@@ -1,9 +1,8 @@
 # Modelamiento_dinamico
-Claro. Para RAPOT, el README debería explicar no solo cómo correr la aplicación, sino qué problema académico resuelve, cómo funcionan las 8 etapas y, sobre todo, qué calcula el software y qué interpreta el usuario. Te propongo este README como documento maestro del proyecto.
+
 
 RAPOT
 
-Reverse Analysis of the Plan de Ordenamiento Territorial
 
 RAPOT es una plataforma experimental de análisis relacional diseñada para desmontar, visualizar y cuestionar el modelo de ciudad contenido en el Plan de Ordenamiento Territorial —POT—.
 
