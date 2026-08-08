@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <link rel="stylesheet" href="modulo-01.css">
 </head>
 <body>
@@ -84,7 +84,7 @@
           <input type="file" id="fileInput" accept=".xlsx,.csv,.xls" hidden>
           <i class="fa-solid fa-cloud-arrow-up"></i>
           <h3>Sube tu análisis del POT</h3>
-          <p>Excel con columnas: Concepto | Estructura | Concepto Relacionado | Tipo de Relación | Justificación | Discurso Vs Realidad</p>
+          <p>Excel con: Concepto | Estructura | Concepto Relacionado | Tipo de Relación | Justificación</p>
           <button class="btn-upload" id="browseBtn">Seleccionar archivo</button>
           <span class="upload-status" id="uploadStatus"></span>
         </div>
@@ -96,19 +96,17 @@
       <div class="stat-card">
         <div class="stat-value" id="statConceptos">0</div>
         <div class="stat-label">Conceptos</div>
-        <div class="stat-desc" id="statConceptosSub">Nodos en la red</div>
+        <div class="stat-desc">Nodos en la red</div>
       </div>
       <div class="stat-card">
         <div class="stat-value" id="statRelaciones">0</div>
         <div class="stat-label">Relaciones</div>
-        <div class="stat-desc" id="statRelacionesSub">Conexiones identificadas</div>
+        <div class="stat-desc">Conexiones identificadas</div>
       </div>
-      <div class="stat-card">
-        <div class="stat-card-warning" id="statContradicciones">
-          <div class="stat-value" style="color:#f43f8e;">0</div>
-          <div class="stat-label">Contradicciones</div>
-          <div class="stat-desc">Discurso vs Estructura</div>
-        </div>
+      <div class="stat-card stat-warning">
+        <div class="stat-value" id="statContradicciones">0</div>
+        <div class="stat-label">Contradicciones</div>
+        <div class="stat-desc">Discurso vs Estructura</div>
       </div>
       <div class="stat-card">
         <div class="stat-value" id="statMacromodelos">0</div>
@@ -117,129 +115,76 @@
       </div>
     </div>
 
-    <!-- MAIN ANALYSIS AREA -->
-    <div class="analysis-area">
-
-      <!-- LEFT: GRAPH -->
-      <div class="graph-section">
-        <div class="section-title">GRAFO INTERACTIVO</div>
-        <div class="graph-container" id="graphArea">
-          <div class="loading-msg" id="loadingMsg">
-            <i class="fa-solid fa-spinner fa-spin"></i>
-            <p>Sube un archivo para comenzar el análisis</p>
-          </div>
-          <svg id="graphSvg" class="graph-svg" style="display:none;"></svg>
+    <!-- MAIN AREA -->
+    <div class="main-area">
+      <div class="graph-container">
+        <div id="loadingMsg" style="text-align:center;padding:60px;color:var(--text-faint);">
+          <i class="fa-solid fa-spinner fa-spin" style="font-size:24px;margin-bottom:12px;display:block;"></i>
+          Sube un archivo para comenzar
         </div>
-        <div class="graph-legend">
-          <div class="legend-item"><span class="legend-dot directa"></span> Directa</div>
-          <div class="legend-item"><span class="legend-dot indirecta"></span> Indirecta</div>
-          <div class="legend-item"><span class="legend-dot soporte"></span> Soporte</div>
-          <div class="legend-item"><span class="legend-dot resiliencia"></span> Resiliencia</div>
-        </div>
-      </div>
-
-      <!-- RIGHT: ANALYSIS PANEL -->
-      <div class="analysis-panel">
-        <div class="panel-title">HALLAZGOS Y ANÁLISIS</div>
-        
-        <!-- NODE DETAIL -->
-        <div id="nodeDetail" class="detail-section" style="display:none;">
-          <div class="detail-header">
-            <h4 id="detailName">Concepto</h4>
-            <span class="detail-close" id="closeDetail">✕</span>
-          </div>
-          <div class="detail-body">
-            <div class="detail-subsection">
-              <div class="subsection-title">Estructura</div>
-              <div id="detailStructure">—</div>
-            </div>
-            <div class="detail-subsection">
-              <div class="subsection-title">Importancia Discursiva vs Estructural</div>
-              <div id="detailDiscrepancy" class="discrepancy-badge">—</div>
-            </div>
-            <div class="detail-subsection">
-              <div class="subsection-title">Conexiones Salientes</div>
-              <div id="detailOutgoing" class="connections-list">—</div>
-            </div>
-            <div class="detail-subsection">
-              <div class="subsection-title">Conexiones Entrantes</div>
-              <div id="detailIncoming" class="connections-list">—</div>
-            </div>
-            <div class="detail-subsection">
-              <div class="subsection-title">Justificación de Relaciones</div>
-              <div id="detailJustification" class="justification-box">—</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- CONTRADICTIONS SUMMARY -->
-        <div id="contradictionsSummary" class="findings-section" style="display:none;">
-          <div class="section-header">
-            <h4><i class="fa-solid fa-triangle-exclamation"></i> Contradicciones Encontradas</h4>
-          </div>
-          <div id="contradictionsList" class="findings-list">—</div>
-        </div>
-
-        <!-- MACRO MODELS -->
-        <div id="macromodelsSummary" class="findings-section" style="display:none;">
-          <div class="section-header">
-            <h4><i class="fa-solid fa-sitemap"></i> Macromodelos Identificados</h4>
-          </div>
-          <div id="macromodelsList" class="findings-list">—</div>
-        </div>
-
-      </div>
-
-    </div>
-
-    <!-- MODAL: RELACIÓN DETALLADA -->
-    <div class="modal" id="relationModal" style="display:none;">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3>ANÁLISIS DE RELACIÓN</h3>
-          <span class="modal-close" id="closeRelation">✕</span>
-        </div>
-        <div class="modal-body">
-          <div class="relation-flow">
-            <div class="flow-node"><span id="relationFrom">A</span></div>
-            <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
-            <div class="flow-node"><span id="relationTo">B</span></div>
-          </div>
-          <div class="relation-type-badge" id="relationTypeBadge">Directa</div>
-          <div class="modal-section">
-            <h4>Justificación desde fuentes</h4>
-            <div id="relationJustification" class="source-quote">—</div>
-          </div>
-          <div class="modal-section">
-            <h4>Naturaleza de la relación</h4>
-            <div id="relationNature">
-              <div class="relation-attribute">
-                <span class="attr-label">Tipo:</span>
-                <span class="attr-value" id="relationNatureType">—</span>
-              </div>
-              <div class="relation-attribute">
-                <span class="attr-label">Dirección:</span>
-                <span class="attr-value" id="relationDirection">—</span>
-              </div>
-              <div class="relation-attribute">
-                <span class="attr-label">Intensidad:</span>
-                <span class="attr-value" id="relationIntensity">—</span>
-              </div>
-            </div>
-          </div>
-          <div class="modal-section">
-            <h4>¿Contradice el discurso?</h4>
-            <div id="relationContradicts" style="padding:10px;background:rgba(244,63,142,0.1);border-radius:6px;color:var(--text);">—</div>
-          </div>
-        </div>
+        <svg id="graphSvg" style="display:none;width:100%;height:100%;"></svg>
       </div>
     </div>
 
     <footer>
-      <p>"El interés del ejercicio está en comprender por qué y cómo se relacionan las cosas." — Clase de Lunes</p>
+      <p>"Comprender la estructura relacional para detectar contradicciones." — Análisis del POT</p>
     </footer>
 
   </main>
+</div>
+
+<!-- MODAL NODO -->
+<div class="modal" id="nodeModal" style="display:none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 id="nodeName">Concepto</h3>
+      <span class="modal-close" onclick="document.getElementById('nodeModal').style.display='none';">✕</span>
+    </div>
+    <div class="modal-body">
+      <div class="modal-section">
+        <strong>Estructura:</strong>
+        <div id="nodeStructure">—</div>
+      </div>
+      <div class="modal-section">
+        <strong>Conexiones Salientes (→):</strong>
+        <div id="nodeOutgoing">—</div>
+      </div>
+      <div class="modal-section">
+        <strong>Conexiones Entrantes (←):</strong>
+        <div id="nodeIncoming">—</div>
+      </div>
+      <div class="modal-section">
+        <strong>Justificaciones:</strong>
+        <div id="nodeJustif">—</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL RELACIÓN -->
+<div class="modal" id="relationModal" style="display:none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Análisis de Relación (según POT)</h3>
+      <span class="modal-close" onclick="document.getElementById('relationModal').style.display='none';">✕</span>
+    </div>
+    <div class="modal-body">
+      <div style="text-align:center;margin:15px 0;padding:12px;background:var(--panel-alt);border-radius:8px;">
+        <div><strong id="relFrom">A</strong></div>
+        <div style="margin:8px 0;color:var(--teal);">↓</div>
+        <div><strong id="relType" style="color:var(--teal);">Tipo</strong></div>
+        <div style="margin:8px 0;color:var(--teal);">↓</div>
+        <div><strong id="relTo">B</strong></div>
+      </div>
+      <div class="modal-section">
+        <strong>📄 Página POT:</strong> <span id="relPage">—</span>
+      </div>
+      <div class="modal-section">
+        <strong>✓ Sustento (cita directa del POT):</strong>
+        <div id="relJustif" class="justif-box">—</div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script src="modulo-01.js"></script>
