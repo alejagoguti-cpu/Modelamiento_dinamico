@@ -356,3 +356,126 @@ footer {
     box-shadow: 0 0 15px rgba(102, 252, 241, 0.5);
   }
 }
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background-color: #0b0d17;
+  color: #e0e0e0;
+}
+
+.container {
+  display: flex;
+  height: 100vh;
+}
+
+.left, .right {
+  flex: 1;
+  padding: 60px;
+}
+
+.left {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.logo h1 {
+  color: #00bcd4;
+  font-size: 2.5rem;
+  margin: 0;
+}
+
+.logo p {
+  color: #ccc;
+  margin-top: 5px;
+}
+
+.description {
+  margin-top: 20px;
+  line-height: 1.6;
+}
+
+.image-box img {
+  width: 100%;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+.quote {
+  background-color: #111320;
+  padding: 20px;
+  border-left: 4px solid #00bcd4;
+  font-style: italic;
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-box {
+  background-color: #141622;
+  padding: 40px;
+  border-radius: 12px;
+  width: 360px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.4);
+}
+
+.lock-icon {
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.login-box h2 {
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.accent {
+  color: #7b61ff;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0 16px;
+  border: none;
+  border-radius: 6px;
+  background-color: #1e2030;
+  color: #fff;
+}
+
+.btn {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(90deg, #00bcd4, #7b61ff);
+  border: none;
+  border-radius: 6px;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.divider {
+  text-align: center;
+  margin: 20px 0;
+  color: #aaa;
+}
+
+.social-login button {
+  background-color: #1e2030;
+  border: none;
+  color: #fff;
+  padding: 10px;
+  margin: 5px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.register {
+  text-align: center;
+  margin-top: 20px;
+}
+
