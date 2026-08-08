@@ -26,6 +26,23 @@ body {
   left: 0;
   top: 0;
   z-index: 5; /* mantiene el sidebar por debajo del contenido */
+  /* Efecto de sombra lateral entre sidebar y contenido */
+.sidebar {
+  width: 240px;
+  background-color: #111320;
+  color: #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 5;
+  box-shadow: 4px 0 12px rgba(0, 0, 0, 0.6); /* sombra lateral */
+}
+
 }
 
 .logo {
