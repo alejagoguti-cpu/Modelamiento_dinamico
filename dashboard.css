@@ -312,4 +312,5 @@ body {
 .module:nth-child(2) h2, .module:nth-child(2) .icon { color: #38bdf8; } /* Medir la Red */
 .module:nth-child(3) h2, .module:nth-child(3) .icon { color: #c084fc; } /* Discurso vs Realidad */
 .module:nth-child(4) h2, .module:nth-child(4) .icon { color: #4ade80; } /* Macromodelos */
-.module:nth-child(5) h2, .module:nth-child(5)
+.module:nth-child(5) h2, .module:nth-child(5) .icon { color: #facc15; } /* Lo que no está */
+.module:nth-child(6
