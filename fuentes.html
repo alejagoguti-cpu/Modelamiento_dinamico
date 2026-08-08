@@ -19,28 +19,28 @@
     </div>
 
     <div class="nav-group">
-      <a href="dashboard.html" class="nav-item "><i class="fa-solid fa-house"></i> Dashboard</a>
+      <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-house"></i> Dashboard</a>
     </div>
 
     <div class="nav-group">
       <div class="nav-label">MÓDULOS</div>
-      <a href="modulo-01.html" class="nav-item "><span class="num">01</span><i class="fa-solid fa-diagram-project"></i> Construir la Red</a>
-      <a href="modulo-02.html" class="nav-item "><span class="num">02</span><i class="fa-solid fa-chart-simple"></i> Medir la Red</a>
-      <a href="modulo-03.html" class="nav-item "><span class="num">03</span><i class="fa-solid fa-eye"></i> Discurso vs Realidad</a>
-      <a href="modulo-04.html" class="nav-item "><span class="num">04</span><i class="fa-solid fa-bullseye"></i> Macromodelos</a>
-      <a href="modulo-05.html" class="nav-item "><span class="num">05</span><i class="fa-solid fa-magnifying-glass"></i> Lo que no está</a>
-      <a href="modulo-06.html" class="nav-item "><span class="num">06</span><i class="fa-solid fa-earth-americas"></i> POT ↔ ODS</a>
-      <a href="modulo-07.html" class="nav-item "><span class="num">07</span><i class="fa-solid fa-flask"></i> Simulador</a>
-      <a href="modulo-08.html" class="nav-item "><span class="num">08</span><i class="fa-solid fa-city"></i> Modelo Propio</a>
+      <a href="modulo-01.html" class="nav-item"><span class="num">01</span><i class="fa-solid fa-diagram-project"></i> Construir la Red</a>
+      <a href="modulo-02.html" class="nav-item"><span class="num">02</span><i class="fa-solid fa-chart-simple"></i> Medir la Red</a>
+      <a href="modulo-03.html" class="nav-item"><span class="num">03</span><i class="fa-solid fa-eye"></i> Discurso vs Realidad</a>
+      <a href="modulo-04.html" class="nav-item"><span class="num">04</span><i class="fa-solid fa-bullseye"></i> Macromodelos</a>
+      <a href="modulo-05.html" class="nav-item"><span class="num">05</span><i class="fa-solid fa-magnifying-glass"></i> Lo que no está</a>
+      <a href="modulo-06.html" class="nav-item"><span class="num">06</span><i class="fa-solid fa-earth-americas"></i> POT ↔ ODS</a>
+      <a href="modulo-07.html" class="nav-item"><span class="num">07</span><i class="fa-solid fa-flask"></i> Simulador</a>
+      <a href="modulo-08.html" class="nav-item"><span class="num">08</span><i class="fa-solid fa-city"></i> Modelo Propio</a>
     </div>
 
     <div class="nav-group">
       <div class="nav-label">GESTIÓN</div>
-      <a href="proyectos.html" class="nav-item "><i class="fa-solid fa-folder"></i> Proyectos</a>
+      <a href="proyectos.html" class="nav-item"><i class="fa-solid fa-folder"></i> Proyectos</a>
       <a href="fuentes.html" class="nav-item active"><i class="fa-solid fa-file-lines"></i> Fuentes y Documentos</a>
-      <a href="favoritos.html" class="nav-item "><i class="fa-solid fa-star"></i> Favoritos</a>
-      <a href="reportes.html" class="nav-item "><i class="fa-solid fa-chart-pie"></i> Reportes</a>
-      <a href="configuracion.html" class="nav-item "><i class="fa-solid fa-gear"></i> Configuración</a>
+      <a href="favoritos.html" class="nav-item"><i class="fa-regular fa-star"></i> Favoritos</a>
+      <a href="reportes.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Reportes</a>
+      <a href="configuracion.html" class="nav-item"><i class="fa-solid fa-gear"></i> Configuración</a>
     </div>
 
     <div class="sidebar-footer">
@@ -53,13 +53,12 @@
     </div>
   </aside>
 
-  <!-- MAIN -->
   <main class="main">
 
     <div class="topbar">
       <h1>Fuentes y Documentos</h1>
       <div class="topbar-actions">
-        <div class="search-box"><i class="fa-solid fa-magnifying-glass"></i> Buscar en el sistema...</div>
+        <div class="search-box"><i class="fa-solid fa-magnifying-glass"></i> Buscar fuente...</div>
         <div class="icon-btn"><i class="fa-regular fa-bell"></i><span class="dot"></span></div>
         <div class="icon-btn"><i class="fa-regular fa-circle-question"></i></div>
         <div class="avatar-sm">EU</div>
@@ -68,30 +67,243 @@
 
     <div class="welcome">
       <h2>Fuentes y Documentos</h2>
-      <p>Consulta y organiza las fuentes documentales cargadas al sistema.</p>
+      <p>Organiza, consulta y gestiona todos los archivos de referencia que usas en RAPOT.</p>
     </div>
 
-    <div class="panel" style="text-align:center; padding:60px 30px;">
-      <div style="width:56px;height:56px;border-radius:14px;background:rgba(47,212,200,0.12);color:var(--teal);
-                  display:flex;align-items:center;justify-content:center;font-size:22px;margin:0 auto 18px;">
-        <i class="fa-solid fa-file-lines"></i>
+    <div class="content-grid">
+
+      <!-- Upload Zone -->
+      <div class="panel upload-panel">
+        <div class="panel-head"><h4>CARGAR NUEVAS FUENTES</h4></div>
+        <div class="upload-zone" id="uploadZone">
+          <input type="file" id="fileInput" multiple accept=".pdf,.xlsx,.xls,.csv,.docx,.txt" hidden>
+          <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
+          <h3>Sube tus documentos</h3>
+          <p>Arrastra archivos aquí o haz clic para seleccionar.<br>
+          Tipos soportados: PDF, Excel, CSV, Word, TXT.</p>
+          <button class="btn-primary-sm" id="browseBtn">Seleccionar archivos</button>
+          <span class="upload-status" id="uploadStatus"></span>
+        </div>
       </div>
-      <h3 style="font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;margin-bottom:8px;">
-        Este módulo está en construcción
-      </h3>
-      <p style="color:var(--text-dim);font-size:13.5px;max-width:420px;margin:0 auto 22px;">
-        Estamos trabajando en esta sección. Mientras tanto puedes volver al Dashboard o explorar el Módulo 01.
-      </p>
-      <a href="dashboard.html" class="module-btn primary" style="display:inline-flex;max-width:200px;margin:0 auto;">
-        Volver al Dashboard <i class="fa-solid fa-arrow-right"></i>
-      </a>
+
+      <!-- Stats -->
+      <div class="stats-col">
+        <div class="stat-card">
+          <div class="stat-top">
+            <span class="stat-val" id="totalFiles">0</span>
+            <i class="fa-solid fa-file-lines stat-icon"></i>
+          </div>
+          <div class="stat-lbl">Documentos</div>
+          <div class="stat-sub">Archivos cargados</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-top">
+            <span class="stat-val" id="totalSize">0 KB</span>
+            <i class="fa-solid fa-database stat-icon"></i>
+          </div>
+          <div class="stat-lbl">Almacenamiento</div>
+          <div class="stat-sub">Espacio usado</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-top">
+            <span class="stat-val" id="lastUpload">—</span>
+            <i class="fa-solid fa-calendar stat-icon"></i>
+          </div>
+          <div class="stat-lbl">Última carga</div>
+          <div class="stat-sub" id="lastUploadTime">Sin archivos</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Files List -->
+    <div class="panel files-panel">
+      <div class="panel-head">
+        <h4>ARCHIVOS CARGADOS</h4>
+        <span class="file-count" id="fileCount">0 archivos</span>
+      </div>
+
+      <div class="files-list" id="filesList">
+        <div class="empty-state">
+          <i class="fa-solid fa-inbox"></i>
+          <p>No hay documentos cargados aún.<br>Sube tu primer archivo arriba.</p>
+        </div>
+      </div>
     </div>
 
     <footer>
-      "No se trata de representar la ciudad, sino de comprenderla para transformarla." — <span>Equipo POT Reverse Engineering</span>
+      <p>"No se trata de representar la ciudad, sino de comprenderla para transformarla." — <span>Equipo POT Reverse Engineering</span></p>
     </footer>
 
   </main>
 </div>
+
+<script>
+const uploadZone = document.getElementById('uploadZone');
+const fileInput = document.getElementById('fileInput');
+const filesList = document.getElementById('filesList');
+const uploadStatus = document.getElementById('uploadStatus');
+const totalFilesDisplay = document.getElementById('totalFiles');
+const totalSizeDisplay = document.getElementById('totalSize');
+const fileCountDisplay = document.getElementById('fileCount');
+const lastUploadDisplay = document.getElementById('lastUpload');
+const lastUploadTimeDisplay = document.getElementById('lastUploadTime');
+const browseBtn = document.getElementById('browseBtn');
+
+// load files from localStorage
+let files = JSON.parse(localStorage.getItem('rapot_fuentes') || '[]');
+
+// upload zone handlers
+uploadZone.addEventListener('click', () => fileInput.click());
+browseBtn.addEventListener('click', (e) => { e.stopPropagation(); fileInput.click(); });
+
+['dragover', 'dragenter'].forEach(evt => uploadZone.addEventListener(evt, (e) => {
+  e.preventDefault();
+  uploadZone.classList.add('dragover');
+}));
+
+['dragleave', 'drop'].forEach(evt => uploadZone.addEventListener(evt, (e) => {
+  e.preventDefault();
+  uploadZone.classList.remove('dragover');
+}));
+
+uploadZone.addEventListener('drop', (e) => {
+  const newFiles = Array.from(e.dataTransfer.files);
+  handleFiles(newFiles);
+});
+
+fileInput.addEventListener('change', (e) => {
+  const newFiles = Array.from(e.target.files);
+  handleFiles(newFiles);
+});
+
+function handleFiles(newFiles){
+  newFiles.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const fileObj = {
+        id: Date.now() + Math.random(),
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        data: e.target.result,
+        uploadedAt: new Date().toISOString()
+      };
+      files.push(fileObj);
+      saveFiles();
+      renderFiles();
+      updateStats();
+      uploadStatus.textContent = `✓ ${file.name} cargado`;
+      setTimeout(() => { uploadStatus.textContent = ''; }, 3000);
+    };
+    reader.readAsArrayBuffer(file);
+  });
+}
+
+function saveFiles(){
+  localStorage.setItem('rapot_fuentes', JSON.stringify(files.map(f => ({
+    ...f, data: '' // don't save raw data in storage, too big
+  }))));
+}
+
+function renderFiles(){
+  if(files.length === 0){
+    filesList.innerHTML = '<div class="empty-state"><i class="fa-solid fa-inbox"></i><p>No hay documentos cargados aún.<br>Sube tu primer archivo arriba.</p></div>';
+    return;
+  }
+
+  filesList.innerHTML = '';
+  files.forEach(file => {
+    const date = new Date(file.uploadedAt);
+    const dateStr = date.toLocaleDateString('es-CO', { year:'numeric', month:'short', day:'numeric' });
+    const timeStr = date.toLocaleTimeString('es-CO', { hour:'2-digit', minute:'2-digit' });
+
+    const row = document.createElement('div');
+    row.className = 'file-row';
+    row.innerHTML = `
+      <div class="file-info">
+        <div class="file-icon">
+          <i class="fa-solid ${getFileIcon(file.type)}"></i>
+        </div>
+        <div class="file-meta">
+          <div class="file-name">${file.name}</div>
+          <div class="file-detail">${formatSize(file.size)} • ${dateStr} a las ${timeStr}</div>
+        </div>
+      </div>
+      <div class="file-actions">
+        <button class="file-btn download-btn" data-id="${file.id}" title="Descargar">
+          <i class="fa-solid fa-download"></i>
+        </button>
+        <button class="file-btn delete-btn" data-id="${file.id}" title="Eliminar">
+          <i class="fa-solid fa-trash"></i>
+        </button>
+      </div>
+    `;
+    filesList.appendChild(row);
+  });
+
+  document.querySelectorAll('.download-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const id = parseFloat(e.currentTarget.dataset.id);
+      const file = files.find(f => f.id === id);
+      if(file){
+        const blob = new Blob([new Uint8Array(file.data)]);
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = file.name;
+        a.click();
+      }
+    });
+  });
+
+  document.querySelectorAll('.delete-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const id = parseFloat(e.currentTarget.dataset.id);
+      files = files.filter(f => f.id !== id);
+      saveFiles();
+      renderFiles();
+      updateStats();
+    });
+  });
+}
+
+function updateStats(){
+  totalFilesDisplay.textContent = files.length;
+  fileCountDisplay.textContent = `${files.length} archivo${files.length !== 1 ? 's' : ''}`;
+
+  const totalSize = files.reduce((sum, f) => sum + f.size, 0);
+  totalSizeDisplay.textContent = formatSize(totalSize);
+
+  if(files.length > 0){
+    const latest = files.reduce((a, b) => new Date(a.uploadedAt) > new Date(b.uploadedAt) ? a : b);
+    const date = new Date(latest.uploadedAt);
+    lastUploadDisplay.textContent = date.toLocaleDateString('es-CO', { month:'short', day:'numeric' });
+    lastUploadTimeDisplay.textContent = date.toLocaleTimeString('es-CO', { hour:'2-digit', minute:'2-digit' });
+  }
+}
+
+function formatSize(bytes){
+  if(bytes === 0) return '0 B';
+  const k = 1024;
+  const sizes = ['B', 'KB', 'MB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return (bytes / Math.pow(k, i)).toFixed(1) + ' ' + sizes[i];
+}
+
+function getFileIcon(type){
+  if(type.includes('pdf')) return 'fa-file-pdf';
+  if(type.includes('word')) return 'fa-file-word';
+  if(type.includes('excel') || type.includes('spreadsheet')) return 'fa-file-excel';
+  if(type.includes('text') || type.includes('csv')) return 'fa-file-csv';
+  return 'fa-file';
+}
+
+// initialize
+renderFiles();
+updateStats();
+</script>
 </body>
 </html>
