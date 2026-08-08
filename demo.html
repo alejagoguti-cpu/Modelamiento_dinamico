@@ -58,7 +58,7 @@
     </div>
   </div>
 
- <script>
+<script>
   document.getElementById("loginForm").addEventListener("submit", function(e) {
     e.preventDefault();
     const email = document.getElementById("email").value.trim();
@@ -67,11 +67,14 @@
     if (!email || !password) {
       alert("Por favor, completa todos los campos antes de continuar.");
     } else {
-      // Redirige a la tercera pantalla
+      // Aquí va la redirección a la tercera pantalla
       window.location.href = "dashboard.html";
     }
   });
 </script>
+</body>
+</html>
+
   <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="demo.css">
 
