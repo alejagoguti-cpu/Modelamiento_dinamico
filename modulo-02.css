@@ -164,7 +164,7 @@ function buildNodeListUI() {
   `).join('');
 }
 
-// SELECT NODE
+// SELECT NODE - MOSTRAR SOLO SUS CONEXIONES
 function selectNode(nodeId) {
   selectedNode = allNodes.find(n => n.id === nodeId);
   
@@ -172,8 +172,10 @@ function selectNode(nodeId) {
   
   document.getElementById('nodeSelect').value = nodeId;
   
-  const incomingLinks = allLinks.filter(l => l.target === nodeId && l.active).length;
-  const outgoingLinks = allLinks.filter(l => l.source === nodeId && l.active).length;
+  // Contar conexiones del nodo seleccionado
+  const connectedTo = allLinks.filter(l => l.source === nodeId && l.active).length;
+  const connectedFrom = allLinks.filter(l => l.target === nodeId && l.active).length;
+  const totalConnections = connectedTo + connectedFrom;
   
   const info = document.getElementById('selectedNodeInfo');
   info.innerHTML = `
@@ -181,12 +183,13 @@ function selectNode(nodeId) {
       <div class="node-info-name">${selectedNode.label}</div>
       <div class="node-info-structure">${selectedNode.structure}</div>
       <div class="node-info-connections">
-        <div class="connection-count">Conexiones activas: ${incomingLinks + outgoingLinks}</div>
-        <div class="connection-count">Estructura: ${selectedNode.structureName}</div>
+        <div class="connection-count">🔗 Conexiones: ${totalConnections}</div>
+        <div class="connection-count">${selectedNode.structureName}</div>
       </div>
     </div>
   `;
   
+  // REDIBUJAR CON SOLO LAS CONEXIONES DEL NODO SELECCIONADO
   drawNetwork();
 }
 
@@ -278,7 +281,7 @@ function updateComparison() {
   document.getElementById('deltaImpacto').textContent = deltaImpacto > 0 ? '+' + deltaImpacto + '%' : deltaImpacto + '%';
 }
 
-// DRAW NETWORK
+// DRAW NETWORK - VERSIÓN MEJORADA CON FILTRADO
 function drawNetwork() {
   const svg = d3.select('#networkViz');
   const width = svg.node().parentElement.offsetWidth - 40;
@@ -286,11 +289,41 @@ function drawNetwork() {
   
   svg.attr('width', width).attr('height', height);
   
-  const activeNodes = allNodes.filter(n => n.active);
-  const activeLinks = allLinks.filter(l => l.active && 
-    activeNodes.some(n => n.id === l.source) &&
-    activeNodes.some(n => n.id === l.target)
-  );
+  let activeNodes = allNodes.filter(n => n.active);
+  let activeLinks = allLinks.filter(l => l.active);
+  
+  // ============ SI HAY UN NODO SELECCIONADO ============
+  // MOSTRAR SOLO ESE NODO Y SUS CONEXIONES DIRECTAS
+  if (selectedNode && selectedNode.active) {
+    const connectedNodeIds = new Set();
+    connectedNodeIds.add(selectedNode.id);
+    
+    // Encontrar todos los nodos conectados directamente al nodo seleccionado
+    allLinks.forEach(link => {
+      if (link.active) {
+        if (link.source === selectedNode.id) {
+          connectedNodeIds.add(link.target);
+        }
+        if (link.target === selectedNode.id) {
+          connectedNodeIds.add(link.source);
+        }
+      }
+    });
+    
+    // Filtrar: solo nodos conectados + solo links entre esos nodos
+    activeNodes = allNodes.filter(n => connectedNodeIds.has(n.id) && n.active);
+    activeLinks = allLinks.filter(l => 
+      l.active && 
+      connectedNodeIds.has(l.source) && 
+      connectedNodeIds.has(l.target)
+    );
+  } else {
+    // Si no hay nodo seleccionado, mostrar todos
+    activeLinks = activeLinks.filter(l => 
+      activeNodes.some(n => n.id === l.source) &&
+      activeNodes.some(n => n.id === l.target)
+    );
+  }
   
   if (networkSimulation) networkSimulation.stop();
   
@@ -298,53 +331,57 @@ function drawNetwork() {
     .force('link', d3.forceLink()
       .id(d => d.id)
       .links(activeLinks)
-      .distance(80))
-    .force('charge', d3.forceManyBody().strength(-200))
+      .distance(100))
+    .force('charge', d3.forceManyBody().strength(-300))
     .force('center', d3.forceCenter(width / 2, height / 2));
   
   svg.selectAll('*').remove();
   
+  // LINKS
   const link = svg.append('g')
     .selectAll('line')
     .data(activeLinks)
     .enter()
     .append('line')
     .attr('stroke', d => {
-      if (d.strength === 'strong') return 'rgba(47,212,200,0.6)';
-      if (d.strength === 'medium') return 'rgba(91,141,239,0.4)';
-      return 'rgba(162,118,242,0.2)';
+      if (d.strength === 'strong') return 'rgba(47,212,200,0.8)';
+      if (d.strength === 'medium') return 'rgba(91,141,239,0.6)';
+      return 'rgba(162,118,242,0.3)';
     })
     .attr('stroke-width', d => {
-      if (d.strength === 'strong') return 2.5;
-      if (d.strength === 'medium') return 1.5;
-      return 1;
+      if (d.strength === 'strong') return 3;
+      if (d.strength === 'medium') return 2;
+      return 1.5;
     });
   
+  // NODES
   const node = svg.append('g')
     .selectAll('circle')
     .data(activeNodes)
     .enter()
     .append('circle')
     .attr('r', d => {
-      const size = 8 * (d.influence || 1);
-      return d.id === selectedNode?.id ? size + 4 : size;
+      const baseSize = 12 * (d.influence || 1);
+      return d.id === selectedNode?.id ? baseSize + 6 : baseSize;
     })
     .attr('fill', d => d.color)
-    .attr('opacity', d => d.id === selectedNode?.id ? 1 : 0.7)
-    .attr('stroke', d => d.id === selectedNode?.id ? '#fff' : 'rgba(255,255,255,0.2)')
-    .attr('stroke-width', d => d.id === selectedNode?.id ? 2 : 1.5)
+    .attr('opacity', d => d.id === selectedNode?.id ? 1 : 0.8)
+    .attr('stroke', d => d.id === selectedNode?.id ? '#fff' : 'rgba(255,255,255,0.3)')
+    .attr('stroke-width', d => d.id === selectedNode?.id ? 3 : 2)
     .call(d3.drag()
       .on('start', dragstarted)
       .on('drag', dragged)
       .on('end', dragended));
   
+  // LABELS
   const labels = svg.append('g')
     .selectAll('text')
     .data(activeNodes)
     .enter()
     .append('text')
-    .text(d => d.label.substring(0, 8))
-    .attr('font-size', '9px')
+    .text(d => d.label.substring(0, 12))
+    .attr('font-size', d => d.id === selectedNode?.id ? '11px' : '9px')
+    .attr('font-weight', d => d.id === selectedNode?.id ? 'bold' : 'normal')
     .attr('fill', '#e7eaf2')
     .attr('text-anchor', 'middle')
     .attr('pointer-events', 'none');
@@ -362,7 +399,7 @@ function drawNetwork() {
     
     labels
       .attr('x', d => d.x)
-      .attr('y', d => d.y + 3);
+      .attr('y', d => d.y + 4);
   });
   
   function dragstarted(event, d) {
@@ -418,3 +455,4 @@ function toggleVisualization(type) {
 window.addEventListener('resize', () => {
   drawNetwork();
 });
+  
