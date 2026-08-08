@@ -1,23 +1,23 @@
-console.log('✓ Módulo 01 inicializando...');
+console.log('✓ Módulo 01 JS iniciando...');
 
 let graphData = { nodes: [], links: [], structures: {} };
 let currentView = 'overview';
 let selectedStructure = null;
 
 const structures = {
-  EEP: { id: 'EEP', name: 'Estructura Ecológica\nPrincipal', color: '#34d399', icon: 'fa-leaf', fullName: 'EEP - Ecológica' },
-  EFC: { id: 'EFC', name: 'Estructura Funcional\ny del Cuidado', color: '#3b82f6', icon: 'fa-home', fullName: 'EFC - Funcional' },
-  ESECI: { id: 'ESECI', name: 'Estructura\nSocioeconómica', color: '#ef9552', icon: 'fa-briefcase', fullName: 'ESECI - Socioeconómica' },
-  EIP: { id: 'EIP', name: 'Estructura Integradora\nde Patrimonios', color: '#b06bf7', icon: 'fa-landmark', fullName: 'EIP - Patrimonio' }
+  EEP: { id: 'EEP', name: 'Sistema Ambiental y de\nEstructura Ecológica Principal', color: '#34d399', icon: 'fa-leaf', fullName: 'EEP - Ecológica' },
+  EFC: { id: 'EFC', name: 'Sistema Funcional\ny del Cuidado', color: '#3b82f6', icon: 'fa-home', fullName: 'EFC - Funcional' },
+  ESECI: { id: 'ESECI', name: 'Sistema de Actividades\nSocioeconómicas', color: '#ef9552', icon: 'fa-briefcase', fullName: 'ESECI - Socioeconómica' },
+  EIP: { id: 'EIP', name: 'Sistema Integrador\nde Patrimonios', color: '#b06bf7', icon: 'fa-landmark', fullName: 'EIP - Patrimonio' }
 };
 
-function loadGraphFromExcel() {
+function loadGraph() {
   try {
     const files = JSON.parse(localStorage.getItem('rapot_fuentes') || '[]');
     const excelFiles = files.filter(f => f.name.endsWith('.xlsx') || f.name.endsWith('.xls'));
     
     if (excelFiles.length === 0) {
-      console.log('⚠ Sin Excel, cargando ejemplo...');
+      console.log('Sin Excel, mostrando ejemplo...');
       loadExample();
       return;
     }
@@ -26,21 +26,79 @@ function loadGraphFromExcel() {
     const array = new Uint8Array(file.data);
     const workbook = XLSX.read(array, { type: 'array' });
     
+    console.log('Hojas encontradas:', workbook.SheetNames);
+    
     let allRows = [];
+    const structData = {};
+    ['EEP', 'EFC', 'ESECI', 'EIP'].forEach(s => structData[s] = { nodes: new Map(), links: [] });
+
+    // Leer cada hoja
     for (const sheetName of ['EEP', 'EFC', 'ESECI', 'EIP']) {
-      if (workbook.SheetNames.includes(sheetName)) {
-        const sheet = workbook.Sheets[sheetName];
-        const rows = XLSX.utils.sheet_to_json(sheet, { defval: '' });
-        const validRows = rows.filter(r => r['Concepto Origen'] && r['Concepto Relacionado']);
-        allRows = allRows.concat(validRows);
-      }
+      if (!workbook.SheetNames.includes(sheetName)) continue;
+      
+      const sheet = workbook.Sheets[sheetName];
+      const rows = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+      
+      console.log(`📄 Hoja ${sheetName}: ${rows.length} filas`);
+      
+      rows.forEach(row => {
+        if (!row['Concepto Origen'] || !row['Concepto Relacionado']) return;
+        
+        const origen = row['Concepto Origen'];
+        const destino = row['Concepto Relacionado'];
+        const tipo = row['Tipo de Relación'] || 'Directa';
+        const sustento = row['Sustento (según el POT)'] || '—';
+        const page = row['Página POT'] || '—';
+
+        // Agregar nodos a la estructura
+        if (!structData[sheetName].nodes.has(origen)) {
+          structData[sheetName].nodes.set(origen, { 
+            name: origen, 
+            estructura: sheetName,
+            in: 0,
+            out: 0
+          });
+        }
+        if (!structData[sheetName].nodes.has(destino)) {
+          structData[sheetName].nodes.set(destino, { 
+            name: destino,
+            estructura: sheetName,
+            in: 0,
+            out: 0
+          });
+        }
+
+        const nodoOrigen = structData[sheetName].nodes.get(origen);
+        const nodoDestino = structData[sheetName].nodes.get(destino);
+        nodoOrigen.out++;
+        nodoDestino.in++;
+
+        // Links dentro de la estructura
+        structData[sheetName].links.push({
+          source: origen,
+          target: destino,
+          tipo: tipo.toLowerCase(),
+          sustento: sustento,
+          page: page,
+          sourceName: origen,
+          targetName: destino
+        });
+
+        allRows.push(row);
+      });
     }
 
-    if (allRows.length > 0) {
-      buildGraph(allRows);
-    } else {
-      loadExample();
-    }
+    graphData.structures = structData;
+
+    // Stats
+    const totalNodes = Object.values(structData).reduce((sum, s) => sum + s.nodes.size, 0);
+    document.getElementById('statConceptos').textContent = totalNodes;
+    document.getElementById('statRelaciones').textContent = allRows.length;
+    document.getElementById('statFuentes').textContent = 4;
+    document.getElementById('statTipos').textContent = new Set(allRows.map(r => r['Tipo de Relación'])).size;
+
+    renderOverview();
+
   } catch (error) {
     console.error('Error:', error);
     loadExample();
@@ -48,82 +106,55 @@ function loadGraphFromExcel() {
 }
 
 function loadExample() {
-  const example = [
-    { 'Concepto Origen': 'Humedales', 'Estructura Origen': 'EEP', 'Concepto Relacionado': 'Vivienda', 'Estructura Relacionada': 'EFC', 'Tipo de Relación': 'Soporte', 'Sustento (según el POT)': 'Los humedales soportan sistemas de vivienda.' },
-    { 'Concepto Origen': 'Áreas protegidas', 'Estructura Origen': 'EEP', 'Concepto Relacionado': 'Turismo', 'Estructura Relacionada': 'ESECI', 'Tipo de Relación': 'Directa', 'Sustento (según el POT)': 'El turismo depende de áreas protegidas.' },
-    { 'Concepto Origen': 'Patrimonio cultural', 'Estructura Origen': 'EIP', 'Concepto Relacionado': 'Identidades', 'Estructura Relacionada': 'EIP', 'Tipo de Relación': 'Directa', 'Sustento (según el POT)': 'El patrimonio forma identidades.' },
-    { 'Concepto Origen': 'Movilidad', 'Estructura Origen': 'EFC', 'Concepto Relacionado': 'Empleo', 'Estructura Relacionada': 'ESECI', 'Tipo de Relación': 'Soporte', 'Sustento (según el POT)': 'La movilidad soporta acceso a empleo.' }
+  const exampleRows = [
+    { 'Concepto Origen': 'Humedales', 'Estructura Origen': 'EEP', 'Concepto Relacionado': 'Ríos', 'Estructura Relacionada': 'EEP', 'Tipo de Relación': 'Directa', 'Página POT': 'p. 51', 'Sustento (según el POT)': 'El agua llega a Bogotá por escorrentías, quebradas y ríos.' },
+    { 'Concepto Origen': 'Ríos', 'Estructura Origen': 'EEP', 'Concepto Relacionado': 'Áreas protegidas', 'Estructura Relacionada': 'EEP', 'Tipo de Relación': 'Soporte', 'Página POT': 'p. 51', 'Sustento (según el POT)': 'Los ríos alimentan áreas protegidas.' }
   ];
-  buildGraph(example);
-}
 
-function buildGraph(rows) {
   const structData = {};
   ['EEP', 'EFC', 'ESECI', 'EIP'].forEach(s => structData[s] = { nodes: new Map(), links: [] });
 
-  const globalLinks = [];
-
-  rows.forEach(row => {
+  exampleRows.forEach(row => {
+    const sheetName = 'EEP';
     const origen = row['Concepto Origen'];
-    const dest = row['Concepto Relacionado'];
-    const estructOrigen = row['Estructura Origen'];
-    const estructDest = row['Estructura Relacionada'];
+    const destino = row['Concepto Relacionado'];
 
-    if (!estructOrigen || !estructDest) return;
-
-    let eOrigen = 'EEP', eDest = 'EEP';
-    if (estructOrigen.includes('Funcional')) eOrigen = 'EFC';
-    else if (estructOrigen.includes('Socioeconómica') || estructOrigen.includes('Creativa')) eOrigen = 'ESECI';
-    else if (estructOrigen.includes('Integradora') || estructOrigen.includes('Patrimonio')) eOrigen = 'EIP';
-
-    if (estructDest.includes('Funcional')) eDest = 'EFC';
-    else if (estructDest.includes('Socioeconómica') || estructDest.includes('Creativa')) eDest = 'ESECI';
-    else if (estructDest.includes('Integradora') || estructDest.includes('Patrimonio')) eDest = 'EIP';
-
-    if (!structData[eOrigen].nodes.has(origen)) {
-      structData[eOrigen].nodes.set(origen, { name: origen, estructura: eOrigen });
+    if (!structData[sheetName].nodes.has(origen)) {
+      structData[sheetName].nodes.set(origen, { name: origen, estructura: sheetName, in: 0, out: 0 });
     }
-    if (!structData[eDest].nodes.has(dest)) {
-      structData[eDest].nodes.set(dest, { name: dest, estructura: eDest });
+    if (!structData[sheetName].nodes.has(destino)) {
+      structData[sheetName].nodes.set(destino, { name: destino, estructura: sheetName, in: 0, out: 0 });
     }
 
-    if (eOrigen !== eDest) {
-      globalLinks.push({
-        source: eOrigen,
-        target: eDest,
-        tipo: (row['Tipo de Relación'] || 'Directa').toLowerCase(),
-        sustento: row['Sustento (según el POT)'] || '—'
-      });
-    }
-
-    // Links dentro de la estructura
-    structData[eOrigen].links.push({
-      source: structData[eOrigen].nodes.get(origen),
-      target: structData[eOrigen].nodes.get(origen), // placeholder
-      tipo: (row['Tipo de Relación'] || 'Directa').toLowerCase(),
-      sustento: row['Sustento (según el POT)'] || '—'
+    structData[sheetName].links.push({
+      source: origen,
+      target: destino,
+      tipo: row['Tipo de Relación'].toLowerCase(),
+      sustento: row['Sustento (según el POT)'],
+      page: row['Página POT'],
+      sourceName: origen,
+      targetName: destino
     });
   });
 
   graphData.structures = structData;
-  graphData.globalLinks = globalLinks;
 
-  const totalNodes = Object.values(structData).reduce((sum, s) => sum + s.nodes.size, 0);
-  document.getElementById('statConceptos').textContent = totalNodes;
-  document.getElementById('statRelaciones').textContent = rows.length;
+  document.getElementById('statConceptos').textContent = 2;
+  document.getElementById('statRelaciones').textContent = 2;
   document.getElementById('statFuentes').textContent = 4;
-  document.getElementById('statTipos').textContent = new Set(rows.map(r => r['Tipo de Relación'])).size;
+  document.getElementById('statTipos').textContent = 2;
 
   renderOverview();
 }
 
 function renderOverview() {
-  console.log('📊 Renderizando OVERVIEW...');
+  console.log('📊 Overview');
   currentView = 'overview';
   document.getElementById('detailPanel').style.display = 'none';
 
   const svg = d3.select('#graphSvg');
   document.getElementById('graphLoading').style.display = 'none';
+  svg.style('display', 'block');
   svg.selectAll('*').remove();
 
   const width = svg.node().parentElement.clientWidth;
@@ -140,21 +171,6 @@ function renderOverview() {
     y: height / 2
   }));
 
-  const links = graphData.globalLinks.map(l => ({
-    source: l.source,
-    target: l.target,
-    tipo: l.tipo
-  }));
-
-  const linkSel = container.append('g').selectAll('line')
-    .data(links)
-    .enter()
-    .append('line')
-    .attr('stroke', '#ffffff')
-    .attr('stroke-width', 2)
-    .attr('opacity', 0.3)
-    .attr('stroke-dasharray', d => d.tipo === 'indirecta' ? '5,5' : 'none');
-
   const nodeSel = container.append('g').selectAll('g')
     .data(nodes)
     .enter()
@@ -163,18 +179,17 @@ function renderOverview() {
     .on('click', (e, d) => renderStructure(d.id));
 
   nodeSel.append('circle')
-    .attr('r', 70)
-    .attr('fill', 'rgba(10,14,23,0.8)')
+    .attr('r', 80)
+    .attr('fill', d => `${d.color}30`)
     .attr('stroke', d => d.color)
     .attr('stroke-width', 3)
-    .attr('filter', d => `drop-shadow(0 0 20px ${d.color})`)
-    .attr('opacity', 0.9);
+    .attr('filter', d => `drop-shadow(0 0 25px ${d.color})`)
+    .attr('opacity', 0.95);
 
   nodeSel.append('text')
     .attr('text-anchor', 'middle')
-    .attr('dy', '-18')
-    .attr('font-size', '24px')
-    .attr('font-weight', '700')
+    .attr('dy', '-35')
+    .attr('font-size', '28px')
     .attr('fill', '#eef0f6')
     .attr('pointer-events', 'none')
     .html(d => `<tspan class="fa-solid ${d.icon}"></tspan>`);
@@ -182,45 +197,29 @@ function renderOverview() {
   nodeSel.append('text')
     .attr('text-anchor', 'middle')
     .attr('dy', '8')
-    .attr('font-size', '11.5px')
+    .attr('font-size', '11px')
     .attr('font-weight', '600')
     .attr('fill', '#eef0f6')
     .attr('pointer-events', 'none')
     .text(d => d.name);
 
   const sim = d3.forceSimulation(nodes)
-    .force('link', d3.forceLink(links).id(d => d.id).distance(220).strength(0.3))
     .force('charge', d3.forceManyBody().strength(-800))
     .force('center', d3.forceCenter(width / 2, height / 2));
 
   sim.on('tick', () => {
-    linkSel
-      .attr('x1', d => nodes.find(n => n.id === d.source).x)
-      .attr('y1', d => nodes.find(n => n.id === d.source).y)
-      .attr('x2', d => nodes.find(n => n.id === d.target).x)
-      .attr('y2', d => nodes.find(n => n.id === d.target).y);
-
     nodeSel.attr('transform', d => `translate(${d.x},${d.y})`);
   });
 }
 
 function renderStructure(structId) {
-  console.log('📊 Renderizando estructura:', structId);
+  console.log('📊 Estructura:', structId);
   currentView = 'structure';
   selectedStructure = structId;
 
   const struct = structures[structId];
   const nodes = Array.from(graphData.structures[structId].nodes.values());
-  const links = [];
-
-  // Crear links entre nodos de la misma estructura
-  for (const node of nodes) {
-    for (const link of graphData.globalLinks) {
-      if ((link.source === structId || link.target === structId) && nodes.some(n => n.name.includes(node.name))) {
-        // Conectar conceptos relacionados
-      }
-    }
-  }
+  const links = graphData.structures[structId].links;
 
   const svg = d3.select('#graphSvg');
   svg.selectAll('*').remove();
@@ -232,6 +231,7 @@ function renderStructure(structId) {
   const container = svg.append('g');
   svg.call(d3.zoom().scaleExtent([0.8, 3]).on('zoom', e => container.attr('transform', e.transform)));
 
+  // LINKS
   const linkSel = container.append('g').selectAll('line')
     .data(links)
     .enter()
@@ -246,6 +246,7 @@ function renderStructure(structId) {
     .attr('opacity', 0.6)
     .attr('stroke-dasharray', d => d.tipo === 'indirecta' ? '5,5' : 'none');
 
+  // NODES
   const nodeSel = container.append('g').selectAll('g')
     .data(nodes)
     .enter()
@@ -254,11 +255,11 @@ function renderStructure(structId) {
     .on('click', (e, d) => showDetail(d));
 
   nodeSel.append('circle')
-    .attr('r', 45)
-    .attr('fill', 'rgba(10,14,23,0.8)')
+    .attr('r', 50)
+    .attr('fill', `${struct.color}30`)
     .attr('stroke', struct.color)
     .attr('stroke-width', 2.5)
-    .attr('filter', `drop-shadow(0 0 12px ${struct.color})`)
+    .attr('filter', `drop-shadow(0 0 15px ${struct.color})`)
     .attr('opacity', 0.95);
 
   nodeSel.append('text')
@@ -271,11 +272,34 @@ function renderStructure(structId) {
     .text(d => d.name.length > 15 ? d.name.slice(0, 12) + '…' : d.name);
 
   const sim = d3.forceSimulation(nodes)
+    .force('link', d3.forceLink(links)
+      .id(d => d.name)
+      .distance(120)
+      .strength(0.3)
+    )
     .force('charge', d3.forceManyBody().strength(-300))
     .force('center', d3.forceCenter(width / 2, height / 2))
-    .force('collide', d3.forceCollide().radius(50));
+    .force('collide', d3.forceCollide().radius(60));
 
   sim.on('tick', () => {
+    linkSel
+      .attr('x1', d => {
+        const n = nodes.find(node => node.name === d.source);
+        return n ? n.x : 0;
+      })
+      .attr('y1', d => {
+        const n = nodes.find(node => node.name === d.source);
+        return n ? n.y : 0;
+      })
+      .attr('x2', d => {
+        const n = nodes.find(node => node.name === d.target);
+        return n ? n.x : 0;
+      })
+      .attr('y2', d => {
+        const n = nodes.find(node => node.name === d.target);
+        return n ? n.y : 0;
+      });
+
     nodeSel.attr('transform', d => `translate(${d.x},${d.y})`);
   });
 }
@@ -284,10 +308,29 @@ function showDetail(node) {
   document.getElementById('detailPanel').style.display = 'flex';
   document.getElementById('detailName').textContent = node.name;
   document.getElementById('detailStruct').textContent = structures[selectedStructure].fullName;
-  document.getElementById('detailOut').innerHTML = '<span class="detail-empty">Conexiones salientes...</span>';
-  document.getElementById('detailIn').innerHTML = '<span class="detail-empty">Conexiones entrantes...</span>';
+  
+  const outgoing = graphData.structures[selectedStructure].links.filter(l => l.source === node.name);
+  const incoming = graphData.structures[selectedStructure].links.filter(l => l.target === node.name);
+
+  document.getElementById('detailOut').innerHTML = outgoing.length > 0
+    ? outgoing.map(l => `<div>→ <strong>${l.targetName}</strong></div>`).join('')
+    : '<span style="color:#6b7284;">Sin conexiones</span>';
+
+  document.getElementById('detailIn').innerHTML = incoming.length > 0
+    ? incoming.map(l => `<div>← <strong>${l.sourceName}</strong></div>`).join('')
+    : '<span style="color:#6b7284;">Sin conexiones</span>';
 }
 
-window.addEventListener('load', () => {
-  loadGraphFromExcel();
+// Cerrar modal detail
+document.getElementById('detailPanel').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('detailPanel')) {
+    document.getElementById('detailPanel').style.display = 'none';
+  }
 });
+
+window.addEventListener('load', () => {
+  console.log('✓ Página cargada');
+  loadGraph();
+});
+
+console.log('✓ Script listo');
