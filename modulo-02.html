@@ -110,109 +110,149 @@
       </div>
     </div>
 
-    <!-- MAIN METRICS GRID -->
-    <div class="metrics-grid">
+    <!-- MAIN METRICS GRID WITH NETWORK VISUALIZATION -->
+    <div class="metrics-with-network">
       
-      <!-- CENTRALIDAD -->
-      <div class="metric-panel">
-        <div class="panel-header">
-          <h3><i class="fa-solid fa-star"></i> Centralidad</h3>
-          <div class="panel-controls">
-            <select class="metric-select" onchange="updateCentrality(this.value)">
-              <option value="betweenness">Intermediación</option>
-              <option value="closeness">Cercanía</option>
-              <option value="degree">Grado</option>
-              <option value="eigenvector">Eigenvector</option>
+      <!-- LEFT: METRICS PANELS -->
+      <div class="metrics-left">
+        
+        <!-- CENTRALIDAD -->
+        <div class="metric-panel">
+          <div class="panel-header">
+            <h3><i class="fa-solid fa-star"></i> Centralidad</h3>
+            <div class="panel-controls">
+              <select class="metric-select" id="centralitySelect" onchange="updateCentrality(this.value)">
+                <option value="betweenness">Intermediación</option>
+                <option value="closeness">Cercanía</option>
+                <option value="degree">Grado</option>
+                <option value="eigenvector">Eigenvector</option>
+              </select>
+            </div>
+          </div>
+          <div class="metric-description">
+            Identifica nodos más influyentes en la red. Mide qué conceptos son más centrales para las conexiones.
+          </div>
+          <div class="ranking-list" id="rankingList">
+            <div class="ranking-item">
+              <div class="rank-badge">1</div>
+              <div class="rank-content">
+                <div class="rank-name">Movilidad</div>
+                <div class="rank-meta">Estructura Funcional</div>
+              </div>
+              <div class="rank-score">0.89</div>
+            </div>
+            <div class="ranking-item">
+              <div class="rank-badge">2</div>
+              <div class="rank-content">
+                <div class="rank-name">Ríos</div>
+                <div class="rank-meta">Estructura Ecológica</div>
+              </div>
+              <div class="rank-score">0.87</div>
+            </div>
+            <div class="ranking-item">
+              <div class="rank-badge">3</div>
+              <div class="rank-content">
+                <div class="rank-name">Vivienda</div>
+                <div class="rank-meta">Estructura Funcional</div>
+              </div>
+              <div class="rank-score">0.84</div>
+            </div>
+            <div class="ranking-item">
+              <div class="rank-badge">4</div>
+              <div class="rank-content">
+                <div class="rank-name">Equipamientos</div>
+                <div class="rank-meta">Estructura Funcional</div>
+              </div>
+              <div class="rank-score">0.81</div>
+            </div>
+            <div class="ranking-item">
+              <div class="rank-badge">5</div>
+              <div class="rank-content">
+                <div class="rank-name">Áreas Protegidas</div>
+                <div class="rank-meta">Estructura Ecológica</div>
+              </div>
+              <div class="rank-score">0.78</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- INTERMEDIACIÓN -->
+        <div class="metric-panel">
+          <div class="panel-header">
+            <h3><i class="fa-solid fa-code-branch"></i> Intermediación</h3>
+            <div class="panel-controls">
+              <button class="toggle-btn active" onclick="toggleIntermediation('all')">Todos</button>
+              <button class="toggle-btn" onclick="toggleIntermediation('high')">Altos</button>
+            </div>
+          </div>
+          <div class="metric-description">
+            Mide qué nodos actúan como puentes entre otras estructuras. Identifica cuellos de botella.
+          </div>
+          <div class="intermediation-chart" id="intermediationChart">
+            <div class="chart-bar">
+              <div class="bar-label">Movilidad</div>
+              <div class="bar-container">
+                <div class="bar-fill" style="width: 92%; background: var(--teal);"></div>
+              </div>
+              <div class="bar-value">0.92</div>
+            </div>
+            <div class="chart-bar">
+              <div class="bar-label">Equipamientos</div>
+              <div class="bar-container">
+                <div class="bar-fill" style="width: 78%; background: var(--blue);"></div>
+              </div>
+              <div class="bar-value">0.78</div>
+            </div>
+            <div class="chart-bar">
+              <div class="bar-label">Conectores Eco.</div>
+              <div class="bar-container">
+                <div class="bar-fill" style="width: 71%; background: var(--green);"></div>
+              </div>
+              <div class="bar-value">0.71</div>
+            </div>
+            <div class="chart-bar">
+              <div class="bar-label">Empleo</div>
+              <div class="bar-container">
+                <div class="bar-fill" style="width: 65%; background: var(--yellow);"></div>
+              </div>
+              <div class="bar-value">0.65</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT: NETWORK VISUALIZATION -->
+      <div class="network-container">
+        <div class="network-header">
+          <h3><i class="fa-solid fa-diagram-project"></i> Red de Conceptos</h3>
+          <div class="network-controls">
+            <select class="metric-select" id="structureFilter" onchange="filterByStructure(this.value)">
+              <option value="all">Todas las estructuras</option>
+              <option value="EEP">EEP - Ecológica</option>
+              <option value="EFC">EFC - Funcional</option>
+              <option value="ESECI">ESECI - Socioeconómica</option>
+              <option value="EIP">EIP - Patrimonial</option>
             </select>
           </div>
         </div>
-        <div class="metric-description">
-          Identifica nodos más influyentes en la red. Mide qué conceptos son más centrales para las conexiones.
-        </div>
-        <div class="ranking-list">
-          <div class="ranking-item">
-            <div class="rank-badge">1</div>
-            <div class="rank-content">
-              <div class="rank-name">Movilidad</div>
-              <div class="rank-meta">Estructura Funcional</div>
-            </div>
-            <div class="rank-score">0.89</div>
+        <svg id="networkGraph" class="network-graph"></svg>
+        <div class="network-legend">
+          <div class="legend-item">
+            <div class="legend-dot" style="background: var(--teal);"></div>
+            <span>EEP - Ecológica</span>
           </div>
-          <div class="ranking-item">
-            <div class="rank-badge">2</div>
-            <div class="rank-content">
-              <div class="rank-name">Ríos</div>
-              <div class="rank-meta">Estructura Ecológica</div>
-            </div>
-            <div class="rank-score">0.87</div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background: var(--blue);"></div>
+            <span>EFC - Funcional</span>
           </div>
-          <div class="ranking-item">
-            <div class="rank-badge">3</div>
-            <div class="rank-content">
-              <div class="rank-name">Vivienda</div>
-              <div class="rank-meta">Estructura Funcional</div>
-            </div>
-            <div class="rank-score">0.84</div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background: var(--purple);"></div>
+            <span>ESECI - Socioeconómica</span>
           </div>
-          <div class="ranking-item">
-            <div class="rank-badge">4</div>
-            <div class="rank-content">
-              <div class="rank-name">Equipamientos</div>
-              <div class="rank-meta">Estructura Funcional</div>
-            </div>
-            <div class="rank-score">0.81</div>
-          </div>
-          <div class="ranking-item">
-            <div class="rank-badge">5</div>
-            <div class="rank-content">
-              <div class="rank-name">Áreas Protegidas</div>
-              <div class="rank-meta">Estructura Ecológica</div>
-            </div>
-            <div class="rank-score">0.78</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- INTERMEDIACIÓN -->
-      <div class="metric-panel">
-        <div class="panel-header">
-          <h3><i class="fa-solid fa-code-branch"></i> Intermediación</h3>
-          <div class="panel-controls">
-            <button class="toggle-btn active" onclick="toggleIntermediation('all')">Todos</button>
-            <button class="toggle-btn" onclick="toggleIntermediation('high')">Altos</button>
-          </div>
-        </div>
-        <div class="metric-description">
-          Mide qué nodos actúan como puentes entre otras estructuras. Identifica cuellos de botella.
-        </div>
-        <div class="intermediation-chart">
-          <div class="chart-bar">
-            <div class="bar-label">Movilidad</div>
-            <div class="bar-container">
-              <div class="bar-fill" style="width: 92%; background: var(--teal);"></div>
-            </div>
-            <div class="bar-value">0.92</div>
-          </div>
-          <div class="chart-bar">
-            <div class="bar-label">Equipamientos</div>
-            <div class="bar-container">
-              <div class="bar-fill" style="width: 78%; background: var(--blue);"></div>
-            </div>
-            <div class="bar-value">0.78</div>
-          </div>
-          <div class="chart-bar">
-            <div class="bar-label">Conectores Eco.</div>
-            <div class="bar-container">
-              <div class="bar-fill" style="width: 71%; background: var(--green);"></div>
-            </div>
-            <div class="bar-value">0.71</div>
-          </div>
-          <div class="chart-bar">
-            <div class="bar-label">Empleo</div>
-            <div class="bar-container">
-              <div class="bar-fill" style="width: 65%; background: var(--yellow);"></div>
-            </div>
-            <div class="bar-value">0.65</div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background: var(--pink);"></div>
+            <span>EIP - Patrimonial</span>
           </div>
         </div>
       </div>
@@ -451,15 +491,305 @@
   </main>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 <script>
+// DATA: Network structure with real data
+const networkData = {
+  nodes: [
+    // EEP - Ecológica (Teal)
+    { id: 'rios', label: 'Ríos', structure: 'EEP', size: 1.2 },
+    { id: 'quebradas', label: 'Quebradas', structure: 'EEP', size: 0.9 },
+    { id: 'humedales', label: 'Humedales', structure: 'EEP', size: 1.1 },
+    { id: 'bosques', label: 'Bosques Urbanos', structure: 'EEP', size: 0.85 },
+    { id: 'parques', label: 'Parques de Borde', structure: 'EEP', size: 0.8 },
+    { id: 'conectores', label: 'Conectores Eco.', structure: 'EEP', size: 1.0 },
+    { id: 'protegidas', label: 'Áreas Protegidas', structure: 'EEP', size: 1.15 },
+    
+    // EFC - Funcional (Blue)
+    { id: 'movilidad', label: 'Movilidad', structure: 'EFC', size: 1.3 },
+    { id: 'transporte', label: 'Transporte Público', structure: 'EFC', size: 1.1 },
+    { id: 'ciclorrutas', label: 'Ciclorrutas', structure: 'EFC', size: 0.9 },
+    { id: 'vivienda', label: 'Vivienda', structure: 'EFC', size: 1.2 },
+    { id: 'equipamientos', label: 'Equipamientos', structure: 'EFC', size: 1.15 },
+    { id: 'manzanas', label: 'Manzanas del Cuidado', structure: 'EFC', size: 0.95 },
+    { id: 'upl', label: 'UPL', structure: 'EFC', size: 0.88 },
+    
+    // ESECI - Socioeconómica (Purple)
+    { id: 'empleo', label: 'Empleo', structure: 'ESECI', size: 1.1 },
+    { id: 'negocios', label: 'Negocios Verdes', structure: 'ESECI', size: 0.9 },
+    { id: 'agricultura', label: 'Agricultura Urbana', structure: 'ESECI', size: 0.85 },
+    { id: 'economia', label: 'Economía Circular', structure: 'ESECI', size: 0.95 },
+    { id: 'innovacion', label: 'Innovación', structure: 'ESECI', size: 1.0 },
+    
+    // EIP - Patrimonial (Pink)
+    { id: 'cultura', label: 'Cultura', structure: 'EIP', size: 0.95 },
+    { id: 'patrimonio', label: 'Patrimonio Local', structure: 'EIP', size: 0.9 },
+    { id: 'memoria', label: 'Memoria', structure: 'EIP', size: 0.85 },
+    { id: 'saberes', label: 'Saberes del Lugar', structure: 'EIP', size: 0.88 }
+  ],
+  links: [
+    // EEP internal
+    { source: 'rios', target: 'quebradas', strength: 'strong' },
+    { source: 'rios', target: 'humedales', strength: 'strong' },
+    { source: 'humedales', target: 'protegidas', strength: 'strong' },
+    { source: 'conectores', target: 'humedales', strength: 'medium' },
+    { source: 'conectores', target: 'parques', strength: 'medium' },
+    { source: 'bosques', target: 'conectores', strength: 'medium' },
+    
+    // EFC internal
+    { source: 'movilidad', target: 'transporte', strength: 'strong' },
+    { source: 'movilidad', target: 'ciclorrutas', strength: 'medium' },
+    { source: 'vivienda', target: 'equipamientos', strength: 'strong' },
+    { source: 'manzanas', target: 'equipamientos', strength: 'medium' },
+    { source: 'upl', target: 'vivienda', strength: 'medium' },
+    
+    // ESECI internal
+    { source: 'empleo', target: 'innovacion', strength: 'medium' },
+    { source: 'negocios', target: 'agricultura', strength: 'medium' },
+    { source: 'economia', target: 'negocios', strength: 'strong' },
+    
+    // EIP internal
+    { source: 'cultura', target: 'patrimonio', strength: 'strong' },
+    { source: 'memoria', target: 'saberes', strength: 'medium' },
+    
+    // INTER-STRUCTURE LINKS
+    { source: 'rios', target: 'movilidad', strength: 'strong' },
+    { source: 'conectores', target: 'movilidad', strength: 'strong' },
+    { source: 'protegidas', target: 'equipamientos', strength: 'medium' },
+    { source: 'agricultura', target: 'protegidas', strength: 'medium' },
+    { source: 'negocios', target: 'conectores', strength: 'weak' },
+    { source: 'empleo', target: 'vivienda', strength: 'strong' },
+    { source: 'patrimonio', target: 'movilidad', strength: 'weak' },
+    { source: 'saberes', target: 'agricultura', strength: 'medium' }
+  ]
+};
+
+// METRICS DATA
+const metricsData = {
+  betweenness: [
+    { node: 'Movilidad', score: 0.89, structure: 'EFC' },
+    { node: 'Ríos', score: 0.87, structure: 'EEP' },
+    { node: 'Vivienda', score: 0.84, structure: 'EFC' },
+    { node: 'Equipamientos', score: 0.81, structure: 'EFC' },
+    { node: 'Áreas Protegidas', score: 0.78, structure: 'EEP' }
+  ],
+  closeness: [
+    { node: 'Equipamientos', score: 0.92, structure: 'EFC' },
+    { node: 'Conectores Eco.', score: 0.88, structure: 'EEP' },
+    { node: 'Empleo', score: 0.85, structure: 'ESECI' },
+    { node: 'Transporte Público', score: 0.82, structure: 'EFC' },
+    { node: 'Humedales', score: 0.79, structure: 'EEP' }
+  ],
+  degree: [
+    { node: 'Movilidad', score: 0.91, structure: 'EFC' },
+    { node: 'Equipamientos', score: 0.87, structure: 'EFC' },
+    { node: 'Ríos', score: 0.86, structure: 'EEP' },
+    { node: 'Conectores Eco.', score: 0.83, structure: 'EEP' },
+    { node: 'Empleo', score: 0.80, structure: 'ESECI' }
+  ],
+  eigenvector: [
+    { node: 'Vivienda', score: 0.90, structure: 'EFC' },
+    { node: 'Protegidas', score: 0.88, structure: 'EEP' },
+    { node: 'Movilidad', score: 0.85, structure: 'EFC' },
+    { node: 'Innovación', score: 0.82, structure: 'ESECI' },
+    { node: 'Patrimonio', score: 0.78, structure: 'EIP' }
+  ]
+};
+
+const intermediationData = {
+  all: [
+    { label: 'Movilidad', value: 0.92 },
+    { label: 'Equipamientos', value: 0.78 },
+    { label: 'Conectores Eco.', value: 0.71 },
+    { label: 'Empleo', value: 0.65 }
+  ],
+  high: [
+    { label: 'Movilidad', value: 0.92 },
+    { label: 'Equipamientos', value: 0.78 }
+  ]
+};
+
+// INITIALIZE VISUALIZATION
+let currentCentrality = 'betweenness';
+let currentFilter = 'all';
+let currentIntermediation = 'all';
+
+function initNetworkGraph() {
+  const svg = d3.select('#networkGraph');
+  const width = svg.node().parentElement.offsetWidth;
+  const height = 520;
+  
+  svg.attr('width', width).attr('height', height);
+  
+  // Filter nodes based on structure
+  let filteredNodes = networkData.nodes;
+  let filteredLinks = networkData.links;
+  
+  if (currentFilter !== 'all') {
+    const nodeIds = networkData.nodes
+      .filter(n => n.structure === currentFilter)
+      .map(n => n.id);
+    filteredNodes = networkData.nodes.filter(n => n.structure === currentFilter);
+    filteredLinks = networkData.links.filter(l => 
+      nodeIds.includes(l.source) && nodeIds.includes(l.target)
+    );
+  }
+  
+  // Color mapping
+  const colors = {
+    EEP: '#2fd4c8',
+    EFC: '#5b8def',
+    ESECI: '#a276f2',
+    EIP: '#f76fb0'
+  };
+  
+  // Create force simulation
+  const simulation = d3.forceSimulation(filteredNodes)
+    .force('link', d3.forceLink(filteredLinks.map(d => ({
+      source: d.source,
+      target: d.target
+    }))).distance(100))
+    .force('charge', d3.forceManyBody().strength(-300))
+    .force('center', d3.forceCenter(width / 2, height / 2));
+  
+  // Clear previous
+  svg.selectAll('*').remove();
+  
+  // Links
+  const link = svg.append('g')
+    .selectAll('line')
+    .data(filteredLinks)
+    .enter()
+    .append('line')
+    .attr('stroke', d => {
+      if (d.strength === 'strong') return 'rgba(47,212,200,0.6)';
+      if (d.strength === 'medium') return 'rgba(91,141,239,0.4)';
+      return 'rgba(162,118,242,0.2)';
+    })
+    .attr('stroke-width', d => {
+      if (d.strength === 'strong') return 2.5;
+      if (d.strength === 'medium') return 1.5;
+      return 1;
+    });
+  
+  // Nodes
+  const node = svg.append('g')
+    .selectAll('circle')
+    .data(filteredNodes)
+    .enter()
+    .append('circle')
+    .attr('r', d => d.size * 8)
+    .attr('fill', d => colors[d.structure])
+    .attr('opacity', 0.8)
+    .attr('stroke', 'rgba(255,255,255,0.2)')
+    .attr('stroke-width', 1.5)
+    .call(drag(simulation));
+  
+  // Labels
+  const labels = svg.append('g')
+    .selectAll('text')
+    .data(filteredNodes)
+    .enter()
+    .append('text')
+    .text(d => d.label)
+    .attr('font-size', '10px')
+    .attr('fill', '#e7eaf2')
+    .attr('text-anchor', 'middle')
+    .attr('pointer-events', 'none');
+  
+  simulation.on('tick', () => {
+    link
+      .attr('x1', d => d.source.x)
+      .attr('y1', d => d.source.y)
+      .attr('x2', d => d.target.x)
+      .attr('y2', d => d.target.y);
+    
+    node
+      .attr('cx', d => d.x)
+      .attr('cy', d => d.y);
+    
+    labels
+      .attr('x', d => d.x)
+      .attr('y', d => d.y + 4);
+  });
+  
+  function drag(simulation) {
+    return d3.drag()
+      .on('start', dragstarted)
+      .on('drag', dragged)
+      .on('end', dragended);
+    
+    function dragstarted(event, d) {
+      if (!event.active) simulation.alphaTarget(0.3).restart();
+      d.fx = d.x;
+      d.fy = d.y;
+    }
+    
+    function dragged(event, d) {
+      d.fx = event.x;
+      d.fy = event.y;
+    }
+    
+    function dragended(event, d) {
+      if (!event.active) simulation.alphaTarget(0);
+      d.fx = null;
+      d.fy = null;
+    }
+  }
+}
+
+// UPDATE RANKING
+function updateRanking(metric) {
+  const data = metricsData[metric];
+  const rankingList = document.getElementById('rankingList');
+  
+  rankingList.innerHTML = data.map((item, idx) => `
+    <div class="ranking-item">
+      <div class="rank-badge">${idx + 1}</div>
+      <div class="rank-content">
+        <div class="rank-name">${item.node}</div>
+        <div class="rank-meta">Estructura ${item.structure}</div>
+      </div>
+      <div class="rank-score">${item.score}</div>
+    </div>
+  `).join('');
+}
+
+// UPDATE INTERMEDIATION
+function updateIntermediation(type) {
+  const data = intermediationData[type];
+  const chart = document.getElementById('intermediationChart');
+  
+  chart.innerHTML = data.map(item => `
+    <div class="chart-bar">
+      <div class="bar-label">${item.label}</div>
+      <div class="bar-container">
+        <div class="bar-fill" style="width: ${item.value * 100}%; background: var(--teal);"></div>
+      </div>
+      <div class="bar-value">${item.value}</div>
+    </div>
+  `).join('');
+}
+
+// HANDLERS
 function updateCentrality(metric) {
-  console.log('Actualizar centralidad:', metric);
+  currentCentrality = metric;
+  updateRanking(metric);
+  console.log('Centralidad actualizada a:', metric);
 }
 
 function toggleIntermediation(type) {
+  currentIntermediation = type;
   const buttons = document.querySelectorAll('.toggle-btn');
   buttons.forEach(btn => btn.classList.remove('active'));
   event.target.classList.add('active');
+  updateIntermediation(type);
+}
+
+function filterByStructure(structure) {
+  currentFilter = structure;
+  initNetworkGraph();
+  console.log('Red filtrada por:', structure);
 }
 
 function filterRelations(type) {
@@ -479,6 +809,18 @@ function shareAnalysis() {
 function recalculateMetrics() {
   alert('Recalculando métricas de la red...');
 }
+
+// INIT ON LOAD
+document.addEventListener('DOMContentLoaded', () => {
+  initNetworkGraph();
+  updateRanking('betweenness');
+  updateIntermediation('all');
+});
+
+// RESIZE HANDLER
+window.addEventListener('resize', () => {
+  initNetworkGraph();
+});
 </script>
 
 </body>
