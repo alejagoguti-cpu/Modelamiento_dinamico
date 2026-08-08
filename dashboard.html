@@ -3,37 +3,46 @@
 <head>
   <meta charset="UTF-8">
   <title>RAPOT - Dashboard</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="dashboard.css">
+  <!-- CDN estable de Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
   <div class="dashboard-container">
     <!-- Sidebar -->
     <aside class="sidebar">
       <div class="logo">
+        <i class="fa-solid fa-circle-nodes"></i>
         <h2>RAPOT</h2>
       </div>
+
       <nav>
-        <ul>
-          <li class="active">Dashboard</li>
-          <li>01 Construir la Red</li>
-          <li>02 Medir la Red</li>
-          <li>03 Discurso vs Realidad</li>
-          <li>04 Macromodelos</li>
-          <li>05 Lo que no está</li>
-          <li>06 POT ↔ ODS</li>
-          <li>07 Simulador</li>
-          <li>08 Modelo Propio</li>
+        <ul class="menu">
+          <li class="active"><i class="fa-solid fa-house"></i> Dashboard</li>
         </ul>
-        <h3>Gestión</h3>
-        <ul>
-          <li>Proyectos</li>
-          <li>Fuentes y Documentos</li>
-          <li>Favoritos</li>
-          <li>Reportes</li>
-          <li>Configuración</li>
+
+        <h3>MÓDULOS</h3>
+        <ul class="menu">
+          <li><i class="fa-solid fa-network-wired"></i> 01 Construir la Red</li>
+          <li><i class="fa-solid fa-chart-bar"></i> 02 Medir la Red</li>
+          <li><i class="fa-solid fa-eye"></i> 03 Discurso vs Realidad</li>
+          <li><i class="fa-solid fa-crosshairs"></i> 04 Macromodelos</li>
+          <li><i class="fa-solid fa-magnifying-glass"></i> 05 Lo que no está</li>
+          <li><i class="fa-solid fa-earth-americas"></i> 06 POT ↔ ODS</li>
+          <li><i class="fa-solid fa-flask"></i> 07 Simulador</li>
+          <li><i class="fa-solid fa-city"></i> 08 Modelo Propio</li>
+        </ul>
+
+        <h3>GESTIÓN</h3>
+        <ul class="menu">
+          <li><i class="fa-solid fa-folder"></i> Proyectos</li>
+          <li><i class="fa-solid fa-file-lines"></i> Fuentes y Documentos</li>
+          <li><i class="fa-solid fa-star"></i> Favoritos</li>
+          <li><i class="fa-solid fa-chart-pie"></i> Reportes</li>
+          <li><i class="fa-solid fa-gear"></i> Configuración</li>
         </ul>
       </nav>
+
       <div class="user-info">
         <p><strong>Equipo Urbano</strong><br>Administrador</p>
         <button class="logout">Cerrar sesión</button>
@@ -42,12 +51,31 @@
 
     <!-- Main content -->
     <main class="main-content">
+      <!-- Barra superior -->
+      <div class="topbar">
+        <div class="topbar-left">
+          <h1>Dashboard</h1>
+        </div>
+        <div class="topbar-right">
+          <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" placeholder="Buscar en el sistema...">
+          </div>
+          <div class="icons">
+            <i class="fa-solid fa-bell"></i>
+            <i class="fa-solid fa-rotate-right"></i>
+            <div class="user-circle">EU</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bienvenida -->
       <header>
-        <h1>Dashboard</h1>
         <h2>¡Bienvenido, Equipo Urbano!</h2>
         <p>Explora, analiza y comprende el modelo de ciudad del POT de Bogotá.</p>
       </header>
 
+      <!-- Módulos -->
       <section class="modules">
         <h3>MÓDULOS DE ANÁLISIS</h3>
         <div class="module-grid">
@@ -117,6 +145,7 @@
         </div>
       </section>
 
+      <!-- Vista general -->
       <section class="overview">
         <div class="stats">
           <h3>VISTA GENERAL DEL MODELO ACTUAL</h3>
@@ -136,6 +165,7 @@
         </div>
       </section>
 
+      <!-- Footer -->
       <footer>
         <p>“No se trata de representar la ciudad, sino de comprenderla para transformarla.”<br>
         — Equipo POT Reverse Engineering | Pontificia Universidad Javeriana</p>
