@@ -72,7 +72,6 @@ body {
   transition: color 0.3s ease;
 }
 
-/* Ícono y texto */
 .menu li i {
   font-size: 1rem;
   color: #b0b0b0;
@@ -142,10 +141,9 @@ body {
 /* Main content */
 .main-content {
   flex: 1;
-  margin-left: 240px;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+  margin-left: 260px; /* espacio más amplio */
+  padding: 20px 50px;
+  overflow-y: auto;
 }
 
 /* Barra superior */
@@ -154,7 +152,7 @@ body {
   justify-content: space-between;
   align-items: center;
   background-color: #111320;
-  padding: 12px 24px;
+  padding: 12px 32px;
   border-bottom: 1px solid #1f2233;
   width: 100%;
   box-sizing: border-box;
@@ -304,32 +302,22 @@ body {
   color: inherit;
 }
 
-/* Vista general */
-.overview {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 40px;
-  gap: 20px;
-}
+/* Colores específicos por módulo */
+.module:nth-child(1) h2 { color: #00bcd4; }
+.module:nth-child(2) h2 { color: #38bdf8; }
+.module:nth-child(3) h2 { color: #c084fc; }
+.module:nth-child(4) h2 { color: #4ade80; }
+.module:nth-child(5) h2 { color: #facc15; }
+.module:nth-child(6) h2 { color: #22c55e; }
+.module:nth-child(7) h2 { color: #f472b6; }
+.module:nth-child(8) h2 { color: #fb923c; }
 
-.stats, .how-to {
-  background-color: #1c1f33;
-  border-radius: 12px;
-  padding: 20px;
-  flex: 1;
-}
-
-.stats h3, .how-to h3 {
-  color: #00bcd4;
-}
-
-footer {
-  margin-top: 40px;
-  text-align: center;
-  color: #aaa;
-  font-size: 0.9rem;
-}
-
+.module:nth-child(1) .icon { color: #00bcd4; }
+.module:nth-child(2) .icon { color: #38bdf8; }
+.module:nth-child(3) .icon { color: #c084fc; }
+.module:nth-child(4) .icon { color: #4ade80; }
+.module:nth-child(5) .icon { color: #facc15; }
+.module:nth-child(6) .icon { color: #22c55e;
 
 
 
