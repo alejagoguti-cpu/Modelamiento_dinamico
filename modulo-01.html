@@ -1,145 +1,147 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RAPOT · Módulo 01 — Construir la Red</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="stylesheet" href="modulo-01.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-</head>
-<body>
-<div class="app">
+:root{
+  --bg: #0a0e17;
+  --sidebar: #0c1120;
+  --panel: #121828;
+  --panel-border: #1c2830;
+  --text: #eef0f6;
+  --text-dim: #9aa1b3;
+  --text-faint: #6b7284;
+  --accent: #2fd4c8;
+  --eep: #34d399;
+  --efc: #3b82f6;
+  --eseci: #ef9552;
+  --eip: #b06bf7;
+}
 
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div class="brand">
-      <div class="mark"><i class="fa-solid fa-diagram-project"></i></div>
-      <span>RAPOT</span>
-    </div>
-    <div class="nav-group">
-      <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-house"></i> Dashboard</a>
-    </div>
-    <div class="nav-group">
-      <div class="nav-label">MÓDULOS</div>
-      <a href="modulo-01.html" class="nav-item active"><span class="num">01</span><i class="fa-solid fa-diagram-project"></i> Construir la Red</a>
-      <a href="modulo-02.html" class="nav-item"><span class="num">02</span><i class="fa-solid fa-chart-simple"></i> Medir la Red</a>
-      <a href="modulo-03.html" class="nav-item"><span class="num">03</span><i class="fa-solid fa-eye"></i> Discurso vs Realidad</a>
-      <a href="modulo-04.html" class="nav-item"><span class="num">04</span><i class="fa-solid fa-bullseye"></i> Macromodelos</a>
-      <a href="modulo-05.html" class="nav-item"><span class="num">05</span><i class="fa-solid fa-magnifying-glass"></i> Lo que no está</a>
-      <a href="modulo-06.html" class="nav-item"><span class="num">06</span><i class="fa-solid fa-earth-americas"></i> POT ↔ ODS</a>
-      <a href="modulo-07.html" class="nav-item"><span class="num">07</span><i class="fa-solid fa-flask"></i> Simulador</a>
-      <a href="modulo-08.html" class="nav-item"><span class="num">08</span><i class="fa-solid fa-city"></i> Modelo Propio</a>
-    </div>
-    <div class="nav-group">
-      <div class="nav-label">GESTIÓN</div>
-      <a href="proyectos.html" class="nav-item"><i class="fa-solid fa-folder"></i> Proyectos</a>
-      <a href="fuentes.html" class="nav-item"><i class="fa-solid fa-file-lines"></i> Fuentes y Documentos</a>
-      <a href="favoritos.html" class="nav-item"><i class="fa-regular fa-star"></i> Favoritos</a>
-      <a href="reportes.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Reportes</a>
-      <a href="configuracion.html" class="nav-item"><i class="fa-solid fa-gear"></i> Configuración</a>
-    </div>
-    <div class="sidebar-footer">
-      <div class="avatar-sm">EU</div>
-      <div class="user-meta">
-        <div class="name">Equipo Urbano</div>
-        <div class="role">Administrador</div>
-      </div>
-      <a href="demo.html" class="logout-btn"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
-    </div>
-  </aside>
+*{box-sizing:border-box;}
+html,body{
+  margin:0; padding:0; height:100%;
+  background: var(--bg);
+  color:var(--text);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  overflow:hidden;
+}
 
-  <!-- MAIN -->
-  <main class="main">
+#app{ display:flex; height:100vh; }
 
-    <div class="topbar">
-      <h1>01. Construir la Red</h1>
-      <p class="subtitle">Analiza las cuatro estructuras del POT y sus interconexiones.</p>
-    </div>
+/* SIDEBAR RAPOT */
+#sidebar-rapot{
+  width:225px; flex-shrink:0; background: var(--sidebar); border-right:1px solid var(--panel-border);
+  display:flex; flex-direction:column; padding:20px 14px; overflow-y:auto;
+}
+.brand{
+  display:flex; align-items:center; gap:10px; padding:6px 6px 22px;
+}
+.brand .mark{
+  width:32px; height:32px; border-radius:9px; background:linear-gradient(135deg, var(--accent), #1a9d94);
+  display:flex; align-items:center; justify-content:center; color:#06110f; font-size:15px;
+}
+.brand span{
+  font-family:'Space Grotesk', sans-serif; font-weight:700; font-size:16px;
+}
+.nav-group{ margin-bottom:20px; }
+.nav-label{
+  font-size:10px; font-weight:700; letter-spacing:1px; color:var(--text-faint);
+  padding:0 10px; margin-bottom:8px; text-transform:uppercase;
+}
+.nav-item{
+  display:flex; align-items:center; gap:10px; padding:9px 10px; border-radius:8px;
+  color:var(--text-dim); font-size:13px; font-weight:500; text-decoration:none;
+  transition:all .2s; cursor:pointer;
+}
+.nav-item:hover{ background:rgba(255,255,255,0.04); color:var(--text); }
+.nav-item.active{ background:rgba(47,212,200,0.12); color:var(--accent); }
+.nav-item i{ width:16px; text-align:center; font-size:13px; }
+.nav-item .num{ font-size:10px; font-weight:700; width:16px; text-align:center; color:var(--text-faint); }
+.sidebar-footer{
+  margin-top:auto; border-top:1px solid var(--panel-border); padding-top:12px;
+  display:flex; align-items:center; gap:10px;
+}
+.avatar-sm{
+  width:32px; height:32px; border-radius:50%; background:var(--panel); border:1px solid var(--panel-border);
+  display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700;
+  color:var(--text-dim); flex-shrink:0;
+}
+.user-meta{ line-height:1.3; }
+.user-meta .name{ font-size:12px; font-weight:600; }
+.user-meta .role{ font-size:11px; color:var(--text-faint); }
 
-    <!-- STATS -->
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-value" id="statConceptos">0</div>
-        <div class="stat-label">Conceptos</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value" id="statRelaciones">0</div>
-        <div class="stat-label">Relaciones</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value" id="statFuentes">0</div>
-        <div class="stat-label">Fuentes</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value" id="statTipos">0</div>
-        <div class="stat-label">Tipos de relación</div>
-      </div>
-    </div>
+/* MAIN CONTENT */
+#main-container{
+  flex:1; display:flex; flex-direction:column; overflow:hidden;
+}
 
-    <!-- GRAPH -->
-    <div class="graph-wrapper">
+header{
+  padding:20px 30px; border-bottom:1px solid var(--panel-border); flex-shrink:0;
+}
+header h1{
+  font-family:'Space Grotesk', sans-serif; font-size:24px; font-weight:800;
+  margin:0 0 4px; letter-spacing:-0.3px;
+}
+header p{
+  font-size:13px; color:var(--text-dim); margin:0;
+}
 
-      <!-- LEGEND LEFT -->
-      <div class="legend-panel">
-        <div class="legend-section">
-          <div class="legend-title">Estructuras</div>
-          <div class="legend-item"><div class="legend-dot" style="background: #34d399;"></div> EEP - Ecológica</div>
-          <div class="legend-item"><div class="legend-dot" style="background: #3b82f6;"></div> EFC - Funcional</div>
-          <div class="legend-item"><div class="legend-dot" style="background: #ef9552;"></div> ESECI - Socioeconómica</div>
-          <div class="legend-item"><div class="legend-dot" style="background: #b06bf7;"></div> EIP - Patrimonio</div>
-        </div>
-        <div class="legend-section">
-          <div class="legend-title">Tipo de Relación</div>
-          <div class="legend-item"><div class="legend-line" style="background: #34d399;"></div> Directa</div>
-          <div class="legend-item"><div class="legend-line" style="background: #3b82f6; border-top: 2px dashed;"></div> Indirecta</div>
-          <div class="legend-item"><div class="legend-line" style="background: #ef9552;"></div> Soporte</div>
-          <div class="legend-item"><div class="legend-line" style="background: #b06bf7;"></div> Resiliencia</div>
-        </div>
-      </div>
+.stats-grid{
+  display:grid; grid-template-columns:repeat(4, 1fr); gap:12px;
+  padding:20px 30px; flex-shrink:0;
+}
+.stat-card{
+  background:var(--panel); border:1px solid var(--panel-border); border-radius:10px; padding:14px;
+}
+.stat-value{
+  font-family:'Space Grotesk', sans-serif; font-size:24px; font-weight:800;
+  color:var(--accent); margin-bottom:4px;
+}
+.stat-label{ font-size:12px; font-weight:700; color:var(--text); }
 
-      <!-- GRAPH CENTER -->
-      <div class="graph-container">
-        <div id="graphLoading" class="graph-loading">
-          <i class="fa-solid fa-spinner fa-spin"></i>
-          Cargando red...
-        </div>
-        <svg id="graphSvg" style="width:100%;height:100%;"></svg>
-      </div>
+.graph-wrapper{
+  flex:1; display:grid; grid-template-columns:240px 1fr 280px; gap:16px;
+  padding:0 30px 30px; overflow:hidden;
+}
 
-      <!-- DETAIL RIGHT -->
-      <div class="detail-panel" id="detailPanel" style="display:none;">
-        <div class="detail-card">
-          <div class="detail-label">Concepto</div>
-          <div class="detail-content" id="detailName">—</div>
-        </div>
-        <div class="detail-card">
-          <div class="detail-label">Estructura</div>
-          <div class="detail-content" id="detailStruct">—</div>
-        </div>
-        <div class="detail-card">
-          <div class="detail-label">Conexiones (→)</div>
-          <div class="detail-content" id="detailOut" style="font-size:11px;line-height:1.8;">—</div>
-        </div>
-        <div class="detail-card">
-          <div class="detail-label">Conexiones (←)</div>
-          <div class="detail-content" id="detailIn" style="font-size:11px;line-height:1.8;">—</div>
-        </div>
-      </div>
+.legend-panel{
+  background:var(--panel); border:1px solid var(--panel-border); border-radius:12px;
+  padding:14px; overflow-y:auto;
+}
+.legend-title{
+  font-size:11px; font-weight:700; letter-spacing:1px; color:var(--text-dim);
+  margin-bottom:12px; text-transform:uppercase;
+}
+.legend-section{ margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid var(--panel-border); }
+.legend-section:last-child{ border-bottom:none; }
 
-    </div>
+.filter-item{
+  display:flex; align-items:center; gap:8px; font-size:12px; margin-bottom:10px; cursor:pointer;
+  padding:6px 8px; border-radius:6px; transition:background .2s;
+}
+.filter-item:hover{ background:rgba(255,255,255,0.05); }
+.filter-item input[type="checkbox"]{
+  width:14px; height:14px; cursor:pointer; accent-color:var(--accent);
+}
+.filter-dot{ width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+.filter-line{ width:16px; height:2px; flex-shrink:0; }
 
-    <footer>
-      <p>"No se trata de representar la ciudad, sino de comprenderla para transformarla." — Equipo POT RE</p>
-    </footer>
+.canvas-container{
+  background:var(--panel); border:1px solid var(--panel-border); border-radius:12px;
+  padding:16px; position:relative; overflow:hidden; flex:1;
+}
+#canvas-wrap{ width:100%; height:100%; position:relative; cursor:grab; }
+#canvas-wrap.panning{ cursor:grabbing; }
+svg#edges{ position:absolute; top:0; left:0; overflow:visible; pointer-events:none; }
 
-  </main>
-</div>
+.detail-panel{
+  background:var(--panel); border:1px solid var(--panel-border); border-radius:12px;
+  padding:14px; overflow-y:auto; display:flex; flex-direction:column; gap:10px;
+}
+.detail-card{
+  background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05);
+  border-radius:8px; padding:10px;
+}
+.detail-label{ font-size:10px; font-weight:700; letter-spacing:0.5px; color:var(--text-dim); margin-bottom:4px; }
+.detail-content{ font-size:12px; color:var(--text); line-height:1.5; }
 
-<script src="datos-pot.js"></script>
-<script src="modulo-01.js"></script>
-</body>
-</html>
+footer{
+  text-align:center; padding:16px 30px; border-top:1px solid var(--panel-border);
+  color:var(--text-faint); font-size:11px; flex-shrink:0;
+}
