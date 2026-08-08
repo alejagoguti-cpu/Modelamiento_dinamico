@@ -157,23 +157,3 @@ body {
   font-size: 0.9rem;
   margin-top: 10px;
 }
-/* Cuadros para secciones de texto */
-.section-box {
-  background-color: #1c1f33;   /* fondo oscuro */
-  border-radius: 12px;         /* esquinas redondeadas */
-  padding: 20px;               /* espacio interno */
-  margin-bottom: 20px;         /* separación entre cuadros */
-  box-shadow: 0 0 12px rgba(0, 188, 212, 0.2); /* sombra turquesa suave */
-}
-
-.section-box h3 {
-  color: #00bcd4;              /* título en turquesa */
-  margin-bottom: 10px;
-}
-
-.section-box p {
-  color: #ccc;                 /* texto claro */
-  font-size: 0.95rem;
-  margin: 6px 0;
-}
-
