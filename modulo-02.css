@@ -1,702 +1,420 @@
-:root {
-  --bg: #0a0e17;
-  --sidebar: #0c1120;
-  --panel: #121828;
-  --panel-alt: #0f1522;
-  --border: rgba(255,255,255,0.07);
-  --border-soft: rgba(255,255,255,0.04);
-  --text: #e7eaf2;
-  --text-dim: #8891a5;
-  --text-faint: #5a6274;
-  --teal: #2fd4c8;
-  --teal-dim: rgba(47,212,200,0.12);
-  --blue: #5b8def;
-  --purple: #a276f2;
-  --green: #4ade80;
-  --yellow: #f5c945;
-  --pink: #f76fb0;
-}
-
-* { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
-  font-family: 'Inter', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  font-size: 14px;
-  -webkit-font-smoothing: antialiased;
-}
-
-.app { display: flex; min-height: 100vh; }
-
-/* SIDEBAR */
-.sidebar {
-  width: 230px;
-  flex-shrink: 0;
-  background: var(--sidebar);
-  border-right: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  padding: 20px 14px;
-}
-
-.brand {
-  display: flex; align-items: center; gap: 10px;
-  padding: 6px 6px 22px 6px;
-}
-
-.brand .mark {
-  width: 32px; height: 32px; border-radius: 9px;
-  background: linear-gradient(135deg, var(--teal), #1a9d94);
-  display: flex; align-items: center; justify-content: center;
-  color: #06110f; font-size: 15px;
-}
-
-.brand span {
-  font-family: 'Space Grotesk', sans-serif;
-  font-weight: 700; font-size: 16px; letter-spacing: 0.5px;
-}
-
-.nav-group { margin-bottom: 20px; }
-
-.nav-label {
-  font-size: 10.5px; font-weight: 700; letter-spacing: 1px;
-  color: var(--text-faint);
-  padding: 0 10px; margin-bottom: 8px;
-}
-
-.nav-item {
-  display: flex; align-items: center; gap: 10px;
-  padding: 9px 10px; border-radius: 8px;
-  color: var(--text-dim);
-  font-size: 13px; font-weight: 500;
-  cursor: pointer;
-  transition: background .15s, color .15s;
-  white-space: nowrap;
-  text-decoration: none;
-}
-
-.nav-item i { width: 16px; text-align: center; font-size: 13px; }
-
-.nav-item .num {
-  font-size: 11px; font-weight: 700; width: 16px; text-align: center; color: var(--text-faint);
-}
-
-.nav-item:hover { background: rgba(255,255,255,0.04); color: var(--text); }
-
-.nav-item.active {
-  background: var(--teal-dim);
-  color: var(--teal);
-}
-
-.nav-item.active .num { color: var(--teal); }
-
-.sidebar-footer {
-  margin-top: auto;
-  border-top: 1px solid var(--border);
-  padding-top: 12px;
-  display: flex; align-items: center; gap: 10px;
-}
-
-.avatar-sm {
-  width: 32px; height: 32px; border-radius: 50%;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 11px; font-weight: 700; color: var(--text-dim);
-  flex-shrink: 0;
-}
-
-.user-meta { line-height: 1.3; flex: 1; min-width: 0; }
-
-.user-meta .name { font-size: 12.5px; font-weight: 600; color: var(--text); }
-
-.user-meta .role { font-size: 11px; color: var(--text-faint); }
-
-.logout-btn {
-  background: none; border: none; color: var(--text-faint);
-  font-size: 13px; cursor: pointer; padding: 4px;
-  text-decoration: none;
-}
-
-.logout-btn:hover { color: var(--pink); }
-
-/* MAIN */
-.main { flex: 1; padding: 22px 34px 50px; min-width: 0; overflow-y: auto; }
-
-.topbar {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 26px;
-}
-
-.topbar h1 {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 19px; font-weight: 600;
-}
-
-.topbar-actions { display: flex; align-items: center; gap: 14px; }
-
-.search-box {
-  display: flex; align-items: center; gap: 8px;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 8px 14px;
-  color: var(--text-faint);
-  font-size: 13px;
-  width: 230px;
-}
-
-.search-box i { font-size: 12px; }
-
-.icon-btn {
-  width: 34px; height: 34px; border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  color: var(--text-dim);
-  font-size: 13px;
-  position: relative;
-}
-
-.icon-btn .dot {
-  position: absolute; top: 6px; right: 7px;
-  width: 6px; height: 6px; border-radius: 50%;
-  background: var(--pink);
-}
-
-.welcome { margin-bottom: 24px; }
-
-.welcome h2 {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 26px; font-weight: 700; margin-bottom: 6px;
-}
-
-.welcome p { color: var(--text-dim); font-size: 14px; }
-
-/* STATS ROW */
-.stats-row {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-  margin-bottom: 24px;
-}
-
-.stat-card {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 16px;
-  text-align: center;
-}
-
-.stat-value {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 28px;
-  font-weight: 700;
-  color: var(--teal);
-  margin-bottom: 4px;
-}
-
-.stat-label {
-  font-size: 12px;
-  color: var(--text-dim);
-}
-
-/* SIMULATOR CONTAINER */
-.simulator-container {
-  display: grid;
-  grid-template-columns: 320px 1fr;
-  gap: 20px;
-  margin-bottom: 28px;
-}
-
-.control-panel {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  height: fit-content;
-  position: sticky;
-  top: 20px;
-}
-
-.control-section h3 {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--text);
-  margin-bottom: 12px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.control-section h3 i {
-  color: var(--teal);
-  font-size: 12px;
-}
-
-.node-selector {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.node-dropdown {
-  background: var(--panel-alt);
-  border: 1px solid var(--border-soft);
-  color: var(--text);
-  border-radius: 8px;
-  padding: 10px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.node-dropdown:hover,
-.node-dropdown:focus {
-  border-color: var(--teal);
-}
-
-.search-box-small {
-  display: flex;
-  align-items: center;
-  background: var(--panel-alt);
-  border: 1px solid var(--border-soft);
-  border-radius: 8px;
-  padding: 8px 10px;
-  gap: 8px;
-}
-
-.search-box-small input {
-  background: none;
-  border: none;
-  color: var(--text);
-  font-size: 12px;
-  flex: 1;
-}
-
-.search-box-small input::placeholder {
-  color: var(--text-faint);
-}
-
-.search-box-small i {
-  color: var(--text-faint);
-  font-size: 11px;
-}
-
-.node-list {
-  max-height: 200px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.node-list-item {
-  padding: 8px 10px;
-  background: var(--panel-alt);
-  border: 1px solid var(--border-soft);
-  border-radius: 6px;
-  font-size: 11px;
-  cursor: pointer;
-  transition: all .2s;
-  color: var(--text-dim);
-}
-
-.node-list-item:hover {
-  border-color: var(--teal);
-  color: var(--teal);
-}
-
-.selected-node-info {
-  background: var(--panel-alt);
-  border: 1px solid var(--border-soft);
-  border-radius: 8px;
-  padding: 12px;
-  min-height: 120px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-.info-placeholder {
-  color: var(--text-faint);
-  font-size: 11px;
-  text-align: center;
-}
-
-.node-info-content {
-  text-align: center;
-}
-
-.node-info-name {
-  font-weight: 700;
-  font-size: 13px;
-  color: var(--text);
-  margin-bottom: 4px;
-}
-
-.node-info-structure {
-  font-size: 10px;
-  color: var(--text-dim);
-  margin-bottom: 8px;
-}
-
-.node-info-connections {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding-top: 8px;
-  border-top: 1px solid var(--border-soft);
-  margin-top: 8px;
-}
-
-.connection-count {
-  font-size: 11px;
-  color: var(--text-dim);
-}
-
-.actions-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 8px;
-}
-
-.action-btn {
-  background: var(--panel-alt);
-  border: 1px solid var(--border-soft);
-  border-radius: 8px;
-  padding: 10px;
-  color: var(--text-dim);
-  cursor: pointer;
-  transition: all .2s;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  font-size: 10px;
-}
-
-.action-btn i {
-  font-size: 13px;
-  color: var(--teal);
-}
-
-.action-btn small {
-  font-size: 9px;
-  color: var(--text-faint);
-}
-
-.action-btn:hover {
-  border-color: var(--teal);
-  background: rgba(47,212,200,0.05);
-  color: var(--teal);
-}
-
-.simulate-btn {
-  width: 100%;
-  background: linear-gradient(135deg, var(--teal), #22b3a8);
-  border: none;
-  color: #06110f;
-  border-radius: 8px;
-  padding: 12px;
-  font-weight: 700;
-  font-size: 13px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  transition: filter .2s;
-}
-
-.simulate-btn:hover {
-  filter: brightness(1.1);
-}
-
-.reset-btn {
-  width: 100%;
-  background: var(--panel-alt);
-  border: 1px solid var(--border-soft);
-  color: var(--text-dim);
-  border-radius: 8px;
-  padding: 10px;
-  font-weight: 600;
-  font-size: 12px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  transition: all .2s;
-}
-
-.reset-btn:hover {
-  border-color: var(--pink);
-  color: var(--pink);
-}
-
-/* VISUALIZATION SECTION */
-.visualization-section {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-}
-
-.viz-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 16px;
-}
-
-.viz-header h3 {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--text);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.viz-header h3 i {
-  color: var(--teal);
-}
-
-.viz-controls {
-  display: flex;
-  gap: 8px;
-}
-
-.toggle-btn {
-  background: var(--panel-alt);
-  border: 1px solid var(--border-soft);
-  color: var(--text-dim);
-  border-radius: 6px;
-  padding: 6px 12px;
-  font-size: 11px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all .2s;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.toggle-btn:hover {
-  border-color: var(--teal);
-  color: var(--text);
-}
-
-.toggle-btn.active {
-  background: var(--teal-dim);
-  border-color: var(--teal);
-  color: var(--teal);
-}
-
-.network-svg {
-  width: 100%;
-  height: 500px;
-  border-radius: 8px;
-  background: var(--panel-alt);
-  border: 1px solid var(--border-soft);
-  margin-bottom: 16px;
-}
-
-.legend-box {
-  background: var(--panel-alt);
-  border: 1px solid var(--border-soft);
-  border-radius: 8px;
-  padding: 12px;
-}
-
-.legend-title {
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--text);
-  margin-bottom: 8px;
-}
-
-.legend-items {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
-}
-
-.legend-item {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 10px;
-  color: var(--text-dim);
-}
-
-.legend-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-}
-
-/* COMPARISON SECTION */
-.comparison-section {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 20px;
-  margin-bottom: 28px;
-}
-
-.comparison-section h3 {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--text);
-  margin-bottom: 16px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.comparison-section h3 i {
-  color: var(--teal);
-}
-
-.comparison-grid {
-  display: grid;
-  grid-template-columns: 1fr 80px 1fr 200px;
-  gap: 16px;
-  align-items: center;
-}
-
-.comparison-card {
-  background: var(--panel-alt);
-  border: 1px solid var(--border-soft);
-  border-radius: 10px;
-  padding: 16px;
-}
-
-.comparison-card.scenario-card {
-  border: 1px solid var(--teal);
-  background: rgba(47,212,200,0.05);
-}
-
-.card-title {
-  font-weight: 700;
-  font-size: 12px;
-  color: var(--text);
-  margin-bottom: 12px;
-  text-align: center;
-}
-
-.metric-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 0;
-  border-bottom: 1px solid var(--border-soft);
-  font-size: 12px;
-}
-
-.metric-row:last-child {
-  border-bottom: none;
-}
-
-.metric-label {
-  color: var(--text-dim);
-}
-
-.metric-value {
-  font-family: 'Space Grotesk', sans-serif;
-  font-weight: 700;
-  color: var(--teal);
-  font-size: 14px;
-}
-
-.comparison-arrow {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--teal);
-  font-size: 20px;
-}
-
-.comparison-delta {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.delta-item {
-  background: var(--panel-alt);
-  border: 1px solid var(--border-soft);
-  border-radius: 8px;
-  padding: 12px;
-  text-align: center;
-}
-
-.delta-label {
-  font-size: 10px;
-  color: var(--text-faint);
-  display: block;
-  margin-bottom: 6px;
-}
-
-.delta-values {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.delta-value {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--teal);
-}
-
-.delta-label-small {
-  font-size: 9px;
-  color: var(--text-dim);
-  margin-top: 2px;
-}
-
-footer {
-  text-align: center;
-  margin-top: 34px;
-  font-size: 12px;
-  color: var(--text-faint);
-}
-
-footer span { color: var(--teal); }
-
-/* RESPONSIVE */
-@media (max-width: 1200px) {
-  .simulator-container {
-    grid-template-columns: 1fr;
+// ESPERAR A QUE TODO CARGUE
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('DOM cargado');
+  
+  // Esperar un poco para que D3 esté listo
+  setTimeout(() => {
+    if (typeof d3 === 'undefined') {
+      console.error('D3 no está disponible');
+      return;
+    }
+    console.log('D3 disponible, inicializando...');
+    initialize();
+  }, 500);
+});
+
+// DATOS REALES DEL POT
+const potData = {
+  EEP: {
+    name: "Estructura Ecológica Principal",
+    color: "#2fd4c8",
+    nodes: [
+      "Quebradas", "Ríos", "Humedales", "Áreas de resiliencia climática",
+      "Áreas protegidas", "Conectores ecosistémicos", "Parques ecológicos de montaña",
+      "Coberturas vegetales", "Parques de borde", "Bosques urbanos",
+      "Corredores montañosos", "Reservas forestales", "Complejos de páramos",
+      "Paisajes sostenibles"
+    ]
+  },
+  EFC: {
+    name: "Estructura Funcional y del Cuidado",
+    color: "#5b8def",
+    nodes: [
+      "Movilidad", "Transporte público", "Ciclorrutas", "Corredores verdes",
+      "Espacio público", "Parques", "UPL", "Proximidad", "Servicios sociales",
+      "Accesibilidad", "Manzanas del Cuidado", "Servicios de cuidado",
+      "Vivienda", "Equipamientos", "Red vial", "Servicios públicos"
+    ]
+  },
+  ESECI: {
+    name: "Estructura Socioeconómica, Creativa y de Innovación",
+    color: "#a276f2",
+    nodes: [
+      "Huertas", "Agricultura urbana", "Producción de alimentos",
+      "Economía circular", "Negocios verdes", "Industria",
+      "Actividades productivas", "Actividades económicas",
+      "Aglomeraciones económicas", "Empleo", "Comercio",
+      "Economías de proximidad", "Innovación", "Actividades creativas",
+      "Turismo", "Servicios"
+    ]
+  },
+  EIP: {
+    name: "Estructura Integradora de Patrimonios",
+    color: "#f76fb0",
+    nodes: [
+      "Patrimonios", "Patrimonio material", "Patrimonio inmaterial",
+      "Memoria", "Prácticas culturales", "Dinámicas comunitarias",
+      "Patrimonio natural", "Saberes del lugar", "Identidades",
+      "Patrimonio local", "Modos de habitar", "Cultura"
+    ]
+  }
+};
+
+// RELACIONES
+const relationships = [
+  { source: "Quebradas", target: "Ríos", strength: "strong" },
+  { source: "Ríos", target: "Humedales", strength: "strong" },
+  { source: "Humedales", target: "Áreas de resiliencia climática", strength: "medium" },
+  { source: "Humedales", target: "Áreas protegidas", strength: "strong" },
+  { source: "Conectores ecosistémicos", target: "Humedales", strength: "medium" },
+  { source: "Conectores ecosistémicos", target: "Parques ecológicos de montaña", strength: "medium" },
+  { source: "Conectores ecosistémicos", target: "Coberturas vegetales", strength: "medium" },
+  { source: "Parques de borde", target: "Ríos", strength: "strong" },
+  { source: "Bosques urbanos", target: "Coberturas vegetales", strength: "medium" },
+  { source: "Movilidad", target: "Transporte público", strength: "strong" },
+  { source: "Transporte público", target: "Ciclorrutas", strength: "medium" },
+  { source: "Movilidad", target: "Espacio público", strength: "strong" },
+  { source: "Espacio público", target: "Parques", strength: "medium" },
+  { source: "UPL", target: "Proximidad", strength: "strong" },
+  { source: "UPL", target: "Servicios sociales", strength: "strong" },
+  { source: "Manzanas del Cuidado", target: "Servicios de cuidado", strength: "strong" },
+  { source: "Vivienda", target: "Equipamientos", strength: "strong" },
+  { source: "Agricultura urbana", target: "Producción de alimentos", strength: "strong" },
+  { source: "Economía circular", target: "Negocios verdes", strength: "strong" },
+  { source: "Actividades productivas", target: "Empleo", strength: "strong" },
+  { source: "Innovación", target: "Empleo", strength: "medium" },
+  { source: "Patrimonios", target: "Patrimonio material", strength: "strong" },
+  { source: "Patrimonios", target: "Patrimonio inmaterial", strength: "strong" },
+  { source: "Patrimonio material", target: "Memoria", strength: "medium" },
+  { source: "Prácticas culturales", target: "Dinámicas comunitarias", strength: "medium" },
+  { source: "Ríos", target: "Movilidad", strength: "medium" },
+  { source: "Coberturas vegetales", target: "Negocios verdes", strength: "weak" },
+  { source: "Agricultura urbana", target: "Áreas protegidas", strength: "weak" },
+  { source: "Empleo", target: "Vivienda", strength: "strong" },
+  { source: "Patrimonio local", target: "Turismo", strength: "medium" }
+];
+
+// STATE
+let allNodes = [];
+let allLinks = [];
+let selectedNode = null;
+let currentAction = null;
+let networkSimulation = null;
+
+// INITIALIZE
+function initialize() {
+  console.log('Inicializando simulador...');
+  buildNodeList();
+  populateDropdown();
+  buildNodeListUI();
+  updateStats();
+  drawNetwork();
+  console.log('Simulador listo');
+}
+
+// BUILD ALL NODES
+function buildNodeList() {
+  allNodes = [];
+  for (let structure in potData) {
+    potData[structure].nodes.forEach(node => {
+      allNodes.push({
+        id: node,
+        label: node,
+        structure: structure,
+        structureName: potData[structure].name,
+        color: potData[structure].color,
+        active: true,
+        influence: 1.0,
+        x: Math.random() * 400,
+        y: Math.random() * 400
+      });
+    });
   }
   
-  .control-panel {
-    position: static;
+  allLinks = relationships.map(rel => ({
+    source: rel.source,
+    target: rel.target,
+    strength: rel.strength,
+    active: true
+  }));
+  
+  console.log('Nodos:', allNodes.length, 'Enlaces:', allLinks.length);
+}
+
+// POPULATE DROPDOWN
+function populateDropdown() {
+  const select = document.getElementById('nodeSelect');
+  select.innerHTML = '<option value="">-- Selecciona un concepto --</option>';
+  
+  allNodes.forEach(node => {
+    const option = document.createElement('option');
+    option.value = node.id;
+    option.textContent = node.id + ' (' + node.structure + ')';
+    select.appendChild(option);
+  });
+}
+
+// BUILD NODE LIST UI
+function buildNodeListUI() {
+  const nodeList = document.getElementById('nodeList');
+  nodeList.innerHTML = allNodes.slice(0, 15).map(node => `
+    <div class="node-list-item" onclick="selectNode('${node.id}')" style="border-left: 3px solid ${node.color};">
+      ${node.label}
+    </div>
+  `).join('');
+}
+
+// SELECT NODE
+function selectNode(nodeId) {
+  selectedNode = allNodes.find(n => n.id === nodeId);
+  
+  if (!selectedNode) return;
+  
+  document.getElementById('nodeSelect').value = nodeId;
+  
+  const incomingLinks = allLinks.filter(l => l.target === nodeId && l.active).length;
+  const outgoingLinks = allLinks.filter(l => l.source === nodeId && l.active).length;
+  
+  const info = document.getElementById('selectedNodeInfo');
+  info.innerHTML = `
+    <div class="node-info-content">
+      <div class="node-info-name">${selectedNode.label}</div>
+      <div class="node-info-structure">${selectedNode.structure}</div>
+      <div class="node-info-connections">
+        <div class="connection-count">Conexiones activas: ${incomingLinks + outgoingLinks}</div>
+        <div class="connection-count">Estructura: ${selectedNode.structureName}</div>
+      </div>
+    </div>
+  `;
+  
+  drawNetwork();
+}
+
+// SEARCH NODES
+function searchNodes(query) {
+  const nodeList = document.getElementById('nodeList');
+  if (!query) {
+    buildNodeListUI();
+    return;
   }
   
-  .comparison-grid {
-    grid-template-columns: 1fr;
+  const filtered = allNodes.filter(n => 
+    n.label.toLowerCase().includes(query.toLowerCase())
+  );
+  
+  nodeList.innerHTML = filtered.slice(0, 15).map(node => `
+    <div class="node-list-item" onclick="selectNode('${node.id}')" style="border-left: 3px solid ${node.color};">
+      ${node.label}
+    </div>
+  `).join('');
+}
+
+// APPLY ACTION
+function applyAction(action) {
+  if (!selectedNode) {
+    alert('Selecciona un nodo primero');
+    return;
+  }
+  
+  currentAction = action;
+  
+  switch(action) {
+    case 'apagar':
+      selectedNode.active = false;
+      allLinks.forEach(link => {
+        if (link.source === selectedNode.id || link.target === selectedNode.id) {
+          link.active = false;
+        }
+      });
+      break;
+    case 'desconectar':
+      allLinks.forEach(link => {
+        if (link.source === selectedNode.id || link.target === selectedNode.id) {
+          link.active = false;
+        }
+      });
+      break;
+    case 'aumentar':
+      selectedNode.influence = Math.min(2.0, selectedNode.influence + 0.3);
+      break;
+    case 'disminuir':
+      selectedNode.influence = Math.max(0.5, selectedNode.influence - 0.3);
+      break;
+  }
+  
+  updateStats();
+  updateComparison();
+  drawNetwork();
+}
+
+// UPDATE STATS
+function updateStats() {
+  const activeNodes = allNodes.filter(n => n.active).length;
+  const activeLinks = allLinks.filter(l => l.active).length;
+  const density = (activeLinks / (activeNodes * (activeNodes - 1) / 2)).toFixed(2);
+  
+  document.getElementById('totalNodes').textContent = activeNodes;
+  document.getElementById('totalLinks').textContent = activeLinks;
+  document.getElementById('density').textContent = density;
+}
+
+// UPDATE COMPARISON
+function updateComparison() {
+  const afterNodes = allNodes.filter(n => n.active).length;
+  const afterLinks = allLinks.filter(l => l.active).length;
+  const afterDensity = (afterLinks / (afterNodes * (afterNodes - 1) / 2)).toFixed(2);
+  
+  const beforeNodes = 87;
+  const beforeLinks = 156;
+  
+  const deltaNodos = afterNodes - beforeNodes;
+  const deltaImpacto = ((afterLinks - beforeLinks) / beforeLinks * 100).toFixed(1);
+  
+  document.getElementById('afterNodes').textContent = afterNodes;
+  document.getElementById('afterLinks').textContent = afterLinks;
+  document.getElementById('afterDensity').textContent = afterDensity;
+  
+  document.getElementById('deltaNodos').textContent = deltaNodos > 0 ? '+' + deltaNodos : deltaNodos;
+  document.getElementById('deltaImpacto').textContent = deltaImpacto > 0 ? '+' + deltaImpacto + '%' : deltaImpacto + '%';
+}
+
+// DRAW NETWORK
+function drawNetwork() {
+  const svg = d3.select('#networkViz');
+  const width = svg.node().parentElement.offsetWidth - 40;
+  const height = 500;
+  
+  svg.attr('width', width).attr('height', height);
+  
+  const activeNodes = allNodes.filter(n => n.active);
+  const activeLinks = allLinks.filter(l => l.active && 
+    activeNodes.some(n => n.id === l.source) &&
+    activeNodes.some(n => n.id === l.target)
+  );
+  
+  if (networkSimulation) networkSimulation.stop();
+  
+  networkSimulation = d3.forceSimulation(activeNodes)
+    .force('link', d3.forceLink()
+      .id(d => d.id)
+      .links(activeLinks)
+      .distance(80))
+    .force('charge', d3.forceManyBody().strength(-200))
+    .force('center', d3.forceCenter(width / 2, height / 2));
+  
+  svg.selectAll('*').remove();
+  
+  const link = svg.append('g')
+    .selectAll('line')
+    .data(activeLinks)
+    .enter()
+    .append('line')
+    .attr('stroke', d => {
+      if (d.strength === 'strong') return 'rgba(47,212,200,0.6)';
+      if (d.strength === 'medium') return 'rgba(91,141,239,0.4)';
+      return 'rgba(162,118,242,0.2)';
+    })
+    .attr('stroke-width', d => {
+      if (d.strength === 'strong') return 2.5;
+      if (d.strength === 'medium') return 1.5;
+      return 1;
+    });
+  
+  const node = svg.append('g')
+    .selectAll('circle')
+    .data(activeNodes)
+    .enter()
+    .append('circle')
+    .attr('r', d => {
+      const size = 8 * (d.influence || 1);
+      return d.id === selectedNode?.id ? size + 4 : size;
+    })
+    .attr('fill', d => d.color)
+    .attr('opacity', d => d.id === selectedNode?.id ? 1 : 0.7)
+    .attr('stroke', d => d.id === selectedNode?.id ? '#fff' : 'rgba(255,255,255,0.2)')
+    .attr('stroke-width', d => d.id === selectedNode?.id ? 2 : 1.5)
+    .call(d3.drag()
+      .on('start', dragstarted)
+      .on('drag', dragged)
+      .on('end', dragended));
+  
+  const labels = svg.append('g')
+    .selectAll('text')
+    .data(activeNodes)
+    .enter()
+    .append('text')
+    .text(d => d.label.substring(0, 8))
+    .attr('font-size', '9px')
+    .attr('fill', '#e7eaf2')
+    .attr('text-anchor', 'middle')
+    .attr('pointer-events', 'none');
+  
+  networkSimulation.on('tick', () => {
+    link
+      .attr('x1', d => d.source.x)
+      .attr('y1', d => d.source.y)
+      .attr('x2', d => d.target.x)
+      .attr('y2', d => d.target.y);
+    
+    node
+      .attr('cx', d => d.x)
+      .attr('cy', d => d.y);
+    
+    labels
+      .attr('x', d => d.x)
+      .attr('y', d => d.y + 3);
+  });
+  
+  function dragstarted(event, d) {
+    if (!event.active) networkSimulation.alphaTarget(0.3).restart();
+    d.fx = d.x;
+    d.fy = d.y;
+  }
+  
+  function dragged(event, d) {
+    d.fx = event.x;
+    d.fy = event.y;
+  }
+  
+  function dragended(event, d) {
+    if (!event.active) networkSimulation.alphaTarget(0);
+    d.fx = null;
+    d.fy = null;
   }
 }
 
-@media (max-width: 768px) {
-  .sidebar { display: none; }
-  .main { padding: 16px 20px 40px; }
-  .stats-row { grid-template-columns: 1fr; }
-  .network-svg { height: 300px; }
-  .legend-items { grid-template-columns: 1fr; }
+// SIMULATION
+function runSimulation() {
+  updateStats();
+  updateComparison();
+  console.log('Simulación ejecutada');
 }
+
+function resetSimulation() {
+  selectedNode = null;
+  currentAction = null;
+  buildNodeList();
+  populateDropdown();
+  buildNodeListUI();
+  updateStats();
+  drawNetwork();
+  document.getElementById('selectedNodeInfo').innerHTML = '<div class="info-placeholder">Selecciona un nodo para ver detalles</div>';
+}
+
+function toggleVisualization(type) {
+  const toggleNodos = document.getElementById('toggleNodos');
+  const toggleLinks = document.getElementById('toggleLinks');
+  
+  if (type === 'nodos') {
+    toggleNodos.classList.add('active');
+    toggleLinks.classList.remove('active');
+  } else {
+    toggleLinks.classList.add('active');
+    toggleNodos.classList.remove('active');
+  }
+}
+
+// RESIZE
+window.addEventListener('resize', () => {
+  drawNetwork();
+});
