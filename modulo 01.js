@@ -1,111 +1,111 @@
 // ============================================================
-// RAPOT · Módulo 01 — Construir la Red (MEJORADO)
-// Carga automática desde API o datos del sistema
-// Muestra vista de 4 estructuras primero
+// RAPOT · Módulo 01 — Ingeniería Inversa del POT
+// Análisis crítico: contradicciones, macromodelos, estructura real
 // ============================================================
 
 const STRUCT_COLORS = {
-  eep: '#2fd4c8', efs: '#3b82f6', ese: '#f59e0b', eag: '#b06bf7', otras: '#6b7284'
+  eep: '#34d399', efs: '#3b82f6', ese: '#ef9552', eag: '#b06bf7', otras: '#6b7284'
 };
-const REL_TYPES = ['directa', 'indirecta', 'soporte', 'resiliencia', 'otra'];
-const REL_COLORS = { directa:'#34d399', indirecta:'#3b82f6', soporte:'#ef9552', resiliencia:'#b06bf7', otra:'#6b7284' };
+const REL_COLORS = {
+  directa: '#34d399', indirecta: '#3b82f6', soporte: '#ef9552', 
+  resiliencia: '#b06bf7', otra: '#6b7284'
+};
 
 let graphData = { nodes: [], links: [] };
-let currentView = 'estructuras'; // 'estructuras' | 'expandida'
+let allRows = [];
 
-// ============================================================
-// FUNCIONES HELPER
-// ============================================================
-
-function norm(str){
+// ============ HELPERS ============
+function norm(str) {
   return (str || '').toString().trim().toLowerCase()
     .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 }
 
-function findCol(headers, candidates){
+function findCol(headers, candidates) {
   const normed = headers.map(norm);
-  for(const c of candidates){
+  for (const c of candidates) {
     const idx = normed.indexOf(norm(c));
-    if(idx !== -1) return headers[idx];
+    if (idx !== -1) return headers[idx];
   }
   return null;
 }
 
-function structKey(estructura){
+function structKey(estructura) {
   const s = norm(estructura);
-  if(s.startsWith('eep') || s.includes('ecolog')) return 'eep';
-  if(s.startsWith('efs') || s.includes('funcional')) return 'efs';
-  if(s.startsWith('ese') || s.includes('socioecon')) return 'ese';
-  if(s.startsWith('eag') || s.includes('administrat')) return 'eag';
+  if (s.startsWith('eep') || s.includes('ecolog')) return 'eep';
+  if (s.startsWith('efs') || s.includes('funcional')) return 'efs';
+  if (s.startsWith('ese') || s.includes('socioecon')) return 'ese';
+  if (s.startsWith('eag') || s.includes('administrat')) return 'eag';
   return 'otras';
 }
 
-function relKey(tipo){
+function relKey(tipo) {
   const t = norm(tipo);
-  if(t.includes('directa') && !t.includes('indirecta')) return 'directa';
-  if(t.includes('indirecta')) return 'indirecta';
-  if(t.includes('soporte')) return 'soporte';
-  if(t.includes('resilien')) return 'resiliencia';
+  if (t.includes('directa') && !t.includes('indirecta')) return 'directa';
+  if (t.includes('indirecta')) return 'indirecta';
+  if (t.includes('soporte')) return 'soporte';
+  if (t.includes('resilien')) return 'resiliencia';
   return 'otra';
 }
 
-// ============================================================
-// PARSEAR ARCHIVO
-// ============================================================
-
-function parseFile(file){
+// ============ PARSE FILE ============
+function parseFile(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onerror = () => reject(new Error('No se pudo leer el archivo'));
     reader.onload = (e) => {
-      try{
+      try {
         const data = new Uint8Array(e.target.result);
         const wb = XLSX.read(data, { type: 'array' });
         const sheet = wb.Sheets[wb.SheetNames[0]];
         const rows = XLSX.utils.sheet_to_json(sheet, { defval: '' });
         resolve(rows);
-      }catch(err){ reject(err); }
+      } catch (err) {
+        reject(err);
+      }
     };
     reader.readAsArrayBuffer(file);
   });
 }
 
-// ============================================================
-// CONSTRUIR GRAFO
-// ============================================================
+// ============ BUILD GRAPH ============
+function buildGraph(rows) {
+  if (!rows.length) throw new Error('El archivo está vacío');
 
-function buildGraph(rows){
-  if(!rows.length) throw new Error('El archivo está vacío');
-
+  allRows = rows;
   const headers = Object.keys(rows[0]);
-  const colConcepto   = findCol(headers, ['Concepto']);
-  const colEstructura = findCol(headers, ['Estructura']);
-  const colFuente      = findCol(headers, ['Fuente']);
-  const colRelacionado = findCol(headers, ['Concepto relacionado', 'Concepto Relacionado']);
-  const colTipo         = findCol(headers, ['Tipo de relación', 'Tipo de relacion', 'Tipo']);
-  const colJustif        = findCol(headers, ['Justificación', 'Justificacion']);
 
-  if(!colConcepto || !colRelacionado){
-    throw new Error('No se encontraron las columnas "Concepto" y "Concepto relacionado".');
+  const colConcepto = findCol(headers, ['Concepto']);
+  const colEstructura = findCol(headers, ['Estructura']);
+  const colRelacionado = findCol(headers, ['Concepto relacionado', 'Concepto Relacionado']);
+  const colTipo = findCol(headers, ['Tipo de relación', 'Tipo de relacion', 'Tipo']);
+  const colJustif = findCol(headers, ['Justificación', 'Justificacion']);
+  const colDiscurso = findCol(headers, ['Discurso', 'Discurso Vs Realidad', 'Discurso vs Realidad']);
+
+  if (!colConcepto || !colRelacionado) {
+    throw new Error('Faltan columnas: "Concepto" y "Concepto relacionado"');
   }
 
   const nodeMap = new Map();
   const links = [];
   const fuentesSet = new Set();
-  const tiposSet = new Set();
+  const macromodelsSet = new Set();
+  let contradictions = 0;
 
-  function ensureNode(name, estructura){
+  function ensureNode(name, estructura) {
     const key = norm(name);
-    if(!key) return null;
-    if(!nodeMap.has(key)){
+    if (!key) return null;
+    if (!nodeMap.has(key)) {
       nodeMap.set(key, {
-        id: key, name: name.toString().trim(),
-        estructura: estructura || '', struct: structKey(estructura),
-        fuentes: new Set(), outDeg: 0, inDeg: 0
+        id: key,
+        name: name.toString().trim(),
+        estructura: estructura || '',
+        struct: structKey(estructura),
+        fuentes: new Set(),
+        outDeg: 0,
+        inDeg: 0,
+        discursiveImportance: 'normal',
+        isContradictory: false
       });
-    } else if(estructura && !nodeMap.get(key).estructura){
-      nodeMap.get(key).estructura = estructura;
-      nodeMap.get(key).struct = structKey(estructura);
     }
     return nodeMap.get(key);
   }
@@ -113,493 +113,300 @@ function buildGraph(rows){
   rows.forEach(row => {
     const conceptoName = row[colConcepto];
     const relacionadoName = row[colRelacionado];
-    if(!conceptoName || !relacionadoName) return;
+    if (!conceptoName || !relacionadoName) return;
 
     const a = ensureNode(conceptoName, colEstructura ? row[colEstructura] : '');
     const b = ensureNode(relacionadoName, '');
-    if(!a || !b || a.id === b.id) return;
+    if (!a || !b || a.id === b.id) return;
 
     const tipo = colTipo ? row[colTipo] : 'Directa';
     const fuente = colFuente ? row[colFuente] : '';
-    const justificacion = colJustif ? row[colJustif] : '';
+    const justif = colJustif ? row[colJustif] : '';
+    const discursoVsRealidad = colDiscurso ? row[colDiscurso] : '';
 
-    if(fuente){ fuentesSet.add(fuente.toString().trim()); a.fuentes.add(fuente.toString().trim()); }
-    tiposSet.add(relKey(tipo));
+    if (fuente) {
+      fuentesSet.add(fuente.toString().trim());
+      a.fuentes.add(fuente.toString().trim());
+    }
 
-    a.outDeg++; b.inDeg++;
+    // Detectar contradicciones
+    if (discursoVsRealidad && (discursoVsRealidad.includes('contradict') || 
+        discursoVsRealidad.includes('perifér') || 
+        discursoVsRealidad.includes('hipocres'))) {
+      a.isContradictory = true;
+      contradictions++;
+    }
+
+    a.outDeg++;
+    b.inDeg++;
 
     links.push({
-      source: a.id, target: b.id,
-      tipo: relKey(tipo), tipoLabel: (tipo || 'Directa').toString(),
-      fuente: fuente || '', justificacion: justificacion || ''
+      source: a.id,
+      target: b.id,
+      tipo: relKey(tipo),
+      tipoLabel: tipo,
+      fuente: fuente || '',
+      justificacion: justif || '',
+      discursoVsRealidad: discursoVsRealidad || '',
+      sourceNode: a,
+      targetNode: b
     });
   });
 
   const nodes = Array.from(nodeMap.values());
-  return { nodes, links, fuentesCount: fuentesSet.size, tiposCount: tiposSet.size };
+  
+  // Detectar macromodelos basados en conexiones
+  nodes.forEach(node => {
+    const connectedLinks = links.filter(l => l.source === node.id || l.target === node.id);
+    connectedLinks.forEach(link => {
+      if (link.justificacion.includes('económic') || link.fuente.includes('económic')) macromodelsSet.add('Economicismo');
+      if (link.justificacion.includes('ambiental') || link.fuente.includes('ecológic')) macromodelsSet.add('Ambientalismo');
+      if (link.justificacion.includes('mercado') || link.justificacion.includes('privado')) macromodelsSet.add('Neoliberalismo');
+      if (link.justificacion.includes('social') || link.justificacion.includes('comunidad')) macromodelsSet.add('Comunitarismo');
+    });
+  });
+
+  return {
+    nodes,
+    links,
+    fuentesCount: fuentesSet.size,
+    macromodels: Array.from(macromodelsSet),
+    contradictions
+  };
 }
 
-// ============================================================
-// ACTUALIZAR ESTADÍSTICAS
-// ============================================================
-
-function updateStats(g){
+// ============ UPDATE STATS ============
+function updateStats(g) {
   document.getElementById('statConceptos').textContent = g.nodes.length;
-  document.getElementById('statConceptosSub').textContent = `${g.nodes.length} conceptos identificados`;
+  document.getElementById('statConceptosSub').textContent = `${g.nodes.length} nodos identificados`;
   document.getElementById('statRelaciones').textContent = g.links.length;
-  document.getElementById('statRelacionesSub').textContent = `${g.links.length} relaciones cargadas`;
-  document.getElementById('statFuentes').textContent = g.fuentesCount;
-  document.getElementById('statFuentesSub').textContent = g.fuentesCount ? `${g.fuentesCount} fuentes distintas` : 'Sin columna de fuente';
-  document.getElementById('statTipos').textContent = g.tiposCount;
-
-  const structCounts = { eep:0, efs:0, ese:0, eag:0, otras:0 };
-  g.nodes.forEach(n => structCounts[n.struct]++);
-  document.getElementById('cnt-eep').textContent = structCounts.eep;
-  document.getElementById('cnt-efs').textContent = structCounts.efs;
-  document.getElementById('cnt-ese').textContent = structCounts.ese;
-  document.getElementById('cnt-eag').textContent = structCounts.eag;
-  document.getElementById('cnt-otras').textContent = structCounts.otras;
-
-  // Densidad
-  const n = g.nodes.length;
-  const density = n > 1 ? (g.links.length / (n * (n - 1))) : 0;
-  document.getElementById('densityVal').textContent = density.toFixed(2);
-  const lbl = density > 0.3 ? 'Alta' : density > 0.1 ? 'Media' : 'Baja';
-  document.getElementById('densityLbl').textContent = lbl;
-  document.getElementById('densityDesc').textContent =
-    density > 0.3 ? 'La red tiene una conectividad alta entre sus conceptos.' :
-    density > 0.1 ? 'La red tiene una conectividad moderada.' :
-    'La red tiene una conectividad baja; hay pocos vínculos entre conceptos.';
-
-  // Donut
-  const relCounts = { directa:0, indirecta:0, soporte:0, resiliencia:0, otra:0 };
-  g.links.forEach(l => relCounts[l.tipo]++);
-  drawDonut(relCounts, g.links.length);
-
-  // Centralidad
-  const maxDeg = Math.max(1, ...g.nodes.map(n => n.inDeg + n.outDeg));
-  const ranked = [...g.nodes].sort((a,b) => (b.inDeg+b.outDeg) - (a.inDeg+a.outDeg)).slice(0, 6);
-  const list = document.getElementById('centralityList');
-  list.innerHTML = '';
-  ranked.forEach(n => {
-    const deg = n.inDeg + n.outDeg;
-    const score = (deg / maxDeg);
-    const row = document.createElement('div');
-    row.className = 'centrality-item';
-    row.innerHTML = `
-      <span class="centrality-name" title="${n.name}">${n.name}</span>
-      <div class="centrality-bar-track"><div class="centrality-bar-fill" style="width:${(score*100).toFixed(0)}%"></div></div>
-      <span class="centrality-val">${score.toFixed(2)}</span>`;
-    list.appendChild(row);
-  });
-
-  document.getElementById('aiTipText').textContent =
-    `Consejo IA: revisa las ${g.links.filter(l=>l.tipo==='indirecta'||!l.justificacion).length} relaciones indirectas o sin justificación para fortalecer la coherencia de la red.`;
-
-  document.getElementById('bottomRow').style.display = 'grid';
+  document.getElementById('statRelacionesSub').textContent = `${g.links.length} conexiones`;
+  document.getElementById('statContradicciones').textContent = g.contradictions;
+  document.getElementById('statMacromodelos').textContent = g.macromodels.length;
 }
 
-function drawDonut(counts, total){
-  const svg = document.getElementById('donutSvg');
-  const legend = document.getElementById('donutLegend');
-  svg.innerHTML = '';
-  legend.innerHTML = '';
-  if(total === 0) return;
-
-  const cx = 90, cy = 90, r = 65, stroke = 22;
-  let angleStart = -90;
-  const circumference = 2 * Math.PI * r;
-
-  REL_TYPES.forEach(key => {
-    const val = counts[key];
-    if(!val) return;
-    const frac = val / total;
-    const dash = frac * circumference;
-    const circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
-    circle.setAttribute('cx', cx); circle.setAttribute('cy', cy); circle.setAttribute('r', r);
-    circle.setAttribute('fill', 'none');
-    circle.setAttribute('stroke', REL_COLORS[key]);
-    circle.setAttribute('stroke-width', stroke);
-    circle.setAttribute('stroke-dasharray', `${dash} ${circumference - dash}`);
-    circle.setAttribute('transform', `rotate(${angleStart} ${cx} ${cy})`);
-    svg.appendChild(circle);
-    angleStart += frac * 360;
-
-    const row = document.createElement('div');
-    row.className = 'dl-row';
-    row.innerHTML = `<span class="dl-dot" style="background:${REL_COLORS[key]}"></span>${key.charAt(0).toUpperCase()+key.slice(1)} <b>${val} (${Math.round(frac*100)}%)</b>`;
-    legend.appendChild(row);
-  });
-
-  const label = document.createElementNS('http://www.w3.org/2000/svg','text');
-  label.setAttribute('x', cx); label.setAttribute('y', cy - 4);
-  label.setAttribute('text-anchor','middle');
-  label.setAttribute('fill', '#eef0f6'); label.setAttribute('font-size','20'); label.setAttribute('font-weight','800');
-  label.textContent = total;
-  svg.appendChild(label);
-  const label2 = document.createElementNS('http://www.w3.org/2000/svg','text');
-  label2.setAttribute('x', cx); label2.setAttribute('y', cy + 14);
-  label2.setAttribute('text-anchor','middle');
-  label2.setAttribute('fill', '#6b7284'); label2.setAttribute('font-size','9');
-  label2.textContent = 'Total';
-  svg.appendChild(label2);
-}
-
-// ============================================================
-// RENDER: VISTA DE 4 ESTRUCTURAS
-// ============================================================
-
-function renderEstructurasView(g){
+// ============ RENDER GRAPH ============
+function renderGraph(g) {
   const area = document.getElementById('graphArea');
+  const loadingMsg = document.getElementById('loadingMsg');
   const svgEl = d3.select('#graphSvg');
+
   svgEl.selectAll('*').remove();
   svgEl.style('display', 'block');
-  document.getElementById('uploadZone').style.display = 'none';
+  loadingMsg.style.display = 'none';
 
-  const width = area.clientWidth || 700;
-  const height = area.clientHeight || 420;
-  svgEl.attr('viewBox', `0 0 ${width} ${height}`);
-  svgEl.attr('style', 'background: var(--panel-alt);');
-
-  const container = svgEl.append('g');
-
-  // Reset zoom
-  svgEl.call(d3.zoom().transform, d3.zoomIdentity);
-
-  const centerX = width / 2;
-  const centerY = height / 2;
-  const radius = Math.min(centerX, centerY) * 0.35;
-
-  // Posiciones de las 4 estructuras
-  const positions = {
-    'eep': { x: centerX, y: centerY - radius, label: 'Sistema Ambiental y de\nEstructura Ecológica\nPrincipal' },
-    'efs': { x: centerX + radius, y: centerY, label: 'Estructura Funcional\ny del Cuidado' },
-    'ese': { x: centerX, y: centerY + radius, label: 'Estructura\nSocioeconómica,\nCreativa y de\nInnovación' },
-    'eag': { x: centerX - radius, y: centerY, label: 'Estructura\nAdministrativa\ny de Gestión' }
-  };
-
-  // Líneas conectoras con flechas
-  container.append('defs').append('marker')
-    .attr('id', 'arrowhead')
-    .attr('markerWidth', 10)
-    .attr('markerHeight', 10)
-    .attr('refX', 9)
-    .attr('refY', 3)
-    .attr('orient', 'auto')
-    .append('polygon')
-    .attr('points', '0 0, 10 3, 0 6')
-    .attr('fill', 'rgba(255,255,255,0.3)');
-
-  const orden = ['eep', 'efs', 'ese', 'eag'];
-  for(let i = 0; i < orden.length; i++){
-    const current = orden[i];
-    const next = orden[(i + 1) % orden.length];
-    const from = positions[current];
-    const to = positions[next];
-
-    const dx = to.x - from.x;
-    const dy = to.y - from.y;
-    const dist = Math.hypot(dx, dy);
-    const ratio = 55 / dist;
-
-    const startX = from.x + dx * ratio;
-    const startY = from.y + dy * ratio;
-    const endX = to.x - dx * ratio;
-    const endY = to.y - dy * ratio;
-
-    container.append('line')
-      .attr('x1', startX).attr('y1', startY)
-      .attr('x2', endX).attr('y2', endY)
-      .attr('stroke', 'rgba(255,255,255,0.2)')
-      .attr('stroke-width', 2)
-      .attr('stroke-dasharray', '5,5')
-      .attr('marker-end', 'url(#arrowhead)');
-  }
-
-  // Nodos (círculos grandes con glow)
-  const structKeys = ['eep', 'efs', 'ese', 'eag'];
-  structKeys.forEach(key => {
-    const pos = positions[key];
-    const count = g.nodes.filter(n => n.struct === key).length;
-    const color = STRUCT_COLORS[key];
-
-    // Glow filter
-    const defs = container.append('defs');
-    defs.append('filter').attr('id', `glow-${key}`)
-      .html(`<feGaussianBlur stdDeviation="4" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>`);
-
-    // Círculo exterior (glow)
-    container.append('circle')
-      .attr('cx', pos.x).attr('cy', pos.y).attr('r', 80)
-      .attr('fill', color).attr('opacity', 0.1)
-      .attr('filter', `url(#glow-${key})`);
-
-    // Círculo principal
-    container.append('circle')
-      .attr('cx', pos.x).attr('cy', pos.y).attr('r', 70)
-      .attr('fill', 'rgba(10,14,23,0.8)')
-      .attr('stroke', color)
-      .attr('stroke-width', 3)
-      .attr('cursor', 'pointer')
-      .on('click', () => showEstructuraExpandida(key, g))
-      .on('mouseover', function(){ d3.select(this).attr('stroke-width', 4); })
-      .on('mouseout', function(){ d3.select(this).attr('stroke-width', 3); });
-
-    // Texto - Nombre
-    container.append('text')
-      .attr('x', pos.x).attr('y', pos.y - 10)
-      .attr('text-anchor', 'middle')
-      .attr('fill', '#fff')
-      .attr('font-size', '14px')
-      .attr('font-weight', '700')
-      .attr('pointer-events', 'none')
-      .text(key.toUpperCase());
-
-    // Texto - Cantidad
-    container.append('text')
-      .attr('x', pos.x).attr('y', pos.y + 20)
-      .attr('text-anchor', 'middle')
-      .attr('fill', color)
-      .attr('font-size', '12px')
-      .attr('font-weight', '600')
-      .attr('pointer-events', 'none')
-      .text(`${count} conceptos`);
-  });
-
-  currentView = 'estructuras';
-}
-
-// ============================================================
-// RENDER: VISTA EXPANDIDA (ESTRUCTURA SELECCIONADA)
-// ============================================================
-
-function showEstructuraExpandida(estructura, g){
-  const area = document.getElementById('graphArea');
-  const svgEl = d3.select('#graphSvg');
-  svgEl.selectAll('*').remove();
-
-  const width = area.clientWidth || 700;
-  const height = area.clientHeight || 420;
+  const width = area.clientWidth || 900;
+  const height = area.clientHeight || 450;
   svgEl.attr('viewBox', `0 0 ${width} ${height}`);
 
   const container = svgEl.append('g');
 
-  svgEl.call(d3.zoom().scaleExtent([0.4, 3]).on('zoom', (event) => {
+  // ZOOM
+  svgEl.call(d3.zoom().scaleExtent([0.5, 3]).on('zoom', (event) => {
     container.attr('transform', event.transform);
   }));
 
-  const nodosEstructura = g.nodes.filter(n => n.struct === estructura);
-
+  // LINKS
   const linkSel = container.append('g').selectAll('path')
-    .data(g.links.filter(l => {
-      const from = g.nodes.find(n => n.id === l.source);
-      return from && from.struct === estructura;
-    }))
-    .enter()
-    .append('path')
-    .attr('class', d => `glink ${d.tipo}`);
+    .data(g.links).enter().append('path')
+    .attr('class', d => `glink ${d.tipo}`)
+    .attr('stroke-dasharray', d => {
+      if (d.tipo === 'indirecta') return '5,5';
+      if (d.tipo === 'otra') return '2,2';
+      return 'none';
+    })
+    .on('click', (event, d) => showRelationModal(d));
 
+  // NODES
   const nodeSel = container.append('g').selectAll('g')
-    .data(nodosEstructura)
-    .enter()
-    .append('g')
+    .data(g.nodes).enter().append('g')
     .attr('class', 'gnode')
     .call(d3.drag()
-      .on('start', (event, d) => { if(!event.active) sim.alphaTarget(0.2).restart(); d.fx=d.x; d.fy=d.y; })
-      .on('drag', (event, d) => { d.fx=event.x; d.fy=event.y; })
-      .on('end', (event, d) => { if(!event.active) sim.alphaTarget(0); d.fx=null; d.fy=null; }));
+      .on('start', (event, d) => { if (!event.active) sim.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; })
+      .on('drag', (event, d) => { d.fx = event.x; d.fy = event.y; })
+      .on('end', (event, d) => { if (!event.active) sim.alphaTarget(0); d.fx = null; d.fy = null; }));
 
   nodeSel.append('circle')
-    .attr('r', d => 10 + Math.min(14, (d.inDeg + d.outDeg)))
-    .attr('fill', 'rgba(10,14,23,0.9)')
+    .attr('r', d => 12 + Math.min(16, (d.inDeg + d.outDeg) * 1.5))
+    .attr('fill', 'rgba(10,14,23,0.95)')
     .attr('stroke', d => STRUCT_COLORS[d.struct])
-    .on('click', (event, d) => showDetail(d, g));
+    .attr('stroke-width', d => d.isContradictory ? 3 : 2.5);
 
   nodeSel.append('text')
-    .attr('dy', d => 10 + Math.min(14, (d.inDeg + d.outDeg)) + 12)
-    .text(d => d.name.length > 16 ? d.name.slice(0,15)+'…' : d.name);
+    .attr('dy', d => 12 + Math.min(16, (d.inDeg + d.outDeg) * 1.5) + 14)
+    .attr('text-anchor', 'middle')
+    .attr('font-size', '10px')
+    .attr('font-weight', '600')
+    .attr('fill', '#eef0f6')
+    .text(d => d.name.length > 18 ? d.name.slice(0, 15) + '…' : d.name);
 
-  const sim = d3.forceSimulation(nodosEstructura)
-    .force('link', d3.forceLink(g.links.filter(l => {
-      const from = g.nodes.find(n => n.id === l.source);
-      return from && from.struct === estructura;
-    })).id(d => d.id).distance(90).strength(0.5))
-    .force('charge', d3.forceManyBody().strength(-220))
-    .force('center', d3.forceCenter(width/2, height/2))
-    .force('collide', d3.forceCollide().radius(34));
+  nodeSel.on('click', (event, d) => showNodeDetail(d, g));
+
+  // SIMULATION
+  const sim = d3.forceSimulation(g.nodes)
+    .force('link', d3.forceLink(g.links).id(d => d.id).distance(120).strength(0.3))
+    .force('charge', d3.forceManyBody().strength(-300))
+    .force('center', d3.forceCenter(width / 2, height / 2))
+    .force('collide', d3.forceCollide().radius(40));
 
   sim.on('tick', () => {
     linkSel.attr('d', d => `M${d.source.x},${d.source.y} L${d.target.x},${d.target.y}`);
     nodeSel.attr('transform', d => `translate(${d.x},${d.y})`);
   });
-
-  document.getElementById('resetZoom').onclick = () => {
-    svgEl.transition().duration(400).call(d3.zoom().transform, d3.zoomIdentity);
-  };
-
-  currentView = 'expandida';
 }
 
-// ============================================================
-// PANEL DE DETALLES
-// ============================================================
+// ============ SHOW NODE DETAIL ============
+function showNodeDetail(node, graph) {
+  const detail = document.getElementById('nodeDetail');
+  const outgoing = graph.links.filter(l => l.source.id === node.id);
+  const incoming = graph.links.filter(l => l.target.id === node.id);
 
-function showDetail(node, g){
-  const panel = document.getElementById('detailPanel');
-  panel.style.display = 'block';
   document.getElementById('detailName').textContent = node.name;
-  document.getElementById('detailTag').textContent = node.estructura ? `${node.struct.toUpperCase()} · ${node.estructura}` : node.struct.toUpperCase();
-  document.getElementById('detailOut').textContent = node.outDeg;
-  document.getElementById('detailIn').textContent = node.inDeg;
-  document.getElementById('detailTotal').textContent = node.outDeg + node.inDeg;
-  const icon = document.getElementById('detailIcon');
-  icon.style.background = `${STRUCT_COLORS[node.struct]}22`;
-  icon.style.color = STRUCT_COLORS[node.struct];
+  document.getElementById('detailStructure').textContent = node.estructura || 'No clasificada';
 
-  const fuentesDiv = document.getElementById('detailFuentes');
-  if(node.fuentes.size){
-    fuentesDiv.innerHTML = Array.from(node.fuentes).map(f => `<div>• ${f}</div>`).join('');
+  // Discrepancia
+  const centralidad = (node.inDeg + node.outDeg) / graph.nodes.length;
+  const discrepancyEl = document.getElementById('detailDiscrepancy');
+  if (centralidad < 0.1 && node.isContradictory) {
+    discrepancyEl.className = 'discrepancy-badge high-discrepancy';
+    discrepancyEl.textContent = '⚠ Periférica pero importante en discurso';
+  } else if (centralidad > 0.3) {
+    discrepancyEl.className = 'discrepancy-badge low-discrepancy';
+    discrepancyEl.textContent = '✓ Central en estructura';
   } else {
-    fuentesDiv.textContent = 'Sin fuentes registradas para este concepto.';
+    discrepancyEl.textContent = 'Normal';
   }
+
+  // Conexiones salientes
+  document.getElementById('detailOutgoing').innerHTML = outgoing.length
+    ? outgoing.map(l => `<div class="connection-item">→ ${l.targetNode.name} <strong style="color:#34d399;">[${l.tipo}]</strong></div>`).join('')
+    : '<div style="color:var(--text-faint);">Sin conexiones salientes</div>';
+
+  // Conexiones entrantes
+  document.getElementById('detailIncoming').innerHTML = incoming.length
+    ? incoming.map(l => `<div class="connection-item">← ${l.sourceNode.name} <strong style="color:#3b82f6;">[${l.tipo}]</strong></div>`).join('')
+    : '<div style="color:var(--text-faint);">Sin conexiones entrantes</div>';
+
+  // Justificaciones
+  const allJustifs = [...outgoing, ...incoming].filter(l => l.justificacion);
+  document.getElementById('detailJustification').innerHTML = allJustifs.length
+    ? allJustifs.map(l => `<div style="margin-bottom:8px;padding:6px;background:rgba(255,255,255,0.02);border-left:2px solid var(--teal);border-radius:4px;font-size:11px;">"${l.justificacion.substring(0, 80)}..."</div>`).join('')
+    : '<div style="color:var(--text-faint);">Sin justificaciones disponibles</div>';
+
+  detail.style.display = 'block';
 }
 
+// ============ SHOW RELATION MODAL ============
+function showRelationModal(link) {
+  const modal = document.getElementById('relationModal');
+  const source = link.sourceNode || link.source;
+  const target = link.targetNode || link.target;
+
+  document.getElementById('relationFrom').textContent = (source.name || source);
+  document.getElementById('relationTo').textContent = (target.name || target);
+  document.getElementById('relationTypeBadge').textContent = link.tipo.toUpperCase();
+  document.getElementById('relationJustification').textContent = link.justificacion || 'Sin justificación especificada';
+  document.getElementById('relationNatureType').textContent = link.tipoLabel;
+  document.getElementById('relationDirection').textContent = 'Unidireccional →';
+  document.getElementById('relationIntensity').textContent = link.justificacion ? 'Alta' : 'Media';
+
+  // Detectar si contradice
+  const contradicts = link.discursoVsRealidad || '';
+  document.getElementById('relationContradicts').innerHTML = contradicts
+    ? `<strong style="color:var(--pink);">⚠ SÍ CONTRADICE:</strong> ${contradicts}`
+    : '<strong style="color:var(--green);">✓ Coherente con discurso</strong>';
+
+  modal.style.display = 'flex';
+}
+
+// ============ CLOSE HANDLERS ============
 document.getElementById('closeDetail').addEventListener('click', () => {
-  document.getElementById('detailPanel').style.display = 'none';
+  document.getElementById('nodeDetail').style.display = 'none';
 });
 
-// ============================================================
-// CARGAR DATOS AUTOMÁTICAMENTE DESDE FUENTES Y DOCUMENTOS
-// ============================================================
+document.getElementById('closeRelation').addEventListener('click', () => {
+  document.getElementById('relationModal').style.display = 'none';
+});
 
-async function loadAutomaticData(){
-  try{
-    // Intentar cargar desde localStorage (datos ya procesados)
-    const savedData = localStorage.getItem('rapot_data_modulo01');
-    if(savedData){
-      const g = JSON.parse(savedData);
-      if(g.nodes && g.links && g.nodes.length > 0){
-        // Reconstruir Set de fuentes
-        g.nodes.forEach(n => { n.fuentes = new Set(n.fuentes || []); });
-        graphData = g;
-        updateStats(g);
-        renderEstructurasView(g);
-        document.getElementById('uploadZone').style.display = 'none';
-        document.getElementById('graphSvg').style.display = 'block';
-        document.querySelectorAll('.stepper .step')[0].classList.remove('active');
-        document.querySelectorAll('.stepper .step')[3].classList.add('active');
-        console.log('✅ Datos cargados automáticamente desde localStorage');
-        return true;
-      }
-    }
-  }catch(err){
-    console.log('⚠️ Error cargando datos guardados:', err);
+document.getElementById('relationModal').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('relationModal')) {
+    document.getElementById('relationModal').style.display = 'none';
   }
-  
-  // Si no hay datos guardados, OCULTAR STEP 1 y mostrar mensaje
-  console.log('📋 No hay datos previos - mostrando upload zone');
-  document.getElementById('uploadZone').style.display = 'flex';
-  document.querySelectorAll('.stepper .step')[0].style.display = 'none'; // Ocultar step 1
-  
-  return false;
-}
-
-// Cargar al iniciar página
-window.addEventListener('load', async () => {
-  await loadAutomaticData();
 });
 
-// ============================================================
-// MANEJO DE UPLOAD (alternativa para cambiar archivo)
-// ============================================================
-
+// ============ FILE UPLOAD ============
 const uploadZone = document.getElementById('uploadZone');
 const fileInput = document.getElementById('fileInput');
 const uploadStatus = document.getElementById('uploadStatus');
 
 uploadZone.addEventListener('click', () => fileInput.click());
-document.getElementById('browseBtn').addEventListener('click', (e) => { e.stopPropagation(); fileInput.click(); });
+document.getElementById('browseBtn').addEventListener('click', (e) => {
+  e.stopPropagation();
+  fileInput.click();
+});
 
-['dragover','dragenter'].forEach(evt => uploadZone.addEventListener(evt, (e) => {
-  e.preventDefault(); uploadZone.classList.add('dragover');
+['dragover', 'dragenter'].forEach(evt => uploadZone.addEventListener(evt, (e) => {
+  e.preventDefault();
+  uploadZone.style.borderColor = 'var(--teal)';
 }));
-['dragleave','drop'].forEach(evt => uploadZone.addEventListener(evt, (e) => {
-  e.preventDefault(); uploadZone.classList.remove('dragover');
+
+['dragleave', 'drop'].forEach(evt => uploadZone.addEventListener(evt, (e) => {
+  e.preventDefault();
+  uploadZone.style.borderColor = 'var(--border)';
 }));
+
 uploadZone.addEventListener('drop', (e) => {
   const file = e.dataTransfer.files[0];
-  if(file) handleFile(file);
-});
-fileInput.addEventListener('change', (e) => {
-  const file = e.target.files[0];
-  if(file) handleFile(file);
+  if (file) handleFile(file);
 });
 
-async function handleFile(file){
+fileInput.addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (file) handleFile(file);
+});
+
+async function handleFile(file) {
   uploadStatus.textContent = 'Leyendo archivo...';
-  try{
+  try {
     const rows = await parseFile(file);
     const g = buildGraph(rows);
-    if(!g.nodes.length){
-      uploadStatus.textContent = 'No se encontraron conceptos válidos en el archivo.';
+
+    if (!g.nodes.length) {
+      uploadStatus.textContent = 'No se encontraron nodos válidos';
       return;
     }
-    
-    // GUARDAR EN LOCALSTORAGE para próximas cargas
-    const dataToSave = {
-      nodes: g.nodes.map(n => ({
-        id: n.id, name: n.name, estructura: n.estructura, struct: n.struct,
-        fuentes: Array.from(n.fuentes), outDeg: n.outDeg, inDeg: n.inDeg
-      })),
-      links: g.links,
-      fuentesCount: g.fuentesCount,
-      tiposCount: g.tiposCount
-    };
-    localStorage.setItem('rapot_data_modulo01', JSON.stringify(dataToSave));
-    
+
     graphData = g;
     updateStats(g);
-    renderEstructurasView(g);
-    document.getElementById('uploadZone').style.display = 'none';
-    document.getElementById('graphSvg').style.display = 'block';
-    document.querySelectorAll('.step')[0].classList.remove('active');
-    document.querySelectorAll('.step')[3].classList.add('active');
-    uploadStatus.textContent = '';
-  }catch(err){
-    uploadStatus.textContent = 'Error: ' + err.message;
+    renderGraph(g);
+    uploadStatus.textContent = `✓ ${g.nodes.length} conceptos, ${g.links.length} relaciones`;
+
+    // Mostrar hallazgos
+    if (g.contradictions > 0) {
+      const contradictionsEl = document.getElementById('contradictionsSummary');
+      const listEl = document.getElementById('contradictionsList');
+      const contradictoryNodes = g.nodes.filter(n => n.isContradictory);
+      listEl.innerHTML = contradictoryNodes.map(n =>
+        `<div class="finding-item"><strong>${n.name}</strong><br><span style="font-size:10px;color:var(--text-faint);">Periférica en estructura pero importante en discurso</span></div>`
+      ).join('');
+      contradictionsEl.style.display = 'block';
+    }
+
+    if (g.macromodels.length > 0) {
+      const macroEl = document.getElementById('macromodelsSummary');
+      const listEl = document.getElementById('macromodelsList');
+      listEl.innerHTML = g.macromodels.map(m =>
+        `<div class="finding-item">📊 <strong>${m}</strong></div>`
+      ).join('');
+      macroEl.style.display = 'block';
+    }
+
+  } catch (err) {
+    uploadStatus.textContent = '❌ Error: ' + err.message;
   }
 }
 
-// ============================================================
-// DESCARGAR PLANTILLA
-// ============================================================
-
-document.getElementById('downloadTemplate').addEventListener('click', () => {
-  const headers = ['Concepto','Estructura','Fuente','Fragmento documental','Concepto relacionado','Tipo de relación','Justificación'];
-  const example = [
-    ['Humedal La Conejera','EEP - Ecológica','POT Bogotá 2022-2035','El humedal regula el ciclo hídrico...','Gestión del agua','Directa','El humedal aporta directamente a la regulación hídrica.'],
-    ['Humedal La Conejera','EEP - Ecológica','POT Bogotá 2022-2035','...','Biodiversidad','Directa','Sostiene especies nativas del territorio.'],
-    ['Movilidad sostenible','EFS - Funcional','POT Bogotá 2022-2035','...','Espacio público','Indirecta','La movilidad activa depende de espacio público adecuado.']
-  ];
-  const ws = XLSX.utils.aoa_to_sheet([headers, ...example]);
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'Plantilla');
-  XLSX.writeFile(wb, 'plantilla_rapot.xlsx');
-});
-
-// ============================================================
-// TABS (visual only)
-// ============================================================
-
-document.querySelectorAll('.tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-  });
-});
-
+// Window resize
 window.addEventListener('resize', () => {
-  if(graphData.nodes.length){
-    if(currentView === 'estructuras') renderEstructurasView(graphData);
-  }
+  if (graphData.nodes.length) renderGraph(graphData);
 });
