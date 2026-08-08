@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RAPOT · Módulo 01 — Ingeniería Inversa del POT</title>
+<title>RAPOT · Módulo 01 — Construir la Red</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -11,7 +11,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 <style>
-:root{
+:root {
   --bg: #0a0e17;
   --sidebar: #0c1120;
   --panel: #121828;
@@ -24,70 +24,78 @@
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; font-size: 14px; }
+body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; }
 .app { display: flex; min-height: 100vh; }
 
-.sidebar { width: 220px; flex-shrink: 0; background: var(--sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 20px 14px; }
+/* SIDEBAR */
+.sidebar { width: 225px; flex-shrink: 0; background: var(--sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 20px 14px; }
 .brand { display: flex; align-items: center; gap: 10px; padding: 6px 6px 22px; }
-.brand .mark { width: 32px; height: 32px; border-radius: 9px; background: linear-gradient(135deg, var(--teal), #1a9d94); display: flex; align-items: center; justify-content: center; color: #06120f; font-size: 15px; }
+.brand .mark { width: 32px; height: 32px; border-radius: 9px; background: linear-gradient(135deg, var(--teal), #1a9d94); display: flex; align-items: center; justify-content: center; color: #06110f; font-size: 15px; }
 .brand span { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 16px; }
-
 .nav-group { margin-bottom: 20px; }
 .nav-label { font-size: 10px; font-weight: 700; letter-spacing: 1px; color: var(--text-faint); padding: 0 10px; margin-bottom: 8px; }
-.nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 8px; color: var(--text-dim); font-size: 13px; font-weight: 500; cursor: pointer; text-decoration: none; transition: all .15s; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 8px; color: var(--text-dim); font-size: 13px; font-weight: 500; cursor: pointer; text-decoration: none; transition: all .2s; }
 .nav-item:hover { background: rgba(255,255,255,0.04); color: var(--text); }
 .nav-item.active { background: rgba(47,212,200,0.12); color: var(--teal); }
 .nav-item i { width: 16px; text-align: center; }
-
+.nav-item .num { font-size: 10px; font-weight: 700; width: 16px; text-align: center; color: var(--text-faint); }
 .sidebar-footer { margin-top: auto; border-top: 1px solid var(--border); padding-top: 12px; display: flex; align-items: center; gap: 10px; }
-.avatar-sm { width: 32px; height: 32px; border-radius: 50%; background: var(--panel); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: var(--text-dim); }
+.avatar-sm { width: 32px; height: 32px; border-radius: 50%; background: var(--panel); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: var(--text-dim); flex-shrink: 0; }
 .user-meta { line-height: 1.3; }
 .user-meta .name { font-size: 12px; font-weight: 600; }
 .user-meta .role { font-size: 11px; color: var(--text-faint); }
+.logout-btn { background: none; border: none; color: var(--text-faint); font-size: 13px; cursor: pointer; text-decoration: none; }
+.logout-btn:hover { color: #f43f8e; }
 
+/* MAIN */
 .main { flex: 1; padding: 20px 30px; overflow-y: auto; }
 .topbar { margin-bottom: 20px; }
-.breadcrumb { font-size: 11px; color: var(--text-faint); margin-bottom: 4px; }
-.topbar h1 { font-family: 'Space Grotesk'; font-size: 24px; font-weight: 800; margin-bottom: 4px; }
+.topbar h1 { font-family: 'Space Grotesk', sans-serif; font-size: 24px; font-weight: 800; margin-bottom: 4px; }
 .subtitle { font-size: 13px; color: var(--text-dim); }
 
-.upload-section { margin-bottom: 20px; }
-.upload-panel { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
-.panel-title { font-size: 12px; font-weight: 700; color: var(--text-dim); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-.upload-zone { background: var(--panel-alt); border: 2px dashed var(--border); border-radius: 10px; padding: 30px; text-align: center; cursor: pointer; transition: all .15s; }
-.upload-zone:hover { border-color: var(--teal); background: rgba(47,212,200,0.04); }
-.upload-zone i { font-size: 28px; color: var(--text-faint); margin-bottom: 10px; display: block; }
-.upload-zone h3 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
-.upload-zone p { font-size: 12px; color: var(--text-faint); margin-bottom: 14px; }
-.btn-upload { background: linear-gradient(135deg, var(--teal), #22b3a8); color: #06120f; border: none; border-radius: 8px; padding: 10px 18px; font-size: 12px; font-weight: 700; cursor: pointer; }
-.btn-upload:hover { opacity: 0.9; }
-.upload-status { display: block; margin-top: 10px; font-size: 12px; color: var(--text-faint); }
+.content-wrapper { display: grid; grid-template-columns: 1fr 280px; gap: 20px; }
+.graph-area { display: flex; flex-direction: column; gap: 16px; }
+.panel { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+.panel-title { font-size: 12px; font-weight: 700; letter-spacing: 1px; color: var(--text-dim); margin-bottom: 12px; }
 
-.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
-.stat-card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
-.stat-value { font-family: 'Space Grotesk'; font-size: 28px; font-weight: 800; color: var(--teal); margin-bottom: 4px; }
-.stat-label { font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
-.stat-desc { font-size: 11px; color: var(--text-faint); }
+.graph-container { height: 550px; background: var(--panel-alt); border: 1px solid var(--border); border-radius: 10px; position: relative; }
+.graph-loading { text-align: center; padding: 150px 30px; color: var(--text-faint); }
+.graph-loading i { font-size: 28px; display: block; margin-bottom: 12px; }
 
-.main-area { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 20px; }
-.graph-container { width: 100%; height: 500px; background: var(--panel-alt); border: 1px solid var(--border); border-radius: 10px; }
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.stat-card { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 14px; }
+.stat-value { font-family: 'Space Grotesk', sans-serif; font-size: 24px; font-weight: 800; color: var(--teal); margin-bottom: 4px; }
+.stat-label { font-size: 12px; font-weight: 700; color: var(--text); }
+.stat-desc { font-size: 11px; color: var(--text-faint); margin-top: 2px; }
 
-.modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 1000; }
-.modal-content { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 20px; width: 90%; max-width: 500px; max-height: 80vh; overflow-y: auto; }
+.detail-panel { display: flex; flex-direction: column; gap: 14px; }
+.detail-card { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 12px; }
+.detail-label { font-size: 10px; font-weight: 700; letter-spacing: 0.5px; color: var(--text-dim); margin-bottom: 6px; }
+.detail-content { font-size: 12px; color: var(--text); line-height: 1.5; }
+
+/* MODAL */
+.modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(4px); }
+.modal.show { display: flex; }
+.modal-content { background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 24px; max-width: 600px; max-height: 80vh; overflow-y: auto; }
 .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
-.modal-header h3 { font-size: 14px; font-weight: 700; margin: 0; }
-.modal-close { cursor: pointer; color: var(--text-faint); font-size: 18px; font-weight: 700; }
+.modal-header h3 { font-size: 16px; font-weight: 700; margin: 0; }
+.modal-close { cursor: pointer; color: var(--text-faint); font-size: 20px; font-weight: 700; }
 .modal-body { display: flex; flex-direction: column; gap: 12px; }
 .modal-section { }
-.modal-section strong { display: block; margin-bottom: 6px; font-size: 12px; color: var(--text-dim); }
-.modal-section div { font-size: 12px; color: var(--text); }
+.modal-section-title { font-size: 11px; font-weight: 700; letter-spacing: 0.5px; color: var(--text-dim); margin-bottom: 6px; }
 
 footer { text-align: center; padding: 20px 0; border-top: 1px solid var(--border); color: var(--text-faint); font-size: 12px; font-style: italic; }
+
+@media (max-width: 1200px) {
+  .content-wrapper { grid-template-columns: 1fr; }
+  .detail-panel { display: grid; grid-template-columns: repeat(2, 1fr); }
+}
 </style>
 </head>
 <body>
 <div class="app">
 
+  <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="brand">
       <div class="mark"><i class="fa-solid fa-diagram-project"></i></div>
@@ -95,12 +103,28 @@ footer { text-align: center; padding: 20px 0; border-top: 1px solid var(--border
     </div>
 
     <div class="nav-group">
-      <a href="#" class="nav-item"><i class="fa-solid fa-house"></i> Dashboard</a>
+      <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-house"></i> Dashboard</a>
     </div>
 
     <div class="nav-group">
       <div class="nav-label">MÓDULOS</div>
-      <a href="#" class="nav-item active"><span class="num">01</span><i class="fa-solid fa-diagram-project"></i> Construir la Red</a>
+      <a href="modulo-01.html" class="nav-item active"><span class="num">01</span><i class="fa-solid fa-diagram-project"></i> Construir la Red</a>
+      <a href="modulo-02.html" class="nav-item"><span class="num">02</span><i class="fa-solid fa-chart-simple"></i> Medir la Red</a>
+      <a href="modulo-03.html" class="nav-item"><span class="num">03</span><i class="fa-solid fa-eye"></i> Discurso vs Realidad</a>
+      <a href="modulo-04.html" class="nav-item"><span class="num">04</span><i class="fa-solid fa-bullseye"></i> Macromodelos</a>
+      <a href="modulo-05.html" class="nav-item"><span class="num">05</span><i class="fa-solid fa-magnifying-glass"></i> Lo que no está</a>
+      <a href="modulo-06.html" class="nav-item"><span class="num">06</span><i class="fa-solid fa-earth-americas"></i> POT ↔ ODS</a>
+      <a href="modulo-07.html" class="nav-item"><span class="num">07</span><i class="fa-solid fa-flask"></i> Simulador</a>
+      <a href="modulo-08.html" class="nav-item"><span class="num">08</span><i class="fa-solid fa-city"></i> Modelo Propio</a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-label">GESTIÓN</div>
+      <a href="proyectos.html" class="nav-item"><i class="fa-solid fa-folder"></i> Proyectos</a>
+      <a href="fuentes.html" class="nav-item"><i class="fa-solid fa-file-lines"></i> Fuentes y Documentos</a>
+      <a href="favoritos.html" class="nav-item"><i class="fa-regular fa-star"></i> Favoritos</a>
+      <a href="reportes.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Reportes</a>
+      <a href="configuracion.html" class="nav-item"><i class="fa-solid fa-gear"></i> Configuración</a>
     </div>
 
     <div class="sidebar-footer">
@@ -109,34 +133,19 @@ footer { text-align: center; padding: 20px 0; border-top: 1px solid var(--border
         <div class="name">Equipo Urbano</div>
         <div class="role">Administrador</div>
       </div>
+      <a href="demo.html" class="logout-btn"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
     </div>
   </aside>
 
+  <!-- MAIN -->
   <main class="main">
 
     <div class="topbar">
-      <div class="breadcrumb">MÓDULOS / MÓDULO 01</div>
-      <h1>01. INGENIERÍA INVERSA DEL POT</h1>
-      <p class="subtitle">Reconstruye la red de relaciones del POT Bogotá Reverdece 2022-2035</p>
+      <h1>01. Construir la Red</h1>
+      <p class="subtitle">Analiza las relaciones conceptuales del POT desde Fuentes y Documentos.</p>
     </div>
 
-    <div class="upload-section">
-      <div class="upload-panel">
-        <div class="panel-title">
-          <i class="fa-solid fa-file-upload"></i>
-          Cargar datos del POT
-        </div>
-        <div class="upload-zone" id="uploadZone">
-          <input type="file" id="fileInput" accept=".xlsx,.csv,.xls" hidden>
-          <i class="fa-solid fa-cloud-arrow-up"></i>
-          <h3>Sube tu análisis del POT</h3>
-          <p>Excel con relaciones conceptuales: Red_Conceptos_POT_Bogota.xlsx</p>
-          <button class="btn-upload" id="browseBtn">📁 Seleccionar archivo</button>
-          <span class="upload-status" id="uploadStatus"></span>
-        </div>
-      </div>
-    </div>
-
+    <!-- STATS -->
     <div class="stats-grid">
       <div class="stat-card">
         <div class="stat-value" id="statConceptos">0</div>
@@ -160,139 +169,152 @@ footer { text-align: center; padding: 20px 0; border-top: 1px solid var(--border
       </div>
     </div>
 
-    <div class="main-area">
-      <div class="graph-container">
-        <div id="loadingMsg" style="text-align:center;padding:60px;color:var(--text-faint);">
-          <i class="fa-solid fa-spinner fa-spin" style="font-size:24px;margin-bottom:12px;display:block;"></i>
-          Sube un archivo Excel para comenzar el análisis
+    <!-- CONTENT -->
+    <div class="content-wrapper">
+      <div class="graph-area">
+        <div class="panel">
+          <div class="panel-title">GRAFO DE RELACIONES</div>
+          <div class="graph-container">
+            <div id="graphLoading" class="graph-loading">
+              <i class="fa-solid fa-spinner fa-spin"></i>
+              Leyendo archivos de Fuentes...
+            </div>
+            <svg id="graphSvg" style="display:none;width:100%;height:100%;"></svg>
+          </div>
         </div>
-        <svg id="graphSvg" style="display:none;width:100%;height:100%;"></svg>
+      </div>
+
+      <!-- DETAIL PANEL -->
+      <div class="detail-panel" id="detailPanel" style="display:none;">
+        <div class="detail-card">
+          <div class="detail-label">CONCEPTO</div>
+          <div class="detail-content" id="detailName">—</div>
+        </div>
+        <div class="detail-card">
+          <div class="detail-label">ESTRUCTURA</div>
+          <div class="detail-content" id="detailStruct">—</div>
+        </div>
+        <div class="detail-card">
+          <div class="detail-label">CONEXIONES → (SALIENTES)</div>
+          <div class="detail-content" id="detailOut" style="font-size:11px;line-height:1.8;">—</div>
+        </div>
+        <div class="detail-card">
+          <div class="detail-label">CONEXIONES ← (ENTRANTES)</div>
+          <div class="detail-content" id="detailIn" style="font-size:11px;line-height:1.8;">—</div>
+        </div>
       </div>
     </div>
 
     <footer>
-      <p>"Comprender la estructura relacional para detectar contradicciones." — Ingeniería Inversa del POT</p>
+      <p>"No se trata de representar la ciudad, sino de comprenderla para transformarla." — Equipo POT Reverse Engineering</p>
     </footer>
 
   </main>
 </div>
 
-<div class="modal" id="nodeModal" style="display:none;">
+<!-- MODAL POPUP -->
+<div class="modal" id="nodeModal">
   <div class="modal-content">
     <div class="modal-header">
-      <h3 id="nodeName">Concepto</h3>
-      <span class="modal-close" onclick="document.getElementById('nodeModal').style.display='none';">✕</span>
+      <h3 id="modalTitle">Concepto</h3>
+      <span class="modal-close" onclick="document.getElementById('nodeModal').classList.remove('show');">✕</span>
     </div>
     <div class="modal-body">
       <div class="modal-section">
-        <strong>Estructura:</strong>
-        <div id="nodeStructure">—</div>
+        <div class="modal-section-title">Estructura</div>
+        <div id="modalStruct">—</div>
       </div>
       <div class="modal-section">
-        <strong>Conexiones (→):</strong>
-        <div id="nodeOutgoing">—</div>
+        <div class="modal-section-title">Conexiones Salientes (→)</div>
+        <div id="modalOutgoing" style="font-size:12px;line-height:1.8;">—</div>
       </div>
       <div class="modal-section">
-        <strong>Conexiones (←):</strong>
-        <div id="nodeIncoming">—</div>
+        <div class="modal-section-title">Conexiones Entrantes (←)</div>
+        <div id="modalIncoming" style="font-size:12px;line-height:1.8;">—</div>
+      </div>
+      <div class="modal-section">
+        <div class="modal-section-title">Justificación / Sustento</div>
+        <div id="modalJustif" style="font-size:12px;line-height:1.6;color:#2fd4c8;">—</div>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-console.log('✓ HTML + CSS + JS COMPLETO cargado');
+console.log('✓ Módulo 01 iniciando...');
 
 let graphData = { nodes: [], links: [] };
 
-const uploadZone = document.getElementById('uploadZone');
-const fileInput = document.getElementById('fileInput');
-const browseBtn = document.getElementById('browseBtn');
-const uploadStatus = document.getElementById('uploadStatus');
+// Leer archivos de localStorage (desde Fuentes y Documentos)
+function getExcelFiles() {
+  const files = JSON.parse(localStorage.getItem('rapot_fuentes') || '[]');
+  console.log('📄 Archivos en localStorage:', files.length);
+  return files.filter(f => f.name.endsWith('.xlsx') || f.name.endsWith('.xls'));
+}
 
-console.log('✓ Elementos encontrados');
-
-browseBtn.addEventListener('click', (e) => {
-  console.log('✓ Botón clickeado');
-  e.preventDefault();
-  fileInput.click();
-});
-
-uploadZone.addEventListener('dragover', (e) => {
-  e.preventDefault();
-  uploadZone.style.borderColor = '#2fd4c8';
-});
-
-uploadZone.addEventListener('dragleave', () => {
-  uploadZone.style.borderColor = 'rgba(255,255,255,0.08)';
-});
-
-uploadZone.addEventListener('drop', (e) => {
-  e.preventDefault();
-  if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
-});
-
-fileInput.addEventListener('change', (e) => {
-  if (e.target.files[0]) handleFile(e.target.files[0]);
-});
-
-async function handleFile(file) {
-  console.log('📄 Archivo:', file.name);
-  uploadStatus.textContent = '⏳ Leyendo...';
-  
+async function loadGraphFromExcel() {
   try {
-    const arrayBuffer = await file.arrayBuffer();
-    const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+    const excelFiles = getExcelFiles();
+    
+    if (excelFiles.length === 0) {
+      console.log('⚠ Sin archivos Excel en Fuentes. Mostrando ejemplo...');
+      loadExampleGraph();
+      return;
+    }
+
+    const file = excelFiles[0]; // tomar el primer Excel
+    console.log('✓ Leyendo:', file.name);
+    
+    // Convertir data de vuelta a Uint8Array
+    const array = new Uint8Array(file.data);
+    const workbook = XLSX.read(array, { type: 'array' });
+    
     console.log('✓ Hojas:', workbook.SheetNames);
     
     let allRows = [];
-    for (const sheetName of workbook.SheetNames) {
-      if (['EEP', 'EFC', 'ESECI', 'EIP'].includes(sheetName)) {
+    const sheetNames = ['EEP', 'EFC', 'ESECI', 'EIP'];
+    
+    for (const sheetName of sheetNames) {
+      if (workbook.SheetNames.includes(sheetName)) {
         const sheet = workbook.Sheets[sheetName];
         const rows = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+        
+        // Filtrar filas válidas
         const validRows = rows.filter(r => r['Concepto Origen'] && r['Concepto Relacionado']);
         console.log(`  ${sheetName}: ${validRows.length} relaciones`);
+        
         allRows = allRows.concat(validRows);
       }
     }
     
-    console.log('✓ Total:', allRows.length);
-    
-    if (allRows.length === 0) {
-      uploadStatus.textContent = '❌ Sin relaciones válidas';
-      return;
+    if (allRows.length > 0) {
+      console.log('✓ Total relaciones:', allRows.length);
+      buildAndRenderGraph(allRows);
+    } else {
+      console.log('⚠ Sin relaciones válidas. Mostrando ejemplo...');
+      loadExampleGraph();
     }
     
-    const graph = buildGraph(allRows);
-    console.log('✓ Grafo:', graph.nodes.length, 'nodos,', graph.links.length, 'relaciones');
-    
-    document.getElementById('statConceptos').textContent = graph.nodes.length;
-    document.getElementById('statRelaciones').textContent = graph.links.length;
-    document.getElementById('statEstructuras').textContent = graph.estructuras;
-    document.getElementById('statDensidad').textContent = (graph.links.length / (graph.nodes.length * (graph.nodes.length - 1))).toFixed(2);
-    
-    renderGraph(graph);
-    uploadStatus.textContent = `✓ ${graph.nodes.length} conceptos, ${graph.links.length} relaciones cargadas`;
-    
   } catch (error) {
-    console.error('❌ Error:', error);
-    uploadStatus.textContent = '❌ ' + error.message;
+    console.error('❌ Error leyendo Excel:', error);
+    loadExampleGraph();
   }
 }
 
-function buildGraph(rows) {
+function buildAndRenderGraph(rows) {
   const nodeMap = new Map();
   const links = [];
-  const estructuras = new Set();
-  
+  const structures = new Set();
+
   rows.forEach(row => {
     const origenName = row['Concepto Origen'];
     const destName = row['Concepto Relacionado'];
     if (!origenName || !destName) return;
-    
+
     const origenKey = origenName.toLowerCase().trim();
     const destKey = destName.toLowerCase().trim();
-    
+
+    // Asegurar nodos
     if (!nodeMap.has(origenKey)) {
       nodeMap.set(origenKey, {
         id: origenKey,
@@ -302,7 +324,7 @@ function buildGraph(rows) {
         out: 0
       });
     }
-    
+
     if (!nodeMap.has(destKey)) {
       nodeMap.set(destKey, {
         id: destKey,
@@ -312,51 +334,82 @@ function buildGraph(rows) {
         out: 0
       });
     }
-    
+
     const origen = nodeMap.get(origenKey);
     const dest = nodeMap.get(destKey);
-    
+
     origen.out++;
     dest.in++;
-    
-    if (origen.estructura !== '—') estructuras.add(origen.estructura);
-    if (dest.estructura !== '—') estructuras.add(dest.estructura);
-    
+
+    structures.add(origen.estructura);
+    structures.add(dest.estructura);
+
     links.push({
       source: origen.id,
       target: dest.id,
       tipo: (row['Tipo de Relación'] || 'Directa').toLowerCase(),
-      sustento: row['Sustento (según el POT)'] || '—'
+      sustento: row['Sustento (según el POT)'] || '—',
+      page: row['Página POT'] || '—',
+      sourceName: origen.name,
+      targetName: dest.name
     });
   });
-  
-  return {
+
+  graphData = {
     nodes: Array.from(nodeMap.values()),
     links: links,
-    estructuras: estructuras.size
+    structures: Array.from(structures)
   };
+
+  updateStats();
+  renderGraph();
 }
 
-function renderGraph(graph) {
-  console.log('📊 Renderizando...');
+function loadExampleGraph() {
+  // Datos de ejemplo
+  const exampleRows = [
+    { 'Concepto Origen': 'Quebradas', 'Estructura Origen': 'EEP', 'Concepto Relacionado': 'Ríos', 'Estructura Relacionada': 'EEP', 'Tipo de Relación': 'Directa', 'Página POT': 'p. 51', 'Sustento (según el POT)': 'El agua llega a Bogotá por escorrentías, quebradas y ríos.' },
+    { 'Concepto Origen': 'Ríos', 'Estructura Origen': 'EEP', 'Concepto Relacionado': 'Humedales', 'Estructura Relacionada': 'EEP', 'Tipo de Relación': 'Directa', 'Página POT': 'p. 51', 'Sustento (según el POT)': 'Los humedales son ecosistemas clave para adaptación climática.' },
+    { 'Concepto Origen': 'Humedales', 'Estructura Origen': 'EEP', 'Concepto Relacionado': 'Áreas protegidas', 'Estructura Relacionada': 'EEP', 'Tipo de Relación': 'Soporte', 'Página POT': 'p. 54', 'Sustento (según el POT)': 'El POT amplía humedales como reservas protegidas.' },
+    { 'Concepto Origen': 'Vivienda', 'Estructura Origen': 'EFC', 'Concepto Relacionado': 'Equipamientos', 'Estructura Relacionada': 'EFC', 'Tipo de Relación': 'Soporte', 'Página POT': 'p. 29', 'Sustento (según el POT)': 'Vivienda con soportes urbanos de calidad.' }
+  ];
+
+  buildAndRenderGraph(exampleRows);
+}
+
+function updateStats() {
+  document.getElementById('statConceptos').textContent = graphData.nodes.length;
+  document.getElementById('statRelaciones').textContent = graphData.links.length;
+  document.getElementById('statEstructuras').textContent = graphData.structures.length;
   
+  const density = graphData.nodes.length > 1 
+    ? (graphData.links.length / (graphData.nodes.length * (graphData.nodes.length - 1))).toFixed(3)
+    : '0.000';
+  document.getElementById('statDensidad').textContent = density;
+}
+
+function renderGraph() {
+  console.log('📊 Renderizando grafo:', graphData.nodes.length, 'nodos,', graphData.links.length, 'links');
+
   const svg = d3.select('#graphSvg');
-  document.getElementById('loadingMsg').style.display = 'none';
+  document.getElementById('graphLoading').style.display = 'none';
   svg.style('display', 'block');
   svg.selectAll('*').remove();
-  
+
   const width = svg.node().parentElement.clientWidth;
   const height = svg.node().parentElement.clientHeight;
-  
+
   svg.attr('viewBox', `0 0 ${width} ${height}`);
   const container = svg.append('g');
-  
+
+  // ZOOM
   svg.call(d3.zoom().scaleExtent([0.5, 4]).on('zoom', (e) => {
     container.attr('transform', e.transform);
   }));
-  
-  const links = container.append('g').selectAll('line')
-    .data(graph.links)
+
+  // LINKS
+  const linksSel = container.append('g').selectAll('line')
+    .data(graphData.links)
     .enter()
     .append('line')
     .attr('stroke', d => {
@@ -366,101 +419,101 @@ function renderGraph(graph) {
       return '#b06bf7';
     })
     .attr('stroke-width', 2)
-    .attr('opacity', 0.6);
-  
-  const nodes = container.append('g').selectAll('g')
-    .data(graph.nodes)
+    .attr('opacity', 0.6)
+    .attr('stroke-dasharray', d => d.tipo === 'indirecta' ? '5,5' : 'none');
+
+  // NODES
+  const nodesSel = container.append('g').selectAll('g')
+    .data(graphData.nodes)
     .enter()
     .append('g')
     .call(d3.drag()
-      .on('start', dragStarted)
-      .on('drag', dragged)
-      .on('end', dragEnded)
+      .on('start', (e, d) => { if (!e.active) sim.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; })
+      .on('drag', (e, d) => { d.fx = e.x; d.fy = e.y; })
+      .on('end', (e, d) => { if (!e.active) sim.alphaTarget(0); d.fx = null; d.fy = null; })
     );
-  
-  nodes.append('circle')
-    .attr('r', d => 8 + (d.in + d.out) * 0.8)
-    .attr('fill', '#34d399')
+
+  nodesSel.append('circle')
+    .attr('r', d => 10 + (d.in + d.out) * 1.2)
+    .attr('fill', d => {
+      if (d.estructura === 'EEP') return '#34d399';
+      if (d.estructura === 'EFC') return '#3b82f6';
+      if (d.estructura === 'ESECI') return '#ef9552';
+      if (d.estructura === 'EIP') return '#b06bf7';
+      return '#6b7284';
+    })
     .attr('stroke', '#0a0e17')
-    .attr('stroke-width', 2)
+    .attr('stroke-width', 2.5)
     .style('cursor', 'pointer')
-    .on('click', (e, d) => showNodeInfo(d, graph));
-  
-  nodes.append('text')
+    .on('click', (e, d) => showNodeModal(d));
+
+  nodesSel.append('text')
     .attr('text-anchor', 'middle')
     .attr('dy', '0.3em')
     .attr('font-size', '10px')
     .attr('fill', '#eef0f6')
     .attr('pointer-events', 'none')
-    .text(d => d.name.length > 12 ? d.name.slice(0, 10) + '…' : d.name);
-  
-  const simulation = d3.forceSimulation(graph.nodes)
-    .force('link', d3.forceLink(graph.links)
-      .id(d => d.id)
-      .distance(80)
-      .strength(0.3)
-    )
+    .text(d => d.name.length > 14 ? d.name.slice(0, 11) + '…' : d.name);
+
+  // SIMULATION
+  const sim = d3.forceSimulation(graphData.nodes)
+    .force('link', d3.forceLink(graphData.links).id(d => d.id).distance(100).strength(0.3))
     .force('charge', d3.forceManyBody().strength(-300))
     .force('center', d3.forceCenter(width / 2, height / 2))
-    .force('collide', d3.forceCollide().radius(30));
-  
-  simulation.on('tick', () => {
-    links
+    .force('collide', d3.forceCollide().radius(35));
+
+  sim.on('tick', () => {
+    linksSel
       .attr('x1', d => d.source.x)
       .attr('y1', d => d.source.y)
       .attr('x2', d => d.target.x)
       .attr('y2', d => d.target.y);
-    
-    nodes.attr('transform', d => `translate(${d.x},${d.y})`);
+
+    nodesSel.attr('transform', d => `translate(${d.x},${d.y})`);
   });
-  
-  function dragStarted(event, d) {
-    if (!event.active) simulation.alphaTarget(0.3).restart();
-    d.fx = d.x;
-    d.fy = d.y;
-  }
-  
-  function dragged(event, d) {
-    d.fx = event.x;
-    d.fy = event.y;
-  }
-  
-  function dragEnded(event, d) {
-    if (!event.active) simulation.alphaTarget(0);
-    d.fx = null;
-    d.fy = null;
-  }
-  
+
   console.log('✓ Grafo renderizado');
 }
 
-function showNodeInfo(node, graph) {
-  console.log('ℹ Nodo:', node.name);
-  
-  const outgoing = graph.links.filter(l => l.source === node);
-  const incoming = graph.links.filter(l => l.target === node);
-  
-  document.getElementById('nodeName').textContent = node.name;
-  document.getElementById('nodeStructure').textContent = node.estructura;
-  
-  document.getElementById('nodeOutgoing').innerHTML = outgoing.length > 0
-    ? outgoing.map(l => `<div>→ ${l.target.name}</div>`).join('')
-    : '<div style="color:#6b7284;">Sin conexiones</div>';
-  
-  document.getElementById('nodeIncoming').innerHTML = incoming.length > 0
-    ? incoming.map(l => `<div>← ${l.source.name}</div>`).join('')
-    : '<div style="color:#6b7284;">Sin conexiones</div>';
-  
-  document.getElementById('nodeModal').style.display = 'flex';
+function showNodeModal(node) {
+  console.log('ℹ Nodo clickeado:', node.name);
+
+  const outgoing = graphData.links.filter(l => l.source === node);
+  const incoming = graphData.links.filter(l => l.target === node);
+
+  document.getElementById('modalTitle').textContent = node.name;
+  document.getElementById('modalStruct').textContent = node.estructura;
+
+  document.getElementById('modalOutgoing').innerHTML = outgoing.length > 0
+    ? outgoing.map(l => `<div>→ <strong>${l.targetName}</strong> <span style="font-size:10px;color:var(--text-faint);">[${l.tipo}]</span></div>`).join('')
+    : '<span style="color:var(--text-faint);">Sin conexiones</span>';
+
+  document.getElementById('modalIncoming').innerHTML = incoming.length > 0
+    ? incoming.map(l => `<div>← <strong>${l.sourceName}</strong> <span style="font-size:10px;color:var(--text-faint);">[${l.tipo}]</span></div>`).join('')
+    : '<span style="color:var(--text-faint);">Sin conexiones</span>';
+
+  const allSustento = [...outgoing, ...incoming].map(l => l.sustento).filter(s => s !== '—');
+  document.getElementById('modalJustif').innerHTML = allSustento.length > 0
+    ? allSustento.map(s => `<div style="padding:6px;background:rgba(47,212,200,0.1);border-radius:4px;margin-bottom:6px;">«${s}»</div>`).join('')
+    : '<span style="color:var(--text-faint);">Sin justificaciones documentadas</span>';
+
+  document.getElementById('nodeModal').classList.add('show');
 }
 
+// Cerrar modal
 document.getElementById('nodeModal').addEventListener('click', (e) => {
   if (e.target === document.getElementById('nodeModal')) {
-    document.getElementById('nodeModal').style.display = 'none';
+    document.getElementById('nodeModal').classList.remove('show');
   }
 });
 
-console.log('✓ TODO LISTO - Clickea el botón para empezar');
+// Iniciar
+window.addEventListener('load', () => {
+  console.log('✓ Página cargada');
+  loadGraphFromExcel();
+});
+
+console.log('✓ Módulo 01 listo');
 </script>
 
 </body>
