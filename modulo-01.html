@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAPOT · 01 Construir la Red</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="modulo-01.css">
+</head>
+<body>
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="mark"><i class="fa-solid fa-diagram-project"></i></div>
+      <span>RAPOT</span>
+    </div>
+
+    <div class="nav-group">
+      <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-house"></i> Dashboard</a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-label">MÓDULOS</div>
+      <a href="modulo-01.html" class="nav-item active"><span class="num">01</span><i class="fa-solid fa-diagram-project"></i> Construir la Red</a>
+      <a href="modulo-02.html" class="nav-item"><span class="num">02</span><i class="fa-solid fa-chart-simple"></i> Medir la Red</a>
+      <a href="modulo-03.html" class="nav-item"><span class="num">03</span><i class="fa-solid fa-eye"></i> Discurso vs Realidad</a>
+      <a href="modulo-04.html" class="nav-item"><span class="num">04</span><i class="fa-solid fa-bullseye"></i> Macromodelos</a>
+      <a href="modulo-05.html" class="nav-item"><span class="num">05</span><i class="fa-solid fa-magnifying-glass"></i> Lo que no está</a>
+      <a href="modulo-06.html" class="nav-item"><span class="num">06</span><i class="fa-solid fa-earth-americas"></i> POT ↔ ODS</a>
+      <a href="modulo-07.html" class="nav-item"><span class="num">07</span><i class="fa-solid fa-flask"></i> Simulador</a>
+      <a href="modulo-08.html" class="nav-item"><span class="num">08</span><i class="fa-solid fa-city"></i> Modelo Propio</a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-label">GESTIÓN</div>
+      <a href="proyectos.html" class="nav-item"><i class="fa-solid fa-folder"></i> Proyectos</a>
+      <a href="fuentes.html" class="nav-item"><i class="fa-solid fa-file-lines"></i> Fuentes y Documentos</a>
+      <a href="favoritos.html" class="nav-item"><i class="fa-regular fa-star"></i> Favoritos</a>
+      <a href="reportes.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Reportes</a>
+      <a href="configuracion.html" class="nav-item"><i class="fa-solid fa-gear"></i> Configuración</a>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="avatar-sm">EU</div>
+      <div class="user-meta">
+        <div class="name">Equipo Urbano</div>
+        <div class="role">Administrador</div>
+      </div>
+      <a href="demo.html" class="logout-btn" title="Cerrar sesión"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <div class="topbar">
+      <div class="breadcrumb">MÓDULOS / MÓDULO 01</div>
+      <div class="topbar-actions">
+        <div class="search-box"><i class="fa-solid fa-magnifying-glass"></i> Buscar en el sistema...</div>
+        <div class="icon-btn"><i class="fa-regular fa-bell"></i><span class="dot"></span></div>
+        <div class="icon-btn"><i class="fa-regular fa-circle-question"></i></div>
+        <div class="avatar-sm">EU</div>
+      </div>
+    </div>
+
+    <div class="page-head">
+      <div>
+        <h1>01. CONSTRUIR LA RED</h1>
+        <p>Crea la red de conceptos y relaciones del POT a partir de fuentes oficiales.</p>
+      </div>
+      <button class="btn-outline" id="downloadTemplate"><i class="fa-solid fa-download"></i> Descargar plantilla</button>
+    </div>
+
+    <!-- STEPPER -->
+    <div class="stepper">
+      <div class="step active" data-step="1">
+        <div class="step-num">1</div>
+        <div class="step-text">
+          <strong>Cargar datos</strong>
+          <span>Importa tus fuentes de información</span>
+        </div>
+      </div>
+      <i class="fa-solid fa-chevron-right step-arrow"></i>
+      <div class="step" data-step="2">
+        <div class="step-num">2</div>
+        <div class="step-text">
+          <strong>Identificar relaciones</strong>
+          <span>Encuentra vínculos entre conceptos</span>
+        </div>
+      </div>
+      <i class="fa-solid fa-chevron-right step-arrow"></i>
+      <div class="step" data-step="3">
+        <div class="step-num">3</div>
+        <div class="step-text">
+          <strong>Clasificar y justificar</strong>
+          <span>Define el tipo de relación y su justificación</span>
+        </div>
+      </div>
+      <i class="fa-solid fa-chevron-right step-arrow"></i>
+      <div class="step" data-step="4">
+        <div class="step-num">4</div>
+        <div class="step-text">
+          <strong>Generar red</strong>
+          <span>Visualiza y exporta tu red de conocimiento</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- STAT CARDS -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-top">
+          <span class="stat-val" id="statConceptos">0</span>
+          <i class="fa-solid fa-diagram-project stat-icon teal"></i>
+        </div>
+        <div class="stat-lbl">Conceptos</div>
+        <div class="stat-sub" id="statConceptosSub">Sube tu archivo para empezar</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-top">
+          <span class="stat-val" id="statRelaciones">0</span>
+          <i class="fa-solid fa-share-nodes stat-icon blue"></i>
+        </div>
+        <div class="stat-lbl">Relaciones</div>
+        <div class="stat-sub" id="statRelacionesSub">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-top">
+          <span class="stat-val" id="statFuentes">0</span>
+          <i class="fa-solid fa-file-lines stat-icon orange"></i>
+        </div>
+        <div class="stat-lbl">Fuentes</div>
+        <div class="stat-sub" id="statFuentesSub">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-top">
+          <span class="stat-val" id="statTipos">0</span>
+          <i class="fa-solid fa-diagram-project stat-icon purple"></i>
+        </div>
+        <div class="stat-lbl">Tipos de relación</div>
+        <div class="stat-sub" id="statTiposSub">Directa, Indirecta, Soporte...</div>
+      </div>
+    </div>
+
+    <!-- MAIN GRID: network + detail panel -->
+    <div class="network-row">
+
+      <div class="panel network-panel">
+        <div class="panel-head">
+          <h4>VISTA DE LA RED</h4>
+          <div class="panel-head-actions">
+            <button class="chip-btn"><i class="fa-solid fa-filter"></i> Filtros</button>
+            <button class="icon-mini" id="resetZoom" title="Restablecer vista"><i class="fa-solid fa-arrows-rotate"></i></button>
+          </div>
+        </div>
+
+        <div class="tabs">
+          <div class="tab active" data-tab="todas">Todas</div>
+          <div class="tab" data-tab="conceptos">Conceptos</div>
+          <div class="tab" data-tab="relaciones">Relaciones</div>
+        </div>
+
+        <div class="network-body">
+
+          <!-- side legend -->
+          <div class="legend-col">
+            <div class="legend-block">
+              <div class="legend-title">TIPOS DE RELACIÓN</div>
+              <div class="legend-row"><span class="lg-line directa"></span> Directa</div>
+              <div class="legend-row"><span class="lg-line indirecta"></span> Indirecta</div>
+              <div class="legend-row"><span class="lg-line soporte"></span> Soporte</div>
+              <div class="legend-row"><span class="lg-line resiliencia"></span> Resiliencia</div>
+              <div class="legend-row"><span class="lg-line otra"></span> Otra</div>
+            </div>
+            <div class="legend-block">
+              <div class="legend-title">ESTRUCTURAS</div>
+              <div class="legend-row"><span class="lg-dot" style="background:#34d399"></span> EEP - Ecológica <b id="cnt-eep">0</b></div>
+              <div class="legend-row"><span class="lg-dot" style="background:#3b82f6"></span> EFS - Funcional <b id="cnt-efs">0</b></div>
+              <div class="legend-row"><span class="lg-dot" style="background:#ef9552"></span> ESE - Socioeconómica <b id="cnt-ese">0</b></div>
+              <div class="legend-row"><span class="lg-dot" style="background:#b06bf7"></span> EAG - Administrativa <b id="cnt-eag">0</b></div>
+              <div class="legend-row"><span class="lg-dot" style="background:#6b7284"></span> Otras <b id="cnt-otras">0</b></div>
+            </div>
+          </div>
+
+          <!-- graph / upload area -->
+          <div class="graph-area" id="graphArea">
+
+            <div class="upload-zone" id="uploadZone">
+              <input type="file" id="fileInput" accept=".csv,.xlsx,.xls" hidden>
+              <i class="fa-solid fa-file-arrow-up upload-icon"></i>
+              <h3>Sube tu archivo de conceptos y relaciones</h3>
+              <p>Arrastra aquí tu Excel o CSV, o haz clic para seleccionarlo.<br>
+              Columnas esperadas: <code>Concepto, Estructura, Fuente, Concepto relacionado, Tipo de relación, Justificación</code></p>
+              <button class="btn-primary-sm" id="browseBtn">Seleccionar archivo</button>
+              <span class="upload-status" id="uploadStatus"></span>
+            </div>
+
+            <svg id="graphSvg" class="graph-svg" style="display:none;"></svg>
+          </div>
+
+          <!-- detail panel -->
+          <div class="detail-panel" id="detailPanel" style="display:none;">
+            <div class="detail-head">
+              <h4>DETALLE DEL CONCEPTO</h4>
+              <i class="fa-solid fa-xmark" id="closeDetail"></i>
+            </div>
+            <div class="detail-id">
+              <div class="detail-icon" id="detailIcon"><i class="fa-solid fa-circle-nodes"></i></div>
+              <div>
+                <div class="detail-name" id="detailName">—</div>
+                <div class="detail-tag" id="detailTag">—</div>
+              </div>
+            </div>
+            <div class="detail-section">
+              <div class="detail-label">Estadísticas</div>
+              <div class="detail-row"><span>Relaciones salientes</span><b id="detailOut">0</b></div>
+              <div class="detail-row"><span>Relaciones entrantes</span><b id="detailIn">0</b></div>
+              <div class="detail-row"><span>Total conexiones</span><b id="detailTotal">0</b></div>
+            </div>
+            <div class="detail-section">
+              <div class="detail-label">Fuentes relacionadas</div>
+              <div id="detailFuentes" class="detail-fuentes">—</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTTOM ROW: charts -->
+    <div class="bottom-row" id="bottomRow" style="display:none;">
+
+      <div class="panel">
+        <div class="panel-head"><h4>DISTRIBUCIÓN DE RELACIONES</h4></div>
+        <div class="donut-wrap">
+          <svg id="donutSvg" viewBox="0 0 180 180" class="donut-svg"></svg>
+          <div class="donut-legend" id="donutLegend"></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><h4>DENSIDAD DE LA RED</h4></div>
+        <div class="density-val" id="densityVal">0.00</div>
+        <div class="density-lbl" id="densityLbl">Densidad media</div>
+        <p class="density-desc" id="densityDesc">La red tiene una conectividad moderada.</p>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><h4>CENTRALIDAD DE CONCEPTOS</h4></div>
+        <div class="centrality-list" id="centralityList"></div>
+      </div>
+
+    </div>
+
+    <div class="ai-tip">
+      <i class="fa-solid fa-wand-magic-sparkles"></i>
+      <span id="aiTipText">Consejo IA: sube tu archivo para que el sistema revise relaciones con baja justificación o indirectas.</span>
+    </div>
+
+  </main>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script src="modulo-01.js"></script>
+</body>
+</html>
