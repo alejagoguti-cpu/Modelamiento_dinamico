@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Pantalla Demo</title>
+</head>
+<body>
+  <h1>Bienvenido a la demostración 🚀</h1>
+  <p>Esta es la nueva página que se abre desde el botón.</p>
+</body>
+</html>
