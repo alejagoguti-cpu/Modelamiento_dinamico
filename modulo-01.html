@@ -7,12 +7,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="configuracion.css">
 <link rel="stylesheet" href="modulo-01.css">
 </head>
 <body>
 <div class="app">
 
-  <!-- SIDEBAR -->
+  <!-- SIDEBAR (tu estructura existente) -->
   <aside class="sidebar">
     <div class="brand">
       <div class="mark"><i class="fa-solid fa-diagram-project"></i></div>
@@ -57,6 +58,7 @@
   <!-- MAIN -->
   <main class="main">
 
+    <!-- TOPBAR (tu estructura existente) -->
     <div class="topbar">
       <div class="breadcrumb">MÓDULOS / MÓDULO 01</div>
       <div class="topbar-actions">
@@ -67,6 +69,7 @@
       </div>
     </div>
 
+    <!-- PAGE HEAD -->
     <div class="page-head">
       <div>
         <h1>01. CONSTRUIR LA RED</h1>
@@ -146,9 +149,8 @@
       </div>
     </div>
 
-    <!-- MAIN GRID: network + detail panel -->
+    <!-- NETWORK PANEL -->
     <div class="network-row">
-
       <div class="panel network-panel">
         <div class="panel-head">
           <h4>VISTA DE LA RED</h4>
@@ -166,7 +168,7 @@
 
         <div class="network-body">
 
-          <!-- side legend -->
+          <!-- LEGEND -->
           <div class="legend-col">
             <div class="legend-block">
               <div class="legend-title">TIPOS DE RELACIÓN</div>
@@ -186,9 +188,8 @@
             </div>
           </div>
 
-          <!-- graph / upload area -->
+          <!-- GRAPH AREA -->
           <div class="graph-area" id="graphArea">
-
             <div class="upload-zone" id="uploadZone">
               <input type="file" id="fileInput" accept=".csv,.xlsx,.xls" hidden>
               <i class="fa-solid fa-file-arrow-up upload-icon"></i>
@@ -198,11 +199,10 @@
               <button class="btn-primary-sm" id="browseBtn">Seleccionar archivo</button>
               <span class="upload-status" id="uploadStatus"></span>
             </div>
-
             <svg id="graphSvg" class="graph-svg" style="display:none;"></svg>
           </div>
 
-          <!-- detail panel -->
+          <!-- DETAIL PANEL -->
           <div class="detail-panel" id="detailPanel" style="display:none;">
             <div class="detail-head">
               <h4>DETALLE DEL CONCEPTO</h4>
@@ -231,7 +231,7 @@
       </div>
     </div>
 
-    <!-- BOTTOM ROW: charts -->
+    <!-- BOTTOM ROW: ANALYTICS -->
     <div class="bottom-row" id="bottomRow" style="display:none;">
 
       <div class="panel">
@@ -256,6 +256,7 @@
 
     </div>
 
+    <!-- AI TIP -->
     <div class="ai-tip">
       <i class="fa-solid fa-wand-magic-sparkles"></i>
       <span id="aiTipText">Consejo IA: sube tu archivo para que el sistema revise relaciones con baja justificación o indirectas.</span>
@@ -264,8 +265,9 @@
   </main>
 </div>
 
+<!-- SCRIPTS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
-<script src="modulo-01.js"></script>
+<script src="modulo-01-mejorado.js"></script>
 </body>
 </html>
