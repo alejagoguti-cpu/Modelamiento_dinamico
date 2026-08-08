@@ -1,4 +1,4 @@
-console.log('✓ Módulo 01 JS iniciando...');
+console.log('✓ Módulo 01 iniciando...');
 
 let graphData = { nodes: [], links: [], structures: {} };
 let currentView = 'overview';
@@ -12,36 +12,51 @@ const structures = {
 };
 
 function loadGraph() {
+  console.log('📂 Buscando archivos en localStorage...');
+  
   try {
+    // Leer archivos de Fuentes y Documentos desde localStorage
     const files = JSON.parse(localStorage.getItem('rapot_fuentes') || '[]');
-    const excelFiles = files.filter(f => f.name.endsWith('.xlsx') || f.name.endsWith('.xls'));
+    console.log('Archivos encontrados:', files.length);
     
-    if (excelFiles.length === 0) {
-      console.log('Sin Excel, mostrando ejemplo...');
-      loadExample();
+    // Buscar archivo Excel
+    const excelFile = files.find(f => 
+      f.name.includes('Red_Conceptos') && (f.name.endsWith('.xlsx') || f.name.endsWith('.xls'))
+    );
+    
+    if (!excelFile) {
+      console.log('⚠ No hay Excel "Red_Conceptos_POT_Bogota.xlsx" en Fuentes');
+      showMessage('Sube el Excel a Fuentes y Documentos primero');
       return;
     }
 
-    const file = excelFiles[0];
-    const array = new Uint8Array(file.data);
+    console.log('✓ Archivo encontrado:', excelFile.name);
+    
+    // Convertir data a Uint8Array
+    const array = new Uint8Array(excelFile.data);
     const workbook = XLSX.read(array, { type: 'array' });
     
-    console.log('Hojas encontradas:', workbook.SheetNames);
+    console.log('✓ Hojas en Excel:', workbook.SheetNames);
     
-    let allRows = [];
     const structData = {};
     ['EEP', 'EFC', 'ESECI', 'EIP'].forEach(s => structData[s] = { nodes: new Map(), links: [] });
 
+    let totalLinks = 0;
+
     // Leer cada hoja
     for (const sheetName of ['EEP', 'EFC', 'ESECI', 'EIP']) {
-      if (!workbook.SheetNames.includes(sheetName)) continue;
+      if (!workbook.SheetNames.includes(sheetName)) {
+        console.log(`⚠ Hoja ${sheetName} no encontrada`);
+        continue;
+      }
       
       const sheet = workbook.Sheets[sheetName];
       const rows = XLSX.utils.sheet_to_json(sheet, { defval: '' });
       
-      console.log(`📄 Hoja ${sheetName}: ${rows.length} filas`);
+      console.log(`📄 ${sheetName}: ${rows.length} filas`);
       
       rows.forEach(row => {
+        // Validar que tenga los campos principales
         if (!row['Concepto Origen'] || !row['Concepto Relacionado']) return;
         
         const origen = row['Concepto Origen'];
@@ -84,71 +99,38 @@ function loadGraph() {
           targetName: destino
         });
 
-        allRows.push(row);
+        totalLinks++;
       });
     }
 
     graphData.structures = structData;
 
-    // Stats
+    // Actualizar stats
     const totalNodes = Object.values(structData).reduce((sum, s) => sum + s.nodes.size, 0);
     document.getElementById('statConceptos').textContent = totalNodes;
-    document.getElementById('statRelaciones').textContent = allRows.length;
+    document.getElementById('statRelaciones').textContent = totalLinks;
     document.getElementById('statFuentes').textContent = 4;
-    document.getElementById('statTipos').textContent = new Set(allRows.map(r => r['Tipo de Relación'])).size;
+    document.getElementById('statTipos').textContent = 4;
 
+    console.log(`✓ Grafo construido: ${totalNodes} conceptos, ${totalLinks} relaciones`);
+    
     renderOverview();
 
   } catch (error) {
-    console.error('Error:', error);
-    loadExample();
+    console.error('❌ Error:', error);
+    showMessage('Error al leer el Excel. Verifica que esté en Fuentes y Documentos');
   }
 }
 
-function loadExample() {
-  const exampleRows = [
-    { 'Concepto Origen': 'Humedales', 'Estructura Origen': 'EEP', 'Concepto Relacionado': 'Ríos', 'Estructura Relacionada': 'EEP', 'Tipo de Relación': 'Directa', 'Página POT': 'p. 51', 'Sustento (según el POT)': 'El agua llega a Bogotá por escorrentías, quebradas y ríos.' },
-    { 'Concepto Origen': 'Ríos', 'Estructura Origen': 'EEP', 'Concepto Relacionado': 'Áreas protegidas', 'Estructura Relacionada': 'EEP', 'Tipo de Relación': 'Soporte', 'Página POT': 'p. 51', 'Sustento (según el POT)': 'Los ríos alimentan áreas protegidas.' }
-  ];
-
-  const structData = {};
-  ['EEP', 'EFC', 'ESECI', 'EIP'].forEach(s => structData[s] = { nodes: new Map(), links: [] });
-
-  exampleRows.forEach(row => {
-    const sheetName = 'EEP';
-    const origen = row['Concepto Origen'];
-    const destino = row['Concepto Relacionado'];
-
-    if (!structData[sheetName].nodes.has(origen)) {
-      structData[sheetName].nodes.set(origen, { name: origen, estructura: sheetName, in: 0, out: 0 });
-    }
-    if (!structData[sheetName].nodes.has(destino)) {
-      structData[sheetName].nodes.set(destino, { name: destino, estructura: sheetName, in: 0, out: 0 });
-    }
-
-    structData[sheetName].links.push({
-      source: origen,
-      target: destino,
-      tipo: row['Tipo de Relación'].toLowerCase(),
-      sustento: row['Sustento (según el POT)'],
-      page: row['Página POT'],
-      sourceName: origen,
-      targetName: destino
-    });
-  });
-
-  graphData.structures = structData;
-
-  document.getElementById('statConceptos').textContent = 2;
-  document.getElementById('statRelaciones').textContent = 2;
-  document.getElementById('statFuentes').textContent = 4;
-  document.getElementById('statTipos').textContent = 2;
-
-  renderOverview();
+function showMessage(msg) {
+  document.getElementById('graphLoading').innerHTML = `
+    <i class="fa-solid fa-triangle-exclamation"></i>
+    <p>${msg}</p>
+  `;
 }
 
 function renderOverview() {
-  console.log('📊 Overview');
+  console.log('📊 Renderizando OVERVIEW (4 estructuras)...');
   currentView = 'overview';
   document.getElementById('detailPanel').style.display = 'none';
 
@@ -164,11 +146,12 @@ function renderOverview() {
   const container = svg.append('g');
   svg.call(d3.zoom().scaleExtent([0.8, 2]).on('zoom', e => container.attr('transform', e.transform)));
 
-  const nodes = Object.values(structures).map(s => ({
+  // Posicionar 4 estructuras en círculo
+  const nodes = Object.values(structures).map((s, i) => ({
     id: s.id,
     ...s,
-    x: width / 2,
-    y: height / 2
+    x: width / 2 + Math.cos((i * Math.PI * 2) / 4) * 250,
+    y: height / 2 + Math.sin((i * Math.PI * 2) / 4) * 250
   }));
 
   const nodeSel = container.append('g').selectAll('g')
@@ -178,25 +161,32 @@ function renderOverview() {
     .style('cursor', 'pointer')
     .on('click', (e, d) => renderStructure(d.id));
 
+  // Círculo grande con glow
   nodeSel.append('circle')
-    .attr('r', 80)
-    .attr('fill', d => `${d.color}30`)
+    .attr('r', 85)
+    .attr('cx', 0)
+    .attr('cy', 0)
+    .attr('fill', d => `${d.color}25`)
     .attr('stroke', d => d.color)
     .attr('stroke-width', 3)
-    .attr('filter', d => `drop-shadow(0 0 25px ${d.color})`)
-    .attr('opacity', 0.95);
+    .attr('filter', d => `drop-shadow(0 0 30px ${d.color})`)
+    .attr('opacity', 0.9);
 
+  // Ícono
   nodeSel.append('text')
+    .attr('x', 0)
+    .attr('y', -30)
     .attr('text-anchor', 'middle')
-    .attr('dy', '-35')
-    .attr('font-size', '28px')
+    .attr('font-size', '32px')
     .attr('fill', '#eef0f6')
     .attr('pointer-events', 'none')
     .html(d => `<tspan class="fa-solid ${d.icon}"></tspan>`);
 
+  // Nombre
   nodeSel.append('text')
+    .attr('x', 0)
+    .attr('y', 15)
     .attr('text-anchor', 'middle')
-    .attr('dy', '8')
     .attr('font-size', '11px')
     .attr('font-weight', '600')
     .attr('fill', '#eef0f6')
@@ -204,7 +194,7 @@ function renderOverview() {
     .text(d => d.name);
 
   const sim = d3.forceSimulation(nodes)
-    .force('charge', d3.forceManyBody().strength(-800))
+    .force('charge', d3.forceManyBody().strength(-1000))
     .force('center', d3.forceCenter(width / 2, height / 2));
 
   sim.on('tick', () => {
@@ -213,13 +203,20 @@ function renderOverview() {
 }
 
 function renderStructure(structId) {
-  console.log('📊 Estructura:', structId);
+  console.log('📊 Renderizando estructura:', structId);
   currentView = 'structure';
   selectedStructure = structId;
 
   const struct = structures[structId];
-  const nodes = Array.from(graphData.structures[structId].nodes.values());
-  const links = graphData.structures[structId].links;
+  const structData = graphData.structures[structId];
+  
+  if (!structData || structData.nodes.size === 0) {
+    showMessage(`No hay datos para ${struct.fullName}`);
+    return;
+  }
+
+  const nodes = Array.from(structData.nodes.values());
+  const links = structData.links;
 
   const svg = d3.select('#graphSvg');
   svg.selectAll('*').remove();
@@ -256,6 +253,8 @@ function renderStructure(structId) {
 
   nodeSel.append('circle')
     .attr('r', 50)
+    .attr('cx', 0)
+    .attr('cy', 0)
     .attr('fill', `${struct.color}30`)
     .attr('stroke', struct.color)
     .attr('stroke-width', 2.5)
@@ -309,8 +308,9 @@ function showDetail(node) {
   document.getElementById('detailName').textContent = node.name;
   document.getElementById('detailStruct').textContent = structures[selectedStructure].fullName;
   
-  const outgoing = graphData.structures[selectedStructure].links.filter(l => l.source === node.name);
-  const incoming = graphData.structures[selectedStructure].links.filter(l => l.target === node.name);
+  const structData = graphData.structures[selectedStructure];
+  const outgoing = structData.links.filter(l => l.source === node.name);
+  const incoming = structData.links.filter(l => l.target === node.name);
 
   document.getElementById('detailOut').innerHTML = outgoing.length > 0
     ? outgoing.map(l => `<div>→ <strong>${l.targetName}</strong></div>`).join('')
@@ -321,15 +321,20 @@ function showDetail(node) {
     : '<span style="color:#6b7284;">Sin conexiones</span>';
 }
 
-// Cerrar modal detail
-document.getElementById('detailPanel').addEventListener('click', (e) => {
-  if (e.target === document.getElementById('detailPanel')) {
-    document.getElementById('detailPanel').style.display = 'none';
+// Cerrar detail panel
+document.addEventListener('DOMContentLoaded', () => {
+  const detailPanel = document.getElementById('detailPanel');
+  if (detailPanel) {
+    detailPanel.addEventListener('click', (e) => {
+      if (e.target === detailPanel) {
+        detailPanel.style.display = 'none';
+      }
+    });
   }
 });
 
 window.addEventListener('load', () => {
-  console.log('✓ Página cargada');
+  console.log('✓ Página cargada, leyendo datos...');
   loadGraph();
 });
 
