@@ -474,11 +474,11 @@ document.getElementById('closeDetail').addEventListener('click', () => {
 
 async function loadAutomaticData(){
   try{
-    // Buscar archivos en localStorage o indexedDB
+    // Intentar cargar desde localStorage (datos ya procesados)
     const savedData = localStorage.getItem('rapot_data_modulo01');
     if(savedData){
       const g = JSON.parse(savedData);
-      if(g.nodes && g.links){
+      if(g.nodes && g.links && g.nodes.length > 0){
         // Reconstruir Set de fuentes
         g.nodes.forEach(n => { n.fuentes = new Set(n.fuentes || []); });
         graphData = g;
@@ -486,21 +486,27 @@ async function loadAutomaticData(){
         renderEstructurasView(g);
         document.getElementById('uploadZone').style.display = 'none';
         document.getElementById('graphSvg').style.display = 'block';
+        document.querySelectorAll('.stepper .step')[0].classList.remove('active');
+        document.querySelectorAll('.stepper .step')[3].classList.add('active');
+        console.log('✅ Datos cargados automáticamente desde localStorage');
         return true;
       }
     }
   }catch(err){
-    console.log('No hay datos guardados:', err);
+    console.log('⚠️ Error cargando datos guardados:', err);
   }
+  
+  // Si no hay datos guardados, OCULTAR STEP 1 y mostrar mensaje
+  console.log('📋 No hay datos previos - mostrando upload zone');
+  document.getElementById('uploadZone').style.display = 'flex';
+  document.querySelectorAll('.stepper .step')[0].style.display = 'none'; // Ocultar step 1
+  
   return false;
 }
 
 // Cargar al iniciar página
 window.addEventListener('load', async () => {
-  const loaded = await loadAutomaticData();
-  if(loaded){
-    console.log('Datos cargados automáticamente desde Fuentes y Documentos');
-  }
+  await loadAutomaticData();
 });
 
 // ============================================================
