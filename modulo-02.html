@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RAPOT · Medir la Red</title>
+<title>RAPOT · Simulador de Escenarios</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="stylesheet" href="modulo-02.css">
+<link rel="stylesheet" href="modulo-02-simulador.css">
 </head>
 <body>
 <div class="app">
@@ -19,28 +19,28 @@
     </div>
 
     <div class="nav-group">
-      <a href="dashboard.html" class="nav-item "><i class="fa-solid fa-house"></i> Dashboard</a>
+      <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-house"></i> Dashboard</a>
     </div>
 
     <div class="nav-group">
       <div class="nav-label">MÓDULOS</div>
-      <a href="modulo-01.html" class="nav-item "><span class="num">01</span><i class="fa-solid fa-diagram-project"></i> Construir la Red</a>
-      <a href="modulo-02.html" class="nav-item active"><span class="num">02</span><i class="fa-solid fa-chart-simple"></i> Medir la Red</a>
-      <a href="modulo-03.html" class="nav-item "><span class="num">03</span><i class="fa-solid fa-eye"></i> Discurso vs Realidad</a>
-      <a href="modulo-04.html" class="nav-item "><span class="num">04</span><i class="fa-solid fa-bullseye"></i> Macromodelos</a>
-      <a href="modulo-05.html" class="nav-item "><span class="num">05</span><i class="fa-solid fa-magnifying-glass"></i> Lo que no está</a>
-      <a href="modulo-06.html" class="nav-item "><span class="num">06</span><i class="fa-solid fa-earth-americas"></i> POT ↔ ODS</a>
-      <a href="modulo-07.html" class="nav-item "><span class="num">07</span><i class="fa-solid fa-flask"></i> Simulador</a>
-      <a href="modulo-08.html" class="nav-item "><span class="num">08</span><i class="fa-solid fa-city"></i> Modelo Propio</a>
+      <a href="modulo-01.html" class="nav-item"><span class="num">01</span><i class="fa-solid fa-diagram-project"></i> Construir la Red</a>
+      <a href="modulo-02.html" class="nav-item active"><span class="num">02</span><i class="fa-solid fa-flask"></i> Simulador</a>
+      <a href="modulo-03.html" class="nav-item"><span class="num">03</span><i class="fa-solid fa-eye"></i> Discurso vs Realidad</a>
+      <a href="modulo-04.html" class="nav-item"><span class="num">04</span><i class="fa-solid fa-bullseye"></i> Macromodelos</a>
+      <a href="modulo-05.html" class="nav-item"><span class="num">05</span><i class="fa-solid fa-magnifying-glass"></i> Lo que no está</a>
+      <a href="modulo-06.html" class="nav-item"><span class="num">06</span><i class="fa-solid fa-earth-americas"></i> POT ↔ ODS</a>
+      <a href="modulo-07.html" class="nav-item"><span class="num">07</span><i class="fa-solid fa-flask"></i> Simulador</a>
+      <a href="modulo-08.html" class="nav-item"><span class="num">08</span><i class="fa-solid fa-city"></i> Modelo Propio</a>
     </div>
 
     <div class="nav-group">
       <div class="nav-label">GESTIÓN</div>
-      <a href="proyectos.html" class="nav-item "><i class="fa-solid fa-folder"></i> Proyectos</a>
-      <a href="fuentes.html" class="nav-item "><i class="fa-solid fa-file-lines"></i> Fuentes y Documentos</a>
-      <a href="favoritos.html" class="nav-item "><i class="fa-solid fa-star"></i> Favoritos</a>
-      <a href="reportes.html" class="nav-item "><i class="fa-solid fa-chart-pie"></i> Reportes</a>
-      <a href="configuracion.html" class="nav-item "><i class="fa-solid fa-gear"></i> Configuración</a>
+      <a href="proyectos.html" class="nav-item"><i class="fa-solid fa-folder"></i> Proyectos</a>
+      <a href="fuentes.html" class="nav-item"><i class="fa-solid fa-file-lines"></i> Fuentes y Documentos</a>
+      <a href="favoritos.html" class="nav-item"><i class="fa-solid fa-star"></i> Favoritos</a>
+      <a href="reportes.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Reportes</a>
+      <a href="configuracion.html" class="nav-item"><i class="fa-solid fa-gear"></i> Configuración</a>
     </div>
 
     <div class="sidebar-footer">
@@ -49,15 +49,14 @@
         <div class="name">Equipo Urbano</div>
         <div class="role">Administrador</div>
       </div>
-      <a href="demo.html" class="logout-btn" title="Cerrar sesión"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
+      <a href="demo.html" class="logout-btn"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
     </div>
   </aside>
 
-  <!-- MAIN -->
   <main class="main">
 
     <div class="topbar">
-      <h1>Medir la Red</h1>
+      <h1>Simulador de Escenarios</h1>
       <div class="topbar-actions">
         <div class="search-box"><i class="fa-solid fa-magnifying-glass"></i> Buscar en el sistema...</div>
         <div class="icon-btn"><i class="fa-regular fa-bell"></i><span class="dot"></span></div>
@@ -67,420 +66,198 @@
     </div>
 
     <div class="welcome">
-      <h2>Medir la Red</h2>
-      <p>Análisis de métricas: centralidad, intermediación, densidad y comunidades.</p>
+      <h2>Control de Experimentos</h2>
+      <p>Simula escenarios: selecciona un nodo, aplica acciones y observa cómo cambia la red.</p>
     </div>
 
-    <!-- KPI ROW -->
-    <div class="kpi-row">
-      <div class="kpi-card">
-        <div class="kpi-icon teal"><i class="fa-solid fa-circle-nodes"></i></div>
-        <div class="kpi-content">
-          <div class="kpi-label">Nodos</div>
-          <div class="kpi-value">87</div>
-          <div class="kpi-meta">Conceptos</div>
-        </div>
+    <!-- STATS ROW -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-value" id="totalNodes">87</div>
+        <div class="stat-label">Nodos activos</div>
       </div>
-
-      <div class="kpi-card">
-        <div class="kpi-icon blue"><i class="fa-solid fa-link"></i></div>
-        <div class="kpi-content">
-          <div class="kpi-label">Conexiones</div>
-          <div class="kpi-value">156</div>
-          <div class="kpi-meta">Relaciones</div>
-        </div>
+      <div class="stat-card">
+        <div class="stat-value" id="totalLinks">156</div>
+        <div class="stat-label">Conexiones</div>
       </div>
-
-      <div class="kpi-card">
-        <div class="kpi-icon purple"><i class="fa-solid fa-chart-pie"></i></div>
-        <div class="kpi-content">
-          <div class="kpi-label">Densidad</div>
-          <div class="kpi-value">0.41</div>
-          <div class="kpi-meta">Conectividad</div>
-        </div>
-      </div>
-
-      <div class="kpi-card">
-        <div class="kpi-icon green"><i class="fa-solid fa-sitemap"></i></div>
-        <div class="kpi-content">
-          <div class="kpi-label">Comunidades</div>
-          <div class="kpi-value">4</div>
-          <div class="kpi-meta">Clusters</div>
-        </div>
+      <div class="stat-card">
+        <div class="stat-value" id="density">0.41</div>
+        <div class="stat-label">Densidad</div>
       </div>
     </div>
 
-    <!-- MAIN METRICS GRID WITH NETWORK VISUALIZATION -->
-    <div class="metrics-with-network">
+    <!-- MAIN SIMULATOR -->
+    <div class="simulator-container">
       
-      <!-- LEFT: METRICS PANELS -->
-      <div class="metrics-left">
+      <!-- LEFT: CONTROL PANEL -->
+      <div class="control-panel">
         
-        <!-- CENTRALIDAD -->
-        <div class="metric-panel">
-          <div class="panel-header">
-            <h3><i class="fa-solid fa-star"></i> Centralidad</h3>
-            <div class="panel-controls">
-              <select class="metric-select" id="centralitySelect" onchange="updateCentrality(this.value)">
-                <option value="betweenness">Intermediación</option>
-                <option value="closeness">Cercanía</option>
-                <option value="degree">Grado</option>
-                <option value="eigenvector">Eigenvector</option>
-              </select>
-            </div>
-          </div>
-          <div class="metric-description">
-            Identifica nodos más influyentes en la red. Mide qué conceptos son más centrales para las conexiones.
-          </div>
-          <div class="ranking-list" id="rankingList">
-            <div class="ranking-item">
-              <div class="rank-badge">1</div>
-              <div class="rank-content">
-                <div class="rank-name">Movilidad</div>
-                <div class="rank-meta">Estructura Funcional</div>
-              </div>
-              <div class="rank-score">0.89</div>
-            </div>
-            <div class="ranking-item">
-              <div class="rank-badge">2</div>
-              <div class="rank-content">
-                <div class="rank-name">Ríos</div>
-                <div class="rank-meta">Estructura Ecológica</div>
-              </div>
-              <div class="rank-score">0.87</div>
-            </div>
-            <div class="ranking-item">
-              <div class="rank-badge">3</div>
-              <div class="rank-content">
-                <div class="rank-name">Vivienda</div>
-                <div class="rank-meta">Estructura Funcional</div>
-              </div>
-              <div class="rank-score">0.84</div>
-            </div>
-            <div class="ranking-item">
-              <div class="rank-badge">4</div>
-              <div class="rank-content">
-                <div class="rank-name">Equipamientos</div>
-                <div class="rank-meta">Estructura Funcional</div>
-              </div>
-              <div class="rank-score">0.81</div>
-            </div>
-            <div class="ranking-item">
-              <div class="rank-badge">5</div>
-              <div class="rank-content">
-                <div class="rank-name">Áreas Protegidas</div>
-                <div class="rank-meta">Estructura Ecológica</div>
-              </div>
-              <div class="rank-score">0.78</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- INTERMEDIACIÓN -->
-        <div class="metric-panel">
-          <div class="panel-header">
-            <h3><i class="fa-solid fa-code-branch"></i> Intermediación</h3>
-            <div class="panel-controls">
-              <button class="toggle-btn active" onclick="toggleIntermediation('all')">Todos</button>
-              <button class="toggle-btn" onclick="toggleIntermediation('high')">Altos</button>
-            </div>
-          </div>
-          <div class="metric-description">
-            Mide qué nodos actúan como puentes entre otras estructuras. Identifica cuellos de botella.
-          </div>
-          <div class="intermediation-chart" id="intermediationChart">
-            <div class="chart-bar">
-              <div class="bar-label">Movilidad</div>
-              <div class="bar-container">
-                <div class="bar-fill" style="width: 92%; background: var(--teal);"></div>
-              </div>
-              <div class="bar-value">0.92</div>
-            </div>
-            <div class="chart-bar">
-              <div class="bar-label">Equipamientos</div>
-              <div class="bar-container">
-                <div class="bar-fill" style="width: 78%; background: var(--blue);"></div>
-              </div>
-              <div class="bar-value">0.78</div>
-            </div>
-            <div class="chart-bar">
-              <div class="bar-label">Conectores Eco.</div>
-              <div class="bar-container">
-                <div class="bar-fill" style="width: 71%; background: var(--green);"></div>
-              </div>
-              <div class="bar-value">0.71</div>
-            </div>
-            <div class="chart-bar">
-              <div class="bar-label">Empleo</div>
-              <div class="bar-container">
-                <div class="bar-fill" style="width: 65%; background: var(--yellow);"></div>
-              </div>
-              <div class="bar-value">0.65</div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- RIGHT: NETWORK VISUALIZATION -->
-      <div class="network-container">
-        <div class="network-header">
-          <h3><i class="fa-solid fa-diagram-project"></i> Red de Conceptos</h3>
-          <div class="network-controls">
-            <select class="metric-select" id="structureFilter" onchange="filterByStructure(this.value)">
-              <option value="all">Todas las estructuras</option>
-              <option value="EEP">EEP - Ecológica</option>
-              <option value="EFC">EFC - Funcional</option>
-              <option value="ESECI">ESECI - Socioeconómica</option>
-              <option value="EIP">EIP - Patrimonial</option>
+        <div class="control-section">
+          <h3><i class="fa-solid fa-sliders"></i> 1. SELECCIONA UN NODO</h3>
+          <div class="node-selector">
+            <select id="nodeSelect" onchange="selectNode(this.value)" class="node-dropdown">
+              <option value="">-- Selecciona un concepto --</option>
             </select>
+            <div class="search-box-small">
+              <input type="text" id="searchNodes" placeholder="Buscar nodo..." onkeyup="searchNodes(this.value)">
+              <i class="fa-solid fa-search"></i>
+            </div>
+            <div class="node-list" id="nodeList"></div>
           </div>
         </div>
-        <svg id="networkGraph" class="network-graph"></svg>
-        <div class="network-legend">
-          <div class="legend-item">
-            <div class="legend-dot" style="background: var(--teal);"></div>
-            <span>EEP - Ecológica</span>
-          </div>
-          <div class="legend-item">
-            <div class="legend-dot" style="background: var(--blue);"></div>
-            <span>EFC - Funcional</span>
-          </div>
-          <div class="legend-item">
-            <div class="legend-dot" style="background: var(--purple);"></div>
-            <span>ESECI - Socioeconómica</span>
-          </div>
-          <div class="legend-item">
-            <div class="legend-dot" style="background: var(--pink);"></div>
-            <span>EIP - Patrimonial</span>
+
+        <div class="control-section">
+          <h3><i class="fa-solid fa-cube"></i> 2. NODO SELECCIONADO</h3>
+          <div class="selected-node-info" id="selectedNodeInfo">
+            <div class="info-placeholder">Selecciona un nodo para ver detalles</div>
           </div>
         </div>
+
+        <div class="control-section">
+          <h3><i class="fa-solid fa-wand-magic-sparkles"></i> 3. SELECCIONA UNA ACCIÓN</h3>
+          <div class="actions-grid">
+            <button class="action-btn" onclick="applyAction('apagar')">
+              <i class="fa-solid fa-power-off"></i>
+              <span>Apagar nodo</span>
+              <small>Eliminar todas sus conexiones</small>
+            </button>
+            <button class="action-btn" onclick="applyAction('desconectar')">
+              <i class="fa-solid fa-link-slash"></i>
+              <span>Desconectar de...</span>
+              <small>Eliminar conexiones específicas</small>
+            </button>
+            <button class="action-btn" onclick="applyAction('aumentar')">
+              <i class="fa-solid fa-arrow-up"></i>
+              <span>Aumentar influencia</span>
+              <small>Incrementar peso de relaciones</small>
+            </button>
+            <button class="action-btn" onclick="applyAction('disminuir')">
+              <i class="fa-solid fa-arrow-down"></i>
+              <span>Disminuir influencia</span>
+              <small>Reducir peso de relaciones</small>
+            </button>
+            <button class="action-btn" onclick="applyAction('conectar')">
+              <i class="fa-solid fa-plus"></i>
+              <span>Crear nueva conexión</span>
+              <small>Conectar con otro nodo</small>
+            </button>
+            <button class="action-btn" onclick="applyAction('mover')">
+              <i class="fa-solid fa-arrows-alt"></i>
+              <span>Cambiar estructura</span>
+              <small>Mover a otra estructura POT</small>
+            </button>
+          </div>
+        </div>
+
+        <button class="simulate-btn" onclick="runSimulation()">
+          <i class="fa-solid fa-play"></i> SIMULAR ESCENARIO
+        </button>
+
+        <button class="reset-btn" onclick="resetSimulation()">
+          <i class="fa-solid fa-rotate-left"></i> Limpiar
+        </button>
+
+      </div>
+
+      <!-- RIGHT: VISUALIZATION -->
+      <div class="visualization-section">
+        
+        <div class="viz-header">
+          <h3><i class="fa-solid fa-chart-network"></i> VISUALIZACIÓN DE LA RED</h3>
+          <div class="viz-controls">
+            <button class="toggle-btn" id="toggleNodos" onclick="toggleVisualization('nodos')" style="background: var(--teal-dim); color: var(--teal); border-color: var(--teal);">
+              <i class="fa-solid fa-circle"></i> Nodos
+            </button>
+            <button class="toggle-btn" id="toggleLinks" onclick="toggleVisualization('links')">
+              <i class="fa-solid fa-link"></i> Conexiones
+            </button>
+          </div>
+        </div>
+
+        <svg id="networkViz" class="network-svg"></svg>
+
+        <div class="legend-box">
+          <div class="legend-title">Estructuras del POT</div>
+          <div class="legend-items">
+            <div class="legend-item">
+              <span class="legend-dot" style="background: #2fd4c8;"></span>
+              <span>EEP - Ecológica</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot" style="background: #5b8def;"></span>
+              <span>EFC - Funcional</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot" style="background: #a276f2;"></span>
+              <span>ESECI - Socioeconómica</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot" style="background: #f76fb0;"></span>
+              <span>EIP - Patrimonial</span>
+            </div>
+          </div>
+        </div>
+
       </div>
 
     </div>
 
-    <!-- SECONDARY METRICS ROW -->
-    <div class="metrics-grid">
-      
-      <!-- DENSIDAD POR ESTRUCTURA -->
-      <div class="metric-panel">
-        <div class="panel-header">
-          <h3><i class="fa-solid fa-chart-pie"></i> Densidad por Estructura</h3>
-          <div class="panel-controls">
-            <span class="info-badge">Conectividad interna</span>
+    <!-- COMPARISON SECTION -->
+    <div class="comparison-section">
+      <h3><i class="fa-solid fa-scale-balanced"></i> COMPARACIÓN: ANTES VS DESPUÉS</h3>
+      <div class="comparison-grid">
+        <div class="comparison-card">
+          <div class="card-title">Estado Actual</div>
+          <div class="metric-row">
+            <span class="metric-label">Nodos activos</span>
+            <span class="metric-value" id="beforeNodes">87</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Conexiones</span>
+            <span class="metric-value" id="beforeLinks">156</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Densidad</span>
+            <span class="metric-value" id="beforeDensity">0.41</span>
           </div>
         </div>
-        <div class="metric-description">
-          Qué tan conectadas están las relaciones dentro de cada estructura del POT.
-        </div>
-        <div class="density-grid">
-          <div class="density-item">
-            <div class="density-circle" style="background: linear-gradient(135deg, var(--teal), #1a9d94);">
-              <span class="density-val">0.58</span>
-            </div>
-            <div class="density-label">
-              <div class="density-name">EEP</div>
-              <div class="density-full">Ecológica</div>
-            </div>
-          </div>
-          <div class="density-item">
-            <div class="density-circle" style="background: linear-gradient(135deg, var(--blue), #4673d9);">
-              <span class="density-val">0.52</span>
-            </div>
-            <div class="density-label">
-              <div class="density-name">EFC</div>
-              <div class="density-full">Funcional</div>
-            </div>
-          </div>
-          <div class="density-item">
-            <div class="density-circle" style="background: linear-gradient(135deg, var(--purple), #8956d4);">
-              <span class="density-val">0.48</span>
-            </div>
-            <div class="density-label">
-              <div class="density-name">ESECI</div>
-              <div class="density-full">Socioeconómica</div>
-            </div>
-          </div>
-          <div class="density-item">
-            <div class="density-circle" style="background: linear-gradient(135deg, var(--pink), #d45fa4);">
-              <span class="density-val">0.41</span>
-            </div>
-            <div class="density-label">
-              <div class="density-name">EIP</div>
-              <div class="density-full">Patrimonial</div>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      <!-- COMUNIDADES -->
-      <div class="metric-panel">
-        <div class="panel-header">
-          <h3><i class="fa-solid fa-sitemap"></i> Comunidades Detectadas</h3>
-          <div class="panel-controls">
-            <span class="info-badge">4 Clusters</span>
+        <div class="comparison-arrow">
+          <i class="fa-solid fa-arrow-right"></i>
+        </div>
+
+        <div class="comparison-card scenario-card">
+          <div class="card-title">Escenario Simulado</div>
+          <div class="metric-row">
+            <span class="metric-label">Nodos activos</span>
+            <span class="metric-value" id="afterNodes">87</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Conexiones</span>
+            <span class="metric-value" id="afterLinks">156</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Densidad</span>
+            <span class="metric-value" id="afterDensity">0.41</span>
           </div>
         </div>
-        <div class="metric-description">
-          Agrupaciones naturales de conceptos altamente conectados entre sí.
-        </div>
-        <div class="communities-list">
-          <div class="community-item">
-            <div class="community-badge" style="background: rgba(47,212,200,0.2); color: var(--teal);">
-              <i class="fa-solid fa-leaf"></i>
-            </div>
-            <div class="community-content">
-              <div class="community-name">Ecosistema Urbano</div>
-              <div class="community-nodes">Ríos, Humedales, Áreas Protegidas, Conectores</div>
-            </div>
-            <div class="community-stat">
-              <div class="community-count">18</div>
-              <div class="community-count-label">nodos</div>
+
+        <div class="comparison-delta">
+          <div class="delta-item">
+            <span class="delta-label">Cambio netos</span>
+            <div class="delta-values">
+              <div class="delta-value" id="deltaNodos">0</div>
+              <div class="delta-label-small">nodos</div>
             </div>
           </div>
-          <div class="community-item">
-            <div class="community-badge" style="background: rgba(91,141,239,0.2); color: var(--blue);">
-              <i class="fa-solid fa-bus"></i>
-            </div>
-            <div class="community-content">
-              <div class="community-name">Movilidad y Acceso</div>
-              <div class="community-nodes">Transporte, Ciclorrutas, UPL, Proximidad</div>
-            </div>
-            <div class="community-stat">
-              <div class="community-count">15</div>
-              <div class="community-count-label">nodos</div>
-            </div>
-          </div>
-          <div class="community-item">
-            <div class="community-badge" style="background: rgba(162,118,242,0.2); color: var(--purple);">
-              <i class="fa-solid fa-briefcase"></i>
-            </div>
-            <div class="community-content">
-              <div class="community-name">Economía y Empleo</div>
-              <div class="community-nodes">Actividades Productivas, Negocios Verdes, Innovación</div>
-            </div>
-            <div class="community-stat">
-              <div class="community-count">14</div>
-              <div class="community-count-label">nodos</div>
-            </div>
-          </div>
-          <div class="community-item">
-            <div class="community-badge" style="background: rgba(247,111,176,0.2); color: var(--pink);">
-              <i class="fa-solid fa-landmark"></i>
-            </div>
-            <div class="community-content">
-              <div class="community-name">Patrimonio e Identidad</div>
-              <div class="community-nodes">Cultura, Memoria, Saberes del Lugar, Identidades</div>
-            </div>
-            <div class="community-stat">
-              <div class="community-count">12</div>
-              <div class="community-count-label">nodos</div>
+          <div class="delta-item">
+            <span class="delta-label">Impacto</span>
+            <div class="delta-values">
+              <div class="delta-value" id="deltaImpacto">0%</div>
+              <div class="delta-label-small">red</div>
             </div>
           </div>
         </div>
-      </div>
-
-    </div>
-
-    <!-- RELACIONES INTER-ESTRUCTURAS -->
-    <div class="metric-panel full-width">
-      <div class="panel-header">
-        <h3><i class="fa-solid fa-arrows-to-dot"></i> Relaciones Inter-Estructuras</h3>
-        <div class="panel-controls">
-          <button class="filter-btn active" onclick="filterRelations('all')">Todas</button>
-          <button class="filter-btn" onclick="filterRelations('strong')">Fuertes</button>
-          <button class="filter-btn" onclick="filterRelations('weak')">Débiles</button>
-        </div>
-      </div>
-      <div class="metric-description">
-        Mapa de conexiones entre estructuras. Identifica dónde hay mayor interdependencia.
-      </div>
-      <div class="matrix-container">
-        <table class="interaction-matrix">
-          <thead>
-            <tr>
-              <th></th>
-              <th class="eco">EEP</th>
-              <th class="func">EFC</th>
-              <th class="socio">ESECI</th>
-              <th class="patri">EIP</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="header-cell eco">EEP</td>
-              <td class="cell strength-high" title="Ecosistema integrado">58</td>
-              <td class="cell strength-high" title="Conectores y movilidad">42</td>
-              <td class="cell strength-medium" title="Agricultura urbana">18</td>
-              <td class="cell strength-low" title="Patrimonio natural">12</td>
-            </tr>
-            <tr>
-              <td class="header-cell func">EFC</td>
-              <td class="cell strength-high" title="Espacios verdes">42</td>
-              <td class="cell strength-high" title="Sistema de proximidad">51</td>
-              <td class="cell strength-high" title="Servicios y empleo">38</td>
-              <td class="cell strength-medium" title="Dinámicas comunitarias">14</td>
-            </tr>
-            <tr>
-              <td class="header-cell socio">ESECI</td>
-              <td class="cell strength-medium" title="Negocios verdes">18</td>
-              <td class="cell strength-high" title="Aglomeraciones económicas">38</td>
-              <td class="cell strength-high" title="Red de empleo">46</td>
-              <td class="cell strength-medium" title="Turismo y patrimonio">16</td>
-            </tr>
-            <tr>
-              <td class="header-cell patri">EIP</td>
-              <td class="cell strength-low" title="Patrimonios naturales">12</td>
-              <td class="cell strength-medium" title="Modo de habitar">14</td>
-              <td class="cell strength-medium" title="Saberes del lugar">16</td>
-              <td class="cell strength-high" title="Identidad cultural">34</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="matrix-legend">
-        <div class="legend-item">
-          <span class="legend-color" style="background: rgba(74,222,128,0.3);"></span>
-          <span>Fuerte (30+)</span>
-        </div>
-        <div class="legend-item">
-          <span class="legend-color" style="background: rgba(245,201,69,0.3);"></span>
-          <span>Media (15-29)</span>
-        </div>
-        <div class="legend-item">
-          <span class="legend-color" style="background: rgba(239,149,82,0.3);"></span>
-          <span>Débil (&lt;15)</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- ANÁLISIS Y EXPORTACIÓN -->
-    <div class="action-row">
-      <div class="action-card">
-        <div class="action-icon"><i class="fa-solid fa-download"></i></div>
-        <div class="action-content">
-          <div class="action-title">Descargar Reporte</div>
-          <div class="action-desc">Exporta métricas y visualizaciones en PDF</div>
-        </div>
-        <button class="action-btn" onclick="downloadReport()"><i class="fa-solid fa-arrow-down"></i></button>
-      </div>
-
-      <div class="action-card">
-        <div class="action-icon"><i class="fa-solid fa-share-nodes"></i></div>
-        <div class="action-content">
-          <div class="action-title">Compartir Análisis</div>
-          <div class="action-desc">Genera enlace para colaboradores</div>
-        </div>
-        <button class="action-btn" onclick="shareAnalysis()"><i class="fa-solid fa-share"></i></button>
-      </div>
-
-      <div class="action-card">
-        <div class="action-icon"><i class="fa-solid fa-arrows-rotate"></i></div>
-        <div class="action-content">
-          <div class="action-title">Recalcular Métricas</div>
-          <div class="action-desc">Vuelve a procesar datos de la red</div>
-        </div>
-        <button class="action-btn" onclick="recalculateMetrics()"><i class="fa-solid fa-sync"></i></button>
       </div>
     </div>
 
@@ -489,339 +266,11 @@
     </footer>
 
   </main>
+
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
-<script>
-// DATA: Network structure with real data
-const networkData = {
-  nodes: [
-    // EEP - Ecológica (Teal)
-    { id: 'rios', label: 'Ríos', structure: 'EEP', size: 1.2 },
-    { id: 'quebradas', label: 'Quebradas', structure: 'EEP', size: 0.9 },
-    { id: 'humedales', label: 'Humedales', structure: 'EEP', size: 1.1 },
-    { id: 'bosques', label: 'Bosques Urbanos', structure: 'EEP', size: 0.85 },
-    { id: 'parques', label: 'Parques de Borde', structure: 'EEP', size: 0.8 },
-    { id: 'conectores', label: 'Conectores Eco.', structure: 'EEP', size: 1.0 },
-    { id: 'protegidas', label: 'Áreas Protegidas', structure: 'EEP', size: 1.15 },
-    
-    // EFC - Funcional (Blue)
-    { id: 'movilidad', label: 'Movilidad', structure: 'EFC', size: 1.3 },
-    { id: 'transporte', label: 'Transporte Público', structure: 'EFC', size: 1.1 },
-    { id: 'ciclorrutas', label: 'Ciclorrutas', structure: 'EFC', size: 0.9 },
-    { id: 'vivienda', label: 'Vivienda', structure: 'EFC', size: 1.2 },
-    { id: 'equipamientos', label: 'Equipamientos', structure: 'EFC', size: 1.15 },
-    { id: 'manzanas', label: 'Manzanas del Cuidado', structure: 'EFC', size: 0.95 },
-    { id: 'upl', label: 'UPL', structure: 'EFC', size: 0.88 },
-    
-    // ESECI - Socioeconómica (Purple)
-    { id: 'empleo', label: 'Empleo', structure: 'ESECI', size: 1.1 },
-    { id: 'negocios', label: 'Negocios Verdes', structure: 'ESECI', size: 0.9 },
-    { id: 'agricultura', label: 'Agricultura Urbana', structure: 'ESECI', size: 0.85 },
-    { id: 'economia', label: 'Economía Circular', structure: 'ESECI', size: 0.95 },
-    { id: 'innovacion', label: 'Innovación', structure: 'ESECI', size: 1.0 },
-    
-    // EIP - Patrimonial (Pink)
-    { id: 'cultura', label: 'Cultura', structure: 'EIP', size: 0.95 },
-    { id: 'patrimonio', label: 'Patrimonio Local', structure: 'EIP', size: 0.9 },
-    { id: 'memoria', label: 'Memoria', structure: 'EIP', size: 0.85 },
-    { id: 'saberes', label: 'Saberes del Lugar', structure: 'EIP', size: 0.88 }
-  ],
-  links: [
-    // EEP internal
-    { source: 'rios', target: 'quebradas', strength: 'strong' },
-    { source: 'rios', target: 'humedales', strength: 'strong' },
-    { source: 'humedales', target: 'protegidas', strength: 'strong' },
-    { source: 'conectores', target: 'humedales', strength: 'medium' },
-    { source: 'conectores', target: 'parques', strength: 'medium' },
-    { source: 'bosques', target: 'conectores', strength: 'medium' },
-    
-    // EFC internal
-    { source: 'movilidad', target: 'transporte', strength: 'strong' },
-    { source: 'movilidad', target: 'ciclorrutas', strength: 'medium' },
-    { source: 'vivienda', target: 'equipamientos', strength: 'strong' },
-    { source: 'manzanas', target: 'equipamientos', strength: 'medium' },
-    { source: 'upl', target: 'vivienda', strength: 'medium' },
-    
-    // ESECI internal
-    { source: 'empleo', target: 'innovacion', strength: 'medium' },
-    { source: 'negocios', target: 'agricultura', strength: 'medium' },
-    { source: 'economia', target: 'negocios', strength: 'strong' },
-    
-    // EIP internal
-    { source: 'cultura', target: 'patrimonio', strength: 'strong' },
-    { source: 'memoria', target: 'saberes', strength: 'medium' },
-    
-    // INTER-STRUCTURE LINKS
-    { source: 'rios', target: 'movilidad', strength: 'strong' },
-    { source: 'conectores', target: 'movilidad', strength: 'strong' },
-    { source: 'protegidas', target: 'equipamientos', strength: 'medium' },
-    { source: 'agricultura', target: 'protegidas', strength: 'medium' },
-    { source: 'negocios', target: 'conectores', strength: 'weak' },
-    { source: 'empleo', target: 'vivienda', strength: 'strong' },
-    { source: 'patrimonio', target: 'movilidad', strength: 'weak' },
-    { source: 'saberes', target: 'agricultura', strength: 'medium' }
-  ]
-};
-
-// METRICS DATA
-const metricsData = {
-  betweenness: [
-    { node: 'Movilidad', score: 0.89, structure: 'EFC' },
-    { node: 'Ríos', score: 0.87, structure: 'EEP' },
-    { node: 'Vivienda', score: 0.84, structure: 'EFC' },
-    { node: 'Equipamientos', score: 0.81, structure: 'EFC' },
-    { node: 'Áreas Protegidas', score: 0.78, structure: 'EEP' }
-  ],
-  closeness: [
-    { node: 'Equipamientos', score: 0.92, structure: 'EFC' },
-    { node: 'Conectores Eco.', score: 0.88, structure: 'EEP' },
-    { node: 'Empleo', score: 0.85, structure: 'ESECI' },
-    { node: 'Transporte Público', score: 0.82, structure: 'EFC' },
-    { node: 'Humedales', score: 0.79, structure: 'EEP' }
-  ],
-  degree: [
-    { node: 'Movilidad', score: 0.91, structure: 'EFC' },
-    { node: 'Equipamientos', score: 0.87, structure: 'EFC' },
-    { node: 'Ríos', score: 0.86, structure: 'EEP' },
-    { node: 'Conectores Eco.', score: 0.83, structure: 'EEP' },
-    { node: 'Empleo', score: 0.80, structure: 'ESECI' }
-  ],
-  eigenvector: [
-    { node: 'Vivienda', score: 0.90, structure: 'EFC' },
-    { node: 'Protegidas', score: 0.88, structure: 'EEP' },
-    { node: 'Movilidad', score: 0.85, structure: 'EFC' },
-    { node: 'Innovación', score: 0.82, structure: 'ESECI' },
-    { node: 'Patrimonio', score: 0.78, structure: 'EIP' }
-  ]
-};
-
-const intermediationData = {
-  all: [
-    { label: 'Movilidad', value: 0.92 },
-    { label: 'Equipamientos', value: 0.78 },
-    { label: 'Conectores Eco.', value: 0.71 },
-    { label: 'Empleo', value: 0.65 }
-  ],
-  high: [
-    { label: 'Movilidad', value: 0.92 },
-    { label: 'Equipamientos', value: 0.78 }
-  ]
-};
-
-// INITIALIZE VISUALIZATION
-let currentCentrality = 'betweenness';
-let currentFilter = 'all';
-let currentIntermediation = 'all';
-
-function initNetworkGraph() {
-  const svg = d3.select('#networkGraph');
-  const width = svg.node().parentElement.offsetWidth;
-  const height = 520;
-  
-  svg.attr('width', width).attr('height', height);
-  
-  // Filter nodes based on structure
-  let filteredNodes = networkData.nodes;
-  let filteredLinks = networkData.links;
-  
-  if (currentFilter !== 'all') {
-    const nodeIds = networkData.nodes
-      .filter(n => n.structure === currentFilter)
-      .map(n => n.id);
-    filteredNodes = networkData.nodes.filter(n => n.structure === currentFilter);
-    filteredLinks = networkData.links.filter(l => 
-      nodeIds.includes(l.source) && nodeIds.includes(l.target)
-    );
-  }
-  
-  // Color mapping
-  const colors = {
-    EEP: '#2fd4c8',
-    EFC: '#5b8def',
-    ESECI: '#a276f2',
-    EIP: '#f76fb0'
-  };
-  
-  // Create force simulation
-  const simulation = d3.forceSimulation(filteredNodes)
-    .force('link', d3.forceLink(filteredLinks.map(d => ({
-      source: d.source,
-      target: d.target
-    }))).distance(100))
-    .force('charge', d3.forceManyBody().strength(-300))
-    .force('center', d3.forceCenter(width / 2, height / 2));
-  
-  // Clear previous
-  svg.selectAll('*').remove();
-  
-  // Links
-  const link = svg.append('g')
-    .selectAll('line')
-    .data(filteredLinks)
-    .enter()
-    .append('line')
-    .attr('stroke', d => {
-      if (d.strength === 'strong') return 'rgba(47,212,200,0.6)';
-      if (d.strength === 'medium') return 'rgba(91,141,239,0.4)';
-      return 'rgba(162,118,242,0.2)';
-    })
-    .attr('stroke-width', d => {
-      if (d.strength === 'strong') return 2.5;
-      if (d.strength === 'medium') return 1.5;
-      return 1;
-    });
-  
-  // Nodes
-  const node = svg.append('g')
-    .selectAll('circle')
-    .data(filteredNodes)
-    .enter()
-    .append('circle')
-    .attr('r', d => d.size * 8)
-    .attr('fill', d => colors[d.structure])
-    .attr('opacity', 0.8)
-    .attr('stroke', 'rgba(255,255,255,0.2)')
-    .attr('stroke-width', 1.5)
-    .call(drag(simulation));
-  
-  // Labels
-  const labels = svg.append('g')
-    .selectAll('text')
-    .data(filteredNodes)
-    .enter()
-    .append('text')
-    .text(d => d.label)
-    .attr('font-size', '10px')
-    .attr('fill', '#e7eaf2')
-    .attr('text-anchor', 'middle')
-    .attr('pointer-events', 'none');
-  
-  simulation.on('tick', () => {
-    link
-      .attr('x1', d => d.source.x)
-      .attr('y1', d => d.source.y)
-      .attr('x2', d => d.target.x)
-      .attr('y2', d => d.target.y);
-    
-    node
-      .attr('cx', d => d.x)
-      .attr('cy', d => d.y);
-    
-    labels
-      .attr('x', d => d.x)
-      .attr('y', d => d.y + 4);
-  });
-  
-  function drag(simulation) {
-    return d3.drag()
-      .on('start', dragstarted)
-      .on('drag', dragged)
-      .on('end', dragended);
-    
-    function dragstarted(event, d) {
-      if (!event.active) simulation.alphaTarget(0.3).restart();
-      d.fx = d.x;
-      d.fy = d.y;
-    }
-    
-    function dragged(event, d) {
-      d.fx = event.x;
-      d.fy = event.y;
-    }
-    
-    function dragended(event, d) {
-      if (!event.active) simulation.alphaTarget(0);
-      d.fx = null;
-      d.fy = null;
-    }
-  }
-}
-
-// UPDATE RANKING
-function updateRanking(metric) {
-  const data = metricsData[metric];
-  const rankingList = document.getElementById('rankingList');
-  
-  rankingList.innerHTML = data.map((item, idx) => `
-    <div class="ranking-item">
-      <div class="rank-badge">${idx + 1}</div>
-      <div class="rank-content">
-        <div class="rank-name">${item.node}</div>
-        <div class="rank-meta">Estructura ${item.structure}</div>
-      </div>
-      <div class="rank-score">${item.score}</div>
-    </div>
-  `).join('');
-}
-
-// UPDATE INTERMEDIATION
-function updateIntermediation(type) {
-  const data = intermediationData[type];
-  const chart = document.getElementById('intermediationChart');
-  
-  chart.innerHTML = data.map(item => `
-    <div class="chart-bar">
-      <div class="bar-label">${item.label}</div>
-      <div class="bar-container">
-        <div class="bar-fill" style="width: ${item.value * 100}%; background: var(--teal);"></div>
-      </div>
-      <div class="bar-value">${item.value}</div>
-    </div>
-  `).join('');
-}
-
-// HANDLERS
-function updateCentrality(metric) {
-  currentCentrality = metric;
-  updateRanking(metric);
-  console.log('Centralidad actualizada a:', metric);
-}
-
-function toggleIntermediation(type) {
-  currentIntermediation = type;
-  const buttons = document.querySelectorAll('.toggle-btn');
-  buttons.forEach(btn => btn.classList.remove('active'));
-  event.target.classList.add('active');
-  updateIntermediation(type);
-}
-
-function filterByStructure(structure) {
-  currentFilter = structure;
-  initNetworkGraph();
-  console.log('Red filtrada por:', structure);
-}
-
-function filterRelations(type) {
-  const buttons = document.querySelectorAll('.filter-btn');
-  buttons.forEach(btn => btn.classList.remove('active'));
-  event.target.classList.add('active');
-}
-
-function downloadReport() {
-  alert('Descargando reporte de métricas...');
-}
-
-function shareAnalysis() {
-  alert('Generando enlace compartible...');
-}
-
-function recalculateMetrics() {
-  alert('Recalculando métricas de la red...');
-}
-
-// INIT ON LOAD
-document.addEventListener('DOMContentLoaded', () => {
-  initNetworkGraph();
-  updateRanking('betweenness');
-  updateIntermediation('all');
-});
-
-// RESIZE HANDLER
-window.addEventListener('resize', () => {
-  initNetworkGraph();
-});
-</script>
+<script src="modulo-02-simulador.js"></script>
 
 </body>
 </html>
