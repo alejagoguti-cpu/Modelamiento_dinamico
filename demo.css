@@ -95,3 +95,34 @@ input:focus {
 .social-login button:hover {
   background-color: #2f3350;
 }
+/* Centrar el contenido en dos columnas */
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100vh;
+  padding: 0 80px;
+}
+
+/* Alinear el texto del lado izquierdo */
+.left {
+  flex: 1;
+  max-width: 45%;
+}
+
+/* Centrar el login en el lado derecho */
+.right {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Ajustar el footer para que no se pegue al login */
+footer {
+  margin-top: 40px;
+  text-align: center;
+  color: #aaa;
+  font-size: 0.9rem;
+}
+
