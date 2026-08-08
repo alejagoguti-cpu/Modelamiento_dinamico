@@ -79,12 +79,12 @@
     </div>
 
     <!-- STEPPER -->
-    <div class="stepper">
-      <div class="step active" data-step="1">
+    <div class="stepper" id="stepperContainer">
+      <div class="step" data-step="1" id="step1">
         <div class="step-num">1</div>
         <div class="step-text">
-          <strong>Cargar datos</strong>
-          <span>Importa tus fuentes de información</span>
+          <strong>Importar datos</strong>
+          <span>Carga tu archivo de conceptos</span>
         </div>
       </div>
       <i class="fa-solid fa-chevron-right step-arrow"></i>
@@ -92,23 +92,23 @@
         <div class="step-num">2</div>
         <div class="step-text">
           <strong>Identificar relaciones</strong>
-          <span>Encuentra vínculos entre conceptos</span>
+          <span>Sistema detecta vínculos automáticamente</span>
         </div>
       </div>
       <i class="fa-solid fa-chevron-right step-arrow"></i>
       <div class="step" data-step="3">
         <div class="step-num">3</div>
         <div class="step-text">
-          <strong>Clasificar y justificar</strong>
-          <span>Define el tipo de relación y su justificación</span>
+          <strong>Validar estructura</strong>
+          <span>Revisa tipos y justificaciones</span>
         </div>
       </div>
       <i class="fa-solid fa-chevron-right step-arrow"></i>
-      <div class="step" data-step="4">
+      <div class="step active" data-step="4" id="step4">
         <div class="step-num">4</div>
         <div class="step-text">
-          <strong>Generar red</strong>
-          <span>Visualiza y exporta tu red de conocimiento</span>
+          <strong>Red generada</strong>
+          <span>Visualiza e interactúa con la red</span>
         </div>
       </div>
     </div>
