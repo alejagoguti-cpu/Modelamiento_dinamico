@@ -49,4 +49,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
-
+document.querySelector('.demo').addEventListener('click', function() {
+  window.location.href = 'demo.html';
+});
