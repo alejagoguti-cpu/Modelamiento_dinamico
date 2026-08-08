@@ -1,9 +1,68 @@
-/* Fondo especial solo para demo.html */
+/* Estilos generales */
 body {
-  background: radial-gradient(circle at top left, #0b0d17, #1a1c2e);
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background-color: #0b0d17;
+  color: #e0e0e0;
 }
 
-/* Caja de login con efecto */
+/* Contenedor principal en dos columnas */
+.container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  height: 100vh;
+  padding: 0 80px;
+  gap: 40px;
+}
+
+/* Lado izquierdo */
+.left {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 90%;
+}
+
+.logo h1 {
+  color: #00bcd4;
+  font-size: 2.5rem;
+  margin: 0;
+}
+
+.logo p {
+  color: #ccc;
+  margin-top: 5px;
+}
+
+.description {
+  margin-top: 20px;
+  line-height: 1.6;
+}
+
+.quote {
+  background-color: #111320;
+  padding: 20px;
+  border-left: 4px solid #00bcd4;
+  font-style: italic;
+  margin-top: 20px;
+}
+
+footer {
+  margin-top: 40px;
+  text-align: center;
+  color: #aaa;
+  font-size: 0.9rem;
+}
+
+/* Lado derecho */
+.right {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Caja de login */
 .login-box {
   background-color: #1c1f33;
   padding: 40px;
@@ -18,7 +77,16 @@ body {
   box-shadow: 0 0 35px rgba(0, 188, 212, 0.6);
 }
 
-/* Inputs con animación */
+.login-box h2 {
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.accent {
+  color: #7b61ff;
+}
+
+/* Inputs */
 input {
   width: 100%;
   padding: 12px;
@@ -36,7 +104,7 @@ input:focus {
   outline: none;
 }
 
-/* Botón con animación */
+/* Botón principal */
 .btn {
   width: 100%;
   padding: 14px;
@@ -54,7 +122,7 @@ input:focus {
   box-shadow: 0 0 12px rgba(123, 97, 255, 0.6);
 }
 
-/* Divider más estilizado */
+/* Divider */
 .divider {
   text-align: center;
   margin: 25px 0;
@@ -95,34 +163,11 @@ input:focus {
 .social-login button:hover {
   background-color: #2f3350;
 }
-/* Centrar el contenido en dos columnas */
-.container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 100vh;
-  padding: 0 80px;
-}
 
-/* Alinear el texto del lado izquierdo */
-.left {
-  flex: 1;
-  max-width: 45%;
-}
-
-/* Centrar el login en el lado derecho */
-.right {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-/* Ajustar el footer para que no se pegue al login */
-footer {
-  margin-top: 40px;
+/* Registro */
+.register {
   text-align: center;
-  color: #aaa;
-  font-size: 0.9rem;
+  margin-top: 20px;
 }
+
 
