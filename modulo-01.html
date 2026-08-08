@@ -3,17 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RAPOT · 01 Construir la Red</title>
+<title>RAPOT · Módulo 01 — Ingeniería Inversa del POT</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="stylesheet" href="configuracion.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.min.js"></script>
 <link rel="stylesheet" href="modulo-01.css">
 </head>
 <body>
 <div class="app">
 
-  <!-- SIDEBAR (tu estructura existente) -->
+  <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="brand">
       <div class="mark"><i class="fa-solid fa-diagram-project"></i></div>
@@ -51,223 +52,196 @@
         <div class="name">Equipo Urbano</div>
         <div class="role">Administrador</div>
       </div>
-      <a href="demo.html" class="logout-btn" title="Cerrar sesión"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
+      <a href="demo.html" class="logout-btn"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
     </div>
   </aside>
 
   <!-- MAIN -->
   <main class="main">
 
-    <!-- TOPBAR (tu estructura existente) -->
     <div class="topbar">
-      <div class="breadcrumb">MÓDULOS / MÓDULO 01</div>
+      <div>
+        <div class="breadcrumb">MÓDULOS / MÓDULO 01</div>
+        <h1>01. INGENIERÍA INVERSA DEL POT</h1>
+        <p class="subtitle">Reconstruye la red de relaciones y hallazgos contradicciones entre el discurso y la estructura real.</p>
+      </div>
       <div class="topbar-actions">
-        <div class="search-box"><i class="fa-solid fa-magnifying-glass"></i> Buscar en el sistema...</div>
+        <div class="search-box"><i class="fa-solid fa-magnifying-glass"></i> Buscar en la red...</div>
         <div class="icon-btn"><i class="fa-regular fa-bell"></i><span class="dot"></span></div>
         <div class="icon-btn"><i class="fa-regular fa-circle-question"></i></div>
         <div class="avatar-sm">EU</div>
       </div>
     </div>
 
-    <!-- PAGE HEAD -->
-    <div class="page-head">
-      <div>
-        <h1>01. CONSTRUIR LA RED</h1>
-        <p>Crea la red de conceptos y relaciones del POT a partir de fuentes oficiales.</p>
-      </div>
-      <button class="btn-outline" id="downloadTemplate"><i class="fa-solid fa-download"></i> Descargar plantilla</button>
-    </div>
-
-    <!-- STEPPER -->
-    <div class="stepper" id="stepperContainer">
-      <div class="step" data-step="1" id="step1">
-        <div class="step-num">1</div>
-        <div class="step-text">
-          <strong>Importar datos</strong>
-          <span>Carga tu archivo de conceptos</span>
+    <!-- UPLOAD SECTION -->
+    <div class="upload-section">
+      <div class="upload-panel">
+        <div class="panel-title">
+          <i class="fa-solid fa-file-upload"></i>
+          Cargar datos del POT
         </div>
-      </div>
-      <i class="fa-solid fa-chevron-right step-arrow"></i>
-      <div class="step" data-step="2">
-        <div class="step-num">2</div>
-        <div class="step-text">
-          <strong>Identificar relaciones</strong>
-          <span>Sistema detecta vínculos automáticamente</span>
-        </div>
-      </div>
-      <i class="fa-solid fa-chevron-right step-arrow"></i>
-      <div class="step" data-step="3">
-        <div class="step-num">3</div>
-        <div class="step-text">
-          <strong>Validar estructura</strong>
-          <span>Revisa tipos y justificaciones</span>
-        </div>
-      </div>
-      <i class="fa-solid fa-chevron-right step-arrow"></i>
-      <div class="step active" data-step="4" id="step4">
-        <div class="step-num">4</div>
-        <div class="step-text">
-          <strong>Red generada</strong>
-          <span>Visualiza e interactúa con la red</span>
+        <div class="upload-zone" id="uploadZone">
+          <input type="file" id="fileInput" accept=".xlsx,.csv,.xls" hidden>
+          <i class="fa-solid fa-cloud-arrow-up"></i>
+          <h3>Sube tu análisis del POT</h3>
+          <p>Excel con columnas: Concepto | Estructura | Concepto Relacionado | Tipo de Relación | Justificación | Discurso Vs Realidad</p>
+          <button class="btn-upload" id="browseBtn">Seleccionar archivo</button>
+          <span class="upload-status" id="uploadStatus"></span>
         </div>
       </div>
     </div>
 
-    <!-- STAT CARDS -->
-    <div class="stats-row">
+    <!-- STATS -->
+    <div class="stats-grid">
       <div class="stat-card">
-        <div class="stat-top">
-          <span class="stat-val" id="statConceptos">0</span>
-          <i class="fa-solid fa-diagram-project stat-icon teal"></i>
-        </div>
-        <div class="stat-lbl">Conceptos</div>
-        <div class="stat-sub" id="statConceptosSub">Sube tu archivo para empezar</div>
+        <div class="stat-value" id="statConceptos">0</div>
+        <div class="stat-label">Conceptos</div>
+        <div class="stat-desc" id="statConceptosSub">Nodos en la red</div>
       </div>
       <div class="stat-card">
-        <div class="stat-top">
-          <span class="stat-val" id="statRelaciones">0</span>
-          <i class="fa-solid fa-share-nodes stat-icon blue"></i>
-        </div>
-        <div class="stat-lbl">Relaciones</div>
-        <div class="stat-sub" id="statRelacionesSub">—</div>
+        <div class="stat-value" id="statRelaciones">0</div>
+        <div class="stat-label">Relaciones</div>
+        <div class="stat-desc" id="statRelacionesSub">Conexiones identificadas</div>
       </div>
       <div class="stat-card">
-        <div class="stat-top">
-          <span class="stat-val" id="statFuentes">0</span>
-          <i class="fa-solid fa-file-lines stat-icon orange"></i>
+        <div class="stat-card-warning" id="statContradicciones">
+          <div class="stat-value" style="color:#f43f8e;">0</div>
+          <div class="stat-label">Contradicciones</div>
+          <div class="stat-desc">Discurso vs Estructura</div>
         </div>
-        <div class="stat-lbl">Fuentes</div>
-        <div class="stat-sub" id="statFuentesSub">—</div>
       </div>
       <div class="stat-card">
-        <div class="stat-top">
-          <span class="stat-val" id="statTipos">0</span>
-          <i class="fa-solid fa-diagram-project stat-icon purple"></i>
-        </div>
-        <div class="stat-lbl">Tipos de relación</div>
-        <div class="stat-sub" id="statTiposSub">Directa, Indirecta, Soporte...</div>
+        <div class="stat-value" id="statMacromodelos">0</div>
+        <div class="stat-label">Macromodelos</div>
+        <div class="stat-desc">Paradigmas identificados</div>
       </div>
     </div>
 
-    <!-- NETWORK PANEL -->
-    <div class="network-row">
-      <div class="panel network-panel">
-        <div class="panel-head">
-          <h4>VISTA DE LA RED</h4>
-          <div class="panel-head-actions">
-            <button class="chip-btn"><i class="fa-solid fa-filter"></i> Filtros</button>
-            <button class="icon-mini" id="resetZoom" title="Restablecer vista"><i class="fa-solid fa-arrows-rotate"></i></button>
+    <!-- MAIN ANALYSIS AREA -->
+    <div class="analysis-area">
+
+      <!-- LEFT: GRAPH -->
+      <div class="graph-section">
+        <div class="section-title">GRAFO INTERACTIVO</div>
+        <div class="graph-container" id="graphArea">
+          <div class="loading-msg" id="loadingMsg">
+            <i class="fa-solid fa-spinner fa-spin"></i>
+            <p>Sube un archivo para comenzar el análisis</p>
+          </div>
+          <svg id="graphSvg" class="graph-svg" style="display:none;"></svg>
+        </div>
+        <div class="graph-legend">
+          <div class="legend-item"><span class="legend-dot directa"></span> Directa</div>
+          <div class="legend-item"><span class="legend-dot indirecta"></span> Indirecta</div>
+          <div class="legend-item"><span class="legend-dot soporte"></span> Soporte</div>
+          <div class="legend-item"><span class="legend-dot resiliencia"></span> Resiliencia</div>
+        </div>
+      </div>
+
+      <!-- RIGHT: ANALYSIS PANEL -->
+      <div class="analysis-panel">
+        <div class="panel-title">HALLAZGOS Y ANÁLISIS</div>
+        
+        <!-- NODE DETAIL -->
+        <div id="nodeDetail" class="detail-section" style="display:none;">
+          <div class="detail-header">
+            <h4 id="detailName">Concepto</h4>
+            <span class="detail-close" id="closeDetail">✕</span>
+          </div>
+          <div class="detail-body">
+            <div class="detail-subsection">
+              <div class="subsection-title">Estructura</div>
+              <div id="detailStructure">—</div>
+            </div>
+            <div class="detail-subsection">
+              <div class="subsection-title">Importancia Discursiva vs Estructural</div>
+              <div id="detailDiscrepancy" class="discrepancy-badge">—</div>
+            </div>
+            <div class="detail-subsection">
+              <div class="subsection-title">Conexiones Salientes</div>
+              <div id="detailOutgoing" class="connections-list">—</div>
+            </div>
+            <div class="detail-subsection">
+              <div class="subsection-title">Conexiones Entrantes</div>
+              <div id="detailIncoming" class="connections-list">—</div>
+            </div>
+            <div class="detail-subsection">
+              <div class="subsection-title">Justificación de Relaciones</div>
+              <div id="detailJustification" class="justification-box">—</div>
+            </div>
           </div>
         </div>
 
-        <div class="tabs">
-          <div class="tab active" data-tab="todas">Todas</div>
-          <div class="tab" data-tab="conceptos">Conceptos</div>
-          <div class="tab" data-tab="relaciones">Relaciones</div>
+        <!-- CONTRADICTIONS SUMMARY -->
+        <div id="contradictionsSummary" class="findings-section" style="display:none;">
+          <div class="section-header">
+            <h4><i class="fa-solid fa-triangle-exclamation"></i> Contradicciones Encontradas</h4>
+          </div>
+          <div id="contradictionsList" class="findings-list">—</div>
         </div>
 
-        <div class="network-body">
-
-          <!-- LEGEND -->
-          <div class="legend-col">
-            <div class="legend-block">
-              <div class="legend-title">TIPOS DE RELACIÓN</div>
-              <div class="legend-row"><span class="lg-line directa"></span> Directa</div>
-              <div class="legend-row"><span class="lg-line indirecta"></span> Indirecta</div>
-              <div class="legend-row"><span class="lg-line soporte"></span> Soporte</div>
-              <div class="legend-row"><span class="lg-line resiliencia"></span> Resiliencia</div>
-              <div class="legend-row"><span class="lg-line otra"></span> Otra</div>
-            </div>
-            <div class="legend-block">
-              <div class="legend-title">ESTRUCTURAS</div>
-              <div class="legend-row"><span class="lg-dot" style="background:#34d399"></span> EEP - Ecológica <b id="cnt-eep">0</b></div>
-              <div class="legend-row"><span class="lg-dot" style="background:#3b82f6"></span> EFS - Funcional <b id="cnt-efs">0</b></div>
-              <div class="legend-row"><span class="lg-dot" style="background:#ef9552"></span> ESE - Socioeconómica <b id="cnt-ese">0</b></div>
-              <div class="legend-row"><span class="lg-dot" style="background:#b06bf7"></span> EAG - Administrativa <b id="cnt-eag">0</b></div>
-              <div class="legend-row"><span class="lg-dot" style="background:#6b7284"></span> Otras <b id="cnt-otras">0</b></div>
-            </div>
+        <!-- MACRO MODELS -->
+        <div id="macromodelsSummary" class="findings-section" style="display:none;">
+          <div class="section-header">
+            <h4><i class="fa-solid fa-sitemap"></i> Macromodelos Identificados</h4>
           </div>
+          <div id="macromodelsList" class="findings-list">—</div>
+        </div>
 
-          <!-- GRAPH AREA -->
-          <div class="graph-area" id="graphArea">
-            <div class="upload-zone" id="uploadZone">
-              <input type="file" id="fileInput" accept=".csv,.xlsx,.xls" hidden>
-              <i class="fa-solid fa-file-arrow-up upload-icon"></i>
-              <h3>Sube tu archivo de conceptos y relaciones</h3>
-              <p>Arrastra aquí tu Excel o CSV, o haz clic para seleccionarlo.<br>
-              Columnas esperadas: <code>Concepto, Estructura, Fuente, Concepto relacionado, Tipo de relación, Justificación</code></p>
-              <button class="btn-primary-sm" id="browseBtn">Seleccionar archivo</button>
-              <span class="upload-status" id="uploadStatus"></span>
-            </div>
-            <svg id="graphSvg" class="graph-svg" style="display:none;"></svg>
+      </div>
+
+    </div>
+
+    <!-- MODAL: RELACIÓN DETALLADA -->
+    <div class="modal" id="relationModal" style="display:none;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>ANÁLISIS DE RELACIÓN</h3>
+          <span class="modal-close" id="closeRelation">✕</span>
+        </div>
+        <div class="modal-body">
+          <div class="relation-flow">
+            <div class="flow-node"><span id="relationFrom">A</span></div>
+            <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+            <div class="flow-node"><span id="relationTo">B</span></div>
           </div>
-
-          <!-- DETAIL PANEL -->
-          <div class="detail-panel" id="detailPanel" style="display:none;">
-            <div class="detail-head">
-              <h4>DETALLE DEL CONCEPTO</h4>
-              <i class="fa-solid fa-xmark" id="closeDetail"></i>
-            </div>
-            <div class="detail-id">
-              <div class="detail-icon" id="detailIcon"><i class="fa-solid fa-circle-nodes"></i></div>
-              <div>
-                <div class="detail-name" id="detailName">—</div>
-                <div class="detail-tag" id="detailTag">—</div>
+          <div class="relation-type-badge" id="relationTypeBadge">Directa</div>
+          <div class="modal-section">
+            <h4>Justificación desde fuentes</h4>
+            <div id="relationJustification" class="source-quote">—</div>
+          </div>
+          <div class="modal-section">
+            <h4>Naturaleza de la relación</h4>
+            <div id="relationNature">
+              <div class="relation-attribute">
+                <span class="attr-label">Tipo:</span>
+                <span class="attr-value" id="relationNatureType">—</span>
+              </div>
+              <div class="relation-attribute">
+                <span class="attr-label">Dirección:</span>
+                <span class="attr-value" id="relationDirection">—</span>
+              </div>
+              <div class="relation-attribute">
+                <span class="attr-label">Intensidad:</span>
+                <span class="attr-value" id="relationIntensity">—</span>
               </div>
             </div>
-            <div class="detail-section">
-              <div class="detail-label">Estadísticas</div>
-              <div class="detail-row"><span>Relaciones salientes</span><b id="detailOut">0</b></div>
-              <div class="detail-row"><span>Relaciones entrantes</span><b id="detailIn">0</b></div>
-              <div class="detail-row"><span>Total conexiones</span><b id="detailTotal">0</b></div>
-            </div>
-            <div class="detail-section">
-              <div class="detail-label">Fuentes relacionadas</div>
-              <div id="detailFuentes" class="detail-fuentes">—</div>
-            </div>
           </div>
-
+          <div class="modal-section">
+            <h4>¿Contradice el discurso?</h4>
+            <div id="relationContradicts" style="padding:10px;background:rgba(244,63,142,0.1);border-radius:6px;color:var(--text);">—</div>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- BOTTOM ROW: ANALYTICS -->
-    <div class="bottom-row" id="bottomRow" style="display:none;">
-
-      <div class="panel">
-        <div class="panel-head"><h4>DISTRIBUCIÓN DE RELACIONES</h4></div>
-        <div class="donut-wrap">
-          <svg id="donutSvg" viewBox="0 0 180 180" class="donut-svg"></svg>
-          <div class="donut-legend" id="donutLegend"></div>
-        </div>
-      </div>
-
-      <div class="panel">
-        <div class="panel-head"><h4>DENSIDAD DE LA RED</h4></div>
-        <div class="density-val" id="densityVal">0.00</div>
-        <div class="density-lbl" id="densityLbl">Densidad media</div>
-        <p class="density-desc" id="densityDesc">La red tiene una conectividad moderada.</p>
-      </div>
-
-      <div class="panel">
-        <div class="panel-head"><h4>CENTRALIDAD DE CONCEPTOS</h4></div>
-        <div class="centrality-list" id="centralityList"></div>
-      </div>
-
-    </div>
-
-    <!-- AI TIP -->
-    <div class="ai-tip">
-      <i class="fa-solid fa-wand-magic-sparkles"></i>
-      <span id="aiTipText">Consejo IA: sube tu archivo para que el sistema revise relaciones con baja justificación o indirectas.</span>
-    </div>
+    <footer>
+      <p>"El interés del ejercicio está en comprender por qué y cómo se relacionan las cosas." — Clase de Lunes</p>
+    </footer>
 
   </main>
 </div>
 
-<!-- SCRIPTS -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
-<script src="modulo-01-mejorado.js"></script>
+<script src="modulo-01.js"></script>
 </body>
 </html>
