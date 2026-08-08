@@ -9,6 +9,7 @@ body {
 .dashboard-container {
   display: flex;
   height: 100vh;
+  overflow: hidden;
 }
 
 /* Sidebar */
@@ -67,23 +68,50 @@ body {
   color: #b0b0b0;
   padding: 8px 0;
   cursor: pointer;
+  position: relative;
   transition: color 0.3s ease;
 }
 
+/* Ícono y texto */
 .menu li i {
   font-size: 1rem;
   color: #b0b0b0;
+  transition: color 0.3s ease;
 }
 
+/* Hover y activo con destello */
 .menu li:hover,
 .menu li.active {
   color: #00bcd4;
 }
 
+.menu li:hover i,
 .menu li.active i {
   color: #00bcd4;
 }
 
+/* Efecto de destello */
+.menu li::before {
+  content: "";
+  position: absolute;
+  left: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #00bcd4;
+  opacity: 0;
+  box-shadow: 0 0 10px #00bcd4, 0 0 20px #00bcd4;
+  transition: opacity 0.3s ease, box-shadow 0.3s ease;
+}
+
+.menu li:hover::before,
+.menu li.active::before {
+  opacity: 1;
+}
+
+/* Usuario */
 .user-info {
   border-top: 1px solid #1f2233;
   padding-top: 15px;
@@ -114,9 +142,10 @@ body {
 /* Main content */
 .main-content {
   flex: 1;
-  margin-left: 240px; /* espacio para el sidebar */
-  padding: 20px 40px;
-  overflow-y: auto;
+  margin-left: 240px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 /* Barra superior */
@@ -127,9 +156,12 @@ body {
   background-color: #111320;
   padding: 12px 24px;
   border-bottom: 1px solid #1f2233;
+  width: 100%;
+  box-sizing: border-box;
   position: sticky;
   top: 0;
   z-index: 10;
+  box-shadow: 0 2px 10px rgba(0, 188, 212, 0.1);
 }
 
 .topbar-left h1 {
@@ -153,6 +185,7 @@ body {
   border-radius: 8px;
   padding: 6px 10px;
   width: 220px;
+  transition: box-shadow 0.3s ease;
 }
 
 .search-box i {
@@ -170,7 +203,11 @@ body {
   width: 100%;
 }
 
-/* Íconos de notificación y recarga */
+.search-box:focus-within {
+  box-shadow: 0 0 10px #00bcd4;
+}
+
+/* Íconos */
 .icons {
   display: flex;
   align-items: center;
@@ -202,7 +239,6 @@ body {
   font-size: 0.85rem;
   border: 1px solid #2a2d44;
 }
-
 
 /* Módulos */
 .modules h3 {
@@ -293,6 +329,7 @@ footer {
   color: #aaa;
   font-size: 0.9rem;
 }
+
 
 
 
