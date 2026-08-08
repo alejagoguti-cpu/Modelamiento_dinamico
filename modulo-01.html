@@ -1,147 +1,425 @@
-:root{
-  --bg: #0a0e17;
-  --sidebar: #0c1120;
-  --panel: #121828;
-  --panel-border: #1c2830;
-  --text: #eef0f6;
-  --text-dim: #9aa1b3;
-  --text-faint: #6b7284;
-  --accent: #2fd4c8;
-  --eep: #34d399;
-  --efc: #3b82f6;
-  --eseci: #ef9552;
-  --eip: #b06bf7;
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAPOT · Módulo 01 — Construir la Red</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="modulo-01.css">
+</head>
+<body>
+<div id="app">
+
+  <!-- SIDEBAR RAPOT -->
+  <aside id="sidebar-rapot">
+    <div class="brand">
+      <div class="mark"><i class="fa-solid fa-diagram-project"></i></div>
+      <span>RAPOT</span>
+    </div>
+    
+    <div class="nav-group">
+      <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-house"></i> Dashboard</a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-label">MÓDULOS</div>
+      <a href="modulo-01.html" class="nav-item active"><span class="num">01</span><i class="fa-solid fa-diagram-project"></i> Construir la Red</a>
+      <a href="modulo-02.html" class="nav-item"><span class="num">02</span><i class="fa-solid fa-chart-simple"></i> Medir la Red</a>
+      <a href="modulo-03.html" class="nav-item"><span class="num">03</span><i class="fa-solid fa-eye"></i> Discurso vs Realidad</a>
+      <a href="modulo-04.html" class="nav-item"><span class="num">04</span><i class="fa-solid fa-bullseye"></i> Macromodelos</a>
+      <a href="modulo-05.html" class="nav-item"><span class="num">05</span><i class="fa-solid fa-magnifying-glass"></i> Lo que no está</a>
+      <a href="modulo-06.html" class="nav-item"><span class="num">06</span><i class="fa-solid fa-earth-americas"></i> POT ↔ ODS</a>
+      <a href="modulo-07.html" class="nav-item"><span class="num">07</span><i class="fa-solid fa-flask"></i> Simulador</a>
+      <a href="modulo-08.html" class="nav-item"><span class="num">08</span><i class="fa-solid fa-city"></i> Modelo Propio</a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-label">GESTIÓN</div>
+      <a href="proyectos.html" class="nav-item"><i class="fa-solid fa-folder"></i> Proyectos</a>
+      <a href="fuentes.html" class="nav-item"><i class="fa-solid fa-file-lines"></i> Fuentes y Documentos</a>
+      <a href="favoritos.html" class="nav-item"><i class="fa-regular fa-star"></i> Favoritos</a>
+      <a href="reportes.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Reportes</a>
+      <a href="configuracion.html" class="nav-item"><i class="fa-solid fa-gear"></i> Configuración</a>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="avatar-sm">EU</div>
+      <div class="user-meta">
+        <div class="name">Equipo Urbano</div>
+        <div class="role">Administrador</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <div id="main-container">
+    <header>
+      <h1>01. Construir la Red</h1>
+      <p>Analiza las cuatro estructuras del POT y sus interconexiones.</p>
+    </header>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value" id="statConceptos">58</div>
+        <div class="stat-label">Conceptos</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="statRelaciones">70</div>
+        <div class="stat-label">Relaciones</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="statFuentes">4</div>
+        <div class="stat-label">Fuentes</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="statTipos">4</div>
+        <div class="stat-label">Tipos de relación</div>
+      </div>
+    </div>
+
+    <div class="graph-wrapper">
+      
+      <!-- LEGEND & FILTERS -->
+      <div class="legend-panel">
+        <div class="legend-section">
+          <div class="legend-title">Estructuras</div>
+          <label class="filter-item">
+            <input type="checkbox" class="filter-struct" value="EEP" checked>
+            <div class="filter-dot" style="background:var(--eep);"></div>
+            <span>EEP</span>
+          </label>
+          <label class="filter-item">
+            <input type="checkbox" class="filter-struct" value="EFC" checked>
+            <div class="filter-dot" style="background:var(--efc);"></div>
+            <span>EFC</span>
+          </label>
+          <label class="filter-item">
+            <input type="checkbox" class="filter-struct" value="ESECI" checked>
+            <div class="filter-dot" style="background:var(--eseci);"></div>
+            <span>ESECI</span>
+          </label>
+          <label class="filter-item">
+            <input type="checkbox" class="filter-struct" value="EIP" checked>
+            <div class="filter-dot" style="background:var(--eip);"></div>
+            <span>EIP</span>
+          </label>
+        </div>
+
+        <div class="legend-section">
+          <div class="legend-title">Tipos de Relación</div>
+          <label class="filter-item">
+            <input type="checkbox" class="filter-type" value="Directa" checked>
+            <div class="filter-line solid" style="background:var(--eep); border-top:2px solid;"></div>
+            <span>Directa</span>
+          </label>
+          <label class="filter-item">
+            <input type="checkbox" class="filter-type" value="Indirecta" checked>
+            <div class="filter-line" style="background:var(--efc); border-top:2px dashed;"></div>
+            <span>Indirecta</span>
+          </label>
+          <label class="filter-item">
+            <input type="checkbox" class="filter-type" value="Soporte" checked>
+            <div class="filter-line solid" style="background:var(--eseci); border-top:2px solid;"></div>
+            <span>Soporte</span>
+          </label>
+          <label class="filter-item">
+            <input type="checkbox" class="filter-type" value="Resiliencia" checked>
+            <div class="filter-line solid" style="background:var(--eip); border-top:2px solid;"></div>
+            <span>Resiliencia</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- CANVAS -->
+      <div class="canvas-container">
+        <div id="canvas-wrap">
+          <svg id="edges"></svg>
+        </div>
+      </div>
+
+      <!-- DETAIL PANEL -->
+      <div class="detail-panel" id="detailPanel" style="display:none;">
+        <div class="detail-card">
+          <div class="detail-label">Concepto</div>
+          <div class="detail-content" id="detailName">—</div>
+        </div>
+        <div class="detail-card">
+          <div class="detail-label">Estructura</div>
+          <div class="detail-content" id="detailStruct">—</div>
+        </div>
+        <div class="detail-card">
+          <div class="detail-label">Conexiones (→)</div>
+          <div class="detail-content" id="detailOut" style="font-size:11px;">—</div>
+        </div>
+        <div class="detail-card">
+          <div class="detail-label">Conexiones (←)</div>
+          <div class="detail-content" id="detailIn" style="font-size:11px;">—</div>
+        </div>
+      </div>
+
+    </div>
+
+    <footer>
+      <p>"No se trata de representar la ciudad, sino de comprenderla para transformarla." — Equipo POT RE</p>
+    </footer>
+
+  </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script>
+
+// DATOS COMPLETOS DEL POT
+const POT_DATA = {
+  EEP: [
+    {origen:"Quebradas",destino:"Ríos",tipo:"Directa",struct:"EEP"},
+    {origen:"Ríos",destino:"Quebradas",tipo:"Soporte",struct:"EEP"},
+    {origen:"Ríos",destino:"Humedales",tipo:"Directa",struct:"EEP"},
+    {origen:"Humedales",destino:"Áreas de resiliencia climática",tipo:"Resiliencia",struct:"EEP"},
+    {origen:"Humedales",destino:"Áreas protegidas",tipo:"Soporte",struct:"EEP"},
+    {origen:"Conectores ecosistémicos",destino:"Humedales",tipo:"Directa",struct:"EEP"},
+    {origen:"Conectores ecosistémicos",destino:"Parques ecológicos de montaña",tipo:"Directa",struct:"EEP"},
+    {origen:"Conectores ecosistémicos",destino:"Áreas protegidas",tipo:"Soporte",struct:"EEP"},
+    {origen:"Conectores ecosistémicos",destino:"Coberturas vegetales",tipo:"Directa",struct:"EEP"},
+    {origen:"Parques de borde",destino:"Coberturas vegetales",tipo:"Directa",struct:"EEP"},
+    {origen:"Parques de borde",destino:"Ríos",tipo:"Resiliencia",struct:"EEP"},
+    {origen:"Áreas de resiliencia climática",destino:"Coberturas vegetales",tipo:"Resiliencia",struct:"EEP"},
+    {origen:"Bosques urbanos",destino:"Coberturas vegetales",tipo:"Directa",struct:"EEP"},
+    {origen:"Bosques urbanos",destino:"Áreas protegidas",tipo:"Indirecta",struct:"EEP"}
+  ],
+  EFC: [
+    {origen:"Movilidad",destino:"Transporte público",tipo:"Directa",struct:"EFC"},
+    {origen:"Transporte público",destino:"Ciclorrutas",tipo:"Directa",struct:"EFC"},
+    {origen:"Transporte público",destino:"Corredores verdes",tipo:"Directa",struct:"EFC"},
+    {origen:"Movilidad",destino:"Espacio público",tipo:"Directa",struct:"EFC"},
+    {origen:"Espacio público",destino:"Parques",tipo:"Directa",struct:"EFC"},
+    {origen:"UPL",destino:"Proximidad",tipo:"Directa",struct:"EFC"},
+    {origen:"UPL",destino:"Servicios sociales",tipo:"Directa",struct:"EFC"},
+    {origen:"UPL",destino:"Accesibilidad",tipo:"Directa",struct:"EFC"},
+    {origen:"Proximidad",destino:"Equipamientos",tipo:"Soporte",struct:"EFC"},
+    {origen:"Manzanas del Cuidado",destino:"Servicios de cuidado",tipo:"Directa",struct:"EFC"},
+    {origen:"Manzanas del Cuidado",destino:"Servicios sociales",tipo:"Directa",struct:"EFC"},
+    {origen:"Manzanas del Cuidado",destino:"Transporte público",tipo:"Soporte",struct:"EFC"},
+    {origen:"Manzanas del Cuidado",destino:"Equipamientos",tipo:"Soporte",struct:"EFC"},
+    {origen:"Servicios sociales",destino:"Servicios de cuidado",tipo:"Soporte",struct:"EFC"},
+    {origen:"Vivienda",destino:"Equipamientos",tipo:"Soporte",struct:"EFC"},
+    {origen:"Vivienda",destino:"Movilidad",tipo:"Directa",struct:"EFC"},
+    {origen:"Espacio público",destino:"Accesibilidad",tipo:"Soporte",struct:"EFC"},
+    {origen:"Red vial",destino:"Ciclorrutas",tipo:"Directa",struct:"EFC"},
+    {origen:"Servicios públicos",destino:"Vivienda",tipo:"Soporte",struct:"EFC"},
+    {origen:"Accesibilidad",destino:"Equipamientos",tipo:"Soporte",struct:"EFC"}
+  ],
+  ESECI: [
+    {origen:"Huertas",destino:"Agricultura urbana",tipo:"Directa",struct:"ESECI"},
+    {origen:"Agricultura urbana",destino:"Producción de alimentos",tipo:"Directa",struct:"ESECI"},
+    {origen:"Economía circular",destino:"Negocios verdes",tipo:"Soporte",struct:"ESECI"},
+    {origen:"Economía circular",destino:"Industria",tipo:"Indirecta",struct:"ESECI"},
+    {origen:"Actividades productivas",destino:"Empleo",tipo:"Directa",struct:"ESECI"},
+    {origen:"Actividades económicas",destino:"Empleo",tipo:"Directa",struct:"ESECI"},
+    {origen:"Aglomeraciones económicas",destino:"Empleo",tipo:"Directa",struct:"ESECI"},
+    {origen:"Aglomeraciones económicas",destino:"Transporte público",tipo:"Soporte",struct:"ESECI"},
+    {origen:"Actividades productivas",destino:"Industria",tipo:"Soporte",struct:"ESECI"},
+    {origen:"Comercio",destino:"Economías de proximidad",tipo:"Directa",struct:"ESECI"},
+    {origen:"Innovación",destino:"Empleo",tipo:"Directa",struct:"ESECI"},
+    {origen:"Actividades creativas",destino:"Industria",tipo:"Directa",struct:"ESECI"},
+    {origen:"Empleo",destino:"Manzanas del Cuidado",tipo:"Resiliencia",struct:"ESECI"},
+    {origen:"Turismo",destino:"Patrimonio local",tipo:"Soporte",struct:"ESECI"},
+    {origen:"Producción de alimentos",destino:"Áreas protegidas",tipo:"Soporte",struct:"ESECI"},
+    {origen:"Negocios verdes",destino:"Coberturas vegetales",tipo:"Resiliencia",struct:"ESECI"},
+    {origen:"Servicios",destino:"Equipamientos",tipo:"Soporte",struct:"ESECI"},
+    {origen:"Empleo",destino:"UPL",tipo:"Directa",struct:"ESECI"}
+  ],
+  EIP: [
+    {origen:"Patrimonios",destino:"Patrimonio material",tipo:"Directa",struct:"EIP"},
+    {origen:"Patrimonios",destino:"Patrimonio inmaterial",tipo:"Directa",struct:"EIP"},
+    {origen:"Patrimonio material",destino:"Memoria",tipo:"Directa",struct:"EIP"},
+    {origen:"Prácticas culturales",destino:"Dinámicas comunitarias",tipo:"Directa",struct:"EIP"},
+    {origen:"Patrimonio natural",destino:"Patrimonio material",tipo:"Directa",struct:"EIP"},
+    {origen:"Saberes del lugar",destino:"Turismo",tipo:"Soporte",struct:"EIP"},
+    {origen:"Identidades",destino:"Prácticas culturales",tipo:"Directa",struct:"EIP"},
+    {origen:"Patrimonio local",destino:"Dinámicas comunitarias",tipo:"Soporte",struct:"EIP"},
+    {origen:"Modos de habitar",destino:"Vivienda",tipo:"Directa",struct:"EIP"},
+    {origen:"Cultura",destino:"Patrimonio inmaterial",tipo:"Directa",struct:"EIP"},
+    {origen:"Dinámicas comunitarias",destino:"UPL",tipo:"Soporte",struct:"EIP"},
+    {origen:"Memoria",destino:"Cultura",tipo:"Directa",struct:"EIP"}
+  ]
+};
+
+const structColors = { EEP: '#34d399', EFC: '#3b82f6', ESECI: '#ef9552', EIP: '#b06bf7' };
+
+let nodes = [];
+let links = [];
+let allNodes = [];
+let allLinks = [];
+let simulation;
+let activeStructs = new Set(['EEP', 'EFC', 'ESECI', 'EIP']);
+let activeTypes = new Set(['Directa', 'Indirecta', 'Soporte', 'Resiliencia']);
+
+// Cargar datos iniciales
+function buildGraph() {
+  allNodes = [];
+  allLinks = [];
+  const nodeMap = new Map();
+
+  Object.entries(POT_DATA).forEach(([struct, relations]) => {
+    relations.forEach(rel => {
+      if (!nodeMap.has(rel.origen)) {
+        nodeMap.set(rel.origen, { id: rel.origen, struct: rel.struct, color: structColors[rel.struct], label: rel.origen });
+        allNodes.push(nodeMap.get(rel.origen));
+      }
+      if (!nodeMap.has(rel.destino)) {
+        nodeMap.set(rel.destino, { id: rel.destino, struct: rel.struct, color: structColors[rel.struct], label: rel.destino });
+        allNodes.push(nodeMap.get(rel.destino));
+      }
+      allLinks.push({ source: rel.origen, target: rel.destino, tipo: rel.tipo });
+    });
+  });
+
+  document.getElementById('statConceptos').textContent = new Set(allNodes.map(n => n.id)).size;
+  
+  // Listeners de filtros
+  document.querySelectorAll('.filter-struct').forEach(el => {
+    el.addEventListener('change', applyFilters);
+  });
+  document.querySelectorAll('.filter-type').forEach(el => {
+    el.addEventListener('change', applyFilters);
+  });
+
+  applyFilters();
 }
 
-*{box-sizing:border-box;}
-html,body{
-  margin:0; padding:0; height:100%;
-  background: var(--bg);
-  color:var(--text);
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  overflow:hidden;
+function applyFilters() {
+  activeStructs.clear();
+  activeTypes.clear();
+
+  document.querySelectorAll('.filter-struct:checked').forEach(el => {
+    activeStructs.add(el.value);
+  });
+  document.querySelectorAll('.filter-type:checked').forEach(el => {
+    activeTypes.add(el.value);
+  });
+
+  // Filtrar nodos
+  nodes = allNodes.filter(n => activeStructs.has(n.struct));
+
+  // Filtrar links
+  links = allLinks.filter(l => {
+    const sourceNode = nodes.find(n => n.id === l.source);
+    const targetNode = nodes.find(n => n.id === l.target);
+    return sourceNode && targetNode && activeTypes.has(l.tipo);
+  });
+
+  renderGraph();
 }
 
-#app{ display:flex; height:100vh; }
+function renderGraph() {
+  const wrap = document.getElementById('canvas-wrap');
+  const width = wrap.clientWidth;
+  const height = wrap.clientHeight;
 
-/* SIDEBAR RAPOT */
-#sidebar-rapot{
-  width:225px; flex-shrink:0; background: var(--sidebar); border-right:1px solid var(--panel-border);
-  display:flex; flex-direction:column; padding:20px 14px; overflow-y:auto;
-}
-.brand{
-  display:flex; align-items:center; gap:10px; padding:6px 6px 22px;
-}
-.brand .mark{
-  width:32px; height:32px; border-radius:9px; background:linear-gradient(135deg, var(--accent), #1a9d94);
-  display:flex; align-items:center; justify-content:center; color:#06110f; font-size:15px;
-}
-.brand span{
-  font-family:'Space Grotesk', sans-serif; font-weight:700; font-size:16px;
-}
-.nav-group{ margin-bottom:20px; }
-.nav-label{
-  font-size:10px; font-weight:700; letter-spacing:1px; color:var(--text-faint);
-  padding:0 10px; margin-bottom:8px; text-transform:uppercase;
-}
-.nav-item{
-  display:flex; align-items:center; gap:10px; padding:9px 10px; border-radius:8px;
-  color:var(--text-dim); font-size:13px; font-weight:500; text-decoration:none;
-  transition:all .2s; cursor:pointer;
-}
-.nav-item:hover{ background:rgba(255,255,255,0.04); color:var(--text); }
-.nav-item.active{ background:rgba(47,212,200,0.12); color:var(--accent); }
-.nav-item i{ width:16px; text-align:center; font-size:13px; }
-.nav-item .num{ font-size:10px; font-weight:700; width:16px; text-align:center; color:var(--text-faint); }
-.sidebar-footer{
-  margin-top:auto; border-top:1px solid var(--panel-border); padding-top:12px;
-  display:flex; align-items:center; gap:10px;
-}
-.avatar-sm{
-  width:32px; height:32px; border-radius:50%; background:var(--panel); border:1px solid var(--panel-border);
-  display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700;
-  color:var(--text-dim); flex-shrink:0;
-}
-.user-meta{ line-height:1.3; }
-.user-meta .name{ font-size:12px; font-weight:600; }
-.user-meta .role{ font-size:11px; color:var(--text-faint); }
+  const svg = d3.select('#edges')
+    .attr('width', width)
+    .attr('height', height);
 
-/* MAIN CONTENT */
-#main-container{
-  flex:1; display:flex; flex-direction:column; overflow:hidden;
-}
+  svg.selectAll('*').remove();
 
-header{
-  padding:20px 30px; border-bottom:1px solid var(--panel-border); flex-shrink:0;
-}
-header h1{
-  font-family:'Space Grotesk', sans-serif; font-size:24px; font-weight:800;
-  margin:0 0 4px; letter-spacing:-0.3px;
-}
-header p{
-  font-size:13px; color:var(--text-dim); margin:0;
-}
+  const g = svg.append('g');
 
-.stats-grid{
-  display:grid; grid-template-columns:repeat(4, 1fr); gap:12px;
-  padding:20px 30px; flex-shrink:0;
-}
-.stat-card{
-  background:var(--panel); border:1px solid var(--panel-border); border-radius:10px; padding:14px;
-}
-.stat-value{
-  font-family:'Space Grotesk', sans-serif; font-size:24px; font-weight:800;
-  color:var(--accent); margin-bottom:4px;
-}
-.stat-label{ font-size:12px; font-weight:700; color:var(--text); }
+  const linkSel = g.selectAll('line')
+    .data(links)
+    .enter()
+    .append('line')
+    .attr('stroke', d => {
+      const colors = { 'Directa': '#34d399', 'Indirecta': '#3b82f6', 'Soporte': '#ef9552', 'Resiliencia': '#b06bf7' };
+      return colors[d.tipo] || '#666';
+    })
+    .attr('stroke-width', d => d.tipo === 'Indirecta' ? 1.5 : 2)
+    .attr('stroke-dasharray', d => d.tipo === 'Indirecta' ? '5,5' : 'none')
+    .attr('opacity', 0.4);
 
-.graph-wrapper{
-  flex:1; display:grid; grid-template-columns:240px 1fr 280px; gap:16px;
-  padding:0 30px 30px; overflow:hidden;
+  const nodeSel = g.selectAll('g')
+    .data(nodes)
+    .enter()
+    .append('g')
+    .attr('class', 'node-group')
+    .style('cursor', 'pointer')
+    .on('click', (e, d) => showDetail(d));
+
+  nodeSel.append('circle')
+    .attr('r', 45)
+    .attr('fill', 'rgba(10,14,23,0.6)')
+    .attr('stroke', d => d.color)
+    .attr('stroke-width', 2);
+
+  nodeSel.append('text')
+    .attr('text-anchor', 'middle')
+    .attr('dy', '0.35em')
+    .attr('font-size', '10px')
+    .attr('font-weight', '600')
+    .attr('fill', '#eef0f6')
+    .attr('pointer-events', 'none')
+    .text(d => d.label.length > 15 ? d.label.slice(0, 12) + '…' : d.label);
+
+  if (simulation) simulation.stop();
+
+  simulation = d3.forceSimulation(nodes)
+    .force('link', d3.forceLink(links).id(d => d.id).distance(120).strength(0.3))
+    .force('charge', d3.forceManyBody().strength(-300))
+    .force('center', d3.forceCenter(width / 2, height / 2))
+    .force('collide', d3.forceCollide(60));
+
+  simulation.on('tick', () => {
+    linkSel
+      .attr('x1', d => {
+        const source = nodes.find(n => n.id === (typeof d.source === 'string' ? d.source : d.source.id));
+        return source ? source.x : 0;
+      })
+      .attr('y1', d => {
+        const source = nodes.find(n => n.id === (typeof d.source === 'string' ? d.source : d.source.id));
+        return source ? source.y : 0;
+      })
+      .attr('x2', d => {
+        const target = nodes.find(n => n.id === (typeof d.target === 'string' ? d.target : d.target.id));
+        return target ? target.x : 0;
+      })
+      .attr('y2', d => {
+        const target = nodes.find(n => n.id === (typeof d.target === 'string' ? d.target : d.target.id));
+        return target ? target.y : 0;
+      });
+
+    nodeSel.attr('transform', d => `translate(${d.x || 0},${d.y || 0})`);
+  });
 }
 
-.legend-panel{
-  background:var(--panel); border:1px solid var(--panel-border); border-radius:12px;
-  padding:14px; overflow-y:auto;
-}
-.legend-title{
-  font-size:11px; font-weight:700; letter-spacing:1px; color:var(--text-dim);
-  margin-bottom:12px; text-transform:uppercase;
-}
-.legend-section{ margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid var(--panel-border); }
-.legend-section:last-child{ border-bottom:none; }
+function showDetail(node) {
+  document.getElementById('detailPanel').style.display = 'flex';
+  document.getElementById('detailName').textContent = node.label;
+  document.getElementById('detailStruct').textContent = node.struct;
+  
+  const outgoing = allLinks.filter(l => l.source === node.id);
+  const incoming = allLinks.filter(l => l.target === node.id);
 
-.filter-item{
-  display:flex; align-items:center; gap:8px; font-size:12px; margin-bottom:10px; cursor:pointer;
-  padding:6px 8px; border-radius:6px; transition:background .2s;
-}
-.filter-item:hover{ background:rgba(255,255,255,0.05); }
-.filter-item input[type="checkbox"]{
-  width:14px; height:14px; cursor:pointer; accent-color:var(--accent);
-}
-.filter-dot{ width:10px; height:10px; border-radius:50%; flex-shrink:0; }
-.filter-line{ width:16px; height:2px; flex-shrink:0; }
+  document.getElementById('detailOut').innerHTML = outgoing.length > 0
+    ? outgoing.map(l => `<div>→ ${l.target}</div>`).join('')
+    : 'Sin conexiones';
 
-.canvas-container{
-  background:var(--panel); border:1px solid var(--panel-border); border-radius:12px;
-  padding:16px; position:relative; overflow:hidden; flex:1;
+  document.getElementById('detailIn').innerHTML = incoming.length > 0
+    ? incoming.map(l => `<div>← ${l.source}</div>`).join('')
+    : 'Sin conexiones';
 }
-#canvas-wrap{ width:100%; height:100%; position:relative; cursor:grab; }
-#canvas-wrap.panning{ cursor:grabbing; }
-svg#edges{ position:absolute; top:0; left:0; overflow:visible; pointer-events:none; }
 
-.detail-panel{
-  background:var(--panel); border:1px solid var(--panel-border); border-radius:12px;
-  padding:14px; overflow-y:auto; display:flex; flex-direction:column; gap:10px;
-}
-.detail-card{
-  background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05);
-  border-radius:8px; padding:10px;
-}
-.detail-label{ font-size:10px; font-weight:700; letter-spacing:0.5px; color:var(--text-dim); margin-bottom:4px; }
-.detail-content{ font-size:12px; color:var(--text); line-height:1.5; }
+window.addEventListener('load', buildGraph);
+window.addEventListener('resize', () => {
+  const wrap = document.getElementById('canvas-wrap');
+  d3.select('#edges')
+    .attr('width', wrap.clientWidth)
+    .attr('height', wrap.clientHeight);
+});
 
-footer{
-  text-align:center; padding:16px 30px; border-top:1px solid var(--panel-border);
-  color:var(--text-faint); font-size:11px; flex-shrink:0;
-}
+</script>
+
+</body>
+</html>
