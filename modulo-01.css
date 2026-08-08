@@ -1,304 +1,412 @@
-:root{
-  --bg: #0a0e17;
-  --sidebar: #0c1120;
-  --panel: #121828;
-  --panel-alt: #0f1522;
-  --border: rgba(255,255,255,0.08);
-  --border-soft: rgba(255,255,255,0.05);
-  --text: #eef0f6;
-  --text-dim: #9aa1b3;
-  --text-faint: #6b7284;
-  --teal: #2fd4c8;
-  --blue: #3b82f6;
-  --purple: #b06bf7;
-  --green: #34d399;
-  --orange: #ef9552;
-  --pink: #f43f8e;
+// ============================================================
+// RAPOT · Módulo 01 — Ingeniería Inversa del POT
+// Análisis crítico: contradicciones, macromodelos, estructura real
+// ============================================================
+
+const STRUCT_COLORS = {
+  eep: '#34d399', efs: '#3b82f6', ese: '#ef9552', eag: '#b06bf7', otras: '#6b7284'
+};
+const REL_COLORS = {
+  directa: '#34d399', indirecta: '#3b82f6', soporte: '#ef9552', 
+  resiliencia: '#b06bf7', otra: '#6b7284'
+};
+
+let graphData = { nodes: [], links: [] };
+let allRows = [];
+
+// ============ HELPERS ============
+function norm(str) {
+  return (str || '').toString().trim().toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 }
 
-*{ box-sizing: border-box; margin: 0; padding: 0; }
-body{ background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; font-size: 14px; }
-.app{ display: flex; min-height: 100vh; }
-
-/* ============== SIDEBAR ============== */
-.sidebar{
-  width: 220px; flex-shrink: 0; background: var(--sidebar); border-right: 1px solid var(--border);
-  display: flex; flex-direction: column; padding: 20px 14px;
+function findCol(headers, candidates) {
+  const normed = headers.map(norm);
+  for (const c of candidates) {
+    const idx = normed.indexOf(norm(c));
+    if (idx !== -1) return headers[idx];
+  }
+  return null;
 }
 
-.brand{ display: flex; align-items: center; gap: 10px; padding: 6px 6px 22px; }
-.brand .mark{
-  width: 32px; height: 32px; border-radius: 9px;
-  background: linear-gradient(135deg, var(--teal), #1a9d94);
-  display: flex; align-items: center; justify-content: center; color: #06110f; font-size: 15px;
-}
-.brand span{ font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 16px; }
-
-.nav-group{ margin-bottom: 20px; }
-.nav-label{ font-size: 10px; font-weight: 700; letter-spacing: 1px; color: var(--text-faint); padding: 0 10px; margin-bottom: 8px; }
-.nav-item{
-  display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 8px;
-  color: var(--text-dim); font-size: 13px; font-weight: 500; cursor: pointer; text-decoration: none;
-  transition: background .15s, color .15s;
-}
-.nav-item i{ width: 16px; text-align: center; font-size: 13px; }
-.nav-item .num{ font-size: 10px; font-weight: 700; width: 14px; text-align: center; }
-.nav-item:hover{ background: rgba(255,255,255,0.04); color: var(--text); }
-.nav-item.active{ background: rgba(47,212,200,0.12); color: var(--teal); }
-
-.sidebar-footer{ margin-top: auto; border-top: 1px solid var(--border); padding-top: 12px; display: flex; align-items: center; gap: 10px; }
-.avatar-sm{
-  width: 32px; height: 32px; border-radius: 50%; background: var(--panel); border: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: var(--text-dim); flex-shrink: 0;
-}
-.user-meta{ line-height: 1.3; }
-.user-meta .name{ font-size: 12px; font-weight: 600; }
-.user-meta .role{ font-size: 11px; color: var(--text-faint); }
-.logout-btn{ background: none; border: none; color: var(--text-faint); cursor: pointer; font-size: 13px; text-decoration: none; }
-.logout-btn:hover{ color: var(--pink); }
-
-/* ============== MAIN ============== */
-.main{ flex: 1; padding: 20px 30px 50px; overflow-y: auto; }
-
-.topbar{ display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 20px; }
-.breadcrumb{ font-size: 11px; letter-spacing: 0.5px; color: var(--text-faint); margin-bottom: 4px; }
-.topbar h1{ font-family: 'Space Grotesk', sans-serif; font-size: 24px; font-weight: 800; margin-bottom: 4px; }
-.subtitle{ font-size: 13px; color: var(--text-dim); }
-
-.topbar-actions{ display: flex; align-items: center; gap: 12px; }
-.search-box{
-  display: flex; align-items: center; gap: 8px; background: var(--panel); border: 1px solid var(--border);
-  border-radius: 8px; padding: 8px 14px; color: var(--text-faint); font-size: 13px; width: 220px;
-}
-.icon-btn{
-  width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center;
-  background: var(--panel); border: 1px solid var(--border); color: var(--text-dim); cursor: pointer; position: relative;
-}
-.icon-btn .dot{ position: absolute; top: 6px; right: 7px; width: 6px; height: 6px; border-radius: 50%; background: var(--pink); }
-
-/* ============== UPLOAD SECTION ============== */
-.upload-section{ margin-bottom: 20px; }
-.upload-panel{ background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
-.panel-title{
-  font-size: 12px; font-weight: 700; letter-spacing: 0.5px; color: var(--text-dim);
-  margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+function structKey(estructura) {
+  const s = norm(estructura);
+  if (s.startsWith('eep') || s.includes('ecolog')) return 'eep';
+  if (s.startsWith('efs') || s.includes('funcional')) return 'efs';
+  if (s.startsWith('ese') || s.includes('socioecon')) return 'ese';
+  if (s.startsWith('eag') || s.includes('administrat')) return 'eag';
+  return 'otras';
 }
 
-.upload-zone{
-  background: var(--panel-alt); border: 2px dashed var(--border); border-radius: 10px;
-  padding: 30px; text-align: center; cursor: pointer; transition: border-color .15s, background .15s;
-}
-.upload-zone:hover{ border-color: var(--teal); background: rgba(47,212,200,0.04); }
-.upload-zone i{ font-size: 28px; color: var(--text-faint); margin-bottom: 10px; display: block; }
-.upload-zone h3{ font-size: 14px; font-weight: 700; margin-bottom: 4px; }
-.upload-zone p{ font-size: 12px; color: var(--text-faint); margin-bottom: 14px; }
-
-.btn-upload{
-  background: linear-gradient(135deg, var(--teal), #22b3a8); color: #06120f; border: none;
-  border-radius: 8px; padding: 10px 18px; font-size: 12px; font-weight: 700; cursor: pointer;
+function relKey(tipo) {
+  const t = norm(tipo);
+  if (t.includes('directa') && !t.includes('indirecta')) return 'directa';
+  if (t.includes('indirecta')) return 'indirecta';
+  if (t.includes('soporte')) return 'soporte';
+  if (t.includes('resilien')) return 'resiliencia';
+  return 'otra';
 }
 
-.upload-status{ display: block; margin-top: 10px; font-size: 12px; color: var(--text-faint); }
-
-/* ============== STATS GRID ============== */
-.stats-grid{
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px;
-}
-.stat-card{
-  background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 16px;
-}
-.stat-card-warning{ background: var(--panel); border: 1px solid var(--pink); border-radius: 12px; padding: 16px; }
-
-.stat-value{ font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 800; color: var(--teal); margin-bottom: 4px; }
-.stat-label{ font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
-.stat-desc{ font-size: 11px; color: var(--text-faint); }
-
-/* ============== ANALYSIS AREA ============== */
-.analysis-area{
-  display: grid; grid-template-columns: 2fr 1.2fr; gap: 16px; margin-bottom: 20px;
-}
-
-.graph-section{
-  background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 16px;
-}
-.section-title{
-  font-size: 11px; font-weight: 700; letter-spacing: 0.5px; color: var(--text-dim);
-  margin-bottom: 12px; display: block;
+// ============ PARSE FILE ============
+function parseFile(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error('No se pudo leer el archivo'));
+    reader.onload = (e) => {
+      try {
+        const data = new Uint8Array(e.target.result);
+        const wb = XLSX.read(data, { type: 'array' });
+        const sheet = wb.Sheets[wb.SheetNames[0]];
+        const rows = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+        resolve(rows);
+      } catch (err) {
+        reject(err);
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  });
 }
 
-.graph-container{
-  width: 100%; height: 450px; background: var(--panel-alt); border: 1px solid var(--border);
-  border-radius: 10px; position: relative; overflow: hidden;
+// ============ BUILD GRAPH ============
+function buildGraph(rows) {
+  if (!rows.length) throw new Error('El archivo está vacío');
+
+  allRows = rows;
+  const headers = Object.keys(rows[0]);
+
+  const colConcepto = findCol(headers, ['Concepto']);
+  const colEstructura = findCol(headers, ['Estructura']);
+  const colRelacionado = findCol(headers, ['Concepto relacionado', 'Concepto Relacionado']);
+  const colTipo = findCol(headers, ['Tipo de relación', 'Tipo de relacion', 'Tipo']);
+  const colJustif = findCol(headers, ['Justificación', 'Justificacion']);
+  const colDiscurso = findCol(headers, ['Discurso', 'Discurso Vs Realidad', 'Discurso vs Realidad']);
+
+  if (!colConcepto || !colRelacionado) {
+    throw new Error('Faltan columnas: "Concepto" y "Concepto relacionado"');
+  }
+
+  const nodeMap = new Map();
+  const links = [];
+  const fuentesSet = new Set();
+  const macromodelsSet = new Set();
+  let contradictions = 0;
+
+  function ensureNode(name, estructura) {
+    const key = norm(name);
+    if (!key) return null;
+    if (!nodeMap.has(key)) {
+      nodeMap.set(key, {
+        id: key,
+        name: name.toString().trim(),
+        estructura: estructura || '',
+        struct: structKey(estructura),
+        fuentes: new Set(),
+        outDeg: 0,
+        inDeg: 0,
+        discursiveImportance: 'normal',
+        isContradictory: false
+      });
+    }
+    return nodeMap.get(key);
+  }
+
+  rows.forEach(row => {
+    const conceptoName = row[colConcepto];
+    const relacionadoName = row[colRelacionado];
+    if (!conceptoName || !relacionadoName) return;
+
+    const a = ensureNode(conceptoName, colEstructura ? row[colEstructura] : '');
+    const b = ensureNode(relacionadoName, '');
+    if (!a || !b || a.id === b.id) return;
+
+    const tipo = colTipo ? row[colTipo] : 'Directa';
+    const fuente = colFuente ? row[colFuente] : '';
+    const justif = colJustif ? row[colJustif] : '';
+    const discursoVsRealidad = colDiscurso ? row[colDiscurso] : '';
+
+    if (fuente) {
+      fuentesSet.add(fuente.toString().trim());
+      a.fuentes.add(fuente.toString().trim());
+    }
+
+    // Detectar contradicciones
+    if (discursoVsRealidad && (discursoVsRealidad.includes('contradict') || 
+        discursoVsRealidad.includes('perifér') || 
+        discursoVsRealidad.includes('hipocres'))) {
+      a.isContradictory = true;
+      contradictions++;
+    }
+
+    a.outDeg++;
+    b.inDeg++;
+
+    links.push({
+      source: a.id,
+      target: b.id,
+      tipo: relKey(tipo),
+      tipoLabel: tipo,
+      fuente: fuente || '',
+      justificacion: justif || '',
+      discursoVsRealidad: discursoVsRealidad || '',
+      sourceNode: a,
+      targetNode: b
+    });
+  });
+
+  const nodes = Array.from(nodeMap.values());
+  
+  // Detectar macromodelos basados en conexiones
+  nodes.forEach(node => {
+    const connectedLinks = links.filter(l => l.source === node.id || l.target === node.id);
+    connectedLinks.forEach(link => {
+      if (link.justificacion.includes('económic') || link.fuente.includes('económic')) macromodelsSet.add('Economicismo');
+      if (link.justificacion.includes('ambiental') || link.fuente.includes('ecológic')) macromodelsSet.add('Ambientalismo');
+      if (link.justificacion.includes('mercado') || link.justificacion.includes('privado')) macromodelsSet.add('Neoliberalismo');
+      if (link.justificacion.includes('social') || link.justificacion.includes('comunidad')) macromodelsSet.add('Comunitarismo');
+    });
+  });
+
+  return {
+    nodes,
+    links,
+    fuentesCount: fuentesSet.size,
+    macromodels: Array.from(macromodelsSet),
+    contradictions
+  };
 }
 
-.loading-msg{
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  height: 100%; color: var(--text-faint); gap: 10px;
-}
-.loading-msg i{ font-size: 24px; }
-
-.graph-svg{ width: 100%; height: 100%; }
-
-.graph-legend{
-  display: flex; gap: 16px; margin-top: 12px; padding: 12px; background: var(--panel-alt); border-radius: 8px;
-}
-.legend-item{ display: flex; align-items: center; gap: 8px; font-size: 12px; }
-.legend-dot{
-  width: 10px; height: 10px; border-radius: 2px;
-}
-.legend-dot.directa{ background: var(--green); }
-.legend-dot.indirecta{ background: var(--blue); }
-.legend-dot.soporte{ background: var(--orange); }
-.legend-dot.resiliencia{ background: var(--purple); }
-
-/* ============== ANALYSIS PANEL ============== */
-.analysis-panel{
-  background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 16px;
-  overflow-y: auto; max-height: 600px;
+// ============ UPDATE STATS ============
+function updateStats(g) {
+  document.getElementById('statConceptos').textContent = g.nodes.length;
+  document.getElementById('statConceptosSub').textContent = `${g.nodes.length} nodos identificados`;
+  document.getElementById('statRelaciones').textContent = g.links.length;
+  document.getElementById('statRelacionesSub').textContent = `${g.links.length} conexiones`;
+  document.getElementById('statContradicciones').textContent = g.contradictions;
+  document.getElementById('statMacromodelos').textContent = g.macromodels.length;
 }
 
-.panel-title{
-  font-size: 11px; font-weight: 700; letter-spacing: 0.5px; color: var(--text-dim);
-  margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
+// ============ RENDER GRAPH ============
+function renderGraph(g) {
+  const area = document.getElementById('graphArea');
+  const loadingMsg = document.getElementById('loadingMsg');
+  const svgEl = d3.select('#graphSvg');
+
+  svgEl.selectAll('*').remove();
+  svgEl.style('display', 'block');
+  loadingMsg.style.display = 'none';
+
+  const width = area.clientWidth || 900;
+  const height = area.clientHeight || 450;
+  svgEl.attr('viewBox', `0 0 ${width} ${height}`);
+
+  const container = svgEl.append('g');
+
+  // ZOOM
+  svgEl.call(d3.zoom().scaleExtent([0.5, 3]).on('zoom', (event) => {
+    container.attr('transform', event.transform);
+  }));
+
+  // LINKS
+  const linkSel = container.append('g').selectAll('path')
+    .data(g.links).enter().append('path')
+    .attr('class', d => `glink ${d.tipo}`)
+    .attr('stroke-dasharray', d => {
+      if (d.tipo === 'indirecta') return '5,5';
+      if (d.tipo === 'otra') return '2,2';
+      return 'none';
+    })
+    .on('click', (event, d) => showRelationModal(d));
+
+  // NODES
+  const nodeSel = container.append('g').selectAll('g')
+    .data(g.nodes).enter().append('g')
+    .attr('class', 'gnode')
+    .call(d3.drag()
+      .on('start', (event, d) => { if (!event.active) sim.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; })
+      .on('drag', (event, d) => { d.fx = event.x; d.fy = event.y; })
+      .on('end', (event, d) => { if (!event.active) sim.alphaTarget(0); d.fx = null; d.fy = null; }));
+
+  nodeSel.append('circle')
+    .attr('r', d => 12 + Math.min(16, (d.inDeg + d.outDeg) * 1.5))
+    .attr('fill', 'rgba(10,14,23,0.95)')
+    .attr('stroke', d => STRUCT_COLORS[d.struct])
+    .attr('stroke-width', d => d.isContradictory ? 3 : 2.5);
+
+  nodeSel.append('text')
+    .attr('dy', d => 12 + Math.min(16, (d.inDeg + d.outDeg) * 1.5) + 14)
+    .attr('text-anchor', 'middle')
+    .attr('font-size', '10px')
+    .attr('font-weight', '600')
+    .attr('fill', '#eef0f6')
+    .text(d => d.name.length > 18 ? d.name.slice(0, 15) + '…' : d.name);
+
+  nodeSel.on('click', (event, d) => showNodeDetail(d, g));
+
+  // SIMULATION
+  const sim = d3.forceSimulation(g.nodes)
+    .force('link', d3.forceLink(g.links).id(d => d.id).distance(120).strength(0.3))
+    .force('charge', d3.forceManyBody().strength(-300))
+    .force('center', d3.forceCenter(width / 2, height / 2))
+    .force('collide', d3.forceCollide().radius(40));
+
+  sim.on('tick', () => {
+    linkSel.attr('d', d => `M${d.source.x},${d.source.y} L${d.target.x},${d.target.y}`);
+    nodeSel.attr('transform', d => `translate(${d.x},${d.y})`);
+  });
 }
 
-.detail-section{
-  background: var(--panel-alt); border: 1px solid var(--border); border-radius: 10px; padding: 12px;
-  margin-bottom: 16px;
+// ============ SHOW NODE DETAIL ============
+function showNodeDetail(node, graph) {
+  const detail = document.getElementById('nodeDetail');
+  const outgoing = graph.links.filter(l => l.source.id === node.id);
+  const incoming = graph.links.filter(l => l.target.id === node.id);
+
+  document.getElementById('detailName').textContent = node.name;
+  document.getElementById('detailStructure').textContent = node.estructura || 'No clasificada';
+
+  // Discrepancia
+  const centralidad = (node.inDeg + node.outDeg) / graph.nodes.length;
+  const discrepancyEl = document.getElementById('detailDiscrepancy');
+  if (centralidad < 0.1 && node.isContradictory) {
+    discrepancyEl.className = 'discrepancy-badge high-discrepancy';
+    discrepancyEl.textContent = '⚠ Periférica pero importante en discurso';
+  } else if (centralidad > 0.3) {
+    discrepancyEl.className = 'discrepancy-badge low-discrepancy';
+    discrepancyEl.textContent = '✓ Central en estructura';
+  } else {
+    discrepancyEl.textContent = 'Normal';
+  }
+
+  // Conexiones salientes
+  document.getElementById('detailOutgoing').innerHTML = outgoing.length
+    ? outgoing.map(l => `<div class="connection-item">→ ${l.targetNode.name} <strong style="color:#34d399;">[${l.tipo}]</strong></div>`).join('')
+    : '<div style="color:var(--text-faint);">Sin conexiones salientes</div>';
+
+  // Conexiones entrantes
+  document.getElementById('detailIncoming').innerHTML = incoming.length
+    ? incoming.map(l => `<div class="connection-item">← ${l.sourceNode.name} <strong style="color:#3b82f6;">[${l.tipo}]</strong></div>`).join('')
+    : '<div style="color:var(--text-faint);">Sin conexiones entrantes</div>';
+
+  // Justificaciones
+  const allJustifs = [...outgoing, ...incoming].filter(l => l.justificacion);
+  document.getElementById('detailJustification').innerHTML = allJustifs.length
+    ? allJustifs.map(l => `<div style="margin-bottom:8px;padding:6px;background:rgba(255,255,255,0.02);border-left:2px solid var(--teal);border-radius:4px;font-size:11px;">"${l.justificacion.substring(0, 80)}..."</div>`).join('')
+    : '<div style="color:var(--text-faint);">Sin justificaciones disponibles</div>';
+
+  detail.style.display = 'block';
 }
 
-.detail-header{
-  display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;
-  padding-bottom: 8px; border-bottom: 1px solid var(--border);
-}
-.detail-header h4{ font-size: 13px; font-weight: 700; margin: 0; }
-.detail-close{ cursor: pointer; color: var(--text-faint); font-size: 16px; }
-.detail-close:hover{ color: var(--text); }
+// ============ SHOW RELATION MODAL ============
+function showRelationModal(link) {
+  const modal = document.getElementById('relationModal');
+  const source = link.sourceNode || link.source;
+  const target = link.targetNode || link.target;
 
-.detail-body{ display: flex; flex-direction: column; gap: 10px; }
+  document.getElementById('relationFrom').textContent = (source.name || source);
+  document.getElementById('relationTo').textContent = (target.name || target);
+  document.getElementById('relationTypeBadge').textContent = link.tipo.toUpperCase();
+  document.getElementById('relationJustification').textContent = link.justificacion || 'Sin justificación especificada';
+  document.getElementById('relationNatureType').textContent = link.tipoLabel;
+  document.getElementById('relationDirection').textContent = 'Unidireccional →';
+  document.getElementById('relationIntensity').textContent = link.justificacion ? 'Alta' : 'Media';
 
-.detail-subsection{
-  padding: 8px 0; border-bottom: 1px solid var(--border-soft);
-}
-.detail-subsection:last-child{ border-bottom: none; }
+  // Detectar si contradice
+  const contradicts = link.discursoVsRealidad || '';
+  document.getElementById('relationContradicts').innerHTML = contradicts
+    ? `<strong style="color:var(--pink);">⚠ SÍ CONTRADICE:</strong> ${contradicts}`
+    : '<strong style="color:var(--green);">✓ Coherente con discurso</strong>';
 
-.subsection-title{ font-size: 11px; font-weight: 700; color: var(--text-dim); margin-bottom: 4px; }
-
-.discrepancy-badge{
-  display: inline-block; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: 700;
-}
-.discrepancy-badge.high-discrepancy{ background: rgba(244,63,142,0.2); color: var(--pink); }
-.discrepancy-badge.low-discrepancy{ background: rgba(52,211,153,0.2); color: var(--green); }
-
-.connections-list{ display: flex; flex-direction: column; gap: 6px; }
-.connection-item{
-  padding: 6px; background: rgba(255,255,255,0.02); border-left: 2px solid var(--teal);
-  border-radius: 4px; font-size: 11px;
+  modal.style.display = 'flex';
 }
 
-.justification-box{
-  background: rgba(255,255,255,0.02); padding: 8px; border-left: 3px solid var(--blue);
-  border-radius: 4px; font-size: 11px; line-height: 1.5; color: var(--text-dim);
+// ============ CLOSE HANDLERS ============
+document.getElementById('closeDetail').addEventListener('click', () => {
+  document.getElementById('nodeDetail').style.display = 'none';
+});
+
+document.getElementById('closeRelation').addEventListener('click', () => {
+  document.getElementById('relationModal').style.display = 'none';
+});
+
+document.getElementById('relationModal').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('relationModal')) {
+    document.getElementById('relationModal').style.display = 'none';
+  }
+});
+
+// ============ FILE UPLOAD ============
+const uploadZone = document.getElementById('uploadZone');
+const fileInput = document.getElementById('fileInput');
+const uploadStatus = document.getElementById('uploadStatus');
+
+uploadZone.addEventListener('click', () => fileInput.click());
+document.getElementById('browseBtn').addEventListener('click', (e) => {
+  e.stopPropagation();
+  fileInput.click();
+});
+
+['dragover', 'dragenter'].forEach(evt => uploadZone.addEventListener(evt, (e) => {
+  e.preventDefault();
+  uploadZone.style.borderColor = 'var(--teal)';
+}));
+
+['dragleave', 'drop'].forEach(evt => uploadZone.addEventListener(evt, (e) => {
+  e.preventDefault();
+  uploadZone.style.borderColor = 'var(--border)';
+}));
+
+uploadZone.addEventListener('drop', (e) => {
+  const file = e.dataTransfer.files[0];
+  if (file) handleFile(file);
+});
+
+fileInput.addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (file) handleFile(file);
+});
+
+async function handleFile(file) {
+  uploadStatus.textContent = 'Leyendo archivo...';
+  try {
+    const rows = await parseFile(file);
+    const g = buildGraph(rows);
+
+    if (!g.nodes.length) {
+      uploadStatus.textContent = 'No se encontraron nodos válidos';
+      return;
+    }
+
+    graphData = g;
+    updateStats(g);
+    renderGraph(g);
+    uploadStatus.textContent = `✓ ${g.nodes.length} conceptos, ${g.links.length} relaciones`;
+
+    // Mostrar hallazgos
+    if (g.contradictions > 0) {
+      const contradictionsEl = document.getElementById('contradictionsSummary');
+      const listEl = document.getElementById('contradictionsList');
+      const contradictoryNodes = g.nodes.filter(n => n.isContradictory);
+      listEl.innerHTML = contradictoryNodes.map(n =>
+        `<div class="finding-item"><strong>${n.name}</strong><br><span style="font-size:10px;color:var(--text-faint);">Periférica en estructura pero importante en discurso</span></div>`
+      ).join('');
+      contradictionsEl.style.display = 'block';
+    }
+
+    if (g.macromodels.length > 0) {
+      const macroEl = document.getElementById('macromodelsSummary');
+      const listEl = document.getElementById('macromodelsList');
+      listEl.innerHTML = g.macromodels.map(m =>
+        `<div class="finding-item">📊 <strong>${m}</strong></div>`
+      ).join('');
+      macroEl.style.display = 'block';
+    }
+
+  } catch (err) {
+    uploadStatus.textContent = '❌ Error: ' + err.message;
+  }
 }
 
-.findings-section{
-  background: var(--panel-alt); border: 1px solid var(--border); border-radius: 10px; padding: 12px;
-  margin-bottom: 16px;
-}
-
-.section-header{
-  padding-bottom: 8px; margin-bottom: 12px; border-bottom: 1px solid var(--border);
-}
-.section-header h4{ font-size: 12px; font-weight: 700; color: var(--text); margin: 0; }
-.section-header i{ margin-right: 6px; color: var(--pink); }
-
-.findings-list{ display: flex; flex-direction: column; gap: 8px; }
-.finding-item{
-  padding: 8px; background: rgba(255,255,255,0.02); border-radius: 4px;
-  font-size: 11px; color: var(--text-dim); line-height: 1.4;
-}
-
-/* ============== MODAL ============== */
-.modal{
-  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center;
-  z-index: 1000; backdrop-filter: blur(4px);
-}
-
-.modal-content{
-  background: var(--panel); border: 1px solid var(--border); border-radius: 12px;
-  padding: 20px; width: 90%; max-width: 600px; max-height: 80vh; overflow-y: auto;
-}
-
-.modal-header{
-  display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border);
-}
-.modal-header h3{ font-size: 14px; font-weight: 700; margin: 0; }
-.modal-close{ cursor: pointer; color: var(--text-faint); font-size: 18px; font-weight: 700; }
-.modal-close:hover{ color: var(--text); }
-
-.modal-body{ display: flex; flex-direction: column; gap: 16px; }
-
-.relation-flow{
-  display: flex; align-items: center; justify-content: space-between; gap: 12px;
-  padding: 12px; background: var(--panel-alt); border-radius: 8px;
-}
-.flow-node{
-  flex: 1; padding: 12px; background: var(--panel); border: 1px solid var(--border); border-radius: 6px;
-  text-align: center; font-size: 12px; font-weight: 700; color: var(--teal);
-}
-.flow-arrow{ color: var(--teal); }
-
-.relation-type-badge{
-  display: inline-block; padding: 6px 12px; background: var(--teal); color: #06120f;
-  border-radius: 6px; font-size: 12px; font-weight: 700;
-}
-
-.modal-section{ }
-.modal-section h4{ font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
-
-.source-quote{
-  padding: 10px; background: var(--panel-alt); border-left: 3px solid var(--blue);
-  border-radius: 6px; font-size: 11px; color: var(--text-dim); line-height: 1.5; font-style: italic;
-}
-
-.relation-attribute{
-  display: flex; align-items: center; justify-content: space-between; padding: 6px 0;
-  border-bottom: 1px solid var(--border-soft);
-}
-.attr-label{ font-size: 11px; font-weight: 700; color: var(--text-dim); }
-.attr-value{ font-size: 11px; color: var(--text); font-weight: 600; }
-
-/* ============== FOOTER ============== */
-footer{
-  text-align: center; padding: 20px 0; border-top: 1px solid var(--border);
-  color: var(--text-faint); font-size: 12px; font-style: italic;
-}
-footer span{ color: var(--teal); }
-
-/* ============== GRAPH ELEMENTS ============== */
-.glink{
-  fill: none; stroke-width: 1.5; stroke: rgba(100,200,200,0.5); pointer-events: none;
-}
-.glink.directa{ stroke: var(--green); stroke-width: 2; opacity: 0.8; }
-.glink.indirecta{ stroke: var(--blue); stroke-width: 1.5; opacity: 0.6; }
-.glink.soporte{ stroke: var(--orange); stroke-width: 2; opacity: 0.7; }
-.glink.resiliencia{ stroke: var(--purple); stroke-width: 2; opacity: 0.7; }
-
-.gnode{ cursor: pointer; }
-.gnode:hover circle{ filter: drop-shadow(0 0 10px rgba(47,212,200,0.9)); }
-.gnode text{ pointer-events: none; user-select: none; }
-
-/* ============== RESPONSIVE ============== */
-@media (max-width: 1200px){
-  .analysis-area{ grid-template-columns: 1fr; }
-  .stats-grid{ grid-template-columns: repeat(2, 1fr); }
-}
-
-@media (max-width: 768px){
-  .sidebar{ display: none; }
-  .main{ padding: 16px; }
-  .topbar{ flex-direction: column; }
-  .topbar-actions{ display: none; }
-}
+// Window resize
+window.addEventListener('resize', () => {
+  if (graphData.nodes.length) renderGraph(graphData);
+});
