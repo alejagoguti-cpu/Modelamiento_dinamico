@@ -469,7 +469,42 @@ document.getElementById('closeDetail').addEventListener('click', () => {
 });
 
 // ============================================================
-// MANEJO DE UPLOAD
+// CARGAR DATOS AUTOMÁTICAMENTE DESDE FUENTES Y DOCUMENTOS
+// ============================================================
+
+async function loadAutomaticData(){
+  try{
+    // Buscar archivos en localStorage o indexedDB
+    const savedData = localStorage.getItem('rapot_data_modulo01');
+    if(savedData){
+      const g = JSON.parse(savedData);
+      if(g.nodes && g.links){
+        // Reconstruir Set de fuentes
+        g.nodes.forEach(n => { n.fuentes = new Set(n.fuentes || []); });
+        graphData = g;
+        updateStats(g);
+        renderEstructurasView(g);
+        document.getElementById('uploadZone').style.display = 'none';
+        document.getElementById('graphSvg').style.display = 'block';
+        return true;
+      }
+    }
+  }catch(err){
+    console.log('No hay datos guardados:', err);
+  }
+  return false;
+}
+
+// Cargar al iniciar página
+window.addEventListener('load', async () => {
+  const loaded = await loadAutomaticData();
+  if(loaded){
+    console.log('Datos cargados automáticamente desde Fuentes y Documentos');
+  }
+});
+
+// ============================================================
+// MANEJO DE UPLOAD (alternativa para cambiar archivo)
 // ============================================================
 
 const uploadZone = document.getElementById('uploadZone');
@@ -503,9 +538,24 @@ async function handleFile(file){
       uploadStatus.textContent = 'No se encontraron conceptos válidos en el archivo.';
       return;
     }
+    
+    // GUARDAR EN LOCALSTORAGE para próximas cargas
+    const dataToSave = {
+      nodes: g.nodes.map(n => ({
+        id: n.id, name: n.name, estructura: n.estructura, struct: n.struct,
+        fuentes: Array.from(n.fuentes), outDeg: n.outDeg, inDeg: n.inDeg
+      })),
+      links: g.links,
+      fuentesCount: g.fuentesCount,
+      tiposCount: g.tiposCount
+    };
+    localStorage.setItem('rapot_data_modulo01', JSON.stringify(dataToSave));
+    
     graphData = g;
     updateStats(g);
     renderEstructurasView(g);
+    document.getElementById('uploadZone').style.display = 'none';
+    document.getElementById('graphSvg').style.display = 'block';
     document.querySelectorAll('.step')[0].classList.remove('active');
     document.querySelectorAll('.step')[3].classList.add('active');
     uploadStatus.textContent = '';
