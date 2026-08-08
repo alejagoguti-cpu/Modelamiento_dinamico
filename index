@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>POT Reverse - Ingeniería inversa del modelo de ciudad</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <nav class="navbar">
+    <div class="logo">
+      <div class="icon"></div>
+      <div class="text">
+        <h1>RAPOT</h1>
+        <p>RELATIONAL ANALYSIS PLATFORM OF THE POT</p>
+      </div>
+    </div>
+
+    <ul class="menu">
+      <li class="active">INICIO</li>
+      <li>MÓDULOS</li>
+      <li>METODOLOGÍA</li>
+      <li>CASO HUMEDAL</li>
+      <li>EQUIPO</li>
+    </ul>
+
+    <button class="demo">VER DEMOSTRACIÓN →</button>
+  </nav>
+</header>
+
+
+  <section class="modulos">
+  <h3>8 MÓDULOS PARA DESCIFRAR EL POT</h3>
+  <p>Un recorrido completo desde la construcción de la red hasta tu modelo propio de ciudad.</p>
+
+  <div class="grid">
+    <div class="modulo activo">
+      <span class="numero">01</span>
+      <div class="icono cyan">⬜⬜⬜</div>
+      <h4>CONSTRUIR LA RED</h4>
+      <p>Crea la red de conceptos y relaciones del POT a partir de fuentes oficiales.</p>
+      <button>Comenzar módulo →</button>
+    </div>
+
+    <div class="modulo azul">
+      <span class="numero">02</span>
+      <div class="icono azul">📊</div>
+      <h4>MEDIR LA RED</h4>
+      <p>Calcula métricas clave: centralidad, intermediación, densidad y comunidades.</p>
+      <button>Ir al módulo →</button>
+    </div>
+
+    <div class="modulo magenta">
+      <span class="numero">03</span>
+      <div class="icono magenta">👁️</div>
+      <h4>DISCURSO VS REALIDAD</h4>
+      <p>Compara la importancia discursiva con la importancia estructural y detecta contradicciones.</p>
+      <button>Ir al módulo →</button>
+    </div>
+
+    <div class="modulo verde">
+      <span class="numero">04</span>
+      <div class="icono verde">⚙️</div>
+      <h4>MACROMODELOS</h4>
+      <p>Identifica las lógicas dominantes detrás del modelo de ciudad y la evidencia que las sustenta.</p>
+      <button>Ir al módulo →</button>
+    </div>
+
+    <div class="modulo naranja">
+      <span class="numero">05</span>
+      <div class="icono naranja">🔍</div>
+      <h4>LO QUE NO ESTÁ</h4>
+      <p>Detecta actores, procesos, especies y dinámicas ausentes o subrepresentadas.</p>
+      <button>Ir al módulo →</button>
+    </div>
+
+    <div class="modulo cyan">
+      <span class="numero">06</span>
+      <div class="icono cyan">♻️</div>
+      <h4>POT ♻ ODS</h4>
+      <p>Analiza cómo las relaciones del POT favorecen, limitan o entran en conflicto con los ODS.</p>
+      <button>Ir al módulo →</button>
+    </div>
+
+    <div class="modulo rosa">
+      <span class="numero">07</span>
+      <div class="icono rosa">🧪</div>
+      <h4>SIMULADOR</h4>
+      <p>Intervén la red: modifica relaciones, pesos o nodos y observa los efectos emergentes.</p>
+      <button>Ir al módulo →</button>
+    </div>
+
+    <div class="modulo naranja">
+      <span class="numero">08</span>
+      <div class="icono naranja">🏙️</div>
+      <h4>MODELO PROPIO DE CIUDAD</h4>
+      <p>Prioriza relaciones y constituye tu modelo alternativo de ciudad basado en los hallazgos.</p>
+      <button>Ir al módulo →</button>
+    </div>
+  </div>
+</section>
+
+
+  <footer>
+    <p>Desmontar para comprender. Comprender para transformar.</p>
+  </footer>
+
+</body>
+</html>
