@@ -3,10 +3,128 @@
 <head>
   <meta charset="UTF-8">
   <title>RAPOT - Dashboard</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Bienvenido al análisis de RAPOT</h1>
-  <p>Aquí aparecerá la visualización del modelo de ciudad.</p>
+  <div class="dashboard-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo">
+        <h2>RAPOT</h2>
+      </div>
+      <nav>
+        <ul>
+          <li class="active">Dashboard</li>
+          <li>01 Construir la Red</li>
+          <li>02 Medir la Red</li>
+          <li>03 Discurso vs Realidad</li>
+          <li>04 Macromodelos</li>
+          <li>05 Lo que no está</li>
+          <li>06 POT ↔ ODS</li>
+          <li>07 Simulador</li>
+          <li>08 Modelo Propio</li>
+        </ul>
+        <h3>Gestión</h3>
+        <ul>
+          <li>Proyectos</li>
+          <li>Fuentes y Documentos</li>
+          <li>Favoritos</li>
+          <li>Reportes</li>
+          <li>Configuración</li>
+        </ul>
+      </nav>
+      <div class="user-info">
+        <p><strong>Equipo Urbano</strong><br>Administrador</p>
+        <button class="logout">Cerrar sesión</button>
+      </div>
+    </aside>
+
+    <!-- Main content -->
+    <main class="main-content">
+      <header>
+        <h1>Dashboard</h1>
+        <h2>¡Bienvenido, Equipo Urbano!</h2>
+        <p>Explora, analiza y comprende el modelo de ciudad del POT de Bogotá.</p>
+      </header>
+
+      <section class="modules">
+        <h3>MÓDULOS DE ANÁLISIS</h3>
+        <div class="module-grid">
+          <div class="module">
+            <h4>01</h4>
+            <h2>CONSTRUIR LA RED</h2>
+            <p>Crea la red de interdependencias y relaciones del POT a partir de fuentes oficiales.</p>
+            <button>Comenzar módulo →</button>
+          </div>
+          <div class="module">
+            <h4>02</h4>
+            <h2>MEDIR LA RED</h2>
+            <p>Calcula métricas clave: centralidad, intermediación, densidad y comunidades.</p>
+            <button>Ir al módulo →</button>
+          </div>
+          <div class="module">
+            <h4>03</h4>
+            <h2>DISCURSO VS REALIDAD</h2>
+            <p>Compara la importancia discursiva con la importancia estructural y detecta contradicciones.</p>
+            <button>Ir al módulo →</button>
+          </div>
+          <div class="module">
+            <h4>04</h4>
+            <h2>MACROMODELOS</h2>
+            <p>Identifica las lógicas dominantes detrás del modelo de ciudad y la evidencia que las sustentan.</p>
+            <button>Ir al módulo →</button>
+          </div>
+          <div class="module">
+            <h4>05</h4>
+            <h2>LO QUE NO ESTÁ</h2>
+            <p>Detecta actores, procesos, espacios y dinámicas ausentes o subrepresentadas.</p>
+            <button>Ir al módulo →</button>
+          </div>
+          <div class="module">
+            <h4>06</h4>
+            <h2>POT ↔ ODS</h2>
+            <p>Analiza cómo las relaciones del POT favorecen, limitan o entran en conflicto con los ODS.</p>
+            <button>Ir al módulo →</button>
+          </div>
+          <div class="module">
+            <h4>07</h4>
+            <h2>SIMULADOR</h2>
+            <p>Intervén la red: modifica relaciones, pesos o nodos y observa los efectos emergentes.</p>
+            <button>Ir al módulo →</button>
+          </div>
+          <div class="module">
+            <h4>08</h4>
+            <h2>MODELO PROPIO DE CIUDAD</h2>
+            <p>Prioriza relaciones y construye tu modelo alternativo de ciudad basado en los hallazgos.</p>
+            <button>Ir al módulo →</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="overview">
+        <div class="stats">
+          <h3>VISTA GENERAL DEL MODELO ACTUAL</h3>
+          <p><strong>Densidad de la red:</strong> 0.38 <span>Alta</span></p>
+          <p><strong>Centralidad dirigida:</strong> 7 <span>Media</span></p>
+          <p><strong>Nodos aislados:</strong> 3 <span>Elementos</span></p>
+        </div>
+        <div class="how-to">
+          <h3>¿CÓMO EMPEZAR?</h3>
+          <ol>
+            <li>Carga tu archivo Excel con conceptos y fuentes oficiales.</li>
+            <li>El sistema identificará relaciones entre conceptos y estructuras.</li>
+            <li>Revisa y valida las relaciones propuestas por el sistema.</li>
+            <li>Explora los 8 módulos de análisis para descubrir hallazgos.</li>
+          </ol>
+          <button>Ir a 01 Construir la Red →</button>
+        </div>
+      </section>
+
+      <footer>
+        <p>“No se trata de representar la ciudad, sino de comprenderla para transformarla.”<br>
+        — Equipo POT Reverse Engineering</p>
+      </footer>
+    </main>
+  </div>
 </body>
 </html>
-
