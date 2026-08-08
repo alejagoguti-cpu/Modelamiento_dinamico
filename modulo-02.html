@@ -68,23 +68,380 @@
 
     <div class="welcome">
       <h2>Medir la Red</h2>
-      <p>Calcula métricas clave: centralidad, intermediación, densidad y comunidades.</p>
+      <p>Análisis de métricas: centralidad, intermediación, densidad y comunidades.</p>
     </div>
 
-    <div class="panel" style="text-align:center; padding:60px 30px;">
-      <div style="width:56px;height:56px;border-radius:14px;background:rgba(47,212,200,0.12);color:var(--teal);
-                  display:flex;align-items:center;justify-content:center;font-size:22px;margin:0 auto 18px;">
-        <i class="fa-solid fa-chart-simple"></i>
+    <!-- KPI ROW -->
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-icon teal"><i class="fa-solid fa-circle-nodes"></i></div>
+        <div class="kpi-content">
+          <div class="kpi-label">Nodos</div>
+          <div class="kpi-value">87</div>
+          <div class="kpi-meta">Conceptos</div>
+        </div>
       </div>
-      <h3 style="font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;margin-bottom:8px;">
-        Este módulo está en construcción
-      </h3>
-      <p style="color:var(--text-dim);font-size:13.5px;max-width:420px;margin:0 auto 22px;">
-        Estamos trabajando en esta sección. Mientras tanto puedes volver al Dashboard o explorar el Módulo 01.
-      </p>
-      <a href="dashboard.html" class="module-btn primary" style="display:inline-flex;max-width:200px;margin:0 auto;">
-        Volver al Dashboard <i class="fa-solid fa-arrow-right"></i>
-      </a>
+
+      <div class="kpi-card">
+        <div class="kpi-icon blue"><i class="fa-solid fa-link"></i></div>
+        <div class="kpi-content">
+          <div class="kpi-label">Conexiones</div>
+          <div class="kpi-value">156</div>
+          <div class="kpi-meta">Relaciones</div>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon purple"><i class="fa-solid fa-chart-pie"></i></div>
+        <div class="kpi-content">
+          <div class="kpi-label">Densidad</div>
+          <div class="kpi-value">0.41</div>
+          <div class="kpi-meta">Conectividad</div>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon green"><i class="fa-solid fa-sitemap"></i></div>
+        <div class="kpi-content">
+          <div class="kpi-label">Comunidades</div>
+          <div class="kpi-value">4</div>
+          <div class="kpi-meta">Clusters</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN METRICS GRID -->
+    <div class="metrics-grid">
+      
+      <!-- CENTRALIDAD -->
+      <div class="metric-panel">
+        <div class="panel-header">
+          <h3><i class="fa-solid fa-star"></i> Centralidad</h3>
+          <div class="panel-controls">
+            <select class="metric-select" onchange="updateCentrality(this.value)">
+              <option value="betweenness">Intermediación</option>
+              <option value="closeness">Cercanía</option>
+              <option value="degree">Grado</option>
+              <option value="eigenvector">Eigenvector</option>
+            </select>
+          </div>
+        </div>
+        <div class="metric-description">
+          Identifica nodos más influyentes en la red. Mide qué conceptos son más centrales para las conexiones.
+        </div>
+        <div class="ranking-list">
+          <div class="ranking-item">
+            <div class="rank-badge">1</div>
+            <div class="rank-content">
+              <div class="rank-name">Movilidad</div>
+              <div class="rank-meta">Estructura Funcional</div>
+            </div>
+            <div class="rank-score">0.89</div>
+          </div>
+          <div class="ranking-item">
+            <div class="rank-badge">2</div>
+            <div class="rank-content">
+              <div class="rank-name">Ríos</div>
+              <div class="rank-meta">Estructura Ecológica</div>
+            </div>
+            <div class="rank-score">0.87</div>
+          </div>
+          <div class="ranking-item">
+            <div class="rank-badge">3</div>
+            <div class="rank-content">
+              <div class="rank-name">Vivienda</div>
+              <div class="rank-meta">Estructura Funcional</div>
+            </div>
+            <div class="rank-score">0.84</div>
+          </div>
+          <div class="ranking-item">
+            <div class="rank-badge">4</div>
+            <div class="rank-content">
+              <div class="rank-name">Equipamientos</div>
+              <div class="rank-meta">Estructura Funcional</div>
+            </div>
+            <div class="rank-score">0.81</div>
+          </div>
+          <div class="ranking-item">
+            <div class="rank-badge">5</div>
+            <div class="rank-content">
+              <div class="rank-name">Áreas Protegidas</div>
+              <div class="rank-meta">Estructura Ecológica</div>
+            </div>
+            <div class="rank-score">0.78</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- INTERMEDIACIÓN -->
+      <div class="metric-panel">
+        <div class="panel-header">
+          <h3><i class="fa-solid fa-code-branch"></i> Intermediación</h3>
+          <div class="panel-controls">
+            <button class="toggle-btn active" onclick="toggleIntermediation('all')">Todos</button>
+            <button class="toggle-btn" onclick="toggleIntermediation('high')">Altos</button>
+          </div>
+        </div>
+        <div class="metric-description">
+          Mide qué nodos actúan como puentes entre otras estructuras. Identifica cuellos de botella.
+        </div>
+        <div class="intermediation-chart">
+          <div class="chart-bar">
+            <div class="bar-label">Movilidad</div>
+            <div class="bar-container">
+              <div class="bar-fill" style="width: 92%; background: var(--teal);"></div>
+            </div>
+            <div class="bar-value">0.92</div>
+          </div>
+          <div class="chart-bar">
+            <div class="bar-label">Equipamientos</div>
+            <div class="bar-container">
+              <div class="bar-fill" style="width: 78%; background: var(--blue);"></div>
+            </div>
+            <div class="bar-value">0.78</div>
+          </div>
+          <div class="chart-bar">
+            <div class="bar-label">Conectores Eco.</div>
+            <div class="bar-container">
+              <div class="bar-fill" style="width: 71%; background: var(--green);"></div>
+            </div>
+            <div class="bar-value">0.71</div>
+          </div>
+          <div class="chart-bar">
+            <div class="bar-label">Empleo</div>
+            <div class="bar-container">
+              <div class="bar-fill" style="width: 65%; background: var(--yellow);"></div>
+            </div>
+            <div class="bar-value">0.65</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SECONDARY METRICS ROW -->
+    <div class="metrics-grid">
+      
+      <!-- DENSIDAD POR ESTRUCTURA -->
+      <div class="metric-panel">
+        <div class="panel-header">
+          <h3><i class="fa-solid fa-chart-pie"></i> Densidad por Estructura</h3>
+          <div class="panel-controls">
+            <span class="info-badge">Conectividad interna</span>
+          </div>
+        </div>
+        <div class="metric-description">
+          Qué tan conectadas están las relaciones dentro de cada estructura del POT.
+        </div>
+        <div class="density-grid">
+          <div class="density-item">
+            <div class="density-circle" style="background: linear-gradient(135deg, var(--teal), #1a9d94);">
+              <span class="density-val">0.58</span>
+            </div>
+            <div class="density-label">
+              <div class="density-name">EEP</div>
+              <div class="density-full">Ecológica</div>
+            </div>
+          </div>
+          <div class="density-item">
+            <div class="density-circle" style="background: linear-gradient(135deg, var(--blue), #4673d9);">
+              <span class="density-val">0.52</span>
+            </div>
+            <div class="density-label">
+              <div class="density-name">EFC</div>
+              <div class="density-full">Funcional</div>
+            </div>
+          </div>
+          <div class="density-item">
+            <div class="density-circle" style="background: linear-gradient(135deg, var(--purple), #8956d4);">
+              <span class="density-val">0.48</span>
+            </div>
+            <div class="density-label">
+              <div class="density-name">ESECI</div>
+              <div class="density-full">Socioeconómica</div>
+            </div>
+          </div>
+          <div class="density-item">
+            <div class="density-circle" style="background: linear-gradient(135deg, var(--pink), #d45fa4);">
+              <span class="density-val">0.41</span>
+            </div>
+            <div class="density-label">
+              <div class="density-name">EIP</div>
+              <div class="density-full">Patrimonial</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- COMUNIDADES -->
+      <div class="metric-panel">
+        <div class="panel-header">
+          <h3><i class="fa-solid fa-sitemap"></i> Comunidades Detectadas</h3>
+          <div class="panel-controls">
+            <span class="info-badge">4 Clusters</span>
+          </div>
+        </div>
+        <div class="metric-description">
+          Agrupaciones naturales de conceptos altamente conectados entre sí.
+        </div>
+        <div class="communities-list">
+          <div class="community-item">
+            <div class="community-badge" style="background: rgba(47,212,200,0.2); color: var(--teal);">
+              <i class="fa-solid fa-leaf"></i>
+            </div>
+            <div class="community-content">
+              <div class="community-name">Ecosistema Urbano</div>
+              <div class="community-nodes">Ríos, Humedales, Áreas Protegidas, Conectores</div>
+            </div>
+            <div class="community-stat">
+              <div class="community-count">18</div>
+              <div class="community-count-label">nodos</div>
+            </div>
+          </div>
+          <div class="community-item">
+            <div class="community-badge" style="background: rgba(91,141,239,0.2); color: var(--blue);">
+              <i class="fa-solid fa-bus"></i>
+            </div>
+            <div class="community-content">
+              <div class="community-name">Movilidad y Acceso</div>
+              <div class="community-nodes">Transporte, Ciclorrutas, UPL, Proximidad</div>
+            </div>
+            <div class="community-stat">
+              <div class="community-count">15</div>
+              <div class="community-count-label">nodos</div>
+            </div>
+          </div>
+          <div class="community-item">
+            <div class="community-badge" style="background: rgba(162,118,242,0.2); color: var(--purple);">
+              <i class="fa-solid fa-briefcase"></i>
+            </div>
+            <div class="community-content">
+              <div class="community-name">Economía y Empleo</div>
+              <div class="community-nodes">Actividades Productivas, Negocios Verdes, Innovación</div>
+            </div>
+            <div class="community-stat">
+              <div class="community-count">14</div>
+              <div class="community-count-label">nodos</div>
+            </div>
+          </div>
+          <div class="community-item">
+            <div class="community-badge" style="background: rgba(247,111,176,0.2); color: var(--pink);">
+              <i class="fa-solid fa-landmark"></i>
+            </div>
+            <div class="community-content">
+              <div class="community-name">Patrimonio e Identidad</div>
+              <div class="community-nodes">Cultura, Memoria, Saberes del Lugar, Identidades</div>
+            </div>
+            <div class="community-stat">
+              <div class="community-count">12</div>
+              <div class="community-count-label">nodos</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RELACIONES INTER-ESTRUCTURAS -->
+    <div class="metric-panel full-width">
+      <div class="panel-header">
+        <h3><i class="fa-solid fa-arrows-to-dot"></i> Relaciones Inter-Estructuras</h3>
+        <div class="panel-controls">
+          <button class="filter-btn active" onclick="filterRelations('all')">Todas</button>
+          <button class="filter-btn" onclick="filterRelations('strong')">Fuertes</button>
+          <button class="filter-btn" onclick="filterRelations('weak')">Débiles</button>
+        </div>
+      </div>
+      <div class="metric-description">
+        Mapa de conexiones entre estructuras. Identifica dónde hay mayor interdependencia.
+      </div>
+      <div class="matrix-container">
+        <table class="interaction-matrix">
+          <thead>
+            <tr>
+              <th></th>
+              <th class="eco">EEP</th>
+              <th class="func">EFC</th>
+              <th class="socio">ESECI</th>
+              <th class="patri">EIP</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="header-cell eco">EEP</td>
+              <td class="cell strength-high" title="Ecosistema integrado">58</td>
+              <td class="cell strength-high" title="Conectores y movilidad">42</td>
+              <td class="cell strength-medium" title="Agricultura urbana">18</td>
+              <td class="cell strength-low" title="Patrimonio natural">12</td>
+            </tr>
+            <tr>
+              <td class="header-cell func">EFC</td>
+              <td class="cell strength-high" title="Espacios verdes">42</td>
+              <td class="cell strength-high" title="Sistema de proximidad">51</td>
+              <td class="cell strength-high" title="Servicios y empleo">38</td>
+              <td class="cell strength-medium" title="Dinámicas comunitarias">14</td>
+            </tr>
+            <tr>
+              <td class="header-cell socio">ESECI</td>
+              <td class="cell strength-medium" title="Negocios verdes">18</td>
+              <td class="cell strength-high" title="Aglomeraciones económicas">38</td>
+              <td class="cell strength-high" title="Red de empleo">46</td>
+              <td class="cell strength-medium" title="Turismo y patrimonio">16</td>
+            </tr>
+            <tr>
+              <td class="header-cell patri">EIP</td>
+              <td class="cell strength-low" title="Patrimonios naturales">12</td>
+              <td class="cell strength-medium" title="Modo de habitar">14</td>
+              <td class="cell strength-medium" title="Saberes del lugar">16</td>
+              <td class="cell strength-high" title="Identidad cultural">34</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="matrix-legend">
+        <div class="legend-item">
+          <span class="legend-color" style="background: rgba(74,222,128,0.3);"></span>
+          <span>Fuerte (30+)</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-color" style="background: rgba(245,201,69,0.3);"></span>
+          <span>Media (15-29)</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-color" style="background: rgba(239,149,82,0.3);"></span>
+          <span>Débil (&lt;15)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ANÁLISIS Y EXPORTACIÓN -->
+    <div class="action-row">
+      <div class="action-card">
+        <div class="action-icon"><i class="fa-solid fa-download"></i></div>
+        <div class="action-content">
+          <div class="action-title">Descargar Reporte</div>
+          <div class="action-desc">Exporta métricas y visualizaciones en PDF</div>
+        </div>
+        <button class="action-btn" onclick="downloadReport()"><i class="fa-solid fa-arrow-down"></i></button>
+      </div>
+
+      <div class="action-card">
+        <div class="action-icon"><i class="fa-solid fa-share-nodes"></i></div>
+        <div class="action-content">
+          <div class="action-title">Compartir Análisis</div>
+          <div class="action-desc">Genera enlace para colaboradores</div>
+        </div>
+        <button class="action-btn" onclick="shareAnalysis()"><i class="fa-solid fa-share"></i></button>
+      </div>
+
+      <div class="action-card">
+        <div class="action-icon"><i class="fa-solid fa-arrows-rotate"></i></div>
+        <div class="action-content">
+          <div class="action-title">Recalcular Métricas</div>
+          <div class="action-desc">Vuelve a procesar datos de la red</div>
+        </div>
+        <button class="action-btn" onclick="recalculateMetrics()"><i class="fa-solid fa-sync"></i></button>
+      </div>
     </div>
 
     <footer>
@@ -93,5 +450,36 @@
 
   </main>
 </div>
+
+<script>
+function updateCentrality(metric) {
+  console.log('Actualizar centralidad:', metric);
+}
+
+function toggleIntermediation(type) {
+  const buttons = document.querySelectorAll('.toggle-btn');
+  buttons.forEach(btn => btn.classList.remove('active'));
+  event.target.classList.add('active');
+}
+
+function filterRelations(type) {
+  const buttons = document.querySelectorAll('.filter-btn');
+  buttons.forEach(btn => btn.classList.remove('active'));
+  event.target.classList.add('active');
+}
+
+function downloadReport() {
+  alert('Descargando reporte de métricas...');
+}
+
+function shareAnalysis() {
+  alert('Generando enlace compartible...');
+}
+
+function recalculateMetrics() {
+  alert('Recalculando métricas de la red...');
+}
+</script>
+
 </body>
 </html>
