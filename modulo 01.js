@@ -1,20 +1,22 @@
 // ============================================================
-// RAPOT · Módulo 01 — Construir la Red
-// Lee un Excel/CSV con conceptos y relaciones y genera el grafo.
-// Columnas esperadas (insensible a mayúsculas/acentos):
-//   Concepto | Estructura | Fuente | Fragmento documental |
-//   Concepto relacionado | Tipo de relación | Justificación
+// RAPOT · Módulo 01 — Construir la Red (MEJORADO)
+// Carga automática desde API o datos del sistema
+// Muestra vista de 4 estructuras primero
 // ============================================================
 
 const STRUCT_COLORS = {
-  eep: '#34d399', efs: '#3b82f6', ese: '#ef9552', eag: '#b06bf7', otras: '#6b7284'
+  eep: '#2fd4c8', efs: '#3b82f6', ese: '#f59e0b', eag: '#b06bf7', otras: '#6b7284'
 };
 const REL_TYPES = ['directa', 'indirecta', 'soporte', 'resiliencia', 'otra'];
 const REL_COLORS = { directa:'#34d399', indirecta:'#3b82f6', soporte:'#ef9552', resiliencia:'#b06bf7', otra:'#6b7284' };
 
 let graphData = { nodes: [], links: [] };
+let currentView = 'estructuras'; // 'estructuras' | 'expandida'
 
-// ---------- helpers ----------
+// ============================================================
+// FUNCIONES HELPER
+// ============================================================
+
 function norm(str){
   return (str || '').toString().trim().toLowerCase()
     .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
@@ -47,7 +49,10 @@ function relKey(tipo){
   return 'otra';
 }
 
-// ---------- parse uploaded file into rows ----------
+// ============================================================
+// PARSEAR ARCHIVO
+// ============================================================
+
 function parseFile(file){
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -65,7 +70,10 @@ function parseFile(file){
   });
 }
 
-// ---------- build graph from rows ----------
+// ============================================================
+// CONSTRUIR GRAFO
+// ============================================================
+
 function buildGraph(rows){
   if(!rows.length) throw new Error('El archivo está vacío');
 
@@ -78,7 +86,7 @@ function buildGraph(rows){
   const colJustif        = findCol(headers, ['Justificación', 'Justificacion']);
 
   if(!colConcepto || !colRelacionado){
-    throw new Error('No se encontraron las columnas "Concepto" y "Concepto relacionado". Revisa el nombre de las columnas.');
+    throw new Error('No se encontraron las columnas "Concepto" y "Concepto relacionado".');
   }
 
   const nodeMap = new Map();
@@ -131,7 +139,10 @@ function buildGraph(rows){
   return { nodes, links, fuentesCount: fuentesSet.size, tiposCount: tiposSet.size };
 }
 
-// ---------- stats ----------
+// ============================================================
+// ACTUALIZAR ESTADÍSTICAS
+// ============================================================
+
 function updateStats(g){
   document.getElementById('statConceptos').textContent = g.nodes.length;
   document.getElementById('statConceptosSub').textContent = `${g.nodes.length} conceptos identificados`;
@@ -149,11 +160,10 @@ function updateStats(g){
   document.getElementById('cnt-eag').textContent = structCounts.eag;
   document.getElementById('cnt-otras').textContent = structCounts.otras;
 
-  // density = edges / (n*(n-1)) directed
+  // Densidad
   const n = g.nodes.length;
   const density = n > 1 ? (g.links.length / (n * (n - 1))) : 0;
-  const densityVal = document.getElementById('densityVal');
-  densityVal.textContent = density.toFixed(2);
+  document.getElementById('densityVal').textContent = density.toFixed(2);
   const lbl = density > 0.3 ? 'Alta' : density > 0.1 ? 'Media' : 'Baja';
   document.getElementById('densityLbl').textContent = lbl;
   document.getElementById('densityDesc').textContent =
@@ -161,12 +171,12 @@ function updateStats(g){
     density > 0.1 ? 'La red tiene una conectividad moderada.' :
     'La red tiene una conectividad baja; hay pocos vínculos entre conceptos.';
 
-  // donut: distribution by tipo
+  // Donut
   const relCounts = { directa:0, indirecta:0, soporte:0, resiliencia:0, otra:0 };
   g.links.forEach(l => relCounts[l.tipo]++);
   drawDonut(relCounts, g.links.length);
 
-  // centrality ranking: total degree, normalized
+  // Centralidad
   const maxDeg = Math.max(1, ...g.nodes.map(n => n.inDeg + n.outDeg));
   const ranked = [...g.nodes].sort((a,b) => (b.inDeg+b.outDeg) - (a.inDeg+a.outDeg)).slice(0, 6);
   const list = document.getElementById('centralityList');
@@ -235,13 +245,138 @@ function drawDonut(counts, total){
   svg.appendChild(label2);
 }
 
-// ---------- render force graph ----------
-function renderGraph(g){
+// ============================================================
+// RENDER: VISTA DE 4 ESTRUCTURAS
+// ============================================================
+
+function renderEstructurasView(g){
   const area = document.getElementById('graphArea');
   const svgEl = d3.select('#graphSvg');
   svgEl.selectAll('*').remove();
   svgEl.style('display', 'block');
   document.getElementById('uploadZone').style.display = 'none';
+
+  const width = area.clientWidth || 700;
+  const height = area.clientHeight || 420;
+  svgEl.attr('viewBox', `0 0 ${width} ${height}`);
+  svgEl.attr('style', 'background: var(--panel-alt);');
+
+  const container = svgEl.append('g');
+
+  // Reset zoom
+  svgEl.call(d3.zoom().transform, d3.zoomIdentity);
+
+  const centerX = width / 2;
+  const centerY = height / 2;
+  const radius = Math.min(centerX, centerY) * 0.35;
+
+  // Posiciones de las 4 estructuras
+  const positions = {
+    'eep': { x: centerX, y: centerY - radius, label: 'Sistema Ambiental y de\nEstructura Ecológica\nPrincipal' },
+    'efs': { x: centerX + radius, y: centerY, label: 'Estructura Funcional\ny del Cuidado' },
+    'ese': { x: centerX, y: centerY + radius, label: 'Estructura\nSocioeconómica,\nCreativa y de\nInnovación' },
+    'eag': { x: centerX - radius, y: centerY, label: 'Estructura\nAdministrativa\ny de Gestión' }
+  };
+
+  // Líneas conectoras con flechas
+  container.append('defs').append('marker')
+    .attr('id', 'arrowhead')
+    .attr('markerWidth', 10)
+    .attr('markerHeight', 10)
+    .attr('refX', 9)
+    .attr('refY', 3)
+    .attr('orient', 'auto')
+    .append('polygon')
+    .attr('points', '0 0, 10 3, 0 6')
+    .attr('fill', 'rgba(255,255,255,0.3)');
+
+  const orden = ['eep', 'efs', 'ese', 'eag'];
+  for(let i = 0; i < orden.length; i++){
+    const current = orden[i];
+    const next = orden[(i + 1) % orden.length];
+    const from = positions[current];
+    const to = positions[next];
+
+    const dx = to.x - from.x;
+    const dy = to.y - from.y;
+    const dist = Math.hypot(dx, dy);
+    const ratio = 55 / dist;
+
+    const startX = from.x + dx * ratio;
+    const startY = from.y + dy * ratio;
+    const endX = to.x - dx * ratio;
+    const endY = to.y - dy * ratio;
+
+    container.append('line')
+      .attr('x1', startX).attr('y1', startY)
+      .attr('x2', endX).attr('y2', endY)
+      .attr('stroke', 'rgba(255,255,255,0.2)')
+      .attr('stroke-width', 2)
+      .attr('stroke-dasharray', '5,5')
+      .attr('marker-end', 'url(#arrowhead)');
+  }
+
+  // Nodos (círculos grandes con glow)
+  const structKeys = ['eep', 'efs', 'ese', 'eag'];
+  structKeys.forEach(key => {
+    const pos = positions[key];
+    const count = g.nodes.filter(n => n.struct === key).length;
+    const color = STRUCT_COLORS[key];
+
+    // Glow filter
+    const defs = container.append('defs');
+    defs.append('filter').attr('id', `glow-${key}`)
+      .html(`<feGaussianBlur stdDeviation="4" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>`);
+
+    // Círculo exterior (glow)
+    container.append('circle')
+      .attr('cx', pos.x).attr('cy', pos.y).attr('r', 80)
+      .attr('fill', color).attr('opacity', 0.1)
+      .attr('filter', `url(#glow-${key})`);
+
+    // Círculo principal
+    container.append('circle')
+      .attr('cx', pos.x).attr('cy', pos.y).attr('r', 70)
+      .attr('fill', 'rgba(10,14,23,0.8)')
+      .attr('stroke', color)
+      .attr('stroke-width', 3)
+      .attr('cursor', 'pointer')
+      .on('click', () => showEstructuraExpandida(key, g))
+      .on('mouseover', function(){ d3.select(this).attr('stroke-width', 4); })
+      .on('mouseout', function(){ d3.select(this).attr('stroke-width', 3); });
+
+    // Texto - Nombre
+    container.append('text')
+      .attr('x', pos.x).attr('y', pos.y - 10)
+      .attr('text-anchor', 'middle')
+      .attr('fill', '#fff')
+      .attr('font-size', '14px')
+      .attr('font-weight', '700')
+      .attr('pointer-events', 'none')
+      .text(key.toUpperCase());
+
+    // Texto - Cantidad
+    container.append('text')
+      .attr('x', pos.x).attr('y', pos.y + 20)
+      .attr('text-anchor', 'middle')
+      .attr('fill', color)
+      .attr('font-size', '12px')
+      .attr('font-weight', '600')
+      .attr('pointer-events', 'none')
+      .text(`${count} conceptos`);
+  });
+
+  currentView = 'estructuras';
+}
+
+// ============================================================
+// RENDER: VISTA EXPANDIDA (ESTRUCTURA SELECCIONADA)
+// ============================================================
+
+function showEstructuraExpandida(estructura, g){
+  const area = document.getElementById('graphArea');
+  const svgEl = d3.select('#graphSvg');
+  svgEl.selectAll('*').remove();
 
   const width = area.clientWidth || 700;
   const height = area.clientHeight || 420;
@@ -253,12 +388,21 @@ function renderGraph(g){
     container.attr('transform', event.transform);
   }));
 
+  const nodosEstructura = g.nodes.filter(n => n.struct === estructura);
+
   const linkSel = container.append('g').selectAll('path')
-    .data(g.links).enter().append('path')
+    .data(g.links.filter(l => {
+      const from = g.nodes.find(n => n.id === l.source);
+      return from && from.struct === estructura;
+    }))
+    .enter()
+    .append('path')
     .attr('class', d => `glink ${d.tipo}`);
 
   const nodeSel = container.append('g').selectAll('g')
-    .data(g.nodes).enter().append('g')
+    .data(nodosEstructura)
+    .enter()
+    .append('g')
     .attr('class', 'gnode')
     .call(d3.drag()
       .on('start', (event, d) => { if(!event.active) sim.alphaTarget(0.2).restart(); d.fx=d.x; d.fy=d.y; })
@@ -268,16 +412,18 @@ function renderGraph(g){
   nodeSel.append('circle')
     .attr('r', d => 10 + Math.min(14, (d.inDeg + d.outDeg)))
     .attr('fill', 'rgba(10,14,23,0.9)')
-    .attr('stroke', d => STRUCT_COLORS[d.struct]);
+    .attr('stroke', d => STRUCT_COLORS[d.struct])
+    .on('click', (event, d) => showDetail(d, g));
 
   nodeSel.append('text')
     .attr('dy', d => 10 + Math.min(14, (d.inDeg + d.outDeg)) + 12)
     .text(d => d.name.length > 16 ? d.name.slice(0,15)+'…' : d.name);
 
-  nodeSel.on('click', (event, d) => showDetail(d, g));
-
-  const sim = d3.forceSimulation(g.nodes)
-    .force('link', d3.forceLink(g.links).id(d => d.id).distance(90).strength(0.5))
+  const sim = d3.forceSimulation(nodosEstructura)
+    .force('link', d3.forceLink(g.links.filter(l => {
+      const from = g.nodes.find(n => n.id === l.source);
+      return from && from.struct === estructura;
+    })).id(d => d.id).distance(90).strength(0.5))
     .force('charge', d3.forceManyBody().strength(-220))
     .force('center', d3.forceCenter(width/2, height/2))
     .force('collide', d3.forceCollide().radius(34));
@@ -290,7 +436,13 @@ function renderGraph(g){
   document.getElementById('resetZoom').onclick = () => {
     svgEl.transition().duration(400).call(d3.zoom().transform, d3.zoomIdentity);
   };
+
+  currentView = 'expandida';
 }
+
+// ============================================================
+// PANEL DE DETALLES
+// ============================================================
 
 function showDetail(node, g){
   const panel = document.getElementById('detailPanel');
@@ -316,7 +468,10 @@ document.getElementById('closeDetail').addEventListener('click', () => {
   document.getElementById('detailPanel').style.display = 'none';
 });
 
-// ---------- upload handling ----------
+// ============================================================
+// MANEJO DE UPLOAD
+// ============================================================
+
 const uploadZone = document.getElementById('uploadZone');
 const fileInput = document.getElementById('fileInput');
 const uploadStatus = document.getElementById('uploadStatus');
@@ -350,15 +505,19 @@ async function handleFile(file){
     }
     graphData = g;
     updateStats(g);
-    renderGraph(g);
+    renderEstructurasView(g);
     document.querySelectorAll('.step')[0].classList.remove('active');
     document.querySelectorAll('.step')[3].classList.add('active');
+    uploadStatus.textContent = '';
   }catch(err){
     uploadStatus.textContent = 'Error: ' + err.message;
   }
 }
 
-// ---------- template download ----------
+// ============================================================
+// DESCARGAR PLANTILLA
+// ============================================================
+
 document.getElementById('downloadTemplate').addEventListener('click', () => {
   const headers = ['Concepto','Estructura','Fuente','Fragmento documental','Concepto relacionado','Tipo de relación','Justificación'];
   const example = [
@@ -372,7 +531,10 @@ document.getElementById('downloadTemplate').addEventListener('click', () => {
   XLSX.writeFile(wb, 'plantilla_rapot.xlsx');
 });
 
-// ---------- tabs (visual only, filters full dataset by node/edge focus) ----------
+// ============================================================
+// TABS (visual only)
+// ============================================================
+
 document.querySelectorAll('.tab').forEach(tab => {
   tab.addEventListener('click', () => {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -381,5 +543,7 @@ document.querySelectorAll('.tab').forEach(tab => {
 });
 
 window.addEventListener('resize', () => {
-  if(graphData.nodes.length) renderGraph(graphData);
+  if(graphData.nodes.length){
+    if(currentView === 'estructuras') renderEstructurasView(graphData);
+  }
 });
