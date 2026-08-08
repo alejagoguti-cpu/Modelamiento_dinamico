@@ -101,6 +101,7 @@
     font-size:13px; cursor:pointer; padding:4px;
   }
   .logout-btn:hover{ color: var(--pink); }
+  a.logout-btn{ text-decoration:none; }
 
   /* ---------- MAIN ---------- */
   .main{ flex:1; padding:22px 34px 50px; min-width:0; }
