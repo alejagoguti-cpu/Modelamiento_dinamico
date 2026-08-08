@@ -1,11 +1,16 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>POT Reverse - Ingeniería inversa del modelo de ciudad</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAPOT · Ingeniería inversa del modelo de ciudad</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="hero.css">
 </head>
 <body>
+
 <header>
   <nav class="navbar">
     <div class="logo">
@@ -15,7 +20,6 @@
         <p>RELATIONAL ANALYSIS PLATFORM OF THE POT</p>
       </div>
     </div>
-
     <ul class="menu">
       <li class="active">INICIO</li>
       <li>MÓDULOS</li>
@@ -23,88 +27,114 @@
       <li>CASO HUMEDAL</li>
       <li>EQUIPO</li>
     </ul>
-
     <button class="demo">VER DEMOSTRACIÓN →</button>
   </nav>
 </header>
 
+<section class="hero">
+  <div class="hero-inner">
 
-  <section class="modulos">
-  <h3>8 MÓDULOS PARA DESCIFRAR EL POT</h3>
-  <p>Un recorrido completo desde la construcción de la red hasta tu modelo propio de ciudad.</p>
+    <!-- LEFT: copy -->
+    <div class="hero-copy">
+      <h1>
+        Ingeniería<br>
+        inversa<br>
+        del <span class="grad">modelo de</span><br>
+        ciudad
+      </h1>
 
-  <div class="grid">
-    <div class="modulo activo">
-      <span class="numero">01</span>
-      <div class="icono cyan">⬜⬜⬜</div>
-      <h4>CONSTRUIR LA RED</h4>
-      <p>Crea la red de conceptos y relaciones del POT a partir de fuentes oficiales.</p>
-      <button>Comenzar módulo →</button>
+      <p class="lead">
+        Una plataforma para analizar, cuestionar y comprender el modelo de ciudad del POT de Bogotá desde sus relaciones.
+      </p>
+
+      <div class="feature-grid">
+        <div class="feature">
+          <div class="f-icon"><i class="fa-solid fa-link"></i></div>
+          <h3>Análisis relacional</h3>
+          <p>Comprende cómo se conectan los conceptos.</p>
+        </div>
+        <div class="feature">
+          <div class="f-icon"><i class="fa-solid fa-chart-simple"></i></div>
+          <h3>Métricas avanzadas</h3>
+          <p>Centralidad, dependencia y patrones ocultos.</p>
+        </div>
+        <div class="feature">
+          <div class="f-icon"><i class="fa-solid fa-eye"></i></div>
+          <h3>Comparación crítica</h3>
+          <p>Discurso vs realidad, POT vs ODS y más.</p>
+        </div>
+      </div>
+
+      <div class="cta-row">
+        <button class="btn-primary">EXPLORAR PLATAFORMA <i class="fa-solid fa-arrow-right"></i></button>
+        <button class="btn-secondary">CONOCE LOS 8 MÓDULOS <i class="fa-solid fa-chevron-down"></i></button>
+      </div>
     </div>
 
-    <div class="modulo azul">
-      <span class="numero">02</span>
-      <div class="icono azul">📊</div>
-      <h4>MEDIR LA RED</h4>
-      <p>Calcula métricas clave: centralidad, intermediación, densidad y comunidades.</p>
-      <button>Ir al módulo →</button>
+    <!-- RIGHT: network diagram -->
+    <div class="hero-visual">
+      <svg viewBox="0 0 560 500" xmlns="http://www.w3.org/2000/svg" class="network-svg">
+        <defs>
+          <marker id="arrowFwd" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="rgba(255,255,255,0.55)"/>
+          </marker>
+        </defs>
+
+        <!-- connecting lines -->
+        <g class="links" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1.3" stroke-dasharray="1 6" stroke-linecap="round">
+          <line x1="185" y1="140" x2="330" y2="105" marker-end="url(#arrowFwd)" marker-start="url(#arrowFwd)"/>
+          <line x1="330" y1="105" x2="440" y2="205" marker-end="url(#arrowFwd)" marker-start="url(#arrowFwd)"/>
+          <line x1="185" y1="140" x2="440" y2="205" marker-end="url(#arrowFwd)" marker-start="url(#arrowFwd)"/>
+          <line x1="185" y1="140" x2="150" y2="290" marker-end="url(#arrowFwd)" marker-start="url(#arrowFwd)"/>
+          <line x1="150" y1="290" x2="440" y2="205" marker-end="url(#arrowFwd)" marker-start="url(#arrowFwd)"/>
+          <line x1="150" y1="290" x2="260" y2="380" marker-end="url(#arrowFwd)" marker-start="url(#arrowFwd)"/>
+          <line x1="260" y1="380" x2="440" y2="205" marker-end="url(#arrowFwd)" marker-start="url(#arrowFwd)"/>
+          <line x1="260" y1="380" x2="400" y2="350" marker-end="url(#arrowFwd)" marker-start="url(#arrowFwd)"/>
+          <line x1="400" y1="350" x2="440" y2="205" marker-end="url(#arrowFwd)" marker-start="url(#arrowFwd)"/>
+          <line x1="330" y1="105" x2="400" y2="350" marker-end="url(#arrowFwd)" marker-start="url(#arrowFwd)"/>
+        </g>
+
+        <!-- nodes -->
+        <g class="node node-teal" transform="translate(185,140)">
+          <circle r="52"></circle>
+          <text y="4">Sistema de<tspan x="0" dy="14">Movilidad</tspan></text>
+        </g>
+
+        <g class="node node-green" transform="translate(330,105)">
+          <circle r="58"></circle>
+          <text y="-8">Sistema<tspan x="0" dy="14">Ambiental y de</tspan><tspan x="0" dy="14">Estructura</tspan><tspan x="0" dy="14">Ecológica</tspan><tspan x="0" dy="14">Principal</tspan></text>
+        </g>
+
+        <g class="node node-purple" transform="translate(440,205)">
+          <circle r="54"></circle>
+          <text y="-2">Sistema de<tspan x="0" dy="14">Hábitat y</tspan><tspan x="0" dy="14">Vivienda</tspan></text>
+        </g>
+
+        <g class="node node-pink" transform="translate(150,290)">
+          <circle r="52"></circle>
+          <text y="0">Sistema de<tspan x="0" dy="14">Equipamientos</tspan></text>
+        </g>
+
+        <g class="node node-blue" transform="translate(260,380)">
+          <circle r="54"></circle>
+          <text y="-2">Sistema de<tspan x="0" dy="14">Servicios</tspan><tspan x="0" dy="14">Públicos</tspan></text>
+        </g>
+
+        <g class="node node-yellow" transform="translate(400,350)">
+          <circle r="54"></circle>
+          <text y="-2">Sistema de<tspan x="0" dy="14">Espacio</tspan><tspan x="0" dy="14">Público</tspan></text>
+        </g>
+      </svg>
+
+      <div class="legend">
+        <span class="legend-title">Convenciones</span>
+        <span class="legend-item"><i class="leg-line leg-directed"></i> Redes dirigidas</span>
+        <span class="legend-item"><i class="leg-line leg-undirected"></i> Redes no dirigidas</span>
+      </div>
     </div>
 
-    <div class="modulo magenta">
-      <span class="numero">03</span>
-      <div class="icono magenta">👁️</div>
-      <h4>DISCURSO VS REALIDAD</h4>
-      <p>Compara la importancia discursiva con la importancia estructural y detecta contradicciones.</p>
-      <button>Ir al módulo →</button>
-    </div>
-
-    <div class="modulo verde">
-      <span class="numero">04</span>
-      <div class="icono verde">⚙️</div>
-      <h4>MACROMODELOS</h4>
-      <p>Identifica las lógicas dominantes detrás del modelo de ciudad y la evidencia que las sustenta.</p>
-      <button>Ir al módulo →</button>
-    </div>
-
-    <div class="modulo naranja">
-      <span class="numero">05</span>
-      <div class="icono naranja">🔍</div>
-      <h4>LO QUE NO ESTÁ</h4>
-      <p>Detecta actores, procesos, especies y dinámicas ausentes o subrepresentadas.</p>
-      <button>Ir al módulo →</button>
-    </div>
-
-    <div class="modulo cyan">
-      <span class="numero">06</span>
-      <div class="icono cyan">♻️</div>
-      <h4>POT ♻ ODS</h4>
-      <p>Analiza cómo las relaciones del POT favorecen, limitan o entran en conflicto con los ODS.</p>
-      <button>Ir al módulo →</button>
-    </div>
-
-    <div class="modulo rosa">
-      <span class="numero">07</span>
-      <div class="icono rosa">🧪</div>
-      <h4>SIMULADOR</h4>
-      <p>Intervén la red: modifica relaciones, pesos o nodos y observa los efectos emergentes.</p>
-      <button>Ir al módulo →</button>
-    </div>
-
-    <div class="modulo naranja">
-      <span class="numero">08</span>
-      <div class="icono naranja">🏙️</div>
-      <h4>MODELO PROPIO DE CIUDAD</h4>
-      <p>Prioriza relaciones y constituye tu modelo alternativo de ciudad basado en los hallazgos.</p>
-      <button>Ir al módulo →</button>
-    </div>
   </div>
 </section>
 
-
-  <footer>
-    <p>Desmontar para comprender. Comprender para transformar.</p>
-  </footer>
-
-  <script src="scripts.js"></script>
 </body>
 </html>
