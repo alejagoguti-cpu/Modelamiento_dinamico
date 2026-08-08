@@ -14,21 +14,7 @@ body {
 
 /* Sidebar */
 .sidebar {
-  width: 240px;
-  background-color: #111320;
-  color: #e0e0e0;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 20px;
-  height: 100vh;
-  position: fixed;
-  left: 0;
-  top: 0;
-  z-index: 5; /* mantiene el sidebar por debajo del contenido */
-  /* Efecto de sombra lateral entre sidebar y contenido */
-.sidebar {
-  width: 240px;
+  width: 260px; /* ancho fijo */
   background-color: #111320;
   color: #e0e0e0;
   display: flex;
@@ -41,8 +27,6 @@ body {
   top: 0;
   z-index: 5;
   box-shadow: 4px 0 12px rgba(0, 0, 0, 0.6); /* sombra lateral */
-}
-
 }
 
 .logo {
@@ -159,9 +143,12 @@ body {
 /* Main content */
 .main-content {
   flex: 1;
-  margin-left: 260px; /* espacio más amplio */
+  margin-left: 260px; /* igual al ancho del sidebar */
   padding: 20px 50px;
   overflow-y: auto;
+  position: relative;
+  z-index: 10;
+  background-color: #0b0d17;
 }
 
 /* Barra superior */
@@ -321,21 +308,8 @@ body {
 }
 
 /* Colores específicos por módulo */
-.module:nth-child(1) h2 { color: #00bcd4; }
-.module:nth-child(2) h2 { color: #38bdf8; }
-.module:nth-child(3) h2 { color: #c084fc; }
-.module:nth-child(4) h2 { color: #4ade80; }
-.module:nth-child(5) h2 { color: #facc15; }
-.module:nth-child(6) h2 { color: #22c55e; }
-.module:nth-child(7) h2 { color: #f472b6; }
-.module:nth-child(8) h2 { color: #fb923c; }
-
-.module:nth-child(1) .icon { color: #00bcd4; }
-.module:nth-child(2) .icon { color: #38bdf8; }
-.module:nth-child(3) .icon { color: #c084fc; }
-.module:nth-child(4) .icon { color: #4ade80; }
-.module:nth-child(5) .icon { color: #facc15; }
-.module:nth-child(6) .icon { color: #22c55e;
-
-
-
+.module:nth-child(1) h2, .module:nth-child(1) .icon { color: #00bcd4; } /* Construir la Red */
+.module:nth-child(2) h2, .module:nth-child(2) .icon { color: #38bdf8; } /* Medir la Red */
+.module:nth-child(3) h2, .module:nth-child(3) .icon { color: #c084fc; } /* Discurso vs Realidad */
+.module:nth-child(4) h2, .module:nth-child(4) .icon { color: #4ade80; } /* Macromodelos */
+.module:nth-child(5) h2, .module:nth-child(5)
