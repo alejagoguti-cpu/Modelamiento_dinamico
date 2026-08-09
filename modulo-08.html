@@ -1,97 +1,311 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RAPOT · Modelo Propio</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="stylesheet" href="modulo-08.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RAPOT · Módulo 08 - Mi Modelo de Ciudad</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous"></link>
+  <link rel="stylesheet" href="modulo-08.css">
 </head>
 <body>
-<div class="app">
 
+<div class="app-container">
+  
+  <!-- SIDEBAR -->
   <aside class="sidebar">
-    <div class="brand">
-      <div class="mark"><i class="fa-solid fa-diagram-project"></i></div>
-      <span>RAPOT</span>
+    <div class="sidebar-brand">
+      <div class="brand-icon"><i class="fa-solid fa-diagram-project"></i></div>
+      <span class="brand-text">RAPOT</span>
     </div>
-
-    <div class="nav-group">
-      <a href="dashboard.html" class="nav-item "><i class="fa-solid fa-house"></i> Dashboard</a>
-    </div>
-
-    <div class="nav-group">
-      <div class="nav-label">MÓDULOS</div>
-      <a href="modulo-01.html" class="nav-item "><span class="num">01</span><i class="fa-solid fa-diagram-project"></i> Construir la Red</a>
-      <a href="modulo-02.html" class="nav-item "><span class="num">02</span><i class="fa-solid fa-chart-simple"></i> Medir la Red</a>
-      <a href="modulo-03.html" class="nav-item "><span class="num">03</span><i class="fa-solid fa-eye"></i> Discurso vs Realidad</a>
-      <a href="modulo-04.html" class="nav-item "><span class="num">04</span><i class="fa-solid fa-bullseye"></i> Macromodelos</a>
-      <a href="modulo-05.html" class="nav-item "><span class="num">05</span><i class="fa-solid fa-magnifying-glass"></i> Lo que no está</a>
-      <a href="modulo-06.html" class="nav-item "><span class="num">06</span><i class="fa-solid fa-earth-americas"></i> POT ↔ ODS</a>
-      <a href="modulo-07.html" class="nav-item "><span class="num">07</span><i class="fa-solid fa-flask"></i> Simulador</a>
-      <a href="modulo-08.html" class="nav-item active"><span class="num">08</span><i class="fa-solid fa-city"></i> Modelo Propio</a>
-    </div>
-
-    <div class="nav-group">
-      <div class="nav-label">GESTIÓN</div>
-      <a href="proyectos.html" class="nav-item "><i class="fa-solid fa-folder"></i> Proyectos</a>
-      <a href="fuentes.html" class="nav-item "><i class="fa-solid fa-file-lines"></i> Fuentes y Documentos</a>
-      <a href="favoritos.html" class="nav-item "><i class="fa-solid fa-star"></i> Favoritos</a>
-      <a href="reportes.html" class="nav-item "><i class="fa-solid fa-chart-pie"></i> Reportes</a>
-      <a href="configuracion.html" class="nav-item "><i class="fa-solid fa-gear"></i> Configuración</a>
-    </div>
-
-    <div class="sidebar-footer">
-      <div class="avatar-sm">EU</div>
-      <div class="user-meta">
-        <div class="name">Equipo Urbano</div>
-        <div class="role">Administrador</div>
+    
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+        <a href="#" class="nav-item">
+          <i class="fa-solid fa-home"></i> Dashboard
+        </a>
       </div>
-      <a href="demo.html" class="logout-btn" title="Cerrar sesión"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
+      
+      <div class="nav-section">
+        <div class="nav-label">MÓDULOS</div>
+        <a href="#" class="nav-item"><span class="nav-num">01</span> Análisis</a>
+        <a href="#" class="nav-item"><span class="nav-num">02</span> Red</a>
+        <a href="#" class="nav-item"><span class="nav-num">03</span> Contradicciones</a>
+        <a href="#" class="nav-item"><span class="nav-num">04</span> Macromodelos</a>
+        <a href="#" class="nav-item"><span class="nav-num">05</span> Ausencias</a>
+        <a href="#" class="nav-item"><span class="nav-num">06</span> POT vs ODS</a>
+        <a href="#" class="nav-item"><span class="nav-num">07</span> Simulador</a>
+        <a href="#" class="nav-item active"><span class="nav-num">08</span> Mi Modelo</a>
+      </div>
+      
+      <div class="nav-section">
+        <div class="nav-label">HERRAMIENTAS</div>
+        <a href="#" class="nav-item"><i class="fa-solid fa-file-export"></i> Exportar</a>
+        <a href="#" class="nav-item"><i class="fa-solid fa-download"></i> Descargar</a>
+        <a href="#" class="nav-item"><i class="fa-solid fa-print"></i> Imprimir</a>
+      </div>
+    </nav>
+    
+    <div class="sidebar-footer">
+      <div class="user-avatar">EU</div>
+      <div class="user-info">
+        <div class="user-name">Equipo</div>
+        <div class="user-role">Arquitectura</div>
+      </div>
     </div>
   </aside>
-
-  <!-- MAIN -->
-  <main class="main">
-
+  
+  <!-- MAIN CONTENT -->
+  <main class="main-container">
+    
+    <!-- TOPBAR -->
     <div class="topbar">
-      <h1>Modelo Propio</h1>
-      <div class="topbar-actions">
-        <div class="search-box"><i class="fa-solid fa-magnifying-glass"></i> Buscar en el sistema...</div>
-        <div class="icon-btn"><i class="fa-regular fa-bell"></i><span class="dot"></span></div>
-        <div class="icon-btn"><i class="fa-regular fa-circle-question"></i></div>
-        <div class="avatar-sm">EU</div>
+      <div class="topbar-left">
+        <h1 class="topbar-title">Mi Modelo de Ciudad</h1>
+        <p class="topbar-subtitle">EEP: Estructura Ecológica Principal - Análisis Crítico</p>
+      </div>
+      <div class="topbar-right">
+        <button class="icon-btn"><i class="fa-regular fa-bell"></i></button>
+        <button class="icon-btn"><i class="fa-regular fa-circle-question"></i></button>
+        <button class="icon-btn"><i class="fa-regular fa-user"></i></button>
       </div>
     </div>
-
-    <div class="welcome">
-      <h2>Modelo Propio</h2>
-      <p>Prioriza relaciones y construye tu modelo alternativo de ciudad basado en los hallazgos.</p>
-    </div>
-
-    <div class="panel" style="text-align:center; padding:60px 30px;">
-      <div style="width:56px;height:56px;border-radius:14px;background:rgba(47,212,200,0.12);color:var(--teal);
-                  display:flex;align-items:center;justify-content:center;font-size:22px;margin:0 auto 18px;">
-        <i class="fa-solid fa-city"></i>
+    
+    <!-- CONTENT GRID -->
+    <div class="content-grid">
+      
+      <!-- LEFT PANEL: CONTROLS -->
+      <div class="left-panel">
+        <div class="panel-card">
+          <div class="panel-header">
+            <h3><i class="fa-solid fa-sliders"></i> Opciones</h3>
+          </div>
+          <div class="panel-body">
+            <div class="form-group">
+              <label for="searchInput">Filtro de búsqueda</label>
+              <input 
+                type="text" 
+                id="searchInput" 
+                class="form-input" 
+                placeholder="Buscar componente..."
+              >
+            </div>
+            <button id="resetBtn" class="btn btn-secondary">
+              <i class="fa-solid fa-rotate-left"></i> Resetear Vista
+            </button>
+          </div>
+        </div>
+        
+        <div class="panel-card">
+          <div class="panel-header">
+            <h3><i class="fa-solid fa-chart-bar"></i> Estadísticas</h3>
+          </div>
+          <div class="panel-body">
+            <div class="stat-item">
+              <span class="stat-label">Nodos Totales:</span>
+              <span class="stat-value" id="totalNodes">14</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Relaciones:</span>
+              <span class="stat-value" id="totalLinks">19</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Nodos Visibles:</span>
+              <span class="stat-value" id="visibleNodes">14</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Densidad:</span>
+              <span class="stat-value" id="densityValue">Alta</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="panel-card">
+          <div class="panel-header">
+            <h3><i class="fa-solid fa-info-circle"></i> Información</h3>
+          </div>
+          <div class="panel-body">
+            <p class="info-text">
+              Red de 14 nodos representando componentes de la Estructura Ecológica Principal del POT Bogotá Reverdece 2022-2035.
+            </p>
+            <p class="info-text">
+              19 relaciones muestran tipos de conexión: flujo, condiciona, integra, sostiene, regula, conecta, genera, vincula.
+            </p>
+          </div>
+        </div>
       </div>
-      <h3 style="font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;margin-bottom:8px;">
-        Este módulo está en construcción
-      </h3>
-      <p style="color:var(--text-dim);font-size:13.5px;max-width:420px;margin:0 auto 22px;">
-        Estamos trabajando en esta sección. Mientras tanto puedes volver al Dashboard o explorar el Módulo 01.
-      </p>
-      <a href="dashboard.html" class="module-btn primary" style="display:inline-flex;max-width:200px;margin:0 auto;">
-        Volver al Dashboard <i class="fa-solid fa-arrow-right"></i>
-      </a>
+      
+      <!-- CENTER PANEL: NETWORK -->
+      <div class="center-panel">
+        <div class="panel-card full-height">
+          <div class="panel-header">
+            <h3><i class="fa-solid fa-sitemap"></i> Red Analítica</h3>
+            <span class="panel-subtitle">Nodos = 14 | Modo Analítico // Nodos = 14</span>
+          </div>
+          <div class="panel-body network-body">
+            <svg id="networkSvg" class="network-svg"></svg>
+          </div>
+        </div>
+      </div>
+      
+      <!-- RIGHT PANEL: LEGEND -->
+      <div class="right-panel">
+        <div class="panel-card">
+          <div class="panel-header">
+            <h3><i class="fa-solid fa-layer-group"></i> Capas</h3>
+          </div>
+          <div class="panel-body">
+            <div class="legend-item">
+              <div class="legend-indicator principal"></div>
+              <div class="legend-content">
+                <div class="legend-label">Nodos Principales</div>
+                <div class="legend-desc">Determinantes</div>
+              </div>
+              <div class="toggle-switch active" data-layer="principal">
+                <div class="toggle-circle"></div>
+              </div>
+            </div>
+            
+            <div class="legend-item">
+              <div class="legend-indicator secundaria"></div>
+              <div class="legend-content">
+                <div class="legend-label">Nodos Secundarios</div>
+                <div class="legend-desc">Complementarios</div>
+              </div>
+              <div class="toggle-switch active" data-layer="secundaria">
+                <div class="toggle-circle"></div>
+              </div>
+            </div>
+            
+            <div class="legend-item">
+              <div class="legend-indicator conexion"></div>
+              <div class="legend-content">
+                <div class="legend-label">Conexiones</div>
+                <div class="legend-desc">Espacios vinculantes</div>
+              </div>
+              <div class="toggle-switch active" data-layer="conexion">
+                <div class="toggle-circle"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="panel-card">
+          <div class="panel-header">
+            <h3><i class="fa-solid fa-arrows-split-up-and-left"></i> Convenciones</h3>
+          </div>
+          <div class="panel-body">
+            <div class="convention-item">
+              <svg width="60" height="16" class="convention-svg">
+                <defs>
+                  <marker id="markerTeal" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                    <polygon points="0 0, 10 3, 0 6" fill="#2fd4c8" />
+                  </marker>
+                </defs>
+                <line x1="2" y1="8" x2="50" y2="8" stroke="#2fd4c8" stroke-width="2" marker-end="url(#markerTeal)" />
+              </svg>
+              <span class="convention-label">Redes dirigidas</span>
+            </div>
+            
+            <div class="convention-item">
+              <svg width="60" height="16" class="convention-svg">
+                <line x1="2" y1="8" x2="58" y2="8" stroke="#4ade80" stroke-width="2" />
+                <polygon points="2,6 6,8 2,10" fill="#4ade80" />
+                <polygon points="58,6 54,8 58,10" fill="#4ade80" />
+              </svg>
+              <span class="convention-label">Redes no dirigidas</span>
+            </div>
+            
+            <div class="convention-item">
+              <svg width="60" height="16" class="convention-svg">
+                <defs>
+                  <marker id="markerGreen" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                    <polygon points="0 0, 10 3, 0 6" fill="#4ade80" />
+                  </marker>
+                </defs>
+                <line x1="2" y1="8" x2="50" y2="8" stroke="#4ade80" stroke-width="3" marker-end="url(#markerGreen)" />
+              </svg>
+              <span class="convention-label">Enlace fuerte</span>
+            </div>
+            
+            <div class="convention-item">
+              <svg width="60" height="16" class="convention-svg">
+                <defs>
+                  <marker id="markerPink" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                    <polygon points="0 0, 10 3, 0 6" fill="#f76fb0" />
+                  </marker>
+                </defs>
+                <line x1="2" y1="8" x2="50" y2="8" stroke="#f76fb0" stroke-width="2" stroke-dasharray="5,5" marker-end="url(#markerPink)" />
+              </svg>
+              <span class="convention-label">Enlace conflictivo</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="panel-card">
+          <div class="panel-header">
+            <h3><i class="fa-solid fa-list"></i> Tipos de Relación</h3>
+          </div>
+          <div class="panel-body">
+            <div class="relation-type">
+              <span class="relation-dot teal"></span>
+              <span class="relation-name">Flujo</span>
+            </div>
+            <div class="relation-type">
+              <span class="relation-dot green"></span>
+              <span class="relation-name">Condiciona</span>
+            </div>
+            <div class="relation-type">
+              <span class="relation-dot green"></span>
+              <span class="relation-name">Integra</span>
+            </div>
+            <div class="relation-type">
+              <span class="relation-dot green"></span>
+              <span class="relation-name">Contiene</span>
+            </div>
+            <div class="relation-type">
+              <span class="relation-dot green"></span>
+              <span class="relation-name">Sostiene</span>
+            </div>
+            <div class="relation-type">
+              <span class="relation-dot green"></span>
+              <span class="relation-name">Regula</span>
+            </div>
+            <div class="relation-type">
+              <span class="relation-dot green"></span>
+              <span class="relation-name">Conecta</span>
+            </div>
+            <div class="relation-type">
+              <span class="relation-dot green"></span>
+              <span class="relation-name">Genera</span>
+            </div>
+            <div class="relation-type">
+              <span class="relation-dot green"></span>
+              <span class="relation-name">Vincula</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
     </div>
-
-    <footer>
-      "No se trata de representar la ciudad, sino de comprenderla para transformarla." — <span>Equipo POT Reverse Engineering</span>
+    
+    <!-- FOOTER -->
+    <footer class="footer">
+      <div class="footer-content">
+        <p class="footer-text">
+          <i class="fa-solid fa-quote-left"></i> Análisis Crítico de la Estructura Ecológica Principal del POT Bogotá Reverdece 2022-2035
+          <i class="fa-solid fa-quote-right"></i>
+        </p>
+        <p class="footer-credit">RAPOT · Ingeniería Inversa de la Ciudad · 2026</p>
+      </div>
     </footer>
-
+    
   </main>
+  
 </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script src="modulo-08.js"></script>
+
 </body>
 </html>
