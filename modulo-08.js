@@ -46,7 +46,9 @@ let selectedLinkIndex = null;
 const state = { selectedComponents: new Set() };
 
 window.addEventListener('load', () => {
+  console.log('✅ Página cargada');
   renderStructureSelector();
+  renderComponentSelector();
   setupListeners();
   initNetwork();
 });
@@ -67,9 +69,10 @@ function renderStructureSelector() {
 
 function renderComponentSelector() {
   const container = document.getElementById('componentsSelector');
-  if (!container) return;
+  if (!container) { console.error('❌ No encontré #componentsSelector'); return; }
   
   const selectedStructs = Array.from(document.querySelectorAll('.structure-checkbox:checked')).map(el => el.dataset.id);
+  console.log('📋 Estructuras seleccionadas:', selectedStructs);
   
   if (selectedStructs.length === 0) {
     container.innerHTML = '<p style="color: var(--text-dim); font-size: 0.8rem;">Selecciona una estructura primero</p>';
@@ -77,24 +80,34 @@ function renderComponentSelector() {
   }
   
   let html = '';
+  let totalComps = 0;
+  
   selectedStructs.forEach(structId => {
     const struct = potData.structures.find(s => s.id === structId);
     if (struct) {
+      console.log(`📦 Mostrando componentes de: ${struct.name} (${struct.components.length})`);
       struct.components.forEach(comp => {
-        html += `<div class="comp-item"><input type="checkbox" id="comp-${comp.id}" data-id="${comp.id}" class="comp-checkbox"><label for="comp-${comp.id}"><span>${comp.name}</span></label></div>`;
+        totalComps++;
+        const isChecked = state.selectedComponents.has(comp.id) ? 'checked' : '';
+        html += `<div class="comp-item"><input type="checkbox" id="comp-${comp.id}" data-id="${comp.id}" class="comp-checkbox" ${isChecked}><label for="comp-${comp.id}"><span>${comp.name}</span></label></div>`;
       });
     }
   });
   
+  console.log(`✅ Total componentes a mostrar: ${totalComps}`);
   container.innerHTML = html;
   
+  // VOLVER A AGREGAR LISTENERS
   document.querySelectorAll('.comp-checkbox').forEach(cb => {
-    if (state.selectedComponents.has(parseInt(cb.dataset.id))) {
-      cb.checked = true;
-    }
     cb.addEventListener('change', function() {
       const id = parseInt(this.dataset.id);
-      this.checked ? state.selectedComponents.add(id) : state.selectedComponents.delete(id);
+      if (this.checked) {
+        state.selectedComponents.add(id);
+        console.log(`✅ Componente ${id} SELECCIONADO`);
+      } else {
+        state.selectedComponents.delete(id);
+        console.log(`❌ Componente ${id} DESELECCIONADO`);
+      }
       initNetwork();
     });
   });
