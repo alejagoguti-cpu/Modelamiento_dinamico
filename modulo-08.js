@@ -26,7 +26,7 @@ const potData = {
       { id: 221, name: "Jardín Infantil Auxiliadora" }, { id: 222, name: "Jardín Mundo Mágico" }, { id: 223, name: "Guardería Refugio" }, { id: 224, name: "Centro Desarrollo Crecer" }, { id: 225, name: "Hogar Infantil Arcoíris" },
       { id: 226, name: "Parque Piecitos Felices" }, { id: 227, name: "Parque Colina Feliz" }, { id: 228, name: "Ludoteca Barrio Nuevo" }, { id: 229, name: "Comedor San Bosco" }, { id: 230, name: "Biblioteca Felicidad" }
     ]},
-    { id: "socioeconomica", name: "Estructura Socioeconómica, Creativa e Innovación", color: "#f59e0b", components: [
+    { id: "socioeconomica", name: "Estructura Socioeconómica", color: "#f59e0b", components: [
       { id: 301, name: "Tiendas Barrio Localidad 1" }, { id: 302, name: "Tiendas Barrio Localidad 3" }, { id: 303, name: "Comercio Informal Centro" }, { id: 304, name: "Pequeño Comercio Paseo" }, { id: 305, name: "Mercado Flores" },
       { id: 306, name: "Centro Abastos Corabastos" }, { id: 307, name: "Mercado Samper Mendoza" }, { id: 308, name: "Plaza Minorista" }, { id: 309, name: "Centro Comercial Carrefour" }, { id: 310, name: "Centro Comercial Éxito" },
       { id: 311, name: "Talleres Confecciones" }, { id: 312, name: "Talleres Zapatería" }, { id: 313, name: "Talleres Carpintería" }, { id: 314, name: "Talleres Ebanistería" }, { id: 315, name: "Taller Cerámica" },
@@ -40,257 +40,259 @@ const potData = {
 let simulation = null;
 let allNodes = [];
 let allLinks = [];
+let manualLinks = [];
 let selectedNode1 = null;
 let selectedNode2 = null;
 let selectedLinkIndex = null;
 const state = { selectedComponents: new Set() };
 
-window.addEventListener('load', () => {
-  console.log('✅ Página cargada');
-  renderStructureSelector();
-  renderComponentSelector();
+document.addEventListener('DOMContentLoaded', () => {
+  renderStructures();
+  renderComponents();
   setupListeners();
   initNetwork();
 });
 
-function renderStructureSelector() {
+function renderStructures() {
   const container = document.getElementById('structuresSelector');
-  if (!container) return;
-  container.innerHTML = potData.structures.map(struct => `
-    <div class="struct-item" style="border-left: 3px solid ${struct.color};">
-      <input type="checkbox" id="struct-${struct.id}" data-id="${struct.id}" class="structure-checkbox">
-      <label for="struct-${struct.id}">
-        <div class="struct-name">${struct.name}</div>
-        <div class="struct-count">${struct.components.length} componentes</div>
+  container.innerHTML = potData.structures.map(s => `
+    <div class="struct-item" style="border-left: 3px solid ${s.color};">
+      <label>
+        <input type="checkbox" class="struct-checkbox" data-id="${s.id}">
+        <div>
+          <div class="struct-name">${s.name}</div>
+          <div class="struct-count">${s.components.length} componentes</div>
+        </div>
       </label>
     </div>
   `).join('');
 }
 
-function renderComponentSelector() {
+function renderComponents() {
   const container = document.getElementById('componentsSelector');
-  if (!container) { console.error('❌ No encontré #componentsSelector'); return; }
-  
-  const selectedStructs = Array.from(document.querySelectorAll('.structure-checkbox:checked')).map(el => el.dataset.id);
-  console.log('📋 Estructuras seleccionadas:', selectedStructs);
+  const selectedStructs = Array.from(document.querySelectorAll('.struct-checkbox:checked')).map(el => el.dataset.id);
   
   if (selectedStructs.length === 0) {
-    container.innerHTML = '<p style="color: var(--text-dim); font-size: 0.8rem;">Selecciona una estructura primero</p>';
+    container.innerHTML = '<p style="color: var(--text-dim); font-size: 0.8rem;">Selecciona una estructura</p>';
     return;
   }
-  
+
   let html = '';
-  let totalComps = 0;
-  
   selectedStructs.forEach(structId => {
     const struct = potData.structures.find(s => s.id === structId);
-    if (struct) {
-      console.log(`📦 Mostrando componentes de: ${struct.name} (${struct.components.length})`);
-      struct.components.forEach(comp => {
-        totalComps++;
-        const isChecked = state.selectedComponents.has(comp.id) ? 'checked' : '';
-        html += `<div class="comp-item"><input type="checkbox" id="comp-${comp.id}" data-id="${comp.id}" class="comp-checkbox" ${isChecked}><label for="comp-${comp.id}"><span>${comp.name}</span></label></div>`;
-      });
-    }
+    struct.components.forEach(comp => {
+      const checked = state.selectedComponents.has(comp.id) ? 'checked' : '';
+      html += `<div class="comp-item"><label><input type="checkbox" class="comp-checkbox" data-id="${comp.id}" ${checked}> ${comp.name}</label></div>`;
+    });
   });
-  
-  console.log(`✅ Total componentes a mostrar: ${totalComps}`);
+
   container.innerHTML = html;
   
-  // VOLVER A AGREGAR LISTENERS
   document.querySelectorAll('.comp-checkbox').forEach(cb => {
-    cb.addEventListener('change', function() {
-      const id = parseInt(this.dataset.id);
-      if (this.checked) {
-        state.selectedComponents.add(id);
-        console.log(`✅ Componente ${id} SELECCIONADO`);
-      } else {
-        state.selectedComponents.delete(id);
-        console.log(`❌ Componente ${id} DESELECCIONADO`);
-      }
+    cb.addEventListener('change', (e) => {
+      const id = parseInt(e.target.dataset.id);
+      e.target.checked ? state.selectedComponents.add(id) : state.selectedComponents.delete(id);
       initNetwork();
     });
   });
 }
 
 function initNetwork() {
-  const selectedCompIds = Array.from(state.selectedComponents);
-  
   allNodes = [];
   allLinks = [];
-  
   const structureMap = {};
-  
-  selectedCompIds.forEach(compId => {
+
+  state.selectedComponents.forEach(compId => {
     const struct = potData.structures.find(s => s.components.some(c => c.id === compId));
-    const comp = struct?.components.find(c => c.id === compId);
+    const comp = struct.components.find(c => c.id === compId);
     
-    if (struct && comp) {
-      allNodes.push({ id: comp.id, label: comp.name, type: "component", color: struct.color, size: 40 });
+    if (comp && struct) {
+      allNodes.push({ id: comp.id, label: comp.name, color: struct.color, size: 32 });
       
       if (!structureMap[struct.id]) {
-        structureMap[struct.id] = struct;
+        structureMap[struct.id] = { ...struct, comps: [] };
       }
-      
-      allLinks.push({ source: struct.id, target: comp.id, type: "flujo", isStructure: false, isAuto: true });
+      structureMap[struct.id].comps.push(comp.id);
     }
   });
+
+  const structureIds = Object.keys(structureMap);
+  let autoConnectionCount = 0;
   
-  // Agregar relaciones entre componentes de diferentes estructuras
-  Object.values(structureMap).forEach((struct1, idx) => {
-    Object.values(structureMap).forEach((struct2, idx2) => {
-      if (idx < idx2) {
-        const comps1 = selectedCompIds.filter(id => struct1.components.some(c => c.id === id));
-        const comps2 = selectedCompIds.filter(id => struct2.components.some(c => c.id === id));
-        if (comps1.length > 0 && comps2.length > 0) {
-          allLinks.push({ source: comps1[0], target: comps2[0], type: "flujo", isStructure: false, isManual: false });
-        }
+  for (let i = 0; i < structureIds.length; i++) {
+    for (let j = i + 1; j < structureIds.length; j++) {
+      const struct1 = structureMap[structureIds[i]];
+      const struct2 = structureMap[structureIds[j]];
+      
+      if (struct1.comps.length > 0 && struct2.comps.length > 0) {
+        struct1.comps.forEach(comp1 => {
+          struct2.comps.forEach(comp2 => {
+            const link = { source: comp1, target: comp2, type: 'flujo', isAuto: true };
+            allLinks.push(link);
+            autoConnectionCount++;
+          });
+        });
       }
-    });
-  });
-  
-  const svg = d3.select("#networkSvg");
-  const container = svg.node()?.parentElement;
-  if (!container) return;
-  
-  const width = container.offsetWidth;
-  const height = container.offsetHeight;
-  
+    }
+  }
+
+  allLinks = allLinks.concat(manualLinks);
+
+  drawNetwork();
+}
+
+function drawNetwork() {
+  const svg = d3.select('#networkSvg');
+  const container = svg.node().parentElement;
+  const width = container.clientWidth;
+  const height = container.clientHeight;
+
   svg.attr('width', width).attr('height', height);
-  svg.selectAll("*").remove();
-  
-  const g = svg.append("g");
-  const defs = svg.append("defs");
-  
-  defs.selectAll("marker").data([{id: "m-teal", color: "#2fd4c8"}, {id: "m-green", color: "#4ade80"}, {id: "m-pink", color: "#f76fb0"}])
-    .enter().append("marker").attr("id", d => d.id).attr("markerWidth", 10).attr("markerHeight", 10).attr("refX", 28).attr("refY", 3).attr("orient", "auto")
-    .append("polygon").attr("points", "0 0, 10 3, 0 6").attr("fill", d => d.color);
-  
+  svg.selectAll('*').remove();
+
+  const g = svg.append('g');
+  const defs = svg.append('defs');
+
+  ['#2fd4c8', '#f76fb0', '#4ade80'].forEach((color, i) => {
+    defs.append('marker')
+      .attr('id', `m-${i}`)
+      .attr('markerWidth', 8)
+      .attr('markerHeight', 8)
+      .attr('refX', 24)
+      .attr('refY', 2)
+      .attr('orient', 'auto')
+      .append('polygon')
+      .attr('points', '0 0, 8 2, 0 4')
+      .attr('fill', color);
+  });
+
   if (simulation) simulation.stop();
-  
+
   simulation = d3.forceSimulation(allNodes)
     .force('link', d3.forceLink(allLinks).id(d => d.id).distance(100).strength(0.3))
-    .force('charge', d3.forceManyBody().strength(-500).distanceMax(600))
+    .force('charge', d3.forceManyBody().strength(-250))
     .force('center', d3.forceCenter(width / 2, height / 2))
-    .force('collide', d3.forceCollide().radius(d => d.size + 20).strength(0.85))
-    .alphaDecay(0.02).velocityDecay(0.5);
-  
-  const link = g.selectAll("line.link").data(allLinks).enter().append("line").attr("class", "link")
-    .attr("stroke", d => d.type === "flujo" ? "#2fd4c8" : d.type === "conflicto" ? "#f76fb0" : "#4ade80")
-    .attr("stroke-width", 1.5)
-    .attr("stroke-dasharray", d => d.type === "conflicto" ? "3,3" : "0")
-    .attr("opacity", 0.4)
-    .attr("marker-end", d => d.type === "flujo" ? "url(#m-teal)" : d.type === "conflicto" ? "url(#m-pink)" : "url(#m-green)")
-    .attr("cursor", "pointer").style("pointer-events", "stroke")
-    .on("click", function(event, d) {
+    .force('collide', d3.forceCollide().radius(45));
+
+  const link = g.selectAll('line')
+    .data(allLinks)
+    .enter()
+    .append('line')
+    .attr('stroke', d => d.type === 'flujo' ? '#2fd4c8' : d.type === 'conflicto' ? '#f76fb0' : '#4ade80')
+    .attr('stroke-width', 1.5)
+    .attr('stroke-dasharray', d => d.type === 'conflicto' ? '3,3' : '0')
+    .attr('opacity', 0.5)
+    .attr('marker-end', d => d.type === 'conflicto' ? 'url(#m-1)' : 'url(#m-0)')
+    .attr('cursor', 'pointer')
+    .on('click', (e, d) => {
       selectedLinkIndex = allLinks.indexOf(d);
-      console.log('📍 Línea seleccionada:', d);
-      showConnectionPanel(null, null, d);
+      const n1 = allNodes.find(n => n.id === d.source);
+      const n2 = allNodes.find(n => n.id === d.target);
+      document.getElementById('connectionInfo').innerHTML = `<strong>${n1.label}</strong><br>↔ ${d.type}<br><strong>${n2.label}</strong>`;
+      document.getElementById('connectionPanel').style.display = 'block';
     });
+
+  const nodeGroup = g.selectAll('g')
+    .data(allNodes)
+    .enter()
+    .append('g')
+    .style('cursor', 'pointer')
+    .on('click', (e, d) => selectNode(d.id))
+    .call(d3.drag()
+      .on('start', (e, d) => { simulation.alphaTarget(0.3).restart(); d.fx = e.x; d.fy = e.y; })
+      .on('drag', (e, d) => { d.fx = e.x; d.fy = e.y; })
+      .on('end', (e, d) => { simulation.alphaTarget(0); d.fx = null; d.fy = null; })
+    );
+
+  nodeGroup.append('circle')
+    .attr('r', d => d.size + 12)
+    .attr('fill', d => d.color)
+    .attr('opacity', 0.2);
   
-  const nodeGroup = g.selectAll("g.node-group").data(allNodes).enter().append("g").attr("class", "node-group").style("cursor", "pointer")
-    .on("click", function(event, d) { selectNodeForConnection(d.id); })
-    .call(drag(simulation));
+  nodeGroup.append('circle')
+    .attr('r', d => d.size)
+    .attr('fill', '#3b82f6')
+    .attr('opacity', 1);
   
-  nodeGroup.append("circle").attr("r", d => d.size + 12).attr("fill", d => d.color).attr("opacity", 0.2);
+  nodeGroup.append('circle')
+    .attr('cx', 0)
+    .attr('cy', 0)
+    .attr('r', 6)
+    .attr('fill', 'none')
+    .attr('stroke', '#fff')
+    .attr('stroke-width', 1);
   
-  nodeGroup.append("circle").attr("r", d => d.size).attr("fill", "#3b82f6").attr("opacity", 1).attr("stroke", "none").style("cursor", "move");
-  
-  nodeGroup.append("text").attr("text-anchor", "middle").attr("dominant-baseline", "central").attr("dy", 0)
-    .attr("font-size", "18px").attr("fill", "#fff").attr("pointer-events", "none").text("●");
-  
-  nodeGroup.append("text").attr("text-anchor", "middle").attr("dominant-baseline", "middle").attr("dy", d => d.size * 0.25)
-    .attr("font-size", 9).attr("font-weight", 700).attr("fill", "#fff").attr("pointer-events", "none").text(d => d.label)
-    .style("text-shadow", "0 1px 3px rgba(0,0,0,0.7)");
-  
+  nodeGroup.append('text')
+    .attr('text-anchor', 'middle')
+    .attr('dy', d => d.size + 18)
+    .attr('font-size', '8px')
+    .attr('fill', '#fff')
+    .attr('pointer-events', 'none')
+    .attr('font-weight', 600)
+    .text(d => d.label);
+
   simulation.on('tick', () => {
-    link.attr('x1', d => d.source.x).attr('y1', d => d.source.y).attr('x2', d => d.target.x).attr('y2', d => d.target.y);
-    nodeGroup.attr('transform', d => `translate(${Math.max(60, Math.min(width - 60, d.x))},${Math.max(60, Math.min(height - 60, d.y))})`);
+    link
+      .attr('x1', d => d.source.x)
+      .attr('y1', d => d.source.y)
+      .attr('x2', d => d.target.x)
+      .attr('y2', d => d.target.y);
+    
+    nodeGroup.attr('transform', d => `translate(${d.x},${d.y})`);
   });
-  
+
   updateStats();
 }
 
-function drag(simulation) {
-  function dragstarted(event, d) { if (!event.active) simulation.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; }
-  function dragged(event, d) { d.fx = event.x; d.fy = event.y; }
-  function dragended(event, d) { if (!event.active) simulation.alphaTarget(0); d.fx = null; d.fy = null; }
-  return d3.drag().on('start', dragstarted).on('drag', dragged).on('end', dragended);
-}
-
 function updateStats() {
-  const countComponents = document.getElementById('countComponents');
-  if (countComponents) countComponents.textContent = state.selectedComponents.size;
+  document.getElementById('countComponents').textContent = state.selectedComponents.size;
+  document.getElementById('countLinks').textContent = allLinks.length;
 }
 
 function setupListeners() {
-  document.querySelectorAll('.structure-checkbox').forEach(cb => {
-    cb.addEventListener('change', function() {
-      renderComponentSelector();
+  document.querySelectorAll('.struct-checkbox').forEach(cb => {
+    cb.addEventListener('change', () => {
+      renderComponents();
       initNetwork();
     });
   });
-  
-  const clearBtn = document.getElementById('clearBtn');
-  if (clearBtn) {
-    clearBtn.addEventListener('click', () => {
-      state.selectedComponents.clear();
-      document.querySelectorAll('.comp-checkbox').forEach(cb => cb.checked = false);
-      initNetwork();
-    });
-  }
+
+  document.getElementById('clearBtn').addEventListener('click', () => {
+    state.selectedComponents.clear();
+    manualLinks = [];
+    document.querySelectorAll('.comp-checkbox').forEach(cb => cb.checked = false);
+    initNetwork();
+  });
 }
 
-function selectNodeForConnection(nodeId) {
-  if (!selectedNode1) { 
+function selectNode(nodeId) {
+  if (!selectedNode1) {
     selectedNode1 = nodeId;
-    console.log('✅ NODO 1:', allNodes.find(n => n.id === nodeId)?.label);
-  }
-  else if (!selectedNode2 && nodeId !== selectedNode1) { 
+  } else if (selectedNode1 !== nodeId && !selectedNode2) {
     selectedNode2 = nodeId;
-    console.log('✅ NODO 2:', allNodes.find(n => n.id === nodeId)?.label);
-    showConnectionPanel(selectedNode1, selectedNode2);
+    const n1 = allNodes.find(n => n.id === selectedNode1);
+    const n2 = allNodes.find(n => n.id === selectedNode2);
+    document.getElementById('connectionInfo').innerHTML = `<strong>${n1.label}</strong><br>→<br><strong>${n2.label}</strong>`;
+    document.getElementById('connectionPanel').style.display = 'block';
   }
-}
-
-function showConnectionPanel(node1Id, node2Id, link = null) {
-  const panel = document.getElementById('connectionPanel');
-  if (!panel) return;
-  
-  let info = '';
-  if (link) {
-    const node1 = allNodes.find(n => n.id === link.source);
-    const node2 = allNodes.find(n => n.id === link.target);
-    info = `${node1?.label} ➜ ${node2?.label} (${link.type})`;
-  } else {
-    const node1 = allNodes.find(n => n.id === node1Id);
-    const node2 = allNodes.find(n => n.id === node2Id);
-    info = `${node1?.label} ➜ ${node2?.label}`;
-  }
-  
-  document.getElementById('connectionInfo').textContent = info;
-  panel.style.display = 'block';
-  document.querySelectorAll('input[name="convention"]').forEach(r => r.checked = false);
 }
 
 function confirmConnection() {
-  const selected = document.querySelector('input[name="convention"]:checked');
-  if (!selected) { alert('⚠️ Selecciona convención'); return; }
+  const type = document.querySelector('input[name="convention"]:checked')?.value;
+  if (!type) { alert('⚠️ Selecciona tipo'); return; }
   
   if (selectedLinkIndex !== null) {
-    // MODIFICAR LÍNEA EXISTENTE
-    const typeMap = { 'dirigida': 'flujo', 'nodirigida': 'bidirectional', 'fuerte': 'fuerte', 'conflicto': 'conflicto' };
-    allLinks[selectedLinkIndex].type = typeMap[selected.value];
-    console.log('✅ LÍNEA MODIFICADA:', allLinks[selectedLinkIndex]);
-    alert('✅ Línea modificada');
+    const link = allLinks[selectedLinkIndex];
+    link.type = type;
+    if (link.isAuto) {
+      link.isAuto = false;
+      if (!manualLinks.find(l => l.source === link.source && l.target === link.target)) {
+        manualLinks.push(link);
+      }
+    }
   } else if (selectedNode1 && selectedNode2) {
-    // CREAR NUEVA LÍNEA
-    const typeMap = { 'dirigida': 'flujo', 'nodirigida': 'bidirectional', 'fuerte': 'fuerte', 'conflicto': 'conflicto' };
-    const node1 = allNodes.find(n => n.id === selectedNode1);
-    const node2 = allNodes.find(n => n.id === selectedNode2);
-    allLinks.push({ source: selectedNode1, target: selectedNode2, type: typeMap[selected.value], isStructure: false });
-    console.log('✅ CONEXIÓN CREADA');
-    alert(`✅ Conexión creada: ${node1?.label} → ${node2?.label}`);
+    const newLink = { source: selectedNode1, target: selectedNode2, type: type, isAuto: false };
+    manualLinks.push(newLink);
   }
   
   closeConnection();
@@ -305,4 +307,5 @@ function closeConnection() {
   document.querySelectorAll('input[name="convention"]').forEach(r => r.checked = false);
 }
 
-function updatePreview() {}
+window.confirmConnection = confirmConnection;
+window.closeConnection = closeConnection;
