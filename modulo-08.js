@@ -99,8 +99,7 @@ function renderComponents() {
 
 function initNetwork() {
   allNodes = [];
-  allLinks = [];
-  const structureMap = {};
+  allLinks = manualLinks.slice(); // SOLO CONEXIONES MANUALES, NO AUTOMÁTICAS
 
   state.selectedComponents.forEach(compId => {
     const struct = potData.structures.find(s => s.components.some(c => c.id === compId));
@@ -108,35 +107,8 @@ function initNetwork() {
     
     if (comp && struct) {
       allNodes.push({ id: comp.id, label: comp.name, color: struct.color, size: 32 });
-      
-      if (!structureMap[struct.id]) {
-        structureMap[struct.id] = { ...struct, comps: [] };
-      }
-      structureMap[struct.id].comps.push(comp.id);
     }
   });
-
-  const structureIds = Object.keys(structureMap);
-  let autoConnectionCount = 0;
-  
-  for (let i = 0; i < structureIds.length; i++) {
-    for (let j = i + 1; j < structureIds.length; j++) {
-      const struct1 = structureMap[structureIds[i]];
-      const struct2 = structureMap[structureIds[j]];
-      
-      if (struct1.comps.length > 0 && struct2.comps.length > 0) {
-        struct1.comps.forEach(comp1 => {
-          struct2.comps.forEach(comp2 => {
-            const link = { source: comp1, target: comp2, type: 'flujo', isAuto: true };
-            allLinks.push(link);
-            autoConnectionCount++;
-          });
-        });
-      }
-    }
-  }
-
-  allLinks = allLinks.concat(manualLinks);
 
   drawNetwork();
 }
@@ -153,23 +125,44 @@ function drawNetwork() {
   const g = svg.append('g');
   const defs = svg.append('defs');
 
-  ['#2fd4c8', '#f76fb0', '#4ade80'].forEach((color, i) => {
-    defs.append('marker')
-      .attr('id', `m-${i}`)
-      .attr('markerWidth', 8)
-      .attr('markerHeight', 8)
-      .attr('refX', 24)
-      .attr('refY', 2)
-      .attr('orient', 'auto')
-      .append('polygon')
-      .attr('points', '0 0, 8 2, 0 4')
-      .attr('fill', color);
-  });
+  // Markers para diferentes tipos de conexión
+  defs.append('marker')
+    .attr('id', 'm-flujo')
+    .attr('markerWidth', 8)
+    .attr('markerHeight', 8)
+    .attr('refX', 24)
+    .attr('refY', 2)
+    .attr('orient', 'auto')
+    .append('polygon')
+    .attr('points', '0 0, 8 2, 0 4')
+    .attr('fill', '#2fd4c8');
+
+  defs.append('marker')
+    .attr('id', 'm-conflicto')
+    .attr('markerWidth', 8)
+    .attr('markerHeight', 8)
+    .attr('refX', 24)
+    .attr('refY', 2)
+    .attr('orient', 'auto')
+    .append('polygon')
+    .attr('points', '0 0, 8 2, 0 4')
+    .attr('fill', '#f76fb0');
+
+  defs.append('marker')
+    .attr('id', 'm-bidirectional')
+    .attr('markerWidth', 8)
+    .attr('markerHeight', 8)
+    .attr('refX', 24)
+    .attr('refY', 2)
+    .attr('orient', 'auto')
+    .append('polygon')
+    .attr('points', '0 0, 8 2, 0 4')
+    .attr('fill', '#4ade80');
 
   if (simulation) simulation.stop();
 
   simulation = d3.forceSimulation(allNodes)
-    .force('link', d3.forceLink(allLinks).id(d => d.id).distance(100).strength(0.3))
+    .force('link', d3.forceLink(allLinks).id(d => d.id || d).distance(100).strength(0.3))
     .force('charge', d3.forceManyBody().strength(-250))
     .force('center', d3.forceCenter(width / 2, height / 2))
     .force('collide', d3.forceCollide().radius(45));
@@ -178,16 +171,28 @@ function drawNetwork() {
     .data(allLinks)
     .enter()
     .append('line')
-    .attr('stroke', d => d.type === 'flujo' ? '#2fd4c8' : d.type === 'conflicto' ? '#f76fb0' : '#4ade80')
-    .attr('stroke-width', 1.5)
+    .attr('stroke', d => {
+      if (d.type === 'flujo') return '#2fd4c8';
+      if (d.type === 'conflicto') return '#f76fb0';
+      if (d.type === 'bidirectional') return '#4ade80';
+      if (d.type === 'fuerte') return '#4ade80';
+      return '#2fd4c8';
+    })
+    .attr('stroke-width', d => d.type === 'fuerte' ? 2.5 : 1.5)
     .attr('stroke-dasharray', d => d.type === 'conflicto' ? '3,3' : '0')
     .attr('opacity', 0.5)
-    .attr('marker-end', d => d.type === 'conflicto' ? 'url(#m-1)' : 'url(#m-0)')
+    .attr('marker-end', d => {
+      if (d.type === 'conflicto') return 'url(#m-conflicto)';
+      if (d.type === 'bidirectional' || d.type === 'fuerte') return 'url(#m-bidirectional)';
+      return 'url(#m-flujo)';
+    })
     .attr('cursor', 'pointer')
     .on('click', (e, d) => {
       selectedLinkIndex = allLinks.indexOf(d);
-      const n1 = allNodes.find(n => n.id === d.source);
-      const n2 = allNodes.find(n => n.id === d.target);
+      const sourceId = typeof d.source === 'object' ? d.source.id : d.source;
+      const targetId = typeof d.target === 'object' ? d.target.id : d.target;
+      const n1 = allNodes.find(n => n.id === sourceId);
+      const n2 = allNodes.find(n => n.id === targetId);
       document.getElementById('connectionInfo').innerHTML = `<strong>${n1.label}</strong><br>↔ ${d.type}<br><strong>${n2.label}</strong>`;
       document.getElementById('connectionPanel').style.display = 'block';
     });
@@ -204,16 +209,19 @@ function drawNetwork() {
       .on('end', (e, d) => { simulation.alphaTarget(0); d.fx = null; d.fy = null; })
     );
 
+  // Glow (color de estructura)
   nodeGroup.append('circle')
     .attr('r', d => d.size + 12)
     .attr('fill', d => d.color)
     .attr('opacity', 0.2);
   
+  // Nodo principal (azul)
   nodeGroup.append('circle')
     .attr('r', d => d.size)
     .attr('fill', '#3b82f6')
     .attr('opacity', 1);
   
+  // Outline pequeño (emoji circle)
   nodeGroup.append('circle')
     .attr('cx', 0)
     .attr('cy', 0)
@@ -222,6 +230,7 @@ function drawNetwork() {
     .attr('stroke', '#fff')
     .attr('stroke-width', 1);
   
+  // Label
   nodeGroup.append('text')
     .attr('text-anchor', 'middle')
     .attr('dy', d => d.size + 18)
@@ -233,10 +242,10 @@ function drawNetwork() {
 
   simulation.on('tick', () => {
     link
-      .attr('x1', d => d.source.x)
-      .attr('y1', d => d.source.y)
-      .attr('x2', d => d.target.x)
-      .attr('y2', d => d.target.y);
+      .attr('x1', d => typeof d.source === 'object' ? d.source.x : allNodes.find(n => n.id === d.source).x)
+      .attr('y1', d => typeof d.source === 'object' ? d.source.y : allNodes.find(n => n.id === d.source).y)
+      .attr('x2', d => typeof d.target === 'object' ? d.target.x : allNodes.find(n => n.id === d.target).x)
+      .attr('y2', d => typeof d.target === 'object' ? d.target.y : allNodes.find(n => n.id === d.target).y);
     
     nodeGroup.attr('transform', d => `translate(${d.x},${d.y})`);
   });
@@ -246,7 +255,7 @@ function drawNetwork() {
 
 function updateStats() {
   document.getElementById('countComponents').textContent = state.selectedComponents.size;
-  document.getElementById('countLinks').textContent = allLinks.length;
+  document.getElementById('countLinks').textContent = manualLinks.length;
 }
 
 function setupListeners() {
@@ -282,16 +291,10 @@ function confirmConnection() {
   if (!type) { alert('⚠️ Selecciona tipo'); return; }
   
   if (selectedLinkIndex !== null) {
-    const link = allLinks[selectedLinkIndex];
+    const link = manualLinks[selectedLinkIndex];
     link.type = type;
-    if (link.isAuto) {
-      link.isAuto = false;
-      if (!manualLinks.find(l => l.source === link.source && l.target === link.target)) {
-        manualLinks.push(link);
-      }
-    }
   } else if (selectedNode1 && selectedNode2) {
-    const newLink = { source: selectedNode1, target: selectedNode2, type: type, isAuto: false };
+    const newLink = { source: selectedNode1, target: selectedNode2, type: type };
     manualLinks.push(newLink);
   }
   
