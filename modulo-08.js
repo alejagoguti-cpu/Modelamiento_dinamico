@@ -1,346 +1,843 @@
 /* ==========================================================
-   MÓDULO 08 — MI MODELO DE CIUDAD — CONSTRUCTOR INTERACTIVO
-   (v2: permite crear, editar y conectar nodos propios)
-
-   Inicio: Nodos del POT ya están presentes (37 nodos)
-   Permitir:
-   - Crear nuevos nodos (click en el vacío)
-   - Editar nombre y estructura de nodos (doble click)
-   - Crear conexiones entre nodos (arrastrar)
-   - Eliminar nodos (botón derecho)
-   - Guardar el modelo en localStorage
+   RED — MI MODELO DE CIUDAD — Módulo 08
+   diagrama con física de nodos, construido a partir de:
+   modelo_propio_ciudad_40_relaciones.xlsx
+   - VIVIENDA está fija en el centro: es el componente con más
+     conexiones (20) y por eso el nodo más grande de la red.
+   - El tamaño de cada bola es proporcional a su número de conexiones.
+   - Los nodos parten de una posición fija, pero se pueden ARRASTRAR:
+     al mover una bola, las conectadas la "siguen" (fuerza de resorte),
+     y el conjunto tiende a volver a su posición original.
+   - Cada línea es una relación tomada de la hoja "Relaciones":
+     Soporte, Conectividad, Dependencia o Transformación.
+   - Clic en una línea -> panel con el sistema origen/destino y la relación.
+   - Clic en una bola -> la apaga (opacidad) y oculta sus líneas conectadas;
+     clic de nuevo la enciende.
+   - Convenciones (tomadas de la hoja "4 convenciones"):
+       Soporte:        verde   #4ade80  continua con flecha
+       Conectividad:   azul    #5b8def  continua con flecha en ambos extremos
+       Dependencia:    rosado  #f76fb0  punteada con flecha
+       Transformación: morado  #a276f2  doble línea con flecha
+   - Colores de sistema (hoja "Sistemas y colores"):
+       Ambiental y ecológico:      verde   #4ade80
+       Hábitat y espacio urbano:   naranja #ef9552
+       Movilidad y conectividad:   azul    #5b8def
+       Económico y productivo:     amarillo #f5c945
+       Social, cultural y cuidado: rosado  #f76fb0
+       Gobernanza:                 morado  #a276f2
    ========================================================== */
 
 const SVG_NS = "http://www.w3.org/2000/svg";
-let svg, simulation, containerWidth = 1400, containerHeight = 800;
-const typeOff = new Set(), catOff = new Set();
+const XHTML_NS = "http://www.w3.org/1999/xhtml";
 
-/* -------- Nodos: Los 37 del POT -------- */
+/* -------- Sistemas: color e icono (hoja "Sistemas y colores") -------- */
+const SISTEMAS = {
+  eco:        { label: "Ambiental y ecológico",      color: "#4ade80", icon: "fa-leaf" },
+  habitat:    { label: "Hábitat y espacio urbano",   color: "#ef9552", icon: "fa-house" },
+  movilidad:  { label: "Movilidad y conectividad",   color: "#5b8def", icon: "fa-road" },
+  economico:  { label: "Económico y productivo",     color: "#f5c945", icon: "fa-coins" },
+  social:     { label: "Social, cultural y cuidado",  color: "#f76fb0", icon: "fa-people-roof" },
+  gobernanza: { label: "Gobernanza",                  color: "#a276f2", icon: "fa-landmark" },
+};
+
+/* -------- Nodos: 32 componentes tomados de la hoja "Relaciones" -------- */
+/* tamaño (r) proporcional al número de conexiones (grado) de cada componente */
 const ODS_NODES = [
-  /* 1. Estructura Ecológica Principal — VERDE */
-  { id: "cerros",     cat: "e1", name: "CERROS\nORIENTALES",        icon: "fa-mountain-sun",  color: "#4ade80", x: 200,  y: 180, r: 52 },
-  { id: "rios",       cat: "e1", name: "RÍOS",                       icon: "fa-water",         color: "#4ade80", x: 330,  y: 430, r: 50 },
-  { id: "quebradas",  cat: "e1", name: "QUEBRADAS",                  icon: "fa-water",         color: "#4ade80", x: 500,  y: 150, r: 46 },
-  { id: "humedales",  cat: "e1", name: "HUMEDALES",                  icon: "fa-droplet",       color: "#4ade80", x: 660,  y: 420, r: 52 },
-  { id: "resiliencia",cat: "e1", name: "ÁREAS DE\nRESILIENCIA",      icon: "fa-shield-heart",  color: "#4ade80", x: 890,  y: 170, r: 52 },
-  { id: "paramos",    cat: "e1", name: "PÁRAMOS",                    icon: "fa-mountain",      color: "#4ade80", x: 250,  y: 640, r: 52 },
-  { id: "bosques",    cat: "e1", name: "BOSQUES\nURBANOS",           icon: "fa-tree",          color: "#4ade80", x: 1140, y: 400, r: 50 },
-  { id: "coberturas", cat: "e1", name: "COBERTURAS\nVEGETALES",      icon: "fa-seedling",      color: "#4ade80", x: 1040, y: 650, r: 54 },
-  { id: "reservas",   cat: "e1", name: "RESERVAS",                  icon: "fa-tree",          color: "#4ade80", x: 1300, y: 190, r: 50 },
-  { id: "areas",      cat: "e1", name: "ÁREAS\nPROTEGIDAS",          icon: "fa-lock",          color: "#4ade80", x: 440,  y: 300, r: 50 },
-  { id: "parques_m",  cat: "e1", name: "PARQUES\nECOLÓGICOS",        icon: "fa-campground",    color: "#4ade80", x: 770,  y: 640, r: 50 },
-  { id: "parque_b",   cat: "e1", name: "PARQUE\nDE BORDE",           icon: "fa-archway",       color: "#4ade80", x: 1430, y: 480, r: 48 },
-  { id: "paisajes",   cat: "e1", name: "PAISAJES",                  icon: "fa-sun",           color: "#4ade80", x: 100,  y: 480, r: 48 },
-  
-  /* 2. Estructura Funcional y del Cuidado — AZUL */
-  { id: "redvial",    cat: "e2", name: "RED VIAL",                   icon: "fa-road",          color: "#5b8def", x: 1240, y: 90,  r: 48 },
-  { id: "transporte", cat: "e2", name: "TRANSPORTE",                 icon: "fa-bus",           color: "#5b8def", x: 960,  y: 330, r: 52 },
-  { id: "corredores", cat: "e2", name: "CORREDORES\nVERDES",         icon: "fa-route",         color: "#5b8def", x: 700,  y: 140, r: 50 },
-  { id: "ciclorutas", cat: "e2", name: "CICLORUTAS",                 icon: "fa-person-biking", color: "#5b8def", x: 1390, y: 330, r: 46 },
-  { id: "equip",      cat: "e2", name: "EQUIPAMIENTOS",              icon: "fa-school",        color: "#5b8def", x: 1250, y: 620, r: 50 },
-  { id: "manzanas",   cat: "e2", name: "MANZANAS\nDEL CUIDADO",       icon: "fa-people-roof",   color: "#5b8def", x: 1470, y: 640, r: 52 },
-  { id: "sserv",      cat: "e2", name: "SERVICIOS\nSOCIALES",         icon: "fa-hand-holding-heart", color: "#5b8def", x: 1370, y: 760, r: 46 },
-  { id: "parques",    cat: "e2", name: "PARQUES",                    icon: "fa-tree-city",     color: "#5b8def", x: 1100, y: 760, r: 46 },
-  { id: "scuidado",   cat: "e2", name: "SERVICIOS\nDE CUIDADO",       icon: "fa-heart-pulse",   color: "#5b8def", x: 1230, y: 470, r: 46 },
-  { id: "vivienda",   cat: "e2", name: "VIVIENDA",                   icon: "fa-house",         color: "#5b8def", x: 950,  y: 520, r: 50 },
-  { id: "servpub",    cat: "e2", name: "SERVICIOS\nPÚBLICOS",         icon: "fa-bolt",          color: "#5b8def", x: 820,  y: 770, r: 46 },
-  
-  /* 3. Estructura Socioeconómica Creativa e Innovación — NARANJA */
-  { id: "financieros", cat: "e3", name: "CENTROS\nFINANCIEROS",       icon: "fa-building-columns", color: "#ef9552", x: 1700, y: 190, r: 48 },
-  { id: "empresariales", cat: "e3", name: "SERVICIOS\nEMPRESARIALES",   icon: "fa-briefcase",       color: "#ef9552", x: 1920, y: 120, r: 50 },
-  { id: "tecnodistrito", cat: "e3", name: "DISTRITO\nTECNOLÓGICO",      icon: "fa-microchip",       color: "#ef9552", x: 2110, y: 270, r: 48 },
-  { id: "industriales",  cat: "e3", name: "ZONAS\nINDUSTRIALES",        icon: "fa-industry",        color: "#ef9552", x: 1860, y: 360, r: 48 },
-  { id: "innovacion",    cat: "e3", name: "INNOVACIÓN",                icon: "fa-lightbulb",       color: "#ef9552", x: 2080, y: 470, r: 46 },
-  { id: "abastecimiento",cat: "e3", name: "ABASTECIMIENTO",            icon: "fa-truck",           color: "#ef9552", x: 1700, y: 430, r: 48 },
-  { id: "plazas",        cat: "e3", name: "PLAZAS DE\nMERCADO",         icon: "fa-store",           color: "#ef9552", x: 1900, y: 530, r: 46 },
-  { id: "turismo",       cat: "e3", name: "TURISMO",                   icon: "fa-map-location-dot", color: "#ef9552", x: 2090, y: 660, r: 46 },
-  { id: "artesanal",     cat: "e3", name: "ARTESANÍA",                 icon: "fa-palette",         color: "#ef9552", x: 1680, y: 640, r: 46 },
-  
-  /* 4. Estructura Integradora de Patrimonio — MORADA */
-  { id: "sitios_sagrados", cat: "e4", name: "SITIOS\nSAGRADOS",         icon: "fa-place-of-worship", color: "#a276f2", x: 2360, y: 200, r: 50 },
-  { id: "pinmaterial",     cat: "e4", name: "PATRIMONIO\nINMATERIAL",    icon: "fa-masks-theater",    color: "#a276f2", x: 2500, y: 440, r: 50 },
-  { id: "pnatural",        cat: "e4", name: "PATRIMONIO\nNATURAL",       icon: "fa-globe",            color: "#a276f2", x: 2650, y: 180, r: 48 },
-  { id: "pecomaterial",    cat: "e4", name: "PATRIMONIO\nECOLÓGICO",     icon: "fa-leaf",             color: "#a276f2", x: 2650, y: 640, r: 50 },
+  { id: "vivienda", name: "VIVIENDA", icon: "fa-house", color: "#ef9552", sistema: "habitat", x: 735, y: 390, r: 88 },
+  { id: "plazas", name: "PLAZAS", icon: "fa-chess-board", color: "#ef9552", sistema: "habitat", x: 890, y: 446, r: 33 },
+  { id: "alcantarillado", name: "ALCANTARILLADO", icon: "fa-faucet-drip", color: "#ef9552", sistema: "habitat", x: 706, y: 552, r: 29 },
+  { id: "espacio_publico", name: "ESPACIO\nPÚBLICO", icon: "fa-people-group", color: "#ef9552", sistema: "habitat", x: 580, y: 446, r: 46 },
+  { id: "redes_de_energia", name: "REDES DE\nENERGÍA", icon: "fa-bolt", color: "#ef9552", sistema: "habitat", x: 652, y: 247, r: 29 },
+  { id: "alumbrado_publico", name: "ALUMBRADO\nPÚBLICO", icon: "fa-lightbulb", color: "#ef9552", sistema: "habitat", x: 817, y: 247, r: 29 },
+  { id: "barrios", name: "BARRIOS", icon: "fa-city", color: "#ef9552", sistema: "habitat", x: 500, y: 560, r: 43 },
+  { id: "centralidades", name: "CENTRALIDADES", icon: "fa-building", color: "#ef9552", sistema: "habitat", x: 860, y: 560, r: 36 },
+  { id: "lotes", name: "LOTES", icon: "fa-vector-square", color: "#ef9552", sistema: "habitat", x: 470, y: 240, r: 29 },
+
+  { id: "humedales", name: "HUMEDALES", icon: "fa-water", color: "#4ade80", sistema: "eco", x: 330, y: 200, r: 62 },
+  { id: "rios", name: "RÍOS", icon: "fa-droplet", color: "#4ade80", sistema: "eco", x: 205, y: 300, r: 46 },
+  { id: "corredores_verdes", name: "CORREDORES\nVERDES", icon: "fa-seedling", color: "#4ade80", sistema: "eco", x: 420, y: 330, r: 54 },
+  { id: "parques_urbanos", name: "PARQUES\nURBANOS", icon: "fa-tree", color: "#4ade80", sistema: "eco", x: 155, y: 120, r: 39 },
+  { id: "corredores_ecologicos", name: "CORREDORES\nECOLÓGICOS", icon: "fa-leaf", color: "#4ade80", sistema: "eco", x: 120, y: 390, r: 39 },
+  { id: "cerros", name: "CERROS", icon: "fa-mountain", color: "#4ade80", sistema: "eco", x: 55, y: 420, r: 35 },
+  { id: "arbolado_urbano", name: "ARBOLADO\nURBANO", icon: "fa-tree-city", color: "#4ade80", sistema: "eco", x: 235, y: 420, r: 35 },
+  { id: "coberturas_vegetales", name: "COBERTURAS\nVEGETALES", icon: "fa-spa", color: "#4ade80", sistema: "eco", x: 335, y: 80, r: 42 },
+  { id: "fuentes_hidricas", name: "FUENTES\nHÍDRICAS", icon: "fa-faucet", color: "#4ade80", sistema: "eco", x: 110, y: 230, r: 35 },
+  { id: "quebradas", name: "QUEBRADAS", icon: "fa-water", color: "#4ade80", sistema: "eco", x: 85, y: 290, r: 35 },
+
+  { id: "educacion", name: "EDUCACIÓN", icon: "fa-graduation-cap", color: "#f76fb0", sistema: "social", x: 1005, y: 175, r: 36 },
+  { id: "equipamientos", name: "EQUIPAMIENTOS", icon: "fa-building-columns", color: "#f76fb0", sistema: "social", x: 1130, y: 80, r: 33 },
+  { id: "salud", name: "SALUD", icon: "fa-heart-pulse", color: "#f76fb0", sistema: "social", x: 895, y: 145, r: 29 },
+  { id: "manzanas_del_cuidado", name: "MANZANAS\nDEL CUIDADO", icon: "fa-people-roof", color: "#f76fb0", sistema: "social", x: 995, y: 300, r: 29 },
+  { id: "recreacion", name: "RECREACIÓN", icon: "fa-futbol", color: "#f76fb0", sistema: "social", x: 1255, y: 175, r: 33 },
+  { id: "patrimonio", name: "PATRIMONIO", icon: "fa-landmark", color: "#f76fb0", sistema: "social", x: 1360, y: 320, r: 33 },
+  { id: "centros_comunitarios", name: "CENTROS\nCOMUNITARIOS", icon: "fa-people-roof", color: "#f76fb0", sistema: "social", x: 330, y: 545, r: 33 },
+  { id: "espacios_culturales", name: "ESPACIOS\nCULTURALES", icon: "fa-masks-theater", color: "#f76fb0", sistema: "social", x: 1010, y: 435, r: 29 },
+  { id: "bibliotecas", name: "BIBLIOTECAS", icon: "fa-book", color: "#f76fb0", sistema: "social", x: 390, y: 500, r: 29 },
+  { id: "centros_deportivos", name: "CENTROS\nDEPORTIVOS", icon: "fa-dumbbell", color: "#f76fb0", sistema: "social", x: 650, y: 375, r: 29 },
+
+  { id: "comercio", name: "COMERCIO", icon: "fa-shop", color: "#f5c945", sistema: "economico", x: 995, y: 525, r: 40 },
+  { id: "empleo", name: "EMPLEO", icon: "fa-briefcase", color: "#f5c945", sistema: "economico", x: 1155, y: 565, r: 40 },
+  { id: "produccion_artesanal", name: "PRODUCCIÓN\nARTESANAL", icon: "fa-hands", color: "#f5c945", sistema: "economico", x: 1305, y: 465, r: 29 },
+  { id: "turismo", name: "TURISMO", icon: "fa-camera-retro", color: "#f5c945", sistema: "economico", x: 1305, y: 625, r: 29 },
+  { id: "economia_popular", name: "ECONOMÍA\nPOPULAR", icon: "fa-store", color: "#f5c945", sistema: "economico", x: 760, y: 470, r: 29 },
+  { id: "plazas_de_mercado", name: "PLAZAS DE\nMERCADO", icon: "fa-basket-shopping", color: "#f5c945", sistema: "economico", x: 650, y: 510, r: 29 },
+  { id: "agricultura_urbana", name: "AGRICULTURA\nURBANA", icon: "fa-carrot", color: "#f5c945", sistema: "economico", x: 495, y: 140, r: 29 },
+
+  { id: "transporte_publico", name: "TRANSPORTE\nPÚBLICO", icon: "fa-bus", color: "#5b8def", sistema: "movilidad", x: 600, y: 655, r: 56 },
+  { id: "red_vial", name: "RED VIAL", icon: "fa-road", color: "#5b8def", sistema: "movilidad", x: 425, y: 705, r: 33 },
+  { id: "ciclorrutas", name: "CICLORRUTAS", icon: "fa-bicycle", color: "#5b8def", sistema: "movilidad", x: 765, y: 705, r: 48 },
+  { id: "andenes", name: "ANDENES", icon: "fa-person-walking", color: "#5b8def", sistema: "movilidad", x: 480, y: 610, r: 29 },
+  { id: "metro", name: "METRO", icon: "fa-train-subway", color: "#5b8def", sistema: "movilidad", x: 905, y: 650, r: 29 },
+  { id: "regiotram", name: "REGIOTRAM", icon: "fa-train", color: "#5b8def", sistema: "movilidad", x: 1290, y: 650, r: 29 },
+
+  { id: "planeacion_urbana", name: "PLANEACIÓN\nURBANA", icon: "fa-compass-drafting", color: "#a276f2", sistema: "gobernanza", x: 160, y: 555, r: 29 },
+  { id: "organizaciones_comunitarias", name: "ORGANIZACIONES\nCOMUNITARIAS", icon: "fa-people-arrows", color: "#a276f2", sistema: "gobernanza", x: 95, y: 650, r: 29 },
+  { id: "entidades_publicas", name: "ENTIDADES\nPÚBLICAS", icon: "fa-building-flag", color: "#a276f2", sistema: "gobernanza", x: 255, y: 525, r: 29 },
+  { id: "juntas_de_accion_comunal", name: "JUNTAS DE\nACCIÓN COMUNAL", icon: "fa-people-group", color: "#a276f2", sistema: "gobernanza", x: 210, y: 460, r: 29 },
 ];
 
+/* -------- física: cada nodo guarda su posición "casa" (ancla) y velocidad -------- */
 ODS_NODES.forEach(n => {
   n.homeX = n.x; n.homeY = n.y;
   n.vx = 0; n.vy = 0;
   n.fixed = false;
 });
 
-/* -------- Estructuras: nombre y color de capa -------- */
-const STRUCT_STYLE = {
-  e1: { color: "#4ade80", label: "1. Ecológica Principal", tag: "ECOLÓGICA" },
-  e2: { color: "#5b8def", label: "2. Funcional y del Cuidado", tag: "FUNCIONAL Y CUIDADO" },
-  e3: { color: "#ef9552", label: "3. Socioeconómica Creativa", tag: "SOCIOECONÓMICA" },
-  e4: { color: "#a276f2", label: "4. Integradora de Patrimonio", tag: "PATRIMONIO" },
-};
-
-/* -------- Tipos de relación — Módulo 08: Constructor Interactivo -------- */
+/* Tipos de relación (hoja "4 convenciones") */
 const TYPE_STYLE = {
-  soporte:     { color: "#ef9552", width: 2.6, label: "Soporte" },
-  alternativa: { color: "#2fd4c8", width: 2.6, label: "Alternativa" },
-  custom:      { color: "#f5c945", width: 2.6, label: "Personalizada" },
-  indirecta:   { color: "#8b93a8", width: 2.4, label: "Indirecta" },
+  soporte:        { color: "#4ade80", width: 1.3, label: "Soporte", desc: "El elemento aporta condiciones, recursos o servicios para que otro funcione.", dash: false, doubleEnd: false, double: false },
+  conectividad:   { color: "#5b8def", width: 1.3, label: "Conectividad", desc: "El elemento conecta lugares, personas, actividades o sistemas.", dash: false, doubleEnd: true, double: false },
+  dependencia:    { color: "#f76fb0", width: 1.2, label: "Dependencia", desc: "El funcionamiento de un elemento depende de otro.", dash: true, doubleEnd: false, double: false },
+  transformacion: { color: "#a276f2", width: 1.1, label: "Transformación", desc: "Un elemento modifica o transforma otro.", dash: false, doubleEnd: false, double: true },
 };
 
-/* -------- Aristas: empieza vacío, el usuario agrega -------- */
-const RAW_EDGES = [];
-let CUSTOM_EDGES = [];
+/* -------- Aristas: 40 relaciones tomadas 1 a 1 de la hoja "Relaciones" -------- */
+let RAW_EDGES = [
+  { s: "vivienda", t: "equipamientos", type: "soporte", sustento: "Vivienda aporta la base habitacional que sostiene la operación de los Equipamientos sociales del sector.", paginaTexto: "Hábitat y espacio urbano → Social, cultural y cuidado" },
+  { s: "vivienda", t: "red_vial", type: "conectividad", sustento: "La Vivienda se conecta con el resto de la ciudad a través de la Red vial.", paginaTexto: "Hábitat y espacio urbano → Movilidad y conectividad" },
+  { s: "vivienda", t: "ciclorrutas", type: "conectividad", sustento: "La Vivienda se conecta con el resto de la ciudad a través de las Ciclorrutas.", paginaTexto: "Hábitat y espacio urbano → Movilidad y conectividad" },
+  { s: "vivienda", t: "transporte_publico", type: "conectividad", sustento: "La Vivienda se conecta con el resto de la ciudad a través del Transporte público.", paginaTexto: "Hábitat y espacio urbano → Movilidad y conectividad" },
+  { s: "vivienda", t: "comercio", type: "dependencia", sustento: "El acceso al Comercio cercano condiciona la calidad de vida de la Vivienda.", paginaTexto: "Hábitat y espacio urbano → Económico y productivo" },
+  { s: "vivienda", t: "empleo", type: "dependencia", sustento: "El acceso al Empleo cercano condiciona la sostenibilidad de la Vivienda.", paginaTexto: "Hábitat y espacio urbano → Económico y productivo" },
+  { s: "vivienda", t: "educacion", type: "soporte", sustento: "Vivienda aporta la base habitacional que sostiene la Educación del sector.", paginaTexto: "Hábitat y espacio urbano → Social, cultural y cuidado" },
+  { s: "vivienda", t: "salud", type: "soporte", sustento: "Vivienda aporta la base habitacional que sostiene el acceso a Salud del sector.", paginaTexto: "Hábitat y espacio urbano → Social, cultural y cuidado" },
+  { s: "vivienda", t: "manzanas_del_cuidado", type: "soporte", sustento: "Vivienda aporta la base habitacional que sostiene las Manzanas del Cuidado.", paginaTexto: "Hábitat y espacio urbano → Social, cultural y cuidado" },
+  { s: "vivienda", t: "parques_urbanos", type: "soporte", sustento: "Vivienda aporta la base habitacional que sostiene el uso de los Parques urbanos.", paginaTexto: "Hábitat y espacio urbano → Ambiental y ecológico" },
+  { s: "vivienda", t: "corredores_verdes", type: "soporte", sustento: "Vivienda aporta la base habitacional que sostiene los Corredores verdes cercanos.", paginaTexto: "Hábitat y espacio urbano → Ambiental y ecológico" },
+  { s: "vivienda", t: "humedales", type: "soporte", sustento: "Vivienda aporta condiciones de borde que sostienen la relación con los Humedales.", paginaTexto: "Hábitat y espacio urbano → Ambiental y ecológico" },
+  { s: "vivienda", t: "rios", type: "soporte", sustento: "Vivienda aporta condiciones de borde que sostienen la relación con los Ríos.", paginaTexto: "Hábitat y espacio urbano → Ambiental y ecológico" },
+  { s: "vivienda", t: "espacio_publico", type: "soporte", sustento: "Vivienda aporta la base habitacional que sostiene el Espacio público circundante.", paginaTexto: "Hábitat y espacio urbano → Hábitat y espacio urbano" },
+  { s: "humedales", t: "rios", type: "soporte", sustento: "Los Humedales sostienen la regulación hídrica de los Ríos cercanos.", paginaTexto: "Ambiental y ecológico → Ambiental y ecológico" },
+  { s: "rios", t: "quebradas", type: "conectividad", sustento: "Los Ríos conectan el sistema hídrico con las Quebradas.", paginaTexto: "Ambiental y ecológico → Ambiental y ecológico" },
+  { s: "cerros", t: "corredores_ecologicos", type: "conectividad", sustento: "Los Cerros conectan con los Corredores ecológicos de la ciudad.", paginaTexto: "Ambiental y ecológico → Ambiental y ecológico" },
+  { s: "corredores_ecologicos", t: "corredores_verdes", type: "conectividad", sustento: "Los Corredores ecológicos conectan con los Corredores verdes urbanos.", paginaTexto: "Ambiental y ecológico → Ambiental y ecológico" },
+  { s: "arbolado_urbano", t: "corredores_verdes", type: "soporte", sustento: "El Arbolado urbano sostiene la estructura de los Corredores verdes.", paginaTexto: "Ambiental y ecológico → Ambiental y ecológico" },
+  { s: "humedales", t: "educacion", type: "soporte", sustento: "Los Humedales sostienen procesos de Educación ambiental del sector.", paginaTexto: "Ambiental y ecológico → Social, cultural y cuidado" },
+  { s: "parques_urbanos", t: "recreacion", type: "soporte", sustento: "Los Parques urbanos sostienen las actividades de Recreación.", paginaTexto: "Ambiental y ecológico → Social, cultural y cuidado" },
+  { s: "transporte_publico", t: "empleo", type: "conectividad", sustento: "El Transporte público conecta a la población con las fuentes de Empleo.", paginaTexto: "Movilidad y conectividad → Económico y productivo" },
+  { s: "red_vial", t: "comercio", type: "conectividad", sustento: "La Red vial conecta a la población con el Comercio.", paginaTexto: "Movilidad y conectividad → Económico y productivo" },
+  { s: "ciclorrutas", t: "recreacion", type: "conectividad", sustento: "Las Ciclorrutas conectan a la población con espacios de Recreación.", paginaTexto: "Movilidad y conectividad → Social, cultural y cuidado" },
+  { s: "produccion_artesanal", t: "patrimonio", type: "transformacion", sustento: "La Producción artesanal transforma saberes locales en Patrimonio cultural.", paginaTexto: "Económico y productivo → Social, cultural y cuidado" },
+  { s: "educacion", t: "empleo", type: "dependencia", sustento: "El acceso al Empleo depende del nivel de Educación alcanzado.", paginaTexto: "Social, cultural y cuidado → Económico y productivo" },
+  { s: "patrimonio", t: "turismo", type: "transformacion", sustento: "El Patrimonio se transforma en un activo para el Turismo.", paginaTexto: "Social, cultural y cuidado → Económico y productivo" },
+  { s: "planeacion_urbana", t: "vivienda", type: "soporte", sustento: "La Planeación urbana sostiene y ordena el desarrollo de la Vivienda.", paginaTexto: "Gobernanza → Hábitat y espacio urbano" },
+  { s: "organizaciones_comunitarias", t: "espacio_publico", type: "transformacion", sustento: "Las Organizaciones comunitarias transforman y activan el Espacio público.", paginaTexto: "Gobernanza → Hábitat y espacio urbano" },
+  { s: "entidades_publicas", t: "humedales", type: "soporte", sustento: "Las Entidades públicas sostienen la protección de los Humedales.", paginaTexto: "Gobernanza → Ambiental y ecológico" },
+  { s: "vivienda", t: "alumbrado_publico", type: "soporte", sustento: "Vivienda aporta la base habitacional que sostiene el Alumbrado público del sector.", paginaTexto: "Hábitat y espacio urbano → Hábitat y espacio urbano" },
+  { s: "vivienda", t: "redes_de_energia", type: "soporte", sustento: "Vivienda aporta la base habitacional que sostiene las Redes de energía.", paginaTexto: "Hábitat y espacio urbano → Hábitat y espacio urbano" },
+  { s: "vivienda", t: "alcantarillado", type: "soporte", sustento: "Vivienda aporta la base habitacional que sostiene el Alcantarillado del sector.", paginaTexto: "Hábitat y espacio urbano → Hábitat y espacio urbano" },
+  { s: "vivienda", t: "plazas", type: "soporte", sustento: "Vivienda aporta la base habitacional que sostiene las Plazas cercanas.", paginaTexto: "Hábitat y espacio urbano → Hábitat y espacio urbano" },
+  { s: "vivienda", t: "espacio_publico", type: "soporte", sustento: "Vivienda aporta la base habitacional que sostiene el Espacio público circundante.", paginaTexto: "Hábitat y espacio urbano → Hábitat y espacio urbano" },
+  { s: "humedales", t: "coberturas_vegetales", type: "soporte", sustento: "Los Humedales sostienen las Coberturas vegetales asociadas.", paginaTexto: "Ambiental y ecológico → Ambiental y ecológico" },
+  { s: "rios", t: "fuentes_hidricas", type: "soporte", sustento: "Los Ríos sostienen el sistema de Fuentes hídricas de la ciudad.", paginaTexto: "Ambiental y ecológico → Ambiental y ecológico" },
+  { s: "corredores_verdes", t: "ciclorrutas", type: "conectividad", sustento: "Los Corredores verdes conectan con la red de Ciclorrutas.", paginaTexto: "Ambiental y ecológico → Movilidad y conectividad" },
+  { s: "equipamientos", t: "transporte_publico", type: "conectividad", sustento: "Los Equipamientos se conectan con la ciudad a través del Transporte público.", paginaTexto: "Social, cultural y cuidado → Movilidad y conectividad" },
+  { s: "comercio", t: "transporte_publico", type: "conectividad", sustento: "El Comercio se conecta con la ciudad a través del Transporte público.", paginaTexto: "Económico y productivo → Movilidad y conectividad" },
+
+  /* -------- 15 relaciones nuevas -------- */
+  { s: "barrios", t: "espacio_publico", type: "soporte", sustento: "Los Barrios aportan la base habitacional que sostiene el Espacio público.", paginaTexto: "Hábitat y espacio urbano → Hábitat y espacio urbano" },
+  { s: "barrios", t: "centros_comunitarios", type: "soporte", sustento: "Los Barrios sostienen la existencia de los Centros comunitarios.", paginaTexto: "Hábitat y espacio urbano → Social, cultural y cuidado" },
+  { s: "barrios", t: "economia_popular", type: "soporte", sustento: "Los Barrios sostienen las dinámicas de la Economía popular.", paginaTexto: "Hábitat y espacio urbano → Económico y productivo" },
+  { s: "centralidades", t: "comercio", type: "soporte", sustento: "Las Centralidades sostienen la concentración de Comercio.", paginaTexto: "Hábitat y espacio urbano → Económico y productivo" },
+  { s: "centralidades", t: "transporte_publico", type: "conectividad", sustento: "Las Centralidades se conectan con la ciudad a través del Transporte público.", paginaTexto: "Hábitat y espacio urbano → Movilidad y conectividad" },
+  { s: "lotes", t: "coberturas_vegetales", type: "transformacion", sustento: "Los Lotes se transforman al modificar las Coberturas vegetales existentes.", paginaTexto: "Hábitat y espacio urbano → Ambiental y ecológico" },
+  { s: "plazas", t: "espacios_culturales", type: "soporte", sustento: "Las Plazas sostienen la existencia de Espacios culturales.", paginaTexto: "Hábitat y espacio urbano → Social, cultural y cuidado" },
+  { s: "andenes", t: "espacio_publico", type: "conectividad", sustento: "Los Andenes conectan a las personas con el Espacio público.", paginaTexto: "Movilidad y conectividad → Hábitat y espacio urbano" },
+  { s: "metro", t: "centralidades", type: "conectividad", sustento: "El Metro conecta a la ciudad con las Centralidades.", paginaTexto: "Movilidad y conectividad → Hábitat y espacio urbano" },
+  { s: "regiotram", t: "empleo", type: "conectividad", sustento: "El Regiotram conecta a la población con las fuentes de Empleo.", paginaTexto: "Movilidad y conectividad → Económico y productivo" },
+  { s: "plazas_de_mercado", t: "barrios", type: "soporte", sustento: "Las Plazas de mercado sostienen la vida cotidiana de los Barrios.", paginaTexto: "Económico y productivo → Hábitat y espacio urbano" },
+  { s: "agricultura_urbana", t: "coberturas_vegetales", type: "soporte", sustento: "La Agricultura urbana sostiene y amplía las Coberturas vegetales.", paginaTexto: "Económico y productivo → Ambiental y ecológico" },
+  { s: "bibliotecas", t: "barrios", type: "soporte", sustento: "Las Bibliotecas sostienen la vida cultural de los Barrios.", paginaTexto: "Social, cultural y cuidado → Hábitat y espacio urbano" },
+  { s: "centros_deportivos", t: "espacio_publico", type: "soporte", sustento: "Los Centros deportivos sostienen el uso activo del Espacio público.", paginaTexto: "Social, cultural y cuidado → Hábitat y espacio urbano" },
+  { s: "juntas_de_accion_comunal", t: "centros_comunitarios", type: "conectividad", sustento: "Las Juntas de Acción Comunal conectan a la comunidad con los Centros comunitarios.", paginaTexto: "Gobernanza → Social, cultural y cuidado" },
+];
 
 function nodeById(id) { return ODS_NODES.find(n => n.id === id); }
 
-/* -------- FUNCIONES DEL CONSTRUCTOR -------- */
-function loadFromLocalStorage() {
-  try {
-    const savedNodes = JSON.parse(localStorage.getItem("RAPOT_M08_CUSTOM_NODES") || "[]");
-    const savedEdges = JSON.parse(localStorage.getItem("RAPOT_M08_CUSTOM_EDGES") || "[]");
-    
-    savedNodes.forEach(node => {
-      const colors = { e1: "#4ade80", e2: "#5b8def", e3: "#ef9552", e4: "#a276f2" };
-      const newNode = {
-        ...node,
-        icon: "fa-circle-plus",
-        color: colors[node.cat],
-        r: 48,
-        custom: true,
-        homeX: node.x,
-        homeY: node.y,
-        vx: 0,
-        vy: 0
-      };
-      ODS_NODES.push(newNode);
-    });
-    
-    savedEdges.forEach(edge => {
-      RAW_EDGES.push(edge);
-    });
-    
-    CUSTOM_EDGES = savedEdges;
-  } catch(e) {
-    console.error("Error cargando datos:", e);
-  }
-}
+/* -------- física: longitud de reposo de cada resorte (arista) -------- */
+RAW_EDGES.forEach(edge => {
+  const s = nodeById(edge.s), t = nodeById(edge.t);
+  if (!s || !t) return;
+  const dist = Math.hypot(t.x - s.x, t.y - s.y);
+  edge.restLength = dist;
+});
 
-function saveTolocalStorage() {
-  try {
-    localStorage.setItem("RAPOT_M08_CUSTOM_NODES", JSON.stringify(
-      ODS_NODES.filter(n => n.custom).map(n => ({ id: n.id, name: n.name, cat: n.cat, x: n.x, y: n.y }))
-    ));
-    localStorage.setItem("RAPOT_M08_CUSTOM_EDGES", JSON.stringify(CUSTOM_EDGES));
-  } catch(e) {
-    console.error("Error guardando datos:", e);
-  }
-}
-
-function downloadModel() {
-  const data = {
-    nodos: ODS_NODES.filter(n => n.custom),
-    relaciones: CUSTOM_EDGES,
-    fecha: new Date().toISOString()
-  };
-  const json = JSON.stringify(data, null, 2);
-  const blob = new Blob([json], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "mi-modelo-ciudad.json";
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
-function clearModel() {
-  if (!confirm("¿Limpiar todos los nodos y relaciones personalizados?")) return;
-  const customIds = new Set(ODS_NODES.filter(n => n.custom).map(n => n.id));
-  ODS_NODES = ODS_NODES.filter(n => !n.custom);
-  RAW_EDGES = RAW_EDGES.filter(e => !customIds.has(e.s) && !customIds.has(e.t));
-  CUSTOM_EDGES = [];
-  localStorage.removeItem("RAPOT_M08_CUSTOM_NODES");
-  localStorage.removeItem("RAPOT_M08_CUSTOM_EDGES");
-  render();
-}
-
-function filterNetwork(mode) {
-  document.querySelectorAll(".network-controls .control-btn").forEach(btn => btn.classList.remove("active"));
-  if (event && event.currentTarget) event.currentTarget.classList.add("active");
-
-  const groups = {
-    all: { types: ["soporte", "alternativa", "custom", "indirecta"], cats: ["e1", "e2", "e3", "e4", "e1-e2", "e2-e3", "e3-e4", "e1-e4"] },
-    e1:  { types: ["soporte", "alternativa", "custom", "indirecta"], cats: ["e1"] },
-    e2:  { types: ["soporte", "alternativa", "custom", "indirecta"], cats: ["e2"] },
-    e3:  { types: ["soporte", "alternativa", "custom", "indirecta"], cats: ["e3"] },
-    e4:  { types: ["soporte", "alternativa", "custom", "indirecta"], cats: ["e4"] },
-  };
-  const active = groups[mode] || groups.all;
-
-  document.querySelectorAll(".legend-item[data-mode='type']").forEach(item => {
-    const type = item.dataset.type;
-    const input = item.querySelector("input");
-    const show = active.types.includes(type);
-    input.checked = show;
-    item.classList.toggle("off", !show);
-    if (show) typeOff.delete(type); else typeOff.add(type);
-  });
-
-  document.querySelectorAll(".legend-item[data-mode='cat']").forEach(item => {
-    const cat = item.dataset.cat;
-    const input = item.querySelector("input");
-    const show = active.cats.includes(cat);
-    input.checked = show;
-    item.classList.toggle("off", !show);
-    if (show) catOff.delete(cat); else catOff.add(cat);
-  });
-
-  refreshEdgeVisibility();
-}
-
-function refreshEdgeVisibility() {
-  document.querySelectorAll(".edge-group").forEach(g => {
-    const type = g.dataset.type;
-    const cat = g.dataset.cat;
-    const visible = !typeOff.has(type) && !catOff.has(cat);
-    g.style.display = visible ? "block" : "none";
-  });
-}
-
-function render() {
-  const container = document.getElementById("network-visualization");
-  container.innerHTML = "";
-  renderNetwork();
-}
-
-function renderNetwork() {
-  const container = document.getElementById("network-visualization");
-  containerWidth = container.clientWidth || 1400;
-  containerHeight = container.clientHeight || 800;
-
-  svg = document.createElementNS(SVG_NS, "svg");
-  svg.setAttribute("viewBox", `0 0 ${containerWidth} ${containerHeight}`);
-  svg.setAttribute("style", "width: 100%; height: 100%; cursor: crosshair;");
-
-  // Defs para arrows
+/* -------- defs: glow por color de nodo + flechas por tipo -------- */
+function buildDefs(svg) {
   const defs = document.createElementNS(SVG_NS, "defs");
-  Object.values(TYPE_STYLE).forEach(style => {
-    const marker = document.createElementNS(SVG_NS, "marker");
-    marker.setAttribute("id", `arrow-${Object.keys(TYPE_STYLE).find(k => TYPE_STYLE[k].color === style.color)}`);
-    marker.setAttribute("markerWidth", "10");
-    marker.setAttribute("markerHeight", "10");
-    marker.setAttribute("refX", "9");
-    marker.setAttribute("refY", "3");
-    marker.setAttribute("orient", "auto-start-reverse");
-    const path = document.createElementNS(SVG_NS, "path");
-    path.setAttribute("d", "M 0 0 L 10 3 L 0 6 Z");
-    path.setAttribute("fill", style.color);
-    marker.appendChild(path);
-    defs.appendChild(marker);
-  });
-  svg.appendChild(defs);
 
-  // Layer edges
-  const edgesLayer = document.createElementNS(SVG_NS, "g");
-  edgesLayer.setAttribute("class", "edges-layer");
-  
+  const uniqueColors = [...new Set(ODS_NODES.map(n => n.color))];
+  uniqueColors.forEach(color => {
+    const filter = document.createElementNS(SVG_NS, "filter");
+    filter.setAttribute("id", "glow-" + color.replace("#", ""));
+    filter.setAttribute("x", "-60%"); filter.setAttribute("y", "-60%");
+    filter.setAttribute("width", "220%"); filter.setAttribute("height", "220%");
+    const blur = document.createElementNS(SVG_NS, "feGaussianBlur");
+    blur.setAttribute("stdDeviation", "3.2"); blur.setAttribute("result", "blur");
+    const merge = document.createElementNS(SVG_NS, "feMerge");
+    ["blur", "blur", "SourceGraphic"].forEach(ref => {
+      const m = document.createElementNS(SVG_NS, "feMergeNode");
+      m.setAttribute("in", ref);
+      merge.appendChild(m);
+    });
+    filter.appendChild(blur); filter.appendChild(merge);
+    defs.appendChild(filter);
+  });
+
+  Object.entries(TYPE_STYLE).forEach(([type, style]) => {
+    ["end", "start"].forEach(pos => {
+      const marker = document.createElementNS(SVG_NS, "marker");
+      marker.setAttribute("id", `arrow-${type}-${pos}`);
+      marker.setAttribute("viewBox", "0 0 10 10");
+      marker.setAttribute("refX", "8"); marker.setAttribute("refY", "5");
+      marker.setAttribute("markerWidth", "7"); marker.setAttribute("markerHeight", "7");
+      marker.setAttribute("orient", pos === "end" ? "auto-start-reverse" : "auto");
+      const path = document.createElementNS(SVG_NS, "path");
+      path.setAttribute("d", "M0,0 L10,5 L0,10 z");
+      path.setAttribute("fill", style.color);
+      marker.appendChild(path);
+      defs.appendChild(marker);
+    });
+  });
+
+  svg.appendChild(defs);
+}
+
+/* -------- aristas: grupo con línea visual + línea invisible más ancha para clic -------- */
+function edgePathData(edge, s, t) {
+  const dx = t.x - s.x, dy = t.y - s.y;
+  const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+  const ux = dx / dist, uy = dy / dist;
+  const startPad = s.r + 2;
+  const endPad = t.r + 8;
+  const x1 = s.x + ux * startPad, y1 = s.y + uy * startPad;
+  const x2 = t.x - ux * endPad,   y2 = t.y - uy * endPad;
+
+  if (edge.curve) {
+    const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+    const px = -uy, py = ux;
+    const cx = mx + px * edge.curve, cy = my + py * edge.curve;
+    return `M${x1},${y1} Q${cx},${cy} ${x2},${y2}`;
+  }
+  return `M${x1},${y1} L${x2},${y2}`;
+}
+
+/* doble línea paralela para relaciones de transformación */
+function edgePathDataDouble(edge, s, t) {
+  const dx = t.x - s.x, dy = t.y - s.y;
+  const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+  const ux = dx / dist, uy = dy / dist;
+  const px = -uy, py = ux;
+  const off = 2.2;
+  const startPad = s.r + 2;
+  const endPad = t.r + 8;
+  const x1 = s.x + ux * startPad, y1 = s.y + uy * startPad;
+  const x2 = t.x - ux * endPad,   y2 = t.y - uy * endPad;
+  return [
+    `M${x1 + px * off},${y1 + py * off} L${x2 + px * off},${y2 + py * off}`,
+    `M${x1 - px * off},${y1 - py * off} L${x2 - px * off},${y2 - py * off}`,
+  ];
+}
+
+function drawEdges(svg) {
+  const g = document.createElementNS(SVG_NS, "g");
+  g.setAttribute("class", "edges-layer");
+
   RAW_EDGES.forEach((edge, i) => {
-    const s = nodeById(edge.s), t = nodeById(edge.t);
+    const s = nodeById(edge.s);
+    const t = nodeById(edge.t);
     if (!s || !t) return;
     const style = TYPE_STYLE[edge.type];
-    const dx = t.x - s.x, dy = t.y - s.y;
-    const d = `M ${s.x} ${s.y} L ${t.x} ${t.y}`;
 
     const group = document.createElementNS(SVG_NS, "g");
     group.setAttribute("class", "edge-group");
     group.setAttribute("data-index", i);
     group.setAttribute("data-type", edge.type);
-    group.setAttribute("data-cat", edge.cat);
+    group.setAttribute("data-source", edge.s);
+    group.setAttribute("data-target", edge.t);
+    group.style.setProperty("--edge-color", style.color);
 
-    const visual = document.createElementNS(SVG_NS, "path");
-    visual.setAttribute("d", d);
-    visual.setAttribute("stroke", style.color);
-    visual.setAttribute("stroke-width", style.width);
-    if (!edge.directa) visual.setAttribute("stroke-dasharray", "6,5");
-    if (edge.directa) visual.setAttribute("marker-end", `url(#arrow-soporte)`);
+    const hit = document.createElementNS(SVG_NS, "path");
+    hit.setAttribute("class", "ods-edge edge-hit");
+
+    let visual;
+    if (style.double) {
+      visual = document.createElementNS(SVG_NS, "g");
+      visual.setAttribute("class", "ods-edge edge-visual edge-visual-double");
+      const [d1, d2] = edgePathDataDouble(edge, s, t);
+      [d1, d2].forEach((d, idx) => {
+        const p = document.createElementNS(SVG_NS, "path");
+        p.setAttribute("d", d);
+        p.setAttribute("stroke", style.color);
+        p.setAttribute("stroke-width", style.width);
+        p.setAttribute("fill", "none");
+        if (idx === 1) p.setAttribute("marker-end", `url(#arrow-${edge.type}-end)`);
+        visual.appendChild(p);
+      });
+      hit.setAttribute("d", edgePathData(edge, s, t));
+    } else {
+      visual = document.createElementNS(SVG_NS, "path");
+      visual.setAttribute("class", "ods-edge edge-visual");
+      visual.setAttribute("stroke", style.color);
+      visual.setAttribute("stroke-width", style.width);
+      visual.setAttribute("fill", "none");
+      const d = edgePathData(edge, s, t);
+      visual.setAttribute("d", d);
+      hit.setAttribute("d", d);
+      if (style.dash) visual.setAttribute("stroke-dasharray", "6,5");
+      visual.setAttribute("marker-end", `url(#arrow-${edge.type}-end)`);
+      if (style.doubleEnd) visual.setAttribute("marker-start", `url(#arrow-${edge.type}-start)`);
+    }
     visual.setAttribute("opacity", "0.9");
-    visual.setAttribute("class", "ods-edge");
+    edge._el = { visual, hit };
 
     group.appendChild(visual);
-    edgesLayer.appendChild(group);
-  });
-  svg.appendChild(edgesLayer);
-
-  // Layer nodes
-  const nodesLayer = document.createElementNS(SVG_NS, "g");
-  nodesLayer.setAttribute("class", "nodes-layer");
-
-  ODS_NODES.forEach(node => {
-    const g = document.createElementNS(SVG_NS, "g");
-    g.setAttribute("class", "ods-node");
-    g.setAttribute("data-id", node.id);
-    g.setAttribute("data-cat", node.cat);
-    g.style.cursor = "grab";
-
-    const circle = document.createElementNS(SVG_NS, "circle");
-    circle.setAttribute("cx", node.x);
-    circle.setAttribute("cy", node.y);
-    circle.setAttribute("r", node.r);
-    circle.setAttribute("fill", node.color);
-    circle.setAttribute("opacity", "0.85");
-
-    const text = document.createElementNS(SVG_NS, "text");
-    text.setAttribute("x", node.x);
-    text.setAttribute("y", node.y);
-    text.setAttribute("text-anchor", "middle");
-    text.setAttribute("dominant-baseline", "middle");
-    text.setAttribute("font-size", "11");
-    text.setAttribute("font-weight", "500");
-    text.setAttribute("fill", "#0a0e17");
-    text.textContent = node.name;
-
-    g.appendChild(circle);
-    g.appendChild(text);
-
-    g.addEventListener("mousedown", (e) => {
-      e.stopPropagation();
-      const startX = e.clientX, startY = e.clientY;
-      let dragging = true;
-
-      const move = (me) => {
-        if (!dragging) return;
-        const dx = me.clientX - startX, dy = me.clientY - startY;
-        node.x += dx / 2;
-        node.y += dy / 2;
-        render();
-      };
-
-      const stop = () => {
-        dragging = false;
-        saveTolocalStorage();
-        document.removeEventListener("mousemove", move);
-        document.removeEventListener("mouseup", stop);
-      };
-
-      document.addEventListener("mousemove", move);
-      document.addEventListener("mouseup", stop);
-    });
-
-    nodesLayer.appendChild(g);
+    group.appendChild(hit);
+    group.addEventListener("click", () => showEdgeInfo(i));
+    g.appendChild(group);
   });
 
-  svg.appendChild(nodesLayer);
-  document.getElementById("network-visualization").appendChild(svg);
+  svg.appendChild(g);
 }
 
-function setupLegendToggle() {
-  document.querySelectorAll(".legend-item[data-mode='type'] input").forEach(input => {
-    input.addEventListener("change", () => refreshEdgeVisibility());
+/* -------- nodos -------- */
+function drawNodes(svg) {
+  const g = document.createElementNS(SVG_NS, "g");
+  g.setAttribute("class", "nodes-layer");
+
+  ODS_NODES.forEach(node => {
+    const group = document.createElementNS(SVG_NS, "g");
+    group.setAttribute("class", "ods-node");
+    group.setAttribute("data-id", node.id);
+
+    const circle = document.createElementNS(SVG_NS, "circle");
+    circle.setAttribute("class", "node-ring");
+    circle.setAttribute("cx", node.x); circle.setAttribute("cy", node.y); circle.setAttribute("r", node.r);
+    circle.setAttribute("stroke", node.color);
+    circle.setAttribute("stroke-width", node.id === "vivienda" ? 3.5 : 2.5);
+    circle.setAttribute("filter", "url(#glow-" + node.color.replace("#", "") + ")");
+
+    const fo = document.createElementNS(SVG_NS, "foreignObject");
+    const size = node.r * 2.2;
+    fo.setAttribute("x", node.x - size / 2); fo.setAttribute("y", node.y - size / 2);
+    fo.setAttribute("width", size); fo.setAttribute("height", size);
+
+    const wrapper = document.createElementNS(XHTML_NS, "div");
+    wrapper.setAttribute("class", "node-inner");
+    wrapper.setAttribute("style",
+      "width:100%;height:100%;display:flex;flex-direction:column;" +
+      "align-items:center;justify-content:center;gap:1px;pointer-events:none;"
+    );
+
+    const iconEl = document.createElementNS(XHTML_NS, "i");
+    iconEl.setAttribute("class", "fa-solid " + node.icon + " node-icon");
+    iconEl.setAttribute("style", `color:${node.color}; font-size:${node.r * 0.42}px; margin:1px 0;`);
+
+    const nameEl = document.createElementNS(XHTML_NS, "div");
+    nameEl.setAttribute("class", "node-name");
+    nameEl.setAttribute("style", `font-size:${Math.max(node.r * 0.155, 7.5)}px; padding:0 3px; font-weight:700; color:#e7eaf2; line-height:1.15; white-space:pre-line;`);
+    nameEl.textContent = node.name;
+
+    wrapper.appendChild(iconEl); wrapper.appendChild(nameEl);
+    fo.appendChild(wrapper);
+
+    group.appendChild(circle);
+    group.appendChild(fo);
+    attachNodeClickHandler(group, node.id);
+    attachNodeDragHandler(group, node);
+    g.appendChild(group);
+
+    node._el = { group, circle, fo };
   });
-  document.querySelectorAll(".legend-item[data-mode='cat'] input").forEach(input => {
-    input.addEventListener("change", () => refreshEdgeVisibility());
+
+  svg.appendChild(g);
+}
+
+/* -------- física: mover nodos y recalcular líneas cada frame -------- */
+const PHYSICS = {
+  spring: 0.045,
+  anchor: 0.02,
+  damping: 0.82,
+  minVel: 0.02,
+};
+
+function updatePositions() {
+  ODS_NODES.forEach(n => {
+    if (!n._el) return;
+    n._el.circle.setAttribute("cx", n.x);
+    n._el.circle.setAttribute("cy", n.y);
+    const size = n.r * 2.2;
+    n._el.fo.setAttribute("x", n.x - size / 2);
+    n._el.fo.setAttribute("y", n.y - size / 2);
+  });
+  RAW_EDGES.forEach(edge => {
+    if (!edge._el) return;
+    const s = nodeById(edge.s), t = nodeById(edge.t);
+    if (!s || !t) return;
+    const style = TYPE_STYLE[edge.type];
+    if (style.double) {
+      const [d1, d2] = edgePathDataDouble(edge, s, t);
+      edge._el.visual.childNodes[0].setAttribute("d", d1);
+      edge._el.visual.childNodes[1].setAttribute("d", d2);
+      edge._el.hit.setAttribute("d", edgePathData(edge, s, t));
+    } else {
+      const d = edgePathData(edge, s, t);
+      edge._el.visual.setAttribute("d", d);
+      edge._el.hit.setAttribute("d", d);
+    }
+  });
+}
+
+let physicsRunning = false;
+function physicsStep() {
+  let moving = false;
+
+  RAW_EDGES.forEach(edge => {
+    const s = nodeById(edge.s), t = nodeById(edge.t);
+    if (!s || !t) return;
+    const dx = t.x - s.x, dy = t.y - s.y;
+    const dist = Math.hypot(dx, dy) || 1;
+    const diff = (dist - edge.restLength) * PHYSICS.spring;
+    const fx = (dx / dist) * diff, fy = (dy / dist) * diff;
+    if (!s.fixed) { s.vx += fx; s.vy += fy; }
+    if (!t.fixed) { t.vx -= fx; t.vy -= fy; }
+  });
+
+  ODS_NODES.forEach(n => {
+    if (n.fixed) { n.vx = 0; n.vy = 0; return; }
+    /* vivienda tiene un ancla más fuerte para permanecer en el centro de la red */
+    const anchorStrength = n.id === "vivienda" ? PHYSICS.anchor * 2.4 : PHYSICS.anchor;
+    n.vx += (n.homeX - n.x) * anchorStrength;
+    n.vy += (n.homeY - n.y) * anchorStrength;
+    n.vx *= PHYSICS.damping;
+    n.vy *= PHYSICS.damping;
+    n.x += n.vx;
+    n.y += n.vy;
+    if (Math.abs(n.vx) > PHYSICS.minVel || Math.abs(n.vy) > PHYSICS.minVel) moving = true;
+  });
+
+  updatePositions();
+
+  if (moving || ODS_NODES.some(n => n.fixed)) {
+    requestAnimationFrame(physicsStep);
+  } else {
+    physicsRunning = false;
+  }
+}
+
+function wakePhysics() {
+  if (!physicsRunning) {
+    physicsRunning = true;
+    requestAnimationFrame(physicsStep);
+  }
+}
+
+/* -------- arrastrar una bola -------- */
+function attachNodeDragHandler(group, node) {
+  const svg = document.getElementById("networkViz");
+  let dragging = false;
+  let moved = false;
+  let startClientX = 0, startClientY = 0;
+
+  function toSvgPoint(clientX, clientY) {
+    const pt = svg.createSVGPoint();
+    pt.x = clientX; pt.y = clientY;
+    const m = svg.getScreenCTM().inverse();
+    return pt.matrixTransform(m);
+  }
+
+  group.addEventListener("pointerdown", (e) => {
+    dragging = true;
+    moved = false;
+    startClientX = e.clientX; startClientY = e.clientY;
+    node.fixed = true;
+    group.classList.add("dragging");
+    group.setPointerCapture(e.pointerId);
+    wakePhysics();
+  });
+
+  group.addEventListener("pointermove", (e) => {
+    if (!dragging) return;
+    if (Math.hypot(e.clientX - startClientX, e.clientY - startClientY) > 4) moved = true;
+    const p = toSvgPoint(e.clientX, e.clientY);
+    node.x = p.x; node.y = p.y;
+    node.vx = 0; node.vy = 0;
+    updatePositions();
+    wakePhysics();
+  });
+
+  function endDrag(e) {
+    if (!dragging) return;
+    dragging = false;
+    node.fixed = false;
+    group.classList.remove("dragging");
+    try { group.releasePointerCapture(e.pointerId); } catch (err) {}
+    wakePhysics();
+    if (moved) {
+      group.dataset.suppressClick = "1";
+      setTimeout(() => { delete group.dataset.suppressClick; }, 0);
+    }
+  }
+
+  group.addEventListener("pointerup", endDrag);
+  group.addEventListener("pointercancel", endDrag);
+}
+
+function renderNetwork() {
+  const svg = document.getElementById("networkViz");
+  if (!svg) return;
+  svg.innerHTML = "";
+  buildDefs(svg);
+  drawEdges(svg);
+  drawNodes(svg);
+}
+
+/* -------- panel de sustento documental (clic en línea) -------- */
+function showEdgeInfo(index) {
+  const edge = RAW_EDGES[index];
+  const s = nodeById(edge.s), t = nodeById(edge.t);
+  const style = TYPE_STYLE[edge.type];
+
+  document.querySelectorAll(".edge-group").forEach(el => el.classList.remove("edge-selected"));
+  document.querySelector(`.edge-group[data-index="${index}"]`)?.classList.add("edge-selected");
+
+  const title = `${s.name} → ${t.name}`.replace(/\n/g, " ");
+  document.getElementById("edgeInfoTitle").textContent = title;
+
+  const typeEl = document.getElementById("edgeInfoType");
+  typeEl.textContent = style.label;
+  typeEl.style.color = style.color;
+  typeEl.style.background = style.color + "26";
+
+  document.getElementById("edgeInfoQuote").textContent = edge.sustento;
+  document.getElementById("edgeInfoPage").textContent =
+    edge.paginaTexto ? `Sistemas: ${edge.paginaTexto}` : "";
+
+  document.getElementById("edgeInfoPanel").classList.add("visible");
+
+  /* resaltar la fila correspondiente de la tabla */
+  document.querySelectorAll(".matrix-row[data-edge]").forEach(row => {
+    row.classList.toggle("row-highlight", Number(row.dataset.edge) === index);
+  });
+}
+
+function hideEdgeInfo() {
+  document.getElementById("edgeInfoPanel").classList.remove("visible");
+  document.querySelectorAll(".edge-group").forEach(el => el.classList.remove("edge-selected"));
+  document.querySelectorAll(".matrix-row[data-edge]").forEach(row => row.classList.remove("row-highlight"));
+}
+
+/* -------- estado de visibilidad: por tipo (leyenda) + por nodo (clic) -------- */
+const typeOff = new Set();
+const nodeOff = new Set();
+
+function refreshEdgeVisibility() {
+  document.querySelectorAll(".edge-group").forEach(group => {
+    const type = group.dataset.type;
+    const s = group.dataset.source;
+    const t = group.dataset.target;
+    const hidden = typeOff.has(type) || nodeOff.has(s) || nodeOff.has(t);
+    group.classList.toggle("hidden-edge", hidden);
+  });
+}
+
+/* clic en una bola: la apaga junto con sus líneas conectadas; clic de nuevo la enciende */
+function toggleNode(id) {
+  const group = document.querySelector(`.ods-node[data-id="${id}"]`);
+  if (!group) return;
+  if (nodeOff.has(id)) {
+    nodeOff.delete(id);
+    group.classList.remove("node-off");
+  } else {
+    nodeOff.add(id);
+    group.classList.add("node-off");
+  }
+  refreshEdgeVisibility();
+}
+
+function attachNodeClickHandler(group, id) {
+  group.addEventListener("click", () => {
+    if (group.dataset.suppressClick) return;
+    toggleNode(id);
+  });
+}
+
+/* -------- spotlight (usado por las tarjetas de sistema) -------- */
+let spotlight = null;
+
+function clearSpotlight() {
+  spotlight = null;
+  document.querySelectorAll(".insight-card").forEach(c => c.classList.remove("active"));
+  applySpotlightState();
+}
+
+function setSpotlightNodes(nodeIds, expand) {
+  spotlight = { mode: "nodes", nodes: new Set(nodeIds), expand: !!expand };
+  document.querySelectorAll(".insight-card").forEach(c => c.classList.remove("active"));
+  applySpotlightState();
+}
+
+function applySpotlightState() {
+  let visibleNodes = null;
+  let visibleEdges = null;
+
+  if (spotlight && spotlight.mode === "nodes") {
+    visibleNodes = new Set(spotlight.nodes);
+    visibleEdges = new Set();
+    RAW_EDGES.forEach((edge, i) => {
+      const sIn = spotlight.nodes.has(edge.s);
+      const tIn = spotlight.nodes.has(edge.t);
+      if (spotlight.expand) {
+        if (sIn || tIn) {
+          visibleEdges.add(i);
+          visibleNodes.add(edge.s);
+          visibleNodes.add(edge.t);
+        }
+      } else {
+        if (sIn && tIn) visibleEdges.add(i);
+      }
+    });
+  }
+
+  document.querySelectorAll(".ods-node").forEach(el => {
+    const id = el.dataset.id;
+    const dim = visibleNodes ? !visibleNodes.has(id) : false;
+    el.classList.toggle("node-focus-dim", dim);
+    el.classList.toggle("node-focus-active", !!(spotlight && spotlight.mode === "nodes" && spotlight.nodes.has(id)));
+  });
+
+  document.querySelectorAll(".edge-group").forEach(el => {
+    const idx = Number(el.dataset.index);
+    const dim = visibleEdges ? !visibleEdges.has(idx) : false;
+    el.classList.toggle("edge-focus-dim", dim);
+  });
+}
+
+function toggleInsight(key) {
+  const card = document.querySelector(`.insight-card[data-insight="${key}"]`);
+  if (!card) return;
+
+  if (card.classList.contains("active")) {
+    clearSpotlight();
+    return;
+  }
+
+  if (key === "todos") {
+    setSpotlightNodes(ODS_NODES.map(n => n.id), false);
+  } else {
+    const ids = ODS_NODES.filter(n => n.sistema === key).map(n => n.id);
+    setSpotlightNodes(ids, true);
+  }
+
+  card.classList.add("active");
+}
+
+/* -------- panel de convenciones (leyenda de tipos de relación) -------- */
+function setupLegendToggle() {
+  document.querySelectorAll(".legend-item input").forEach(input => {
+    input.addEventListener("change", (e) => {
+      const item = e.target.closest(".legend-item");
+      const type = item.dataset.type;
+      if (e.target.checked) typeOff.delete(type); else typeOff.add(type);
+      item.classList.toggle("off", !e.target.checked);
+      refreshEdgeVisibility();
+    });
+  });
+
+  document.getElementById("edgeInfoClose")?.addEventListener("click", hideEdgeInfo);
+}
+
+/* -------- controles Todos / por tipo de relación -------- */
+function filterNetwork(mode) {
+  document.querySelectorAll(".network-controls .control-btn").forEach(btn => btn.classList.remove("active"));
+  event.currentTarget.classList.add("active");
+
+  const groups = {
+    all: ["soporte", "conectividad", "dependencia", "transformacion"],
+    soporte: ["soporte"],
+    conectividad: ["conectividad"],
+    dependencia: ["dependencia"],
+    transformacion: ["transformacion"],
+  };
+  const activeTypes = groups[mode] || groups.all;
+
+  document.querySelectorAll(".legend-item[data-type]").forEach(item => {
+    const type = item.dataset.type;
+    const input = item.querySelector("input");
+    const show = activeTypes.includes(type);
+    input.checked = show;
+    item.classList.toggle("off", !show);
+    if (show) typeOff.delete(type); else typeOff.add(type);
+  });
+  refreshEdgeVisibility();
+}
+
+/* -------- botones de acción (placeholders) -------- */
+function generateODSReport() { console.log("Generando reporte de red..."); }
+function downloadAlignment() { console.log("Descargando tabla de relaciones..."); }
+function shareAnalysis() { console.log("Compartiendo análisis..."); }
+
+/* -------- CONSTRUCTOR: añadir componentes y relaciones -------- */
+const ICON_BY_SISTEMA = {
+  eco: "fa-tree",
+  habitat: "fa-house",
+  movilidad: "fa-road",
+  economico: "fa-coins",
+  social: "fa-people-roof",
+  gobernanza: "fa-landmark",
+};
+
+function populateEdgeSelects() {
+  const fromSel = document.getElementById("edgeFrom");
+  const toSel = document.getElementById("edgeTo");
+  if (!fromSel || !toSel) return;
+  const currentFrom = fromSel.value;
+  const currentTo = toSel.value;
+  fromSel.innerHTML = "<option value=\"\">De…</option>" + ODS_NODES.map(n =>
+    `<option value="${n.id}"${n.id === currentFrom ? " selected" : ""}>${n.name.replace(/\n/g, " ")}</option>`).join("");
+  toSel.innerHTML = "<option value=\"\">Hacia…</option>" + ODS_NODES.map(n =>
+    `<option value="${n.id}"${n.id === currentTo ? " selected" : ""}>${n.name.replace(/\n/g, " ")}</option>`).join("");
+}
+
+function addNode() {
+  const input = document.getElementById("nodeName");
+  const sel = document.getElementById("nodeCat");
+  const name = (input.value || "").trim().toUpperCase();
+  const sistema = sel.value;
+  if (!name) { flashButton(input.closest(".builder-form").querySelector(".btn-builder")); return; }
+  if (ODS_NODES.some(n => n.id === slugify(name))) {
+    alert("Ya existe un componente con ese nombre.");
+    return;
+  }
+  const node = {
+    id: slugify(name),
+    name: name,
+    icon: ICON_BY_SISTEMA[sistema],
+    color: SISTEMAS[sistema].color,
+    sistema: sistema,
+    x: 500 + Math.random() * 300,
+    y: 120 + Math.random() * 300,
+    r: 29,
+  };
+  node.homeX = node.x; node.homeY = node.y;
+  node.vx = 0; node.vy = 0; node.fixed = false;
+  ODS_NODES.push(node);
+  input.value = "";
+  refreshAfterBuilder();
+}
+
+function addEdge() {
+  const from = document.getElementById("edgeFrom").value;
+  const to = document.getElementById("edgeTo").value;
+  const type = document.getElementById("edgeType").value;
+  const just = document.getElementById("edgeJust").value.trim();
+  const btn = document.getElementById("edgeJust").closest(".builder-form").querySelector(".btn-builder");
+  if (!from || !to || from === to) { flashButton(btn); return; }
+  const s = nodeById(from), t = nodeById(to);
+  if (!s || !t) return;
+  RAW_EDGES.push({
+    s: from,
+    t: to,
+    type,
+    sustento: just || "Supuesto por definir.",
+    paginaTexto: `${SISTEMAS[s.sistema].label} → ${SISTEMAS[t.sistema].label}`,
+  });
+  const last = RAW_EDGES[RAW_EDGES.length - 1];
+  last.restLength = Math.hypot(t.x - s.x, t.y - s.y) || 300;
+  document.getElementById("edgeJust").value = "";
+  flashButton(btn);
+  refreshAfterBuilder();
+}
+
+function refreshAfterBuilder() {
+  populateEdgeSelects();
+  renderTable();
+  renderNetwork();
+}
+
+function flashButton(btn) {
+  if (!btn) return;
+  btn.classList.add("flash");
+  setTimeout(() => btn.classList.remove("flash"), 700);
+}
+
+function slugify(str) {
+  return str.toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_|_$/g, "");
+}
+
+const TYPE_TAG_CLASS = {
+  soporte: "sop", conectividad: "con", dependencia: "dep", transformacion: "trans",
+};
+const TYPE_LINE_DESC = {
+  soporte: "Continua",
+  conectividad: "Continua (doble flecha)",
+  dependencia: "Punteada",
+  transformacion: "Doble línea",
+};
+const TYPE_COLOR_NAME = {
+  soporte: "Verde", conectividad: "Azul", dependencia: "Rosado", transformacion: "Morado",
+};
+
+/* -------- tabla del modelo: generada dinámicamente -------- */
+function renderTable() {
+  const container = document.getElementById("modelTable");
+  if (!container) return;
+  const header = container.querySelector(".matrix-row.header");
+  container.innerHTML = "";
+  container.appendChild(header);
+
+  RAW_EDGES.forEach((edge, i) => {
+    const s = nodeById(edge.s), t = nodeById(edge.t);
+    if (!s || !t) return;
+    const style = TYPE_STYLE[edge.type];
+    const row = document.createElement("div");
+    row.className = "matrix-row";
+    row.dataset.edge = i;
+    row.innerHTML = `
+      <div class="matrix-cell">${i + 1}</div>
+      <div class="matrix-cell">${s.name.replace(/\n/g, " ")} → ${t.name.replace(/\n/g, " ")}</div>
+      <div class="matrix-cell">${TYPE_LINE_DESC[edge.type]}</div>
+      <div class="matrix-cell"><span class="legend-swatch legend-swatch-line" style="border-color:${style.color};${style.dash ? "border-top-style:dashed;" : ""}"></span><span style="color:${style.color};font-weight:700;">${TYPE_COLOR_NAME[edge.type]}</span></div>
+      <div class="matrix-cell"><span class="alignment-tag ${TYPE_TAG_CLASS[edge.type]}">${style.label}</span></div>
+      <div class="matrix-cell quote-cell">“${edge.sustento}”</div>
+    `;
+    row.addEventListener("click", () => showEdgeInfo(i));
+    container.appendChild(row);
   });
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  loadFromLocalStorage();
   renderNetwork();
   setupLegendToggle();
+  populateEdgeSelects();
+  renderTable();
 });
+
+/* acceso público para extensiones y pruebas */
+if (typeof window !== "undefined") {
+  window.__odsNodes = ODS_NODES;
+  window.__odsEdges = RAW_EDGES;
+}
