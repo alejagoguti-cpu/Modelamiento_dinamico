@@ -37,34 +37,34 @@ const ODS_NODES = [
   { id: "paisajes",   cat: "e1", name: "PAISAJES\nSOSTENIBLES",      icon: "fa-sun",           color: "#4ade80", x: 100,  y: 480, r: 48 },
 
   /* 2. Estructura Funcional y del Cuidado — AZUL */
-  { id: "redvial",    cat: "e2", name: "RED\nVIAL",                  icon: "fa-road",          color: "#5b8def", x: 1240, y: 90,  r: 48 },
-  { id: "transporte", cat: "e2", name: "TRANSPORTE\nPÚBLICO",        icon: "fa-bus",           color: "#5b8def", x: 960,  y: 330, r: 52 },
-  { id: "corredores", cat: "e2", name: "CORREDORES\nVERDES",         icon: "fa-route",         color: "#5b8def", x: 700,  y: 140, r: 50 },
-  { id: "ciclorutas", cat: "e2", name: "CICLORRUTAS",                icon: "fa-person-biking", color: "#5b8def", x: 1390, y: 330, r: 46 },
-  { id: "equip",      cat: "e2", name: "EQUIPAMIENTOS",              icon: "fa-school",        color: "#5b8def", x: 1250, y: 620, r: 50 },
-  { id: "manzanas",   cat: "e2", name: "MANZANAS\nDEL CUIDADO",      icon: "fa-people-roof",   color: "#5b8def", x: 1470, y: 640, r: 52 },
-  { id: "sserv",      cat: "e2", name: "SERVICIOS\nSOCIALES",        icon: "fa-hand-holding-heart", color: "#5b8def", x: 1370, y: 760, r: 46 },
-  { id: "parques",    cat: "e2", name: "PARQUES",                    icon: "fa-tree-city",     color: "#5b8def", x: 1100, y: 760, r: 46 },
-  { id: "scuidado",   cat: "e2", name: "SERVICIOS\nDE CUIDADO",      icon: "fa-heart-pulse",   color: "#5b8def", x: 1230, y: 470, r: 46 },
-  { id: "vivienda",   cat: "e2", name: "VIVIENDA",                   icon: "fa-house",         color: "#5b8def", x: 950,  y: 520, r: 50 },
-  { id: "servpub",    cat: "e2", name: "SERVICIOS\nPÚBLICOS",        icon: "fa-bolt",          color: "#5b8def", x: 820,  y: 770, r: 46 },
+  { id: "redvial",    cat: "e2", pagina: "43", name: "RED\nVIAL",                  icon: "fa-road",          color: "#5b8def", x: 1240, y: 90,  r: 48 },
+  { id: "transporte", cat: "e2", pagina: "43", name: "TRANSPORTE\nPÚBLICO",        icon: "fa-bus",           color: "#5b8def", x: 960,  y: 330, r: 52 },
+  { id: "corredores", cat: "e2", pagina: "43", name: "CORREDORES\nVERDES",         icon: "fa-route",         color: "#5b8def", x: 700,  y: 140, r: 50 },
+  { id: "ciclorutas", cat: "e2", pagina: "43", name: "CICLORRUTAS",                icon: "fa-person-biking", color: "#5b8def", x: 1390, y: 330, r: 46 },
+  { id: "equip",      cat: "e2", pagina: "43", name: "EQUIPAMIENTOS",              icon: "fa-school",        color: "#5b8def", x: 1250, y: 620, r: 50 },
+  { id: "manzanas",   cat: "e2", pagina: "43", name: "MANZANAS\nDEL CUIDADO",      icon: "fa-people-roof",   color: "#5b8def", x: 1470, y: 640, r: 52 },
+  { id: "sserv",      cat: "e2", pagina: "43", name: "SERVICIOS\nSOCIALES",        icon: "fa-hand-holding-heart", color: "#5b8def", x: 1370, y: 760, r: 46 },
+  { id: "parques",    cat: "e2", pagina: "43", name: "PARQUES",                    icon: "fa-tree-city",     color: "#5b8def", x: 1100, y: 760, r: 46 },
+  { id: "scuidado",   cat: "e2", pagina: "43", name: "SERVICIOS\nDE CUIDADO",      icon: "fa-heart-pulse",   color: "#5b8def", x: 1230, y: 470, r: 46 },
+  { id: "vivienda",   cat: "e2", pagina: "43", name: "VIVIENDA",                   icon: "fa-house",         color: "#5b8def", x: 950,  y: 520, r: 50 },
+  { id: "servpub",    cat: "e2", pagina: "43", name: "SERVICIOS\nPÚBLICOS",        icon: "fa-bolt",          color: "#5b8def", x: 820,  y: 770, r: 46 },
 
   /* 3. Estructura Socioeconómica Creativa e Innovación — NARANJA */
-  { id: "financieros", cat: "e3", name: "CENTROS\nFINANCIEROS",      icon: "fa-building-columns", color: "#ef9552", x: 1700, y: 190, r: 48 },
-  { id: "empresariales", cat: "e3", name: "SERVICIOS\nEMPRESARIALES", icon: "fa-briefcase",      color: "#ef9552", x: 1920, y: 120, r: 50 },
-  { id: "tecnodistrito", cat: "e3", name: "DISTRITO\nTECNOLÓGICO",   icon: "fa-microchip",      color: "#ef9552", x: 2110, y: 270, r: 48 },
-  { id: "industriales",  cat: "e3", name: "ZONAS\nINDUSTRIALES",     icon: "fa-industry",       color: "#ef9552", x: 1860, y: 360, r: 48 },
-  { id: "innovacion",    cat: "e3", name: "INNOVACIÓN",              icon: "fa-lightbulb",      color: "#ef9552", x: 2080, y: 470, r: 46 },
-  { id: "abastecimiento",cat: "e3", name: "CENTROS DE\nABASTECIMIENTO", icon: "fa-truck",      color: "#ef9552", x: 1700, y: 430, r: 48 },
-  { id: "plazas",        cat: "e3", name: "PLAZAS\nDE MERCADO",      icon: "fa-store",          color: "#ef9552", x: 1900, y: 530, r: 46 },
-  { id: "turismo",       cat: "e3", name: "ZONAS DE\nINTERÉS\nTURÍSTICO", icon: "fa-map-location-dot", color: "#ef9552", x: 2090, y: 660, r: 46 },
-  { id: "artesanal",     cat: "e3", name: "PRODUCCIÓN\nARTESANAL",   icon: "fa-palette",        color: "#ef9552", x: 1680, y: 640, r: 46 },
+  { id: "financieros", cat: "e3", pagina: "239-241", name: "CENTROS\nFINANCIEROS",      icon: "fa-building-columns", color: "#ef9552", x: 1700, y: 190, r: 48 },
+  { id: "empresariales", cat: "e3", pagina: "239-241", name: "SERVICIOS\nEMPRESARIALES", icon: "fa-briefcase",      color: "#ef9552", x: 1920, y: 120, r: 50 },
+  { id: "tecnodistrito", cat: "e3", pagina: "239-241", name: "DISTRITO\nTECNOLÓGICO",   icon: "fa-microchip",      color: "#ef9552", x: 2110, y: 270, r: 48 },
+  { id: "industriales",  cat: "e3", pagina: "239-241", name: "ZONAS\nINDUSTRIALES",     icon: "fa-industry",       color: "#ef9552", x: 1860, y: 360, r: 48 },
+  { id: "innovacion",    cat: "e3", pagina: "239-241", name: "INNOVACIÓN",              icon: "fa-lightbulb",      color: "#ef9552", x: 2080, y: 470, r: 46 },
+  { id: "abastecimiento",cat: "e3", pagina: "239-241", name: "CENTROS DE\nABASTECIMIENTO", icon: "fa-truck",      color: "#ef9552", x: 1700, y: 430, r: 48 },
+  { id: "plazas",        cat: "e3", pagina: "239-241", name: "PLAZAS\nDE MERCADO",      icon: "fa-store",          color: "#ef9552", x: 1900, y: 530, r: 46 },
+  { id: "turismo",       cat: "e3", pagina: "239-241", name: "ZONAS DE\nINTERÉS\nTURÍSTICO", icon: "fa-map-location-dot", color: "#ef9552", x: 2090, y: 660, r: 46 },
+  { id: "artesanal",     cat: "e3", pagina: "239-241", name: "PRODUCCIÓN\nARTESANAL",   icon: "fa-palette",        color: "#ef9552", x: 1680, y: 640, r: 46 },
 
   /* 4. Estructura Integradora de Patrimonio — MORADA */
-  { id: "sitios_sagrados", cat: "e4", name: "SISTEMA DE\nSITIOS\nSAGRADOS", icon: "fa-place-of-worship", color: "#a276f2", x: 2360, y: 200, r: 50 },
-  { id: "pinmaterial",     cat: "e4", name: "PATRIMONIO\nINMATERIAL",    icon: "fa-masks-theater",    color: "#a276f2", x: 2500, y: 440, r: 50 },
-  { id: "pnatural",        cat: "e4", name: "PATRIMONIO\nNATURAL",       icon: "fa-globe",              color: "#a276f2", x: 2650, y: 180, r: 48 },
-  { id: "pecomaterial",    cat: "e4", name: "PATRIMONIO ECOLÓGICO\nMATERIAL", icon: "fa-leaf",          color: "#a276f2", x: 2650, y: 640, r: 50 },
+  { id: "sitios_sagrados", cat: "e4", pagina: "126", name: "SISTEMA DE\nSITIOS\nSAGRADOS", icon: "fa-place-of-worship", color: "#a276f2", x: 2360, y: 200, r: 50 },
+  { id: "pinmaterial",     cat: "e4", pagina: "126", name: "PATRIMONIO\nINMATERIAL",    icon: "fa-masks-theater",    color: "#a276f2", x: 2500, y: 440, r: 50 },
+  { id: "pnatural",        cat: "e4", pagina: "126", name: "PATRIMONIO\nNATURAL",       icon: "fa-globe",              color: "#a276f2", x: 2650, y: 180, r: 48 },
+  { id: "pecomaterial",    cat: "e4", pagina: "126", name: "PATRIMONIO ECOLÓGICO\nMATERIAL", icon: "fa-leaf",          color: "#a276f2", x: 2650, y: 640, r: 50 },
 ];
 
 ODS_NODES.forEach(n => {
@@ -91,50 +91,50 @@ const TYPE_STYLE = {
 /* -------- Aristas: relaciones de las 4 estructuras -------- */
 const RAW_EDGES = [
   /* === 1. Estructura Ecológica Principal (verde) === */
-  { s: "cerros",     t: "rios",       type: "soporte",     directa: true,  cat: "e1", sustento: "Los cerros orientales son los corredores montañosos de la estructura ecológica: contienen y alimentan los ríos que descienden al valle." },
-  { s: "quebradas",  t: "humedales",  type: "soporte",     directa: true,  cat: "e1", sustento: "Las quebradas de la Sabana alimentan los humedales: su caudal mantiene la lámina de agua y la vida del ecosistema." },
-  { s: "humedales",  t: "rios",       type: "soporte",     directa: true,  cat: "e1", sustento: "Los humedales regulan los ríos de la Sabana: amortiguan crecientes, sedimentan y depuran el agua que circula por la cuenca." },
-  { s: "humedales",  t: "resiliencia",type: "soporte",     directa: true,  cat: "e1", sustento: "Los humedales son parte de las áreas de resiliencia climática: absorben el exceso hídrico y reducen el riesgo de inundación." },
-  { s: "rios",       t: "paramos",    type: "soporte",     directa: true,  cat: "e1", sustento: "Los ríos de la Sabana nacen en los complejos de páramos: la agua que llega a la ciudad depende de esos ecosistemas altoandinos." },
-  { s: "bosques",    t: "coberturas", type: "soporte",     directa: true,  cat: "e1", sustento: "Los bosques urbanos integran y sostienen las coberturas vegetales de la ciudad." },
-  { s: "resiliencia",t: "coberturas", type: "resiliencia", directa: true,  cat: "e1", sustento: "Las áreas de resiliencia climática dependen de las coberturas vegetales para su funcionamiento: sin vegetación no hay regulación térmica ni hídrica." },
-  { s: "reservas",   t: "coberturas", type: "resiliencia", directa: true,  cat: "e1", sustento: "Las reservas forestales sostienen las coberturas vegetales: garantizan suelo protegido y continuidad de la vegetación." },
-  { s: "cerros",     t: "areas",      type: "indirecta",   directa: false, cat: "e1", sustento: "Los cerros orientales se vinculan con las áreas protegidas de manera indirecta: no toda su extensión está bajo régimen de protección, aunque la protege parcialmente." },
-  { s: "areas",      t: "parques_m",  type: "soporte",     directa: false, cat: "e1", sustento: "Las áreas protegidas contienen a los parques ecológicos de montaña: el régimen de protección habilita su existencia." },
-  { s: "areas",      t: "reservas",   type: "soporte",     directa: false, cat: "e1", sustento: "Las áreas protegidas dan origen a las reservas forestales: la protección jurídica habilita la reserva como figura de conservación." },
-  { s: "parques_m",  t: "coberturas", type: "soporte",     directa: false, cat: "e1", sustento: "Los parques ecológicos de montaña aportan sus coberturas vegetales al sistema ecológico urbano." },
-  { s: "humedales",  t: "coberturas", type: "soporte",     directa: false, cat: "e1", sustento: "Los humedales contribuyen a las coberturas vegetales del sistema ecológico: su vegetación palustre es cobertura viva." },
-  { s: "coberturas", t: "parque_b",   type: "soporte",     directa: true,  cat: "e1", sustento: "Las coberturas vegetales sostienen el parque de borde: la franja verde que separa la ciudad del campo depende de ellas." },
-  { s: "paramos",    t: "paisajes",   type: "soporte",     directa: false, cat: "e1", sustento: "Los complejos de páramos sustentan los paisajes sostenibles de la región: su conservación es condición de la sostenibilidad del territorio." },
+  { s: "cerros",     t: "rios",       type: "soporte",     directa: true,  cat: "e1", pagina: "186", sustento: "Los cerros orientales son los corredores montañosos de la estructura ecológica: contienen y alimentan los ríos que descienden al valle." },
+  { s: "quebradas",  t: "humedales",  type: "soporte",     directa: true,  cat: "e1", pagina: "186", sustento: "Las quebradas de la Sabana alimentan los humedales: su caudal mantiene la lámina de agua y la vida del ecosistema." },
+  { s: "humedales",  t: "rios",       type: "soporte",     directa: true,  cat: "e1", pagina: "186", sustento: "Los humedales regulan los ríos de la Sabana: amortiguan crecientes, sedimentan y depuran el agua que circula por la cuenca." },
+  { s: "humedales",  t: "resiliencia",type: "soporte",     directa: true,  cat: "e1", pagina: "186", sustento: "Los humedales son parte de las áreas de resiliencia climática: absorben el exceso hídrico y reducen el riesgo de inundación." },
+  { s: "rios",       t: "paramos",    type: "soporte",     directa: true,  cat: "e1", pagina: "186", sustento: "Los ríos de la Sabana nacen en los complejos de páramos: la agua que llega a la ciudad depende de esos ecosistemas altoandinos." },
+  { s: "bosques",    t: "coberturas", type: "soporte",     directa: true,  cat: "e1", pagina: "186", sustento: "Los bosques urbanos integran y sostienen las coberturas vegetales de la ciudad." },
+  { s: "resiliencia",t: "coberturas", type: "resiliencia", directa: true,  cat: "e1", pagina: "186", sustento: "Las áreas de resiliencia climática dependen de las coberturas vegetales para su funcionamiento: sin vegetación no hay regulación térmica ni hídrica." },
+  { s: "reservas",   t: "coberturas", type: "resiliencia", directa: true,  cat: "e1", pagina: "186", sustento: "Las reservas forestales sostienen las coberturas vegetales: garantizan suelo protegido y continuidad de la vegetación." },
+  { s: "cerros",     t: "areas",      type: "indirecta",   directa: false, cat: "e1", pagina: "186", sustento: "Los cerros orientales se vinculan con las áreas protegidas de manera indirecta: no toda su extensión está bajo régimen de protección, aunque la protege parcialmente." },
+  { s: "areas",      t: "parques_m",  type: "soporte",     directa: false, cat: "e1", pagina: "186", sustento: "Las áreas protegidas contienen a los parques ecológicos de montaña: el régimen de protección habilita su existencia." },
+  { s: "areas",      t: "reservas",   type: "soporte",     directa: false, cat: "e1", pagina: "186", sustento: "Las áreas protegidas dan origen a las reservas forestales: la protección jurídica habilita la reserva como figura de conservación." },
+  { s: "parques_m",  t: "coberturas", type: "soporte",     directa: false, cat: "e1", pagina: "186", sustento: "Los parques ecológicos de montaña aportan sus coberturas vegetales al sistema ecológico urbano." },
+  { s: "humedales",  t: "coberturas", type: "soporte",     directa: false, cat: "e1", pagina: "186", sustento: "Los humedales contribuyen a las coberturas vegetales del sistema ecológico: su vegetación palustre es cobertura viva." },
+  { s: "coberturas", t: "parque_b",   type: "soporte",     directa: true,  cat: "e1", pagina: "186", sustento: "Las coberturas vegetales sostienen el parque de borde: la franja verde que separa la ciudad del campo depende de ellas." },
+  { s: "paramos",    t: "paisajes",   type: "soporte",     directa: false, cat: "e1", pagina: "186", sustento: "Los complejos de páramos sustentan los paisajes sostenibles de la región: su conservación es condición de la sostenibilidad del territorio." },
 
   /* === 2. Estructura Funcional y del Cuidado (azul) === */
-  { s: "redvial",    t: "transporte", type: "soporte",     directa: true,  cat: "e2", sustento: "La red vial es la infraestructura que hace posible el transporte público: sin corredores viales no hay sistema de buses ni Metro." },
-  { s: "redvial",    t: "equip",      type: "soporte",     directa: true,  cat: "e2", sustento: "La red vial conecta y da acceso a los equipamientos educativos, de salud y comunitarios de la ciudad." },
-  { s: "corredores", t: "transporte", type: "soporte",     directa: true,  cat: "e2", sustento: "Los corredores verdes alimentan y complementan el transporte público: alojan buses eléctricos e integran movilidad y ecosistema." },
-  { s: "corredores", t: "ciclorutas", type: "soporte",     directa: true,  cat: "e2", sustento: "Los corredores verdes contienen ciclorrutas seguras: la cicloinfraestructura se integra a su diseño." },
-  { s: "manzanas",   t: "sserv",      type: "soporte",     directa: true,  cat: "e2", sustento: "Las Manzanas del Cuidado cualifican los servicios sociales del Distrito y hacen efectiva la articulación interinstitucional." },
-  { s: "manzanas",   t: "parques",    type: "soporte",     directa: true,  cat: "e2", sustento: "Las Manzanas del Cuidado aprovechan los parques como infraestructura de encuentro y cuidado comunitario." },
-  { s: "equip",      t: "scuidado",   type: "soporte",     directa: false, cat: "e2", sustento: "Los equipamientos existen como anclas de los servicios de cuidado: la relación es inferida de la política de anclaje en equipamientos preexistentes." },
-  { s: "equip",      t: "sserv",      type: "soporte",     directa: false, cat: "e2", sustento: "Los equipamientos se vinculan con los servicios sociales: la articulación de entidades del Distrito opera a través de ellos." },
-  { s: "equip",      t: "vivienda",   type: "soporte",     directa: true,  cat: "e2", sustento: "Los equipamientos educativos deben estar cerca de la vivienda: la proximidad es prioridad de la estructura funcional." },
-  { s: "vivienda",   t: "servpub",    type: "soporte",     directa: false, cat: "e2", sustento: "La vivienda depende de los servicios públicos: la relación es inferida de la condición básica de habitabilidad." },
-  { s: "vivienda",   t: "ciclorutas", type: "soporte",     directa: false, cat: "e2", sustento: "La vivienda se vincula con las ciclorrutas: el acceso ciclistas desde el barrio es condición de movilidad cotidiana." },
-  { s: "vivienda",   t: "transporte", type: "soporte",     directa: false, cat: "e2", sustento: "La vivienda se conecta con el transporte público: la accesibilidad determina la calidad de vida de los hogares." },
+  { s: "redvial",    t: "transporte", type: "soporte",     directa: true,  cat: "e2", pagina: "43", sustento: "La red vial es la infraestructura que hace posible el transporte público: sin corredores viales no hay sistema de buses ni Metro." },
+  { s: "redvial",    t: "equip",      type: "soporte",     directa: true,  cat: "e2", pagina: "43", sustento: "La red vial conecta y da acceso a los equipamientos educativos, de salud y comunitarios de la ciudad." },
+  { s: "corredores", t: "transporte", type: "soporte",     directa: true,  cat: "e2", pagina: "43", sustento: "Los corredores verdes alimentan y complementan el transporte público: alojan buses eléctricos e integran movilidad y ecosistema." },
+  { s: "corredores", t: "ciclorutas", type: "soporte",     directa: true,  cat: "e2", pagina: "43", sustento: "Los corredores verdes contienen ciclorrutas seguras: la cicloinfraestructura se integra a su diseño." },
+  { s: "manzanas",   t: "sserv",      type: "soporte",     directa: true,  cat: "e2", pagina: "43", sustento: "Las Manzanas del Cuidado cualifican los servicios sociales del Distrito y hacen efectiva la articulación interinstitucional." },
+  { s: "manzanas",   t: "parques",    type: "soporte",     directa: true,  cat: "e2", pagina: "43", sustento: "Las Manzanas del Cuidado aprovechan los parques como infraestructura de encuentro y cuidado comunitario." },
+  { s: "equip",      t: "scuidado",   type: "soporte",     directa: false, cat: "e2", pagina: "43", sustento: "Los equipamientos existen como anclas de los servicios de cuidado: la relación es inferida de la política de anclaje en equipamientos preexistentes." },
+  { s: "equip",      t: "sserv",      type: "soporte",     directa: false, cat: "e2", pagina: "43", sustento: "Los equipamientos se vinculan con los servicios sociales: la articulación de entidades del Distrito opera a través de ellos." },
+  { s: "equip",      t: "vivienda",   type: "soporte",     directa: true,  cat: "e2", pagina: "43", sustento: "Los equipamientos educativos deben estar cerca de la vivienda: la proximidad es prioridad de la estructura funcional." },
+  { s: "vivienda",   t: "servpub",    type: "soporte",     directa: false, cat: "e2", pagina: "43", sustento: "La vivienda depende de los servicios públicos: la relación es inferida de la condición básica de habitabilidad." },
+  { s: "vivienda",   t: "ciclorutas", type: "soporte",     directa: false, cat: "e2", pagina: "43", sustento: "La vivienda se vincula con las ciclorrutas: el acceso ciclistas desde el barrio es condición de movilidad cotidiana." },
+  { s: "vivienda",   t: "transporte", type: "soporte",     directa: false, cat: "e2", pagina: "43", sustento: "La vivienda se conecta con el transporte público: la accesibilidad determina la calidad de vida de los hogares." },
 
   /* === 3. Estructura Socioeconómica Creativa e Innovación (naranja) === */
-  { s: "financieros",t: "empresariales", type: "soporte", directa: true,  cat: "e3", sustento: "Los centros financieros sostienen los servicios empresariales: el capital y la banca financian la economía del conocimiento." },
-  { s: "empresariales", t: "tecnodistrito", type: "soporte", directa: true, cat: "e3", sustento: "Los servicios empresariales alimentan el distrito tecnológico: proveen demanda, clientes y profesionalización." },
-  { s: "empresariales", t: "industriales", type: "soporte", directa: true,  cat: "e3", sustento: "Los servicios empresariales sirven a las zonas industriales: logística, diseño, comercio y gestión." },
-  { s: "tecnodistrito", t: "innovacion", type: "soporte", directa: true,   cat: "e3", sustento: "El distrito tecnológico genera innovación: es el nodo que concentra emprendimiento y economía creativa." },
-  { s: "abastecimiento", t: "plazas", type: "soporte",     directa: false, cat: "e3", sustento: "Los centros de abastecimiento abastecen las plazas de mercado: la relación logística es inferida de la cadena de distribución de alimentos." },
-  { s: "plazas",     t: "empresariales", type: "soporte", directa: false,  cat: "e3", sustento: "Las plazas de mercado se vinculan con los servicios empresariales: el comercio local se integra a la economía formal de servicios." },
-  { s: "industriales", t: "turismo", type: "soporte",      directa: false, cat: "e3", sustento: "Las zonas industriales se relacionan con las zonas de interés turístico: la reconversión y el turismo industrial son vías de interés económico." },
-  { s: "artesanal",  t: "turismo",      type: "soporte",   directa: false, cat: "e3", sustento: "La producción artesanal alimenta las zonas de interés turístico: la cultura material local atrae y sostiene el turismo cultural." },
+  { s: "financieros",t: "empresariales", type: "soporte", directa: true,  cat: "e3", pagina: "239-241", sustento: "Los centros financieros sostienen los servicios empresariales: el capital y la banca financian la economía del conocimiento." },
+  { s: "empresariales", t: "tecnodistrito", type: "soporte", directa: true, cat: "e3", pagina: "239-241", sustento: "Los servicios empresariales alimentan el distrito tecnológico: proveen demanda, clientes y profesionalización." },
+  { s: "empresariales", t: "industriales", type: "soporte", directa: true,  cat: "e3", pagina: "239-241", sustento: "Los servicios empresariales sirven a las zonas industriales: logística, diseño, comercio y gestión." },
+  { s: "tecnodistrito", t: "innovacion", type: "soporte", directa: true,   cat: "e3", pagina: "239-241", sustento: "El distrito tecnológico genera innovación: es el nodo que concentra emprendimiento y economía creativa." },
+  { s: "abastecimiento", t: "plazas", type: "soporte",     directa: false, cat: "e3", pagina: "239-241", sustento: "Los centros de abastecimiento abastecen las plazas de mercado: la relación logística es inferida de la cadena de distribución de alimentos." },
+  { s: "plazas",     t: "empresariales", type: "soporte", directa: false,  cat: "e3", pagina: "239-241", sustento: "Las plazas de mercado se vinculan con los servicios empresariales: el comercio local se integra a la economía formal de servicios." },
+  { s: "industriales", t: "turismo", type: "soporte",      directa: false, cat: "e3", pagina: "239-241", sustento: "Las zonas industriales se relacionan con las zonas de interés turístico: la reconversión y el turismo industrial son vías de interés económico." },
+  { s: "artesanal",  t: "turismo",      type: "soporte",   directa: false, cat: "e3", pagina: "239-241", sustento: "La producción artesanal alimenta las zonas de interés turístico: la cultura material local atrae y sostiene el turismo cultural." },
 
   /* === 4. Estructura Integradora de Patrimonio (morada) === */
-  { s: "sitios_sagrados", t: "pinmaterial", type: "resiliencia", directa: true, cat: "e4", sustento: "El sistema de sitios sagrados sostiene el patrimonio inmaterial: las prácticas, rituales y memorias se arraigan en esos lugares." },
-  { s: "pinmaterial",  t: "pnatural",    type: "resiliencia", directa: true, cat: "e4", sustento: "El patrimonio inmaterial se entrelaza con el patrimonio natural: los saberes y usos tradicionales dependen de los ecosistemas." },
-  { s: "pnatural",     t: "pecomaterial",type: "resiliencia", directa: true, cat: "e4", sustento: "El patrimonio natural integra el patrimonio ecológico material: la conservación de la naturaleza es parte del patrimonio colectivo." },
+  { s: "sitios_sagrados", t: "pinmaterial", type: "resiliencia", directa: true, cat: "e4", pagina: "126", sustento: "El sistema de sitios sagrados sostiene el patrimonio inmaterial: las prácticas, rituales y memorias se arraigan en esos lugares." },
+  { s: "pinmaterial",  t: "pnatural",    type: "resiliencia", directa: true, cat: "e4", pagina: "126", sustento: "El patrimonio inmaterial se entrelaza con el patrimonio natural: los saberes y usos tradicionales dependen de los ecosistemas." },
+  { s: "pnatural",     t: "pecomaterial",type: "resiliencia", directa: true, cat: "e4", pagina: "126", sustento: "El patrimonio natural integra el patrimonio ecológico material: la conservación de la naturaleza es parte del patrimonio colectivo." },
 ];
 
 function nodeById(id) { return ODS_NODES.find(n => n.id === id); }
@@ -446,9 +446,9 @@ function showEdgeInfo(index) {
   typeEl.style.color = style.color;
   typeEl.style.background = style.color + "26";
 
-  document.getElementById("edgeInfoQuote").textContent = edge.sustento;
-  document.getElementById("edgeInfoPage").textContent = "Estructura POT: " + struct.label;
-
+    document.getElementById("edgeInfoQuote").textContent = edge.sustento;
+  document.getElementById("edgeInfoPage").textContent =
+    (edge.pagina ? `Página POT: p. ${edge.pagina} · ` : "") + "Estructura POT: " + struct.label;
   document.getElementById("edgeInfoPanel").classList.add("visible");
 
   document.querySelectorAll(".matrix-row[data-edge]").forEach(row => {
