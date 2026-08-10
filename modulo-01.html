@@ -3,17 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RAPOT · Módulo 01 — Construir la Red</title>
+<title>RAPOT · Construir la Red</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="modulo-01.css">
 </head>
 <body>
-<div id="app">
+<div class="app">
 
-  <!-- SIDEBAR RAPOT -->
-  <aside id="sidebar-rapot">
+  <aside class="sidebar">
     <div class="brand">
       <div class="mark"><i class="fa-solid fa-diagram-project"></i></div>
       <span>RAPOT</span>
@@ -39,7 +38,7 @@
       <div class="nav-label">GESTIÓN</div>
       <a href="proyectos.html" class="nav-item"><i class="fa-solid fa-folder"></i> Proyectos</a>
       <a href="fuentes.html" class="nav-item"><i class="fa-solid fa-file-lines"></i> Fuentes y Documentos</a>
-      <a href="favoritos.html" class="nav-item"><i class="fa-regular fa-star"></i> Favoritos</a>
+      <a href="favoritos.html" class="nav-item"><i class="fa-solid fa-star"></i> Favoritos</a>
       <a href="reportes.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Reportes</a>
       <a href="configuracion.html" class="nav-item"><i class="fa-solid fa-gear"></i> Configuración</a>
     </div>
@@ -50,162 +49,230 @@
         <div class="name">Equipo Urbano</div>
         <div class="role">Administrador</div>
       </div>
+      <a href="demo.html" class="logout-btn"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
     </div>
   </aside>
 
-  <!-- MAIN CONTENT -->
-  <div id="main-container">
-    <header>
-      <div>
-        <h1>01. Construir la Red</h1>
-        <p>Crea la red de conceptos y relaciones del POT a partir de fuentes oficiales.</p>
-      </div>
-      <div class="header-action"><i class="fa-solid fa-download"></i> Descargar plantilla</div>
-    </header>
+  <main class="main">
 
-    <div class="stats-grid">
-      <div class="stat-card">
-        <i class="fa-solid fa-diagram-project"></i>
-        <div class="stat-value" id="statConceptos">—</div>
-        <div class="stat-label">Conceptos</div>
-        <div class="stat-sub">Nodos identificados</div>
-      </div>
-      <div class="stat-card">
-        <i class="fa-solid fa-link"></i>
-        <div class="stat-value" id="statRelaciones">—</div>
-        <div class="stat-label">Relaciones</div>
-        <div class="stat-sub">—</div>
-      </div>
-      <div class="stat-card">
-        <i class="fa-solid fa-file-lines"></i>
-        <div class="stat-value" id="statFuentes">—</div>
-        <div class="stat-label">Fuentes</div>
-        <div class="stat-sub">—</div>
-      </div>
-      <div class="stat-card">
-        <i class="fa-solid fa-diagram-project"></i>
-        <div class="stat-value" id="statTipos">—</div>
-        <div class="stat-label">Tipos de relación</div>
-        <div class="stat-sub">Directa, Indirecta, Soporte…</div>
+    <div class="topbar">
+      <h1>Construir la Red</h1>
+      <div class="topbar-actions">
+        <div class="search-box"><i class="fa-solid fa-magnifying-glass"></i> Buscar en el sistema...</div>
+        <div class="icon-btn"><i class="fa-regular fa-bell"></i><span class="dot"></span></div>
+        <div class="icon-btn"><i class="fa-regular fa-circle-question"></i></div>
+        <div class="avatar-sm">EU</div>
       </div>
     </div>
 
-    <div class="graph-panel">
-      <div class="graph-panel-header">
-        <div class="graph-panel-title">Vista de la red</div>
-        <div class="graph-panel-tools">
-          <div class="tool-btn"><i class="fa-solid fa-filter"></i> Filtros</div>
-          <div class="tool-btn"><i class="fa-solid fa-rotate-right"></i></div>
+    <div class="welcome">
+      <h2>Construir la Red</h2>
+      <p>Activa y desactiva las 4 estructuras del POT para visualizar cómo se relacionan los conceptos. Integra todas para ver la red unificada.</p>
+    </div>
+
+    <!-- STRUCTURE CARDS (4 tarjetas con toggle) -->
+    <div class="structure-cards">
+      <div class="structure-card" data-structure="EEP">
+        <div class="structure-header">
+          <div class="structure-icon" style="background: rgba(47,212,200,0.15); color: #2fd4c8;">
+            <i class="fa-solid fa-leaf"></i>
+          </div>
+          <div class="structure-info">
+            <h3>EEP</h3>
+            <p>Ecológica Principal</p>
+          </div>
+          <div class="structure-toggle">
+            <input type="checkbox" id="toggle-eep" class="structure-input" checked>
+            <label for="toggle-eep" class="toggle-slider"></label>
+          </div>
+        </div>
+        <div class="structure-stats">
+          <div class="stat">
+            <span class="stat-value" id="eep-concepts">14</span>
+            <span class="stat-label">Conceptos</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value" id="eep-relations">20</span>
+            <span class="stat-label">Relaciones</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value" id="eep-sources">1</span>
+            <span class="stat-label">Fuentes</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value" id="eep-types">4</span>
+            <span class="stat-label">Tipos</span>
+          </div>
         </div>
       </div>
 
-      <div style="padding:0 18px;">
-        <div class="graph-tabs" style="border-bottom:1px solid var(--panel-border); padding-bottom:2px;">
-          <div class="graph-tab active" data-tab="todas">Todas</div>
-          <div class="graph-tab" data-tab="conceptos">Conceptos</div>
-          <div class="graph-tab" data-tab="relaciones">Relaciones</div>
+      <div class="structure-card" data-structure="EFC">
+        <div class="structure-header">
+          <div class="structure-icon" style="background: rgba(91,141,239,0.15); color: #5b8def;">
+            <i class="fa-solid fa-home"></i>
+          </div>
+          <div class="structure-info">
+            <h3>EFC</h3>
+            <p>Funcional y del Cuidado</p>
+          </div>
+          <div class="structure-toggle">
+            <input type="checkbox" id="toggle-efc" class="structure-input" checked>
+            <label for="toggle-efc" class="toggle-slider"></label>
+          </div>
+        </div>
+        <div class="structure-stats">
+          <div class="stat">
+            <span class="stat-value" id="efc-concepts">16</span>
+            <span class="stat-label">Conceptos</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value" id="efc-relations">20</span>
+            <span class="stat-label">Relaciones</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value" id="efc-sources">1</span>
+            <span class="stat-label">Fuentes</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value" id="efc-types">4</span>
+            <span class="stat-label">Tipos</span>
+          </div>
         </div>
       </div>
 
-      <div class="graph-wrapper">
-
-        <!-- LEGEND / FILTERS -->
-        <div class="legend-panel">
-          <div class="legend-section">
-            <div class="legend-title">Tipos de relación</div>
-            <label class="filter-item">
-              <input type="checkbox" class="filter-type" value="Directa" checked>
-              <span><span class="filter-line solid" style="border-color:var(--rel-directa);"></span> Directa</span>
-            </label>
-            <label class="filter-item">
-              <input type="checkbox" class="filter-type" value="Indirecta" checked>
-              <span><span class="filter-line dashed" style="border-color:var(--rel-indirecta);"></span> Indirecta</span>
-            </label>
-            <label class="filter-item">
-              <input type="checkbox" class="filter-type" value="Soporte" checked>
-              <span><span class="filter-line solid" style="border-color:var(--rel-soporte);"></span> Soporte</span>
-            </label>
-            <label class="filter-item">
-              <input type="checkbox" class="filter-type" value="Resiliencia" checked>
-              <span><span class="filter-line solid" style="border-color:var(--rel-resiliencia);"></span> Resiliencia</span>
-            </label>
+      <div class="structure-card" data-structure="ESECI">
+        <div class="structure-header">
+          <div class="structure-icon" style="background: rgba(239,149,82,0.15); color: #ef9552;">
+            <i class="fa-solid fa-handshake"></i>
           </div>
-
-          <div class="legend-section">
-            <div class="legend-title">Estructuras</div>
-            <div class="structure-list" id="structureList"><!-- generado por JS --></div>
+          <div class="structure-info">
+            <h3>ESECI</h3>
+            <p>Socioeconómica, Creativa e Innovación</p>
+          </div>
+          <div class="structure-toggle">
+            <input type="checkbox" id="toggle-eseci" class="structure-input" checked>
+            <label for="toggle-eseci" class="toggle-slider"></label>
           </div>
         </div>
-
-        <!-- CANVAS -->
-        <div class="canvas-container">
-          <div id="canvas-wrap">
-            <svg id="graphSvgLayer"></svg>
-            <div id="nodeLayer" class="node-layer"></div>
-
-            <div class="diagram-title-card">
-              <div class="diagram-title" id="diagramTitle">—</div>
-              <div class="diagram-subtitle" id="diagramSubtitle">—</div>
-            </div>
-
-            <div class="layers-card" id="layersCard">
-              <div class="layers-title">Leyenda de capas</div>
-              <label class="layers-row">
-                Nodos Principales
-                <span class="switch">
-                  <input type="checkbox" id="togglePrincipal" checked>
-                  <span class="slider"></span>
-                </span>
-              </label>
-              <label class="layers-row">
-                Conexiones Activas
-                <span class="switch">
-                  <input type="checkbox" id="toggleEdges" checked>
-                  <span class="slider"></span>
-                </span>
-              </label>
-            </div>
-
-            <!-- Lista de conceptos (se muestra al hacer clic en la pestaña "Conceptos") -->
-            <div class="concepts-list-panel" id="conceptsListPanel">
-              <div class="concepts-list-title" id="conceptsListTitle">Conceptos</div>
-              <ul class="concepts-list" id="conceptsList"></ul>
-            </div>
+        <div class="structure-stats">
+          <div class="stat">
+            <span class="stat-value" id="eseci-concepts">23</span>
+            <span class="stat-label">Conceptos</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value" id="eseci-relations">18</span>
+            <span class="stat-label">Relaciones</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value" id="eseci-sources">1</span>
+            <span class="stat-label">Fuentes</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value" id="eseci-types">4</span>
+            <span class="stat-label">Tipos</span>
           </div>
         </div>
+      </div>
 
-        <!-- DETAIL PANEL -->
-        <div class="detail-panel" id="detailPanel" style="display:none;">
-          <div class="detail-card">
-            <div class="detail-label">Concepto</div>
-            <div class="detail-content" id="detailName">—</div>
+      <div class="structure-card" data-structure="EIP">
+        <div class="structure-header">
+          <div class="structure-icon" style="background: rgba(162,118,242,0.15); color: #a276f2;">
+            <i class="fa-solid fa-crown"></i>
           </div>
-          <div class="detail-card">
-            <div class="detail-label">Estructura</div>
-            <div class="detail-content" id="detailStruct">—</div>
+          <div class="structure-info">
+            <h3>EIP</h3>
+            <p>Integradora de Patrimonios</p>
           </div>
-          <div class="detail-card">
-            <div class="detail-label">Conexiones (→)</div>
-            <div class="detail-content" id="detailOut" style="font-size:11px;">—</div>
-          </div>
-          <div class="detail-card">
-            <div class="detail-label">Conexiones (←)</div>
-            <div class="detail-content" id="detailIn" style="font-size:11px;">—</div>
+          <div class="structure-toggle">
+            <input type="checkbox" id="toggle-eip" class="structure-input" checked>
+            <label for="toggle-eip" class="toggle-slider"></label>
           </div>
         </div>
+        <div class="structure-stats">
+          <div class="stat">
+            <span class="stat-value" id="eip-concepts">15</span>
+            <span class="stat-label">Conceptos</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value" id="eip-relations">12</span>
+            <span class="stat-label">Relaciones</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value" id="eip-sources">1</span>
+            <span class="stat-label">Fuentes</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value" id="eip-types">4</span>
+            <span class="stat-label">Tipos</span>
+          </div>
+        </div>
+      </div>
+    </div>
 
+    <!-- NETWORK SECTION -->
+    <div class="network-section">
+      <div class="network-header">
+        <h3><i class="fa-solid fa-sitemap"></i> Red Interactiva del POT</h3>
+        <div class="network-controls">
+          <button class="control-btn active" onclick="setViewMode('single')">Vista Individual</button>
+          <button class="control-btn" onclick="setViewMode('unified')">Vista Unificada</button>
+        </div>
+      </div>
+
+      <div class="network-viz-wrap">
+        <svg id="networkViz" viewBox="0 0 1400 800" preserveAspectRatio="xMidYMid meet"></svg>
+
+        <div class="network-sidebar">
+          <aside class="network-legend" id="networkLegend">
+            <div class="legend-title">Convenciones</div>
+
+            <label class="legend-item" data-type="Directa">
+              <input type="checkbox" checked>
+              <span class="legend-swatch swatch-directa"></span>
+              Directa
+            </label>
+
+            <label class="legend-item" data-type="Soporte">
+              <input type="checkbox" checked>
+              <span class="legend-swatch swatch-soporte"></span>
+              Soporte
+            </label>
+
+            <label class="legend-item" data-type="Resiliencia">
+              <input type="checkbox" checked>
+              <span class="legend-swatch swatch-resiliencia"></span>
+              Resiliencia
+            </label>
+
+            <div class="legend-divider"></div>
+
+            <div class="legend-hint">Clic en una línea: ver sustento.<br>Doble clic en una bola: apagarla.<br>Triple clic en una bola: ver solo su flujo.</div>
+          </aside>
+
+          <div class="edge-info-panel" id="edgeInfoPanel">
+            <div class="edge-info-header">
+              <span id="edgeInfoTitle">Conexión</span>
+              <button class="edge-info-close" id="edgeInfoClose" type="button" aria-label="Cerrar">&times;</button>
+            </div>
+            <div class="edge-info-type" id="edgeInfoType"></div>
+            <div class="edge-info-quote" id="edgeInfoQuote"></div>
+            <div class="edge-info-page" id="edgeInfoPage"></div>
+          </div>
+        </div>
       </div>
     </div>
 
     <footer>
-      <p>"No se trata de representar la ciudad, sino de comprenderla para transformarla." — Equipo POT RE</p>
+      "Construir la red es entender cómo se conectan las estructuras del POT para transformar la ciudad." — <span>Equipo RAPOT</span>
     </footer>
 
-  </div>
+  </main>
 
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
 <script src="modulo-01.js"></script>
+
 </body>
 </html>
