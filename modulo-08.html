@@ -1,369 +1,998 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RAPOT · Modelo Propio</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="stylesheet" href="modulo-08.css">
-</head>
-<body>
-<div class="app">
+:root {
+  --bg: #0a0e17;
+  --sidebar: #0c1120;
+  --panel: #121828;
+  --panel-alt: #0f1522;
+  --border: rgba(255,255,255,0.07);
+  --border-soft: rgba(255,255,255,0.04);
+  --text: #e7eaf2;
+  --text-dim: #8891a5;
+  --text-faint: #5a6274;
+  --teal: #2fd4c8;
+  --teal-dim: rgba(47,212,200,0.12);
+  --blue: #5b8def;
+  --purple: #a276f2;
+  --green: #4ade80;
+  --yellow: #f5c945;
+  --pink: #f76fb0;
+  --orange: #ef9552;
+}
 
-  <aside class="sidebar">
-    <div class="brand">
-      <div class="mark"><i class="fa-solid fa-diagram-project"></i></div>
-      <span>RAPOT</span>
-    </div>
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-    <div class="nav-group">
-      <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-house"></i> Dashboard</a>
-    </div>
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+}
 
-    <div class="nav-group">
-      <div class="nav-label">MÓDULOS</div>
-      <a href="modulo-01.html" class="nav-item"><span class="num">01</span><i class="fa-solid fa-diagram-project"></i> Construir la Red</a>
-      <a href="modulo-02.html" class="nav-item"><span class="num">02</span><i class="fa-solid fa-chart-simple"></i> Medir la Red</a>
-      <a href="modulo-03.html" class="nav-item"><span class="num">03</span><i class="fa-solid fa-eye"></i> Discurso vs Realidad</a>
-      <a href="modulo-04.html" class="nav-item"><span class="num">04</span><i class="fa-solid fa-bullseye"></i> Macromodelos</a>
-      <a href="modulo-05.html" class="nav-item"><span class="num">05</span><i class="fa-solid fa-magnifying-glass"></i> Lo que no está</a>
-      <a href="modulo-06.html" class="nav-item"><span class="num">06</span><i class="fa-solid fa-earth-americas"></i> POT ↔ ODS</a>
-      <a href="modulo-07.html" class="nav-item"><span class="num">07</span><i class="fa-solid fa-flask"></i> Simulador</a>
-      <a href="modulo-08.html" class="nav-item active"><span class="num">08</span><i class="fa-solid fa-city"></i> Modelo Propio</a>
-    </div>
+.app { display: flex; min-height: 100vh; }
 
-    <div class="nav-group">
-      <div class="nav-label">GESTIÓN</div>
-      <a href="proyectos.html" class="nav-item"><i class="fa-solid fa-folder"></i> Proyectos</a>
-      <a href="fuentes.html" class="nav-item"><i class="fa-solid fa-file-lines"></i> Fuentes y Documentos</a>
-      <a href="favoritos.html" class="nav-item"><i class="fa-solid fa-star"></i> Favoritos</a>
-      <a href="reportes.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Reportes</a>
-      <a href="configuracion.html" class="nav-item"><i class="fa-solid fa-gear"></i> Configuración</a>
-    </div>
+/* SIDEBAR */
+.sidebar {
+  width: 230px;
+  flex-shrink: 0;
+  background: var(--sidebar);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  padding: 20px 14px;
+}
 
-    <div class="sidebar-footer">
-      <div class="avatar-sm">EU</div>
-      <div class="user-meta">
-        <div class="name">Equipo Urbano</div>
-        <div class="role">Administrador</div>
-      </div>
-      <a href="demo.html" class="logout-btn"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
-    </div>
-  </aside>
+.brand {
+  display: flex; align-items: center; gap: 10px;
+  padding: 6px 6px 22px 6px;
+}
 
-  <main class="main">
+.brand .mark {
+  width: 32px; height: 32px; border-radius: 9px;
+  background: linear-gradient(135deg, var(--teal), #1a9d94);
+  display: flex; align-items: center; justify-content: center;
+  color: #06110f; font-size: 15px;
+}
 
-    <div class="topbar">
-      <h1>Modelo Propio</h1>
-      <div class="topbar-actions">
-        <div class="search-box"><i class="fa-solid fa-magnifying-glass"></i> Buscar en el sistema...</div>
-        <div class="icon-btn"><i class="fa-regular fa-bell"></i><span class="dot"></span></div>
-        <div class="icon-btn"><i class="fa-regular fa-circle-question"></i></div>
-        <div class="avatar-sm">EU</div>
-      </div>
-    </div>
+.brand span {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700; font-size: 16px; letter-spacing: 0.5px;
+}
 
-    <div class="welcome">
-      <h2>Modelo Propio — Construir una explicación de la ciudad</h2>
-      <p>Ya no se trata de representar la ciudad, sino de comprenderla para transformarla. Este módulo te permite <strong>construir tu propio modelo de ciudad</strong> a partir de 6 sistemas (Ambiental, Hábitat, Movilidad, Económico, Social/Cuidado y Gobernanza), conectados por relaciones de soporte, conectividad, dependencia o transformación. <strong>Vivienda</strong> es el componente con más conexiones de tu modelo y por eso es el centro de la red.</p>
-    </div>
+.nav-group { margin-bottom: 20px; }
 
-    <!-- SISTEMAS: los 6 sistemas de la hoja "Sistemas y colores" del Excel -->
-    <div class="ods-insight-stats" id="odsInsightStats">
-      <div class="insight-card" data-insight="eco" style="--insight-color:#4ade80;" onclick="toggleInsight('eco')">
-        <div class="insight-icon"><i class="fa-solid fa-leaf"></i></div>
-        <div class="insight-title">Ambiental y ecológico</div>
-      </div>
+.nav-label {
+  font-size: 10.5px; font-weight: 700; letter-spacing: 1px;
+  color: var(--text-faint);
+  padding: 0 10px; margin-bottom: 8px;
+}
 
-      <div class="insight-card" data-insight="habitat" style="--insight-color:#ef9552;" onclick="toggleInsight('habitat')">
-        <div class="insight-icon"><i class="fa-solid fa-house"></i></div>
-        <div class="insight-title">Hábitat y espacio urbano</div>
-      </div>
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 10px; border-radius: 8px;
+  color: var(--text-dim);
+  font-size: 13px; font-weight: 500;
+  cursor: pointer;
+  transition: background .15s, color .15s;
+  white-space: nowrap;
+  text-decoration: none;
+}
 
-      <div class="insight-card" data-insight="movilidad" style="--insight-color:#5b8def;" onclick="toggleInsight('movilidad')">
-        <div class="insight-icon"><i class="fa-solid fa-road"></i></div>
-        <div class="insight-title">Movilidad y conectividad</div>
-      </div>
+.nav-item i { width: 16px; text-align: center; font-size: 13px; }
 
-      <div class="insight-card" data-insight="economico" style="--insight-color:#f5c945;" onclick="toggleInsight('economico')">
-        <div class="insight-icon"><i class="fa-solid fa-coins"></i></div>
-        <div class="insight-title">Económico y productivo</div>
-      </div>
+.nav-item .num {
+  font-size: 11px; font-weight: 700; width: 16px; text-align: center; color: var(--text-faint);
+}
 
-      <div class="insight-card" data-insight="social" style="--insight-color:#f76fb0;" onclick="toggleInsight('social')">
-        <div class="insight-icon"><i class="fa-solid fa-people-roof"></i></div>
-        <div class="insight-title">Social, cultural y cuidado</div>
-      </div>
+.nav-item:hover { background: rgba(255,255,255,0.04); color: var(--text); }
 
-      <div class="insight-card" data-insight="gobernanza" style="--insight-color:#a276f2;" onclick="toggleInsight('gobernanza')">
-        <div class="insight-icon"><i class="fa-solid fa-landmark"></i></div>
-        <div class="insight-title">Gobernanza</div>
-      </div>
-    </div>
+.nav-item.active {
+  background: var(--teal-dim);
+  color: var(--teal);
+}
 
-    <!-- RED CONCEPTUAL -->
-    <div class="network-section">
-      <div class="network-header">
-        <h3><i class="fa-solid fa-sitemap"></i> Mi Modelo de Ciudad — Interactivo y Editable</h3>
-        <div class="network-controls">
-          <button class="control-btn active" onclick="filterNetwork('all')">Todos</button>
-          <button class="control-btn" onclick="filterNetwork('soporte')">Soporte</button>
-          <button class="control-btn" onclick="filterNetwork('conectividad')">Conectividad</button>
-          <button class="control-btn" onclick="filterNetwork('dependencia')">Dependencia</button>
-          <button class="control-btn" onclick="filterNetwork('transformacion')">Transformación</button>
-        </div>
-      </div>
+.nav-item.active .num { color: var(--teal); }
 
-      <div class="network-viz-wrap">
-        <svg id="networkViz" viewBox="0 0 1470 780" preserveAspectRatio="xMidYMid meet"></svg>
+.sidebar-footer {
+  margin-top: auto;
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+  display: flex; align-items: center; gap: 10px;
+}
 
-        <div class="network-sidebar">
-          <aside class="network-legend" id="networkLegend">
-            <div class="legend-title">Tipos de relación</div>
+.avatar-sm {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; color: var(--text-dim);
+  flex-shrink: 0;
+}
 
-            <label class="legend-item" data-type="soporte">
-              <input type="checkbox" checked>
-              <span class="legend-swatch swatch-soporte"></span>
-              Soporte
-            </label>
+.user-meta { line-height: 1.3; flex: 1; min-width: 0; }
 
-            <label class="legend-item" data-type="conectividad">
-              <input type="checkbox" checked>
-              <span class="legend-swatch swatch-conectividad"></span>
-              Conectividad
-            </label>
+.user-meta .name { font-size: 12.5px; font-weight: 600; color: var(--text); }
 
-            <label class="legend-item" data-type="dependencia">
-              <input type="checkbox" checked>
-              <span class="legend-swatch swatch-dependencia"></span>
-              Dependencia
-            </label>
+.user-meta .role { font-size: 11px; color: var(--text-faint); }
 
-            <label class="legend-item" data-type="transformacion">
-              <input type="checkbox" checked>
-              <span class="legend-swatch swatch-transformacion"></span>
-              Transformación
-            </label>
+.logout-btn {
+  background: none; border: none; color: var(--text-faint);
+  font-size: 13px; cursor: pointer; padding: 4px;
+  text-decoration: none;
+}
 
-            <div class="legend-title">Sistema del componente</div>
-            <div class="legend-item legend-static">
-              <span class="legend-swatch swatch-eco"></span>
-              Ambiental y ecológico
-            </div>
-            <div class="legend-item legend-static">
-              <span class="legend-swatch swatch-habitat"></span>
-              Hábitat y espacio urbano
-            </div>
-            <div class="legend-item legend-static">
-              <span class="legend-swatch swatch-movilidad"></span>
-              Movilidad y conectividad
-            </div>
-            <div class="legend-item legend-static">
-              <span class="legend-swatch swatch-economico"></span>
-              Económico y productivo
-            </div>
-            <div class="legend-item legend-static">
-              <span class="legend-swatch swatch-social"></span>
-              Social, cultural y cuidado
-            </div>
-            <div class="legend-item legend-static">
-              <span class="legend-swatch swatch-gobernanza"></span>
-              Gobernanza
-            </div>
+.logout-btn:hover { color: var(--pink); }
 
-            <div class="legend-divider"></div>
-            <div class="legend-hint">Clic en una línea: ver la relación y su sustento.<br>
-            Clic en una bola: apagarla junto con sus líneas (clic de nuevo la enciende).<br>
-            Arrastra una bola: las conectadas la siguen y todo vuelve a su lugar al soltar.<br>
-            Usa el <strong>Constructor</strong> para añadir nodos y conexiones a tu modelo.</div>
-          </aside>
+/* MAIN */
+.main { flex: 1; padding: 22px 34px 50px; min-width: 0; overflow-y: auto; }
 
-          <div class="edge-info-panel" id="edgeInfoPanel">
-            <div class="edge-info-header">
-              <span id="edgeInfoTitle">Relación</span>
-              <button class="edge-info-close" id="edgeInfoClose" type="button" aria-label="Cerrar">&times;</button>
-            </div>
-            <div class="edge-info-type" id="edgeInfoType"></div>
-            <div class="edge-info-quote" id="edgeInfoQuote"></div>
-            <div class="edge-info-page" id="edgeInfoPage"></div>
-          </div>
-        </div>
-      </div>
-    </div>
+.topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 26px;
+}
 
-    <!-- CONSTRUCTOR DE MODELO -->
-    <div class="builder-section">
-      <div class="builder-card">
-        <div class="card-header">
-          <h3><i class="fa-solid fa-hammer"></i> Constructor — Añade componentes y relaciones a tu modelo</h3>
-        </div>
+.topbar h1 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 19px; font-weight: 600;
+}
 
-        <div class="builder-grid">
-          <div class="builder-block">
-            <h4><i class="fa-solid fa-plus"></i> Añadir un componente</h4>
-            <p class="builder-hint">Define un elemento del modelo de ciudad y su sistema.</p>
-            <div class="builder-form">
-              <input type="text" id="nodeName" placeholder="Nombre del componente (ej. Mercado local)">
-              <select id="nodeCat">
-                <option value="eco">Ambiental y ecológico</option>
-                <option value="habitat">Hábitat y espacio urbano</option>
-                <option value="movilidad">Movilidad y conectividad</option>
-                <option value="economico">Económico y productivo</option>
-                <option value="social">Social, cultural y cuidado</option>
-                <option value="gobernanza">Gobernanza</option>
-              </select>
-              <button class="btn-builder" onclick="addNode()"><i class="fa-solid fa-plus"></i> Añadir nodo</button>
-            </div>
-          </div>
+.topbar-actions { display: flex; align-items: center; gap: 14px; }
 
-          <div class="builder-block">
-            <h4><i class="fa-solid fa-link"></i> Añadir una relación</h4>
-            <p class="builder-hint">Conecta dos componentes declarando el tipo de relación y el supuesto que la justifica.</p>
-            <div class="builder-form">
-              <div class="builder-row">
-                <select id="edgeFrom"><option value="">De…</option></select>
-                <i class="fa-solid fa-arrow-right arrow-sep"></i>
-                <select id="edgeTo"><option value="">Hacia…</option></select>
-              </div>
-              <select id="edgeType">
-                <option value="soporte">Soporte</option>
-                <option value="conectividad">Conectividad</option>
-                <option value="dependencia">Dependencia</option>
-                <option value="transformacion">Transformación</option>
-              </select>
-              <input type="text" id="edgeJust" placeholder="Supuesto o justificación (ej. porque el tiempo de traslado condiciona el acceso al trabajo)">
-              <button class="btn-builder" onclick="addEdge()"><i class="fa-solid fa-link"></i> Añadir conexión</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+.search-box {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 14px;
+  color: var(--text-faint);
+  font-size: 13px;
+  width: 230px;
+}
 
-    <!-- TABLA DEL MODELO -->
-    <div class="analysis-container">
-      <div class="analysis-card full-width">
-        <div class="card-header">
-          <h3><i class="fa-solid fa-table"></i> Mi Modelo — Componentes y Relaciones</h3>
-        </div>
+.search-box i { font-size: 12px; }
 
-        <div class="matrix-container" id="modelTable">
-          <div class="matrix-row header">
-            <div class="matrix-cell header-cell">#</div>
-            <div class="matrix-cell header-cell">Relación</div>
-            <div class="matrix-cell header-cell">Línea</div>
-            <div class="matrix-cell header-cell">Color</div>
-            <div class="matrix-cell header-cell">Tipo de relación</div>
-            <div class="matrix-cell header-cell">Supuesto / Justificación</div>
-          </div>
-          <!-- filas generadas dinámicamente por el JS -->
-        </div>
-      </div>
-    </div>
+.icon-btn {
+  width: 34px; height: 34px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  font-size: 13px;
+  position: relative;
+}
 
-    <!-- LECTURA DEL MODELO -->
-    <div class="synergies-section">
-      <div class="synergies-grid">
-        <div class="synergy-card success">
-          <div class="synergy-icon"><i class="fa-solid fa-gears"></i></div>
-          <div class="synergy-content">
-            <h4>Supuestos del Modelo</h4>
-            <ul>
-              <li><strong>Componentes declarados:</strong> el modelo parte de 46 componentes distribuidos en 6 sistemas (ambiental, hábitat, movilidad, económico, social y gobernanza)</li>
-              <li><strong>Relaciones tipificadas:</strong> cada conexión declara si sostiene, conecta, condiciona o transforma a otro componente — nada queda sin justificación</li>
-              <li><strong>Vivienda como centro:</strong> con 20 conexiones directas, Vivienda es el componente más central del modelo — el nodo más grande de la red</li>
-            </ul>
-          </div>
-        </div>
+.icon-btn .dot {
+  position: absolute; top: 6px; right: 7px;
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--pink);
+}
 
-        <div class="synergy-card conflict">
-          <div class="synergy-icon"><i class="fa-solid fa-eye-low-vision"></i></div>
-          <div class="synergy-content">
-            <h4>Lo que el Modelo Explica</h4>
-            <ul>
-              <li><strong>Centralidad:</strong> el tamaño de cada bola es proporcional a su número de conexiones — así se ve de un vistazo qué componentes son estructurales y cuáles periféricos</li>
-              <li><strong>Rutas cruzadas:</strong> relaciones como Humedales → Educación o Corredores verdes → Ciclorrutas muestran cómo un sistema sostiene a otro distinto</li>
-              <li><strong>Comparación con el POT:</strong> contrasta tu modelo con el modelo operativo del POT (Módulo 04): ¿qué componentes subordina cada uno?</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
+.welcome { margin-bottom: 28px; }
 
-    <!-- RECOMENDACIONES -->
-    <div class="recommendations-section">
-      <h3><i class="fa-solid fa-lightbulb"></i> Recomendaciones para Construir tu Modelo</h3>
+.welcome h2 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 26px; font-weight: 700; margin-bottom: 6px;
+}
 
-      <div class="recommendations-grid">
-        <div class="rec-card">
-          <div class="rec-number">1</div>
-          <div class="rec-content">
-            <h4>Justifica cada conexión con un supuesto explícito</h4>
-            <p>Ninguna relación debe quedar sin justificación: escribe por qué un componente sostiene, conecta, condiciona o transforma a otro. El supuesto es lo que convierte una flecha en argumento.
-            <div class="rec-impact">
-              <span class="impact-badge">Rigor: +28%</span>
-            </div>
-          </div>
-        </div>
+.welcome p { color: var(--text-dim); font-size: 14px; }
 
-        <div class="rec-card">
-          <div class="rec-number">2</div>
-          <div class="rec-content">
-            <h4>Observa qué componentes concentran la red</h4>
-            <p>Los nodos más grandes (Vivienda, Humedales, Transporte público) son los que más determinan el modelo. Pregúntate qué pasaría con la red si uno de ellos fallara.
-            <div class="rec-impact">
-              <span class="impact-badge">Rigor: +24%</span>
-            </div>
-          </div>
-        </div>
+/* SISTEMAS (tarjetas debajo del texto de bienvenida): 6 sistemas del Excel, clicables */
+.ods-insight-stats {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 14px;
+  margin-bottom: 28px;
+}
 
-        <div class="rec-card">
-          <div class="rec-number">3</div>
-          <div class="rec-content">
-            <h4>Confronta tu modelo con el POT</h4>
-            <p>Compara tu red con la del Módulo 04 (Macromodelos): identifica qué componentes subordina cada modelo y qué relaciones prioriza cada arquitectura. La comparación es el ejercicio de pensamiento crítico.
-            <div class="rec-impact">
-              <span class="impact-badge">Rigor: +20%</span>
-            </div>
-          </div>
-        </div>
+.insight-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: border-color .2s, background-color .2s, transform .15s;
+}
 
-        <div class="rec-card">
-          <div class="rec-number">4</div>
-          <div class="rec-content">
-            <h4>Deja visible lo que no está</h4>
-            <p>Anota qué componentes y relaciones decidiste excluir de tu modelo. Todo modelo define lo que es la ciudad por lo que omite.
-            <div class="rec-impact">
-              <span class="impact-badge">Rigor: +18%</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+.insight-card:hover {
+  border-color: var(--insight-color, var(--teal));
+  transform: translateY(-1px);
+}
 
-    <!-- BOTONES DE ACCIÓN -->
-    <div class="action-buttons">
-      <button class="btn-primary" onclick="generateODSReport()">
-        <i class="fa-solid fa-file-pdf"></i> Generar Reporte de Mi Modelo
-      </button>
-      <button class="btn-secondary" onclick="downloadAlignment()">
-        <i class="fa-solid fa-download"></i> Descargar Tabla
-      </button>
-      <button class="btn-secondary" onclick="shareAnalysis()">
-        <i class="fa-solid fa-share-nodes"></i> Compartir Análisis
-      </button>
-    </div>
+.insight-card.active {
+  border-color: var(--insight-color, var(--teal));
+  background: color-mix(in srgb, var(--insight-color, var(--teal)) 14%, var(--panel));
+  box-shadow: 0 0 0 1px var(--insight-color, var(--teal)) inset;
+}
 
-    <footer>
-      "No se trata de representar la ciudad, sino de comprenderla para transformarla." — <span>Equipo POT Reverse Engineering</span>
-    </footer>
+.insight-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+  background: color-mix(in srgb, var(--insight-color, var(--teal)) 22%, transparent);
+  color: var(--insight-color, var(--teal));
+}
 
-  </main>
+.insight-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.25;
+}
 
-</div>
+/* NETWORK SECTION */
+.network-section {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 28px;
+}
 
-<script src="modulo-08.js"></script>
+.network-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
 
-</body>
-</html>
+.network-header h3 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.network-header h3 i {
+  color: var(--teal);
+  font-size: 13px;
+}
+
+.network-controls {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.control-btn {
+  background: var(--panel-alt);
+  border: 1px solid var(--border-soft);
+  color: var(--text-dim);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.control-btn:hover,
+.control-btn.active {
+  border-color: var(--teal);
+  color: var(--teal);
+  background: rgba(47,212,200,0.05);
+}
+
+/* NETWORK DIAGRAM + LEGEND */
+.network-viz-wrap {
+  display: flex;
+  gap: 16px;
+  align-items: stretch;
+}
+
+#networkViz {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  height: 640px;
+  background: var(--panel-alt);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  display: block;
+}
+
+.network-sidebar {
+  width: 225px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.network-legend {
+  width: 100%;
+  background: var(--panel-alt);
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  padding: 16px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-self: flex-start;
+}
+
+.legend-hint {
+  font-size: 10.5px;
+  color: var(--text-faint);
+  line-height: 1.5;
+}
+
+/* EDGE INFO PANEL (sustento documental) */
+.edge-info-panel {
+  display: none;
+  width: 100%;
+  background: var(--panel-alt);
+  border: 1px solid var(--teal);
+  box-shadow: 0 0 14px rgba(47,212,200,0.15);
+  border-radius: 8px;
+  padding: 14px;
+}
+
+.edge-info-panel.visible { display: block; }
+
+.edge-info-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+#edgeInfoTitle {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--teal);
+  line-height: 1.3;
+}
+
+.edge-info-close {
+  background: none;
+  border: none;
+  color: var(--text-faint);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 0 0 6px;
+  flex-shrink: 0;
+}
+
+.edge-info-close:hover { color: var(--pink); }
+
+.edge-info-type {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.edge-info-quote {
+  font-size: 11.5px;
+  color: var(--text-dim);
+  line-height: 1.55;
+  font-style: italic;
+  border-left: 2px solid var(--border);
+  padding-left: 10px;
+  margin-bottom: 10px;
+}
+
+.edge-info-page {
+  font-size: 11px;
+  color: var(--text-faint);
+  font-weight: 600;
+}
+
+.legend-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--text-faint);
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  color: var(--text-dim);
+  cursor: pointer;
+  user-select: none;
+  transition: color .15s, opacity .15s;
+}
+
+.legend-item:hover { color: var(--text); }
+
+.legend-item.off { opacity: 0.4; }
+
+.legend-item input {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 15px;
+  height: 15px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.legend-item input:checked {
+  background: var(--teal);
+  border-color: var(--teal);
+}
+
+.legend-item input:checked::after {
+  content: "";
+  position: absolute;
+  left: 4px; top: 1px;
+  width: 4px; height: 8px;
+  border: solid #06110f;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.legend-swatch {
+  width: 22px;
+  height: 0;
+  border-top-width: 2px;
+  border-top-style: solid;
+  flex-shrink: 0;
+}
+
+.swatch-soporte       { border-color: #4ade80; }
+.swatch-conectividad  { border-color: #5b8def; }
+.swatch-dependencia   { border-color: #f76fb0; border-top-style: dashed; }
+.swatch-transformacion{ border-color: #a276f2; border-top-style: double; border-top-width: 3px; }
+
+.swatch-eco        { border-color: #4ade80; }
+.swatch-habitat     { border-color: #ef9552; }
+.swatch-movilidad   { border-color: #5b8def; }
+.swatch-economico   { border-color: #f5c945; }
+.swatch-social      { border-color: #f76fb0; }
+.swatch-gobernanza  { border-color: #a276f2; }
+
+.legend-item.legend-static { cursor: default; }
+
+.legend-divider {
+  height: 1px;
+  background: var(--border-soft);
+  margin: 2px 0;
+}
+
+/* SVG node/edge styling */
+.ods-node { cursor: pointer; touch-action: none; }
+.ods-node.dragging { cursor: grabbing; }
+.ods-node .node-ring { fill: rgba(8,11,18,0.6); transition: opacity .2s; }
+.ods-node .node-inner { font-family: 'Inter', sans-serif; color: var(--text); text-align: center; transition: opacity .2s; }
+.ods-node .node-icon { line-height: 1; }
+.ods-node .node-name { color: var(--text-dim); font-weight: 600; line-height: 1.05; }
+
+.ods-node.node-off .node-ring { opacity: 0.14; }
+.ods-node.node-off .node-inner { opacity: 0.22; }
+
+.ods-node { transition: opacity .2s; }
+.ods-node.node-focus-dim { opacity: 0.12; }
+.ods-node.node-focus-active .node-ring { filter: drop-shadow(0 0 8px #fff); }
+
+.edge-group { cursor: pointer; }
+.edge-group.hidden-edge { display: none; }
+.edge-group { transition: opacity .2s; }
+.edge-group.edge-focus-dim { opacity: 0.05; }
+
+.ods-edge.edge-visual { fill: none; pointer-events: none; transition: opacity .15s, filter .15s; }
+.ods-edge.edge-visual-double path { transition: opacity .15s, filter .15s; }
+.ods-edge.edge-hit { fill: none; stroke: transparent; stroke-width: 10; pointer-events: stroke; }
+
+.edge-group:hover .edge-visual,
+.edge-group:hover .edge-visual path {
+  opacity: 1 !important;
+  filter: drop-shadow(0 0 4px var(--edge-color));
+}
+
+.edge-group.edge-selected .edge-visual,
+.edge-group.edge-selected .edge-visual path {
+  opacity: 1 !important;
+  filter: drop-shadow(0 0 6px var(--edge-color));
+}
+
+/* ANALYSIS CONTAINER */
+.analysis-container {
+  display: grid;
+  gap: 20px;
+  margin-bottom: 28px;
+}
+
+.analysis-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.analysis-card.full-width {
+  grid-column: 1 / -1;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.card-header h3 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-header h3 i {
+  color: var(--teal);
+  font-size: 13px;
+}
+
+/* MATRIX */
+.matrix-container {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.matrix-row {
+  display: flex;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.matrix-row:last-child {
+  border-bottom: none;
+}
+
+.matrix-row.header {
+  background: var(--panel-alt);
+}
+
+.matrix-row.highlight {
+  background: rgba(47,212,200,0.12);
+  box-shadow: 0 0 0 1px rgba(47,212,200,0.4) inset;
+}
+
+.matrix-cell {
+  flex: 1;
+  padding: 14px;
+  font-size: 12px;
+  border-right: 1px solid var(--border-soft);
+  display: flex;
+  align-items: center;
+}
+
+.matrix-cell:last-child {
+  border-right: none;
+}
+
+.matrix-cell.header-cell {
+  font-weight: 700;
+  color: var(--text);
+}
+
+.matrix-cell.ods-badge {
+  font-weight: 700;
+  border-radius: 6px;
+  padding: 8px 12px;
+  min-width: 60px;
+  text-align: center;
+}
+
+.matrix-cell.quote-cell {
+  flex: 2;
+  font-size: 11px;
+  color: var(--text-dim);
+  font-style: italic;
+  line-height: 1.45;
+}
+
+.alignment-tag {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.alignment-tag.sop {
+  background: rgba(74,222,128,0.15);
+  color: #4ade80;
+}
+
+.alignment-tag.con {
+  background: rgba(91,141,239,0.15);
+  color: #5b8def;
+}
+
+.alignment-tag.dep {
+  background: rgba(247,111,176,0.15);
+  color: #f76fb0;
+}
+
+.alignment-tag.trans {
+  background: rgba(162,118,242,0.15);
+  color: #a276f2;
+}
+
+.matrix-row.row-highlight {
+  background: rgba(47,212,200,0.08);
+  box-shadow: inset 0 0 0 1.5px rgba(47,212,200,0.45);
+}
+
+/* SYNERGIES SECTION */
+.synergies-section {
+  margin-bottom: 28px;
+}
+
+.synergies-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.synergy-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  gap: 16px;
+}
+
+.synergy-card.success {
+  background: linear-gradient(135deg, rgba(74,222,128,0.08), rgba(74,222,128,0.02));
+  border-color: rgba(74,222,128,0.2);
+}
+
+.synergy-card.conflict {
+  background: linear-gradient(135deg, rgba(247,111,176,0.08), rgba(247,111,176,0.02));
+  border-color: rgba(247,111,176,0.2);
+}
+
+.synergy-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+  background: var(--panel-alt);
+  color: var(--teal);
+}
+
+.synergy-card.success .synergy-icon {
+  background: rgba(74,222,128,0.15);
+  color: var(--green);
+}
+
+.synergy-card.conflict .synergy-icon {
+  background: rgba(247,111,176,0.15);
+  color: var(--pink);
+}
+
+.synergy-content h4 {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 10px;
+}
+
+.synergy-content ul {
+  list-style: none;
+}
+
+.synergy-content li {
+  font-size: 11px;
+  color: var(--text-dim);
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.synergy-content li:last-child {
+  border-bottom: none;
+}
+
+/* RECOMMENDATIONS SECTION */
+.recommendations-section {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 28px;
+}
+
+.recommendations-section h3 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.recommendations-section h3 i {
+  color: var(--yellow);
+  font-size: 13px;
+}
+
+.recommendations-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.rec-card {
+  background: var(--panel-alt);
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  padding: 16px;
+  display: flex;
+  gap: 14px;
+}
+
+.rec-number {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--teal);
+  color: #06110f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.rec-content { flex: 1; }
+
+.rec-content h4 {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.rec-content p {
+  font-size: 11px;
+  color: var(--text-dim);
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+
+.rec-impact {
+  display: flex;
+  gap: 8px;
+}
+
+.impact-badge {
+  background: rgba(47,212,200,0.15);
+  color: var(--teal);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+/* ACTION BUTTONS */
+.action-buttons {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.btn-primary,
+.btn-secondary {
+  border: none;
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all .2s;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--teal), #22b3a8);
+  color: #06110f;
+}
+
+.btn-primary:hover {
+  filter: brightness(1.1);
+}
+
+.btn-secondary {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+}
+
+.btn-secondary:hover {
+  border-color: var(--teal);
+  color: var(--teal);
+  background: rgba(47,212,200,0.05);
+}
+
+/* BUILDER SECTION — Constructor de modelo */
+.builder-section {
+  margin-bottom: 28px;
+}
+
+.builder-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.builder-card .card-header h3 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.builder-card .card-header i {
+  color: var(--teal);
+  margin-right: 8px;
+}
+
+.builder-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 20px;
+  margin-top: 16px;
+}
+
+.builder-block h4 {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.builder-block h4 i {
+  color: var(--teal);
+  margin-right: 6px;
+}
+
+.builder-hint {
+  font-size: 11.5px;
+  color: var(--text-faint);
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+.builder-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.builder-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.builder-form input,
+.builder-form select {
+  background: var(--panel-alt);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 12.5px;
+  padding: 10px 12px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color .15s;
+  width: 100%;
+}
+
+.builder-form input:focus,
+.builder-form select:focus {
+  border-color: var(--teal);
+}
+
+.builder-form input::placeholder {
+  color: var(--text-faint);
+}
+
+.arrow-sep {
+  color: var(--teal);
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.btn-builder {
+  background: var(--panel-alt);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--teal);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 10px 14px;
+  cursor: pointer;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all .15s;
+}
+
+.btn-builder:hover {
+  border-color: var(--teal);
+  background: rgba(47,212,200,0.08);
+}
+
+.btn-builder.flash {
+  border-color: var(--green);
+  color: var(--green);
+  box-shadow: 0 0 0 3px rgba(74,222,128,0.18);
+}
+
+footer {
+  text-align: center;
+  margin-top: 34px;
+  font-size: 12px;
+  color: var(--text-faint);
+}
+
+footer span { color: var(--teal); }
+
+/* RESPONSIVE */
+@media (max-width: 1300px) {
+  .ods-insight-stats { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 1200px) {
+  .synergies-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 900px) {
+  .network-viz-wrap { flex-direction: column; }
+  .network-legend { width: 100%; flex-direction: row; flex-wrap: wrap; align-self: stretch; }
+  #networkViz { height: 460px; }
+}
+
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+  .main { padding: 16px 20px 40px; }
+  .ods-insight-stats { grid-template-columns: repeat(2, 1fr); }
+  .recommendations-grid { grid-template-columns: 1fr; }
+  .action-buttons { flex-direction: column; }
+}
