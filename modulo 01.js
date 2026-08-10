@@ -159,6 +159,8 @@ function buildNetwork(svg) {
     const struct = currentStructure;
     const data = allData[struct];
     
+    console.log(`Building ${struct}:`, data);
+    
     if (data && data.conceptos) {
       data.conceptos.forEach(concept => {
         const id = `${struct}:${concept.id}`;
@@ -166,8 +168,10 @@ function buildNetwork(svg) {
           id,
           label: concept.name,
           icon: concept.icon,
-          x: concept.x || Math.random() * 800,
-          y: concept.y || Math.random() * 600,
+          x: concept.x || (700 + Math.random() * 200 - 100),
+          y: concept.y || (400 + Math.random() * 200 - 100),
+          vx: 0,
+          vy: 0,
           structure: struct,
           color: STRUCTURES[struct].color
         };
@@ -179,10 +183,13 @@ function buildNetwork(svg) {
         data.relaciones.forEach(edge => {
           const source = `${struct}:${edge.source}`;
           const target = `${struct}:${edge.target}`;
-          if (nodeMap.has(source) && nodeMap.has(target)) {
+          const srcNode = nodeMap.get(source);
+          const tgtNode = nodeMap.get(target);
+          
+          if (srcNode && tgtNode) {
             edges.push({
-              source: nodeMap.get(source),
-              target: nodeMap.get(target),
+              source: srcNode,
+              target: tgtNode,
               type: edge.type,
               sustento: edge.sustento
             });
@@ -201,8 +208,10 @@ function buildNetwork(svg) {
           id,
           label: concept.name,
           icon: concept.icon,
-          x: concept.x || Math.random() * 800,
-          y: concept.y || Math.random() * 600,
+          x: concept.x || (700 + Math.random() * 200 - 100),
+          y: concept.y || (400 + Math.random() * 200 - 100),
+          vx: 0,
+          vy: 0,
           structure: struct,
           color: STRUCTURES[struct].color
         };
@@ -214,10 +223,13 @@ function buildNetwork(svg) {
         data.relaciones.forEach(edge => {
           const source = `${struct}:${edge.source}`;
           const target = `${struct}:${edge.target}`;
-          if (nodeMap.has(source) && nodeMap.has(target)) {
+          const srcNode = nodeMap.get(source);
+          const tgtNode = nodeMap.get(target);
+          
+          if (srcNode && tgtNode) {
             edges.push({
-              source: nodeMap.get(source),
-              target: nodeMap.get(target),
+              source: srcNode,
+              target: tgtNode,
               type: edge.type,
               sustento: edge.sustento,
               structure: struct
@@ -227,6 +239,8 @@ function buildNetwork(svg) {
       }
     });
   }
+
+  console.log(`Nodes: ${nodes.length}, Edges: ${edges.length}`);
 
   // Crear simulación
   simulation = d3.forceSimulation(nodes)
@@ -238,7 +252,7 @@ function buildNetwork(svg) {
     .force("collision", d3.forceCollide(50))
     .alphaDecay(0.05);
 
-  // Dibujar aristas (inicialmente ocultas)
+  // Dibujar aristas
   const edgeGroups = svg.selectAll("g.edge-group")
     .data(edges, (d, i) => i)
     .join("g")
@@ -251,14 +265,15 @@ function buildNetwork(svg) {
     .attr("class", "pot-edge")
     .attr("stroke", d => RELATION_STYLE[d.type]?.color || "#ffffff")
     .attr("stroke-width", d => RELATION_STYLE[d.type]?.width || 2)
-    .attr("stroke-dasharray", d => RELATION_STYLE[d.type]?.dash ? "4,4" : "none")
     .attr("opacity", 0.6);
 
   edgeGroups.append("line")
     .attr("class", "pot-edge-hit")
+    .attr("stroke-width", 12)
+    .attr("stroke", "transparent")
     .on("click", (event, d) => showEdgeInfo(d));
 
-  // Dibujar nodos (inicialmente ocultos)
+  // Dibujar nodos
   const nodeGroups = svg.selectAll("g.pot-node")
     .data(nodes, d => d.id)
     .join("g")
@@ -285,17 +300,19 @@ function buildNetwork(svg) {
     .attr("dy", "-0.8em")
     .attr("font-size", "18px")
     .attr("pointer-events", "none")
-    .attr("color", d => d.color)
-    .html(d => `<i class="fas ${d.icon}"></i>`);
+    .attr("fill", d => d.color)
+    .html(d => `<tspan class="fas ${d.icon}">●</tspan>`);
 
   nodeGroups.append("text")
     .attr("class", "node-label")
     .attr("text-anchor", "middle")
     .attr("dy", "0.4em")
     .attr("pointer-events", "none")
+    .attr("fill", "#e7eaf2")
+    .attr("font-size", "11px")
     .text(d => d.label);
 
-  // Actualizar posiciones durante simulación
+  // Actualizar posiciones
   simulation.on("tick", () => {
     edgeGroups.select("line.pot-edge")
       .attr("x1", d => d.source.x)
@@ -312,7 +329,7 @@ function buildNetwork(svg) {
     nodeGroups.attr("transform", d => `translate(${d.x},${d.y})`);
   });
 
-  // FADE IN suave (animación de entrada)
+  // FADE IN suave
   edgeGroups
     .transition()
     .duration(500)
