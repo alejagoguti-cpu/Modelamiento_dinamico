@@ -175,7 +175,7 @@ body {
 
 .welcome p { color: var(--text-dim); font-size: 14px; }
 
-/* INSIGHTS CARDS */
+/* INSIGHTS GRID */
 .insights-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
@@ -195,12 +195,11 @@ body {
   align-items: center;
   justify-content: center;
   text-align: center;
-  min-height: 100px;
-  gap: 8px;
+  gap: 6px;
 }
 
 .insight-card:hover {
-  border-color: var(--insight-color);
+  border-color: var(--teal);
   background: rgba(47, 212, 200, 0.05);
   transform: translateY(-2px);
 }
@@ -213,7 +212,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--insight-color);
+  color: var(--teal);
   font-size: 16px;
 }
 
@@ -221,10 +220,15 @@ body {
   font-size: 12px;
   font-weight: 700;
   color: var(--text);
-  line-height: 1.3;
 }
 
-/* NETWORK VISUALIZATION SECTION */
+.insight-count {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--teal);
+}
+
+/* NETWORK SECTION */
 .network-section {
   background: var(--panel);
   border: 1px solid var(--border);
@@ -245,27 +249,9 @@ body {
 
 .network-header h3 i { color: var(--teal); }
 
-.network-controls {
-  display: flex; gap: 8px;
-}
-
-.control-btn {
-  background: var(--panel-alt);
-  border: 1px solid var(--border-soft);
-  color: var(--text-dim);
-  border-radius: 6px;
-  padding: 6px 12px;
-  font-size: 12px; font-weight: 600;
-  cursor: pointer;
-  transition: all .15s;
-}
-
-.control-btn:hover { color: var(--text); border-color: var(--border); }
-
-.control-btn.active {
-  background: var(--teal-dim);
-  color: var(--teal);
-  border-color: var(--teal);
+.network-info {
+  display: flex; gap: 20px;
+  font-size: 12px; color: var(--text-dim);
 }
 
 .network-viz-wrap {
@@ -275,19 +261,12 @@ body {
   border-radius: 8px;
   background: #05070d;
   overflow: hidden;
-  min-height: 600px;
-}
-
-.network-canvas {
-  flex: 1;
-  min-width: 0;
-  position: relative;
+  min-height: 680px;
 }
 
 #networkViz {
-  width: 100%;
-  height: 600px;
-  display: block;
+  flex: 1;
+  min-width: 0;
 }
 
 .network-sidebar {
@@ -295,7 +274,9 @@ body {
   border-left: 1px solid var(--border-soft);
   padding: 14px;
   overflow-y: auto;
-  display: flex; flex-direction: column; gap: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
 /* NETWORK LEGEND */
@@ -316,7 +297,7 @@ body {
 
 .legend-item {
   display: flex; align-items: center; gap: 8px;
-  font-size: 12px; color: var(--text-dim);
+  font-size: 11px; color: var(--text-dim);
   margin-bottom: 8px;
   cursor: pointer;
   user-select: none;
@@ -325,6 +306,7 @@ body {
 .legend-item input[type="checkbox"] {
   width: 14px; height: 14px;
   accent-color: var(--teal);
+  cursor: pointer;
 }
 
 .legend-swatch {
@@ -333,13 +315,12 @@ body {
   flex-shrink: 0;
 }
 
-.swatch-amb { background: var(--teal); }
-.swatch-patri { background: var(--purple); }
-.swatch-func { background: var(--blue); }
-.swatch-econ { background: var(--orange); }
-.swatch-comp { background: rgba(47,212,200,0.5); }
-.swatch-func-rel { background: rgba(91,141,239,0.5); }
-.swatch-causal { background: rgba(162,118,242,0.5); }
+.swatch-rel-hidrica { background: rgba(38, 189, 227, 0.7); }
+.swatch-rel-ecologica { background: rgba(47, 212, 200, 0.7); }
+.swatch-rel-funcional { background: rgba(91, 141, 239, 0.7); }
+.swatch-rel-patrimonial { background: rgba(162, 118, 242, 0.7); }
+.swatch-rel-economica { background: rgba(239, 149, 82, 0.7); }
+.swatch-rel-social { background: rgba(76, 175, 80, 0.7); }
 
 .legend-divider {
   height: 1px;
@@ -363,17 +344,22 @@ body {
 }
 
 .node-info-panel.visible {
-  display: flex; flex-direction: column; gap: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .node-info-header {
-  display: flex; justify-content: space-between; align-items: flex-start;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
 }
 
 .node-info-header h4 {
   font-size: 13px; font-weight: 700;
   color: var(--text);
   margin: 0;
+  word-wrap: break-word;
 }
 
 .node-info-close {
@@ -382,23 +368,23 @@ body {
   font-size: 16px; cursor: pointer;
   padding: 0; width: 20px; height: 20px;
   display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
 }
 
 .node-info-close:hover { color: var(--text); }
 
-.node-info-type {
+.node-info-structure {
   font-size: 11px;
   color: var(--text-faint);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
-.node-info-count {
+.node-info-connections {
   font-size: 12px;
   color: var(--text-dim);
+  line-height: 1.4;
 }
-
-.node-info-count strong { color: var(--text); }
 
 /* MATRIX SECTION */
 .matrix-section {
@@ -436,18 +422,23 @@ body {
 }
 
 .relationships-table th {
-  text-align: left; padding: 10px;
-  font-weight: 600; color: var(--text-dim);
-  font-size: 11px; text-transform: uppercase;
+  text-align: left;
+  padding: 10px;
+  font-weight: 600;
+  color: var(--text-dim);
+  font-size: 11px;
+  text-transform: uppercase;
 }
 
 .relationships-table td {
-  padding: 10px; border-bottom: 1px solid var(--border-soft);
+  padding: 10px;
+  border-bottom: 1px solid var(--border-soft);
   color: var(--text-dim);
 }
 
 .relationships-table tr:hover {
   background: rgba(47,212,200,0.03);
+  cursor: pointer;
 }
 
 .rel-tag {
@@ -458,10 +449,10 @@ body {
   font-weight: 600;
 }
 
-.rel-tag.amb { background: rgba(47,212,200,0.2); color: var(--teal); }
-.rel-tag.patri { background: rgba(162,118,242,0.2); color: var(--purple); }
-.rel-tag.func { background: rgba(91,141,239,0.2); color: var(--blue); }
-.rel-tag.econ { background: rgba(239,149,82,0.2); color: var(--orange); }
+.rel-tag.Ambiental { background: rgba(47,212,200,0.2); color: var(--teal); }
+.rel-tag.Patrimonio { background: rgba(162,118,242,0.2); color: var(--purple); }
+.rel-tag.Funcional { background: rgba(91,141,239,0.2); color: var(--blue); }
+.rel-tag.Socioeconómico { background: rgba(239,149,82,0.2); color: var(--orange); }
 
 /* FOOTER */
 footer {
@@ -477,7 +468,7 @@ footer span { color: var(--teal); font-weight: 600; }
 
 /* RESPONSIVE */
 @media (max-width: 1400px) {
-  .stats-section { grid-template-columns: 1fr; }
+  .insights-grid { grid-template-columns: repeat(3, 1fr); }
 }
 
 @media (max-width: 768px) {
@@ -485,5 +476,5 @@ footer span { color: var(--teal); font-weight: 600; }
   .main { padding: 16px 20px 40px; }
   .network-viz-wrap { flex-direction: column; }
   .network-sidebar { width: 100%; border-left: none; border-top: 1px solid var(--border-soft); }
-  #networkViz { height: 400px; }
+  .insights-grid { grid-template-columns: repeat(2, 1fr); }
 }
