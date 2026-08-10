@@ -1,10 +1,10 @@
 /* ==========================================================
-   RED CONCEPTUAL DE PATRIMONIO + EFC — diagrama con física de nodos
+   RED CONCEPTUAL DE PATRIMONIO — diagrama con física de nodos
    - Los nodos parten de una posición fija, pero se pueden ARRASTRAR:
      al mover una bola, las conectadas la "siguen" (fuerza de resorte),
      y el conjunto tiende a volver a su posición original.
    - Conexiones tomadas 1 a 1 de la tabla de relaciones del POT
-     (páginas 186, 196, 198 + páginas 30, 43, 122, 125, 126, 239–241 para EFC).
+     (páginas 186, 196 y 198).
    - Clic en una línea -> panel con Conexión / Tipo / Frase exacta / Página.
    - Doble clic en una bola -> la apaga (opacidad) y oculta sus líneas.
    - Triple clic en una bola -> aísla su flujo (solo se ven los nodos
@@ -15,26 +15,14 @@
 const SVG_NS = "http://www.w3.org/2000/svg";
 const XHTML_NS = "http://www.w3.org/1999/xhtml";
 
-/* -------- Nodos: conceptos de patrimonio + EFC con posición fija -------- */
+/* -------- Nodos: conceptos de patrimonio con posición fija -------- */
 const ODS_NODES = [
-  /* PATRIMONIO */
   { id: "pcm",    num: "", name: "PATRIMONIO CULTURAL\nMATERIAL",                               icon: "fa-landmark",        color: "#2fd4c8", x: 735,  y: 110, r: 64 },
   { id: "pcim",   num: "", name: "PATRIMONIO CULTURAL\nINMATERIAL",                           icon: "fa-masks-theater",   color: "#a276f2", x: 320,  y: 340, r: 60 },
   { id: "pn",     num: "", name: "PATRIMONIO NATURAL",                                        icon: "fa-leaf",            color: "#4ade80", x: 1100, y: 340, r: 60 },
   { id: "pa",     num: "", name: "PATRIMONIO ARQUEOLÓGICO",                                   icon: "fa-trowel",          color: "#ef9552", x: 580,  y: 610, r: 56 },
   { id: "sss",    num: "", name: "SISTEMA DE SITIOS\nSAGRADOS",                               icon: "fa-mountain-sun",    color: "#f5c945", x: 150,  y: 620, r: 56 },
   { id: "eip",    num: "", name: "EIP — ESTRUCTURA\nECOLÓGICA PRINCIPAL",               icon: "fa-diagram-project", color: "#5b8def", x: 1330, y: 130, r: 60 },
-  
-  /* EFC */
-  { id: "rv",     num: "", name: "RED VIAL",                                                   icon: "fa-road",            color: "#f97316", x: 200,  y: 150, r: 50 },
-  { id: "cv",     num: "", name: "CORREDORES\nVERDES",                                         icon: "fa-tree",            color: "#22c55e", x: 400,  y: 200, r: 50 },
-  { id: "cr",     num: "", name: "CICLORUTAS",                                                 icon: "fa-person-biking",   color: "#06b6d4", x: 500,  y: 100, r: 48 },
-  { id: "tp",     num: "", name: "TRANSPORTE\nPÚBLICO",                                       icon: "fa-bus",             color: "#8b5cf6", x: 350,  y: 30,  r: 52 },
-  { id: "eq",     num: "", name: "EQUIPAMIENTOS",                                             icon: "fa-building",        color: "#ec4899", x: 900,  y: 600, r: 50 },
-  { id: "vi",     num: "", name: "VIVIENDA",                                                   icon: "fa-house",           color: "#3b82f6", x: 1050, y: 630, r: 48 },
-  { id: "mdc",    num: "", name: "MANZANAS DEL\nCUIDADO",                                     icon: "fa-heart",           color: "#f43f5e", x: 1200, y: 580, r: 56 },
-  { id: "ss",     num: "", name: "SERVICIOS\nSOCIALES",                                       icon: "fa-hands-helping",   color: "#d946ef", x: 1320, y: 650, r: 50 },
-  { id: "sc",     num: "", name: "SERVICIOS DE\nCUIDADO",                                     icon: "fa-hospital",        color: "#06b6d4", x: 1050, y: 720, r: 50 },
 ];
 
 /* -------- física: cada nodo guarda su posición "casa" (ancla) y velocidad -------- */
@@ -52,26 +40,16 @@ const TYPE_STYLE = {
 
 /* -------- Aristas: tabla de relaciones del POT, 1 a 1 -------- */
 const RAW_EDGES = [
-  /* PATRIMONIO (relaciones originales) */
-  { s: "pcm",  t: "pcim", type: "soporte",     directa: true, pagina: 196, sustento: ""la EIP inscribe y precisa un sistema de relaciones del patrimonio cultural material, inmaterial y natural en el territorio."" },
-  { s: "pcm",  t: "pn",   type: "soporte",     directa: true, pagina: 196, sustento: ""la EIP inscribe y precisa un sistema de relaciones del patrimonio cultural material, inmaterial y natural en el territorio."" },
-  { s: "pcim", t: "pn",   type: "soporte",     directa: true, pagina: 196, sustento: ""la EIP inscribe y precisa un sistema de relaciones del patrimonio cultural material, inmaterial y natural en el territorio."" },
-  { s: "pa",   t: "pn",   type: "resiliencia", directa: true, pagina: 198, sustento: ""hoy pueden ser referentes de procesos adaptativos y que revelan prácticas de integralidad de la cultura con la naturaleza."" },
-  { s: "pa",   t: "pcm",  type: "soporte",     directa: true, pagina: 198, sustento: ""Este patrimonio cultural se convirtió en un referente de movilización"" },
-  { s: "sss",  t: "pcim", type: "soporte",     directa: true, pagina: 186, sustento: ""son el testimonio de complejas estrategias de cómo interpretamos y valoramos las huellas del territorio que"" },
+  { s: "pcm",  t: "pcim", type: "soporte",     directa: true, pagina: 196, sustento: "“la EIP inscribe y precisa un sistema de relaciones del patrimonio cultural material, inmaterial y natural en el territorio.”" },
+  { s: "pcm",  t: "pn",   type: "soporte",     directa: true, pagina: 196, sustento: "“la EIP inscribe y precisa un sistema de relaciones del patrimonio cultural material, inmaterial y natural en el territorio.”" },
+  { s: "pcim", t: "pn",   type: "soporte",     directa: true, pagina: 196, sustento: "“la EIP inscribe y precisa un sistema de relaciones del patrimonio cultural material, inmaterial y natural en el territorio.”" },
+  { s: "pa",   t: "pn",   type: "resiliencia", directa: true, pagina: 198, sustento: "“hoy pueden ser referentes de procesos adaptativos y que revelan prácticas de integralidad de la cultura con la naturaleza.”" },
+  { s: "pa",   t: "pcm",  type: "soporte",     directa: true, pagina: 198, sustento: "“Este patrimonio cultural se convirtió en un referente de movilización”" },
+  { s: "sss",  t: "pcim", type: "soporte",     directa: true, pagina: 186, sustento: "“son el testimonio de complejas estrategias de cómo interpretamos y valoramos las huellas del territorio que”" },
   /* EIP articula el sistema de relaciones (pág. 196): enlace conceptual con el nodo EIP */
-  { s: "eip",  t: "pcm",  type: "soporte",     directa: true, pagina: 196, sustento: ""la EIP inscribe y precisa un sistema de relaciones del patrimonio cultural material, inmaterial y natural en el territorio."", esEip: true },
-  { s: "eip",  t: "pcim", type: "soporte",     directa: true, pagina: 196, sustento: ""la EIP inscribe y precisa un sistema de relaciones del patrimonio cultural material, inmaterial y natural en el territorio."", esEip: true },
-  { s: "eip",  t: "pn",   type: "soporte",     directa: true, pagina: 196, sustento: ""la EIP inscribe y precisa un sistema de relaciones del patrimonio cultural material, inmaterial y natural en el territorio."", esEip: true },
-  
-  /* EFC (relaciones nuevas) */
-  { s: "rv",   t: "tp",   type: "soporte",     directa: true, pagina: 43,  sustento: ""Además del Metro, Bogotá necesita con urgencia ampliar sus entradas y salidas, tapar más huecos, hacer más vías, ciclorutas, cables y corredores verdes con buses eléctricos para que el transporte público de calidad llegue a todas partes, conecte a la gente, la saque del tránsito y la contaminación."" },
-  { s: "cv",   t: "tp",   type: "soporte",     directa: true, pagina: 30,  sustento: ""que, en todo caso, las diversas zonas de la ciudad estén conectadas por un sistema multimodal de transporte público, colectivo, de energías limpias y renovables basadas en la red Metro y alimentadas por los demás modos y medios de transporte público como los corredores verdes, los cables y las ciclorutas."" },
-  { s: "cr",   t: "tp",   type: "soporte",     directa: true, pagina: 239, sustento: ""Por eso, además del Metro, y para alimentarlo y complementarlo, están los corredores verdes, con diseño ecosistémico, transporte público eléctrico, ciclorutas seguras y andenes, plazas y espacios de encuentro..."" },
-  { s: "eq",   t: "vi",   type: "soporte",     directa: true, pagina: 126, sustento: ""Por un lado, priorizamos que los colegios o equipamientos educativos estén cerca de la vivienda o incluso cerca del trabajo de los padres."" },
-  { s: "mdc",  t: "vi",   type: "soporte",     directa: true, pagina: 125, sustento: ""Aprovechar los equipamientos existentes como anclas de las Manzanas del Cuidado, para que en esos diferentes espacios del Distrito cuiden a quienes nos cuidan, fue el cuello de botella que se resolvió con el pot."" },
-  { s: "mdc",  t: "ss",   type: "soporte",     directa: true, pagina: 126, sustento: ""cuantifica los servicios sociales del Distrito y hace efectiva la articulación interinstitucional."" },
-  { s: "mdc",  t: "sc",   type: "soporte",     directa: true, pagina: 122, sustento: ""Las Manzanas del Cuidado son áreas acotadas que agrupan diversas infraestructuras para brindar servicios de manera simultánea y articulada a las personas cuidadoras, a quienes ellas cuidan y a sus familias."" },
+  { s: "eip",  t: "pcm",  type: "soporte",     directa: true, pagina: 196, sustento: "“la EIP inscribe y precisa un sistema de relaciones del patrimonio cultural material, inmaterial y natural en el territorio.”", esEip: true },
+  { s: "eip",  t: "pcim", type: "soporte",     directa: true, pagina: 196, sustento: "“la EIP inscribe y precisa un sistema de relaciones del patrimonio cultural material, inmaterial y natural en el territorio.”", esEip: true },
+  { s: "eip",  t: "pn",   type: "soporte",     directa: true, pagina: 196, sustento: "“la EIP inscribe y precisa un sistema de relaciones del patrimonio cultural material, inmaterial y natural en el territorio.”", esEip: true },
 ];
 
 function nodeById(id) { return ODS_NODES.find(n => n.id === id); }
@@ -213,32 +191,149 @@ function drawNodes(svg) {
       "align-items:center;justify-content:center;gap:1px;pointer-events:none;"
     );
 
-    const icon = document.createElementNS(XHTML_NS, "i");
-    icon.setAttribute("class", `fa-solid ${node.icon}`);
-    icon.setAttribute("style", `font-size:${node.r * 0.7}px;color:${node.color};`);
-    wrapper.appendChild(icon);
+    const iconEl = document.createElementNS(XHTML_NS, "i");
+    iconEl.setAttribute("class", "fa-solid " + node.icon + " node-icon");
+    iconEl.setAttribute("style", `color:${node.color}; font-size:${node.r * 0.42}px; margin:1px 0;`);
 
-    const label = document.createElementNS(XHTML_NS, "text");
-    label.setAttribute("style",
-      `font-size:${Math.min(node.r * 0.35, 13)}px;font-weight:600;text-align:center;` +
-      `color:#fff;line-height:1.1;white-space:pre-wrap;pointer-events:none;`
-    );
-    label.textContent = node.name;
-    wrapper.appendChild(label);
+    const nameEl = document.createElementNS(XHTML_NS, "div");
+    nameEl.setAttribute("class", "node-name");
+    nameEl.setAttribute("style", `font-size:${Math.max(node.r * 0.155, 7.5)}px; padding:0 3px; font-weight:700; color:#e7eaf2; line-height:1.15; white-space:pre-line;`);
+    nameEl.textContent = node.name;
 
+    wrapper.appendChild(iconEl); wrapper.appendChild(nameEl);
     fo.appendChild(wrapper);
+
     group.appendChild(circle);
     group.appendChild(fo);
-
     attachNodeClickHandler(group, node.id);
+    attachNodeDragHandler(group, node);
     g.appendChild(group);
+
+    node._el = { group, circle, fo };
   });
 
   svg.appendChild(g);
 }
 
-/* -------- interactividad: drag + physics -------- */
-let dragNode = null;
+/* -------- física: mover nodos y recalcular líneas cada frame -------- */
+const PHYSICS = {
+  spring: 0.045,
+  anchor: 0.02,
+  damping: 0.82,
+  minVel: 0.02,
+};
+
+function updatePositions() {
+  ODS_NODES.forEach(n => {
+    if (!n._el) return;
+    n._el.circle.setAttribute("cx", n.x);
+    n._el.circle.setAttribute("cy", n.y);
+    const size = n.r * 2.2;
+    n._el.fo.setAttribute("x", n.x - size / 2);
+    n._el.fo.setAttribute("y", n.y - size / 2);
+  });
+  RAW_EDGES.forEach(edge => {
+    if (!edge._el) return;
+    const s = nodeById(edge.s), t = nodeById(edge.t);
+    if (!s || !t) return;
+    const d = edgePathData(edge, s, t);
+    edge._el.visual.setAttribute("d", d);
+    edge._el.hit.setAttribute("d", d);
+  });
+}
+
+let physicsRunning = false;
+function physicsStep() {
+  let moving = false;
+
+  RAW_EDGES.forEach(edge => {
+    const s = nodeById(edge.s), t = nodeById(edge.t);
+    if (!s || !t) return;
+    const dx = t.x - s.x, dy = t.y - s.y;
+    const dist = Math.hypot(dx, dy) || 1;
+    const diff = (dist - edge.restLength) * PHYSICS.spring;
+    const fx = (dx / dist) * diff, fy = (dy / dist) * diff;
+    if (!s.fixed) { s.vx += fx; s.vy += fy; }
+    if (!t.fixed) { t.vx -= fx; t.vy -= fy; }
+  });
+
+  ODS_NODES.forEach(n => {
+    if (n.fixed) { n.vx = 0; n.vy = 0; return; }
+    n.vx += (n.homeX - n.x) * PHYSICS.anchor;
+    n.vy += (n.homeY - n.y) * PHYSICS.anchor;
+    n.vx *= PHYSICS.damping;
+    n.vy *= PHYSICS.damping;
+    n.x += n.vx;
+    n.y += n.vy;
+    if (Math.abs(n.vx) > PHYSICS.minVel || Math.abs(n.vy) > PHYSICS.minVel) moving = true;
+  });
+
+  updatePositions();
+
+  if (moving || ODS_NODES.some(n => n.fixed)) {
+    requestAnimationFrame(physicsStep);
+  } else {
+    physicsRunning = false;
+  }
+}
+
+function wakePhysics() {
+  if (!physicsRunning) {
+    physicsRunning = true;
+    requestAnimationFrame(physicsStep);
+  }
+}
+
+/* -------- arrastrar una bola -------- */
+function attachNodeDragHandler(group, node) {
+  const svg = document.getElementById("networkViz");
+  let dragging = false;
+  let moved = false;
+  let startClientX = 0, startClientY = 0;
+
+  function toSvgPoint(clientX, clientY) {
+    const pt = svg.createSVGPoint();
+    pt.x = clientX; pt.y = clientY;
+    const m = svg.getScreenCTM().inverse();
+    return pt.matrixTransform(m);
+  }
+
+  group.addEventListener("pointerdown", (e) => {
+    dragging = true;
+    moved = false;
+    startClientX = e.clientX; startClientY = e.clientY;
+    node.fixed = true;
+    group.classList.add("dragging");
+    group.setPointerCapture(e.pointerId);
+    wakePhysics();
+  });
+
+  group.addEventListener("pointermove", (e) => {
+    if (!dragging) return;
+    if (Math.hypot(e.clientX - startClientX, e.clientY - startClientY) > 4) moved = true;
+    const p = toSvgPoint(e.clientX, e.clientY);
+    node.x = p.x; node.y = p.y;
+    node.vx = 0; node.vy = 0;
+    updatePositions();
+    wakePhysics();
+  });
+
+  function endDrag(e) {
+    if (!dragging) return;
+    dragging = false;
+    node.fixed = false;
+    group.classList.remove("dragging");
+    try { group.releasePointerCapture(e.pointerId); } catch (err) {}
+    wakePhysics();
+    if (moved) {
+      group.dataset.suppressClick = "1";
+      setTimeout(() => { delete group.dataset.suppressClick; }, 0);
+    }
+  }
+
+  group.addEventListener("pointerup", endDrag);
+  group.addEventListener("pointercancel", endDrag);
+}
 
 function renderNetwork() {
   const svg = document.getElementById("networkViz");
@@ -247,113 +342,44 @@ function renderNetwork() {
   buildDefs(svg);
   drawEdges(svg);
   drawNodes(svg);
-
-  svg.addEventListener("mousedown", (e) => {
-    const el = e.target.closest(".ods-node");
-    if (!el) return;
-    dragNode = nodeById(el.dataset.id);
-    if (dragNode) dragNode.fixed = true;
-  });
-
-  svg.addEventListener("mousemove", (e) => {
-    if (!dragNode) return;
-    const rect = svg.getBoundingClientRect();
-    const x = (e.clientX - rect.left) * (1470 / rect.width);
-    const y = (e.clientY - rect.top) * (780 / rect.height);
-    dragNode.x = x;
-    dragNode.y = y;
-    dragNode.homeX = x;
-    dragNode.homeY = y;
-    updateRender();
-  });
-
-  svg.addEventListener("mouseup", () => {
-    if (dragNode) dragNode.fixed = false;
-    dragNode = null;
-  });
-
-  requestAnimationFrame(animateNetwork);
 }
 
-function updateRender() {
-  ODS_NODES.forEach(node => {
-    const el = document.querySelector(`.ods-node[data-id="${node.id}"]`);
-    if (!el) return;
-    const circle = el.querySelector(".node-ring");
-    const fo = el.querySelector("foreignObject");
-    if (circle) { circle.setAttribute("cx", node.x); circle.setAttribute("cy", node.y); }
-    if (fo) { fo.setAttribute("x", node.x - (node.r * 1.1)); fo.setAttribute("y", node.y - (node.r * 1.1)); }
-  });
+/* -------- panel de sustento documental (clic en línea) -------- */
+function showEdgeInfo(index) {
+  const edge = RAW_EDGES[index];
+  const s = nodeById(edge.s), t = nodeById(edge.t);
+  const style = TYPE_STYLE[edge.type];
 
-  RAW_EDGES.forEach((edge, i) => {
-    const s = nodeById(edge.s);
-    const t = nodeById(edge.t);
-    if (!s || !t || !edge._el) return;
-    const d = edgePathData(edge, s, t);
-    edge._el.visual.setAttribute("d", d);
-    edge._el.hit.setAttribute("d", d);
-  });
-}
+  document.querySelectorAll(".edge-group").forEach(el => el.classList.remove("edge-selected"));
+  document.querySelector(`.edge-group[data-index="${index}"]`)?.classList.add("edge-selected");
 
-function animateNetwork() {
-  const dt = 0.016; // ~60fps
-  const gravity = 0.08;
-  const damping = 0.85;
+  document.getElementById("edgeInfoTitle").textContent =
+    `${s.name} → ${t.name}`;
 
-  ODS_NODES.forEach(node => {
-    if (node.fixed) return;
+  const typeEl = document.getElementById("edgeInfoType");
+  typeEl.textContent = style.label + (edge.directa ? " · Directa — continua" : " · Inferida");
+  typeEl.style.color = style.color;
+  typeEl.style.background = style.color + "26";
 
-    let fx = 0, fy = 0;
-
-    // Resorte hacia la posición home
-    const dx = node.homeX - node.x, dy = node.homeY - node.y;
-    fx += dx * gravity;
-    fy += dy * gravity;
-
-    // Repulsión entre nodos
-    ODS_NODES.forEach(other => {
-      if (other === node) return;
-      const dx = node.x - other.x, dy = node.y - other.y;
-      const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-      const force = 50 / (dist * dist);
-      fx += (dx / dist) * force;
-      fy += (dy / dist) * force;
-    });
-
-    // Aceleración y velocidad
-    node.vx = (node.vx + fx * dt) * damping;
-    node.vy = (node.vy + fy * dt) * damping;
-    node.x += node.vx * dt;
-    node.y += node.vy * dt;
-  });
-
-  updateRender();
-  requestAnimationFrame(animateNetwork);
-}
-
-/* -------- panel de información de arista -------- */
-function showEdgeInfo(i) {
-  const edge = RAW_EDGES[i];
-  if (!edge) return;
-
-  document.getElementById("edgeInfoTitle").textContent = `${edge.s} → ${edge.t}`;
-  document.getElementById("edgeInfoType").textContent = TYPE_STYLE[edge.type].label;
   document.getElementById("edgeInfoQuote").textContent = edge.sustento;
-  document.getElementById("edgeInfoPage").textContent = `Página ${edge.pagina}`;
+  document.getElementById("edgeInfoPage").textContent =
+    edge.pagina != null ? `Página: ${edge.pagina}` : "Página: por confirmar";
 
-  const panel = document.getElementById("edgeInfoPanel");
-  panel.classList.add("visible");
-  document.querySelector(".edge-group")?.classList.remove("highlighted");
-  document.querySelector(`.edge-group[data-index="${i}"]`)?.classList.add("highlighted");
+  document.getElementById("edgeInfoPanel").classList.add("visible");
+
+  /* resaltar la fila correspondiente de la tabla */
+  document.querySelectorAll(".matrix-row[data-edge]").forEach(row => {
+    row.classList.toggle("highlight", Number(row.dataset.edge) === index);
+  });
 }
 
 function hideEdgeInfo() {
-  const panel = document.getElementById("edgeInfoPanel");
-  panel.classList.remove("visible");
-  document.querySelector(".edge-group.highlighted")?.classList.remove("highlighted");
+  document.getElementById("edgeInfoPanel").classList.remove("visible");
+  document.querySelectorAll(".edge-group").forEach(el => el.classList.remove("edge-selected"));
+  document.querySelectorAll(".matrix-row[data-edge]").forEach(row => row.classList.remove("highlight"));
 }
 
-/* -------- filtros de visibilidad -------- */
+/* -------- estado de visibilidad: por tipo (leyenda) + por nodo (doble clic) -------- */
 const typeOff = new Set();
 const nodeOff = new Set();
 
@@ -473,9 +499,9 @@ function toggleNodeFlow(id) {
 
 /* -------- tarjetas de insights -------- */
 const NODE_INSIGHTS = {
-  soporte:     ["pcm", "pcim", "pn", "pa", "sss", "rv", "cv", "cr", "tp", "eq", "vi", "mdc", "ss", "sc"],
+  soporte:     ["pcm", "pcim", "pn", "pa", "sss"],
   resiliencia: ["pa", "pn"],
-  hubs:        ["pn", "pcm", "tp", "mdc"],
+  hubs:        ["pn", "pcm"],
   directas:    [],
 };
 
