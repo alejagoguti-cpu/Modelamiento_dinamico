@@ -67,7 +67,7 @@
 
     <div class="welcome">
       <h2>Construir la Red</h2>
-      <p>Identifica y visualiza las relaciones entre conceptos del POT: patrimonio cultural material, inmaterial, natural, arqueológico, sistemas de sitios sagrados y componentes de la Estructura Funcional y del Cuidado (EFC).</p>
+      <p>Identifica y visualiza las relaciones entre conceptos del POT: patrimonio cultural material, inmaterial, natural, arqueológico y sistemas de sitios sagrados.</p>
     </div>
 
     <!-- INSIGHTS: tarjetas clicables para explorar la red -->
@@ -101,7 +101,7 @@
     <!-- RED CONCEPTUAL -->
     <div class="network-section">
       <div class="network-header">
-        <h3><i class="fa-solid fa-sitemap"></i> Red Conceptual — POT Interactiva (Patrimonio + EFC)</h3>
+        <h3><i class="fa-solid fa-sitemap"></i> Red Conceptual de Patrimonio — POT Interactiva</h3>
         <div class="network-controls">
           <button class="control-btn active" onclick="filterNetwork('all')">Todos</button>
           <button class="control-btn" onclick="filterNetwork('soporte')">Soporte</button>
@@ -157,25 +157,24 @@
     <div class="analysis-container">
       <div class="analysis-card full-width">
         <div class="card-header">
-          <h3><i class="fa-solid fa-table"></i> Tabla de Relaciones — POT Patrimonio + EFC</h3>
+          <h3><i class="fa-solid fa-table"></i> Tabla de Relaciones de Patrimonio — POT</h3>
         </div>
 
         <div class="matrix-container">
           <div class="matrix-row header">
             <div class="matrix-cell header-cell">Concepto 1</div>
             <div class="matrix-cell header-cell">Concepto 2</div>
-            <div class="matrix-cell header-cell">Página POT</div>
-            <div class="matrix-cell header-cell">Texto exacto</div>
-            <div class="matrix-cell header-cell">Tipo</div>
+            <div class="matrix-cell header-cell">Página</div>
+            <div class="matrix-cell header-cell">Frase exacta del POT</div>
+            <div class="matrix-cell header-cell">Tipo de relación</div>
             <div class="matrix-cell header-cell">Línea</div>
           </div>
 
-          <!-- ======== PATRIMONIO (relaciones originales) ======== -->
           <div class="matrix-row" data-edge="0">
             <div class="matrix-cell">Patrimonio cultural material</div>
             <div class="matrix-cell">Patrimonio cultural inmaterial</div>
             <div class="matrix-cell">196</div>
-            <div class="matrix-cell quote-cell">"la EIP inscribe y precisa un sistema de relaciones del patrimonio cultural material, inmaterial y natural en el territorio."</div>
+            <div class="matrix-cell quote-cell">“la EIP inscribe y precisa un sistema de relaciones del patrimonio cultural material, inmaterial y natural en el territorio.”</div>
             <div class="matrix-cell"><span class="alignment-tag strong">Soporte</span></div>
             <div class="matrix-cell">Directa — continua</div>
           </div>
@@ -184,7 +183,7 @@
             <div class="matrix-cell">Patrimonio cultural material</div>
             <div class="matrix-cell">Patrimonio natural</div>
             <div class="matrix-cell">196</div>
-            <div class="matrix-cell quote-cell">"la EIP inscribe y precisa un sistema de relaciones del patrimonio cultural material, inmaterial y natural en el territorio."</div>
+            <div class="matrix-cell quote-cell">“la EIP inscribe y precisa un sistema de relaciones del patrimonio cultural material, inmaterial y natural en el territorio.”</div>
             <div class="matrix-cell"><span class="alignment-tag strong">Soporte</span></div>
             <div class="matrix-cell">Directa — continua</div>
           </div>
@@ -193,7 +192,7 @@
             <div class="matrix-cell">Patrimonio cultural inmaterial</div>
             <div class="matrix-cell">Patrimonio natural</div>
             <div class="matrix-cell">196</div>
-            <div class="matrix-cell quote-cell">"la EIP inscribe y precisa un sistema de relaciones del patrimonio cultural material, inmaterial y natural en el territorio."</div>
+            <div class="matrix-cell quote-cell">“la EIP inscribe y precisa un sistema de relaciones del patrimonio cultural material, inmaterial y natural en el territorio.”</div>
             <div class="matrix-cell"><span class="alignment-tag strong">Soporte</span></div>
             <div class="matrix-cell">Directa — continua</div>
           </div>
@@ -202,7 +201,7 @@
             <div class="matrix-cell">Patrimonio arqueológico</div>
             <div class="matrix-cell">Patrimonio natural</div>
             <div class="matrix-cell">198</div>
-            <div class="matrix-cell quote-cell">"hoy pueden ser referentes de procesos adaptativos y que revelan prácticas de integralidad de la cultura con la naturaleza."</div>
+            <div class="matrix-cell quote-cell">“hoy pueden ser referentes de procesos adaptativos y que revelan prácticas de integralidad de la cultura con la naturaleza.”</div>
             <div class="matrix-cell"><span class="alignment-tag medium">Resiliencia</span></div>
             <div class="matrix-cell">Directa — continua</div>
           </div>
@@ -211,7 +210,7 @@
             <div class="matrix-cell">Patrimonio arqueológico</div>
             <div class="matrix-cell">Patrimonio cultural material</div>
             <div class="matrix-cell">198</div>
-            <div class="matrix-cell quote-cell">"Este patrimonio cultural se convirtió en un referente de movilización"</div>
+            <div class="matrix-cell quote-cell">“Este patrimonio cultural se convirtió en un referente de movilización”</div>
             <div class="matrix-cell"><span class="alignment-tag strong">Soporte</span></div>
             <div class="matrix-cell">Directa — continua</div>
           </div>
@@ -220,71 +219,7 @@
             <div class="matrix-cell">Sistema de Sitios Sagrados</div>
             <div class="matrix-cell">Patrimonio cultural inmaterial</div>
             <div class="matrix-cell">186</div>
-            <div class="matrix-cell quote-cell">"son el testimonio de complejas estrategias de cómo interpretamos y valoramos las huellas del territorio que"</div>
-            <div class="matrix-cell"><span class="alignment-tag strong">Soporte</span></div>
-            <div class="matrix-cell">Directa — continua</div>
-          </div>
-
-          <!-- ======== EFC (relaciones nuevas) ======== -->
-          <div class="matrix-row" data-edge="6">
-            <div class="matrix-cell">Red vial</div>
-            <div class="matrix-cell">Transporte público</div>
-            <div class="matrix-cell">43</div>
-            <div class="matrix-cell quote-cell">"Además del Metro, Bogotá necesita con urgencia ampliar sus entradas y salidas, tapar más huecos, hacer más vías, ciclorutas, cables y corredores verdes con buses eléctricos para que el transporte público de calidad llegue a todas partes, conecte a la gente, la saque del tránsito y la contaminación."</div>
-            <div class="matrix-cell"><span class="alignment-tag strong">Soporte</span></div>
-            <div class="matrix-cell">Directa — continua</div>
-          </div>
-
-          <div class="matrix-row" data-edge="7">
-            <div class="matrix-cell">Corredores verdes</div>
-            <div class="matrix-cell">Transporte público</div>
-            <div class="matrix-cell">30</div>
-            <div class="matrix-cell quote-cell">"que, en todo caso, las diversas zonas de la ciudad estén conectadas por un sistema multimodal de transporte público, colectivo, de energías limpias y renovables basadas en la red Metro y alimentadas por los demás modos y medios de transporte público como los corredores verdes, los cables y las ciclorutas."</div>
-            <div class="matrix-cell"><span class="alignment-tag strong">Soporte</span></div>
-            <div class="matrix-cell">Directa — continua</div>
-          </div>
-
-          <div class="matrix-row" data-edge="8">
-            <div class="matrix-cell">Ciclorutas</div>
-            <div class="matrix-cell">Transporte público</div>
-            <div class="matrix-cell">239–241</div>
-            <div class="matrix-cell quote-cell">"Por eso, además del Metro, y para alimentarlo y complementarlo, están los corredores verdes, con diseño ecosistémico, transporte público eléctrico, ciclorutas seguras y andenes, plazas y espacios de encuentro..."</div>
-            <div class="matrix-cell"><span class="alignment-tag strong">Soporte</span></div>
-            <div class="matrix-cell">Directa — continua</div>
-          </div>
-
-          <div class="matrix-row" data-edge="9">
-            <div class="matrix-cell">Equipamientos</div>
-            <div class="matrix-cell">Vivienda</div>
-            <div class="matrix-cell">126</div>
-            <div class="matrix-cell quote-cell">"Por un lado, priorizamos que los colegios o equipamientos educativos estén cerca de la vivienda o incluso cerca del trabajo de los padres."</div>
-            <div class="matrix-cell"><span class="alignment-tag strong">Soporte</span></div>
-            <div class="matrix-cell">Directa — continua</div>
-          </div>
-
-          <div class="matrix-row" data-edge="10">
-            <div class="matrix-cell">Manzanas del Cuidado</div>
-            <div class="matrix-cell">Vivienda</div>
-            <div class="matrix-cell">125</div>
-            <div class="matrix-cell quote-cell">"Aprovechar los equipamientos existentes como anclas de las Manzanas del Cuidado, para que en esos diferentes espacios del Distrito cuiden a quienes nos cuidan, fue el cuello de botella que se resolvió con el pot."</div>
-            <div class="matrix-cell"><span class="alignment-tag strong">Soporte</span></div>
-            <div class="matrix-cell">Directa — continua</div>
-          </div>
-
-          <div class="matrix-row" data-edge="11">
-            <div class="matrix-cell">Manzanas del Cuidado</div>
-            <div class="matrix-cell">Servicios sociales</div>
-            <div class="matrix-cell">126</div>
-            <div class="matrix-cell quote-cell">"cuantifica los servicios sociales del Distrito y hace efectiva la articulación interinstitucional."</div>
-            <div class="matrix-cell"><span class="alignment-tag strong">Soporte</span></div>
-            <div class="matrix-cell">Directa — continua</div>
-          </div>
-
-          <div class="matrix-row" data-edge="12">
-            <div class="matrix-cell">Manzanas del Cuidado</div>
-            <div class="matrix-cell">Servicios de cuidado</div>
-            <div class="matrix-cell">122</div>
-            <div class="matrix-cell quote-cell">"Las Manzanas del Cuidado son áreas acotadas que agrupan diversas infraestructuras para brindar servicios de manera simultánea y articulada a las personas cuidadoras, a quienes ellas cuidan y a sus familias."</div>
+            <div class="matrix-cell quote-cell">“son el testimonio de complejas estrategias de cómo interpretamos y valoramos las huellas del territorio que</div>
             <div class="matrix-cell"><span class="alignment-tag strong">Soporte</span></div>
             <div class="matrix-cell">Directa — continua</div>
           </div>
@@ -298,7 +233,7 @@
         <div class="synergy-card success">
           <div class="synergy-icon"><i class="fa-solid fa-handshake"></i></div>
           <div class="synergy-content">
-            <h4>Estructura de la Red — Patrimonio</h4>
+            <h4>Estructura de la Red</h4>
             <ul>
               <li><strong>EIP como articulador:</strong> inscribe y precisa el sistema de relaciones del patrimonio material, inmaterial y natural (pág. 196)</li>
               <li><strong>Patrimonio natural como nodo clave:</strong> conecta con material, inmaterial y arqueológico</li>
@@ -308,13 +243,13 @@
         </div>
 
         <div class="synergy-card conflict">
-          <div class="synergy-icon"><i class="fa-solid fa-route"></i></div>
+          <div class="synergy-icon"><i class="fa-solid fa-seedling"></i></div>
           <div class="synergy-content">
-            <h4>Estructura de la Red — EFC</h4>
+            <h4>Lectura Conceptual</h4>
             <ul>
-              <li><strong>Transporte público como articulador:</strong> conecta red vial, corredores verdes y ciclorutas (págs. 30, 43, 239–241)</li>
-              <li><strong>Manzanas del Cuidado como hub:</strong> integra vivienda, servicios sociales y de cuidado (págs. 122, 125, 126)</li>
-              <li><strong>Equipamientos como soporte:</strong> anclan las Manzanas del Cuidado y conectan con vivienda</li>
+              <li><strong>Soporte (verde):</strong> relaciones que anclan y sostienen el sistema patrimonial entre conceptos</li>
+              <li><strong>Resiliencia (rosa):</strong> vínculo arqueología-naturaleza como práctica adaptativa de integralidad</li>
+              <li><strong>Sitios Sagrados:</strong> testimonio de las estrategias de interpretación y valoración del territorio (pág. 186)</li>
             </ul>
           </div>
         </div>
@@ -329,7 +264,7 @@
         <div class="rec-card">
           <div class="rec-number">1</div>
           <div class="rec-content">
-            <h4>Consolidar la EIP como eje articulador de Patrimonio</h4>
+            <h4>Consolidar la EIP como eje articulador</h4>
             <p>Usar la Estructura Ecológica Principal como nodo central que organiza las relaciones del patrimonio material, inmaterial y natural en el territorio.</p>
             <div class="rec-impact">
               <span class="impact-badge">Impacto: +20%</span>
@@ -340,10 +275,10 @@
         <div class="rec-card">
           <div class="rec-number">2</div>
           <div class="rec-content">
-            <h4>Integrar Transporte como nodo central de la EFC</h4>
-            <p>Fortalecer el vínculo entre red vial, corredores verdes, ciclorutas y transporte público como sistema multimodal de energías limpias.</p>
+            <h4>Expandir el vínculo arqueología-naturaleza</h4>
+            <p>Documentar las prácticas de integralidad de la cultura con la naturaleza como insumo para relaciones de resiliencia en la red.</p>
             <div class="rec-impact">
-              <span class="impact-badge">Impacto: +18%</span>
+              <span class="impact-badge">Impacto: +15%</span>
             </div>
           </div>
         </div>
@@ -351,10 +286,10 @@
         <div class="rec-card">
           <div class="rec-number">3</div>
           <div class="rec-content">
-            <h4>Expandir las Manzanas del Cuidado</h4>
-            <p>Documentar y mapear las relaciones entre vivienda, equipamientos, servicios sociales y de cuidado en cada manzana del territorio.</p>
+            <h4>Visibilizar los Sitios Sagrados</h4>
+            <p>Integrar las estrategias de interpretación y valoración de las huellas del territorio como relaciones de soporte cultural.</p>
             <div class="rec-impact">
-              <span class="impact-badge">Impacto: +16%</span>
+              <span class="impact-badge">Impacto: +12%</span>
             </div>
           </div>
         </div>
@@ -363,7 +298,7 @@
           <div class="rec-number">4</div>
           <div class="rec-content">
             <h4>Monitorear nuevas relaciones</h4>
-            <p>Crear indicadores específicos para rastrear nuevas relaciones que surjan en revisiones y actualizaciones del POT.</p>
+            <p>Crear indicadores específicos para rastrear nuevas relaciones de patrimonio que surjan en revisiones y actualizaciones del POT.</p>
             <div class="rec-impact">
               <span class="impact-badge">Impacto: +8%</span>
             </div>
@@ -393,7 +328,7 @@
 
 </div>
 
-<script src="modulo-01-updated.js"></script>
+<script src="modulo-01.js"></script>
 
 </body>
 </html>
