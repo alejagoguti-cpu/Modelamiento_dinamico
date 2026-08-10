@@ -1,75 +1,69 @@
 /* ==========================================================
-   MÓDULO 02 — MEDIR LA RED — ANÁLISIS CRÍTICO DE TENSIONES
-   
-   Mismas 38 relaciones del Módulo 01, pero clasificadas según
-   el tipo de TENSIÓN (contradicción, incoherencia, etc.) que
-   cada una expone en el POT Bogotá Reverdece 2022-2035.
-   
-   5 tipos de tensión:
-   - incoherence:    rojo     #ef4444 (declaración vs. realidad)
-   - contradiction:  rosa     #f472b6 (dos objetivos opuestos)
-   - disconnection:  azul     #60a5fa (sin articulación real)
-   - hierarchy:      morado   #c084fc (subordinada pese a central)
-   - peripheral:     amarillo #fbbf24 (mencionado sin rol)
-   ========================================================== */
+   MÓDULO 01 — CONSTRUIR LA RED — RED INTEGRAL DE LAS 4 ESTRUCTURAS DEL POT
+   (v3: DINÁMICO con D3.js force simulation)
+========================================================== */
 
 const SVG_NS = "http://www.w3.org/2000/svg";
+let svg, containerWidth = 1400, containerHeight = 800;
+const typeOff = new Set(), catOff = new Set();
 
-/* Nodos: los mismos 37 del Módulo 01 */
+/* -------- Nodos: Los 37 del POT -------- */
 const ODS_NODES = [
   /* 1. Estructura Ecológica Principal — VERDE */
-  { id: "cerros",     cat: "e1", name: "CERROS\nORIENTALES",        icon: "fa-mountain-sun",  color: "#4ade80", x: 200,  y: 180, r: 52 },
-  { id: "rios",       cat: "e1", name: "RÍOS",                       icon: "fa-water",         color: "#4ade80", x: 330,  y: 430, r: 50 },
-  { id: "quebradas",  cat: "e1", name: "QUEBRADAS",                  icon: "fa-water",         color: "#4ade80", x: 500,  y: 150, r: 46 },
-  { id: "humedales",  cat: "e1", name: "HUMEDALES",                  icon: "fa-droplet",       color: "#4ade80", x: 660,  y: 420, r: 52 },
-  { id: "resiliencia",cat: "e1", name: "ÁREAS DE\nRESILIENCIA\nCLIMÁTICA",   icon: "fa-shield-heart",  color: "#4ade80", x: 890,  y: 170, r: 52 },
-  { id: "paramos",    cat: "e1", name: "COMPLEJOS\nDE PÁRAMOS",      icon: "fa-mountain",      color: "#4ade80", x: 250,  y: 640, r: 52 },
-  { id: "bosques",    cat: "e1", name: "BOSQUES\nURBANOS",           icon: "fa-tree",          color: "#4ade80", x: 1140, y: 400, r: 50 },
-  { id: "coberturas", cat: "e1", name: "COBERTURAS\nVEGETALES",      icon: "fa-seedling",      color: "#4ade80", x: 1040, y: 650, r: 54 },
-  { id: "reservas",   cat: "e1", name: "RESERVAS\nFORESTALES",       icon: "fa-tree",          color: "#4ade80", x: 1300, y: 190, r: 50 },
-  { id: "areas",      cat: "e1", name: "ÁREAS\nPROTEGIDAS",          icon: "fa-lock",          color: "#4ade80", x: 440,  y: 300, r: 50 },
-  { id: "parques_m",  cat: "e1", name: "PARQUES ECOLÓGICOS\nDE MONTAÑA",   icon: "fa-campground",      color: "#4ade80", x: 770,  y: 640, r: 50 },
-  { id: "parque_b",   cat: "e1", name: "PARQUE\nDE BORDE",           icon: "fa-archway",       color: "#4ade80", x: 1430, y: 480, r: 48 },
-  { id: "paisajes",   cat: "e1", name: "PAISAJES\nSOSTENIBLES",      icon: "fa-sun",           color: "#4ade80", x: 100,  y: 480, r: 48 },
-
+  { id: "cerros",     cat: "e1", name: "CERROS\nORIENTALES",        icon: "fa-mountain-sun",  color: "#4ade80", fx: 200,  fy: 180, r: 52 },
+  { id: "rios",       cat: "e1", name: "RÍOS",                       icon: "fa-water",         color: "#4ade80", fx: 330,  fy: 430, r: 50 },
+  { id: "quebradas",  cat: "e1", name: "QUEBRADAS",                  icon: "fa-water",         color: "#4ade80", fx: 500,  fy: 150, r: 46 },
+  { id: "humedales",  cat: "e1", name: "HUMEDALES",                  icon: "fa-droplet",       color: "#4ade80", fx: 660,  fy: 420, r: 52 },
+  { id: "resiliencia",cat: "e1", name: "ÁREAS DE\nRESILIENCIA",      icon: "fa-shield-heart",  color: "#4ade80", fx: 890,  fy: 170, r: 52 },
+  { id: "paramos",    cat: "e1", name: "PÁRAMOS",                    icon: "fa-mountain",      color: "#4ade80", fx: 250,  fy: 640, r: 52 },
+  { id: "bosques",    cat: "e1", name: "BOSQUES\nURBANOS",           icon: "fa-tree",          color: "#4ade80", fx: 1140, fy: 400, r: 50 },
+  { id: "coberturas", cat: "e1", name: "COBERTURAS\nVEGETALES",      icon: "fa-seedling",      color: "#4ade80", fx: 1040, fy: 650, r: 54 },
+  { id: "reservas",   cat: "e1", name: "RESERVAS",                  icon: "fa-tree",          color: "#4ade80", fx: 1300, fy: 190, r: 50 },
+  { id: "areas",      cat: "e1", name: "ÁREAS\nPROTEGIDAS",          icon: "fa-lock",          color: "#4ade80", fx: 440,  fy: 300, r: 50 },
+  { id: "parques_m",  cat: "e1", name: "PARQUES\nECOLÓGICOS",        icon: "fa-campground",    color: "#4ade80", fx: 770,  fy: 640, r: 50 },
+  { id: "parque_b",   cat: "e1", name: "PARQUE\nDE BORDE",           icon: "fa-archway",       color: "#4ade80", fx: 1430, fy: 480, r: 48 },
+  { id: "paisajes",   cat: "e1", name: "PAISAJES",                  icon: "fa-sun",           color: "#4ade80", fx: 100,  fy: 480, r: 48 },
+  
   /* 2. Estructura Funcional y del Cuidado — AZUL */
-  { id: "redvial",    cat: "e2", name: "RED\nVIAL",                  icon: "fa-road",          color: "#5b8def", x: 1240, y: 90,  r: 48 },
-  { id: "transporte", cat: "e2", name: "TRANSPORTE\nPÚBLICO",        icon: "fa-bus",           color: "#5b8def", x: 960,  y: 330, r: 52 },
-  { id: "corredores", cat: "e2", name: "CORREDORES\nVERDES",         icon: "fa-route",         color: "#5b8def", x: 700,  y: 140, r: 50 },
-  { id: "ciclorutas", cat: "e2", name: "CICLORRUTAS",                icon: "fa-person-biking", color: "#5b8def", x: 1390, y: 330, r: 46 },
-  { id: "equip",      cat: "e2", name: "EQUIPAMIENTOS",              icon: "fa-school",        color: "#5b8def", x: 1250, y: 620, r: 50 },
-  { id: "manzanas",   cat: "e2", name: "MANZANAS\nDEL CUIDADO",      icon: "fa-people-roof",   color: "#5b8def", x: 1470, y: 640, r: 52 },
-  { id: "sserv",      cat: "e2", name: "SERVICIOS\nSOCIALES",        icon: "fa-hand-holding-heart", color: "#5b8def", x: 1370, y: 760, r: 46 },
-  { id: "parques",    cat: "e2", name: "PARQUES",                    icon: "fa-tree-city",     color: "#5b8def", x: 1100, y: 760, r: 46 },
-  { id: "scuidado",   cat: "e2", name: "SERVICIOS\nDE CUIDADO",      icon: "fa-heart-pulse",   color: "#5b8def", x: 1230, y: 470, r: 46 },
-  { id: "vivienda",   cat: "e2", name: "VIVIENDA",                   icon: "fa-house",         color: "#5b8def", x: 950,  y: 520, r: 50 },
-  { id: "servpub",    cat: "e2", name: "SERVICIOS\nPÚBLICOS",        icon: "fa-bolt",          color: "#5b8def", x: 820,  y: 770, r: 46 },
-
+  { id: "redvial",    cat: "e2", name: "RED VIAL",                   icon: "fa-road",          color: "#5b8def", fx: 1240, fy: 90,  r: 48 },
+  { id: "transporte", cat: "e2", name: "TRANSPORTE",                 icon: "fa-bus",           color: "#5b8def", fx: 960,  fy: 330, r: 52 },
+  { id: "corredores", cat: "e2", name: "CORREDORES\nVERDES",         icon: "fa-route",         color: "#5b8def", fx: 700,  fy: 140, r: 50 },
+  { id: "ciclorutas", cat: "e2", name: "CICLORUTAS",                 icon: "fa-person-biking", color: "#5b8def", fx: 1390, fy: 330, r: 46 },
+  { id: "equip",      cat: "e2", name: "EQUIPAMIENTOS",              icon: "fa-school",        color: "#5b8def", fx: 1250, fy: 620, r: 50 },
+  { id: "manzanas",   cat: "e2", name: "MANZANAS\nDEL CUIDADO",       icon: "fa-people-roof",   color: "#5b8def", fx: 1470, fy: 640, r: 52 },
+  { id: "sserv",      cat: "e2", name: "SERVICIOS\nSOCIALES",         icon: "fa-hand-holding-heart", color: "#5b8def", fx: 1370, fy: 760, r: 46 },
+  { id: "parques",    cat: "e2", name: "PARQUES",                    icon: "fa-tree-city",     color: "#5b8def", fx: 1100, fy: 760, r: 46 },
+  { id: "scuidado",   cat: "e2", name: "SERVICIOS\nDE CUIDADO",       icon: "fa-heart-pulse",   color: "#5b8def", fx: 1230, fy: 470, r: 46 },
+  { id: "vivienda",   cat: "e2", name: "VIVIENDA",                   icon: "fa-house",         color: "#5b8def", fx: 950,  fy: 520, r: 50 },
+  { id: "servpub",    cat: "e2", name: "SERVICIOS\nPÚBLICOS",         icon: "fa-bolt",          color: "#5b8def", fx: 820,  fy: 770, r: 46 },
+  
   /* 3. Estructura Socioeconómica Creativa e Innovación — NARANJA */
-  { id: "financieros", cat: "e3", name: "CENTROS\nFINANCIEROS",      icon: "fa-building-columns", color: "#ef9552", x: 1700, y: 190, r: 48 },
-  { id: "empresariales", cat: "e3", name: "SERVICIOS\nEMPRESARIALES", icon: "fa-briefcase",      color: "#ef9552", x: 1920, y: 120, r: 50 },
-  { id: "tecnodistrito", cat: "e3", name: "DISTRITO\nTECNOLÓGICO",   icon: "fa-microchip",      color: "#ef9552", x: 2110, y: 270, r: 48 },
-  { id: "industriales",  cat: "e3", name: "ZONAS\nINDUSTRIALES",     icon: "fa-industry",       color: "#ef9552", x: 1860, y: 360, r: 48 },
-  { id: "innovacion",    cat: "e3", name: "INNOVACIÓN",              icon: "fa-lightbulb",      color: "#ef9552", x: 2080, y: 470, r: 46 },
-  { id: "abastecimiento",cat: "e3", name: "CENTROS DE\nABASTECIMIENTO", icon: "fa-truck",      color: "#ef9552", x: 1700, y: 430, r: 48 },
-  { id: "plazas",        cat: "e3", name: "PLAZAS\nDE MERCADO",      icon: "fa-store",          color: "#ef9552", x: 1900, y: 530, r: 46 },
-  { id: "turismo",       cat: "e3", name: "ZONAS DE\nINTERÉS\nTURÍSTICO", icon: "fa-map-location-dot", color: "#ef9552", x: 2090, y: 660, r: 46 },
-  { id: "artesanal",     cat: "e3", name: "PRODUCCIÓN\nARTESANAL",   icon: "fa-palette",        color: "#ef9552", x: 1680, y: 640, r: 46 },
-
+  { id: "financieros", cat: "e3", name: "CENTROS\nFINANCIEROS",       icon: "fa-building-columns", color: "#ef9552", fx: 1700, fy: 190, r: 48 },
+  { id: "empresariales", cat: "e3", name: "SERVICIOS\nEMPRESARIALES",   icon: "fa-briefcase",       color: "#ef9552", fx: 1920, fy: 120, r: 50 },
+  { id: "tecnodistrito", cat: "e3", name: "DISTRITO\nTECNOLÓGICO",      icon: "fa-microchip",       color: "#ef9552", fx: 2110, fy: 270, r: 48 },
+  { id: "industriales",  cat: "e3", name: "ZONAS\nINDUSTRIALES",        icon: "fa-industry",        color: "#ef9552", fx: 1860, fy: 360, r: 48 },
+  { id: "innovacion",    cat: "e3", name: "INNOVACIÓN",                icon: "fa-lightbulb",       color: "#ef9552", fx: 2080, fy: 470, r: 46 },
+  { id: "abastecimiento",cat: "e3", name: "ABASTECIMIENTO",            icon: "fa-truck",           color: "#ef9552", fx: 1700, fy: 430, r: 48 },
+  { id: "plazas",        cat: "e3", name: "PLAZAS DE\nMERCADO",         icon: "fa-store",           color: "#ef9552", fx: 1900, fy: 530, r: 46 },
+  { id: "turismo",       cat: "e3", name: "TURISMO",                   icon: "fa-map-location-dot", color: "#ef9552", fx: 2090, fy: 660, r: 46 },
+  { id: "artesanal",     cat: "e3", name: "ARTESANÍA",                 icon: "fa-palette",         color: "#ef9552", fx: 1680, fy: 640, r: 46 },
+  
   /* 4. Estructura Integradora de Patrimonio — MORADA */
-  { id: "sitios_sagrados", cat: "e4", name: "SISTEMA DE\nSITIOS\nSAGRADOS", icon: "fa-place-of-worship", color: "#a276f2", x: 2360, y: 200, r: 50 },
-  { id: "pinmaterial",     cat: "e4", name: "PATRIMONIO\nINMATERIAL",    icon: "fa-masks-theater",    color: "#a276f2", x: 2500, y: 440, r: 50 },
-  { id: "pnatural",        cat: "e4", name: "PATRIMONIO\nNATURAL",       icon: "fa-globe",              color: "#a276f2", x: 2650, y: 180, r: 48 },
-  { id: "pecomaterial",    cat: "e4", name: "PATRIMONIO ECOLÓGICO\nMATERIAL", icon: "fa-leaf",          color: "#a276f2", x: 2650, y: 640, r: 50 },
+  { id: "sitios_sagrados", cat: "e4", name: "SITIOS\nSAGRADOS",         icon: "fa-place-of-worship", color: "#a276f2", fx: 2360, fy: 200, r: 50 },
+  { id: "pinmaterial",     cat: "e4", name: "PATRIMONIO\nINMATERIAL",    icon: "fa-masks-theater",    color: "#a276f2", fx: 2500, fy: 440, r: 50 },
+  { id: "pnatural",        cat: "e4", name: "PATRIMONIO\nNATURAL",       icon: "fa-globe",            color: "#a276f2", fx: 2650, fy: 180, r: 48 },
+  { id: "pecomaterial",    cat: "e4", name: "PATRIMONIO\nECOLÓGICO",     icon: "fa-leaf",             color: "#a276f2", fx: 2650, fy: 640, r: 50 },
 ];
 
-ODS_NODES.forEach(n => {
-  n.homeX = n.x; n.homeY = n.y;
-  n.vx = 0; n.vy = 0;
-  n.fixed = false;
+ODS_NODES.forEach((n, i) => {
+  n.x = n.fx;
+  n.y = n.fy;
+  n.vx = 0;
+  n.vy = 0;
+  n.index = i;
 });
 
-/* Estructuras */
+/* -------- Estructuras -------- */
 const STRUCT_STYLE = {
   e1: { color: "#4ade80", label: "1. Ecológica Principal", tag: "ECOLÓGICA" },
   e2: { color: "#5b8def", label: "2. Funcional y del Cuidado", tag: "FUNCIONAL Y CUIDADO" },
@@ -77,385 +71,276 @@ const STRUCT_STYLE = {
   e4: { color: "#a276f2", label: "4. Integradora de Patrimonio", tag: "PATRIMONIO" },
 };
 
-/* Tipos de TENSIÓN (no relación) */
-const TENSION_STYLE = {
-  incoherence: { color: "#ef4444", label: "Incoherencia", icon: "fa-triangle-exclamation" },
-  contradiction: { color: "#f472b6", label: "Contradicción", icon: "fa-arrows-cross" },
-  disconnection: { color: "#60a5fa", label: "Desconexión", icon: "fa-link-slash" },
-  hierarchy: { color: "#c084fc", label: "Jerarquía implícita", icon: "fa-arrow-down" },
-  peripheral: { color: "#fbbf24", label: "Periférico discursivo", icon: "fa-comment-dots" },
+/* -------- Tipos de relación -------- */
+const TYPE_STYLE = {
+  soporte:     { color: "#ef9552", width: 2.6, label: "Soporte" },
+  resiliencia: { color: "#5b8def", width: 2.6, label: "Resiliencia" },
+  indirecta:   { color: "#8b93a8", width: 2.4, label: "Indirecta" },
 };
 
-/* 38 TENSIONES - Análisis crítico de las relaciones del POT */
-const RAW_TENSIONS = [
-  /* === 1. Estructura Ecológica Principal — 9 tensiones === */
-  { s: "cerros",     t: "rios",       tension: "incoherence",   directa: true,  cat: "e1", pagina: "92", sustento: "Declara EEP como 'primera ordenante' y 'rectora' (p. 92) pero invierte más en autopistas que en protección ecológica; cerros orientales amenazados por presión urbanizadora." },
-  { s: "quebradas",  t: "humedales",  tension: "hierarchy",     directa: true,  cat: "e1", pagina: "186", sustento: "Humedales mencionados como vitales (p. 186) pero ocupan solo 3 páginas del documento; subordinados a proyectos de drenaje urbano y vialidad." },
-  { s: "humedales",  t: "resiliencia",tension: "disconnection", directa: true,  cat: "e1", pagina: "186", sustento: "Relación entre humedales y resiliencia climática afirmada (p. 186) pero sin mecanismos claros de protección operacional; contradicción con ALO (vía que atraviesa Capellanía)." },
-  { s: "rios",       t: "paramos",    tension: "peripheral",    directa: true,  cat: "e1", pagina: "186", sustento: "Páramos como origen del agua (p. 186) pero fuera del territorio distrital; su protección depende de otras jurisdicciones sin pacto claro." },
-  { s: "bosques",    t: "coberturas", tension: "incoherence",   directa: true,  cat: "e1", pagina: "186", sustento: "'100+ hectáreas de bosques urbanos' prometidas (p. 92) pero sin presupuesto específico ni fechas; competencia con densificación urbana." },
-  { s: "resiliencia",t: "coberturas", tension: "contradiction",  directa: true,  cat: "e1", pagina: "186", sustento: "Resiliencia climática exige coberturas vegetales (p. 186) pero ciudad propone densificación de vivienda en zonas de vegetación." },
-  { s: "reservas",   t: "coberturas", tension: "hierarchy",     directa: true,  cat: "e1", pagina: "186", sustento: "Reservas forestales como garantía de sostenibilidad (p. 186) pero su expansión es periférica respecto a inversiones de cuidado y movilidad." },
-  { s: "areas",      t: "parques_m",  tension: "disconnection",  directa: false, cat: "e1", pagina: "186", sustento: "Áreas protegidas y parques de montaña desconectados en operación: conservación vs. uso público sin claridad sobre límites." },
-  { s: "parque_b",   t: "paisajes",   tension: "incoherence",   directa: true,  cat: "e1", pagina: "186", sustento: "Parque de borde como protección del paisaje (p. 186) pero amenazado por proyectos de infraestructura; 'Reserva Forestal Thomas van der Hammen' bajo presión permanente." },
-
-  /* === 2. Estructura Funcional y del Cuidado — 8 tensiones === */
-  { s: "redvial",    t: "transporte", tension: "contradiction",  directa: true,  cat: "e2", pagina: "43", sustento: "Red vial dedicada a autos pero POT propone 'transporte público prioritario' (p. 43); inversiones reales enfocadas en autopistas (ALO, Caracas, Suba-Cota)." },
-  { s: "corredores", t: "ciclorutas", tension: "incoherence",   directa: true,  cat: "e2", pagina: "43", sustento: "Corredores verdes y ciclorrutas como 'ejes de proximidad' (p. 43) pero diseño basado en automóvil; limitadas a ciclovías fragmentadas." },
-  { s: "manzanas",   t: "sserv",      tension: "disconnection", directa: true,  cat: "e2", pagina: "43", sustento: "Manzanas del Cuidado articularían servicios sociales (p. 43) pero sin conexión clara con red de movilidad que determina acceso real; 30 minutos a pie es frontera invisible." },
-  { s: "equip",      t: "scuidado",   tension: "disconnection", directa: false, cat: "e2", pagina: "43", sustento: "Equipamientos son anclas de servicios de cuidado (p. 43) pero distribuidos de forma fragmentada; 'acceso a 30 minutos' es promesa sin verificación." },
-  { s: "vivienda",   t: "servpub",    tension: "hierarchy",     directa: false, cat: "e2", pagina: "43", sustento: "Servicios públicos como derecho básico pero subordinados a lógica de expansión periférica; miles de hogares aún sin conexión de agua potable." },
-  { s: "equip",      t: "vivienda",   tension: "peripheral",    directa: true,  cat: "e2", pagina: "43", sustento: "Proximidad entre equipamientos y vivienda mencionada (p. 43) pero sin mecanismos; densificación y desplazamiento contradicen esta intención." },
-  { s: "vivienda",   t: "ciclorutas", tension: "incoherence",   directa: false, cat: "e2", pagina: "43", sustento: "Ciclorutas como movilidad cotidiana desde vivienda (p. 43) pero solo 231 km programados para ciudad de 2770 km²; cobertura insuficiente." },
-  { s: "parques",    t: "manzanas",   tension: "hierarchy",     directa: true,  cat: "e2", pagina: "43", sustento: "Parques como infraestructura de cuidado comunitario (p. 43) pero déficit de 6 m²/hab.; espacio público realmente para movilidad, no encuentro." },
-
-  /* === 3. Estructura Socioeconómica Creativa e Innovación — 7 tensiones === */
-  { s: "financieros",t: "empresariales", tension: "hierarchy",  directa: true,  cat: "e3", pagina: "239-241", sustento: "Centros financieros como base del crecimiento (p. 239-241) pero concentrados en norte; estructura subordinada a lógica de aglomeración capitalista vs. 'economía popular'." },
-  { s: "tecnodistrito", t: "innovacion", tension: "incoherence", directa: true,  cat: "e3", pagina: "239-241", sustento: "Distrito tecnológico como nodo de innovación (p. 239-241) pero ubicado en zona de conflictividad ambiental (CTIB en reserva); contradice EEP." },
-  { s: "industriales", t: "turismo", tension: "disconnection", directa: false, cat: "e3", pagina: "239-241", sustento: "Reconversión industrial a turismo (p. 239-241) sin claridad operacional; Restrepo (cueros) vs. destino turístico: son lógicas opuestas sin puente." },
-  { s: "plazas",     t: "empresariales", tension: "contradiction", directa: false, cat: "e3", pagina: "239-241", sustento: "Plazas de mercado como 'economía local' (p. 43) pero POT favorece formalización y servicios empresariales; ambas demandan espacio público incompatible." },
-  { s: "artesanal",  t: "turismo",      tension: "peripheral",   directa: false, cat: "e3", pagina: "239-241", sustento: "Producción artesanal mencionada (p. 239-241) pero sin instrumentos de protección; amenazada por renovación urbana y gentrificación." },
-  { s: "abastecimiento", t: "plazas",  tension: "incoherence",  directa: false, cat: "e3", pagina: "239-241", sustento: "Cadena logística de alimentos (p. 239-241) pero inversiones en modernización corporativa vs. sistemas tradicionales de distribución." },
-  { s: "empresariales", t: "tecnodistrito", tension: "hierarchy", directa: true, cat: "e3", pagina: "239-241", sustento: "Servicios empresariales sustentan innovación (p. 239-241) pero subordinados a inversión extranjera; economía local como periférica." },
-
-  /* === 4. Estructura Integradora de Patrimonio — 3 tensiones === */
-  { s: "sitios_sagrados", t: "pinmaterial", tension: "peripheral", directa: true, cat: "e4", pagina: "126", sustento: "Sitios sagrados como base del patrimonio (p. 126) pero mencionados una sola vez; Cabildo Muisca solicita reconocimiento sin claridad operacional." },
-  { s: "pinmaterial",  t: "pnatural",    tension: "disconnection", directa: true, cat: "e4", pagina: "126", sustento: "Patrimonio inmaterial entrelazado con natural (p. 126) pero sin mecanismos de co-gestión con comunidades; apenas párrafos sobre operación." },
-  { s: "pnatural",     t: "pecomaterial",tension: "hierarchy", directa: true, cat: "e4", pagina: "126", sustento: "Patrimonio natural como conservación de naturaleza (p. 126) pero subordinado a proyectos de infraestructura y densificación." },
-
-  /* === CONEXIONES ENTRE ESTRUCTURAS === */
-  /* EEP ↔ EFC */
-  { s: "coberturas", t: "corredores", tension: "incoherence", directa: true, cat: "e1-e2", pagina: "92", sustento: "Corredores verdes como 'diseño ecosistémico' (p. 92) pero implementados como vías verdes sin protección real de coberturas; presión por densificación." },
-  { s: "humedales", t: "manzanas", tension: "disconnection", directa: false, cat: "e1-e2", pagina: "43", sustento: "Manzanas del Cuidado rodean humedales en teoría (p. 43) pero sin conexión operacional; servicios de cuidado sin articulación con espacios verdes." },
-  { s: "rios", t: "transporte", tension: "contradiction", directa: false, cat: "e1-e2", pagina: "43", sustento: "Ríos como ordenantes ecológicos (p. 92) pero transporte público prioriza vías arteriales que vulneran riberas; ALO versus Bogotá Reverdece." },
-  
-  /* EFC ↔ ESECI */
-  { s: "redvial", t: "financieros", tension: "hierarchy", directa: false, cat: "e2-e3", pagina: "170", sustento: "Red vial conecta centros financieros (p. 170) pero infraestructura funcional subordinada a lógica económica capitalista; cuidado es periférico." },
-  { s: "manzanas", t: "plazas", tension: "contradiction", directa: false, cat: "e2-e3", pagina: "43", sustento: "Manzanas integran plazas de mercado (p. 43) pero 'modernización' y formalización las desplazan; dos visiones incompatibles de economía urbana." },
-  { s: "equip", t: "tecnodistrito", tension: "disconnection", directa: false, cat: "e2-e3", pagina: "170", sustento: "Equipamientos educativos albergan innovación (p. 170) pero sin claridad sobre dónde se ubicará CTIB; conflicto de usos del suelo." },
-
-  /* ESECI ↔ Patrimonio */
-  { s: "turismo", t: "pinmaterial", tension: "contradiction", directa: false, cat: "e3-e4", pagina: "239-241", sustento: "Turismo cultural reconoce patrimonio (p. 239-241) pero 'destino turístico inteligente' y mercantilización amenazan autenticidad del patrimonio inmaterial." },
-  { s: "artesanal", t: "pnatural", tension: "incoherence", directa: false, cat: "e3-e4", pagina: "239-241", sustento: "Producción artesanal depende de naturaleza (p. 239-241) pero sin protección; renovación urbana desplaza áreas artesanales hacia periferia." },
-
-  /* EEP ↔ Patrimonio */
-  { s: "coberturas", t: "pecomaterial", tension: "hierarchy", directa: false, cat: "e1-e4", pagina: "126", sustento: "Coberturas son patrimonio ecológico material (p. 126) pero estructura de patrimonio apenas ocupa 3 páginas vs. 40 de movilidad; subordinación clara." },
-  { s: "paisajes", t: "pinmaterial", tension: "peripheral", directa: false, cat: "e1-e4", pagina: "126", sustento: "Paisajes sostenibles integran patrimonio inmaterial (p. 126) pero sin mecanismos operacionales; conocimiento local mencionado sin protección." },
+/* -------- Aristas -------- */
+const RAW_EDGES = [
+  { s: "cerros",     t: "rios",       type: "soporte",     directa: true,  cat: "e1", pagina: "186", sustento: "Los cerros orientales contienen y alimentan los ríos." },
+  { s: "quebradas",  t: "humedales",  type: "soporte",     directa: true,  cat: "e1", pagina: "186", sustento: "Las quebradas alimentan los humedales." },
+  { s: "humedales",  t: "rios",       type: "soporte",     directa: true,  cat: "e1", pagina: "186", sustento: "Los humedales regulan los ríos." },
+  { s: "humedales",  t: "resiliencia",type: "soporte",     directa: true,  cat: "e1", pagina: "186", sustento: "Los humedales son áreas de resiliencia climática." },
+  { s: "rios",       t: "paramos",    type: "soporte",     directa: true,  cat: "e1", pagina: "186", sustento: "Los ríos nacen en los páramos." },
+  { s: "bosques",    t: "coberturas", type: "soporte",     directa: true,  cat: "e1", pagina: "186", sustento: "Los bosques sustentan las coberturas." },
+  { s: "resiliencia",t: "coberturas", type: "resiliencia", directa: true,  cat: "e1", pagina: "186", sustento: "La resiliencia depende de coberturas." },
+  { s: "reservas",   t: "coberturas", type: "resiliencia", directa: true,  cat: "e1", pagina: "186", sustento: "Las reservas sostienen coberturas." },
+  { s: "cerros",     t: "areas",      type: "indirecta",   directa: false, cat: "e1", pagina: "186", sustento: "Los cerros se vinculan con áreas protegidas." },
+  { s: "areas",      t: "parques_m",  type: "soporte",     directa: false, cat: "e1", pagina: "186", sustento: "Las áreas contienen parques ecológicos." },
+  { s: "areas",      t: "reservas",   type: "soporte",     directa: false, cat: "e1", pagina: "186", sustento: "Las áreas originan reservas." },
+  { s: "parques_m",  t: "coberturas", type: "soporte",     directa: false, cat: "e1", pagina: "186", sustento: "Los parques aportan coberturas." },
+  { s: "humedales",  t: "coberturas", type: "soporte",     directa: false, cat: "e1", pagina: "186", sustento: "Los humedales contribuyen coberturas." },
+  { s: "coberturas", t: "parque_b",   type: "soporte",     directa: true,  cat: "e1", pagina: "186", sustento: "Las coberturas sustentan el parque de borde." },
+  { s: "paramos",    t: "paisajes",   type: "soporte",     directa: false, cat: "e1", pagina: "186", sustento: "Los páramos sustentan paisajes sostenibles." },
+  { s: "redvial",    t: "transporte", type: "soporte",     directa: true,  cat: "e2", pagina: "43", sustento: "La red vial habilita el transporte." },
+  { s: "redvial",    t: "equip",      type: "soporte",     directa: true,  cat: "e2", pagina: "43", sustento: "La red vial conecta equipamientos." },
+  { s: "corredores", t: "transporte", type: "soporte",     directa: true,  cat: "e2", pagina: "43", sustento: "Los corredores integran transporte." },
+  { s: "corredores", t: "ciclorutas", type: "soporte",     directa: true,  cat: "e2", pagina: "43", sustento: "Los corredores contienen ciclorrutas." },
+  { s: "manzanas",   t: "sserv",      type: "soporte",     directa: true,  cat: "e2", pagina: "43", sustento: "Las manzanas cualifican servicios." },
+  { s: "manzanas",   t: "parques",    type: "soporte",     directa: true,  cat: "e2", pagina: "43", sustento: "Las manzanas usan parques." },
+  { s: "equip",      t: "scuidado",   type: "soporte",     directa: false, cat: "e2", pagina: "43", sustento: "Equipamientos y cuidado." },
+  { s: "equip",      t: "sserv",      type: "soporte",     directa: false, cat: "e2", pagina: "43", sustento: "Equipamientos articulan servicios." },
+  { s: "equip",      t: "vivienda",   type: "soporte",     directa: true,  cat: "e2", pagina: "43", sustento: "Equipamientos cerca de vivienda." },
+  { s: "vivienda",   t: "servpub",    type: "soporte",     directa: false, cat: "e2", pagina: "43", sustento: "Vivienda depende de servicios." },
+  { s: "vivienda",   t: "ciclorutas", type: "soporte",     directa: false, cat: "e2", pagina: "43", sustento: "Vivienda accede a ciclorrutas." },
+  { s: "vivienda",   t: "transporte", type: "soporte",     directa: false, cat: "e2", pagina: "43", sustento: "Vivienda conecta con transporte." },
+  { s: "financieros",t: "empresariales", type: "soporte", directa: true,  cat: "e3", pagina: "239-241", sustento: "Financieros sustentan empresas." },
+  { s: "empresariales", t: "tecnodistrito", type: "soporte", directa: true, cat: "e3", pagina: "239-241", sustento: "Empresas alimentan tecnología." },
+  { s: "empresariales", t: "industriales", type: "soporte", directa: true,  cat: "e3", pagina: "239-241", sustento: "Empresas sirven industria." },
+  { s: "tecnodistrito", t: "innovacion", type: "soporte", directa: true,   cat: "e3", pagina: "239-241", sustento: "Tech genera innovación." },
+  { s: "abastecimiento", t: "plazas", type: "soporte",     directa: false, cat: "e3", pagina: "239-241", sustento: "Abastecimiento alimenta plazas." },
+  { s: "plazas",     t: "empresariales", type: "soporte", directa: false,  cat: "e3", pagina: "239-241", sustento: "Plazas integran economía formal." },
+  { s: "industriales", t: "turismo", type: "soporte",      directa: false, cat: "e3", pagina: "239-241", sustento: "Industria reconversión turística." },
+  { s: "artesanal",  t: "turismo",      type: "soporte",   directa: false, cat: "e3", pagina: "239-241", sustento: "Artesanía alimenta turismo." },
+  { s: "sitios_sagrados", t: "pinmaterial", type: "resiliencia", directa: true, cat: "e4", pagina: "126", sustento: "Sitios sagrados sostienen inmaterial." },
+  { s: "pinmaterial",  t: "pnatural",    type: "resiliencia", directa: true, cat: "e4", pagina: "126", sustento: "Inmaterial se entrelaza con natural." },
+  { s: "pnatural",     t: "pecomaterial",type: "resiliencia", directa: true, cat: "e4", pagina: "126", sustento: "Natural integra patrimonio ecológico." },
+  { s: "coberturas", t: "corredores", type: "soporte", directa: true, cat: "e1-e2", pagina: "92", sustento: "Corredores integran coberturas." },
+  { s: "humedales", t: "manzanas", type: "soporte", directa: false, cat: "e1-e2", pagina: "43", sustento: "Humedales rodean manzanas." },
+  { s: "rios", t: "transporte", type: "soporte", directa: false, cat: "e1-e2", pagina: "43", sustento: "Ríos estructuran transporte." },
+  { s: "redvial", t: "financieros", type: "soporte", directa: false, cat: "e2-e3", pagina: "170", sustento: "Red vial conecta financieros." },
+  { s: "manzanas", t: "plazas", type: "soporte", directa: false, cat: "e2-e3", pagina: "43", sustento: "Manzanas integran plazas." },
+  { s: "equip", t: "tecnodistrito", type: "soporte", directa: false, cat: "e2-e3", pagina: "170", sustento: "Educación alberga tech." },
+  { s: "turismo", t: "pinmaterial", type: "soporte", directa: false, cat: "e3-e4", pagina: "239-241", sustento: "Turismo dinamiza inmaterial." },
+  { s: "artesanal", t: "pnatural", type: "soporte", directa: false, cat: "e3-e4", pagina: "239-241", sustento: "Artesanía depende natural." },
+  { s: "coberturas", t: "pecomaterial", type: "resiliencia", directa: false, cat: "e1-e4", pagina: "126", sustento: "Coberturas son patrimonio." },
+  { s: "paisajes", t: "pinmaterial", type: "soporte", directa: false, cat: "e1-e4", pagina: "126", sustento: "Paisajes integran inmaterial." },
 ];
 
 function nodeById(id) { return ODS_NODES.find(n => n.id === id); }
 
-/* Física: longitud de reposo */
-RAW_TENSIONS.forEach(edge => {
-  const s = nodeById(edge.s), t = nodeById(edge.t);
-  if (!s || !t) return;
-  edge.restLength = Math.hypot(t.x - s.x, t.y - s.y);
-});
+/* SIMULACIÓN DE FUERZAS */
+const alpha = 0.3;
+const alphaDecay = 0.02;
+const velocityDecay = 0.6;
 
-/* Defs: arrows + glow */
-function buildDefs(svg) {
-  const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
-  
-  const tensionTypes = Object.keys(TENSION_STYLE);
-  tensionTypes.forEach(type => {
-    const color = TENSION_STYLE[type].color;
-    
-    // Glow filter
-    const filter = document.createElementNS("http://www.w3.org/2000/svg", "filter");
-    filter.setAttribute("id", `glow-${type}`);
-    filter.setAttribute("x", "-50%");
-    filter.setAttribute("y", "-50%");
-    filter.setAttribute("width", "200%");
-    filter.setAttribute("height", "200%");
-    
-    const feGaussianBlur = document.createElementNS("http://www.w3.org/2000/svg", "feGaussianBlur");
-    feGaussianBlur.setAttribute("stdDeviation", "2");
-    feGaussianBlur.setAttribute("result", "coloredBlur");
-    filter.appendChild(feGaussianBlur);
-    
-    const feMerge = document.createElementNS("http://www.w3.org/2000/svg", "feMerge");
-    const feMergeNode1 = document.createElementNS("http://www.w3.org/2000/svg", "feMergeNode");
-    feMergeNode1.setAttribute("in", "coloredBlur");
-    const feMergeNode2 = document.createElementNS("http://www.w3.org/2000/svg", "feMergeNode");
-    feMergeNode2.setAttribute("in", "SourceGraphic");
-    feMerge.appendChild(feMergeNode1);
-    feMerge.appendChild(feMergeNode2);
-    filter.appendChild(feMerge);
-    defs.appendChild(filter);
-    
-    // Arrow marker
-    const marker = document.createElementNS("http://www.w3.org/2000/svg", "marker");
-    marker.setAttribute("id", `arrow-${type}`);
+function simulateForces(iterations = 300) {
+  for (let iter = 0; iter < iterations; iter++) {
+    let alphaVal = alpha * Math.pow(1 - alphaDecay, iter);
+    if (alphaVal < 0.001) break;
+
+    // Fuerzas repulsivas entre nodos
+    for (let i = 0; i < ODS_NODES.length; i++) {
+      for (let j = i + 1; j < ODS_NODES.length; j++) {
+        const a = ODS_NODES[i], b = ODS_NODES[j];
+        const dx = b.x - a.x, dy = b.y - a.y;
+        const dist = Math.hypot(dx, dy) + 1;
+        const force = alphaVal * 150 / (dist * dist);
+        
+        a.vx -= (dx / dist) * force;
+        a.vy -= (dy / dist) * force;
+        b.vx += (dx / dist) * force;
+        b.vy += (dy / dist) * force;
+      }
+    }
+
+    // Fuerzas de atracción (aristas)
+    RAW_EDGES.forEach(edge => {
+      const a = nodeById(edge.s), b = nodeById(edge.t);
+      if (!a || !b) return;
+      const dx = b.x - a.x, dy = b.y - a.y;
+      const dist = Math.hypot(dx, dy);
+      const k = 0.05;
+      
+      a.vx += (dx / dist) * k * alphaVal;
+      a.vy += (dy / dist) * k * alphaVal;
+      b.vx -= (dx / dist) * k * alphaVal;
+      b.vy -= (dy / dist) * k * alphaVal;
+    });
+
+    // Actualizar posiciones
+    ODS_NODES.forEach(n => {
+      n.vx *= velocityDecay;
+      n.vy *= velocityDecay;
+      n.x += n.vx;
+      n.y += n.vy;
+      
+      // Mantener dentro del canvas
+      n.x = Math.max(n.r, Math.min(containerWidth - n.r, n.x));
+      n.y = Math.max(n.r, Math.min(containerHeight - n.r, n.y));
+    });
+  }
+}
+
+function render() {
+  const container = document.getElementById("network-visualization");
+  container.innerHTML = "";
+  containerWidth = container.clientWidth || 1400;
+  containerHeight = container.clientHeight || 800;
+
+  simulateForces(200);
+
+  svg = document.createElementNS(SVG_NS, "svg");
+  svg.setAttribute("viewBox", `0 0 ${containerWidth} ${containerHeight}`);
+  svg.setAttribute("style", "width: 100%; height: 100%;");
+
+  // Defs
+  const defs = document.createElementNS(SVG_NS, "defs");
+  Object.values(TYPE_STYLE).forEach((style, idx) => {
+    const marker = document.createElementNS(SVG_NS, "marker");
+    marker.setAttribute("id", `arrow-${idx}`);
     marker.setAttribute("markerWidth", "10");
     marker.setAttribute("markerHeight", "10");
     marker.setAttribute("refX", "9");
     marker.setAttribute("refY", "3");
     marker.setAttribute("orient", "auto-start-reverse");
-    
-    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    path.setAttribute("d", "M0,0 L0,6 L9,3 z");
-    path.setAttribute("fill", color);
+    const path = document.createElementNS(SVG_NS, "path");
+    path.setAttribute("d", "M 0 0 L 10 3 L 0 6 Z");
+    path.setAttribute("fill", style.color);
     marker.appendChild(path);
     defs.appendChild(marker);
   });
-  
   svg.appendChild(defs);
-}
 
-/* Render edges (tensiones) */
-function drawEdges(svg) {
-  const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
-  g.setAttribute("class", "edges-layer");
-
-  RAW_TENSIONS.forEach((edge, i) => {
+  // Aristas
+  const edgesLayer = document.createElementNS(SVG_NS, "g");
+  edgesLayer.setAttribute("class", "edges-layer");
+  
+  RAW_EDGES.forEach((edge, i) => {
     const s = nodeById(edge.s), t = nodeById(edge.t);
     if (!s || !t) return;
-
-    const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
-    group.setAttribute("class", `edge-group`);
+    const style = TYPE_STYLE[edge.type];
+    
+    const group = document.createElementNS(SVG_NS, "g");
+    group.setAttribute("class", "edge-group");
     group.setAttribute("data-index", i);
-    group.setAttribute("data-tension", edge.tension);
+    group.setAttribute("data-type", edge.type);
     group.setAttribute("data-cat", edge.cat);
-    group.setAttribute("data-source", s.id);
-    group.setAttribute("data-target", t.id);
 
-    const style = TENSION_STYLE[edge.tension];
-
-    const d = `M ${s.x} ${s.y} L ${t.x} ${t.y}`;
-
-    const hit = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    hit.setAttribute("d", d);
-    hit.setAttribute("class", "ods-edge edge-hit");
-
-    const visual = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    visual.setAttribute("d", d);
-    visual.setAttribute("class", "ods-edge edge-visual");
+    const visual = document.createElementNS(SVG_NS, "path");
+    visual.setAttribute("d", `M ${s.x} ${s.y} L ${t.x} ${t.y}`);
     visual.setAttribute("stroke", style.color);
-    visual.setAttribute("stroke-width", "2.8");
+    visual.setAttribute("stroke-width", style.width);
+    visual.setAttribute("fill", "none");
     if (!edge.directa) visual.setAttribute("stroke-dasharray", "6,5");
-    if (edge.directa) visual.setAttribute("marker-end", `url(#arrow-${edge.tension})`);
-    visual.setAttribute("opacity", "0.85");
+    if (edge.directa) visual.setAttribute("marker-end", "url(#arrow-0)");
+    visual.setAttribute("opacity", "0.8");
 
     group.appendChild(visual);
-    group.appendChild(hit);
-    group.addEventListener("click", () => showTensionInfo(i));
-    g.appendChild(group);
-
-    edge._el = { visual, hit, d };
+    edgesLayer.appendChild(group);
   });
+  svg.appendChild(edgesLayer);
 
-  svg.appendChild(g);
-}
-
-/* Render nodes */
-function drawNodes(svg) {
-  const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
-  g.setAttribute("class", "nodes-layer");
+  // Nodos
+  const nodesLayer = document.createElementNS(SVG_NS, "g");
+  nodesLayer.setAttribute("class", "nodes-layer");
 
   ODS_NODES.forEach(node => {
-    const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
-    group.setAttribute("class", `ods-node ods-node-${node.cat}`);
-    group.setAttribute("data-id", node.id);
+    const g = document.createElementNS(SVG_NS, "g");
+    g.setAttribute("class", "ods-node");
+    g.setAttribute("data-id", node.id);
+    g.setAttribute("data-cat", node.cat);
+    g.style.cursor = "pointer";
 
-    const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    const circle = document.createElementNS(SVG_NS, "circle");
     circle.setAttribute("cx", node.x);
     circle.setAttribute("cy", node.y);
     circle.setAttribute("r", node.r);
     circle.setAttribute("fill", node.color);
-    circle.setAttribute("opacity", "0.92");
+    circle.setAttribute("opacity", "0.85");
 
-    const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    const text = document.createElementNS(SVG_NS, "text");
     text.setAttribute("x", node.x);
     text.setAttribute("y", node.y);
     text.setAttribute("text-anchor", "middle");
-    text.setAttribute("dominant-baseline", "central");
-    text.setAttribute("font-size", "9px");
-    text.setAttribute("font-weight", "700");
+    text.setAttribute("dominant-baseline", "middle");
+    text.setAttribute("font-size", "10");
+    text.setAttribute("font-weight", "600");
     text.setAttribute("fill", "#0a0e17");
-    text.setAttribute("pointer-events", "none");
     text.textContent = node.name;
 
-    group.appendChild(circle);
-    group.appendChild(text);
-    g.appendChild(group);
-
-    node._el = { circle, text, group };
+    g.appendChild(circle);
+    g.appendChild(text);
+    nodesLayer.appendChild(g);
   });
 
-  svg.appendChild(g);
+  svg.appendChild(nodesLayer);
+  document.getElementById("network-visualization").appendChild(svg);
 }
 
-/* Initialize */
-function init() {
-  const svg = document.getElementById("networkViz");
-  buildDefs(svg);
-  drawEdges(svg);
-  drawNodes(svg);
+function filterNetwork(mode) {
+  document.querySelectorAll(".network-controls .control-btn").forEach(btn => btn.classList.remove("active"));
+  if (event && event.currentTarget) event.currentTarget.classList.add("active");
 
-  updateMetrics();
-  populateTable();
+  const groups = {
+    all:     { types: ["soporte", "resiliencia", "indirecta"], cats: ["e1", "e2", "e3", "e4", "e1-e2", "e2-e3", "e3-e4", "e1-e4"] },
+    soporte:     { types: ["soporte"],             cats: ["e1", "e2", "e3", "e4", "e1-e2", "e2-e3", "e3-e4", "e1-e4"] },
+    resiliencia: { types: ["resiliencia"],         cats: ["e1", "e2", "e3", "e4", "e1-e2", "e2-e3", "e3-e4", "e1-e4"] },
+    indirecta:   { types: ["indirecta"],           cats: ["e1", "e2", "e3", "e4", "e1-e2", "e2-e3", "e3-e4", "e1-e4"] },
+    e1:          { types: ["soporte", "resiliencia", "indirecta"], cats: ["e1"] },
+    e2:          { types: ["soporte", "resiliencia", "indirecta"], cats: ["e2"] },
+    e3:          { types: ["soporte", "resiliencia", "indirecta"], cats: ["e3"] },
+    e4:          { types: ["soporte", "resiliencia", "indirecta"], cats: ["e4"] },
+  };
+  const active = groups[mode] || groups.all;
 
-  // Legend listeners
-  document.querySelectorAll(".legend-item").forEach(item => {
-    item.querySelector("input").addEventListener("change", refreshEdgeVisibility);
+  document.querySelectorAll(".legend-item[data-mode='type']").forEach(item => {
+    const type = item.dataset.type;
+    const input = item.querySelector("input");
+    const show = active.types.includes(type);
+    input.checked = show;
+    item.classList.toggle("off", !show);
+    if (show) typeOff.delete(type); else typeOff.add(type);
   });
 
-  // Close panel
-  document.getElementById("edgeInfoClose").addEventListener("click", hideTensionInfo);
-}
-
-/* Show tension info panel */
-function showTensionInfo(index) {
-  const edge = RAW_TENSIONS[index];
-  const s = nodeById(edge.s), t = nodeById(edge.t);
-  const style = TENSION_STYLE[edge.tension];
-  const struct = STRUCT_STYLE[edge.cat] || { label: "Conexión entre estructuras", color: "#fff" };
-
-  document.getElementById("edgeInfoTitle").textContent = `${s.name.replace(/\n/g, " ")} → ${t.name.replace(/\n/g, " ")}`;
-
-  const typeEl = document.getElementById("edgeInfoType");
-  typeEl.textContent = style.label + " · " + struct.label + (edge.directa ? " · Directa" : " · Inferida");
-  typeEl.style.color = style.color;
-  typeEl.style.background = style.color + "26";
-
-  document.getElementById("edgeInfoQuote").textContent = edge.sustento;
-  document.getElementById("edgeInfoPage").textContent = `Análisis crítico: p. ${edge.pagina}`;
-  document.getElementById("edgeInfoPanel").classList.add("visible");
-
-  // Highlight row
-  document.querySelectorAll(".matrix-row[data-edge]").forEach(row => {
-    row.classList.toggle("row-highlight", Number(row.dataset.edge) === index);
+  document.querySelectorAll(".legend-item[data-mode='cat']").forEach(item => {
+    const cat = item.dataset.cat;
+    const input = item.querySelector("input");
+    const show = active.cats.includes(cat);
+    input.checked = show;
+    item.classList.toggle("off", !show);
+    if (show) catOff.delete(cat); else catOff.add(cat);
   });
-}
-
-function hideTensionInfo() {
-  document.getElementById("edgeInfoPanel").classList.remove("visible");
-  document.querySelectorAll(".matrix-row[data-edge]").forEach(row => row.classList.remove("row-highlight"));
-}
-
-/* Update metrics */
-function updateMetrics() {
-  document.getElementById("metricNodes").textContent = ODS_NODES.length;
-  document.getElementById("metricTensions").textContent = RAW_TENSIONS.length;
-
-  const counts = {};
-  Object.keys(TENSION_STYLE).forEach(t => counts[t] = 0);
-  RAW_TENSIONS.forEach(e => counts[e.tension]++);
-
-  document.getElementById("metricIncoherence").textContent = counts.incoherence;
-  document.getElementById("metricContradiction").textContent = counts.contradiction;
-  document.getElementById("metricDisconnection").textContent = counts.disconnection;
-  document.getElementById("metricHierarchy").textContent = counts.hierarchy;
-  document.getElementById("metricPeripheral").textContent = counts.peripheral;
-
-  const maxTension = Object.entries(counts).reduce((a, b) => a[1] > b[1] ? a : b)[0];
-  const maxNode = RAW_TENSIONS.filter(e => e.tension === maxTension).reduce((a, b) => {
-    const aCount = RAW_TENSIONS.filter(t => t.s === a.s || t.t === a.s).length;
-    const bCount = RAW_TENSIONS.filter(t => t.s === b.s || t.t === b.s).length;
-    return aCount >= bCount ? a : b;
-  });
-  document.getElementById("metricIncTension").textContent = nodeById(maxNode.s).name.replace(/\n/g, " ");
-
-  const density = ((RAW_TENSIONS.length * 2) / (ODS_NODES.length * (ODS_NODES.length - 1))) * 100;
-  document.getElementById("metricTensionDensity").textContent = density.toFixed(1) + "%";
-}
-
-/* Populate table */
-function populateTable() {
-  const container = document.querySelector(".matrix-container");
-  const header = container.querySelector(".matrix-row.header");
-
-  RAW_TENSIONS.forEach((edge, i) => {
-    const s = nodeById(edge.s), t = nodeById(edge.t);
-    const style = TENSION_STYLE[edge.tension];
-    const struct = STRUCT_STYLE[edge.cat] || { label: "Inter-estructuras" };
-
-    const row = document.createElement("div");
-    row.className = "matrix-row";
-    row.dataset.edge = i;
-
-    row.innerHTML = `
-      <div class="matrix-cell"><span class="swatch-tag" style="background-color: ${struct.color}20; border-left: 3px solid ${struct.color};"></span> ${struct.label}</div>
-      <div class="matrix-cell">${s.name.replace(/\n/g, " ")} ➞ ${t.name.replace(/\n/g, " ")}</div>
-      <div class="matrix-cell">${edge.directa ? "Continua" : "Discontinua"}</div>
-      <div class="matrix-cell"><span class="legend-swatch" style="border-color: ${style.color};"></span> ${style.label}</div>
-      <div class="matrix-cell">p. ${edge.pagina}</div>
-      <div class="matrix-cell quote-cell">${edge.sustento}</div>
-    `;
-
-    row.addEventListener("click", () => showTensionInfo(i));
-    container.appendChild(row);
-  });
-}
-
-/* Filter network */
-const tensionOff = new Set();
-const nodeOff = new Set();
-const catOff = new Set();
-
-function filterNetwork(filter) {
-  tensionOff.clear();
-  nodeOff.clear();
-  catOff.clear();
-
-  if (filter !== "all") {
-    if (Object.keys(TENSION_STYLE).includes(filter)) {
-      Object.keys(TENSION_STYLE).forEach(t => {
-        if (t !== filter) tensionOff.add(t);
-      });
-    } else if (filter.startsWith("e")) {
-      Object.keys(STRUCT_STYLE).forEach(c => {
-        if (c !== filter) catOff.add(c);
-      });
-    }
-  }
 
   refreshEdgeVisibility();
-  document.querySelectorAll(".control-btn").forEach(btn => btn.classList.remove("active"));
-  event.target.classList.add("active");
 }
 
 function refreshEdgeVisibility() {
-  document.querySelectorAll(".edge-group").forEach(group => {
-    const tension = group.dataset.tension;
-    const cat = group.dataset.cat;
-    const s = group.dataset.source;
-    const t = group.dataset.target;
-    const hidden = tensionOff.has(tension) || nodeOff.has(s) || nodeOff.has(t) || catOff.has(cat);
-    group.classList.toggle("hidden-edge", hidden);
+  document.querySelectorAll(".edge-group").forEach(g => {
+    const type = g.dataset.type;
+    const cat = g.dataset.cat;
+    const visible = !typeOff.has(type) && !catOff.has(cat);
+    g.style.display = visible ? "block" : "none";
+  });
+}
+
+function setupLegendToggle() {
+  document.querySelectorAll(".legend-item[data-mode='type'] input").forEach(input => {
+    input.addEventListener("change", () => refreshEdgeVisibility());
+  });
+  document.querySelectorAll(".legend-item[data-mode='cat'] input").forEach(input => {
+    input.addEventListener("change", () => refreshEdgeVisibility());
   });
 }
 
 function toggleInsight(insight) {
-  if (insight === "todas") {
-    tensionOff.clear();
-    nodeOff.clear();
-    catOff.clear();
-  } else {
-    const isActive = tensionOff.has(insight);
-    if (isActive) {
-      tensionOff.delete(insight);
-    } else {
-      Object.keys(TENSION_STYLE).forEach(t => {
-        if (t !== insight) tensionOff.add(t);
-      });
-    }
-  }
-  refreshEdgeVisibility();
+  console.log("Insight:", insight);
 }
 
-/* Actions */
-function generateTensionReport() {
-  alert("Generando reporte de tensiones...");
-}
-
-function downloadTensionTable() {
-  alert("Descargando tabla...");
-}
-
-function shareAnalysis() {
-  alert("Compartiendo análisis...");
-}
-
-/* Start */
-document.addEventListener("DOMContentLoaded", init);
+document.addEventListener("DOMContentLoaded", () => {
+  render();
+  setupLegendToggle();
+});
