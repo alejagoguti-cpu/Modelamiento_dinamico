@@ -45,7 +45,62 @@ ODS_NODES.forEach(n => {
   n.homeX = n.x; n.homeY = n.y;
   n.vx = 0; n.vy = 0;
   n.fixed = false; // true mientras el usuario lo está arrastrando
+  /* posición de "casa" original, para poder restaurarla luego de una animación temporal
+     (ver animateBridgeNode) sin perder de vista el ancla real del nodo */
+  n.baseHomeX = n.homeX; n.baseHomeY = n.homeY;
 });
+
+/* -------- HALLAZGOS del análisis de la red --------
+   Nodos que funcionan como articuladores/conectores de la red: al hacer TRIPLE CLIC
+   sobre ellos (además de aislar su flujo, comportamiento ya existente) se muestra un
+   popup con el hallazgo. ODS 9 además "demuestra" el hallazgo moviéndose ODS 3
+   temporalmente entre ODS 4 y ODS 9, y luego regresa a su lugar. */
+const FINDINGS = {
+  ods1: {
+    title: "ODS 1 · Nodo articulador de la red",
+    text: "Al aislar su flujo, el ODS 1 funciona como uno de los principales nodos articuladores de la red. Insight: si se interviene sobre la pobreza, potencialmente se afectan diferentes dimensiones de la red al mismo tiempo.",
+  },
+  ods13: {
+    title: "ODS 13 · El cambio climático funciona como un articulador",
+    text: "El cambio climático conecta dimensiones que inicialmente parecían separadas. Funciona como una condición transversal: un problema climático puede tener consecuencias sociales, económicas, urbanas y ambientales.",
+  },
+  ods9: {
+    title: "ODS 9 · Conecta grupos diferentes de la red",
+    text: "El ODS 9 no solamente está conectado con varios objetivos, sino que conecta grupos diferentes de la red. Para evidenciarlo, ODS 3 se desplaza un momento hacia la izquierda, entre ODS 4 y ODS 9, y luego vuelve a su lugar.",
+    bridge: { node: "ods3", between: ["ods4", "ods9"] },
+  },
+};
+
+/* Relación con hallazgo propio: al hacer CLIC en esa línea (comportamiento normal de
+   sustento documental) también se muestra el popup del hallazgo, y además se aísla
+   la vista para mostrar SOLO esos dos nodos y la línea entre ellos. */
+const EDGE_FINDINGS = {
+  "ods1->ods13": {
+    title: "ODS 1 ↔ ODS 13 · Relación inesperada",
+    text: "El ODS 1 no entiende la pobreza únicamente como un problema económico: también exige reducir la vulnerabilidad de las personas pobres frente a fenómenos relacionados con el clima.",
+    nodes: ["ods1", "ods13"],
+  },
+};
+
+/* Nodos que presentan una CONTRADICCIÓN dentro del análisis: al hacer clic en su
+   entrada del panel rojo "Contradicción" se aísla solo ese nodo (sin sus vecinos)
+   y se muestra la cita/observación correspondiente. */
+const CONTRADICTIONS = {
+  ods16: {
+    title: "ODS 16 · Contradicción",
+    text: "“Sin paz, estabilidad, derechos humanos y gobernabilidad efectiva basada en el Estado de derecho, no es posible alcanzar el desarrollo sostenible.”",
+  },
+  ods14: {
+    title: "ODS 14 · Contradicción",
+    text: "“Los océanos del mundo —su temperatura, química, corrientes y vida— mueven sistemas mundiales que hacen que la Tierra sea habitable para la humanidad.”",
+  },
+  ods11: {
+    title: "ODS 11 · Contradicción",
+    text: "Si las ciudades concentran actividad económica, desarrollo social, ciencia, cultura y productividad, ¿por qué el ODS 11 no aparece como uno de los principales articuladores de nuestra red?",
+  },
+};
+
+function edgeKey(edge) { return edge.s + "->" + edge.t; }
 
 /* El punteado depende de si la relación es "no directa" (inferida): las relaciones
    directas se dibujan con línea sólida y las inferidas con línea punteada.
@@ -186,7 +241,7 @@ function drawEdges(svg) {
     const d = edgePathData(edge, s, t);
 
     const group = document.createElementNS(SVG_NS, "g");
-    group.setAttribute("class", "edge-group");
+    group.setAttribute("class", "edge-group" + (EDGE_FINDINGS[edgeKey(edge)] ? " has-finding" : ""));
     group.setAttribute("data-index", i);
     group.setAttribute("data-type", edge.type);
     group.setAttribute("data-source", edge.s);
@@ -208,7 +263,11 @@ function drawEdges(svg) {
 
     group.appendChild(visual);
     group.appendChild(hit);
-    group.addEventListener("click", () => showEdgeInfo(i));
+    group.addEventListener("click", () => {
+      showEdgeInfo(i);
+      const finding = EDGE_FINDINGS[edgeKey(edge)];
+      if (finding) activateEdgeFinding(edgeKey(edge));
+    });
     g.appendChild(group);
 
     /* referencias para poder recalcular el trazo en cada frame de física */
@@ -225,7 +284,7 @@ function drawNodes(svg) {
 
   ODS_NODES.forEach(node => {
     const group = document.createElementNS(SVG_NS, "g");
-    group.setAttribute("class", "ods-node");
+    group.setAttribute("class", "ods-node" + (FINDINGS[node.id] ? " has-finding" : ""));
     group.setAttribute("data-id", node.id);
 
     const circle = document.createElementNS(SVG_NS, "circle");
@@ -499,6 +558,10 @@ function clearSpotlight() {
   spotlight = null;
   document.querySelectorAll(".insight-card").forEach(c => c.classList.remove("active"));
   applySpotlightState();
+  hideFindingPopup();
+  clearActivePanelButtons();
+  activeContradiction = null;
+  activeEdgeFinding = null;
 }
 
 function setSpotlightNodes(nodeIds, expand) {
@@ -563,7 +626,128 @@ function toggleNodeFlow(id) {
     clearSpotlight();
   } else {
     setSpotlightNodes([id], true);
+    const finding = FINDINGS[id];
+    if (finding) {
+      showFindingPopup(finding);
+      setActivePanelButton("finding", id);
+      if (finding.bridge) {
+        animateBridgeNode(finding.bridge.node, finding.bridge.between);
+      }
+    }
   }
+}
+
+/* -------- contradicciones: aísla SOLO ese nodo (sin vecinos) y muestra su cita -------- */
+let activeContradiction = null;
+function toggleContradiction(id) {
+  const already = activeContradiction === id;
+  if (already) {
+    clearSpotlight();
+    return;
+  }
+  setSpotlightNodes([id], false);
+  activeContradiction = id;
+  setActivePanelButton("contradiction", id);
+  const data = CONTRADICTIONS[id];
+  if (data) showFindingPopup(data, "contradiction");
+}
+
+/* -------- relación con hallazgo propio (ODS 1 ↔ ODS 13): aísla SOLO esos dos nodos
+   y la línea entre ellos -------- */
+let activeEdgeFinding = null;
+function activateEdgeFinding(key) {
+  const finding = EDGE_FINDINGS[key];
+  if (!finding) return;
+  const already = activeEdgeFinding === key;
+  if (already) {
+    clearSpotlight();
+    return;
+  }
+  const [s, t] = key.split("->");
+  const idx = RAW_EDGES.findIndex(e => e.s === s && e.t === t);
+  if (idx >= 0) showEdgeInfo(idx);
+  setSpotlightNodes(finding.nodes, false);
+  activeEdgeFinding = key;
+  setActivePanelButton("finding", "edge:" + key);
+  showFindingPopup(finding);
+}
+
+/* -------- estado activo de los chips de la barra "Hallazgos" / "Contradicción" -------- */
+function clearActivePanelButtons() {
+  document.querySelectorAll(".fc-chip").forEach(b => b.classList.remove("active"));
+}
+
+function setActivePanelButton(kind, key) {
+  clearActivePanelButtons();
+  const selector = kind === "finding"
+    ? `.fc-chip[data-finding="${key}"]`
+    : `.fc-chip[data-contradiction="${key}"]`;
+  document.querySelector(selector)?.classList.add("active");
+}
+
+/* -------- conecta los chips de la barra "Hallazgos" y "Contradicción" -------- */
+function setupSidePanels() {
+  document.querySelectorAll(".fc-chip[data-finding]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const key = btn.dataset.finding;
+      if (key.startsWith("edge:")) {
+        activateEdgeFinding(key.slice(5));
+      } else {
+        toggleNodeFlow(key);
+      }
+    });
+  });
+
+  document.querySelectorAll(".fc-chip[data-contradiction]").forEach(btn => {
+    btn.addEventListener("click", () => toggleContradiction(btn.dataset.contradiction));
+  });
+}
+
+/* -------- popup de hallazgo / contradicción (sobre el lienzo de la red) --------
+   Permanece visible hasta que el usuario lo cierra manualmente o se limpia
+   el spotlight (clic en otra tarjeta/chip, o de nuevo en el mismo). */
+function showFindingPopup(finding, variant) {
+  const popup = document.getElementById("findingPopup");
+  if (!popup) return;
+  const isContradiction = variant === "contradiction";
+  popup.classList.toggle("contradiction", isContradiction);
+  document.getElementById("findingPopupBadge").innerHTML = isContradiction
+    ? '<i class="fa-solid fa-triangle-exclamation"></i> Contradicción'
+    : '<i class="fa-solid fa-magnifying-glass-chart"></i> Hallazgo';
+  document.getElementById("findingPopupTitle").textContent = finding.title;
+  document.getElementById("findingPopupText").textContent = finding.text;
+  popup.classList.add("visible");
+}
+
+function hideFindingPopup() {
+  document.getElementById("findingPopup")?.classList.remove("visible");
+}
+
+/* -------- animación "puente": mueve temporalmente un nodo hacia una posición
+   intermedia entre otros dos (para evidenciar visualmente que conecta dos grupos)
+   y luego lo regresa a su lugar original. Reutiliza la física de anclaje ya
+   existente: basta con mover el ancla (home) y dejar que el resorte lo lleve. -------- */
+let bridgeTimer = null;
+function animateBridgeNode(nodeId, betweenIds, holdMs = 1600) {
+  const node = nodeById(nodeId);
+  const a = nodeById(betweenIds[0]);
+  const b = nodeById(betweenIds[1]);
+  if (!node || !a || !b) return;
+  if (bridgeTimer) { clearTimeout(bridgeTimer); bridgeTimer = null; }
+
+  const midX = (a.baseHomeX + b.baseHomeX) / 2;
+  const midY = (a.baseHomeY + b.baseHomeY) / 2 - 90; /* desplazado para no solaparse */
+
+  node.homeX = midX;
+  node.homeY = midY;
+  wakePhysics();
+
+  bridgeTimer = setTimeout(() => {
+    node.homeX = node.baseHomeX;
+    node.homeY = node.baseHomeY;
+    wakePhysics();
+    bridgeTimer = null;
+  }, holdMs);
 }
 
 /* -------- tarjetas de insights (arriba de la red) -------- */
@@ -606,6 +790,7 @@ function setupLegendToggle() {
   });
 
   document.getElementById("edgeInfoClose")?.addEventListener("click", hideEdgeInfo);
+  document.getElementById("findingPopupClose")?.addEventListener("click", hideFindingPopup);
 }
 
 /* -------- controles Todos / Alineados / Conflictos -------- */
@@ -631,6 +816,515 @@ function filterNetwork(mode) {
   refreshEdgeVisibility();
 }
 
+/* ==========================================================
+   RED DE ESTRUCTURAS DEL POT (estática) — segunda red
+   - Tomada 1 a 1 de la tabla 'Red_relaciones_POT_CORREGIDA_FRASES_EXACTAS.xlsx'.
+   - Nodos fijos: SIN arrastre, SIN zoom/paneo (se ve completa siempre).
+   - Clic en cualquier línea -> panel 'Sustento' (frase + página + artículo).
+   - Panel derecho '1. Relaciones que favorecen los ODS': al hacer clic en
+     cada relación se resaltan sus líneas en la red y aparecen las insignias
+     ODS correspondientes conectadas con una línea punteada.
+   ========================================================== */
+
+const PN_NODES = [
+  { id: "p_corredores_montanosos", name: "Corredores montañosos", cluster: "EEP", color: "#3ddc84", icon: "fa-mountain", x: 276.9, y: 48.0, r: 14.0 },
+  { id: "p_rios", name: "Ríos", cluster: "EEP", color: "#3ddc84", icon: "fa-water", x: 136.2, y: 99.1, r: 21.0 },
+  { id: "p_quebradas", name: "Quebradas", cluster: "EEP", color: "#3ddc84", icon: "fa-cloud-rain", x: 220.2, y: 93.5, r: 14.0 },
+  { id: "p_humedales", name: "Humedales", cluster: "EEP", color: "#3ddc84", icon: "fa-droplet", x: 267.8, y: 153.0, r: 26.6 },
+  { id: "p_cerros_orientales", name: "Cerros Orientales", cluster: "EEP", color: "#3ddc84", icon: "fa-mountain-sun", x: 351.8, y: 41.0, r: 14.0 },
+  { id: "p_complejos_de_paramos", name: "Complejos de páramos", cluster: "EEP", color: "#3ddc84", icon: "fa-mountain", x: 111.0, y: 239.1, r: 14.0 },
+  { id: "p_bosques_urbanos", name: "Bosques urbanos", cluster: "EEP", color: "#3ddc84", icon: "fa-seedling", x: 138.3, y: 157.9, r: 14.0 },
+  { id: "p_coberturas_vegetales", name: "Coberturas vegetales", cluster: "EEP", color: "#3ddc84", icon: "fa-leaf", x: 169.1, y: 230.0, r: 23.8 },
+  { id: "p_areas_de_resiliencia_climatica", name: "Áreas de resiliencia climática", cluster: "EEP", color: "#3ddc84", icon: "fa-temperature-arrow-up", x: 188.7, y: 157.9, r: 21.0 },
+  { id: "p_areas_protegidas", name: "Áreas protegidas", cluster: "EEP", color: "#3ddc84", icon: "fa-shield-halved", x: 336.4, y: 94.2, r: 14.0 },
+  { id: "p_parques_ecologicos_de_montana", name: "Parques ecológicos de montaña", cluster: "EEP", color: "#3ddc84", icon: "fa-tree", x: 379.1, y: 140.4, r: 14.0 },
+  { id: "p_reservas_forestales", name: "Reservas forestales", cluster: "EEP", color: "#3ddc84", icon: "fa-tree", x: 344.1, y: 258.0, r: 14.0 },
+  { id: "p_parques_de_borde", name: "Parques de borde", cluster: "EEP", color: "#3ddc84", icon: "fa-house-chimney", x: 233.5, y: 254.5, r: 14.0 },
+  { id: "p_paisajes_sostenibles", name: "Paisajes sostenibles", cluster: "EEP", color: "#3ddc84", icon: "fa-mountain-sun", x: 172.6, y: 291.6, r: 14.0 },
+  { id: "p_equipamientos", name: "Equipamientos", cluster: "EFC", color: "#5b8def", icon: "fa-building-columns", x: 367.9, y: 377.0, r: 23.8 },
+  { id: "p_servicios_de_cuidado", name: "Servicios de cuidado", cluster: "EFC", color: "#5b8def", icon: "fa-hand-holding-heart", x: 246.8, y: 372.1, r: 14.0 },
+  { id: "p_servicios_sociales", name: "Servicios sociales", cluster: "EFC", color: "#5b8def", icon: "fa-people-roof", x: 313.3, y: 429.5, r: 14.0 },
+  { id: "p_vivienda", name: "Vivienda", cluster: "EFC", color: "#5b8def", icon: "fa-house", x: 247.5, y: 468.0, r: 26.6 },
+  { id: "p_servicios_publicos", name: "Servicios públicos", cluster: "EFC", color: "#5b8def", icon: "fa-plug", x: 179.6, y: 405.0, r: 14.0 },
+  { id: "p_ciclorutas", name: "Ciclorutas", cluster: "EFC", color: "#5b8def", icon: "fa-bicycle", x: 93.5, y: 419.0, r: 14.0 },
+  { id: "p_transporte_publico", name: "Transporte público", cluster: "EFC", color: "#5b8def", icon: "fa-bus", x: 136.9, y: 487.6, r: 14.0 },
+  { id: "p_red_vial", name: "Red vial", cluster: "EFC", color: "#5b8def", icon: "fa-road-circle-check", x: 365.8, y: 514.9, r: 14.0 },
+  { id: "p_corredores_verdes", name: "Corredores verdes", cluster: "EFC", color: "#5b8def", icon: "fa-road", x: 125.0, y: 575.1, r: 14.0 },
+  { id: "p_manzanas_del_cuidado", name: "Manzanas del Cuidado", cluster: "EFC", color: "#5b8def", icon: "fa-heart", x: 230.0, y: 561.8, r: 14.0 },
+  { id: "p_parques", name: "Parques", cluster: "EFC", color: "#5b8def", icon: "fa-tree-city", x: 178.9, y: 532.4, r: 14.0 },
+  { id: "p_distrito_centro_tecnologico_e_innovacion", name: "Distrito Centro Tecnológico e Innovación", cluster: "ESECI", color: "#f0a340", icon: "fa-microchip", x: 577.9, y: 233.5, r: 15.4 },
+  { id: "p_servicios_empresariales", name: "Servicios empresariales", cluster: "ESECI", color: "#f0a340", icon: "fa-briefcase", x: 461.0, y: 277.6, r: 26.6 },
+  { id: "p_sistema_de_educacion", name: "Sistema de educación", cluster: "ESECI", color: "#f0a340", icon: "fa-graduation-cap", x: 588.4, y: 360.9, r: 18.2 },
+  { id: "p_centros_de_abastecimiento", name: "Centros de abastecimiento", cluster: "ESECI", color: "#f0a340", icon: "fa-truck-ramp-box", x: 676.6, y: 233.5, r: 14.0 },
+  { id: "p_plazas_de_mercado", name: "Plazas de mercado", cluster: "ESECI", color: "#f0a340", icon: "fa-store", x: 543.6, y: 311.9, r: 14.0 },
+  { id: "p_zonas_industriales", name: "Zonas industriales", cluster: "ESECI", color: "#f0a340", icon: "fa-industry", x: 724.2, y: 303.5, r: 23.8 },
+  { id: "p_produccion_artesanal", name: "Producción artesanal", cluster: "ESECI", color: "#f0a340", icon: "fa-palette", x: 638.8, y: 407.1, r: 14.0 },
+  { id: "p_zonas_de_interes_turistico", name: "Zonas de interés turístico", cluster: "ESECI", color: "#f0a340", icon: "fa-map-location-dot", x: 720.0, y: 373.5, r: 14.0 },
+  { id: "p_centros_financieros", name: "Centros financieros", cluster: "ESECI", color: "#f0a340", icon: "fa-building-columns", x: 465.9, y: 400.1, r: 14.0 },
+  { id: "p_sistema_de_sitios_sagrados", name: "Sistema de sitios sagrados", cluster: "EIP", color: "#a276f2", icon: "fa-place-of-worship", x: 451.2, y: 457.5, r: 14.0 },
+  { id: "p_patrimonio_inmaterial", name: "Patrimonio inmaterial", cluster: "EIP", color: "#a276f2", icon: "fa-masks-theater", x: 667.5, y: 452.6, r: 14.0 },
+  { id: "p_patrimonio_arqueologico", name: "Patrimonio arqueológico", cluster: "EIP", color: "#a276f2", icon: "fa-landmark-dome", x: 573.7, y: 428.1, r: 14.0 },
+  { id: "p_patrimonio_natural", name: "Patrimonio natural", cluster: "EIP", color: "#a276f2", icon: "fa-mountain-sun", x: 465.9, y: 557.6, r: 23.8 },
+  { id: "p_patrimonio_material", name: "Patrimonio material", cluster: "EIP", color: "#a276f2", icon: "fa-landmark", x: 608.0, y: 531.0, r: 14.0 },
+];
+
+const PN_EDGES = [
+  { s: "p_corredores_montanosos", t: "p_rios", tipo: "soporte", directa: true, sinFlecha: false, pagina: "70", articulo: "Art. 7", frase: "corredores montañosos … ríos y humedales" },
+  { s: "p_quebradas", t: "p_humedales", tipo: "soporte", directa: true, sinFlecha: false, pagina: "72", articulo: "Art. 42 / 62", frase: "ríos y quebradas … humedales" },
+  { s: "p_cerros_orientales", t: "p_humedales", tipo: "soporte", directa: true, sinFlecha: false, pagina: "70", articulo: "Art. 7", frase: "cerros orientales … ríos y humedales" },
+  { s: "p_humedales", t: "p_rios", tipo: "soporte", directa: true, sinFlecha: false, pagina: "72", articulo: "Art. 42 / 62", frase: "ríos y quebradas … humedales" },
+  { s: "p_rios", t: "p_complejos_de_paramos", tipo: "soporte", directa: true, sinFlecha: false, pagina: "70", articulo: "Art. 7", frase: "complejos de páramos … ríos y humedales" },
+  { s: "p_bosques_urbanos", t: "p_coberturas_vegetales", tipo: "soporte", directa: true, sinFlecha: false, pagina: "73", articulo: "Art. 74", frase: "cobertura vegetal … flora propia" },
+  { s: "p_areas_de_resiliencia_climatica", t: "p_coberturas_vegetales", tipo: "resiliencia", directa: true, sinFlecha: false, pagina: "72", articulo: "Art. 42", frase: "territorio resiliente … cambio climático" },
+  { s: "p_humedales", t: "p_areas_de_resiliencia_climatica", tipo: "soporte", directa: true, sinFlecha: false, pagina: "72", articulo: "Art. 42", frase: "amortiguación de los impactos ambientales" },
+  { s: "p_areas_protegidas", t: "p_humedales", tipo: "soporte", directa: false, sinFlecha: false, pagina: "71", articulo: "Art. 41 / 51", frase: "Reservas Distritales de Humedal" },
+  { s: "p_areas_protegidas", t: "p_parques_ecologicos_de_montana", tipo: "soporte", directa: false, sinFlecha: false, pagina: "71", articulo: "Art. 51 / 54", frase: "Parques Distritales Ecológicos de Montaña" },
+  { s: "p_areas_protegidas", t: "p_reservas_forestales", tipo: "soporte", directa: false, sinFlecha: false, pagina: "71", articulo: "Art. 41 / 45 / 48", frase: "Reserva Forestal Protectora … Regional" },
+  { s: "p_reservas_forestales", t: "p_humedales", tipo: "resiliencia", directa: true, sinFlecha: false, pagina: "72", articulo: "Art. 42", frase: "conectividad y complementariedad" },
+  { s: "p_parques_ecologicos_de_montana", t: "p_coberturas_vegetales", tipo: "soporte", directa: false, sinFlecha: false, pagina: "72", articulo: "Art. 54", frase: "restaurar y preservar … especies nativas" },
+  { s: "p_coberturas_vegetales", t: "p_parques_de_borde", tipo: "soporte", directa: false, sinFlecha: false, pagina: "136", articulo: "Art. 121", frase: "coberturas vegetales … parques de borde" },
+  { s: "p_coberturas_vegetales", t: "p_paisajes_sostenibles", tipo: "soporte", directa: false, sinFlecha: false, pagina: "72", articulo: "Art. 52 / 74", frase: "funcionalidad ecosistémica … conectividad" },
+  { s: "p_complejos_de_paramos", t: "p_paisajes_sostenibles", tipo: "soporte", directa: false, sinFlecha: false, pagina: "70", articulo: "Art. 7 / 52", frase: "complejos de páramos … paisajes" },
+  { s: "p_equipamientos", t: "p_servicios_de_cuidado", tipo: "soporte", directa: false, sinFlecha: false, pagina: "117–118", articulo: "Art. 94–95", frase: "equipamientos y servicios de cuidado" },
+  { s: "p_equipamientos", t: "p_servicios_sociales", tipo: "soporte", directa: false, sinFlecha: false, pagina: "117–118", articulo: "Art. 94–95", frase: "equipamientos y servicios sociales" },
+  { s: "p_equipamientos", t: "p_vivienda", tipo: "soporte", directa: true, sinFlecha: false, pagina: "117", articulo: "Art. 94 / 95", frase: "equipamientos … soluciones habitacionales" },
+  { s: "p_servicios_publicos", t: "p_vivienda", tipo: "soporte", directa: false, sinFlecha: false, pagina: "179", articulo: "Art. 179", frase: "servicio público … actividades en la ciudad" },
+  { s: "p_ciclorutas", t: "p_vivienda", tipo: "soporte", directa: false, sinFlecha: false, pagina: "117", articulo: "Art. 88", frase: "accesibilidad … conectividad" },
+  { s: "p_ciclorutas", t: "p_transporte_publico", tipo: "resiliencia", directa: false, sinFlecha: true, pagina: "117 / 158–159", articulo: "Art. 88 / 158–159", frase: "cicloinfraestructura … corredores verdes" },
+  { s: "p_ciclorutas", t: "p_areas_de_resiliencia_climatica", tipo: "soporte", directa: true, sinFlecha: false, pagina: null, articulo: "", frase: "Conexión Ciclorutas – Áreas de resiliencia climática (soporte), añadida según lo indicado. Pendiente de completar con la cita y página exactas del documento de sustento." },
+  { s: "p_transporte_publico", t: "p_vivienda", tipo: "soporte", directa: false, sinFlecha: false, pagina: "117", articulo: "Art. 88", frase: "accesibilidad … conectividad" },
+  { s: "p_red_vial", t: "p_transporte_publico", tipo: "soporte", directa: true, sinFlecha: false, pagina: "158–159", articulo: "Art. 158–159", frase: "malla arterial … transporte público" },
+  { s: "p_red_vial", t: "p_equipamientos", tipo: "soporte", directa: true, sinFlecha: false, pagina: "117", articulo: "Art. 88 / 95", frase: "accesibilidad … equipamientos" },
+  { s: "p_corredores_verdes", t: "p_ciclorutas", tipo: "soporte", directa: true, sinFlecha: false, pagina: "117", articulo: "Política de movilidad", frase: "corredores verdes … cicloinfraestructura" },
+  { s: "p_corredores_verdes", t: "p_transporte_publico", tipo: "soporte", directa: true, sinFlecha: false, pagina: "158–159", articulo: "Art. 158–159", frase: "corredores verdes de transporte público" },
+  { s: "p_manzanas_del_cuidado", t: "p_servicios_sociales", tipo: "soporte", directa: true, sinFlecha: false, pagina: "117–118", articulo: "Art. 94–95", frase: "manzanas del cuidado … servicios sociales" },
+  { s: "p_manzanas_del_cuidado", t: "p_equipamientos", tipo: "soporte", directa: true, sinFlecha: false, pagina: "117–118", articulo: "Art. 94–95", frase: "manzanas del cuidado … equipamientos" },
+  { s: "p_manzanas_del_cuidado", t: "p_parques", tipo: "soporte", directa: true, sinFlecha: false, pagina: "117", articulo: "Art. 94", frase: "jardines infantiles, colegios, parques" },
+  { s: "p_distrito_centro_tecnologico_e_innovacion", t: "p_servicios_empresariales", tipo: "soporte", directa: true, sinFlecha: false, pagina: "122", articulo: "Art. 101", frase: "Eje de servicios empresariales" },
+  { s: "p_distrito_centro_tecnologico_e_innovacion", t: "p_sistema_de_educacion", tipo: "soporte", directa: true, sinFlecha: false, pagina: "122", articulo: "Art. 100–101", frase: "formación del talento humano" },
+  { s: "p_centros_de_abastecimiento", t: "p_plazas_de_mercado", tipo: "soporte", directa: false, sinFlecha: false, pagina: "122", articulo: "Art. 100–101", frase: "Centros de Abasto Mayorista … Plazas de Mercado" },
+  { s: "p_plazas_de_mercado", t: "p_servicios_empresariales", tipo: "soporte", directa: true, sinFlecha: false, pagina: "122", articulo: "Art. 101", frase: "Plazas de Mercado … infraestructuras" },
+  { s: "p_zonas_industriales", t: "p_servicios_empresariales", tipo: "soporte", directa: true, sinFlecha: false, pagina: "122", articulo: "Art. 101", frase: "Eje de servicios empresariales … zonas industriales" },
+  { s: "p_zonas_industriales", t: "p_sistema_de_educacion", tipo: "soporte", directa: false, sinFlecha: false, pagina: "122", articulo: "Art. 100–101", frase: "formación del talento humano … empresas" },
+  { s: "p_zonas_industriales", t: "p_produccion_artesanal", tipo: "soporte", directa: true, sinFlecha: false, pagina: "122", articulo: "Art. 100–101", frase: "producción tradicional … industrias creativas" },
+  { s: "p_zonas_de_interes_turistico", t: "p_plazas_de_mercado", tipo: "soporte", directa: true, sinFlecha: false, pagina: "122", articulo: "Art. 101", frase: "Zonas de Interés Turístico … Plazas de Mercado" },
+  { s: "p_centros_financieros", t: "p_servicios_empresariales", tipo: "soporte", directa: true, sinFlecha: false, pagina: "122", articulo: "Art. 100", frase: "centros financieros y de servicios empresariales" },
+  { s: "p_sistema_de_sitios_sagrados", t: "p_patrimonio_inmaterial", tipo: "resiliencia", directa: true, sinFlecha: false, pagina: "103–104", articulo: "Art. 80", frase: "patrimonio cultural inmaterial … comunidades" },
+  { s: "p_patrimonio_arqueologico", t: "p_patrimonio_natural", tipo: "soporte", directa: true, sinFlecha: false, pagina: "103–104", articulo: "Art. 80", frase: "Patrimonio Natural … Patrimonio Arqueológico" },
+  { s: "p_patrimonio_arqueologico", t: "p_patrimonio_material", tipo: "resiliencia", directa: true, sinFlecha: false, pagina: "103–104", articulo: "Art. 80", frase: "Patrimonio Cultural material … Patrimonio Arqueológico" },
+  { s: "p_patrimonio_natural", t: "p_patrimonio_inmaterial", tipo: "soporte", directa: true, sinFlecha: false, pagina: "103–104", articulo: "Art. 80", frase: "patrimonio cultural material, inmaterial y natural" },
+  { s: "p_patrimonio_material", t: "p_patrimonio_natural", tipo: "soporte", directa: true, sinFlecha: false, pagina: "103–104", articulo: "Art. 80", frase: "integra … material, inmaterial y natural" },
+  { s: "p_patrimonio_material", t: "p_patrimonio_inmaterial", tipo: "soporte", directa: true, sinFlecha: false, pagina: "103–104", articulo: "Art. 80", frase: "patrimonio cultural material, inmaterial y natural" },
+
+  /* -------- relaciones ENTRE estructuras (documento aparte) -------- */
+  { s: "p_humedales", t: "p_patrimonio_natural", tipo: "soporte", directa: false, sinFlecha: false, pagina: "195–196", articulo: "", frase: "En ese sentido, la EIP inscribe y precisa un sistema de relaciones del patrimonio cultural material, inmaterial y natural en el territorio." },
+  { s: "p_patrimonio_arqueologico", t: "p_equipamientos", tipo: "soporte", directa: true, sinFlecha: false, pagina: "200", articulo: "", frase: "Para la Secretaría Distrital de Planeación (SDP), en el proceso de implementación del POT, fue la oportunidad de incorporarlos como nodo de equipamientos próximos y de proyectos a escala local." },
+  { s: "p_patrimonio_inmaterial", t: "p_produccion_artesanal", tipo: "soporte", directa: true, sinFlecha: false, pagina: "190", articulo: "", frase: "Esta producción artesanal «corresponde entonces a las actividades creativas de producción de objetos, realizadas con predominio manual y auxiliadas en algunos casos con maquinarias simples, obteniendo un resultado final individualizado, determinado por los patrones culturales, el medio ambiente y su desarrollo histórico»." },
+  { s: "p_manzanas_del_cuidado", t: "p_sistema_de_educacion", tipo: "soporte", directa: true, sinFlecha: false, pagina: "126", articulo: "", frase: "Con los nuevos colegios y jardines infantiles anclados en las Manzanas del Cuidado, lograremos que las mujeres, las niñas y los niños puedan garantizar su derecho a la educación en lugares cercanos a sus hogares." },
+  { s: "p_equipamientos", t: "p_sistema_de_educacion", tipo: "soporte", directa: true, sinFlecha: false, pagina: "126", articulo: "", frase: "Bajo la nueva visión del POT, la infraestructura social es compatible con otros usos y equipamientos, como centros deportivos, culturales y de recreación, entre otros." },
+  { s: "p_equipamientos", t: "p_servicios_empresariales", tipo: "soporte", directa: false, sinFlecha: false, pagina: "165", articulo: "", frase: "Equipamiento como detonante de dinámicas económicas." },
+  { s: "p_transporte_publico", t: "p_zonas_industriales", tipo: "soporte", directa: false, sinFlecha: false, pagina: "31", articulo: "", frase: "Y que, en todo caso, las diversas zonas de la ciudad estén conectadas por un sistema multimodal de transporte público, colectivo, de energías limpias y renovables basadas en la red Metro y alimentadas por los demás modos y medios de transporte público como los corredores verdes, los cables y las ciclorrutas." },
+  { s: "p_parques_ecologicos_de_montana", t: "p_zonas_de_interes_turistico", tipo: "soporte", directa: false, sinFlecha: false, pagina: "54", articulo: "", frase: "Sostenible: Ecoturismo, viverismo, agricultura urbana y periurbana y puntos de la tierra." },
+  { s: "p_parques_ecologicos_de_montana", t: "p_patrimonio_natural", tipo: "soporte", directa: true, sinFlecha: false, pagina: "54", articulo: "", frase: "Son áreas de alta pendiente en suelo urbano y rural, caracterizadas por contar con remanentes de bosques altoandinos dispersos y ecosistemas subxerofíticos de gran importancia ecosistémica entre otros que, por su estructura y función ecosistémica, aportan a la conservación de la biodiversidad y los servicios ecosistémicos, la conectividad ecológica y a la resiliencia climática de los entornos urbanos, rurales y de transición a escala local y regional." },
+  { s: "p_areas_de_resiliencia_climatica", t: "p_patrimonio_natural", tipo: "resiliencia", directa: false, sinFlecha: false, pagina: "72", articulo: "", frase: "Así mismo, creamos las Áreas de Resiliencia Climática y Protección por Riesgo…" },
+];
+
+function pnNodeById(id) { return PN_NODES.find(n => n.id === id); }
+
+/* -------- 3 relaciones destacadas: "favorecen los ODS" -------- */
+const PN_ODS_COLOR = { 8: "#A21942", 9: "#FD6925", 11: "#FD9D24", 13: "#3F7E44" };
+
+const PN_FAVORABLE_GROUPS = {
+  movilidad: {
+    title: "Movilidad y ecosistemas conectados",
+    edges: [
+      ["p_red_vial", "p_transporte_publico"],
+      ["p_red_vial", "p_equipamientos"],
+      ["p_corredores_verdes", "p_ciclorutas"],
+      ["p_corredores_verdes", "p_transporte_publico"],
+      ["p_ciclorutas", "p_areas_de_resiliencia_climatica"],
+    ],
+    ods: [9, 11, 13],
+    badge: { x: 60, y: 300, anchor: "p_red_vial" },
+    quotes: [
+      { text: "El diseño y construcción de los corredores de movilidad parte de reconocer e incorporar la circulación de correntías y quebradas y todos los factores ecosistémicos.", pagina: "117", articulo: "Art. 88" },
+      { text: "Las diversas zonas de la ciudad estén conectadas por un sistema multimodal de transporte público, colectivo, de energías limpias y renovables.", pagina: "158–159", articulo: "Art. 158–159" },
+    ],
+  },
+  distrito: {
+    title: "Distrito Tecnológico → Servicios empresariales",
+    edges: [["p_distrito_centro_tecnologico_e_innovacion", "p_servicios_empresariales"]],
+    ods: [9, 8],
+    badge: { x: 700, y: 150, anchor: "p_distrito_centro_tecnologico_e_innovacion" },
+    quotes: [
+      { text: "Consolidación de un área de actividad especializada en servicios empresariales, tecnológicos y de innovación, que permita fortalecer la competitividad y productividad de la ciudad.", pagina: "122", articulo: "Art. 101" },
+    ],
+  },
+  humedales: {
+    title: "Humedales → Resiliencia climática",
+    edges: [["p_humedales", "p_areas_de_resiliencia_climatica"]],
+    ods: [13],
+    badge: { x: 310, y: 60, anchor: "p_humedales" },
+    quotes: [
+      { text: "Para aumentar su capacidad de resiliencia climática, el POT Bogotá Reverdece 2022–2035 complementa la EEP con más de cien hectáreas de bosques urbanos a consolidar, entre otras muchas estrategias para garantizar el reverdecimiento, la renaturalización y la biodiversidad de Bogotá.", pagina: "72", articulo: "Art. 42" },
+    ],
+  },
+};
+
+/* cada arista que participa en un grupo "favorable" queda marcada, para que al
+   hacer clic en ella se muestren las citas completas del hallazgo en vez de
+   solo su fragmento suelto de la tabla */
+function pnEdgeKey(s, t) { return s + "->" + t; }
+const PN_EDGE_TO_GROUP = {};
+Object.entries(PN_FAVORABLE_GROUPS).forEach(([key, group]) => {
+  group.edges.forEach(([s, t]) => { PN_EDGE_TO_GROUP[pnEdgeKey(s, t)] = key; });
+});
+
+/* nodos de la red de estructuras que participan en cada grupo "favorable"
+   (para poder apagar/atenuar todo lo demás cuando se activa el grupo) */
+Object.values(PN_FAVORABLE_GROUPS).forEach(group => {
+  const set = new Set();
+  group.edges.forEach(([s, t]) => { set.add(s); set.add(t); });
+  group.involvedNodes = set;
+});
+
+/* -------- réplica en miniatura del diagrama principal ODS ↔ ODS --------
+   Para cada grupo se calcula un mini-layout que conserva las posiciones
+   relativas reales de los nodos ODS en la red de arriba (networkViz),
+   solo que escaladas hacia abajo y centradas en el punto de la insignia.
+   Así el "cluster" de ODS de cada hallazgo se ve igual que en la red
+   principal, pero mucho más chico. */
+function computeMiniOdsLayout(odsList, cx, cy, scale) {
+  const nodes = odsList.map(num => nodeById("ods" + num)).filter(Boolean);
+  if (nodes.length === 0) return {};
+
+  const minX = Math.min(...nodes.map(n => n.homeX));
+  const maxX = Math.max(...nodes.map(n => n.homeX));
+  const minY = Math.min(...nodes.map(n => n.homeY));
+  const maxY = Math.max(...nodes.map(n => n.homeY));
+  const midX = (minX + maxX) / 2;
+  const midY = (minY + maxY) / 2;
+
+  const positions = {};
+  nodes.forEach(n => {
+    positions[n.num] = {
+      x: cx + (n.homeX - midX) * scale,
+      y: cy + (n.homeY - midY) * scale,
+      r: Math.max(n.r * scale, 7.5),
+      color: n.color,
+      num: n.num,
+    };
+  });
+  return positions;
+}
+
+/* mismas relaciones reales entre esos ODS (tipo, color, directa/inferida)
+   tal como existen en la red principal (RAW_EDGES) */
+function pnOdsLinksFor(odsList) {
+  const links = [];
+  for (let i = 0; i < odsList.length; i++) {
+    for (let j = i + 1; j < odsList.length; j++) {
+      const a = "ods" + odsList[i], b = "ods" + odsList[j];
+      const edge = RAW_EDGES.find(e => (e.s === a && e.t === b) || (e.s === b && e.t === a));
+      if (edge) links.push({ from: odsList[i], to: odsList[j], type: edge.type, directa: edge.directa });
+    }
+  }
+  return links;
+}
+
+/* -------- construir el SVG de la red de estructuras (estática) -------- */
+function buildPnDefs(svg) {
+  const defs = document.createElementNS(SVG_NS, "defs");
+  const pnColors = { soporte: "#ef9552", resiliencia: "#5b8def" };
+  Object.entries(pnColors).forEach(([tipo, color]) => {
+    const marker = document.createElementNS(SVG_NS, "marker");
+    marker.setAttribute("id", "pn-arrow-" + tipo);
+    marker.setAttribute("viewBox", "0 0 10 10");
+    marker.setAttribute("refX", "8"); marker.setAttribute("refY", "5");
+    marker.setAttribute("markerWidth", "6"); marker.setAttribute("markerHeight", "6");
+    marker.setAttribute("orient", "auto-start-reverse");
+    const path = document.createElementNS(SVG_NS, "path");
+    path.setAttribute("d", "M0,0 L10,5 L0,10 z");
+    path.setAttribute("fill", color);
+    marker.appendChild(path);
+    defs.appendChild(marker);
+  });
+  svg.appendChild(defs);
+}
+
+function pnEdgePath(s, t) {
+  const dx = t.x - s.x, dy = t.y - s.y;
+  const dist = Math.hypot(dx, dy) || 1;
+  const ux = dx / dist, uy = dy / dist;
+  const x1 = s.x + ux * (s.r + 1.5), y1 = s.y + uy * (s.r + 1.5);
+  const x2 = t.x - ux * (t.r + 5),   y2 = t.y - uy * (t.r + 5);
+  return `M${x1},${y1} L${x2},${y2}`;
+}
+
+function drawPnEdges(svg) {
+  const g = document.createElementNS(SVG_NS, "g");
+  g.setAttribute("class", "pn-edges-layer");
+  const pnColors = { soporte: "#ef9552", resiliencia: "#5b8def" };
+
+  PN_EDGES.forEach((edge, i) => {
+    const s = pnNodeById(edge.s), t = pnNodeById(edge.t);
+    if (!s || !t) return;
+    const color = pnColors[edge.tipo];
+    const d = pnEdgePath(s, t);
+    const group = document.createElementNS(SVG_NS, "g");
+    group.setAttribute("class", "pn-edge-group");
+    group.setAttribute("data-index", i);
+    group.style.setProperty("--pn-edge-color", color);
+
+    const hit = document.createElementNS(SVG_NS, "path");
+    hit.setAttribute("d", d);
+    hit.setAttribute("class", "pn-edge pn-edge-hit");
+
+    const visual = document.createElementNS(SVG_NS, "path");
+    visual.setAttribute("d", d);
+    visual.setAttribute("class", "pn-edge pn-edge-visual");
+    visual.setAttribute("stroke", color);
+    visual.setAttribute("stroke-width", 1.3);
+    if (!edge.directa) visual.setAttribute("stroke-dasharray", "5,4");
+    if (!edge.sinFlecha) visual.setAttribute("marker-end", `url(#pn-arrow-${edge.tipo})`);
+    visual.setAttribute("opacity", "0.8");
+
+    group.appendChild(visual);
+    group.appendChild(hit);
+    group.addEventListener("click", () => showPnEdgeInfo(i));
+    g.appendChild(group);
+    edge._el = { group, visual, hit };
+  });
+
+  svg.appendChild(g);
+}
+
+function drawPnNodes(svg) {
+  const g = document.createElementNS(SVG_NS, "g");
+  g.setAttribute("class", "pn-nodes-layer");
+
+  PN_NODES.forEach(node => {
+    const group = document.createElementNS(SVG_NS, "g");
+    group.setAttribute("class", "pn-node");
+    group.setAttribute("data-id", node.id);
+
+    const circle = document.createElementNS(SVG_NS, "circle");
+    circle.setAttribute("class", "pn-node-ring");
+    circle.setAttribute("cx", node.x); circle.setAttribute("cy", node.y); circle.setAttribute("r", node.r);
+    circle.setAttribute("stroke", node.color);
+    circle.setAttribute("stroke-width", 1.6);
+
+    const fo = document.createElementNS(SVG_NS, "foreignObject");
+    const size = node.r * 2.1;
+    fo.setAttribute("x", node.x - size / 2); fo.setAttribute("y", node.y - size / 2);
+    fo.setAttribute("width", size); fo.setAttribute("height", size);
+
+    const wrapper = document.createElementNS(XHTML_NS, "div");
+    wrapper.setAttribute("style",
+      "width:100%;height:100%;display:flex;flex-direction:column;" +
+      "align-items:center;justify-content:center;gap:1px;pointer-events:none;overflow:hidden;"
+    );
+
+    const iconEl = document.createElementNS(XHTML_NS, "i");
+    iconEl.setAttribute("class", "fa-solid " + node.icon);
+    iconEl.setAttribute("style", `color:${node.color}; font-size:${Math.max(node.r * 0.42, 7)}px;`);
+
+    const nameEl = document.createElementNS(XHTML_NS, "div");
+    nameEl.setAttribute("style", `color:#c7cde0; font-weight:600; font-size:${Math.max(node.r * 0.185, 4.6)}px; line-height:1.05; padding:0 2px; text-align:center;`);
+    nameEl.textContent = node.name;
+
+    wrapper.appendChild(iconEl); wrapper.appendChild(nameEl);
+    fo.appendChild(wrapper);
+    group.appendChild(circle);
+    group.appendChild(fo);
+    g.appendChild(group);
+    node._el = { circle, fo };
+  });
+
+  svg.appendChild(g);
+}
+
+function renderPotStructure() {
+  const svg = document.getElementById("pnViz");
+  if (!svg) return;
+  svg.innerHTML = "";
+  buildPnDefs(svg);
+  drawPnEdges(svg);
+  drawPnNodes(svg);
+  drawPnOdsBadges(svg);
+}
+
+/* -------- clúster ODS en miniatura (una por grupo, oculto hasta activarse) --------
+   Réplica a escala reducida del diagrama principal: mismas posiciones
+   relativas, mismos colores por ODS y mismas líneas (color/tipo/sólida
+   o punteada) que las relaciones reales entre esos ODS arriba. */
+function drawPnOdsBadges(svg) {
+  const g = document.createElementNS(SVG_NS, "g");
+  g.setAttribute("class", "pn-badges-layer");
+
+  const MINI_SCALE = 0.16;
+
+  Object.entries(PN_FAVORABLE_GROUPS).forEach(([key, group]) => {
+    const anchor = pnNodeById(group.badge.anchor);
+    const bx = group.badge.x, by = group.badge.y;
+
+    const wrap = document.createElementNS(SVG_NS, "g");
+    wrap.setAttribute("class", "pn-ods-badge-group");
+    wrap.setAttribute("data-group", key);
+
+    const positions = computeMiniOdsLayout(group.ods, bx, by, MINI_SCALE);
+    const positionList = Object.values(positions);
+
+    if (anchor && positionList.length) {
+      const nearest = positionList[0];
+      const connector = document.createElementNS(SVG_NS, "path");
+      connector.setAttribute("class", "pn-ods-connector");
+      connector.setAttribute("d", `M${nearest.x},${nearest.y} L${anchor.x},${anchor.y}`);
+      wrap.appendChild(connector);
+    }
+
+    /* líneas primero, para que los nodos queden encima */
+    pnOdsLinksFor(group.ods).forEach(link => {
+      const a = positions[link.from], b = positions[link.to];
+      if (!a || !b) return;
+      const style = TYPE_STYLE[link.type];
+      const path = document.createElementNS(SVG_NS, "path");
+      path.setAttribute("class", "pn-ods-link");
+      path.setAttribute("d", `M${a.x},${a.y} L${b.x},${b.y}`);
+      path.setAttribute("stroke", style.color);
+      path.setAttribute("stroke-width", Math.max(style.width * 0.7, 1));
+      if (!link.directa) path.setAttribute("stroke-dasharray", "3,3");
+      path.setAttribute("marker-end", `url(#arrow-${link.type})`);
+      wrap.appendChild(path);
+    });
+
+    /* nodos ODS en miniatura */
+    positionList.forEach(p => {
+      const badge = document.createElementNS(SVG_NS, "circle");
+      badge.setAttribute("class", "pn-ods-badge");
+      badge.setAttribute("cx", p.x); badge.setAttribute("cy", p.y); badge.setAttribute("r", p.r);
+      badge.setAttribute("fill", p.color);
+      wrap.appendChild(badge);
+
+      const label = document.createElementNS(SVG_NS, "text");
+      label.setAttribute("class", "pn-ods-badge-label");
+      label.setAttribute("x", p.x); label.setAttribute("y", p.y + p.r * 0.35);
+      label.setAttribute("text-anchor", "middle");
+      label.setAttribute("style", `font-size:${Math.max(p.r * 0.95, 7)}px;`);
+      label.textContent = p.num;
+      wrap.appendChild(label);
+    });
+
+    g.appendChild(wrap);
+  });
+
+  svg.appendChild(g);
+}
+
+/* -------- resaltar un grupo "favorable": apaga el resto de conceptos (nodos y
+   líneas), deja solo los que se mencionan en la relación, y muestra sus
+   insignias ODS -------- */
+let pnActiveGroup = null;
+function togglePnFavorableGroup(key) {
+  const already = pnActiveGroup === key;
+  clearPnHighlight();
+  if (already) return;
+
+  const group = PN_FAVORABLE_GROUPS[key];
+  if (!group) return;
+  pnActiveGroup = key;
+
+  const activeKeys = new Set(group.edges.map(([s, t]) => pnEdgeKey(s, t)));
+  PN_EDGES.forEach((edge, i) => {
+    if (!edge._el) return;
+    const on = activeKeys.has(pnEdgeKey(edge.s, edge.t));
+    edge._el.group.classList.toggle("pn-edge-highlight", on);
+    edge._el.group.classList.toggle("pn-edge-dim", !on);
+  });
+
+  document.querySelectorAll(".pn-node").forEach(el => {
+    const involved = group.involvedNodes.has(el.dataset.id);
+    el.classList.toggle("pn-node-dim", !involved);
+    el.classList.toggle("pn-node-active", involved);
+  });
+
+  document.querySelector(`.pn-ods-badge-group[data-group="${key}"]`)?.classList.add("visible");
+  document.querySelector(`.pn-finding-item[data-pn-finding="${key}"]`)?.classList.add("active");
+}
+
+function clearPnHighlight() {
+  pnActiveGroup = null;
+  document.querySelectorAll(".pn-edge-group").forEach(el => {
+    el.classList.remove("pn-edge-highlight", "pn-edge-dim");
+  });
+  document.querySelectorAll(".pn-node").forEach(el => {
+    el.classList.remove("pn-node-dim", "pn-node-active");
+  });
+  document.querySelectorAll(".pn-ods-badge-group").forEach(el => el.classList.remove("visible"));
+  document.querySelectorAll(".pn-finding-item").forEach(el => el.classList.remove("active"));
+}
+
+/* -------- panel "Sustento" (clic en cualquier línea de la red de estructuras) -------- */
+function showPnEdgeInfo(index) {
+  const edge = PN_EDGES[index];
+  const s = pnNodeById(edge.s), t = pnNodeById(edge.t);
+  if (!s || !t) return;
+
+  document.querySelectorAll(".pn-edge-group").forEach(el => el.classList.remove("pn-edge-selected"));
+  document.querySelector(`.pn-edge-group[data-index="${index}"]`)?.classList.add("pn-edge-selected");
+
+  const panel = document.getElementById("pnSustentoPanel");
+  if (!panel) return;
+
+  document.getElementById("pnSustentoTitle").textContent = `${s.name} → ${t.name}`;
+
+  const tipoEl = document.getElementById("pnSustentoTipo");
+  const color = edge.tipo === "resiliencia" ? "#5b8def" : "#ef9552";
+  tipoEl.textContent = (edge.tipo === "resiliencia" ? "Resiliencia" : "Soporte") + (edge.directa ? " · Directa" : " · Indirecta");
+  tipoEl.style.color = color;
+  tipoEl.style.background = color + "26";
+
+  const groupKey = PN_EDGE_TO_GROUP[pnEdgeKey(edge.s, edge.t)];
+  const odsRow = document.getElementById("pnSustentoOds");
+  const quotesWrap = document.getElementById("pnSustentoQuotes");
+  quotesWrap.innerHTML = "";
+
+  if (groupKey) {
+    const group = PN_FAVORABLE_GROUPS[groupKey];
+    odsRow.innerHTML = "ODS relacionados: " + group.ods.map(n =>
+      `<span class="pn-ods-chip" style="background:${(PN_ODS_COLOR[n] || "#8891a5")}26;color:${PN_ODS_COLOR[n] || "#8891a5"}">ODS ${n}</span>`
+    ).join(" ");
+    odsRow.style.display = "flex";
+    group.quotes.forEach(q => {
+      const block = document.createElement("div");
+      block.className = "pn-sustento-quote-block";
+      block.innerHTML = `<div class="pn-sustento-quote">"${q.text}"</div><div class="pn-sustento-page">Página: ${q.pagina} · ${q.articulo}</div>`;
+      quotesWrap.appendChild(block);
+    });
+  } else {
+    odsRow.style.display = "none";
+    const block = document.createElement("div");
+    block.className = "pn-sustento-quote-block";
+    block.innerHTML = `<div class="pn-sustento-quote">"${edge.frase}"</div><div class="pn-sustento-page">Página: ${edge.pagina || "por confirmar"} · ${edge.articulo || ""}</div>`;
+    quotesWrap.appendChild(block);
+  }
+
+  panel.classList.add("visible");
+}
+
+function hidePnEdgeInfo() {
+  document.getElementById("pnSustentoPanel")?.classList.remove("visible");
+  document.querySelectorAll(".pn-edge-group").forEach(el => el.classList.remove("pn-edge-selected"));
+}
+
+/* -------- conecta el panel derecho "1. Relaciones que favorecen los ODS" -------- */
+function setupPnPanel() {
+  document.querySelectorAll(".pn-finding-item[data-pn-finding]").forEach(btn => {
+    btn.addEventListener("click", () => togglePnFavorableGroup(btn.dataset.pnFinding));
+  });
+  document.getElementById("pnSustentoClose")?.addEventListener("click", hidePnEdgeInfo);
+}
+
 /* -------- botones de acción (placeholders existentes) -------- */
 function generateODSReport() { console.log("Generando reporte POT-ODS..."); }
 function downloadAlignment() { console.log("Descargando matriz de alineación..."); }
@@ -639,4 +1333,7 @@ function shareAnalysis() { console.log("Compartiendo análisis..."); }
 document.addEventListener("DOMContentLoaded", () => {
   renderNetwork();
   setupLegendToggle();
+  setupSidePanels();
+  renderPotStructure();
+  setupPnPanel();
 });
