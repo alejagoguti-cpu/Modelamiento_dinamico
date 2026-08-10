@@ -405,12 +405,18 @@ body {
 /* EDGE INFO PANEL (sustento documental) */
 .edge-info-panel {
   display: none;
-  width: 100%;
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 380px;
+  max-height: 70vh;
+  overflow-y: auto;
   background: var(--panel-alt);
   border: 1px solid var(--teal);
   box-shadow: 0 0 14px rgba(47,212,200,0.15);
   border-radius: 8px;
   padding: 14px;
+  z-index: 1000;
 }
 
 .edge-info-panel.visible { display: block; }
