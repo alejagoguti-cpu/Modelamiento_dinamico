@@ -240,18 +240,19 @@
             <div class="legend-divider"></div>
             <div class="legend-hint">Clic en una línea: ver la relación, el tipo y el sustento.<br>Doble clic en una bola: apagarla/encenderla.<br>Triple clic en una bola: ver solo su flujo.<br>Las bolas se arrastran y las conectadas la siguen.</div>
           </aside>
-
-          <div class="edge-info-panel" id="edgeInfoPanel">
-            <div class="edge-info-header">
-              <span id="edgeInfoTitle">Relación</span>
-              <button class="edge-info-close" id="edgeInfoClose" type="button" aria-label="Cerrar">&times;</button>
-            </div>
-            <div class="edge-info-type" id="edgeInfoType"></div>
-            <div class="edge-info-quote" id="edgeInfoQuote"></div>
-            <div class="edge-info-page" id="edgeInfoPage"></div>
-          </div>
         </div>
       </div>
+    </div>
+
+    <!-- EDGE INFO PANEL (movido fuera de network-sidebar para position: fixed) -->
+    <div class="edge-info-panel" id="edgeInfoPanel">
+      <div class="edge-info-header">
+        <span id="edgeInfoTitle">Relación</span>
+        <button class="edge-info-close" id="edgeInfoClose" type="button" aria-label="Cerrar">&times;</button>
+      </div>
+      <div class="edge-info-type" id="edgeInfoType"></div>
+      <div class="edge-info-quote" id="edgeInfoQuote"></div>
+      <div class="edge-info-page" id="edgeInfoPage"></div>
     </div>
 
     <!-- TABLA DE RELACIONES -->
