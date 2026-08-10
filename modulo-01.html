@@ -1,334 +1,141 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RAPOT · Construir la Red</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="stylesheet" href="modulo-01.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAPOT - Módulo 01: Red Conceptual Interactiva</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="modulo-01.css">
 </head>
 <body>
-<div class="app">
-
-  <aside class="sidebar">
-    <div class="brand">
-      <div class="mark"><i class="fa-solid fa-diagram-project"></i></div>
-      <span>RAPOT</span>
-    </div>
-
-    <div class="nav-group">
-      <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-house"></i> Dashboard</a>
-    </div>
-
-    <div class="nav-group">
-      <div class="nav-label">MÓDULOS</div>
-      <a href="modulo-01.html" class="nav-item active"><span class="num">01</span><i class="fa-solid fa-diagram-project"></i> Construir la Red</a>
-      <a href="modulo-02.html" class="nav-item"><span class="num">02</span><i class="fa-solid fa-chart-simple"></i> Medir la Red</a>
-      <a href="modulo-03.html" class="nav-item"><span class="num">03</span><i class="fa-solid fa-eye"></i> Discurso vs Realidad</a>
-      <a href="modulo-04.html" class="nav-item"><span class="num">04</span><i class="fa-solid fa-bullseye"></i> Macromodelos</a>
-      <a href="modulo-05.html" class="nav-item"><span class="num">05</span><i class="fa-solid fa-magnifying-glass"></i> Lo que no está</a>
-      <a href="modulo-06.html" class="nav-item"><span class="num">06</span><i class="fa-solid fa-earth-americas"></i> POT ↔ ODS</a>
-      <a href="modulo-07.html" class="nav-item"><span class="num">07</span><i class="fa-solid fa-flask"></i> Simulador</a>
-      <a href="modulo-08.html" class="nav-item"><span class="num">08</span><i class="fa-solid fa-city"></i> Modelo Propio</a>
-    </div>
-
-    <div class="nav-group">
-      <div class="nav-label">GESTIÓN</div>
-      <a href="proyectos.html" class="nav-item"><i class="fa-solid fa-folder"></i> Proyectos</a>
-      <a href="fuentes.html" class="nav-item"><i class="fa-solid fa-file-lines"></i> Fuentes y Documentos</a>
-      <a href="favoritos.html" class="nav-item"><i class="fa-solid fa-star"></i> Favoritos</a>
-      <a href="reportes.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Reportes</a>
-      <a href="configuracion.html" class="nav-item"><i class="fa-solid fa-gear"></i> Configuración</a>
-    </div>
-
-    <div class="sidebar-footer">
-      <div class="avatar-sm">EU</div>
-      <div class="user-meta">
-        <div class="name">Equipo Urbano</div>
-        <div class="role">Administrador</div>
-      </div>
-      <a href="demo.html" class="logout-btn"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
-    </div>
-  </aside>
-
-  <main class="main">
-
-    <div class="topbar">
-      <h1>Construir la Red</h1>
-      <div class="topbar-actions">
-        <div class="search-box"><i class="fa-solid fa-magnifying-glass"></i> Buscar en el sistema...</div>
-        <div class="icon-btn"><i class="fa-regular fa-bell"></i><span class="dot"></span></div>
-        <div class="icon-btn"><i class="fa-regular fa-circle-question"></i></div>
-        <div class="avatar-sm">EU</div>
-      </div>
-    </div>
-
-    <div class="welcome">
-      <h2>Construir la Red</h2>
-      <p>Identifica y visualiza las relaciones entre conceptos del POT: patrimonio cultural material, inmaterial, natural, arqueológico y sistemas de sitios sagrados.</p>
-    </div>
-
-    <!-- INSIGHTS: tarjetas clicables para explorar la red -->
-    <div class="ods-insight-stats" id="odsInsightStats">
-      <div class="insight-card" data-insight="soporte" style="--insight-color:#4ade80;" onclick="toggleInsight('soporte')">
-        <div class="insight-icon"><i class="fa-solid fa-handshake"></i></div>
-        <div class="insight-title">Relaciones de soporte</div>
-      </div>
-
-      <div class="insight-card" data-insight="resiliencia" style="--insight-color:#f76fb0;" onclick="toggleInsight('resiliencia')">
-        <div class="insight-icon"><i class="fa-solid fa-seedling"></i></div>
-        <div class="insight-title">Relaciones de resiliencia</div>
-      </div>
-
-      <div class="insight-card" data-insight="hubs" style="--insight-color:#5b8def;" onclick="toggleInsight('hubs')">
-        <div class="insight-icon"><i class="fa-solid fa-circle-nodes"></i></div>
-        <div class="insight-title">Conceptos centrales (hubs)</div>
-      </div>
-
-      <div class="insight-card" data-insight="directas" style="--insight-color:#f5c945;" onclick="toggleInsight('directas')">
-        <div class="insight-icon"><i class="fa-solid fa-link"></i></div>
-        <div class="insight-title">Solo relaciones directas</div>
-      </div>
-
-      <div class="insight-card" data-insight="todos" style="--insight-color:#2fd4c8;" onclick="toggleInsight('todos')">
-        <div class="insight-icon"><i class="fa-solid fa-diagram-project"></i></div>
-        <div class="insight-title">Ver toda la red</div>
-      </div>
-    </div>
-
-    <!-- RED CONCEPTUAL -->
-    <div class="network-section">
-      <div class="network-header">
-        <h3><i class="fa-solid fa-sitemap"></i> Red Conceptual de Patrimonio — POT Interactiva</h3>
-        <div class="network-controls">
-          <button class="control-btn active" onclick="filterNetwork('all')">Todos</button>
-          <button class="control-btn" onclick="filterNetwork('soporte')">Soporte</button>
-          <button class="control-btn" onclick="filterNetwork('resiliencia')">Resiliencia</button>
+    <div class="modulo-01-container">
+        <!-- SVG Network Container -->
+        <div class="network-wrapper">
+            <svg
+                id="network-svg"
+                class="network-svg"
+                viewBox="0 0 1470 780"
+                preserveAspectRatio="xMidYMid meet"
+            >
+                <defs id="svg-defs"></defs>
+                <g id="edges-layer"></g>
+                <g id="nodes-layer"></g>
+            </svg>
         </div>
-      </div>
 
-      <div class="network-viz-wrap">
-        <svg id="networkViz" viewBox="0 0 1470 780" preserveAspectRatio="xMidYMid meet"></svg>
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="todos">
+                    <i class="fas fa-list"></i> Todos
+                </button>
+                <button class="filter-btn" data-filter="soporte">
+                    <i class="fas fa-link"></i> Soporte
+                </button>
+                <button class="filter-btn" data-filter="resiliencia">
+                    <i class="fas fa-shield"></i> Resiliencia
+                </button>
+            </div>
+        </div>
 
-        <div class="network-sidebar">
-          <aside class="network-legend" id="networkLegend">
-            <div class="legend-title">Convenciones</div>
-
-            <label class="legend-item" data-type="soporte">
-              <input type="checkbox" checked>
-              <span class="legend-swatch swatch-soporte"></span>
-              Soporte
-            </label>
-
-            <label class="legend-item" data-type="resiliencia">
-              <input type="checkbox" checked>
-              <span class="legend-swatch swatch-resiliencia"></span>
-              Resiliencia
-            </label>
-
-            <div class="legend-divider"></div>
-
-            <div class="legend-title">Tipo de relación</div>
-            <div class="legend-item legend-static">
-              <span class="legend-swatch swatch-directa"></span>
-              Directa — continua
+        <!-- Insight Cards -->
+        <div class="insights-panel">
+            <div class="insight-card" data-insight="soporte">
+                <div class="insight-icon">
+                    <i class="fas fa-link"></i>
+                </div>
+                <div class="insight-content">
+                    <h3>Soporte</h3>
+                    <p>7 relaciones</p>
+                </div>
             </div>
 
-            <div class="legend-divider"></div>
-            <div class="legend-hint">Clic en una línea: ver frase exacta del POT y página.<br>Doble clic en una bola: apagarla/encenderla.<br>Triple clic en una bola: ver solo su flujo.</div>
-          </aside>
-
-          <div class="edge-info-panel" id="edgeInfoPanel">
-            <div class="edge-info-header">
-              <span id="edgeInfoTitle">Conexión</span>
-              <button class="edge-info-close" id="edgeInfoClose" type="button" aria-label="Cerrar">&times;</button>
+            <div class="insight-card" data-insight="resiliencia">
+                <div class="insight-icon">
+                    <i class="fas fa-shield"></i>
+                </div>
+                <div class="insight-content">
+                    <h3>Resiliencia</h3>
+                    <p>2 relaciones</p>
+                </div>
             </div>
-            <div class="edge-info-type" id="edgeInfoType"></div>
-            <div class="edge-info-quote" id="edgeInfoQuote"></div>
-            <div class="edge-info-page" id="edgeInfoPage"></div>
-          </div>
+
+            <div class="insight-card" data-insight="hubs">
+                <div class="insight-icon">
+                    <i class="fas fa-star"></i>
+                </div>
+                <div class="insight-content">
+                    <h3>Hubs</h3>
+                    <p>Nodos centrales</p>
+                </div>
+            </div>
+
+            <div class="insight-card" data-insight="directas">
+                <div class="insight-icon">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+                <div class="insight-content">
+                    <h3>Directas</h3>
+                    <p>9 relaciones</p>
+                </div>
+            </div>
+
+            <div class="insight-card" data-insight="all">
+                <div class="insight-icon">
+                    <i class="fas fa-network-wired"></i>
+                </div>
+                <div class="insight-content">
+                    <h3>Ver toda la red</h3>
+                    <p>Restablecer vista</p>
+                </div>
+            </div>
         </div>
-      </div>
+
+        <!-- Edge Info Panel -->
+        <div class="edge-info-panel" id="edge-info-panel">
+            <div class="panel-header">
+                <h3 id="edge-title">Relación</h3>
+                <button class="close-btn" id="close-edge-info">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="panel-content">
+                <div class="edge-type-badge" id="edge-type-badge"></div>
+                <p id="edge-description" class="edge-description"></p>
+                <div class="edge-reference">
+                    <p id="edge-page" class="edge-page"></p>
+                    <p id="edge-text" class="edge-text"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Relations Table -->
+        <div class="relations-table-container" id="relations-table-container">
+            <div class="table-header">
+                <h3>Matriz de Relaciones</h3>
+                <button class="toggle-table-btn" id="toggle-table-btn">
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+            </div>
+            <div class="table-content" id="table-content">
+                <table class="matrix-table">
+                    <thead>
+                        <tr>
+                            <th>Origen</th>
+                            <th>Destino</th>
+                            <th>Tipo</th>
+                            <th>Descripción</th>
+                        </tr>
+                    </thead>
+                    <tbody id="matrix-tbody"></tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
-    <!-- TABLA DE SUSTENTO -->
-    <div class="analysis-container">
-      <div class="analysis-card full-width">
-        <div class="card-header">
-          <h3><i class="fa-solid fa-table"></i> Tabla de Relaciones de Patrimonio — POT</h3>
-        </div>
-
-        <div class="matrix-container">
-          <div class="matrix-row header">
-            <div class="matrix-cell header-cell">Concepto 1</div>
-            <div class="matrix-cell header-cell">Concepto 2</div>
-            <div class="matrix-cell header-cell">Página</div>
-            <div class="matrix-cell header-cell">Frase exacta del POT</div>
-            <div class="matrix-cell header-cell">Tipo de relación</div>
-            <div class="matrix-cell header-cell">Línea</div>
-          </div>
-
-          <div class="matrix-row" data-edge="0">
-            <div class="matrix-cell">Patrimonio cultural material</div>
-            <div class="matrix-cell">Patrimonio cultural inmaterial</div>
-            <div class="matrix-cell">196</div>
-            <div class="matrix-cell quote-cell">“la EIP inscribe y precisa un sistema de relaciones del patrimonio cultural material, inmaterial y natural en el territorio.”</div>
-            <div class="matrix-cell"><span class="alignment-tag strong">Soporte</span></div>
-            <div class="matrix-cell">Directa — continua</div>
-          </div>
-
-          <div class="matrix-row" data-edge="1">
-            <div class="matrix-cell">Patrimonio cultural material</div>
-            <div class="matrix-cell">Patrimonio natural</div>
-            <div class="matrix-cell">196</div>
-            <div class="matrix-cell quote-cell">“la EIP inscribe y precisa un sistema de relaciones del patrimonio cultural material, inmaterial y natural en el territorio.”</div>
-            <div class="matrix-cell"><span class="alignment-tag strong">Soporte</span></div>
-            <div class="matrix-cell">Directa — continua</div>
-          </div>
-
-          <div class="matrix-row" data-edge="2">
-            <div class="matrix-cell">Patrimonio cultural inmaterial</div>
-            <div class="matrix-cell">Patrimonio natural</div>
-            <div class="matrix-cell">196</div>
-            <div class="matrix-cell quote-cell">“la EIP inscribe y precisa un sistema de relaciones del patrimonio cultural material, inmaterial y natural en el territorio.”</div>
-            <div class="matrix-cell"><span class="alignment-tag strong">Soporte</span></div>
-            <div class="matrix-cell">Directa — continua</div>
-          </div>
-
-          <div class="matrix-row" data-edge="3">
-            <div class="matrix-cell">Patrimonio arqueológico</div>
-            <div class="matrix-cell">Patrimonio natural</div>
-            <div class="matrix-cell">198</div>
-            <div class="matrix-cell quote-cell">“hoy pueden ser referentes de procesos adaptativos y que revelan prácticas de integralidad de la cultura con la naturaleza.”</div>
-            <div class="matrix-cell"><span class="alignment-tag medium">Resiliencia</span></div>
-            <div class="matrix-cell">Directa — continua</div>
-          </div>
-
-          <div class="matrix-row" data-edge="4">
-            <div class="matrix-cell">Patrimonio arqueológico</div>
-            <div class="matrix-cell">Patrimonio cultural material</div>
-            <div class="matrix-cell">198</div>
-            <div class="matrix-cell quote-cell">“Este patrimonio cultural se convirtió en un referente de movilización”</div>
-            <div class="matrix-cell"><span class="alignment-tag strong">Soporte</span></div>
-            <div class="matrix-cell">Directa — continua</div>
-          </div>
-
-          <div class="matrix-row" data-edge="5">
-            <div class="matrix-cell">Sistema de Sitios Sagrados</div>
-            <div class="matrix-cell">Patrimonio cultural inmaterial</div>
-            <div class="matrix-cell">186</div>
-            <div class="matrix-cell quote-cell">“son el testimonio de complejas estrategias de cómo interpretamos y valoramos las huellas del territorio que</div>
-            <div class="matrix-cell"><span class="alignment-tag strong">Soporte</span></div>
-            <div class="matrix-cell">Directa — continua</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- LECTURA DE LA RED -->
-    <div class="synergies-section">
-      <div class="synergies-grid">
-        <div class="synergy-card success">
-          <div class="synergy-icon"><i class="fa-solid fa-handshake"></i></div>
-          <div class="synergy-content">
-            <h4>Estructura de la Red</h4>
-            <ul>
-              <li><strong>EIP como articulador:</strong> inscribe y precisa el sistema de relaciones del patrimonio material, inmaterial y natural (pág. 196)</li>
-              <li><strong>Patrimonio natural como nodo clave:</strong> conecta con material, inmaterial y arqueológico</li>
-              <li><strong>Patrimonio arqueológico:</strong> referente de procesos adaptativos y de la integralidad cultura-naturaleza (pág. 198)</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="synergy-card conflict">
-          <div class="synergy-icon"><i class="fa-solid fa-seedling"></i></div>
-          <div class="synergy-content">
-            <h4>Lectura Conceptual</h4>
-            <ul>
-              <li><strong>Soporte (verde):</strong> relaciones que anclan y sostienen el sistema patrimonial entre conceptos</li>
-              <li><strong>Resiliencia (rosa):</strong> vínculo arqueología-naturaleza como práctica adaptativa de integralidad</li>
-              <li><strong>Sitios Sagrados:</strong> testimonio de las estrategias de interpretación y valoración del territorio (pág. 186)</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- RECOMENDACIONES -->
-    <div class="recommendations-section">
-      <h3><i class="fa-solid fa-lightbulb"></i> Recomendaciones para la Construcción de la Red</h3>
-
-      <div class="recommendations-grid">
-        <div class="rec-card">
-          <div class="rec-number">1</div>
-          <div class="rec-content">
-            <h4>Consolidar la EIP como eje articulador</h4>
-            <p>Usar la Estructura Ecológica Principal como nodo central que organiza las relaciones del patrimonio material, inmaterial y natural en el territorio.</p>
-            <div class="rec-impact">
-              <span class="impact-badge">Impacto: +20%</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="rec-card">
-          <div class="rec-number">2</div>
-          <div class="rec-content">
-            <h4>Expandir el vínculo arqueología-naturaleza</h4>
-            <p>Documentar las prácticas de integralidad de la cultura con la naturaleza como insumo para relaciones de resiliencia en la red.</p>
-            <div class="rec-impact">
-              <span class="impact-badge">Impacto: +15%</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="rec-card">
-          <div class="rec-number">3</div>
-          <div class="rec-content">
-            <h4>Visibilizar los Sitios Sagrados</h4>
-            <p>Integrar las estrategias de interpretación y valoración de las huellas del territorio como relaciones de soporte cultural.</p>
-            <div class="rec-impact">
-              <span class="impact-badge">Impacto: +12%</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="rec-card">
-          <div class="rec-number">4</div>
-          <div class="rec-content">
-            <h4>Monitorear nuevas relaciones</h4>
-            <p>Crear indicadores específicos para rastrear nuevas relaciones de patrimonio que surjan en revisiones y actualizaciones del POT.</p>
-            <div class="rec-impact">
-              <span class="impact-badge">Impacto: +8%</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- BOTONES DE ACCIÓN -->
-    <div class="action-buttons">
-      <button class="btn-primary" onclick="generateODSReport()">
-        <i class="fa-solid fa-file-pdf"></i> Generar Reporte de Red
-      </button>
-      <button class="btn-secondary" onclick="downloadAlignment()">
-        <i class="fa-solid fa-download"></i> Descargar Tabla
-      </button>
-      <button class="btn-secondary" onclick="shareAnalysis()">
-        <i class="fa-solid fa-share-nodes"></i> Compartir Análisis
-      </button>
-    </div>
-
-    <footer>
-      "No se trata de representar la ciudad, sino de comprenderla para transformarla." — <span>Equipo POT Reverse Engineering</span>
-    </footer>
-
-  </main>
-
-</div>
-
-<script src="modulo-01.js"></script>
-
+    <script src="modulo-01.js"></script>
 </body>
 </html>
