@@ -582,8 +582,13 @@ function applySpotlightState() {
     });
   } else if (spotlight && spotlight.mode === "types") {
     visibleEdges = new Set();
+    visibleNodes = new Set();
     RAW_EDGES.forEach((edge, i) => {
-      if (spotlight.types.includes(edge.type)) visibleEdges.add(i);
+      if (spotlight.types.includes(edge.type)) {
+        visibleEdges.add(i);
+        visibleNodes.add(edge.s);
+        visibleNodes.add(edge.t);
+      }
     });
   } else if (spotlight && spotlight.mode === "cats") {
     visibleNodes = new Set();
