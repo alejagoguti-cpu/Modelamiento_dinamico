@@ -67,39 +67,34 @@
 
     <div class="welcome">
       <h2>Construir la Red</h2>
-      <p>Analiza las cuatro estructuras del POT y sus interconexiones territoriales.</p>
+      <p>Analiza las cuatro estructuras del POT y sus 130 componentes interconectados.</p>
     </div>
 
-    <!-- INSIGHTS CARDS -->
-    <div class="insights-grid">
-      <div class="insight-card" onclick="filterByStructure('all')">
-        <div class="insight-icon"><i class="fa-solid fa-diagram-project"></i></div>
-        <div class="insight-title">Todos</div>
-        <div class="insight-count" id="count-all">130</div>
-      </div>
-
-      <div class="insight-card" onclick="filterByStructure('Ambiental')">
+    <!-- ESTRUCTURA INSIGHTS -->
+    <div class="ods-insight-stats" id="odsInsightStats">
+      <div class="insight-card" data-insight="amb" style="--insight-color:#2fd4c8;" onclick="filterNetwork('amb')">
         <div class="insight-icon"><i class="fa-solid fa-leaf"></i></div>
-        <div class="insight-title">Ambiental</div>
-        <div class="insight-count" id="count-amb">40</div>
+        <div class="insight-title">Ambiental (40)</div>
       </div>
 
-      <div class="insight-card" onclick="filterByStructure('Patrimonio')">
+      <div class="insight-card" data-insight="patri" style="--insight-color:#a276f2;" onclick="filterNetwork('patri')">
         <div class="insight-icon"><i class="fa-solid fa-landmark"></i></div>
-        <div class="insight-title">Patrimonio</div>
-        <div class="insight-count" id="count-pat">30</div>
+        <div class="insight-title">Patrimonio (30)</div>
       </div>
 
-      <div class="insight-card" onclick="filterByStructure('Funcional')">
+      <div class="insight-card" data-insight="func" style="--insight-color:#5b8def;" onclick="filterNetwork('func')">
         <div class="insight-icon"><i class="fa-solid fa-heart"></i></div>
-        <div class="insight-title">Funcional</div>
-        <div class="insight-count" id="count-func">30</div>
+        <div class="insight-title">Funcional (30)</div>
       </div>
 
-      <div class="insight-card" onclick="filterByStructure('Socioeconómico')">
+      <div class="insight-card" data-insight="econ" style="--insight-color:#ef9552;" onclick="filterNetwork('econ')">
         <div class="insight-icon"><i class="fa-solid fa-chart-bar"></i></div>
-        <div class="insight-title">Socioeconómico</div>
-        <div class="insight-count" id="count-econ">30</div>
+        <div class="insight-title">Socioeconómico (30)</div>
+      </div>
+
+      <div class="insight-card" data-insight="all" style="--insight-color:#4ade80;" onclick="filterNetwork('all')">
+        <div class="insight-icon"><i class="fa-solid fa-diagram-project"></i></div>
+        <div class="insight-title">Todos (130)</div>
       </div>
     </div>
 
@@ -107,88 +102,95 @@
     <div class="network-section">
       <div class="network-header">
         <h3><i class="fa-solid fa-sitemap"></i> Red POT Interactiva</h3>
-        <div class="network-info">
-          <span>Nodos: <strong id="nodeCount">130</strong></span>
-          <span>Conexiones: <strong id="linkCount">0</strong></span>
+        <div class="network-controls">
+          <button class="control-btn active" onclick="filterNetwork('all')">Todos</button>
+          <button class="control-btn" onclick="filterNetwork('amb')">Ambiental</button>
+          <button class="control-btn" onclick="filterNetwork('patri')">Patrimonio</button>
+          <button class="control-btn" onclick="filterNetwork('func')">Funcional</button>
+          <button class="control-btn" onclick="filterNetwork('econ')">Socioeconómico</button>
         </div>
       </div>
 
       <div class="network-viz-wrap">
-        <svg id="networkViz" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid meet"></svg>
+        <svg id="networkViz" viewBox="0 0 1470 780" preserveAspectRatio="xMidYMid meet"></svg>
 
         <div class="network-sidebar">
-          <aside class="network-legend">
-            <div class="legend-title">Relaciones POT</div>
+          <aside class="network-legend" id="networkLegend">
+            <div class="legend-title">Estructuras</div>
 
-            <label class="legend-item">
+            <label class="legend-item" data-type="amb">
               <input type="checkbox" checked onchange="updateNetwork()">
-              <span class="legend-swatch swatch-rel-hidrica"></span>
-              Relación Hídrica
+              <span class="legend-swatch swatch-amb"></span>
+              Ambiental y EEP
             </label>
 
-            <label class="legend-item">
+            <label class="legend-item" data-type="patri">
               <input type="checkbox" checked onchange="updateNetwork()">
-              <span class="legend-swatch swatch-rel-ecologica"></span>
-              Relación Ecológica
+              <span class="legend-swatch swatch-patri"></span>
+              Patrimonios
             </label>
 
-            <label class="legend-item">
+            <label class="legend-item" data-type="func">
               <input type="checkbox" checked onchange="updateNetwork()">
-              <span class="legend-swatch swatch-rel-funcional"></span>
-              Relación Funcional
+              <span class="legend-swatch swatch-func"></span>
+              Funcional y Cuidado
             </label>
 
-            <label class="legend-item">
+            <label class="legend-item" data-type="econ">
               <input type="checkbox" checked onchange="updateNetwork()">
-              <span class="legend-swatch swatch-rel-patrimonial"></span>
-              Relación Patrimonial
-            </label>
-
-            <label class="legend-item">
-              <input type="checkbox" checked onchange="updateNetwork()">
-              <span class="legend-swatch swatch-rel-economica"></span>
-              Relación Económica
-            </label>
-
-            <label class="legend-item">
-              <input type="checkbox" checked onchange="updateNetwork()">
-              <span class="legend-swatch swatch-rel-social"></span>
-              Relación Social
+              <span class="legend-swatch swatch-econ"></span>
+              Socioeconómico
             </label>
 
             <div class="legend-divider"></div>
-            <div class="legend-hint">Clic en nodo: info. Hover: destacar.</div>
+
+            <div class="legend-title">Relaciones POT</div>
+            <label class="legend-item" data-type="hidrica">
+              <input type="checkbox" checked onchange="updateNetwork()">
+              <span class="legend-swatch swatch-hidrica"></span>
+              Hídrica
+            </label>
+
+            <label class="legend-item" data-type="ecol">
+              <input type="checkbox" checked onchange="updateNetwork()">
+              <span class="legend-swatch swatch-ecol"></span>
+              Ecológica
+            </label>
+
+            <label class="legend-item" data-type="func-rel">
+              <input type="checkbox" checked onchange="updateNetwork()">
+              <span class="legend-swatch swatch-func-rel"></span>
+              Funcional
+            </label>
+
+            <div class="legend-divider"></div>
+            <div class="legend-hint">Clic en nodo: info.<br>Hover: resaltar.</div>
           </aside>
 
-          <div class="node-info-panel" id="nodeInfoPanel">
-            <div class="node-info-header">
-              <h4 id="nodeInfoName">-</h4>
-              <button class="node-info-close" onclick="closeNodeInfo()">&times;</button>
+          <div class="edge-info-panel" id="edgeInfoPanel">
+            <div class="edge-info-header">
+              <span id="edgeInfoTitle">Componente</span>
+              <button class="edge-info-close" id="edgeInfoClose" type="button" aria-label="Cerrar">&times;</button>
             </div>
-            <div class="node-info-structure" id="nodeInfoStructure">-</div>
-            <div class="node-info-connections" id="nodeInfoConnections">-</div>
+            <div class="edge-info-type" id="edgeInfoType"></div>
+            <div class="edge-info-quote" id="edgeInfoQuote"></div>
           </div>
         </div>
       </div>
     </div>
 
     <!-- MATRIX -->
-    <div class="matrix-section">
+    <div class="analysis-container">
       <h3><i class="fa-solid fa-table"></i> Matriz de Relaciones POT</h3>
       <div class="matrix-container">
-        <table class="relationships-table">
-          <thead>
-            <tr>
-              <th>Estructura A</th>
-              <th>Componente A</th>
-              <th>Estructura B</th>
-              <th>Componente B</th>
-              <th>Relación POT</th>
-            </tr>
-          </thead>
-          <tbody id="relationshipsBody">
-          </tbody>
-        </table>
+        <div class="matrix-row header">
+          <div class="matrix-cell header-cell">Estructura A</div>
+          <div class="matrix-cell header-cell">Componente A</div>
+          <div class="matrix-cell header-cell">Estructura B</div>
+          <div class="matrix-cell header-cell">Componente B</div>
+          <div class="matrix-cell header-cell">Tipo</div>
+        </div>
+        <div id="matrixBody"></div>
       </div>
     </div>
 
@@ -200,7 +202,6 @@
 
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
 <script src="modulo-01.js"></script>
 
 </body>
