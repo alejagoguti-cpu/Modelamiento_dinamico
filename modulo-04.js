@@ -21,57 +21,46 @@ const XHTML_NS = "http://www.w3.org/1999/xhtml";
 
 /* -------- Nodos: los componentes de las 4 estructuras -------- */
 const ODS_NODES = [
-  /* 1. Estructura Ecológica Principal — VERDE */
-  { id: "cerros",     cat: "e1", name: "CERROS\nORIENTALES",        icon: "fa-mountain-sun",  color: "#4ade80", x: 200,  y: 180, r: 52 },
-  { id: "rios",       cat: "e1", name: "RÍOS",                       icon: "fa-water",         color: "#4ade80", x: 330,  y: 430, r: 50 },
-  { id: "quebradas",  cat: "e1", name: "QUEBRADAS",                  icon: "fa-water",         color: "#4ade80", x: 500,  y: 150, r: 46 },
-  { id: "humedales",  cat: "e1", name: "HUMEDALES",                  icon: "fa-droplet",       color: "#4ade80", x: 660,  y: 420, r: 52 },
-  { id: "resiliencia",cat: "e1", name: "ÁREAS DE\nRESILIENCIA\nCLIMÁTICA",   icon: "fa-shield-heart",  color: "#4ade80", x: 890,  y: 170, r: 52 },
-  { id: "paramos",    cat: "e1", name: "COMPLEJOS\nDE PÁRAMOS",      icon: "fa-mountain",      color: "#4ade80", x: 250,  y: 640, r: 52 },
-  { id: "bosques",    cat: "e1", name: "BOSQUES\nURBANOS",           icon: "fa-tree",          color: "#4ade80", x: 1140, y: 400, r: 50 },
-  { id: "coberturas", cat: "e1", name: "COBERTURAS\nVEGETALES",      icon: "fa-seedling",      color: "#4ade80", x: 1040, y: 650, r: 54 },
-  { id: "reservas",   cat: "e1", name: "RESERVAS\nFORESTALES",       icon: "fa-tree",          color: "#4ade80", x: 1300, y: 190, r: 50 },
-  { id: "areas",      cat: "e1", name: "ÁREAS\nPROTEGIDAS",          icon: "fa-lock",          color: "#4ade80", x: 440,  y: 300, r: 50 },
-  { id: "parques_m",  cat: "e1", name: "PARQUES ECOLÓGICOS\nDE MONTAÑA",   icon: "fa-campground",      color: "#4ade80", x: 770,  y: 640, r: 50 },
-  { id: "parque_b",   cat: "e1", name: "PARQUE\nDE BORDE",           icon: "fa-archway",       color: "#4ade80", x: 1430, y: 480, r: 48 },
-  { id: "paisajes",   cat: "e1", name: "PAISAJES\nSOSTENIBLES",      icon: "fa-sun",           color: "#4ade80", x: 100,  y: 480, r: 48 },
+  /* ============================================================
+     5 MACROMODELOS (nodos madre, grandes) + sus conceptos propios.
+     Cada paradigma tiene su color. Los conceptos comparten el color
+     de su macromodelo. Las conexiones cruzadas revelan qué domina.
+     ============================================================ */
 
-  /* 2. Estructura Funcional y del Cuidado — AZUL */
-  { id: "redvial",    cat: "e2", pagina: "43", name: "RED\nVIAL",                  icon: "fa-road",          color: "#5b8def", x: 1240, y: 90,  r: 48 },
-  { id: "transporte", cat: "e2", pagina: "43", name: "TRANSPORTE\nPÚBLICO",        icon: "fa-bus",           color: "#5b8def", x: 960,  y: 330, r: 52 },
-  { id: "corredores", cat: "e2", pagina: "43", name: "CORREDORES\nVERDES",         icon: "fa-route",         color: "#5b8def", x: 700,  y: 140, r: 50 },
-  { id: "ciclorutas", cat: "e2", pagina: "43", name: "CICLORRUTAS",                icon: "fa-person-biking", color: "#5b8def", x: 1390, y: 330, r: 46 },
-  { id: "equip",      cat: "e2", pagina: "43", name: "EQUIPAMIENTOS",              icon: "fa-school",        color: "#5b8def", x: 1250, y: 620, r: 50 },
-  { id: "manzanas",   cat: "e2", pagina: "43", name: "MANZANAS\nDEL CUIDADO",      icon: "fa-people-roof",   color: "#5b8def", x: 1470, y: 640, r: 52 },
-  { id: "sserv",      cat: "e2", pagina: "43", name: "SERVICIOS\nSOCIALES",        icon: "fa-hand-holding-heart", color: "#5b8def", x: 1370, y: 760, r: 46 },
-  { id: "parques",    cat: "e2", pagina: "43", name: "PARQUES",                    icon: "fa-tree-city",     color: "#5b8def", x: 1100, y: 760, r: 46 },
-  { id: "scuidado",   cat: "e2", pagina: "43", name: "SERVICIOS\nDE CUIDADO",      icon: "fa-heart-pulse",   color: "#5b8def", x: 1230, y: 470, r: 46 },
-  { id: "vivienda",   cat: "e2", pagina: "43", name: "VIVIENDA",                   icon: "fa-house",         color: "#5b8def", x: 950,  y: 520, r: 50 },
-  { id: "servpub",    cat: "e2", pagina: "43", name: "SERVICIOS\nPÚBLICOS",        icon: "fa-bolt",          color: "#5b8def", x: 820,  y: 770, r: 46 },
+  /* === 1. NEOLIBERAL / MERCANTILISTA — MAGENTA === */
+  { id: "neoliberal",    cat: "m1", name: "NEOLIBERAL\nMERCANTILISTA",   icon: "fa-money-bill-trend-up", color: "#e94d8c", x: 1900, y: 200, r: 64 },
+  { id: "renta_suelo",   cat: "m1", name: "RENTA DEL\nSUELO",            icon: "fa-sack-dollar",    color: "#e94d8c", x: 2150, y: 120, r: 46 },
+  { id: "competitividad",cat: "m1", name: "COMPETITIVIDAD\nURBANA",      icon: "fa-trophy",         color: "#e94d8c", x: 2250, y: 300, r: 46 },
+  { id: "mercado_inmob", cat: "m1", name: "MERCADO\nINMOBILIARIO",       icon: "fa-building-circle-arrow-right", color: "#e94d8c", x: 2100, y: 400, r: 46 },
+  { id: "aglomeracion",  cat: "m1", name: "AGLOMERACIÓN\nCAPITALISTA",    icon: "fa-city",           color: "#e94d8c", x: 1750, y: 350, r: 46 },
 
-  /* 3. Estructura Socioeconómica Creativa e Innovación — NARANJA */
-  { id: "financieros", cat: "e3", pagina: "239-241", name: "CENTROS\nFINANCIEROS",      icon: "fa-building-columns", color: "#ef9552", x: 1700, y: 190, r: 48 },
-  { id: "empresariales", cat: "e3", pagina: "239-241", name: "SERVICIOS\nEMPRESARIALES", icon: "fa-briefcase",      color: "#ef9552", x: 1920, y: 120, r: 50 },
-  { id: "tecnodistrito", cat: "e3", pagina: "239-241", name: "DISTRITO\nTECNOLÓGICO",   icon: "fa-microchip",      color: "#ef9552", x: 2110, y: 270, r: 48 },
-  { id: "industriales",  cat: "e3", pagina: "239-241", name: "ZONAS\nINDUSTRIALES",     icon: "fa-industry",       color: "#ef9552", x: 1860, y: 360, r: 48 },
-  { id: "innovacion",    cat: "e3", pagina: "239-241", name: "INNOVACIÓN",              icon: "fa-lightbulb",      color: "#ef9552", x: 2080, y: 470, r: 46 },
-  { id: "abastecimiento",cat: "e3", pagina: "239-241", name: "CENTROS DE\nABASTECIMIENTO", icon: "fa-truck",      color: "#ef9552", x: 1700, y: 430, r: 48 },
-  { id: "plazas",        cat: "e3", pagina: "239-241", name: "PLAZAS\nDE MERCADO",      icon: "fa-store",          color: "#ef9552", x: 1900, y: 530, r: 46 },
-  { id: "turismo",       cat: "e3", pagina: "239-241", name: "ZONAS DE\nINTERÉS\nTURÍSTICO", icon: "fa-map-location-dot", color: "#ef9552", x: 2090, y: 660, r: 46 },
-  { id: "artesanal",     cat: "e3", pagina: "239-241", name: "PRODUCCIÓN\nARTESANAL",   icon: "fa-palette",        color: "#ef9552", x: 1680, y: 640, r: 46 },
+  /* === 2. DESARROLLISTA / PRODUCTIVISTA — NARANJA === */
+  { id: "desarrollista", cat: "m2", name: "DESARROLLISTA\nPRODUCTIVISTA", icon: "fa-industry",       color: "#ef9552", x: 1400, y: 780, r: 64 },
+  { id: "grandes_obras", cat: "m2", name: "GRANDES\nOBRAS",              icon: "fa-helmet-safety",  color: "#ef9552", x: 1150, y: 850, r: 46 },
+  { id: "pib_urbano",    cat: "m2", name: "CRECIMIENTO\nPIB",            icon: "fa-arrow-trend-up", color: "#ef9552", x: 1650, y: 870, r: 46 },
+  { id: "infra_vial",    cat: "m2", name: "INFRAESTRUCTURA\nVIAL",       icon: "fa-road",           color: "#ef9552", x: 1400, y: 950, r: 46 },
+  { id: "reconversion",  cat: "m2", name: "RECONVERSIÓN\nPRODUCTIVA",     icon: "fa-arrows-spin",    color: "#ef9552", x: 1750, y: 720, r: 46 },
 
-  /* 4. Estructura Integradora de Patrimonio — MORADA */
-  { id: "sitios_sagrados", cat: "e4", pagina: "126", name: "SISTEMA DE\nSITIOS\nSAGRADOS", icon: "fa-place-of-worship", color: "#a276f2", x: 2360, y: 200, r: 50 },
-  { id: "pinmaterial",     cat: "e4", pagina: "126", name: "PATRIMONIO\nINMATERIAL",    icon: "fa-masks-theater",    color: "#a276f2", x: 2500, y: 440, r: 50 },
-  { id: "pnatural",        cat: "e4", pagina: "126", name: "PATRIMONIO\nNATURAL",       icon: "fa-globe",              color: "#a276f2", x: 2650, y: 180, r: 48 },
-  { id: "pecomaterial",    cat: "e4", pagina: "126", name: "PATRIMONIO ECOLÓGICO\nMATERIAL", icon: "fa-leaf",          color: "#a276f2", x: 2650, y: 640, r: 50 },
+  /* === 3. AMBIENTALISTA (DISCURSIVO) — VERDE === */
+  { id: "ambientalista", cat: "m3", name: "AMBIENTALISTA\n(DISCURSIVO)",  icon: "fa-leaf",           color: "#4ade80", x: 500,  y: 250, r: 64 },
+  { id: "serv_ecosist",  cat: "m3", name: "SERVICIOS\nECOSISTÉMICOS",     icon: "fa-seedling",       color: "#4ade80", x: 250,  y: 150, r: 46 },
+  { id: "reverdece",     cat: "m3", name: "BOGOTÁ\nREVERDECE",           icon: "fa-tree",           color: "#4ade80", x: 200,  y: 380, r: 46 },
+  { id: "resiliencia_c", cat: "m3", name: "RESILIENCIA\nCLIMÁTICA",       icon: "fa-shield-heart",   color: "#4ade80", x: 400,  y: 480, r: 46 },
+  { id: "eep",           cat: "m3", name: "ESTRUCTURA\nECOLÓGICA (EEP)",  icon: "fa-mountain-sun",   color: "#4ade80", x: 700,  y: 380, r: 46 },
 
-  /* MACROMODELOS — MAGENTA (#e94d8c) — los paradigmas que producen el POT */
-  { id: "neoliberal",   cat: "macro", name: "NEOLIBERAL\nMERCANTILISTA",      icon: "fa-money-bill-trend-up", color: "#e94d8c", x: 1850, y: 250, r: 66 },
-  { id: "desarrollista",cat: "macro", name: "DESARROLLISTA\nPRODUCTIVISTA",   icon: "fa-industry",           color: "#e94d8c", x: 1400, y: 780, r: 64 },
-  { id: "ambientalista",cat: "macro", name: "AMBIENTALISTA\n(DISCURSIVO)",    icon: "fa-leaf",               color: "#e94d8c", x: 500,  y: 300, r: 64 },
-  { id: "tecnocratico", cat: "macro", name: "TECNOCRÁTICO\nESTATISTA",        icon: "fa-gears",              color: "#e94d8c", x: 1100, y: 200, r: 62 },
-  { id: "comunitario",  cat: "macro", name: "COMUNITARIO\nDEL CUIDADO",       icon: "fa-people-group",       color: "#e94d8c", x: 1250, y: 550, r: 62 },
+  /* === 4. TECNOCRÁTICO / ESTATISTA — AZUL === */
+  { id: "tecnocratico",  cat: "m4", name: "TECNOCRÁTICO\nESTATISTA",      icon: "fa-gears",          color: "#5b8def", x: 1050, y: 180, r: 64 },
+  { id: "indicadores",   cat: "m4", name: "INDICADORES\nY MÉTRICAS",      icon: "fa-chart-line",     color: "#5b8def", x: 800,  y: 100, r: 46 },
+  { id: "norma_pot",     cat: "m4", name: "NORMA\nJURÍDICA (POT)",        icon: "fa-scale-balanced", color: "#5b8def", x: 1300, y: 90,  r: 46 },
+  { id: "ciudad_intel",  cat: "m4", name: "CIUDAD\nINTELIGENTE",          icon: "fa-microchip",      color: "#5b8def", x: 1200, y: 320, r: 46 },
+  { id: "planeacion",    cat: "m4", name: "PLANEACIÓN\nCENTRALIZADA",     icon: "fa-sitemap",        color: "#5b8def", x: 900,  y: 320, r: 46 },
+
+  /* === 5. COMUNITARIO / DEL CUIDADO — MORADO === */
+  { id: "comunitario",   cat: "m5", name: "COMUNITARIO\nDEL CUIDADO",     icon: "fa-people-group",   color: "#a276f2", x: 1300, y: 550, r: 64 },
+  { id: "proximidad",    cat: "m5", name: "PROXIMIDAD\n(15 MIN)",         icon: "fa-person-walking", color: "#a276f2", x: 1100, y: 620, r: 46 },
+  { id: "trabajo_cuidado",cat: "m5", name: "TRABAJO DE\nCUIDADO",         icon: "fa-hand-holding-heart", color: "#a276f2", x: 1550, y: 600, r: 46 },
+  { id: "economia_pop",  cat: "m5", name: "ECONOMÍA\nPOPULAR",            icon: "fa-store",          color: "#a276f2", x: 1500, y: 450, r: 46 },
+  { id: "tejido_barrial",cat: "m5", name: "TEJIDO\nBARRIAL",              icon: "fa-house-chimney-window", color: "#a276f2", x: 1150, y: 470, r: 46 },
 ];
 
 ODS_NODES.forEach(n => {
@@ -82,12 +71,11 @@ ODS_NODES.forEach(n => {
 
 /* -------- Estructuras: nombre y color de capa -------- */
 const STRUCT_STYLE = {
-  e1: { color: "#4ade80", label: "1. Ecológica Principal", tag: "ECOLÓGICA" },
-  e2: { color: "#5b8def", label: "2. Funcional y del Cuidado", tag: "FUNCIONAL Y CUIDADO" },
-  e3: { color: "#ef9552", label: "3. Socioeconómica Creativa", tag: "SOCIOECONÓMICA" },
-  e4: { color: "#a276f2", label: "4. Integradora de Patrimonio", tag: "PATRIMONIO" },
-  concepto: { color: "#2fd4c8", label: "Concepto / Lógica abstracta", tag: "CONCEPTO" },
-  macro: { color: "#e94d8c", label: "Macromodelo / Paradigma", tag: "MACROMODELO" },
+  m1: { color: "#e94d8c", label: "Neoliberal / Mercantilista", tag: "NEOLIBERAL" },
+  m2: { color: "#ef9552", label: "Desarrollista / Productivista", tag: "DESARROLLISTA" },
+  m3: { color: "#4ade80", label: "Ambientalista (discursivo)", tag: "AMBIENTALISTA" },
+  m4: { color: "#5b8def", label: "Tecnocrático / Estatista", tag: "TECNOCRÁTICO" },
+  m5: { color: "#a276f2", label: "Comunitario / del Cuidado", tag: "COMUNITARIO" },
 };
 
 /* -------- Tipos de relación -------- */
@@ -106,42 +94,57 @@ const TYPE_STYLE = {
 /* -------- Aristas: relaciones de las 4 estructuras -------- */
 const RAW_EDGES = [
   /* ============================================================
-     MACROMODELOS → COMPONENTES FÍSICOS DEL POT
-     Cada relación evidencia la influencia de un paradigma.
-     El tipo revela si el macromodelo DOMINA (jerarquia/conflicto)
-     o solo se enuncia (funcional/complementariedad).
-     HALLAZGO: el neoliberal-desarrollista tiene más y más fuertes
-     conexiones que el ambientalista → modelo real vs declarado.
+     A) Cada MACROMODELO despliega sus conceptos propios (dependencia)
+     B) Conexiones CRUZADAS entre paradigmas revelan cuál domina
+     El popup responde: por qué, qué circula, quién manda, consecuencia.
      ============================================================ */
 
-  /* === NEOLIBERAL / MERCANTILISTA — el dominante oculto === */
-  { s: "neoliberal", t: "financieros", type: "jerarquia", directa: true, cat: "macro", pagina: "239-241", sustento: "EVIDENCIA: El POT concentra servicios financieros y empresariales en el norte (p.239-241). INFLUENCIA: dominante. QUÉ REVELA: el suelo se trata como activo de mercado; la aglomeración capitalista ordena el territorio. CONSECUENCIA: reproduce la segregación norte-sur." },
-  { s: "neoliberal", t: "vivienda", type: "conflicto", directa: true, cat: "macro", pagina: "43", sustento: "EVIDENCIA: La vivienda se regula por renta del suelo, no por derecho. INFLUENCIA: dominante. QUÉ REVELA: densificación como negocio inmobiliario. CONSECUENCIA: gentrificación y desplazamiento no reconocidos — distancia entre discurso social y modelo operativo." },
-  { s: "neoliberal", t: "turismo", type: "jerarquia", directa: true, cat: "macro", pagina: "239", sustento: "EVIDENCIA: 'Destino turístico inteligente' mercantiliza el patrimonio (p.239). INFLUENCIA: dominante. QUÉ REVELA: la cultura como activo económico. CONSECUENCIA: patrimonio convertido en escenografía para el consumo." },
-  { s: "neoliberal", t: "coberturas", type: "conflicto", directa: true, cat: "macro", pagina: "92", sustento: "EVIDENCIA: La presión inmobiliaria compite con el suelo verde. INFLUENCIA: dominante subordinando lo ecológico. QUÉ REVELA: la EEP declarada rectora cede ante la renta del suelo. CONSECUENCIA: el corazón de la hipocresía institucional." },
+  /* === A) NEOLIBERAL despliega sus conceptos === */
+  { s: "neoliberal", t: "renta_suelo", type: "dependencia", directa: true, cat: "m1", sustento: "POR QUÉ: La renta del suelo es el motor del paradigma neoliberal. QUÉ CIRCULA: valorización, plusvalía urbana. CONSECUENCIA: el suelo se gestiona como activo financiero, no como bien común." },
+  { s: "neoliberal", t: "competitividad", type: "dependencia", directa: true, cat: "m1", sustento: "POR QUÉ: La ciudad debe competir por inversión global. QUÉ CIRCULA: capital, imagen de marca-ciudad. CONSECUENCIA: prioriza atraer capital sobre resolver necesidades locales." },
+  { s: "neoliberal", t: "mercado_inmob", type: "dependencia", directa: true, cat: "m1", sustento: "POR QUÉ: El mercado inmobiliario materializa la renta del suelo. QUÉ CIRCULA: transacciones, desarrollo privado. CONSECUENCIA: la vivienda como mercancía antes que como derecho." },
+  { s: "neoliberal", t: "aglomeracion", type: "funcional", directa: true, cat: "m1", sustento: "POR QUÉ: La aglomeración concentra la actividad económica rentable. QUÉ CIRCULA: economías de escala. CONSECUENCIA: refuerza la segregación norte-sur de Bogotá." },
 
-  /* === DESARROLLISTA / PRODUCTIVISTA — infraestructura como progreso === */
-  { s: "desarrollista", t: "redvial", type: "jerarquia", directa: true, cat: "macro", pagina: "43", sustento: "EVIDENCIA: Inversión prioritaria en autopistas y ampliación vial (p.229). INFLUENCIA: dominante. QUÉ REVELA: progreso entendido como infraestructura para el auto. CONSECUENCIA: contradice la promesa de movilidad sostenible." },
-  { s: "desarrollista", t: "transporte", type: "funcional", directa: true, cat: "macro", pagina: "43", sustento: "EVIDENCIA: Metro y transporte masivo como grandes obras. INFLUENCIA: fuerte. QUÉ REVELA: el desarrollo se mide en megaproyectos. CONSECUENCIA: privilegia lo visible-monumental sobre lo cotidiano." },
-  { s: "desarrollista", t: "tecnodistrito", type: "causal", directa: true, cat: "macro", pagina: "239", sustento: "EVIDENCIA: Distrito tecnológico como motor de crecimiento (p.239). INFLUENCIA: fuerte. QUÉ REVELA: fe en el crecimiento económico como fin. CONSECUENCIA: subordina otros valores al PIB urbano." },
-  { s: "desarrollista", t: "industriales", type: "funcional", directa: true, cat: "macro", pagina: "239", sustento: "EVIDENCIA: Zonas industriales y reconversión productiva. INFLUENCIA: media. QUÉ REVELA: la producción como base del modelo. CONSECUENCIA: tensión con la vocación ambiental declarada." },
+  /* === A) DESARROLLISTA despliega sus conceptos === */
+  { s: "desarrollista", t: "grandes_obras", type: "dependencia", directa: true, cat: "m2", sustento: "POR QUÉ: El progreso se mide en megaproyectos visibles. QUÉ CIRCULA: inversión pública, legitimidad política. CONSECUENCIA: privilegia lo monumental sobre lo cotidiano." },
+  { s: "desarrollista", t: "pib_urbano", type: "dependencia", directa: true, cat: "m2", sustento: "POR QUÉ: El crecimiento del PIB es el fin último. QUÉ CIRCULA: producción, empleo formal. CONSECUENCIA: subordina otros valores (ambiente, cuidado) al indicador económico." },
+  { s: "desarrollista", t: "infra_vial", type: "dependencia", directa: true, cat: "m2", sustento: "POR QUÉ: La infraestructura vial encarna el desarrollo. QUÉ CIRCULA: inversión en asfalto (p.229). CONSECUENCIA: privilegia el auto y contradice la movilidad sostenible declarada." },
+  { s: "desarrollista", t: "reconversion", type: "funcional", directa: true, cat: "m2", sustento: "POR QUÉ: Reconvertir zonas industriales genera nuevo valor. QUÉ CIRCULA: renovación urbana. CONSECUENCIA: puede desplazar economías y comunidades existentes." },
 
-  /* === AMBIENTALISTA — fuerte en discurso, débil en estructura === */
-  { s: "ambientalista", t: "cerros", type: "funcional", directa: true, cat: "macro", pagina: "92", sustento: "EVIDENCIA: 'Bogotá Reverdece', EEP como 'primera ordenante' (p.92). INFLUENCIA: fuerte en discurso. QUÉ REVELA: ambientalismo como marca. CONSECUENCIA: pero con pocas conexiones estructurales vinculantes — periférico en la práctica." },
-  { s: "ambientalista", t: "humedales", type: "funcional", directa: false, cat: "macro", pagina: "186", sustento: "EVIDENCIA: Humedales 'vitales' pero solo 3 páginas (p.186). INFLUENCIA: discursiva. QUÉ REVELA: alta centralidad narrativa, baja centralidad estructural. CONSECUENCIA: la contradicción que el análisis de red hace visible." },
-  { s: "ambientalista", t: "corredores", type: "complementariedad", directa: false, cat: "macro", pagina: "43", sustento: "EVIDENCIA: Corredores verdes como símbolo (p.43). INFLUENCIA: discursiva. QUÉ REVELA: vitrina de sostenibilidad. CONSECUENCIA: riesgo de greenwashing si no hay protección real." },
-  { s: "neoliberal", t: "ambientalista", type: "conflicto", directa: true, cat: "macro", pagina: "92", sustento: "EVIDENCIA: El discurso ambiental coexiste con inversión en ladrillo y asfalto. INFLUENCIA: el neoliberal subordina al ambiental. QUÉ REVELA: dos macromodelos en tensión donde gana el económico. CONSECUENCIA: modelo declarado (verde) ≠ modelo operativo (mercado). EL HALLAZGO CENTRAL." },
+  /* === A) AMBIENTALISTA despliega sus conceptos === */
+  { s: "ambientalista", t: "serv_ecosist", type: "dependencia", directa: true, cat: "m3", sustento: "POR QUÉ: Los servicios ecosistémicos justifican la protección. QUÉ CIRCULA: agua, aire, regulación climática. CONSECUENCIA: base técnica del discurso verde, pero débilmente operacionalizada." },
+  { s: "ambientalista", t: "reverdece", type: "dependencia", directa: true, cat: "m3", sustento: "POR QUÉ: 'Bogotá Reverdece' es la marca del POT. QUÉ CIRCULA: legitimidad política, imagen. CONSECUENCIA: riesgo de greenwashing si no hay estructura que lo sostenga." },
+  { s: "ambientalista", t: "resiliencia_c", type: "funcional", directa: true, cat: "m3", sustento: "POR QUÉ: La resiliencia climática es meta declarada. QUÉ CIRCULA: adaptación al cambio climático. CONSECUENCIA: aparece en objetivos pero con pocas relaciones vinculantes." },
+  { s: "ambientalista", t: "eep", type: "dependencia", directa: true, cat: "m3", sustento: "POR QUÉ: La EEP es el corazón del paradigma ambiental (p.92). QUÉ CIRCULA: mandato de 'primera ordenante'. CONSECUENCIA: alta centralidad discursiva que la red pondrá a prueba." },
 
-  /* === TECNOCRÁTICO / ESTATISTA — norma, datos y control === */
-  { s: "tecnocratico", t: "equip", type: "regulacion", directa: true, cat: "macro", pagina: "43", sustento: "EVIDENCIA: Estándares de equipamientos y acceso a 30 min. INFLUENCIA: media. QUÉ REVELA: la ciudad gobernada por indicadores y normas. CONSECUENCIA: eficiencia técnica que puede ignorar la vida cotidiana real." },
-  { s: "tecnocratico", t: "servpub", type: "regulacion", directa: true, cat: "macro", pagina: "43", sustento: "EVIDENCIA: Servicios públicos regulados por cobertura y métricas. INFLUENCIA: media. QUÉ REVELA: gestión estatal por metas cuantitativas. CONSECUENCIA: lo no medible (calidad de vida) queda fuera." },
-  { s: "tecnocratico", t: "manzanas", type: "funcional", directa: true, cat: "macro", pagina: "43", sustento: "EVIDENCIA: Manzanas del Cuidado como política pública articulada. INFLUENCIA: media. QUÉ REVELA: el Estado como articulador de servicios. CONSECUENCIA: depende de continuidad institucional para no ser retórica." },
+  /* === A) TECNOCRÁTICO despliega sus conceptos === */
+  { s: "tecnocratico", t: "indicadores", type: "dependencia", directa: true, cat: "m4", sustento: "POR QUÉ: La ciudad se gobierna por métricas. QUÉ CIRCULA: datos, metas cuantitativas. CONSECUENCIA: lo no medible (calidad de vida, vínculos) queda fuera del modelo." },
+  { s: "tecnocratico", t: "norma_pot", type: "dependencia", directa: true, cat: "m4", sustento: "POR QUÉ: El POT como norma jurídica ordena el territorio. QUÉ CIRCULA: regulación, obligatoriedad legal. CONSECUENCIA: da estabilidad pero puede rigidizar frente a dinámicas emergentes." },
+  { s: "tecnocratico", t: "ciudad_intel", type: "funcional", directa: true, cat: "m4", sustento: "POR QUÉ: La 'ciudad inteligente' promete gestión eficiente. QUÉ CIRCULA: datos, tecnología. CONSECUENCIA: puede despolitizar decisiones urbanas presentándolas como técnicas." },
+  { s: "tecnocratico", t: "planeacion", type: "dependencia", directa: true, cat: "m4", sustento: "POR QUÉ: La planeación centralizada es el método del Estado. QUÉ CIRCULA: decisiones top-down. CONSECUENCIA: tensión con la autoorganización barrial y comunitaria." },
 
-  /* === COMUNITARIO / DEL CUIDADO — el contrapeso emergente === */
-  { s: "comunitario", t: "manzanas", type: "dependencia", directa: true, cat: "macro", pagina: "43", sustento: "EVIDENCIA: Manzanas del Cuidado como corazón del paradigma (p.43). INFLUENCIA: creciente. QUÉ REVELA: lógica de proximidad y cuidado colectivo. CONSECUENCIA: potencial contrapeso al modelo mercantil, si recibe recursos." },
-  { s: "comunitario", t: "scuidado", type: "dependencia", directa: true, cat: "macro", pagina: "43", sustento: "EVIDENCIA: Servicios de cuidado como red de soporte social. INFLUENCIA: creciente. QUÉ REVELA: reconocimiento del trabajo de cuidado. CONSECUENCIA: reconfiguraría la ciudad si dejara de ser periférico." },
-  { s: "comunitario", t: "plazas", type: "complementariedad", directa: false, cat: "macro", pagina: "43", sustento: "EVIDENCIA: Plazas de mercado como economía popular. INFLUENCIA: media. QUÉ REVELA: valor de lo comunitario y tradicional. CONSECUENCIA: en tensión con la modernización mercantil que las desplaza." },
-  { s: "desarrollista", t: "comunitario", type: "conflicto", directa: true, cat: "macro", pagina: "43", sustento: "EVIDENCIA: La lógica de grandes obras compite con la escala barrial del cuidado. INFLUENCIA: el desarrollista domina en presupuesto. QUÉ REVELA: dos visiones de ciudad enfrentadas. CONSECUENCIA: revela qué modelo prioriza realmente el POT — la macro-obra sobre el micro-cuidado." },
+  /* === A) COMUNITARIO despliega sus conceptos === */
+  { s: "comunitario", t: "proximidad", type: "dependencia", directa: true, cat: "m5", sustento: "POR QUÉ: La proximidad (ciudad de 15 min) es el ideal del cuidado. QUÉ CIRCULA: acceso cotidiano a servicios. CONSECUENCIA: reconfiguraría la ciudad si dejara de ser periférica." },
+  { s: "comunitario", t: "trabajo_cuidado", type: "dependencia", directa: true, cat: "m5", sustento: "POR QUÉ: El trabajo de cuidado sostiene la vida. QUÉ CIRCULA: tiempo, labor no remunerada. CONSECUENCIA: su reconocimiento cambiaría las prioridades del modelo urbano." },
+  { s: "comunitario", t: "economia_pop", type: "funcional", directa: true, cat: "m5", sustento: "POR QUÉ: La economía popular es la base material del barrio. QUÉ CIRCULA: comercio local, plazas de mercado. CONSECUENCIA: en tensión con la modernización mercantil que la desplaza." },
+  { s: "comunitario", t: "tejido_barrial", type: "dependencia", directa: true, cat: "m5", sustento: "POR QUÉ: El tejido barrial es la red social del cuidado. QUÉ CIRCULA: confianza, apoyo mutuo. CONSECUENCIA: capital social que el POT reconoce poco en su estructura." },
+
+  /* === B) CONEXIONES CRUZADAS — el hallazgo: quién domina === */
+  { s: "renta_suelo", t: "eep", type: "conflicto", directa: true, cat: "m1", sustento: "HALLAZGO CENTRAL: La renta del suelo choca con la EEP. QUIÉN MANDA: la renta subordina a la ecología en la práctica presupuestal. CONSECUENCIA: la EEP 'rectora' cede ante el mercado — el modelo declarado (verde) ≠ operativo (mercado)." },
+  { s: "mercado_inmob", t: "reverdece", type: "conflicto", directa: true, cat: "m1", sustento: "POR QUÉ: El mercado inmobiliario vacía de contenido a 'Reverdece'. QUIÉN MANDA: el capital sobre el discurso verde. CONSECUENCIA: greenwashing — la marca ambiental sin sustancia estructural." },
+  { s: "infra_vial", t: "eep", type: "conflicto", directa: true, cat: "m2", sustento: "POR QUÉ: La expansión vial (ALO) amenaza cerros y riberas. QUIÉN MANDA: el desarrollismo sobre lo ecológico. CONSECUENCIA: contradicción central que la lectura lineal del POT oculta." },
+  { s: "pib_urbano", t: "trabajo_cuidado", type: "jerarquia", directa: true, cat: "m2", sustento: "POR QUÉ: El PIB no contabiliza el trabajo de cuidado. QUIÉN MANDA: la lógica productivista invisibiliza el cuidado. CONSECUENCIA: el cuidado, central en el discurso, es periférico en el presupuesto." },
+  { s: "aglomeracion", t: "proximidad", type: "conflicto", directa: true, cat: "m1", sustento: "POR QUÉ: La aglomeración concentra, la proximidad distribuye. QUIÉN MANDA: la aglomeración capitalista domina la localización. CONSECUENCIA: la ciudad de 15 min queda como aspiración frente a la concentración real." },
+  { s: "grandes_obras", t: "tejido_barrial", type: "conflicto", directa: true, cat: "m2", sustento: "POR QUÉ: Las grandes obras fracturan el tejido barrial. QUIÉN MANDA: la escala megaproyecto sobre la escala humana. CONSECUENCIA: revela qué prioriza el POT — la macro-obra sobre el micro-cuidado." },
+  { s: "norma_pot", t: "eep", type: "regulacion", directa: true, cat: "m4", sustento: "POR QUÉ: La norma jurídica debería proteger la EEP. QUÉ CIRCULA: obligatoriedad legal. CONSECUENCIA: si la norma no vincula fuerte, la protección es declarativa." },
+  { s: "indicadores", t: "trabajo_cuidado", type: "jerarquia", directa: true, cat: "m4", sustento: "POR QUÉ: Los indicadores no miden el cuidado. QUIÉN MANDA: la métrica define qué importa. CONSECUENCIA: lo no cuantificable se vuelve invisible para la planeación." },
+  { s: "competitividad", t: "economia_pop", type: "conflicto", directa: true, cat: "m1", sustento: "POR QUÉ: La competitividad global desprecia la economía popular. QUIÉN MANDA: el capital formal sobre el informal. CONSECUENCIA: plazas de mercado y economía barrial en riesgo de desplazamiento." },
+  { s: "reconversion", t: "economia_pop", type: "conflicto", directa: false, cat: "m2", sustento: "POR QUÉ: La reconversión productiva desplaza economías existentes. QUIÉN MANDA: el desarrollo sobre lo popular. CONSECUENCIA: gentrificación económica no reconocida en el POT." },
+
+  /* === B) EMERGENCIA: alianzas y contrapesos === */
+  { s: "comunitario", t: "ambientalista", type: "complementariedad", directa: true, cat: "m5", sustento: "EMERGENCIA: Cuidado y ambiente comparten lógica de sostenibilidad de la vida. ALIANZA POTENCIAL: juntos podrían ser contrapeso al eje neoliberal-desarrollista. CONSECUENCIA: de esta alianza podría emerger un modelo alternativo de ciudad." },
+  { s: "neoliberal", t: "desarrollista", type: "complementariedad", directa: true, cat: "m1", sustento: "EMERGENCIA: Neoliberal y desarrollista se refuerzan mutuamente. ALIANZA DOMINANTE: mercado + grandes obras = el eje que realmente estructura el POT. CONSECUENCIA: juntos subordinan a los otros tres paradigmas." },
+  { s: "tecnocratico", t: "neoliberal", type: "funcional", directa: false, cat: "m4", sustento: "EMERGENCIA: La tecnocracia da forma técnica-neutral a decisiones de mercado. QUÉ CIRCULA: legitimación experta. CONSECUENCIA: presenta como 'técnico' lo que es una opción política a favor del capital." },
 ];
 
 function nodeById(id) { return ODS_NODES.find(n => n.id === id); }
@@ -711,7 +714,7 @@ function filterNetwork(mode) {
   if (event && event.currentTarget) event.currentTarget.classList.add("active");
 
   const T = ["dependencia", "condicionamiento", "causal", "funcional", "complementariedad", "conflicto", "jerarquia", "retroalimentacion", "regulacion"];
-  const C = ["e1", "e2", "e3", "e4", "e1-e2", "e2-e3", "e3-e4", "e1-e4", "e1-e3", "macro"];
+  const C = ["m1", "m2", "m3", "m4", "m5"];
   const groups = {
     all:               { types: T, cats: C },
     dependencia:       { types: ["dependencia"],       cats: C },
@@ -722,10 +725,12 @@ function filterNetwork(mode) {
     conflicto:         { types: ["conflicto"],         cats: C },
     jerarquia:         { types: ["jerarquia"],         cats: C },
     retroalimentacion: { types: ["retroalimentacion"], cats: C },
-    e1: { types: T, cats: ["e1"] },
-    e2: { types: T, cats: ["e2"] },
-    e3: { types: T, cats: ["e3"] },
-    e4: { types: T, cats: ["e4"] },
+    regulacion:        { types: ["regulacion"],        cats: C },
+    m1: { types: T, cats: ["m1"] },
+    m2: { types: T, cats: ["m2"] },
+    m3: { types: T, cats: ["m3"] },
+    m4: { types: T, cats: ["m4"] },
+    m5: { types: T, cats: ["m5"] },
   };
   const active = groups[mode] || groups.all;
 
