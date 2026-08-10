@@ -100,7 +100,7 @@ const ODS_NODES = [
 ODS_NODES.forEach(n => {
   n.homeX = n.x; n.homeY = n.y;
   n.vx = 0; n.vy = 0;
-  n.fixed = false;
+  n.fixed = (n.id === "vivienda");
 });
 
 /* Tipos de relación (hoja "4 convenciones") */
@@ -108,7 +108,7 @@ const TYPE_STYLE = {
   soporte:        { color: "#4ade80", width: 1.3, label: "Soporte", desc: "El elemento aporta condiciones, recursos o servicios para que otro funcione.", dash: false, doubleEnd: false, double: false },
   conectividad:   { color: "#5b8def", width: 1.3, label: "Conectividad", desc: "El elemento conecta lugares, personas, actividades o sistemas.", dash: false, doubleEnd: true, double: false },
   dependencia:    { color: "#f76fb0", width: 1.2, label: "Dependencia", desc: "El funcionamiento de un elemento depende de otro.", dash: true, doubleEnd: false, double: false },
-  transformacion: { color: "#a276f2", width: 1.1, label: "Transformación", desc: "Un elemento modifica o transforma otro.", dash: false, doubleEnd: false, double: true },
+  transformacion: { color: "#a276f2", width: 1.1, label: "Transformación", desc: "Un elemento modifica o transforma otro.", dash: false, doubleEnd: false, double: false },
 };
 
 /* -------- Aristas: 40 relaciones tomadas 1 a 1 de la hoja "Relaciones" -------- */
@@ -147,7 +147,6 @@ let RAW_EDGES = [
   { s: "vivienda", t: "redes_de_energia", type: "soporte", sustento: "Vivienda aporta la base habitacional que sostiene las Redes de energía.", paginaTexto: "Hábitat y espacio urbano → Hábitat y espacio urbano" },
   { s: "vivienda", t: "alcantarillado", type: "soporte", sustento: "Vivienda aporta la base habitacional que sostiene el Alcantarillado del sector.", paginaTexto: "Hábitat y espacio urbano → Hábitat y espacio urbano" },
   { s: "vivienda", t: "plazas", type: "soporte", sustento: "Vivienda aporta la base habitacional que sostiene las Plazas cercanas.", paginaTexto: "Hábitat y espacio urbano → Hábitat y espacio urbano" },
-  { s: "vivienda", t: "espacio_publico", type: "soporte", sustento: "Vivienda aporta la base habitacional que sostiene el Espacio público circundante.", paginaTexto: "Hábitat y espacio urbano → Hábitat y espacio urbano" },
   { s: "humedales", t: "coberturas_vegetales", type: "soporte", sustento: "Los Humedales sostienen las Coberturas vegetales asociadas.", paginaTexto: "Ambiental y ecológico → Ambiental y ecológico" },
   { s: "rios", t: "fuentes_hidricas", type: "soporte", sustento: "Los Ríos sostienen el sistema de Fuentes hídricas de la ciudad.", paginaTexto: "Ambiental y ecológico → Ambiental y ecológico" },
   { s: "corredores_verdes", t: "ciclorrutas", type: "conectividad", sustento: "Los Corredores verdes conectan con la red de Ciclorrutas.", paginaTexto: "Ambiental y ecológico → Movilidad y conectividad" },
@@ -308,7 +307,7 @@ function drawEdges(svg) {
       visual.setAttribute("marker-end", `url(#arrow-${edge.type}-end)`);
       if (style.doubleEnd) visual.setAttribute("marker-start", `url(#arrow-${edge.type}-start)`);
     }
-    visual.setAttribute("opacity", "0.9");
+    visual.setAttribute("opacity", "0.35");
     edge._el = { visual, hit };
 
     group.appendChild(visual);
@@ -411,6 +410,22 @@ function updatePositions() {
 let physicsRunning = false;
 function physicsStep() {
   let moving = false;
+
+  // Repulsión para que los nodos no se toquen
+  for (let i = 0; i < ODS_NODES.length; i++) {
+    for (let j = i + 1; j < ODS_NODES.length; j++) {
+      const ni = ODS_NODES[i], nj = ODS_NODES[j];
+      const dx = nj.x - ni.x, dy = nj.y - ni.y;
+      const dist = Math.hypot(dx, dy) || 1;
+      const minDist = ni.r + nj.r + 30; // Margen de separación
+      if (dist < minDist) {
+        const force = (minDist - dist) * 0.08;
+        const fx = (dx / dist) * force, fy = (dy / dist) * force;
+        if (!ni.fixed) { ni.vx -= fx; ni.vy -= fy; }
+        if (!nj.fixed) { nj.vx += fx; nj.vy += fy; }
+      }
+    }
+  }
 
   RAW_EDGES.forEach(edge => {
     const s = nodeById(edge.s), t = nodeById(edge.t);
