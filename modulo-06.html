@@ -98,7 +98,7 @@
       </div>
     </div>
 
-    <!-- NETWORK VISUALIZATION -->
+    <!-- NETWORK VISUALIZATION (red POT ↔ ODS) -->
     <div class="network-section">
       <div class="network-header">
         <h3><i class="fa-solid fa-sitemap"></i> Red POT ↔ ODS Interactiva</h3>
@@ -109,11 +109,37 @@
         </div>
       </div>
 
+      <div class="fc-bar">
+        <div class="fc-group fc-findings">
+          <span class="fc-label"><i class="fa-solid fa-magnifying-glass-chart"></i> Hallazgos</span>
+          <button class="fc-chip" type="button" data-finding="ods1">ODS 1</button>
+          <button class="fc-chip" type="button" data-finding="ods13">ODS 13</button>
+          <button class="fc-chip" type="button" data-finding="ods9">ODS 9</button>
+          <button class="fc-chip" type="button" data-finding="edge:ods1->ods13">ODS 1 ↔ ODS 13</button>
+        </div>
+        <div class="fc-divider"></div>
+        <div class="fc-group fc-contradictions">
+          <span class="fc-label"><i class="fa-solid fa-triangle-exclamation"></i> Contradicción</span>
+          <button class="fc-chip fc-chip-red" type="button" data-contradiction="ods16">ODS 16</button>
+          <button class="fc-chip fc-chip-red" type="button" data-contradiction="ods14">ODS 14</button>
+          <button class="fc-chip fc-chip-red" type="button" data-contradiction="ods11">ODS 11</button>
+        </div>
+      </div>
+
       <div class="network-viz-wrap">
-        <svg id="networkViz" viewBox="0 0 1470 780" preserveAspectRatio="xMidYMid meet"></svg>
+        <div class="network-canvas">
+          <svg id="networkViz" viewBox="0 0 1470 780" preserveAspectRatio="xMidYMid meet"></svg>
+
+          <div class="finding-popup" id="findingPopup">
+            <button class="finding-popup-close" id="findingPopupClose" type="button" aria-label="Cerrar">&times;</button>
+            <div class="finding-popup-badge" id="findingPopupBadge"><i class="fa-solid fa-magnifying-glass-chart"></i> Hallazgo</div>
+            <div class="finding-popup-title" id="findingPopupTitle"></div>
+            <div class="finding-popup-text" id="findingPopupText"></div>
+          </div>
+        </div>
 
         <div class="network-sidebar">
-          <aside class="network-legend" id="networkLegend">
+          <aside class="network-legend compact" id="networkLegend">
             <div class="legend-title">Convenciones</div>
 
             <label class="legend-item" data-type="comp">
@@ -127,8 +153,6 @@
               <span class="legend-swatch swatch-func"></span>
               Funcional
             </label>
-
-            <div class="legend-divider"></div>
 
             <label class="legend-item" data-type="causal">
               <input type="checkbox" checked>
@@ -144,18 +168,15 @@
 
             <div class="legend-divider"></div>
 
-            <div class="legend-title">Tipo de relación</div>
             <div class="legend-item legend-static">
               <span class="legend-swatch swatch-directa"></span>
               Directa
-            </div>
-            <div class="legend-item legend-static">
-              <span class="legend-swatch swatch-nodirecta"></span>
+              <span class="legend-swatch swatch-nodirecta" style="margin-left:10px;"></span>
               No directa
             </div>
 
             <div class="legend-divider"></div>
-            <div class="legend-hint">Clic en una línea: ver sustento.<br>Doble clic en una bola: apagarla/encenderla.<br>Triple clic en una bola: ver solo su flujo.</div>
+            <div class="legend-hint">Clic en línea: sustento.<br>Doble clic: apagar/encender.<br>Triple clic: ver solo su flujo.</div>
           </aside>
 
           <div class="edge-info-panel" id="edgeInfoPanel">
@@ -171,179 +192,53 @@
       </div>
     </div>
 
-    <!-- ALIGNMENT MATRIX -->
-    <div class="analysis-container">
-      <div class="analysis-card full-width">
-        <div class="card-header">
-          <h3><i class="fa-solid fa-table"></i> Matriz de Alineación POT-ODS</h3>
-        </div>
-
-        <div class="matrix-container">
-          <div class="matrix-row header">
-            <div class="matrix-cell header-cell">ODS</div>
-            <div class="matrix-cell header-cell">Estructura POT</div>
-            <div class="matrix-cell header-cell">Alineación</div>
-            <div class="matrix-cell header-cell">Conflictos</div>
-            <div class="matrix-cell header-cell">Potencial</div>
-          </div>
-
-          <div class="matrix-row" data-ods="1">
-            <div class="matrix-cell ods-badge" style="background: rgba(230,36,51,0.2); color: #e62433;">ODS 1</div>
-            <div class="matrix-cell">EFC + Vivienda</div>
-            <div class="matrix-cell"><span class="alignment-tag strong">Fuerte</span></div>
-            <div class="matrix-cell"><span class="conflict-tag">Acceso desigual</span></div>
-            <div class="matrix-cell">Alto</div>
-          </div>
-
-          <div class="matrix-row" data-ods="3">
-            <div class="matrix-cell ods-badge" style="background: rgba(76,159,56,0.2); color: #4c9f38;">ODS 3</div>
-            <div class="matrix-cell">Servicios de cuidado</div>
-            <div class="matrix-cell"><span class="alignment-tag strong">Fuerte</span></div>
-            <div class="matrix-cell"><span class="conflict-tag">Cobertura limitada</span></div>
-            <div class="matrix-cell">Muy Alto</div>
-          </div>
-
-          <div class="matrix-row" data-ods="5">
-            <div class="matrix-cell ods-badge" style="background: rgba(221,16,55,0.2); color: #dd1037;">ODS 5</div>
-            <div class="matrix-cell">Manzanas del Cuidado</div>
-            <div class="matrix-cell"><span class="alignment-tag medium">Media</span></div>
-            <div class="matrix-cell"><span class="conflict-tag">Sesgo de género</span></div>
-            <div class="matrix-cell">Muy Alto</div>
-          </div>
-
-          <div class="matrix-row" data-ods="6">
-            <div class="matrix-cell ods-badge" style="background: rgba(38,189,227,0.2); color: #26bde3;">ODS 6</div>
-            <div class="matrix-cell">Ríos, Humedales</div>
-            <div class="matrix-cell"><span class="alignment-tag strong">Fuerte</span></div>
-            <div class="matrix-cell"><span class="conflict-tag">Contaminación</span></div>
-            <div class="matrix-cell">Alto</div>
-          </div>
-
-          <div class="matrix-row" data-ods="8">
-            <div class="matrix-cell ods-badge" style="background: rgba(162,25,66,0.2); color: #a21942;">ODS 8</div>
-            <div class="matrix-cell">Economía circular, empleo</div>
-            <div class="matrix-cell"><span class="alignment-tag medium">Media</span></div>
-            <div class="matrix-cell"><span class="conflict-tag">Informalidad ignorada</span></div>
-            <div class="matrix-cell">Muy Alto</div>
-          </div>
-
-          <div class="matrix-row" data-ods="11">
-            <div class="matrix-cell ods-badge" style="background: rgba(221,166,58,0.2); color: #dda63a;">ODS 11</div>
-            <div class="matrix-cell">Toda la estructura POT</div>
-            <div class="matrix-cell"><span class="alignment-tag strong">Fuerte</span></div>
-            <div class="matrix-cell"><span class="conflict-tag">Brecha de implementación</span></div>
-            <div class="matrix-cell">Muy Alto</div>
-          </div>
-
-          <div class="matrix-row" data-ods="13">
-            <div class="matrix-cell ods-badge" style="background: rgba(63,126,68,0.2); color: #3f7e44;">ODS 13</div>
-            <div class="matrix-cell">EEP, Conectores</div>
-            <div class="matrix-cell"><span class="alignment-tag strong">Fuerte</span></div>
-            <div class="matrix-cell"><span class="conflict-tag">Flujos de aire ocultos</span></div>
-            <div class="matrix-cell">Alto</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- SYNERGIES & CONFLICTS -->
-    <div class="synergies-section">
-      <div class="synergies-grid">
-        <div class="synergy-card success">
-          <div class="synergy-icon"><i class="fa-solid fa-handshake"></i></div>
-          <div class="synergy-content">
-            <h4>Mayores Sinergias</h4>
-            <ul>
-              <li><strong>ODS 11 + EFC:</strong> Ciudades inclusivas ↔ Acceso a servicios</li>
-              <li><strong>ODS 13 + EEP:</strong> Acción climática ↔ Protección ecosistémica</li>
-              <li><strong>ODS 3 + Cuidado:</strong> Salud ↔ Manzanas del Cuidado</li>
-              <li><strong>ODS 6 + Ríos:</strong> Agua limpia ↔ Humedales naturales</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="synergy-card conflict">
-          <div class="synergy-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
-          <div class="synergy-content">
-            <h4>Principales Conflictos</h4>
-            <ul>
-              <li><strong>ODS 1 vs Vivienda:</strong> Acceso desigual a vivienda formal</li>
-              <li><strong>ODS 8 vs Economía:</strong> Informalidad no contemplada en POT</li>
-              <li><strong>ODS 5 vs Género:</strong> Brecha de representación femenina</li>
-              <li><strong>ODS 10 vs Migración:</strong> Población flotante excluida</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- RECOMMENDATIONS -->
-    <div class="recommendations-section">
-      <h3><i class="fa-solid fa-lightbulb"></i> Recomendaciones de Alineación</h3>
-
-      <div class="recommendations-grid">
-        <div class="rec-card">
-          <div class="rec-number">1</div>
-          <div class="rec-content">
-            <h4>Formalización de Economía Informal</h4>
-            <p>Integrar al POT espacios para comercio ambulante y trabajo doméstico para alinear con ODS 8 (Trabajo Decente).</p>
-            <div class="rec-impact">
-              <span class="impact-badge">Impacto: +15%</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="rec-card">
-          <div class="rec-number">2</div>
-          <div class="rec-content">
-            <h4>Inclusión de Grupos Vulnerables</h4>
-            <p>Expandir enfoque de género, infancia y discapacidad para alinear con ODS 1, 3, 5, 10.</p>
-            <div class="rec-impact">
-              <span class="impact-badge">Impacto: +18%</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="rec-card">
-          <div class="rec-number">3</div>
-          <div class="rec-content">
-            <h4>Integración de Ciclos Naturales</h4>
-            <p>Modelar agua, aire y biodiversidad como sistemas vivos para alinear con ODS 6, 13, 15.</p>
-            <div class="rec-impact">
-              <span class="impact-badge">Impacto: +12%</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="rec-card">
-          <div class="rec-number">4</div>
-          <div class="rec-content">
-            <h4>Monitoreo y Evaluación</h4>
-            <p>Crear indicadores específicos de ODS en el POT para seguimiento y evaluación periódica.</p>
-            <div class="rec-impact">
-              <span class="impact-badge">Impacto: +8%</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ACTION BUTTONS -->
-    <div class="action-buttons">
-      <button class="btn-primary" onclick="generateODSReport()">
-        <i class="fa-solid fa-file-pdf"></i> Generar Reporte POT-ODS
-      </button>
-      <button class="btn-secondary" onclick="downloadAlignment()">
-        <i class="fa-solid fa-download"></i> Descargar Matriz
-      </button>
-      <button class="btn-secondary" onclick="shareAnalysis()">
-        <i class="fa-solid fa-share-nodes"></i> Compartir Análisis
-      </button>
-    </div>
-
     <footer>
       "No se trata de representar la ciudad, sino de comprenderla para transformarla." — <span>Equipo POT Reverse Engineering</span>
     </footer>
+
+    <!-- RED DE ESTRUCTURAS DEL POT (estática, se ve completa, sin zoom ni arrastre) -->
+    <div class="pn-section">
+      <div class="network-header">
+        <h3><i class="fa-solid fa-diagram-project"></i> Red de Relaciones del POT (Estructuras)</h3>
+      </div>
+
+      <div class="pn-wrap">
+        <div class="pn-canvas">
+          <svg id="pnViz" viewBox="0 0 800 620" preserveAspectRatio="xMidYMid meet"></svg>
+
+          <div class="pn-sustento-panel" id="pnSustentoPanel">
+            <button class="pn-sustento-close" id="pnSustentoClose" type="button" aria-label="Cerrar">&times;</button>
+            <div class="pn-sustento-badge"><i class="fa-solid fa-quote-left"></i> Sustento</div>
+            <div class="pn-sustento-title" id="pnSustentoTitle"></div>
+            <div class="pn-sustento-type" id="pnSustentoTipo"></div>
+            <div class="pn-sustento-ods" id="pnSustentoOds"></div>
+            <div id="pnSustentoQuotes"></div>
+          </div>
+        </div>
+
+        <aside class="pn-sidebar">
+          <div class="pn-findings-panel">
+            <div class="pn-findings-title">1. Relaciones que favorecen los ODS</div>
+            <button class="pn-finding-item" type="button" data-pn-finding="movilidad">
+              Red vial, corredores verdes y ciclorutas → Transporte, equipamientos y ecosistemas
+              <span class="pn-finding-ods">ODS 9 · 11 · 13</span>
+            </button>
+            <button class="pn-finding-item" type="button" data-pn-finding="distrito">
+              Distrito Centro Tecnológico → Servicios empresariales
+              <span class="pn-finding-ods">ODS 9 · 8</span>
+            </button>
+            <button class="pn-finding-item" type="button" data-pn-finding="humedales">
+              Humedales → Áreas de resiliencia climática
+              <span class="pn-finding-ods">ODS 13</span>
+            </button>
+          </div>
+          <div class="pn-legend-hint">
+            Clic en un renglón: resalta la relación en la red y muestra los ODS con los que se vincula.<br>
+            Clic en cualquier línea de la red: muestra su sustento documental.
+          </div>
+        </aside>
+      </div>
+    </div>
 
   </main>
 
