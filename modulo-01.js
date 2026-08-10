@@ -545,19 +545,16 @@ function clearSpotlight() {
 
 function setSpotlightNodes(nodeIds, expand) {
   spotlight = { mode: "nodes", nodes: new Set(nodeIds), expand: !!expand };
-  document.querySelectorAll(".insight-card").forEach(c => c.classList.remove("active"));
   applySpotlightState();
 }
 
 function setSpotlightTypes(types) {
   spotlight = { mode: "types", types };
-  document.querySelectorAll(".insight-card").forEach(c => c.classList.remove("active"));
   applySpotlightState();
 }
 
 function setSpotlightCats(cats, keepAllNodes) {
   spotlight = { mode: "cats", cats, keepAllNodes: !!keepAllNodes };
-  document.querySelectorAll(".insight-card").forEach(c => c.classList.remove("active"));
   applySpotlightState();
 }
 
@@ -648,10 +645,17 @@ function toggleInsight(key) {
     return;
   }
 
+  document.querySelectorAll(".insight-card").forEach(c => c.classList.remove("active"));
+
+  if (key === "todas" || key === "todos") {
+    clearSpotlight();
+    return;
+  }
+
   if (TYPE_KEY[key]) {
     setSpotlightTypes([TYPE_KEY[key]]);
   } else if (NODE_INSIGHTS[key] && NODE_INSIGHTS[key].length) {
-    setSpotlightCats(NODE_INSIGHTS[key].map(id => nodeById(id).cat), true);
+    setSpotlightCats([key], true);
     NODE_INSIGHTS[key].forEach(id => {
       const el = document.querySelector(`.ods-node[data-id="${id}"]`);
       if (el) el.classList.add("node-focus-active");
