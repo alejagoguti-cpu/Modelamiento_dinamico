@@ -1,326 +1,741 @@
-// ============================================================================
-// MÓDULO 05: LO QUE NO ESTÁ - JAVASCRIPT COMPLETO
-// ============================================================================
+/* ==========================================================
+   MÓDULO 05 — LO QUE NO ESTÁ — AUSENCIAS Y VACÍOS DEL POT
+   (v2: mapeo de relaciones faltantes, componentes ignorados, conflictos silenciados)
 
-const absencesData = [
-  // ACTORES FALTANTES (ROSA)
-  { id: 1, nombre: 'Infancia 0-5', categoría: 'missing', severidad: 'critical', porcentaje: 94, color: '#f76fb0', ausencia: 94, icon: 'fa-baby', grupo: 'Actores' },
-  { id: 2, nombre: 'Personas con Discapacidad', categoría: 'missing', severidad: 'critical', porcentaje: 92, color: '#f76fb0', ausencia: 92, icon: 'fa-wheelchair', grupo: 'Actores' },
-  { id: 3, nombre: 'Migrantes/Flotantes', categoría: 'missing', severidad: 'high', porcentaje: 88, color: '#f76fb0', ausencia: 88, icon: 'fa-person-hiking', grupo: 'Actores' },
-  { id: 4, nombre: 'Fauna Urbana', categoría: 'missing', severidad: 'high', porcentaje: 76, color: '#f76fb0', ausencia: 76, icon: 'fa-dove', grupo: 'Actores' },
-  { id: 5, nombre: 'Investigación Local', categoría: 'missing', severidad: 'high', porcentaje: 72, color: '#f76fb0', ausencia: 72, icon: 'fa-flask', grupo: 'Actores' },
-  { id: 6, nombre: 'Economía Feminista', categoría: 'missing', severidad: 'medium', porcentaje: 68, color: '#f76fb0', ausencia: 68, icon: 'fa-venus', grupo: 'Actores' },
-  { id: 7, nombre: 'Arte y Expresión Callejera', categoría: 'missing', severidad: 'medium', porcentaje: 65, color: '#f76fb0', ausencia: 65, icon: 'fa-palette', grupo: 'Actores' },
-  { id: 8, nombre: 'Saberes Ancestrales', categoría: 'missing', severidad: 'medium', porcentaje: 60, color: '#f76fb0', ausencia: 60, icon: 'fa-book', grupo: 'Actores' },
-  { id: 9, nombre: 'Cuidadores Formales e Informales', categoría: 'missing', severidad: 'high', porcentaje: 81, color: '#f76fb0', ausencia: 81, icon: 'fa-heart', grupo: 'Actores' },
-  
-  // PROCESOS OCULTOS (PÚRPURA)
-  { id: 10, nombre: 'Ciclo del Agua', categoría: 'hidden', severidad: 'critical', porcentaje: 85, color: '#a276f2', ausencia: 85, icon: 'fa-droplet', grupo: 'Procesos' },
-  { id: 11, nombre: 'Flujos de Aire', categoría: 'hidden', severidad: 'critical', porcentaje: 81, color: '#a276f2', ausencia: 81, icon: 'fa-wind', grupo: 'Procesos' },
-  { id: 12, nombre: 'Dinámicas Informales', categoría: 'hidden', severidad: 'high', porcentaje: 76, color: '#a276f2', ausencia: 76, icon: 'fa-users', grupo: 'Procesos' },
-  { id: 13, nombre: 'Fenómenos Sísmicos', categoría: 'hidden', severidad: 'high', porcentaje: 71, color: '#a276f2', ausencia: 71, icon: 'fa-earth-americas', grupo: 'Procesos' },
-  { id: 14, nombre: 'Gentrificación', categoría: 'hidden', severidad: 'high', porcentaje: 68, color: '#a276f2', ausencia: 68, icon: 'fa-building', grupo: 'Procesos' },
-  { id: 15, nombre: 'Desigualdad de Género', categoría: 'hidden', severidad: 'medium', porcentaje: 62, color: '#a276f2', ausencia: 62, icon: 'fa-genderless', grupo: 'Procesos' },
-  { id: 16, nombre: 'Conflictividad Social', categoría: 'hidden', severidad: 'medium', porcentaje: 55, color: '#a276f2', ausencia: 55, icon: 'fa-handshake', grupo: 'Procesos' },
-  
-  // SUBREPRESENTADOS (VERDE)
-  { id: 17, nombre: 'Mujeres en liderazgo', categoría: 'under', severidad: 'high', porcentaje: 45, color: '#4ade80', ausencia: 45, icon: 'fa-crown', grupo: 'Subrepres.' },
-  { id: 18, nombre: 'Jóvenes LGBTQ+', categoría: 'under', severidad: 'high', porcentaje: 42, color: '#4ade80', ausencia: 42, icon: 'fa-rainbow', grupo: 'Subrepres.' },
-  { id: 19, nombre: 'Personas Mayores', categoría: 'under', severidad: 'high', porcentaje: 38, color: '#4ade80', ausencia: 38, icon: 'fa-person-cane', grupo: 'Subrepres.' },
-  { id: 20, nombre: 'Trabajadores informales', categoría: 'under', severidad: 'medium', porcentaje: 35, color: '#4ade80', ausencia: 35, icon: 'fa-briefcase', grupo: 'Subrepres.' },
-  { id: 21, nombre: 'Ambiente (microplásticos)', categoría: 'under', severidad: 'medium', porcentaje: 32, color: '#4ade80', ausencia: 32, icon: 'fa-leaf', grupo: 'Subrepres.' },
-  { id: 22, nombre: 'Salud mental colectiva', categoría: 'under', severidad: 'medium', porcentaje: 28, color: '#4ade80', ausencia: 28, icon: 'fa-brain', grupo: 'Subrepres.' },
-  { id: 23, nombre: 'Seguridad alimentaria', categoría: 'under', severidad: 'medium', porcentaje: 25, color: '#4ade80', ausencia: 25, icon: 'fa-apple', grupo: 'Subrepres.' },
-  { id: 24, nombre: 'Educación comunitaria', categoría: 'under', severidad: 'low', porcentaje: 20, color: '#4ade80', ausencia: 20, icon: 'fa-book-open', grupo: 'Subrepres.' }
+   Nodos: Los 37 originales + espacios de ausencia
+   
+   Tipos de ausencias:
+   - relacion-faltante: Conexión que debería existir pero no está
+   - componente-ignorado: Elemento poco mencionado, marginado
+   - conflicto-silenciado: Tensión no reconocida en el documento
+   - vacio-logico: Contradicción en la arquitectura relacional
+
+   Las aristas representan AUSENCIAS, no presencias.
+   ========================================================== */
+
+const SVG_NS = "http://www.w3.org/2000/svg";
+const XHTML_NS = "http://www.w3.org/1999/xhtml";
+
+/* -------- Nodos: los componentes de las 4 estructuras -------- */
+const ODS_NODES = [
+  /* 1. Estructura Ecológica Principal — VERDE */
+  { id: "cerros",     cat: "e1", name: "CERROS\nORIENTALES",        icon: "fa-mountain-sun",  color: "#4ade80", x: 200,  y: 180, r: 52 },
+  { id: "rios",       cat: "e1", name: "RÍOS",                       icon: "fa-water",         color: "#4ade80", x: 330,  y: 430, r: 50 },
+  { id: "quebradas",  cat: "e1", name: "QUEBRADAS",                  icon: "fa-water",         color: "#4ade80", x: 500,  y: 150, r: 46 },
+  { id: "humedales",  cat: "e1", name: "HUMEDALES",                  icon: "fa-droplet",       color: "#4ade80", x: 660,  y: 420, r: 52 },
+  { id: "resiliencia",cat: "e1", name: "ÁREAS DE\nRESILIENCIA\nCLIMÁTICA",   icon: "fa-shield-heart",  color: "#4ade80", x: 890,  y: 170, r: 52 },
+  { id: "paramos",    cat: "e1", name: "COMPLEJOS\nDE PÁRAMOS",      icon: "fa-mountain",      color: "#4ade80", x: 250,  y: 640, r: 52 },
+  { id: "bosques",    cat: "e1", name: "BOSQUES\nURBANOS",           icon: "fa-tree",          color: "#4ade80", x: 1140, y: 400, r: 50 },
+  { id: "coberturas", cat: "e1", name: "COBERTURAS\nVEGETALES",      icon: "fa-seedling",      color: "#4ade80", x: 1040, y: 650, r: 54 },
+  { id: "reservas",   cat: "e1", name: "RESERVAS\nFORESTALES",       icon: "fa-tree",          color: "#4ade80", x: 1300, y: 190, r: 50 },
+  { id: "areas",      cat: "e1", name: "ÁREAS\nPROTEGIDAS",          icon: "fa-lock",          color: "#4ade80", x: 440,  y: 300, r: 50 },
+  { id: "parques_m",  cat: "e1", name: "PARQUES ECOLÓGICOS\nDE MONTAÑA",   icon: "fa-campground",      color: "#4ade80", x: 770,  y: 640, r: 50 },
+  { id: "parque_b",   cat: "e1", name: "PARQUE\nDE BORDE",           icon: "fa-archway",       color: "#4ade80", x: 1430, y: 480, r: 48 },
+  { id: "paisajes",   cat: "e1", name: "PAISAJES\nSOSTENIBLES",      icon: "fa-sun",           color: "#4ade80", x: 100,  y: 480, r: 48 },
+
+  /* 2. Estructura Funcional y del Cuidado — AZUL */
+  { id: "redvial",    cat: "e2", pagina: "43", name: "RED\nVIAL",                  icon: "fa-road",          color: "#5b8def", x: 1240, y: 90,  r: 48 },
+  { id: "transporte", cat: "e2", pagina: "43", name: "TRANSPORTE\nPÚBLICO",        icon: "fa-bus",           color: "#5b8def", x: 960,  y: 330, r: 52 },
+  { id: "corredores", cat: "e2", pagina: "43", name: "CORREDORES\nVERDES",         icon: "fa-route",         color: "#5b8def", x: 700,  y: 140, r: 50 },
+  { id: "ciclorutas", cat: "e2", pagina: "43", name: "CICLORRUTAS",                icon: "fa-person-biking", color: "#5b8def", x: 1390, y: 330, r: 46 },
+  { id: "equip",      cat: "e2", pagina: "43", name: "EQUIPAMIENTOS",              icon: "fa-school",        color: "#5b8def", x: 1250, y: 620, r: 50 },
+  { id: "manzanas",   cat: "e2", pagina: "43", name: "MANZANAS\nDEL CUIDADO",      icon: "fa-people-roof",   color: "#5b8def", x: 1470, y: 640, r: 52 },
+  { id: "sserv",      cat: "e2", pagina: "43", name: "SERVICIOS\nSOCIALES",        icon: "fa-hand-holding-heart", color: "#5b8def", x: 1370, y: 760, r: 46 },
+  { id: "parques",    cat: "e2", pagina: "43", name: "PARQUES",                    icon: "fa-tree-city",     color: "#5b8def", x: 1100, y: 760, r: 46 },
+  { id: "scuidado",   cat: "e2", pagina: "43", name: "SERVICIOS\nDE CUIDADO",      icon: "fa-heart-pulse",   color: "#5b8def", x: 1230, y: 470, r: 46 },
+  { id: "vivienda",   cat: "e2", pagina: "43", name: "VIVIENDA",                   icon: "fa-house",         color: "#5b8def", x: 950,  y: 520, r: 50 },
+  { id: "servpub",    cat: "e2", pagina: "43", name: "SERVICIOS\nPÚBLICOS",        icon: "fa-bolt",          color: "#5b8def", x: 820,  y: 770, r: 46 },
+
+  /* 3. Estructura Socioeconómica Creativa e Innovación — NARANJA */
+  { id: "financieros", cat: "e3", pagina: "239-241", name: "CENTROS\nFINANCIEROS",      icon: "fa-building-columns", color: "#ef9552", x: 1700, y: 190, r: 48 },
+  { id: "empresariales", cat: "e3", pagina: "239-241", name: "SERVICIOS\nEMPRESARIALES", icon: "fa-briefcase",      color: "#ef9552", x: 1920, y: 120, r: 50 },
+  { id: "tecnodistrito", cat: "e3", pagina: "239-241", name: "DISTRITO\nTECNOLÓGICO",   icon: "fa-microchip",      color: "#ef9552", x: 2110, y: 270, r: 48 },
+  { id: "industriales",  cat: "e3", pagina: "239-241", name: "ZONAS\nINDUSTRIALES",     icon: "fa-industry",       color: "#ef9552", x: 1860, y: 360, r: 48 },
+  { id: "innovacion",    cat: "e3", pagina: "239-241", name: "INNOVACIÓN",              icon: "fa-lightbulb",      color: "#ef9552", x: 2080, y: 470, r: 46 },
+  { id: "abastecimiento",cat: "e3", pagina: "239-241", name: "CENTROS DE\nABASTECIMIENTO", icon: "fa-truck",      color: "#ef9552", x: 1700, y: 430, r: 48 },
+  { id: "plazas",        cat: "e3", pagina: "239-241", name: "PLAZAS\nDE MERCADO",      icon: "fa-store",          color: "#ef9552", x: 1900, y: 530, r: 46 },
+  { id: "turismo",       cat: "e3", pagina: "239-241", name: "ZONAS DE\nINTERÉS\nTURÍSTICO", icon: "fa-map-location-dot", color: "#ef9552", x: 2090, y: 660, r: 46 },
+  { id: "artesanal",     cat: "e3", pagina: "239-241", name: "PRODUCCIÓN\nARTESANAL",   icon: "fa-palette",        color: "#ef9552", x: 1680, y: 640, r: 46 },
+
+  /* 4. Estructura Integradora de Patrimonio — MORADA */
+  { id: "sitios_sagrados", cat: "e4", pagina: "126", name: "SISTEMA DE\nSITIOS\nSAGRADOS", icon: "fa-place-of-worship", color: "#a276f2", x: 2360, y: 200, r: 50 },
+  { id: "pinmaterial",     cat: "e4", pagina: "126", name: "PATRIMONIO\nINMATERIAL",    icon: "fa-masks-theater",    color: "#a276f2", x: 2500, y: 440, r: 50 },
+  { id: "pnatural",        cat: "e4", pagina: "126", name: "PATRIMONIO\nNATURAL",       icon: "fa-globe",              color: "#a276f2", x: 2650, y: 180, r: 48 },
+  { id: "pecomaterial",    cat: "e4", pagina: "126", name: "PATRIMONIO ECOLÓGICO\nMATERIAL", icon: "fa-leaf",          color: "#a276f2", x: 2650, y: 640, r: 50 },
 ];
 
-const linksData = [
-  { source: 1, target: 18, tipo: 'interdependencia', fuente: 'Primera infancia ↔ Jóvenes LGBTQ+', explicacion: 'Población infantil LGBTQ+ requiere políticas integradas' },
-  { source: 2, target: 17, tipo: 'interseccionalidad', fuente: 'Discapacidad ↔ Mujeres Liderazgo', explicacion: 'Mujeres con discapacidad sufren doble discriminación' },
-  { source: 3, target: 20, tipo: 'vulnerabilidad', fuente: 'Migrantes ↔ Trabajo Informal', explicacion: 'Migrantes concentrados en economía informal' },
-  { source: 4, target: 21, tipo: 'ambiental', fuente: 'Fauna ↔ Microplásticos', explicacion: 'Contaminación plástica afecta biodiversidad urbana' },
-  { source: 10, target: 4, tipo: 'ambiental', fuente: 'Ciclo Agua ↔ Fauna', explicacion: 'Ecosistemas hídricos soportan fauna urbana' },
-  { source: 11, target: 21, tipo: 'ambiental', fuente: 'Flujos Aire ↔ Microplásticos', explicacion: 'Circulación de aire dispersa contaminantes' },
-  { source: 12, target: 20, tipo: 'económica', fuente: 'Dinámicas Inform. ↔ Trabajo Informal', explicacion: 'Informalidad es dinámica territorial estructurada' },
-  { source: 14, target: 17, tipo: 'social', fuente: 'Gentrificación ↔ Mujeres Liderazgo', explicacion: 'Desplazamiento afecta más a mujeres' },
-  { source: 15, target: 18, tipo: 'social', fuente: 'Desigualdad Género ↔ LGBTQ+', explicacion: 'Desigualdad de género impacta comunidad LGBTQ+' },
-  { source: 13, target: 19, tipo: 'vulnerabilidad', fuente: 'Sísmicos ↔ Personas Mayores', explicacion: 'Adultos mayores población vulnerable ante desastres' },
-  { source: 22, target: 12, tipo: 'social', fuente: 'Salud Mental ↔ Dinámicas Inform.', explicacion: 'Informalidad causa estrés y problemas de salud mental' }
-];
+ODS_NODES.forEach(n => {
+  n.homeX = n.x; n.homeY = n.y;
+  n.vx = 0; n.vy = 0;
+  n.fixed = false;
+});
 
-const nodeDetails = {
-  1: { fuente: 'UNICEF Bogotá 2023', detalles: 'Solo 12 menciones en POT vs 487 de vivienda. El 92% de expertos considera crítica la ausencia.', metrica: '487,000 menores 0-5' },
-  2: { fuente: 'DANE - Censo 2018', detalles: '1.3 millones de personas con discapacidad. 89% de espacios públicos sin acceso.', metrica: '1.3M personas' },
-  3: { fuente: 'OIM Colombia 2023', detalles: '85,000 personas sin vivienda permanente. Migrantes generan 18% del PIB.', metrica: '85,000 flotantes' },
-  4: { fuente: 'WWF Colombia 2022', detalles: '78% de polinizadores urbanos en declive. Fauna sin agencia ecológica.', metrica: '60% sin protección' },
-  5: { fuente: 'COLCIENCIAS 2023', detalles: 'Solo 4 universidades mencionadas. Investigación local: 68% información.', metrica: '15 vs 340 menciones' },
-  6: { fuente: 'CEPAL 2022', detalles: 'Cero menciones de "economía feminista". Mujeres: 75% más trabajo doméstico.', metrica: '75% desigualdad' },
-  7: { fuente: 'ACULCO 2023', detalles: 'Arte callejero ilegalizado. Genera 60% más cohesión social.', metrica: '50% sin programación' },
-  8: { fuente: 'ICANH 2022', detalles: 'Pueblos originarios mencionados solo históricamente. 70% sin territorio.', metrica: '70% excluidos' },
-  9: { fuente: 'CEPAL 2022', detalles: 'Cuidado ausente como categoría estructural. 85% sin protección social.', metrica: '85% informal' },
-  10: { fuente: 'EAAB 2023', detalles: 'Ciclo agua: infraestructura estática. Modelizar reduciría inundaciones 90%.', metrica: '75% en riesgo' },
-  11: { fuente: 'IDEAM 2023', detalles: 'Ventilación urbana no mapeada. Corredores mejoran 88% calidad aire.', metrica: '70% isla calor' },
-  12: { fuente: 'DANE 2023', detalles: 'Informalidad tratada como "problema". 82% del empleo urbano.', metrica: '82% informal' },
-  13: { fuente: 'USGS 2023', detalles: 'Bogotá: zona sísmica alta. 65% infraestructura no sismorresistente.', metrica: 'Amenaza ALTA' },
-  14: { fuente: 'IIEUT 2023', detalles: '79% desplazamientos involuntarios. 72% de estratos 1-2.', metrica: '79% desplazado' },
-  15: { fuente: 'DANE 2023', detalles: 'Desigualdad no integrada territorialmente. 78% mujeres inseguridad.', metrica: '78% inseguridad' },
-  16: { fuente: 'CINEP 2023', detalles: 'Movilización social no legítima. 68% cambios por conflictividad.', metrica: '60% disputas' },
-  17: { fuente: 'ONU Mujeres 2023', detalles: 'Liderazgo femenino 45% menos. 70% más eficacia con diversidad.', metrica: '55% paridad' },
-  18: { fuente: 'OVD 2022', detalles: 'Población LGBTQ+ ausente 42%. 85% reporta violencia.', metrica: '85% vulnerable' },
-  19: { fuente: 'HelpAge 2023', detalles: 'Mayores: 0.8% de POT. 75+ crece 8% anual.', metrica: '+8% anual' },
-  20: { fuente: 'OIT 2022', detalles: 'Informalidad no integrada. 72% sin seguridad social.', metrica: '72% desprotegidos' },
-  21: { fuente: 'UNEP 2023', detalles: 'Microplásticos no mapeados. 65% agua subterránea contaminada.', metrica: '65% contaminada' },
-  22: { fuente: 'OMS 2023', detalles: 'Salud mental ausente en POT. 70% origen territorial.', metrica: '70% territorial' },
-  23: { fuente: 'FAO 2023', detalles: 'Seguridad alimentaria barely. Bogotá: potencial 20% local.', metrica: '20% potencial' },
-  24: { fuente: 'UNESCO 2023', detalles: 'Educación comunitaria ausente. 60% aprendizaje extraescolar.', metrica: '60% informal' }
+/* -------- Estructuras: nombre y color de capa -------- */
+const STRUCT_STYLE = {
+  e1: { color: "#4ade80", label: "1. Ecológica Principal", tag: "ECOLÓGICA" },
+  e2: { color: "#5b8def", label: "2. Funcional y del Cuidado", tag: "FUNCIONAL Y CUIDADO" },
+  e3: { color: "#ef9552", label: "3. Socioeconómica Creativa", tag: "SOCIOECONÓMICA" },
+  e4: { color: "#a276f2", label: "4. Integradora de Patrimonio", tag: "PATRIMONIO" },
 };
 
-// FUNCIONES
-function getLabel(nombre) {
-  return nombre.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
-}
+/* -------- Tipos de ausencias — Módulo 05 -------- */
+const TYPE_STYLE = {
+  "relacion-faltante":    { color: "#ef4444", width: 2.6, label: "Relación Faltante" },
+  "componente-ignorado":  { color: "#f472b6", width: 2.6, label: "Componente Ignorado" },
+  "conflicto-silenciado": { color: "#f87171", width: 2.6, label: "Conflicto Silenciado" },
+  "vacio-logico":         { color: "#fbbf24", width: 2.4, label: "Vacío Lógico" },
+};
 
-function renderIndicators() {
-  const container = document.getElementById('indicatorsContainer');
-  container.innerHTML = absencesData.map(item => `
-    <div class="indicator-card" onclick="openNodeModal(${item.id})">
-      <div class="indicator-icon" style="background: ${item.color}20; color: ${item.color};">
-        <i class="fa-solid ${item.icon}"></i>
-      </div>
-      <div class="indicator-content">
-        <div class="indicator-name">${item.nombre}</div>
-        <div class="indicator-meta">${item.ausencia}% ausente</div>
-      </div>
-      <div class="indicator-badge badge-${item.severidad}">${item.severidad}</div>
-    </div>
-  `).join('');
-}
-
-function openNodeModal(nodeId) {
-  const node = absencesData.find(n => n.id === nodeId);
-  const details = nodeDetails[nodeId];
-  const modalBody = document.getElementById('modalBody');
+/* -------- Aristas: relaciones de las 4 estructuras -------- */
+const RAW_EDGES = [
+  /* Relaciones faltantes entre estructuras */
+  { s: "transporte", t: "coberturas", type: "relacion-faltante",    directa: true,  cat: "e1-e2", pagina: "N/A", sustento: "No hay relación explícita entre expansión de infraestructura vial y pérdida de coberturas vegetales: ausencia de análisis de conflicto." },
+  { s: "vivienda",   t: "rios",       type: "relacion-faltante",    directa: true,  cat: "e1-e2", pagina: "N/A", sustento: "No existe vínculo entre densificación de vivienda y riesgo hídrico: ausencia de análisis de vulnerabilidad climática." },
+  { s: "economia",   t: "ecologia",   type: "relacion-faltante",    directa: true,  cat: "e1-e3", pagina: "N/A", sustento: "No hay relación explícita entre lógica económica y protección de EEP: el POT no articula cómo los incentivos económicos afectan lo ambiental." },
   
-  modalBody.innerHTML = `
-    <div class="modal-header">
-      <h3>${node.nombre}</h3>
-      <span class="severity-badge severity-${node.severidad}">${node.severidad.toUpperCase()}</span>
-    </div>
-    
-    <div class="modal-section">
-      <h4>Categoría</h4>
-      <p>${node.grupo}</p>
-    </div>
-    
-    <div class="modal-section">
-      <h4>Nivel de ausencia</h4>
-      <div class="progress-bar">
-        <div class="progress-fill" style="width: ${node.ausencia}%; background: ${node.color};"></div>
-      </div>
-      <p><strong>${node.ausencia}%</strong> ausente</p>
-    </div>
-    
-    <div class="modal-section">
-      <h4>Fuente</h4>
-      <p>📊 ${details.fuente}</p>
-    </div>
-    
-    <div class="modal-section">
-      <h4>Detalles</h4>
-      <p>${details.detalles}</p>
-    </div>
-    
-    <div class="modal-section">
-      <h4>Métrica clave</h4>
-      <p>📈 ${details.metrica}</p>
-    </div>
-  `;
+  /* Componentes ignorados */
+  { s: "periferia",  t: "sserv",      type: "componente-ignorado",  directa: false, cat: "e2", pagina: "N/A", sustento: "Las periferias urbanas y sus dinámicas de cuidado comunitario son marginales: poco mencionadas en el documento." },
+  { s: "indigenas",  t: "pinmaterial",type: "componente-ignorado",  directa: false, cat: "e4", pagina: "N/A", sustento: "Los pueblos indígenas y sus saberes patrimoniales están prácticamente ausentes del análisis." },
+  { s: "informalidad",t: "empresariales", type: "componente-ignorado", directa: false, cat: "e3", pagina: "N/A", sustento: "La economía informal (3M de trabajadores) es ignorada en la estructura socioeconómica del POT." },
   
-  document.getElementById('modalOverlay').style.display = 'flex';
-}
-
-function openLinkModal(link) {
-  const modalBody = document.getElementById('modalBody');
+  /* Conflictos silenciados */
+  { s: "transporte", t: "eep",        type: "conflicto-silenciado", directa: true,  cat: "e1-e2", pagina: "N/A", sustento: "El conflicto entre expansión de infraestructura vial y protección de EEP no está explícitamente abordado." },
+  { s: "manzanas",   t: "servpub",    type: "conflicto-silenciado", directa: true,  cat: "e2", pagina: "N/A", sustento: "El desfase entre demanda de servicios por densificación y capacidad de provisión no es mencionado." },
+  { s: "turismo",    t: "ciclorutas", type: "conflicto-silenciado", directa: false, cat: "e3", pagina: "N/A", sustento: "El riesgo de gentrificación por turismo y renovación urbana no está en el POT." },
   
-  modalBody.innerHTML = `
-    <div class="modal-header">
-      <h3>Conexión entre ausencias</h3>
-    </div>
-    
-    <div class="modal-section">
-      <h4>Relación</h4>
-      <p><strong>${link.fuente}</strong></p>
-    </div>
-    
-    <div class="modal-section">
-      <h4>Tipo de vínculo</h4>
-      <span class="severity-badge severity-${link.tipo}" style="background: rgba(255,255,255,0.05);">${link.tipo}</span>
-    </div>
-    
-    <div class="modal-section">
-      <h4>Explicación</h4>
-      <p>${link.explicacion}</p>
-    </div>
-  `;
-  
-  document.getElementById('modalOverlay').style.display = 'flex';
-}
+  /* Vacíos lógicos */
+  { s: "pinmaterial",t: "empresariales", type: "vacio-logico", directa: true, cat: "e3-e4", pagina: "N/A", sustento: "La E. Patrimonio está completamente desconectada de la lógica económica: sin modelo de sostenibilidad financiera." },
+  { s: "scuidado",   t: "transporte",    type: "vacio-logico", directa: true, cat: "e2", pagina: "N/A", sustento: "El cuidado como prioridad discursiva está subordinado a movilidad en la arquitectura funcional real." },
+];
 
-function closeModal() {
-  document.getElementById('modalOverlay').style.display = 'none';
-}
+function nodeById(id) { return ODS_NODES.find(n => n.id === id); }
 
-function filterAbsences(type) {
-  const buttons = document.querySelectorAll('.tab-btn');
-  buttons.forEach(btn => btn.classList.remove('active'));
-  event.target.classList.add('active');
-  console.log('Filtrar por:', type);
-}
+/* -------- física: longitud de reposo -------- */
+RAW_EDGES.forEach(edge => {
+  const s = nodeById(edge.s), t = nodeById(edge.t);
+  if (!s || !t) return;
+  edge.restLength = Math.hypot(t.x - s.x, t.y - s.y);
+});
 
-function generateReport() {
-  alert('Generando reporte PDF...');
-}
-
-function suggestAdditions() {
-  alert('Sugiriendo adiciones inteligentes...');
-}
-
-function compareODS() {
-  alert('Comparando con ODS...');
-}
-
-// INICIALIZAR
-function initNetworkVisualization() {
-  const svg = d3.select('#networkSvg');
-  const container = svg.node().parentElement;
-  const width = container.offsetWidth;
-  const height = container.offsetHeight;
-
-  const nodes = absencesData.map((d, i) => ({
-    ...d,
-    x: width / 2 + (Math.random() - 0.5) * 300,
-    y: height / 2 + (Math.random() - 0.5) * 300,
-    vx: 0,
-    vy: 0
-  }));
-
-  const links = linksData.map(d => ({
-    ...d,
-    source: nodes.find(n => n.id === d.source),
-    target: nodes.find(n => n.id === d.target)
-  }));
-
-  const simulation = d3.forceSimulation(nodes)
-    .force('link', d3.forceLink(links).id(d => d.id).distance(100).strength(0.5))
-    .force('charge', d3.forceManyBody().strength(-150).distanceMax(200))
-    .force('center', d3.forceCenter(width / 2, height / 2).strength(0.1))
-    .force('collide', d3.forceCollide().radius(d => Math.max(10, d.porcentaje / 8) + 4).strength(0.7))
-    .alphaDecay(0.05)
-    .velocityDecay(0.6);
-
-  svg.selectAll('*').remove();
-  const g = svg.append('g');
-
-  const linkGroup = g.append('g')
-    .selectAll('line')
-    .data(links)
-    .enter()
-    .append('line')
-    .attr('stroke', '#374151')
-    .attr('stroke-width', 1.5)
-    .attr('opacity', 0.6)
-    .style('cursor', 'pointer')
-    .on('click', function(event, d) {
-      event.stopPropagation();
-      openLinkModal(d);
-    })
-    .on('mouseover', function(event, d) {
-      d3.select(this).attr('stroke', d.source.color).attr('stroke-width', 2.5).attr('opacity', 1);
-    })
-    .on('mouseout', function(event, d) {
-      d3.select(this).attr('stroke', '#374151').attr('stroke-width', 1.5).attr('opacity', 0.6);
+/* -------- defs: glow + flechas -------- */
+function buildDefs(svg) {
+  const defs = document.createElementNS(SVG_NS, "defs");
+  const uniqueColors = [...new Set(ODS_NODES.map(n => n.color))];
+  uniqueColors.forEach(color => {
+    const filter = document.createElementNS(SVG_NS, "filter");
+    filter.setAttribute("id", "glow-" + color.replace("#", ""));
+    filter.setAttribute("x", "-60%"); filter.setAttribute("y", "-60%");
+    filter.setAttribute("width", "220%"); filter.setAttribute("height", "220%");
+    const blur = document.createElementNS(SVG_NS, "feGaussianBlur");
+    blur.setAttribute("stdDeviation", "3.2"); blur.setAttribute("result", "blur");
+    const merge = document.createElementNS(SVG_NS, "feMerge");
+    ["blur", "blur", "SourceGraphic"].forEach(ref => {
+      const m = document.createElementNS(SVG_NS, "feMergeNode");
+      m.setAttribute("in", ref);
+      merge.appendChild(m);
     });
-
-  const nodeGroup = g.append('g')
-    .selectAll('circle')
-    .data(nodes)
-    .enter()
-    .append('circle')
-    .attr('r', d => Math.max(10, d.porcentaje / 8))
-    .attr('fill', d => d.color)
-    .attr('opacity', 0.85)
-    .attr('stroke', 'rgba(255, 255, 255, 0.3)')
-    .attr('stroke-width', 2)
-    .style('cursor', 'pointer')
-    .on('click', function(event, d) {
-      event.stopPropagation();
-      openNodeModal(d.id);
-    })
-    .on('mouseover', function(event, d) {
-      d3.select(this).attr('stroke-width', 3).attr('stroke', '#2fd4c8').attr('opacity', 1);
-    })
-    .on('mouseout', function(event, d) {
-      d3.select(this).attr('stroke-width', 2).attr('stroke', 'rgba(255, 255, 255, 0.3)').attr('opacity', 0.85);
-    })
-    .call(drag(simulation));
-
-  const labels = g.append('g')
-    .selectAll('text')
-    .data(nodes)
-    .enter()
-    .append('text')
-    .text(d => getLabel(d.nombre))
-    .attr('font-size', '9px')
-    .attr('font-weight', '700')
-    .attr('fill', '#fff')
-    .attr('text-anchor', 'middle')
-    .attr('dy', '0.3em')
-    .attr('pointer-events', 'none');
-
-  simulation.on('tick', () => {
-    nodes.forEach(d => {
-      const r = Math.max(10, d.porcentaje / 8);
-      d.x = Math.max(r, Math.min(width - r, d.x));
-      d.y = Math.max(r, Math.min(height - r, d.y));
-    });
-
-    linkGroup.attr('x1', d => d.source.x).attr('y1', d => d.source.y).attr('x2', d => d.target.x).attr('y2', d => d.target.y);
-    nodeGroup.attr('cx', d => d.x).attr('cy', d => d.y);
-    labels.attr('x', d => d.x).attr('y', d => d.y);
+    filter.appendChild(blur); filter.appendChild(merge);
+    defs.appendChild(filter);
   });
 
-  function drag(simulation) {
-    return d3.drag()
-      .on('start', dragstarted)
-      .on('drag', dragged)
-      .on('end', dragended);
+  Object.entries(TYPE_STYLE).forEach(([type, style]) => {
+    const marker = document.createElementNS(SVG_NS, "marker");
+    marker.setAttribute("id", "arrow-" + type);
+    marker.setAttribute("viewBox", "0 0 10 10");
+    marker.setAttribute("refX", "8"); marker.setAttribute("refY", "5");
+    marker.setAttribute("markerWidth", "7"); marker.setAttribute("markerHeight", "7");
+    marker.setAttribute("orient", "auto-start-reverse");
+    const path = document.createElementNS(SVG_NS, "path");
+    path.setAttribute("d", "M0,0 L10,5 L0,10 z");
+    path.setAttribute("fill", style.color);
+    marker.appendChild(path);
+    defs.appendChild(marker);
+  });
 
-    function dragstarted(event, d) {
-      if (!event.active) simulation.alphaTarget(0.3).restart();
-      d.fx = d.x;
-      d.fy = d.y;
-    }
+  svg.appendChild(defs);
+}
 
-    function dragged(event, d) {
-      d.fx = event.x;
-      d.fy = event.y;
-    }
+/* -------- aristas -------- */
+function edgePathData(edge, s, t) {
+  const dx = t.x - s.x, dy = t.y - s.y;
+  const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+  const ux = dx / dist, uy = dy / dist;
+  const startPad = s.r + 2;
+  const endPad = t.r + 8;
+  const x1 = s.x + ux * startPad, y1 = s.y + uy * startPad;
+  const x2 = t.x - ux * endPad,   y2 = t.y - uy * endPad;
+  return `M${x1},${y1} L${x2},${y2}`;
+}
 
-    function dragended(event, d) {
-      if (!event.active) simulation.alphaTarget(0);
-      d.fx = null;
-      d.fy = null;
-    }
+function drawEdges(svg) {
+  const g = document.createElementNS(SVG_NS, "g");
+  g.setAttribute("class", "edges-layer");
+
+  RAW_EDGES.forEach((edge, i) => {
+    const s = nodeById(edge.s);
+    const t = nodeById(edge.t);
+    if (!s || !t) return;
+    const style = TYPE_STYLE[edge.type];
+    const d = edgePathData(edge, s, t);
+
+    const group = document.createElementNS(SVG_NS, "g");
+    group.setAttribute("class", "edge-group");
+    group.setAttribute("data-index", i);
+    group.setAttribute("data-type", edge.type);
+    group.setAttribute("data-cat", edge.cat);
+    group.setAttribute("data-source", edge.s);
+    group.setAttribute("data-target", edge.t);
+    group.style.setProperty("--edge-color", style.color);
+
+    const hit = document.createElementNS(SVG_NS, "path");
+    hit.setAttribute("d", d);
+    hit.setAttribute("class", "ods-edge edge-hit");
+
+    const visual = document.createElementNS(SVG_NS, "path");
+    visual.setAttribute("d", d);
+    visual.setAttribute("class", "ods-edge edge-visual");
+    visual.setAttribute("stroke", style.color);
+    visual.setAttribute("stroke-width", style.width);
+    if (!edge.directa) visual.setAttribute("stroke-dasharray", "6,5");
+    if (edge.directa) visual.setAttribute("marker-end", `url(#arrow-${edge.type})`);
+    visual.setAttribute("opacity", "0.9");
+
+    group.appendChild(visual);
+    group.appendChild(hit);
+    group.addEventListener("click", () => showEdgeInfo(i));
+    g.appendChild(group);
+
+    edge._el = { visual, hit, d };
+  });
+
+  svg.appendChild(g);
+}
+
+/* -------- nodos -------- */
+function drawNodes(svg) {
+  const g = document.createElementNS(SVG_NS, "g");
+  g.setAttribute("class", "nodes-layer");
+
+  ODS_NODES.forEach(node => {
+    const group = document.createElementNS(SVG_NS, "g");
+    group.setAttribute("class", "ods-node ods-node-" + node.cat);
+    group.setAttribute("data-id", node.id);
+    group.setAttribute("data-cat", node.cat);
+
+    const circle = document.createElementNS(SVG_NS, "circle");
+    circle.setAttribute("class", "node-ring");
+    circle.setAttribute("cx", node.x); circle.setAttribute("cy", node.y); circle.setAttribute("r", node.r);
+    circle.setAttribute("stroke", node.color);
+    circle.setAttribute("stroke-width", 2.5);
+    circle.setAttribute("filter", "url(#glow-" + node.color.replace("#", "") + ")");
+
+    const fo = document.createElementNS(SVG_NS, "foreignObject");
+    const size = node.r * 2.2;
+    fo.setAttribute("x", node.x - size / 2); fo.setAttribute("y", node.y - size / 2);
+    fo.setAttribute("width", size); fo.setAttribute("height", size);
+
+    const wrapper = document.createElementNS(XHTML_NS, "div");
+    wrapper.setAttribute("class", "node-inner");
+    wrapper.setAttribute("style",
+      "width:100%;height:100%;display:flex;flex-direction:column;" +
+      "align-items:center;justify-content:center;gap:1px;pointer-events:none;"
+    );
+
+    const iconEl = document.createElementNS(XHTML_NS, "i");
+    iconEl.setAttribute("class", "fa-solid " + node.icon + " node-icon");
+    iconEl.setAttribute("style", `color:${node.color}; font-size:${node.r * 0.42}px; margin:1px 0;`);
+
+    const nameEl = document.createElementNS(XHTML_NS, "div");
+    nameEl.setAttribute("class", "node-name");
+    nameEl.setAttribute("style", `font-size:${Math.max(node.r * 0.155, 7.5)}px; padding:0 3px; font-weight:700; color:#e7eaf2; line-height:1.15; white-space:pre-line;`);
+    nameEl.textContent = node.name;
+
+    const tagEl = document.createElementNS(XHTML_NS, "div");
+    tagEl.setAttribute("class", "node-cat-tag");
+    tagEl.setAttribute("style", `font-size:${Math.max(node.r * 0.135, 6.5)}px; margin-top:1px; font-weight:700; letter-spacing:0.3px; color:${node.color}; white-space:nowrap;`);
+    tagEl.textContent = STRUCT_STYLE[node.cat].tag;
+
+    wrapper.appendChild(iconEl); wrapper.appendChild(nameEl); wrapper.appendChild(tagEl);
+    fo.appendChild(wrapper);
+
+    group.appendChild(circle);
+    group.appendChild(fo);
+    attachNodeClickHandler(group, node.id);
+    attachNodeDragHandler(group, node);
+    g.appendChild(group);
+
+    node._el = { group, circle, fo };
+  });
+
+  svg.appendChild(g);
+}
+
+/* -------- física -------- */
+const PHYSICS = {
+  spring: 0.045,
+  anchor: 0.02,
+  damping: 0.82,
+  minVel: 0.02,
+};
+
+function updatePositions() {
+  ODS_NODES.forEach(n => {
+    if (!n._el) return;
+    n._el.circle.setAttribute("cx", n.x);
+    n._el.circle.setAttribute("cy", n.y);
+    const size = n.r * 2.2;
+    n._el.fo.setAttribute("x", n.x - size / 2);
+    n._el.fo.setAttribute("y", n.y - size / 2);
+  });
+  RAW_EDGES.forEach(edge => {
+    if (!edge._el) return;
+    const s = nodeById(edge.s), t = nodeById(edge.t);
+    if (!s || !t) return;
+    const d = edgePathData(edge, s, t);
+    edge._el.visual.setAttribute("d", d);
+    edge._el.hit.setAttribute("d", d);
+  });
+}
+
+let physicsRunning = false;
+function physicsStep() {
+  let moving = false;
+
+  RAW_EDGES.forEach(edge => {
+    const s = nodeById(edge.s), t = nodeById(edge.t);
+    if (!s || !t) return;
+    const dx = t.x - s.x, dy = t.y - s.y;
+    const dist = Math.hypot(dx, dy) || 1;
+    const diff = (dist - edge.restLength) * PHYSICS.spring;
+    const fx = (dx / dist) * diff, fy = (dy / dist) * diff;
+    if (!s.fixed) { s.vx += fx; s.vy += fy; }
+    if (!t.fixed) { t.vx -= fx; t.vy -= fy; }
+  });
+
+  ODS_NODES.forEach(n => {
+    if (n.fixed) { n.vx = 0; n.vy = 0; return; }
+    n.vx += (n.homeX - n.x) * PHYSICS.anchor;
+    n.vy += (n.homeY - n.y) * PHYSICS.anchor;
+    n.vx *= PHYSICS.damping;
+    n.vy *= PHYSICS.damping;
+    n.x += n.vx;
+    n.y += n.vy;
+    if (Math.abs(n.vx) > PHYSICS.minVel || Math.abs(n.vy) > PHYSICS.minVel) moving = true;
+  });
+
+  updatePositions();
+
+  if (moving || ODS_NODES.some(n => n.fixed)) {
+    requestAnimationFrame(physicsStep);
+  } else {
+    physicsRunning = false;
   }
 }
 
-// MAIN
-document.addEventListener('DOMContentLoaded', function() {
-  const overlay = document.getElementById('modalOverlay');
-  overlay.addEventListener('click', function(event) {
-    if (event.target === overlay) closeModal();
+function wakePhysics() {
+  if (!physicsRunning) {
+    physicsRunning = true;
+    requestAnimationFrame(physicsStep);
+  }
+}
+
+/* -------- arrastre -------- */
+function attachNodeDragHandler(group, node) {
+  const svg = document.getElementById("networkViz");
+  let dragging = false;
+  let moved = false;
+  let startClientX = 0, startClientY = 0;
+
+  function toSvgPoint(clientX, clientY) {
+    const pt = svg.createSVGPoint();
+    pt.x = clientX; pt.y = clientY;
+    const m = svg.getScreenCTM().inverse();
+    return pt.matrixTransform(m);
+  }
+
+  group.addEventListener("pointerdown", (e) => {
+    dragging = true;
+    moved = false;
+    startClientX = e.clientX; startClientY = e.clientY;
+    node.fixed = true;
+    group.classList.add("dragging");
+    group.setPointerCapture(e.pointerId);
+    wakePhysics();
   });
 
-  renderIndicators();
-  initNetworkVisualization();
+  group.addEventListener("pointermove", (e) => {
+    if (!dragging) return;
+    if (Math.hypot(e.clientX - startClientX, e.clientY - startClientY) > 4) moved = true;
+    const p = toSvgPoint(e.clientX, e.clientY);
+    node.x = p.x; node.y = p.y;
+    node.vx = 0; node.vy = 0;
+    updatePositions();
+    wakePhysics();
+  });
+
+  function endDrag(e) {
+    if (!dragging) return;
+    dragging = false;
+    node.fixed = false;
+    group.classList.remove("dragging");
+    try { group.releasePointerCapture(e.pointerId); } catch (err) {}
+    wakePhysics();
+    if (moved) {
+      group.dataset.suppressClick = "1";
+      setTimeout(() => { delete group.dataset.suppressClick; }, 0);
+    }
+  }
+
+  group.addEventListener("pointerup", endDrag);
+  group.addEventListener("pointercancel", endDrag);
+}
+
+function renderNetwork() {
+  const svg = document.getElementById("networkViz");
+  if (!svg) return;
+  svg.innerHTML = "";
+  buildDefs(svg);
+  drawEdges(svg);
+  drawNodes(svg);
+}
+
+/* -------- panel de información -------- */
+function showEdgeInfo(index) {
+  const edge = RAW_EDGES[index];
+  const s = nodeById(edge.s), t = nodeById(edge.t);
+  const style = TYPE_STYLE[edge.type];
+  const struct = STRUCT_STYLE[edge.cat];
+
+  document.querySelectorAll(".edge-group").forEach(el => el.classList.remove("edge-selected"));
+  document.querySelector(`.edge-group[data-index="${index}"]`)?.classList.add("edge-selected");
+
+  const label = (n) => n.name.replace(/\n/g, " ");
+  document.getElementById("edgeInfoTitle").textContent = `${label(s)} → ${label(t)}`;
+
+  const typeEl = document.getElementById("edgeInfoType");
+  typeEl.textContent = style.label + " · " + struct.label + (edge.directa ? " · Directa — continua" : " · Indirecta / inferida");
+  typeEl.style.color = style.color;
+  typeEl.style.background = style.color + "26";
+
+    document.getElementById("edgeInfoQuote").textContent = edge.sustento;
+  document.getElementById("edgeInfoPage").textContent =
+    (edge.pagina ? `Página POT: p. ${edge.pagina} · ` : "") + "Estructura POT: " + struct.label;
+  document.getElementById("edgeInfoPanel").classList.add("visible");
+
+  document.querySelectorAll(".matrix-row[data-edge]").forEach(row => {
+    row.classList.toggle("row-highlight", Number(row.dataset.edge) === index);
+  });
+}
+
+function hideEdgeInfo() {
+  document.getElementById("edgeInfoPanel").classList.remove("visible");
+  document.querySelectorAll(".edge-group").forEach(el => el.classList.remove("edge-selected"));
+  document.querySelectorAll(".matrix-row[data-edge]").forEach(row => row.classList.remove("row-highlight"));
+}
+
+/* -------- visibilidad -------- */
+const typeOff = new Set();
+const nodeOff = new Set();
+const catOff = new Set();
+
+function refreshEdgeVisibility() {
+  document.querySelectorAll(".edge-group").forEach(group => {
+    const type = group.dataset.type;
+    const cat = group.dataset.cat;
+    const s = group.dataset.source;
+    const t = group.dataset.target;
+    const hidden = typeOff.has(type) || nodeOff.has(s) || nodeOff.has(t) || catOff.has(cat);
+    group.classList.toggle("hidden-edge", hidden);
+  });
+}
+
+function toggleNode(id) {
+  const group = document.querySelector(`.ods-node[data-id="${id}"]`);
+  if (!group) return;
+  if (nodeOff.has(id)) {
+    nodeOff.delete(id);
+    group.classList.remove("node-off");
+  } else {
+    nodeOff.add(id);
+    group.classList.add("node-off");
+  }
+  refreshEdgeVisibility();
+}
+
+/* -------- clic simple / doble / triple -------- */
+function attachNodeClickHandler(group, id) {
+  let count = 0;
+  let timer = null;
+  group.addEventListener("click", () => {
+    if (group.dataset.suppressClick) return;
+    count++;
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(() => {
+      if (count === 2) {
+        toggleNode(id);
+      } else if (count >= 3) {
+        toggleNodeFlow(id);
+      }
+      count = 0;
+    }, 320);
+  });
+}
+
+/* -------- spotlight -------- */
+let spotlight = null;
+
+function clearSpotlight() {
+  spotlight = null;
+  document.querySelectorAll(".insight-card").forEach(c => c.classList.remove("active"));
+  applySpotlightState();
+}
+
+function setSpotlightNodes(nodeIds, expand) {
+  spotlight = { mode: "nodes", nodes: new Set(nodeIds), expand: !!expand };
+  document.querySelectorAll(".insight-card").forEach(c => c.classList.remove("active"));
+  applySpotlightState();
+}
+
+function setSpotlightTypes(types) {
+  spotlight = { mode: "types", types };
+  document.querySelectorAll(".insight-card").forEach(c => c.classList.remove("active"));
+  applySpotlightState();
+}
+
+function setSpotlightCats(cats, keepAllNodes) {
+  spotlight = { mode: "cats", cats, keepAllNodes: !!keepAllNodes };
+  document.querySelectorAll(".insight-card").forEach(c => c.classList.remove("active"));
+  applySpotlightState();
+}
+
+function applySpotlightState() {
+  let visibleNodes = null;
+  let visibleEdges = null;
+
+  if (spotlight && spotlight.mode === "nodes") {
+    visibleNodes = new Set(spotlight.nodes);
+    visibleEdges = new Set();
+    RAW_EDGES.forEach((edge, i) => {
+      const sIn = spotlight.nodes.has(edge.s);
+      const tIn = spotlight.nodes.has(edge.t);
+      if (spotlight.expand) {
+        if (sIn || tIn) {
+          visibleEdges.add(i);
+          visibleNodes.add(edge.s);
+          visibleNodes.add(edge.t);
+        }
+      } else {
+        if (sIn && tIn) visibleEdges.add(i);
+      }
+    });
+  } else if (spotlight && spotlight.mode === "types") {
+    visibleEdges = new Set();
+    RAW_EDGES.forEach((edge, i) => {
+      if (spotlight.types.includes(edge.type)) visibleEdges.add(i);
+    });
+  } else if (spotlight && spotlight.mode === "cats") {
+    visibleNodes = new Set();
+    visibleEdges = new Set();
+    RAW_EDGES.forEach((edge, i) => {
+      if (spotlight.cats.includes(edge.cat)) {
+        visibleEdges.add(i);
+        visibleNodes.add(edge.s);
+        visibleNodes.add(edge.t);
+      }
+    });
+    if (spotlight.keepAllNodes) {
+      ODS_NODES.forEach(n => visibleNodes.add(n.id));
+    }
+  }
+
+  document.querySelectorAll(".ods-node").forEach(el => {
+    const id = el.dataset.id;
+    const dim = visibleNodes ? !visibleNodes.has(id) : false;
+    el.classList.toggle("node-focus-dim", dim);
+    el.classList.toggle("node-focus-active", !!(spotlight && spotlight.mode === "nodes" && spotlight.nodes.has(id)));
+  });
+
+  document.querySelectorAll(".edge-group").forEach(el => {
+    const idx = Number(el.dataset.index);
+    const dim = visibleEdges ? !visibleEdges.has(idx) : false;
+    el.classList.toggle("edge-focus-dim", dim);
+  });
+}
+
+function toggleNodeFlow(id) {
+  const already = spotlight && spotlight.mode === "nodes" && spotlight.expand &&
+                   spotlight.nodes.size === 1 && spotlight.nodes.has(id);
+  if (already) {
+    clearSpotlight();
+  } else {
+    setSpotlightNodes([id], true);
+  }
+}
+
+/* -------- tarjetas de insights -------- */
+const NODE_INSIGHTS = {
+  ecologica:     ODS_NODES.filter(n => n.cat === "e1").map(n => n.id),
+  funcional:     ODS_NODES.filter(n => n.cat === "e2").map(n => n.id),
+  socioeconomica:ODS_NODES.filter(n => n.cat === "e3").map(n => n.id),
+  patrimonio:    ODS_NODES.filter(n => n.cat === "e4").map(n => n.id),
+};
+
+const TYPE_KEY = {
+  soporte:     "soporte",
+  resiliencia: "resiliencia",
+  indirecta:   "indirecta",
+};
+
+function toggleInsight(key) {
+  const card = document.querySelector(`.insight-card[data-insight="${key}"]`);
+  if (!card) return;
+
+  if (card.classList.contains("active")) {
+    clearSpotlight();
+    return;
+  }
+
+  if (TYPE_KEY[key]) {
+    setSpotlightTypes([TYPE_KEY[key]]);
+  } else if (NODE_INSIGHTS[key] && NODE_INSIGHTS[key].length) {
+    setSpotlightCats(NODE_INSIGHTS[key].map(id => nodeById(id).cat), true);
+    NODE_INSIGHTS[key].forEach(id => {
+      const el = document.querySelector(`.ods-node[data-id="${id}"]`);
+      if (el) el.classList.add("node-focus-active");
+    });
+  } else {
+    setSpotlightNodes(ODS_NODES.map(n => n.id), false);
+  }
+
+  card.classList.add("active");
+}
+
+/* -------- leyenda -------- */
+function setupLegendToggle() {
+  document.querySelectorAll(".legend-item input").forEach(input => {
+    input.addEventListener("change", (e) => {
+      const item = e.target.closest(".legend-item");
+      const mode = item.dataset.mode;
+      const val = item.dataset.type || item.dataset.cat;
+      if (e.target.checked) {
+        if (mode === "type") typeOff.delete(val); else catOff.delete(val);
+      } else {
+        if (mode === "type") typeOff.add(val); else catOff.add(val);
+      }
+      item.classList.toggle("off", !e.target.checked);
+      refreshEdgeVisibility();
+    });
+  });
+
+  document.getElementById("edgeInfoClose")?.addEventListener("click", hideEdgeInfo);
+}
+
+/* -------- filtros -------- */
+function filterNetwork(mode) {
+  document.querySelectorAll(".network-controls .control-btn").forEach(btn => btn.classList.remove("active"));
+  if (event && event.currentTarget) event.currentTarget.classList.add("active");
+
+  const groups = {
+    all:                    { types: ["relacion-faltante", "componente-ignorado", "conflicto-silenciado", "vacio-logico"], cats: ["e1", "e2", "e3", "e4", "e1-e2", "e2-e3", "e3-e4", "e1-e4"] },
+    "relacion-faltante":    { types: ["relacion-faltante"],    cats: ["e1", "e2", "e3", "e4", "e1-e2", "e2-e3", "e3-e4", "e1-e4"] },
+    "componente-ignorado":  { types: ["componente-ignorado"],  cats: ["e1", "e2", "e3", "e4", "e1-e2", "e2-e3", "e3-e4", "e1-e4"] },
+    "conflicto-silenciado": { types: ["conflicto-silenciado"], cats: ["e1", "e2", "e3", "e4", "e1-e2", "e2-e3", "e3-e4", "e1-e4"] },
+    "vacio-logico":         { types: ["vacio-logico"],         cats: ["e1", "e2", "e3", "e4", "e1-e2", "e2-e3", "e3-e4", "e1-e4"] },
+    e1:                     { types: ["relacion-faltante", "componente-ignorado", "conflicto-silenciado", "vacio-logico"], cats: ["e1"] },
+    e2:                     { types: ["relacion-faltante", "componente-ignorado", "conflicto-silenciado", "vacio-logico"], cats: ["e2"] },
+    e3:                     { types: ["relacion-faltante", "componente-ignorado", "conflicto-silenciado", "vacio-logico"], cats: ["e3"] },
+    e4:                     { types: ["relacion-faltante", "componente-ignorado", "conflicto-silenciado", "vacio-logico"], cats: ["e4"] },
+  };
+  const active = groups[mode] || groups.all;
+
+  document.querySelectorAll(".legend-item[data-mode='type']").forEach(item => {
+    const type = item.dataset.type;
+    const input = item.querySelector("input");
+    const show = active.types.includes(type);
+    input.checked = show;
+    item.classList.toggle("off", !show);
+    if (show) typeOff.delete(type); else typeOff.add(type);
+  });
+
+  document.querySelectorAll(".legend-item[data-mode='cat']").forEach(item => {
+    const cat = item.dataset.cat;
+    const input = item.querySelector("input");
+    const show = active.cats.includes(cat);
+    input.checked = show;
+    item.classList.toggle("off", !show);
+    if (show) catOff.delete(cat); else catOff.add(cat);
+  });
+
+  refreshEdgeVisibility();
+}
+
+/* -------- métricas de red -------- */
+function computeMetrics() {
+  const nodeCount = ODS_NODES.length;
+  const edgeCount = RAW_EDGES.length;
+
+  const degrees = {};
+  ODS_NODES.forEach(n => { degrees[n.id] = 0; });
+  RAW_EDGES.forEach(e => { degrees[e.s] = (degrees[e.s] || 0) + 1; degrees[e.t] = (degrees[e.t] || 0) + 1; });
+
+  const avgDegree = (2 * edgeCount) / nodeCount;
+  const density = (2 * edgeCount) / (nodeCount * (nodeCount - 1));
+
+  /* grado máximo y nodo más conectado */
+  let maxId = null, maxDeg = 0;
+  ODS_NODES.forEach(n => { if (degrees[n.id] > maxDeg) { maxDeg = degrees[n.id]; maxId = n.id; } });
+
+  /* por estructura */
+  const byStruct = {};
+  Object.keys(STRUCT_STYLE).forEach(cat => {
+    byStruct[cat] = {
+      nodes: ODS_NODES.filter(n => n.cat === cat).length,
+      edges: RAW_EDGES.filter(e => e.cat === cat).length,
+    };
+  });
+
+  /* centralidad: hubs (grado >= 4) */
+  const hubs = ODS_NODES.filter(n => degrees[n.id] >= 4);
+
+  /* tipo de línea */
+  const cont = RAW_EDGES.filter(e => e.directa).length;
+  const disc = RAW_EDGES.filter(e => !e.directa).length;
+
+  return { nodeCount, edgeCount, avgDegree, density, maxId, maxDeg, byStruct, hubs, cont, disc, degrees };
+}
+
+function renderMetrics() {
+  const m = computeMetrics();
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+
+  set("metricNodes", m.nodeCount);
+  set("metricEdges", m.edgeCount);
+  set("metricAvgDegree", m.avgDegree.toFixed(2));
+  set("metricDensity", (m.density * 100).toFixed(1) + "%");
+
+  const maxNode = nodeById(m.maxId);
+  set("metricHubNode", maxNode ? maxNode.name.replace(/\n/g, " ") : "—");
+  set("metricHubDegree", m.maxDeg);
+  set("metricHubs", m.hubs.length);
+  set("metricCont", m.cont);
+  set("metricDisc", m.disc);
+
+  /* leyenda de contadores por estructura */
+  Object.keys(STRUCT_STYLE).forEach(cat => {
+    const el = document.getElementById("struct-" + cat);
+    if (el) el.textContent = `${byStructLabel(m, cat)}: ${m.byStruct[cat].nodes} nodos · ${m.byStruct[cat].edges} relaciones`;
+  });
+}
+
+function byStructLabel(m, cat) { return STRUCT_STYLE[cat].label; }
+
+/* -------- botones de acción -------- */
+function generateODSReport() { console.log("Generando reporte de red..."); }
+function downloadAlignment() { console.log("Descargando tabla de relaciones..."); }
+function shareAnalysis() { console.log("Compartiendo análisis..."); }
+
+document.addEventListener("DOMContentLoaded", () => {
+  renderNetwork();
+  setupLegendToggle();
+  // renderMetrics(); // ELIMINADO: métricas removidas
 });
