@@ -71,79 +71,41 @@
     </div>
 
     <!-- MÉTRICAS DE LA RED -->
-    <div class="network-metrics">
-      <div class="metric-card">
-        <div class="metric-icon"><i class="fa-solid fa-circle-nodes"></i></div>
-        <div class="metric-value" id="metricNodes">0</div>
-        <div class="metric-label">Componentes (nodos)</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-icon"><i class="fa-solid fa-link"></i></div>
-        <div class="metric-value" id="metricEdges">0</div>
-        <div class="metric-label">Relaciones (aristas)</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-icon"><i class="fa-solid fa-arrows-turn-to-dots"></i></div>
-        <div class="metric-value" id="metricAvgDegree">0</div>
-        <div class="metric-label">Grado promedio</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-icon"><i class="fa-solid fa-percent"></i></div>
-        <div class="metric-value" id="metricDensity">0%</div>
-        <div class="metric-label">Densidad de la red</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-icon"><i class="fa-solid fa-circle-dot"></i></div>
-        <div class="metric-value metric-hub" id="metricHubNode">—</div>
-        <div class="metric-label">Nodo más conectado (<span id="metricHubDegree">0</span>)</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-icon"><i class="fa-solid fa-share-nodes"></i></div>
-        <div class="metric-value" id="metricHubs">0</div>
-        <div class="metric-label">Concentradores (≥4 conexiones)</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-icon"><i class="fa-solid fa-grip-lines"></i></div>
-        <div class="metric-value" id="metricCont">0</div>
-        <div class="metric-label">Líneas continuas (directas)</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-icon"><i class="fa-solid fa-grip-lines-vertical"></i></div>
-        <div class="metric-value" id="metricDisc">0</div>
-        <div class="metric-label">Líneas discontinuas (inferidas)</div>
-      </div>
-    </div>
-
     <!-- INSIGHTS: tarjetas clicables para explorar por estructura -->
     <div class="ods-insight-stats" id="odsInsightStats">
-      <div class="insight-card" data-insight="ecologica" style="--insight-color:#4ade80;" onclick="toggleInsight('ecologica')">
-        <div class="insight-icon"><i class="fa-solid fa-mountain-sun"></i></div>
-        <div class="insight-title">1. Ecológica Principal</div>
-      </div>
-
-      <div class="insight-card" data-insight="funcional" style="--insight-color:#5b8def;" onclick="toggleInsight('funcional')">
-        <div class="insight-icon"><i class="fa-solid fa-people-roof"></i></div>
-        <div class="insight-title">2. Funcional y Cuidado</div>
-      </div>
-
-      <div class="insight-card" data-insight="socioeconomica" style="--insight-color:#ef9552;" onclick="toggleInsight('socioeconomica')">
-        <div class="insight-icon"><i class="fa-solid fa-microchip"></i></div>
-        <div class="insight-title">3. Socioeconómica Creativa</div>
-      </div>
-
-      <div class="insight-card" data-insight="patrimonio" style="--insight-color:#a276f2;" onclick="toggleInsight('patrimonio')">
-        <div class="insight-icon"><i class="fa-solid fa-place-of-worship"></i></div>
-        <div class="insight-title">4. Integradora de Patrimonio</div>
-      </div>
-
       <div class="insight-card" data-insight="soporte" style="--insight-color:#ef9552;" onclick="toggleInsight('soporte')">
         <div class="insight-icon"><i class="fa-solid fa-hand-holding"></i></div>
-        <div class="insight-title">Solo relaciones de Soporte</div>
+        <div class="insight-title">Soporte</div>
       </div>
 
       <div class="insight-card" data-insight="resiliencia" style="--insight-color:#5b8def;" onclick="toggleInsight('resiliencia')">
         <div class="insight-icon"><i class="fa-solid fa-shield-heart"></i></div>
-        <div class="insight-title">Solo relaciones de Resiliencia</div>
+        <div class="insight-title">Resiliencia</div>
+      </div>
+
+      <div class="insight-card" data-insight="indirecta" style="--insight-color:#8b93a8;" onclick="toggleInsight('indirecta')">
+        <div class="insight-icon"><i class="fa-solid fa-arrow-right-arrow-left"></i></div>
+        <div class="insight-title">Indirecta</div>
+      </div>
+
+      <div class="insight-card" data-insight="e1" style="--insight-color:#4ade80;" onclick="toggleInsight('e1')">
+        <div class="insight-icon"><i class="fa-solid fa-mountain-sun"></i></div>
+        <div class="insight-title">1. Ecológica Principal</div>
+      </div>
+
+      <div class="insight-card" data-insight="e2" style="--insight-color:#5b8def;" onclick="toggleInsight('e2')">
+        <div class="insight-icon"><i class="fa-solid fa-people-roof"></i></div>
+        <div class="insight-title">2. Funcional y Cuidado</div>
+      </div>
+
+      <div class="insight-card" data-insight="e3" style="--insight-color:#ef9552;" onclick="toggleInsight('e3')">
+        <div class="insight-icon"><i class="fa-solid fa-microchip"></i></div>
+        <div class="insight-title">3. Socioeconómica Creativa</div>
+      </div>
+
+      <div class="insight-card" data-insight="e4" style="--insight-color:#a276f2;" onclick="toggleInsight('e4')">
+        <div class="insight-icon"><i class="fa-solid fa-place-of-worship"></i></div>
+        <div class="insight-title">4. Integradora de Patrimonio</div>
       </div>
 
       <div class="insight-card" data-insight="todos" style="--insight-color:#2fd4c8;" onclick="toggleInsight('todos')">
@@ -247,7 +209,7 @@
     <!-- EDGE INFO PANEL (movido fuera de network-sidebar para position: fixed) -->
     <div class="edge-info-panel" id="edgeInfoPanel">
       <div class="edge-info-header">
-        <span id="edgeInfoTitle">Relación</span>
+        <span id="edgeInfoTitle">Tensión</span>
         <button class="edge-info-close" id="edgeInfoClose" type="button" aria-label="Cerrar">&times;</button>
       </div>
       <div class="edge-info-type" id="edgeInfoType"></div>
@@ -259,7 +221,7 @@
     <div class="analysis-container">
       <div class="analysis-card full-width">
         <div class="card-header">
-          <h3><i class="fa-solid fa-table"></i> Tabla de Relaciones — Las 4 Estructuras del POT</h3>
+          <h3><i class="fa-solid fa-table"></i> Tabla de Tensiones — Análisis Crítico del POT</h3>
         </div>
 
         <div class="matrix-container">
@@ -267,12 +229,14 @@
             <div class="matrix-cell header-cell">Estructura</div>
             <div class="matrix-cell header-cell">Relación</div>
             <div class="matrix-cell header-cell">Línea</div>
-            <div class="matrix-cell header-cell">Color</div>
+            <div class="matrix-cell header-cell">Tipo de tensión</div>
             <div class="matrix-cell header-cell">Página</div>
-            <div class="matrix-cell header-cell">Sustento</div>
+            <div class="matrix-cell header-cell">Análisis crítico</div>
           </div>
 
-          <div class="matrix-row" data-edge="0">
+          </div>
+          <!-- Las filas se generarán dinámicamente con JavaScript -->
+        </div>
             <div class="matrix-cell"><span class="swatch-tag swatch-e1"></span> E. Ecológica</div>
             <div class="matrix-cell">Cerros orientales ➞ Ríos (corredores montañosos)</div>
             <div class="matrix-cell">Discontinua</div>
@@ -693,29 +657,60 @@
       </div>
     </div>
 
-    <!-- LECTURA DE LA RED -->
+    <!-- LECTURA CRÍTICA -->
     <div class="synergies-section">
       <div class="synergies-grid">
         <div class="synergy-card success">
-          <div class="synergy-icon"><i class="fa-solid fa-diagram-project"></i></div>
+          <div class="synergy-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
           <div class="synergy-content">
-            <h4>Lectura Estructural</h4>
+            <h4>Incoherencias (9 tensiones)</h4>
             <ul>
-              <li><strong>Núcleo ecológico:</strong> los cerros, los ríos y las coberturas vegetales concentran las conexiones de la estructura ecológica; todo lo demás se ramifica desde ellos</li>
-              <li><strong>Continuidad y discontinuidad:</strong> las relaciones declaradas con claridad se dibujan con línea continua; las inferidas o indirectas, con línea discontinua</li>
-              <li><strong>Soporte, resiliencia e indirecta:</strong> tres tipos de relación organizan la red; el soporte domina las estructuras socioeconómica y funcional, la resiliencia define a la de patrimonio</li>
+              <li><strong>Declaración vs. realidad:</strong> el POT enuncia un principio pero el análisis de inversiones o prácticas muestra que se invierte en lo opuesto</li>
+              <li><strong>Ejemplo:</strong> "Estructura Ecológica Principal, rectora y garante de equilibrios" (p. 92) pero se invierten más recursos en expansión vial que en conservación</li>
             </ul>
           </div>
         </div>
 
         <div class="synergy-card conflict">
-          <div class="synergy-icon"><i class="fa-solid fa-layer-group"></i></div>
+          <div class="synergy-icon"><i class="fa-solid fa-arrows-cross"></i></div>
           <div class="synergy-content">
-            <h4>Lectura Comparada</h4>
+            <h4>Contradicciones (8 tensiones)</h4>
             <ul>
-              <li><strong>Asimetría estructural:</strong> la estructura ecológica y la funcional son densas y ramificadas; la de patrimonio es una cadena corta de tres eslabones</li>
-              <li><strong>Solapamientos:</strong> corredores verdes, humedales y coberturas vegetales aparecen en más de una estructura: son los nodos que cosen el POT</li>
-              <li><strong>Preguntas para seguir:</strong> ¿por qué el patrimonio solo se relaciona consigo mismo? ¿Qué conecta la estructura socioeconómica con la ecológica?</li>
+              <li><strong>Dos objetivos que se oponen:</strong> el documento propone simultáneamente cosas que son lógicamente incompatibles</li>
+              <li><strong>Ejemplo:</strong> "movilidad sostenible con transporte público" (p. 43) pero "inversiones previstas en autopistas y ampliación vial para autos" (p. 229)</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="synergy-card success">
+          <div class="synergy-icon"><i class="fa-solid fa-link-slash"></i></div>
+          <div class="synergy-content">
+            <h4>Desconexiones (7 tensiones)</h4>
+            <ul>
+              <li><strong>Estructura sin articulación real:</strong> dos elementos se declaran conectados pero el documento no especifica cómo operan en conjunto</li>
+              <li><strong>Ejemplo:</strong> Manzanas del Cuidado conectadas a servicios sociales pero sin claridad sobre relación con red de movilidad que determina acceso</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="synergy-card conflict">
+          <div class="synergy-icon"><i class="fa-solid fa-arrow-down"></i></div>
+          <div class="synergy-content">
+            <h4>Jerarquías implícitas (8 tensiones)</h4>
+            <ul>
+              <li><strong>Estructura subordinada pese a centrales:</strong> una estructura se declara "principal" o "rectora" pero el análisis de recursos, páginas o énfasis muestra que está subordinada</li>
+              <li><strong>Ejemplo:</strong> EEP como "primera ordenante" (p. 92) pero patrimonio apenas ocupa 3 páginas vs. 40 de movilidad</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="synergy-card success">
+          <div class="synergy-icon"><i class="fa-solid fa-comment-dots"></i></div>
+          <div class="synergy-content">
+            <h4>Periféricos discursivos (6 tensiones)</h4>
+            <ul>
+              <li><strong>Mencionado pero sin rol:</strong> elementos aparecen en declaraciones pero carecen de operacionalización, presupuesto o mecanismos claros</li>
+              <li><strong>Ejemplo:</strong> "patrimonio inmaterial como elemento estructurante" (p. 126) mencionado una sola vez sin instrumentos de protección</li>
             </ul>
           </div>
         </div>
@@ -724,14 +719,14 @@
 
     <!-- RECOMENDACIONES -->
     <div class="recommendations-section">
-      <h3><i class="fa-solid fa-lightbulb"></i> Recomendaciones para Construir la Red</h3>
+      <h3><i class="fa-solid fa-lightbulb"></i> Recomendaciones para Medir la Red</h3>
 
       <div class="recommendations-grid">
         <div class="rec-card">
           <div class="rec-number">1</div>
           <div class="rec-content">
-            <h4>Verificar cada relación contra el texto del POT</h4>
-            <p>Contrastar cada flecha con la página exacta del documento: distinguir lo que el POT declara explícitamente de lo que la ingeniería inversa infiere.
+            <h4>Identificar las 38 tensiones en el texto POT</h4>
+            <p>Cada relación de las estructuras contiene una tensión: contrastar declaraciones con presupuestos e inversiones reales.
             <div class="rec-impact">
               <span class="impact-badge">Impacto: +25%</span>
             </div>
