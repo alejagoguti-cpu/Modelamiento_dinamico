@@ -3,22 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RAPOT · Módulo 01 — Construir la Red</title>
+<title>RAPOT · Construir la Red</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="modulo-01.css">
 </head>
 <body>
-<div id="app">
+<div class="app">
 
-  <!-- SIDEBAR RAPOT -->
-  <aside id="sidebar-rapot">
+  <aside class="sidebar">
     <div class="brand">
       <div class="mark"><i class="fa-solid fa-diagram-project"></i></div>
       <span>RAPOT</span>
     </div>
-    
+
     <div class="nav-group">
       <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-house"></i> Dashboard</a>
     </div>
@@ -39,7 +38,7 @@
       <div class="nav-label">GESTIÓN</div>
       <a href="proyectos.html" class="nav-item"><i class="fa-solid fa-folder"></i> Proyectos</a>
       <a href="fuentes.html" class="nav-item"><i class="fa-solid fa-file-lines"></i> Fuentes y Documentos</a>
-      <a href="favoritos.html" class="nav-item"><i class="fa-regular fa-star"></i> Favoritos</a>
+      <a href="favoritos.html" class="nav-item"><i class="fa-solid fa-star"></i> Favoritos</a>
       <a href="reportes.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Reportes</a>
       <a href="configuracion.html" class="nav-item"><i class="fa-solid fa-gear"></i> Configuración</a>
     </div>
@@ -50,376 +49,158 @@
         <div class="name">Equipo Urbano</div>
         <div class="role">Administrador</div>
       </div>
+      <a href="demo.html" class="logout-btn"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
     </div>
   </aside>
 
-  <!-- MAIN CONTENT -->
-  <div id="main-container">
-    <header>
-      <h1>01. Construir la Red</h1>
-      <p>Analiza las cuatro estructuras del POT y sus interconexiones.</p>
-    </header>
+  <main class="main">
 
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-value" id="statConceptos">58</div>
-        <div class="stat-label">Conceptos</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value" id="statRelaciones">70</div>
-        <div class="stat-label">Relaciones</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value" id="statFuentes">4</div>
-        <div class="stat-label">Fuentes</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value" id="statTipos">4</div>
-        <div class="stat-label">Tipos de relación</div>
+    <div class="topbar">
+      <h1>Construir la Red</h1>
+      <div class="topbar-actions">
+        <div class="search-box"><i class="fa-solid fa-magnifying-glass"></i> Buscar en el sistema...</div>
+        <div class="icon-btn"><i class="fa-regular fa-bell"></i><span class="dot"></span></div>
+        <div class="icon-btn"><i class="fa-regular fa-circle-question"></i></div>
+        <div class="avatar-sm">EU</div>
       </div>
     </div>
 
-    <div class="graph-wrapper">
-      
-      <!-- LEGEND & FILTERS -->
-      <div class="legend-panel">
-        <div class="legend-section">
-          <div class="legend-title">Estructuras</div>
-          <label class="filter-item">
-            <input type="checkbox" class="filter-struct" value="EEP" checked>
-            <div class="filter-dot" style="background:var(--eep);"></div>
-            <span>EEP</span>
-          </label>
-          <label class="filter-item">
-            <input type="checkbox" class="filter-struct" value="EFC" checked>
-            <div class="filter-dot" style="background:var(--efc);"></div>
-            <span>EFC</span>
-          </label>
-          <label class="filter-item">
-            <input type="checkbox" class="filter-struct" value="ESECI" checked>
-            <div class="filter-dot" style="background:var(--eseci);"></div>
-            <span>ESECI</span>
-          </label>
-          <label class="filter-item">
-            <input type="checkbox" class="filter-struct" value="EIP" checked>
-            <div class="filter-dot" style="background:var(--eip);"></div>
-            <span>EIP</span>
-          </label>
-        </div>
+    <div class="welcome">
+      <h2>Construir la Red</h2>
+      <p>Analiza las cuatro estructuras del POT y sus 130+ componentes interconectados en una red dinámica.</p>
+    </div>
 
-        <div class="legend-section">
-          <div class="legend-title">Tipos de Relación</div>
-          <label class="filter-item">
-            <input type="checkbox" class="filter-type" value="Directa" checked>
-            <div class="filter-line solid" style="background:var(--eep); border-top:2px solid;"></div>
-            <span>Directa</span>
-          </label>
-          <label class="filter-item">
-            <input type="checkbox" class="filter-type" value="Indirecta" checked>
-            <div class="filter-line" style="background:var(--efc); border-top:2px dashed;"></div>
-            <span>Indirecta</span>
-          </label>
-          <label class="filter-item">
-            <input type="checkbox" class="filter-type" value="Soporte" checked>
-            <div class="filter-line solid" style="background:var(--eseci); border-top:2px solid;"></div>
-            <span>Soporte</span>
-          </label>
-          <label class="filter-item">
-            <input type="checkbox" class="filter-type" value="Resiliencia" checked>
-            <div class="filter-line solid" style="background:var(--eip); border-top:2px solid;"></div>
-            <span>Resiliencia</span>
-          </label>
+    <!-- STATS CARDS -->
+    <div class="stats-section">
+      <div class="stat-card">
+        <h4>Sistema Ambiental y EEP</h4>
+        <div class="stat-value">40</div>
+        <div class="stat-items">
+          <div class="stat-item"><span class="stat-item-dot" style="background: var(--teal);"></span> Componentes ecológicos</div>
+          <div class="stat-item"><span class="stat-item-dot" style="background: var(--teal);"></span> Estructuras de protección</div>
         </div>
       </div>
 
-      <!-- CANVAS -->
-      <div class="canvas-container">
-        <div id="canvas-wrap">
-          <svg id="edges"></svg>
+      <div class="stat-card">
+        <h4>Estructura de Patrimonios</h4>
+        <div class="stat-value">30</div>
+        <div class="stat-items">
+          <div class="stat-item"><span class="stat-item-dot" style="background: var(--purple);"></span> Patrimonio cultural e histórico</div>
+          <div class="stat-item"><span class="stat-item-dot" style="background: var(--purple);"></span> Identidad territorial</div>
         </div>
       </div>
 
-      <!-- DETAIL PANEL -->
-      <div class="detail-panel" id="detailPanel" style="display:none;">
-        <div class="detail-card">
-          <div class="detail-label">Concepto</div>
-          <div class="detail-content" id="detailName">—</div>
-        </div>
-        <div class="detail-card">
-          <div class="detail-label">Estructura</div>
-          <div class="detail-content" id="detailStruct">—</div>
-        </div>
-        <div class="detail-card">
-          <div class="detail-label">Conexiones (→)</div>
-          <div class="detail-content" id="detailOut" style="font-size:11px;">—</div>
-        </div>
-        <div class="detail-card">
-          <div class="detail-label">Conexiones (←)</div>
-          <div class="detail-content" id="detailIn" style="font-size:11px;">—</div>
+      <div class="stat-card">
+        <h4>Estructura Funcional y Cuidado</h4>
+        <div class="stat-value">30</div>
+        <div class="stat-items">
+          <div class="stat-item"><span class="stat-item-dot" style="background: var(--blue);"></span> Servicios de cuidado</div>
+          <div class="stat-item"><span class="stat-item-dot" style="background: var(--blue);"></span> Manzanas del Cuidado</div>
         </div>
       </div>
 
+      <div class="stat-card">
+        <h4>Estructura Socioeconómica</h4>
+        <div class="stat-value">30</div>
+        <div class="stat-items">
+          <div class="stat-item"><span class="stat-item-dot" style="background: var(--orange);"></span> Dinámicas económicas</div>
+          <div class="stat-item"><span class="stat-item-dot" style="background: var(--orange);"></span> Generación de empleo</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NETWORK VISUALIZATION -->
+    <div class="network-section">
+      <div class="network-header">
+        <h3><i class="fa-solid fa-sitemap"></i> Red POT Interactiva</h3>
+        <div class="network-controls">
+          <button class="control-btn active" onclick="filterNetwork('all')">Todos</button>
+          <button class="control-btn" onclick="filterNetwork('amb')">Ambiental</button>
+          <button class="control-btn" onclick="filterNetwork('patri')">Patrimonios</button>
+          <button class="control-btn" onclick="filterNetwork('func')">Funcional</button>
+          <button class="control-btn" onclick="filterNetwork('econ')">Socioeconómico</button>
+        </div>
+      </div>
+
+      <div class="network-viz-wrap">
+        <div class="network-canvas">
+          <svg id="networkViz"></svg>
+        </div>
+
+        <div class="network-sidebar">
+          <aside class="network-legend">
+            <div class="legend-title">Estructuras</div>
+
+            <label class="legend-item" data-type="amb">
+              <input type="checkbox" checked>
+              <span class="legend-swatch swatch-amb"></span>
+              Ambiental y EEP
+            </label>
+
+            <label class="legend-item" data-type="patri">
+              <input type="checkbox" checked>
+              <span class="legend-swatch swatch-patri"></span>
+              Patrimonios
+            </label>
+
+            <label class="legend-item" data-type="func">
+              <input type="checkbox" checked>
+              <span class="legend-swatch swatch-func"></span>
+              Funcional y Cuidado
+            </label>
+
+            <label class="legend-item" data-type="econ">
+              <input type="checkbox" checked>
+              <span class="legend-swatch swatch-econ"></span>
+              Socioeconómico
+            </label>
+
+            <div class="legend-divider"></div>
+            <div class="legend-hint">Arrastra para mover. Doble clic en nodo: aislar. Rueda: zoom.</div>
+          </aside>
+
+          <div class="node-info-panel" id="nodeInfoPanel">
+            <div class="node-info-header">
+              <h4 id="nodeInfoTitle">Componente</h4>
+              <button class="node-info-close" id="nodeInfoClose" type="button">&times;</button>
+            </div>
+            <div class="node-info-type" id="nodeInfoType"></div>
+            <div class="node-info-count" id="nodeInfoCount"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RELATIONSHIPS TABLE -->
+    <div class="relationships-section">
+      <h3><i class="fa-solid fa-arrow-right-arrow-left"></i> Relaciones Principales (70+)</h3>
+
+      <table class="relationships-table">
+        <thead>
+          <tr>
+            <th>Estructura A</th>
+            <th>Componente A</th>
+            <th>Estructura B</th>
+            <th>Componente B</th>
+            <th>Tipo</th>
+          </tr>
+        </thead>
+        <tbody id="relationshipsBody">
+          <!-- Populated by JS -->
+        </tbody>
+      </table>
     </div>
 
     <footer>
-      <p>"No se trata de representar la ciudad, sino de comprenderla para transformarla." — Equipo POT RE</p>
+      "La red es el mensaje: ninguna estructura funciona aislada." — <span>Equipo POT Reverse Engineering</span>
     </footer>
 
-  </div>
+  </main>
 
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
-<script>
-
-// DATOS COMPLETOS DEL POT
-const POT_DATA = {
-  EEP: [
-    {origen:"Quebradas",destino:"Ríos",tipo:"Directa",struct:"EEP"},
-    {origen:"Ríos",destino:"Quebradas",tipo:"Soporte",struct:"EEP"},
-    {origen:"Ríos",destino:"Humedales",tipo:"Directa",struct:"EEP"},
-    {origen:"Humedales",destino:"Áreas de resiliencia climática",tipo:"Resiliencia",struct:"EEP"},
-    {origen:"Humedales",destino:"Áreas protegidas",tipo:"Soporte",struct:"EEP"},
-    {origen:"Conectores ecosistémicos",destino:"Humedales",tipo:"Directa",struct:"EEP"},
-    {origen:"Conectores ecosistémicos",destino:"Parques ecológicos de montaña",tipo:"Directa",struct:"EEP"},
-    {origen:"Conectores ecosistémicos",destino:"Áreas protegidas",tipo:"Soporte",struct:"EEP"},
-    {origen:"Conectores ecosistémicos",destino:"Coberturas vegetales",tipo:"Directa",struct:"EEP"},
-    {origen:"Parques de borde",destino:"Coberturas vegetales",tipo:"Directa",struct:"EEP"},
-    {origen:"Parques de borde",destino:"Ríos",tipo:"Resiliencia",struct:"EEP"},
-    {origen:"Áreas de resiliencia climática",destino:"Coberturas vegetales",tipo:"Resiliencia",struct:"EEP"},
-    {origen:"Bosques urbanos",destino:"Coberturas vegetales",tipo:"Directa",struct:"EEP"},
-    {origen:"Bosques urbanos",destino:"Áreas protegidas",tipo:"Indirecta",struct:"EEP"}
-  ],
-  EFC: [
-    {origen:"Movilidad",destino:"Transporte público",tipo:"Directa",struct:"EFC"},
-    {origen:"Transporte público",destino:"Ciclorrutas",tipo:"Directa",struct:"EFC"},
-    {origen:"Transporte público",destino:"Corredores verdes",tipo:"Directa",struct:"EFC"},
-    {origen:"Movilidad",destino:"Espacio público",tipo:"Directa",struct:"EFC"},
-    {origen:"Espacio público",destino:"Parques",tipo:"Directa",struct:"EFC"},
-    {origen:"UPL",destino:"Proximidad",tipo:"Directa",struct:"EFC"},
-    {origen:"UPL",destino:"Servicios sociales",tipo:"Directa",struct:"EFC"},
-    {origen:"UPL",destino:"Accesibilidad",tipo:"Directa",struct:"EFC"},
-    {origen:"Proximidad",destino:"Equipamientos",tipo:"Soporte",struct:"EFC"},
-    {origen:"Manzanas del Cuidado",destino:"Servicios de cuidado",tipo:"Directa",struct:"EFC"},
-    {origen:"Manzanas del Cuidado",destino:"Servicios sociales",tipo:"Directa",struct:"EFC"},
-    {origen:"Manzanas del Cuidado",destino:"Transporte público",tipo:"Soporte",struct:"EFC"},
-    {origen:"Manzanas del Cuidado",destino:"Equipamientos",tipo:"Soporte",struct:"EFC"},
-    {origen:"Servicios sociales",destino:"Servicios de cuidado",tipo:"Soporte",struct:"EFC"},
-    {origen:"Vivienda",destino:"Equipamientos",tipo:"Soporte",struct:"EFC"},
-    {origen:"Vivienda",destino:"Movilidad",tipo:"Directa",struct:"EFC"},
-    {origen:"Espacio público",destino:"Accesibilidad",tipo:"Soporte",struct:"EFC"},
-    {origen:"Red vial",destino:"Ciclorrutas",tipo:"Directa",struct:"EFC"},
-    {origen:"Servicios públicos",destino:"Vivienda",tipo:"Soporte",struct:"EFC"},
-    {origen:"Accesibilidad",destino:"Equipamientos",tipo:"Soporte",struct:"EFC"}
-  ],
-  ESECI: [
-    {origen:"Huertas",destino:"Agricultura urbana",tipo:"Directa",struct:"ESECI"},
-    {origen:"Agricultura urbana",destino:"Producción de alimentos",tipo:"Directa",struct:"ESECI"},
-    {origen:"Economía circular",destino:"Negocios verdes",tipo:"Soporte",struct:"ESECI"},
-    {origen:"Economía circular",destino:"Industria",tipo:"Indirecta",struct:"ESECI"},
-    {origen:"Actividades productivas",destino:"Empleo",tipo:"Directa",struct:"ESECI"},
-    {origen:"Actividades económicas",destino:"Empleo",tipo:"Directa",struct:"ESECI"},
-    {origen:"Aglomeraciones económicas",destino:"Empleo",tipo:"Directa",struct:"ESECI"},
-    {origen:"Aglomeraciones económicas",destino:"Transporte público",tipo:"Soporte",struct:"ESECI"},
-    {origen:"Actividades productivas",destino:"Industria",tipo:"Soporte",struct:"ESECI"},
-    {origen:"Comercio",destino:"Economías de proximidad",tipo:"Directa",struct:"ESECI"},
-    {origen:"Innovación",destino:"Empleo",tipo:"Directa",struct:"ESECI"},
-    {origen:"Actividades creativas",destino:"Industria",tipo:"Directa",struct:"ESECI"},
-    {origen:"Empleo",destino:"Manzanas del Cuidado",tipo:"Resiliencia",struct:"ESECI"},
-    {origen:"Turismo",destino:"Patrimonio local",tipo:"Soporte",struct:"ESECI"},
-    {origen:"Producción de alimentos",destino:"Áreas protegidas",tipo:"Soporte",struct:"ESECI"},
-    {origen:"Negocios verdes",destino:"Coberturas vegetales",tipo:"Resiliencia",struct:"ESECI"},
-    {origen:"Servicios",destino:"Equipamientos",tipo:"Soporte",struct:"ESECI"},
-    {origen:"Empleo",destino:"UPL",tipo:"Directa",struct:"ESECI"}
-  ],
-  EIP: [
-    {origen:"Patrimonios",destino:"Patrimonio material",tipo:"Directa",struct:"EIP"},
-    {origen:"Patrimonios",destino:"Patrimonio inmaterial",tipo:"Directa",struct:"EIP"},
-    {origen:"Patrimonio material",destino:"Memoria",tipo:"Directa",struct:"EIP"},
-    {origen:"Prácticas culturales",destino:"Dinámicas comunitarias",tipo:"Directa",struct:"EIP"},
-    {origen:"Patrimonio natural",destino:"Patrimonio material",tipo:"Directa",struct:"EIP"},
-    {origen:"Saberes del lugar",destino:"Turismo",tipo:"Soporte",struct:"EIP"},
-    {origen:"Identidades",destino:"Prácticas culturales",tipo:"Directa",struct:"EIP"},
-    {origen:"Patrimonio local",destino:"Dinámicas comunitarias",tipo:"Soporte",struct:"EIP"},
-    {origen:"Modos de habitar",destino:"Vivienda",tipo:"Directa",struct:"EIP"},
-    {origen:"Cultura",destino:"Patrimonio inmaterial",tipo:"Directa",struct:"EIP"},
-    {origen:"Dinámicas comunitarias",destino:"UPL",tipo:"Soporte",struct:"EIP"},
-    {origen:"Memoria",destino:"Cultura",tipo:"Directa",struct:"EIP"}
-  ]
-};
-
-const structColors = { EEP: '#34d399', EFC: '#3b82f6', ESECI: '#ef9552', EIP: '#b06bf7' };
-
-let nodes = [];
-let links = [];
-let allNodes = [];
-let allLinks = [];
-let simulation;
-let activeStructs = new Set(['EEP', 'EFC', 'ESECI', 'EIP']);
-let activeTypes = new Set(['Directa', 'Indirecta', 'Soporte', 'Resiliencia']);
-
-// Cargar datos iniciales
-function buildGraph() {
-  allNodes = [];
-  allLinks = [];
-  const nodeMap = new Map();
-
-  Object.entries(POT_DATA).forEach(([struct, relations]) => {
-    relations.forEach(rel => {
-      if (!nodeMap.has(rel.origen)) {
-        nodeMap.set(rel.origen, { id: rel.origen, struct: rel.struct, color: structColors[rel.struct], label: rel.origen });
-        allNodes.push(nodeMap.get(rel.origen));
-      }
-      if (!nodeMap.has(rel.destino)) {
-        nodeMap.set(rel.destino, { id: rel.destino, struct: rel.struct, color: structColors[rel.struct], label: rel.destino });
-        allNodes.push(nodeMap.get(rel.destino));
-      }
-      allLinks.push({ source: rel.origen, target: rel.destino, tipo: rel.tipo });
-    });
-  });
-
-  document.getElementById('statConceptos').textContent = new Set(allNodes.map(n => n.id)).size;
-  
-  // Listeners de filtros
-  document.querySelectorAll('.filter-struct').forEach(el => {
-    el.addEventListener('change', applyFilters);
-  });
-  document.querySelectorAll('.filter-type').forEach(el => {
-    el.addEventListener('change', applyFilters);
-  });
-
-  applyFilters();
-}
-
-function applyFilters() {
-  activeStructs.clear();
-  activeTypes.clear();
-
-  document.querySelectorAll('.filter-struct:checked').forEach(el => {
-    activeStructs.add(el.value);
-  });
-  document.querySelectorAll('.filter-type:checked').forEach(el => {
-    activeTypes.add(el.value);
-  });
-
-  // Filtrar nodos
-  nodes = allNodes.filter(n => activeStructs.has(n.struct));
-
-  // Filtrar links
-  links = allLinks.filter(l => {
-    const sourceNode = nodes.find(n => n.id === l.source);
-    const targetNode = nodes.find(n => n.id === l.target);
-    return sourceNode && targetNode && activeTypes.has(l.tipo);
-  });
-
-  renderGraph();
-}
-
-function renderGraph() {
-  const wrap = document.getElementById('canvas-wrap');
-  const width = wrap.clientWidth;
-  const height = wrap.clientHeight;
-
-  const svg = d3.select('#edges')
-    .attr('width', width)
-    .attr('height', height);
-
-  svg.selectAll('*').remove();
-
-  const g = svg.append('g');
-
-  const linkSel = g.selectAll('line')
-    .data(links)
-    .enter()
-    .append('line')
-    .attr('stroke', d => {
-      const colors = { 'Directa': '#34d399', 'Indirecta': '#3b82f6', 'Soporte': '#ef9552', 'Resiliencia': '#b06bf7' };
-      return colors[d.tipo] || '#666';
-    })
-    .attr('stroke-width', d => d.tipo === 'Indirecta' ? 1.5 : 2)
-    .attr('stroke-dasharray', d => d.tipo === 'Indirecta' ? '5,5' : 'none')
-    .attr('opacity', 0.4);
-
-  const nodeSel = g.selectAll('g')
-    .data(nodes)
-    .enter()
-    .append('g')
-    .attr('class', 'node-group')
-    .style('cursor', 'pointer')
-    .on('click', (e, d) => showDetail(d));
-
-  nodeSel.append('circle')
-    .attr('r', 45)
-    .attr('fill', 'rgba(10,14,23,0.6)')
-    .attr('stroke', d => d.color)
-    .attr('stroke-width', 2);
-
-  nodeSel.append('text')
-    .attr('text-anchor', 'middle')
-    .attr('dy', '0.35em')
-    .attr('font-size', '10px')
-    .attr('font-weight', '600')
-    .attr('fill', '#eef0f6')
-    .attr('pointer-events', 'none')
-    .text(d => d.label.length > 15 ? d.label.slice(0, 12) + '…' : d.label);
-
-  if (simulation) simulation.stop();
-
-  simulation = d3.forceSimulation(nodes)
-    .force('link', d3.forceLink(links).id(d => d.id).distance(120).strength(0.3))
-    .force('charge', d3.forceManyBody().strength(-300))
-    .force('center', d3.forceCenter(width / 2, height / 2))
-    .force('collide', d3.forceCollide(60));
-
-  simulation.on('tick', () => {
-    linkSel
-      .attr('x1', d => {
-        const source = nodes.find(n => n.id === (typeof d.source === 'string' ? d.source : d.source.id));
-        return source ? source.x : 0;
-      })
-      .attr('y1', d => {
-        const source = nodes.find(n => n.id === (typeof d.source === 'string' ? d.source : d.source.id));
-        return source ? source.y : 0;
-      })
-      .attr('x2', d => {
-        const target = nodes.find(n => n.id === (typeof d.target === 'string' ? d.target : d.target.id));
-        return target ? target.x : 0;
-      })
-      .attr('y2', d => {
-        const target = nodes.find(n => n.id === (typeof d.target === 'string' ? d.target : d.target.id));
-        return target ? target.y : 0;
-      });
-
-    nodeSel.attr('transform', d => `translate(${d.x || 0},${d.y || 0})`);
-  });
-}
-
-function showDetail(node) {
-  document.getElementById('detailPanel').style.display = 'flex';
-  document.getElementById('detailName').textContent = node.label;
-  document.getElementById('detailStruct').textContent = node.struct;
-  
-  const outgoing = allLinks.filter(l => l.source === node.id);
-  const incoming = allLinks.filter(l => l.target === node.id);
-
-  document.getElementById('detailOut').innerHTML = outgoing.length > 0
-    ? outgoing.map(l => `<div>→ ${l.target}</div>`).join('')
-    : 'Sin conexiones';
-
-  document.getElementById('detailIn').innerHTML = incoming.length > 0
-    ? incoming.map(l => `<div>← ${l.source}</div>`).join('')
-    : 'Sin conexiones';
-}
-
-window.addEventListener('load', buildGraph);
-window.addEventListener('resize', () => {
-  const wrap = document.getElementById('canvas-wrap');
-  d3.select('#edges')
-    .attr('width', wrap.clientWidth)
-    .attr('height', wrap.clientHeight);
-});
-
-</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script src="modulo-01.js"></script>
 
 </body>
 </html>
