@@ -891,7 +891,6 @@ const PN_EDGES = [
   { s: "p_servicios_publicos", t: "p_vivienda", tipo: "soporte", directa: false, sinFlecha: false, pagina: "179", articulo: "Art. 179", frase: "servicio público … actividades en la ciudad" },
   { s: "p_ciclorutas", t: "p_vivienda", tipo: "soporte", directa: false, sinFlecha: false, pagina: "117", articulo: "Art. 88", frase: "accesibilidad … conectividad" },
   { s: "p_ciclorutas", t: "p_transporte_publico", tipo: "resiliencia", directa: false, sinFlecha: true, pagina: "117 / 158–159", articulo: "Art. 88 / 158–159", frase: "cicloinfraestructura … corredores verdes" },
-  { s: "p_ciclorutas", t: "p_areas_de_resiliencia_climatica", tipo: "soporte", directa: true, sinFlecha: false, pagina: null, articulo: "", frase: "Conexión Ciclorutas – Áreas de resiliencia climática (soporte), añadida según lo indicado. Pendiente de completar con la cita y página exactas del documento de sustento." },
   { s: "p_transporte_publico", t: "p_vivienda", tipo: "soporte", directa: false, sinFlecha: false, pagina: "117", articulo: "Art. 88", frase: "accesibilidad … conectividad" },
   { s: "p_red_vial", t: "p_transporte_publico", tipo: "soporte", directa: true, sinFlecha: false, pagina: "158–159", articulo: "Art. 158–159", frase: "malla arterial … transporte público" },
   { s: "p_red_vial", t: "p_equipamientos", tipo: "soporte", directa: true, sinFlecha: false, pagina: "117", articulo: "Art. 88 / 95", frase: "accesibilidad … equipamientos" },
@@ -942,7 +941,7 @@ const PN_FAVORABLE_GROUPS = {
       ["p_red_vial", "p_equipamientos"],
       ["p_corredores_verdes", "p_ciclorutas"],
       ["p_corredores_verdes", "p_transporte_publico"],
-      ["p_ciclorutas", "p_areas_de_resiliencia_climatica"],
+      ["p_areas_de_resiliencia_climatica", "p_coberturas_vegetales"],
     ],
     ods: [9, 11, 13],
     badge: { x: 60, y: 300, anchor: "p_red_vial" },
@@ -988,45 +987,17 @@ Object.values(PN_FAVORABLE_GROUPS).forEach(group => {
   group.involvedNodes = set;
 });
 
-/* -------- réplica en miniatura del diagrama principal ODS ↔ ODS --------
-   Para cada grupo se calcula un mini-layout que conserva las posiciones
-   relativas reales de los nodos ODS en la red de arriba (networkViz),
-   solo que escaladas hacia abajo y centradas en el punto de la insignia.
-   Así el "cluster" de ODS de cada hallazgo se ve igual que en la red
-   principal, pero mucho más chico. */
-function computeMiniOdsLayout(odsList, cx, cy, scale) {
-  const nodes = odsList.map(num => nodeById("ods" + num)).filter(Boolean);
-  if (nodes.length === 0) return {};
-
-  const minX = Math.min(...nodes.map(n => n.homeX));
-  const maxX = Math.max(...nodes.map(n => n.homeX));
-  const minY = Math.min(...nodes.map(n => n.homeY));
-  const maxY = Math.max(...nodes.map(n => n.homeY));
-  const midX = (minX + maxX) / 2;
-  const midY = (minY + maxY) / 2;
-
-  const positions = {};
-  nodes.forEach(n => {
-    positions[n.num] = {
-      x: cx + (n.homeX - midX) * scale,
-      y: cy + (n.homeY - midY) * scale,
-      r: Math.max(n.r * scale, 7.5),
-      color: n.color,
-      num: n.num,
-    };
-  });
-  return positions;
-}
-
-/* mismas relaciones reales entre esos ODS (tipo, color, directa/inferida)
-   tal como existen en la red principal (RAW_EDGES) */
+/* replica, entre las insignias ODS de un grupo, las mismas conexiones que esos
+   ODS ya tienen en la red de arriba (p. ej. arriba el ODS 9, 11 y 13 están
+   conectados entre sí: aquí abajo se dibuja esa misma conexión entre sus
+   insignias, con el color/punteado de esa relación real) */
 function pnOdsLinksFor(odsList) {
   const links = [];
   for (let i = 0; i < odsList.length; i++) {
     for (let j = i + 1; j < odsList.length; j++) {
       const a = "ods" + odsList[i], b = "ods" + odsList[j];
       const edge = RAW_EDGES.find(e => (e.s === a && e.t === b) || (e.s === b && e.t === a));
-      if (edge) links.push({ from: odsList[i], to: odsList[j], type: edge.type, directa: edge.directa });
+      if (edge) links.push({ from: i, to: j, style: TYPE_STYLE[edge.type], directa: edge.directa });
     }
   }
   return links;
@@ -1154,15 +1125,10 @@ function renderPotStructure() {
   drawPnOdsBadges(svg);
 }
 
-/* -------- clúster ODS en miniatura (una por grupo, oculto hasta activarse) --------
-   Réplica a escala reducida del diagrama principal: mismas posiciones
-   relativas, mismos colores por ODS y mismas líneas (color/tipo/sólida
-   o punteada) que las relaciones reales entre esos ODS arriba. */
+/* -------- insignias ODS flotantes (una por grupo, ocultas hasta activarse) -------- */
 function drawPnOdsBadges(svg) {
   const g = document.createElementNS(SVG_NS, "g");
   g.setAttribute("class", "pn-badges-layer");
-
-  const MINI_SCALE = 0.16;
 
   Object.entries(PN_FAVORABLE_GROUPS).forEach(([key, group]) => {
     const anchor = pnNodeById(group.badge.anchor);
@@ -1172,47 +1138,39 @@ function drawPnOdsBadges(svg) {
     wrap.setAttribute("class", "pn-ods-badge-group");
     wrap.setAttribute("data-group", key);
 
-    const positions = computeMiniOdsLayout(group.ods, bx, by, MINI_SCALE);
-    const positionList = Object.values(positions);
-
-    if (anchor && positionList.length) {
-      const nearest = positionList[0];
+    if (anchor) {
       const connector = document.createElementNS(SVG_NS, "path");
       connector.setAttribute("class", "pn-ods-connector");
-      connector.setAttribute("d", `M${nearest.x},${nearest.y} L${anchor.x},${anchor.y}`);
+      connector.setAttribute("d", `M${bx},${by} L${anchor.x},${anchor.y}`);
       wrap.appendChild(connector);
     }
 
-    /* líneas primero, para que los nodos queden encima */
-    pnOdsLinksFor(group.ods).forEach(link => {
-      const a = positions[link.from], b = positions[link.to];
-      if (!a || !b) return;
-      const style = TYPE_STYLE[link.type];
-      const path = document.createElementNS(SVG_NS, "path");
-      path.setAttribute("class", "pn-ods-link");
-      path.setAttribute("d", `M${a.x},${a.y} L${b.x},${b.y}`);
-      path.setAttribute("stroke", style.color);
-      path.setAttribute("stroke-width", Math.max(style.width * 0.7, 1));
-      if (!link.directa) path.setAttribute("stroke-dasharray", "3,3");
-      path.setAttribute("marker-end", `url(#arrow-${link.type})`);
-      wrap.appendChild(path);
-    });
-
-    /* nodos ODS en miniatura */
-    positionList.forEach(p => {
+    group.ods.forEach((odsNum, idx) => {
+      const cx = bx + idx * 24, cy = by;
       const badge = document.createElementNS(SVG_NS, "circle");
       badge.setAttribute("class", "pn-ods-badge");
-      badge.setAttribute("cx", p.x); badge.setAttribute("cy", p.y); badge.setAttribute("r", p.r);
-      badge.setAttribute("fill", p.color);
+      badge.setAttribute("cx", cx); badge.setAttribute("cy", cy); badge.setAttribute("r", 11);
+      badge.setAttribute("fill", PN_ODS_COLOR[odsNum] || "#8891a5");
       wrap.appendChild(badge);
 
       const label = document.createElementNS(SVG_NS, "text");
       label.setAttribute("class", "pn-ods-badge-label");
-      label.setAttribute("x", p.x); label.setAttribute("y", p.y + p.r * 0.35);
+      label.setAttribute("x", cx); label.setAttribute("y", cy + 3.5);
       label.setAttribute("text-anchor", "middle");
-      label.setAttribute("style", `font-size:${Math.max(p.r * 0.95, 7)}px;`);
-      label.textContent = p.num;
+      label.textContent = odsNum;
       wrap.appendChild(label);
+    });
+
+    /* si esos mismos ODS ya están conectados entre sí arriba (p. ej. 9-11, 9-13,
+       11-13), se dibuja aquí la misma conexión entre sus insignias */
+    pnOdsLinksFor(group.ods).forEach(link => {
+      const x1 = bx + link.from * 24, x2 = bx + link.to * 24;
+      const odsLine = document.createElementNS(SVG_NS, "path");
+      odsLine.setAttribute("class", "pn-ods-link");
+      odsLine.setAttribute("d", `M${x1},${by - 11} Q${(x1 + x2) / 2},${by - 22} ${x2},${by - 11}`);
+      odsLine.setAttribute("stroke", link.style.color);
+      if (!link.directa) odsLine.setAttribute("stroke-dasharray", "3,3");
+      wrap.appendChild(odsLine);
     });
 
     g.appendChild(wrap);
