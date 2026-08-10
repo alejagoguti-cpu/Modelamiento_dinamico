@@ -1,985 +1,1339 @@
-:root {
-  --bg: #0a0e17;
-  --sidebar: #0c1120;
-  --panel: #121828;
-  --panel-alt: #0f1522;
-  --border: rgba(255,255,255,0.07);
-  --border-soft: rgba(255,255,255,0.04);
-  --text: #e7eaf2;
-  --text-dim: #8891a5;
-  --text-faint: #5a6274;
-  --teal: #2fd4c8;
-  --teal-dim: rgba(47,212,200,0.12);
-  --blue: #5b8def;
-  --purple: #a276f2;
-  --green: #4ade80;
-  --yellow: #f5c945;
-  --pink: #f76fb0;
-  --orange: #ef9552;
-  --red: #ef4444;
-}
-
-* { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
-  font-family: 'Inter', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  font-size: 14px;
-  -webkit-font-smoothing: antialiased;
-}
-
-.app { display: flex; min-height: 100vh; }
-
-/* SIDEBAR */
-.sidebar {
-  width: 230px;
-  flex-shrink: 0;
-  background: var(--sidebar);
-  border-right: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  padding: 20px 14px;
-}
-
-.brand {
-  display: flex; align-items: center; gap: 10px;
-  padding: 6px 6px 22px 6px;
-}
-
-.brand .mark {
-  width: 32px; height: 32px; border-radius: 9px;
-  background: linear-gradient(135deg, var(--teal), #1a9d94);
-  display: flex; align-items: center; justify-content: center;
-  color: #06110f; font-size: 15px;
-}
-
-.brand span {
-  font-family: 'Space Grotesk', sans-serif;
-  font-weight: 700; font-size: 16px; letter-spacing: 0.5px;
-}
-
-.nav-group { margin-bottom: 20px; }
-
-.nav-label {
-  font-size: 10.5px; font-weight: 700; letter-spacing: 1px;
-  color: var(--text-faint);
-  padding: 0 10px; margin-bottom: 8px;
-}
-
-.nav-item {
-  display: flex; align-items: center; gap: 10px;
-  padding: 9px 10px; border-radius: 8px;
-  color: var(--text-dim);
-  font-size: 13px; font-weight: 500;
-  cursor: pointer;
-  transition: background .15s, color .15s;
-  white-space: nowrap;
-  text-decoration: none;
-}
-
-.nav-item i { width: 16px; text-align: center; font-size: 13px; }
-
-.nav-item .num {
-  font-size: 11px; font-weight: 700; width: 16px; text-align: center; color: var(--text-faint);
-}
-
-.nav-item:hover { background: rgba(255,255,255,0.04); color: var(--text); }
-
-.nav-item.active {
-  background: var(--teal-dim);
-  color: var(--teal);
-}
-
-.nav-item.active .num { color: var(--teal); }
-
-.sidebar-footer {
-  margin-top: auto;
-  border-top: 1px solid var(--border);
-  padding-top: 12px;
-  display: flex; align-items: center; gap: 10px;
-}
-
-.avatar-sm {
-  width: 32px; height: 32px; border-radius: 50%;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 11px; font-weight: 700; color: var(--text-dim);
-  flex-shrink: 0;
-}
-
-.user-meta { line-height: 1.3; flex: 1; min-width: 0; }
-
-.user-meta .name { font-size: 12.5px; font-weight: 600; color: var(--text); }
-
-.user-meta .role { font-size: 11px; color: var(--text-faint); }
-
-.logout-btn {
-  background: none; border: none; color: var(--text-faint);
-  font-size: 13px; cursor: pointer; padding: 4px;
-  text-decoration: none;
-}
-
-.logout-btn:hover { color: var(--pink); }
-
-/* MAIN */
-.main { flex: 1; padding: 22px 34px 50px; min-width: 0; overflow-y: auto; }
-
-.topbar {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 26px;
-}
-
-.topbar h1 {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 19px; font-weight: 600;
-}
-
-.topbar-actions { display: flex; align-items: center; gap: 14px; }
-
-.search-box {
-  display: flex; align-items: center; gap: 8px;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 8px 14px;
-  color: var(--text-faint);
-  font-size: 13px;
-  width: 230px;
-}
-
-.search-box i { font-size: 12px; }
-
-.icon-btn {
-  width: 34px; height: 34px; border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  color: var(--text-dim);
-  font-size: 13px;
-  position: relative;
-}
-
-.icon-btn .dot {
-  position: absolute; top: 6px; right: 7px;
-  width: 6px; height: 6px; border-radius: 50%;
-  background: var(--pink);
-}
-
-.welcome { margin-bottom: 28px; }
-
-.welcome h2 {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 26px; font-weight: 700; margin-bottom: 6px;
-}
-
-.welcome p { color: var(--text-dim); font-size: 14px; }
-
-/* ODS INSIGHTS (reemplaza alignment-stats): 5 cuadros icono + título, clicables */
-.ods-insight-stats {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 16px;
-  margin-bottom: 28px;
-}
-
-.insight-card {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 16px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  cursor: pointer;
-  transition: border-color .2s, background-color .2s, transform .15s;
-}
-
-.insight-card:hover {
-  border-color: var(--insight-color, var(--teal));
-  transform: translateY(-1px);
-}
-
-.insight-card.active {
-  border-color: var(--insight-color, var(--teal));
-  background: color-mix(in srgb, var(--insight-color, var(--teal)) 14%, var(--panel));
-  box-shadow: 0 0 0 1px var(--insight-color, var(--teal)) inset;
-}
-
-.insight-icon {
-  width: 44px;
-  height: 44px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 17px;
-  flex-shrink: 0;
-  background: color-mix(in srgb, var(--insight-color, var(--teal)) 22%, transparent);
-  color: var(--insight-color, var(--teal));
-}
-
-.insight-title {
-  font-size: 12.5px;
-  font-weight: 700;
-  color: var(--text);
-  line-height: 1.3;
-}
-
-/* NETWORK SECTION */
-.network-section {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 20px;
-  margin-bottom: 28px;
-}
-
-.network-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 16px;
-}
-
-.network-header h3 {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--text);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.network-header h3 i {
-  color: var(--teal);
-  font-size: 13px;
-}
-
-.network-controls {
-  display: flex;
-  gap: 8px;
-}
-
-.control-btn {
-  background: var(--panel-alt);
-  border: 1px solid var(--border-soft);
-  color: var(--text-dim);
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all .2s;
-}
-
-.control-btn:hover,
-.control-btn.active {
-  border-color: var(--teal);
-  color: var(--teal);
-  background: rgba(47,212,200,0.05);
-}
-
-/* -------- BARRA COMPACTA: Hallazgos + Contradicción (arriba del lienzo) -------- */
-.fc-bar {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 14px;
-  background: var(--panel-alt);
-  border: 1px solid var(--border-soft);
-  border-radius: 8px;
-  padding: 9px 12px;
-  margin-bottom: 12px;
-}
-
-.fc-group {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  flex-wrap: wrap;
-}
-
-.fc-divider {
-  width: 1px;
-  align-self: stretch;
-  background: var(--border-soft);
-}
-
-.fc-label {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.3px;
-  text-transform: uppercase;
-  color: var(--teal);
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  white-space: nowrap;
-}
-
-.fc-contradictions .fc-label { color: var(--red); }
-
-.fc-chip {
-  background: rgba(255,255,255,0.03);
-  border: 1px solid var(--border-soft);
-  border-radius: 999px;
-  padding: 4px 11px;
-  font-family: 'Inter', sans-serif;
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--text-dim);
-  cursor: pointer;
-  transition: background-color .15s, border-color .15s, color .15s;
-  white-space: nowrap;
-}
-
-.fc-chip:hover {
-  border-color: var(--teal);
-  color: var(--text);
-}
-
-.fc-chip.active {
-  background: color-mix(in srgb, var(--teal) 18%, transparent);
-  border-color: var(--teal);
-  color: var(--text);
-}
-
-.fc-chip-red:hover { border-color: var(--red); }
-.fc-chip-red.active {
-  background: color-mix(in srgb, var(--red) 18%, transparent);
-  border-color: var(--red);
-  color: var(--text);
-}
-
-/* NETWORK DIAGRAM + LEGEND */
-.network-viz-wrap {
-  display: flex;
-  gap: 16px;
-  align-items: stretch;
-}
-
-.network-canvas {
-  position: relative;
-  flex: 1;
-  min-width: 0;
-}
-
-#networkViz {
-  width: 100%;
-  height: 560px;
-  background: var(--panel-alt);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  display: block;
-}
-
-/* -------- POPUP DE HALLAZGOS (triple clic en ODS con insight / relación destacada) -------- */
-.finding-popup {
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  width: 270px;
-  max-width: calc(100% - 28px);
-  background: var(--panel-alt);
-  border: 1px solid var(--finding-color, var(--teal));
-  box-shadow: 0 10px 28px rgba(0,0,0,0.4), 0 0 16px color-mix(in srgb, var(--finding-color, var(--teal)) 30%, transparent);
-  border-radius: 10px;
-  padding: 14px 30px 14px 16px;
-  opacity: 0;
-  transform: translateY(-8px);
-  pointer-events: none;
-  transition: opacity .25s ease, transform .25s ease;
-  z-index: 5;
-}
-
-.finding-popup.visible {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
-}
-
-/* variante roja para contradicciones (misma caja, distinto acento) */
-.finding-popup.contradiction {
-  border-color: var(--red);
-  box-shadow: 0 10px 28px rgba(0,0,0,0.4), 0 0 16px rgba(239,68,68,0.3);
-}
-.finding-popup.contradiction .finding-popup-badge { color: var(--red); }
-
-.finding-popup-close {
-  position: absolute;
-  top: 8px;
-  right: 10px;
-  background: none;
-  border: none;
-  color: var(--text-faint);
-  font-size: 17px;
-  line-height: 1;
-  cursor: pointer;
-  padding: 0;
-}
-
-.finding-popup-close:hover { color: var(--pink); }
-
-.finding-popup-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.4px;
-  text-transform: uppercase;
-  color: var(--finding-color, var(--teal));
-  margin-bottom: 8px;
-}
-
-.finding-popup-title {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--text);
-  margin-bottom: 6px;
-  line-height: 1.35;
-}
-
-.finding-popup-text {
-  font-size: 11.5px;
-  color: var(--text-dim);
-  line-height: 1.55;
-}
-
-/* indicador visual sobre los nodos/relaciones que tienen un hallazgo asociado */
-@keyframes findingPulse {
-  0%, 100% { stroke-opacity: 1; }
-  50% { stroke-opacity: 0.35; }
-}
-
-.ods-node.has-finding .node-ring {
-  stroke-width: 3.5;
-  animation: findingPulse 2.2s ease-in-out infinite;
-}
-
-.edge-group.has-finding .edge-visual {
-  stroke-width: 3;
-  filter: drop-shadow(0 0 3px var(--edge-color));
-}
-
-.network-sidebar {
-  width: 205px;
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.network-legend {
-  width: 100%;
-  background: var(--panel-alt);
-  border: 1px solid var(--border-soft);
-  border-radius: 8px;
-  padding: 16px 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  align-self: flex-start;
-}
-
-.network-legend.compact {
-  padding: 10px 12px;
-  gap: 7px;
-}
-
-.network-legend.compact .legend-title { font-size: 9.5px; }
-.network-legend.compact .legend-item { font-size: 10.5px; gap: 6px; }
-.network-legend.compact .legend-divider { margin: 1px 0; }
-.network-legend.compact .legend-hint { font-size: 9.5px; line-height: 1.4; }
-.network-legend.compact .legend-swatch { width: 12px; height: 12px; }
-
-.legend-hint {
-  font-size: 10.5px;
-  color: var(--text-faint);
-  line-height: 1.5;
-}
-
-/* (paneles laterales de hallazgos/contradicciones migrados a .fc-bar, ver arriba) */
-
-/* EDGE INFO PANEL (sustento documental) */
-.edge-info-panel {
-  display: none;
-  width: 100%;
-  background: var(--panel-alt);
-  border: 1px solid var(--teal);
-  box-shadow: 0 0 14px rgba(47,212,200,0.15);
-  border-radius: 8px;
-  padding: 14px;
-}
-
-.edge-info-panel.visible { display: block; }
-
-.edge-info-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-
-#edgeInfoTitle {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 12.5px;
-  font-weight: 700;
-  color: var(--teal);
-  line-height: 1.3;
-}
-
-.edge-info-close {
-  background: none;
-  border: none;
-  color: var(--text-faint);
-  font-size: 18px;
-  line-height: 1;
-  cursor: pointer;
-  padding: 0 0 0 6px;
-  flex-shrink: 0;
-}
-
-.edge-info-close:hover { color: var(--pink); }
-
-.edge-info-type {
-  display: inline-block;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.4px;
-  text-transform: uppercase;
-  padding: 3px 8px;
-  border-radius: 4px;
-  margin-bottom: 10px;
-}
-
-.edge-info-quote {
-  font-size: 11.5px;
-  color: var(--text-dim);
-  line-height: 1.55;
-  font-style: italic;
-  border-left: 2px solid var(--border);
-  padding-left: 10px;
-  margin-bottom: 10px;
-}
-
-.edge-info-page {
-  font-size: 11px;
-  color: var(--text-faint);
-  font-weight: 600;
-}
-
-.legend-title {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 10.5px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  color: var(--text-faint);
-  text-transform: uppercase;
-  margin-bottom: 2px;
-}
-
-.legend-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 12px;
-  color: var(--text-dim);
-  cursor: pointer;
-  user-select: none;
-  transition: color .15s, opacity .15s;
-}
-
-.legend-item:hover { color: var(--text); }
-
-.legend-item.off { opacity: 0.4; }
-
-.legend-item input {
-  appearance: none;
-  -webkit-appearance: none;
-  width: 15px;
-  height: 15px;
-  border-radius: 4px;
-  border: 1px solid var(--border);
-  background: var(--panel);
-  cursor: pointer;
-  position: relative;
-  flex-shrink: 0;
-}
-
-.legend-item input:checked {
-  background: var(--teal);
-  border-color: var(--teal);
-}
-
-.legend-item input:checked::after {
-  content: "";
-  position: absolute;
-  left: 4px; top: 1px;
-  width: 4px; height: 8px;
-  border: solid #06110f;
-  border-width: 0 2px 2px 0;
-  transform: rotate(45deg);
-}
-
-.legend-swatch {
-  width: 22px;
-  height: 0;
-  border-top-width: 2px;
-  border-top-style: solid;
-  flex-shrink: 0;
-}
-
-.swatch-comp   { border-color: #4ade80; }
-.swatch-func   { border-color: #5b8def; }
-.swatch-causal { border-color: #f76fb0; border-top-width: 1.5px; }
-.swatch-cond   { border-color: #ef9552; }
-
-.swatch-directa   { border-color: #ffffff; }
-.swatch-nodirecta { border-color: #ffffff; border-top-style: dashed; }
-
-.legend-item.legend-static { cursor: default; }
-
-.legend-divider {
-  height: 1px;
-  background: var(--border-soft);
-  margin: 2px 0;
-}
-
-/* SVG node/edge styling */
-.ods-node { cursor: grab; touch-action: none; }
-.ods-node.dragging { cursor: grabbing; }
-.ods-node .node-ring { fill: rgba(8,11,18,0.6); transition: opacity .2s; }
-.ods-node .node-inner { font-family: 'Inter', sans-serif; color: var(--text); text-align: center; transition: opacity .2s; }
-.ods-node .node-num { font-family: 'Space Grotesk', sans-serif; font-weight: 800; line-height: 1; }
-.ods-node .node-icon { line-height: 1; }
-.ods-node .node-name { color: var(--text-dim); font-weight: 600; line-height: 1.05; }
-
-.ods-node.node-off .node-ring { opacity: 0.18; }
-.ods-node.node-off .node-inner { opacity: 0.28; }
-
-.ods-node { transition: opacity .2s; }
-.ods-node.node-focus-dim { opacity: 0.12; }
-.ods-node.node-focus-active .node-ring { filter: drop-shadow(0 0 8px #fff); }
-
-.edge-group { cursor: pointer; }
-.edge-group.hidden-edge { display: none; }
-.edge-group { transition: opacity .2s; }
-.edge-group.edge-focus-dim { opacity: 0.05; }
-
-.ods-edge.edge-visual { fill: none; pointer-events: none; transition: opacity .15s, filter .15s; }
-.ods-edge.edge-hit { fill: none; stroke: transparent; stroke-width: 12; pointer-events: stroke; }
-
-.edge-group:hover .edge-visual {
-  opacity: 1 !important;
-  filter: drop-shadow(0 0 4px var(--edge-color));
-}
-
-.edge-group.edge-selected .edge-visual {
-  opacity: 1 !important;
-  filter: drop-shadow(0 0 6px var(--edge-color));
-}
-
-footer {
-  text-align: center;
-  margin-top: 34px;
-  font-size: 12px;
-  color: var(--text-faint);
-}
-
-footer span { color: var(--teal); }
-
-/* RESPONSIVE */
-@media (max-width: 1200px) {
-  .ods-insight-stats { grid-template-columns: repeat(2, 1fr); }
-}
-
-@media (max-width: 900px) {
-  .network-viz-wrap { flex-direction: column; }
-  .network-legend { width: 100%; flex-direction: row; flex-wrap: wrap; align-self: stretch; }
-  #networkViz { height: 460px; }
-}
-
-@media (max-width: 768px) {
-  .sidebar { display: none; }
-  .main { padding: 16px 20px 40px; }
-  .ods-insight-stats { grid-template-columns: 1fr; }
+/* ==========================================================
+   RED POT ↔ ODS — diagrama con física de nodos
+   - Los nodos parten de una posición fija, pero ahora se pueden
+     ARRASTRAR: al mover una bola, las que están conectadas a ella
+     la "siguen" (fuerza de resorte a lo largo de cada línea), y
+     todo el conjunto tiende a volver a su posición original con
+     un resorte suave de anclaje (para que no quede desordenado).
+   - Conexiones tomadas 1 a 1 de la tabla de sustento documental.
+   - Clic en una línea -> panel con Conexión / Tipo / Sustento / Página.
+   - Doble clic en una bola -> la apaga (opacidad) y oculta sus líneas.
+   - Triple clic en una bola -> aísla su flujo (solo se ven los nodos
+     y líneas con los que se conecta directamente).
+   - El punteado de una línea indica si la relación es "no directa"
+     (inferida); las relaciones directas se dibujan con línea sólida.
+   ========================================================== */
+
+const SVG_NS = "http://www.w3.org/2000/svg";
+const XHTML_NS = "http://www.w3.org/1999/xhtml";
+
+/* -------- Nodos: posición fija, nombres oficiales exactos -------- */
+const ODS_NODES = [
+  { id: "ods5",  num: 5,  name: "IGUALDAD DE GÉNERO",                      icon: "fa-venus-mars",     color: "#FF3A21", x: 183,  y: 64,  r: 40 },
+  { id: "ods1",  num: 1,  name: "FIN DE LA POBREZA",                       icon: "fa-people-group",   color: "#E5243B", x: 610,  y: 78,  r: 60 },
+  { id: "ods12", num: 12, name: "PRODUCCIÓN Y CONSUMO RESPONSABLES",       icon: "fa-recycle",        color: "#BF8B2E", x: 886,  y: 76,  r: 40 },
+  { id: "ods2",  num: 2,  name: "HAMBRE CERO",                             icon: "fa-bowl-food",      color: "#DDA63A", x: 313,  y: 215, r: 60 },
+  { id: "ods8",  num: 8,  name: "TRABAJO DECENTE Y CRECIMIENTO ECONÓMICO", icon: "fa-chart-line",     color: "#A21942", x: 562,  y: 242, r: 40 },
+  { id: "ods3",  num: 3,  name: "SALUD Y BIENESTAR",                       icon: "fa-heart-pulse",    color: "#4C9F38", x: 836,  y: 270, r: 40 },
+  { id: "ods10", num: 10, name: "REDUCCIÓN DE LAS DESIGUALDADES",          icon: "fa-scale-balanced", color: "#DD1367", x: 1049, y: 185, r: 40 },
+  { id: "ods6",  num: 6,  name: "AGUA LIMPIA Y SANEAMIENTO",               icon: "fa-droplet",        color: "#26BDE2", x: 72,   y: 342, r: 40 },
+  { id: "ods15", num: 15, name: "VIDA DE ECOSISTEMAS TERRESTRES",          icon: "fa-tree",           color: "#56C02B", x: 284,  y: 424, r: 40 },
+  { id: "ods13", num: 13, name: "ACCIÓN POR EL CLIMA",                     icon: "fa-globe",          color: "#3F7E44", x: 706,  y: 406, r: 60 },
+  { id: "ods7",  num: 7,  name: "ENERGÍA ASEQUIBLE Y NO CONTAMINANTE",     icon: "fa-bolt",           color: "#FCC30B", x: 930,  y: 434, r: 40 },
+  { id: "ods16", num: 16, name: "PAZ, JUSTICIA E INSTITUCIONES SÓLIDAS",   icon: "fa-gavel",          color: "#00689D", x: 994,  y: 354, r: 40 },
+  { id: "ods4",  num: 4,  name: "EDUCACIÓN DE CALIDAD",                    icon: "fa-book",           color: "#C5192D", x: 183,  y: 654, r: 40 },
+  { id: "ods9",  num: 9,  name: "INDUSTRIA, INNOVACIÓN E INFRAESTRUCTURA", icon: "fa-industry",       color: "#FD6925", x: 447,  y: 657, r: 40 },
+  { id: "ods11", num: 11, name: "CIUDADES Y COMUNIDADES SOSTENIBLES",      icon: "fa-city",           color: "#FD9D24", x: 639,  y: 692, r: 40 },
+  { id: "ods14", num: 14, name: "VIDA SUBMARINA",                         icon: "fa-fish",           color: "#0A97D9", x: 789,  y: 689, r: 40 },
+  { id: "ods17", num: 17, name: "ALIANZAS PARA LOGRAR LOS OBJETIVOS",      icon: "fa-handshake",      color: "#19486A", x: 1350, y: 470, r: 40 },
+];
+
+/* ODS 1, 2 y 13 son intencionalmente un poco más grandes (r 60) que el resto (r 40, todos iguales) */
+
+/* -------- física: cada nodo guarda su posición "casa" (ancla) y velocidad -------- */
+ODS_NODES.forEach(n => {
+  n.homeX = n.x; n.homeY = n.y;
+  n.vx = 0; n.vy = 0;
+  n.fixed = false; // true mientras el usuario lo está arrastrando
+  /* posición de "casa" original, para poder restaurarla luego de una animación temporal
+     (ver animateBridgeNode) sin perder de vista el ancla real del nodo */
+  n.baseHomeX = n.homeX; n.baseHomeY = n.homeY;
+});
+
+/* -------- HALLAZGOS del análisis de la red --------
+   Nodos que funcionan como articuladores/conectores de la red: al hacer TRIPLE CLIC
+   sobre ellos (además de aislar su flujo, comportamiento ya existente) se muestra un
+   popup con el hallazgo. ODS 9 además "demuestra" el hallazgo moviéndose ODS 3
+   temporalmente entre ODS 4 y ODS 9, y luego regresa a su lugar. */
+const FINDINGS = {
+  ods1: {
+    title: "ODS 1 · Nodo articulador de la red",
+    text: "Al aislar su flujo, el ODS 1 funciona como uno de los principales nodos articuladores de la red. Insight: si se interviene sobre la pobreza, potencialmente se afectan diferentes dimensiones de la red al mismo tiempo.",
+  },
+  ods13: {
+    title: "ODS 13 · El cambio climático funciona como un articulador",
+    text: "El cambio climático conecta dimensiones que inicialmente parecían separadas. Funciona como una condición transversal: un problema climático puede tener consecuencias sociales, económicas, urbanas y ambientales.",
+  },
+  ods9: {
+    title: "ODS 9 · Conecta grupos diferentes de la red",
+    text: "El ODS 9 no solamente está conectado con varios objetivos, sino que conecta grupos diferentes de la red. Para evidenciarlo, ODS 3 se desplaza un momento hacia la izquierda, entre ODS 4 y ODS 9, y luego vuelve a su lugar.",
+    bridge: { node: "ods3", between: ["ods4", "ods9"] },
+  },
+};
+
+/* Relación con hallazgo propio: al hacer CLIC en esa línea (comportamiento normal de
+   sustento documental) también se muestra el popup del hallazgo, y además se aísla
+   la vista para mostrar SOLO esos dos nodos y la línea entre ellos. */
+const EDGE_FINDINGS = {
+  "ods1->ods13": {
+    title: "ODS 1 ↔ ODS 13 · Relación inesperada",
+    text: "El ODS 1 no entiende la pobreza únicamente como un problema económico: también exige reducir la vulnerabilidad de las personas pobres frente a fenómenos relacionados con el clima.",
+    nodes: ["ods1", "ods13"],
+  },
+};
+
+/* Nodos que presentan una CONTRADICCIÓN dentro del análisis: al hacer clic en su
+   entrada del panel rojo "Contradicción" se aísla solo ese nodo (sin sus vecinos)
+   y se muestra la cita/observación correspondiente. */
+const CONTRADICTIONS = {
+  ods16: {
+    title: "ODS 16 · Contradicción",
+    text: "“Sin paz, estabilidad, derechos humanos y gobernabilidad efectiva basada en el Estado de derecho, no es posible alcanzar el desarrollo sostenible.”",
+  },
+  ods14: {
+    title: "ODS 14 · Contradicción",
+    text: "“Los océanos del mundo —su temperatura, química, corrientes y vida— mueven sistemas mundiales que hacen que la Tierra sea habitable para la humanidad.”",
+  },
+  ods11: {
+    title: "ODS 11 · Contradicción",
+    text: "Si las ciudades concentran actividad económica, desarrollo social, ciencia, cultura y productividad, ¿por qué el ODS 11 no aparece como uno de los principales articuladores de nuestra red?",
+  },
+};
+
+function edgeKey(edge) { return edge.s + "->" + edge.t; }
+
+/* El punteado depende de si la relación es "no directa" (inferida): las relaciones
+   directas se dibujan con línea sólida y las inferidas con línea punteada.
+   El color SIEMPRE es el de su tipo (comp verde, func azul, causal rosa, cond naranja),
+   verificado contra la leyenda de la imagen de referencia. */
+const TYPE_STYLE = {
+  comp:   { color: "#4ade80", width: 2,   label: "Complementaria" },
+  func:   { color: "#5b8def", width: 2,   label: "Funcional" },
+  causal: { color: "#f76fb0", width: 1.1, label: "Causal" },
+  cond:   { color: "#ef9552", width: 1.6, label: "Condicionamiento" },
+};
+
+/* -------- Aristas: tabla de sustento documental (Excel) tal cual, + ajustes puntuales indicados -------- */
+const RAW_EDGES = [
+  { s: "ods6",  t: "ods5",  type: "comp",   directa: true, pagina: 35, sustento: "De aquí a 2030, lograr el acceso a servicios de saneamiento e higiene adecuados y equitativos para todos y poner fin a la defecación al aire libre, prestando especial atención a las necesidades de las mujeres y las niñas y las personas en situaciones de vulnerabilidad." },
+  { s: "ods5",  t: "ods1",  type: "comp",   directa: true, pagina: 18, sustento: "Crear marcos normativos sólidos en los planos nacional, regional e internacional, sobre la base de estrategias de desarrollo en favor de los pobres que tengan en cuenta las cuestiones de género, a fin de apoyar la inversión acelerada en medidas para erradicar la pobreza." },
+  { s: "ods5",  t: "ods4",  type: "comp",   directa: true, pagina: 32, sustento: "Si se facilita a las mujeres y niñas igualdad en el acceso a la educación, atención médica, un trabajo decente y representación en los procesos de adopción de decisiones políticas y económicas, se impulsarán las economías sostenibles y se beneficiará a las sociedades y a la humanidad en su conjunto." },
+  { s: "ods5",  t: "ods8",  type: "causal", directa: true, pagina: 32, sustento: "Si se facilita a las mujeres y niñas igualdad en el acceso a la educación, atención médica, un trabajo decente y representación en los procesos de adopción de decisiones políticas y económicas, se impulsarán las economías sostenibles y se beneficiará a las sociedades y a la humanidad en su conjunto." },
+  { s: "ods1",  t: "ods2",  type: "cond",   directa: true, pagina: 16, sustento: "Entre sus manifestaciones se incluyen el hambre y la malnutrición, el acceso limitado a la educación y a otros servicios básicos, la discriminación y la exclusión sociales y la falta de participación en la adopción de decisiones." },
+  { s: "ods1",  t: "ods3",  type: "func",   directa: true, pagina: 18, sustento: "Proporción del gasto público total que se dedica a servicios esenciales (educación, salud y protección social)." },
+  { s: "ods1",  t: "ods4",  type: "cond",   directa: true, pagina: 16, sustento: "Entre sus manifestaciones se incluyen el hambre y la malnutrición, el acceso limitado a la educación y a otros servicios básicos..." },
+  { s: "ods1",  t: "ods8",  type: "causal", directa: true, pagina: 16, sustento: "El crecimiento económico debe ser inclusivo con el fin de crear empleos sostenibles y promover la igualdad." },
+  { s: "ods1",  t: "ods13", type: "cond",   directa: true, pagina: 18, sustento: "De aquí a 2030, fomentar la resiliencia de los pobres y las personas que se encuentran en situaciones de vulnerabilidad y reducir su exposición y vulnerabilidad a los fenómenos extremos relacionados con el clima..." },
+  { s: "ods2",  t: "ods1",  type: "cond",   directa: true, pagina: 20, sustento: "El sector alimentario y el sector agrícola ofrecen soluciones claves para el desarrollo y son vitales para la eliminación del hambre y la pobreza." },
+  { s: "ods2",  t: "ods8",  type: "causal", directa: true, pagina: 20, sustento: "Si se hace bien, la agricultura, la silvicultura y las piscifactorías pueden suministrarnos comida nutritiva para todos y generar ingresos decentes..." },
+  { s: "ods2",  t: "ods13", type: "cond",   directa: true, pagina: 20, sustento: "El cambio climático está poniendo mayor presión sobre los recursos de los que dependemos y aumentan los riesgos asociados a desastres tales como sequías e inundaciones." },
+  { s: "ods2",  t: "ods15", type: "cond",   directa: true, pagina: 20, sustento: "Pero ahora mismo, nuestros suelos, agua, océanos, bosques y nuestra biodiversidad están siendo rápidamente degradados." },
+  { s: "ods6",  t: "ods2",  type: "causal", directa: true, pagina: 35, sustento: "La escasez de recursos hídricos, la mala calidad del agua y el saneamiento inadecuado influyen negativamente en la seguridad alimentaria..." },
+  { s: "ods6",  t: "ods4",  type: "causal", directa: true, pagina: 35, sustento: "La escasez de recursos hídricos, la mala calidad del agua y el saneamiento inadecuado influyen negativamente en [...] las oportunidades de educación para las familias pobres..." },
+  { s: "ods8",  t: "ods1",  type: "causal", directa: true, pagina: 16, sustento: "El crecimiento económico debe ser inclusivo con el fin de crear empleos sostenibles y promover la igualdad." },
+  { s: "ods8",  t: "ods12", type: "causal", directa: true, pagina: 41, sustento: "Mejorar progresivamente, de aquí a 2030, la producción y el consumo eficientes de los recursos mundiales y procurar desvincular el crecimiento económico de la degradación del medio ambiente..." },
+  { s: "ods9",  t: "ods3",  type: "causal", directa: true, pagina: 44, sustento: "Desde hace tiempo se reconoce que, para conseguir un incremento de la productividad y de los ingresos y mejoras en los resultados sanitarios y educativos, se necesitan inversiones en infraestructura." },
+  { s: "ods9",  t: "ods4",  type: "causal", directa: true, pagina: 44, sustento: "Desde hace tiempo se reconoce que, para conseguir un incremento de la productividad y de los ingresos y mejoras en los resultados sanitarios y educativos, se necesitan inversiones en infraestructura." },
+  { s: "ods9",  t: "ods11", type: "func",   directa: true, pagina: 44, sustento: "El ritmo de crecimiento y urbanización también está generando la necesidad de contar con nuevas inversiones en infraestructuras sostenibles que permitirán a las ciudades ser más resistentes al cambio climático..." },
+  { s: "ods9",  t: "ods13", type: "func",   directa: true, pagina: 44, sustento: "...nuevas inversiones en infraestructuras sostenibles que permitirán a las ciudades ser más resistentes al cambio climático...", curve: -12 },
+  { s: "ods11", t: "ods7",  type: "func",   directa: true, pagina: 52, sustento: "El futuro que queremos incluye a ciudades de oportunidades, con acceso a servicios básicos, energía, vivienda, transporte y más facilidades para todos." },
+  { s: "ods11", t: "ods13", type: "comp",   directa: true, pagina: 53, sustento: "De aquí a 2020, aumentar considerablemente el número de ciudades y asentamientos humanos que adoptan e implementan políticas y planes integrados para promover la inclusión, el uso eficiente de los recursos, la mitigación del cambio climático y la adaptación a él y la resiliencia ante los desastres..." },
+  { s: "ods12", t: "ods3",  type: "causal", directa: true, pagina: 56, sustento: "...reducir significativamente su liberación a la atmósfera, el agua y el suelo a fin de minimizar sus efectos adversos en la salud humana y el medio ambiente." },
+  { s: "ods13", t: "ods1",  type: "cond",   directa: true, pagina: 18, sustento: "De aquí a 2030, fomentar la resiliencia de los pobres y las personas que se encuentran en situaciones de vulnerabilidad y reducir su exposición y vulnerabilidad a los fenómenos extremos relacionados con el clima..." },
+  { s: "ods13", t: "ods2",  type: "cond",   directa: true, pagina: 20, sustento: "El cambio climático está poniendo mayor presión sobre los recursos de los que dependemos y aumentan los riesgos asociados a desastres tales como sequías e inundaciones." },
+  { s: "ods13", t: "ods14", type: "comp",   directa: true, pagina: 63, sustento: "Nuestras precipitaciones, el agua potable, el clima, el tiempo, las costas, gran parte de nuestros alimentos e incluso el oxígeno del aire que respiramos provienen, en última instancia del mar y son regulados por este." },
+  /* 14 → 2: corregida según lo indicado — es causal (morada) y punteada, no complementaria/verde */
+  { s: "ods14", t: "ods2",  type: "causal", directa: false, pagina: 63, sustento: "Nuestras precipitaciones, el agua potable, el clima, el tiempo, las costas, gran parte de nuestros alimentos e incluso el oxígeno del aire que respiramos provienen, en última instancia del mar y son regulados por este." },
+  { s: "ods15", t: "ods1",  type: "comp",   directa: true, pagina: 70, sustento: "De aquí a 2020, integrar los valores de los ecosistemas y la biodiversidad en la planificación, los procesos de desarrollo, las estrategias de reducción de la pobreza..." },
+  { s: "ods15", t: "ods11", type: "comp",   directa: false, pagina: 52, sustento: "Redoblar los esfuerzos para proteger y salvaguardar el patrimonio cultural y natural del mundo." },
+  { s: "ods16", t: "ods10", type: "comp",   directa: false, pagina: 71, sustento: "Promover sociedades pacíficas e inclusivas para el desarrollo sostenible, facilitar el acceso a la justicia para todos y construir a todos los niveles instituciones eficaces e inclusivas que rindan cuentas." },
+  { s: "ods17", t: "ods9",  type: "func",   directa: true, pagina: 76, sustento: "Entre estos sectores figuran la energía sostenible, la infraestructura y el transporte, así como las tecnologías de la información y las comunicaciones." },
+  /* 7 → 9: agregada según lo indicado (funcional / azul) */
+  { s: "ods7",  t: "ods9",  type: "func",   directa: true, pagina: null, sustento: "Conexión ODS 7 – ODS 9 (funcional), añadida según lo indicado. Pendiente de completar con la cita y página exactas del documento de sustento." },
+  /* 1 → 10: agregada según lo indicado */
+  { s: "ods1",  t: "ods10", type: "comp",   directa: true, pagina: null, sustento: "Conexión ODS 1 – ODS 10 (complementaria), añadida según lo indicado. Pendiente de completar con la cita y página exactas del documento de sustento." },
+];
+
+/* "17 → todos": el ODS 17 se conecta con el resto (excepto ODS 9, ya listado arriba) */
+const TODOS_SUSTENTO = "...a fin de apoyar el logro de los Objetivos de Desarrollo Sostenible en todos los países, particularmente los países en desarrollo.";
+const TODOS_PAGINA = 79;
+ODS_NODES.forEach(n => {
+  if (n.id === "ods17" || n.id === "ods9") return;
+  RAW_EDGES.push({ s: "ods17", t: n.id, type: "func", directa: true, pagina: TODOS_PAGINA, sustento: TODOS_SUSTENTO, esTodos: true });
+});
+
+function nodeById(id) { return ODS_NODES.find(n => n.id === id); }
+
+/* -------- física: longitud de reposo de cada resorte (arista) -------- */
+RAW_EDGES.forEach(edge => {
+  const s = nodeById(edge.s), t = nodeById(edge.t);
+  if (!s || !t) return;
+  edge.restLength = Math.hypot(t.x - s.x, t.y - s.y);
+});
+
+/* -------- defs: glow por color de nodo + flechas por tipo -------- */
+function buildDefs(svg) {
+  const defs = document.createElementNS(SVG_NS, "defs");
+
+  const uniqueColors = [...new Set(ODS_NODES.map(n => n.color))];
+  uniqueColors.forEach(color => {
+    const filter = document.createElementNS(SVG_NS, "filter");
+    filter.setAttribute("id", "glow-" + color.replace("#", ""));
+    filter.setAttribute("x", "-60%"); filter.setAttribute("y", "-60%");
+    filter.setAttribute("width", "220%"); filter.setAttribute("height", "220%");
+    const blur = document.createElementNS(SVG_NS, "feGaussianBlur");
+    blur.setAttribute("stdDeviation", "3.2"); blur.setAttribute("result", "blur");
+    const merge = document.createElementNS(SVG_NS, "feMerge");
+    ["blur", "blur", "SourceGraphic"].forEach(ref => {
+      const m = document.createElementNS(SVG_NS, "feMergeNode");
+      m.setAttribute("in", ref);
+      merge.appendChild(m);
+    });
+    filter.appendChild(blur); filter.appendChild(merge);
+    defs.appendChild(filter);
+  });
+
+  Object.entries(TYPE_STYLE).forEach(([type, style]) => {
+    const marker = document.createElementNS(SVG_NS, "marker");
+    marker.setAttribute("id", "arrow-" + type);
+    marker.setAttribute("viewBox", "0 0 10 10");
+    marker.setAttribute("refX", "8"); marker.setAttribute("refY", "5");
+    marker.setAttribute("markerWidth", "7"); marker.setAttribute("markerHeight", "7");
+    marker.setAttribute("orient", "auto-start-reverse");
+    const path = document.createElementNS(SVG_NS, "path");
+    path.setAttribute("d", "M0,0 L10,5 L0,10 z");
+    path.setAttribute("fill", style.color);
+    marker.appendChild(path);
+    defs.appendChild(marker);
+  });
+
+  svg.appendChild(defs);
+}
+
+/* -------- aristas: grupo con línea visual + línea invisible más ancha para clic -------- */
+function edgePathData(edge, s, t) {
+  const dx = t.x - s.x, dy = t.y - s.y;
+  const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+  const ux = dx / dist, uy = dy / dist;
+  const startPad = s.r + 2;
+  const endPad = t.r + 8;
+  const x1 = s.x + ux * startPad, y1 = s.y + uy * startPad;
+  const x2 = t.x - ux * endPad,   y2 = t.y - uy * endPad;
+
+  if (edge.curve) {
+    const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+    const px = -uy, py = ux; // perpendicular unitario
+    const cx = mx + px * edge.curve, cy = my + py * edge.curve;
+    return `M${x1},${y1} Q${cx},${cy} ${x2},${y2}`;
+  }
+  return `M${x1},${y1} L${x2},${y2}`;
+}
+
+function drawEdges(svg) {
+  const g = document.createElementNS(SVG_NS, "g");
+  g.setAttribute("class", "edges-layer");
+
+  RAW_EDGES.forEach((edge, i) => {
+    const s = nodeById(edge.s);
+    const t = nodeById(edge.t);
+    if (!s || !t) return;
+    const style = TYPE_STYLE[edge.type];
+    const d = edgePathData(edge, s, t);
+
+    const group = document.createElementNS(SVG_NS, "g");
+    group.setAttribute("class", "edge-group" + (EDGE_FINDINGS[edgeKey(edge)] ? " has-finding" : ""));
+    group.setAttribute("data-index", i);
+    group.setAttribute("data-type", edge.type);
+    group.setAttribute("data-source", edge.s);
+    group.setAttribute("data-target", edge.t);
+    group.style.setProperty("--edge-color", style.color);
+
+    const hit = document.createElementNS(SVG_NS, "path");
+    hit.setAttribute("d", d);
+    hit.setAttribute("class", "ods-edge edge-hit");
+
+    const visual = document.createElementNS(SVG_NS, "path");
+    visual.setAttribute("d", d);
+    visual.setAttribute("class", "ods-edge edge-visual");
+    visual.setAttribute("stroke", style.color);
+    visual.setAttribute("stroke-width", edge.esTodos ? style.width * 0.7 : style.width);
+    if (!edge.directa) visual.setAttribute("stroke-dasharray", "6,5");
+    visual.setAttribute("marker-end", `url(#arrow-${edge.type})`);
+    visual.setAttribute("opacity", edge.esTodos ? "0.35" : "0.85");
+
+    group.appendChild(visual);
+    group.appendChild(hit);
+    group.addEventListener("click", () => {
+      showEdgeInfo(i);
+      const finding = EDGE_FINDINGS[edgeKey(edge)];
+      if (finding) activateEdgeFinding(edgeKey(edge));
+    });
+    g.appendChild(group);
+
+    /* referencias para poder recalcular el trazo en cada frame de física */
+    edge._el = { visual, hit };
+  });
+
+  svg.appendChild(g);
+}
+
+/* -------- nodos -------- */
+function drawNodes(svg) {
+  const g = document.createElementNS(SVG_NS, "g");
+  g.setAttribute("class", "nodes-layer");
+
+  ODS_NODES.forEach(node => {
+    const group = document.createElementNS(SVG_NS, "g");
+    group.setAttribute("class", "ods-node" + (FINDINGS[node.id] ? " has-finding" : ""));
+    group.setAttribute("data-id", node.id);
+
+    const circle = document.createElementNS(SVG_NS, "circle");
+    circle.setAttribute("class", "node-ring");
+    circle.setAttribute("cx", node.x); circle.setAttribute("cy", node.y); circle.setAttribute("r", node.r);
+    circle.setAttribute("stroke", node.color);
+    circle.setAttribute("stroke-width", 2.5);
+    circle.setAttribute("filter", "url(#glow-" + node.color.replace("#", "") + ")");
+
+    const fo = document.createElementNS(SVG_NS, "foreignObject");
+    const size = node.r * 1.9;
+    fo.setAttribute("x", node.x - size / 2); fo.setAttribute("y", node.y - size / 2);
+    fo.setAttribute("width", size); fo.setAttribute("height", size);
+
+    const wrapper = document.createElementNS(XHTML_NS, "div");
+    wrapper.setAttribute("class", "node-inner");
+    wrapper.setAttribute("style",
+      "width:100%;height:100%;display:flex;flex-direction:column;" +
+      "align-items:center;justify-content:center;gap:1px;pointer-events:none;"
+    );
+
+    const numEl = document.createElementNS(XHTML_NS, "div");
+    numEl.setAttribute("class", "node-num");
+    numEl.setAttribute("style", `color:${node.color}; font-size:${Math.max(node.r * 0.24, 9)}px;`);
+    numEl.textContent = node.num;
+
+    const iconEl = document.createElementNS(XHTML_NS, "i");
+    iconEl.setAttribute("class", "fa-solid " + node.icon + " node-icon");
+    iconEl.setAttribute("style", `color:${node.color}; font-size:${node.r * 0.44}px; margin:1px 0;`);
+
+    const nameEl = document.createElementNS(XHTML_NS, "div");
+    nameEl.setAttribute("class", "node-name");
+    nameEl.setAttribute("style", `font-size:${Math.max(node.r * 0.145, 6)}px; padding:0 3px;`);
+    nameEl.textContent = node.name;
+
+    wrapper.appendChild(numEl); wrapper.appendChild(iconEl); wrapper.appendChild(nameEl);
+    fo.appendChild(wrapper);
+
+    group.appendChild(circle);
+    group.appendChild(fo);
+    attachNodeClickHandler(group, node.id);
+    attachNodeDragHandler(group, node);
+    g.appendChild(group);
+
+    /* referencias para poder mover el nodo en cada frame de física */
+    node._el = { group, circle, fo };
+  });
+
+  svg.appendChild(g);
+}
+
+/* -------- física: mover nodos y recalcular líneas cada frame -------- */
+const PHYSICS = {
+  spring: 0.045,   // qué tanto "sigue" un nodo a los que están conectados a él
+  anchor: 0.02,    // qué tanto tira cada nodo de vuelta a su posición original
+  damping: 0.82,   // fricción (evita que oscile para siempre)
+  minVel: 0.02,
+};
+
+function updatePositions() {
+  ODS_NODES.forEach(n => {
+    if (!n._el) return;
+    n._el.circle.setAttribute("cx", n.x);
+    n._el.circle.setAttribute("cy", n.y);
+    const size = n.r * 1.9;
+    n._el.fo.setAttribute("x", n.x - size / 2);
+    n._el.fo.setAttribute("y", n.y - size / 2);
+  });
+  RAW_EDGES.forEach(edge => {
+    if (!edge._el) return;
+    const s = nodeById(edge.s), t = nodeById(edge.t);
+    if (!s || !t) return;
+    const d = edgePathData(edge, s, t);
+    edge._el.visual.setAttribute("d", d);
+    edge._el.hit.setAttribute("d", d);
+  });
+}
+
+let physicsRunning = false;
+function physicsStep() {
+  let moving = false;
+
+  RAW_EDGES.forEach(edge => {
+    const s = nodeById(edge.s), t = nodeById(edge.t);
+    if (!s || !t) return;
+    const dx = t.x - s.x, dy = t.y - s.y;
+    const dist = Math.hypot(dx, dy) || 1;
+    const diff = (dist - edge.restLength) * PHYSICS.spring;
+    const fx = (dx / dist) * diff, fy = (dy / dist) * diff;
+    if (!s.fixed) { s.vx += fx; s.vy += fy; }
+    if (!t.fixed) { t.vx -= fx; t.vy -= fy; }
+  });
+
+  ODS_NODES.forEach(n => {
+    if (n.fixed) { n.vx = 0; n.vy = 0; return; }
+    n.vx += (n.homeX - n.x) * PHYSICS.anchor;
+    n.vy += (n.homeY - n.y) * PHYSICS.anchor;
+    n.vx *= PHYSICS.damping;
+    n.vy *= PHYSICS.damping;
+    n.x += n.vx;
+    n.y += n.vy;
+    if (Math.abs(n.vx) > PHYSICS.minVel || Math.abs(n.vy) > PHYSICS.minVel) moving = true;
+  });
+
+  updatePositions();
+
+  if (moving || ODS_NODES.some(n => n.fixed)) {
+    requestAnimationFrame(physicsStep);
+  } else {
+    physicsRunning = false;
+  }
+}
+
+function wakePhysics() {
+  if (!physicsRunning) {
+    physicsRunning = true;
+    requestAnimationFrame(physicsStep);
+  }
+}
+
+/* -------- arrastrar una bola: los nodos conectados la "siguen" -------- */
+function attachNodeDragHandler(group, node) {
+  const svg = document.getElementById("networkViz");
+  let dragging = false;
+  let moved = false;
+  let startClientX = 0, startClientY = 0;
+
+  function toSvgPoint(clientX, clientY) {
+    const pt = svg.createSVGPoint();
+    pt.x = clientX; pt.y = clientY;
+    const m = svg.getScreenCTM().inverse();
+    return pt.matrixTransform(m);
+  }
+
+  group.addEventListener("pointerdown", (e) => {
+    dragging = true;
+    moved = false;
+    startClientX = e.clientX; startClientY = e.clientY;
+    node.fixed = true;
+    group.classList.add("dragging");
+    group.setPointerCapture(e.pointerId);
+    wakePhysics();
+  });
+
+  group.addEventListener("pointermove", (e) => {
+    if (!dragging) return;
+    if (Math.hypot(e.clientX - startClientX, e.clientY - startClientY) > 4) moved = true;
+    const p = toSvgPoint(e.clientX, e.clientY);
+    node.x = p.x; node.y = p.y;
+    node.vx = 0; node.vy = 0;
+    updatePositions();
+    wakePhysics();
+  });
+
+  function endDrag(e) {
+    if (!dragging) return;
+    dragging = false;
+    node.fixed = false;
+    group.classList.remove("dragging");
+    try { group.releasePointerCapture(e.pointerId); } catch (err) {}
+    wakePhysics();
+    if (moved) {
+      /* evita que el "click" que sigue al arrastre dispare doble/triple clic */
+      group.dataset.suppressClick = "1";
+      setTimeout(() => { delete group.dataset.suppressClick; }, 0);
+    }
+  }
+
+  group.addEventListener("pointerup", endDrag);
+  group.addEventListener("pointercancel", endDrag);
+}
+
+function renderNetwork() {
+  const svg = document.getElementById("networkViz");
+  if (!svg) return;
+  svg.innerHTML = "";
+  buildDefs(svg);
+  drawEdges(svg);
+  drawNodes(svg);
+}
+
+/* -------- panel de sustento documental (clic en línea) -------- */
+function showEdgeInfo(index) {
+  const edge = RAW_EDGES[index];
+  const s = nodeById(edge.s), t = nodeById(edge.t);
+  const style = TYPE_STYLE[edge.type];
+
+  document.querySelectorAll(".edge-group").forEach(el => el.classList.remove("edge-selected"));
+  document.querySelector(`.edge-group[data-index="${index}"]`)?.classList.add("edge-selected");
+
+  document.getElementById("edgeInfoTitle").textContent =
+    `ODS ${s.num} → ODS ${t.num}  ·  ${s.name} → ${t.name}`;
+
+  const typeEl = document.getElementById("edgeInfoType");
+  typeEl.textContent = style.label + (edge.directa ? " · Directa" : " · Inferida");
+  typeEl.style.color = style.color;
+  typeEl.style.background = style.color + "26";
+
+  document.getElementById("edgeInfoQuote").textContent = `"${edge.sustento}"`;
+  document.getElementById("edgeInfoPage").textContent =
+    edge.pagina != null ? `Página: ${edge.pagina}` : "Página: por confirmar";
+
+  document.getElementById("edgeInfoPanel").classList.add("visible");
+}
+
+function hideEdgeInfo() {
+  document.getElementById("edgeInfoPanel").classList.remove("visible");
+  document.querySelectorAll(".edge-group").forEach(el => el.classList.remove("edge-selected"));
+}
+
+/* -------- estado de visibilidad: por tipo (leyenda) + por nodo (doble clic) -------- */
+const typeOff = new Set();
+const nodeOff = new Set();
+
+function refreshEdgeVisibility() {
+  document.querySelectorAll(".edge-group").forEach(group => {
+    const type = group.dataset.type;
+    const s = group.dataset.source;
+    const t = group.dataset.target;
+    const hidden = typeOff.has(type) || nodeOff.has(s) || nodeOff.has(t);
+    group.classList.toggle("hidden-edge", hidden);
+  });
+}
+
+function toggleNode(id) {
+  const group = document.querySelector(`.ods-node[data-id="${id}"]`);
+  if (!group) return;
+  if (nodeOff.has(id)) {
+    nodeOff.delete(id);
+    group.classList.remove("node-off");
+  } else {
+    nodeOff.add(id);
+    group.classList.add("node-off");
+  }
+  refreshEdgeVisibility();
+}
+
+/* -------- clic simple / doble / triple sobre una bola --------
+   1 clic  -> no hace nada especial
+   2 clics -> apaga/enciende el nodo (comportamiento existente)
+   3 clics -> aísla el flujo: solo se ven los nodos y líneas que
+              se tocan directamente con el nodo elegido
+   Se cuentan los clics manualmente (en vez de usar "dblclick")
+   para poder distinguir el triple clic de forma confiable. */
+function attachNodeClickHandler(group, id) {
+  let count = 0;
+  let timer = null;
+  group.addEventListener("click", () => {
+    if (group.dataset.suppressClick) return;
+    count++;
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(() => {
+      if (count === 2) {
+        toggleNode(id);
+      } else if (count >= 3) {
+        toggleNodeFlow(id);
+      }
+      count = 0;
+    }, 320);
+  });
+}
+
+/* -------- spotlight: aísla nodos/líneas (triple clic en una bola O clic en una tarjeta de arriba) --------
+   spotlight = null                                   -> todo visible, normal
+   spotlight = { mode:"nodes", nodes:Set, expand }     -> solo esos nodos (y si expand=true, también
+                                                          sus vecinos directos) quedan visibles
+   spotlight = { mode:"types", types:[...] }           -> solo se ven las líneas de esos tipos */
+let spotlight = null;
+
+function clearSpotlight() {
+  spotlight = null;
+  document.querySelectorAll(".insight-card").forEach(c => c.classList.remove("active"));
+  applySpotlightState();
+  hideFindingPopup();
+  clearActivePanelButtons();
+  activeContradiction = null;
+  activeEdgeFinding = null;
+}
+
+function setSpotlightNodes(nodeIds, expand) {
+  spotlight = { mode: "nodes", nodes: new Set(nodeIds), expand: !!expand };
+  document.querySelectorAll(".insight-card").forEach(c => c.classList.remove("active"));
+  applySpotlightState();
+}
+
+function setSpotlightTypes(types) {
+  spotlight = { mode: "types", types };
+  document.querySelectorAll(".insight-card").forEach(c => c.classList.remove("active"));
+  applySpotlightState();
+}
+
+function applySpotlightState() {
+  let visibleNodes = null; // null = todos visibles
+  let visibleEdges = null;
+
+  if (spotlight && spotlight.mode === "nodes") {
+    visibleNodes = new Set(spotlight.nodes);
+    visibleEdges = new Set();
+    RAW_EDGES.forEach((edge, i) => {
+      const sIn = spotlight.nodes.has(edge.s);
+      const tIn = spotlight.nodes.has(edge.t);
+      if (spotlight.expand) {
+        /* triple clic: además de la bola elegida, se muestran sus vecinos directos */
+        if (sIn || tIn) {
+          visibleEdges.add(i);
+          visibleNodes.add(edge.s);
+          visibleNodes.add(edge.t);
+        }
+      } else {
+        /* tarjeta de insight: solo se muestran los ODS exactos de la lista */
+        if (sIn && tIn) visibleEdges.add(i);
+      }
+    });
+  } else if (spotlight && spotlight.mode === "types") {
+    visibleEdges = new Set();
+    RAW_EDGES.forEach((edge, i) => {
+      if (spotlight.types.includes(edge.type)) visibleEdges.add(i);
+    });
+  }
+
+  document.querySelectorAll(".ods-node").forEach(el => {
+    const id = el.dataset.id;
+    const dim = visibleNodes ? !visibleNodes.has(id) : false;
+    el.classList.toggle("node-focus-dim", dim);
+    el.classList.toggle("node-focus-active", !!(spotlight && spotlight.mode === "nodes" && spotlight.nodes.has(id)));
+  });
+
+  document.querySelectorAll(".edge-group").forEach(el => {
+    const idx = Number(el.dataset.index);
+    const dim = visibleEdges ? !visibleEdges.has(idx) : false;
+    el.classList.toggle("edge-focus-dim", dim);
+  });
+}
+
+function toggleNodeFlow(id) {
+  const already = spotlight && spotlight.mode === "nodes" && spotlight.expand &&
+                   spotlight.nodes.size === 1 && spotlight.nodes.has(id);
+  if (already) {
+    clearSpotlight();
+  } else {
+    setSpotlightNodes([id], true);
+    const finding = FINDINGS[id];
+    if (finding) {
+      showFindingPopup(finding);
+      setActivePanelButton("finding", id);
+      if (finding.bridge) {
+        animateBridgeNode(finding.bridge.node, finding.bridge.between);
+      }
+    }
+  }
+}
+
+/* -------- contradicciones: aísla SOLO ese nodo (sin vecinos) y muestra su cita -------- */
+let activeContradiction = null;
+function toggleContradiction(id) {
+  const already = activeContradiction === id;
+  if (already) {
+    clearSpotlight();
+    return;
+  }
+  setSpotlightNodes([id], false);
+  activeContradiction = id;
+  setActivePanelButton("contradiction", id);
+  const data = CONTRADICTIONS[id];
+  if (data) showFindingPopup(data, "contradiction");
+}
+
+/* -------- relación con hallazgo propio (ODS 1 ↔ ODS 13): aísla SOLO esos dos nodos
+   y la línea entre ellos -------- */
+let activeEdgeFinding = null;
+function activateEdgeFinding(key) {
+  const finding = EDGE_FINDINGS[key];
+  if (!finding) return;
+  const already = activeEdgeFinding === key;
+  if (already) {
+    clearSpotlight();
+    return;
+  }
+  const [s, t] = key.split("->");
+  const idx = RAW_EDGES.findIndex(e => e.s === s && e.t === t);
+  if (idx >= 0) showEdgeInfo(idx);
+  setSpotlightNodes(finding.nodes, false);
+  activeEdgeFinding = key;
+  setActivePanelButton("finding", "edge:" + key);
+  showFindingPopup(finding);
+}
+
+/* -------- estado activo de los chips de la barra "Hallazgos" / "Contradicción" -------- */
+function clearActivePanelButtons() {
+  document.querySelectorAll(".fc-chip").forEach(b => b.classList.remove("active"));
+}
+
+function setActivePanelButton(kind, key) {
+  clearActivePanelButtons();
+  const selector = kind === "finding"
+    ? `.fc-chip[data-finding="${key}"]`
+    : `.fc-chip[data-contradiction="${key}"]`;
+  document.querySelector(selector)?.classList.add("active");
+}
+
+/* -------- conecta los chips de la barra "Hallazgos" y "Contradicción" -------- */
+function setupSidePanels() {
+  document.querySelectorAll(".fc-chip[data-finding]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const key = btn.dataset.finding;
+      if (key.startsWith("edge:")) {
+        activateEdgeFinding(key.slice(5));
+      } else {
+        toggleNodeFlow(key);
+      }
+    });
+  });
+
+  document.querySelectorAll(".fc-chip[data-contradiction]").forEach(btn => {
+    btn.addEventListener("click", () => toggleContradiction(btn.dataset.contradiction));
+  });
+}
+
+/* -------- popup de hallazgo / contradicción (sobre el lienzo de la red) --------
+   Permanece visible hasta que el usuario lo cierra manualmente o se limpia
+   el spotlight (clic en otra tarjeta/chip, o de nuevo en el mismo). */
+function showFindingPopup(finding, variant) {
+  const popup = document.getElementById("findingPopup");
+  if (!popup) return;
+  const isContradiction = variant === "contradiction";
+  popup.classList.toggle("contradiction", isContradiction);
+  document.getElementById("findingPopupBadge").innerHTML = isContradiction
+    ? '<i class="fa-solid fa-triangle-exclamation"></i> Contradicción'
+    : '<i class="fa-solid fa-magnifying-glass-chart"></i> Hallazgo';
+  document.getElementById("findingPopupTitle").textContent = finding.title;
+  document.getElementById("findingPopupText").textContent = finding.text;
+  popup.classList.add("visible");
+}
+
+function hideFindingPopup() {
+  document.getElementById("findingPopup")?.classList.remove("visible");
+}
+
+/* -------- animación "puente": mueve temporalmente un nodo hacia una posición
+   intermedia entre otros dos (para evidenciar visualmente que conecta dos grupos)
+   y luego lo regresa a su lugar original. Reutiliza la física de anclaje ya
+   existente: basta con mover el ancla (home) y dejar que el resorte lo lleve. -------- */
+let bridgeTimer = null;
+function animateBridgeNode(nodeId, betweenIds, holdMs = 1600) {
+  const node = nodeById(nodeId);
+  const a = nodeById(betweenIds[0]);
+  const b = nodeById(betweenIds[1]);
+  if (!node || !a || !b) return;
+  if (bridgeTimer) { clearTimeout(bridgeTimer); bridgeTimer = null; }
+
+  const midX = (a.baseHomeX + b.baseHomeX) / 2;
+  const midY = (a.baseHomeY + b.baseHomeY) / 2 - 90; /* desplazado para no solaparse */
+
+  node.homeX = midX;
+  node.homeY = midY;
+  wakePhysics();
+
+  bridgeTimer = setTimeout(() => {
+    node.homeX = node.baseHomeX;
+    node.homeY = node.baseHomeY;
+    wakePhysics();
+    bridgeTimer = null;
+  }, holdMs);
+}
+
+/* -------- tarjetas de insights (arriba de la red) -------- */
+const NODE_INSIGHTS = {
+  conectados:   [1, 2, 4, 5, 8, 9, 13],
+  hubs:         [1, 2, 13],
+  puentes:      [9, 8],
+  perifericos:  [16, 7, 10],
+};
+
+function toggleInsight(key) {
+  const card = document.querySelector(`.insight-card[data-insight="${key}"]`);
+  if (!card) return;
+
+  if (card.classList.contains("active")) {
+    clearSpotlight();
+    return;
+  }
+
+  if (key === "predominantes") {
+    setSpotlightTypes(["causal", "func"]);
+  } else {
+    const ids = (NODE_INSIGHTS[key] || []).map(n => "ods" + n);
+    setSpotlightNodes(ids, false);
+  }
+
+  card.classList.add("active");
+}
+
+/* -------- panel de convenciones -------- */
+function setupLegendToggle() {
+  document.querySelectorAll(".legend-item input").forEach(input => {
+    input.addEventListener("change", (e) => {
+      const item = e.target.closest(".legend-item");
+      const type = item.dataset.type;
+      if (e.target.checked) typeOff.delete(type); else typeOff.add(type);
+      item.classList.toggle("off", !e.target.checked);
+      refreshEdgeVisibility();
+    });
+  });
+
+  document.getElementById("edgeInfoClose")?.addEventListener("click", hideEdgeInfo);
+  document.getElementById("findingPopupClose")?.addEventListener("click", hideFindingPopup);
+}
+
+/* -------- controles Todos / Alineados / Conflictos -------- */
+function filterNetwork(mode) {
+  document.querySelectorAll(".network-controls .control-btn").forEach(btn => btn.classList.remove("active"));
+  event.currentTarget.classList.add("active");
+
+  const groups = {
+    all: ["comp", "func", "causal", "cond"],
+    aligned: ["comp", "func"],
+    conflicts: ["causal", "cond"],
+  };
+  const activeTypes = groups[mode] || groups.all;
+
+  document.querySelectorAll(".legend-item[data-type]").forEach(item => {
+    const type = item.dataset.type;
+    const input = item.querySelector("input");
+    const show = activeTypes.includes(type);
+    input.checked = show;
+    item.classList.toggle("off", !show);
+    if (show) typeOff.delete(type); else typeOff.add(type);
+  });
+  refreshEdgeVisibility();
 }
 
 /* ==========================================================
-   RED DE ESTRUCTURAS DEL POT (segunda red, estática)
+   RED DE ESTRUCTURAS DEL POT (estática) — segunda red
+   - Tomada 1 a 1 de la tabla 'Red_relaciones_POT_CORREGIDA_FRASES_EXACTAS.xlsx'.
+   - Nodos fijos: SIN arrastre, SIN zoom/paneo (se ve completa siempre).
+   - Clic en cualquier línea -> panel 'Sustento' (frase + página + artículo).
+   - Panel derecho '1. Relaciones que favorecen los ODS': al hacer clic en
+     cada relación se resaltan sus líneas en la red y aparecen las insignias
+     ODS correspondientes conectadas con una línea punteada.
    ========================================================== */
-.pn-section {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 20px;
-  margin-top: 28px;
-  margin-bottom: 28px;
-  opacity: 0.94;
+
+const PN_NODES = [
+  { id: "p_corredores_montanosos", name: "Corredores montañosos", cluster: "EEP", color: "#3ddc84", icon: "fa-mountain", x: 276.9, y: 48.0, r: 14.0 },
+  { id: "p_rios", name: "Ríos", cluster: "EEP", color: "#3ddc84", icon: "fa-water", x: 136.2, y: 99.1, r: 21.0 },
+  { id: "p_quebradas", name: "Quebradas", cluster: "EEP", color: "#3ddc84", icon: "fa-cloud-rain", x: 220.2, y: 93.5, r: 14.0 },
+  { id: "p_humedales", name: "Humedales", cluster: "EEP", color: "#3ddc84", icon: "fa-droplet", x: 267.8, y: 153.0, r: 26.6 },
+  { id: "p_cerros_orientales", name: "Cerros Orientales", cluster: "EEP", color: "#3ddc84", icon: "fa-mountain-sun", x: 351.8, y: 41.0, r: 14.0 },
+  { id: "p_complejos_de_paramos", name: "Complejos de páramos", cluster: "EEP", color: "#3ddc84", icon: "fa-mountain", x: 111.0, y: 239.1, r: 14.0 },
+  { id: "p_bosques_urbanos", name: "Bosques urbanos", cluster: "EEP", color: "#3ddc84", icon: "fa-seedling", x: 138.3, y: 157.9, r: 14.0 },
+  { id: "p_coberturas_vegetales", name: "Coberturas vegetales", cluster: "EEP", color: "#3ddc84", icon: "fa-leaf", x: 169.1, y: 230.0, r: 23.8 },
+  { id: "p_areas_de_resiliencia_climatica", name: "Áreas de resiliencia climática", cluster: "EEP", color: "#3ddc84", icon: "fa-temperature-arrow-up", x: 188.7, y: 157.9, r: 21.0 },
+  { id: "p_areas_protegidas", name: "Áreas protegidas", cluster: "EEP", color: "#3ddc84", icon: "fa-shield-halved", x: 336.4, y: 94.2, r: 14.0 },
+  { id: "p_parques_ecologicos_de_montana", name: "Parques ecológicos de montaña", cluster: "EEP", color: "#3ddc84", icon: "fa-tree", x: 379.1, y: 140.4, r: 14.0 },
+  { id: "p_reservas_forestales", name: "Reservas forestales", cluster: "EEP", color: "#3ddc84", icon: "fa-tree", x: 344.1, y: 258.0, r: 14.0 },
+  { id: "p_parques_de_borde", name: "Parques de borde", cluster: "EEP", color: "#3ddc84", icon: "fa-house-chimney", x: 233.5, y: 254.5, r: 14.0 },
+  { id: "p_paisajes_sostenibles", name: "Paisajes sostenibles", cluster: "EEP", color: "#3ddc84", icon: "fa-mountain-sun", x: 172.6, y: 291.6, r: 14.0 },
+  { id: "p_equipamientos", name: "Equipamientos", cluster: "EFC", color: "#5b8def", icon: "fa-building-columns", x: 367.9, y: 377.0, r: 23.8 },
+  { id: "p_servicios_de_cuidado", name: "Servicios de cuidado", cluster: "EFC", color: "#5b8def", icon: "fa-hand-holding-heart", x: 246.8, y: 372.1, r: 14.0 },
+  { id: "p_servicios_sociales", name: "Servicios sociales", cluster: "EFC", color: "#5b8def", icon: "fa-people-roof", x: 313.3, y: 429.5, r: 14.0 },
+  { id: "p_vivienda", name: "Vivienda", cluster: "EFC", color: "#5b8def", icon: "fa-house", x: 247.5, y: 468.0, r: 26.6 },
+  { id: "p_servicios_publicos", name: "Servicios públicos", cluster: "EFC", color: "#5b8def", icon: "fa-plug", x: 179.6, y: 405.0, r: 14.0 },
+  { id: "p_ciclorutas", name: "Ciclorutas", cluster: "EFC", color: "#5b8def", icon: "fa-bicycle", x: 93.5, y: 419.0, r: 14.0 },
+  { id: "p_transporte_publico", name: "Transporte público", cluster: "EFC", color: "#5b8def", icon: "fa-bus", x: 136.9, y: 487.6, r: 14.0 },
+  { id: "p_red_vial", name: "Red vial", cluster: "EFC", color: "#5b8def", icon: "fa-road-circle-check", x: 365.8, y: 514.9, r: 14.0 },
+  { id: "p_corredores_verdes", name: "Corredores verdes", cluster: "EFC", color: "#5b8def", icon: "fa-road", x: 125.0, y: 575.1, r: 14.0 },
+  { id: "p_manzanas_del_cuidado", name: "Manzanas del Cuidado", cluster: "EFC", color: "#5b8def", icon: "fa-heart", x: 230.0, y: 561.8, r: 14.0 },
+  { id: "p_parques", name: "Parques", cluster: "EFC", color: "#5b8def", icon: "fa-tree-city", x: 178.9, y: 532.4, r: 14.0 },
+  { id: "p_distrito_centro_tecnologico_e_innovacion", name: "Distrito Centro Tecnológico e Innovación", cluster: "ESECI", color: "#f0a340", icon: "fa-microchip", x: 577.9, y: 233.5, r: 15.4 },
+  { id: "p_servicios_empresariales", name: "Servicios empresariales", cluster: "ESECI", color: "#f0a340", icon: "fa-briefcase", x: 461.0, y: 277.6, r: 26.6 },
+  { id: "p_sistema_de_educacion", name: "Sistema de educación", cluster: "ESECI", color: "#f0a340", icon: "fa-graduation-cap", x: 588.4, y: 360.9, r: 18.2 },
+  { id: "p_centros_de_abastecimiento", name: "Centros de abastecimiento", cluster: "ESECI", color: "#f0a340", icon: "fa-truck-ramp-box", x: 676.6, y: 233.5, r: 14.0 },
+  { id: "p_plazas_de_mercado", name: "Plazas de mercado", cluster: "ESECI", color: "#f0a340", icon: "fa-store", x: 543.6, y: 311.9, r: 14.0 },
+  { id: "p_zonas_industriales", name: "Zonas industriales", cluster: "ESECI", color: "#f0a340", icon: "fa-industry", x: 724.2, y: 303.5, r: 23.8 },
+  { id: "p_produccion_artesanal", name: "Producción artesanal", cluster: "ESECI", color: "#f0a340", icon: "fa-palette", x: 638.8, y: 407.1, r: 14.0 },
+  { id: "p_zonas_de_interes_turistico", name: "Zonas de interés turístico", cluster: "ESECI", color: "#f0a340", icon: "fa-map-location-dot", x: 720.0, y: 373.5, r: 14.0 },
+  { id: "p_centros_financieros", name: "Centros financieros", cluster: "ESECI", color: "#f0a340", icon: "fa-building-columns", x: 465.9, y: 400.1, r: 14.0 },
+  { id: "p_sistema_de_sitios_sagrados", name: "Sistema de sitios sagrados", cluster: "EIP", color: "#a276f2", icon: "fa-place-of-worship", x: 451.2, y: 457.5, r: 14.0 },
+  { id: "p_patrimonio_inmaterial", name: "Patrimonio inmaterial", cluster: "EIP", color: "#a276f2", icon: "fa-masks-theater", x: 667.5, y: 452.6, r: 14.0 },
+  { id: "p_patrimonio_arqueologico", name: "Patrimonio arqueológico", cluster: "EIP", color: "#a276f2", icon: "fa-landmark-dome", x: 573.7, y: 428.1, r: 14.0 },
+  { id: "p_patrimonio_natural", name: "Patrimonio natural", cluster: "EIP", color: "#a276f2", icon: "fa-mountain-sun", x: 465.9, y: 557.6, r: 23.8 },
+  { id: "p_patrimonio_material", name: "Patrimonio material", cluster: "EIP", color: "#a276f2", icon: "fa-landmark", x: 608.0, y: 531.0, r: 14.0 },
+];
+
+const PN_EDGES = [
+  { s: "p_corredores_montanosos", t: "p_rios", tipo: "soporte", directa: true, sinFlecha: false, pagina: "70", articulo: "Art. 7", frase: "corredores montañosos … ríos y humedales" },
+  { s: "p_quebradas", t: "p_humedales", tipo: "soporte", directa: true, sinFlecha: false, pagina: "72", articulo: "Art. 42 / 62", frase: "ríos y quebradas … humedales" },
+  { s: "p_cerros_orientales", t: "p_humedales", tipo: "soporte", directa: true, sinFlecha: false, pagina: "70", articulo: "Art. 7", frase: "cerros orientales … ríos y humedales" },
+  { s: "p_humedales", t: "p_rios", tipo: "soporte", directa: true, sinFlecha: false, pagina: "72", articulo: "Art. 42 / 62", frase: "ríos y quebradas … humedales" },
+  { s: "p_rios", t: "p_complejos_de_paramos", tipo: "soporte", directa: true, sinFlecha: false, pagina: "70", articulo: "Art. 7", frase: "complejos de páramos … ríos y humedales" },
+  { s: "p_bosques_urbanos", t: "p_coberturas_vegetales", tipo: "soporte", directa: true, sinFlecha: false, pagina: "73", articulo: "Art. 74", frase: "cobertura vegetal … flora propia" },
+  { s: "p_areas_de_resiliencia_climatica", t: "p_coberturas_vegetales", tipo: "resiliencia", directa: true, sinFlecha: false, pagina: "72", articulo: "Art. 42", frase: "territorio resiliente … cambio climático" },
+  { s: "p_humedales", t: "p_areas_de_resiliencia_climatica", tipo: "soporte", directa: true, sinFlecha: false, pagina: "72", articulo: "Art. 42", frase: "amortiguación de los impactos ambientales" },
+  { s: "p_areas_protegidas", t: "p_humedales", tipo: "soporte", directa: false, sinFlecha: false, pagina: "71", articulo: "Art. 41 / 51", frase: "Reservas Distritales de Humedal" },
+  { s: "p_areas_protegidas", t: "p_parques_ecologicos_de_montana", tipo: "soporte", directa: false, sinFlecha: false, pagina: "71", articulo: "Art. 51 / 54", frase: "Parques Distritales Ecológicos de Montaña" },
+  { s: "p_areas_protegidas", t: "p_reservas_forestales", tipo: "soporte", directa: false, sinFlecha: false, pagina: "71", articulo: "Art. 41 / 45 / 48", frase: "Reserva Forestal Protectora … Regional" },
+  { s: "p_reservas_forestales", t: "p_humedales", tipo: "resiliencia", directa: true, sinFlecha: false, pagina: "72", articulo: "Art. 42", frase: "conectividad y complementariedad" },
+  { s: "p_parques_ecologicos_de_montana", t: "p_coberturas_vegetales", tipo: "soporte", directa: false, sinFlecha: false, pagina: "72", articulo: "Art. 54", frase: "restaurar y preservar … especies nativas" },
+  { s: "p_coberturas_vegetales", t: "p_parques_de_borde", tipo: "soporte", directa: false, sinFlecha: false, pagina: "136", articulo: "Art. 121", frase: "coberturas vegetales … parques de borde" },
+  { s: "p_coberturas_vegetales", t: "p_paisajes_sostenibles", tipo: "soporte", directa: false, sinFlecha: false, pagina: "72", articulo: "Art. 52 / 74", frase: "funcionalidad ecosistémica … conectividad" },
+  { s: "p_complejos_de_paramos", t: "p_paisajes_sostenibles", tipo: "soporte", directa: false, sinFlecha: false, pagina: "70", articulo: "Art. 7 / 52", frase: "complejos de páramos … paisajes" },
+  { s: "p_equipamientos", t: "p_servicios_de_cuidado", tipo: "soporte", directa: false, sinFlecha: false, pagina: "117–118", articulo: "Art. 94–95", frase: "equipamientos y servicios de cuidado" },
+  { s: "p_equipamientos", t: "p_servicios_sociales", tipo: "soporte", directa: false, sinFlecha: false, pagina: "117–118", articulo: "Art. 94–95", frase: "equipamientos y servicios sociales" },
+  { s: "p_equipamientos", t: "p_vivienda", tipo: "soporte", directa: true, sinFlecha: false, pagina: "117", articulo: "Art. 94 / 95", frase: "equipamientos … soluciones habitacionales" },
+  { s: "p_servicios_publicos", t: "p_vivienda", tipo: "soporte", directa: false, sinFlecha: false, pagina: "179", articulo: "Art. 179", frase: "servicio público … actividades en la ciudad" },
+  { s: "p_ciclorutas", t: "p_vivienda", tipo: "soporte", directa: false, sinFlecha: false, pagina: "117", articulo: "Art. 88", frase: "accesibilidad … conectividad" },
+  { s: "p_ciclorutas", t: "p_transporte_publico", tipo: "resiliencia", directa: false, sinFlecha: true, pagina: "117 / 158–159", articulo: "Art. 88 / 158–159", frase: "cicloinfraestructura … corredores verdes" },
+  { s: "p_ciclorutas", t: "p_areas_de_resiliencia_climatica", tipo: "soporte", directa: true, sinFlecha: false, pagina: null, articulo: "", frase: "Conexión Ciclorutas – Áreas de resiliencia climática (soporte), añadida según lo indicado. Pendiente de completar con la cita y página exactas del documento de sustento." },
+  { s: "p_transporte_publico", t: "p_vivienda", tipo: "soporte", directa: false, sinFlecha: false, pagina: "117", articulo: "Art. 88", frase: "accesibilidad … conectividad" },
+  { s: "p_red_vial", t: "p_transporte_publico", tipo: "soporte", directa: true, sinFlecha: false, pagina: "158–159", articulo: "Art. 158–159", frase: "malla arterial … transporte público" },
+  { s: "p_red_vial", t: "p_equipamientos", tipo: "soporte", directa: true, sinFlecha: false, pagina: "117", articulo: "Art. 88 / 95", frase: "accesibilidad … equipamientos" },
+  { s: "p_corredores_verdes", t: "p_ciclorutas", tipo: "soporte", directa: true, sinFlecha: false, pagina: "117", articulo: "Política de movilidad", frase: "corredores verdes … cicloinfraestructura" },
+  { s: "p_corredores_verdes", t: "p_transporte_publico", tipo: "soporte", directa: true, sinFlecha: false, pagina: "158–159", articulo: "Art. 158–159", frase: "corredores verdes de transporte público" },
+  { s: "p_manzanas_del_cuidado", t: "p_servicios_sociales", tipo: "soporte", directa: true, sinFlecha: false, pagina: "117–118", articulo: "Art. 94–95", frase: "manzanas del cuidado … servicios sociales" },
+  { s: "p_manzanas_del_cuidado", t: "p_equipamientos", tipo: "soporte", directa: true, sinFlecha: false, pagina: "117–118", articulo: "Art. 94–95", frase: "manzanas del cuidado … equipamientos" },
+  { s: "p_manzanas_del_cuidado", t: "p_parques", tipo: "soporte", directa: true, sinFlecha: false, pagina: "117", articulo: "Art. 94", frase: "jardines infantiles, colegios, parques" },
+  { s: "p_distrito_centro_tecnologico_e_innovacion", t: "p_servicios_empresariales", tipo: "soporte", directa: true, sinFlecha: false, pagina: "122", articulo: "Art. 101", frase: "Eje de servicios empresariales" },
+  { s: "p_distrito_centro_tecnologico_e_innovacion", t: "p_sistema_de_educacion", tipo: "soporte", directa: true, sinFlecha: false, pagina: "122", articulo: "Art. 100–101", frase: "formación del talento humano" },
+  { s: "p_centros_de_abastecimiento", t: "p_plazas_de_mercado", tipo: "soporte", directa: false, sinFlecha: false, pagina: "122", articulo: "Art. 100–101", frase: "Centros de Abasto Mayorista … Plazas de Mercado" },
+  { s: "p_plazas_de_mercado", t: "p_servicios_empresariales", tipo: "soporte", directa: true, sinFlecha: false, pagina: "122", articulo: "Art. 101", frase: "Plazas de Mercado … infraestructuras" },
+  { s: "p_zonas_industriales", t: "p_servicios_empresariales", tipo: "soporte", directa: true, sinFlecha: false, pagina: "122", articulo: "Art. 101", frase: "Eje de servicios empresariales … zonas industriales" },
+  { s: "p_zonas_industriales", t: "p_sistema_de_educacion", tipo: "soporte", directa: false, sinFlecha: false, pagina: "122", articulo: "Art. 100–101", frase: "formación del talento humano … empresas" },
+  { s: "p_zonas_industriales", t: "p_produccion_artesanal", tipo: "soporte", directa: true, sinFlecha: false, pagina: "122", articulo: "Art. 100–101", frase: "producción tradicional … industrias creativas" },
+  { s: "p_zonas_de_interes_turistico", t: "p_plazas_de_mercado", tipo: "soporte", directa: true, sinFlecha: false, pagina: "122", articulo: "Art. 101", frase: "Zonas de Interés Turístico … Plazas de Mercado" },
+  { s: "p_centros_financieros", t: "p_servicios_empresariales", tipo: "soporte", directa: true, sinFlecha: false, pagina: "122", articulo: "Art. 100", frase: "centros financieros y de servicios empresariales" },
+  { s: "p_sistema_de_sitios_sagrados", t: "p_patrimonio_inmaterial", tipo: "resiliencia", directa: true, sinFlecha: false, pagina: "103–104", articulo: "Art. 80", frase: "patrimonio cultural inmaterial … comunidades" },
+  { s: "p_patrimonio_arqueologico", t: "p_patrimonio_natural", tipo: "soporte", directa: true, sinFlecha: false, pagina: "103–104", articulo: "Art. 80", frase: "Patrimonio Natural … Patrimonio Arqueológico" },
+  { s: "p_patrimonio_arqueologico", t: "p_patrimonio_material", tipo: "resiliencia", directa: true, sinFlecha: false, pagina: "103–104", articulo: "Art. 80", frase: "Patrimonio Cultural material … Patrimonio Arqueológico" },
+  { s: "p_patrimonio_natural", t: "p_patrimonio_inmaterial", tipo: "soporte", directa: true, sinFlecha: false, pagina: "103–104", articulo: "Art. 80", frase: "patrimonio cultural material, inmaterial y natural" },
+  { s: "p_patrimonio_material", t: "p_patrimonio_natural", tipo: "soporte", directa: true, sinFlecha: false, pagina: "103–104", articulo: "Art. 80", frase: "integra … material, inmaterial y natural" },
+  { s: "p_patrimonio_material", t: "p_patrimonio_inmaterial", tipo: "soporte", directa: true, sinFlecha: false, pagina: "103–104", articulo: "Art. 80", frase: "patrimonio cultural material, inmaterial y natural" },
+
+  /* -------- relaciones ENTRE estructuras (documento aparte) -------- */
+  { s: "p_humedales", t: "p_patrimonio_natural", tipo: "soporte", directa: false, sinFlecha: false, pagina: "195–196", articulo: "", frase: "En ese sentido, la EIP inscribe y precisa un sistema de relaciones del patrimonio cultural material, inmaterial y natural en el territorio." },
+  { s: "p_patrimonio_arqueologico", t: "p_equipamientos", tipo: "soporte", directa: true, sinFlecha: false, pagina: "200", articulo: "", frase: "Para la Secretaría Distrital de Planeación (SDP), en el proceso de implementación del POT, fue la oportunidad de incorporarlos como nodo de equipamientos próximos y de proyectos a escala local." },
+  { s: "p_patrimonio_inmaterial", t: "p_produccion_artesanal", tipo: "soporte", directa: true, sinFlecha: false, pagina: "190", articulo: "", frase: "Esta producción artesanal «corresponde entonces a las actividades creativas de producción de objetos, realizadas con predominio manual y auxiliadas en algunos casos con maquinarias simples, obteniendo un resultado final individualizado, determinado por los patrones culturales, el medio ambiente y su desarrollo histórico»." },
+  { s: "p_manzanas_del_cuidado", t: "p_sistema_de_educacion", tipo: "soporte", directa: true, sinFlecha: false, pagina: "126", articulo: "", frase: "Con los nuevos colegios y jardines infantiles anclados en las Manzanas del Cuidado, lograremos que las mujeres, las niñas y los niños puedan garantizar su derecho a la educación en lugares cercanos a sus hogares." },
+  { s: "p_equipamientos", t: "p_sistema_de_educacion", tipo: "soporte", directa: true, sinFlecha: false, pagina: "126", articulo: "", frase: "Bajo la nueva visión del POT, la infraestructura social es compatible con otros usos y equipamientos, como centros deportivos, culturales y de recreación, entre otros." },
+  { s: "p_equipamientos", t: "p_servicios_empresariales", tipo: "soporte", directa: false, sinFlecha: false, pagina: "165", articulo: "", frase: "Equipamiento como detonante de dinámicas económicas." },
+  { s: "p_transporte_publico", t: "p_zonas_industriales", tipo: "soporte", directa: false, sinFlecha: false, pagina: "31", articulo: "", frase: "Y que, en todo caso, las diversas zonas de la ciudad estén conectadas por un sistema multimodal de transporte público, colectivo, de energías limpias y renovables basadas en la red Metro y alimentadas por los demás modos y medios de transporte público como los corredores verdes, los cables y las ciclorrutas." },
+  { s: "p_parques_ecologicos_de_montana", t: "p_zonas_de_interes_turistico", tipo: "soporte", directa: false, sinFlecha: false, pagina: "54", articulo: "", frase: "Sostenible: Ecoturismo, viverismo, agricultura urbana y periurbana y puntos de la tierra." },
+  { s: "p_parques_ecologicos_de_montana", t: "p_patrimonio_natural", tipo: "soporte", directa: true, sinFlecha: false, pagina: "54", articulo: "", frase: "Son áreas de alta pendiente en suelo urbano y rural, caracterizadas por contar con remanentes de bosques altoandinos dispersos y ecosistemas subxerofíticos de gran importancia ecosistémica entre otros que, por su estructura y función ecosistémica, aportan a la conservación de la biodiversidad y los servicios ecosistémicos, la conectividad ecológica y a la resiliencia climática de los entornos urbanos, rurales y de transición a escala local y regional." },
+  { s: "p_areas_de_resiliencia_climatica", t: "p_patrimonio_natural", tipo: "resiliencia", directa: false, sinFlecha: false, pagina: "72", articulo: "", frase: "Así mismo, creamos las Áreas de Resiliencia Climática y Protección por Riesgo…" },
+];
+
+function pnNodeById(id) { return PN_NODES.find(n => n.id === id); }
+
+/* -------- 3 relaciones destacadas: "favorecen los ODS" -------- */
+const PN_ODS_COLOR = { 8: "#A21942", 9: "#FD6925", 11: "#FD9D24", 13: "#3F7E44" };
+
+const PN_FAVORABLE_GROUPS = {
+  movilidad: {
+    title: "Movilidad y ecosistemas conectados",
+    edges: [
+      ["p_red_vial", "p_transporte_publico"],
+      ["p_red_vial", "p_equipamientos"],
+      ["p_corredores_verdes", "p_ciclorutas"],
+      ["p_corredores_verdes", "p_transporte_publico"],
+      ["p_ciclorutas", "p_areas_de_resiliencia_climatica"],
+    ],
+    ods: [9, 11, 13],
+    badge: { x: 60, y: 300, anchor: "p_red_vial" },
+    quotes: [
+      { text: "El diseño y construcción de los corredores de movilidad parte de reconocer e incorporar la circulación de correntías y quebradas y todos los factores ecosistémicos.", pagina: "117", articulo: "Art. 88" },
+      { text: "Las diversas zonas de la ciudad estén conectadas por un sistema multimodal de transporte público, colectivo, de energías limpias y renovables.", pagina: "158–159", articulo: "Art. 158–159" },
+    ],
+  },
+  distrito: {
+    title: "Distrito Tecnológico → Servicios empresariales",
+    edges: [["p_distrito_centro_tecnologico_e_innovacion", "p_servicios_empresariales"]],
+    ods: [9, 8],
+    badge: { x: 700, y: 150, anchor: "p_distrito_centro_tecnologico_e_innovacion" },
+    quotes: [
+      { text: "Consolidación de un área de actividad especializada en servicios empresariales, tecnológicos y de innovación, que permita fortalecer la competitividad y productividad de la ciudad.", pagina: "122", articulo: "Art. 101" },
+    ],
+  },
+  humedales: {
+    title: "Humedales → Resiliencia climática",
+    edges: [["p_humedales", "p_areas_de_resiliencia_climatica"]],
+    ods: [13],
+    badge: { x: 310, y: 60, anchor: "p_humedales" },
+    quotes: [
+      { text: "Para aumentar su capacidad de resiliencia climática, el POT Bogotá Reverdece 2022–2035 complementa la EEP con más de cien hectáreas de bosques urbanos a consolidar, entre otras muchas estrategias para garantizar el reverdecimiento, la renaturalización y la biodiversidad de Bogotá.", pagina: "72", articulo: "Art. 42" },
+    ],
+  },
+};
+
+/* cada arista que participa en un grupo "favorable" queda marcada, para que al
+   hacer clic en ella se muestren las citas completas del hallazgo en vez de
+   solo su fragmento suelto de la tabla */
+function pnEdgeKey(s, t) { return s + "->" + t; }
+const PN_EDGE_TO_GROUP = {};
+Object.entries(PN_FAVORABLE_GROUPS).forEach(([key, group]) => {
+  group.edges.forEach(([s, t]) => { PN_EDGE_TO_GROUP[pnEdgeKey(s, t)] = key; });
+});
+
+/* nodos de la red de estructuras que participan en cada grupo "favorable"
+   (para poder apagar/atenuar todo lo demás cuando se activa el grupo) */
+Object.values(PN_FAVORABLE_GROUPS).forEach(group => {
+  const set = new Set();
+  group.edges.forEach(([s, t]) => { set.add(s); set.add(t); });
+  group.involvedNodes = set;
+});
+
+/* -------- réplica en miniatura del diagrama principal ODS ↔ ODS --------
+   Para cada grupo se calcula un mini-layout que conserva las posiciones
+   relativas reales de los nodos ODS en la red de arriba (networkViz),
+   solo que escaladas hacia abajo y centradas en el punto de la insignia.
+   Así el "cluster" de ODS de cada hallazgo se ve igual que en la red
+   principal, pero mucho más chico. */
+function computeMiniOdsLayout(odsList, cx, cy, scale) {
+  const nodes = odsList.map(num => nodeById("ods" + num)).filter(Boolean);
+  if (nodes.length === 0) return {};
+
+  const minX = Math.min(...nodes.map(n => n.homeX));
+  const maxX = Math.max(...nodes.map(n => n.homeX));
+  const minY = Math.min(...nodes.map(n => n.homeY));
+  const maxY = Math.max(...nodes.map(n => n.homeY));
+  const midX = (minX + maxX) / 2;
+  const midY = (minY + maxY) / 2;
+
+  const positions = {};
+  nodes.forEach(n => {
+    positions[n.num] = {
+      x: cx + (n.homeX - midX) * scale,
+      y: cy + (n.homeY - midY) * scale,
+      r: Math.max(n.r * scale, 7.5),
+      color: n.color,
+      num: n.num,
+    };
+  });
+  return positions;
 }
 
-.pn-wrap {
-  display: flex;
-  gap: 16px;
-  align-items: stretch;
+/* mismas relaciones reales entre esos ODS (tipo, color, directa/inferida)
+   tal como existen en la red principal (RAW_EDGES) */
+function pnOdsLinksFor(odsList) {
+  const links = [];
+  for (let i = 0; i < odsList.length; i++) {
+    for (let j = i + 1; j < odsList.length; j++) {
+      const a = "ods" + odsList[i], b = "ods" + odsList[j];
+      const edge = RAW_EDGES.find(e => (e.s === a && e.t === b) || (e.s === b && e.t === a));
+      if (edge) links.push({ from: odsList[i], to: odsList[j], type: edge.type, directa: edge.directa });
+    }
+  }
+  return links;
 }
 
-.pn-canvas {
-  position: relative;
-  flex: 1;
-  min-width: 0;
+/* -------- construir el SVG de la red de estructuras (estática) -------- */
+function buildPnDefs(svg) {
+  const defs = document.createElementNS(SVG_NS, "defs");
+  const pnColors = { soporte: "#ef9552", resiliencia: "#5b8def" };
+  Object.entries(pnColors).forEach(([tipo, color]) => {
+    const marker = document.createElementNS(SVG_NS, "marker");
+    marker.setAttribute("id", "pn-arrow-" + tipo);
+    marker.setAttribute("viewBox", "0 0 10 10");
+    marker.setAttribute("refX", "8"); marker.setAttribute("refY", "5");
+    marker.setAttribute("markerWidth", "6"); marker.setAttribute("markerHeight", "6");
+    marker.setAttribute("orient", "auto-start-reverse");
+    const path = document.createElementNS(SVG_NS, "path");
+    path.setAttribute("d", "M0,0 L10,5 L0,10 z");
+    path.setAttribute("fill", color);
+    marker.appendChild(path);
+    defs.appendChild(marker);
+  });
+  svg.appendChild(defs);
 }
 
-#pnViz {
-  width: 100%;
-  height: 460px;
-  background: var(--panel-alt);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  display: block;
-  touch-action: none;
+function pnEdgePath(s, t) {
+  const dx = t.x - s.x, dy = t.y - s.y;
+  const dist = Math.hypot(dx, dy) || 1;
+  const ux = dx / dist, uy = dy / dist;
+  const x1 = s.x + ux * (s.r + 1.5), y1 = s.y + uy * (s.r + 1.5);
+  const x2 = t.x - ux * (t.r + 5),   y2 = t.y - uy * (t.r + 5);
+  return `M${x1},${y1} L${x2},${y2}`;
 }
 
-.pn-node .pn-node-ring { fill: rgba(8,11,18,0.65); }
-.pn-node text, .pn-node div { font-family: 'Inter', sans-serif; }
+function drawPnEdges(svg) {
+  const g = document.createElementNS(SVG_NS, "g");
+  g.setAttribute("class", "pn-edges-layer");
+  const pnColors = { soporte: "#ef9552", resiliencia: "#5b8def" };
 
-.pn-edge-group { cursor: pointer; }
-.pn-edge { fill: none; }
-.pn-edge-hit { stroke: transparent; stroke-width: 10; pointer-events: stroke; }
-.pn-edge-visual { pointer-events: none; transition: opacity .2s, stroke-width .2s, filter .2s; }
+  PN_EDGES.forEach((edge, i) => {
+    const s = pnNodeById(edge.s), t = pnNodeById(edge.t);
+    if (!s || !t) return;
+    const color = pnColors[edge.tipo];
+    const d = pnEdgePath(s, t);
+    const group = document.createElementNS(SVG_NS, "g");
+    group.setAttribute("class", "pn-edge-group");
+    group.setAttribute("data-index", i);
+    group.style.setProperty("--pn-edge-color", color);
 
-.pn-edge-group:hover .pn-edge-visual {
-  opacity: 1 !important;
-  filter: drop-shadow(0 0 4px var(--pn-edge-color));
+    const hit = document.createElementNS(SVG_NS, "path");
+    hit.setAttribute("d", d);
+    hit.setAttribute("class", "pn-edge pn-edge-hit");
+
+    const visual = document.createElementNS(SVG_NS, "path");
+    visual.setAttribute("d", d);
+    visual.setAttribute("class", "pn-edge pn-edge-visual");
+    visual.setAttribute("stroke", color);
+    visual.setAttribute("stroke-width", 1.3);
+    if (!edge.directa) visual.setAttribute("stroke-dasharray", "5,4");
+    if (!edge.sinFlecha) visual.setAttribute("marker-end", `url(#pn-arrow-${edge.tipo})`);
+    visual.setAttribute("opacity", "0.8");
+
+    group.appendChild(visual);
+    group.appendChild(hit);
+    group.addEventListener("click", () => showPnEdgeInfo(i));
+    g.appendChild(group);
+    edge._el = { group, visual, hit };
+  });
+
+  svg.appendChild(g);
 }
 
-.pn-edge-group.pn-edge-selected .pn-edge-visual {
-  opacity: 1 !important;
-  filter: drop-shadow(0 0 6px var(--pn-edge-color));
+function drawPnNodes(svg) {
+  const g = document.createElementNS(SVG_NS, "g");
+  g.setAttribute("class", "pn-nodes-layer");
+
+  PN_NODES.forEach(node => {
+    const group = document.createElementNS(SVG_NS, "g");
+    group.setAttribute("class", "pn-node");
+    group.setAttribute("data-id", node.id);
+
+    const circle = document.createElementNS(SVG_NS, "circle");
+    circle.setAttribute("class", "pn-node-ring");
+    circle.setAttribute("cx", node.x); circle.setAttribute("cy", node.y); circle.setAttribute("r", node.r);
+    circle.setAttribute("stroke", node.color);
+    circle.setAttribute("stroke-width", 1.6);
+
+    const fo = document.createElementNS(SVG_NS, "foreignObject");
+    const size = node.r * 2.1;
+    fo.setAttribute("x", node.x - size / 2); fo.setAttribute("y", node.y - size / 2);
+    fo.setAttribute("width", size); fo.setAttribute("height", size);
+
+    const wrapper = document.createElementNS(XHTML_NS, "div");
+    wrapper.setAttribute("style",
+      "width:100%;height:100%;display:flex;flex-direction:column;" +
+      "align-items:center;justify-content:center;gap:1px;pointer-events:none;overflow:hidden;"
+    );
+
+    const iconEl = document.createElementNS(XHTML_NS, "i");
+    iconEl.setAttribute("class", "fa-solid " + node.icon);
+    iconEl.setAttribute("style", `color:${node.color}; font-size:${Math.max(node.r * 0.42, 7)}px;`);
+
+    const nameEl = document.createElementNS(XHTML_NS, "div");
+    nameEl.setAttribute("style", `color:#c7cde0; font-weight:600; font-size:${Math.max(node.r * 0.185, 4.6)}px; line-height:1.05; padding:0 2px; text-align:center;`);
+    nameEl.textContent = node.name;
+
+    wrapper.appendChild(iconEl); wrapper.appendChild(nameEl);
+    fo.appendChild(wrapper);
+    group.appendChild(circle);
+    group.appendChild(fo);
+    g.appendChild(group);
+    node._el = { circle, fo };
+  });
+
+  svg.appendChild(g);
 }
 
-.pn-edge-group.pn-edge-dim .pn-edge-visual { opacity: 0.08 !important; }
-
-.pn-edge-group.pn-edge-highlight .pn-edge-visual {
-  opacity: 1 !important;
-  stroke-width: 3 !important;
-  filter: drop-shadow(0 0 6px var(--pn-edge-color));
+function renderPotStructure() {
+  const svg = document.getElementById("pnViz");
+  if (!svg) return;
+  svg.innerHTML = "";
+  buildPnDefs(svg);
+  drawPnEdges(svg);
+  drawPnNodes(svg);
+  drawPnOdsBadges(svg);
 }
 
-.pn-ods-connector {
-  fill: none;
-  stroke: rgba(231,234,242,0.35);
-  stroke-width: 1;
-  stroke-dasharray: 3,3;
-  opacity: 0;
-  transition: opacity .2s;
+/* -------- clúster ODS en miniatura (una por grupo, oculto hasta activarse) --------
+   Réplica a escala reducida del diagrama principal: mismas posiciones
+   relativas, mismos colores por ODS y mismas líneas (color/tipo/sólida
+   o punteada) que las relaciones reales entre esos ODS arriba. */
+function drawPnOdsBadges(svg) {
+  const g = document.createElementNS(SVG_NS, "g");
+  g.setAttribute("class", "pn-badges-layer");
+
+  const MINI_SCALE = 0.16;
+
+  Object.entries(PN_FAVORABLE_GROUPS).forEach(([key, group]) => {
+    const anchor = pnNodeById(group.badge.anchor);
+    const bx = group.badge.x, by = group.badge.y;
+
+    const wrap = document.createElementNS(SVG_NS, "g");
+    wrap.setAttribute("class", "pn-ods-badge-group");
+    wrap.setAttribute("data-group", key);
+
+    const positions = computeMiniOdsLayout(group.ods, bx, by, MINI_SCALE);
+    const positionList = Object.values(positions);
+
+    if (anchor && positionList.length) {
+      const nearest = positionList[0];
+      const connector = document.createElementNS(SVG_NS, "path");
+      connector.setAttribute("class", "pn-ods-connector");
+      connector.setAttribute("d", `M${nearest.x},${nearest.y} L${anchor.x},${anchor.y}`);
+      wrap.appendChild(connector);
+    }
+
+    /* líneas primero, para que los nodos queden encima */
+    pnOdsLinksFor(group.ods).forEach(link => {
+      const a = positions[link.from], b = positions[link.to];
+      if (!a || !b) return;
+      const style = TYPE_STYLE[link.type];
+      const path = document.createElementNS(SVG_NS, "path");
+      path.setAttribute("class", "pn-ods-link");
+      path.setAttribute("d", `M${a.x},${a.y} L${b.x},${b.y}`);
+      path.setAttribute("stroke", style.color);
+      path.setAttribute("stroke-width", Math.max(style.width * 0.7, 1));
+      if (!link.directa) path.setAttribute("stroke-dasharray", "3,3");
+      path.setAttribute("marker-end", `url(#arrow-${link.type})`);
+      wrap.appendChild(path);
+    });
+
+    /* nodos ODS en miniatura */
+    positionList.forEach(p => {
+      const badge = document.createElementNS(SVG_NS, "circle");
+      badge.setAttribute("class", "pn-ods-badge");
+      badge.setAttribute("cx", p.x); badge.setAttribute("cy", p.y); badge.setAttribute("r", p.r);
+      badge.setAttribute("fill", p.color);
+      wrap.appendChild(badge);
+
+      const label = document.createElementNS(SVG_NS, "text");
+      label.setAttribute("class", "pn-ods-badge-label");
+      label.setAttribute("x", p.x); label.setAttribute("y", p.y + p.r * 0.35);
+      label.setAttribute("text-anchor", "middle");
+      label.setAttribute("style", `font-size:${Math.max(p.r * 0.95, 7)}px;`);
+      label.textContent = p.num;
+      wrap.appendChild(label);
+    });
+
+    g.appendChild(wrap);
+  });
+
+  svg.appendChild(g);
 }
 
-.pn-node { transition: opacity .2s; }
-.pn-node-dim { opacity: 0.12; }
-.pn-node-active .pn-node-ring { filter: drop-shadow(0 0 6px #fff); stroke-width: 2.4; }
+/* -------- resaltar un grupo "favorable": apaga el resto de conceptos (nodos y
+   líneas), deja solo los que se mencionan en la relación, y muestra sus
+   insignias ODS -------- */
+let pnActiveGroup = null;
+function togglePnFavorableGroup(key) {
+  const already = pnActiveGroup === key;
+  clearPnHighlight();
+  if (already) return;
 
-.pn-ods-link { fill: none; stroke-width: 1.6; }
+  const group = PN_FAVORABLE_GROUPS[key];
+  if (!group) return;
+  pnActiveGroup = key;
 
-.pn-ods-badge-group { opacity: 0; pointer-events: none; transition: opacity .2s; }
-.pn-ods-badge-group.visible { opacity: 1; }
-.pn-ods-badge-group.visible .pn-ods-connector { opacity: 1; }
+  const activeKeys = new Set(group.edges.map(([s, t]) => pnEdgeKey(s, t)));
+  PN_EDGES.forEach((edge, i) => {
+    if (!edge._el) return;
+    const on = activeKeys.has(pnEdgeKey(edge.s, edge.t));
+    edge._el.group.classList.toggle("pn-edge-highlight", on);
+    edge._el.group.classList.toggle("pn-edge-dim", !on);
+  });
 
-.pn-ods-badge { stroke: #06110f; stroke-width: 1; }
-.pn-ods-badge-label {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 10px;
-  font-weight: 800;
-  fill: #06110f;
+  document.querySelectorAll(".pn-node").forEach(el => {
+    const involved = group.involvedNodes.has(el.dataset.id);
+    el.classList.toggle("pn-node-dim", !involved);
+    el.classList.toggle("pn-node-active", involved);
+  });
+
+  document.querySelector(`.pn-ods-badge-group[data-group="${key}"]`)?.classList.add("visible");
+  document.querySelector(`.pn-finding-item[data-pn-finding="${key}"]`)?.classList.add("active");
 }
 
-/* panel "Sustento" de la red de estructuras */
-.pn-sustento-panel {
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  width: 280px;
-  max-width: calc(100% - 28px);
-  background: var(--panel-alt);
-  border: 1px solid var(--teal);
-  box-shadow: 0 10px 28px rgba(0,0,0,0.4), 0 0 14px rgba(47,212,200,0.18);
-  border-radius: 10px;
-  padding: 14px 30px 14px 16px;
-  opacity: 0;
-  transform: translateY(-8px);
-  pointer-events: none;
-  transition: opacity .2s ease, transform .2s ease;
-  z-index: 5;
-  max-height: calc(100% - 28px);
-  overflow-y: auto;
+function clearPnHighlight() {
+  pnActiveGroup = null;
+  document.querySelectorAll(".pn-edge-group").forEach(el => {
+    el.classList.remove("pn-edge-highlight", "pn-edge-dim");
+  });
+  document.querySelectorAll(".pn-node").forEach(el => {
+    el.classList.remove("pn-node-dim", "pn-node-active");
+  });
+  document.querySelectorAll(".pn-ods-badge-group").forEach(el => el.classList.remove("visible"));
+  document.querySelectorAll(".pn-finding-item").forEach(el => el.classList.remove("active"));
 }
 
-.pn-sustento-panel.visible {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
+/* -------- panel "Sustento" (clic en cualquier línea de la red de estructuras) -------- */
+function showPnEdgeInfo(index) {
+  const edge = PN_EDGES[index];
+  const s = pnNodeById(edge.s), t = pnNodeById(edge.t);
+  if (!s || !t) return;
+
+  document.querySelectorAll(".pn-edge-group").forEach(el => el.classList.remove("pn-edge-selected"));
+  document.querySelector(`.pn-edge-group[data-index="${index}"]`)?.classList.add("pn-edge-selected");
+
+  const panel = document.getElementById("pnSustentoPanel");
+  if (!panel) return;
+
+  document.getElementById("pnSustentoTitle").textContent = `${s.name} → ${t.name}`;
+
+  const tipoEl = document.getElementById("pnSustentoTipo");
+  const color = edge.tipo === "resiliencia" ? "#5b8def" : "#ef9552";
+  tipoEl.textContent = (edge.tipo === "resiliencia" ? "Resiliencia" : "Soporte") + (edge.directa ? " · Directa" : " · Indirecta");
+  tipoEl.style.color = color;
+  tipoEl.style.background = color + "26";
+
+  const groupKey = PN_EDGE_TO_GROUP[pnEdgeKey(edge.s, edge.t)];
+  const odsRow = document.getElementById("pnSustentoOds");
+  const quotesWrap = document.getElementById("pnSustentoQuotes");
+  quotesWrap.innerHTML = "";
+
+  if (groupKey) {
+    const group = PN_FAVORABLE_GROUPS[groupKey];
+    odsRow.innerHTML = "ODS relacionados: " + group.ods.map(n =>
+      `<span class="pn-ods-chip" style="background:${(PN_ODS_COLOR[n] || "#8891a5")}26;color:${PN_ODS_COLOR[n] || "#8891a5"}">ODS ${n}</span>`
+    ).join(" ");
+    odsRow.style.display = "flex";
+    group.quotes.forEach(q => {
+      const block = document.createElement("div");
+      block.className = "pn-sustento-quote-block";
+      block.innerHTML = `<div class="pn-sustento-quote">"${q.text}"</div><div class="pn-sustento-page">Página: ${q.pagina} · ${q.articulo}</div>`;
+      quotesWrap.appendChild(block);
+    });
+  } else {
+    odsRow.style.display = "none";
+    const block = document.createElement("div");
+    block.className = "pn-sustento-quote-block";
+    block.innerHTML = `<div class="pn-sustento-quote">"${edge.frase}"</div><div class="pn-sustento-page">Página: ${edge.pagina || "por confirmar"} · ${edge.articulo || ""}</div>`;
+    quotesWrap.appendChild(block);
+  }
+
+  panel.classList.add("visible");
 }
 
-.pn-sustento-close {
-  position: absolute;
-  top: 8px;
-  right: 10px;
-  background: none;
-  border: none;
-  color: var(--text-faint);
-  font-size: 17px;
-  line-height: 1;
-  cursor: pointer;
-  padding: 0;
+function hidePnEdgeInfo() {
+  document.getElementById("pnSustentoPanel")?.classList.remove("visible");
+  document.querySelectorAll(".pn-edge-group").forEach(el => el.classList.remove("pn-edge-selected"));
 }
 
-.pn-sustento-close:hover { color: var(--pink); }
-
-.pn-sustento-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.4px;
-  text-transform: uppercase;
-  color: var(--teal);
-  margin-bottom: 8px;
+/* -------- conecta el panel derecho "1. Relaciones que favorecen los ODS" -------- */
+function setupPnPanel() {
+  document.querySelectorAll(".pn-finding-item[data-pn-finding]").forEach(btn => {
+    btn.addEventListener("click", () => togglePnFavorableGroup(btn.dataset.pnFinding));
+  });
+  document.getElementById("pnSustentoClose")?.addEventListener("click", hidePnEdgeInfo);
 }
 
-.pn-sustento-title {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 12.5px;
-  font-weight: 700;
-  color: var(--text);
-  margin-bottom: 6px;
-  line-height: 1.3;
-}
+/* -------- botones de acción (placeholders existentes) -------- */
+function generateODSReport() { console.log("Generando reporte POT-ODS..."); }
+function downloadAlignment() { console.log("Descargando matriz de alineación..."); }
+function shareAnalysis() { console.log("Compartiendo análisis..."); }
 
-.pn-sustento-type {
-  display: inline-block;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.4px;
-  text-transform: uppercase;
-  padding: 3px 8px;
-  border-radius: 4px;
-  margin-bottom: 8px;
-}
-
-.pn-sustento-ods {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-  align-items: center;
-  font-size: 10.5px;
-  color: var(--text-dim);
-  margin-bottom: 8px;
-}
-
-.pn-ods-chip {
-  border-radius: 999px;
-  padding: 2px 8px;
-  font-size: 10px;
-  font-weight: 700;
-}
-
-.pn-sustento-quote-block { margin-bottom: 8px; }
-.pn-sustento-quote-block:last-child { margin-bottom: 0; }
-
-.pn-sustento-quote {
-  font-size: 11.5px;
-  color: var(--text-dim);
-  line-height: 1.5;
-  font-style: italic;
-  border-left: 2px solid var(--border);
-  padding-left: 10px;
-  margin-bottom: 4px;
-}
-
-.pn-sustento-page {
-  font-size: 10.5px;
-  color: var(--text-faint);
-  font-weight: 600;
-}
-
-/* panel derecho: "1. Relaciones que favorecen los ODS" */
-.pn-sidebar {
-  width: 250px;
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.pn-findings-panel {
-  background: var(--panel-alt);
-  border: 1px solid var(--border-soft);
-  border-radius: 8px;
-  padding: 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.pn-findings-title {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 11.5px;
-  font-weight: 700;
-  color: var(--green);
-  margin-bottom: 4px;
-}
-
-.pn-finding-item {
-  background: rgba(255,255,255,0.03);
-  border: 1px solid var(--border-soft);
-  border-radius: 8px;
-  padding: 9px 10px;
-  font-family: 'Inter', sans-serif;
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-dim);
-  text-align: left;
-  cursor: pointer;
-  transition: border-color .15s, color .15s, background-color .15s;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  line-height: 1.35;
-}
-
-.pn-finding-item:hover { border-color: var(--green); color: var(--text); }
-
-.pn-finding-item.active {
-  border-color: var(--green);
-  color: var(--text);
-  background: color-mix(in srgb, var(--green) 14%, transparent);
-}
-
-.pn-finding-ods {
-  font-size: 9.5px;
-  font-weight: 700;
-  letter-spacing: 0.3px;
-  color: var(--green);
-  text-transform: uppercase;
-}
-
-.pn-legend-hint {
-  font-size: 10px;
-  color: var(--text-faint);
-  line-height: 1.5;
-  padding: 0 2px;
-}
-
-@media (max-width: 900px) {
-  .pn-wrap { flex-direction: column; }
-  .pn-sidebar { width: 100%; }
-  #pnViz { height: 400px; }
-}
+document.addEventListener("DOMContentLoaded", () => {
+  renderNetwork();
+  setupLegendToggle();
+  setupSidePanels();
+  renderPotStructure();
+  setupPnPanel();
+});
