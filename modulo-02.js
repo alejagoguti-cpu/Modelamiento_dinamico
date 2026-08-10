@@ -547,19 +547,16 @@ function clearSpotlight() {
 
 function setSpotlightNodes(nodeIds, expand) {
   spotlight = { mode: "nodes", nodes: new Set(nodeIds), expand: !!expand };
-  document.querySelectorAll(".insight-card").forEach(c => c.classList.remove("active"));
   applySpotlightState();
 }
 
 function setSpotlightTypes(types) {
   spotlight = { mode: "types", types };
-  document.querySelectorAll(".insight-card").forEach(c => c.classList.remove("active"));
   applySpotlightState();
 }
 
 function setSpotlightCats(cats, keepAllNodes) {
   spotlight = { mode: "cats", cats, keepAllNodes: !!keepAllNodes };
-  document.querySelectorAll(".insight-card").forEach(c => c.classList.remove("active"));
   applySpotlightState();
 }
 
@@ -629,16 +626,18 @@ function toggleNodeFlow(id) {
 
 /* -------- tarjetas de insights -------- */
 const NODE_INSIGHTS = {
-  ecologica:     ODS_NODES.filter(n => n.cat === "e1").map(n => n.id),
-  funcional:     ODS_NODES.filter(n => n.cat === "e2").map(n => n.id),
-  socioeconomica:ODS_NODES.filter(n => n.cat === "e3").map(n => n.id),
-  patrimonio:    ODS_NODES.filter(n => n.cat === "e4").map(n => n.id),
+  e1: ODS_NODES.filter(n => n.cat === "e1").map(n => n.id),
+  e2: ODS_NODES.filter(n => n.cat === "e2").map(n => n.id),
+  e3: ODS_NODES.filter(n => n.cat === "e3").map(n => n.id),
+  e4: ODS_NODES.filter(n => n.cat === "e4").map(n => n.id),
 };
 
 const TYPE_KEY = {
-  soporte:     "soporte",
-  resiliencia: "resiliencia",
-  indirecta:   "indirecta",
+  incoherence:   "incoherence",
+  contradiction: "contradiction",
+  disconnection: "disconnection",
+  hierarchy:     "hierarchy",
+  peripheral:    "peripheral",
 };
 
 function toggleInsight(key) {
@@ -650,10 +649,18 @@ function toggleInsight(key) {
     return;
   }
 
+  // Quitar active de todas las demás tarjetas primero
+  document.querySelectorAll(".insight-card").forEach(c => c.classList.remove("active"));
+
+  if (key === "todas" || key === "todos") {
+    clearSpotlight();
+    return;
+  }
+
   if (TYPE_KEY[key]) {
     setSpotlightTypes([TYPE_KEY[key]]);
   } else if (NODE_INSIGHTS[key] && NODE_INSIGHTS[key].length) {
-    setSpotlightCats(NODE_INSIGHTS[key].map(id => nodeById(id).cat), true);
+    setSpotlightCats([key], true);
     NODE_INSIGHTS[key].forEach(id => {
       const el = document.querySelector(`.ods-node[data-id="${id}"]`);
       if (el) el.classList.add("node-focus-active");
