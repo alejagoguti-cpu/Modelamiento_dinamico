@@ -97,14 +97,7 @@ const ODS_NODES = [
 ];
 
 /* -------- física: cada nodo guarda su posición "casa" (ancla) y velocidad -------- */
-ODS_NODES.forEach((n, i) => {
-  if (n.id !== "vivienda") {
-    // Redistribuir nodos inicialmente hacia el centro para evitar el vacío
-    const angle = Math.random() * Math.PI * 2;
-    const dist = 95 + Math.random() * 200;
-    n.x = 735 + Math.cos(angle) * dist;
-    n.y = 390 + Math.sin(angle) * dist;
-  }
+ODS_NODES.forEach(n => {
   n.homeX = n.x; n.homeY = n.y;
   n.vx = 0; n.vy = 0;
   n.fixed = (n.id === "vivienda");
@@ -424,9 +417,9 @@ function physicsStep() {
       const ni = ODS_NODES[i], nj = ODS_NODES[j];
       const dx = nj.x - ni.x, dy = nj.y - ni.y;
       const dist = Math.hypot(dx, dy) || 1;
-      const minDist = ni.r + nj.r + 12; // Margen de separación más estrecho para integración
+      const minDist = ni.r + nj.r + 30; // Margen de separación
       if (dist < minDist) {
-        const force = (minDist - dist) * 0.12;
+        const force = (minDist - dist) * 0.08;
         const fx = (dx / dist) * force, fy = (dy / dist) * force;
         if (!ni.fixed) { ni.vx -= fx; ni.vy -= fy; }
         if (!nj.fixed) { nj.vx += fx; nj.vy += fy; }
@@ -447,15 +440,10 @@ function physicsStep() {
 
   ODS_NODES.forEach(n => {
     if (n.fixed) { n.vx = 0; n.vy = 0; return; }
-    // Gravedad central para integrar todo hacia Vivienda
-    const gx = (735 - n.x) * 0.005;
-    const gy = (390 - n.y) * 0.005;
-    n.vx += gx;
-    n.vy += gy;
-
+    /* vivienda tiene un ancla más fuerte para permanecer en el centro de la red */
     const anchorStrength = n.id === "vivienda" ? PHYSICS.anchor * 2.4 : PHYSICS.anchor;
-    n.vx += (n.homeX - n.x) * anchorStrength * 0.5;
-    n.vy += (n.homeY - n.y) * anchorStrength * 0.5;
+    n.vx += (n.homeX - n.x) * anchorStrength;
+    n.vy += (n.homeY - n.y) * anchorStrength;
     n.vx *= PHYSICS.damping;
     n.vy *= PHYSICS.damping;
     n.x += n.vx;
