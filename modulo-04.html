@@ -107,7 +107,7 @@
     <!-- RED -->
     <div class="network-section">
       <div class="network-header">
-        <h3><i class="fa-solid fa-sitemap"></i> Red de las 4 Estructuras del POT — Interactiva</h3>
+        <h3><i class="fa-solid fa-sitemap"></i> Red de Macromodelos del POT — Interactiva</h3>
         <div class="network-controls">
           <button class="control-btn active" onclick="filterNetwork('all')">Todos</button>
           <button class="control-btn" onclick="filterNetwork('dependencia')">Dependencias</button>
@@ -119,15 +119,16 @@
           <button class="control-btn" onclick="filterNetwork('jerarquia')">Jerarquías</button>
           <button class="control-btn" onclick="filterNetwork('retroalimentacion')">Retroaliment.</button>
           <button class="control-btn" onclick="filterNetwork('regulacion')">Regulación</button>
-          <button class="control-btn" onclick="filterNetwork('e1')">E. Ecológica</button>
-          <button class="control-btn" onclick="filterNetwork('e2')">E. Funcional</button>
-          <button class="control-btn" onclick="filterNetwork('e3')">E. Socioeconómica</button>
-          <button class="control-btn" onclick="filterNetwork('e4')">E. Patrimonio</button>
+          <button class="control-btn" onclick="filterNetwork('m1')">Neoliberal</button>
+          <button class="control-btn" onclick="filterNetwork('m2')">Desarrollista</button>
+          <button class="control-btn" onclick="filterNetwork('m3')">Ambientalista</button>
+          <button class="control-btn" onclick="filterNetwork('m4')">Tecnocrático</button>
+          <button class="control-btn" onclick="filterNetwork('m5')">Comunitario</button>
         </div>
       </div>
 
       <div class="network-viz-wrap">
-        <svg id="networkViz" viewBox="0 0 2770 860" preserveAspectRatio="xMidYMid meet"></svg>
+        <svg id="networkViz" viewBox="0 0 2500 1050" preserveAspectRatio="xMidYMid meet"></svg>
 
         <div class="network-sidebar">
           <aside class="network-legend" id="networkLegend">
@@ -198,36 +199,36 @@
             </div>
 
             <div class="legend-divider"></div>
-            <div class="legend-title">Estructuras del POT</div>
+            <div class="legend-title">Macromodelos</div>
 
-            <label class="legend-item" data-mode="cat" data-cat="e1">
+            <label class="legend-item" data-mode="cat" data-cat="m1">
               <input type="checkbox" checked>
-              <span class="legend-swatch swatch-e1"></span>
-              1. Ecológica Principal
+              <span class="legend-swatch swatch-m1"></span>
+              Neoliberal / Mercantilista
             </label>
 
-            <label class="legend-item" data-mode="cat" data-cat="e2">
+            <label class="legend-item" data-mode="cat" data-cat="m2">
               <input type="checkbox" checked>
-              <span class="legend-swatch swatch-e2"></span>
-              2. Funcional y del Cuidado
+              <span class="legend-swatch swatch-m2"></span>
+              Desarrollista / Productivista
             </label>
 
-            <label class="legend-item" data-mode="cat" data-cat="e3">
+            <label class="legend-item" data-mode="cat" data-cat="m3">
               <input type="checkbox" checked>
-              <span class="legend-swatch swatch-e3"></span>
-              3. Socioeconómica Creativa
+              <span class="legend-swatch swatch-m3"></span>
+              Ambientalista (discursivo)
             </label>
 
-            <label class="legend-item" data-mode="cat" data-cat="e4">
+            <label class="legend-item" data-mode="cat" data-cat="m4">
               <input type="checkbox" checked>
-              <span class="legend-swatch swatch-e4"></span>
-              4. Integradora de Patrimonio
+              <span class="legend-swatch swatch-m4"></span>
+              Tecnocrático / Estatista
             </label>
 
-            <label class="legend-item" data-mode="cat" data-cat="macro">
+            <label class="legend-item" data-mode="cat" data-cat="m5">
               <input type="checkbox" checked>
-              <span class="legend-swatch swatch-macro"></span>
-              Macromodelos / Paradigmas
+              <span class="legend-swatch swatch-m5"></span>
+              Comunitario / del Cuidado
             </label>
 
             <div class="legend-divider"></div>
