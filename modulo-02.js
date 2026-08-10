@@ -478,6 +478,9 @@ const nodeOff = new Set();
 const catOff = new Set();
 
 function refreshEdgeVisibility() {
+  // Primero, ocultar/mostrar líneas
+  const visibleNodes = new Set(ODS_NODES.map(n => n.id));
+  
   document.querySelectorAll(".edge-group").forEach(group => {
     const type = group.dataset.type;
     const cat = group.dataset.cat;
@@ -485,6 +488,19 @@ function refreshEdgeVisibility() {
     const t = group.dataset.target;
     const hidden = typeOff.has(type) || nodeOff.has(s) || nodeOff.has(t) || catOff.has(cat);
     group.classList.toggle("hidden-edge", hidden);
+    
+    // Si la línea está visible, marcar sus nodos como conectados
+    if (!hidden) {
+      visibleNodes.add(s);
+      visibleNodes.add(t);
+    }
+  });
+
+  // Luego, ocultar nodos que NO tienen líneas visibles
+  document.querySelectorAll(".ods-node").forEach(node => {
+    const nodeId = node.dataset.id;
+    const hasVisibleEdges = visibleNodes.has(nodeId) && !nodeOff.has(nodeId);
+    node.classList.toggle("hidden-node", !hasVisibleEdges);
   });
 }
 
@@ -675,24 +691,26 @@ function filterNetwork(mode) {
   if (event && event.currentTarget) event.currentTarget.classList.add("active");
 
   const groups = {
-    all:     { types: ["soporte", "resiliencia", "indirecta"], cats: ["e1", "e2", "e3", "e4"] },
-    soporte:     { types: ["soporte"],             cats: ["e1", "e2", "e3", "e4"] },
-    resiliencia: { types: ["resiliencia"],         cats: ["e1", "e2", "e3", "e4"] },
-    indirecta:   { types: ["indirecta"],           cats: ["e1", "e2", "e3", "e4"] },
-    e1:          { types: ["soporte", "resiliencia", "indirecta"], cats: ["e1"] },
-    e2:          { types: ["soporte", "resiliencia", "indirecta"], cats: ["e2"] },
-    e3:          { types: ["soporte", "resiliencia", "indirecta"], cats: ["e3"] },
-    e4:          { types: ["soporte", "resiliencia", "indirecta"], cats: ["e4"] },
+    all:           { types: ["incoherence", "contradiction", "disconnection", "hierarchy", "peripheral"], cats: ["e1", "e2", "e3", "e4", "e1-e2", "e2-e3", "e3-e4", "e1-e4"] },
+    incoherence:   { types: ["incoherence"],   cats: ["e1", "e2", "e3", "e4", "e1-e2", "e2-e3", "e3-e4", "e1-e4"] },
+    contradiction: { types: ["contradiction"], cats: ["e1", "e2", "e3", "e4", "e1-e2", "e2-e3", "e3-e4", "e1-e4"] },
+    disconnection: { types: ["disconnection"], cats: ["e1", "e2", "e3", "e4", "e1-e2", "e2-e3", "e3-e4", "e1-e4"] },
+    hierarchy:     { types: ["hierarchy"],     cats: ["e1", "e2", "e3", "e4", "e1-e2", "e2-e3", "e3-e4", "e1-e4"] },
+    peripheral:    { types: ["peripheral"],   cats: ["e1", "e2", "e3", "e4", "e1-e2", "e2-e3", "e3-e4", "e1-e4"] },
+    e1: { types: ["incoherence", "contradiction", "disconnection", "hierarchy", "peripheral"], cats: ["e1"] },
+    e2: { types: ["incoherence", "contradiction", "disconnection", "hierarchy", "peripheral"], cats: ["e2"] },
+    e3: { types: ["incoherence", "contradiction", "disconnection", "hierarchy", "peripheral"], cats: ["e3"] },
+    e4: { types: ["incoherence", "contradiction", "disconnection", "hierarchy", "peripheral"], cats: ["e4"] },
   };
   const active = groups[mode] || groups.all;
 
-  document.querySelectorAll(".legend-item[data-mode='type']").forEach(item => {
-    const type = item.dataset.type;
+  document.querySelectorAll(".legend-item[data-mode='tension']").forEach(item => {
+    const tension = item.dataset.tension;
     const input = item.querySelector("input");
-    const show = active.types.includes(type);
+    const show = active.types.includes(tension);
     input.checked = show;
     item.classList.toggle("off", !show);
-    if (show) typeOff.delete(type); else typeOff.add(type);
+    if (show) typeOff.delete(tension); else typeOff.add(tension);
   });
 
   document.querySelectorAll(".legend-item[data-mode='cat']").forEach(item => {
