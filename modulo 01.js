@@ -1,18 +1,10 @@
-/* ========================================================
-   RED POT BOGOTÁ: 4 ESTRUCTURAS INTERACTIVAS CON ANIMACIONES
-   - EEP: Estructura Ecológica Principal (Teal #2fd4c8)
-   - EFC: Estructura Funcional y del Cuidado (Azul #5b8def)
-   - ESECI: Estructura Socioeconómica, Creativa e Innovación (Naranja #ef9552)
-   - EIP: Estructura Integradora de Patrimonios (Púrpura #a276f2)
-   ======================================================== */
-
-const SVG_NS = "http://www.w3.org/2000/svg";
+/* RED POT - VERSIÓN FUNCIONAL SIMPLIFICADA */
 
 const STRUCTURES = {
-  EEP: { name: "Ecológica Principal", color: "#2fd4c8", icon: "fa-leaf" },
-  EFC: { name: "Funcional y del Cuidado", color: "#5b8def", icon: "fa-home" },
-  ESECI: { name: "Socioeconómica, Creativa e Innovación", color: "#ef9552", icon: "fa-handshake" },
-  EIP: { name: "Integradora de Patrimonios", color: "#a276f2", icon: "fa-crown" }
+  EEP: { name: "Ecológica Principal", color: "#2fd4c8" },
+  EFC: { name: "Funcional y del Cuidado", color: "#5b8def" },
+  ESECI: { name: "Socioeconómica, Creativa e Innovación", color: "#ef9552" },
+  EIP: { name: "Integradora de Patrimonios", color: "#a276f2" }
 };
 
 let allData = null;
@@ -20,422 +12,233 @@ let activeStructures = { EEP: true, EFC: true, ESECI: true, EIP: true };
 let viewMode = "single";
 let currentStructure = "EEP";
 let simulation = null;
-let selectedEdge = null;
-let typeOff = new Set();
-let isAnimating = false;
 
-const RELATION_STYLE = {
-  "Directa": { color: "#ffffff", width: 2, dash: "" },
-  "Soporte": { color: "#ef9552", width: 1.8, dash: "" },
-  "Resiliencia": { color: "#4ade80", width: 1.8, dash: "" }
-};
-
-// ========== CARGAR DATA ==========
-async function loadData() {
+// ========== DATA ==========
+function initData() {
   allData = {
     EEP: {
-      name: "Estructura Ecológica Principal",
-      color: "#2fd4c8",
-      icon: "fa-leaf",
       conceptos: [
-        { id: "rios", name: "Ríos", icon: "fa-water", x: 330, y: 360 },
-        { id: "quebradas", name: "Quebradas", icon: "fa-water", x: 290, y: 280 },
-        { id: "humedales", name: "Humedales", icon: "fa-droplet", x: 520, y: 450 },
-        { id: "bosques", name: "Bosques Urbanos", icon: "fa-tree", x: 300, y: 440 },
-        { id: "vegetacion", name: "Coberturas vegetales", icon: "fa-leaf", x: 360, y: 560 },
-        { id: "parques_montaña", name: "Parques ecológicos", icon: "fa-mountain", x: 660, y: 270 },
-        { id: "cerros", name: "Cerros Orientales", icon: "fa-mountain", x: 680, y: 200 },
-        { id: "areas_protegidas", name: "Áreas protegidas", icon: "fa-shield", x: 610, y: 360 },
-        { id: "resiliencia", name: "Áreas resiliencia climática", icon: "fa-leaf", x: 620, y: 420 },
-        { id: "complejos_paramos", name: "Complejos páramos", icon: "fa-mountain", x: 730, y: 360 },
-        { id: "conectores", name: "Conectores ecosistémicos", icon: "fa-arrows-spin", x: 430, y: 300 }
+        { id: "rios", name: "Ríos", x: 330, y: 360 },
+        { id: "quebradas", name: "Quebradas", x: 290, y: 280 },
+        { id: "humedales", name: "Humedales", x: 520, y: 450 },
+        { id: "bosques", name: "Bosques Urbanos", x: 300, y: 440 },
+        { id: "vegetacion", name: "Coberturas vegetales", x: 360, y: 560 },
+        { id: "parques", name: "Parques ecológicos", x: 660, y: 270 },
+        { id: "cerros", name: "Cerros Orientales", x: 680, y: 200 },
+        { id: "areas_protegidas", name: "Áreas protegidas", x: 610, y: 360 },
+        { id: "resiliencia", name: "Áreas resiliencia", x: 620, y: 420 },
+        { id: "paramos", name: "Complejos páramos", x: 730, y: 360 },
+        { id: "conectores", name: "Conectores", x: 430, y: 300 }
       ],
       relaciones: [
-        { source: "quebradas", target: "rios", type: "Directa", sustento: "Las quebradas alimentan los ríos principales" },
-        { source: "rios", target: "humedales", type: "Directa", sustento: "Los ríos conectan con humedales" },
-        { source: "humedales", target: "resiliencia", type: "Resiliencia", sustento: "Humedales para mitigación climática" },
-        { source: "conectores", target: "bosques", type: "Directa", sustento: "Conectores articulan bosques urbanos" },
-        { source: "conectores", target: "parques_montaña", type: "Directa", sustento: "Conectores hacia parques de montaña" },
-        { source: "conectores", target: "vegetacion", type: "Soporte", sustento: "Conectores requieren coberturas vegetales" }
+        { source: "quebradas", target: "rios", type: "Directa" },
+        { source: "rios", target: "humedales", type: "Directa" },
+        { source: "humedales", target: "resiliencia", type: "Resiliencia" },
+        { source: "conectores", target: "bosques", type: "Directa" },
+        { source: "conectores", target: "parques", type: "Directa" },
+        { source: "conectores", target: "vegetacion", type: "Soporte" }
       ]
     },
     EFC: {
-      name: "Estructura Funcional y del Cuidado",
-      color: "#5b8def",
-      icon: "fa-home",
       conceptos: [
-        { id: "vivienda", name: "Vivienda", icon: "fa-home", x: 520, y: 450 },
-        { id: "ciclorrutas", name: "Ciclorrutas", icon: "fa-person-biking", x: 290, y: 360 },
-        { id: "transporte", name: "Transporte público", icon: "fa-bus", x: 340, y: 480 },
-        { id: "servicios_cuidado", name: "Servicios de cuidado", icon: "fa-heart", x: 520, y: 300 },
-        { id: "equipamientos", name: "Equipamientos", icon: "fa-building", x: 700, y: 310 },
-        { id: "manzanas_cuidado", name: "Manzanas del Cuidado", icon: "fa-cubes", x: 520, y: 550 },
-        { id: "parques", name: "Parques", icon: "fa-tree", x: 410, y: 580 },
-        { id: "conectores_verdes", name: "Conectores verdes", icon: "fa-arrows-spin", x: 370, y: 380 },
-        { id: "espacios_publicos", name: "Espacios públicos", icon: "fa-square", x: 560, y: 380 }
+        { id: "vivienda", name: "Vivienda", x: 520, y: 450 },
+        { id: "ciclorrutas", name: "Ciclorrutas", x: 290, y: 360 },
+        { id: "transporte", name: "Transporte público", x: 340, y: 480 },
+        { id: "servicios", name: "Servicios de cuidado", x: 520, y: 300 },
+        { id: "equipamientos", name: "Equipamientos", x: 700, y: 310 },
+        { id: "manzanas", name: "Manzanas del Cuidado", x: 520, y: 550 },
+        { id: "parques2", name: "Parques", x: 410, y: 580 },
+        { id: "conectores2", name: "Conectores verdes", x: 370, y: 380 }
       ],
       relaciones: [
-        { source: "vivienda", target: "equipamientos", type: "Directa", sustento: "Vivienda articulada con equipamientos" },
-        { source: "manzanas_cuidado", target: "servicios_cuidado", type: "Directa", sustento: "Manzanas del cuidado integran servicios" },
-        { source: "transporte", target: "ciclorrutas", type: "Soporte", sustento: "Transporte complementado con ciclorrutas" },
-        { source: "conectores_verdes", target: "parques", type: "Directa", sustento: "Conectores articulan parques" }
+        { source: "vivienda", target: "equipamientos", type: "Directa" },
+        { source: "manzanas", target: "servicios", type: "Directa" },
+        { source: "transporte", target: "ciclorrutas", type: "Soporte" },
+        { source: "conectores2", target: "parques2", type: "Directa" }
       ]
     },
     ESECI: {
-      name: "Estructura Socioeconómica, Creativa y de Innovación",
-      color: "#ef9552",
-      icon: "fa-handshake",
       conceptos: [
-        { id: "servicios_emp", name: "Servicios empresariales", icon: "fa-briefcase", x: 240, y: 360 },
-        { id: "plazas_mercado", name: "Plazas de mercado", icon: "fa-store", x: 410, y: 480 },
-        { id: "educacion", name: "Sistema de educación", icon: "fa-book", x: 520, y: 550 },
-        { id: "centros_financieros", name: "Centros financieros", icon: "fa-landmark", x: 440, y: 320 },
-        { id: "centros_especialistas", name: "Centros de especialistas", icon: "fa-building", x: 680, y: 320 },
-        { id: "zonas_turisticas", name: "Zonas turísticas", icon: "fa-map", x: 680, y: 560 },
-        { id: "produccion_artesanal", name: "Producción artesanal", icon: "fa-gem", x: 380, y: 650 },
-        { id: "industrias", name: "Industrias", icon: "fa-industry", x: 640, y: 450 }
+        { id: "distrito", name: "Distrito Centro Tecnológico", x: 200, y: 350 },
+        { id: "servicios", name: "Servicios empresariales", x: 400, y: 300 },
+        { id: "educacion", name: "Sistema de educación", x: 400, y: 450 },
+        { id: "industrias", name: "Zonas industriales", x: 600, y: 400 },
+        { id: "plazas", name: "Plazas de mercado", x: 600, y: 500 },
+        { id: "abastecimiento", name: "Centros abastecimiento", x: 500, y: 550 },
+        { id: "turistico", name: "Zonas turísticas", x: 300, y: 550 },
+        { id: "financieros", name: "Centros financieros", x: 700, y: 350 }
       ],
       relaciones: [
-        { source: "servicios_emp", target: "centros_financieros", type: "Directa", sustento: "Servicios en centros financieros" },
-        { source: "plazas_mercado", target: "educacion", type: "Directa", sustento: "Plazas y espacios educativos integrados" },
-        { source: "centros_especialistas", target: "industrias", type: "Directa", sustento: "Especialistas conectados con industrias" }
+        { source: "distrito", target: "servicios", type: "Directa" },
+        { source: "distrito", target: "educacion", type: "Directa" },
+        { source: "educacion", target: "servicios", type: "Directa" },
+        { source: "educacion", target: "industrias", type: "Directa" },
+        { source: "industrias", target: "servicios", type: "Directa" },
+        { source: "industrias", target: "plazas", type: "Directa" },
+        { source: "plazas", target: "abastecimiento", type: "Directa" },
+        { source: "turistico", target: "plazas", type: "Directa" },
+        { source: "financieros", target: "servicios", type: "Directa" }
       ]
     },
     EIP: {
-      name: "Estructura Integradora de Patrimonios",
-      color: "#a276f2",
-      icon: "fa-crown",
       conceptos: [
-        { id: "patrimonio_natural", name: "Patrimonio Natural", icon: "fa-leaf", x: 350, y: 520 },
-        { id: "patrimonio_arqueologico", name: "Patrimonio arqueológico", icon: "fa-gem", x: 310, y: 410 },
-        { id: "patrimonio_inmaterial", name: "Patrimonio inmaterial", icon: "fa-book", x: 630, y: 360 },
-        { id: "patrimonio_material", name: "Patrimonio material", icon: "fa-landmark", x: 540, y: 520 },
-        { id: "sitios_sagrados", name: "Sitios sagrados", icon: "fa-church", x: 320, y: 390 },
-        { id: "identidades", name: "Identidades", icon: "fa-people-group", x: 450, y: 330 }
+        { id: "patrimonio_material", name: "Patrimonio material", x: 350, y: 400 },
+        { id: "patrimonio_inmaterial", name: "Patrimonio inmaterial", x: 550, y: 350 },
+        { id: "patrimonio_natural", name: "Patrimonio natural", x: 450, y: 500 },
+        { id: "patrimonio_arqueologico", name: "Patrimonio arqueológico", x: 250, y: 450 },
+        { id: "sitios_sagrados", name: "Sitios Sagrados", x: 650, y: 450 }
       ],
       relaciones: [
-        { source: "patrimonio_natural", target: "patrimonio_arqueologico", type: "Directa", sustento: "Patrimonio natural y arqueológico integrados" },
-        { source: "patrimonio_arqueologico", target: "sitios_sagrados", type: "Soporte", sustento: "Sitios arqueológicos con significancia sagrada" },
-        { source: "patrimonio_inmaterial", target: "identidades", type: "Directa", sustento: "Patrimonio inmaterial define identidades" }
+        { source: "patrimonio_material", target: "patrimonio_inmaterial", type: "Soporte" },
+        { source: "patrimonio_material", target: "patrimonio_natural", type: "Soporte" },
+        { source: "patrimonio_inmaterial", target: "patrimonio_natural", type: "Soporte" },
+        { source: "patrimonio_arqueologico", target: "patrimonio_natural", type: "Resiliencia" },
+        { source: "patrimonio_arqueologico", target: "patrimonio_material", type: "Soporte" },
+        { source: "sitios_sagrados", target: "patrimonio_inmaterial", type: "Soporte" }
       ]
     }
   };
-  
-  console.log("✓ Data cargada");
-  renderNetwork();
 }
 
-// ========== RENDER NETWORK CON ANIMACIONES ==========
+// ========== RENDER ==========
 function renderNetwork() {
-  if (isAnimating) return;
-  isAnimating = true;
-
   const svg = d3.select("#networkViz");
+  svg.selectAll("*").remove();
+
+  const struct = currentStructure;
+  const data = allData[struct];
   
-  // FADE OUT de elementos existentes
-  svg.selectAll("g.edge-group, g.pot-node")
-    .transition()
-    .duration(300)
-    .style("opacity", 0)
-    .on("end", () => {
-      svg.selectAll("*").remove();
-      buildNetwork(svg);
-    });
-    
-  // Si no hay nada, simplemente construir
-  if (svg.selectAll("g.pot-node").size() === 0) {
-    buildNetwork(svg);
-  }
-}
+  if (!data) return;
 
-function buildNetwork(svg) {
-  const nodes = [];
-  const edges = [];
-  const nodeMap = new Map();
+  // Preparar nodos y aristas
+  const nodes = data.conceptos.map(c => ({
+    id: c.id,
+    name: c.name,
+    x: c.x,
+    y: c.y,
+    vx: 0,
+    vy: 0
+  }));
 
-  const visibleStructures = Object.keys(activeStructures).filter(k => activeStructures[k]);
-
-  if (viewMode === "single") {
-    const struct = currentStructure;
-    const data = allData[struct];
-    
-    console.log(`Building ${struct}:`, data);
-    
-    if (data && data.conceptos) {
-      data.conceptos.forEach(concept => {
-        const id = `${struct}:${concept.id}`;
-        const node = {
-          id,
-          label: concept.name,
-          icon: concept.icon,
-          x: concept.x || (700 + Math.random() * 200 - 100),
-          y: concept.y || (400 + Math.random() * 200 - 100),
-          vx: 0,
-          vy: 0,
-          structure: struct,
-          color: STRUCTURES[struct].color
-        };
-        nodes.push(node);
-        nodeMap.set(id, node);
-      });
-
-      if (data.relaciones) {
-        data.relaciones.forEach(edge => {
-          const source = `${struct}:${edge.source}`;
-          const target = `${struct}:${edge.target}`;
-          const srcNode = nodeMap.get(source);
-          const tgtNode = nodeMap.get(target);
-          
-          if (srcNode && tgtNode) {
-            edges.push({
-              source: srcNode,
-              target: tgtNode,
-              type: edge.type,
-              sustento: edge.sustento
-            });
-          }
-        });
-      }
-    }
-  } else {
-    visibleStructures.forEach(struct => {
-      const data = allData[struct];
-      if (!data || !data.conceptos) return;
-
-      data.conceptos.forEach(concept => {
-        const id = `${struct}:${concept.id}`;
-        const node = {
-          id,
-          label: concept.name,
-          icon: concept.icon,
-          x: concept.x || (700 + Math.random() * 200 - 100),
-          y: concept.y || (400 + Math.random() * 200 - 100),
-          vx: 0,
-          vy: 0,
-          structure: struct,
-          color: STRUCTURES[struct].color
-        };
-        nodes.push(node);
-        nodeMap.set(id, node);
-      });
-
-      if (data.relaciones) {
-        data.relaciones.forEach(edge => {
-          const source = `${struct}:${edge.source}`;
-          const target = `${struct}:${edge.target}`;
-          const srcNode = nodeMap.get(source);
-          const tgtNode = nodeMap.get(target);
-          
-          if (srcNode && tgtNode) {
-            edges.push({
-              source: srcNode,
-              target: tgtNode,
-              type: edge.type,
-              sustento: edge.sustento,
-              structure: struct
-            });
-          }
-        });
-      }
-    });
-  }
-
-  console.log(`Nodes: ${nodes.length}, Edges: ${edges.length}`);
+  const nodeMap = new Map(nodes.map(n => [n.id, n]));
+  
+  const edges = data.relaciones.map(r => ({
+    source: nodeMap.get(r.source),
+    target: nodeMap.get(r.target),
+    type: r.type
+  })).filter(e => e.source && e.target);
 
   // Crear simulación
   simulation = d3.forceSimulation(nodes)
-    .force("link", d3.forceLink(edges)
-      .distance(120)
-      .strength(0.2))
-    .force("charge", d3.forceManyBody().strength(-250).distanceMax(300))
+    .force("link", d3.forceLink(edges).distance(120).strength(0.2))
+    .force("charge", d3.forceManyBody().strength(-200))
     .force("center", d3.forceCenter(700, 400))
-    .force("collision", d3.forceCollide(50))
-    .alphaDecay(0.05);
+    .force("collision", d3.forceCollide(50));
 
-  // Dibujar aristas
-  const edgeGroups = svg.selectAll("g.edge-group")
-    .data(edges, (d, i) => i)
-    .join("g")
-    .attr("class", "edge-group")
-    .attr("data-index", (d, i) => i)
-    .style("--edge-color", d => d.source.color)
-    .style("opacity", 0);
-
-  edgeGroups.append("line")
-    .attr("class", "pot-edge")
-    .attr("stroke", d => RELATION_STYLE[d.type]?.color || "#ffffff")
-    .attr("stroke-width", d => RELATION_STYLE[d.type]?.width || 2)
+  // Aristas
+  const links = svg.append("g")
+    .selectAll("line")
+    .data(edges)
+    .join("line")
+    .attr("stroke", d => d.type === "Directa" ? "#ffffff" : d.type === "Soporte" ? "#ef9552" : "#4ade80")
+    .attr("stroke-width", 2)
     .attr("opacity", 0.6);
 
-  edgeGroups.append("line")
-    .attr("class", "pot-edge-hit")
-    .attr("stroke-width", 12)
-    .attr("stroke", "transparent")
-    .on("click", (event, d) => showEdgeInfo(d));
-
-  // Dibujar nodos
-  const nodeGroups = svg.selectAll("g.pot-node")
-    .data(nodes, d => d.id)
+  // Nodos
+  const nodeGroups = svg.append("g")
+    .selectAll("g")
+    .data(nodes)
     .join("g")
-    .attr("class", "pot-node")
-    .style("opacity", 0)
     .call(drag(simulation));
 
   nodeGroups.append("circle")
-    .attr("class", "node-circle")
     .attr("r", 35)
-    .attr("fill", d => d.color)
+    .attr("fill", STRUCTURES[struct].color)
     .attr("opacity", 0.15)
-    .attr("stroke", d => d.color)
-    .attr("stroke-width", 1.5)
-    .on("dblclick", (event, d) => toggleNode(d.id))
-    .on("click", (event, d) => {
-      event.stopPropagation();
-      if (event.detail === 3) isolateNodeFlow(d.id);
-    });
+    .attr("stroke", STRUCTURES[struct].color)
+    .attr("stroke-width", 1.5);
 
   nodeGroups.append("text")
-    .attr("class", "node-icon")
     .attr("text-anchor", "middle")
-    .attr("dy", "-0.8em")
-    .attr("font-size", "18px")
-    .attr("pointer-events", "none")
-    .attr("fill", d => d.color)
-    .html(d => `<tspan class="fas ${d.icon}">●</tspan>`);
-
-  nodeGroups.append("text")
-    .attr("class", "node-label")
-    .attr("text-anchor", "middle")
-    .attr("dy", "0.4em")
-    .attr("pointer-events", "none")
+    .attr("dy", "0.3em")
     .attr("fill", "#e7eaf2")
-    .attr("font-size", "11px")
-    .text(d => d.label);
+    .attr("font-size", "10px")
+    .attr("pointer-events", "none")
+    .text(d => d.name)
+    .style("word-wrap", "break-word");
 
-  // Actualizar posiciones
+  // Actualizar en cada tick
   simulation.on("tick", () => {
-    edgeGroups.select("line.pot-edge")
+    links
       .attr("x1", d => d.source.x)
       .attr("y1", d => d.source.y)
       .attr("x2", d => d.target.x)
       .attr("y2", d => d.target.y);
 
-    edgeGroups.select("line.pot-edge-hit")
-      .attr("x1", d => d.source.x)
-      .attr("y1", d => d.source.y)
-      .attr("x2", d => d.target.x)
-      .attr("y2", d => d.target.y);
-
-    nodeGroups.attr("transform", d => `translate(${d.x},${d.y})`);
+    nodeGroups
+      .attr("transform", d => `translate(${d.x},${d.y})`);
   });
 
-  // FADE IN suave
-  edgeGroups
-    .transition()
-    .duration(500)
-    .delay(200)
-    .style("opacity", 1);
-
-  nodeGroups
-    .transition()
-    .duration(500)
-    .style("opacity", 1);
-
-  setTimeout(() => { isAnimating = false; }, 700);
+  console.log(`✓ Renderizado ${struct}: ${nodes.length} nodos, ${edges.length} aristas`);
 }
 
-// ========== CONTROLES ==========
-function setViewMode(mode) {
-  viewMode = mode;
-  document.querySelectorAll(".network-controls .control-btn").forEach(btn => btn.classList.remove("active"));
-  event.currentTarget.classList.add("active");
-  renderNetwork();
-}
-
-function toggleStructure(structure) {
-  activeStructures[structure] = !activeStructures[structure];
-  const input = document.getElementById(`toggle-${structure.toLowerCase()}`);
-  if (input) input.checked = activeStructures[structure];
-  
-  const card = document.querySelector(`.structure-card[data-structure="${structure}"]`);
-  if (card) {
-    card.style.transition = "all 0.3s ease";
-    card.style.opacity = activeStructures[structure] ? "1" : "0.5";
-    card.style.transform = activeStructures[structure] ? "scale(1)" : "scale(0.95)";
-  }
-  
-  if (viewMode === "unified") {
-    renderNetwork();
-  } else if (currentStructure === structure && !activeStructures[structure]) {
-    const available = Object.keys(activeStructures).find(s => activeStructures[s]);
-    if (available) {
-      currentStructure = available;
-      renderNetwork();
-    }
-  }
-}
-
-function showEdgeInfo(edge) {
-  selectedEdge = edge;
-  const panel = document.getElementById("edgeInfoPanel");
-  const title = document.getElementById("edgeInfoTitle");
-  const type = document.getElementById("edgeInfoType");
-  const quote = document.getElementById("edgeInfoQuote");
-
-  title.textContent = `${edge.source.label} → ${edge.target.label}`;
-  type.textContent = edge.type;
-  quote.textContent = `"${edge.sustento}"`;
-
-  panel.classList.add("visible");
-}
-
-function hideEdgeInfo() {
-  document.getElementById("edgeInfoPanel").classList.remove("visible");
-  selectedEdge = null;
-}
-
-function toggleNode(nodeId) {
-  const nodes = d3.selectAll(".pot-node");
-  nodes.each(function(d) {
-    if (d.id === nodeId) {
-      d3.select(this).classed("node-off", !d3.select(this).classed("node-off"));
-    }
-  });
-}
-
-function isolateNodeFlow(nodeId) {
-  console.log("Aislando flujo de:", nodeId);
-}
-
-// ========== DRAG BEHAVIOR ==========
+// ========== DRAG ==========
 function drag(simulation) {
   function dragstarted(event) {
     if (!event.active) simulation.alphaTarget(0.3).restart();
     event.subject.fx = event.subject.x;
     event.subject.fy = event.subject.y;
   }
-
   function dragged(event) {
     event.subject.fx = event.x;
     event.subject.fy = event.y;
   }
-
   function dragended(event) {
     if (!event.active) simulation.alphaTarget(0);
     event.subject.fx = null;
     event.subject.fy = null;
   }
-
   return d3.drag()
     .on("start", dragstarted)
     .on("drag", dragged)
     .on("end", dragended);
 }
 
-// ========== EVENT LISTENERS ==========
-document.addEventListener("DOMContentLoaded", () => {
-  loadData();
+// ========== CONTROLES ==========
+function setViewMode(mode) {
+  viewMode = mode;
+  document.querySelectorAll(".control-btn").forEach(b => b.classList.remove("active"));
+  event.currentTarget.classList.add("active");
+  renderNetwork();
+}
 
+function toggleStructure(struct) {
+  activeStructures[struct] = !activeStructures[struct];
+  const input = document.getElementById(`toggle-${struct.toLowerCase()}`);
+  if (input) input.checked = activeStructures[struct];
+  
+  if (currentStructure === struct && !activeStructures[struct]) {
+    const next = Object.keys(activeStructures).find(s => activeStructures[s]);
+    if (next) {
+      currentStructure = next;
+      renderNetwork();
+    }
+  } else if (activeStructures[struct]) {
+    currentStructure = struct;
+    renderNetwork();
+  }
+}
+
+function hideEdgeInfo() {
+  document.getElementById("edgeInfoPanel").classList.remove("visible");
+}
+
+// ========== INIT ==========
+document.addEventListener("DOMContentLoaded", () => {
+  initData();
+  renderNetwork();
+
+  // Toggle listeners
   document.querySelectorAll(".structure-input").forEach(input => {
     input.addEventListener("change", (e) => {
       const struct = e.target.id.replace("toggle-", "").toUpperCase();
@@ -443,19 +246,17 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+  // Close panel
   document.getElementById("edgeInfoClose")?.addEventListener("click", hideEdgeInfo);
 
+  // Legend
   document.querySelectorAll(".legend-item input").forEach(input => {
     input.addEventListener("change", (e) => {
       const type = e.target.closest(".legend-item").dataset.type;
-      if (e.target.checked) {
-        typeOff.delete(type);
-      } else {
-        typeOff.add(type);
-      }
-      d3.selectAll(".edge-group").style("display", (d) => {
-        return typeOff.has(d.type) ? "none" : "block";
-      });
+      const display = e.target.checked ? "block" : "none";
+      d3.selectAll("line").style("display", d => 
+        (d.type === type) ? display : null
+      );
     });
   });
 });
