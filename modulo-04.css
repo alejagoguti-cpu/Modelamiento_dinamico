@@ -347,6 +347,8 @@ body {
 .swatch-e2 { background: #5b8def; }
 .swatch-e3 { background: #ef9552; }
 .swatch-e4 { background: #a276f2; }
+.swatch-concepto { background: #2fd4c8; }
+.swatch-macro { background: #e94d8c; }
 
 .node-cat-tag {
   font-size: 9px;
@@ -538,6 +540,24 @@ body {
   flex-shrink: 0;
 }
 
+/* Tipos de tensión - Módulo 02 */
+.swatch-incoherence { border-color: #ef4444; }
+.swatch-contradiction { border-color: #f472b6; }
+.swatch-disconnection { border-color: #60a5fa; }
+.swatch-hierarchy { border-color: #c084fc; }
+.swatch-peripheral { border-color: #fbbf24; }
+
+/* Relaciones operacionales — Módulo 03 */
+.swatch-dependencia      { border-color: #ef4444; }
+.swatch-condicionamiento { border-color: #f472b6; }
+.swatch-causal           { border-color: #60a5fa; }
+.swatch-funcional        { border-color: #c084fc; }
+.swatch-complementariedad { border-color: #fbbf24; }
+.swatch-conflicto        { border-color: #f87171; }
+.swatch-jerarquia        { border-color: #a78bfa; }
+.swatch-retroalimentacion { border-color: #10b981; }
+.swatch-regulacion { border-color: #38bdf8; }
+
 /* Tipos de relación del Módulo 01 */
 .swatch-soporte    { border-color: #ef9552; }
 .swatch-resiliencia { border-color: #5b8def; }
@@ -577,7 +597,8 @@ body {
 .ods-node.node-focus-active .node-ring { filter: drop-shadow(0 0 8px #fff); }
 
 .edge-group { cursor: pointer; }
-.edge-group.hidden-edge { display: none; }
+.edge-group.hidden-edge { visibility: hidden; }
+.ods-node.hidden-node { display: none; }
 .edge-group { transition: opacity .2s; }
 .edge-group.edge-focus-dim { opacity: 0.05; }
 
