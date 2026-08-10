@@ -135,6 +135,25 @@ const RAW_EDGES = [
   { s: "sitios_sagrados", t: "pinmaterial", type: "resiliencia", directa: true, cat: "e4", pagina: "126", sustento: "El sistema de sitios sagrados sostiene el patrimonio inmaterial: las prácticas, rituales y memorias se arraigan en esos lugares." },
   { s: "pinmaterial",  t: "pnatural",    type: "resiliencia", directa: true, cat: "e4", pagina: "126", sustento: "El patrimonio inmaterial se entrelaza con el patrimonio natural: los saberes y usos tradicionales dependen de los ecosistemas." },
   { s: "pnatural",     t: "pecomaterial",type: "resiliencia", directa: true, cat: "e4", pagina: "126", sustento: "El patrimonio natural integra el patrimonio ecológico material: la conservación de la naturaleza es parte del patrimonio colectivo." },
+
+  /* === CONEXIONES ENTRE ESTRUCTURAS === */
+  /* EEP ↔ EFC */
+  { s: "coberturas", t: "corredores", type: "soporte", directa: true, cat: "e1-e2", pagina: "92", sustento: "Los corredores verdes tienen diseño ecosistémico integrado a las coberturas vegetales: el espacio público para movilidad sostiene la conectividad de la estructura ecológica." },
+  { s: "humedales", t: "manzanas", type: "soporte", directa: false, cat: "e1-e2", pagina: "43", sustento: "Los humedales y áreas de resiliencia climática rodean y sustentam las Manzanas del Cuidado: la infraestructura de servicios de cuidado se integra a espacios verdes." },
+  { s: "rios", t: "transporte", type: "soporte", directa: false, cat: "e1-e2", pagina: "43", sustento: "Los ríos estructuran los corredores de transporte público: el drenaje sostenible y el trasporte se articulan en el mismo espacio." },
+  
+  /* EFC ↔ ESECI */
+  { s: "redvial", t: "financieros", type: "soporte", directa: false, cat: "e2-e3", pagina: "170", sustento: "La red vial conecta los centros financieros con las aglomeraciones económicas de la ciudad: la infraestructura funcional habilita la concentración de servicios empresariales." },
+  { s: "manzanas", t: "plazas", type: "soporte", directa: false, cat: "e2-e3", pagina: "43", sustento: "Las Manzanas del Cuidado integran a las plazas de mercado como infraestructura de economía local y distribución: el comercio tradicional es sostén de la vida cotidiana." },
+  { s: "equip", t: "tecnodistrito", type: "soporte", directa: false, cat: "e2-e3", pagina: "170", sustento: "Los equipamientos de educación superior albergan nodos del distrito tecnológico: la investigación y la innovación se localizan en infraestructura de formación." },
+
+  /* ESECI ↔ Patrimonio */
+  { s: "turismo", t: "pinmaterial", type: "soporte", directa: false, cat: "e3-e4", pagina: "239-241", sustento: "Las zonas de interés turístico se articulan con el patrimonio inmaterial: el turismo cultural reconoce y dinamiza los saberes y prácticas locales de la ciudad." },
+  { s: "artesanal", t: "pnatural", type: "soporte", directa: false, cat: "e3-e4", pagina: "239-241", sustento: "La producción artesanal depende del patrimonio natural: los saberes artesanales de materiales locales se arraigan en los ecosistemas." },
+
+  /* EEP ↔ Patrimonio */
+  { s: "coberturas", t: "pecomaterial", type: "resiliencia", directa: false, cat: "e1-e4", pagina: "126", sustento: "Las coberturas vegetales son patrimonio ecológico material: la continuidad de los ecosistemas urbanos sostiene la herencia natural de la ciudad." },
+  { s: "paisajes", t: "pinmaterial", type: "soporte", directa: false, cat: "e1-e4", pagina: "126", sustento: "Los paisajes sostenibles integran el patrimonio inmaterial: el conocimiento local sobre territorio y ambiente se enraiza en el paisaje vivido." },
 ];
 
 function nodeById(id) { return ODS_NODES.find(n => n.id === id); }
