@@ -584,7 +584,8 @@ body {
 .ods-node.node-focus-active .node-ring { filter: drop-shadow(0 0 8px #fff); }
 
 .edge-group { cursor: pointer; }
-.edge-group.hidden-edge { display: none; }
+.edge-group.hidden-edge { visibility: hidden; }
+.ods-node.hidden-node { display: none; }
 .edge-group { transition: opacity .2s; }
 .edge-group.edge-focus-dim { opacity: 0.05; }
 
