@@ -1,372 +1,542 @@
-// =============================================================================
-// DATOS DEL POT BOGOTÁ REVERDECE 2022-2035
-// =============================================================================
+// ============================================================================
+// MÓDULO 01: CONSTRUIR LA RED
+// Red interactiva de 130 nodos y 70+ relaciones de las 4 estructuras POT
+// ============================================================================
 
-const POT_DATA = {
-  "EEP": [
-    {"origen": "Quebradas", "destino": "Ríos", "tipo": "Directa", "sustento": "El agua llega a Bogotá por cientos de escorrentías, quebradas y ríos que alimentan las cuatro cuencas.", "page": "p. 51"},
-    {"origen": "Ríos", "destino": "Quebradas", "tipo": "Soporte", "sustento": "Las cuatro cuencas (Tunjuelo, Fucha, Salitre y Torca) que atraviesan la ciudad se alimentan de las quebradas y desembocan en el río Bogotá.", "page": "p. 51"},
-    {"origen": "Ríos", "destino": "Humedales", "tipo": "Directa", "sustento": "Los humedales son los ecosistemas más importantes tanto para la mitigación como para la adaptación al cambio climático, ligados al ciclo del río.", "page": "p. 51"},
-    {"origen": "Humedales", "destino": "Áreas protegidas", "tipo": "Soporte", "sustento": "El POT amplía en un 20% el área de humedales y declara dos nuevos como reservas.", "page": "p. 54"},
-    {"origen": "Conectores ecosistémicos", "destino": "Humedales", "tipo": "Directa", "sustento": "Los conectores abarcan espacios verdes hasta los humedales y parques de montaña.", "page": "p. 58"},
-    {"origen": "Conectores ecosistémicos", "destino": "Parques ecológicos de montaña", "tipo": "Directa", "sustento": "Los conectores incluyen parques ecológicos de montaña como Entrenubes y Soratama.", "page": "p. 58"},
-    {"origen": "Conectores ecosistémicos", "destino": "Áreas protegidas", "tipo": "Soporte", "sustento": "Los conectores priorizan coberturas vegetales que conecten las áreas protegidas.", "page": "p. 58"},
-    {"origen": "Conectores ecosistémicos", "destino": "Coberturas vegetales", "tipo": "Directa", "sustento": "Gracias al Manual de coberturas, los conectores priorizan más y mejores coberturas vegetales.", "page": "p. 58"},
-    {"origen": "Parques de borde", "destino": "Coberturas vegetales", "tipo": "Directa", "sustento": "La red de parques de borde contribuye a la mejora de las coberturas vegetales.", "page": "p. 58"},
-    {"origen": "Parques de borde", "destino": "Ríos", "tipo": "Resiliencia", "sustento": "Los parques de borde se establecen a lo largo de la ronda del río Bogotá.", "page": "p. 58"},
-    {"origen": "Áreas de resiliencia climática", "destino": "Coberturas vegetales", "tipo": "Resiliencia", "sustento": "Las áreas de resiliencia deben contar con intervenciones en coberturas que optimicen condiciones ambientales.", "page": "p. 58"},
-    {"origen": "Bosques urbanos", "destino": "Coberturas vegetales", "tipo": "Directa", "sustento": "El POT delinea 21 áreas estratégicas como bosques urbanos con nuevo manual de coberturas.", "page": "p. 57"},
-    {"origen": "Bosques urbanos", "destino": "Áreas protegidas", "tipo": "Indirecta", "sustento": "Los bosques urbanos incrementan la biodiversidad dentro de las áreas protegidas.", "page": "p. 57"},
-    {"origen": "Corredores montañosos", "destino": "Reservas forestales", "tipo": "Soporte", "sustento": "El POT protege corredores montañosos y reservas forestales como parte de la Estructura Ecológica Regional.", "page": "p. 22"},
-    {"origen": "Reservas forestales", "destino": "Ríos", "tipo": "Soporte", "sustento": "Las reservas forestales forman la Estructura Ecológica Regional que asegura el abastecimiento hídrico.", "page": "p. 22"},
-    {"origen": "Complejos de páramos", "destino": "Ríos", "tipo": "Soporte", "sustento": "El agua proviene del sistema de páramos más grande del mundo, por escorrentías, quebradas y ríos.", "page": "p. 51"},
-    {"origen": "Paisajes sostenibles", "destino": "Áreas protegidas", "tipo": "Soporte", "sustento": "El POT protege Paisajes Sostenibles y Parques Ecológicos de Montañas como conjunto.", "page": "p. 21"},
-    {"origen": "Áreas protegidas", "destino": "Complejos de páramos", "tipo": "Directa", "sustento": "El POT amplía protección sobre cerros orientales, corredor de páramos de Sumapaz y Chingaza.", "page": "p. 21"},
-    {"origen": "Humedales", "destino": "Áreas de resiliencia climática", "tipo": "Resiliencia", "sustento": "Los humedales regulan el agua, previenen inundaciones y son hogar de especies polinizadoras.", "page": "p. 57"},
-    {"origen": "Ciudades del mundo", "destino": "Humedales", "tipo": "Indirecta", "sustento": "Modelos Analítico 14 nodos", "page": "p. 51"}
-  ],
-  "EFC": [
-    {"origen": "Vivienda", "destino": "Equipamientos", "tipo": "Soporte", "sustento": "La vivienda se articula con los sistemas de cuidado y equipamientos comunitarios.", "page": "p. 29"},
-    {"origen": "Movilidad", "destino": "Vivienda", "tipo": "Directa", "sustento": "La movilidad conecta las comunidades con sus viviendas y servicios.", "page": "p. 30"},
-    {"origen": "Espacio público", "destino": "Equipamientos", "tipo": "Directa", "sustento": "El espacio público integra los equipamientos de servicios y cuidado.", "page": "p. 31"},
-    {"origen": "Equipamientos", "destino": "Salud", "tipo": "Soporte", "sustento": "Los equipamientos incluyen centros de salud comunitaria.", "page": "p. 32"},
-    {"origen": "Salud", "destino": "Educación", "tipo": "Soporte", "sustento": "La salud y educación son servicios complementarios de cuidado.", "page": "p. 32"},
-    {"origen": "Educación", "destino": "Comunidades", "tipo": "Directa", "sustento": "La educación fortalece el tejido comunitario.", "page": "p. 33"},
-    {"origen": "Comunidades", "destino": "Espacio público", "tipo": "Directa", "sustento": "Las comunidades se reúnen en espacios públicos compartidos.", "page": "p. 31"},
-    {"origen": "Infraestructura de servicios", "destino": "Agua potable", "tipo": "Directa", "sustento": "La infraestructura garantiza servicios de agua potable.", "page": "p. 34"},
-    {"origen": "Agua potable", "destino": "Vivienda", "tipo": "Soporte", "sustento": "El acceso a agua es fundamental para la vivienda digna.", "page": "p. 34"},
-    {"origen": "Saneamiento", "destino": "Vivienda", "tipo": "Soporte", "sustento": "El saneamiento es esencial para la calidad de vida.", "page": "p. 35"},
-    {"origen": "Energía", "destino": "Equipamientos", "tipo": "Soporte", "sustento": "La energía permite el funcionamiento de equipamientos.", "page": "p. 36"},
-    {"origen": "Telecomunicaciones", "destino": "Comunidades", "tipo": "Indirecta", "sustento": "Las TIC conectan a las comunidades.", "page": "p. 37"},
-    {"origen": "Transporte público", "destino": "Movilidad", "tipo": "Directa", "sustento": "El transporte público es la base de la movilidad urbana.", "page": "p. 30"},
-    {"origen": "Ciclocarriles", "destino": "Movilidad", "tipo": "Soporte", "sustento": "Los ciclocarriles complementan el sistema de movilidad.", "page": "p. 39"},
-    {"origen": "Espacios de recreación", "destino": "Espacio público", "tipo": "Directa", "sustento": "Los espacios recreativos enriquecen el espacio público.", "page": "p. 40"},
-    {"origen": "Deportes", "destino": "Comunidades", "tipo": "Soporte", "sustento": "El deporte cohesiona a las comunidades.", "page": "p. 41"},
-    {"origen": "Cultura", "destino": "Equipamientos", "tipo": "Directa", "sustento": "La cultura se desarrolla en equipamientos especializados.", "page": "p. 42"},
-    {"origen": "Seguridad alimentaria", "destino": "Vivienda", "tipo": "Soporte", "sustento": "La seguridad alimentaria es esencial para la vida digna.", "page": "p. 43"},
-    {"origen": "Huertos urbanos", "destino": "Seguridad alimentaria", "tipo": "Directa", "sustento": "Los huertos urbanos producen alimentos frescos.", "page": "p. 44"},
-    {"origen": "Cuidadores y cuidadoras", "destino": "Comunidades", "tipo": "Directa", "sustento": "Los cuidadores fortalecen el tejido comunitario.", "page": "p. 45"}
-  ],
-  "ESECI": [
-    {"origen": "Economía creativa", "destino": "Empleo", "tipo": "Directa", "sustento": "La economía creativa genera empleos locales y sostenibles.", "page": "p. 31"},
-    {"origen": "Distritos creativos", "destino": "Economía creativa", "tipo": "Soporte", "sustento": "Los distritos creativos son espacios de innovación y creación.", "page": "p. 46"},
-    {"origen": "Turismo", "destino": "Empleo", "tipo": "Directa", "sustento": "El turismo genera empleo y dinámicas económicas locales.", "page": "p. 47"},
-    {"origen": "Comercio local", "destino": "Empleo", "tipo": "Directa", "sustento": "El comercio local genera oportunidades de trabajo.", "page": "p. 48"},
-    {"origen": "Emprendimiento", "destino": "Economía creativa", "tipo": "Soporte", "sustento": "El emprendimiento impulsa la innovación económica.", "page": "p. 49"},
-    {"origen": "Innovación tecnológica", "destino": "Emprendimiento", "tipo": "Directa", "sustento": "La innovación tecnológica potencia emprendimientos.", "page": "p. 50"},
-    {"origen": "Formación técnica", "destino": "Emprendimiento", "tipo": "Soporte", "sustento": "La formación técnica prepara emprendedores.", "page": "p. 51"},
-    {"origen": "Investigación", "destino": "Innovación tecnológica", "tipo": "Directa", "sustento": "La investigación genera innovaciones.", "page": "p. 52"},
-    {"origen": "Universidades", "destino": "Investigación", "tipo": "Soporte", "sustento": "Las universidades generan conocimiento y investigación.", "page": "p. 53"},
-    {"origen": "Centros de innovación", "destino": "Emprendimiento", "tipo": "Soporte", "sustento": "Los centros de innovación apoyan emprendimientos.", "page": "p. 54"},
-    {"origen": "Finanzas solidarias", "destino": "Emprendimiento", "tipo": "Soporte", "sustento": "Las finanzas solidarias financian emprendimientos locales.", "page": "p. 55"},
-    {"origen": "Cooperativas", "destino": "Economía creativa", "tipo": "Directa", "sustento": "Las cooperativas impulsan la economía solidaria.", "page": "p. 56"},
-    {"origen": "Comercio justo", "destino": "Comercio local", "tipo": "Directa", "sustento": "El comercio justo garantiza prácticas éticas.", "page": "p. 57"},
-    {"origen": "Producción sostenible", "destino": "Economía creativa", "tipo": "Soporte", "sustento": "La producción sostenible es modelo de la nueva economía.", "page": "p. 58"},
-    {"origen": "Bienes y servicios", "destino": "Empleo", "tipo": "Indirecta", "sustento": "Los bienes y servicios generan valor y empleo.", "page": "p. 59"},
-    {"origen": "Mercados locales", "destino": "Comercio local", "tipo": "Directa", "sustento": "Los mercados locales dinamizan el comercio.", "page": "p. 60"},
-    {"origen": "Agricultura urbana", "destino": "Producción sostenible", "tipo": "Directa", "sustento": "La agricultura urbana produce alimentos localmente.", "page": "p. 61"},
-    {"origen": "Agroindustria", "destino": "Empleo", "tipo": "Soporte", "sustento": "La agroindustria genera valor agregado y empleo.", "page": "p. 62"}
-  ],
-  "EIP": [
-    {"origen": "Patrimonios", "destino": "Patrimonio material", "tipo": "Directa", "sustento": "Por primera vez un POT contempla todas las manifestaciones culturales.", "page": "p. 183"},
-    {"origen": "Patrimonio material", "destino": "Memoria", "tipo": "Directa", "sustento": "Oficios tradicionales preservan la memoria histórica del sector.", "page": "p. 185"},
-    {"origen": "Prácticas culturales", "destino": "Dinámicas comunitarias", "tipo": "Directa", "sustento": "El POT tiene en cuenta todas las manifestaciones culturales y ancestrales.", "page": "p. 185"},
-    {"origen": "Patrimonio natural", "destino": "Patrimonio material", "tipo": "Directa", "sustento": "El nuevo POT considera los patrimonios material, natural y arqueológico.", "page": "p. 185"},
-    {"origen": "Saberes del lugar", "destino": "Turismo", "tipo": "Soporte", "sustento": "El turismo responsable vincula residentes y saberes del lugar.", "page": "p. 31"},
-    {"origen": "Identidades", "destino": "Prácticas culturales", "tipo": "Directa", "sustento": "El Distrito reconoce e integra las manifestaciones culturales.", "page": "p. 183"},
-    {"origen": "Patrimonio local", "destino": "Dinámicas comunitarias", "tipo": "Soporte", "sustento": "El turismo sostenible reconoce el patrimonio local.", "page": "p. 31"},
-    {"origen": "Modos de habitar", "destino": "Vivienda", "tipo": "Directa", "sustento": "El POT reconoce el habitar próximo de oficios y tradiciones.", "page": "p. 185"},
-    {"origen": "Cultura", "destino": "Patrimonio inmaterial", "tipo": "Directa", "sustento": "Los Distritos Creativos generan encuentros culturales.", "page": "p. 183"},
-    {"origen": "Dinámicas comunitarias", "destino": "UPL", "tipo": "Soporte", "sustento": "Las nuevas localidades reconocen y protegen patrimonios e identidades.", "page": "p. 17"},
-    {"origen": "Memoria", "destino": "Cultura", "tipo": "Directa", "sustento": "Los oficios tradicionales nutren la memoria de los bogotanos.", "page": "p. 185"},
-    {"origen": "Patrimonio inmaterial", "destino": "Identidades", "tipo": "Directa", "sustento": "El patrimonio inmaterial es fundante de las identidades.", "page": "p. 186"}
-  ]
-};
+// DATOS: 130 nodos distribuidos en 4 sistemas
+const NODES_DATA = [
+  // SISTEMA AMBIENTAL Y EEP (40 nodos)
+  { id: "eep-1", name: "Estructura Ecológica Principal", group: "amb", category: "hub" },
+  { id: "eep-2", name: "Corredor Ecológico Rio Bogotá", group: "amb", category: "main" },
+  { id: "eep-3", name: "Parques Metropolitanos", group: "amb", category: "main" },
+  { id: "eep-4", name: "Humedales Protegidos", group: "amb", category: "main" },
+  { id: "eep-5", name: "Bosques de Protección", group: "amb", category: "main" },
+  { id: "eep-6", name: "Zonas de Reserva", group: "amb", category: "secondary" },
+  { id: "eep-7", name: "Conectores Ecológicos", group: "amb", category: "secondary" },
+  { id: "eep-8", name: "Áreas de Amortiguamiento", group: "amb", category: "secondary" },
+  { id: "eep-9", name: "Ciclo del Agua Urbana", group: "amb", category: "secondary" },
+  { id: "eep-10", name: "Biodiversidad Local", group: "amb", category: "secondary" },
+  { id: "eep-11", name: "Calidad del Aire", group: "amb", category: "secondary" },
+  { id: "eep-12", name: "Mitigación Climática", group: "amb", category: "secondary" },
+  { id: "eep-13", name: "Suelos Productivos", group: "amb", category: "secondary" },
+  { id: "eep-14", name: "Agricultura Urbana", group: "amb", category: "secondary" },
+  { id: "eep-15", name: "Energías Renovables", group: "amb", category: "secondary" },
+  { id: "eep-16", name: "Gestión de Residuos", group: "amb", category: "secondary" },
+  { id: "eep-17", name: "Espacios Verdes Locales", group: "amb", category: "secondary" },
+  { id: "eep-18", name: "Zonas de Transición", group: "amb", category: "secondary" },
+  { id: "eep-19", name: "Protección de Rondas Hídricas", group: "amb", category: "secondary" },
+  { id: "eep-20", name: "Monitoreo Ambiental", group: "amb", category: "secondary" },
+  { id: "eep-21", name: "Restauración Ecológica", group: "amb", category: "secondary" },
+  { id: "eep-22", name: "Flora Nativa", group: "amb", category: "secondary" },
+  { id: "eep-23", name: "Fauna Urbana", group: "amb", category: "secondary" },
+  { id: "eep-24", name: "Drenaje Natural", group: "amb", category: "secondary" },
+  { id: "eep-25", name: "Infiltración de Agua", group: "amb", category: "secondary" },
+  { id: "eep-26", name: "Reducción de Isla de Calor", group: "amb", category: "secondary" },
+  { id: "eep-27", name: "Permeabilidad del Suelo", group: "amb", category: "secondary" },
+  { id: "eep-28", name: "Seguridad Hídrica", group: "amb", category: "secondary" },
+  { id: "eep-29", name: "Gestión de Escorrentía", group: "amb", category: "secondary" },
+  { id: "eep-30", name: "Ecoturismo", group: "amb", category: "secondary" },
+  { id: "eep-31", name: "Educación Ambiental", group: "amb", category: "secondary" },
+  { id: "eep-32", name: "Investigación Ecológica", group: "amb", category: "secondary" },
+  { id: "eep-33", name: "Gobernanza Ambiental", group: "amb", category: "secondary" },
+  { id: "eep-34", name: "Normatividad Verde", group: "amb", category: "secondary" },
+  { id: "eep-35", name: "Financiamiento Verde", group: "amb", category: "secondary" },
+  { id: "eep-36", name: "Certificación Ambiental", group: "amb", category: "secondary" },
+  { id: "eep-37", name: "Sistemas de Información Ambiental", group: "amb", category: "secondary" },
+  { id: "eep-38", name: "Adaptación al Cambio Climático", group: "amb", category: "secondary" },
+  { id: "eep-39", name: "Resiliencia Ecológica", group: "amb", category: "secondary" },
+  { id: "eep-40", name: "Planificación Ecorregional", group: "amb", category: "secondary" },
 
-// =============================================================================
-// LÓGICA DEL MÓDULO 01
-// =============================================================================
+  // ESTRUCTURA DE PATRIMONIOS (30 nodos)
+  { id: "pat-1", name: "Patrimonio Cultural Centro Histórico", group: "patri", category: "hub" },
+  { id: "pat-2", name: "Zonas de Influencia Patrimonial", group: "patri", category: "main" },
+  { id: "pat-3", name: "Monumentos y Sitios Arqueológicos", group: "patri", category: "main" },
+  { id: "pat-4", name: "Espacios Públicos Históricos", group: "patri", category: "main" },
+  { id: "pat-5", name: "Memoria Colectiva y Narrativas", group: "patri", category: "secondary" },
+  { id: "pat-6", name: "Archivos y Documentación", group: "patri", category: "secondary" },
+  { id: "pat-7", name: "Museos y Centros Culturales", group: "patri", category: "secondary" },
+  { id: "pat-8", name: "Expresiones Artísticas Locales", group: "patri", category: "secondary" },
+  { id: "pat-9", name: "Patrimonio Inmaterial", group: "patri", category: "secondary" },
+  { id: "pat-10", name: "Conocimientos Tradicionales", group: "patri", category: "secondary" },
+  { id: "pat-11", name: "Identidad Territorial", group: "patri", category: "secondary" },
+  { id: "pat-12", name: "Lenguajes Locales y Dialectos", group: "patri", category: "secondary" },
+  { id: "pat-13", name: "Culinaria Tradicional", group: "patri", category: "secondary" },
+  { id: "pat-14", name: "Artesanía Local", group: "patri", category: "secondary" },
+  { id: "pat-15", name: "Fiestas y Festivales", group: "patri", category: "secondary" },
+  { id: "pat-16", name: "Ritualidades Comunitarias", group: "patri", category: "secondary" },
+  { id: "pat-17", name: "Conservación y Restauración", group: "patri", category: "secondary" },
+  { id: "pat-18", name: "Gestión Patrimonial", group: "patri", category: "secondary" },
+  { id: "pat-19", name: "Financiamiento Cultural", group: "patri", category: "secondary" },
+  { id: "pat-20", name: "Regulaciones para Protección", group: "patri", category: "secondary" },
+  { id: "pat-21", name: "Participación Comunitaria", group: "patri", category: "secondary" },
+  { id: "pat-22", name: "Investigación Histórica", group: "patri", category: "secondary" },
+  { id: "pat-23", name: "Educación Patrimonial", group: "patri", category: "secondary" },
+  { id: "pat-24", name: "Turismo Cultural", group: "patri", category: "secondary" },
+  { id: "pat-25", name: "Emprendimiento Cultural", group: "patri", category: "secondary" },
+  { id: "pat-26", name: "Economía Creativa", group: "patri", category: "secondary" },
+  { id: "pat-27", name: "Infraestructura Cultural", group: "patri", category: "secondary" },
+  { id: "pat-28", name: "Digitalización Patrimonial", group: "patri", category: "secondary" },
+  { id: "pat-29", name: "Redes Culturales", group: "patri", category: "secondary" },
+  { id: "pat-30", name: "Patrimonio en Riesgo", group: "patri", category: "secondary" },
 
-console.log('✓ Módulo 01 iniciando...');
+  // ESTRUCTURA FUNCIONAL Y CUIDADO (30 nodos)
+  { id: "func-1", name: "Manzanas del Cuidado", group: "func", category: "hub" },
+  { id: "func-2", name: "Servicios de Salud Integrados", group: "func", category: "main" },
+  { id: "func-3", name: "Educación y Formación", group: "func", category: "main" },
+  { id: "func-4", name: "Infraestructura Social", group: "func", category: "main" },
+  { id: "func-5", name: "Cuidado de la Infancia", group: "func", category: "secondary" },
+  { id: "func-6", name: "Atención a Personas Mayores", group: "func", category: "secondary" },
+  { id: "func-7", name: "Apoyo a Personas con Discapacidad", group: "func", category: "secondary" },
+  { id: "func-8", name: "Servicios de Agua y Saneamiento", group: "func", category: "secondary" },
+  { id: "func-9", name: "Infraestructura de Energía", group: "func", category: "secondary" },
+  { id: "func-10", name: "Telecomunicaciones", group: "func", category: "secondary" },
+  { id: "func-11", name: "Transporte Público Equitativo", group: "func", category: "secondary" },
+  { id: "func-12", name: "Seguridad Alimentaria", group: "func", category: "secondary" },
+  { id: "func-13", name: "Espacios Públicos Seguros", group: "func", category: "secondary" },
+  { id: "func-14", name: "Accesibilidad Universal", group: "func", category: "secondary" },
+  { id: "func-15", name: "Inclusión Social", group: "func", category: "secondary" },
+  { id: "func-16", name: "Atención Psicosocial", group: "func", category: "secondary" },
+  { id: "func-17", name: "Redes Comunitarias de Cuidado", group: "func", category: "secondary" },
+  { id: "func-18", name: "Gobernanza del Cuidado", group: "func", category: "secondary" },
+  { id: "func-19", name: "Financiamiento Social", group: "func", category: "secondary" },
+  { id: "func-20", name: "Indicadores de Bienestar", group: "func", category: "secondary" },
+  { id: "func-21", name: "Monitoreo de Cobertura", group: "func", category: "secondary" },
+  { id: "func-22", name: "Equidad de Género en Servicios", group: "func", category: "secondary" },
+  { id: "func-23", name: "Prevención de Violencias", group: "func", category: "secondary" },
+  { id: "func-24", name: "Salud Mental Comunitaria", group: "func", category: "secondary" },
+  { id: "func-25", name: "Nutrición y Alimentación", group: "func", category: "secondary" },
+  { id: "func-26", name: "Actividad Física y Recreación", group: "func", category: "secondary" },
+  { id: "func-27", name: "Espacios Lúdicos Infantiles", group: "func", category: "secondary" },
+  { id: "func-28", name: "Bibliotecas y Centros de Aprendizaje", group: "func", category: "secondary" },
+  { id: "func-29", name: "Asesoramiento Jurídico", group: "func", category: "secondary" },
+  { id: "func-30", name: "Gestión Integrada del Cuidado", group: "func", category: "secondary" },
 
-let graphData = { nodes: [], links: [], structures: {} };
-let currentView = 'overview';
-let selectedStructure = null;
+  // ESTRUCTURA SOCIOECONÓMICA (30 nodos)
+  { id: "econ-1", name: "Dinámicas Económicas Integradas", group: "econ", category: "hub" },
+  { id: "econ-2", name: "Mercado Laboral Formal", group: "econ", category: "main" },
+  { id: "econ-3", name: "Economía Informal y Ambulante", group: "econ", category: "main" },
+  { id: "econ-4", name: "Emprendimiento y PYMES", group: "econ", category: "main" },
+  { id: "econ-5", name: "Sectores Productivos Estratégicos", group: "econ", category: "secondary" },
+  { id: "econ-6", name: "Tecnología e Innovación", group: "econ", category: "secondary" },
+  { id: "econ-7", name: "Industria Creativa", group: "econ", category: "secondary" },
+  { id: "econ-8", name: "Turismo Urbano", group: "econ", category: "secondary" },
+  { id: "econ-9", name: "Comercio de Proximidad", group: "econ", category: "secondary" },
+  { id: "econ-10", name: "Economía del Cuidado", group: "econ", category: "secondary" },
+  { id: "econ-11", name: "Cooperativismo y Asociacionismo", group: "econ", category: "secondary" },
+  { id: "econ-12", name: "Inclusión Económica de Mujeres", group: "econ", category: "secondary" },
+  { id: "econ-13", name: "Jóvenes en Empleabilidad", group: "econ", category: "secondary" },
+  { id: "econ-14", name: "Poblaciones Vulnerables", group: "econ", category: "secondary" },
+  { id: "econ-15", name: "Migración Laboral", group: "econ", category: "secondary" },
+  { id: "econ-16", name: "Formación Laboral Continua", group: "econ", category: "secondary" },
+  { id: "econ-17", name: "Seguridad Social Integral", group: "econ", category: "secondary" },
+  { id: "econ-18", name: "Finanzas Inclusivas", group: "econ", category: "secondary" },
+  { id: "econ-19", name: "Acceso al Crédito", group: "econ", category: "secondary" },
+  { id: "econ-20", name: "Tributación Justa", group: "econ", category: "secondary" },
+  { id: "econ-21", name: "Presupuestos Participativos", group: "econ", category: "secondary" },
+  { id: "econ-22", name: "Incentivos Económicos", group: "econ", category: "secondary" },
+  { id: "econ-23", name: "Infraestructura Productiva", group: "econ", category: "secondary" },
+  { id: "econ-24", name: "Espacios de Trabajo Compartido", group: "econ", category: "secondary" },
+  { id: "econ-25", name: "Cadenas de Suministro Locales", group: "econ", category: "secondary" },
+  { id: "econ-26", name: "Comercio Justo y Ético", group: "econ", category: "secondary" },
+  { id: "econ-27", name: "Economía Circular", group: "econ", category: "secondary" },
+  { id: "econ-28", name: "Sostenibilidad Financiera", group: "econ", category: "secondary" },
+  { id: "econ-29", name: "Inversión Social", group: "econ", category: "secondary" },
+  { id: "econ-30", name: "Gobernanza Económica", group: "econ", category: "secondary" }
+];
 
-const structures = {
-  EEP: { id: 'EEP', name: 'Sistema Ambiental y de\nEstructura Ecológica Principal', color: '#34d399', icon: 'fa-leaf', fullName: 'EEP - Ecológica' },
-  EFC: { id: 'EFC', name: 'Sistema Funcional\ny del Cuidado', color: '#3b82f6', icon: 'fa-home', fullName: 'EFC - Funcional' },
-  ESECI: { id: 'ESECI', name: 'Sistema de Actividades\nSocioeconómicas', color: '#ef9552', icon: 'fa-briefcase', fullName: 'ESECI - Socioeconómica' },
-  EIP: { id: 'EIP', name: 'Sistema Integrador\nde Patrimonios', color: '#b06bf7', icon: 'fa-landmark', fullName: 'EIP - Patrimonio' }
-};
+// RELACIONES (70+ enlaces entre estructuras)
+const LINKS_DATA = [
+  // AMBIENTAL → PATRIMONIOS
+  { source: "eep-1", target: "pat-1", type: "complementary" },
+  { source: "eep-2", target: "pat-2", type: "complementary" },
+  { source: "eep-3", target: "pat-4", type: "functional" },
+  { source: "eep-4", target: "pat-11", type: "causal" },
+  { source: "eep-5", target: "pat-3", type: "complementary" },
+  { source: "eep-22", target: "pat-9", type: "functional" },
+  { source: "eep-23", target: "pat-16", type: "functional" },
+  { source: "eep-31", target: "pat-23", type: "functional" },
 
-function buildGraph() {
-  console.log('🔨 Construyendo grafo...');
+  // AMBIENTAL → FUNCIONAL
+  { source: "eep-1", target: "func-1", type: "causal" },
+  { source: "eep-2", target: "func-11", type: "functional" },
+  { source: "eep-4", target: "func-8", type: "functional" },
+  { source: "eep-9", target: "func-8", type: "causal" },
+  { source: "eep-11", target: "func-2", type: "causal" },
+  { source: "eep-12", target: "func-1", type: "complementary" },
+  { source: "eep-13", target: "func-12", type: "causal" },
+  { source: "eep-14", target: "func-12", type: "functional" },
+  { source: "eep-17", target: "func-13", type: "complementary" },
+  { source: "eep-26", target: "func-24", type: "causal" },
+  { source: "eep-28", target: "func-8", type: "causal" },
 
-  const structData = {};
-  ['EEP', 'EFC', 'ESECI', 'EIP'].forEach(s => structData[s] = { nodes: new Map(), links: [] });
+  // AMBIENTAL → SOCIOECONÓMICO
+  { source: "eep-1", target: "econ-1", type: "complementary" },
+  { source: "eep-13", target: "econ-5", type: "functional" },
+  { source: "eep-14", target: "econ-5", type: "functional" },
+  { source: "eep-15", target: "econ-5", type: "functional" },
+  { source: "eep-16", target: "econ-5", type: "functional" },
+  { source: "eep-30", target: "econ-8", type: "functional" },
+  { source: "eep-31", target: "econ-16", type: "functional" },
+  { source: "eep-32", target: "econ-6", type: "functional" },
 
-  let totalLinks = 0;
+  // PATRIMONIOS → FUNCIONAL
+  { source: "pat-1", target: "func-1", type: "complementary" },
+  { source: "pat-5", target: "func-15", type: "functional" },
+  { source: "pat-7", target: "func-3", type: "functional" },
+  { source: "pat-8", target: "func-26", type: "functional" },
+  { source: "pat-9", target: "func-5", type: "complementary" },
+  { source: "pat-10", target: "func-3", type: "functional" },
+  { source: "pat-12", target: "func-3", type: "functional" },
+  { source: "pat-13", target: "func-12", type: "functional" },
+  { source: "pat-14", target: "func-26", type: "functional" },
 
-  Object.entries(POT_DATA).forEach(([sheetName, rows]) => {
-    console.log(`📄 ${sheetName}: ${rows.length} relaciones`);
-    
-    rows.forEach(row => {
-      const origen = row.origen;
-      const destino = row.destino;
-      const tipo = row.tipo;
-      const sustento = row.sustento;
+  // PATRIMONIOS → SOCIOECONÓMICO
+  { source: "pat-1", target: "econ-1", type: "complementary" },
+  { source: "pat-7", target: "econ-7", type: "functional" },
+  { source: "pat-8", target: "econ-7", type: "functional" },
+  { source: "pat-14", target: "econ-7", type: "functional" },
+  { source: "pat-24", target: "econ-8", type: "functional" },
+  { source: "pat-25", target: "econ-4", type: "functional" },
+  { source: "pat-26", target: "econ-7", type: "functional" },
+  { source: "pat-29", target: "econ-11", type: "functional" },
 
-      if (!origen || !destino) return;
+  // FUNCIONAL → SOCIOECONÓMICO
+  { source: "func-1", target: "econ-1", type: "causal" },
+  { source: "func-2", target: "econ-16", type: "functional" },
+  { source: "func-3", target: "econ-16", type: "causal" },
+  { source: "func-5", target: "econ-13", type: "functional" },
+  { source: "func-6", target: "econ-14", type: "functional" },
+  { source: "func-10", target: "econ-6", type: "functional" },
+  { source: "func-11", target: "econ-2", type: "functional" },
+  { source: "func-12", target: "econ-2", type: "functional" },
+  { source: "func-14", target: "econ-2", type: "functional" },
+  { source: "func-15", target: "econ-14", type: "functional" },
+  { source: "func-17", target: "econ-11", type: "functional" },
+  { source: "func-22", target: "econ-12", type: "functional" },
+  { source: "func-24", target: "econ-16", type: "functional" },
+  { source: "func-28", target: "econ-16", type: "functional" },
 
-      if (!structData[sheetName].nodes.has(origen)) {
-        structData[sheetName].nodes.set(origen, { 
-          name: origen, 
-          estructura: sheetName,
-          in: 0,
-          out: 0
-        });
-      }
-      if (!structData[sheetName].nodes.has(destino)) {
-        structData[sheetName].nodes.set(destino, { 
-          name: destino,
-          estructura: sheetName,
-          in: 0,
-          out: 0
-        });
-      }
+  // INTERESTRUCTURALES COMPLEJAS (Hub convergencias)
+  { source: "eep-1", target: "pat-1", type: "complementary" },
+  { source: "pat-1", target: "func-1", type: "complementary" },
+  { source: "func-1", target: "econ-1", type: "causal" },
+  { source: "eep-2", target: "func-11", type: "functional" },
+  { source: "eep-12", target: "func-24", type: "causal" },
+  { source: "eep-31", target: "pat-23", type: "functional" },
+  { source: "pat-23", target: "econ-16", type: "functional" }
+];
 
-      const nodoOrigen = structData[sheetName].nodes.get(origen);
-      const nodoDestino = structData[sheetName].nodes.get(destino);
-      nodoOrigen.out++;
-      nodoDestino.in++;
+let simulation, svg, networkContainer, selectedNode = null, currentFilter = 'all';
 
-      structData[sheetName].links.push({
-        source: origen,
-        target: destino,
-        tipo: tipo.toLowerCase(),
-        sustento: sustento,
-        sourceName: origen,
-        targetName: destino
-      });
+// ============================================================================
+// INICIALIZACIÓN
+// ============================================================================
 
-      totalLinks++;
-    });
-  });
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    initNetwork();
+    setupLegendListeners();
+    populateRelationshipsTable();
+  }, 100);
+});
 
-  graphData.structures = structData;
-
-  const totalNodes = Object.values(structData).reduce((sum, s) => sum + s.nodes.size, 0);
-  document.getElementById('statConceptos').textContent = totalNodes;
-  document.getElementById('statRelaciones').textContent = totalLinks;
-  document.getElementById('statFuentes').textContent = 4;
-  document.getElementById('statTipos').textContent = 4;
-
-  console.log(`✅ Grafo: ${totalNodes} conceptos, ${totalLinks} relaciones`);
+function initNetwork() {
+  networkContainer = document.getElementById('networkViz');
   
-  renderOverview();
-}
-
-function renderOverview() {
-  console.log('📊 Vista: OVERVIEW');
-  currentView = 'overview';
-  document.getElementById('detailPanel').style.display = 'none';
-
-  const svg = d3.select('#graphSvg');
-  document.getElementById('graphLoading').style.display = 'none';
-  svg.style('display', 'block');
-  svg.selectAll('*').remove();
-
-  const width = svg.node().parentElement.clientWidth;
-  const height = svg.node().parentElement.clientHeight;
-  svg.attr('viewBox', `0 0 ${width} ${height}`);
-
-  const container = svg.append('g');
-  svg.call(d3.zoom().scaleExtent([0.8, 2]).on('zoom', e => container.attr('transform', e.transform)));
-
-  const nodes = Object.values(structures).map((s, i) => ({
-    id: s.id,
-    ...s,
-    x: width / 2 + Math.cos((i * Math.PI * 2) / 4) * 280,
-    y: height / 2 + Math.sin((i * Math.PI * 2) / 4) * 280
-  }));
-
-  const nodeSel = container.append('g').selectAll('g')
-    .data(nodes)
-    .enter()
-    .append('g')
-    .style('cursor', 'pointer')
-    .on('click', (e, d) => renderStructure(d.id));
-
-  nodeSel.append('circle')
-    .attr('r', 90)
-    .attr('cx', 0)
-    .attr('cy', 0)
-    .attr('fill', d => `${d.color}20`)
-    .attr('stroke', d => d.color)
-    .attr('stroke-width', 3)
-    .attr('filter', d => `drop-shadow(0 0 35px ${d.color})`)
-    .attr('opacity', 0.9);
-
-  nodeSel.append('text')
-    .attr('x', 0)
-    .attr('y', -35)
-    .attr('text-anchor', 'middle')
-    .attr('font-size', '40px')
-    .attr('fill', '#eef0f6')
-    .attr('pointer-events', 'none')
-    .html(d => `<tspan class="fa-solid ${d.icon}"></tspan>`);
-
-  nodeSel.append('text')
-    .attr('x', 0)
-    .attr('y', 20)
-    .attr('text-anchor', 'middle')
-    .attr('font-size', '11.5px')
-    .attr('font-weight', '600')
-    .attr('fill', '#eef0f6')
-    .attr('pointer-events', 'none')
-    .text(d => d.name);
-
-  const sim = d3.forceSimulation(nodes)
-    .force('charge', d3.forceManyBody().strength(-1200))
-    .force('center', d3.forceCenter(width / 2, height / 2));
-
-  sim.on('tick', () => {
-    nodeSel.attr('transform', d => `translate(${d.x},${d.y})`);
-  });
-}
-
-function renderStructure(structId) {
-  console.log('📊 Vista: ESTRUCTURA', structId);
-  currentView = 'structure';
-  selectedStructure = structId;
-
-  const struct = structures[structId];
-  const structData = graphData.structures[structId];
-  
-  if (!structData || structData.nodes.size === 0) {
-    console.warn(`Sin datos para ${structId}`);
+  if (!networkContainer) {
+    console.error('networkViz container not found');
     return;
   }
 
-  const nodes = Array.from(structData.nodes.values());
-  const links = structData.links;
+  const containerRect = networkContainer.parentElement.getBoundingClientRect();
+  const width = 900;
+  const height = 600;
 
-  const svg = d3.select('#graphSvg');
-  svg.selectAll('*').remove();
+  // LIMPIEZA
+  d3.select('#networkViz').selectAll("*").remove();
 
-  const width = svg.node().parentElement.clientWidth;
-  const height = svg.node().parentElement.clientHeight;
-  svg.attr('viewBox', `0 0 ${width} ${height}`);
+  svg = d3.select('#networkViz')
+    .attr('viewBox', `0 0 ${width} ${height}`)
+    .attr('preserveAspectRatio', 'xMidYMid meet');
 
-  const container = svg.append('g');
-  svg.call(d3.zoom().scaleExtent([0.8, 3]).on('zoom', e => container.attr('transform', e.transform)));
+  // SIMULACIÓN D3 FORCE
+  simulation = d3.forceSimulation(NODES_DATA)
+    .force('link', d3.forceLink(LINKS_DATA)
+      .id(d => d.id)
+      .distance(100)
+      .strength(0.5))
+    .force('charge', d3.forceManyBody().strength(-200).distanceMax(250))
+    .force('collision', d3.forceCollide(35))
+    .force('center', d3.forceCenter(width / 2, height / 2))
+    .force('x', d3.forceX(width / 2).strength(0.05))
+    .force('y', d3.forceY(height / 2).strength(0.05))
+    .alphaDecay(0.05);
 
-  const linkSel = container.append('g').selectAll('line')
-    .data(links)
+  // ARISTAS
+  const links = svg.append('g')
+    .selectAll('line')
+    .data(LINKS_DATA)
     .enter()
     .append('line')
-    .attr('stroke', d => {
-      if (d.tipo === 'directa') return '#34d399';
-      if (d.tipo === 'indirecta') return '#3b82f6';
-      if (d.tipo === 'soporte') return '#ef9552';
-      return '#b06bf7';
-    })
-    .attr('stroke-width', 2.5)
-    .attr('opacity', 0.7)
-    .attr('stroke-dasharray', d => d.tipo === 'indirecta' ? '5,5' : 'none');
+    .attr('class', d => `link link-${d.type}`)
+    .attr('stroke', d => getLinkColor(d.type, d))
+    .attr('stroke-width', 1.5)
+    .attr('opacity', 0.5);
 
-  const nodeSel = container.append('g').selectAll('g')
-    .data(nodes)
+  // NODOS
+  const nodes = svg.append('g')
+    .selectAll('circle')
+    .data(NODES_DATA)
     .enter()
     .append('g')
-    .style('cursor', 'pointer')
-    .on('click', (e, d) => showDetail(d));
+    .attr('class', d => `node node-${d.group}`)
+    .attr('data-id', d => d.id);
 
-  nodeSel.append('circle')
-    .attr('r', 55)
-    .attr('cx', 0)
-    .attr('cy', 0)
-    .attr('fill', `${struct.color}25`)
-    .attr('stroke', struct.color)
-    .attr('stroke-width', 2.5)
-    .attr('filter', `drop-shadow(0 0 18px ${struct.color})`)
-    .attr('opacity', 0.95);
+  nodes.append('circle')
+    .attr('r', d => getNodeRadius(d))
+    .attr('fill', d => getNodeColor(d))
+    .attr('stroke', d => getNodeStroke(d))
+    .attr('stroke-width', d => d.category === 'hub' ? 3 : d.category === 'main' ? 2 : 1.5)
+    .attr('opacity', 0.85);
 
-  nodeSel.append('text')
+  // LABELS
+  nodes.append('text')
+    .attr('class', 'node-label')
+    .attr('font-size', d => d.category === 'hub' ? 9 : 7)
     .attr('text-anchor', 'middle')
-    .attr('dy', '0.35em')
-    .attr('font-size', '11px')
-    .attr('font-weight', '600')
-    .attr('fill', '#eef0f6')
-    .attr('pointer-events', 'none')
-    .text(d => d.name.length > 16 ? d.name.slice(0, 13) + '…' : d.name);
+    .attr('dominant-baseline', 'middle')
+    .attr('fill', d => getNodeColor(d))
+    .text(d => d.name.substring(0, 15))
+    .attr('pointer-events', 'none');
 
-  const sim = d3.forceSimulation(nodes)
-    .force('link', d3.forceLink(links)
-      .id(d => d.name)
-      .distance(130)
-      .strength(0.35)
-    )
-    .force('charge', d3.forceManyBody().strength(-320))
-    .force('center', d3.forceCenter(width / 2, height / 2))
-    .force('collide', d3.forceCollide().radius(65));
+  // INTERACTIVIDAD
+  nodes.on('mouseenter', function(event, d) {
+    d3.select(this).select('circle')
+      .attr('r', getNodeRadius(d) * 1.8)
+      .attr('stroke-width', 3)
+      .attr('opacity', 1);
+    
+    svg.selectAll('line').attr('opacity', link => 
+      (link.source.id === d.id || link.target.id === d.id) ? 0.8 : 0.15
+    );
+  })
+  .on('mouseleave', function(event, d) {
+    d3.select(this).select('circle')
+      .attr('r', getNodeRadius(d))
+      .attr('stroke-width', d => d.category === 'hub' ? 3 : d.category === 'main' ? 2 : 1.5)
+      .attr('opacity', 0.85);
+    
+    svg.selectAll('line').attr('opacity', 0.5);
+  })
+  .on('click', function(event, d) {
+    event.stopPropagation();
+    showNodeInfo(d);
+  })
+  .call(d3.drag()
+    .on('start', dragStart)
+    .on('drag', dragged)
+    .on('end', dragEnd));
 
-  sim.on('tick', () => {
-    linkSel
-      .attr('x1', d => {
-        const n = nodes.find(node => node.name === d.source);
-        return n ? n.x : 0;
-      })
-      .attr('y1', d => {
-        const n = nodes.find(node => node.name === d.source);
-        return n ? n.y : 0;
-      })
-      .attr('x2', d => {
-        const n = nodes.find(node => node.name === d.target);
-        return n ? n.x : 0;
-      })
-      .attr('y2', d => {
-        const n = nodes.find(node => node.name === d.target);
-        return n ? n.y : 0;
-      });
+  // TICK
+  simulation.on('tick', () => {
+    links
+      .attr('x1', d => Math.max(20, Math.min(width - 20, d.source.x)))
+      .attr('y1', d => Math.max(20, Math.min(height - 20, d.source.y)))
+      .attr('x2', d => Math.max(20, Math.min(width - 20, d.target.x)))
+      .attr('y2', d => Math.max(20, Math.min(height - 20, d.target.y)));
 
-    nodeSel.attr('transform', d => `translate(${d.x},${d.y})`);
+    nodes.attr('transform', d => 
+      `translate(${Math.max(20, Math.min(width - 20, d.x))},${Math.max(20, Math.min(height - 20, d.y))})`
+    );
+  });
+
+  // ZOOM
+  const zoom = d3.zoom().on('zoom', (event) => {
+    svg.select('g').attr('transform', event.transform);
+  });
+  
+  svg.call(zoom);
+}
+
+// ============================================================================
+// UTILIDADES DE COLOR Y ESTILO
+// ============================================================================
+
+function getNodeColor(d) {
+  const colors = {
+    'amb': '#2fd4c8',
+    'patri': '#a276f2',
+    'func': '#5b8def',
+    'econ': '#ef9552'
+  };
+  return colors[d.group] || '#8891a5';
+}
+
+function getNodeStroke(d) {
+  const colors = {
+    'amb': '#1a9d94',
+    'patri': '#7a4fb3',
+    'func': '#3d5ba8',
+    'econ': '#c97a3d'
+  };
+  return colors[d.group] || '#5a6274';
+}
+
+function getNodeRadius(d) {
+  if (d.category === 'hub') return 28;
+  if (d.category === 'main') return 22;
+  return 16;
+}
+
+function getLinkColor(type, link) {
+  const typeColors = {
+    'complementary': 'rgba(47,212,200,0.5)',
+    'functional': 'rgba(91,141,239,0.5)',
+    'causal': 'rgba(162,118,242,0.5)',
+    'conditioning': 'rgba(239,149,82,0.5)'
+  };
+  return typeColors[type] || 'rgba(255,255,255,0.2)';
+}
+
+// ============================================================================
+// INTERACTIVIDAD
+// ============================================================================
+
+function dragStart(event, d) {
+  if (!event.active) simulation.alphaTarget(0.3).restart();
+  d.fx = d.x;
+  d.fy = d.y;
+}
+
+function dragged(event, d) {
+  d.fx = event.x;
+  d.fy = event.y;
+}
+
+function dragEnd(event, d) {
+  if (!event.active) simulation.alphaTarget(0);
+  d.fx = null;
+  d.fy = null;
+}
+
+function filterNetwork(filter) {
+  currentFilter = filter;
+  
+  document.querySelectorAll('.control-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  
+  // Encontrar el botón correcto y marcarlo como activo
+  document.querySelectorAll('.control-btn').forEach(btn => {
+    if ((filter === 'all' && btn.textContent.trim() === 'Todos') ||
+        (filter === 'amb' && btn.textContent.trim() === 'Ambiental') ||
+        (filter === 'patri' && btn.textContent.trim() === 'Patrimonios') ||
+        (filter === 'func' && btn.textContent.trim() === 'Funcional') ||
+        (filter === 'econ' && btn.textContent.trim() === 'Socioeconómico')) {
+      btn.classList.add('active');
+    }
+  });
+
+  if (!svg) return;
+
+  svg.selectAll('.node').attr('opacity', d => {
+    if (filter === 'all') return 0.85;
+    return d.group === filter ? 0.85 : 0.15;
+  });
+
+  svg.selectAll('line').attr('opacity', d => {
+    if (filter === 'all') return 0.5;
+    const matchSource = d.source.group === filter;
+    const matchTarget = d.target.group === filter;
+    return matchSource || matchTarget ? 0.7 : 0.1;
   });
 }
 
-function showDetail(node) {
-  document.getElementById('detailPanel').style.display = 'flex';
-  document.getElementById('detailName').textContent = node.name;
-  document.getElementById('detailStruct').textContent = structures[selectedStructure].fullName;
+function setupLegendListeners() {
+  if (!svg) return;
   
-  const structData = graphData.structures[selectedStructure];
-  const outgoing = structData.links.filter(l => l.source === node.name);
-  const incoming = structData.links.filter(l => l.target === node.name);
-
-  document.getElementById('detailOut').innerHTML = outgoing.length > 0
-    ? outgoing.map(l => `<div style="padding:4px 0;">→ <strong>${l.targetName}</strong></div>`).join('')
-    : '<span style="color:#6b7284;font-size:11px;">Sin conexiones</span>';
-
-  document.getElementById('detailIn').innerHTML = incoming.length > 0
-    ? incoming.map(l => `<div style="padding:4px 0;">← <strong>${l.sourceName}</strong></div>`).join('')
-    : '<span style="color:#6b7284;font-size:11px;">Sin conexiones</span>';
+  document.querySelectorAll('.legend-item input[type="checkbox"]').forEach(checkbox => {
+    checkbox.addEventListener('change', (event) => {
+      const type = checkbox.parentElement.dataset.type;
+      const isChecked = checkbox.checked;
+      
+      // Filtrar nodos por grupo
+      svg.selectAll('.node').attr('opacity', d => {
+        if (type === d.group) {
+          return isChecked ? 0.85 : 0.15;
+        }
+        return 0.85;
+      });
+      
+      // Filtrar líneas
+      svg.selectAll('line').attr('opacity', d => {
+        const sourceMatch = d.source.group === type;
+        const targetMatch = d.target.group === type;
+        
+        if (sourceMatch || targetMatch) {
+          return isChecked ? 0.5 : 0.1;
+        }
+        return 0.5;
+      });
+    });
+  });
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  const detailPanel = document.getElementById('detailPanel');
-  if (detailPanel) {
-    detailPanel.addEventListener('click', (e) => {
-      if (e.target === detailPanel) {
-        detailPanel.style.display = 'none';
-      }
-    });
-  }
-});
+function showNodeInfo(node) {
+  selectedNode = node;
+  const panel = document.getElementById('nodeInfoPanel');
+  const title = document.getElementById('nodeInfoTitle');
+  const type = document.getElementById('nodeInfoType');
+  const count = document.getElementById('nodeInfoCount');
 
-window.addEventListener('load', () => {
-  console.log('✓ Página cargada');
-  buildGraph();
-});
+  title.textContent = node.name;
+  type.textContent = node.group.toUpperCase();
+  
+  const connections = LINKS_DATA.filter(l => l.source.id === node.id || l.target.id === node.id);
+  count.innerHTML = `<strong>${connections.length}</strong> conexiones en la red`;
 
-console.log('✓ Script listo');
+  panel.classList.add('visible');
+
+  document.getElementById('nodeInfoClose').onclick = () => {
+    panel.classList.remove('visible');
+    selectedNode = null;
+  };
+}
+
+// ============================================================================
+// TABLA DE RELACIONES
+// ============================================================================
+
+function populateRelationshipsTable() {
+  const tbody = document.getElementById('relationshipsBody');
+  const typeLabels = {
+    'complementary': 'Complementaria',
+    'functional': 'Funcional',
+    'causal': 'Causal',
+    'conditioning': 'Condicional'
+  };
+
+  const typeMap = {
+    'amb': 'Ambiental',
+    'patri': 'Patrimonio',
+    'func': 'Funcional',
+    'econ': 'Socioeconómico'
+  };
+
+  LINKS_DATA.slice(0, 30).forEach(link => {
+    const sourceNode = NODES_DATA.find(n => n.id === link.source);
+    const targetNode = NODES_DATA.find(n => n.id === link.target);
+
+    if (sourceNode && targetNode) {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td><span class="rel-tag ${sourceNode.group}">${typeMap[sourceNode.group]}</span></td>
+        <td>${sourceNode.name.substring(0, 25)}...</td>
+        <td><span class="rel-tag ${targetNode.group}">${typeMap[targetNode.group]}</span></td>
+        <td>${targetNode.name.substring(0, 25)}...</td>
+        <td>${typeLabels[link.type]}</td>
+      `;
+      tbody.appendChild(row);
+    }
+  });
+}
