@@ -649,6 +649,16 @@ body {
 .link-cross { stroke-width: 1.1; opacity: 0.85; }
 .link-cross.link-punteada { stroke-dasharray: 4 3; }
 
+/* Línea creada únicamente para el indicador de simulación Humedales→Espacio
+   público: no representa una cita textual del POT, por eso no es clickeable
+   y se distingue con un trazo punteado tenue en vez del naranja de "soporte". */
+.link-indicator-only {
+  stroke: var(--teal);
+  stroke-width: 1;
+  stroke-dasharray: 2 3;
+  opacity: 0.55;
+}
+
 /* Relaciones documentadas: son las que tienen flecha y son clicables */
 .links line.link-soporte,
 .links line.link-resiliencia {
@@ -816,23 +826,226 @@ body {
   .legend { gap: 10px; }
 }
 
-/* Movimiento y cohesión visual de la red */
-.network-static-wrap {
-  position: relative;
-  background: radial-gradient(circle at 50% 42%, rgba(47,212,200,.08), transparent 42%), #05070d;
-  box-shadow: inset 0 0 55px rgba(47,212,200,.04);
+/* ---------------------------------------------------------------------- */
+/* INDICADOR: aviso + modal de la calculadora ATP                        */
+/* ---------------------------------------------------------------------- */
+.indicator-prompt {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(47,212,200,0.10);
+  border: 1px solid rgba(47,212,200,0.4);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin: 14px 0 0;
+  font-size: 12.5px;
+  color: var(--text);
+  flex-wrap: wrap;
 }
-.network-static-wrap svg { touch-action: none; user-select: none; }
-.links line.link-soporte,
-.links line.link-resiliencia { stroke-linecap: round; }
-.node { cursor: grab; transform-box: fill-box; transform-origin: center; transition: filter .2s ease, opacity .3s ease; }
-.node:active, .node.is-dragging { cursor: grabbing; }
-.node:hover { filter: brightness(1.2); }
-.node.is-dragging { filter: brightness(1.25) drop-shadow(0 0 8px currentColor); }
-.node-fill { transition: fill .25s ease, stroke-width .25s ease, filter .25s ease; }
-.node.node-selected { animation: nodePulse 1.8s ease-in-out infinite; }
-.links line { transition: opacity .25s ease, stroke-width .2s ease; }
-.scenario-btn:hover, .legend-item:hover, .net-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,.2); }
-.scenario-btn, .legend-item, .net-btn { transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease, background .2s ease; }
-@keyframes nodePulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.06); } }
-@media (prefers-reduced-motion: reduce) { .node.node-selected { animation: none; } }
+
+.indicator-prompt i.fa-chart-line { color: var(--teal); font-size: 14px; }
+.indicator-prompt span { flex: 1; min-width: 160px; }
+.indicator-prompt-btn {
+  background: var(--teal);
+  border-color: var(--teal);
+  color: #06231f;
+  font-weight: 700;
+}
+.indicator-prompt-btn:hover { background: #3ee8db; border-color: #3ee8db; color: #06231f; }
+
+.indicator-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(3,5,10,0.72);
+  backdrop-filter: blur(2px);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.indicator-modal {
+  position: relative;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 26px 28px;
+  max-width: 480px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+
+.indicator-tag {
+  display: block;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--teal);
+  text-transform: uppercase;
+  letter-spacing: .3px;
+  margin-bottom: 10px;
+}
+
+.indicator-title {
+  font-size: 16.5px;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1.35;
+  margin-bottom: 16px;
+}
+
+/* Fórmula tipo fracción real (numerador / línea / denominador), como en un
+   libro de texto, en vez de una sola línea de texto monoespaciado. */
+.fraction-formula {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  background: var(--panel-alt);
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  padding: 18px 16px;
+  margin-bottom: 16px;
+  font-family: 'Times New Roman', 'Georgia', serif;
+}
+
+.fraction-varname {
+  font-style: italic;
+  font-size: 17px;
+  color: var(--text);
+}
+
+.fraction-eq { font-size: 16px; color: var(--text-dim); }
+
+.fraction {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 12.5px;
+  color: var(--text);
+  line-height: 1.4;
+}
+
+.fraction-num, .fraction-den {
+  padding: 0 6px 4px;
+  text-align: center;
+}
+
+.fraction-den { padding-top: 4px; padding-bottom: 0; }
+
+.fraction-bar {
+  display: block;
+  width: 100%;
+  height: 1px;
+  background: var(--text);
+  margin: 0 0 2px;
+}
+
+.fraction-times {
+  font-size: 15px;
+  color: var(--text-dim);
+  font-style: italic;
+}
+
+.indicator-explanation {
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--text-dim);
+  background: var(--panel-alt);
+  border-left: 3px solid var(--teal);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 12px;
+  margin-bottom: 16px;
+}
+
+.indicator-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.indicator-inputs label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-dim);
+}
+
+.indicator-inputs input {
+  background: var(--panel-alt);
+  border: 1px solid var(--border-soft);
+  border-radius: 6px;
+  padding: 9px 11px;
+  color: var(--text);
+  font-size: 13px;
+  font-family: inherit;
+}
+
+.indicator-inputs input:focus {
+  outline: none;
+  border-color: var(--func);
+}
+
+.indicator-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #f3a3a3;
+  font-size: 11.5px;
+  margin-bottom: 12px;
+}
+
+.indicator-modal .indicator-sim-btn {
+  width: 100%;
+  justify-content: center;
+  background: var(--teal);
+  border-color: var(--teal);
+  color: #06231f;
+  font-weight: 700;
+}
+.indicator-modal .indicator-sim-btn:hover { background: #3ee8db; border-color: #3ee8db; color: #06231f; }
+
+.indicator-result {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px dashed var(--border-soft);
+}
+
+.indicator-result-value {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--teal);
+  margin-bottom: 12px;
+}
+
+.indicator-cascade {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 11px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.indicator-cascade .cascade-step {
+  background: var(--panel-alt);
+  border: 1px solid var(--border-soft);
+  border-radius: 6px;
+  padding: 4px 9px;
+  color: var(--text);
+}
+
+.indicator-cascade i.fa-arrow-right { color: var(--text-faint); font-size: 10px; }
+
+.indicator-cascade-text {
+  font-size: 11.5px;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
