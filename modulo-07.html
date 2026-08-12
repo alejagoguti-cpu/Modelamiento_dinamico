@@ -165,6 +165,17 @@
       <div class="col right">
 
         <div class="pcard">
+          <h2>Escenario de nodo crítico
+            <span class="hint">Los nodos más grandes son los que tienen más relaciones. Apaga uno para ver qué se rompe.</span>
+          </h2>
+          <p class="node-question" id="nodeQuestion">—</p>
+          <label class="node-label" for="nodeSelect">Concepto a desconectar</label>
+          <select id="nodeSelect" class="node-select"></select>
+          <p class="node-impact" id="nodeImpact">—</p>
+          <button class="btn node-sim-btn" id="btnNodeSim"><i class="fa-solid fa-power-off"></i> Simular sin este nodo</button>
+        </div>
+
+        <div class="pcard">
           <h2>Evidencia del POT</h2>
           <div id="evBox"></div>
         </div>
