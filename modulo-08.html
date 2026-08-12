@@ -103,6 +103,29 @@
       </div>
     </div>
 
+    <!-- SELECTOR DE PLAZO: apaga el modelo para ver solo lo de corto o largo plazo -->
+    <div class="plazo-section">
+      <div class="plazo-header">
+        <h3><i class="fa-solid fa-timeline"></i> ¿Qué quieres ver: corto o largo plazo?</h3>
+        <p>Elige un horizonte y el resto de los componentes se apagan — solo quedan encendidos los que tu modelo plantea para ese plazo.</p>
+      </div>
+      <div class="plazo-toggle" id="plazoToggle">
+        <button class="plazo-btn active" data-plazo="todos" onclick="setPlazo('todos')">
+          <i class="fa-solid fa-layer-group"></i>
+          <span>Modelo completo</span>
+        </button>
+        <button class="plazo-btn plazo-corto" data-plazo="corto" onclick="setPlazo('corto')">
+          <i class="fa-solid fa-bolt"></i>
+          <span>Corto plazo</span>
+        </button>
+        <button class="plazo-btn plazo-largo" data-plazo="largo" onclick="setPlazo('largo')">
+          <i class="fa-solid fa-mountain-sun"></i>
+          <span>Largo plazo</span>
+        </button>
+      </div>
+      <div class="plazo-desc" id="plazoDesc">Viendo el modelo completo: los 6 sistemas y sus componentes, sin filtrar por plazo.</div>
+    </div>
+
     <!-- RED CONCEPTUAL -->
     <div class="network-section">
       <div class="network-header">
