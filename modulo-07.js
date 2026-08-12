@@ -5,8 +5,8 @@
    No se inventan relaciones ni se alteran frases o páginas.
    ======================================================================= */
 
-// 78 relaciones: 68 sustentadas con frase textual del POT, 7 que la propia tabla
-// marca 'por verificar' y 3 agregadas a pedido sin frase registrada todavia.
+// 86 relaciones: 68 sustentadas con frase textual del POT, 7 que la tabla marca
+// 'por verificar' y 11 agregadas a pedido, pendientes de frase y pagina.
 const POT_DATA = {
  "sistemas": {
   "EEP": {
@@ -32,8 +32,8 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Bosques urbanos",
    "icon": "fa-tree-city",
-   "x": 1192.1,
-   "y": -13.1,
+   "x": 1108.7,
+   "y": -273.0,
    "r": 42.7,
    "deg": 1
   },
@@ -42,8 +42,8 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Cerros Orientales",
    "icon": "fa-mountain",
-   "x": 154.1,
-   "y": -1018.5,
+   "x": 490.6,
+   "y": -819.6,
    "r": 42.7,
    "deg": 1
   },
@@ -52,18 +52,18 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Coberturas vegetales",
    "icon": "fa-seedling",
-   "x": 1006.5,
-   "y": -230.5,
-   "r": 68.1,
-   "deg": 5
+   "x": 841.3,
+   "y": -133.8,
+   "r": 76.6,
+   "deg": 6
   },
   {
    "id": "EEP::Complejos de páramos",
    "sys": "EEP",
    "label": "Complejos de páramos",
    "icon": "fa-cloud",
-   "x": 834.1,
-   "y": -916.5,
+   "x": 763.7,
+   "y": -850.2,
    "r": 47.4,
    "deg": 2
   },
@@ -72,8 +72,8 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Conservación ambiental",
    "icon": "fa-shield-heart",
-   "x": 961.3,
-   "y": 364.9,
+   "x": 954.5,
+   "y": 399.2,
    "r": 42.7,
    "deg": 1
   },
@@ -82,8 +82,8 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Corredores montañosos",
    "icon": "fa-mountain-sun",
-   "x": 398.1,
-   "y": -1210.6,
+   "x": 226.1,
+   "y": -1117.3,
    "r": 42.7,
    "deg": 1
   },
@@ -92,8 +92,8 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Humedales",
    "icon": "fa-droplet",
-   "x": 105.0,
-   "y": -564.3,
+   "x": 148.9,
+   "y": -428.9,
    "r": 140.0,
    "deg": 12
   },
@@ -102,8 +102,8 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Paisajes sostenibles",
    "icon": "fa-image",
-   "x": 1021.5,
-   "y": -637.7,
+   "x": 957.6,
+   "y": -554.4,
    "r": 47.4,
    "deg": 2
   },
@@ -112,18 +112,18 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Parques de borde",
    "icon": "fa-leaf",
-   "x": 1193.3,
-   "y": -379.1,
-   "r": 42.7,
-   "deg": 1
+   "x": 1035.7,
+   "y": 161.2,
+   "r": 47.4,
+   "deg": 2
   },
   {
    "id": "EEP::Parques ecológicos de montaña",
    "sys": "EEP",
    "label": "Parques ecológicos de montaña",
    "icon": "fa-mountain",
-   "x": 805.3,
-   "y": 92.9,
+   "x": 750.6,
+   "y": 138.2,
    "r": 60.3,
    "deg": 4
   },
@@ -132,8 +132,8 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Quebradas",
    "icon": "fa-tint",
-   "x": -52.6,
-   "y": -1017.4,
+   "x": 13.7,
+   "y": -892.5,
    "r": 42.7,
    "deg": 1
   },
@@ -142,8 +142,8 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Reservas forestales",
    "icon": "fa-tree",
-   "x": 567.2,
-   "y": -771.5,
+   "x": 604.3,
+   "y": -611.1,
    "r": 47.4,
    "deg": 2
   },
@@ -152,28 +152,28 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Ríos",
    "icon": "fa-water",
-   "x": 463.9,
-   "y": -977.4,
-   "r": 53.4,
-   "deg": 3
+   "x": 346.7,
+   "y": -895.8,
+   "r": 60.3,
+   "deg": 4
   },
   {
    "id": "EEP::Áreas de resiliencia climática",
    "sys": "EEP",
    "label": "Áreas de resiliencia climática",
    "icon": "fa-temperature-half",
-   "x": 604.9,
-   "y": -179.3,
-   "r": 53.4,
-   "deg": 3
+   "x": 436.2,
+   "y": 87.7,
+   "r": 60.3,
+   "deg": 4
   },
   {
    "id": "EEP::Áreas protegidas",
    "sys": "EEP",
    "label": "Áreas protegidas",
    "icon": "fa-shield-halved",
-   "x": 692.9,
-   "y": -460.7,
+   "x": 675.4,
+   "y": -362.3,
    "r": 53.4,
    "deg": 3
   },
@@ -182,8 +182,8 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "Ciclorutas",
    "icon": "fa-bicycle",
-   "x": -469.0,
-   "y": -597.5,
+   "x": -394.9,
+   "y": -467.4,
    "r": 68.1,
    "deg": 5
   },
@@ -192,8 +192,8 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "Corredores verdes",
    "icon": "fa-road",
-   "x": -715.3,
-   "y": -831.2,
+   "x": -612.9,
+   "y": -680.3,
    "r": 47.4,
    "deg": 2
   },
@@ -202,8 +202,8 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "Equipamientos",
    "icon": "fa-building-columns",
-   "x": -772.1,
-   "y": 116.7,
+   "x": -704.9,
+   "y": 189.0,
    "r": 105.9,
    "deg": 9
   },
@@ -212,8 +212,8 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "Espacio público",
    "icon": "fa-umbrella-beach",
-   "x": -319.3,
-   "y": -996.0,
+   "x": -258.0,
+   "y": -873.8,
    "r": 42.7,
    "deg": 1
   },
@@ -222,8 +222,8 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "Manzanas del Cuidado",
    "icon": "fa-hand-holding-heart",
-   "x": -1044.6,
-   "y": -107.4,
+   "x": -936.6,
+   "y": 13.3,
    "r": 68.1,
    "deg": 5
   },
@@ -232,8 +232,8 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "Parques",
    "icon": "fa-tree",
-   "x": -1118.4,
-   "y": -591.9,
+   "x": -1087.8,
+   "y": -413.0,
    "r": 42.7,
    "deg": 1
   },
@@ -242,8 +242,8 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "Red vial",
    "icon": "fa-road-bridge",
-   "x": -906.9,
-   "y": -425.4,
+   "x": -771.2,
+   "y": -342.4,
    "r": 47.4,
    "deg": 2
   },
@@ -252,8 +252,8 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "Servicios de cuidado",
    "icon": "fa-heart",
-   "x": -1182.3,
-   "y": -256.3,
+   "x": -996.6,
+   "y": -227.7,
    "r": 42.7,
    "deg": 1
   },
@@ -262,8 +262,8 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "Servicios públicos",
    "icon": "fa-plug",
-   "x": -726.4,
-   "y": 349.0,
+   "x": -284.1,
+   "y": 288.2,
    "r": 76.6,
    "deg": 6
   },
@@ -272,8 +272,8 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "Servicios sociales",
    "icon": "fa-people-group",
-   "x": -1193.3,
-   "y": 84.1,
+   "x": -1108.7,
+   "y": 83.6,
    "r": 47.4,
    "deg": 2
   },
@@ -282,18 +282,18 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "Transporte público",
    "icon": "fa-bus",
-   "x": -551.9,
-   "y": -358.6,
-   "r": 85.8,
-   "deg": 7
+   "x": -359.2,
+   "y": -168.3,
+   "r": 95.5,
+   "deg": 8
   },
   {
    "id": "EFC::Vivienda",
    "sys": "EFC",
    "label": "Vivienda",
    "icon": "fa-house",
-   "x": -316.4,
-   "y": -103.3,
+   "x": -208.5,
+   "y": -0.6,
    "r": 105.9,
    "deg": 9
   },
@@ -302,38 +302,38 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "Actividades económicas",
    "icon": "fa-chart-line",
-   "x": -481.0,
-   "y": 273.3,
-   "r": 47.4,
-   "deg": 2
+   "x": 309.4,
+   "y": -43.1,
+   "r": 53.4,
+   "deg": 3
   },
   {
    "id": "ESECI::Centros de abastecimiento",
    "sys": "ESECI",
    "label": "Centros de abastecimiento",
    "icon": "fa-truck",
-   "x": 695.5,
-   "y": 1058.4,
-   "r": 42.7,
-   "deg": 1
+   "x": 48.5,
+   "y": 527.0,
+   "r": 47.4,
+   "deg": 2
   },
   {
    "id": "ESECI::Centros financieros",
    "sys": "ESECI",
    "label": "Centros financieros",
    "icon": "fa-building-columns",
-   "x": 41.0,
-   "y": 1176.3,
-   "r": 42.7,
-   "deg": 1
+   "x": 189.0,
+   "y": 1117.3,
+   "r": 47.4,
+   "deg": 2
   },
   {
    "id": "ESECI::Corazones productivos",
    "sys": "ESECI",
    "label": "Corazones productivos",
    "icon": "fa-heart-pulse",
-   "x": 141.4,
-   "y": -343.7,
+   "x": -560.8,
+   "y": 291.9,
    "r": 42.7,
    "deg": 1
   },
@@ -342,8 +342,8 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "Distrito Centro Tecnológico e Innovación",
    "icon": "fa-microchip",
-   "x": -716.2,
-   "y": 738.3,
+   "x": -542.2,
+   "y": 709.7,
    "r": 60.3,
    "deg": 4
   },
@@ -352,8 +352,8 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "Economía",
    "icon": "fa-coins",
-   "x": 480.2,
-   "y": 365.8,
+   "x": 514.7,
+   "y": 446.2,
    "r": 53.4,
    "deg": 3
   },
@@ -362,8 +362,8 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "Empleo",
    "icon": "fa-briefcase",
-   "x": -688.0,
-   "y": -128.6,
+   "x": -596.3,
+   "y": -36.4,
    "r": 76.6,
    "deg": 6
   },
@@ -372,18 +372,18 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "Plazas de mercado",
    "icon": "fa-store",
-   "x": 367.3,
-   "y": 979.6,
-   "r": 53.4,
-   "deg": 3
+   "x": 339.2,
+   "y": 858.9,
+   "r": 60.3,
+   "deg": 4
   },
   {
    "id": "ESECI::Producción artesanal",
    "sys": "ESECI",
    "label": "Producción artesanal",
    "icon": "fa-gem",
-   "x": -432.8,
-   "y": 964.8,
+   "x": -128.9,
+   "y": 1048.2,
    "r": 47.4,
    "deg": 2
   },
@@ -392,18 +392,18 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "Producción de alimentos",
    "icon": "fa-wheat-awn",
-   "x": 430.7,
-   "y": -546.4,
-   "r": 42.7,
-   "deg": 1
+   "x": 251.2,
+   "y": -646.6,
+   "r": 47.4,
+   "deg": 2
   },
   {
    "id": "ESECI::Servicios empresariales",
    "sys": "ESECI",
    "label": "Servicios empresariales",
    "icon": "fa-handshake",
-   "x": -305.3,
-   "y": 776.8,
+   "x": -172.6,
+   "y": 771.1,
    "r": 68.1,
    "deg": 5
   },
@@ -412,38 +412,38 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "Sistema de educación",
    "icon": "fa-graduation-cap",
-   "x": -895.1,
-   "y": 344.8,
-   "r": 68.1,
-   "deg": 5
+   "x": -646.0,
+   "y": 462.3,
+   "r": 76.6,
+   "deg": 6
   },
   {
    "id": "ESECI::Zonas de interés turístico",
    "sys": "ESECI",
    "label": "Zonas de interés turístico",
    "icon": "fa-camera",
-   "x": 724.6,
-   "y": 616.2,
-   "r": 60.3,
-   "deg": 4
+   "x": 739.7,
+   "y": 572.0,
+   "r": 68.1,
+   "deg": 5
   },
   {
    "id": "ESECI::Zonas industriales",
    "sys": "ESECI",
    "label": "Zonas industriales",
    "icon": "fa-industry",
-   "x": -572.3,
-   "y": 482.7,
-   "r": 76.6,
-   "deg": 6
+   "x": -158.7,
+   "y": 467.6,
+   "r": 85.8,
+   "deg": 7
   },
   {
    "id": "EIP::Patrimonio arqueológico",
    "sys": "EIP",
    "label": "Patrimonio arqueológico",
    "icon": "fa-scroll",
-   "x": -223.0,
-   "y": 540.6,
+   "x": -341.8,
+   "y": 654.9,
    "r": 53.4,
    "deg": 3
   },
@@ -452,8 +452,8 @@ const POT_DATA = {
    "sys": "EIP",
    "label": "Patrimonio cultural",
    "icon": "fa-landmark",
-   "x": 545.0,
-   "y": 757.0,
+   "x": 613.2,
+   "y": 806.5,
    "r": 47.4,
    "deg": 2
   },
@@ -462,28 +462,28 @@ const POT_DATA = {
    "sys": "EIP",
    "label": "Patrimonio inmaterial",
    "icon": "fa-masks-theater",
-   "x": -70.1,
-   "y": 930.7,
-   "r": 60.3,
-   "deg": 4
+   "x": -334.4,
+   "y": 889.5,
+   "r": 68.1,
+   "deg": 5
   },
   {
    "id": "EIP::Patrimonio material",
    "sys": "EIP",
    "label": "Patrimonio material",
    "icon": "fa-monument",
-   "x": 110.8,
-   "y": 763.2,
-   "r": 53.4,
-   "deg": 3
+   "x": 36.3,
+   "y": 905.2,
+   "r": 68.1,
+   "deg": 5
   },
   {
    "id": "EIP::Patrimonio natural",
    "sys": "EIP",
    "label": "Patrimonio natural",
    "icon": "fa-mountain-sun",
-   "x": 295.9,
-   "y": 315.7,
+   "x": 229.9,
+   "y": 434.0,
    "r": 85.8,
    "deg": 7
   },
@@ -492,8 +492,8 @@ const POT_DATA = {
    "sys": "EIP",
    "label": "Sistema de sitios sagrados",
    "icon": "fa-place-of-worship",
-   "x": -371.0,
-   "y": 1210.6,
+   "x": -704.2,
+   "y": 992.9,
    "r": 42.7,
    "deg": 1
   }
@@ -1824,13 +1824,149 @@ const POT_DATA = {
    "porVerificar": true,
    "sinFrase": true,
    "id": 77
+  },
+  {
+   "sO": "ESECI",
+   "cO": "Zonas de interés turístico",
+   "sD": "EEP",
+   "cD": "Parques de borde",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "—",
+   "seccion": "Pendiente de referencia en el POT",
+   "frase": null,
+   "clase": "Intersistema",
+   "completa": false,
+   "porVerificar": true,
+   "sinFrase": true,
+   "id": 78
+  },
+  {
+   "sO": "ESECI",
+   "cO": "Producción de alimentos",
+   "sD": "EEP",
+   "cD": "Ríos",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "—",
+   "seccion": "Pendiente de referencia en el POT",
+   "frase": null,
+   "clase": "Intersistema",
+   "completa": false,
+   "porVerificar": true,
+   "sinFrase": true,
+   "id": 79
+  },
+  {
+   "sO": "ESECI",
+   "cO": "Actividades económicas",
+   "sD": "EEP",
+   "cD": "Coberturas vegetales",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "—",
+   "seccion": "Pendiente de referencia en el POT",
+   "frase": null,
+   "clase": "Intersistema",
+   "completa": false,
+   "porVerificar": true,
+   "sinFrase": true,
+   "id": 80
+  },
+  {
+   "sO": "ESECI",
+   "cO": "Zonas industriales",
+   "sD": "EEP",
+   "cD": "Áreas de resiliencia climática",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Resiliencia",
+   "pag": "—",
+   "seccion": "Pendiente de referencia en el POT",
+   "frase": null,
+   "clase": "Intersistema",
+   "completa": false,
+   "porVerificar": true,
+   "sinFrase": true,
+   "id": 81
+  },
+  {
+   "sO": "ESECI",
+   "cO": "Plazas de mercado",
+   "sD": "EIP",
+   "cD": "Patrimonio material",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte",
+   "pag": "—",
+   "seccion": "Pendiente de referencia en el POT",
+   "frase": null,
+   "clase": "Intersistema",
+   "completa": false,
+   "porVerificar": true,
+   "sinFrase": true,
+   "id": 82
+  },
+  {
+   "sO": "ESECI",
+   "cO": "Centros financieros",
+   "sD": "EIP",
+   "cD": "Patrimonio material",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "—",
+   "seccion": "Pendiente de referencia en el POT",
+   "frase": null,
+   "clase": "Intersistema",
+   "completa": false,
+   "porVerificar": true,
+   "sinFrase": true,
+   "id": 83
+  },
+  {
+   "sO": "ESECI",
+   "cO": "Sistema de educación",
+   "sD": "EIP",
+   "cD": "Patrimonio inmaterial",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "—",
+   "seccion": "Pendiente de referencia en el POT",
+   "frase": null,
+   "clase": "Intersistema",
+   "completa": false,
+   "porVerificar": true,
+   "sinFrase": true,
+   "id": 84
+  },
+  {
+   "sO": "ESECI",
+   "cO": "Centros de abastecimiento",
+   "sD": "EFC",
+   "cD": "Transporte público",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "—",
+   "seccion": "Pendiente de referencia en el POT",
+   "frase": null,
+   "clase": "Intersistema",
+   "completa": false,
+   "porVerificar": true,
+   "sinFrase": true,
+   "id": 85
   }
  ],
  "vb": [
-  -1278,
-  -1296,
-  2557,
-  2627
+  -1194,
+  -1202,
+  2387,
+  2441
  ]
 };
 
@@ -2156,7 +2292,11 @@ function updateSimPanel(active, total, rank) {
       <div class="sim-line"><span>Relaciones eliminadas</span><span>${removed}</span></div>
       <div class="sim-line"><span>Relaciones restantes</span><span>${active}</span></div>
       <div class="sim-line"><span>Pérdida de conectividad</span><span>${loss}%</span></div>
-      <p class="note" style="border:0;padding-top:9px">Al desactivar ${off.join(' + ')}, la red pierde ${loss}% de sus relaciones.</p>`;
+      <p class="note" style="border:0;padding-top:9px">Al desactivar ${off.join(' + ')}, la red pierde ${loss}% de sus relaciones.</p>
+      ${off.includes('ESECI') ? `<div class="eco-note"><i class="fa-solid fa-arrow-trend-up"></i>
+        <span>Es la caída más fuerte de la red: el POT orienta buena parte del ordenamiento hacia el
+        crecimiento económico, el empleo y la productividad, así que al quitar la ESECI se desprenden
+        ${removed} relaciones y la red se parte en ${components().count} componentes.</span></div>` : ''}`;
   }
 
   // ---- hallazgo dinámico ----
@@ -2414,6 +2554,14 @@ function initIntro() {
   const cerrar = () => {
     back.classList.add('hidden');
     document.body.style.overflow = '';
+    // señalar el escenario que demuestra el hallazgo
+    const btn = document.querySelector('.scenario-btn[data-sys="ESECI"]');
+    if (btn) {
+      btn.classList.add('spotlight');
+      btn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      btn.addEventListener('click', () => btn.classList.remove('spotlight'), { once: true });
+      setTimeout(() => btn.classList.remove('spotlight'), 14000);
+    }
   };
   bEnd.addEventListener('click', cerrar);
   document.getElementById('introClose').addEventListener('click', cerrar);
