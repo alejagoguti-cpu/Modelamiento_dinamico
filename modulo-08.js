@@ -608,6 +608,7 @@ function clearSpotlight() {
   setActivePlazoButton("todos");
   document.getElementById("plazoDesc").textContent =
     "Viendo el modelo completo: los 6 sistemas y sus componentes, sin filtrar por plazo.";
+  renderPlazoHow("todos");
   applySpotlightState();
 }
 
@@ -672,6 +673,7 @@ function toggleInsight(key) {
   setActivePlazoButton("todos");
   document.getElementById("plazoDesc").textContent =
     "Viendo el modelo completo: los 6 sistemas y sus componentes, sin filtrar por plazo.";
+  renderPlazoHow("todos");
   card.classList.add("active");
 }
 
@@ -682,8 +684,102 @@ const PLAZO_DESC = {
   largo: "Largo plazo: se apagan las acciones rápidas y de bajo costo. Quedan encendidos los componentes que requieren obra estructural, inversión mayor o procesos de varios años.",
 };
 
+/* Cómo se logrará cada plazo: mecanismo concreto + qué componentes de TU modelo cubre */
+const PLAZO_HOW = {
+  corto: [
+    {
+      icon: "fa-broom", color: "#f5c945",
+      title: "Obra menor y mantenimiento urbano",
+      text: "Contratos de obra menor, sin licitación mayor: adecuar, iluminar y señalizar lo que ya existe.",
+      comps: "Espacio público · Plazas · Andenes · Alumbrado público",
+    },
+    {
+      icon: "fa-hand-holding-dollar", color: "#4ade80",
+      title: "Presupuesto participativo",
+      text: "La comunidad decide y ejecuta directamente los recursos, a través de sus propias organizaciones.",
+      comps: "Centros comunitarios · Bibliotecas · JAC · Organizaciones comunitarias",
+    },
+    {
+      icon: "fa-store", color: "#ef9552",
+      title: "Formalización y créditos blandos",
+      text: "Ferias, formalización de vendedores y microcrédito: se activa la economía existente, sin obra nueva.",
+      comps: "Comercio · Economía popular · Plazas de mercado · Producción artesanal",
+    },
+    {
+      icon: "fa-bicycle", color: "#5b8def",
+      title: "Señalización, no construcción",
+      text: "Pintar y señalizar corredores ya existentes en la malla vial, sin obra civil mayor.",
+      comps: "Ciclorrutas",
+    },
+    {
+      icon: "fa-seedling", color: "#4ade80",
+      title: "Jornadas de siembra y mantenimiento",
+      text: "Programas replicables de arborización y cuidado de zonas verdes ya delimitadas.",
+      comps: "Parques urbanos · Arbolado urbano",
+    },
+    {
+      icon: "fa-people-roof", color: "#f76fb0",
+      title: "Uso de infraestructura existente",
+      text: "Programación y operación de espacios que ya están construidos, sin ampliar la planta física.",
+      comps: "Manzanas del Cuidado · Espacios culturales · Centros deportivos · Recreación",
+    },
+  ],
+  largo: [
+    {
+      icon: "fa-train-subway", color: "#5b8def",
+      title: "Macroproyectos de movilidad",
+      text: "Estudios de factibilidad, financiamiento con banca multilateral o Nación, y varios periodos de gobierno para construirse.",
+      comps: "Metro · Regiotram · Red vial · Transporte público",
+    },
+    {
+      icon: "fa-bolt", color: "#ef9552",
+      title: "Planes maestros de servicios públicos",
+      text: "Inversión plurianual ejecutada por las empresas de servicios públicos, con redes que se construyen por etapas.",
+      comps: "Redes de energía · Alcantarillado",
+    },
+    {
+      icon: "fa-water", color: "#4ade80",
+      title: "Planes de manejo ambiental",
+      text: "Compra de predios y restauración ecológica de largo aliento, coordinada con la autoridad ambiental.",
+      comps: "Humedales · Ríos · Quebradas · Cerros · Corredores ecológicos · Corredores verdes",
+    },
+    {
+      icon: "fa-building-columns", color: "#f76fb0",
+      title: "Planes maestros de equipamientos",
+      text: "Construcción o rehabilitación con inversión de capital y convocatorias de infraestructura social.",
+      comps: "Educación · Salud · Equipamientos · Patrimonio",
+    },
+    {
+      icon: "fa-city", color: "#f5c945",
+      title: "Instrumentos de gestión del suelo",
+      text: "Planes parciales, macroproyectos y atracción de inversión privada para transformar el uso del suelo.",
+      comps: "Empleo · Turismo · Centralidades · Lotes",
+    },
+  ],
+};
+
 function setActivePlazoButton(mode) {
   document.querySelectorAll(".plazo-btn").forEach(b => b.classList.toggle("active", b.dataset.plazo === mode));
+}
+
+function renderPlazoHow(mode) {
+  const container = document.getElementById("plazoHow");
+  if (!container) return;
+  const items = PLAZO_HOW[mode];
+  if (!items) {
+    container.innerHTML = `<div class="plazo-how-empty">Elige "Corto plazo" o "Largo plazo" para ver cómo se logra cada uno con los componentes de tu modelo.</div>`;
+    return;
+  }
+  container.innerHTML = items.map(it => `
+    <div class="plazo-how-card" style="--how-color:${it.color};">
+      <div class="plazo-how-icon"><i class="fa-solid ${it.icon}"></i></div>
+      <div class="plazo-how-content">
+        <h5>${it.title}</h5>
+        <p>${it.text}</p>
+        <span class="plazo-how-components">${it.comps}</span>
+      </div>
+    </div>
+  `).join("");
 }
 
 function setPlazo(mode) {
@@ -694,6 +790,7 @@ function setPlazo(mode) {
     spotlight = null;
     document.getElementById("plazoDesc").textContent =
       "Viendo el modelo completo: los 6 sistemas y sus componentes, sin filtrar por plazo.";
+    renderPlazoHow("todos");
     applySpotlightState();
     return;
   }
@@ -701,6 +798,7 @@ function setPlazo(mode) {
   const ids = ODS_NODES.filter(n => n.plazo === mode || n.plazo === "ambos").map(n => n.id);
   spotlight = { mode: "nodes", nodes: new Set(ids), expand: false };
   document.getElementById("plazoDesc").textContent = PLAZO_DESC[mode];
+  renderPlazoHow(mode);
   applySpotlightState();
 }
 
@@ -887,6 +985,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setupLegendToggle();
   populateEdgeSelects();
   renderTable();
+  renderPlazoHow("todos");
 });
 
 /* acceso público para extensiones y pruebas */
