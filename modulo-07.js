@@ -5,8 +5,8 @@
    No se inventan relaciones ni se alteran frases o páginas.
    ======================================================================= */
 
-// 86 relaciones: 68 sustentadas con frase textual del POT, 7 que la tabla marca
-// 'por verificar' y 11 agregadas a pedido, pendientes de frase y pagina.
+// 98 relaciones: 68 sustentadas con frase textual del POT, 7 marcadas 'por
+// verificar' por la propia tabla y 23 agregadas a pedido, pendientes de frase.
 const POT_DATA = {
  "sistemas": {
   "EEP": {
@@ -32,19 +32,19 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Bosques urbanos",
    "icon": "fa-tree-city",
-   "x": 1108.7,
-   "y": -273.0,
-   "r": 42.7,
-   "deg": 1
+   "x": -614.4,
+   "y": 1387.4,
+   "r": 48.9,
+   "deg": 2
   },
   {
    "id": "EEP::Cerros Orientales",
    "sys": "EEP",
    "label": "Cerros Orientales",
    "icon": "fa-mountain",
-   "x": 490.6,
-   "y": -819.6,
-   "r": 42.7,
+   "x": 1688.7,
+   "y": 157.4,
+   "r": 43.5,
    "deg": 1
   },
   {
@@ -52,19 +52,19 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Coberturas vegetales",
    "icon": "fa-seedling",
-   "x": 841.3,
-   "y": -133.8,
-   "r": 76.6,
-   "deg": 6
+   "x": -280.3,
+   "y": 935.3,
+   "r": 88.3,
+   "deg": 7
   },
   {
    "id": "EEP::Complejos de páramos",
    "sys": "EEP",
    "label": "Complejos de páramos",
    "icon": "fa-cloud",
-   "x": 763.7,
-   "y": -850.2,
-   "r": 47.4,
+   "x": 868.2,
+   "y": 1593.6,
+   "r": 48.9,
    "deg": 2
   },
   {
@@ -72,9 +72,9 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Conservación ambiental",
    "icon": "fa-shield-heart",
-   "x": 954.5,
-   "y": 399.2,
-   "r": 42.7,
+   "x": 1299.2,
+   "y": -1049.2,
+   "r": 43.5,
    "deg": 1
   },
   {
@@ -82,9 +82,9 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Corredores montañosos",
    "icon": "fa-mountain-sun",
-   "x": 226.1,
-   "y": -1117.3,
-   "r": 42.7,
+   "x": 1525.3,
+   "y": 1167.5,
+   "r": 43.5,
    "deg": 1
   },
   {
@@ -92,8 +92,8 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Humedales",
    "icon": "fa-droplet",
-   "x": 148.9,
-   "y": -428.9,
+   "x": 753.3,
+   "y": -42.4,
    "r": 140.0,
    "deg": 12
   },
@@ -102,9 +102,9 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Paisajes sostenibles",
    "icon": "fa-image",
-   "x": 957.6,
-   "y": -554.4,
-   "r": 47.4,
+   "x": 226.4,
+   "y": 1661.8,
+   "r": 48.9,
    "deg": 2
   },
   {
@@ -112,9 +112,9 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Parques de borde",
    "icon": "fa-leaf",
-   "x": 1035.7,
-   "y": 161.2,
-   "r": 47.4,
+   "x": 360.1,
+   "y": 1365.0,
+   "r": 48.9,
    "deg": 2
   },
   {
@@ -122,9 +122,9 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Parques ecológicos de montaña",
    "icon": "fa-mountain",
-   "x": 750.6,
-   "y": 138.2,
-   "r": 60.3,
+   "x": 620.2,
+   "y": 991.3,
+   "r": 62.7,
    "deg": 4
   },
   {
@@ -132,9 +132,9 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Quebradas",
    "icon": "fa-tint",
-   "x": 13.7,
-   "y": -892.5,
-   "r": 42.7,
+   "x": 1525.4,
+   "y": -455.3,
+   "r": 43.5,
    "deg": 1
   },
   {
@@ -142,9 +142,9 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Reservas forestales",
    "icon": "fa-tree",
-   "x": 604.3,
-   "y": -611.1,
-   "r": 47.4,
+   "x": 1517.4,
+   "y": -13.4,
+   "r": 48.9,
    "deg": 2
   },
   {
@@ -152,29 +152,29 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Ríos",
    "icon": "fa-water",
-   "x": 346.7,
-   "y": -895.8,
-   "r": 60.3,
-   "deg": 4
+   "x": 1011.5,
+   "y": 972.3,
+   "r": 70.7,
+   "deg": 5
   },
   {
    "id": "EEP::Áreas de resiliencia climática",
    "sys": "EEP",
    "label": "Áreas de resiliencia climática",
    "icon": "fa-temperature-half",
-   "x": 436.2,
-   "y": 87.7,
-   "r": 60.3,
-   "deg": 4
+   "x": -279.9,
+   "y": 231.1,
+   "r": 70.7,
+   "deg": 5
   },
   {
    "id": "EEP::Áreas protegidas",
    "sys": "EEP",
    "label": "Áreas protegidas",
    "icon": "fa-shield-halved",
-   "x": 675.4,
-   "y": -362.3,
-   "r": 53.4,
+   "x": 1379.7,
+   "y": 488.8,
+   "r": 55.4,
    "deg": 3
   },
   {
@@ -182,9 +182,9 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "Ciclorutas",
    "icon": "fa-bicycle",
-   "x": -394.9,
-   "y": -467.4,
-   "r": 68.1,
+   "x": 250.4,
+   "y": -921.5,
+   "r": 70.7,
    "deg": 5
   },
   {
@@ -192,9 +192,9 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "Corredores verdes",
    "icon": "fa-road",
-   "x": -612.9,
-   "y": -680.3,
-   "r": 47.4,
+   "x": 319.3,
+   "y": -1425.4,
+   "r": 48.9,
    "deg": 2
   },
   {
@@ -202,29 +202,29 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "Equipamientos",
    "icon": "fa-building-columns",
-   "x": -704.9,
-   "y": 189.0,
-   "r": 105.9,
-   "deg": 9
+   "x": -1102.4,
+   "y": -519.5,
+   "r": 118.2,
+   "deg": 10
   },
   {
    "id": "EFC::Espacio público",
    "sys": "EFC",
    "label": "Espacio público",
    "icon": "fa-umbrella-beach",
-   "x": -258.0,
-   "y": -873.8,
-   "r": 42.7,
-   "deg": 1
+   "x": 699.0,
+   "y": 401.0,
+   "r": 55.4,
+   "deg": 3
   },
   {
    "id": "EFC::Manzanas del Cuidado",
    "sys": "EFC",
    "label": "Manzanas del Cuidado",
    "icon": "fa-hand-holding-heart",
-   "x": -936.6,
-   "y": 13.3,
-   "r": 68.1,
+   "x": -1149.9,
+   "y": -987.4,
+   "r": 70.7,
    "deg": 5
   },
   {
@@ -232,9 +232,9 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "Parques",
    "icon": "fa-tree",
-   "x": -1087.8,
-   "y": -413.0,
-   "r": 42.7,
+   "x": -1023.6,
+   "y": -1661.8,
+   "r": 43.5,
    "deg": 1
   },
   {
@@ -242,9 +242,9 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "Red vial",
    "icon": "fa-road-bridge",
-   "x": -771.2,
-   "y": -342.4,
-   "r": 47.4,
+   "x": -728.6,
+   "y": -1205.4,
+   "r": 48.9,
    "deg": 2
   },
   {
@@ -252,9 +252,9 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "Servicios de cuidado",
    "icon": "fa-heart",
-   "x": -996.6,
-   "y": -227.7,
-   "r": 42.7,
+   "x": -1688.7,
+   "y": -844.9,
+   "r": 43.5,
    "deg": 1
   },
   {
@@ -262,9 +262,9 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "Servicios públicos",
    "icon": "fa-plug",
-   "x": -284.1,
-   "y": 288.2,
-   "r": 76.6,
+   "x": -1214.2,
+   "y": -307.1,
+   "r": 79.2,
    "deg": 6
   },
   {
@@ -272,9 +272,9 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "Servicios sociales",
    "icon": "fa-people-group",
-   "x": -1108.7,
-   "y": 83.6,
-   "r": 47.4,
+   "x": -1407.2,
+   "y": -1216.9,
+   "r": 48.9,
    "deg": 2
   },
   {
@@ -282,9 +282,9 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "Transporte público",
    "icon": "fa-bus",
-   "x": -359.2,
-   "y": -168.3,
-   "r": 95.5,
+   "x": -101.7,
+   "y": -570.6,
+   "r": 97.8,
    "deg": 8
   },
   {
@@ -292,9 +292,9 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "Vivienda",
    "icon": "fa-house",
-   "x": -208.5,
-   "y": -0.6,
-   "r": 105.9,
+   "x": -242.0,
+   "y": -742.2,
+   "r": 107.8,
    "deg": 9
   },
   {
@@ -302,19 +302,19 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "Actividades económicas",
    "icon": "fa-chart-line",
-   "x": 309.4,
-   "y": -43.1,
-   "r": 53.4,
-   "deg": 3
+   "x": -698.3,
+   "y": 30.2,
+   "r": 62.7,
+   "deg": 4
   },
   {
    "id": "ESECI::Centros de abastecimiento",
    "sys": "ESECI",
    "label": "Centros de abastecimiento",
    "icon": "fa-truck",
-   "x": 48.5,
-   "y": 527.0,
-   "r": 47.4,
+   "x": -191.6,
+   "y": 574.2,
+   "r": 48.9,
    "deg": 2
   },
   {
@@ -322,9 +322,9 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "Centros financieros",
    "icon": "fa-building-columns",
-   "x": 189.0,
-   "y": 1117.3,
-   "r": 47.4,
+   "x": -1162.6,
+   "y": 1179.0,
+   "r": 48.9,
    "deg": 2
   },
   {
@@ -332,9 +332,9 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "Corazones productivos",
    "icon": "fa-heart-pulse",
-   "x": -560.8,
-   "y": 291.9,
-   "r": 42.7,
+   "x": -312.2,
+   "y": -1456.1,
+   "r": 43.5,
    "deg": 1
   },
   {
@@ -342,19 +342,19 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "Distrito Centro Tecnológico e Innovación",
    "icon": "fa-microchip",
-   "x": -542.2,
-   "y": 709.7,
-   "r": 60.3,
-   "deg": 4
+   "x": -1455.0,
+   "y": 395.8,
+   "r": 70.7,
+   "deg": 5
   },
   {
    "id": "ESECI::Economía",
    "sys": "ESECI",
    "label": "Economía",
    "icon": "fa-coins",
-   "x": 514.7,
-   "y": 446.2,
-   "r": 53.4,
+   "x": 749.1,
+   "y": -879.3,
+   "r": 55.4,
    "deg": 3
   },
   {
@@ -362,39 +362,39 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "Empleo",
    "icon": "fa-briefcase",
-   "x": -596.3,
-   "y": -36.4,
-   "r": 76.6,
-   "deg": 6
+   "x": -600.3,
+   "y": -630.4,
+   "r": 97.8,
+   "deg": 8
   },
   {
    "id": "ESECI::Plazas de mercado",
    "sys": "ESECI",
    "label": "Plazas de mercado",
    "icon": "fa-store",
-   "x": 339.2,
-   "y": 858.9,
-   "r": 60.3,
-   "deg": 4
+   "x": 82.1,
+   "y": 939.6,
+   "r": 79.2,
+   "deg": 6
   },
   {
    "id": "ESECI::Producción artesanal",
    "sys": "ESECI",
    "label": "Producción artesanal",
    "icon": "fa-gem",
-   "x": -128.9,
-   "y": 1048.2,
-   "r": 47.4,
-   "deg": 2
+   "x": -1484.4,
+   "y": -98.2,
+   "r": 55.4,
+   "deg": 3
   },
   {
    "id": "ESECI::Producción de alimentos",
    "sys": "ESECI",
    "label": "Producción de alimentos",
    "icon": "fa-wheat-awn",
-   "x": 251.2,
-   "y": -646.6,
-   "r": 47.4,
+   "x": 1126.8,
+   "y": 549.7,
+   "r": 48.9,
    "deg": 2
   },
   {
@@ -402,59 +402,59 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "Servicios empresariales",
    "icon": "fa-handshake",
-   "x": -172.6,
-   "y": 771.1,
-   "r": 68.1,
-   "deg": 5
+   "x": -981.5,
+   "y": 721.0,
+   "r": 88.3,
+   "deg": 7
   },
   {
    "id": "ESECI::Sistema de educación",
    "sys": "ESECI",
    "label": "Sistema de educación",
    "icon": "fa-graduation-cap",
-   "x": -646.0,
-   "y": 462.3,
-   "r": 76.6,
-   "deg": 6
+   "x": -1049.5,
+   "y": -68.4,
+   "r": 88.3,
+   "deg": 7
   },
   {
    "id": "ESECI::Zonas de interés turístico",
    "sys": "ESECI",
    "label": "Zonas de interés turístico",
    "icon": "fa-camera",
-   "x": 739.7,
-   "y": 572.0,
-   "r": 68.1,
-   "deg": 5
+   "x": 650.6,
+   "y": 677.8,
+   "r": 79.2,
+   "deg": 6
   },
   {
    "id": "ESECI::Zonas industriales",
    "sys": "ESECI",
    "label": "Zonas industriales",
    "icon": "fa-industry",
-   "x": -158.7,
-   "y": 467.6,
-   "r": 85.8,
-   "deg": 7
+   "x": -980.8,
+   "y": 150.4,
+   "r": 97.8,
+   "deg": 8
   },
   {
    "id": "EIP::Patrimonio arqueológico",
    "sys": "EIP",
    "label": "Patrimonio arqueológico",
    "icon": "fa-scroll",
-   "x": -341.8,
-   "y": 654.9,
-   "r": 53.4,
-   "deg": 3
+   "x": -845.0,
+   "y": 342.2,
+   "r": 62.7,
+   "deg": 4
   },
   {
    "id": "EIP::Patrimonio cultural",
    "sys": "EIP",
    "label": "Patrimonio cultural",
    "icon": "fa-landmark",
-   "x": 613.2,
-   "y": 806.5,
-   "r": 47.4,
+   "x": 1157.5,
+   "y": -322.5,
+   "r": 48.9,
    "deg": 2
   },
   {
@@ -462,29 +462,29 @@ const POT_DATA = {
    "sys": "EIP",
    "label": "Patrimonio inmaterial",
    "icon": "fa-masks-theater",
-   "x": -334.4,
-   "y": 889.5,
-   "r": 68.1,
-   "deg": 5
+   "x": -606.8,
+   "y": -280.2,
+   "r": 88.3,
+   "deg": 7
   },
   {
    "id": "EIP::Patrimonio material",
    "sys": "EIP",
    "label": "Patrimonio material",
    "icon": "fa-monument",
-   "x": 36.3,
-   "y": 905.2,
-   "r": 68.1,
-   "deg": 5
+   "x": -616.5,
+   "y": 630.7,
+   "r": 88.3,
+   "deg": 7
   },
   {
    "id": "EIP::Patrimonio natural",
    "sys": "EIP",
    "label": "Patrimonio natural",
    "icon": "fa-mountain-sun",
-   "x": 229.9,
-   "y": 434.0,
-   "r": 85.8,
+   "x": 62.3,
+   "y": 430.7,
+   "r": 88.3,
    "deg": 7
   },
   {
@@ -492,9 +492,9 @@ const POT_DATA = {
    "sys": "EIP",
    "label": "Sistema de sitios sagrados",
    "icon": "fa-place-of-worship",
-   "x": -704.2,
-   "y": 992.9,
-   "r": 42.7,
+   "x": -96.6,
+   "y": -1276.6,
+   "r": 43.5,
    "deg": 1
   }
  ],
@@ -1960,13 +1960,217 @@ const POT_DATA = {
    "porVerificar": true,
    "sinFrase": true,
    "id": 85
+  },
+  {
+   "sO": "ESECI",
+   "cO": "Zonas industriales",
+   "sD": "EIP",
+   "cD": "Patrimonio material",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "—",
+   "seccion": "Pendiente de referencia en el POT",
+   "frase": null,
+   "clase": "Intersistema",
+   "completa": false,
+   "porVerificar": true,
+   "sinFrase": true,
+   "id": 86
+  },
+  {
+   "sO": "ESECI",
+   "cO": "Sistema de educación",
+   "sD": "EEP",
+   "cD": "Coberturas vegetales",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "—",
+   "seccion": "Pendiente de referencia en el POT",
+   "frase": null,
+   "clase": "Intersistema",
+   "completa": false,
+   "porVerificar": true,
+   "sinFrase": true,
+   "id": 87
+  },
+  {
+   "sO": "ESECI",
+   "cO": "Zonas de interés turístico",
+   "sD": "EFC",
+   "cD": "Espacio público",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte",
+   "pag": "—",
+   "seccion": "Pendiente de referencia en el POT",
+   "frase": null,
+   "clase": "Intersistema",
+   "completa": false,
+   "porVerificar": true,
+   "sinFrase": true,
+   "id": 88
+  },
+  {
+   "sO": "ESECI",
+   "cO": "Actividades económicas",
+   "sD": "EIP",
+   "cD": "Patrimonio inmaterial",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "—",
+   "seccion": "Pendiente de referencia en el POT",
+   "frase": null,
+   "clase": "Intersistema",
+   "completa": false,
+   "porVerificar": true,
+   "sinFrase": true,
+   "id": 89
+  },
+  {
+   "sO": "ESECI",
+   "cO": "Empleo",
+   "sD": "EEP",
+   "cD": "Áreas de resiliencia climática",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Resiliencia",
+   "pag": "—",
+   "seccion": "Pendiente de referencia en el POT",
+   "frase": null,
+   "clase": "Intersistema",
+   "completa": false,
+   "porVerificar": true,
+   "sinFrase": true,
+   "id": 90
+  },
+  {
+   "sO": "ESECI",
+   "cO": "Empleo",
+   "sD": "EIP",
+   "cD": "Patrimonio inmaterial",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "—",
+   "seccion": "Pendiente de referencia en el POT",
+   "frase": null,
+   "clase": "Intersistema",
+   "completa": false,
+   "porVerificar": true,
+   "sinFrase": true,
+   "id": 91
+  },
+  {
+   "sO": "ESECI",
+   "cO": "Servicios empresariales",
+   "sD": "EIP",
+   "cD": "Patrimonio material",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "—",
+   "seccion": "Pendiente de referencia en el POT",
+   "frase": null,
+   "clase": "Intersistema",
+   "completa": false,
+   "porVerificar": true,
+   "sinFrase": true,
+   "id": 92
+  },
+  {
+   "sO": "ESECI",
+   "cO": "Servicios empresariales",
+   "sD": "EEP",
+   "cD": "Bosques urbanos",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Resiliencia",
+   "pag": "—",
+   "seccion": "Pendiente de referencia en el POT",
+   "frase": null,
+   "clase": "Intersistema",
+   "completa": false,
+   "porVerificar": true,
+   "sinFrase": true,
+   "id": 93
+  },
+  {
+   "sO": "ESECI",
+   "cO": "Distrito Centro Tecnológico e Innovación",
+   "sD": "EIP",
+   "cD": "Patrimonio arqueológico",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "—",
+   "seccion": "Pendiente de referencia en el POT",
+   "frase": null,
+   "clase": "Intersistema",
+   "completa": false,
+   "porVerificar": true,
+   "sinFrase": true,
+   "id": 94
+  },
+  {
+   "sO": "ESECI",
+   "cO": "Plazas de mercado",
+   "sD": "EFC",
+   "cD": "Espacio público",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte",
+   "pag": "—",
+   "seccion": "Pendiente de referencia en el POT",
+   "frase": null,
+   "clase": "Intersistema",
+   "completa": false,
+   "porVerificar": true,
+   "sinFrase": true,
+   "id": 95
+  },
+  {
+   "sO": "ESECI",
+   "cO": "Plazas de mercado",
+   "sD": "EEP",
+   "cD": "Ríos",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "—",
+   "seccion": "Pendiente de referencia en el POT",
+   "frase": null,
+   "clase": "Intersistema",
+   "completa": false,
+   "porVerificar": true,
+   "sinFrase": true,
+   "id": 96
+  },
+  {
+   "sO": "ESECI",
+   "cO": "Producción artesanal",
+   "sD": "EFC",
+   "cD": "Equipamientos",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "—",
+   "seccion": "Pendiente de referencia en el POT",
+   "frase": null,
+   "clase": "Intersistema",
+   "completa": false,
+   "porVerificar": true,
+   "sinFrase": true,
+   "id": 97
   }
  ],
  "vb": [
-  -1384,
-  -1392,
-  2767,
-  2821
+  -1964,
+  -1937,
+  3927,
+  3910
  ]
 };
 
@@ -2165,6 +2369,7 @@ function render() {
       if (off) cls.push('node-off');
       if (!off && state[s] && ratio >= 0.34 && ratio < 1) cls.push('weakened');
       if (!off && state[s] && ratio >= 1) cls.push('cut-off');
+      if (isBridge(c)) cls.push('bridge');
 
       const g = el('g', {
         class: cls.join(' '),
@@ -2310,6 +2515,7 @@ function updateMetrics() {
       </div>`).join('');
 
   updateWeakBanner(active, total);
+  updateBridgePanel();
   updateSimPanel(active, total, rank);
 }
 
@@ -2344,6 +2550,42 @@ function updateWeakBanner(active, total) {
     <span class="wb-sub">${cortados} concepto(s) quedaron sin ninguna conexión ·
     ${debiles} perdieron la mitad o más de las suyas</span>`;
   banner.classList.remove('hidden');
+}
+
+
+// ---------------------------------------------------------------------
+// NODOS PUENTE: conceptos que se relacionan con las TRES estructuras
+// distintas a la suya. Son las costuras de la red.
+// ---------------------------------------------------------------------
+function structuresTouched(c) {
+  const set = new Set();
+  c.rels.forEach(r => {
+    const otro = r.from === c.id ? r.sD : r.sO;
+    if (otro !== c.sys) set.add(otro);
+  });
+  return set;
+}
+const isBridge = c => structuresTouched(c).size >= 3;
+
+function updateBridgePanel() {
+  const box = document.getElementById('bridgeList');
+  if (!box) return;
+  const lista = Object.values(model.concepts)
+    .filter(isBridge)
+    .map(c => ({ c, deg: c.rels.length }))
+    .sort((a, b) => b.deg - a.deg);
+
+  if (!lista.length) { box.innerHTML = '<p class="ev-empty">Ningún concepto conecta con las tres estructuras restantes.</p>'; return; }
+
+  const porESECI = lista.filter(o => o.c.sys === 'ESECI').length;
+  box.innerHTML = lista.map(o => `
+      <div class="bridge-row" style="--sys:${model.systems[o.c.sys].color}">
+        <i class="fa-solid ${o.c.icon}"></i>
+        <span class="bl">${esc(o.c.label)}</span>
+        <span class="bs">${o.c.sys}</span>
+        <span class="bn">${o.deg}</span>
+      </div>`).join('') +
+    `<p class="note">${porESECI} de ${lista.length} nodos puente pertenecen a la ESECI: es la estructura que cose la red.</p>`;
 }
 
 const set = (id, html) => { document.getElementById(id).innerHTML = html; };
