@@ -604,11 +604,9 @@ const relActive = r => state[r.sO] && state[r.sD];
 //    todos los conceptos quedan visibles y bien separados.
 // ---------------------------------------------------------------------
 const SYS_ORDER = ['EEP', 'EFC', 'ESECI', 'EIP']; // EFC y ESECI juntos: concentran el flujo más pesado
-const R_SYS = 150;   // círculo donde se ubican los nodos de sistema
-const R1 = 330;      // anillo interior de conceptos
-const R2 = 445;      // anillo exterior de conceptos
+const R1 = 310;      // anillo interior de conceptos
+const R2 = 425;      // anillo exterior de conceptos
 
-const SYS_R = 30;    // radio del nodo de sistema
 const CON_R = 12;    // radio del nodo de concepto
 
 const layout = {};
@@ -628,9 +626,6 @@ function computeLayout() {
     const sec = sectors[s];
     const ids = model.systems[s].concepts;
     const n = ids.length;
-
-    // el sistema se coloca en el centro angular de su sector
-    layout[s] = { x: R_SYS * Math.cos(sec.mid), y: R_SYS * Math.sin(sec.mid) };
 
     // reparto entre los dos anillos proporcional al radio, para que la
     // separación entre conceptos vecinos sea pareja en ambos
@@ -727,51 +722,6 @@ function render() {
   const gNodes = document.getElementById('gNodes');
   [gGuides, gMembers, gRels, gNodes].forEach(g => (g.innerHTML = ''));
 
-  // -- anillos guía y arcos de sector (agrupan cada estructura)
-  [R1, R2].forEach(r => {
-    gGuides.appendChild(el('circle', { class: 'ring-guide', cx: 0, cy: 0, r }));
-  });
-
-  const arcR = R2 + 44;
-  SYS_ORDER.forEach(s => {
-    if (!state[s]) return;
-    const sec = sectors[s];
-    const pad = 0.035;
-    const a0 = sec.a0 + pad, a1 = sec.a1 - pad;
-    const p0 = { x: arcR * Math.cos(a0), y: arcR * Math.sin(a0) };
-    const p1 = { x: arcR * Math.cos(a1), y: arcR * Math.sin(a1) };
-    const large = a1 - a0 > Math.PI ? 1 : 0;
-    gGuides.appendChild(el('path', {
-      class: 'sector-arc',
-      d: `M${p0.x.toFixed(1)},${p0.y.toFixed(1)} A${arcR},${arcR} 0 ${large} 1 ${p1.x.toFixed(1)},${p1.y.toFixed(1)}`,
-      style: `--sys:${model.systems[s].color}`
-    }));
-
-    const lp = { x: (arcR + 24) * Math.cos(sec.mid), y: (arcR + 24) * Math.sin(sec.mid) };
-    const t = el('text', {
-      class: 'sector-label',
-      x: lp.x.toFixed(1), y: lp.y.toFixed(1),
-      style: `--sys:${model.systems[s].color}`
-    });
-    t.textContent = s;
-    gGuides.appendChild(t);
-  });
-
-  // -- líneas de pertenencia (sistema -> concepto). No son relaciones del POT.
-  SYS.forEach(s => {
-    if (!state[s]) return;
-    model.systems[s].concepts.forEach(id => {
-      const a = layout[s], b = layout[id];
-      const dx = b.x - a.x, dy = b.y - a.y;
-      const L = Math.hypot(dx, dy) || 1;
-      gMembers.appendChild(el('line', {
-        class: 'member-link',
-        x1: a.x + (dx / L) * SYS_R, y1: a.y + (dy / L) * SYS_R,
-        x2: b.x - (dx / L) * CON_R, y2: b.y - (dy / L) * CON_R
-      }));
-    });
-  });
-
   // -- relaciones activas (las inactivas NO se dibujan: desaparecen de verdad)
   model.relations.forEach(r => {
     if (!relActive(r)) return;
@@ -836,31 +786,6 @@ function render() {
     });
   });
 
-  // -- nodos de sistema
-  SYS.forEach(s => {
-    if (!state[s]) return;
-    const sy = model.systems[s];
-    const p = layout[s];
-    const g = el('g', {
-      class: 'sys-node node-appear',
-      transform: `translate(${p.x},${p.y})`,
-      style: `--sys:${sy.color}`,
-      'data-sys': s
-    });
-    g.appendChild(el('circle', { class: 'core', r: SYS_R }));
-    const code = el('text', { class: 'code', y: 4 });
-    code.textContent = s;
-    g.appendChild(code);
-
-    g.addEventListener('mouseenter', ev => showTooltip(ev,
-      `<div class="tt-sys" style="color:${sy.color}">${s}</div>${esc(sy.nombre)}<br>` +
-      `<span style="color:#8891a5">${sy.concepts.length} conceptos · ${outgoing(s)} relaciones salientes activas</span>`));
-    g.addEventListener('mousemove', moveTooltip);
-    g.addEventListener('mouseleave', hideTooltip);
-    g.addEventListener('click', ev => { ev.stopPropagation(); toggleSystem(s); });
-
-    gNodes.appendChild(g);
-  });
 }
 
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -874,23 +799,20 @@ const incoming = s => model.relations.filter(r => r.sD === s && relActive(r)).le
 const incident = s => model.relations.filter(r => r.sO === s || r.sD === s).length;
 
 function components() {
+  // La red visible son los conceptos y las relaciones documentadas.
+  // Un concepto sin ninguna relación activa cuenta como componente propio.
   const adj = {};
-  const add = (a, b) => {
-    (adj[a] = adj[a] || []).push(b);
-    (adj[b] = adj[b] || []).push(a);
-  };
   const nodes = [];
-  SYS.forEach(s => {
-    if (!state[s]) return;
-    nodes.push(s);
-    adj[s] = adj[s] || [];
-    model.systems[s].concepts.forEach(id => {
-      nodes.push(id);
-      adj[id] = adj[id] || [];
-      add(s, id);
-    });
+  Object.values(model.concepts).forEach(c => {
+    if (!state[c.sys]) return;
+    nodes.push(c.id);
+    adj[c.id] = [];
   });
-  model.relations.forEach(r => { if (relActive(r)) add(r.from, r.to); });
+  model.relations.forEach(r => {
+    if (!relActive(r)) return;
+    adj[r.from].push(r.to);
+    adj[r.to].push(r.from);
+  });
 
   const seen = new Set();
   const sizes = [];
@@ -915,7 +837,7 @@ function updateMetrics() {
   const active = model.relations.filter(relActive).length;
   const pct = total ? Math.round((active / total) * 100) : 0;
   const comp = components();
-  const totalNodes = SYS.length + Object.keys(model.concepts).length;
+  const totalNodes = Object.keys(model.concepts).length;
 
   const isolatedCount = Object.values(model.concepts)
     .filter(c => state[c.sys] && !c.rels.some(relActive)).length;
@@ -1103,9 +1025,6 @@ function focusConcept(id) {
     const r = model.relations.find(x => x.id === +p.getAttribute('data-rel'));
     p.classList.toggle('dim', !(r && (r.from === id || r.to === id)));
   });
-  document.querySelectorAll('.sys-node').forEach(g => {
-    g.classList.toggle('dim', g.getAttribute('data-sys') !== c.sys);
-  });
 }
 
 function clearFocus() {
@@ -1140,7 +1059,7 @@ function hideTooltip() { tip().classList.remove('show'); }
 // ---------------------------------------------------------------------
 // 7. ZOOM Y DESPLAZAMIENTO
 // ---------------------------------------------------------------------
-const BASE_VB = { x: -560, y: -560, w: 1120, h: 1120 };
+const BASE_VB = { x: -500, y: -500, w: 1000, h: 1000 };
 let vb = Object.assign({}, BASE_VB);
 
 function applyVB() {
