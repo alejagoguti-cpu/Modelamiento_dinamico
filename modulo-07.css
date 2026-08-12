@@ -1178,3 +1178,62 @@ body {
 }
 
 .eco-note i { color: var(--eseci); margin-top: 2px; }
+
+/* ======================================================================
+   DEBILITAMIENTO DE LA RED AL APAGAR UNA ESTRUCTURA
+   ====================================================================== */
+
+/* Nodo que perdió parte de sus relaciones: se despega y pierde brillo */
+.concept.weakened .node-fill {
+  stroke: #ef9552;
+  stroke-dasharray: 7 5;
+  filter: none;
+  opacity: 0.78;
+}
+.concept.weakened .node-icon { opacity: 0.6; }
+.concept.weakened text { opacity: 0.72; }
+
+/* Nodo que quedó sin ninguna conexión activa: cortado de la red */
+.concept.cut-off .node-fill {
+  stroke: var(--danger);
+  stroke-dasharray: 5 5;
+  filter: none;
+  opacity: 0.55;
+}
+.concept.cut-off .node-icon { opacity: 0.4; }
+.concept.cut-off text { opacity: 0.45; fill: #f3a3a3; }
+
+/* Las líneas que sobreviven se estiran: se ven tensionadas */
+.rel { transition: opacity 0.4s ease; }
+
+/* Aviso sobre el propio diagrama */
+.weak-banner {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(12, 8, 8, 0.9);
+  border: 1px solid rgba(239, 68, 68, 0.5);
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-size: 12.5px;
+  color: var(--text);
+  z-index: 10;
+  max-width: 88%;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+  animation: bannerIn 0.4s ease both;
+  pointer-events: none;
+}
+
+.weak-banner.hidden { display: none; }
+.weak-banner i { color: var(--danger); font-size: 15px; }
+.weak-banner b { color: #ffb3b3; }
+.weak-banner .wb-sub { display: block; font-size: 10.5px; color: var(--text-dim); margin-top: 2px; }
+
+@keyframes bannerIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(-8px); }
+  to { opacity: 1; transform: translateX(-50%); }
+}
