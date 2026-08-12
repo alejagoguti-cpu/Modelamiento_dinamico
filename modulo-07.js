@@ -601,8 +601,60 @@ const POT_DATA = {
 
 const SYS = ['EEP', 'EFC', 'EIP', 'ESECI'];
 
+// Icono de Font Awesome para cada concepto (no emojis)
+const ICONS = {
+  // Estructura Ecológica Principal
+  'Humedales': 'fa-droplet',
+  'Coberturas vegetales': 'fa-seedling',
+  'Conservación ambiental': 'fa-shield-heart',
+  'Parques ecológicos de montaña': 'fa-mountain',
+  'Reservas forestales': 'fa-tree',
+  // Estructura Funcional y del Cuidado
+  'Vivienda': 'fa-house',
+  'Equipamientos': 'fa-building-columns',
+  'Servicios públicos': 'fa-plug',
+  'Servicios sociales': 'fa-people-group',
+  'Manzanas del Cuidado': 'fa-hand-holding-heart',
+  'Transporte público': 'fa-bus',
+  'Ciclorutas': 'fa-bicycle',
+  'Corredores verdes': 'fa-road',
+  'Espacio público': 'fa-umbrella-beach',
+  // Estructura Socioeconómica, Creativa y de Innovación
+  'Empleo': 'fa-briefcase',
+  'Economía': 'fa-coins',
+  'Zonas industriales': 'fa-industry',
+  'Actividades económicas': 'fa-chart-line',
+  'Distrito Centro Tecnológico e Innovación': 'fa-microchip',
+  'Producción artesanal': 'fa-gem',
+  'Producción de alimentos': 'fa-wheat-awn',
+  'Servicios empresariales': 'fa-handshake',
+  'Sistema de educación': 'fa-graduation-cap',
+  'Zonas de interés turístico': 'fa-camera',
+  'Corazones productivos': 'fa-heart-pulse',
+  // Estructura Integradora de Patrimonios
+  'Patrimonio cultural': 'fa-landmark',
+  'Patrimonio inmaterial': 'fa-masks-theater',
+  'Patrimonio natural': 'fa-mountain-sun'
+};
+const iconFor = label => ICONS[label] || 'fa-circle-dot';
+
+// Tamaño del nodo según su número de relaciones documentadas
+const TIERS = {
+  high: { r: 34, icon: 16, font: 8.8 },
+  mid:  { r: 24, icon: 12, font: 8.4 },
+  low:  { r: 16, icon: 9,  font: 8.0 }
+};
+function tierOf(degree) {
+  if (degree >= 5) return 'high';
+  if (degree >= 3) return 'mid';
+  return 'low';
+}
+const tierOfConcept = id => tierOf(model.concepts[id].rels.length);
+
 // Estado del simulador: true = sistema activo
 const state = { EEP: true, EFC: true, EIP: true, ESECI: true };
+// Conceptos apagados individualmente (escenario "¿qué pasaría si no existiera X?")
+const offNodes = new Set();
 let lastToggledOff = null;
 let selectedRel = null;
 
@@ -642,8 +694,11 @@ function buildModel() {
   });
 }
 
-// Una relación está activa solo si AMBOS sistemas (origen y destino) están ON
-const relActive = r => state[r.sO] && state[r.sD];
+// Una relación está activa solo si AMBOS sistemas están ON y ninguno de sus
+// dos conceptos fue apagado individualmente
+const nodeOn = id => !offNodes.has(id);
+const relActive = r => state[r.sO] && state[r.sD] && nodeOn(r.from) && nodeOn(r.to);
+const conceptVisible = c => state[c.sys];
 
 // ---------------------------------------------------------------------
 // 2. LAYOUT: UNA SOLA RED CIRCULAR.
@@ -661,8 +716,8 @@ const relActive = r => state[r.sO] && state[r.sD];
 const CENTER_SYS = 'ESECI';
 const OUTER_ORDER = ['EFC', 'EEP', 'EIP'];
 
-const R_IN = 170;    // anillo central (conceptos puente de la ESECI)
-const R_OUT = 350;   // anillo exterior (las otras tres estructuras)
+const R_IN = 195;    // anillo central (conceptos puente de la ESECI)
+const R_OUT = 395;   // anillo exterior (las otras tres estructuras)
 const CON_R = 12;    // radio del nodo de concepto
 
 const layout = {};
@@ -775,7 +830,9 @@ function render() {
   model.relations.forEach(r => {
     if (!relActive(r)) return;
     const a = layout[r.from], b = layout[r.to];
-    const d = curvePath(a, b, CON_R, CON_R);
+    const rA = TIERS[tierOfConcept(r.from)].r;
+    const rB = TIERS[tierOfConcept(r.to)].r;
+    const d = curvePath(a, b, rA, rB);
     const kind = r.tipo === 'Soporte' ? 'soporte' : 'resiliencia';
     const cls = ['rel', kind];
     if (r.linea === 'Punteada') cls.push('punteada');
@@ -808,25 +865,46 @@ function render() {
     model.systems[s].concepts.forEach(id => {
       const c = model.concepts[id];
       const p = layout[id];
-      const isolated = !c.rels.some(relActive);
+      const activeRels = c.rels.filter(relActive).length;
+      const isolated = activeRels === 0;
+      const off = offNodes.has(id);
+      const tier = tierOfConcept(id);
+      const T = TIERS[tier];
+
+      const cls = ['concept', 'node-appear', 'deg-' + tier];
+      if (isolated && !off) cls.push('isolated');
+      if (off) cls.push('node-off');
+
       const g = el('g', {
-        class: 'concept node-appear' + (isolated ? ' isolated' : ''),
+        class: cls.join(' '),
         transform: `translate(${p.x.toFixed(1)},${p.y.toFixed(1)})`,
         style: `--sys:${model.systems[s].color}`,
         'data-id': id
       });
-      g.appendChild(el('circle', { r: CON_R }));
+
+      g.appendChild(el('circle', { class: 'node-fill', r: T.r }));
+
+      // icono dentro del nodo
+      const fo = el('foreignObject', {
+        x: -T.r, y: -T.r, width: T.r * 2, height: T.r * 2
+      });
+      const div = document.createElementNS('http://www.w3.org/1999/xhtml', 'div');
+      div.setAttribute('class', 'node-icon');
+      div.innerHTML = `<i class="fa-solid ${iconFor(c.label)}" style="font-size:${T.icon}px"></i>`;
+      fo.appendChild(div);
+      g.appendChild(fo);
 
       const lines = wrapLabel(c.label);
       lines.forEach((ln, i) => {
-        const t = el('text', { y: CON_R + 10 + i * 8.6 });
+        const t = el('text', { y: T.r + 11 + i * 8.6, style: `font-size:${T.font}px` });
         t.textContent = ln;
         g.appendChild(t);
       });
 
       g.addEventListener('mouseenter', ev => showTooltip(ev,
         `<div class="tt-sys" style="color:${model.systems[s].color}">${s}</div>${esc(c.label)}<br>` +
-        `<span style="color:#8891a5">${c.rels.filter(relActive).length} relación(es) activa(s)${isolated ? ' · AISLADO' : ''}</span>`));
+        `<span style="color:#8891a5">${c.rels.length} relación(es) en el POT · ${activeRels} activa(s)` +
+        `${off ? ' · APAGADO' : isolated ? ' · AISLADO' : ''}</span>`));
       g.addEventListener('mousemove', moveTooltip);
       g.addEventListener('mouseleave', hideTooltip);
       g.addEventListener('click', ev => { ev.stopPropagation(); focusConcept(id); });
@@ -1022,11 +1100,13 @@ function updateSwitches() {
 
 function resetAll() {
   SYS.forEach(s => (state[s] = true));
+  offNodes.clear();
   lastToggledOff = null;
   clearEvidence();
   updateSwitches();
   render();
   updateMetrics();
+  if (document.getElementById('nodeSelect')) { syncNodeBtn(); updateNodeImpact(); }
   resetView();
 }
 
@@ -1083,8 +1163,88 @@ function clearFocus() {
 }
 
 // ---------------------------------------------------------------------
-// 6. TOOLTIP
+// 5b. ESCENARIO DE NODO CRÍTICO
+// Permite apagar un concepto concreto ("¿qué pasaría si no existieran los
+// Humedales?"). Al apagarlo desaparecen todas las relaciones que lo tocan.
+// La lista se calcula sola: los conceptos con más relaciones primero.
 // ---------------------------------------------------------------------
+const TOP_NODES = 10;
+
+function topNodes(n) {
+  return Object.values(model.concepts)
+    .filter(c => c.rels.length > 0)
+    .map(c => ({ id: c.id, label: c.label, sys: c.sys, deg: c.rels.length }))
+    .sort((a, b) => b.deg - a.deg || a.label.localeCompare(b.label))
+    .slice(0, n);
+}
+
+function initNodeScenario() {
+  const sel = document.getElementById('nodeSelect');
+  if (!sel) return;
+  sel.innerHTML = topNodes(TOP_NODES).map(o =>
+    `<option value="${o.id}">${esc(o.label)} · ${o.deg} conexiones</option>`).join('');
+  sel.addEventListener('change', onNodeSelectChange);
+  document.getElementById('btnNodeSim').addEventListener('click', toggleNodeScenario);
+  onNodeSelectChange();
+}
+
+function plural(label) {
+  // "¿Qué pasaría si no existieran los Humedales?" / "...si no existiera la Vivienda?"
+  return /s$/i.test(label.trim());
+}
+
+function onNodeSelectChange() {
+  const sel = document.getElementById('nodeSelect');
+  const id = sel.value;
+  const c = model.concepts[id];
+  if (!c) return;
+
+  // si había otro nodo apagado, se reactiva al cambiar de selección
+  if (offNodes.size) {
+    offNodes.clear();
+    render();
+    updateMetrics();
+  }
+
+  document.getElementById('nodeQuestion').textContent =
+    plural(c.label)
+      ? `¿Qué pasaría si no existieran «${c.label}»?`
+      : `¿Qué pasaría si no existiera «${c.label}»?`;
+
+  syncNodeBtn();
+  updateNodeImpact();
+}
+
+function toggleNodeScenario() {
+  const id = document.getElementById('nodeSelect').value;
+  if (!id) return;
+  if (offNodes.has(id)) offNodes.delete(id);
+  else { offNodes.clear(); offNodes.add(id); }
+  syncNodeBtn();
+  render();
+  updateMetrics();
+}
+
+function syncNodeBtn() {
+  const id = document.getElementById('nodeSelect').value;
+  const btn = document.getElementById('btnNodeSim');
+  const on = offNodes.has(id);
+  btn.classList.toggle('active', on);
+  btn.innerHTML = on
+    ? '<i class="fa-solid fa-power-off"></i> Reactivar nodo'
+    : '<i class="fa-solid fa-power-off"></i> Simular sin este nodo';
+}
+
+function updateNodeImpact() {
+  const id = document.getElementById('nodeSelect').value;
+  const c = model.concepts[id];
+  const box = document.getElementById('nodeImpact');
+  if (!c || !box) return;
+  const total = model.relations.length;
+  const pct = Math.round((c.rels.length / total) * 100);
+  box.innerHTML = `Este concepto participa en <b>${c.rels.length}</b> de las <b>${total}</b>
+    relaciones documentadas (<b>${pct}%</b>). Al apagarlo, esas relaciones desaparecen de la red.`;
+}
 const tip = () => document.getElementById('tooltip');
 
 function showTooltip(ev, html) {
@@ -1110,7 +1270,7 @@ function hideTooltip() { tip().classList.remove('show'); }
 // ---------------------------------------------------------------------
 // 7. ZOOM Y DESPLAZAMIENTO
 // ---------------------------------------------------------------------
-const BASE_VB = { x: -430, y: -430, w: 860, h: 860 };
+const BASE_VB = { x: -480, y: -480, w: 960, h: 960 };
 let vb = Object.assign({}, BASE_VB);
 
 function applyVB() {
@@ -1184,6 +1344,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('btnFit').addEventListener('click', resetView);
 
   clearEvidence();
+  initNodeScenario();
   initPanZoom();
   applyVB();
   render();
