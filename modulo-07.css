@@ -487,7 +487,6 @@ body {
 .lg-dot { width: 9px; height: 9px; border-radius: 50%; }
 .lg-dot.soporte { background: var(--soporte); }
 .lg-dot.resiliencia { background: var(--resiliencia); }
-.lg-line.member { border-top: 1px dotted var(--text-faint); }
 
 .net-btns { display: flex; gap: 6px; }
 
@@ -519,17 +518,7 @@ body {
 .net-stage svg { width: 100%; height: 100%; display: block; }
 
 /* -------- SVG: sistemas, conceptos, relaciones -------- */
-/* Anillos guía y arcos que agrupan cada estructura */
-.ring-guide { fill: none; stroke: rgba(255,255,255,0.05); stroke-width: 1; stroke-dasharray: 4 7; }
-.sector-arc { fill: none; stroke: var(--sys); stroke-width: 3; opacity: 0.4; stroke-linecap: round; }
-.sector-label { fill: var(--sys); font-size: 13px; font-weight: 800; text-anchor: middle; dominant-baseline: middle; opacity: 0.85; }
-
-/* Nodo de sistema: discreto, no domina la red */
-.sys-node circle.core { fill: var(--sys); fill-opacity: 0.22; stroke: var(--sys); stroke-width: 2; }
-.sys-node text.code { fill: var(--sys); font-size: 13px; font-weight: 800; text-anchor: middle; }
-.sys-node { cursor: pointer; }
-
-/* Conceptos: son los protagonistas de la red */
+/* Conceptos: son los únicos nodos de la red */
 .concept circle { fill: #0d1322; stroke: var(--sys); stroke-width: 1.8; }
 .concept text { fill: #d5dced; font-size: 9px; text-anchor: middle; font-weight: 600; }
 .concept { cursor: pointer; }
