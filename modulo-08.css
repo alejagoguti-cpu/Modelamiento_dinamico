@@ -319,6 +319,63 @@ body {
   padding-top: 12px;
 }
 
+.plazo-how {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+.plazo-how-empty {
+  grid-column: 1 / -1;
+  font-size: 12.5px;
+  color: var(--text-faint);
+  font-style: italic;
+}
+
+.plazo-how-card {
+  background: var(--panel-alt);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 18px;
+  display: flex;
+  gap: 14px;
+}
+
+.plazo-how-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  flex-shrink: 0;
+  background: color-mix(in srgb, var(--how-color, var(--teal)) 18%, transparent);
+  color: var(--how-color, var(--teal));
+}
+
+.plazo-how-content h5 {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 5px;
+}
+
+.plazo-how-content p {
+  font-size: 11.5px;
+  color: var(--text-dim);
+  line-height: 1.55;
+}
+
+.plazo-how-content .plazo-how-components {
+  display: block;
+  margin-top: 6px;
+  font-size: 10.5px;
+  color: var(--how-color, var(--teal));
+  font-weight: 600;
+}
+
 .network-header {
   display: flex;
   align-items: center;
@@ -1065,6 +1122,7 @@ footer span { color: var(--teal); }
 
 @media (max-width: 1200px) {
   .synergies-grid { grid-template-columns: 1fr; }
+  .plazo-how { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 900px) {
@@ -1079,4 +1137,5 @@ footer span { color: var(--teal); }
   .ods-insight-stats { grid-template-columns: repeat(2, 1fr); }
   .recommendations-grid { grid-template-columns: 1fr; }
   .action-buttons { flex-direction: column; }
+  .plazo-toggle { grid-template-columns: 1fr; }
 }
