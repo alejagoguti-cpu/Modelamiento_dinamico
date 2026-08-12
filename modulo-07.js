@@ -5,547 +5,596 @@
    No se inventan relaciones ni se alteran frases o páginas.
    ======================================================================= */
 
-// GENERADO AUTOMÁTICAMENTE DESDE Red_4_Estructuras_POT_CORREGIDA.xlsx (hoja RELACIONES)
-// NO editar a mano: frases y páginas son literales del Excel.
+// GENERADO DESDE tabla_relaciones_POT_frases_exactas.xlsx (hoja 'Relaciones sustentadas')
+// NO editar a mano: frases, páginas y secciones son literales del Excel.
 const POT_DATA = {
  "sistemas": {
   "EEP": {
    "nombre": "Estructura Ecológica Principal",
-   "color": "#22B88A",
-   "funcion": "Base ecológica / resiliencia"
+   "color": "#22b88a",
+   "funcion": "Base ecológica"
   },
   "EFC": {
    "nombre": "Estructura Funcional y del Cuidado",
-   "color": "#3B82F6",
-   "funcion": "Soporte funcional / articulación"
-  },
-  "EIP": {
-   "nombre": "Estructura Integradora de Patrimonios",
-   "color": "#A855F7",
-   "funcion": "Integración social y territorial"
+   "color": "#3b82f6",
+   "funcion": "Soporte funcional"
   },
   "ESECI": {
    "nombre": "Estructura Socioeconómica, Creativa y de Innovación",
-   "color": "#D9A441",
-   "funcion": "Resultado económico / productivo"
+   "color": "#d9a441",
+   "funcion": "Puente socioeconómico"
+  },
+  "EIP": {
+   "nombre": "Estructura Integradora de Patrimonios",
+   "color": "#a855f7",
+   "funcion": "Integración patrimonial"
   }
  },
  "conceptos": {
   "EEP": [
-   "Agua / ecosistemas",
-   "Agua / equilibrio ecosistémico",
-   "Ambiente",
-   "Ambiente / resiliencia",
-   "Calidad del aire / ambiente",
-   "Ecosistemas",
-   "Ecosistemas / recursos naturales",
-   "Función ambiental",
-   "Recursos naturales / agua",
-   "Recursos naturales / ecosistemas",
-   "Áreas de importancia ambiental",
-   "Áreas naturales / biodiversidad"
+   "Coberturas vegetales",
+   "Conservación ambiental",
+   "Humedales",
+   "Parques ecológicos de montaña",
+   "Reservas forestales"
   ],
   "EFC": [
-   "Cuidado / infraestructura",
-   "Cultura / equipamientos",
+   "Ciclorutas",
+   "Corredores verdes",
    "Equipamientos",
-   "Equipamientos / cuidado",
    "Espacio público",
-   "Espacio público / cuidado",
-   "Espacio público / movilidad",
-   "Movilidad / infraestructura",
-   "Movilidad limpia / corredores verdes",
-   "Movilidad multimodal",
-   "Movilidad sostenible",
-   "Plan Maestro de Cuidado",
-   "Plan Maestro de Hábitat y Servicios Públicos",
-   "Plan Maestro de Movilidad",
-   "Sistema de movilidad",
-   "Soporte territorial / ciudad",
-   "Transporte / estaciones"
-  ],
-  "EIP": [
-   "Cultura / equipamientos",
-   "Cultura / prácticas",
-   "Patrimonio",
-   "Patrimonio / cultura",
-   "Patrimonio / dinámicas sociales",
-   "Patrimonio / identidad territorial",
-   "Patrimonio / memoria",
-   "Patrimonio cultural / natural",
-   "Patrimonio local / dinámicas comunitarias",
-   "Patrimonio natural"
+   "Manzanas del Cuidado",
+   "Servicios públicos",
+   "Servicios sociales",
+   "Transporte público",
+   "Vivienda"
   ],
   "ESECI": [
-   "Actividades productivas",
-   "Aglomeraciones económicas",
-   "Aglomeración económica / empleo",
-   "Desarrollo socioeconómico",
-   "Dinámicas económicas",
-   "Economía / productividad",
-   "Economía / turismo",
-   "Economía circular",
-   "Empresas / actividades productivas",
-   "Mezcla de usos / aglomeración económica",
-   "Producción / actividades productivas",
-   "Producción / consumo de alimentos",
-   "Producción sostenible",
-   "Productividad / aglomeración",
-   "Productividad / empleo",
-   "Reactivación económica",
-   "Tejido económico local",
-   "Tejidos productivos / empleo",
-   "Vida productiva"
+   "Actividades económicas",
+   "Corazones productivos",
+   "Distrito Centro Tecnológico e Innovación",
+   "Economía",
+   "Empleo",
+   "Producción artesanal",
+   "Producción de alimentos",
+   "Servicios empresariales",
+   "Sistema de educación",
+   "Zonas de interés turístico",
+   "Zonas industriales"
+  ],
+  "EIP": [
+   "Patrimonio cultural",
+   "Patrimonio inmaterial",
+   "Patrimonio natural"
   ]
  },
  "relaciones": [
   {
    "id": 0,
-   "sO": "EEP",
-   "cO": "Agua / equilibrio ecosistémico",
+   "sO": "EFC",
+   "cO": "Transporte público",
    "sD": "ESECI",
-   "cD": "Desarrollo socioeconómico",
+   "cD": "Empleo",
    "dir": "→",
+   "sentido": "Transporte público → Empleo",
    "tipo": "Soporte",
    "evid": "Directa",
    "linea": "Sólida",
-   "color": "#F59E0B",
-   "pag": "21",
-   "frase": "“La eep es la integración de las áreas de origen natural y antrópico que tienen una oferta ambiental significativa, es ordenadora del territorio y garante de los equilibrios ecosistémicos, del agua y la riqueza hídrica, que es la primera ordenante del territorio, para una ocupación y manejo sostenible de los recursos naturales renovables, base del desarrollo socioeconómico de la población.”"
+   "color": "Naranja",
+   "pag": "164",
+   "seccion": "Una ciudad para el empleo y las oportunidades",
+   "clase": "Intersistema",
+   "frase": "“Los tiempos de desplazamiento son el resultado de la eficiencia y calidad de los sistemas de transporte masivo y de sus modos y estructuración. Un buen sistema de transporte se nota en menores tiempos de viaje que suplen las necesidades de desplazamiento de la ciudadanía y facilitan la conexión entre las personas y el sector productivo.”"
   },
   {
    "id": 1,
-   "sO": "ESECI",
-   "cO": "Producción / consumo de alimentos",
-   "sD": "EEP",
-   "cD": "Ecosistemas / recursos naturales",
-   "dir": "→",
-   "tipo": "Resiliencia",
-   "evid": "Directa",
-   "linea": "Sólida",
-   "color": "#2563EB",
-   "pag": "21",
-   "frase": "“Nuestro pot promueve actividades como el viverismo, las huertas, la agricultura urbana y familiar, y las actividades agroecológicas dentro de un modelo de producción, comercialización y consumo de alimentos que contribuyan a la soberanía alimentaria en comunidades organizadas que aprovechen los residuos, optimicen los recursos y no afecten los ecosistemas.”"
-  },
-  {
-   "id": 2,
-   "sO": "ESECI",
-   "cO": "Producción / actividades productivas",
-   "sD": "EEP",
-   "cD": "Ecosistemas",
-   "dir": "→",
-   "tipo": "Resiliencia",
-   "evid": "Directa",
-   "linea": "Sólida",
-   "color": "#2563EB",
-   "pag": "31",
-   "frase": "“con equipamientos que faciliten la economía campesina, familiar y comunitaria, el turismo responsable de naturaleza que vincule residentes y saberes del lugar y la conservación del ambiente como formas de productividad, sustento y desarrollo sostenible.”"
-  },
-  {
-   "id": 3,
-   "sO": "EEP",
-   "cO": "Recursos naturales / agua",
+   "sO": "EFC",
+   "cO": "Vivienda",
    "sD": "ESECI",
-   "cD": "Economía / productividad",
+   "cD": "Empleo",
    "dir": "→",
+   "sentido": "Vivienda → Empleo",
    "tipo": "Soporte",
    "evid": "Directa",
    "linea": "Sólida",
-   "color": "#F59E0B",
-   "pag": "31",
-   "frase": "“la conservación del ambiente como formas de productividad, sustento y desarrollo sostenible.”"
+   "color": "Naranja",
+   "pag": "169",
+   "seccion": "Una ciudad para el empleo y las oportunidades",
+   "clase": "Intersistema",
+   "frase": "“De esta manera, el Plan Maestro de Hábitat y Servicios Públicos se convierte en una herramienta eficaz para concretar la visión de mixtura, al acercar la vivienda a los grandes centros de productividad y, por consiguiente, mejorar las condiciones de acceso al empleo, consolidando así tejidos económicos continuos y complementarios entre el gran corazón productivo de escala urbana y las actividades económicas de soporte a la vida.”"
+  },
+  {
+   "id": 2,
+   "sO": "EFC",
+   "cO": "Equipamientos",
+   "sD": "ESECI",
+   "cD": "Empleo",
+   "dir": "→",
+   "sentido": "Equipamientos → Empleo",
+   "tipo": "Soporte",
+   "evid": "Directa",
+   "linea": "Sólida",
+   "color": "Naranja",
+   "pag": "171",
+   "seccion": "Una ciudad para el empleo y las oportunidades",
+   "clase": "Intersistema",
+   "frase": "“Esos equipamientos —que están pensados para ofrecer, de manera híbrida, la mayor cantidad de servicios sociales posibles— tienen un potencial de ser, en sí mismos, fuentes de generación de empleo de proximidad y de fomentar dinámicas económicas complementarias en sus zonas de influencia.”"
+  },
+  {
+   "id": 3,
+   "sO": "EFC",
+   "cO": "Manzanas del Cuidado",
+   "sD": "ESECI",
+   "cD": "Empleo",
+   "dir": "→",
+   "sentido": "Manzanas del Cuidado → Empleo",
+   "tipo": "Soporte",
+   "evid": "Indirecta",
+   "linea": "Punteada",
+   "color": "Naranja",
+   "pag": "118",
+   "seccion": "Sistema Distrital de Manzanas del Cuidado",
+   "clase": "Intersistema",
+   "frase": "“El sistema atiende tres tipos de poblaciones: a las personas cuidadoras, ofreciéndoles servicios de educación, respiro, formación y capitalización para el trabajo y el emprendimiento, y otras formas de generación de ingresos, con los que les devolvemos las oportunidades que han sacrificado por las cargas de cuidado.”"
   },
   {
    "id": 4,
    "sO": "EFC",
-   "cO": "Movilidad sostenible",
-   "sD": "EEP",
-   "cD": "Calidad del aire / ambiente",
+   "cO": "Equipamientos",
+   "sD": "ESECI",
+   "cD": "Servicios empresariales",
    "dir": "→",
-   "tipo": "Resiliencia",
+   "sentido": "Equipamientos → Servicios empresariales",
+   "tipo": "Soporte",
    "evid": "Directa",
    "linea": "Sólida",
-   "color": "#2563EB",
-   "pag": "22",
-   "frase": "“En Bogotá cada año registramos 2.300 muertes prematuras atribuibles a la contaminación del aire, causada en un 60 % por la movilidad basada en el uso de combustibles fósiles. Para cambiar esa tendencia es indispensable cambiar nuestros hábitos de movilidad, incrementar la caminata y el transporte en modos públicos y colectivos que usen energías limpias y renovables, la descarbonización de la movilidad, el drenaje sostenible, el tratamiento de los residuos domiciliarios, el manejo técnico del sistema de saneamiento básico y el reverdecimiento y renaturalización del espacio público.”"
+   "color": "Naranja",
+   "pag": "165",
+   "seccion": "Instrumentos del ordenamiento territorial que impactan la productividad y el empleo",
+   "clase": "Intersistema",
+   "frase": "“Equipamiento como detonante de dinámicas económicas”"
   },
   {
    "id": 5,
    "sO": "EFC",
-   "cO": "Espacio público / movilidad",
-   "sD": "EEP",
-   "cD": "Función ambiental",
+   "cO": "Vivienda",
+   "sD": "ESECI",
+   "cD": "Economía",
    "dir": "→",
-   "tipo": "Resiliencia",
+   "sentido": "Vivienda → Economía",
+   "tipo": "Soporte",
    "evid": "Directa",
    "linea": "Sólida",
-   "color": "#2563EB",
-   "pag": "22",
-   "frase": "“Para reverdecer a Bogotá vamos a implementar el arbolado, la jardinería, las huertas y toda la agroecología urbana como un elemento fundamental que contribuya a consolidar la función ambiental de los elementos de espacio público.”"
+   "color": "Naranja",
+   "pag": "169",
+   "seccion": "Una ciudad para el empleo y las oportunidades",
+   "clase": "Intersistema",
+   "frase": "“El Plan Maestro de Hábitat tiene la capacidad de robustecer las economías de proximidad, no solamente al propiciar la mixtura de usos del suelo en los proyectos de vivienda y en los instrumentos de los diferentes planes parciales, sino combinando sus usos al interior de las mismas edificaciones.”"
   },
   {
    "id": 6,
-   "sO": "EEP",
-   "cO": "Agua / ecosistemas",
-   "sD": "EFC",
-   "cD": "Espacio público / movilidad",
+   "sO": "EFC",
+   "cO": "Servicios públicos",
+   "sD": "ESECI",
+   "cD": "Zonas industriales",
    "dir": "→",
-   "tipo": "Resiliencia",
+   "sentido": "Servicios públicos → Zonas industriales",
+   "tipo": "Soporte",
    "evid": "Indirecta",
    "linea": "Punteada",
-   "color": "#2563EB",
-   "pag": "22",
-   "frase": "“Las cinco transformaciones urbanas que iniciamos protegen el agua y consolidan el sistema hídrico mediante estrategias de conectividad y complementariedad de los ecosistemas como articuladores con su entorno regional...”"
+   "color": "Naranja",
+   "pag": "169",
+   "seccion": "Una ciudad para el empleo y las oportunidades",
+   "clase": "Intersistema",
+   "frase": "“Por ejemplo, allí serán fundamentales los servicios de energía en las zonas industriales o de almacenamiento de datos, o los servicios de telecomunicaciones e internet en zonas como el Campus de Ciencia, Tecnología e Innovación de la Ciudad (ctib).”"
   },
   {
    "id": 7,
    "sO": "EFC",
-   "cO": "Movilidad limpia / corredores verdes",
-   "sD": "EEP",
-   "cD": "Ambiente / resiliencia",
+   "cO": "Servicios públicos",
+   "sD": "ESECI",
+   "cD": "Distrito Centro Tecnológico e Innovación",
    "dir": "→",
-   "tipo": "Resiliencia",
-   "evid": "Directa",
-   "linea": "Sólida",
-   "color": "#2563EB",
-   "pag": "22",
-   "frase": "“El pot y el pmss ponen como eje estructurador de la movilidad al peatón y privilegian el espacio público para la movilidad y los desplazamientos en modos de transporte activos, de cero y bajas emisiones, el desarrollo de corredores verdes...”"
+   "sentido": "Servicios públicos → Distrito Centro Tecnológico e Innovación",
+   "tipo": "Soporte",
+   "evid": "Indirecta",
+   "linea": "Punteada",
+   "color": "Naranja",
+   "pag": "169",
+   "seccion": "Una ciudad para el empleo y las oportunidades",
+   "clase": "Intersistema",
+   "frase": "“Por ejemplo, allí serán fundamentales los servicios de energía en las zonas industriales o de almacenamiento de datos, o los servicios de telecomunicaciones e internet en zonas como el Campus de Ciencia, Tecnología e Innovación de la Ciudad (ctib).”"
   },
   {
    "id": 8,
-   "sO": "EIP",
-   "cO": "Patrimonio cultural / natural",
-   "sD": "EEP",
-   "cD": "Ambiente",
+   "sO": "EFC",
+   "cO": "Ciclorutas",
+   "sD": "ESECI",
+   "cD": "Empleo",
    "dir": "→",
-   "tipo": "Resiliencia",
-   "evid": "Directa",
-   "linea": "Sólida",
-   "color": "#2563EB",
-   "pag": "30",
-   "frase": "“El pot busca intervenir estratégicamente, vinculando las dinámicas patrimoniales, ambientales, sociales y culturales para proteger y garantizar la permanencia y calidad de vida de los pobladores originales de las zonas de renovación urbana y actuaciones estratégicas.”"
+   "sentido": "Ciclorutas → Empleo",
+   "tipo": "Soporte",
+   "evid": "Indirecta",
+   "linea": "Punteada",
+   "color": "Naranja",
+   "pag": "171",
+   "seccion": "Una ciudad para el empleo y las oportunidades",
+   "clase": "Intersistema",
+   "frase": "“Los cables eléctricos, rutas circulares y cicloinfraestructura permite a su vez interconectividad de proximidad dentro de las upl y conexión con los corredores de alta demanda, sean de metro o de TransMilenio. Esto mejorará significativamente la calidad de vida y la productividad de la población, que hará uso de estas infraestructuras; también, consolidará las dinámicas de aglomeración económica que concentran el tejido empresarial y, con ello, las fuentes de generación de empleo en el centro ampliado, pero también en las nuevas zonas más periféricas, mejor servidas y conectadas gracias a la red multimodal de transporte.”"
   },
   {
    "id": 9,
-   "sO": "EEP",
-   "cO": "Áreas naturales / biodiversidad",
-   "sD": "EIP",
-   "cD": "Patrimonio natural",
+   "sO": "ESECI",
+   "cO": "Actividades económicas",
+   "sD": "EFC",
+   "cD": "Vivienda",
    "dir": "→",
-   "tipo": "Resiliencia",
-   "evid": "Directa",
-   "linea": "Sólida",
-   "color": "#2563EB",
-   "pag": "196",
-   "frase": "“la eip inscribe y precisa un sistema de relaciones del patrimonio cultural material, inmaterial y natural en el territorio.”"
+   "sentido": "Actividades económicas → Vivienda",
+   "tipo": "Soporte",
+   "evid": "Indirecta",
+   "linea": "Punteada",
+   "color": "Naranja",
+   "pag": "171",
+   "seccion": "Una ciudad para el empleo y las oportunidades",
+   "clase": "Intersistema",
+   "frase": "“El programa busca promover el dinamismo, la reactivación económica y la creación de empleos. Se apuesta por el impulso a proyectos que generen actividades económicas asociadas al emprendimiento, la creatividad, la innovación y la cultura, que se complementa con las áreas residenciales donde se interactúa a partir del sistema de movilidad.”"
   },
   {
    "id": 10,
-   "sO": "EIP",
-   "cO": "Patrimonio / identidad territorial",
-   "sD": "EEP",
-   "cD": "Áreas de importancia ambiental",
+   "sO": "ESECI",
+   "cO": "Corazones productivos",
+   "sD": "EFC",
+   "cD": "Vivienda",
    "dir": "→",
-   "tipo": "Resiliencia",
+   "sentido": "Corazones productivos → Vivienda",
+   "tipo": "Soporte",
    "evid": "Indirecta",
    "linea": "Punteada",
-   "color": "#2563EB",
-   "pag": "200",
-   "frase": "“La insistencia en exaltar las distintas maneras de interpretar el modo en que nos hemos adaptado al territorio está dada por un presente que nos exige mayores esfuerzos en la valoración de las áreas de importancia ambiental y de los patrimonios culturales como respuesta, fuente y medio para aportar al imperativo de detener el deterioro del hábitat global...”"
+   "color": "Naranja",
+   "pag": "169",
+   "seccion": "Una ciudad para el empleo y las oportunidades",
+   "clase": "Intersistema",
+   "frase": "“El nuevo modelo de ordenamiento del territorio a partir de la mixtura y la complementariedad que plantea el pot busca revertir esta tendencia promoviendo las áreas receptoras de actividad económica, las áreas de actividad receptoras de vivienda de interés social en cercanía de las aglomeraciones y el ecosistema productivo y la mixtura de usos en las áreas de proximidad (antiguas zonas de uso residencial neto).”"
   },
   {
    "id": 11,
-   "sO": "EIP",
-   "cO": "Patrimonio / dinámicas sociales",
+   "sO": "ESECI",
+   "cO": "Zonas industriales",
    "sD": "EFC",
-   "cD": "Espacio público / cuidado",
+   "cD": "Servicios públicos",
    "dir": "→",
+   "sentido": "Zonas industriales → Servicios públicos",
    "tipo": "Soporte",
    "evid": "Directa",
    "linea": "Sólida",
-   "color": "#F59E0B",
-   "pag": "30",
-   "frase": "“Buscamos la revitalización de las áreas consolidadas para mejorar la calidad ambiental y paisajística de los barrios, la seguridad en el espacio público, aumentar la oferta de espacios de encuentro y los servicios sociales del cuidado y aportar a la reactivación económica.”"
+   "color": "Naranja",
+   "pag": "169",
+   "seccion": "Una ciudad para el empleo y las oportunidades",
+   "clase": "Intersistema",
+   "frase": "“El Plan Maestro de Hábitat y Servicios Públicos debe garantizar las condiciones de prestación de los servicios públicos de las diferentes actividades económicas.”"
   },
   {
    "id": 12,
-   "sO": "EFC",
-   "cO": "Movilidad / infraestructura",
-   "sD": "EIP",
-   "cD": "Patrimonio / cultura",
+   "sO": "ESECI",
+   "cO": "Distrito Centro Tecnológico e Innovación",
+   "sD": "EFC",
+   "cD": "Servicios públicos",
    "dir": "→",
+   "sentido": "Distrito Centro Tecnológico e Innovación → Servicios públicos",
    "tipo": "Soporte",
    "evid": "Directa",
    "linea": "Sólida",
-   "color": "#F59E0B",
-   "pag": "121",
-   "frase": "“Con el Plan de Ordenamiento Territorial (pot) damos un salto histórico para ordenar la ciudad integrando criterios ambientales, patrimoniales, de movilidad, seguridad y productividad, y sumamos el cuidado como un eje estructural en la planeación urbana.”"
+   "color": "Naranja",
+   "pag": "169",
+   "seccion": "Una ciudad para el empleo y las oportunidades",
+   "clase": "Intersistema",
+   "frase": "“Por ejemplo, allí serán fundamentales los servicios de energía en las zonas industriales o de almacenamiento de datos, o los servicios de telecomunicaciones e internet en zonas como el Campus de Ciencia, Tecnología e Innovación de la Ciudad (ctib).”"
   },
   {
    "id": 13,
-   "sO": "EIP",
-   "cO": "Patrimonio / memoria",
+   "sO": "ESECI",
+   "cO": "Actividades económicas",
    "sD": "EFC",
-   "cD": "Espacio público",
+   "cD": "Servicios públicos",
    "dir": "→",
+   "sentido": "Actividades económicas → Servicios públicos",
    "tipo": "Soporte",
    "evid": "Directa",
    "linea": "Sólida",
-   "color": "#F59E0B",
-   "pag": "196",
-   "frase": "“espacios públicos para la itinerancia próxima y segura, lugares que animen la memoria y expresen los valores identitarios”"
+   "color": "Naranja",
+   "pag": "169",
+   "seccion": "Una ciudad para el empleo y las oportunidades",
+   "clase": "Intersistema",
+   "frase": "“El Plan Maestro de Hábitat y Servicios Públicos debe garantizar las condiciones de prestación de los servicios públicos de las diferentes actividades económicas.”"
   },
   {
    "id": 14,
-   "sO": "EFC",
-   "cO": "Cultura / equipamientos",
-   "sD": "EIP",
-   "cD": "Patrimonio / cultura",
+   "sO": "ESECI",
+   "cO": "Sistema de educación",
+   "sD": "ESECI",
+   "cD": "Empleo",
    "dir": "→",
+   "sentido": "Sistema de educación → Empleo",
    "tipo": "Soporte",
    "evid": "Directa",
    "linea": "Sólida",
-   "color": "#F59E0B",
-   "pag": "128",
-   "frase": "“26 equipamientos culturales y 14 infraestructuras para atender a niñas y niños, personas mayores y personas con discapacidad.”"
+   "color": "Naranja",
+   "pag": "30",
+   "seccion": "Presentación del POT",
+   "clase": "Intrasistema",
+   "frase": "“La inversión y ejecución sostenida del pot, el pmss y la inversión en esa educación con calidad y pertinencia, desde la básica hasta la superior, lograrán en conjunto, en la próxima década, el mayor crecimiento en productividad, empleabilidad de calidad y competitividad que haya tenido Bogotá.”"
   },
   {
    "id": 15,
-   "sO": "EFC",
-   "cO": "Movilidad multimodal",
+   "sO": "ESECI",
+   "cO": "Zonas industriales",
    "sD": "ESECI",
-   "cD": "Empresas / actividades productivas",
+   "cD": "Producción artesanal",
    "dir": "→",
+   "sentido": "Zonas industriales → Producción artesanal",
    "tipo": "Soporte",
    "evid": "Directa",
    "linea": "Sólida",
-   "color": "#F59E0B",
+   "color": "Naranja",
    "pag": "30",
-   "frase": "“para que se instalen empresas y actividades productivas generadoras de trabajo. Y que, en todo caso, las diversas zonas de la ciudad estén conectadas por un sistema multimodal de transporte público, colectivo, de energías limpias y renovables basadas en la red Metro y alimentadas por los demás modos y medios de transporte público como los corredores verdes, los cables y las ciclorrutas.”"
+   "seccion": "Presentación del POT",
+   "clase": "Intrasistema",
+   "frase": "“Por eso el pot promueve la permanencia de las industrias tradicionales en el tejido urbano y promueve nuevas implantaciones económicas generadoras de empleo formal, articuladas a los entornos urbanos donde se aglomeran saberes y talentos, y en particular aquellos que dan lugar a aglomeraciones especializadas de producción tradicional e industrias creativas, culturales, verdes, digitales y tecnológicas.”"
   },
   {
    "id": 16,
-   "sO": "ESECI",
-   "cO": "Mezcla de usos / aglomeración económica",
-   "sD": "EFC",
-   "cD": "Soporte territorial / ciudad",
+   "sO": "EIP",
+   "cO": "Patrimonio cultural",
+   "sD": "ESECI",
+   "cD": "Zonas de interés turístico",
    "dir": "→",
+   "sentido": "Patrimonio cultural → Zonas de interés turístico",
    "tipo": "Soporte",
-   "evid": "Directa",
-   "linea": "Sólida",
-   "color": "#F59E0B",
-   "pag": "30",
-   "frase": "“La mezcla de usos del suelo es la garantía de soporte territorial para la aglomeración económica productiva especializada y diversificada y la inclusión de todas las actividades y oportunidades en el territorio.”"
+   "evid": "Indirecta",
+   "linea": "Punteada",
+   "color": "Naranja",
+   "pag": "31",
+   "seccion": "Presentación del POT",
+   "clase": "Intersistema",
+   "frase": "“Por eso promovemos la ciudad como destino turístico inteligente, sostenible, de salud y de negocios que reconozca el patrimonio local, las dinámicas comunitarias, los sistemas cooperativos de producción sostenible como huertas productivas, bancos de semillas nativas y plantas de uso medicinal, entre otros.”"
   },
   {
    "id": 17,
-   "sO": "EFC",
-   "cO": "Equipamientos / cuidado",
+   "sO": "EIP",
+   "cO": "Patrimonio natural",
    "sD": "ESECI",
-   "cD": "Reactivación económica",
+   "cD": "Zonas de interés turístico",
    "dir": "→",
+   "sentido": "Patrimonio natural → Zonas de interés turístico",
    "tipo": "Soporte",
-   "evid": "Directa",
-   "linea": "Sólida",
-   "color": "#F59E0B",
-   "pag": "30",
-   "frase": "“Buscamos la revitalización de las áreas consolidadas para mejorar la calidad ambiental y paisajística de los barrios, la seguridad en el espacio público, aumentar la oferta de espacios de encuentro y los servicios sociales del cuidado y aportar a la reactivación económica.”"
+   "evid": "Indirecta",
+   "linea": "Punteada",
+   "color": "Naranja",
+   "pag": "31",
+   "seccion": "Presentación del POT",
+   "clase": "Intersistema",
+   "frase": "“En la ruralidad es urgente mejorar las condiciones habitacionales, desde los componentes de servicios públicos domiciliarios, accesibilidad y movilidad, con equipamientos que faciliten la economía campesina, familiar y comunitaria, el turismo responsable de naturaleza que vincule residentes y saberes del lugar y la conservación del ambiente como formas de productividad, sustento y desarrollo sostenible.”"
   },
   {
    "id": 18,
-   "sO": "EFC",
-   "cO": "Equipamientos",
+   "sO": "EIP",
+   "cO": "Patrimonio inmaterial",
    "sD": "ESECI",
-   "cD": "Dinámicas económicas",
+   "cD": "Producción artesanal",
    "dir": "→",
+   "sentido": "Patrimonio inmaterial → Producción artesanal",
    "tipo": "Soporte",
    "evid": "Directa",
    "linea": "Sólida",
-   "color": "#F59E0B",
-   "pag": "122",
-   "frase": "“Garantizar equipamientos y servicios de cuidado en cada upl al nivel más próximo a la ciudadanía fue el reto y el logro, que se suman a los equipamientos de seguridad y justicia, a la malla vial local e intermedia, a un espacio público funcional por habitante y también a la dinámica comercial local.”"
+   "color": "Naranja",
+   "pag": "200",
+   "seccion": "Los reconocimientos y el plan para los patrimonios vitales",
+   "clase": "Intersistema",
+   "frase": "“Esta producción artesanal corresponde entonces a las actividades creativas de producción de objetos, realizadas con predominio manual y auxiliadas en algunos casos con maquinarias simples, obteniendo un resultado final individualizado, determinado por los patrones culturales, el medio ambiente y su desarrollo histórico.”"
   },
   {
    "id": 19,
-   "sO": "EFC",
-   "cO": "Plan Maestro de Movilidad",
+   "sO": "EIP",
+   "cO": "Patrimonio cultural",
    "sD": "ESECI",
-   "cD": "Productividad / empleo",
+   "cD": "Economía",
    "dir": "→",
+   "sentido": "Patrimonio cultural → Economía",
    "tipo": "Soporte",
-   "evid": "Directa",
-   "linea": "Sólida",
-   "color": "#F59E0B",
-   "pag": "165",
-   "frase": "“a) Impacto en la productividad por tiempos de viaje”"
+   "evid": "Indirecta",
+   "linea": "Punteada",
+   "color": "Naranja",
+   "pag": "204",
+   "seccion": "Los reconocimientos y el plan para los patrimonios vitales",
+   "clase": "Intersistema",
+   "frase": "“Esta oferta y este movimiento económico y cultural hacen parte de una de las iniciativas primordiales que fija el pot para que la cultura, en ciertos barrios o sectores de Bogotá, se convierta en un polo de desarrollo económico y social: los Distritos Creativos.”"
   },
   {
    "id": 20,
-   "sO": "EFC",
-   "cO": "Plan Maestro de Movilidad",
-   "sD": "ESECI",
-   "cD": "Aglomeraciones económicas",
+   "sO": "EEP",
+   "cO": "Humedales",
+   "sD": "EFC",
+   "cD": "Espacio público",
    "dir": "→",
+   "sentido": "Humedales → Espacio público",
    "tipo": "Soporte",
    "evid": "Directa",
    "linea": "Sólida",
-   "color": "#F59E0B",
-   "pag": "165",
-   "frase": "“b) Consolidación de aglomeraciones por conectividad”"
+   "color": "Naranja",
+   "pag": "92",
+   "seccion": "Transformaciones urbanas",
+   "clase": "Intersistema",
+   "frase": "“Se debatió si podíamos considerar espacio público los elementos de nuestra Estructura Ecológica Principal (eep) adecuando humedales, bordes de ríos y quebradas, para el disfrute ciudadano.”"
   },
   {
    "id": 21,
-   "sO": "EFC",
-   "cO": "Plan Maestro de Hábitat y Servicios Públicos",
+   "sO": "EEP",
+   "cO": "Humedales",
    "sD": "ESECI",
-   "cD": "Tejido económico local",
+   "cD": "Producción de alimentos",
    "dir": "→",
+   "sentido": "Humedales → Producción de alimentos",
    "tipo": "Soporte",
    "evid": "Directa",
    "linea": "Sólida",
-   "color": "#F59E0B",
-   "pag": "165",
-   "frase": "“c) Promover la consolidación de tejido económico local”"
+   "color": "Naranja",
+   "pag": "196",
+   "seccion": "Nuestro territorio y nuestra identidad",
+   "clase": "Intersistema",
+   "frase": "“Las huertas son entonces parte de un valor presente interesado en restablecer vínculos entre los ciclos de producción de alimentos y consumo en ámbitos domésticos. La existencia de estos lugares reconcilia distintas maneras de habitar la ciudad, de conocimientos y prácticas asociados a la preservación de especies y semillas nativas, la siembra, al manejo responsable del agua y de la comprensión del clima.”"
   },
   {
    "id": 22,
-   "sO": "EFC",
-   "cO": "Plan Maestro de Cuidado",
+   "sO": "EEP",
+   "cO": "Conservación ambiental",
    "sD": "ESECI",
-   "cD": "Dinámicas económicas",
+   "cD": "Economía",
    "dir": "→",
+   "sentido": "Conservación ambiental → Economía",
    "tipo": "Soporte",
-   "evid": "Directa",
-   "linea": "Sólida",
-   "color": "#F59E0B",
-   "pag": "165",
-   "frase": "“a) Equipamiento como detonante de dinámicas económicas”"
+   "evid": "Indirecta",
+   "linea": "Punteada",
+   "color": "Naranja",
+   "pag": "31",
+   "seccion": "Presentación del POT",
+   "clase": "Intersistema",
+   "frase": "“En la ruralidad es urgente mejorar las condiciones habitacionales, desde los componentes de servicios públicos domiciliarios, accesibilidad y movilidad, con equipamientos que faciliten la economía campesina, familiar y comunitaria, el turismo responsable de naturaleza que vincule residentes y saberes del lugar y la conservación del ambiente como formas de productividad, sustento y desarrollo sostenible.”"
   },
   {
    "id": 23,
    "sO": "EFC",
-   "cO": "Transporte / estaciones",
-   "sD": "ESECI",
-   "cD": "Tejidos productivos / empleo",
+   "cO": "Equipamientos",
+   "sD": "EFC",
+   "cD": "Servicios sociales",
    "dir": "→",
+   "sentido": "Equipamientos → Servicios sociales",
    "tipo": "Soporte",
    "evid": "Directa",
    "linea": "Sólida",
-   "color": "#F59E0B",
-   "pag": "167",
-   "frase": "“La inversión en infraestructura para la movilidad es la principal apuesta por la productividad futura de la ciudad.”"
+   "color": "Naranja",
+   "pag": "117",
+   "seccion": "Sistema Distrital de Manzanas del Cuidado",
+   "clase": "Interna",
+   "frase": "“Dotar a los barrios de esta infraestructura social hace que los servicios de educación, salud, cultura y cuidado estén próximos y accesibles para garantizar los derechos y satisfacer las necesidades básicas de las personas.”"
   },
   {
    "id": 24,
    "sO": "EFC",
-   "cO": "Sistema de movilidad",
-   "sD": "ESECI",
-   "cD": "Aglomeración económica / empleo",
+   "cO": "Equipamientos",
+   "sD": "EFC",
+   "cD": "Vivienda",
    "dir": "→",
+   "sentido": "Equipamientos → Vivienda",
    "tipo": "Soporte",
    "evid": "Directa",
    "linea": "Sólida",
-   "color": "#F59E0B",
-   "pag": "167",
-   "frase": "“Los mismos ejes de transporte masivo y los orígenes-destino definidos por las estaciones benefician de manera particular ciertos flujos e interdependencias en el territorio, lo que consolidará y potenciará ciertas zonas de la ciudad.”"
+   "color": "Naranja",
+   "pag": "40",
+   "seccion": "Presentación del POT",
+   "clase": "Interna",
+   "frase": "“Que sea en suelo de desarrollo o en suelo de renovación urbana, los constructores y desarrolladores inmobiliarios siempre tengan que garantizar diversos tipos de vivienda de interés social y soportes urbanos y equipamientos sociales de calidad para familias de diferentes tamaños y niveles de ingreso que comparten un mismo trozo de ciudad.”"
   },
   {
    "id": 25,
    "sO": "EFC",
-   "cO": "Sistema de movilidad",
-   "sD": "ESECI",
-   "cD": "Productividad / aglomeración",
+   "cO": "Manzanas del Cuidado",
+   "sD": "EFC",
+   "cD": "Servicios sociales",
    "dir": "→",
+   "sentido": "Manzanas del Cuidado → Servicios sociales",
    "tipo": "Soporte",
    "evid": "Directa",
    "linea": "Sólida",
-   "color": "#F59E0B",
-   "pag": "167",
-   "frase": "“Esto mejorará significativamente la calidad de vida y la productividad de la población, que hará uso de estas infraestructuras; también, consolidará las dinámicas de aglomeración económica que concentran el tejido empresarial, y con ello, las fuentes de generación de empleo...”"
+   "color": "Naranja",
+   "pag": "118",
+   "seccion": "Sistema Distrital de Manzanas del Cuidado",
+   "clase": "Interna",
+   "frase": "“El sistema articula servicios existentes y crea otros nuevos para atender las altas demandas de cuidado de una manera corresponsable entre el gobierno distrital, las comunidades, el sector privado y los demás miembros de los hogares para redistribuir la sobrecarga que llevaban solas las mujeres y balancear la provisión del cuidado, con el fin de devolverles tiempo a las mujeres y a las personas cuidadoras para su desarrollo personal, autocuidado, bienestar, generación de ingresos o participación política.”"
   },
   {
    "id": 26,
-   "sO": "EIP",
-   "cO": "Patrimonio local / dinámicas comunitarias",
-   "sD": "ESECI",
-   "cD": "Producción sostenible",
+   "sO": "EFC",
+   "cO": "Manzanas del Cuidado",
+   "sD": "EFC",
+   "cD": "Equipamientos",
    "dir": "→",
+   "sentido": "Manzanas del Cuidado → Equipamientos",
    "tipo": "Soporte",
    "evid": "Directa",
    "linea": "Sólida",
-   "color": "#F59E0B",
-   "pag": "31",
-   "frase": "“Por eso promovemos la ciudad como destino turístico inteligente, sostenible, de salud y de negocios que reconozca el patrimonio local, las dinámicas comunitarias, los sistemas cooperativos de producción sostenible como huertas productivas, bancos de semillas nativas y plantas de uso medicinal, entre otros.”"
+   "color": "Naranja",
+   "pag": "118",
+   "seccion": "Sistema Distrital de Manzanas del Cuidado",
+   "clase": "Interna",
+   "frase": "“El tejido que se forma entre las Manzanas del Cuidado y la infraestructura nueva y existente de salud, educación, cultura, cuidado y recreación convierte cada una de las upl —que son las nuevas localidades en las que el pot proyecta la ciudad— en una Red del Cuidado.”"
   },
   {
    "id": 27,
-   "sO": "EIP",
-   "cO": "Patrimonio",
-   "sD": "ESECI",
-   "cD": "Vida productiva",
+   "sO": "EFC",
+   "cO": "Corredores verdes",
+   "sD": "EFC",
+   "cD": "Ciclorutas",
    "dir": "→",
+   "sentido": "Corredores verdes → Ciclorutas",
    "tipo": "Soporte",
    "evid": "Directa",
    "linea": "Sólida",
-   "color": "#F59E0B",
-   "pag": "196",
-   "frase": "“Esta estructura persigue la gestión integral de los patrimonios, lo que al cabo fortalece los vínculos sociales y la vida productiva de los grupos poblacionales que habitan, se relacionan y les dan sentido a los territorios urbanos y rurales del Distrito Capital.”"
+   "color": "Naranja",
+   "pag": "30",
+   "seccion": "Presentación del POT",
+   "clase": "Interna",
+   "frase": "“Y que, en todo caso, las diversas zonas de la ciudad estén conectadas por un sistema multimodal de transporte público, colectivo, de energías limpias y renovables basadas en la red Metro y alimentadas por los demás modos y medios de transporte público como los corredores verdes, los cables y las ciclorrutas.”"
   },
   {
    "id": 28,
-   "sO": "ESECI",
-   "cO": "Economía / turismo",
-   "sD": "EIP",
-   "cD": "Patrimonio",
+   "sO": "EFC",
+   "cO": "Corredores verdes",
+   "sD": "EFC",
+   "cD": "Transporte público",
    "dir": "→",
+   "sentido": "Corredores verdes → Transporte público",
    "tipo": "Soporte",
    "evid": "Directa",
    "linea": "Sólida",
-   "color": "#F59E0B",
-   "pag": "205",
-   "frase": "“Para los sectores de cultura, economía y turismo es una escuela de formación de líderes y lideresas sustentada en la presencia de patrimonios que cuentan el origen de sus pobladores...”"
+   "color": "Naranja",
+   "pag": "30",
+   "seccion": "Presentación del POT",
+   "clase": "Interna",
+   "frase": "“Y que, en todo caso, las diversas zonas de la ciudad estén conectadas por un sistema multimodal de transporte público, colectivo, de energías limpias y renovables basadas en la red Metro y alimentadas por los demás modos y medios de transporte público como los corredores verdes, los cables y las ciclorrutas.”"
   },
   {
    "id": 29,
-   "sO": "EIP",
-   "cO": "Cultura / prácticas",
-   "sD": "ESECI",
-   "cD": "Actividades productivas",
+   "sO": "EEP",
+   "cO": "Reservas forestales",
+   "sD": "EEP",
+   "cD": "Humedales",
    "dir": "→",
-   "tipo": "Soporte",
-   "evid": "Indirecta",
-   "linea": "Punteada",
-   "color": "#F59E0B",
-   "pag": "30",
-   "frase": "“las dinámicas patrimoniales, ambientales, sociales y culturales”"
+   "sentido": "Reservas forestales → Humedales",
+   "tipo": "Resiliencia",
+   "evid": "Directa",
+   "linea": "Sólida",
+   "color": "Azul",
+   "pag": "72",
+   "seccion": "Art. 42",
+   "clase": "Interna",
+   "frase": "“La Estructura Ecológica Principal es un sistema de áreas y corredores que sostienen la biodiversidad y los servicios ecosistémicos, y su conectividad y complementariedad son fundamentales para garantizar su funcionalidad.”"
   },
   {
    "id": 30,
-   "sO": "EFC",
-   "cO": "Cuidado / infraestructura",
-   "sD": "EIP",
-   "cD": "Cultura / equipamientos",
+   "sO": "EEP",
+   "cO": "Parques ecológicos de montaña",
+   "sD": "EEP",
+   "cD": "Coberturas vegetales",
    "dir": "→",
+   "sentido": "Parques ecológicos de montaña → Coberturas vegetales",
    "tipo": "Soporte",
    "evid": "Indirecta",
    "linea": "Punteada",
-   "color": "#F59E0B",
-   "pag": "121",
-   "frase": "“...integrando criterios ambientales, patrimoniales, de movilidad, seguridad y productividad, y sumamos el cuidado como un eje estructural en la planeación urbana.”"
-  },
-  {
-   "id": 31,
-   "sO": "EEP",
-   "cO": "Recursos naturales / ecosistemas",
-   "sD": "ESECI",
-   "cD": "Economía circular",
-   "dir": "→",
-   "tipo": "Soporte",
-   "evid": "Directa",
-   "linea": "Sólida",
-   "color": "#F59E0B",
-   "pag": "21",
-   "frase": "“el nuevo pot pone fin a ese absurdo y crea en Doña Juana un parque tecnológico para que con diversas tecnologías transformemos los residuos en materiales reutilizables que regresen a la tierra en forma de abonos y fertilizantes, y a la industria y los hogares en diversos materiales reutilizables en una economía circular.”"
+   "color": "Naranja",
+   "pag": "72",
+   "seccion": "Art. 54",
+   "clase": "Interna",
+   "frase": "“Los Parques Distritales Ecológicos de Montaña tienen como objetivo restaurar y preservar las especies nativas y garantizar la conectividad ecológica.”"
   }
  ]
 };
@@ -603,69 +652,69 @@ const relActive = r => state[r.sO] && state[r.sD];
 //    angular. Así la red se lee integrada (no como 4 grupos sueltos) y
 //    todos los conceptos quedan visibles y bien separados.
 // ---------------------------------------------------------------------
-const SYS_ORDER = ['EEP', 'EFC', 'ESECI', 'EIP']; // EFC y ESECI juntos: concentran el flujo más pesado
-const R1 = 310;      // anillo interior de conceptos
-const R2 = 425;      // anillo exterior de conceptos
+// ---------------------------------------------------------------------
+// 2. LAYOUT: la ESECI va AL CENTRO porque sus conceptos funcionan como
+//    puentes entre las demás estructuras (es el destino de 17 de las 31
+//    relaciones). EEP, EFC y EIP se reparten en un anillo exterior, cada
+//    una en su propio sector angular.
+// ---------------------------------------------------------------------
+const CENTER_SYS = 'ESECI';
+const OUTER_ORDER = ['EFC', 'EEP', 'EIP'];
 
+const R_IN = 170;    // anillo central (conceptos puente de la ESECI)
+const R_OUT = 350;   // anillo exterior (las otras tres estructuras)
 const CON_R = 12;    // radio del nodo de concepto
 
 const layout = {};
 const sectors = {};  // sistema -> {a0, a1, mid}
 
 function computeLayout() {
-  const total = SYS.reduce((n, s) => n + model.systems[s].concepts.length, 0);
-
+  // --- sectores del anillo exterior, proporcionales al nº de conceptos
+  const totalOuter = OUTER_ORDER.reduce((n, s) => n + model.systems[s].concepts.length, 0);
   let acc = -Math.PI / 2;
-  SYS_ORDER.forEach(s => {
-    const span = (2 * Math.PI * model.systems[s].concepts.length) / total;
+  OUTER_ORDER.forEach(s => {
+    const span = (2 * Math.PI * model.systems[s].concepts.length) / totalOuter;
     sectors[s] = { a0: acc, a1: acc + span, mid: acc + span / 2 };
     acc += span;
   });
 
-  SYS_ORDER.forEach(s => {
-    const sec = sectors[s];
-    const ids = model.systems[s].concepts;
-    const n = ids.length;
-
-    // reparto entre los dos anillos proporcional al radio, para que la
-    // separación entre conceptos vecinos sea pareja en ambos
-    const n1 = Math.max(1, Math.round((n * R1) / (R1 + R2)));
-    const n2 = n - n1;
-
-    // ordenar por "hacia dónde apunta" cada concepto reduce cruces
-    const pref = {};
-    ids.forEach(id => {
-      const c = model.concepts[id];
-      let v = 0, k = 0;
-      c.rels.forEach(r => {
-        const other = r.sO === s ? r.sD : r.sO;
-        if (other === s || !sectors[other]) return;
-        let d = sectors[other].mid - sec.mid;
-        while (d > Math.PI) d -= 2 * Math.PI;
-        while (d < -Math.PI) d += 2 * Math.PI;
-        v += d; k++;
-      });
-      pref[id] = k ? v / k : 0;
+  const place = (arr, R, a0, a1) => {
+    const k = arr.length;
+    arr.forEach((id, i) => {
+      const ang = a0 + (a1 - a0) * ((i + 0.5) / k);
+      layout[id] = { x: R * Math.cos(ang), y: R * Math.sin(ang) };
     });
-    const sorted = ids.slice().sort((a, b) => pref[a] - pref[b] || a.localeCompare(b));
+  };
 
-    // los más conectados al anillo interior (quedan más cerca del centro)
-    const byDeg = sorted.slice().sort((a, b) =>
-      model.concepts[b].rels.length - model.concepts[a].rels.length);
-    const inner = new Set(byDeg.slice(0, n1));
+  // --- anillo exterior: ordenar cada sector para reducir cruces
+  OUTER_ORDER.forEach(s => {
+    const sec = sectors[s];
+    const ids = model.systems[s].concepts.slice()
+      .sort((a, b) => model.concepts[b].rels.length - model.concepts[a].rels.length || a.localeCompare(b));
+    place(ids, R_OUT, sec.a0 + 0.06, sec.a1 - 0.06);
+  });
 
-    const ring1 = sorted.filter(id => inner.has(id));
-    const ring2 = sorted.filter(id => !inner.has(id));
+  // --- anillo central (ESECI): cada concepto puente se coloca mirando hacia
+  //     el promedio angular de los conceptos externos con los que se conecta
+  const centerIds = model.systems[CENTER_SYS].concepts;
+  const pref = {};
+  centerIds.forEach(id => {
+    const c = model.concepts[id];
+    let vx = 0, vy = 0, n = 0;
+    c.rels.forEach(r => {
+      const other = r.from === id ? r.to : r.from;
+      const p = layout[other];
+      if (!p) return;                       // otro concepto de la ESECI: aún sin posición
+      vx += p.x; vy += p.y; n++;
+    });
+    pref[id] = n ? Math.atan2(vy, vx) : 0;
+  });
 
-    const place = (arr, R) => {
-      const k = arr.length;
-      arr.forEach((id, i) => {
-        const ang = sec.a0 + (sec.a1 - sec.a0) * ((i + 0.5) / k);
-        layout[id] = { x: R * Math.cos(ang), y: R * Math.sin(ang) };
-      });
-    };
-    place(ring1, R1);
-    place(ring2, R2);
+  const sortedCenter = centerIds.slice().sort((a, b) => pref[a] - pref[b] || a.localeCompare(b));
+  const startAng = sortedCenter.length ? pref[sortedCenter[0]] : 0;
+  sortedCenter.forEach((id, i) => {
+    const ang = startAng + (2 * Math.PI * i) / sortedCenter.length;
+    layout[id] = { x: R_IN * Math.cos(ang), y: R_IN * Math.sin(ang) };
   });
 }
 
@@ -996,12 +1045,14 @@ function selectRelation(id) {
     <div class="ev-concepts"><b>${esc(r.cO)}</b> ${r.dir} <b>${esc(r.cD)}</b></div>
     <div class="ev-meta">
       <div><div class="k">Tipo</div><div class="v" style="color:var(--${kind})">${r.tipo}</div></div>
-      <div><div class="k">Línea</div><div class="v">${r.evid}</div></div>
-      <div><div class="k">Trazo</div><div class="v">${r.linea}</div></div>
-      <div><div class="k">Página impresa</div><div class="v">${r.pag}</div></div>
+      <div><div class="k">Lectura</div><div class="v">${r.evid}</div></div>
+      <div><div class="k">Línea</div><div class="v">${r.linea}</div></div>
+      <div><div class="k">Página POT</div><div class="v">${r.pag}</div></div>
+      <div style="grid-column:1/-1"><div class="k">Clase de relación</div><div class="v">${r.clase}</div></div>
+      <div style="grid-column:1/-1"><div class="k">Sección / referencia</div><div class="v" style="font-size:10.5px;line-height:1.4">${esc(r.seccion)}</div></div>
     </div>
     <div class="ev-quote ${kind}">${esc(r.frase)}</div>
-    <div class="ev-src">Frase literal del POT Bogotá Reverdece 2022–2035 · página impresa ${r.pag}</div>`;
+    <div class="ev-src">Frase literal del POT Bogotá Reverdece 2022–2035 · página ${r.pag}</div>`;
 
   render();
 }
@@ -1059,7 +1110,7 @@ function hideTooltip() { tip().classList.remove('show'); }
 // ---------------------------------------------------------------------
 // 7. ZOOM Y DESPLAZAMIENTO
 // ---------------------------------------------------------------------
-const BASE_VB = { x: -500, y: -500, w: 1000, h: 1000 };
+const BASE_VB = { x: -430, y: -430, w: 860, h: 860 };
 let vb = Object.assign({}, BASE_VB);
 
 function applyVB() {
