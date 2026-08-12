@@ -42,58 +42,60 @@ const SISTEMAS = {
 
 /* -------- Nodos: 32 componentes tomados de la hoja "Relaciones" -------- */
 /* tamaño (r) proporcional al número de conexiones (grado) de cada componente */
+/* plazo: "corto" (accion rápida/bajo costo), "largo" (obra estructural/años),
+   "ambos" (vigente y prioritario en los dos horizontes) */
 const ODS_NODES = [
-  { id: "vivienda", name: "VIVIENDA", icon: "fa-house", color: "#ef9552", sistema: "habitat", x: 735, y: 390, r: 88 },
-  { id: "plazas", name: "PLAZAS", icon: "fa-chess-board", color: "#ef9552", sistema: "habitat", x: 890, y: 446, r: 33 },
-  { id: "alcantarillado", name: "ALCANTARILLADO", icon: "fa-faucet-drip", color: "#ef9552", sistema: "habitat", x: 706, y: 552, r: 29 },
-  { id: "espacio_publico", name: "ESPACIO\nPÚBLICO", icon: "fa-people-group", color: "#ef9552", sistema: "habitat", x: 580, y: 446, r: 46 },
-  { id: "redes_de_energia", name: "REDES DE\nENERGÍA", icon: "fa-bolt", color: "#ef9552", sistema: "habitat", x: 652, y: 247, r: 29 },
-  { id: "alumbrado_publico", name: "ALUMBRADO\nPÚBLICO", icon: "fa-lightbulb", color: "#ef9552", sistema: "habitat", x: 817, y: 247, r: 29 },
-  { id: "barrios", name: "BARRIOS", icon: "fa-city", color: "#ef9552", sistema: "habitat", x: 500, y: 560, r: 43 },
-  { id: "centralidades", name: "CENTRALIDADES", icon: "fa-building", color: "#ef9552", sistema: "habitat", x: 860, y: 560, r: 36 },
-  { id: "lotes", name: "LOTES", icon: "fa-vector-square", color: "#ef9552", sistema: "habitat", x: 470, y: 240, r: 29 },
+  { id: "vivienda", name: "VIVIENDA", icon: "fa-house", color: "#ef9552", sistema: "habitat", x: 735, y: 390, r: 88, plazo: "ambos" },
+  { id: "plazas", name: "PLAZAS", icon: "fa-chess-board", color: "#ef9552", sistema: "habitat", x: 890, y: 446, r: 33, plazo: "corto" },
+  { id: "alcantarillado", name: "ALCANTARILLADO", icon: "fa-faucet-drip", color: "#ef9552", sistema: "habitat", x: 706, y: 552, r: 29, plazo: "largo" },
+  { id: "espacio_publico", name: "ESPACIO\nPÚBLICO", icon: "fa-people-group", color: "#ef9552", sistema: "habitat", x: 580, y: 446, r: 46, plazo: "corto" },
+  { id: "redes_de_energia", name: "REDES DE\nENERGÍA", icon: "fa-bolt", color: "#ef9552", sistema: "habitat", x: 652, y: 247, r: 29, plazo: "largo" },
+  { id: "alumbrado_publico", name: "ALUMBRADO\nPÚBLICO", icon: "fa-lightbulb", color: "#ef9552", sistema: "habitat", x: 817, y: 247, r: 29, plazo: "corto" },
+  { id: "barrios", name: "BARRIOS", icon: "fa-city", color: "#ef9552", sistema: "habitat", x: 500, y: 560, r: 43, plazo: "ambos" },
+  { id: "centralidades", name: "CENTRALIDADES", icon: "fa-building", color: "#ef9552", sistema: "habitat", x: 860, y: 560, r: 36, plazo: "largo" },
+  { id: "lotes", name: "LOTES", icon: "fa-vector-square", color: "#ef9552", sistema: "habitat", x: 470, y: 240, r: 29, plazo: "largo" },
 
-  { id: "humedales", name: "HUMEDALES", icon: "fa-water", color: "#4ade80", sistema: "eco", x: 330, y: 200, r: 62 },
-  { id: "rios", name: "RÍOS", icon: "fa-droplet", color: "#4ade80", sistema: "eco", x: 205, y: 300, r: 46 },
-  { id: "corredores_verdes", name: "CORREDORES\nVERDES", icon: "fa-seedling", color: "#4ade80", sistema: "eco", x: 420, y: 330, r: 54 },
-  { id: "parques_urbanos", name: "PARQUES\nURBANOS", icon: "fa-tree", color: "#4ade80", sistema: "eco", x: 155, y: 120, r: 39 },
-  { id: "corredores_ecologicos", name: "CORREDORES\nECOLÓGICOS", icon: "fa-leaf", color: "#4ade80", sistema: "eco", x: 120, y: 390, r: 39 },
-  { id: "cerros", name: "CERROS", icon: "fa-mountain", color: "#4ade80", sistema: "eco", x: 55, y: 420, r: 35 },
-  { id: "arbolado_urbano", name: "ARBOLADO\nURBANO", icon: "fa-tree-city", color: "#4ade80", sistema: "eco", x: 235, y: 420, r: 35 },
-  { id: "coberturas_vegetales", name: "COBERTURAS\nVEGETALES", icon: "fa-spa", color: "#4ade80", sistema: "eco", x: 335, y: 80, r: 42 },
-  { id: "fuentes_hidricas", name: "FUENTES\nHÍDRICAS", icon: "fa-faucet", color: "#4ade80", sistema: "eco", x: 110, y: 230, r: 35 },
-  { id: "quebradas", name: "QUEBRADAS", icon: "fa-water", color: "#4ade80", sistema: "eco", x: 85, y: 290, r: 35 },
+  { id: "humedales", name: "HUMEDALES", icon: "fa-water", color: "#4ade80", sistema: "eco", x: 330, y: 200, r: 62, plazo: "largo" },
+  { id: "rios", name: "RÍOS", icon: "fa-droplet", color: "#4ade80", sistema: "eco", x: 205, y: 300, r: 46, plazo: "largo" },
+  { id: "corredores_verdes", name: "CORREDORES\nVERDES", icon: "fa-seedling", color: "#4ade80", sistema: "eco", x: 420, y: 330, r: 54, plazo: "largo" },
+  { id: "parques_urbanos", name: "PARQUES\nURBANOS", icon: "fa-tree", color: "#4ade80", sistema: "eco", x: 155, y: 120, r: 39, plazo: "corto" },
+  { id: "corredores_ecologicos", name: "CORREDORES\nECOLÓGICOS", icon: "fa-leaf", color: "#4ade80", sistema: "eco", x: 120, y: 390, r: 39, plazo: "largo" },
+  { id: "cerros", name: "CERROS", icon: "fa-mountain", color: "#4ade80", sistema: "eco", x: 55, y: 420, r: 35, plazo: "largo" },
+  { id: "arbolado_urbano", name: "ARBOLADO\nURBANO", icon: "fa-tree-city", color: "#4ade80", sistema: "eco", x: 235, y: 420, r: 35, plazo: "corto" },
+  { id: "coberturas_vegetales", name: "COBERTURAS\nVEGETALES", icon: "fa-spa", color: "#4ade80", sistema: "eco", x: 335, y: 80, r: 42, plazo: "largo" },
+  { id: "fuentes_hidricas", name: "FUENTES\nHÍDRICAS", icon: "fa-faucet", color: "#4ade80", sistema: "eco", x: 110, y: 230, r: 35, plazo: "largo" },
+  { id: "quebradas", name: "QUEBRADAS", icon: "fa-water", color: "#4ade80", sistema: "eco", x: 85, y: 290, r: 35, plazo: "largo" },
 
-  { id: "educacion", name: "EDUCACIÓN", icon: "fa-graduation-cap", color: "#f76fb0", sistema: "social", x: 1005, y: 175, r: 36 },
-  { id: "equipamientos", name: "EQUIPAMIENTOS", icon: "fa-building-columns", color: "#f76fb0", sistema: "social", x: 1130, y: 80, r: 33 },
-  { id: "salud", name: "SALUD", icon: "fa-heart-pulse", color: "#f76fb0", sistema: "social", x: 895, y: 145, r: 29 },
-  { id: "manzanas_del_cuidado", name: "MANZANAS\nDEL CUIDADO", icon: "fa-people-roof", color: "#f76fb0", sistema: "social", x: 995, y: 300, r: 29 },
-  { id: "recreacion", name: "RECREACIÓN", icon: "fa-futbol", color: "#f76fb0", sistema: "social", x: 1255, y: 175, r: 33 },
-  { id: "patrimonio", name: "PATRIMONIO", icon: "fa-landmark", color: "#f76fb0", sistema: "social", x: 1360, y: 320, r: 33 },
-  { id: "centros_comunitarios", name: "CENTROS\nCOMUNITARIOS", icon: "fa-people-roof", color: "#f76fb0", sistema: "social", x: 330, y: 545, r: 33 },
-  { id: "espacios_culturales", name: "ESPACIOS\nCULTURALES", icon: "fa-masks-theater", color: "#f76fb0", sistema: "social", x: 1010, y: 435, r: 29 },
-  { id: "bibliotecas", name: "BIBLIOTECAS", icon: "fa-book", color: "#f76fb0", sistema: "social", x: 390, y: 500, r: 29 },
-  { id: "centros_deportivos", name: "CENTROS\nDEPORTIVOS", icon: "fa-dumbbell", color: "#f76fb0", sistema: "social", x: 650, y: 375, r: 29 },
+  { id: "educacion", name: "EDUCACIÓN", icon: "fa-graduation-cap", color: "#f76fb0", sistema: "social", x: 1005, y: 175, r: 36, plazo: "largo" },
+  { id: "equipamientos", name: "EQUIPAMIENTOS", icon: "fa-building-columns", color: "#f76fb0", sistema: "social", x: 1130, y: 80, r: 33, plazo: "largo" },
+  { id: "salud", name: "SALUD", icon: "fa-heart-pulse", color: "#f76fb0", sistema: "social", x: 895, y: 145, r: 29, plazo: "largo" },
+  { id: "manzanas_del_cuidado", name: "MANZANAS\nDEL CUIDADO", icon: "fa-people-roof", color: "#f76fb0", sistema: "social", x: 995, y: 300, r: 29, plazo: "corto" },
+  { id: "recreacion", name: "RECREACIÓN", icon: "fa-futbol", color: "#f76fb0", sistema: "social", x: 1255, y: 175, r: 33, plazo: "corto" },
+  { id: "patrimonio", name: "PATRIMONIO", icon: "fa-landmark", color: "#f76fb0", sistema: "social", x: 1360, y: 320, r: 33, plazo: "largo" },
+  { id: "centros_comunitarios", name: "CENTROS\nCOMUNITARIOS", icon: "fa-people-roof", color: "#f76fb0", sistema: "social", x: 330, y: 545, r: 33, plazo: "corto" },
+  { id: "espacios_culturales", name: "ESPACIOS\nCULTURALES", icon: "fa-masks-theater", color: "#f76fb0", sistema: "social", x: 1010, y: 435, r: 29, plazo: "corto" },
+  { id: "bibliotecas", name: "BIBLIOTECAS", icon: "fa-book", color: "#f76fb0", sistema: "social", x: 390, y: 500, r: 29, plazo: "corto" },
+  { id: "centros_deportivos", name: "CENTROS\nDEPORTIVOS", icon: "fa-dumbbell", color: "#f76fb0", sistema: "social", x: 650, y: 375, r: 29, plazo: "corto" },
 
-  { id: "comercio", name: "COMERCIO", icon: "fa-shop", color: "#f5c945", sistema: "economico", x: 995, y: 525, r: 40 },
-  { id: "empleo", name: "EMPLEO", icon: "fa-briefcase", color: "#f5c945", sistema: "economico", x: 1155, y: 565, r: 40 },
-  { id: "produccion_artesanal", name: "PRODUCCIÓN\nARTESANAL", icon: "fa-hands", color: "#f5c945", sistema: "economico", x: 1305, y: 465, r: 29 },
-  { id: "turismo", name: "TURISMO", icon: "fa-camera-retro", color: "#f5c945", sistema: "economico", x: 1305, y: 625, r: 29 },
-  { id: "economia_popular", name: "ECONOMÍA\nPOPULAR", icon: "fa-store", color: "#f5c945", sistema: "economico", x: 760, y: 470, r: 29 },
-  { id: "plazas_de_mercado", name: "PLAZAS DE\nMERCADO", icon: "fa-basket-shopping", color: "#f5c945", sistema: "economico", x: 650, y: 510, r: 29 },
-  { id: "agricultura_urbana", name: "AGRICULTURA\nURBANA", icon: "fa-carrot", color: "#f5c945", sistema: "economico", x: 495, y: 140, r: 29 },
+  { id: "comercio", name: "COMERCIO", icon: "fa-shop", color: "#f5c945", sistema: "economico", x: 995, y: 525, r: 40, plazo: "corto" },
+  { id: "empleo", name: "EMPLEO", icon: "fa-briefcase", color: "#f5c945", sistema: "economico", x: 1155, y: 565, r: 40, plazo: "largo" },
+  { id: "produccion_artesanal", name: "PRODUCCIÓN\nARTESANAL", icon: "fa-hands", color: "#f5c945", sistema: "economico", x: 1305, y: 465, r: 29, plazo: "corto" },
+  { id: "turismo", name: "TURISMO", icon: "fa-camera-retro", color: "#f5c945", sistema: "economico", x: 1305, y: 625, r: 29, plazo: "largo" },
+  { id: "economia_popular", name: "ECONOMÍA\nPOPULAR", icon: "fa-store", color: "#f5c945", sistema: "economico", x: 760, y: 470, r: 29, plazo: "corto" },
+  { id: "plazas_de_mercado", name: "PLAZAS DE\nMERCADO", icon: "fa-basket-shopping", color: "#f5c945", sistema: "economico", x: 650, y: 510, r: 29, plazo: "corto" },
+  { id: "agricultura_urbana", name: "AGRICULTURA\nURBANA", icon: "fa-carrot", color: "#f5c945", sistema: "economico", x: 495, y: 140, r: 29, plazo: "corto" },
 
-  { id: "transporte_publico", name: "TRANSPORTE\nPÚBLICO", icon: "fa-bus", color: "#5b8def", sistema: "movilidad", x: 600, y: 655, r: 56 },
-  { id: "red_vial", name: "RED VIAL", icon: "fa-road", color: "#5b8def", sistema: "movilidad", x: 425, y: 705, r: 33 },
-  { id: "ciclorrutas", name: "CICLORRUTAS", icon: "fa-bicycle", color: "#5b8def", sistema: "movilidad", x: 765, y: 705, r: 48 },
-  { id: "andenes", name: "ANDENES", icon: "fa-person-walking", color: "#5b8def", sistema: "movilidad", x: 480, y: 610, r: 29 },
-  { id: "metro", name: "METRO", icon: "fa-train-subway", color: "#5b8def", sistema: "movilidad", x: 905, y: 650, r: 29 },
-  { id: "regiotram", name: "REGIOTRAM", icon: "fa-train", color: "#5b8def", sistema: "movilidad", x: 1290, y: 650, r: 29 },
+  { id: "transporte_publico", name: "TRANSPORTE\nPÚBLICO", icon: "fa-bus", color: "#5b8def", sistema: "movilidad", x: 600, y: 655, r: 56, plazo: "largo" },
+  { id: "red_vial", name: "RED VIAL", icon: "fa-road", color: "#5b8def", sistema: "movilidad", x: 425, y: 705, r: 33, plazo: "largo" },
+  { id: "ciclorrutas", name: "CICLORRUTAS", icon: "fa-bicycle", color: "#5b8def", sistema: "movilidad", x: 765, y: 705, r: 48, plazo: "corto" },
+  { id: "andenes", name: "ANDENES", icon: "fa-person-walking", color: "#5b8def", sistema: "movilidad", x: 480, y: 610, r: 29, plazo: "corto" },
+  { id: "metro", name: "METRO", icon: "fa-train-subway", color: "#5b8def", sistema: "movilidad", x: 905, y: 650, r: 29, plazo: "largo" },
+  { id: "regiotram", name: "REGIOTRAM", icon: "fa-train", color: "#5b8def", sistema: "movilidad", x: 1290, y: 650, r: 29, plazo: "largo" },
 
-  { id: "planeacion_urbana", name: "PLANEACIÓN\nURBANA", icon: "fa-compass-drafting", color: "#a276f2", sistema: "gobernanza", x: 160, y: 555, r: 29 },
-  { id: "organizaciones_comunitarias", name: "ORGANIZACIONES\nCOMUNITARIAS", icon: "fa-people-arrows", color: "#a276f2", sistema: "gobernanza", x: 95, y: 650, r: 29 },
-  { id: "entidades_publicas", name: "ENTIDADES\nPÚBLICAS", icon: "fa-building-flag", color: "#a276f2", sistema: "gobernanza", x: 255, y: 525, r: 29 },
-  { id: "juntas_de_accion_comunal", name: "JUNTAS DE\nACCIÓN COMUNAL", icon: "fa-people-group", color: "#a276f2", sistema: "gobernanza", x: 210, y: 460, r: 29 },
+  { id: "planeacion_urbana", name: "PLANEACIÓN\nURBANA", icon: "fa-compass-drafting", color: "#a276f2", sistema: "gobernanza", x: 160, y: 555, r: 29, plazo: "ambos" },
+  { id: "organizaciones_comunitarias", name: "ORGANIZACIONES\nCOMUNITARIAS", icon: "fa-people-arrows", color: "#a276f2", sistema: "gobernanza", x: 95, y: 650, r: 29, plazo: "corto" },
+  { id: "entidades_publicas", name: "ENTIDADES\nPÚBLICAS", icon: "fa-building-flag", color: "#a276f2", sistema: "gobernanza", x: 255, y: 525, r: 29, plazo: "ambos" },
+  { id: "juntas_de_accion_comunal", name: "JUNTAS DE\nACCIÓN COMUNAL", icon: "fa-people-group", color: "#a276f2", sistema: "gobernanza", x: 210, y: 460, r: 29, plazo: "corto" },
 ];
 
 /* -------- física: cada nodo guarda su posición "casa" (ancla) y velocidad -------- */
@@ -603,6 +605,9 @@ let spotlight = null;
 function clearSpotlight() {
   spotlight = null;
   document.querySelectorAll(".insight-card").forEach(c => c.classList.remove("active"));
+  setActivePlazoButton("todos");
+  document.getElementById("plazoDesc").textContent =
+    "Viendo el modelo completo: los 6 sistemas y sus componentes, sin filtrar por plazo.";
   applySpotlightState();
 }
 
@@ -664,7 +669,39 @@ function toggleInsight(key) {
     setSpotlightNodes(ids, true);
   }
 
+  setActivePlazoButton("todos");
+  document.getElementById("plazoDesc").textContent =
+    "Viendo el modelo completo: los 6 sistemas y sus componentes, sin filtrar por plazo.";
   card.classList.add("active");
+}
+
+/* -------- selector grande: Corto plazo / Largo plazo / Modelo completo -------- */
+const PLAZO_LABEL = { corto: "Corto plazo", largo: "Largo plazo" };
+const PLAZO_DESC = {
+  corto: "Corto plazo: se apagan los componentes que requieren obra estructural o procesos largos. Quedan encendidas las acciones rápidas y de bajo costo — lo que tu modelo plantea hacer ya.",
+  largo: "Largo plazo: se apagan las acciones rápidas y de bajo costo. Quedan encendidos los componentes que requieren obra estructural, inversión mayor o procesos de varios años.",
+};
+
+function setActivePlazoButton(mode) {
+  document.querySelectorAll(".plazo-btn").forEach(b => b.classList.toggle("active", b.dataset.plazo === mode));
+}
+
+function setPlazo(mode) {
+  setActivePlazoButton(mode);
+  document.querySelectorAll(".insight-card").forEach(c => c.classList.remove("active"));
+
+  if (mode === "todos") {
+    spotlight = null;
+    document.getElementById("plazoDesc").textContent =
+      "Viendo el modelo completo: los 6 sistemas y sus componentes, sin filtrar por plazo.";
+    applySpotlightState();
+    return;
+  }
+
+  const ids = ODS_NODES.filter(n => n.plazo === mode || n.plazo === "ambos").map(n => n.id);
+  spotlight = { mode: "nodes", nodes: new Set(ids), expand: false };
+  document.getElementById("plazoDesc").textContent = PLAZO_DESC[mode];
+  applySpotlightState();
 }
 
 /* -------- panel de convenciones (leyenda de tipos de relación) -------- */
@@ -753,6 +790,7 @@ function addNode() {
     x: 500 + Math.random() * 300,
     y: 120 + Math.random() * 300,
     r: 29,
+    plazo: "ambos",
   };
   node.homeX = node.x; node.homeY = node.y;
   node.vx = 0; node.vy = 0; node.fixed = false;
