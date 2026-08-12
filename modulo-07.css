@@ -574,7 +574,7 @@ body {
 
 .rel {
   fill: none;
-  stroke-width: 1.1;
+  stroke-width: 5;
   cursor: pointer;
   animation: draw 0.5s ease both;
 }
@@ -583,12 +583,12 @@ body {
 
 .rel.soporte { stroke: var(--soporte); }
 .rel.resiliencia { stroke: var(--resiliencia); }
-.rel.punteada { stroke-dasharray: 5 4; }
-.rel:hover { stroke-width: 2.4; }
+.rel.punteada { stroke-dasharray: 18 12; }
+.rel:hover { stroke-width: 9; }
 .rel.dim { opacity: 0.12; }
-.rel.sel { stroke-width: 2.6; }
+.rel.sel { stroke-width: 10; }
 
-.rel-hit { fill: none; stroke: transparent; stroke-width: 12; cursor: pointer; }
+.rel-hit { fill: none; stroke: transparent; stroke-width: 34; cursor: pointer; }
 
 /* --------------------------------------------------------------- TOOLTIP */
 .tooltip {
@@ -792,3 +792,311 @@ body {
   color: var(--eseci);
   letter-spacing: 0.2px;
 }
+
+/* ======================================================================
+   POP-UP DE APERTURA: HALLAZGO PRINCIPAL
+   Tarjeta clara centrada, al estilo de la referencia.
+   ====================================================================== */
+.intro-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 26px;
+  background: rgba(5, 8, 16, 0.78);
+  backdrop-filter: blur(6px);
+  animation: introFade 0.4s ease both;
+}
+
+.intro-backdrop.hidden { display: none; }
+
+@keyframes introFade { from { opacity: 0; } to { opacity: 1; } }
+
+.intro-modal {
+  position: relative;
+  width: 100%;
+  max-width: 760px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: #f7fafc;
+  color: #1b2536;
+  border-radius: 20px;
+  padding: 30px 38px 26px;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.6);
+  animation: introRise 0.45s cubic-bezier(.2, .8, .3, 1) both;
+}
+
+@keyframes introRise {
+  from { opacity: 0; transform: translateY(24px) scale(0.97); }
+  to { opacity: 1; transform: none; }
+}
+
+.intro-close {
+  position: absolute;
+  top: 18px;
+  right: 20px;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #5b6a80;
+  font-size: 18px;
+  cursor: pointer;
+  transition: 0.18s;
+}
+
+.intro-close:hover { background: #e6edf5; color: #1b2536; }
+
+.intro-head { display: flex; align-items: center; gap: 16px; }
+
+.intro-icon {
+  width: 62px;
+  height: 62px;
+  flex: 0 0 62px;
+  border-radius: 50%;
+  background: #e3eef8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #2f8fb5;
+  font-size: 24px;
+}
+
+.intro-head h2 {
+  font-family: 'Space Grotesk', 'Inter', sans-serif;
+  font-size: 27px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  color: #16202f;
+}
+
+.intro-divider {
+  position: relative;
+  height: 1px;
+  background: #dde5ee;
+  margin: 22px 0 24px;
+}
+
+.intro-divider span {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #3aa0c4;
+  transform: translate(-50%, -50%);
+}
+
+.intro-body { display: flex; gap: 26px; align-items: flex-start; }
+
+.intro-figure {
+  width: 132px;
+  height: 132px;
+  flex: 0 0 132px;
+  border-radius: 50%;
+  background: #e9f1f8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #3f7ea3;
+  font-size: 52px;
+}
+
+.intro-text { min-width: 0; }
+
+.intro-text p {
+  font-size: 15.5px;
+  line-height: 1.62;
+  color: #35435a;
+  margin-bottom: 14px;
+}
+
+.intro-text b { color: #16202f; font-weight: 700; }
+.intro-text b.hl { color: #1c8ab0; }
+
+.intro-text .intro-q {
+  font-size: 16.5px;
+  font-weight: 700;
+  color: #16202f;
+  margin-bottom: 10px;
+}
+
+/* cifras calculadas desde los datos, para respaldar el hallazgo */
+.intro-figures {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(108px, 1fr));
+  gap: 9px;
+  margin-top: 18px;
+}
+
+.fig-card {
+  background: #fff;
+  border: 1px solid #e2e9f1;
+  border-radius: 10px;
+  padding: 10px 11px;
+  border-top: 3px solid var(--fig, #ccc);
+}
+
+.fig-card .fig-code { font-size: 11px; font-weight: 800; color: var(--fig); letter-spacing: 0.3px; }
+.fig-card .fig-num { font-size: 23px; font-weight: 800; color: #16202f; line-height: 1.1; margin-top: 2px; }
+.fig-card .fig-lbl { font-size: 9.5px; color: #6b7a90; line-height: 1.3; margin-top: 3px; }
+
+.intro-foot {
+  display: flex;
+  justify-content: flex-end;
+  border-top: 1px solid #dde5ee;
+  margin-top: 24px;
+  padding-top: 18px;
+}
+
+.intro-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  background: #fff;
+  border: 1.5px solid #b9d7e6;
+  color: #1c7fa3;
+  font-family: inherit;
+  font-size: 14.5px;
+  font-weight: 700;
+  padding: 13px 22px;
+  border-radius: 11px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.intro-btn:hover { background: #1c8ab0; border-color: #1c8ab0; color: #fff; }
+.intro-btn i:last-child { font-size: 12px; }
+
+@media (max-width: 700px) {
+  .intro-modal { padding: 24px 20px 20px; }
+  .intro-body { flex-direction: column; align-items: center; }
+  .intro-figure { width: 96px; height: 96px; flex-basis: 96px; font-size: 38px; }
+  .intro-head h2 { font-size: 22px; }
+  .intro-text p { font-size: 14.5px; }
+}
+
+/* ======================================================================
+   POP-UP DE LA FRASE EXACTA (al hacer clic en una línea de la red)
+   ====================================================================== */
+.quote-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 380;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 26px;
+  background: rgba(5, 8, 16, 0.76);
+  backdrop-filter: blur(5px);
+  animation: introFade 0.28s ease both;
+}
+
+.quote-backdrop.hidden { display: none; }
+
+.quote-modal {
+  position: relative;
+  width: 100%;
+  max-width: 660px;
+  max-height: 88vh;
+  overflow-y: auto;
+  background: #f7fafc;
+  color: #1b2536;
+  border-radius: 18px;
+  padding: 30px 34px 24px;
+  box-shadow: 0 26px 80px rgba(0, 0, 0, 0.6);
+  animation: introRise 0.32s cubic-bezier(.2, .8, .3, 1) both;
+}
+
+.quote-rel {
+  font-family: 'Space Grotesk', 'Inter', sans-serif;
+  font-size: 19px;
+  font-weight: 700;
+  color: #16202f;
+  line-height: 1.35;
+  padding-right: 34px;
+}
+
+.quote-rel .arrow { color: #8a99ad; margin: 0 6px; }
+
+.quote-tags { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 12px; }
+
+.quote-tag {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  padding: 4px 9px;
+  border-radius: 5px;
+  background: #e8eef6;
+  color: #4a5a73;
+}
+
+.quote-tag.soporte { background: #fdf0dc; color: #9a6212; }
+.quote-tag.resiliencia { background: #e0e9fb; color: #1f4fa8; }
+
+.quote-divider {
+  position: relative;
+  height: 1px;
+  background: #dde5ee;
+  margin: 20px 0;
+}
+
+.quote-divider span {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #3aa0c4;
+  transform: translate(-50%, -50%);
+}
+
+/* La frase textual del POT: protagonista del pop-up */
+.quote-text {
+  font-size: 16px;
+  line-height: 1.7;
+  color: #26334a;
+  font-style: italic;
+  border-left: 4px solid #3aa0c4;
+  padding: 4px 0 4px 18px;
+}
+
+.quote-foot {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  border-top: 1px solid #dde5ee;
+  margin-top: 22px;
+  padding-top: 15px;
+}
+
+.quote-page {
+  font-size: 15px;
+  font-weight: 800;
+  color: #16202f;
+}
+
+.quote-sec { font-size: 11.5px; color: #6b7a90; text-align: right; flex: 1; min-width: 140px; }
+
+@media (max-width: 640px) {
+  .quote-modal { padding: 24px 20px 18px; }
+  .quote-rel { font-size: 16.5px; }
+  .quote-text { font-size: 14.5px; }
+  .quote-foot { flex-direction: column; }
+  .quote-sec { text-align: left; }
+}
+
+/* Relaciones que la propia tabla del POT excluye por falta de frase continua:
+   se dibujan más tenues para no presentarlas como sustentadas. */
+.rel.por-verificar { opacity: 0.4; stroke-dasharray: 6 14; }
+.rel.por-verificar:hover { opacity: 0.85; }
+
+.quote-tag.pv { background: #fbe9e9; color: #a33; }
