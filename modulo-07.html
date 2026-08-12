@@ -64,7 +64,7 @@
 
     <div class="welcome">
       <h2>Red de las 4 estructuras territoriales</h2>
-      <p>Simulador de desconexión construido con las 86 relaciones documentadas de las cuatro estructuras territoriales. El tamaño de cada nodo depende de cuántas relaciones tiene. Apaga una estructura completa o un nodo específico para ver qué se rompe.</p>
+      <p>Simulador de desconexión construido con las 98 relaciones documentadas de las cuatro estructuras territoriales. El tamaño de cada nodo depende de cuántas relaciones tiene. Apaga una estructura completa o un nodo específico para ver qué se rompe.</p>
     </div>
 
     <!-- SIMULADOR ON/OFF -->
@@ -120,7 +120,7 @@
           </div>
 
           <div class="net-stage" id="stage">
-            <svg id="svg" xmlns="http://www.w3.org/2000/svg" viewBox="-1384 -1392 2767 2821">
+            <svg id="svg" xmlns="http://www.w3.org/2000/svg" viewBox="-1964 -1937 3927 3910">
               <defs>
                 <marker id="ar-soporte" viewBox="0 0 10 10" refX="9" refY="5"
                         markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse">
@@ -180,6 +180,13 @@
           <select id="nodeSelect" class="node-select"></select>
           <p class="node-impact" id="nodeImpact">—</p>
           <button class="btn node-sim-btn" id="btnNodeSim"><i class="fa-solid fa-power-off"></i> Simular sin este nodo</button>
+        </div>
+
+        <div class="pcard">
+          <h2>Nodos puente
+            <span class="hint">Conceptos que se relacionan con las tres estructuras distintas a la suya. Se detectan solos.</span>
+          </h2>
+          <div id="bridgeList"></div>
         </div>
 
         <div class="pcard">
