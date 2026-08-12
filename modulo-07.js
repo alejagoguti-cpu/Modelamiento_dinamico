@@ -597,60 +597,80 @@ function buildModel() {
 const relActive = r => state[r.sO] && state[r.sD];
 
 // ---------------------------------------------------------------------
-// 2. LAYOUT jerárquico: 4 sistemas alrededor del centro, conceptos en
-//    anillo alrededor de su propio sistema. El orden angular de cada
-//    concepto se calcula según hacia qué sistema apunta, para reducir
-//    cruces de líneas.
+// 2. LAYOUT: UNA SOLA RED CIRCULAR.
+//    Los 4 sistemas van en un círculo pequeño al centro; sus conceptos se
+//    reparten en dos anillos, cada sistema dentro de su propio sector
+//    angular. Así la red se lee integrada (no como 4 grupos sueltos) y
+//    todos los conceptos quedan visibles y bien separados.
 // ---------------------------------------------------------------------
-const D = 320;
-const SYS_POS = {
-  EFC:   { x: -D, y: -D },
-  ESECI: { x:  D, y: -D },
-  EEP:   { x:  D, y:  D },
-  EIP:   { x: -D, y:  D }
-};
+const SYS_ORDER = ['EEP', 'EFC', 'ESECI', 'EIP']; // EFC y ESECI juntos: concentran el flujo más pesado
+const R_SYS = 150;   // círculo donde se ubican los nodos de sistema
+const R1 = 330;      // anillo interior de conceptos
+const R2 = 445;      // anillo exterior de conceptos
 
-const SYS_R = 42;      // radio del nodo de sistema
-const CON_R = 11;      // radio del nodo de concepto
-const SLOT = 84;       // separación mínima entre conceptos vecinos del anillo
+const SYS_R = 30;    // radio del nodo de sistema
+const CON_R = 12;    // radio del nodo de concepto
 
-const layout = {};     // id -> {x, y}
-const ringRadius = {};
+const layout = {};
+const sectors = {};  // sistema -> {a0, a1, mid}
 
 function computeLayout() {
-  SYS.forEach(s => {
-    const ids = model.systems[s].concepts;
-    const k = ids.length;
-    const R = Math.max(125, (k * SLOT) / (2 * Math.PI));
-    ringRadius[s] = R;
+  const total = SYS.reduce((n, s) => n + model.systems[s].concepts.length, 0);
 
-    // dirección preferida de cada concepto (hacia los sistemas con los que se relaciona)
+  let acc = -Math.PI / 2;
+  SYS_ORDER.forEach(s => {
+    const span = (2 * Math.PI * model.systems[s].concepts.length) / total;
+    sectors[s] = { a0: acc, a1: acc + span, mid: acc + span / 2 };
+    acc += span;
+  });
+
+  SYS_ORDER.forEach(s => {
+    const sec = sectors[s];
+    const ids = model.systems[s].concepts;
+    const n = ids.length;
+
+    // el sistema se coloca en el centro angular de su sector
+    layout[s] = { x: R_SYS * Math.cos(sec.mid), y: R_SYS * Math.sin(sec.mid) };
+
+    // reparto entre los dos anillos proporcional al radio, para que la
+    // separación entre conceptos vecinos sea pareja en ambos
+    const n1 = Math.max(1, Math.round((n * R1) / (R1 + R2)));
+    const n2 = n - n1;
+
+    // ordenar por "hacia dónde apunta" cada concepto reduce cruces
     const pref = {};
     ids.forEach(id => {
       const c = model.concepts[id];
-      let vx = 0, vy = 0, n = 0;
+      let v = 0, k = 0;
       c.rels.forEach(r => {
         const other = r.sO === s ? r.sD : r.sO;
-        if (other === s) return;
-        vx += SYS_POS[other].x - SYS_POS[s].x;
-        vy += SYS_POS[other].y - SYS_POS[s].y;
-        n++;
+        if (other === s || !sectors[other]) return;
+        let d = sectors[other].mid - sec.mid;
+        while (d > Math.PI) d -= 2 * Math.PI;
+        while (d < -Math.PI) d += 2 * Math.PI;
+        v += d; k++;
       });
-      pref[id] = n ? Math.atan2(vy, vx) : 0;
+      pref[id] = k ? v / k : 0;
     });
-
     const sorted = ids.slice().sort((a, b) => pref[a] - pref[b] || a.localeCompare(b));
-    const start = sorted.length ? pref[sorted[0]] : 0;
 
-    sorted.forEach((id, i) => {
-      const ang = start + (2 * Math.PI * i) / k;
-      layout[id] = {
-        x: SYS_POS[s].x + R * Math.cos(ang),
-        y: SYS_POS[s].y + R * Math.sin(ang)
-      };
-    });
+    // los más conectados al anillo interior (quedan más cerca del centro)
+    const byDeg = sorted.slice().sort((a, b) =>
+      model.concepts[b].rels.length - model.concepts[a].rels.length);
+    const inner = new Set(byDeg.slice(0, n1));
 
-    layout[s] = { x: SYS_POS[s].x, y: SYS_POS[s].y };
+    const ring1 = sorted.filter(id => inner.has(id));
+    const ring2 = sorted.filter(id => !inner.has(id));
+
+    const place = (arr, R) => {
+      const k = arr.length;
+      arr.forEach((id, i) => {
+        const ang = sec.a0 + (sec.a1 - sec.a0) * ((i + 0.5) / k);
+        layout[id] = { x: R * Math.cos(ang), y: R * Math.sin(ang) };
+      });
+    };
+    place(ring1, R1);
+    place(ring2, R2);
   });
 }
 
@@ -707,17 +727,34 @@ function render() {
   const gNodes = document.getElementById('gNodes');
   [gGuides, gMembers, gRels, gNodes].forEach(g => (g.innerHTML = ''));
 
-  // -- halos de sistema
-  SYS.forEach(s => {
+  // -- anillos guía y arcos de sector (agrupan cada estructura)
+  [R1, R2].forEach(r => {
+    gGuides.appendChild(el('circle', { class: 'ring-guide', cx: 0, cy: 0, r }));
+  });
+
+  const arcR = R2 + 44;
+  SYS_ORDER.forEach(s => {
     if (!state[s]) return;
-    const p = layout[s];
-    const halo = el('circle', {
-      class: 'sys-halo',
-      cx: p.x, cy: p.y,
-      r: ringRadius[s] + 34,
+    const sec = sectors[s];
+    const pad = 0.035;
+    const a0 = sec.a0 + pad, a1 = sec.a1 - pad;
+    const p0 = { x: arcR * Math.cos(a0), y: arcR * Math.sin(a0) };
+    const p1 = { x: arcR * Math.cos(a1), y: arcR * Math.sin(a1) };
+    const large = a1 - a0 > Math.PI ? 1 : 0;
+    gGuides.appendChild(el('path', {
+      class: 'sector-arc',
+      d: `M${p0.x.toFixed(1)},${p0.y.toFixed(1)} A${arcR},${arcR} 0 ${large} 1 ${p1.x.toFixed(1)},${p1.y.toFixed(1)}`,
+      style: `--sys:${model.systems[s].color}`
+    }));
+
+    const lp = { x: (arcR + 24) * Math.cos(sec.mid), y: (arcR + 24) * Math.sin(sec.mid) };
+    const t = el('text', {
+      class: 'sector-label',
+      x: lp.x.toFixed(1), y: lp.y.toFixed(1),
       style: `--sys:${model.systems[s].color}`
     });
-    gGuides.appendChild(halo);
+    t.textContent = s;
+    gGuides.appendChild(t);
   });
 
   // -- líneas de pertenencia (sistema -> concepto). No son relaciones del POT.
@@ -811,12 +848,9 @@ function render() {
       'data-sys': s
     });
     g.appendChild(el('circle', { class: 'core', r: SYS_R }));
-    const code = el('text', { class: 'code', y: 2 });
+    const code = el('text', { class: 'code', y: 4 });
     code.textContent = s;
     g.appendChild(code);
-    const role = el('text', { class: 'role', y: 15 });
-    role.textContent = sy.funcion;
-    g.appendChild(role);
 
     g.addEventListener('mouseenter', ev => showTooltip(ev,
       `<div class="tt-sys" style="color:${sy.color}">${s}</div>${esc(sy.nombre)}<br>` +
@@ -1106,7 +1140,7 @@ function hideTooltip() { tip().classList.remove('show'); }
 // ---------------------------------------------------------------------
 // 7. ZOOM Y DESPLAZAMIENTO
 // ---------------------------------------------------------------------
-const BASE_VB = { x: -690, y: -690, w: 1380, h: 1380 };
+const BASE_VB = { x: -560, y: -560, w: 1120, h: 1120 };
 let vb = Object.assign({}, BASE_VB);
 
 function applyVB() {
