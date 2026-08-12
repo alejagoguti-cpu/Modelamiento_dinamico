@@ -6,7 +6,7 @@
 <title>RAPOT · Módulo 07 · Simulador de Estructuras</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="modulo-07.css">
 </head>
 <body>
@@ -53,8 +53,6 @@
       <a href="demo.html" class="logout-btn" title="Salir"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
     </div>
   </aside>
-
-  <!-- MAIN -->
   <main class="main">
     <div class="topbar">
       <h1>Módulo 07 · Simulador de Estructuras</h1>
@@ -65,524 +63,146 @@
     </div>
 
     <div class="welcome">
-      <h2>Red de impacto entre estructuras</h2>
-      <p>Apaga una estructura para simular su ausencia, o explora cada relación documentada en el POT: color, tipo de línea, página y la frase exacta que la sustenta.</p>
+      <h2>Red de las 4 estructuras territoriales</h2>
+      <p>Simulador de desconexión construido únicamente con las 32 relaciones documentadas en el POT Bogotá Reverdece 2022–2035. Apaga una estructura para medir cuánta articulación aporta a la red.</p>
     </div>
 
-    <!-- SCENARIO SELECTOR -->
+    <!-- SIMULADOR ON/OFF -->
     <section class="scenario-selector">
       <div class="selector-header">
         <h3><i class="fa-solid fa-sliders"></i>Escenarios: ¿Qué pasa si apagamos una estructura?</h3>
+        <button class="btn" id="btnReset"><i class="fa-solid fa-arrows-rotate"></i> Reactivar todas</button>
       </div>
       <div class="scenario-buttons">
-        <button class="scenario-btn" data-scenario="sin_eep" onclick="loadScenario('sin_eep', this)">
+        <button class="scenario-btn" data-sys="EEP">
           <i class="fa-solid fa-circle-minus"></i>
+          <span class="sys-state">ON</span>
           <span class="btn-title">Sin Estructura Ecológica Principal</span>
           <span class="btn-question">¿Qué pasaría si no existiera la EEP?</span>
         </button>
-        <button class="scenario-btn" data-scenario="sin_efc" onclick="loadScenario('sin_efc', this)">
+        <button class="scenario-btn" data-sys="EFC">
           <i class="fa-solid fa-circle-minus"></i>
+          <span class="sys-state">ON</span>
           <span class="btn-title">Sin Estructura Funcional y del Cuidado</span>
           <span class="btn-question">¿Qué pasaría si no existiera la EFC?</span>
         </button>
-        <button class="scenario-btn" data-scenario="sin_eseci" onclick="loadScenario('sin_eseci', this)">
+        <button class="scenario-btn" data-sys="ESECI">
           <i class="fa-solid fa-circle-minus"></i>
+          <span class="sys-state">ON</span>
           <span class="btn-title">Sin Estructura Socioeconómica, Creativa y de Innovación</span>
           <span class="btn-question">¿Qué pasaría si no existiera la ESECI?</span>
         </button>
-        <button class="scenario-btn" data-scenario="sin_eip" onclick="loadScenario('sin_eip', this)">
+        <button class="scenario-btn" data-sys="EIP">
           <i class="fa-solid fa-circle-minus"></i>
+          <span class="sys-state">ON</span>
           <span class="btn-title">Sin Estructura Integradora de Patrimonios</span>
           <span class="btn-question">¿Qué pasaría si no existiera la EIP?</span>
         </button>
       </div>
     </section>
 
-    <!-- STATIC IMPACT NETWORK -->
-    <section class="network-static-section">
-      <div class="network-layout">
-        <div class="network-main">
-      <div class="network-header">
-        <h4><i class="fa-solid fa-circle-nodes"></i>Red de relaciones documentadas en el POT</h4>
-        <div class="legend">
-          <button class="legend-item" data-linktype="directa" onclick="toggleLinkType('directa', this)">
-            <i class="fa-regular fa-square-check"></i><span class="legend-line line-directa"></span>Directa
-          </button>
-          <button class="legend-item" data-linktype="indirecta" onclick="toggleLinkType('indirecta', this)">
-            <i class="fa-regular fa-square-check"></i><span class="legend-line line-indirecta"></span>Indirecta
-          </button>
-          <button class="legend-item" data-linktype="soporte" onclick="toggleLinkType('soporte', this)">
-            <i class="fa-regular fa-square-check"></i><span class="legend-line line-soporte"></span>Soporte
-          </button>
-          <button class="legend-item" data-linktype="resiliencia" onclick="toggleLinkType('resiliencia', this)">
-            <i class="fa-regular fa-square-check"></i><span class="legend-line line-resiliencia"></span>Resiliencia
-          </button>
+    <div class="net-layout">
+
+      <!-- ================= RED + ESTADO ================= -->
+      <div class="col">
+        <div class="pcard net-card">
+          <div class="net-toolbar">
+            <div class="legend">
+              <div class="legend-item"><span class="lg-line"></span>Relación directa</div>
+              <div class="legend-item"><span class="lg-line dashed"></span>Relación indirecta</div>
+              <div class="legend-item"><span class="lg-dot soporte"></span>Soporte</div>
+              <div class="legend-item"><span class="lg-dot resiliencia"></span>Resiliencia</div>
+              <div class="legend-item"><span class="lg-line member"></span>Pertenencia al sistema</div>
+            </div>
+            <div class="net-btns">
+              <button class="btn" id="btnIn"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+              <button class="btn" id="btnOut"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
+              <button class="btn" id="btnFit">Ajustar</button>
+            </div>
+          </div>
+
+          <div class="net-stage" id="stage">
+            <svg id="svg" xmlns="http://www.w3.org/2000/svg" viewBox="-690 -690 1380 1380">
+              <defs>
+                <marker id="ar-soporte" viewBox="0 0 10 10" refX="9" refY="5"
+                        markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse">
+                  <path d="M0,0 L10,5 L0,10 z" fill="#f59e0b"></path>
+                </marker>
+                <marker id="ar-resiliencia" viewBox="0 0 10 10" refX="9" refY="5"
+                        markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse">
+                  <path d="M0,0 L10,5 L0,10 z" fill="#2563eb"></path>
+                </marker>
+              </defs>
+              <g id="gGuides"></g>
+              <g id="gMembers"></g>
+              <g id="gRels"></g>
+              <g id="gNodes"></g>
+            </svg>
+            <div class="tooltip" id="tooltip"></div>
+          </div>
+        </div>
+
+        <div class="pcard">
+          <h2>Estado de la red</h2>
+          <div class="stat-grid">
+            <div class="stat wide">
+              <div class="lbl">Relaciones activas</div>
+              <div class="val accent" id="mRelAct">—</div>
+              <div class="bar-track"><div class="bar-fill" id="mBar" style="width:100%"></div></div>
+            </div>
+            <div class="stat"><div class="lbl">Red activa</div><div class="val" id="mPct">—</div></div>
+            <div class="stat"><div class="lbl">Relaciones totales</div><div class="val" id="mRelTot">—</div></div>
+            <div class="stat"><div class="lbl">Nodos totales</div><div class="val" id="mNodTot">—</div></div>
+            <div class="stat"><div class="lbl">Nodos activos</div><div class="val" id="mNodAct">—</div></div>
+            <div class="stat"><div class="lbl">Componentes conectados</div><div class="val" id="mComp">—</div></div>
+            <div class="stat"><div class="lbl">Componente principal</div><div class="val" id="mMain">—</div></div>
+            <div class="stat"><div class="lbl">Conceptos aislados</div><div class="val" id="mIso">—</div></div>
+            <div class="stat wide"><div class="lbl">Sistema con mayor centralidad</div><div class="val" id="mCentral">—</div></div>
+          </div>
         </div>
       </div>
 
-      <!-- AVISO: aparece arriba, visible, al seleccionar un nodo con indicador -->
-      <div class="indicator-prompt" id="indicatorPrompt" style="display:none">
-        <i class="fa-solid fa-chart-line"></i>
-        <span id="indicatorPromptText">Este nodo tiene un indicador asociado del POT.</span>
-        <button class="net-btn indicator-prompt-btn" onclick="openIndicatorModal()">Ver indicador</button>
-      </div>
+      <!-- ================= PANELES ================= -->
+      <div class="col right">
 
-      <div class="network-toolbar">
-        <div class="net-stats">
-          <div class="stat-chip"><i class="fa-solid fa-circle-dot"></i>Nodos: <span id="statNodes">0</span></div>
-          <div class="stat-chip"><i class="fa-solid fa-timeline"></i>Relaciones: <span id="statLinks">0</span></div>
-          <div class="stat-chip"><i class="fa-solid fa-layer-group"></i>Estructuras activas: <span id="statActive">4/4</span></div>
-          <div class="stat-chip" id="selectedChip" style="display:none"><i class="fa-solid fa-crosshairs"></i><span id="statSelected"></span></div>
-        </div>
-        <div class="net-controls">
-          <button class="net-btn" onclick="resetNetwork()"><i class="fa-solid fa-arrows-rotate"></i>Reiniciar</button>
-        </div>
-      </div>
-
-      <div class="network-static-wrap">
-        <svg id="staticNetwork" viewBox="-523 -364 926 704" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <marker id="arrow-directa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-              <path d="M0,0 L10,5 L0,10 z" fill="rgba(255,255,255,0.55)"></path>
-            </marker>
-            <marker id="arrow-soporte" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-              <path d="M0,0 L10,5 L0,10 z" fill="#ef9552"></path>
-            </marker>
-            <marker id="arrow-resiliencia" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-              <path d="M0,0 L10,5 L0,10 z" fill="#4c8dff"></path>
-            </marker>
-          </defs>
-          <g class="links">
-      <line class="link-soporte l-eco" data-s="corredores_mont" data-t="rios" x1="276.5" y1="299.8" x2="233.0" y2="241.5"></line>
-      <line class="link-soporte l-eco" data-s="quebradas" data-t="humedales" x1="142.3" y1="293.9" x2="158.97187173294446" y2="173.68507819993872"></line>
-      <line class="link-soporte l-eco" data-s="cerros_orientales" data-t="humedales" x1="184.74308318321096" y1="231.17285655660905" x2="158.97187173294446" y2="173.68507819993872"></line>
-      <line class="link-soporte l-eco" data-s="humedales" data-t="rios" x1="158.97187173294446" y1="173.68507819993872" x2="233.0" y2="241.5"></line>
-      <line class="link-soporte l-eco" data-s="rios" data-t="complejos_paramos" x1="233.0" y1="241.5" x2="291.8" y2="223.0"></line>
-      <line class="link-soporte l-eco" data-s="bosques_urbanos" data-t="coberturas_vegetales" x1="280.2184457606933" y1="108.55907431229787" x2="217.24650028621886" y2="110.43899004440222"></line>
-      <line class="link-resiliencia l-eco" data-s="areas_resiliencia" data-t="coberturas_vegetales" x1="145.624065395224" y1="102.90806308979478" x2="217.24650028621886" y2="110.43899004440222"></line>
-      <line class="link-soporte l-eco" data-s="humedales" data-t="areas_resiliencia" x1="158.97187173294446" y1="173.68507819993872" x2="145.624065395224" y2="102.90806308979478"></line>
-      <line class="link-soporte l-eco link-punteada" data-s="areas_protegidas" data-t="humedales" x1="95.33460850380075" y1="207.36442986686768" x2="158.97187173294446" y2="173.68507819993872"></line>
-      <line class="link-soporte l-eco link-punteada" data-s="areas_protegidas" data-t="parques_eco_montana" x1="95.33460850380075" y1="207.36442986686768" x2="91.9222210350019" y2="124.86313829314484"></line>
-      <line class="link-soporte l-eco link-punteada" data-s="areas_protegidas" data-t="reservas_forestales" x1="95.33460850380075" y1="207.36442986686768" x2="118.09319448839949" y2="250.75851660667163"></line>
-      <line class="link-resiliencia l-eco" data-s="reservas_forestales" data-t="humedales" x1="118.09319448839949" y1="250.75851660667163" x2="158.97187173294446" y2="173.68507819993872"></line>
-      <line class="link-soporte l-eco link-punteada" data-s="parques_eco_montana" data-t="coberturas_vegetales" x1="91.9222210350019" y1="124.86313829314484" x2="217.24650028621886" y2="110.43899004440222"></line>
-      <line class="link-soporte l-eco link-punteada" data-s="coberturas_vegetales" data-t="parques_borde" x1="217.24650028621886" y1="110.43899004440222" x2="363.2" y2="102.2"></line>
-      <line class="link-soporte l-eco link-punteada" data-s="coberturas_vegetales" data-t="paisajes_sostenibles" x1="217.24650028621886" y1="110.43899004440222" x2="273.5" y2="165.7"></line>
-      <line class="link-soporte l-eco link-punteada" data-s="complejos_paramos" data-t="paisajes_sostenibles" x1="291.8" y1="223.0" x2="273.5" y2="165.7"></line>
-      <line class="link-soporte l-func link-punteada" data-s="equipamientos" data-t="servicios_cuidado" x1="-85.1624818711363" y1="-143.02749642522272" x2="-68.07672563902837" y2="-208.44371178893243"></line>
-      <line class="link-soporte l-func link-punteada" data-s="equipamientos" data-t="servicios_sociales" x1="-85.1624818711363" y1="-143.02749642522272" x2="-99.61281825330106" y2="-233.05011060355005"></line>
-      <line class="link-soporte l-func" data-s="equipamientos" data-t="vivienda" x1="-85.1624818711363" y1="-143.02749642522272" x2="-201.55956812575732" y2="-226.9951837114033"></line>
-      <line class="link-soporte l-func link-punteada" data-s="servicios_publicos" data-t="vivienda" x1="-241.9" y1="-281.2" x2="-201.55956812575732" y2="-226.9951837114033"></line>
-      <line class="link-soporte l-func link-punteada" data-s="ciclorrutas" data-t="vivienda" x1="-262.5367564830934" y1="-231.19280896244214" x2="-201.55956812575732" y2="-226.9951837114033"></line>
-      <line class="link-resiliencia l-func link-punteada no-arrow" data-s="ciclorrutas" data-t="transporte_publico" x1="-262.5367564830934" y1="-231.19280896244214" x2="-249.04104653820687" y2="-157.3979437271935"></line>
-      <line class="link-soporte l-func link-punteada" data-s="transporte_publico" data-t="vivienda" x1="-249.04104653820687" y1="-157.3979437271935" x2="-201.55956812575732" y2="-226.9951837114033"></line>
-      <line class="link-soporte l-func" data-s="red_vial" data-t="transporte_publico" x1="-189.9998228388823" y1="-179.3782509153635" x2="-249.04104653820687" y2="-157.3979437271935"></line>
-      <line class="link-soporte l-func" data-s="red_vial" data-t="equipamientos" x1="-189.9998228388823" y1="-179.3782509153635" x2="-85.1624818711363" y2="-143.02749642522272"></line>
-      <line class="link-soporte l-func" data-s="corredores_verdes" data-t="ciclorrutas" x1="-299.65976163012647" y1="-199.2102748406225" x2="-262.5367564830934" y2="-231.19280896244214"></line>
-      <line class="link-soporte l-func" data-s="corredores_verdes" data-t="transporte_publico" x1="-299.65976163012647" y1="-199.2102748406225" x2="-249.04104653820687" y2="-157.3979437271935"></line>
-      <line class="link-soporte l-func" data-s="manzanas_cuidado" data-t="servicios_sociales" x1="-146.82244936348957" y1="-246.17454317947195" x2="-99.61281825330106" y2="-233.05011060355005"></line>
-      <line class="link-soporte l-func" data-s="manzanas_cuidado" data-t="equipamientos" x1="-146.82244936348957" y1="-246.17454317947195" x2="-85.1624818711363" y2="-143.02749642522272"></line>
-      <line class="link-soporte l-func" data-s="manzanas_cuidado" data-t="parques" x1="-146.82244936348957" y1="-246.17454317947195" x2="-137.5" y2="-324.2"></line>
-      <line class="link-soporte l-econ" data-s="distrito_tec" data-t="servicios_empresariales" x1="-194.7254717943295" y1="-100.7335846192401" x2="-144.92707761478317" y2="-30.820600112688616"></line>
-      <line class="link-soporte l-econ" data-s="distrito_tec" data-t="sist_educacion" x1="-194.7254717943295" y1="-100.7335846192401" x2="-141.59766209577515" y2="-187.8084410446283"></line>
-      <line class="link-soporte l-econ link-punteada" data-s="centros_abastecimiento" data-t="plazas_mercado" x1="-482.9" y1="286.0" x2="-332.8" y2="127.4"></line>
-      <line class="link-soporte l-econ" data-s="plazas_mercado" data-t="servicios_empresariales" x1="-332.8" y1="127.4" x2="-144.92707761478317" y2="-30.820600112688616"></line>
-      <line class="link-soporte l-econ" data-s="zonas_industriales" data-t="servicios_empresariales" x1="-144.89023698544761" y1="-102.82059068746598" x2="-144.92707761478317" y2="-30.820600112688616"></line>
-      <line class="link-soporte l-econ link-punteada" data-s="zonas_industriales" data-t="sist_educacion" x1="-144.89023698544761" y1="-102.82059068746598" x2="-141.59766209577515" y2="-187.8084410446283"></line>
-      <line class="link-soporte l-econ" data-s="zonas_industriales" data-t="produccion_artesanal" x1="-144.89023698544761" y1="-102.82059068746598" x2="-66.56849125356064" y2="-81.70787718660984"></line>
-      <line class="link-soporte l-econ" data-s="zonas_interes_turistico" data-t="plazas_mercado" x1="-26.1" y1="275.6" x2="-332.8" y2="127.4"></line>
-      <line class="link-soporte l-econ" data-s="centros_financieros" data-t="servicios_empresariales" x1="-298.9" y1="-32.2" x2="-144.92707761478317" y2="-30.820600112688616"></line>
-      <line class="link-resiliencia l-patri" data-s="sitios_sagrados" data-t="patrimonio_inmaterial" x1="272.5" y1="-239.2" x2="112.0" y2="-97.0"></line>
-      <line class="link-soporte l-patri" data-s="patrimonio_arqueologico" data-t="patrimonio_natural" x1="-19.03150874643937" y1="-93.59212281339016" x2="77.07634953754489" y2="54.41031649386562"></line>
-      <line class="link-resiliencia l-patri" data-s="patrimonio_arqueologico" data-t="patrimonio_material" x1="-19.03150874643937" y1="-93.59212281339016" x2="46.469660076961425" y2="-10.760463463592366"></line>
-      <line class="link-soporte l-patri" data-s="patrimonio_natural" data-t="patrimonio_inmaterial" x1="77.07634953754489" y1="54.41031649386562" x2="112.0" y2="-97.0"></line>
-      <line class="link-soporte l-patri" data-s="patrimonio_material" data-t="patrimonio_natural" x1="46.469660076961425" y1="-10.760463463592366" x2="77.07634953754489" y2="54.41031649386562"></line>
-      <line class="link-soporte l-patri" data-s="patrimonio_material" data-t="patrimonio_inmaterial" x1="46.469660076961425" y1="-10.760463463592366" x2="112.0" y2="-97.0"></line>
-      <line class="link-soporte l-eco l-patri link-cross link-punteada" data-s="humedales" data-t="patrimonio_natural" x1="158.97187173294446" y1="173.68507819993872" x2="77.07634953754489" y2="54.41031649386562"></line>
-      <line class="link-soporte l-func l-patri link-cross" data-s="patrimonio_arqueologico" data-t="equipamientos" x1="-19.03150874643937" y1="-93.59212281339016" x2="-85.1624818711363" y2="-143.02749642522272"></line>
-      <line class="link-soporte l-econ l-patri link-cross" data-s="patrimonio_inmaterial" data-t="produccion_artesanal" x1="112.0" y1="-97.0" x2="-66.56849125356064" y2="-81.70787718660984"></line>
-      <line class="link-soporte l-econ l-func link-cross" data-s="manzanas_cuidado" data-t="sist_educacion" x1="-146.82244936348957" y1="-246.17454317947195" x2="-141.59766209577515" y2="-187.8084410446283"></line>
-      <line class="link-soporte l-econ l-func link-cross" data-s="equipamientos" data-t="sist_educacion" x1="-85.1624818711363" y1="-143.02749642522272" x2="-141.59766209577515" y2="-187.8084410446283"></line>
-      <line class="link-soporte l-econ l-func link-cross link-punteada" data-s="equipamientos" data-t="servicios_empresariales" x1="-85.1624818711363" y1="-143.02749642522272" x2="-144.92707761478317" y2="-30.820600112688616"></line>
-      <line class="link-soporte l-econ l-func link-cross link-punteada" data-s="transporte_publico" data-t="zonas_industriales" x1="-249.04104653820687" y1="-157.3979437271935" x2="-144.89023698544761" y2="-102.82059068746598"></line>
-      <line class="link-soporte l-eco l-econ link-cross link-punteada" data-s="parques_eco_montana" data-t="zonas_interes_turistico" x1="91.9222210350019" y1="124.86313829314484" x2="-26.1" y2="275.6"></line>
-      <line class="link-soporte l-eco l-patri link-cross" data-s="parques_eco_montana" data-t="patrimonio_natural" x1="91.9222210350019" y1="124.86313829314484" x2="77.07634953754489" y2="54.41031649386562"></line>
-      <line class="link-resiliencia l-eco l-patri link-cross link-punteada" data-s="areas_resiliencia" data-t="patrimonio_natural" x1="145.624065395224" y1="102.90806308979478" x2="77.07634953754489" y2="54.41031649386562"></line>
-      <line class="link-indicator-only l-eco l-func link-cross" data-s="humedales" data-t="espacio_publico" x1="158.97187173294446" y1="173.68507819993872" x2="182.6" y2="294.0"></line>
-          </g>
-          <g class="nodes">
-      <g class="node n-eco node-main" id="n_humedales" transform="translate(158.97187173294446,173.68507819993872)" data-x0="158.97187173294446" data-y0="173.68507819993872">
-        <circle class="node-fill" r="34"></circle>
-        <foreignObject x="-24" y="-24" width="48" height="48">
-          <div class="node-icon" xmlns="http://www.w3.org/1999/xhtml"><i class="fa-solid fa-droplet" style="font-size:17px"></i></div>
-        </foreignObject>
-        <text class="node-label" y="48">Humedales</text>
-      </g>
-      <g class="node n-eco node-main" id="n_coberturas_vegetales" transform="translate(217.24650028621886,110.43899004440222)" data-x0="217.24650028621886" data-y0="110.43899004440222">
-        <circle class="node-fill" r="34"></circle>
-        <foreignObject x="-24" y="-24" width="48" height="48">
-          <div class="node-icon" xmlns="http://www.w3.org/1999/xhtml"><i class="fa-solid fa-seedling" style="font-size:17px"></i></div>
-        </foreignObject>
-        <text class="node-label" y="48" textLength="124" lengthAdjust="spacingAndGlyphs">Coberturas vegetales</text>
-      </g>
-      <g class="node n-eco node-hub" id="n_parques_eco_montana" transform="translate(91.9222210350019,124.86313829314484)" data-x0="91.9222210350019" data-y0="124.86313829314484">
-        <circle class="node-fill" r="21"></circle>
-        <foreignObject x="-15" y="-15" width="30" height="30">
-          <div class="node-icon" xmlns="http://www.w3.org/1999/xhtml"><i class="fa-solid fa-mountain-sun" style="font-size:12px"></i></div>
-        </foreignObject>
-        <text class="node-label" y="32" textLength="86" lengthAdjust="spacingAndGlyphs">Parques ecológicos de montaña</text>
-      </g>
-      <g class="node n-eco node-hub" id="n_areas_protegidas" transform="translate(95.33460850380075,207.36442986686768)" data-x0="95.33460850380075" data-y0="207.36442986686768">
-        <circle class="node-fill" r="21"></circle>
-        <foreignObject x="-15" y="-15" width="30" height="30">
-          <div class="node-icon" xmlns="http://www.w3.org/1999/xhtml"><i class="fa-solid fa-shield-halved" style="font-size:12px"></i></div>
-        </foreignObject>
-        <text class="node-label" y="32" textLength="86" lengthAdjust="spacingAndGlyphs">Áreas protegidas</text>
-      </g>
-      <g class="node n-eco node-hub" id="n_areas_resiliencia" transform="translate(145.624065395224,102.90806308979478)" data-x0="145.624065395224" data-y0="102.90806308979478">
-        <circle class="node-fill" r="21"></circle>
-        <foreignObject x="-15" y="-15" width="30" height="30">
-          <div class="node-icon" xmlns="http://www.w3.org/1999/xhtml"><i class="fa-solid fa-temperature-half" style="font-size:12px"></i></div>
-        </foreignObject>
-        <text class="node-label" y="32" textLength="86" lengthAdjust="spacingAndGlyphs">Áreas de resiliencia climática</text>
-      </g>
-      <g class="node n-eco node-hub" id="n_rios" transform="translate(233.0,241.5)" data-x0="233.0" data-y0="241.5">
-        <circle class="node-fill" r="21"></circle>
-        <foreignObject x="-15" y="-15" width="30" height="30">
-          <div class="node-icon" xmlns="http://www.w3.org/1999/xhtml"><i class="fa-solid fa-water" style="font-size:12px"></i></div>
-        </foreignObject>
-        <text class="node-label" y="32">Ríos</text>
-      </g>
-      <g class="node n-eco" id="n_reservas_forestales" transform="translate(118.09319448839949,250.75851660667163)" data-x0="118.09319448839949" data-y0="250.75851660667163">
-        <circle class="node-fill" r="13"></circle>
-        <foreignObject x="-9" y="-9" width="17" height="17">
-          <div class="node-icon" xmlns="http://www.w3.org/1999/xhtml"><i class="fa-solid fa-tree" style="font-size:9px"></i></div>
-        </foreignObject>
-        <text class="node-label" y="23" textLength="58" lengthAdjust="spacingAndGlyphs">Reservas forestales</text>
-      </g>
-      <g class="node n-eco" id="n_paisajes_sostenibles" transform="translate(273.5,165.7)" data-x0="273.5" data-y0="165.7">
-        <circle class="node-fill" r="13"></circle>
-        <foreignObject x="-9" y="-9" width="17" height="17">
-          <div class="node-icon" xmlns="http://www.w3.org/1999/xhtml"><i class="fa-solid fa-leaf" style="font-size:9px"></i></div>
-        </foreignObject>
-        <text class="node-label" y="23" textLength="58" lengthAdjust="spacingAndGlyphs">Paisajes sostenibles</text>
-      </g>
-      <g class="node n-eco" id="n_complejos_paramos" transform="translate(291.8,223.0)" data-x0="291.8" data-y0="223.0">
-        <circle class="node-fill" r="13"></circle>
-        <foreignObject x="-9" y="-9" width="17" height="17">
-          <div class="node-icon" xmlns="http://www.w3.org/1999/xhtml"><i class="fa-solid fa-mountain" style="font-size:9px"></i></div>
-        </foreignObject>
-        <text class="node-label" y="23" textLength="58" lengthAdjust="spacingAndGlyphs">Complejos de páramos</text>
-      </g>
-      <g class="node n-eco" id="n_bosques_urbanos" transform="translate(280.2184457606933,108.55907431229787)" data-x0="280.2184457606933" data-y0="108.55907431229787">
-        <circle class="node-fill" r="13"></circle>
-        <foreignObject x="-9" y="-9" width="17" height="17">
-          <div class="node-icon" xmlns="http://www.w3.org/1999/xhtml"><i class="fa-solid fa-tree" style="font-size:9px"></i></div>
-        </foreignObject>
-        <text class="node-label" y="23" textLength="58" lengthAdjust="spacingAndGlyphs">Bosques urbanos</text>
-      </g>
-      <g class="node n-eco" id="n_cerros_orientales" transform="translate(184.74308318321096,231.17285655660905)" data-x0="184.74308318321096" data-y0="231.17285655660905">
-        <circle class="node-fill" r="13"></circle>
-        <foreignObject x="-9" y="-9" width="17" height="17">
-          <div class="node-icon" xmlns="http://www.w3.org/1999/xhtml"><i class="fa-solid fa-mountain-sun" style="font-size:9px"></i></div>
-        </foreignObject>
-        <text class="node-label" y="23" textLength="58" lengthAdjust="spacingAndGlyphs">Cerros Orientales</text>
-      </g>
-      <g class="node n-eco" id="n_corredores_mont" transform="translate(276.5,299.8)" data-x0="276.5" data-y0="299.8">
-        <circle class="node-fill" r="13"></circle>
-        <foreignObject x="-9" y="-9" width="17" height="17">
-          <div class="node-icon" xmlns="http://www.w3.org/1999/xhtml"><i class="fa-solid fa-mountain" style="font-size:9px"></i></div>
-        </foreignObject>
-        <text class="node-label" y="23" textLength="58" lengthAdjust="spacingAndGlyphs">Corredores montañosos</text>
-      </g>
-      <g class="node n-eco" id="n_quebradas" transform="translate(142.3,293.9)" data-x0="142.3" data-y0="293.9">
-        <circle class="node-fill" r="13"></circle>
-        <foreignObject x="-9" y="-9" width="17" height="17">
-          <div class="node-icon" xmlns="http://www.w3.org/1999/xhtml"><i class="fa-solid fa-water" style="font-size:9px"></i></div>
-        </foreignObject>
-        <text class="node-label" y="23">Quebradas</text>
-      </g>
-      <g class="node n-eco" id="n_parques_borde" transform="translate(363.2,102.2)" data-x0="363.2" data-y0="102.2">
-        <circle class="node-fill" r="13"></circle>
-        <foreignObject x="-9" y="-9" width="17" height="17">
-          <div class="node-icon" xmlns="http://www.w3.org/1999/xhtml"><i class="fa-solid fa-tree-city" style="font-size:9px"></i></div>
-        </foreignObject>
-        <text class="node-label" y="23" textLength="58" lengthAdjust="spacingAndGlyphs">Parques de borde</text>
-      </g>
-      <g class="node n-econ node-main" id="n_servicios_empresariales" transform="translate(-144.92707761478317,-30.820600112688616)" data-x0="-144.92707761478317" data-y0="-30.820600112688616">
-        <circle class="node-fill" r="34"></circle>
-        <foreignObject x="-24" y="-24" width="48" height="48">
-          <div class="node-icon" xmlns="http://www.w3.org/1999/xhtml"><i class="fa-solid fa-briefcase" style="font-size:17px"></i></div>
-        </foreignObject>
-        <text class="node-label" y="48" textLength="124" lengthAdjust="spacingAndGlyphs">Servicios empresariales</text>
-      </g>
-      <g class="node n-econ node-hub" id="n_sist_educacion" transform="translate(-141.59766209577515,-187.8084410446283)" data-x0="-141.59766209577515" data-y0="-187.8084410446283">
-        <circle class="node-fill" r="21"></circle>
-        <foreignObject x="-15" y="-15" width="30" height="30">
-          <div class="node-icon" xmlns="http://www.w3.org/1999/xhtml"><i class="fa-solid fa-graduation-cap" style="font-size:12px"></i></div>
-        </foreignObject>
-        <text class="node-label" y="32" textLength="86" lengthAdjust="spacingAndGlyphs">Sistema de educación</text>
-      </g>
-      <g class="node n-econ node-hub" id="n_zonas_industriales" transform="translate(-144.89023698544761,-102.82059068746598)" data-x0="-144.89023698544761" data-y0="-102.82059068746598">
-        <circle class="node-fill" r="21"></circle>
-        <foreignObject x="-15" y="-15" width="30" height="30">
-          <div class="node-icon" xmlns="http://www.w3.org/1999/xhtml"><i class="fa-solid fa-industry" style="font-size:12px"></i></div>
-        </foreignObject>
-        <text class="node-label" y="32" textLength="86" lengthAdjust="spacingAndGlyphs">Zonas industriales</text>
-      </g>
-      <g class="node n-econ node-hub" id="n_plazas_mercado" transform="translate(-332.8,127.4)" data-x0="-332.8" data-y0="127.4">
-        <circle class="node-fill" r="21"></circle>
-        <foreignObject x="-15" y="-15" width="30" height="30">
-          <div class="node-icon" xmlns="http://www.w3.org/1999/xhtml"><i class="fa-solid fa-store" style="font-size:12px"></i></div>
-        </foreignObject>
-        <text class="node-label" y="32" textLength="86" lengthAdjust="spacingAndGlyphs">Plazas de mercado</text>
-      </g>
-      <g class="node n-econ" id="n_distrito_tec" transform="translate(-194.7254717943295,-100.7335846192401)" data-x0="-194.7254717943295" data-y0="-100.7335846192401">
-        <circle class="node-fill" r="13"></circle>
-        <foreignObject x="-9" y="-9" width="17" height="17">
-          <div class="node-icon" xmlns="http://www.w3.org/1999/xhtml"><i class="fa-solid fa-microchip" style="font-size:9px"></i></div>
-        </foreignObject>
-        <text class="node-label" y="23" textLength="58" lengthAdjust="spacingAndGlyphs">Distrito Centro Tecnológico e Innovación</text>
-      </g>
-      <g class="node n-econ" id="n_zonas_interes_turistico" transform="translate(-26.1,275.6)" data-x0="-26.1" data-y0="275.6">
-        <circle class="node-fill" r="13"></circle>
-        <foreignObject x="-9" y="-9" width="17" height="17">
-          <div class="node-icon" xmlns="http://www.w3.org/1999/xhtml"><i class="fa-solid fa-camera-retro" style="font-size:9px"></i></div>
-        </foreignObject>
-        <text class="node-label" y="23" textLength="58" lengthAdjust="spacingAndGlyphs">Zonas de interés turístico</text>
-      </g>
-      <g class="node n-econ" id="n_produccion_artesanal" transform="translate(-66.56849125356064,-81.70787718660984)" data-x0="-66.56849125356064" data-y0="-81.70787718660984">
-        <circle class="node-fill" r="13"></circle>
-        <foreignObject x="-9" y="-9" width="17" height="17">
-          <div class="node-icon" xmlns="http://www.w3.org/1999/xhtml"><i class="fa-solid fa-hammer" style="font-size:9px"></i></div>
-        </foreignObject>
-        <text class="node-label" y="23" textLength="58" lengthAdjust="spacingAndGlyphs">Producción artesanal</text>
-      </g>
-      <g class="node n-econ" id="n_centros_abastecimiento" transform="translate(-482.9,286.0)" data-x0="-482.9" data-y0="286.0">
-        <circle class="node-fill" r="13"></circle>
-        <foreignObject x="-9" y="-9" width="17" height="17">
-          <div class="node-icon" xmlns="http://www.w3.org/1999/xhtml"><i class="fa-solid fa-truck-ramp-box" style="font-size:9px"></i></div>
-        </foreignObject>
-        <text class="node-label" y="23" textLength="58" lengthAdjust="spacingAndGlyphs">Centros de abastecimiento</text>
-      </g>
-      <g class="node n-econ" id="n_centros_financieros" transform="translate(-298.9,-32.2)" data-x0="-298.9" data-y0="-32.2">
-        <circle class="node-fill" r="13"></circle>
-        <foreignObject x="-9" y="-9" width="17" height="17">
-          <div class="node-icon" xmlns="http://www.w3.org/1999/xhtml"><i class="fa-solid fa-building" style="font-size:9px"></i></div>
-        </foreignObject>
-        <text class="node-label" y="23" textLength="58" lengthAdjust="spacingAndGlyphs">Centros financieros</text>
-      </g>
-      <g class="node n-econ" id="n_produccion_alimentos" transform="translate(-167.588120766643,-146.24645938177477)" data-x0="-167.588120766643" data-y0="-146.24645938177477">
-        <circle class="node-fill" r="13"></circle>
-        <foreignObject x="-9" y="-9" width="17" height="17">
-          <div class="node-icon" xmlns="http://www.w3.org/1999/xhtml"><i class="fa-solid fa-wheat-awn" style="font-size:9px"></i></div>
-        </foreignObject>
-        <text class="node-label" y="23" textLength="58" lengthAdjust="spacingAndGlyphs">Producción de alimentos</text>
-      </g>
-      <g class="node n-func node-main" id="n_equipamientos" transform="translate(-85.1624818711363,-143.02749642522272)" data-x0="-85.1624818711363" data-y0="-143.02749642522272">
-        <circle class="node-fill" r="34"></circle>
-        <foreignObject x="-24" y="-24" width="48" height="48">
-          <div class="node-icon" xmlns="http://www.w3.org/1999/xhtml"><i class="fa-solid fa-building-columns" style="font-size:17px"></i></div>
-        </foreignObject>
-        <text class="node-label" y="48">Equipamientos</text>
-      </g>
-      <g class="node n-func node-main" id="n_transporte_publico" transform="translate(-249.04104653820687,-157.3979437271935)" data-x0="-249.04104653820687" data-y0="-157.3979437271935">
-        <circle class="node-fill" r="34"></circle>
-        <foreignObject x="-24" y="-24" width="48" height="48">
-          <div class="node-icon" xmlns="http://www.w3.org/1999/xhtml"><i class="fa-solid fa-bus" style="font-size:17px"></i></div>
-        </foreignObject>
-        <text class="node-label" y="48">Transporte público</text>
-      </g>
-      <g class="node n-func node-hub" id="n_manzanas_cuidado" transform="translate(-146.82244936348957,-246.17454317947195)" data-x0="-146.82244936348957" data-y0="-246.17454317947195">
-        <circle class="node-fill" r="21"></circle>
-        <foreignObject x="-15" y="-15" width="30" height="30">
-          <div class="node-icon" xmlns="http://www.w3.org/1999/xhtml"><i class="fa-solid fa-hand-holding-heart" style="font-size:12px"></i></div>
-        </foreignObject>
-        <text class="node-label" y="32" textLength="86" lengthAdjust="spacingAndGlyphs">Manzanas del Cuidado</text>
-      </g>
-      <g class="node n-func node-hub" id="n_vivienda" transform="translate(-201.55956812575732,-226.9951837114033)" data-x0="-201.55956812575732" data-y0="-226.9951837114033">
-        <circle class="node-fill" r="21"></circle>
-        <foreignObject x="-15" y="-15" width="30" height="30">
-          <div class="node-icon" xmlns="http://www.w3.org/1999/xhtml"><i class="fa-solid fa-house" style="font-size:12px"></i></div>
-        </foreignObject>
-        <text class="node-label" y="32">Vivienda</text>
-      </g>
-      <g class="node n-func node-hub" id="n_ciclorrutas" transform="translate(-262.5367564830934,-231.19280896244214)" data-x0="-262.5367564830934" data-y0="-231.19280896244214">
-        <circle class="node-fill" r="21"></circle>
-        <foreignObject x="-15" y="-15" width="30" height="30">
-          <div class="node-icon" xmlns="http://www.w3.org/1999/xhtml"><i class="fa-solid fa-bicycle" style="font-size:12px"></i></div>
-        </foreignObject>
-        <text class="node-label" y="32">Ciclorrutas</text>
-      </g>
-      <g class="node n-func" id="n_red_vial" transform="translate(-189.9998228388823,-179.3782509153635)" data-x0="-189.9998228388823" data-y0="-179.3782509153635">
-        <circle class="node-fill" r="13"></circle>
-        <foreignObject x="-9" y="-9" width="17" height="17">
-          <div class="node-icon" xmlns="http://www.w3.org/1999/xhtml"><i class="fa-solid fa-road" style="font-size:9px"></i></div>
-        </foreignObject>
-        <text class="node-label" y="23">Red vial</text>
-      </g>
-      <g class="node n-func" id="n_servicios_sociales" transform="translate(-99.61281825330106,-233.05011060355005)" data-x0="-99.61281825330106" data-y0="-233.05011060355005">
-        <circle class="node-fill" r="13"></circle>
-        <foreignObject x="-9" y="-9" width="17" height="17">
-          <div class="node-icon" xmlns="http://www.w3.org/1999/xhtml"><i class="fa-solid fa-people-group" style="font-size:9px"></i></div>
-        </foreignObject>
-        <text class="node-label" y="23" textLength="58" lengthAdjust="spacingAndGlyphs">Servicios sociales</text>
-      </g>
-      <g class="node n-func" id="n_corredores_verdes" transform="translate(-299.65976163012647,-199.2102748406225)" data-x0="-299.65976163012647" data-y0="-199.2102748406225">
-        <circle class="node-fill" r="13"></circle>
-        <foreignObject x="-9" y="-9" width="17" height="17">
-          <div class="node-icon" xmlns="http://www.w3.org/1999/xhtml"><i class="fa-solid fa-tree" style="font-size:9px"></i></div>
-        </foreignObject>
-        <text class="node-label" y="23" textLength="58" lengthAdjust="spacingAndGlyphs">Corredores verdes</text>
-      </g>
-      <g class="node n-func" id="n_servicios_publicos" transform="translate(-241.9,-281.2)" data-x0="-241.9" data-y0="-281.2">
-        <circle class="node-fill" r="13"></circle>
-        <foreignObject x="-9" y="-9" width="17" height="17">
-          <div class="node-icon" xmlns="http://www.w3.org/1999/xhtml"><i class="fa-solid fa-plug" style="font-size:9px"></i></div>
-        </foreignObject>
-        <text class="node-label" y="23" textLength="58" lengthAdjust="spacingAndGlyphs">Servicios públicos</text>
-      </g>
-      <g class="node n-func" id="n_servicios_cuidado" transform="translate(-68.07672563902837,-208.44371178893243)" data-x0="-68.07672563902837" data-y0="-208.44371178893243">
-        <circle class="node-fill" r="13"></circle>
-        <foreignObject x="-9" y="-9" width="17" height="17">
-          <div class="node-icon" xmlns="http://www.w3.org/1999/xhtml"><i class="fa-solid fa-hands-holding-child" style="font-size:9px"></i></div>
-        </foreignObject>
-        <text class="node-label" y="23" textLength="58" lengthAdjust="spacingAndGlyphs">Servicios de cuidado</text>
-      </g>
-      <g class="node n-func" id="n_espacio_publico" transform="translate(182.6,294.0)" data-x0="182.6" data-y0="294.0">
-        <circle class="node-fill" r="13"></circle>
-        <foreignObject x="-9" y="-9" width="17" height="17">
-          <div class="node-icon" xmlns="http://www.w3.org/1999/xhtml"><i class="fa-solid fa-umbrella-beach" style="font-size:9px"></i></div>
-        </foreignObject>
-        <text class="node-label" y="23" textLength="58" lengthAdjust="spacingAndGlyphs">Espacio público</text>
-      </g>
-      <g class="node n-func" id="n_parques" transform="translate(-137.5,-324.2)" data-x0="-137.5" data-y0="-324.2">
-        <circle class="node-fill" r="13"></circle>
-        <foreignObject x="-9" y="-9" width="17" height="17">
-          <div class="node-icon" xmlns="http://www.w3.org/1999/xhtml"><i class="fa-solid fa-tree" style="font-size:9px"></i></div>
-        </foreignObject>
-        <text class="node-label" y="23">Parques</text>
-      </g>
-      <g class="node n-patri node-main" id="n_patrimonio_natural" transform="translate(77.07634953754489,54.41031649386562)" data-x0="77.07634953754489" data-y0="54.41031649386562">
-        <circle class="node-fill" r="34"></circle>
-        <foreignObject x="-24" y="-24" width="48" height="48">
-          <div class="node-icon" xmlns="http://www.w3.org/1999/xhtml"><i class="fa-solid fa-tree" style="font-size:17px"></i></div>
-        </foreignObject>
-        <text class="node-label" y="48">Patrimonio natural</text>
-      </g>
-      <g class="node n-patri node-hub" id="n_patrimonio_inmaterial" transform="translate(112.0,-97.0)" data-x0="112.0" data-y0="-97.0">
-        <circle class="node-fill" r="21"></circle>
-        <foreignObject x="-15" y="-15" width="30" height="30">
-          <div class="node-icon" xmlns="http://www.w3.org/1999/xhtml"><i class="fa-solid fa-masks-theater" style="font-size:12px"></i></div>
-        </foreignObject>
-        <text class="node-label" y="32" textLength="86" lengthAdjust="spacingAndGlyphs">Patrimonio inmaterial</text>
-      </g>
-      <g class="node n-patri node-hub" id="n_patrimonio_arqueologico" transform="translate(-19.03150874643937,-93.59212281339016)" data-x0="-19.03150874643937" data-y0="-93.59212281339016">
-        <circle class="node-fill" r="21"></circle>
-        <foreignObject x="-15" y="-15" width="30" height="30">
-          <div class="node-icon" xmlns="http://www.w3.org/1999/xhtml"><i class="fa-solid fa-monument" style="font-size:12px"></i></div>
-        </foreignObject>
-        <text class="node-label" y="32" textLength="86" lengthAdjust="spacingAndGlyphs">Patrimonio arqueológico</text>
-      </g>
-      <g class="node n-patri node-hub" id="n_patrimonio_material" transform="translate(46.469660076961425,-10.760463463592366)" data-x0="46.469660076961425" data-y0="-10.760463463592366">
-        <circle class="node-fill" r="21"></circle>
-        <foreignObject x="-15" y="-15" width="30" height="30">
-          <div class="node-icon" xmlns="http://www.w3.org/1999/xhtml"><i class="fa-solid fa-landmark" style="font-size:12px"></i></div>
-        </foreignObject>
-        <text class="node-label" y="32" textLength="86" lengthAdjust="spacingAndGlyphs">Patrimonio material</text>
-      </g>
-      <g class="node n-patri" id="n_sitios_sagrados" transform="translate(272.5,-239.2)" data-x0="272.5" data-y0="-239.2">
-        <circle class="node-fill" r="13"></circle>
-        <foreignObject x="-9" y="-9" width="17" height="17">
-          <div class="node-icon" xmlns="http://www.w3.org/1999/xhtml"><i class="fa-solid fa-place-of-worship" style="font-size:9px"></i></div>
-        </foreignObject>
-        <text class="node-label" y="23" textLength="58" lengthAdjust="spacingAndGlyphs">Sitios sagrados</text>
-      </g>
-          </g>
-        </svg>
-      </div>
-
-      <div class="struct-legend">
-        <div class="struct-legend-item"><span class="struct-dot" style="background:#22b88a"></span>Estructura Ecológica Principal</div>
-        <div class="struct-legend-item"><span class="struct-dot" style="background:#3b6fe0"></span>Estructura Funcional y del Cuidado</div>
-        <div class="struct-legend-item"><span class="struct-dot" style="background:#d9a441"></span>Estructura Socioeconómica, Creativa y de Innovación</div>
-        <div class="struct-legend-item"><span class="struct-dot" style="background:#b13bff"></span>Estructura Integradora de Patrimonios</div>
-      </div>
-      <div class="hint-text"><i class="fa-solid fa-hand-pointer"></i>Haz clic en un nodo para resaltar sus conexiones, o en una línea con datos para ver la frase exacta y la página del POT.</div>
-
-      <!-- RELATION PANEL -->
-      <div class="relation-panel" id="relationPanel" style="display:none">
-        <button class="relation-close" onclick="closeRelationPanel()"><i class="fa-solid fa-xmark"></i></button>
-        <div class="relation-header">
-          <div class="relation-concepts" id="relConcepts">—</div>
-          <div class="relation-badge badge-directa" id="relBadge">—</div>
-        </div>
-        <div class="relation-description" id="relDescription" style="display:none"></div>
-        <div class="relation-phrase" id="relPhrase">—</div>
-        <div class="relation-page"><i class="fa-solid fa-book-open"></i><span id="relPage">—</span> · Plan de Ordenamiento Territorial de Bogotá</div>
-      </div>
+        <div class="pcard">
+          <h2>Evidencia del POT</h2>
+          <div id="evBox"></div>
         </div>
 
-        <!-- PANEL: nodo central -->
-        <aside class="central-node-panel">
-          <h4><i class="fa-solid fa-bullseye"></i>Punto crítico de la red</h4>
-          <p class="central-question">¿Qué pasa si se desconecta un nodo central?</p>
-          <p class="central-hint">Elige uno de los nodos con más conexiones documentadas y simula su desconexión para ver qué tan dependiente es la red de él.</p>
+        <div class="pcard">
+          <h2>Simulación del apagado</h2>
+          <div id="simBox"></div>
+        </div>
 
-          <label class="central-label" for="centralNodeSelect">Nodo a desconectar</label>
-          <select id="centralNodeSelect" class="central-select" onchange="onCentralNodeChange()"></select>
+        <div class="pcard">
+          <h2>Hallazgo de la simulación</h2>
+          <div class="finding" id="finding">—</div>
+        </div>
 
-          <button class="net-btn central-sim-btn" id="centralSimBtn" onclick="toggleCentralNode()">
-            <i class="fa-solid fa-power-off"></i>Simular
-          </button>
-        </aside>
-      </div>
-    </section>
-  </main>
+        <div class="pcard">
+          <h2>Centralidad saliente
+            <span class="hint">Relaciones activas cuyo origen es cada sistema. Se calcula desde los datos.</span>
+          </h2>
+          <div id="rankList"></div>
+          <div id="topSys"></div>
+          <p class="note">
+            La centralidad de la red <b>no equivale a la jerarquía normativa del POT</b>. El POT define la
+            EEP como “primera ordenante” del territorio; esta red mide algo distinto: qué estructura resulta
+            <b>más articuladora</b> según las relaciones explícitas construidas a partir del documento.
+          </p>
+        </div>
 
-  <!-- MODAL: calculadora de indicadores (contenido dinámico según el par de nodos) -->
-  <div class="indicator-modal-backdrop" id="indicatorModalBackdrop" style="display:none" onclick="closeIndicatorModalBackdrop(event)">
-    <div class="indicator-modal" onclick="event.stopPropagation()">
-      <button class="relation-close" onclick="closeIndicatorModal()"><i class="fa-solid fa-xmark"></i></button>
+        <div class="pcard">
+          <h2>¿Qué sistema genera mayor dependencia?
+            <span class="hint">Relaciones que desaparecerían si ese sistema se apagara (como origen o destino).</span>
+          </h2>
+          <div id="compareList"></div>
+        </div>
 
-      <div class="indicator-tag" id="indicatorTag">—</div>
-      <h3 class="indicator-title" id="indicatorTitle">—</h3>
-
-      <div class="fraction-formula">
-        <span class="fraction-varname" id="indicatorVarName">I</span>
-        <span class="fraction-eq">=</span>
-        <span class="fraction">
-          <span class="fraction-num" id="indicatorNumLabel">—</span>
-          <span class="fraction-bar"></span>
-          <span class="fraction-den" id="indicatorDenLabel">—</span>
-        </span>
-        <span class="fraction-times">× 100</span>
-      </div>
-
-      <p class="indicator-explanation" id="indicatorExplanation" style="display:none"></p>
-
-      <div class="indicator-inputs">
-        <label id="indicatorNumFieldLabel">Numerador
-          <input type="number" id="indicatorNumerador" min="0" placeholder="Ej: 3200">
-        </label>
-        <label id="indicatorDenFieldLabel">Denominador
-          <input type="number" id="indicatorDenominador" min="0" placeholder="Ej: 5000">
-        </label>
-      </div>
-
-      <div class="indicator-error" id="indicatorError" style="display:none">
-        <i class="fa-solid fa-triangle-exclamation"></i>Ingresa valores válidos (el denominador debe ser mayor a 0).
-      </div>
-
-      <button class="net-btn indicator-sim-btn" onclick="simulateIndicator()"><i class="fa-solid fa-play"></i>Simular indicador</button>
-
-      <div class="indicator-result" id="indicatorResult" style="display:none">
-        <div class="indicator-result-value"><span id="indicatorVarName2">I</span> = <span id="indicatorValue">—</span>%</div>
-        <div class="indicator-cascade" id="indicatorCascade"></div>
-        <p class="indicator-cascade-text" id="indicatorCascadeText"></p>
       </div>
     </div>
-  </div>
+  </main>
 </div>
 
 <script src="modulo-07.js"></script>
