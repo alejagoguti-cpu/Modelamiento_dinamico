@@ -5,9 +5,10 @@
    No se inventan relaciones ni se alteran frases o páginas.
    ======================================================================= */
 
-// GENERADO de tabla_relaciones_POT_frases_exactas.xlsx (31 con frase completa)
-// + Red_relaciones_POT_CORREGIDA_FRASES_EXACTAS.xlsx (36 internas, fragmentos)
-// = 67 relaciones. La frase y la página son literales del Excel.
+// Relaciones: tabla_relaciones_POT_frases_exactas.xlsx (31) +
+// Red_relaciones_POT_CORREGIDA_FRASES_EXACTAS.xlsx (36 internas) +
+// documento de relaciones entre estructuras (8) = 75 relaciones.
+// Frases y páginas literales de la fuente; frases mostradas entre comillas.
 const POT_DATA = {
  "sistemas": {
   "EEP": {
@@ -33,9 +34,9 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Bosques urbanos",
    "icon": "fa-tree-city",
-   "x": 54.0,
-   "y": -1078.2,
-   "r": 57.0,
+   "x": -1319.7,
+   "y": 90.2,
+   "r": 44.1,
    "deg": 1
   },
   {
@@ -43,9 +44,9 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Cerros Orientales",
    "icon": "fa-mountain",
-   "x": -1153.4,
-   "y": -253.1,
-   "r": 57.0,
+   "x": -189.3,
+   "y": -1014.5,
+   "r": 44.1,
    "deg": 1
   },
   {
@@ -53,9 +54,9 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Coberturas vegetales",
    "icon": "fa-seedling",
-   "x": -394.3,
-   "y": -989.6,
-   "r": 85.8,
+   "x": -1148.9,
+   "y": -236.1,
+   "r": 82.6,
    "deg": 5
   },
   {
@@ -63,9 +64,9 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Complejos de páramos",
    "icon": "fa-cloud",
-   "x": -182.2,
-   "y": -920.1,
-   "r": 65.1,
+   "x": -833.1,
+   "y": -1044.5,
+   "r": 51.3,
    "deg": 2
   },
   {
@@ -73,9 +74,9 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Conservación ambiental",
    "icon": "fa-shield-heart",
-   "x": 231.8,
-   "y": 911.7,
-   "r": 57.0,
+   "x": 202.3,
+   "y": 1277.7,
+   "r": 44.1,
    "deg": 1
   },
   {
@@ -83,9 +84,9 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Corredores montañosos",
    "icon": "fa-mountain-sun",
-   "x": -15.0,
-   "y": -776.5,
-   "r": 57.0,
+   "x": -42.4,
+   "y": -1297.5,
+   "r": 44.1,
    "deg": 1
   },
   {
@@ -93,19 +94,19 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Humedales",
    "icon": "fa-droplet",
-   "x": -849.9,
-   "y": -391.0,
-   "r": 104.0,
-   "deg": 8
+   "x": -460.3,
+   "y": -645.0,
+   "r": 140.0,
+   "deg": 9
   },
   {
    "id": "EEP::Paisajes sostenibles",
    "sys": "EEP",
    "label": "Paisajes sostenibles",
    "icon": "fa-image",
-   "x": -165.9,
-   "y": -1150.0,
-   "r": 65.1,
+   "x": -1111.6,
+   "y": -702.3,
+   "r": 51.3,
    "deg": 2
   },
   {
@@ -113,9 +114,9 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Parques de borde",
    "icon": "fa-leaf",
-   "x": -530.6,
-   "y": -1130.5,
-   "r": 57.0,
+   "x": -1368.3,
+   "y": -302.9,
+   "r": 44.1,
    "deg": 1
   },
   {
@@ -123,19 +124,19 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Parques ecológicos de montaña",
    "icon": "fa-mountain",
-   "x": -742.6,
-   "y": -925.1,
-   "r": 65.1,
-   "deg": 2
+   "x": -987.5,
+   "y": 82.3,
+   "r": 70.9,
+   "deg": 4
   },
   {
    "id": "EEP::Quebradas",
    "sys": "EEP",
    "label": "Quebradas",
    "icon": "fa-tint",
-   "x": -972.2,
-   "y": -134.9,
-   "r": 57.0,
+   "x": -549.8,
+   "y": -981.6,
+   "r": 44.1,
    "deg": 1
   },
   {
@@ -143,9 +144,9 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Reservas forestales",
    "icon": "fa-tree",
-   "x": -1075.8,
-   "y": -514.4,
-   "r": 65.1,
+   "x": -789.2,
+   "y": -745.3,
+   "r": 51.3,
    "deg": 2
   },
   {
@@ -153,9 +154,9 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Ríos",
    "icon": "fa-water",
-   "x": -404.1,
-   "y": -671.1,
-   "r": 72.5,
+   "x": -416.1,
+   "y": -1150.1,
+   "r": 60.3,
    "deg": 3
   },
   {
@@ -163,19 +164,19 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Áreas de resiliencia climática",
    "icon": "fa-temperature-half",
-   "x": -669.5,
-   "y": -708.5,
-   "r": 65.1,
-   "deg": 2
+   "x": -780.1,
+   "y": -264.6,
+   "r": 60.3,
+   "deg": 3
   },
   {
    "id": "EEP::Áreas protegidas",
    "sys": "EEP",
    "label": "Áreas protegidas",
    "icon": "fa-shield-halved",
-   "x": -937.6,
-   "y": -689.0,
-   "r": 72.5,
+   "x": -876.8,
+   "y": -458.5,
+   "r": 60.3,
    "deg": 3
   },
   {
@@ -183,9 +184,9 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "Ciclorutas",
    "icon": "fa-bicycle",
-   "x": -133.3,
-   "y": 1037.4,
-   "r": 79.3,
+   "x": 1268.1,
+   "y": 208.1,
+   "r": 70.9,
    "deg": 4
   },
   {
@@ -193,9 +194,9 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "Corredores verdes",
    "icon": "fa-road",
-   "x": -400.8,
-   "y": 1150.0,
-   "r": 65.1,
+   "x": 1368.3,
+   "y": -73.9,
+   "r": 51.3,
    "deg": 2
   },
   {
@@ -203,19 +204,19 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "Equipamientos",
    "icon": "fa-building-columns",
-   "x": -328.4,
-   "y": 439.4,
-   "r": 98.1,
-   "deg": 7
+   "x": 587.8,
+   "y": 9.7,
+   "r": 140.0,
+   "deg": 9
   },
   {
    "id": "EFC::Espacio público",
    "sys": "EFC",
    "label": "Espacio público",
    "icon": "fa-umbrella-beach",
-   "x": -1050.4,
-   "y": 72.5,
-   "r": 57.0,
+   "x": 101.1,
+   "y": -956.5,
+   "r": 44.1,
    "deg": 1
   },
   {
@@ -223,19 +224,19 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "Manzanas del Cuidado",
    "icon": "fa-hand-holding-heart",
-   "x": -602.9,
-   "y": 663.7,
-   "r": 79.3,
-   "deg": 4
+   "x": 857.3,
+   "y": -297.6,
+   "r": 82.6,
+   "deg": 5
   },
   {
    "id": "EFC::Parques",
    "sys": "EFC",
    "label": "Parques",
    "icon": "fa-tree",
-   "x": -947.0,
-   "y": 747.0,
-   "r": 57.0,
+   "x": 951.8,
+   "y": -812.3,
+   "r": 44.1,
    "deg": 1
   },
   {
@@ -243,9 +244,9 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "Red vial",
    "icon": "fa-road-bridge",
-   "x": -560.0,
-   "y": 864.2,
-   "r": 65.1,
+   "x": 1090.6,
+   "y": -197.0,
+   "r": 51.3,
    "deg": 2
   },
   {
@@ -253,9 +254,9 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "Servicios de cuidado",
    "icon": "fa-heart",
-   "x": -798.0,
-   "y": 354.5,
-   "r": 57.0,
+   "x": 621.9,
+   "y": -622.1,
+   "r": 44.1,
    "deg": 1
   },
   {
@@ -263,9 +264,9 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "Servicios públicos",
    "icon": "fa-plug",
-   "x": 460.3,
-   "y": 421.2,
-   "r": 92.1,
+   "x": 845.9,
+   "y": 800.0,
+   "r": 95.5,
    "deg": 6
   },
   {
@@ -273,9 +274,9 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "Servicios sociales",
    "icon": "fa-people-group",
-   "x": -782.0,
-   "y": 565.6,
-   "r": 65.1,
+   "x": 891.5,
+   "y": -522.8,
+   "r": 51.3,
    "deg": 2
   },
   {
@@ -283,19 +284,19 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "Transporte público",
    "icon": "fa-bus",
-   "x": -292.1,
-   "y": 934.7,
-   "r": 85.8,
-   "deg": 5
+   "x": 1073.7,
+   "y": 232.9,
+   "r": 95.5,
+   "deg": 6
   },
   {
    "id": "EFC::Vivienda",
    "sys": "EFC",
    "label": "Vivienda",
    "icon": "fa-house",
-   "x": 88.6,
-   "y": 766.2,
-   "r": 104.0,
+   "x": 886.2,
+   "y": 530.8,
+   "r": 124.3,
    "deg": 8
   },
   {
@@ -303,9 +304,9 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "Actividades económicas",
    "icon": "fa-chart-line",
-   "x": 354.4,
-   "y": 660.9,
-   "r": 65.1,
+   "x": 823.2,
+   "y": 1034.1,
+   "r": 51.3,
    "deg": 2
   },
   {
@@ -313,9 +314,9 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "Centros de abastecimiento",
    "icon": "fa-truck",
-   "x": 750.6,
-   "y": -853.0,
-   "r": 57.0,
+   "x": -977.3,
+   "y": 1006.2,
+   "r": 44.1,
    "deg": 1
   },
   {
@@ -323,9 +324,9 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "Centros financieros",
    "icon": "fa-building-columns",
-   "x": 468.0,
-   "y": -699.4,
-   "r": 57.0,
+   "x": -159.4,
+   "y": 1206.7,
+   "r": 44.1,
    "deg": 1
   },
   {
@@ -333,9 +334,9 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "Corazones productivos",
    "icon": "fa-heart-pulse",
-   "x": 442.1,
-   "y": 945.6,
-   "r": 57.0,
+   "x": 1114.3,
+   "y": 768.6,
+   "r": 44.1,
    "deg": 1
   },
   {
@@ -343,9 +344,9 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "Distrito Centro Tecnológico e Innovación",
    "icon": "fa-microchip",
-   "x": 544.7,
-   "y": 84.1,
-   "r": 79.3,
+   "x": 545.4,
+   "y": 797.0,
+   "r": 70.9,
    "deg": 4
   },
   {
@@ -353,9 +354,9 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "Economía",
    "icon": "fa-coins",
-   "x": 558.2,
-   "y": 726.4,
-   "r": 72.5,
+   "x": 348.5,
+   "y": 1036.2,
+   "r": 60.3,
    "deg": 3
   },
   {
@@ -363,9 +364,9 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "Empleo",
    "icon": "fa-briefcase",
-   "x": -141.7,
-   "y": 642.4,
-   "r": 92.1,
+   "x": 912.2,
+   "y": 90.8,
+   "r": 95.5,
    "deg": 6
   },
   {
@@ -373,9 +374,9 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "Plazas de mercado",
    "icon": "fa-store",
-   "x": 727.9,
-   "y": -536.3,
-   "r": 72.5,
+   "x": -611.4,
+   "y": 937.8,
+   "r": 60.3,
    "deg": 3
   },
   {
@@ -383,9 +384,9 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "Producción artesanal",
    "icon": "fa-gem",
-   "x": 998.0,
-   "y": -366.9,
-   "r": 65.1,
+   "x": 37.5,
+   "y": 943.7,
+   "r": 51.3,
    "deg": 2
   },
   {
@@ -393,9 +394,9 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "Producción de alimentos",
    "icon": "fa-wheat-awn",
-   "x": -585.8,
-   "y": -298.9,
-   "r": 57.0,
+   "x": -104.0,
+   "y": -691.2,
+   "r": 44.1,
    "deg": 1
   },
   {
@@ -403,9 +404,9 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "Servicios empresariales",
    "icon": "fa-handshake",
-   "x": 333.5,
-   "y": -215.4,
-   "r": 85.8,
+   "x": 126.2,
+   "y": 713.8,
+   "r": 82.6,
    "deg": 5
   },
   {
@@ -413,49 +414,49 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "Sistema de educación",
    "icon": "fa-graduation-cap",
-   "x": 321.0,
-   "y": 277.1,
-   "r": 72.5,
-   "deg": 3
+   "x": 699.3,
+   "y": 265.5,
+   "r": 82.6,
+   "deg": 5
   },
   {
    "id": "ESECI::Zonas de interés turístico",
    "sys": "ESECI",
    "label": "Zonas de interés turístico",
    "icon": "fa-camera",
-   "x": 918.3,
-   "y": -151.4,
-   "r": 72.5,
-   "deg": 3
+   "x": -823.7,
+   "y": 608.5,
+   "r": 70.9,
+   "deg": 4
   },
   {
    "id": "ESECI::Zonas industriales",
    "sys": "ESECI",
    "label": "Zonas industriales",
    "icon": "fa-industry",
-   "x": 645.4,
-   "y": -84.7,
-   "r": 85.8,
-   "deg": 5
+   "x": 550.2,
+   "y": 603.7,
+   "r": 95.5,
+   "deg": 6
   },
   {
    "id": "EIP::Patrimonio arqueológico",
    "sys": "EIP",
    "label": "Patrimonio arqueológico",
    "icon": "fa-scroll",
-   "x": 992.1,
-   "y": 571.9,
-   "r": 65.1,
-   "deg": 2
+   "x": -189.6,
+   "y": 304.2,
+   "r": 60.3,
+   "deg": 3
   },
   {
    "id": "EIP::Patrimonio cultural",
    "sys": "EIP",
    "label": "Patrimonio cultural",
    "icon": "fa-landmark",
-   "x": 813.7,
-   "y": 383.2,
-   "r": 65.1,
+   "x": -294.2,
+   "y": 990.6,
+   "r": 51.3,
    "deg": 2
   },
   {
@@ -463,9 +464,9 @@ const POT_DATA = {
    "sys": "EIP",
    "label": "Patrimonio inmaterial",
    "icon": "fa-masks-theater",
-   "x": 1138.6,
-   "y": 7.1,
-   "r": 79.3,
+   "x": -446.7,
+   "y": 764.2,
+   "r": 70.9,
    "deg": 4
   },
   {
@@ -473,9 +474,9 @@ const POT_DATA = {
    "sys": "EIP",
    "label": "Patrimonio material",
    "icon": "fa-monument",
-   "x": 1144.1,
-   "y": 267.8,
-   "r": 72.5,
+   "x": -585.3,
+   "y": 472.4,
+   "r": 60.3,
    "deg": 3
   },
   {
@@ -483,19 +484,19 @@ const POT_DATA = {
    "sys": "EIP",
    "label": "Patrimonio natural",
    "icon": "fa-mountain-sun",
-   "x": 993.6,
-   "y": 169.1,
-   "r": 79.3,
-   "deg": 4
+   "x": -626.8,
+   "y": 142.5,
+   "r": 109.5,
+   "deg": 7
   },
   {
    "id": "EIP::Sistema de sitios sagrados",
    "sys": "EIP",
    "label": "Sistema de sitios sagrados",
    "icon": "fa-place-of-worship",
-   "x": 1153.4,
-   "y": 429.2,
-   "r": 57.0,
+   "x": -402.7,
+   "y": 1297.5,
+   "r": 44.1,
    "deg": 1
   }
  ],
@@ -975,7 +976,7 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "70",
    "seccion": "Art. 7",
-   "frase": "corredores montañosos … ríos y humedales",
+   "frase": "“corredores montañosos … ríos y humedales”",
    "clase": "Interna",
    "completa": false,
    "id": 31
@@ -990,7 +991,7 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "72",
    "seccion": "Art. 42 / 62",
-   "frase": "ríos y quebradas … humedales",
+   "frase": "“ríos y quebradas … humedales”",
    "clase": "Interna",
    "completa": false,
    "id": 32
@@ -1005,7 +1006,7 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "70",
    "seccion": "Art. 7",
-   "frase": "cerros orientales … ríos y humedales",
+   "frase": "“cerros orientales … ríos y humedales”",
    "clase": "Interna",
    "completa": false,
    "id": 33
@@ -1020,7 +1021,7 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "72",
    "seccion": "Art. 42 / 62",
-   "frase": "ríos y quebradas … humedales",
+   "frase": "“ríos y quebradas … humedales”",
    "clase": "Interna",
    "completa": false,
    "id": 34
@@ -1035,7 +1036,7 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "70",
    "seccion": "Art. 7",
-   "frase": "complejos de páramos … ríos y humedales",
+   "frase": "“complejos de páramos … ríos y humedales”",
    "clase": "Interna",
    "completa": false,
    "id": 35
@@ -1050,7 +1051,7 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "73",
    "seccion": "Art. 74",
-   "frase": "cobertura vegetal … flora propia",
+   "frase": "“cobertura vegetal … flora propia”",
    "clase": "Interna",
    "completa": false,
    "id": 36
@@ -1065,7 +1066,7 @@ const POT_DATA = {
    "tipo": "Resiliencia",
    "pag": "72",
    "seccion": "Art. 42",
-   "frase": "territorio resiliente … cambio climático",
+   "frase": "“territorio resiliente … cambio climático”",
    "clase": "Interna",
    "completa": false,
    "id": 37
@@ -1080,7 +1081,7 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "72",
    "seccion": "Art. 42",
-   "frase": "amortiguación de los impactos ambientales",
+   "frase": "“amortiguación de los impactos ambientales”",
    "clase": "Interna",
    "completa": false,
    "id": 38
@@ -1095,7 +1096,7 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "71",
    "seccion": "Art. 41 / 51",
-   "frase": "Reservas Distritales de Humedal",
+   "frase": "“Reservas Distritales de Humedal”",
    "clase": "Interna",
    "completa": false,
    "id": 39
@@ -1110,7 +1111,7 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "71",
    "seccion": "Art. 51 / 54",
-   "frase": "Parques Distritales Ecológicos de Montaña",
+   "frase": "“Parques Distritales Ecológicos de Montaña”",
    "clase": "Interna",
    "completa": false,
    "id": 40
@@ -1125,7 +1126,7 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "71",
    "seccion": "Art. 41 / 45 / 48",
-   "frase": "Reserva Forestal Protectora … Regional",
+   "frase": "“Reserva Forestal Protectora … Regional”",
    "clase": "Interna",
    "completa": false,
    "id": 41
@@ -1140,7 +1141,7 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "136",
    "seccion": "Art. 121",
-   "frase": "coberturas vegetales … parques de borde",
+   "frase": "“coberturas vegetales … parques de borde”",
    "clase": "Interna",
    "completa": false,
    "id": 42
@@ -1155,7 +1156,7 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "72",
    "seccion": "Art. 52 / 74",
-   "frase": "funcionalidad ecosistémica … conectividad",
+   "frase": "“funcionalidad ecosistémica … conectividad”",
    "clase": "Interna",
    "completa": false,
    "id": 43
@@ -1170,7 +1171,7 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "70",
    "seccion": "Art. 7 / 52",
-   "frase": "complejos de páramos … paisajes",
+   "frase": "“complejos de páramos … paisajes”",
    "clase": "Interna",
    "completa": false,
    "id": 44
@@ -1185,7 +1186,7 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "117–118",
    "seccion": "Art. 94–95",
-   "frase": "equipamientos y servicios de cuidado",
+   "frase": "“equipamientos y servicios de cuidado”",
    "clase": "Interna",
    "completa": false,
    "id": 45
@@ -1200,7 +1201,7 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "179",
    "seccion": "Art. 179",
-   "frase": "servicio público … actividades en la ciudad",
+   "frase": "“servicio público … actividades en la ciudad”",
    "clase": "Interna",
    "completa": false,
    "id": 46
@@ -1215,7 +1216,7 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "117",
    "seccion": "Art. 88",
-   "frase": "accesibilidad … conectividad",
+   "frase": "“accesibilidad … conectividad”",
    "clase": "Interna",
    "completa": false,
    "id": 47
@@ -1230,7 +1231,7 @@ const POT_DATA = {
    "tipo": "Resiliencia",
    "pag": "117 / 158–159",
    "seccion": "Art. 88 / 158–159",
-   "frase": "cicloinfraestructura … corredores verdes",
+   "frase": "“cicloinfraestructura … corredores verdes”",
    "clase": "Interna",
    "completa": false,
    "id": 48
@@ -1245,7 +1246,7 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "117",
    "seccion": "Art. 88",
-   "frase": "accesibilidad … conectividad",
+   "frase": "“accesibilidad … conectividad”",
    "clase": "Interna",
    "completa": false,
    "id": 49
@@ -1260,7 +1261,7 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "158–159",
    "seccion": "Art. 158–159",
-   "frase": "malla arterial … transporte público",
+   "frase": "“malla arterial … transporte público”",
    "clase": "Interna",
    "completa": false,
    "id": 50
@@ -1275,7 +1276,7 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "117",
    "seccion": "Art. 88 / 95",
-   "frase": "accesibilidad … equipamientos",
+   "frase": "“accesibilidad … equipamientos”",
    "clase": "Interna",
    "completa": false,
    "id": 51
@@ -1290,7 +1291,7 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "117",
    "seccion": "Art. 94",
-   "frase": "jardines infantiles, colegios, parques",
+   "frase": "“jardines infantiles, colegios, parques”",
    "clase": "Interna",
    "completa": false,
    "id": 52
@@ -1305,7 +1306,7 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "122",
    "seccion": "Art. 101",
-   "frase": "Eje de servicios empresariales",
+   "frase": "“Eje de servicios empresariales”",
    "clase": "Interna",
    "completa": false,
    "id": 53
@@ -1320,7 +1321,7 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "122",
    "seccion": "Art. 100–101",
-   "frase": "formación del talento humano",
+   "frase": "“formación del talento humano”",
    "clase": "Interna",
    "completa": false,
    "id": 54
@@ -1335,7 +1336,7 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "122",
    "seccion": "Art. 100–101",
-   "frase": "Centros de Abasto Mayorista … Plazas de Mercado",
+   "frase": "“Centros de Abasto Mayorista … Plazas de Mercado”",
    "clase": "Interna",
    "completa": false,
    "id": 55
@@ -1350,7 +1351,7 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "122",
    "seccion": "Art. 101",
-   "frase": "Plazas de Mercado … infraestructuras",
+   "frase": "“Plazas de Mercado … infraestructuras”",
    "clase": "Interna",
    "completa": false,
    "id": 56
@@ -1365,7 +1366,7 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "122",
    "seccion": "Art. 101",
-   "frase": "Eje de servicios empresariales … zonas industriales",
+   "frase": "“Eje de servicios empresariales … zonas industriales”",
    "clase": "Interna",
    "completa": false,
    "id": 57
@@ -1380,7 +1381,7 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "122",
    "seccion": "Art. 100–101",
-   "frase": "formación del talento humano … empresas",
+   "frase": "“formación del talento humano … empresas”",
    "clase": "Interna",
    "completa": false,
    "id": 58
@@ -1395,7 +1396,7 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "122",
    "seccion": "Art. 101",
-   "frase": "Zonas de Interés Turístico … Plazas de Mercado",
+   "frase": "“Zonas de Interés Turístico … Plazas de Mercado”",
    "clase": "Interna",
    "completa": false,
    "id": 59
@@ -1410,7 +1411,7 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "122",
    "seccion": "Art. 100",
-   "frase": "centros financieros y de servicios empresariales",
+   "frase": "“centros financieros y de servicios empresariales”",
    "clase": "Interna",
    "completa": false,
    "id": 60
@@ -1425,7 +1426,7 @@ const POT_DATA = {
    "tipo": "Resiliencia",
    "pag": "103–104",
    "seccion": "Art. 80",
-   "frase": "patrimonio cultural inmaterial … comunidades",
+   "frase": "“patrimonio cultural inmaterial … comunidades”",
    "clase": "Interna",
    "completa": false,
    "id": 61
@@ -1440,7 +1441,7 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "103–104",
    "seccion": "Art. 80",
-   "frase": "Patrimonio Natural … Patrimonio Arqueológico",
+   "frase": "“Patrimonio Natural … Patrimonio Arqueológico”",
    "clase": "Interna",
    "completa": false,
    "id": 62
@@ -1455,7 +1456,7 @@ const POT_DATA = {
    "tipo": "Resiliencia",
    "pag": "103–104",
    "seccion": "Art. 80",
-   "frase": "Patrimonio Cultural material … Patrimonio Arqueológico",
+   "frase": "“Patrimonio Cultural material … Patrimonio Arqueológico”",
    "clase": "Interna",
    "completa": false,
    "id": 63
@@ -1470,7 +1471,7 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "103–104",
    "seccion": "Art. 80",
-   "frase": "patrimonio cultural material, inmaterial y natural",
+   "frase": "“patrimonio cultural material, inmaterial y natural”",
    "clase": "Interna",
    "completa": false,
    "id": 64
@@ -1485,7 +1486,7 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "103–104",
    "seccion": "Art. 80",
-   "frase": "integra … material, inmaterial y natural",
+   "frase": "“integra … material, inmaterial y natural”",
    "clase": "Interna",
    "completa": false,
    "id": 65
@@ -1500,17 +1501,137 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "103–104",
    "seccion": "Art. 80",
-   "frase": "patrimonio cultural material, inmaterial y natural",
+   "frase": "“patrimonio cultural material, inmaterial y natural”",
    "clase": "Interna",
    "completa": false,
    "id": 66
+  },
+  {
+   "sO": "EEP",
+   "cO": "Humedales",
+   "sD": "EIP",
+   "cD": "Patrimonio natural",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "195–196",
+   "seccion": "Relación entre estructuras (documento del POT)",
+   "frase": "“En ese sentido, la eip inscribe y precisa un sistema de relaciones del patrimonio cultural material, inmaterial y natural en el territorio.”",
+   "clase": "Intersistema",
+   "completa": true,
+   "id": 67
+  },
+  {
+   "sO": "EIP",
+   "cO": "Patrimonio arqueológico",
+   "sD": "EFC",
+   "cD": "Equipamientos",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte",
+   "pag": "200",
+   "seccion": "Relación entre estructuras (documento del POT)",
+   "frase": "“para la Secretaría Distrital de Planeación (sdp), en el proceso de implementación del pot, fue la oportunidad de incorporarlos como nodo de equipamientos próximos y de proyectos a escala local.”",
+   "clase": "Intersistema",
+   "completa": true,
+   "id": 68
+  },
+  {
+   "sO": "EFC",
+   "cO": "Manzanas del Cuidado",
+   "sD": "ESECI",
+   "cD": "Sistema de educación",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte",
+   "pag": "126",
+   "seccion": "Relación entre estructuras (documento del POT)",
+   "frase": "“Con los nuevos colegios y jardines infantiles anclados en las Manzanas del Cuidado, lograremos que las mujeres, las niñas y los niños puedan garantizar su derecho a la educación en lugares cercanos a sus hogares.”",
+   "clase": "Intersistema",
+   "completa": true,
+   "id": 69
+  },
+  {
+   "sO": "EFC",
+   "cO": "Equipamientos",
+   "sD": "ESECI",
+   "cD": "Sistema de educación",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte",
+   "pag": "126",
+   "seccion": "Relación entre estructuras (documento del POT)",
+   "frase": "“Bajo la nueva visión del pot, la infraestructura social es compatible con otros usos y equipamientos, como centros deportivos, culturales y de recreación, entre otros.”",
+   "clase": "Intersistema",
+   "completa": true,
+   "id": 70
+  },
+  {
+   "sO": "EFC",
+   "cO": "Transporte público",
+   "sD": "ESECI",
+   "cD": "Zonas industriales",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "31",
+   "seccion": "Relación entre estructuras (documento del POT)",
+   "frase": "“Y que, en todo caso, las diversas zonas de la ciudad estén conectadas por un sistema multimodal de transporte público, colectivo, de energías limpias y renovables basadas en la red Metro y alimentadas por los demás modos y medios de transporte público como los corredores verdes, los cables y las ciclorrutas.”",
+   "clase": "Intersistema",
+   "completa": true,
+   "id": 71
+  },
+  {
+   "sO": "EEP",
+   "cO": "Parques ecológicos de montaña",
+   "sD": "ESECI",
+   "cD": "Zonas de interés turístico",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "54",
+   "seccion": "Relación entre estructuras (documento del POT)",
+   "frase": "“Sostenible: Ecoturismo, viverismo, agricultura urbana y periurbana y puntos de la tierra.”",
+   "clase": "Intersistema",
+   "completa": true,
+   "id": 72
+  },
+  {
+   "sO": "EEP",
+   "cO": "Parques ecológicos de montaña",
+   "sD": "EIP",
+   "cD": "Patrimonio natural",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte",
+   "pag": "54",
+   "seccion": "Relación entre estructuras (documento del POT)",
+   "frase": "“Son áreas de alta pendiente en suelo urbano y rural, caracterizadas por contar con remanentes de bosques altoandinos dispersos y ecosistemas subxerofíticos de gran importancia ecosistémica entre otros que, por su estructura y función ecosistémica, aportan a la conservación de la biodiversidad y los servicios ecosistémicos, la conectividad ecológica y a la resiliencia climática de los entornos urbanos,ruralesydetransiciónaescalalocalyregional.”",
+   "clase": "Intersistema",
+   "completa": true,
+   "id": 73
+  },
+  {
+   "sO": "EEP",
+   "cO": "Áreas de resiliencia climática",
+   "sD": "EIP",
+   "cD": "Patrimonio natural",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Resiliencia",
+   "pag": "72",
+   "seccion": "Relación entre estructuras (documento del POT)",
+   "frase": "“Así mismo, creamos las Áreas de Resiliencia Climática y Protección por Riesgo…”",
+   "clase": "Intersistema",
+   "completa": true,
+   "id": 74
   }
  ],
  "vb": [
-  -1223,
-  -1220,
-  2447,
-  2470
+  -1448,
+  -1378,
+  2897,
+  2789
  ]
 };
 
@@ -1661,10 +1782,10 @@ function render() {
       const isolated = activeRels === 0;
       const off = offNodes.has(id);
       const R = nodeR[id];
-      const iconSize = Math.max(22, Math.round(R * 0.46));
-      const fontSize = Math.max(14, Math.min(20, R * 0.26));
+      const iconSize = Math.max(24, Math.round(R * 0.44));
+      const fontSize = Math.max(15, Math.min(24, R * 0.22));
       // nivel de brillo por conectividad (solo estético)
-      const glow = R >= 86 ? 'high' : R >= 68 ? 'mid' : 'low';
+      const glow = R >= 110 ? 'high' : R >= 80 ? 'mid' : 'low';
 
       const cls = ['concept', 'node-appear', 'deg-' + glow];
       if (isolated && !off) cls.push('isolated');
