@@ -5,8 +5,8 @@
    No se inventan relaciones ni se alteran frases o páginas.
    ======================================================================= */
 
-// 75 relaciones de 3 fuentes. 68 sustentadas con frase del POT y 7 marcadas
-// 'por verificar' porque la propia tabla las excluye por falta de frase continua.
+// 78 relaciones: 68 sustentadas con frase textual del POT, 7 que la propia tabla
+// marca 'por verificar' y 3 agregadas a pedido sin frase registrada todavia.
 const POT_DATA = {
  "sistemas": {
   "EEP": {
@@ -32,9 +32,9 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Bosques urbanos",
    "icon": "fa-tree-city",
-   "x": 1229.2,
-   "y": 265.4,
-   "r": 44.1,
+   "x": 1192.1,
+   "y": -13.1,
+   "r": 42.7,
    "deg": 1
   },
   {
@@ -42,9 +42,9 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Cerros Orientales",
    "icon": "fa-mountain",
-   "x": 293.9,
-   "y": -1043.9,
-   "r": 44.1,
+   "x": 154.1,
+   "y": -1018.5,
+   "r": 42.7,
    "deg": 1
   },
   {
@@ -52,9 +52,9 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Coberturas vegetales",
    "icon": "fa-seedling",
-   "x": 1154.9,
-   "y": -28.5,
-   "r": 82.6,
+   "x": 1006.5,
+   "y": -230.5,
+   "r": 68.1,
    "deg": 5
   },
   {
@@ -62,9 +62,9 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Complejos de páramos",
    "icon": "fa-cloud",
-   "x": 1041.6,
-   "y": -846.1,
-   "r": 51.3,
+   "x": 834.1,
+   "y": -916.5,
+   "r": 47.4,
    "deg": 2
   },
   {
@@ -72,9 +72,9 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Conservación ambiental",
    "icon": "fa-shield-heart",
-   "x": -324.4,
-   "y": -370.4,
-   "r": 44.1,
+   "x": 961.3,
+   "y": 364.9,
+   "r": 42.7,
    "deg": 1
   },
   {
@@ -82,9 +82,9 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Corredores montañosos",
    "icon": "fa-mountain-sun",
-   "x": 492.4,
-   "y": -1243.7,
-   "r": 44.1,
+   "x": 398.1,
+   "y": -1210.6,
+   "r": 42.7,
    "deg": 1
   },
   {
@@ -92,19 +92,19 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Humedales",
    "icon": "fa-droplet",
-   "x": 556.9,
-   "y": -550.7,
+   "x": 105.0,
+   "y": -564.3,
    "r": 140.0,
-   "deg": 9
+   "deg": 12
   },
   {
    "id": "EEP::Paisajes sostenibles",
    "sys": "EEP",
    "label": "Paisajes sostenibles",
    "icon": "fa-image",
-   "x": 1188.0,
-   "y": -502.4,
-   "r": 51.3,
+   "x": 1021.5,
+   "y": -637.7,
+   "r": 47.4,
    "deg": 2
   },
   {
@@ -112,9 +112,9 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Parques de borde",
    "icon": "fa-leaf",
-   "x": 1309.9,
-   "y": -216.8,
-   "r": 44.1,
+   "x": 1193.3,
+   "y": -379.1,
+   "r": 42.7,
    "deg": 1
   },
   {
@@ -122,9 +122,9 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Parques ecológicos de montaña",
    "icon": "fa-mountain",
-   "x": 907.8,
-   "y": 277.2,
-   "r": 70.9,
+   "x": 805.3,
+   "y": 92.9,
+   "r": 60.3,
    "deg": 4
   },
   {
@@ -132,9 +132,9 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Quebradas",
    "icon": "fa-tint",
-   "x": 534.2,
-   "y": -923.4,
-   "r": 44.1,
+   "x": -52.6,
+   "y": -1017.4,
+   "r": 42.7,
    "deg": 1
   },
   {
@@ -142,9 +142,9 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Reservas forestales",
    "icon": "fa-tree",
-   "x": 875.9,
-   "y": -633.7,
-   "r": 51.3,
+   "x": 567.2,
+   "y": -771.5,
+   "r": 47.4,
    "deg": 2
   },
   {
@@ -152,9 +152,9 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Ríos",
    "icon": "fa-water",
-   "x": 760.9,
-   "y": -998.0,
-   "r": 60.3,
+   "x": 463.9,
+   "y": -977.4,
+   "r": 53.4,
    "deg": 3
   },
   {
@@ -162,9 +162,9 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Áreas de resiliencia climática",
    "icon": "fa-temperature-half",
-   "x": 833.3,
-   "y": -69.4,
-   "r": 60.3,
+   "x": 604.9,
+   "y": -179.3,
+   "r": 53.4,
    "deg": 3
   },
   {
@@ -172,9 +172,9 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Áreas protegidas",
    "icon": "fa-shield-halved",
-   "x": 908.9,
-   "y": -311.4,
-   "r": 60.3,
+   "x": 692.9,
+   "y": -460.7,
+   "r": 53.4,
    "deg": 3
   },
   {
@@ -182,19 +182,19 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "Ciclorutas",
    "icon": "fa-bicycle",
-   "x": -1245.8,
-   "y": -335.0,
-   "r": 70.9,
-   "deg": 4
+   "x": -469.0,
+   "y": -597.5,
+   "r": 68.1,
+   "deg": 5
   },
   {
    "id": "EFC::Corredores verdes",
    "sys": "EFC",
    "label": "Corredores verdes",
    "icon": "fa-road",
-   "x": -1201.4,
-   "y": -647.4,
-   "r": 51.3,
+   "x": -715.3,
+   "y": -831.2,
+   "r": 47.4,
    "deg": 2
   },
   {
@@ -202,9 +202,9 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "Equipamientos",
    "icon": "fa-building-columns",
-   "x": -595.7,
-   "y": -124.2,
-   "r": 140.0,
+   "x": -772.1,
+   "y": 116.7,
+   "r": 105.9,
    "deg": 9
   },
   {
@@ -212,9 +212,9 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "Espacio público",
    "icon": "fa-umbrella-beach",
-   "x": 7.0,
-   "y": -1043.0,
-   "r": 44.1,
+   "x": -319.3,
+   "y": -996.0,
+   "r": 42.7,
    "deg": 1
   },
   {
@@ -222,9 +222,9 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "Manzanas del Cuidado",
    "icon": "fa-hand-holding-heart",
-   "x": -745.3,
-   "y": -531.0,
-   "r": 82.6,
+   "x": -1044.6,
+   "y": -107.4,
+   "r": 68.1,
    "deg": 5
   },
   {
@@ -232,9 +232,9 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "Parques",
    "icon": "fa-tree",
-   "x": -625.9,
-   "y": -1102.2,
-   "r": 44.1,
+   "x": -1118.4,
+   "y": -591.9,
+   "r": 42.7,
    "deg": 1
   },
   {
@@ -242,9 +242,9 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "Red vial",
    "icon": "fa-road-bridge",
-   "x": -986.1,
-   "y": -535.2,
-   "r": 51.3,
+   "x": -906.9,
+   "y": -425.4,
+   "r": 47.4,
    "deg": 2
   },
   {
@@ -252,9 +252,9 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "Servicios de cuidado",
    "icon": "fa-heart",
-   "x": -459.1,
-   "y": -844.5,
-   "r": 44.1,
+   "x": -1182.3,
+   "y": -256.3,
+   "r": 42.7,
    "deg": 1
   },
   {
@@ -262,9 +262,9 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "Servicios públicos",
    "icon": "fa-plug",
-   "x": -999.8,
-   "y": 462.2,
-   "r": 95.5,
+   "x": -726.4,
+   "y": 349.0,
+   "r": 76.6,
    "deg": 6
   },
   {
@@ -272,9 +272,9 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "Servicios sociales",
    "icon": "fa-people-group",
-   "x": -765.1,
-   "y": -811.1,
-   "r": 51.3,
+   "x": -1193.3,
+   "y": 84.1,
+   "r": 47.4,
    "deg": 2
   },
   {
@@ -282,29 +282,29 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "Transporte público",
    "icon": "fa-bus",
-   "x": -1140.4,
-   "y": -115.9,
-   "r": 95.5,
-   "deg": 6
+   "x": -551.9,
+   "y": -358.6,
+   "r": 85.8,
+   "deg": 7
   },
   {
    "id": "EFC::Vivienda",
    "sys": "EFC",
    "label": "Vivienda",
    "icon": "fa-house",
-   "x": -1036.9,
-   "y": 136.7,
-   "r": 124.3,
-   "deg": 8
+   "x": -316.4,
+   "y": -103.3,
+   "r": 105.9,
+   "deg": 9
   },
   {
    "id": "ESECI::Actividades económicas",
    "sys": "ESECI",
    "label": "Actividades económicas",
    "icon": "fa-chart-line",
-   "x": -1161.4,
-   "y": 663.3,
-   "r": 51.3,
+   "x": -481.0,
+   "y": 273.3,
+   "r": 47.4,
    "deg": 2
   },
   {
@@ -312,9 +312,9 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "Centros de abastecimiento",
    "icon": "fa-truck",
-   "x": -597.4,
-   "y": 1184.0,
-   "r": 44.1,
+   "x": 695.5,
+   "y": 1058.4,
+   "r": 42.7,
    "deg": 1
   },
   {
@@ -322,9 +322,9 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "Centros financieros",
    "icon": "fa-building-columns",
-   "x": -371.6,
-   "y": 1243.7,
-   "r": 44.1,
+   "x": 41.0,
+   "y": 1176.3,
+   "r": 42.7,
    "deg": 1
   },
   {
@@ -332,9 +332,9 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "Corazones productivos",
    "icon": "fa-heart-pulse",
-   "x": -1309.9,
-   "y": 366.2,
-   "r": 44.1,
+   "x": 141.4,
+   "y": -343.7,
+   "r": 42.7,
    "deg": 1
   },
   {
@@ -342,9 +342,9 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "Distrito Centro Tecnológico e Innovación",
    "icon": "fa-microchip",
-   "x": -887.1,
-   "y": 811.4,
-   "r": 70.9,
+   "x": -716.2,
+   "y": 738.3,
+   "r": 60.3,
    "deg": 4
   },
   {
@@ -352,9 +352,9 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "Economía",
    "icon": "fa-coins",
-   "x": -430.8,
-   "y": 392.4,
-   "r": 60.3,
+   "x": 480.2,
+   "y": 365.8,
+   "r": 53.4,
    "deg": 3
   },
   {
@@ -362,9 +362,9 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "Empleo",
    "icon": "fa-briefcase",
-   "x": -930.5,
-   "y": -163.0,
-   "r": 95.5,
+   "x": -688.0,
+   "y": -128.6,
+   "r": 76.6,
    "deg": 6
   },
   {
@@ -372,9 +372,9 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "Plazas de mercado",
    "icon": "fa-store",
-   "x": -205.4,
-   "y": 1025.3,
-   "r": 60.3,
+   "x": 367.3,
+   "y": 979.6,
+   "r": 53.4,
    "deg": 3
   },
   {
@@ -382,9 +382,9 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "Producción artesanal",
    "icon": "fa-gem",
-   "x": -29.3,
-   "y": 1112.1,
-   "r": 51.3,
+   "x": -432.8,
+   "y": 964.8,
+   "r": 47.4,
    "deg": 2
   },
   {
@@ -392,9 +392,9 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "Producción de alimentos",
    "icon": "fa-wheat-awn",
-   "x": 137.4,
-   "y": -622.8,
-   "r": 44.1,
+   "x": 430.7,
+   "y": -546.4,
+   "r": 42.7,
    "deg": 1
   },
   {
@@ -402,9 +402,9 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "Servicios empresariales",
    "icon": "fa-handshake",
-   "x": -527.6,
-   "y": 777.0,
-   "r": 82.6,
+   "x": -305.3,
+   "y": 776.8,
+   "r": 68.1,
    "deg": 5
   },
   {
@@ -412,9 +412,9 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "Sistema de educación",
    "icon": "fa-graduation-cap",
-   "x": -809.9,
-   "y": 192.2,
-   "r": 82.6,
+   "x": -895.1,
+   "y": 344.8,
+   "r": 68.1,
    "deg": 5
   },
   {
@@ -422,9 +422,9 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "Zonas de interés turístico",
    "icon": "fa-camera",
-   "x": 406.2,
-   "y": 766.0,
-   "r": 70.9,
+   "x": 724.6,
+   "y": 616.2,
+   "r": 60.3,
    "deg": 4
   },
   {
@@ -432,9 +432,9 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "Zonas industriales",
    "icon": "fa-industry",
-   "x": -711.7,
-   "y": 602.7,
-   "r": 95.5,
+   "x": -572.3,
+   "y": 482.7,
+   "r": 76.6,
    "deg": 6
   },
   {
@@ -442,9 +442,9 @@ const POT_DATA = {
    "sys": "EIP",
    "label": "Patrimonio arqueológico",
    "icon": "fa-scroll",
-   "x": 241.8,
-   "y": 460.6,
-   "r": 60.3,
+   "x": -223.0,
+   "y": 540.6,
+   "r": 53.4,
    "deg": 3
   },
   {
@@ -452,9 +452,9 @@ const POT_DATA = {
    "sys": "EIP",
    "label": "Patrimonio cultural",
    "icon": "fa-landmark",
-   "x": 113.2,
-   "y": 886.9,
-   "r": 51.3,
+   "x": 545.0,
+   "y": 757.0,
+   "r": 47.4,
    "deg": 2
   },
   {
@@ -462,9 +462,9 @@ const POT_DATA = {
    "sys": "EIP",
    "label": "Patrimonio inmaterial",
    "icon": "fa-masks-theater",
-   "x": 565.6,
-   "y": 1013.0,
-   "r": 70.9,
+   "x": -70.1,
+   "y": 930.7,
+   "r": 60.3,
    "deg": 4
   },
   {
@@ -472,9 +472,9 @@ const POT_DATA = {
    "sys": "EIP",
    "label": "Patrimonio material",
    "icon": "fa-monument",
-   "x": 771.7,
-   "y": 746.9,
-   "r": 60.3,
+   "x": 110.8,
+   "y": 763.2,
+   "r": 53.4,
    "deg": 3
   },
   {
@@ -482,9 +482,9 @@ const POT_DATA = {
    "sys": "EIP",
    "label": "Patrimonio natural",
    "icon": "fa-mountain-sun",
-   "x": 676.2,
-   "y": 379.6,
-   "r": 109.5,
+   "x": 295.9,
+   "y": 315.7,
+   "r": 85.8,
    "deg": 7
   },
   {
@@ -492,9 +492,9 @@ const POT_DATA = {
    "sys": "EIP",
    "label": "Sistema de sitios sagrados",
    "icon": "fa-place-of-worship",
-   "x": 859.5,
-   "y": 1053.7,
-   "r": 44.1,
+   "x": -371.0,
+   "y": 1210.6,
+   "r": 42.7,
    "deg": 1
   }
  ],
@@ -513,7 +513,8 @@ const POT_DATA = {
    "clase": "Intersistema",
    "completa": true,
    "id": 0,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "EFC",
@@ -529,7 +530,8 @@ const POT_DATA = {
    "clase": "Intersistema",
    "completa": true,
    "id": 1,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "EFC",
@@ -545,7 +547,8 @@ const POT_DATA = {
    "clase": "Intersistema",
    "completa": true,
    "id": 2,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "EFC",
@@ -561,7 +564,8 @@ const POT_DATA = {
    "clase": "Intersistema",
    "completa": true,
    "id": 3,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "EFC",
@@ -577,7 +581,8 @@ const POT_DATA = {
    "clase": "Intersistema",
    "completa": true,
    "id": 4,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "EFC",
@@ -593,7 +598,8 @@ const POT_DATA = {
    "clase": "Intersistema",
    "completa": true,
    "id": 5,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "EFC",
@@ -609,7 +615,8 @@ const POT_DATA = {
    "clase": "Intersistema",
    "completa": true,
    "id": 6,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "EFC",
@@ -625,7 +632,8 @@ const POT_DATA = {
    "clase": "Intersistema",
    "completa": true,
    "id": 7,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "EFC",
@@ -641,7 +649,8 @@ const POT_DATA = {
    "clase": "Intersistema",
    "completa": true,
    "id": 8,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "ESECI",
@@ -657,7 +666,8 @@ const POT_DATA = {
    "clase": "Intersistema",
    "completa": true,
    "id": 9,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "ESECI",
@@ -673,7 +683,8 @@ const POT_DATA = {
    "clase": "Intersistema",
    "completa": true,
    "id": 10,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "ESECI",
@@ -689,7 +700,8 @@ const POT_DATA = {
    "clase": "Intersistema",
    "completa": true,
    "id": 11,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "ESECI",
@@ -705,7 +717,8 @@ const POT_DATA = {
    "clase": "Intersistema",
    "completa": true,
    "id": 12,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "ESECI",
@@ -721,7 +734,8 @@ const POT_DATA = {
    "clase": "Intersistema",
    "completa": true,
    "id": 13,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "ESECI",
@@ -737,7 +751,8 @@ const POT_DATA = {
    "clase": "Intrasistema",
    "completa": true,
    "id": 14,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "ESECI",
@@ -753,7 +768,8 @@ const POT_DATA = {
    "clase": "Intrasistema",
    "completa": true,
    "id": 15,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "EIP",
@@ -769,7 +785,8 @@ const POT_DATA = {
    "clase": "Intersistema",
    "completa": true,
    "id": 16,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "EIP",
@@ -785,7 +802,8 @@ const POT_DATA = {
    "clase": "Intersistema",
    "completa": true,
    "id": 17,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "EIP",
@@ -801,7 +819,8 @@ const POT_DATA = {
    "clase": "Intersistema",
    "completa": true,
    "id": 18,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "EIP",
@@ -817,7 +836,8 @@ const POT_DATA = {
    "clase": "Intersistema",
    "completa": true,
    "id": 19,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "EEP",
@@ -833,7 +853,8 @@ const POT_DATA = {
    "clase": "Intersistema",
    "completa": true,
    "id": 20,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "EEP",
@@ -849,7 +870,8 @@ const POT_DATA = {
    "clase": "Intersistema",
    "completa": true,
    "id": 21,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "EEP",
@@ -865,7 +887,8 @@ const POT_DATA = {
    "clase": "Intersistema",
    "completa": true,
    "id": 22,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "EFC",
@@ -881,7 +904,8 @@ const POT_DATA = {
    "clase": "Interna",
    "completa": true,
    "id": 23,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "EFC",
@@ -897,7 +921,8 @@ const POT_DATA = {
    "clase": "Interna",
    "completa": true,
    "id": 24,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "EFC",
@@ -913,7 +938,8 @@ const POT_DATA = {
    "clase": "Interna",
    "completa": true,
    "id": 25,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "EFC",
@@ -929,7 +955,8 @@ const POT_DATA = {
    "clase": "Interna",
    "completa": true,
    "id": 26,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "EFC",
@@ -945,7 +972,8 @@ const POT_DATA = {
    "clase": "Interna",
    "completa": true,
    "id": 27,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "EFC",
@@ -961,7 +989,8 @@ const POT_DATA = {
    "clase": "Interna",
    "completa": true,
    "id": 28,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "EEP",
@@ -977,7 +1006,8 @@ const POT_DATA = {
    "clase": "Interna",
    "completa": true,
    "id": 29,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "EEP",
@@ -993,7 +1023,8 @@ const POT_DATA = {
    "clase": "Interna",
    "completa": true,
    "id": 30,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "EEP",
@@ -1009,7 +1040,8 @@ const POT_DATA = {
    "clase": "Interna",
    "completa": false,
    "id": 31,
-   "porVerificar": true
+   "porVerificar": true,
+   "sinFrase": false
   },
   {
    "sO": "EEP",
@@ -1025,7 +1057,8 @@ const POT_DATA = {
    "clase": "Interna",
    "completa": false,
    "id": 32,
-   "porVerificar": true
+   "porVerificar": true,
+   "sinFrase": false
   },
   {
    "sO": "EEP",
@@ -1041,7 +1074,8 @@ const POT_DATA = {
    "clase": "Interna",
    "completa": false,
    "id": 33,
-   "porVerificar": true
+   "porVerificar": true,
+   "sinFrase": false
   },
   {
    "sO": "EEP",
@@ -1057,7 +1091,8 @@ const POT_DATA = {
    "clase": "Interna",
    "completa": false,
    "id": 34,
-   "porVerificar": true
+   "porVerificar": true,
+   "sinFrase": false
   },
   {
    "sO": "EEP",
@@ -1073,7 +1108,8 @@ const POT_DATA = {
    "clase": "Interna",
    "completa": false,
    "id": 35,
-   "porVerificar": true
+   "porVerificar": true,
+   "sinFrase": false
   },
   {
    "sO": "EEP",
@@ -1089,7 +1125,8 @@ const POT_DATA = {
    "clase": "Interna",
    "completa": false,
    "id": 36,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "EEP",
@@ -1105,7 +1142,8 @@ const POT_DATA = {
    "clase": "Interna",
    "completa": false,
    "id": 37,
-   "porVerificar": true
+   "porVerificar": true,
+   "sinFrase": false
   },
   {
    "sO": "EEP",
@@ -1121,7 +1159,8 @@ const POT_DATA = {
    "clase": "Interna",
    "completa": false,
    "id": 38,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "EEP",
@@ -1137,7 +1176,8 @@ const POT_DATA = {
    "clase": "Interna",
    "completa": false,
    "id": 39,
-   "porVerificar": true
+   "porVerificar": true,
+   "sinFrase": false
   },
   {
    "sO": "EEP",
@@ -1153,7 +1193,8 @@ const POT_DATA = {
    "clase": "Interna",
    "completa": false,
    "id": 40,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "EEP",
@@ -1169,7 +1210,8 @@ const POT_DATA = {
    "clase": "Interna",
    "completa": false,
    "id": 41,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "EEP",
@@ -1185,7 +1227,8 @@ const POT_DATA = {
    "clase": "Interna",
    "completa": false,
    "id": 42,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "EEP",
@@ -1201,7 +1244,8 @@ const POT_DATA = {
    "clase": "Interna",
    "completa": false,
    "id": 43,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "EEP",
@@ -1217,7 +1261,8 @@ const POT_DATA = {
    "clase": "Interna",
    "completa": false,
    "id": 44,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "EFC",
@@ -1233,7 +1278,8 @@ const POT_DATA = {
    "clase": "Interna",
    "completa": false,
    "id": 45,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "EFC",
@@ -1249,7 +1295,8 @@ const POT_DATA = {
    "clase": "Interna",
    "completa": false,
    "id": 46,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "EFC",
@@ -1265,7 +1312,8 @@ const POT_DATA = {
    "clase": "Interna",
    "completa": false,
    "id": 47,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "EFC",
@@ -1281,7 +1329,8 @@ const POT_DATA = {
    "clase": "Interna",
    "completa": false,
    "id": 48,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "EFC",
@@ -1297,7 +1346,8 @@ const POT_DATA = {
    "clase": "Interna",
    "completa": false,
    "id": 49,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "EFC",
@@ -1313,7 +1363,8 @@ const POT_DATA = {
    "clase": "Interna",
    "completa": false,
    "id": 50,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "EFC",
@@ -1329,7 +1380,8 @@ const POT_DATA = {
    "clase": "Interna",
    "completa": false,
    "id": 51,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "EFC",
@@ -1345,7 +1397,8 @@ const POT_DATA = {
    "clase": "Interna",
    "completa": false,
    "id": 52,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "ESECI",
@@ -1361,7 +1414,8 @@ const POT_DATA = {
    "clase": "Interna",
    "completa": false,
    "id": 53,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "ESECI",
@@ -1377,7 +1431,8 @@ const POT_DATA = {
    "clase": "Interna",
    "completa": false,
    "id": 54,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "ESECI",
@@ -1393,7 +1448,8 @@ const POT_DATA = {
    "clase": "Interna",
    "completa": false,
    "id": 55,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "ESECI",
@@ -1409,7 +1465,8 @@ const POT_DATA = {
    "clase": "Interna",
    "completa": false,
    "id": 56,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "ESECI",
@@ -1425,7 +1482,8 @@ const POT_DATA = {
    "clase": "Interna",
    "completa": false,
    "id": 57,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "ESECI",
@@ -1441,7 +1499,8 @@ const POT_DATA = {
    "clase": "Interna",
    "completa": false,
    "id": 58,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "ESECI",
@@ -1457,7 +1516,8 @@ const POT_DATA = {
    "clase": "Interna",
    "completa": false,
    "id": 59,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "ESECI",
@@ -1473,7 +1533,8 @@ const POT_DATA = {
    "clase": "Interna",
    "completa": false,
    "id": 60,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "EIP",
@@ -1489,7 +1550,8 @@ const POT_DATA = {
    "clase": "Interna",
    "completa": false,
    "id": 61,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "EIP",
@@ -1505,7 +1567,8 @@ const POT_DATA = {
    "clase": "Interna",
    "completa": false,
    "id": 62,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "EIP",
@@ -1521,7 +1584,8 @@ const POT_DATA = {
    "clase": "Interna",
    "completa": false,
    "id": 63,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "EIP",
@@ -1537,7 +1601,8 @@ const POT_DATA = {
    "clase": "Interna",
    "completa": false,
    "id": 64,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "EIP",
@@ -1553,7 +1618,8 @@ const POT_DATA = {
    "clase": "Interna",
    "completa": false,
    "id": 65,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "EIP",
@@ -1569,7 +1635,8 @@ const POT_DATA = {
    "clase": "Interna",
    "completa": false,
    "id": 66,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "EEP",
@@ -1585,7 +1652,8 @@ const POT_DATA = {
    "clase": "Intersistema",
    "completa": true,
    "id": 67,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "EIP",
@@ -1601,7 +1669,8 @@ const POT_DATA = {
    "clase": "Intersistema",
    "completa": true,
    "id": 68,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "EFC",
@@ -1617,7 +1686,8 @@ const POT_DATA = {
    "clase": "Intersistema",
    "completa": true,
    "id": 69,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "EFC",
@@ -1633,7 +1703,8 @@ const POT_DATA = {
    "clase": "Intersistema",
    "completa": true,
    "id": 70,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "EFC",
@@ -1649,7 +1720,8 @@ const POT_DATA = {
    "clase": "Intersistema",
    "completa": true,
    "id": 71,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "EEP",
@@ -1665,7 +1737,8 @@ const POT_DATA = {
    "clase": "Intersistema",
    "completa": true,
    "id": 72,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "EEP",
@@ -1681,7 +1754,8 @@ const POT_DATA = {
    "clase": "Intersistema",
    "completa": true,
    "id": 73,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
   },
   {
    "sO": "EEP",
@@ -1697,14 +1771,66 @@ const POT_DATA = {
    "clase": "Intersistema",
    "completa": true,
    "id": 74,
-   "porVerificar": false
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "EFC",
+   "cO": "Vivienda",
+   "sD": "EEP",
+   "cD": "Humedales",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte",
+   "pag": "—",
+   "seccion": "Pendiente de referencia en el POT",
+   "frase": null,
+   "clase": "Intersistema",
+   "completa": false,
+   "porVerificar": true,
+   "sinFrase": true,
+   "id": 75
+  },
+  {
+   "sO": "EEP",
+   "cO": "Humedales",
+   "sD": "EFC",
+   "cD": "Transporte público",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "—",
+   "seccion": "Pendiente de referencia en el POT",
+   "frase": null,
+   "clase": "Intersistema",
+   "completa": false,
+   "porVerificar": true,
+   "sinFrase": true,
+   "id": 76
+  },
+  {
+   "sO": "EFC",
+   "cO": "Ciclorutas",
+   "sD": "EEP",
+   "cD": "Humedales",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "—",
+   "seccion": "Pendiente de referencia en el POT",
+   "frase": null,
+   "clase": "Intersistema",
+   "completa": false,
+   "porVerificar": true,
+   "sinFrase": true,
+   "id": 77
   }
  ],
  "vb": [
-  -1395,
-  -1329,
-  2790,
-  2693
+  -1278,
+  -1296,
+  2557,
+  2627
  ]
 };
 
@@ -2245,40 +2371,56 @@ function initIntro() {
   const back = document.getElementById('introBackdrop');
   if (!back) return;
 
-  // Cifras que respaldan el hallazgo, calculadas desde los datos:
-  // qué tanto se conecta la EIP fuera de sí misma y qué se pierde sin ella.
-  const S = 'EIP';
-  const cross = model.relations.filter(r => r.sO !== r.sD && (r.sO === S || r.sD === S));
-  const alcanza = new Set(cross.map(r => (r.sO === S ? r.sD : r.sO))).size;
-  const perdidas = model.relations.filter(r => r.sO === S || r.sD === S).length;
-  const pct = Math.round((perdidas / model.relations.length) * 100);
-
-  const datos = [
-    { n: cross.length, lbl: 'conexiones con otras estructuras', color: model.systems.EIP.color },
-    { n: alcanza,      lbl: 'estructuras distintas alcanzadas', color: model.systems.ESECI.color },
-    { n: perdidas,     lbl: `relaciones se pierden sin la EIP (${pct}%)`, color: model.systems.EFC.color }
-  ];
+  // Cifras del hallazgo, calculadas desde los datos: conexiones de cada
+  // estructura con las demás (relaciones que cruzan de un sistema a otro).
+  const figs = SYS.map(s => ({
+    s,
+    n: model.relations.filter(r => r.sO !== r.sD && (r.sO === s || r.sD === s)).length,
+    color: model.systems[s].color
+  })).sort((a, b) => b.n - a.n);
 
   const box = document.getElementById('introFigures');
   if (box) {
-    box.innerHTML = datos.map(d => `
-      <div class="fig-card" style="--fig:${d.color}">
-        <div class="fig-num">${d.n}</div>
-        <div class="fig-lbl">${d.lbl}</div>
+    box.innerHTML = figs.map(f => `
+      <div class="fig-card" style="--fig:${f.color}">
+        <div class="fig-code">${f.s}</div>
+        <div class="fig-num">${f.n}</div>
+        <div class="fig-lbl">conexiones con otros sistemas</div>
       </div>`).join('');
   }
+
+  // --- navegación de los dos pasos ---
+  const step1 = document.getElementById('step1');
+  const step2 = document.getElementById('step2');
+  const lbl   = document.getElementById('introStepLbl');
+  const bNext = document.getElementById('introNext');
+  const bBack = document.getElementById('introBack');
+  const bEnd  = document.getElementById('introBtn');
+
+  function paso(n) {
+    step1.classList.toggle('hidden', n !== 1);
+    step2.classList.toggle('hidden', n !== 2);
+    bNext.classList.toggle('hidden', n !== 1);
+    bBack.classList.toggle('hidden', n !== 2);
+    bEnd.classList.toggle('hidden', n !== 2);
+    lbl.textContent = 'Paso ' + n + ' de 2';
+    const m = document.querySelector('.intro-modal');
+    if (m) m.scrollTop = 0;
+  }
+
+  bNext.addEventListener('click', () => paso(2));
+  bBack.addEventListener('click', () => paso(1));
 
   const cerrar = () => {
     back.classList.add('hidden');
     document.body.style.overflow = '';
   };
-  const btn = document.getElementById('introBtn');
-  const x = document.getElementById('introClose');
-  if (btn) btn.addEventListener('click', cerrar);
-  if (x) x.addEventListener('click', cerrar);
+  bEnd.addEventListener('click', cerrar);
+  document.getElementById('introClose').addEventListener('click', cerrar);
   back.addEventListener('click', e => { if (e.target === back) cerrar(); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrar(); });
 
+  paso(1);
   document.body.style.overflow = 'hidden';
 }
 
@@ -2298,13 +2440,21 @@ function openQuoteModal(r, kind) {
     `<span class="quote-tag">${r.evid}</span>`,
     `<span class="quote-tag">${r.sO} → ${r.sD}</span>`
   ];
-  if (r.porVerificar) tags.push('<span class="quote-tag pv">por verificar</span>');
+  if (r.sinFrase) tags.push('<span class="quote-tag pv">sin frase registrada</span>');
+  else if (r.porVerificar) tags.push('<span class="quote-tag pv">por verificar</span>');
   else if (!r.completa) tags.push('<span class="quote-tag">fragmento del archivo fuente</span>');
   document.getElementById('quoteTags').innerHTML = tags.join('');
 
   // r.frase ya viene entre comillas tipográficas desde los datos
-  document.getElementById('quoteText').textContent = r.frase;
-  document.getElementById('quotePage').textContent = 'Página ' + r.pag;
+  const qt = document.getElementById('quoteText');
+  if (r.sinFrase || !r.frase) {
+    qt.textContent = 'Esta relación se agregó a la red pero todavía no tiene una frase del POT registrada que la sustente. Añádela en el Excel (frase textual y página) para que aparezca aquí.';
+    qt.classList.add('no-quote');
+  } else {
+    qt.textContent = r.frase;
+    qt.classList.remove('no-quote');
+  }
+  document.getElementById('quotePage').textContent = r.pag === '—' ? 'Página pendiente' : 'Página ' + r.pag;
   document.getElementById('quoteSec').textContent = r.seccion || '';
 
   back.classList.remove('hidden');
