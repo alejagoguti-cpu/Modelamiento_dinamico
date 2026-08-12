@@ -679,7 +679,7 @@ const el = (tag, attrs = {}) => {
   return n;
 };
 
-function wrapLabel(text, maxChars = 18) {
+function wrapLabel(text, maxChars = 15) {
   if (text.length <= maxChars) return [text];
   const parts = text.split(' / ');
   if (parts.length === 2 && parts[0].length <= maxChars + 4 && parts[1].length <= maxChars + 4) {
