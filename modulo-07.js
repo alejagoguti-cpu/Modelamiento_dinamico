@@ -1963,10 +1963,10 @@ const POT_DATA = {
   }
  ],
  "vb": [
-  -1194,
-  -1202,
-  2387,
-  2441
+  -1384,
+  -1392,
+  2767,
+  2821
  ]
 };
 
@@ -2067,7 +2067,43 @@ function curvePath(a, b, rA, rB) {
   return `M${p1.x.toFixed(1)},${p1.y.toFixed(1)} Q${cx.toFixed(1)},${cy.toFixed(1)} ${p2.x.toFixed(1)},${p2.y.toFixed(1)}`;
 }
 
+
+// ---------------------------------------------------------------------
+// DEBILITAMIENTO DE LA RED
+// Cuando se apaga una estructura, cada concepto que sobrevive se desplaza
+// hacia afuera en proporción a las relaciones que perdió. Los que quedan
+// sin ninguna conexión activa se van más lejos y se marcan en rojo.
+// Así se ve, no solo se calcula, qué tanto sostenía la red la estructura
+// apagada.
+// ---------------------------------------------------------------------
+const drawPos = {};
+
+function lossRatioOf(c) {
+  const total = c.rels.length;
+  if (!total) return 0;
+  return c.rels.filter(r => !relActive(r)).length / total;
+}
+
+function computeDrift() {
+  const algoApagado = SYS.some(s => !state[s]) || offNodes.size > 0;
+
+  Object.values(model.concepts).forEach(c => {
+    const p = layout[c.id];
+    drawPos[c.id] = { x: p.x, y: p.y };
+    if (!algoApagado) return;
+    if (!state[c.sys] || offNodes.has(c.id)) return;   // los apagados no se mueven
+
+    const ratio = lossRatioOf(c);
+    if (ratio < 0.34) return;                          // perdió poco: se queda
+
+    const d = Math.hypot(p.x, p.y) || 1;
+    const drift = 70 + 300 * ratio;                    // pierde más -> se aleja más
+    drawPos[c.id] = { x: p.x + (p.x / d) * drift, y: p.y + (p.y / d) * drift };
+  });
+}
+
 function render() {
+  computeDrift();
   const gGuides = document.getElementById('gGuides');
   const gMembers = document.getElementById('gMembers');
   const gRels = document.getElementById('gRels');
@@ -2077,7 +2113,7 @@ function render() {
   // -- relaciones activas (las inactivas NO se dibujan: desaparecen de verdad)
   model.relations.forEach(r => {
     if (!relActive(r)) return;
-    const a = layout[r.from], b = layout[r.to];
+    const a = drawPos[r.from] || layout[r.from], b = drawPos[r.to] || layout[r.to];
     const rA = nodeR[r.from];
     const rB = nodeR[r.to];
     const d = curvePath(a, b, rA, rB);
@@ -2113,7 +2149,7 @@ function render() {
     if (!state[s]) return;
     model.systems[s].concepts.forEach(id => {
       const c = model.concepts[id];
-      const p = layout[id];
+      const p = drawPos[id] || layout[id];
       const activeRels = c.rels.filter(relActive).length;
       const isolated = activeRels === 0;
       const off = offNodes.has(id);
@@ -2124,8 +2160,11 @@ function render() {
       const glow = R >= 110 ? 'high' : R >= 80 ? 'mid' : 'low';
 
       const cls = ['concept', 'node-appear', 'deg-' + glow];
+      const ratio = lossRatioOf(c);
       if (isolated && !off) cls.push('isolated');
       if (off) cls.push('node-off');
+      if (!off && state[s] && ratio >= 0.34 && ratio < 1) cls.push('weakened');
+      if (!off && state[s] && ratio >= 1) cls.push('cut-off');
 
       const g = el('g', {
         class: cls.join(' '),
@@ -2270,7 +2309,41 @@ function updateMetrics() {
         <span class="n">${o.n} rel.</span>
       </div>`).join('');
 
+  updateWeakBanner(active, total);
   updateSimPanel(active, total, rank);
+}
+
+
+// Aviso sobre el diagrama: cuánto se debilitó la red y cuántos nodos quedaron
+// desconectados. Todo calculado del estado actual.
+function updateWeakBanner(active, total) {
+  const banner = document.getElementById('weakBanner');
+  const txt = document.getElementById('weakBannerText');
+  if (!banner || !txt) return;
+
+  const off = SYS.filter(s => !state[s]);
+  const nodosOff = offNodes.size;
+  if (!off.length && !nodosOff) {
+    banner.classList.add('hidden');
+    return;
+  }
+
+  const perdidas = total - active;
+  const loss = total ? Math.round((perdidas / total) * 100) : 0;
+  const comp = components();
+
+  const cortados = Object.values(model.concepts)
+    .filter(c => state[c.sys] && !offNodes.has(c.id) && c.rels.length && lossRatioOf(c) >= 1).length;
+  const debiles = Object.values(model.concepts)
+    .filter(c => state[c.sys] && !offNodes.has(c.id) && c.rels.length &&
+                 lossRatioOf(c) >= 0.34 && lossRatioOf(c) < 1).length;
+
+  const quien = off.length ? off.join(' + ') : 'ese nodo';
+  txt.innerHTML = `<b>Red debilitada:</b> sin ${quien} se pierden <b>${perdidas} de ${total}</b>
+    relaciones (<b>${loss}%</b>) y la red queda en <b>${comp.count}</b> componentes.
+    <span class="wb-sub">${cortados} concepto(s) quedaron sin ninguna conexión ·
+    ${debiles} perdieron la mitad o más de las suyas</span>`;
+  banner.classList.remove('hidden');
 }
 
 const set = (id, html) => { document.getElementById(id).innerHTML = html; };
