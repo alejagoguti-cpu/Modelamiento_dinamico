@@ -520,11 +520,13 @@ body {
 /* -------- SVG: sistemas, conceptos, relaciones -------- */
 /* Conceptos: son los únicos nodos de la red */
 .concept circle { fill: #0d1322; stroke: var(--sys); stroke-width: 1.8; }
-.concept text { fill: #d5dced; font-size: 9px; text-anchor: middle; font-weight: 600; }
+.concept text { fill: #d5dced; font-size: 8.4px; text-anchor: middle; font-weight: 600; }
 .concept { cursor: pointer; }
 
+/* La animación solo usa opacidad: si usara transform, sobrescribiría el
+   atributo transform del SVG y todos los nodos caerían al centro. */
 .node-appear { animation: pop 0.42s ease both; }
-@keyframes pop { from { opacity: 0; transform: scale(0.86); } to { opacity: 1; transform: scale(1); } }
+@keyframes pop { from { opacity: 0; } to { opacity: 1; } }
 
 .concept.isolated circle { stroke-dasharray: 2.5 2.5; stroke: var(--danger); opacity: 0.75; }
 .concept.isolated text { fill: var(--text-faint); }
