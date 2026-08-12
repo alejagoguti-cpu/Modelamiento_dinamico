@@ -518,10 +518,46 @@ body {
 .net-stage svg { width: 100%; height: 100%; display: block; }
 
 /* -------- SVG: sistemas, conceptos, relaciones -------- */
-/* Conceptos: son los únicos nodos de la red */
-.concept circle { fill: #0d1322; stroke: var(--sys); stroke-width: 1.8; }
-.concept text { fill: #d5dced; font-size: 8.4px; text-anchor: middle; font-weight: 600; }
+/* Conceptos: son los únicos nodos de la red. El tamaño depende del número
+   de relaciones documentadas (deg-high / deg-mid / deg-low). */
 .concept { cursor: pointer; }
+.concept .node-fill { fill: #0d1322; stroke: var(--sys); stroke-width: 1.8; }
+.concept text {
+  fill: #d5dced;
+  text-anchor: middle;
+  font-weight: 600;
+  paint-order: stroke;
+  stroke: #05070d;
+  stroke-width: 2.4px;
+  stroke-linejoin: round;
+}
+
+/* Icono dentro del nodo */
+.node-icon {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--sys);
+  line-height: 1;
+}
+
+/* Brillo proporcional a la conectividad: los hubs destacan */
+.concept.deg-low  .node-fill { filter: drop-shadow(0 0 3px var(--sys)); }
+.concept.deg-mid  .node-fill { filter: drop-shadow(0 0 6px var(--sys)); stroke-width: 2; }
+.concept.deg-high .node-fill { filter: drop-shadow(0 0 11px var(--sys)); stroke-width: 2.4; }
+.concept.deg-high text { font-weight: 700; }
+
+/* Concepto apagado en el escenario de nodo crítico */
+.concept.node-off .node-fill {
+  stroke: var(--danger);
+  stroke-dasharray: 3 2.5;
+  filter: none;
+  opacity: 0.45;
+}
+.concept.node-off .node-icon { opacity: 0.35; }
+.concept.node-off text { opacity: 0.4; }
 
 /* La animación solo usa opacidad: si usara transform, sobrescribiría el
    atributo transform del SVG y todos los nodos caerían al centro. */
@@ -680,3 +716,61 @@ body {
 
 .scenario-btn.active .sys-state { background: rgba(239,68,68,0.18); color: #f3a3a3; }
 .scenario-btn { position: relative; }
+
+/* ---------------------------------------------------------------------- */
+/* Panel: escenario de nodo crítico                                      */
+/* ---------------------------------------------------------------------- */
+.node-question {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.4;
+  margin-bottom: 10px;
+}
+
+.node-label {
+  display: block;
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-faint);
+  margin-bottom: 5px;
+}
+
+.node-select {
+  width: 100%;
+  background: var(--panel-alt);
+  border: 1px solid var(--border-soft);
+  color: var(--text);
+  font-size: 11.5px;
+  font-weight: 600;
+  font-family: inherit;
+  padding: 8px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.node-select:hover { border-color: var(--eseci); }
+
+.node-impact {
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--text-dim);
+  margin: 10px 0;
+}
+
+.node-impact b { color: var(--text); }
+
+.node-sim-btn {
+  width: 100%;
+  justify-content: center;
+  background: rgba(239, 68, 68, 0.12);
+  border-color: rgba(239, 68, 68, 0.38);
+  color: #f3a3a3;
+  font-weight: 700;
+  padding: 9px 12px;
+}
+
+.node-sim-btn:hover { border-color: var(--danger); color: #ffb3b3; }
+.node-sim-btn.active { background: rgba(239, 68, 68, 0.22); border-color: var(--danger); color: #ffc4c4; }
