@@ -64,7 +64,7 @@
 
     <div class="welcome">
       <h2>Red de las 4 estructuras territoriales</h2>
-      <p>Simulador de desconexión construido con las 75 relaciones documentadas de las cuatro estructuras territoriales. El tamaño de cada nodo depende de cuántas relaciones tiene. Apaga una estructura completa o un nodo específico para ver qué se rompe.</p>
+      <p>Simulador de desconexión construido con las 78 relaciones documentadas de las cuatro estructuras territoriales. El tamaño de cada nodo depende de cuántas relaciones tiene. Apaga una estructura completa o un nodo específico para ver qué se rompe.</p>
     </div>
 
     <!-- SIMULADOR ON/OFF -->
@@ -120,7 +120,7 @@
           </div>
 
           <div class="net-stage" id="stage">
-            <svg id="svg" xmlns="http://www.w3.org/2000/svg" viewBox="-1395 -1329 2790 2693">
+            <svg id="svg" xmlns="http://www.w3.org/2000/svg" viewBox="-1278 -1296 2557 2627">
               <defs>
                 <marker id="ar-soporte" viewBox="0 0 10 10" refX="9" refY="5"
                         markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse">
@@ -214,30 +214,51 @@
 </div>
 
 <script src="modulo-07.js"></script>
-<!-- ================= POP-UP DE APERTURA: HALLAZGO PRINCIPAL ================= -->
+<!-- ================= POP-UP DE APERTURA: HALLAZGO PRINCIPAL (2 pasos) ================= -->
 <div class="intro-backdrop" id="introBackdrop">
   <div class="intro-modal" role="dialog" aria-labelledby="introTitle">
     <button class="intro-close" id="introClose" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button>
 
     <div class="intro-head">
       <div class="intro-icon"><i class="fa-solid fa-circle-nodes"></i></div>
-      <h2 id="introTitle">Hallazgo principal</h2>
+      <div>
+        <h2 id="introTitle">Hallazgo principal</h2>
+        <div class="intro-step" id="introStepLbl">Paso 1 de 2</div>
+      </div>
     </div>
 
     <div class="intro-divider"><span></span></div>
 
-    <div class="intro-body">
-      <div class="intro-figure"><i class="fa-solid fa-landmark-dome"></i></div>
-
+    <!-- ---------- PASO 1: el hallazgo ---------- -->
+    <div class="intro-body intro-step-1" id="step1">
+      <div class="intro-figure"><i class="fa-solid fa-diagram-project"></i></div>
       <div class="intro-text">
-        <p class="intro-lead">Al simular la ausencia de la <b class="hl">Estructura Integradora de Patrimonios</b> encontramos que un componente que parece específico del territorio tiene conexiones con otras dinámicas del modelo de ciudad.</p>
-
+        <p>El POT dice que la <b>Estructura Ecológica Principal (EEP)</b> es la primera ordenante del territorio.</p>
+        <p>Pero al construir nuestra red, encontramos que la <b class="hl">Estructura Socioeconómica, Creativa y de Innovación (ESECI)</b> es la que tiene más conexiones con los demás sistemas.</p>
         <div class="intro-figures" id="introFigures"></div>
       </div>
     </div>
 
+    <!-- ---------- PASO 2: el por qué ---------- -->
+    <div class="intro-body intro-step-2 hidden" id="step2">
+      <div class="intro-figure"><i class="fa-solid fa-lightbulb"></i></div>
+      <div class="intro-text">
+        <p class="intro-q">¿Por qué?</p>
+        <p>La ESECI tiene más conexiones porque el POT usa el ordenamiento territorial para impulsar la economía, el empleo y la productividad. Por eso relaciona cosas como la movilidad, la vivienda, los equipamientos y la conectividad con las actividades económicas.</p>
+        <p>En cambio, la EEP cumple principalmente una función ambiental: ordenar y proteger el territorio a través del agua, los ecosistemas y la biodiversidad.</p>
+        <p>Por eso, en nuestra red aparecen más relaciones conectadas con la ESECI que con la EEP.</p>
+      </div>
+    </div>
+
     <div class="intro-foot">
-      <button class="intro-btn" id="introBtn">
+      <button class="intro-btn ghost hidden" id="introBack">
+        <i class="fa-solid fa-arrow-left"></i> Volver
+      </button>
+      <button class="intro-btn" id="introNext">
+        ¿Por qué?
+        <i class="fa-solid fa-arrow-right"></i>
+      </button>
+      <button class="intro-btn hidden" id="introBtn">
         <i class="fa-solid fa-diagram-project"></i>
         ¿Cómo llegamos a esa conclusión?
         <i class="fa-solid fa-arrow-right"></i>
