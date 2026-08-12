@@ -1,756 +1,1196 @@
-// MODULO 07: SIMULADOR
-console.log('Módulo 07: Simulador - Inicializado');
+/* =======================================================================
+   RAPOT · MÓDULO 07 — Simulador de las 4 Estructuras del POT
+   Base de datos: Red_4_Estructuras_POT_CORREGIDA.xlsx (hoja RELACIONES)
+   32 relaciones · 58 conceptos · 4 sistemas
+   No se inventan relaciones ni se alteran frases o páginas.
+   ======================================================================= */
 
-// ---------------------------------------------------------------------------
-// ESCENARIOS (apagar/encender una estructura completa)
-// ---------------------------------------------------------------------------
-const scenarios = {
-  sin_eep:   { label: 'Escenario sin Estructura Ecológica Principal', struct: 'eco' },
-  sin_efc:   { label: 'Escenario sin Estructura Funcional y del Cuidado', struct: 'func' },
-  sin_eseci: { label: 'Escenario sin Estructura Socioeconómica, Creativa y de Innovación', struct: 'econ' },
-  sin_eip:   { label: 'Escenario sin Estructura Integradora de Patrimonios', struct: 'patri' }
+// GENERADO AUTOMÁTICAMENTE DESDE Red_4_Estructuras_POT_CORREGIDA.xlsx (hoja RELACIONES)
+// NO editar a mano: frases y páginas son literales del Excel.
+const POT_DATA = {
+ "sistemas": {
+  "EEP": {
+   "nombre": "Estructura Ecológica Principal",
+   "color": "#22B88A",
+   "funcion": "Base ecológica / resiliencia"
+  },
+  "EFC": {
+   "nombre": "Estructura Funcional y del Cuidado",
+   "color": "#3B82F6",
+   "funcion": "Soporte funcional / articulación"
+  },
+  "EIP": {
+   "nombre": "Estructura Integradora de Patrimonios",
+   "color": "#A855F7",
+   "funcion": "Integración social y territorial"
+  },
+  "ESECI": {
+   "nombre": "Estructura Socioeconómica, Creativa y de Innovación",
+   "color": "#D9A441",
+   "funcion": "Resultado económico / productivo"
+  }
+ },
+ "conceptos": {
+  "EEP": [
+   "Agua / ecosistemas",
+   "Agua / equilibrio ecosistémico",
+   "Ambiente",
+   "Ambiente / resiliencia",
+   "Calidad del aire / ambiente",
+   "Ecosistemas",
+   "Ecosistemas / recursos naturales",
+   "Función ambiental",
+   "Recursos naturales / agua",
+   "Recursos naturales / ecosistemas",
+   "Áreas de importancia ambiental",
+   "Áreas naturales / biodiversidad"
+  ],
+  "EFC": [
+   "Cuidado / infraestructura",
+   "Cultura / equipamientos",
+   "Equipamientos",
+   "Equipamientos / cuidado",
+   "Espacio público",
+   "Espacio público / cuidado",
+   "Espacio público / movilidad",
+   "Movilidad / infraestructura",
+   "Movilidad limpia / corredores verdes",
+   "Movilidad multimodal",
+   "Movilidad sostenible",
+   "Plan Maestro de Cuidado",
+   "Plan Maestro de Hábitat y Servicios Públicos",
+   "Plan Maestro de Movilidad",
+   "Sistema de movilidad",
+   "Soporte territorial / ciudad",
+   "Transporte / estaciones"
+  ],
+  "EIP": [
+   "Cultura / equipamientos",
+   "Cultura / prácticas",
+   "Patrimonio",
+   "Patrimonio / cultura",
+   "Patrimonio / dinámicas sociales",
+   "Patrimonio / identidad territorial",
+   "Patrimonio / memoria",
+   "Patrimonio cultural / natural",
+   "Patrimonio local / dinámicas comunitarias",
+   "Patrimonio natural"
+  ],
+  "ESECI": [
+   "Actividades productivas",
+   "Aglomeraciones económicas",
+   "Aglomeración económica / empleo",
+   "Desarrollo socioeconómico",
+   "Dinámicas económicas",
+   "Economía / productividad",
+   "Economía / turismo",
+   "Economía circular",
+   "Empresas / actividades productivas",
+   "Mezcla de usos / aglomeración económica",
+   "Producción / actividades productivas",
+   "Producción / consumo de alimentos",
+   "Producción sostenible",
+   "Productividad / aglomeración",
+   "Productividad / empleo",
+   "Reactivación económica",
+   "Tejido económico local",
+   "Tejidos productivos / empleo",
+   "Vida productiva"
+  ]
+ },
+ "relaciones": [
+  {
+   "id": 0,
+   "sO": "EEP",
+   "cO": "Agua / equilibrio ecosistémico",
+   "sD": "ESECI",
+   "cD": "Desarrollo socioeconómico",
+   "dir": "→",
+   "tipo": "Soporte",
+   "evid": "Directa",
+   "linea": "Sólida",
+   "color": "#F59E0B",
+   "pag": "21",
+   "frase": "“La eep es la integración de las áreas de origen natural y antrópico que tienen una oferta ambiental significativa, es ordenadora del territorio y garante de los equilibrios ecosistémicos, del agua y la riqueza hídrica, que es la primera ordenante del territorio, para una ocupación y manejo sostenible de los recursos naturales renovables, base del desarrollo socioeconómico de la población.”"
+  },
+  {
+   "id": 1,
+   "sO": "ESECI",
+   "cO": "Producción / consumo de alimentos",
+   "sD": "EEP",
+   "cD": "Ecosistemas / recursos naturales",
+   "dir": "→",
+   "tipo": "Resiliencia",
+   "evid": "Directa",
+   "linea": "Sólida",
+   "color": "#2563EB",
+   "pag": "21",
+   "frase": "“Nuestro pot promueve actividades como el viverismo, las huertas, la agricultura urbana y familiar, y las actividades agroecológicas dentro de un modelo de producción, comercialización y consumo de alimentos que contribuyan a la soberanía alimentaria en comunidades organizadas que aprovechen los residuos, optimicen los recursos y no afecten los ecosistemas.”"
+  },
+  {
+   "id": 2,
+   "sO": "ESECI",
+   "cO": "Producción / actividades productivas",
+   "sD": "EEP",
+   "cD": "Ecosistemas",
+   "dir": "→",
+   "tipo": "Resiliencia",
+   "evid": "Directa",
+   "linea": "Sólida",
+   "color": "#2563EB",
+   "pag": "31",
+   "frase": "“con equipamientos que faciliten la economía campesina, familiar y comunitaria, el turismo responsable de naturaleza que vincule residentes y saberes del lugar y la conservación del ambiente como formas de productividad, sustento y desarrollo sostenible.”"
+  },
+  {
+   "id": 3,
+   "sO": "EEP",
+   "cO": "Recursos naturales / agua",
+   "sD": "ESECI",
+   "cD": "Economía / productividad",
+   "dir": "→",
+   "tipo": "Soporte",
+   "evid": "Directa",
+   "linea": "Sólida",
+   "color": "#F59E0B",
+   "pag": "31",
+   "frase": "“la conservación del ambiente como formas de productividad, sustento y desarrollo sostenible.”"
+  },
+  {
+   "id": 4,
+   "sO": "EFC",
+   "cO": "Movilidad sostenible",
+   "sD": "EEP",
+   "cD": "Calidad del aire / ambiente",
+   "dir": "→",
+   "tipo": "Resiliencia",
+   "evid": "Directa",
+   "linea": "Sólida",
+   "color": "#2563EB",
+   "pag": "22",
+   "frase": "“En Bogotá cada año registramos 2.300 muertes prematuras atribuibles a la contaminación del aire, causada en un 60 % por la movilidad basada en el uso de combustibles fósiles. Para cambiar esa tendencia es indispensable cambiar nuestros hábitos de movilidad, incrementar la caminata y el transporte en modos públicos y colectivos que usen energías limpias y renovables, la descarbonización de la movilidad, el drenaje sostenible, el tratamiento de los residuos domiciliarios, el manejo técnico del sistema de saneamiento básico y el reverdecimiento y renaturalización del espacio público.”"
+  },
+  {
+   "id": 5,
+   "sO": "EFC",
+   "cO": "Espacio público / movilidad",
+   "sD": "EEP",
+   "cD": "Función ambiental",
+   "dir": "→",
+   "tipo": "Resiliencia",
+   "evid": "Directa",
+   "linea": "Sólida",
+   "color": "#2563EB",
+   "pag": "22",
+   "frase": "“Para reverdecer a Bogotá vamos a implementar el arbolado, la jardinería, las huertas y toda la agroecología urbana como un elemento fundamental que contribuya a consolidar la función ambiental de los elementos de espacio público.”"
+  },
+  {
+   "id": 6,
+   "sO": "EEP",
+   "cO": "Agua / ecosistemas",
+   "sD": "EFC",
+   "cD": "Espacio público / movilidad",
+   "dir": "→",
+   "tipo": "Resiliencia",
+   "evid": "Indirecta",
+   "linea": "Punteada",
+   "color": "#2563EB",
+   "pag": "22",
+   "frase": "“Las cinco transformaciones urbanas que iniciamos protegen el agua y consolidan el sistema hídrico mediante estrategias de conectividad y complementariedad de los ecosistemas como articuladores con su entorno regional...”"
+  },
+  {
+   "id": 7,
+   "sO": "EFC",
+   "cO": "Movilidad limpia / corredores verdes",
+   "sD": "EEP",
+   "cD": "Ambiente / resiliencia",
+   "dir": "→",
+   "tipo": "Resiliencia",
+   "evid": "Directa",
+   "linea": "Sólida",
+   "color": "#2563EB",
+   "pag": "22",
+   "frase": "“El pot y el pmss ponen como eje estructurador de la movilidad al peatón y privilegian el espacio público para la movilidad y los desplazamientos en modos de transporte activos, de cero y bajas emisiones, el desarrollo de corredores verdes...”"
+  },
+  {
+   "id": 8,
+   "sO": "EIP",
+   "cO": "Patrimonio cultural / natural",
+   "sD": "EEP",
+   "cD": "Ambiente",
+   "dir": "→",
+   "tipo": "Resiliencia",
+   "evid": "Directa",
+   "linea": "Sólida",
+   "color": "#2563EB",
+   "pag": "30",
+   "frase": "“El pot busca intervenir estratégicamente, vinculando las dinámicas patrimoniales, ambientales, sociales y culturales para proteger y garantizar la permanencia y calidad de vida de los pobladores originales de las zonas de renovación urbana y actuaciones estratégicas.”"
+  },
+  {
+   "id": 9,
+   "sO": "EEP",
+   "cO": "Áreas naturales / biodiversidad",
+   "sD": "EIP",
+   "cD": "Patrimonio natural",
+   "dir": "→",
+   "tipo": "Resiliencia",
+   "evid": "Directa",
+   "linea": "Sólida",
+   "color": "#2563EB",
+   "pag": "196",
+   "frase": "“la eip inscribe y precisa un sistema de relaciones del patrimonio cultural material, inmaterial y natural en el territorio.”"
+  },
+  {
+   "id": 10,
+   "sO": "EIP",
+   "cO": "Patrimonio / identidad territorial",
+   "sD": "EEP",
+   "cD": "Áreas de importancia ambiental",
+   "dir": "→",
+   "tipo": "Resiliencia",
+   "evid": "Indirecta",
+   "linea": "Punteada",
+   "color": "#2563EB",
+   "pag": "200",
+   "frase": "“La insistencia en exaltar las distintas maneras de interpretar el modo en que nos hemos adaptado al territorio está dada por un presente que nos exige mayores esfuerzos en la valoración de las áreas de importancia ambiental y de los patrimonios culturales como respuesta, fuente y medio para aportar al imperativo de detener el deterioro del hábitat global...”"
+  },
+  {
+   "id": 11,
+   "sO": "EIP",
+   "cO": "Patrimonio / dinámicas sociales",
+   "sD": "EFC",
+   "cD": "Espacio público / cuidado",
+   "dir": "→",
+   "tipo": "Soporte",
+   "evid": "Directa",
+   "linea": "Sólida",
+   "color": "#F59E0B",
+   "pag": "30",
+   "frase": "“Buscamos la revitalización de las áreas consolidadas para mejorar la calidad ambiental y paisajística de los barrios, la seguridad en el espacio público, aumentar la oferta de espacios de encuentro y los servicios sociales del cuidado y aportar a la reactivación económica.”"
+  },
+  {
+   "id": 12,
+   "sO": "EFC",
+   "cO": "Movilidad / infraestructura",
+   "sD": "EIP",
+   "cD": "Patrimonio / cultura",
+   "dir": "→",
+   "tipo": "Soporte",
+   "evid": "Directa",
+   "linea": "Sólida",
+   "color": "#F59E0B",
+   "pag": "121",
+   "frase": "“Con el Plan de Ordenamiento Territorial (pot) damos un salto histórico para ordenar la ciudad integrando criterios ambientales, patrimoniales, de movilidad, seguridad y productividad, y sumamos el cuidado como un eje estructural en la planeación urbana.”"
+  },
+  {
+   "id": 13,
+   "sO": "EIP",
+   "cO": "Patrimonio / memoria",
+   "sD": "EFC",
+   "cD": "Espacio público",
+   "dir": "→",
+   "tipo": "Soporte",
+   "evid": "Directa",
+   "linea": "Sólida",
+   "color": "#F59E0B",
+   "pag": "196",
+   "frase": "“espacios públicos para la itinerancia próxima y segura, lugares que animen la memoria y expresen los valores identitarios”"
+  },
+  {
+   "id": 14,
+   "sO": "EFC",
+   "cO": "Cultura / equipamientos",
+   "sD": "EIP",
+   "cD": "Patrimonio / cultura",
+   "dir": "→",
+   "tipo": "Soporte",
+   "evid": "Directa",
+   "linea": "Sólida",
+   "color": "#F59E0B",
+   "pag": "128",
+   "frase": "“26 equipamientos culturales y 14 infraestructuras para atender a niñas y niños, personas mayores y personas con discapacidad.”"
+  },
+  {
+   "id": 15,
+   "sO": "EFC",
+   "cO": "Movilidad multimodal",
+   "sD": "ESECI",
+   "cD": "Empresas / actividades productivas",
+   "dir": "→",
+   "tipo": "Soporte",
+   "evid": "Directa",
+   "linea": "Sólida",
+   "color": "#F59E0B",
+   "pag": "30",
+   "frase": "“para que se instalen empresas y actividades productivas generadoras de trabajo. Y que, en todo caso, las diversas zonas de la ciudad estén conectadas por un sistema multimodal de transporte público, colectivo, de energías limpias y renovables basadas en la red Metro y alimentadas por los demás modos y medios de transporte público como los corredores verdes, los cables y las ciclorrutas.”"
+  },
+  {
+   "id": 16,
+   "sO": "ESECI",
+   "cO": "Mezcla de usos / aglomeración económica",
+   "sD": "EFC",
+   "cD": "Soporte territorial / ciudad",
+   "dir": "→",
+   "tipo": "Soporte",
+   "evid": "Directa",
+   "linea": "Sólida",
+   "color": "#F59E0B",
+   "pag": "30",
+   "frase": "“La mezcla de usos del suelo es la garantía de soporte territorial para la aglomeración económica productiva especializada y diversificada y la inclusión de todas las actividades y oportunidades en el territorio.”"
+  },
+  {
+   "id": 17,
+   "sO": "EFC",
+   "cO": "Equipamientos / cuidado",
+   "sD": "ESECI",
+   "cD": "Reactivación económica",
+   "dir": "→",
+   "tipo": "Soporte",
+   "evid": "Directa",
+   "linea": "Sólida",
+   "color": "#F59E0B",
+   "pag": "30",
+   "frase": "“Buscamos la revitalización de las áreas consolidadas para mejorar la calidad ambiental y paisajística de los barrios, la seguridad en el espacio público, aumentar la oferta de espacios de encuentro y los servicios sociales del cuidado y aportar a la reactivación económica.”"
+  },
+  {
+   "id": 18,
+   "sO": "EFC",
+   "cO": "Equipamientos",
+   "sD": "ESECI",
+   "cD": "Dinámicas económicas",
+   "dir": "→",
+   "tipo": "Soporte",
+   "evid": "Directa",
+   "linea": "Sólida",
+   "color": "#F59E0B",
+   "pag": "122",
+   "frase": "“Garantizar equipamientos y servicios de cuidado en cada upl al nivel más próximo a la ciudadanía fue el reto y el logro, que se suman a los equipamientos de seguridad y justicia, a la malla vial local e intermedia, a un espacio público funcional por habitante y también a la dinámica comercial local.”"
+  },
+  {
+   "id": 19,
+   "sO": "EFC",
+   "cO": "Plan Maestro de Movilidad",
+   "sD": "ESECI",
+   "cD": "Productividad / empleo",
+   "dir": "→",
+   "tipo": "Soporte",
+   "evid": "Directa",
+   "linea": "Sólida",
+   "color": "#F59E0B",
+   "pag": "165",
+   "frase": "“a) Impacto en la productividad por tiempos de viaje”"
+  },
+  {
+   "id": 20,
+   "sO": "EFC",
+   "cO": "Plan Maestro de Movilidad",
+   "sD": "ESECI",
+   "cD": "Aglomeraciones económicas",
+   "dir": "→",
+   "tipo": "Soporte",
+   "evid": "Directa",
+   "linea": "Sólida",
+   "color": "#F59E0B",
+   "pag": "165",
+   "frase": "“b) Consolidación de aglomeraciones por conectividad”"
+  },
+  {
+   "id": 21,
+   "sO": "EFC",
+   "cO": "Plan Maestro de Hábitat y Servicios Públicos",
+   "sD": "ESECI",
+   "cD": "Tejido económico local",
+   "dir": "→",
+   "tipo": "Soporte",
+   "evid": "Directa",
+   "linea": "Sólida",
+   "color": "#F59E0B",
+   "pag": "165",
+   "frase": "“c) Promover la consolidación de tejido económico local”"
+  },
+  {
+   "id": 22,
+   "sO": "EFC",
+   "cO": "Plan Maestro de Cuidado",
+   "sD": "ESECI",
+   "cD": "Dinámicas económicas",
+   "dir": "→",
+   "tipo": "Soporte",
+   "evid": "Directa",
+   "linea": "Sólida",
+   "color": "#F59E0B",
+   "pag": "165",
+   "frase": "“a) Equipamiento como detonante de dinámicas económicas”"
+  },
+  {
+   "id": 23,
+   "sO": "EFC",
+   "cO": "Transporte / estaciones",
+   "sD": "ESECI",
+   "cD": "Tejidos productivos / empleo",
+   "dir": "→",
+   "tipo": "Soporte",
+   "evid": "Directa",
+   "linea": "Sólida",
+   "color": "#F59E0B",
+   "pag": "167",
+   "frase": "“La inversión en infraestructura para la movilidad es la principal apuesta por la productividad futura de la ciudad.”"
+  },
+  {
+   "id": 24,
+   "sO": "EFC",
+   "cO": "Sistema de movilidad",
+   "sD": "ESECI",
+   "cD": "Aglomeración económica / empleo",
+   "dir": "→",
+   "tipo": "Soporte",
+   "evid": "Directa",
+   "linea": "Sólida",
+   "color": "#F59E0B",
+   "pag": "167",
+   "frase": "“Los mismos ejes de transporte masivo y los orígenes-destino definidos por las estaciones benefician de manera particular ciertos flujos e interdependencias en el territorio, lo que consolidará y potenciará ciertas zonas de la ciudad.”"
+  },
+  {
+   "id": 25,
+   "sO": "EFC",
+   "cO": "Sistema de movilidad",
+   "sD": "ESECI",
+   "cD": "Productividad / aglomeración",
+   "dir": "→",
+   "tipo": "Soporte",
+   "evid": "Directa",
+   "linea": "Sólida",
+   "color": "#F59E0B",
+   "pag": "167",
+   "frase": "“Esto mejorará significativamente la calidad de vida y la productividad de la población, que hará uso de estas infraestructuras; también, consolidará las dinámicas de aglomeración económica que concentran el tejido empresarial, y con ello, las fuentes de generación de empleo...”"
+  },
+  {
+   "id": 26,
+   "sO": "EIP",
+   "cO": "Patrimonio local / dinámicas comunitarias",
+   "sD": "ESECI",
+   "cD": "Producción sostenible",
+   "dir": "→",
+   "tipo": "Soporte",
+   "evid": "Directa",
+   "linea": "Sólida",
+   "color": "#F59E0B",
+   "pag": "31",
+   "frase": "“Por eso promovemos la ciudad como destino turístico inteligente, sostenible, de salud y de negocios que reconozca el patrimonio local, las dinámicas comunitarias, los sistemas cooperativos de producción sostenible como huertas productivas, bancos de semillas nativas y plantas de uso medicinal, entre otros.”"
+  },
+  {
+   "id": 27,
+   "sO": "EIP",
+   "cO": "Patrimonio",
+   "sD": "ESECI",
+   "cD": "Vida productiva",
+   "dir": "→",
+   "tipo": "Soporte",
+   "evid": "Directa",
+   "linea": "Sólida",
+   "color": "#F59E0B",
+   "pag": "196",
+   "frase": "“Esta estructura persigue la gestión integral de los patrimonios, lo que al cabo fortalece los vínculos sociales y la vida productiva de los grupos poblacionales que habitan, se relacionan y les dan sentido a los territorios urbanos y rurales del Distrito Capital.”"
+  },
+  {
+   "id": 28,
+   "sO": "ESECI",
+   "cO": "Economía / turismo",
+   "sD": "EIP",
+   "cD": "Patrimonio",
+   "dir": "→",
+   "tipo": "Soporte",
+   "evid": "Directa",
+   "linea": "Sólida",
+   "color": "#F59E0B",
+   "pag": "205",
+   "frase": "“Para los sectores de cultura, economía y turismo es una escuela de formación de líderes y lideresas sustentada en la presencia de patrimonios que cuentan el origen de sus pobladores...”"
+  },
+  {
+   "id": 29,
+   "sO": "EIP",
+   "cO": "Cultura / prácticas",
+   "sD": "ESECI",
+   "cD": "Actividades productivas",
+   "dir": "→",
+   "tipo": "Soporte",
+   "evid": "Indirecta",
+   "linea": "Punteada",
+   "color": "#F59E0B",
+   "pag": "30",
+   "frase": "“las dinámicas patrimoniales, ambientales, sociales y culturales”"
+  },
+  {
+   "id": 30,
+   "sO": "EFC",
+   "cO": "Cuidado / infraestructura",
+   "sD": "EIP",
+   "cD": "Cultura / equipamientos",
+   "dir": "→",
+   "tipo": "Soporte",
+   "evid": "Indirecta",
+   "linea": "Punteada",
+   "color": "#F59E0B",
+   "pag": "121",
+   "frase": "“...integrando criterios ambientales, patrimoniales, de movilidad, seguridad y productividad, y sumamos el cuidado como un eje estructural en la planeación urbana.”"
+  },
+  {
+   "id": 31,
+   "sO": "EEP",
+   "cO": "Recursos naturales / ecosistemas",
+   "sD": "ESECI",
+   "cD": "Economía circular",
+   "dir": "→",
+   "tipo": "Soporte",
+   "evid": "Directa",
+   "linea": "Sólida",
+   "color": "#F59E0B",
+   "pag": "21",
+   "frase": "“el nuevo pot pone fin a ese absurdo y crea en Doña Juana un parque tecnológico para que con diversas tecnologías transformemos los residuos en materiales reutilizables que regresen a la tierra en forma de abonos y fertilizantes, y a la industria y los hogares en diversos materiales reutilizables en una economía circular.”"
+  }
+ ]
 };
 
-function loadScenario(scenarioKey, buttonEl) {
-  const scenario = scenarios[scenarioKey];
-  if (!scenario) return;
+const SYS = ['EEP', 'EFC', 'EIP', 'ESECI'];
 
-  const struct = scenario.struct;
-  const isOff = buttonEl.classList.toggle('active');
+// Estado del simulador: true = sistema activo
+const state = { EEP: true, EFC: true, EIP: true, ESECI: true };
+let lastToggledOff = null;
+let selectedRel = null;
 
-  const icon = buttonEl.querySelector('i');
-  if (icon) {
-    icon.classList.toggle('fa-circle-minus', !isOff);
-    icon.classList.toggle('fa-power-off', isOff);
+// ---------------------------------------------------------------------
+// 1. MODELO: nodos (sistemas + conceptos) y aristas
+// ---------------------------------------------------------------------
+const conceptId = (sis, con) => sis + '::' + con;
+
+const model = { systems: {}, concepts: {}, relations: [] };
+
+function buildModel() {
+  // idempotente: reconstruye desde cero para no duplicar relaciones si se
+  // vuelve a invocar la inicialización
+  model.systems = {};
+  model.concepts = {};
+  model.relations = [];
+
+  SYS.forEach(s => {
+    model.systems[s] = Object.assign({ code: s, concepts: [] }, POT_DATA.sistemas[s]);
+  });
+
+  SYS.forEach(s => {
+    (POT_DATA.conceptos[s] || []).forEach(c => {
+      const id = conceptId(s, c);
+      model.concepts[id] = { id, sys: s, label: c, rels: [] };
+      model.systems[s].concepts.push(id);
+    });
+  });
+
+  POT_DATA.relaciones.forEach(r => {
+    const from = conceptId(r.sO, r.cO);
+    const to = conceptId(r.sD, r.cD);
+    const rel = Object.assign({}, r, { from, to });
+    model.relations.push(rel);
+    model.concepts[from].rels.push(rel);
+    model.concepts[to].rels.push(rel);
+  });
+}
+
+// Una relación está activa solo si AMBOS sistemas (origen y destino) están ON
+const relActive = r => state[r.sO] && state[r.sD];
+
+// ---------------------------------------------------------------------
+// 2. LAYOUT jerárquico: 4 sistemas alrededor del centro, conceptos en
+//    anillo alrededor de su propio sistema. El orden angular de cada
+//    concepto se calcula según hacia qué sistema apunta, para reducir
+//    cruces de líneas.
+// ---------------------------------------------------------------------
+const D = 320;
+const SYS_POS = {
+  EFC:   { x: -D, y: -D },
+  ESECI: { x:  D, y: -D },
+  EEP:   { x:  D, y:  D },
+  EIP:   { x: -D, y:  D }
+};
+
+const SYS_R = 42;      // radio del nodo de sistema
+const CON_R = 11;      // radio del nodo de concepto
+const SLOT = 84;       // separación mínima entre conceptos vecinos del anillo
+
+const layout = {};     // id -> {x, y}
+const ringRadius = {};
+
+function computeLayout() {
+  SYS.forEach(s => {
+    const ids = model.systems[s].concepts;
+    const k = ids.length;
+    const R = Math.max(125, (k * SLOT) / (2 * Math.PI));
+    ringRadius[s] = R;
+
+    // dirección preferida de cada concepto (hacia los sistemas con los que se relaciona)
+    const pref = {};
+    ids.forEach(id => {
+      const c = model.concepts[id];
+      let vx = 0, vy = 0, n = 0;
+      c.rels.forEach(r => {
+        const other = r.sO === s ? r.sD : r.sO;
+        if (other === s) return;
+        vx += SYS_POS[other].x - SYS_POS[s].x;
+        vy += SYS_POS[other].y - SYS_POS[s].y;
+        n++;
+      });
+      pref[id] = n ? Math.atan2(vy, vx) : 0;
+    });
+
+    const sorted = ids.slice().sort((a, b) => pref[a] - pref[b] || a.localeCompare(b));
+    const start = sorted.length ? pref[sorted[0]] : 0;
+
+    sorted.forEach((id, i) => {
+      const ang = start + (2 * Math.PI * i) / k;
+      layout[id] = {
+        x: SYS_POS[s].x + R * Math.cos(ang),
+        y: SYS_POS[s].y + R * Math.sin(ang)
+      };
+    });
+
+    layout[s] = { x: SYS_POS[s].x, y: SYS_POS[s].y };
+  });
+}
+
+// ---------------------------------------------------------------------
+// 3. RENDER
+// ---------------------------------------------------------------------
+const NS = 'http://www.w3.org/2000/svg';
+const el = (tag, attrs = {}) => {
+  const n = document.createElementNS(NS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  return n;
+};
+
+function wrapLabel(text, maxChars = 18) {
+  if (text.length <= maxChars) return [text];
+  const parts = text.split(' / ');
+  if (parts.length === 2 && parts[0].length <= maxChars + 4 && parts[1].length <= maxChars + 4) {
+    return [parts[0] + ' /', parts[1]];
   }
-
-  document.querySelectorAll('.node.n-' + struct).forEach(node => {
-    node.classList.toggle('node-off', isOff);
-  });
-
-  // Recalcula el apagado de TODAS las líneas según el estado real de sus dos
-  // nodos: una línea que cruza estructuras (p. ej. eco-func) debe quedar
-  // apagada si CUALQUIERA de las dos estructuras que toca está apagada, sin
-  // importar cuál fue la última que se reactivó.
-  recomputeLinkOffState();
-
-  console.log((isOff ? 'Apagando' : 'Reactivando') + ' estructura:', scenario.label);
-  updateStats();
-}
-
-function recomputeLinkOffState() {
-  document.querySelectorAll('#staticNetwork .links line').forEach(link => {
-    const s = link.getAttribute('data-s');
-    const t = link.getAttribute('data-t');
-    const sNode = document.getElementById('n_' + s);
-    const tNode = document.getElementById('n_' + t);
-    const sOff = !!(sNode && sNode.classList.contains('node-off'));
-    const tOff = !!(tNode && tNode.classList.contains('node-off'));
-    link.classList.toggle('link-off', sOff || tOff);
-  });
-
-  updateFragmentationDrift();
-}
-
-// ---------------------------------------------------------------------------
-// "DESPEGUE" de nodos huérfanos: cuando se apaga un sistema, cualquier nodo
-// que se quede SIN ninguna conexión activa (aunque él mismo siga encendido)
-// se separa un poco de su posición original, empujado hacia afuera del
-// centro de la red, para mostrar visualmente que la red se está rompiendo.
-// ---------------------------------------------------------------------------
-function initNodeTransforms() {
-  document.querySelectorAll('#staticNetwork .node').forEach(nodeEl => {
-    const x0 = nodeEl.getAttribute('data-x0');
-    const y0 = nodeEl.getAttribute('data-y0');
-    nodeEl.removeAttribute('transform');
-    nodeEl.style.transform = `translate(${x0}px, ${y0}px)`;
-  });
-}
-
-function updateFragmentationDrift() {
-  document.querySelectorAll('#staticNetwork .node').forEach(nodeEl => {
-    const id = nodeEl.id.replace(/^n_/, '');
-    const x0 = parseFloat(nodeEl.getAttribute('data-x0'));
-    const y0 = parseFloat(nodeEl.getAttribute('data-y0'));
-    const isOff = nodeEl.classList.contains('node-off');
-    const links = nodeLinks[id] || [];
-    const hasActiveLink = links.some(l => !l.classList.contains('link-off'));
-    const orphaned = !isOff && links.length > 0 && !hasActiveLink;
-
-    if (orphaned) {
-      const dist = Math.hypot(x0, y0) || 1;
-      const drift = 42;
-      const dx = (x0 / dist) * drift;
-      const dy = (y0 / dist) * drift;
-      nodeEl.style.transform = `translate(${x0 + dx}px, ${y0 + dy}px)`;
-      nodeEl.classList.add('node-drift');
+  const words = text.split(' ');
+  const lines = [''];
+  words.forEach(w => {
+    const i = lines.length - 1;
+    if ((lines[i] + ' ' + w).trim().length <= maxChars || !lines[i]) {
+      lines[i] = (lines[i] + ' ' + w).trim();
     } else {
-      nodeEl.style.transform = `translate(${x0}px, ${y0}px)`;
-      nodeEl.classList.remove('node-drift');
+      lines.push(w);
     }
   });
-}
-
-// ---------------------------------------------------------------------------
-// LEYENDA
-// "Directa/Indirecta" = estilo de línea (sólida/punteada), independiente del
-// color. "Soporte/Resiliencia" = tipo de relación (color naranja/azul).
-// Ambas dimensiones convivenen en la misma línea, así que se filtran por
-// separado.
-// ---------------------------------------------------------------------------
-function toggleLinkType(type, itemEl) {
-  const isOff = itemEl.classList.toggle('off');
-  const icon = itemEl.querySelector('i');
-  if (icon) {
-    icon.classList.toggle('fa-square-check', !isOff);
-    icon.classList.toggle('fa-square', isOff);
+  if (lines.length > 2) {
+    const rest = lines.slice(1).join(' ');
+    return [lines[0], rest.length > maxChars + 6 ? rest.slice(0, maxChars + 4) + '…' : rest];
   }
+  return lines;
+}
 
-  let selector;
-  if (type === 'directa') selector = '#staticNetwork .links line:not(.link-punteada)';
-  else if (type === 'indirecta') selector = '#staticNetwork .links line.link-punteada';
-  else selector = '#staticNetwork .links line.link-' + type;
+// Trayectoria curva entre dos puntos, recortada en los bordes de los nodos
+function curvePath(a, b, rA, rB) {
+  const dx = b.x - a.x, dy = b.y - a.y;
+  const len = Math.hypot(dx, dy) || 1;
+  const ux = dx / len, uy = dy / len;
+  const p1 = { x: a.x + ux * (rA + 2), y: a.y + uy * (rA + 2) };
+  const p2 = { x: b.x - ux * (rB + 8), y: b.y - uy * (rB + 8) };
+  const mx = (p1.x + p2.x) / 2, my = (p1.y + p2.y) / 2;
+  const bow = Math.min(46, len * 0.11);
+  const cx = mx - uy * bow, cy = my + ux * bow;
+  return `M${p1.x.toFixed(1)},${p1.y.toFixed(1)} Q${cx.toFixed(1)},${cy.toFixed(1)} ${p2.x.toFixed(1)},${p2.y.toFixed(1)}`;
+}
 
-  document.querySelectorAll(selector).forEach(link => {
-    link.classList.toggle('type-off', isOff);
+function render() {
+  const gGuides = document.getElementById('gGuides');
+  const gMembers = document.getElementById('gMembers');
+  const gRels = document.getElementById('gRels');
+  const gNodes = document.getElementById('gNodes');
+  [gGuides, gMembers, gRels, gNodes].forEach(g => (g.innerHTML = ''));
+
+  // -- halos de sistema
+  SYS.forEach(s => {
+    if (!state[s]) return;
+    const p = layout[s];
+    const halo = el('circle', {
+      class: 'sys-halo',
+      cx: p.x, cy: p.y,
+      r: ringRadius[s] + 34,
+      style: `--sys:${model.systems[s].color}`
+    });
+    gGuides.appendChild(halo);
   });
 
-  console.log((isOff ? 'Ocultando' : 'Mostrando') + ' relaciones tipo:', type);
-}
+  // -- líneas de pertenencia (sistema -> concepto). No son relaciones del POT.
+  SYS.forEach(s => {
+    if (!state[s]) return;
+    model.systems[s].concepts.forEach(id => {
+      const a = layout[s], b = layout[id];
+      const dx = b.x - a.x, dy = b.y - a.y;
+      const L = Math.hypot(dx, dy) || 1;
+      gMembers.appendChild(el('line', {
+        class: 'member-link',
+        x1: a.x + (dx / L) * SYS_R, y1: a.y + (dy / L) * SYS_R,
+        x2: b.x - (dx / L) * CON_R, y2: b.y - (dy / L) * CON_R
+      }));
+    });
+  });
 
-// ---------------------------------------------------------------------------
-// RELACIONES DOCUMENTADAS EN EL POT
-// Fuente: "Red_relaciones_POT_CORREGIDA_FRASES_EXACTAS.xlsx" (hoja "Todas
-// las relaciones"). Clave: "origen|destino" tal como aparece en la tabla
-// (columnas Concepto origen -> Concepto destino). El sentido de la flecha se
-// resuelve comparando esto contra data-s/data-t de cada línea, así que no
-// importa en qué orden se dibujó la línea en el SVG.
-// ---------------------------------------------------------------------------
-const relationData = {
-  "corredores_mont|rios": { page: '70', relation: 'soporte', description: 'Art. 7', phrase: '"corredores montañosos … ríos y humedales"' },
-  "quebradas|humedales": { page: '72', relation: 'soporte', description: 'Art. 42 / 62', phrase: '"ríos y quebradas … humedales"' },
-  "cerros_orientales|humedales": { page: '70', relation: 'soporte', description: 'Art. 7', phrase: '"cerros orientales … ríos y humedales"' },
-  "humedales|rios": { page: '72', relation: 'soporte', description: 'Art. 42 / 62', phrase: '"ríos y quebradas … humedales"' },
-  "rios|complejos_paramos": { page: '70', relation: 'soporte', description: 'Art. 7', phrase: '"complejos de páramos … ríos y humedales"' },
-  "bosques_urbanos|coberturas_vegetales": { page: '73', relation: 'soporte', description: 'Art. 74', phrase: '"cobertura vegetal … flora propia"' },
-  "areas_resiliencia|coberturas_vegetales": { page: '72', relation: 'resiliencia', description: 'Art. 42', phrase: '"territorio resiliente … cambio climático"' },
-  "humedales|areas_resiliencia": { page: '72', relation: 'soporte', description: 'Art. 42', phrase: '"amortiguación de los impactos ambientales"' },
-  "areas_protegidas|humedales": { page: '71', relation: 'soporte', punteada: true, description: 'Art. 41 / 51', phrase: '"Reservas Distritales de Humedal"' },
-  "areas_protegidas|parques_eco_montana": { page: '71', relation: 'soporte', punteada: true, description: 'Art. 51 / 54', phrase: '"Parques Distritales Ecológicos de Montaña"' },
-  "areas_protegidas|reservas_forestales": { page: '71', relation: 'soporte', punteada: true, description: 'Art. 41 / 45 / 48', phrase: '"Reserva Forestal Protectora … Regional"' },
-  "reservas_forestales|humedales": { page: '72', relation: 'resiliencia', description: 'Art. 42', phrase: '"conectividad y complementariedad"' },
-  "parques_eco_montana|coberturas_vegetales": { page: '72', relation: 'soporte', punteada: true, description: 'Art. 54', phrase: '"restaurar y preservar … especies nativas"' },
-  "coberturas_vegetales|parques_borde": { page: '136', relation: 'soporte', punteada: true, description: 'Art. 121', phrase: '"coberturas vegetales … parques de borde"' },
-  "coberturas_vegetales|paisajes_sostenibles": { page: '72', relation: 'soporte', punteada: true, description: 'Art. 52 / 74', phrase: '"funcionalidad ecosistémica … conectividad"' },
-  "complejos_paramos|paisajes_sostenibles": { page: '70', relation: 'soporte', punteada: true, description: 'Art. 7 / 52', phrase: '"complejos de páramos … paisajes"' },
-  "equipamientos|servicios_cuidado": { page: '117–118', relation: 'soporte', punteada: true, description: 'Art. 94–95', phrase: '"equipamientos y servicios de cuidado"' },
-  "equipamientos|servicios_sociales": { page: '117–118', relation: 'soporte', punteada: true, description: 'Art. 94–95', phrase: '"equipamientos y servicios sociales"' },
-  "equipamientos|vivienda": { page: '117', relation: 'soporte', description: 'Art. 94 / 95', phrase: '"equipamientos … soluciones habitacionales"' },
-  "servicios_publicos|vivienda": { page: '179', relation: 'soporte', punteada: true, description: 'Art. 179', phrase: '"servicio público … actividades en la ciudad"' },
-  "ciclorrutas|vivienda": { page: '117', relation: 'soporte', punteada: true, description: 'Art. 88', phrase: '"accesibilidad … conectividad"' },
-  "ciclorrutas|transporte_publico": { page: '117 / 158–159', relation: 'resiliencia', punteada: true, noArrow: true, description: 'Art. 88 / 158–159', phrase: '"cicloinfraestructura … corredores verdes"' },
-  "transporte_publico|vivienda": { page: '117', relation: 'soporte', punteada: true, description: 'Art. 88', phrase: '"accesibilidad … conectividad"' },
-  "red_vial|transporte_publico": { page: '158–159', relation: 'soporte', description: 'Art. 158–159', phrase: '"malla arterial … transporte público"' },
-  "red_vial|equipamientos": { page: '117', relation: 'soporte', description: 'Art. 88 / 95', phrase: '"accesibilidad … equipamientos"' },
-  "corredores_verdes|ciclorrutas": { page: '117', relation: 'soporte', description: 'Política de movilidad', phrase: '"corredores verdes … cicloinfraestructura"' },
-  "corredores_verdes|transporte_publico": { page: '158–159', relation: 'soporte', description: 'Art. 158–159', phrase: '"corredores verdes de transporte público"' },
-  "manzanas_cuidado|servicios_sociales": { page: '117–118', relation: 'soporte', description: 'Art. 94–95', phrase: '"manzanas del cuidado … servicios sociales"' },
-  "manzanas_cuidado|equipamientos": { page: '117–118', relation: 'soporte', description: 'Art. 94–95', phrase: '"manzanas del cuidado … equipamientos"' },
-  "manzanas_cuidado|parques": { page: '117', relation: 'soporte', description: 'Art. 94', phrase: '"jardines infantiles, colegios, parques"' },
-  "distrito_tec|servicios_empresariales": { page: '122', relation: 'soporte', description: 'Art. 101', phrase: '"Eje de servicios empresariales"' },
-  "distrito_tec|sist_educacion": { page: '122', relation: 'soporte', description: 'Art. 100–101', phrase: '"formación del talento humano"' },
-  "centros_abastecimiento|plazas_mercado": { page: '122', relation: 'soporte', punteada: true, description: 'Art. 100–101', phrase: '"Centros de Abasto Mayorista … Plazas de Mercado"' },
-  "plazas_mercado|servicios_empresariales": { page: '122', relation: 'soporte', description: 'Art. 101', phrase: '"Plazas de Mercado … infraestructuras"' },
-  "zonas_industriales|servicios_empresariales": { page: '122', relation: 'soporte', description: 'Art. 101', phrase: '"Eje de servicios empresariales … zonas industriales"' },
-  "zonas_industriales|sist_educacion": { page: '122', relation: 'soporte', punteada: true, description: 'Art. 100–101', phrase: '"formación del talento humano … empresas"' },
-  "zonas_industriales|produccion_artesanal": { page: '122', relation: 'soporte', description: 'Art. 100–101', phrase: '"producción tradicional … industrias creativas"' },
-  "zonas_interes_turistico|plazas_mercado": { page: '122', relation: 'soporte', description: 'Art. 101', phrase: '"Zonas de Interés Turístico … Plazas de Mercado"' },
-  "centros_financieros|servicios_empresariales": { page: '122', relation: 'soporte', description: 'Art. 100', phrase: '"centros financieros y de servicios empresariales"' },
-  "sitios_sagrados|patrimonio_inmaterial": { page: '103–104', relation: 'resiliencia', description: 'Art. 80', phrase: '"patrimonio cultural inmaterial … comunidades"' },
-  "patrimonio_arqueologico|patrimonio_natural": { page: '103–104', relation: 'soporte', description: 'Art. 80', phrase: '"Patrimonio Natural … Patrimonio Arqueológico"' },
-  "patrimonio_arqueologico|patrimonio_material": { page: '103–104', relation: 'resiliencia', description: 'Art. 80', phrase: '"Patrimonio Cultural material … Patrimonio Arqueológico"' },
-  "patrimonio_natural|patrimonio_inmaterial": { page: '103–104', relation: 'soporte', description: 'Art. 80', phrase: '"patrimonio cultural material, inmaterial y natural"' },
-  "patrimonio_material|patrimonio_natural": { page: '103–104', relation: 'soporte', description: 'Art. 80', phrase: '"integra … material, inmaterial y natural"' },
-  "patrimonio_material|patrimonio_inmaterial": { page: '103–104', relation: 'soporte', description: 'Art. 80', phrase: '"patrimonio cultural material, inmaterial y natural"' },
+  // -- relaciones activas (las inactivas NO se dibujan: desaparecen de verdad)
+  model.relations.forEach(r => {
+    if (!relActive(r)) return;
+    const a = layout[r.from], b = layout[r.to];
+    const d = curvePath(a, b, CON_R, CON_R);
+    const kind = r.tipo === 'Soporte' ? 'soporte' : 'resiliencia';
+    const cls = ['rel', kind];
+    if (r.linea === 'Punteada') cls.push('punteada');
+    if (selectedRel === r.id) cls.push('sel');
 
-  // --- Relaciones ENTRE estructuras distintas (puentes de la red) ---
-  "humedales|patrimonio_natural": { page: '195–196', relation: 'soporte', punteada: true, description: 'EIP y patrimonio natural', phrase: '"la eip inscribe … patrimonio material, inmaterial y natural"' },
-  "patrimonio_arqueologico|equipamientos": { page: '200', relation: 'soporte', description: 'SDP – implementación del POT', phrase: '"incorporarlos como nodo de equipamientos próximos"' },
-  "patrimonio_inmaterial|produccion_artesanal": { page: '190', relation: 'soporte', description: 'Producción artesanal', phrase: '"actividades creativas … predominio manual"' },
-  "manzanas_cuidado|sist_educacion": { page: '126', relation: 'soporte', description: 'Manzanas del Cuidado', phrase: '"nuevos colegios y jardines … Manzanas del Cuidado"' },
-  "equipamientos|sist_educacion": { page: '126', relation: 'soporte', description: 'Infraestructura social compatible', phrase: '"infraestructura social es compatible con otros usos"' },
-  "equipamientos|servicios_empresariales": { page: '165', relation: 'soporte', punteada: true, description: 'Equipamiento y economía', phrase: '"equipamiento como detonante de dinámicas económicas"' },
-  "transporte_publico|zonas_industriales": { page: '31', relation: 'soporte', punteada: true, description: 'Sistema multimodal de transporte', phrase: '"sistema multimodal de transporte público … conectado"' },
-  "parques_eco_montana|zonas_interes_turistico": { page: '54', relation: 'soporte', punteada: true, description: 'Ecoturismo', phrase: '"ecoturismo, viverismo, agricultura urbana y periurbana"' },
-  "parques_eco_montana|patrimonio_natural": { page: '54', relation: 'soporte', description: 'Parques ecológicos de montaña', phrase: '"remanentes de bosques altoandinos … importancia ecosistémica"' },
-  "areas_resiliencia|patrimonio_natural": { page: '72', relation: 'resiliencia', punteada: true, description: 'Áreas de Resiliencia Climática', phrase: '"creamos las Áreas de Resiliencia Climática y Protección por Riesgo"' },
-};
+    const path = el('path', {
+      class: cls.join(' '),
+      d,
+      'marker-end': `url(#ar-${kind})`,
+      'data-rel': r.id
+    });
+    const hit = el('path', { class: 'rel-hit', d, 'data-rel': r.id });
 
-function findRelation(s, t) {
-  return relationData[s + '|' + t] || relationData[t + '|' + s] || null;
-}
+    [path, hit].forEach(node => {
+      node.addEventListener('click', ev => { ev.stopPropagation(); selectRelation(r.id); });
+      node.addEventListener('mouseenter', ev => showTooltip(ev,
+        `<div class="tt-sys" style="color:${model.systems[r.sO].color}">${r.sO} → ${r.sD}</div>` +
+        `${esc(r.cO)} → ${esc(r.cD)}<br><span style="color:#8891a5">${r.tipo} · ${r.evid} · p. ${r.pag}</span>`));
+      node.addEventListener('mousemove', moveTooltip);
+      node.addEventListener('mouseleave', hideTooltip);
+    });
 
-// Marca con 'has-data' cada línea (todas, en este dataset, tienen ficha) y le
-// asigna: flecha (forward/backward/both/ninguna si noArrow), y el modificador
-// 'link-punteada' cuando la lectura del POT es "Indirecta" (línea punteada).
-function applyArrowDirections() {
-  document.querySelectorAll('#staticNetwork .links line').forEach(line => {
-    const s = line.getAttribute('data-s');
-    const t = line.getAttribute('data-t');
-    const rel = relationData[s + '|' + t];
-    const relRev = relationData[t + '|' + s];
-    const isDirectional = line.classList.contains('link-soporte') || line.classList.contains('link-resiliencia');
+    gRels.appendChild(path);
+    gRels.appendChild(hit);
+  });
 
-    if (!rel && !relRev) {
-      if (isDirectional) line.classList.add('arrow-forward');
-      return;
-    }
+  // -- conceptos
+  SYS.forEach(s => {
+    if (!state[s]) return;
+    model.systems[s].concepts.forEach(id => {
+      const c = model.concepts[id];
+      const p = layout[id];
+      const isolated = !c.rels.some(relActive);
+      const g = el('g', {
+        class: 'concept node-appear' + (isolated ? ' isolated' : ''),
+        transform: `translate(${p.x.toFixed(1)},${p.y.toFixed(1)})`,
+        style: `--sys:${model.systems[s].color}`,
+        'data-id': id
+      });
+      g.appendChild(el('circle', { r: CON_R }));
 
-    line.classList.add('has-data');
+      const lines = wrapLabel(c.label);
+      lines.forEach((ln, i) => {
+        const t = el('text', { y: CON_R + 10 + i * 8.6 });
+        t.textContent = ln;
+        g.appendChild(t);
+      });
 
-    const noArrow = (rel && rel.noArrow) || (relRev && relRev.noArrow);
-    if (noArrow) return; // sin flecha: el POT no permite identificar una dirección inequívoca
+      g.addEventListener('mouseenter', ev => showTooltip(ev,
+        `<div class="tt-sys" style="color:${model.systems[s].color}">${s}</div>${esc(c.label)}<br>` +
+        `<span style="color:#8891a5">${c.rels.filter(relActive).length} relación(es) activa(s)${isolated ? ' · AISLADO' : ''}</span>`));
+      g.addEventListener('mousemove', moveTooltip);
+      g.addEventListener('mouseleave', hideTooltip);
+      g.addEventListener('click', ev => { ev.stopPropagation(); focusConcept(id); });
 
-    let cls = 'arrow-forward';
-    if ((rel && rel.bidirectional) || (relRev && relRev.bidirectional)) {
-      cls = 'arrow-both';
-    } else if (relRev) {
-      cls = 'arrow-backward';
-    }
-    line.classList.add(cls);
+      gNodes.appendChild(g);
+    });
+  });
+
+  // -- nodos de sistema
+  SYS.forEach(s => {
+    if (!state[s]) return;
+    const sy = model.systems[s];
+    const p = layout[s];
+    const g = el('g', {
+      class: 'sys-node node-appear',
+      transform: `translate(${p.x},${p.y})`,
+      style: `--sys:${sy.color}`,
+      'data-sys': s
+    });
+    g.appendChild(el('circle', { class: 'core', r: SYS_R }));
+    const code = el('text', { class: 'code', y: 2 });
+    code.textContent = s;
+    g.appendChild(code);
+    const role = el('text', { class: 'role', y: 15 });
+    role.textContent = sy.funcion;
+    g.appendChild(role);
+
+    g.addEventListener('mouseenter', ev => showTooltip(ev,
+      `<div class="tt-sys" style="color:${sy.color}">${s}</div>${esc(sy.nombre)}<br>` +
+      `<span style="color:#8891a5">${sy.concepts.length} conceptos · ${outgoing(s)} relaciones salientes activas</span>`));
+    g.addEventListener('mousemove', moveTooltip);
+    g.addEventListener('mouseleave', hideTooltip);
+    g.addEventListener('click', ev => { ev.stopPropagation(); toggleSystem(s); });
+
+    gNodes.appendChild(g);
   });
 }
 
-// Oculta por defecto las líneas Directa/Indirecta que NO tienen ficha
-// (no debería quedar ninguna en este dataset, pero se conserva por si se
-// agregan relaciones sin evidencia documentada más adelante).
-function hideUndocumentedLines() {
-  document.querySelectorAll('#staticNetwork .links line.link-directa, #staticNetwork .links line.link-indirecta').forEach(line => {
-    if (!line.classList.contains('has-data')) {
-      line.classList.add('type-off');
-    }
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+// ---------------------------------------------------------------------
+// 4. MÉTRICAS
+// ---------------------------------------------------------------------
+const outgoing = s => model.relations.filter(r => r.sO === s && relActive(r)).length;
+const incoming = s => model.relations.filter(r => r.sD === s && relActive(r)).length;
+// relaciones que desaparecerían si ese sistema se apagara (desde red completa)
+const incident = s => model.relations.filter(r => r.sO === s || r.sD === s).length;
+
+function components() {
+  const adj = {};
+  const add = (a, b) => {
+    (adj[a] = adj[a] || []).push(b);
+    (adj[b] = adj[b] || []).push(a);
+  };
+  const nodes = [];
+  SYS.forEach(s => {
+    if (!state[s]) return;
+    nodes.push(s);
+    adj[s] = adj[s] || [];
+    model.systems[s].concepts.forEach(id => {
+      nodes.push(id);
+      adj[id] = adj[id] || [];
+      add(s, id);
+    });
   });
+  model.relations.forEach(r => { if (relActive(r)) add(r.from, r.to); });
+
+  const seen = new Set();
+  const sizes = [];
+  nodes.forEach(n => {
+    if (seen.has(n)) return;
+    let size = 0;
+    const stack = [n];
+    seen.add(n);
+    while (stack.length) {
+      const cur = stack.pop();
+      size++;
+      (adj[cur] || []).forEach(nb => { if (!seen.has(nb)) { seen.add(nb); stack.push(nb); } });
+    }
+    sizes.push(size);
+  });
+  sizes.sort((a, b) => b - a);
+  return { count: sizes.length, largest: sizes[0] || 0, totalNodes: nodes.length };
 }
 
-let selectedLink = null;
+function updateMetrics() {
+  const total = model.relations.length;
+  const active = model.relations.filter(relActive).length;
+  const pct = total ? Math.round((active / total) * 100) : 0;
+  const comp = components();
+  const totalNodes = SYS.length + Object.keys(model.concepts).length;
 
-function openRelationPanel(line) {
-  const s = line.getAttribute('data-s');
-  const t = line.getAttribute('data-t');
-  const sEl = document.getElementById('n_' + s);
-  const tEl = document.getElementById('n_' + t);
-  const sLabel = sEl ? nodeLabel(sEl) : s;
-  const tLabel = tEl ? nodeLabel(tEl) : t;
+  const isolatedCount = Object.values(model.concepts)
+    .filter(c => state[c.sys] && !c.rels.some(relActive)).length;
 
-  const rel = findRelation(s, t);
-  const isSoporte = line.classList.contains('link-soporte');
-  const relationName = rel ? rel.relation : (isSoporte ? 'soporte' : 'resiliencia');
+  set('mRelTot', total);
+  set('mRelAct', active + ' <small>/ ' + total + '</small>');
+  set('mPct', pct + '<small>%</small>');
+  set('mNodTot', totalNodes);
+  set('mNodAct', comp.totalNodes + ' <small>/ ' + totalNodes + '</small>');
+  set('mComp', comp.count);
+  set('mMain', comp.largest + ' <small>nodos</small>');
+  set('mIso', isolatedCount);
 
-  document.querySelectorAll('.links line.link-selected').forEach(l => l.classList.remove('link-selected'));
-  line.classList.add('link-selected');
-  selectedLink = line;
+  const bar = document.getElementById('mBar');
+  bar.style.width = pct + '%';
+  bar.style.background = pct === 100 ? 'var(--eep)' : pct >= 60 ? 'var(--eseci)' : 'var(--danger)';
 
-  const arrowSymbol = line.classList.contains('arrow-both') ? '↔' : (line.classList.contains('arrow-forward') || line.classList.contains('arrow-backward') ? '→' : '—');
-  document.getElementById('relConcepts').textContent = `${sLabel} ${arrowSymbol} ${tLabel}`;
+  // ---- centralidad saliente (calculada, nunca fija) ----
+  const rank = SYS.map(s => ({ s, out: outgoing(s), inc: incoming(s), on: state[s] }))
+    .sort((a, b) => b.out - a.out || a.s.localeCompare(b.s));
+  const maxOut = Math.max(1, ...rank.map(r => r.out));
 
-  const badge = document.getElementById('relBadge');
-  const badgeNames = { soporte: 'Soporte', resiliencia: 'Resiliencia', directa: 'Directa' };
-  badge.textContent = badgeNames[relationName] || 'Directa';
-  badge.className = 'relation-badge badge-' + relationName;
+  document.getElementById('rankList').innerHTML = rank.map((r, i) => `
+    <div class="rank-row ${r.on ? '' : 'is-off'}" style="--sys:${model.systems[r.s].color}">
+      <span class="pos">${i + 1}</span>
+      <span class="code">${r.s}</span>
+      <span class="track"><span class="fill" style="width:${(r.out / maxOut) * 100}%"></span></span>
+      <span class="n">${r.out}</span>
+    </div>`).join('');
 
-  const descEl = document.getElementById('relDescription');
-  if (rel && rel.description) {
-    descEl.textContent = rel.description;
-    descEl.style.display = 'block';
+  const top = rank[0];
+  const tie = rank.filter(r => r.out === top.out && top.out > 0);
+  document.getElementById('topSys').innerHTML = top.out === 0
+    ? '<span class="badge-top">Sin relaciones salientes activas</span>'
+    : `<span class="badge-top" style="color:${model.systems[top.s].color};border-color:${model.systems[top.s].color}66;background:${model.systems[top.s].color}1f">
+         ${tie.length > 1 ? tie.map(t => t.s).join(' / ') : top.s} · Mayor centralidad
+       </span>`;
+  set('mCentral', top.out === 0 ? '—' : (tie.length > 1 ? tie.map(t => t.s).join(' / ') : top.s));
+
+  // ---- comparación: dependencia que genera cada sistema ----
+  const maxInc = Math.max(...SYS.map(incident));
+  document.getElementById('compareList').innerHTML = SYS
+    .map(s => ({ s, n: incident(s) }))
+    .sort((a, b) => b.n - a.n)
+    .map(o => `
+      <div class="compare-row" style="--sys:${model.systems[o.s].color}">
+        <span class="code">${o.s}</span>
+        <span class="track"><span class="fill" style="width:${(o.n / maxInc) * 100}%"></span></span>
+        <span class="n">${o.n} rel.</span>
+      </div>`).join('');
+
+  updateSimPanel(active, total, rank);
+}
+
+const set = (id, html) => { document.getElementById(id).innerHTML = html; };
+
+function updateSimPanel(active, total, rank) {
+  const off = SYS.filter(s => !state[s]);
+  const box = document.getElementById('simBox');
+
+  if (!off.length) {
+    box.innerHTML = `<p class="ev-empty">Todos los sistemas están activos. Apaga uno para medir cuánta articulación aporta a la red.</p>`;
   } else {
-    descEl.style.display = 'none';
+    const removed = total - active;
+    const loss = total ? Math.round((removed / total) * 100) : 0;
+    box.innerHTML = `
+      <div class="sim-off">
+        <div class="k">Sistema${off.length > 1 ? 's' : ''} desactivado${off.length > 1 ? 's' : ''}</div>
+        <div class="v">${off.join(' + ')}</div>
+      </div>
+      <div class="sim-line"><span>Relaciones eliminadas</span><span>${removed}</span></div>
+      <div class="sim-line"><span>Relaciones restantes</span><span>${active}</span></div>
+      <div class="sim-line"><span>Pérdida de conectividad</span><span>${loss}%</span></div>
+      <p class="note" style="border:0;padding-top:9px">Al desactivar ${off.join(' + ')}, la red pierde ${loss}% de sus relaciones.</p>`;
   }
 
-  document.getElementById('relPhrase').textContent = rel ? rel.phrase : 'Aún no hay una ficha con la frase exacta del POT para esta relación.';
-  document.getElementById('relPage').textContent = rel ? ('Página ' + rel.page) : '—';
-
-  document.getElementById('relationPanel').style.display = 'block';
-  document.getElementById('relationPanel').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  // ---- hallazgo dinámico ----
+  const top = rank[0];
+  const f = document.getElementById('finding');
+  if (!off.length) {
+    f.innerHTML = top.out === 0
+      ? 'Sin relaciones activas para analizar.'
+      : `La red está completa: <b>${active} de ${total}</b> relaciones activas.
+         Según las relaciones construidas a partir del POT, <b>${top.s}</b> concentra la mayor
+         centralidad saliente (<b>${top.out}</b> relaciones), por lo que opera como
+         <b>principal articulador de esta red</b>.`;
+  } else {
+    const removed = total - active;
+    const loss = total ? Math.round((removed / total) * 100) : 0;
+    const worst = SYS.map(s => ({ s, n: incident(s) })).sort((a, b) => b.n - a.n)[0];
+    f.innerHTML = `Al desactivar <b>${off.join(' + ')}</b>, la red pierde <b>${removed}</b> de sus
+      <b>${total}</b> relaciones (<b>${loss}%</b>) y queda con <b>${components().count}</b>
+      componente(s) conectado(s).
+      ${top.out > 0
+        ? `Con la red así, <b>${top.s}</b> pasa a tener la mayor centralidad saliente (<b>${top.out}</b> relaciones).`
+        : 'No quedan relaciones salientes activas.'}
+      En la red completa, el sistema que genera mayor dependencia es <b>${worst.s}</b>
+      (${worst.n} relaciones incidentes).`;
+  }
 }
 
-function closeRelationPanel() {
-  document.getElementById('relationPanel').style.display = 'none';
-  if (selectedLink) selectedLink.classList.remove('link-selected');
-  selectedLink = null;
+// ---------------------------------------------------------------------
+// 5. INTERACCIÓN
+// ---------------------------------------------------------------------
+function toggleSystem(s) {
+  state[s] = !state[s];
+  lastToggledOff = state[s] ? null : s;
+  if (selectedRel !== null) {
+    const r = model.relations.find(x => x.id === selectedRel);
+    if (r && !relActive(r)) clearEvidence();
+  }
+  updateSwitches();
+  render();
+  updateMetrics();
 }
 
-// ---------------------------------------------------------------------------
-// RED: adjacencia, tamaño dinámico según conectividad, selección/resaltado,
-// zoom, reset, stats
-// ---------------------------------------------------------------------------
-let adjacency = {};       // nodeId -> Set de nodeIds vecinos
-let nodeLinks = {};       // nodeId -> [line elements]
-let selectedNode = null;
-const baseViewBox = { x: -523, y: -364, w: 926, h: 704 };
-let currentViewBox = { ...baseViewBox };
-
-function buildAdjacency() {
-  adjacency = {};
-  nodeLinks = {};
-  document.querySelectorAll('#staticNetwork .links line').forEach(line => {
-    const s = line.getAttribute('data-s');
-    const t = line.getAttribute('data-t');
-    if (!s || !t) return;
-    (adjacency[s] = adjacency[s] || new Set()).add(t);
-    (adjacency[t] = adjacency[t] || new Set()).add(s);
-    (nodeLinks[s] = nodeLinks[s] || []).push(line);
-    (nodeLinks[t] = nodeLinks[t] || []).push(line);
-  });
-}
-
-// Tres presets de tamaño (radio del círculo, tamaño del ícono, posición del
-// texto) según el número real de conexiones del nodo. Un nodo con más
-// relaciones documentadas en el POT se dibuja más grande.
-const SIZE_PRESETS = {
-  low:  { r: 13, fo: 17, icon: 9,  textY: 23 },
-  mid:  { r: 21, fo: 30, icon: 12, textY: 32 },
-  high: { r: 34, fo: 48, icon: 17, textY: 48 }
-};
-
-function degreeTier(degree) {
-  if (degree >= 5) return 'high';
-  if (degree >= 3) return 'mid';
-  return 'low';
-}
-
-// Redimensiona cada nodo (círculo, ícono y posición del texto) según su
-// grado real de conectividad calculado a partir de las líneas del SVG.
-function applyDynamicSizing() {
-  document.querySelectorAll('#staticNetwork .node').forEach(nodeEl => {
-    const id = nodeEl.id.replace(/^n_/, '');
-    const degree = (adjacency[id] || new Set()).size;
-    const tier = degreeTier(degree);
-    const preset = SIZE_PRESETS[tier];
-
-    nodeEl.classList.remove('node-hub', 'node-main');
-    if (tier === 'mid') nodeEl.classList.add('node-hub');
-    if (tier === 'high') nodeEl.classList.add('node-main');
-
-    const circle = nodeEl.querySelector('circle.node-fill');
-    if (circle) circle.setAttribute('r', preset.r);
-
-    const fo = nodeEl.querySelector('foreignObject');
-    if (fo) {
-      const off = -preset.fo / 2;
-      fo.setAttribute('x', off);
-      fo.setAttribute('y', off);
-      fo.setAttribute('width', preset.fo);
-      fo.setAttribute('height', preset.fo);
-    }
-
-    const icon = nodeEl.querySelector('.node-icon i');
-    if (icon) icon.style.fontSize = preset.icon + 'px';
-
-    const text = nodeEl.querySelector('text.node-label');
-    if (text) {
-      text.setAttribute('y', preset.textY);
-      // Evita que las etiquetas largas se salgan del círculo.
-      const label = text.textContent.trim();
-      const estWidth = label.length * (tier === 'high' ? 4.1 : tier === 'mid' ? 3.7 : 3.4);
-      const maxWidth = preset.r * 2 * 1.55;
-      if (estWidth > maxWidth) {
-        text.setAttribute('textLength', maxWidth.toFixed(0));
-        text.setAttribute('lengthAdjust', 'spacingAndGlyphs');
-      } else {
-        text.removeAttribute('textLength');
-        text.removeAttribute('lengthAdjust');
-      }
+function updateSwitches() {
+  SYS.forEach(s => {
+    const b = document.querySelector('.scenario-btn[data-sys="' + s + '"]');
+    if (!b) return;
+    const off = !state[s];
+    // en este módulo, "active" = escenario de apagado encendido
+    b.classList.toggle('active', off);
+    const st = b.querySelector('.sys-state');
+    if (st) st.textContent = off ? 'OFF' : 'ON';
+    const ic = b.querySelector('i');
+    if (ic) {
+      ic.classList.toggle('fa-circle-minus', !off);
+      ic.classList.toggle('fa-power-off', off);
     }
   });
 }
 
-// Asigna deg-low / deg-mid / deg-high para el glow (mismo criterio que el
-// tamaño, así el glow y el tamaño crecen juntos).
-function applyConnectivityGlow() {
-  document.querySelectorAll('#staticNetwork .node').forEach(nodeEl => {
-    const id = nodeEl.id.replace(/^n_/, '');
-    const degree = (adjacency[id] || new Set()).size;
-    const tier = degreeTier(degree);
-    nodeEl.classList.remove('deg-low', 'deg-mid', 'deg-high');
-    nodeEl.classList.add('deg-' + tier);
+function resetAll() {
+  SYS.forEach(s => (state[s] = true));
+  lastToggledOff = null;
+  clearEvidence();
+  updateSwitches();
+  render();
+  updateMetrics();
+  resetView();
+}
+
+function selectRelation(id) {
+  selectedRel = id;
+  const r = model.relations.find(x => x.id === id);
+  if (!r) return;
+  const kind = r.tipo === 'Soporte' ? 'soporte' : 'resiliencia';
+
+  document.getElementById('evBox').innerHTML = `
+    <div class="ev-rel">
+      <span style="color:${model.systems[r.sO].color}">${r.sO}</span>
+      <span class="arrow">→</span>
+      <span style="color:${model.systems[r.sD].color}">${r.sD}</span>
+    </div>
+    <div class="ev-concepts"><b>${esc(r.cO)}</b> ${r.dir} <b>${esc(r.cD)}</b></div>
+    <div class="ev-meta">
+      <div><div class="k">Tipo</div><div class="v" style="color:var(--${kind})">${r.tipo}</div></div>
+      <div><div class="k">Línea</div><div class="v">${r.evid}</div></div>
+      <div><div class="k">Trazo</div><div class="v">${r.linea}</div></div>
+      <div><div class="k">Página impresa</div><div class="v">${r.pag}</div></div>
+    </div>
+    <div class="ev-quote ${kind}">${esc(r.frase)}</div>
+    <div class="ev-src">Frase literal del POT Bogotá Reverdece 2022–2035 · página impresa ${r.pag}</div>`;
+
+  render();
+}
+
+function clearEvidence() {
+  selectedRel = null;
+  document.getElementById('evBox').innerHTML =
+    `<p class="ev-empty">Haz clic en cualquier línea de la red para ver la frase exacta del POT que sustenta esa relación, con su página impresa.</p>`;
+}
+
+// Resalta un concepto y sus relaciones activas
+function focusConcept(id) {
+  const c = model.concepts[id];
+  const neighbors = new Set([id]);
+  c.rels.filter(relActive).forEach(r => { neighbors.add(r.from); neighbors.add(r.to); });
+
+  document.querySelectorAll('.concept').forEach(g => {
+    g.classList.toggle('dim', !neighbors.has(g.getAttribute('data-id')));
+  });
+  document.querySelectorAll('.rel').forEach(p => {
+    const r = model.relations.find(x => x.id === +p.getAttribute('data-rel'));
+    p.classList.toggle('dim', !(r && (r.from === id || r.to === id)));
+  });
+  document.querySelectorAll('.sys-node').forEach(g => {
+    g.classList.toggle('dim', g.getAttribute('data-sys') !== c.sys);
   });
 }
 
-function nodeLabel(nodeEl) {
-  const span = nodeEl.querySelector('.node-label');
-  return span ? span.textContent.replace(/\s+/g, ' ').trim() : nodeEl.id;
+function clearFocus() {
+  document.querySelectorAll('.dim').forEach(n => n.classList.remove('dim'));
 }
 
-// ---------------------------------------------------------------------------
-// PANEL "¿Qué pasa si se desconecta un nodo central?"
-// Ofrece varias opciones (no solo el de mayor grado): se listan los nodos
-// con más conexiones documentadas para que el usuario elija cuál simular.
-// ---------------------------------------------------------------------------
-let centralNodeId = null;
-let centralNodeOff = false;
-const CENTRAL_OPTIONS_COUNT = 8;
+// ---------------------------------------------------------------------
+// 6. TOOLTIP
+// ---------------------------------------------------------------------
+const tip = () => document.getElementById('tooltip');
 
-function topCentralNodes(count) {
-  return Object.keys(adjacency)
-    .map(id => ({ id, degree: adjacency[id].size }))
-    .sort((a, b) => b.degree - a.degree)
-    .slice(0, count);
+function showTooltip(ev, html) {
+  const t = tip();
+  t.innerHTML = html;
+  t.classList.add('show');
+  moveTooltip(ev);
 }
 
-function updateCentralNodePanel() {
-  const select = document.getElementById('centralNodeSelect');
-  if (!select) return;
-
-  const options = topCentralNodes(CENTRAL_OPTIONS_COUNT);
-  select.innerHTML = options.map(opt => {
-    const nodeEl = document.getElementById('n_' + opt.id);
-    const label = nodeEl ? nodeLabel(nodeEl) : opt.id;
-    return `<option value="${opt.id}">${label} · ${opt.degree} conexiones</option>`;
-  }).join('');
-
-  if (options.length) {
-    centralNodeId = options[0].id;
-    select.value = centralNodeId;
-  }
+function moveTooltip(ev) {
+  const t = tip();
+  const stage = document.getElementById('stage').getBoundingClientRect();
+  let x = ev.clientX - stage.left + 14;
+  let y = ev.clientY - stage.top + 14;
+  if (x + 270 > stage.width) x -= 290;
+  if (y + 90 > stage.height) y -= 110;
+  t.style.left = x + 'px';
+  t.style.top = y + 'px';
 }
 
-function onCentralNodeChange() {
-  // Si había un nodo apagado y el usuario elige otro, reconecta el anterior
-  // antes de cambiar de selección.
-  if (centralNodeOff) toggleCentralNode();
-  const select = document.getElementById('centralNodeSelect');
-  centralNodeId = select.value;
+function hideTooltip() { tip().classList.remove('show'); }
+
+// ---------------------------------------------------------------------
+// 7. ZOOM Y DESPLAZAMIENTO
+// ---------------------------------------------------------------------
+const BASE_VB = { x: -690, y: -690, w: 1380, h: 1380 };
+let vb = Object.assign({}, BASE_VB);
+
+function applyVB() {
+  document.getElementById('svg').setAttribute('viewBox', `${vb.x} ${vb.y} ${vb.w} ${vb.h}`);
 }
 
-function toggleCentralNode() {
-  if (!centralNodeId) return;
-  const nodeEl = document.getElementById('n_' + centralNodeId);
-  if (!nodeEl) return;
-
-  centralNodeOff = !centralNodeOff;
-
-  nodeEl.classList.toggle('node-off', centralNodeOff);
-  recomputeLinkOffState();
-
-  const select = document.getElementById('centralNodeSelect');
-  if (select) select.disabled = centralNodeOff;
-
-  const btn = document.getElementById('centralSimBtn');
-  if (btn) {
-    btn.classList.toggle('active', centralNodeOff);
-    btn.innerHTML = centralNodeOff
-      ? '<i class="fa-solid fa-power-off"></i>Reconectar'
-      : '<i class="fa-solid fa-power-off"></i>Simular';
-  }
-
-  console.log((centralNodeOff ? 'Desconectando' : 'Reconectando') + ' nodo central:', centralNodeId);
+function zoom(f, cx, cy) {
+  const nw = Math.max(320, Math.min(3200, vb.w / f));
+  const nh = nw * (BASE_VB.h / BASE_VB.w);
+  if (cx === undefined) { cx = vb.x + vb.w / 2; cy = vb.y + vb.h / 2; }
+  vb.x = cx - (cx - vb.x) * (nw / vb.w);
+  vb.y = cy - (cy - vb.y) * (nh / vb.h);
+  vb.w = nw; vb.h = nh;
+  applyVB();
 }
 
-// ---------------------------------------------------------------------------
-// Los nodos son fijos (posición calculada por el layout de la red); ya no se
-// pueden arrastrar. updateLinesForNode se conserva por si en el futuro se
-// necesita mover un nodo por código.
-// ---------------------------------------------------------------------------
-function updateLinesForNode(id, x, y) {
-  document.querySelectorAll('#staticNetwork .links line[data-s="' + id + '"]').forEach(l => {
-    l.setAttribute('x1', x); l.setAttribute('y1', y);
+function resetView() { vb = Object.assign({}, BASE_VB); applyVB(); }
+
+function initPanZoom() {
+  const stage = document.getElementById('stage');
+  const svg = document.getElementById('svg');
+
+  stage.addEventListener('wheel', e => {
+    e.preventDefault();
+    const rect = svg.getBoundingClientRect();
+    const cx = vb.x + ((e.clientX - rect.left) / rect.width) * vb.w;
+    const cy = vb.y + ((e.clientY - rect.top) / rect.height) * vb.h;
+    zoom(e.deltaY < 0 ? 1.16 : 1 / 1.16, cx, cy);
+  }, { passive: false });
+
+  let dragging = false, sx = 0, sy = 0, ox = 0, oy = 0;
+  stage.addEventListener('pointerdown', e => {
+    dragging = true; sx = e.clientX; sy = e.clientY; ox = vb.x; oy = vb.y;
+    stage.classList.add('panning');
+    stage.setPointerCapture(e.pointerId);
   });
-  document.querySelectorAll('#staticNetwork .links line[data-t="' + id + '"]').forEach(l => {
-    l.setAttribute('x2', x); l.setAttribute('y2', y);
+  stage.addEventListener('pointermove', e => {
+    if (!dragging) return;
+    const rect = svg.getBoundingClientRect();
+    vb.x = ox - ((e.clientX - sx) / rect.width) * vb.w;
+    vb.y = oy - ((e.clientY - sy) / rect.height) * vb.h;
+    applyVB();
   });
+  const end = () => { dragging = false; stage.classList.remove('panning'); };
+  stage.addEventListener('pointerup', end);
+  stage.addEventListener('pointercancel', end);
+
+  svg.addEventListener('click', () => { clearFocus(); });
 }
 
-function selectNode(id) {
-  const nodeEl = document.getElementById('n_' + id);
-  if (!nodeEl) return;
+// ---------------------------------------------------------------------
+// 8. ARRANQUE
+// ---------------------------------------------------------------------
+let initialized = false;
 
-  if (selectedNode === id) {
-    clearSelection();
-    return;
-  }
+document.addEventListener('DOMContentLoaded', () => {
+  if (initialized) return;
+  initialized = true;
 
-  selectedNode = id;
-  const neighbors = adjacency[id] || new Set();
+  buildModel();
+  computeLayout();
 
-  document.querySelectorAll('#staticNetwork .node').forEach(n => {
-    const nid = n.id.replace(/^n_/, '');
-    const keep = nid === id || neighbors.has(nid);
-    n.classList.toggle('node-dim', !keep);
-    n.classList.toggle('node-selected', nid === id);
-  });
+  // interruptores = los botones de escenario del módulo
+  document.querySelectorAll('.scenario-btn[data-sys]').forEach(b =>
+    b.addEventListener('click', () => toggleSystem(b.getAttribute('data-sys'))));
+  updateSwitches();
 
-  document.querySelectorAll('#staticNetwork .links line').forEach(l => {
-    const active = l.getAttribute('data-s') === id || l.getAttribute('data-t') === id;
-    l.classList.toggle('link-dim', !active);
-    l.classList.toggle('link-active', active);
-  });
+  document.getElementById('btnReset').addEventListener('click', resetAll);
+  document.getElementById('btnIn').addEventListener('click', () => zoom(1.25));
+  document.getElementById('btnOut').addEventListener('click', () => zoom(0.8));
+  document.getElementById('btnFit').addEventListener('click', resetView);
 
-  const chip = document.getElementById('selectedChip');
-  const label = document.getElementById('statSelected');
-  if (chip && label) {
-    label.textContent = nodeLabel(nodeEl) + ' · ' + neighbors.size + ' conexiones';
-    chip.style.display = 'flex';
-  }
+  clearEvidence();
+  initPanZoom();
+  applyVB();
+  render();
+  updateMetrics();
 
-  checkIndicatorPrompt(id);
-}
-
-function clearSelection() {
-  selectedNode = null;
-  document.querySelectorAll('#staticNetwork .node').forEach(n => {
-    n.classList.remove('node-dim', 'node-selected');
-  });
-  document.querySelectorAll('#staticNetwork .links line').forEach(l => {
-    l.classList.remove('link-dim', 'link-active');
-  });
-  checkIndicatorPrompt(null);
-  const chip = document.getElementById('selectedChip');
-  if (chip) chip.style.display = 'none';
-}
-
-function applyViewBox() {
-  const svg = document.getElementById('staticNetwork');
-  if (!svg) return;
-  svg.setAttribute('viewBox', `${currentViewBox.x} ${currentViewBox.y} ${currentViewBox.w} ${currentViewBox.h}`);
-}
-
-function resetNetwork() {
-  document.querySelectorAll('.scenario-btn.active').forEach(btn => {
-    const key = btn.getAttribute('data-scenario');
-    loadScenario(key, btn);
-  });
-
-  document.querySelectorAll('.legend-item.off').forEach(item => {
-    toggleLinkType(item.getAttribute('data-linktype'), item);
-  });
-
-  clearSelection();
-  closeRelationPanel();
-
-  if (centralNodeOff) toggleCentralNode();
-
-  currentViewBox = { ...baseViewBox };
-  applyViewBox();
-  updateStats();
-  console.log('Red reiniciada');
-}
-
-function updateStats() {
-  const totalNodes = document.querySelectorAll('#staticNetwork .node').length;
-  const totalLinks = document.querySelectorAll('#staticNetwork .links line').length;
-  const totalStructs = Object.keys(scenarios).length;
-  const offStructs = document.querySelectorAll('.scenario-btn.active').length;
-
-  const nEl = document.getElementById('statNodes');
-  const lEl = document.getElementById('statLinks');
-  const aEl = document.getElementById('statActive');
-  if (nEl) nEl.textContent = totalNodes;
-  if (lEl) lEl.textContent = totalLinks;
-  if (aEl) aEl.textContent = (totalStructs - offStructs) + '/' + totalStructs;
-}
-
-document.addEventListener('DOMContentLoaded', function () {
-  buildAdjacency();
-  applyArrowDirections();
-  applyDynamicSizing();
-  applyConnectivityGlow();
-  hideUndocumentedLines();
-  applyViewBox();
-  updateCentralNodePanel();
-  updateStats();
-  initNodeTransforms();
-
-  document.querySelectorAll('#staticNetwork .node').forEach(nodeEl => {
-    nodeEl.addEventListener('click', (e) => {
-      e.stopPropagation();
-      selectNode(nodeEl.id.replace(/^n_/, ''));
-    });
-  });
-
-  document.querySelectorAll('#staticNetwork .links line.link-soporte, #staticNetwork .links line.link-resiliencia, #staticNetwork .links line.has-data').forEach(line => {
-    line.addEventListener('click', (e) => {
-      e.stopPropagation();
-      openRelationPanel(line);
-    });
-  });
-
-  const svg = document.getElementById('staticNetwork');
-  if (svg) {
-    svg.addEventListener('click', (e) => {
-      if (e.target === svg) {
-        clearSelection();
-        closeRelationPanel();
-      }
-    });
-  }
+  // verificación de integridad de datos en consola
+  const r = model.relations;
+  console.log('Relaciones cargadas:', r.length,
+    '| Sólidas:', r.filter(x => x.linea === 'Sólida').length,
+    '| Punteadas:', r.filter(x => x.linea === 'Punteada').length,
+    '| Soporte:', r.filter(x => x.tipo === 'Soporte').length,
+    '| Resiliencia:', r.filter(x => x.tipo === 'Resiliencia').length,
+    '| Conceptos:', Object.keys(model.concepts).length);
 });
-
-// ---------------------------------------------------------------------------
-// INDICADORES DE SIMULACIÓN
-// Cada indicador está anclado a un par de nodos conectados en la red. Al
-// seleccionar cualquiera de los dos nodos del par aparece un aviso; al abrir
-// el indicador se resaltan SOLO esos dos nodos y la flecha entre ellos, y se
-// muestra la fórmula, se puede simular con cualquier valor, y se explica la
-// cadena de causalidad.
-// ---------------------------------------------------------------------------
-const INDICATORS = {
-  'transporte_publico|vivienda': {
-    pair: ['transporte_publico', 'vivienda'],
-    tag: 'Transporte público → Vivienda',
-    title: 'Accesibilidad residencial al transporte público',
-    varName: 'A<sub>TP</sub>',
-    numLabel: 'Viviendas a ≤500 m de una parada',
-    denLabel: 'Viviendas totales',
-    numField: 'Viviendas a ≤500 m de una parada',
-    denField: 'Viviendas totales',
-    explanation: 'Mide qué porcentaje de las viviendas de la zona tiene una parada de transporte público a menos de 500 metros. A mayor indicador, mayor accesibilidad residencial al sistema de transporte.',
-    cascade: ['Transporte público', 'Cobertura de vivienda', 'Indicador A_TP'],
-    cascadeText: 'Si cambia el transporte público → cambia la cobertura de vivienda → cambia el indicador.'
-  },
-  'corredores_verdes|ciclorrutas': {
-    pair: ['corredores_verdes', 'ciclorrutas'],
-    tag: 'Corredores verdes → Ciclorrutas',
-    title: 'Integración de la cicloinfraestructura con los corredores verdes',
-    varName: 'I<sub>CV</sub>',
-    numLabel: 'km de ciclorrutas que recorren o se integran a corredores verdes',
-    denLabel: 'km totales de ciclorrutas',
-    numField: 'km de ciclorrutas dentro/junto a un corredor verde',
-    denField: 'km totales de ciclorrutas',
-    explanation: 'Numerador: kilómetros de ciclorrutas que están dentro, junto a o conectadas directamente con un corredor verde. Denominador: kilómetros totales de ciclorrutas del área estudiada. Resultado: porcentaje de la red ciclista articulada con la estructura verde. A mayor indicador, mayor integración entre la movilidad ciclista y los corredores verdes.',
-    cascade: ['Corredores verdes', 'Cicloinfraestructura articulada', 'Indicador I_CV'],
-    cascadeText: 'Si cambian los corredores verdes → cambia la articulación de las ciclorrutas → cambia el indicador.'
-  },
-  'humedales|espacio_publico': {
-    pair: ['humedales', 'espacio_publico'],
-    tag: 'Humedales → Espacio público',
-    title: 'Vinculación del espacio público a los humedales',
-    varName: 'I<sub>H</sub>',
-    numLabel: 'Área de espacio público vinculada a humedales',
-    denLabel: 'Área total de espacio público',
-    numField: 'Área de espacio público vinculada a humedales (m²)',
-    denField: 'Área total de espacio público (m²)',
-    explanation: 'A mayor indicador, mayor integración entre el sistema ambiental y el espacio público.',
-    cascade: ['Humedales', 'Espacio público vinculado', 'Indicador I_H'],
-    cascadeText: 'Si cambian los humedales → cambia el espacio público vinculado a ellos → cambia el indicador.'
-  },
-  'red_vial|equipamientos': {
-    pair: ['red_vial', 'equipamientos'],
-    tag: 'Red vial → Equipamientos',
-    title: 'Articulación de la red vial con los equipamientos',
-    varName: 'I',
-    numLabel: 'Equipamientos con acceso adecuado por la red vial',
-    denLabel: 'Total de equipamientos',
-    numField: 'Equipamientos con acceso adecuado por la red vial',
-    denField: 'Total de equipamientos',
-    explanation: 'Un mayor porcentaje indica una mayor articulación entre la red vial y la distribución territorial de los equipamientos.',
-    cascade: ['Red vial', 'Acceso a equipamientos', 'Indicador I'],
-    cascadeText: 'Si cambia la red vial → cambia el acceso a los equipamientos → cambia el indicador.'
-  }
-};
-
-let activeIndicatorKey = null;
-
-function findIndicatorForNode(id) {
-  for (const key in INDICATORS) {
-    if (INDICATORS[key].pair.includes(id)) return key;
-  }
-  return null;
-}
-
-function checkIndicatorPrompt(id) {
-  const prompt = document.getElementById('indicatorPrompt');
-  if (!prompt) return;
-  const key = id ? findIndicatorForNode(id) : null;
-  if (key) {
-    activeIndicatorKey = key;
-    const textEl = document.getElementById('indicatorPromptText');
-    if (textEl) textEl.textContent = 'Este nodo tiene un indicador asociado del POT: ' + INDICATORS[key].tag + '.';
-    prompt.style.display = 'flex';
-  } else {
-    prompt.style.display = 'none';
-  }
-}
-
-function highlightIndicatorPair(pair) {
-  document.querySelectorAll('#staticNetwork .node').forEach(n => {
-    const nid = n.id.replace(/^n_/, '');
-    n.classList.toggle('node-dim', !pair.includes(nid));
-    n.classList.toggle('node-selected', pair.includes(nid));
-  });
-
-  document.querySelectorAll('#staticNetwork .links line').forEach(l => {
-    const s = l.getAttribute('data-s');
-    const t = l.getAttribute('data-t');
-    const isPairLink = pair.includes(s) && pair.includes(t);
-    l.classList.toggle('link-dim', !isPairLink);
-    l.classList.toggle('link-active', isPairLink);
-  });
-}
-
-function openIndicatorModal() {
-  if (!activeIndicatorKey) return;
-  const ind = INDICATORS[activeIndicatorKey];
-  highlightIndicatorPair(ind.pair);
-
-  document.getElementById('indicatorTag').textContent = ind.tag;
-  document.getElementById('indicatorTitle').textContent = ind.title;
-  document.getElementById('indicatorVarName').innerHTML = ind.varName;
-  document.getElementById('indicatorVarName2').innerHTML = ind.varName;
-  document.getElementById('indicatorNumLabel').textContent = ind.numLabel;
-  document.getElementById('indicatorDenLabel').textContent = ind.denLabel;
-  document.getElementById('indicatorNumFieldLabel').firstChild.textContent = ind.numField;
-  document.getElementById('indicatorDenFieldLabel').firstChild.textContent = ind.denField;
-
-  const expl = document.getElementById('indicatorExplanation');
-  if (ind.explanation) {
-    expl.textContent = ind.explanation;
-    expl.style.display = 'block';
-  } else {
-    expl.style.display = 'none';
-  }
-
-  document.getElementById('indicatorCascade').innerHTML = ind.cascade
-    .map(step => `<span class="cascade-step">${step}</span>`)
-    .join('<i class="fa-solid fa-arrow-right"></i>');
-  document.getElementById('indicatorCascadeText').textContent = ind.cascadeText;
-
-  document.getElementById('indicatorNumerador').value = '';
-  document.getElementById('indicatorDenominador').value = '';
-  document.getElementById('indicatorError').style.display = 'none';
-  document.getElementById('indicatorResult').style.display = 'none';
-
-  const backdrop = document.getElementById('indicatorModalBackdrop');
-  if (backdrop) backdrop.style.display = 'flex';
-}
-
-function closeIndicatorModal() {
-  const backdrop = document.getElementById('indicatorModalBackdrop');
-  if (backdrop) backdrop.style.display = 'none';
-  clearSelection();
-}
-
-function closeIndicatorModalBackdrop(evt) {
-  if (evt.target && evt.target.id === 'indicatorModalBackdrop') closeIndicatorModal();
-}
-
-function simulateIndicator() {
-  const numEl = document.getElementById('indicatorNumerador');
-  const denEl = document.getElementById('indicatorDenominador');
-  const num = parseFloat(numEl.value);
-  const den = parseFloat(denEl.value);
-
-  const resultBox = document.getElementById('indicatorResult');
-  const valueEl = document.getElementById('indicatorValue');
-  const errorEl = document.getElementById('indicatorError');
-
-  if (isNaN(num) || isNaN(den) || den <= 0 || num < 0) {
-    if (errorEl) errorEl.style.display = 'block';
-    if (resultBox) resultBox.style.display = 'none';
-    return;
-  }
-  if (errorEl) errorEl.style.display = 'none';
-
-  const value = (num / den) * 100;
-  if (valueEl) valueEl.textContent = value.toFixed(1);
-  if (resultBox) resultBox.style.display = 'block';
-}
