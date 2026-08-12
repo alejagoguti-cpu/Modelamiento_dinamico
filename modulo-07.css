@@ -1100,3 +1100,50 @@ body {
 .rel.por-verificar:hover { opacity: 0.85; }
 
 .quote-tag.pv { background: #fbe9e9; color: #a33; }
+
+/* Aviso cuando la relación aún no tiene frase del POT registrada */
+.quote-text.no-quote {
+  font-style: normal;
+  font-size: 14px;
+  color: #7b5a1e;
+  background: #fdf6e6;
+  border-left-color: #d8a441;
+  padding: 14px 16px;
+  border-radius: 0 8px 8px 0;
+}
+
+/* Pop-up de apertura en dos pasos */
+.intro-step {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: #7d8da0;
+  margin-top: 3px;
+}
+
+.intro-pane.hidden { display: none; }
+.intro-pane { animation: introFade 0.3s ease both; }
+
+/* --- Pop-up de apertura en dos pasos --- */
+.intro-step {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: #7d8ca1;
+  margin-top: 3px;
+}
+
+.intro-body.hidden { display: none; }
+
+.intro-foot { gap: 10px; }
+.intro-foot .intro-btn.hidden { display: none; }
+
+.intro-btn.ghost {
+  border-color: #dbe3ec;
+  color: #6b7a90;
+  margin-right: auto;   /* "Volver" a la izquierda */
+}
+
+.intro-btn.ghost:hover { background: #eef3f8; border-color: #c6d2df; color: #35435a; }
