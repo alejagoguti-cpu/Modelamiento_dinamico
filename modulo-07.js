@@ -48,6 +48,47 @@ function recomputeLinkOffState() {
     const tOff = !!(tNode && tNode.classList.contains('node-off'));
     link.classList.toggle('link-off', sOff || tOff);
   });
+
+  updateFragmentationDrift();
+}
+
+// ---------------------------------------------------------------------------
+// "DESPEGUE" de nodos huérfanos: cuando se apaga un sistema, cualquier nodo
+// que se quede SIN ninguna conexión activa (aunque él mismo siga encendido)
+// se separa un poco de su posición original, empujado hacia afuera del
+// centro de la red, para mostrar visualmente que la red se está rompiendo.
+// ---------------------------------------------------------------------------
+function initNodeTransforms() {
+  document.querySelectorAll('#staticNetwork .node').forEach(nodeEl => {
+    const x0 = nodeEl.getAttribute('data-x0');
+    const y0 = nodeEl.getAttribute('data-y0');
+    nodeEl.removeAttribute('transform');
+    nodeEl.style.transform = `translate(${x0}px, ${y0}px)`;
+  });
+}
+
+function updateFragmentationDrift() {
+  document.querySelectorAll('#staticNetwork .node').forEach(nodeEl => {
+    const id = nodeEl.id.replace(/^n_/, '');
+    const x0 = parseFloat(nodeEl.getAttribute('data-x0'));
+    const y0 = parseFloat(nodeEl.getAttribute('data-y0'));
+    const isOff = nodeEl.classList.contains('node-off');
+    const links = nodeLinks[id] || [];
+    const hasActiveLink = links.some(l => !l.classList.contains('link-off'));
+    const orphaned = !isOff && links.length > 0 && !hasActiveLink;
+
+    if (orphaned) {
+      const dist = Math.hypot(x0, y0) || 1;
+      const drift = 42;
+      const dx = (x0 / dist) * drift;
+      const dy = (y0 / dist) * drift;
+      nodeEl.style.transform = `translate(${x0 + dx}px, ${y0 + dy}px)`;
+      nodeEl.classList.add('node-drift');
+    } else {
+      nodeEl.style.transform = `translate(${x0}px, ${y0}px)`;
+      nodeEl.classList.remove('node-drift');
+    }
+  });
 }
 
 // ---------------------------------------------------------------------------
@@ -245,7 +286,7 @@ function closeRelationPanel() {
 let adjacency = {};       // nodeId -> Set de nodeIds vecinos
 let nodeLinks = {};       // nodeId -> [line elements]
 let selectedNode = null;
-const baseViewBox = { x: -578, y: -578, w: 1148, h: 1163 };
+const baseViewBox = { x: -523, y: -364, w: 926, h: 704 };
 let currentViewBox = { ...baseViewBox };
 
 function buildAdjacency() {
@@ -517,6 +558,7 @@ document.addEventListener('DOMContentLoaded', function () {
   applyViewBox();
   updateCentralNodePanel();
   updateStats();
+  initNodeTransforms();
 
   document.querySelectorAll('#staticNetwork .node').forEach(nodeEl => {
     nodeEl.addEventListener('click', (e) => {
