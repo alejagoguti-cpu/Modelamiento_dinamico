@@ -1237,3 +1237,28 @@ body {
   from { opacity: 0; transform: translateX(-50%) translateY(-8px); }
   to { opacity: 1; transform: translateX(-50%); }
 }
+
+/* Nodos puente: anillo exterior que los distingue en la red */
+.concept.bridge .node-fill {
+  stroke-width: 4;
+  stroke-dasharray: none;
+}
+.concept.bridge text { font-weight: 800; }
+
+/* Panel de nodos puente */
+.bridge-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 0;
+  border-bottom: 1px dashed var(--border-soft);
+  font-size: 11.5px;
+}
+.bridge-row:last-of-type { border-bottom: 0; }
+.bridge-row i { color: var(--sys); width: 15px; text-align: center; font-size: 12px; }
+.bridge-row .bl { flex: 1; color: var(--text); font-weight: 600; }
+.bridge-row .bs { font-size: 9.5px; font-weight: 800; color: var(--sys); letter-spacing: .3px; }
+.bridge-row .bn {
+  font-size: 10.5px; font-weight: 800; color: var(--text-dim);
+  background: var(--panel-alt); border-radius: 4px; padding: 2px 7px; min-width: 26px; text-align: center;
+}
