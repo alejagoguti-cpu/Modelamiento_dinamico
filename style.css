@@ -133,10 +133,10 @@ body{
 /* ---------- COPY ---------- */
 .hero-copy h1{
   font-family:'Space Grotesk', sans-serif;
-  font-size: clamp(40px, 5.2vw, 62px);
+  font-size: clamp(32px, 4.2vw, 48px);
   font-weight:800;
-  line-height:1.08;
-  letter-spacing:-1px;
+  line-height:1.18;
+  letter-spacing:-0.6px;
   margin-bottom:22px;
 }
 
@@ -430,7 +430,7 @@ body{
   .hero-visual{ order:-1; margin-bottom:20px; }
   .feature-grid{ max-width:none; }
   .lead{ max-width:none; }
-  .hero-copy h1{ font-size: clamp(36px, 8vw, 56px); }
+  .hero-copy h1{ font-size: clamp(30px, 7vw, 44px); }
 }
 
 @media (max-width: 480px){
