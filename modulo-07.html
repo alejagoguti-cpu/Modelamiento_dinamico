@@ -64,7 +64,7 @@
 
     <div class="welcome">
       <h2>Red de las 4 estructuras territoriales</h2>
-      <p>Simulador de desconexión construido con las 67 relaciones documentadas de las cuatro estructuras territoriales. El tamaño de cada nodo depende de cuántas relaciones tiene. Apaga una estructura completa o un nodo específico para ver qué se rompe.</p>
+      <p>Simulador de desconexión construido con las 75 relaciones documentadas de las cuatro estructuras territoriales. El tamaño de cada nodo depende de cuántas relaciones tiene. Apaga una estructura completa o un nodo específico para ver qué se rompe.</p>
     </div>
 
     <!-- SIMULADOR ON/OFF -->
@@ -112,16 +112,15 @@
               <div class="legend-item"><span class="lg-line dashed"></span>Relación indirecta</div>
               <div class="legend-item"><span class="lg-dot soporte"></span>Soporte</div>
               <div class="legend-item"><span class="lg-dot resiliencia"></span>Resiliencia</div>
+              <div class="legend-item"><span class="lg-line dashed" style="opacity:.45"></span>Por verificar</div>
                 </div>
             <div class="net-btns">
-              <button class="btn" id="btnIn"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
-              <button class="btn" id="btnOut"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
-              <button class="btn" id="btnFit">Ajustar</button>
+              <button class="btn" id="btnFit"><i class="fa-solid fa-arrows-rotate"></i> Centrar vista</button>
             </div>
           </div>
 
           <div class="net-stage" id="stage">
-            <svg id="svg" xmlns="http://www.w3.org/2000/svg" viewBox="-1223 -1220 2447 2470">
+            <svg id="svg" xmlns="http://www.w3.org/2000/svg" viewBox="-1395 -1329 2790 2693">
               <defs>
                 <marker id="ar-soporte" viewBox="0 0 10 10" refX="9" refY="5"
                         markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse">
@@ -156,13 +155,17 @@
             <div class="stat"><div class="lbl">Componentes conectados</div><div class="val" id="mComp">—</div></div>
             <div class="stat"><div class="lbl">Componente principal</div><div class="val" id="mMain">—</div></div>
             <div class="stat"><div class="lbl">Conceptos aislados</div><div class="val" id="mIso">—</div></div>
-            <div class="stat wide"><div class="lbl">Sistema con mayor centralidad</div><div class="val" id="mCentral">—</div></div>
+            <div class="stat wide"><div class="lbl">Sistema más conectado con los demás</div><div class="val" id="mCentral">—</div></div>
           </div>
         </div>
       </div>
 
       <!-- ================= PANELES ================= -->
       <div class="col right">
+
+        <div class="pcard" id="evCard">
+          <div id="evBox"></div>
+        </div>
 
         <div class="pcard">
           <h2>Escenario de nodo crítico
@@ -173,10 +176,6 @@
           <select id="nodeSelect" class="node-select"></select>
           <p class="node-impact" id="nodeImpact">—</p>
           <button class="btn node-sim-btn" id="btnNodeSim"><i class="fa-solid fa-power-off"></i> Simular sin este nodo</button>
-        </div>
-
-        <div class="pcard" id="evCard">
-          <div id="evBox"></div>
         </div>
 
         <div class="pcard">
@@ -190,8 +189,8 @@
         </div>
 
         <div class="pcard">
-          <h2>Centralidad saliente
-            <span class="hint">Relaciones activas cuyo origen es cada sistema. Se calcula desde los datos.</span>
+          <h2>Conexiones con otros sistemas
+            <span class="hint">Relaciones activas que cruzan de una estructura a otra. Es la medida del hallazgo principal y se calcula desde los datos.</span>
           </h2>
           <div id="rankList"></div>
           <div id="topSys"></div>
@@ -215,5 +214,56 @@
 </div>
 
 <script src="modulo-07.js"></script>
+<!-- ================= POP-UP DE APERTURA: HALLAZGO PRINCIPAL ================= -->
+<div class="intro-backdrop" id="introBackdrop">
+  <div class="intro-modal" role="dialog" aria-labelledby="introTitle">
+    <button class="intro-close" id="introClose" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button>
+
+    <div class="intro-head">
+      <div class="intro-icon"><i class="fa-solid fa-circle-nodes"></i></div>
+      <h2 id="introTitle">Hallazgo principal</h2>
+    </div>
+
+    <div class="intro-divider"><span></span></div>
+
+    <div class="intro-body">
+      <div class="intro-figure"><i class="fa-solid fa-landmark-dome"></i></div>
+
+      <div class="intro-text">
+        <p class="intro-lead">Al simular la ausencia de la <b class="hl">Estructura Integradora de Patrimonios</b> encontramos que un componente que parece específico del territorio tiene conexiones con otras dinámicas del modelo de ciudad.</p>
+
+        <div class="intro-figures" id="introFigures"></div>
+      </div>
+    </div>
+
+    <div class="intro-foot">
+      <button class="intro-btn" id="introBtn">
+        <i class="fa-solid fa-diagram-project"></i>
+        ¿Cómo llegamos a esa conclusión?
+        <i class="fa-solid fa-arrow-right"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ================= POP-UP DE LA FRASE EXACTA (al hacer clic en una línea) ================= -->
+<div class="quote-backdrop hidden" id="quoteBackdrop">
+  <div class="quote-modal" role="dialog">
+    <button class="intro-close" id="quoteClose" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button>
+
+    <div class="quote-rel" id="quoteRel">—</div>
+    <div class="quote-tags" id="quoteTags"></div>
+
+    <div class="quote-divider"><span></span></div>
+
+    <blockquote class="quote-text" id="quoteText">—</blockquote>
+
+    <div class="quote-foot">
+      <div class="quote-page" id="quotePage">—</div>
+      <div class="quote-sec" id="quoteSec"></div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
