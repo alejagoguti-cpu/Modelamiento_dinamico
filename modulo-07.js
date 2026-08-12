@@ -5,10 +5,8 @@
    No se inventan relaciones ni se alteran frases o páginas.
    ======================================================================= */
 
-// Relaciones: tabla_relaciones_POT_frases_exactas.xlsx (31) +
-// Red_relaciones_POT_CORREGIDA_FRASES_EXACTAS.xlsx (36 internas) +
-// documento de relaciones entre estructuras (8) = 75 relaciones.
-// Frases y páginas literales de la fuente; frases mostradas entre comillas.
+// 75 relaciones de 3 fuentes. 68 sustentadas con frase del POT y 7 marcadas
+// 'por verificar' porque la propia tabla las excluye por falta de frase continua.
 const POT_DATA = {
  "sistemas": {
   "EEP": {
@@ -34,8 +32,8 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Bosques urbanos",
    "icon": "fa-tree-city",
-   "x": -1319.7,
-   "y": 90.2,
+   "x": 1229.2,
+   "y": 265.4,
    "r": 44.1,
    "deg": 1
   },
@@ -44,8 +42,8 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Cerros Orientales",
    "icon": "fa-mountain",
-   "x": -189.3,
-   "y": -1014.5,
+   "x": 293.9,
+   "y": -1043.9,
    "r": 44.1,
    "deg": 1
   },
@@ -54,8 +52,8 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Coberturas vegetales",
    "icon": "fa-seedling",
-   "x": -1148.9,
-   "y": -236.1,
+   "x": 1154.9,
+   "y": -28.5,
    "r": 82.6,
    "deg": 5
   },
@@ -64,8 +62,8 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Complejos de páramos",
    "icon": "fa-cloud",
-   "x": -833.1,
-   "y": -1044.5,
+   "x": 1041.6,
+   "y": -846.1,
    "r": 51.3,
    "deg": 2
   },
@@ -74,8 +72,8 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Conservación ambiental",
    "icon": "fa-shield-heart",
-   "x": 202.3,
-   "y": 1277.7,
+   "x": -324.4,
+   "y": -370.4,
    "r": 44.1,
    "deg": 1
   },
@@ -84,8 +82,8 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Corredores montañosos",
    "icon": "fa-mountain-sun",
-   "x": -42.4,
-   "y": -1297.5,
+   "x": 492.4,
+   "y": -1243.7,
    "r": 44.1,
    "deg": 1
   },
@@ -94,8 +92,8 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Humedales",
    "icon": "fa-droplet",
-   "x": -460.3,
-   "y": -645.0,
+   "x": 556.9,
+   "y": -550.7,
    "r": 140.0,
    "deg": 9
   },
@@ -104,8 +102,8 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Paisajes sostenibles",
    "icon": "fa-image",
-   "x": -1111.6,
-   "y": -702.3,
+   "x": 1188.0,
+   "y": -502.4,
    "r": 51.3,
    "deg": 2
   },
@@ -114,8 +112,8 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Parques de borde",
    "icon": "fa-leaf",
-   "x": -1368.3,
-   "y": -302.9,
+   "x": 1309.9,
+   "y": -216.8,
    "r": 44.1,
    "deg": 1
   },
@@ -124,8 +122,8 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Parques ecológicos de montaña",
    "icon": "fa-mountain",
-   "x": -987.5,
-   "y": 82.3,
+   "x": 907.8,
+   "y": 277.2,
    "r": 70.9,
    "deg": 4
   },
@@ -134,8 +132,8 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Quebradas",
    "icon": "fa-tint",
-   "x": -549.8,
-   "y": -981.6,
+   "x": 534.2,
+   "y": -923.4,
    "r": 44.1,
    "deg": 1
   },
@@ -144,8 +142,8 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Reservas forestales",
    "icon": "fa-tree",
-   "x": -789.2,
-   "y": -745.3,
+   "x": 875.9,
+   "y": -633.7,
    "r": 51.3,
    "deg": 2
   },
@@ -154,8 +152,8 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Ríos",
    "icon": "fa-water",
-   "x": -416.1,
-   "y": -1150.1,
+   "x": 760.9,
+   "y": -998.0,
    "r": 60.3,
    "deg": 3
   },
@@ -164,8 +162,8 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Áreas de resiliencia climática",
    "icon": "fa-temperature-half",
-   "x": -780.1,
-   "y": -264.6,
+   "x": 833.3,
+   "y": -69.4,
    "r": 60.3,
    "deg": 3
   },
@@ -174,8 +172,8 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "Áreas protegidas",
    "icon": "fa-shield-halved",
-   "x": -876.8,
-   "y": -458.5,
+   "x": 908.9,
+   "y": -311.4,
    "r": 60.3,
    "deg": 3
   },
@@ -184,8 +182,8 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "Ciclorutas",
    "icon": "fa-bicycle",
-   "x": 1268.1,
-   "y": 208.1,
+   "x": -1245.8,
+   "y": -335.0,
    "r": 70.9,
    "deg": 4
   },
@@ -194,8 +192,8 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "Corredores verdes",
    "icon": "fa-road",
-   "x": 1368.3,
-   "y": -73.9,
+   "x": -1201.4,
+   "y": -647.4,
    "r": 51.3,
    "deg": 2
   },
@@ -204,8 +202,8 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "Equipamientos",
    "icon": "fa-building-columns",
-   "x": 587.8,
-   "y": 9.7,
+   "x": -595.7,
+   "y": -124.2,
    "r": 140.0,
    "deg": 9
   },
@@ -214,8 +212,8 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "Espacio público",
    "icon": "fa-umbrella-beach",
-   "x": 101.1,
-   "y": -956.5,
+   "x": 7.0,
+   "y": -1043.0,
    "r": 44.1,
    "deg": 1
   },
@@ -224,8 +222,8 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "Manzanas del Cuidado",
    "icon": "fa-hand-holding-heart",
-   "x": 857.3,
-   "y": -297.6,
+   "x": -745.3,
+   "y": -531.0,
    "r": 82.6,
    "deg": 5
   },
@@ -234,8 +232,8 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "Parques",
    "icon": "fa-tree",
-   "x": 951.8,
-   "y": -812.3,
+   "x": -625.9,
+   "y": -1102.2,
    "r": 44.1,
    "deg": 1
   },
@@ -244,8 +242,8 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "Red vial",
    "icon": "fa-road-bridge",
-   "x": 1090.6,
-   "y": -197.0,
+   "x": -986.1,
+   "y": -535.2,
    "r": 51.3,
    "deg": 2
   },
@@ -254,8 +252,8 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "Servicios de cuidado",
    "icon": "fa-heart",
-   "x": 621.9,
-   "y": -622.1,
+   "x": -459.1,
+   "y": -844.5,
    "r": 44.1,
    "deg": 1
   },
@@ -264,8 +262,8 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "Servicios públicos",
    "icon": "fa-plug",
-   "x": 845.9,
-   "y": 800.0,
+   "x": -999.8,
+   "y": 462.2,
    "r": 95.5,
    "deg": 6
   },
@@ -274,8 +272,8 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "Servicios sociales",
    "icon": "fa-people-group",
-   "x": 891.5,
-   "y": -522.8,
+   "x": -765.1,
+   "y": -811.1,
    "r": 51.3,
    "deg": 2
   },
@@ -284,8 +282,8 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "Transporte público",
    "icon": "fa-bus",
-   "x": 1073.7,
-   "y": 232.9,
+   "x": -1140.4,
+   "y": -115.9,
    "r": 95.5,
    "deg": 6
   },
@@ -294,8 +292,8 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "Vivienda",
    "icon": "fa-house",
-   "x": 886.2,
-   "y": 530.8,
+   "x": -1036.9,
+   "y": 136.7,
    "r": 124.3,
    "deg": 8
   },
@@ -304,8 +302,8 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "Actividades económicas",
    "icon": "fa-chart-line",
-   "x": 823.2,
-   "y": 1034.1,
+   "x": -1161.4,
+   "y": 663.3,
    "r": 51.3,
    "deg": 2
   },
@@ -314,8 +312,8 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "Centros de abastecimiento",
    "icon": "fa-truck",
-   "x": -977.3,
-   "y": 1006.2,
+   "x": -597.4,
+   "y": 1184.0,
    "r": 44.1,
    "deg": 1
   },
@@ -324,8 +322,8 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "Centros financieros",
    "icon": "fa-building-columns",
-   "x": -159.4,
-   "y": 1206.7,
+   "x": -371.6,
+   "y": 1243.7,
    "r": 44.1,
    "deg": 1
   },
@@ -334,8 +332,8 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "Corazones productivos",
    "icon": "fa-heart-pulse",
-   "x": 1114.3,
-   "y": 768.6,
+   "x": -1309.9,
+   "y": 366.2,
    "r": 44.1,
    "deg": 1
   },
@@ -344,8 +342,8 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "Distrito Centro Tecnológico e Innovación",
    "icon": "fa-microchip",
-   "x": 545.4,
-   "y": 797.0,
+   "x": -887.1,
+   "y": 811.4,
    "r": 70.9,
    "deg": 4
   },
@@ -354,8 +352,8 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "Economía",
    "icon": "fa-coins",
-   "x": 348.5,
-   "y": 1036.2,
+   "x": -430.8,
+   "y": 392.4,
    "r": 60.3,
    "deg": 3
   },
@@ -364,8 +362,8 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "Empleo",
    "icon": "fa-briefcase",
-   "x": 912.2,
-   "y": 90.8,
+   "x": -930.5,
+   "y": -163.0,
    "r": 95.5,
    "deg": 6
   },
@@ -374,8 +372,8 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "Plazas de mercado",
    "icon": "fa-store",
-   "x": -611.4,
-   "y": 937.8,
+   "x": -205.4,
+   "y": 1025.3,
    "r": 60.3,
    "deg": 3
   },
@@ -384,8 +382,8 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "Producción artesanal",
    "icon": "fa-gem",
-   "x": 37.5,
-   "y": 943.7,
+   "x": -29.3,
+   "y": 1112.1,
    "r": 51.3,
    "deg": 2
   },
@@ -394,8 +392,8 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "Producción de alimentos",
    "icon": "fa-wheat-awn",
-   "x": -104.0,
-   "y": -691.2,
+   "x": 137.4,
+   "y": -622.8,
    "r": 44.1,
    "deg": 1
   },
@@ -404,8 +402,8 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "Servicios empresariales",
    "icon": "fa-handshake",
-   "x": 126.2,
-   "y": 713.8,
+   "x": -527.6,
+   "y": 777.0,
    "r": 82.6,
    "deg": 5
   },
@@ -414,8 +412,8 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "Sistema de educación",
    "icon": "fa-graduation-cap",
-   "x": 699.3,
-   "y": 265.5,
+   "x": -809.9,
+   "y": 192.2,
    "r": 82.6,
    "deg": 5
   },
@@ -424,8 +422,8 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "Zonas de interés turístico",
    "icon": "fa-camera",
-   "x": -823.7,
-   "y": 608.5,
+   "x": 406.2,
+   "y": 766.0,
    "r": 70.9,
    "deg": 4
   },
@@ -434,8 +432,8 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "Zonas industriales",
    "icon": "fa-industry",
-   "x": 550.2,
-   "y": 603.7,
+   "x": -711.7,
+   "y": 602.7,
    "r": 95.5,
    "deg": 6
   },
@@ -444,8 +442,8 @@ const POT_DATA = {
    "sys": "EIP",
    "label": "Patrimonio arqueológico",
    "icon": "fa-scroll",
-   "x": -189.6,
-   "y": 304.2,
+   "x": 241.8,
+   "y": 460.6,
    "r": 60.3,
    "deg": 3
   },
@@ -454,8 +452,8 @@ const POT_DATA = {
    "sys": "EIP",
    "label": "Patrimonio cultural",
    "icon": "fa-landmark",
-   "x": -294.2,
-   "y": 990.6,
+   "x": 113.2,
+   "y": 886.9,
    "r": 51.3,
    "deg": 2
   },
@@ -464,8 +462,8 @@ const POT_DATA = {
    "sys": "EIP",
    "label": "Patrimonio inmaterial",
    "icon": "fa-masks-theater",
-   "x": -446.7,
-   "y": 764.2,
+   "x": 565.6,
+   "y": 1013.0,
    "r": 70.9,
    "deg": 4
   },
@@ -474,8 +472,8 @@ const POT_DATA = {
    "sys": "EIP",
    "label": "Patrimonio material",
    "icon": "fa-monument",
-   "x": -585.3,
-   "y": 472.4,
+   "x": 771.7,
+   "y": 746.9,
    "r": 60.3,
    "deg": 3
   },
@@ -484,8 +482,8 @@ const POT_DATA = {
    "sys": "EIP",
    "label": "Patrimonio natural",
    "icon": "fa-mountain-sun",
-   "x": -626.8,
-   "y": 142.5,
+   "x": 676.2,
+   "y": 379.6,
    "r": 109.5,
    "deg": 7
   },
@@ -494,8 +492,8 @@ const POT_DATA = {
    "sys": "EIP",
    "label": "Sistema de sitios sagrados",
    "icon": "fa-place-of-worship",
-   "x": -402.7,
-   "y": 1297.5,
+   "x": 859.5,
+   "y": 1053.7,
    "r": 44.1,
    "deg": 1
   }
@@ -514,7 +512,8 @@ const POT_DATA = {
    "frase": "“Los tiempos de desplazamiento son el resultado de la eficiencia y calidad de los sistemas de transporte masivo y de sus modos y estructuración. Un buen sistema de transporte se nota en menores tiempos de viaje que suplen las necesidades de desplazamiento de la ciudadanía y facilitan la conexión entre las personas y el sector productivo.”",
    "clase": "Intersistema",
    "completa": true,
-   "id": 0
+   "id": 0,
+   "porVerificar": false
   },
   {
    "sO": "EFC",
@@ -529,7 +528,8 @@ const POT_DATA = {
    "frase": "“De esta manera, el Plan Maestro de Hábitat y Servicios Públicos se convierte en una herramienta eficaz para concretar la visión de mixtura, al acercar la vivienda a los grandes centros de productividad y, por consiguiente, mejorar las condiciones de acceso al empleo, consolidando así tejidos económicos continuos y complementarios entre el gran corazón productivo de escala urbana y las actividades económicas de soporte a la vida.”",
    "clase": "Intersistema",
    "completa": true,
-   "id": 1
+   "id": 1,
+   "porVerificar": false
   },
   {
    "sO": "EFC",
@@ -544,7 +544,8 @@ const POT_DATA = {
    "frase": "“Esos equipamientos —que están pensados para ofrecer, de manera híbrida, la mayor cantidad de servicios sociales posibles— tienen un potencial de ser, en sí mismos, fuentes de generación de empleo de proximidad y de fomentar dinámicas económicas complementarias en sus zonas de influencia.”",
    "clase": "Intersistema",
    "completa": true,
-   "id": 2
+   "id": 2,
+   "porVerificar": false
   },
   {
    "sO": "EFC",
@@ -559,7 +560,8 @@ const POT_DATA = {
    "frase": "“El sistema atiende tres tipos de poblaciones: a las personas cuidadoras, ofreciéndoles servicios de educación, respiro, formación y capitalización para el trabajo y el emprendimiento, y otras formas de generación de ingresos, con los que les devolvemos las oportunidades que han sacrificado por las cargas de cuidado.”",
    "clase": "Intersistema",
    "completa": true,
-   "id": 3
+   "id": 3,
+   "porVerificar": false
   },
   {
    "sO": "EFC",
@@ -574,7 +576,8 @@ const POT_DATA = {
    "frase": "“Equipamiento como detonante de dinámicas económicas”",
    "clase": "Intersistema",
    "completa": true,
-   "id": 4
+   "id": 4,
+   "porVerificar": false
   },
   {
    "sO": "EFC",
@@ -589,7 +592,8 @@ const POT_DATA = {
    "frase": "“El Plan Maestro de Hábitat tiene la capacidad de robustecer las economías de proximidad, no solamente al propiciar la mixtura de usos del suelo en los proyectos de vivienda y en los instrumentos de los diferentes planes parciales, sino combinando sus usos al interior de las mismas edificaciones.”",
    "clase": "Intersistema",
    "completa": true,
-   "id": 5
+   "id": 5,
+   "porVerificar": false
   },
   {
    "sO": "EFC",
@@ -604,7 +608,8 @@ const POT_DATA = {
    "frase": "“Por ejemplo, allí serán fundamentales los servicios de energía en las zonas industriales o de almacenamiento de datos, o los servicios de telecomunicaciones e internet en zonas como el Campus de Ciencia, Tecnología e Innovación de la Ciudad (ctib).”",
    "clase": "Intersistema",
    "completa": true,
-   "id": 6
+   "id": 6,
+   "porVerificar": false
   },
   {
    "sO": "EFC",
@@ -619,7 +624,8 @@ const POT_DATA = {
    "frase": "“Por ejemplo, allí serán fundamentales los servicios de energía en las zonas industriales o de almacenamiento de datos, o los servicios de telecomunicaciones e internet en zonas como el Campus de Ciencia, Tecnología e Innovación de la Ciudad (ctib).”",
    "clase": "Intersistema",
    "completa": true,
-   "id": 7
+   "id": 7,
+   "porVerificar": false
   },
   {
    "sO": "EFC",
@@ -634,7 +640,8 @@ const POT_DATA = {
    "frase": "“Los cables eléctricos, rutas circulares y cicloinfraestructura permite a su vez interconectividad de proximidad dentro de las upl y conexión con los corredores de alta demanda, sean de metro o de TransMilenio. Esto mejorará significativamente la calidad de vida y la productividad de la población, que hará uso de estas infraestructuras; también, consolidará las dinámicas de aglomeración económica que concentran el tejido empresarial y, con ello, las fuentes de generación de empleo en el centro ampliado, pero también en las nuevas zonas más periféricas, mejor servidas y conectadas gracias a la red multimodal de transporte.”",
    "clase": "Intersistema",
    "completa": true,
-   "id": 8
+   "id": 8,
+   "porVerificar": false
   },
   {
    "sO": "ESECI",
@@ -649,7 +656,8 @@ const POT_DATA = {
    "frase": "“El programa busca promover el dinamismo, la reactivación económica y la creación de empleos. Se apuesta por el impulso a proyectos que generen actividades económicas asociadas al emprendimiento, la creatividad, la innovación y la cultura, que se complementa con las áreas residenciales donde se interactúa a partir del sistema de movilidad.”",
    "clase": "Intersistema",
    "completa": true,
-   "id": 9
+   "id": 9,
+   "porVerificar": false
   },
   {
    "sO": "ESECI",
@@ -664,7 +672,8 @@ const POT_DATA = {
    "frase": "“El nuevo modelo de ordenamiento del territorio a partir de la mixtura y la complementariedad que plantea el pot busca revertir esta tendencia promoviendo las áreas receptoras de actividad económica, las áreas de actividad receptoras de vivienda de interés social en cercanía de las aglomeraciones y el ecosistema productivo y la mixtura de usos en las áreas de proximidad (antiguas zonas de uso residencial neto).”",
    "clase": "Intersistema",
    "completa": true,
-   "id": 10
+   "id": 10,
+   "porVerificar": false
   },
   {
    "sO": "ESECI",
@@ -679,7 +688,8 @@ const POT_DATA = {
    "frase": "“El Plan Maestro de Hábitat y Servicios Públicos debe garantizar las condiciones de prestación de los servicios públicos de las diferentes actividades económicas.”",
    "clase": "Intersistema",
    "completa": true,
-   "id": 11
+   "id": 11,
+   "porVerificar": false
   },
   {
    "sO": "ESECI",
@@ -694,7 +704,8 @@ const POT_DATA = {
    "frase": "“Por ejemplo, allí serán fundamentales los servicios de energía en las zonas industriales o de almacenamiento de datos, o los servicios de telecomunicaciones e internet en zonas como el Campus de Ciencia, Tecnología e Innovación de la Ciudad (ctib).”",
    "clase": "Intersistema",
    "completa": true,
-   "id": 12
+   "id": 12,
+   "porVerificar": false
   },
   {
    "sO": "ESECI",
@@ -709,7 +720,8 @@ const POT_DATA = {
    "frase": "“El Plan Maestro de Hábitat y Servicios Públicos debe garantizar las condiciones de prestación de los servicios públicos de las diferentes actividades económicas.”",
    "clase": "Intersistema",
    "completa": true,
-   "id": 13
+   "id": 13,
+   "porVerificar": false
   },
   {
    "sO": "ESECI",
@@ -724,7 +736,8 @@ const POT_DATA = {
    "frase": "“La inversión y ejecución sostenida del pot, el pmss y la inversión en esa educación con calidad y pertinencia, desde la básica hasta la superior, lograrán en conjunto, en la próxima década, el mayor crecimiento en productividad, empleabilidad de calidad y competitividad que haya tenido Bogotá.”",
    "clase": "Intrasistema",
    "completa": true,
-   "id": 14
+   "id": 14,
+   "porVerificar": false
   },
   {
    "sO": "ESECI",
@@ -739,7 +752,8 @@ const POT_DATA = {
    "frase": "“Por eso el pot promueve la permanencia de las industrias tradicionales en el tejido urbano y promueve nuevas implantaciones económicas generadoras de empleo formal, articuladas a los entornos urbanos donde se aglomeran saberes y talentos, y en particular aquellos que dan lugar a aglomeraciones especializadas de producción tradicional e industrias creativas, culturales, verdes, digitales y tecnológicas.”",
    "clase": "Intrasistema",
    "completa": true,
-   "id": 15
+   "id": 15,
+   "porVerificar": false
   },
   {
    "sO": "EIP",
@@ -754,7 +768,8 @@ const POT_DATA = {
    "frase": "“Por eso promovemos la ciudad como destino turístico inteligente, sostenible, de salud y de negocios que reconozca el patrimonio local, las dinámicas comunitarias, los sistemas cooperativos de producción sostenible como huertas productivas, bancos de semillas nativas y plantas de uso medicinal, entre otros.”",
    "clase": "Intersistema",
    "completa": true,
-   "id": 16
+   "id": 16,
+   "porVerificar": false
   },
   {
    "sO": "EIP",
@@ -769,7 +784,8 @@ const POT_DATA = {
    "frase": "“En la ruralidad es urgente mejorar las condiciones habitacionales, desde los componentes de servicios públicos domiciliarios, accesibilidad y movilidad, con equipamientos que faciliten la economía campesina, familiar y comunitaria, el turismo responsable de naturaleza que vincule residentes y saberes del lugar y la conservación del ambiente como formas de productividad, sustento y desarrollo sostenible.”",
    "clase": "Intersistema",
    "completa": true,
-   "id": 17
+   "id": 17,
+   "porVerificar": false
   },
   {
    "sO": "EIP",
@@ -784,7 +800,8 @@ const POT_DATA = {
    "frase": "“Esta producción artesanal corresponde entonces a las actividades creativas de producción de objetos, realizadas con predominio manual y auxiliadas en algunos casos con maquinarias simples, obteniendo un resultado final individualizado, determinado por los patrones culturales, el medio ambiente y su desarrollo histórico.”",
    "clase": "Intersistema",
    "completa": true,
-   "id": 18
+   "id": 18,
+   "porVerificar": false
   },
   {
    "sO": "EIP",
@@ -799,7 +816,8 @@ const POT_DATA = {
    "frase": "“Esta oferta y este movimiento económico y cultural hacen parte de una de las iniciativas primordiales que fija el pot para que la cultura, en ciertos barrios o sectores de Bogotá, se convierta en un polo de desarrollo económico y social: los Distritos Creativos.”",
    "clase": "Intersistema",
    "completa": true,
-   "id": 19
+   "id": 19,
+   "porVerificar": false
   },
   {
    "sO": "EEP",
@@ -814,7 +832,8 @@ const POT_DATA = {
    "frase": "“Se debatió si podíamos considerar espacio público los elementos de nuestra Estructura Ecológica Principal (eep) adecuando humedales, bordes de ríos y quebradas, para el disfrute ciudadano.”",
    "clase": "Intersistema",
    "completa": true,
-   "id": 20
+   "id": 20,
+   "porVerificar": false
   },
   {
    "sO": "EEP",
@@ -829,7 +848,8 @@ const POT_DATA = {
    "frase": "“Las huertas son entonces parte de un valor presente interesado en restablecer vínculos entre los ciclos de producción de alimentos y consumo en ámbitos domésticos. La existencia de estos lugares reconcilia distintas maneras de habitar la ciudad, de conocimientos y prácticas asociados a la preservación de especies y semillas nativas, la siembra, al manejo responsable del agua y de la comprensión del clima.”",
    "clase": "Intersistema",
    "completa": true,
-   "id": 21
+   "id": 21,
+   "porVerificar": false
   },
   {
    "sO": "EEP",
@@ -844,7 +864,8 @@ const POT_DATA = {
    "frase": "“En la ruralidad es urgente mejorar las condiciones habitacionales, desde los componentes de servicios públicos domiciliarios, accesibilidad y movilidad, con equipamientos que faciliten la economía campesina, familiar y comunitaria, el turismo responsable de naturaleza que vincule residentes y saberes del lugar y la conservación del ambiente como formas de productividad, sustento y desarrollo sostenible.”",
    "clase": "Intersistema",
    "completa": true,
-   "id": 22
+   "id": 22,
+   "porVerificar": false
   },
   {
    "sO": "EFC",
@@ -859,7 +880,8 @@ const POT_DATA = {
    "frase": "“Dotar a los barrios de esta infraestructura social hace que los servicios de educación, salud, cultura y cuidado estén próximos y accesibles para garantizar los derechos y satisfacer las necesidades básicas de las personas.”",
    "clase": "Interna",
    "completa": true,
-   "id": 23
+   "id": 23,
+   "porVerificar": false
   },
   {
    "sO": "EFC",
@@ -874,7 +896,8 @@ const POT_DATA = {
    "frase": "“Que sea en suelo de desarrollo o en suelo de renovación urbana, los constructores y desarrolladores inmobiliarios siempre tengan que garantizar diversos tipos de vivienda de interés social y soportes urbanos y equipamientos sociales de calidad para familias de diferentes tamaños y niveles de ingreso que comparten un mismo trozo de ciudad.”",
    "clase": "Interna",
    "completa": true,
-   "id": 24
+   "id": 24,
+   "porVerificar": false
   },
   {
    "sO": "EFC",
@@ -889,7 +912,8 @@ const POT_DATA = {
    "frase": "“El sistema articula servicios existentes y crea otros nuevos para atender las altas demandas de cuidado de una manera corresponsable entre el gobierno distrital, las comunidades, el sector privado y los demás miembros de los hogares para redistribuir la sobrecarga que llevaban solas las mujeres y balancear la provisión del cuidado, con el fin de devolverles tiempo a las mujeres y a las personas cuidadoras para su desarrollo personal, autocuidado, bienestar, generación de ingresos o participación política.”",
    "clase": "Interna",
    "completa": true,
-   "id": 25
+   "id": 25,
+   "porVerificar": false
   },
   {
    "sO": "EFC",
@@ -904,7 +928,8 @@ const POT_DATA = {
    "frase": "“El tejido que se forma entre las Manzanas del Cuidado y la infraestructura nueva y existente de salud, educación, cultura, cuidado y recreación convierte cada una de las upl —que son las nuevas localidades en las que el pot proyecta la ciudad— en una Red del Cuidado.”",
    "clase": "Interna",
    "completa": true,
-   "id": 26
+   "id": 26,
+   "porVerificar": false
   },
   {
    "sO": "EFC",
@@ -919,7 +944,8 @@ const POT_DATA = {
    "frase": "“Y que, en todo caso, las diversas zonas de la ciudad estén conectadas por un sistema multimodal de transporte público, colectivo, de energías limpias y renovables basadas en la red Metro y alimentadas por los demás modos y medios de transporte público como los corredores verdes, los cables y las ciclorrutas.”",
    "clase": "Interna",
    "completa": true,
-   "id": 27
+   "id": 27,
+   "porVerificar": false
   },
   {
    "sO": "EFC",
@@ -934,7 +960,8 @@ const POT_DATA = {
    "frase": "“Y que, en todo caso, las diversas zonas de la ciudad estén conectadas por un sistema multimodal de transporte público, colectivo, de energías limpias y renovables basadas en la red Metro y alimentadas por los demás modos y medios de transporte público como los corredores verdes, los cables y las ciclorrutas.”",
    "clase": "Interna",
    "completa": true,
-   "id": 28
+   "id": 28,
+   "porVerificar": false
   },
   {
    "sO": "EEP",
@@ -949,7 +976,8 @@ const POT_DATA = {
    "frase": "“La Estructura Ecológica Principal es un sistema de áreas y corredores que sostienen la biodiversidad y los servicios ecosistémicos, y su conectividad y complementariedad son fundamentales para garantizar su funcionalidad.”",
    "clase": "Interna",
    "completa": true,
-   "id": 29
+   "id": 29,
+   "porVerificar": false
   },
   {
    "sO": "EEP",
@@ -964,7 +992,8 @@ const POT_DATA = {
    "frase": "“Los Parques Distritales Ecológicos de Montaña tienen como objetivo restaurar y preservar las especies nativas y garantizar la conectividad ecológica.”",
    "clase": "Interna",
    "completa": true,
-   "id": 30
+   "id": 30,
+   "porVerificar": false
   },
   {
    "sO": "EEP",
@@ -976,10 +1005,11 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "70",
    "seccion": "Art. 7",
-   "frase": "“corredores montañosos … ríos y humedales”",
+   "frase": "corredores montañosos … ríos y humedales",
    "clase": "Interna",
    "completa": false,
-   "id": 31
+   "id": 31,
+   "porVerificar": true
   },
   {
    "sO": "EEP",
@@ -991,10 +1021,11 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "72",
    "seccion": "Art. 42 / 62",
-   "frase": "“ríos y quebradas … humedales”",
+   "frase": "ríos y quebradas … humedales",
    "clase": "Interna",
    "completa": false,
-   "id": 32
+   "id": 32,
+   "porVerificar": true
   },
   {
    "sO": "EEP",
@@ -1006,10 +1037,11 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "70",
    "seccion": "Art. 7",
-   "frase": "“cerros orientales … ríos y humedales”",
+   "frase": "cerros orientales … ríos y humedales",
    "clase": "Interna",
    "completa": false,
-   "id": 33
+   "id": 33,
+   "porVerificar": true
   },
   {
    "sO": "EEP",
@@ -1021,10 +1053,11 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "72",
    "seccion": "Art. 42 / 62",
-   "frase": "“ríos y quebradas … humedales”",
+   "frase": "ríos y quebradas … humedales",
    "clase": "Interna",
    "completa": false,
-   "id": 34
+   "id": 34,
+   "porVerificar": true
   },
   {
    "sO": "EEP",
@@ -1036,10 +1069,11 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "70",
    "seccion": "Art. 7",
-   "frase": "“complejos de páramos … ríos y humedales”",
+   "frase": "complejos de páramos … ríos y humedales",
    "clase": "Interna",
    "completa": false,
-   "id": 35
+   "id": 35,
+   "porVerificar": true
   },
   {
    "sO": "EEP",
@@ -1051,10 +1085,11 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "73",
    "seccion": "Art. 74",
-   "frase": "“cobertura vegetal … flora propia”",
+   "frase": "cobertura vegetal … flora propia",
    "clase": "Interna",
    "completa": false,
-   "id": 36
+   "id": 36,
+   "porVerificar": false
   },
   {
    "sO": "EEP",
@@ -1066,10 +1101,11 @@ const POT_DATA = {
    "tipo": "Resiliencia",
    "pag": "72",
    "seccion": "Art. 42",
-   "frase": "“territorio resiliente … cambio climático”",
+   "frase": "territorio resiliente … cambio climático",
    "clase": "Interna",
    "completa": false,
-   "id": 37
+   "id": 37,
+   "porVerificar": true
   },
   {
    "sO": "EEP",
@@ -1081,10 +1117,11 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "72",
    "seccion": "Art. 42",
-   "frase": "“amortiguación de los impactos ambientales”",
+   "frase": "amortiguación de los impactos ambientales",
    "clase": "Interna",
    "completa": false,
-   "id": 38
+   "id": 38,
+   "porVerificar": false
   },
   {
    "sO": "EEP",
@@ -1096,10 +1133,11 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "71",
    "seccion": "Art. 41 / 51",
-   "frase": "“Reservas Distritales de Humedal”",
+   "frase": "Reservas Distritales de Humedal",
    "clase": "Interna",
    "completa": false,
-   "id": 39
+   "id": 39,
+   "porVerificar": true
   },
   {
    "sO": "EEP",
@@ -1111,10 +1149,11 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "71",
    "seccion": "Art. 51 / 54",
-   "frase": "“Parques Distritales Ecológicos de Montaña”",
+   "frase": "Parques Distritales Ecológicos de Montaña",
    "clase": "Interna",
    "completa": false,
-   "id": 40
+   "id": 40,
+   "porVerificar": false
   },
   {
    "sO": "EEP",
@@ -1126,10 +1165,11 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "71",
    "seccion": "Art. 41 / 45 / 48",
-   "frase": "“Reserva Forestal Protectora … Regional”",
+   "frase": "Reserva Forestal Protectora … Regional",
    "clase": "Interna",
    "completa": false,
-   "id": 41
+   "id": 41,
+   "porVerificar": false
   },
   {
    "sO": "EEP",
@@ -1141,10 +1181,11 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "136",
    "seccion": "Art. 121",
-   "frase": "“coberturas vegetales … parques de borde”",
+   "frase": "coberturas vegetales … parques de borde",
    "clase": "Interna",
    "completa": false,
-   "id": 42
+   "id": 42,
+   "porVerificar": false
   },
   {
    "sO": "EEP",
@@ -1156,10 +1197,11 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "72",
    "seccion": "Art. 52 / 74",
-   "frase": "“funcionalidad ecosistémica … conectividad”",
+   "frase": "funcionalidad ecosistémica … conectividad",
    "clase": "Interna",
    "completa": false,
-   "id": 43
+   "id": 43,
+   "porVerificar": false
   },
   {
    "sO": "EEP",
@@ -1171,10 +1213,11 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "70",
    "seccion": "Art. 7 / 52",
-   "frase": "“complejos de páramos … paisajes”",
+   "frase": "complejos de páramos … paisajes",
    "clase": "Interna",
    "completa": false,
-   "id": 44
+   "id": 44,
+   "porVerificar": false
   },
   {
    "sO": "EFC",
@@ -1186,10 +1229,11 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "117–118",
    "seccion": "Art. 94–95",
-   "frase": "“equipamientos y servicios de cuidado”",
+   "frase": "equipamientos y servicios de cuidado",
    "clase": "Interna",
    "completa": false,
-   "id": 45
+   "id": 45,
+   "porVerificar": false
   },
   {
    "sO": "EFC",
@@ -1201,10 +1245,11 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "179",
    "seccion": "Art. 179",
-   "frase": "“servicio público … actividades en la ciudad”",
+   "frase": "servicio público … actividades en la ciudad",
    "clase": "Interna",
    "completa": false,
-   "id": 46
+   "id": 46,
+   "porVerificar": false
   },
   {
    "sO": "EFC",
@@ -1216,10 +1261,11 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "117",
    "seccion": "Art. 88",
-   "frase": "“accesibilidad … conectividad”",
+   "frase": "accesibilidad … conectividad",
    "clase": "Interna",
    "completa": false,
-   "id": 47
+   "id": 47,
+   "porVerificar": false
   },
   {
    "sO": "EFC",
@@ -1231,10 +1277,11 @@ const POT_DATA = {
    "tipo": "Resiliencia",
    "pag": "117 / 158–159",
    "seccion": "Art. 88 / 158–159",
-   "frase": "“cicloinfraestructura … corredores verdes”",
+   "frase": "cicloinfraestructura … corredores verdes",
    "clase": "Interna",
    "completa": false,
-   "id": 48
+   "id": 48,
+   "porVerificar": false
   },
   {
    "sO": "EFC",
@@ -1246,10 +1293,11 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "117",
    "seccion": "Art. 88",
-   "frase": "“accesibilidad … conectividad”",
+   "frase": "accesibilidad … conectividad",
    "clase": "Interna",
    "completa": false,
-   "id": 49
+   "id": 49,
+   "porVerificar": false
   },
   {
    "sO": "EFC",
@@ -1261,10 +1309,11 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "158–159",
    "seccion": "Art. 158–159",
-   "frase": "“malla arterial … transporte público”",
+   "frase": "malla arterial … transporte público",
    "clase": "Interna",
    "completa": false,
-   "id": 50
+   "id": 50,
+   "porVerificar": false
   },
   {
    "sO": "EFC",
@@ -1276,10 +1325,11 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "117",
    "seccion": "Art. 88 / 95",
-   "frase": "“accesibilidad … equipamientos”",
+   "frase": "accesibilidad … equipamientos",
    "clase": "Interna",
    "completa": false,
-   "id": 51
+   "id": 51,
+   "porVerificar": false
   },
   {
    "sO": "EFC",
@@ -1291,10 +1341,11 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "117",
    "seccion": "Art. 94",
-   "frase": "“jardines infantiles, colegios, parques”",
+   "frase": "jardines infantiles, colegios, parques",
    "clase": "Interna",
    "completa": false,
-   "id": 52
+   "id": 52,
+   "porVerificar": false
   },
   {
    "sO": "ESECI",
@@ -1306,10 +1357,11 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "122",
    "seccion": "Art. 101",
-   "frase": "“Eje de servicios empresariales”",
+   "frase": "Eje de servicios empresariales",
    "clase": "Interna",
    "completa": false,
-   "id": 53
+   "id": 53,
+   "porVerificar": false
   },
   {
    "sO": "ESECI",
@@ -1321,10 +1373,11 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "122",
    "seccion": "Art. 100–101",
-   "frase": "“formación del talento humano”",
+   "frase": "formación del talento humano",
    "clase": "Interna",
    "completa": false,
-   "id": 54
+   "id": 54,
+   "porVerificar": false
   },
   {
    "sO": "ESECI",
@@ -1336,10 +1389,11 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "122",
    "seccion": "Art. 100–101",
-   "frase": "“Centros de Abasto Mayorista … Plazas de Mercado”",
+   "frase": "Centros de Abasto Mayorista … Plazas de Mercado",
    "clase": "Interna",
    "completa": false,
-   "id": 55
+   "id": 55,
+   "porVerificar": false
   },
   {
    "sO": "ESECI",
@@ -1351,10 +1405,11 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "122",
    "seccion": "Art. 101",
-   "frase": "“Plazas de Mercado … infraestructuras”",
+   "frase": "Plazas de Mercado … infraestructuras",
    "clase": "Interna",
    "completa": false,
-   "id": 56
+   "id": 56,
+   "porVerificar": false
   },
   {
    "sO": "ESECI",
@@ -1366,10 +1421,11 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "122",
    "seccion": "Art. 101",
-   "frase": "“Eje de servicios empresariales … zonas industriales”",
+   "frase": "Eje de servicios empresariales … zonas industriales",
    "clase": "Interna",
    "completa": false,
-   "id": 57
+   "id": 57,
+   "porVerificar": false
   },
   {
    "sO": "ESECI",
@@ -1381,10 +1437,11 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "122",
    "seccion": "Art. 100–101",
-   "frase": "“formación del talento humano … empresas”",
+   "frase": "formación del talento humano … empresas",
    "clase": "Interna",
    "completa": false,
-   "id": 58
+   "id": 58,
+   "porVerificar": false
   },
   {
    "sO": "ESECI",
@@ -1396,10 +1453,11 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "122",
    "seccion": "Art. 101",
-   "frase": "“Zonas de Interés Turístico … Plazas de Mercado”",
+   "frase": "Zonas de Interés Turístico … Plazas de Mercado",
    "clase": "Interna",
    "completa": false,
-   "id": 59
+   "id": 59,
+   "porVerificar": false
   },
   {
    "sO": "ESECI",
@@ -1411,10 +1469,11 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "122",
    "seccion": "Art. 100",
-   "frase": "“centros financieros y de servicios empresariales”",
+   "frase": "centros financieros y de servicios empresariales",
    "clase": "Interna",
    "completa": false,
-   "id": 60
+   "id": 60,
+   "porVerificar": false
   },
   {
    "sO": "EIP",
@@ -1426,10 +1485,11 @@ const POT_DATA = {
    "tipo": "Resiliencia",
    "pag": "103–104",
    "seccion": "Art. 80",
-   "frase": "“patrimonio cultural inmaterial … comunidades”",
+   "frase": "patrimonio cultural inmaterial … comunidades",
    "clase": "Interna",
    "completa": false,
-   "id": 61
+   "id": 61,
+   "porVerificar": false
   },
   {
    "sO": "EIP",
@@ -1441,10 +1501,11 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "103–104",
    "seccion": "Art. 80",
-   "frase": "“Patrimonio Natural … Patrimonio Arqueológico”",
+   "frase": "Patrimonio Natural … Patrimonio Arqueológico",
    "clase": "Interna",
    "completa": false,
-   "id": 62
+   "id": 62,
+   "porVerificar": false
   },
   {
    "sO": "EIP",
@@ -1456,10 +1517,11 @@ const POT_DATA = {
    "tipo": "Resiliencia",
    "pag": "103–104",
    "seccion": "Art. 80",
-   "frase": "“Patrimonio Cultural material … Patrimonio Arqueológico”",
+   "frase": "Patrimonio Cultural material … Patrimonio Arqueológico",
    "clase": "Interna",
    "completa": false,
-   "id": 63
+   "id": 63,
+   "porVerificar": false
   },
   {
    "sO": "EIP",
@@ -1471,10 +1533,11 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "103–104",
    "seccion": "Art. 80",
-   "frase": "“patrimonio cultural material, inmaterial y natural”",
+   "frase": "patrimonio cultural material, inmaterial y natural",
    "clase": "Interna",
    "completa": false,
-   "id": 64
+   "id": 64,
+   "porVerificar": false
   },
   {
    "sO": "EIP",
@@ -1486,10 +1549,11 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "103–104",
    "seccion": "Art. 80",
-   "frase": "“integra … material, inmaterial y natural”",
+   "frase": "integra … material, inmaterial y natural",
    "clase": "Interna",
    "completa": false,
-   "id": 65
+   "id": 65,
+   "porVerificar": false
   },
   {
    "sO": "EIP",
@@ -1501,10 +1565,11 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "103–104",
    "seccion": "Art. 80",
-   "frase": "“patrimonio cultural material, inmaterial y natural”",
+   "frase": "patrimonio cultural material, inmaterial y natural",
    "clase": "Interna",
    "completa": false,
-   "id": 66
+   "id": 66,
+   "porVerificar": false
   },
   {
    "sO": "EEP",
@@ -1516,10 +1581,11 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "195–196",
    "seccion": "Relación entre estructuras (documento del POT)",
-   "frase": "“En ese sentido, la eip inscribe y precisa un sistema de relaciones del patrimonio cultural material, inmaterial y natural en el territorio.”",
+   "frase": "En ese sentido, la eip inscribe y precisa un sistema de relaciones del patrimonio cultural material, inmaterial y natural en el territorio.",
    "clase": "Intersistema",
    "completa": true,
-   "id": 67
+   "id": 67,
+   "porVerificar": false
   },
   {
    "sO": "EIP",
@@ -1531,10 +1597,11 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "200",
    "seccion": "Relación entre estructuras (documento del POT)",
-   "frase": "“para la Secretaría Distrital de Planeación (sdp), en el proceso de implementación del pot, fue la oportunidad de incorporarlos como nodo de equipamientos próximos y de proyectos a escala local.”",
+   "frase": "para la Secretaría Distrital de Planeación (sdp), en el proceso de implementación del pot, fue la oportunidad de incorporarlos como nodo de equipamientos próximos y de proyectos a escala local.",
    "clase": "Intersistema",
    "completa": true,
-   "id": 68
+   "id": 68,
+   "porVerificar": false
   },
   {
    "sO": "EFC",
@@ -1546,10 +1613,11 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "126",
    "seccion": "Relación entre estructuras (documento del POT)",
-   "frase": "“Con los nuevos colegios y jardines infantiles anclados en las Manzanas del Cuidado, lograremos que las mujeres, las niñas y los niños puedan garantizar su derecho a la educación en lugares cercanos a sus hogares.”",
+   "frase": "Con los nuevos colegios y jardines infantiles anclados en las Manzanas del Cuidado, lograremos que las mujeres, las niñas y los niños puedan garantizar su derecho a la educación en lugares cercanos a sus hogares.",
    "clase": "Intersistema",
    "completa": true,
-   "id": 69
+   "id": 69,
+   "porVerificar": false
   },
   {
    "sO": "EFC",
@@ -1561,10 +1629,11 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "126",
    "seccion": "Relación entre estructuras (documento del POT)",
-   "frase": "“Bajo la nueva visión del pot, la infraestructura social es compatible con otros usos y equipamientos, como centros deportivos, culturales y de recreación, entre otros.”",
+   "frase": "Bajo la nueva visión del pot, la infraestructura social es compatible con otros usos y equipamientos, como centros deportivos, culturales y de recreación, entre otros.",
    "clase": "Intersistema",
    "completa": true,
-   "id": 70
+   "id": 70,
+   "porVerificar": false
   },
   {
    "sO": "EFC",
@@ -1576,10 +1645,11 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "31",
    "seccion": "Relación entre estructuras (documento del POT)",
-   "frase": "“Y que, en todo caso, las diversas zonas de la ciudad estén conectadas por un sistema multimodal de transporte público, colectivo, de energías limpias y renovables basadas en la red Metro y alimentadas por los demás modos y medios de transporte público como los corredores verdes, los cables y las ciclorrutas.”",
+   "frase": "Y que, en todo caso, las diversas zonas de la ciudad estén conectadas por un sistema multimodal de transporte público, colectivo, de energías limpias y renovables basadas en la red Metro y alimentadas por los demás modos y medios de transporte público como los corredores verdes, los cables y las ciclorrutas.",
    "clase": "Intersistema",
    "completa": true,
-   "id": 71
+   "id": 71,
+   "porVerificar": false
   },
   {
    "sO": "EEP",
@@ -1591,10 +1661,11 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "54",
    "seccion": "Relación entre estructuras (documento del POT)",
-   "frase": "“Sostenible: Ecoturismo, viverismo, agricultura urbana y periurbana y puntos de la tierra.”",
+   "frase": "Sostenible: Ecoturismo, viverismo, agricultura urbana y periurbana y puntos de la tierra.",
    "clase": "Intersistema",
    "completa": true,
-   "id": 72
+   "id": 72,
+   "porVerificar": false
   },
   {
    "sO": "EEP",
@@ -1606,10 +1677,11 @@ const POT_DATA = {
    "tipo": "Soporte",
    "pag": "54",
    "seccion": "Relación entre estructuras (documento del POT)",
-   "frase": "“Son áreas de alta pendiente en suelo urbano y rural, caracterizadas por contar con remanentes de bosques altoandinos dispersos y ecosistemas subxerofíticos de gran importancia ecosistémica entre otros que, por su estructura y función ecosistémica, aportan a la conservación de la biodiversidad y los servicios ecosistémicos, la conectividad ecológica y a la resiliencia climática de los entornos urbanos,ruralesydetransiciónaescalalocalyregional.”",
+   "frase": "Son áreas de alta pendiente en suelo urbano y rural, caracterizadas por contar con remanentes de bosques altoandinos dispersos y ecosistemas subxerofíticos de gran importancia ecosistémica entre otros que, por su estructura y función ecosistémica, aportan a la conservación de la biodiversidad y los servicios ecosistémicos, la conectividad ecológica y a la resiliencia climática de los entornos urbanos,ruralesydetransiciónaescalalocalyregional.",
    "clase": "Intersistema",
    "completa": true,
-   "id": 73
+   "id": 73,
+   "porVerificar": false
   },
   {
    "sO": "EEP",
@@ -1621,17 +1693,18 @@ const POT_DATA = {
    "tipo": "Resiliencia",
    "pag": "72",
    "seccion": "Relación entre estructuras (documento del POT)",
-   "frase": "“Así mismo, creamos las Áreas de Resiliencia Climática y Protección por Riesgo…”",
+   "frase": "Así mismo, creamos las Áreas de Resiliencia Climática y Protección por Riesgo…",
    "clase": "Intersistema",
    "completa": true,
-   "id": 74
+   "id": 74,
+   "porVerificar": false
   }
  ],
  "vb": [
-  -1448,
-  -1378,
-  2897,
-  2789
+  -1395,
+  -1329,
+  2790,
+  2693
  ]
 };
 
@@ -1749,6 +1822,7 @@ function render() {
     const kind = r.tipo === 'Soporte' ? 'soporte' : 'resiliencia';
     const cls = ['rel', kind];
     if (r.linea === 'Punteada') cls.push('punteada');
+    if (r.porVerificar) cls.push('por-verificar');
     if (selectedRel === r.id) cls.push('sel');
 
     const path = el('path', {
@@ -1835,6 +1909,10 @@ const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(
 // 4. MÉTRICAS
 // ---------------------------------------------------------------------
 const outgoing = s => model.relations.filter(r => r.sO === s && relActive(r)).length;
+// Conexiones con OTROS sistemas: es la medida en la que la ESECI encabeza la red
+// y la que sustenta el hallazgo principal del módulo.
+const crossLinks = s => model.relations.filter(r =>
+  r.sO !== r.sD && (r.sO === s || r.sD === s) && relActive(r)).length;
 const incoming = s => model.relations.filter(r => r.sD === s && relActive(r)).length;
 // relaciones que desaparecerían si ese sistema se apagara (desde red completa)
 const incident = s => model.relations.filter(r => r.sO === s || r.sD === s).length;
@@ -1897,7 +1975,7 @@ function updateMetrics() {
   bar.style.background = pct === 100 ? 'var(--eep)' : pct >= 60 ? 'var(--eseci)' : 'var(--danger)';
 
   // ---- centralidad saliente (calculada, nunca fija) ----
-  const rank = SYS.map(s => ({ s, out: outgoing(s), inc: incoming(s), on: state[s] }))
+  const rank = SYS.map(s => ({ s, out: crossLinks(s), inc: incoming(s), on: state[s] }))
     .sort((a, b) => b.out - a.out || a.s.localeCompare(b.s));
   const maxOut = Math.max(1, ...rank.map(r => r.out));
 
@@ -1912,9 +1990,9 @@ function updateMetrics() {
   const top = rank[0];
   const tie = rank.filter(r => r.out === top.out && top.out > 0);
   document.getElementById('topSys').innerHTML = top.out === 0
-    ? '<span class="badge-top">Sin relaciones salientes activas</span>'
+    ? '<span class="badge-top">Sin conexiones activas entre sistemas</span>'
     : `<span class="badge-top" style="color:${model.systems[top.s].color};border-color:${model.systems[top.s].color}66;background:${model.systems[top.s].color}1f">
-         ${tie.length > 1 ? tie.map(t => t.s).join(' / ') : top.s} · Mayor centralidad
+         ${tie.length > 1 ? tie.map(t => t.s).join(' / ') : top.s} · Más conectado con los demás
        </span>`;
   set('mCentral', top.out === 0 ? '—' : (tie.length > 1 ? tie.map(t => t.s).join(' / ') : top.s));
 
@@ -1963,7 +2041,7 @@ function updateSimPanel(active, total, rank) {
       ? 'Sin relaciones activas para analizar.'
       : `La red está completa: <b>${active} de ${total}</b> relaciones activas.
          Según las relaciones construidas a partir del POT, <b>${top.s}</b> concentra la mayor
-         centralidad saliente (<b>${top.out}</b> relaciones), por lo que opera como
+         cantidad de conexiones con las demás estructuras (<b>${top.out}</b>), por lo que opera como
          <b>principal articulador de esta red</b>.`;
   } else {
     const removed = total - active;
@@ -1973,7 +2051,7 @@ function updateSimPanel(active, total, rank) {
       <b>${total}</b> relaciones (<b>${loss}%</b>) y queda con <b>${components().count}</b>
       componente(s) conectado(s).
       ${top.out > 0
-        ? `Con la red así, <b>${top.s}</b> pasa a tener la mayor centralidad saliente (<b>${top.out}</b> relaciones).`
+        ? `Con la red así, <b>${top.s}</b> pasa a ser la más conectada con las demás (<b>${top.out}</b> conexiones).`
         : 'No quedan relaciones salientes activas.'}
       En la red completa, el sistema que genera mayor dependencia es <b>${worst.s}</b>
       (${worst.n} relaciones incidentes).`;
@@ -2029,6 +2107,8 @@ function selectRelation(id) {
   const r = model.relations.find(x => x.id === id);
   if (!r) return;
   const kind = r.tipo === 'Soporte' ? 'soporte' : 'resiliencia';
+
+  openQuoteModal(r, kind);
 
   document.getElementById('evBox').innerHTML = `
     <div class="ev-rel">
@@ -2157,6 +2237,92 @@ function updateNodeImpact() {
   box.innerHTML = `Este concepto participa en <b>${c.rels.length}</b> de las <b>${total}</b>
     relaciones documentadas (<b>${pct}%</b>). Al apagarlo, esas relaciones desaparecen de la red.`;
 }
+// ---------------------------------------------------------------------
+// POP-UP DE APERTURA: HALLAZGO PRINCIPAL
+// Las cifras de respaldo se calculan desde los datos, no van escritas a mano.
+// ---------------------------------------------------------------------
+function initIntro() {
+  const back = document.getElementById('introBackdrop');
+  if (!back) return;
+
+  // Cifras que respaldan el hallazgo, calculadas desde los datos:
+  // qué tanto se conecta la EIP fuera de sí misma y qué se pierde sin ella.
+  const S = 'EIP';
+  const cross = model.relations.filter(r => r.sO !== r.sD && (r.sO === S || r.sD === S));
+  const alcanza = new Set(cross.map(r => (r.sO === S ? r.sD : r.sO))).size;
+  const perdidas = model.relations.filter(r => r.sO === S || r.sD === S).length;
+  const pct = Math.round((perdidas / model.relations.length) * 100);
+
+  const datos = [
+    { n: cross.length, lbl: 'conexiones con otras estructuras', color: model.systems.EIP.color },
+    { n: alcanza,      lbl: 'estructuras distintas alcanzadas', color: model.systems.ESECI.color },
+    { n: perdidas,     lbl: `relaciones se pierden sin la EIP (${pct}%)`, color: model.systems.EFC.color }
+  ];
+
+  const box = document.getElementById('introFigures');
+  if (box) {
+    box.innerHTML = datos.map(d => `
+      <div class="fig-card" style="--fig:${d.color}">
+        <div class="fig-num">${d.n}</div>
+        <div class="fig-lbl">${d.lbl}</div>
+      </div>`).join('');
+  }
+
+  const cerrar = () => {
+    back.classList.add('hidden');
+    document.body.style.overflow = '';
+  };
+  const btn = document.getElementById('introBtn');
+  const x = document.getElementById('introClose');
+  if (btn) btn.addEventListener('click', cerrar);
+  if (x) x.addEventListener('click', cerrar);
+  back.addEventListener('click', e => { if (e.target === back) cerrar(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrar(); });
+
+  document.body.style.overflow = 'hidden';
+}
+
+// ---------------------------------------------------------------------
+// POP-UP DE LA FRASE EXACTA: se abre al hacer clic en una línea.
+// Muestra la frase textual del POT entre comillas y la página debajo.
+// ---------------------------------------------------------------------
+function openQuoteModal(r, kind) {
+  const back = document.getElementById('quoteBackdrop');
+  if (!back) return;
+
+  document.getElementById('quoteRel').innerHTML =
+    `${esc(r.cO)}<span class="arrow">→</span>${esc(r.cD)}`;
+
+  const tags = [
+    `<span class="quote-tag ${kind}">${r.tipo}</span>`,
+    `<span class="quote-tag">${r.evid}</span>`,
+    `<span class="quote-tag">${r.sO} → ${r.sD}</span>`
+  ];
+  if (r.porVerificar) tags.push('<span class="quote-tag pv">por verificar</span>');
+  else if (!r.completa) tags.push('<span class="quote-tag">fragmento del archivo fuente</span>');
+  document.getElementById('quoteTags').innerHTML = tags.join('');
+
+  // r.frase ya viene entre comillas tipográficas desde los datos
+  document.getElementById('quoteText').textContent = r.frase;
+  document.getElementById('quotePage').textContent = 'Página ' + r.pag;
+  document.getElementById('quoteSec').textContent = r.seccion || '';
+
+  back.classList.remove('hidden');
+}
+
+function closeQuoteModal() {
+  const back = document.getElementById('quoteBackdrop');
+  if (back) back.classList.add('hidden');
+}
+
+function initQuoteModal() {
+  const back = document.getElementById('quoteBackdrop');
+  if (!back) return;
+  document.getElementById('quoteClose').addEventListener('click', closeQuoteModal);
+  back.addEventListener('click', e => { if (e.target === back) closeQuoteModal(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeQuoteModal(); });
+}
+
 const tip = () => document.getElementById('tooltip');
 
 function showTooltip(ev, html) {
@@ -2190,29 +2356,11 @@ function applyVB() {
   document.getElementById('svg').setAttribute('viewBox', `${vb.x} ${vb.y} ${vb.w} ${vb.h}`);
 }
 
-function zoom(f, cx, cy) {
-  const nw = Math.max(320, Math.min(3200, vb.w / f));
-  const nh = nw * (BASE_VB.h / BASE_VB.w);
-  if (cx === undefined) { cx = vb.x + vb.w / 2; cy = vb.y + vb.h / 2; }
-  vb.x = cx - (cx - vb.x) * (nw / vb.w);
-  vb.y = cy - (cy - vb.y) * (nh / vb.h);
-  vb.w = nw; vb.h = nh;
-  applyVB();
-}
-
 function resetView() { vb = Object.assign({}, BASE_VB); applyVB(); }
 
 function initPanZoom() {
   const stage = document.getElementById('stage');
   const svg = document.getElementById('svg');
-
-  stage.addEventListener('wheel', e => {
-    e.preventDefault();
-    const rect = svg.getBoundingClientRect();
-    const cx = vb.x + ((e.clientX - rect.left) / rect.width) * vb.w;
-    const cy = vb.y + ((e.clientY - rect.top) / rect.height) * vb.h;
-    zoom(e.deltaY < 0 ? 1.16 : 1 / 1.16, cx, cy);
-  }, { passive: false });
 
   let dragging = false, sx = 0, sy = 0, ox = 0, oy = 0;
   stage.addEventListener('pointerdown', e => {
@@ -2252,11 +2400,11 @@ document.addEventListener('DOMContentLoaded', () => {
   updateSwitches();
 
   document.getElementById('btnReset').addEventListener('click', resetAll);
-  document.getElementById('btnIn').addEventListener('click', () => zoom(1.25));
-  document.getElementById('btnOut').addEventListener('click', () => zoom(0.8));
-  document.getElementById('btnFit').addEventListener('click', resetView);
+  const bf=document.getElementById('btnFit'); if(bf) bf.addEventListener('click', resetView);
 
   clearEvidence();
+  initIntro();
+  initQuoteModal();
   initNodeScenario();
   initPanZoom();
   applyVB();
