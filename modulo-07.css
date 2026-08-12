@@ -625,7 +625,18 @@ body {
 .links line.type-off { opacity: 0.04 !important; }
 
 /* resaltado por selección de nodo */
-.node { cursor: pointer; }
+.node { cursor: pointer; transition: transform 0.7s cubic-bezier(.34,1.4,.4,1); }
+
+/* Nodo que se quedó sin ninguna conexión activa al apagar un sistema: se
+   despega visualmente de su lugar y se marca con un contorno punteado rojo
+   tenue, para mostrar que la red se fragmentó en ese punto. */
+.node.node-drift .node-fill {
+  stroke: #ef6a6a;
+  stroke-dasharray: 3 2;
+  opacity: 0.75;
+}
+.node.node-drift .node-icon { opacity: 0.6; }
+.node.node-drift .node-label { opacity: 0.55; }
 .node.node-dim { opacity: 0.12; }
 .links line.link-dim { opacity: 0.06; }
 .node.node-selected .node-fill { stroke-width: 2.2; filter: drop-shadow(0 0 5px currentColor); }
