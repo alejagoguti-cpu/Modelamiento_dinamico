@@ -574,7 +574,7 @@ body {
 
 .rel {
   fill: none;
-  stroke-width: 1.7;
+  stroke-width: 1.1;
   cursor: pointer;
   animation: draw 0.5s ease both;
 }
@@ -584,9 +584,9 @@ body {
 .rel.soporte { stroke: var(--soporte); }
 .rel.resiliencia { stroke: var(--resiliencia); }
 .rel.punteada { stroke-dasharray: 5 4; }
-.rel:hover { stroke-width: 3.2; }
+.rel:hover { stroke-width: 2.4; }
 .rel.dim { opacity: 0.12; }
-.rel.sel { stroke-width: 3.4; }
+.rel.sel { stroke-width: 2.6; }
 
 .rel-hit { fill: none; stroke: transparent; stroke-width: 12; cursor: pointer; }
 
@@ -647,8 +647,6 @@ body {
   border-left: 3px solid var(--soporte);
   border-radius: 0 6px 6px 0;
   padding: 11px 12px;
-  max-height: 260px;
-  overflow-y: auto;
 }
 
 .ev-quote.resiliencia { border-left-color: var(--resiliencia); }
@@ -774,3 +772,23 @@ body {
 
 .node-sim-btn:hover { border-color: var(--danger); color: #ffb3b3; }
 .node-sim-btn.active { background: rgba(239, 68, 68, 0.22); border-color: var(--danger); color: #ffc4c4; }
+
+.ev-warn {
+  display: flex;
+  gap: 7px;
+  align-items: flex-start;
+  font-size: 10.5px;
+  line-height: 1.45;
+  color: var(--text-faint);
+  margin-top: 9px;
+}
+.ev-warn i { color: var(--eseci); margin-top: 2px; }
+
+/* Página del POT, justo debajo de la frase exacta */
+.ev-page {
+  margin-top: 10px;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--eseci);
+  letter-spacing: 0.2px;
+}
