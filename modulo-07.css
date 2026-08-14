@@ -1416,3 +1416,39 @@ body {
   .net-stage { min-height: 500px; }
   .concept text { stroke-width: 2.6px; }
 }
+
+/* CONTROLES DE ZOOM */
+.zoom-controls {
+  position: absolute;
+  z-index: 12;
+  top: 14px;
+  right: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px;
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 9px;
+  background: rgba(10,14,23,.90);
+  box-shadow: 0 8px 24px rgba(0,0,0,.28);
+  backdrop-filter: blur(8px);
+}
+.zoom-btn {
+  width: 30px;
+  height: 30px;
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 6px;
+  background: #121a2a;
+  color: #e7eaf2;
+  font: 700 18px/1 Inter, sans-serif;
+  cursor: pointer;
+}
+.zoom-btn:hover { background: #1c2940; border-color: var(--teal); color: var(--teal); }
+.zoom-value {
+  min-width: 48px;
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 11px;
+  font-weight: 700;
+}
+.zoom-reset { font-size: 13px; margin-left: 2px; }
