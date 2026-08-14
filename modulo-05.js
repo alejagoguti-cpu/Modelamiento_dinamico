@@ -1,741 +1,3204 @@
-/* ==========================================================
-   MÓDULO 05 — LO QUE NO ESTÁ — AUSENCIAS Y VACÍOS DEL POT
-   (v2: mapeo de relaciones faltantes, componentes ignorados, conflictos silenciados)
+/* =======================================================================
+   RAPOT · MÓDULO 05 — CÓMO VEMOS NOSOTROS EL POT
+   Base de datos: Red_4_Estructuras_POT_CORREGIDA.xlsx (hoja RELACIONES)
+   32 relaciones · 58 conceptos · 4 sistemas
+   No se inventan relaciones ni se alteran frases o páginas.
+   ======================================================================= */
 
-   Nodos: Los 37 originales + espacios de ausencia
-   
-   Tipos de ausencias:
-   - relacion-faltante: Conexión que debería existir pero no está
-   - componente-ignorado: Elemento poco mencionado, marginado
-   - conflicto-silenciado: Tensión no reconocida en el documento
-   - vacio-logico: Contradicción en la arquitectura relacional
-
-   Las aristas representan AUSENCIAS, no presencias.
-   ========================================================== */
-
-const SVG_NS = "http://www.w3.org/2000/svg";
-const XHTML_NS = "http://www.w3.org/1999/xhtml";
-
-/* -------- Nodos: los componentes de las 4 estructuras -------- */
-const ODS_NODES = [
-  /* 1. Estructura Ecológica Principal — VERDE */
-  { id: "cerros",     cat: "e1", name: "CERROS\nORIENTALES",        icon: "fa-mountain-sun",  color: "#4ade80", x: 200,  y: 180, r: 52 },
-  { id: "rios",       cat: "e1", name: "RÍOS",                       icon: "fa-water",         color: "#4ade80", x: 330,  y: 430, r: 50 },
-  { id: "quebradas",  cat: "e1", name: "QUEBRADAS",                  icon: "fa-water",         color: "#4ade80", x: 500,  y: 150, r: 46 },
-  { id: "humedales",  cat: "e1", name: "HUMEDALES",                  icon: "fa-droplet",       color: "#4ade80", x: 660,  y: 420, r: 52 },
-  { id: "resiliencia",cat: "e1", name: "ÁREAS DE\nRESILIENCIA\nCLIMÁTICA",   icon: "fa-shield-heart",  color: "#4ade80", x: 890,  y: 170, r: 52 },
-  { id: "paramos",    cat: "e1", name: "COMPLEJOS\nDE PÁRAMOS",      icon: "fa-mountain",      color: "#4ade80", x: 250,  y: 640, r: 52 },
-  { id: "bosques",    cat: "e1", name: "BOSQUES\nURBANOS",           icon: "fa-tree",          color: "#4ade80", x: 1140, y: 400, r: 50 },
-  { id: "coberturas", cat: "e1", name: "COBERTURAS\nVEGETALES",      icon: "fa-seedling",      color: "#4ade80", x: 1040, y: 650, r: 54 },
-  { id: "reservas",   cat: "e1", name: "RESERVAS\nFORESTALES",       icon: "fa-tree",          color: "#4ade80", x: 1300, y: 190, r: 50 },
-  { id: "areas",      cat: "e1", name: "ÁREAS\nPROTEGIDAS",          icon: "fa-lock",          color: "#4ade80", x: 440,  y: 300, r: 50 },
-  { id: "parques_m",  cat: "e1", name: "PARQUES ECOLÓGICOS\nDE MONTAÑA",   icon: "fa-campground",      color: "#4ade80", x: 770,  y: 640, r: 50 },
-  { id: "parque_b",   cat: "e1", name: "PARQUE\nDE BORDE",           icon: "fa-archway",       color: "#4ade80", x: 1430, y: 480, r: 48 },
-  { id: "paisajes",   cat: "e1", name: "PAISAJES\nSOSTENIBLES",      icon: "fa-sun",           color: "#4ade80", x: 100,  y: 480, r: 48 },
-
-  /* 2. Estructura Funcional y del Cuidado — AZUL */
-  { id: "redvial",    cat: "e2", pagina: "43", name: "RED\nVIAL",                  icon: "fa-road",          color: "#5b8def", x: 1240, y: 90,  r: 48 },
-  { id: "transporte", cat: "e2", pagina: "43", name: "TRANSPORTE\nPÚBLICO",        icon: "fa-bus",           color: "#5b8def", x: 960,  y: 330, r: 52 },
-  { id: "corredores", cat: "e2", pagina: "43", name: "CORREDORES\nVERDES",         icon: "fa-route",         color: "#5b8def", x: 700,  y: 140, r: 50 },
-  { id: "ciclorutas", cat: "e2", pagina: "43", name: "CICLORRUTAS",                icon: "fa-person-biking", color: "#5b8def", x: 1390, y: 330, r: 46 },
-  { id: "equip",      cat: "e2", pagina: "43", name: "EQUIPAMIENTOS",              icon: "fa-school",        color: "#5b8def", x: 1250, y: 620, r: 50 },
-  { id: "manzanas",   cat: "e2", pagina: "43", name: "MANZANAS\nDEL CUIDADO",      icon: "fa-people-roof",   color: "#5b8def", x: 1470, y: 640, r: 52 },
-  { id: "sserv",      cat: "e2", pagina: "43", name: "SERVICIOS\nSOCIALES",        icon: "fa-hand-holding-heart", color: "#5b8def", x: 1370, y: 760, r: 46 },
-  { id: "parques",    cat: "e2", pagina: "43", name: "PARQUES",                    icon: "fa-tree-city",     color: "#5b8def", x: 1100, y: 760, r: 46 },
-  { id: "scuidado",   cat: "e2", pagina: "43", name: "SERVICIOS\nDE CUIDADO",      icon: "fa-heart-pulse",   color: "#5b8def", x: 1230, y: 470, r: 46 },
-  { id: "vivienda",   cat: "e2", pagina: "43", name: "VIVIENDA",                   icon: "fa-house",         color: "#5b8def", x: 950,  y: 520, r: 50 },
-  { id: "servpub",    cat: "e2", pagina: "43", name: "SERVICIOS\nPÚBLICOS",        icon: "fa-bolt",          color: "#5b8def", x: 820,  y: 770, r: 46 },
-
-  /* 3. Estructura Socioeconómica Creativa e Innovación — NARANJA */
-  { id: "financieros", cat: "e3", pagina: "239-241", name: "CENTROS\nFINANCIEROS",      icon: "fa-building-columns", color: "#ef9552", x: 1700, y: 190, r: 48 },
-  { id: "empresariales", cat: "e3", pagina: "239-241", name: "SERVICIOS\nEMPRESARIALES", icon: "fa-briefcase",      color: "#ef9552", x: 1920, y: 120, r: 50 },
-  { id: "tecnodistrito", cat: "e3", pagina: "239-241", name: "DISTRITO\nTECNOLÓGICO",   icon: "fa-microchip",      color: "#ef9552", x: 2110, y: 270, r: 48 },
-  { id: "industriales",  cat: "e3", pagina: "239-241", name: "ZONAS\nINDUSTRIALES",     icon: "fa-industry",       color: "#ef9552", x: 1860, y: 360, r: 48 },
-  { id: "innovacion",    cat: "e3", pagina: "239-241", name: "INNOVACIÓN",              icon: "fa-lightbulb",      color: "#ef9552", x: 2080, y: 470, r: 46 },
-  { id: "abastecimiento",cat: "e3", pagina: "239-241", name: "CENTROS DE\nABASTECIMIENTO", icon: "fa-truck",      color: "#ef9552", x: 1700, y: 430, r: 48 },
-  { id: "plazas",        cat: "e3", pagina: "239-241", name: "PLAZAS\nDE MERCADO",      icon: "fa-store",          color: "#ef9552", x: 1900, y: 530, r: 46 },
-  { id: "turismo",       cat: "e3", pagina: "239-241", name: "ZONAS DE\nINTERÉS\nTURÍSTICO", icon: "fa-map-location-dot", color: "#ef9552", x: 2090, y: 660, r: 46 },
-  { id: "artesanal",     cat: "e3", pagina: "239-241", name: "PRODUCCIÓN\nARTESANAL",   icon: "fa-palette",        color: "#ef9552", x: 1680, y: 640, r: 46 },
-
-  /* 4. Estructura Integradora de Patrimonio — MORADA */
-  { id: "sitios_sagrados", cat: "e4", pagina: "126", name: "SISTEMA DE\nSITIOS\nSAGRADOS", icon: "fa-place-of-worship", color: "#a276f2", x: 2360, y: 200, r: 50 },
-  { id: "pinmaterial",     cat: "e4", pagina: "126", name: "PATRIMONIO\nINMATERIAL",    icon: "fa-masks-theater",    color: "#a276f2", x: 2500, y: 440, r: 50 },
-  { id: "pnatural",        cat: "e4", pagina: "126", name: "PATRIMONIO\nNATURAL",       icon: "fa-globe",              color: "#a276f2", x: 2650, y: 180, r: 48 },
-  { id: "pecomaterial",    cat: "e4", pagina: "126", name: "PATRIMONIO ECOLÓGICO\nMATERIAL", icon: "fa-leaf",          color: "#a276f2", x: 2650, y: 640, r: 50 },
-];
-
-ODS_NODES.forEach(n => {
-  n.homeX = n.x; n.homeY = n.y;
-  n.vx = 0; n.vy = 0;
-  n.fixed = false;
-});
-
-/* -------- Estructuras: nombre y color de capa -------- */
-const STRUCT_STYLE = {
-  e1: { color: "#4ade80", label: "1. Ecológica Principal", tag: "ECOLÓGICA" },
-  e2: { color: "#5b8def", label: "2. Funcional y del Cuidado", tag: "FUNCIONAL Y CUIDADO" },
-  e3: { color: "#ef9552", label: "3. Socioeconómica Creativa", tag: "SOCIOECONÓMICA" },
-  e4: { color: "#a276f2", label: "4. Integradora de Patrimonio", tag: "PATRIMONIO" },
+// 98 relaciones: 68 sustentadas con frase textual del POT, 7 marcadas 'por
+// verificar' por la propia tabla y 23 agregadas a pedido, pendientes de frase.
+const POT_DATA = {
+ "sistemas": {
+  "EEP": {
+   "nombre": "Estructura Ecológica Principal",
+   "color": "#5cc8ff"
+  },
+  "EFC": {
+   "nombre": "Estructura Funcional y del Cuidado",
+   "color": "#ff7a8a"
+  },
+  "ESECI": {
+   "nombre": "Estructura Socioeconómica, Creativa y de Innovación",
+   "color": "#b58cff"
+  },
+  "EIP": {
+   "nombre": "Estructura Integradora de Patrimonios",
+   "color": "#ffd166"
+  }
+ },
+ "nodos": [
+  {
+   "id": "EEP::Bosques urbanos",
+   "sys": "EEP",
+   "label": "Bosques urbanos",
+   "icon": "fa-tree-city",
+   "x": -614.4,
+   "y": 1387.4,
+   "r": 48.9,
+   "deg": 2
+  },
+  {
+   "id": "EEP::Cerros Orientales",
+   "sys": "EEP",
+   "label": "Cerros Orientales",
+   "icon": "fa-mountain",
+   "x": 1688.7,
+   "y": 157.4,
+   "r": 43.5,
+   "deg": 1
+  },
+  {
+   "id": "EEP::Coberturas vegetales",
+   "sys": "EEP",
+   "label": "Coberturas vegetales",
+   "icon": "fa-seedling",
+   "x": -280.3,
+   "y": 935.3,
+   "r": 88.3,
+   "deg": 7
+  },
+  {
+   "id": "EEP::Complejos de páramos",
+   "sys": "EEP",
+   "label": "Complejos de páramos",
+   "icon": "fa-cloud",
+   "x": 868.2,
+   "y": 1593.6,
+   "r": 48.9,
+   "deg": 2
+  },
+  {
+   "id": "EEP::Conservación ambiental",
+   "sys": "EEP",
+   "label": "Conservación ambiental",
+   "icon": "fa-shield-heart",
+   "x": 1299.2,
+   "y": -1049.2,
+   "r": 43.5,
+   "deg": 1
+  },
+  {
+   "id": "EEP::Corredores montañosos",
+   "sys": "EEP",
+   "label": "Corredores montañosos",
+   "icon": "fa-mountain-sun",
+   "x": 1525.3,
+   "y": 1167.5,
+   "r": 43.5,
+   "deg": 1
+  },
+  {
+   "id": "EEP::Humedales",
+   "sys": "EEP",
+   "label": "Humedales",
+   "icon": "fa-droplet",
+   "x": 753.3,
+   "y": -42.4,
+   "r": 140.0,
+   "deg": 12
+  },
+  {
+   "id": "EEP::Paisajes sostenibles",
+   "sys": "EEP",
+   "label": "Paisajes sostenibles",
+   "icon": "fa-image",
+   "x": 226.4,
+   "y": 1661.8,
+   "r": 48.9,
+   "deg": 2
+  },
+  {
+   "id": "EEP::Parques de borde",
+   "sys": "EEP",
+   "label": "Parques de borde",
+   "icon": "fa-leaf",
+   "x": 360.1,
+   "y": 1365.0,
+   "r": 48.9,
+   "deg": 2
+  },
+  {
+   "id": "EEP::Parques ecológicos de montaña",
+   "sys": "EEP",
+   "label": "Parques ecológicos de montaña",
+   "icon": "fa-mountain",
+   "x": 620.2,
+   "y": 991.3,
+   "r": 62.7,
+   "deg": 4
+  },
+  {
+   "id": "EEP::Quebradas",
+   "sys": "EEP",
+   "label": "Quebradas",
+   "icon": "fa-tint",
+   "x": 1525.4,
+   "y": -455.3,
+   "r": 43.5,
+   "deg": 1
+  },
+  {
+   "id": "EEP::Reservas forestales",
+   "sys": "EEP",
+   "label": "Reservas forestales",
+   "icon": "fa-tree",
+   "x": 1517.4,
+   "y": -13.4,
+   "r": 48.9,
+   "deg": 2
+  },
+  {
+   "id": "EEP::Ríos",
+   "sys": "EEP",
+   "label": "Ríos",
+   "icon": "fa-water",
+   "x": 1011.5,
+   "y": 972.3,
+   "r": 70.7,
+   "deg": 5
+  },
+  {
+   "id": "EEP::Áreas de resiliencia climática",
+   "sys": "EEP",
+   "label": "Áreas de resiliencia climática",
+   "icon": "fa-temperature-half",
+   "x": -279.9,
+   "y": 231.1,
+   "r": 70.7,
+   "deg": 5
+  },
+  {
+   "id": "EEP::Áreas protegidas",
+   "sys": "EEP",
+   "label": "Áreas protegidas",
+   "icon": "fa-shield-halved",
+   "x": 1379.7,
+   "y": 488.8,
+   "r": 55.4,
+   "deg": 3
+  },
+  {
+   "id": "EFC::Ciclorutas",
+   "sys": "EFC",
+   "label": "Ciclorutas",
+   "icon": "fa-bicycle",
+   "x": 250.4,
+   "y": -921.5,
+   "r": 70.7,
+   "deg": 5
+  },
+  {
+   "id": "EFC::Corredores verdes",
+   "sys": "EFC",
+   "label": "Corredores verdes",
+   "icon": "fa-road",
+   "x": 319.3,
+   "y": -1425.4,
+   "r": 48.9,
+   "deg": 2
+  },
+  {
+   "id": "EFC::Equipamientos",
+   "sys": "EFC",
+   "label": "Equipamientos",
+   "icon": "fa-building-columns",
+   "x": -1102.4,
+   "y": -519.5,
+   "r": 118.2,
+   "deg": 10
+  },
+  {
+   "id": "EFC::Espacio público",
+   "sys": "EFC",
+   "label": "Espacio público",
+   "icon": "fa-umbrella-beach",
+   "x": 699.0,
+   "y": 401.0,
+   "r": 55.4,
+   "deg": 3
+  },
+  {
+   "id": "EFC::Manzanas del Cuidado",
+   "sys": "EFC",
+   "label": "Manzanas del Cuidado",
+   "icon": "fa-hand-holding-heart",
+   "x": -1149.9,
+   "y": -987.4,
+   "r": 70.7,
+   "deg": 5
+  },
+  {
+   "id": "EFC::Parques",
+   "sys": "EFC",
+   "label": "Parques",
+   "icon": "fa-tree",
+   "x": -1023.6,
+   "y": -1661.8,
+   "r": 43.5,
+   "deg": 1
+  },
+  {
+   "id": "EFC::Red vial",
+   "sys": "EFC",
+   "label": "Red vial",
+   "icon": "fa-road-bridge",
+   "x": -728.6,
+   "y": -1205.4,
+   "r": 48.9,
+   "deg": 2
+  },
+  {
+   "id": "EFC::Servicios de cuidado",
+   "sys": "EFC",
+   "label": "Servicios de cuidado",
+   "icon": "fa-heart",
+   "x": -1688.7,
+   "y": -844.9,
+   "r": 43.5,
+   "deg": 1
+  },
+  {
+   "id": "EFC::Servicios públicos",
+   "sys": "EFC",
+   "label": "Servicios públicos",
+   "icon": "fa-plug",
+   "x": -1214.2,
+   "y": -307.1,
+   "r": 79.2,
+   "deg": 6
+  },
+  {
+   "id": "EFC::Servicios sociales",
+   "sys": "EFC",
+   "label": "Servicios sociales",
+   "icon": "fa-people-group",
+   "x": -1407.2,
+   "y": -1216.9,
+   "r": 48.9,
+   "deg": 2
+  },
+  {
+   "id": "EFC::Transporte público",
+   "sys": "EFC",
+   "label": "Transporte público",
+   "icon": "fa-bus",
+   "x": -101.7,
+   "y": -570.6,
+   "r": 97.8,
+   "deg": 8
+  },
+  {
+   "id": "EFC::Vivienda",
+   "sys": "EFC",
+   "label": "Vivienda",
+   "icon": "fa-house",
+   "x": -242.0,
+   "y": -742.2,
+   "r": 107.8,
+   "deg": 9
+  },
+  {
+   "id": "ESECI::Actividades económicas",
+   "sys": "ESECI",
+   "label": "Actividades económicas",
+   "icon": "fa-chart-line",
+   "x": -698.3,
+   "y": 30.2,
+   "r": 62.7,
+   "deg": 4
+  },
+  {
+   "id": "ESECI::Centros de abastecimiento",
+   "sys": "ESECI",
+   "label": "Centros de abastecimiento",
+   "icon": "fa-truck",
+   "x": -191.6,
+   "y": 574.2,
+   "r": 48.9,
+   "deg": 2
+  },
+  {
+   "id": "ESECI::Centros financieros",
+   "sys": "ESECI",
+   "label": "Centros financieros",
+   "icon": "fa-building-columns",
+   "x": -1162.6,
+   "y": 1179.0,
+   "r": 48.9,
+   "deg": 2
+  },
+  {
+   "id": "ESECI::Corazones productivos",
+   "sys": "ESECI",
+   "label": "Corazones productivos",
+   "icon": "fa-heart-pulse",
+   "x": -312.2,
+   "y": -1456.1,
+   "r": 43.5,
+   "deg": 1
+  },
+  {
+   "id": "ESECI::Distrito Centro Tecnológico e Innovación",
+   "sys": "ESECI",
+   "label": "Distrito Centro Tecnológico e Innovación",
+   "icon": "fa-microchip",
+   "x": -1455.0,
+   "y": 395.8,
+   "r": 70.7,
+   "deg": 5
+  },
+  {
+   "id": "ESECI::Economía",
+   "sys": "ESECI",
+   "label": "Economía",
+   "icon": "fa-coins",
+   "x": 749.1,
+   "y": -879.3,
+   "r": 55.4,
+   "deg": 3
+  },
+  {
+   "id": "ESECI::Empleo",
+   "sys": "ESECI",
+   "label": "Empleo",
+   "icon": "fa-briefcase",
+   "x": -600.3,
+   "y": -630.4,
+   "r": 97.8,
+   "deg": 8
+  },
+  {
+   "id": "ESECI::Plazas de mercado",
+   "sys": "ESECI",
+   "label": "Plazas de mercado",
+   "icon": "fa-store",
+   "x": 82.1,
+   "y": 939.6,
+   "r": 79.2,
+   "deg": 6
+  },
+  {
+   "id": "ESECI::Producción artesanal",
+   "sys": "ESECI",
+   "label": "Producción artesanal",
+   "icon": "fa-gem",
+   "x": -1484.4,
+   "y": -98.2,
+   "r": 55.4,
+   "deg": 3
+  },
+  {
+   "id": "ESECI::Producción de alimentos",
+   "sys": "ESECI",
+   "label": "Producción de alimentos",
+   "icon": "fa-wheat-awn",
+   "x": 1126.8,
+   "y": 549.7,
+   "r": 48.9,
+   "deg": 2
+  },
+  {
+   "id": "ESECI::Servicios empresariales",
+   "sys": "ESECI",
+   "label": "Servicios empresariales",
+   "icon": "fa-handshake",
+   "x": -981.5,
+   "y": 721.0,
+   "r": 88.3,
+   "deg": 7
+  },
+  {
+   "id": "ESECI::Sistema de educación",
+   "sys": "ESECI",
+   "label": "Sistema de educación",
+   "icon": "fa-graduation-cap",
+   "x": -1049.5,
+   "y": -68.4,
+   "r": 88.3,
+   "deg": 7
+  },
+  {
+   "id": "ESECI::Zonas de interés turístico",
+   "sys": "ESECI",
+   "label": "Zonas de interés turístico",
+   "icon": "fa-camera",
+   "x": 650.6,
+   "y": 677.8,
+   "r": 79.2,
+   "deg": 6
+  },
+  {
+   "id": "ESECI::Zonas industriales",
+   "sys": "ESECI",
+   "label": "Zonas industriales",
+   "icon": "fa-industry",
+   "x": -980.8,
+   "y": 150.4,
+   "r": 97.8,
+   "deg": 8
+  },
+  {
+   "id": "EIP::Patrimonio arqueológico",
+   "sys": "EIP",
+   "label": "Patrimonio arqueológico",
+   "icon": "fa-scroll",
+   "x": -845.0,
+   "y": 342.2,
+   "r": 62.7,
+   "deg": 4
+  },
+  {
+   "id": "EIP::Patrimonio cultural",
+   "sys": "EIP",
+   "label": "Patrimonio cultural",
+   "icon": "fa-landmark",
+   "x": 1157.5,
+   "y": -322.5,
+   "r": 48.9,
+   "deg": 2
+  },
+  {
+   "id": "EIP::Patrimonio inmaterial",
+   "sys": "EIP",
+   "label": "Patrimonio inmaterial",
+   "icon": "fa-masks-theater",
+   "x": -606.8,
+   "y": -280.2,
+   "r": 88.3,
+   "deg": 7
+  },
+  {
+   "id": "EIP::Patrimonio material",
+   "sys": "EIP",
+   "label": "Patrimonio material",
+   "icon": "fa-monument",
+   "x": -616.5,
+   "y": 630.7,
+   "r": 88.3,
+   "deg": 7
+  },
+  {
+   "id": "EIP::Patrimonio natural",
+   "sys": "EIP",
+   "label": "Patrimonio natural",
+   "icon": "fa-mountain-sun",
+   "x": 62.3,
+   "y": 430.7,
+   "r": 88.3,
+   "deg": 7
+  },
+  {
+   "id": "EIP::Sistema de sitios sagrados",
+   "sys": "EIP",
+   "label": "Sistema de sitios sagrados",
+   "icon": "fa-place-of-worship",
+   "x": -96.6,
+   "y": -1276.6,
+   "r": 43.5,
+   "deg": 1
+  }
+ ],
+ "relaciones": [
+  {
+   "sO": "EFC",
+   "cO": "Transporte público",
+   "sD": "ESECI",
+   "cD": "Empleo",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte",
+   "pag": "164",
+   "seccion": "Una ciudad para el empleo y las oportunidades",
+   "frase": "“Los tiempos de desplazamiento son el resultado de la eficiencia y calidad de los sistemas de transporte masivo y de sus modos y estructuración. Un buen sistema de transporte se nota en menores tiempos de viaje que suplen las necesidades de desplazamiento de la ciudadanía y facilitan la conexión entre las personas y el sector productivo.”",
+   "clase": "Intersistema",
+   "completa": true,
+   "id": 0,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "EFC",
+   "cO": "Vivienda",
+   "sD": "ESECI",
+   "cD": "Empleo",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte",
+   "pag": "169",
+   "seccion": "Una ciudad para el empleo y las oportunidades",
+   "frase": "“De esta manera, el Plan Maestro de Hábitat y Servicios Públicos se convierte en una herramienta eficaz para concretar la visión de mixtura, al acercar la vivienda a los grandes centros de productividad y, por consiguiente, mejorar las condiciones de acceso al empleo, consolidando así tejidos económicos continuos y complementarios entre el gran corazón productivo de escala urbana y las actividades económicas de soporte a la vida.”",
+   "clase": "Intersistema",
+   "completa": true,
+   "id": 1,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "EFC",
+   "cO": "Equipamientos",
+   "sD": "ESECI",
+   "cD": "Empleo",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte",
+   "pag": "171",
+   "seccion": "Una ciudad para el empleo y las oportunidades",
+   "frase": "“Esos equipamientos —que están pensados para ofrecer, de manera híbrida, la mayor cantidad de servicios sociales posibles— tienen un potencial de ser, en sí mismos, fuentes de generación de empleo de proximidad y de fomentar dinámicas económicas complementarias en sus zonas de influencia.”",
+   "clase": "Intersistema",
+   "completa": true,
+   "id": 2,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "EFC",
+   "cO": "Manzanas del Cuidado",
+   "sD": "ESECI",
+   "cD": "Empleo",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "118",
+   "seccion": "Sistema Distrital de Manzanas del Cuidado",
+   "frase": "“El sistema atiende tres tipos de poblaciones: a las personas cuidadoras, ofreciéndoles servicios de educación, respiro, formación y capitalización para el trabajo y el emprendimiento, y otras formas de generación de ingresos, con los que les devolvemos las oportunidades que han sacrificado por las cargas de cuidado.”",
+   "clase": "Intersistema",
+   "completa": true,
+   "id": 3,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "EFC",
+   "cO": "Equipamientos",
+   "sD": "ESECI",
+   "cD": "Servicios empresariales",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte",
+   "pag": "165",
+   "seccion": "Instrumentos del ordenamiento territorial que impactan la productividad y el empleo",
+   "frase": "“Equipamiento como detonante de dinámicas económicas”",
+   "clase": "Intersistema",
+   "completa": true,
+   "id": 4,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "EFC",
+   "cO": "Vivienda",
+   "sD": "ESECI",
+   "cD": "Economía",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte",
+   "pag": "169",
+   "seccion": "Una ciudad para el empleo y las oportunidades",
+   "frase": "“El Plan Maestro de Hábitat tiene la capacidad de robustecer las economías de proximidad, no solamente al propiciar la mixtura de usos del suelo en los proyectos de vivienda y en los instrumentos de los diferentes planes parciales, sino combinando sus usos al interior de las mismas edificaciones.”",
+   "clase": "Intersistema",
+   "completa": true,
+   "id": 5,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "EFC",
+   "cO": "Servicios públicos",
+   "sD": "ESECI",
+   "cD": "Zonas industriales",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "169",
+   "seccion": "Una ciudad para el empleo y las oportunidades",
+   "frase": "“Por ejemplo, allí serán fundamentales los servicios de energía en las zonas industriales o de almacenamiento de datos, o los servicios de telecomunicaciones e internet en zonas como el Campus de Ciencia, Tecnología e Innovación de la Ciudad (ctib).”",
+   "clase": "Intersistema",
+   "completa": true,
+   "id": 6,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "EFC",
+   "cO": "Servicios públicos",
+   "sD": "ESECI",
+   "cD": "Distrito Centro Tecnológico e Innovación",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "169",
+   "seccion": "Una ciudad para el empleo y las oportunidades",
+   "frase": "“Por ejemplo, allí serán fundamentales los servicios de energía en las zonas industriales o de almacenamiento de datos, o los servicios de telecomunicaciones e internet en zonas como el Campus de Ciencia, Tecnología e Innovación de la Ciudad (ctib).”",
+   "clase": "Intersistema",
+   "completa": true,
+   "id": 7,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "EFC",
+   "cO": "Ciclorutas",
+   "sD": "ESECI",
+   "cD": "Empleo",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "171",
+   "seccion": "Una ciudad para el empleo y las oportunidades",
+   "frase": "“Los cables eléctricos, rutas circulares y cicloinfraestructura permite a su vez interconectividad de proximidad dentro de las upl y conexión con los corredores de alta demanda, sean de metro o de TransMilenio. Esto mejorará significativamente la calidad de vida y la productividad de la población, que hará uso de estas infraestructuras; también, consolidará las dinámicas de aglomeración económica que concentran el tejido empresarial y, con ello, las fuentes de generación de empleo en el centro ampliado, pero también en las nuevas zonas más periféricas, mejor servidas y conectadas gracias a la red multimodal de transporte.”",
+   "clase": "Intersistema",
+   "completa": true,
+   "id": 8,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "ESECI",
+   "cO": "Actividades económicas",
+   "sD": "EFC",
+   "cD": "Vivienda",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "171",
+   "seccion": "Una ciudad para el empleo y las oportunidades",
+   "frase": "“El programa busca promover el dinamismo, la reactivación económica y la creación de empleos. Se apuesta por el impulso a proyectos que generen actividades económicas asociadas al emprendimiento, la creatividad, la innovación y la cultura, que se complementa con las áreas residenciales donde se interactúa a partir del sistema de movilidad.”",
+   "clase": "Intersistema",
+   "completa": true,
+   "id": 9,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "ESECI",
+   "cO": "Corazones productivos",
+   "sD": "EFC",
+   "cD": "Vivienda",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "169",
+   "seccion": "Una ciudad para el empleo y las oportunidades",
+   "frase": "“El nuevo modelo de ordenamiento del territorio a partir de la mixtura y la complementariedad que plantea el pot busca revertir esta tendencia promoviendo las áreas receptoras de actividad económica, las áreas de actividad receptoras de vivienda de interés social en cercanía de las aglomeraciones y el ecosistema productivo y la mixtura de usos en las áreas de proximidad (antiguas zonas de uso residencial neto).”",
+   "clase": "Intersistema",
+   "completa": true,
+   "id": 10,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "ESECI",
+   "cO": "Zonas industriales",
+   "sD": "EFC",
+   "cD": "Servicios públicos",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte",
+   "pag": "169",
+   "seccion": "Una ciudad para el empleo y las oportunidades",
+   "frase": "“El Plan Maestro de Hábitat y Servicios Públicos debe garantizar las condiciones de prestación de los servicios públicos de las diferentes actividades económicas.”",
+   "clase": "Intersistema",
+   "completa": true,
+   "id": 11,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "ESECI",
+   "cO": "Distrito Centro Tecnológico e Innovación",
+   "sD": "EFC",
+   "cD": "Servicios públicos",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte",
+   "pag": "169",
+   "seccion": "Una ciudad para el empleo y las oportunidades",
+   "frase": "“Por ejemplo, allí serán fundamentales los servicios de energía en las zonas industriales o de almacenamiento de datos, o los servicios de telecomunicaciones e internet en zonas como el Campus de Ciencia, Tecnología e Innovación de la Ciudad (ctib).”",
+   "clase": "Intersistema",
+   "completa": true,
+   "id": 12,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "ESECI",
+   "cO": "Actividades económicas",
+   "sD": "EFC",
+   "cD": "Servicios públicos",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte",
+   "pag": "169",
+   "seccion": "Una ciudad para el empleo y las oportunidades",
+   "frase": "“El Plan Maestro de Hábitat y Servicios Públicos debe garantizar las condiciones de prestación de los servicios públicos de las diferentes actividades económicas.”",
+   "clase": "Intersistema",
+   "completa": true,
+   "id": 13,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "ESECI",
+   "cO": "Sistema de educación",
+   "sD": "ESECI",
+   "cD": "Empleo",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte",
+   "pag": "30",
+   "seccion": "Presentación del POT",
+   "frase": "“La inversión y ejecución sostenida del pot, el pmss y la inversión en esa educación con calidad y pertinencia, desde la básica hasta la superior, lograrán en conjunto, en la próxima década, el mayor crecimiento en productividad, empleabilidad de calidad y competitividad que haya tenido Bogotá.”",
+   "clase": "Intrasistema",
+   "completa": true,
+   "id": 14,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "ESECI",
+   "cO": "Zonas industriales",
+   "sD": "ESECI",
+   "cD": "Producción artesanal",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte",
+   "pag": "30",
+   "seccion": "Presentación del POT",
+   "frase": "“Por eso el pot promueve la permanencia de las industrias tradicionales en el tejido urbano y promueve nuevas implantaciones económicas generadoras de empleo formal, articuladas a los entornos urbanos donde se aglomeran saberes y talentos, y en particular aquellos que dan lugar a aglomeraciones especializadas de producción tradicional e industrias creativas, culturales, verdes, digitales y tecnológicas.”",
+   "clase": "Intrasistema",
+   "completa": true,
+   "id": 15,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "EIP",
+   "cO": "Patrimonio cultural",
+   "sD": "ESECI",
+   "cD": "Zonas de interés turístico",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "31",
+   "seccion": "Presentación del POT",
+   "frase": "“Por eso promovemos la ciudad como destino turístico inteligente, sostenible, de salud y de negocios que reconozca el patrimonio local, las dinámicas comunitarias, los sistemas cooperativos de producción sostenible como huertas productivas, bancos de semillas nativas y plantas de uso medicinal, entre otros.”",
+   "clase": "Intersistema",
+   "completa": true,
+   "id": 16,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "EIP",
+   "cO": "Patrimonio natural",
+   "sD": "ESECI",
+   "cD": "Zonas de interés turístico",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "31",
+   "seccion": "Presentación del POT",
+   "frase": "“En la ruralidad es urgente mejorar las condiciones habitacionales, desde los componentes de servicios públicos domiciliarios, accesibilidad y movilidad, con equipamientos que faciliten la economía campesina, familiar y comunitaria, el turismo responsable de naturaleza que vincule residentes y saberes del lugar y la conservación del ambiente como formas de productividad, sustento y desarrollo sostenible.”",
+   "clase": "Intersistema",
+   "completa": true,
+   "id": 17,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "EIP",
+   "cO": "Patrimonio inmaterial",
+   "sD": "ESECI",
+   "cD": "Producción artesanal",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte",
+   "pag": "200",
+   "seccion": "Los reconocimientos y el plan para los patrimonios vitales",
+   "frase": "“Esta producción artesanal corresponde entonces a las actividades creativas de producción de objetos, realizadas con predominio manual y auxiliadas en algunos casos con maquinarias simples, obteniendo un resultado final individualizado, determinado por los patrones culturales, el medio ambiente y su desarrollo histórico.”",
+   "clase": "Intersistema",
+   "completa": true,
+   "id": 18,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "EIP",
+   "cO": "Patrimonio cultural",
+   "sD": "ESECI",
+   "cD": "Economía",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "204",
+   "seccion": "Los reconocimientos y el plan para los patrimonios vitales",
+   "frase": "“Esta oferta y este movimiento económico y cultural hacen parte de una de las iniciativas primordiales que fija el pot para que la cultura, en ciertos barrios o sectores de Bogotá, se convierta en un polo de desarrollo económico y social: los Distritos Creativos.”",
+   "clase": "Intersistema",
+   "completa": true,
+   "id": 19,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "EEP",
+   "cO": "Humedales",
+   "sD": "EFC",
+   "cD": "Espacio público",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte",
+   "pag": "92",
+   "seccion": "Transformaciones urbanas",
+   "frase": "“Se debatió si podíamos considerar espacio público los elementos de nuestra Estructura Ecológica Principal (eep) adecuando humedales, bordes de ríos y quebradas, para el disfrute ciudadano.”",
+   "clase": "Intersistema",
+   "completa": true,
+   "id": 20,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "EEP",
+   "cO": "Humedales",
+   "sD": "ESECI",
+   "cD": "Producción de alimentos",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte",
+   "pag": "196",
+   "seccion": "Nuestro territorio y nuestra identidad",
+   "frase": "“Las huertas son entonces parte de un valor presente interesado en restablecer vínculos entre los ciclos de producción de alimentos y consumo en ámbitos domésticos. La existencia de estos lugares reconcilia distintas maneras de habitar la ciudad, de conocimientos y prácticas asociados a la preservación de especies y semillas nativas, la siembra, al manejo responsable del agua y de la comprensión del clima.”",
+   "clase": "Intersistema",
+   "completa": true,
+   "id": 21,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "EEP",
+   "cO": "Conservación ambiental",
+   "sD": "ESECI",
+   "cD": "Economía",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "31",
+   "seccion": "Presentación del POT",
+   "frase": "“En la ruralidad es urgente mejorar las condiciones habitacionales, desde los componentes de servicios públicos domiciliarios, accesibilidad y movilidad, con equipamientos que faciliten la economía campesina, familiar y comunitaria, el turismo responsable de naturaleza que vincule residentes y saberes del lugar y la conservación del ambiente como formas de productividad, sustento y desarrollo sostenible.”",
+   "clase": "Intersistema",
+   "completa": true,
+   "id": 22,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "EFC",
+   "cO": "Equipamientos",
+   "sD": "EFC",
+   "cD": "Servicios sociales",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte",
+   "pag": "117",
+   "seccion": "Sistema Distrital de Manzanas del Cuidado",
+   "frase": "“Dotar a los barrios de esta infraestructura social hace que los servicios de educación, salud, cultura y cuidado estén próximos y accesibles para garantizar los derechos y satisfacer las necesidades básicas de las personas.”",
+   "clase": "Interna",
+   "completa": true,
+   "id": 23,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "EFC",
+   "cO": "Equipamientos",
+   "sD": "EFC",
+   "cD": "Vivienda",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte",
+   "pag": "40",
+   "seccion": "Presentación del POT",
+   "frase": "“Que sea en suelo de desarrollo o en suelo de renovación urbana, los constructores y desarrolladores inmobiliarios siempre tengan que garantizar diversos tipos de vivienda de interés social y soportes urbanos y equipamientos sociales de calidad para familias de diferentes tamaños y niveles de ingreso que comparten un mismo trozo de ciudad.”",
+   "clase": "Interna",
+   "completa": true,
+   "id": 24,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "EFC",
+   "cO": "Manzanas del Cuidado",
+   "sD": "EFC",
+   "cD": "Servicios sociales",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte",
+   "pag": "118",
+   "seccion": "Sistema Distrital de Manzanas del Cuidado",
+   "frase": "“El sistema articula servicios existentes y crea otros nuevos para atender las altas demandas de cuidado de una manera corresponsable entre el gobierno distrital, las comunidades, el sector privado y los demás miembros de los hogares para redistribuir la sobrecarga que llevaban solas las mujeres y balancear la provisión del cuidado, con el fin de devolverles tiempo a las mujeres y a las personas cuidadoras para su desarrollo personal, autocuidado, bienestar, generación de ingresos o participación política.”",
+   "clase": "Interna",
+   "completa": true,
+   "id": 25,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "EFC",
+   "cO": "Manzanas del Cuidado",
+   "sD": "EFC",
+   "cD": "Equipamientos",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte",
+   "pag": "118",
+   "seccion": "Sistema Distrital de Manzanas del Cuidado",
+   "frase": "“El tejido que se forma entre las Manzanas del Cuidado y la infraestructura nueva y existente de salud, educación, cultura, cuidado y recreación convierte cada una de las upl —que son las nuevas localidades en las que el pot proyecta la ciudad— en una Red del Cuidado.”",
+   "clase": "Interna",
+   "completa": true,
+   "id": 26,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "EFC",
+   "cO": "Corredores verdes",
+   "sD": "EFC",
+   "cD": "Ciclorutas",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte",
+   "pag": "30",
+   "seccion": "Presentación del POT",
+   "frase": "“Y que, en todo caso, las diversas zonas de la ciudad estén conectadas por un sistema multimodal de transporte público, colectivo, de energías limpias y renovables basadas en la red Metro y alimentadas por los demás modos y medios de transporte público como los corredores verdes, los cables y las ciclorrutas.”",
+   "clase": "Interna",
+   "completa": true,
+   "id": 27,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "EFC",
+   "cO": "Corredores verdes",
+   "sD": "EFC",
+   "cD": "Transporte público",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte",
+   "pag": "30",
+   "seccion": "Presentación del POT",
+   "frase": "“Y que, en todo caso, las diversas zonas de la ciudad estén conectadas por un sistema multimodal de transporte público, colectivo, de energías limpias y renovables basadas en la red Metro y alimentadas por los demás modos y medios de transporte público como los corredores verdes, los cables y las ciclorrutas.”",
+   "clase": "Interna",
+   "completa": true,
+   "id": 28,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "EEP",
+   "cO": "Reservas forestales",
+   "sD": "EEP",
+   "cD": "Humedales",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Resiliencia",
+   "pag": "72",
+   "seccion": "Art. 42",
+   "frase": "“La Estructura Ecológica Principal es un sistema de áreas y corredores que sostienen la biodiversidad y los servicios ecosistémicos, y su conectividad y complementariedad son fundamentales para garantizar su funcionalidad.”",
+   "clase": "Interna",
+   "completa": true,
+   "id": 29,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "EEP",
+   "cO": "Parques ecológicos de montaña",
+   "sD": "EEP",
+   "cD": "Coberturas vegetales",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "72",
+   "seccion": "Art. 54",
+   "frase": "“Los Parques Distritales Ecológicos de Montaña tienen como objetivo restaurar y preservar las especies nativas y garantizar la conectividad ecológica.”",
+   "clase": "Interna",
+   "completa": true,
+   "id": 30,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "EEP",
+   "cO": "Corredores montañosos",
+   "sD": "EEP",
+   "cD": "Ríos",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte",
+   "pag": "70",
+   "seccion": "Art. 7",
+   "frase": "corredores montañosos … ríos y humedales",
+   "clase": "Interna",
+   "completa": false,
+   "id": 31,
+   "porVerificar": true,
+   "sinFrase": false
+  },
+  {
+   "sO": "EEP",
+   "cO": "Quebradas",
+   "sD": "EEP",
+   "cD": "Humedales",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte",
+   "pag": "72",
+   "seccion": "Art. 42 / 62",
+   "frase": "ríos y quebradas … humedales",
+   "clase": "Interna",
+   "completa": false,
+   "id": 32,
+   "porVerificar": true,
+   "sinFrase": false
+  },
+  {
+   "sO": "EEP",
+   "cO": "Cerros Orientales",
+   "sD": "EEP",
+   "cD": "Humedales",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte",
+   "pag": "70",
+   "seccion": "Art. 7",
+   "frase": "cerros orientales … ríos y humedales",
+   "clase": "Interna",
+   "completa": false,
+   "id": 33,
+   "porVerificar": true,
+   "sinFrase": false
+  },
+  {
+   "sO": "EEP",
+   "cO": "Humedales",
+   "sD": "EEP",
+   "cD": "Ríos",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte",
+   "pag": "72",
+   "seccion": "Art. 42 / 62",
+   "frase": "ríos y quebradas … humedales",
+   "clase": "Interna",
+   "completa": false,
+   "id": 34,
+   "porVerificar": true,
+   "sinFrase": false
+  },
+  {
+   "sO": "EEP",
+   "cO": "Ríos",
+   "sD": "EEP",
+   "cD": "Complejos de páramos",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte",
+   "pag": "70",
+   "seccion": "Art. 7",
+   "frase": "complejos de páramos … ríos y humedales",
+   "clase": "Interna",
+   "completa": false,
+   "id": 35,
+   "porVerificar": true,
+   "sinFrase": false
+  },
+  {
+   "sO": "EEP",
+   "cO": "Bosques urbanos",
+   "sD": "EEP",
+   "cD": "Coberturas vegetales",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte",
+   "pag": "73",
+   "seccion": "Art. 74",
+   "frase": "cobertura vegetal … flora propia",
+   "clase": "Interna",
+   "completa": false,
+   "id": 36,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "EEP",
+   "cO": "Áreas de resiliencia climática",
+   "sD": "EEP",
+   "cD": "Coberturas vegetales",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Resiliencia",
+   "pag": "72",
+   "seccion": "Art. 42",
+   "frase": "territorio resiliente … cambio climático",
+   "clase": "Interna",
+   "completa": false,
+   "id": 37,
+   "porVerificar": true,
+   "sinFrase": false
+  },
+  {
+   "sO": "EEP",
+   "cO": "Humedales",
+   "sD": "EEP",
+   "cD": "Áreas de resiliencia climática",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte",
+   "pag": "72",
+   "seccion": "Art. 42",
+   "frase": "amortiguación de los impactos ambientales",
+   "clase": "Interna",
+   "completa": false,
+   "id": 38,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "EEP",
+   "cO": "Áreas protegidas",
+   "sD": "EEP",
+   "cD": "Humedales",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "71",
+   "seccion": "Art. 41 / 51",
+   "frase": "Reservas Distritales de Humedal",
+   "clase": "Interna",
+   "completa": false,
+   "id": 39,
+   "porVerificar": true,
+   "sinFrase": false
+  },
+  {
+   "sO": "EEP",
+   "cO": "Áreas protegidas",
+   "sD": "EEP",
+   "cD": "Parques ecológicos de montaña",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "71",
+   "seccion": "Art. 51 / 54",
+   "frase": "Parques Distritales Ecológicos de Montaña",
+   "clase": "Interna",
+   "completa": false,
+   "id": 40,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "EEP",
+   "cO": "Áreas protegidas",
+   "sD": "EEP",
+   "cD": "Reservas forestales",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "71",
+   "seccion": "Art. 41 / 45 / 48",
+   "frase": "Reserva Forestal Protectora … Regional",
+   "clase": "Interna",
+   "completa": false,
+   "id": 41,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "EEP",
+   "cO": "Coberturas vegetales",
+   "sD": "EEP",
+   "cD": "Parques de borde",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "136",
+   "seccion": "Art. 121",
+   "frase": "coberturas vegetales … parques de borde",
+   "clase": "Interna",
+   "completa": false,
+   "id": 42,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "EEP",
+   "cO": "Coberturas vegetales",
+   "sD": "EEP",
+   "cD": "Paisajes sostenibles",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "72",
+   "seccion": "Art. 52 / 74",
+   "frase": "funcionalidad ecosistémica … conectividad",
+   "clase": "Interna",
+   "completa": false,
+   "id": 43,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "EEP",
+   "cO": "Complejos de páramos",
+   "sD": "EEP",
+   "cD": "Paisajes sostenibles",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "70",
+   "seccion": "Art. 7 / 52",
+   "frase": "complejos de páramos … paisajes",
+   "clase": "Interna",
+   "completa": false,
+   "id": 44,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "EFC",
+   "cO": "Equipamientos",
+   "sD": "EFC",
+   "cD": "Servicios de cuidado",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "117–118",
+   "seccion": "Art. 94–95",
+   "frase": "equipamientos y servicios de cuidado",
+   "clase": "Interna",
+   "completa": false,
+   "id": 45,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "EFC",
+   "cO": "Servicios públicos",
+   "sD": "EFC",
+   "cD": "Vivienda",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "179",
+   "seccion": "Art. 179",
+   "frase": "servicio público … actividades en la ciudad",
+   "clase": "Interna",
+   "completa": false,
+   "id": 46,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "EFC",
+   "cO": "Ciclorutas",
+   "sD": "EFC",
+   "cD": "Vivienda",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "117",
+   "seccion": "Art. 88",
+   "frase": "accesibilidad … conectividad",
+   "clase": "Interna",
+   "completa": false,
+   "id": 47,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "EFC",
+   "cO": "Ciclorutas",
+   "sD": "EFC",
+   "cD": "Transporte público",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Resiliencia",
+   "pag": "117 / 158–159",
+   "seccion": "Art. 88 / 158–159",
+   "frase": "cicloinfraestructura … corredores verdes",
+   "clase": "Interna",
+   "completa": false,
+   "id": 48,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "EFC",
+   "cO": "Transporte público",
+   "sD": "EFC",
+   "cD": "Vivienda",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "117",
+   "seccion": "Art. 88",
+   "frase": "accesibilidad … conectividad",
+   "clase": "Interna",
+   "completa": false,
+   "id": 49,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "EFC",
+   "cO": "Red vial",
+   "sD": "EFC",
+   "cD": "Transporte público",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte",
+   "pag": "158–159",
+   "seccion": "Art. 158–159",
+   "frase": "malla arterial … transporte público",
+   "clase": "Interna",
+   "completa": false,
+   "id": 50,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "EFC",
+   "cO": "Red vial",
+   "sD": "EFC",
+   "cD": "Equipamientos",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte",
+   "pag": "117",
+   "seccion": "Art. 88 / 95",
+   "frase": "accesibilidad … equipamientos",
+   "clase": "Interna",
+   "completa": false,
+   "id": 51,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "EFC",
+   "cO": "Manzanas del Cuidado",
+   "sD": "EFC",
+   "cD": "Parques",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte",
+   "pag": "117",
+   "seccion": "Art. 94",
+   "frase": "jardines infantiles, colegios, parques",
+   "clase": "Interna",
+   "completa": false,
+   "id": 52,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "ESECI",
+   "cO": "Distrito Centro Tecnológico e Innovación",
+   "sD": "ESECI",
+   "cD": "Servicios empresariales",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte",
+   "pag": "122",
+   "seccion": "Art. 101",
+   "frase": "Eje de servicios empresariales",
+   "clase": "Interna",
+   "completa": false,
+   "id": 53,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "ESECI",
+   "cO": "Distrito Centro Tecnológico e Innovación",
+   "sD": "ESECI",
+   "cD": "Sistema de educación",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte",
+   "pag": "122",
+   "seccion": "Art. 100–101",
+   "frase": "formación del talento humano",
+   "clase": "Interna",
+   "completa": false,
+   "id": 54,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "ESECI",
+   "cO": "Centros de abastecimiento",
+   "sD": "ESECI",
+   "cD": "Plazas de mercado",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "122",
+   "seccion": "Art. 100–101",
+   "frase": "Centros de Abasto Mayorista … Plazas de Mercado",
+   "clase": "Interna",
+   "completa": false,
+   "id": 55,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "ESECI",
+   "cO": "Plazas de mercado",
+   "sD": "ESECI",
+   "cD": "Servicios empresariales",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte",
+   "pag": "122",
+   "seccion": "Art. 101",
+   "frase": "Plazas de Mercado … infraestructuras",
+   "clase": "Interna",
+   "completa": false,
+   "id": 56,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "ESECI",
+   "cO": "Zonas industriales",
+   "sD": "ESECI",
+   "cD": "Servicios empresariales",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte",
+   "pag": "122",
+   "seccion": "Art. 101",
+   "frase": "Eje de servicios empresariales … zonas industriales",
+   "clase": "Interna",
+   "completa": false,
+   "id": 57,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "ESECI",
+   "cO": "Zonas industriales",
+   "sD": "ESECI",
+   "cD": "Sistema de educación",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "122",
+   "seccion": "Art. 100–101",
+   "frase": "formación del talento humano … empresas",
+   "clase": "Interna",
+   "completa": false,
+   "id": 58,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "ESECI",
+   "cO": "Zonas de interés turístico",
+   "sD": "ESECI",
+   "cD": "Plazas de mercado",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte",
+   "pag": "122",
+   "seccion": "Art. 101",
+   "frase": "Zonas de Interés Turístico … Plazas de Mercado",
+   "clase": "Interna",
+   "completa": false,
+   "id": 59,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "ESECI",
+   "cO": "Centros financieros",
+   "sD": "ESECI",
+   "cD": "Servicios empresariales",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte",
+   "pag": "122",
+   "seccion": "Art. 100",
+   "frase": "centros financieros y de servicios empresariales",
+   "clase": "Interna",
+   "completa": false,
+   "id": 60,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "EIP",
+   "cO": "Sistema de sitios sagrados",
+   "sD": "EIP",
+   "cD": "Patrimonio inmaterial",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Resiliencia",
+   "pag": "103–104",
+   "seccion": "Art. 80",
+   "frase": "patrimonio cultural inmaterial … comunidades",
+   "clase": "Interna",
+   "completa": false,
+   "id": 61,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "EIP",
+   "cO": "Patrimonio arqueológico",
+   "sD": "EIP",
+   "cD": "Patrimonio natural",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte",
+   "pag": "103–104",
+   "seccion": "Art. 80",
+   "frase": "Patrimonio Natural … Patrimonio Arqueológico",
+   "clase": "Interna",
+   "completa": false,
+   "id": 62,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "EIP",
+   "cO": "Patrimonio arqueológico",
+   "sD": "EIP",
+   "cD": "Patrimonio material",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Resiliencia",
+   "pag": "103–104",
+   "seccion": "Art. 80",
+   "frase": "Patrimonio Cultural material … Patrimonio Arqueológico",
+   "clase": "Interna",
+   "completa": false,
+   "id": 63,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "EIP",
+   "cO": "Patrimonio natural",
+   "sD": "EIP",
+   "cD": "Patrimonio inmaterial",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte",
+   "pag": "103–104",
+   "seccion": "Art. 80",
+   "frase": "patrimonio cultural material, inmaterial y natural",
+   "clase": "Interna",
+   "completa": false,
+   "id": 64,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "EIP",
+   "cO": "Patrimonio material",
+   "sD": "EIP",
+   "cD": "Patrimonio natural",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte",
+   "pag": "103–104",
+   "seccion": "Art. 80",
+   "frase": "integra … material, inmaterial y natural",
+   "clase": "Interna",
+   "completa": false,
+   "id": 65,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "EIP",
+   "cO": "Patrimonio material",
+   "sD": "EIP",
+   "cD": "Patrimonio inmaterial",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte",
+   "pag": "103–104",
+   "seccion": "Art. 80",
+   "frase": "patrimonio cultural material, inmaterial y natural",
+   "clase": "Interna",
+   "completa": false,
+   "id": 66,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "EEP",
+   "cO": "Humedales",
+   "sD": "EIP",
+   "cD": "Patrimonio natural",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "195–196",
+   "seccion": "Relación entre estructuras (documento del POT)",
+   "frase": "En ese sentido, la eip inscribe y precisa un sistema de relaciones del patrimonio cultural material, inmaterial y natural en el territorio.",
+   "clase": "Intersistema",
+   "completa": true,
+   "id": 67,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "EIP",
+   "cO": "Patrimonio arqueológico",
+   "sD": "EFC",
+   "cD": "Equipamientos",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte",
+   "pag": "200",
+   "seccion": "Relación entre estructuras (documento del POT)",
+   "frase": "para la Secretaría Distrital de Planeación (sdp), en el proceso de implementación del pot, fue la oportunidad de incorporarlos como nodo de equipamientos próximos y de proyectos a escala local.",
+   "clase": "Intersistema",
+   "completa": true,
+   "id": 68,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "EFC",
+   "cO": "Manzanas del Cuidado",
+   "sD": "ESECI",
+   "cD": "Sistema de educación",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte",
+   "pag": "126",
+   "seccion": "Relación entre estructuras (documento del POT)",
+   "frase": "Con los nuevos colegios y jardines infantiles anclados en las Manzanas del Cuidado, lograremos que las mujeres, las niñas y los niños puedan garantizar su derecho a la educación en lugares cercanos a sus hogares.",
+   "clase": "Intersistema",
+   "completa": true,
+   "id": 69,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "EFC",
+   "cO": "Equipamientos",
+   "sD": "ESECI",
+   "cD": "Sistema de educación",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte",
+   "pag": "126",
+   "seccion": "Relación entre estructuras (documento del POT)",
+   "frase": "Bajo la nueva visión del pot, la infraestructura social es compatible con otros usos y equipamientos, como centros deportivos, culturales y de recreación, entre otros.",
+   "clase": "Intersistema",
+   "completa": true,
+   "id": 70,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "EFC",
+   "cO": "Transporte público",
+   "sD": "ESECI",
+   "cD": "Zonas industriales",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "31",
+   "seccion": "Relación entre estructuras (documento del POT)",
+   "frase": "Y que, en todo caso, las diversas zonas de la ciudad estén conectadas por un sistema multimodal de transporte público, colectivo, de energías limpias y renovables basadas en la red Metro y alimentadas por los demás modos y medios de transporte público como los corredores verdes, los cables y las ciclorrutas.",
+   "clase": "Intersistema",
+   "completa": true,
+   "id": 71,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "EEP",
+   "cO": "Parques ecológicos de montaña",
+   "sD": "ESECI",
+   "cD": "Zonas de interés turístico",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "54",
+   "seccion": "Relación entre estructuras (documento del POT)",
+   "frase": "Sostenible: Ecoturismo, viverismo, agricultura urbana y periurbana y puntos de la tierra.",
+   "clase": "Intersistema",
+   "completa": true,
+   "id": 72,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "EEP",
+   "cO": "Parques ecológicos de montaña",
+   "sD": "EIP",
+   "cD": "Patrimonio natural",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte",
+   "pag": "54",
+   "seccion": "Relación entre estructuras (documento del POT)",
+   "frase": "Son áreas de alta pendiente en suelo urbano y rural, caracterizadas por contar con remanentes de bosques altoandinos dispersos y ecosistemas subxerofíticos de gran importancia ecosistémica entre otros que, por su estructura y función ecosistémica, aportan a la conservación de la biodiversidad y los servicios ecosistémicos, la conectividad ecológica y a la resiliencia climática de los entornos urbanos,ruralesydetransiciónaescalalocalyregional.",
+   "clase": "Intersistema",
+   "completa": true,
+   "id": 73,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "EEP",
+   "cO": "Áreas de resiliencia climática",
+   "sD": "EIP",
+   "cD": "Patrimonio natural",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Resiliencia",
+   "pag": "72",
+   "seccion": "Relación entre estructuras (documento del POT)",
+   "frase": "Así mismo, creamos las Áreas de Resiliencia Climática y Protección por Riesgo…",
+   "clase": "Intersistema",
+   "completa": true,
+   "id": 74,
+   "porVerificar": false,
+   "sinFrase": false
+  },
+  {
+   "sO": "EFC",
+   "cO": "Vivienda",
+   "sD": "EEP",
+   "cD": "Humedales",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte",
+   "pag": "—",
+   "seccion": "Pendiente de referencia en el POT",
+   "frase": null,
+   "clase": "Intersistema",
+   "completa": false,
+   "porVerificar": true,
+   "sinFrase": true,
+   "id": 75
+  },
+  {
+   "sO": "EEP",
+   "cO": "Humedales",
+   "sD": "EFC",
+   "cD": "Transporte público",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "—",
+   "seccion": "Pendiente de referencia en el POT",
+   "frase": null,
+   "clase": "Intersistema",
+   "completa": false,
+   "porVerificar": true,
+   "sinFrase": true,
+   "id": 76
+  },
+  {
+   "sO": "EFC",
+   "cO": "Ciclorutas",
+   "sD": "EEP",
+   "cD": "Humedales",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "—",
+   "seccion": "Pendiente de referencia en el POT",
+   "frase": null,
+   "clase": "Intersistema",
+   "completa": false,
+   "porVerificar": true,
+   "sinFrase": true,
+   "id": 77
+  },
+  {
+   "sO": "ESECI",
+   "cO": "Zonas de interés turístico",
+   "sD": "EEP",
+   "cD": "Parques de borde",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "—",
+   "seccion": "Pendiente de referencia en el POT",
+   "frase": null,
+   "clase": "Intersistema",
+   "completa": false,
+   "porVerificar": true,
+   "sinFrase": true,
+   "id": 78
+  },
+  {
+   "sO": "ESECI",
+   "cO": "Producción de alimentos",
+   "sD": "EEP",
+   "cD": "Ríos",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "—",
+   "seccion": "Pendiente de referencia en el POT",
+   "frase": null,
+   "clase": "Intersistema",
+   "completa": false,
+   "porVerificar": true,
+   "sinFrase": true,
+   "id": 79
+  },
+  {
+   "sO": "ESECI",
+   "cO": "Actividades económicas",
+   "sD": "EEP",
+   "cD": "Coberturas vegetales",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "—",
+   "seccion": "Pendiente de referencia en el POT",
+   "frase": null,
+   "clase": "Intersistema",
+   "completa": false,
+   "porVerificar": true,
+   "sinFrase": true,
+   "id": 80
+  },
+  {
+   "sO": "ESECI",
+   "cO": "Zonas industriales",
+   "sD": "EEP",
+   "cD": "Áreas de resiliencia climática",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Resiliencia",
+   "pag": "—",
+   "seccion": "Pendiente de referencia en el POT",
+   "frase": null,
+   "clase": "Intersistema",
+   "completa": false,
+   "porVerificar": true,
+   "sinFrase": true,
+   "id": 81
+  },
+  {
+   "sO": "ESECI",
+   "cO": "Plazas de mercado",
+   "sD": "EIP",
+   "cD": "Patrimonio material",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte",
+   "pag": "—",
+   "seccion": "Pendiente de referencia en el POT",
+   "frase": null,
+   "clase": "Intersistema",
+   "completa": false,
+   "porVerificar": true,
+   "sinFrase": true,
+   "id": 82
+  },
+  {
+   "sO": "ESECI",
+   "cO": "Centros financieros",
+   "sD": "EIP",
+   "cD": "Patrimonio material",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "—",
+   "seccion": "Pendiente de referencia en el POT",
+   "frase": null,
+   "clase": "Intersistema",
+   "completa": false,
+   "porVerificar": true,
+   "sinFrase": true,
+   "id": 83
+  },
+  {
+   "sO": "ESECI",
+   "cO": "Sistema de educación",
+   "sD": "EIP",
+   "cD": "Patrimonio inmaterial",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "—",
+   "seccion": "Pendiente de referencia en el POT",
+   "frase": null,
+   "clase": "Intersistema",
+   "completa": false,
+   "porVerificar": true,
+   "sinFrase": true,
+   "id": 84
+  },
+  {
+   "sO": "ESECI",
+   "cO": "Centros de abastecimiento",
+   "sD": "EFC",
+   "cD": "Transporte público",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "—",
+   "seccion": "Pendiente de referencia en el POT",
+   "frase": null,
+   "clase": "Intersistema",
+   "completa": false,
+   "porVerificar": true,
+   "sinFrase": true,
+   "id": 85
+  },
+  {
+   "sO": "ESECI",
+   "cO": "Zonas industriales",
+   "sD": "EIP",
+   "cD": "Patrimonio material",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "—",
+   "seccion": "Pendiente de referencia en el POT",
+   "frase": null,
+   "clase": "Intersistema",
+   "completa": false,
+   "porVerificar": true,
+   "sinFrase": true,
+   "id": 86
+  },
+  {
+   "sO": "ESECI",
+   "cO": "Sistema de educación",
+   "sD": "EEP",
+   "cD": "Coberturas vegetales",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "—",
+   "seccion": "Pendiente de referencia en el POT",
+   "frase": null,
+   "clase": "Intersistema",
+   "completa": false,
+   "porVerificar": true,
+   "sinFrase": true,
+   "id": 87
+  },
+  {
+   "sO": "ESECI",
+   "cO": "Zonas de interés turístico",
+   "sD": "EFC",
+   "cD": "Espacio público",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte",
+   "pag": "—",
+   "seccion": "Pendiente de referencia en el POT",
+   "frase": null,
+   "clase": "Intersistema",
+   "completa": false,
+   "porVerificar": true,
+   "sinFrase": true,
+   "id": 88
+  },
+  {
+   "sO": "ESECI",
+   "cO": "Actividades económicas",
+   "sD": "EIP",
+   "cD": "Patrimonio inmaterial",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "—",
+   "seccion": "Pendiente de referencia en el POT",
+   "frase": null,
+   "clase": "Intersistema",
+   "completa": false,
+   "porVerificar": true,
+   "sinFrase": true,
+   "id": 89
+  },
+  {
+   "sO": "ESECI",
+   "cO": "Empleo",
+   "sD": "EEP",
+   "cD": "Áreas de resiliencia climática",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Resiliencia",
+   "pag": "—",
+   "seccion": "Pendiente de referencia en el POT",
+   "frase": null,
+   "clase": "Intersistema",
+   "completa": false,
+   "porVerificar": true,
+   "sinFrase": true,
+   "id": 90
+  },
+  {
+   "sO": "ESECI",
+   "cO": "Empleo",
+   "sD": "EIP",
+   "cD": "Patrimonio inmaterial",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "—",
+   "seccion": "Pendiente de referencia en el POT",
+   "frase": null,
+   "clase": "Intersistema",
+   "completa": false,
+   "porVerificar": true,
+   "sinFrase": true,
+   "id": 91
+  },
+  {
+   "sO": "ESECI",
+   "cO": "Servicios empresariales",
+   "sD": "EIP",
+   "cD": "Patrimonio material",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "—",
+   "seccion": "Pendiente de referencia en el POT",
+   "frase": null,
+   "clase": "Intersistema",
+   "completa": false,
+   "porVerificar": true,
+   "sinFrase": true,
+   "id": 92
+  },
+  {
+   "sO": "ESECI",
+   "cO": "Servicios empresariales",
+   "sD": "EEP",
+   "cD": "Bosques urbanos",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Resiliencia",
+   "pag": "—",
+   "seccion": "Pendiente de referencia en el POT",
+   "frase": null,
+   "clase": "Intersistema",
+   "completa": false,
+   "porVerificar": true,
+   "sinFrase": true,
+   "id": 93
+  },
+  {
+   "sO": "ESECI",
+   "cO": "Distrito Centro Tecnológico e Innovación",
+   "sD": "EIP",
+   "cD": "Patrimonio arqueológico",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "—",
+   "seccion": "Pendiente de referencia en el POT",
+   "frase": null,
+   "clase": "Intersistema",
+   "completa": false,
+   "porVerificar": true,
+   "sinFrase": true,
+   "id": 94
+  },
+  {
+   "sO": "ESECI",
+   "cO": "Plazas de mercado",
+   "sD": "EFC",
+   "cD": "Espacio público",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte",
+   "pag": "—",
+   "seccion": "Pendiente de referencia en el POT",
+   "frase": null,
+   "clase": "Intersistema",
+   "completa": false,
+   "porVerificar": true,
+   "sinFrase": true,
+   "id": 95
+  },
+  {
+   "sO": "ESECI",
+   "cO": "Plazas de mercado",
+   "sD": "EEP",
+   "cD": "Ríos",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "—",
+   "seccion": "Pendiente de referencia en el POT",
+   "frase": null,
+   "clase": "Intersistema",
+   "completa": false,
+   "porVerificar": true,
+   "sinFrase": true,
+   "id": 96
+  },
+  {
+   "sO": "ESECI",
+   "cO": "Producción artesanal",
+   "sD": "EFC",
+   "cD": "Equipamientos",
+   "linea": "Punteada",
+   "evid": "Indirecta",
+   "tipo": "Soporte",
+   "pag": "—",
+   "seccion": "Pendiente de referencia en el POT",
+   "frase": null,
+   "clase": "Intersistema",
+   "completa": false,
+   "porVerificar": true,
+   "sinFrase": true,
+   "id": 97
+  }
+ ],
+ "vb": [
+  -1964,
+  -1937,
+  3927,
+  3910
+ ]
 };
 
-/* -------- Tipos de ausencias — Módulo 05 -------- */
-const TYPE_STYLE = {
-  "relacion-faltante":    { color: "#ef4444", width: 2.6, label: "Relación Faltante" },
-  "componente-ignorado":  { color: "#f472b6", width: 2.6, label: "Componente Ignorado" },
-  "conflicto-silenciado": { color: "#f87171", width: 2.6, label: "Conflicto Silenciado" },
-  "vacio-logico":         { color: "#fbbf24", width: 2.4, label: "Vacío Lógico" },
-};
+const SYS = ['EEP', 'EFC', 'EIP', 'ESECI'];
 
-/* -------- Aristas: relaciones de las 4 estructuras -------- */
-const RAW_EDGES = [
-  /* Relaciones faltantes entre estructuras */
-  { s: "transporte", t: "coberturas", type: "relacion-faltante",    directa: true,  cat: "e1-e2", pagina: "N/A", sustento: "No hay relación explícita entre expansión de infraestructura vial y pérdida de coberturas vegetales: ausencia de análisis de conflicto." },
-  { s: "vivienda",   t: "rios",       type: "relacion-faltante",    directa: true,  cat: "e1-e2", pagina: "N/A", sustento: "No existe vínculo entre densificación de vivienda y riesgo hídrico: ausencia de análisis de vulnerabilidad climática." },
-  { s: "economia",   t: "ecologia",   type: "relacion-faltante",    directa: true,  cat: "e1-e3", pagina: "N/A", sustento: "No hay relación explícita entre lógica económica y protección de EEP: el POT no articula cómo los incentivos económicos afectan lo ambiental." },
-  
-  /* Componentes ignorados */
-  { s: "periferia",  t: "sserv",      type: "componente-ignorado",  directa: false, cat: "e2", pagina: "N/A", sustento: "Las periferias urbanas y sus dinámicas de cuidado comunitario son marginales: poco mencionadas en el documento." },
-  { s: "indigenas",  t: "pinmaterial",type: "componente-ignorado",  directa: false, cat: "e4", pagina: "N/A", sustento: "Los pueblos indígenas y sus saberes patrimoniales están prácticamente ausentes del análisis." },
-  { s: "informalidad",t: "empresariales", type: "componente-ignorado", directa: false, cat: "e3", pagina: "N/A", sustento: "La economía informal (3M de trabajadores) es ignorada en la estructura socioeconómica del POT." },
-  
-  /* Conflictos silenciados */
-  { s: "transporte", t: "eep",        type: "conflicto-silenciado", directa: true,  cat: "e1-e2", pagina: "N/A", sustento: "El conflicto entre expansión de infraestructura vial y protección de EEP no está explícitamente abordado." },
-  { s: "manzanas",   t: "servpub",    type: "conflicto-silenciado", directa: true,  cat: "e2", pagina: "N/A", sustento: "El desfase entre demanda de servicios por densificación y capacidad de provisión no es mencionado." },
-  { s: "turismo",    t: "ciclorutas", type: "conflicto-silenciado", directa: false, cat: "e3", pagina: "N/A", sustento: "El riesgo de gentrificación por turismo y renovación urbana no está en el POT." },
-  
-  /* Vacíos lógicos */
-  { s: "pinmaterial",t: "empresariales", type: "vacio-logico", directa: true, cat: "e3-e4", pagina: "N/A", sustento: "La E. Patrimonio está completamente desconectada de la lógica económica: sin modelo de sostenibilidad financiera." },
-  { s: "scuidado",   t: "transporte",    type: "vacio-logico", directa: true, cat: "e2", pagina: "N/A", sustento: "El cuidado como prioridad discursiva está subordinado a movilidad en la arquitectura funcional real." },
-];
+// Estado del simulador: true = sistema activo
+const state = { EEP: true, EFC: true, EIP: true, ESECI: true };
+// Conceptos apagados individualmente (escenario "¿qué pasaría si no existiera X?")
+const offNodes = new Set();
+let lastToggledOff = null;
+let selectedRel = null;
 
-function nodeById(id) { return ODS_NODES.find(n => n.id === id); }
+// ---------------------------------------------------------------------
+// 1. MODELO: nodos (sistemas + conceptos) y aristas
+// ---------------------------------------------------------------------
+const conceptId = (sis, con) => sis + '::' + con;
 
-/* -------- física: longitud de reposo -------- */
-RAW_EDGES.forEach(edge => {
-  const s = nodeById(edge.s), t = nodeById(edge.t);
-  if (!s || !t) return;
-  edge.restLength = Math.hypot(t.x - s.x, t.y - s.y);
-});
+const model = { systems: {}, concepts: {}, relations: [] };
+const layout = {};
+const nodeR = {};
+// Escala visual para que los nodos conserven proporción pero no se vean diminutos
+// dentro del viewBox amplio de la red.
+const NODE_VISUAL_SCALE = 1.35;
 
-/* -------- defs: glow + flechas -------- */
-function buildDefs(svg) {
-  const defs = document.createElementNS(SVG_NS, "defs");
-  const uniqueColors = [...new Set(ODS_NODES.map(n => n.color))];
-  uniqueColors.forEach(color => {
-    const filter = document.createElementNS(SVG_NS, "filter");
-    filter.setAttribute("id", "glow-" + color.replace("#", ""));
-    filter.setAttribute("x", "-60%"); filter.setAttribute("y", "-60%");
-    filter.setAttribute("width", "220%"); filter.setAttribute("height", "220%");
-    const blur = document.createElementNS(SVG_NS, "feGaussianBlur");
-    blur.setAttribute("stdDeviation", "3.2"); blur.setAttribute("result", "blur");
-    const merge = document.createElementNS(SVG_NS, "feMerge");
-    ["blur", "blur", "SourceGraphic"].forEach(ref => {
-      const m = document.createElementNS(SVG_NS, "feMergeNode");
-      m.setAttribute("in", ref);
-      merge.appendChild(m);
-    });
-    filter.appendChild(blur); filter.appendChild(merge);
-    defs.appendChild(filter);
+function buildModel() {
+  model.systems = {}; model.concepts = {}; model.relations = [];
+
+  SYS.forEach(s => {
+    model.systems[s] = Object.assign({ code: s, concepts: [] }, POT_DATA.sistemas[s]);
   });
 
-  Object.entries(TYPE_STYLE).forEach(([type, style]) => {
-    const marker = document.createElementNS(SVG_NS, "marker");
-    marker.setAttribute("id", "arrow-" + type);
-    marker.setAttribute("viewBox", "0 0 10 10");
-    marker.setAttribute("refX", "8"); marker.setAttribute("refY", "5");
-    marker.setAttribute("markerWidth", "7"); marker.setAttribute("markerHeight", "7");
-    marker.setAttribute("orient", "auto-start-reverse");
-    const path = document.createElementNS(SVG_NS, "path");
-    path.setAttribute("d", "M0,0 L10,5 L0,10 z");
-    path.setAttribute("fill", style.color);
-    marker.appendChild(path);
-    defs.appendChild(marker);
+  POT_DATA.nodos.forEach(n => {
+    model.concepts[n.id] = { id: n.id, sys: n.sys, label: n.label, icon: n.icon, deg: n.deg, rels: [] };
+    model.systems[n.sys].concepts.push(n.id);
+    layout[n.id] = { x: n.x, y: n.y };
+    nodeR[n.id] = n.r * NODE_VISUAL_SCALE;
   });
 
-  svg.appendChild(defs);
-}
-
-/* -------- aristas -------- */
-function edgePathData(edge, s, t) {
-  const dx = t.x - s.x, dy = t.y - s.y;
-  const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-  const ux = dx / dist, uy = dy / dist;
-  const startPad = s.r + 2;
-  const endPad = t.r + 8;
-  const x1 = s.x + ux * startPad, y1 = s.y + uy * startPad;
-  const x2 = t.x - ux * endPad,   y2 = t.y - uy * endPad;
-  return `M${x1},${y1} L${x2},${y2}`;
-}
-
-function drawEdges(svg) {
-  const g = document.createElementNS(SVG_NS, "g");
-  g.setAttribute("class", "edges-layer");
-
-  RAW_EDGES.forEach((edge, i) => {
-    const s = nodeById(edge.s);
-    const t = nodeById(edge.t);
-    if (!s || !t) return;
-    const style = TYPE_STYLE[edge.type];
-    const d = edgePathData(edge, s, t);
-
-    const group = document.createElementNS(SVG_NS, "g");
-    group.setAttribute("class", "edge-group");
-    group.setAttribute("data-index", i);
-    group.setAttribute("data-type", edge.type);
-    group.setAttribute("data-cat", edge.cat);
-    group.setAttribute("data-source", edge.s);
-    group.setAttribute("data-target", edge.t);
-    group.style.setProperty("--edge-color", style.color);
-
-    const hit = document.createElementNS(SVG_NS, "path");
-    hit.setAttribute("d", d);
-    hit.setAttribute("class", "ods-edge edge-hit");
-
-    const visual = document.createElementNS(SVG_NS, "path");
-    visual.setAttribute("d", d);
-    visual.setAttribute("class", "ods-edge edge-visual");
-    visual.setAttribute("stroke", style.color);
-    visual.setAttribute("stroke-width", style.width);
-    if (!edge.directa) visual.setAttribute("stroke-dasharray", "6,5");
-    if (edge.directa) visual.setAttribute("marker-end", `url(#arrow-${edge.type})`);
-    visual.setAttribute("opacity", "0.9");
-
-    group.appendChild(visual);
-    group.appendChild(hit);
-    group.addEventListener("click", () => showEdgeInfo(i));
-    g.appendChild(group);
-
-    edge._el = { visual, hit, d };
-  });
-
-  svg.appendChild(g);
-}
-
-/* -------- nodos -------- */
-function drawNodes(svg) {
-  const g = document.createElementNS(SVG_NS, "g");
-  g.setAttribute("class", "nodes-layer");
-
-  ODS_NODES.forEach(node => {
-    const group = document.createElementNS(SVG_NS, "g");
-    group.setAttribute("class", "ods-node ods-node-" + node.cat);
-    group.setAttribute("data-id", node.id);
-    group.setAttribute("data-cat", node.cat);
-
-    const circle = document.createElementNS(SVG_NS, "circle");
-    circle.setAttribute("class", "node-ring");
-    circle.setAttribute("cx", node.x); circle.setAttribute("cy", node.y); circle.setAttribute("r", node.r);
-    circle.setAttribute("stroke", node.color);
-    circle.setAttribute("stroke-width", 2.5);
-    circle.setAttribute("filter", "url(#glow-" + node.color.replace("#", "") + ")");
-
-    const fo = document.createElementNS(SVG_NS, "foreignObject");
-    const size = node.r * 2.2;
-    fo.setAttribute("x", node.x - size / 2); fo.setAttribute("y", node.y - size / 2);
-    fo.setAttribute("width", size); fo.setAttribute("height", size);
-
-    const wrapper = document.createElementNS(XHTML_NS, "div");
-    wrapper.setAttribute("class", "node-inner");
-    wrapper.setAttribute("style",
-      "width:100%;height:100%;display:flex;flex-direction:column;" +
-      "align-items:center;justify-content:center;gap:1px;pointer-events:none;"
-    );
-
-    const iconEl = document.createElementNS(XHTML_NS, "i");
-    iconEl.setAttribute("class", "fa-solid " + node.icon + " node-icon");
-    iconEl.setAttribute("style", `color:${node.color}; font-size:${node.r * 0.42}px; margin:1px 0;`);
-
-    const nameEl = document.createElementNS(XHTML_NS, "div");
-    nameEl.setAttribute("class", "node-name");
-    nameEl.setAttribute("style", `font-size:${Math.max(node.r * 0.155, 7.5)}px; padding:0 3px; font-weight:700; color:#e7eaf2; line-height:1.15; white-space:pre-line;`);
-    nameEl.textContent = node.name;
-
-    const tagEl = document.createElementNS(XHTML_NS, "div");
-    tagEl.setAttribute("class", "node-cat-tag");
-    tagEl.setAttribute("style", `font-size:${Math.max(node.r * 0.135, 6.5)}px; margin-top:1px; font-weight:700; letter-spacing:0.3px; color:${node.color}; white-space:nowrap;`);
-    tagEl.textContent = STRUCT_STYLE[node.cat].tag;
-
-    wrapper.appendChild(iconEl); wrapper.appendChild(nameEl); wrapper.appendChild(tagEl);
-    fo.appendChild(wrapper);
-
-    group.appendChild(circle);
-    group.appendChild(fo);
-    attachNodeClickHandler(group, node.id);
-    attachNodeDragHandler(group, node);
-    g.appendChild(group);
-
-    node._el = { group, circle, fo };
-  });
-
-  svg.appendChild(g);
-}
-
-/* -------- física -------- */
-const PHYSICS = {
-  spring: 0.045,
-  anchor: 0.02,
-  damping: 0.82,
-  minVel: 0.02,
-};
-
-function updatePositions() {
-  ODS_NODES.forEach(n => {
-    if (!n._el) return;
-    n._el.circle.setAttribute("cx", n.x);
-    n._el.circle.setAttribute("cy", n.y);
-    const size = n.r * 2.2;
-    n._el.fo.setAttribute("x", n.x - size / 2);
-    n._el.fo.setAttribute("y", n.y - size / 2);
-  });
-  RAW_EDGES.forEach(edge => {
-    if (!edge._el) return;
-    const s = nodeById(edge.s), t = nodeById(edge.t);
-    if (!s || !t) return;
-    const d = edgePathData(edge, s, t);
-    edge._el.visual.setAttribute("d", d);
-    edge._el.hit.setAttribute("d", d);
+  POT_DATA.relaciones.forEach(r => {
+    const from = conceptId(r.sO, r.cO);
+    const to = conceptId(r.sD, r.cD);
+    const rel = Object.assign({}, r, { from, to });
+    model.relations.push(rel);
+    model.concepts[from].rels.push(rel);
+    model.concepts[to].rels.push(rel);
   });
 }
 
-let physicsRunning = false;
-function physicsStep() {
-  let moving = false;
+// Una relación está activa solo si AMBOS sistemas están ON y ninguno de sus
+// dos conceptos fue apagado individualmente
+const nodeOn = id => !offNodes.has(id);
+const relActive = r => state[r.sO] && state[r.sD] && nodeOn(r.from) && nodeOn(r.to);
 
-  RAW_EDGES.forEach(edge => {
-    const s = nodeById(edge.s), t = nodeById(edge.t);
-    if (!s || !t) return;
-    const dx = t.x - s.x, dy = t.y - s.y;
-    const dist = Math.hypot(dx, dy) || 1;
-    const diff = (dist - edge.restLength) * PHYSICS.spring;
-    const fx = (dx / dist) * diff, fy = (dy / dist) * diff;
-    if (!s.fixed) { s.vx += fx; s.vy += fy; }
-    if (!t.fixed) { t.vx -= fx; t.vy -= fy; }
+// Las posiciones de partida vienen de POT_DATA (agrupadas por estructura),
+// pero muchas quedaban demasiado pegadas / superpuestas. Aquí se relajan con
+// una simulación simple de fuerzas: se separan los nodos que se solapan y se
+// evita que las conexiones queden demasiado comprimidas, partiendo siempre
+// del layout original para conservar el agrupamiento por estructura.
+function computeLayout() {
+  const ids = Object.keys(layout);
+  const n = ids.length;
+  const pos = {};
+  const sysOf = {};
+  ids.forEach((id, i) => {
+    // pequeño jitter inicial para no arrancar con nodos exactamente
+    // simétricos/pegados, lo que ayuda a que la relajación encuentre un
+    // acomodo más limpio en vez de quedarse atascada en el layout original
+    const jx = ((i * 37) % 23 - 11) * 2.1;
+    const jy = ((i * 53) % 19 - 9) * 2.1;
+    pos[id] = { x: layout[id].x + jx, y: layout[id].y + jy };
+    sysOf[id] = model.concepts[id].sys;
   });
 
-  ODS_NODES.forEach(n => {
-    if (n.fixed) { n.vx = 0; n.vy = 0; return; }
-    n.vx += (n.homeX - n.x) * PHYSICS.anchor;
-    n.vy += (n.homeY - n.y) * PHYSICS.anchor;
-    n.vx *= PHYSICS.damping;
-    n.vy *= PHYSICS.damping;
-    n.x += n.vx;
-    n.y += n.vy;
-    if (Math.abs(n.vx) > PHYSICS.minVel || Math.abs(n.vy) > PHYSICS.minVel) moving = true;
-  });
+  const edges = model.relations.map(r => ({ a: r.from, b: r.to }));
 
-  updatePositions();
+  const ITER = 420;
+  const REPEL = 145000;          // separa cualquier par de nodos que se acerque demasiado
+  const SPRING = 0.016;          // mantiene cerca a los nodos conectados
+  const GAP = 92;                // aire mínimo extra entre los bordes de dos nodos
+  const CENTER_PULL = 0.0016;    // atracción muy suave al centro global
+  const CROSS_SYS_PUSH = 7.4e6;  // empuje adicional de largo alcance entre estructuras distintas
+  const CLUSTER_PULL = 0.010;    // atracción suave hacia el centroide de la propia estructura
 
-  if (moving || ODS_NODES.some(n => n.fixed)) {
-    requestAnimationFrame(physicsStep);
-  } else {
-    physicsRunning = false;
-  }
-}
+  for (let it = 0; it < ITER; it++) {
+    const force = {};
+    ids.forEach(id => (force[id] = { x: 0, y: 0 }));
 
-function wakePhysics() {
-  if (!physicsRunning) {
-    physicsRunning = true;
-    requestAnimationFrame(physicsStep);
-  }
-}
+    // 1) repulsión entre todos los pares: evita solapes entre nodos, y
+    //    empuja un poco más fuerte entre nodos de estructuras distintas
+    //    para que cada estructura se distinga como un grupo aparte
+    for (let i = 0; i < n; i++) {
+      const idA = ids[i], a = pos[idA];
+      for (let j = i + 1; j < n; j++) {
+        const idB = ids[j], b = pos[idB];
+        const dx = a.x - b.x, dy = a.y - b.y;
+        const dist = Math.hypot(dx, dy) || 0.001;
+        const minDist = nodeR[idA] + nodeR[idB] + GAP;
+        const sameSys = sysOf[idA] === sysOf[idB];
 
-/* -------- arrastre -------- */
-function attachNodeDragHandler(group, node) {
-  const svg = document.getElementById("networkViz");
-  let dragging = false;
-  let moved = false;
-  let startClientX = 0, startClientY = 0;
-
-  function toSvgPoint(clientX, clientY) {
-    const pt = svg.createSVGPoint();
-    pt.x = clientX; pt.y = clientY;
-    const m = svg.getScreenCTM().inverse();
-    return pt.matrixTransform(m);
-  }
-
-  group.addEventListener("pointerdown", (e) => {
-    dragging = true;
-    moved = false;
-    startClientX = e.clientX; startClientY = e.clientY;
-    node.fixed = true;
-    group.classList.add("dragging");
-    group.setPointerCapture(e.pointerId);
-    wakePhysics();
-  });
-
-  group.addEventListener("pointermove", (e) => {
-    if (!dragging) return;
-    if (Math.hypot(e.clientX - startClientX, e.clientY - startClientY) > 4) moved = true;
-    const p = toSvgPoint(e.clientX, e.clientY);
-    node.x = p.x; node.y = p.y;
-    node.vx = 0; node.vy = 0;
-    updatePositions();
-    wakePhysics();
-  });
-
-  function endDrag(e) {
-    if (!dragging) return;
-    dragging = false;
-    node.fixed = false;
-    group.classList.remove("dragging");
-    try { group.releasePointerCapture(e.pointerId); } catch (err) {}
-    wakePhysics();
-    if (moved) {
-      group.dataset.suppressClick = "1";
-      setTimeout(() => { delete group.dataset.suppressClick; }, 0);
-    }
-  }
-
-  group.addEventListener("pointerup", endDrag);
-  group.addEventListener("pointercancel", endDrag);
-}
-
-function renderNetwork() {
-  const svg = document.getElementById("networkViz");
-  if (!svg) return;
-  svg.innerHTML = "";
-  buildDefs(svg);
-  drawEdges(svg);
-  drawNodes(svg);
-}
-
-/* -------- panel de información -------- */
-function showEdgeInfo(index) {
-  const edge = RAW_EDGES[index];
-  const s = nodeById(edge.s), t = nodeById(edge.t);
-  const style = TYPE_STYLE[edge.type];
-  const struct = STRUCT_STYLE[edge.cat];
-
-  document.querySelectorAll(".edge-group").forEach(el => el.classList.remove("edge-selected"));
-  document.querySelector(`.edge-group[data-index="${index}"]`)?.classList.add("edge-selected");
-
-  const label = (n) => n.name.replace(/\n/g, " ");
-  document.getElementById("edgeInfoTitle").textContent = `${label(s)} → ${label(t)}`;
-
-  const typeEl = document.getElementById("edgeInfoType");
-  typeEl.textContent = style.label + " · " + struct.label + (edge.directa ? " · Directa — continua" : " · Indirecta / inferida");
-  typeEl.style.color = style.color;
-  typeEl.style.background = style.color + "26";
-
-    document.getElementById("edgeInfoQuote").textContent = edge.sustento;
-  document.getElementById("edgeInfoPage").textContent =
-    (edge.pagina ? `Página POT: p. ${edge.pagina} · ` : "") + "Estructura POT: " + struct.label;
-  document.getElementById("edgeInfoPanel").classList.add("visible");
-
-  document.querySelectorAll(".matrix-row[data-edge]").forEach(row => {
-    row.classList.toggle("row-highlight", Number(row.dataset.edge) === index);
-  });
-}
-
-function hideEdgeInfo() {
-  document.getElementById("edgeInfoPanel").classList.remove("visible");
-  document.querySelectorAll(".edge-group").forEach(el => el.classList.remove("edge-selected"));
-  document.querySelectorAll(".matrix-row[data-edge]").forEach(row => row.classList.remove("row-highlight"));
-}
-
-/* -------- visibilidad -------- */
-const typeOff = new Set();
-const nodeOff = new Set();
-const catOff = new Set();
-
-function refreshEdgeVisibility() {
-  document.querySelectorAll(".edge-group").forEach(group => {
-    const type = group.dataset.type;
-    const cat = group.dataset.cat;
-    const s = group.dataset.source;
-    const t = group.dataset.target;
-    const hidden = typeOff.has(type) || nodeOff.has(s) || nodeOff.has(t) || catOff.has(cat);
-    group.classList.toggle("hidden-edge", hidden);
-  });
-}
-
-function toggleNode(id) {
-  const group = document.querySelector(`.ods-node[data-id="${id}"]`);
-  if (!group) return;
-  if (nodeOff.has(id)) {
-    nodeOff.delete(id);
-    group.classList.remove("node-off");
-  } else {
-    nodeOff.add(id);
-    group.classList.add("node-off");
-  }
-  refreshEdgeVisibility();
-}
-
-/* -------- clic simple / doble / triple -------- */
-function attachNodeClickHandler(group, id) {
-  let count = 0;
-  let timer = null;
-  group.addEventListener("click", () => {
-    if (group.dataset.suppressClick) return;
-    count++;
-    if (timer) clearTimeout(timer);
-    timer = setTimeout(() => {
-      if (count === 2) {
-        toggleNode(id);
-      } else if (count >= 3) {
-        toggleNodeFlow(id);
-      }
-      count = 0;
-    }, 320);
-  });
-}
-
-/* -------- spotlight -------- */
-let spotlight = null;
-
-function clearSpotlight() {
-  spotlight = null;
-  document.querySelectorAll(".insight-card").forEach(c => c.classList.remove("active"));
-  applySpotlightState();
-}
-
-function setSpotlightNodes(nodeIds, expand) {
-  spotlight = { mode: "nodes", nodes: new Set(nodeIds), expand: !!expand };
-  document.querySelectorAll(".insight-card").forEach(c => c.classList.remove("active"));
-  applySpotlightState();
-}
-
-function setSpotlightTypes(types) {
-  spotlight = { mode: "types", types };
-  document.querySelectorAll(".insight-card").forEach(c => c.classList.remove("active"));
-  applySpotlightState();
-}
-
-function setSpotlightCats(cats, keepAllNodes) {
-  spotlight = { mode: "cats", cats, keepAllNodes: !!keepAllNodes };
-  document.querySelectorAll(".insight-card").forEach(c => c.classList.remove("active"));
-  applySpotlightState();
-}
-
-function applySpotlightState() {
-  let visibleNodes = null;
-  let visibleEdges = null;
-
-  if (spotlight && spotlight.mode === "nodes") {
-    visibleNodes = new Set(spotlight.nodes);
-    visibleEdges = new Set();
-    RAW_EDGES.forEach((edge, i) => {
-      const sIn = spotlight.nodes.has(edge.s);
-      const tIn = spotlight.nodes.has(edge.t);
-      if (spotlight.expand) {
-        if (sIn || tIn) {
-          visibleEdges.add(i);
-          visibleNodes.add(edge.s);
-          visibleNodes.add(edge.t);
+        if (dist < minDist * 2.2) {
+          const overlap = Math.max(0, minDist - dist) + 1;
+          const f = (REPEL * overlap) / (dist * dist + 500);
+          const ux = dx / dist, uy = dy / dist;
+          force[idA].x += ux * f; force[idA].y += uy * f;
+          force[idB].x -= ux * f; force[idB].y -= uy * f;
         }
-      } else {
-        if (sIn && tIn) visibleEdges.add(i);
+
+        // empuje suave de largo alcance solo entre estructuras distintas,
+        // para separar visualmente los "territorios" de cada color
+        if (!sameSys) {
+          const fSep = CROSS_SYS_PUSH / (dist * dist + 9000);
+          const ux = dx / dist, uy = dy / dist;
+          force[idA].x += ux * fSep; force[idA].y += uy * fSep;
+          force[idB].x -= ux * fSep; force[idB].y -= uy * fSep;
+        }
       }
-    });
-  } else if (spotlight && spotlight.mode === "types") {
-    visibleEdges = new Set();
-    RAW_EDGES.forEach((edge, i) => {
-      if (spotlight.types.includes(edge.type)) visibleEdges.add(i);
-    });
-  } else if (spotlight && spotlight.mode === "cats") {
-    visibleNodes = new Set();
-    visibleEdges = new Set();
-    RAW_EDGES.forEach((edge, i) => {
-      if (spotlight.cats.includes(edge.cat)) {
-        visibleEdges.add(i);
-        visibleNodes.add(edge.s);
-        visibleNodes.add(edge.t);
-      }
-    });
-    if (spotlight.keepAllNodes) {
-      ODS_NODES.forEach(n => visibleNodes.add(n.id));
     }
+
+    // 2) resorte entre nodos conectados: los mantiene relativamente cerca
+    edges.forEach(({ a: idA, b: idB }) => {
+      const a = pos[idA], b = pos[idB];
+      const dx = b.x - a.x, dy = b.y - a.y;
+      const dist = Math.hypot(dx, dy) || 0.001;
+      const rest = nodeR[idA] + nodeR[idB] + 150;
+      const f = SPRING * (dist - rest);
+      const ux = dx / dist, uy = dy / dist;
+      force[idA].x += ux * f; force[idA].y += uy * f;
+      force[idB].x -= ux * f; force[idB].y -= uy * f;
+    });
+
+    // 3) atracción suave al centroide de la propia estructura: agrupa
+    //    visualmente cada color sin volverlo rígido (los resortes y la
+    //    repulsión de arriba siguen mandando en la forma final)
+    const centroid = {};
+    const count = {};
+    SYS.forEach(s => { centroid[s] = { x: 0, y: 0 }; count[s] = 0; });
+    ids.forEach(id => {
+      const s = sysOf[id];
+      centroid[s].x += pos[id].x; centroid[s].y += pos[id].y; count[s]++;
+    });
+    SYS.forEach(s => { if (count[s]) { centroid[s].x /= count[s]; centroid[s].y /= count[s]; } });
+    ids.forEach(id => {
+      const s = sysOf[id];
+      force[id].x += (centroid[s].x - pos[id].x) * CLUSTER_PULL;
+      force[id].y += (centroid[s].y - pos[id].y) * CLUSTER_PULL;
+    });
+
+    // 4) atracción suave al centro para que la red no se disperse sin límite
+    ids.forEach(id => {
+      force[id].x += -pos[id].x * CENTER_PULL;
+      force[id].y += -pos[id].y * CENTER_PULL;
+    });
+
+    // el movimiento se va "enfriando" a medida que avanzan las iteraciones
+    const damp = Math.max(0, 1 - it / (ITER * 1.1));
+    ids.forEach(id => {
+      pos[id].x += force[id].x * damp;
+      pos[id].y += force[id].y * damp;
+    });
   }
 
-  document.querySelectorAll(".ods-node").forEach(el => {
-    const id = el.dataset.id;
-    const dim = visibleNodes ? !visibleNodes.has(id) : false;
-    el.classList.toggle("node-focus-dim", dim);
-    el.classList.toggle("node-focus-active", !!(spotlight && spotlight.mode === "nodes" && spotlight.nodes.has(id)));
-  });
+  ids.forEach(id => { layout[id] = pos[id]; });
 
-  document.querySelectorAll(".edge-group").forEach(el => {
-    const idx = Number(el.dataset.index);
-    const dim = visibleEdges ? !visibleEdges.has(idx) : false;
-    el.classList.toggle("edge-focus-dim", dim);
+  // recalcula el viewBox para que "Centrar vista" encuadre bien la red ya
+  // relajada (puede haber quedado un poco más grande que el original)
+  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  ids.forEach(id => {
+    const p = pos[id], r = nodeR[id] + 82; // margen compacto para las etiquetas
+    minX = Math.min(minX, p.x - r); maxX = Math.max(maxX, p.x + r);
+    minY = Math.min(minY, p.y - r); maxY = Math.max(maxY, p.y + r);
+  });
+  BASE_VB = { x: minX, y: minY, w: maxX - minX, h: maxY - minY };
+  vb = Object.assign({}, BASE_VB);
+}
+
+// ---------------------------------------------------------------------
+// 3. RENDER
+// ---------------------------------------------------------------------
+const NS = 'http://www.w3.org/2000/svg';
+const el = (tag, attrs = {}) => {
+  const n = document.createElementNS(NS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  return n;
+};
+
+function wrapLabel(text, maxChars = 15) {
+  if (text.length <= maxChars) return [text];
+  const parts = text.split(' / ');
+  if (parts.length === 2 && parts[0].length <= maxChars + 4 && parts[1].length <= maxChars + 4) {
+    return [parts[0] + ' /', parts[1]];
+  }
+  const words = text.split(' ');
+  const lines = [''];
+  words.forEach(w => {
+    const i = lines.length - 1;
+    if ((lines[i] + ' ' + w).trim().length <= maxChars || !lines[i]) {
+      lines[i] = (lines[i] + ' ' + w).trim();
+    } else {
+      lines.push(w);
+    }
+  });
+  if (lines.length > 2) {
+    const rest = lines.slice(1).join(' ');
+    return [lines[0], rest.length > maxChars + 6 ? rest.slice(0, maxChars + 4) + '…' : rest];
+  }
+  return lines;
+}
+
+// Trayectoria recta entre dos puntos, recortada exactamente en los bordes.
+// Las curvas anteriores desplazaban visualmente el recorrido y hacían parecer
+// que algunas relaciones terminaban en nodos equivocados, especialmente cuando
+// había muchos enlaces cruzados. La relación sigue usando sus endpoints reales.
+function curvePath(a, b, rA, rB) {
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  const len = Math.hypot(dx, dy) || 1;
+  const ux = dx / len;
+  const uy = dy / len;
+  const gap = 3;
+  const p1 = { x: a.x + ux * (rA + gap), y: a.y + uy * (rA + gap) };
+  const p2 = { x: b.x - ux * (rB + gap), y: b.y - uy * (rB + gap) };
+  return `M${p1.x.toFixed(1)},${p1.y.toFixed(1)} L${p2.x.toFixed(1)},${p2.y.toFixed(1)}`;
+}
+
+
+// ---------------------------------------------------------------------
+// DEBILITAMIENTO DE LA RED
+// Cuando se apaga una estructura, los demás nodos NO cambian de lugar:
+// se quedan exactamente donde estaban. Lo único que cambia es su opacidad
+// (ver "weakened"/"cut-off" en render()) y la de los nodos/relaciones que
+// pertenecen a la estructura apagada (ver "sys-off"/"rel-off").
+// ---------------------------------------------------------------------
+const drawPos = {};
+
+function lossRatioOf(c) {
+  const total = c.rels.length;
+  if (!total) return 0;
+  return c.rels.filter(r => !relActive(r)).length / total;
+}
+
+function computeDrift() {
+  Object.values(model.concepts).forEach(c => {
+    const p = layout[c.id];
+    drawPos[c.id] = { x: p.x, y: p.y };
   });
 }
 
-function toggleNodeFlow(id) {
-  const already = spotlight && spotlight.mode === "nodes" && spotlight.expand &&
-                   spotlight.nodes.size === 1 && spotlight.nodes.has(id);
-  if (already) {
-    clearSpotlight();
-  } else {
-    setSpotlightNodes([id], true);
-  }
+function render() {
+  computeDrift();
+  const gGuides = document.getElementById('gGuides');
+  const gMembers = document.getElementById('gMembers');
+  const gRels = document.getElementById('gRels');
+  const gNodes = document.getElementById('gNodes');
+  [gGuides, gMembers, gRels, gNodes].forEach(g => (g.innerHTML = ''));
+
+  // -- todas las relaciones se dibujan siempre, en su mismo lugar; las que
+  //    tocan una estructura o un nodo apagado simplemente quedan con muy
+  //    baja opacidad ("rel-off"), en vez de desaparecer y reorganizar la red
+  model.relations.forEach(r => {
+    const active = relActive(r);
+    const a = drawPos[r.from] || layout[r.from], b = drawPos[r.to] || layout[r.to];
+    const rA = nodeR[r.from];
+    const rB = nodeR[r.to];
+    const d = curvePath(a, b, rA, rB);
+    const kind = r.tipo === 'Soporte' ? 'soporte' : 'resiliencia';
+    const cls = ['rel', kind];
+    if (r.linea === 'Punteada') cls.push('punteada');
+    if (r.porVerificar) cls.push('por-verificar');
+    if (selectedRel === r.id) cls.push('sel');
+    if (!active) cls.push('rel-off');
+
+    // cinta difuminada detrás de la línea: da un aspecto sólido y suave
+    // (no neón) a la relación, en vez de un simple trazo brillante
+    const glowCls = ['rel', 'rel-glow', kind];
+    if (cls.includes('punteada')) glowCls.push('punteada');
+    if (cls.includes('sel')) glowCls.push('sel');
+    if (!active) glowCls.push('rel-off');
+    const glow = el('path', { class: glowCls.join(' '), d, 'data-rel': r.id });
+
+    const path = el('path', {
+      class: cls.join(' '),
+      d,
+      'marker-end': `url(#ar-${kind})`,
+      'data-rel': r.id
+    });
+    const hit = el('path', { class: 'rel-hit', d, 'data-rel': r.id });
+
+    [path, hit].forEach(node => {
+      node.addEventListener('click', ev => { ev.stopPropagation(); selectRelation(r.id); });
+      node.addEventListener('mouseenter', ev => showTooltip(ev,
+        `<div class="tt-sys" style="color:${model.systems[r.sO].color}">${r.sO} → ${r.sD}</div>` +
+        `${esc(r.cO)} → ${esc(r.cD)}<br><span style="color:#8891a5">${r.tipo} · ${r.evid} · p. ${r.pag}</span>`));
+      node.addEventListener('mousemove', moveTooltip);
+      node.addEventListener('mouseleave', hideTooltip);
+    });
+
+    gRels.appendChild(glow);
+    gRels.appendChild(path);
+    gRels.appendChild(hit);
+  });
+
+  // -- conceptos: se dibujan TODOS siempre, en su misma posición; los que
+  //    pertenecen a una estructura apagada solo bajan mucho su opacidad
+  //    ("sys-off"), no se quitan del mapa ni mueven a los demás
+  SYS.forEach(s => {
+    const sysOff = !state[s];
+    model.systems[s].concepts.forEach(id => {
+      const c = model.concepts[id];
+      const p = drawPos[id] || layout[id];
+      const activeRels = c.rels.filter(relActive).length;
+      const isolated = activeRels === 0;
+      const off = offNodes.has(id);
+      const R = nodeR[id];
+const iconSize = Math.max(28, Math.round(R * 0.52));
+      // Etiquetas más grandes y legibles, manteniendo proporción con el nodo.
+      const fontSize = Math.max(26, Math.min(44, R * 0.28));
+      // nivel de brillo por conectividad (solo estético)
+      const glow = R >= 110 ? 'high' : R >= 80 ? 'mid' : 'low';
+
+      const cls = ['concept', 'node-appear', 'deg-' + glow];
+      const ratio = lossRatioOf(c);
+      if (isolated && !off && !sysOff) cls.push('isolated');
+      if (off) cls.push('node-off');
+      if (sysOff) cls.push('sys-off');
+      if (!off && !sysOff && ratio >= 0.34 && ratio < 1) cls.push('weakened');
+      if (!off && !sysOff && ratio >= 1) cls.push('cut-off');
+      if (isBridge(c)) cls.push('bridge');
+
+      const g = el('g', {
+        class: cls.join(' '),
+        transform: `translate(${p.x.toFixed(1)},${p.y.toFixed(1)})`,
+        style: `--sys:${model.systems[s].color}`,
+        'data-id': id
+      });
+
+      g.appendChild(el('circle', { class: 'node-fill', r: R }));
+
+      // icono dentro del nodo
+      const fo = el('foreignObject', { x: -R, y: -R, width: R * 2, height: R * 2 });
+      const div = document.createElementNS('http://www.w3.org/1999/xhtml', 'div');
+      div.setAttribute('class', 'node-icon');
+      div.innerHTML = `<i class="fa-solid ${c.icon}" style="font-size:${iconSize}px"></i>`;
+      fo.appendChild(div);
+      g.appendChild(fo);
+
+      const lines = wrapLabel(c.label);
+      lines.forEach((ln, i) => {
+        const t = el('text', { y: R + fontSize + 5 + i * (fontSize + 1.6), style: `font-size:${fontSize}px` });
+        t.textContent = ln;
+        g.appendChild(t);
+      });
+
+      g.addEventListener('mouseenter', ev => showTooltip(ev,
+        `<div class="tt-sys" style="color:${model.systems[s].color}">${s}</div>${esc(c.label)}<br>` +
+        `<span style="color:#8891a5">${c.rels.length} relación(es) en el POT · ${activeRels} activa(s)` +
+        `${off ? ' · APAGADO' : isolated ? ' · AISLADO' : ''}</span>`));
+      g.addEventListener('mousemove', moveTooltip);
+      g.addEventListener('mouseleave', hideTooltip);
+      g.addEventListener('click', ev => { ev.stopPropagation(); focusConcept(id); });
+
+      gNodes.appendChild(g);
+    });
+  });
+
 }
 
-/* -------- tarjetas de insights -------- */
-const NODE_INSIGHTS = {
-  ecologica:     ODS_NODES.filter(n => n.cat === "e1").map(n => n.id),
-  funcional:     ODS_NODES.filter(n => n.cat === "e2").map(n => n.id),
-  socioeconomica:ODS_NODES.filter(n => n.cat === "e3").map(n => n.id),
-  patrimonio:    ODS_NODES.filter(n => n.cat === "e4").map(n => n.id),
-};
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
-const TYPE_KEY = {
-  soporte:     "soporte",
-  resiliencia: "resiliencia",
-  indirecta:   "indirecta",
-};
+// ---------------------------------------------------------------------
+// 4. MÉTRICAS
+// ---------------------------------------------------------------------
+const outgoing = s => model.relations.filter(r => r.sO === s && relActive(r)).length;
+// Conexiones con OTROS sistemas: es la medida en la que la ESECI encabeza la red
+// y la que sustenta el hallazgo principal del módulo.
+const crossLinks = s => model.relations.filter(r =>
+  r.sO !== r.sD && (r.sO === s || r.sD === s) && relActive(r)).length;
+const incoming = s => model.relations.filter(r => r.sD === s && relActive(r)).length;
+// relaciones que desaparecerían si ese sistema se apagara (desde red completa)
+const incident = s => model.relations.filter(r => r.sO === s || r.sD === s).length;
 
-function toggleInsight(key) {
-  const card = document.querySelector(`.insight-card[data-insight="${key}"]`);
-  if (!card) return;
+function components() {
+  // La red visible son los conceptos y las relaciones documentadas.
+  // Un concepto sin ninguna relación activa cuenta como componente propio.
+  const adj = {};
+  const nodes = [];
+  Object.values(model.concepts).forEach(c => {
+    if (!state[c.sys]) return;
+    nodes.push(c.id);
+    adj[c.id] = [];
+  });
+  model.relations.forEach(r => {
+    if (!relActive(r)) return;
+    adj[r.from].push(r.to);
+    adj[r.to].push(r.from);
+  });
 
-  if (card.classList.contains("active")) {
-    clearSpotlight();
+  const seen = new Set();
+  const sizes = [];
+  nodes.forEach(n => {
+    if (seen.has(n)) return;
+    let size = 0;
+    const stack = [n];
+    seen.add(n);
+    while (stack.length) {
+      const cur = stack.pop();
+      size++;
+      (adj[cur] || []).forEach(nb => { if (!seen.has(nb)) { seen.add(nb); stack.push(nb); } });
+    }
+    sizes.push(size);
+  });
+  sizes.sort((a, b) => b - a);
+  return { count: sizes.length, largest: sizes[0] || 0, totalNodes: nodes.length };
+}
+
+function updateMetrics() {
+  const total = model.relations.length;
+  const active = model.relations.filter(relActive).length;
+  const pct = total ? Math.round((active / total) * 100) : 0;
+  const comp = components();
+  const totalNodes = Object.keys(model.concepts).length;
+
+  const isolatedCount = Object.values(model.concepts)
+    .filter(c => state[c.sys] && !c.rels.some(relActive)).length;
+
+  set('mRelTot', total);
+  set('mRelAct', active + ' <small>/ ' + total + '</small>');
+  set('mPct', pct + '<small>%</small>');
+  set('mNodTot', totalNodes);
+  set('mNodAct', comp.totalNodes + ' <small>/ ' + totalNodes + '</small>');
+  set('mComp', comp.count);
+  set('mMain', comp.largest + ' <small>nodos</small>');
+  set('mIso', isolatedCount);
+
+  const bar = document.getElementById('mBar');
+  bar.style.width = pct + '%';
+  bar.style.background = pct === 100 ? 'var(--eep)' : pct >= 60 ? 'var(--eseci)' : 'var(--danger)';
+
+  // ---- centralidad saliente (calculada, nunca fija) ----
+  const rank = SYS.map(s => ({ s, out: crossLinks(s), inc: incoming(s), on: state[s] }))
+    .sort((a, b) => b.out - a.out || a.s.localeCompare(b.s));
+  const maxOut = Math.max(1, ...rank.map(r => r.out));
+
+  document.getElementById('rankList').innerHTML = rank.map((r, i) => `
+    <div class="rank-row ${r.on ? '' : 'is-off'}" style="--sys:${model.systems[r.s].color}">
+      <span class="pos">${i + 1}</span>
+      <span class="code">${r.s}</span>
+      <span class="track"><span class="fill" style="width:${(r.out / maxOut) * 100}%"></span></span>
+      <span class="n">${r.out}</span>
+    </div>`).join('');
+
+  const top = rank[0];
+  const tie = rank.filter(r => r.out === top.out && top.out > 0);
+  document.getElementById('topSys').innerHTML = top.out === 0
+    ? '<span class="badge-top">Sin conexiones activas entre sistemas</span>'
+    : `<span class="badge-top" style="color:${model.systems[top.s].color};border-color:${model.systems[top.s].color}66;background:${model.systems[top.s].color}1f">
+         ${tie.length > 1 ? tie.map(t => t.s).join(' / ') : top.s} · Más conectado con los demás
+       </span>`;
+  set('mCentral', top.out === 0 ? '—' : (tie.length > 1 ? tie.map(t => t.s).join(' / ') : top.s));
+
+  // ---- comparación: dependencia que genera cada sistema ----
+  const maxInc = Math.max(...SYS.map(incident));
+  document.getElementById('compareList').innerHTML = SYS
+    .map(s => ({ s, n: incident(s) }))
+    .sort((a, b) => b.n - a.n)
+    .map(o => `
+      <div class="compare-row" style="--sys:${model.systems[o.s].color}">
+        <span class="code">${o.s}</span>
+        <span class="track"><span class="fill" style="width:${(o.n / maxInc) * 100}%"></span></span>
+        <span class="n">${o.n} rel.</span>
+      </div>`).join('');
+
+  updateWeakBanner(active, total);
+  updateBridgePanel();
+  updateSimPanel(active, total, rank);
+}
+
+
+// Aviso sobre el diagrama: cuánto se debilitó la red y cuántos nodos quedaron
+// desconectados. Todo calculado del estado actual.
+function updateWeakBanner(active, total) {
+  const banner = document.getElementById('weakBanner');
+  const txt = document.getElementById('weakBannerText');
+  if (!banner || !txt) return;
+
+  const off = SYS.filter(s => !state[s]);
+  const nodosOff = offNodes.size;
+  if (!off.length && !nodosOff) {
+    banner.classList.add('hidden');
     return;
   }
 
-  if (TYPE_KEY[key]) {
-    setSpotlightTypes([TYPE_KEY[key]]);
-  } else if (NODE_INSIGHTS[key] && NODE_INSIGHTS[key].length) {
-    setSpotlightCats(NODE_INSIGHTS[key].map(id => nodeById(id).cat), true);
-    NODE_INSIGHTS[key].forEach(id => {
-      const el = document.querySelector(`.ods-node[data-id="${id}"]`);
-      if (el) el.classList.add("node-focus-active");
-    });
+  const perdidas = total - active;
+  const loss = total ? Math.round((perdidas / total) * 100) : 0;
+  const comp = components();
+
+  const cortados = Object.values(model.concepts)
+    .filter(c => state[c.sys] && !offNodes.has(c.id) && c.rels.length && lossRatioOf(c) >= 1).length;
+  const debiles = Object.values(model.concepts)
+    .filter(c => state[c.sys] && !offNodes.has(c.id) && c.rels.length &&
+                 lossRatioOf(c) >= 0.34 && lossRatioOf(c) < 1).length;
+
+  const quien = off.length ? off.join(' + ') : 'ese nodo';
+  txt.innerHTML = `<b>Red debilitada:</b> sin ${quien} se pierden <b>${perdidas} de ${total}</b>
+    relaciones (<b>${loss}%</b>) y la red queda en <b>${comp.count}</b> componentes.
+    <span class="wb-sub">${cortados} concepto(s) quedaron sin ninguna conexión ·
+    ${debiles} perdieron la mitad o más de las suyas</span>`;
+  banner.classList.remove('hidden');
+}
+
+
+// ---------------------------------------------------------------------
+// NODOS PUENTE: conceptos que se relacionan con las TRES estructuras
+// distintas a la suya. Son las costuras de la red.
+// ---------------------------------------------------------------------
+function structuresTouched(c) {
+  const set = new Set();
+  c.rels.forEach(r => {
+    const otro = r.from === c.id ? r.sD : r.sO;
+    if (otro !== c.sys) set.add(otro);
+  });
+  return set;
+}
+const isBridge = c => structuresTouched(c).size >= 3;
+
+function updateBridgePanel() {
+  const box = document.getElementById('bridgeList');
+  if (!box) return;
+  const lista = Object.values(model.concepts)
+    .filter(isBridge)
+    .map(c => ({ c, deg: c.rels.length }))
+    .sort((a, b) => b.deg - a.deg);
+
+  if (!lista.length) { box.innerHTML = '<p class="ev-empty">Ningún concepto conecta con las tres estructuras restantes.</p>'; return; }
+
+  const porESECI = lista.filter(o => o.c.sys === 'ESECI').length;
+  box.innerHTML = lista.map(o => `
+      <div class="bridge-row" style="--sys:${model.systems[o.c.sys].color}">
+        <i class="fa-solid ${o.c.icon}"></i>
+        <span class="bl">${esc(o.c.label)}</span>
+        <span class="bs">${o.c.sys}</span>
+        <span class="bn">${o.deg}</span>
+      </div>`).join('') +
+    `<p class="note">${porESECI} de ${lista.length} nodos puente pertenecen a la ESECI: es la estructura que cose la red.</p>`;
+}
+
+const set = (id, html) => { document.getElementById(id).innerHTML = html; };
+
+function updateSimPanel(active, total, rank) {
+  const off = SYS.filter(s => !state[s]);
+  const box = document.getElementById('simBox');
+
+  if (!off.length) {
+    box.innerHTML = `<p class="ev-empty">Todos los sistemas están activos. Apaga uno para medir cuánta articulación aporta a la red.</p>`;
   } else {
-    setSpotlightNodes(ODS_NODES.map(n => n.id), false);
+    const removed = total - active;
+    const loss = total ? Math.round((removed / total) * 100) : 0;
+    box.innerHTML = `
+      <div class="sim-off">
+        <div class="k">Sistema${off.length > 1 ? 's' : ''} desactivado${off.length > 1 ? 's' : ''}</div>
+        <div class="v">${off.join(' + ')}</div>
+      </div>
+      <div class="sim-line"><span>Relaciones eliminadas</span><span>${removed}</span></div>
+      <div class="sim-line"><span>Relaciones restantes</span><span>${active}</span></div>
+      <div class="sim-line"><span>Pérdida de conectividad</span><span>${loss}%</span></div>
+      <p class="note" style="border:0;padding-top:9px">Al desactivar ${off.join(' + ')}, la red pierde ${loss}% de sus relaciones.</p>
+      ${off.includes('ESECI') ? `<div class="eco-note"><i class="fa-solid fa-arrow-trend-up"></i>
+        <span>Es la caída más fuerte de la red: el POT orienta buena parte del ordenamiento hacia el
+        crecimiento económico, el empleo y la productividad, así que al quitar la ESECI se desprenden
+        ${removed} relaciones y la red se parte en ${components().count} componentes.</span></div>` : ''}`;
   }
 
-  card.classList.add("active");
+  // ---- hallazgo dinámico ----
+  const top = rank[0];
+  const f = document.getElementById('finding');
+  if (!off.length) {
+    f.innerHTML = top.out === 0
+      ? 'Sin relaciones activas para analizar.'
+      : `La red está completa: <b>${active} de ${total}</b> relaciones activas.
+         Según las relaciones construidas a partir del POT, <b>${top.s}</b> concentra la mayor
+         cantidad de conexiones con las demás estructuras (<b>${top.out}</b>), por lo que opera como
+         <b>principal articulador de esta red</b>.`;
+  } else {
+    const removed = total - active;
+    const loss = total ? Math.round((removed / total) * 100) : 0;
+    const worst = SYS.map(s => ({ s, n: incident(s) })).sort((a, b) => b.n - a.n)[0];
+    f.innerHTML = `Al desactivar <b>${off.join(' + ')}</b>, la red pierde <b>${removed}</b> de sus
+      <b>${total}</b> relaciones (<b>${loss}%</b>) y queda con <b>${components().count}</b>
+      componente(s) conectado(s).
+      ${top.out > 0
+        ? `Con la red así, <b>${top.s}</b> pasa a ser la más conectada con las demás (<b>${top.out}</b> conexiones).`
+        : 'No quedan relaciones salientes activas.'}
+      En la red completa, el sistema que genera mayor dependencia es <b>${worst.s}</b>
+      (${worst.n} relaciones incidentes).`;
+  }
 }
 
-/* -------- leyenda -------- */
-function setupLegendToggle() {
-  document.querySelectorAll(".legend-item input").forEach(input => {
-    input.addEventListener("change", (e) => {
-      const item = e.target.closest(".legend-item");
-      const mode = item.dataset.mode;
-      const val = item.dataset.type || item.dataset.cat;
-      if (e.target.checked) {
-        if (mode === "type") typeOff.delete(val); else catOff.delete(val);
-      } else {
-        if (mode === "type") typeOff.add(val); else catOff.add(val);
-      }
-      item.classList.toggle("off", !e.target.checked);
-      refreshEdgeVisibility();
-    });
+// ---------------------------------------------------------------------
+// 5. INTERACCIÓN
+// ---------------------------------------------------------------------
+function toggleSystem(s) {
+  state[s] = !state[s];
+  lastToggledOff = state[s] ? null : s;
+  if (selectedRel !== null) {
+    const r = model.relations.find(x => x.id === selectedRel);
+    if (r && !relActive(r)) clearEvidence();
+  }
+  updateSwitches();
+  render();
+  updateMetrics();
+}
+
+function updateSwitches() {
+  SYS.forEach(s => {
+    const b = document.querySelector('.scenario-btn[data-sys="' + s + '"]');
+    if (!b) return;
+    const off = !state[s];
+    // en este módulo, "active" = escenario de apagado encendido
+    b.classList.toggle('active', off);
+    const st = b.querySelector('.sys-state');
+    if (st) st.textContent = off ? 'OFF' : 'ON';
+    const ic = b.querySelector('i');
+    if (ic) {
+      ic.classList.toggle('fa-circle-minus', !off);
+      ic.classList.toggle('fa-power-off', off);
+    }
   });
-
-  document.getElementById("edgeInfoClose")?.addEventListener("click", hideEdgeInfo);
 }
 
-/* -------- filtros -------- */
-function filterNetwork(mode) {
-  document.querySelectorAll(".network-controls .control-btn").forEach(btn => btn.classList.remove("active"));
-  if (event && event.currentTarget) event.currentTarget.classList.add("active");
+function resetAll() {
+  SYS.forEach(s => (state[s] = true));
+  offNodes.clear();
+  lastToggledOff = null;
+  clearEvidence();
+  updateSwitches();
+  render();
+  updateMetrics();
+  if (document.getElementById('nodeSelect')) { syncNodeBtn(); updateNodeImpact(); }
+  resetView();
+}
 
-  const groups = {
-    all:                    { types: ["relacion-faltante", "componente-ignorado", "conflicto-silenciado", "vacio-logico"], cats: ["e1", "e2", "e3", "e4", "e1-e2", "e2-e3", "e3-e4", "e1-e4"] },
-    "relacion-faltante":    { types: ["relacion-faltante"],    cats: ["e1", "e2", "e3", "e4", "e1-e2", "e2-e3", "e3-e4", "e1-e4"] },
-    "componente-ignorado":  { types: ["componente-ignorado"],  cats: ["e1", "e2", "e3", "e4", "e1-e2", "e2-e3", "e3-e4", "e1-e4"] },
-    "conflicto-silenciado": { types: ["conflicto-silenciado"], cats: ["e1", "e2", "e3", "e4", "e1-e2", "e2-e3", "e3-e4", "e1-e4"] },
-    "vacio-logico":         { types: ["vacio-logico"],         cats: ["e1", "e2", "e3", "e4", "e1-e2", "e2-e3", "e3-e4", "e1-e4"] },
-    e1:                     { types: ["relacion-faltante", "componente-ignorado", "conflicto-silenciado", "vacio-logico"], cats: ["e1"] },
-    e2:                     { types: ["relacion-faltante", "componente-ignorado", "conflicto-silenciado", "vacio-logico"], cats: ["e2"] },
-    e3:                     { types: ["relacion-faltante", "componente-ignorado", "conflicto-silenciado", "vacio-logico"], cats: ["e3"] },
-    e4:                     { types: ["relacion-faltante", "componente-ignorado", "conflicto-silenciado", "vacio-logico"], cats: ["e4"] },
+function selectRelation(id) {
+  selectedRel = id;
+  const r = model.relations.find(x => x.id === id);
+  if (!r) return;
+  const kind = r.tipo === 'Soporte' ? 'soporte' : 'resiliencia';
+
+  openQuoteModal(r, kind);
+
+  document.getElementById('evBox').innerHTML = `
+    <div class="ev-rel">
+      <span style="color:${model.systems[r.sO].color}">${r.sO}</span>
+      <span class="arrow">→</span>
+      <span style="color:${model.systems[r.sD].color}">${r.sD}</span>
+    </div>
+    <div class="ev-concepts"><b>${esc(r.cO)}</b> → <b>${esc(r.cD)}</b></div>
+    <div class="ev-meta">
+      <div><div class="k">Tipo</div><div class="v" style="color:var(--${kind})">${r.tipo}</div></div>
+      <div><div class="k">Lectura</div><div class="v">${r.evid}</div></div>
+      <div style="grid-column:1/-1"><div class="k">Sección / referencia</div><div class="v" style="font-size:10.5px;line-height:1.4">${esc(r.seccion)}</div></div>
+    </div>
+    <div class="ev-quote ${kind}">${esc(r.frase)}</div>
+    <div class="ev-page">Página ${r.pag}</div>
+    ${r.completa ? '' : '<div class="ev-warn"><i class="fa-solid fa-circle-info"></i>El archivo fuente guarda esta relación como fragmento abreviado, no como frase completa.</div>'}`;
+
+  render();
+}
+
+function clearEvidence() {
+  selectedRel = null;
+  document.getElementById('evBox').innerHTML =
+    `<p class="ev-empty">Haz clic en cualquier línea de la red para ver el detalle de esa relación.</p>`;
+}
+
+// Resalta un concepto y sus relaciones activas
+function focusConcept(id) {
+  const c = model.concepts[id];
+  const neighbors = new Set([id]);
+  c.rels.filter(relActive).forEach(r => { neighbors.add(r.from); neighbors.add(r.to); });
+
+  document.querySelectorAll('.concept').forEach(g => {
+    g.classList.toggle('dim', !neighbors.has(g.getAttribute('data-id')));
+  });
+  document.querySelectorAll('.rel').forEach(p => {
+    const r = model.relations.find(x => x.id === +p.getAttribute('data-rel'));
+    p.classList.toggle('dim', !(r && (r.from === id || r.to === id)));
+  });
+}
+
+function clearFocus() {
+  document.querySelectorAll('.dim').forEach(n => n.classList.remove('dim'));
+}
+
+// ---------------------------------------------------------------------
+// 5b. ESCENARIO DE NODO CRÍTICO
+// Permite apagar un concepto concreto ("¿qué pasaría si no existieran los
+// Humedales?"). Al apagarlo desaparecen todas las relaciones que lo tocan.
+// La lista se calcula sola: los conceptos con más relaciones primero.
+// ---------------------------------------------------------------------
+const TOP_NODES = 10;
+
+function topNodes(n) {
+  return Object.values(model.concepts)
+    .filter(c => c.rels.length > 0)
+    .map(c => ({ id: c.id, label: c.label, sys: c.sys, deg: c.rels.length }))
+    .sort((a, b) => b.deg - a.deg || a.label.localeCompare(b.label))
+    .slice(0, n);
+}
+
+function initNodeScenario() {
+  const sel = document.getElementById('nodeSelect');
+  if (!sel) return;
+  sel.innerHTML = topNodes(TOP_NODES).map(o =>
+    `<option value="${o.id}">${esc(o.label)} · ${o.deg} conexiones</option>`).join('');
+  sel.addEventListener('change', onNodeSelectChange);
+  document.getElementById('btnNodeSim').addEventListener('click', toggleNodeScenario);
+  onNodeSelectChange();
+}
+
+function plural(label) {
+  // "¿Qué pasaría si no existieran los Humedales?" / "...si no existiera la Vivienda?"
+  return /s$/i.test(label.trim());
+}
+
+function onNodeSelectChange() {
+  const sel = document.getElementById('nodeSelect');
+  const id = sel.value;
+  const c = model.concepts[id];
+  if (!c) return;
+
+  // si había otro nodo apagado, se reactiva al cambiar de selección
+  if (offNodes.size) {
+    offNodes.clear();
+    render();
+    updateMetrics();
+  }
+
+  document.getElementById('nodeQuestion').textContent =
+    plural(c.label)
+      ? `¿Qué pasaría si no existieran «${c.label}»?`
+      : `¿Qué pasaría si no existiera «${c.label}»?`;
+
+  syncNodeBtn();
+  updateNodeImpact();
+}
+
+function toggleNodeScenario() {
+  const id = document.getElementById('nodeSelect').value;
+  if (!id) return;
+  if (offNodes.has(id)) offNodes.delete(id);
+  else { offNodes.clear(); offNodes.add(id); }
+  syncNodeBtn();
+  render();
+  updateMetrics();
+}
+
+function syncNodeBtn() {
+  const id = document.getElementById('nodeSelect').value;
+  const btn = document.getElementById('btnNodeSim');
+  const on = offNodes.has(id);
+  btn.classList.toggle('active', on);
+  btn.innerHTML = on
+    ? '<i class="fa-solid fa-power-off"></i> Reactivar nodo'
+    : '<i class="fa-solid fa-power-off"></i> Simular sin este nodo';
+}
+
+function updateNodeImpact() {
+  const id = document.getElementById('nodeSelect').value;
+  const c = model.concepts[id];
+  const box = document.getElementById('nodeImpact');
+  if (!c || !box) return;
+  const total = model.relations.length;
+  const pct = Math.round((c.rels.length / total) * 100);
+  box.innerHTML = `<b>${c.rels.length}</b> de <b>${total}</b> relaciones (<b>${pct}%</b>) se pierden al apagarlo.`;
+}
+// ---------------------------------------------------------------------
+// POP-UP DE APERTURA: HALLAZGO PRINCIPAL
+// Las cifras de respaldo se calculan desde los datos, no van escritas a mano.
+// ---------------------------------------------------------------------
+function initIntro() {
+  const back = document.getElementById('introBackdrop');
+  if (!back) return;
+
+  // Cifras del hallazgo, calculadas desde los datos: conexiones de cada
+  // estructura con las demás (relaciones que cruzan de un sistema a otro).
+  const figs = SYS.map(s => ({
+    s,
+    n: model.relations.filter(r => r.sO !== r.sD && (r.sO === s || r.sD === s)).length,
+    color: model.systems[s].color
+  })).sort((a, b) => b.n - a.n);
+
+  const box = document.getElementById('introFigures');
+  if (box) {
+    box.innerHTML = figs.map(f => `
+      <div class="fig-card" style="--fig:${f.color}">
+        <div class="fig-code">${f.s}</div>
+        <div class="fig-num">${f.n}</div>
+        <div class="fig-lbl">conexiones con otros sistemas</div>
+      </div>`).join('');
+  }
+
+  // --- navegación de los dos pasos ---
+  const step1 = document.getElementById('step1');
+  const step2 = document.getElementById('step2');
+  const lbl   = document.getElementById('introStepLbl');
+  const bNext = document.getElementById('introNext');
+  const bBack = document.getElementById('introBack');
+  const bEnd  = document.getElementById('introBtn');
+
+  function paso(n) {
+    step1.classList.toggle('hidden', n !== 1);
+    step2.classList.toggle('hidden', n !== 2);
+    bNext.classList.toggle('hidden', n !== 1);
+    bBack.classList.toggle('hidden', n !== 2);
+    bEnd.classList.toggle('hidden', n !== 2);
+    lbl.textContent = 'Paso ' + n + ' de 2';
+    const m = document.querySelector('.intro-modal');
+    if (m) m.scrollTop = 0;
+  }
+
+  bNext.addEventListener('click', () => paso(2));
+  bBack.addEventListener('click', () => paso(1));
+
+  const cerrar = () => {
+    back.classList.add('hidden');
+    document.body.style.overflow = '';
+    // señalar el escenario que demuestra el hallazgo
+    const btn = document.querySelector('.scenario-btn[data-sys="ESECI"]');
+    if (btn) {
+      btn.classList.add('spotlight');
+      btn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      btn.addEventListener('click', () => btn.classList.remove('spotlight'), { once: true });
+      setTimeout(() => btn.classList.remove('spotlight'), 14000);
+    }
   };
-  const active = groups[mode] || groups.all;
+  bEnd.addEventListener('click', cerrar);
+  document.getElementById('introClose').addEventListener('click', cerrar);
+  back.addEventListener('click', e => { if (e.target === back) cerrar(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrar(); });
 
-  document.querySelectorAll(".legend-item[data-mode='type']").forEach(item => {
-    const type = item.dataset.type;
-    const input = item.querySelector("input");
-    const show = active.types.includes(type);
-    input.checked = show;
-    item.classList.toggle("off", !show);
-    if (show) typeOff.delete(type); else typeOff.add(type);
-  });
-
-  document.querySelectorAll(".legend-item[data-mode='cat']").forEach(item => {
-    const cat = item.dataset.cat;
-    const input = item.querySelector("input");
-    const show = active.cats.includes(cat);
-    input.checked = show;
-    item.classList.toggle("off", !show);
-    if (show) catOff.delete(cat); else catOff.add(cat);
-  });
-
-  refreshEdgeVisibility();
+  paso(1);
+  document.body.style.overflow = 'hidden';
 }
 
-/* -------- métricas de red -------- */
-function computeMetrics() {
-  const nodeCount = ODS_NODES.length;
-  const edgeCount = RAW_EDGES.length;
+// ---------------------------------------------------------------------
+// POP-UP DE LA FRASE EXACTA: se abre al hacer clic en una línea.
+// Muestra la frase textual del POT entre comillas y la página debajo.
+// ---------------------------------------------------------------------
+function openQuoteModal(r, kind) {
+  const back = document.getElementById('quoteBackdrop');
+  if (!back) return;
 
-  const degrees = {};
-  ODS_NODES.forEach(n => { degrees[n.id] = 0; });
-  RAW_EDGES.forEach(e => { degrees[e.s] = (degrees[e.s] || 0) + 1; degrees[e.t] = (degrees[e.t] || 0) + 1; });
+  document.getElementById('quoteRel').innerHTML =
+    `${esc(r.cO)}<span class="arrow">→</span>${esc(r.cD)}`;
 
-  const avgDegree = (2 * edgeCount) / nodeCount;
-  const density = (2 * edgeCount) / (nodeCount * (nodeCount - 1));
+  const tags = [
+    `<span class="quote-tag ${kind}">${r.tipo}</span>`,
+    `<span class="quote-tag">${r.evid}</span>`,
+    `<span class="quote-tag">${r.sO} → ${r.sD}</span>`
+  ];
+  if (r.sinFrase) tags.push('<span class="quote-tag pv">sin frase registrada</span>');
+  else if (r.porVerificar) tags.push('<span class="quote-tag pv">por verificar</span>');
+  else if (!r.completa) tags.push('<span class="quote-tag">fragmento del archivo fuente</span>');
+  document.getElementById('quoteTags').innerHTML = tags.join('');
 
-  /* grado máximo y nodo más conectado */
-  let maxId = null, maxDeg = 0;
-  ODS_NODES.forEach(n => { if (degrees[n.id] > maxDeg) { maxDeg = degrees[n.id]; maxId = n.id; } });
+  // r.frase ya viene entre comillas tipográficas desde los datos
+  const qt = document.getElementById('quoteText');
+  if (r.sinFrase || !r.frase) {
+    qt.textContent = 'Esta relación se agregó a la red pero todavía no tiene una frase del POT registrada que la sustente. Añádela en el Excel (frase textual y página) para que aparezca aquí.';
+    qt.classList.add('no-quote');
+  } else {
+    qt.textContent = r.frase;
+    qt.classList.remove('no-quote');
+  }
+  document.getElementById('quotePage').textContent = r.pag === '—' ? 'Página pendiente' : 'Página ' + r.pag;
+  document.getElementById('quoteSec').textContent = r.seccion || '';
 
-  /* por estructura */
-  const byStruct = {};
-  Object.keys(STRUCT_STYLE).forEach(cat => {
-    byStruct[cat] = {
-      nodes: ODS_NODES.filter(n => n.cat === cat).length,
-      edges: RAW_EDGES.filter(e => e.cat === cat).length,
-    };
-  });
-
-  /* centralidad: hubs (grado >= 4) */
-  const hubs = ODS_NODES.filter(n => degrees[n.id] >= 4);
-
-  /* tipo de línea */
-  const cont = RAW_EDGES.filter(e => e.directa).length;
-  const disc = RAW_EDGES.filter(e => !e.directa).length;
-
-  return { nodeCount, edgeCount, avgDegree, density, maxId, maxDeg, byStruct, hubs, cont, disc, degrees };
+  back.classList.remove('hidden');
 }
 
-function renderMetrics() {
-  const m = computeMetrics();
-  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+function closeQuoteModal() {
+  const back = document.getElementById('quoteBackdrop');
+  if (back) back.classList.add('hidden');
+}
 
-  set("metricNodes", m.nodeCount);
-  set("metricEdges", m.edgeCount);
-  set("metricAvgDegree", m.avgDegree.toFixed(2));
-  set("metricDensity", (m.density * 100).toFixed(1) + "%");
+function initQuoteModal() {
+  const back = document.getElementById('quoteBackdrop');
+  if (!back) return;
+  document.getElementById('quoteClose').addEventListener('click', closeQuoteModal);
+  back.addEventListener('click', e => { if (e.target === back) closeQuoteModal(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeQuoteModal(); });
+}
 
-  const maxNode = nodeById(m.maxId);
-  set("metricHubNode", maxNode ? maxNode.name.replace(/\n/g, " ") : "—");
-  set("metricHubDegree", m.maxDeg);
-  set("metricHubs", m.hubs.length);
-  set("metricCont", m.cont);
-  set("metricDisc", m.disc);
+const tip = () => document.getElementById('tooltip');
 
-  /* leyenda de contadores por estructura */
-  Object.keys(STRUCT_STYLE).forEach(cat => {
-    const el = document.getElementById("struct-" + cat);
-    if (el) el.textContent = `${byStructLabel(m, cat)}: ${m.byStruct[cat].nodes} nodos · ${m.byStruct[cat].edges} relaciones`;
+function showTooltip(ev, html) {
+  const t = tip();
+  t.innerHTML = html;
+  t.classList.add('show');
+  moveTooltip(ev);
+}
+
+function moveTooltip(ev) {
+  const t = tip();
+  const stage = document.getElementById('stage').getBoundingClientRect();
+  let x = ev.clientX - stage.left + 14;
+  let y = ev.clientY - stage.top + 14;
+  if (x + 270 > stage.width) x -= 290;
+  if (y + 90 > stage.height) y -= 110;
+  t.style.left = x + 'px';
+  t.style.top = y + 'px';
+}
+
+function hideTooltip() { tip().classList.remove('show'); }
+
+// ---------------------------------------------------------------------
+// 7. ZOOM Y DESPLAZAMIENTO
+// ---------------------------------------------------------------------
+const VB = POT_DATA.vb;
+let BASE_VB = { x: VB[0], y: VB[1], w: VB[2], h: VB[3] };
+let vb = Object.assign({}, BASE_VB);
+
+function applyVB() {
+  document.getElementById('svg').setAttribute('viewBox', `${vb.x} ${vb.y} ${vb.w} ${vb.h}`);
+  const z = document.getElementById('zoomValue');
+  if (z) z.textContent = Math.round((BASE_VB.w / vb.w) * 100) + '%';
+}
+
+function resetView() { vb = Object.assign({}, BASE_VB); applyVB(); }
+
+function zoomAt(factor, clientX, clientY) {
+  const stage = document.getElementById('stage');
+  const svg = document.getElementById('svg');
+  const rect = svg.getBoundingClientRect();
+  const px = clientX == null ? rect.left + rect.width / 2 : clientX;
+  const py = clientY == null ? rect.top + rect.height / 2 : clientY;
+  const relX = Math.max(0, Math.min(1, (px - rect.left) / rect.width));
+  const relY = Math.max(0, Math.min(1, (py - rect.top) / rect.height));
+  const focusX = vb.x + relX * vb.w;
+  const focusY = vb.y + relY * vb.h;
+  const nextW = Math.max(BASE_VB.w * 0.16, Math.min(BASE_VB.w * 4, vb.w * factor));
+  const nextH = nextW * (BASE_VB.h / BASE_VB.w);
+  vb.x = focusX - relX * nextW;
+  vb.y = focusY - relY * nextH;
+  vb.w = nextW;
+  vb.h = nextH;
+  applyVB();
+}
+
+function initPanZoom() {
+  const stage = document.getElementById('stage');
+  const svg = document.getElementById('svg');
+
+  let dragging = false, sx = 0, sy = 0, ox = 0, oy = 0;
+  stage.addEventListener('pointerdown', e => {
+    dragging = true; sx = e.clientX; sy = e.clientY; ox = vb.x; oy = vb.y;
+    stage.classList.add('panning');
+    stage.setPointerCapture(e.pointerId);
+  });
+  stage.addEventListener('pointermove', e => {
+    if (!dragging) return;
+    const rect = svg.getBoundingClientRect();
+    vb.x = ox - ((e.clientX - sx) / rect.width) * vb.w;
+    vb.y = oy - ((e.clientY - sy) / rect.height) * vb.h;
+    applyVB();
+  });
+  const end = () => { dragging = false; stage.classList.remove('panning'); };
+  stage.addEventListener('pointerup', end);
+  stage.addEventListener('pointercancel', end);
+
+  svg.addEventListener('click', () => { clearFocus(); });
+
+  stage.addEventListener('wheel', e => {
+    e.preventDefault();
+    zoomAt(e.deltaY > 0 ? 1.12 : 0.88, e.clientX, e.clientY);
+  }, { passive: false });
+
+  const zoomIn = document.getElementById('btnZoomIn');
+  const zoomOut = document.getElementById('btnZoomOut');
+  const zoomReset = document.getElementById('btnZoomReset');
+  if (zoomIn) zoomIn.addEventListener('click', e => {
+    e.stopPropagation();
+    zoomAt(0.78);
+  });
+  if (zoomOut) zoomOut.addEventListener('click', e => {
+    e.stopPropagation();
+    zoomAt(1.28);
+  });
+  if (zoomReset) zoomReset.addEventListener('click', e => {
+    e.stopPropagation();
+    resetView();
   });
 }
 
-function byStructLabel(m, cat) { return STRUCT_STYLE[cat].label; }
+// ---------------------------------------------------------------------
+// 8. ARRANQUE
+// ---------------------------------------------------------------------
+let initialized = false;
 
-/* -------- botones de acción -------- */
-function generateODSReport() { console.log("Generando reporte de red..."); }
-function downloadAlignment() { console.log("Descargando tabla de relaciones..."); }
-function shareAnalysis() { console.log("Compartiendo análisis..."); }
+document.addEventListener('DOMContentLoaded', () => {
+  if (initialized) return;
+  initialized = true;
 
-document.addEventListener("DOMContentLoaded", () => {
-  renderNetwork();
-  setupLegendToggle();
-  // renderMetrics(); // ELIMINADO: métricas removidas
+  buildModel();
+  computeLayout();
+
+  // interruptores = los botones de escenario del módulo
+  document.querySelectorAll('.scenario-btn[data-sys]').forEach(b =>
+    b.addEventListener('click', () => toggleSystem(b.getAttribute('data-sys'))));
+  updateSwitches();
+
+  document.getElementById('btnReset').addEventListener('click', resetAll);
+  const bf=document.getElementById('btnFit'); if(bf) bf.addEventListener('click', resetView);
+
+  clearEvidence();
+  initIntro();
+  initQuoteModal();
+  initNodeScenario();
+  initPanZoom();
+  applyVB();
+  render();
+  updateMetrics();
+
+  // verificación de integridad de datos en consola
+  const r = model.relations;
+  console.log('Relaciones cargadas:', r.length,
+    '| Sólidas:', r.filter(x => x.linea === 'Sólida').length,
+    '| Punteadas:', r.filter(x => x.linea === 'Punteada').length,
+    '| Soporte:', r.filter(x => x.tipo === 'Soporte').length,
+    '| Resiliencia:', r.filter(x => x.tipo === 'Resiliencia').length,
+    '| Conceptos:', Object.keys(model.concepts).length);
 });
