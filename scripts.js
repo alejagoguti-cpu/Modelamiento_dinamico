@@ -628,11 +628,11 @@ const relations = {
 
   function getComputedColor(accent){
     switch (accent){
-      case "green":  return "#00a877";
-      case "purple": return "#b026ff";
-      case "blue":   return "#0091ff";
-      case "yellow": return "#ff6a00";
-      default: return "#00a877";
+      case "green":  return "#3fd0bf";
+      case "purple": return "#ff8f8f";
+      case "blue":   return "#c7ccd1";
+      case "yellow": return "#f5c26b";
+      default: return "#3fd0bf";
     }
   }
 
@@ -689,7 +689,6 @@ const relations = {
         <div class="sustento-relation">${relationLabel}</div>
         <span class="sustento-tipo-badge ${badgeClass}">${sustento.tipoLabel || "Relación"}</span>
         <div class="pot-quote">&ldquo;${sustento.cita}&rdquo;</div>
-        ${sustento.parcial ? '<div class="sustento-partial-note">Cita parcial — el documento fuente venía cortado, aún falta el texto completo.</div>' : ""}
         <div class="pot-page">${sustento.pagina ? sustento.pagina + " del POT" : "Página del POT pendiente de confirmar"}</div>
       `;
     } else {
