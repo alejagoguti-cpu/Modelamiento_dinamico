@@ -460,7 +460,38 @@ const relations = {
     return { x: cx + ux * r, y: cy + uy * r };
   }
 
+  // ---------- nodos principales = los que tienen más conexiones ----------
+  // Calcula el grado (nº de relaciones) de cada nodo y usa eso para decidir
+  // tamaño del círculo y cuáles se marcan como "principales".
+  function applyDegreeSizing(net){
+    const MIN_R = 27, MAX_R = 60;
+    const deg = {};
+    net.nodes.forEach((n) => { deg[n.id] = 0; });
+    net.edges.forEach((e) => {
+      if (deg[e.from] !== undefined) deg[e.from]++;
+      if (deg[e.to]   !== undefined) deg[e.to]++;
+    });
+    const degrees = net.nodes.map((n) => deg[n.id] || 0);
+    const maxDeg = Math.max(...degrees);
+    const minDeg = Math.min(...degrees);
+    // umbral: los "principales" son los que están en el grupo de mayor conexión
+    const distinctDesc = Array.from(new Set(degrees)).sort((a, b) => b - a);
+    const k = Math.max(1, Math.round(net.nodes.length / 5));
+    const threshold = distinctDesc[Math.min(k, distinctDesc.length) - 1];
+
+    net.nodes.forEach((n) => {
+      const d = deg[n.id] || 0;
+      n.degree = d;
+      n.primary = d >= threshold;
+      n.r = maxDeg === minDeg
+        ? (MIN_R + MAX_R) / 2
+        : Math.round((MIN_R + (MAX_R - MIN_R) * ((d - minDeg) / (maxDeg - minDeg))) * 10) / 10;
+    });
+  }
+
   function renderNetwork(net){
+    applyDegreeSizing(net);
+
     titleEl.textContent = net.title;
     titleEl.style.color = getComputedColor(net.accent);
     subtitleEl.textContent = `Modo Analítico // Nodos = ${net.count}`;
@@ -537,11 +568,11 @@ const relations = {
 
   function getComputedColor(accent){
     switch (accent){
-      case "green":  return "#34d399";
-      case "purple": return "#b06bf7";
-      case "blue":   return "#3b82f6";
-      case "yellow": return "#f5c945";
-      default: return "#34d399";
+      case "green":  return "#00a877";
+      case "purple": return "#b026ff";
+      case "blue":   return "#0091ff";
+      case "yellow": return "#ff6a00";
+      default: return "#00a877";
     }
   }
 
