@@ -242,7 +242,7 @@ body {
 
 .welcome p { color: var(--text-dim); font-size: 14px; }
 
-/* SCENARIO SELECTOR */
+/* SCENARIO SELECTOR (leyenda del bloque, dejado por compatibilidad) */
 .scenario-selector {
   background: var(--panel);
   border: 1px solid var(--border);
@@ -266,26 +266,32 @@ body {
   color: var(--teal);
 }
 
+/* -------------------------------------------------------------------
+   Escenarios: apagar una estructura — lista numerada en el panel de
+   información (izquierda), con ícono de categoría y switch ON/OFF a
+   la derecha de cada fila.
+   ------------------------------------------------------------------- */
+.escenarios-card h2 { margin-bottom: 12px; }
+
 .scenario-buttons {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .scenario-btn {
   background: var(--panel-alt);
-  border: 2px solid var(--border-soft);
+  border: 1.5px solid var(--border-soft);
   border-radius: 10px;
-  padding: 16px;
+  padding: 10px 12px;
   cursor: pointer;
   transition: all .2s;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 18px 34px 1fr auto;
   align-items: center;
-  justify-content: center;
-  gap: 10px;
-  text-align: center;
-  min-height: 96px;
+  column-gap: 10px;
+  row-gap: 1px;
+  text-align: left;
 }
 
 .scenario-btn:hover {
@@ -293,28 +299,77 @@ body {
   background: rgba(47,191,174,0.05);
 }
 
-.scenario-btn i {
-  font-size: 18px;
-  color: var(--teal);
-  transition: color .2s;
+/* el ícono real (fa-circle-minus / fa-power-off) sigue existiendo para que
+   el JS pueda alternar su clase, pero visualmente el estado se muestra con
+   el switch ON/OFF; se oculta para no duplicar información */
+.scenario-btn > i.fa-circle-minus,
+.scenario-btn > i.fa-power-off {
+  display: none;
 }
 
+.row-num {
+  grid-column: 1;
+  grid-row: 1 / 3;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--text-faint);
+}
+
+.row-icon {
+  grid-column: 2;
+  grid-row: 1 / 3;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  background: var(--teal-dim);
+  color: var(--teal);
+  transition: background .2s, color .2s;
+}
+
+.scenario-btn[data-sys="EEP"] .row-icon { background: rgba(47,191,174,0.16); color: var(--eep); }
+.scenario-btn[data-sys="EFC"] .row-icon { background: rgba(239,139,60,0.16); color: var(--efc); }
+.scenario-btn[data-sys="ESECI"] .row-icon { background: rgba(234,176,76,0.16); color: var(--eseci); }
+.scenario-btn[data-sys="EIP"] .row-icon { background: rgba(239,111,111,0.16); color: var(--eip); }
+
 .btn-title {
+  grid-column: 3;
+  grid-row: 1;
   font-weight: 700;
   font-size: 12px;
-  line-height: 1.4;
+  line-height: 1.35;
   color: var(--text);
   display: block;
   transition: color .2s;
 }
 
 .btn-question {
+  grid-column: 3;
+  grid-row: 2;
   font-size: 10.5px;
   font-weight: 500;
   color: var(--text-faint);
   display: block;
   font-style: italic;
   transition: color .2s;
+}
+
+.scenario-btn .sys-state {
+  grid-column: 4;
+  grid-row: 1 / 3;
+  position: static;
+  justify-self: end;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  padding: 4px 9px;
+  border-radius: 20px;
+  background: rgba(47,191,174,0.16);
+  color: var(--eep);
+  white-space: nowrap;
 }
 
 .scenario-btn.active .btn-question {
@@ -327,11 +382,17 @@ body {
   background: rgba(239,68,68,0.08);
 }
 
-.scenario-btn.active i {
+.scenario-btn.active .row-icon {
+  background: rgba(239,68,68,0.18);
   color: var(--off-red);
 }
 
 .scenario-btn.active .btn-title {
+  color: #f3a3a3;
+}
+
+.scenario-btn.active .sys-state {
+  background: rgba(239,68,68,0.2);
   color: #f3a3a3;
 }
 
@@ -547,7 +608,8 @@ body {
 
 .btn:hover { color: var(--text); border-color: var(--text-faint); }
 
-/* red (svg) + panel de escenarios, uno junto al otro dentro de la misma tarjeta */
+/* la red ocupa todo el ancho de la tarjeta (el panel de escenarios ahora
+   vive en el panel de información de la izquierda, ver .escenarios-card) */
 .net-body {
   display: flex;
   align-items: stretch;
@@ -568,77 +630,12 @@ body {
 .net-stage svg { width: 100%; height: 100%; display: block; }
 
 /* ---------------------------------------------------- PANEL DE ESCENARIOS */
-/* Prender/apagar las 4 estructuras, ahora dentro de la red (a la derecha) */
-.net-side-panel {
-  width: 250px;
-  flex-shrink: 0;
-  border-left: 1px solid var(--border-soft);
-  background: var(--panel);
-  overflow-y: auto;
-}
-
-.net-side-card { padding: 14px 14px 16px; }
-
-.net-side-title {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  font-size: 11.5px;
-  font-weight: 700;
-  color: var(--text);
-  margin-bottom: 12px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid var(--border-soft);
-}
-
-.net-side-title i { color: var(--teal); }
-
-.net-side-panel .scenario-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.net-side-panel .scenario-btn {
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-start;
-  flex-wrap: wrap;
-  min-height: 0;
-  padding: 9px 10px;
-  gap: 4px 9px;
-  text-align: left;
-  border-radius: 8px;
-}
-
-.net-side-panel .scenario-btn i {
-  font-size: 13px;
-  order: 1;
-  margin-left: 0;
-}
-
-.net-side-panel .scenario-btn .sys-state {
-  position: static;
-  order: 2;
-  font-size: 8.5px;
-  margin-right: auto;
-}
-
-.net-side-panel .scenario-btn .btn-title {
-  order: 3;
-  flex: 1 1 100%;
-  font-size: 11px;
-  line-height: 1.3;
-}
-
-.net-side-panel .scenario-btn .btn-question {
-  display: none;
-}
-
+/* El botón "Reactivar todas" vive ahora dentro de la tarjeta de escenarios,
+   en el panel de información (izquierda); ver .escenarios-card más arriba. */
 .net-side-reset {
   width: 100%;
   justify-content: center;
-  margin-top: 12px;
+  margin-top: 4px;
 }
 
 /* -------- SVG: sistemas, conceptos, relaciones -------- */
@@ -705,28 +702,30 @@ body {
    difuminada del mismo color detrás (".rel-glow") que le da cuerpo suave. */
 .rel {
   fill: none;
-  stroke-width: 3;
+  stroke-width: 2.1;
   cursor: pointer;
   animation: draw 0.5s ease;
   transition: opacity 0.35s ease;
 }
 
-@keyframes draw { from { opacity: 0; } to { opacity: 0.95; } }
+@keyframes draw { from { opacity: 0; } to { opacity: 0.85; } }
 
 .rel.soporte { stroke: var(--soporte); }
 .rel.resiliencia { stroke: var(--resiliencia); }
 /* directa = sólida (por defecto); indirecta = punteada, bien diferenciada */
 .rel.punteada { stroke-dasharray: 9 7; }
-.rel:hover { stroke-width: 6; }
+.rel:hover { stroke-width: 5; }
 .rel.dim { opacity: 0.12; }
-.rel.sel { stroke-width: 7; }
+.rel.sel { stroke-width: 6; }
 
 /* Relación que toca una estructura o un nodo apagado: se queda en su sitio
    pero casi invisible, en vez de desaparecer del mapa. */
 .rel.rel-off { opacity: 0.05; }
 
 /* Cinta difuminada detrás de la línea: da el aspecto "sólido y suave" que
-   pidió el usuario, en vez de un brillo tipo neón. */
+   pidió el usuario, en vez de un brillo tipo neón. Se deja bien sutil para
+   que la red se lea limpia (menos "sopa" de color) y se parezca a la
+   referencia: líneas finas y espacio de aire alrededor de cada nodo. */
 .rel-glow {
   fill: none;
   stroke-linecap: round;
@@ -735,10 +734,10 @@ body {
   transition: opacity 0.35s ease;
 }
 .rel-glow.soporte,
-.rel-glow.resiliencia { stroke-width: 13; opacity: 0.32; }
-.rel-glow.punteada { stroke-width: 8; opacity: 0.16; }
-.rel-glow.sel { stroke-width: 18; opacity: 0.5; }
-.rel-glow.dim { opacity: 0.04; }
+.rel-glow.resiliencia { stroke-width: 7; opacity: 0.16; }
+.rel-glow.punteada { stroke-width: 5; opacity: 0.08; }
+.rel-glow.sel { stroke-width: 14; opacity: 0.4; }
+.rel-glow.dim { opacity: 0.03; }
 .rel-glow.rel-off { opacity: 0.02; }
 
 .rel-hit { fill: none; stroke: transparent; stroke-width: 34; cursor: pointer; }
@@ -851,21 +850,8 @@ body {
   .topbar { padding: 14px 16px; }
 }
 
-/* Estado ON/OFF dentro de cada botón de escenario */
-.scenario-btn .sys-state {
-  position: absolute;
-  top: 10px;
-  right: 12px;
-  font-size: 9px;
-  font-weight: 800;
-  letter-spacing: 0.5px;
-  padding: 3px 7px;
-  border-radius: 4px;
-  background: rgba(34,184,138,0.16);
-  color: var(--eep);
-}
-
-.scenario-btn.active .sys-state { background: rgba(239,68,68,0.18); color: #f3a3a3; }
+/* (el estado ON/OFF de cada fila ahora se define junto al resto de
+   .scenario-btn / .sys-state más arriba, como switch al final de la fila) */
 .scenario-btn { position: relative; }
 
 /* ---------------------------------------------------------------------- */
