@@ -1577,3 +1577,17 @@ body {
 @media (max-width: 800px) {
   .insight-popup { top: 84px; left: 64px; right: auto; width: 225px; }
 }
+
+/* DESELECCIÓN LOCAL POR TRIPLE CLIC */
+.concept.local-deselected .node-fill {
+  stroke-width: 3.5;
+  filter: drop-shadow(0 0 7px rgba(255,255,255,.28));
+}
+
+/* RED LIMPIA: una sola línea por relación, sin halos ni duplicados */
+.rel-glow { display: none !important; }
+.rel { stroke-width: 1.7; opacity: .68; }
+.rel.punteada { stroke-dasharray: 7 6; }
+.rel.sel { stroke-width: 3.5; opacity: 1; }
+.rel.rel-off { opacity: .035; }
+.rel-hit { stroke: transparent; stroke-width: 12; fill: none; pointer-events: stroke; }
