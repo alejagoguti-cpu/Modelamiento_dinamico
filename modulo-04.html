@@ -1,512 +1,71 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RAPOT · Macromodelos</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="stylesheet" href="modulo-04.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RAPOT · Redes conceptuales del POT</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="modulo-04.css">
 </head>
 <body>
-<div class="app">
-
-  <aside class="sidebar">
-    <div class="brand">
-      <div class="mark"><i class="fa-solid fa-diagram-project"></i></div>
-      <span>RAPOT</span>
-    </div>
-
-    <div class="nav-group">
-      <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-house"></i> Dashboard</a>
-    </div>
-
-    <div class="nav-group">
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand"><div class="mark"><i class="fa-solid fa-diagram-project"></i></div><span>RAPOT</span></div>
+      <a class="nav-item" href="dashboard.html"><i class="fa-solid fa-house"></i> Dashboard</a>
       <div class="nav-label">MÓDULOS</div>
-      <a href="modulo-01.html" class="nav-item"><span class="num">01</span><i class="fa-solid fa-diagram-project"></i> Construir la Red</a>
-      <a href="modulo-02.html" class="nav-item"><span class="num">02</span><i class="fa-solid fa-chart-simple"></i> Medir la Red</a>
-      <a href="modulo-03.html" class="nav-item"><span class="num">03</span><i class="fa-solid fa-eye"></i> Discurso vs Realidad</a>
-      <a href="modulo-04.html" class="nav-item active"><span class="num">04</span><i class="fa-solid fa-bullseye"></i> Macromodelos</a>
-      <a href="modulo-05.html" class="nav-item"><span class="num">05</span><i class="fa-solid fa-magnifying-glass"></i> Lo que no está</a>
-      <a href="modulo-06.html" class="nav-item"><span class="num">06</span><i class="fa-solid fa-earth-americas"></i> POT ↔ ODS</a>
-      <a href="modulo-07.html" class="nav-item"><span class="num">07</span><i class="fa-solid fa-flask"></i> Simulador</a>
-      <a href="modulo-08.html" class="nav-item"><span class="num">08</span><i class="fa-solid fa-city"></i> Modelo Propio</a>
-    </div>
+      <a class="nav-item" href="modulo-01.html"><span>01</span><i class="fa-solid fa-diagram-project"></i> Construir la Red</a>
+      <a class="nav-item" href="modulo-02.html"><span>02</span><i class="fa-solid fa-chart-simple"></i> Medir la Red</a>
+      <a class="nav-item" href="modulo-03.html"><span>03</span><i class="fa-solid fa-eye"></i> Discurso vs Realidad</a>
+      <a class="nav-item active" href="modulo-04.html"><span>04</span><i class="fa-solid fa-bullseye"></i> Macromodelos</a>
+      <a class="nav-item" href="modulo-05.html"><span>05</span><i class="fa-solid fa-magnifying-glass"></i> Lo que no está</a>
+      <a class="nav-item" href="modulo-06.html"><span>06</span><i class="fa-solid fa-earth-americas"></i> POT ↔ ODS</a>
+      <div class="sidebar-footer"><div class="avatar-sm">EU</div><div><strong>Equipo Urbano</strong><small>Administrador</small></div></div>
+    </aside>
 
-    <div class="nav-group">
-      <div class="nav-label">GESTIÓN</div>
-      <a href="proyectos.html" class="nav-item"><i class="fa-solid fa-folder"></i> Proyectos</a>
-      <a href="fuentes.html" class="nav-item"><i class="fa-solid fa-file-lines"></i> Fuentes y Documentos</a>
-      <a href="favoritos.html" class="nav-item"><i class="fa-solid fa-star"></i> Favoritos</a>
-      <a href="reportes.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Reportes</a>
-      <a href="configuracion.html" class="nav-item"><i class="fa-solid fa-gear"></i> Configuración</a>
-    </div>
+    <main class="main">
+      <header class="topbar"><div><span class="eyebrow">MÓDULO 04</span><h1>Macromodelos del POT</h1></div><div class="avatar-sm">EU</div></header>
+      <section class="welcome">
+        <h2>Dos lecturas conectadas sobre lo que entendemos del POT</h2>
+        <p>Elimina el modelo central y observa dos redes conceptuales: una <strong>ambientalista</strong> y otra <strong>humanista</strong>. Haz clic en los sistemas humanistas para desplegar sus conceptos concretos y explorar sus conexiones.</p>
+      </section>
 
-    <div class="sidebar-footer">
-      <div class="avatar-sm">EU</div>
-      <div class="user-meta">
-        <div class="name">Equipo Urbano</div>
-        <div class="role">Administrador</div>
-      </div>
-      <a href="demo.html" class="logout-btn"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
-    </div>
-  </aside>
-
-  <main class="main">
-
-    <div class="topbar">
-      <h1>Macromodelos</h1>
-      <div class="topbar-actions">
-        <div class="search-box"><i class="fa-solid fa-magnifying-glass"></i> Buscar en el sistema...</div>
-        <div class="icon-btn"><i class="fa-regular fa-bell"></i><span class="dot"></span></div>
-        <div class="icon-btn"><i class="fa-regular fa-circle-question"></i></div>
-        <div class="avatar-sm">EU</div>
-      </div>
-    </div>
-
-    <div class="welcome">
-      <h2>Macromodelos — ¿Qué visiones de ciudad conviven dentro del POT?</h2>
-      <p>Esta red es una <strong>interpretación propia</strong>, no una transcripción de las 4 estructuras oficiales del POT. Construimos 6 macromodelos —lentes distintos para leer el mismo documento— y los superponemos: varios conceptos (vivienda, transporte público, patrimonio, accesibilidad, corredores ecológicos, gestión ambiental) pertenecen a más de un sistema a la vez y funcionan como <strong>puentes</strong>. El tamaño de cada nodo se calcula a partir de su número real de conexiones, así que los <strong>hub</strong> emergen del grafo en vez de darse por supuestos.</p>
-    </div>
-
-    <!-- INSIGHTS: tarjetas clicables para explorar la red -->
-    <div class="ods-insight-stats" id="odsInsightStats">
-      <div class="insight-card" data-insight="hubs" style="--insight-color:#f5c945;" onclick="toggleInsight('hubs')">
-        <div class="insight-icon"><i class="fa-solid fa-circle-nodes"></i></div>
-        <div class="insight-title">Sistemas y nodos HUB</div>
-      </div>
-
-      <div class="insight-card" data-insight="puentes" style="--insight-color:#2fd4c8;" onclick="toggleInsight('puentes')">
-        <div class="insight-icon"><i class="fa-solid fa-arrows-left-right"></i></div>
-        <div class="insight-title">Conceptos puente</div>
-      </div>
-
-      <div class="insight-card" data-insight="tensiones" style="--insight-color:#f76fb0;" onclick="toggleInsight('tensiones')">
-        <div class="insight-icon"><i class="fa-solid fa-scale-unbalanced"></i></div>
-        <div class="insight-title">Tensiones / articulaciones</div>
-      </div>
-
-      <div class="insight-card" data-insight="gobernanza" style="--insight-color:#9aa3b2;" onclick="toggleInsight('gobernanza')">
-        <div class="insight-icon"><i class="fa-solid fa-gavel"></i></div>
-        <div class="insight-title">Gobernanza: capa transversal</div>
-      </div>
-
-      <div class="insight-card" data-insight="todos" style="--insight-color:#a276f2;" onclick="toggleInsight('todos')">
-        <div class="insight-icon"><i class="fa-solid fa-diagram-project"></i></div>
-        <div class="insight-title">Ver toda la red</div>
-      </div>
-    </div>
-
-    <!-- RED CONCEPTUAL -->
-    <div class="network-section">
-      <div class="network-header">
-        <h3><i class="fa-solid fa-sitemap"></i> Red de Macromodelos de Ciudad — Interactiva</h3>
-        <div class="network-controls">
-          <button class="control-btn active" onclick="filterNetwork('all')">Todos</button>
-          <button class="control-btn" onclick="filterNetwork('sistema')">Entre sistemas</button>
-          <button class="control-btn" onclick="filterNetwork('compartido')">Puentes</button>
-          <button class="control-btn" onclick="filterNetwork('tension')">Tensiones</button>
-          <button class="control-btn" onclick="filterNetwork('articulacion')">Articulaciones</button>
-        </div>
-      </div>
-
-      <div class="network-viz-wrap">
-        <svg id="networkViz" viewBox="0 0 1640 1140" preserveAspectRatio="xMidYMid meet"></svg>
-
-        <div class="network-sidebar">
-          <aside class="network-legend" id="networkLegend">
-            <div class="legend-title">Convenciones</div>
-
-            <label class="legend-item" data-type="sistema">
-              <input type="checkbox" checked>
-              <span class="legend-swatch swatch-sistema"></span>
-              Relación entre macromodelos
-            </label>
-
-            <label class="legend-item" data-type="compartido">
-              <input type="checkbox" checked>
-              <span class="legend-swatch swatch-compartido"></span>
-              Conexión de concepto puente
-            </label>
-
-            <label class="legend-item" data-type="pertenencia">
-              <input type="checkbox" checked>
-              <span class="legend-swatch swatch-pertenencia"></span>
-              Nodo puente → sistema de origen
-            </label>
-
-            <label class="legend-item" data-type="tension">
-              <input type="checkbox" checked>
-              <span class="legend-swatch swatch-tension"></span>
-              Tensión / contradicción
-            </label>
-
-            <label class="legend-item" data-type="articulacion">
-              <input type="checkbox" checked>
-              <span class="legend-swatch swatch-articulacion"></span>
-              Articulación (sinergia)
-            </label>
-
-            <label class="legend-item" data-type="tension_art">
-              <input type="checkbox" checked>
-              <span class="legend-swatch swatch-tension-art"></span>
-              Tensión y articulación simultánea
-            </label>
-
-            <label class="legend-item" data-type="interno">
-              <input type="checkbox" checked>
-              <span class="legend-swatch swatch-interno"></span>
-              Pertenencia interna (concepto → su sistema)
-            </label>
-
-            <div class="legend-title">Categoría de nodo</div>
-            <div class="legend-item legend-static">
-              <span class="legend-swatch swatch-macro"></span>
-              Macromodelo (bola grande, tamaño = grado real)
-            </div>
-            <div class="legend-item legend-static">
-              <span class="legend-swatch swatch-evi"></span>
-              Concepto puente (anillo punteado)
-            </div>
-
-            <div class="legend-divider"></div>
-            <div class="legend-hint">Clic en una línea: ver el tipo de relación y su lectura interpretativa.<br>Doble clic en una bola: apagarla/encenderla.<br>Triple clic en una bola: ver solo su flujo.<br>Todas las bolas se pueden arrastrar.</div>
-          </aside>
-
-          <div class="edge-info-panel" id="edgeInfoPanel">
-            <div class="edge-info-header">
-              <span id="edgeInfoTitle">Macromodelo</span>
-              <button class="edge-info-close" id="edgeInfoClose" type="button" aria-label="Cerrar">&times;</button>
-            </div>
-            <div class="edge-info-type" id="edgeInfoType"></div>
-            <div class="edge-info-quote" id="edgeInfoQuote"></div>
-            <div class="edge-info-page" id="edgeInfoPage"></div>
+      <section class="workspace">
+        <aside class="conventions panel">
+          <div class="panel-kicker">GUÍA DE LECTURA</div>
+          <h2>Convenciones</h2>
+          <p class="muted">Los colores identifican el tipo de concepto y las líneas muestran cómo se relacionan dentro de la lectura del POT.</p>
+          <div class="legend-group">
+            <h3>Red ambientalista</h3>
+            <label><span class="dot green"></span>Concepto ambiental concreto</label>
+            <label><span class="line green-line"></span>Conexión ambiental</label>
+            <label><span class="dot green-soft"></span>Red ecológica relacionada</label>
           </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- TABLA DE SUSTENTO -->
-    <div class="analysis-container">
-      <div class="analysis-card full-width">
-        <div class="card-header">
-          <h3><i class="fa-solid fa-table"></i> Tabla de relaciones — red de macromodelos</h3>
-        </div>
-
-        <p class="source-disclaimer"><i class="fa-solid fa-circle-info"></i> Esta tabla documenta nuestra <strong>interpretación propia</strong> de la red, no citas ni páginas del POT. Ninguna fila afirma que el POT declare la relación de forma literal; en la columna "Estado de la fuente" se indica que está pendiente de vincular a artículo/página/cita exacta si se aporta el texto fuente.</p>
-
-        <div class="matrix-container">
-          <div class="matrix-row header">
-            <div class="matrix-cell header-cell">Relación</div>
-            <div class="matrix-cell header-cell">Línea</div>
-            <div class="matrix-cell header-cell">Color</div>
-            <div class="matrix-cell header-cell">Categoría</div>
-            <div class="matrix-cell header-cell">Estado de la fuente</div>
-            <div class="matrix-cell header-cell">Lectura interpretativa</div>
+          <div class="legend-group">
+            <h3>Red humanista</h3>
+            <label><span class="dot orange"></span>Sistema humanista</label>
+            <label><span class="dot yellow"></span>Sistema socioeconómico</label>
+            <label><span class="dot blue"></span>Sistema de gobernanza</label>
+            <label><span class="dot purple"></span>Sistema funcionalista</label>
           </div>
-
-          <div class="matrix-row" data-edge="6">
-            <div class="matrix-cell">Ambientalista ↔ Humanista</div>
-            <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-sistema" style="margin:0;"></span> Azul grisáceo</div>
-            <div class="matrix-cell"><span class="alignment-tag strong tag-sistema">Relación de sistema</span></div>
-            <div class="matrix-cell">Interpretación propia — sin cita</div>
-            <div class="matrix-cell quote-cell">Naturaleza y estructura ecológica ↔ calidad de vida, espacio público y bienestar.</div>
+          <div class="legend-group">
+            <h3>Relación</h3>
+            <label><span class="line connection"></span>Conexión entre conceptos</label>
+            <label><span class="line dashed"></span>Conexión transversal</label>
           </div>
+          <div class="hint"><i class="fa-solid fa-hand-pointer"></i><span>Haz clic en una bola del lado humanista para mostrar u ocultar sus conceptos.</span></div>
+        </aside>
 
-          <div class="matrix-row" data-edge="7">
-            <div class="matrix-cell">Ambientalista ↔ Funcionalista</div>
-            <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-sistema" style="margin:0;"></span> Azul grisáceo</div>
-            <div class="matrix-cell"><span class="alignment-tag strong tag-sistema">Relación de sistema</span></div>
-            <div class="matrix-cell">Interpretación propia — sin cita</div>
-            <div class="matrix-cell quote-cell">Corredores ecológicos ↔ corredores verdes y movilidad.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="8">
-            <div class="matrix-cell">Ambientalista ↔ Socioeconómico</div>
-            <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-sistema" style="margin:0;"></span> Azul grisáceo</div>
-            <div class="matrix-cell"><span class="alignment-tag strong tag-sistema">Relación de sistema</span></div>
-            <div class="matrix-cell">Interpretación propia — sin cita</div>
-            <div class="matrix-cell quote-cell">Recursos naturales ↔ soporte de actividades humanas y económicas.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="9">
-            <div class="matrix-cell">Ambientalista ↔ Cultural / patrimonial</div>
-            <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-sistema" style="margin:0;"></span> Azul grisáceo</div>
-            <div class="matrix-cell"><span class="alignment-tag strong tag-sistema">Relación de sistema</span></div>
-            <div class="matrix-cell">Interpretación propia — sin cita</div>
-            <div class="matrix-cell quote-cell">Patrimonio natural ↔ identidad y paisaje.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="10">
-            <div class="matrix-cell">Ambientalista ↔ Gobernanza</div>
-            <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-sistema" style="margin:0;"></span> Azul grisáceo</div>
-            <div class="matrix-cell"><span class="alignment-tag strong tag-sistema">Relación de sistema</span></div>
-            <div class="matrix-cell">Interpretación propia — sin cita</div>
-            <div class="matrix-cell quote-cell">Gestión ambiental ↔ gestión pública y participación.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="11">
-            <div class="matrix-cell">Humanista ↔ Funcionalista</div>
-            <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-sistema" style="margin:0;"></span> Azul grisáceo</div>
-            <div class="matrix-cell"><span class="alignment-tag strong tag-sistema">Relación de sistema</span></div>
-            <div class="matrix-cell">Interpretación propia — sin cita</div>
-            <div class="matrix-cell quote-cell">Vivienda y equipamientos ↔ transporte y accesibilidad.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="12">
-            <div class="matrix-cell">Humanista ↔ Socioeconómico</div>
-            <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-sistema" style="margin:0;"></span> Azul grisáceo</div>
-            <div class="matrix-cell"><span class="alignment-tag strong tag-sistema">Relación de sistema</span></div>
-            <div class="matrix-cell">Interpretación propia — sin cita</div>
-            <div class="matrix-cell quote-cell">Vivienda ↔ empleo.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="13">
-            <div class="matrix-cell">Humanista ↔ Cultural / patrimonial</div>
-            <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-sistema" style="margin:0;"></span> Azul grisáceo</div>
-            <div class="matrix-cell"><span class="alignment-tag strong tag-sistema">Relación de sistema</span></div>
-            <div class="matrix-cell">Interpretación propia — sin cita</div>
-            <div class="matrix-cell quote-cell">Patrimonio ↔ apropiación y vida cotidiana.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="14">
-            <div class="matrix-cell">Humanista ↔ Gobernanza</div>
-            <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-sistema" style="margin:0;"></span> Azul grisáceo</div>
-            <div class="matrix-cell"><span class="alignment-tag strong tag-sistema">Relación de sistema</span></div>
-            <div class="matrix-cell">Interpretación propia — sin cita</div>
-            <div class="matrix-cell quote-cell">Servicios de cuidado ↔ gestión y participación.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="15">
-            <div class="matrix-cell">Funcionalista ↔ Socioeconómico</div>
-            <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-sistema" style="margin:0;"></span> Azul grisáceo</div>
-            <div class="matrix-cell"><span class="alignment-tag strong tag-sistema">Relación de sistema</span></div>
-            <div class="matrix-cell">Interpretación propia — sin cita</div>
-            <div class="matrix-cell quote-cell">Transporte ↔ empleo, empresas y actividades productivas.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="16">
-            <div class="matrix-cell">Funcionalista ↔ Cultural / patrimonial</div>
-            <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-sistema" style="margin:0;"></span> Azul grisáceo</div>
-            <div class="matrix-cell"><span class="alignment-tag strong tag-sistema">Relación de sistema</span></div>
-            <div class="matrix-cell">Interpretación propia — sin cita</div>
-            <div class="matrix-cell quote-cell">Accesibilidad ↔ patrimonio y turismo.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="17">
-            <div class="matrix-cell">Funcionalista ↔ Gobernanza</div>
-            <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-sistema" style="margin:0;"></span> Azul grisáceo</div>
-            <div class="matrix-cell"><span class="alignment-tag strong tag-sistema">Relación de sistema</span></div>
-            <div class="matrix-cell">Interpretación propia — sin cita</div>
-            <div class="matrix-cell quote-cell">Infraestructura ↔ gestión pública.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="18">
-            <div class="matrix-cell">Socioeconómico ↔ Cultural / patrimonial</div>
-            <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-sistema" style="margin:0;"></span> Azul grisáceo</div>
-            <div class="matrix-cell"><span class="alignment-tag strong tag-sistema">Relación de sistema</span></div>
-            <div class="matrix-cell">Interpretación propia — sin cita</div>
-            <div class="matrix-cell quote-cell">Patrimonio ↔ turismo y actividades culturales.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="19">
-            <div class="matrix-cell">Socioeconómico ↔ Gobernanza</div>
-            <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-sistema" style="margin:0;"></span> Azul grisáceo</div>
-            <div class="matrix-cell"><span class="alignment-tag strong tag-sistema">Relación de sistema</span></div>
-            <div class="matrix-cell">Interpretación propia — sin cita</div>
-            <div class="matrix-cell quote-cell">Actividad económica ↔ regulación, gestión y planificación.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="20">
-            <div class="matrix-cell">Cultural / patrimonial ↔ Gobernanza</div>
-            <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-sistema" style="margin:0;"></span> Azul grisáceo</div>
-            <div class="matrix-cell"><span class="alignment-tag strong tag-sistema">Relación de sistema</span></div>
-            <div class="matrix-cell">Interpretación propia — sin cita</div>
-            <div class="matrix-cell quote-cell">Patrimonio ↔ gestión y participación.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="64">
-            <div class="matrix-cell">Vivienda ↔ Empleo</div>
-            <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-articulacion" style="margin:0;"></span> Verde</div>
-            <div class="matrix-cell"><span class="alignment-tag strong tag-articulacion">Articulación</span></div>
-            <div class="matrix-cell">Interpretación propia — sin cita</div>
-            <div class="matrix-cell quote-cell">No se lee como contradicción sino como dependencia funcional entre hábitat y sustento económico.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="70">
-            <div class="matrix-cell">Corredores ecológicos/verdes ↔ Infraestructura</div>
-            <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-tension" style="margin:0;"></span> Rojo</div>
-            <div class="matrix-cell"><span class="alignment-tag strong tag-tension">Tensión</span></div>
-            <div class="matrix-cell">Interpretación propia — sin cita</div>
-            <div class="matrix-cell quote-cell">El POT plantea infraestructura y movilidad, pero también corredores verdes y conectividad ecológica: dos lógicas que compiten por el mismo suelo.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="74">
-            <div class="matrix-cell">Patrimonio ↔ Turismo</div>
-            <div class="matrix-cell">Doble línea</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-tension-art" style="margin:0;"></span> Rosa</div>
-            <div class="matrix-cell"><span class="alignment-tag strong tag-tension-art">Tensión / articulación</span></div>
-            <div class="matrix-cell">Interpretación propia — sin cita</div>
-            <div class="matrix-cell quote-cell">El patrimonio se declara valor a conservar, pero también se incorpora como activo turístico y económico.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="77">
-            <div class="matrix-cell">Áreas protegidas ↔ Turismo</div>
-            <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-tension" style="margin:0;"></span> Rojo</div>
-            <div class="matrix-cell"><span class="alignment-tag strong tag-tension">Tensión</span></div>
-            <div class="matrix-cell">Interpretación propia — sin cita</div>
-            <div class="matrix-cell quote-cell">La estructura ambiental se presenta como soporte del desarrollo, pero algunos elementos naturales se incorporan a actividades turísticas y económicas.</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- LECTURA DE LA RED: 5 HALLAZGOS -->
-    <div class="synergies-section">
-      <div class="synergies-grid">
-        <div class="synergy-card success">
-          <div class="synergy-icon"><i class="fa-solid fa-circle-nodes"></i></div>
-          <div class="synergy-content">
-            <h4>1 y 2 · Los 6 sistemas están completamente interconectados, pero el puente no es siempre el mismo nodo</h4>
-            <ul>
-              <li>Las 15 relaciones posibles entre macromodelos existen todas: ningún sistema aparece aislado en el nivel general de la red</li>
-              <li>Al bajar al nivel de los conceptos, la conectividad no se concentra en el socioeconómico como anticipaba nuestra hipótesis inicial: <strong>Patrimonio</strong> y <strong>Transporte público</strong> son los conceptos puente con más conexiones reales (grado calculado, no asumido)</li>
-              <li>El socioeconómico funciona más como sistema "receptor" —muchos puentes llegan a él (empleo, turismo, actividades productivas)— que como origen de nuevos puentes</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="synergy-card conflict">
-          <div class="synergy-icon"><i class="fa-solid fa-gavel"></i></div>
-          <div class="synergy-content">
-            <h4>3 · La gobernanza es transversal pero queda poco visible como sistema territorial</h4>
-            <ul>
-              <li>El sistema de gobernanza se conecta con los otros 5 al nivel general (relación de sistema), igual que los demás</li>
-              <li>Pero sus subnodos concretos (participación, comunidad, actores públicos y privados) quedan casi todos con una sola conexión interna: solo "gestión ambiental" opera como puente real hacia otro sistema</li>
-              <li>Esto sugiere que la gobernanza aparece en el POT como capa de gestión más que como territorio con forma propia</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="synergy-card success">
-          <div class="synergy-icon"><i class="fa-solid fa-tree"></i></div>
-          <div class="synergy-content">
-            <h4>4 · "Áreas protegidas" concentra la tensión conservación ↔ aprovechamiento</h4>
-            <ul>
-              <li>Dentro del sistema ambientalista, "áreas protegidas" es el subnodo con más conexiones (gestión ambiental, patrimonio, turismo), muy por encima del resto de sus subnodos, que quedan con una sola conexión</li>
-              <li>Ese mismo nodo es el punto exacto donde aparece la tensión conservación ↔ aprovechamiento: el hub ambiental y la contradicción coinciden en el mismo lugar de la red</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="synergy-card conflict">
-          <div class="synergy-icon"><i class="fa-solid fa-scale-unbalanced"></i></div>
-          <div class="synergy-content">
-            <h4>5 · Tensión y articulación no son lo mismo, y la red los distingue</h4>
-            <ul>
-              <li>Vivienda ↔ empleo se lee como <strong>articulación</strong> (sinergia funcional), no como contradicción</li>
-              <li>Infraestructura ↔ corredores ecológicos y áreas protegidas ↔ turismo se leen como <strong>tensiones</strong> reales entre lógicas que compiten por el mismo suelo</li>
-              <li>Patrimonio ↔ turismo es un caso mixto: <strong>tensión y articulación a la vez</strong>, y se dibuja con un estilo de línea propio para no forzarlo a una sola categoría</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <p class="source-disclaimer" style="margin-top:-8px;"><i class="fa-solid fa-triangle-exclamation"></i> Estos 5 hallazgos se leen directamente del grafo que construimos (conteo real de conexiones), no de una cita del POT. Si compartes el texto del POT, podemos vincular cada relación a su artículo, página y cita exacta.</p>
-
-    <!-- RECOMENDACIONES -->
-    <div class="recommendations-section">
-      <h3><i class="fa-solid fa-lightbulb"></i> Próximos pasos para profundizar la lectura</h3>
-
-      <div class="recommendations-grid">
-        <div class="rec-card">
-          <div class="rec-number">1</div>
-          <div class="rec-content">
-            <h4>Vincular cada relación a su fuente exacta en el POT</h4>
-            <p>Esta red es interpretación propia. El siguiente paso es cargar el texto del POT (artículos, páginas) para reemplazar cada "interpretación propia — sin cita" por su artículo, página y cita textual exacta.
-            <div class="rec-impact">
-              <span class="impact-badge">Pendiente de fuente</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="rec-card">
-          <div class="rec-number">2</div>
-          <div class="rec-content">
-            <h4>Comprobar si el socioeconómico es realmente el hub</h4>
-            <p>La red muestra que, al nivel de conceptos, Patrimonio y Transporte público concentran más puentes que los subnodos socioeconómicos. Vale la pena revisar si esto se sostiene al sumar más evidencia textual.
-            <div class="rec-impact">
-              <span class="impact-badge">Hipótesis por confirmar</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="rec-card">
-          <div class="rec-number">3</div>
-          <div class="rec-content">
-            <h4>Explorar la baja visibilidad territorial de la gobernanza</h4>
-            <p>Casi todos los subnodos de gobernanza quedan con una sola conexión. Valdría la pena revisar si el POT le da instrumentos y programación concretos, o si queda como capa transversal sin territorio propio.
-            <div class="rec-impact">
-              <span class="impact-badge">Por revisar</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="rec-card">
-          <div class="rec-number">4</div>
-          <div class="rec-content">
-            <h4>Sumar más nodos compartidos si aparecen en el texto</h4>
-            <p>Los 6 conceptos puente actuales (vivienda, transporte, patrimonio, accesibilidad, corredores, gestión ambiental) son un punto de partida. Si el POT sustenta otros conceptos que crucen sistemas, se pueden añadir sin romper la estructura.
-            <div class="rec-impact">
-              <span class="impact-badge">Abierto</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- BOTONES DE ACCIÓN -->
-    <div class="action-buttons">
-      <button class="btn-primary" onclick="generateODSReport()">
-        <i class="fa-solid fa-file-pdf"></i> Generar Reporte de la Red
-      </button>
-      <button class="btn-secondary" onclick="downloadAlignment()">
-        <i class="fa-solid fa-download"></i> Descargar Tabla
-      </button>
-      <button class="btn-secondary" onclick="shareAnalysis()">
-        <i class="fa-solid fa-share-nodes"></i> Compartir Análisis
-      </button>
-    </div>
-
-    <footer>
-      "La red no representa lo que el POT dice ser, sino las visiones de ciudad que se pueden leer al superponer sus sistemas." — <span>Equipo urbano</span>
-    </footer>
-
-  </main>
-
-</div>
-
-<script src="modulo-04.js"></script>
-
+        <section class="network-card panel">
+          <div class="network-head"><div><div class="panel-kicker">RED CONCEPTUAL INTERACTIVA</div><h2>Ambientalista ↔ Humanista</h2></div><button id="resetBtn" class="reset-btn"><i class="fa-solid fa-rotate-left"></i> Restablecer</button></div>
+          <div id="selectionNote" class="selection-note">Selecciona un sistema de la red humanista.</div>
+          <svg id="networkViz" viewBox="0 0 1200 760" role="img" aria-label="Red conceptual ambientalista y humanista del POT"></svg>
+          <div id="conceptDetail" class="concept-detail" aria-live="polite"><strong>Cómo leer la red</strong><span>La bola ambientalista contiene conceptos ecológicos concretos. La bola humanista es mayor y se conecta con tres sistemas: socioeconómico, gobernanza y funcionalista.</span></div>
+        </section>
+      </section>
+    </main>
+  </div>
+  <script src="modulo-04.js"></script>
 </body>
 </html>
