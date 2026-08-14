@@ -1,835 +1,263 @@
-:root{
-  --bg: #121010;
-  --bg-soft: #1b1817;
-  --surface: #201c1a;
-  --border: rgba(255,255,255,0.08);
-  --border-strong: rgba(255,255,255,0.16);
-  --text: #f3efe9;
-  --text-dim: #b9b2aa;
-  --text-faint: #857f78;
-
-  /* gama "infografía": turquesa, coral, morado, mostaza sobre fondo negro
-     (los nombres de variable son heredados del sistema anterior, los colores ya no son
-     literalmente verde/morado/azul/amarillo) */
-  --green: #2fbfae;
-  --green-dark: #1f8f82;
-  --green-soft: rgba(47,191,174,0.16);
-  --purple: #ef6f6f;
-  --purple-soft: rgba(239,111,111,0.16);
-  --blue: #9b7ef0;
-  --blue-soft: rgba(155,126,240,0.16);
-  --yellow: #eab04c;
-  --yellow-soft: rgba(234,176,76,0.16);
-
-  --shadow-sm: 0 2px 6px rgba(0,0,0,0.35);
-  --shadow-md: 0 14px 34px rgba(0,0,0,0.45);
-  --shadow-lg: 0 30px 80px rgba(0,0,0,0.55);
-
-  --radius-lg: 22px;
-  --radius-md: 16px;
-  --radius-sm: 10px;
-}
-
-*{ box-sizing:border-box; margin:0; padding:0; }
-
-body{
-  background: var(--bg);
-  color: var(--text);
-  font-family:'Inter', sans-serif;
-  -webkit-font-smoothing:antialiased;
-}
-
-/* ================= NAVBAR ================= */
-.navbar{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:24px;
-  padding: 16px 6vw;
-  background: var(--surface);
-  border-bottom:1px solid var(--border);
-}
-
-.navbar .logo{
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
-
-.navbar .logo .icon{
-  width:34px;
-  height:34px;
-  flex-shrink:0;
-}
-
-.navbar .logo .icon circle:first-child{
-  stroke: var(--border-strong);
-}
-
-.navbar .logo .icon circle:not(:first-child){
-  fill: var(--green);
-  filter: none;
-}
-
-.navbar .logo .text h1{
-  font-family:'Space Grotesk', sans-serif;
-  font-size:17px;
-  font-weight:800;
-  letter-spacing:0.5px;
-  line-height:1.15;
-  color: var(--text);
-}
-
-.navbar .logo .text p{
-  font-size:10px;
-  font-weight:600;
-  letter-spacing:1.5px;
-  color: var(--text-faint);
-}
-
-.navbar .menu{
-  display:flex;
-  gap:2px;
-  list-style:none;
-  background: var(--bg-soft);
-  border:1px solid var(--border);
-  border-radius:999px;
-  padding:4px;
-}
-
-.navbar .menu li{
-  cursor:pointer;
-  font-size:12.5px;
-  font-weight:600;
-  letter-spacing:0.2px;
-  color: var(--text-dim);
-  padding:9px 18px;
-  border-radius:999px;
-  transition: color .15s, background .15s;
-}
-
-.navbar .menu li:hover{ color: var(--text); }
-.navbar .menu li.active{ background: var(--text); color: var(--bg); }
-
-.navbar .demo{
-  cursor:pointer;
-  background: var(--text);
-  color: var(--bg);
-  border:1px solid var(--text);
-  border-radius:10px;
-  padding:10px 18px;
-  font-size:12.5px;
-  font-weight:700;
-  letter-spacing:0.3px;
-  white-space:nowrap;
-  transition: filter .15s, transform .15s;
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  text-decoration:none;
-}
-
-.navbar .demo:hover{ filter:brightness(1.15); transform:translateY(-1px); }
-
-@media (max-width: 768px){
-  .navbar{
-    flex-direction:column;
-    align-items:flex-start;
-    gap:16px;
-  }
-  .navbar .menu{ flex-wrap:wrap; gap:16px; }
-}
-
-/* ================= HERO ================= */
-.hero{
-  min-height:calc(100vh - 90px);
-  display:flex;
-  align-items:center;
-  padding: 60px 5vw;
-}
-
-.hero-inner{
-  display:grid;
-  grid-template-columns: minmax(320px, 560px) 1fr;
-  gap: 40px;
-  max-width:1440px;
-  margin:0 auto;
-  width:100%;
-  align-items:center;
-}
-
-/* ---------- COPY ---------- */
-.hero-copy h1{
-  font-family:'Space Grotesk', sans-serif;
-  font-size: clamp(32px, 4.2vw, 48px);
-  font-weight:800;
-  line-height:1.18;
-  letter-spacing:-0.6px;
-  margin-bottom:22px;
-  color: var(--text);
-}
-
-.hero-copy h1 .grad{
-  background: linear-gradient(100deg, var(--green) 0%, var(--purple) 55%, var(--yellow) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-.lead{
-  color: var(--text-dim);
-  font-size:16px;
-  line-height:1.65;
-  max-width:480px;
-  margin-bottom:34px;
-}
-
-.feature-grid{
-  display:grid;
-  grid-template-columns: 1fr 1fr;
-  column-gap:32px;
-  row-gap:22px;
-  margin-bottom:38px;
-  max-width:480px;
-}
-
-.feature .f-icon{
-  width:38px;
-  height:38px;
-  border-radius:12px;
-  background: var(--green-soft);
-  color: var(--green);
-  font-size:14px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  margin-bottom:10px;
-}
-
-.feature h3{
-  font-size:14px;
-  font-weight:700;
-  margin-bottom:5px;
-  color: var(--text);
-}
-
-.feature p{
-  font-size:12.5px;
-  color: var(--text-faint);
-  line-height:1.5;
-  max-width:200px;
-}
-
-.cta-row{
-  display:flex;
-  align-items:center;
-  gap:14px;
-  flex-wrap:wrap;
-}
-
-.btn-primary{
-  cursor:pointer;
-  background: linear-gradient(90deg, var(--green), var(--green-dark));
-  color:#0d0f0e;
-  border:none;
-  border-radius:12px;
-  padding:15px 24px;
-  font-size:13px;
-  font-weight:800;
-  letter-spacing:0.4px;
-  display:inline-flex;
-  align-items:center;
-  gap:10px;
-  text-decoration:none;
-  transition: filter .15s, transform .15s;
-  box-shadow: 0 12px 26px rgba(47,191,174,0.28);
-}
-.btn-primary:hover{ filter:brightness(1.1); transform:translateY(-1px); }
-
-.btn-secondary{
-  cursor:pointer;
-  background: var(--surface);
-  color: var(--text);
-  border:1px solid var(--border-strong);
-  border-radius:12px;
-  padding:15px 22px;
-  font-size:13px;
-  font-weight:700;
-  letter-spacing:0.4px;
-  display:inline-flex;
-  align-items:center;
-  gap:10px;
-  transition: background .15s, border-color .15s;
-}
-.btn-secondary:hover{ background: var(--bg-soft); }
-
-/* ---------- NETWORK VISUAL ---------- */
-.hero-visual{
-  position:relative;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-}
-
-.hero-visual-card{
-  width:100%;
-  background: var(--surface);
-  border:1px solid var(--border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
-  padding: 28px 26px 22px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-}
-
-.visual-question{
-  font-size:14.5px;
-  font-weight:700;
-  color: var(--text);
-  text-align:center;
-  max-width:480px;
-  line-height:1.5;
-  margin-bottom:16px;
-}
-
-.legend{
-  display:flex;
-  align-items:center;
-  gap:22px;
-  margin-bottom:14px;
-  flex-wrap:wrap;
-  justify-content:center;
-}
-
-.legend-title{
-  font-size:12.5px;
-  font-weight:700;
-  color: var(--text);
-}
-
-.legend-item{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  font-size:12px;
-  color: var(--text-faint);
-}
-
-.network-svg{
-  width:100%;
-  max-width:620px;
-  height:auto;
-  overflow:visible;
-}
-
-.node circle{
-  fill: var(--surface);
-  stroke-width:3.5;
-  filter: drop-shadow(0 8px 18px rgba(0,0,0,0.4));
-  transition: filter .18s ease, stroke-width .18s ease;
-}
-
-.node{
-  cursor: grab;
-  touch-action: none;
-  user-select: none;
-}
-
-.node.dragging{
-  cursor: grabbing;
-}
-
-.node.dragging circle{
-  stroke-width:5;
-}
-
-.node text{
-  fill: var(--text);
-  font-family:'Inter', sans-serif;
-  font-size:11px;
-  font-weight:700;
-  text-anchor:middle;
-  pointer-events:none;
-}
-
-.node-green circle{ stroke: url(#grad-green); filter: drop-shadow(0 0 16px rgba(47,191,174,0.55)) drop-shadow(0 8px 18px rgba(0,0,0,0.4)); }
-.node-purple circle{ stroke: url(#grad-purple); filter: drop-shadow(0 0 16px rgba(239,111,111,0.5)) drop-shadow(0 8px 18px rgba(0,0,0,0.4)); }
-.node-blue circle{ stroke: url(#grad-blue); filter: drop-shadow(0 0 16px rgba(155,126,240,0.5)) drop-shadow(0 8px 18px rgba(0,0,0,0.4)); }
-.node-yellow circle{ stroke: url(#grad-yellow); filter: drop-shadow(0 0 16px rgba(234,176,76,0.5)) drop-shadow(0 8px 18px rgba(0,0,0,0.4)); }
-
-/* ---------- RELATION LINKS ---------- */
-.link{ cursor:pointer; }
-
-.link-line{
-  fill:none;
-  stroke: rgba(255,255,255,0.3);
-  stroke-width:1.8;
-  stroke-dasharray:5 5;
-  stroke-linecap:round;
-  opacity:1;
-  transition: stroke .18s ease, stroke-width .18s ease, opacity .18s ease, filter .18s ease;
-}
-
-.link-arrow{
-  fill: rgba(255,255,255,0.35);
-  transition: fill .18s ease, filter .18s ease;
-}
-
-.link-hit{
-  fill:none;
-  stroke: transparent;
-  stroke-width:22;
-  cursor:pointer;
-  pointer-events: all;
-}
-
-.link:hover .link-line,
-.link:focus .link-line,
-.link.link-active .link-line{
-  stroke: var(--green);
-  stroke-width:2.6;
-  stroke-dasharray:6 4;
-  opacity:1;
-  filter: drop-shadow(0 0 6px rgba(47,191,174,0.6));
-}
-
-.link:hover .link-arrow,
-.link:focus .link-arrow,
-.link.link-active .link-arrow{
-  fill: var(--green);
-  filter: drop-shadow(0 0 6px rgba(47,191,174,0.6));
-}
-
-.leg-svg{ display:block; }
-
-/* ================= POPUP ================= */
-.pot-popup{
-  position:fixed;
-  width:min(340px, 86vw);
-  background: var(--surface);
-  border:1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding:18px 20px 16px;
-  box-shadow: var(--shadow-lg);
-  z-index:10000;
-  animation: pot-pop-in .16s ease;
-}
-
-@keyframes pot-pop-in{
-  from{ opacity:0; transform:translateY(6px) scale(.97); }
-  to{ opacity:1; transform:none; }
-}
-
-.pot-popup .pot-popup-close{
-  cursor:pointer;
-  position:absolute;
-  top:10px; right:12px;
-  background:none;
-  border:none;
-  color: var(--text-faint);
-  font-size:14px;
-  padding:4px;
-  line-height:1;
-}
-.pot-popup .pot-popup-close:hover{ color: var(--text); }
-
-.pot-popup .pot-relation{
-  font-size:11px;
-  font-weight:700;
-  letter-spacing:0.6px;
-  color: var(--green);
-  text-transform:uppercase;
-  margin-bottom:10px;
-  padding-right:18px;
-}
-
-.pot-popup .pot-quote{
-  font-size:14px;
-  line-height:1.55;
-  font-style:italic;
-  color: var(--text);
-  margin-bottom:14px;
-}
-
-.pot-popup .pot-page{
-  font-size:12px;
-  color: var(--text-faint);
-  border-top:1px solid var(--border);
-  padding-top:10px;
-  font-weight:600;
-  letter-spacing:0.3px;
-}
-
-/* ---------- RESPONSIVE ---------- */
-@media (max-width: 980px){
-  .hero-inner{
-    grid-template-columns: 1fr;
-  }
-  .hero-visual{ order:-1; margin-bottom:20px; }
-  .feature-grid{ max-width:none; }
-  .lead{ max-width:none; }
-  .hero-copy h1{ font-size: clamp(30px, 7vw, 44px); }
-}
-
-@media (max-width: 480px){
-  .cta-row{ flex-direction:column; align-items:stretch; }
-  .btn-primary, .btn-secondary{ justify-content:center; }
-}
-/* ================= POPUP DE REDES POR ESTRUCTURA ================= */
-
-.redes-modal-overlay{
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.7);
-  backdrop-filter: blur(3px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 20000;
-  padding: 24px;
-  animation: redes-fade-in .15s ease;
-}
-
-.redes-modal-overlay[hidden]{ display: none; }
-
-@keyframes redes-fade-in{
-  from{ opacity: 0; }
-  to{ opacity: 1; }
-}
-
-.redes-modal{
-  position: relative;
-  width: min(1100px, 100%);
-  max-height: 92vh;
-  overflow: auto;
-  background: var(--surface);
-  border: 1px solid var(--border, rgba(255,255,255,0.08));
-  border-radius: 22px;
-  padding: 26px 28px 30px;
-  box-shadow: 0 30px 80px rgba(0,0,0,0.6);
-  animation: redes-pop-in .18s ease;
-}
-
-@keyframes redes-pop-in{
-  from{ opacity: 0; transform: translateY(10px) scale(.97); }
-  to{ opacity: 1; transform: none; }
-}
-
-.redes-modal-close{
-  cursor: pointer;
-  position: absolute;
-  top: 16px; right: 18px;
-  width: 32px; height: 32px;
-  border-radius: 8px;
-  background: var(--bg-soft, #1b1817);
-  border: 1px solid var(--border, rgba(255,255,255,0.08));
-  color: var(--text-dim, #b9b2aa);
-  font-size: 14px;
-  line-height: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background .15s, color .15s;
-}
-.redes-modal-close:hover{ background: var(--border-strong); color: var(--text, #f3efe9); }
-
-.redes-modal-header{
-  margin-bottom: 6px;
-  padding-right: 40px;
-}
-
-.redes-modal-header h2{
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 22px;
-  font-weight: 800;
-  letter-spacing: -0.2px;
-  color: var(--redes-accent, #2fbfae);
-}
-
-.redes-modal-subtitle{
-  font-size: 12.5px;
-  font-weight: 600;
-  letter-spacing: 0.3px;
-  color: var(--text-faint, #857f78);
-  margin-top: 4px;
-}
-
-.redes-modal-body{
-  display: grid;
-  grid-template-columns: 1fr 230px;
-  gap: 22px;
-  margin-top: 18px;
-  align-items: start;
-}
-
-.redes-network-svg{
-  width: 100%;
-  height: auto;
-  overflow: visible;
-}
-
-/* ---- nodos ---- */
-.redes-node{
-  cursor: pointer;
-  transition: opacity .2s ease;
-}
-
-.redes-node circle{
-  fill: var(--surface, #201c1a);
-  stroke-width: 3;
-  filter: drop-shadow(0 8px 16px rgba(0,0,0,0.4));
-  transition: opacity .18s ease;
-}
-
-/* click en un nodo: se apaga junto con sus conexiones (ver redes-edge.is-dimmed) */
-.redes-node.is-dimmed{ opacity: 0.28; }
-
-.redes-node.is-primary circle{
-  stroke-width: 4;
-}
-
-.redes-node text{
-  fill: var(--text, #f3efe9);
-  font-family: 'Inter', sans-serif;
-  font-weight: 700;
-  text-anchor: middle;
-  pointer-events: none;
-}
-
-.redes-node .redes-node-label{
-  font-size: 9.5px;
-  line-height: 1.15;
-}
-
-.redes-node .redes-node-icon-fo{
-  overflow: visible;
-  pointer-events: none;
-}
-
-.redes-node .redes-node-icon{
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 15px;
-}
-
-.redes-nodes.dim-secondary .redes-node:not(.is-primary){
-  opacity: 0.35;
-}
-
-/* colores por color de acento del nodo (turquesa / coral / gris / mostaza), con brillo degradado sobre fondo negro */
-.redes-node[data-accent="green"]  circle{ stroke: url(#grad-green);  filter: drop-shadow(0 0 11px rgba(47,191,174,0.45)) drop-shadow(0 8px 16px rgba(0,0,0,0.4)); }
-.redes-node[data-accent="green"]  .redes-node-icon{ color: #4fd6c6; }
-.redes-node[data-accent="purple"] circle{ stroke: url(#grad-purple); filter: drop-shadow(0 0 11px rgba(239,111,111,0.4)) drop-shadow(0 8px 16px rgba(0,0,0,0.4)); }
-.redes-node[data-accent="purple"] .redes-node-icon{ color: #f2908f; }
-.redes-node[data-accent="blue"]   circle{ stroke: url(#grad-blue);   filter: drop-shadow(0 0 11px rgba(155,126,240,0.45)) drop-shadow(0 8px 16px rgba(0,0,0,0.4)); }
-.redes-node[data-accent="blue"]   .redes-node-icon{ color: #cdb8fb; }
-.redes-node[data-accent="yellow"] circle{ stroke: url(#grad-yellow); filter: drop-shadow(0 0 11px rgba(234,176,76,0.45)) drop-shadow(0 8px 16px rgba(0,0,0,0.4)); }
-.redes-node[data-accent="yellow"] .redes-node-icon{ color: #f2c069; }
-
-.redes-node.is-primary circle{
-  stroke-width: 5;
-}
-.redes-node[data-accent="green"].is-primary  circle{ filter: drop-shadow(0 0 18px rgba(47,191,174,0.6)) drop-shadow(0 10px 22px rgba(0,0,0,0.45)); }
-.redes-node[data-accent="purple"].is-primary circle{ filter: drop-shadow(0 0 18px rgba(239,111,111,0.55)) drop-shadow(0 10px 22px rgba(0,0,0,0.45)); }
-.redes-node[data-accent="blue"].is-primary   circle{ filter: drop-shadow(0 0 18px rgba(155,126,240,0.6)) drop-shadow(0 10px 22px rgba(0,0,0,0.45)); }
-.redes-node[data-accent="yellow"].is-primary circle{ filter: drop-shadow(0 0 18px rgba(234,176,76,0.6)) drop-shadow(0 10px 22px rgba(0,0,0,0.45)); }
-
-/* ---- conexiones ---- */
-.redes-edges{ transition: opacity .18s ease; }
-.redes-edges.is-hidden{ opacity: 0; pointer-events: none; }
-
-.redes-edge{ cursor: pointer; transition: opacity .2s ease; }
-.redes-edge-hit{ fill: none; stroke: transparent; stroke-width: 16; pointer-events: all; }
-
-/* líneas punteadas con extremos redondeados, más "vivas" que un simple trazo sólido */
-.redes-edge-line{ fill: none; stroke-linecap: round; stroke-dasharray: 5 5; transition: stroke-width .15s ease, filter .15s ease; }
-.redes-edge-arrow{ transition: filter .15s ease, opacity .2s ease; }
-
-.redes-edge:hover .redes-edge-line,
-.redes-edge:focus .redes-edge-line{
-  stroke-width: 3.2;
-  filter: drop-shadow(0 0 7px rgba(255,255,255,0.45));
-}
-
-/* un nodo apagado apaga también sus conexiones */
-.redes-edge.is-dimmed{ opacity: 0.18; }
-
-.redes-edge-directa .redes-edge-line{ stroke: rgba(255,255,255,0.42); stroke-width: 1.7; filter: drop-shadow(0 0 3px rgba(255,255,255,0.12)); }
-.redes-edge-directa .redes-edge-arrow{ fill: rgba(255,255,255,0.42); }
-
-.redes-edge-indirecta .redes-edge-line{ stroke: rgba(255,255,255,0.32); stroke-width: 1.4; stroke-dasharray: 1.5 6; }
-.redes-edge-indirecta .redes-edge-arrow{ fill: rgba(255,255,255,0.32); }
-
-.redes-edge-soporte .redes-edge-line{ stroke: url(#grad-soporte); stroke-width: 2.2; stroke-dasharray: 6 4; filter: drop-shadow(0 0 5px rgba(234,176,76,0.35)); }
-.redes-edge-soporte .redes-edge-arrow{ fill: #f0a15c; }
-.redes-edge-soporte.is-dashed .redes-edge-line{ stroke-dasharray: 1.5 6; stroke-width: 1.7; }
-
-.redes-edge-resiliencia .redes-edge-line{ stroke: url(#grad-resiliencia); stroke-width: 2.2; stroke-dasharray: 6 4; filter: drop-shadow(0 0 5px rgba(155,126,240,0.35)); }
-.redes-edge-resiliencia .redes-edge-arrow{ fill: #b39af0; }
-.redes-edge-resiliencia.is-dashed .redes-edge-line{ stroke-dasharray: 1.5 6; stroke-width: 1.7; }
-
-/* ---- panel lateral ---- */
-.redes-side-panel{
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.redes-legend-card, .redes-conventions-card{
-  background: var(--bg-soft, #1b1817);
-  border: 1px solid var(--border, rgba(255,255,255,0.08));
-  border-radius: 14px;
-  padding: 14px 16px 16px;
-}
-
-.redes-legend-card-title{
-  display: block;
-  font-size: 12.5px;
-  font-weight: 700;
-  color: var(--text, #f3efe9);
-  margin-bottom: 12px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid var(--border, rgba(255,255,255,0.08));
-}
-
-.redes-toggle-row{
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  font-size: 12px;
-  color: var(--text-dim, #b9b2aa);
-  margin-bottom: 10px;
-}
-.redes-toggle-row:last-child{ margin-bottom: 0; }
-
-.redes-toggle{
-  cursor: pointer;
-  position: relative;
-  width: 34px;
-  height: 19px;
-  border-radius: 999px;
-  border: none;
-  background: rgba(255,255,255,0.18);
-  transition: background .15s ease;
-  flex-shrink: 0;
-}
-
-.redes-toggle .redes-toggle-knob{
-  position: absolute;
-  top: 2px; left: 2px;
-  width: 15px; height: 15px;
-  border-radius: 50%;
-  background: #fff;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.4);
-  transition: transform .15s ease;
-}
-
-.redes-toggle.is-on{ background: var(--green, #2fbfae); }
-.redes-toggle.is-on .redes-toggle-knob{ transform: translateX(15px); }
-
-.redes-convention-item{
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 12px;
-  color: var(--text-dim, #b9b2aa);
-  margin-bottom: 9px;
-}
-.redes-convention-item:last-child{ margin-bottom: 0; }
-
-.redes-swatch{
-  width: 24px;
-  height: 0;
-  border-top: 2px solid;
-  flex-shrink: 0;
-}
-
-.redes-swatch-directa{ border-top-style: solid; border-top-color: rgba(255,255,255,0.4); }
-.redes-swatch-indirecta{ border-top-style: dashed; border-top-color: rgba(255,255,255,0.3); }
-.redes-swatch-soporte{ border-top-style: solid; border-image: linear-gradient(90deg,#eab04c,#ef6f6f) 1; }
-.redes-swatch-resiliencia{ border-top-style: solid; border-image: linear-gradient(90deg,#2fbfae,#9b7ef0) 1; }
-
-@media (max-width: 760px){
-  .redes-modal-body{ grid-template-columns: 1fr; }
-  .redes-side-panel{ flex-direction: row; flex-wrap: wrap; }
-  .redes-legend-card, .redes-conventions-card{ flex: 1 1 220px; }
-}
-
-/* ---- popup de sustento (al hacer click en una línea de relación) ---- */
-.sustento-popup{
-  position: fixed;
-  width: min(360px, 88vw);
-  background: var(--surface, #201c1a);
-  border: 1px solid var(--border, rgba(255,255,255,0.08));
-  border-radius: var(--radius-md, 16px);
-  padding: 18px 20px 16px;
-  box-shadow: 0 24px 60px rgba(0,0,0,0.6);
-  z-index: 21000;
-  animation: pot-pop-in .16s ease;
-}
-
-.sustento-popup .pot-popup-close{
-  cursor: pointer;
-  position: absolute;
-  top: 10px; right: 12px;
-  background: none;
-  border: none;
-  color: var(--text-faint, #857f78);
-  font-size: 14px;
-  padding: 4px;
-  line-height: 1;
-}
-.sustento-popup .pot-popup-close:hover{ color: var(--text, #f3efe9); }
-
-.sustento-popup .sustento-relation{
-  font-size: 13.5px;
-  font-weight: 800;
-  color: var(--text, #f3efe9);
-  margin-bottom: 8px;
-  padding-right: 18px;
-}
-
-.sustento-tipo-badge{
-  display: inline-flex;
-  font-size: 10.5px;
-  font-weight: 800;
-  letter-spacing: 0.3px;
-  text-transform: uppercase;
-  padding: 3px 9px;
-  border-radius: 999px;
-  margin-bottom: 10px;
-}
-.sustento-tipo-soporte{ background: rgba(234,176,76,0.18); color: #eab04c; }
-.sustento-tipo-resiliencia{ background: rgba(47,191,174,0.18); color: #4fd6c6; }
-.sustento-tipo-directa{ background: rgba(255,255,255,0.08); color: var(--text-dim); }
-.sustento-tipo-indirecta{ background: rgba(255,255,255,0.08); color: var(--text-dim); }
-.sustento-tipo-generico{ background: rgba(255,255,255,0.08); color: var(--text-dim); }
-
-.sustento-popup .pot-quote{
-  font-size: 13.5px;
-  line-height: 1.55;
-  font-style: italic;
-  color: var(--text, #f3efe9);
-  margin-bottom: 12px;
-}
-
-.sustento-popup .sustento-partial-note{
-  font-size: 11px;
-  color: var(--text-faint, #857f78);
-  margin-top: -6px;
-  margin-bottom: 12px;
-}
-
-.sustento-popup .pot-page{
-  font-size: 12px;
-  color: var(--text-faint, #857f78);
-  border-top: 1px solid var(--border, rgba(255,255,255,0.08));
-  padding-top: 10px;
-  font-weight: 600;
-  letter-spacing: 0.3px;
-}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAPOT · La ciudad construida por relaciones</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+<!-- gradientes artísticos (paleta inspirada en infografía: teal, coral, gris, mostaza) compartidos por el diagrama principal y los popups de red -->
+<svg width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true">
+  <defs>
+    <linearGradient id="grad-green" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#45d6c5"></stop>
+      <stop offset="100%" stop-color="#1f8f82"></stop>
+    </linearGradient>
+    <linearGradient id="grad-purple" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ff8f8f"></stop>
+      <stop offset="100%" stop-color="#d94f5c"></stop>
+    </linearGradient>
+    <linearGradient id="grad-blue" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffb37a"></stop>
+      <stop offset="100%" stop-color="#e8763c"></stop>
+    </linearGradient>
+    <linearGradient id="grad-yellow" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f5c26b"></stop>
+      <stop offset="100%" stop-color="#d9902e"></stop>
+    </linearGradient>
+    <linearGradient id="grad-soporte" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#eab04c"></stop>
+      <stop offset="100%" stop-color="#ef6f6f"></stop>
+    </linearGradient>
+    <linearGradient id="grad-resiliencia" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#2fbfae"></stop>
+      <stop offset="100%" stop-color="#ef8b3c"></stop>
+    </linearGradient>
+    <!-- desenfoque usado por el "blob" orgánico que conecta los nodos en los popups de red -->
+    <filter id="blob-blur" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="12"></feGaussianBlur>
+    </filter>
+  </defs>
+</svg>
+
+<header>
+  <nav class="navbar">
+    <div class="logo">
+      <svg class="icon" viewBox="0 0 34 34" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="17" cy="17" r="16" fill="none" stroke="rgba(47,212,200,0.55)" stroke-width="1.4"/>
+        <circle cx="17" cy="9"  r="3"></circle>
+        <circle cx="10" cy="21" r="3"></circle>
+        <circle cx="24" cy="21" r="3"></circle>
+      </svg>
+      <div class="text">
+        <h1>RAPOT</h1>
+      </div>
+    </div>
+    <ul class="menu">
+      <li class="active">INICIO</li>
+      <li>MÓDULOS</li>
+      <li>METODOLOGÍA</li>
+      <li>CASO HUMEDAL</li>
+      <li>EQUIPO</li>
+    </ul>
+    <a class="demo" href="./demo.html" target="_blank" rel="noopener noreferrer">VER DEMOSTRACIÓN <i class="fa-solid fa-arrow-right"></i></a>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+
+    <!-- LEFT: copy -->
+    <div class="hero-copy">
+      <h1>
+        Ingeniería inversa <span class="grad">del POT</span>.
+      </h1>
+
+      <p class="lead">
+        RAPOT permite explorar esas relaciones para comprender cómo las decisiones territoriales configuran el modelo urbano de Bogotá.
+      </p>
+
+      <div class="feature-grid">
+        <div class="feature">
+          <div class="f-icon"><i class="fa-solid fa-link"></i></div>
+          <h3>Análisis relacional</h3>
+          <p>Comprende cómo se conectan los conceptos.</p>
+        </div>
+        <div class="feature">
+          <div class="f-icon"><i class="fa-solid fa-chart-column"></i></div>
+          <h3>Métricas avanzadas</h3>
+          <p>Centralidad, dependencia y patrones ocultos.</p>
+        </div>
+        <div class="feature">
+          <div class="f-icon"><i class="fa-solid fa-eye"></i></div>
+          <h3>Comparación crítica</h3>
+          <p>Discurso vs realidad, POT vs ODS y más.</p>
+        </div>
+      </div>
+
+      <div class="cta-row">
+        <a class="btn-primary" href="./dashboard.html">EXPLORAR PLATAFORMA <i class="fa-solid fa-arrow-right"></i></a>
+        <button class="btn-secondary">CONOCE LOS 8 MÓDULOS <i class="fa-solid fa-chevron-down"></i></button>
+      </div>
+    </div>
+
+    <!-- RIGHT: network diagram -->
+    <div class="hero-visual">
+     <div class="hero-visual-card">
+
+      <p class="visual-question">¿Cómo organiza, relaciona y prioriza el POT los diferentes componentes de Bogotá?</p>
+
+      <div class="legend">
+        <span class="legend-title">Convenciones</span>
+        <span class="legend-item">
+          <svg class="leg-svg" viewBox="0 0 50 12" width="50" height="12" aria-hidden="true">
+            <line x1="2" y1="6" x2="38" y2="6" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" stroke-dasharray="3 3"></line>
+            <path d="M38,6 L31,2 L31,10 Z" fill="rgba(255,255,255,0.55)"></path>
+          </svg>
+          Redes dirigidas
+        </span>
+        <span class="legend-item">
+          <svg class="leg-svg" viewBox="0 0 56 12" width="56" height="12" aria-hidden="true">
+            <line x1="8" y1="6" x2="48" y2="6" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" stroke-dasharray="3 3"></line>
+            <path d="M8,6 L15,2 L15,10 Z" fill="rgba(255,255,255,0.55)"></path>
+            <path d="M48,6 L41,2 L41,10 Z" fill="rgba(255,255,255,0.55)"></path>
+          </svg>
+          Redes bidireccionales
+        </span>
+      </div>
+
+      <svg viewBox="0 0 620 560" xmlns="http://www.w3.org/2000/svg" class="network-svg" id="network-svg">
+
+        <!-- relations: each is clickable. Curves fan out from the centre, arrowhead sits in the open gap -->
+        <g class="links">
+
+          <!-- EEP (verde) -> ESECI (amarillo) -->
+          <g class="link" data-relation="e1" tabindex="0" role="button" aria-label="Relación EEP a ESECI">
+            <path class="link-hit" d="M344.7,170.2 Q375,295 345.1,417.8"></path>
+            <path class="link-line" d="M344.7,170.2 Q375,295 345.1,417.8"></path>
+            <path class="link-arrow" d="M-15,-5 L0,0 L-15,5 Z" transform="translate(345.1,417.8) rotate(103.7)"></path>
+          </g>
+
+          <!-- EIP (morado) -> EEP (verde) -->
+          <g class="link" data-relation="e2" tabindex="0" role="button" aria-label="Relación EIP a EEP">
+            <path class="link-hit" d="M159.2,245.3 Q189.7,158.4 271.4,130.2"></path>
+            <path class="link-line" d="M159.2,245.3 Q189.7,158.4 271.4,130.2"></path>
+            <path class="link-arrow" d="M-15,-5 L0,0 L-15,5 Z" transform="translate(271.4,130.2) rotate(-19.0)"></path>
+          </g>
+
+          <!-- EFC (azul) -> EEP (verde) -->
+          <g class="link" data-relation="e3" tabindex="0" role="button" aria-label="Relación EFC a EEP">
+            <path class="link-hit" d="M484.3,244.2 Q460.3,158.4 388.1,131.6"></path>
+            <path class="link-line" d="M484.3,244.2 Q460.3,158.4 388.1,131.6"></path>
+            <path class="link-arrow" d="M-15,-5 L0,0 L-15,5 Z" transform="translate(388.1,131.6) rotate(-159.6)"></path>
+          </g>
+
+          <!-- EFC (azul) -> ESECI (amarillo) -->
+          <g class="link" data-relation="e4" tabindex="0" role="button" aria-label="Relación EFC a ESECI">
+            <path class="link-hit" d="M483.8,355.7 Q460.3,436.6 390.7,459.8"></path>
+            <path class="link-line" d="M483.8,355.7 Q460.3,436.6 390.7,459.8"></path>
+            <path class="link-arrow" d="M-15,-5 L0,0 L-15,5 Z" transform="translate(390.7,459.8) rotate(161.6)"></path>
+          </g>
+
+          <!-- EIP (morado) -> EFC (azul) -->
+          <g class="link" data-relation="e5" tabindex="0" role="button" aria-label="Relación EIP a EFC">
+            <path class="link-hit" d="M191.3,327.1 Q320,395 448.7,327.1"></path>
+            <path class="link-line" d="M191.3,327.1 Q320,395 448.7,327.1"></path>
+            <path class="link-arrow" d="M-15,-5 L0,0 L-15,5 Z" transform="translate(448.7,327.1) rotate(-27.8)"></path>
+          </g>
+
+          <!-- EIP (morado) -> ESECI (amarillo) -->
+          <g class="link" data-relation="e6" tabindex="0" role="button" aria-label="Relación EIP a ESECI">
+            <path class="link-hit" d="M159.8,354.5 Q189.7,436.6 268.9,461.1"></path>
+            <path class="link-line" d="M159.8,354.5 Q189.7,436.6 268.9,461.1"></path>
+            <path class="link-arrow" d="M-15,-5 L0,0 L-15,5 Z" transform="translate(268.9,461.1) rotate(17.2)"></path>
+          </g>
+
+        </g>
+
+        <!-- nodes (arrastrables). El grupo externo lo mueve la física de arrastre (transform);
+             el grupo interno ".node-float" solo hace flotar visualmente el círculo con CSS,
+             sin tocar el transform que controla el arrastre. -->
+        <g class="node node-green" data-node="green" transform="translate(330,110)">
+          <g class="node-float">
+            <circle r="62"></circle>
+            <text y="-14">Sistema<tspan x="0" dy="14">Ambiental y de</tspan><tspan x="0" dy="14">Estructura</tspan><tspan x="0" dy="14">Ecológica</tspan><tspan x="0" dy="14">Principal</tspan></text>
+          </g>
+        </g>
+
+        <g class="node node-purple" data-node="purple" transform="translate(140,300)">
+          <g class="node-float">
+            <circle r="58"></circle>
+            <text y="-7">Estructura<tspan x="0" dy="14">Integradora de</tspan><tspan x="0" dy="14">Patrimonios</tspan></text>
+          </g>
+        </g>
+
+        <g class="node node-blue" data-node="blue" transform="translate(500,300)">
+          <g class="node-float">
+            <circle r="58"></circle>
+            <text y="-7">Estructura<tspan x="0" dy="14">Funcional y</tspan><tspan x="0" dy="14">del Cuidado</tspan></text>
+          </g>
+        </g>
+
+        <g class="node node-yellow" data-node="yellow" transform="translate(330,480)">
+          <g class="node-float">
+            <circle r="64"></circle>
+            <text y="-21">Estructura<tspan x="0" dy="14">Socioeconómica,</tspan><tspan x="0" dy="14">Creativa y de</tspan><tspan x="0" dy="14">Innovación</tspan></text>
+          </g>
+        </g>
+      </svg>
+     </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ POPUP: redes por estructura ============ -->
+<div id="redes-modal-overlay" class="redes-modal-overlay" hidden>
+  <div class="redes-modal" role="dialog" aria-modal="true" aria-labelledby="redes-modal-title">
+    <button class="redes-modal-close" type="button" aria-label="Cerrar">✕</button>
+
+    <div class="redes-modal-header">
+      <h2 id="redes-modal-title">Estructura</h2>
+      <p class="redes-modal-subtitle">Modo Analítico // Nodos = 0</p>
+    </div>
+
+    <div class="redes-modal-body">
+      <svg class="redes-network-svg" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+        <g class="redes-edges"></g>
+        <g class="redes-nodes"></g>
+      </svg>
+
+      <aside class="redes-side-panel">
+        <div class="redes-legend-card">
+          <span class="redes-legend-card-title">Leyenda de Capas</span>
+          <div class="redes-toggle-row">
+            <span>Nodos Principales</span>
+            <button class="redes-toggle is-on" type="button" data-toggle="nodes" role="switch" aria-checked="true"><span class="redes-toggle-knob"></span></button>
+          </div>
+          <div class="redes-toggle-row">
+            <span>Conexiones Activas</span>
+            <button class="redes-toggle is-on" type="button" data-toggle="edges" role="switch" aria-checked="true"><span class="redes-toggle-knob"></span></button>
+          </div>
+        </div>
+
+        <div class="redes-conventions-card">
+          <span class="redes-legend-card-title">Convenciones</span>
+          <div class="redes-convention-item"><span class="redes-swatch redes-swatch-directa"></span>Directa</div>
+          <div class="redes-convention-item"><span class="redes-swatch redes-swatch-indirecta"></span>Indirecta</div>
+          <div class="redes-convention-item"><span class="redes-swatch redes-swatch-soporte"></span>Soporte</div>
+          <div class="redes-convention-item"><span class="redes-swatch redes-swatch-resiliencia"></span>Resiliencia</div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>
+
+<script src="./scripts.js" defer></script>
+</body>
+</html>
