@@ -70,34 +70,6 @@
       <p>Analiza cómo las relaciones del POT favorecen, limitan o entran en conflicto con los ODS.</p>
     </div>
 
-    <!-- ODS INSIGHTS (antes: alignment-stats) -->
-    <div class="ods-insight-stats" id="odsInsightStats">
-      <div class="insight-card" data-insight="conectados" style="--insight-color:#4ade80;" onclick="toggleInsight('conectados')">
-        <div class="insight-icon"><i class="fa-solid fa-diagram-project"></i></div>
-        <div class="insight-title">ODS más conectados</div>
-      </div>
-
-      <div class="insight-card" data-insight="hubs" style="--insight-color:#5b8def;" onclick="toggleInsight('hubs')">
-        <div class="insight-icon"><i class="fa-solid fa-circle-nodes"></i></div>
-        <div class="insight-title">Hubs</div>
-      </div>
-
-      <div class="insight-card" data-insight="puentes" style="--insight-color:#f5c945;" onclick="toggleInsight('puentes')">
-        <div class="insight-icon"><i class="fa-solid fa-bridge"></i></div>
-        <div class="insight-title">Puentes</div>
-      </div>
-
-      <div class="insight-card" data-insight="perifericos" style="--insight-color:#8891a5;" onclick="toggleInsight('perifericos')">
-        <div class="insight-icon"><i class="fa-solid fa-satellite"></i></div>
-        <div class="insight-title">Periféricos</div>
-      </div>
-
-      <div class="insight-card" data-insight="predominantes" style="--insight-color:#f76fb0;" onclick="toggleInsight('predominantes')">
-        <div class="insight-icon"><i class="fa-solid fa-code-branch"></i></div>
-        <div class="insight-title">Relaciones predominantes</div>
-      </div>
-    </div>
-
     <!-- NETWORK VISUALIZATION (red POT ↔ ODS) -->
     <div class="network-section">
       <div class="network-header">
@@ -127,6 +99,34 @@
       </div>
 
       <div class="network-viz-wrap">
+        <!-- ODS INSIGHTS (antes: fila horizontal arriba de la red; ahora al lado izquierdo) -->
+        <div class="ods-insight-stats" id="odsInsightStats">
+          <div class="insight-card" data-insight="conectados" style="--insight-color:#4ade80;" onclick="toggleInsight('conectados')">
+            <div class="insight-icon"><i class="fa-solid fa-diagram-project"></i></div>
+            <div class="insight-title">ODS más conectados</div>
+          </div>
+
+          <div class="insight-card" data-insight="hubs" style="--insight-color:#5b8def;" onclick="toggleInsight('hubs')">
+            <div class="insight-icon"><i class="fa-solid fa-circle-nodes"></i></div>
+            <div class="insight-title">Hubs</div>
+          </div>
+
+          <div class="insight-card" data-insight="puentes" style="--insight-color:#f5c945;" onclick="toggleInsight('puentes')">
+            <div class="insight-icon"><i class="fa-solid fa-bridge"></i></div>
+            <div class="insight-title">Puentes</div>
+          </div>
+
+          <div class="insight-card" data-insight="perifericos" style="--insight-color:#8891a5;" onclick="toggleInsight('perifericos')">
+            <div class="insight-icon"><i class="fa-solid fa-satellite"></i></div>
+            <div class="insight-title">Periféricos</div>
+          </div>
+
+          <div class="insight-card" data-insight="predominantes" style="--insight-color:#f76fb0;" onclick="toggleInsight('predominantes')">
+            <div class="insight-icon"><i class="fa-solid fa-code-branch"></i></div>
+            <div class="insight-title">Relaciones predominantes</div>
+          </div>
+        </div>
+
         <div class="network-canvas">
           <svg id="networkViz" viewBox="0 0 1470 780" preserveAspectRatio="xMidYMid meet"></svg>
 
@@ -199,19 +199,6 @@
       </div>
 
       <div class="pn-wrap">
-        <div class="pn-canvas">
-          <svg id="pnViz" viewBox="0 0 800 620" preserveAspectRatio="xMidYMid meet"></svg>
-
-          <div class="pn-sustento-panel" id="pnSustentoPanel">
-            <button class="pn-sustento-close" id="pnSustentoClose" type="button" aria-label="Cerrar">&times;</button>
-            <div class="pn-sustento-badge"><i class="fa-solid fa-quote-left"></i> Sustento</div>
-            <div class="pn-sustento-title" id="pnSustentoTitle"></div>
-            <div class="pn-sustento-type" id="pnSustentoTipo"></div>
-            <div class="pn-sustento-ods" id="pnSustentoOds"></div>
-            <div id="pnSustentoQuotes"></div>
-          </div>
-        </div>
-
         <aside class="pn-sidebar">
           <div class="pn-findings-panel">
             <div class="pn-findings-title">1. Relaciones que favorecen los ODS</div>
@@ -233,6 +220,19 @@
             Clic en cualquier línea de la red: muestra su sustento documental.
           </div>
         </aside>
+
+        <div class="pn-canvas">
+          <svg id="pnViz" viewBox="0 0 800 620" preserveAspectRatio="xMidYMid meet"></svg>
+
+          <div class="pn-sustento-panel" id="pnSustentoPanel">
+            <button class="pn-sustento-close" id="pnSustentoClose" type="button" aria-label="Cerrar">&times;</button>
+            <div class="pn-sustento-badge"><i class="fa-solid fa-quote-left"></i> Sustento</div>
+            <div class="pn-sustento-title" id="pnSustentoTitle"></div>
+            <div class="pn-sustento-type" id="pnSustentoTipo"></div>
+            <div class="pn-sustento-ods" id="pnSustentoOds"></div>
+            <div id="pnSustentoQuotes"></div>
+          </div>
+        </div>
       </div>
     </div>
 
