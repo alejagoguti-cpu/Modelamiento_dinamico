@@ -3,260 +3,244 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RAPOT · Módulo 06 · POT ↔ ODS</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<title>RAPOT · POT ↔ ODS</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="modulo-06.css">
 </head>
 <body>
 <div class="app">
 
-  <!-- SIDEBAR -->
   <aside class="sidebar">
-    <div class="brand" data-tooltip="RAPOT">
+    <div class="brand">
       <div class="mark"><i class="fa-solid fa-diagram-project"></i></div>
-      <span class="nav-text">RAPOT</span>
+      <span>RAPOT</span>
     </div>
 
     <div class="nav-group">
-      <a href="dashboard.html" class="nav-item" data-tooltip="Dashboard"><i class="fa-solid fa-house"></i><span class="nav-text">Dashboard</span></a>
+      <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-house"></i><span class="nav-text">Dashboard</span></a>
     </div>
 
     <div class="nav-group">
       <div class="nav-label">MÓDULOS</div>
-      <a href="modulo-01.html" class="nav-item" data-tooltip="01 · Construir la Red"><span class="num">01</span><i class="fa-solid fa-diagram-project"></i><span class="nav-text">Construir la Red</span></a>
-      <a href="modulo-02.html" class="nav-item" data-tooltip="02 · Medir la Red"><span class="num">02</span><i class="fa-solid fa-chart-simple"></i><span class="nav-text">Medir la Red</span></a>
-      <a href="modulo-03.html" class="nav-item" data-tooltip="03 · Discurso vs Realidad"><span class="num">03</span><i class="fa-solid fa-eye"></i><span class="nav-text">Discurso vs Realidad</span></a>
-      <a href="modulo-04.html" class="nav-item" data-tooltip="04 · Macromodelos"><span class="num">04</span><i class="fa-solid fa-bullseye"></i><span class="nav-text">Macromodelos</span></a>
-      <a href="modulo-05.html" class="nav-item" data-tooltip="05 · Lo que no está"><span class="num">05</span><i class="fa-solid fa-magnifying-glass"></i><span class="nav-text">Lo que no está</span></a>
-      <a href="modulo-06.html" class="nav-item active" data-tooltip="06 · POT ↔ ODS"><span class="num">06</span><i class="fa-solid fa-earth-americas"></i><span class="nav-text">POT ↔ ODS</span></a>
-      <a href="modulo-07.html" class="nav-item" data-tooltip="07 · Simulador"><span class="num">07</span><i class="fa-solid fa-flask"></i><span class="nav-text">Simulador</span></a>
-      <a href="modulo-08.html" class="nav-item" data-tooltip="08 · Modelo Propio"><span class="num">08</span><i class="fa-solid fa-city"></i><span class="nav-text">Modelo Propio</span></a>
+      <a href="modulo-01.html" class="nav-item"><span class="num">01</span><i class="fa-solid fa-diagram-project"></i><span class="nav-text">Construir la Red</span></a>
+      <a href="modulo-02.html" class="nav-item"><span class="num">02</span><i class="fa-solid fa-chart-simple"></i><span class="nav-text">Medir la Red</span></a>
+      <a href="modulo-03.html" class="nav-item"><span class="num">03</span><i class="fa-solid fa-eye"></i><span class="nav-text">Discurso vs Realidad</span></a>
+      <a href="modulo-04.html" class="nav-item"><span class="num">04</span><i class="fa-solid fa-bullseye"></i><span class="nav-text">Macromodelos</span></a>
+      <a href="modulo-05.html" class="nav-item"><span class="num">05</span><i class="fa-solid fa-magnifying-glass"></i><span class="nav-text">Lo que no está</span></a>
+      <a href="modulo-06.html" class="nav-item active"><span class="num">06</span><i class="fa-solid fa-earth-americas"></i><span class="nav-text">POT ↔ ODS</span></a>
+      <a href="modulo-07.html" class="nav-item"><span class="num">07</span><i class="fa-solid fa-flask"></i><span class="nav-text">Simulador</span></a>
+      <a href="modulo-08.html" class="nav-item"><span class="num">08</span><i class="fa-solid fa-city"></i><span class="nav-text">Modelo Propio</span></a>
     </div>
 
     <div class="nav-group">
       <div class="nav-label">GESTIÓN</div>
-      <a href="proyectos.html" class="nav-item" data-tooltip="Proyectos"><i class="fa-solid fa-folder"></i><span class="nav-text">Proyectos</span></a>
-      <a href="fuentes.html" class="nav-item" data-tooltip="Fuentes y Documentos"><i class="fa-solid fa-file-lines"></i><span class="nav-text">Fuentes y Documentos</span></a>
-      <a href="favoritos.html" class="nav-item" data-tooltip="Favoritos"><i class="fa-solid fa-star"></i><span class="nav-text">Favoritos</span></a>
-      <a href="reportes.html" class="nav-item" data-tooltip="Reportes"><i class="fa-solid fa-chart-pie"></i><span class="nav-text">Reportes</span></a>
-      <a href="configuracion.html" class="nav-item" data-tooltip="Configuración"><i class="fa-solid fa-gear"></i><span class="nav-text">Configuración</span></a>
+      <a href="proyectos.html" class="nav-item"><i class="fa-solid fa-folder"></i><span class="nav-text">Proyectos</span></a>
+      <a href="fuentes.html" class="nav-item"><i class="fa-solid fa-file-lines"></i><span class="nav-text">Fuentes y Documentos</span></a>
+      <a href="favoritos.html" class="nav-item"><i class="fa-solid fa-star"></i><span class="nav-text">Favoritos</span></a>
+      <a href="reportes.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i><span class="nav-text">Reportes</span></a>
+      <a href="configuracion.html" class="nav-item"><i class="fa-solid fa-gear"></i><span class="nav-text">Configuración</span></a>
     </div>
 
     <div class="sidebar-footer">
-      <div class="avatar-sm" data-tooltip="Analista RAPOT · Plan de Ordenamiento">RA</div>
+      <div class="avatar-sm">EU</div>
       <div class="user-meta">
-        <div class="name">Analista RAPOT</div>
-        <div class="role">Plan de Ordenamiento</div>
+        <div class="name">Equipo Urbano</div>
+        <div class="role">Administrador</div>
       </div>
-      <a href="demo.html" class="logout-btn" data-tooltip="Salir"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
+      <a href="demo.html" class="logout-btn"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
     </div>
   </aside>
+
   <main class="main">
+
     <div class="topbar">
-      <h1>Módulo 06 · POT ↔ ODS</h1>
+      <h1>POT ↔ ODS</h1>
       <div class="topbar-actions">
-        <div class="search-box"><i class="fa-solid fa-magnifying-glass"></i><span>Buscar concepto...</span></div>
-        <button class="icon-btn"><i class="fa-regular fa-bell"></i><span class="dot"></span></button>
+        <div class="search-box"><i class="fa-solid fa-magnifying-glass"></i> Buscar en el sistema...</div>
+        <div class="icon-btn"><i class="fa-regular fa-bell"></i><span class="dot"></span></div>
+        <div class="icon-btn"><i class="fa-regular fa-circle-question"></i></div>
+        <div class="avatar-sm">EU</div>
       </div>
     </div>
 
     <div class="welcome">
-      <h2>Red de las 4 estructuras territoriales y los ODS</h2>
-      <p>Explora la red de relaciones documentadas entre las cuatro estructuras territoriales y los Objetivos de Desarrollo Sostenible. Conserva los controles de lectura, las métricas y la visualización de conexiones del módulo original.</p>
+      <h2>POT ↔ ODS</h2>
+      <p>Analiza cómo las relaciones del POT favorecen, limitan o entran en conflicto con los ODS.</p>
     </div>
 
-    <div class="net-layout">
-
-      <!-- ================= PANEL DE INFORMACIÓN ================= -->
-      <div class="col right">
-
-        <div class="pcard escenarios-card">
-          <h2>Escenario: ¿qué pasa si apagamos una estructura?</h2>
-          <div class="scenario-buttons">
-            <button class="scenario-btn" data-sys="EEP">
-              <i class="fa-solid fa-circle-minus"></i>
-              <span class="sys-state">ON</span>
-              <span class="row-num">1</span>
-              <span class="row-icon"><i class="fa-solid fa-leaf" aria-hidden="true"></i></span>
-              <span class="btn-title">Sin Estructura Ecológica Principal</span>
-              <span class="btn-question">¿Qué pasaría si no existiera la EEP?</span>
-            </button>
-            <button class="scenario-btn" data-sys="EFC">
-              <i class="fa-solid fa-circle-minus"></i>
-              <span class="sys-state">ON</span>
-              <span class="row-num">2</span>
-              <span class="row-icon"><i class="fa-solid fa-heart" aria-hidden="true"></i></span>
-              <span class="btn-title">Sin Estructura Funcional y del Cuidado</span>
-              <span class="btn-question">¿Qué pasaría si no existiera la EFC?</span>
-            </button>
-            <button class="scenario-btn" data-sys="ESECI">
-              <i class="fa-solid fa-circle-minus"></i>
-              <span class="sys-state">ON</span>
-              <span class="row-num">3</span>
-              <span class="row-icon"><i class="fa-solid fa-lightbulb" aria-hidden="true"></i></span>
-              <span class="btn-title">Sin Estructura Socioeconómica, Creativa y de Innovación</span>
-              <span class="btn-question">¿Qué pasaría si no existiera la ESECI?</span>
-            </button>
-            <button class="scenario-btn" data-sys="EIP">
-              <i class="fa-solid fa-circle-minus"></i>
-              <span class="sys-state">ON</span>
-              <span class="row-num">4</span>
-              <span class="row-icon"><i class="fa-solid fa-landmark" aria-hidden="true"></i></span>
-              <span class="btn-title">Sin Estructura Integradora de Patrimonios</span>
-              <span class="btn-question">¿Qué pasaría si no existiera la EIP?</span>
-            </button>
-          </div>
-          <button class="btn net-side-reset" id="btnReset"><i class="fa-solid fa-arrows-rotate"></i> Reactivar todas</button>
+    <!-- NETWORK VISUALIZATION (red POT ↔ ODS) -->
+    <div class="network-section">
+      <div class="network-header">
+        <h3><i class="fa-solid fa-sitemap"></i> Red POT ↔ ODS Interactiva</h3>
+        <div class="network-controls">
+          <button class="control-btn active" onclick="filterNetwork('all')">Todos</button>
+          <button class="control-btn" onclick="filterNetwork('aligned')">Alineados</button>
+          <button class="control-btn" onclick="filterNetwork('conflicts')">Conflictos</button>
         </div>
-
-        <div class="pcard" id="evCard">
-          <div id="evBox"></div>
-        </div>
-
-        <div class="pcard">
-          <h2>Escenario de nodo crítico
-            <span class="hint">Apaga el nodo más conectado y observa qué se rompe.</span>
-          </h2>
-          <p class="node-question" id="nodeQuestion">—</p>
-          <label class="node-label" for="nodeSelect">Concepto a desconectar</label>
-          <select id="nodeSelect" class="node-select"></select>
-          <p class="node-impact" id="nodeImpact">—</p>
-          <button class="btn node-sim-btn" id="btnNodeSim"><i class="fa-solid fa-power-off"></i> Simular sin este nodo</button>
-        </div>
-
-        <div class="pcard">
-          <h2>Nodos puente
-            <span class="hint">Conceptos que se relacionan con las tres estructuras distintas a la suya. Se detectan solos.</span>
-          </h2>
-          <div id="bridgeList"></div>
-        </div>
-
-        <div class="pcard">
-          <h2>Simulación del apagado</h2>
-          <div id="simBox"></div>
-        </div>
-
-        <div class="pcard">
-          <h2>Hallazgo de la simulación</h2>
-          <div class="finding" id="finding">—</div>
-        </div>
-
-        <div class="pcard">
-          <h2>Conexiones con otros sistemas
-            <span class="hint">Relaciones activas que cruzan de una estructura a otra. Es la medida del hallazgo principal y se calcula desde los datos.</span>
-          </h2>
-          <div id="rankList"></div>
-          <div id="topSys"></div>
-          <p class="note">
-            La centralidad de la red <b>no equivale a la jerarquía normativa del POT</b>. El POT define la
-            EEP como “primera ordenante” del territorio; esta red mide algo distinto: qué estructura resulta
-            <b>más articuladora</b> según las relaciones explícitas construidas a partir del documento.
-          </p>
-        </div>
-
-        <div class="pcard">
-          <h2>¿Qué sistema genera mayor dependencia?
-            <span class="hint">Relaciones que desaparecerían si ese sistema se apagara (como origen o destino).</span>
-          </h2>
-          <div id="compareList"></div>
-        </div>
-
       </div>
 
-      <!-- ================= RED + ESTADO ================= -->
-      <div class="col">
-        <div class="pcard net-card">
-          <div class="net-toolbar">
-            <div class="legend">
-              <div class="legend-item"><span class="lg-line"></span>Relación directa</div>
-              <div class="legend-item"><span class="lg-line dashed"></span>Relación indirecta</div>
-              <div class="legend-item"><span class="lg-dot soporte"></span>Soporte</div>
-              <div class="legend-item"><span class="lg-dot resiliencia"></span>Resiliencia</div>
-              <div class="legend-item"><span class="lg-line dashed" style="opacity:.45"></span>Por verificar</div>
-                </div>
-            <div class="net-btns">
-              <button class="btn" id="btnFit"><i class="fa-solid fa-arrows-rotate"></i> Centrar vista</button>
-            </div>
+      <div class="fc-bar">
+        <div class="fc-group fc-findings">
+          <span class="fc-label"><i class="fa-solid fa-magnifying-glass-chart"></i> Hallazgos</span>
+          <button class="fc-chip" type="button" data-finding="ods1">ODS 1</button>
+          <button class="fc-chip" type="button" data-finding="ods13">ODS 13</button>
+          <button class="fc-chip" type="button" data-finding="ods9">ODS 9</button>
+          <button class="fc-chip" type="button" data-finding="edge:ods1->ods13">ODS 1 ↔ ODS 13</button>
+        </div>
+        <div class="fc-divider"></div>
+        <div class="fc-group fc-contradictions">
+          <span class="fc-label"><i class="fa-solid fa-triangle-exclamation"></i> Contradicción</span>
+          <button class="fc-chip fc-chip-red" type="button" data-contradiction="ods16">ODS 16</button>
+          <button class="fc-chip fc-chip-red" type="button" data-contradiction="ods14">ODS 14</button>
+          <button class="fc-chip fc-chip-red" type="button" data-contradiction="ods11">ODS 11</button>
+        </div>
+      </div>
+
+      <div class="network-viz-wrap">
+        <!-- ODS INSIGHTS (antes: fila horizontal arriba de la red; ahora al lado izquierdo) -->
+        <div class="ods-insight-stats" id="odsInsightStats">
+          <div class="insight-card" data-insight="conectados" style="--insight-color:#4ade80;" onclick="toggleInsight('conectados')">
+            <div class="insight-icon"><i class="fa-solid fa-diagram-project"></i></div>
+            <div class="insight-title">ODS más conectados</div>
           </div>
 
-          <div class="net-body">
-            <div class="net-stage" id="stage">
-              <div class="zoom-controls" aria-label="Controles de zoom">
-                <button type="button" class="zoom-btn" id="btnZoomOut" aria-label="Alejar" title="Alejar">−</button>
-                <span class="zoom-value" id="zoomValue">100%</span>
-                <button type="button" class="zoom-btn" id="btnZoomIn" aria-label="Acercar" title="Acercar">+</button>
-                <button type="button" class="zoom-btn zoom-reset" id="btnZoomReset" aria-label="Restablecer zoom" title="Restablecer zoom"><i class="fa-solid fa-crosshairs"></i></button>
-              </div>
-              <svg id="svg" xmlns="http://www.w3.org/2000/svg" viewBox="-1964 -1937 3927 3910">
-                <defs>
-                  <marker id="ar-soporte" viewBox="0 0 10 10" refX="9" refY="5"
-                          markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse">
-                    <path d="M0,0 L10,5 L0,10 z" fill="#f0a15c"></path>
-                  </marker>
-                  <marker id="ar-resiliencia" viewBox="0 0 10 10" refX="9" refY="5"
-                          markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse">
-                    <path d="M0,0 L10,5 L0,10 z" fill="#2fbfae"></path>
-                  </marker>
-                  <linearGradient id="grad-eep" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stop-color="#45d6c5"></stop>
-                    <stop offset="100%" stop-color="#1f8f82"></stop>
-                  </linearGradient>
-                  <linearGradient id="grad-efc" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stop-color="#ffb37a"></stop>
-                    <stop offset="100%" stop-color="#e8763c"></stop>
-                  </linearGradient>
-                  <linearGradient id="grad-eseci" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stop-color="#f5c26b"></stop>
-                    <stop offset="100%" stop-color="#d9902e"></stop>
-                  </linearGradient>
-                  <linearGradient id="grad-eip" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stop-color="#ff8f8f"></stop>
-                    <stop offset="100%" stop-color="#d94f5c"></stop>
-                  </linearGradient>
-                  <!-- desenfoque para que las relaciones se vean como una cinta sólida difuminada, sin neón -->
-                  <filter id="rel-blur" x="-60%" y="-60%" width="220%" height="220%">
-                    <feGaussianBlur stdDeviation="7"></feGaussianBlur>
-                  </filter>
-                </defs>
-                <g id="gGuides"></g>
-                <g id="gMembers"></g>
-                <g id="gRels"></g>
-                <g id="gNodes"></g>
-              </svg>
-              <div class="weak-banner hidden" id="weakBanner">
-                <i class="fa-solid fa-link-slash"></i>
-                <span id="weakBannerText"></span>
-              </div>
-              <div class="tooltip" id="tooltip"></div>
-            </div>
+          <div class="insight-card" data-insight="hubs" style="--insight-color:#5b8def;" onclick="toggleInsight('hubs')">
+            <div class="insight-icon"><i class="fa-solid fa-circle-nodes"></i></div>
+            <div class="insight-title">Hubs</div>
+          </div>
+
+          <div class="insight-card" data-insight="puentes" style="--insight-color:#f5c945;" onclick="toggleInsight('puentes')">
+            <div class="insight-icon"><i class="fa-solid fa-bridge"></i></div>
+            <div class="insight-title">Puentes</div>
+          </div>
+
+          <div class="insight-card" data-insight="perifericos" style="--insight-color:#8891a5;" onclick="toggleInsight('perifericos')">
+            <div class="insight-icon"><i class="fa-solid fa-satellite"></i></div>
+            <div class="insight-title">Periféricos</div>
+          </div>
+
+          <div class="insight-card" data-insight="predominantes" style="--insight-color:#f76fb0;" onclick="toggleInsight('predominantes')">
+            <div class="insight-icon"><i class="fa-solid fa-code-branch"></i></div>
+            <div class="insight-title">Relaciones predominantes</div>
           </div>
         </div>
 
-        <div class="pcard">
-          <h2>Estado de la red</h2>
-          <div class="stat-grid">
-            <div class="stat wide">
-              <div class="lbl">Relaciones activas</div>
-              <div class="val accent" id="mRelAct">—</div>
-              <div class="bar-track"><div class="bar-fill" id="mBar" style="width:100%"></div></div>
+        <div class="network-canvas">
+          <svg id="networkViz" viewBox="0 0 1470 780" preserveAspectRatio="xMidYMid meet"></svg>
+
+          <div class="finding-popup" id="findingPopup">
+            <button class="finding-popup-close" id="findingPopupClose" type="button" aria-label="Cerrar">&times;</button>
+            <div class="finding-popup-badge" id="findingPopupBadge"><i class="fa-solid fa-magnifying-glass-chart"></i> Hallazgo</div>
+            <div class="finding-popup-title" id="findingPopupTitle"></div>
+            <div class="finding-popup-text" id="findingPopupText"></div>
+          </div>
+
+          <div class="finding-stack" id="findingStack"></div>
+        </div>
+
+        <div class="network-sidebar">
+          <aside class="network-legend compact" id="networkLegend">
+            <div class="legend-title">Convenciones</div>
+
+            <label class="legend-item" data-type="comp">
+              <input type="checkbox" checked>
+              <span class="legend-swatch swatch-comp"></span>
+              Complementarias
+            </label>
+
+            <label class="legend-item" data-type="causal">
+              <input type="checkbox" checked>
+              <span class="legend-swatch swatch-causal"></span>
+              Causal
+            </label>
+
+            <label class="legend-item" data-type="cond">
+              <input type="checkbox" checked>
+              <span class="legend-swatch swatch-cond"></span>
+              Condicionamiento
+            </label>
+
+            <div class="legend-divider"></div>
+
+            <div class="legend-item legend-static">
+              <span class="legend-swatch swatch-directa"></span>
+              Directa
+              <span class="legend-swatch swatch-nodirecta" style="margin-left:10px;"></span>
+              No directa
             </div>
-            <div class="stat"><div class="lbl">Red activa</div><div class="val" id="mPct">—</div></div>
-            <div class="stat"><div class="lbl">Relaciones totales</div><div class="val" id="mRelTot">—</div></div>
-            <div class="stat"><div class="lbl">Nodos totales</div><div class="val" id="mNodTot">—</div></div>
-            <div class="stat"><div class="lbl">Nodos activos</div><div class="val" id="mNodAct">—</div></div>
-            <div class="stat"><div class="lbl">Componentes conectados</div><div class="val" id="mComp">—</div></div>
-            <div class="stat"><div class="lbl">Componente principal</div><div class="val" id="mMain">—</div></div>
-            <div class="stat"><div class="lbl">Conceptos aislados</div><div class="val" id="mIso">—</div></div>
-            <div class="stat wide"><div class="lbl">Sistema más conectado con los demás</div><div class="val" id="mCentral">—</div></div>
+
+            <div class="legend-divider"></div>
+            <div class="legend-hint">Clic en línea: sustento.<br>Doble clic: apagar/encender.<br>Triple clic: ver solo su flujo.</div>
+          </aside>
+
+          <div class="edge-info-panel" id="edgeInfoPanel">
+            <div class="edge-info-header">
+              <span id="edgeInfoTitle">Conexión</span>
+              <button class="edge-info-close" id="edgeInfoClose" type="button" aria-label="Cerrar">&times;</button>
+            </div>
+            <div class="edge-info-type" id="edgeInfoType"></div>
+            <div class="edge-info-quote" id="edgeInfoQuote"></div>
+            <div class="edge-info-page" id="edgeInfoPage"></div>
           </div>
         </div>
       </div>
     </div>
+
+    <footer>
+      "No se trata de representar la ciudad, sino de comprenderla para transformarla." — <span>Equipo POT Reverse Engineering</span>
+    </footer>
+
+    <!-- RED DE ESTRUCTURAS DEL POT (estática, se ve completa, sin zoom ni arrastre) -->
+    <div class="pn-section">
+      <div class="network-header">
+        <h3><i class="fa-solid fa-diagram-project"></i> Red de Relaciones del POT (Estructuras)</h3>
+      </div>
+
+      <div class="pn-wrap">
+        <aside class="pn-sidebar">
+          <div class="pn-findings-panel">
+            <div class="pn-findings-title">1. Relaciones que favorecen los ODS</div>
+            <button class="pn-finding-item" type="button" data-pn-finding="movilidad">
+              Red vial, corredores verdes y ciclorutas → Transporte, equipamientos y ecosistemas
+              <span class="pn-finding-ods">ODS 9 · 11 · 13</span>
+            </button>
+            <button class="pn-finding-item" type="button" data-pn-finding="distrito">
+              Distrito Centro Tecnológico → Servicios empresariales
+              <span class="pn-finding-ods">ODS 9 · 8</span>
+            </button>
+            <button class="pn-finding-item" type="button" data-pn-finding="humedales">
+              Humedales → Áreas de resiliencia climática
+              <span class="pn-finding-ods">ODS 13</span>
+            </button>
+          </div>
+          <div class="pn-legend-hint">
+            Clic en un renglón: resalta la relación en la red y muestra los ODS con los que se vincula.<br>
+            Clic en cualquier línea de la red: muestra su sustento documental.
+          </div>
+        </aside>
+
+        <div class="pn-canvas">
+          <svg id="pnViz" viewBox="0 0 800 620" preserveAspectRatio="xMidYMid meet"></svg>
+
+          <div class="pn-sustento-panel" id="pnSustentoPanel">
+            <button class="pn-sustento-close" id="pnSustentoClose" type="button" aria-label="Cerrar">&times;</button>
+            <div class="pn-sustento-badge"><i class="fa-solid fa-quote-left"></i> Sustento</div>
+            <div class="pn-sustento-title" id="pnSustentoTitle"></div>
+            <div class="pn-sustento-type" id="pnSustentoTipo"></div>
+            <div class="pn-sustento-ods" id="pnSustentoOds"></div>
+            <div id="pnSustentoQuotes"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </main>
+
 </div>
 
 <script src="modulo-06.js"></script>
+
 </body>
 </html>
