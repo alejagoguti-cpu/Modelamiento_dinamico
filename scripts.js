@@ -317,7 +317,7 @@ const relations = {
         { id:"protegidas",  label:["Áreas","protegidas"],                 icon:"fa-shield-halved",         x:605, y:152, r:38 },
         { id:"bosques",     label:["Bosques","urbanos"],                  icon:"fa-tree",                  x:156, y:285, r:34 },
         { id:"resiliencia", label:["Áreas de","resiliencia","climática"], icon:"fa-temperature-half",      x:269, y:289, r:36 },
-        { id:"humedales",   label:["Humedales"],                         icon:"fa-droplet",               x:449, y:272, r:58, primary:true },
+        { id:"humedales",   label:["Humedales"],                         icon:"fa-droplet",               x:449, y:272, r:58, primary:true, boost:1.55 },
         { id:"parquesmnt",  label:["Parques","ecológicos","de montaña"],  icon:"fa-mountain",              x:705, y:248, r:40 },
         { id:"paramos",     label:["Complejos de","páramos"],             icon:"fa-mountain",              x:96,  y:463, r:32 },
         { id:"coberturas",  label:["Coberturas","vegetales"],             icon:"fa-seedling",              x:228, y:429, r:50, primary:true },
@@ -510,10 +510,16 @@ const relations = {
     net.nodes.forEach((n) => {
       const d = deg[n.id] || 0;
       n.degree = d;
-      n.primary = d >= threshold;
-      n.r = maxDeg === minDeg
+      let r = maxDeg === minDeg
         ? (MIN_R + MAX_R) / 2
         : Math.round((MIN_R + (MAX_R - MIN_R) * ((d - minDeg) / (maxDeg - minDeg))) * 10) / 10;
+      // algunos nodos (ej. Humedales) llevan un refuerzo manual de tamaño aunque su
+      // grado de conexión no sea el más alto, porque conceptualmente son un nodo central
+      if (n.boost){
+        r = Math.min(MAX_R * 1.3, Math.round(r * n.boost * 10) / 10);
+      }
+      n.r = r;
+      n.primary = d >= threshold || !!n.boost;
     });
   }
 
@@ -530,6 +536,14 @@ const relations = {
     const byId = {};
     net.nodes.forEach((n) => { byId[n.id] = n; });
 
+    // guarda, por id de nodo, qué elementos <g> de conexión lo tocan,
+    // para poder apagarlos junto con el nodo al hacer click en él
+    const edgesByNode = {};
+    function linkEdgeToNode(nodeId, edgeEl){
+      if (!edgesByNode[nodeId]) edgesByNode[nodeId] = [];
+      edgesByNode[nodeId].push(edgeEl);
+    }
+
     net.edges.forEach((e) => {
       const a = byId[e.from], b = byId[e.to];
       if (!a || !b) return;
@@ -543,6 +557,11 @@ const relations = {
         "aria-label": `Relación ${a.label.join(" ")} - ${b.label.join(" ")}`
       });
       const d = `M${p0.x.toFixed(1)},${p0.y.toFixed(1)} L${p1.x.toFixed(1)},${p1.y.toFixed(1)}`;
+
+      // "blob" orgánico difuminado detrás de la línea: para que la conexión no sea solo
+      // un trazo, sino una mancha suave de color que une los dos nodos (como en la referencia)
+      const blob = el("path", { class: `redes-edge-blob redes-edge-blob-${e.kind}`, d, filter: "url(#blob-blur)" });
+      g.appendChild(blob);
 
       // trazo invisible más ancho, para que sea fácil hacer click en la línea
       const hit = el("path", { class: "redes-edge-hit", d });
@@ -585,16 +604,28 @@ const relations = {
       });
 
       edgesG.appendChild(g);
+      linkEdgeToNode(e.from, g);
+      linkEdgeToNode(e.to, g);
     });
 
-    net.nodes.forEach((n) => {
+    net.nodes.forEach((n, i) => {
       const g = el("g", {
         class: `redes-node${n.primary ? " is-primary" : ""}`,
         "data-accent": net.accent,
+        tabindex: "0",
+        role: "button",
+        "aria-label": `${n.label.join(" ")} (click para atenuar)`,
         transform: `translate(${n.x},${n.y})`
       });
+
+      // grupo interno: solo este flota con CSS, el externo mantiene la posición real del nodo
+      const float = el("g", { class: "redes-node-float" });
+      float.style.animationDuration = (4.4 + (i % 5) * 0.35).toFixed(2) + "s";
+      float.style.animationDelay = (-(i % 7) * 0.5).toFixed(2) + "s";
+      g.appendChild(float);
+
       const circle = el("circle", { r: n.r });
-      g.appendChild(circle);
+      float.appendChild(circle);
 
       const iconSize = Math.max(16, n.r * 0.5);
       const fo = el("foreignObject", {
@@ -606,7 +637,7 @@ const relations = {
       div.className = "redes-node-icon";
       div.innerHTML = `<i class="fa-solid ${n.icon}"></i>`;
       fo.appendChild(div);
-      g.appendChild(fo);
+      float.appendChild(fo);
 
       const text = el("text", { class: "redes-node-label", y: -(n.r*0.62) + iconSize + 2 });
       n.label.forEach((line, i) => {
@@ -614,7 +645,23 @@ const relations = {
         tspan.textContent = line;
         text.appendChild(tspan);
       });
-      g.appendChild(text);
+      float.appendChild(text);
+
+      // click en el nodo -> se atenúa junto con las líneas que lo conectan (click de nuevo lo restaura)
+      function toggleDim(ev){
+        ev.stopPropagation();
+        const dimmed = g.classList.toggle("is-dimmed");
+        (edgesByNode[n.id] || []).forEach((edgeEl) => {
+          edgeEl.classList.toggle("is-dimmed", dimmed);
+        });
+      }
+      g.addEventListener("click", toggleDim);
+      g.addEventListener("keydown", (ev) => {
+        if (ev.key === "Enter" || ev.key === " "){
+          ev.preventDefault();
+          toggleDim(ev);
+        }
+      });
 
       nodesG.appendChild(g);
     });
@@ -630,7 +677,7 @@ const relations = {
     switch (accent){
       case "green":  return "#3fd0bf";
       case "purple": return "#ff8f8f";
-      case "blue":   return "#c7ccd1";
+      case "blue":   return "#f5a45f";
       case "yellow": return "#f5c26b";
       default: return "#3fd0bf";
     }
