@@ -2193,7 +2193,10 @@ const layout = {};
 const nodeR = {};
 // Escala visual para que los nodos conserven proporción pero no se vean diminutos
 // dentro del viewBox amplio de la red.
-const NODE_VISUAL_SCALE = 1.35;
+const NODE_VISUAL_SCALE = 1.25;
+// Relaciones ESECI que permanecen visibles al apagar la tarjeta socioeconómica.
+// Corresponden a las dos primeras relaciones ESECI del archivo de datos.
+const ESECI_RETAINED_REL_IDS = new Set([9, 10]);
 
 function buildModel() {
   model.systems = {}; model.concepts = {}; model.relations = [];
@@ -2206,7 +2209,9 @@ function buildModel() {
     model.concepts[n.id] = { id: n.id, sys: n.sys, label: n.label, icon: n.icon, deg: n.deg, rels: [] };
     model.systems[n.sys].concepts.push(n.id);
     layout[n.id] = { x: n.x, y: n.y };
-    nodeR[n.id] = n.r * NODE_VISUAL_SCALE;
+    // Mantiene pequeños los nodos periféricos y amplía especialmente los hubs.
+    // El término adicional depende del grado real, no de una posición fija.
+    nodeR[n.id] = n.r * NODE_VISUAL_SCALE + Math.max(0, n.deg - 3) * 7;
   });
 
   POT_DATA.relaciones.forEach(r => {
@@ -2222,7 +2227,16 @@ function buildModel() {
 // Una relación está activa solo si AMBOS sistemas están ON y ninguno de sus
 // dos conceptos fue apagado individualmente
 const nodeOn = id => !offNodes.has(id);
-const relActive = r => state[r.sO] && state[r.sD] && nodeOn(r.from) && nodeOn(r.to);
+
+function relActive(r) {
+  // Al apagar ESECI, se conservan únicamente las relaciones 9 y 10.
+  // El sistema del otro extremo sí debe continuar encendido.
+  if ((r.sO === 'ESECI' || r.sD === 'ESECI') && ESECI_RETAINED_REL_IDS.has(r.id)) {
+    const otherSystem = r.sO === 'ESECI' ? r.sD : r.sO;
+    return state[otherSystem] && nodeOn(r.from) && nodeOn(r.to);
+  }
+  return state[r.sO] && state[r.sD] && nodeOn(r.from) && nodeOn(r.to);
+}
 
 // Las posiciones de partida vienen de POT_DATA (agrupadas por estructura),
 // pero muchas quedaban demasiado pegadas / superpuestas. Aquí se relajan con
@@ -3172,6 +3186,12 @@ let initialized = false;
 document.addEventListener('DOMContentLoaded', () => {
   if (initialized) return;
   initialized = true;
+
+  const closeInsight = document.getElementById('closeInsight');
+  const insightPopup = document.getElementById('eseCIInsight');
+  if (closeInsight && insightPopup) {
+    closeInsight.addEventListener('click', () => insightPopup.classList.add('is-hidden'));
+  }
 
   buildModel();
   computeLayout();
