@@ -76,6 +76,7 @@
 
     <!-- RIGHT: network diagram -->
     <div class="hero-visual">
+     <div class="hero-visual-card">
 
       <p class="visual-question">¿Cómo organiza, relaciona y prioriza el POT los diferentes componentes de Bogotá?</p>
 
@@ -83,16 +84,16 @@
         <span class="legend-title">Convenciones</span>
         <span class="legend-item">
           <svg class="leg-svg" viewBox="0 0 50 12" width="50" height="12" aria-hidden="true">
-            <line x1="2" y1="6" x2="38" y2="6" stroke="rgba(255,255,255,0.55)" stroke-width="1.5" stroke-dasharray="3 3"></line>
-            <path d="M38,6 L31,2 L31,10 Z" fill="rgba(255,255,255,0.7)"></path>
+            <line x1="2" y1="6" x2="38" y2="6" stroke="rgba(16,21,26,0.4)" stroke-width="1.5" stroke-dasharray="3 3"></line>
+            <path d="M38,6 L31,2 L31,10 Z" fill="rgba(16,21,26,0.55)"></path>
           </svg>
           Redes dirigidas
         </span>
         <span class="legend-item">
           <svg class="leg-svg" viewBox="0 0 56 12" width="56" height="12" aria-hidden="true">
-            <line x1="8" y1="6" x2="48" y2="6" stroke="rgba(255,255,255,0.55)" stroke-width="1.5" stroke-dasharray="3 3"></line>
-            <path d="M8,6 L15,2 L15,10 Z" fill="rgba(255,255,255,0.7)"></path>
-            <path d="M48,6 L41,2 L41,10 Z" fill="rgba(255,255,255,0.7)"></path>
+            <line x1="8" y1="6" x2="48" y2="6" stroke="rgba(16,21,26,0.4)" stroke-width="1.5" stroke-dasharray="3 3"></line>
+            <path d="M8,6 L15,2 L15,10 Z" fill="rgba(16,21,26,0.55)"></path>
+            <path d="M48,6 L41,2 L41,10 Z" fill="rgba(16,21,26,0.55)"></path>
           </svg>
           Redes bidireccionales
         </span>
@@ -168,10 +169,52 @@
           <text y="-21">Estructura<tspan x="0" dy="14">Socioeconómica,</tspan><tspan x="0" dy="14">Creativa y de</tspan><tspan x="0" dy="14">Innovación</tspan></text>
         </g>
       </svg>
+     </div>
     </div>
 
   </div>
 </section>
+
+<!-- ============ POPUP: redes por estructura ============ -->
+<div id="redes-modal-overlay" class="redes-modal-overlay" hidden>
+  <div class="redes-modal" role="dialog" aria-modal="true" aria-labelledby="redes-modal-title">
+    <button class="redes-modal-close" type="button" aria-label="Cerrar">✕</button>
+
+    <div class="redes-modal-header">
+      <h2 id="redes-modal-title">Estructura</h2>
+      <p class="redes-modal-subtitle">Modo Analítico // Nodos = 0</p>
+    </div>
+
+    <div class="redes-modal-body">
+      <svg class="redes-network-svg" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+        <g class="redes-edges"></g>
+        <g class="redes-nodes"></g>
+      </svg>
+
+      <aside class="redes-side-panel">
+        <div class="redes-legend-card">
+          <span class="redes-legend-card-title">Leyenda de Capas</span>
+          <div class="redes-toggle-row">
+            <span>Nodos Principales</span>
+            <button class="redes-toggle is-on" type="button" data-toggle="nodes" role="switch" aria-checked="true"><span class="redes-toggle-knob"></span></button>
+          </div>
+          <div class="redes-toggle-row">
+            <span>Conexiones Activas</span>
+            <button class="redes-toggle is-on" type="button" data-toggle="edges" role="switch" aria-checked="true"><span class="redes-toggle-knob"></span></button>
+          </div>
+        </div>
+
+        <div class="redes-conventions-card">
+          <span class="redes-legend-card-title">Convenciones</span>
+          <div class="redes-convention-item"><span class="redes-swatch redes-swatch-directa"></span>Directa</div>
+          <div class="redes-convention-item"><span class="redes-swatch redes-swatch-indirecta"></span>Indirecta</div>
+          <div class="redes-convention-item"><span class="redes-swatch redes-swatch-soporte"></span>Soporte</div>
+          <div class="redes-convention-item"><span class="redes-swatch redes-swatch-resiliencia"></span>Resiliencia</div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>
 
 <script src="./scripts.js" defer></script>
 </body>
