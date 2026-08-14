@@ -178,7 +178,7 @@ body {
 /* ODS INSIGHTS (reemplaza alignment-stats): 5 cuadros icono + título, clicables */
 .ods-insight-stats {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 16px;
   margin-bottom: 28px;
 }
@@ -281,90 +281,6 @@ body {
   background: rgba(47,212,200,0.05);
 }
 
-/* NETWORK METRICS */
-.network-metrics {
-  display: grid;
-  grid-template-columns: repeat(8, 1fr);
-  gap: 14px;
-  margin-bottom: 28px;
-}
-
-.metric-card {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  align-items: flex-start;
-}
-
-.metric-icon {
-  color: var(--teal);
-  font-size: 12px;
-  margin-bottom: 2px;
-}
-
-.metric-value {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--text);
-  line-height: 1.1;
-}
-
-.metric-value.metric-hub {
-  font-size: 14px;
-  color: var(--green);
-}
-
-.metric-label {
-  font-size: 10.5px;
-  color: var(--text-faint);
-  line-height: 1.3;
-}
-
-.struct-count {
-  font-size: 10.5px;
-  color: var(--text-dim);
-  line-height: 1.4;
-  padding-left: 25px;
-  margin-top: -6px;
-}
-
-.swatch-tag {
-  display: inline-block;
-  width: 14px;
-  height: 14px;
-  border-radius: 3px;
-  margin-right: 6px;
-  vertical-align: middle;
-}
-
-/* Estructuras: colores por capa */
-.swatch-e1 { background: #4ade80; }
-.swatch-e2 { background: #5b8def; }
-.swatch-e3 { background: #ef9552; }
-.swatch-e4 { background: #a276f2; }
-.swatch-concepto { background: #2fd4c8; }
-.swatch-macro { background: #e94d8c; }
-.swatch-m1 { background: #e94d8c; }
-.swatch-m2 { background: #ef9552; }
-.swatch-m3 { background: #4ade80; }
-.swatch-m4 { background: #5b8def; }
-.swatch-m5 { background: #a276f2; }
-
-.node-cat-tag {
-  font-size: 9px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-  padding: 1px 5px;
-  border-radius: 3px;
-  color: #06110f;
-}
-
 /* NETWORK DIAGRAM + LEGEND */
 .network-viz-wrap {
   display: flex;
@@ -412,18 +328,12 @@ body {
 /* EDGE INFO PANEL (sustento documental) */
 .edge-info-panel {
   display: none;
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  width: 380px;
-  max-height: 70vh;
-  overflow-y: auto;
+  width: 100%;
   background: var(--panel-alt);
   border: 1px solid var(--teal);
   box-shadow: 0 0 14px rgba(47,212,200,0.15);
   border-radius: 8px;
   padding: 14px;
-  z-index: 1000;
 }
 
 .edge-info-panel.visible { display: block; }
@@ -545,33 +455,25 @@ body {
   flex-shrink: 0;
 }
 
-/* Tipos de tensión - Módulo 02 */
-.swatch-incoherence { border-color: #ef4444; }
-.swatch-contradiction { border-color: #f472b6; }
-.swatch-disconnection { border-color: #60a5fa; }
-.swatch-hierarchy { border-color: #c084fc; }
-.swatch-peripheral { border-color: #fbbf24; }
+.swatch-comp   { border-color: #4ade80; }
+.swatch-func   { border-color: #5b8def; }
+.swatch-causal { border-color: #f76fb0; border-top-width: 1.5px; }
+.swatch-cond   { border-color: #ef9552; }
 
-/* Relaciones operacionales — Módulo 03 */
-.swatch-dependencia      { border-color: #ef4444; }
-.swatch-condicionamiento { border-color: #f472b6; }
-.swatch-causal           { border-color: #60a5fa; }
-.swatch-funcional        { border-color: #c084fc; }
-.swatch-complementariedad { border-color: #fbbf24; }
-.swatch-conflicto        { border-color: #f87171; }
-.swatch-jerarquia        { border-color: #a78bfa; }
-.swatch-retroalimentacion { border-color: #10b981; }
-.swatch-regulacion { border-color: #38bdf8; }
+.swatch-operativo { border-color: #ef4444; }
+.swatch-declarado { border-color: #2fd4c8; }
+.swatch-periferico { border-color: #f5c945; border-top-style: dashed; }
+.swatch-macro { border-color: #a276f2; border-top-style: double; border-top-width: 3px; }
+.swatch-evi { border-color: #ffffff; border-top-style: dashed; }
 
-/* Tipos de relación del Módulo 01 */
-.swatch-soporte    { border-color: #ef9552; }
-.swatch-resiliencia { border-color: #5b8def; }
-.swatch-indirecta  { border-color: #8b93a6; border-top-style: dashed; }
-
-.swatch-e1-line { border-color: #4ade80; }
-.swatch-e2-line { border-color: #5b8def; }
-.swatch-e3-line { border-color: #ef9552; }
-.swatch-e4-line { border-color: #a276f2; }
+/* red de macromodelos */
+.swatch-sistema      { border-color: #8aa0c8; }
+.swatch-interno       { border-color: #5b6b85; opacity: .6; }
+.swatch-pertenencia   { border-color: #cbd5e1; border-top-style: dashed; }
+.swatch-compartido    { border-color: #2fd4c8; border-top-style: dashed; }
+.swatch-tension       { border-color: #ef4444; }
+.swatch-articulacion  { border-color: #4ade80; }
+.swatch-tension-art   { border-color: #f76fb0; border-top-style: double; border-top-width: 3px; }
 
 .swatch-solida   { border-color: #ffffff; }
 .swatch-punteada { border-color: #ffffff; border-top-style: dashed; }
@@ -602,8 +504,7 @@ body {
 .ods-node.node-focus-active .node-ring { filter: drop-shadow(0 0 8px #fff); }
 
 .edge-group { cursor: pointer; }
-.edge-group.hidden-edge { visibility: hidden; }
-.ods-node.hidden-node { display: none; }
+.edge-group.hidden-edge { display: none; }
 .edge-group { transition: opacity .2s; }
 .edge-group.edge-focus-dim { opacity: 0.05; }
 
@@ -731,44 +632,24 @@ body {
   color: var(--green);
 }
 
-.alignment-tag.sop {
-  background: rgba(239,149,82,0.15);
-  color: #ef9552;
-}
-
-.alignment-tag.res {
-  background: rgba(91,141,239,0.15);
-  color: #5b8def;
-}
-
-.alignment-tag.ind {
-  background: rgba(139,147,166,0.18);
-  color: #b5bdcf;
-}
-
-.alignment-tag.inco {
+.alignment-tag.oper {
   background: rgba(239,68,68,0.15);
   color: #ef4444;
 }
 
-.alignment-tag.contr {
-  background: rgba(247,111,176,0.15);
-  color: #f76fb0;
-}
-
-.alignment-tag.desc {
-  background: rgba(91,141,239,0.15);
-  color: #5b8def;
-}
-
-.alignment-tag.jer {
-  background: rgba(162,118,242,0.15);
-  color: #a276f2;
+.alignment-tag.decl {
+  background: rgba(47,212,200,0.15);
+  color: #2fd4c8;
 }
 
 .alignment-tag.peri {
   background: rgba(245,201,69,0.15);
   color: #c9a01a;
+}
+
+.alignment-tag.tens {
+  background: rgba(247,111,176,0.15);
+  color: #f76fb0;
 }
 
 .matrix-row.row-highlight {
@@ -780,6 +661,42 @@ body {
   background: rgba(245,201,69,0.15);
   color: var(--yellow);
 }
+
+.alignment-tag.tag-sistema {
+  background: rgba(138,160,200,0.15);
+  color: #8aa0c8;
+}
+
+.alignment-tag.tag-tension {
+  background: rgba(239,68,68,0.15);
+  color: #ef4444;
+}
+
+.alignment-tag.tag-articulacion {
+  background: rgba(74,222,128,0.15);
+  color: #4ade80;
+}
+
+.alignment-tag.tag-tension-art {
+  background: rgba(247,111,176,0.15);
+  color: #f76fb0;
+}
+
+.source-disclaimer {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-dim);
+  background: var(--panel-alt);
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin: 0 0 16px;
+}
+
+.source-disclaimer i { color: var(--yellow); margin-top: 2px; }
 
 .conflict-tag {
   padding: 4px 8px;
@@ -1000,17 +917,9 @@ footer {
 footer span { color: var(--teal); }
 
 /* RESPONSIVE */
-@media (max-width: 1400px) {
-  .network-metrics { grid-template-columns: repeat(4, 1fr); }
-}
-
 @media (max-width: 1200px) {
   .ods-insight-stats { grid-template-columns: repeat(2, 1fr); }
   .synergies-grid { grid-template-columns: 1fr; }
-}
-
-@media (max-width: 768px) {
-  .network-metrics { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 900px) {
