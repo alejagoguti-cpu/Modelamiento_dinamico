@@ -1,97 +1,256 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RAPOT · Favoritos</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="stylesheet" href="favoritos.css">
-</head>
-<body>
-<div class="app">
+/* ================= POPUP DE REDES POR ESTRUCTURA ================= */
 
-  <aside class="sidebar">
-    <div class="brand">
-      <div class="mark"><i class="fa-solid fa-diagram-project"></i></div>
-      <span>RAPOT</span>
-    </div>
+.redes-modal-overlay{
+  position: fixed;
+  inset: 0;
+  background: rgba(4,6,11,0.82);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20000;
+  padding: 24px;
+  animation: redes-fade-in .15s ease;
+}
 
-    <div class="nav-group">
-      <a href="dashboard.html" class="nav-item "><i class="fa-solid fa-house"></i> Dashboard</a>
-    </div>
+.redes-modal-overlay[hidden]{ display: none; }
 
-    <div class="nav-group">
-      <div class="nav-label">MÓDULOS</div>
-      <a href="modulo-01.html" class="nav-item "><span class="num">01</span><i class="fa-solid fa-diagram-project"></i> Construir la Red</a>
-      <a href="modulo-02.html" class="nav-item "><span class="num">02</span><i class="fa-solid fa-chart-simple"></i> Medir la Red</a>
-      <a href="modulo-03.html" class="nav-item "><span class="num">03</span><i class="fa-solid fa-eye"></i> Discurso vs Realidad</a>
-      <a href="modulo-04.html" class="nav-item "><span class="num">04</span><i class="fa-solid fa-bullseye"></i> Macromodelos</a>
-      <a href="modulo-05.html" class="nav-item "><span class="num">05</span><i class="fa-solid fa-magnifying-glass"></i> Lo que no está</a>
-      <a href="modulo-06.html" class="nav-item "><span class="num">06</span><i class="fa-solid fa-earth-americas"></i> POT ↔ ODS</a>
-      <a href="modulo-07.html" class="nav-item "><span class="num">07</span><i class="fa-solid fa-flask"></i> Simulador</a>
-      <a href="modulo-08.html" class="nav-item "><span class="num">08</span><i class="fa-solid fa-city"></i> Modelo Propio</a>
-    </div>
+@keyframes redes-fade-in{
+  from{ opacity: 0; }
+  to{ opacity: 1; }
+}
 
-    <div class="nav-group">
-      <div class="nav-label">GESTIÓN</div>
-      <a href="proyectos.html" class="nav-item "><i class="fa-solid fa-folder"></i> Proyectos</a>
-      <a href="fuentes.html" class="nav-item "><i class="fa-solid fa-file-lines"></i> Fuentes y Documentos</a>
-      <a href="favoritos.html" class="nav-item active"><i class="fa-solid fa-star"></i> Favoritos</a>
-      <a href="reportes.html" class="nav-item "><i class="fa-solid fa-chart-pie"></i> Reportes</a>
-      <a href="configuracion.html" class="nav-item "><i class="fa-solid fa-gear"></i> Configuración</a>
-    </div>
+.redes-modal{
+  position: relative;
+  width: min(1100px, 100%);
+  max-height: 92vh;
+  overflow: auto;
+  background: radial-gradient(1200px 600px at 20% 0%, rgba(255,255,255,0.04), transparent 60%), #0b0f18;
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 16px;
+  padding: 26px 28px 30px;
+  box-shadow: 0 30px 90px rgba(0,0,0,0.55);
+  animation: redes-pop-in .18s ease;
+}
 
-    <div class="sidebar-footer">
-      <div class="avatar-sm">EU</div>
-      <div class="user-meta">
-        <div class="name">Equipo Urbano</div>
-        <div class="role">Administrador</div>
-      </div>
-      <a href="demo.html" class="logout-btn" title="Cerrar sesión"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
-    </div>
-  </aside>
+@keyframes redes-pop-in{
+  from{ opacity: 0; transform: translateY(10px) scale(.97); }
+  to{ opacity: 1; transform: none; }
+}
 
-  <!-- MAIN -->
-  <main class="main">
+.redes-modal-close{
+  cursor: pointer;
+  position: absolute;
+  top: 16px; right: 18px;
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: var(--text-dim, #9aa1b3);
+  font-size: 14px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .15s, color .15s;
+}
+.redes-modal-close:hover{ background: rgba(255,255,255,0.1); color: var(--text, #eef0f6); }
 
-    <div class="topbar">
-      <h1>Favoritos</h1>
-      <div class="topbar-actions">
-        <div class="search-box"><i class="fa-solid fa-magnifying-glass"></i> Buscar en el sistema...</div>
-        <div class="icon-btn"><i class="fa-regular fa-bell"></i><span class="dot"></span></div>
-        <div class="icon-btn"><i class="fa-regular fa-circle-question"></i></div>
-        <div class="avatar-sm">EU</div>
-      </div>
-    </div>
+.redes-modal-header{
+  margin-bottom: 6px;
+  padding-right: 40px;
+}
 
-    <div class="welcome">
-      <h2>Favoritos</h2>
-      <p>Accede rápido a los conceptos, relaciones y reportes que has guardado.</p>
-    </div>
+.redes-modal-header h2{
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.2px;
+  color: var(--redes-accent, #34d399);
+}
 
-    <div class="panel" style="text-align:center; padding:60px 30px;">
-      <div style="width:56px;height:56px;border-radius:14px;background:rgba(47,212,200,0.12);color:var(--teal);
-                  display:flex;align-items:center;justify-content:center;font-size:22px;margin:0 auto 18px;">
-        <i class="fa-solid fa-star"></i>
-      </div>
-      <h3 style="font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;margin-bottom:8px;">
-        Este módulo está en construcción
-      </h3>
-      <p style="color:var(--text-dim);font-size:13.5px;max-width:420px;margin:0 auto 22px;">
-        Estamos trabajando en esta sección. Mientras tanto puedes volver al Dashboard o explorar el Módulo 01.
-      </p>
-      <a href="dashboard.html" class="module-btn primary" style="display:inline-flex;max-width:200px;margin:0 auto;">
-        Volver al Dashboard <i class="fa-solid fa-arrow-right"></i>
-      </a>
-    </div>
+.redes-modal-subtitle{
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  color: var(--text-faint, #6b7284);
+  margin-top: 4px;
+}
 
-    <footer>
-      "No se trata de representar la ciudad, sino de comprenderla para transformarla." — <span>Equipo POT Reverse Engineering</span>
-    </footer>
+.redes-modal-body{
+  display: grid;
+  grid-template-columns: 1fr 230px;
+  gap: 22px;
+  margin-top: 18px;
+  align-items: start;
+}
 
-  </main>
-</div>
-</body>
-</html>
+.redes-network-svg{
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+/* ---- nodos ---- */
+.redes-node{
+  cursor: default;
+}
+
+.redes-node circle{
+  fill: rgba(10,14,23,0.94);
+  stroke-width: 3;
+  transition: opacity .18s ease;
+}
+
+.redes-node.is-primary circle{
+  stroke-width: 4;
+}
+
+.redes-node text{
+  fill: var(--text, #eef0f6);
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+.redes-node .redes-node-label{
+  font-size: 9.5px;
+  line-height: 1.15;
+}
+
+.redes-node .redes-node-icon-fo{
+  overflow: visible;
+  pointer-events: none;
+}
+
+.redes-node .redes-node-icon{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+}
+
+.redes-nodes.dim-secondary .redes-node:not(.is-primary){
+  opacity: 0.35;
+}
+
+/* colores por color de acento del nodo (verde/morado/azul/amarillo) */
+.redes-node[data-accent="green"]  circle{ stroke: #34d399; filter: drop-shadow(0 0 14px rgba(52,211,153,0.5)); }
+.redes-node[data-accent="green"]  .redes-node-icon{ color: #34d399; }
+.redes-node[data-accent="purple"] circle{ stroke: #b06bf7; filter: drop-shadow(0 0 14px rgba(176,107,247,0.55)); }
+.redes-node[data-accent="purple"] .redes-node-icon{ color: #b06bf7; }
+.redes-node[data-accent="blue"]   circle{ stroke: #3b82f6; filter: drop-shadow(0 0 14px rgba(59,130,246,0.55)); }
+.redes-node[data-accent="blue"]   .redes-node-icon{ color: #3b82f6; }
+.redes-node[data-accent="yellow"] circle{ stroke: #f5c945; filter: drop-shadow(0 0 14px rgba(245,201,69,0.55)); }
+.redes-node[data-accent="yellow"] .redes-node-icon{ color: #f5c945; }
+
+/* ---- conexiones ---- */
+.redes-edges{ transition: opacity .18s ease; }
+.redes-edges.is-hidden{ opacity: 0; pointer-events: none; }
+
+.redes-edge-line{ fill: none; stroke-linecap: round; }
+.redes-edge-arrow{ }
+
+.redes-edge-directa .redes-edge-line{ stroke: rgba(255,255,255,0.55); stroke-width: 1.6; }
+.redes-edge-directa .redes-edge-arrow{ fill: rgba(255,255,255,0.55); }
+
+.redes-edge-indirecta .redes-edge-line{ stroke: rgba(255,255,255,0.45); stroke-width: 1.4; stroke-dasharray: 4 4; }
+.redes-edge-indirecta .redes-edge-arrow{ fill: rgba(255,255,255,0.45); }
+
+.redes-edge-soporte .redes-edge-line{ stroke: #f5923e; stroke-width: 1.7; }
+.redes-edge-soporte .redes-edge-arrow{ fill: #f5923e; }
+.redes-edge-soporte.is-dashed .redes-edge-line{ stroke-dasharray: 4 4; stroke-width: 1.4; }
+
+.redes-edge-resiliencia .redes-edge-line{ stroke: #3b82f6; stroke-width: 1.7; }
+.redes-edge-resiliencia .redes-edge-arrow{ fill: #3b82f6; }
+.redes-edge-resiliencia.is-dashed .redes-edge-line{ stroke-dasharray: 4 4; stroke-width: 1.4; }
+
+/* ---- panel lateral ---- */
+.redes-side-panel{
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.redes-legend-card, .redes-conventions-card{
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 12px;
+  padding: 14px 16px 16px;
+}
+
+.redes-legend-card-title{
+  display: block;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--text, #eef0f6);
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.redes-toggle-row{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 12px;
+  color: var(--text-dim, #9aa1b3);
+  margin-bottom: 10px;
+}
+.redes-toggle-row:last-child{ margin-bottom: 0; }
+
+.redes-toggle{
+  cursor: pointer;
+  position: relative;
+  width: 34px;
+  height: 19px;
+  border-radius: 999px;
+  border: none;
+  background: rgba(255,255,255,0.14);
+  transition: background .15s ease;
+  flex-shrink: 0;
+}
+
+.redes-toggle .redes-toggle-knob{
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 15px; height: 15px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform .15s ease;
+}
+
+.redes-toggle.is-on{ background: #34d399; }
+.redes-toggle.is-on .redes-toggle-knob{ transform: translateX(15px); }
+
+.redes-convention-item{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  color: var(--text-dim, #9aa1b3);
+  margin-bottom: 9px;
+}
+.redes-convention-item:last-child{ margin-bottom: 0; }
+
+.redes-swatch{
+  width: 24px;
+  height: 0;
+  border-top: 2px solid;
+  flex-shrink: 0;
+}
+
+.redes-swatch-directa{ border-top-style: solid; border-top-color: rgba(255,255,255,0.6); }
+.redes-swatch-indirecta{ border-top-style: dashed; border-top-color: rgba(255,255,255,0.5); }
+.redes-swatch-soporte{ border-top-style: solid; border-top-color: #f5923e; }
+.redes-swatch-resiliencia{ border-top-style: solid; border-top-color: #3b82f6; }
+
+@media (max-width: 760px){
+  .redes-modal-body{ grid-template-columns: 1fr; }
+  .redes-side-panel{ flex-direction: row; flex-wrap: wrap; }
+  .redes-legend-card, .redes-conventions-card{ flex: 1 1 220px; }
+}
