@@ -2230,21 +2230,34 @@ function computeLayout() {
   const ids = Object.keys(layout);
   const n = ids.length;
   const pos = {};
-  ids.forEach(id => { pos[id] = { x: layout[id].x, y: layout[id].y }; });
+  const sysOf = {};
+  ids.forEach((id, i) => {
+    // pequeño jitter inicial para no arrancar con nodos exactamente
+    // simétricos/pegados, lo que ayuda a que la relajación encuentre un
+    // acomodo más limpio en vez de quedarse atascada en el layout original
+    const jx = ((i * 37) % 23 - 11) * 2.1;
+    const jy = ((i * 53) % 19 - 9) * 2.1;
+    pos[id] = { x: layout[id].x + jx, y: layout[id].y + jy };
+    sysOf[id] = model.concepts[id].sys;
+  });
 
   const edges = model.relations.map(r => ({ a: r.from, b: r.to }));
 
-  const ITER = 260;
-  const REPEL = 60000;          // separa cualquier par de nodos que se acerque demasiado
-  const SPRING = 0.018;         // mantiene cerca a los nodos conectados
-  const GAP = 40;               // aire mínimo extra entre los bordes de dos nodos
-  const CENTER_PULL = 0.002;    // atracción muy suave al centro global
+  const ITER = 420;
+  const REPEL = 145000;          // separa cualquier par de nodos que se acerque demasiado
+  const SPRING = 0.016;          // mantiene cerca a los nodos conectados
+  const GAP = 74;                // aire mínimo extra entre los bordes de dos nodos
+  const CENTER_PULL = 0.0016;    // atracción muy suave al centro global
+  const CROSS_SYS_PUSH = 5.2e6;  // empuje adicional de largo alcance entre estructuras distintas
+  const CLUSTER_PULL = 0.010;    // atracción suave hacia el centroide de la propia estructura
 
   for (let it = 0; it < ITER; it++) {
     const force = {};
     ids.forEach(id => (force[id] = { x: 0, y: 0 }));
 
-    // 1) repulsión entre todos los pares: evita solapes entre nodos
+    // 1) repulsión entre todos los pares: evita solapes entre nodos, y
+    //    empuja un poco más fuerte entre nodos de estructuras distintas
+    //    para que cada estructura se distinga como un grupo aparte
     for (let i = 0; i < n; i++) {
       const idA = ids[i], a = pos[idA];
       for (let j = i + 1; j < n; j++) {
@@ -2252,12 +2265,23 @@ function computeLayout() {
         const dx = a.x - b.x, dy = a.y - b.y;
         const dist = Math.hypot(dx, dy) || 0.001;
         const minDist = nodeR[idA] + nodeR[idB] + GAP;
+        const sameSys = sysOf[idA] === sysOf[idB];
+
         if (dist < minDist * 2.2) {
           const overlap = Math.max(0, minDist - dist) + 1;
           const f = (REPEL * overlap) / (dist * dist + 500);
           const ux = dx / dist, uy = dy / dist;
           force[idA].x += ux * f; force[idA].y += uy * f;
           force[idB].x -= ux * f; force[idB].y -= uy * f;
+        }
+
+        // empuje suave de largo alcance solo entre estructuras distintas,
+        // para separar visualmente los "territorios" de cada color
+        if (!sameSys) {
+          const fSep = CROSS_SYS_PUSH / (dist * dist + 9000);
+          const ux = dx / dist, uy = dy / dist;
+          force[idA].x += ux * fSep; force[idA].y += uy * fSep;
+          force[idB].x -= ux * fSep; force[idB].y -= uy * fSep;
         }
       }
     }
@@ -2267,14 +2291,31 @@ function computeLayout() {
       const a = pos[idA], b = pos[idB];
       const dx = b.x - a.x, dy = b.y - a.y;
       const dist = Math.hypot(dx, dy) || 0.001;
-      const rest = nodeR[idA] + nodeR[idB] + 130;
+      const rest = nodeR[idA] + nodeR[idB] + 150;
       const f = SPRING * (dist - rest);
       const ux = dx / dist, uy = dy / dist;
       force[idA].x += ux * f; force[idA].y += uy * f;
       force[idB].x -= ux * f; force[idB].y -= uy * f;
     });
 
-    // 3) atracción suave al centro para que la red no se disperse sin límite
+    // 3) atracción suave al centroide de la propia estructura: agrupa
+    //    visualmente cada color sin volverlo rígido (los resortes y la
+    //    repulsión de arriba siguen mandando en la forma final)
+    const centroid = {};
+    const count = {};
+    SYS.forEach(s => { centroid[s] = { x: 0, y: 0 }; count[s] = 0; });
+    ids.forEach(id => {
+      const s = sysOf[id];
+      centroid[s].x += pos[id].x; centroid[s].y += pos[id].y; count[s]++;
+    });
+    SYS.forEach(s => { if (count[s]) { centroid[s].x /= count[s]; centroid[s].y /= count[s]; } });
+    ids.forEach(id => {
+      const s = sysOf[id];
+      force[id].x += (centroid[s].x - pos[id].x) * CLUSTER_PULL;
+      force[id].y += (centroid[s].y - pos[id].y) * CLUSTER_PULL;
+    });
+
+    // 4) atracción suave al centro para que la red no se disperse sin límite
     ids.forEach(id => {
       force[id].x += -pos[id].x * CENTER_PULL;
       force[id].y += -pos[id].y * CENTER_PULL;
@@ -2294,7 +2335,7 @@ function computeLayout() {
   // relajada (puede haber quedado un poco más grande que el original)
   let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
   ids.forEach(id => {
-    const p = pos[id], r = nodeR[id] + 90; // margen para las etiquetas
+    const p = pos[id], r = nodeR[id] + 110; // margen para las etiquetas
     minX = Math.min(minX, p.x - r); maxX = Math.max(maxX, p.x + r);
     minY = Math.min(minY, p.y - r); maxY = Math.max(maxY, p.y + r);
   });
@@ -2895,8 +2936,7 @@ function updateNodeImpact() {
   if (!c || !box) return;
   const total = model.relations.length;
   const pct = Math.round((c.rels.length / total) * 100);
-  box.innerHTML = `Este concepto participa en <b>${c.rels.length}</b> de las <b>${total}</b>
-    relaciones documentadas (<b>${pct}%</b>). Al apagarlo, esas relaciones desaparecen de la red.`;
+  box.innerHTML = `<b>${c.rels.length}</b> de <b>${total}</b> relaciones (<b>${pct}%</b>) se pierden al apagarlo.`;
 }
 // ---------------------------------------------------------------------
 // POP-UP DE APERTURA: HALLAZGO PRINCIPAL
