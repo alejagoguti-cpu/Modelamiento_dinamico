@@ -5,21 +5,21 @@ const resetBtn = document.getElementById('resetBtn');
 const NS = 'http://www.w3.org/2000/svg';
 
 const ambient = {
-  id: 'ambientalista', x: 285, y: 365, r: 118, color: '#37d477',
+  id: 'ambientalista', x: 270, y: 365, r: 170, color: '#37d477',
   concepts: [
-    ['Humedales',185,190], ['Ríos',105,310], ['Quebradas',105,445],
-    ['Cerros',185,555], ['Áreas protegidas',325,585], ['Coberturas vegetales',405,470],
-    ['Resiliencia climática',430,315], ['Estructura ecológica',370,185]
+    ['Humedales',270,235], ['Ríos',170,300], ['Quebradas',145,405],
+    ['Cerros',210,490], ['Áreas protegidas',315,500], ['Coberturas vegetales',385,420],
+    ['Resiliencia climática',390,315], ['Estructura ecológica',330,245]
   ]
 };
 
 const humanSystems = [
-  {id:'socioeconomico', title:'SISTEMA', subtitle:'SOCIOECONÓMICO', x:825, y:190, r:82, color:'#f5c945', concepts:['Empleo','Comercio','Actividades productivas','Vivienda','Servicios empresariales']},
-  {id:'gobernanza', title:'SISTEMA DE', subtitle:'GOBERNANZA', x:980, y:365, r:82, color:'#5b8def', concepts:['Participación','Gestión pública','Coordinación institucional','Instrumentos de planificación','Actores públicos']},
-  {id:'funcionalista', title:'SISTEMA', subtitle:'FUNCIONALISTA', x:825, y:540, r:82, color:'#a276f2', concepts:['Red vial','Transporte público','Ciclorutas','Infraestructura','Accesibilidad']}
+  {id:'socioeconomico', title:'SISTEMA', subtitle:'SOCIOECONÓMICO', x:820, y:220, r:72, color:'#f5c945', concepts:['Empleo','Comercio','Actividades productivas','Vivienda','Servicios empresariales']},
+  {id:'gobernanza', title:'SISTEMA DE', subtitle:'GOBERNANZA', x:965, y:365, r:72, color:'#5b8def', concepts:['Participación','Gestión pública','Coordinación institucional','Instrumentos de planificación','Actores públicos']},
+  {id:'funcionalista', title:'SISTEMA', subtitle:'FUNCIONALISTA', x:820, y:510, r:72, color:'#a276f2', concepts:['Red vial','Transporte público','Ciclorutas','Infraestructura','Accesibilidad']}
 ];
 
-const human = {id:'humanista', x:620, y:365, r:145, color:'#ff9567'};
+const human = {id:'humanista', x:820, y:365, r:285, color:'#ff9567'};
 const allConcepts = new Map();
 let activeSystem = null;
 
@@ -82,12 +82,12 @@ function drawHumanSystems(){
     text(system.x,system.y+29,'clic para explorar','node-subtitle',g);
     system.concepts.forEach((name,index)=>{
       const angle=(-145 + index*72)*Math.PI/180;
-      const cx=system.x+Math.cos(angle)*185;
-      const cy=system.y+Math.sin(angle)*135;
+      const cx=system.x+Math.cos(angle)*88;
+      const cy=system.y+Math.sin(angle)*66;
       const cg=el('g',{class:'svg-node concept-node', 'data-parent':system.id});
       cg.style.color=system.color;
       line(system.x,system.y,cx,cy,'edge cross',cg);
-      circleNode(cx,cy,27,system.color,'',cg);
+      circleNode(cx,cy,22,system.color,'',cg);
       text(cx,cy+4,name,'concept-label',cg);
       allConcepts.set(`${system.id}-${index}`,{node:cg,name,system});
     });
@@ -126,7 +126,6 @@ function drawCrossRelations(){
 function render(){
   svg.innerHTML='';
   drawAmbientNetwork();
-  drawCrossRelations();
   drawAmbient();
   drawHuman();
   drawHumanSystems();
