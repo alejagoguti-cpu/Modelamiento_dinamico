@@ -1,439 +1,321 @@
-:root{
-  --bg: #0a0e17;
-  --text: #eef0f6;
-  --text-dim: #9aa1b3;
-  --text-faint: #6b7284;
-  --teal: #2fd4c8;
-  --green: #34d399;
-  --purple: #b06bf7;
-  --pink: #f43f8e;
-  --blue: #3b82f6;
-  --yellow: #f5c945;
-}
+// ===================== POPUPS DE RED POR ESTRUCTURA (EEP / EFC / ESECI / EIP) =====================
+// Archivo independiente de scripts.js: solo agrega la funcionalidad de "click en nodo -> ver su red".
+(function initRedesPopup(){
 
-*{ box-sizing:border-box; margin:0; padding:0; }
+  // ---------- datos de cada red (nodos e iconos aproximados a partir de las capturas) ----------
+  const NETWORKS = {
 
-body{
-  background: var(--bg);
-  color: var(--text);
-  font-family:'Inter', sans-serif;
-  -webkit-font-smoothing:antialiased;
-}
+    // -------- verde: Estructura Ecológica Principal --------
+    green: {
+      title: "Estructura Ecológica Principal",
+      count: 14,
+      accent: "green",
+      nodes: [
+        { id:"corredores",  label:["Corredores","montañosos"],            icon:"fa-mountain",              x:471, y:53,  r:34 },
+        { id:"cerros",      label:["Cerros","Orientales"],                icon:"fa-mountain",              x:644, y:37,  r:34 },
+        { id:"rios",        label:["Ríos"],                               icon:"fa-water",                 x:152, y:159, r:46, primary:true },
+        { id:"quebradas",   label:["Quebradas"],                          icon:"fa-water",                 x:341, y:149, r:30 },
+        { id:"protegidas",  label:["Áreas","protegidas"],                 icon:"fa-shield-halved",         x:605, y:152, r:38 },
+        { id:"bosques",     label:["Bosques","urbanos"],                  icon:"fa-tree",                  x:156, y:285, r:34 },
+        { id:"resiliencia", label:["Áreas de","resiliencia","climática"], icon:"fa-temperature-half",      x:269, y:289, r:36 },
+        { id:"humedales",   label:["Humedales"],                         icon:"fa-droplet",               x:449, y:272, r:58, primary:true },
+        { id:"parquesmnt",  label:["Parques","ecológicos","de montaña"],  icon:"fa-mountain",              x:705, y:248, r:40 },
+        { id:"paramos",     label:["Complejos de","páramos"],             icon:"fa-mountain",              x:96,  y:463, r:32 },
+        { id:"coberturas",  label:["Coberturas","vegetales"],             icon:"fa-seedling",              x:228, y:429, r:50, primary:true },
+        { id:"parquesborde",label:["Parques","de borde"],                 icon:"fa-house-chimney",         x:373, y:483, r:30 },
+        { id:"reservas",    label:["Reservas","forestales"],              icon:"fa-tree",                  x:606, y:392, r:38 },
+        { id:"paisajes",    label:["Paisajes","sostenibles"],             icon:"fa-hands-holding-circle",  x:236, y:559, r:34 }
+      ],
+      edges: [
+        { from:"corredores",  to:"rios",         kind:"soporte" },
+        { from:"cerros",      to:"protegidas",   kind:"soporte" },
+        { from:"cerros",      to:"humedales",    kind:"soporte" },
+        { from:"quebradas",   to:"humedales",    kind:"soporte" },
+        { from:"rios",        to:"humedales",    kind:"soporte" },
+        { from:"bosques",     to:"rios",         kind:"soporte" },
+        { from:"bosques",     to:"coberturas",   kind:"soporte" },
+        { from:"paramos",     to:"rios",         kind:"soporte" },
+        { from:"resiliencia", to:"coberturas",   kind:"resiliencia" },
+        { from:"reservas",    to:"coberturas",   kind:"resiliencia" },
+        { from:"paramos",     to:"paisajes",     kind:"soporte", dashed:true, directed:false },
+        { from:"protegidas",  to:"parquesmnt",   kind:"soporte", dashed:true, directed:false },
+        { from:"protegidas",  to:"humedales",    kind:"soporte", dashed:true, directed:false },
+        { from:"humedales",   to:"reservas",     kind:"soporte", dashed:true, directed:false },
+        { from:"humedales",   to:"parquesborde", kind:"soporte", dashed:true, directed:false },
+        { from:"coberturas",  to:"parquesborde", kind:"soporte", dashed:true, directed:false }
+      ]
+    },
 
-/* ================= NAVBAR ================= */
-.navbar{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:24px;
-  padding: 20px 6vw;
-  border-bottom:1px solid rgba(255,255,255,0.08);
-}
+    // -------- azul: Estructura Funcional y del Cuidado --------
+    blue: {
+      title: "Estructura Funcional y del Cuidado",
+      count: 16,
+      accent: "blue",
+      nodes: [
+        { id:"cuidado",     label:["Servicios de","cuidado"],       icon:"fa-heart",              x:428, y:76,  r:34 },
+        { id:"equipamient", label:["Equipamientos"],                icon:"fa-building",           x:688, y:83,  r:42 },
+        { id:"servpub",     label:["Servicios","públicos"],         icon:"fa-bus",                x:148, y:144, r:32 },
+        { id:"ciclorrutas", label:["Ciclorrutas"],                  icon:"fa-bicycle",            x:93,  y:173, r:34 },
+        { id:"servsoc",     label:["Servicios","sociales"],         icon:"fa-hand-holding-heart", x:572, y:195, r:36 },
+        { id:"vivienda",    label:["Vivienda"],                     icon:"fa-house",              x:428, y:275, r:58, primary:true },
+        { id:"transporte",  label:["Transporte","público"],         icon:"fa-bus",                x:187, y:317, r:36 },
+        { id:"parques",     label:["Parques"],                      icon:"fa-tree",               x:282, y:410, r:30 },
+        { id:"redvial",     label:["Red vial"],                     icon:"fa-road",               x:688, y:373, r:34 },
+        { id:"manzanas",    label:["Manzanas del","Cuidado"],       icon:"fa-border-all",         x:394, y:472, r:50, primary:true },
+        { id:"corredoresv", label:["Corredores","verdes"],          icon:"fa-leaf",               x:162, y:500, r:34 }
+      ],
+      edges: [
+        { from:"cuidado",     to:"equipamient", kind:"soporte", dashed:true, directed:false },
+        { from:"servpub",     to:"vivienda",    kind:"soporte", dashed:true },
+        { from:"ciclorrutas", to:"vivienda",    kind:"resiliencia", dashed:true },
+        { from:"transporte",  to:"vivienda",    kind:"soporte", dashed:true },
+        { from:"servsoc",     to:"equipamient", kind:"soporte", dashed:true, directed:false },
+        { from:"equipamient", to:"vivienda",    kind:"soporte" },
+        { from:"manzanas",    to:"equipamient", kind:"soporte" },
+        { from:"redvial",     to:"equipamient", kind:"soporte" },
+        { from:"corredoresv", to:"transporte",  kind:"soporte" },
+        { from:"transporte",  to:"redvial",     kind:"soporte" },
+        { from:"parques",     to:"manzanas",    kind:"directa", directed:false }
+      ]
+    },
 
-.navbar .logo{
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
+    // -------- amarillo: Estructura Socioeconómica, Creativa y de Innovación --------
+    yellow: {
+      title: "Estructura Socioeconómica, Creativa y de Innovación",
+      count: 10,
+      accent: "yellow",
+      nodes: [
+        { id:"distrito",  label:["Distrito Centro","Tecnológico e","Innovación"], icon:"fa-diagram-project", x:320, y:114, r:38 },
+        { id:"abastec",   label:["Centros de","abastecimiento"],                  icon:"fa-truck",           x:571, y:96,  r:32 },
+        { id:"empresa",   label:["Servicios","empresariales"],                    icon:"fa-briefcase",       x:88,  y:184, r:50, primary:true },
+        { id:"plazas",    label:["Plazas de","mercado"],                          icon:"fa-store",           x:267, y:258, r:32 },
+        { id:"industria", label:["Zonas","industriales"],                        icon:"fa-industry",        x:678, y:245, r:52, primary:true },
+        { id:"educacion", label:["Sistema de","educación"],                      icon:"fa-graduation-cap",  x:407, y:310, r:46, primary:true },
+        { id:"turismo",   label:["Zonas interés","turístico"],                    icon:"fa-map",             x:676, y:386, r:34 },
+        { id:"financier", label:["Centros","financieros"],                       icon:"fa-landmark",        x:97,  y:444, r:34 },
+        { id:"artesanal", label:["Producción","artesanal"],                      icon:"fa-gem",             x:237, y:551, r:34 }
+      ],
+      edges: [
+        { from:"empresa",   to:"distrito",  kind:"soporte" },
+        { from:"empresa",   to:"plazas",    kind:"soporte" },
+        { from:"empresa",   to:"educacion", kind:"soporte" },
+        { from:"empresa",   to:"financier", kind:"soporte" },
+        { from:"industria", to:"distrito",  kind:"soporte", dashed:true },
+        { from:"industria", to:"plazas",    kind:"soporte" },
+        { from:"industria", to:"educacion", kind:"soporte" },
+        { from:"industria", to:"turismo",   kind:"soporte" },
+        { from:"distrito",  to:"abastec",   kind:"indirecta", dashed:true, directed:false },
+        { from:"educacion", to:"artesanal", kind:"soporte" },
+        { from:"empresa",   to:"artesanal", kind:"soporte" }
+      ]
+    },
 
-.navbar .logo .icon{
-  width:34px;
-  height:34px;
-  flex-shrink:0;
-}
+    // -------- morado: Estructura Integradora de Patrimonios --------
+    purple: {
+      title: "Estructura Integradora de Patrimonios",
+      count: 6,
+      accent: "purple",
+      nodes: [
+        { id:"sagrados",     label:["Sistema de","Sitios sagrados"], icon:"fa-place-of-worship", x:159, y:161, r:38 },
+        { id:"arqueologico", label:["Patrimonio","arqueológico"],    icon:"fa-scroll",           x:441, y:164, r:36 },
+        { id:"inmaterial",   label:["Patrimonio","inmaterial"],      icon:"fa-masks-theater",    x:656, y:213, r:38 },
+        { id:"material",     label:["Patrimonio","material"],        icon:"fa-landmark",         x:515, y:368, r:38 },
+        { id:"natural",      label:["Patrimonio","natural"],         icon:"fa-tree",             x:194, y:426, r:54, primary:true }
+      ],
+      edges: [
+        { from:"arqueologico", to:"inmaterial", kind:"resiliencia" },
+        { from:"arqueologico", to:"material",   kind:"resiliencia" },
+        { from:"sagrados",     to:"natural",    kind:"soporte" },
+        { from:"sagrados",     to:"material",   kind:"soporte" },
+        { from:"arqueologico", to:"natural",    kind:"soporte" },
+        { from:"inmaterial",   to:"natural",    kind:"soporte" },
+        { from:"inmaterial",   to:"material",   kind:"soporte" },
+        { from:"material",     to:"natural",    kind:"soporte", directed:false }
+      ]
+    }
+  };
 
-.navbar .logo .icon circle:not(:first-child){
-  fill: var(--teal);
-  filter: drop-shadow(0 0 6px rgba(47,212,200,0.7));
-}
+  const SVG_NS = "http://www.w3.org/2000/svg";
+  const overlay   = document.getElementById("redes-modal-overlay");
+  if (!overlay) return;
+  const modal     = overlay.querySelector(".redes-modal");
+  const titleEl   = overlay.querySelector("#redes-modal-title");
+  const subtitleEl= overlay.querySelector(".redes-modal-subtitle");
+  const svg       = overlay.querySelector(".redes-network-svg");
+  const edgesG    = overlay.querySelector(".redes-edges");
+  const nodesG    = overlay.querySelector(".redes-nodes");
+  const closeBtn  = overlay.querySelector(".redes-modal-close");
+  const toggleNodesBtn = overlay.querySelector('[data-toggle="nodes"]');
+  const toggleEdgesBtn = overlay.querySelector('[data-toggle="edges"]');
 
-.navbar .logo .text h1{
-  font-family:'Space Grotesk', sans-serif;
-  font-size:17px;
-  font-weight:800;
-  letter-spacing:0.5px;
-  line-height:1.15;
-}
-
-.navbar .logo .text p{
-  font-size:10px;
-  font-weight:600;
-  letter-spacing:1.5px;
-  color: var(--text-faint);
-}
-
-.navbar .menu{
-  display:flex;
-  gap:28px;
-  list-style:none;
-}
-
-.navbar .menu li{
-  cursor:pointer;
-  font-size:13px;
-  font-weight:600;
-  letter-spacing:0.3px;
-  color: var(--text-dim);
-  transition: color .15s;
-}
-
-.navbar .menu li:hover{ color: var(--text); }
-.navbar .menu li.active{ color: var(--teal); }
-
-.navbar .demo{
-  cursor:pointer;
-  background: transparent;
-  color: var(--text);
-  border:1px solid rgba(255,255,255,0.18);
-  border-radius:8px;
-  padding:10px 18px;
-  font-size:12.5px;
-  font-weight:700;
-  letter-spacing:0.3px;
-  white-space:nowrap;
-  transition: background .15s, border-color .15s;
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  text-decoration:none;
-}
-
-.navbar .demo:hover{
-  background: rgba(255,255,255,0.06);
-  border-color: rgba(255,255,255,0.32);
-}
-
-@media (max-width: 768px){
-  .navbar{
-    flex-direction:column;
-    align-items:flex-start;
-    gap:16px;
+  function el(tag, attrs){
+    const node = document.createElementNS(SVG_NS, tag);
+    Object.keys(attrs || {}).forEach((k) => node.setAttribute(k, attrs[k]));
+    return node;
   }
-  .navbar .menu{ flex-wrap:wrap; gap:16px; }
-}
 
-/* ================= HERO ================= */
-.hero{
-  min-height:calc(100vh - 90px);
-  display:flex;
-  align-items:center;
-  padding: 60px 5vw;
-}
-
-.hero-inner{
-  display:grid;
-  grid-template-columns: minmax(320px, 560px) 1fr;
-  gap: 40px;
-  max-width:1440px;
-  margin:0 auto;
-  width:100%;
-  align-items:center;
-}
-
-/* ---------- COPY ---------- */
-.hero-copy h1{
-  font-family:'Space Grotesk', sans-serif;
-  font-size: clamp(32px, 4.2vw, 48px);
-  font-weight:800;
-  line-height:1.18;
-  letter-spacing:-0.6px;
-  margin-bottom:22px;
-}
-
-.hero-copy h1 .grad{
-  background: linear-gradient(100deg, #8b5cf6 0%, #b06bf7 45%, #e964c6 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-.lead{
-  color: var(--text-dim);
-  font-size:16px;
-  line-height:1.65;
-  max-width:480px;
-  margin-bottom:34px;
-}
-
-.feature-grid{
-  display:grid;
-  grid-template-columns: 1fr 1fr;
-  column-gap:32px;
-  row-gap:22px;
-  margin-bottom:38px;
-  max-width:480px;
-}
-
-.feature .f-icon{
-  color: var(--text);
-  font-size:16px;
-  margin-bottom:10px;
-}
-
-.feature h3{
-  font-size:14px;
-  font-weight:700;
-  margin-bottom:5px;
-}
-
-.feature p{
-  font-size:12.5px;
-  color: var(--text-faint);
-  line-height:1.5;
-  max-width:200px;
-}
-
-.cta-row{
-  display:flex;
-  align-items:center;
-  gap:14px;
-  flex-wrap:wrap;
-}
-
-.btn-primary{
-  cursor:pointer;
-  background: linear-gradient(90deg, #2fb3f5, #4f7dfb);
-  color:#04101f;
-  border:none;
-  border-radius:10px;
-  padding:15px 24px;
-  font-size:13px;
-  font-weight:800;
-  letter-spacing:0.4px;
-  display:inline-flex;
-  align-items:center;
-  gap:10px;
-  text-decoration:none;
-  transition: filter .15s, transform .15s;
-  box-shadow: 0 10px 30px rgba(79,125,251,0.12);
-}
-.btn-primary:hover{ filter:brightness(1.08); transform:translateY(-1px); }
-
-.btn-secondary{
-  cursor:pointer;
-  background: transparent;
-  color: var(--text);
-  border:1px solid rgba(255,255,255,0.16);
-  border-radius:10px;
-  padding:15px 22px;
-  font-size:13px;
-  font-weight:700;
-  letter-spacing:0.4px;
-  display:inline-flex;
-  align-items:center;
-  gap:10px;
-  transition: background .15s, border-color .15s;
-}
-.btn-secondary:hover{ background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.3); }
-
-/* ---------- NETWORK VISUAL ---------- */
-.hero-visual{
-  position:relative;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-}
-
-.visual-question{
-  font-size:14.5px;
-  font-weight:700;
-  color: var(--text);
-  text-align:center;
-  max-width:480px;
-  line-height:1.5;
-  margin-bottom:16px;
-}
-
-.legend{
-  display:flex;
-  align-items:center;
-  gap:22px;
-  margin-bottom:14px;
-  flex-wrap:wrap;
-  justify-content:center;
-}
-
-.legend-title{
-  font-size:12.5px;
-  font-weight:700;
-  color: var(--text);
-}
-
-.legend-item{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  font-size:12px;
-  color: var(--text-faint);
-}
-
-.leg-line{
-  width:26px;
-  height:0;
-  border-top:1.5px dashed rgba(255,255,255,0.45);
-  display:inline-block;
-}
-
-.leg-undirected{
-  border-top-style: dotted;
-}
-
-.network-svg{
-  width:100%;
-  max-width:620px;
-  height:auto;
-  overflow:visible;
-}
-
-.node circle{
-  fill: rgba(10,14,23,0.94);
-  stroke-width:3.5;
-  transition: filter .18s ease, stroke-width .18s ease;
-}
-
-.node{
-  cursor: grab;
-  touch-action: none;
-  user-select: none;
-}
-
-.node.dragging{
-  cursor: grabbing;
-}
-
-.node.dragging circle{
-  stroke-width:5;
-}
-
-.node text{
-  fill: var(--text);
-  font-family:'Inter', sans-serif;
-  font-size:11px;
-  font-weight:700;
-  text-anchor:middle;
-  pointer-events:none;
-}
-
-.node-green circle{ stroke: var(--green); filter: drop-shadow(0 0 22px rgba(52,211,153,0.55)); }
-.node-purple circle{ stroke: var(--purple); filter: drop-shadow(0 0 22px rgba(176,107,247,0.6)); }
-.node-blue circle{ stroke: var(--blue); filter: drop-shadow(0 0 22px rgba(59,130,246,0.6)); }
-.node-yellow circle{ stroke: var(--yellow); filter: drop-shadow(0 0 22px rgba(245,201,69,0.6)); }
-
-/* ---------- RELATION LINKS ---------- */
-.link{ cursor:pointer; }
-
-.link-line{
-  fill:none;
-  stroke: rgba(255,255,255,0.65);
-  stroke-width:1.8;
-  stroke-dasharray:5 5;
-  stroke-linecap:round;
-  opacity:1;
-  transition: stroke .18s ease, stroke-width .18s ease, opacity .18s ease, filter .18s ease;
-}
-
-.link-arrow{
-  fill: rgba(255,255,255,0.65);
-  transition: fill .18s ease, filter .18s ease;
-}
-
-.link-hit{
-  fill:none;
-  stroke: transparent;
-  stroke-width:22;
-  cursor:pointer;
-  pointer-events: all;
-}
-
-.link:hover .link-line,
-.link:focus .link-line,
-.link.link-active .link-line{
-  stroke: var(--teal);
-  stroke-width:2.6;
-  stroke-dasharray:6 4;
-  opacity:1;
-  filter: drop-shadow(0 0 8px rgba(47,212,200,0.9));
-}
-
-.link:hover .link-arrow,
-.link:focus .link-arrow,
-.link.link-active .link-arrow{
-  fill: var(--teal);
-  filter: drop-shadow(0 0 6px rgba(47,212,200,0.9));
-}
-
-.leg-svg{ display:block; }
-
-/* ================= POPUP ================= */
-.pot-popup{
-  position:fixed;
-  width:min(340px, 86vw);
-  background: rgba(8,12,20,0.97);
-  border:1px solid rgba(255,255,255,0.12);
-  border-radius:12px;
-  padding:18px 20px 16px;
-  box-shadow:0 20px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(47,212,200,0.08);
-  z-index:10000;
-  animation: pot-pop-in .16s ease;
-}
-
-@keyframes pot-pop-in{
-  from{ opacity:0; transform:translateY(6px) scale(.97); }
-  to{ opacity:1; transform:none; }
-}
-
-.pot-popup .pot-popup-close{
-  cursor:pointer;
-  position:absolute;
-  top:10px; right:12px;
-  background:none;
-  border:none;
-  color: var(--text-faint);
-  font-size:14px;
-  padding:4px;
-  line-height:1;
-}
-.pot-popup .pot-popup-close:hover{ color: var(--text); }
-
-.pot-popup .pot-relation{
-  font-size:11px;
-  font-weight:700;
-  letter-spacing:0.6px;
-  color: var(--teal);
-  text-transform:uppercase;
-  margin-bottom:10px;
-  padding-right:18px;
-}
-
-.pot-popup .pot-quote{
-  font-size:14px;
-  line-height:1.55;
-  font-style:italic;
-  color: var(--text);
-  margin-bottom:14px;
-}
-
-.pot-popup .pot-page{
-  font-size:12px;
-  color: var(--text-faint);
-  border-top:1px solid rgba(255,255,255,0.08);
-  padding-top:10px;
-  font-weight:600;
-  letter-spacing:0.3px;
-}
-
-/* ---------- RESPONSIVE ---------- */
-@media (max-width: 980px){
-  .hero-inner{
-    grid-template-columns: 1fr;
+  function pointOnCircle(cx, cy, r, tx, ty){
+    let ux = tx - cx, uy = ty - cy;
+    const d = Math.hypot(ux, uy) || 1;
+    ux /= d; uy /= d;
+    return { x: cx + ux * r, y: cy + uy * r };
   }
-  .hero-visual{ order:-1; margin-bottom:20px; }
-  .feature-grid{ max-width:none; }
-  .lead{ max-width:none; }
-  .hero-copy h1{ font-size: clamp(30px, 7vw, 44px); }
-}
 
-@media (max-width: 480px){
-  .cta-row{ flex-direction:column; align-items:stretch; }
-  .btn-primary, .btn-secondary{ justify-content:center; }
-}
+  function renderNetwork(net){
+    titleEl.textContent = net.title;
+    titleEl.style.color = getComputedColor(net.accent);
+    subtitleEl.textContent = `Modo Analítico // Nodos = ${net.count}`;
+
+    edgesG.innerHTML = "";
+    nodesG.innerHTML = "";
+
+    const byId = {};
+    net.nodes.forEach((n) => { byId[n.id] = n; });
+
+    net.edges.forEach((e) => {
+      const a = byId[e.from], b = byId[e.to];
+      if (!a || !b) return;
+      const p0 = pointOnCircle(a.x, a.y, a.r, b.x, b.y);
+      const p1 = pointOnCircle(b.x, b.y, b.r, a.x, a.y);
+
+      const g = el("g", { class: `redes-edge redes-edge-${e.kind}${e.dashed ? " is-dashed" : ""}` });
+      const line = el("path", {
+        class: "redes-edge-line",
+        d: `M${p0.x.toFixed(1)},${p0.y.toFixed(1)} L${p1.x.toFixed(1)},${p1.y.toFixed(1)}`
+      });
+      g.appendChild(line);
+
+      if (e.directed !== false){
+        const angle = Math.atan2(p1.y - p0.y, p1.x - p0.x) * 180 / Math.PI;
+        const arrow = el("path", {
+          class: "redes-edge-arrow",
+          d: "M-9,-4 L0,0 L-9,4 Z",
+          transform: `translate(${p1.x.toFixed(1)},${p1.y.toFixed(1)}) rotate(${angle.toFixed(1)})`
+        });
+        g.appendChild(arrow);
+      }
+      edgesG.appendChild(g);
+    });
+
+    net.nodes.forEach((n) => {
+      const g = el("g", {
+        class: `redes-node${n.primary ? " is-primary" : ""}`,
+        "data-accent": net.accent,
+        transform: `translate(${n.x},${n.y})`
+      });
+      const circle = el("circle", { r: n.r });
+      g.appendChild(circle);
+
+      const iconSize = Math.max(16, n.r * 0.5);
+      const fo = el("foreignObject", {
+        class: "redes-node-icon-fo",
+        x: -iconSize/2, y: -(n.r*0.62), width: iconSize, height: iconSize
+      });
+      const div = document.createElement("div");
+      div.setAttribute("xmlns", "http://www.w3.org/1999/xhtml");
+      div.className = "redes-node-icon";
+      div.innerHTML = `<i class="fa-solid ${n.icon}"></i>`;
+      fo.appendChild(div);
+      g.appendChild(fo);
+
+      const text = el("text", { class: "redes-node-label", y: -(n.r*0.62) + iconSize + 2 });
+      n.label.forEach((line, i) => {
+        const tspan = el("tspan", { x: 0, dy: i === 0 ? 10 : 11 });
+        tspan.textContent = line;
+        text.appendChild(tspan);
+      });
+      g.appendChild(text);
+
+      nodesG.appendChild(g);
+    });
+
+    // reset toggles a "on" cada vez que se abre una red nueva
+    setToggle(toggleNodesBtn, true);
+    setToggle(toggleEdgesBtn, true);
+    nodesG.classList.remove("dim-secondary");
+    edgesG.classList.remove("is-hidden");
+  }
+
+  function getComputedColor(accent){
+    switch (accent){
+      case "green":  return "#34d399";
+      case "purple": return "#b06bf7";
+      case "blue":   return "#3b82f6";
+      case "yellow": return "#f5c945";
+      default: return "#34d399";
+    }
+  }
+
+  function setToggle(btn, on){
+    if (!btn) return;
+    btn.classList.toggle("is-on", on);
+    btn.setAttribute("aria-checked", on ? "true" : "false");
+  }
+
+  function openNetwork(colorKey){
+    const net = NETWORKS[colorKey];
+    if (!net) return;
+    renderNetwork(net);
+    overlay.hidden = false;
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeModal(){
+    overlay.hidden = true;
+    document.body.style.overflow = "";
+  }
+
+  closeBtn.addEventListener("click", closeModal);
+  overlay.addEventListener("click", (e) => {
+    if (e.target === overlay) closeModal();
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && !overlay.hidden) closeModal();
+  });
+
+  if (toggleNodesBtn){
+    toggleNodesBtn.addEventListener("click", () => {
+      const on = !toggleNodesBtn.classList.contains("is-on");
+      setToggle(toggleNodesBtn, on);
+      nodesG.classList.toggle("dim-secondary", !on);
+    });
+  }
+  if (toggleEdgesBtn){
+    toggleEdgesBtn.addEventListener("click", () => {
+      const on = !toggleEdgesBtn.classList.contains("is-on");
+      setToggle(toggleEdgesBtn, on);
+      edgesG.classList.toggle("is-hidden", !on);
+    });
+  }
+
+  // ---------- click en los 4 nodos del hero (distinguiendo click de arrastre) ----------
+  const heroNodes = document.querySelectorAll("#network-svg .node[data-node]");
+  heroNodes.forEach((node) => {
+    const colorKey = node.getAttribute("data-node");
+    let downPoint = null;
+    let downTime = 0;
+
+    node.addEventListener("pointerdown", (e) => {
+      downPoint = { x: e.clientX, y: e.clientY };
+      downTime = Date.now();
+    });
+
+    node.addEventListener("pointerup", (e) => {
+      if (!downPoint) return;
+      const dist = Math.hypot(e.clientX - downPoint.x, e.clientY - downPoint.y);
+      const elapsed = Date.now() - downTime;
+      downPoint = null;
+      if (dist < 6 && elapsed < 500){
+        openNetwork(colorKey);
+      }
+    });
+
+    node.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " "){
+        e.preventDefault();
+        openNetwork(colorKey);
+      }
+    });
+  });
+
+})();
