@@ -2477,9 +2477,6 @@ function render() {
     // datos para el análisis, pero no deben ensuciar la red visual.
     if (r.porVerificar) return;
     const active = relActive(r);
-    // Las relaciones inactivas no se dibujan: así no quedan líneas flotando
-    // hacia nodos apagados. Permanecen en los datos y métricas del escenario.
-    if (!active) return;
     const a = drawPos[r.from] || layout[r.from], b = drawPos[r.to] || layout[r.to];
     const rA = nodeR[r.from];
     const rB = nodeR[r.to];
@@ -2489,14 +2486,14 @@ function render() {
     if (r.linea === 'Punteada') cls.push('punteada');
     if (r.porVerificar) cls.push('por-verificar');
     if (selectedRel === r.id) cls.push('sel');
-
+    if (!active) cls.push('rel-off');
 
     // cinta difuminada detrás de la línea: da un aspecto sólido y suave
     // (no neón) a la relación, en vez de un simple trazo brillante
     const glowCls = ['rel', 'rel-glow', kind];
     if (cls.includes('punteada')) glowCls.push('punteada');
     if (cls.includes('sel')) glowCls.push('sel');
-
+    if (!active) glowCls.push('rel-off');
     const glow = el('path', { class: glowCls.join(' '), d, 'data-rel': r.id });
 
     const path = el('path', {
