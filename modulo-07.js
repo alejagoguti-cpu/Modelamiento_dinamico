@@ -11,19 +11,19 @@ const POT_DATA = {
  "sistemas": {
   "EEP": {
    "nombre": "Estructura Ecológica Principal",
-   "color": "#22b88a"
+   "color": "#2fbfae"
   },
   "EFC": {
    "nombre": "Estructura Funcional y del Cuidado",
-   "color": "#3b82f6"
+   "color": "#ef8b3c"
   },
   "ESECI": {
    "nombre": "Estructura Socioeconómica, Creativa y de Innovación",
-   "color": "#d9a441"
+   "color": "#eab04c"
   },
   "EIP": {
    "nombre": "Estructura Integradora de Patrimonios",
-   "color": "#a855f7"
+   "color": "#ef6f6f"
   }
  },
  "nodos": [
