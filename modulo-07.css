@@ -506,17 +506,98 @@ body {
 
 .btn:hover { color: var(--text); border-color: var(--text-faint); }
 
+/* red (svg) + panel de escenarios, uno junto al otro dentro de la misma tarjeta */
+.net-body {
+  display: flex;
+  align-items: stretch;
+}
+
 .net-stage {
   position: relative;
   background: #05070d;
   height: 74vh;
   min-height: 520px;
+  flex: 1;
+  min-width: 0;
   cursor: grab;
   overflow: hidden;
 }
 
 .net-stage.panning { cursor: grabbing; }
 .net-stage svg { width: 100%; height: 100%; display: block; }
+
+/* ---------------------------------------------------- PANEL DE ESCENARIOS */
+/* Prender/apagar las 4 estructuras, ahora dentro de la red (a la derecha) */
+.net-side-panel {
+  width: 250px;
+  flex-shrink: 0;
+  border-left: 1px solid var(--border-soft);
+  background: var(--panel);
+  overflow-y: auto;
+}
+
+.net-side-card { padding: 14px 14px 16px; }
+
+.net-side-title {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.net-side-title i { color: var(--teal); }
+
+.net-side-panel .scenario-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.net-side-panel .scenario-btn {
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  min-height: 0;
+  padding: 9px 10px;
+  gap: 4px 9px;
+  text-align: left;
+  border-radius: 8px;
+}
+
+.net-side-panel .scenario-btn i {
+  font-size: 13px;
+  order: 3;
+  margin-left: auto;
+}
+
+.net-side-panel .scenario-btn .sys-state {
+  position: static;
+  order: 2;
+  font-size: 8.5px;
+}
+
+.net-side-panel .scenario-btn .btn-title {
+  order: 1;
+  flex: 1 1 100%;
+  font-size: 11px;
+  line-height: 1.3;
+}
+
+.net-side-panel .scenario-btn .btn-question {
+  display: none;
+}
+
+.net-side-reset {
+  width: 100%;
+  justify-content: center;
+  margin-top: 12px;
+}
 
 /* -------- SVG: sistemas, conceptos, relaciones -------- */
 /* Conceptos: son los únicos nodos de la red. El tamaño depende del número
@@ -560,9 +641,14 @@ body {
 .concept.node-off .node-icon { opacity: 0.35; }
 .concept.node-off text { opacity: 0.4; }
 
+/* Estructura completa apagada desde "Escenarios": el nodo NO se mueve ni se
+   quita del mapa, solo baja muchísimo su opacidad para leerse como "fuera". */
+.concept.sys-off { opacity: 0.08; transition: opacity 0.35s ease; }
+.concept.sys-off .node-fill { filter: none; }
+
 /* La animación solo usa opacidad: si usara transform, sobrescribiría el
    atributo transform del SVG y todos los nodos caerían al centro. */
-.node-appear { animation: pop 0.42s ease both; }
+.node-appear { animation: pop 0.42s ease; }
 @keyframes pop { from { opacity: 0; } to { opacity: 1; } }
 
 .concept.isolated circle { stroke-dasharray: 2.5 2.5; stroke: var(--danger); opacity: 0.75; }
@@ -573,21 +659,45 @@ body {
 .member-link { stroke: rgba(255, 255, 255, 0.1); stroke-width: 0.7; fill: none; }
 .member-link.dim { opacity: 0.15; }
 
+/* Línea de relación: un trazo fino y sólido (sin neón) sobre una cinta
+   difuminada del mismo color detrás (".rel-glow") que le da cuerpo suave. */
 .rel {
   fill: none;
-  stroke-width: 5;
+  stroke-width: 3;
   cursor: pointer;
-  animation: draw 0.5s ease both;
+  animation: draw 0.5s ease;
+  transition: opacity 0.35s ease;
 }
 
-@keyframes draw { from { opacity: 0; } to { opacity: 0.9; } }
+@keyframes draw { from { opacity: 0; } to { opacity: 0.95; } }
 
 .rel.soporte { stroke: var(--soporte); }
 .rel.resiliencia { stroke: var(--resiliencia); }
-.rel.punteada { stroke-dasharray: 18 12; }
-.rel:hover { stroke-width: 9; }
+/* directa = sólida (por defecto); indirecta = punteada, bien diferenciada */
+.rel.punteada { stroke-dasharray: 9 7; }
+.rel:hover { stroke-width: 6; }
 .rel.dim { opacity: 0.12; }
-.rel.sel { stroke-width: 10; }
+.rel.sel { stroke-width: 7; }
+
+/* Relación que toca una estructura o un nodo apagado: se queda en su sitio
+   pero casi invisible, en vez de desaparecer del mapa. */
+.rel.rel-off { opacity: 0.05; }
+
+/* Cinta difuminada detrás de la línea: da el aspecto "sólido y suave" que
+   pidió el usuario, en vez de un brillo tipo neón. */
+.rel-glow {
+  fill: none;
+  stroke-linecap: round;
+  pointer-events: none;
+  filter: url(#rel-blur);
+  transition: opacity 0.35s ease;
+}
+.rel-glow.soporte,
+.rel-glow.resiliencia { stroke-width: 13; opacity: 0.32; }
+.rel-glow.punteada { stroke-width: 8; opacity: 0.16; }
+.rel-glow.sel { stroke-width: 18; opacity: 0.5; }
+.rel-glow.dim { opacity: 0.04; }
+.rel-glow.rel-off { opacity: 0.02; }
 
 .rel-hit { fill: none; stroke: transparent; stroke-width: 34; cursor: pointer; }
 
@@ -1204,7 +1314,7 @@ body {
 .concept.cut-off .node-icon { opacity: 0.4; }
 .concept.cut-off text { opacity: 0.45; fill: #f3a3a3; }
 
-/* Las líneas que sobreviven se estiran: se ven tensionadas */
+/* Las relaciones ya no se mueven ni estiran: solo cambian de opacidad */
 .rel { transition: opacity 0.4s ease; }
 
 /* Aviso sobre el propio diagrama */
