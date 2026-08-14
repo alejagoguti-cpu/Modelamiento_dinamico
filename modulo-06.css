@@ -8,15 +8,40 @@
   --text: #e7eaf2;
   --text-dim: #8891a5;
   --text-faint: #5a6274;
-  --teal: #2fd4c8;
-  --teal-dim: rgba(47,212,200,0.12);
-  --blue: #5b8def;
-  --purple: #a276f2;
-  --green: #4ade80;
-  --yellow: #f5c945;
+  /* misma gama "infografía" (teal, coral, naranja, mostaza sobre negro) usada en index.html */
+  --teal: #2fbfae;
+  --teal-dim: rgba(47,191,174,0.12);
+  --blue: #ef8b3c;
+  --purple: #ef6f6f;
+  --green: #2fbfae;
+  --yellow: #eab04c;
   --pink: #f76fb0;
-  --orange: #ef9552;
-  --red: #ef4444;
+  --orange: #ef8b3c;
+
+  /* Colores de cada estructura del modelo (según convención) */
+  --eco: #2fbfae;     /* Sistema Ambiental y de Estructura Ecológica Principal */
+  --func: #ef8b3c;    /* Estructura Funcional y del Cuidado */
+  --econ: #eab04c;    /* Estructura Socioeconómica, Creativa y de Innovación */
+  --patri: #ef6f6f;   /* Estructura Integradora de Patrimonios */
+
+  /* Colores de los tipos de relación (según leyenda) */
+  --line-directa: rgba(255,255,255,0.55);
+  --line-indirecta: rgba(255,255,255,0.38);
+  --line-soporte: #f0a15c;
+  --line-resiliencia: #2fbfae;
+
+  --off-red: #ef4444;
+
+  /* Sistemas de la nueva base (Red_4_Estructuras_POT_CORREGIDA.xlsx) */
+  --eep: #2fbfae;
+  --efc: #ef8b3c;
+  --eip: #ef6f6f;
+  --eseci: #eab04c;
+
+  /* Tipos de relación según la hoja LEYENDA */
+  --soporte: #f0a15c;
+  --resiliencia: #2fbfae;
+  --danger: #ef4444;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -31,7 +56,8 @@ body {
 
 .app { display: flex; min-height: 100vh; }
 
-/* SIDEBAR */
+/* SIDEBAR — colapsada a solo iconos; el texto aparece como tooltip al pasar
+   el mouse (ver data-tooltip + regla ::after más abajo) */
 .sidebar {
   width: 64px;
   flex-shrink: 0;
@@ -39,40 +65,51 @@ body {
   border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
-  padding: 20px 10px;
-  transition: width .2s ease;
+  align-items: center;
+  padding: 18px 8px;
 }
 
 .brand {
-  display: flex; align-items: center; gap: 10px;
-  padding: 6px 6px 22px 6px;
-  justify-content: center;
+  display: flex; align-items: center; justify-content: center;
+  padding: 6px 0 18px 0;
+  position: relative;
 }
 
 .brand .mark {
-  width: 32px; height: 32px; border-radius: 9px;
+  width: 34px; height: 34px; border-radius: 9px;
   background: linear-gradient(135deg, var(--teal), #1a9d94);
   display: flex; align-items: center; justify-content: center;
   color: #06110f; font-size: 15px;
-  flex-shrink: 0;
 }
 
-.brand span { display: none; }
+.brand .nav-text { display: none; }
 
-.nav-group { margin-bottom: 20px; }
+.nav-group {
+  margin-bottom: 14px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
 .nav-label {
+  /* Solo iconos: las etiquetas de sección se ocultan; queda un pequeño
+     separador para marcar el cambio de grupo */
+  display: none;
+}
+
+.nav-group + .nav-group::before {
+  content: "";
+  display: block;
+  width: 24px;
   height: 1px;
   background: var(--border-soft);
-  margin: 0 4px 8px;
-  padding: 0;
-  overflow: hidden;
-  text-indent: -9999px;
+  margin: 0 0 10px 0;
 }
 
 .nav-item {
-  display: flex; align-items: center; justify-content: center; gap: 10px;
-  padding: 10px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  width: 40px; height: 40px; border-radius: 9px;
   color: var(--text-dim);
   font-size: 13px; font-weight: 500;
   cursor: pointer;
@@ -80,17 +117,12 @@ body {
   white-space: nowrap;
   text-decoration: none;
   position: relative;
+  margin-bottom: 4px;
 }
 
-.nav-item i { width: 16px; text-align: center; font-size: 14px; }
+.nav-item i { width: 16px; text-align: center; font-size: 15px; }
 
-.nav-item .num {
-  font-size: 11px; font-weight: 700; width: 16px; text-align: center; color: var(--text-faint);
-  display: none;
-}
-
-/* el texto de cada ítem queda oculto: solo se ve el ícono.
-   Aparece como tooltip flotante al pasar el mouse o hacer clic (ver JS: setupSidebarTooltip) */
+.nav-item .num { display: none; }
 .nav-item .nav-text { display: none; }
 
 .nav-item:hover { background: rgba(255,255,255,0.04); color: var(--text); }
@@ -100,36 +132,40 @@ body {
   color: var(--teal);
 }
 
-.nav-item.active .num { color: var(--teal); }
+/* Tooltip: solo aparece al dejar el mouse sobre el icono */
+[data-tooltip] { position: relative; }
 
-/* tooltip flotante compartido (una sola instancia, reposicionada por JS) */
-.sidebar-tooltip {
-  position: fixed;
-  background: var(--panel);
-  border: 1px solid var(--teal);
+[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: calc(100% + 10px);
+  top: 50%;
+  transform: translateY(-50%) translateX(-4px);
+  background: #10161f;
+  border: 1px solid var(--border-soft);
   color: var(--text);
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 600;
-  padding: 6px 10px;
-  border-radius: 6px;
   white-space: nowrap;
-  box-shadow: 0 6px 16px rgba(0,0,0,0.4);
-  pointer-events: none;
+  padding: 6px 10px;
+  border-radius: 7px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.35);
   opacity: 0;
-  transform: translate(0, -50%) translateX(-4px);
-  transition: opacity .12s ease, transform .12s ease;
-  z-index: 50;
+  pointer-events: none;
+  transition: opacity .15s ease, transform .15s ease;
+  z-index: 40;
 }
 
-.sidebar-tooltip.visible {
+[data-tooltip]:hover::after {
   opacity: 1;
-  transform: translate(0, -50%) translateX(0);
+  transform: translateY(-50%) translateX(0);
 }
 
 .sidebar-footer {
   margin-top: auto;
   border-top: 1px solid var(--border);
-  padding-top: 12px;
+  padding-top: 14px;
+  width: 100%;
   display: flex; flex-direction: column; align-items: center; gap: 10px;
 }
 
@@ -144,14 +180,11 @@ body {
 
 .user-meta { display: none; }
 
-.user-meta .name { font-size: 12.5px; font-weight: 600; color: var(--text); }
-
-.user-meta .role { font-size: 11px; color: var(--text-faint); }
-
 .logout-btn {
   background: none; border: none; color: var(--text-faint);
-  font-size: 13px; cursor: pointer; padding: 4px;
+  font-size: 14px; cursor: pointer; padding: 6px;
   text-decoration: none;
+  display: flex; align-items: center; justify-content: center;
 }
 
 .logout-btn:hover { color: var(--pink); }
@@ -209,67 +242,8 @@ body {
 
 .welcome p { color: var(--text-dim); font-size: 14px; }
 
-/* ODS INSIGHTS: ahora es un panel angosto al lado IZQUIERDO de la red (2 columnas),
-   ya no la fila horizontal de arriba */
-.ods-insight-stats {
-  width: 210px;
-  flex-shrink: 0;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-  align-content: start;
-}
-
-.insight-card {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 12px 8px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 8px;
-  cursor: pointer;
-  transition: border-color .2s, background-color .2s, transform .15s;
-}
-
-.insight-card:hover {
-  border-color: var(--insight-color, var(--teal));
-  transform: translateY(-1px);
-}
-
-.insight-card.active {
-  border-color: var(--insight-color, var(--teal));
-  background: color-mix(in srgb, var(--insight-color, var(--teal)) 14%, var(--panel));
-  box-shadow: 0 0 0 1px var(--insight-color, var(--teal)) inset;
-}
-
-.insight-icon {
-  width: 38px;
-  height: 38px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 15px;
-  flex-shrink: 0;
-  background: color-mix(in srgb, var(--insight-color, var(--teal)) 22%, transparent);
-  color: var(--insight-color, var(--teal));
-}
-
-.insight-title {
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--text);
-  line-height: 1.25;
-}
-
-/* la 5ta tarjeta ("Relaciones predominantes") ocupa las 2 columnas para no quedar sola */
-.insight-card[data-insight="predominantes"] { grid-column: 1 / -1; flex-direction: row; text-align: left; }
-
-/* NETWORK SECTION */
-.network-section {
+/* SCENARIO SELECTOR (leyenda del bloque, dejado por compatibilidad) */
+.scenario-selector {
   background: var(--panel);
   border: 1px solid var(--border);
   border-radius: 12px;
@@ -277,14 +251,7 @@ body {
   margin-bottom: 28px;
 }
 
-.network-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 16px;
-}
-
-.network-header h3 {
+.selector-header h3 {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 14px;
   font-weight: 700;
@@ -292,820 +259,1196 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
+  margin-bottom: 16px;
 }
 
-.network-header h3 i {
+.selector-header h3 i {
   color: var(--teal);
-  font-size: 13px;
 }
 
-.network-controls {
+/* -------------------------------------------------------------------
+   Escenarios: apagar una estructura — lista numerada en el panel de
+   información (izquierda), con ícono de categoría y switch ON/OFF a
+   la derecha de cada fila.
+   ------------------------------------------------------------------- */
+.escenarios-card h2 { margin-bottom: 12px; }
+
+.scenario-buttons {
   display: flex;
+  flex-direction: column;
   gap: 8px;
 }
 
-.control-btn {
+.scenario-btn {
   background: var(--panel-alt);
-  border: 1px solid var(--border-soft);
-  color: var(--text-dim);
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 600;
+  border: 1.5px solid var(--border-soft);
+  border-radius: 10px;
+  padding: 10px 12px;
   cursor: pointer;
   transition: all .2s;
+  display: grid;
+  grid-template-columns: 18px 34px 1fr auto;
+  align-items: center;
+  column-gap: 10px;
+  row-gap: 1px;
+  text-align: left;
 }
 
-.control-btn:hover,
-.control-btn.active {
+.scenario-btn:hover {
   border-color: var(--teal);
-  color: var(--teal);
-  background: rgba(47,212,200,0.05);
+  background: rgba(47,191,174,0.05);
 }
 
-/* -------- BARRA COMPACTA: Hallazgos + Contradicción (arriba del lienzo) -------- */
-.fc-bar {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 14px;
-  background: var(--panel-alt);
-  border: 1px solid var(--border-soft);
-  border-radius: 8px;
-  padding: 9px 12px;
-  margin-bottom: 12px;
+/* el ícono real (fa-circle-minus / fa-power-off) sigue existiendo para que
+   el JS pueda alternar su clase, pero visualmente el estado se muestra con
+   el switch ON/OFF; se oculta para no duplicar información */
+.scenario-btn > i.fa-circle-minus,
+.scenario-btn > i.fa-power-off {
+  display: none;
 }
 
-.fc-group {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  flex-wrap: wrap;
-}
-
-.fc-divider {
-  width: 1px;
-  align-self: stretch;
-  background: var(--border-soft);
-}
-
-.fc-label {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.3px;
-  text-transform: uppercase;
-  color: var(--teal);
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  white-space: nowrap;
-}
-
-.fc-contradictions .fc-label { color: var(--red); }
-
-.fc-chip {
-  background: rgba(255,255,255,0.03);
-  border: 1px solid var(--border-soft);
-  border-radius: 999px;
-  padding: 4px 11px;
-  font-family: 'Inter', sans-serif;
+.row-num {
+  grid-column: 1;
+  grid-row: 1 / 3;
   font-size: 11px;
-  font-weight: 700;
-  color: var(--text-dim);
-  cursor: pointer;
-  transition: background-color .15s, border-color .15s, color .15s;
-  white-space: nowrap;
-}
-
-.fc-chip:hover {
-  border-color: var(--teal);
-  color: var(--text);
-}
-
-.fc-chip.active {
-  background: color-mix(in srgb, var(--teal) 18%, transparent);
-  border-color: var(--teal);
-  color: var(--text);
-}
-
-.fc-chip-red:hover { border-color: var(--red); }
-.fc-chip-red.active {
-  background: color-mix(in srgb, var(--red) 18%, transparent);
-  border-color: var(--red);
-  color: var(--text);
-}
-
-/* NETWORK DIAGRAM + LEGEND */
-.network-viz-wrap {
-  display: flex;
-  gap: 16px;
-  align-items: stretch;
-}
-
-.network-canvas {
-  position: relative;
-  flex: 1;
-  min-width: 0;
-}
-
-#networkViz {
-  width: 100%;
-  height: 560px;
-  background: var(--panel-alt);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  display: block;
-}
-
-/* -------- POPUP DE HALLAZGOS (triple clic en ODS con insight / relación destacada) -------- */
-.finding-popup {
-  position: absolute;
-  top: 14px;
-  left: 14px;
-  width: 270px;
-  max-width: calc(100% - 28px);
-  background: var(--panel-alt);
-  border: 1px solid var(--finding-color, var(--teal));
-  box-shadow: 0 10px 28px rgba(0,0,0,0.4), 0 0 16px color-mix(in srgb, var(--finding-color, var(--teal)) 30%, transparent);
-  border-radius: 10px;
-  padding: 14px 30px 14px 16px;
-  opacity: 0;
-  transform: translateY(-8px);
-  pointer-events: none;
-  transition: opacity .25s ease, transform .25s ease;
-  z-index: 5;
-}
-
-.finding-popup.visible {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
-}
-
-/* variante roja para contradicciones (misma caja, distinto acento) */
-.finding-popup.contradiction {
-  border-color: var(--red);
-  box-shadow: 0 10px 28px rgba(0,0,0,0.4), 0 0 16px rgba(239,68,68,0.3);
-}
-.finding-popup.contradiction .finding-popup-badge { color: var(--red); }
-
-.finding-popup-close {
-  position: absolute;
-  top: 8px;
-  right: 10px;
-  background: none;
-  border: none;
+  font-weight: 800;
   color: var(--text-faint);
-  font-size: 17px;
-  line-height: 1;
-  cursor: pointer;
-  padding: 0;
 }
 
-.finding-popup-close:hover { color: var(--pink); }
-
-.finding-popup-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.4px;
-  text-transform: uppercase;
-  color: var(--finding-color, var(--teal));
-  margin-bottom: 8px;
-}
-
-.finding-popup-title {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--text);
-  margin-bottom: 6px;
-  line-height: 1.35;
-}
-
-.finding-popup-text {
-  font-size: 11.5px;
-  color: var(--text-dim);
-  line-height: 1.55;
-}
-
-/* -------- PILA DE 3 TARJETAS (hallazgo con tarjetas de apoyo, p. ej. ODS 1) --------
-   Reemplaza al .finding-popup sencillo cuando el hallazgo trae "cards" propias.
-   Estilo claro (fondo blanco, borde turquesa) igual al de la imagen de referencia. */
-.finding-stack {
-  position: absolute;
-  top: 14px;
-  left: 14px;
-  width: 210px;
-  max-width: calc(100% - 28px);
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  opacity: 0;
-  transform: translateY(-8px);
-  pointer-events: none;
-  transition: opacity .25s ease, transform .25s ease;
-  z-index: 5;
-}
-
-.finding-stack.visible {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
-}
-
-.finding-card {
-  position: relative;
-  background: #eef4f7;
-  border: 2px solid var(--teal);
-  border-radius: 18px;
-  padding: 18px 16px 16px;
-  text-align: center;
-  box-shadow: 0 10px 24px rgba(0,0,0,0.35);
-}
-
-.finding-card-close {
-  position: absolute;
-  top: 6px;
-  right: 10px;
-  background: none;
-  border: none;
-  color: #7c8896;
-  font-size: 16px;
-  line-height: 1;
-  cursor: pointer;
-  padding: 0;
-}
-.finding-card-close:hover { color: var(--pink); }
-
-.finding-card-icon {
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  background: var(--teal);
-  color: #06110f;
+.row-icon {
+  grid-column: 2;
+  grid-row: 1 / 3;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 20px;
-  margin: 0 auto 10px;
-}
-
-.finding-card-title {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 19px;
-  font-weight: 800;
+  font-size: 14px;
+  background: var(--teal-dim);
   color: var(--teal);
-  margin-bottom: 8px;
+  transition: background .2s, color .2s;
 }
 
-.finding-card-text {
-  font-size: 11.5px;
-  color: #1c2a33;
-  line-height: 1.45;
-}
+.scenario-btn[data-sys="EEP"] .row-icon { background: rgba(47,191,174,0.16); color: var(--eep); }
+.scenario-btn[data-sys="EFC"] .row-icon { background: rgba(239,139,60,0.16); color: var(--efc); }
+.scenario-btn[data-sys="ESECI"] .row-icon { background: rgba(234,176,76,0.16); color: var(--eseci); }
+.scenario-btn[data-sys="EIP"] .row-icon { background: rgba(239,111,111,0.16); color: var(--eip); }
 
-.finding-card-source {
-  display: block;
-  margin-top: 10px;
-  background: var(--teal);
-  color: #06251f;
-  font-size: 8.5px;
+.btn-title {
+  grid-column: 3;
+  grid-row: 1;
   font-weight: 700;
-  padding: 4px 8px;
-  border-radius: 6px;
-  word-break: break-all;
-  text-decoration: none;
+  font-size: 12px;
+  line-height: 1.35;
+  color: var(--text);
+  display: block;
+  transition: color .2s;
 }
 
-/* indicador visual sobre los nodos/relaciones que tienen un hallazgo asociado */
-@keyframes findingPulse {
-  0%, 100% { stroke-opacity: 1; }
-  50% { stroke-opacity: 0.35; }
+.btn-question {
+  grid-column: 3;
+  grid-row: 2;
+  font-size: 10.5px;
+  font-weight: 500;
+  color: var(--text-faint);
+  display: block;
+  font-style: italic;
+  transition: color .2s;
 }
 
-.ods-node.has-finding .node-ring {
-  stroke-width: 3.5;
-  animation: findingPulse 2.2s ease-in-out infinite;
+.scenario-btn .sys-state {
+  grid-column: 4;
+  grid-row: 1 / 3;
+  position: static;
+  justify-self: end;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  padding: 4px 9px;
+  border-radius: 20px;
+  background: rgba(47,191,174,0.16);
+  color: var(--eep);
+  white-space: nowrap;
 }
 
-.edge-group.has-finding .edge-visual {
-  stroke-width: 3;
-  filter: drop-shadow(0 0 3px var(--edge-color));
+.scenario-btn.active .btn-question {
+  color: #f3a3a3;
 }
 
-.network-sidebar {
-  width: 205px;
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
+/* Estado "apagado": la estructura fue removida del escenario */
+.scenario-btn.active {
+  border-color: var(--off-red);
+  background: rgba(239,68,68,0.08);
+}
+
+.scenario-btn.active .row-icon {
+  background: rgba(239,68,68,0.18);
+  color: var(--off-red);
+}
+
+.scenario-btn.active .btn-title {
+  color: #f3a3a3;
+}
+
+.scenario-btn.active .sys-state {
+  background: rgba(239,68,68,0.2);
+  color: #f3a3a3;
+}
+
+
+/* ======================================================================
+   RED DE LAS 4 ESTRUCTURAS (base: Red_4_Estructuras_POT_CORREGIDA.xlsx)
+   ====================================================================== */
+/* ---------------------------------------------------------------- LAYOUT */
+.net-layout {
+  display: grid;
+  grid-template-columns: 310px 1fr;
   gap: 16px;
+  align-items: start;
 }
 
-.network-legend {
+.col { display: flex; flex-direction: column; gap: 14px; }
+
+.pcard {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+
+.pcard h2 {
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 12px;
+}
+
+.pcard h2 .hint {
+  display: block;
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 500;
+  font-size: 10.5px;
+  color: var(--text-faint);
+  margin-top: 4px;
+}
+
+/* ------------------------------------------------------------- SWITCHES */
+.switches { display: flex; flex-direction: column; gap: 8px; }
+
+.legacy-switch-unused {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   width: 100%;
   background: var(--panel-alt);
   border: 1px solid var(--border-soft);
+  border-left: 3px solid var(--sys, var(--text-faint));
   border-radius: 8px;
-  padding: 16px 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  align-self: flex-start;
-}
-
-.network-legend.compact {
-  padding: 10px 12px;
-  gap: 7px;
-}
-
-.network-legend.compact .legend-title { font-size: 9.5px; }
-.network-legend.compact .legend-item { font-size: 10.5px; gap: 6px; }
-.network-legend.compact .legend-divider { margin: 1px 0; }
-.network-legend.compact .legend-hint { font-size: 9.5px; line-height: 1.4; }
-.network-legend.compact .legend-swatch { width: 12px; height: 12px; }
-
-.legend-hint {
-  font-size: 10.5px;
-  color: var(--text-faint);
-  line-height: 1.5;
-}
-
-/* (paneles laterales de hallazgos/contradicciones migrados a .fc-bar, ver arriba) */
-
-/* EDGE INFO PANEL (sustento documental) */
-.edge-info-panel {
-  display: none;
-  width: 100%;
-  background: var(--panel-alt);
-  border: 1px solid var(--teal);
-  box-shadow: 0 0 14px rgba(47,212,200,0.15);
-  border-radius: 8px;
-  padding: 14px;
-}
-
-.edge-info-panel.visible { display: block; }
-
-.edge-info-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-
-#edgeInfoTitle {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 12.5px;
-  font-weight: 700;
-  color: var(--teal);
-  line-height: 1.3;
-}
-
-.edge-info-close {
-  background: none;
-  border: none;
-  color: var(--text-faint);
-  font-size: 18px;
-  line-height: 1;
+  padding: 9px 12px;
   cursor: pointer;
-  padding: 0 0 0 6px;
-  flex-shrink: 0;
+  font-family: inherit;
+  color: var(--text);
+  text-align: left;
+  transition: background 0.18s, opacity 0.18s;
 }
 
-.edge-info-close:hover { color: var(--pink); }
+.switch:hover { background: #161d30; }
 
-.edge-info-type {
-  display: inline-block;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.4px;
-  text-transform: uppercase;
-  padding: 3px 8px;
+.switch .code { font-size: 13px; font-weight: 800; color: var(--sys); min-width: 46px; }
+.switch .nm { font-size: 10.5px; color: var(--text-dim); flex: 1; line-height: 1.35; }
+
+.switch .state {
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  padding: 3px 7px;
   border-radius: 4px;
-  margin-bottom: 10px;
+  background: rgba(34, 184, 138, 0.14);
+  color: var(--eep);
 }
 
-.edge-info-quote {
-  font-size: 11.5px;
-  color: var(--text-dim);
-  line-height: 1.55;
-  font-style: italic;
-  border-left: 2px solid var(--border);
-  padding-left: 10px;
-  margin-bottom: 10px;
+.switch.off { opacity: 0.5; border-left-color: var(--text-faint); }
+.switch.off .code { color: var(--text-faint); }
+.switch.off .state { background: rgba(239, 68, 68, 0.15); color: #f3a3a3; }
+
+/* ---------------------------------------------------------------- STATS */
+.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+.stat {
+  background: var(--panel-alt);
+  border: 1px solid var(--border-soft);
+  border-radius: 7px;
+  padding: 9px 10px;
 }
 
-.edge-info-page {
-  font-size: 11px;
-  color: var(--text-faint);
-  font-weight: 600;
+.stat.wide { grid-column: 1 / -1; }
+.stat .lbl { font-size: 9px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-faint); font-weight: 700; }
+.stat .val { font-size: 17px; font-weight: 800; margin-top: 3px; }
+.stat .val small { font-size: 11px; color: var(--text-dim); font-weight: 600; }
+.stat .val.accent { color: var(--eep); }
+
+.bar-track {
+  height: 5px;
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 7px;
 }
 
-.legend-title {
-  font-family: 'Space Grotesk', sans-serif;
+.bar-fill {
+  height: 100%;
+  background: var(--eep);
+  border-radius: 3px;
+  transition: width 0.5s ease, background 0.3s;
+}
+
+/* ----------------------------------------------------------- CENTRALIDAD */
+.rank-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 9px;
+}
+
+.rank-row .pos { font-size: 10px; color: var(--text-faint); font-weight: 800; width: 14px; }
+.rank-row .code { font-size: 11.5px; font-weight: 800; color: var(--sys); width: 46px; }
+
+.rank-row .track {
+  flex: 1;
+  height: 15px;
+  background: var(--panel-alt);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.rank-row .fill {
+  height: 100%;
+  background: var(--sys);
+  opacity: 0.75;
+  border-radius: 4px;
+  transition: width 0.5s ease;
+}
+
+.rank-row .n { font-size: 11px; font-weight: 800; width: 20px; text-align: right; }
+.rank-row.is-off { opacity: 0.35; }
+
+.badge-top {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  background: rgba(217, 164, 65, 0.15);
+  color: var(--eseci);
+  border: 1px solid rgba(217, 164, 65, 0.4);
+  border-radius: 5px;
+  padding: 3px 7px;
+  margin-top: 4px;
+}
+
+.note {
   font-size: 10.5px;
-  font-weight: 700;
-  letter-spacing: 1px;
+  line-height: 1.5;
   color: var(--text-faint);
-  text-transform: uppercase;
-  margin-bottom: 2px;
+  border-top: 1px dashed var(--border-soft);
+  padding-top: 10px;
+  margin-top: 10px;
 }
+
+/* ----------------------------------------------------------------- RED */
+.pcard.net-card { padding: 0; overflow: hidden; }
+
+.net-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--border-soft);
+  flex-wrap: wrap;
+}
+
+.legend { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
 
 .legend-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 12px;
+  gap: 6px;
+  font-size: 10.5px;
   color: var(--text-dim);
+}
+
+.lg-line { width: 22px; height: 0; border-top: 2px solid var(--text); }
+.lg-line.dashed { border-top-style: dashed; }
+.lg-line.soporte { border-color: var(--soporte); }
+.lg-line.resiliencia { border-color: var(--resiliencia); }
+.lg-dot { width: 9px; height: 9px; border-radius: 50%; }
+.lg-dot.soporte { background: var(--soporte); }
+.lg-dot.resiliencia { background: var(--resiliencia); }
+
+.net-btns { display: flex; gap: 6px; }
+
+.btn {
+  background: var(--panel-alt);
+  border: 1px solid var(--border-soft);
+  color: var(--text-dim);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: inherit;
   cursor: pointer;
-  user-select: none;
-  transition: color .15s, opacity .15s;
+  transition: 0.16s;
 }
 
-.legend-item:hover { color: var(--text); }
+.btn:hover { color: var(--text); border-color: var(--text-faint); }
 
-.legend-item.off { opacity: 0.4; }
-
-.legend-item input {
-  appearance: none;
-  -webkit-appearance: none;
-  width: 15px;
-  height: 15px;
-  border-radius: 4px;
-  border: 1px solid var(--border);
-  background: var(--panel);
-  cursor: pointer;
-  position: relative;
-  flex-shrink: 0;
-}
-
-.legend-item input:checked {
-  background: var(--teal);
-  border-color: var(--teal);
-}
-
-.legend-item input:checked::after {
-  content: "";
-  position: absolute;
-  left: 4px; top: 1px;
-  width: 4px; height: 8px;
-  border: solid #06110f;
-  border-width: 0 2px 2px 0;
-  transform: rotate(45deg);
-}
-
-.legend-swatch {
-  width: 22px;
-  height: 0;
-  border-top-width: 2px;
-  border-top-style: solid;
-  flex-shrink: 0;
-}
-
-.swatch-comp   { border-color: #4ade80; }
-.swatch-causal { border-color: #f76fb0; border-top-width: 1.5px; }
-.swatch-cond   { border-color: #ef9552; }
-
-.swatch-directa   { border-color: #ffffff; }
-.swatch-nodirecta { border-color: #ffffff; border-top-style: dashed; }
-
-.legend-item.legend-static { cursor: default; }
-
-.legend-divider {
-  height: 1px;
-  background: var(--border-soft);
-  margin: 2px 0;
-}
-
-/* SVG node/edge styling */
-.ods-node { cursor: grab; touch-action: none; }
-.ods-node.dragging { cursor: grabbing; }
-.ods-node .node-ring { fill: rgba(8,11,18,0.6); transition: opacity .2s; }
-.ods-node .node-inner { font-family: 'Inter', sans-serif; color: var(--text); text-align: center; transition: opacity .2s; }
-.ods-node .node-num { font-family: 'Space Grotesk', sans-serif; font-weight: 800; line-height: 1; }
-.ods-node .node-icon { line-height: 1; }
-.ods-node .node-name { color: var(--text-dim); font-weight: 600; line-height: 1.05; }
-
-.ods-node.node-off .node-ring { opacity: 0.18; }
-.ods-node.node-off .node-inner { opacity: 0.28; }
-
-.ods-node { transition: opacity .2s; }
-.ods-node.node-focus-dim { opacity: 0.12; }
-.ods-node.node-focus-active .node-ring { filter: drop-shadow(0 0 8px #fff); }
-
-.edge-group { cursor: pointer; }
-.edge-group.hidden-edge { display: none; }
-.edge-group { transition: opacity .2s; }
-.edge-group.edge-focus-dim { opacity: 0.05; }
-
-.ods-edge.edge-visual { fill: none; pointer-events: none; transition: opacity .15s, filter .15s; }
-.ods-edge.edge-hit { fill: none; stroke: transparent; stroke-width: 12; pointer-events: stroke; }
-
-.edge-group:hover .edge-visual {
-  opacity: 1 !important;
-  filter: drop-shadow(0 0 4px var(--edge-color));
-}
-
-.edge-group.edge-selected .edge-visual {
-  opacity: 1 !important;
-  filter: drop-shadow(0 0 6px var(--edge-color));
-}
-
-footer {
-  text-align: center;
-  margin-top: 34px;
-  font-size: 12px;
-  color: var(--text-faint);
-}
-
-footer span { color: var(--teal); }
-
-/* RESPONSIVE */
-@media (max-width: 900px) {
-  .network-viz-wrap { flex-direction: column; }
-  .network-legend { width: 100%; flex-direction: row; flex-wrap: wrap; align-self: stretch; }
-  .ods-insight-stats { width: 100%; grid-template-columns: repeat(3, 1fr); }
-  #networkViz { height: 460px; }
-}
-
-@media (max-width: 768px) {
-  .sidebar { display: none; }
-  .main { padding: 16px 20px 40px; }
-  .ods-insight-stats { grid-template-columns: repeat(2, 1fr); }
-}
-
-/* ==========================================================
-   RED DE ESTRUCTURAS DEL POT (segunda red, estática)
-   ========================================================== */
-.pn-section {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 20px;
-  margin-top: 28px;
-  margin-bottom: 28px;
-  opacity: 0.94;
-}
-
-.pn-wrap {
+/* la red ocupa todo el ancho de la tarjeta (el panel de escenarios ahora
+   vive en el panel de información de la izquierda, ver .escenarios-card) */
+.net-body {
   display: flex;
-  gap: 16px;
   align-items: stretch;
 }
 
-.pn-canvas {
+.net-stage {
   position: relative;
+  background: #05070d;
+  height: 74vh;
+  min-height: 520px;
   flex: 1;
   min-width: 0;
+  cursor: grab;
+  overflow: hidden;
 }
 
-#pnViz {
+.net-stage.panning { cursor: grabbing; }
+.net-stage svg { width: 100%; height: 100%; display: block; }
+
+/* ---------------------------------------------------- PANEL DE ESCENARIOS */
+/* El botón "Reactivar todas" vive ahora dentro de la tarjeta de escenarios,
+   en el panel de información (izquierda); ver .escenarios-card más arriba. */
+.net-side-reset {
   width: 100%;
-  height: 460px;
-  background: var(--panel-alt);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  display: block;
-  touch-action: none;
+  justify-content: center;
+  margin-top: 4px;
 }
 
-.pn-node .pn-node-ring { fill: rgba(8,11,18,0.65); }
-.pn-node text, .pn-node div { font-family: 'Inter', sans-serif; }
-
-.pn-edge-group { cursor: pointer; }
-.pn-edge { fill: none; }
-.pn-edge-hit { stroke: transparent; stroke-width: 10; pointer-events: stroke; }
-.pn-edge-visual { pointer-events: none; transition: opacity .2s, stroke-width .2s, filter .2s; }
-
-.pn-edge-group:hover .pn-edge-visual {
-  opacity: 1 !important;
-  filter: drop-shadow(0 0 4px var(--pn-edge-color));
+/* -------- SVG: sistemas, conceptos, relaciones -------- */
+/* Conceptos: son los únicos nodos de la red. El tamaño depende del número
+   de relaciones documentadas (deg-high / deg-mid / deg-low). */
+.concept { cursor: pointer; }
+.concept .node-fill { fill: #0d1322; stroke: var(--sys); stroke-width: 1.8; }
+.concept text {
+  fill: #d5dced;
+  text-anchor: middle;
+  font-weight: 600;
+  paint-order: stroke;
+  stroke: #05070d;
+  stroke-width: 2.4px;
+  stroke-linejoin: round;
 }
 
-.pn-edge-group.pn-edge-selected .pn-edge-visual {
-  opacity: 1 !important;
-  filter: drop-shadow(0 0 6px var(--pn-edge-color));
-}
-
-.pn-edge-group.pn-edge-dim .pn-edge-visual { opacity: 0.08 !important; }
-
-.pn-edge-group.pn-edge-highlight .pn-edge-visual {
-  opacity: 1 !important;
-  stroke-width: 3 !important;
-  filter: drop-shadow(0 0 6px var(--pn-edge-color));
-}
-
-.pn-ods-connector {
-  fill: none;
-  stroke: rgba(231,234,242,0.35);
-  stroke-width: 1;
-  stroke-dasharray: 3,3;
-  opacity: 0;
-  transition: opacity .2s;
-}
-
-.pn-node { transition: opacity .2s; }
-.pn-node-dim { opacity: 0.12; }
-.pn-node-active .pn-node-ring { filter: drop-shadow(0 0 6px #fff); stroke-width: 2.4; }
-
-.pn-ods-link { fill: none; stroke-width: 1.6; }
-
-.pn-ods-badge-group { opacity: 0; pointer-events: none; transition: opacity .2s; }
-.pn-ods-badge-group.visible { opacity: 1; }
-.pn-ods-badge-group.visible .pn-ods-connector { opacity: 1; }
-
-.pn-ods-badge { stroke: #06110f; stroke-width: 1; }
-.pn-ods-badge-label {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 10px;
-  font-weight: 800;
-  fill: #06110f;
-}
-
-/* panel "Sustento" de la red de estructuras */
-.pn-sustento-panel {
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  width: 280px;
-  max-width: calc(100% - 28px);
-  background: var(--panel-alt);
-  border: 1px solid var(--teal);
-  box-shadow: 0 10px 28px rgba(0,0,0,0.4), 0 0 14px rgba(47,212,200,0.18);
-  border-radius: 10px;
-  padding: 14px 30px 14px 16px;
-  opacity: 0;
-  transform: translateY(-8px);
-  pointer-events: none;
-  transition: opacity .2s ease, transform .2s ease;
-  z-index: 5;
-  max-height: calc(100% - 28px);
-  overflow-y: auto;
-}
-
-.pn-sustento-panel.visible {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
-}
-
-.pn-sustento-close {
-  position: absolute;
-  top: 8px;
-  right: 10px;
-  background: none;
-  border: none;
-  color: var(--text-faint);
-  font-size: 17px;
-  line-height: 1;
-  cursor: pointer;
-  padding: 0;
-}
-
-.pn-sustento-close:hover { color: var(--pink); }
-
-.pn-sustento-badge {
-  display: inline-flex;
+/* Icono dentro del nodo */
+.node-icon {
+  width: 100%;
+  height: 100%;
+  display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.4px;
-  text-transform: uppercase;
-  color: var(--teal);
-  margin-bottom: 8px;
+  justify-content: center;
+  color: var(--sys);
+  line-height: 1;
 }
 
-.pn-sustento-title {
-  font-family: 'Space Grotesk', sans-serif;
+/* Brillo proporcional a la conectividad: los hubs destacan */
+.concept.deg-low  .node-fill { filter: drop-shadow(0 0 3px var(--sys)); }
+.concept.deg-mid  .node-fill { filter: drop-shadow(0 0 6px var(--sys)); stroke-width: 2; }
+.concept.deg-high .node-fill { filter: drop-shadow(0 0 11px var(--sys)); stroke-width: 2.4; }
+.concept.deg-high text { font-weight: 700; }
+
+/* Concepto apagado en el escenario de nodo crítico */
+.concept.node-off .node-fill {
+  stroke: var(--danger);
+  stroke-dasharray: 3 2.5;
+  filter: none;
+  opacity: 0.45;
+}
+.concept.node-off .node-icon { opacity: 0.35; }
+.concept.node-off text { opacity: 0.4; }
+
+/* Estructura completa apagada desde "Escenarios": el nodo NO se mueve ni se
+   quita del mapa, solo baja muchísimo su opacidad para leerse como "fuera". */
+.concept.sys-off { opacity: 0.08; transition: opacity 0.35s ease; }
+.concept.sys-off .node-fill { filter: none; }
+
+/* La animación solo usa opacidad: si usara transform, sobrescribiría el
+   atributo transform del SVG y todos los nodos caerían al centro. */
+.node-appear { animation: pop 0.42s ease; }
+@keyframes pop { from { opacity: 0; } to { opacity: 1; } }
+
+.concept.isolated circle { stroke-dasharray: 2.5 2.5; stroke: var(--danger); opacity: 0.75; }
+.concept.isolated text { fill: var(--text-faint); }
+.concept.dim { opacity: 0.2; }
+.sys-node.dim { opacity: 0.25; }
+
+.member-link { stroke: rgba(255, 255, 255, 0.1); stroke-width: 0.7; fill: none; }
+.member-link.dim { opacity: 0.15; }
+
+/* Línea de relación: un trazo fino y sólido (sin neón) sobre una cinta
+   difuminada del mismo color detrás (".rel-glow") que le da cuerpo suave. */
+.rel {
+  fill: none;
+  stroke-width: 2.1;
+  cursor: pointer;
+  animation: draw 0.5s ease;
+  transition: opacity 0.35s ease;
+}
+
+@keyframes draw { from { opacity: 0; } to { opacity: 0.85; } }
+
+.rel.soporte { stroke: var(--soporte); }
+.rel.resiliencia { stroke: var(--resiliencia); }
+/* directa = sólida (por defecto); indirecta = punteada, bien diferenciada */
+.rel.punteada { stroke-dasharray: 9 7; }
+.rel:hover { stroke-width: 5; }
+.rel.dim { opacity: 0.12; }
+.rel.sel { stroke-width: 6; }
+
+/* Relación que toca una estructura o un nodo apagado: se queda en su sitio
+   pero casi invisible, en vez de desaparecer del mapa. */
+.rel.rel-off { opacity: 0.05; }
+
+/* Cinta difuminada detrás de la línea: da el aspecto "sólido y suave" que
+   pidió el usuario, en vez de un brillo tipo neón. Se deja bien sutil para
+   que la red se lea limpia (menos "sopa" de color) y se parezca a la
+   referencia: líneas finas y espacio de aire alrededor de cada nodo. */
+.rel-glow {
+  fill: none;
+  stroke-linecap: round;
+  pointer-events: none;
+  filter: url(#rel-blur);
+  transition: opacity 0.35s ease;
+}
+.rel-glow.soporte,
+.rel-glow.resiliencia { stroke-width: 7; opacity: 0.16; }
+.rel-glow.punteada { stroke-width: 5; opacity: 0.08; }
+.rel-glow.sel { stroke-width: 14; opacity: 0.4; }
+.rel-glow.dim { opacity: 0.03; }
+.rel-glow.rel-off { opacity: 0.02; }
+
+.rel-hit { fill: none; stroke: transparent; stroke-width: 34; cursor: pointer; }
+
+/* --------------------------------------------------------------- TOOLTIP */
+.tooltip {
+  position: absolute;
+  pointer-events: none;
+  background: #0b1120;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 7px 10px;
+  font-size: 11px;
+  color: var(--text);
+  max-width: 260px;
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.55);
+  opacity: 0;
+  transition: opacity 0.14s;
+  z-index: 20;
+}
+
+.tooltip.show { opacity: 1; }
+.tooltip .tt-sys { font-size: 9.5px; font-weight: 800; letter-spacing: 0.4px; }
+
+/* -------------------------------------------------------------- EVIDENCIA */
+.ev-empty { font-size: 11.5px; color: var(--text-faint); line-height: 1.55; }
+
+.ev-rel {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  font-weight: 800;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.ev-rel .arrow { color: var(--text-faint); }
+.ev-concepts { font-size: 11px; color: var(--text-dim); line-height: 1.5; margin-bottom: 12px; }
+
+.ev-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+
+.ev-meta div {
+  background: var(--panel-alt);
+  border: 1px solid var(--border-soft);
+  border-radius: 6px;
+  padding: 7px 9px;
+}
+
+.ev-meta .k { font-size: 8.5px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-faint); font-weight: 700; }
+.ev-meta .v { font-size: 11.5px; font-weight: 700; margin-top: 2px; }
+
+.ev-quote {
+  font-size: 11.5px;
+  line-height: 1.65;
+  color: var(--text);
+  font-style: italic;
+  background: var(--panel-alt);
+  border-left: 3px solid var(--soporte);
+  border-radius: 0 6px 6px 0;
+  padding: 11px 12px;
+}
+
+.ev-quote.resiliencia { border-left-color: var(--resiliencia); }
+.ev-src { font-size: 10px; color: var(--text-faint); margin-top: 9px; }
+
+/* ------------------------------------------------------------- SIMULACIÓN */
+.sim-off {
+  background: rgba(239, 68, 68, 0.09);
+  border: 1px solid rgba(239, 68, 68, 0.32);
+  border-radius: 8px;
+  padding: 11px 12px;
+  margin-bottom: 11px;
+}
+
+.sim-off .k { font-size: 8.5px; text-transform: uppercase; letter-spacing: 0.5px; color: #f3a3a3; font-weight: 800; }
+.sim-off .v { font-size: 13px; font-weight: 800; margin-top: 2px; }
+
+.sim-line { display: flex; justify-content: space-between; font-size: 11.5px; padding: 5px 0; border-bottom: 1px dashed var(--border-soft); }
+.sim-line span:last-child { font-weight: 800; }
+
+.finding {
+  font-size: 11.5px;
+  line-height: 1.6;
+  color: var(--text);
+  background: var(--panel-alt);
+  border-left: 3px solid var(--eep);
+  border-radius: 0 6px 6px 0;
+  padding: 11px 12px;
+}
+
+.finding b { color: var(--eep); }
+
+.compare-row { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
+.compare-row .code { font-size: 11px; font-weight: 800; color: var(--sys); width: 46px; }
+.compare-row .track { flex: 1; height: 13px; background: var(--panel-alt); border-radius: 4px; overflow: hidden; }
+.compare-row .fill { height: 100%; background: var(--sys); opacity: 0.6; transition: width 0.45s ease; }
+.compare-row .n { font-size: 10.5px; font-weight: 700; width: 42px; text-align: right; color: var(--text-dim); }
+
+/* ------------------------------------------------------------- RESPONSIVE */
+@media (max-width: 1200px) {
+  .net-layout { grid-template-columns: 240px 1fr; }
+  .col:not(.right) { grid-column: 1 / -1; }
+}
+
+@media (max-width: 820px) {
+  .net-layout { grid-template-columns: 1fr; padding: 12px; }
+  .col.left, .col.right { grid-column: auto; }
+  .net-stage { height: 60vh; }
+  .topbar { padding: 14px 16px; }
+}
+
+/* (el estado ON/OFF de cada fila ahora se define junto al resto de
+   .scenario-btn / .sys-state más arriba, como switch al final de la fila) */
+.scenario-btn { position: relative; }
+
+/* ---------------------------------------------------------------------- */
+/* Panel: escenario de nodo crítico                                      */
+/* ---------------------------------------------------------------------- */
+.node-question {
   font-size: 12.5px;
   font-weight: 700;
   color: var(--text);
-  margin-bottom: 6px;
-  line-height: 1.3;
+  line-height: 1.4;
+  margin-bottom: 10px;
 }
 
-.pn-sustento-type {
-  display: inline-block;
-  font-size: 10px;
+.node-label {
+  display: block;
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-faint);
+  margin-bottom: 5px;
+}
+
+.node-select {
+  width: 100%;
+  background: var(--panel-alt);
+  border: 1px solid var(--border-soft);
+  color: var(--text);
+  font-size: 11.5px;
+  font-weight: 600;
+  font-family: inherit;
+  padding: 8px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.node-select:hover { border-color: var(--eseci); }
+
+.node-impact {
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--text-dim);
+  margin: 10px 0;
+}
+
+.node-impact b { color: var(--text); }
+
+.node-sim-btn {
+  width: 100%;
+  justify-content: center;
+  background: rgba(239, 68, 68, 0.12);
+  border-color: rgba(239, 68, 68, 0.38);
+  color: #f3a3a3;
+  font-weight: 700;
+  padding: 9px 12px;
+}
+
+.node-sim-btn:hover { border-color: var(--danger); color: #ffb3b3; }
+.node-sim-btn.active { background: rgba(239, 68, 68, 0.22); border-color: var(--danger); color: #ffc4c4; }
+
+.ev-warn {
+  display: flex;
+  gap: 7px;
+  align-items: flex-start;
+  font-size: 10.5px;
+  line-height: 1.45;
+  color: var(--text-faint);
+  margin-top: 9px;
+}
+.ev-warn i { color: var(--eseci); margin-top: 2px; }
+
+/* Página del POT, justo debajo de la frase exacta */
+.ev-page {
+  margin-top: 10px;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--eseci);
+  letter-spacing: 0.2px;
+}
+
+/* ======================================================================
+   POP-UP DE APERTURA: HALLAZGO PRINCIPAL
+   Tarjeta clara centrada, al estilo de la referencia.
+   ====================================================================== */
+.intro-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 26px;
+  background: rgba(5, 8, 16, 0.78);
+  backdrop-filter: blur(6px);
+  animation: introFade 0.4s ease both;
+}
+
+.intro-backdrop.hidden { display: none; }
+
+@keyframes introFade { from { opacity: 0; } to { opacity: 1; } }
+
+.intro-modal {
+  position: relative;
+  width: 100%;
+  max-width: 760px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: #f7fafc;
+  color: #1b2536;
+  border-radius: 20px;
+  padding: 30px 38px 26px;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.6);
+  animation: introRise 0.45s cubic-bezier(.2, .8, .3, 1) both;
+}
+
+@keyframes introRise {
+  from { opacity: 0; transform: translateY(24px) scale(0.97); }
+  to { opacity: 1; transform: none; }
+}
+
+.intro-close {
+  position: absolute;
+  top: 18px;
+  right: 20px;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #5b6a80;
+  font-size: 18px;
+  cursor: pointer;
+  transition: 0.18s;
+}
+
+.intro-close:hover { background: #e6edf5; color: #1b2536; }
+
+.intro-head { display: flex; align-items: center; gap: 16px; }
+
+.intro-icon {
+  width: 62px;
+  height: 62px;
+  flex: 0 0 62px;
+  border-radius: 50%;
+  background: #e3eef8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #2f8fb5;
+  font-size: 24px;
+}
+
+.intro-head h2 {
+  font-family: 'Space Grotesk', 'Inter', sans-serif;
+  font-size: 27px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  color: #16202f;
+}
+
+.intro-divider {
+  position: relative;
+  height: 1px;
+  background: #dde5ee;
+  margin: 22px 0 24px;
+}
+
+.intro-divider span {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #3aa0c4;
+  transform: translate(-50%, -50%);
+}
+
+.intro-body { display: flex; gap: 26px; align-items: flex-start; }
+
+.intro-figure {
+  width: 132px;
+  height: 132px;
+  flex: 0 0 132px;
+  border-radius: 50%;
+  background: #e9f1f8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #3f7ea3;
+  font-size: 52px;
+}
+
+.intro-text { min-width: 0; }
+
+.intro-text p {
+  font-size: 15.5px;
+  line-height: 1.62;
+  color: #35435a;
+  margin-bottom: 14px;
+}
+
+.intro-text b { color: #16202f; font-weight: 700; }
+.intro-text b.hl { color: #1c8ab0; }
+
+.intro-text .intro-q {
+  font-size: 16.5px;
+  font-weight: 700;
+  color: #16202f;
+  margin-bottom: 10px;
+}
+
+/* cifras calculadas desde los datos, para respaldar el hallazgo */
+.intro-figures {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(108px, 1fr));
+  gap: 9px;
+  margin-top: 18px;
+}
+
+.fig-card {
+  background: #fff;
+  border: 1px solid #e2e9f1;
+  border-radius: 10px;
+  padding: 10px 11px;
+  border-top: 3px solid var(--fig, #ccc);
+}
+
+.fig-card .fig-code { font-size: 11px; font-weight: 800; color: var(--fig); letter-spacing: 0.3px; }
+.fig-card .fig-num { font-size: 23px; font-weight: 800; color: #16202f; line-height: 1.1; margin-top: 2px; }
+.fig-card .fig-lbl { font-size: 9.5px; color: #6b7a90; line-height: 1.3; margin-top: 3px; }
+
+.intro-foot {
+  display: flex;
+  justify-content: flex-end;
+  border-top: 1px solid #dde5ee;
+  margin-top: 24px;
+  padding-top: 18px;
+}
+
+.intro-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  background: #fff;
+  border: 1.5px solid #b9d7e6;
+  color: #1c7fa3;
+  font-family: inherit;
+  font-size: 14.5px;
+  font-weight: 700;
+  padding: 13px 22px;
+  border-radius: 11px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.intro-btn:hover { background: #1c8ab0; border-color: #1c8ab0; color: #fff; }
+.intro-btn i:last-child { font-size: 12px; }
+
+@media (max-width: 700px) {
+  .intro-modal { padding: 24px 20px 20px; }
+  .intro-body { flex-direction: column; align-items: center; }
+  .intro-figure { width: 96px; height: 96px; flex-basis: 96px; font-size: 38px; }
+  .intro-head h2 { font-size: 22px; }
+  .intro-text p { font-size: 14.5px; }
+}
+
+/* ======================================================================
+   POP-UP DE LA FRASE EXACTA (al hacer clic en una línea de la red)
+   ====================================================================== */
+.quote-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 380;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 26px;
+  background: rgba(5, 8, 16, 0.76);
+  backdrop-filter: blur(5px);
+  animation: introFade 0.28s ease both;
+}
+
+.quote-backdrop.hidden { display: none; }
+
+.quote-modal {
+  position: relative;
+  width: 100%;
+  max-width: 660px;
+  max-height: 88vh;
+  overflow-y: auto;
+  background: #f7fafc;
+  color: #1b2536;
+  border-radius: 18px;
+  padding: 30px 34px 24px;
+  box-shadow: 0 26px 80px rgba(0, 0, 0, 0.6);
+  animation: introRise 0.32s cubic-bezier(.2, .8, .3, 1) both;
+}
+
+.quote-rel {
+  font-family: 'Space Grotesk', 'Inter', sans-serif;
+  font-size: 19px;
+  font-weight: 700;
+  color: #16202f;
+  line-height: 1.35;
+  padding-right: 34px;
+}
+
+.quote-rel .arrow { color: #8a99ad; margin: 0 6px; }
+
+.quote-tags { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 12px; }
+
+.quote-tag {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  padding: 4px 9px;
+  border-radius: 5px;
+  background: #e8eef6;
+  color: #4a5a73;
+}
+
+.quote-tag.soporte { background: #fdf0dc; color: #9a6212; }
+.quote-tag.resiliencia { background: #dcf5f1; color: #0f766e; }
+
+.quote-divider {
+  position: relative;
+  height: 1px;
+  background: #dde5ee;
+  margin: 20px 0;
+}
+
+.quote-divider span {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #3aa0c4;
+  transform: translate(-50%, -50%);
+}
+
+/* La frase textual del POT: protagonista del pop-up */
+.quote-text {
+  font-size: 16px;
+  line-height: 1.7;
+  color: #26334a;
+  font-style: italic;
+  border-left: 4px solid #3aa0c4;
+  padding: 4px 0 4px 18px;
+}
+
+.quote-foot {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  border-top: 1px solid #dde5ee;
+  margin-top: 22px;
+  padding-top: 15px;
+}
+
+.quote-page {
+  font-size: 15px;
+  font-weight: 800;
+  color: #16202f;
+}
+
+.quote-sec { font-size: 11.5px; color: #6b7a90; text-align: right; flex: 1; min-width: 140px; }
+
+@media (max-width: 640px) {
+  .quote-modal { padding: 24px 20px 18px; }
+  .quote-rel { font-size: 16.5px; }
+  .quote-text { font-size: 14.5px; }
+  .quote-foot { flex-direction: column; }
+  .quote-sec { text-align: left; }
+}
+
+/* Relaciones que la propia tabla del POT excluye por falta de frase continua:
+   se dibujan más tenues para no presentarlas como sustentadas. */
+.rel.por-verificar { opacity: 0.4; stroke-dasharray: 6 14; }
+.rel.por-verificar:hover { opacity: 0.85; }
+
+.quote-tag.pv { background: #fbe9e9; color: #a33; }
+
+/* Aviso cuando la relación aún no tiene frase del POT registrada */
+.quote-text.no-quote {
+  font-style: normal;
+  font-size: 14px;
+  color: #7b5a1e;
+  background: #fdf6e6;
+  border-left-color: #d8a441;
+  padding: 14px 16px;
+  border-radius: 0 8px 8px 0;
+}
+
+/* Pop-up de apertura en dos pasos */
+.intro-step {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: #7d8da0;
+  margin-top: 3px;
+}
+
+.intro-pane.hidden { display: none; }
+.intro-pane { animation: introFade 0.3s ease both; }
+
+/* --- Pop-up de apertura en dos pasos --- */
+.intro-step {
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.4px;
   text-transform: uppercase;
-  padding: 3px 8px;
-  border-radius: 4px;
-  margin-bottom: 8px;
+  color: #7d8ca1;
+  margin-top: 3px;
 }
 
-.pn-sustento-ods {
+.intro-body.hidden { display: none; }
+
+.intro-foot { gap: 10px; }
+.intro-foot .intro-btn.hidden { display: none; }
+
+.intro-btn.ghost {
+  border-color: #dbe3ec;
+  color: #6b7a90;
+  margin-right: auto;   /* "Volver" a la izquierda */
+}
+
+.intro-btn.ghost:hover { background: #eef3f8; border-color: #c6d2df; color: #35435a; }
+
+/* Escenario destacado tras cerrar el pop-up del hallazgo */
+.scenario-btn.spotlight {
+  border-color: var(--eseci);
+  box-shadow: 0 0 0 2px rgba(217, 164, 65, 0.35), 0 0 22px rgba(217, 164, 65, 0.28);
+  animation: spot 1.7s ease-in-out infinite;
+}
+
+@keyframes spot {
+  0%, 100% { box-shadow: 0 0 0 2px rgba(217,164,65,0.30), 0 0 16px rgba(217,164,65,0.20); }
+  50%      { box-shadow: 0 0 0 3px rgba(217,164,65,0.55), 0 0 30px rgba(217,164,65,0.42); }
+}
+
+.scenario-btn.spotlight .btn-title { color: var(--eseci); }
+
+/* Nota sobre el peso económico al apagar la ESECI */
+.eco-note {
   display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
+  gap: 9px;
+  align-items: flex-start;
+  background: rgba(217, 164, 65, 0.10);
+  border: 1px solid rgba(217, 164, 65, 0.32);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-top: 10px;
+  font-size: 11.5px;
+  line-height: 1.55;
+  color: var(--text-dim);
+}
+
+.eco-note i { color: var(--eseci); margin-top: 2px; }
+
+/* ======================================================================
+   DEBILITAMIENTO DE LA RED AL APAGAR UNA ESTRUCTURA
+   ====================================================================== */
+
+/* Nodo que perdió parte de sus relaciones: se despega y pierde brillo */
+.concept.weakened .node-fill {
+  stroke: #ef8b3c;
+  stroke-dasharray: 7 5;
+  filter: none;
+  opacity: 0.78;
+}
+.concept.weakened .node-icon { opacity: 0.6; }
+.concept.weakened text { opacity: 0.72; }
+
+/* Nodo que quedó sin ninguna conexión activa: cortado de la red */
+.concept.cut-off .node-fill {
+  stroke: var(--danger);
+  stroke-dasharray: 5 5;
+  filter: none;
+  opacity: 0.55;
+}
+.concept.cut-off .node-icon { opacity: 0.4; }
+.concept.cut-off text { opacity: 0.45; fill: #f3a3a3; }
+
+/* Las relaciones ya no se mueven ni estiran: solo cambian de opacidad */
+.rel { transition: opacity 0.4s ease; }
+
+/* Aviso sobre el propio diagrama */
+.weak-banner {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
   align-items: center;
-  font-size: 10.5px;
-  color: var(--text-dim);
-  margin-bottom: 8px;
-}
-
-.pn-ods-chip {
-  border-radius: 999px;
-  padding: 2px 8px;
-  font-size: 10px;
-  font-weight: 700;
-}
-
-.pn-sustento-quote-block { margin-bottom: 8px; }
-.pn-sustento-quote-block:last-child { margin-bottom: 0; }
-
-.pn-sustento-quote {
-  font-size: 11.5px;
-  color: var(--text-dim);
-  line-height: 1.5;
-  font-style: italic;
-  border-left: 2px solid var(--border);
-  padding-left: 10px;
-  margin-bottom: 4px;
-}
-
-.pn-sustento-page {
-  font-size: 10.5px;
-  color: var(--text-faint);
-  font-weight: 600;
-}
-
-/* panel derecho: "1. Relaciones que favorecen los ODS" */
-.pn-sidebar {
-  width: 250px;
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.pn-findings-panel {
-  background: var(--panel-alt);
-  border: 1px solid var(--border-soft);
-  border-radius: 8px;
-  padding: 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.pn-findings-title {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 11.5px;
-  font-weight: 700;
-  color: var(--green);
-  margin-bottom: 4px;
-}
-
-.pn-finding-item {
-  background: rgba(255,255,255,0.03);
-  border: 1px solid var(--border-soft);
-  border-radius: 8px;
-  padding: 9px 10px;
-  font-family: 'Inter', sans-serif;
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-dim);
-  text-align: left;
-  cursor: pointer;
-  transition: border-color .15s, color .15s, background-color .15s;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  line-height: 1.35;
-}
-
-.pn-finding-item:hover { border-color: var(--green); color: var(--text); }
-
-.pn-finding-item.active {
-  border-color: var(--green);
+  gap: 10px;
+  background: rgba(12, 8, 8, 0.9);
+  border: 1px solid rgba(239, 68, 68, 0.5);
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-size: 12.5px;
   color: var(--text);
-  background: color-mix(in srgb, var(--green) 14%, transparent);
+  z-index: 10;
+  max-width: 88%;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+  animation: bannerIn 0.4s ease both;
+  pointer-events: none;
 }
 
-.pn-finding-ods {
-  font-size: 9.5px;
+.weak-banner.hidden { display: none; }
+.weak-banner i { color: var(--danger); font-size: 15px; }
+.weak-banner b { color: #ffb3b3; }
+.weak-banner .wb-sub { display: block; font-size: 10.5px; color: var(--text-dim); margin-top: 2px; }
+
+@keyframes bannerIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(-8px); }
+  to { opacity: 1; transform: translateX(-50%); }
+}
+
+/* Nodos puente: anillo exterior que los distingue en la red */
+.concept.bridge .node-fill {
+  stroke-width: 4;
+  stroke-dasharray: none;
+}
+.concept.bridge text { font-weight: 800; }
+
+/* Panel de nodos puente */
+.bridge-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 0;
+  border-bottom: 1px dashed var(--border-soft);
+  font-size: 11.5px;
+}
+.bridge-row:last-of-type { border-bottom: 0; }
+.bridge-row i { color: var(--sys); width: 15px; text-align: center; font-size: 12px; }
+.bridge-row .bl { flex: 1; color: var(--text); font-weight: 600; }
+.bridge-row .bs { font-size: 9.5px; font-weight: 800; color: var(--sys); letter-spacing: .3px; }
+.bridge-row .bn {
+  font-size: 10.5px; font-weight: 800; color: var(--text-dim);
+  background: var(--panel-alt); border-radius: 4px; padding: 2px 7px; min-width: 26px; text-align: center;
+}
+/* CORRECCIÓN VISUAL · NODOS LEGIBLES */
+.net-card { overflow: hidden; }
+.net-stage { min-height: 560px; background: #070b13; }
+.concept .node-fill { fill: #101827; stroke-width: 3; }
+.concept.deg-mid .node-fill { stroke-width: 3.4; }
+.concept.deg-high .node-fill { stroke-width: 4; }
+.concept text { fill: #edf2fb; font-weight: 700; stroke: #070b13; stroke-width: 3.2px; paint-order: stroke fill; }
+.node-icon { filter: drop-shadow(0 1px 2px rgba(0,0,0,.45)); }
+.rel { stroke-width: 2.8; }
+.rel-glow { opacity: .28; }
+.rel:hover { stroke-width: 6; }
+@media (max-width: 1100px) {
+  .net-stage { min-height: 500px; }
+  .concept text { stroke-width: 2.6px; }
+}
+
+/* CONTROLES DE ZOOM */
+.zoom-controls {
+  position: absolute;
+  z-index: 12;
+  top: 14px;
+  right: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px;
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 9px;
+  background: rgba(10,14,23,.90);
+  box-shadow: 0 8px 24px rgba(0,0,0,.28);
+  backdrop-filter: blur(8px);
+}
+.zoom-btn {
+  width: 30px;
+  height: 30px;
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 6px;
+  background: #121a2a;
+  color: #e7eaf2;
+  font: 700 18px/1 Inter, sans-serif;
+  cursor: pointer;
+}
+.zoom-btn:hover { background: #1c2940; border-color: var(--teal); color: var(--teal); }
+.zoom-value {
+  min-width: 48px;
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.3px;
-  color: var(--green);
-  text-transform: uppercase;
 }
-
-.pn-legend-hint {
-  font-size: 10px;
-  color: var(--text-faint);
-  line-height: 1.5;
-  padding: 0 2px;
-}
-
-@media (max-width: 900px) {
-  .pn-wrap { flex-direction: column; }
-  .pn-sidebar { width: 100%; }
-  #pnViz { height: 400px; }
-}
+.zoom-reset { font-size: 13px; margin-left: 2px; }
