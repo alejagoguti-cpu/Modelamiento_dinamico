@@ -8,38 +8,39 @@
   --text: #e7eaf2;
   --text-dim: #8891a5;
   --text-faint: #5a6274;
-  --teal: #2fd4c8;
-  --teal-dim: rgba(47,212,200,0.12);
-  --blue: #5b8def;
-  --purple: #a276f2;
-  --green: #4ade80;
-  --yellow: #f5c945;
+  /* misma gama "infografía" (teal, coral, naranja, mostaza sobre negro) usada en index.html */
+  --teal: #2fbfae;
+  --teal-dim: rgba(47,191,174,0.12);
+  --blue: #ef8b3c;
+  --purple: #ef6f6f;
+  --green: #2fbfae;
+  --yellow: #eab04c;
   --pink: #f76fb0;
-  --orange: #ef9552;
+  --orange: #ef8b3c;
 
   /* Colores de cada estructura del modelo (según convención) */
-  --eco: #22b88a;     /* Sistema Ambiental y de Estructura Ecológica Principal */
-  --func: #3b6fe0;    /* Estructura Funcional y del Cuidado */
-  --econ: #d9a441;    /* Estructura Socioeconómica, Creativa y de Innovación */
-  --patri: #b13bff;   /* Estructura Integradora de Patrimonios */
+  --eco: #2fbfae;     /* Sistema Ambiental y de Estructura Ecológica Principal */
+  --func: #ef8b3c;    /* Estructura Funcional y del Cuidado */
+  --econ: #eab04c;    /* Estructura Socioeconómica, Creativa y de Innovación */
+  --patri: #ef6f6f;   /* Estructura Integradora de Patrimonios */
 
   /* Colores de los tipos de relación (según leyenda) */
   --line-directa: rgba(255,255,255,0.55);
   --line-indirecta: rgba(255,255,255,0.38);
-  --line-soporte: #ef9552;
-  --line-resiliencia: #4c8dff;
+  --line-soporte: #f0a15c;
+  --line-resiliencia: #2fbfae;
 
   --off-red: #ef4444;
 
   /* Sistemas de la nueva base (Red_4_Estructuras_POT_CORREGIDA.xlsx) */
-  --eep: #22b88a;
-  --efc: #3b82f6;
-  --eip: #a855f7;
-  --eseci: #d9a441;
+  --eep: #2fbfae;
+  --efc: #ef8b3c;
+  --eip: #ef6f6f;
+  --eseci: #eab04c;
 
   /* Tipos de relación según la hoja LEYENDA */
-  --soporte: #f59e0b;
-  --resiliencia: #2563eb;
+  --soporte: #f0a15c;
+  --resiliencia: #2fbfae;
   --danger: #ef4444;
 }
 
@@ -248,7 +249,7 @@ body {
 
 .scenario-btn:hover {
   border-color: var(--teal);
-  background: rgba(47,212,200,0.05);
+  background: rgba(47,191,174,0.05);
 }
 
 .scenario-btn i {
@@ -1037,7 +1038,7 @@ body {
 }
 
 .quote-tag.soporte { background: #fdf0dc; color: #9a6212; }
-.quote-tag.resiliencia { background: #e0e9fb; color: #1f4fa8; }
+.quote-tag.resiliencia { background: #dcf5f1; color: #0f766e; }
 
 .quote-divider {
   position: relative;
@@ -1185,7 +1186,7 @@ body {
 
 /* Nodo que perdió parte de sus relaciones: se despega y pierde brillo */
 .concept.weakened .node-fill {
-  stroke: #ef9552;
+  stroke: #ef8b3c;
   stroke-dasharray: 7 5;
   filter: none;
   opacity: 0.78;
