@@ -2221,9 +2221,86 @@ function buildModel() {
 const nodeOn = id => !offNodes.has(id);
 const relActive = r => state[r.sO] && state[r.sD] && nodeOn(r.from) && nodeOn(r.to);
 
-// Las posiciones vienen precalculadas en POT_DATA (layout de fuerzas por
-// clúster, optimizado para minimizar cruces de líneas).
-function computeLayout() { /* nada: layout ya cargado en buildModel */ }
+// Las posiciones de partida vienen de POT_DATA (agrupadas por estructura),
+// pero muchas quedaban demasiado pegadas / superpuestas. Aquí se relajan con
+// una simulación simple de fuerzas: se separan los nodos que se solapan y se
+// evita que las conexiones queden demasiado comprimidas, partiendo siempre
+// del layout original para conservar el agrupamiento por estructura.
+function computeLayout() {
+  const ids = Object.keys(layout);
+  const n = ids.length;
+  const pos = {};
+  ids.forEach(id => { pos[id] = { x: layout[id].x, y: layout[id].y }; });
+
+  const edges = model.relations.map(r => ({ a: r.from, b: r.to }));
+
+  const ITER = 260;
+  const REPEL = 60000;          // separa cualquier par de nodos que se acerque demasiado
+  const SPRING = 0.018;         // mantiene cerca a los nodos conectados
+  const GAP = 40;               // aire mínimo extra entre los bordes de dos nodos
+  const CENTER_PULL = 0.002;    // atracción muy suave al centro global
+
+  for (let it = 0; it < ITER; it++) {
+    const force = {};
+    ids.forEach(id => (force[id] = { x: 0, y: 0 }));
+
+    // 1) repulsión entre todos los pares: evita solapes entre nodos
+    for (let i = 0; i < n; i++) {
+      const idA = ids[i], a = pos[idA];
+      for (let j = i + 1; j < n; j++) {
+        const idB = ids[j], b = pos[idB];
+        const dx = a.x - b.x, dy = a.y - b.y;
+        const dist = Math.hypot(dx, dy) || 0.001;
+        const minDist = nodeR[idA] + nodeR[idB] + GAP;
+        if (dist < minDist * 2.2) {
+          const overlap = Math.max(0, minDist - dist) + 1;
+          const f = (REPEL * overlap) / (dist * dist + 500);
+          const ux = dx / dist, uy = dy / dist;
+          force[idA].x += ux * f; force[idA].y += uy * f;
+          force[idB].x -= ux * f; force[idB].y -= uy * f;
+        }
+      }
+    }
+
+    // 2) resorte entre nodos conectados: los mantiene relativamente cerca
+    edges.forEach(({ a: idA, b: idB }) => {
+      const a = pos[idA], b = pos[idB];
+      const dx = b.x - a.x, dy = b.y - a.y;
+      const dist = Math.hypot(dx, dy) || 0.001;
+      const rest = nodeR[idA] + nodeR[idB] + 130;
+      const f = SPRING * (dist - rest);
+      const ux = dx / dist, uy = dy / dist;
+      force[idA].x += ux * f; force[idA].y += uy * f;
+      force[idB].x -= ux * f; force[idB].y -= uy * f;
+    });
+
+    // 3) atracción suave al centro para que la red no se disperse sin límite
+    ids.forEach(id => {
+      force[id].x += -pos[id].x * CENTER_PULL;
+      force[id].y += -pos[id].y * CENTER_PULL;
+    });
+
+    // el movimiento se va "enfriando" a medida que avanzan las iteraciones
+    const damp = Math.max(0, 1 - it / (ITER * 1.1));
+    ids.forEach(id => {
+      pos[id].x += force[id].x * damp;
+      pos[id].y += force[id].y * damp;
+    });
+  }
+
+  ids.forEach(id => { layout[id] = pos[id]; });
+
+  // recalcula el viewBox para que "Centrar vista" encuadre bien la red ya
+  // relajada (puede haber quedado un poco más grande que el original)
+  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  ids.forEach(id => {
+    const p = pos[id], r = nodeR[id] + 90; // margen para las etiquetas
+    minX = Math.min(minX, p.x - r); maxX = Math.max(maxX, p.x + r);
+    minY = Math.min(minY, p.y - r); maxY = Math.max(maxY, p.y + r);
+  });
+  BASE_VB = { x: minX, y: minY, w: maxX - minX, h: maxY - minY };
+  vb = Object.assign({}, BASE_VB);
+}
 
 // ---------------------------------------------------------------------
 // 3. RENDER
@@ -2274,11 +2351,10 @@ function curvePath(a, b, rA, rB) {
 
 // ---------------------------------------------------------------------
 // DEBILITAMIENTO DE LA RED
-// Cuando se apaga una estructura, cada concepto que sobrevive se desplaza
-// hacia afuera en proporción a las relaciones que perdió. Los que quedan
-// sin ninguna conexión activa se van más lejos y se marcan en rojo.
-// Así se ve, no solo se calcula, qué tanto sostenía la red la estructura
-// apagada.
+// Cuando se apaga una estructura, los demás nodos NO cambian de lugar:
+// se quedan exactamente donde estaban. Lo único que cambia es su opacidad
+// (ver "weakened"/"cut-off" en render()) y la de los nodos/relaciones que
+// pertenecen a la estructura apagada (ver "sys-off"/"rel-off").
 // ---------------------------------------------------------------------
 const drawPos = {};
 
@@ -2289,20 +2365,9 @@ function lossRatioOf(c) {
 }
 
 function computeDrift() {
-  const algoApagado = SYS.some(s => !state[s]) || offNodes.size > 0;
-
   Object.values(model.concepts).forEach(c => {
     const p = layout[c.id];
     drawPos[c.id] = { x: p.x, y: p.y };
-    if (!algoApagado) return;
-    if (!state[c.sys] || offNodes.has(c.id)) return;   // los apagados no se mueven
-
-    const ratio = lossRatioOf(c);
-    if (ratio < 0.34) return;                          // perdió poco: se queda
-
-    const d = Math.hypot(p.x, p.y) || 1;
-    const drift = 70 + 300 * ratio;                    // pierde más -> se aleja más
-    drawPos[c.id] = { x: p.x + (p.x / d) * drift, y: p.y + (p.y / d) * drift };
   });
 }
 
@@ -2314,9 +2379,11 @@ function render() {
   const gNodes = document.getElementById('gNodes');
   [gGuides, gMembers, gRels, gNodes].forEach(g => (g.innerHTML = ''));
 
-  // -- relaciones activas (las inactivas NO se dibujan: desaparecen de verdad)
+  // -- todas las relaciones se dibujan siempre, en su mismo lugar; las que
+  //    tocan una estructura o un nodo apagado simplemente quedan con muy
+  //    baja opacidad ("rel-off"), en vez de desaparecer y reorganizar la red
   model.relations.forEach(r => {
-    if (!relActive(r)) return;
+    const active = relActive(r);
     const a = drawPos[r.from] || layout[r.from], b = drawPos[r.to] || layout[r.to];
     const rA = nodeR[r.from];
     const rB = nodeR[r.to];
@@ -2326,6 +2393,15 @@ function render() {
     if (r.linea === 'Punteada') cls.push('punteada');
     if (r.porVerificar) cls.push('por-verificar');
     if (selectedRel === r.id) cls.push('sel');
+    if (!active) cls.push('rel-off');
+
+    // cinta difuminada detrás de la línea: da un aspecto sólido y suave
+    // (no neón) a la relación, en vez de un simple trazo brillante
+    const glowCls = ['rel', 'rel-glow', kind];
+    if (cls.includes('punteada')) glowCls.push('punteada');
+    if (cls.includes('sel')) glowCls.push('sel');
+    if (!active) glowCls.push('rel-off');
+    const glow = el('path', { class: glowCls.join(' '), d, 'data-rel': r.id });
 
     const path = el('path', {
       class: cls.join(' '),
@@ -2344,13 +2420,16 @@ function render() {
       node.addEventListener('mouseleave', hideTooltip);
     });
 
+    gRels.appendChild(glow);
     gRels.appendChild(path);
     gRels.appendChild(hit);
   });
 
-  // -- conceptos
+  // -- conceptos: se dibujan TODOS siempre, en su misma posición; los que
+  //    pertenecen a una estructura apagada solo bajan mucho su opacidad
+  //    ("sys-off"), no se quitan del mapa ni mueven a los demás
   SYS.forEach(s => {
-    if (!state[s]) return;
+    const sysOff = !state[s];
     model.systems[s].concepts.forEach(id => {
       const c = model.concepts[id];
       const p = drawPos[id] || layout[id];
@@ -2365,10 +2444,11 @@ function render() {
 
       const cls = ['concept', 'node-appear', 'deg-' + glow];
       const ratio = lossRatioOf(c);
-      if (isolated && !off) cls.push('isolated');
+      if (isolated && !off && !sysOff) cls.push('isolated');
       if (off) cls.push('node-off');
-      if (!off && state[s] && ratio >= 0.34 && ratio < 1) cls.push('weakened');
-      if (!off && state[s] && ratio >= 1) cls.push('cut-off');
+      if (sysOff) cls.push('sys-off');
+      if (!off && !sysOff && ratio >= 0.34 && ratio < 1) cls.push('weakened');
+      if (!off && !sysOff && ratio >= 1) cls.push('cut-off');
       if (isBridge(c)) cls.push('bridge');
 
       const g = el('g', {
@@ -2962,7 +3042,7 @@ function hideTooltip() { tip().classList.remove('show'); }
 // 7. ZOOM Y DESPLAZAMIENTO
 // ---------------------------------------------------------------------
 const VB = POT_DATA.vb;
-const BASE_VB = { x: VB[0], y: VB[1], w: VB[2], h: VB[3] };
+let BASE_VB = { x: VB[0], y: VB[1], w: VB[2], h: VB[3] };
 let vb = Object.assign({}, BASE_VB);
 
 function applyVB() {
