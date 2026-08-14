@@ -69,6 +69,63 @@
 
     <div class="net-layout">
 
+      <!-- ================= PANEL DE INFORMACIÓN ================= -->
+      <div class="col right">
+
+        <div class="pcard" id="evCard">
+          <div id="evBox"></div>
+        </div>
+
+        <div class="pcard">
+          <h2>Escenario de nodo crítico
+            <span class="hint">Los nodos más grandes son los que tienen más relaciones. Apaga uno para ver qué se rompe.</span>
+          </h2>
+          <p class="node-question" id="nodeQuestion">—</p>
+          <label class="node-label" for="nodeSelect">Concepto a desconectar</label>
+          <select id="nodeSelect" class="node-select"></select>
+          <p class="node-impact" id="nodeImpact">—</p>
+          <button class="btn node-sim-btn" id="btnNodeSim"><i class="fa-solid fa-power-off"></i> Simular sin este nodo</button>
+        </div>
+
+        <div class="pcard">
+          <h2>Nodos puente
+            <span class="hint">Conceptos que se relacionan con las tres estructuras distintas a la suya. Se detectan solos.</span>
+          </h2>
+          <div id="bridgeList"></div>
+        </div>
+
+        <div class="pcard">
+          <h2>Simulación del apagado</h2>
+          <div id="simBox"></div>
+        </div>
+
+        <div class="pcard">
+          <h2>Hallazgo de la simulación</h2>
+          <div class="finding" id="finding">—</div>
+        </div>
+
+        <div class="pcard">
+          <h2>Conexiones con otros sistemas
+            <span class="hint">Relaciones activas que cruzan de una estructura a otra. Es la medida del hallazgo principal y se calcula desde los datos.</span>
+          </h2>
+          <div id="rankList"></div>
+          <div id="topSys"></div>
+          <p class="note">
+            La centralidad de la red <b>no equivale a la jerarquía normativa del POT</b>. El POT define la
+            EEP como “primera ordenante” del territorio; esta red mide algo distinto: qué estructura resulta
+            <b>más articuladora</b> según las relaciones explícitas construidas a partir del documento.
+          </p>
+        </div>
+
+        <div class="pcard">
+          <h2>¿Qué sistema genera mayor dependencia?
+            <span class="hint">Relaciones que desaparecerían si ese sistema se apagara (como origen o destino).</span>
+          </h2>
+          <div id="compareList"></div>
+        </div>
+
+      </div>
+
       <!-- ================= RED + ESTADO ================= -->
       <div class="col">
         <div class="pcard net-card">
@@ -184,63 +241,6 @@
             <div class="stat wide"><div class="lbl">Sistema más conectado con los demás</div><div class="val" id="mCentral">—</div></div>
           </div>
         </div>
-      </div>
-
-      <!-- ================= PANELES ================= -->
-      <div class="col right">
-
-        <div class="pcard" id="evCard">
-          <div id="evBox"></div>
-        </div>
-
-        <div class="pcard">
-          <h2>Escenario de nodo crítico
-            <span class="hint">Los nodos más grandes son los que tienen más relaciones. Apaga uno para ver qué se rompe.</span>
-          </h2>
-          <p class="node-question" id="nodeQuestion">—</p>
-          <label class="node-label" for="nodeSelect">Concepto a desconectar</label>
-          <select id="nodeSelect" class="node-select"></select>
-          <p class="node-impact" id="nodeImpact">—</p>
-          <button class="btn node-sim-btn" id="btnNodeSim"><i class="fa-solid fa-power-off"></i> Simular sin este nodo</button>
-        </div>
-
-        <div class="pcard">
-          <h2>Nodos puente
-            <span class="hint">Conceptos que se relacionan con las tres estructuras distintas a la suya. Se detectan solos.</span>
-          </h2>
-          <div id="bridgeList"></div>
-        </div>
-
-        <div class="pcard">
-          <h2>Simulación del apagado</h2>
-          <div id="simBox"></div>
-        </div>
-
-        <div class="pcard">
-          <h2>Hallazgo de la simulación</h2>
-          <div class="finding" id="finding">—</div>
-        </div>
-
-        <div class="pcard">
-          <h2>Conexiones con otros sistemas
-            <span class="hint">Relaciones activas que cruzan de una estructura a otra. Es la medida del hallazgo principal y se calcula desde los datos.</span>
-          </h2>
-          <div id="rankList"></div>
-          <div id="topSys"></div>
-          <p class="note">
-            La centralidad de la red <b>no equivale a la jerarquía normativa del POT</b>. El POT define la
-            EEP como “primera ordenante” del territorio; esta red mide algo distinto: qué estructura resulta
-            <b>más articuladora</b> según las relaciones explícitas construidas a partir del documento.
-          </p>
-        </div>
-
-        <div class="pcard">
-          <h2>¿Qué sistema genera mayor dependencia?
-            <span class="hint">Relaciones que desaparecerían si ese sistema se apagara (como origen o destino).</span>
-          </h2>
-          <div id="compareList"></div>
-        </div>
-
       </div>
     </div>
   </main>
