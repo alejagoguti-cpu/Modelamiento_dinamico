@@ -1,807 +1,634 @@
-// ===================== DATOS DE LAS RELACIONES (tabla del POT) =====================
-const relations = {
-  e1: {
-    label: "EEP → ESECI",
-    quote: "la conservación del ambiente como formas de productividad, sustento y desarrollo sostenible.",
-    page: "p. 31"
-  },
-  e2: {
-    label: "EIP → EEP",
-    quote: "Por eso promovemos la ciudad a que reconozca el patrimonio local, las dinámicas comunitarias, los sistemas cooperativos de producción sostenible como huertas productivas, bancos de semillas nativas y plantas de uso medicinal, entre otros.",
-    page: "p. 31"
-  },
-  e3: {
-    label: "EFC → EEP",
-    quote: "En la ruralidad es urgente mejorar las condiciones habitacionales, desde los componentes de servicios públicos domiciliarios, accesibilidad y movilidad, con equipamientos que faciliten la economía campesina, familiar y comunitaria, el turismo responsable de naturaleza que vincule residentes y saberes del lugar y la conservación del ambiente como formas de productividad, sustento y desarrollo sostenible.",
-    page: "p. 31"
-  },
-  e4: {
-    label: "EFC → ESECI",
-    quote: "Bajo la nueva visión del POT, la infraestructura social es compatible con otros usos y equipamientos, como centros deportivos, culturales y de recreación, entre otros. Esto propicia infraestructuras compartidas y multifuncionales que contribuyen a la interculturalidad, que estimulan la permanencia de los estudiantes en el sistema educativo y que promueven la generación de conocimiento.",
-    page: "p. 126"
-  },
-  e5: {
-    label: "EIP → EFC",
-    quote: "El POT busca intervenir estratégicamente, vinculando las dinámicas patrimoniales, ambientales, sociales y culturales para proteger y garantizar la permanencia y calidad de vida de los pobladores originales de las zonas de renovación urbana y actuaciones estratégicas.",
-    page: "p. 30"
-  },
-  e6: {
-    label: "EIP → ESECI",
-    quote: "El mismo planteamiento vincula patrimonio local, dinámicas comunitarias y producción sostenible, permitiendo analizar su relación con la dimensión socioeconómica.",
-    page: "p. 35"
-  }
+/* ==========================================================
+   RED DE LAS 4 ESTRUCTURAS DEL POT — Módulo 01 (Construir la Red)
+
+   Este archivo reemplaza una versión anterior (diagrama "hero" +
+   popups modales por estructura) que ya no correspondía al HTML
+   actual: la página cambió a un solo lienzo SVG (#networkViz) con
+   tarjetas de insight, filtros y panel de sustento — la misma
+   arquitectura del Módulo 04 — pero el JS seguía buscando
+   #network-svg, #redes-modal-overlay, etc., que ya no existen.
+   Por eso la red no se dibujaba: el script no encontraba nada
+   donde pintar y se detenía en silencio.
+
+   Los 38 nodos y las 38 relaciones de abajo son exactamente los
+   que ya estaban documentados en la tabla de sustento del HTML
+   (misma etiqueta, mismo tipo, misma página, misma cita), solo que
+   ahora también alimentan el diagrama en vez de vivir nada más en
+   la tabla.
+   ========================================================== */
+
+const SVG_NS = "http://www.w3.org/2000/svg";
+const XHTML_NS = "http://www.w3.org/1999/xhtml";
+
+/* -------- geometría auxiliar -------- */
+function polar(cx, cy, angleDeg, r) {
+  const a = angleDeg * Math.PI / 180;
+  return { x: cx + r * Math.cos(a), y: cy + r * Math.sin(a) };
+}
+
+/* -------- 4 estructuras del POT, en clústeres a lo ancho del lienzo -------- */
+const CATEGORIES = {
+  e1: { name: "Estructura Ecológica Principal",             color: "#4ade80", cx: 380,  cy: 460, radius: 260 },
+  e2: { name: "Estructura Funcional y del Cuidado",         color: "#5b8def", cx: 1080, cy: 460, radius: 250 },
+  e3: { name: "Estructura Socioeconómica Creativa",         color: "#ef9552", cx: 1780, cy: 460, radius: 230 },
+  e4: { name: "Estructura Integradora de Patrimonio",       color: "#a276f2", cx: 2380, cy: 460, radius: 160 },
 };
-// ===================== POPUP DE RELACIONES =====================
-(function initRelationPopups(){
-  const links = document.querySelectorAll(".link[data-relation]");
-  function closePopup(){
-    const existing = document.querySelector(".pot-popup");
-    if (existing) existing.remove();
-    document.removeEventListener("click", onOutsideClick, true);
-  }
-  function onOutsideClick(e){
-    const popup = document.querySelector(".pot-popup");
-    if (popup && !popup.contains(e.target) && !e.target.closest(".link")) {
-      closePopup();
-    }
-  }
-  function openPopup(relationId, x, y){
-    closePopup();
-    const data = relations[relationId];
-    if (!data) return;
-    const popup = document.createElement("div");
-    popup.className = "pot-popup";
-    popup.innerHTML = `
-      <button class="pot-popup-close" aria-label="Cerrar">✕</button>
-      <div class="pot-relation">${data.label}</div>
-      <div class="pot-quote">&ldquo;${data.quote}&rdquo;</div>
-      <div class="pot-page">${data.page}</div>
-    `;
-    document.body.appendChild(popup);
-    // posicionar y ajustar para que no se salga de la pantalla
-    const rect = popup.getBoundingClientRect();
-    const margin = 16;
-    let left = x + 16;
-    let top = y + 16;
-    if (left + rect.width + margin > window.innerWidth) {
-      left = x - rect.width - 16;
-    }
-    if (top + rect.height + margin > window.innerHeight) {
-      top = window.innerHeight - rect.height - margin;
-    }
-    if (left < margin) left = margin;
-    if (top < margin) top = margin;
-    popup.style.left = left + "px";
-    popup.style.top = top + "px";
-    popup.querySelector(".pot-popup-close").addEventListener("click", (ev) => {
-      ev.stopPropagation();
-      closePopup();
-    });
-    setTimeout(() => document.addEventListener("click", onOutsideClick, true), 0);
-  }
-  links.forEach((link) => {
-    const relationId = link.getAttribute("data-relation");
-    link.addEventListener("click", (e) => {
-      e.stopPropagation();
-      links.forEach((l) => l.classList.remove("link-active"));
-      link.classList.add("link-active");
-      openPopup(relationId, e.clientX, e.clientY);
-    });
-    // accesibilidad: abrir con teclado (Enter / espacio)
-    link.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        const box = link.getBoundingClientRect();
-        links.forEach((l) => l.classList.remove("link-active"));
-        link.classList.add("link-active");
-        openPopup(relationId, box.left + box.width / 2, box.top + box.height / 2);
-      }
-    });
+
+/* -------- nodos por estructura -------- */
+const CONCEPTS = {
+  e1: [
+    { id: "e1_cerros",      name: "Cerros\norientales",         icon: "fa-mountain" },
+    { id: "e1_rios",        name: "Ríos",                        icon: "fa-water" },
+    { id: "e1_quebradas",   name: "Quebradas",                   icon: "fa-water" },
+    { id: "e1_humedales",   name: "Humedales",                   icon: "fa-droplet" },
+    { id: "e1_resiliencia", name: "Áreas de\nresiliencia\nclimática", icon: "fa-temperature-half" },
+    { id: "e1_paramos",     name: "Complejos de\npáramos",       icon: "fa-mountain" },
+    { id: "e1_bosques",     name: "Bosques\nurbanos",            icon: "fa-tree" },
+    { id: "e1_coberturas",  name: "Coberturas\nvegetales",       icon: "fa-seedling" },
+    { id: "e1_reservas",    name: "Reservas\nforestales",        icon: "fa-tree" },
+    { id: "e1_protegidas",  name: "Áreas\nprotegidas",           icon: "fa-shield-halved" },
+    { id: "e1_parquesmnt",  name: "Parques\necológicos\nde montaña", icon: "fa-mountain" },
+    { id: "e1_parqueborde", name: "Parque\nde borde",            icon: "fa-house-chimney" },
+    { id: "e1_paisajes",    name: "Paisajes\nsostenibles",       icon: "fa-hands-holding-circle" },
+  ],
+  e2: [
+    { id: "e2_vial",        name: "Red vial",                   icon: "fa-road" },
+    { id: "e2_transporte",  name: "Transporte\npúblico",         icon: "fa-bus" },
+    { id: "e2_equipamient", name: "Equipamientos",               icon: "fa-building" },
+    { id: "e2_corredoresv", name: "Corredores\nverdes",          icon: "fa-leaf" },
+    { id: "e2_ciclorutas",  name: "Ciclorrutas",                 icon: "fa-bicycle" },
+    { id: "e2_manzanas",    name: "Manzanas del\ncuidado",       icon: "fa-border-all" },
+    { id: "e2_sersociales", name: "Servicios\nsociales",         icon: "fa-hand-holding-heart" },
+    { id: "e2_parques",     name: "Parques",                     icon: "fa-tree" },
+    { id: "e2_sercuidado",  name: "Servicios de\ncuidado",       icon: "fa-heart" },
+    { id: "e2_vivienda",    name: "Vivienda",                    icon: "fa-house" },
+    { id: "e2_serpublicos", name: "Servicios\npúblicos",         icon: "fa-plug" },
+  ],
+  e3: [
+    { id: "e3_financieros",     name: "Centros\nfinancieros",        icon: "fa-landmark" },
+    { id: "e3_empresariales",   name: "Servicios\nempresariales",    icon: "fa-briefcase" },
+    { id: "e3_distrito",        name: "Distrito\ntecnológico",       icon: "fa-diagram-project" },
+    { id: "e3_industriales",    name: "Zonas\nindustriales",         icon: "fa-industry" },
+    { id: "e3_innovacion",      name: "Innovación",                  icon: "fa-lightbulb" },
+    { id: "e3_abastecimiento",  name: "Centros de\nabastecimiento",  icon: "fa-truck" },
+    { id: "e3_plazas",          name: "Plazas de\nmercado",          icon: "fa-store" },
+    { id: "e3_turistico",       name: "Zonas interés\nturístico",    icon: "fa-map" },
+    { id: "e3_artesanal",       name: "Producción\nartesanal",       icon: "fa-gem" },
+  ],
+  e4: [
+    { id: "e4_sagrados",    name: "Sistema de\nsitios sagrados",   icon: "fa-place-of-worship" },
+    { id: "e4_inmaterial",  name: "Patrimonio\ninmaterial",        icon: "fa-masks-theater" },
+    { id: "e4_natural",     name: "Patrimonio\nnatural",           icon: "fa-tree" },
+    { id: "e4_ecomaterial", name: "Patrimonio\necológico material", icon: "fa-landmark" },
+  ],
+};
+
+/* -------- construir nodos con posición en abanico dentro de su clúster -------- */
+const ODS_NODES = [];
+Object.entries(CONCEPTS).forEach(([catId, list]) => {
+  const cat = CATEGORIES[catId];
+  list.forEach((c, i) => {
+    const angle = (360 / list.length) * i - 90;
+    const p = polar(cat.cx, cat.cy, angle, cat.radius);
+    ODS_NODES.push({ id: c.id, name: c.name, icon: c.icon, color: cat.color, cat: catId, x: p.x, y: p.y, r: 28 });
   });
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") closePopup();
+});
+
+ODS_NODES.forEach(n => { n.homeX = n.x; n.homeY = n.y; n.vx = 0; n.vy = 0; n.fixed = false; });
+
+/* -------- estilos por tipo de tensión (color) -------- */
+const TYPE_STYLE = {
+  soporte:    { color: "#ef9552", width: 2.2, label: "Soporte" },
+  resiliencia:{ color: "#5b8def", width: 2.2, label: "Resiliencia" },
+  indirecta:  { color: "#8b93a6", width: 2.0, label: "Indirecta" },
+};
+
+/* -------- 38 relaciones, idénticas a la tabla de sustento del HTML -------- */
+function E(s, t, cat, type, directa, page, label, quote) {
+  return { s, t, cat, type, directa, page, label, sustento: quote };
+}
+const RAW_EDGES = [
+  E("e1_cerros","e1_rios","e1","soporte",false,"p. 186","Cerros orientales ➞ Ríos (corredores montañosos)","Los cerros orientales son los corredores montañosos de la estructura ecológica: contienen y alimentan los ríos que descienden al valle."),
+  E("e1_quebradas","e1_humedales","e1","soporte",true,"p. 186","Quebradas ➞ Humedales","Las quebradas de la Sabana alimentan los humedales: su caudal mantiene la lámina de agua y la vida del ecosistema."),
+  E("e1_humedales","e1_rios","e1","soporte",true,"p. 186","Humedales ➞ Ríos","Los humedales regulan los ríos de la Sabana: amortiguan crecientes, sedimentan y depuran el agua que circula por la cuenca."),
+  E("e1_humedales","e1_resiliencia","e1","soporte",true,"p. 186","Humedales ➞ Áreas de resiliencia climática","Los humedales son parte de las áreas de resiliencia climática: absorben el exceso hídrico y reducen el riesgo de inundación."),
+  E("e1_rios","e1_paramos","e1","soporte",true,"p. 186","Ríos ➞ Complejos de páramos","Los ríos de la Sabana nacen en los complejos de páramos: el agua que llega a la ciudad depende de esos ecosistemas altoandinos."),
+  E("e1_bosques","e1_coberturas","e1","soporte",true,"p. 186","Bosques urbanos ➞ Coberturas vegetales","Los bosques urbanos integran y sostienen las coberturas vegetales de la ciudad."),
+  E("e1_resiliencia","e1_coberturas","e1","resiliencia",true,"p. 186","Áreas de resiliencia climática ➞ Coberturas vegetales","Las áreas de resiliencia climática dependen de las coberturas vegetales para su funcionamiento: sin vegetación no hay regulación térmica ni hídrica."),
+  E("e1_reservas","e1_coberturas","e1","resiliencia",true,"p. 186","Reservas forestales ➞ Coberturas vegetales","Las reservas forestales sostienen las coberturas vegetales: garantizan suelo protegido y continuidad de la vegetación."),
+  E("e1_cerros","e1_protegidas","e1","indirecta",false,"p. 186","Cerros orientales ➞ Áreas protegidas","Los cerros orientales se vinculan con las áreas protegidas de manera indirecta: no toda su extensión está bajo régimen de protección, aunque la protege parcialmente."),
+  E("e1_protegidas","e1_parquesmnt","e1","soporte",false,"p. 186","Áreas protegidas ➞ Parques ecológicos de montaña","Las áreas protegidas contienen a los parques ecológicos de montaña: el régimen de protección habilita su existencia."),
+  E("e1_protegidas","e1_reservas","e1","soporte",false,"p. 186","Áreas protegidas ➞ Reservas forestales","Las áreas protegidas dan origen a las reservas forestales: la protección jurídica habilita la reserva como figura de conservación."),
+  E("e1_parquesmnt","e1_coberturas","e1","soporte",false,"p. 186","Parque ecológico de montaña ➞ Coberturas vegetales","Los parques ecológicos de montaña aportan sus coberturas vegetales al sistema ecológico urbano."),
+  E("e1_humedales","e1_coberturas","e1","soporte",false,"p. 186","Humedales ➞ Coberturas vegetales","Los humedales contribuyen a las coberturas vegetales del sistema ecológico: su vegetación palustre es cobertura viva."),
+  E("e1_coberturas","e1_parqueborde","e1","soporte",true,"p. 186","Coberturas vegetales ➞ Parque de borde","Las coberturas vegetales sostienen el parque de borde: la franja verde que separa la ciudad del campo depende de ellas."),
+  E("e1_paramos","e1_paisajes","e1","soporte",false,"p. 186","Complejos de páramos ➞ Paisajes sostenibles","Los complejos de páramos sustentan los paisajes sostenibles de la región: su conservación es condición de la sostenibilidad del territorio."),
+
+  E("e2_vial","e2_transporte","e2","soporte",true,"p. 43","Red vial ➞ Transporte público","La red vial es la infraestructura que hace posible el transporte público: sin corredores viales no hay sistema de buses ni Metro."),
+  E("e2_vial","e2_equipamient","e2","soporte",true,"p. 43","Red vial ➞ Equipamientos","La red vial conecta y da acceso a los equipamientos educativos, de salud y comunitarios de la ciudad."),
+  E("e2_corredoresv","e2_transporte","e2","soporte",true,"p. 43","Corredores verdes ➞ Transporte público","Los corredores verdes alimentan y complementan el transporte público: alojan buses eléctricos e integran movilidad y ecosistema."),
+  E("e2_corredoresv","e2_ciclorutas","e2","soporte",true,"p. 43","Corredores verdes ➞ Ciclorrutas","Los corredores verdes contienen ciclorrutas seguras: la cicloinfraestructura se integra a su diseño."),
+  E("e2_manzanas","e2_sersociales","e2","soporte",true,"p. 43","Manzanas del cuidado ➞ Servicios sociales","Las Manzanas del Cuidado cualifican los servicios sociales del Distrito y hacen efectiva la articulación interinstitucional."),
+  E("e2_manzanas","e2_parques","e2","soporte",true,"p. 43","Manzanas del cuidado ➞ Parques","Las Manzanas del Cuidado aprovechan los parques como infraestructura de encuentro y cuidado comunitario."),
+  E("e2_equipamient","e2_sercuidado","e2","soporte",false,"p. 43","Equipamientos ➞ Servicios de cuidado","Los equipamientos existen como anclas de los servicios de cuidado: la relación es inferida de la política de anclaje en equipamientos preexistentes."),
+  E("e2_equipamient","e2_sersociales","e2","soporte",false,"p. 43","Equipamientos ➞ Servicios sociales","Los equipamientos se vinculan con los servicios sociales: la articulación de entidades del Distrito opera a través de ellos."),
+  E("e2_equipamient","e2_vivienda","e2","soporte",true,"p. 43","Equipamientos ➞ Vivienda","Los equipamientos educativos deben estar cerca de la vivienda: la proximidad es prioridad de la estructura funcional."),
+  E("e2_vivienda","e2_serpublicos","e2","soporte",false,"p. 43","Vivienda ➞ Servicios públicos","La vivienda depende de los servicios públicos: la relación es inferida de la condición básica de habitabilidad."),
+  E("e2_vivienda","e2_ciclorutas","e2","soporte",false,"p. 43","Vivienda ➞ Ciclorrutas","La vivienda se vincula con las ciclorrutas: el acceso ciclista desde el barrio es condición de movilidad cotidiana."),
+  E("e2_vivienda","e2_transporte","e2","soporte",false,"p. 43","Vivienda ➞ Transporte público","La vivienda se conecta con el transporte público: la accesibilidad determina la calidad de vida de los hogares."),
+
+  E("e3_financieros","e3_empresariales","e3","soporte",true,"p. 239-241","Centros financieros ➞ Servicios empresariales","Los centros financieros sostienen los servicios empresariales: el capital y la banca financian la economía del conocimiento."),
+  E("e3_empresariales","e3_distrito","e3","soporte",true,"p. 239-241","Servicios empresariales ➞ Distrito tecnológico","Los servicios empresariales alimentan el distrito tecnológico: proveen demanda, clientes y profesionalización."),
+  E("e3_empresariales","e3_industriales","e3","soporte",true,"p. 239-241","Servicios empresariales ➞ Zonas industriales","Los servicios empresariales sirven a las zonas industriales: logística, diseño, comercio y gestión."),
+  E("e3_distrito","e3_innovacion","e3","soporte",true,"p. 239-241","Distrito tecnológico ➞ Innovación","El distrito tecnológico genera innovación: es el nodo que concentra emprendimiento y economía creativa."),
+  E("e3_abastecimiento","e3_plazas","e3","soporte",false,"p. 239-241","Centros de abastecimiento ➞ Plazas de mercado","Los centros de abastecimiento abastecen las plazas de mercado: la relación logística es inferida de la cadena de distribución de alimentos."),
+  E("e3_plazas","e3_empresariales","e3","soporte",false,"p. 239-241","Plazas de mercado ➞ Servicios empresariales","Las plazas de mercado se vinculan con los servicios empresariales: el comercio local se integra a la economía formal de servicios."),
+  E("e3_industriales","e3_turistico","e3","soporte",false,"p. 239-241","Zonas industriales ➞ Zonas de interés turístico","Las zonas industriales se relacionan con las zonas de interés turístico: la reconversión y el turismo industrial son vías de interés económico."),
+  E("e3_artesanal","e3_turistico","e3","soporte",false,"p. 239-241","Producción artesanal ➞ Zonas de interés turístico","La producción artesanal alimenta las zonas de interés turístico: la cultura material local atrae y sostiene el turismo cultural."),
+
+  E("e4_sagrados","e4_inmaterial","e4","resiliencia",true,"p. 126","Sistema de sitios sagrados ➞ Patrimonio inmaterial","El sistema de sitios sagrados sostiene el patrimonio inmaterial: las prácticas, rituales y memorias se arraigan en esos lugares."),
+  E("e4_inmaterial","e4_natural","e4","resiliencia",true,"p. 126","Patrimonio inmaterial ➞ Patrimonio natural","El patrimonio inmaterial se entrelaza con el patrimonio natural: los saberes y usos tradicionales dependen de los ecosistemas."),
+  E("e4_natural","e4_ecomaterial","e4","resiliencia",true,"p. 126","Patrimonio natural ➞ Patrimonio ecológico material","El patrimonio natural integra el patrimonio ecológico material: la conservación de la naturaleza es parte del patrimonio colectivo."),
+];
+
+function nodeById(id) { return ODS_NODES.find(n => n.id === id); }
+
+/* -------- tamaño por grado real de conexión (nodos "principales" emergen del cálculo) -------- */
+(function sizeByDegree() {
+  const deg = {};
+  RAW_EDGES.forEach(e => { deg[e.s] = (deg[e.s]||0)+1; deg[e.t] = (deg[e.t]||0)+1; });
+  ODS_NODES.forEach(n => {
+    const d = deg[n.id] || 0;
+    n.degree = d;
+    n.r = Math.min(46, 22 + d * 3.6);
+    n.homeX = n.x; n.homeY = n.y;
   });
 })();
-// ===================== DIAGRAMA INTERACTIVO (arrastrar nodos, tipo imán) =====================
-(function initDraggableDiagram(){
-  const svg = document.getElementById("network-svg");
-  if (!svg) return;
-  // posiciones y radios base de cada nodo (deben coincidir con el transform inicial del HTML)
-  const nodeDefs = {
-    green:  { cx: 330, cy: 110, r: 62 },
-    purple: { cx: 140, cy: 300, r: 58 },
-    blue:   { cx: 500, cy: 300, r: 58 },
-    yellow: { cx: 330, cy: 480, r: 64 }
-  };
-  // vector de "curvatura" fijo de cada relación (control - punto medio), tomado del diseño original
-  const edgeDefs = [
-    { id: "e1", from: "green",  to: "yellow", bow: { x: 30.1,  y: 1      } },
-    { id: "e2", from: "purple", to: "green",  bow: { x: -25.6, y: -29.35 } },
-    { id: "e3", from: "blue",   to: "green",  bow: { x: 24.1,  y: -29.5  } },
-    { id: "e4", from: "blue",   to: "yellow", bow: { x: 23.05, y: 28.85  } },
-    { id: "e5", from: "purple", to: "blue",   bow: { x: 0,     y: 67.9   } },
-    { id: "e6", from: "purple", to: "yellow", bow: { x: -24.65,y: 28.8   } }
-  ];
-  const ids = Object.keys(nodeDefs);
-  // estado físico: posición absoluta actual, velocidad, si se está arrastrando
-  const state = {};
-  ids.forEach((id) => {
-    const n = nodeDefs[id];
-    state[id] = { x: n.cx, y: n.cy, vx: 0, vy: 0, dragging: false };
+
+RAW_EDGES.forEach(edge => {
+  const s = nodeById(edge.s), t = nodeById(edge.t);
+  if (!s || !t) return;
+  edge.restLength = Math.hypot(t.x - s.x, t.y - s.y);
+});
+
+/* -------- defs: glow por color + flechas por tipo -------- */
+function buildDefs(svg) {
+  const defs = document.createElementNS(SVG_NS, "defs");
+  const uniqueColors = [...new Set(ODS_NODES.map(n => n.color))];
+  uniqueColors.forEach(color => {
+    const filter = document.createElementNS(SVG_NS, "filter");
+    filter.setAttribute("id", "glow-" + color.replace("#", ""));
+    filter.setAttribute("x", "-60%"); filter.setAttribute("y", "-60%");
+    filter.setAttribute("width", "220%"); filter.setAttribute("height", "220%");
+    const blur = document.createElementNS(SVG_NS, "feGaussianBlur");
+    blur.setAttribute("stdDeviation", "3.2"); blur.setAttribute("result", "blur");
+    const merge = document.createElementNS(SVG_NS, "feMerge");
+    ["blur", "blur", "SourceGraphic"].forEach(ref => {
+      const m = document.createElementNS(SVG_NS, "feMergeNode");
+      m.setAttribute("in", ref);
+      merge.appendChild(m);
+    });
+    filter.appendChild(blur); filter.appendChild(merge);
+    defs.appendChild(filter);
   });
-  // todos los pares de nodos (grafo completo) con su distancia original "de reposo".
-  // esto es lo que hace el efecto imán: cada par intenta mantener su separación original.
-  const pairs = [];
-  for (let i = 0; i < ids.length; i++){
-    for (let j = i + 1; j < ids.length; j++){
-      const a = nodeDefs[ids[i]], b = nodeDefs[ids[j]];
-      const rest = Math.hypot(b.cx - a.cx, b.cy - a.cy);
-      pairs.push({ a: ids[i], b: ids[j], rest });
+  Object.entries(TYPE_STYLE).forEach(([type, style]) => {
+    const marker = document.createElementNS(SVG_NS, "marker");
+    marker.setAttribute("id", "arrow-" + type);
+    marker.setAttribute("viewBox", "0 0 10 10");
+    marker.setAttribute("refX", "8"); marker.setAttribute("refY", "5");
+    marker.setAttribute("markerWidth", "7"); marker.setAttribute("markerHeight", "7");
+    marker.setAttribute("orient", "auto-start-reverse");
+    const path = document.createElementNS(SVG_NS, "path");
+    path.setAttribute("d", "M0,0 L10,5 L0,10 z");
+    path.setAttribute("fill", style.color);
+    marker.appendChild(path);
+    defs.appendChild(marker);
+  });
+  svg.appendChild(defs);
+}
+
+function edgePathData(s, t) {
+  const dx = t.x - s.x, dy = t.y - s.y;
+  const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+  const ux = dx / dist, uy = dy / dist;
+  const startPad = s.r + 2, endPad = t.r + 8;
+  const x1 = s.x + ux * startPad, y1 = s.y + uy * startPad;
+  const x2 = t.x - ux * endPad,   y2 = t.y - uy * endPad;
+  return `M${x1},${y1} L${x2},${y2}`;
+}
+
+function drawEdges(svg) {
+  const g = document.createElementNS(SVG_NS, "g");
+  g.setAttribute("class", "edges-layer");
+
+  RAW_EDGES.forEach((edge, i) => {
+    const s = nodeById(edge.s), t = nodeById(edge.t);
+    if (!s || !t) return;
+    const style = TYPE_STYLE[edge.type];
+    const d = edgePathData(s, t);
+
+    const group = document.createElementNS(SVG_NS, "g");
+    group.setAttribute("class", "edge-group");
+    group.setAttribute("data-index", i);
+    group.setAttribute("data-type", edge.type);
+    group.setAttribute("data-cat", edge.cat);
+    group.setAttribute("data-source", edge.s);
+    group.setAttribute("data-target", edge.t);
+    group.style.setProperty("--edge-color", style.color);
+
+    const hit = document.createElementNS(SVG_NS, "path");
+    hit.setAttribute("d", d);
+    hit.setAttribute("class", "ods-edge edge-hit");
+
+    const visual = document.createElementNS(SVG_NS, "path");
+    visual.setAttribute("d", d);
+    visual.setAttribute("class", "ods-edge edge-visual");
+    visual.setAttribute("stroke", style.color);
+    visual.setAttribute("stroke-width", style.width);
+    if (!edge.directa) visual.setAttribute("stroke-dasharray", "6,5");
+    if (edge.directa) visual.setAttribute("marker-end", `url(#arrow-${edge.type})`);
+    visual.setAttribute("opacity", "0.9");
+    edge._el = { visual, hit };
+
+    group.appendChild(visual);
+    group.appendChild(hit);
+    group.addEventListener("click", () => showEdgeInfo(i));
+    g.appendChild(group);
+  });
+
+  svg.appendChild(g);
+}
+
+function drawNodes(svg) {
+  const g = document.createElementNS(SVG_NS, "g");
+  g.setAttribute("class", "nodes-layer");
+
+  ODS_NODES.forEach(node => {
+    const group = document.createElementNS(SVG_NS, "g");
+    group.setAttribute("class", "ods-node");
+    group.setAttribute("data-id", node.id);
+    group.setAttribute("data-cat", node.cat);
+
+    const circle = document.createElementNS(SVG_NS, "circle");
+    circle.setAttribute("class", "node-ring");
+    circle.setAttribute("cx", node.x); circle.setAttribute("cy", node.y); circle.setAttribute("r", node.r);
+    circle.setAttribute("stroke", node.color);
+    circle.setAttribute("stroke-width", 2.5);
+    circle.setAttribute("filter", "url(#glow-" + node.color.replace("#", "") + ")");
+
+    const fo = document.createElementNS(SVG_NS, "foreignObject");
+    const size = node.r * 2.3;
+    fo.setAttribute("x", node.x - size / 2); fo.setAttribute("y", node.y - size / 2);
+    fo.setAttribute("width", size); fo.setAttribute("height", size);
+
+    const wrapper = document.createElementNS(XHTML_NS, "div");
+    wrapper.setAttribute("class", "node-inner");
+    wrapper.setAttribute("style",
+      "width:100%;height:100%;display:flex;flex-direction:column;" +
+      "align-items:center;justify-content:center;gap:1px;pointer-events:none;"
+    );
+
+    if (node.icon) {
+      const iconEl = document.createElementNS(XHTML_NS, "i");
+      iconEl.setAttribute("class", "fa-solid " + node.icon + " node-icon");
+      iconEl.setAttribute("style", `color:${node.color}; font-size:${node.r * 0.42}px; margin:1px 0;`);
+      wrapper.appendChild(iconEl);
     }
-  }
-  const K_HOME = 16;   // qué tanto "recuerda" cada bolita su lugar original
-  const K_EDGE = 42;   // fuerza del "imán" entre bolitas conectadas
-  const DAMPING = 12;  // fricción, evita que oscile para siempre
-  const SETTLE_EPS = 0.05;
-  let rafId = null;
-  let lastFrame = null;
-  function toSvgPoint(evt){
+
+    const nameEl = document.createElementNS(XHTML_NS, "div");
+    nameEl.setAttribute("class", "node-name");
+    nameEl.setAttribute("style", `font-size:${Math.max(node.r * 0.185, 7.5)}px; padding:0 3px; font-weight:700; color:#e7eaf2; line-height:1.15; white-space:pre-line;`);
+    nameEl.textContent = node.name;
+
+    wrapper.appendChild(nameEl);
+    fo.appendChild(wrapper);
+
+    group.appendChild(circle);
+    group.appendChild(fo);
+    attachNodeClickHandler(group, node.id);
+    attachNodeDragHandler(group, node);
+    g.appendChild(group);
+
+    node._el = { group, circle, fo };
+  });
+
+  svg.appendChild(g);
+}
+
+/* -------- física de resorte (arrastrar bolas) -------- */
+const PHYSICS = { spring: 0.045, anchor: 0.02, damping: 0.82, minVel: 0.02 };
+
+function updatePositions() {
+  ODS_NODES.forEach(n => {
+    if (!n._el) return;
+    n._el.circle.setAttribute("cx", n.x);
+    n._el.circle.setAttribute("cy", n.y);
+    const size = n.r * 2.3;
+    n._el.fo.setAttribute("x", n.x - size / 2);
+    n._el.fo.setAttribute("y", n.y - size / 2);
+  });
+  RAW_EDGES.forEach(edge => {
+    if (!edge._el) return;
+    const s = nodeById(edge.s), t = nodeById(edge.t);
+    if (!s || !t) return;
+    const d = edgePathData(s, t);
+    edge._el.visual.setAttribute("d", d);
+    edge._el.hit.setAttribute("d", d);
+  });
+}
+
+let physicsRunning = false;
+function physicsStep() {
+  let moving = false;
+  RAW_EDGES.forEach(edge => {
+    const s = nodeById(edge.s), t = nodeById(edge.t);
+    if (!s || !t) return;
+    const dx = t.x - s.x, dy = t.y - s.y;
+    const dist = Math.hypot(dx, dy) || 1;
+    const diff = (dist - edge.restLength) * PHYSICS.spring;
+    const fx = (dx / dist) * diff, fy = (dy / dist) * diff;
+    if (!s.fixed) { s.vx += fx; s.vy += fy; }
+    if (!t.fixed) { t.vx -= fx; t.vy -= fy; }
+  });
+  ODS_NODES.forEach(n => {
+    if (n.fixed) { n.vx = 0; n.vy = 0; return; }
+    n.vx += (n.homeX - n.x) * PHYSICS.anchor;
+    n.vy += (n.homeY - n.y) * PHYSICS.anchor;
+    n.vx *= PHYSICS.damping;
+    n.vy *= PHYSICS.damping;
+    n.x += n.vx;
+    n.y += n.vy;
+    if (Math.abs(n.vx) > PHYSICS.minVel || Math.abs(n.vy) > PHYSICS.minVel) moving = true;
+  });
+  updatePositions();
+  if (moving || ODS_NODES.some(n => n.fixed)) requestAnimationFrame(physicsStep);
+  else physicsRunning = false;
+}
+function wakePhysics() {
+  if (!physicsRunning) { physicsRunning = true; requestAnimationFrame(physicsStep); }
+}
+
+function attachNodeDragHandler(group, node) {
+  const svg = document.getElementById("networkViz");
+  let dragging = false, moved = false, startClientX = 0, startClientY = 0;
+  function toSvgPoint(clientX, clientY) {
     const pt = svg.createSVGPoint();
-    pt.x = evt.clientX;
-    pt.y = evt.clientY;
-    const ctm = svg.getScreenCTM();
-    return pt.matrixTransform(ctm.inverse());
+    pt.x = clientX; pt.y = clientY;
+    const m = svg.getScreenCTM().inverse();
+    return pt.matrixTransform(m);
   }
-  function updateNodeTransform(id){
-    const g = svg.querySelector(`[data-node="${id}"]`);
-    if (!g) return;
-    const s = state[id];
-    g.setAttribute("transform", `translate(${s.x.toFixed(2)},${s.y.toFixed(2)})`);
-  }
-  function updateEdge(edge){
-    const g = svg.querySelector(`.link[data-relation="${edge.id}"]`);
-    if (!g) return;
-    const nA = nodeDefs[edge.from], nB = nodeDefs[edge.to];
-    const A = state[edge.from], B = state[edge.to];
-    let ux = B.x - A.x, uy = B.y - A.y;
-    const dist = Math.hypot(ux, uy) || 1;
-    ux /= dist; uy /= dist;
-    const P0 = { x: A.x + ux * nA.r, y: A.y + uy * nA.r };
-    const P1 = { x: B.x - ux * nB.r, y: B.y - uy * nB.r };
-    const mid = { x: (P0.x + P1.x) / 2, y: (P0.y + P1.y) / 2 };
-    const C = { x: mid.x + edge.bow.x, y: mid.y + edge.bow.y };
-    const d = `M${P0.x.toFixed(1)},${P0.y.toFixed(1)} Q${C.x.toFixed(1)},${C.y.toFixed(1)} ${P1.x.toFixed(1)},${P1.y.toFixed(1)}`;
-    const line = g.querySelector(".link-line");
-    const hit = g.querySelector(".link-hit");
-    const arrow = g.querySelector(".link-arrow");
-    if (line) line.setAttribute("d", d);
-    if (hit) hit.setAttribute("d", d);
-    if (arrow){
-      const dx2 = 2 * (P1.x - C.x), dy2 = 2 * (P1.y - C.y);
-      const angle = Math.atan2(dy2, dx2) * 180 / Math.PI;
-      arrow.setAttribute("transform", `translate(${P1.x.toFixed(1)},${P1.y.toFixed(1)}) rotate(${angle.toFixed(1)})`);
-    }
-  }
-  function updateAllEdges(){
-    edgeDefs.forEach(updateEdge);
-  }
-  function stepPhysics(dt){
-    // fuerza acumulada sobre cada nodo este fotograma
-    const forces = {};
-    ids.forEach((id) => { forces[id] = { fx: 0, fy: 0 }; });
-    // 1) resorte débil hacia la posición original de cada nodo
-    ids.forEach((id) => {
-      const n = nodeDefs[id], s = state[id];
-      forces[id].fx += K_HOME * (n.cx - s.x);
-      forces[id].fy += K_HOME * (n.cy - s.y);
-    });
-    // 2) "imán": cada par conectado intenta mantener su distancia original,
-    //    así que si arrastras uno, jala a los demás detrás de él
-    pairs.forEach(({ a, b, rest }) => {
-      const sa = state[a], sb = state[b];
-      const dx = sb.x - sa.x, dy = sb.y - sa.y;
-      const dist = Math.hypot(dx, dy) || 1;
-      const ux = dx / dist, uy = dy / dist;
-      const stretch = dist - rest;
-      const fx = K_EDGE * stretch * ux;
-      const fy = K_EDGE * stretch * uy;
-      forces[a].fx += fx; forces[a].fy += fy;
-      forces[b].fx -= fx; forces[b].fy -= fy;
-    });
-    let anyMoving = false;
-    ids.forEach((id) => {
-      const s = state[id];
-      if (s.dragging){ anyMoving = true; return; }
-      const f = forces[id];
-      const ax = f.fx - DAMPING * s.vx;
-      const ay = f.fy - DAMPING * s.vy;
-      s.vx += ax * dt;
-      s.vy += ay * dt;
-      s.x += s.vx * dt;
-      s.y += s.vy * dt;
-      const n = nodeDefs[id];
-      const atHome = Math.abs(s.x - n.cx) < SETTLE_EPS && Math.abs(s.y - n.cy) < SETTLE_EPS;
-      const atRest = Math.abs(s.vx) < SETTLE_EPS && Math.abs(s.vy) < SETTLE_EPS;
-      if (atHome && atRest){
-        s.x = n.cx; s.y = n.cy; s.vx = 0; s.vy = 0;
-      } else {
-        anyMoving = true;
-      }
-      updateNodeTransform(id);
-    });
-    updateAllEdges();
-    return anyMoving;
-  }
-  function loop(ts){
-    if (lastFrame === null) lastFrame = ts;
-    const dt = Math.min((ts - lastFrame) / 1000, 0.032);
-    lastFrame = ts;
-    const draggingAny = ids.some((id) => state[id].dragging);
-    const moving = stepPhysics(dt);
-    if (moving || draggingAny){
-      rafId = requestAnimationFrame(loop);
-    } else {
-      rafId = null;
-      lastFrame = null;
-    }
-  }
-  function ensureLoop(){
-    if (rafId === null){
-      lastFrame = null;
-      rafId = requestAnimationFrame(loop);
-    }
-  }
-  function attachDrag(id){
-    const g = svg.querySelector(`[data-node="${id}"]`);
-    if (!g) return;
-    const s = state[id];
-    let startPoint = null;
-    let startPos = null;
-    let lastPoint = null;
-    let lastTime = null;
-    g.addEventListener("pointerdown", (e) => {
-      e.preventDefault();
-      g.setPointerCapture(e.pointerId);
-      g.classList.add("dragging");
-      s.dragging = true;
-      s.vx = 0; s.vy = 0;
-      startPoint = toSvgPoint(e);
-      startPos = { x: s.x, y: s.y };
-      lastPoint = startPoint;
-      lastTime = performance.now();
-      ensureLoop();
-    });
-    g.addEventListener("pointermove", (e) => {
-      if (!s.dragging) return;
-      const p = toSvgPoint(e);
-      s.x = startPos.x + (p.x - startPoint.x);
-      s.y = startPos.y + (p.y - startPoint.y);
-      const now = performance.now();
-      const dt = Math.max(now - lastTime, 1) / 1000;
-      s.vx = (p.x - lastPoint.x) / dt;
-      s.vy = (p.y - lastPoint.y) / dt;
-      lastPoint = p; lastTime = now;
-      updateNodeTransform(id);
-      ensureLoop();
-    });
-    function endDrag(e){
-      if (!s.dragging) return;
-      s.dragging = false;
-      g.classList.remove("dragging");
-      try { g.releasePointerCapture(e.pointerId); } catch (err) { /* noop */ }
-      ensureLoop();
-    }
-    g.addEventListener("pointerup", endDrag);
-    g.addEventListener("pointercancel", endDrag);
-  }
-  ids.forEach(attachDrag);
-  updateAllEdges();
-})();
-// ===================== POPUPS DE RED POR ESTRUCTURA (EEP / EFC / ESECI / EIP) =====================
-// Archivo independiente de scripts.js: solo agrega la funcionalidad de "click en nodo -> ver su red".
-(function initRedesPopup(){
-
-  // ---------- datos de cada red (nodos e iconos aproximados a partir de las capturas) ----------
-  const NETWORKS = {
-
-    // -------- verde: Estructura Ecológica Principal --------
-    green: {
-      title: "Estructura Ecológica Principal",
-      count: 14,
-      accent: "green",
-      nodes: [
-        { id:"corredores",  label:["Corredores","montañosos"],            icon:"fa-mountain",              x:471, y:53,  r:34 },
-        { id:"cerros",      label:["Cerros","Orientales"],                icon:"fa-mountain",              x:644, y:37,  r:34 },
-        { id:"rios",        label:["Ríos"],                               icon:"fa-water",                 x:152, y:159, r:46, primary:true },
-        { id:"quebradas",   label:["Quebradas"],                          icon:"fa-water",                 x:341, y:149, r:30 },
-        { id:"protegidas",  label:["Áreas","protegidas"],                 icon:"fa-shield-halved",         x:605, y:152, r:38 },
-        { id:"bosques",     label:["Bosques","urbanos"],                  icon:"fa-tree",                  x:156, y:285, r:34 },
-        { id:"resiliencia", label:["Áreas de","resiliencia","climática"], icon:"fa-temperature-half",      x:269, y:289, r:36 },
-        { id:"humedales",   label:["Humedales"],                         icon:"fa-droplet",               x:449, y:272, r:58, primary:true },
-        { id:"parquesmnt",  label:["Parques","ecológicos","de montaña"],  icon:"fa-mountain",              x:705, y:248, r:40 },
-        { id:"paramos",     label:["Complejos de","páramos"],             icon:"fa-mountain",              x:96,  y:463, r:32 },
-        { id:"coberturas",  label:["Coberturas","vegetales"],             icon:"fa-seedling",              x:228, y:429, r:50, primary:true },
-        { id:"parquesborde",label:["Parques","de borde"],                 icon:"fa-house-chimney",         x:373, y:483, r:30 },
-        { id:"reservas",    label:["Reservas","forestales"],              icon:"fa-tree",                  x:606, y:392, r:38 },
-        { id:"paisajes",    label:["Paisajes","sostenibles"],             icon:"fa-hands-holding-circle",  x:236, y:559, r:34 }
-      ],
-      // edges verificadas contra la tabla de sustento del POT que compartiste
-      // (se excluyen "Bosques urbanos → Áreas protegidas" y "Paisajes sostenibles → Áreas
-      // protegidas": la propia tabla dice "no la pondría" por falta de sustento textual)
-      edges: [
-        { from:"humedales",  to:"rios",         kind:"soporte", sustento:{ pagina:"p. 22", tipoLabel:"Soporte", parcial:true,
-          cita:"El POT presenta el sistema hídrico y señala que los humedales hacen parte de las estructuras que aseguran el abastecimiento…" } },
-        { from:"humedales",  to:"cerros",       kind:"soporte", sustento:{ pagina:"p. 59", tipoLabel:"Soporte", parcial:true,
-          cita:"El POT identifica un conector \"Cerros Orientales-río Bogotá\" y señala que los conectores incluyen los humedales y…" } },
-        { from:"corredores", to:"rios",         kind:"directa", directed:false, sustento:{ pagina:"p. 22", tipoLabel:"Sin dirección", parcial:true,
-          cita:"El POT incluye conjuntamente \"los complejos de páramos, los corredores montañosos, las reservas forestales, los…\"" } },
-        { from:"paramos",    to:"rios",         kind:"directa", directed:false, sustento:{ pagina:"p. 22", tipoLabel:"Sin dirección", parcial:true,
-          cita:"El POT los integra al sistema que \"aseguran el abastecimiento hídrico y la provisión de bienes y servicios ecosistémicos\". No…" } },
-        { from:"reservas",   to:"rios",         kind:"directa", directed:false, sustento:{ pagina:"p. 22", tipoLabel:"Sin dirección", parcial:true,
-          cita:"El POT incluye reservas forestales y ríos dentro de la…" } },
-        { from:"resiliencia",to:"coberturas",   kind:"resiliencia", sustento:{ pagina:"p. 59", tipoLabel:"Resiliencia", parcial:true,
-          cita:"El POT señala que las áreas de resiliencia \"deben contar con intervenciones en coberturas\" para optimizar las condiciones…" } },
-        { from:"coberturas", to:"protegidas",   kind:"soporte", sustento:{ pagina:"p. 59", tipoLabel:"Soporte", parcial:false,
-          cita:"El POT señala que se priorizan \"coberturas vegetales que conecten entre sí las áreas protegidas\"." } },
-        { from:"parquesmnt", to:"coberturas",   kind:"soporte", sustento:{ pagina:"p. 54", tipoLabel:"Soporte", parcial:true,
-          cita:"El POT muestra el caso del Parque Distrital Ecológico de Montaña Soratama, donde \"se priorizan las coberturas vegetales que…\"" } },
-        { from:"parquesborde",to:"coberturas",  kind:"soporte", sustento:{ pagina:"p. 54", tipoLabel:"Soporte", parcial:true,
-          cita:"El POT incluye los parques de borde dentro de la estrategia…" } },
-        { from:"quebradas",  to:"rios",         kind:"directa", directed:false, sustento:{ pagina:null, tipoLabel:"Sin dirección", parcial:true,
-          cita:"Ambos pertenecen al sistema hídrico, pero con los conceptos de tu red no encontré una frase que permita afirmar Quebradas →…" } },
-        { from:"cerros",     to:"rios",         kind:"directa", directed:false, sustento:{ pagina:"p. 59", tipoLabel:"Sin dirección", parcial:true,
-          cita:"El POT sí identifica el conector \"Cerros Orientales-río Bogotá\", pero eso demuestra conectividad, no que exista una…" } }
-      ]
-    },
-
-    // -------- azul: Estructura Funcional y del Cuidado --------
-    blue: {
-      title: "Estructura Funcional y del Cuidado",
-      count: 16,
-      accent: "blue",
-      nodes: [
-        { id:"cuidado",     label:["Servicios de","cuidado"],       icon:"fa-heart",              x:428, y:76,  r:34 },
-        { id:"equipamient", label:["Equipamientos"],                icon:"fa-building",           x:688, y:83,  r:42 },
-        { id:"servpub",     label:["Servicios","públicos"],         icon:"fa-bus",                x:148, y:144, r:32 },
-        { id:"ciclorrutas", label:["Ciclorrutas"],                  icon:"fa-bicycle",            x:93,  y:173, r:34 },
-        { id:"servsoc",     label:["Servicios","sociales"],         icon:"fa-hand-holding-heart", x:572, y:195, r:36 },
-        { id:"vivienda",    label:["Vivienda"],                     icon:"fa-house",              x:428, y:275, r:58, primary:true },
-        { id:"transporte",  label:["Transporte","público"],         icon:"fa-bus",                x:187, y:317, r:36 },
-        { id:"parques",     label:["Parques"],                      icon:"fa-tree",               x:282, y:410, r:30 },
-        { id:"redvial",     label:["Red vial"],                     icon:"fa-road",               x:688, y:373, r:34 },
-        { id:"manzanas",    label:["Manzanas del","Cuidado"],       icon:"fa-border-all",         x:394, y:472, r:50, primary:true },
-        { id:"corredoresv", label:["Corredores","verdes"],          icon:"fa-leaf",               x:162, y:500, r:34 }
-      ],
-      edges: [
-        { from:"cuidado",     to:"equipamient", kind:"soporte", dashed:true, directed:false },
-        { from:"servpub",     to:"vivienda",    kind:"soporte", dashed:true },
-        { from:"ciclorrutas", to:"vivienda",    kind:"resiliencia", dashed:true },
-        { from:"transporte",  to:"vivienda",    kind:"soporte", dashed:true },
-        { from:"servsoc",     to:"equipamient", kind:"soporte", dashed:true, directed:false },
-        { from:"equipamient", to:"vivienda",    kind:"soporte" },
-        { from:"manzanas",    to:"equipamient", kind:"soporte" },
-        { from:"redvial",     to:"equipamient", kind:"soporte" },
-        { from:"corredoresv", to:"transporte",  kind:"soporte" },
-        { from:"transporte",  to:"redvial",     kind:"soporte" },
-        { from:"parques",     to:"manzanas",    kind:"directa", directed:false }
-      ]
-    },
-
-    // -------- amarillo: Estructura Socioeconómica, Creativa y de Innovación --------
-    yellow: {
-      title: "Estructura Socioeconómica, Creativa y de Innovación",
-      count: 10,
-      accent: "yellow",
-      nodes: [
-        { id:"distrito",  label:["Distrito Centro","Tecnológico e","Innovación"], icon:"fa-diagram-project", x:320, y:114, r:38 },
-        { id:"abastec",   label:["Centros de","abastecimiento"],                  icon:"fa-truck",           x:571, y:96,  r:32 },
-        { id:"empresa",   label:["Servicios","empresariales"],                    icon:"fa-briefcase",       x:88,  y:184, r:50, primary:true },
-        { id:"plazas",    label:["Plazas de","mercado"],                          icon:"fa-store",           x:267, y:258, r:32 },
-        { id:"industria", label:["Zonas","industriales"],                        icon:"fa-industry",        x:678, y:245, r:52, primary:true },
-        { id:"educacion", label:["Sistema de","educación"],                      icon:"fa-graduation-cap",  x:407, y:310, r:46, primary:true },
-        { id:"turismo",   label:["Zonas interés","turístico"],                    icon:"fa-map",             x:676, y:386, r:34 },
-        { id:"financier", label:["Centros","financieros"],                       icon:"fa-landmark",        x:97,  y:444, r:34 },
-        { id:"artesanal", label:["Producción","artesanal"],                      icon:"fa-gem",             x:237, y:551, r:34 }
-      ],
-      // edges verificadas contra tus tablas de sustento (Distrito, Servicios empresariales,
-      // Ecosistema de educación superior, Zonas industriales). "Corredores inteligentes de
-      // turismo" aparece en tu tabla pero todavía no existe como nodo en este diagrama.
-      edges: [
-        { from:"financier", to:"empresa",   kind:"directa", bidirectional:true, sustento:{ pagina:"p. 92", tipoLabel:"Directa",
-          cita:"\"Los centros financieros y de servicios empresariales: Centro Internacional, Chapinero, Teleport y otros\". (SDP)" } },
-        { from:"distrito",  to:"educacion", kind:"directa", sustento:{ pagina:"p. 158", tipoLabel:"Directa",
-          cita:"\"El corazón del campus comprende un área de 247 hectáreas en el centro de la ciudad articulada con las aeZibo y Reencuentro. Conecta la principal aglomeración de conocimiento del país con las zonas empresariales del occidente y norte de la ciudad\". (Bogotá.gov.co)" } },
-        { from:"distrito",  to:"industria", kind:"directa", sustento:{ pagina:"p. 158", tipoLabel:"Directa",
-          cita:"\"El corazón del campus comprende un área de 247 hectáreas en el centro de la ciudad articulada con las aeZibo y Reencuentro\". (Bogotá.gov.co)" } },
-        { from:"distrito",  to:"empresa",   kind:"directa", sustento:{ pagina:"p. 158", tipoLabel:"Directa",
-          cita:"\"Conecta la principal aglomeración de conocimiento del país con las zonas empresariales del occidente y norte de la ciudad\". (Bogotá.gov.co)" } },
-        { from:"turismo",   to:"plazas",    kind:"directa", sustento:{ pagina:"p. 92", tipoLabel:"Directa",
-          cita:"\"Cluster Hotelero y Zonas de Interés Turístico, incluyendo los Corredores inteligentes de turismo (COINT) y los elementos de las Estructuras Ecológica Principal e Integradora de Patrimonios, Cables, Plazas de Mercado y otras infraestructuras con especial vocación turística\". (Scribd)" } },
-        { from:"abastec",   to:"artesanal", kind:"indirecta", dashed:true, sustento:{ pagina:"p. 92", tipoLabel:"Indirecta (punteada)",
-          cita:"\"Economías de aglomeración con énfasis de especialización – Corazones productivos de escala urbana- compuestas por: […] Centros de Abasto Mayorista\". (pdfcoffee.com)" } },
-        { from:"educacion", to:"empresa",   kind:"soporte", sustento:{ pagina:"p. 30", tipoLabel:"Soporte · Directa",
-          cita:"\"los programas de becas de educación universitaria como Jóvenes a la U y de formación para el trabajo como Todos a la U se han enfocado en esas mismas habilidades y tipos de carreras para encuadrar con las necesidades y ofertas de trabajo y emprendimiento presentes y futuras de la ciudad\"." } },
-        { from:"educacion", to:"industria", kind:"soporte", sustento:{ pagina:"p. 30", tipoLabel:"Soporte · Directa",
-          cita:"\"La inversión y ejecución sostenida del pot, el pmss y la inversión en esa educación con calidad y pertinencia, desde la básica hasta la superior, lograrán en conjunto, en la próxima década, el mayor crecimiento en productividad, empleabilidad de calidad y competitividad que haya tenido Bogotá\"." } },
-        { from:"industria", to:"artesanal", kind:"soporte", sustento:{ pagina:"p. 30", tipoLabel:"Soporte · Directa",
-          cita:"\"Por eso el pot promueve la permanencia de las industrias tradicionales en el tejido urbano y promueve nuevas implantaciones económicas generadoras de empleo formal, articuladas a los entornos urbanos donde se aglomeran saberes y talentos, y en particular aquellos que dan lugar a aglomeraciones especializadas de producción tradicional e industrias creativas, culturales, verdes, digitales y tecnológicas\"." } },
-        { from:"educacion", to:"artesanal", kind:"soporte", dashed:true, sustento:{ pagina:"p. 30", tipoLabel:"Soporte · Indirecta",
-          cita:"\"la inversión en educación pública de calidad ha asegurado que desde los colegios se mejoren las habilidades en ciencias, matemáticas, bilingüismo, ingenierías y tecnologías, y los programas de becas de educación universitaria […] se han enfocado en esas mismas habilidades y tipos de carreras para encuadrar con las necesidades y ofertas de trabajo y emprendimiento presentes y futuras de la ciudad\"." } },
-        { from:"industria", to:"empresa",   kind:"soporte", sustento:{ pagina:"p. 30", tipoLabel:"Soporte · Directa",
-          cita:"\"El pot protege a las zonas productivas históricas de la expulsión […] y potencia la oferta de suelo para la localización de nuevas empresas, en especial en la categoría de suelo para grandes servicios metropolitanos\"." } }
-      ]
-    },
-
-    // -------- morado: Estructura Integradora de Patrimonios --------
-    purple: {
-      title: "Estructura Integradora de Patrimonios",
-      count: 6,
-      accent: "purple",
-      nodes: [
-        { id:"sagrados",     label:["Sistema de","Sitios sagrados"], icon:"fa-place-of-worship", x:159, y:161, r:38 },
-        { id:"arqueologico", label:["Patrimonio","arqueológico"],    icon:"fa-scroll",           x:441, y:164, r:36 },
-        { id:"inmaterial",   label:["Patrimonio","inmaterial"],      icon:"fa-masks-theater",    x:656, y:213, r:38 },
-        { id:"material",     label:["Patrimonio","material"],        icon:"fa-landmark",         x:515, y:368, r:38 },
-        { id:"natural",      label:["Patrimonio","natural"],         icon:"fa-tree",             x:194, y:426, r:54, primary:true }
-      ],
-      // edges tomadas literalmente de tu tabla "Concepto 1 / Concepto 2 / Página / Frase exacta"
-      edges: [
-        { from:"material",     to:"inmaterial", kind:"soporte", sustento:{ pagina:"p. 196", tipoLabel:"Soporte · Directa",
-          cita:"\"la EIP inscribe y precisa un sistema de relaciones del patrimonio cultural material, inmaterial y natural en el territorio\"." } },
-        { from:"material",     to:"natural",    kind:"soporte", sustento:{ pagina:"p. 196", tipoLabel:"Soporte · Directa",
-          cita:"\"la EIP inscribe y precisa un sistema de relaciones del patrimonio cultural material, inmaterial y natural en el territorio\"." } },
-        { from:"inmaterial",   to:"natural",    kind:"soporte", sustento:{ pagina:"p. 196", tipoLabel:"Soporte · Directa",
-          cita:"\"la EIP inscribe y precisa un sistema de relaciones del patrimonio cultural material, inmaterial y natural en el territorio\"." } },
-        { from:"arqueologico", to:"natural",    kind:"resiliencia", sustento:{ pagina:"p. 198", tipoLabel:"Resiliencia · Directa",
-          cita:"\"hoy pueden ser referentes de procesos adaptativos y que revelan prácticas de integralidad de la cultura con la naturaleza\"." } },
-        { from:"arqueologico", to:"material",   kind:"soporte", sustento:{ pagina:"p. 198", tipoLabel:"Soporte · Directa",
-          cita:"\"Este patrimonio cultural se convirtió en un referente de movilización\"." } },
-        { from:"sagrados",     to:"inmaterial", kind:"soporte", sustento:{ pagina:"p. 186", tipoLabel:"Soporte · Directa",
-          cita:"\"son el testimonio de complejas estrategias de cómo interpretamos y valoramos las huellas del territorio que hoy habitamos\"." } }
-      ]
-    }
-  };
-
-  const SVG_NS = "http://www.w3.org/2000/svg";
-  const overlay   = document.getElementById("redes-modal-overlay");
-  if (!overlay) return;
-  const modal     = overlay.querySelector(".redes-modal");
-  const titleEl   = overlay.querySelector("#redes-modal-title");
-  const subtitleEl= overlay.querySelector(".redes-modal-subtitle");
-  const svg       = overlay.querySelector(".redes-network-svg");
-  const edgesG    = overlay.querySelector(".redes-edges");
-  const nodesG    = overlay.querySelector(".redes-nodes");
-  const closeBtn  = overlay.querySelector(".redes-modal-close");
-  const toggleNodesBtn = overlay.querySelector('[data-toggle="nodes"]');
-  const toggleEdgesBtn = overlay.querySelector('[data-toggle="edges"]');
-
-  function el(tag, attrs){
-    const node = document.createElementNS(SVG_NS, tag);
-    Object.keys(attrs || {}).forEach((k) => node.setAttribute(k, attrs[k]));
-    return node;
-  }
-
-  function pointOnCircle(cx, cy, r, tx, ty){
-    let ux = tx - cx, uy = ty - cy;
-    const d = Math.hypot(ux, uy) || 1;
-    ux /= d; uy /= d;
-    return { x: cx + ux * r, y: cy + uy * r };
-  }
-
-  // ---------- nodos principales = los que tienen más conexiones ----------
-  // Calcula el grado (nº de relaciones) de cada nodo y usa eso para decidir
-  // tamaño del círculo y cuáles se marcan como "principales".
-  function applyDegreeSizing(net){
-    const MIN_R = 27, MAX_R = 60;
-    const deg = {};
-    net.nodes.forEach((n) => { deg[n.id] = 0; });
-    net.edges.forEach((e) => {
-      if (deg[e.from] !== undefined) deg[e.from]++;
-      if (deg[e.to]   !== undefined) deg[e.to]++;
-    });
-    const degrees = net.nodes.map((n) => deg[n.id] || 0);
-    const maxDeg = Math.max(...degrees);
-    const minDeg = Math.min(...degrees);
-    // umbral: los "principales" son los que están en el grupo de mayor conexión
-    const distinctDesc = Array.from(new Set(degrees)).sort((a, b) => b - a);
-    const k = Math.max(1, Math.round(net.nodes.length / 5));
-    const threshold = distinctDesc[Math.min(k, distinctDesc.length) - 1];
-
-    net.nodes.forEach((n) => {
-      const d = deg[n.id] || 0;
-      n.degree = d;
-      n.primary = d >= threshold;
-      n.r = maxDeg === minDeg
-        ? (MIN_R + MAX_R) / 2
-        : Math.round((MIN_R + (MAX_R - MIN_R) * ((d - minDeg) / (maxDeg - minDeg))) * 10) / 10;
-    });
-  }
-
-  function renderNetwork(net){
-    applyDegreeSizing(net);
-
-    titleEl.textContent = net.title;
-    titleEl.style.color = getComputedColor(net.accent);
-    subtitleEl.textContent = `Modo Analítico // Nodos = ${net.count}`;
-
-    edgesG.innerHTML = "";
-    nodesG.innerHTML = "";
-
-    const byId = {};
-    net.nodes.forEach((n) => { byId[n.id] = n; });
-
-    // guarda, por id de nodo, qué elementos <g> de conexión lo tocan,
-    // para poder apagarlos junto con el nodo al hacer click en él
-    const edgesByNode = {};
-    function linkEdgeToNode(nodeId, edgeEl){
-      if (!edgesByNode[nodeId]) edgesByNode[nodeId] = [];
-      edgesByNode[nodeId].push(edgeEl);
-    }
-
-    net.edges.forEach((e) => {
-      const a = byId[e.from], b = byId[e.to];
-      if (!a || !b) return;
-      const p0 = pointOnCircle(a.x, a.y, a.r, b.x, b.y);
-      const p1 = pointOnCircle(b.x, b.y, b.r, a.x, a.y);
-
-      const g = el("g", {
-        class: `redes-edge redes-edge-${e.kind}${e.dashed ? " is-dashed" : ""}`,
-        tabindex: "0",
-        role: "button",
-        "aria-label": `Relación ${a.label.join(" ")} - ${b.label.join(" ")}`
-      });
-      const d = `M${p0.x.toFixed(1)},${p0.y.toFixed(1)} L${p1.x.toFixed(1)},${p1.y.toFixed(1)}`;
-
-      // trazo invisible más ancho, para que sea fácil hacer click en la línea
-      const hit = el("path", { class: "redes-edge-hit", d });
-      g.appendChild(hit);
-
-      const line = el("path", { class: "redes-edge-line", d });
-      g.appendChild(line);
-
-      if (e.directed !== false){
-        const angle = Math.atan2(p1.y - p0.y, p1.x - p0.x) * 180 / Math.PI;
-        const arrow = el("path", {
-          class: "redes-edge-arrow",
-          d: "M-9,-4 L0,0 L-9,4 Z",
-          transform: `translate(${p1.x.toFixed(1)},${p1.y.toFixed(1)}) rotate(${angle.toFixed(1)})`
-        });
-        g.appendChild(arrow);
-      }
-      if (e.bidirectional){
-        const angleBack = Math.atan2(p0.y - p1.y, p0.x - p1.x) * 180 / Math.PI;
-        const arrowBack = el("path", {
-          class: "redes-edge-arrow",
-          d: "M-9,-4 L0,0 L-9,4 Z",
-          transform: `translate(${p0.x.toFixed(1)},${p0.y.toFixed(1)}) rotate(${angleBack.toFixed(1)})`
-        });
-        g.appendChild(arrowBack);
-      }
-
-      // click / Enter -> popup con el sustento de esta relación (tabla del POT)
-      const relationLabel = `${a.label.join(" ")} → ${b.label.join(" ")}`;
-      g.addEventListener("click", (ev) => {
-        ev.stopPropagation();
-        openSustentoPopup(relationLabel, e.sustento, ev.clientX, ev.clientY);
-      });
-      g.addEventListener("keydown", (ev) => {
-        if (ev.key === "Enter" || ev.key === " "){
-          ev.preventDefault();
-          const box = g.getBoundingClientRect();
-          openSustentoPopup(relationLabel, e.sustento, box.left + box.width / 2, box.top + box.height / 2);
-        }
-      });
-
-      edgesG.appendChild(g);
-      linkEdgeToNode(e.from, g);
-      linkEdgeToNode(e.to, g);
-    });
-
-    net.nodes.forEach((n) => {
-      const g = el("g", {
-        class: `redes-node${n.primary ? " is-primary" : ""}`,
-        "data-accent": net.accent,
-        tabindex: "0",
-        role: "button",
-        "aria-label": `${n.label.join(" ")} (click para atenuar)`,
-        transform: `translate(${n.x},${n.y})`
-      });
-      const circle = el("circle", { r: n.r });
-      g.appendChild(circle);
-
-      const iconSize = Math.max(16, n.r * 0.5);
-      const fo = el("foreignObject", {
-        class: "redes-node-icon-fo",
-        x: -iconSize/2, y: -(n.r*0.62), width: iconSize, height: iconSize
-      });
-      const div = document.createElement("div");
-      div.setAttribute("xmlns", "http://www.w3.org/1999/xhtml");
-      div.className = "redes-node-icon";
-      div.innerHTML = `<i class="fa-solid ${n.icon}"></i>`;
-      fo.appendChild(div);
-      g.appendChild(fo);
-
-      const text = el("text", { class: "redes-node-label", y: -(n.r*0.62) + iconSize + 2 });
-      n.label.forEach((line, i) => {
-        const tspan = el("tspan", { x: 0, dy: i === 0 ? 10 : 11 });
-        tspan.textContent = line;
-        text.appendChild(tspan);
-      });
-      g.appendChild(text);
-
-      // click en el nodo -> se atenúa junto con las líneas que lo conectan (click de nuevo lo restaura)
-      function toggleDim(ev){
-        ev.stopPropagation();
-        const dimmed = g.classList.toggle("is-dimmed");
-        (edgesByNode[n.id] || []).forEach((edgeEl) => {
-          edgeEl.classList.toggle("is-dimmed", dimmed);
-        });
-      }
-      g.addEventListener("click", toggleDim);
-      g.addEventListener("keydown", (ev) => {
-        if (ev.key === "Enter" || ev.key === " "){
-          ev.preventDefault();
-          toggleDim(ev);
-        }
-      });
-
-      nodesG.appendChild(g);
-    });
-
-    // reset toggles a "on" cada vez que se abre una red nueva
-    setToggle(toggleNodesBtn, true);
-    setToggle(toggleEdgesBtn, true);
-    nodesG.classList.remove("dim-secondary");
-    edgesG.classList.remove("is-hidden");
-  }
-
-  function getComputedColor(accent){
-    switch (accent){
-      case "green":  return "#3fd0bf";
-      case "purple": return "#ff8f8f";
-      case "blue":   return "#b18cf5";
-      case "yellow": return "#f5c26b";
-      default: return "#3fd0bf";
-    }
-  }
-
-  function setToggle(btn, on){
-    if (!btn) return;
-    btn.classList.toggle("is-on", on);
-    btn.setAttribute("aria-checked", on ? "true" : "false");
-  }
-
-  function openNetwork(colorKey){
-    const net = NETWORKS[colorKey];
-    if (!net) return;
-    renderNetwork(net);
-    overlay.hidden = false;
-    document.body.style.overflow = "hidden";
-  }
-
-  function closeModal(){
-    overlay.hidden = true;
-    document.body.style.overflow = "";
-  }
-
-  // ---------- popup de sustento: se abre al hacer click en una línea de relación ----------
-  function tipoBadgeClass(tipoLabel){
-    const t = (tipoLabel || "").toLowerCase();
-    if (t.includes("soporte")) return "sustento-tipo-soporte";
-    if (t.includes("resiliencia")) return "sustento-tipo-resiliencia";
-    if (t.includes("indirecta")) return "sustento-tipo-indirecta";
-    if (t.includes("directa")) return "sustento-tipo-directa";
-    return "sustento-tipo-generico";
-  }
-
-  function closeSustentoPopup(){
-    const existing = document.querySelector(".sustento-popup");
-    if (existing) existing.remove();
-    document.removeEventListener("click", onOutsideSustentoClick, true);
-  }
-  function onOutsideSustentoClick(e){
-    const popup = document.querySelector(".sustento-popup");
-    if (popup && !popup.contains(e.target) && !e.target.closest(".redes-edge")) {
-      closeSustentoPopup();
-    }
-  }
-
-  function openSustentoPopup(relationLabel, sustento, x, y){
-    closeSustentoPopup();
-    const popup = document.createElement("div");
-    popup.className = "sustento-popup";
-
-    if (sustento){
-      const badgeClass = tipoBadgeClass(sustento.tipoLabel);
-      popup.innerHTML = `
-        <button class="pot-popup-close" aria-label="Cerrar">✕</button>
-        <div class="sustento-relation">${relationLabel}</div>
-        <span class="sustento-tipo-badge ${badgeClass}">${sustento.tipoLabel || "Relación"}</span>
-        <div class="pot-quote">&ldquo;${sustento.cita}&rdquo;</div>
-        <div class="pot-page">${sustento.pagina ? sustento.pagina + " del POT" : "Página del POT pendiente de confirmar"}</div>
-      `;
-    } else {
-      popup.innerHTML = `
-        <button class="pot-popup-close" aria-label="Cerrar">✕</button>
-        <div class="sustento-relation">${relationLabel}</div>
-        <div class="pot-quote">Todavía no tengo el sustento documentado de esta relación en la tabla del POT.</div>
-        <div class="pot-page">Compárteme la fila de la tabla y la agrego aquí.</div>
-      `;
-    }
-
-    document.body.appendChild(popup);
-    const rect = popup.getBoundingClientRect();
-    const margin = 16;
-    let left = x + 16;
-    let top = y + 16;
-    if (left + rect.width + margin > window.innerWidth) left = x - rect.width - 16;
-    if (top + rect.height + margin > window.innerHeight) top = window.innerHeight - rect.height - margin;
-    if (left < margin) left = margin;
-    if (top < margin) top = margin;
-    popup.style.left = left + "px";
-    popup.style.top = top + "px";
-
-    popup.querySelector(".pot-popup-close").addEventListener("click", (ev) => {
-      ev.stopPropagation();
-      closeSustentoPopup();
-    });
-    setTimeout(() => document.addEventListener("click", onOutsideSustentoClick, true), 0);
-  }
-
-  closeBtn.addEventListener("click", () => { closeSustentoPopup(); closeModal(); });
-  overlay.addEventListener("click", (e) => {
-    if (e.target === overlay) { closeSustentoPopup(); closeModal(); }
+  group.addEventListener("pointerdown", (e) => {
+    dragging = true; moved = false;
+    startClientX = e.clientX; startClientY = e.clientY;
+    node.fixed = true;
+    group.classList.add("dragging");
+    group.setPointerCapture(e.pointerId);
+    wakePhysics();
   });
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape"){
-      closeSustentoPopup();
-      if (!overlay.hidden) closeModal();
-    }
+  group.addEventListener("pointermove", (e) => {
+    if (!dragging) return;
+    if (Math.hypot(e.clientX - startClientX, e.clientY - startClientY) > 4) moved = true;
+    const p = toSvgPoint(e.clientX, e.clientY);
+    node.x = p.x; node.y = p.y;
+    node.vx = 0; node.vy = 0;
+    updatePositions();
+    wakePhysics();
   });
-
-  if (toggleNodesBtn){
-    toggleNodesBtn.addEventListener("click", () => {
-      const on = !toggleNodesBtn.classList.contains("is-on");
-      setToggle(toggleNodesBtn, on);
-      nodesG.classList.toggle("dim-secondary", !on);
-    });
+  function endDrag(e) {
+    if (!dragging) return;
+    dragging = false;
+    node.fixed = false;
+    group.classList.remove("dragging");
+    try { group.releasePointerCapture(e.pointerId); } catch (err) {}
+    wakePhysics();
+    if (moved) {
+      group.dataset.suppressClick = "1";
+      setTimeout(() => { delete group.dataset.suppressClick; }, 0);
+    }
   }
-  if (toggleEdgesBtn){
-    toggleEdgesBtn.addEventListener("click", () => {
-      const on = !toggleEdgesBtn.classList.contains("is-on");
-      setToggle(toggleEdgesBtn, on);
-      edgesG.classList.toggle("is-hidden", !on);
+  group.addEventListener("pointerup", endDrag);
+  group.addEventListener("pointercancel", endDrag);
+}
+
+function renderNetwork() {
+  const svg = document.getElementById("networkViz");
+  if (!svg) return;
+  svg.innerHTML = "";
+  buildDefs(svg);
+  drawEdges(svg);
+  drawNodes(svg);
+  updateStructCounts();
+}
+
+function updateStructCounts() {
+  Object.keys(CATEGORIES).forEach(catId => {
+    const el = document.getElementById("struct-" + catId);
+    if (!el) return;
+    const nNodes = ODS_NODES.filter(n => n.cat === catId).length;
+    const nEdges = RAW_EDGES.filter(e => e.cat === catId).length;
+    el.textContent = `${CATEGORIES[catId].name}: ${nNodes} nodos · ${nEdges} relaciones`;
+  });
+}
+
+/* -------- panel de sustento (clic en línea) -------- */
+function showEdgeInfo(index) {
+  const edge = RAW_EDGES[index];
+  const style = TYPE_STYLE[edge.type];
+
+  document.querySelectorAll(".edge-group").forEach(el => el.classList.remove("edge-selected"));
+  document.querySelector(`.edge-group[data-index="${index}"]`)?.classList.add("edge-selected");
+
+  document.getElementById("edgeInfoTitle").textContent = edge.label;
+  const typeEl = document.getElementById("edgeInfoType");
+  typeEl.textContent = style.label + (edge.directa ? " · Directa — continua" : " · Discontinua — inferida");
+  typeEl.style.color = style.color;
+  typeEl.style.background = style.color + "26";
+  document.getElementById("edgeInfoQuote").textContent = edge.sustento;
+  document.getElementById("edgeInfoPage").textContent = `Página POT: ${edge.page}`;
+  document.getElementById("edgeInfoPanel").classList.add("visible");
+
+  document.querySelectorAll(".matrix-row[data-edge]").forEach(row => {
+    row.classList.toggle("row-highlight", Number(row.dataset.edge) === index);
+  });
+}
+function hideEdgeInfo() {
+  document.getElementById("edgeInfoPanel").classList.remove("visible");
+  document.querySelectorAll(".edge-group").forEach(el => el.classList.remove("edge-selected"));
+  document.querySelectorAll(".matrix-row[data-edge]").forEach(row => row.classList.remove("row-highlight"));
+}
+
+/* -------- visibilidad: por tipo, por categoría (leyenda) y por nodo (doble clic) -------- */
+const typeOff = new Set();
+const catOff = new Set();
+const nodeOff = new Set();
+
+function refreshEdgeVisibility() {
+  document.querySelectorAll(".ods-node").forEach(el => {
+    el.classList.toggle("hidden-node", catOff.has(el.dataset.cat) && !nodeOff.has(el.dataset.id) ? true : catOff.has(el.dataset.cat));
+  });
+  document.querySelectorAll(".edge-group").forEach(group => {
+    const type = group.dataset.type, cat = group.dataset.cat;
+    const s = group.dataset.source, t = group.dataset.target;
+    const hidden = typeOff.has(type) || catOff.has(cat) || nodeOff.has(s) || nodeOff.has(t);
+    group.classList.toggle("hidden-edge", hidden);
+  });
+}
+
+function toggleNode(id) {
+  const group = document.querySelector(`.ods-node[data-id="${id}"]`);
+  if (!group) return;
+  if (nodeOff.has(id)) { nodeOff.delete(id); group.classList.remove("node-off"); }
+  else { nodeOff.add(id); group.classList.add("node-off"); }
+  refreshEdgeVisibility();
+}
+
+function attachNodeClickHandler(group, id) {
+  let count = 0, timer = null;
+  group.addEventListener("click", () => {
+    if (group.dataset.suppressClick) return;
+    count++;
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(() => {
+      if (count === 2) toggleNode(id);
+      else if (count >= 3) toggleNodeFlow(id);
+      count = 0;
+    }, 320);
+  });
+}
+
+/* -------- spotlight (tarjetas de insight) -------- */
+let spotlight = null;
+function clearSpotlight() {
+  spotlight = null;
+  document.querySelectorAll(".insight-card").forEach(c => c.classList.remove("active"));
+  applySpotlightState();
+}
+function setSpotlightNodes(nodeIds, expand) {
+  spotlight = { mode: "nodes", nodes: new Set(nodeIds), expand: !!expand };
+  document.querySelectorAll(".insight-card").forEach(c => c.classList.remove("active"));
+  applySpotlightState();
+}
+function setSpotlightTypes(types) {
+  spotlight = { mode: "types", types };
+  document.querySelectorAll(".insight-card").forEach(c => c.classList.remove("active"));
+  applySpotlightState();
+}
+function applySpotlightState() {
+  let visibleNodes = null, visibleEdges = null;
+  if (spotlight && spotlight.mode === "nodes") {
+    visibleNodes = new Set(spotlight.nodes);
+    visibleEdges = new Set();
+    RAW_EDGES.forEach((edge, i) => {
+      const sIn = spotlight.nodes.has(edge.s), tIn = spotlight.nodes.has(edge.t);
+      if (spotlight.expand) {
+        if (sIn || tIn) { visibleEdges.add(i); visibleNodes.add(edge.s); visibleNodes.add(edge.t); }
+      } else if (sIn && tIn) visibleEdges.add(i);
     });
+  } else if (spotlight && spotlight.mode === "types") {
+    visibleEdges = new Set();
+    RAW_EDGES.forEach((edge, i) => { if (spotlight.types.includes(edge.type)) visibleEdges.add(i); });
   }
+  document.querySelectorAll(".ods-node").forEach(el => {
+    const id = el.dataset.id;
+    const dim = visibleNodes ? !visibleNodes.has(id) : false;
+    el.classList.toggle("node-focus-dim", dim);
+    el.classList.toggle("node-focus-active", !!(spotlight && spotlight.mode === "nodes" && spotlight.nodes.has(id)));
+  });
+  document.querySelectorAll(".edge-group").forEach(el => {
+    const idx = Number(el.dataset.index);
+    const dim = visibleEdges ? !visibleEdges.has(idx) : false;
+    el.classList.toggle("edge-focus-dim", dim);
+  });
+}
+function toggleNodeFlow(id) {
+  const already = spotlight && spotlight.mode === "nodes" && spotlight.expand &&
+                   spotlight.nodes.size === 1 && spotlight.nodes.has(id);
+  if (already) clearSpotlight();
+  else setSpotlightNodes([id], true);
+}
 
-  // ---------- click en los 4 nodos del hero (distinguiendo click de arrastre) ----------
-  const heroNodes = document.querySelectorAll("#network-svg .node[data-node]");
-  heroNodes.forEach((node) => {
-    const colorKey = node.getAttribute("data-node");
-    let downPoint = null;
-    let downTime = 0;
+/* -------- tarjetas de insight -------- */
+const NODE_INSIGHTS = {
+  e1: ODS_NODES.filter(n => n.cat === "e1").map(n => n.id),
+  e2: ODS_NODES.filter(n => n.cat === "e2").map(n => n.id),
+  e3: ODS_NODES.filter(n => n.cat === "e3").map(n => n.id),
+  e4: ODS_NODES.filter(n => n.cat === "e4").map(n => n.id),
+};
+const TYPE_KEY = { soporte: "soporte", resiliencia: "resiliencia", indirecta: "indirecta" };
 
-    node.addEventListener("pointerdown", (e) => {
-      downPoint = { x: e.clientX, y: e.clientY };
-      downTime = Date.now();
-    });
+function toggleInsight(key) {
+  const card = document.querySelector(`.insight-card[data-insight="${key}"]`);
+  if (!card) return;
+  if (card.classList.contains("active")) { clearSpotlight(); return; }
 
-    node.addEventListener("pointerup", (e) => {
-      if (!downPoint) return;
-      const dist = Math.hypot(e.clientX - downPoint.x, e.clientY - downPoint.y);
-      const elapsed = Date.now() - downTime;
-      downPoint = null;
-      if (dist < 6 && elapsed < 500){
-        openNetwork(colorKey);
-      }
-    });
+  if (TYPE_KEY[key]) setSpotlightTypes([TYPE_KEY[key]]);
+  else if (key === "todos") setSpotlightNodes(ODS_NODES.map(n => n.id), false);
+  else if (NODE_INSIGHTS[key]) setSpotlightNodes(NODE_INSIGHTS[key], true);
+  else setSpotlightNodes(ODS_NODES.map(n => n.id), false);
 
-    node.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" || e.key === " "){
-        e.preventDefault();
-        openNetwork(colorKey);
-      }
+  card.classList.add("active");
+}
+
+/* -------- panel de convenciones: dos grupos independientes (tipo / estructura) -------- */
+function setupLegendToggle() {
+  document.querySelectorAll('.legend-item[data-mode="type"] input').forEach(input => {
+    input.addEventListener("change", (e) => {
+      const item = e.target.closest(".legend-item");
+      const type = item.dataset.type;
+      if (e.target.checked) typeOff.delete(type); else typeOff.add(type);
+      item.classList.toggle("off", !e.target.checked);
+      refreshEdgeVisibility();
     });
   });
+  document.querySelectorAll('.legend-item[data-mode="cat"] input').forEach(input => {
+    input.addEventListener("change", (e) => {
+      const item = e.target.closest(".legend-item");
+      const cat = item.dataset.cat;
+      if (e.target.checked) catOff.delete(cat); else catOff.add(cat);
+      item.classList.toggle("off", !e.target.checked);
+      refreshEdgeVisibility();
+    });
+  });
+  document.getElementById("edgeInfoClose")?.addEventListener("click", hideEdgeInfo);
+}
 
-})();
+/* -------- controles Todos / por tipo / por estructura -------- */
+function filterNetwork(mode) {
+  document.querySelectorAll(".network-controls .control-btn").forEach(btn => btn.classList.remove("active"));
+  event.currentTarget.classList.add("active");
+
+  const allTypes = ["soporte", "resiliencia", "indirecta"];
+  const allCats = ["e1", "e2", "e3", "e4"];
+  let activeTypes = allTypes, activeCats = allCats;
+
+  if (allTypes.includes(mode)) activeTypes = [mode];
+  else if (allCats.includes(mode)) activeCats = [mode];
+
+  document.querySelectorAll('.legend-item[data-mode="type"]').forEach(item => {
+    const type = item.dataset.type;
+    const input = item.querySelector("input");
+    const show = activeTypes.includes(type);
+    input.checked = show;
+    item.classList.toggle("off", !show);
+    if (show) typeOff.delete(type); else typeOff.add(type);
+  });
+  document.querySelectorAll('.legend-item[data-mode="cat"]').forEach(item => {
+    const cat = item.dataset.cat;
+    const input = item.querySelector("input");
+    const show = activeCats.includes(cat);
+    input.checked = show;
+    item.classList.toggle("off", !show);
+    if (show) catOff.delete(cat); else catOff.add(cat);
+  });
+  refreshEdgeVisibility();
+}
+
+/* -------- botones de acción (placeholders) -------- */
+function generateODSReport() { console.log("Generando reporte de la red..."); }
+function downloadAlignment() { console.log("Descargando tabla de relaciones..."); }
+function shareAnalysis() { console.log("Compartiendo análisis..."); }
+
+document.addEventListener("DOMContentLoaded", () => {
+  renderNetwork();
+  setupLegendToggle();
+});
