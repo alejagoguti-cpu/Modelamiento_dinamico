@@ -2346,6 +2346,35 @@ function computeLayout() {
     });
   }
 
+    // Organización final determinista: cada estructura ocupa un cuadrante,
+  // con su hub principal en el centro y los demás nodos en anillos. Esto evita
+  // que el relajador disperse los grupos y produzca una maraña de cruces.
+  const clusterCenters = {
+    EEP: { x: -900, y: -650 },
+    EFC: { x: 900, y: -650 },
+    ESECI: { x: 900, y: 650 },
+    EIP: { x: -900, y: 650 }
+  };
+  SYS.forEach(s => {
+    const members = model.systems[s].concepts.slice().sort((a, b) =>
+      (model.concepts[b].deg - model.concepts[a].deg) || a.localeCompare(b));
+    const center = clusterCenters[s];
+    if (!members.length) return;
+    pos[members[0]] = { x: center.x, y: center.y };
+    members.slice(1).forEach((id, index) => {
+      const ring = index < 6 ? 1 : 2;
+      const ringIndex = ring === 1 ? index : index - 6;
+      const ringCount = ring === 1 ? Math.min(6, members.length - 1) : members.length - 7;
+      const angle = -Math.PI / 2 + (ringIndex / Math.max(1, ringCount)) * Math.PI * 2;
+      const radiusX = ring === 1 ? 285 : 500;
+      const radiusY = ring === 1 ? 240 : 390;
+      pos[id] = {
+        x: center.x + Math.cos(angle) * radiusX,
+        y: center.y + Math.sin(angle) * radiusY
+      };
+    });
+  });
+
   ids.forEach(id => { layout[id] = pos[id]; });
 
   // recalcula el viewBox para que "Centrar vista" encuadre bien la red ya
@@ -2444,6 +2473,9 @@ function render() {
   //    tocan una estructura o un nodo apagado simplemente quedan con muy
   //    baja opacidad ("rel-off"), en vez de desaparecer y reorganizar la red
   model.relations.forEach(r => {
+    // No dibujar relaciones pendientes de verificación: se mantienen en los
+    // datos para el análisis, pero no deben ensuciar la red visual.
+    if (r.porVerificar) return;
     const active = relActive(r);
     const a = drawPos[r.from] || layout[r.from], b = drawPos[r.to] || layout[r.to];
     const rA = nodeR[r.from];
@@ -2481,7 +2513,8 @@ function render() {
       node.addEventListener('mouseleave', hideTooltip);
     });
 
-    gRels.appendChild(glow);
+    // Una única línea visible por relación. El hitbox conserva la interacción,
+    // pero se elimina la cinta difuminada que generaba trazos extraños.
     gRels.appendChild(path);
     gRels.appendChild(hit);
   });
@@ -2543,7 +2576,25 @@ const iconSize = Math.max(28, Math.round(R * 0.52));
         `${off ? ' · APAGADO' : isolated ? ' · AISLADO' : ''}</span>`));
       g.addEventListener('mousemove', moveTooltip);
       g.addEventListener('mouseleave', hideTooltip);
-      g.addEventListener('click', ev => { ev.stopPropagation(); focusConcept(id); });
+
+      // Un clic enfoca el nodo. Tres clics realizan una deselección local:
+      // solo el nodo y sus vecinos directos, sin renderizar ni mover la red.
+      let clickCount = 0;
+      let clickTimer = null;
+      g.addEventListener('click', ev => {
+        ev.stopPropagation();
+        clickCount++;
+        if (clickTimer) clearTimeout(clickTimer);
+        if (clickCount === 3) {
+          deselectLocal(id);
+          clickCount = 0;
+          return;
+        }
+        clickTimer = setTimeout(() => {
+          if (clickCount === 1) focusConcept(id);
+          clickCount = 0;
+        }, 280);
+      });
 
       gNodes.appendChild(g);
     });
@@ -2784,9 +2835,40 @@ function updateSimPanel(active, total, rank) {
 // ---------------------------------------------------------------------
 // 5. INTERACCIÓN
 // ---------------------------------------------------------------------
+function showStructureInsight(s, isOff) {
+  const popup = document.getElementById('eseCIInsight');
+  const title = document.getElementById('insightTitle');
+  const text = document.getElementById('insightText');
+  if (!popup || !title || !text) return;
+
+  const insights = {
+    ESECI: {
+      title: 'ESECI · Economía y productividad',
+      text: 'La ESECI presenta más conexiones en esta red porque el POT relaciona movilidad, vivienda, equipamientos, empleo y productividad: transporte y sector productivo (p. 164), vivienda y acceso al empleo (p. 169), equipamientos y generación de empleo (p. 171), y conectividad multimodal, productividad y empleo (p. 171). Esta mayor centralidad es un resultado calculado a partir de las relaciones documentadas; no es una frase literal de una sola página del POT. Al apagarla, la red conserva únicamente las dos relaciones definidas para este escenario.'
+    },
+    EEP: {
+      title: 'EEP · Protección ambiental',
+      text: 'La EEP se define como un sistema de áreas y corredores que sostiene la biodiversidad y los servicios ecosistémicos (p. 72, art. 42), e incluye humedales, ríos y quebradas (p. 92). Por eso su función principal es ecológica y de protección territorial, más que de articulación productiva.'
+    },
+    EFC: {
+      title: 'EFC · Cuidado y funcionamiento',
+      text: 'La EFC conecta la movilidad, la vivienda, los servicios, los equipamientos y el espacio público para sostener la vida cotidiana y el funcionamiento urbano.'
+    },
+    EIP: {
+      title: 'EIP · Patrimonios',
+      text: 'La EIP articula los patrimonios culturales, naturales, materiales e inmateriales con la identidad territorial, la producción y las actividades de la ciudad.'
+    }
+  };
+  const info = insights[s] || insights.ESECI;
+  title.textContent = info.title;
+  text.textContent = isOff ? info.text + ' La estructura está apagada en este momento.' : info.text;
+  popup.classList.remove('is-hidden');
+}
+
 function toggleSystem(s) {
   state[s] = !state[s];
   lastToggledOff = state[s] ? null : s;
+  showStructureInsight(s, !state[s]);
   if (selectedRel !== null) {
     const r = model.relations.find(x => x.id === selectedRel);
     if (r && !relActive(r)) clearEvidence();
@@ -2875,6 +2957,35 @@ function focusConcept(id) {
 
 function clearFocus() {
   document.querySelectorAll('.dim').forEach(n => n.classList.remove('dim'));
+}
+
+function deselectLocal(id) {
+  const c = model.concepts[id];
+  if (!c) return;
+  const neighbors = new Set([id]);
+  c.rels.filter(relActive).forEach(r => {
+    neighbors.add(r.from);
+    neighbors.add(r.to);
+  });
+
+  // Solo se limpian las marcas visuales del nodo pulsado y sus vecinos.
+  document.querySelectorAll('.concept').forEach(g => {
+    if (neighbors.has(g.getAttribute('data-id'))) {
+      g.classList.remove('dim', 'local-selected');
+      g.classList.add('local-deselected');
+    }
+  });
+  document.querySelectorAll('.rel').forEach(p => {
+    const r = model.relations.find(x => x.id === +p.getAttribute('data-rel'));
+    if (r && (neighbors.has(r.from) || neighbors.has(r.to))) {
+      p.classList.remove('dim', 'sel');
+    }
+  });
+
+  // La marca desaparece sola al siguiente enfoque o al hacer clic fuera.
+  window.setTimeout(() => {
+    document.querySelectorAll('.local-deselected').forEach(g => g.classList.remove('local-deselected'));
+  }, 700);
 }
 
 // ---------------------------------------------------------------------
