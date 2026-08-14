@@ -66,708 +66,386 @@
     </div>
 
     <div class="welcome">
-      <h2>Macromodelos — ¿De dónde surge este modelo de ciudad?</h2>
-      <p>El POT no surge de la nada: está producido por <strong>paradigmas</strong> (en <span style="color:#e94d8c;font-weight:700;">magenta</span>) que compiten por definir la ciudad. Esta red conecta 5 macromodelos con los componentes físicos donde dejan su huella. El <strong>hallazgo central</strong>: aunque el POT tiene un discurso ambientalista fuerte, sus relaciones muestran que el macromodelo <strong>neoliberal-desarrollista domina</strong> y subordina lo ecológico — la distancia entre el modelo declarado y el modelo operativo. Cada línea evidencia qué paradigma influye, si es dominante o solo discursivo, y qué revela sobre la ciudad real.</p>
+      <h2>Macromodelos — ¿Qué visiones de ciudad conviven dentro del POT?</h2>
+      <p>Esta red es una <strong>interpretación propia</strong>, no una transcripción de las 4 estructuras oficiales del POT. Construimos 6 macromodelos —lentes distintos para leer el mismo documento— y los superponemos: varios conceptos (vivienda, transporte público, patrimonio, accesibilidad, corredores ecológicos, gestión ambiental) pertenecen a más de un sistema a la vez y funcionan como <strong>puentes</strong>. El tamaño de cada nodo se calcula a partir de su número real de conexiones, así que los <strong>hub</strong> emergen del grafo en vez de darse por supuestos.</p>
     </div>
 
-    <!-- MÉTRICAS DE LA RED -->
-    <!-- INSIGHTS: tarjetas de los 5 macromodelos -->
+    <!-- INSIGHTS: tarjetas clicables para explorar la red -->
     <div class="ods-insight-stats" id="odsInsightStats">
-      <div class="insight-card" data-insight="neoliberal" style="--insight-color:#e94d8c;" onclick="toggleInsight('neoliberal')">
-        <div class="insight-icon"><i class="fa-solid fa-money-bill-trend-up"></i></div>
-        <div class="insight-title">Neoliberal / Mercantilista</div>
+      <div class="insight-card" data-insight="hubs" style="--insight-color:#f5c945;" onclick="toggleInsight('hubs')">
+        <div class="insight-icon"><i class="fa-solid fa-circle-nodes"></i></div>
+        <div class="insight-title">Sistemas y nodos HUB</div>
       </div>
 
-      <div class="insight-card" data-insight="desarrollista" style="--insight-color:#e94d8c;" onclick="toggleInsight('desarrollista')">
-        <div class="insight-icon"><i class="fa-solid fa-industry"></i></div>
-        <div class="insight-title">Desarrollista / Productivista</div>
+      <div class="insight-card" data-insight="puentes" style="--insight-color:#2fd4c8;" onclick="toggleInsight('puentes')">
+        <div class="insight-icon"><i class="fa-solid fa-arrows-left-right"></i></div>
+        <div class="insight-title">Conceptos puente</div>
       </div>
 
-      <div class="insight-card" data-insight="ambientalista" style="--insight-color:#e94d8c;" onclick="toggleInsight('ambientalista')">
-        <div class="insight-icon"><i class="fa-solid fa-leaf"></i></div>
-        <div class="insight-title">Ambientalista (discursivo)</div>
+      <div class="insight-card" data-insight="tensiones" style="--insight-color:#f76fb0;" onclick="toggleInsight('tensiones')">
+        <div class="insight-icon"><i class="fa-solid fa-scale-unbalanced"></i></div>
+        <div class="insight-title">Tensiones / articulaciones</div>
       </div>
 
-      <div class="insight-card" data-insight="tecnocratico" style="--insight-color:#e94d8c;" onclick="toggleInsight('tecnocratico')">
-        <div class="insight-icon"><i class="fa-solid fa-gears"></i></div>
-        <div class="insight-title">Tecnocrático / Estatista</div>
+      <div class="insight-card" data-insight="gobernanza" style="--insight-color:#9aa3b2;" onclick="toggleInsight('gobernanza')">
+        <div class="insight-icon"><i class="fa-solid fa-gavel"></i></div>
+        <div class="insight-title">Gobernanza: capa transversal</div>
       </div>
 
-      <div class="insight-card" data-insight="comunitario" style="--insight-color:#e94d8c;" onclick="toggleInsight('comunitario')">
-        <div class="insight-icon"><i class="fa-solid fa-people-group"></i></div>
-        <div class="insight-title">Comunitario / del Cuidado</div>
-      </div>
-
-      <div class="insight-card" data-insight="todas" style="--insight-color:#2fd4c8;" onclick="toggleInsight('todas')">
+      <div class="insight-card" data-insight="todos" style="--insight-color:#a276f2;" onclick="toggleInsight('todos')">
         <div class="insight-icon"><i class="fa-solid fa-diagram-project"></i></div>
         <div class="insight-title">Ver toda la red</div>
       </div>
     </div>
 
-    <!-- RED -->
+    <!-- RED CONCEPTUAL -->
     <div class="network-section">
       <div class="network-header">
-        <h3><i class="fa-solid fa-sitemap"></i> Red de Macromodelos del POT — Interactiva</h3>
+        <h3><i class="fa-solid fa-sitemap"></i> Red de Macromodelos de Ciudad — Interactiva</h3>
         <div class="network-controls">
           <button class="control-btn active" onclick="filterNetwork('all')">Todos</button>
-          <button class="control-btn" onclick="filterNetwork('dependencia')">Dependencias</button>
-          <button class="control-btn" onclick="filterNetwork('condicionamiento')">Condicionamientos</button>
-          <button class="control-btn" onclick="filterNetwork('causal')">Causales</button>
-          <button class="control-btn" onclick="filterNetwork('funcional')">Funcionales</button>
-          <button class="control-btn" onclick="filterNetwork('complementariedad')">Complementar.</button>
-          <button class="control-btn" onclick="filterNetwork('conflicto')">Conflictos</button>
-          <button class="control-btn" onclick="filterNetwork('jerarquia')">Jerarquías</button>
-          <button class="control-btn" onclick="filterNetwork('retroalimentacion')">Retroaliment.</button>
-          <button class="control-btn" onclick="filterNetwork('regulacion')">Regulación</button>
-          <button class="control-btn" onclick="filterNetwork('m1')">Neoliberal</button>
-          <button class="control-btn" onclick="filterNetwork('m2')">Desarrollista</button>
-          <button class="control-btn" onclick="filterNetwork('m3')">Ambientalista</button>
-          <button class="control-btn" onclick="filterNetwork('m4')">Tecnocrático</button>
-          <button class="control-btn" onclick="filterNetwork('m5')">Comunitario</button>
+          <button class="control-btn" onclick="filterNetwork('sistema')">Entre sistemas</button>
+          <button class="control-btn" onclick="filterNetwork('compartido')">Puentes</button>
+          <button class="control-btn" onclick="filterNetwork('tension')">Tensiones</button>
+          <button class="control-btn" onclick="filterNetwork('articulacion')">Articulaciones</button>
         </div>
       </div>
 
       <div class="network-viz-wrap">
-        <svg id="networkViz" viewBox="0 0 2500 1050" preserveAspectRatio="xMidYMid meet"></svg>
+        <svg id="networkViz" viewBox="0 0 1640 1140" preserveAspectRatio="xMidYMid meet"></svg>
 
         <div class="network-sidebar">
           <aside class="network-legend" id="networkLegend">
-            <div class="legend-title">Tipo de relación</div>
+            <div class="legend-title">Convenciones</div>
 
-            <label class="legend-item" data-mode="tension" data-tension="dependencia">
+            <label class="legend-item" data-type="sistema">
               <input type="checkbox" checked>
-              <span class="legend-swatch swatch-dependencia"></span>
-              Dependencia
+              <span class="legend-swatch swatch-sistema"></span>
+              Relación entre macromodelos
             </label>
 
-            <label class="legend-item" data-mode="tension" data-tension="condicionamiento">
+            <label class="legend-item" data-type="compartido">
               <input type="checkbox" checked>
-              <span class="legend-swatch swatch-condicionamiento"></span>
-              Condicionamiento
+              <span class="legend-swatch swatch-compartido"></span>
+              Conexión de concepto puente
             </label>
 
-            <label class="legend-item" data-mode="tension" data-tension="causal">
+            <label class="legend-item" data-type="pertenencia">
               <input type="checkbox" checked>
-              <span class="legend-swatch swatch-causal"></span>
-              Causal
+              <span class="legend-swatch swatch-pertenencia"></span>
+              Nodo puente → sistema de origen
             </label>
 
-            <label class="legend-item" data-mode="tension" data-tension="funcional">
+            <label class="legend-item" data-type="tension">
               <input type="checkbox" checked>
-              <span class="legend-swatch swatch-funcional"></span>
-              Funcional
+              <span class="legend-swatch swatch-tension"></span>
+              Tensión / contradicción
             </label>
 
-            <label class="legend-item" data-mode="tension" data-tension="complementariedad">
+            <label class="legend-item" data-type="articulacion">
               <input type="checkbox" checked>
-              <span class="legend-swatch swatch-complementariedad"></span>
-              Complementariedad
+              <span class="legend-swatch swatch-articulacion"></span>
+              Articulación (sinergia)
             </label>
 
-            <label class="legend-item" data-mode="tension" data-tension="conflicto">
+            <label class="legend-item" data-type="tension_art">
               <input type="checkbox" checked>
-              <span class="legend-swatch swatch-conflicto"></span>
-              Conflicto
+              <span class="legend-swatch swatch-tension-art"></span>
+              Tensión y articulación simultánea
             </label>
 
-            <label class="legend-item" data-mode="tension" data-tension="jerarquia">
+            <label class="legend-item" data-type="interno">
               <input type="checkbox" checked>
-              <span class="legend-swatch swatch-jerarquia"></span>
-              Jerarquía
+              <span class="legend-swatch swatch-interno"></span>
+              Pertenencia interna (concepto → su sistema)
             </label>
 
-            <label class="legend-item" data-mode="tension" data-tension="retroalimentacion">
-              <input type="checkbox" checked>
-              <span class="legend-swatch swatch-retroalimentacion"></span>
-              Retroalimentación
-            </label>
-
-            <label class="legend-item" data-mode="tension" data-tension="regulacion">
-              <input type="checkbox" checked>
-              <span class="legend-swatch swatch-regulacion"></span>
-              Regulación
-            </label>
-
-            <div class="legend-title">Tipo de línea</div>
+            <div class="legend-title">Categoría de nodo</div>
             <div class="legend-item legend-static">
-              <span class="legend-swatch swatch-solida"></span>
-              Relación directa — continua con flecha
+              <span class="legend-swatch swatch-macro"></span>
+              Macromodelo (bola grande, tamaño = grado real)
             </div>
             <div class="legend-item legend-static">
-              <span class="legend-swatch swatch-punteada"></span>
-              Relación inferida / indirecta — discontinua
+              <span class="legend-swatch swatch-evi"></span>
+              Concepto puente (anillo punteado)
             </div>
 
             <div class="legend-divider"></div>
-            <div class="legend-title">Macromodelos</div>
-
-            <label class="legend-item" data-mode="cat" data-cat="m1">
-              <input type="checkbox" checked>
-              <span class="legend-swatch swatch-m1"></span>
-              Neoliberal / Mercantilista
-            </label>
-
-            <label class="legend-item" data-mode="cat" data-cat="m2">
-              <input type="checkbox" checked>
-              <span class="legend-swatch swatch-m2"></span>
-              Desarrollista / Productivista
-            </label>
-
-            <label class="legend-item" data-mode="cat" data-cat="m3">
-              <input type="checkbox" checked>
-              <span class="legend-swatch swatch-m3"></span>
-              Ambientalista (discursivo)
-            </label>
-
-            <label class="legend-item" data-mode="cat" data-cat="m4">
-              <input type="checkbox" checked>
-              <span class="legend-swatch swatch-m4"></span>
-              Tecnocrático / Estatista
-            </label>
-
-            <label class="legend-item" data-mode="cat" data-cat="m5">
-              <input type="checkbox" checked>
-              <span class="legend-swatch swatch-m5"></span>
-              Comunitario / del Cuidado
-            </label>
-
-            <div class="legend-divider"></div>
-            <div class="legend-title">Estado por estructura</div>
-            <div class="struct-count" id="struct-e1"></div>
-            <div class="struct-count" id="struct-e2"></div>
-            <div class="struct-count" id="struct-e3"></div>
-            <div class="struct-count" id="struct-e4"></div>
-
-            <div class="legend-divider"></div>
-            <div class="legend-hint">Clic en una línea: ver la relación, el tipo y el sustento.<br>Doble clic en una bola: apagarla/encenderla.<br>Triple clic en una bola: ver solo su flujo.<br>Las bolas se arrastran y las conectadas la siguen.</div>
+            <div class="legend-hint">Clic en una línea: ver el tipo de relación y su lectura interpretativa.<br>Doble clic en una bola: apagarla/encenderla.<br>Triple clic en una bola: ver solo su flujo.<br>Todas las bolas se pueden arrastrar.</div>
           </aside>
+
+          <div class="edge-info-panel" id="edgeInfoPanel">
+            <div class="edge-info-header">
+              <span id="edgeInfoTitle">Macromodelo</span>
+              <button class="edge-info-close" id="edgeInfoClose" type="button" aria-label="Cerrar">&times;</button>
+            </div>
+            <div class="edge-info-type" id="edgeInfoType"></div>
+            <div class="edge-info-quote" id="edgeInfoQuote"></div>
+            <div class="edge-info-page" id="edgeInfoPage"></div>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- EDGE INFO PANEL (movido fuera de network-sidebar para position: fixed) -->
-    <div class="edge-info-panel" id="edgeInfoPanel">
-      <div class="edge-info-header">
-        <span id="edgeInfoTitle">Tensión</span>
-        <button class="edge-info-close" id="edgeInfoClose" type="button" aria-label="Cerrar">&times;</button>
-      </div>
-      <div class="edge-info-type" id="edgeInfoType"></div>
-      <div class="edge-info-quote" id="edgeInfoQuote"></div>
-      <div class="edge-info-page" id="edgeInfoPage"></div>
-    </div>
-
-    <!-- TABLA DE RELACIONES -->
+    <!-- TABLA DE SUSTENTO -->
     <div class="analysis-container">
       <div class="analysis-card full-width">
         <div class="card-header">
-          <h3><i class="fa-solid fa-table"></i> Tabla de Influencia de Macromodelos</h3>
+          <h3><i class="fa-solid fa-table"></i> Tabla de relaciones — red de macromodelos</h3>
         </div>
+
+        <p class="source-disclaimer"><i class="fa-solid fa-circle-info"></i> Esta tabla documenta nuestra <strong>interpretación propia</strong> de la red, no citas ni páginas del POT. Ninguna fila afirma que el POT declare la relación de forma literal; en la columna "Estado de la fuente" se indica que está pendiente de vincular a artículo/página/cita exacta si se aporta el texto fuente.</p>
 
         <div class="matrix-container">
           <div class="matrix-row header">
-            <div class="matrix-cell header-cell">Estructura</div>
             <div class="matrix-cell header-cell">Relación</div>
             <div class="matrix-cell header-cell">Línea</div>
-            <div class="matrix-cell header-cell">Tipo de relación</div>
-            <div class="matrix-cell header-cell">Página</div>
-            <div class="matrix-cell header-cell">Análisis crítico</div>
-          </div>
-
-          </div>
-          <!-- Las filas se generarán dinámicamente con JavaScript -->
-        </div>
-            <div class="matrix-cell"><span class="swatch-tag swatch-e1"></span> E. Ecológica</div>
-            <div class="matrix-cell">Cerros orientales ➞ Ríos (corredores montañosos)</div>
-            <div class="matrix-cell">Discontinua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-soporte" style="margin:0;"></span> Naranja</div>
-            <div class="matrix-cell"><span class="alignment-tag strong sop">Soporte</span></div>
-            
-            <div class="matrix-cell">p. 186</div>
-            <div class="matrix-cell quote-cell">Los cerros orientales son los corredores montañosos de la estructura ecológica: contienen y alimentan los ríos que descienden al valle.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="1">
-            <div class="matrix-cell"><span class="swatch-tag swatch-e1"></span> E. Ecológica</div>
-            <div class="matrix-cell">Quebradas ➞ Humedales</div>
-            <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-soporte" style="margin:0;"></span> Naranja</div>
-            <div class="matrix-cell"><span class="alignment-tag strong sop">Soporte</span></div>
-            
-            <div class="matrix-cell">p. 186</div>
-            <div class="matrix-cell quote-cell">Las quebradas de la Sabana alimentan los humedales: su caudal mantiene la lámina de agua y la vida del ecosistema.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="2">
-            <div class="matrix-cell"><span class="swatch-tag swatch-e1"></span> E. Ecológica</div>
-            <div class="matrix-cell">Humedales ➞ Ríos</div>
-            <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-soporte" style="margin:0;"></span> Naranja</div>
-            <div class="matrix-cell"><span class="alignment-tag strong sop">Soporte</span></div>
-            
-            <div class="matrix-cell">p. 186</div>
-            <div class="matrix-cell quote-cell">Los humedales regulan los ríos de la Sabana: amortiguan crecientes, sedimentan y depuran el agua que circula por la cuenca.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="3">
-            <div class="matrix-cell"><span class="swatch-tag swatch-e1"></span> E. Ecológica</div>
-            <div class="matrix-cell">Humedales ➞ Áreas de resiliencia climática</div>
-            <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-soporte" style="margin:0;"></span> Naranja</div>
-            <div class="matrix-cell"><span class="alignment-tag strong sop">Soporte</span></div>
-            
-            <div class="matrix-cell">p. 186</div>
-            <div class="matrix-cell quote-cell">Los humedales son parte de las áreas de resiliencia climática: absorben el exceso hídrico y reducen el riesgo de inundación.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="4">
-            <div class="matrix-cell"><span class="swatch-tag swatch-e1"></span> E. Ecológica</div>
-            <div class="matrix-cell">Ríos ➞ Complejos de páramos</div>
-            <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-soporte" style="margin:0;"></span> Naranja</div>
-            <div class="matrix-cell"><span class="alignment-tag strong sop">Soporte</span></div>
-            
-            <div class="matrix-cell">p. 186</div>
-            <div class="matrix-cell quote-cell">Los ríos de la Sabana nacen en los complejos de páramos: el agua que llega a la ciudad depende de esos ecosistemas altoandinos.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="5">
-            <div class="matrix-cell"><span class="swatch-tag swatch-e1"></span> E. Ecológica</div>
-            <div class="matrix-cell">Bosques urbanos ➞ Coberturas vegetales</div>
-            <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-soporte" style="margin:0;"></span> Naranja</div>
-            <div class="matrix-cell"><span class="alignment-tag strong sop">Soporte</span></div>
-            
-            <div class="matrix-cell">p. 186</div>
-            <div class="matrix-cell quote-cell">Los bosques urbanos integran y sostienen las coberturas vegetales de la ciudad.</div>
+            <div class="matrix-cell header-cell">Color</div>
+            <div class="matrix-cell header-cell">Categoría</div>
+            <div class="matrix-cell header-cell">Estado de la fuente</div>
+            <div class="matrix-cell header-cell">Lectura interpretativa</div>
           </div>
 
           <div class="matrix-row" data-edge="6">
-            <div class="matrix-cell"><span class="swatch-tag swatch-e1"></span> E. Ecológica</div>
-            <div class="matrix-cell">Áreas de resiliencia climática ➞ Coberturas vegetales</div>
+            <div class="matrix-cell">Ambientalista ↔ Humanista</div>
             <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-resiliencia" style="margin:0;"></span> Azul</div>
-            <div class="matrix-cell"><span class="alignment-tag strong res">Resiliencia</span></div>
-            
-            <div class="matrix-cell">p. 186</div>
-            <div class="matrix-cell quote-cell">Las áreas de resiliencia climática dependen de las coberturas vegetales para su funcionamiento: sin vegetación no hay regulación térmica ni hídrica.</div>
+            <div class="matrix-cell"><span class="legend-swatch swatch-sistema" style="margin:0;"></span> Azul grisáceo</div>
+            <div class="matrix-cell"><span class="alignment-tag strong tag-sistema">Relación de sistema</span></div>
+            <div class="matrix-cell">Interpretación propia — sin cita</div>
+            <div class="matrix-cell quote-cell">Naturaleza y estructura ecológica ↔ calidad de vida, espacio público y bienestar.</div>
           </div>
 
           <div class="matrix-row" data-edge="7">
-            <div class="matrix-cell"><span class="swatch-tag swatch-e1"></span> E. Ecológica</div>
-            <div class="matrix-cell">Reservas forestales ➞ Coberturas vegetales</div>
+            <div class="matrix-cell">Ambientalista ↔ Funcionalista</div>
             <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-resiliencia" style="margin:0;"></span> Azul</div>
-            <div class="matrix-cell"><span class="alignment-tag strong res">Resiliencia</span></div>
-            
-            <div class="matrix-cell">p. 186</div>
-            <div class="matrix-cell quote-cell">Las reservas forestales sostienen las coberturas vegetales: garantizan suelo protegido y continuidad de la vegetación.</div>
+            <div class="matrix-cell"><span class="legend-swatch swatch-sistema" style="margin:0;"></span> Azul grisáceo</div>
+            <div class="matrix-cell"><span class="alignment-tag strong tag-sistema">Relación de sistema</span></div>
+            <div class="matrix-cell">Interpretación propia — sin cita</div>
+            <div class="matrix-cell quote-cell">Corredores ecológicos ↔ corredores verdes y movilidad.</div>
           </div>
 
           <div class="matrix-row" data-edge="8">
-            <div class="matrix-cell"><span class="swatch-tag swatch-e1"></span> E. Ecológica</div>
-            <div class="matrix-cell">Cerros orientales ➞ Áreas protegidas</div>
-            <div class="matrix-cell">Discontinua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-indirecta" style="margin:0;"></span> Gris</div>
-            <div class="matrix-cell"><span class="alignment-tag strong ind">Indirecta</span></div>
-            
-            <div class="matrix-cell">p. 186</div>
-            <div class="matrix-cell quote-cell">Los cerros orientales se vinculan con las áreas protegidas de manera indirecta: no toda su extensión está bajo régimen de protección, aunque la protege parcialmente.</div>
+            <div class="matrix-cell">Ambientalista ↔ Socioeconómico</div>
+            <div class="matrix-cell">Continua</div>
+            <div class="matrix-cell"><span class="legend-swatch swatch-sistema" style="margin:0;"></span> Azul grisáceo</div>
+            <div class="matrix-cell"><span class="alignment-tag strong tag-sistema">Relación de sistema</span></div>
+            <div class="matrix-cell">Interpretación propia — sin cita</div>
+            <div class="matrix-cell quote-cell">Recursos naturales ↔ soporte de actividades humanas y económicas.</div>
           </div>
 
           <div class="matrix-row" data-edge="9">
-            <div class="matrix-cell"><span class="swatch-tag swatch-e1"></span> E. Ecológica</div>
-            <div class="matrix-cell">Áreas protegidas ➞ Parques ecológicos de montaña</div>
-            <div class="matrix-cell">Discontinua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-soporte" style="margin:0;"></span> Naranja</div>
-            <div class="matrix-cell"><span class="alignment-tag strong sop">Soporte</span></div>
-            
-            <div class="matrix-cell">p. 186</div>
-            <div class="matrix-cell quote-cell">Las áreas protegidas contienen a los parques ecológicos de montaña: el régimen de protección habilita su existencia.</div>
+            <div class="matrix-cell">Ambientalista ↔ Cultural / patrimonial</div>
+            <div class="matrix-cell">Continua</div>
+            <div class="matrix-cell"><span class="legend-swatch swatch-sistema" style="margin:0;"></span> Azul grisáceo</div>
+            <div class="matrix-cell"><span class="alignment-tag strong tag-sistema">Relación de sistema</span></div>
+            <div class="matrix-cell">Interpretación propia — sin cita</div>
+            <div class="matrix-cell quote-cell">Patrimonio natural ↔ identidad y paisaje.</div>
           </div>
 
           <div class="matrix-row" data-edge="10">
-            <div class="matrix-cell"><span class="swatch-tag swatch-e1"></span> E. Ecológica</div>
-            <div class="matrix-cell">Áreas protegidas ➞ Reservas forestales</div>
-            <div class="matrix-cell">Discontinua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-soporte" style="margin:0;"></span> Naranja</div>
-            <div class="matrix-cell"><span class="alignment-tag strong sop">Soporte</span></div>
-            
-            <div class="matrix-cell">p. 186</div>
-            <div class="matrix-cell quote-cell">Las áreas protegidas dan origen a las reservas forestales: la protección jurídica habilita la reserva como figura de conservación.</div>
+            <div class="matrix-cell">Ambientalista ↔ Gobernanza</div>
+            <div class="matrix-cell">Continua</div>
+            <div class="matrix-cell"><span class="legend-swatch swatch-sistema" style="margin:0;"></span> Azul grisáceo</div>
+            <div class="matrix-cell"><span class="alignment-tag strong tag-sistema">Relación de sistema</span></div>
+            <div class="matrix-cell">Interpretación propia — sin cita</div>
+            <div class="matrix-cell quote-cell">Gestión ambiental ↔ gestión pública y participación.</div>
           </div>
 
           <div class="matrix-row" data-edge="11">
-            <div class="matrix-cell"><span class="swatch-tag swatch-e1"></span> E. Ecológica</div>
-            <div class="matrix-cell">Parque ecológico de montaña ➞ Coberturas vegetales</div>
-            <div class="matrix-cell">Discontinua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-soporte" style="margin:0;"></span> Naranja</div>
-            <div class="matrix-cell"><span class="alignment-tag strong sop">Soporte</span></div>
-            
-            <div class="matrix-cell">p. 186</div>
-            <div class="matrix-cell quote-cell">Los parques ecológicos de montaña aportan sus coberturas vegetales al sistema ecológico urbano.</div>
+            <div class="matrix-cell">Humanista ↔ Funcionalista</div>
+            <div class="matrix-cell">Continua</div>
+            <div class="matrix-cell"><span class="legend-swatch swatch-sistema" style="margin:0;"></span> Azul grisáceo</div>
+            <div class="matrix-cell"><span class="alignment-tag strong tag-sistema">Relación de sistema</span></div>
+            <div class="matrix-cell">Interpretación propia — sin cita</div>
+            <div class="matrix-cell quote-cell">Vivienda y equipamientos ↔ transporte y accesibilidad.</div>
           </div>
 
           <div class="matrix-row" data-edge="12">
-            <div class="matrix-cell"><span class="swatch-tag swatch-e1"></span> E. Ecológica</div>
-            <div class="matrix-cell">Humedales ➞ Coberturas vegetales</div>
-            <div class="matrix-cell">Discontinua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-soporte" style="margin:0;"></span> Naranja</div>
-            <div class="matrix-cell"><span class="alignment-tag strong sop">Soporte</span></div>
-            
-            <div class="matrix-cell">p. 186</div>
-            <div class="matrix-cell quote-cell">Los humedales contribuyen a las coberturas vegetales del sistema ecológico: su vegetación palustre es cobertura viva.</div>
+            <div class="matrix-cell">Humanista ↔ Socioeconómico</div>
+            <div class="matrix-cell">Continua</div>
+            <div class="matrix-cell"><span class="legend-swatch swatch-sistema" style="margin:0;"></span> Azul grisáceo</div>
+            <div class="matrix-cell"><span class="alignment-tag strong tag-sistema">Relación de sistema</span></div>
+            <div class="matrix-cell">Interpretación propia — sin cita</div>
+            <div class="matrix-cell quote-cell">Vivienda ↔ empleo.</div>
           </div>
 
           <div class="matrix-row" data-edge="13">
-            <div class="matrix-cell"><span class="swatch-tag swatch-e1"></span> E. Ecológica</div>
-            <div class="matrix-cell">Coberturas vegetales ➞ Parque de borde</div>
+            <div class="matrix-cell">Humanista ↔ Cultural / patrimonial</div>
             <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-soporte" style="margin:0;"></span> Naranja</div>
-            <div class="matrix-cell"><span class="alignment-tag strong sop">Soporte</span></div>
-            
-            <div class="matrix-cell">p. 186</div>
-            <div class="matrix-cell quote-cell">Las coberturas vegetales sostienen el parque de borde: la franja verde que separa la ciudad del campo depende de ellas.</div>
+            <div class="matrix-cell"><span class="legend-swatch swatch-sistema" style="margin:0;"></span> Azul grisáceo</div>
+            <div class="matrix-cell"><span class="alignment-tag strong tag-sistema">Relación de sistema</span></div>
+            <div class="matrix-cell">Interpretación propia — sin cita</div>
+            <div class="matrix-cell quote-cell">Patrimonio ↔ apropiación y vida cotidiana.</div>
           </div>
 
           <div class="matrix-row" data-edge="14">
-            <div class="matrix-cell"><span class="swatch-tag swatch-e1"></span> E. Ecológica</div>
-            <div class="matrix-cell">Complejos de páramos ➞ Paisajes sostenibles</div>
-            <div class="matrix-cell">Discontinua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-soporte" style="margin:0;"></span> Naranja</div>
-            <div class="matrix-cell"><span class="alignment-tag strong sop">Soporte</span></div>
-            
-            <div class="matrix-cell">p. 186</div>
-            <div class="matrix-cell quote-cell">Los complejos de páramos sustentan los paisajes sostenibles de la región: su conservación es condición de la sostenibilidad del territorio.</div>
+            <div class="matrix-cell">Humanista ↔ Gobernanza</div>
+            <div class="matrix-cell">Continua</div>
+            <div class="matrix-cell"><span class="legend-swatch swatch-sistema" style="margin:0;"></span> Azul grisáceo</div>
+            <div class="matrix-cell"><span class="alignment-tag strong tag-sistema">Relación de sistema</span></div>
+            <div class="matrix-cell">Interpretación propia — sin cita</div>
+            <div class="matrix-cell quote-cell">Servicios de cuidado ↔ gestión y participación.</div>
           </div>
 
           <div class="matrix-row" data-edge="15">
-            <div class="matrix-cell"><span class="swatch-tag swatch-e2"></span> E. Funcional</div>
-            <div class="matrix-cell">Red vial ➞ Transporte público</div>
+            <div class="matrix-cell">Funcionalista ↔ Socioeconómico</div>
             <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-soporte" style="margin:0;"></span> Naranja</div>
-            <div class="matrix-cell"><span class="alignment-tag strong sop">Soporte</span></div>
-            
-            <div class="matrix-cell">p. 43</div>
-            <div class="matrix-cell quote-cell">La red vial es la infraestructura que hace posible el transporte público: sin corredores viales no hay sistema de buses ni Metro.</div>
+            <div class="matrix-cell"><span class="legend-swatch swatch-sistema" style="margin:0;"></span> Azul grisáceo</div>
+            <div class="matrix-cell"><span class="alignment-tag strong tag-sistema">Relación de sistema</span></div>
+            <div class="matrix-cell">Interpretación propia — sin cita</div>
+            <div class="matrix-cell quote-cell">Transporte ↔ empleo, empresas y actividades productivas.</div>
           </div>
 
           <div class="matrix-row" data-edge="16">
-            <div class="matrix-cell"><span class="swatch-tag swatch-e2"></span> E. Funcional</div>
-            <div class="matrix-cell">Red vial ➞ Equipamientos</div>
+            <div class="matrix-cell">Funcionalista ↔ Cultural / patrimonial</div>
             <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-soporte" style="margin:0;"></span> Naranja</div>
-            <div class="matrix-cell"><span class="alignment-tag strong sop">Soporte</span></div>
-            
-            <div class="matrix-cell">p. 43</div>
-            <div class="matrix-cell quote-cell">La red vial conecta y da acceso a los equipamientos educativos, de salud y comunitarios de la ciudad.</div>
+            <div class="matrix-cell"><span class="legend-swatch swatch-sistema" style="margin:0;"></span> Azul grisáceo</div>
+            <div class="matrix-cell"><span class="alignment-tag strong tag-sistema">Relación de sistema</span></div>
+            <div class="matrix-cell">Interpretación propia — sin cita</div>
+            <div class="matrix-cell quote-cell">Accesibilidad ↔ patrimonio y turismo.</div>
           </div>
 
           <div class="matrix-row" data-edge="17">
-            <div class="matrix-cell"><span class="swatch-tag swatch-e2"></span> E. Funcional</div>
-            <div class="matrix-cell">Corredores verdes ➞ Transporte público</div>
+            <div class="matrix-cell">Funcionalista ↔ Gobernanza</div>
             <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-soporte" style="margin:0;"></span> Naranja</div>
-            <div class="matrix-cell"><span class="alignment-tag strong sop">Soporte</span></div>
-            
-            <div class="matrix-cell">p. 43</div>
-            <div class="matrix-cell quote-cell">Los corredores verdes alimentan y complementan el transporte público: alojan buses eléctricos e integran movilidad y ecosistema.</div>
+            <div class="matrix-cell"><span class="legend-swatch swatch-sistema" style="margin:0;"></span> Azul grisáceo</div>
+            <div class="matrix-cell"><span class="alignment-tag strong tag-sistema">Relación de sistema</span></div>
+            <div class="matrix-cell">Interpretación propia — sin cita</div>
+            <div class="matrix-cell quote-cell">Infraestructura ↔ gestión pública.</div>
           </div>
 
           <div class="matrix-row" data-edge="18">
-            <div class="matrix-cell"><span class="swatch-tag swatch-e2"></span> E. Funcional</div>
-            <div class="matrix-cell">Corredores verdes ➞ Ciclorrutas</div>
+            <div class="matrix-cell">Socioeconómico ↔ Cultural / patrimonial</div>
             <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-soporte" style="margin:0;"></span> Naranja</div>
-            <div class="matrix-cell"><span class="alignment-tag strong sop">Soporte</span></div>
-            
-            <div class="matrix-cell">p. 43</div>
-            <div class="matrix-cell quote-cell">Los corredores verdes contienen ciclorrutas seguras: la cicloinfraestructura se integra a su diseño.</div>
+            <div class="matrix-cell"><span class="legend-swatch swatch-sistema" style="margin:0;"></span> Azul grisáceo</div>
+            <div class="matrix-cell"><span class="alignment-tag strong tag-sistema">Relación de sistema</span></div>
+            <div class="matrix-cell">Interpretación propia — sin cita</div>
+            <div class="matrix-cell quote-cell">Patrimonio ↔ turismo y actividades culturales.</div>
           </div>
 
           <div class="matrix-row" data-edge="19">
-            <div class="matrix-cell"><span class="swatch-tag swatch-e2"></span> E. Funcional</div>
-            <div class="matrix-cell">Manzanas del cuidado ➞ Servicios sociales</div>
+            <div class="matrix-cell">Socioeconómico ↔ Gobernanza</div>
             <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-soporte" style="margin:0;"></span> Naranja</div>
-            <div class="matrix-cell"><span class="alignment-tag strong sop">Soporte</span></div>
-            
-            <div class="matrix-cell">p. 43</div>
-            <div class="matrix-cell quote-cell">Las Manzanas del Cuidado cualifican los servicios sociales del Distrito y hacen efectiva la articulación interinstitucional.</div>
+            <div class="matrix-cell"><span class="legend-swatch swatch-sistema" style="margin:0;"></span> Azul grisáceo</div>
+            <div class="matrix-cell"><span class="alignment-tag strong tag-sistema">Relación de sistema</span></div>
+            <div class="matrix-cell">Interpretación propia — sin cita</div>
+            <div class="matrix-cell quote-cell">Actividad económica ↔ regulación, gestión y planificación.</div>
           </div>
 
           <div class="matrix-row" data-edge="20">
-            <div class="matrix-cell"><span class="swatch-tag swatch-e2"></span> E. Funcional</div>
-            <div class="matrix-cell">Manzanas del cuidado ➞ Parques</div>
+            <div class="matrix-cell">Cultural / patrimonial ↔ Gobernanza</div>
             <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-soporte" style="margin:0;"></span> Naranja</div>
-            <div class="matrix-cell"><span class="alignment-tag strong sop">Soporte</span></div>
-            
-            <div class="matrix-cell">p. 43</div>
-            <div class="matrix-cell quote-cell">Las Manzanas del Cuidado aprovechan los parques como infraestructura de encuentro y cuidado comunitario.</div>
+            <div class="matrix-cell"><span class="legend-swatch swatch-sistema" style="margin:0;"></span> Azul grisáceo</div>
+            <div class="matrix-cell"><span class="alignment-tag strong tag-sistema">Relación de sistema</span></div>
+            <div class="matrix-cell">Interpretación propia — sin cita</div>
+            <div class="matrix-cell quote-cell">Patrimonio ↔ gestión y participación.</div>
           </div>
 
-          <div class="matrix-row" data-edge="21">
-            <div class="matrix-cell"><span class="swatch-tag swatch-e2"></span> E. Funcional</div>
-            <div class="matrix-cell">Equipamientos ➞ Servicios de cuidado</div>
-            <div class="matrix-cell">Discontinua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-soporte" style="margin:0;"></span> Naranja</div>
-            <div class="matrix-cell"><span class="alignment-tag strong sop">Soporte</span></div>
-            
-            <div class="matrix-cell">p. 43</div>
-            <div class="matrix-cell quote-cell">Los equipamientos existen como anclas de los servicios de cuidado: la relación es inferida de la política de anclaje en equipamientos preexistentes.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="22">
-            <div class="matrix-cell"><span class="swatch-tag swatch-e2"></span> E. Funcional</div>
-            <div class="matrix-cell">Equipamientos ➞ Servicios sociales</div>
-            <div class="matrix-cell">Discontinua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-soporte" style="margin:0;"></span> Naranja</div>
-            <div class="matrix-cell"><span class="alignment-tag strong sop">Soporte</span></div>
-            
-            <div class="matrix-cell">p. 43</div>
-            <div class="matrix-cell quote-cell">Los equipamientos se vinculan con los servicios sociales: la articulación de entidades del Distrito opera a través de ellos.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="23">
-            <div class="matrix-cell"><span class="swatch-tag swatch-e2"></span> E. Funcional</div>
-            <div class="matrix-cell">Equipamientos ➞ Vivienda</div>
+          <div class="matrix-row" data-edge="64">
+            <div class="matrix-cell">Vivienda ↔ Empleo</div>
             <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-soporte" style="margin:0;"></span> Naranja</div>
-            <div class="matrix-cell"><span class="alignment-tag strong sop">Soporte</span></div>
-            
-            <div class="matrix-cell">p. 43</div>
-            <div class="matrix-cell quote-cell">Los equipamientos educativos deben estar cerca de la vivienda: la proximidad es prioridad de la estructura funcional.</div>
+            <div class="matrix-cell"><span class="legend-swatch swatch-articulacion" style="margin:0;"></span> Verde</div>
+            <div class="matrix-cell"><span class="alignment-tag strong tag-articulacion">Articulación</span></div>
+            <div class="matrix-cell">Interpretación propia — sin cita</div>
+            <div class="matrix-cell quote-cell">No se lee como contradicción sino como dependencia funcional entre hábitat y sustento económico.</div>
           </div>
 
-          <div class="matrix-row" data-edge="24">
-            <div class="matrix-cell"><span class="swatch-tag swatch-e2"></span> E. Funcional</div>
-            <div class="matrix-cell">Vivienda ➞ Servicios públicos</div>
-            <div class="matrix-cell">Discontinua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-soporte" style="margin:0;"></span> Naranja</div>
-            <div class="matrix-cell"><span class="alignment-tag strong sop">Soporte</span></div>
-            
-            <div class="matrix-cell">p. 43</div>
-            <div class="matrix-cell quote-cell">La vivienda depende de los servicios públicos: la relación es inferida de la condición básica de habitabilidad.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="25">
-            <div class="matrix-cell"><span class="swatch-tag swatch-e2"></span> E. Funcional</div>
-            <div class="matrix-cell">Vivienda ➞ Ciclorrutas</div>
-            <div class="matrix-cell">Discontinua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-soporte" style="margin:0;"></span> Naranja</div>
-            <div class="matrix-cell"><span class="alignment-tag strong sop">Soporte</span></div>
-            
-            <div class="matrix-cell">p. 43</div>
-            <div class="matrix-cell quote-cell">La vivienda se vincula con las ciclorrutas: el acceso ciclista desde el barrio es condición de movilidad cotidiana.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="26">
-            <div class="matrix-cell"><span class="swatch-tag swatch-e2"></span> E. Funcional</div>
-            <div class="matrix-cell">Vivienda ➞ Transporte público</div>
-            <div class="matrix-cell">Discontinua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-soporte" style="margin:0;"></span> Naranja</div>
-            <div class="matrix-cell"><span class="alignment-tag strong sop">Soporte</span></div>
-            
-            <div class="matrix-cell">p. 43</div>
-            <div class="matrix-cell quote-cell">La vivienda se conecta con el transporte público: la accesibilidad determina la calidad de vida de los hogares.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="27">
-            <div class="matrix-cell"><span class="swatch-tag swatch-e3"></span> E. Socioeconómica</div>
-            <div class="matrix-cell">Centros financieros ➞ Servicios empresariales</div>
+          <div class="matrix-row" data-edge="70">
+            <div class="matrix-cell">Corredores ecológicos/verdes ↔ Infraestructura</div>
             <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-soporte" style="margin:0;"></span> Naranja</div>
-            <div class="matrix-cell"><span class="alignment-tag strong sop">Soporte</span></div>
-            
-            <div class="matrix-cell">p. 239-241</div>
-            <div class="matrix-cell quote-cell">Los centros financieros sostienen los servicios empresariales: el capital y la banca financian la economía del conocimiento.</div>
+            <div class="matrix-cell"><span class="legend-swatch swatch-tension" style="margin:0;"></span> Rojo</div>
+            <div class="matrix-cell"><span class="alignment-tag strong tag-tension">Tensión</span></div>
+            <div class="matrix-cell">Interpretación propia — sin cita</div>
+            <div class="matrix-cell quote-cell">El POT plantea infraestructura y movilidad, pero también corredores verdes y conectividad ecológica: dos lógicas que compiten por el mismo suelo.</div>
           </div>
 
-          <div class="matrix-row" data-edge="28">
-            <div class="matrix-cell"><span class="swatch-tag swatch-e3"></span> E. Socioeconómica</div>
-            <div class="matrix-cell">Servicios empresariales ➞ Distrito tecnológico</div>
+          <div class="matrix-row" data-edge="74">
+            <div class="matrix-cell">Patrimonio ↔ Turismo</div>
+            <div class="matrix-cell">Doble línea</div>
+            <div class="matrix-cell"><span class="legend-swatch swatch-tension-art" style="margin:0;"></span> Rosa</div>
+            <div class="matrix-cell"><span class="alignment-tag strong tag-tension-art">Tensión / articulación</span></div>
+            <div class="matrix-cell">Interpretación propia — sin cita</div>
+            <div class="matrix-cell quote-cell">El patrimonio se declara valor a conservar, pero también se incorpora como activo turístico y económico.</div>
+          </div>
+
+          <div class="matrix-row" data-edge="77">
+            <div class="matrix-cell">Áreas protegidas ↔ Turismo</div>
             <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-soporte" style="margin:0;"></span> Naranja</div>
-            <div class="matrix-cell"><span class="alignment-tag strong sop">Soporte</span></div>
-            
-            <div class="matrix-cell">p. 239-241</div>
-            <div class="matrix-cell quote-cell">Los servicios empresariales alimentan el distrito tecnológico: proveen demanda, clientes y profesionalización.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="29">
-            <div class="matrix-cell"><span class="swatch-tag swatch-e3"></span> E. Socioeconómica</div>
-            <div class="matrix-cell">Servicios empresariales ➞ Zonas industriales</div>
-            <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-soporte" style="margin:0;"></span> Naranja</div>
-            <div class="matrix-cell"><span class="alignment-tag strong sop">Soporte</span></div>
-            
-            <div class="matrix-cell">p. 239-241</div>
-            <div class="matrix-cell quote-cell">Los servicios empresariales sirven a las zonas industriales: logística, diseño, comercio y gestión.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="30">
-            <div class="matrix-cell"><span class="swatch-tag swatch-e3"></span> E. Socioeconómica</div>
-            <div class="matrix-cell">Distrito tecnológico ➞ Innovación</div>
-            <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-soporte" style="margin:0;"></span> Naranja</div>
-            <div class="matrix-cell"><span class="alignment-tag strong sop">Soporte</span></div>
-            
-            <div class="matrix-cell">p. 239-241</div>
-            <div class="matrix-cell quote-cell">El distrito tecnológico genera innovación: es el nodo que concentra emprendimiento y economía creativa.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="31">
-            <div class="matrix-cell"><span class="swatch-tag swatch-e3"></span> E. Socioeconómica</div>
-            <div class="matrix-cell">Centros de abastecimiento ➞ Plazas de mercado</div>
-            <div class="matrix-cell">Discontinua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-soporte" style="margin:0;"></span> Naranja</div>
-            <div class="matrix-cell"><span class="alignment-tag strong sop">Soporte</span></div>
-            
-            <div class="matrix-cell">p. 239-241</div>
-            <div class="matrix-cell quote-cell">Los centros de abastecimiento abastecen las plazas de mercado: la relación logística es inferida de la cadena de distribución de alimentos.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="32">
-            <div class="matrix-cell"><span class="swatch-tag swatch-e3"></span> E. Socioeconómica</div>
-            <div class="matrix-cell">Plazas de mercado ➞ Servicios empresariales</div>
-            <div class="matrix-cell">Discontinua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-soporte" style="margin:0;"></span> Naranja</div>
-            <div class="matrix-cell"><span class="alignment-tag strong sop">Soporte</span></div>
-            
-            <div class="matrix-cell">p. 239-241</div>
-            <div class="matrix-cell quote-cell">Las plazas de mercado se vinculan con los servicios empresariales: el comercio local se integra a la economía formal de servicios.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="33">
-            <div class="matrix-cell"><span class="swatch-tag swatch-e3"></span> E. Socioeconómica</div>
-            <div class="matrix-cell">Zonas industriales ➞ Zonas de interés turístico</div>
-            <div class="matrix-cell">Discontinua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-soporte" style="margin:0;"></span> Naranja</div>
-            <div class="matrix-cell"><span class="alignment-tag strong sop">Soporte</span></div>
-            
-            <div class="matrix-cell">p. 239-241</div>
-            <div class="matrix-cell quote-cell">Las zonas industriales se relacionan con las zonas de interés turístico: la reconversión y el turismo industrial son vías de interés económico.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="34">
-            <div class="matrix-cell"><span class="swatch-tag swatch-e3"></span> E. Socioeconómica</div>
-            <div class="matrix-cell">Producción artesanal ➞ Zonas de interés turístico</div>
-            <div class="matrix-cell">Discontinua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-soporte" style="margin:0;"></span> Naranja</div>
-            <div class="matrix-cell"><span class="alignment-tag strong sop">Soporte</span></div>
-            
-            <div class="matrix-cell">p. 239-241</div>
-            <div class="matrix-cell quote-cell">La producción artesanal alimenta las zonas de interés turístico: la cultura material local atrae y sostiene el turismo cultural.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="35">
-            <div class="matrix-cell"><span class="swatch-tag swatch-e4"></span> E. Patrimonio</div>
-            <div class="matrix-cell">Sistema de sitios sagrados ➞ Patrimonio inmaterial</div>
-            <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-resiliencia" style="margin:0;"></span> Azul</div>
-            <div class="matrix-cell"><span class="alignment-tag strong res">Resiliencia</span></div>
-            
-            <div class="matrix-cell">p. 126</div>
-            <div class="matrix-cell quote-cell">El sistema de sitios sagrados sostiene el patrimonio inmaterial: las prácticas, rituales y memorias se arraigan en esos lugares.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="36">
-            <div class="matrix-cell"><span class="swatch-tag swatch-e4"></span> E. Patrimonio</div>
-            <div class="matrix-cell">Patrimonio inmaterial ➞ Patrimonio natural</div>
-            <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-resiliencia" style="margin:0;"></span> Azul</div>
-            <div class="matrix-cell"><span class="alignment-tag strong res">Resiliencia</span></div>
-            
-            <div class="matrix-cell">p. 126</div>
-            <div class="matrix-cell quote-cell">El patrimonio inmaterial se entrelaza con el patrimonio natural: los saberes y usos tradicionales dependen de los ecosistemas.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="37">
-            <div class="matrix-cell"><span class="swatch-tag swatch-e4"></span> E. Patrimonio</div>
-            <div class="matrix-cell">Patrimonio natural ➞ Patrimonio ecológico material</div>
-            <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-resiliencia" style="margin:0;"></span> Azul</div>
-            <div class="matrix-cell"><span class="alignment-tag strong res">Resiliencia</span></div>
-            
-            <div class="matrix-cell">p. 126</div>
-            <div class="matrix-cell quote-cell">El patrimonio natural integra el patrimonio ecológico material: la conservación de la naturaleza es parte del patrimonio colectivo.</div>
+            <div class="matrix-cell"><span class="legend-swatch swatch-tension" style="margin:0;"></span> Rojo</div>
+            <div class="matrix-cell"><span class="alignment-tag strong tag-tension">Tensión</span></div>
+            <div class="matrix-cell">Interpretación propia — sin cita</div>
+            <div class="matrix-cell quote-cell">La estructura ambiental se presenta como soporte del desarrollo, pero algunos elementos naturales se incorporan a actividades turísticas y económicas.</div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- LECTURA CRÍTICA -->
+    <!-- LECTURA DE LA RED: 5 HALLAZGOS -->
     <div class="synergies-section">
       <div class="synergies-grid">
         <div class="synergy-card success">
-          <div class="synergy-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+          <div class="synergy-icon"><i class="fa-solid fa-circle-nodes"></i></div>
           <div class="synergy-content">
-            <h4>Incoherencias (9 tensiones)</h4>
+            <h4>1 y 2 · Los 6 sistemas están completamente interconectados, pero el puente no es siempre el mismo nodo</h4>
             <ul>
-              <li><strong>Declaración vs. realidad:</strong> el POT enuncia un principio pero el análisis de inversiones o prácticas muestra que se invierte en lo opuesto</li>
-              <li><strong>Ejemplo:</strong> "Estructura Ecológica Principal, rectora y garante de equilibrios" (p. 92) pero se invierten más recursos en expansión vial que en conservación</li>
+              <li>Las 15 relaciones posibles entre macromodelos existen todas: ningún sistema aparece aislado en el nivel general de la red</li>
+              <li>Al bajar al nivel de los conceptos, la conectividad no se concentra en el socioeconómico como anticipaba nuestra hipótesis inicial: <strong>Patrimonio</strong> y <strong>Transporte público</strong> son los conceptos puente con más conexiones reales (grado calculado, no asumido)</li>
+              <li>El socioeconómico funciona más como sistema "receptor" —muchos puentes llegan a él (empleo, turismo, actividades productivas)— que como origen de nuevos puentes</li>
             </ul>
           </div>
         </div>
 
         <div class="synergy-card conflict">
-          <div class="synergy-icon"><i class="fa-solid fa-arrows-cross"></i></div>
+          <div class="synergy-icon"><i class="fa-solid fa-gavel"></i></div>
           <div class="synergy-content">
-            <h4>Contradicciones (8 tensiones)</h4>
+            <h4>3 · La gobernanza es transversal pero queda poco visible como sistema territorial</h4>
             <ul>
-              <li><strong>Dos objetivos que se oponen:</strong> el documento propone simultáneamente cosas que son lógicamente incompatibles</li>
-              <li><strong>Ejemplo:</strong> "movilidad sostenible con transporte público" (p. 43) pero "inversiones previstas en autopistas y ampliación vial para autos" (p. 229)</li>
+              <li>El sistema de gobernanza se conecta con los otros 5 al nivel general (relación de sistema), igual que los demás</li>
+              <li>Pero sus subnodos concretos (participación, comunidad, actores públicos y privados) quedan casi todos con una sola conexión interna: solo "gestión ambiental" opera como puente real hacia otro sistema</li>
+              <li>Esto sugiere que la gobernanza aparece en el POT como capa de gestión más que como territorio con forma propia</li>
             </ul>
           </div>
         </div>
 
         <div class="synergy-card success">
-          <div class="synergy-icon"><i class="fa-solid fa-link-slash"></i></div>
+          <div class="synergy-icon"><i class="fa-solid fa-tree"></i></div>
           <div class="synergy-content">
-            <h4>Desconexiones (7 tensiones)</h4>
+            <h4>4 · "Áreas protegidas" concentra la tensión conservación ↔ aprovechamiento</h4>
             <ul>
-              <li><strong>Estructura sin articulación real:</strong> dos elementos se declaran conectados pero el documento no especifica cómo operan en conjunto</li>
-              <li><strong>Ejemplo:</strong> Manzanas del Cuidado conectadas a servicios sociales pero sin claridad sobre relación con red de movilidad que determina acceso</li>
+              <li>Dentro del sistema ambientalista, "áreas protegidas" es el subnodo con más conexiones (gestión ambiental, patrimonio, turismo), muy por encima del resto de sus subnodos, que quedan con una sola conexión</li>
+              <li>Ese mismo nodo es el punto exacto donde aparece la tensión conservación ↔ aprovechamiento: el hub ambiental y la contradicción coinciden en el mismo lugar de la red</li>
             </ul>
           </div>
         </div>
 
         <div class="synergy-card conflict">
-          <div class="synergy-icon"><i class="fa-solid fa-arrow-down"></i></div>
+          <div class="synergy-icon"><i class="fa-solid fa-scale-unbalanced"></i></div>
           <div class="synergy-content">
-            <h4>Jerarquías implícitas (8 tensiones)</h4>
+            <h4>5 · Tensión y articulación no son lo mismo, y la red los distingue</h4>
             <ul>
-              <li><strong>Estructura subordinada pese a centrales:</strong> una estructura se declara "principal" o "rectora" pero el análisis de recursos, páginas o énfasis muestra que está subordinada</li>
-              <li><strong>Ejemplo:</strong> EEP como "primera ordenante" (p. 92) pero patrimonio apenas ocupa 3 páginas vs. 40 de movilidad</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="synergy-card success">
-          <div class="synergy-icon"><i class="fa-solid fa-comment-dots"></i></div>
-          <div class="synergy-content">
-            <h4>Periféricos discursivos (6 tensiones)</h4>
-            <ul>
-              <li><strong>Mencionado pero sin rol:</strong> elementos aparecen en declaraciones pero carecen de operacionalización, presupuesto o mecanismos claros</li>
-              <li><strong>Ejemplo:</strong> "patrimonio inmaterial como elemento estructurante" (p. 126) mencionado una sola vez sin instrumentos de protección</li>
+              <li>Vivienda ↔ empleo se lee como <strong>articulación</strong> (sinergia funcional), no como contradicción</li>
+              <li>Infraestructura ↔ corredores ecológicos y áreas protegidas ↔ turismo se leen como <strong>tensiones</strong> reales entre lógicas que compiten por el mismo suelo</li>
+              <li>Patrimonio ↔ turismo es un caso mixto: <strong>tensión y articulación a la vez</strong>, y se dibuja con un estilo de línea propio para no forzarlo a una sola categoría</li>
             </ul>
           </div>
         </div>
       </div>
     </div>
 
+    <p class="source-disclaimer" style="margin-top:-8px;"><i class="fa-solid fa-triangle-exclamation"></i> Estos 5 hallazgos se leen directamente del grafo que construimos (conteo real de conexiones), no de una cita del POT. Si compartes el texto del POT, podemos vincular cada relación a su artículo, página y cita exacta.</p>
+
     <!-- RECOMENDACIONES -->
     <div class="recommendations-section">
-      <h3><i class="fa-solid fa-lightbulb"></i> Recomendaciones para Medir la Red</h3>
+      <h3><i class="fa-solid fa-lightbulb"></i> Próximos pasos para profundizar la lectura</h3>
 
       <div class="recommendations-grid">
         <div class="rec-card">
           <div class="rec-number">1</div>
           <div class="rec-content">
-            <h4>Identificar las 38 tensiones en el texto POT</h4>
-            <p>Cada relación de las estructuras contiene una tensión: contrastar declaraciones con presupuestos e inversiones reales.
+            <h4>Vincular cada relación a su fuente exacta en el POT</h4>
+            <p>Esta red es interpretación propia. El siguiente paso es cargar el texto del POT (artículos, páginas) para reemplazar cada "interpretación propia — sin cita" por su artículo, página y cita textual exacta.
             <div class="rec-impact">
-              <span class="impact-badge">Impacto: +25%</span>
+              <span class="impact-badge">Pendiente de fuente</span>
             </div>
           </div>
         </div>
@@ -775,10 +453,10 @@
         <div class="rec-card">
           <div class="rec-number">2</div>
           <div class="rec-content">
-            <h4>Explorar los nodos transversales</h4>
-            <p>Los corredores verdes, los humedales y las coberturas vegetales aparecen en varias estructuras: estudiarlos como costuras que unen (o separan) las lógicas del plan.
+            <h4>Comprobar si el socioeconómico es realmente el hub</h4>
+            <p>La red muestra que, al nivel de conceptos, Patrimonio y Transporte público concentran más puentes que los subnodos socioeconómicos. Vale la pena revisar si esto se sostiene al sumar más evidencia textual.
             <div class="rec-impact">
-              <span class="impact-badge">Impacto: +18%</span>
+              <span class="impact-badge">Hipótesis por confirmar</span>
             </div>
           </div>
         </div>
@@ -786,10 +464,10 @@
         <div class="rec-card">
           <div class="rec-number">3</div>
           <div class="rec-content">
-            <h4>Interrogar la estructura de patrimonio</h4>
-            <p>La cadena sagrados ➞ inmaterial ➞ natural ➞ material es autocontenida: preguntar por qué no se conecta con vivienda, movilidad o economía, y qué implica esa clausura.
+            <h4>Explorar la baja visibilidad territorial de la gobernanza</h4>
+            <p>Casi todos los subnodos de gobernanza quedan con una sola conexión. Valdría la pena revisar si el POT le da instrumentos y programación concretos, o si queda como capa transversal sin territorio propio.
             <div class="rec-impact">
-              <span class="impact-badge">Impacto: +15%</span>
+              <span class="impact-badge">Por revisar</span>
             </div>
           </div>
         </div>
@@ -797,10 +475,10 @@
         <div class="rec-card">
           <div class="rec-number">4</div>
           <div class="rec-content">
-            <h4>Completar las relaciones inferidas</h4>
-            <p>Las líneas discontinuas son hipótesis razonables: validarlas con las fuentes y convertirlas en conexiones declaradas o marcarlas como ausencias para el Módulo 05.
+            <h4>Sumar más nodos compartidos si aparecen en el texto</h4>
+            <p>Los 6 conceptos puente actuales (vivienda, transporte, patrimonio, accesibilidad, corredores, gestión ambiental) son un punto de partida. Si el POT sustenta otros conceptos que crucen sistemas, se pueden añadir sin romper la estructura.
             <div class="rec-impact">
-              <span class="impact-badge">Impacto: +13%</span>
+              <span class="impact-badge">Abierto</span>
             </div>
           </div>
         </div>
@@ -821,7 +499,7 @@
     </div>
 
     <footer>
-      "No se trata de representar la ciudad, sino de comprenderla para transformarla." — <span>Equipo POT Reverse Engineering</span>
+      "La red no representa lo que el POT dice ser, sino las visiones de ciudad que se pueden leer al superponer sus sistemas." — <span>Equipo urbano</span>
     </footer>
 
   </main>
