@@ -67,40 +67,6 @@
       <p>Simulador de desconexión construido con las 98 relaciones documentadas de las cuatro estructuras territoriales. El tamaño de cada nodo depende de cuántas relaciones tiene. Apaga una estructura completa o un nodo específico para ver qué se rompe.</p>
     </div>
 
-    <!-- SIMULADOR ON/OFF -->
-    <section class="scenario-selector">
-      <div class="selector-header">
-        <h3><i class="fa-solid fa-sliders"></i>Escenarios: ¿Qué pasa si apagamos una estructura?</h3>
-        <button class="btn" id="btnReset"><i class="fa-solid fa-arrows-rotate"></i> Reactivar todas</button>
-      </div>
-      <div class="scenario-buttons">
-        <button class="scenario-btn" data-sys="EEP">
-          <i class="fa-solid fa-circle-minus"></i>
-          <span class="sys-state">ON</span>
-          <span class="btn-title">Sin Estructura Ecológica Principal</span>
-          <span class="btn-question">¿Qué pasaría si no existiera la EEP?</span>
-        </button>
-        <button class="scenario-btn" data-sys="EFC">
-          <i class="fa-solid fa-circle-minus"></i>
-          <span class="sys-state">ON</span>
-          <span class="btn-title">Sin Estructura Funcional y del Cuidado</span>
-          <span class="btn-question">¿Qué pasaría si no existiera la EFC?</span>
-        </button>
-        <button class="scenario-btn" data-sys="ESECI">
-          <i class="fa-solid fa-circle-minus"></i>
-          <span class="sys-state">ON</span>
-          <span class="btn-title">Sin Estructura Socioeconómica, Creativa y de Innovación</span>
-          <span class="btn-question">¿Qué pasaría si no existiera la ESECI?</span>
-        </button>
-        <button class="scenario-btn" data-sys="EIP">
-          <i class="fa-solid fa-circle-minus"></i>
-          <span class="sys-state">ON</span>
-          <span class="btn-title">Sin Estructura Integradora de Patrimonios</span>
-          <span class="btn-question">¿Qué pasaría si no existiera la EIP?</span>
-        </button>
-      </div>
-    </section>
-
     <div class="net-layout">
 
       <!-- ================= RED + ESTADO ================= -->
@@ -119,28 +85,84 @@
             </div>
           </div>
 
-          <div class="net-stage" id="stage">
-            <svg id="svg" xmlns="http://www.w3.org/2000/svg" viewBox="-1964 -1937 3927 3910">
-              <defs>
-                <marker id="ar-soporte" viewBox="0 0 10 10" refX="9" refY="5"
-                        markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse">
-                  <path d="M0,0 L10,5 L0,10 z" fill="#f0a15c"></path>
-                </marker>
-                <marker id="ar-resiliencia" viewBox="0 0 10 10" refX="9" refY="5"
-                        markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse">
-                  <path d="M0,0 L10,5 L0,10 z" fill="#2fbfae"></path>
-                </marker>
-              </defs>
-              <g id="gGuides"></g>
-              <g id="gMembers"></g>
-              <g id="gRels"></g>
-              <g id="gNodes"></g>
-            </svg>
-            <div class="weak-banner hidden" id="weakBanner">
-          <i class="fa-solid fa-link-slash"></i>
-          <span id="weakBannerText"></span>
-        </div>
-        <div class="tooltip" id="tooltip"></div>
+          <div class="net-body">
+            <div class="net-stage" id="stage">
+              <svg id="svg" xmlns="http://www.w3.org/2000/svg" viewBox="-1964 -1937 3927 3910">
+                <defs>
+                  <marker id="ar-soporte" viewBox="0 0 10 10" refX="9" refY="5"
+                          markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse">
+                    <path d="M0,0 L10,5 L0,10 z" fill="#f0a15c"></path>
+                  </marker>
+                  <marker id="ar-resiliencia" viewBox="0 0 10 10" refX="9" refY="5"
+                          markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse">
+                    <path d="M0,0 L10,5 L0,10 z" fill="#2fbfae"></path>
+                  </marker>
+                  <linearGradient id="grad-eep" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#45d6c5"></stop>
+                    <stop offset="100%" stop-color="#1f8f82"></stop>
+                  </linearGradient>
+                  <linearGradient id="grad-efc" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#ffb37a"></stop>
+                    <stop offset="100%" stop-color="#e8763c"></stop>
+                  </linearGradient>
+                  <linearGradient id="grad-eseci" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#f5c26b"></stop>
+                    <stop offset="100%" stop-color="#d9902e"></stop>
+                  </linearGradient>
+                  <linearGradient id="grad-eip" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#ff8f8f"></stop>
+                    <stop offset="100%" stop-color="#d94f5c"></stop>
+                  </linearGradient>
+                  <!-- desenfoque para que las relaciones se vean como una cinta sólida difuminada, sin neón -->
+                  <filter id="rel-blur" x="-60%" y="-60%" width="220%" height="220%">
+                    <feGaussianBlur stdDeviation="7"></feGaussianBlur>
+                  </filter>
+                </defs>
+                <g id="gGuides"></g>
+                <g id="gMembers"></g>
+                <g id="gRels"></g>
+                <g id="gNodes"></g>
+              </svg>
+              <div class="weak-banner hidden" id="weakBanner">
+                <i class="fa-solid fa-link-slash"></i>
+                <span id="weakBannerText"></span>
+              </div>
+              <div class="tooltip" id="tooltip"></div>
+            </div>
+
+            <!-- ================= ESCENARIOS ON/OFF (dentro de la red) ================= -->
+            <aside class="net-side-panel">
+              <div class="net-side-card">
+                <span class="net-side-title"><i class="fa-solid fa-sliders"></i> Escenarios: apagar una estructura</span>
+                <div class="scenario-buttons">
+                  <button class="scenario-btn" data-sys="EEP">
+                    <i class="fa-solid fa-circle-minus"></i>
+                    <span class="sys-state">ON</span>
+                    <span class="btn-title">Estructura Ecológica Principal</span>
+                    <span class="btn-question">¿Qué pasaría si no existiera la EEP?</span>
+                  </button>
+                  <button class="scenario-btn" data-sys="EFC">
+                    <i class="fa-solid fa-circle-minus"></i>
+                    <span class="sys-state">ON</span>
+                    <span class="btn-title">Estructura Funcional y del Cuidado</span>
+                    <span class="btn-question">¿Qué pasaría si no existiera la EFC?</span>
+                  </button>
+                  <button class="scenario-btn" data-sys="ESECI">
+                    <i class="fa-solid fa-circle-minus"></i>
+                    <span class="sys-state">ON</span>
+                    <span class="btn-title">Estructura Socioeconómica, Creativa y de Innovación</span>
+                    <span class="btn-question">¿Qué pasaría si no existiera la ESECI?</span>
+                  </button>
+                  <button class="scenario-btn" data-sys="EIP">
+                    <i class="fa-solid fa-circle-minus"></i>
+                    <span class="sys-state">ON</span>
+                    <span class="btn-title">Estructura Integradora de Patrimonios</span>
+                    <span class="btn-question">¿Qué pasaría si no existiera la EIP?</span>
+                  </button>
+                </div>
+                <button class="btn net-side-reset" id="btnReset"><i class="fa-solid fa-arrows-rotate"></i> Reactivar todas</button>
+              </div>
+            </aside>
           </div>
         </div>
 
@@ -225,77 +247,5 @@
 </div>
 
 <script src="modulo-07.js"></script>
-<!-- ================= POP-UP DE APERTURA: HALLAZGO PRINCIPAL (2 pasos) ================= -->
-<div class="intro-backdrop" id="introBackdrop">
-  <div class="intro-modal" role="dialog" aria-labelledby="introTitle">
-    <button class="intro-close" id="introClose" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button>
-
-    <div class="intro-head">
-      <div class="intro-icon"><i class="fa-solid fa-circle-nodes"></i></div>
-      <div>
-        <h2 id="introTitle">Hallazgo principal</h2>
-        <div class="intro-step" id="introStepLbl">Paso 1 de 2</div>
-      </div>
-    </div>
-
-    <div class="intro-divider"><span></span></div>
-
-    <!-- ---------- PASO 1: el hallazgo ---------- -->
-    <div class="intro-body intro-step-1" id="step1">
-      <div class="intro-figure"><i class="fa-solid fa-diagram-project"></i></div>
-      <div class="intro-text">
-        <p>El POT dice que la <b>Estructura Ecológica Principal (EEP)</b> es la primera ordenante del territorio.</p>
-        <p>Pero al construir nuestra red, encontramos que la <b class="hl">Estructura Socioeconómica, Creativa y de Innovación (ESECI)</b> es la que tiene más conexiones con los demás sistemas.</p>
-        <div class="intro-figures" id="introFigures"></div>
-      </div>
-    </div>
-
-    <!-- ---------- PASO 2: el por qué ---------- -->
-    <div class="intro-body intro-step-2 hidden" id="step2">
-      <div class="intro-figure"><i class="fa-solid fa-lightbulb"></i></div>
-      <div class="intro-text">
-        <p class="intro-q">¿Por qué?</p>
-        <p>La ESECI tiene más conexiones porque el POT usa el ordenamiento territorial para impulsar la economía, el empleo y la productividad. Por eso relaciona cosas como la movilidad, la vivienda, los equipamientos y la conectividad con las actividades económicas.</p>
-        <p>En cambio, la EEP cumple principalmente una función ambiental: ordenar y proteger el territorio a través del agua, los ecosistemas y la biodiversidad.</p>
-        <p>Por eso, en nuestra red aparecen más relaciones conectadas con la ESECI que con la EEP.</p>
-      </div>
-    </div>
-
-    <div class="intro-foot">
-      <button class="intro-btn ghost hidden" id="introBack">
-        <i class="fa-solid fa-arrow-left"></i> Volver
-      </button>
-      <button class="intro-btn" id="introNext">
-        ¿Por qué?
-        <i class="fa-solid fa-arrow-right"></i>
-      </button>
-      <button class="intro-btn hidden" id="introBtn">
-        <i class="fa-solid fa-diagram-project"></i>
-        ¿Cómo llegamos a esa conclusión?
-        <i class="fa-solid fa-arrow-right"></i>
-      </button>
-    </div>
-  </div>
-</div>
-
-<!-- ================= POP-UP DE LA FRASE EXACTA (al hacer clic en una línea) ================= -->
-<div class="quote-backdrop hidden" id="quoteBackdrop">
-  <div class="quote-modal" role="dialog">
-    <button class="intro-close" id="quoteClose" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button>
-
-    <div class="quote-rel" id="quoteRel">—</div>
-    <div class="quote-tags" id="quoteTags"></div>
-
-    <div class="quote-divider"><span></span></div>
-
-    <blockquote class="quote-text" id="quoteText">—</blockquote>
-
-    <div class="quote-foot">
-      <div class="quote-page" id="quotePage">—</div>
-      <div class="quote-sec" id="quoteSec"></div>
-    </div>
-  </div>
-</div>
-
 </body>
 </html>
