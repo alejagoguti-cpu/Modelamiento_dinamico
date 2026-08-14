@@ -325,23 +325,32 @@ const relations = {
         { id:"reservas",    label:["Reservas","forestales"],              icon:"fa-tree",                  x:606, y:392, r:38 },
         { id:"paisajes",    label:["Paisajes","sostenibles"],             icon:"fa-hands-holding-circle",  x:236, y:559, r:34 }
       ],
+      // edges verificadas contra la tabla de sustento del POT que compartiste
+      // (se excluyen "Bosques urbanos → Áreas protegidas" y "Paisajes sostenibles → Áreas
+      // protegidas": la propia tabla dice "no la pondría" por falta de sustento textual)
       edges: [
-        { from:"corredores",  to:"rios",         kind:"soporte" },
-        { from:"cerros",      to:"protegidas",   kind:"soporte" },
-        { from:"cerros",      to:"humedales",    kind:"soporte" },
-        { from:"quebradas",   to:"humedales",    kind:"soporte" },
-        { from:"rios",        to:"humedales",    kind:"soporte" },
-        { from:"bosques",     to:"rios",         kind:"soporte" },
-        { from:"bosques",     to:"coberturas",   kind:"soporte" },
-        { from:"paramos",     to:"rios",         kind:"soporte" },
-        { from:"resiliencia", to:"coberturas",   kind:"resiliencia" },
-        { from:"reservas",    to:"coberturas",   kind:"resiliencia" },
-        { from:"paramos",     to:"paisajes",     kind:"soporte", dashed:true, directed:false },
-        { from:"protegidas",  to:"parquesmnt",   kind:"soporte", dashed:true, directed:false },
-        { from:"protegidas",  to:"humedales",    kind:"soporte", dashed:true, directed:false },
-        { from:"humedales",   to:"reservas",     kind:"soporte", dashed:true, directed:false },
-        { from:"humedales",   to:"parquesborde", kind:"soporte", dashed:true, directed:false },
-        { from:"coberturas",  to:"parquesborde", kind:"soporte", dashed:true, directed:false }
+        { from:"humedales",  to:"rios",         kind:"soporte", sustento:{ pagina:"p. 22", tipoLabel:"Soporte", parcial:true,
+          cita:"El POT presenta el sistema hídrico y señala que los humedales hacen parte de las estructuras que aseguran el abastecimiento…" } },
+        { from:"humedales",  to:"cerros",       kind:"soporte", sustento:{ pagina:"p. 59", tipoLabel:"Soporte", parcial:true,
+          cita:"El POT identifica un conector \"Cerros Orientales-río Bogotá\" y señala que los conectores incluyen los humedales y…" } },
+        { from:"corredores", to:"rios",         kind:"directa", directed:false, sustento:{ pagina:"p. 22", tipoLabel:"Sin dirección", parcial:true,
+          cita:"El POT incluye conjuntamente \"los complejos de páramos, los corredores montañosos, las reservas forestales, los…\"" } },
+        { from:"paramos",    to:"rios",         kind:"directa", directed:false, sustento:{ pagina:"p. 22", tipoLabel:"Sin dirección", parcial:true,
+          cita:"El POT los integra al sistema que \"aseguran el abastecimiento hídrico y la provisión de bienes y servicios ecosistémicos\". No…" } },
+        { from:"reservas",   to:"rios",         kind:"directa", directed:false, sustento:{ pagina:"p. 22", tipoLabel:"Sin dirección", parcial:true,
+          cita:"El POT incluye reservas forestales y ríos dentro de la…" } },
+        { from:"resiliencia",to:"coberturas",   kind:"resiliencia", sustento:{ pagina:"p. 59", tipoLabel:"Resiliencia", parcial:true,
+          cita:"El POT señala que las áreas de resiliencia \"deben contar con intervenciones en coberturas\" para optimizar las condiciones…" } },
+        { from:"coberturas", to:"protegidas",   kind:"soporte", sustento:{ pagina:"p. 59", tipoLabel:"Soporte", parcial:false,
+          cita:"El POT señala que se priorizan \"coberturas vegetales que conecten entre sí las áreas protegidas\"." } },
+        { from:"parquesmnt", to:"coberturas",   kind:"soporte", sustento:{ pagina:"p. 54", tipoLabel:"Soporte", parcial:true,
+          cita:"El POT muestra el caso del Parque Distrital Ecológico de Montaña Soratama, donde \"se priorizan las coberturas vegetales que…\"" } },
+        { from:"parquesborde",to:"coberturas",  kind:"soporte", sustento:{ pagina:"p. 54", tipoLabel:"Soporte", parcial:true,
+          cita:"El POT incluye los parques de borde dentro de la estrategia…" } },
+        { from:"quebradas",  to:"rios",         kind:"directa", directed:false, sustento:{ pagina:null, tipoLabel:"Sin dirección", parcial:true,
+          cita:"Ambos pertenecen al sistema hídrico, pero con los conceptos de tu red no encontré una frase que permita afirmar Quebradas →…" } },
+        { from:"cerros",     to:"rios",         kind:"directa", directed:false, sustento:{ pagina:"p. 59", tipoLabel:"Sin dirección", parcial:true,
+          cita:"El POT sí identifica el conector \"Cerros Orientales-río Bogotá\", pero eso demuestra conectividad, no que exista una…" } }
       ]
     },
 
@@ -394,18 +403,32 @@ const relations = {
         { id:"financier", label:["Centros","financieros"],                       icon:"fa-landmark",        x:97,  y:444, r:34 },
         { id:"artesanal", label:["Producción","artesanal"],                      icon:"fa-gem",             x:237, y:551, r:34 }
       ],
+      // edges verificadas contra tus tablas de sustento (Distrito, Servicios empresariales,
+      // Ecosistema de educación superior, Zonas industriales). "Corredores inteligentes de
+      // turismo" aparece en tu tabla pero todavía no existe como nodo en este diagrama.
       edges: [
-        { from:"empresa",   to:"distrito",  kind:"soporte" },
-        { from:"empresa",   to:"plazas",    kind:"soporte" },
-        { from:"empresa",   to:"educacion", kind:"soporte" },
-        { from:"empresa",   to:"financier", kind:"soporte" },
-        { from:"industria", to:"distrito",  kind:"soporte", dashed:true },
-        { from:"industria", to:"plazas",    kind:"soporte" },
-        { from:"industria", to:"educacion", kind:"soporte" },
-        { from:"industria", to:"turismo",   kind:"soporte" },
-        { from:"distrito",  to:"abastec",   kind:"indirecta", dashed:true, directed:false },
-        { from:"educacion", to:"artesanal", kind:"soporte" },
-        { from:"empresa",   to:"artesanal", kind:"soporte" }
+        { from:"financier", to:"empresa",   kind:"directa", bidirectional:true, sustento:{ pagina:"p. 92", tipoLabel:"Directa",
+          cita:"\"Los centros financieros y de servicios empresariales: Centro Internacional, Chapinero, Teleport y otros\". (SDP)" } },
+        { from:"distrito",  to:"educacion", kind:"directa", sustento:{ pagina:"p. 158", tipoLabel:"Directa",
+          cita:"\"El corazón del campus comprende un área de 247 hectáreas en el centro de la ciudad articulada con las aeZibo y Reencuentro. Conecta la principal aglomeración de conocimiento del país con las zonas empresariales del occidente y norte de la ciudad\". (Bogotá.gov.co)" } },
+        { from:"distrito",  to:"industria", kind:"directa", sustento:{ pagina:"p. 158", tipoLabel:"Directa",
+          cita:"\"El corazón del campus comprende un área de 247 hectáreas en el centro de la ciudad articulada con las aeZibo y Reencuentro\". (Bogotá.gov.co)" } },
+        { from:"distrito",  to:"empresa",   kind:"directa", sustento:{ pagina:"p. 158", tipoLabel:"Directa",
+          cita:"\"Conecta la principal aglomeración de conocimiento del país con las zonas empresariales del occidente y norte de la ciudad\". (Bogotá.gov.co)" } },
+        { from:"turismo",   to:"plazas",    kind:"directa", sustento:{ pagina:"p. 92", tipoLabel:"Directa",
+          cita:"\"Cluster Hotelero y Zonas de Interés Turístico, incluyendo los Corredores inteligentes de turismo (COINT) y los elementos de las Estructuras Ecológica Principal e Integradora de Patrimonios, Cables, Plazas de Mercado y otras infraestructuras con especial vocación turística\". (Scribd)" } },
+        { from:"abastec",   to:"artesanal", kind:"indirecta", dashed:true, sustento:{ pagina:"p. 92", tipoLabel:"Indirecta (punteada)",
+          cita:"\"Economías de aglomeración con énfasis de especialización – Corazones productivos de escala urbana- compuestas por: […] Centros de Abasto Mayorista\". (pdfcoffee.com)" } },
+        { from:"educacion", to:"empresa",   kind:"soporte", sustento:{ pagina:"p. 30", tipoLabel:"Soporte · Directa",
+          cita:"\"los programas de becas de educación universitaria como Jóvenes a la U y de formación para el trabajo como Todos a la U se han enfocado en esas mismas habilidades y tipos de carreras para encuadrar con las necesidades y ofertas de trabajo y emprendimiento presentes y futuras de la ciudad\"." } },
+        { from:"educacion", to:"industria", kind:"soporte", sustento:{ pagina:"p. 30", tipoLabel:"Soporte · Directa",
+          cita:"\"La inversión y ejecución sostenida del pot, el pmss y la inversión en esa educación con calidad y pertinencia, desde la básica hasta la superior, lograrán en conjunto, en la próxima década, el mayor crecimiento en productividad, empleabilidad de calidad y competitividad que haya tenido Bogotá\"." } },
+        { from:"industria", to:"artesanal", kind:"soporte", sustento:{ pagina:"p. 30", tipoLabel:"Soporte · Directa",
+          cita:"\"Por eso el pot promueve la permanencia de las industrias tradicionales en el tejido urbano y promueve nuevas implantaciones económicas generadoras de empleo formal, articuladas a los entornos urbanos donde se aglomeran saberes y talentos, y en particular aquellos que dan lugar a aglomeraciones especializadas de producción tradicional e industrias creativas, culturales, verdes, digitales y tecnológicas\"." } },
+        { from:"educacion", to:"artesanal", kind:"soporte", dashed:true, sustento:{ pagina:"p. 30", tipoLabel:"Soporte · Indirecta",
+          cita:"\"la inversión en educación pública de calidad ha asegurado que desde los colegios se mejoren las habilidades en ciencias, matemáticas, bilingüismo, ingenierías y tecnologías, y los programas de becas de educación universitaria […] se han enfocado en esas mismas habilidades y tipos de carreras para encuadrar con las necesidades y ofertas de trabajo y emprendimiento presentes y futuras de la ciudad\"." } },
+        { from:"industria", to:"empresa",   kind:"soporte", sustento:{ pagina:"p. 30", tipoLabel:"Soporte · Directa",
+          cita:"\"El pot protege a las zonas productivas históricas de la expulsión […] y potencia la oferta de suelo para la localización de nuevas empresas, en especial en la categoría de suelo para grandes servicios metropolitanos\"." } }
       ]
     },
 
@@ -421,15 +444,20 @@ const relations = {
         { id:"material",     label:["Patrimonio","material"],        icon:"fa-landmark",         x:515, y:368, r:38 },
         { id:"natural",      label:["Patrimonio","natural"],         icon:"fa-tree",             x:194, y:426, r:54, primary:true }
       ],
+      // edges tomadas literalmente de tu tabla "Concepto 1 / Concepto 2 / Página / Frase exacta"
       edges: [
-        { from:"arqueologico", to:"inmaterial", kind:"resiliencia" },
-        { from:"arqueologico", to:"material",   kind:"resiliencia" },
-        { from:"sagrados",     to:"natural",    kind:"soporte" },
-        { from:"sagrados",     to:"material",   kind:"soporte" },
-        { from:"arqueologico", to:"natural",    kind:"soporte" },
-        { from:"inmaterial",   to:"natural",    kind:"soporte" },
-        { from:"inmaterial",   to:"material",   kind:"soporte" },
-        { from:"material",     to:"natural",    kind:"soporte", directed:false }
+        { from:"material",     to:"inmaterial", kind:"soporte", sustento:{ pagina:"p. 196", tipoLabel:"Soporte · Directa",
+          cita:"\"la EIP inscribe y precisa un sistema de relaciones del patrimonio cultural material, inmaterial y natural en el territorio\"." } },
+        { from:"material",     to:"natural",    kind:"soporte", sustento:{ pagina:"p. 196", tipoLabel:"Soporte · Directa",
+          cita:"\"la EIP inscribe y precisa un sistema de relaciones del patrimonio cultural material, inmaterial y natural en el territorio\"." } },
+        { from:"inmaterial",   to:"natural",    kind:"soporte", sustento:{ pagina:"p. 196", tipoLabel:"Soporte · Directa",
+          cita:"\"la EIP inscribe y precisa un sistema de relaciones del patrimonio cultural material, inmaterial y natural en el territorio\"." } },
+        { from:"arqueologico", to:"natural",    kind:"resiliencia", sustento:{ pagina:"p. 198", tipoLabel:"Resiliencia · Directa",
+          cita:"\"hoy pueden ser referentes de procesos adaptativos y que revelan prácticas de integralidad de la cultura con la naturaleza\"." } },
+        { from:"arqueologico", to:"material",   kind:"soporte", sustento:{ pagina:"p. 198", tipoLabel:"Soporte · Directa",
+          cita:"\"Este patrimonio cultural se convirtió en un referente de movilización\"." } },
+        { from:"sagrados",     to:"inmaterial", kind:"soporte", sustento:{ pagina:"p. 186", tipoLabel:"Soporte · Directa",
+          cita:"\"son el testimonio de complejas estrategias de cómo interpretamos y valoramos las huellas del territorio que hoy habitamos\"." } }
       ]
     }
   };
@@ -508,11 +536,19 @@ const relations = {
       const p0 = pointOnCircle(a.x, a.y, a.r, b.x, b.y);
       const p1 = pointOnCircle(b.x, b.y, b.r, a.x, a.y);
 
-      const g = el("g", { class: `redes-edge redes-edge-${e.kind}${e.dashed ? " is-dashed" : ""}` });
-      const line = el("path", {
-        class: "redes-edge-line",
-        d: `M${p0.x.toFixed(1)},${p0.y.toFixed(1)} L${p1.x.toFixed(1)},${p1.y.toFixed(1)}`
+      const g = el("g", {
+        class: `redes-edge redes-edge-${e.kind}${e.dashed ? " is-dashed" : ""}`,
+        tabindex: "0",
+        role: "button",
+        "aria-label": `Relación ${a.label.join(" ")} - ${b.label.join(" ")}`
       });
+      const d = `M${p0.x.toFixed(1)},${p0.y.toFixed(1)} L${p1.x.toFixed(1)},${p1.y.toFixed(1)}`;
+
+      // trazo invisible más ancho, para que sea fácil hacer click en la línea
+      const hit = el("path", { class: "redes-edge-hit", d });
+      g.appendChild(hit);
+
+      const line = el("path", { class: "redes-edge-line", d });
       g.appendChild(line);
 
       if (e.directed !== false){
@@ -524,6 +560,30 @@ const relations = {
         });
         g.appendChild(arrow);
       }
+      if (e.bidirectional){
+        const angleBack = Math.atan2(p0.y - p1.y, p0.x - p1.x) * 180 / Math.PI;
+        const arrowBack = el("path", {
+          class: "redes-edge-arrow",
+          d: "M-9,-4 L0,0 L-9,4 Z",
+          transform: `translate(${p0.x.toFixed(1)},${p0.y.toFixed(1)}) rotate(${angleBack.toFixed(1)})`
+        });
+        g.appendChild(arrowBack);
+      }
+
+      // click / Enter -> popup con el sustento de esta relación (tabla del POT)
+      const relationLabel = `${a.label.join(" ")} → ${b.label.join(" ")}`;
+      g.addEventListener("click", (ev) => {
+        ev.stopPropagation();
+        openSustentoPopup(relationLabel, e.sustento, ev.clientX, ev.clientY);
+      });
+      g.addEventListener("keydown", (ev) => {
+        if (ev.key === "Enter" || ev.key === " "){
+          ev.preventDefault();
+          const box = g.getBoundingClientRect();
+          openSustentoPopup(relationLabel, e.sustento, box.left + box.width / 2, box.top + box.height / 2);
+        }
+      });
+
       edgesG.appendChild(g);
     });
 
@@ -595,12 +655,80 @@ const relations = {
     document.body.style.overflow = "";
   }
 
-  closeBtn.addEventListener("click", closeModal);
+  // ---------- popup de sustento: se abre al hacer click en una línea de relación ----------
+  function tipoBadgeClass(tipoLabel){
+    const t = (tipoLabel || "").toLowerCase();
+    if (t.includes("soporte")) return "sustento-tipo-soporte";
+    if (t.includes("resiliencia")) return "sustento-tipo-resiliencia";
+    if (t.includes("indirecta")) return "sustento-tipo-indirecta";
+    if (t.includes("directa")) return "sustento-tipo-directa";
+    return "sustento-tipo-generico";
+  }
+
+  function closeSustentoPopup(){
+    const existing = document.querySelector(".sustento-popup");
+    if (existing) existing.remove();
+    document.removeEventListener("click", onOutsideSustentoClick, true);
+  }
+  function onOutsideSustentoClick(e){
+    const popup = document.querySelector(".sustento-popup");
+    if (popup && !popup.contains(e.target) && !e.target.closest(".redes-edge")) {
+      closeSustentoPopup();
+    }
+  }
+
+  function openSustentoPopup(relationLabel, sustento, x, y){
+    closeSustentoPopup();
+    const popup = document.createElement("div");
+    popup.className = "sustento-popup";
+
+    if (sustento){
+      const badgeClass = tipoBadgeClass(sustento.tipoLabel);
+      popup.innerHTML = `
+        <button class="pot-popup-close" aria-label="Cerrar">✕</button>
+        <div class="sustento-relation">${relationLabel}</div>
+        <span class="sustento-tipo-badge ${badgeClass}">${sustento.tipoLabel || "Relación"}</span>
+        <div class="pot-quote">&ldquo;${sustento.cita}&rdquo;</div>
+        ${sustento.parcial ? '<div class="sustento-partial-note">Cita parcial — el documento fuente venía cortado, aún falta el texto completo.</div>' : ""}
+        <div class="pot-page">${sustento.pagina ? sustento.pagina + " del POT" : "Página del POT pendiente de confirmar"}</div>
+      `;
+    } else {
+      popup.innerHTML = `
+        <button class="pot-popup-close" aria-label="Cerrar">✕</button>
+        <div class="sustento-relation">${relationLabel}</div>
+        <div class="pot-quote">Todavía no tengo el sustento documentado de esta relación en la tabla del POT.</div>
+        <div class="pot-page">Compárteme la fila de la tabla y la agrego aquí.</div>
+      `;
+    }
+
+    document.body.appendChild(popup);
+    const rect = popup.getBoundingClientRect();
+    const margin = 16;
+    let left = x + 16;
+    let top = y + 16;
+    if (left + rect.width + margin > window.innerWidth) left = x - rect.width - 16;
+    if (top + rect.height + margin > window.innerHeight) top = window.innerHeight - rect.height - margin;
+    if (left < margin) left = margin;
+    if (top < margin) top = margin;
+    popup.style.left = left + "px";
+    popup.style.top = top + "px";
+
+    popup.querySelector(".pot-popup-close").addEventListener("click", (ev) => {
+      ev.stopPropagation();
+      closeSustentoPopup();
+    });
+    setTimeout(() => document.addEventListener("click", onOutsideSustentoClick, true), 0);
+  }
+
+  closeBtn.addEventListener("click", () => { closeSustentoPopup(); closeModal(); });
   overlay.addEventListener("click", (e) => {
-    if (e.target === overlay) closeModal();
+    if (e.target === overlay) { closeSustentoPopup(); closeModal(); }
   });
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && !overlay.hidden) closeModal();
+    if (e.key === "Escape"){
+      closeSustentoPopup();
+      if (!overlay.hidden) closeModal();
+    }
   });
 
   if (toggleNodesBtn){
