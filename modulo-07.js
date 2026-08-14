@@ -2191,6 +2191,9 @@ const conceptId = (sis, con) => sis + '::' + con;
 const model = { systems: {}, concepts: {}, relations: [] };
 const layout = {};
 const nodeR = {};
+// Escala visual para que los nodos conserven proporción pero no se vean diminutos
+// dentro del viewBox amplio de la red.
+const NODE_VISUAL_SCALE = 1.35;
 
 function buildModel() {
   model.systems = {}; model.concepts = {}; model.relations = [];
@@ -2203,7 +2206,7 @@ function buildModel() {
     model.concepts[n.id] = { id: n.id, sys: n.sys, label: n.label, icon: n.icon, deg: n.deg, rels: [] };
     model.systems[n.sys].concepts.push(n.id);
     layout[n.id] = { x: n.x, y: n.y };
-    nodeR[n.id] = n.r;
+    nodeR[n.id] = n.r * NODE_VISUAL_SCALE;
   });
 
   POT_DATA.relaciones.forEach(r => {
@@ -2335,7 +2338,7 @@ function computeLayout() {
   // relajada (puede haber quedado un poco más grande que el original)
   let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
   ids.forEach(id => {
-    const p = pos[id], r = nodeR[id] + 110; // margen para las etiquetas
+    const p = pos[id], r = nodeR[id] + 82; // margen compacto para las etiquetas
     minX = Math.min(minX, p.x - r); maxX = Math.max(maxX, p.x + r);
     minY = Math.min(minY, p.y - r); maxY = Math.max(maxY, p.y + r);
   });
@@ -2376,17 +2379,20 @@ function wrapLabel(text, maxChars = 15) {
   return lines;
 }
 
-// Trayectoria curva entre dos puntos, recortada en los bordes de los nodos
+// Trayectoria recta entre dos puntos, recortada exactamente en los bordes.
+// Las curvas anteriores desplazaban visualmente el recorrido y hacían parecer
+// que algunas relaciones terminaban en nodos equivocados, especialmente cuando
+// había muchos enlaces cruzados. La relación sigue usando sus endpoints reales.
 function curvePath(a, b, rA, rB) {
-  const dx = b.x - a.x, dy = b.y - a.y;
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
   const len = Math.hypot(dx, dy) || 1;
-  const ux = dx / len, uy = dy / len;
-  const p1 = { x: a.x + ux * (rA + 2), y: a.y + uy * (rA + 2) };
-  const p2 = { x: b.x - ux * (rB + 8), y: b.y - uy * (rB + 8) };
-  const mx = (p1.x + p2.x) / 2, my = (p1.y + p2.y) / 2;
-  const bow = Math.min(46, len * 0.11);
-  const cx = mx - uy * bow, cy = my + ux * bow;
-  return `M${p1.x.toFixed(1)},${p1.y.toFixed(1)} Q${cx.toFixed(1)},${cy.toFixed(1)} ${p2.x.toFixed(1)},${p2.y.toFixed(1)}`;
+  const ux = dx / len;
+  const uy = dy / len;
+  const gap = 3;
+  const p1 = { x: a.x + ux * (rA + gap), y: a.y + uy * (rA + gap) };
+  const p2 = { x: b.x - ux * (rB + gap), y: b.y - uy * (rB + gap) };
+  return `M${p1.x.toFixed(1)},${p1.y.toFixed(1)} L${p2.x.toFixed(1)},${p2.y.toFixed(1)}`;
 }
 
 
@@ -2478,8 +2484,9 @@ function render() {
       const isolated = activeRels === 0;
       const off = offNodes.has(id);
       const R = nodeR[id];
-      const iconSize = Math.max(24, Math.round(R * 0.44));
-      const fontSize = Math.max(15, Math.min(24, R * 0.22));
+const iconSize = Math.max(28, Math.round(R * 0.52));
+      // Etiquetas más grandes y legibles, manteniendo proporción con el nodo.
+      const fontSize = Math.max(26, Math.min(44, R * 0.28));
       // nivel de brillo por conectividad (solo estético)
       const glow = R >= 110 ? 'high' : R >= 80 ? 'mid' : 'low';
 
