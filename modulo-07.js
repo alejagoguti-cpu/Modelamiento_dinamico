@@ -3094,9 +3094,30 @@ let vb = Object.assign({}, BASE_VB);
 
 function applyVB() {
   document.getElementById('svg').setAttribute('viewBox', `${vb.x} ${vb.y} ${vb.w} ${vb.h}`);
+  const z = document.getElementById('zoomValue');
+  if (z) z.textContent = Math.round((BASE_VB.w / vb.w) * 100) + '%';
 }
 
 function resetView() { vb = Object.assign({}, BASE_VB); applyVB(); }
+
+function zoomAt(factor, clientX, clientY) {
+  const stage = document.getElementById('stage');
+  const svg = document.getElementById('svg');
+  const rect = svg.getBoundingClientRect();
+  const px = clientX == null ? rect.left + rect.width / 2 : clientX;
+  const py = clientY == null ? rect.top + rect.height / 2 : clientY;
+  const relX = Math.max(0, Math.min(1, (px - rect.left) / rect.width));
+  const relY = Math.max(0, Math.min(1, (py - rect.top) / rect.height));
+  const focusX = vb.x + relX * vb.w;
+  const focusY = vb.y + relY * vb.h;
+  const nextW = Math.max(BASE_VB.w * 0.16, Math.min(BASE_VB.w * 4, vb.w * factor));
+  const nextH = nextW * (BASE_VB.h / BASE_VB.w);
+  vb.x = focusX - relX * nextW;
+  vb.y = focusY - relY * nextH;
+  vb.w = nextW;
+  vb.h = nextH;
+  applyVB();
+}
 
 function initPanZoom() {
   const stage = document.getElementById('stage');
@@ -3120,6 +3141,27 @@ function initPanZoom() {
   stage.addEventListener('pointercancel', end);
 
   svg.addEventListener('click', () => { clearFocus(); });
+
+  stage.addEventListener('wheel', e => {
+    e.preventDefault();
+    zoomAt(e.deltaY > 0 ? 1.12 : 0.88, e.clientX, e.clientY);
+  }, { passive: false });
+
+  const zoomIn = document.getElementById('btnZoomIn');
+  const zoomOut = document.getElementById('btnZoomOut');
+  const zoomReset = document.getElementById('btnZoomReset');
+  if (zoomIn) zoomIn.addEventListener('click', e => {
+    e.stopPropagation();
+    zoomAt(0.78);
+  });
+  if (zoomOut) zoomOut.addEventListener('click', e => {
+    e.stopPropagation();
+    zoomAt(1.28);
+  });
+  if (zoomReset) zoomReset.addEventListener('click', e => {
+    e.stopPropagation();
+    resetView();
+  });
 }
 
 // ---------------------------------------------------------------------
