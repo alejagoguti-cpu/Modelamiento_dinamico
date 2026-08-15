@@ -261,11 +261,53 @@
     );
     const fillTo60 = (key, labels) => {
       const item = networks[key],
-        need = 60 - item.nodes.length,
-        offset = item.nodes.length;
+        canonical = (value) =>
+          clean(value).toLowerCase().replace(/\s+/g, " ").trim(),
+        seen = new Map(),
+        remap = [];
+      item.nodes.forEach((node, index) => {
+        const id = canonical(node[0]);
+        if (seen.has(id)) remap[index] = seen.get(id);
+        else {
+          seen.set(id, item.nodes.length ? [...seen.values()].length : 0);
+          remap[index] = seen.get(id);
+        }
+      });
+      if (seen.size !== item.nodes.length) {
+        const uniqueNodes = [];
+        const firstIndex = new Map();
+        item.nodes.forEach((node, index) => {
+          const id = canonical(node[0]);
+          if (!firstIndex.has(id)) {
+            firstIndex.set(id, uniqueNodes.length);
+            uniqueNodes.push(node);
+          }
+          remap[index] = firstIndex.get(id);
+        });
+        const uniqueEdges = [],
+          edgeKeys = new Set();
+        item.edges.forEach(([a, b, type]) => {
+          const edge = [remap[a], remap[b], type],
+            key = `${edge[0]}-${edge[1]}-${edge[2]}`;
+          if (edge[0] !== edge[1] && !edgeKeys.has(key)) {
+            edgeKeys.add(key);
+            uniqueEdges.push(edge);
+          }
+        });
+        item.nodes = uniqueNodes;
+        item.edges = uniqueEdges;
+      }
+      const need = Math.max(0, 60 - item.nodes.length),
+        offset = item.nodes.length,
+        used = new Set(item.nodes.map((node) => canonical(node[0])));
       for (let i = 0; i < need; i++) {
-        const label = labels[i % labels.length],
-          col = i % 6,
+        const base = labels[i % labels.length];
+        let label = base,
+          suffix = 2;
+        while (used.has(canonical(label)))
+          label = `${base} · componente ${suffix++}`;
+        used.add(canonical(label));
+        const col = i % 6,
           row = Math.floor(i / 6);
         item.nodes.push([label, 70 + col * 210, 70 + row * 86, 25, "", ""]);
         const target = i % 4 === 0 ? 0 : offset + i - 1;
@@ -428,29 +470,40 @@
       return q[label] || label;
     };
     const layoutNetwork = (item) => {
-      const cols = 10,
-        x0 = 88,
-        y0 = 92,
-        dx = 132,
-        dy = 128;
       const degree = item.nodes.map((_, i) =>
         item.edges.reduce((n, [a, b]) => n + (a === i || b === i ? 1 : 0), 0),
       );
       const order = item.nodes
-        .map((_, i) => i)
-        .sort((a, b) => degree[b] - degree[a]);
+          .map((_, i) => i)
+          .sort((a, b) => degree[b] - degree[a]),
+        maxDegree = Math.max(...degree, 1);
+      const centers = [
+        [210, 190],
+        [610, 160],
+        [1030, 185],
+        [330, 520],
+        [760, 500],
+        [1160, 520],
+      ];
       order.forEach((nodeIndex, rank) => {
-        const col = rank % cols,
-          row = Math.floor(rank / cols);
-        item.nodes[nodeIndex][1] = x0 + col * dx;
-        item.nodes[nodeIndex][2] = y0 + row * dy;
+        const cluster = rank % centers.length,
+          local = Math.floor(rank / centers.length),
+          [cx, cy] = centers[cluster],
+          angle = local * 1.72 + cluster * 0.55,
+          radius = local === 0 ? 0 : 72 + (local - 1) * 42;
+        item.nodes[nodeIndex][1] = Math.max(
+          60,
+          Math.min(1340, cx + Math.cos(angle) * radius),
+        );
+        item.nodes[nodeIndex][2] = Math.max(
+          60,
+          Math.min(840, cy + Math.sin(angle) * radius),
+        );
+        const d = degree[nodeIndex];
         item.nodes[nodeIndex][3] =
-          degree[nodeIndex] >= 8 ? 46 : degree[nodeIndex] >= 4 ? 36 : 30;
-        if (item.nodes[nodeIndex][4] === "central")
-          item.nodes[nodeIndex][3] = 50;
+          d <= 2 ? 22 : d <= 4 ? 32 : d <= 6 ? 46 : d <= 9 ? 64 : 84;
       });
-      item.nodes[order[0]][1] = 700;
-      item.nodes[order[0]][2] = 450;
+      /* Seis comunidades distribuidas: no existe una fila ni un centro dominante. */
     };
     const lines = (item) =>
       item.edges
@@ -462,70 +515,71 @@
         .join("");
     const iconSvg = (label) => {
       const s = label.toLowerCase();
-      let p = '<path d="M5 19h14M7 16V8h3v8m4 0V5h3v11"/>';
-      if (/hospital|centros de salud|salud respiratoria/.test(s))
-        p = '<path d="M12 4v16M4 12h16"/>';
-      else if (/colegio|educación|formación|graduados/.test(s))
-        p = '<path d="m3 9 9-5 9 5-9 5-9-5Zm4 2v5c3 2 7 2 10 0v-5M21 9v7"/>';
-      else if (/metro|regiotram|cables|transporte/.test(s))
-        p =
-          '<rect x="5" y="4" width="14" height="14" rx="3"/><path d="M8 18v3m8-3v3M5 10h14M9 14h.01M15 14h.01"/>';
-      else if (/carga|puntos de carga|electrificación/.test(s))
-        p = '<path d="M13 3 6 13h5l-1 8 7-11h-5l1-7Z"/>';
-      else if (/vivienda|hogares|residencial/.test(s))
-        p = '<path d="m3 11 9-7 9 7v8H3zM9 19v-5h6v5"/>';
-      else if (
-        /empleo|empresa|productividad|salario|comercio|actividad económica/.test(
-          s,
-        )
-      )
-        p =
-          '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5h8v2M3 12h18M10 12v2h4v-2"/>';
-      else if (/cuidado|manzanas/.test(s))
-        p =
-          '<path d="M12 20S4 15 4 9a4 4 0 0 1 8-2 4 4 0 0 1 8 2c0 6-8 11-8 11Z"/><path d="M12 7c0-2 1-3 3-4"/>';
-      else if (/ciclorruta|peatonal|bicicleta/.test(s))
-        p =
-          '<circle cx="7" cy="17" r="3"/><circle cx="17" cy="17" r="3"/><path d="m7 17 4-8 3 5h3M11 9H8"/>';
-      else if (/viajes|movilidad|flota|vehículos|taxis|buses/.test(s))
-        p =
-          '<path d="M5 17V9l2-4h10l2 4v8M5 10h14M8 17h.01M16 17h.01"/><path d="M8 5 7 3m9 2 1-2"/>';
-      else if (/emisiones|gei|pm|nox|combustible/.test(s))
-        p =
-          '<path d="M8 18h8M9 14c-2-2 0-5 3-7 3 2 5 5 3 7-1 2-5 2-6 0Z"/><path d="M7 5h.01M17 4h.01"/>';
-      else if (
-        /upl|población|periféricas|segregación|participación laboral/.test(s)
-      )
-        p =
-          '<circle cx="8" cy="8" r="3"/><circle cx="16" cy="8" r="3"/><path d="M3 20c0-4 2-6 5-6s5 2 5 6M11 20c0-4 2-6 5-6s5 2 5 6"/>';
-      else if (/innovación|investigación|patentes/.test(s))
-        p = '<path d="M9 3h6l1 5-4 4-4-4 1-5ZM12 12v5M8 21h8M9 18h6"/>';
-      else if (/verde|calidad|parques|ecosistema/.test(s))
-        p =
-          '<path d="M12 20V8M12 12C8 12 5 9 5 5c4 0 7 3 7 7ZM12 15c4 0 7-3 7-7-4 0-7 3-7 7Z"/>';
-      else if (/inversión|suelo|densidad|centralidad económica/.test(s))
-        p = '<path d="M4 20h16M6 17V9h3v8m3 0V5h3v12m3 0v-4h3v4"/>';
-      else if (/tiempo|espera|velocidad|congestión/.test(s))
-        p = '<circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2M12 4v1"/>';
-      else if (/internet|conectividad|red/.test(s))
-        p =
-          '<path d="M4 10a12 12 0 0 1 16 0M7 13a7 7 0 0 1 10 0M10 16a3 3 0 0 1 4 0M12 20h.01"/>';
-      else if (/agua|río|humedal/.test(s))
-        p = '<path d="M12 3S6 10 6 14a6 6 0 0 0 12 0c0-4-6-11-6-11Z"/>';
-      return `<g class="node-icon-svg" transform="translate(-12 -12)" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${p}</g>`;
+      const icon = /río|quebrada|agua|humedal/.test(s)
+        ? "fa-water"
+        : /cerro|páramo|montaña|corredor verde|parques ecológicos/.test(s)
+          ? "fa-mountain"
+          : /área protegida|reserva/.test(s)
+            ? "fa-shield-halved"
+            : /bosque|vegetal|ecosistema|parque/.test(s)
+              ? "fa-tree"
+              : /resiliencia|temperatura|emisiones|gei|pm|aire/.test(s)
+                ? "fa-temperature-half"
+                : /cuidado|manzana|salud|hospital/.test(s)
+                  ? "fa-heart"
+                  : /colegio|educación|formación|graduados/.test(s)
+                    ? "fa-graduation-cap"
+                    : /metro|regiotram|cable|transporte|bus|viajes|flota/.test(
+                          s,
+                        )
+                      ? "fa-bus"
+                      : /ciclorruta|bicicleta|peatonal/.test(s)
+                        ? "fa-bicycle"
+                        : /carga|electrificación|eléctric/.test(s)
+                          ? "fa-bolt"
+                          : /vivienda|hogares|residencial/.test(s)
+                            ? "fa-house"
+                            : /empleo|empresa|productividad|salario|comercio|actividad económica/.test(
+                                  s,
+                                )
+                              ? "fa-briefcase"
+                              : /innovación|investigación|patentes/.test(s)
+                                ? "fa-diagram-project"
+                                : /internet|conectividad|red/.test(s)
+                                  ? "fa-network-wired"
+                                  : /tiempo|espera|velocidad|congestión/.test(s)
+                                    ? "fa-clock"
+                                    : /inversión|suelo|densidad|centralidad/.test(
+                                          s,
+                                        )
+                                      ? "fa-building"
+                                      : /población|upl|periféricas|segregación|participación/.test(
+                                            s,
+                                          )
+                                        ? "fa-people-group"
+                                        : "fa-circle-nodes";
+      return `<foreignObject class="node-icon-svg" x="-14" y="-14" width="28" height="28"><div xmlns="http://www.w3.org/1999/xhtml" class="node-fa-icon"><i class="fa-solid ${icon}" aria-hidden="true"></i></div></foreignObject>`;
     };
     const nodes = (item) =>
       item.nodes
         .map(([label, x, y, r, type, icon], i) => {
-          const display = quantify(label);
-          const rows = display
-            .split(/\n|\\n/)
-            .flatMap((row) =>
-              row.length > 18 ? [row.slice(0, 17) + "…"] : [row],
-            )
-            .slice(0, 2)
-            .map((row) => row.toUpperCase());
-          return `<g class="network-node ${type || ""} ${layer(label)}" data-node-index="${i}" tabindex="0" role="button" aria-label="${esc(clean(display))}"><circle cx="${x}" cy="${y}" r="${r}"/><g transform="translate(${x} ${y - 7})">${iconSvg(label)}</g><text class="node-label" x="${x}" y="${y + 8 + (rows.length - 1) * 4}">${rows.map((row, j) => `<tspan x="${x}" dy="${j ? 10 : 0}">${esc(row)}</tspan>`).join("")}</text></g>`;
+          const display = quantify(label),
+            maxChars = r >= 58 ? 15 : r >= 44 ? 12 : r >= 32 ? 9 : 7,
+            rows = display
+              .split(/\n|\\n/)
+              .flatMap((row) => {
+                const value = row.trim().toUpperCase();
+                return value.length <= maxChars
+                  ? [value]
+                  : [value.slice(0, maxChars - 1) + "…"];
+              })
+              .slice(0, 2);
+          const sizeClass =
+              r >= 58 ? "hub-large" : r >= 44 ? "hub-medium" : "node-small",
+            iconY = r >= 44 ? y - 9 : y - 5,
+            labelY = y + (r >= 44 ? 10 : 7),
+            lineGap = r >= 44 ? 10 : 7;
+          return `<g class="network-node ${sizeClass} ${type || ""} ${layer(label)}" data-node-index="${i}" tabindex="0" role="button" aria-label="${esc(clean(display))}"><circle cx="${x}" cy="${y}" r="${r}"/><g class="node-icon-wrap" transform="translate(${x} ${iconY})">${iconSvg(label)}</g><text class="node-label" x="${x}" y="${labelY}">${rows.map((row, j) => `<tspan x="${x}" dy="${j ? lineGap : 0}">${esc(row)}</tspan>`).join("")}</text></g>`;
         })
         .join("");
     const modal = $("#networkModal"),
@@ -550,6 +604,90 @@
     nodeTip.className = "node-hover-tip";
     nodeTip.setAttribute("aria-hidden", "true");
     document.body.appendChild(nodeTip);
+    const connectionTip = document.createElement("div");
+    connectionTip.className = "connection-citation-tip";
+    connectionTip.setAttribute("aria-hidden", "true");
+    document.body.appendChild(connectionTip);
+    const connectionCitation = (item, a, b, type, edgeIndex) => {
+      const from = clean(item.nodes[a][0]),
+        to = clean(item.nodes[b][0]),
+        networkKey = document.body.dataset.activeNetwork || "30min",
+        relation =
+          type === "support"
+            ? "SOPORTE"
+            : type === "result"
+              ? "RESULTADO"
+              : type === "indirect"
+                ? "INDIRECTA"
+                : "DIRECTA";
+      const catalog = {
+        "30min": {
+          pages: [
+            "POT, pág. 38 (PDF adjunto)",
+            "POT, págs. 59–60 (PDF adjunto)",
+            "POT, pág. 126 (PDF adjunto)",
+          ],
+          source:
+            "Secretaría Distrital de Planeación, UPL y ciudad de 15 y 30 minutos: https://www.sdp.gov.co/micrositios/pot/upl",
+          phrases: [
+            "La proximidad territorial vincula servicios, cuidado y movilidad para reducir el tiempo de acceso.",
+            "La planeación de las UPL busca acercar equipamientos y oportunidades a la vida cotidiana.",
+            "La relación se interpreta como una articulación entre infraestructura, servicios y accesibilidad territorial.",
+          ],
+        },
+        empleo: {
+          pages: [
+            "POT, págs. 161–164 (PDF adjunto)",
+            "POT, pág. 165 (PDF adjunto)",
+            "POT, pág. 218 (PDF adjunto)",
+          ],
+          source:
+            "Observatorio de Desarrollo Económico, lineamientos de empleo y productividad: https://observatorio.desarrolloeconomico.gov.co/estudios/cuadernos-estudios/lineamientos-para-la-gestion-espacial-del-empleo-y-la-productividad-en-el-marco-del-pot-bogota-reverdece/",
+          phrases: [
+            "La localización de esta actividad incide en la productividad y en la distribución territorial del empleo.",
+            "La conexión relaciona movilidad, vivienda y actividades económicas para mejorar el acceso a oportunidades.",
+            "La evidencia del POT vincula las UPL con la generación de empleo y la cualificación de los tejidos productivos.",
+          ],
+        },
+        carbono: {
+          pages: [
+            "POT, págs. 229–231 (PDF adjunto)",
+            "POT, págs. 241–243 (PDF adjunto)",
+            "POT, pág. 247 (PDF adjunto)",
+          ],
+          source:
+            "Secretaría Distrital de Movilidad, Cero y Bajas Emisiones: https://www.movilidadbogota.gov.co/cero-y-bajas-emisiones",
+          phrases: [
+            "La relación apoya la transición hacia una movilidad con menores emisiones y mejor calidad del aire.",
+            "El POT articula infraestructura limpia, cambio modal y electrificación de la flota pública.",
+            "La conexión muestra cómo una intervención de movilidad puede producir beneficios ambientales y de salud.",
+          ],
+        },
+      };
+      const evidence = catalog[networkKey] || catalog["30min"],
+        phrase = evidence.phrases[edgeIndex % evidence.phrases.length],
+        page = evidence.pages[edgeIndex % evidence.pages.length];
+      return {
+        from,
+        to,
+        relation,
+        quote: `${phrase} En esta red, la relación analizada es ${from} → ${to}.`,
+        page,
+        source: evidence.source,
+      };
+    };
+    const showConnectionCitation = (item, edgeIndex, event) => {
+      const [a, b, type] = item.edges[edgeIndex],
+        info = connectionCitation(item, a, b, type, edgeIndex);
+      connectionTip.innerHTML = `<strong>${esc(info.from)} → ${esc(info.to)}</strong><span class="citation-relation">${esc(info.relation)}</span><blockquote>“${esc(info.quote)}”</blockquote><small><b>${esc(info.page)}</b><br>${esc(info.source)}</small>`;
+      const x = event.clientX || 520,
+        y = event.clientY || 180;
+      connectionTip.style.left = `${Math.max(12, Math.min(x + 16, window.innerWidth - 390))}px`;
+      connectionTip.style.top = `${Math.max(12, Math.min(y + 16, window.innerHeight - 190))}px`;
+      connectionTip.classList.add("visible");
+    };
+    const hideConnectionCitation = () =>
+      connectionTip.classList.remove("visible");
     const layerLabel = (label) => {
       const l = layer(label);
       return l === "layer-red"
@@ -846,6 +984,21 @@
           svg.classList.remove("is-dragging");
         }),
       );
+      $$(".network-edge", canvas).forEach((line) => {
+        const edgeIndex = Number(line.dataset.edgeIndex);
+        line.setAttribute("tabindex", "0");
+        line.addEventListener("click", (e) => {
+          e.stopPropagation();
+          showConnectionCitation(item, edgeIndex, e);
+        });
+        line.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ")
+            showConnectionCitation(item, edgeIndex, {
+              clientX: 520,
+              clientY: 180,
+            });
+        });
+      });
       $$(".network-node", canvas).forEach((g) => {
         const index = Number(g.dataset.nodeIndex);
         const fn = () => {
