@@ -171,12 +171,15 @@
       },
     };
     const expandNetwork = (key, extraNodes, extraEdges) => {
-      const item = networks[key],
-        offset = item.nodes.length;
+      const item = networks[key];
+      const offset = item.nodes.length;
+      item._key = key;
+      item.edges = item.edges || [];
       item.nodes.push(...extraNodes);
       item.edges.push(
         ...extraEdges.map(([a, b, t]) => [a + offset, b + offset, t]),
       );
+      item._categories = item.nodes.map((node) => thematicCategory(key, node[0]));
     };
     expandNetwork(
       "30min",
@@ -259,7 +262,7 @@
         [9, 5, "result"],
       ],
     );
-    const fillTo60 = (key, labels) => {
+    const fillTo30 = (key, labels) => {
       const item = networks[key],
         canonical = (value) =>
           clean(value).toLowerCase().replace(/\s+/g, " ").trim(),
@@ -297,7 +300,7 @@
         item.nodes = uniqueNodes;
         item.edges = uniqueEdges;
       }
-      const need = Math.max(0, 60 - item.nodes.length),
+      const need = Math.max(0, 30 - item.nodes.length),
         offset = item.nodes.length,
         used = new Set(item.nodes.map((node) => canonical(node[0])));
       for (let i = 0; i < need; i++) {
@@ -317,8 +320,9 @@
           i % 5 === 0 ? "support" : i % 3 === 0 ? "indirect" : "direct",
         ]);
       }
+      item._categories = item.nodes.map((node) => thematicCategory(key, node[0]));
     };
-    fillTo60("30min", [
+    fillTo30("30min", [
       "UPL norte · acceso 62 min",
       "UPL sur · acceso 26 min",
       "Cobertura de cuidado · %",
@@ -356,7 +360,7 @@
       "Ahorro de tiempo · min",
       "Meta de proximidad · 2035",
     ]);
-    fillTo60("empleo", [
+    fillTo30("empleo", [
       "Empleo formal · %",
       "Empleo informal · %",
       "Tasa de desempleo · 7%",
@@ -394,7 +398,7 @@
       "Migración laboral · %",
       "Productividad territorial · índice",
     ]);
-    fillTo60("carbono", [
+    fillTo30("carbono", [
       "Demanda de viajes · #",
       "Viajes motorizados · %",
       "Viajes transporte público · %",
@@ -448,6 +452,51 @@
         return "layer-blue";
       return "layer-green";
     };
+    const thematicCatalog = {
+      "30min": [
+        { id: "care-health", label: "Cuidado y salud", color: "#46d6d0" },
+        { id: "education", label: "Educación y equipamientos", color: "#7fe6de" },
+        { id: "mobility", label: "Movilidad y proximidad", color: "#e89a6c" },
+        { id: "housing-employment", label: "Vivienda y empleo", color: "#c79cff" },
+        { id: "access-goals", label: "Acceso y metas", color: "#f4c95d" },
+      ],
+      empleo: [
+        { id: "economic-activity", label: "Actividad económica", color: "#e89a6c" },
+        { id: "human-capital", label: "Capital humano", color: "#7fe6de" },
+        { id: "labor-mobility", label: "Movilidad laboral", color: "#46d6d0" },
+        { id: "territorial-equity", label: "Equidad territorial", color: "#c79cff" },
+        { id: "employment-results", label: "Resultados de empleo", color: "#f4c95d" },
+      ],
+      carbono: [
+        { id: "clean-transit", label: "Transporte limpio", color: "#46d6d0" },
+        { id: "clean-infrastructure", label: "Infraestructura limpia", color: "#7fe6de" },
+        { id: "emissions-air", label: "Emisiones y aire", color: "#e89a6c" },
+        { id: "modal-change", label: "Cambio modal", color: "#c79cff" },
+        { id: "environmental-health", label: "Salud ambiental", color: "#f4c95d" },
+      ],
+    };
+    function thematicCategory(key, label) {
+      const s = clean(label).toLowerCase();
+      if (key === "30min") {
+        if (/cuidado|salud|hospital/.test(s)) return "care-health";
+        if (/colegio|educación|equipamiento/.test(s)) return "education";
+        if (/transporte|peatonal|viaje|distancia|tiempo|conectividad/.test(s)) return "mobility";
+        if (/vivienda|empleo|comercio/.test(s)) return "housing-employment";
+        return "access-goals";
+      }
+      if (key === "empleo") {
+        if (/empresa|actividad|productividad|innovación|inversión|comercio/.test(s)) return "economic-activity";
+        if (/educación|formación|graduados|salario|capital|patentes/.test(s)) return "human-capital";
+        if (/transporte|movilidad|tiempo|acceso|vivienda/.test(s)) return "labor-mobility";
+        if (/upl|segregación|género|participación|territorial/.test(s)) return "territorial-equity";
+        return "employment-results";
+      }
+      if (/emisiones|gei|pm|aire|salud respiratoria/.test(s)) return /salud/.test(s) ? "environmental-health" : "emissions-air";
+      if (/metro|regiotram|cable|ciclorruta|transporte|flota|taxis|viajes/.test(s)) return "clean-transit";
+      if (/carga|electrificación|infraestructura|corredor/.test(s)) return "clean-infrastructure";
+      if (/cambio modal|demanda|combustible|velocidad/.test(s)) return "modal-change";
+      return "environmental-health";
+    }
     const quantify = (label) => {
       const q = {
         "UPL · 33": "UPL\n33 unidades",
@@ -504,6 +553,29 @@
           d <= 2 ? 22 : d <= 4 ? 32 : d <= 6 ? 46 : d <= 9 ? 64 : 84;
       });
       /* Seis comunidades distribuidas: no existe una fila ni un centro dominante. */
+      /* Relajación de colisiones: evita que radios grandes invadan nodos vecinos. */
+      for (let pass = 0; pass < 14; pass++) {
+        for (let i = 0; i < item.nodes.length; i++) {
+          for (let j = i + 1; j < item.nodes.length; j++) {
+            const A = item.nodes[i],
+              B = item.nodes[j],
+              dx = B[1] - A[1],
+              dy = B[2] - A[2],
+              distance = Math.hypot(dx, dy) || 0.01,
+              minimum = A[3] + B[3] + 42;
+            if (distance >= minimum) continue;
+            const ux = dx / distance,
+              uy = dy / distance,
+              push = (minimum - distance) / 2,
+              aWeight = degree[i] >= degree[j] ? 0.35 : 0.65,
+              bWeight = 1 - aWeight;
+            A[1] = Math.max(55, Math.min(1345, A[1] - ux * push * aWeight));
+            A[2] = Math.max(55, Math.min(845, A[2] - uy * push * aWeight));
+            B[1] = Math.max(55, Math.min(1345, B[1] + ux * push * bWeight));
+            B[2] = Math.max(55, Math.min(845, B[2] + uy * push * bWeight));
+          }
+        }
+      }
     };
     const lines = (item) =>
       item.edges
@@ -579,9 +651,21 @@
             iconY = r >= 44 ? y - 9 : y - 5,
             labelY = y + (r >= 44 ? 10 : 7),
             lineGap = r >= 44 ? 10 : 7;
-          return `<g class="network-node ${sizeClass} ${type || ""} ${layer(label)}" data-node-index="${i}" tabindex="0" role="button" aria-label="${esc(clean(display))}"><circle cx="${x}" cy="${y}" r="${r}"/><g class="node-icon-wrap" transform="translate(${x} ${iconY})">${iconSvg(label)}</g><text class="node-label" x="${x}" y="${labelY}">${rows.map((row, j) => `<tspan x="${x}" dy="${j ? lineGap : 0}">${esc(row)}</tspan>`).join("")}</text></g>`;
+          const category = item._categories?.[i] || "access-goals";
+          return `<g class="network-node ${sizeClass} ${type || ""} ${layer(label)} category-${category}" data-node-index="${i}" data-category="${category}" tabindex="0" role="button" aria-label="${esc(clean(display))}"><circle cx="${x}" cy="${y}" r="${r}"/><g class="node-icon-wrap" transform="translate(${x} ${iconY})">${iconSvg(label)}</g><text class="node-label" x="${x}" y="${labelY}">${rows.map((row, j) => `<tspan x="${x}" dy="${j ? lineGap : 0}">${esc(row)}</tspan>`).join("")}</text></g>`;
         })
         .join("");
+    const categoryHalos = (item) => {
+      const categories = thematicCatalog[item._key] || [];
+      return `<g class="category-halos">${categories.map((category) => {
+        const indices = item._categories.map((value, index) => value === category.id ? index : -1).filter((index) => index >= 0);
+        if (!indices.length) return "";
+        const xs = indices.map((index) => item.nodes[index][1]), ys = indices.map((index) => item.nodes[index][2]);
+        const minX = Math.max(18, Math.min(...xs) - 52), maxX = Math.min(1382, Math.max(...xs) + 52);
+        const minY = Math.max(26, Math.min(...ys) - 52), maxY = Math.min(874, Math.max(...ys) + 52);
+        return `<g class="category-halo" data-category="${category.id}"><rect x="${minX}" y="${minY}" width="${Math.max(110, maxX - minX)}" height="${Math.max(90, maxY - minY)}" rx="28" style="--category-color:${category.color}"/><text x="${minX + 14}" y="${minY + 18}">${esc(category.label)}</text></g>`;
+      }).join("")}</g>`;
+    };
     const modal = $("#networkModal"),
       canvas = $("#networkCanvas"),
       details = $("#nodeDetails");
@@ -948,7 +1032,7 @@
       $("#networkCount").textContent =
         `${item.nodes.length} nodos · ${item.edges.length} conexiones`;
       $("#networkExplanation").textContent = item.text;
-      canvas.innerHTML = `<svg viewBox="0 0 1400 900" role="img" aria-label="${esc(item.title)}"><defs><marker id="arrow-direct" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 7 3.5 0 7Z" fill="#55b7ff"/></marker><marker id="arrow-indirect" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 7 3.5 0 7Z" fill="#b27cff"/></marker><marker id="arrow-support" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 7 3.5 0 7Z" fill="#e0b447"/></marker><marker id="arrow-result" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 7 3.5 0 7Z" fill="#ff6eaa"/></marker></defs><g id="networkViewport">${lines(item)}${nodes(item)}</g></svg>`;
+      canvas.innerHTML = `<svg viewBox="0 0 1400 900" role="img" aria-label="${esc(item.title)}"><defs><marker id="arrow-direct" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 7 3.5 0 7Z" fill="#55b7ff"/></marker><marker id="arrow-indirect" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 7 3.5 0 7Z" fill="#b27cff"/></marker><marker id="arrow-support" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 7 3.5 0 7Z" fill="#e0b447"/></marker><marker id="arrow-result" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 7 3.5 0 7Z" fill="#ff6eaa"/></marker></defs><g id="networkViewport">${categoryHalos(item)}${lines(item)}${nodes(item)}</g></svg>`;
       document.body.dataset.activeNetwork = key;
       hiddenNodes = new Set();
       clickCycle = { index: null, count: 0 };
@@ -958,6 +1042,42 @@
       updateZoom();
       show(modal);
       selectNode(item, null);
+      const categoryFilters = $("#categoryFilters");
+      if (categoryFilters) {
+        categoryFilters.innerHTML = `<b>Temas</b>${(thematicCatalog[key] || []).map((category) => `<label class="category-filter" style="--category-color:${category.color}"><input type="checkbox" data-category-filter="${category.id}" checked /><i></i>${esc(category.label)}</label>`).join("")}`;
+        const applyCategoryFilters = () => {
+          const active = new Set($$("[data-category-filter]", categoryFilters).filter((input) => input.checked).map((input) => input.dataset.categoryFilter));
+          $$(".network-node", canvas).forEach((node) => node.classList.toggle("category-hidden", !active.has(node.dataset.category)));
+          $$(".network-edge, .network-edge-hit", canvas).forEach((edge) => {
+            const [a, b] = item.edges[Number(edge.dataset.edgeIndex)] || [];
+            edge.classList.toggle("category-hidden", !active.has(item._categories[a]) || !active.has(item._categories[b]));
+          });
+          $$(".category-halo", canvas).forEach((halo) => halo.classList.toggle("category-hidden", !active.has(halo.dataset.category)));
+        };
+        $$('[data-category-filter]', categoryFilters).forEach((input) => input.addEventListener("change", applyCategoryFilters));
+      }
+      const searchInput = $("#nodeSearchInput"),
+        searchCount = $("#nodeSearchCount");
+      if (searchInput) {
+        searchInput.value = "";
+        searchInput.oninput = () => {
+          const query = clean(searchInput.value).toLowerCase().trim(),
+            groups = $$(".network-node", canvas),
+            matches = item.nodes
+              .map((node, index) => ({ index, label: clean(node[0]).toLowerCase() }))
+              .filter((node) => !query || node.label.includes(query));
+          groups.forEach((group, index) => {
+            const match = !query || matches.some((item) => item.index === index);
+            group.classList.toggle("search-match", Boolean(query && match));
+            group.classList.toggle("search-dimmed", Boolean(query && !match));
+          });
+          if (searchCount) {
+            searchCount.textContent = query ? `${matches.length} resultado${matches.length === 1 ? "" : "s"}` : "";
+          }
+          if (matches.length === 1 && query) selectNode(item, matches[0].index);
+          else if (!query) selectNode(item, null);
+        };
+      }
       const svg = $("svg", canvas);
       svg.addEventListener(
         "wheel",
@@ -971,22 +1091,80 @@
         },
         { passive: false },
       );
+      const activePointers = new Map();
+      let pinchGesture = null;
+      const pointerMidpoint = () => {
+        const points = [...activePointers.values()];
+        return {
+          x: (points[0].x + points[1].x) / 2,
+          y: (points[0].y + points[1].y) / 2,
+        };
+      };
+      const pointerDistance = () => {
+        const points = [...activePointers.values()];
+        return Math.hypot(points[1].x - points[0].x, points[1].y - points[0].y);
+      };
       svg.addEventListener("pointerdown", (e) => {
+        if (e.pointerType === "touch") {
+          activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+          svg.setPointerCapture(e.pointerId);
+          if (activePointers.size === 2) {
+            drag = null;
+            const midpoint = pointerMidpoint();
+            pinchGesture = {
+              distance: pointerDistance(),
+              midpoint,
+              zoom,
+              panX,
+              panY,
+            };
+            svg.classList.add("is-pinch-zooming");
+          } else if (activePointers.size === 1 && !e.target.closest(".network-node")) {
+            drag = { x: e.clientX, y: e.clientY, panX, panY, pointerId: e.pointerId };
+            svg.classList.add("is-dragging");
+          }
+          return;
+        }
         if (e.target.closest(".network-node")) return;
-        drag = { x: e.clientX, y: e.clientY, panX, panY };
+        drag = { x: e.clientX, y: e.clientY, panX, panY, pointerId: e.pointerId };
         svg.setPointerCapture(e.pointerId);
         svg.classList.add("is-dragging");
       });
       svg.addEventListener("pointermove", (e) => {
-        if (!drag) return;
+        if (e.pointerType === "touch") {
+          if (!activePointers.has(e.pointerId)) return;
+          activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+          if (activePointers.size >= 2 && pinchGesture) {
+            const midpoint = pointerMidpoint();
+            zoom = Math.max(
+              0.55,
+              Math.min(2.4, pinchGesture.zoom * (pointerDistance() / pinchGesture.distance)),
+            );
+            panX = pinchGesture.panX + (midpoint.x - pinchGesture.midpoint.x) * 1.35;
+            panY = pinchGesture.panY + (midpoint.y - pinchGesture.midpoint.y) * 1.35;
+            updateZoom();
+          } else if (drag && drag.pointerId === e.pointerId) {
+            panX = drag.panX + (e.clientX - drag.x) * 1.5;
+            panY = drag.panY + (e.clientY - drag.y) * 1.5;
+            updateZoom();
+          }
+          return;
+        }
+        if (!drag || drag.pointerId !== e.pointerId) return;
         panX = drag.panX + (e.clientX - drag.x) * 1.5;
         panY = drag.panY + (e.clientY - drag.y) * 1.5;
         updateZoom();
       });
       ["pointerup", "pointercancel"].forEach((eventName) =>
-        svg.addEventListener(eventName, () => {
-          drag = null;
-          svg.classList.remove("is-dragging");
+        svg.addEventListener(eventName, (e) => {
+          if (e.pointerType === "touch") {
+            activePointers.delete(e.pointerId);
+            if (activePointers.size < 2) pinchGesture = null;
+            if (!activePointers.size || drag?.pointerId === e.pointerId) drag = null;
+          } else if (drag?.pointerId === e.pointerId) {
+            drag = null;
+          }
+          svg.classList.remove("is-dragging", "is-pinch-zooming");
         }),
       );
       $$(".network-edge-hit", canvas).forEach((line) => {
