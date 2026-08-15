@@ -9,6 +9,10 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap"
       rel="stylesheet"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
     <link rel="stylesheet" href="modulo-07.css" />
   </head>
   <body>
@@ -264,18 +268,60 @@
           <div id="networkCanvas" class="network-canvas"></div>
           <aside class="network-aside">
             <div id="nodeDetails" class="network-panel node-details">
-              <h3>Inspección del nodo</h3>
+              <h3>
+                <span class="panel-icon teal"
+                  ><i class="fa-solid fa-crosshairs"></i></span
+                >Inspección del nodo
+              </h3>
               <p>
                 Haz clic en un nodo para ver cuántas conexiones tiene y con qué
                 elementos se relaciona.
               </p>
             </div>
-            <div class="network-panel">
-              <h3>Lectura del indicador</h3>
+            <div class="network-panel indicator-panel">
+              <h3>
+                <span class="panel-icon teal"
+                  ><i class="fa-solid fa-wave-square"></i></span
+                >Lectura del indicador
+              </h3>
               <p id="networkExplanation"></p>
+              <div id="networkMetricGrid" class="network-metric-grid">
+                <div class="network-mini-card teal">
+                  <i class="fa-solid fa-cloud"></i><strong>47%</strong
+                  ><span>Indicador principal</span>
+                </div>
+                <div class="network-mini-card warm">
+                  <i class="fa-solid fa-sun"></i><strong>18%</strong
+                  ><span>Indicador crítico</span>
+                </div>
+                <div class="network-mini-card teal">
+                  <i class="fa-solid fa-train-tram"></i><strong>77%</strong
+                  ><span>Meta del escenario</span>
+                </div>
+                <div class="network-mini-card teal">
+                  <i class="fa-solid fa-bolt"></i><strong>100%</strong
+                  ><span>Meta futura</span>
+                </div>
+                <div class="network-mini-card warm">
+                  <i class="fa-solid fa-leaf"></i><strong>72%</strong
+                  ><span>Reducción prevista</span>
+                </div>
+                <div class="network-mini-card teal">
+                  <i class="fa-solid fa-layer-group"></i><strong>Ver más</strong
+                  ><span>Capas y metodología</span>
+                </div>
+              </div>
             </div>
-            <div class="network-panel">
-              <h3>Capas del sistema</h3>
+            <div class="network-panel layers-panel">
+              <h3>
+                <span class="panel-icon teal"
+                  ><i class="fa-solid fa-layer-group"></i></span
+                >Capas del sistema
+              </h3>
+              <p class="panel-caption">
+                Activa o desactiva capas para analizar diferentes variables del
+                sistema urbano.
+              </p>
               <div class="layer-item red">
                 <i></i
                 ><span
@@ -300,8 +346,12 @@
                 >
               </div>
             </div>
-            <div class="network-panel">
-              <h3>Convenciones</h3>
+            <div class="network-panel conventions-panel">
+              <h3>
+                <span class="panel-icon warm"
+                  ><i class="fa-solid fa-route"></i></span
+                >Convenciones
+              </h3>
               <div class="convention">
                 <i class="line direct"></i> Relación directa
               </div>
