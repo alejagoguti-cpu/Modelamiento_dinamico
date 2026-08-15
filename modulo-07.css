@@ -1302,7 +1302,8 @@ button {
 }
 
 .network-node.hidden-network-node,
-.network-edge.hidden-network-edge {
+.network-edge.hidden-network-edge,
+.network-edge-hit.hidden-network-edge {
   display: none !important;
 }
 .network-toolbar #networkRestore {
