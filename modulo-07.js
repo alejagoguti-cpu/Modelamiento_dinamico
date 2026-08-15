@@ -510,7 +510,7 @@
         .map(([a, b, t], i) => {
           const A = item.nodes[a],
             B = item.nodes[b];
-          return `<line class="network-edge ${t}" data-edge-index="${i}" marker-end="url(#arrow-${t})" x1="${A[1]}" y1="${A[2]}" x2="${B[1]}" y2="${B[2]}"/>`;
+          return `<line class="network-edge ${t}" data-edge-index="${i}" marker-end="url(#arrow-${t})" x1="${A[1]}" y1="${A[2]}" x2="${B[1]}" y2="${B[2]}"/><line class="network-edge-hit" data-edge-index="${i}" tabindex="0" x1="${A[1]}" y1="${A[2]}" x2="${B[1]}" y2="${B[2]}"/>`;
         })
         .join("");
     const iconSvg = (label) => {
@@ -901,6 +901,8 @@
         "<h3>Nodo oculto</h3><p>Se ocultó el nodo y sus conexiones directas. Usa <b>Restablecer red</b> para restaurarlo.</p>";
     };
     const selectNode = (item, index) => {
+      details.classList.toggle("is-active", index !== null);
+      details.hidden = false;
       const groups = $$(".network-node", canvas),
         edges = $$(".network-edge", canvas);
       groups.forEach((g) => g.classList.remove("selected", "dimmed"));
@@ -933,7 +935,10 @@
               ? "Capa Azul · Determinista"
               : "Capa Verde · Social",
         info = nodeInfo(n[0]);
-      details.innerHTML = `<h3>Inspección del nodo</h3><span class="node-badge ${l.replace("layer-", "")}">${name}</span><p class="node-name">${esc(info.n)}</p><p class="node-meta"><b>${linked.length}</b> conexiones reales en esta red</p><div class="node-fact"><b>${esc(info.value)}</b><small>Unidad: ${esc(info.unit)}</small></div><p class="node-explanation">${esc(info.role)}</p><p class="node-source">Fuente: ${esc(info.source)}</p><h4>Relaciones conectadas</h4><ul class="node-connections">${linked.map((v) => `<li>${esc(clean(item.nodes[v.index][0]))} <small>· ${v.type === "support" ? "soporte" : v.type === "indirect" ? "indirecta" : v.type === "result" ? "resultado" : "directa"}</small></li>`).join("")}</ul>`;
+      details.innerHTML = `<h3><span class="panel-icon teal"><i class="fa-solid fa-crosshairs"></i></span>Inspección del nodo</h3><span class="node-badge ${l.replace("layer-", "")}">${name}</span><p class="node-name">${esc(info.n)}</p><p class="node-meta"><b>${linked.length}</b> conexiones reales en esta red</p><div class="node-fact"><b>${esc(info.value)}</b><small>Unidad: ${esc(info.unit)}</small></div><p class="node-explanation"><strong>Explicación:</strong> ${esc(info.role)}</p><p class="node-source">Fuente: ${esc(info.source)}</p><h4>Relaciones conectadas</h4><ul class="node-connections">${linked.map((v) => `<li>${esc(clean(item.nodes[v.index][0]))} <small>· ${v.type === "support" ? "soporte" : v.type === "indirect" ? "indirecta" : v.type === "result" ? "resultado" : "directa"}</small></li>`).join("")}</ul>`;
+      requestAnimationFrame(() =>
+        details.scrollIntoView({ block: "nearest", behavior: "smooth" }),
+      );
     };
     const openNetwork = (key) => {
       const item = networks[key];
@@ -984,7 +989,7 @@
           svg.classList.remove("is-dragging");
         }),
       );
-      $$(".network-edge", canvas).forEach((line) => {
+      $$(".network-edge-hit", canvas).forEach((line) => {
         const edgeIndex = Number(line.dataset.edgeIndex);
         line.setAttribute("tabindex", "0");
         line.addEventListener("click", (e) => {
@@ -1011,7 +1016,10 @@
             clickCycle = { index, count: 0 };
           }
         };
-        g.addEventListener("click", fn);
+        g.addEventListener("click", (e) => {
+          e.stopPropagation();
+          fn();
+        });
         g.addEventListener("keydown", (e) => {
           if (e.key === "Enter" || e.key === " ") fn();
         });
