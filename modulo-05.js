@@ -1,15 +1,16 @@
 let upzData = [];
+let currentSelection = null;
 
 // Inicializar mapa
 const map = L.map('map').setView([4.60, -74.08], 11);
 
+// Mapa colorido OpenStreetMap
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  attribution: '© OpenStreetMap',
+  attribution: '© OpenStreetMap contributors',
   maxZoom: 19
 }).addTo(map);
 
 let upzLayers = {};
-let currentSelection = null;
 
 // Cargar UPL
 fetch('upz_bogota.geojson')
@@ -17,76 +18,40 @@ fetch('upz_bogota.geojson')
   .then(data => {
     upzData = data.features.map(f => f.properties);
     
-    data.features.forEach(feature => {
+    const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8', '#F7DC6F'];
+    
+    data.features.forEach((feature, idx) => {
       const props = feature.properties;
-      const code = props.uplcodigo.split('UPZ')[1]?.trim() || props.id;
+      const color = colors[idx % colors.length];
       
-      // Layer para el polígono
       const layer = L.geoJSON(feature, {
         style: {
-          color: '#2fd4c8',
+          color: color,
           weight: 2,
-          opacity: 0.5,
-          fillColor: '#0f1419',
-          fillOpacity: 0.2
+          opacity: 0.8,
+          fillColor: color,
+          fillOpacity: 0.4
         },
         onEachFeature: (feature, layer) => {
           layer.on('click', () => selectUPZ(props));
+          layer.bindPopup(`<strong>${props.nombre}</strong><br>${props.uplcodigo}`);
         }
       }).addTo(map);
       
-      upzLayers[props.id] = { layer, code };
-      
-      // Agregar label con número
-      const bounds = layer.getBounds();
-      const center = bounds.getCenter();
-      
-      L.marker(center, {
-        icon: L.divIcon({
-          html: `<div class="upz-label">${code}</div>`,
-          className: 'upz-marker',
-          iconSize: [40, 40]
-        })
-      }).addTo(map);
+      upzLayers[props.id] = layer;
     });
     
     renderItemList();
   });
 
-// Estilo para labels
-const style = document.createElement('style');
-style.innerHTML = `
-  .upz-marker {
-    display: grid !important;
-    place-items: center !important;
-  }
-  .upz-label {
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: transparent;
-    color: #2fd4c8;
-    font-weight: 700;
-    font-size: 16px;
-    border: 2px solid #2fd4c8;
-    border-radius: 50%;
-    text-shadow: 0 0 6px rgba(0,0,0,0.8);
-  }
-`;
-document.head.appendChild(style);
-
 function renderItemList() {
   const container = document.getElementById('item-list');
   container.innerHTML = '';
   
-  upzData.slice(0, 20).forEach(upz => {
+  upzData.forEach(upz => {
     const div = document.createElement('div');
     div.className = 'upz-item' + (currentSelection?.id === upz.id ? ' active' : '');
-    div.innerHTML = `
-      <strong>${upz.uplcodigo}</strong> - ${upz.nombre}
-    `;
+    div.innerHTML = `${upz.uplcodigo} - ${upz.nombre}`;
     div.onclick = () => selectUPZ(upz);
     container.appendChild(div);
   });
@@ -95,26 +60,42 @@ function renderItemList() {
 function selectUPZ(upz) {
   currentSelection = upz;
   
-  // Actualizar mapa
   if (upzLayers[upz.id]) {
-    const bounds = upzLayers[upz.id].layer.getBounds();
+    const bounds = upzLayers[upz.id].getBounds();
     map.fitBounds(bounds);
-    upzLayers[upz.id].layer.setStyle({ fillOpacity: 0.4 });
   }
   
   // Actualizar panel derecho
-  const code = upz.uplcodigo.split('UPZ')[1]?.trim() || upz.id;
+  const code = upz.uplcodigo.replace('UPZ', '').trim();
   document.getElementById('detail-title').textContent = `UPL SELECCIONADA: ${code} · ${upz.nombre.toUpperCase()}`;
   
-  document.getElementById('section-title').textContent = `UPL seleccionada: ${code}`;
+  document.getElementById('detail-description').innerHTML = `
+    <p>La escala Meso (33 UPL) es el corazón del proyecto. Es aquí donde se gestiona la proximidad para lograr la ciudad de los 15 minutos.</p>
+    <p><strong>Estrategia Bogotá Viva</strong></p>
+  `;
   
   renderItemList();
 }
 
-// Tabs
-document.querySelectorAll('.scale-tab').forEach(btn => {
+// Tabs escala
+document.querySelectorAll('.scale-btn').forEach(btn => {
   btn.addEventListener('click', (e) => {
-    document.querySelectorAll('.scale-tab').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.scale-btn').forEach(b => b.classList.remove('active'));
     e.target.classList.add('active');
+    
+    const scale = e.target.dataset.scale;
+    
+    if (scale === 'macro') {
+      map.setView([4.60, -74.08], 10);
+    } else if (scale === 'meso') {
+      map.setView([4.60, -74.08], 11);
+    } else if (scale === 'micro') {
+      if (currentSelection) {
+        const bounds = upzLayers[currentSelection.id].getBounds();
+        map.fitBounds(bounds);
+      } else {
+        map.setView([4.60, -74.08], 12);
+      }
+    }
   });
 });
