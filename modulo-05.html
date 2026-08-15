@@ -3,260 +3,150 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RAPOT · Módulo 05 · Cómo vemos nosotros el POT</title>
+<title>RAPOT · Módulo 05 · Navegador Multiescalar</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="modulo-05.css">
 </head>
 <body>
-<div class="app">
-
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div class="brand" data-tooltip="RAPOT">
-      <div class="mark"><i class="fa-solid fa-diagram-project"></i></div>
-      <span class="nav-text">RAPOT</span>
+<div class="main-layout">
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <span class="breadcrumb">PORTAL HEURÍSTICO</span>
+      <span class="breadcrumb-sep">Pantalla 4 de 7</span>
     </div>
-
-    <div class="nav-group">
-      <a href="dashboard.html" class="nav-item" data-tooltip="Dashboard"><i class="fa-solid fa-house"></i><span class="nav-text">Dashboard</span></a>
+    <div class="topbar-right">
+      <span>Centro de ayuda</span>
+      <i class="fa-solid fa-bell"></i>
     </div>
+  </div>
 
-    <div class="nav-group">
-      <div class="nav-label">MÓDULOS</div>
-      <a href="modulo-01.html" class="nav-item" data-tooltip="01 · Construir la Red"><span class="num">01</span><i class="fa-solid fa-diagram-project"></i><span class="nav-text">Construir la Red</span></a>
-      <a href="modulo-02.html" class="nav-item" data-tooltip="02 · Medir la Red"><span class="num">02</span><i class="fa-solid fa-chart-simple"></i><span class="nav-text">Medir la Red</span></a>
-      <a href="modulo-03.html" class="nav-item" data-tooltip="03 · Discurso vs Realidad"><span class="num">03</span><i class="fa-solid fa-eye"></i><span class="nav-text">Discurso vs Realidad</span></a>
-      <a href="modulo-04.html" class="nav-item" data-tooltip="04 · Macromodelos"><span class="num">04</span><i class="fa-solid fa-bullseye"></i><span class="nav-text">Macromodelos</span></a>
-      <a href="modulo-05.html" class="nav-item active" data-tooltip="05 · Cómo vemos nosotros el POT"><span class="num">05</span><i class="fa-solid fa-magnifying-glass"></i><span class="nav-text">Cómo vemos nosotros el POT</span></a>
-      <a href="modulo-06.html" class="nav-item" data-tooltip="06 · POT ↔ ODS"><span class="num">06</span><i class="fa-solid fa-earth-americas"></i><span class="nav-text">POT ↔ ODS</span></a>
-      <a href="modulo-07.html" class="nav-item" data-tooltip="07 · Simulador"><span class="num">07</span><i class="fa-solid fa-flask"></i><span class="nav-text">Simulador</span></a>
-      <a href="modulo-08.html" class="nav-item" data-tooltip="08 · Modelo Propio"><span class="num">08</span><i class="fa-solid fa-city"></i><span class="nav-text">Modelo Propio</span></a>
-    </div>
-
-    <div class="nav-group">
-      <div class="nav-label">GESTIÓN</div>
-      <a href="proyectos.html" class="nav-item" data-tooltip="Proyectos"><i class="fa-solid fa-folder"></i><span class="nav-text">Proyectos</span></a>
-      <a href="fuentes.html" class="nav-item" data-tooltip="Fuentes y Documentos"><i class="fa-solid fa-file-lines"></i><span class="nav-text">Fuentes y Documentos</span></a>
-      <a href="favoritos.html" class="nav-item" data-tooltip="Favoritos"><i class="fa-solid fa-star"></i><span class="nav-text">Favoritos</span></a>
-      <a href="reportes.html" class="nav-item" data-tooltip="Reportes"><i class="fa-solid fa-chart-pie"></i><span class="nav-text">Reportes</span></a>
-      <a href="configuracion.html" class="nav-item" data-tooltip="Configuración"><i class="fa-solid fa-gear"></i><span class="nav-text">Configuración</span></a>
-    </div>
-
-    <div class="sidebar-footer">
-      <div class="avatar-sm" data-tooltip="Analista RAPOT · Plan de Ordenamiento">RA</div>
-      <div class="user-meta">
-        <div class="name">Analista RAPOT</div>
-        <div class="role">Plan de Ordenamiento</div>
-      </div>
-      <a href="demo.html" class="logout-btn" data-tooltip="Salir"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
-    </div>
-  </aside>
-  <main class="main">
-    <div class="topbar">
-      <h1>Módulo 05 · Cómo vemos nosotros el POT</h1>
-      <div class="topbar-actions">
-        <div class="search-box"><i class="fa-solid fa-magnifying-glass"></i><span>Buscar concepto...</span></div>
-        <button class="icon-btn"><i class="fa-regular fa-bell"></i><span class="dot"></span></button>
-      </div>
-    </div>
-
-    <div class="welcome">
-      <h2>Nuestra lectura de las 4 estructuras territoriales</h2>
-      <p>Explora cómo vemos nosotros las relaciones entre las cuatro estructuras territoriales. Conserva los controles de lectura, las métricas y la visualización de conexiones del módulo original.</p>
-    </div>
-
-    <div class="net-layout">
-
-      <!-- ================= PANEL DE INFORMACIÓN ================= -->
-      <div class="col right">
-
-        <div class="pcard escenarios-card">
-          <h2>Escenario: ¿qué pasa si apagamos una estructura?</h2>
-          <div class="scenario-buttons">
-            <button class="scenario-btn" data-sys="EEP">
-              <i class="fa-solid fa-circle-minus"></i>
-              <span class="sys-state">ON</span>
-              <span class="row-num">1</span>
-              <span class="row-icon"><i class="fa-solid fa-leaf" aria-hidden="true"></i></span>
-              <span class="btn-title">Sin Estructura Ecológica Principal</span>
-              <span class="btn-question">¿Qué pasaría con la ciudad sin humedales, ríos y cerros protegidos?</span>
-            </button>
-            <button class="scenario-btn" data-sys="EFC">
-              <i class="fa-solid fa-circle-minus"></i>
-              <span class="sys-state">ON</span>
-              <span class="row-num">2</span>
-              <span class="row-icon"><i class="fa-solid fa-heart" aria-hidden="true"></i></span>
-              <span class="btn-title">Sin Estructura Funcional y del Cuidado</span>
-              <span class="btn-question">¿Cómo cambiaría la vida cotidiana sin transporte, vivienda y cuidado conectados?</span>
-            </button>
-            <button class="scenario-btn" data-sys="ESECI">
-              <i class="fa-solid fa-circle-minus"></i>
-              <span class="sys-state">ON</span>
-              <span class="row-num">3</span>
-              <span class="row-icon"><i class="fa-solid fa-lightbulb" aria-hidden="true"></i></span>
-              <span class="btn-title">Sin Estructura Socioeconómica, Creativa y de Innovación</span>
-              <span class="btn-question">¿Cómo se sostendrían el empleo, la producción y el abastecimiento local?</span>
-            </button>
-            <button class="scenario-btn" data-sys="EIP">
-              <i class="fa-solid fa-circle-minus"></i>
-              <span class="sys-state">ON</span>
-              <span class="row-num">4</span>
-              <span class="row-icon"><i class="fa-solid fa-landmark" aria-hidden="true"></i></span>
-              <span class="btn-title">Sin Estructura Integradora de Patrimonios</span>
-              <span class="btn-question">¿Qué perdería la ciudad si su patrimonio y sus memorias desaparecieran?</span>
-            </button>
-          </div>
-          <button class="btn net-side-reset" id="btnReset"><i class="fa-solid fa-arrows-rotate"></i> Reactivar todas</button>
-        </div>
-
-        <div class="pcard" id="evCard">
-          <div id="evBox"></div>
-        </div>
-
-        <div class="pcard">
-          <h2>Escenario de nodo crítico
-            <span class="hint">Apaga el nodo más conectado y observa qué se rompe.</span>
-          </h2>
-          <p class="node-question" id="nodeQuestion">—</p>
-          <label class="node-label" for="nodeSelect">Concepto a desconectar</label>
-          <select id="nodeSelect" class="node-select"></select>
-          <p class="node-impact" id="nodeImpact">—</p>
-          <button class="btn node-sim-btn" id="btnNodeSim"><i class="fa-solid fa-power-off"></i> Simular sin este nodo</button>
-        </div>
-
-        <div class="pcard">
-          <h2>Nodos puente
-            <span class="hint">Conceptos que se relacionan con las tres estructuras distintas a la suya. Se detectan solos.</span>
-          </h2>
-          <div id="bridgeList"></div>
-        </div>
-
-        <div class="pcard">
-          <h2>Simulación del apagado</h2>
-          <div id="simBox"></div>
-        </div>
-
-        <div class="pcard">
-          <h2>Hallazgo de la simulación</h2>
-          <div class="finding" id="finding">—</div>
-        </div>
-
-        <div class="pcard">
-          <h2>Conexiones con otros sistemas
-            <span class="hint">Relaciones activas que cruzan de una estructura a otra. Es la medida del hallazgo principal y se calcula desde los datos.</span>
-          </h2>
-          <div id="rankList"></div>
-          <div id="topSys"></div>
-          <p class="note">
-            La centralidad de la red <b>no equivale a la jerarquía normativa del POT</b>. El POT define la
-            EEP como “primera ordenante” del territorio; esta red mide algo distinto: qué estructura resulta
-            <b>más articuladora</b> según las relaciones explícitas construidas a partir del documento.
-          </p>
-        </div>
-
-        <div class="pcard">
-          <h2>¿Qué sistema genera mayor dependencia?
-            <span class="hint">Relaciones que desaparecerían si ese sistema se apagara (como origen o destino).</span>
-          </h2>
-          <div id="compareList"></div>
-        </div>
-
+  <div class="content-wrapper">
+    <!-- SIDEBAR LEFT -->
+    <aside class="sidebar-left">
+      <div class="nav-top">
+        <i class="fa-solid fa-home"></i>
+        <i class="fa-solid fa-wrench"></i>
+        <i class="fa-solid fa-layer-group"></i>
       </div>
 
-      <!-- ================= RED + ESTADO ================= -->
-      <div class="col">
-        <div class="pcard net-card">
-          <div class="net-toolbar">
-            <div class="legend">
-              <div class="legend-item"><span class="lg-line"></span>Relación directa</div>
-              <div class="legend-item"><span class="lg-line dashed"></span>Relación indirecta</div>
-              <div class="legend-item"><span class="lg-dot soporte"></span>Soporte</div>
-              <div class="legend-item"><span class="lg-dot resiliencia"></span>Resiliencia</div>
-              <div class="legend-item"><span class="lg-line dashed" style="opacity:.45"></span>Por verificar</div>
-                </div>
-            <div class="net-btns">
-              <button class="btn" id="btnFit"><i class="fa-solid fa-arrows-rotate"></i> Centrar vista</button>
-            </div>
-          </div>
+      <div class="hero-section">
+        <h1>Navegador Multiescalar</h1>
+        <p>El Zoom de Eames</p>
+        <div class="description">Explora Bogotá desde múltiples escalas para entender su estructura y gestionar la proximidad de manera inteligente.</div>
+      </div>
 
-          <div class="net-body">
-            <div class="net-stage" id="stage">
-              <div class="zoom-controls" aria-label="Controles de zoom">
-                <button type="button" class="zoom-btn" id="btnZoomOut" aria-label="Alejar" title="Alejar">−</button>
-                <span class="zoom-value" id="zoomValue">100%</span>
-                <button type="button" class="zoom-btn" id="btnZoomIn" aria-label="Acercar" title="Acercar">+</button>
-                <button type="button" class="zoom-btn zoom-reset" id="btnZoomReset" aria-label="Restablecer zoom" title="Restablecer zoom"><i class="fa-solid fa-crosshairs"></i></button>
-              </div>
-              <svg id="svg" xmlns="http://www.w3.org/2000/svg" viewBox="-1964 -1937 3927 3910">
-                <defs>
-                  <marker id="ar-soporte" viewBox="0 0 10 10" refX="9" refY="5"
-                          markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse">
-                    <path d="M0,0 L10,5 L0,10 z" fill="#ffb55c"></path>
-                  </marker>
-                  <marker id="ar-resiliencia" viewBox="0 0 10 10" refX="9" refY="5"
-                          markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse">
-                    <path d="M0,0 L10,5 L0,10 z" fill="#72e3c0"></path>
-                  </marker>
-                  <linearGradient id="grad-eep" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stop-color="#8de3ff"></stop>
-                    <stop offset="100%" stop-color="#3e8fea"></stop>
-                  </linearGradient>
-                  <linearGradient id="grad-efc" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stop-color="#ffabc1"></stop>
-                    <stop offset="100%" stop-color="#e35b7f"></stop>
-                  </linearGradient>
-                  <linearGradient id="grad-eseci" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stop-color="#d0b4ff"></stop>
-                    <stop offset="100%" stop-color="#8c66d9"></stop>
-                  </linearGradient>
-                  <linearGradient id="grad-eip" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stop-color="#ffe6a1"></stop>
-                    <stop offset="100%" stop-color="#e8a83d"></stop>
-                  </linearGradient>
-                  <!-- desenfoque para que las relaciones se vean como una cinta sólida difuminada, sin neón -->
-                  <filter id="rel-blur" x="-60%" y="-60%" width="220%" height="220%">
-                    <feGaussianBlur stdDeviation="7"></feGaussianBlur>
-                  </filter>
-                </defs>
-                <g id="gGuides"></g>
-                <g id="gMembers"></g>
-                <g id="gRels"></g>
-                <g id="gNodes"></g>
-              </svg>
-              <div class="weak-banner hidden" id="weakBanner">
-                <i class="fa-solid fa-link-slash"></i>
-                <span id="weakBannerText"></span>
-              </div>
-              <div class="tooltip" id="tooltip"></div>
-            </div>
+      <div class="scale-tabs">
+        <button class="scale-tab active" data-scale="macro">Macro</button>
+        <button class="scale-tab" data-scale="meso">Meso</button>
+        <button class="scale-tab" data-scale="micro">Micro</button>
+      </div>
+
+      <div class="alt-views">
+        <div class="alt-label">Vistas alternativas</div>
+        <div class="alt-item">
+          <i class="fa-solid fa-globe"></i>
+          <span>Región Metropolitana<br/>20 municipios conectados</span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </div>
+        <div class="alt-item">
+          <i class="fa-solid fa-map"></i>
+          <span>Barrio Vital /<br/>Manzanas del Cuidado<br/>Unidad de proximidad</span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </div>
+      </div>
+
+      <div class="upz-section">
+        <div class="upz-label" id="section-title">UPL seleccionada: -</div>
+        <div class="upz-list" id="item-list"></div>
+      </div>
+    </aside>
+
+    <!-- CENTER MAP -->
+    <div class="map-section">
+      <div id="map"></div>
+      <div class="map-controls">
+        <button class="map-btn">+</button>
+        <div class="map-compass"></div>
+        <button class="map-btn">−</button>
+      </div>
+    </div>
+
+    <!-- SIDEBAR RIGHT -->
+    <aside class="sidebar-right">
+      <div class="scales-info">
+        <div class="scale-info">
+          <div class="scale-icon macro"></div>
+          <div>
+            <div class="scale-name">Macro</div>
+            <div class="scale-desc">Región Metropolitana<br/>Conectividad y flujos regionales</div>
           </div>
         </div>
-
-        <div class="pcard">
-          <h2>Estado de la red</h2>
-          <div class="stat-grid">
-            <div class="stat wide">
-              <div class="lbl">Relaciones activas</div>
-              <div class="val accent" id="mRelAct">—</div>
-              <div class="bar-track"><div class="bar-fill" id="mBar" style="width:100%"></div></div>
-            </div>
-            <div class="stat"><div class="lbl">Red activa</div><div class="val" id="mPct">—</div></div>
-            <div class="stat"><div class="lbl">Relaciones totales</div><div class="val" id="mRelTot">—</div></div>
-            <div class="stat"><div class="lbl">Nodos totales</div><div class="val" id="mNodTot">—</div></div>
-            <div class="stat"><div class="lbl">Nodos activos</div><div class="val" id="mNodAct">—</div></div>
-            <div class="stat"><div class="lbl">Componentes conectados</div><div class="val" id="mComp">—</div></div>
-            <div class="stat"><div class="lbl">Componente principal</div><div class="val" id="mMain">—</div></div>
-            <div class="stat"><div class="lbl">Conceptos aislados</div><div class="val" id="mIso">—</div></div>
-            <div class="stat wide"><div class="lbl">Sistema más conectado con los demás</div><div class="val" id="mCentral">—</div></div>
+        <div class="scale-info">
+          <div class="scale-icon meso"></div>
+          <div>
+            <div class="scale-name">Meso</div>
+            <div class="scale-desc">33 UPL<br/>Gestión de proximidad y equidad territorial</div>
+          </div>
+        </div>
+        <div class="scale-info">
+          <div class="scale-icon micro"></div>
+          <div>
+            <div class="scale-name">Micro</div>
+            <div class="scale-desc">Barrio / Manzana<br/>Experiencias cotidianas y diseño de intervenciones</div>
           </div>
         </div>
       </div>
-    </div>
-  </main>
+
+      <div class="upl-detail">
+        <div class="upl-header">
+          <h3 id="detail-title">UPL SELECCIONADA: 19 · FONTIBÓN</h3>
+          <i class="fa-solid fa-star"></i>
+        </div>
+        <div class="upl-description" id="detail-description">
+          <p>La escala Meso (33 UPL) es el corazón del proyecto. Es aquí donde se gestiona la proximidad para lograr la ciudad de los 15 minutos.</p>
+          <p><strong>Estrategia Bogotá Viva</strong></p>
+        </div>
+      </div>
+
+      <div class="metrics">
+        <div class="metric-card">
+          <div class="metric-number">32%</div>
+          <div class="metric-label">Déficit de Servicios</div>
+          <div class="metric-info">Déficit modo en UPL seleccionada vs. 21% promedio ciudad</div>
+          <div class="metric-chart"></div>
+          <a href="#">Ver detalle →</a>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-number">68%</div>
+          <div class="metric-label">Empleo Cercano</div>
+          <div class="metric-info">Empleo accesible en 30 min vs. 50% promedio ciudad</div>
+          <div class="metric-chart"></div>
+          <a href="#">Ver detalle →</a>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-number">74%</div>
+          <div class="metric-label">Proximidad (ciudad 30 min)</div>
+          <div class="metric-info">Población con acceso a 8 servicios esenciales en 30 min</div>
+          <div class="metric-chart"></div>
+          <a href="#">Ver detalle →</a>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-label">Comparar UPL</div>
+          <button class="compare-btn">+ Agregar UPL</button>
+        </div>
+      </div>
+    </aside>
+  </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="modulo-05.js"></script>
 </body>
 </html>
