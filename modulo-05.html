@@ -14,9 +14,9 @@
 <div class="layout">
   <!-- TOPBAR -->
   <div class="topbar">
-    <div class="topbar-content">
+    <div class="topbar-left">
       <span class="breadcrumb">PORTAL HEURÍSTICO</span>
-      <span class="breadcrumb-sep">Pantalla 4 de 7</span>
+      <span class="sep">Pantalla 4 de 7</span>
     </div>
     <div class="topbar-right">
       <span>Centro de ayuda</span>
@@ -27,82 +27,92 @@
   <div class="main">
     <!-- SIDEBAR LEFT -->
     <aside class="sidebar-left">
-      <div class="nav-icons">
+      <div class="nav-top">
         <i class="fa-solid fa-home"></i>
         <i class="fa-solid fa-wrench"></i>
         <i class="fa-solid fa-layer-group"></i>
       </div>
 
-      <div class="nav-title">
-        <h1>Navegador Multiescalar</h1>
-        <p>El Zoom de Eames</p>
+      <div class="logo">
+        <i class="fa-solid fa-check"></i>
       </div>
 
-      <div class="nav-description">
-        Explora Bogotá desde múltiples escalas para entender su estructura y gestionar la proximidad de manera inteligente.
+      <h1>Navegador Multiescalar</h1>
+      <p>El Zoom de Eames</p>
+
+      <div class="desc">Explora Bogotá desde múltiples escalas para entender su estructura y gestionar la proximidad de manera inteligente.</div>
+
+      <div class="tabs">
+        <button class="tab active" data-scale="macro">Macro</button>
+        <button class="tab" data-scale="meso">Meso</button>
+        <button class="tab" data-scale="micro">Micro</button>
       </div>
 
-      <div class="scale-buttons">
-        <button class="scale-btn active" data-scale="macro">Macro</button>
-        <button class="scale-btn" data-scale="meso">Meso</button>
-        <button class="scale-btn" data-scale="micro">Micro</button>
-      </div>
-
-      <div class="alt-views">
-        <div class="alt-title">VISTAS ALTERNATIVAS</div>
-        <div class="alt-item">
+      <div class="vistas">
+        <div class="vistas-label">Vistas alternativas</div>
+        <div class="vista-item">
           <i class="fa-solid fa-globe"></i>
-          <div class="alt-text">
-            <strong>Región Metropolitana</strong>
-            <p>20 municipios conectados</p>
-          </div>
+          <span>Región Metropolitana<br/>20 municipios conectados</span>
           <i class="fa-solid fa-arrow-right"></i>
         </div>
-        <div class="alt-item">
+        <div class="vista-item">
           <i class="fa-solid fa-map"></i>
-          <div class="alt-text">
-            <strong>Barrio Vital / Manzanas del Cuidado</strong>
-            <p>Unidad de proximidad</p>
-          </div>
+          <span>Barrio Vital /<br/>Manzanas del Cuidado<br/>Unidad de proximidad</span>
           <i class="fa-solid fa-arrow-right"></i>
         </div>
       </div>
 
-      <div class="upz-selector">
-        <div class="upz-title">SELECCIONADA:</div>
-        <div class="upz-list" id="item-list"></div>
+      <div class="legend">
+        <div class="legend-label">Leyenda</div>
+        <div class="legend-item">
+          <span class="dot upl"></span> UPL seleccionada
+        </div>
+        <div class="legend-item">
+          <span class="dot upl-focus"></span> UPL con foco estratégico
+        </div>
+        <div class="legend-item">
+          <span class="line"></span> Límite de Bogotá
+        </div>
       </div>
+
+      <div class="upz-list" id="item-list"></div>
+
+      <div class="user">AV</div>
     </aside>
 
-    <!-- MAP -->
-    <div class="map-wrapper">
+    <!-- CENTER MAP -->
+    <div class="map-section">
       <div id="map"></div>
       <div class="map-controls">
-        <button class="map-btn">+</button>
+        <button class="ctrl">+</button>
         <div class="compass"></div>
-        <button class="map-btn">−</button>
+        <button class="ctrl">−</button>
       </div>
     </div>
 
     <!-- SIDEBAR RIGHT -->
     <aside class="sidebar-right">
-      <div class="scales-legend">
-        <div class="legend-item">
-          <div class="legend-color macro"></div>
+      <div class="escalas">
+        <div class="escala-label">LAS 3 ESCALAS DEL PROYECTO</div>
+        
+        <div class="escala-item macro-box">
+          <i class="fa-solid fa-globe"></i>
           <div>
             <strong>Macro</strong>
             <p>Región Metropolitana<br/>Conectividad y flujos regionales</p>
           </div>
         </div>
-        <div class="legend-item">
-          <div class="legend-color meso"></div>
+
+        <div class="escala-item meso-box">
+          <div class="box-icon">33</div>
           <div>
             <strong>Meso</strong>
             <p>33 UPL<br/>Gestión de proximidad y equidad territorial</p>
           </div>
         </div>
-        <div class="legend-item">
-          <div class="legend-color micro"></div>
+
+        <div class="escala-item micro-box">
+          <div class="box-icon">🏘️</div>
           <div>
             <strong>Micro</strong>
             <p>Barrio / Manzana<br/>Experiencias cotidianas y diseño de intervenciones</p>
@@ -110,30 +120,44 @@
         </div>
       </div>
 
-      <div class="upl-info">
-        <div class="upl-header">
-          <h2 id="detail-title">UPL SELECCIONADA: 19 · FONTIBÓN</h2>
-          <i class="fa-solid fa-star"></i>
-        </div>
-        <div class="upl-text" id="detail-description">
-          <p>La escala Meso (33 UPL) es el corazón del proyecto. Es aquí donde se gestiona la proximidad para lograr la ciudad de los 15 minutos.</p>
-          <p><strong>Estrategia Bogotá Viva</strong></p>
-        </div>
+      <div class="detail">
+        <h2 id="detail-title">UPL SELECCIONADA: 19 · FONTIBÓN</h2>
+        <i class="fa-solid fa-star"></i>
       </div>
 
-      <div class="metrics-section">
-        <div class="metric">
-          <div class="metric-value">32%</div>
-          <div class="metric-name">DÉFICIT DE SERVICIOS</div>
-          <div class="metric-text">Déficit modo en UPL seleccionada vs. 21% promedio ciudad</div>
+      <div class="detail-text" id="detail-description">
+        <p>La escala Meso (33 UPL) es el corazón del proyecto. Es aquí donde se gestiona la proximidad para lograr la ciudad de los 30 minutos <span style="font-size: 8px; color: #7a8fa0;">[4, 59; 212]</span></p>
+        <p><strong>Estrategia Bogotá Viva</strong></p>
+      </div>
+
+      <div class="metrics">
+        <div class="metric-box">
+          <div class="metric-number">32%</div>
+          <div class="metric-label">DÉFICIT DE SERVICIOS</div>
+          <div class="metric-desc">Déficit modo en UPL seleccionada vs. 21% promedio ciudad</div>
+          <div class="metric-chart"></div>
           <a href="#">Ver detalle →</a>
         </div>
 
-        <div class="metric">
-          <div class="metric-value">68%</div>
-          <div class="metric-name">EMPLEO CERCANO</div>
-          <div class="metric-text">Empleo accesible en 30 min vs. 50% promedio ciudad</div>
+        <div class="metric-box">
+          <div class="metric-number">68%</div>
+          <div class="metric-label">EMPLEO CERCANO</div>
+          <div class="metric-desc">Empleo accesible en 30 min vs. 50% promedio ciudad</div>
+          <div class="metric-chart"></div>
           <a href="#">Ver detalle →</a>
+        </div>
+
+        <div class="metric-box">
+          <div class="metric-number">74%</div>
+          <div class="metric-label">PROXIMIDAD (CIUDAD 30 MIN)</div>
+          <div class="metric-desc">Población con acceso a 8 servicios esenciales en 30 min</div>
+          <div class="metric-chart"></div>
+          <a href="#">Ver detalle →</a>
+        </div>
+
+        <div class="metric-box compare">
+          <div class="metric-label">COMPARAR UPL</div>
+          <button class="btn-compare">+ Agregar UPL</button>
         </div>
       </div>
     </aside>
