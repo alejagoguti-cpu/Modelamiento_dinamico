@@ -101,34 +101,20 @@
             <button id="exportBtn" class="outline-btn">
               ⇩ &nbsp;Guardar reporte final
             </button>
+            <a id="downloadDeckBtn" class="outline-btn deck-download" href="M_dulo_07___REDSEG_N_EL_POT.pdf" download="SINTESIS_Modulo_07.pdf" aria-label="Descargar presentación SÍNTESIS en PDF">
+              ⇩ &nbsp;Descargar SÍNTESIS
+            </a>
           </div>
-          <article class="interaction-card">
-            <button class="close-card" data-close="interaction-card">×</button>
-            <div class="round-icon">⌘</div>
-            <div>
-              <h3>
-                El éxito del sistema<br />es producto de<br /><span
-                  >la interacción.</span
-                >
-              </h3>
-              <p>
-                Si el tiempo de viaje promedio los 30 min o la resiliencia
-                falla, la base entra en Game Over por colapso sistémico.
-              </p>
+          <article class="hero-visual" aria-label="Modelo urbano principal">
+            <div class="urban-mesh" aria-hidden="true">
+              <span class="mesh-line line-a"></span><span class="mesh-line line-b"></span><span class="mesh-line line-c"></span>
+              <span class="mesh-route route-a"></span><span class="mesh-route route-b"></span>
+              <div class="city-silhouette">
+                <i class="tower tower-1"></i><i class="tower tower-2"></i><i class="tower tower-3"></i><i class="tower tower-4"></i><i class="tower tower-5"></i><i class="tower tower-6"></i><i class="tower tower-7"></i>
+              </div>
             </div>
-          </article>
-          <article class="game-card">
-            <div class="game-glow"></div>
-            <div class="game-icon">⚠</div>
-            <h2>GAME OVER</h2>
-            <h3>Colapso sistémico</h3>
-            <p>
-              La habitabilidad de la ciudad ha excedido los límites críticos.
-              Acciones requeridas.
-            </p>
-            <button id="diagnoseBtn" class="danger-btn">
-              Ver diagnóstico crítico
-            </button>
+            <div class="hero-visual-caption"><span class="signal-dot"></span><span>BOGOTÁ VIVA</span><b>MODELO URBANO · ESCENARIO ÓPTIMO 2040</b></div>
+            <button id="diagnoseBtn" class="danger-btn hero-diagnose">Ver diagnóstico crítico</button>
           </article>
         </section>
 
@@ -225,7 +211,7 @@
           <span>Modelo activo: <b>Bogotá Viva · Escenario Óptimo 2040</b></span
           ><span>Simulación completada: <b>Hoy, 08:42</b></span
           ><span>Confianza del modelo: <b>Alta</b> <i></i></span
-          ><button id="exportBottom">⇩ &nbsp; Exportar dashboard</button>
+          ><button id="exportBottom">⇩ &nbsp; Guardar síntesis</button>
         </footer>
       </main>
     </div>
@@ -264,6 +250,7 @@
               Restablecer red</button
             ><button type="button" id="networkZoomIn" title="Acercar">+</button
             ><span>Arrastra el fondo para desplazarte</span>
+            <a id="downloadDeckModalBtn" class="network-deck-download" href="M_dulo_07___REDSEG_N_EL_POT.pdf" download="SINTESIS_Modulo_07.pdf" aria-label="Descargar presentación SÍNTESIS en PDF">⇩ Descargar SÍNTESIS</a>
             <label class="node-search" for="nodeSearchInput">
               <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
               <input id="nodeSearchInput" type="search" placeholder="Buscar nodo..." autocomplete="off" />
