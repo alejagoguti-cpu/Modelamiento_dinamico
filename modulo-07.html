@@ -269,10 +269,30 @@
               aria-label="Convenciones de la red"
             >
               <b>Convenciones</b>
-              <span class="toolbar-convention direct"><i></i>Directa</span>
-              <span class="toolbar-convention indirect"><i></i>Indirecta</span>
-              <span class="toolbar-convention support"><i></i>Soporte</span>
-              <span class="toolbar-convention result"><i></i>Resultado</span>
+              <label class="toolbar-convention all-conventions"><input type="checkbox" id="edge-filter-all" checked /><i></i> Todas</label>
+              <label class="toolbar-convention direct"><input type="checkbox" class="edge-filter" data-edge-type="direct" checked /><i></i>Directa</label>
+              <label class="toolbar-convention indirect"><input type="checkbox" class="edge-filter" data-edge-type="indirect" checked /><i></i>Indirecta</label>
+              <label class="toolbar-convention support"><input type="checkbox" class="edge-filter" data-edge-type="support" checked /><i></i>Soporte</label>
+              <label class="toolbar-convention result"><input type="checkbox" class="edge-filter" data-edge-type="result" checked /><i></i>Resultado</label>
+              <div class="toolbar-layers-summary">
+                <b><i class="fa-solid fa-layer-group"></i> Capas del sistema</b>
+                <span
+                >
+                <small
+                  ><strong class="layer-red-text">Capa Roja · Ecológica</strong>
+                  Soporte vital y EEP · POT, pág. 112</small
+                >
+                <small
+                  ><strong class="layer-blue-text"
+                    >Capa Azul · Determinista</strong
+                  >
+                  Vías, Metro y redes · POT, pág. 170</small
+                >
+                <small
+                  ><strong class="layer-green-text">Capa Verde · Social</strong>
+                  Ciudadanos y empresas con agencia · POT, pág. 218</small
+                >
+              </div>
             </div>
           </div>
           <div id="networkCanvas" class="network-canvas"></div>
@@ -320,40 +340,6 @@
                   <i class="fa-solid fa-layer-group"></i><strong>Ver más</strong
                   ><span>Capas y metodología</span>
                 </div>
-              </div>
-            </div>
-            <div class="network-panel layers-panel">
-              <h3>
-                <span class="panel-icon teal"
-                  ><i class="fa-solid fa-layer-group"></i></span
-                >Capas del sistema
-              </h3>
-              <p class="panel-caption">
-                Activa o desactiva capas para analizar diferentes variables del
-                sistema urbano.
-              </p>
-              <div class="layer-item red">
-                <i></i
-                ><span
-                  ><b>Capa Roja · Ecológica</b
-                  ><small>Soporte vital y EEP · POT, pág. 112</small></span
-                >
-              </div>
-              <div class="layer-item blue">
-                <i></i
-                ><span
-                  ><b>Capa Azul · Determinista</b
-                  ><small>Vías, Metro y redes · POT, pág. 170</small></span
-                >
-              </div>
-              <div class="layer-item green">
-                <i></i
-                ><span
-                  ><b>Capa Verde · Social</b
-                  ><small
-                    >Ciudadanos y empresas con agencia · POT, pág. 218</small
-                  ></span
-                >
               </div>
             </div>
           </aside>
