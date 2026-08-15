@@ -912,7 +912,8 @@
           hiddenNodes.has(Number(g.dataset.nodeIndex)),
         );
       });
-      $$(".network-edge", canvas).forEach((e, edgeIndex) => {
+      $$(".network-edge, .network-edge-hit", canvas).forEach((e) => {
+        const edgeIndex = Number(e.dataset.edgeIndex);
         const [a, b] =
           networks[document.body.dataset.activeNetwork || "30min"].edges[
             edgeIndex
@@ -925,8 +926,9 @@
     };
     const hideNodeAndConnections = (item, index) => {
       hiddenNodes.add(index);
-      $$(".network-edge", canvas).forEach((e, edgeIndex) => {
-        const [a, b] = item.edges[edgeIndex];
+      $$(".network-edge, .network-edge-hit", canvas).forEach((e) => {
+        const edgeIndex = Number(e.dataset.edgeIndex);
+        const [a, b] = item.edges[edgeIndex] || [];
         if (a === index || b === index) e.classList.add("hidden-network-edge");
       });
       const node = $(`.network-node[data-node-index="${index}"]`, canvas);
