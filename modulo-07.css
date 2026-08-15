@@ -3398,3 +3398,48 @@ body {
 /* Categorías temáticas independientes por escenario */
 .category-filters{display:inline-flex;align-items:center;gap:5px;flex:1 1 100%;flex-wrap:wrap;padding-top:4px;color:#8eaaa5;font-size:9px}.category-filters>b{color:#46d6d0;letter-spacing:.08em;text-transform:uppercase;margin-right:3px}.category-filter{display:inline-flex;align-items:center;gap:5px;min-height:24px;padding:3px 7px;border:1px solid color-mix(in srgb,var(--category-color) 42%,transparent);border-radius:999px;background:rgba(11,12,15,.68);color:#c9d8d4;cursor:pointer;transition:opacity .2s ease,border-color .2s ease,box-shadow .2s ease}.category-filter input{appearance:none;width:11px;height:11px;margin:0;border:1px solid var(--category-color);border-radius:50%;background:#0b0c0f;display:grid;place-content:center}.category-filter input::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--category-color);transform:scale(0);transition:transform .15s ease}.category-filter input:checked::before{transform:scale(1)}.category-filter:has(input:not(:checked)){opacity:.42}.category-filter:has(input:checked){box-shadow:0 0 10px color-mix(in srgb,var(--category-color) 16%,transparent)}.category-halos{pointer-events:none}.category-halo rect{fill:color-mix(in srgb,var(--category-color) 5%,transparent);stroke:color-mix(in srgb,var(--category-color) 34%,transparent);stroke-width:1.2;stroke-dasharray:5 7;opacity:.5}.category-halo text{fill:var(--category-color);font:600 10px/1 Arial,sans-serif;letter-spacing:.05em;opacity:.68;text-transform:uppercase}.category-halo.category-hidden{display:none}.network-node.category-hidden{opacity:.08!important;filter:saturate(.15)}.network-edge.category-hidden,.network-edge-hit.category-hidden{opacity:0!important;pointer-events:none!important}
 @media (max-width:760px){.category-filters{order:5;gap:4px}.category-filter{min-height:32px;font-size:10px}}
+
+/* Descarga de la presentación SÍNTESIS */
+#downloadDeckBtn.deck-download {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 196px;
+  min-height: 42px;
+  margin-top: 12px;
+  text-decoration: none;
+  color: #46d6d0;
+  border: 1px solid rgba(70,214,208,.58);
+  background: rgba(11,12,15,.72);
+  cursor: pointer;
+}
+#downloadDeckBtn.deck-download:hover,
+#downloadDeckBtn.deck-download:focus-visible {
+  color: #f5f7f8;
+  border-color: #e89a6c;
+  outline: none;
+  box-shadow: 0 0 16px rgba(70,214,208,.16);
+}
+@media (max-width: 760px) {
+  #downloadDeckBtn.deck-download {
+    width: 100%;
+    margin-top: 10px;
+  }
+}
+/* Cuando una categoría se desactiva, no queda ningún elemento interactivo fantasma. */
+.network-node.hidden-network-node,
+.network-edge.hidden-network-edge,
+.network-edge-hit.hidden-network-edge,
+.network-node.category-hidden,
+.network-edge.category-hidden,
+.network-edge-hit.category-hidden {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+}
+.category-halo.category-hidden {
+  display: none !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+}
