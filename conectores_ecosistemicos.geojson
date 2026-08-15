@@ -1,0 +1,114 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 1,
+        "nombre": "Corredor Verde Cámara Séptima",
+        "tipo": "Corredor Verde",
+        "color": "#2FD4C8"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-74.16, 4.65],
+          [-74.14, 4.62],
+          [-74.12, 4.60],
+          [-74.10, 4.58]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 2,
+        "nombre": "Corredor de Agua - Río Bogotá",
+        "tipo": "Corredor de Agua",
+        "color": "#3498DB"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-74.18, 4.62],
+          [-74.15, 4.61],
+          [-74.12, 4.60],
+          [-74.08, 4.59]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 3,
+        "nombre": "Corredor de Páramo - Sumapaz",
+        "tipo": "Corredor de Páramo",
+        "color": "#27AE60"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-74.16, 4.68],
+          [-74.14, 4.65],
+          [-74.12, 4.62],
+          [-74.10, 4.58]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 4,
+        "nombre": "Red Ecológica de Humedales",
+        "tipo": "Red Humedales",
+        "color": "#4ADEAO"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-74.15, 4.645],
+          [-74.14, 4.635],
+          [-74.16, 4.627]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 5,
+        "nombre": "Reserva Forestal Thomas van der Hammen",
+        "tipo": "Reserva Forestal",
+        "color": "#229954"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-74.17, 4.66],
+          [-74.13, 4.66],
+          [-74.13, 4.70],
+          [-74.17, 4.70],
+          [-74.17, 4.66]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 6,
+        "nombre": "Cerros Orientales",
+        "tipo": "Cerros",
+        "color": "#1E8449"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-74.06, 4.55],
+          [-74.02, 4.55],
+          [-74.02, 4.70],
+          [-74.06, 4.70],
+          [-74.06, 4.55]
+        ]]
+      }
+    }
+  ]
+}

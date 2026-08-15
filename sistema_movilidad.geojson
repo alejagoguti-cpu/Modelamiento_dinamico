@@ -1,0 +1,189 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 1,
+        "nombre": "Línea 1 Metro",
+        "tipo": "Metro",
+        "color": "#E74C3C"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-74.23, 4.65],
+          [-74.20, 4.64],
+          [-74.18, 4.63],
+          [-74.15, 4.62],
+          [-74.12, 4.61],
+          [-74.10, 4.60],
+          [-74.08, 4.58]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 2,
+        "nombre": "Línea 2 Metro (Suba-Engativá)",
+        "tipo": "Metro",
+        "color": "#E74C3C"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-74.10, 4.75],
+          [-74.10, 4.72],
+          [-74.10, 4.68],
+          [-74.10, 4.65],
+          [-74.10, 4.62]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 3,
+        "nombre": "BRT Troncal",
+        "tipo": "BRT",
+        "color": "#2C3E50"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-74.20, 4.68],
+          [-74.15, 4.66],
+          [-74.10, 4.64],
+          [-74.05, 4.62],
+          [-74.00, 4.60]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 4,
+        "nombre": "RegioTram (Tren de cercanías)",
+        "tipo": "RegioTram",
+        "color": "#3498DB"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-74.25, 4.65],
+          [-74.20, 4.63],
+          [-74.15, 4.61],
+          [-74.10, 4.59],
+          [-74.05, 4.57]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 5,
+        "nombre": "Cable Aéreo San Rafael - La Calera",
+        "tipo": "Cable Aéreo",
+        "color": "#9B59B6"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-74.05, 4.72],
+          [-74.08, 4.68],
+          [-74.10, 4.65]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 6,
+        "nombre": "Cable Aéreo San Cristóbal",
+        "tipo": "Cable Aéreo",
+        "color": "#9B59B6"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-74.05, 4.59],
+          [-74.07, 4.57],
+          [-74.09, 4.55]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 7,
+        "nombre": "Cable Aéreo Ciudad Bolívar",
+        "tipo": "Cable Aéreo",
+        "color": "#9B59B6"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-74.12, 4.48],
+          [-74.13, 4.50],
+          [-74.14, 4.52]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 8,
+        "nombre": "Cable Aéreo Porvenir",
+        "tipo": "Cable Aéreo",
+        "color": "#9B59B6"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-74.20, 4.42],
+          [-74.19, 4.44],
+          [-74.18, 4.46]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 9,
+        "nombre": "Malla vial arterial",
+        "tipo": "Vía Arterial",
+        "color": "#95A5A6"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-74.25, 4.70],
+          [-74.20, 4.70],
+          [-74.15, 4.70],
+          [-74.10, 4.70],
+          [-74.05, 4.70]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 10,
+        "nombre": "Corredor Verde Carrera Séptima",
+        "tipo": "Corredor Verde",
+        "color": "#27AE60"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-74.08, 4.75],
+          [-74.08, 4.70],
+          [-74.08, 4.65],
+          [-74.08, 4.60],
+          [-74.08, 4.55]
+        ]
+      }
+    }
+  ]
+}

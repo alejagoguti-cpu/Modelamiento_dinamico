@@ -1,0 +1,330 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 1,
+        "nombre": "Toberín",
+        "estado": "activa",
+        "color": "#4ade80"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-74.035, 4.718]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 2,
+        "nombre": "Usaquén",
+        "estado": "activa",
+        "color": "#4ade80"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-74.012, 4.705]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 3,
+        "nombre": "Chapinero",
+        "estado": "activa",
+        "color": "#4ade80"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-74.052, 4.682]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 4,
+        "nombre": "Barrios Unidos",
+        "estado": "activa",
+        "color": "#4ade80"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-74.078, 4.671]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 5,
+        "nombre": "Teusaquillo",
+        "estado": "activa",
+        "color": "#4ade80"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-74.073, 4.645]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 6,
+        "nombre": "Centro Histórico",
+        "estado": "activa",
+        "color": "#4ade80"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-74.076, 4.607]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 7,
+        "nombre": "San Cristóbal",
+        "estado": "activa",
+        "color": "#4ade80"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-74.071, 4.595]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 8,
+        "nombre": "Puente Aranda",
+        "estado": "activa",
+        "color": "#4ade80"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-74.098, 4.612]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 9,
+        "nombre": "Restrepo",
+        "estado": "activa",
+        "color": "#4ade80"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-74.063, 4.569]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 10,
+        "nombre": "Usme",
+        "estado": "activa",
+        "color": "#4ade80"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-74.033, 4.513]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 11,
+        "nombre": "Entrerríos",
+        "estado": "activa",
+        "color": "#4ade80"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-73.999, 4.582]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 12,
+        "nombre": "Rafael Uribe Umaña",
+        "estado": "activa",
+        "color": "#4ade80"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-74.102, 4.565]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 13,
+        "nombre": "Tunjuelito",
+        "estado": "activa",
+        "color": "#4ade80"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-74.095, 4.525]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 14,
+        "nombre": "Lucero",
+        "estado": "activa",
+        "color": "#4ade80"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-74.135, 4.499]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 15,
+        "nombre": "Kennedy",
+        "estado": "activa",
+        "color": "#4ade80"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-74.162, 4.565]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 16,
+        "nombre": "Patio Bonito",
+        "estado": "activa",
+        "color": "#4ade80"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-74.172, 4.493]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 17,
+        "nombre": "Bosques",
+        "estado": "activa",
+        "color": "#4ade80"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-74.105, 4.455]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 18,
+        "nombre": "Arborizadora",
+        "estado": "activa",
+        "color": "#4ade80"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-74.167, 4.418]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 19,
+        "nombre": "Edén",
+        "estado": "activa",
+        "color": "#4ade80"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-74.146, 4.403]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 20,
+        "nombre": "Porvenir",
+        "estado": "proyectada",
+        "color": "#2fd4c8"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-74.197, 4.420]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 21,
+        "nombre": "Tabora",
+        "estado": "activa",
+        "color": "#4ade80"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-74.137, 4.642]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 22,
+        "nombre": "Salitré",
+        "estado": "activa",
+        "color": "#4ade80"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-74.126, 4.598]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 23,
+        "nombre": "Britalia",
+        "estado": "activa",
+        "color": "#4ade80"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-74.152, 4.696]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 24,
+        "nombre": "Rincón de Suba",
+        "estado": "activa",
+        "color": "#4ade80"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-74.098, 4.745]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 25,
+        "nombre": "Fontibón",
+        "estado": "activa",
+        "color": "#4ade80"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-74.208, 4.647]
+      }
+    }
+  ]
+}

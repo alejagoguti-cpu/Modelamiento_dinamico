@@ -1,0 +1,290 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 1,
+        "nombre": "Usaquén",
+        "tipo": "Espontáneo",
+        "color": "#FFB81C"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-74.01, 4.71],
+          [-73.98, 4.71],
+          [-73.98, 4.74],
+          [-74.01, 4.74],
+          [-74.01, 4.71]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 2,
+        "nombre": "Parque de la 93",
+        "tipo": "Espontáneo",
+        "color": "#FFB81C"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-74.04, 4.72],
+          [-74.01, 4.72],
+          [-74.01, 4.75],
+          [-74.04, 4.75],
+          [-74.04, 4.72]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 3,
+        "nombre": "San Felipe",
+        "tipo": "Espontáneo",
+        "color": "#FFB81C"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-74.06, 4.69],
+          [-74.03, 4.69],
+          [-74.03, 4.72],
+          [-74.06, 4.72],
+          [-74.06, 4.69]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 4,
+        "nombre": "La 85",
+        "tipo": "Espontáneo",
+        "color": "#FFB81C"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-74.05, 4.66],
+          [-74.02, 4.66],
+          [-74.02, 4.69],
+          [-74.05, 4.69],
+          [-74.05, 4.66]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 5,
+        "nombre": "Chapinero",
+        "tipo": "Espontáneo",
+        "color": "#FFB81C"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-74.07, 4.64],
+          [-74.04, 4.64],
+          [-74.04, 4.67],
+          [-74.07, 4.67],
+          [-74.07, 4.64]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 6,
+        "nombre": "Diverso La Playa",
+        "tipo": "Espontáneo",
+        "color": "#FFB81C"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-74.08, 4.62],
+          [-74.05, 4.62],
+          [-74.05, 4.65],
+          [-74.08, 4.65],
+          [-74.08, 4.62]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 7,
+        "nombre": "Teusaquillo",
+        "tipo": "Espontáneo",
+        "color": "#FFB81C"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-74.10, 4.62],
+          [-74.07, 4.62],
+          [-74.07, 4.65],
+          [-74.10, 4.65],
+          [-74.10, 4.62]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 8,
+        "nombre": "Centro Internacional",
+        "tipo": "Espontáneo",
+        "color": "#FFB81C"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-74.09, 4.58],
+          [-74.06, 4.58],
+          [-74.06, 4.61],
+          [-74.09, 4.61],
+          [-74.09, 4.58]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 9,
+        "nombre": "La Candelaria - Santa Fe",
+        "tipo": "Espontáneo",
+        "color": "#FFB81C"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-74.08, 4.56],
+          [-74.05, 4.56],
+          [-74.05, 4.59],
+          [-74.08, 4.59],
+          [-74.08, 4.56]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 10,
+        "nombre": "Bronx DC",
+        "tipo": "Inducido",
+        "color": "#9B9B9B"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-74.10, 4.54],
+          [-74.07, 4.54],
+          [-74.07, 4.57],
+          [-74.10, 4.57],
+          [-74.10, 4.54]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 11,
+        "nombre": "Fontibón",
+        "tipo": "Inducido",
+        "color": "#9B9B9B"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-74.18, 4.64],
+          [-74.15, 4.64],
+          [-74.15, 4.67],
+          [-74.18, 4.67],
+          [-74.18, 4.64]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 12,
+        "nombre": "Ciencia, Tecnología e Innovación",
+        "tipo": "Inducido",
+        "color": "#9B9B9B"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-74.12, 4.60],
+          [-74.09, 4.60],
+          [-74.09, 4.63],
+          [-74.12, 4.63],
+          [-74.12, 4.60]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 13,
+        "nombre": "ZIBo",
+        "tipo": "Inducido",
+        "color": "#9B9B9B"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-74.12, 4.54],
+          [-74.09, 4.54],
+          [-74.09, 4.57],
+          [-74.12, 4.57],
+          [-74.12, 4.54]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 14,
+        "nombre": "Campín",
+        "tipo": "Inducido",
+        "color": "#9B9B9B"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-74.10, 4.61],
+          [-74.07, 4.61],
+          [-74.07, 4.64],
+          [-74.10, 4.64],
+          [-74.10, 4.61]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 15,
+        "nombre": "Castellana",
+        "tipo": "Inducido",
+        "color": "#9B9B9B"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-74.08, 4.59],
+          [-74.05, 4.59],
+          [-74.05, 4.62],
+          [-74.08, 4.62],
+          [-74.08, 4.59]
+        ]]
+      }
+    }
+  ]
+}

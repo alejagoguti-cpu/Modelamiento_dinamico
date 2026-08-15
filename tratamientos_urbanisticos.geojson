@@ -1,0 +1,77 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 1,
+        "nombre": "Consolidación",
+        "color": "#1F3A93"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-74.16, 4.60],
+          [-74.12, 4.60],
+          [-74.12, 4.64],
+          [-74.16, 4.64],
+          [-74.16, 4.60]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 2,
+        "nombre": "Desarrollo",
+        "color": "#FFB81C"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-74.14, 4.58],
+          [-74.10, 4.58],
+          [-74.10, 4.62],
+          [-74.14, 4.62],
+          [-74.14, 4.58]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 3,
+        "nombre": "Mejoramiento Integral",
+        "color": "#E74C3C"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-74.13, 4.56],
+          [-74.09, 4.56],
+          [-74.09, 4.60],
+          [-74.13, 4.60],
+          [-74.13, 4.56]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 4,
+        "nombre": "Renovación Urbana",
+        "color": "#8B4513"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-74.15, 4.54],
+          [-74.10, 4.54],
+          [-74.10, 4.58],
+          [-74.15, 4.58],
+          [-74.15, 4.54]
+        ]]
+      }
+    }
+  ]
+}

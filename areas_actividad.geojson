@@ -1,0 +1,81 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 1,
+        "nombre": "Estacionarte - Receptora de vivienda de interés social",
+        "tipo": "AAR",
+        "color": "#D9824E"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-74.15, 4.62],
+          [-74.12, 4.62],
+          [-74.12, 4.65],
+          [-74.15, 4.65],
+          [-74.15, 4.62]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 2,
+        "nombre": "Grandes Servicios Metropolitanos",
+        "tipo": "AAGM",
+        "color": "#6B4C9A"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-74.13, 4.60],
+          [-74.10, 4.60],
+          [-74.10, 4.63],
+          [-74.13, 4.63],
+          [-74.13, 4.60]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 3,
+        "nombre": "Proximidad - Generadora de soportes urbanos",
+        "tipo": "AAP",
+        "color": "#B8860B"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-74.16, 4.58],
+          [-74.11, 4.58],
+          [-74.11, 4.62],
+          [-74.16, 4.62],
+          [-74.16, 4.58]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 4,
+        "nombre": "Estacionarte - Receptora de actividades económicas",
+        "tipo": "AAE",
+        "color": "#FF6B35"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-74.14, 4.56],
+          [-74.08, 4.56],
+          [-74.08, 4.61],
+          [-74.14, 4.61],
+          [-74.14, 4.56]
+        ]]
+      }
+    }
+  ]
+}

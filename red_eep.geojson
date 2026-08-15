@@ -1,0 +1,187 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "h1",
+        "nombre": "Humedales",
+        "tipo": "nodo_principal",
+        "size": "large"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-74.15, 4.63]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "rio",
+        "nombre": "Ríos",
+        "tipo": "nodo_principal",
+        "size": "large"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-74.18, 4.60]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ce",
+        "nombre": "Cerros Orientales",
+        "tipo": "nodo_principal",
+        "size": "large"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-74.05, 4.68]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "corr",
+        "nombre": "Corredores ecológicos",
+        "tipo": "nodo_secundario",
+        "size": "medium"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-74.12, 4.70]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "qb",
+        "nombre": "Quebradas",
+        "tipo": "nodo_secundario",
+        "size": "medium"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-74.13, 4.61]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ap",
+        "nombre": "Áreas protegidas",
+        "tipo": "nodo_secundario",
+        "size": "medium"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-74.08, 4.65]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ru",
+        "nombre": "Bosques urbanos",
+        "tipo": "nodo_secundario",
+        "size": "medium"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-74.10, 4.58]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cm",
+        "nombre": "Cobertura vegetal climática",
+        "tipo": "nodo_secundario",
+        "size": "medium"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-74.14, 4.52]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "pb",
+        "nombre": "Parques de borde",
+        "tipo": "nodo_terciario",
+        "size": "small"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-74.16, 4.58]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "rf",
+        "nombre": "Reservas forestales",
+        "tipo": "nodo_terciario",
+        "size": "small"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-74.06, 4.62]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cp",
+        "nombre": "Complejos de páramos",
+        "tipo": "nodo_terciario",
+        "size": "small"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-74.18, 4.70]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cv",
+        "nombre": "Coberturas vegetales",
+        "tipo": "nodo_terciario",
+        "size": "small"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-74.12, 4.55]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "pe",
+        "nombre": "Paisajes sostenibles",
+        "tipo": "nodo_terciario",
+        "size": "small"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-74.09, 4.50]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ec",
+        "nombre": "Ecosistemas",
+        "tipo": "nodo_terciario",
+        "size": "small"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-74.20, 4.55]
+      }
+    }
+  ]
+}
