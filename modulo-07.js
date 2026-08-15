@@ -431,9 +431,8 @@
       item.edges
         .map(([a, b, t], i) => {
           const A = item.nodes[a],
-            B = item.nodes[b],
-            sign = t === "indirect" ? "↔" : t === "support" ? "→" : "+";
-          return `<line class="network-edge ${t}" data-edge-index="${i}" x1="${A[1]}" y1="${A[2]}" x2="${B[1]}" y2="${B[2]}"/><text class="edge-sign" x="${(A[1] + B[1]) / 2}" y="${(A[2] + B[2]) / 2}">${sign}</text>`;
+            B = item.nodes[b];
+          return `<line class="network-edge ${t}" data-edge-index="${i}" x1="${A[1]}" y1="${A[2]}" x2="${B[1]}" y2="${B[2]}"/>`;
         })
         .join("");
     const iconSvg = (label) => {
@@ -475,8 +474,13 @@
     const nodes = (item) =>
       item.nodes
         .map(([label, x, y, r, type, icon], i) => {
-          const display = quantify(label),
-            rows = display.split("\\n");
+          const display = quantify(label);
+          const rows = display
+            .split(/\n|\\n/)
+            .flatMap((row) =>
+              row.length > 18 ? [row.slice(0, 17) + "…"] : [row],
+            )
+            .slice(0, 2);
           return `<g class="network-node ${type || ""} ${layer(label)}" data-node-index="${i}" tabindex="0" role="button" aria-label="${esc(clean(display))}"><circle cx="${x}" cy="${y}" r="${r}"/><g transform="translate(${x} ${y - 12})">${iconSvg(label)}</g><text x="${x}" y="${y + 7 + (rows.length - 1) * 4}">${rows.map((row, j) => `<tspan x="${x}" dy="${j ? 13 : 0}">${esc(row)}</tspan>`).join("")}</text></g>`;
         })
         .join("");
