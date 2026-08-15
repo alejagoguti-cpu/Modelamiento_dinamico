@@ -427,6 +427,28 @@
       };
       return q[label] || label;
     };
+    const layoutNetwork = (item) => {
+      const cols = 10,
+        x0 = 130,
+        y0 = 120,
+        dx = 205,
+        dy = 165;
+      const degree = item.nodes.map((_, i) =>
+        item.edges.reduce((n, [a, b]) => n + (a === i || b === i ? 1 : 0), 0),
+      );
+      const order = item.nodes
+        .map((_, i) => i)
+        .sort((a, b) => degree[b] - degree[a]);
+      order.forEach((nodeIndex, rank) => {
+        const col = rank % cols,
+          row = Math.floor(rank / cols);
+        item.nodes[nodeIndex][1] = x0 + col * dx;
+        item.nodes[nodeIndex][2] = y0 + row * dy;
+        item.nodes[nodeIndex][3] = Math.min(item.nodes[nodeIndex][3], 58);
+      });
+      item.nodes[order[0]][1] = 1060;
+      item.nodes[order[0]][2] = 540;
+    };
     const lines = (item) =>
       item.edges
         .map(([a, b, t], i) => {
@@ -435,9 +457,12 @@
           return `<line class="network-edge ${t}" data-edge-index="${i}" x1="${A[1]}" y1="${A[2]}" x2="${B[1]}" y2="${B[2]}"/>`;
         })
         .join("");
-    const iconSvg = (label) => {
-      const s = label.toLowerCase();
-      let p = '<circle cx="12" cy="12" r="3"/>';
+    const iconSvg = (label, index) => {
+      const s = label.toLowerCase(),
+        angle = (index * 17) % 360,
+        seed = index + 3,
+        unique = `<path d="M12 3v3M12 18v3M3 12h3M18 12h3" transform="rotate(${angle} 12 12)"/>`;
+      let p = '<circle cx="12" cy="12" r="5"/>';
       if (/hospital|salud|aire|respiratoria/.test(s))
         p = '<path d="M12 4v16M4 12h16"/>';
       else if (/colegio|educación/.test(s))
@@ -450,26 +475,36 @@
       else if (/empleo|empresa|productividad|salario|comercio/.test(s))
         p =
           '<rect x="4" y="7" width="16" height="12" rx="2"/><path d="M9 7V5h6v2M4 12h16M10 12v2h4v-2"/>';
-      else if (/cuidado|manzanas|salud/.test(s))
+      else if (/cuidado|manzanas/.test(s))
         p =
           '<path d="M12 20S4 15 4 9a4 4 0 0 1 8-2 4 4 0 0 1 8 2c0 6-8 11-8 11Z"/>';
       else if (
-        /metro|ciclorruta|peatonal|movilidad|viajes|flota|vehículos|taxis/.test(
-          s,
-        )
+        /ciclorruta|peatonal|movilidad|viajes|flota|vehículos|taxis/.test(s)
       )
-        p = '<circle cx="12" cy="12" r="8"/><path d="M8 12h8M12 8v8"/>';
+        p =
+          '<circle cx="8" cy="16" r="3"/><circle cx="17" cy="16" r="3"/><path d="m8 16 3-8 4 2 2 6M11 8h-3"/>';
       else if (/emisiones|gei|pm|combustible/.test(s))
         p = '<path d="M8 18h8M9 14c-2-2 0-5 3-7 3 2 5 5 3 7-1 2-5 2-6 0Z"/>';
       else if (/upl|población|periféricas|segregación/.test(s))
         p =
           '<circle cx="8" cy="9" r="3"/><circle cx="16" cy="9" r="3"/><path d="M3 19c0-3 2-5 5-5s5 2 5 5M11 19c0-3 2-5 5-5s5 2 5 5"/>';
-      else if (/educación|innovación|investigación/.test(s))
-        p = '<path d="M4 6h16v12H4zM8 10h8M8 14h5"/>';
-      else if (/aire|ecosistema|corredor|verde|calidad/.test(s))
+      else if (/innovación|investigación/.test(s))
+        p = '<path d="M9 3h6l1 5-4 4-4-4 1-5ZM12 12v8M8 20h8"/>';
+      else if (/verde|calidad|parques/.test(s))
         p =
           '<path d="M12 20V8M12 12C8 12 5 9 5 5c4 0 7 3 7 7ZM12 15c4 0 7-3 7-7-4 0-7 3-7 7Z"/>';
-      return `<g class="node-icon-svg" transform="translate(-12 -12)" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">${p}</g>`;
+      else if (/inversión|suelo|densidad/.test(s))
+        p = '<path d="M4 19h16M6 16V9h3v7m3 0V5h3v11m3 0v-4h3v4"/>';
+      else if (/tiempo|espera|velocidad|congestión/.test(s))
+        p = '<circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/>';
+      else if (/internet|conectividad/.test(s))
+        p =
+          '<path d="M4 10a12 12 0 0 1 16 0M7 13a7 7 0 0 1 10 0M10 16a3 3 0 0 1 4 0M12 20h.01"/>';
+      else if (/población|hogares|dependiente/.test(s))
+        p =
+          '<circle cx="12" cy="8" r="3"/><path d="M6 20c0-4 2-6 6-6s6 2 6 6"/>';
+      const marker = `<circle cx="12" cy="12" r="9" stroke-dasharray="${3 + (seed % 4)} ${2 + (seed % 3)}" opacity=".6"/>`;
+      return `<g class="node-icon-svg" transform="translate(-12 -12)" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">${p}${marker}${unique}</g>`;
     };
     const nodes = (item) =>
       item.nodes
@@ -481,12 +516,59 @@
               row.length > 18 ? [row.slice(0, 17) + "…"] : [row],
             )
             .slice(0, 2);
-          return `<g class="network-node ${type || ""} ${layer(label)}" data-node-index="${i}" tabindex="0" role="button" aria-label="${esc(clean(display))}"><circle cx="${x}" cy="${y}" r="${r}"/><g transform="translate(${x} ${y - 12})">${iconSvg(label)}</g><text x="${x}" y="${y + 7 + (rows.length - 1) * 4}">${rows.map((row, j) => `<tspan x="${x}" dy="${j ? 13 : 0}">${esc(row)}</tspan>`).join("")}</text></g>`;
+          return `<g class="network-node ${type || ""} ${layer(label)}" data-node-index="${i}" tabindex="0" role="button" aria-label="${esc(clean(display))}"><circle cx="${x}" cy="${y}" r="${r}"/><g transform="translate(${x} ${y - 12})">${iconSvg(label, i)}</g><text x="${x}" y="${y + 7 + (rows.length - 1) * 4}">${rows.map((row, j) => `<tspan x="${x}" dy="${j ? 13 : 0}">${esc(row)}</tspan>`).join("")}</text></g>`;
         })
         .join("");
     const modal = $("#networkModal"),
       canvas = $("#networkCanvas"),
       details = $("#nodeDetails");
+    let zoom = 1,
+      panX = 0,
+      panY = 0,
+      drag = null,
+      hiddenNodes = new Set(),
+      clickCycle = { index: null, count: 0 };
+    const updateZoom = () => {
+      const viewport = $("#networkViewport", canvas);
+      if (!viewport) return;
+      viewport.setAttribute(
+        "transform",
+        `translate(${panX} ${panY}) scale(${zoom})`,
+      );
+      $("#networkZoomReset").textContent = `${Math.round(zoom * 100)}%`;
+    };
+    const nodeTip = document.createElement("div");
+    nodeTip.className = "node-hover-tip";
+    nodeTip.setAttribute("aria-hidden", "true");
+    document.body.appendChild(nodeTip);
+    const layerLabel = (label) => {
+      const l = layer(label);
+      return l === "layer-red"
+        ? "Capa Roja · Ecológica"
+        : l === "layer-blue"
+          ? "Capa Azul · Determinista"
+          : "Capa Verde · Social";
+    };
+    const showNodeTip = (item, index, event) => {
+      const node = item.nodes[index],
+        info = nodeInfo(node[0]);
+      const linked = item.edges
+        .filter(([a, b]) => a === index || b === index)
+        .map(([a, b]) => clean(item.nodes[a === index ? b : a][0]));
+      const type =
+        node[4] === "central"
+          ? "Nodo principal"
+          : node[4] === "result"
+            ? "Nodo resultado"
+            : "Variable auxiliar";
+      nodeTip.innerHTML = `<strong>${esc(info.n)}</strong><span>${layerLabel(node[0])} · ${type}</span><b>${linked.length} conexiones</b><small>${esc(info.value)} · ${esc(info.unit)}</small><em>Conecta con: ${esc(linked.slice(0, 4).join(", "))}${linked.length > 4 ? " y más" : ""}</em>`;
+      const x = event.clientX || 520,
+        y = event.clientY || 180;
+      nodeTip.style.left = `${Math.max(12, Math.min(x + 14, window.innerWidth - 330))}px`;
+      nodeTip.style.top = `${Math.max(12, Math.min(y + 14, window.innerHeight - 190))}px`;
+      nodeTip.classList.add("visible");
+    };
+    const hideNodeTip = () => nodeTip.classList.remove("visible");
     const nodeInfo = (label) => {
       const s = clean(label).toLowerCase();
       const catalog = [
@@ -642,6 +724,35 @@
         source: "Relación documentada del modelo POT.",
       };
     };
+    const applyHiddenState = () => {
+      $$(".network-node", canvas).forEach((g) => {
+        g.classList.toggle(
+          "hidden-network-node",
+          hiddenNodes.has(Number(g.dataset.nodeIndex)),
+        );
+      });
+      $$(".network-edge", canvas).forEach((e, edgeIndex) => {
+        const [a, b] =
+          networks[document.body.dataset.activeNetwork || "30min"].edges[
+            edgeIndex
+          ] || [];
+        e.classList.toggle(
+          "hidden-network-edge",
+          hiddenNodes.has(a) || hiddenNodes.has(b),
+        );
+      });
+    };
+    const hideNodeAndConnections = (item, index) => {
+      hiddenNodes.add(index);
+      $$(".network-edge", canvas).forEach((e, edgeIndex) => {
+        const [a, b] = item.edges[edgeIndex];
+        if (a === index || b === index) e.classList.add("hidden-network-edge");
+      });
+      const node = $(`.network-node[data-node-index="${index}"]`, canvas);
+      node?.classList.add("hidden-network-node");
+      details.innerHTML =
+        "<h3>Nodo oculto</h3><p>Se ocultó el nodo y sus conexiones directas. Usa <b>Mostrar ocultos</b> para restaurarlo.</p>";
+    };
     const selectNode = (item, index) => {
       const groups = $$(".network-node", canvas),
         edges = $$(".network-edge", canvas);
@@ -679,25 +790,110 @@
     };
     const openNetwork = (key) => {
       const item = networks[key];
+      layoutNetwork(item);
       $("#networkTitle").textContent = item.title;
       $("#networkSubtitle").textContent = item.subtitle;
       $("#networkCount").textContent =
         `${item.nodes.length} nodos · ${item.edges.length} conexiones`;
       $("#networkExplanation").textContent = item.text;
-      canvas.innerHTML = `<svg viewBox="0 0 1320 900" role="img" aria-label="${esc(item.title)}"><g>${lines(item)}</g>${nodes(item)}</svg>`;
+      canvas.innerHTML = `<svg viewBox="0 0 2180 1120" role="img" aria-label="${esc(item.title)}"><g id="networkViewport">${lines(item)}${nodes(item)}</g></svg>`;
+      document.body.dataset.activeNetwork = key;
+      hiddenNodes = new Set();
+      clickCycle = { index: null, count: 0 };
+      zoom = 1;
+      panX = 0;
+      panY = 0;
+      updateZoom();
       show(modal);
       selectNode(item, null);
+      const svg = $("svg", canvas);
+      svg.addEventListener(
+        "wheel",
+        (e) => {
+          e.preventDefault();
+          zoom = Math.max(
+            0.55,
+            Math.min(2.4, zoom + (e.deltaY < 0 ? 0.12 : -0.12)),
+          );
+          updateZoom();
+        },
+        { passive: false },
+      );
+      svg.addEventListener("pointerdown", (e) => {
+        if (e.target.closest(".network-node")) return;
+        drag = { x: e.clientX, y: e.clientY, panX, panY };
+        svg.setPointerCapture(e.pointerId);
+        svg.classList.add("is-dragging");
+      });
+      svg.addEventListener("pointermove", (e) => {
+        if (!drag) return;
+        panX = drag.panX + (e.clientX - drag.x) * 1.5;
+        panY = drag.panY + (e.clientY - drag.y) * 1.5;
+        updateZoom();
+      });
+      ["pointerup", "pointercancel"].forEach((eventName) =>
+        svg.addEventListener(eventName, () => {
+          drag = null;
+          svg.classList.remove("is-dragging");
+        }),
+      );
       $$(".network-node", canvas).forEach((g) => {
-        const fn = () => selectNode(item, Number(g.dataset.nodeIndex));
+        const index = Number(g.dataset.nodeIndex);
+        const fn = () => {
+          if (clickCycle.index !== index) clickCycle = { index, count: 0 };
+          clickCycle.count += 1;
+          if (clickCycle.count === 1) selectNode(item, index);
+          else if (clickCycle.count === 2) selectNode(item, null);
+          else {
+            hideNodeAndConnections(item, index);
+            clickCycle = { index, count: 0 };
+          }
+        };
         g.addEventListener("click", fn);
         g.addEventListener("keydown", (e) => {
           if (e.key === "Enter" || e.key === " ") fn();
         });
+        g.addEventListener("mouseenter", (e) => showNodeTip(item, index, e));
+        g.addEventListener("mousemove", (e) => showNodeTip(item, index, e));
+        g.addEventListener("mouseleave", hideNodeTip);
+        g.addEventListener("focus", () =>
+          showNodeTip(item, index, { clientX: 520, clientY: 180 }),
+        );
+        g.addEventListener("blur", hideNodeTip);
       });
     };
     $$(".network-trigger").forEach((b) =>
       b.addEventListener("click", () => openNetwork(b.dataset.network)),
     );
+    $("#networkZoomIn")?.addEventListener("click", () => {
+      zoom = Math.min(2.4, zoom + 0.15);
+      updateZoom();
+    });
+    $("#networkZoomOut")?.addEventListener("click", () => {
+      zoom = Math.max(0.55, zoom - 0.15);
+      updateZoom();
+    });
+    $("#networkZoomReset")?.addEventListener("click", () => {
+      zoom = 1;
+      panX = 0;
+      panY = 0;
+      updateZoom();
+    });
+    $("#networkRestore")?.addEventListener("click", () => {
+      hiddenNodes.clear();
+      $$(".hidden-network-node", canvas).forEach((g) =>
+        g.classList.remove("hidden-network-node"),
+      );
+      $$(".hidden-network-edge", canvas).forEach((e) =>
+        e.classList.remove("hidden-network-edge"),
+      );
+      selectNode(
+        networks[document.body.dataset.activeNetwork || "30min"],
+        null,
+      );
+      clickCycle = { index: null, count: 0 };
+      toast("Nodos y conexiones restaurados");
+    });
     $("#networkModalClose")?.addEventListener("click", () => hide(modal));
     modal?.addEventListener("click", (e) => {
       if (e.target === modal) hide(modal);
