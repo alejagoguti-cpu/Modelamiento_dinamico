@@ -1,1305 +1,376 @@
-(() => {
-  "use strict";
-  const start = (fn) =>
-    document.readyState === "loading"
-      ? document.addEventListener("DOMContentLoaded", fn, { once: true })
-      : fn();
-  start(() => {
-    const $ = (s, r = document) => r.querySelector(s),
-      $$ = (s, r = document) => [...r.querySelectorAll(s)];
-    const toast = (text) => {
-      let e = $("#dashboardToast");
-      if (!e) {
-        e = document.createElement("div");
-        e.id = "dashboardToast";
-        e.className = "dashboard-toast";
-        document.body.appendChild(e);
-      }
-      e.textContent = text;
-      e.classList.add("show");
-      clearTimeout(toast.t);
-      toast.t = setTimeout(() => e.classList.remove("show"), 2400);
-    };
-    const show = (e) => e && e.classList.remove("hidden"),
-      hide = (e) => e && e.classList.add("hidden"),
-      esc = (v) =>
-        String(v)
-          .replaceAll("&", "&amp;")
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          .replaceAll('"', "&quot;"),
-      clean = (v) => String(v).replaceAll("\\n", " ");
-    const networks = {
-      "30min": {
-        title: "Ciudad de los 30 minutos",
-        subtitle:
-          "Modo analítico // Nodos de proximidad, cuidado e infraestructura",
-        count: "14 nodos · 22 conexiones",
-        text: "La red explica cómo las 33 Unidades de Planeamiento Local articulan la proximidad: servicios de cuidado, salud, educación, vivienda, empleo, espacio público y transporte deben quedar accesibles en un máximo de 30 minutos caminando, en bicicleta o en transporte público. Los 160 Proyectos Integrales de Proximidad convierten esta meta en intervenciones construidas con la ciudadanía. Fuente base: Secretaría Distrital de Planeación, noticia ¡La ciudad de los 30 minutos se consolida en Bogotá!, 29 de noviembre de 2023.",
-        nodes: [
-          ["33 Unidades de Planeamiento Local", 390, 230, 58, "central", "⌖"],
-          ["Manzanas\\ndel Cuidado", 145, 105, 42, "", "♥"],
-          ["Centros\\nde salud", 160, 350, 37, "", "✚"],
-          ["Jardines\\ninfantiles", 355, 82, 38, "", "✚"],
-          ["Colegios y\\nuniversidades", 605, 94, 40, "", "▦"],
-          ["Transporte\\npúblico", 635, 290, 45, "", "▣"],
-          ["Empleo\\nformal", 425, 390, 40, "", "▤"],
-          ["Meta: acceso\\nen 30 minutos", 720, 215, 42, "result", "↗"],
-          ["Vivienda\\ndigna VIS/VIP", 185, 225, 35, "", "⌂"],
-          ["Cuidado\\ncomunitario", 315, 340, 36, "", "♥"],
-          ["Equipamientos\\nsociales", 520, 335, 38, "", "▥"],
-          ["Actividades\\nde ocio y cultura", 590, 410, 32, "", "▤"],
-          ["Tiempo máximo\\nde acceso: 30 min", 90, 245, 34, "", "◷"],
-          ["Redes peatonales\\ny bicicleta", 465, 115, 33, "", "⌁"],
-        ],
-        edges: [
-          [0, 1, "direct"],
-          [0, 2, "support"],
-          [0, 3, "direct"],
-          [0, 4, "direct"],
-          [0, 5, "support"],
-          [0, 6, "direct"],
-          [0, 7, "result"],
-          [0, 8, "direct"],
-          [0, 9, "support"],
-          [0, 10, "direct"],
-          [0, 11, "indirect"],
-          [0, 12, "indirect"],
-          [0, 13, "support"],
-          [1, 9, "direct"],
-          [2, 10, "direct"],
-          [3, 4, "indirect"],
-          [5, 6, "direct"],
-          [5, 13, "support"],
-          [8, 12, "indirect"],
-          [9, 10, "direct"],
-          [10, 11, "direct"],
-          [6, 7, "result"],
-        ],
-      },
-      empleo: {
-        title: "Productividad y empleo",
-        subtitle: "Modo analítico // Actores, UPL y economía territorial",
-        count: "14 nodos · 22 conexiones",
-        text: "La red representa la apuesta del POT por una ciudad menos segregada y con productividad descentralizada. Conecta sectores productivos, servicios metropolitanos, incentivos urbanísticos y económicos, equipamientos públicos, transporte, vivienda y mejoramiento de barrios para acercar el empleo a las zonas deficitarias. El archivo oficial destaca la localización de actividades productivas en Rafael Uribe Uribe, Tunjuelito, Ciudad Bolívar y Bosa, así como el uso flexible del suelo y la adaptación del POT a los barrios populares.",
-        nodes: [
-          ["Empleo formal y\\nproductividad", 390, 230, 58, "central", "▥"],
-          ["Sectores\\nproductivos", 135, 100, 42, "result", "↗"],
-          ["Zonas deficitarias\\nde empleo", 125, 350, 38, "", "⌖"],
-          ["Zonas superavitarias\\nde empleo", 390, 80, 38, "", "▥"],
-          ["Descentralización\\nde oportunidades", 650, 100, 42, "support", "⌖"],
-          ["Servicios\\nmetropolitanos", 660, 330, 42, "", "◈"],
-          ["Vivienda y\\nsoportes urbanos", 390, 410, 36, "", "⌂"],
-          ["Transporte\\ny bicicleta", 175, 225, 36, "", "▣"],
-          ["Industrias creativas\\ny del conocimiento", 700, 220, 36, "", "⇄"],
-          ["Industrias\\nverdes", 205, 470, 32, "", "♙"],
-          ["Equipamientos\\npúblicos", 535, 455, 35, "", "▦"],
-          ["Manzanas del Cuidado\\ncerca del transporte", 70, 220, 33, "", "▤"],
-          ["Empresas e\\nindustria", 550, 195, 39, "", "◉"],
-          ["Reubicación de\\nactividades productivas", 700, 450, 35, "", "◆"],
-        ],
-        edges: [
-          [0, 1, "result"],
-          [0, 2, "direct"],
-          [0, 3, "direct"],
-          [0, 4, "support"],
-          [0, 5, "direct"],
-          [0, 6, "direct"],
-          [0, 7, "indirect"],
-          [0, 8, "support"],
-          [0, 9, "direct"],
-          [0, 10, "direct"],
-          [0, 11, "indirect"],
-          [0, 12, "direct"],
-          [0, 13, "support"],
-          [2, 4, "indirect"],
-          [5, 6, "direct"],
-          [5, 12, "direct"],
-          [7, 8, "indirect"],
-          [9, 10, "direct"],
-          [3, 12, "direct"],
-          [1, 13, "result"],
-          [6, 10, "support"],
-        ],
-      },
-      carbono: {
-        title: "Descarbonización de la movilidad",
-        subtitle:
-          "Modo analítico // Infraestructura limpia, emisiones y transición",
-        count: "14 nodos · 23 conexiones",
-        text: "La red representa la hoja de ruta del POT para descarbonizar la movilidad: una red férrea urbana y regional con Metro y Regiotram, seis cables aéreos, corredores verdes, red peatonal, bicicleta y transporte público eléctrico. También incorpora carga a gas, salida progresiva del diésel, construcción sostenible, separación de residuos y localización de actividades cerca del transporte para reducir desplazamientos. El archivo oficial fija metas de 11 corredores de alta capacidad, 218 km de red peatonal mejorada, 564 km de infraestructura ciclista y una reducción del 50% de las emisiones de gases de efecto invernadero.",
-        nodes: [
-          ["Viajes\\nlimpios", 390, 230, 58, "central", "⌁"],
-          ["Red férrea\\nurbana y regional", 110, 90, 38, "support", "▣"],
-          ["Cuatro líneas\\nde Metro", 350, 70, 35, "", "▣"],
-          ["Regiotram\\nOccidente y Norte", 590, 85, 35, "", "▥"],
-          ["Corredores\\nverdes", 670, 315, 42, "support", "♧"],
-          ["Red peatonal y\\nmicromovilidad", 390, 430, 45, "support", "♢"],
-          ["Transporte público\\neléctrico", 115, 330, 40, "result", "⚡"],
-          ["Reducción de\\nemisiones GEI", 390, 125, 38, "layer-red", "◌"],
-          ["Calidad del aire\\ny material particulado", 620, 205, 37, "layer-red", "◌"],
-          ["Transporte de\\ncarga a gas", 145, 220, 34, "", "⚡"],
-          ["Construcción\\nsostenible", 680, 450, 36, "support", "▣"],
-          ["Manejo de residuos\\ny separación en fuente", 545, 420, 35, "", "⌂"],
-          ["Calles\\ncompletas", 180, 455, 33, "", "▤"],
-          ["Peatón como\\nprioridad", 70, 190, 34, "layer-red", "♧"],
-        ],
-        edges: [
-          [0, 1, "support"],
-          [0, 2, "direct"],
-          [0, 3, "direct"],
-          [0, 4, "support"],
-          [0, 5, "support"],
-          [0, 6, "result"],
-          [0, 7, "indirect"],
-          [0, 8, "indirect"],
-          [0, 9, "direct"],
-          [0, 10, "direct"],
-          [0, 11, "direct"],
-          [0, 12, "support"],
-          [0, 13, "indirect"],
-          [4, 5, "direct"],
-          [1, 2, "indirect"],
-          [5, 11, "direct"],
-          [6, 9, "direct"],
-          [10, 11, "support"],
-          [12, 10, "direct"],
-          [7, 8, "direct"],
-          [8, 13, "result"],
-          [2, 3, "indirect"],
-        ],
-      },
-    };
-    const expandNetwork = (key, extraNodes, extraEdges) => {
-      const item = networks[key];
-      const offset = item.nodes.length;
-      item._key = key;
-      item.edges = item.edges || [];
-      item.nodes.push(...extraNodes);
-      item.edges.push(
-        ...extraEdges.map(([a, b, t]) => [a + offset, b + offset, t]),
-      );
-      item._categories = item.nodes.map((node) => thematicCategory(key, node[0]));
-    };
-    expandNetwork(
-      "30min",
-      [
-        ["Tiempo medio de viaje", 70, 70, 30, "", "◷"],
-        ["Acceso a servicios", 250, 45, 31, "result", "◉"],
-        ["Oferta de cuidado", 505, 45, 30, "", "♥"],
-        ["Distancia a salud", 735, 95, 29, "", "↔"],
-        ["Cobertura educativa", 735, 185, 30, "", "▦"],
-        ["Conectividad peatonal", 70, 390, 30, "", "⌁"],
-        ["Calidad del espacio público", 275, 470, 32, "", "⌂"],
-        ["Centralidad urbana", 520, 470, 30, "", "◎"],
-        ["Población vulnerable", 735, 375, 31, "", "♙"],
-        ["Tiempo de cuidado", 70, 485, 28, "", "◷"],
-      ],
-      [
-        [0, 1, "direct"],
-        [1, 2, "support"],
-        [2, 3, "direct"],
-        [3, 4, "indirect"],
-        [4, 7, "support"],
-        [5, 6, "direct"],
-        [6, 7, "indirect"],
-        [7, 8, "support"],
-        [8, 9, "indirect"],
-        [9, 0, "result"],
-      ],
-    );
-    expandNetwork(
-      "empleo",
-      [
-        ["Incentivos urbanísticos\\ny económicos", 70, 70, 31, "result", "↗"],
-        ["Transferencia de oportunidades\\ny derechos urbanísticos", 250, 42, 30, "", "▤"],
-        ["Uso flexible\\ndel suelo", 505, 42, 30, "", "✓"],
-        ["Acceso territorial\\nal empleo", 735, 85, 31, "", "◎"],
-        ["Economía del\\ncuidado", 735, 175, 30, "", "♥"],
-        ["Educación\\nsuperior", 70, 395, 31, "", "▦"],
-        ["Industrias del\\nconocimiento", 260, 470, 30, "", "✦"],
-        ["Mejoramiento de\\nbarrios populares", 500, 470, 31, "support", "▥"],
-        ["Acupuntura urbana\\ny urbanismo táctico", 735, 370, 33, "", "⇄"],
-        ["Participación\\nterritorial", 70, 475, 29, "", "♙"],
-      ],
-      [
-        [0, 1, "direct"],
-        [1, 2, "direct"],
-        [2, 3, "result"],
-        [3, 4, "support"],
-        [4, 9, "indirect"],
-        [5, 6, "direct"],
-        [6, 7, "support"],
-        [7, 8, "direct"],
-        [8, 9, "indirect"],
-        [9, 0, "result"],
-      ],
-    );
-    expandNetwork(
-      "carbono",
-      [
-        ["Sistemas de alta\\ncapacidad", 70, 70, 31, "", "⇄"],
-        ["Intermodalidad", 250, 42, 31, "", "◌"],
-        ["Flota sin\\ndiésel", 505, 42, 32, "layer-red", "◌"],
-        ["Corredores verdes\\narborizados", 735, 90, 30, "layer-red", "◌"],
-        ["Andenes, plazas\\ny parques conectados", 735, 180, 32, "layer-red", "♧"],
-        ["Infraestructura\\nde carga", 70, 395, 31, "result", "⚡"],
-        ["Disminución del\\nvehículo particular", 260, 470, 31, "", "▣"],
-        ["Actividades y servicios\\ncerca del transporte", 500, 470, 31, "support", "↗"],
-        ["Conexión regional\\nSabana y Soacha", 735, 365, 30, "", "◷"],
-        ["Salud ambiental", 70, 475, 31, "layer-red", "♥"],
-      ],
-      [
-        [0, 1, "direct"],
-        [1, 2, "direct"],
-        [2, 3, "result"],
-        [3, 4, "support"],
-        [4, 9, "result"],
-        [5, 6, "support"],
-        [6, 7, "direct"],
-        [7, 8, "direct"],
-        [8, 0, "indirect"],
-        [9, 5, "result"],
-      ],
-    );
-    const fillTo30 = (key, labels) => {
-      const item = networks[key],
-        canonical = (value) =>
-          clean(value).toLowerCase().replace(/\s+/g, " ").trim(),
-        seen = new Map(),
-        remap = [];
-      item.nodes.forEach((node, index) => {
-        const id = canonical(node[0]);
-        if (seen.has(id)) remap[index] = seen.get(id);
-        else {
-          seen.set(id, item.nodes.length ? [...seen.values()].length : 0);
-          remap[index] = seen.get(id);
-        }
-      });
-      if (seen.size !== item.nodes.length) {
-        const uniqueNodes = [];
-        const firstIndex = new Map();
-        item.nodes.forEach((node, index) => {
-          const id = canonical(node[0]);
-          if (!firstIndex.has(id)) {
-            firstIndex.set(id, uniqueNodes.length);
-            uniqueNodes.push(node);
-          }
-          remap[index] = firstIndex.get(id);
-        });
-        const uniqueEdges = [],
-          edgeKeys = new Set();
-        item.edges.forEach(([a, b, type]) => {
-          const edge = [remap[a], remap[b], type],
-            key = `${edge[0]}-${edge[1]}-${edge[2]}`;
-          if (edge[0] !== edge[1] && !edgeKeys.has(key)) {
-            edgeKeys.add(key);
-            uniqueEdges.push(edge);
-          }
-        });
-        item.nodes = uniqueNodes;
-        item.edges = uniqueEdges;
-      }
-      const need = Math.max(0, 30 - item.nodes.length),
-        offset = item.nodes.length,
-        used = new Set(item.nodes.map((node) => canonical(node[0])));
-      for (let i = 0; i < need; i++) {
-        const base = labels[i % labels.length];
-        let label = base,
-          suffix = 2;
-        while (used.has(canonical(label)))
-          label = `${base} · componente ${suffix++}`;
-        used.add(canonical(label));
-        const col = i % 6,
-          row = Math.floor(i / 6);
-        item.nodes.push([label, 70 + col * 210, 70 + row * 86, 25, "", ""]);
-        const target = i % 4 === 0 ? 0 : offset + i - 1;
-        item.edges.push([
-          target,
-          offset + i,
-          i % 5 === 0 ? "support" : i % 3 === 0 ? "indirect" : "direct",
-        ]);
-      }
-      item._categories = item.nodes.map((node) => thematicCategory(key, node[0]));
-    };
-    fillTo30("30min", [
-      "160 Proyectos Integrales de Proximidad",
-      "Redes peatonales y ciclistas",
-      "UPL Occidente: Fontibón y Engativá",
-      "UPL Centro Ampliado: Chapinero y Teusaquillo",
-      "UPL Suroccidente: Bosa y Kennedy",
-      "UPL Rural: Cerros, Tunjuelo y Sumapaz",
-    ]);
-    fillTo30("empleo", [
-      "Meta regional: 40% del PIB",
-      "Sectores productivos en zonas deficitarias",
-      "Actividad productiva en Bosa y Ciudad Bolívar",
-      "Actividad productiva en Rafael Uribe y Tunjuelito",
-      "Equipamientos sin restricción de uso del suelo",
-      "Tiempo de desplazamiento al trabajo",
-      "Productividad por trabajador · COP",
-      "Empresas activas · #",
-      "Nuevas empresas · #",
-      "Cierre de empresas · #",
-      "Vacantes · #",
-      "Formación técnica · #",
-      "Graduados · #",
-      "Inserción laboral · %",
-      "Innovación · índice",
-      "Patentes · #",
-      "Inversión privada · COP",
-      "Inversión pública · COP",
-      "UPL con déficit · 23",
-      "UPL con superávit · 10",
-      "Centralidad económica · índice",
-      "Acceso a transporte · %",
-      "Costo de transporte · COP",
-      "Tiempo al empleo · min",
-      "Vivienda cerca del empleo · %",
-      "Suelo productivo · ha",
-      "Suelo mixto · ha",
-      "Comercio local · #",
-      "Servicios empresariales · #",
-      "Cadenas productivas · #",
-      "Economía del cuidado · #",
-      "Población activa · #",
-      "Población ocupada · #",
-      "Población desempleada · #",
-      "Migración laboral · %",
-      "Productividad territorial · índice",
-    ]);
-    fillTo30("carbono", [
-      "11 corredores de alta capacidad",
-      "218 km de red peatonal mejorada",
-      "564 km de infraestructura para bicicleta",
-      "Seis cables aéreos nuevos",
-      "Dos Regiotram regionales",
-      "Meta: reducir 50% las emisiones GEI",
-    ]);
-    const layer = (label) => {
-      const s = label.toLowerCase();
-      if (
-        /río|humedal|ecosistema|emisiones|pm fino|aire|corredor verde|área protegida|parques ecológicos/.test(
-          s,
-        )
-      )
-        return "layer-red";
-      if (
-        /metro|regiotram|férrea|alta capacidad|cable|transporte|peatonal|micromovilidad|intermodalidad|hospital|centro|colegio|ciclorruta|carga|taxis|flota pública|vehículos|eléctrico/.test(
-          s,
-        )
-      )
-        return "layer-blue";
-      return "layer-green";
-    };
-    const thematicCatalog = {
-      "30min": [
-        { id: "care-health", label: "Cuidado y salud", color: "#46d6d0" },
-        { id: "education", label: "Educación y equipamientos", color: "#7fe6de" },
-        { id: "mobility", label: "Movilidad y proximidad", color: "#e89a6c" },
-        { id: "housing-employment", label: "Vivienda y empleo", color: "#c79cff" },
-        { id: "access-goals", label: "Acceso y metas", color: "#f4c95d" },
-      ],
-      empleo: [
-        { id: "economic-activity", label: "Actividad económica", color: "#e89a6c" },
-        { id: "human-capital", label: "Capital humano", color: "#7fe6de" },
-        { id: "labor-mobility", label: "Movilidad laboral", color: "#46d6d0" },
-        { id: "territorial-equity", label: "Equidad territorial", color: "#c79cff" },
-        { id: "employment-results", label: "Resultados de empleo", color: "#f4c95d" },
-      ],
-      carbono: [
-        { id: "clean-transit", label: "Transporte limpio", color: "#46d6d0" },
-        { id: "clean-infrastructure", label: "Infraestructura limpia", color: "#7fe6de" },
-        { id: "emissions-air", label: "Emisiones y aire", color: "#e89a6c" },
-        { id: "modal-change", label: "Cambio modal", color: "#c79cff" },
-        { id: "environmental-health", label: "Salud ambiental", color: "#f4c95d" },
-      ],
-    };
-    function thematicCategory(key, label) {
-      const s = clean(label).toLowerCase();
-      if (key === "30min") {
-        if (/cuidado|salud|hospital/.test(s)) return "care-health";
-        if (/colegio|educación|equipamiento/.test(s)) return "education";
-        if (/transporte|peatonal|viaje|distancia|tiempo|conectividad/.test(s)) return "mobility";
-        if (/vivienda|empleo|comercio/.test(s)) return "housing-employment";
-        return "access-goals";
-      }
-      if (key === "empleo") {
-        if (/empresa|actividad|productividad|innovación|inversión|comercio|sectores productivos|servicios metropolitanos|industrias|reubicación/.test(s)) return "economic-activity";
-        if (/educación|formación|graduados|salario|capital|patentes|conocimiento/.test(s)) return "human-capital";
-        if (/transporte|movilidad|tiempo|acceso|vivienda|equipamientos|manzanas del cuidado|uso flexible/.test(s)) return "labor-mobility";
-        if (/upl|segregación|género|participación|territorial|incentivos|transferencia|deficitarias|superavitarias|barrios populares|bosa|ciudad bolívar|rafael uribe|tunjuelito/.test(s)) return "territorial-equity";
-        return "employment-results";
-      }
-      if (/emisiones|gei|pm|aire|salud respiratoria/.test(s)) return /salud/.test(s) ? "environmental-health" : "emissions-air";
-      if (/metro|regiotram|cable|ciclorruta|transporte|flota|taxis|viajes/.test(s)) return "clean-transit";
-      if (/carga|electrificación|infraestructura|corredor/.test(s)) return "clean-infrastructure";
-      if (/cambio modal|demanda|combustible|velocidad/.test(s)) return "modal-change";
-      return "environmental-health";
-    }
-    const quantify = (label) => {
-      const q = {
-        "UPL · 33": "UPL\n33 unidades",
-        "33 Unidades de Planeamiento Local": "UPL\n33 unidades",
-        "160 Proyectos Integrales de Proximidad": "160 PIP",
-        "Redes peatonales y ciclistas": "Red peatonal\ny bicicleta",
-        "Espacio público local reverdecido": "Espacio público\nreverdecido",
-        "Vivienda VIS y VIP": "Vivienda\nVIS/VIP",
-        "Empleo formal cercano": "Empleo formal\ncercano",
-        "UPL Occidente: Fontibón y Engativá": "Occidente\nFontibón · Engativá",
-        "UPL Centro Ampliado: Chapinero y Teusaquillo": "Centro ampliado\nChapinero · Teusaquillo",
-        "UPL Suroccidente: Bosa y Kennedy": "Suroccidente\nBosa · Kennedy",
-        "UPL Rural: Cerros, Tunjuelo y Sumapaz": "Rural\nCerros · Tunjuelo · Sumapaz",
-        "Manzanas\\ndel Cuidado": "Manzanas\ndel Cuidado",
-        "Centros\\nde salud": "Centros\nde salud",
-        "Jardines\\ninfantiles": "Jardines\ninfantiles",
-        "Colegios y\\nuniversidades": "Colegios y\nuniversidades",
-        "Tiempo máximo\\nde acceso: 30 min": "Acceso máximo\n30 minutos",
-        "Meta: acceso\\nen 30 minutos": "Meta: acceso\n30 minutos",
-        "910.509\\nnuevos empleos": "Empleo\n910.509",
-        "10 / 33 UPL\\nsuperávit": "Superávit\n10/33 UPL",
-        "13 UPL\\nperiféricas": "Periferia\n13 UPL",
-        "47% GEI\\ntransporte": "GEI\n47% transporte",
-        "18% PM\\nfino": "PM fino\n18% transporte",
-        "Viajes\\nlimpios 77%": "Viajes limpios\n77% · 2035",
-        "Flota pública\\n2040": "Flota eléctrica\n100% · 2040",
-        "5 líneas\\nde Metro": "Metro\n5 líneas",
-        "1.000 km\\nciclorrutas": "Ciclorrutas\n1.000 km",
-      };
-      return q[label] || label;
-    };
-    const layoutNetwork = (item) => {
-      const degree = item.nodes.map((_, i) =>
-        item.edges.reduce((n, [a, b]) => n + (a === i || b === i ? 1 : 0), 0),
-      );
-      const order = item.nodes
-          .map((_, i) => i)
-          .sort((a, b) => degree[b] - degree[a]),
-        maxDegree = Math.max(...degree, 1);
-      const centers = [
-        [210, 190],
-        [610, 160],
-        [1030, 185],
-        [330, 520],
-        [760, 500],
-        [1160, 520],
-      ];
-      order.forEach((nodeIndex, rank) => {
-        const cluster = rank % centers.length,
-          local = Math.floor(rank / centers.length),
-          [cx, cy] = centers[cluster],
-          angle = local * 1.72 + cluster * 0.55,
-          radius = local === 0 ? 0 : 72 + (local - 1) * 42;
-        item.nodes[nodeIndex][1] = Math.max(
-          60,
-          Math.min(1340, cx + Math.cos(angle) * radius),
-        );
-        item.nodes[nodeIndex][2] = Math.max(
-          60,
-          Math.min(840, cy + Math.sin(angle) * radius),
-        );
-        const d = degree[nodeIndex];
-        item.nodes[nodeIndex][3] =
-          d <= 2 ? 22 : d <= 4 ? 32 : d <= 6 ? 46 : d <= 9 ? 64 : 84;
-      });
-      /* Seis comunidades distribuidas: no existe una fila ni un centro dominante. */
-      /* Relajación de colisiones: evita que radios grandes invadan nodos vecinos. */
-      for (let pass = 0; pass < 14; pass++) {
-        for (let i = 0; i < item.nodes.length; i++) {
-          for (let j = i + 1; j < item.nodes.length; j++) {
-            const A = item.nodes[i],
-              B = item.nodes[j],
-              dx = B[1] - A[1],
-              dy = B[2] - A[2],
-              distance = Math.hypot(dx, dy) || 0.01,
-              minimum = A[3] + B[3] + 42;
-            if (distance >= minimum) continue;
-            const ux = dx / distance,
-              uy = dy / distance,
-              push = (minimum - distance) / 2,
-              aWeight = degree[i] >= degree[j] ? 0.35 : 0.65,
-              bWeight = 1 - aWeight;
-            A[1] = Math.max(55, Math.min(1345, A[1] - ux * push * aWeight));
-            A[2] = Math.max(55, Math.min(845, A[2] - uy * push * aWeight));
-            B[1] = Math.max(55, Math.min(1345, B[1] + ux * push * bWeight));
-            B[2] = Math.max(55, Math.min(845, B[2] + uy * push * bWeight));
-          }
-        }
-      }
-    };
-    const lines = (item) =>
-      item.edges
-        .map(([a, b, t], i) => {
-          const A = item.nodes[a],
-            B = item.nodes[b];
-          return `<line class="network-edge ${t}" data-edge-index="${i}" marker-end="url(#arrow-${t})" x1="${A[1]}" y1="${A[2]}" x2="${B[1]}" y2="${B[2]}"/><line class="network-edge-hit ${t}" data-edge-index="${i}" data-edge-type="${t}" tabindex="0" x1="${A[1]}" y1="${A[2]}" x2="${B[1]}" y2="${B[2]}"/>`;
-        })
-        .join("");
-    const iconSvg = (label) => {
-      const s = label.toLowerCase();
-      const icon = /río|quebrada|agua|humedal/.test(s)
-        ? "fa-water"
-        : /cerro|páramo|montaña|corredor verde|parques ecológicos/.test(s)
-          ? "fa-mountain"
-          : /área protegida|reserva/.test(s)
-            ? "fa-shield-halved"
-            : /bosque|vegetal|ecosistema|parque/.test(s)
-              ? "fa-tree"
-              : /resiliencia|temperatura|emisiones|gei|pm|aire/.test(s)
-                ? "fa-temperature-half"
-                : /cuidado|manzana|salud|hospital/.test(s)
-                  ? "fa-heart"
-                  : /colegio|educación|formación|graduados/.test(s)
-                    ? "fa-graduation-cap"
-                    : /metro|regiotram|cable|transporte|bus|viajes|flota/.test(
-                          s,
-                        )
-                      ? "fa-bus"
-                      : /ciclorruta|bicicleta|peatonal/.test(s)
-                        ? "fa-bicycle"
-                        : /carga|electrificación|eléctric/.test(s)
-                          ? "fa-bolt"
-                          : /vivienda|hogares|residencial/.test(s)
-                            ? "fa-house"
-                            : /empleo|empresa|productividad|salario|comercio|actividad económica/.test(
-                                  s,
-                                )
-                              ? "fa-briefcase"
-                              : /innovación|investigación|patentes/.test(s)
-                                ? "fa-diagram-project"
-                                : /internet|conectividad|red/.test(s)
-                                  ? "fa-network-wired"
-                                  : /tiempo|espera|velocidad|congestión/.test(s)
-                                    ? "fa-clock"
-                                    : /inversión|suelo|densidad|centralidad/.test(
-                                          s,
-                                        )
-                                      ? "fa-building"
-                                      : /población|upl|periféricas|segregación|participación/.test(
-                                            s,
-                                          )
-                                        ? "fa-people-group"
-                                        : "fa-circle-nodes";
-      return `<foreignObject class="node-icon-svg" x="-14" y="-14" width="28" height="28"><div xmlns="http://www.w3.org/1999/xhtml" class="node-fa-icon"><i class="fa-solid ${icon}" aria-hidden="true"></i></div></foreignObject>`;
-    };
-    const nodes = (item) =>
-      item.nodes
-        .map(([label, x, y, r, type, icon], i) => {
-          const display = quantify(label),
-            maxChars = r >= 58 ? 15 : r >= 44 ? 12 : r >= 32 ? 9 : 7,
-            rows = display
-              .split(/\n|\\n/)
-              .flatMap((row) => {
-                const value = row.trim().toUpperCase();
-                return value.length <= maxChars
-                  ? [value]
-                  : [value.slice(0, maxChars - 1) + "…"];
-              })
-              .slice(0, 2);
-          const sizeClass =
-              r >= 58 ? "hub-large" : r >= 44 ? "hub-medium" : "node-small",
-            iconY = r >= 44 ? y - 9 : y - 5,
-            labelY = y + (r >= 44 ? 10 : 7),
-            lineGap = r >= 44 ? 10 : 7;
-          const category = item._categories?.[i] || "access-goals";
-          return `<g class="network-node ${sizeClass} ${type || ""} ${layer(label)} category-${category}" data-node-index="${i}" data-category="${category}" tabindex="0" role="button" aria-label="${esc(clean(display))}"><circle cx="${x}" cy="${y}" r="${r}"/><g class="node-icon-wrap" transform="translate(${x} ${iconY})">${iconSvg(label)}</g><text class="node-label" x="${x}" y="${labelY}">${rows.map((row, j) => `<tspan x="${x}" dy="${j ? lineGap : 0}">${esc(row)}</tspan>`).join("")}</text></g>`;
-        })
-        .join("");
-    const categoryHalos = (item) => {
-      const categories = thematicCatalog[item._key] || [];
-      return `<g class="category-halos">${categories.map((category) => {
-        const indices = item._categories.map((value, index) => value === category.id ? index : -1).filter((index) => index >= 0);
-        if (!indices.length) return "";
-        const xs = indices.map((index) => item.nodes[index][1]), ys = indices.map((index) => item.nodes[index][2]);
-        const minX = Math.max(18, Math.min(...xs) - 52), maxX = Math.min(1382, Math.max(...xs) + 52);
-        const minY = Math.max(26, Math.min(...ys) - 52), maxY = Math.min(874, Math.max(...ys) + 52);
-        return `<g class="category-halo" data-category="${category.id}"><rect x="${minX}" y="${minY}" width="${Math.max(110, maxX - minX)}" height="${Math.max(90, maxY - minY)}" rx="28" style="--category-color:${category.color}"/><text x="${minX + 14}" y="${minY + 18}">${esc(category.label)}</text></g>`;
-      }).join("")}</g>`;
-    };
-    const modal = $("#networkModal"),
-      canvas = $("#networkCanvas"),
-      details = $("#nodeDetails");
-    let zoom = 1,
-      panX = 0,
-      panY = 0,
-      drag = null,
-      hiddenNodes = new Set(),
-      clickCycle = { index: null, count: 0 };
-    const updateZoom = () => {
-      const viewport = $("#networkViewport", canvas);
-      if (!viewport) return;
-      viewport.setAttribute(
-        "transform",
-        `translate(${panX} ${panY}) scale(${zoom})`,
-      );
-      $("#networkZoomReset").textContent = `${Math.round(zoom * 100)}%`;
-    };
-    const nodeTip = document.createElement("div");
-    nodeTip.className = "node-hover-tip";
-    nodeTip.setAttribute("aria-hidden", "true");
-    document.body.appendChild(nodeTip);
-    const connectionTip = document.createElement("div");
-    connectionTip.className = "connection-citation-tip";
-    connectionTip.setAttribute("aria-hidden", "true");
-    document.body.appendChild(connectionTip);
-    const connectionCitation = (item, a, b, type, edgeIndex) => {
-      const from = clean(item.nodes[a][0]),
-        to = clean(item.nodes[b][0]),
-        networkKey = document.body.dataset.activeNetwork || "30min",
-        relation =
-          type === "support"
-            ? "SOPORTE"
-            : type === "result"
-              ? "RESULTADO"
-              : type === "indirect"
-                ? "INDIRECTA"
-                : "DIRECTA";
-      const catalog = {
-        "30min": {
-          pages: [
-            "POT, pág. 38 (PDF adjunto)",
-            "POT, págs. 59–60 (PDF adjunto)",
-            "POT, pág. 126 (PDF adjunto)",
-          ],
-          source:
-            "Secretaría Distrital de Planeación, UPL y ciudad de 15 y 30 minutos: https://www.sdp.gov.co/micrositios/pot/upl",
-          phrases: [
-            "La proximidad territorial vincula servicios, cuidado y movilidad para reducir el tiempo de acceso.",
-            "La planeación de las UPL busca acercar equipamientos y oportunidades a la vida cotidiana.",
-            "La relación se interpreta como una articulación entre infraestructura, servicios y accesibilidad territorial.",
-          ],
-        },
-        empleo: {
-          pages: [
-            "POT, págs. 161–164 (PDF adjunto)",
-            "POT, pág. 165 (PDF adjunto)",
-            "POT, pág. 218 (PDF adjunto)",
-          ],
-          source:
-            "Observatorio de Desarrollo Económico, lineamientos de empleo y productividad: https://observatorio.desarrolloeconomico.gov.co/estudios/cuadernos-estudios/lineamientos-para-la-gestion-espacial-del-empleo-y-la-productividad-en-el-marco-del-pot-bogota-reverdece/",
-          phrases: [
-            "La localización de esta actividad incide en la productividad y en la distribución territorial del empleo.",
-            "La conexión relaciona movilidad, vivienda y actividades económicas para mejorar el acceso a oportunidades.",
-            "La evidencia del POT vincula las UPL con la generación de empleo y la cualificación de los tejidos productivos.",
-          ],
-        },
-        carbono: {
-          pages: [
-            "POT, págs. 229–231 (PDF adjunto)",
-            "POT, págs. 241–243 (PDF adjunto)",
-            "POT, pág. 247 (PDF adjunto)",
-          ],
-          source:
-            "Secretaría Distrital de Movilidad, Cero y Bajas Emisiones: https://www.movilidadbogota.gov.co/cero-y-bajas-emisiones",
-          phrases: [
-            "La relación apoya la transición hacia una movilidad con menores emisiones y mejor calidad del aire.",
-            "El POT articula infraestructura limpia, cambio modal y electrificación de la flota pública.",
-            "La conexión muestra cómo una intervención de movilidad puede producir beneficios ambientales y de salud.",
-          ],
-        },
-      };
-      const evidence = catalog[networkKey] || catalog["30min"],
-        phrase = evidence.phrases[edgeIndex % evidence.phrases.length],
-        page = evidence.pages[edgeIndex % evidence.pages.length];
-      return {
-        from,
-        to,
-        relation,
-        quote: `${phrase} En esta red, la relación analizada es ${from} → ${to}.`,
-        page,
-        source: evidence.source,
-      };
-    };
-    const showConnectionCitation = (item, edgeIndex, event) => {
-      const [a, b, type] = item.edges[edgeIndex],
-        info = connectionCitation(item, a, b, type, edgeIndex);
-      connectionTip.innerHTML = `<strong>${esc(info.from)} → ${esc(info.to)}</strong><span class="citation-relation">${esc(info.relation)}</span><blockquote>“${esc(info.quote)}”</blockquote><small><b>${esc(info.page)}</b><br>${esc(info.source)}</small>`;
-      const x = event.clientX || 520,
-        y = event.clientY || 180;
-      connectionTip.style.left = `${Math.max(12, Math.min(x + 16, window.innerWidth - 390))}px`;
-      connectionTip.style.top = `${Math.max(12, Math.min(y + 16, window.innerHeight - 190))}px`;
-      connectionTip.classList.add("visible");
-    };
-    const hideConnectionCitation = () =>
-      connectionTip.classList.remove("visible");
-    const layerLabel = (label) => {
-      const l = layer(label);
-      return l === "layer-red"
-        ? "Capa Roja · Ecológica"
-        : l === "layer-blue"
-          ? "Capa Azul · Determinista"
-          : "Capa Verde · Social";
-    };
-    const showNodeTip = (item, index, event) => {
-      const node = item.nodes[index],
-        info = nodeInfo(node[0]);
-      const linked = item.edges
-        .filter(([a, b]) => a === index || b === index)
-        .map(([a, b]) => clean(item.nodes[a === index ? b : a][0]));
-      const type =
-        node[4] === "central"
-          ? "Nodo principal"
-          : node[4] === "result"
-            ? "Nodo resultado"
-            : "Variable auxiliar";
-      nodeTip.innerHTML = `<strong>${esc(info.n)}</strong><span>${layerLabel(node[0])} · ${type}</span><b>${linked.length} conexiones</b><small>${esc(info.value)} · ${esc(info.unit)}</small><em>Conecta con: ${esc(linked.slice(0, 4).join(", "))}${linked.length > 4 ? " y más" : ""}</em>`;
-      const x = event.clientX || 520,
-        y = event.clientY || 180;
-      nodeTip.style.left = `${Math.max(12, Math.min(x + 14, window.innerWidth - 330))}px`;
-      nodeTip.style.top = `${Math.max(12, Math.min(y + 14, window.innerHeight - 190))}px`;
-      nodeTip.classList.add("visible");
-    };
-    const hideNodeTip = () => nodeTip.classList.remove("visible");
-    const nodeInfo = (label) => {
-      const s = clean(label).toLowerCase();
-      const catalog = [
-        [
-          /upl/,
-          [
-            "Unidad de Planeamiento Local",
-            "33 unidades territoriales",
-            "UPL",
-            "Organiza la proximidad y permite comparar acceso, empleo y servicios entre sectores.",
-            "POT, indicador de ciudad de 30 minutos.",
-          ],
-        ],
-        [
-          /manzanas/,
-          [
-            "Manzanas del Cuidado",
-            "45 equipamientos de cuidado",
-            "manzanas",
-            "Acercan servicios de cuidado a la población y reducen tiempos de desplazamiento.",
-            "POT, red de cuidado.",
-          ],
-        ],
-        [
-          /hospital/,
-          [
-            "Hospitales",
-            "24 hospitales",
-            "hospitales",
-            "Aumentan la cobertura efectiva de salud y reducen la distancia a servicios esenciales.",
-            "POT, estructura de servicios.",
-          ],
-        ],
-        [
-          /centros/,
-          [
-            "Centros de salud",
-            "41 centros",
-            "centros",
-            "Funcionan como oferta de salud de proximidad conectada con las UPL.",
-            "POT, estructura de servicios.",
-          ],
-        ],
-        [
-          /colegios|educación/,
-          [
-            "Oferta educativa",
-            "80 colegios / educación superior",
-            "equipamientos",
-            "Eleva la cobertura educativa y modifica el acceso a oportunidades.",
-            "POT, equipamientos sociales.",
-          ],
-        ],
-        [
-          /brecha|tiempo medio|tiempo de cuidado/,
-          [
-            "Tiempo y brecha de viaje",
-            "26–62 minutos",
-            "minutos",
-            "Es una variable de fricción: cuando sube, disminuye el acceso a empleo, cuidado y servicios.",
-            "POT, ciudad de 30 minutos.",
-          ],
-        ],
-        [
-          /empleo|nuevos empleos/,
-          [
-            "Empleo potencial",
-            "910.509 empleos / +24%",
-            "empleos",
-            "Resultado de la articulación entre actividad económica, formación, vivienda y movilidad.",
-            "POT, productividad y empleo.",
-          ],
-        ],
-        [
-          /superávit|upl periféricas/,
-          [
-            "Distribución territorial del empleo",
-            "10 de 33 UPL / 13 UPL periféricas",
-            "UPL",
-            "Mide si el empleo se concentra o se distribuye de forma equilibrada.",
-            "POT, productividad y empleo.",
-          ],
-        ],
-        [
-          /47%|gei|emisiones/,
-          [
-            "Gases de efecto invernadero",
-            "47% asociado al transporte",
-            "% GEI",
-            "Al aumentar la motorización y el combustible, aumenta la presión climática.",
-            "POT, descarbonización.",
-          ],
-        ],
-        [
-          /18%|pm fino|material particulado/,
-          [
-            "Material particulado fino",
-            "18% asociado al transporte",
-            "% PM",
-            "Representa presión sobre la calidad del aire y la salud respiratoria.",
-            "POT, calidad del aire.",
-          ],
-        ],
-        [
-          /viajes|cambio modal/,
-          [
-            "Viajes en modos limpios",
-            "77% meta 2035",
-            "% de viajes",
-            "El cambio modal reduce emisiones cuando desplaza viajes contaminantes hacia transporte limpio.",
-            "POT, descarbonización.",
-          ],
-        ],
-        [
-          /flota|electrificación|taxis/,
-          [
-            "Electrificación de flota",
-            "100% de flota pública · 2040",
-            "% de flota",
-            "Reduce emisiones por viaje y depende de infraestructura de carga y política pública.",
-            "POT, transición energética.",
-          ],
-        ],
-        [
-          /metro|regiotram|cables|transporte/,
-          [
-            "Infraestructura de movilidad",
-            "Metro, RegioTram, cables y transporte",
-            "sistema",
-            "Conecta vivienda, empleo y servicios; es una variable determinista de soporte.",
-            "POT, pág. 170.",
-          ],
-        ],
-        [
-          /aire|salud respiratoria/,
-          [
-            "Calidad del aire y salud",
-            "Variable ambiental de resultado",
-            "presión ambiental",
-            "Resume el efecto de emisiones y material particulado sobre la población.",
-            "POT, capa ecológica.",
-          ],
-        ],
-      ];
-      for (const [rx, v] of catalog)
-        if (rx.test(s))
-          return { n: v[0], value: v[1], unit: v[2], role: v[3], source: v[4] };
-      return {
-        n: clean(label),
-        value: "Variable del modelo",
-        unit: "cualitativa",
-        role: "Conecta otras variables y participa en el resultado del indicador.",
-        source: "Relación documentada del modelo POT.",
-      };
-    };
-    const applyHiddenState = () => {
-      $$(".network-node", canvas).forEach((g) => {
-        g.classList.toggle(
-          "hidden-network-node",
-          hiddenNodes.has(Number(g.dataset.nodeIndex)),
-        );
-      });
-      $$(".network-edge, .network-edge-hit", canvas).forEach((e) => {
-        const edgeIndex = Number(e.dataset.edgeIndex);
-        const [a, b] =
-          networks[document.body.dataset.activeNetwork || "30min"].edges[
-            edgeIndex
-          ] || [];
-        e.classList.toggle(
-          "hidden-network-edge",
-          hiddenNodes.has(a) || hiddenNodes.has(b),
-        );
-      });
-    };
-    const hideNodeAndConnections = (item, index) => {
-      hiddenNodes.add(index);
-      $$(".network-edge, .network-edge-hit", canvas).forEach((e) => {
-        const edgeIndex = Number(e.dataset.edgeIndex);
-        const [a, b] = item.edges[edgeIndex] || [];
-        if (a === index || b === index) e.classList.add("hidden-network-edge");
-      });
-      const node = $(`.network-node[data-node-index="${index}"]`, canvas);
-      node?.classList.add("hidden-network-node");
-      details.innerHTML =
-        "<h3>Nodo oculto</h3><p>Se ocultó el nodo y sus conexiones directas. Usa <b>Restablecer red</b> para restaurarlo.</p>";
-    };
-    const selectNode = (item, index) => {
-      details.classList.toggle("is-active", index !== null);
-      details.hidden = false;
-      const groups = $$(".network-node", canvas),
-        edges = $$(".network-edge", canvas);
-      groups.forEach((g) => g.classList.remove("selected", "dimmed"));
-      edges.forEach((e) => e.classList.remove("highlight", "dimmed"));
-      if (index === null) {
-        details.innerHTML =
-          "<h3>Inspección del nodo</h3><p>Haz clic en un nodo para ver sus conexiones reales.</p>";
-        return;
-      }
-      const linked = [];
-      item.edges.forEach(([a, b, t], i) => {
-        if (a === index) linked.push({ index: b, type: t, edge: i });
-        if (b === index) linked.push({ index: a, type: t, edge: i });
-      });
-      groups.forEach((g, i) => {
-        if (i === index) g.classList.add("selected");
-        else if (!linked.some((v) => v.index === i)) g.classList.add("dimmed");
-      });
-      edges.forEach((e, i) =>
-        linked.some((v) => v.edge === i)
-          ? e.classList.add("highlight")
-          : e.classList.add("dimmed"),
-      );
-      const n = item.nodes[index],
-        l = layer(n[0]),
-        name =
-          l === "layer-red"
-            ? "Capa Roja · Ecológica"
-            : l === "layer-blue"
-              ? "Capa Azul · Determinista"
-              : "Capa Verde · Social",
-        info = nodeInfo(n[0]);
-      details.innerHTML = `<h3><span class="panel-icon teal"><i class="fa-solid fa-crosshairs"></i></span>Inspección del nodo</h3><span class="node-badge ${l.replace("layer-", "")}">${name}</span><p class="node-name">${esc(info.n)}</p><p class="node-meta"><b>${linked.length}</b> conexiones reales en esta red</p><div class="node-fact"><b>${esc(info.value)}</b><small>Unidad: ${esc(info.unit)}</small></div><p class="node-explanation"><strong>Explicación:</strong> ${esc(info.role)}</p><p class="node-source">Fuente: ${esc(info.source)}</p><h4>Relaciones conectadas</h4><ul class="node-connections">${linked.map((v) => `<li>${esc(clean(item.nodes[v.index][0]))} <small>· ${v.type === "support" ? "soporte" : v.type === "indirect" ? "indirecta" : v.type === "result" ? "resultado" : "directa"}</small></li>`).join("")}</ul>`;
-      requestAnimationFrame(() =>
-        details.scrollIntoView({ block: "nearest", behavior: "smooth" }),
-      );
-    };
-    const openNetwork = (key) => {
-      const item = networks[key];
-      layoutNetwork(item);
-      $("#networkTitle").textContent = item.title;
-      $("#networkSubtitle").textContent = item.subtitle;
-      $("#networkCount").textContent =
-        `${item.nodes.length} nodos · ${item.edges.length} conexiones`;
-      $("#networkExplanation").textContent = item.text;
-      canvas.innerHTML = `<svg viewBox="0 0 1400 900" role="img" aria-label="${esc(item.title)}"><defs><marker id="arrow-direct" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 7 3.5 0 7Z" fill="#55b7ff"/></marker><marker id="arrow-indirect" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 7 3.5 0 7Z" fill="#b27cff"/></marker><marker id="arrow-support" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 7 3.5 0 7Z" fill="#e0b447"/></marker><marker id="arrow-result" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 7 3.5 0 7Z" fill="#ff6eaa"/></marker></defs><g id="networkViewport">${categoryHalos(item)}${lines(item)}${nodes(item)}</g></svg>`;
-      document.body.dataset.activeNetwork = key;
-      hiddenNodes = new Set();
-      clickCycle = { index: null, count: 0 };
-      zoom = 1;
-      panX = 0;
-      panY = 0;
-      updateZoom();
-      show(modal);
-      selectNode(item, null);
-      const categoryFilters = $("#categoryFilters");
-      if (categoryFilters) {
-        categoryFilters.innerHTML = `<b>Temas</b>${(thematicCatalog[key] || []).map((category) => `<label class="category-filter" style="--category-color:${category.color}"><input type="checkbox" data-category-filter="${category.id}" checked /><i></i>${esc(category.label)}</label>`).join("")}`;
-        const applyCategoryFilters = () => {
-          const active = new Set($$("[data-category-filter]", categoryFilters).filter((input) => input.checked).map((input) => input.dataset.categoryFilter));
-          $$(".network-node", canvas).forEach((node) => node.classList.toggle("category-hidden", !active.has(node.dataset.category)));
-          $$(".network-edge, .network-edge-hit", canvas).forEach((edge) => {
-            const [a, b] = item.edges[Number(edge.dataset.edgeIndex)] || [];
-            edge.classList.toggle("category-hidden", !active.has(item._categories[a]) || !active.has(item._categories[b]));
-          });
-          $$(".category-halo", canvas).forEach((halo) => halo.classList.toggle("category-hidden", !active.has(halo.dataset.category)));
-        };
-        $$('[data-category-filter]', categoryFilters).forEach((input) => input.addEventListener("change", applyCategoryFilters));
-      }
-      const searchInput = $("#nodeSearchInput"),
-        searchCount = $("#nodeSearchCount");
-      if (searchInput) {
-        searchInput.value = "";
-        searchInput.oninput = () => {
-          const query = clean(searchInput.value).toLowerCase().trim(),
-            groups = $$(".network-node", canvas),
-            matches = item.nodes
-              .map((node, index) => ({ index, label: clean(node[0]).toLowerCase() }))
-              .filter((node) => !query || node.label.includes(query));
-          groups.forEach((group, index) => {
-            const match = !query || matches.some((item) => item.index === index);
-            group.classList.toggle("search-match", Boolean(query && match));
-            group.classList.toggle("search-dimmed", Boolean(query && !match));
-          });
-          if (searchCount) {
-            searchCount.textContent = query ? `${matches.length} resultado${matches.length === 1 ? "" : "s"}` : "";
-          }
-          if (matches.length === 1 && query) selectNode(item, matches[0].index);
-          else if (!query) selectNode(item, null);
-        };
-      }
-      const svg = $("svg", canvas);
-      svg.addEventListener(
-        "wheel",
-        (e) => {
-          e.preventDefault();
-          zoom = Math.max(
-            0.55,
-            Math.min(2.4, zoom + (e.deltaY < 0 ? 0.12 : -0.12)),
-          );
-          updateZoom();
-        },
-        { passive: false },
-      );
-      const activePointers = new Map();
-      let pinchGesture = null;
-      const pointerMidpoint = () => {
-        const points = [...activePointers.values()];
-        return {
-          x: (points[0].x + points[1].x) / 2,
-          y: (points[0].y + points[1].y) / 2,
-        };
-      };
-      const pointerDistance = () => {
-        const points = [...activePointers.values()];
-        return Math.hypot(points[1].x - points[0].x, points[1].y - points[0].y);
-      };
-      svg.addEventListener("pointerdown", (e) => {
-        if (e.pointerType === "touch") {
-          activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
-          svg.setPointerCapture(e.pointerId);
-          if (activePointers.size === 2) {
-            drag = null;
-            const midpoint = pointerMidpoint();
-            pinchGesture = {
-              distance: pointerDistance(),
-              midpoint,
-              zoom,
-              panX,
-              panY,
-            };
-            svg.classList.add("is-pinch-zooming");
-          } else if (activePointers.size === 1 && !e.target.closest(".network-node")) {
-            drag = { x: e.clientX, y: e.clientY, panX, panY, pointerId: e.pointerId };
-            svg.classList.add("is-dragging");
-          }
-          return;
-        }
-        if (e.target.closest(".network-node")) return;
-        drag = { x: e.clientX, y: e.clientY, panX, panY, pointerId: e.pointerId };
-        svg.setPointerCapture(e.pointerId);
-        svg.classList.add("is-dragging");
-      });
-      svg.addEventListener("pointermove", (e) => {
-        if (e.pointerType === "touch") {
-          if (!activePointers.has(e.pointerId)) return;
-          activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
-          if (activePointers.size >= 2 && pinchGesture) {
-            const midpoint = pointerMidpoint();
-            zoom = Math.max(
-              0.55,
-              Math.min(2.4, pinchGesture.zoom * (pointerDistance() / pinchGesture.distance)),
-            );
-            panX = pinchGesture.panX + (midpoint.x - pinchGesture.midpoint.x) * 1.35;
-            panY = pinchGesture.panY + (midpoint.y - pinchGesture.midpoint.y) * 1.35;
-            updateZoom();
-          } else if (drag && drag.pointerId === e.pointerId) {
-            panX = drag.panX + (e.clientX - drag.x) * 1.5;
-            panY = drag.panY + (e.clientY - drag.y) * 1.5;
-            updateZoom();
-          }
-          return;
-        }
-        if (!drag || drag.pointerId !== e.pointerId) return;
-        panX = drag.panX + (e.clientX - drag.x) * 1.5;
-        panY = drag.panY + (e.clientY - drag.y) * 1.5;
-        updateZoom();
-      });
-      ["pointerup", "pointercancel"].forEach((eventName) =>
-        svg.addEventListener(eventName, (e) => {
-          if (e.pointerType === "touch") {
-            activePointers.delete(e.pointerId);
-            if (activePointers.size < 2) pinchGesture = null;
-            if (!activePointers.size || drag?.pointerId === e.pointerId) drag = null;
-          } else if (drag?.pointerId === e.pointerId) {
-            drag = null;
-          }
-          svg.classList.remove("is-dragging", "is-pinch-zooming");
-        }),
-      );
-      $$(".network-edge-hit", canvas).forEach((line) => {
-        const edgeIndex = Number(line.dataset.edgeIndex);
-        line.setAttribute("tabindex", "0");
-        line.addEventListener("click", (e) => {
-          e.stopPropagation();
-          showConnectionCitation(item, edgeIndex, e);
-        });
-        line.addEventListener("keydown", (e) => {
-          if (e.key === "Enter" || e.key === " ")
-            showConnectionCitation(item, edgeIndex, {
-              clientX: 520,
-              clientY: 180,
-            });
-        });
-      });
-      $$(".network-node", canvas).forEach((g) => {
-        const index = Number(g.dataset.nodeIndex);
-        const fn = () => {
-          if (clickCycle.index !== index) clickCycle = { index, count: 0 };
-          clickCycle.count += 1;
-          if (clickCycle.count === 1) selectNode(item, index);
-          else if (clickCycle.count === 2) selectNode(item, null);
-          else {
-            hideNodeAndConnections(item, index);
-            clickCycle = { index, count: 0 };
-          }
-        };
-        g.addEventListener("click", (e) => {
-          e.stopPropagation();
-          fn();
-        });
-        g.addEventListener("keydown", (e) => {
-          if (e.key === "Enter" || e.key === " ") fn();
-        });
-        g.addEventListener("mouseenter", (e) => showNodeTip(item, index, e));
-        g.addEventListener("mousemove", (e) => showNodeTip(item, index, e));
-        g.addEventListener("mouseleave", hideNodeTip);
-        g.addEventListener("focus", () =>
-          showNodeTip(item, index, { clientX: 520, clientY: 180 }),
-        );
-        g.addEventListener("blur", hideNodeTip);
-      });
-    };
-    $$(".network-trigger").forEach((b) =>
-      b.addEventListener("click", () => openNetwork(b.dataset.network)),
-    );
-    $("#networkZoomIn")?.addEventListener("click", () => {
-      zoom = Math.min(2.4, zoom + 0.15);
-      updateZoom();
-    });
-    $("#networkZoomOut")?.addEventListener("click", () => {
-      zoom = Math.max(0.55, zoom - 0.15);
-      updateZoom();
-    });
-    $("#networkZoomReset")?.addEventListener("click", () => {
-      zoom = 1;
-      panX = 0;
-      panY = 0;
-      updateZoom();
-    });
-      $("#networkRestore")?.addEventListener("click", () => {
-        hiddenNodes.clear();
-      $$(".hidden-network-node", canvas).forEach((g) =>
-        g.classList.remove("hidden-network-node"),
-      );
-      $$(".hidden-network-edge", canvas).forEach((e) =>
-        e.classList.remove("hidden-network-edge"),
-      );
-      $$(".network-node", canvas).forEach((g) =>
-        g.classList.remove("selected", "dimmed"),
-      );
-      $$(".network-edge", canvas).forEach((e) =>
-        e.classList.remove("highlight", "dimmed"),
-      );
-      zoom = 1;
-      panX = 0;
-      panY = 0;
-      updateZoom();
-      selectNode(
-        networks[document.body.dataset.activeNetwork || "30min"],
-        null,
-      );
-      clickCycle = { index: null, count: 0 };
-      toast("Red restablecida");
-    });
-      const allFilter = $("#edge-filter-all");
-      const applyEdgeFilters = () => {
-        const filters = $$(".edge-filter");
-        const enabled = new Set(
-          filters
-            .filter((input) => input.checked)
-            .map((input) => input.dataset.edgeType),
-        );
-        ["direct", "indirect", "support", "result"].forEach((type) => {
-          const visible = enabled.has(type);
-          $$(`.network-edge.${type}, .network-edge-hit.${type}`, canvas).forEach(
-            (edge) => edge.classList.toggle("edge-type-hidden", !visible),
-          );
-        });
-        if (allFilter) {
-          const active = filters.filter((input) => input.checked).length;
-          allFilter.checked = active === filters.length;
-          allFilter.indeterminate = active > 0 && active < filters.length;
-          allFilter.setAttribute(
-            "aria-label",
-            allFilter.checked
-              ? "Deseleccionar todas las convenciones"
-              : "Seleccionar todas las convenciones",
-          );
-        }
-      };
-      $$(".edge-filter").forEach((input) =>
-        input.addEventListener("change", applyEdgeFilters),
-      );
-      allFilter?.addEventListener("change", () => {
-        $$(".edge-filter").forEach(
-          (input) => (input.checked = allFilter.checked),
-        );
-        applyEdgeFilters();
-      });
-      $("#networkRestore")?.addEventListener("click", () => {
-        $$(".edge-filter").forEach((input) => (input.checked = true));
-        applyEdgeFilters();
-      });
-      applyEdgeFilters();
-      $("#networkModalClose")?.addEventListener("click", () => hide(modal));
-    modal?.addEventListener("click", (e) => {
-      if (e.target === modal) hide(modal);
-    });
-    $$(".side-item").forEach((x) => x.classList.remove("active"));
-    $$(".side-item")[6]?.classList.add("active");
-    $$(".side-item").forEach((b) =>
-      b.addEventListener("click", () => {
-        $$(".side-item").forEach((x) => x.classList.remove("active"));
-        b.classList.add("active");
-        toast(b.title + " seleccionado");
-      }),
-    );
-    $("#helpBtn")?.addEventListener("click", () =>
-      toast("Usa 1, 2 y 3 para abrir redes con más nodos e iconos."),
-    );
-    $("#bellBtn")?.addEventListener("click", () =>
-      toast("No hay alertas nuevas."),
-    );
-    $("#diagnoseBtn")?.addEventListener("click", () => show($("#modal")));
-    $("#modalClose")?.addEventListener("click", () => hide($("#modal")));
-    $("#modal")?.addEventListener("click", (e) => {
-      if (e.target.id === "modal") hide(e.currentTarget);
-    });
-    $$(".close-card").forEach((b) =>
-      b.addEventListener("click", () =>
-        b.closest(".interaction-card")?.remove(),
-      ),
-    );
-    const exportReport = () => {
-      const blob = new Blob(
-          [
-            "Dashboard de Emergencia e Impacto\nRedes ampliadas con nodos semánticos y clasificación por capas.",
-          ],
-          { type: "text/plain" },
-        ),
-        url = URL.createObjectURL(blob),
-        a = document.createElement("a");
-      a.href = url;
-      a.download = "reporte-emergencia-impacto.txt";
-      a.click();
-      URL.revokeObjectURL(url);
-      toast("Reporte guardado");
-    };
-    $("#exportBtn")?.addEventListener("click", exportReport);
-    $("#exportBottom")?.addEventListener("click", exportReport);
-    $$("select").forEach((s) =>
-      s.addEventListener("change", () =>
-        toast("Periodo actualizado: " + s.value),
-      ),
-    );
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") {
-        hide(modal);
-        hide($("#modal"));
-      }
-    });
-  });
-})();
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Portal Heurístico · Dashboard de Emergencia e Impacto</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="modulo-07.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand-mark">⌂</div>
+        <nav class="side-nav" aria-label="Navegación de las siete pantallas">
+          <button
+            class="side-item active"
+            title="Pantalla 1 · Portal de bienvenida"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M3 11.5 12 4l9 7.5M5.5 10.5V20h13v-9.5M9 20v-5h6v5" />
+            </svg>
+          </button>
+          <button class="side-item" title="Pantalla 2 · Ingeniería inversa">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="6" cy="7" r="2" />
+              <circle cx="18" cy="5" r="2" />
+              <circle cx="14" cy="18" r="2" />
+              <circle cx="7" cy="17" r="2" />
+              <path
+                d="m7.7 8.2 4.9 7.2M8 7.2l8-1.4M9 16.7l3.2.8M16.8 6.8l-1.8 9"
+              />
+            </svg>
+          </button>
+          <button class="side-item" title="Pantalla 3 · Agencia">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="5" r="2.5" />
+              <circle cx="6" cy="17" r="2.5" />
+              <circle cx="18" cy="17" r="2.5" />
+              <path d="M10.7 7.1 7.3 14.8M13.3 7.1l3.4 7.7M8.5 17h7" />
+            </svg>
+          </button>
+          <button class="side-item" title="Pantalla 4 · Navegador multiescalar">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="10.5" cy="10.5" r="6.5" />
+              <path d="m16 16 5 5M10.5 7v7M7 10.5h7" />
+            </svg>
+          </button>
+          <button class="side-item" title="Pantalla 5 · Sistemas de Ackoff">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 6h16M4 12h16M4 18h16" />
+              <circle cx="8" cy="6" r="2" />
+              <circle cx="15" cy="12" r="2" />
+              <circle cx="10" cy="18" r="2" />
+            </svg>
+          </button>
+          <button class="side-item" title="Pantalla 6 · Motor de simulación">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M5 4v16l14-8z" />
+              <path d="M4 21h16M7 21v-2M12 21v-2M17 21v-2" />
+            </svg>
+          </button>
+          <button class="side-item" title="Pantalla 7 · Dashboard de impacto">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 19V5M4 19h16M7 15l3-4 3 2 5-7" />
+              <path d="M18 4h3v3" />
+            </svg>
+          </button>
+        </nav>
+        <div class="sidebar-bottom">AV</div>
+      </aside>
+
+      <main class="dashboard">
+        <header class="topbar">
+          <div class="portal-title">
+            <strong>PORTAL HEURÍSTICO</strong><span></span
+            ><small>Pantalla 7 de 7</small>
+          </div>
+          <div class="top-actions">
+            <button id="helpBtn" class="top-btn">Centro de ayuda&nbsp; ?</button
+            ><button id="bellBtn" class="bell-btn">♧<i></i></button>
+          </div>
+        </header>
+
+        <section class="hero-grid">
+          <div class="hero-copy">
+            <div class="eyebrow"><b></b> RESULTADOS FINALES DEL SISTEMA</div>
+            <h1>Dashboard de<br /><em>Emergencia e Impacto</em></h1>
+            <p>
+              Resultados integrados del sistema Bogotá Viva.<br />Impacto
+              urbano, desempeño económico y ambiental<br />bajo el escenario
+              óptimo actual.
+            </p>
+            <button id="exportBtn" class="outline-btn">
+              ⇩ &nbsp;Guardar reporte final
+            </button>
+            <a id="downloadDeckBtn" class="outline-btn deck-download" href="M_dulo_07___REDSEG_N_EL_POT.pdf" download="SINTESIS_Modulo_07.pdf" aria-label="Descargar presentación SÍNTESIS en PDF">
+              ⇩ &nbsp;Descargar SÍNTESIS
+            </a>
+          </div>
+          <article class="interaction-card">
+            <button class="close-card" data-close="interaction-card">×</button>
+            <div class="round-icon">⌘</div>
+            <div>
+              <h3>
+                El éxito del sistema<br />es producto de<br /><span
+                  >la interacción.</span
+                >
+              </h3>
+              <p>
+                Si el tiempo de viaje promedio los 30 min o la resiliencia
+                falla, la base entra en Game Over por colapso sistémico.
+              </p>
+            </div>
+          </article>
+          <article class="game-card">
+            <div class="game-glow"></div>
+            <div class="game-icon">⚠</div>
+            <h2>GAME OVER</h2>
+            <h3>Colapso sistémico</h3>
+            <p>
+              La habitabilidad de la ciudad ha excedido los límites críticos.
+              Acciones requeridas.
+            </p>
+            <button id="diagnoseBtn" class="danger-btn">
+              Ver diagnóstico crítico
+            </button>
+          </article>
+        </section>
+
+        <section class="metric-grid">
+          <article class="metric-card cyan">
+            <header>
+              <button
+                class="metric-number network-trigger"
+                data-network="30min"
+                title="Abrir red de Ciudad de los 30 minutos"
+              >
+                1
+              </button>
+              <div>
+                <strong>Ciudad de los 30 minutos</strong
+                ><small>Acceso equitativo a servicios y oportunidades</small>
+              </div>
+            </header>
+            <div class="metric-body metric-focus">
+              <div class="focus-icon">⌁</div>
+              <div class="focus-copy">
+                <small>INDICADOR CLAVE</small>
+                <strong>Acceso a servicios y oportunidades</strong>
+                <span><i></i>Meta de proximidad · 2035</span>
+              </div>
+            </div>
+            <footer>
+              <span>♣ <b>33</b><small>UPL del modelo</small></span
+              ><span>⌖ <b>45</b><small>Manzanas del Cuidado</small></span
+              ><span>◷ <b>26–62 min</b><small>Brecha de viaje</small></span>
+            </footer>
+          </article>
+          <article class="metric-card orange">
+            <header>
+              <button
+                class="metric-number network-trigger"
+                data-network="empleo"
+                title="Abrir red de Productividad y empleo"
+              >
+                2
+              </button>
+              <div>
+                <strong>Productividad y empleo</strong
+                ><small>Crecimiento económico inclusivo y sostenible</small>
+              </div>
+            </header>
+            <div class="metric-body metric-focus">
+              <div class="focus-icon">↗</div>
+              <div class="focus-copy">
+                <small>INDICADOR CLAVE</small>
+                <strong>Crecimiento de la población ocupada</strong>
+                <span><i></i>Escenario alto · productividad inclusiva</span>
+              </div>
+            </div>
+            <footer>
+              <span>▣ <b>910.509</b><small>Empleos potenciales</small></span
+              ><span>▥ <b>7%</b><small>Desempleo escenario alto</small></span
+              ><span
+                >⌂ <b>10 / 33</b><small>UPL con superávit laboral</small></span
+              >
+            </footer>
+          </article>
+          <article class="metric-card cyan">
+            <header>
+              <button
+                class="metric-number network-trigger"
+                data-network="carbono"
+                title="Abrir red de Descarbonización"
+              >
+                3
+              </button>
+              <div>
+                <strong>Descarbonización</strong
+                ><small>Reducción de emisiones y calidad del aire</small>
+              </div>
+            </header>
+            <div class="metric-body metric-focus">
+              <div class="focus-icon">◌</div>
+              <div class="focus-copy">
+                <small>INDICADOR CLAVE</small>
+                <strong>Transición hacia viajes limpios</strong>
+                <span><i></i>Meta de descarbonización · 2035</span>
+              </div>
+            </div>
+            <footer>
+              <span>♧ <b>47%</b><small>GEI del transporte</small></span
+              ><span>♧ <b>18%</b><small>PM fino del transporte</small></span
+              ><span>⌁ <b>2040</b><small>Flota pública eléctrica</small></span>
+            </footer>
+          </article>
+        </section>
+
+        <footer class="dashboard-footer">
+          <span>Modelo activo: <b>Bogotá Viva · Escenario Óptimo 2040</b></span
+          ><span>Simulación completada: <b>Hoy, 08:42</b></span
+          ><span>Confianza del modelo: <b>Alta</b> <i></i></span
+          ><button id="exportBottom">⇩ &nbsp; Exportar dashboard</button>
+        </footer>
+      </main>
+    </div>
+    <div id="networkModal" class="network-modal hidden">
+      <div class="network-modal-box">
+        <button id="networkModalClose" class="network-close">×</button>
+        <div class="network-modal-head">
+          <div>
+            <div class="network-kicker">
+              MODO ANALÍTICO // RELACIONES DEL MODELO
+            </div>
+            <h2 id="networkTitle">Red analítica</h2>
+            <p id="networkSubtitle">
+              Nodos y conexiones que explican el indicador.
+            </p>
+          </div>
+          <div class="network-count" id="networkCount">—</div>
+        </div>
+        <div class="network-modal-content">
+          <div
+            class="network-toolbar"
+            aria-label="Controles de navegación de la red"
+          >
+            <button type="button" id="networkZoomOut" title="Alejar">−</button
+            ><button
+              type="button"
+              id="networkZoomReset"
+              title="Restablecer vista"
+            >
+              100%</button
+            ><button
+              type="button"
+              id="networkRestore"
+              title="Restablecer toda la red"
+            >
+              Restablecer red</button
+            ><button type="button" id="networkZoomIn" title="Acercar">+</button
+            ><span>Arrastra el fondo para desplazarte</span>
+            <label class="node-search" for="nodeSearchInput">
+              <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+              <input id="nodeSearchInput" type="search" placeholder="Buscar nodo..." autocomplete="off" />
+              <small id="nodeSearchCount" aria-live="polite"></small>
+            </label>
+            <div id="categoryFilters" class="category-filters" aria-label="Categorías temáticas"></div>
+            <div
+              class="toolbar-conventions"
+              aria-label="Convenciones de la red"
+            >
+              <b>Convenciones</b>
+              <label class="toolbar-convention all-conventions"><input type="checkbox" id="edge-filter-all" checked /><i></i> Todas</label>
+              <label class="toolbar-convention direct"><input type="checkbox" class="edge-filter" data-edge-type="direct" checked /><i></i>Directa</label>
+              <label class="toolbar-convention indirect"><input type="checkbox" class="edge-filter" data-edge-type="indirect" checked /><i></i>Indirecta</label>
+              <label class="toolbar-convention support"><input type="checkbox" class="edge-filter" data-edge-type="support" checked /><i></i>Soporte</label>
+              <label class="toolbar-convention result"><input type="checkbox" class="edge-filter" data-edge-type="result" checked /><i></i>Resultado</label>
+              <div class="toolbar-layers-summary">
+                <b><i class="fa-solid fa-layer-group"></i> Capas del sistema</b>
+                <span
+                >
+                <small
+                  ><strong class="layer-red-text">Capa Roja · Ecológica</strong>
+                  Soporte vital y EEP · POT, pág. 112</small
+                >
+                <small
+                  ><strong class="layer-blue-text"
+                    >Capa Azul · Determinista</strong
+                  >
+                  Vías, Metro y redes · POT, pág. 170</small
+                >
+                <small
+                  ><strong class="layer-green-text">Capa Verde · Social</strong>
+                  Ciudadanos y empresas con agencia · POT, pág. 218</small
+                >
+              </div>
+            </div>
+          </div>
+          <div id="networkCanvas" class="network-canvas"></div>
+          <aside class="network-aside">
+            <div id="nodeDetails" class="network-panel node-details">
+              <h3>
+                <span class="panel-icon teal"
+                  ><i class="fa-solid fa-crosshairs"></i></span
+                >Inspección del nodo
+              </h3>
+              <p>
+                Haz clic en un nodo para ver cuántas conexiones tiene y con qué
+                elementos se relaciona.
+              </p>
+            </div>
+            <div class="network-panel indicator-panel">
+              <h3>
+                <span class="panel-icon teal"
+                  ><i class="fa-solid fa-wave-square"></i></span
+                >Lectura del indicador
+              </h3>
+              <p id="networkExplanation"></p>
+              <div id="networkMetricGrid" class="network-metric-grid">
+                <div class="network-mini-card teal">
+                  <i class="fa-solid fa-cloud"></i><strong>47%</strong
+                  ><span>Indicador principal</span>
+                </div>
+                <div class="network-mini-card warm">
+                  <i class="fa-solid fa-sun"></i><strong>18%</strong
+                  ><span>Indicador crítico</span>
+                </div>
+                <div class="network-mini-card teal">
+                  <i class="fa-solid fa-train-tram"></i><strong>77%</strong
+                  ><span>Meta del escenario</span>
+                </div>
+                <div class="network-mini-card teal">
+                  <i class="fa-solid fa-bolt"></i><strong>100%</strong
+                  ><span>Meta futura</span>
+                </div>
+                <div class="network-mini-card warm">
+                  <i class="fa-solid fa-leaf"></i><strong>72%</strong
+                  ><span>Reducción prevista</span>
+                </div>
+                <div class="network-mini-card teal">
+                  <i class="fa-solid fa-layer-group"></i><strong>Ver más</strong
+                  ><span>Capas y metodología</span>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </div>
+    <div id="modal" class="modal hidden">
+      <div class="modal-box">
+        <button id="modalClose">×</button>
+        <h2>Diagnóstico crítico</h2>
+        <p>
+          El sistema entra en condición de colapso cuando el tiempo de viaje
+          supera los 30 minutos o la resiliencia urbana cae por debajo del
+          umbral operativo.
+        </p>
+        <div class="modal-stats">
+          <b>24%<small>Acceso objetivo</small></b
+          ><b>73/100<small>Resiliencia</small></b
+          ><b>77%<small>Viajes limpios</small></b>
+        </div>
+      </div>
+    </div>
+    <script src="modulo-07.js"></script>
+  </body>
+</html>
