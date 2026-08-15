@@ -510,7 +510,7 @@
         .map(([a, b, t], i) => {
           const A = item.nodes[a],
             B = item.nodes[b];
-          return `<line class="network-edge ${t}" data-edge-index="${i}" marker-end="url(#arrow-${t})" x1="${A[1]}" y1="${A[2]}" x2="${B[1]}" y2="${B[2]}"/><line class="network-edge-hit" data-edge-index="${i}" tabindex="0" x1="${A[1]}" y1="${A[2]}" x2="${B[1]}" y2="${B[2]}"/>`;
+          return `<line class="network-edge ${t}" data-edge-index="${i}" marker-end="url(#arrow-${t})" x1="${A[1]}" y1="${A[2]}" x2="${B[1]}" y2="${B[2]}"/><line class="network-edge-hit ${t}" data-edge-index="${i}" data-edge-type="${t}" tabindex="0" x1="${A[1]}" y1="${A[2]}" x2="${B[1]}" y2="${B[2]}"/>`;
         })
         .join("");
     const iconSvg = (label) => {
@@ -1049,8 +1049,8 @@
       panY = 0;
       updateZoom();
     });
-    $("#networkRestore")?.addEventListener("click", () => {
-      hiddenNodes.clear();
+      $("#networkRestore")?.addEventListener("click", () => {
+        hiddenNodes.clear();
       $$(".hidden-network-node", canvas).forEach((g) =>
         g.classList.remove("hidden-network-node"),
       );
@@ -1074,7 +1074,47 @@
       clickCycle = { index: null, count: 0 };
       toast("Red restablecida");
     });
-    $("#networkModalClose")?.addEventListener("click", () => hide(modal));
+      const allFilter = $("#edge-filter-all");
+      const applyEdgeFilters = () => {
+        const filters = $$(".edge-filter");
+        const enabled = new Set(
+          filters
+            .filter((input) => input.checked)
+            .map((input) => input.dataset.edgeType),
+        );
+        ["direct", "indirect", "support", "result"].forEach((type) => {
+          const visible = enabled.has(type);
+          $$(`.network-edge.${type}, .network-edge-hit.${type}`, canvas).forEach(
+            (edge) => edge.classList.toggle("edge-type-hidden", !visible),
+          );
+        });
+        if (allFilter) {
+          const active = filters.filter((input) => input.checked).length;
+          allFilter.checked = active === filters.length;
+          allFilter.indeterminate = active > 0 && active < filters.length;
+          allFilter.setAttribute(
+            "aria-label",
+            allFilter.checked
+              ? "Deseleccionar todas las convenciones"
+              : "Seleccionar todas las convenciones",
+          );
+        }
+      };
+      $$(".edge-filter").forEach((input) =>
+        input.addEventListener("change", applyEdgeFilters),
+      );
+      allFilter?.addEventListener("change", () => {
+        $$(".edge-filter").forEach(
+          (input) => (input.checked = allFilter.checked),
+        );
+        applyEdgeFilters();
+      });
+      $("#networkRestore")?.addEventListener("click", () => {
+        $$(".edge-filter").forEach((input) => (input.checked = true));
+        applyEdgeFilters();
+      });
+      applyEdgeFilters();
+      $("#networkModalClose")?.addEventListener("click", () => hide(modal));
     modal?.addEventListener("click", (e) => {
       if (e.target === modal) hide(modal);
     });
