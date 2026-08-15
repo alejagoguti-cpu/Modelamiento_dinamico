@@ -223,14 +223,17 @@ html, body {
   gap: 4px;
 }
 
-.upz-item {
-  padding: 8px;
+.upz-item.humedal-card {
+  padding: 12px;
   background: #1a2332;
   border: 1px solid #2a3f5a;
-  border-radius: 3px;
+  border-radius: 4px;
   cursor: pointer;
   font-size: 9px;
   transition: 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .upz-item:hover {
