@@ -1064,3 +1064,58 @@ button {
 .network-node.layer-green .node-icon-svg {
   color: var(--green);
 }
+
+/* Sidebar: iconos SVG lineales visibles en todos los estados */
+.side-nav .side-item {
+  color: #71807b;
+  background: transparent;
+}
+.side-nav .side-item svg {
+  width: 24px;
+  height: 24px;
+  display: block;
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 1;
+}
+.side-nav .side-item svg path,
+.side-nav .side-item svg circle,
+.side-nav .side-item svg line,
+.side-nav .side-item svg polyline {
+  fill: none !important;
+  stroke: currentColor !important;
+}
+.side-nav .side-item:hover,
+.side-nav .side-item.active {
+  color: #27cdc4;
+}
+.side-nav .side-item.active {
+  background: rgba(39, 205, 196, 0.1);
+  box-shadow: 0 0 18px rgba(39, 205, 196, 0.22);
+}
+
+/* Etiquetas compactas dentro de nodos */
+.network-node > text {
+  font-size: 8px !important;
+  font-weight: 700;
+  letter-spacing: -0.15px;
+  text-anchor: middle;
+  fill: #eef4ef;
+  paint-order: stroke;
+  stroke: #111817;
+  stroke-width: 3px;
+  stroke-linejoin: round;
+}
+.network-node.central > text {
+  font-size: 9px !important;
+}
+.network-node circle {
+  fill: #0b1112;
+  fill-opacity: 0.95;
+}
+.edge-sign {
+  display: none !important;
+}
