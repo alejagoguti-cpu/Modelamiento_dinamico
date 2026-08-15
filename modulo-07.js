@@ -429,10 +429,10 @@
     };
     const layoutNetwork = (item) => {
       const cols = 10,
-        x0 = 130,
-        y0 = 120,
-        dx = 205,
-        dy = 165;
+        x0 = 88,
+        y0 = 92,
+        dx = 132,
+        dy = 128;
       const degree = item.nodes.map((_, i) =>
         item.edges.reduce((n, [a, b]) => n + (a === i || b === i ? 1 : 0), 0),
       );
@@ -444,67 +444,75 @@
           row = Math.floor(rank / cols);
         item.nodes[nodeIndex][1] = x0 + col * dx;
         item.nodes[nodeIndex][2] = y0 + row * dy;
-        item.nodes[nodeIndex][3] = Math.min(item.nodes[nodeIndex][3], 58);
+        item.nodes[nodeIndex][3] =
+          degree[nodeIndex] >= 8 ? 46 : degree[nodeIndex] >= 4 ? 36 : 30;
+        if (item.nodes[nodeIndex][4] === "central")
+          item.nodes[nodeIndex][3] = 50;
       });
-      item.nodes[order[0]][1] = 1060;
-      item.nodes[order[0]][2] = 540;
+      item.nodes[order[0]][1] = 700;
+      item.nodes[order[0]][2] = 450;
     };
     const lines = (item) =>
       item.edges
         .map(([a, b, t], i) => {
           const A = item.nodes[a],
             B = item.nodes[b];
-          return `<line class="network-edge ${t}" data-edge-index="${i}" x1="${A[1]}" y1="${A[2]}" x2="${B[1]}" y2="${B[2]}"/>`;
+          return `<line class="network-edge ${t}" data-edge-index="${i}" marker-end="url(#arrow-${t})" x1="${A[1]}" y1="${A[2]}" x2="${B[1]}" y2="${B[2]}"/>`;
         })
         .join("");
-    const iconSvg = (label, index) => {
-      const s = label.toLowerCase(),
-        angle = (index * 17) % 360,
-        seed = index + 3,
-        unique = `<path d="M12 3v3M12 18v3M3 12h3M18 12h3" transform="rotate(${angle} 12 12)"/>`;
-      let p = '<circle cx="12" cy="12" r="5"/>';
-      if (/hospital|salud|aire|respiratoria/.test(s))
+    const iconSvg = (label) => {
+      const s = label.toLowerCase();
+      let p = '<path d="M5 19h14M7 16V8h3v8m4 0V5h3v11"/>';
+      if (/hospital|centros de salud|salud respiratoria/.test(s))
         p = '<path d="M12 4v16M4 12h16"/>';
-      else if (/colegio|educación/.test(s))
-        p = '<path d="M4 9l8-4 8 4-8 4-8-4Zm3 3v4c2 2 8 2 10 0v-4M20 9v7"/>';
-      else if (/metro|regiotram|cable|transporte|carga/.test(s))
+      else if (/colegio|educación|formación|graduados/.test(s))
+        p = '<path d="m3 9 9-5 9 5-9 5-9-5Zm4 2v5c3 2 7 2 10 0v-5M21 9v7"/>';
+      else if (/metro|regiotram|cables|transporte/.test(s))
         p =
-          '<rect x="5" y="5" width="14" height="12" rx="3"/><path d="M8 17v3m8-3v3M5 10h14M8 14h.01M16 14h.01"/>';
-      else if (/vivienda|espacio/.test(s))
-        p = '<path d="m4 11 8-7 8 7v8H4zM9 19v-5h6v5"/>';
-      else if (/empleo|empresa|productividad|salario|comercio/.test(s))
-        p =
-          '<rect x="4" y="7" width="16" height="12" rx="2"/><path d="M9 7V5h6v2M4 12h16M10 12v2h4v-2"/>';
-      else if (/cuidado|manzanas/.test(s))
-        p =
-          '<path d="M12 20S4 15 4 9a4 4 0 0 1 8-2 4 4 0 0 1 8 2c0 6-8 11-8 11Z"/>';
+          '<rect x="5" y="4" width="14" height="14" rx="3"/><path d="M8 18v3m8-3v3M5 10h14M9 14h.01M15 14h.01"/>';
+      else if (/carga|puntos de carga|electrificación/.test(s))
+        p = '<path d="M13 3 6 13h5l-1 8 7-11h-5l1-7Z"/>';
+      else if (/vivienda|hogares|residencial/.test(s))
+        p = '<path d="m3 11 9-7 9 7v8H3zM9 19v-5h6v5"/>';
       else if (
-        /ciclorruta|peatonal|movilidad|viajes|flota|vehículos|taxis/.test(s)
+        /empleo|empresa|productividad|salario|comercio|actividad económica/.test(
+          s,
+        )
       )
         p =
-          '<circle cx="8" cy="16" r="3"/><circle cx="17" cy="16" r="3"/><path d="m8 16 3-8 4 2 2 6M11 8h-3"/>';
-      else if (/emisiones|gei|pm|combustible/.test(s))
-        p = '<path d="M8 18h8M9 14c-2-2 0-5 3-7 3 2 5 5 3 7-1 2-5 2-6 0Z"/>';
-      else if (/upl|población|periféricas|segregación/.test(s))
+          '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5h8v2M3 12h18M10 12v2h4v-2"/>';
+      else if (/cuidado|manzanas/.test(s))
         p =
-          '<circle cx="8" cy="9" r="3"/><circle cx="16" cy="9" r="3"/><path d="M3 19c0-3 2-5 5-5s5 2 5 5M11 19c0-3 2-5 5-5s5 2 5 5"/>';
-      else if (/innovación|investigación/.test(s))
-        p = '<path d="M9 3h6l1 5-4 4-4-4 1-5ZM12 12v8M8 20h8"/>';
-      else if (/verde|calidad|parques/.test(s))
+          '<path d="M12 20S4 15 4 9a4 4 0 0 1 8-2 4 4 0 0 1 8 2c0 6-8 11-8 11Z"/><path d="M12 7c0-2 1-3 3-4"/>';
+      else if (/ciclorruta|peatonal|bicicleta/.test(s))
+        p =
+          '<circle cx="7" cy="17" r="3"/><circle cx="17" cy="17" r="3"/><path d="m7 17 4-8 3 5h3M11 9H8"/>';
+      else if (/viajes|movilidad|flota|vehículos|taxis|buses/.test(s))
+        p =
+          '<path d="M5 17V9l2-4h10l2 4v8M5 10h14M8 17h.01M16 17h.01"/><path d="M8 5 7 3m9 2 1-2"/>';
+      else if (/emisiones|gei|pm|nox|combustible/.test(s))
+        p =
+          '<path d="M8 18h8M9 14c-2-2 0-5 3-7 3 2 5 5 3 7-1 2-5 2-6 0Z"/><path d="M7 5h.01M17 4h.01"/>';
+      else if (
+        /upl|población|periféricas|segregación|participación laboral/.test(s)
+      )
+        p =
+          '<circle cx="8" cy="8" r="3"/><circle cx="16" cy="8" r="3"/><path d="M3 20c0-4 2-6 5-6s5 2 5 6M11 20c0-4 2-6 5-6s5 2 5 6"/>';
+      else if (/innovación|investigación|patentes/.test(s))
+        p = '<path d="M9 3h6l1 5-4 4-4-4 1-5ZM12 12v5M8 21h8M9 18h6"/>';
+      else if (/verde|calidad|parques|ecosistema/.test(s))
         p =
           '<path d="M12 20V8M12 12C8 12 5 9 5 5c4 0 7 3 7 7ZM12 15c4 0 7-3 7-7-4 0-7 3-7 7Z"/>';
-      else if (/inversión|suelo|densidad/.test(s))
-        p = '<path d="M4 19h16M6 16V9h3v7m3 0V5h3v11m3 0v-4h3v4"/>';
+      else if (/inversión|suelo|densidad|centralidad económica/.test(s))
+        p = '<path d="M4 20h16M6 17V9h3v8m3 0V5h3v12m3 0v-4h3v4"/>';
       else if (/tiempo|espera|velocidad|congestión/.test(s))
-        p = '<circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/>';
-      else if (/internet|conectividad/.test(s))
+        p = '<circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2M12 4v1"/>';
+      else if (/internet|conectividad|red/.test(s))
         p =
           '<path d="M4 10a12 12 0 0 1 16 0M7 13a7 7 0 0 1 10 0M10 16a3 3 0 0 1 4 0M12 20h.01"/>';
-      else if (/población|hogares|dependiente/.test(s))
-        p =
-          '<circle cx="12" cy="8" r="3"/><path d="M6 20c0-4 2-6 6-6s6 2 6 6"/>';
-      const marker = `<circle cx="12" cy="12" r="9" stroke-dasharray="${3 + (seed % 4)} ${2 + (seed % 3)}" opacity=".6"/>`;
-      return `<g class="node-icon-svg" transform="translate(-12 -12)" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">${p}${marker}${unique}</g>`;
+      else if (/agua|río|humedal/.test(s))
+        p = '<path d="M12 3S6 10 6 14a6 6 0 0 0 12 0c0-4-6-11-6-11Z"/>';
+      return `<g class="node-icon-svg" transform="translate(-12 -12)" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${p}</g>`;
     };
     const nodes = (item) =>
       item.nodes
@@ -515,8 +523,9 @@
             .flatMap((row) =>
               row.length > 18 ? [row.slice(0, 17) + "…"] : [row],
             )
-            .slice(0, 2);
-          return `<g class="network-node ${type || ""} ${layer(label)}" data-node-index="${i}" tabindex="0" role="button" aria-label="${esc(clean(display))}"><circle cx="${x}" cy="${y}" r="${r}"/><g transform="translate(${x} ${y - 12})">${iconSvg(label, i)}</g><text x="${x}" y="${y + 7 + (rows.length - 1) * 4}">${rows.map((row, j) => `<tspan x="${x}" dy="${j ? 13 : 0}">${esc(row)}</tspan>`).join("")}</text></g>`;
+            .slice(0, 2)
+            .map((row) => row.toUpperCase());
+          return `<g class="network-node ${type || ""} ${layer(label)}" data-node-index="${i}" tabindex="0" role="button" aria-label="${esc(clean(display))}"><circle cx="${x}" cy="${y}" r="${r}"/><g transform="translate(${x} ${y - 7})">${iconSvg(label)}</g><text class="node-label" x="${x}" y="${y + 8 + (rows.length - 1) * 4}">${rows.map((row, j) => `<tspan x="${x}" dy="${j ? 10 : 0}">${esc(row)}</tspan>`).join("")}</text></g>`;
         })
         .join("");
     const modal = $("#networkModal"),
@@ -751,7 +760,7 @@
       const node = $(`.network-node[data-node-index="${index}"]`, canvas);
       node?.classList.add("hidden-network-node");
       details.innerHTML =
-        "<h3>Nodo oculto</h3><p>Se ocultó el nodo y sus conexiones directas. Usa <b>Mostrar ocultos</b> para restaurarlo.</p>";
+        "<h3>Nodo oculto</h3><p>Se ocultó el nodo y sus conexiones directas. Usa <b>Restablecer red</b> para restaurarlo.</p>";
     };
     const selectNode = (item, index) => {
       const groups = $$(".network-node", canvas),
@@ -796,7 +805,7 @@
       $("#networkCount").textContent =
         `${item.nodes.length} nodos · ${item.edges.length} conexiones`;
       $("#networkExplanation").textContent = item.text;
-      canvas.innerHTML = `<svg viewBox="0 0 2180 1120" role="img" aria-label="${esc(item.title)}"><g id="networkViewport">${lines(item)}${nodes(item)}</g></svg>`;
+      canvas.innerHTML = `<svg viewBox="0 0 1400 900" role="img" aria-label="${esc(item.title)}"><defs><marker id="arrow-direct" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 7 3.5 0 7Z" fill="#55b7ff"/></marker><marker id="arrow-indirect" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 7 3.5 0 7Z" fill="#b27cff"/></marker><marker id="arrow-support" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 7 3.5 0 7Z" fill="#e0b447"/></marker><marker id="arrow-result" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 7 3.5 0 7Z" fill="#ff6eaa"/></marker></defs><g id="networkViewport">${lines(item)}${nodes(item)}</g></svg>`;
       document.body.dataset.activeNetwork = key;
       hiddenNodes = new Set();
       clickCycle = { index: null, count: 0 };
@@ -887,12 +896,22 @@
       $$(".hidden-network-edge", canvas).forEach((e) =>
         e.classList.remove("hidden-network-edge"),
       );
+      $$(".network-node", canvas).forEach((g) =>
+        g.classList.remove("selected", "dimmed"),
+      );
+      $$(".network-edge", canvas).forEach((e) =>
+        e.classList.remove("highlight", "dimmed"),
+      );
+      zoom = 1;
+      panX = 0;
+      panY = 0;
+      updateZoom();
       selectNode(
         networks[document.body.dataset.activeNetwork || "30min"],
         null,
       );
       clickCycle = { index: null, count: 0 };
-      toast("Nodos y conexiones restaurados");
+      toast("Red restablecida");
     });
     $("#networkModalClose")?.addEventListener("click", () => hide(modal));
     modal?.addEventListener("click", (e) => {
