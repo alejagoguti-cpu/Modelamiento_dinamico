@@ -602,7 +602,12 @@
             labelY = y + (r >= 44 ? 10 : 7),
             lineGap = r >= 44 ? 10 : 7;
           const category = item._categories?.[i] || "access-goals";
-          return `<g class="network-node ${sizeClass} ${type || ""} ${layer(label)} category-${category}" data-node-index="${i}" data-category="${category}" tabindex="0" role="button" aria-label="${esc(clean(display))}"><circle cx="${x}" cy="${y}" r="${r}"/><g class="node-icon-wrap" transform="translate(${x} ${iconY})">${iconSvg(label)}</g><text class="node-label" x="${x}" y="${labelY}">${rows.map((row, j) => `<tspan x="${x}" dy="${j ? lineGap : 0}">${esc(row)}</tspan>`).join("")}</text></g>`;
+          const relationCounts = item.edges.reduce((counts, edge) => {
+            if (edge[0] === i || edge[1] === i) counts[edge[2]] = (counts[edge[2]] || 0) + 1;
+            return counts;
+          }, {});
+          const relationType = ["direct", "indirect", "support", "result"].sort((a, b) => (relationCounts[b] || 0) - (relationCounts[a] || 0))[0];
+          return `<g class="network-node ${sizeClass} ${type || ""} relation-${relationType} ${layer(label)} category-${category}" data-node-index="${i}" data-relation-type="${relationType}" data-category="${category}" tabindex="0" role="button" aria-label="${esc(clean(display))}"><circle cx="${x}" cy="${y}" r="${r}"/><g class="node-icon-wrap" transform="translate(${x} ${iconY})">${iconSvg(label)}</g><text class="node-label" x="${x}" y="${labelY}">${rows.map((row, j) => `<tspan x="${x}" dy="${j ? lineGap : 0}">${esc(row)}</tspan>`).join("")}</text></g>`;
         })
         .join("");
     const categoryHalos = (item) => {
@@ -926,15 +931,24 @@
     };
     const hideNodeAndConnections = (item, index) => {
       hiddenNodes.add(index);
-      $$(".network-edge, .network-edge-hit", canvas).forEach((e) => {
-        const edgeIndex = Number(e.dataset.edgeIndex);
-        const [a, b] = item.edges[edgeIndex] || [];
-        if (a === index || b === index) e.classList.add("hidden-network-edge");
-      });
-      const node = $(`.network-node[data-node-index="${index}"]`, canvas);
-      node?.classList.add("hidden-network-node");
+      let changed = true;
+      while (changed) {
+        changed = false;
+        item.nodes.forEach((_, nodeIndex) => {
+          if (hiddenNodes.has(nodeIndex)) return;
+          const visibleNeighbors = item.edges
+            .filter(([a, b]) => a === nodeIndex || b === nodeIndex)
+            .map(([a, b]) => (a === nodeIndex ? b : a))
+            .filter((neighbor) => !hiddenNodes.has(neighbor));
+          if (!visibleNeighbors.length) {
+            hiddenNodes.add(nodeIndex);
+            changed = true;
+          }
+        });
+      }
+      applyHiddenState();
       details.innerHTML =
-        "<h3>Nodo oculto</h3><p>Se ocultó el nodo y sus conexiones directas. Usa <b>Restablecer red</b> para restaurarlo.</p>";
+        "<h3>Nodo oculto</h3><p>Se ocultó el nodo y cualquier elemento que quedara sin una relación visible. Usa <b>Restablecer red</b> para restaurarlo.</p>";
     };
     const selectNode = (item, index) => {
       details.classList.toggle("is-active", index !== null);
@@ -999,14 +1013,31 @@
         categoryFilters.innerHTML = `<b>Temas</b>${(thematicCatalog[key] || []).map((category) => `<label class="category-filter" style="--category-color:${category.color}"><input type="checkbox" data-category-filter="${category.id}" checked /><i></i>${esc(category.label)}</label>`).join("")}`;
         const applyCategoryFilters = () => {
           const active = new Set($$("[data-category-filter]", categoryFilters).filter((input) => input.checked).map((input) => input.dataset.categoryFilter));
+          const categoryHidden = new Set(item.nodes.map((node, index) => active.has(item._categories[index]) ? null : index).filter((index) => index !== null));
+          let changed = true;
+          while (changed) {
+            changed = false;
+            item.nodes.forEach((_, nodeIndex) => {
+              if (categoryHidden.has(nodeIndex)) return;
+              const visibleNeighbors = item.edges
+                .filter(([a, b]) => a === nodeIndex || b === nodeIndex)
+                .map(([a, b]) => (a === nodeIndex ? b : a))
+                .filter((neighbor) => !categoryHidden.has(neighbor) && !hiddenNodes.has(neighbor));
+              if (!visibleNeighbors.length) {
+                categoryHidden.add(nodeIndex);
+                changed = true;
+              }
+            });
+          }
           $$(".network-node", canvas).forEach((node) => {
-            const hidden = !active.has(node.dataset.category);
-            node.classList.toggle("category-hidden", hidden);
+            const index = Number(node.dataset.nodeIndex);
+            const hidden = categoryHidden.has(index) || hiddenNodes.has(index);
+            node.classList.toggle("category-hidden", categoryHidden.has(index));
             node.classList.toggle("hidden-network-node", hidden);
           });
           $$(".network-edge, .network-edge-hit", canvas).forEach((edge) => {
             const [a, b] = item.edges[Number(edge.dataset.edgeIndex)] || [];
-            const hidden = !active.has(item._categories[a]) || !active.has(item._categories[b]);
+            const hidden = categoryHidden.has(a) || categoryHidden.has(b) || hiddenNodes.has(a) || hiddenNodes.has(b);
             edge.classList.toggle("category-hidden", hidden);
             edge.classList.toggle("hidden-network-edge", hidden);
           });
