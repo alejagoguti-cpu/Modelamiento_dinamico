@@ -141,7 +141,7 @@ body {
 .control-btn:hover, .control-btn.active { border-color: var(--teal); color: var(--teal); background: rgba(47,212,200,0.05); }
 
 .swatch-tag { display: inline-block; width: 14px; height: 14px; border-radius: 3px; margin-right: 6px; vertical-align: middle; }
-.swatch-e1 { background: #2dd4bf; } .swatch-e2 { background: #f97316; } .swatch-e3 { background: #eab308; } .swatch-e4 { background: #ec4899; }
+.swatch-e1 { background: #5cd6d1; } .swatch-e2 { background: #ef9f54; } .swatch-e3 { background: #fac47b; } .swatch-e4 { background: #fb8d84; }
 
 /* NETWORK CANVAS + ZOOM */
 .network-viz-wrap { display: flex; gap: 16px; align-items: stretch; }
