@@ -11,7 +11,7 @@ const POT_DATA = {
  "sistemas": {
   "EEP": {
    "nombre": "Estructura Ecológica Principal",
-   "color": "#2fbfae"
+   "color": "#58d68d"
   },
   "EFC": {
    "nombre": "Estructura Funcional y del Cuidado",
@@ -2193,7 +2193,7 @@ const layout = {};
 const nodeR = {};
 // Escala visual para que los nodos conserven proporción pero no se vean diminutos
 // dentro del viewBox amplio de la red.
-const NODE_VISUAL_SCALE = 0.96;
+const NODE_VISUAL_SCALE = 1.12;
 // Relaciones ESECI que permanecen visibles al apagar la tarjeta socioeconómica.
 // Corresponden a las dos primeras relaciones ESECI del archivo de datos.
 const ESECI_RETAINED_REL_IDS = new Set([9, 10]);
@@ -2229,7 +2229,7 @@ function buildModel() {
   // grados heredados de conexiones que fueron retiradas por falta de evidencia.
   Object.values(model.concepts).forEach(c => {
     c.deg = c.rels.length;
-    nodeR[c.id] = Math.max(34, 30 + c.deg * 8);
+    nodeR[c.id] = Math.max(38, 34 + c.deg * 13);
   });
 }
 
@@ -2355,28 +2355,25 @@ function computeLayout() {
     });
   }
 
-  // Malla orgánica descentralizada: no se usan anillos, radios ni cuadrantes.
-  // Los hubs se intercalan en el campo y los nodos restantes parten de una
-  // dispersión determinista tipo nube antes de la relajación anti-colisión.
-  const spreadIds = ids.slice().sort((a, b) =>
-    (model.concepts[b].deg - model.concepts[a].deg) || a.localeCompare(b));
-  const hubIds = spreadIds.slice(0, Math.min(8, spreadIds.length));
-  const hubPositions = [
-    { x: -900, y: -430 }, { x: -260, y: -720 },
-    { x: 520, y: -560 }, { x: 930, y: -120 },
-    { x: 680, y: 520 }, { x: 80, y: 760 },
-    { x: -660, y: 570 }, { x: -980, y: 100 }
-  ];
-  hubIds.forEach((id, index) => { pos[id] = hubPositions[index]; });
-  const secondaryIds = spreadIds.filter(id => !hubIds.includes(id));
-  secondaryIds.forEach((id, index) => {
-    const seed = index + 11;
-    const x = ((seed * 947) % 3001) - 1500;
-    const y = ((seed * 617 + index * 83) % 2101) - 1050;
-    pos[id] = {
-      x: x + Math.sin(seed * 1.71) * 135,
-      y: y + Math.cos(seed * 1.29) * 105
-    };
+  // Distribución horizontal limpia: cada estructura ocupa una zona amplia,
+  // pero sus nodos se escalonan en filas para que las conexiones sean legibles.
+  // No se inventan relaciones ni se cambian los datos; solo se modifica su posición.
+  const zoneX = { EEP: -1150, EFC: -390, ESECI: 390, EIP: 1150 };
+  const zoneStep = { EEP: 205, EFC: 215, ESECI: 205, EIP: 235 };
+  const rowY = [-720, -310, 100, 510, 920];
+  SYS.forEach(s => {
+    const group = model.systems[s].concepts.slice().sort((a, b) =>
+      (model.concepts[b].deg - model.concepts[a].deg) || a.localeCompare(b));
+    const cols = group.length <= 6 ? 2 : group.length <= 12 ? 3 : 4;
+    group.forEach((id, index) => {
+      const row = Math.floor(index / cols);
+      const col = index % cols;
+      const offset = (col - (cols - 1) / 2) * zoneStep[s];
+      pos[id] = {
+        x: zoneX[s] + offset,
+        y: rowY[row % rowY.length] + ((col % 2) * 42 - 21)
+      };
+    });
   });
 
   // Relajación final de colisiones: separa bordes reales de los círculos,
@@ -2572,6 +2569,7 @@ const iconSize = Math.max(28, Math.round(R * 0.52));
       if (isolated && !off && !sysOff) cls.push('isolated');
       if (off) cls.push('node-off');
       if (sysOff) cls.push('sys-off');
+      if (offNodes.size && (off || activeRels === 0)) cls.push('node-hidden');
       if (!off && !sysOff && ratio >= 0.34 && ratio < 1) cls.push('weakened');
       if (!off && !sysOff && ratio >= 1) cls.push('cut-off');
       if (isBridge(c)) cls.push('bridge');
@@ -2594,8 +2592,10 @@ const iconSize = Math.max(28, Math.round(R * 0.52));
       g.appendChild(fo);
 
       const lines = wrapLabel(c.label);
+      const labelStep = Math.max(13, Math.min(18, R * 0.18));
+      const labelStart = Math.max(-R * 0.02, R * 0.24 - ((lines.length - 1) * labelStep) / 2);
       lines.forEach((ln, i) => {
-        const t = el('text', { y: R + fontSize + 5 + i * (fontSize + 1.6), style: `font-size:${fontSize}px` });
+        const t = el('text', { y: labelStart + i * labelStep, style: `font-size:${Math.max(14, Math.min(22, fontSize * .7))}px` });
         t.textContent = ln;
         g.appendChild(t);
       });
@@ -2607,23 +2607,25 @@ const iconSize = Math.max(28, Math.round(R * 0.52));
       g.addEventListener('mousemove', moveTooltip);
       g.addEventListener('mouseleave', hideTooltip);
 
-      // Un clic enfoca el nodo. Tres clics realizan una deselección local:
-      // solo el nodo y sus vecinos directos, sin renderizar ni mover la red.
+      // Ciclo de interacción: 1 clic = enfocar; 2 = deseleccionar;
+      // 3 = ocultar el nodo y sus conexiones. No se mueve la red.
       let clickCount = 0;
       let clickTimer = null;
       g.addEventListener('click', ev => {
         ev.stopPropagation();
-        clickCount++;
+        clickCount += 1;
         if (clickTimer) clearTimeout(clickTimer);
-        if (clickCount === 3) {
-          deselectLocal(id);
-          clickCount = 0;
-          return;
-        }
         clickTimer = setTimeout(() => {
-          if (clickCount === 1) focusConcept(id);
+          if (clickCount === 1) {
+            focusConcept(id);
+          } else if (clickCount === 2) {
+            deselectLocal(id);
+            clearFocus();
+          } else if (clickCount >= 3) {
+            hideNodeAndConnections(id);
+          }
           clickCount = 0;
-        }, 280);
+        }, 320);
       });
 
       gNodes.appendChild(g);
@@ -2680,6 +2682,17 @@ function components() {
   return { count: sizes.length, largest: sizes[0] || 0, totalNodes: nodes.length };
 }
 
+function updateHiddenNodesIndicator() {
+  const indicator = document.getElementById('hiddenNodesIndicator');
+  const text = document.getElementById('hiddenNodesText');
+  if (!indicator || !text) return;
+  const count = offNodes.size;
+  indicator.classList.toggle('is-clear', count === 0);
+  indicator.classList.toggle('has-hidden', count > 0);
+  text.textContent = count ? `${count} nodo${count === 1 ? '' : 's'} oculto${count === 1 ? '' : 's'}` : 'Sin nodos ocultos';
+  indicator.title = count ? 'Nodos ocultados con triple clic' : 'Todos los nodos visibles';
+}
+
 function updateMetrics() {
   const total = model.relations.length;
   const active = model.relations.filter(relActive).length;
@@ -2698,6 +2711,18 @@ function updateMetrics() {
   set('mComp', comp.count);
   set('mMain', comp.largest + ' <small>nodos</small>');
   set('mIso', isolatedCount);
+
+  const activeSystems = SYS.filter(s => state[s]).length;
+  set('metricActive', activeSystems);
+  set('metricActiveSub', activeSystems === SYS.length ? 'Estructuras activas' : `de ${SYS.length} estructuras activas`);
+  set('metricRelations', total);
+  set('metricNodes', comp.totalNodes);
+  set('metricNodesSub', `de ${totalNodes} conceptos activos`);
+  set('metricConnectivity', pct + '%');
+  set('metricConnectivityValue', `${active} activas`);
+  const metricRing = document.querySelector('.metric-ring');
+  if (metricRing) metricRing.style.setProperty('--connectivity', pct + '%');
+  updateHiddenNodesIndicator();
 
   const bar = document.getElementById('mBar');
   bar.style.width = pct + '%';
@@ -2838,28 +2863,75 @@ function updateSimPanel(active, total, rank) {
   }
 
   // ---- hallazgo dinámico ----
+  // El texto separa lo que la red muestra de cualquier interpretación normativa.
   const top = rank[0];
   const f = document.getElementById('finding');
+  const nf = document.getElementById('networkFindingText');
+  let findingHtml = '';
   if (!off.length) {
-    f.innerHTML = top.out === 0
-      ? 'Sin relaciones activas para analizar.'
-      : `La red está completa: <b>${active} de ${total}</b> relaciones activas.
-         Según las relaciones construidas a partir del POT, <b>${top.s}</b> concentra la mayor
-         cantidad de conexiones con las demás estructuras (<b>${top.out}</b>), por lo que opera como
-         <b>principal articulador de esta red</b>.`;
+    findingHtml = top.out === 0
+      ? 'No hay relaciones intersistema activas para analizar.'
+      : `La red muestra <b>${active} de ${total}</b> relaciones activas. En este modelo, <b>${top.s}</b> es el sistema con más conexiones hacia otras estructuras (<b>${top.out}</b>). Esto describe la topología de la red; no establece una jerarquía normativa del POT.`;
   } else {
     const removed = total - active;
     const loss = total ? Math.round((removed / total) * 100) : 0;
-    const worst = SYS.map(s => ({ s, n: incident(s) })).sort((a, b) => b.n - a.n)[0];
-    f.innerHTML = `Al desactivar <b>${off.join(' + ')}</b>, la red pierde <b>${removed}</b> de sus
-      <b>${total}</b> relaciones (<b>${loss}%</b>) y queda con <b>${components().count}</b>
-      componente(s) conectado(s).
-      ${top.out > 0
-        ? `Con la red así, <b>${top.s}</b> pasa a ser la más conectada con las demás (<b>${top.out}</b> conexiones).`
-        : 'No quedan relaciones salientes activas.'}
-      En la red completa, el sistema que genera mayor dependencia es <b>${worst.s}</b>
-      (${worst.n} relaciones incidentes).`;
+    findingHtml = `Al desactivar <b>${off.join(' + ')}</b>, desaparecen <b>${removed}</b> relaciones y quedan <b>${active}</b> activas. La red queda dividida en <b>${components().count}</b> componente(s). El resultado muestra la dependencia interna de este modelo; no afirma que una estructura sea superior a otra en el POT.`;
   }
+  if (f) f.innerHTML = findingHtml;
+  updateNetworkFinding(off, active, total);
+  if (nf) nf.setAttribute('data-state', off.length ? 'partial' : 'complete');
+}
+
+function animateFindingElement(el) {
+  if (!el) return;
+  el.classList.remove('finding-updated');
+  void el.offsetWidth;
+  el.classList.add('finding-updated');
+  window.clearTimeout(el._findingAnimationTimer);
+  el._findingAnimationTimer = window.setTimeout(() => el.classList.remove('finding-updated'), 720);
+}
+
+function updateNetworkFinding(off, active, total) {
+  const title = document.querySelector('.finding-card-title');
+  const summary = document.querySelector('.finding-card-summary');
+  if (!title || !summary) return;
+
+  const findings = {
+    EEP: {
+      title: 'EEP · Protección ambiental',
+      text: 'La EEP tiene conexiones porque el POT usa la estructura ecológica para ordenar y proteger el territorio a través del agua, los ecosistemas y la biodiversidad. Por eso relaciona elementos como humedales, ríos, quebradas, áreas protegidas y parques ecológicos con la conservación ambiental y la resiliencia climática. En cambio, su función principal no es impulsar directamente el empleo o la productividad, sino sostener las condiciones ambientales que permiten la vida urbana.'
+    },
+    EFC: {
+      title: 'EFC · Cuidado y funcionamiento',
+      text: 'La EFC tiene conexiones porque el POT usa la estructura funcional y del cuidado para organizar la vida cotidiana y el funcionamiento urbano. Por eso relaciona la movilidad, la vivienda, los servicios públicos, los equipamientos, el espacio público y los servicios de cuidado con el acceso de la población a las oportunidades de la ciudad. En cambio, su función principal no es proteger ecosistemas ni ordenar patrimonios, sino garantizar soporte, acceso y cuidado para la vida diaria.'
+    },
+    ESECI: {
+      title: 'ESECI · Economía y productividad',
+      text: 'La ESECI tiene más conexiones porque el POT usa el ordenamiento territorial para impulsar la economía, el empleo y la productividad. Por eso relaciona cosas como la movilidad, la vivienda, los equipamientos y la conectividad con las actividades económicas. En cambio, la EEP cumple principalmente una función ambiental: ordenar y proteger el territorio a través del agua, los ecosistemas y la biodiversidad.'
+    },
+    EIP: {
+      title: 'EIP · Patrimonios',
+      text: 'La EIP tiene conexiones porque el POT usa la estructura integradora de patrimonios para reconocer y articular los valores culturales y territoriales de la ciudad. Por eso relaciona el patrimonio material, inmaterial, arqueológico, cultural y natural con la identidad, la memoria, los sitios sagrados y las actividades que construyen sentido de lugar. En cambio, su función principal no es organizar la productividad ni sustituir la protección ecológica, sino integrar los patrimonios en el ordenamiento territorial.'
+    }
+  };
+
+  if (!off.length) {
+    title.textContent = 'ESECI articula más conexiones';
+    summary.textContent = 'La ESECI tiene más conexiones porque el POT usa el ordenamiento territorial para impulsar la economía, el empleo y la productividad. Por eso relaciona cosas como la movilidad, la vivienda, los equipamientos y la conectividad con las actividades económicas. En cambio, la EEP cumple principalmente una función ambiental: ordenar y proteger el territorio a través del agua, los ecosistemas y la biodiversidad.';
+    animateFindingElement(document.getElementById('networkFinding'));
+    return;
+  }
+
+  if (off.length === 1 && findings[off[0]]) {
+    title.textContent = findings[off[0]].title;
+    summary.textContent = findings[off[0]].text + ` En esta simulación desaparecen ${total - active} relaciones.`;
+    animateFindingElement(document.getElementById('networkFinding'));
+    return;
+  }
+
+  title.textContent = 'Escenario combinado';
+  summary.textContent = `Al apagar ${off.join(' + ')}, desaparecen ${total - active} relaciones y quedan ${active} activas. La red muestra la dependencia interna de este modelo.`;
+  animateFindingElement(document.getElementById('networkFinding'));
 }
 
 // ---------------------------------------------------------------------
@@ -2874,25 +2946,26 @@ function showStructureInsight(s, isOff) {
   const insights = {
     ESECI: {
       title: 'ESECI · Economía y productividad',
-      text: 'La ESECI presenta más conexiones en esta red porque el POT relaciona movilidad, vivienda, equipamientos, empleo y productividad: transporte y sector productivo (p. 164), vivienda y acceso al empleo (p. 169), equipamientos y generación de empleo (p. 171), y conectividad multimodal, productividad y empleo (p. 171). Esta mayor centralidad es un resultado calculado a partir de las relaciones documentadas; no es una frase literal de una sola página del POT. Al apagarla, la red conserva únicamente las dos relaciones definidas para este escenario.'
+      text: 'La ESECI tiene más conexiones porque el POT usa el ordenamiento territorial para impulsar la economía, el empleo y la productividad. Por eso relaciona cosas como la movilidad, la vivienda, los equipamientos y la conectividad con las actividades económicas. En cambio, la EEP cumple principalmente una función ambiental: ordenar y proteger el territorio a través del agua, los ecosistemas y la biodiversidad. Esta mayor centralidad es un resultado calculado a partir de las relaciones documentadas, con apoyos en el POT, pp. 164, 169 y 171; no es una frase literal de una sola página.'
     },
     EEP: {
       title: 'EEP · Protección ambiental',
-      text: 'La EEP se define como un sistema de áreas y corredores que sostiene la biodiversidad y los servicios ecosistémicos (p. 72, art. 42), e incluye humedales, ríos y quebradas (p. 92). Por eso su función principal es ecológica y de protección territorial, más que de articulación productiva.'
+      text: 'La EEP tiene conexiones porque el POT usa la estructura ecológica para ordenar y proteger el territorio a través del agua, los ecosistemas y la biodiversidad. Por eso relaciona humedales, ríos, quebradas y áreas protegidas con la conservación ambiental y la resiliencia climática. En cambio, su función principal no es impulsar directamente el empleo o la productividad, sino sostener las condiciones ambientales que permiten la vida urbana (POT, pp. 72 y 92).'
     },
     EFC: {
       title: 'EFC · Cuidado y funcionamiento',
-      text: 'La EFC conecta la movilidad, la vivienda, los servicios, los equipamientos y el espacio público para sostener la vida cotidiana y el funcionamiento urbano.'
+      text: 'La EFC tiene conexiones porque el POT usa la estructura funcional y del cuidado para organizar la vida cotidiana y el funcionamiento urbano. Por eso relaciona movilidad, vivienda, servicios públicos, equipamientos, espacio público y servicios de cuidado con el acceso de la población a las oportunidades de la ciudad. En cambio, su función principal no es proteger ecosistemas ni ordenar patrimonios, sino garantizar soporte, acceso y cuidado para la vida diaria.'
     },
     EIP: {
       title: 'EIP · Patrimonios',
-      text: 'La EIP articula los patrimonios culturales, naturales, materiales e inmateriales con la identidad territorial, la producción y las actividades de la ciudad.'
+      text: 'La EIP tiene conexiones porque el POT usa la estructura integradora de patrimonios para reconocer y articular los valores culturales y territoriales de la ciudad. Por eso relaciona patrimonio material, inmaterial, arqueológico, cultural y natural con la identidad, la memoria, los sitios sagrados y las actividades que construyen sentido de lugar. En cambio, su función principal no es organizar la productividad ni sustituir la protección ecológica, sino integrar los patrimonios en el ordenamiento territorial.'
     }
   };
   const info = insights[s] || insights.ESECI;
   title.textContent = info.title;
   text.textContent = isOff ? info.text + ' La estructura está apagada en este momento.' : info.text;
   popup.classList.remove('is-hidden');
+  animateFindingElement(popup);
 }
 
 function toggleSystem(s) {
@@ -2987,6 +3060,29 @@ function focusConcept(id) {
 
 function clearFocus() {
   document.querySelectorAll('.dim').forEach(n => n.classList.remove('dim'));
+}
+
+function hideNodeAndConnections(id) {
+  if (!model.concepts[id]) return;
+  offNodes.add(id);
+
+  // Cascada: si un concepto queda sin ninguna relación activa, también se oculta.
+  let changed = true;
+  while (changed) {
+    changed = false;
+    Object.values(model.concepts).forEach(c => {
+      if (!offNodes.has(c.id) && c.rels.filter(relActive).length === 0) {
+        offNodes.add(c.id);
+        changed = true;
+      }
+    });
+  }
+
+  clearFocus();
+  clearEvidence();
+  render();
+  updateMetrics();
+  if (document.getElementById('nodeSelect')) { syncNodeBtn(); updateNodeImpact(); }
 }
 
 function deselectLocal(id) {
@@ -3328,11 +3424,26 @@ document.addEventListener('DOMContentLoaded', () => {
   if (initialized) return;
   initialized = true;
 
+  const findingCardAction = document.getElementById('findingCardAction');
+  const findingCardDetails = document.getElementById('findingCardDetails');
+  if (findingCardAction && findingCardDetails) {
+    findingCardAction.addEventListener('click', e => {
+      e.stopPropagation();
+      const open = !findingCardDetails.hidden;
+      findingCardDetails.hidden = open;
+      findingCardAction.textContent = open ? 'Ver hallazgo completo' : 'Ocultar explicación';
+    });
+  }
+
   const closeInsight = document.getElementById('closeInsight');
   const insightPopup = document.getElementById('eseCIInsight');
   if (closeInsight && insightPopup) {
     closeInsight.addEventListener('click', () => insightPopup.classList.add('is-hidden'));
   }
+
+  const networkFinding = document.getElementById('networkFinding');
+  const welcomeElement = document.querySelector('.welcome');
+  if (networkFinding && welcomeElement) welcomeElement.append(networkFinding);
 
   buildModel();
   computeLayout();
