@@ -317,18 +317,17 @@ function computeDegrees() {
    Los "vacío" (ausencias entre estructuras) quedan como líneas largas
    que cruzan de un centro a otro, igual que en la referencia.
    ========================================================== */
-const CANVAS = { w: 3000, h: 3000 };
-const HUB_CENTERS = (() => {
-  const cx = CANVAS.w / 2, cy = CANVAS.h / 2, R = 620;
-  // e1 arriba (teal), e2 derecha (naranja), e3 abajo (amarillo), e4 izquierda (rosa) —
-  // igual disposición en diamante que la referencia de las 4 estructuras.
-  return {
-    e1: { x: cx, y: cy - R },
-    e2: { x: cx + R, y: cy },
-    e3: { x: cx, y: cy + R },
-    e4: { x: cx - R, y: cy },
-  };
-})();
+// Lienzo alargado norte-sur (como la silueta real de Bogotá) — los 4 hubs se
+// distribuyen dentro de la silueta, en una disposición irregular como la
+// referencia (no un diamante geométrico perfecto), dejando que el mesh de
+// satélites llene el espacio entre ellos.
+const CANVAS = { w: 2600, h: 3200 };
+const HUB_CENTERS = {
+  e1: { x: 950,  y: 850 },   // Humedales / Ecológica — noroccidente
+  e2: { x: 1750, y: 780 },   // Actuaciones estratégicas / Funcional — nororiente
+  e3: { x: 980,  y: 2050 },  // Corazones productivos / Socioeconómica — centro-sur
+  e4: { x: 1820, y: 2000 },  // Infraestructuras / Patrimonio — suroriente
+};
 
 function layoutNetwork() {
   const deg = computeDegrees();
@@ -336,7 +335,7 @@ function layoutNetwork() {
     n.color = STRUCT_STYLE[n.cat].color;
     n.vx = 0; n.vy = 0; n.fixed = false; n.isMainHub = false;
     const d = deg[n.id] || 0;
-    n.r = 22 + Math.pow(d, 1.35) * 10; // el tamaño real sale del grado, no de una etiqueta — hubs MUCHO más grandes que la periferia
+    n.r = 22 + Math.pow(d, 1.35) * 10; // radio "temático" (sale del grado real) — se usa para el hub y para el espaciado angular
     n._deg = d;
   });
 
@@ -350,19 +349,23 @@ function layoutNetwork() {
 
     const hub = group[0];
     hub.x = center.x; hub.y = center.y; hub.isMainHub = true;
+    hub.collR = hub.r; // el hub sí ocupa su radio temático completo
     const rest = group.slice(1);
+    rest.forEach(n => { n.collR = Math.max(n.r * 0.32, 5) + 4; }); // satélite: radio visual real (punto pequeño)
 
     // hasta 3 anillos concéntricos según grado real, para que los componentes
-    // algo conectados queden más cerca del hub y los periféricos más lejos —
-    // igual lectura visual que la referencia (satélites chicos bien separados).
+    // algo conectados queden más cerca del hub y los periféricos más lejos.
+    // Los satélites se DIBUJAN como puntos pequeños (collR), aunque su "peso"
+    // temático (n.r) siga saliendo del grado real — así el mesh queda denso
+    // y compacto, como en la referencia, sin sacrificar el tamaño-por-grado.
     const ringHigh = rest.filter(n => n._deg >= 3);
     const ringMid  = rest.filter(n => n._deg === 1 || n._deg === 2);
     const ringLow  = rest.filter(n => n._deg === 0);
 
-    const GAP = 50;
+    const GAP = 16;
     function placeRing(ringNodes, minRadius, angleSpan, angleStart) {
       if (!ringNodes.length) return minRadius;
-      const sumDiam = ringNodes.reduce((s, n) => s + 2 * n.r + GAP, 0);
+      const sumDiam = ringNodes.reduce((s, n) => s + 2 * n.collR + GAP, 0);
       const neededR = Math.max(minRadius, sumDiam / angleSpan);
       ringNodes.forEach((n, i) => {
         const angle = angleStart + ((i + 0.5) / ringNodes.length) * angleSpan;
@@ -379,20 +382,21 @@ function layoutNetwork() {
     // apuntando derecho hacia afuera; muchos nodos = abanico más amplio.
     const cx = CANVAS.w / 2, cy = CANVAS.h / 2;
     const outward = Math.atan2(center.y - cy, center.x - cx) || 0;
+    hub._outwardAngle = outward;
     const n = rest.length;
-    const angleSpan = Math.min(Math.PI * 1.15, Math.PI * 0.32 + n * (Math.PI / 11));
+    const angleSpan = Math.min(Math.PI * 1.7, Math.PI * 0.55 + n * (Math.PI / 9));
     const angleStart = outward - angleSpan / 2;
 
-    const rHigh = placeRing(ringHigh, hub.r + 180, angleSpan, angleStart);
-    const rMid = placeRing(ringMid, rHigh + (ringHigh[0] ? Math.max(...ringHigh.map(n => n.r)) : 0) + 150, angleSpan, angleStart);
-    placeRing(ringLow, rMid + (ringMid[0] ? Math.max(...ringMid.map(n => n.r)) : 0) + 140, angleSpan, angleStart);
+    const rHigh = placeRing(ringHigh, hub.r + 60, angleSpan, angleStart);
+    const rMid = placeRing(ringMid, rHigh + 55, angleSpan, angleStart);
+    placeRing(ringLow, rMid + 50, angleSpan, angleStart);
   });
 
   // ---- 2. Resolución de colisiones por radio real (red de seguridad) ----
   // El layout radial ya evita casi toda superposición por diseño; esta pasada
   // solo destraba los pocos casos límite entre anillos vecinos o estructuras
   // cercanas, sin mover la red entera.
-  const PAD = 12;
+  const PAD = 6;
   for (let pass = 0; pass < 120; pass++) {
     let anyOverlap = false;
     for (let i = 0; i < nodes.length; i++) {
@@ -401,7 +405,7 @@ function layoutNetwork() {
         if (a.isMainHub && b.isMainHub) continue; // no mover los 4 hubs principales entre sí
         let dx = b.x - a.x, dy = b.y - a.y;
         let dist = Math.sqrt(dx * dx + dy * dy) || 0.01;
-        const minDist = a.r + b.r + PAD;
+        const minDist = a.collR + b.collR + PAD;
         if (dist < minDist) {
           anyOverlap = true;
           const overlap = (minDist - dist) / 2;
@@ -412,8 +416,8 @@ function layoutNetwork() {
       }
     }
     nodes.forEach(n => {
-      n.x = Math.max(n.r + 20, Math.min(CANVAS.w - n.r - 20, n.x));
-      n.y = Math.max(n.r + 20, Math.min(CANVAS.h - n.r - 20, n.y));
+      n.x = Math.max(n.collR + 20, Math.min(CANVAS.w - n.collR - 20, n.x));
+      n.y = Math.max(n.collR + 20, Math.min(CANVAS.h - n.collR - 20, n.y));
     });
     if (!anyOverlap) break;
   }
@@ -515,28 +519,33 @@ function buildDefs(svg) {
 }
 
 /* ==========================================================
-   FONDO DE MAPA (decorativo) — silueta abstracta tipo "territorio",
-   inspirada en el estilo de referencia (contorno oscuro + textura de
-   puntos), pero SIN pretender ser una cartografía real de Bogotá:
-   es una forma estilizada, generada matemáticamente (sin datos
-   geográficos), solo para dar ambientación de "mapa" detrás de la red.
-   No lleva escala numérica ni coordenadas reales — sería una falsa
-   precisión que no podemos respaldar.
+   FONDO DE MAPA — silueta ESQUEMÁTICA de Bogotá D.C. (perímetro urbano +
+   cerros orientales), trazada a mano sobre puntos de referencia conocidos
+   de la forma general de la ciudad (alargada norte-sur, borde oriental
+   recto por los Cerros, borde occidental más irregular por el río Bogotá
+   y los humedales). Es una aproximación decorativa, NO cartografía oficial
+   georreferenciada (no reemplaza IDECA/SDP) — se indica así en el title
+   del ícono de escala, para no reclamar una precisión que no tenemos.
+   La textura de "terreno" se genera con feTurbulence (ruido procedural),
+   igual de forma al look de foto-satelital oscura de la referencia.
    ========================================================== */
 function buildMapBackground(svg) {
   const g = document.createElementNS(SVG_NS, "g");
   g.setAttribute("class", "map-bg-layer");
 
   const cx = CANVAS.w / 2, cy = CANVAS.h / 2;
-  // multiplicadores fijos (no aleatorios) para un contorno irregular
-  // pero reproducible en cada carga — silueta alargada norte-sur,
-  // evocando la forma general de la sabana de Bogotá sin copiar límites reales.
-  const mult = [0.5,0.68,0.6,0.88,0.72,1.02,0.85,1.12,0.95,1.18,1.0,1.15,0.9,1.05,0.78,0.95,0.68,0.82,0.55,0.7,0.42,0.58,0.38,0.46];
-  const rx = CANVAS.w * 0.34, ry = CANVAS.h * 0.42;
-  const pts = mult.map((m, i) => {
-    const angle = (i / mult.length) * Math.PI * 2 - Math.PI / 2;
-    return { x: cx + Math.cos(angle) * rx * m, y: cy + Math.sin(angle) * ry * m };
-  });
+  // silueta esquemática: alargada N-S, borde oriental (derecha) casi recto,
+  // borde occidental más irregular. Puntos en sentido horario desde el norte.
+  const shapePts = [
+    [0.30,0.02],[0.45,0.03],[0.55,0.05],[0.62,0.10],[0.66,0.16],
+    [0.70,0.20],[0.72,0.27],[0.70,0.33],[0.74,0.38],[0.71,0.44],
+    [0.75,0.50],[0.72,0.56],[0.76,0.62],[0.73,0.68],[0.70,0.74],
+    [0.66,0.80],[0.60,0.86],[0.52,0.91],[0.44,0.95],[0.36,0.98],
+    [0.28,0.96],[0.22,0.90],[0.20,0.82],[0.15,0.76],[0.18,0.68],
+    [0.12,0.62],[0.16,0.55],[0.10,0.48],[0.14,0.41],[0.09,0.34],
+    [0.13,0.27],[0.10,0.20],[0.15,0.13],[0.20,0.07],[0.26,0.03],
+  ];
+  const pts = shapePts.map(([px, py]) => ({ x: px * CANVAS.w, y: py * CANVAS.h }));
 
   function smoothClosedPath(points) {
     let d = "";
@@ -564,53 +573,121 @@ function buildMapBackground(svg) {
   clip.appendChild(clipPath);
   defs.appendChild(clip);
 
-  const pattern = document.createElementNS(SVG_NS, "pattern");
-  pattern.setAttribute("id", "mapDotPattern");
-  pattern.setAttribute("width", "34"); pattern.setAttribute("height", "34");
-  pattern.setAttribute("patternUnits", "userSpaceOnUse");
-  const dot = document.createElementNS(SVG_NS, "circle");
-  dot.setAttribute("cx", "3"); dot.setAttribute("cy", "3"); dot.setAttribute("r", "1.4");
-  dot.setAttribute("fill", "rgba(190,205,230,0.16)");
-  pattern.appendChild(dot);
-  defs.appendChild(pattern);
+  // textura de "terreno" procedural (ruido) — imita el look foto-satelital
+  // oscuro y rugoso de la referencia, sin pretender ser datos reales de elevación.
+  const filter = document.createElementNS(SVG_NS, "filter");
+  filter.setAttribute("id", "terrainNoise");
+  filter.setAttribute("x", "-5%"); filter.setAttribute("y", "-5%");
+  filter.setAttribute("width", "110%"); filter.setAttribute("height", "110%");
+  const turb = document.createElementNS(SVG_NS, "feTurbulence");
+  turb.setAttribute("type", "fractalNoise");
+  turb.setAttribute("baseFrequency", "0.012 0.018");
+  turb.setAttribute("numOctaves", "4");
+  turb.setAttribute("seed", "7");
+  turb.setAttribute("result", "noise");
+  const colorMatrix = document.createElementNS(SVG_NS, "feColorMatrix");
+  colorMatrix.setAttribute("in", "noise");
+  colorMatrix.setAttribute("type", "matrix");
+  colorMatrix.setAttribute("values", "0 0 0 0 0.08  0 0 0 0 0.10  0 0 0 0 0.11  0 0 0 0.55 0");
+  filter.appendChild(turb); filter.appendChild(colorMatrix);
+  defs.appendChild(filter);
   g.appendChild(defs);
 
-  // relleno base de la silueta
+  // relleno base oscuro de la silueta
   const fill = document.createElementNS(SVG_NS, "path");
   fill.setAttribute("d", blobPath);
-  fill.setAttribute("fill", "#151f38");
-  fill.setAttribute("opacity", "0.9");
+  fill.setAttribute("fill", "#111111");
   g.appendChild(fill);
 
-  // textura de puntos, recortada a la silueta
-  const dotsRect = document.createElementNS(SVG_NS, "rect");
-  dotsRect.setAttribute("x", "0"); dotsRect.setAttribute("y", "0");
-  dotsRect.setAttribute("width", CANVAS.w); dotsRect.setAttribute("height", CANVAS.h);
-  dotsRect.setAttribute("fill", "url(#mapDotPattern)");
-  dotsRect.setAttribute("clip-path", `url(#${blobId}-clip)`);
-  g.appendChild(dotsRect);
+  // textura de terreno, recortada a la silueta
+  const noiseRect = document.createElementNS(SVG_NS, "rect");
+  noiseRect.setAttribute("x", "0"); noiseRect.setAttribute("y", "0");
+  noiseRect.setAttribute("width", CANVAS.w); noiseRect.setAttribute("height", CANVAS.h);
+  noiseRect.setAttribute("filter", "url(#terrainNoise)");
+  noiseRect.setAttribute("clip-path", `url(#${blobId}-clip)`);
+  g.appendChild(noiseRect);
 
-  // un par de "curvas de nivel" concéntricas, solo decorativas
-  [0.7, 0.45].forEach(scale => {
-    const innerPts = pts.map(p => ({
-      x: cx + (p.x - cx) * scale,
-      y: cy + (p.y - cy) * scale,
-    }));
-    const contour = document.createElementNS(SVG_NS, "path");
-    contour.setAttribute("d", smoothClosedPath(innerPts));
-    contour.setAttribute("fill", "none");
-    contour.setAttribute("stroke", "rgba(150,170,200,0.15)");
-    contour.setAttribute("stroke-width", "1.5");
-    g.appendChild(contour);
-  });
+  // viñeta radial suave (oscurece bordes, ilumina centro — como la referencia)
+  const vignette = document.createElementNS(SVG_NS, "radialGradient");
+  vignette.setAttribute("id", "mapVignette");
+  vignette.setAttribute("cx", "50%"); vignette.setAttribute("cy", "42%"); vignette.setAttribute("r", "65%");
+  const stop1 = document.createElementNS(SVG_NS, "stop");
+  stop1.setAttribute("offset", "0%"); stop1.setAttribute("stop-color", "#1a1a1a"); stop1.setAttribute("stop-opacity", "0.3");
+  const stop2 = document.createElementNS(SVG_NS, "stop");
+  stop2.setAttribute("offset", "100%"); stop2.setAttribute("stop-color", "#000000"); stop2.setAttribute("stop-opacity", "0.55");
+  vignette.appendChild(stop1); vignette.appendChild(stop2);
+  defs.appendChild(vignette);
+  const vignetteRect = document.createElementNS(SVG_NS, "rect");
+  vignetteRect.setAttribute("x", "0"); vignetteRect.setAttribute("y", "0");
+  vignetteRect.setAttribute("width", CANVAS.w); vignetteRect.setAttribute("height", CANVAS.h);
+  vignetteRect.setAttribute("fill", "url(#mapVignette)");
+  vignetteRect.setAttribute("clip-path", `url(#${blobId}-clip)`);
+  g.appendChild(vignetteRect);
 
   // borde de la silueta
   const outline = document.createElementNS(SVG_NS, "path");
   outline.setAttribute("d", blobPath);
   outline.setAttribute("fill", "none");
-  outline.setAttribute("stroke", "rgba(160,180,210,0.32)");
-  outline.setAttribute("stroke-width", "2");
+  outline.setAttribute("stroke", "rgba(200,200,200,0.22)");
+  outline.setAttribute("stroke-width", "1.5");
   g.appendChild(outline);
+
+  svg.appendChild(g);
+}
+
+/* ==========================================================
+   MESH AMBIENTAL — puntos y líneas finas de fondo, puramente decorativos
+   (NO son los 40 componentes reales, que se dibujan aparte en drawNodes).
+   Dan la densidad visual de "mesh de ciudad" de la referencia sin mezclar
+   datos reales con relleno visual. Coordenadas fijas (no aleatorias) para
+   que el resultado sea reproducible en cada carga.
+   ========================================================== */
+function buildAmbientMesh(svg) {
+  const g = document.createElementNS(SVG_NS, "g");
+  g.setAttribute("class", "ambient-mesh-layer");
+  g.setAttribute("opacity", "0.5");
+
+  // grilla fija con offset determinístico (sin Math.random) para look orgánico
+  const seedPts = [];
+  const cols = 14, rows = 16;
+  for (let i = 0; i < cols; i++) {
+    for (let j = 0; j < rows; j++) {
+      const baseX = (i + 0.5) / cols * CANVAS.w;
+      const baseY = (j + 0.5) / rows * CANVAS.h;
+      const jitterX = (((i * 37 + j * 19) % 23) - 11) * 6;
+      const jitterY = (((i * 17 + j * 41) % 29) - 14) * 6;
+      seedPts.push({ x: baseX + jitterX, y: baseY + jitterY, idx: i * rows + j });
+    }
+  }
+  // colores ambientales: ciclan entre los 4 colores de estructura para dar
+  // la sensación de "mesh multicolor" de la referencia
+  const palette = ["#5cd6d1", "#ef9f54", "#fac47b", "#fb8d84"];
+
+  // líneas finas entre puntos cercanos (umbral de distancia)
+  const THRESH = 230;
+  for (let i = 0; i < seedPts.length; i++) {
+    for (let j = i + 1; j < seedPts.length; j++) {
+      const a = seedPts[i], b = seedPts[j];
+      const d = Math.hypot(a.x - b.x, a.y - b.y);
+      if (d < THRESH && (a.idx + b.idx) % 3 !== 0) {
+        const line = document.createElementNS(SVG_NS, "line");
+        line.setAttribute("x1", a.x); line.setAttribute("y1", a.y);
+        line.setAttribute("x2", b.x); line.setAttribute("y2", b.y);
+        line.setAttribute("stroke", palette[a.idx % 4]);
+        line.setAttribute("stroke-width", "0.6");
+        line.setAttribute("opacity", "0.22");
+        g.appendChild(line);
+      }
+    }
+  }
+  seedPts.forEach(p => {
+    const dot = document.createElementNS(SVG_NS, "circle");
+    dot.setAttribute("cx", p.x); dot.setAttribute("cy", p.y);
+    dot.setAttribute("r", (p.idx % 5 === 0) ? 3.2 : 1.8);
+    dot.setAttribute("fill", palette[p.idx % 4]);
+    dot.setAttribute("opacity", (p.idx % 5 === 0) ? "0.55" : "0.4");
+    g.appendChild(dot);
+  });
 
   svg.appendChild(g);
 }
@@ -630,7 +707,7 @@ function edgePathData(edge, s, t) {
   const dx = t.x - s.x, dy = t.y - s.y;
   const dist = Math.sqrt(dx * dx + dy * dy) || 1;
   const ux = dx / dist, uy = dy / dist;
-  const startPad = s.r + 2, endPad = t.r + 8;
+  const startPad = (s.collR || s.r) + 2, endPad = (t.collR || t.r) + 6;
   const x1 = s.x + ux * startPad, y1 = s.y + uy * startPad;
   const x2 = t.x - ux * endPad, y2 = t.y - uy * endPad;
   return `M${x1},${y1} L${x2},${y2}`;
@@ -675,50 +752,88 @@ function drawEdges(svg) {
   svg.appendChild(g);
 }
 
+// Estilo "referencia": solo los 4 hubs principales llevan ícono + etiqueta de texto
+// al lado (igual que "Humedales", "Actuaciones estratégicas", etc. en la imagen).
+// El resto de los 36 componentes reales se muestran como puntos de color sólido,
+// sin texto dentro — igual que los puntitos del mesh de fondo de la referencia —
+// para no saturar la vista; su ficha completa sigue disponible al hacer clic.
 function drawNodes(svg) {
   const g = document.createElementNS(SVG_NS, "g");
   g.setAttribute("class", "nodes-layer");
   ODS_NODES.forEach(node => {
     const group = document.createElementNS(SVG_NS, "g");
-    group.setAttribute("class", "ods-node ods-node-" + node.cat);
+    group.setAttribute("class", "ods-node ods-node-" + node.cat + (node.isMainHub ? " ods-hub" : " ods-satellite"));
     group.setAttribute("data-id", node.id);
     group.setAttribute("data-cat", node.cat);
 
-    const circle = document.createElementNS(SVG_NS, "circle");
-    circle.setAttribute("class", "node-ring");
-    circle.setAttribute("cx", node.x); circle.setAttribute("cy", node.y); circle.setAttribute("r", node.r);
-    circle.setAttribute("stroke", node.color);
-    circle.setAttribute("stroke-width", 2.5);
-    circle.setAttribute("filter", "url(#glow-" + node.color.replace("#", "") + ")");
+    if (node.isMainHub) {
+      // Hub principal: círculo con anillo + ícono dentro, etiqueta de texto AL LADO (fuera del círculo).
+      const circle = document.createElementNS(SVG_NS, "circle");
+      circle.setAttribute("class", "node-ring node-ring-hub");
+      circle.setAttribute("cx", node.x); circle.setAttribute("cy", node.y); circle.setAttribute("r", node.r);
+      circle.setAttribute("fill", "#0a0a0a");
+      circle.setAttribute("stroke", node.color);
+      circle.setAttribute("stroke-width", 2.5);
+      circle.setAttribute("filter", "url(#glow-" + node.color.replace("#", "") + ")");
 
-    const fo = document.createElementNS(SVG_NS, "foreignObject");
-    const size = node.r * 2.2;
-    fo.setAttribute("x", node.x - size / 2); fo.setAttribute("y", node.y - size / 2);
-    fo.setAttribute("width", size); fo.setAttribute("height", size);
+      const fo = document.createElementNS(SVG_NS, "foreignObject");
+      const size = node.r * 1.3;
+      fo.setAttribute("x", node.x - size / 2); fo.setAttribute("y", node.y - size / 2);
+      fo.setAttribute("width", size); fo.setAttribute("height", size);
+      const iconWrap = document.createElementNS(XHTML_NS, "div");
+      iconWrap.setAttribute("style", "width:100%;height:100%;display:flex;align-items:center;justify-content:center;pointer-events:none;");
+      const iconEl = document.createElementNS(XHTML_NS, "i");
+      iconEl.setAttribute("class", "fa-solid " + node.icon);
+      iconEl.setAttribute("style", `color:${node.color}; font-size:${node.r * 0.75}px;`);
+      iconWrap.appendChild(iconEl);
+      fo.appendChild(iconWrap);
 
-    const wrapper = document.createElementNS(XHTML_NS, "div");
-    wrapper.setAttribute("class", "node-inner");
-    wrapper.setAttribute("style", "width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;pointer-events:none;");
+      // etiqueta lateral (fuera del círculo, hacia afuera del centro del lienzo).
+      // El viewBox usa coordenadas ~3x más grandes que los píxeles de pantalla
+      // reales, así que la fuente y la caja se escalan para verse legibles.
+      const labelSize = { w: 560, h: 170 };
+      const outward = node._outwardAngle || 0;
+      const labelDX = Math.cos(outward) >= 0 ? node.r + 34 : -(node.r + 34 + labelSize.w);
+      const labelFO = document.createElementNS(SVG_NS, "foreignObject");
+      labelFO.setAttribute("x", node.x + labelDX);
+      labelFO.setAttribute("y", node.y - labelSize.h / 2);
+      labelFO.setAttribute("width", labelSize.w);
+      labelFO.setAttribute("height", labelSize.h);
+      const labelWrap = document.createElementNS(XHTML_NS, "div");
+      const alignStyle = Math.cos(outward) >= 0 ? "text-align:left;" : "text-align:right;";
+      labelWrap.setAttribute("style", `width:100%; height:100%; display:flex; align-items:center; ${alignStyle} pointer-events:none;`);
+      const labelText = document.createElementNS(XHTML_NS, "div");
+      labelText.setAttribute("style", `font-size:42px; font-weight:700; color:#f2f3f6; line-height:1.25; font-family:'Space Grotesk',sans-serif; white-space:pre-line; text-shadow:0 2px 8px rgba(0,0,0,0.8);`);
+      labelText.textContent = node.name.replace(/\n/g, " ");
+      labelWrap.appendChild(labelText);
+      labelFO.appendChild(labelWrap);
 
-    const iconEl = document.createElementNS(XHTML_NS, "i");
-    iconEl.setAttribute("class", "fa-solid " + node.icon + " node-icon");
-    iconEl.setAttribute("style", `color:${node.color}; font-size:${node.r * 0.4}px; margin:1px 0;`);
+      group.appendChild(circle); group.appendChild(fo); group.appendChild(labelFO);
+      attachNodeClickHandler(group, node.id);
+      attachNodeDragHandler(group, node);
+      g.appendChild(group);
+      node._el = { group, circle, fo, labelFO, labelDX, labelH: labelSize.h };
+    } else {
+      // Satélite: punto sólido de color, sin texto — tamaño por grado real.
+      const dot = document.createElementNS(SVG_NS, "circle");
+      dot.setAttribute("class", "node-dot");
+      dot.setAttribute("cx", node.x); dot.setAttribute("cy", node.y); dot.setAttribute("r", Math.max(node.r * 0.32, 5));
+      dot.setAttribute("fill", node.color);
+      dot.setAttribute("opacity", "0.92");
+      const ring = document.createElementNS(SVG_NS, "circle");
+      ring.setAttribute("class", "node-dot-ring");
+      ring.setAttribute("cx", node.x); ring.setAttribute("cy", node.y); ring.setAttribute("r", Math.max(node.r * 0.32, 5) + 4);
+      ring.setAttribute("fill", "none");
+      ring.setAttribute("stroke", node.color);
+      ring.setAttribute("stroke-width", "1");
+      ring.setAttribute("opacity", "0.35");
 
-    const nameEl = document.createElementNS(XHTML_NS, "div");
-    nameEl.setAttribute("class", "node-name");
-    nameEl.setAttribute("style", `font-size:${Math.max(node.r * 0.145, 7)}px; padding:0 3px; font-weight:700; color:#e7eaf2; line-height:1.15; white-space:pre-line;`);
-    nameEl.textContent = node.name;
-
-    const fuenteDot = document.createElementNS(XHTML_NS, "div");
-    fuenteDot.setAttribute("style", `width:6px;height:6px;border-radius:50%;background:${FUENTE_STYLE[node.fuente].color};margin-top:2px;`);
-
-    wrapper.appendChild(iconEl); wrapper.appendChild(nameEl); wrapper.appendChild(fuenteDot);
-    fo.appendChild(wrapper);
-    group.appendChild(circle); group.appendChild(fo);
-    attachNodeClickHandler(group, node.id);
-    attachNodeDragHandler(group, node);
-    g.appendChild(group);
-    node._el = { group, circle, fo };
+      group.appendChild(ring); group.appendChild(dot);
+      attachNodeClickHandler(group, node.id);
+      attachNodeDragHandler(group, node);
+      g.appendChild(group);
+      node._el = { group, circle: dot, ring };
+    }
   });
   svg.appendChild(g);
 }
@@ -730,8 +845,16 @@ function updatePositions() {
   ODS_NODES.forEach(n => {
     if (!n._el) return;
     n._el.circle.setAttribute("cx", n.x); n._el.circle.setAttribute("cy", n.y);
-    const size = n.r * 2.2;
-    n._el.fo.setAttribute("x", n.x - size / 2); n._el.fo.setAttribute("y", n.y - size / 2);
+    if (n.isMainHub) {
+      const size = n.r * 1.3;
+      n._el.fo.setAttribute("x", n.x - size / 2); n._el.fo.setAttribute("y", n.y - size / 2);
+      if (n._el.labelFO) {
+        n._el.labelFO.setAttribute("x", n.x + n._el.labelDX);
+        n._el.labelFO.setAttribute("y", n.y - n._el.labelH / 2);
+      }
+    } else if (n._el.ring) {
+      n._el.ring.setAttribute("cx", n.x); n._el.ring.setAttribute("cy", n.y);
+    }
   });
   RAW_EDGES.forEach(edge => {
     if (!edge._el) return;
@@ -804,7 +927,7 @@ function renderNetwork() {
   const svg = document.getElementById("networkViz");
   if (!svg) return;
   svg.innerHTML = "";
-  buildDefs(svg); drawEdges(svg); drawNodes(svg); setupZoomPan(svg);
+  buildDefs(svg); buildMapBackground(svg); buildAmbientMesh(svg); drawEdges(svg); drawNodes(svg); setupZoomPan(svg);
 }
 
 /* -------- paneles de información -------- */
@@ -1002,7 +1125,11 @@ function renderMetrics() {
   Object.keys(STRUCT_STYLE).forEach(cat => {
     const el = document.getElementById("struct-" + cat);
     const nCount = ODS_NODES.filter(n => n.cat === cat).length;
-    if (el) el.textContent = `${STRUCT_STYLE[cat].label}: ${STRUCT_STYLE[cat].articulos} · ${nCount} componentes en la red`;
+    if (el) {
+      el.textContent = String(nCount);
+      const row = el.closest(".cat-item");
+      if (row) row.title = `${STRUCT_STYLE[cat].label}: ${STRUCT_STYLE[cat].articulos} · ${nCount} componentes reales en la red`;
+    }
   });
 }
 
