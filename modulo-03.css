@@ -6809,3 +6809,102 @@ Need update styles maybe `display:none` for quote-backdrop means if old openQuot
   .app > .sidebar { width: 64px !important; min-width: 64px !important; }
   .app > .main { margin-left: 0 !important; }
 }
+
+/* Sidebar de SÍNTESIS aplicada también al Módulo 03. */
+.app > .sidebar {
+  width: 90px !important;
+  min-width: 90px !important;
+  height: auto !important;
+  min-height: 100vh !important;
+  position: static !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  padding: 18px 0 14px !important;
+  background: #080c0c !important;
+  border-right: 1px solid rgba(255,255,255,.07) !important;
+}
+.app > .sidebar .brand-mark {
+  width: 40px !important;
+  height: 40px !important;
+  border: 1px solid #2fbfae !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  color: #2fbfae !important;
+  font-size: 22px !important;
+  box-shadow: 0 0 18px rgba(39,205,196,.2) !important;
+  margin: 0 0 26px !important;
+}
+.app > .sidebar .side-nav {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 11px !important;
+}
+.app > .sidebar .side-item {
+  position: relative !important;
+  width: 42px !important;
+  height: 42px !important;
+  min-height: 42px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 1px solid rgba(160,190,180,.2) !important;
+  border-radius: 50% !important;
+  background: #101716 !important;
+  color: #73827b !important;
+  display: grid !important;
+  place-items: center !important;
+  text-decoration: none !important;
+  box-shadow: none !important;
+}
+.app > .sidebar .side-item svg {
+  width: 20px !important;
+  height: 20px !important;
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 1.55 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+}
+.app > .sidebar .side-item:hover,
+.app > .sidebar .side-item.active {
+  color: #2fbfae !important;
+  border-color: #2fbfae !important;
+  background: rgba(39,205,196,.08) !important;
+  box-shadow: 0 0 17px rgba(39,205,196,.25) !important;
+}
+.app > .sidebar .side-item::after {
+  content: attr(title) !important;
+  position: absolute !important;
+  left: 56px !important;
+  top: 50% !important;
+  transform: translateY(-50%) translateX(-5px) !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  white-space: nowrap !important;
+  background: #17211e !important;
+  border: 1px solid rgba(39,205,196,.45) !important;
+  color: #e3f2ed !important;
+  border-radius: 6px !important;
+  padding: 7px 10px !important;
+  font-size: 10px !important;
+  z-index: 70 !important;
+  transition: .16s !important;
+}
+.app > .sidebar .side-item:hover::after { opacity: 1 !important; transform: translateY(-50%) !important; }
+.app > .sidebar .sidebar-bottom {
+  margin-top: auto !important;
+  width: 38px !important;
+  height: 38px !important;
+  border: 1px solid #2fbfae !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  color: #2fbfae !important;
+  font-size: 11px !important;
+}
+.app > .main { margin-left: 0 !important; }
+@media (max-width: 800px) {
+  .app > .sidebar { width: 90px !important; min-width: 90px !important; }
+  .app > .main { margin-left: 0 !important; }
+}
