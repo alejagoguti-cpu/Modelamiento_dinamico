@@ -1,360 +1,269 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Portal Heurístico · Dashboard de Emergencia e Impacto</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
-    <link rel="stylesheet" href="modulo-07.css" />
-  </head>
-  <body>
-    <div class="app-shell">
-      <aside class="sidebar">
-        <div class="brand-mark">⌂</div>
-        <nav class="side-nav" aria-label="Navegación de las siete pantallas">
-          <button
-            class="side-item active"
-            title="Pantalla 1 · Portal de bienvenida"
-          >
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M3 11.5 12 4l9 7.5M5.5 10.5V20h13v-9.5M9 20v-5h6v5" />
-            </svg>
-          </button>
-          <button class="side-item" title="Pantalla 2 · Ingeniería inversa">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <circle cx="6" cy="7" r="2" />
-              <circle cx="18" cy="5" r="2" />
-              <circle cx="14" cy="18" r="2" />
-              <circle cx="7" cy="17" r="2" />
-              <path
-                d="m7.7 8.2 4.9 7.2M8 7.2l8-1.4M9 16.7l3.2.8M16.8 6.8l-1.8 9"
-              />
-            </svg>
-          </button>
-          <button class="side-item" title="Pantalla 3 · Agencia">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <circle cx="12" cy="5" r="2.5" />
-              <circle cx="6" cy="17" r="2.5" />
-              <circle cx="18" cy="17" r="2.5" />
-              <path d="M10.7 7.1 7.3 14.8M13.3 7.1l3.4 7.7M8.5 17h7" />
-            </svg>
-          </button>
-          <button class="side-item" title="Pantalla 4 · Navegador multiescalar">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <circle cx="10.5" cy="10.5" r="6.5" />
-              <path d="m16 16 5 5M10.5 7v7M7 10.5h7" />
-            </svg>
-          </button>
-          <button class="side-item" title="Pantalla 5 · Sistemas de Ackoff">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M4 6h16M4 12h16M4 18h16" />
-              <circle cx="8" cy="6" r="2" />
-              <circle cx="15" cy="12" r="2" />
-              <circle cx="10" cy="18" r="2" />
-            </svg>
-          </button>
-          <button class="side-item" title="Pantalla 6 · Motor de simulación">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M5 4v16l14-8z" />
-              <path d="M4 21h16M7 21v-2M12 21v-2M17 21v-2" />
-            </svg>
-          </button>
-          <button class="side-item" title="Pantalla 7 · Dashboard de impacto">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M4 19V5M4 19h16M7 15l3-4 3 2 5-7" />
-              <path d="M18 4h3v3" />
-            </svg>
-          </button>
-        </nav>
-        <div class="sidebar-bottom">AV</div>
-      </aside>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAPOT · Módulo 07 · Simulador de Estructuras</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="modulo-07.css">
+</head>
+<body>
+<div class="app">
+  <aside class="insight-popup" id="eseCIInsight" aria-label="Explicación de las conexiones de ESECI">
+    <button type="button" class="insight-close" id="closeInsight" aria-label="Cerrar explicación">×</button>
+    <div class="insight-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+    <div class="insight-kicker">Hallazgo</div>
+    <h3 id="insightTitle">Hallazgo de la red</h3>
+    <p id="insightText">La ESECI presenta más conexiones en esta red porque el POT relaciona movilidad, vivienda, equipamientos, empleo y productividad: transporte y sector productivo (p. 164), vivienda y acceso al empleo (p. 169), equipamientos y generación de empleo (p. 171), y conectividad multimodal, productividad y empleo (p. 171). Esta mayor centralidad es un resultado calculado a partir de las relaciones documentadas; no es una frase literal de una sola página del POT. En contraste, la EEP se define como un sistema de áreas y corredores que sostiene la biodiversidad y los servicios ecosistémicos (p. 72, art. 42), e incluye humedales, ríos y quebradas (p. 92).</p>
+  </aside>
 
-      <main class="dashboard">
-        <header class="topbar">
-          <div class="portal-title">
-            <strong>PORTAL HEURÍSTICO</strong><span></span
-            ><small>Pantalla 7 de 7</small>
-          </div>
-          <div class="top-actions">
-            <button id="helpBtn" class="top-btn">Centro de ayuda&nbsp; ?</button
-            ><button id="bellBtn" class="bell-btn">♧<i></i></button>
-          </div>
-        </header>
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand" data-tooltip="RAPOT">
+      <div class="mark"><i class="fa-solid fa-diagram-project"></i></div>
+      <span class="nav-text">RAPOT</span>
+    </div>
 
-        <section class="hero-grid">
-          <div class="hero-copy">
-            <div class="eyebrow"><b></b> RESULTADOS FINALES DEL SISTEMA</div>
-            <h1>Dashboard de<br /><em>Emergencia e Impacto</em></h1>
-            <p>
-              Resultados integrados del sistema Bogotá Viva.<br />Impacto
-              urbano, desempeño económico y ambiental<br />bajo el escenario
-              óptimo actual.
-            </p>
-            <button id="exportBtn" class="outline-btn">
-              ⇩ &nbsp;Guardar reporte final
+    <div class="nav-group">
+      <a href="dashboard.html" class="nav-item" data-tooltip="Dashboard"><i class="fa-solid fa-house"></i><span class="nav-text">Dashboard</span></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-label">MÓDULOS</div>
+      <a href="modulo-01.html" class="nav-item" data-tooltip="01 · Construir la Red"><span class="num">01</span><i class="fa-solid fa-diagram-project"></i><span class="nav-text">Construir la Red</span></a>
+      <a href="modulo-02.html" class="nav-item" data-tooltip="02 · Medir la Red"><span class="num">02</span><i class="fa-solid fa-chart-simple"></i><span class="nav-text">Medir la Red</span></a>
+      <a href="modulo-03.html" class="nav-item" data-tooltip="03 · Discurso vs Realidad"><span class="num">03</span><i class="fa-solid fa-eye"></i><span class="nav-text">Discurso vs Realidad</span></a>
+      <a href="modulo-04.html" class="nav-item" data-tooltip="04 · Macromodelos"><span class="num">04</span><i class="fa-solid fa-bullseye"></i><span class="nav-text">Macromodelos</span></a>
+      <a href="modulo-05.html" class="nav-item" data-tooltip="05 · Lo que no está"><span class="num">05</span><i class="fa-solid fa-magnifying-glass"></i><span class="nav-text">Lo que no está</span></a>
+      <a href="modulo-06.html" class="nav-item" data-tooltip="06 · POT ↔ ODS"><span class="num">06</span><i class="fa-solid fa-earth-americas"></i><span class="nav-text">POT ↔ ODS</span></a>
+      <a href="modulo-07.html" class="nav-item active" data-tooltip="07 · Simulador"><span class="num">07</span><i class="fa-solid fa-flask"></i><span class="nav-text">Simulador</span></a>
+      <a href="modulo-08.html" class="nav-item" data-tooltip="08 · Modelo Propio"><span class="num">08</span><i class="fa-solid fa-city"></i><span class="nav-text">Modelo Propio</span></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-label">GESTIÓN</div>
+      <a href="proyectos.html" class="nav-item" data-tooltip="Proyectos"><i class="fa-solid fa-folder"></i><span class="nav-text">Proyectos</span></a>
+      <a href="fuentes.html" class="nav-item" data-tooltip="Fuentes y Documentos"><i class="fa-solid fa-file-lines"></i><span class="nav-text">Fuentes y Documentos</span></a>
+      <a href="favoritos.html" class="nav-item" data-tooltip="Favoritos"><i class="fa-solid fa-star"></i><span class="nav-text">Favoritos</span></a>
+      <a href="reportes.html" class="nav-item" data-tooltip="Reportes"><i class="fa-solid fa-chart-pie"></i><span class="nav-text">Reportes</span></a>
+      <a href="configuracion.html" class="nav-item" data-tooltip="Configuración"><i class="fa-solid fa-gear"></i><span class="nav-text">Configuración</span></a>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="avatar-sm" data-tooltip="Analista RAPOT · Plan de Ordenamiento">RA</div>
+      <div class="user-meta">
+        <div class="name">Analista RAPOT</div>
+        <div class="role">Plan de Ordenamiento</div>
+      </div>
+      <a href="demo.html" class="logout-btn" data-tooltip="Salir"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
+    </div>
+  </aside>
+  <main class="main">
+    <div class="topbar">
+      <h1>Módulo 07 · Simulador de Estructuras</h1>
+      <div class="topbar-actions">
+        <div class="search-box"><i class="fa-solid fa-magnifying-glass"></i><span>Buscar concepto...</span></div>
+        <button class="icon-btn"><i class="fa-regular fa-bell"></i><span class="dot"></span></button>
+      </div>
+    </div>
+
+    <div class="welcome">
+      <h2>Red de las 4 estructuras territoriales</h2>
+      <p>Simulador de desconexión construido con las 98 relaciones documentadas de las cuatro estructuras territoriales. El tamaño de cada nodo depende de cuántas relaciones tiene. Apaga una estructura completa o un nodo específico para ver qué se rompe.</p>
+    </div>
+
+    <div class="net-layout">
+
+      <!-- ================= PANEL DE INFORMACIÓN ================= -->
+      <div class="col right">
+
+        <div class="pcard escenarios-card">
+          <h2>Escenario: ¿qué pasa si apagamos una estructura?</h2>
+          <div class="scenario-buttons">
+            <button class="scenario-btn" data-sys="EEP">
+              <i class="fa-solid fa-circle-minus"></i>
+              <span class="sys-state">ON</span>
+              <span class="row-num">1</span>
+              <span class="row-icon"><i class="fa-solid fa-leaf" aria-hidden="true"></i></span>
+              <span class="btn-title">Sin Estructura Ecológica Principal</span>
+              <span class="btn-question">¿Qué pasaría si no existiera la EEP?</span>
             </button>
-            <a id="downloadDeckBtn" class="outline-btn deck-download" href="M_dulo_07___REDSEG_N_EL_POT.pdf" download="SINTESIS_Modulo_07.pdf" aria-label="Descargar presentación SÍNTESIS en PDF">
-              ⇩ &nbsp;Descargar SÍNTESIS
-            </a>
+            <button class="scenario-btn" data-sys="EFC">
+              <i class="fa-solid fa-circle-minus"></i>
+              <span class="sys-state">ON</span>
+              <span class="row-num">2</span>
+              <span class="row-icon"><i class="fa-solid fa-heart" aria-hidden="true"></i></span>
+              <span class="btn-title">Sin Estructura Funcional y del Cuidado</span>
+              <span class="btn-question">¿Qué pasaría si no existiera la EFC?</span>
+            </button>
+            <button class="scenario-btn" data-sys="ESECI">
+              <i class="fa-solid fa-circle-minus"></i>
+              <span class="sys-state">ON</span>
+              <span class="row-num">3</span>
+              <span class="row-icon"><i class="fa-solid fa-lightbulb" aria-hidden="true"></i></span>
+              <span class="btn-title">Sin Estructura Socioeconómica, Creativa y de Innovación</span>
+              <span class="btn-question">¿Qué pasaría si no existiera la ESECI?</span>
+            </button>
+            <button class="scenario-btn" data-sys="EIP">
+              <i class="fa-solid fa-circle-minus"></i>
+              <span class="sys-state">ON</span>
+              <span class="row-num">4</span>
+              <span class="row-icon"><i class="fa-solid fa-landmark" aria-hidden="true"></i></span>
+              <span class="btn-title">Sin Estructura Integradora de Patrimonios</span>
+              <span class="btn-question">¿Qué pasaría si no existiera la EIP?</span>
+            </button>
           </div>
-          <article class="hero-visual" aria-label="Modelo urbano principal">
-            <div class="urban-mesh" aria-hidden="true">
-              <span class="mesh-line line-a"></span><span class="mesh-line line-b"></span><span class="mesh-line line-c"></span>
-              <span class="mesh-route route-a"></span><span class="mesh-route route-b"></span>
-              <div class="city-silhouette">
-                <i class="tower tower-1"></i><i class="tower tower-2"></i><i class="tower tower-3"></i><i class="tower tower-4"></i><i class="tower tower-5"></i><i class="tower tower-6"></i><i class="tower tower-7"></i>
-              </div>
-            </div>
-            <div class="hero-visual-caption"><span class="signal-dot"></span><span>BOGOTÁ VIVA</span><b>MODELO URBANO · ESCENARIO ÓPTIMO 2040</b></div>
-            <button id="diagnoseBtn" class="danger-btn hero-diagnose">Ver diagnóstico crítico</button>
-          </article>
-        </section>
-
-        <section class="metric-grid">
-          <article class="metric-card cyan">
-            <header>
-              <button
-                class="metric-number network-trigger"
-                data-network="30min"
-                title="Abrir red de Ciudad de los 30 minutos"
-              >
-                1
-              </button>
-              <div>
-                <strong>Ciudad de los 30 minutos</strong
-                ><small>Acceso equitativo a servicios y oportunidades</small>
-              </div>
-            </header>
-            <div class="metric-body metric-focus">
-              <div class="focus-icon">⌁</div>
-              <div class="focus-copy">
-                <small>INDICADOR CLAVE</small>
-                <strong>Acceso a servicios y oportunidades</strong>
-                <span><i></i>Meta de proximidad · 2035</span>
-              </div>
-            </div>
-            <footer>
-              <span>♣ <b>33</b><small>UPL del modelo</small></span
-              ><span>⌖ <b>45</b><small>Manzanas del Cuidado</small></span
-              ><span>◷ <b>26–62 min</b><small>Brecha de viaje</small></span>
-            </footer>
-          </article>
-          <article class="metric-card orange">
-            <header>
-              <button
-                class="metric-number network-trigger"
-                data-network="empleo"
-                title="Abrir red de Productividad y empleo"
-              >
-                2
-              </button>
-              <div>
-                <strong>Productividad y empleo</strong
-                ><small>Crecimiento económico inclusivo y sostenible</small>
-              </div>
-            </header>
-            <div class="metric-body metric-focus">
-              <div class="focus-icon">↗</div>
-              <div class="focus-copy">
-                <small>INDICADOR CLAVE</small>
-                <strong>Crecimiento de la población ocupada</strong>
-                <span><i></i>Escenario alto · productividad inclusiva</span>
-              </div>
-            </div>
-            <footer>
-              <span>▣ <b>910.509</b><small>Empleos potenciales</small></span
-              ><span>▥ <b>7%</b><small>Desempleo escenario alto</small></span
-              ><span
-                >⌂ <b>10 / 33</b><small>UPL con superávit laboral</small></span
-              >
-            </footer>
-          </article>
-          <article class="metric-card cyan">
-            <header>
-              <button
-                class="metric-number network-trigger"
-                data-network="carbono"
-                title="Abrir red de Descarbonización"
-              >
-                3
-              </button>
-              <div>
-                <strong>Descarbonización</strong
-                ><small>Reducción de emisiones y calidad del aire</small>
-              </div>
-            </header>
-            <div class="metric-body metric-focus">
-              <div class="focus-icon">◌</div>
-              <div class="focus-copy">
-                <small>INDICADOR CLAVE</small>
-                <strong>Transición hacia viajes limpios</strong>
-                <span><i></i>Meta de descarbonización · 2035</span>
-              </div>
-            </div>
-            <footer>
-              <span>♧ <b>47%</b><small>GEI del transporte</small></span
-              ><span>♧ <b>18%</b><small>PM fino del transporte</small></span
-              ><span>⌁ <b>2040</b><small>Flota pública eléctrica</small></span>
-            </footer>
-          </article>
-        </section>
-
-        <footer class="dashboard-footer">
-          <span>Modelo activo: <b>Bogotá Viva · Escenario Óptimo 2040</b></span
-          ><span>Simulación completada: <b>Hoy, 08:42</b></span
-          ><span>Confianza del modelo: <b>Alta</b> <i></i></span
-          ><button id="exportBottom">⇩ &nbsp; Guardar síntesis</button>
-        </footer>
-      </main>
-    </div>
-    <div id="networkModal" class="network-modal hidden">
-      <div class="network-modal-box">
-        <button id="networkModalClose" class="network-close">×</button>
-        <div class="network-modal-head">
-          <div>
-            <div class="network-kicker">
-              MODO ANALÍTICO // RELACIONES DEL MODELO
-            </div>
-            <h2 id="networkTitle">Red analítica</h2>
-            <p id="networkSubtitle">
-              Nodos y conexiones que explican el indicador.
-            </p>
-          </div>
-          <div class="network-count" id="networkCount">—</div>
+          <button class="btn net-side-reset" id="btnReset"><i class="fa-solid fa-arrows-rotate"></i> Reactivar todas</button>
         </div>
-        <div class="network-modal-content">
-          <div
-            class="network-toolbar"
-            aria-label="Controles de navegación de la red"
-          >
-            <button type="button" id="networkZoomOut" title="Alejar">−</button
-            ><button
-              type="button"
-              id="networkZoomReset"
-              title="Restablecer vista"
-            >
-              100%</button
-            ><button
-              type="button"
-              id="networkRestore"
-              title="Restablecer toda la red"
-            >
-              Restablecer red</button
-            ><button type="button" id="networkZoomIn" title="Acercar">+</button
-            ><span>Arrastra el fondo para desplazarte</span>
-            <a id="downloadDeckModalBtn" class="network-deck-download" href="M_dulo_07___REDSEG_N_EL_POT.pdf" download="SINTESIS_Modulo_07.pdf" aria-label="Descargar presentación SÍNTESIS en PDF">⇩ Descargar SÍNTESIS</a>
-            <label class="node-search" for="nodeSearchInput">
-              <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
-              <input id="nodeSearchInput" type="search" placeholder="Buscar nodo..." autocomplete="off" />
-              <small id="nodeSearchCount" aria-live="polite"></small>
-            </label>
-            <div id="categoryFilters" class="category-filters" aria-label="Categorías temáticas"></div>
-            <div
-              class="toolbar-conventions"
-              aria-label="Convenciones de la red"
-            >
-              <b>Convenciones</b>
-              <label class="toolbar-convention all-conventions"><input type="checkbox" id="edge-filter-all" checked /><i></i> Todas</label>
-              <label class="toolbar-convention direct"><input type="checkbox" class="edge-filter" data-edge-type="direct" checked /><i></i>Directa</label>
-              <label class="toolbar-convention indirect"><input type="checkbox" class="edge-filter" data-edge-type="indirect" checked /><i></i>Indirecta</label>
-              <label class="toolbar-convention support"><input type="checkbox" class="edge-filter" data-edge-type="support" checked /><i></i>Soporte</label>
-              <label class="toolbar-convention result"><input type="checkbox" class="edge-filter" data-edge-type="result" checked /><i></i>Resultado</label>
-              <div class="toolbar-layers-summary">
-                <b><i class="fa-solid fa-layer-group"></i> Capas del sistema</b>
-                <span
-                >
-                <small
-                  ><strong class="layer-red-text">Capa Roja · Ecológica</strong>
-                  Soporte vital y EEP · POT, pág. 112</small
-                >
-                <small
-                  ><strong class="layer-blue-text"
-                    >Capa Azul · Determinista</strong
-                  >
-                  Vías, Metro y redes · POT, pág. 170</small
-                >
-                <small
-                  ><strong class="layer-green-text">Capa Verde · Social</strong>
-                  Ciudadanos y empresas con agencia · POT, pág. 218</small
-                >
-              </div>
+
+        <div class="pcard" id="evCard">
+          <div id="evBox"></div>
+        </div>
+
+        <div class="pcard">
+          <h2>Escenario de nodo crítico
+            <span class="hint">Apaga el nodo más conectado y observa qué se rompe.</span>
+          </h2>
+          <p class="node-question" id="nodeQuestion">—</p>
+          <label class="node-label" for="nodeSelect">Concepto a desconectar</label>
+          <select id="nodeSelect" class="node-select"></select>
+          <p class="node-impact" id="nodeImpact">—</p>
+          <button class="btn node-sim-btn" id="btnNodeSim"><i class="fa-solid fa-power-off"></i> Simular sin este nodo</button>
+        </div>
+
+        <div class="pcard">
+          <h2>Nodos puente
+            <span class="hint">Conceptos que se relacionan con las tres estructuras distintas a la suya. Se detectan solos.</span>
+          </h2>
+          <div id="bridgeList"></div>
+        </div>
+
+        <div class="pcard">
+          <h2>Simulación del apagado</h2>
+          <div id="simBox"></div>
+        </div>
+
+        <div class="pcard">
+          <h2>Hallazgo de la simulación</h2>
+          <div class="finding" id="finding">—</div>
+        </div>
+
+        <div class="pcard">
+          <h2>Conexiones con otros sistemas
+            <span class="hint">Relaciones activas que cruzan de una estructura a otra. Es la medida del hallazgo principal y se calcula desde los datos.</span>
+          </h2>
+          <div id="rankList"></div>
+          <div id="topSys"></div>
+          <p class="note">
+            La centralidad de la red <b>no equivale a la jerarquía normativa del POT</b>. El POT define la
+            EEP como “primera ordenante” del territorio; esta red mide algo distinto: qué estructura resulta
+            <b>más articuladora</b> según las relaciones explícitas construidas a partir del documento.
+          </p>
+        </div>
+
+        <div class="pcard">
+          <h2>¿Qué sistema genera mayor dependencia?
+            <span class="hint">Relaciones que desaparecerían si ese sistema se apagara (como origen o destino).</span>
+          </h2>
+          <div id="compareList"></div>
+        </div>
+
+      </div>
+
+      <!-- ================= RED + ESTADO ================= -->
+      <div class="col">
+        <div class="pcard net-card">
+          <div class="net-toolbar">
+            <div class="legend">
+              <div class="legend-item"><span class="lg-line"></span>Relación directa</div>
+              <div class="legend-item"><span class="lg-line dashed"></span>Relación indirecta</div>
+              <div class="legend-item"><span class="lg-dot soporte"></span>Soporte</div>
+              <div class="legend-item"><span class="lg-dot resiliencia"></span>Resiliencia</div>
+
+                </div>
+            <div class="net-btns">
+              <button class="btn" id="btnFit"><i class="fa-solid fa-arrows-rotate"></i> Centrar vista</button>
             </div>
           </div>
-          <div id="networkCanvas" class="network-canvas"></div>
-          <aside class="network-aside">
-            <div id="nodeDetails" class="network-panel node-details">
-              <h3>
-                <span class="panel-icon teal"
-                  ><i class="fa-solid fa-crosshairs"></i></span
-                >Inspección del nodo
-              </h3>
-              <p>
-                Haz clic en un nodo para ver cuántas conexiones tiene y con qué
-                elementos se relaciona.
-              </p>
-            </div>
-            <div class="network-panel indicator-panel">
-              <h3>
-                <span class="panel-icon teal"
-                  ><i class="fa-solid fa-wave-square"></i></span
-                >Lectura del indicador
-              </h3>
-              <p id="networkExplanation"></p>
-              <div id="networkMetricGrid" class="network-metric-grid">
-                <div class="network-mini-card teal">
-                  <i class="fa-solid fa-cloud"></i><strong>47%</strong
-                  ><span>Indicador principal</span>
-                </div>
-                <div class="network-mini-card warm">
-                  <i class="fa-solid fa-sun"></i><strong>18%</strong
-                  ><span>Indicador crítico</span>
-                </div>
-                <div class="network-mini-card teal">
-                  <i class="fa-solid fa-train-tram"></i><strong>77%</strong
-                  ><span>Meta del escenario</span>
-                </div>
-                <div class="network-mini-card teal">
-                  <i class="fa-solid fa-bolt"></i><strong>100%</strong
-                  ><span>Meta futura</span>
-                </div>
-                <div class="network-mini-card warm">
-                  <i class="fa-solid fa-leaf"></i><strong>72%</strong
-                  ><span>Reducción prevista</span>
-                </div>
-                <div class="network-mini-card teal">
-                  <i class="fa-solid fa-layer-group"></i><strong>Ver más</strong
-                  ><span>Capas y metodología</span>
-                </div>
+
+          <div class="net-body">
+            <div class="net-stage" id="stage">
+              <div class="zoom-controls" aria-label="Controles de zoom">
+                <button type="button" class="zoom-btn" id="btnZoomOut" aria-label="Alejar" title="Alejar">−</button>
+                <span class="zoom-value" id="zoomValue">100%</span>
+                <button type="button" class="zoom-btn" id="btnZoomIn" aria-label="Acercar" title="Acercar">+</button>
+                <button type="button" class="zoom-btn zoom-reset" id="btnZoomReset" aria-label="Restablecer zoom" title="Restablecer zoom"><i class="fa-solid fa-crosshairs"></i></button>
               </div>
+              <svg id="svg" xmlns="http://www.w3.org/2000/svg" viewBox="-1964 -1937 3927 3910">
+                <defs>
+                  <marker id="ar-soporte" viewBox="0 0 10 10" refX="9" refY="5"
+                          markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse">
+                    <path d="M0,0 L10,5 L0,10 z" fill="#f0a15c"></path>
+                  </marker>
+                  <marker id="ar-resiliencia" viewBox="0 0 10 10" refX="9" refY="5"
+                          markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse">
+                    <path d="M0,0 L10,5 L0,10 z" fill="#2fbfae"></path>
+                  </marker>
+                  <linearGradient id="grad-eep" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#45d6c5"></stop>
+                    <stop offset="100%" stop-color="#1f8f82"></stop>
+                  </linearGradient>
+                  <linearGradient id="grad-efc" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#ffb37a"></stop>
+                    <stop offset="100%" stop-color="#e8763c"></stop>
+                  </linearGradient>
+                  <linearGradient id="grad-eseci" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#f5c26b"></stop>
+                    <stop offset="100%" stop-color="#d9902e"></stop>
+                  </linearGradient>
+                  <linearGradient id="grad-eip" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#ff8f8f"></stop>
+                    <stop offset="100%" stop-color="#d94f5c"></stop>
+                  </linearGradient>
+                  <!-- desenfoque para que las relaciones se vean como una cinta sólida difuminada, sin neón -->
+                  <filter id="rel-blur" x="-60%" y="-60%" width="220%" height="220%">
+                    <feGaussianBlur stdDeviation="7"></feGaussianBlur>
+                  </filter>
+                </defs>
+                <g id="gGuides"></g>
+                <g id="gMembers"></g>
+                <g id="gRels"></g>
+                <g id="gNodes"></g>
+              </svg>
+              <div class="weak-banner hidden" id="weakBanner">
+                <i class="fa-solid fa-link-slash"></i>
+                <span id="weakBannerText"></span>
+              </div>
+              <div class="tooltip" id="tooltip"></div>
             </div>
-          </aside>
+          </div>
+        </div>
+
+        <div class="pcard">
+          <h2>Estado de la red</h2>
+          <div class="stat-grid">
+            <div class="stat wide">
+              <div class="lbl">Relaciones activas</div>
+              <div class="val accent" id="mRelAct">—</div>
+              <div class="bar-track"><div class="bar-fill" id="mBar" style="width:100%"></div></div>
+            </div>
+            <div class="stat"><div class="lbl">Red activa</div><div class="val" id="mPct">—</div></div>
+            <div class="stat"><div class="lbl">Relaciones totales</div><div class="val" id="mRelTot">—</div></div>
+            <div class="stat"><div class="lbl">Nodos totales</div><div class="val" id="mNodTot">—</div></div>
+            <div class="stat"><div class="lbl">Nodos activos</div><div class="val" id="mNodAct">—</div></div>
+            <div class="stat"><div class="lbl">Componentes conectados</div><div class="val" id="mComp">—</div></div>
+            <div class="stat"><div class="lbl">Componente principal</div><div class="val" id="mMain">—</div></div>
+            <div class="stat"><div class="lbl">Conceptos aislados</div><div class="val" id="mIso">—</div></div>
+            <div class="stat wide"><div class="lbl">Sistema más conectado con los demás</div><div class="val" id="mCentral">—</div></div>
+          </div>
         </div>
       </div>
     </div>
-    <div id="modal" class="modal hidden">
-      <div class="modal-box">
-        <button id="modalClose">×</button>
-        <h2>Diagnóstico crítico</h2>
-        <p>
-          El sistema entra en condición de colapso cuando el tiempo de viaje
-          supera los 30 minutos o la resiliencia urbana cae por debajo del
-          umbral operativo.
-        </p>
-        <div class="modal-stats">
-          <b>24%<small>Acceso objetivo</small></b
-          ><b>73/100<small>Resiliencia</small></b
-          ><b>77%<small>Viajes limpios</small></b>
-        </div>
-      </div>
-    </div>
-    <script src="modulo-07.js"></script>
-  </body>
+  </main>
+</div>
+
+<script src="modulo-07.js"></script>
+</body>
 </html>
