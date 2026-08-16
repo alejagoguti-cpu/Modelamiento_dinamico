@@ -276,19 +276,19 @@ const RAW_EDGES = [
   //      La Excel corrobora este hallazgo de forma independiente (hoja "Resumen": columna
   //      "Relaciones verificadas intersistema" = 0 en las 4 filas). Estas NO son relaciones del
   //      texto: son la ausencia documentada de un puente, ligada a un componente real del inventario. ====
-  { s:"humedales", t:"vivienda", cat:"e1-e2", tipo:"vacio", relacion:null, fuente:"inferencia", articulo:null, pagina:null, cita:null,
+  { s:"humedales", t:"vivienda", cat:"e1-e2", tipo:"vacio", relacion:"Soporte", fuente:"inferencia", articulo:null, pagina:null, cita:null,
     analisis:"No existe ningún artículo confirmado (ni en la matriz de 45 relaciones del equipo, ni en el índice oficial) que articule Humedales (EEP) con la producción de Vivienda (EFC) — pese a que la expansión de vivienda sobre rondas de humedal es uno de los conflictos urbanos más documentados de Bogotá (Jaboque, Tibanica, Capellanía)." },
-  { s:"humedales", t:"manzanas_del_cuidado", cat:"e1-e2", tipo:"vacio", relacion:null, fuente:"inferencia", articulo:null, pagina:null, cita:null,
+  { s:"humedales", t:"manzanas_del_cuidado", cat:"e1-e2", tipo:"vacio", relacion:"Soporte", fuente:"inferencia", articulo:null, pagina:null, cita:null,
     analisis:"Las Manzanas del Cuidado se promocionan cercanas a espacios verdes, pero no hay mecanismo articulado, ni en la matriz de relaciones ni en el índice oficial, que conecte su localización con la protección de humedales." },
-  { s:"rios", t:"transporte_publico", cat:"e1-e2", tipo:"vacio", relacion:null, fuente:"inferencia", articulo:null, pagina:null, cita:null,
+  { s:"rios", t:"transporte_publico", cat:"e1-e2", tipo:"vacio", relacion:"Resiliencia", fuente:"inferencia", articulo:null, pagina:null, cita:null,
     analisis:"No hay relación registrada que articule el Sistema Hídrico (ríos/quebradas) con el Sistema de Movilidad, pese a que rondas hídricas y trazados viales compiten por el mismo suelo (caso documentado: ALO junto al río Bogotá)." },
-  { s:"complejos_de_paramos", t:"distrito_centro_tecnologico_e_innovacion", cat:"e1-e3", tipo:"vacio", relacion:null, fuente:"inferencia", articulo:null, pagina:null, cita:null,
+  { s:"complejos_de_paramos", t:"distrito_centro_tecnologico_e_innovacion", cat:"e1-e3", tipo:"vacio", relacion:"Soporte", fuente:"inferencia", articulo:null, pagina:null, cita:null,
     analisis:"Ninguna relación confirmada conecta la protección de páramos con los componentes de la ESECI (Distrito Tecnológico, zonas industriales, servicios empresariales) — la estructura ecológica y la socioeconómica no comparten ni un solo puente verificado en las 45 relaciones documentadas." },
-  { s:"areas_de_resiliencia_climatica", t:"zonas_industriales", cat:"e1-e3", tipo:"vacio", relacion:null, fuente:"inferencia", articulo:null, pagina:null, cita:null,
+  { s:"areas_de_resiliencia_climatica", t:"zonas_industriales", cat:"e1-e3", tipo:"vacio", relacion:"Resiliencia", fuente:"inferencia", articulo:null, pagina:null, cita:null,
     analisis:"Las Áreas de Resiliencia Climática no tienen ningún puente confirmado hacia las Zonas Industriales u otro componente de la ESECI, pese a que estas últimas son, típicamente, infraestructura de alto impacto ambiental." },
-  { s:"rios", t:"sistema_de_sitios_sagrados", cat:"e1-e4", tipo:"vacio", relacion:null, fuente:"inferencia", articulo:null, pagina:null, cita:null,
+  { s:"rios", t:"sistema_de_sitios_sagrados", cat:"e1-e4", tipo:"vacio", relacion:"Soporte", fuente:"inferencia", articulo:null, pagina:null, cita:null,
     analisis:"No hay relación registrada que conecte el Sistema Hídrico con los Sitios Sagrados o el patrimonio de la EIP, aunque el centro histórico de Bogotá se fundó junto a los ríos San Francisco/Vicachá, hoy canalizados." },
-  { s:"distrito_centro_tecnologico_e_innovacion", t:"patrimonio_natural", cat:"e3-e4", tipo:"vacio", relacion:null, fuente:"inferencia", articulo:null, pagina:null, cita:null,
+  { s:"distrito_centro_tecnologico_e_innovacion", t:"patrimonio_natural", cat:"e3-e4", tipo:"vacio", relacion:"Soporte", fuente:"inferencia", articulo:null, pagina:null, cita:null,
     analisis:"Ningún puente confirmado entre los componentes económicos de la ESECI y la protección patrimonial de la EIP, pese a que la presión inmobiliaria/comercial sobre zonas patrimoniales es un conflicto documentado (La Candelaria, Chapinero)." },
 ];
 
@@ -335,7 +335,7 @@ function layoutNetwork() {
     n.color = STRUCT_STYLE[n.cat].color;
     n.vx = 0; n.vy = 0; n.fixed = false;
     const d = deg[n.id] || 0;
-    n.r = 26 + Math.sqrt(d) * 13; // el tamaño real sale del grado, no de una etiqueta
+    n.r = 20 + Math.pow(d, 1.25) * 7; // el tamaño real sale del grado, no de una etiqueta — hubs mucho más grandes
   });
 
   // Relajación por fuerzas (Fruchterman-Reingold simplificado), corrida
@@ -461,8 +461,10 @@ function buildDefs(svg) {
     filter.appendChild(blur); filter.appendChild(merge);
     defs.appendChild(filter);
   });
-  // marcadores de flecha: uno por color relevante (directa=Soporte naranja / Resiliencia azul / vacio rojo)
-  const arrowColors = { "directa-Soporte": RELACION_STYLE.Soporte.color, "directa-Resiliencia": RELACION_STYLE.Resiliencia.color, "vacio": TYPE_STYLE.vacio.color };
+  // marcadores de flecha: solo 2 colores en toda la red — Soporte (naranja) y Resiliencia (azul).
+  // "vacío" NO usa un tercer color: hereda el color de su propia dimensión Soporte/Resiliencia,
+  // y se distingue únicamente por el estilo de línea (punteado disperso, ver drawEdges).
+  const arrowColors = { "Soporte": RELACION_STYLE.Soporte.color, "Resiliencia": RELACION_STYLE.Resiliencia.color };
   Object.entries(arrowColors).forEach(([key, color]) => {
     const marker = document.createElementNS(SVG_NS, "marker");
     marker.setAttribute("id", "arrow-" + key);
@@ -479,15 +481,14 @@ function buildDefs(svg) {
   svg.appendChild(defs);
 }
 
-// Color del trazo: "vacio" siempre rojo; el resto usa la dimensión Soporte/Resiliencia
-// (independiente del estilo de línea directa/indirecta).
+// Color del trazo: SOLO 2 colores en toda la red — Soporte (naranja) y Resiliencia (azul).
+// El estilo de línea (sólida+flecha / punteada / punteada dispersa) es lo que distingue
+// directa / indirecta / vacío — nunca el color.
 function edgeColor(edge) {
-  if (edge.tipo === "vacio") return TYPE_STYLE.vacio.color;
-  return (edge.relacion && RELACION_STYLE[edge.relacion]) ? RELACION_STYLE[edge.relacion].color : TYPE_STYLE[edge.tipo].color;
+  return (edge.relacion && RELACION_STYLE[edge.relacion]) ? RELACION_STYLE[edge.relacion].color : RELACION_STYLE.Soporte.color;
 }
 function arrowMarkerId(edge) {
-  if (edge.tipo === "vacio") return "arrow-vacio";
-  if (edge.relacion) return "arrow-directa-" + edge.relacion;
+  if (edge.relacion) return "arrow-" + edge.relacion;
   return null;
 }
 
@@ -526,11 +527,11 @@ function drawEdges(svg) {
     visual.setAttribute("d", d);
     visual.setAttribute("class", "ods-edge edge-visual");
     visual.setAttribute("stroke", color);
-    visual.setAttribute("stroke-width", edge.tipo === "vacio" ? 2.4 : edge.tipo === "directa" ? 2.2 : 1.4);
-    if (edge.tipo !== "directa") visual.setAttribute("stroke-dasharray", edge.tipo === "vacio" ? "3,6" : "5,4");
+    visual.setAttribute("stroke-width", edge.tipo === "vacio" ? 2 : edge.tipo === "directa" ? 2.2 : 1.4);
+    if (edge.tipo !== "directa") visual.setAttribute("stroke-dasharray", edge.tipo === "vacio" ? "2,7" : "5,4");
     const markerId = arrowMarkerId(edge);
     if (markerId) visual.setAttribute("marker-end", `url(#${markerId})`);
-    visual.setAttribute("opacity", edge.tipo === "indirecta" ? "0.55" : "0.95");
+    visual.setAttribute("opacity", edge.tipo === "indirecta" ? "0.55" : edge.tipo === "vacio" ? "0.6" : "0.95");
 
     group.appendChild(visual); group.appendChild(hit);
     group.addEventListener("click", (ev) => { ev.stopPropagation(); showEdgeInfo(i); });
