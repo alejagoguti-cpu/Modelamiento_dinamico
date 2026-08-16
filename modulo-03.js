@@ -2612,9 +2612,9 @@ const iconSize = Math.max(28, Math.round(R * 0.52));
       // El icono ocupa solo la franja superior del nodo; nunca invade la etiqueta.
       const fo = el('foreignObject', {
         x: -R * 0.82,
-        y: -R * 0.78,
+        y: -R * 0.58,
         width: R * 1.64,
-        height: R * 0.48
+        height: R * 0.52
       });
       const div = document.createElementNS('http://www.w3.org/1999/xhtml', 'div');
       div.setAttribute('class', 'node-icon');
@@ -2628,7 +2628,7 @@ const iconSize = Math.max(28, Math.round(R * 0.52));
       const labelStep = Math.max(12, Math.min(19, R * 0.18));
       const labelFont = Math.max(10, Math.min(18, R * 0.22));
       // Las etiquetas quedan centradas en la mitad inferior del nodo.
-      const labelStart = Math.max(R * 0.18, R * 0.28 - ((lines.length - 1) * labelStep) / 2);
+      const labelStart = Math.max(R * 0.16, R * 0.24 - ((lines.length - 1) * labelStep) / 2);
       lines.forEach((ln, i) => {
         const t = el('text', { y: labelStart + i * labelStep, style: `font-size:${labelFont}px` });
         t.textContent = ln;
