@@ -1160,3 +1160,33 @@ footer span { color: var(--teal); }
 .app > .sidebar .side-item:hover::after { opacity: 1 !important; transform: translateY(-50%) !important; }
 .app > .sidebar .sidebar-bottom { margin-top: auto !important; width: 38px !important; height: 38px !important; border: 1px solid #2fbfae !important; border-radius: 50% !important; display: grid !important; place-items: center !important; color: #2fbfae !important; font-size: 11px !important; }
 .app > .main { margin-left: 0 !important; }
+
+/* Jerarquía cromática compartida: títulos sin azul, blanco + turquesa. */
+.topbar h1,
+.welcome h2,
+.network-header h3,
+.pn-section .network-header h3 {
+  color: #f4f7f6 !important;
+}
+.topbar h1,
+.welcome h2 {
+  letter-spacing: -0.02em;
+}
+.welcome h2 {
+  background: linear-gradient(90deg, #f4f7f6 0%, #f4f7f6 58%, #46d6d0 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.network-header h3 i,
+.pn-section .network-header h3 i,
+.fc-label,
+.ods-insight-stats + * .fc-label {
+  color: #46d6d0 !important;
+}
+.control-btn.active {
+  color: #46d6d0 !important;
+  border-color: #46d6d0 !important;
+  background: rgba(70,214,208,.10) !important;
+}
+/* El azul se conserva solo en nodos/relaciones con significado propio, no en títulos. */
