@@ -3370,20 +3370,33 @@ function initPanZoom() {
   const stage = document.getElementById('stage');
   const svg = document.getElementById('svg');
 
-  let dragging = false, sx = 0, sy = 0, ox = 0, oy = 0;
+  let dragging = false, moved = false, sx = 0, sy = 0, ox = 0, oy = 0;
   stage.addEventListener('pointerdown', e => {
-    dragging = true; sx = e.clientX; sy = e.clientY; ox = vb.x; oy = vb.y;
-    stage.classList.add('panning');
-    stage.setPointerCapture(e.pointerId);
+    dragging = true;
+    moved = false;
+    sx = e.clientX; sy = e.clientY; ox = vb.x; oy = vb.y;
+    // No capturamos el puntero todavía: así un clic sobre un nodo llega al SVG.
   });
   stage.addEventListener('pointermove', e => {
     if (!dragging) return;
+    const dx = e.clientX - sx;
+    const dy = e.clientY - sy;
+    if (!moved && Math.hypot(dx, dy) < 5) return;
+    if (!moved) {
+      moved = true;
+      stage.classList.add('panning');
+      if (stage.setPointerCapture) stage.setPointerCapture(e.pointerId);
+    }
     const rect = svg.getBoundingClientRect();
-    vb.x = ox - ((e.clientX - sx) / rect.width) * vb.w;
-    vb.y = oy - ((e.clientY - sy) / rect.height) * vb.h;
+    vb.x = ox - (dx / rect.width) * vb.w;
+    vb.y = oy - (dy / rect.height) * vb.h;
     applyVB();
   });
-  const end = () => { dragging = false; stage.classList.remove('panning'); };
+  const end = () => {
+    dragging = false;
+    moved = false;
+    stage.classList.remove('panning');
+  };
   stage.addEventListener('pointerup', end);
   stage.addEventListener('pointercancel', end);
 
