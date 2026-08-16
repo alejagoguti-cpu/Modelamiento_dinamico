@@ -1362,3 +1362,9 @@ footer span { color: #46d6d0; }
   -webkit-text-fill-color: transparent !important;
 }
 .welcome p { color: #9aa2ad !important; }
+
+/* Paleta final sin azul: lienzos y contenedores en carbón, no azul marino. */
+.app, .main, .network-section, .network-viz-wrap, .network-canvas, .network-sidebar, .pn-section, .pn-wrap, .pn-canvas, .pn-sidebar { background-color: #0b0c0f !important; }
+.network-section, .pn-section { background: rgba(20,21,24,.88) !important; }
+.network-canvas, .pn-canvas, #networkViz, #pnViz { background: #101316 !important; border-color: rgba(70,214,208,.18) !important; }
+:root { --blue: #46d6d0 !important; --panel: #141518 !important; --panel-alt: #101316 !important; }
