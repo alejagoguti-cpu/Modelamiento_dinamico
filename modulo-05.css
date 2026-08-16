@@ -581,3 +581,13 @@ html, body {
   .portal-sidebar { width: 72px; min-width: 72px; }
   .portal-item::after { left: 50px; }
 }
+
+.portal-item svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
