@@ -6207,3 +6207,41 @@ body {
     display: none !important;
   }
 }
+
+/* Corrección final del icono del hallazgo: columna propia, sin solapamiento */
+@media (min-width: 1100px) {
+  .welcome > .network-finding {
+    display: block !important;
+    padding: 16px 24px 14px 112px !important;
+    overflow: hidden !important;
+  }
+  .welcome > .network-finding .network-finding-icon {
+    position: absolute !important;
+    top: 28px !important;
+    left: 30px !important;
+    width: 58px !important;
+    height: 58px !important;
+    margin: 0 !important;
+    display: grid !important;
+    place-items: center !important;
+    border-radius: 50% !important;
+    font-size: 20px !important;
+    line-height: 1 !important;
+    background: linear-gradient(145deg,#46d6d0,#198d89) !important;
+    color: #fff !important;
+    box-shadow: 0 8px 22px rgba(22,141,137,.27) !important;
+  }
+  .welcome > .network-finding .network-finding-kicker,
+  .welcome > .network-finding .network-finding-text {
+    margin-left: 0 !important;
+    max-width: none !important;
+  }
+  .welcome > .network-finding .finding-card-title {
+    margin: 0 !important;
+    text-align: left !important;
+  }
+  .welcome > .network-finding .finding-card-summary {
+    margin: 7px 0 0 !important;
+    text-align: left !important;
+  }
+}
