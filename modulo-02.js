@@ -314,9 +314,9 @@ function computeDegrees() {
    atracción por arista) los relaja hasta verse como una sola red,
    no 4 islas.
    ========================================================== */
-const CANVAS = { w: 1700, h: 1500 };
+const CANVAS = { w: 1900, h: 1650 };
 const HUB_CENTERS = (() => {
-  const cx = CANVAS.w / 2, cy = CANVAS.h / 2, R = 260;
+  const cx = CANVAS.w / 2, cy = CANVAS.h / 2, R = 130;
   const centers = {};
   ["e1","e2","e3","e4"].forEach((cat, i) => {
     const angle = (Math.PI / 2) * i - Math.PI / 4;
@@ -329,19 +329,19 @@ function layoutNetwork() {
   const deg = computeDegrees();
   ODS_NODES.forEach(n => {
     const center = HUB_CENTERS[n.cat];
-    const spread = 130;
+    const spread = 150;
     n.x = center.x + (Math.random() - 0.5) * spread * 2;
     n.y = center.y + (Math.random() - 0.5) * spread * 2;
     n.color = STRUCT_STYLE[n.cat].color;
     n.vx = 0; n.vy = 0; n.fixed = false;
     const d = deg[n.id] || 0;
-    n.r = 20 + Math.pow(d, 1.25) * 7; // el tamaño real sale del grado, no de una etiqueta — hubs mucho más grandes
+    n.r = 22 + Math.pow(d, 1.35) * 10; // el tamaño real sale del grado, no de una etiqueta — hubs MUCHO más grandes que la periferia
   });
 
   // Relajación por fuerzas (Fruchterman-Reingold simplificado), corrida
   // una sola vez al cargar para que el layout inicial ya se vea como red.
   const nodes = ODS_NODES;
-  const k = 150;
+  const k = 155;
   for (let iter = 0; iter < 260; iter++) {
     const disp = {};
     nodes.forEach(n => { disp[n.id] = { x: 0, y: 0 }; });
@@ -351,7 +351,11 @@ function layoutNetwork() {
         const a = nodes[i], b = nodes[j];
         let dx = a.x - b.x, dy = a.y - b.y;
         let dist = Math.sqrt(dx * dx + dy * dy) || 0.01;
-        const force = (k * k) / dist;
+        // la repulsión crece un poco con el tamaño real de ambos nodos, para que los
+        // hubs grandes reserven algo más de espacio propio sin separar del todo los clústeres
+        // (la resolución de colisiones de más abajo termina de destrabar superposiciones puntuales).
+        const sizeFactor = 1 + (a.r + b.r) / 160;
+        const force = (k * k * sizeFactor) / dist;
         const ux = dx / dist, uy = dy / dist;
         disp[a.id].x += ux * force; disp[a.id].y += uy * force;
         disp[b.id].x -= ux * force; disp[b.id].y -= uy * force;
@@ -367,13 +371,14 @@ function layoutNetwork() {
       disp[a.id].x -= ux * force; disp[a.id].y -= uy * force;
       disp[b.id].x += ux * force; disp[b.id].y += uy * force;
     });
-    // gravedad débil hacia el centro de su propia estructura (para que sigan agrupadas por color)
+    // gravedad MUY débil hacia el centro de su propia estructura — apenas lo suficiente
+    // para que el color siga leyéndose agrupado, sin volver a separar la red en 4 islas.
     nodes.forEach(n => {
       const c = HUB_CENTERS[n.cat];
-      disp[n.id].x += (c.x - n.x) * 0.02;
-      disp[n.id].y += (c.y - n.y) * 0.02;
+      disp[n.id].x += (c.x - n.x) * 0.008;
+      disp[n.id].y += (c.y - n.y) * 0.008;
     });
-    const temp = Math.max(1, 12 * (1 - iter / 260));
+    const temp = Math.max(1, 14 * (1 - iter / 260));
     nodes.forEach(n => {
       const d = disp[n.id];
       const dist = Math.sqrt(d.x * d.x + d.y * d.y) || 0.01;
@@ -383,6 +388,42 @@ function layoutNetwork() {
       n.x = Math.max(60, Math.min(CANVAS.w - 60, n.x));
       n.y = Math.max(60, Math.min(CANVAS.h - 60, n.y));
     });
+  }
+
+  // ---- Resolución de colisiones por radio real ----
+  // El layout de fuerzas de arriba repele por PUNTOS, no por el tamaño real de cada
+  // bola — con hubs mucho más grandes que la periferia eso deja círculos superpuestos.
+  // Estas pasadas adicionales separan cualquier par de nodos cuya distancia sea menor
+  // que la suma de sus radios (+margen), sin mover la red entera: solo destraba
+  // superposiciones puntuales, así el mapa se ve mucho menos desordenado/cruzado.
+  const PAD = 10;
+  for (let pass = 0; pass < 140; pass++) {
+    let anyOverlap = false;
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const a = nodes[i], b = nodes[j];
+        let dx = b.x - a.x, dy = b.y - a.y;
+        let dist = Math.sqrt(dx * dx + dy * dy) || 0.01;
+        const minDist = a.r + b.r + PAD;
+        if (dist < minDist) {
+          anyOverlap = true;
+          const overlap = (minDist - dist) / 2;
+          const ux = dx / dist, uy = dy / dist;
+          a.x -= ux * overlap; a.y -= uy * overlap;
+          b.x += ux * overlap; b.y += uy * overlap;
+        }
+      }
+    }
+    // suave atracción de vuelta al centro de su estructura para que no se dispersen
+    // hacia las esquinas del canvas al resolver colisiones
+    nodes.forEach(n => {
+      const c = HUB_CENTERS[n.cat];
+      n.x += (c.x - n.x) * 0.01;
+      n.y += (c.y - n.y) * 0.01;
+      n.x = Math.max(n.r + 20, Math.min(CANVAS.w - n.r - 20, n.x));
+      n.y = Math.max(n.r + 20, Math.min(CANVAS.h - n.r - 20, n.y));
+    });
+    if (!anyOverlap) break;
   }
 
   nodes.forEach(n => { n.homeX = n.x; n.homeY = n.y; });
@@ -544,10 +585,9 @@ function drawEdges(svg) {
 function drawNodes(svg) {
   const g = document.createElementNS(SVG_NS, "g");
   g.setAttribute("class", "nodes-layer");
-  ODS_NODES.forEach((node, index) => {
+  ODS_NODES.forEach(node => {
     const group = document.createElementNS(SVG_NS, "g");
-    group.setAttribute("class", "ods-node floating-node ods-node-" + node.cat);
-    group.style.setProperty("--float-delay", `${((index * 0.17) % 2.4).toFixed(2)}s`);
+    group.setAttribute("class", "ods-node ods-node-" + node.cat);
     group.setAttribute("data-id", node.id);
     group.setAttribute("data-cat", node.cat);
 
@@ -555,8 +595,6 @@ function drawNodes(svg) {
     circle.setAttribute("class", "node-ring");
     circle.setAttribute("cx", node.x); circle.setAttribute("cy", node.y); circle.setAttribute("r", node.r);
     circle.setAttribute("stroke", node.color);
-    circle.style.stroke = node.color;
-    circle.style.color = node.color;
     circle.setAttribute("stroke-width", 2.5);
     circle.setAttribute("filter", "url(#glow-" + node.color.replace("#", "") + ")");
 
@@ -568,11 +606,6 @@ function drawNodes(svg) {
     const wrapper = document.createElementNS(XHTML_NS, "div");
     wrapper.setAttribute("class", "node-inner");
     wrapper.setAttribute("style", "width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;pointer-events:none;");
-
-    const numEl = document.createElementNS(XHTML_NS, "div");
-    numEl.setAttribute("class", "node-num");
-    numEl.setAttribute("style", `color:${node.color};font-family:'Space Grotesk',sans-serif;font-weight:800;font-size:${Math.max(node.r * 0.24, 9)}px;line-height:1;`);
-    numEl.textContent = index + 1;
 
     const iconEl = document.createElementNS(XHTML_NS, "i");
     iconEl.setAttribute("class", "fa-solid " + node.icon + " node-icon");
@@ -586,7 +619,7 @@ function drawNodes(svg) {
     const fuenteDot = document.createElementNS(XHTML_NS, "div");
     fuenteDot.setAttribute("style", `width:6px;height:6px;border-radius:50%;background:${FUENTE_STYLE[node.fuente].color};margin-top:2px;`);
 
-    wrapper.appendChild(numEl); wrapper.appendChild(iconEl); wrapper.appendChild(nameEl); wrapper.appendChild(fuenteDot);
+    wrapper.appendChild(iconEl); wrapper.appendChild(nameEl); wrapper.appendChild(fuenteDot);
     fo.appendChild(wrapper);
     group.appendChild(circle); group.appendChild(fo);
     attachNodeClickHandler(group, node.id);
@@ -939,29 +972,3 @@ document.addEventListener("DOMContentLoaded", () => {
   renderMatrix();
   document.getElementById("networkViz")?.addEventListener("click", () => { hideEdgeInfo(); hideNodeInfo(); });
 });
-
-
-/* Zoom compatible con el lenguaje interactivo del Módulo 06. */
-(() => {
-  function setupModule06Zoom() {
-    const svg = document.getElementById('networkViz');
-    const wrap = svg?.parentElement;
-    if (!svg || svg.dataset.module06ZoomReady === '1') return;
-    svg.dataset.module06ZoomReady = '1';
-    const initial = svg.getAttribute('viewBox').trim().split(/\s+/).map(Number);
-    if (initial.length !== 4 || initial.some(Number.isNaN)) return;
-    let scale = 1;
-    const [x,y,w,h] = initial;
-    const level = wrap?.querySelector('.network06-zoom-level');
-    const update = () => {
-      const nw=w/scale, nh=h/scale;
-      svg.setAttribute('viewBox', `${x+(w-nw)/2} ${y+(h-nh)/2} ${nw} ${nh}`);
-      if (level) level.textContent = `${Math.round(scale*100)}%`;
-    };
-    const change = delta => { scale=Math.min(2.25,Math.max(.75,+(scale+delta).toFixed(2))); update(); };
-    wrap?.querySelector('.network06-zoom-in')?.addEventListener('click',()=>change(.25));
-    wrap?.querySelector('.network06-zoom-out')?.addEventListener('click',()=>change(-.25));
-    svg.addEventListener('wheel', e => { e.preventDefault(); change(e.deltaY<0?.10:-.10); }, {passive:false});
-  }
-  document.addEventListener('DOMContentLoaded', setupModule06Zoom);
-})();
