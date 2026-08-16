@@ -1,134 +1,345 @@
-const svg = document.getElementById('networkViz');
-const note = document.getElementById('selectionNote');
-const detail = document.getElementById('conceptDetail');
-const resetBtn = document.getElementById('resetBtn');
-const NS = 'http://www.w3.org/2000/svg';
-
-const ambient = {
-  id: 'ambientalista', x: 270, y: 365, r: 170, color: '#37d477',
-  concepts: [
-    ['Humedales',270,235], ['Ríos',170,300], ['Quebradas',145,405],
-    ['Cerros',210,490], ['Áreas protegidas',315,500], ['Coberturas vegetales',385,420],
-    ['Resiliencia climática',390,315], ['Estructura ecológica',330,245]
-  ]
-};
-
-const humanSystems = [
-  {id:'socioeconomico', title:'SISTEMA', subtitle:'SOCIOECONÓMICO', x:820, y:220, r:72, color:'#f5c945', concepts:['Empleo','Comercio','Actividades productivas','Vivienda','Servicios empresariales']},
-  {id:'gobernanza', title:'SISTEMA DE', subtitle:'GOBERNANZA', x:965, y:365, r:72, color:'#5b8def', concepts:['Participación','Gestión pública','Coordinación institucional','Instrumentos de planificación','Actores públicos']},
-  {id:'funcionalista', title:'SISTEMA', subtitle:'FUNCIONALISTA', x:820, y:510, r:72, color:'#a276f2', concepts:['Red vial','Transporte público','Ciclorutas','Infraestructura','Accesibilidad']}
+let upzData = [];
+let barrios Data = [];
+let currentSelection = null;
+const humedales = [
+  {id: 'h1', nombre: "Humedal Burro", lat: 4.644296801427965, lng: -74.15052710000018, area: 18.5},
+  {id: 'h2', nombre: "Humedal El Techo", lat: 4.645366863767807, lng: -74.14136322378499, area: 32.2},
+  {id: 'h3', nombre: "Humedal Vaca", lat: 4.627282592850425, lng: -74.15947984079249, area: 24.8},
 ];
 
-const human = {id:'humanista', x:820, y:365, r:285, color:'#ff9567'};
-const allConcepts = new Map();
-let activeSystem = null;
+const map = L.map('map').setView([4.60, -74.08], 11);
 
-function el(tag, attrs={}, parent=svg){
-  const node = document.createElementNS(NS, tag);
-  Object.entries(attrs).forEach(([key,value]) => node.setAttribute(key,value));
-  parent.appendChild(node); return node;
-}
-function line(x1,y1,x2,y2, cls, parent){ return el('line',{x1,y1,x2,y2,class:cls},parent); }
-function text(x,y,content,cls,parent=svg){ const t=el('text',{x,y,class:cls},parent); t.textContent=content; return t; }
-function multiline(x,y,lines,cls,parent=svg, gap=16){ lines.forEach((lineText,i)=>text(x,y+i*gap,lineText,cls,parent)); }
-function circleNode(x,y,r,color,cls,parent=svg){ return el('circle',{cx:x,cy:y,r,fill:'#111c2b',stroke:color,'stroke-width':3,class:cls},parent); }
+L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {
+  attribution: '© CartoDB',
+  maxZoom: 19
+}).addTo(map);
 
-function drawAmbientNetwork(){
-  const group = el('g',{class:'ambient-network'});
-  const pts = ambient.concepts.map(c=>({name:c[0],x:c[1],y:c[2]}));
-  const edges = [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,0],[1,7],[1,5],[2,5],[3,5],[0,6]];
-  edges.forEach(([a,b])=>line(pts[a].x,pts[a].y,pts[b].x,pts[b].y,'edge environmental',group));
-  pts.forEach(p=>{
-    const g=el('g',{class:'svg-node ambient-concept'},group);
-    circleNode(p.x,p.y,29,'#8cf0a9','',g);
-    text(p.x,p.y+4,p.name,'concept-label',g);
-  });
-}
+let upzLayers = {};
+let upzLabels = {};
+let barrios Layers = {};
+let barrio Labels = {};
+let humedalLayers = {};
+let humedalMarkers = {};
+let eepNodos = [];
+let eepLayers = {};
+let networkLines = [];
+let currentMode = 'meso';
 
-function drawAmbient(){
-  const group=el('g',{class:'svg-node ambientalista-node'});
-  circleNode(ambient.x,ambient.y,ambient.r,ambient.color,'',group);
-  el('circle',{cx:ambient.x,cy:ambient.y,r:ambient.r-12,fill:'none',stroke:'#8cf0a9','stroke-width':1,'stroke-dasharray':'4 8',opacity:.6},group);
-  text(ambient.x,ambient.y-18,'AMBIENTALISTA','node-title',group);
-  text(ambient.x,ambient.y+4,'red ecológica', 'node-subtitle',group);
-  text(ambient.x,ambient.y+22,'conceptos concretos','node-subtitle',group);
-  group.addEventListener('click',()=>{
-    note.textContent='La red ambientalista muestra conceptos ecológicos concretos y sus conexiones.';
-    detail.innerHTML='<strong>Ambientalista</strong><span>Humedales, ríos, quebradas, cerros, áreas protegidas, coberturas vegetales, resiliencia climática y estructura ecológica.</span>';
-  });
-}
-
-function drawHuman(){
-  const group=el('g',{class:'svg-node human-node'});
-  circleNode(human.x,human.y,human.r,human.color,'',group);
-  el('circle',{cx:human.x,cy:human.y,r:human.r-13,fill:'none',stroke:'#ffc0a5','stroke-width':1,'stroke-dasharray':'3 9',opacity:.65},group);
-  text(human.x,human.y-22,'HUMANISTA','node-title',group);
-  text(human.x,human.y+2,'bienestar y vida', 'node-subtitle',group);
-  text(human.x,human.y+20,'en el territorio','node-subtitle',group);
-  group.addEventListener('click',()=>{
-    note.textContent='La bola humanista conecta las tres dimensiones que puedes explorar a la derecha.';
-    detail.innerHTML='<strong>Humanista</strong><span>Selecciona sistema socioeconómico, gobernanza o funcionalista para desplegar sus conceptos.</span>';
-  });
-}
-
-function drawHumanSystems(){
-  humanSystems.forEach(system=>{
-    line(human.x + Math.cos(Math.atan2(system.y-human.y,system.x-human.x))*human.r, human.y + Math.sin(Math.atan2(system.y-human.y,system.x-human.x))*human.r, system.x - Math.cos(Math.atan2(system.y-human.y,system.x-human.x))*system.r, system.y - Math.sin(Math.atan2(system.y-human.y,system.x-human.x))*system.r,'edge human');
-    const g=el('g',{class:'svg-node human-system', 'data-system':system.id});
-    g.style.color=system.color;
-    circleNode(system.x,system.y,system.r,system.color,'',g);
-    text(system.x,system.y-11,system.title,'node-subtitle',g);
-    text(system.x,system.y+9,system.subtitle,'node-title',g);
-    text(system.x,system.y+29,'clic para explorar','node-subtitle',g);
-    system.concepts.forEach((name,index)=>{
-      const angle=(-145 + index*72)*Math.PI/180;
-      const cx=system.x+Math.cos(angle)*88;
-      const cy=system.y+Math.sin(angle)*66;
-      const cg=el('g',{class:'svg-node concept-node', 'data-parent':system.id});
-      cg.style.color=system.color;
-      line(system.x,system.y,cx,cy,'edge cross',cg);
-      circleNode(cx,cy,22,system.color,'',cg);
-      text(cx,cy+4,name,'concept-label',cg);
-      allConcepts.set(`${system.id}-${index}`,{node:cg,name,system});
+// Cargar UPZ (MACRO)
+fetch('upz_bogota.geojson')
+  .then(r => r.json())
+  .then(data => {
+    upzData = data.features.map(f => f.properties);
+    
+    data.features.forEach((feature, idx) => {
+      const props = feature.properties;
+      const code = props.uplcodigo.split('UPZ')[1]?.trim() || props.id;
+      
+      const coords = feature.geometry.coordinates;
+      
+      const labelDiv = L.divIcon({
+        html: `<div style="width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; background: transparent; color: #2fd4c8; font-weight: 700; font-size: 9px; border: 1.5px solid #2fd4c8; border-radius: 50%; text-shadow: 0 0 6px rgba(0,0,0,0.8);">${code}</div>`,
+        className: 'upz-label-marker',
+        iconSize: [24, 24],
+        iconAnchor: [12, 12]
+      });
+      
+      const marker = L.marker([coords[1], coords[0]], { icon: labelDiv, interactive: false });
+      upzLabels[props.id] = marker;
     });
-    g.addEventListener('click',(event)=>{event.stopPropagation(); toggleSystem(system.id);});
+    
+    renderItemList();
   });
-}
 
-function toggleSystem(id){
-  activeSystem=activeSystem===id?null:id;
-  document.querySelectorAll('.human-system').forEach(node=>node.classList.toggle('selected',node.dataset.system===activeSystem));
-  document.querySelectorAll('.concept-node').forEach(node=>{
-    node.classList.toggle('visible',node.dataset.parent===activeSystem);
-    node.classList.toggle('dim',activeSystem && node.dataset.parent!==activeSystem);
+// Cargar Barrios (MESO)
+fetch('barrios_bogota.geojson')
+  .then(r => r.json())
+  .then(data => {
+    barrios Data = data.features.map(f => f.properties);
+    
+    data.features.forEach((feature, idx) => {
+      const props = feature.properties;
+      const coords = feature.geometry.coordinates;
+      
+      const labelDiv = L.divIcon({
+        html: `<div style="width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; background: transparent; color: #2fd4c8; font-weight: 700; font-size: 7px; border: 1px solid #2fd4c8; border-radius: 50%; text-shadow: 0 0 4px rgba(0,0,0,0.8);">${props.codigo}</div>`,
+        className: 'barrio-label-marker',
+        iconSize: [16, 16],
+        iconAnchor: [8, 8]
+      });
+      
+      const marker = L.marker([coords[1], coords[0]], { icon: labelDiv, interactive: false });
+      barrio Labels[props.id] = marker;
+    });
   });
-  const system=humanSystems.find(s=>s.id===id);
-  if(activeSystem){
-    note.textContent=`Mostrando conceptos del ${system.subtitle.toLowerCase()}. Haz clic nuevamente para ocultarlos.`;
-    detail.innerHTML=`<strong>${system.subtitle}</strong><span>${system.concepts.join(' · ')}. Estos conceptos se conectan con la lectura humanista del POT.</span>`;
-  }else{
-    note.textContent='Selecciona un sistema de la red humanista.';
-    detail.innerHTML='<strong>Cómo leer la red</strong><span>La bola ambientalista contiene conceptos ecológicos concretos. La bola humanista se conecta con tres sistemas: socioeconómico, gobernanza y funcionalista.</span>';
+
+// Cargar nodos de la red EEP
+fetch('red_eep.geojson')
+  .then(r => r.json())
+  .then(data => {
+    eepNodos = data.features;
+  });
+
+function renderItemList() {
+  const container = document.getElementById('item-list');
+  container.innerHTML = '';
+  
+  if (currentMode === 'macro') {
+    upzData.forEach(upz => {
+      const div = document.createElement('div');
+      div.className = 'upz-item' + (currentSelection?.id === upz.id ? ' active' : '');
+      div.innerHTML = `${upz.uplcodigo}`;
+      div.onclick = () => selectUPZ(upz);
+      container.appendChild(div);
+    });
+  } else if (currentMode === 'meso') {
+    barrios Data.forEach(barrio => {
+      const div = document.createElement('div');
+      div.className = 'upz-item' + (currentSelection?.id === barrio.id ? ' active' : '');
+      div.innerHTML = `${barrio.codigo} - ${barrio.nombre}`;
+      div.onclick = () => selectBarrio(barrio);
+      container.appendChild(div);
+    });
+  } else if (currentMode === 'micro') {
+    humedales.forEach(h => {
+      const div = document.createElement('div');
+      div.className = 'upz-item humedal-card' + (currentSelection?.id === h.id ? ' active' : '');
+      div.innerHTML = `
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+          <strong style="color: #2fd4c8; font-size: 11px;">${h.nombre}</strong>
+          <div style="font-size: 9px; color: #7a8fa0;">
+            <div>📍 ${h.lat.toFixed(4)}, ${h.lng.toFixed(4)}</div>
+            <div>📏 Área: ${h.area} ha</div>
+          </div>
+        </div>
+      `;
+      div.onclick = () => selectHumedal(h);
+      container.appendChild(div);
+    });
   }
 }
 
-function drawCrossRelations(){
-  const relations=[
-    [ambient.x+ambient.r,ambient.y-35,human.x-human.r,human.y-55,'ambiental ↔ bienestar'],
-    [ambient.x+ambient.r-8,ambient.y+42,human.x-human.r,human.y+54,'naturaleza ↔ territorio'],
-    [human.x+human.r,human.y-52,humanSystems[0].x-humanSystems[0].r,humanSystems[0].y+25,'vida ↔ empleo'],
-    [human.x+human.r,human.y,humanSystems[1].x-humanSystems[1].r,humanSystems[1].y,'vida ↔ participación'],
-    [human.x+human.r,human.y+52,humanSystems[2].x-humanSystems[2].r,humanSystems[2].y-25,'vida ↔ movilidad']
-  ];
-  relations.forEach(r=>{line(r[0],r[1],r[2],r[3],'edge cross');text((r[0]+r[2])/2,(r[1]+r[3])/2-7,r[4],'relation-label');});
+function selectUPZ(upz) {
+  currentSelection = upz;
+  
+  document.getElementById('detail-title').textContent = `UPZ SELECCIONADA: ${upz.uplcodigo.toUpperCase()}`;
+  
+  document.getElementById('detail-description').innerHTML = `
+    <p><strong>${upz.nombre}</strong></p>
+    <p>Zona de Planeamiento de Bogotá</p>
+  `;
+  
+  renderItemList();
 }
 
-function render(){
-  svg.innerHTML='';
-  drawAmbientNetwork();
-  drawAmbient();
-  drawHuman();
-  drawHumanSystems();
+function selectBarrio(barrio) {
+  currentSelection = barrio;
+  
+  document.getElementById('detail-title').textContent = `${barrio.nombre.toUpperCase()}`;
+  
+  document.getElementById('detail-description').innerHTML = `
+    <p><strong>${barrio.nombre}</strong></p>
+    <p style="margin-top: 10px;">Barrio de Bogotá</p>
+    <p style="font-size: 9px; color: #7a8fa0; margin-top: 8px;">Código: ${barrio.codigo}</p>
+  `;
+  
+  renderItemList();
 }
-resetBtn.addEventListener('click',()=>{activeSystem=null;render();note.textContent='Selecciona un sistema de la red humanista.';detail.innerHTML='<strong>Cómo leer la red</strong><span>La bola ambientalista contiene conceptos ecológicos concretos. La bola humanista se conecta con tres sistemas: socioeconómico, gobernanza y funcionalista.</span>';});
-render();
+
+function showEepNetwork() {
+  Object.values(eepLayers).forEach(layer => {
+    try { map.removeLayer(layer); } catch(e) {}
+  });
+  eepLayers = {};
+  
+  if (eepNodos.length === 0) return;
+  
+  const conexiones = [
+    {from: 'h1', to: 'rio', tipo: 'directa'},
+    {from: 'h1', to: 'ce', tipo: 'directa'},
+    {from: 'h1', to: 'qb', tipo: 'indirecta'},
+    {from: 'h1', to: 'ap', tipo: 'indirecta'},
+    {from: 'rio', to: 'corr', tipo: 'directa'},
+    {from: 'rio', to: 'ec', tipo: 'indirecta'},
+    {from: 'ce', to: 'cp', tipo: 'directa'},
+    {from: 'ce', to: 'rf', tipo: 'directa'},
+    {from: 'qb', to: 'ru', tipo: 'indirecta'},
+    {from: 'qb', to: 'pb', tipo: 'indirecta'},
+    {from: 'ap', to: 'rf', tipo: 'directa'},
+    {from: 'cm', to: 'cv', tipo: 'indirecta'}
+  ];
+  
+  conexiones.forEach(conn => {
+    const nodoFrom = eepNodos.find(n => n.properties.id === conn.from);
+    const nodoTo = eepNodos.find(n => n.properties.id === conn.to);
+    
+    if (nodoFrom && nodoTo) {
+      const coords = nodoFrom.geometry.coordinates;
+      const coordsTo = nodoTo.geometry.coordinates;
+      
+      const dashArray = conn.tipo === 'indirecta' ? '5, 3' : '0';
+      const lineColor = conn.tipo === 'indirecta' ? '#ff9552' : '#2fd4c8';
+      
+      const line = L.polyline([
+        [coords[1], coords[0]],
+        [coordsTo[1], coordsTo[0]]
+      ], {
+        color: lineColor,
+        weight: 2,
+        opacity: 0.7,
+        dashArray: dashArray
+      }).addTo(map);
+      
+      eepLayers['conn_' + conn.from + '_' + conn.to] = line;
+    }
+  });
+  
+  eepNodos.forEach(nodo => {
+    const coords = nodo.geometry.coordinates;
+    const props = nodo.properties;
+    
+    let radius = 15;
+    if (props.tipo === 'nodo_secundario') radius = 10;
+    if (props.tipo === 'nodo_terciario') radius = 7;
+    
+    const circle = L.circleMarker([coords[1], coords[0]], {
+      radius: radius,
+      fillColor: '#2fd4c8',
+      color: '#0a0e17',
+      weight: 2,
+      opacity: 0.9,
+      fillOpacity: 0.8
+    })
+    .bindPopup(`<strong>${props.nombre}</strong>`)
+    .addTo(map);
+    
+    eepLayers['nodo_' + props.id] = circle;
+    
+    const labelDiv = L.divIcon({
+      html: `<div style="font-size: 7px; color: #fff; text-align: center; font-weight: 600; text-shadow: 0 0 3px rgba(0,0,0,0.8); width: 50px;">${props.nombre}</div>`,
+      className: 'eep-label',
+      iconSize: [50, 16],
+      iconAnchor: [25, 8]
+    });
+    
+    const label = L.marker([coords[1], coords[0]], { icon: labelDiv, interactive: false }).addTo(map);
+    eepLayers['label_' + props.id] = label;
+  });
+}
+
+function selectHumedal(h) {
+  currentSelection = h;
+  
+  networkLines.forEach(line => map.removeLayer(line));
+  networkLines = [];
+  
+  map.setView([h.lat, h.lng], 13);
+  
+  humedales.forEach(other => {
+    if (other.id !== h.id) {
+      const line = L.polyline([
+        [h.lat, h.lng],
+        [other.lat, other.lng]
+      ], {
+        color: '#2fd4c8',
+        weight: 2,
+        opacity: 0.5,
+        dashArray: '5, 5'
+      }).addTo(map);
+      
+      networkLines.push(line);
+    }
+  });
+  
+  showEepNetwork();
+  
+  document.getElementById('detail-title').textContent = `HUMEDAL SELECCIONADO: ${h.nombre.toUpperCase()}`;
+  
+  document.getElementById('detail-description').innerHTML = `
+    <p><strong>Estructura Ecológica Principal (EEP)</strong></p>
+    <p>La EEP es la integración de áreas de origen natural que tienen una oferta ambiental significativa, es ordenadora del territorio y garante de los equilibrios ecosistémicos, del agua y la riqueza hídrica.</p>
+    <p><strong>Relación Cuerpo Hídrico - Verde - Ecosistemas:</strong></p>
+    <p>Los humedales son elementos clave de la EEP. Regulan el ciclo del agua, proveen hábitat para fauna silvestre y flora nativa, actúan como corredores ecológicos y mitigar el riesgo climático.</p>
+    <p style="font-size: 9px; color: #7a8fa0; margin-top: 8px;">📍 ${h.lat.toFixed(4)}, ${h.lng.toFixed(4)}<br/>📏 Área: ${h.area} ha</p>
+    <p style="font-size: 8px; color: #7a8fa0;">POT Bogotá Reverdece 2022-2035</p>
+    <p style="margin-top: 10px; font-size: 9px;"><strong>Relaciones en la red EEP:</strong></p>
+    <p style="font-size: 8px;">— Línea sólida teal = Relación directa<br/>— Línea punteada naranja = Relación indirecta</p>
+  `;
+  
+  renderItemList();
+}
+
+document.querySelectorAll('.tab').forEach(btn => {
+  btn.addEventListener('click', function(e) {
+    document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+    
+    const scale = this.dataset.scale;
+    
+    Object.values(barrio Labels).forEach(marker => {
+      try { map.removeLayer(marker); } catch(e) {}
+    });
+    Object.values(humedalLayers).forEach(layer => {
+      try { map.removeLayer(layer); } catch(e) {}
+    });
+    Object.values(humedalMarkers).forEach(marker => {
+      try { map.removeLayer(marker); } catch(e) {}
+    });
+    networkLines.forEach(line => {
+      try { map.removeLayer(line); } catch(e) {}
+    });
+    Object.values(eepLayers).forEach(layer => {
+      try { map.removeLayer(layer); } catch(e) {}
+    });
+    networkLines = [];
+    eepLayers = {};
+    
+    if (scale === 'macro') {
+      currentMode = 'macro';
+      map.setView([4.60, -74.08], 10);
+      Object.values(upzLabels).forEach(marker => marker.addTo(map));
+    } else if (scale === 'meso') {
+      currentMode = 'meso';
+      map.setView([4.60, -74.08], 12);
+      Object.values(barrio Labels).forEach(marker => marker.addTo(map));
+      Object.values(upzLabels).forEach(marker => {
+        try { map.removeLayer(marker); } catch(e) {}
+      });
+    } else if (scale === 'micro') {
+      currentMode = 'micro';
+      
+      humedales.forEach(h => {
+        const circle = L.circle([h.lat, h.lng], {
+          radius: 1500,
+          color: '#4ade80',
+          weight: 2,
+          opacity: 0.8,
+          fillColor: '#4ade80',
+          fillOpacity: 0.3
+        })
+        .on('click', () => selectHumedal(h))
+        .addTo(map);
+        
+        humedalLayers[h.id] = circle;
+        
+        const marker = L.circleMarker([h.lat, h.lng], {
+          radius: 8,
+          fillColor: '#4ade80',
+          color: '#2d8a5f',
+          weight: 2,
+          opacity: 0.8,
+          fillOpacity: 0.7
+        })
+        .on('click', () => selectHumedal(h))
+        .addTo(map);
+        
+        humedalMarkers[h.id] = marker;
+      });
+      
+      const group = new L.featureGroup(Object.values(humedalLayers));
+      map.fitBounds(group.getBounds().pad(0.2));
+    }
+    
+    renderItemList();
+  });
+});
