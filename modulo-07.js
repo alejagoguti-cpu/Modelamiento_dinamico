@@ -1290,11 +1290,16 @@
     });
     $$(".side-item").forEach((x) => x.classList.remove("active"));
     $$(".side-item")[6]?.classList.add("active");
-    $$(".side-item").forEach((b) =>
+    $$(".side-item").forEach((b, index) =>
       b.addEventListener("click", () => {
         $$(".side-item").forEach((x) => x.classList.remove("active"));
         b.classList.add("active");
-        toast(b.title + " seleccionado");
+        const scenarioBySidebar = ["30min", "empleo", "carbono"];
+        if (scenarioBySidebar[index]) {
+          openNetwork(scenarioBySidebar[index]);
+        } else {
+          toast(b.title + " seleccionado");
+        }
       }),
     );
     $("#helpBtn")?.addEventListener("click", () =>
