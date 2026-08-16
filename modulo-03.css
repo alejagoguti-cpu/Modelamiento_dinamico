@@ -6679,3 +6679,133 @@ Need update styles maybe `display:none` for quote-backdrop means if old openQuot
   .welcome { height: auto !important; min-height: 204px !important; }
   .welcome > .network-finding { min-height: 180px !important; max-height: none !important; overflow: visible !important; }
 }
+
+/* Sidebar unificada: misma sidebar visual y funcional del Módulo 07. */
+.app > .sidebar {
+  width: 64px !important;
+  min-width: 64px !important;
+  height: auto !important;
+  min-height: 100vh !important;
+  position: static !important;
+  left: auto !important;
+  top: auto !important;
+  z-index: 10 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  padding: 18px 8px !important;
+  background: #0c1120 !important;
+  border-right: 1px solid rgba(255,255,255,.07) !important;
+}
+.app > .sidebar .brand {
+  width: auto !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 6px 0 18px !important;
+  display: flex !important;
+  place-items: initial !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  color: inherit !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.app > .sidebar .brand .mark {
+  width: 34px !important;
+  height: 34px !important;
+  border: 0 !important;
+  border-radius: 9px !important;
+  background: linear-gradient(135deg,#2fbfae,#1a9d94) !important;
+  color: #06110f !important;
+}
+.app > .sidebar .brand .nav-text,
+.app > .sidebar .nav-label,
+.app > .sidebar .sidebar-footer .user-meta { display: none !important; }
+.app > .sidebar .nav-group {
+  width: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 0 !important;
+  margin: 0 0 14px !important;
+}
+.app > .sidebar .nav-group + .nav-group::before {
+  content: '' !important;
+  display: block !important;
+  width: 24px !important;
+  height: 1px !important;
+  background: rgba(255,255,255,.04) !important;
+  margin: 0 0 10px !important;
+}
+.app > .sidebar .nav-item {
+  position: relative !important;
+  width: 40px !important;
+  height: 40px !important;
+  min-height: 40px !important;
+  padding: 0 !important;
+  margin-bottom: 4px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 0 !important;
+  border-radius: 9px !important;
+  background: transparent !important;
+  color: #8891a5 !important;
+  text-decoration: none !important;
+  box-shadow: none !important;
+}
+.app > .sidebar .nav-item .num { display: none !important; }
+.app > .sidebar .nav-item i { width: 16px !important; margin: 0 !important; font-size: 15px !important; color: currentColor !important; }
+.app > .sidebar .nav-item:hover,
+.app > .sidebar .nav-item.active {
+  color: #e7eaf2 !important;
+  border: 0 !important;
+  background: rgba(255,255,255,.04) !important;
+  box-shadow: none !important;
+}
+.app > .sidebar .nav-item.active { color: #2fbfae !important; background: rgba(47,191,174,.12) !important; }
+.app > .sidebar [data-tooltip]::after {
+  left: calc(100% + 10px) !important;
+  top: 50% !important;
+  transform: translateY(-50%) translateX(-4px) !important;
+  background: #10161f !important;
+  border: 1px solid rgba(255,255,255,.04) !important;
+  color: #e7eaf2 !important;
+  font-size: 11.5px !important;
+  padding: 6px 10px !important;
+  border-radius: 7px !important;
+  box-shadow: 0 8px 20px rgba(0,0,0,.35) !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  z-index: 70 !important;
+}
+.app > .sidebar [data-tooltip]:hover::after { opacity: 1 !important; transform: translateY(-50%) translateX(0) !important; }
+.app > .sidebar .sidebar-footer {
+  width: 100% !important;
+  height: auto !important;
+  margin-top: auto !important;
+  padding-top: 14px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 10px !important;
+  border-top: 1px solid rgba(255,255,255,.07) !important;
+}
+.app > .sidebar .avatar-sm {
+  width: 32px !important;
+  height: 32px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 1px solid rgba(255,255,255,.07) !important;
+  border-radius: 50% !important;
+  background: #121828 !important;
+  color: #8891a5 !important;
+  font-size: 11px !important;
+}
+.app > .sidebar .logout-btn { display: none !important; }
+.app > .main { margin-left: 0 !important; }
+@media (max-width: 800px) {
+  .app > .sidebar { width: 64px !important; min-width: 64px !important; }
+  .app > .main { margin-left: 0 !important; }
+}
