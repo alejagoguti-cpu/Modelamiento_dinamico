@@ -6274,3 +6274,83 @@ body {
   .quote-rel { font-size: 16px !important; }
   .quote-text { font-size: 14px !important; }
 }
+
+
+/* Corrección final: restaurar la barra inferior en los selectores reales del Módulo 03 */
+@media (min-width: 1100px) {
+  html, body {
+    height: 100% !important;
+    overflow: hidden !important;
+  }
+  .app {
+    height: 100vh !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+  .app > .main {
+    height: 100vh !important;
+    min-height: 0 !important;
+    padding: 16px 28px 10px !important;
+    overflow: hidden !important;
+  }
+  .app > .main > .welcome {
+    min-height: 0 !important;
+    height: 142px !important;
+    margin-bottom: 8px !important;
+    overflow: visible !important;
+  }
+  .app > .main > .net-layout {
+    height: calc(100vh - 168px) !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+    align-items: stretch !important;
+  }
+  .app > .main > .net-layout > .col:last-child {
+    height: 100% !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+  .app > .main > .net-layout > .col:last-child > .net-card {
+    height: calc(100% - 84px) !important;
+    min-height: 0 !important;
+    margin-bottom: 8px !important;
+  }
+  .app > .main > .net-layout > .col:last-child > .net-card .net-body,
+  .app > .main > .net-layout > .col:last-child > .net-card .net-stage {
+    min-height: 0 !important;
+    height: 100% !important;
+  }
+  .app > .main > .net-layout > .col:last-child > .network-metrics-strip {
+    display: grid !important;
+    flex: 0 0 68px !important;
+    height: 68px !important;
+    min-height: 68px !important;
+    margin: 0 !important;
+    padding: 8px 12px !important;
+    overflow: visible !important;
+  }
+  .app > .main > .net-layout > .col:last-child > .network-metrics-strip .network-metric {
+    padding: 2px 12px !important;
+    gap: 8px !important;
+  }
+  .app > .main > .net-layout > .col:last-child > .network-metrics-strip .network-metric-icon {
+    width: 34px !important;
+    height: 34px !important;
+    flex-basis: 34px !important;
+    font-size: 15px !important;
+  }
+  .app > .main > .net-layout > .col:last-child > .network-metrics-strip .network-metric strong {
+    font-size: 19px !important;
+    margin-top: 2px !important;
+  }
+  .app > .main > .net-layout > .col:last-child > .network-metrics-strip .network-metric small {
+    margin-top: 2px !important;
+    font-size: 8px !important;
+  }
+  .app > .main > .net-layout > .col:last-child > .network-metrics-strip .metric-ring {
+    width: 42px !important;
+    height: 42px !important;
+    flex-basis: 42px !important;
+    font-size: 10px !important;
+  }
+}
