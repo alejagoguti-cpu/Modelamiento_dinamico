@@ -1466,3 +1466,20 @@ footer span { color: #46d6d0; }
 @media (max-width: 900px) {
   .network-zoom-controls { top: 10px; right: 10px; }
 }
+
+/* Flotación sutil de nodos: movimiento visual independiente de la física y las conexiones. */
+@keyframes rapotNodeFloat {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, -2.5px, 0); }
+}
+.floating-node {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: rapotNodeFloat 3.8s ease-in-out var(--float-delay, 0s) infinite;
+  will-change: transform;
+}
+.ods-node.dragging,
+.floating-node:focus-within { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) {
+  .floating-node { animation: none !important; }
+}

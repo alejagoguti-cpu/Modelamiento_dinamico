@@ -300,9 +300,10 @@ function drawNodes(svg) {
   const g = document.createElementNS(SVG_NS, "g");
   g.setAttribute("class", "nodes-layer");
 
-  ODS_NODES.forEach(node => {
+  ODS_NODES.forEach((node, index) => {
     const group = document.createElementNS(SVG_NS, "g");
-    group.setAttribute("class", "ods-node" + (FINDINGS[node.id] ? " has-finding" : ""));
+    group.setAttribute("class", "ods-node floating-node" + (FINDINGS[node.id] ? " has-finding" : ""));
+    group.style.setProperty("--float-delay", `${((index * 0.17) % 2.4).toFixed(2)}s`);
     group.setAttribute("data-id", node.id);
 
     const circle = document.createElementNS(SVG_NS, "circle");
@@ -1192,9 +1193,10 @@ function drawPnNodes(svg) {
   const g = document.createElementNS(SVG_NS, "g");
   g.setAttribute("class", "pn-nodes-layer");
 
-  PN_NODES.forEach(node => {
+  PN_NODES.forEach((node, index) => {
     const group = document.createElementNS(SVG_NS, "g");
-    group.setAttribute("class", "pn-node");
+    group.setAttribute("class", "pn-node floating-node");
+    group.style.setProperty("--float-delay", `${((index * 0.13) % 2.2).toFixed(2)}s`);
     group.setAttribute("data-id", node.id);
 
     const circle = document.createElementNS(SVG_NS, "circle");
