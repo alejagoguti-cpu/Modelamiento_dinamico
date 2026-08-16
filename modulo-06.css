@@ -1190,3 +1190,175 @@ footer span { color: var(--teal); }
   background: rgba(70,214,208,.10) !important;
 }
 /* El azul se conserva solo en nodos/relaciones con significado propio, no en títulos. */
+
+/* =====================================================================
+   BRANDING COMPARTIDO RAPOT · MÓDULOS 03 / 06 / 07
+   La red POT ↔ ODS conserva sus colores semánticos; se unifica la
+   interfaz, la navegación y la jerarquía visual del portal.
+   ===================================================================== */
+:root {
+  --bg: #0b0c0f;
+  --sidebar: #0e1015;
+  --panel: #141518;
+  --panel-alt: #101316;
+  --border: rgba(255,255,255,.10);
+  --border-soft: rgba(255,255,255,.055);
+  --text: #f1f3f4;
+  --text-dim: #9aa2ad;
+  --text-faint: #68717c;
+  --teal: #46d6d0;
+  --teal-dim: rgba(70,214,208,.12);
+}
+body { background: var(--bg); color: var(--text); }
+.app { background: var(--bg); }
+.sidebar {
+  width: 64px;
+  background: #0e1015;
+  border-right: 1px solid rgba(255,255,255,.09);
+  padding: 20px 10px;
+}
+.brand .mark {
+  background: linear-gradient(135deg, #46d6d0, #1caaa3);
+  box-shadow: 0 0 18px rgba(70,214,208,.18);
+}
+.nav-item { color: #9aa2ad; border-radius: 8px; }
+.nav-item:hover { background: rgba(70,214,208,.08); color: #f1f3f4; }
+.nav-item.active {
+  background: rgba(70,214,208,.13);
+  color: #46d6d0;
+  box-shadow: inset 0 0 0 1px rgba(70,214,208,.30);
+}
+.sidebar-tooltip { background: #141518; border-color: #46d6d0; color: #f1f3f4; }
+.avatar-sm { background: #141518; border-color: rgba(70,214,208,.55); color: #46d6d0; }
+.main { padding: 22px 34px 50px; background: var(--bg); }
+.topbar { margin-bottom: 26px; }
+.topbar h1, .network-header h3, .pn-section .network-header h3 { color: #f1f3f4; }
+.network-header h3 i, .pn-section .network-header h3 i { color: #46d6d0; }
+.search-box, .network-section, .pn-section, .network-sidebar > *, .network-canvas, .pn-canvas {
+  background: #141518;
+  border-color: rgba(255,255,255,.10);
+}
+.network-section, .pn-section { box-shadow: 0 14px 36px rgba(0,0,0,.22); }
+.network-header { border-bottom-color: rgba(70,214,208,.20); }
+.control-btn, .network-controls button, .network-controls select, .filter-btn, .zoom-control button {
+  border-color: rgba(70,214,208,.42);
+  color: #46d6d0;
+  background: rgba(70,214,208,.06);
+}
+.control-btn:hover, .control-btn.active, .network-controls button:hover, .filter-btn:hover, .zoom-control button:hover {
+  background: rgba(70,214,208,.14);
+  border-color: #46d6d0;
+}
+.network-legend, .edge-info-panel, .finding-popup, .finding-stack .finding-card {
+  background: rgba(20,21,24,.94);
+  border-color: rgba(255,255,255,.10);
+}
+.network-legend .legend-title, .edge-info-header, .finding-popup-badge { color: #46d6d0; }
+.network-legend input:checked { accent-color: #46d6d0; }
+footer { color: #68717c; border-color: rgba(255,255,255,.08); }
+footer span { color: #46d6d0; }
+@media (max-width: 900px) { .main { padding: 18px 20px 40px; } }
+
+/* Ajuste de clases reales del HTML del Módulo 06 */
+.brand-mark {
+  width: 32px; height: 32px; border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, #46d6d0, #1caaa3);
+  color: #06110f;
+  font-weight: 800;
+  box-shadow: 0 0 18px rgba(70,214,208,.18);
+}
+.side-nav { display: flex; flex-direction: column; gap: 8px; }
+.side-item {
+  width: 44px; height: 44px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  color: #8e98a5; text-decoration: none;
+  border: 1px solid transparent;
+  transition: background .15s ease, color .15s ease, border-color .15s ease;
+}
+.side-item svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.side-item:hover { color: #f1f3f4; background: rgba(70,214,208,.08); border-color: rgba(70,214,208,.22); }
+.side-item.active { color: #46d6d0; background: rgba(70,214,208,.13); border-color: rgba(70,214,208,.55); box-shadow: 0 0 14px rgba(70,214,208,.12); }
+.sidebar-bottom {
+  margin-top: auto; width: 32px; height: 32px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid rgba(70,214,208,.55);
+  color: #46d6d0; background: #141518; font-size: 11px; font-weight: 700;
+}
+.topbar h1 {
+  color: #f1f3f4;
+  font-size: 20px;
+  letter-spacing: .01em;
+}
+.welcome { margin-bottom: 28px; }
+.welcome h2 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(32px, 4vw, 48px);
+  line-height: 1.02;
+  letter-spacing: -.04em;
+  background: linear-gradient(100deg, #46d6d0 0%, #f1f3f4 48%, #e89a6c 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: 10px;
+}
+.welcome p { color: #9aa2ad; font-size: 14px; max-width: 760px; }
+.network-section, .pn-section { border-radius: 14px; padding: 18px; }
+#networkViz { background: #101316; border-color: rgba(70,214,208,.18); }
+
+/* Override final: sustituye las reglas históricas del Módulo 06 que usaban azul verdoso y sidebar de 90px. */
+:root {
+  --bg: #0b0c0f !important;
+  --sidebar: #0e1015 !important;
+  --panel: #141518 !important;
+  --panel-alt: #101316 !important;
+  --teal: #46d6d0 !important;
+  --teal-dim: rgba(70,214,208,.12) !important;
+}
+.app > .sidebar {
+  width: 64px !important;
+  min-width: 64px !important;
+  background: #0e1015 !important;
+  border-right-color: rgba(255,255,255,.09) !important;
+  padding: 20px 10px !important;
+}
+.app > .sidebar .brand-mark {
+  width: 32px !important; height: 32px !important;
+  margin: 0 0 22px !important;
+  border-radius: 9px !important;
+  background: linear-gradient(135deg,#46d6d0,#1caaa3) !important;
+  border: 0 !important;
+  color: #06110f !important;
+  font-size: 15px !important;
+  box-shadow: 0 0 18px rgba(70,214,208,.18) !important;
+}
+.app > .sidebar .side-nav { gap: 8px !important; }
+.app > .sidebar .side-item {
+  width: 44px !important; height: 44px !important; min-height: 44px !important;
+  border-radius: 10px !important;
+  background: transparent !important;
+  border-color: transparent !important;
+  color: #9aa2ad !important;
+  box-shadow: none !important;
+}
+.app > .sidebar .side-item:hover,
+.app > .sidebar .side-item.active {
+  background: rgba(70,214,208,.13) !important;
+  border-color: rgba(70,214,208,.55) !important;
+  color: #46d6d0 !important;
+  box-shadow: 0 0 14px rgba(70,214,208,.12) !important;
+}
+.app > .sidebar .side-item::after { background: #141518 !important; border-color: #46d6d0 !important; color: #f1f3f4 !important; }
+.app > .sidebar .sidebar-bottom { width: 32px !important; height: 32px !important; border-color: rgba(70,214,208,.55) !important; color: #46d6d0 !important; background: #141518 !important; }
+.main { background: #0b0c0f !important; }
+.network-section, .pn-section { background: #141518 !important; border-color: rgba(255,255,255,.10) !important; }
+#networkViz, #pnViz { background: #101316 !important; border-color: rgba(70,214,208,.18) !important; }
+.topbar h1 { font-size: 20px !important; color: #f1f3f4 !important; }
+.welcome h2 {
+  font-size: clamp(32px,4vw,48px) !important;
+  background: linear-gradient(100deg,#46d6d0 0%,#f1f3f4 48%,#e89a6c 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+}
+.welcome p { color: #9aa2ad !important; }
