@@ -602,12 +602,13 @@
             labelY = y + (r >= 44 ? 10 : 7),
             lineGap = r >= 44 ? 10 : 7;
           const category = item._categories?.[i] || "access-goals";
+          const categoryColor = (thematicCatalog[item._key] || []).find((entry) => entry.id === category)?.color || "#46d6d0";
           const relationCounts = item.edges.reduce((counts, edge) => {
             if (edge[0] === i || edge[1] === i) counts[edge[2]] = (counts[edge[2]] || 0) + 1;
             return counts;
           }, {});
           const relationType = ["direct", "indirect", "support", "result"].sort((a, b) => (relationCounts[b] || 0) - (relationCounts[a] || 0))[0];
-          return `<g class="network-node ${sizeClass} ${type || ""} relation-${relationType} ${layer(label)} category-${category}" data-node-index="${i}" data-relation-type="${relationType}" data-category="${category}" tabindex="0" role="button" aria-label="${esc(clean(display))}"><circle cx="${x}" cy="${y}" r="${r}"/><g class="node-icon-wrap" transform="translate(${x} ${iconY})">${iconSvg(label)}</g><text class="node-label" x="${x}" y="${labelY}">${rows.map((row, j) => `<tspan x="${x}" dy="${j ? lineGap : 0}">${esc(row)}</tspan>`).join("")}</text></g>`;
+          return `<g class="network-node floating-node ${sizeClass} ${type || ""} relation-${relationType} ${layer(label)} category-${category}" data-node-index="${i}" data-relation-type="${relationType}" data-category="${category}" tabindex="0" role="button" aria-label="${esc(clean(display))}" style="--node-color:${categoryColor};color:${categoryColor}"><circle class="node-ring" cx="${x}" cy="${y}" r="${r}" style="fill:rgba(8,11,18,.6);stroke:${categoryColor};stroke-width:2.5;filter:drop-shadow(0 0 5px ${categoryColor})"/><g class="node-icon-wrap" transform="translate(${x} ${iconY})">${iconSvg(label)}</g><text class="node-label" x="${x}" y="${labelY}">${rows.map((row, j) => `<tspan x="${x}" dy="${j ? lineGap : 0}">${esc(row)}</tspan>`).join("")}</text></g>`;
         })
         .join("");
     const categoryHalos = (item) => {

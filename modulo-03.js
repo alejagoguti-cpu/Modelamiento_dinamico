@@ -2576,7 +2576,7 @@ function render() {
   //    ("sys-off"), no se quitan del mapa ni mueven a los demás
   SYS.forEach(s => {
     const sysOff = !state[s];
-    model.systems[s].concepts.forEach(id => {
+    model.systems[s].concepts.forEach((id, index) => {
       const c = model.concepts[id];
       const p = drawPos[id] || layout[id];
       const activeRels = c.rels.filter(relActive).length;
@@ -2602,42 +2602,42 @@ const iconSize = Math.max(28, Math.round(R * 0.52));
       const g = el('g', {
         class: cls.join(' '),
         transform: `translate(${p.x.toFixed(1)},${p.y.toFixed(1)})`,
-        style: `--sys:${model.systems[s].color}`,
+        style: `--sys:${model.systems[s].color};--node-filter:url(#glow-${model.systems[s].color.replace('#', '')})`,
         'data-id': id
       });
 
-      g.appendChild(el('circle', { class: 'node-fill', r: R }));
-
-      // Los nodos pequeños usan menos caracteres por línea y una tipografía más contenida.
-      const maxLabelChars = R < 45 ? 9 : R < 60 ? 11 : R < 80 ? 13 : 16;
-      const lines = wrapLabel(c.label, maxLabelChars);
-      const labelStep = Math.max(12, Math.min(19, R * 0.18));
-      const labelFont = Math.max(10, Math.min(18, R * 0.22));
-      // Se calcula un único bloque icono + etiqueta y se centra alrededor de y=0.
-      const iconBlock = Math.max(30, R * 0.42);
-      const labelBlock = lines.length * labelStep;
-      const blockGap = Math.max(3, R * 0.045);
-      const blockTop = -(iconBlock + blockGap + labelBlock) / 2;
+      const ring = el('circle', {
+        class: 'node-fill node-ring',
+        r: R,
+        stroke: model.systems[s].color,
+        'stroke-width': '2.5',
+        filter: `url(#glow-${model.systems[s].color.replace('#', '')})`
+      });
+      g.appendChild(ring);
 
       const fo = el('foreignObject', {
-        x: -R * 0.82,
-        y: blockTop,
-        width: R * 1.64,
-        height: iconBlock
+        x: -R * 0.95,
+        y: -R * 0.95,
+        width: R * 1.9,
+        height: R * 1.9
       });
-      const div = document.createElementNS('http://www.w3.org/1999/xhtml', 'div');
-      div.setAttribute('class', 'node-icon');
-      div.innerHTML = `<i class="fa-solid ${c.icon}" style="font-size:${iconSize}px"></i>`;
-      fo.appendChild(div);
+      const wrapper = document.createElementNS('http://www.w3.org/1999/xhtml', 'div');
+      wrapper.setAttribute('class', 'node-inner');
+      wrapper.setAttribute('style', 'width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;pointer-events:none;text-align:center;');
+      const numEl = document.createElementNS('http://www.w3.org/1999/xhtml', 'div');
+      numEl.setAttribute('class', 'node-num');
+      numEl.setAttribute('style', `color:${model.systems[s].color};font-family:'Space Grotesk',sans-serif;font-weight:800;font-size:${Math.max(R * 0.24, 9)}px;line-height:1;`);
+      numEl.textContent = index + 1;
+      const iconEl = document.createElementNS('http://www.w3.org/1999/xhtml', 'i');
+      iconEl.setAttribute('class', `fa-solid ${c.icon} node-icon`);
+      iconEl.setAttribute('style', `color:${model.systems[s].color};font-size:${R * 0.44}px;line-height:1;margin:1px 0;`);
+      const nameEl = document.createElementNS('http://www.w3.org/1999/xhtml', 'div');
+      nameEl.setAttribute('class', 'node-name');
+      nameEl.setAttribute('style', `font-family:Inter,sans-serif;font-size:${Math.max(R * 0.145, 6)}px;padding:0 3px;font-weight:600;color:var(--text-dim);line-height:1.05;white-space:normal;`);
+      nameEl.textContent = c.label;
+      wrapper.appendChild(numEl); wrapper.appendChild(iconEl); wrapper.appendChild(nameEl);
+      fo.appendChild(wrapper);
       g.appendChild(fo);
-
-      // La etiqueta queda inmediatamente debajo del icono y el conjunto permanece centrado.
-      const labelStart = blockTop + iconBlock + blockGap + labelStep * 0.78;
-      lines.forEach((ln, i) => {
-        const t = el('text', { y: labelStart + i * labelStep, style: `font-size:${labelFont}px` });
-        t.textContent = ln;
-        g.appendChild(t);
-      });
 
       g.addEventListener('mouseenter', ev => showTooltip(ev,
         `<div class="tt-sys" style="color:${model.systems[s].color}">${s}</div>${esc(c.label)}<br>` +

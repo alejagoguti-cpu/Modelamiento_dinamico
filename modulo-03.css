@@ -7088,3 +7088,15 @@ Need update styles maybe `display:none` for quote-backdrop means if old openQuot
 }
 
 /* Los estilos compartidos de nodos y zoom viven en network06-shared.css. */
+
+/* Baseline visual POT ↔ ODS aplicado al renderizador del Módulo 03 */
+#gNodes .concept .node-ring {
+  fill: rgba(8,11,18,.6) !important;
+  stroke-width: 2.5px !important;
+  filter: var(--node-filter) !important;
+}
+#gNodes .concept .node-inner { font-family: Inter, sans-serif !important; color: var(--text) !important; text-align: center !important; }
+#gNodes .concept .node-num { font-family: 'Space Grotesk', sans-serif !important; font-weight: 800 !important; line-height: 1 !important; }
+#gNodes .concept .node-icon { line-height: 1 !important; }
+#gNodes .concept .node-name { color: var(--text-dim) !important; font-family: Inter, sans-serif !important; font-weight: 600 !important; line-height: 1.05 !important; }
+@media (prefers-reduced-motion: reduce) { #gNodes .concept .node-ring { animation: none !important; } }

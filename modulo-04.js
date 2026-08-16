@@ -1,5 +1,5 @@
 let upzData = [];
-let barrios Data = [];
+let barriosData = [];
 let currentSelection = null;
 const humedales = [
   {id: 'h1', nombre: "Humedal Burro", lat: 4.644296801427965, lng: -74.15052710000018, area: 18.5},
@@ -7,17 +7,20 @@ const humedales = [
   {id: 'h3', nombre: "Humedal Vaca", lat: 4.627282592850425, lng: -74.15947984079249, area: 24.8},
 ];
 
-const map = L.map('map').setView([4.60, -74.08], 11);
+const mapElement = document.getElementById('map');
+const map = mapElement && window.L ? L.map('map').setView([4.60, -74.08], 11) : null;
 
-L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {
-  attribution: '© CartoDB',
-  maxZoom: 19
-}).addTo(map);
+if (map) {
+  L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {
+    attribution: '© CartoDB',
+    maxZoom: 19
+  }).addTo(map);
+}
 
 let upzLayers = {};
 let upzLabels = {};
-let barrios Layers = {};
-let barrio Labels = {};
+let barriosLayers = {};
+let barrioLabels = {};
 let humedalLayers = {};
 let humedalMarkers = {};
 let eepNodos = [];
@@ -55,7 +58,7 @@ fetch('upz_bogota.geojson')
 fetch('barrios_bogota.geojson')
   .then(r => r.json())
   .then(data => {
-    barrios Data = data.features.map(f => f.properties);
+    barriosData = data.features.map(f => f.properties);
     
     data.features.forEach((feature, idx) => {
       const props = feature.properties;
@@ -69,7 +72,7 @@ fetch('barrios_bogota.geojson')
       });
       
       const marker = L.marker([coords[1], coords[0]], { icon: labelDiv, interactive: false });
-      barrio Labels[props.id] = marker;
+      barrioLabels[props.id] = marker;
     });
   });
 
@@ -93,7 +96,7 @@ function renderItemList() {
       container.appendChild(div);
     });
   } else if (currentMode === 'meso') {
-    barrios Data.forEach(barrio => {
+    barriosData.forEach(barrio => {
       const div = document.createElement('div');
       div.className = 'upz-item' + (currentSelection?.id === barrio.id ? ' active' : '');
       div.innerHTML = `${barrio.codigo} - ${barrio.nombre}`;
@@ -194,36 +197,20 @@ function showEepNetwork() {
     }
   });
   
-  eepNodos.forEach(nodo => {
+  eepNodos.forEach((nodo, index) => {
     const coords = nodo.geometry.coordinates;
     const props = nodo.properties;
-    
-    let radius = 15;
-    if (props.tipo === 'nodo_secundario') radius = 10;
-    if (props.tipo === 'nodo_terciario') radius = 7;
-    
-    const circle = L.circleMarker([coords[1], coords[0]], {
-      radius: radius,
-      fillColor: '#2fd4c8',
-      color: '#0a0e17',
-      weight: 2,
-      opacity: 0.9,
-      fillOpacity: 0.8
-    })
-    .bindPopup(`<strong>${props.nombre}</strong>`)
-    .addTo(map);
-    
-    eepLayers['nodo_' + props.id] = circle;
-    
-    const labelDiv = L.divIcon({
-      html: `<div style="font-size: 7px; color: #fff; text-align: center; font-weight: 600; text-shadow: 0 0 3px rgba(0,0,0,0.8); width: 50px;">${props.nombre}</div>`,
-      className: 'eep-label',
-      iconSize: [50, 16],
-      iconAnchor: [25, 8]
+    const icon = /río|agua|quebrada|humedal/i.test(props.nombre) ? 'fa-water' : /parque|bosque|cerro|veget/i.test(props.nombre) ? 'fa-tree' : 'fa-leaf';
+    const nodeDiv = L.divIcon({
+      html: `<div class="module06-leaflet-node" style="--node-color:#58d68d;--float-delay:${(index % 9) * -0.42}s"><span class="module06-leaflet-num">${index + 1}</span><i class="fa-solid ${icon}"></i><span class="module06-leaflet-name">${props.nombre}</span></div>`,
+      className: 'module06-leaflet-icon',
+      iconSize: [76, 76],
+      iconAnchor: [38, 38]
     });
-    
-    const label = L.marker([coords[1], coords[0]], { icon: labelDiv, interactive: false }).addTo(map);
-    eepLayers['label_' + props.id] = label;
+    const marker = L.marker([coords[1], coords[0]], { icon: nodeDiv })
+      .bindPopup(`<strong>${props.nombre}</strong>`)
+      .addTo(map);
+    eepLayers['nodo_' + props.id] = marker;
   });
 }
 
@@ -276,7 +263,7 @@ document.querySelectorAll('.tab').forEach(btn => {
     
     const scale = this.dataset.scale;
     
-    Object.values(barrio Labels).forEach(marker => {
+    Object.values(barrioLabels).forEach(marker => {
       try { map.removeLayer(marker); } catch(e) {}
     });
     Object.values(humedalLayers).forEach(layer => {
@@ -301,7 +288,7 @@ document.querySelectorAll('.tab').forEach(btn => {
     } else if (scale === 'meso') {
       currentMode = 'meso';
       map.setView([4.60, -74.08], 12);
-      Object.values(barrio Labels).forEach(marker => marker.addTo(map));
+      Object.values(barrioLabels).forEach(marker => marker.addTo(map));
       Object.values(upzLabels).forEach(marker => {
         try { map.removeLayer(marker); } catch(e) {}
       });
@@ -368,4 +355,39 @@ document.querySelectorAll('.tab').forEach(btn => {
     svg.addEventListener('wheel', e => { e.preventDefault(); change(e.deltaY<0?.10:-.10); }, {passive:false});
   }
   document.addEventListener('DOMContentLoaded', setupModule06Zoom);
+})();
+
+/* Renderizador SVG compartido con POT ↔ ODS para la lectura Macromodelos. */
+(() => {
+  const svg = document.getElementById('networkViz');
+  if (!svg) return;
+  const NS = 'http://www.w3.org/2000/svg';
+  const systems = [
+    { id:'ambiental', label:'Ambientalista', color:'#58d68d', icon:'fa-leaf', x:250, y:370, r:76 },
+    { id:'humanista', label:'Humanista', color:'#ef8b3c', icon:'fa-people-group', x:610, y:350, r:102 },
+    { id:'socio', label:'Socioeconómico', color:'#eab04c', icon:'fa-chart-line', x:940, y:205, r:64 },
+    { id:'gob', label:'Gobernanza', color:'#4ade80', icon:'fa-landmark', x:950, y:500, r:64 },
+    { id:'funcional', label:'Funcionalista', color:'#a879ff', icon:'fa-network-wired', x:610, y:635, r:64 }
+  ];
+  const links = [[0,1],[1,2],[1,3],[1,4],[0,3],[0,2]];
+  const el = (tag, attrs={}) => { const n=document.createElementNS(NS,tag); Object.entries(attrs).forEach(([k,v])=>n.setAttribute(k,v)); return n; };
+  const render = () => {
+    svg.innerHTML = '';
+    svg.setAttribute('viewBox','0 0 1200 760');
+    const defs = el('defs');
+    systems.forEach(s => { const f=el('filter',{id:`glow-${s.color.slice(1)}`,x:'-80%',y:'-80%',width:'260%',height:'260%'}); f.appendChild(el('feGaussianBlur',{stdDeviation:'4',result:'blur'})); const merge=el('feMerge'); merge.appendChild(el('feMergeNode',{in:'blur'})); merge.appendChild(el('feMergeNode',{in:'SourceGraphic'})); f.appendChild(merge); defs.appendChild(f); });
+    svg.appendChild(defs);
+    const lines=el('g',{class:'network06-links'});
+    links.forEach(([a,b])=>{const A=systems[a],B=systems[b]; lines.appendChild(el('line',{x1:A.x,y1:A.y,x2:B.x,y2:B.y,class:'network-edge',stroke:'#46d6d0','stroke-width':'2','stroke-opacity':'.65'}));});
+    svg.appendChild(lines);
+    systems.forEach((s,i)=>{
+      const g=el('g',{class:'network-node floating-node',transform:`translate(${s.x} ${s.y})`,style:`--node-color:${s.color};--node-filter:url(#glow-${s.color.slice(1)});color:${s.color}`,'data-node-index':i,tabindex:'0',role:'button','aria-label':s.label});
+      g.appendChild(el('circle',{class:'node-ring',r:s.r,fill:'rgba(8,11,18,.6)',stroke:s.color,'stroke-width':'2.5',filter:`url(#glow-${s.color.slice(1)})`}));
+      const fo=el('foreignObject',{x:-s.r*.95,y:-s.r*.95,width:s.r*1.9,height:s.r*1.9});
+      const wrap=document.createElementNS('http://www.w3.org/1999/xhtml','div'); wrap.className='node-inner'; wrap.style.cssText='width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-align:center;pointer-events:none;font-family:Inter,sans-serif;';
+      wrap.innerHTML=`<span class="node-num" style="font-family:'Space Grotesk';font-weight:800;color:${s.color};font-size:${Math.max(s.r*.2,12)}px;line-height:1">${i+1}</span><i class="fa-solid ${s.icon} node-icon" style="color:${s.color};font-size:${s.r*.38}px;line-height:1"></i><span class="node-name" style="color:var(--text-dim);font-size:${Math.max(s.r*.14,8)}px;font-weight:600;line-height:1.05">${s.label}</span>`;
+      fo.appendChild(wrap); g.appendChild(fo); g.addEventListener('click',()=>{document.getElementById('selectionNote').textContent=`Sistema seleccionado: ${s.label}`;}); svg.appendChild(g);
+    });
+  };
+  render();
 })();
