@@ -5432,3 +5432,728 @@ body {
 #gNodes .concept.focused > text {
   opacity: 1 !important;
 }
+
+/* Hallazgo compacto dentro de la esquina superior derecha de la red */
+.network-finding {
+  position: absolute;
+  z-index: 8;
+  top: 18px;
+  right: 18px;
+  width: min(310px, 34%);
+  min-height: 92px;
+  padding: 13px 15px 14px;
+  border: 1px solid rgba(70,214,208,.45);
+  border-top: 2px solid #46d6d0;
+  border-radius: 10px;
+  background: rgba(11,12,15,.92);
+  color: #e7ecee;
+  pointer-events: none;
+  box-shadow: 0 10px 28px rgba(0,0,0,.25);
+}
+.network-finding-kicker {
+  color: #46d6d0;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .14em;
+  margin-bottom: 8px;
+}
+.network-finding-text {
+  font-size: 12px;
+  line-height: 1.42;
+  color: #c7d1d1;
+}
+.network-finding-text b { color: #f0a15c; }
+@media (max-width: 900px) {
+  .network-finding { width: 250px; top: 12px; right: 12px; }
+  .network-finding-text { font-size: 11px; }
+}
+
+/* Hallazgo principal: glassmorphism blanco con icono */
+.network-finding {
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  column-gap: 10px;
+  row-gap: 4px;
+  align-items: start;
+  width: min(360px, 38%);
+  min-height: 132px;
+  padding: 15px 17px 16px;
+  border: 1px solid rgba(255,255,255,.72);
+  border-top: 3px solid #46d6d0;
+  border-radius: 14px;
+  background: rgba(255,255,255,.90);
+  color: #162022;
+  backdrop-filter: blur(16px) saturate(125%);
+  -webkit-backdrop-filter: blur(16px) saturate(125%);
+  box-shadow: 0 16px 42px rgba(0,0,0,.32), inset 0 1px 0 rgba(255,255,255,.85);
+}
+.network-finding-icon {
+  grid-row: 1 / span 2;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: linear-gradient(145deg,#46d6d0,#168d89);
+  color: #fff;
+  font-size: 14px;
+  box-shadow: 0 5px 14px rgba(22,141,137,.32);
+}
+.network-finding-kicker {
+  color: #168d89;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .14em;
+  margin: 0;
+}
+.network-finding-text {
+  color: #263436;
+  font-size: 12px;
+  line-height: 1.43;
+  font-weight: 500;
+}
+.network-finding-text b { color: #b96532; }
+@media (max-width: 900px) {
+  .network-finding { width: 280px; min-height: 120px; padding: 12px 13px; }
+  .network-finding-text { font-size: 11px; }
+}
+
+/* Diagrama causal del hallazgo aprobado */
+.network-finding-text { font-size: 11px; line-height: 1.25; }
+.finding-diagram { display: grid; grid-template-columns: 48px 40px 1fr; gap: 5px; align-items: center; }
+.finding-node { width: 44px; height: 30px; display: flex; align-items: center; justify-content: center; gap: 4px; border-radius: 8px; background: rgba(70,214,208,.14); border: 1px solid rgba(22,141,137,.55); color: #168d89; font-size: 10px; font-weight: 900; }
+.finding-node i { font-size: 11px; }
+.finding-node-main { background: rgba(232,154,108,.18); border-color: rgba(185,101,50,.62); color: #b96532; }
+.finding-arrow { color: #778486; font-size: 9px; text-align: center; font-weight: 800; }
+.finding-targets { display: flex; flex-wrap: wrap; gap: 3px; }
+.finding-targets span { padding: 3px 5px; border-radius: 5px; background: #f2f5f3; border: 1px solid #d7e2df; color: #263436; font-size: 9px; font-weight: 700; }
+.finding-support-label { grid-column: 1 / -1; margin-top: 4px; color: #778486; font-size: 8px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+.finding-support { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 3px; }
+.finding-support span { padding: 3px 5px; border-radius: 5px; background: #fff8f2; border: 1px solid #f0c7a7; color: #8e522e; font-size: 8.5px; font-weight: 700; }
+.finding-support i { margin-right: 2px; }
+.finding-divider { display: flex; align-items: center; gap: 5px; margin: 7px 0; color: #889294; font-size: 8px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; }
+.finding-divider::before, .finding-divider::after { content: ''; height: 1px; flex: 1; background: #d7e2df; }
+.finding-eep { grid-template-columns: 48px 40px 1fr; }
+
+/* Tarjeta compacta tipo modal para el hallazgo */
+.network-finding {
+  pointer-events: auto;
+  width: min(330px, 36%);
+  min-height: 310px;
+  display: block;
+  padding: 12px 14px 14px;
+  background: rgba(255,255,255,.94);
+  border: 1px solid rgba(255,255,255,.82);
+  border-top: 3px solid #46d6d0;
+  border-radius: 14px;
+  color: #172326;
+  box-shadow: 0 18px 48px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.9);
+}
+.network-finding-icon { position: absolute; top: 13px; left: 14px; z-index: 2; width: 27px; height: 27px; font-size: 12px; }
+.network-finding-kicker { margin: 3px 0 0 36px; color: #168d89; font-size: 8px; letter-spacing: .13em; }
+.network-finding-text { margin-top: 9px; color: #263436; font-size: 11px; line-height: 1.38; }
+.finding-art { position: relative; height: 112px; margin: 0 0 12px; border-radius: 10px; overflow: hidden; background: linear-gradient(145deg,#f6fbfc 0%,#eaf5f6 52%,#fffaf6 100%); border: 1px solid #e4eeee; box-shadow: inset 0 -16px 24px rgba(70,214,208,.08); }
+.finding-art::after { content: ''; position: absolute; left: 19%; right: 19%; bottom: 17px; height: 13px; border-radius: 50%; background: rgba(70,214,208,.16); filter: blur(8px); }
+.finding-art-orbit { position: absolute; border: 1px solid rgba(22,141,137,.28); border-radius: 50%; transform: rotate(-12deg); }
+.orbit-one { width: 148px; height: 60px; left: 52px; top: 22px; }
+.orbit-two { width: 96px; height: 38px; left: 78px; top: 38px; border-color: rgba(185,101,50,.3); }
+.finding-art-core { position: absolute; left: calc(50% - 22px); top: 27px; width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%; background: linear-gradient(145deg,#46d6d0,#198d89); color: white; font-size: 18px; box-shadow: 0 8px 18px rgba(22,141,137,.28); z-index: 1; }
+.art-dot { position: absolute; width: 7px; height: 7px; border-radius: 50%; background: #e89a6c; box-shadow: 0 0 0 4px rgba(232,154,108,.14); }
+.dot-one { left: 48px; top: 37px; }.dot-two { right: 55px; top: 29px; background:#46d6d0; }.dot-three { left: 73px; bottom: 25px; background:#e89a6c; }.dot-four { right: 83px; bottom: 24px; background:#7be0a6; }
+.finding-card-title { margin: 0; color: #172326; font-size: 18px; line-height: 1.12; letter-spacing: -.02em; text-align: center; }
+.finding-card-summary { margin: 7px 8px 0; color: #657375; font-size: 11px; line-height: 1.4; text-align: center; }
+.finding-card-details { margin: 9px 3px 0; padding: 8px 9px; border-radius: 8px; background: #f4f8f7; color: #445457; font-size: 10px; line-height: 1.4; }
+.finding-card-action { width: 100%; margin-top: 13px; border: 0; border-radius: 8px; padding: 9px 12px; background: linear-gradient(100deg,#168d89,#46d6d0); color: white; font: 700 11px/1.1 inherit; cursor: pointer; box-shadow: 0 6px 14px rgba(22,141,137,.2); }
+.finding-card-action:hover { filter: brightness(1.05); }
+@media (max-width: 900px) { .network-finding { width: 270px; min-height: 278px; } .finding-art { height: 94px; } .finding-card-title { font-size: 16px; } }
+
+/* El hallazgo vive fuera del panel/canvas de conexiones */
+.net-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 330px;
+  align-items: start;
+  gap: 14px;
+}
+.net-body > .net-stage { grid-column: 1; }
+.net-body > .network-finding {
+  grid-column: 2;
+  grid-row: 1;
+  position: relative;
+  top: auto;
+  right: auto;
+  align-self: start;
+  margin-top: 18px;
+}
+@media (max-width: 980px) {
+  .net-body { grid-template-columns: minmax(0, 1fr); }
+  .net-body > .net-stage { grid-column: 1; grid-row: 1; }
+  .net-body > .network-finding { grid-column: 1; grid-row: 2; width: min(100%, 360px); margin: 14px 0 0 auto; }
+}
+
+/* Corrección final: hallazgo orgánico en esquina del canvas */
+.net-body { display: block !important; }
+.net-body > .net-stage {
+  position: relative;
+  min-height: 620px;
+}
+.net-body > .net-stage > .network-finding {
+  position: absolute !important;
+  top: 18px !important;
+  right: 18px !important;
+  z-index: 30;
+  width: 218px !important;
+  min-height: 0 !important;
+  padding: 10px 13px 12px !important;
+  margin: 0 !important;
+  border: 1px solid rgba(255,255,255,.86) !important;
+  border-top: 0 !important;
+  border-radius: 46% 54% 42% 58% / 34% 40% 60% 66% !important;
+  transform: rotate(1.5deg);
+  background: rgba(255,255,255,.94) !important;
+  box-shadow: 0 18px 42px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.98) !important;
+}
+.net-body > .net-stage > .network-finding::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 23%;
+  right: 20%;
+  height: 3px;
+  border-radius: 60%;
+  background: linear-gradient(90deg,#46d6d0,#e89a6c);
+}
+.net-body > .net-stage > .network-finding .finding-art {
+  height: 82px;
+  margin-bottom: 9px;
+  border-radius: 42% 58% 50% 50% / 48% 40% 60% 52%;
+}
+.net-body > .net-stage > .network-finding .finding-card-title { font-size: 16px; }
+.net-body > .net-stage > .network-finding .finding-card-summary { font-size: 10px; }
+.net-body > .net-stage > .network-finding .finding-card-action { padding: 8px 10px; font-size: 10px; }
+@media (max-width: 980px) {
+  .net-body > .net-stage > .network-finding {
+    top: 12px !important;
+    right: 12px !important;
+    width: 190px !important;
+  }
+}
+@media (max-width: 640px) {
+  .net-body > .net-stage > .network-finding {
+    width: 168px !important;
+    transform: rotate(0deg) scale(.92);
+    transform-origin: top right;
+  }
+}
+
+/* Referencia visual: hallazgo horizontal arriba de la red, no dentro del canvas */
+.net-body {
+  position: relative;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px;
+}
+.net-body > .net-stage { order: 2; }
+.net-body > .network-finding {
+  order: 1;
+  position: relative !important;
+  top: auto !important;
+  right: auto !important;
+  z-index: 5;
+  width: min(680px, 72%) !important;
+  min-height: 132px !important;
+  margin: 0 18px 0 auto !important;
+  padding: 18px 26px 16px 126px !important;
+  display: block;
+  overflow: visible;
+  border: 1px solid rgba(255,255,255,.9) !important;
+  border-top: 0 !important;
+  border-radius: 9% 4% 12% 5% / 16% 11% 14% 9% !important;
+  transform: rotate(-.35deg);
+  background: rgba(255,255,255,.93) !important;
+  box-shadow: 0 18px 45px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.98) !important;
+}
+.net-body > .network-finding::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 3%;
+  right: 4%;
+  height: 3px;
+  border-radius: 50%;
+  background: linear-gradient(90deg,#46d6d0 0 48%,#e89a6c 76%,#46d6d0);
+}
+.net-body > .network-finding::after {
+  content: '';
+  position: absolute;
+  left: 22px;
+  bottom: -8px;
+  width: 62px;
+  height: 18px;
+  border-left: 2px solid rgba(255,255,255,.9);
+  border-bottom: 2px solid rgba(255,255,255,.9);
+  border-radius: 0 0 0 80%;
+  transform: rotate(-12deg);
+}
+.net-body > .network-finding .network-finding-icon {
+  top: 30px;
+  left: 34px;
+  width: 62px;
+  height: 62px;
+  font-size: 22px;
+  border-radius: 50%;
+  background: linear-gradient(145deg,#46d6d0,#198d89);
+  color: #fff;
+  box-shadow: 0 8px 22px rgba(22,141,137,.27);
+}
+.net-body > .network-finding .network-finding-kicker { margin: 0 0 5px; }
+.net-body > .network-finding .network-finding-text { margin-top: 0; }
+.net-body > .network-finding .finding-art { display: none; }
+.net-body > .network-finding .finding-card-title { text-align: left; font-size: 20px; }
+.net-body > .network-finding .finding-card-summary { margin-left: 0; text-align: left; font-size: 11px; max-width: 440px; }
+.net-body > .network-finding .finding-card-action { width: auto; margin-top: 8px; padding: 7px 12px; }
+@media (max-width: 980px) {
+  .net-body > .network-finding { width: min(680px, 92%) !important; padding-left: 112px !important; }
+}
+@media (max-width: 640px) {
+  .net-body > .network-finding { width: 100% !important; margin: 0 !important; padding: 16px 18px 14px 96px !important; }
+  .net-body > .network-finding .network-finding-icon { left: 24px; width: 52px; height: 52px; }
+  .net-body > .network-finding .finding-card-title { font-size: 16px; }
+}
+
+/* Reparación: el hallazgo no participa en el layout del canvas */
+.net-body {
+  display: block !important;
+  position: relative !important;
+  min-height: 0 !important;
+}
+.net-body > .net-stage {
+  display: block !important;
+  width: 100% !important;
+  height: 74vh !important;
+  min-height: 560px !important;
+  flex: none !important;
+  margin: 0 !important;
+}
+.net-body > .network-finding {
+  position: absolute !important;
+  top: 14px !important;
+  right: 18px !important;
+  z-index: 30 !important;
+  margin: 0 !important;
+  width: min(680px, 72%) !important;
+}
+@media (max-width: 980px) {
+  .net-body > .net-stage { height: 60vh !important; min-height: 500px !important; }
+  .net-body > .network-finding { width: min(680px, 88%) !important; }
+}
+
+/* Ubicación final: hallazgo junto al título principal */
+.welcome {
+  position: relative !important;
+  min-height: 176px;
+  padding-right: min(560px, 48%) !important;
+}
+.welcome > .network-finding {
+  position: absolute !important;
+  top: 0 !important;
+  right: 18px !important;
+  z-index: 20 !important;
+  width: min(520px, 47%) !important;
+  min-height: 132px !important;
+  margin: 0 !important;
+  padding: 18px 22px 15px 112px !important;
+  border: 1px solid rgba(255,255,255,.9) !important;
+  border-top: 0 !important;
+  border-radius: 9% 4% 12% 5% / 16% 11% 14% 9% !important;
+  transform: rotate(-.25deg);
+  background: rgba(255,255,255,.93) !important;
+  box-shadow: 0 18px 45px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.98) !important;
+}
+.welcome > .network-finding::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 4%;
+  right: 4%;
+  height: 3px;
+  border-radius: 50%;
+  background: linear-gradient(90deg,#46d6d0,#e89a6c,#46d6d0);
+}
+.welcome > .network-finding .network-finding-icon {
+  top: 30px;
+  left: 28px;
+  width: 58px;
+  height: 58px;
+  font-size: 20px;
+  border-radius: 50%;
+  background: linear-gradient(145deg,#46d6d0,#198d89);
+  color: #fff;
+  box-shadow: 0 8px 22px rgba(22,141,137,.27);
+}
+.welcome > .network-finding .finding-art { display: none; }
+.welcome > .network-finding .network-finding-kicker { margin: 0 0 5px; }
+.welcome > .network-finding .finding-card-title { text-align: left; font-size: 19px; }
+.welcome > .network-finding .finding-card-summary { margin-left: 0; text-align: left; font-size: 10.5px; }
+.welcome > .network-finding .finding-card-action { width: auto; margin-top: 8px; padding: 7px 12px; }
+@media (max-width: 1080px) {
+  .welcome { padding-right: 0 !important; min-height: 300px; }
+  .welcome > .network-finding { position: relative !important; top: auto !important; right: auto !important; width: min(680px, 100%) !important; margin: 18px 0 0 auto !important; }
+}
+@media (max-width: 640px) {
+  .welcome { min-height: 0; }
+  .welcome > .network-finding { padding-left: 94px !important; }
+  .welcome > .network-finding .network-finding-icon { left: 22px; width: 52px; height: 52px; }
+}
+
+/* Hallazgo completo: lectura cómoda junto al título */
+.welcome { min-height: 228px; padding-right: min(640px, 50%) !important; }
+.welcome > .network-finding {
+  width: min(620px, 49%) !important;
+  min-height: 188px !important;
+  padding: 18px 24px 16px 112px !important;
+}
+.welcome > .network-finding .finding-card-title { font-size: 18px; }
+.welcome > .network-finding .finding-card-summary {
+  max-width: 470px;
+  font-size: 10.5px;
+  line-height: 1.42;
+  margin-top: 7px;
+}
+.welcome > .network-finding .finding-card-action { margin-top: 10px; }
+@media (max-width: 1080px) {
+  .welcome { min-height: 0; padding-right: 0 !important; }
+  .welcome > .network-finding { min-height: 188px !important; }
+}
+
+/* Restauración de títulos visibles dentro de cada nodo */
+#gNodes .concept > text {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  fill: #edf2fb !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  text-anchor: middle !important;
+  paint-order: stroke fill !important;
+  stroke: #070b13 !important;
+  stroke-width: 3px !important;
+  stroke-linejoin: round !important;
+}
+#gNodes .concept.node-off > text { opacity: .42 !important; }
+
+/* Refinamiento del hallazgo y etiquetas internas */
+.welcome > .network-finding {
+  border: 1px solid rgba(255,255,255,.78) !important;
+  border-top: 2px solid #46d6d0 !important;
+  border-radius: 24px 34px 20px 30px !important;
+  transform: none !important;
+}
+.welcome > .network-finding::before,
+.welcome > .network-finding::after { display: none !important; }
+.welcome > .network-finding .finding-card-summary { color: #4e5d60; }
+#gNodes .concept > text { dominant-baseline: middle !important; }
+#gNodes .concept > .node-icon { pointer-events: none; }
+
+/* EEP = verde ecológico en toda la interfaz */
+:root {
+  --eep: #58d68d !important;
+  --eco: #58d68d !important;
+  --resiliencia: #58d68d !important;
+}
+.scenario-btn[data-sys="EEP"] .row-icon {
+  background: rgba(88,214,141,.18) !important;
+  color: #58d68d !important;
+}
+#gNodes .concept[style*="#58d68d"] .node-fill {
+  stroke: #58d68d !important;
+  filter: drop-shadow(0 0 8px rgba(88,214,141,.38)) !important;
+}
+#gNodes .concept[style*="#58d68d"] .node-icon,
+#gNodes .concept[style*="#58d68d"] > text { color: #58d68d !important; }
+
+/* Adaptación visual a la referencia de laboratorio futurista */
+.net-stage {
+  background:
+    radial-gradient(circle at 52% 46%, rgba(17,76,84,.16), transparent 42%),
+    radial-gradient(circle at 84% 22%, rgba(70,214,208,.06), transparent 24%),
+    #050b10 !important;
+  border: 1px solid rgba(70,214,208,.22) !important;
+  border-radius: 12px !important;
+  box-shadow: inset 0 0 48px rgba(20,87,95,.12) !important;
+}
+#gNodes .concept .node-fill {
+  fill: #08151b !important;
+  stroke-width: 2.4px !important;
+}
+#gNodes .concept.deg-mid .node-fill { stroke-width: 3px !important; }
+#gNodes .concept.deg-high .node-fill { stroke-width: 3.8px !important; }
+#gNodes .concept .node-icon {
+  color: var(--sys) !important;
+  filter: drop-shadow(0 0 7px color-mix(in srgb, var(--sys) 48%, transparent)) !important;
+}
+#gNodes .concept > text {
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  fill: #eef8f5 !important;
+  stroke: #071116 !important;
+  stroke-width: 3.5px !important;
+}
+#gRels path.rel {
+  stroke-width: 1.35px !important;
+  opacity: .68 !important;
+}
+#gRels path.rel.punteada { stroke-dasharray: 8 7 !important; opacity: .58 !important; }
+#gRels path.rel.soporte { stroke: #e89a6c !important; }
+#gRels path.rel.resiliencia { stroke: #58d68d !important; }
+#gRels path.rel-glow { opacity: .08 !important; filter: none !important; }
+/* Aros de sistema discretos, evitando una red en anillos */
+#gGuides { opacity: .2 !important; }
+.net-toolbar { background: rgba(4,12,16,.74) !important; border-color: rgba(70,214,208,.16) !important; }
+
+/* Franja inferior de cifras, inspirada en la referencia */
+.network-metrics-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  margin: 14px 0 16px;
+  padding: 16px 18px;
+  border: 1px solid rgba(70,214,208,.2);
+  border-radius: 12px;
+  background: linear-gradient(105deg, rgba(5,19,23,.95), rgba(8,22,27,.76));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.04), 0 12px 28px rgba(0,0,0,.18);
+}
+.network-metric {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 4px 20px;
+  border-right: 1px solid rgba(135,194,190,.13);
+}
+.network-metric:last-child { border-right: 0; }
+.network-metric-icon {
+  flex: 0 0 46px;
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: #46d6d0;
+  font-size: 21px;
+  background: rgba(70,214,208,.08);
+  border: 1px solid rgba(70,214,208,.22);
+  box-shadow: 0 0 18px rgba(70,214,208,.1);
+}
+.network-metric-label {
+  display: block;
+  color: #46d6d0;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .12em;
+  line-height: 1.2;
+}
+.network-metric strong {
+  display: block;
+  margin-top: 4px;
+  color: #f0f6f2;
+  font-size: 25px;
+  line-height: 1;
+  font-weight: 800;
+}
+.network-metric small {
+  display: block;
+  margin-top: 5px;
+  color: #8da6a3;
+  font-size: 9px;
+  line-height: 1.2;
+}
+.metric-ring {
+  flex: 0 0 56px;
+  width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: #46d6d0;
+  font-size: 13px;
+  font-weight: 800;
+  background: radial-gradient(circle at center, #07171b 55%, transparent 57%), conic-gradient(#46d6d0 var(--connectivity, 100%), rgba(70,214,208,.13) 0);
+  border: 1px solid rgba(70,214,208,.35);
+}
+@media (max-width: 1050px) {
+  .network-metrics-strip { grid-template-columns: repeat(2, minmax(0,1fr)); row-gap: 14px; }
+  .network-metric:nth-child(2) { border-right: 0; }
+}
+@media (max-width: 640px) {
+  .network-metrics-strip { grid-template-columns: 1fr; padding: 12px; }
+  .network-metric { border-right: 0; border-bottom: 1px solid rgba(135,194,190,.13); padding: 10px 6px; }
+  .network-metric:last-child { border-bottom: 0; }
+}
+
+/* Encabezado compacto: elimina la franja negra vacía */
+.welcome {
+  min-height: 166px !important;
+  margin-bottom: 12px !important;
+  padding-top: 4px !important;
+  padding-bottom: 0 !important;
+}
+.welcome > .network-finding {
+  top: 0 !important;
+  min-height: 150px !important;
+  padding-top: 14px !important;
+  padding-bottom: 12px !important;
+}
+.welcome > .network-finding .finding-card-summary {
+  line-height: 1.28 !important;
+  margin-top: 5px !important;
+}
+.net-layout { margin-top: 0 !important; }
+@media (max-width: 1080px) {
+  .welcome { min-height: 0 !important; margin-bottom: 12px !important; }
+  .welcome > .network-finding { min-height: 150px !important; margin-top: 10px !important; }
+}
+
+/* Red limpia: la topología permanece completa, pero la atención se concentra
+   en la relación seleccionada para evitar el efecto de telaraña. */
+#gRels path.rel {
+  opacity: .30 !important;
+  stroke-width: 1.1px !important;
+}
+#gRels path.rel.punteada { opacity: .20 !important; stroke-width: 1px !important; }
+#gRels path.rel.sel {
+  opacity: 1 !important;
+  stroke-width: 3px !important;
+  filter: drop-shadow(0 0 4px currentColor) !important;
+}
+#gRels path.rel.dim { opacity: .06 !important; }
+#gRels path.rel.rel-off { opacity: 0 !important; pointer-events: none !important; }
+
+/* Triple clic: ocultamiento visual sin recomputar ni mover el layout */
+#gNodes .concept.node-hidden {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+#gRels path.rel-off {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* Tablero de una sola pantalla en escritorio */
+@media (min-width: 1100px) {
+  html, body { height: 100%; overflow: hidden !important; }
+  .app-shell, main, .page { height: 100vh !important; min-height: 0 !important; }
+  main { overflow: hidden !important; }
+  .page {
+    display: flex !important;
+    flex-direction: column !important;
+    padding-top: 12px !important;
+    padding-bottom: 10px !important;
+  }
+  .welcome {
+    flex: 0 0 142px !important;
+    min-height: 142px !important;
+    margin-bottom: 8px !important;
+    overflow: visible !important;
+  }
+  .welcome > .network-finding {
+    min-height: 126px !important;
+    max-height: 132px !important;
+    overflow: hidden !important;
+    padding: 12px 18px !important;
+  }
+  .welcome > .network-finding .finding-card-summary {
+    display: -webkit-box !important;
+    -webkit-line-clamp: 5 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+  }
+  .net-layout {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    height: auto !important;
+    overflow: hidden !important;
+    align-items: stretch !important;
+  }
+  .net-layout > .col:first-child {
+    min-height: 0 !important;
+    height: 100% !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    scrollbar-width: thin;
+  }
+  .net-layout > .col:last-child {
+    min-height: 0 !important;
+    height: 100% !important;
+    overflow: hidden !important;
+  }
+  .net-card {
+    height: calc(100% - 76px) !important;
+    min-height: 0 !important;
+    margin-bottom: 8px !important;
+  }
+  .net-card .net-body,
+  .net-card .net-stage {
+    min-height: 0 !important;
+    height: 100% !important;
+  }
+  .network-metrics-strip {
+    min-height: 68px !important;
+    height: 68px !important;
+    margin: 8px 0 0 !important;
+    padding: 8px 12px !important;
+  }
+  .network-metric { padding: 2px 12px !important; gap: 8px !important; }
+  .network-metric-icon { width: 34px !important; height: 34px !important; flex-basis: 34px !important; font-size: 15px !important; }
+  .network-metric strong { font-size: 19px !important; margin-top: 2px !important; }
+  .network-metric small { margin-top: 2px !important; font-size: 8px !important; }
+  .metric-ring { width: 42px !important; height: 42px !important; flex-basis: 42px !important; font-size: 10px !important; }
+  .net-layout > .col:first-child > .pcard { margin-bottom: 8px !important; padding: 10px 12px !important; }
+  .net-layout > .col:first-child .pcard h2 { font-size: 11px !important; margin-bottom: 6px !important; }
+  .net-layout > .col:first-child .scenario-btn { min-height: 48px !important; padding: 6px 8px !important; }
+}
+@media (max-width: 1099px) {
+  .page { min-height: 100vh; }
+}
+
+/* Entrada suave del hallazgo al cambiar de escenario */
+.finding-updated {
+  animation: findingReveal .68s cubic-bezier(.22,.75,.25,1) both;
+}
+@keyframes findingReveal {
+  0% { opacity: .28; transform: translateY(8px) scale(.985); box-shadow: 0 0 0 rgba(70,214,208,0); }
+  55% { opacity: 1; transform: translateY(-2px) scale(1.006); box-shadow: 0 0 24px rgba(70,214,208,.16); }
+  100% { opacity: 1; transform: translateY(0) scale(1); box-shadow: 0 8px 28px rgba(0,0,0,.22); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .finding-updated { animation: none !important; }
+}
+
+/* Indicador de nodos ocultados por triple clic */
+.hidden-nodes-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 30px;
+  padding: 0 10px;
+  border: 1px solid rgba(70,214,208,.22);
+  border-radius: 999px;
+  color: rgba(220,232,236,.65);
+  background: rgba(10,18,22,.66);
+  font-size: 10px;
+  letter-spacing: .04em;
+  white-space: nowrap;
+  transition: color .25s ease, border-color .25s ease, background .25s ease, box-shadow .25s ease;
+}
+.hidden-nodes-indicator i { font-size: 11px; }
+.hidden-nodes-indicator.has-hidden {
+  color: #f0b16d;
+  border-color: rgba(240,177,109,.6);
+  background: rgba(240,177,109,.09);
+  box-shadow: 0 0 16px rgba(240,177,109,.12);
+}
+.hidden-nodes-indicator.is-clear { opacity: .62; }
+@media (max-width: 780px) {
+  .hidden-nodes-indicator { max-width: 128px; overflow: hidden; text-overflow: ellipsis; }
+}
