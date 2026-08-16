@@ -2937,35 +2937,11 @@ function updateNetworkFinding(off, active, total) {
 // ---------------------------------------------------------------------
 // 5. INTERACCIÓN
 // ---------------------------------------------------------------------
-function showStructureInsight(s, isOff) {
+function showStructureInsight() {
+  // El hallazgo superior (#networkFinding) es el único hallazgo contextual.
+  // El popup lateral anterior duplicaba la información y tapaba el escenario.
   const popup = document.getElementById('eseCIInsight');
-  const title = document.getElementById('insightTitle');
-  const text = document.getElementById('insightText');
-  if (!popup || !title || !text) return;
-
-  const insights = {
-    ESECI: {
-      title: 'ESECI · Economía y productividad',
-      text: 'La ESECI tiene más conexiones porque el POT usa el ordenamiento territorial para impulsar la economía, el empleo y la productividad. Por eso relaciona cosas como la movilidad, la vivienda, los equipamientos y la conectividad con las actividades económicas. En cambio, la EEP cumple principalmente una función ambiental: ordenar y proteger el territorio a través del agua, los ecosistemas y la biodiversidad. Esta mayor centralidad es un resultado calculado a partir de las relaciones documentadas, con apoyos en el POT, pp. 164, 169 y 171; no es una frase literal de una sola página.'
-    },
-    EEP: {
-      title: 'EEP · Protección ambiental',
-      text: 'La EEP tiene conexiones porque el POT usa la estructura ecológica para ordenar y proteger el territorio a través del agua, los ecosistemas y la biodiversidad. Por eso relaciona humedales, ríos, quebradas y áreas protegidas con la conservación ambiental y la resiliencia climática. En cambio, su función principal no es impulsar directamente el empleo o la productividad, sino sostener las condiciones ambientales que permiten la vida urbana (POT, pp. 72 y 92).'
-    },
-    EFC: {
-      title: 'EFC · Cuidado y funcionamiento',
-      text: 'La EFC tiene conexiones porque el POT usa la estructura funcional y del cuidado para organizar la vida cotidiana y el funcionamiento urbano. Por eso relaciona movilidad, vivienda, servicios públicos, equipamientos, espacio público y servicios de cuidado con el acceso de la población a las oportunidades de la ciudad. En cambio, su función principal no es proteger ecosistemas ni ordenar patrimonios, sino garantizar soporte, acceso y cuidado para la vida diaria.'
-    },
-    EIP: {
-      title: 'EIP · Patrimonios',
-      text: 'La EIP tiene conexiones porque el POT usa la estructura integradora de patrimonios para reconocer y articular los valores culturales y territoriales de la ciudad. Por eso relaciona patrimonio material, inmaterial, arqueológico, cultural y natural con la identidad, la memoria, los sitios sagrados y las actividades que construyen sentido de lugar. En cambio, su función principal no es organizar la productividad ni sustituir la protección ecológica, sino integrar los patrimonios en el ordenamiento territorial.'
-    }
-  };
-  const info = insights[s] || insights.ESECI;
-  title.textContent = info.title;
-  text.textContent = isOff ? info.text + ' La estructura está apagada en este momento.' : info.text;
-  popup.classList.remove('is-hidden');
-  animateFindingElement(popup);
+  if (popup) popup.classList.add('is-hidden');
 }
 
 function toggleSystem(s) {

@@ -6446,3 +6446,10 @@ body {
 @media (max-width: 560px) {
   .quote-explanation { font-size: 10.5px; max-width: 36ch; }
 }
+
+
+/* Un solo hallazgo contextual: el banner de red debilitada ya no se superpone al canvas */
+#eseCIInsight,
+#weakBanner {
+  display: none !important;
+}
