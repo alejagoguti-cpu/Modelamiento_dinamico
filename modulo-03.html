@@ -172,10 +172,10 @@
         <div class="pcard net-card">
           <div class="net-toolbar">
             <div class="legend">
-              <label class="legend-item legend-filter direct"><input class="edge-filter" type="checkbox" data-edge-filter="direct" checked><span class="lg-line"></span><span>Relación directa</span></label>
-              <label class="legend-item legend-filter indirect"><input class="edge-filter" type="checkbox" data-edge-filter="indirect" checked><span class="lg-line dashed"></span><span>Relación indirecta</span></label>
-              <label class="legend-item legend-filter soporte"><input class="edge-filter" type="checkbox" data-edge-filter="soporte" checked><span class="lg-dot soporte"></span><span>Soporte</span></label>
-              <label class="legend-item legend-filter resiliencia"><input class="edge-filter" type="checkbox" data-edge-filter="resiliencia" checked><span class="lg-dot resiliencia"></span><span>Resiliencia</span></label>
+              <div class="legend-item"><span class="lg-line"></span>Relación directa</div>
+              <div class="legend-item"><span class="lg-line dashed"></span>Relación indirecta</div>
+              <div class="legend-item"><span class="lg-dot soporte"></span>Soporte</div>
+              <div class="legend-item"><span class="lg-dot resiliencia"></span>Resiliencia</div>
               
                 </div>
             <div class="net-btns">
@@ -298,10 +298,8 @@
   <div class="quote-backdrop hidden" id="quoteBackdrop" role="dialog" aria-modal="true" aria-label="Cita documental de la conexión">
     <article class="quote-modal">
       <button class="modal-close" id="quoteClose" type="button" aria-label="Cerrar cita">×</button>
-      <div class="simulation-kicker">CITA DOCUMENTAL · POT</div>
-      <div class="quote-rel" id="quoteRel"></div>
+      <h3 class="quote-rel" id="quoteRel"></h3>
       <div class="quote-tags" id="quoteTags"></div>
-      <div class="quote-divider"><span></span></div>
       <blockquote class="quote-text" id="quoteText"></blockquote>
       <div class="quote-foot">
         <div class="quote-page" id="quotePage"></div>

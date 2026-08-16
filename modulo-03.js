@@ -2182,7 +2182,6 @@ const state = { EEP: true, EFC: true, EIP: true, ESECI: true };
 const offNodes = new Set();
 let lastToggledOff = null;
 let selectedRel = null;
-const edgeFilters = { direct: true, indirect: true, soporte: true, resiliencia: true };
 
 // ---------------------------------------------------------------------
 // 1. MODELO: nodos (sistemas + conceptos) y aristas
@@ -2237,12 +2236,6 @@ function buildModel() {
 // Una relación está activa solo si AMBOS sistemas están ON y ninguno de sus
 // dos conceptos fue apagado individualmente
 const nodeOn = id => !offNodes.has(id);
-
-function relationVisibleByFilter(r) {
-  const lineKey = r.linea === 'Punteada' ? 'indirect' : 'direct';
-  const typeKey = r.tipo === 'Soporte' ? 'soporte' : 'resiliencia';
-  return edgeFilters[lineKey] && edgeFilters[typeKey];
-}
 
 function relActive(r) {
   // Al apagar ESECI, se conservan únicamente las relaciones 9 y 10.
@@ -2507,7 +2500,6 @@ function render() {
   //    tocan una estructura o un nodo apagado simplemente quedan con muy
   //    baja opacidad ("rel-off"), en vez de desaparecer y reorganizar la red
   model.relations.forEach(r => {
-    if (!relationVisibleByFilter(r)) return;
     // No dibujar relaciones pendientes de verificación: se mantienen en los
     // datos para el análisis, pero no deben ensuciar la red visual.
     if (r.porVerificar) return;
@@ -2567,9 +2559,8 @@ function render() {
       const off = offNodes.has(id);
       const R = nodeR[id];
 const iconSize = Math.max(28, Math.round(R * 0.52));
-      // La etiqueta debe quedar subordinada al nodo: tamaño proporcional al radio.
-      const labelSize = Math.max(7, Math.min(13, R * 0.105));
-      const labelChars = Math.max(7, Math.min(15, Math.floor(R / 5.6)));
+      // Etiquetas más grandes y legibles, manteniendo proporción con el nodo.
+      const fontSize = Math.max(26, Math.min(44, R * 0.28));
       // nivel de brillo por conectividad (solo estético)
       const glow = R >= 110 ? 'high' : R >= 80 ? 'mid' : 'low';
 
@@ -2600,11 +2591,11 @@ const iconSize = Math.max(28, Math.round(R * 0.52));
       fo.appendChild(div);
       g.appendChild(fo);
 
-      const lines = wrapLabel(c.label, labelChars);
-      const labelStep = Math.max(8, Math.min(12, labelSize * 1.08));
-      const labelStart = Math.max(-R * 0.08, R * 0.22 - ((lines.length - 1) * labelStep) / 2);
+      const lines = wrapLabel(c.label);
+      const labelStep = Math.max(13, Math.min(18, R * 0.18));
+      const labelStart = Math.max(-R * 0.02, R * 0.24 - ((lines.length - 1) * labelStep) / 2);
       lines.forEach((ln, i) => {
-        const t = el('text', { y: labelStart + i * labelStep, style: `--label-size:${labelSize.toFixed(1)}px;--label-step:${labelStep.toFixed(1)}px` });
+        const t = el('text', { y: labelStart + i * labelStep, style: `font-size:${Math.max(14, Math.min(22, fontSize * .7))}px` });
         t.textContent = ln;
         g.appendChild(t);
       });
@@ -2980,8 +2971,7 @@ function showStructureInsight(s, isOff) {
 function toggleSystem(s) {
   state[s] = !state[s];
   lastToggledOff = state[s] ? null : s;
-  const insightPopup = document.getElementById('eseCIInsight');
-  if (insightPopup) insightPopup.classList.add('is-hidden');
+  showStructureInsight(s, !state[s]);
   if (selectedRel !== null) {
     const r = model.relations.find(x => x.id === selectedRel);
     if (r && !relActive(r)) clearEvidence();
@@ -3028,15 +3018,6 @@ function selectRelation(id) {
 
   openQuoteModal(r, kind);
 
-  const evCard = document.getElementById('evCard');
-  if (evCard) {
-    evCard.classList.add('evidence-active');
-    const infoCol = evCard.closest('.col');
-    if (infoCol) requestAnimationFrame(() => {
-      infoCol.scrollTo({ top: Math.max(0, evCard.offsetTop - 10), behavior: 'smooth' });
-    });
-  }
-
   document.getElementById('evBox').innerHTML = `
     <div class="ev-rel">
       <span style="color:${model.systems[r.sO].color}">${r.sO}</span>
@@ -3058,8 +3039,6 @@ function selectRelation(id) {
 
 function clearEvidence() {
   selectedRel = null;
-  const evCard = document.getElementById('evCard');
-  if (evCard) evCard.classList.remove('evidence-active');
   document.getElementById('evBox').innerHTML =
     `<p class="ev-empty">Haz clic en cualquier línea de la red para ver el detalle de esa relación.</p>`;
 }
@@ -3295,16 +3274,9 @@ function openQuoteModal(r, kind) {
   if (!back) return;
 
   document.getElementById('quoteRel').innerHTML =
-    `${esc(r.cO)}<span class="arrow">→</span>${esc(r.cD)}`;
+    `${esc(r.cO)} <span class="arrow">→</span> ${esc(r.cD)}`;
 
-  const tags = [
-    `<span class="quote-tag ${kind}">${r.tipo}</span>`,
-    `<span class="quote-tag">${r.evid}</span>`,
-    `<span class="quote-tag">${r.sO} → ${r.sD}</span>`
-  ];
-  if (r.sinFrase) tags.push('<span class="quote-tag pv">sin frase registrada</span>');
-  else if (r.porVerificar) tags.push('<span class="quote-tag pv">por verificar</span>');
-  else if (!r.completa) tags.push('<span class="quote-tag">fragmento del archivo fuente</span>');
+  const tags = [`<span class="quote-tag ${kind}">${esc((r.tipo || 'SOPORTE').toUpperCase())}</span>`];
   document.getElementById('quoteTags').innerHTML = tags.join('');
 
   // r.frase ya viene entre comillas tipográficas desde los datos
@@ -3316,7 +3288,7 @@ function openQuoteModal(r, kind) {
     qt.textContent = r.frase;
     qt.classList.remove('no-quote');
   }
-  document.getElementById('quotePage').textContent = r.pag === '—' ? 'Página pendiente' : 'Página ' + r.pag;
+  document.getElementById('quotePage').textContent = r.pag === '—' ? 'Página pendiente' : `p. ${r.pag} del POT`;
   document.getElementById('quoteSec').textContent = r.seccion || '';
 
   back.classList.remove('hidden');
@@ -3325,21 +3297,6 @@ function openQuoteModal(r, kind) {
 function closeQuoteModal() {
   const back = document.getElementById('quoteBackdrop');
   if (back) back.classList.add('hidden');
-}
-
-function initEdgeFilters() {
-  document.querySelectorAll('[data-edge-filter]').forEach(input => {
-    const key = input.getAttribute('data-edge-filter');
-    input.checked = edgeFilters[key] !== false;
-    input.addEventListener('change', () => {
-      edgeFilters[key] = input.checked;
-      if (selectedRel !== null) {
-        const selected = model.relations.find(r => r.id === selectedRel);
-        if (selected && !relationVisibleByFilter(selected)) clearEvidence();
-      }
-      render();
-    });
-  });
 }
 
 function initQuoteModal() {
@@ -3383,24 +3340,6 @@ function applyVB() {
   document.getElementById('svg').setAttribute('viewBox', `${vb.x} ${vb.y} ${vb.w} ${vb.h}`);
   const z = document.getElementById('zoomValue');
   if (z) z.textContent = Math.round((BASE_VB.w / vb.w) * 100) + '%';
-}
-
-function fitViewToStage() {
-  const stage = document.getElementById('stage');
-  if (!stage || !BASE_VB.w || !BASE_VB.h) return;
-  const rect = stage.getBoundingClientRect();
-  if (rect.width < 20 || rect.height < 20) return;
-  const stageRatio = rect.width / rect.height;
-  const baseRatio = BASE_VB.w / BASE_VB.h;
-  const cx = BASE_VB.x + BASE_VB.w / 2;
-  const cy = BASE_VB.y + BASE_VB.h / 2;
-  let w = BASE_VB.w;
-  let h = BASE_VB.h;
-  if (stageRatio > baseRatio) w = h * stageRatio;
-  else h = w / stageRatio;
-  BASE_VB = { x: cx - w / 2, y: cy - h / 2, w, h };
-  vb = Object.assign({}, BASE_VB);
-  applyVB();
 }
 
 function resetView() { vb = Object.assign({}, BASE_VB); applyVB(); }
@@ -3512,12 +3451,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   clearEvidence();
   initIntro();
-  initEdgeFilters();
   initQuoteModal();
   initNodeScenario();
   initPanZoom();
+  applyVB();
   render();
-  fitViewToStage();
   updateMetrics();
 
   // verificación de integridad de datos en consola
