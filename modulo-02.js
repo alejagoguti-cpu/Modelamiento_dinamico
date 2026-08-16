@@ -55,13 +55,13 @@ const SVG_NS = "http://www.w3.org/2000/svg";
 const XHTML_NS = "http://www.w3.org/1999/xhtml";
 
 const STRUCT_STYLE = {
-  e1: { color: "#2dd4bf", label: "1. Estructura Ecológica Principal", short: "EEP",
+  e1: { color: "#5cd6d1", label: "1. Estructura Ecológica Principal", short: "EEP",
     articulos: "Art. 41–79 (39 artículos)", paginas: "pp. 70–101" },
-  e2: { color: "#f97316", label: "2. Estructura Funcional y del Cuidado", short: "EFC",
+  e2: { color: "#ef9f54", label: "2. Estructura Funcional y del Cuidado", short: "EFC",
     articulos: "Art. 88–99 (12 artículos)", paginas: "pp. 109–120" },
-  e3: { color: "#eab308", label: "3. Estructura Socioeconómica, Creativa y de Innovación", short: "ESECI",
+  e3: { color: "#fac47b", label: "3. Estructura Socioeconómica, Creativa y de Innovación", short: "ESECI",
     articulos: "Art. 100–101 (2 artículos, + Art.240/243/327 en Libro III)", paginas: "pp. 120–122 / 223–279" },
-  e4: { color: "#ec4899", label: "4. Estructura Integradora de Patrimonios", short: "EIP",
+  e4: { color: "#fb8d84", label: "4. Estructura Integradora de Patrimonios", short: "EIP",
     articulos: "Art. 80–87 (8 artículos)", paginas: "pp. 101–109" },
 };
 
