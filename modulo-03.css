@@ -6310,3 +6310,103 @@ body {
   .legend { flex-wrap: wrap; gap: 7px 10px; }
   .legend-filter { min-height: 28px; }
 }
+
+/* Modal de evidencia de conexión: composición oscura compacta según referencia */
+.quote-backdrop {
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background: rgba(3, 6, 10, .58);
+  backdrop-filter: blur(3px);
+}
+.quote-modal {
+  width: min(450px, calc(100vw - 36px));
+  max-width: 450px;
+  max-height: min(310px, calc(100vh - 36px));
+  overflow-y: auto;
+  padding: 24px 24px 18px;
+  background: rgba(24, 24, 25, .97);
+  color: #f4f1ec;
+  border: 1px solid rgba(255,255,255,.12);
+  border-top-color: rgba(232,154,108,.55);
+  border-radius: 18px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.62), 0 0 0 1px rgba(70,214,208,.06);
+}
+.quote-modal::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(255,255,255,.045), transparent 34%);
+}
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 15px;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: rgba(255,255,255,.52);
+  font-size: 23px;
+  line-height: 1;
+  cursor: pointer;
+}
+.modal-close:hover { color: #fff; }
+.quote-modal .simulation-kicker {
+  margin-bottom: 12px;
+  color: #46d6d0;
+  font-size: 9px;
+  letter-spacing: 1.2px;
+}
+.quote-rel {
+  padding-right: 28px;
+  color: #f7f4ef;
+  font-size: 18px;
+  line-height: 1.3;
+}
+.quote-rel .arrow { color: #aaa49b; }
+.quote-tags { margin-top: 10px; }
+.quote-tag {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(232,154,108,.2);
+  color: #f0b179;
+  font-size: 10px;
+}
+.quote-tag.soporte { background: rgba(232,154,108,.22); color: #f0b179; }
+.quote-tag.resiliencia { background: rgba(88,214,141,.18); color: #79e4a2; }
+.quote-divider {
+  border-top-color: rgba(255,255,255,.1);
+  margin-top: 14px;
+  padding-top: 14px;
+}
+.quote-text {
+  max-height: 104px;
+  overflow: hidden;
+  margin: 0;
+  padding: 0 0 0 14px;
+  border-left: 3px solid #e89a6c;
+  color: rgba(248,246,241,.9);
+  font-size: 15px;
+  line-height: 1.48;
+}
+.quote-foot {
+  border-top-color: rgba(255,255,255,.1);
+  margin-top: 14px;
+  padding-top: 12px;
+}
+.quote-page { color: #b9b4ac; font-size: 14px; font-weight: 500; }
+.quote-sec { color: #7e817f; font-size: 10.5px; }
+.quote-text.no-quote {
+  color: #f0b179;
+  background: rgba(232,154,108,.1);
+  border-left-color: #e89a6c;
+}
+@media (max-width: 640px) {
+  .quote-modal { padding: 22px 18px 16px; }
+  .quote-rel { font-size: 16px; }
+  .quote-text { font-size: 13.5px; }
+}
