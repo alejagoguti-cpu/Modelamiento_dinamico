@@ -276,88 +276,98 @@ function openEepModal(humedal) {
   
   modal.style.display = 'block';
   
-  // Crear mini-mapa dentro del modal
-  const container = document.getElementById('eepMapContainer');
-  if (!container) return;
-  
-  container.innerHTML = '';
-  
-  const miniMap = L.map(container).setView([humedal.lat, humedal.lng], 13);
-  
-  L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {
-    attribution: '© CartoDB',
-    maxZoom: 19
-  }).addTo(miniMap);
-  
-  // Dibujar red EEP en el mini-mapa
-  if (eepNodos.length > 0) {
-    const conexiones = [
-      {from: 'h1', to: 'rio', tipo: 'directa'},
-      {from: 'h1', to: 'ce', tipo: 'directa'},
-      {from: 'h1', to: 'qb', tipo: 'indirecta'},
-      {from: 'h1', to: 'ap', tipo: 'indirecta'},
-      {from: 'rio', to: 'corr', tipo: 'directa'},
-      {from: 'rio', to: 'ec', tipo: 'indirecta'},
-      {from: 'ce', to: 'cp', tipo: 'directa'},
-      {from: 'ce', to: 'rf', tipo: 'directa'},
-      {from: 'qb', to: 'ru', tipo: 'indirecta'},
-      {from: 'qb', to: 'pb', tipo: 'indirecta'},
-      {from: 'ap', to: 'rf', tipo: 'directa'},
-      {from: 'cm', to: 'cv', tipo: 'indirecta'}
-    ];
+  // Esperar a que el DOM se renderice
+  setTimeout(() => {
+    const container = document.getElementById('eepMapContainer');
+    if (!container) return;
     
-    conexiones.forEach(conn => {
-      const nodoFrom = eepNodos.find(n => n.properties.id === conn.from);
-      const nodoTo = eepNodos.find(n => n.properties.id === conn.to);
-      
-      if (nodoFrom && nodoTo) {
-        const coords = nodoFrom.geometry.coordinates;
-        const coordsTo = nodoTo.geometry.coordinates;
-        
-        const dashArray = conn.tipo === 'indirecta' ? '5, 3' : '0';
-        const lineColor = conn.tipo === 'indirecta' ? '#ff9552' : '#2fd4c8';
-        
-        L.polyline([
-          [coords[1], coords[0]],
-          [coordsTo[1], coordsTo[0]]
-        ], {
-          color: lineColor,
-          weight: 2,
-          opacity: 0.7,
-          dashArray: dashArray
-        }).addTo(miniMap);
-      }
-    });
+    // Limpiar contenedor
+    container.innerHTML = '';
     
-    eepNodos.forEach(nodo => {
-      const coords = nodo.geometry.coordinates;
-      const props = nodo.properties;
+    // Crear mini-mapa
+    const miniMap = L.map(container, {
+      zoomControl: true,
+      attributionControl: true
+    }).setView([4.63, -74.15], 12);
+    
+    L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {
+      attribution: '© CartoDB',
+      maxZoom: 19
+    }).addTo(miniMap);
+    
+    // Dibujar red EEP en el mini-mapa
+    if (eepNodos.length > 0) {
+      const conexiones = [
+        {from: 'h1', to: 'rio', tipo: 'directa'},
+        {from: 'h1', to: 'ce', tipo: 'directa'},
+        {from: 'h1', to: 'qb', tipo: 'indirecta'},
+        {from: 'h1', to: 'ap', tipo: 'indirecta'},
+        {from: 'rio', to: 'corr', tipo: 'directa'},
+        {from: 'rio', to: 'ec', tipo: 'indirecta'},
+        {from: 'ce', to: 'cp', tipo: 'directa'},
+        {from: 'ce', to: 'rf', tipo: 'directa'},
+        {from: 'qb', to: 'ru', tipo: 'indirecta'},
+        {from: 'qb', to: 'pb', tipo: 'indirecta'},
+        {from: 'ap', to: 'rf', tipo: 'directa'},
+        {from: 'cm', to: 'cv', tipo: 'indirecta'}
+      ];
       
-      let radius = 15;
-      if (props.tipo === 'nodo_secundario') radius = 10;
-      if (props.tipo === 'nodo_terciario') radius = 7;
-      
-      L.circleMarker([coords[1], coords[0]], {
-        radius: radius,
-        fillColor: '#2fd4c8',
-        color: '#0a0e17',
-        weight: 2,
-        opacity: 0.9,
-        fillOpacity: 0.8
-      })
-      .bindPopup(`<strong>${props.nombre}</strong>`)
-      .addTo(miniMap);
-      
-      const labelDiv = L.divIcon({
-        html: `<div style="font-size: 7px; color: #fff; text-align: center; font-weight: 600; text-shadow: 0 0 3px rgba(0,0,0,0.8); width: 50px;">${props.nombre}</div>`,
-        className: 'eep-label',
-        iconSize: [50, 16],
-        iconAnchor: [25, 8]
+      conexiones.forEach(conn => {
+        const nodoFrom = eepNodos.find(n => n.properties.id === conn.from);
+        const nodoTo = eepNodos.find(n => n.properties.id === conn.to);
+        
+        if (nodoFrom && nodoTo) {
+          const coords = nodoFrom.geometry.coordinates;
+          const coordsTo = nodoTo.geometry.coordinates;
+          
+          const dashArray = conn.tipo === 'indirecta' ? '5, 3' : '0';
+          const lineColor = conn.tipo === 'indirecta' ? '#ff9552' : '#2fd4c8';
+          
+          L.polyline([
+            [coords[1], coords[0]],
+            [coordsTo[1], coordsTo[0]]
+          ], {
+            color: lineColor,
+            weight: 2,
+            opacity: 0.7,
+            dashArray: dashArray
+          }).addTo(miniMap);
+        }
       });
       
-      L.marker([coords[1], coords[0]], { icon: labelDiv, interactive: false }).addTo(miniMap);
-    });
-  }
+      eepNodos.forEach(nodo => {
+        const coords = nodo.geometry.coordinates;
+        const props = nodo.properties;
+        
+        let radius = 15;
+        if (props.tipo === 'nodo_secundario') radius = 10;
+        if (props.tipo === 'nodo_terciario') radius = 7;
+        
+        L.circleMarker([coords[1], coords[0]], {
+          radius: radius,
+          fillColor: '#2fd4c8',
+          color: '#0a0e17',
+          weight: 2,
+          opacity: 0.9,
+          fillOpacity: 0.8
+        })
+        .bindPopup(`<strong>${props.nombre}</strong>`)
+        .addTo(miniMap);
+        
+        const labelDiv = L.divIcon({
+          html: `<div style="font-size: 7px; color: #fff; text-align: center; font-weight: 600; text-shadow: 0 0 3px rgba(0,0,0,0.8); width: 50px;">${props.nombre}</div>`,
+          className: 'eep-label',
+          iconSize: [50, 16],
+          iconAnchor: [25, 8]
+        });
+        
+        L.marker([coords[1], coords[0]], { icon: labelDiv, interactive: false }).addTo(miniMap);
+      });
+    }
+    
+    // Ajustar tamaño del mapa
+    miniMap.invalidateSize();
+  }, 100);
 }
 
 function closeEepModal() {
