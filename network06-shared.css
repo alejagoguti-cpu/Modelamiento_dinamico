@@ -6,20 +6,20 @@
 .ods-node, .pn-node {
   transform-box: fill-box;
   transform-origin: center;
-  animation: module06NodeFloat 3.8s ease-in-out var(--node-float-delay,0s) infinite;
+  animation: module06NodeFloat 3.8s ease-in-out var(--float-delay,0s) infinite;
   will-change: transform;
 }
 .network-node circle, .svg-node circle, .concept .node-fill {
   transform-box: fill-box;
   transform-origin: center;
-  animation: module06NodeFloat 3.8s ease-in-out var(--node-float-delay,0s) infinite;
+  animation: module06NodeFloat 3.8s ease-in-out var(--float-delay,0s) infinite;
   will-change: transform;
 }
-.ods-node .node-ring, .network-node circle, .svg-node circle, .pn-node .pn-node-ring, .concept .node-fill {
+.network-node circle, .svg-node circle, .pn-node .pn-node-ring, .concept .node-fill {
   filter: drop-shadow(0 0 5px currentColor);
   transition: filter .2s, stroke-width .2s, opacity .2s;
 }
-.ods-node:hover .node-ring, .network-node:hover circle, .svg-node:hover circle, .pn-node:hover .pn-node-ring, .concept:hover .node-fill {
+.network-node:hover circle, .svg-node:hover circle, .pn-node:hover .pn-node-ring, .concept:hover .node-fill {
   filter: drop-shadow(0 0 11px currentColor);
 }
 .network06-zoom-controls {

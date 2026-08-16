@@ -263,9 +263,10 @@ function drawNodes(svg) {
   const g = document.createElementNS(SVG_NS, "g");
   g.setAttribute("class", "nodes-layer");
 
-  ODS_NODES.forEach(node => {
+  ODS_NODES.forEach((node, index) => {
     const group = document.createElementNS(SVG_NS, "g");
     group.setAttribute("class", "ods-node");
+    group.style.setProperty("--float-delay", `${((index * 0.17) % 2.4).toFixed(2)}s`);
     group.setAttribute("data-id", node.id);
     group.setAttribute("data-cat", node.cat);
 
@@ -273,6 +274,8 @@ function drawNodes(svg) {
     circle.setAttribute("class", "node-ring");
     circle.setAttribute("cx", node.x); circle.setAttribute("cy", node.y); circle.setAttribute("r", node.r);
     circle.setAttribute("stroke", node.color);
+    circle.style.stroke = node.color;
+    circle.style.color = node.color;
     circle.setAttribute("stroke-width", 2.5);
     circle.setAttribute("filter", "url(#glow-" + node.color.replace("#", "") + ")");
 
