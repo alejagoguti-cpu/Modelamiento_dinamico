@@ -6245,3 +6245,68 @@ body {
     text-align: left !important;
   }
 }
+
+/* Detalle de conexión visible al hacer clic en una línea */
+#evCard.evidence-active {
+  border-color: rgba(70,214,208,.62) !important;
+  box-shadow: 0 0 0 1px rgba(70,214,208,.14), 0 12px 28px rgba(0,0,0,.22) !important;
+  animation: evidenceReveal .34s ease both;
+}
+#evCard.evidence-active .ev-empty { display: none !important; }
+@keyframes evidenceReveal {
+  from { opacity: .72; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Etiquetas internas: el tamaño sigue el radio del nodo */
+#gNodes .concept > text {
+  font-size: var(--label-size, 9px) !important;
+  line-height: var(--label-step, 10px) !important;
+  letter-spacing: -.02em !important;
+  dominant-baseline: middle !important;
+}
+
+/* Casillas visibles de convenciones sobre la red */
+.legend-filter {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  user-select: none;
+}
+.legend-filter .edge-filter {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  margin: 0 1px 0 0;
+  border: 1px solid rgba(210,230,230,.72);
+  border-radius: 3px;
+  background: rgba(5,13,16,.9);
+  display: inline-grid;
+  place-content: center;
+  cursor: pointer;
+}
+.legend-filter .edge-filter::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 1px;
+  transform: scale(0);
+  transition: transform .15s ease;
+  background: #46d6d0;
+}
+.legend-filter .edge-filter:checked::before { transform: scale(1); }
+.legend-filter.indirect .edge-filter { border-color: #e89a6c; }
+.legend-filter.indirect .edge-filter::before { background: #e89a6c; }
+.legend-filter.soporte .edge-filter { border-color: #e89a6c; }
+.legend-filter.soporte .edge-filter::before { background: #e89a6c; }
+.legend-filter.resiliencia .edge-filter { border-color: #58d68d; }
+.legend-filter.resiliencia .edge-filter::before { background: #58d68d; }
+.legend-filter:has(.edge-filter:not(:checked)) { opacity: .42; }
+.legend-filter:has(.edge-filter:checked) { opacity: 1; }
+.legend-filter .edge-filter:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+@media (max-width: 760px) {
+  .legend { flex-wrap: wrap; gap: 7px 10px; }
+  .legend-filter { min-height: 28px; }
+}
