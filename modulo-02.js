@@ -546,7 +546,7 @@ function drawNodes(svg) {
   g.setAttribute("class", "nodes-layer");
   ODS_NODES.forEach((node, index) => {
     const group = document.createElementNS(SVG_NS, "g");
-    group.setAttribute("class", "ods-node ods-node-" + node.cat);
+    group.setAttribute("class", "ods-node floating-node ods-node-" + node.cat);
     group.style.setProperty("--float-delay", `${((index * 0.17) % 2.4).toFixed(2)}s`);
     group.setAttribute("data-id", node.id);
     group.setAttribute("data-cat", node.cat);
@@ -569,6 +569,11 @@ function drawNodes(svg) {
     wrapper.setAttribute("class", "node-inner");
     wrapper.setAttribute("style", "width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;pointer-events:none;");
 
+    const numEl = document.createElementNS(XHTML_NS, "div");
+    numEl.setAttribute("class", "node-num");
+    numEl.setAttribute("style", `color:${node.color};font-family:'Space Grotesk',sans-serif;font-weight:800;font-size:${Math.max(node.r * 0.24, 9)}px;line-height:1;`);
+    numEl.textContent = index + 1;
+
     const iconEl = document.createElementNS(XHTML_NS, "i");
     iconEl.setAttribute("class", "fa-solid " + node.icon + " node-icon");
     iconEl.setAttribute("style", `color:${node.color}; font-size:${node.r * 0.4}px; margin:1px 0;`);
@@ -581,7 +586,7 @@ function drawNodes(svg) {
     const fuenteDot = document.createElementNS(XHTML_NS, "div");
     fuenteDot.setAttribute("style", `width:6px;height:6px;border-radius:50%;background:${FUENTE_STYLE[node.fuente].color};margin-top:2px;`);
 
-    wrapper.appendChild(iconEl); wrapper.appendChild(nameEl); wrapper.appendChild(fuenteDot);
+    wrapper.appendChild(numEl); wrapper.appendChild(iconEl); wrapper.appendChild(nameEl); wrapper.appendChild(fuenteDot);
     fo.appendChild(wrapper);
     group.appendChild(circle); group.appendChild(fo);
     attachNodeClickHandler(group, node.id);
