@@ -308,100 +308,97 @@ function computeDegrees() {
 }
 
 /* ==========================================================
-   LAYOUT — malla densa tipo "red de mundo pequeño": los 4 grupos
-   parten de centros cercanos entre sí (no en esquinas separadas)
-   y un layout de fuerzas (repulsión entre todos los nodos +
-   atracción por arista) los relaja hasta verse como una sola red,
-   no 4 islas.
+   LAYOUT — hub-y-satélites por estructura (como la referencia
+   "El POT Implícito"): cada una de las 4 estructuras tiene un centro
+   propio bien separado de los otros 3, con su nodo de mayor grado en
+   el centro y el resto de sus componentes distribuidos en anillos
+   concéntricos alrededor — así las líneas hub→satélite quedan como
+   rayos bien visibles, sin nodos apilados unos sobre otros.
+   Los "vacío" (ausencias entre estructuras) quedan como líneas largas
+   que cruzan de un centro a otro, igual que en la referencia.
    ========================================================== */
-const CANVAS = { w: 1900, h: 1650 };
+const CANVAS = { w: 2300, h: 2050 };
 const HUB_CENTERS = (() => {
-  const cx = CANVAS.w / 2, cy = CANVAS.h / 2, R = 130;
-  const centers = {};
-  ["e1","e2","e3","e4"].forEach((cat, i) => {
-    const angle = (Math.PI / 2) * i - Math.PI / 4;
-    centers[cat] = { x: cx + Math.cos(angle) * R, y: cy + Math.sin(angle) * R };
-  });
-  return centers;
+  const cx = CANVAS.w / 2, cy = CANVAS.h / 2, R = 640;
+  // e1 arriba (teal), e2 derecha (naranja), e3 abajo (amarillo), e4 izquierda (rosa) —
+  // igual disposición en diamante que la referencia de las 4 estructuras.
+  return {
+    e1: { x: cx, y: cy - R },
+    e2: { x: cx + R, y: cy },
+    e3: { x: cx, y: cy + R },
+    e4: { x: cx - R, y: cy },
+  };
 })();
 
 function layoutNetwork() {
   const deg = computeDegrees();
   ODS_NODES.forEach(n => {
-    const center = HUB_CENTERS[n.cat];
-    const spread = 150;
-    n.x = center.x + (Math.random() - 0.5) * spread * 2;
-    n.y = center.y + (Math.random() - 0.5) * spread * 2;
     n.color = STRUCT_STYLE[n.cat].color;
-    n.vx = 0; n.vy = 0; n.fixed = false;
+    n.vx = 0; n.vy = 0; n.fixed = false; n.isMainHub = false;
     const d = deg[n.id] || 0;
     n.r = 22 + Math.pow(d, 1.35) * 10; // el tamaño real sale del grado, no de una etiqueta — hubs MUCHO más grandes que la periferia
+    n._deg = d;
   });
 
-  // Relajación por fuerzas (Fruchterman-Reingold simplificado), corrida
-  // una sola vez al cargar para que el layout inicial ya se vea como red.
   const nodes = ODS_NODES;
-  const k = 155;
-  for (let iter = 0; iter < 260; iter++) {
-    const disp = {};
-    nodes.forEach(n => { disp[n.id] = { x: 0, y: 0 }; });
 
-    for (let i = 0; i < nodes.length; i++) {
-      for (let j = i + 1; j < nodes.length; j++) {
-        const a = nodes[i], b = nodes[j];
-        let dx = a.x - b.x, dy = a.y - b.y;
-        let dist = Math.sqrt(dx * dx + dy * dy) || 0.01;
-        // la repulsión crece un poco con el tamaño real de ambos nodos, para que los
-        // hubs grandes reserven algo más de espacio propio sin separar del todo los clústeres
-        // (la resolución de colisiones de más abajo termina de destrabar superposiciones puntuales).
-        const sizeFactor = 1 + (a.r + b.r) / 160;
-        const force = (k * k * sizeFactor) / dist;
-        const ux = dx / dist, uy = dy / dist;
-        disp[a.id].x += ux * force; disp[a.id].y += uy * force;
-        disp[b.id].x -= ux * force; disp[b.id].y -= uy * force;
-      }
+  // ---- 1. Layout radial determinístico por estructura ----
+  ["e1", "e2", "e3", "e4"].forEach(cat => {
+    const center = HUB_CENTERS[cat];
+    const group = nodes.filter(n => n.cat === cat).sort((a, b) => b._deg - a._deg);
+    if (!group.length) return;
+
+    const hub = group[0];
+    hub.x = center.x; hub.y = center.y; hub.isMainHub = true;
+    const rest = group.slice(1);
+
+    // hasta 3 anillos concéntricos según grado real, para que los componentes
+    // algo conectados queden más cerca del hub y los periféricos más lejos —
+    // igual lectura visual que la referencia (satélites chicos bien separados).
+    const ringHigh = rest.filter(n => n._deg >= 3);
+    const ringMid  = rest.filter(n => n._deg === 1 || n._deg === 2);
+    const ringLow  = rest.filter(n => n._deg === 0);
+
+    const GAP = 34;
+    function placeRing(ringNodes, minRadius, angleSpan, angleStart) {
+      if (!ringNodes.length) return minRadius;
+      const sumDiam = ringNodes.reduce((s, n) => s + 2 * n.r + GAP, 0);
+      const neededR = Math.max(minRadius, sumDiam / angleSpan);
+      ringNodes.forEach((n, i) => {
+        const angle = angleStart + ((i + 0.5) / ringNodes.length) * angleSpan;
+        n.x = center.x + Math.cos(angle) * neededR;
+        n.y = center.y + Math.sin(angle) * neededR;
+      });
+      return neededR;
     }
-    RAW_EDGES.forEach(e => {
-      const a = nodeById(e.s), b = nodeById(e.t);
-      if (!a || !b) return;
-      let dx = a.x - b.x, dy = a.y - b.y;
-      let dist = Math.sqrt(dx * dx + dy * dy) || 0.01;
-      const force = (dist * dist) / k * 0.5;
-      const ux = dx / dist, uy = dy / dist;
-      disp[a.id].x -= ux * force; disp[a.id].y -= uy * force;
-      disp[b.id].x += ux * force; disp[b.id].y += uy * force;
-    });
-    // gravedad MUY débil hacia el centro de su propia estructura — apenas lo suficiente
-    // para que el color siga leyéndose agrupado, sin volver a separar la red en 4 islas.
-    nodes.forEach(n => {
-      const c = HUB_CENTERS[n.cat];
-      disp[n.id].x += (c.x - n.x) * 0.008;
-      disp[n.id].y += (c.y - n.y) * 0.008;
-    });
-    const temp = Math.max(1, 14 * (1 - iter / 260));
-    nodes.forEach(n => {
-      const d = disp[n.id];
-      const dist = Math.sqrt(d.x * d.x + d.y * d.y) || 0.01;
-      const capped = Math.min(dist, temp * 10);
-      n.x += (d.x / dist) * capped;
-      n.y += (d.y / dist) * capped;
-      n.x = Math.max(60, Math.min(CANVAS.w - 60, n.x));
-      n.y = Math.max(60, Math.min(CANVAS.h - 60, n.y));
-    });
-  }
 
-  // ---- Resolución de colisiones por radio real ----
-  // El layout de fuerzas de arriba repele por PUNTOS, no por el tamaño real de cada
-  // bola — con hubs mucho más grandes que la periferia eso deja círculos superpuestos.
-  // Estas pasadas adicionales separan cualquier par de nodos cuya distancia sea menor
-  // que la suma de sus radios (+margen), sin mover la red entera: solo destraba
-  // superposiciones puntuales, así el mapa se ve mucho menos desordenado/cruzado.
-  const PAD = 10;
-  for (let pass = 0; pass < 140; pass++) {
+    // ángulo "hacia afuera" del centro del canvas: cada estructura abre su
+    // abanico de satélites hacia el borde del lienzo, no hacia el centro,
+    // para que las 4 estructuras no se invadan entre sí. El ancho del abanico
+    // escala con la cantidad de satélites — pocos nodos = abanico angosto
+    // apuntando derecho hacia afuera; muchos nodos = abanico más amplio.
+    const cx = CANVAS.w / 2, cy = CANVAS.h / 2;
+    const outward = Math.atan2(center.y - cy, center.x - cx) || 0;
+    const n = rest.length;
+    const angleSpan = Math.min(Math.PI * 1.15, Math.PI * 0.32 + n * (Math.PI / 11));
+    const angleStart = outward - angleSpan / 2;
+
+    const rHigh = placeRing(ringHigh, hub.r + 110, angleSpan, angleStart);
+    const rMid = placeRing(ringMid, rHigh + (ringHigh[0] ? Math.max(...ringHigh.map(n => n.r)) : 0) + 90, angleSpan, angleStart);
+    placeRing(ringLow, rMid + (ringMid[0] ? Math.max(...ringMid.map(n => n.r)) : 0) + 80, angleSpan, angleStart);
+  });
+
+  // ---- 2. Resolución de colisiones por radio real (red de seguridad) ----
+  // El layout radial ya evita casi toda superposición por diseño; esta pasada
+  // solo destraba los pocos casos límite entre anillos vecinos o estructuras
+  // cercanas, sin mover la red entera.
+  const PAD = 12;
+  for (let pass = 0; pass < 120; pass++) {
     let anyOverlap = false;
     for (let i = 0; i < nodes.length; i++) {
       for (let j = i + 1; j < nodes.length; j++) {
         const a = nodes[i], b = nodes[j];
+        if (a.isMainHub && b.isMainHub) continue; // no mover los 4 hubs principales entre sí
         let dx = b.x - a.x, dy = b.y - a.y;
         let dist = Math.sqrt(dx * dx + dy * dy) || 0.01;
         const minDist = a.r + b.r + PAD;
@@ -414,12 +411,7 @@ function layoutNetwork() {
         }
       }
     }
-    // suave atracción de vuelta al centro de su estructura para que no se dispersen
-    // hacia las esquinas del canvas al resolver colisiones
     nodes.forEach(n => {
-      const c = HUB_CENTERS[n.cat];
-      n.x += (c.x - n.x) * 0.01;
-      n.y += (c.y - n.y) * 0.01;
       n.x = Math.max(n.r + 20, Math.min(CANVAS.w - n.r - 20, n.x));
       n.y = Math.max(n.r + 20, Math.min(CANVAS.h - n.r - 20, n.y));
     });
@@ -599,7 +591,7 @@ function drawNodes(svg) {
     circle.setAttribute("filter", "url(#glow-" + node.color.replace("#", "") + ")");
 
     const fo = document.createElementNS(SVG_NS, "foreignObject");
-    const size = node.r * 1.9;
+    const size = node.r * 2.2;
     fo.setAttribute("x", node.x - size / 2); fo.setAttribute("y", node.y - size / 2);
     fo.setAttribute("width", size); fo.setAttribute("height", size);
 
@@ -609,11 +601,11 @@ function drawNodes(svg) {
 
     const iconEl = document.createElementNS(XHTML_NS, "i");
     iconEl.setAttribute("class", "fa-solid " + node.icon + " node-icon");
-    iconEl.setAttribute("style", `color:${node.color}; font-size:${node.r * 0.44}px; margin:1px 0;`);
+    iconEl.setAttribute("style", `color:${node.color}; font-size:${node.r * 0.4}px; margin:1px 0;`);
 
     const nameEl = document.createElementNS(XHTML_NS, "div");
     nameEl.setAttribute("class", "node-name");
-    nameEl.setAttribute("style", `font-size:${Math.max(node.r * 0.145, 6)}px; padding:0 3px; font-weight:600; color:var(--text-dim); line-height:1.05; white-space:pre-line;`);
+    nameEl.setAttribute("style", `font-size:${Math.max(node.r * 0.145, 7)}px; padding:0 3px; font-weight:700; color:#e7eaf2; line-height:1.15; white-space:pre-line;`);
     nameEl.textContent = node.name;
 
     const fuenteDot = document.createElementNS(XHTML_NS, "div");
