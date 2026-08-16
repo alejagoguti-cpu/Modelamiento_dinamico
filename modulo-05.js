@@ -1,5 +1,5 @@
 let upzData = [];
-let barrios Data = [];
+let barrosData = [];
 let currentSelection = null;
 const humedales = [
   {id: 'h1', nombre: "Humedal Burro", lat: 4.644296801427965, lng: -74.15052710000018, area: 18.5},
@@ -16,8 +16,8 @@ L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}
 
 let upzLayers = {};
 let upzLabels = {};
-let barrios Layers = {};
-let barrio Labels = {};
+let barriosLayers = {};
+let barrioLabels = {};
 let humedalLayers = {};
 let humedalMarkers = {};
 let eepNodos = [];
@@ -55,7 +55,7 @@ fetch('upz_bogota.geojson')
 fetch('barrios_bogota.geojson')
   .then(r => r.json())
   .then(data => {
-    barrios Data = data.features.map(f => f.properties);
+    barrosData = data.features.map(f => f.properties);
     
     data.features.forEach((feature, idx) => {
       const props = feature.properties;
@@ -69,7 +69,7 @@ fetch('barrios_bogota.geojson')
       });
       
       const marker = L.marker([coords[1], coords[0]], { icon: labelDiv, interactive: false });
-      barrio Labels[props.id] = marker;
+      barrioLabels[props.id] = marker;
     });
   });
 
@@ -93,7 +93,7 @@ function renderItemList() {
       container.appendChild(div);
     });
   } else if (currentMode === 'meso') {
-    barrios Data.forEach(barrio => {
+    barrosData.forEach(barrio => {
       const div = document.createElement('div');
       div.className = 'upz-item' + (currentSelection?.id === barrio.id ? ' active' : '');
       div.innerHTML = `${barrio.codigo} - ${barrio.nombre}`;
@@ -384,7 +384,7 @@ document.querySelectorAll('.tab').forEach(btn => {
     
     const scale = this.dataset.scale;
     
-    Object.values(barrio Labels).forEach(marker => {
+    Object.values(barrioLabels).forEach(marker => {
       try { map.removeLayer(marker); } catch(e) {}
     });
     Object.values(humedalLayers).forEach(layer => {
@@ -409,7 +409,7 @@ document.querySelectorAll('.tab').forEach(btn => {
     } else if (scale === 'meso') {
       currentMode = 'meso';
       map.setView([4.60, -74.08], 12);
-      Object.values(barrio Labels).forEach(marker => marker.addTo(map));
+      Object.values(barrioLabels).forEach(marker => marker.addTo(map));
       Object.values(upzLabels).forEach(marker => {
         try { map.removeLayer(marker); } catch(e) {}
       });
