@@ -1205,6 +1205,15 @@ function renderPotStructure() {
   drawPnEdges(svg);
   drawPnNodes(svg);
   drawPnOdsBadges(svg);
+
+  /* Agrupa únicamente el contenido visual; las definiciones SVG quedan fuera. */
+  const zoomLayer = document.createElementNS(SVG_NS, "g");
+  zoomLayer.setAttribute("id", "pnZoomLayer");
+  [...svg.children].forEach(child => {
+    if (child.tagName.toLowerCase() !== "defs") zoomLayer.appendChild(child);
+  });
+  svg.appendChild(zoomLayer);
+  updatePnZoom();
 }
 
 /* -------- clúster ODS en miniatura (una por grupo, oculto hasta activarse) --------
@@ -1370,6 +1379,31 @@ function hidePnEdgeInfo() {
   document.querySelectorAll(".pn-edge-group").forEach(el => el.classList.remove("pn-edge-selected"));
 }
 
+/* -------- zoom interno de la segunda red -------- */
+let pnZoomScale = 1;
+const PN_ZOOM_MIN = 0.75;
+const PN_ZOOM_MAX = 2.25;
+const PN_VIEWBOX_CENTER_X = 400;
+const PN_VIEWBOX_CENTER_Y = 310;
+
+function updatePnZoom() {
+  const layer = document.getElementById("pnZoomLayer");
+  if (!layer) return;
+  layer.setAttribute("transform", `translate(${PN_VIEWBOX_CENTER_X} ${PN_VIEWBOX_CENTER_Y}) scale(${pnZoomScale}) translate(${-PN_VIEWBOX_CENTER_X} ${-PN_VIEWBOX_CENTER_Y})`);
+  const level = document.getElementById("pnZoomLevel");
+  if (level) level.textContent = `${Math.round(pnZoomScale * 100)}%`;
+}
+
+function changePnZoom(delta) {
+  pnZoomScale = Math.min(PN_ZOOM_MAX, Math.max(PN_ZOOM_MIN, +(pnZoomScale + delta).toFixed(2)));
+  updatePnZoom();
+}
+
+function setupPnZoom() {
+  document.getElementById("pnZoomIn")?.addEventListener("click", () => changePnZoom(0.25));
+  document.getElementById("pnZoomOut")?.addEventListener("click", () => changePnZoom(-0.25));
+}
+
 /* -------- conecta el panel derecho "1. Relaciones que favorecen los ODS" -------- */
 function setupPnPanel() {
   document.querySelectorAll(".pn-finding-item[data-pn-finding]").forEach(btn => {
@@ -1427,5 +1461,6 @@ document.addEventListener("DOMContentLoaded", () => {
   setupSidePanels();
   renderPotStructure();
   setupPnPanel();
+  setupPnZoom();
   setupSidebarTooltip();
 });
