@@ -1,227 +1,333 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RAPOT · Una ciudad que no cabe en el POT</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="stylesheet" href="modulo-02.css">
-</head>
-<body>
-<div class="app">
+:root {
+  --bg: #0a0e17;
+  --sidebar: #0c1120;
+  --panel: #121828;
+  --panel-alt: #0f1522;
+  --border: rgba(255,255,255,0.07);
+  --border-soft: rgba(255,255,255,0.04);
+  --text: #e7eaf2;
+  --text-dim: #8891a5;
+  --text-faint: #5a6274;
+  --teal: #2fd4c8;
+  --teal-dim: rgba(47,212,200,0.12);
+  --blue: #5b8def;
+  --purple: #a276f2;
+  --green: #4ade80;
+  --yellow: #f5c945;
+  --pink: #f76fb0;
+  --orange: #ef9552;
+  --red: #ef4444;
+}
 
-  <aside class="sidebar sidebar-icons-only">
-    <div class="brand-icon"><i class="fa-solid fa-diagram-project"></i></div>
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-    <nav class="icon-nav">
-      <a href="dashboard.html" class="icon-nav-item" title="Dashboard"><i class="fa-solid fa-house"></i></a>
-      <a href="modulo-01.html" class="icon-nav-item" title="Construir la Red"><i class="fa-solid fa-diagram-project"></i></a>
-      <a href="modulo-02.html" class="icon-nav-item active" title="Medir la Red"><i class="fa-solid fa-chart-simple"></i></a>
-      <a href="modulo-03.html" class="icon-nav-item" title="Discurso vs Realidad"><i class="fa-solid fa-eye"></i></a>
-      <a href="modulo-04.html" class="icon-nav-item" title="Macromodelos"><i class="fa-solid fa-bullseye"></i></a>
-      <a href="modulo-05.html" class="icon-nav-item" title="Lo que no está"><i class="fa-solid fa-magnifying-glass"></i></a>
-      <a href="modulo-06.html" class="icon-nav-item" title="POT ↔ ODS"><i class="fa-solid fa-earth-americas"></i></a>
-      <a href="modulo-07.html" class="icon-nav-item" title="Simulador"><i class="fa-solid fa-flask"></i></a>
-      <a href="modulo-08.html" class="icon-nav-item" title="Modelo Propio"><i class="fa-solid fa-city"></i></a>
-    </nav>
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+}
 
-    <div class="icon-nav-footer">
-      <a href="configuracion.html" class="icon-nav-item" title="Configuración"><i class="fa-solid fa-gear"></i></a>
-      <a href="demo.html" class="icon-nav-item" title="Salir"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
-    </div>
-  </aside>
+.app { display: flex; min-height: 100vh; }
 
-  <main class="main">
+/* SIDEBAR */
+.sidebar {
+  width: 230px; flex-shrink: 0; background: var(--sidebar);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column; padding: 20px 14px;
+}
+.brand { display: flex; align-items: center; gap: 10px; padding: 6px 6px 22px 6px; }
+.brand .mark {
+  width: 32px; height: 32px; border-radius: 9px;
+  background: linear-gradient(135deg, var(--teal), #1a9d94);
+  display: flex; align-items: center; justify-content: center;
+  color: #06110f; font-size: 15px;
+}
+.brand span { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 16px; letter-spacing: 0.5px; }
+.nav-group { margin-bottom: 20px; }
+.nav-label { font-size: 10.5px; font-weight: 700; letter-spacing: 1px; color: var(--text-faint); padding: 0 10px; margin-bottom: 8px; }
+.nav-item {
+  display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 8px;
+  color: var(--text-dim); font-size: 13px; font-weight: 500; cursor: pointer;
+  transition: background .15s, color .15s; white-space: nowrap; text-decoration: none;
+}
+.nav-item i { width: 16px; text-align: center; font-size: 13px; }
+.nav-item .num { font-size: 11px; font-weight: 700; width: 16px; text-align: center; color: var(--text-faint); }
+.nav-item:hover { background: rgba(255,255,255,0.04); color: var(--text); }
+.nav-item.active { background: var(--teal-dim); color: var(--teal); }
+.nav-item.active .num { color: var(--teal); }
+.sidebar-footer { margin-top: auto; border-top: 1px solid var(--border); padding-top: 12px; display: flex; align-items: center; gap: 10px; }
 
-    <div class="topbar">
-      <div class="topbar-brand"><i class="fa-solid fa-circle-nodes"></i> Bogotá Viva: Simulación Urbana</div>
-      <div class="topbar-actions">
-        <div class="icon-btn"><i class="fa-regular fa-bell"></i><span class="dot"></span></div>
-        <div class="icon-btn"><i class="fa-solid fa-sun"></i></div>
-        <div class="icon-btn"><i class="fa-solid fa-user"></i></div>
-      </div>
-    </div>
+/* SIDEBAR — solo íconos, sin texto (estilo referencia) */
+.sidebar.sidebar-icons-only {
+  width: 64px; align-items: center; padding: 18px 0;
+}
+.brand-icon {
+  width: 34px; height: 34px; border-radius: 10px; margin-bottom: 26px;
+  background: linear-gradient(135deg, var(--teal), #1a9d94);
+  display: flex; align-items: center; justify-content: center;
+  color: #06110f; font-size: 15px;
+}
+.icon-nav { display: flex; flex-direction: column; gap: 8px; align-items: center; }
+.icon-nav-item {
+  width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center;
+  color: var(--text-dim); font-size: 15px; text-decoration: none; transition: background .15s, color .15s;
+}
+.icon-nav-item:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+.icon-nav-item.active { background: var(--teal-dim); color: var(--teal); }
+.icon-nav-footer { margin-top: auto; display: flex; flex-direction: column; gap: 8px; align-items: center; }
+.avatar-sm {
+  width: 32px; height: 32px; border-radius: 50%; background: var(--panel); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: var(--text-dim); flex-shrink: 0;
+}
+.user-meta { line-height: 1.3; flex: 1; min-width: 0; }
+.user-meta .name { font-size: 12.5px; font-weight: 600; color: var(--text); }
+.user-meta .role { font-size: 11px; color: var(--text-faint); }
+.logout-btn { background: none; border: none; color: var(--text-faint); font-size: 13px; cursor: pointer; padding: 4px; text-decoration: none; }
+.logout-btn:hover { color: var(--pink); }
 
-    <div class="welcome">
-      <div class="welcome-eyebrow">INGENIERÍA INVERSA</div>
-      <h2>Una ciudad que no cabe en el POT</h2>
-      <p class="welcome-sub">Ingeniería inversa al Modelo de Ocupación Territorial (MOT)</p>
-    </div>
+/* MAIN */
+.main { flex: 1; padding: 22px 34px 50px; min-width: 0; overflow-y: auto; }
+.topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 26px; }
+.topbar h1 { font-family: 'Space Grotesk', sans-serif; font-size: 19px; font-weight: 600; }
+.topbar-brand { font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 10px; }
+.topbar-brand i { color: var(--teal); font-size: 15px; }
+.topbar-actions { display: flex; align-items: center; gap: 14px; }
+.search-box { display: flex; align-items: center; gap: 8px; background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 8px 14px; color: var(--text-faint); font-size: 13px; width: 230px; }
+.search-box i { font-size: 12px; }
+.icon-btn { width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: var(--panel); border: 1px solid var(--border); color: var(--text-dim); font-size: 13px; position: relative; }
+.icon-btn .dot { position: absolute; top: 6px; right: 7px; width: 6px; height: 6px; border-radius: 50%; background: var(--pink); }
 
-    <div class="quote-card">
-      <div class="quote-mark">&ldquo;</div>
-      <p>Realizamos una ingeniería inversa al Modelo de Ocupación Territorial (MOT). Desarmamos el decreto para ver cómo interactúan realmente sus partes en el territorio.</p>
-    </div>
+.welcome { margin-bottom: 20px; }
+.welcome-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; color: var(--orange); margin-bottom: 6px; position: relative; padding-left: 14px; }
+.welcome-eyebrow::before { content: ""; position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 8px; height: 2px; background: var(--orange); }
+.welcome h2 { font-family: 'Space Grotesk', sans-serif; font-size: 30px; font-weight: 700; margin-bottom: 8px; background: linear-gradient(90deg, #fff, var(--orange)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+.welcome-sub { color: var(--text-dim); font-size: 14px; line-height: 1.6; max-width: 700px; }
+.welcome p { color: var(--text-dim); font-size: 13.5px; line-height: 1.6; max-width: 1100px; }
 
-    <!-- RED -->
-    <div class="network-section">
-      <div class="network-header">
-        <h3><i class="fa-solid fa-sitemap"></i> Red de las 4 Estructuras — hubs por peso real en artículos</h3>
-        <div class="network-controls">
-          <button class="control-btn active" onclick="filterNetwork('all')">Todos</button>
-          <button class="control-btn" onclick="filterNetwork('vacio')">Vacíos</button>
-          <button class="control-btn" onclick="filterNetwork('directa')">Directas</button>
-          <button class="control-btn" onclick="filterNetwork('indirecta')">Indirectas</button>
-          <button class="control-btn" onclick="filterNetwork('e1')">E. Ecológica</button>
-          <button class="control-btn" onclick="filterNetwork('e2')">E. Funcional</button>
-          <button class="control-btn" onclick="filterNetwork('e3')">E. Socioeconómica</button>
-          <button class="control-btn" onclick="filterNetwork('e4')">E. Patrimonio</button>
-        </div>
-      </div>
+.quote-card {
+  background: linear-gradient(135deg, rgba(239,149,82,0.08), rgba(239,149,82,0.01));
+  border: 1px solid rgba(239,149,82,0.25); border-radius: 12px; padding: 18px 20px 18px 46px;
+  margin-bottom: 22px; position: relative; max-width: 760px;
+}
+.quote-card .quote-mark { position: absolute; left: 16px; top: 6px; font-size: 32px; font-family: Georgia, serif; color: var(--orange); opacity: 0.6; line-height: 1; }
+.quote-card p { font-size: 13px; color: var(--text-dim); line-height: 1.6; }
 
-      <div class="network-viz-wrap">
-        <div class="network-canvas">
-          <svg id="networkViz" viewBox="250 150 2500 2700" preserveAspectRatio="xMidYMid meet"></svg>
-          <div class="zoom-controls">
-            <button id="zoomIn" title="Acercar"><i class="fa-solid fa-plus"></i></button>
-            <button id="zoomOut" title="Alejar"><i class="fa-solid fa-minus"></i></button>
-            <button id="zoomReset" title="Restablecer"><i class="fa-solid fa-compress"></i></button>
-          </div>
-        </div>
+/* NOTA METODOLÓGICA */
+.method-note {
+  background: linear-gradient(135deg, rgba(47,212,200,0.06), rgba(47,212,200,0.01));
+  border: 1px solid rgba(47,212,200,0.25);
+  border-radius: 12px; padding: 18px 20px; margin-bottom: 24px;
+}
+.method-note-header { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 13px; color: var(--teal); display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.method-note p { font-size: 12.5px; color: var(--text-dim); line-height: 1.6; margin-bottom: 12px; }
+.method-note p:last-child { margin-bottom: 0; }
+.method-legend { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.method-note-foot { font-style: italic; }
 
-        <div class="network-sidebar">
-          <aside class="network-legend" id="networkLegend">
-            <div class="legend-title">Tipos de relación</div>
-            <label class="legend-item" data-mode="type" data-type="directa">
-              <input type="checkbox" checked><span class="legend-swatch swatch-directa-neutral"></span> Directa (respaldo real)
-            </label>
-            <label class="legend-item" data-mode="type" data-type="indirecta">
-              <input type="checkbox" checked><span class="legend-swatch swatch-indirecta-neutral"></span> Indirecta (inferencia)
-            </label>
-            <label class="legend-item legend-item-minor" data-mode="type" data-type="vacio">
-              <input type="checkbox" checked><span class="legend-swatch swatch-vacio-neutral"></span> Vacío (ausencia documentada)
-            </label>
+.fuente-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 10.5px; font-weight: 700; padding: 4px 9px; border-radius: 20px; white-space: nowrap;
+}
 
-            <div class="legend-divider"></div>
-            <div class="legend-title">Color de la línea</div>
-            <div class="legend-static-item"><span class="legend-swatch" style="background:#f5a623;border-color:#f5a623;"></span> Soporte (sostiene / habilita)</div>
-            <div class="legend-static-item"><span class="legend-swatch" style="background:#5b8def;border-color:#5b8def;"></span> Resiliencia (conectividad ecosistémica / clima)</div>
+/* INSIGHT STATS */
+.ods-insight-stats { display: grid; grid-template-columns: repeat(8, 1fr); gap: 14px; margin-bottom: 20px; }
+.insight-card {
+  background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 14px;
+  display: flex; align-items: center; gap: 10px; cursor: pointer;
+  transition: border-color .2s, background-color .2s, transform .15s;
+}
+.insight-card:hover { border-color: var(--insight-color, var(--teal)); transform: translateY(-1px); }
+.insight-card.active {
+  border-color: var(--insight-color, var(--teal));
+  background: color-mix(in srgb, var(--insight-color, var(--teal)) 14%, var(--panel));
+  box-shadow: 0 0 0 1px var(--insight-color, var(--teal)) inset;
+}
+.insight-icon {
+  width: 38px; height: 38px; border-radius: 9px; display: flex; align-items: center; justify-content: center;
+  font-size: 15px; flex-shrink: 0;
+  background: color-mix(in srgb, var(--insight-color, var(--teal)) 22%, transparent);
+  color: var(--insight-color, var(--teal));
+}
+.insight-title { font-size: 11.5px; font-weight: 700; color: var(--text); line-height: 1.25; }
 
-            <div class="legend-divider"></div>
-            <div class="legend-title">Categorías del POT</div>
-            <label class="legend-item" data-mode="cat" data-cat="e1"><input type="checkbox" checked><span class="legend-swatch swatch-e1"></span> 1. Ecológica Principal</label>
-            <label class="legend-item" data-mode="cat" data-cat="e2"><input type="checkbox" checked><span class="legend-swatch swatch-e2"></span> 2. Funcional y del Cuidado</label>
-            <label class="legend-item" data-mode="cat" data-cat="e3"><input type="checkbox" checked><span class="legend-swatch swatch-e3"></span> 3. Socioeconómica Creativa</label>
-            <label class="legend-item" data-mode="cat" data-cat="e4"><input type="checkbox" checked><span class="legend-swatch swatch-e4"></span> 4. Integradora de Patrimonio</label>
-            <div class="struct-count" id="struct-e1"></div>
-            <div class="struct-count" id="struct-e2"></div>
-            <div class="struct-count" id="struct-e3"></div>
-            <div class="struct-count" id="struct-e4"></div>
+/* METRICS ROW */
+.metrics-row { display: grid; grid-template-columns: repeat(7, 1fr); gap: 14px; margin-bottom: 24px; }
+.metric-box { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 14px; text-align: center; }
+.metric-box.highlight-bad { border-color: rgba(239,68,68,0.35); background: linear-gradient(135deg, rgba(239,68,68,0.08), var(--panel)); }
+.metric-box.highlight-good { border-color: rgba(47,212,200,0.35); background: linear-gradient(135deg, rgba(47,212,200,0.08), var(--panel)); }
+.metric-value { font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700; color: var(--text); }
+.metric-label { font-size: 10.5px; color: var(--text-faint); margin-top: 4px; line-height: 1.3; }
 
-            <div class="legend-divider"></div>
-            <div class="legend-hint">Scroll: zoom · Arrastrar fondo: mover lienzo · Clic en bola: ficha documental · Doble clic: apagar/encender · Triple clic: ver solo su flujo · Clic en línea: ver el análisis.</div>
-          </aside>
-        </div>
-      </div>
-    </div>
+/* NETWORK SECTION */
+.network-section { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 28px; }
+.network-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
+.network-header h3 { font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 8px; }
+.network-header h3 i { color: var(--teal); font-size: 13px; }
+.network-controls { display: flex; gap: 8px; flex-wrap: wrap; }
+.control-btn {
+  background: var(--panel-alt); border: 1px solid var(--border-soft); color: var(--text-dim);
+  padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all .2s;
+}
+.control-btn:hover, .control-btn.active { border-color: var(--teal); color: var(--teal); background: rgba(47,212,200,0.05); }
 
-    <!-- PANEL DE INFO: ARISTA -->
-    <div class="edge-info-panel" id="edgeInfoPanel">
-      <div class="edge-info-header">
-        <span id="edgeInfoTitle">Relación</span>
-        <button class="edge-info-close" id="edgeInfoClose" type="button" aria-label="Cerrar">&times;</button>
-      </div>
-      <div class="edge-info-type" id="edgeInfoType"></div>
-      <div id="edgeInfoFuente" style="margin-bottom:10px;"></div>
-      <div class="edge-info-quote" id="edgeInfoQuote"></div>
-      <div class="edge-info-analisis" id="edgeInfoAnalisis"></div>
-      <div class="edge-info-page" id="edgeInfoPage"></div>
-    </div>
+.swatch-tag { display: inline-block; width: 14px; height: 14px; border-radius: 3px; margin-right: 6px; vertical-align: middle; }
+.swatch-e1 { background: #5cd6d1; } .swatch-e2 { background: #ef9f54; } .swatch-e3 { background: #fac47b; } .swatch-e4 { background: #fb8d84; }
 
-    <!-- PANEL DE INFO: NODO -->
-    <div class="edge-info-panel node-info-panel" id="nodeInfoPanel">
-      <div class="edge-info-header">
-        <span id="nodeInfoTitle">Componente</span>
-        <button class="edge-info-close" id="nodeInfoClose" type="button" aria-label="Cerrar">&times;</button>
-      </div>
-      <div class="edge-info-type" id="nodeInfoStruct"></div>
-      <div id="nodeInfoFuente" style="margin-bottom:10px;"></div>
-      <div class="edge-info-page" id="nodeInfoArticulo" style="margin-bottom:8px;"></div>
-      <div class="edge-info-quote" id="nodeInfoQuote"></div>
-      <div class="edge-info-analisis" id="nodeInfoNota"></div>
-      <div class="node-info-mapa" id="nodeInfoMapaWrap" style="display:none;">
-        <a id="nodeInfoMapa" href="#" target="_blank" rel="noopener"><i class="fa-solid fa-map-location-dot"></i> Ver cartografía / geoportal oficial</a>
-      </div>
-    </div>
+/* NETWORK CANVAS + ZOOM */
+.network-viz-wrap { display: flex; gap: 16px; align-items: stretch; }
+.network-canvas { position: relative; flex: 1; min-width: 0; align-self: flex-start; }
+#networkViz {
+  width: 100%; height: 680px; background: radial-gradient(circle at 50% 42%, #0d1220 0%, #070a12 100%);
+  border: 1px solid var(--border); border-radius: 8px;
+  display: block; cursor: grab;
+}
+#networkViz.panning { cursor: grabbing; }
 
-    <!-- TABLA DE RELACIONES (generada dinámicamente — antes había una tabla estática que no coincidía con los datos reales) -->
-    <div class="analysis-container">
-      <div class="analysis-card full-width">
-        <div class="card-header">
-          <h3><i class="fa-solid fa-table"></i> Tabla completa de relaciones</h3>
-        </div>
-        <div class="matrix-container">
-          <div class="matrix-row header">
-            <div class="matrix-cell header-cell">Estructura</div>
-            <div class="matrix-cell header-cell">Relación</div>
-            <div class="matrix-cell header-cell">Tipo</div>
-            <div class="matrix-cell header-cell">Fuente</div>
-            <div class="matrix-cell header-cell">Artículo / página</div>
-            <div class="matrix-cell header-cell">Análisis</div>
-          </div>
-          <div id="matrixRows"></div>
-        </div>
-      </div>
-    </div>
+.zoom-controls { position: absolute; bottom: 14px; right: 14px; display: flex; flex-direction: column; gap: 6px; }
+.zoom-controls button {
+  width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border);
+  background: rgba(18,24,40,0.85); color: var(--text-dim); font-size: 13px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px);
+}
+.zoom-controls button:hover { border-color: var(--teal); color: var(--teal); }
 
-    <!-- HALLAZGOS -->
-    <div class="synergies-section">
-      <div class="synergies-grid">
-        <div class="synergy-card conflict">
-          <div class="synergy-icon"><i class="fa-solid fa-plane"></i></div>
-          <div class="synergy-content">
-            <h4>Red de mundo pequeño, no de sistema dinámico</h4>
-            <ul>
-              <li>Sobre las 45 relaciones documentadas por el equipo (hoja "Matriz completa"), <strong>0 son puentes reales entre estructuras</strong> — las 45 son internas a EEP, EFC, ESECI o EIP. Cada estructura es densa hacia adentro y prácticamente aislada hacia afuera.</li>
-              <li>El propio Excel del equipo corrobora esto de forma independiente: la hoja "Resumen" registra "Relaciones verificadas intersistema" = 0 en las 4 estructuras.</li>
-              <li>Documentamos 7 vacíos de articulación explícitos entre EEP/EFC/ESECI/EIP frente a 0 puentes reales confirmados — la proporción es de mundo pequeño: hubs grandes conectados entre sí dentro de su propio "clúster", casi sin aristas hacia los hubs de los otros tres.</li>
-            </ul>
-          </div>
-        </div>
-        <div class="synergy-card success">
-          <div class="synergy-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
-          <div class="synergy-content">
-            <h4>General vs. particular</h4>
-            <ul>
-              <li>El POT nombra por su <strong>nombre propio</strong> a la Reserva Thomas van der Hammen (Art.7 y Art.50), pero trata a "Humedales" como categoría genérica de 39 conceptos al mismo nivel de detalle — sin distinguir uno de los 17 humedales oficiales de Bogotá.</li>
-              <li>Pese a ese tratamiento genérico, Humedales termina siendo el <strong>hub de mayor grado real de toda la red</strong> (6 conexiones) — el componente más citado no es el más nombrado con precisión.</li>
-            </ul>
-          </div>
-        </div>
-        <div class="synergy-card conflict">
-          <div class="synergy-icon"><i class="fa-solid fa-draw-polygon"></i></div>
-          <div class="synergy-content">
-            <h4>Polígonos que se presentan fijos, pero son móviles</h4>
-            <ul>
-              <li>Art. 12, parágrafo 2: cuando se "sustraen o realinderan" predios de suelo de protección, cambian automáticamente de categoría — el límite es una ficción jurídico-administrativa, no un límite ecológico fijo.</li>
-              <li>Art. 573-574 habilitan a la SDP a corregir los mapas oficiales por resolución (sin pasar por el Concejo) — confirmado en la práctica con la Resolución 1488/2023. El territorio real se desalinea del mapa constantemente, y el mapa se "corrige" después.</li>
-            </ul>
-          </div>
-        </div>
-        <div class="synergy-card success">
-          <div class="synergy-icon"><i class="fa-solid fa-scale-unbalanced"></i></div>
-          <div class="synergy-content">
-            <h4>La ESECI no tiene lógica sistémica propia</h4>
-            <ul>
-              <li>Solo 2 artículos (100-101) en el capítulo de Estructuras Territoriales, frente a 39 de la EEP, 12 de la EFC y 8 de la EIP — y aun así aporta 9 conceptos y 9 relaciones documentadas en la Matriz completa, todas internas a sí misma.</li>
-              <li>Su desarrollo real vive disperso en el Libro III como "Áreas de Actividad" — zonificación de usos del suelo, no componentes protegidos con su propia lógica ecológica/social como las otras 3 estructuras.</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
+.network-sidebar { width: 220px; flex-shrink: 0; display: flex; flex-direction: column; gap: 16px; }
+.network-legend {
+  width: 100%; background: var(--panel-alt); border: 1px solid var(--border-soft); border-radius: 8px;
+  padding: 16px 14px; display: flex; flex-direction: column; gap: 12px; align-self: flex-start;
+}
+.legend-title { font-family: 'Space Grotesk', sans-serif; font-size: 10.5px; font-weight: 700; letter-spacing: 1px; color: var(--text-faint); text-transform: uppercase; margin-bottom: 2px; }
+.legend-item { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--text-dim); cursor: pointer; user-select: none; transition: color .15s, opacity .15s; }
+.legend-item:hover { color: var(--text); }
+.legend-item.off { opacity: 0.4; }
+.legend-item input {
+  appearance: none; -webkit-appearance: none; width: 15px; height: 15px; border-radius: 4px;
+  border: 1px solid var(--border); background: var(--panel); cursor: pointer; position: relative; flex-shrink: 0;
+}
+.legend-item input:checked { background: var(--teal); border-color: var(--teal); }
+.legend-item input:checked::after {
+  content: ""; position: absolute; left: 4px; top: 1px; width: 4px; height: 8px;
+  border: solid #06110f; border-width: 0 2px 2px 0; transform: rotate(45deg);
+}
+.legend-swatch { width: 22px; height: 0; border-top-width: 2.5px; border-top-style: solid; flex-shrink: 0; }
+.swatch-directa { border-color: #2fd4c8; }
+.swatch-indirecta { border-color: #8b93a8; border-top-style: dashed; }
+.swatch-vacio { border-color: #ef4444; border-top-style: dashed; }
+/* Estilo de línea neutro (gris): la red solo tiene 2 colores reales — Soporte/Resiliencia —
+   así que esta sección de la leyenda muestra el TRAZO, no un color temático. */
+.swatch-directa-neutral { border-color: #b7bccb; border-top-style: solid; }
+.swatch-indirecta-neutral { border-color: #b7bccb; border-top-style: dashed; }
+.swatch-vacio-neutral { border-color: #b7bccb; border-top-style: dotted; border-top-width: 3px; }
+.legend-item-minor { opacity: 0.6; font-size: 11px; }
+.legend-static-item { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--text-dim); }
+.legend-static-item .legend-swatch { width: 15px; height: 15px; border-radius: 4px; border-top: none !important; }
+.legend-divider { height: 1px; background: var(--border-soft); margin: 2px 0; }
+.legend-hint { font-size: 10.5px; color: var(--text-faint); line-height: 1.5; }
+.struct-count { font-size: 11px; color: var(--text-dim); line-height: 1.4; }
 
-    <footer>
-      "No se trata de representar la ciudad, sino de comprenderla para transformarla." — <span>Equipo POT Reverse Engineering</span>
-    </footer>
+/* NODOS / ARISTAS SVG */
+.ods-node { cursor: grab; touch-action: none; }
+.ods-node.dragging { cursor: grabbing; }
+.ods-node .node-ring { fill: rgba(8,11,18,0.6); transition: opacity .2s; }
+.ods-node .node-inner { font-family: 'Inter', sans-serif; color: var(--text); text-align: center; transition: opacity .2s; }
+.ods-node .node-icon { line-height: 1; }
+.ods-node .node-name { color: var(--text-dim); font-weight: 600; line-height: 1.05; }
+.ods-node.ods-hub .node-ring { fill: rgba(8,11,18,0.35); }
+.ods-node.ods-hub .node-name { color: var(--text); font-size: 15px !important; }
 
-  </main>
+.ods-node.node-off .node-ring { opacity: 0.18; }
+.ods-node.node-off .node-inner { opacity: 0.28; }
+.ods-node { transition: opacity .2s; }
+.ods-node.node-focus-dim { opacity: 0.12; }
+.ods-node.node-focus-active .node-ring, .ods-node.node-selected .node-ring { filter: drop-shadow(0 0 8px #fff); }
+.ods-node.hidden-node { display: none; }
 
-</div>
+.edge-group { cursor: pointer; }
+.edge-group.hidden-edge { visibility: hidden; }
+.edge-group { transition: opacity .2s; }
+.edge-group.edge-focus-dim { opacity: 0.05; }
+.ods-edge.edge-visual { fill: none; pointer-events: none; transition: opacity .15s, filter .15s; }
+.ods-edge.edge-hit { fill: none; stroke: transparent; stroke-width: 12; pointer-events: stroke; }
+.edge-group:hover .edge-visual { opacity: 1 !important; filter: drop-shadow(0 0 4px var(--edge-color)); }
+.edge-group.edge-selected .edge-visual { opacity: 1 !important; filter: drop-shadow(0 0 6px var(--edge-color)); }
 
-<script src="modulo-02.js"></script>
+/* PANEL DE INFO (arista y nodo comparten estilo base) */
+.edge-info-panel {
+  display: none; position: fixed; top: 20px; right: 20px; width: 400px; max-height: 76vh; overflow-y: auto;
+  background: var(--panel-alt); border: 1px solid var(--teal); box-shadow: 0 0 14px rgba(47,212,200,0.15);
+  border-radius: 8px; padding: 16px; z-index: 1000;
+}
+.edge-info-panel.visible { display: block; }
+.node-info-panel { border-color: var(--purple); box-shadow: 0 0 14px rgba(162,118,242,0.15); }
+.edge-info-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+#edgeInfoTitle, #nodeInfoTitle { font-family: 'Space Grotesk', sans-serif; font-size: 13.5px; font-weight: 700; color: var(--teal); line-height: 1.3; }
+.node-info-panel #nodeInfoTitle { color: var(--purple); }
+.edge-info-close { background: none; border: none; color: var(--text-faint); font-size: 18px; line-height: 1; cursor: pointer; padding: 0 0 0 6px; flex-shrink: 0; }
+.edge-info-close:hover { color: var(--pink); }
+.edge-info-type { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; padding: 3px 8px; border-radius: 4px; margin-bottom: 10px; }
+.edge-info-quote { font-size: 12px; color: var(--text-dim); line-height: 1.55; font-style: italic; border-left: 2px solid var(--border); padding-left: 10px; margin-bottom: 10px; }
+.edge-info-analisis { font-size: 12px; color: var(--text); line-height: 1.55; margin-bottom: 10px; }
+.edge-info-page { font-size: 11px; color: var(--text-faint); font-weight: 600; }
+.node-info-mapa { margin-top: 12px; border-top: 1px solid var(--border-soft); padding-top: 10px; }
+.node-info-mapa a { color: var(--teal); font-size: 12px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+.node-info-mapa a:hover { text-decoration: underline; }
 
-</body>
-</html>
+/* ANALYSIS / MATRIX */
+.analysis-container { display: grid; gap: 20px; margin-bottom: 28px; }
+.analysis-card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+.analysis-card.full-width { grid-column: 1 / -1; }
+.card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.card-header h3 { font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 8px; }
+.card-header h3 i { color: var(--teal); font-size: 13px; }
+
+.matrix-container { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.matrix-row { display: flex; border-bottom: 1px solid var(--border-soft); cursor: pointer; }
+.matrix-row:hover { background: rgba(255,255,255,0.02); }
+.matrix-row:last-child { border-bottom: none; }
+.matrix-row.header { background: var(--panel-alt); cursor: default; }
+.matrix-row.header:hover { background: var(--panel-alt); }
+.matrix-cell { flex: 1; padding: 12px 14px; font-size: 11.5px; border-right: 1px solid var(--border-soft); display: flex; align-items: center; }
+.matrix-cell:last-child { border-right: none; }
+.matrix-cell.header-cell { font-weight: 700; color: var(--text); }
+.matrix-cell.quote-cell { flex: 2; font-size: 11px; color: var(--text-dim); line-height: 1.45; }
+.alignment-tag { padding: 4px 8px; border-radius: 4px; font-size: 10.5px; font-weight: 700; }
+.matrix-row.row-highlight { background: rgba(47,212,200,0.08); box-shadow: inset 0 0 0 1.5px rgba(47,212,200,0.45); }
+
+/* SYNERGIES */
+.synergies-section { margin-bottom: 28px; }
+.synergies-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.synergy-card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 20px; display: flex; gap: 16px; }
+.synergy-card.success { background: linear-gradient(135deg, rgba(74,222,128,0.08), rgba(74,222,128,0.02)); border-color: rgba(74,222,128,0.2); }
+.synergy-card.conflict { background: linear-gradient(135deg, rgba(247,111,176,0.08), rgba(247,111,176,0.02)); border-color: rgba(247,111,176,0.2); }
+.synergy-icon { width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; background: var(--panel-alt); color: var(--teal); }
+.synergy-card.success .synergy-icon { background: rgba(74,222,128,0.15); color: var(--green); }
+.synergy-card.conflict .synergy-icon { background: rgba(247,111,176,0.15); color: var(--pink); }
+.synergy-content h4 { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 10px; }
+.synergy-content ul { list-style: none; }
+.synergy-content li { font-size: 11.5px; color: var(--text-dim); padding: 7px 0; border-bottom: 1px solid var(--border-soft); line-height: 1.5; }
+.synergy-content li:last-child { border-bottom: none; }
+
+footer { text-align: center; margin-top: 34px; font-size: 12px; color: var(--text-faint); }
+footer span { color: var(--teal); }
+
+/* RESPONSIVE */
+@media (max-width: 1400px) {
+  .ods-insight-stats { grid-template-columns: repeat(4, 1fr); }
+  .metrics-row { grid-template-columns: repeat(4, 1fr); }
+}
+@media (max-width: 1200px) {
+  .synergies-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 900px) {
+  .network-viz-wrap { flex-direction: column; }
+  .network-legend { width: 100%; flex-direction: row; flex-wrap: wrap; align-self: stretch; }
+  #networkViz { height: 460px; }
+  .ods-insight-stats { grid-template-columns: repeat(2, 1fr); }
+  .metrics-row { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+  .main { padding: 16px 20px 40px; }
+}
