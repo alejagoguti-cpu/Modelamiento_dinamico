@@ -11,7 +11,7 @@
 </head>
 <body>
 <div class="app">
-  <aside class="insight-popup" id="eseCIInsight" aria-label="Explicación de las conexiones de ESECI">
+  <aside class="insight-popup is-hidden" id="eseCIInsight" aria-label="Explicación de las conexiones de ESECI">
     <button type="button" class="insight-close" id="closeInsight" aria-label="Cerrar explicación">×</button>
     <div class="insight-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
     <div class="insight-kicker">Hallazgo</div>
@@ -61,13 +61,6 @@
     </div>
   </aside>
   <main class="main">
-    <div class="topbar">
-      <h1>Bogotá Viva: Simulación Urbana</h1>
-      <div class="topbar-actions">
-        <div class="search-box"><i class="fa-solid fa-magnifying-glass"></i><span>Buscar concepto...</span></div>
-        <button class="icon-btn"><i class="fa-regular fa-bell"></i><span class="dot"></span></button>
-      </div>
-    </div>
 
     <div class="welcome">
       <div class="simulation-kicker">MOTOR DE SIMULACIÓN Y ACTIVIDADES</div>
@@ -186,12 +179,28 @@
               
                 </div>
             <div class="net-btns">
+              <span class="hidden-nodes-indicator is-clear" id="hiddenNodesIndicator" aria-live="polite"><i class="fa-solid fa-eye-slash"></i><span id="hiddenNodesText">Sin nodos ocultos</span></span>
               <button class="btn" id="btnFit"><i class="fa-solid fa-arrows-rotate"></i> Centrar vista</button>
             </div>
           </div>
 
           <div class="net-body">
             <div class="net-stage" id="stage">
+                <aside class="network-finding" id="networkFinding" aria-live="polite">
+                  <div class="network-finding-icon" aria-hidden="true"><i class="fa-solid fa-lightbulb"></i></div>
+                  <div class="network-finding-kicker">HALLAZGO PRINCIPAL</div>
+                  <div class="network-finding-text" id="networkFindingText">
+                    <div class="finding-art" aria-hidden="true">
+                      <div class="finding-art-orbit orbit-one"></div>
+                      <div class="finding-art-orbit orbit-two"></div>
+                      <div class="finding-art-core"><i class="fa-solid fa-lightbulb"></i></div>
+                      <span class="art-dot dot-one"></span><span class="art-dot dot-two"></span><span class="art-dot dot-three"></span><span class="art-dot dot-four"></span>
+                    </div>
+                    <h3 class="finding-card-title">ESECI articula más conexiones</h3>
+                    <p class="finding-card-summary">La ESECI tiene más conexiones porque el POT usa el ordenamiento territorial para impulsar la economía, el empleo y la productividad. Por eso relaciona cosas como la movilidad, la vivienda, los equipamientos y la conectividad con las actividades económicas. En cambio, la EEP cumple principalmente una función ambiental: ordenar y proteger el territorio a través del agua, los ecosistemas y la biodiversidad.</p>
+                    <div class="finding-card-details" id="findingCardDetails" hidden>La ESECI tiene más conexiones porque el POT usa el ordenamiento territorial para impulsar la economía, el empleo y la productividad. Por eso relaciona cosas como la movilidad, la vivienda, los equipamientos y la conectividad con las actividades económicas. En cambio, la EEP cumple principalmente una función ambiental: ordenar y proteger el territorio a través del agua, los ecosistemas y la biodiversidad.</div>
+                  </div>
+                </aside>
               <div class="zoom-controls" aria-label="Controles de zoom">
                 <button type="button" class="zoom-btn" id="btnZoomOut" aria-label="Alejar" title="Alejar">−</button>
                 <span class="zoom-value" id="zoomValue">100%</span>
@@ -242,6 +251,25 @@
             </div>
           </div>
         </div>
+
+        <section class="network-metrics-strip" aria-label="Indicadores principales de la red">
+          <div class="network-metric">
+            <div class="network-metric-icon"><i class="fa-solid fa-network-wired"></i></div>
+            <div><span class="network-metric-label">RED ACTIVA</span><strong id="metricActive">—</strong><small id="metricActiveSub">Estructuras territoriales</small></div>
+          </div>
+          <div class="network-metric">
+            <div class="network-metric-icon"><i class="fa-solid fa-share-nodes"></i></div>
+            <div><span class="network-metric-label">RELACIONES TOTALES</span><strong id="metricRelations">—</strong><small>Relaciones verificadas</small></div>
+          </div>
+          <div class="network-metric">
+            <div class="network-metric-icon"><i class="fa-solid fa-wave-square"></i></div>
+            <div><span class="network-metric-label">NODOS ACTIVOS</span><strong id="metricNodes">—</strong><small id="metricNodesSub">del total de conceptos</small></div>
+          </div>
+          <div class="network-metric connectivity-metric">
+            <div class="metric-ring"><span id="metricConnectivity">—</span></div>
+            <div><span class="network-metric-label">CONECTIVIDAD MEDIA</span><strong id="metricConnectivityValue">—</strong><small>Relaciones activas</small></div>
+          </div>
+        </section>
 
         <div class="pcard">
           <h2>Estado de la red</h2>
