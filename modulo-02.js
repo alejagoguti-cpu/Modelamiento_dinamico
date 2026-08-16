@@ -319,7 +319,7 @@ function computeDegrees() {
    ========================================================== */
 const CANVAS = { w: 3000, h: 3000 };
 const HUB_CENTERS = (() => {
-  const cx = CANVAS.w / 2, cy = CANVAS.h / 2, R = 760;
+  const cx = CANVAS.w / 2, cy = CANVAS.h / 2, R = 620;
   // e1 arriba (teal), e2 derecha (naranja), e3 abajo (amarillo), e4 izquierda (rosa) —
   // igual disposición en diamante que la referencia de las 4 estructuras.
   return {
@@ -804,7 +804,7 @@ function renderNetwork() {
   const svg = document.getElementById("networkViz");
   if (!svg) return;
   svg.innerHTML = "";
-  buildDefs(svg); buildMapBackground(svg); drawEdges(svg); drawNodes(svg); setupZoomPan(svg);
+  buildDefs(svg); drawEdges(svg); drawNodes(svg); setupZoomPan(svg);
 }
 
 /* -------- paneles de información -------- */
