@@ -973,7 +973,8 @@ function refreshEdgeVisibility() {
     group.classList.toggle("hidden-edge", hidden);
   });
   document.querySelectorAll(".ods-node").forEach(node => {
-    node.classList.toggle("hidden-node", nodeOff.has(node.dataset.id));
+    const cat = node.dataset.cat;
+    node.classList.toggle("hidden-node", nodeOff.has(node.dataset.id) || catOff.has(cat));
   });
 }
 function toggleNode(id) {
