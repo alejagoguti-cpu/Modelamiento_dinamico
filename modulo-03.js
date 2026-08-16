@@ -2609,7 +2609,13 @@ const iconSize = Math.max(28, Math.round(R * 0.52));
       g.appendChild(el('circle', { class: 'node-fill', r: R }));
 
       // icono dentro del nodo
-      const fo = el('foreignObject', { x: -R, y: -R, width: R * 2, height: R * 2 });
+      // El icono ocupa solo la franja superior del nodo; nunca invade la etiqueta.
+      const fo = el('foreignObject', {
+        x: -R * 0.82,
+        y: -R * 0.78,
+        width: R * 1.64,
+        height: R * 0.48
+      });
       const div = document.createElementNS('http://www.w3.org/1999/xhtml', 'div');
       div.setAttribute('class', 'node-icon');
       div.innerHTML = `<i class="fa-solid ${c.icon}" style="font-size:${iconSize}px"></i>`;
@@ -2617,10 +2623,11 @@ const iconSize = Math.max(28, Math.round(R * 0.52));
       g.appendChild(fo);
 
       const lines = wrapLabel(c.label);
-      const labelStep = Math.max(13, Math.min(18, R * 0.18));
-      const labelStart = Math.max(-R * 0.02, R * 0.24 - ((lines.length - 1) * labelStep) / 2);
+      const labelStep = Math.max(14, Math.min(20, R * 0.18));
+      // Las etiquetas quedan centradas en la mitad inferior del nodo.
+      const labelStart = Math.max(R * 0.18, R * 0.28 - ((lines.length - 1) * labelStep) / 2);
       lines.forEach((ln, i) => {
-        const t = el('text', { y: labelStart + i * labelStep, style: `font-size:${Math.max(14, Math.min(22, fontSize * .7))}px` });
+        const t = el('text', { y: labelStart + i * labelStep, style: `font-size:${Math.max(12, Math.min(20, fontSize * .64))}px` });
         t.textContent = ln;
         g.appendChild(t);
       });
