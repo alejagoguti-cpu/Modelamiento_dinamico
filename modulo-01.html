@@ -8,50 +8,26 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="modulo-01.css">
+<link rel="stylesheet" href="sidebar-unified.css">
 </head>
 <body>
 <div class="app">
 
   <aside class="sidebar">
-    <div class="brand">
-      <div class="mark"><i class="fa-solid fa-diagram-project"></i></div>
-      <span>RAPOT</span>
-    </div>
-
-    <div class="nav-group">
-      <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-house"></i> Dashboard</a>
-    </div>
-
-    <div class="nav-group">
-      <div class="nav-label">MÓDULOS</div>
-      <a href="modulo-01.html" class="nav-item active"><span class="num">01</span><i class="fa-solid fa-diagram-project"></i> Construir la Red</a>
-      <a href="modulo-02.html" class="nav-item"><span class="num">02</span><i class="fa-solid fa-chart-simple"></i> Medir la Red</a>
-      <a href="modulo-03.html" class="nav-item"><span class="num">03</span><i class="fa-solid fa-eye"></i> Discurso vs Realidad</a>
-      <a href="modulo-04.html" class="nav-item"><span class="num">04</span><i class="fa-solid fa-bullseye"></i> Macromodelos</a>
-      <a href="modulo-05.html" class="nav-item"><span class="num">05</span><i class="fa-solid fa-magnifying-glass"></i> Lo que no está</a>
-      <a href="modulo-07.html" class="nav-item"><span class="num">07</span><i class="fa-solid fa-flask"></i> Simulador</a>
-      <a href="modulo-08.html" class="nav-item"><span class="num">08</span><i class="fa-solid fa-city"></i> Modelo Propio</a>
-      <a href="modulo-06.html" class="nav-item"><span class="num">06</span><i class="fa-solid fa-earth-americas"></i> POT ↔ ODS</a>
-    </div>
-
-    <div class="nav-group">
-      <div class="nav-label">GESTIÓN</div>
-      <a href="proyectos.html" class="nav-item"><i class="fa-solid fa-folder"></i> Proyectos</a>
-      <a href="fuentes.html" class="nav-item"><i class="fa-solid fa-file-lines"></i> Fuentes y Documentos</a>
-      <a href="favoritos.html" class="nav-item"><i class="fa-solid fa-star"></i> Favoritos</a>
-      <a href="reportes.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Reportes</a>
-      <a href="configuracion.html" class="nav-item"><i class="fa-solid fa-gear"></i> Configuración</a>
-    </div>
-
-    <div class="sidebar-footer">
-      <div class="avatar-sm">EU</div>
-      <div class="user-meta">
-        <div class="name">Equipo Urbano</div>
-        <div class="role">Administrador</div>
-      </div>
-      <a href="demo.html" class="logout-btn"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
-    </div>
-  </aside>
+  <div class="brand-mark">⌂</div>
+  <nav class="side-nav" aria-label="Navegación del portal">
+    <a class="side-item" href="dashboard.html" title="Dashboard" aria-label="Dashboard"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5M5.5 10.5V20h13v-9.5M9 20v-5h6v5" /></svg></a>
+    <a class="side-item active" href="modulo-01.html" title="01 · Construir la Red" aria-label="Construir la Red"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="7" r="2" /><circle cx="18" cy="5" r="2" /><circle cx="14" cy="18" r="2" /><circle cx="7" cy="17" r="2" /><path d="m7.7 8.2 4.9 7.2M8 7.2l8-1.4M9 16.7l3.2.8M16.8 6.8l-1.8 9" /></svg></a>
+    <a class="side-item" href="modulo-02.html" title="02 · Medir la Red" aria-label="Medir la Red"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="2.5" /><circle cx="6" cy="17" r="2.5" /><circle cx="18" cy="17" r="2.5" /><path d="M10.7 7.1 7.3 14.8M13.3 7.1l3.4 7.7M8.5 17h7" /></svg></a>
+    <a class="side-item" href="modulo-03.html" title="03 · Discurso vs Realidad" aria-label="Discurso vs Realidad"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" /><path d="m16 16 5 5M10.5 7v7M7 10.5h7" /></svg></a>
+    <a class="side-item" href="modulo-04.html" title="04 · Macromodelos" aria-label="Macromodelos"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" /><circle cx="8" cy="6" r="2" /><circle cx="15" cy="12" r="2" /><circle cx="10" cy="18" r="2" /></svg></a>
+    <a class="side-item" href="modulo-05.html" title="05 · Navegador Multiescalar" aria-label="Navegador Multiescalar"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" /><path d="m16 16 5 5M10.5 7v7M7 10.5h7" /></svg></a>
+    <a class="side-item" href="modulo-07.html" title="07 · SÍNTESIS" aria-label="SÍNTESIS"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5M4 19h16M7 15l3-4 3 2 5-7" /><path d="M18 4h3v3" /></svg></a>
+    <a class="side-item" href="modulo-08.html" title="08 · Modelo Propio" aria-label="Modelo Propio"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17 12 4l8 13M7 17h10M9 13h6" /></svg></a>
+    <a class="side-item" href="modulo-06.html" title="06 · POT ↔ ODS" aria-label="POT ↔ ODS"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4v16l14-8z" /><path d="M4 21h16M7 21v-2M12 21v-2M17 21v-2" /></svg></a>
+  </nav>
+  <div class="sidebar-bottom">RA</div>
+</aside>
 
   <main class="main">
 

@@ -1,0 +1,92 @@
+/* Sidebar global RAPOT compartida por todos los módulos. */
+.app > .sidebar {
+  flex: 0 0 90px;
+  width: 90px;
+  min-width: 90px;
+  min-height: 100vh;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 18px 0 14px;
+  background: #080c0c;
+  border-right: 1px solid rgba(255,255,255,.08);
+  color: #e3f2ed;
+}
+.app > .sidebar .brand-mark {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 26px;
+  border: 1px solid #46d6d0;
+  border-radius: 50%;
+  color: #46d6d0;
+  font-size: 22px;
+  box-shadow: 0 0 18px rgba(70,214,208,.2);
+}
+.app > .sidebar .side-nav { display: flex; flex-direction: column; gap: 11px; }
+.app > .sidebar .side-item {
+  position: relative;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  border: 1px solid rgba(160,190,180,.2);
+  border-radius: 50%;
+  background: #101716;
+  color: #73827b;
+  text-decoration: none;
+  transition: .18s;
+}
+.app > .sidebar .side-item svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.55;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.app > .sidebar .side-item:hover,
+.app > .sidebar .side-item.active {
+  color: #46d6d0;
+  border-color: #46d6d0;
+  background: rgba(70,214,208,.08);
+  box-shadow: 0 0 17px rgba(70,214,208,.25);
+}
+.app > .sidebar .side-item::after {
+  content: attr(title);
+  position: absolute;
+  left: 56px;
+  top: 50%;
+  transform: translateY(-50%) translateX(-5px);
+  opacity: 0;
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 60;
+  padding: 7px 10px;
+  border: 1px solid rgba(70,214,208,.45);
+  border-radius: 6px;
+  background: #17211e;
+  color: #e3f2ed;
+  font-size: 10px;
+  transition: .16s;
+}
+.app > .sidebar .side-item:hover::after { opacity: 1; transform: translateY(-50%); }
+.app > .sidebar .sidebar-bottom {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  margin-top: auto;
+  border: 1px solid #46d6d0;
+  border-radius: 50%;
+  color: #46d6d0;
+  font-size: 11px;
+}
+@media (max-width: 900px) {
+  .app > .sidebar { flex-basis: 72px; width: 72px; min-width: 72px; }
+  .app > .sidebar .side-item::after { left: 50px; }
+}

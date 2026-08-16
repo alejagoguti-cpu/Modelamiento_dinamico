@@ -516,11 +516,11 @@ html, body {
   display: grid;
   place-items: center;
   margin-bottom: 26px;
-  border: 1px solid #2fbfae;
+  border: 1px solid #46d6d0;
   border-radius: 50%;
-  color: #2fbfae;
+  color: #46d6d0;
   font-size: 22px;
-  box-shadow: 0 0 18px rgba(39,205,196,.2);
+  box-shadow: 0 0 18px rgba(70,214,208,.2);
 }
 .portal-nav { display: flex; flex-direction: column; gap: 11px; }
 .portal-item {
@@ -541,10 +541,10 @@ html, body {
 .portal-item i { font-size: 15px; }
 .portal-item:hover,
 .portal-item.active {
-  color: #2fbfae;
-  border-color: #2fbfae;
-  background: rgba(39,205,196,.08);
-  box-shadow: 0 0 17px rgba(39,205,196,.25);
+  color: #46d6d0;
+  border-color: #46d6d0;
+  background: rgba(70,214,208,.08);
+  box-shadow: 0 0 17px rgba(70,214,208,.25);
 }
 .portal-item::after {
   content: attr(title);
@@ -556,7 +556,7 @@ html, body {
   pointer-events: none;
   white-space: nowrap;
   padding: 7px 10px;
-  border: 1px solid rgba(39,205,196,.45);
+  border: 1px solid rgba(70,214,208,.45);
   border-radius: 6px;
   background: #17211e;
   color: #e3f2ed;
@@ -571,9 +571,9 @@ html, body {
   display: grid;
   place-items: center;
   margin-top: auto;
-  border: 1px solid #2fbfae;
+  border: 1px solid #46d6d0;
   border-radius: 50%;
-  color: #2fbfae;
+  color: #46d6d0;
   font-size: 11px;
 }
 @media (max-width: 900px) {
