@@ -3011,8 +3011,11 @@ function resetAll() {
 }
 
 function selectRelation(id) {
-  selectedRel = id;
-  const r = model.relations.find(x => x.id === id);
+  // Los atributos data-rel del SVG llegan como texto; el modelo usa IDs numéricos.
+  // Normalizar aquí evita que el clic del hitbox no encuentre la relación.
+  const normalizedId = Number(id);
+  selectedRel = Number.isNaN(normalizedId) ? id : normalizedId;
+  const r = model.relations.find(x => String(x.id) === String(id));
   if (!r) return;
   const kind = r.tipo === 'Soporte' ? 'soporte' : 'resiliencia';
 
@@ -3384,7 +3387,17 @@ function initPanZoom() {
   stage.addEventListener('pointerup', end);
   stage.addEventListener('pointercancel', end);
 
-  svg.addEventListener('click', () => { clearFocus(); });
+  // Delegación de clic: mantiene las conexiones seleccionables aunque el trazo
+  // visible sea muy fino o el navegador cambie el orden de pintado del SVG.
+  svg.addEventListener('click', ev => {
+    const target = ev.target && ev.target.closest ? ev.target.closest('path[data-rel]') : null;
+    if (target && (target.classList.contains('rel') || target.classList.contains('rel-hit'))) {
+      ev.stopPropagation();
+      selectRelation(target.getAttribute('data-rel'));
+      return;
+    }
+    clearFocus();
+  }, true);
 
   stage.addEventListener('wheel', e => {
     e.preventDefault();

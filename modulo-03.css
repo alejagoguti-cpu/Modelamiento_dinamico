@@ -6408,3 +6408,17 @@ body {
     flex: none !important;
   }
 }
+
+
+/* Hitbox de conexiones: amplio para clic, invisible para la composición */
+#svg .rel-hit {
+  fill: none !important;
+  stroke: transparent !important;
+  stroke-width: 22px !important;
+  pointer-events: stroke !important;
+  cursor: pointer !important;
+}
+#svg .rel-hit.edge-type-hidden,
+#svg .rel-hit.rel-off {
+  pointer-events: none !important;
+}
