@@ -6562,3 +6562,29 @@ Need update styles maybe `display:none` for quote-backdrop means if old openQuot
     height: 27px !important;
   }
 }
+
+/* Scrollbar del panel lateral: nunca blanco, integrado al laboratorio oscuro. */
+@media (min-width: 821px) {
+  .app > .main > .net-layout > .col:first-child {
+    scrollbar-width: thin !important;
+    scrollbar-color: rgba(70,214,208,.48) rgba(11,12,15,.72) !important;
+    scrollbar-gutter: stable;
+  }
+  .app > .main > .net-layout > .col:first-child::-webkit-scrollbar {
+    width: 6px !important;
+    height: 6px !important;
+  }
+  .app > .main > .net-layout > .col:first-child::-webkit-scrollbar-track {
+    background: rgba(11,12,15,.72) !important;
+    border-radius: 99px !important;
+  }
+  .app > .main > .net-layout > .col:first-child::-webkit-scrollbar-thumb {
+    background: rgba(70,214,208,.48) !important;
+    border: 1px solid rgba(11,12,15,.88) !important;
+    border-radius: 99px !important;
+    box-shadow: 0 0 8px rgba(70,214,208,.12) !important;
+  }
+  .app > .main > .net-layout > .col:first-child::-webkit-scrollbar-thumb:hover {
+    background: rgba(70,214,208,.72) !important;
+  }
+}
