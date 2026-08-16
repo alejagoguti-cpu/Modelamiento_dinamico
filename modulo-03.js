@@ -2608,13 +2608,22 @@ const iconSize = Math.max(28, Math.round(R * 0.52));
 
       g.appendChild(el('circle', { class: 'node-fill', r: R }));
 
-      // icono dentro del nodo
-      // El icono ocupa solo la franja superior del nodo; nunca invade la etiqueta.
+      // Los nodos pequeños usan menos caracteres por línea y una tipografía más contenida.
+      const maxLabelChars = R < 45 ? 9 : R < 60 ? 11 : R < 80 ? 13 : 16;
+      const lines = wrapLabel(c.label, maxLabelChars);
+      const labelStep = Math.max(12, Math.min(19, R * 0.18));
+      const labelFont = Math.max(10, Math.min(18, R * 0.22));
+      // Se calcula un único bloque icono + etiqueta y se centra alrededor de y=0.
+      const iconBlock = Math.max(30, R * 0.42);
+      const labelBlock = lines.length * labelStep;
+      const blockGap = Math.max(3, R * 0.045);
+      const blockTop = -(iconBlock + blockGap + labelBlock) / 2;
+
       const fo = el('foreignObject', {
         x: -R * 0.82,
-        y: -R * 0.58,
+        y: blockTop,
         width: R * 1.64,
-        height: R * 0.52
+        height: iconBlock
       });
       const div = document.createElementNS('http://www.w3.org/1999/xhtml', 'div');
       div.setAttribute('class', 'node-icon');
@@ -2622,13 +2631,8 @@ const iconSize = Math.max(28, Math.round(R * 0.52));
       fo.appendChild(div);
       g.appendChild(fo);
 
-      // Los nodos pequeños usan menos caracteres por línea y una tipografía más contenida.
-      const maxLabelChars = R < 45 ? 9 : R < 60 ? 11 : R < 80 ? 13 : 16;
-      const lines = wrapLabel(c.label, maxLabelChars);
-      const labelStep = Math.max(12, Math.min(19, R * 0.18));
-      const labelFont = Math.max(10, Math.min(18, R * 0.22));
-      // Las etiquetas quedan centradas en la mitad inferior del nodo.
-      const labelStart = Math.max(R * 0.16, R * 0.24 - ((lines.length - 1) * labelStep) / 2);
+      // La etiqueta queda inmediatamente debajo del icono y el conjunto permanece centrado.
+      const labelStart = blockTop + iconBlock + blockGap + labelStep * 0.78;
       lines.forEach((ln, i) => {
         const t = el('text', { y: labelStart + i * labelStep, style: `font-size:${labelFont}px` });
         t.textContent = ln;
