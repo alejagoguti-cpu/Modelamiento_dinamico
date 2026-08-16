@@ -2971,7 +2971,8 @@ function showStructureInsight(s, isOff) {
 function toggleSystem(s) {
   state[s] = !state[s];
   lastToggledOff = state[s] ? null : s;
-  showStructureInsight(s, !state[s]);
+  const insightPopup = document.getElementById('eseCIInsight');
+  if (insightPopup) insightPopup.classList.add('is-hidden');
   if (selectedRel !== null) {
     const r = model.relations.find(x => x.id === selectedRel);
     if (r && !relActive(r)) clearEvidence();
@@ -3349,6 +3350,24 @@ function applyVB() {
   if (z) z.textContent = Math.round((BASE_VB.w / vb.w) * 100) + '%';
 }
 
+function fitViewToStage() {
+  const stage = document.getElementById('stage');
+  if (!stage || !BASE_VB.w || !BASE_VB.h) return;
+  const rect = stage.getBoundingClientRect();
+  if (rect.width < 20 || rect.height < 20) return;
+  const stageRatio = rect.width / rect.height;
+  const baseRatio = BASE_VB.w / BASE_VB.h;
+  const cx = BASE_VB.x + BASE_VB.w / 2;
+  const cy = BASE_VB.y + BASE_VB.h / 2;
+  let w = BASE_VB.w;
+  let h = BASE_VB.h;
+  if (stageRatio > baseRatio) w = h * stageRatio;
+  else h = w / stageRatio;
+  BASE_VB = { x: cx - w / 2, y: cy - h / 2, w, h };
+  vb = Object.assign({}, BASE_VB);
+  applyVB();
+}
+
 function resetView() { vb = Object.assign({}, BASE_VB); applyVB(); }
 
 function zoomAt(factor, clientX, clientY) {
@@ -3461,8 +3480,8 @@ document.addEventListener('DOMContentLoaded', () => {
   initQuoteModal();
   initNodeScenario();
   initPanZoom();
-  applyVB();
   render();
+  fitViewToStage();
   updateMetrics();
 
   // verificación de integridad de datos en consola
