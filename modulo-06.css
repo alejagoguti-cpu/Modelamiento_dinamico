@@ -1368,3 +1368,13 @@ footer span { color: #46d6d0; }
 .network-section, .pn-section { background: rgba(20,21,24,.88) !important; }
 .network-canvas, .pn-canvas, #networkViz, #pnViz { background: #101316 !important; border-color: rgba(70,214,208,.18) !important; }
 :root { --blue: #46d6d0 !important; --panel: #141518 !important; --panel-alt: #101316 !important; }
+
+/* Igualación visual: la segunda red debe tener la misma altura útil que la red superior. */
+#pnViz { height: 560px !important; }
+.pn-canvas, .pn-sidebar { min-height: 560px !important; }
+
+/* Igualar el panel completo: compensa la barra superior del primer panel sin cambiar el contenido de la segunda red. */
+.pn-section { min-height: 698px !important; }
+@media (max-width: 900px) {
+  .pn-section { min-height: 0 !important; }
+}
