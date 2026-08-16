@@ -894,17 +894,17 @@ const PN_NODES = [
   { id: "p_reservas_forestales", name: "Reservas forestales", cluster: "EEP", color: "#3ddc84", icon: "fa-tree", x: 344.1, y: 258.0, r: 14.0 },
   { id: "p_parques_de_borde", name: "Parques de borde", cluster: "EEP", color: "#3ddc84", icon: "fa-house-chimney", x: 233.5, y: 254.5, r: 14.0 },
   { id: "p_paisajes_sostenibles", name: "Paisajes sostenibles", cluster: "EEP", color: "#3ddc84", icon: "fa-mountain-sun", x: 172.6, y: 291.6, r: 14.0 },
-  { id: "p_equipamientos", name: "Equipamientos", cluster: "EFC", color: "#5b8def", icon: "fa-building-columns", x: 367.9, y: 377.0, r: 23.8 },
-  { id: "p_servicios_de_cuidado", name: "Servicios de cuidado", cluster: "EFC", color: "#5b8def", icon: "fa-hand-holding-heart", x: 246.8, y: 372.1, r: 14.0 },
-  { id: "p_servicios_sociales", name: "Servicios sociales", cluster: "EFC", color: "#5b8def", icon: "fa-people-roof", x: 313.3, y: 429.5, r: 14.0 },
-  { id: "p_vivienda", name: "Vivienda", cluster: "EFC", color: "#5b8def", icon: "fa-house", x: 247.5, y: 468.0, r: 26.6 },
-  { id: "p_servicios_publicos", name: "Servicios públicos", cluster: "EFC", color: "#5b8def", icon: "fa-plug", x: 179.6, y: 405.0, r: 14.0 },
-  { id: "p_ciclorutas", name: "Ciclorutas", cluster: "EFC", color: "#5b8def", icon: "fa-bicycle", x: 93.5, y: 419.0, r: 14.0 },
-  { id: "p_transporte_publico", name: "Transporte público", cluster: "EFC", color: "#5b8def", icon: "fa-bus", x: 136.9, y: 487.6, r: 14.0 },
-  { id: "p_red_vial", name: "Red vial", cluster: "EFC", color: "#5b8def", icon: "fa-road-circle-check", x: 365.8, y: 514.9, r: 14.0 },
-  { id: "p_corredores_verdes", name: "Corredores verdes", cluster: "EFC", color: "#5b8def", icon: "fa-road", x: 125.0, y: 575.1, r: 14.0 },
-  { id: "p_manzanas_del_cuidado", name: "Manzanas del Cuidado", cluster: "EFC", color: "#5b8def", icon: "fa-heart", x: 230.0, y: 561.8, r: 14.0 },
-  { id: "p_parques", name: "Parques", cluster: "EFC", color: "#5b8def", icon: "fa-tree-city", x: 178.9, y: 532.4, r: 14.0 },
+  { id: "p_equipamientos", name: "Equipamientos", cluster: "EFC", color: "#46d6d0", icon: "fa-building-columns", x: 367.9, y: 377.0, r: 23.8 },
+  { id: "p_servicios_de_cuidado", name: "Servicios de cuidado", cluster: "EFC", color: "#46d6d0", icon: "fa-hand-holding-heart", x: 246.8, y: 372.1, r: 14.0 },
+  { id: "p_servicios_sociales", name: "Servicios sociales", cluster: "EFC", color: "#46d6d0", icon: "fa-people-roof", x: 313.3, y: 429.5, r: 14.0 },
+  { id: "p_vivienda", name: "Vivienda", cluster: "EFC", color: "#46d6d0", icon: "fa-house", x: 247.5, y: 468.0, r: 26.6 },
+  { id: "p_servicios_publicos", name: "Servicios públicos", cluster: "EFC", color: "#46d6d0", icon: "fa-plug", x: 179.6, y: 405.0, r: 14.0 },
+  { id: "p_ciclorutas", name: "Ciclorutas", cluster: "EFC", color: "#46d6d0", icon: "fa-bicycle", x: 93.5, y: 419.0, r: 14.0 },
+  { id: "p_transporte_publico", name: "Transporte público", cluster: "EFC", color: "#46d6d0", icon: "fa-bus", x: 136.9, y: 487.6, r: 14.0 },
+  { id: "p_red_vial", name: "Red vial", cluster: "EFC", color: "#46d6d0", icon: "fa-road-circle-check", x: 365.8, y: 514.9, r: 14.0 },
+  { id: "p_corredores_verdes", name: "Corredores verdes", cluster: "EFC", color: "#46d6d0", icon: "fa-road", x: 125.0, y: 575.1, r: 14.0 },
+  { id: "p_manzanas_del_cuidado", name: "Manzanas del Cuidado", cluster: "EFC", color: "#46d6d0", icon: "fa-heart", x: 230.0, y: 561.8, r: 14.0 },
+  { id: "p_parques", name: "Parques", cluster: "EFC", color: "#46d6d0", icon: "fa-tree-city", x: 178.9, y: 532.4, r: 14.0 },
   { id: "p_distrito_centro_tecnologico_e_innovacion", name: "Distrito Centro Tecnológico e Innovación", cluster: "ESECI", color: "#f0a340", icon: "fa-microchip", x: 577.9, y: 233.5, r: 15.4 },
   { id: "p_servicios_empresariales", name: "Servicios empresariales", cluster: "ESECI", color: "#f0a340", icon: "fa-briefcase", x: 461.0, y: 277.6, r: 26.6 },
   { id: "p_sistema_de_educacion", name: "Sistema de educación", cluster: "ESECI", color: "#f0a340", icon: "fa-graduation-cap", x: 588.4, y: 360.9, r: 18.2 },
@@ -1088,7 +1088,7 @@ function pnOdsLinksFor(odsList) {
 /* -------- construir el SVG de la red de estructuras (estática) -------- */
 function buildPnDefs(svg) {
   const defs = document.createElementNS(SVG_NS, "defs");
-  const pnColors = { soporte: "#ef9552", resiliencia: "#5b8def" };
+  const pnColors = { soporte: "#ef9552", resiliencia: "#46d6d0" };
   Object.entries(pnColors).forEach(([tipo, color]) => {
     const marker = document.createElementNS(SVG_NS, "marker");
     marker.setAttribute("id", "pn-arrow-" + tipo);
@@ -1117,7 +1117,7 @@ function pnEdgePath(s, t) {
 function drawPnEdges(svg) {
   const g = document.createElementNS(SVG_NS, "g");
   g.setAttribute("class", "pn-edges-layer");
-  const pnColors = { soporte: "#ef9552", resiliencia: "#5b8def" };
+  const pnColors = { soporte: "#ef9552", resiliencia: "#46d6d0" };
 
   PN_EDGES.forEach((edge, i) => {
     const s = pnNodeById(edge.s), t = pnNodeById(edge.t);
@@ -1332,7 +1332,7 @@ function showPnEdgeInfo(index) {
   document.getElementById("pnSustentoTitle").textContent = `${s.name} → ${t.name}`;
 
   const tipoEl = document.getElementById("pnSustentoTipo");
-  const color = edge.tipo === "resiliencia" ? "#5b8def" : "#ef9552";
+  const color = edge.tipo === "resiliencia" ? "#46d6d0" : "#ef9552";
   tipoEl.textContent = (edge.tipo === "resiliencia" ? "Resiliencia" : "Soporte") + (edge.directa ? " · Directa" : " · Indirecta");
   tipoEl.style.color = color;
   tipoEl.style.background = color + "26";
