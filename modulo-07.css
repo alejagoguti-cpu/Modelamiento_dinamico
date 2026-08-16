@@ -3589,3 +3589,5 @@ body {
   .dashboard-footer { flex-wrap: wrap; gap: 12px 20px; }
   .dashboard-footer button { width: 100%; margin-left: 0; }
 }
+
+/* Los estilos compartidos de nodos y zoom viven en network06-shared.css. */

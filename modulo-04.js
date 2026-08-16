@@ -343,3 +343,29 @@ document.querySelectorAll('.tab').forEach(btn => {
     renderItemList();
   });
 });
+
+
+/* Zoom compatible con el lenguaje interactivo del Módulo 06. */
+(() => {
+  function setupModule06Zoom() {
+    const svg = document.getElementById('networkViz');
+    const wrap = svg?.parentElement;
+    if (!svg || svg.dataset.module06ZoomReady === '1') return;
+    svg.dataset.module06ZoomReady = '1';
+    const initial = svg.getAttribute('viewBox').trim().split(/\s+/).map(Number);
+    if (initial.length !== 4 || initial.some(Number.isNaN)) return;
+    let scale = 1;
+    const [x,y,w,h] = initial;
+    const level = wrap?.querySelector('.network06-zoom-level');
+    const update = () => {
+      const nw=w/scale, nh=h/scale;
+      svg.setAttribute('viewBox', `${x+(w-nw)/2} ${y+(h-nh)/2} ${nw} ${nh}`);
+      if (level) level.textContent = `${Math.round(scale*100)}%`;
+    };
+    const change = delta => { scale=Math.min(2.25,Math.max(.75,+(scale+delta).toFixed(2))); update(); };
+    wrap?.querySelector('.network06-zoom-in')?.addEventListener('click',()=>change(.25));
+    wrap?.querySelector('.network06-zoom-out')?.addEventListener('click',()=>change(-.25));
+    svg.addEventListener('wheel', e => { e.preventDefault(); change(e.deltaY<0?.10:-.10); }, {passive:false});
+  }
+  document.addEventListener('DOMContentLoaded', setupModule06Zoom);
+})();

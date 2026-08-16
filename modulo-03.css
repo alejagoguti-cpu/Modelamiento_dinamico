@@ -7086,3 +7086,5 @@ Need update styles maybe `display:none` for quote-backdrop means if old openQuot
   .net-layout > .col.right .scenario-buttons { gap: 9px !important; }
   .net-layout > .col.right .scenario-btn { min-height: 54px !important; padding: 10px 12px !important; }
 }
+
+/* Los estilos compartidos de nodos y zoom viven en network06-shared.css. */

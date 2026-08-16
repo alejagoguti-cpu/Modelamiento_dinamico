@@ -956,3 +956,5 @@ footer span { color: var(--teal); }
   .recommendations-grid { grid-template-columns: 1fr; }
   .action-buttons { flex-direction: column; }
 }
+
+/* Los estilos compartidos de nodos y zoom viven en network06-shared.css. */

@@ -1,0 +1,39 @@
+/* Lenguaje visual compartido de nodos inspirado en el Módulo 06. */
+@keyframes module06NodeFloat {
+  0%,100% { transform: translate3d(0,0,0); }
+  50% { transform: translate3d(0,-2.5px,0); }
+}
+.ods-node, .pn-node {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: module06NodeFloat 3.8s ease-in-out var(--node-float-delay,0s) infinite;
+  will-change: transform;
+}
+.network-node circle, .svg-node circle, .concept .node-fill {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: module06NodeFloat 3.8s ease-in-out var(--node-float-delay,0s) infinite;
+  will-change: transform;
+}
+.ods-node .node-ring, .network-node circle, .svg-node circle, .pn-node .pn-node-ring, .concept .node-fill {
+  filter: drop-shadow(0 0 5px currentColor);
+  transition: filter .2s, stroke-width .2s, opacity .2s;
+}
+.ods-node:hover .node-ring, .network-node:hover circle, .svg-node:hover circle, .pn-node:hover .pn-node-ring, .concept:hover .node-fill {
+  filter: drop-shadow(0 0 11px currentColor);
+}
+.network06-zoom-controls {
+  position:absolute; top:14px; right:14px; z-index:20;
+  display:inline-flex; align-items:center; gap:6px; padding:5px;
+  border:1px solid rgba(70,214,208,.28); border-radius:9px;
+  background:rgba(11,12,15,.82); backdrop-filter:blur(8px);
+  box-shadow:0 8px 20px rgba(0,0,0,.28);
+}
+.network06-zoom-controls button {
+  width:30px; height:30px; padding:0; border:1px solid rgba(70,214,208,.38);
+  border-radius:6px; background:rgba(70,214,208,.08); color:#46d6d0;
+  font:700 18px/1 Inter,sans-serif; cursor:pointer;
+}
+.network06-zoom-controls button:hover { background:rgba(70,214,208,.18); border-color:#46d6d0; }
+.network06-zoom-controls span { min-width:42px; text-align:center; color:#f1f3f4; font:700 10px/1 Inter,sans-serif; }
+@media (prefers-reduced-motion:reduce) { .ods-node,.pn-node,.network-node circle,.svg-node circle,.concept .node-fill { animation:none!important; } }

@@ -1139,3 +1139,5 @@ footer span { color: var(--teal); }
   .action-buttons { flex-direction: column; }
   .plazo-toggle { grid-template-columns: 1fr; }
 }
+
+/* Los estilos compartidos de nodos y zoom viven en network06-shared.css. */
