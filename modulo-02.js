@@ -317,9 +317,9 @@ function computeDegrees() {
    Los "vacío" (ausencias entre estructuras) quedan como líneas largas
    que cruzan de un centro a otro, igual que en la referencia.
    ========================================================== */
-const CANVAS = { w: 2300, h: 2050 };
+const CANVAS = { w: 3000, h: 3000 };
 const HUB_CENTERS = (() => {
-  const cx = CANVAS.w / 2, cy = CANVAS.h / 2, R = 640;
+  const cx = CANVAS.w / 2, cy = CANVAS.h / 2, R = 760;
   // e1 arriba (teal), e2 derecha (naranja), e3 abajo (amarillo), e4 izquierda (rosa) —
   // igual disposición en diamante que la referencia de las 4 estructuras.
   return {
@@ -359,7 +359,7 @@ function layoutNetwork() {
     const ringMid  = rest.filter(n => n._deg === 1 || n._deg === 2);
     const ringLow  = rest.filter(n => n._deg === 0);
 
-    const GAP = 34;
+    const GAP = 50;
     function placeRing(ringNodes, minRadius, angleSpan, angleStart) {
       if (!ringNodes.length) return minRadius;
       const sumDiam = ringNodes.reduce((s, n) => s + 2 * n.r + GAP, 0);
@@ -383,9 +383,9 @@ function layoutNetwork() {
     const angleSpan = Math.min(Math.PI * 1.15, Math.PI * 0.32 + n * (Math.PI / 11));
     const angleStart = outward - angleSpan / 2;
 
-    const rHigh = placeRing(ringHigh, hub.r + 110, angleSpan, angleStart);
-    const rMid = placeRing(ringMid, rHigh + (ringHigh[0] ? Math.max(...ringHigh.map(n => n.r)) : 0) + 90, angleSpan, angleStart);
-    placeRing(ringLow, rMid + (ringMid[0] ? Math.max(...ringMid.map(n => n.r)) : 0) + 80, angleSpan, angleStart);
+    const rHigh = placeRing(ringHigh, hub.r + 180, angleSpan, angleStart);
+    const rMid = placeRing(ringMid, rHigh + (ringHigh[0] ? Math.max(...ringHigh.map(n => n.r)) : 0) + 150, angleSpan, angleStart);
+    placeRing(ringLow, rMid + (ringMid[0] ? Math.max(...ringMid.map(n => n.r)) : 0) + 140, angleSpan, angleStart);
   });
 
   // ---- 2. Resolución de colisiones por radio real (red de seguridad) ----
@@ -661,11 +661,11 @@ function drawEdges(svg) {
     visual.setAttribute("d", d);
     visual.setAttribute("class", "ods-edge edge-visual");
     visual.setAttribute("stroke", color);
-    visual.setAttribute("stroke-width", edge.tipo === "vacio" ? 2 : edge.tipo === "directa" ? 2.2 : 1.4);
+    visual.setAttribute("stroke-width", edge.tipo === "vacio" ? 2.6 : edge.tipo === "directa" ? 2.2 : 1.4);
     if (edge.tipo !== "directa") visual.setAttribute("stroke-dasharray", edge.tipo === "vacio" ? "2,7" : "5,4");
     const markerId = arrowMarkerId(edge);
     if (markerId) visual.setAttribute("marker-end", `url(#${markerId})`);
-    visual.setAttribute("opacity", edge.tipo === "indirecta" ? "0.55" : edge.tipo === "vacio" ? "0.6" : "0.95");
+    visual.setAttribute("opacity", edge.tipo === "indirecta" ? "0.55" : edge.tipo === "vacio" ? "0.8" : "0.95");
 
     group.appendChild(visual); group.appendChild(hit);
     group.addEventListener("click", (ev) => { ev.stopPropagation(); showEdgeInfo(i); });
