@@ -55,17 +55,11 @@
 
       <div class="network-body">
         <div class="network-canvas">
-          <svg id="networkViz" viewBox="0 0 2600 3200" preserveAspectRatio="xMidYMid meet"></svg>
+          <svg id="networkViz" viewBox="0 0 3400 3000" preserveAspectRatio="xMidYMid meet"></svg>
           <div class="zoom-controls">
             <button id="zoomIn" title="Acercar"><i class="fa-solid fa-plus"></i></button>
             <button id="zoomOut" title="Alejar"><i class="fa-solid fa-minus"></i></button>
             <button id="zoomReset" title="Restablecer"><i class="fa-solid fa-compress"></i></button>
-          </div>
-          <div class="map-scale" title="Escala aproximada — silueta esquemática de Bogotá, no cartografía oficial">
-            <i class="fa-solid fa-location-arrow"></i>
-            <div class="map-scale-bar">
-              <span>0</span><span>5</span><span>10</span><span>15 km</span>
-            </div>
           </div>
         </div>
 
@@ -86,11 +80,6 @@
               <input type="checkbox" checked><span class="legend-swatch swatch-indirecta-neutral"></span>
               <span class="legend-text"><strong>Indirecta</strong><small>Relación funcional intermedia</small></span>
             </label>
-            <label class="legend-item legend-item-minor" data-mode="type" data-type="vacio">
-              <input type="checkbox" checked><span class="legend-swatch swatch-vacio-neutral"></span>
-              <span class="legend-text"><strong>Vacío</strong><small>Ausencia documentada entre estructuras</small></span>
-            </label>
-
             <div class="legend-divider"></div>
             <div class="legend-title">Color de la línea</div>
             <div class="legend-static-item"><span class="legend-swatch" style="background:#f5a623;border-color:#f5a623;"></span> Soporte (sostiene / habilita)</div>
@@ -126,8 +115,8 @@
             <div class="legend-divider"></div>
             <div class="legend-footer-row">
               <button class="control-btn active" onclick="filterNetwork('all')">Todas</button>
-              <button class="control-btn" onclick="filterNetwork('vacio')">Vacíos</button>
               <button class="control-btn" onclick="filterNetwork('directa')">Directas</button>
+              <button class="control-btn" onclick="filterNetwork('indirecta')">Indirectas</button>
             </div>
           </aside>
         </div>
