@@ -104,6 +104,11 @@
 
         <div class="network-canvas">
           <svg id="networkViz" viewBox="0 0 1470 780" preserveAspectRatio="xMidYMid meet"></svg>
+          <div class="network-zoom-controls" aria-label="Controles de zoom de la red superior">
+            <button id="networkZoomIn" type="button" aria-label="Acercar la red superior">+</button>
+            <span id="networkZoomLevel" aria-live="polite">100%</span>
+            <button id="networkZoomOut" type="button" aria-label="Alejar la red superior">−</button>
+          </div>
 
           <div class="finding-popup" id="findingPopup">
             <button class="finding-popup-close" id="findingPopupClose" type="button" aria-label="Cerrar">&times;</button>

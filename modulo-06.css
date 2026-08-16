@@ -1422,3 +1422,47 @@ footer span { color: #46d6d0; }
 @media (max-width: 900px) {
   .pn-zoom-controls { top: 10px; right: 10px; }
 }
+
+/* Controles de zoom dentro del lienzo de la primera red. */
+.network-zoom-controls {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 8;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px;
+  border: 1px solid rgba(70,214,208,.28);
+  border-radius: 9px;
+  background: rgba(11,12,15,.82);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 8px 20px rgba(0,0,0,.28);
+}
+.network-zoom-controls button {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid rgba(70,214,208,.38);
+  border-radius: 6px;
+  background: rgba(70,214,208,.08);
+  color: #46d6d0;
+  font: 700 18px/1 Inter, sans-serif;
+  cursor: pointer;
+}
+.network-zoom-controls button:hover,
+.network-zoom-controls button:focus-visible {
+  background: rgba(70,214,208,.18);
+  border-color: #46d6d0;
+  outline: none;
+}
+.network-zoom-controls span {
+  min-width: 42px;
+  text-align: center;
+  color: #f1f3f4;
+  font: 700 10px/1 Inter, sans-serif;
+  letter-spacing: .04em;
+}
+@media (max-width: 900px) {
+  .network-zoom-controls { top: 10px; right: 10px; }
+}

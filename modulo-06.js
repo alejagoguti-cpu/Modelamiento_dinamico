@@ -484,6 +484,42 @@ function renderNetwork() {
   drawNodes(svg);
 }
 
+/* -------- zoom interno de la primera red superior -------- */
+let networkZoomScale = 1;
+const NETWORK_ZOOM_MIN = 0.75;
+const NETWORK_ZOOM_MAX = 2.25;
+const NETWORK_VIEWBOX_WIDTH = 1470;
+const NETWORK_VIEWBOX_HEIGHT = 780;
+const NETWORK_VIEWBOX_CENTER_X = NETWORK_VIEWBOX_WIDTH / 2;
+const NETWORK_VIEWBOX_CENTER_Y = NETWORK_VIEWBOX_HEIGHT / 2;
+
+function updateNetworkZoom() {
+  const svg = document.getElementById("networkViz");
+  if (!svg) return;
+  const width = NETWORK_VIEWBOX_WIDTH / networkZoomScale;
+  const height = NETWORK_VIEWBOX_HEIGHT / networkZoomScale;
+  svg.setAttribute("viewBox", `${NETWORK_VIEWBOX_CENTER_X - width / 2} ${NETWORK_VIEWBOX_CENTER_Y - height / 2} ${width} ${height}`);
+  const level = document.getElementById("networkZoomLevel");
+  if (level) level.textContent = `${Math.round(networkZoomScale * 100)}%`;
+}
+
+function changeNetworkZoom(delta) {
+  networkZoomScale = Math.min(NETWORK_ZOOM_MAX, Math.max(NETWORK_ZOOM_MIN, +(networkZoomScale + delta).toFixed(2)));
+  updateNetworkZoom();
+}
+
+function setupNetworkZoom() {
+  document.getElementById("networkZoomIn")?.addEventListener("click", () => changeNetworkZoom(0.25));
+  document.getElementById("networkZoomOut")?.addEventListener("click", () => changeNetworkZoom(-0.25));
+
+  const svg = document.getElementById("networkViz");
+  svg?.addEventListener("wheel", (event) => {
+    /* La rueda se captura únicamente dentro de la red superior. */
+    event.preventDefault();
+    changeNetworkZoom(event.deltaY < 0 ? 0.10 : -0.10);
+  }, { passive: false });
+}
+
 /* -------- panel de sustento documental (clic en línea) -------- */
 function showEdgeInfo(index) {
   const edge = RAW_EDGES[index];
@@ -1464,6 +1500,7 @@ function setupSidebarTooltip() {
 
 document.addEventListener("DOMContentLoaded", () => {
   renderNetwork();
+  setupNetworkZoom();
   setupLegendToggle();
   setupSidePanels();
   renderPotStructure();
