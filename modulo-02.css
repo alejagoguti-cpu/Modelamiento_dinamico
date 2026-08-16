@@ -182,6 +182,11 @@ body {
 .swatch-directa { border-color: #2fd4c8; }
 .swatch-indirecta { border-color: #8b93a8; border-top-style: dashed; }
 .swatch-vacio { border-color: #ef4444; border-top-style: dashed; }
+/* Estilo de línea neutro (gris): la red solo tiene 2 colores reales — Soporte/Resiliencia —
+   así que esta sección de la leyenda muestra el TRAZO, no un color temático. */
+.swatch-directa-neutral { border-color: #b7bccb; border-top-style: solid; }
+.swatch-indirecta-neutral { border-color: #b7bccb; border-top-style: dashed; }
+.swatch-vacio-neutral { border-color: #b7bccb; border-top-style: dotted; border-top-width: 3px; }
 .legend-static-item { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--text-dim); }
 .legend-static-item .legend-swatch { width: 15px; height: 15px; border-radius: 4px; border-top: none !important; }
 .legend-divider { height: 1px; background: var(--border-soft); margin: 2px 0; }
