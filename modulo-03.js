@@ -3399,6 +3399,9 @@ function initPanZoom() {
   };
   stage.addEventListener('pointerup', end);
   stage.addEventListener('pointercancel', end);
+  // El menú contextual del navegador interrumpe la prueba de la red y tapa
+  // los nodos; la interfaz usa clic izquierdo para el ciclo de interacción.
+  stage.addEventListener('contextmenu', e => e.preventDefault());
 
   // Delegación de clic: mantiene las conexiones seleccionables aunque el trazo
   // visible sea muy fino o el navegador cambie el orden de pintado del SVG.
