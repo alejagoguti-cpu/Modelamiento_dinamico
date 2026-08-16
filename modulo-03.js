@@ -2182,6 +2182,18 @@ const state = { EEP: true, EFC: true, EIP: true, ESECI: true };
 const offNodes = new Set();
 let lastToggledOff = null;
 let selectedRel = null;
+const relationFilters = {
+  directa: true,
+  indirecta: true,
+  soporte: true,
+  resiliencia: true,
+};
+
+function relationPassesFilters(r) {
+  const evidenceKey = String(r.evid || 'Directa').toLowerCase().startsWith('ind') ? 'indirecta' : 'directa';
+  const typeKey = r.tipo === 'Resiliencia' ? 'resiliencia' : 'soporte';
+  return relationFilters[evidenceKey] && relationFilters[typeKey];
+}
 
 // ---------------------------------------------------------------------
 // 1. MODELO: nodos (sistemas + conceptos) y aristas
@@ -2503,6 +2515,7 @@ function render() {
     // No dibujar relaciones pendientes de verificación: se mantienen en los
     // datos para el análisis, pero no deben ensuciar la red visual.
     if (r.porVerificar) return;
+    if (!relationPassesFilters(r)) return;
     const active = relActive(r);
     const a = drawPos[r.from] || layout[r.from], b = drawPos[r.to] || layout[r.to];
     const rA = nodeR[r.from];
@@ -3454,6 +3467,19 @@ function initPanZoom() {
   });
 }
 
+function initRelationFilters() {
+  document.querySelectorAll('[data-relation-filter]').forEach(input => {
+    const key = input.dataset.relationFilter;
+    input.checked = relationFilters[key] !== false;
+    input.addEventListener('change', () => {
+      relationFilters[key] = input.checked;
+      input.closest('.relation-filter')?.classList.toggle('off', !input.checked);
+      render();
+      updateAll();
+    });
+  });
+}
+
 // ---------------------------------------------------------------------
 // 8. ARRANQUE
 // ---------------------------------------------------------------------
@@ -3500,6 +3526,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initQuoteModal();
   initNodeScenario();
   initPanZoom();
+  initRelationFilters();
   applyVB();
   render();
   updateMetrics();

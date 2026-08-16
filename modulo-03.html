@@ -163,13 +163,24 @@
       <div class="col">
         <div class="pcard net-card">
           <div class="net-toolbar">
-            <div class="legend">
-              <div class="legend-item"><span class="lg-line"></span>Relación directa</div>
-              <div class="legend-item"><span class="lg-line dashed"></span>Relación indirecta</div>
-              <div class="legend-item"><span class="lg-dot soporte"></span>Soporte</div>
-              <div class="legend-item"><span class="lg-dot resiliencia"></span>Resiliencia</div>
-              
-                </div>
+            <div class="legend relation-filters" aria-label="Filtros de relaciones">
+              <label class="legend-item relation-filter" data-filter-label="directa">
+                <input type="checkbox" class="relation-filter-input" data-relation-filter="directa" checked>
+                <span class="lg-line"></span><span>Relación directa</span>
+              </label>
+              <label class="legend-item relation-filter" data-filter-label="indirecta">
+                <input type="checkbox" class="relation-filter-input" data-relation-filter="indirecta" checked>
+                <span class="lg-line dashed"></span><span>Relación indirecta</span>
+              </label>
+              <label class="legend-item relation-filter" data-filter-label="soporte">
+                <input type="checkbox" class="relation-filter-input" data-relation-filter="soporte" checked>
+                <span class="lg-dot soporte"></span><span>Soporte</span>
+              </label>
+              <label class="legend-item relation-filter" data-filter-label="resiliencia">
+                <input type="checkbox" class="relation-filter-input" data-relation-filter="resiliencia" checked>
+                <span class="lg-dot resiliencia"></span><span>Resiliencia</span>
+              </label>
+            </div>
             <div class="net-btns">
               <span class="hidden-nodes-indicator is-clear" id="hiddenNodesIndicator" aria-live="polite"><i class="fa-solid fa-eye-slash"></i><span id="hiddenNodesText">Sin nodos ocultos</span></span>
               <button class="btn" id="btnFit"><i class="fa-solid fa-arrows-rotate"></i> Centrar vista</button>

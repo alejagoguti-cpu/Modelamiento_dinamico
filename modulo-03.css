@@ -6935,3 +6935,37 @@ Need update styles maybe `display:none` for quote-backdrop means if old openQuot
   background: #080c0c !important;
   color: #2fbfae !important;
 }
+
+/* Filtros interactivos de relaciones en la leyenda. */
+.relation-filters { gap: 12px !important; }
+.relation-filter { cursor: pointer !important; user-select: none; }
+.relation-filter input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  margin: 0;
+  border: 1px solid rgba(160,190,180,.45);
+  border-radius: 3px;
+  background: #101716;
+  position: relative;
+  flex: 0 0 14px;
+  cursor: pointer;
+}
+.relation-filter input[type="checkbox"]:checked {
+  background: #2fbfae;
+  border-color: #46d6d0;
+}
+.relation-filter input[type="checkbox"]:checked::after {
+  content: "";
+  position: absolute;
+  width: 4px;
+  height: 8px;
+  left: 4px;
+  top: 1px;
+  border: solid #07100f;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+.relation-filter.off { opacity: .42; }
+.relation-filter:hover { color: #f2f7f5 !important; }
