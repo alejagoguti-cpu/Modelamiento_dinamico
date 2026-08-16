@@ -58,6 +58,25 @@ body {
 .nav-item.active { background: var(--teal-dim); color: var(--teal); }
 .nav-item.active .num { color: var(--teal); }
 .sidebar-footer { margin-top: auto; border-top: 1px solid var(--border); padding-top: 12px; display: flex; align-items: center; gap: 10px; }
+
+/* SIDEBAR — solo íconos, sin texto (estilo referencia) */
+.sidebar.sidebar-icons-only {
+  width: 64px; align-items: center; padding: 18px 0;
+}
+.brand-icon {
+  width: 34px; height: 34px; border-radius: 10px; margin-bottom: 26px;
+  background: linear-gradient(135deg, var(--teal), #1a9d94);
+  display: flex; align-items: center; justify-content: center;
+  color: #06110f; font-size: 15px;
+}
+.icon-nav { display: flex; flex-direction: column; gap: 8px; align-items: center; }
+.icon-nav-item {
+  width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center;
+  color: var(--text-dim); font-size: 15px; text-decoration: none; transition: background .15s, color .15s;
+}
+.icon-nav-item:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+.icon-nav-item.active { background: var(--teal-dim); color: var(--teal); }
+.icon-nav-footer { margin-top: auto; display: flex; flex-direction: column; gap: 8px; align-items: center; }
 .avatar-sm {
   width: 32px; height: 32px; border-radius: 50%; background: var(--panel); border: 1px solid var(--border);
   display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: var(--text-dim); flex-shrink: 0;
@@ -72,6 +91,8 @@ body {
 .main { flex: 1; padding: 22px 34px 50px; min-width: 0; overflow-y: auto; }
 .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 26px; }
 .topbar h1 { font-family: 'Space Grotesk', sans-serif; font-size: 19px; font-weight: 600; }
+.topbar-brand { font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 10px; }
+.topbar-brand i { color: var(--teal); font-size: 15px; }
 .topbar-actions { display: flex; align-items: center; gap: 14px; }
 .search-box { display: flex; align-items: center; gap: 8px; background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 8px 14px; color: var(--text-faint); font-size: 13px; width: 230px; }
 .search-box i { font-size: 12px; }
@@ -79,8 +100,19 @@ body {
 .icon-btn .dot { position: absolute; top: 6px; right: 7px; width: 6px; height: 6px; border-radius: 50%; background: var(--pink); }
 
 .welcome { margin-bottom: 20px; }
-.welcome h2 { font-family: 'Space Grotesk', sans-serif; font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+.welcome-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; color: var(--orange); margin-bottom: 6px; position: relative; padding-left: 14px; }
+.welcome-eyebrow::before { content: ""; position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 8px; height: 2px; background: var(--orange); }
+.welcome h2 { font-family: 'Space Grotesk', sans-serif; font-size: 30px; font-weight: 700; margin-bottom: 8px; background: linear-gradient(90deg, #fff, var(--orange)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+.welcome-sub { color: var(--text-dim); font-size: 14px; line-height: 1.6; max-width: 700px; }
 .welcome p { color: var(--text-dim); font-size: 13.5px; line-height: 1.6; max-width: 1100px; }
+
+.quote-card {
+  background: linear-gradient(135deg, rgba(239,149,82,0.08), rgba(239,149,82,0.01));
+  border: 1px solid rgba(239,149,82,0.25); border-radius: 12px; padding: 18px 20px 18px 46px;
+  margin-bottom: 22px; position: relative; max-width: 760px;
+}
+.quote-card .quote-mark { position: absolute; left: 16px; top: 6px; font-size: 32px; font-family: Georgia, serif; color: var(--orange); opacity: 0.6; line-height: 1; }
+.quote-card p { font-size: 13px; color: var(--text-dim); line-height: 1.6; }
 
 /* NOTA METODOLÓGICA */
 .method-note {
@@ -161,17 +193,6 @@ body {
 }
 .zoom-controls button:hover { border-color: var(--teal); color: var(--teal); }
 
-/* Brújula decorativa — puramente ambiental, sin escala numérica ni pretensión
-   de precisión cartográfica real (el fondo es una silueta estilizada, no un mapa georreferenciado). */
-.map-compass {
-  position: absolute; bottom: 14px; left: 14px; width: 40px; height: 40px; border-radius: 50%;
-  border: 1px solid var(--border); background: rgba(18,24,40,0.85); backdrop-filter: blur(4px);
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  color: var(--text-faint); font-size: 12px; gap: 1px; cursor: help;
-}
-.map-compass i { font-size: 11px; transform: rotate(-45deg); color: var(--text-dim); }
-.map-compass span { font-size: 9px; font-weight: 700; letter-spacing: 0.5px; }
-
 .network-sidebar { width: 220px; flex-shrink: 0; display: flex; flex-direction: column; gap: 16px; }
 .network-legend {
   width: 100%; background: var(--panel-alt); border: 1px solid var(--border-soft); border-radius: 8px;
@@ -199,6 +220,7 @@ body {
 .swatch-directa-neutral { border-color: #b7bccb; border-top-style: solid; }
 .swatch-indirecta-neutral { border-color: #b7bccb; border-top-style: dashed; }
 .swatch-vacio-neutral { border-color: #b7bccb; border-top-style: dotted; border-top-width: 3px; }
+.legend-item-minor { opacity: 0.6; font-size: 11px; }
 .legend-static-item { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--text-dim); }
 .legend-static-item .legend-swatch { width: 15px; height: 15px; border-radius: 4px; border-top: none !important; }
 .legend-divider { height: 1px; background: var(--border-soft); margin: 2px 0; }
