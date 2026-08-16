@@ -514,6 +514,107 @@ function buildDefs(svg) {
   svg.appendChild(defs);
 }
 
+/* ==========================================================
+   FONDO DE MAPA (decorativo) — silueta abstracta tipo "territorio",
+   inspirada en el estilo de referencia (contorno oscuro + textura de
+   puntos), pero SIN pretender ser una cartografía real de Bogotá:
+   es una forma estilizada, generada matemáticamente (sin datos
+   geográficos), solo para dar ambientación de "mapa" detrás de la red.
+   No lleva escala numérica ni coordenadas reales — sería una falsa
+   precisión que no podemos respaldar.
+   ========================================================== */
+function buildMapBackground(svg) {
+  const g = document.createElementNS(SVG_NS, "g");
+  g.setAttribute("class", "map-bg-layer");
+
+  const cx = CANVAS.w / 2, cy = CANVAS.h / 2;
+  // multiplicadores fijos (no aleatorios) para un contorno irregular
+  // pero reproducible en cada carga — silueta alargada norte-sur,
+  // evocando la forma general de la sabana de Bogotá sin copiar límites reales.
+  const mult = [0.5,0.68,0.6,0.88,0.72,1.02,0.85,1.12,0.95,1.18,1.0,1.15,0.9,1.05,0.78,0.95,0.68,0.82,0.55,0.7,0.42,0.58,0.38,0.46];
+  const rx = CANVAS.w * 0.34, ry = CANVAS.h * 0.42;
+  const pts = mult.map((m, i) => {
+    const angle = (i / mult.length) * Math.PI * 2 - Math.PI / 2;
+    return { x: cx + Math.cos(angle) * rx * m, y: cy + Math.sin(angle) * ry * m };
+  });
+
+  function smoothClosedPath(points) {
+    let d = "";
+    const n = points.length;
+    const mid = (a, b) => ({ x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 });
+    const start = mid(points[n - 1], points[0]);
+    d += `M${start.x},${start.y} `;
+    for (let i = 0; i < n; i++) {
+      const p = points[i], next = points[(i + 1) % n];
+      const m = mid(p, next);
+      d += `Q${p.x},${p.y} ${m.x},${m.y} `;
+    }
+    d += "Z";
+    return d;
+  }
+
+  const blobPath = smoothClosedPath(pts);
+  const blobId = "mapBlobShape";
+
+  const defs = document.createElementNS(SVG_NS, "defs");
+  const clip = document.createElementNS(SVG_NS, "clipPath");
+  clip.setAttribute("id", blobId + "-clip");
+  const clipPath = document.createElementNS(SVG_NS, "path");
+  clipPath.setAttribute("d", blobPath);
+  clip.appendChild(clipPath);
+  defs.appendChild(clip);
+
+  const pattern = document.createElementNS(SVG_NS, "pattern");
+  pattern.setAttribute("id", "mapDotPattern");
+  pattern.setAttribute("width", "34"); pattern.setAttribute("height", "34");
+  pattern.setAttribute("patternUnits", "userSpaceOnUse");
+  const dot = document.createElementNS(SVG_NS, "circle");
+  dot.setAttribute("cx", "3"); dot.setAttribute("cy", "3"); dot.setAttribute("r", "1.4");
+  dot.setAttribute("fill", "rgba(190,205,230,0.16)");
+  pattern.appendChild(dot);
+  defs.appendChild(pattern);
+  g.appendChild(defs);
+
+  // relleno base de la silueta
+  const fill = document.createElementNS(SVG_NS, "path");
+  fill.setAttribute("d", blobPath);
+  fill.setAttribute("fill", "#151f38");
+  fill.setAttribute("opacity", "0.9");
+  g.appendChild(fill);
+
+  // textura de puntos, recortada a la silueta
+  const dotsRect = document.createElementNS(SVG_NS, "rect");
+  dotsRect.setAttribute("x", "0"); dotsRect.setAttribute("y", "0");
+  dotsRect.setAttribute("width", CANVAS.w); dotsRect.setAttribute("height", CANVAS.h);
+  dotsRect.setAttribute("fill", "url(#mapDotPattern)");
+  dotsRect.setAttribute("clip-path", `url(#${blobId}-clip)`);
+  g.appendChild(dotsRect);
+
+  // un par de "curvas de nivel" concéntricas, solo decorativas
+  [0.7, 0.45].forEach(scale => {
+    const innerPts = pts.map(p => ({
+      x: cx + (p.x - cx) * scale,
+      y: cy + (p.y - cy) * scale,
+    }));
+    const contour = document.createElementNS(SVG_NS, "path");
+    contour.setAttribute("d", smoothClosedPath(innerPts));
+    contour.setAttribute("fill", "none");
+    contour.setAttribute("stroke", "rgba(150,170,200,0.15)");
+    contour.setAttribute("stroke-width", "1.5");
+    g.appendChild(contour);
+  });
+
+  // borde de la silueta
+  const outline = document.createElementNS(SVG_NS, "path");
+  outline.setAttribute("d", blobPath);
+  outline.setAttribute("fill", "none");
+  outline.setAttribute("stroke", "rgba(160,180,210,0.32)");
+  outline.setAttribute("stroke-width", "2");
+  g.appendChild(outline);
+
+  svg.appendChild(g);
+}
+
 // Color del trazo: SOLO 2 colores en toda la red — Soporte (naranja) y Resiliencia (azul).
 // El estilo de línea (sólida+flecha / punteada / punteada dispersa) es lo que distingue
 // directa / indirecta / vacío — nunca el color.
@@ -703,7 +804,7 @@ function renderNetwork() {
   const svg = document.getElementById("networkViz");
   if (!svg) return;
   svg.innerHTML = "";
-  buildDefs(svg); drawEdges(svg); drawNodes(svg); setupZoomPan(svg);
+  buildDefs(svg); buildMapBackground(svg); drawEdges(svg); drawNodes(svg); setupZoomPan(svg);
 }
 
 /* -------- paneles de información -------- */
