@@ -101,15 +101,15 @@ body {
 .topbar-chevron { font-size: 11px; color: var(--text-faint); margin-left: 2px; }
 
 .welcome { margin-bottom: 22px; }
-.welcome-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; color: var(--teal); margin-bottom: 8px; position: relative; padding-left: 14px; }
-.welcome-eyebrow::before { content: ""; position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 8px; height: 2px; background: var(--teal); }
-.welcome h2 { font-family: 'Space Grotesk', sans-serif; font-size: 34px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.5px; }
+.welcome-eyebrow { font-size: 12px; font-weight: 700; letter-spacing: 1.5px; color: var(--teal); margin-bottom: 10px; position: relative; padding-left: 16px; }
+.welcome-eyebrow::before { content: ""; position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 9px; height: 2px; background: var(--teal); }
+.welcome h2 { font-family: 'Space Grotesk', sans-serif; font-size: 54px; font-weight: 700; margin-bottom: 12px; letter-spacing: -1px; line-height: 1.1; }
 .welcome h2 .h2-plain { color: #f2f3f6; }
 .welcome h2 .h2-accent {
   background: linear-gradient(90deg, #f2f3f6 0%, #e9695c 55%, #d28b36 100%);
   -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
 }
-.welcome-sub { color: var(--text-dim); font-size: 14.5px; line-height: 1.6; max-width: 700px; }
+.welcome-sub { color: var(--text-dim); font-size: 15px; line-height: 1.6; max-width: 700px; }
 .welcome p { color: var(--text-dim); font-size: 13.5px; line-height: 1.6; max-width: 1100px; }
 
 .quote-card {
