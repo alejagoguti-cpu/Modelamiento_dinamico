@@ -1,0 +1,500 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 1,
+        "uplcodigo": "UPZ 1",
+        "nombre": "Britalia"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -74.04577527527996,
+          4.696057835794614
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 2,
+        "uplcodigo": "UPZ 2",
+        "nombre": "Tober\u00edn"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -74.1081540826808,
+          4.676938635305783
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 3,
+        "uplcodigo": "UPZ 3",
+        "nombre": "Usaqu\u00e9n"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -74.05684619459177,
+          4.724176742913038
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 4,
+        "uplcodigo": "UPZ 4",
+        "nombre": "Torca"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -74.08128023249758,
+          4.562267766830218
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 5,
+        "uplcodigo": "UPZ 5",
+        "nombre": "Niza"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -74.08552023739325,
+          4.578078864852236
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 6,
+        "uplcodigo": "UPZ 6",
+        "nombre": "Suba"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -74.0614075361424,
+          4.698250774503015
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 7,
+        "uplcodigo": "UPZ 7",
+        "nombre": "Centro Hist\u00f3rico"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -74.16178433732492,
+          4.608607773936893
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 8,
+        "uplcodigo": "UPZ 8",
+        "nombre": "Teusaquillo"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -74.16507649505425,
+          4.6003093500882875
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 9,
+        "uplcodigo": "UPZ 9",
+        "nombre": "Chapinero"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -74.08913675974496,
+          4.546687244078232
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 10,
+        "uplcodigo": "UPZ 10",
+        "nombre": "Barrios Unidos"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -74.11760623392988,
+          4.502574960494884
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 11,
+        "uplcodigo": "UPZ 11",
+        "nombre": "Restrepo"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -74.09046854080192,
+          4.532509268774405
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 13,
+        "uplcodigo": "UPZ 13",
+        "nombre": "Puente Aranda"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -74.11571542899318,
+          4.570019808381865
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 14,
+        "uplcodigo": "UPZ 14",
+        "nombre": "Los Alc\u00e1zares"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -74.1157257518718,
+          4.55762888796328
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 15,
+        "uplcodigo": "UPZ 15",
+        "nombre": "Engativ\u00e1"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -74.10866467036685,
+          4.544549762651734
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 16,
+        "uplcodigo": "UPZ 16",
+        "nombre": "Fontib\u00f3n"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -74.14393726804849,
+          4.677027701736826
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 17,
+        "uplcodigo": "UPZ 17",
+        "nombre": "Tintal"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -74.10186099760023,
+          4.662940860900915
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 18,
+        "uplcodigo": "UPZ 18",
+        "nombre": "Patio Bonito"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -74.09482576962314,
+          4.56508119241262
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 19,
+        "uplcodigo": "UPZ 19",
+        "nombre": "Kennedy"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -74.09310336399916,
+          4.583638509280559
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 20,
+        "uplcodigo": "UPZ 20",
+        "nombre": "Salitre"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -74.10433859971069,
+          4.573736495399751
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 21,
+        "uplcodigo": "UPZ 21",
+        "nombre": "Bosa"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -74.11836832989316,
+          4.58266877236727
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 22,
+        "uplcodigo": "UPZ 22",
+        "nombre": "Ed\u00e9n"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -74.04666752147645,
+          4.666004724949741
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 23,
+        "uplcodigo": "UPZ 23",
+        "nombre": "Lucero"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -74.1123617305431,
+          4.607028706905306
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 24,
+        "uplcodigo": "UPZ 24",
+        "nombre": "Bosa - Porvenir"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -74.01946493718654,
+          4.667742397233538
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 25,
+        "uplcodigo": "UPZ 25",
+        "nombre": "Rafael Uribe Uribe"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -74.07207079491326,
+          4.596605074520744
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 26,
+        "uplcodigo": "UPZ 26",
+        "nombre": "Tunjuelito"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -74.09572756356225,
+          4.598407320447347
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 27,
+        "uplcodigo": "UPZ 27",
+        "nombre": "San Crist\u00f3bal"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -74.03096172837215,
+          4.751145388886111
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 28,
+        "uplcodigo": "UPZ 28",
+        "nombre": "Usme Entrenubes"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -74.07275430760724,
+          4.6435435783927135
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 29,
+        "uplcodigo": "UPZ 29",
+        "nombre": "Usme Centro"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -74.07392428162908,
+          4.6279604907729395
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 30,
+        "uplcodigo": "UPZ 30",
+        "nombre": "Cerros Orientales"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -74.08539878234399,
+          4.661106455466674
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 31,
+        "uplcodigo": "UPZ 31",
+        "nombre": "Cuenca del Tunjuelo"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -74.09133292659298,
+          4.647745255233148
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 32,
+        "uplcodigo": "UPZ 32",
+        "nombre": "Sumapaz"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -74.08637186130646,
+          4.648285214645899
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 33,
+        "uplcodigo": "UPZ 33",
+        "nombre": "Salitre - Bosa (expansi\u00f3n)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -74.08954087427318,
+          4.6307248071884075
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 34,
+        "uplcodigo": "UPZ 34",
+        "nombre": "Norte (expansi\u00f3n)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -74.1783538096743,
+          4.637108307372606
+        ]
+      }
+    }
+  ]
+}
