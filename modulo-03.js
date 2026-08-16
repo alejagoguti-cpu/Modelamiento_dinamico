@@ -2622,12 +2622,15 @@ const iconSize = Math.max(28, Math.round(R * 0.52));
       fo.appendChild(div);
       g.appendChild(fo);
 
-      const lines = wrapLabel(c.label);
-      const labelStep = Math.max(14, Math.min(20, R * 0.18));
+      // Los nodos pequeños usan menos caracteres por línea y una tipografía más contenida.
+      const maxLabelChars = R < 45 ? 9 : R < 60 ? 11 : R < 80 ? 13 : 16;
+      const lines = wrapLabel(c.label, maxLabelChars);
+      const labelStep = Math.max(12, Math.min(19, R * 0.18));
+      const labelFont = Math.max(10, Math.min(18, R * 0.22));
       // Las etiquetas quedan centradas en la mitad inferior del nodo.
       const labelStart = Math.max(R * 0.18, R * 0.28 - ((lines.length - 1) * labelStep) / 2);
       lines.forEach((ln, i) => {
-        const t = el('text', { y: labelStart + i * labelStep, style: `font-size:${Math.max(12, Math.min(20, fontSize * .64))}px` });
+        const t = el('text', { y: labelStart + i * labelStep, style: `font-size:${labelFont}px` });
         t.textContent = ln;
         g.appendChild(t);
       });
