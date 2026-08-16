@@ -6422,3 +6422,27 @@ body {
 #svg .rel-hit.rel-off {
   pointer-events: none !important;
 }
+
+
+/* Explicación breve dentro de la cita, siguiendo el tooltip oscuro de referencia */
+.quote-explanation-label {
+  margin-top: 12px;
+  color: #46d6d0;
+  font: 700 9px/1.2 'Space Grotesk', Inter, system-ui, sans-serif;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.quote-explanation {
+  margin: 5px 0 11px;
+  color: #d7ddd9;
+  font: 400 11px/1.45 Inter, system-ui, sans-serif;
+  max-width: 44ch;
+}
+.quote-explanation + .quote-text {
+  margin-top: 0;
+  padding-top: 10px;
+  border-top: 1px solid rgba(226, 232, 226, .14);
+}
+@media (max-width: 560px) {
+  .quote-explanation { font-size: 10.5px; max-width: 36ch; }
+}

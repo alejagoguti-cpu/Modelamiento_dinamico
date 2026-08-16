@@ -3282,6 +3282,12 @@ function openQuoteModal(r, kind) {
   const tags = [`<span class="quote-tag ${kind}">${esc((r.tipo || 'SOPORTE').toUpperCase())}</span>`];
   document.getElementById('quoteTags').innerHTML = tags.join('');
 
+  const explanation = r.sO === r.sD
+    ? `La conexión se mantiene dentro de la estructura ${r.sO}. En este modelo, ${r.cO} se relaciona con ${r.cD} como un vínculo de ${(r.tipo || 'soporte').toLowerCase()}, clasificado como relación ${(r.evid || 'directa').toLowerCase()}.`
+    : `La relación conecta la estructura ${r.sO} con ${r.sD}: ${r.cO} funciona como vínculo territorial hacia ${r.cD}. En este modelo se clasifica como ${(r.tipo || 'soporte').toLowerCase()} y se lee como una relación ${(r.evid || 'directa').toLowerCase()}.`;
+  const qe = document.getElementById('quoteExplanation');
+  if (qe) qe.textContent = explanation;
+
   // r.frase ya viene entre comillas tipográficas desde los datos
   const qt = document.getElementById('quoteText');
   if (r.sinFrase || !r.frase) {
