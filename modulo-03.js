@@ -633,7 +633,9 @@ const POT_DATA = {
    "completa": true,
    "id": 7,
    "porVerificar": false,
-   "sinFrase": false
+   "sinFrase": false,
+   "explicacion": "Los servicios públicos sostienen el funcionamiento del Distrito Centro Tecnológico e Innovación mediante energía, telecomunicaciones e internet. La relación es indirecta porque la infraestructura habilita la actividad, pero no constituye por sí misma el distrito.",
+   "ejemplo": "Sin energía estable y conectividad digital, un campus de ciencia, tecnología e innovación no podría operar de forma continua.",
   },
   {
    "sO": "EFC",
@@ -803,7 +805,9 @@ const POT_DATA = {
    "completa": true,
    "id": 17,
    "porVerificar": false,
-   "sinFrase": false
+   "sinFrase": false,
+   "explicacion": "El patrimonio natural puede apoyar el turismo responsable cuando se combina con conservación, accesibilidad, equipamientos y saberes locales. La relación es indirecta porque el POT no convierte todo patrimonio natural en zona turística.",
+   "ejemplo": "Un recorrido de naturaleza alrededor de un ecosistema protegido puede generar turismo responsable sin transformar el ecosistema en una infraestructura turística.",
   },
   {
    "sO": "EIP",
@@ -870,8 +874,11 @@ const POT_DATA = {
    "clase": "Intersistema",
    "completa": true,
    "id": 21,
+   "evid": "Indirecta",
    "porVerificar": false,
-   "sinFrase": false
+   "sinFrase": false,
+   "explicacion": "Los humedales aportan agua, biodiversidad, semillas y regulación ambiental, condiciones que pueden apoyar prácticas de huerta y producción de alimentos. La relación es indirecta porque el humedal no es una unidad productiva de alimentos.",
+   "ejemplo": "Una huerta urbana cercana puede beneficiarse del conocimiento sobre agua y semillas asociado al ecosistema, pero no debe instalarse dentro del humedal protegido.",
   },
   {
    "sO": "EEP",
@@ -1653,7 +1660,9 @@ const POT_DATA = {
    "completa": true,
    "id": 67,
    "porVerificar": false,
-   "sinFrase": false
+   "sinFrase": false,
+   "explicacion": "La protección de los humedales contribuye a conservar valores naturales que el POT integra dentro del patrimonio natural. La relación es indirecta porque conecta dos estructuras territoriales mediante una función de conservación.",
+   "ejemplo": "Conservar un humedal mantiene un valor natural que luego puede reconocerse dentro del sistema de patrimonio natural, aunque ambos nodos tengan funciones distintas.",
   },
   {
    "sO": "EIP",
@@ -1669,8 +1678,11 @@ const POT_DATA = {
    "clase": "Intersistema",
    "completa": true,
    "id": 68,
+   "evid": "Indirecta",
    "porVerificar": false,
-   "sinFrase": false
+   "sinFrase": false,
+   "explicacion": "El patrimonio arqueológico puede incorporarse a proyectos y equipamientos próximos mediante su reconocimiento, protección y puesta en valor. La relación es indirecta porque el patrimonio no es un equipamiento por sí mismo.",
+   "ejemplo": "Un equipamiento cultural o educativo puede incluir la interpretación de un sitio arqueológico cercano sin convertir el sitio en un equipamiento.",
   },
   {
    "sO": "EFC",
@@ -1738,7 +1750,9 @@ const POT_DATA = {
    "completa": true,
    "id": 72,
    "porVerificar": false,
-   "sinFrase": false
+   "sinFrase": false,
+   "explicacion": "Los parques ecológicos de montaña pueden sostener ecoturismo y educación ambiental compatibles con la conservación. La relación es indirecta porque el POT menciona actividades sostenibles asociadas, no una equivalencia entre parque y zona turística.",
+   "ejemplo": "Un sendero de ecoturismo con control de visitantes puede acercar a la ciudadanía al parque sin cambiar su función ecológica.",
   },
   {
    "sO": "EEP",
@@ -3012,6 +3026,13 @@ function resetAll() {
   resetView();
 }
 
+function relationExplanation(r) {
+  if (r.explicacion) return r.explicacion;
+  return r.sO === r.sD
+    ? `La conexión se mantiene dentro de la estructura ${r.sO}: ${r.cO} se relaciona con ${r.cD} como un vínculo de ${(r.tipo || 'soporte').toLowerCase()} y lectura ${(r.evid || 'directa').toLowerCase()}.`
+    : `La relación conecta la estructura ${r.sO} con ${r.sD}: ${r.cO} funciona como vínculo territorial hacia ${r.cD}. Se clasifica como ${(r.tipo || 'soporte').toLowerCase()} y se lee como una relación ${(r.evid || 'directa').toLowerCase()}.`;
+}
+
 function selectRelation(id, ev) {
   // El mismo tooltip sobre la línea contiene toda la evidencia; no se abre otro popup.
   hideTooltip();
@@ -3041,6 +3062,7 @@ function selectRelation(id, ev) {
       <div><div class="k">Lectura</div><div class="v">${r.evid}</div></div>
       <div style="grid-column:1/-1"><div class="k">Sección / referencia</div><div class="v" style="font-size:10.5px;line-height:1.4">${esc(r.seccion)}</div></div>
     </div>
+    <div class="ev-explanation"><b>Explicación causal</b><br>${esc(relationExplanation(r))}${r.ejemplo ? `<br><span class="ev-example"><b>Ejemplo</b> ${esc(r.ejemplo)}</span>` : ""}</div>
     <div class="ev-quote ${kind}">${esc(r.frase)}</div>
     <div class="ev-page">Página ${r.pag}</div>
     ${r.completa ? '' : '<div class="ev-warn"><i class="fa-solid fa-circle-info"></i>El archivo fuente guarda esta relación como fragmento abreviado, no como frase completa.</div>'}`;
@@ -3327,13 +3349,11 @@ function initQuoteModal() {
 const tip = () => document.getElementById('tooltip');
 
 function relationTooltipHTML(r) {
-  const explanation = r.sO === r.sD
-    ? `La conexión se mantiene dentro de la estructura ${r.sO}: ${r.cO} se relaciona con ${r.cD} como un vínculo de ${(r.tipo || 'soporte').toLowerCase()} y lectura ${(r.evid || 'directa').toLowerCase()}.`
-    : `La relación conecta ${r.sO} con ${r.sD}: ${r.cO} funciona como vínculo territorial hacia ${r.cD}. Se clasifica como ${(r.tipo || 'soporte').toLowerCase()} y se lee como una relación ${(r.evid || 'directa').toLowerCase()}.`;
+  const explanation = relationExplanation(r);
   return `<div class="tt-sys" style="color:${model.systems[r.sO].color}">${esc(r.sO)} → ${esc(r.sD)}</div>` +
     `<div class="tt-rel">${esc(r.cO)} → ${esc(r.cD)}</div>` +
     `<span class="tt-type">${esc((r.tipo || 'Soporte').toUpperCase())} · ${esc(r.evid || 'Directa')} · p. ${esc(r.pag)}</span>` +
-    `<div class="tt-label">EXPLICACIÓN</div><div class="tt-explanation">${esc(explanation)}</div>` +
+    `<div class="tt-label">EXPLICACIÓN</div><div class="tt-explanation">${esc(explanation)}${r.ejemplo ? `<br><span class="tt-example"><b>Ejemplo:</b> ${esc(r.ejemplo)}</span>` : ""}</div>` +
     `<div class="tt-label">CITA POT</div><div class="tt-quote">${esc(r.frase || 'Cita pendiente de completar')}</div>` +
     `<div class="tt-page">${esc(r.seccion || 'POT')} · p. ${esc(r.pag)}</div>`;
 }

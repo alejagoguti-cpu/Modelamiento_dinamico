@@ -6997,3 +6997,36 @@ Need update styles maybe `display:none` for quote-backdrop means if old openQuot
   .welcome { margin-bottom: 18px !important; }
   .net-layout { grid-template-columns: 1fr !important; gap: 16px !important; }
 }
+
+/* Explicación causal: interpretación del vínculo separada de la cita textual. */
+.ev-explanation {
+  margin: 10px 0 9px;
+  padding: 9px 11px;
+  border: 1px solid rgba(70,214,208,.22);
+  border-left: 3px solid var(--teal);
+  border-radius: 8px;
+  background: rgba(70,214,208,.06);
+  color: #d9ebe6;
+  font-size: 11px;
+  line-height: 1.45;
+}
+.ev-explanation b {
+  color: var(--teal);
+  font-size: 9px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.ev-example,
+.tt-example {
+  display: block;
+  margin-top: 7px;
+  padding-top: 7px;
+  border-top: 1px solid rgba(70,214,208,.16);
+  color: #b9d8d2;
+}
+.ev-example b,
+.tt-example b {
+  color: #e89a6c;
+  letter-spacing: .04em;
+}
