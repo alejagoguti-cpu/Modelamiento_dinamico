@@ -6354,3 +6354,57 @@ body {
     font-size: 10px !important;
   }
 }
+
+
+/* Composición aprobada: canvas central visible, métricas debajo y paneles secundarios fuera del viewport */
+@media (min-width: 821px) {
+  .app > .main > .net-layout {
+    grid-template-columns: 310px minmax(0, 1fr) !important;
+    height: calc(100vh - 168px) !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+  .app > .main > .net-layout > .col {
+    min-height: 0 !important;
+  }
+  .app > .main > .net-layout > .col:last-child {
+    grid-column: auto !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+    gap: 0 !important;
+  }
+  .app > .main > .net-layout > .col:last-child > .net-card {
+    display: block !important;
+    height: calc(100% - 84px) !important;
+    min-height: 0 !important;
+    flex: none !important;
+    margin: 0 0 8px !important;
+  }
+  .app > .main > .net-layout > .col:last-child > .net-card .net-body {
+    display: block !important;
+    height: calc(100% - 54px) !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+  .app > .main > .net-layout > .col:last-child > .net-card .net-stage {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+  .app > .main > .net-layout > .col:last-child > .network-metrics-strip {
+    display: grid !important;
+    position: relative !important;
+    z-index: 4 !important;
+    height: 68px !important;
+    min-height: 68px !important;
+    flex: none !important;
+    margin: 0 !important;
+    overflow: visible !important;
+  }
+  .app > .main > .net-layout > .col:last-child > .network-metrics-strip ~ .pcard {
+    flex: none !important;
+  }
+}
