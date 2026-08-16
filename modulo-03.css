@@ -6908,3 +6908,30 @@ Need update styles maybe `display:none` for quote-backdrop means if old openQuot
   .app > .sidebar { width: 90px !important; min-width: 90px !important; }
   .app > .main { margin-left: 0 !important; }
 }
+
+/* Corrección final: ningún icono de la sidebar debe convertirse en una bola blanca al recargar. */
+.app > .sidebar .side-item,
+.app > .sidebar .side-item:visited {
+  background-color: #101716 !important;
+  background-image: none !important;
+  color: #73827b !important;
+}
+.app > .sidebar .side-item.active,
+.app > .sidebar .side-item:hover {
+  background-color: rgba(39,205,196,.08) !important;
+  background-image: none !important;
+  color: #2fbfae !important;
+}
+.app > .sidebar .side-item::before,
+.app > .sidebar .side-item::after { box-sizing: border-box; }
+.app > .sidebar .side-item svg,
+.app > .sidebar .side-item svg * {
+  fill: none !important;
+  background: transparent !important;
+  stroke: currentColor !important;
+}
+.app > .sidebar .brand-mark,
+.app > .sidebar .sidebar-bottom {
+  background: #080c0c !important;
+  color: #2fbfae !important;
+}
