@@ -2532,7 +2532,7 @@ function render() {
     const hit = el('path', { class: 'rel-hit', d, 'data-rel': r.id });
 
     [path, hit].forEach(node => {
-      node.addEventListener('click', ev => { ev.stopPropagation(); selectRelation(r.id); });
+      node.addEventListener('click', ev => { ev.stopPropagation(); selectRelation(r.id, ev); });
       node.addEventListener('mouseenter', ev => showTooltip(ev,
         `<div class="tt-sys" style="color:${model.systems[r.sO].color}">${r.sO} → ${r.sD}</div>` +
         `${esc(r.cO)} → ${esc(r.cD)}<br><span style="color:#8891a5">${r.tipo} · ${r.evid} · p. ${r.pag}</span>`));
@@ -3001,9 +3001,8 @@ function resetAll() {
   resetView();
 }
 
-function selectRelation(id) {
-  // El tooltip corto solo sirve como previsualización al pasar el cursor.
-  // Al hacer clic debe desaparecer para dejar visible el popup documental completo.
+function selectRelation(id, ev) {
+  // El mismo tooltip sobre la línea contiene toda la evidencia; no se abre otro popup.
   hideTooltip();
   // Los atributos data-rel del SVG llegan como texto; el modelo usa IDs numéricos.
   // Normalizar aquí evita que el clic del hitbox no encuentre la relación.
@@ -3013,7 +3012,19 @@ function selectRelation(id) {
   if (!r) return;
   const kind = r.tipo === 'Soporte' ? 'soporte' : 'resiliencia';
 
-  openQuoteModal(r, kind);
+  const explanation = r.sO === r.sD
+    ? `La conexión se mantiene dentro de la estructura ${r.sO}: ${r.cO} se relaciona con ${r.cD} como un vínculo de ${(r.tipo || 'soporte').toLowerCase()} y lectura ${(r.evid || 'directa').toLowerCase()}.`
+    : `La relación conecta ${r.sO} con ${r.sD}: ${r.cO} funciona como vínculo territorial hacia ${r.cD}. Se clasifica como ${(r.tipo || 'soporte').toLowerCase()} y se lee como una relación ${(r.evid || 'directa').toLowerCase()}.`;
+  const fullTooltip = `<div class="tt-sys" style="color:${model.systems[r.sO].color}">${esc(r.sO)} → ${esc(r.sD)}</div>` +
+    `<div class="tt-rel">${esc(r.cO)} → ${esc(r.cD)}</div>` +
+    `<span class="tt-type">${esc((r.tipo || 'Soporte').toUpperCase())} · ${esc(r.evid || 'Directa')} · p. ${esc(r.pag)}</span>` +
+    `<div class="tt-label">EXPLICACIÓN</div><div class="tt-explanation">${esc(explanation)}</div>` +
+    `<div class="tt-label">CITA POT</div><div class="tt-quote">${esc(r.frase || 'Cita pendiente de completar')}</div>` +
+    `<div class="tt-page">${esc(r.seccion || 'POT')} · p. ${esc(r.pag)}</div>`;
+  if (ev) {
+    showTooltip(ev, fullTooltip);
+    tip().classList.add('pinned');
+  }
 
   document.getElementById('evBox').innerHTML = `
     <div class="ev-rel">
@@ -3330,7 +3341,10 @@ function moveTooltip(ev) {
   t.style.top = y + 'px';
 }
 
-function hideTooltip() { tip().classList.remove('show'); }
+function hideTooltip() {
+  const t = tip();
+  if (!t.classList.contains('pinned')) t.classList.remove('show');
+}
 
 // ---------------------------------------------------------------------
 // 7. ZOOM Y DESPLAZAMIENTO
@@ -3409,10 +3423,11 @@ function initPanZoom() {
     const target = ev.target && ev.target.closest ? ev.target.closest('path[data-rel]') : null;
     if (target && (target.classList.contains('rel') || target.classList.contains('rel-hit'))) {
       ev.stopPropagation();
-      selectRelation(target.getAttribute('data-rel'));
+      selectRelation(target.getAttribute('data-rel'), ev);
       return;
     }
     clearFocus();
+    tip().classList.remove('show', 'pinned');
   }, true);
 
   stage.addEventListener('wheel', e => {
