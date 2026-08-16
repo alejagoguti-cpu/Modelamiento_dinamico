@@ -1,39 +1,932 @@
-/* Red documental del POT: nodos concretos, hubs por frecuencia y evidencia verificable. */
-const PDF='./BOGOTAREVERDE.pdf';
-const COLORS={e1:'#2fd4c8',e2:'#6c9cff',e3:'#e6a65a',e4:'#b18aff'};
-const STRUCT={e1:'Estructura Ecológica Principal',e2:'Estructura Funcional y del Cuidado',e3:'Estructura Socioeconómica, Creativa y de Innovación',e4:'Estructura Integradora de Patrimonio'};
-const nodes=[
- {id:'agua',name:'Agua',cat:'e1',x:300,y:230,size:34,freq:42,desc:'Sistema hídrico y condición de soporte de la EEP.',quote:'“La estructura ecológica principal es la base de la resiliencia climática y de la sostenibilidad ambiental del territorio.”',page:'p. 42',maps:[['Estructura Ecológica Principal','p. 42 · áreas protegidas, sistema hídrico y resiliencia'] ]},
- {id:'humedales',name:'Humedales',cat:'e1',x:180,y:390,size:38,freq:48,desc:'Reservas Distritales de Humedal y ecosistemas concretos.',quote:'“No se podrán realizar obras sobre la ronda hídrica o la zona de fluctuación del nivel de agua.”',page:'p. 186',maps:[['Estructura Ecológica Principal','p. 42 · Reservas Distritales de Humedal'],['Conectores ecosistémicos','p. 60 · Suba–Conejera'] ]},
- {id:'conectores',name:'Conectores ecosistémicos',cat:'e1',x:410,y:395,size:28,freq:28,desc:'Corredores que vinculan áreas de la EEP.',quote:'“Mapa de los conectores ecosistémicos. POT Bogotá Reverdece 2022-2035.”',page:'p. 60',maps:[['Conectores ecosistémicos','p. 60 · Cerros–río Bogotá, Media Luna del Sur, Suba–Conejera, Virrey–Chicó y Fucha'] ]},
- {id:'reserva',name:'Thomas van der Hammen',cat:'e1',x:520,y:175,size:29,freq:24,desc:'Reserva Forestal Regional Productora del Norte de Bogotá.',quote:'“Reserva Forestal Regional Productora del Norte de Bogotá - Thomas van der Hammen.”',page:'p. 42',maps:[['Estructura Ecológica Principal','p. 42 · reserva forestal regional'] ]},
- {id:'transporte',name:'Transporte público',cat:'e2',x:710,y:260,size:42,freq:55,desc:'Red de movilidad y proyectos masivos de transporte.',quote:'“Se busca una ciudad de proximidad donde los tiempos de desplazamiento no superen los treinta minutos en modos de transporte público limpios y sostenibles.”',page:'p. 149',maps:[['Sistema de Movilidad','p. 172 · red Metro, corredores y actuaciones estratégicas'] ]},
- {id:'equipamientos',name:'Equipamientos',cat:'e2',x:820,y:435,size:34,freq:39,desc:'Servicios sociales, educación, salud e integración social.',quote:'“Dotar a la ciudad de equipamientos y servicios sociales (educación, salud, integración social, entre otros) [...] facilitará que los flujos sociales se movilicen en un rango de tiempo de treinta minutos o menos.”',page:'p. 170',maps:[['Manzanas del Cuidado','p. 123 · manzanas activas y proyectadas'] ]},
- {id:'vivienda',name:'Vivienda',cat:'e2',x:610,y:520,size:34,freq:44,desc:'Áreas residenciales y producción del hábitat.',quote:'“La ciudad de proximidad reconoce las diferentes formas de habitar y transitar la ciudad.”',page:'p. 149',maps:[['Ciudad popular','p. 141 · progresión de la ciudad popular e informal'] ]},
- {id:'empleo',name:'Empleo',cat:'e3',x:865,y:150,size:39,freq:51,desc:'Concentración, aglomeración y distribución territorial del trabajo.',quote:'“La dinámica misma de las economías de aglomeración hace que estas se desborden en el territorio y se constituya un modelo policéntrico que puede ser potenciado.”',page:'p. 171',maps:[['Estructura Socioeconómica, Creativa y de Innovación','p. 170 · centros, clústeres y corazones productivos'] ]},
- {id:'corazones',name:'Corazones productivos',cat:'e3',x:1030,y:280,size:31,freq:32,desc:'Aglomeraciones especializadas y diversificadas.',quote:'“Potenciar corazones productivos de aglomeración especializada para concretar el modelo policéntrico.”',page:'p. 171',maps:[['Estructura Socioeconómica, Creativa y de Innovación','p. 170 · corazones productivos'] ]},
- {id:'abastecimiento',name:'Abastecimiento',cat:'e3',x:1010,y:450,size:29,freq:26,desc:'Centros de abastecimiento, plazas y cadenas alimentarias.',quote:'“El POT pretende facilitar y propiciar nuevas fuentes de empleo [...] y desarrollar corazones productivos incipientes y economías de proximidad.”',page:'p. 171',maps:[['Estructura Socioeconómica, Creativa y de Innovación','p. 170 · centros de abastecimiento y plazas de mercado'] ]},
- {id:'patrimonio',name:'Patrimonio',cat:'e4',x:590,y:110,size:32,freq:37,desc:'Estructura integradora de patrimonio material, natural e inmaterial.',quote:'“El patrimonio cultural ha sido la oportunidad para [...] estrechar los lazos con su comunidad.”',page:'p. 126',maps:[['Patrimonio','p. 126 · estructura integradora de patrimonio'] ]},
- {id:'comunidades',name:'Comunidades',cat:'e4',x:420,y:585,size:29,freq:24,desc:'Actores, cuidado, apropiación y construcción colectiva del territorio.',quote:'“La ciudad popular, en su mayoría autoconstruida, representa cerca del 30% del suelo urbano de Bogotá.”',page:'p. 141',maps:[['Ciudad popular','p. 141 · progresión histórica'] ]},
- {id:'cuidado',name:'Cuidado',cat:'e2',x:750,y:590,size:30,freq:33,desc:'Red del cuidado, servicios y proximidad.',quote:'“Con cada UPL abastecida de manera equitativa, próxima y accesible de servicios, Bogotá se convertirá en una ciudad de treinta minutos.”',page:'p. 123',maps:[['Manzanas del Cuidado','p. 123 · localizaciones activas y proyectadas'] ]},
- {id:'regiotram',name:'RegioTram',cat:'e2',x:960,y:595,size:26,freq:19,desc:'Infraestructura regional conectada con áreas estratégicas.',quote:'“Por la zona pasarán [...] el RegioTram de Occidente y la tercera línea del Metro.”',page:'p. 172',maps:[['Sistema de Movilidad','p. 172 · movilidad regional y actuaciones estratégicas'] ]},
- {id:'campus',name:'Campus de Innovación',cat:'e3',x:1110,y:155,size:27,freq:17,desc:'Ámbito de innovación, academia, empresas y sector público.',quote:'“Con el Campus de Innovación se consolidará un modelo de ciudad inteligente que combinará los principales ecosistemas circundantes con las diferentes dinámicas urbanas existentes.”',page:'p. 177',maps:[['Campus de Innovación','p. 177 · plano 1:5000, estaciones Metro L3 y usos'] ]},
- {id:'ruralidad',name:'Ruralidad',cat:'e1',x:170,y:570,size:28,freq:22,desc:'Paisajes sostenibles, agroparques y relaciones regionales.',quote:'“Los paisajes sostenibles son la figura de protección y manejo ambiental [...] en áreas rurales.”',page:'p. 69',maps:[['Paisajes sostenibles','p. 68–69 · agroparques y corredores rurales'] ]}
+/* ==========================================================
+   RAPOT · LA RED IMPLÍCITA DEL POT (Bogotá Reverdece 2022-2035)
+
+   FUENTE DE DATOS: reconstruido directamente desde el archivo del equipo
+   "tabla_completa_relaciones_POT_Bogota_Reverdece.xlsx" (hoja "Matriz
+   completa": 45 relaciones intra-estructura con página, artículo y —
+   cuando existe— cita textual verbatim del POT). Se generó el código a
+   partir del Excel para evitar errores de transcripción manual.
+
+   Regla de nodos (hoja "Criterios" del Excel): no se introducen conceptos
+   abstractos ni subcategorías de otro nodo; los conceptos se mantienen al
+   mismo nivel de detalle. Por eso "Humedales" pesa exactamente igual que
+   "Transporte público": ningún nodo es hijo/categoría de otro.
+
+   Convención de líneas (hoja "Criterios"):
+     - Tipo de línea → ESTILO del trazo:
+         Sólida / Directa   : el POT establece de forma explícita el vínculo.
+         Punteada / Indirecta: vínculo construido por una relación funcional
+                                intermedia, menos directa.
+     - Tipo de relación → COLOR del trazo (dimensión independiente):
+         Soporte     (naranja): el primer concepto sostiene/facilita/habilita
+                                 el funcionamiento del segundo.
+         Resiliencia (azul)   : la relación está ligada expresamente a
+                                 conectividad ecosistémica, resiliencia
+                                 climática o reducción de riesgo.
+     - Vacío (rojo, discontinuo, con flecha): AUSENCIA documentada de
+       articulación entre dos componentes reales de estructuras distintas.
+       Es un hallazgo del equipo, no una relación del texto del POT — y no
+       forma parte del esquema Soporte/Resiliencia (que es 100% intra-
+       estructura en la Excel).
+
+   Nivel de evidencia (hoja "Criterios"):
+     - cita_literal (Nivel A)         : frase textual continua del POT,
+       validada desde el documento — evidencia recomendada para la red final.
+     - inventario_pendiente (Nivel B/C): relación que estaba en el inventario
+       previo del equipo pero sin cita textual completa aún validada — el
+       propio Excel indica "No presentarla como cita exacta" / "Usar en red:
+       Solo después de verificar". Se muestra igual en la red (con su
+       página/artículo aproximado) pero SIN inventar una cita, y con badge
+       visualmente distinto de cita_literal.
+     - fuente_secundaria / inferencia : quedan disponibles para hallazgos
+       propios del equipo por fuera de la Excel (p.ej. los vacíos de
+       articulación intersistema, que la Excel corrobora de forma
+       independiente: en la hoja "Resumen" las 4 estructuras muestran 0
+       relaciones verificadas intersistema).
+
+   No hay nodos-hub artificiales: el tamaño de cada bola sale del GRADO
+   REAL de conexión dentro de esta red (cuántas relaciones directas/
+   indirectas tiene), calculado después de construir las aristas — así
+   los hubs son los que el propio grafo revela, no una categoría
+   administrativa impuesta.
+   ========================================================== */
+
+const SVG_NS = "http://www.w3.org/2000/svg";
+const XHTML_NS = "http://www.w3.org/1999/xhtml";
+
+const STRUCT_STYLE = {
+  e1: { color: "#2dd4bf", label: "1. Estructura Ecológica Principal", short: "EEP",
+    articulos: "Art. 41–79 (39 artículos)", paginas: "pp. 70–101" },
+  e2: { color: "#f97316", label: "2. Estructura Funcional y del Cuidado", short: "EFC",
+    articulos: "Art. 88–99 (12 artículos)", paginas: "pp. 109–120" },
+  e3: { color: "#eab308", label: "3. Estructura Socioeconómica, Creativa y de Innovación", short: "ESECI",
+    articulos: "Art. 100–101 (2 artículos, + Art.240/243/327 en Libro III)", paginas: "pp. 120–122 / 223–279" },
+  e4: { color: "#ec4899", label: "4. Estructura Integradora de Patrimonios", short: "EIP",
+    articulos: "Art. 80–87 (8 artículos)", paginas: "pp. 101–109" },
+};
+
+const FUENTE_STYLE = {
+  cita_literal:         { color: "#2fd4c8", label: "Cita literal verificada (Nivel A)",              icon: "fa-quote-right" },
+  indice_oficial:       { color: "#5b8def", label: "Índice oficial (título confirmado)",             icon: "fa-list-check" },
+  fuente_secundaria:    { color: "#f5c945", label: "Fuente secundaria (ABC POT / prensa oficial)",    icon: "fa-newspaper" },
+  inferencia:           { color: "#ef9552", label: "Inferencia razonada del equipo",                 icon: "fa-lightbulb" },
+  inventario_pendiente: { color: "#8b93a8", label: "Inventario previo (Nivel B/C — cita sin validar)", icon: "fa-hourglass-half" },
+};
+
+/* ==========================================================
+   NODOS — 39 conceptos extraídos 1:1 de la hoja "Matriz completa"
+   del Excel del equipo, al mismo nivel de detalle (sin subcategorías
+   ni nodos-agregadores), + 1 nodo suplementario claramente marcado.
+   ========================================================== */
+const ODS_NODES = [
+  /* ---- ESTRUCTURA ECOLÓGICA PRINCIPAL ---- */
+  { id:"corredores_montanosos", cat:"e1", name:"CORREDORES\nMONTAÑOSOS", icon:"fa-mountain", fuente:"inventario_pendiente" },
+  { id:"rios", cat:"e1", name:"RÍOS", icon:"fa-water", fuente:"inventario_pendiente" },
+  { id:"quebradas", cat:"e1", name:"QUEBRADAS", icon:"fa-water", fuente:"inventario_pendiente" },
+  { id:"humedales", cat:"e1", name:"HUMEDALES", icon:"fa-droplet", fuente:"cita_literal" },
+  { id:"cerros_orientales", cat:"e1", name:"CERROS\nORIENTALES", icon:"fa-mountain-sun", fuente:"inventario_pendiente" },
+  { id:"complejos_de_paramos", cat:"e1", name:"COMPLEJOS\nDE PÁRAMOS", icon:"fa-mountain", fuente:"inventario_pendiente" },
+  { id:"bosques_urbanos", cat:"e1", name:"BOSQUES\nURBANOS", icon:"fa-tree", fuente:"inventario_pendiente" },
+  { id:"coberturas_vegetales", cat:"e1", name:"COBERTURAS\nVEGETALES", icon:"fa-leaf", fuente:"inventario_pendiente" },
+  { id:"areas_de_resiliencia_climatica", cat:"e1", name:"ÁREAS DE\nRESILIENCIA CLIMÁTICA", icon:"fa-shield-heart", fuente:"cita_literal" },
+  { id:"areas_protegidas", cat:"e1", name:"ÁREAS\nPROTEGIDAS", icon:"fa-shield-halved", fuente:"inventario_pendiente" },
+  { id:"parques_ecologicos_de_montana", cat:"e1", name:"PARQUES ECOLÓGICOS\nDE MONTAÑA", icon:"fa-campground", fuente:"inventario_pendiente" },
+  { id:"reservas_forestales", cat:"e1", name:"RESERVAS\nFORESTALES", icon:"fa-tree-city", fuente:"inventario_pendiente" },
+  { id:"parques_de_borde", cat:"e1", name:"PARQUES\nDE BORDE", icon:"fa-archway", fuente:"inventario_pendiente" },
+  { id:"paisajes_sostenibles", cat:"e1", name:"PAISAJES\nSOSTENIBLES", icon:"fa-sun", fuente:"inventario_pendiente" },
+
+  /* ---- ESTRUCTURA FUNCIONAL Y DEL CUIDADO ---- */
+  { id:"equipamientos", cat:"e2", name:"EQUIPAMIENTOS", icon:"fa-school", fuente:"cita_literal" },
+  { id:"servicios_de_cuidado", cat:"e2", name:"SERVICIOS\nDE CUIDADO", icon:"fa-hand-holding-heart", fuente:"inventario_pendiente" },
+  { id:"servicios_sociales", cat:"e2", name:"SERVICIOS\nSOCIALES", icon:"fa-people-roof", fuente:"cita_literal" },
+  { id:"vivienda", cat:"e2", name:"VIVIENDA", icon:"fa-house", fuente:"cita_literal" },
+  { id:"servicios_publicos", cat:"e2", name:"SERVICIOS\nPÚBLICOS", icon:"fa-bolt", fuente:"inventario_pendiente" },
+  { id:"ciclorutas", cat:"e2", name:"CICLORUTAS", icon:"fa-person-biking", fuente:"cita_literal" },
+  { id:"transporte_publico", cat:"e2", name:"TRANSPORTE\nPÚBLICO", icon:"fa-bus", fuente:"cita_literal" },
+  { id:"red_vial", cat:"e2", name:"RED\nVIAL", icon:"fa-road", fuente:"cita_literal" },
+  { id:"corredores_verdes", cat:"e2", name:"CORREDORES\nVERDES", icon:"fa-seedling", fuente:"cita_literal" },
+  { id:"manzanas_del_cuidado", cat:"e2", name:"MANZANAS\nDEL CUIDADO", icon:"fa-building-shield", fuente:"cita_literal" },
+  { id:"parques", cat:"e2", name:"PARQUES", icon:"fa-tree", fuente:"inventario_pendiente" },
+
+  /* ---- ESTRUCTURA SOCIOECONÓMICA, CREATIVA Y DE INNOVACIÓN ---- */
+  { id:"distrito_centro_tecnologico_e_innovacion", cat:"e3", name:"DISTRITO CENTRO\nTECNOLÓGICO E INNOVACIÓN", icon:"fa-microchip", fuente:"inventario_pendiente" },
+  { id:"servicios_empresariales", cat:"e3", name:"SERVICIOS\nEMPRESARIALES", icon:"fa-briefcase", fuente:"inventario_pendiente" },
+  { id:"sistema_de_educacion", cat:"e3", name:"SISTEMA\nDE EDUCACIÓN", icon:"fa-graduation-cap", fuente:"inventario_pendiente" },
+  { id:"centros_de_abastecimiento", cat:"e3", name:"CENTROS\nDE ABASTECIMIENTO", icon:"fa-warehouse", fuente:"inventario_pendiente" },
+  { id:"plazas_de_mercado", cat:"e3", name:"PLAZAS\nDE MERCADO", icon:"fa-store", fuente:"inventario_pendiente" },
+  { id:"zonas_industriales", cat:"e3", name:"ZONAS\nINDUSTRIALES", icon:"fa-industry", fuente:"cita_literal" },
+  { id:"produccion_artesanal", cat:"e3", name:"PRODUCCIÓN\nARTESANAL", icon:"fa-hammer", fuente:"cita_literal" },
+  { id:"zonas_de_interes_turistico", cat:"e3", name:"ZONAS DE\nINTERÉS TURÍSTICO", icon:"fa-camera", fuente:"inventario_pendiente" },
+  { id:"centros_financieros", cat:"e3", name:"CENTROS\nFINANCIEROS", icon:"fa-building-columns", fuente:"inventario_pendiente" },
+
+  /* ---- ESTRUCTURA INTEGRADORA DE PATRIMONIOS ---- */
+  { id:"sistema_de_sitios_sagrados", cat:"e4", name:"SISTEMA DE\nSITIOS SAGRADOS", icon:"fa-place-of-worship", fuente:"inventario_pendiente" },
+  { id:"patrimonio_inmaterial", cat:"e4", name:"PATRIMONIO\nINMATERIAL", icon:"fa-masks-theater", fuente:"inventario_pendiente" },
+  { id:"patrimonio_arqueologico", cat:"e4", name:"PATRIMONIO\nARQUEOLÓGICO", icon:"fa-monument", fuente:"inventario_pendiente" },
+  { id:"patrimonio_natural", cat:"e4", name:"PATRIMONIO\nNATURAL", icon:"fa-leaf", fuente:"inventario_pendiente" },
+  { id:"patrimonio_material", cat:"e4", name:"PATRIMONIO\nMATERIAL", icon:"fa-landmark", fuente:"inventario_pendiente" },
+
+  /* ---- NODO SUPLEMENTARIO (fuera de la matriz del Excel; añadido por su fuerza narrativa
+          para el hallazgo "general vs. particular": el POT nombra esta reserva por su
+          nombre propio en el Art.7, a diferencia del tratamiento genérico de "humedales") ---- */
+  { id:"van_der_hammen", cat:"e1", name:"RESERVA THOMAS\nVAN DER HAMMEN", icon:"fa-tree",
+    fuente:"cita_literal", suplementario:true },
 ];
-const edges=[
- ['agua','humedales','soporte','directa'],['humedales','conectores','soporte','directa'],['reserva','humedales','soporte','directa'],['humedales','transporte','resiliencia','indirecta'],['agua','resiliencia','resiliencia','directa'],['ruralidad','agua','soporte','directa'],['reserva','patrimonio','soporte','indirecta'],['humedales','patrimonio','soporte','indirecta'],['transporte','vivienda','soporte','directa'],['transporte','empleo','soporte','directa'],['transporte','equipamientos','soporte','directa'],['transporte','cuidado','soporte','directa'],['regiotram','empleo','soporte','directa'],['equipamientos','cuidado','soporte','directa'],['vivienda','cuidado','soporte','directa'],['empleo','corazones','soporte','directa'],['corazones','abastecimiento','soporte','directa'],['abastecimiento','comunidades','soporte','indirecta'],['empleo','campus','soporte','directa'],['campus','transporte','soporte','directa'],['patrimonio','comunidades','soporte','directa'],['comunidades','cuidado','resiliencia','indirecta'],['ruralidad','empleo','soporte','indirecta'],['vivienda','comunidades','soporte','directa'],['equipamientos','empleo','soporte','indirecta'],['transporte','regiotram','soporte','directa'],['conectores','patrimonio','resiliencia','indirecta'],['humedales','cuidado','resiliencia','indirecta']
-].map((e,i)=>({id:i,s:e[0],t:e[1],kind:e[2],mode:e[3]}));
-const svg=document.getElementById('networkViz'), NS='http://www.w3.org/2000/svg'; let activeFilter='all', selected=null, pan={x:0,y:0,scale:1,drag:false,sx:0,sy:0};
-const gEdges=document.createElementNS(NS,'g'),gNodes=document.createElementNS(NS,'g'); svg.append(gEdges,gNodes);
-function node(id){return nodes.find(n=>n.id===id)}
-function text(parent,x,y,value,cls,anchor='middle'){const t=document.createElementNS(NS,'text');t.setAttribute('x',x);t.setAttribute('y',y);t.setAttribute('text-anchor',anchor);t.setAttribute('class',cls);t.textContent=value;parent.append(t);return t}
-function render(){gEdges.innerHTML='';gNodes.innerHTML=''; const visible=n=>activeFilter==='all'||n.cat===activeFilter; edges.forEach(e=>{const s=node(e.s),t=node(e.t),line=document.createElementNS(NS,'line');line.setAttribute('x1',s.x);line.setAttribute('y1',s.y);line.setAttribute('x2',t.x);line.setAttribute('y2',t.y);line.setAttribute('class','edge '+(visible(s)&&visible(t)?'':'dim'));line.setAttribute('stroke',e.kind==='soporte'?'#e6a65a':'#6c9cff');line.setAttribute('stroke-width',e.mode==='directa'?1.7:1.1);if(e.mode!=='directa')line.setAttribute('stroke-dasharray','5 7');line.setAttribute('marker-end','url(#arrow)');line.addEventListener('click',()=>selectEdge(e));gEdges.append(line)});nodes.forEach(n=>{const wrap=document.createElementNS(NS,'g');wrap.setAttribute('class','node '+(visible(n)?'':'dim'));wrap.dataset.id=n.id;const halo=document.createElementNS(NS,'circle');halo.setAttribute('cx',n.x);halo.setAttribute('cy',n.y);halo.setAttribute('r',n.size+12);halo.setAttribute('class','node-halo');halo.setAttribute('fill',COLORS[n.cat]);wrap.append(halo);const c=document.createElementNS(NS,'circle');c.setAttribute('cx',n.x);c.setAttribute('cy',n.y);c.setAttribute('r',n.size);c.setAttribute('class','main-node');c.setAttribute('fill','#0d1619');c.setAttribute('stroke',COLORS[n.cat]);c.style.color=COLORS[n.cat];wrap.append(c);text(wrap,n.x,n.y+4,n.name,'node-label');text(wrap,n.x,n.y+n.size+17,STRUCT[n.cat].replace('Estructura ','').replace('Principal','').replace(', Creativa y de Innovación',''),'node-structure');wrap.addEventListener('click',()=>selectNode(n));gNodes.append(wrap)}); if(!document.getElementById('arrow')){const defs=document.createElementNS(NS,'defs'),m=document.createElementNS(NS,'marker');m.id='arrow';m.setAttribute('viewBox','0 0 10 10');m.setAttribute('refX','9');m.setAttribute('refY','5');m.setAttribute('markerWidth','5');m.setAttribute('markerHeight','5');m.setAttribute('orient','auto-start-reverse');const p=document.createElementNS(NS,'path');p.setAttribute('d','M 0 0 L 10 5 L 0 10 z');p.setAttribute('fill','#9ba8a5');m.append(p);defs.append(m);svg.prepend(defs)}}
-function selectNode(n){selected=n;document.getElementById('evidenceTitle').textContent=n.name;document.getElementById('evidenceMeta').textContent=`${STRUCT[n.cat]} · ${n.desc} · ${n.freq} menciones / señales documentales`;document.getElementById('evidenceQuote').textContent=n.quote;document.getElementById('evidenceSource').textContent=`— POT Bogotá Reverdece · ${n.page}`;document.getElementById('mapList').innerHTML=n.maps.map(m=>`<div class="map-card"><div><strong>${m[0]}</strong><span>${m[1]}</span></div><a href="${PDF}" target="_blank">Abrir ↗</a></div>`).join('');document.querySelectorAll('.main-node').forEach(c=>c.classList.remove('focus-ring'));const current=[...document.querySelectorAll('.node')].find(x=>x.dataset.id===n.id);if(current)current.querySelector('.main-node').classList.add('focus-ring');document.getElementById('evidencia').scrollIntoView({behavior:'smooth',block:'nearest'})}
-function selectEdge(e){const s=node(e.s),t=node(e.t);document.getElementById('evidenceTitle').textContent=`${s.name} ↔ ${t.name}`;document.getElementById('evidenceMeta').textContent=`Relación ${e.mode} · ${e.kind} · evidencia de lectura relacional`;document.getElementById('evidenceQuote').textContent=`La relación se infiere al leer conjuntamente las menciones de “${s.name}” y “${t.name}” en el POT. La línea no inventa un componente: hace visible una dependencia o articulación que el documento deja distribuida entre capítulos y mapas.`;document.getElementById('evidenceSource').textContent='— RAPOT · inferencia documentada, verificar en el PDF';document.getElementById('mapList').innerHTML='<div class="map-card"><div><strong>PDF Bogotá Reverdece</strong><span>Usa la búsqueda del PDF para contrastar ambos conceptos.</span></div><a href="'+PDF+'" target="_blank">Abrir ↗</a></div>'}
-document.querySelectorAll('.pill').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.pill').forEach(x=>x.classList.remove('active'));b.classList.add('active');activeFilter=b.dataset.filter;render()}));
-function applyTransform(){svg.querySelectorAll('g').forEach(g=>g.setAttribute('transform',`translate(${pan.x} ${pan.y}) scale(${pan.scale})`));const label=document.getElementById('zoomReset');if(label)label.textContent=Math.round(pan.scale*100)+'%'}
-function resetView(){pan={x:0,y:0,scale:1,drag:false,sx:0,sy:0};applyTransform()}
-document.getElementById('resetView').addEventListener('click',resetView);document.getElementById('zoomReset').addEventListener('click',resetView);document.getElementById('zoomIn').addEventListener('click',()=>{pan.scale=Math.min(1.8,pan.scale+.12);applyTransform()});document.getElementById('zoomOut').addEventListener('click',()=>{pan.scale=Math.max(.65,pan.scale-.12);applyTransform()});
-svg.addEventListener('wheel',e=>{e.preventDefault();pan.scale=Math.max(.7,Math.min(1.7,pan.scale+(e.deltaY<0?.08:-.08)));applyTransform()},{passive:false});svg.addEventListener('pointerdown',e=>{pan.drag=true;pan.sx=e.clientX-pan.x;pan.sy=e.clientY-pan.y;svg.setPointerCapture(e.pointerId)});svg.addEventListener('pointermove',e=>{if(!pan.drag)return;pan.x=e.clientX-pan.sx;pan.y=e.clientY-pan.sy;applyTransform()});svg.addEventListener('pointerup',()=>pan.drag=false);
-document.getElementById('mapsButton').addEventListener('click',()=>document.getElementById('cartografias').scrollIntoView({behavior:'smooth'}));
-render();selectNode(nodes.find(n=>n.id==='humedales'));document.getElementById('nodeCount').textContent=nodes.length;document.getElementById('edgeCount').textContent=edges.length;
+
+function nodeById(id) { return ODS_NODES.find(n => n.id === id); }
+
+/* ==========================================================
+   ARISTAS — 45 relaciones intra-estructura de la Matriz completa,
+   + 2 del nodo suplementario, + 7 "vacío" (hallazgo de ausencias
+   intersistema, corroborado independientemente por la hoja "Resumen"
+   del Excel: 0 relaciones verificadas intersistema en las 4 filas).
+   ========================================================== */
+const TYPE_STYLE = {
+  directa:   { color: "#2fd4c8", label: "Directa (respaldo explícito del POT)" },
+  indirecta: { color: "#8b93a8", label: "Indirecta (relación funcional intermedia)" },
+  vacio:     { color: "#ef4444", label: "Vacío de articulación (hallazgo)" },
+};
+// Color de trazo por "Tipo de relación" (dimensión independiente del estilo de línea)
+const RELACION_STYLE = {
+  Soporte:     { color: "#f5a623", label: "Soporte (sostiene / habilita)" },
+  Resiliencia: { color: "#5b8def", label: "Resiliencia (conectividad ecosistémica / clima)" },
+};
+
+const RAW_EDGES = [
+  // ==== Relaciones intra-estructura (45), fuente: hoja "Matriz completa" — tabla_completa_relaciones_POT_Bogota_Reverdece.xlsx ====
+  // ---- Estructura Ecológica Principal ----
+  { s:"corredores_montanosos", t:"rios", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"Art. 7", pagina:"70", cita:null,
+    analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: ríos y humedales]." },
+  { s:"quebradas", t:"humedales", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"Art. 42 / 62", pagina:"72", cita:null,
+    analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: ríos y quebradas y humedales]." },
+  { s:"cerros_orientales", t:"humedales", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"Art. 7", pagina:"70", cita:null,
+    analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: cerros orientales, ríos y humedales]." },
+  { s:"humedales", t:"rios", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"Art. 42 / 62", pagina:"72", cita:null,
+    analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: ríos y quebradas y humedales]." },
+  { s:"rios", t:"complejos_de_paramos", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"Art. 7", pagina:"70", cita:null,
+    analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: complejos de páramos, ríos y humedales]." },
+  { s:"bosques_urbanos", t:"coberturas_vegetales", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"Art. 74", pagina:"73", cita:null,
+    analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: cobertura vegetal]." },
+  { s:"areas_de_resiliencia_climatica", t:"coberturas_vegetales", cat:"e1", tipo:"directa", relacion:"Resiliencia", fuente:"inventario_pendiente", articulo:"Art. 42", pagina:"72", cita:null,
+    analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: territorio resiliente al cambio climático]." },
+  { s:"humedales", t:"areas_de_resiliencia_climatica", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:"Estrategias de EEP / resiliencia", pagina:"57",
+    cita:"La EEP, como la suma de las áreas protegidas y verdes de especial importancia ambiental, cumple con su potencial en términos de regulación hídrica, acumulación de carbono, aumento de la biodiversidad y el paisaje, entre otros servicios ecosistémicos. El esfuerzo de cuidar las zonas verdes y naturales que trae el POT se hace por el paisaje y la oferta de espacios para la recreación en medio de la naturaleza, pero también porque su existencia puede mejorar nuestra resiliencia frente al cambio climático, nos garantiza el acceso al agua y una relación menos agresiva con esta, reduciendo lo extremo de las temporadas de lluvias y sequías.",
+    analisis:"El humedal es un elemento de la EEP; la frase explica que la conservación de zonas verdes y naturales aporta resiliencia climática y regulación hídrica." },
+  { s:"areas_protegidas", t:"humedales", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"Art. 41 / 51", pagina:"71", cita:null,
+    analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: Reservas Distritales de Humedal]." },
+  { s:"areas_protegidas", t:"parques_ecologicos_de_montana", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"Art. 51 / 54", pagina:"71", cita:null,
+    analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: Parques Distritales Ecológicos de Montaña]." },
+  { s:"areas_protegidas", t:"reservas_forestales", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"Art. 41 / 45 / 48", pagina:"71", cita:null,
+    analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: Reserva Forestal Protectora Regional]." },
+  { s:"reservas_forestales", t:"humedales", cat:"e1", tipo:"directa", relacion:"Resiliencia", fuente:"inventario_pendiente", articulo:"Art. 42", pagina:"72", cita:null,
+    analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: conectividad y complementariedad]." },
+  { s:"parques_ecologicos_de_montana", t:"coberturas_vegetales", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"Art. 54", pagina:"72", cita:null,
+    analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: restaurar y preservar las especies nativas]." },
+  { s:"coberturas_vegetales", t:"parques_de_borde", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"Art. 121", pagina:"136", cita:null,
+    analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: coberturas vegetales en parques de borde]." },
+  { s:"coberturas_vegetales", t:"paisajes_sostenibles", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"Art. 52 / 74", pagina:"72", cita:null,
+    analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: funcionalidad ecosistémica y conectividad]." },
+  { s:"complejos_de_paramos", t:"paisajes_sostenibles", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"Art. 7 / 52", pagina:"70", cita:null,
+    analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: complejos de páramos y paisajes]." },
+
+  // ---- Estructura Funcional y del Cuidado ----
+  { s:"equipamientos", t:"servicios_de_cuidado", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"Art. 94–95", pagina:"117–118", cita:null,
+    analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: equipamientos y servicios de cuidado]." },
+  { s:"equipamientos", t:"servicios_sociales", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"Art. 94–95", pagina:"117–118", cita:null,
+    analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: equipamientos y servicios sociales]." },
+  { s:"equipamientos", t:"vivienda", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:"Una ciudad para el empleo y las oportunidades", pagina:"29",
+    cita:"Que sea en suelo de desarrollo o en suelo de renovación urbana, los constructores y desarrolladores inmobiliarios siempre tengan que garantizar diversos tipos de vivienda de interés social y soportes urbanos y equipamientos sociales de calidad para familias de diferentes tamaños y niveles de ingreso que comparten un mismo trozo de ciudad.",
+    analisis:"El POT vincula la vivienda con soportes urbanos y equipamientos sociales de calidad. (Corrige un hallazgo previo erróneo: sí existe una relación real y textual entre Equipamientos y Vivienda dentro de la EFC.)" },
+  { s:"servicios_publicos", t:"vivienda", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"Art. 179", pagina:"179", cita:null,
+    analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: servicio público para las actividades en la ciudad]." },
+  { s:"ciclorutas", t:"vivienda", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"Art. 88", pagina:"117", cita:null,
+    analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: accesibilidad y conectividad]." },
+  { s:"ciclorutas", t:"transporte_publico", cat:"e2", tipo:"indirecta", relacion:"Resiliencia", fuente:"cita_literal", articulo:"Art. 159", pagina:"159",
+    cita:"Los proyectos de infraestructura de los corredores verdes de alta capacidad, media capacidad y los corredores de baja capacidad deberán incluir intervenciones que permitan su conexión con la red de ciclo infraestructura de la ciudad.",
+    analisis:"El POT establece literalmente que los corredores de transporte deben conectarse con la red de cicloinfraestructura." },
+  { s:"transporte_publico", t:"vivienda", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"Art. 88", pagina:"117", cita:null,
+    analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: accesibilidad y conectividad]." },
+  { s:"red_vial", t:"transporte_publico", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:"Art. 158–159", pagina:"158–159",
+    cita:"La malla arterial: Son las calles que permiten el desarrollo de viajes de alcance urbano, dan soporte a la operación de todos los modos y es el sustrato para la localización de infraestructuras de la red de transporte público de alta y media capacidad.",
+    analisis:"El POT define la red vial como soporte de la infraestructura de transporte público." },
+  { s:"red_vial", t:"equipamientos", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"Art. 88 / 95", pagina:"117", cita:null,
+    analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: accesibilidad … equipamientos]." },
+  { s:"corredores_verdes", t:"ciclorutas", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:"Art. 159", pagina:"159",
+    cita:"Los proyectos de infraestructura de los corredores verdes de alta capacidad, media capacidad y los corredores de baja capacidad deberán incluir intervenciones que permitan su conexión con la red de ciclo infraestructura de la ciudad.",
+    analisis:"El texto hace explícita la conexión entre corredores verdes y cicloinfraestructura." },
+  { s:"corredores_verdes", t:"transporte_publico", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:"Arts. 158–160", pagina:"158–160",
+    cita:"En un corredor verde se desarrolla infraestructura de movilidad que privilegia modos de transporte limpios, al peatón y a la micromovilidad; protege y resalta el patrimonio cultural y desarrolla estrategias de reverdecimiento, entendidas como acciones de mitigación al cambio climático, conexión ecosistémica y cumplimiento de los Objetivos de Desarrollo Sostenible – ODS.",
+    analisis:"El POT define el corredor verde como infraestructura de movilidad y, simultáneamente, como espacio de reverdecimiento y conexión ecosistémica." },
+  { s:"manzanas_del_cuidado", t:"servicios_sociales", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:"Sistema Distrital de Manzanas del Cuidado", pagina:"128",
+    cita:"El tejido que se forma entre las Manzanas del Cuidado y la infraestructura nueva y existente de salud, educación, cultura, cuidado y recreación convierte cada una de las UPL —que son las nuevas localidades en las que el POT proyecta la ciudad— en una Red del Cuidado.",
+    analisis:"La Red del Cuidado se construye articulando las Manzanas con infraestructura de servicios." },
+  { s:"manzanas_del_cuidado", t:"equipamientos", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:"Sistema Distrital de Manzanas del Cuidado", pagina:"128",
+    cita:"El tejido que se forma entre las Manzanas del Cuidado y la infraestructura nueva y existente de salud, educación, cultura, cuidado y recreación convierte cada una de las UPL —que son las nuevas localidades en las que el POT proyecta la ciudad— en una Red del Cuidado.",
+    analisis:"Las Manzanas del Cuidado se articulan explícitamente con la infraestructura social existente y nueva." },
+  { s:"manzanas_del_cuidado", t:"parques", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"Art. 94", pagina:"117", cita:null,
+    analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: jardines infantiles, colegios, parques]." },
+
+  // ---- Estructura Socioeconómica, Creativa y de Innovación ----
+  { s:"distrito_centro_tecnologico_e_innovacion", t:"servicios_empresariales", cat:"e3", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"Art. 101", pagina:"122", cita:null,
+    analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: Eje de Servicios Empresariales Avenida El Dorado]." },
+  { s:"distrito_centro_tecnologico_e_innovacion", t:"sistema_de_educacion", cat:"e3", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"Art. 100–101", pagina:"122", cita:null,
+    analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: formación del talento humano]." },
+  { s:"centros_de_abastecimiento", t:"plazas_de_mercado", cat:"e3", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"Art. 100–101", pagina:"122", cita:null,
+    analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: Centros de Abasto Mayorista y Plazas de Mercado]." },
+  { s:"plazas_de_mercado", t:"servicios_empresariales", cat:"e3", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"Art. 101", pagina:"122", cita:null,
+    analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: Plazas de Mercado e infraestructuras]." },
+  { s:"zonas_industriales", t:"servicios_empresariales", cat:"e3", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"Art. 101", pagina:"122", cita:null,
+    analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: Eje de Servicios Empresariales Avenida El Dorado y Zonas industriales]." },
+  { s:"zonas_industriales", t:"sistema_de_educacion", cat:"e3", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"Art. 100–101", pagina:"122", cita:null,
+    analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: formación del talento humano y empresas]." },
+  { s:"zonas_industriales", t:"produccion_artesanal", cat:"e3", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:"Presentación del POT", pagina:"30",
+    cita:"Por eso el POT promueve la permanencia de las industrias tradicionales en el tejido urbano y promueve nuevas implantaciones económicas generadoras de empleo formal, articuladas a los entornos urbanos donde se aglomeran saberes y talentos, y en particular aquellos que dan lugar a aglomeraciones especializadas de producción tradicional e industrias creativas, culturales, verdes, digitales y tecnológicas.",
+    analisis:"La frase vincula la permanencia de industrias tradicionales con producción tradicional e industrias creativas/culturales." },
+  { s:"zonas_de_interes_turistico", t:"plazas_de_mercado", cat:"e3", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"Art. 101", pagina:"122", cita:null,
+    analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: Zonas de Interés Turístico y Plazas de Mercado]." },
+  { s:"centros_financieros", t:"servicios_empresariales", cat:"e3", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"Art. 100", pagina:"122", cita:null,
+    analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: centros financieros y de servicios empresariales]." },
+
+  // ---- Estructura Integradora de Patrimonios ----
+  { s:"sistema_de_sitios_sagrados", t:"patrimonio_inmaterial", cat:"e4", tipo:"directa", relacion:"Resiliencia", fuente:"inventario_pendiente", articulo:"Art. 80", pagina:"103–104", cita:null,
+    analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: patrimonio cultural inmaterial y comunidades]." },
+  { s:"patrimonio_arqueologico", t:"patrimonio_natural", cat:"e4", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"Art. 80", pagina:"103–104", cita:null,
+    analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: Patrimonio Natural y Patrimonio Arqueológico]." },
+  { s:"patrimonio_arqueologico", t:"patrimonio_material", cat:"e4", tipo:"directa", relacion:"Resiliencia", fuente:"inventario_pendiente", articulo:"Art. 80", pagina:"103–104", cita:null,
+    analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: Patrimonio Cultural material y Patrimonio Arqueológico]." },
+  { s:"patrimonio_natural", t:"patrimonio_inmaterial", cat:"e4", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"Art. 80", pagina:"103–104", cita:null,
+    analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: patrimonio cultural material, inmaterial y natural]." },
+  { s:"patrimonio_material", t:"patrimonio_natural", cat:"e4", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"Art. 80", pagina:"103–104", cita:null,
+    analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: integra el patrimonio cultural material, inmaterial y natural]." },
+  { s:"patrimonio_material", t:"patrimonio_inmaterial", cat:"e4", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"Art. 80", pagina:"103–104", cita:null,
+    analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: patrimonio cultural material, inmaterial y natural]." },
+
+  // ==== NODO SUPLEMENTARIO: Reserva Thomas van der Hammen (no está en la matriz del Excel; se añade
+  //      por su fuerza narrativa para el hallazgo "general vs. particular" — el POT la nombra por su
+  //      nombre propio en el Art.7, a diferencia del tratamiento genérico de "humedales") ====
+  { s:"van_der_hammen", t:"areas_protegidas", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"cita_literal",
+    articulo:"Art. 7 / Art. 50", pagina:"33 / 79-80",
+    cita:"“…la Reserva Thomas Van Der Hammen, los complejos de páramos, los corredores montañosos, las reservas forestales y los ríos y humedales que comparte con su entorno regional.” (Art. 7, p.33)",
+    analisis:"La Reserva se nombra por nombre propio junto a los demás elementos de la EEP en el Art.7, y tiene artículo dedicado propio (Art.50) dentro del Sistema Distrital de Áreas Protegidas — a diferencia de los humedales, tratados como categoría genérica." },
+  { s:"van_der_hammen", t:"reservas_forestales", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"cita_literal",
+    articulo:"Art. 50", pagina:"79-80", cita:null,
+    analisis:"Su nombre oficial completo es 'Reserva Forestal Regional Productora del Norte de Bogotá D.C., Thomas van der Hammen' — administrativamente es un caso particular de la categoría Reservas forestales." },
+
+  // ==== VACÍOS DE ARTICULACIÓN: hallazgo central — ausencias documentadas entre estructuras.
+  //      La Excel corrobora este hallazgo de forma independiente (hoja "Resumen": columna
+  //      "Relaciones verificadas intersistema" = 0 en las 4 filas). Estas NO son relaciones del
+  //      texto: son la ausencia documentada de un puente, ligada a un componente real del inventario. ====
+  { s:"humedales", t:"vivienda", cat:"e1-e2", tipo:"vacio", relacion:null, fuente:"inferencia", articulo:null, pagina:null, cita:null,
+    analisis:"No existe ningún artículo confirmado (ni en la matriz de 45 relaciones del equipo, ni en el índice oficial) que articule Humedales (EEP) con la producción de Vivienda (EFC) — pese a que la expansión de vivienda sobre rondas de humedal es uno de los conflictos urbanos más documentados de Bogotá (Jaboque, Tibanica, Capellanía)." },
+  { s:"humedales", t:"manzanas_del_cuidado", cat:"e1-e2", tipo:"vacio", relacion:null, fuente:"inferencia", articulo:null, pagina:null, cita:null,
+    analisis:"Las Manzanas del Cuidado se promocionan cercanas a espacios verdes, pero no hay mecanismo articulado, ni en la matriz de relaciones ni en el índice oficial, que conecte su localización con la protección de humedales." },
+  { s:"rios", t:"transporte_publico", cat:"e1-e2", tipo:"vacio", relacion:null, fuente:"inferencia", articulo:null, pagina:null, cita:null,
+    analisis:"No hay relación registrada que articule el Sistema Hídrico (ríos/quebradas) con el Sistema de Movilidad, pese a que rondas hídricas y trazados viales compiten por el mismo suelo (caso documentado: ALO junto al río Bogotá)." },
+  { s:"complejos_de_paramos", t:"distrito_centro_tecnologico_e_innovacion", cat:"e1-e3", tipo:"vacio", relacion:null, fuente:"inferencia", articulo:null, pagina:null, cita:null,
+    analisis:"Ninguna relación confirmada conecta la protección de páramos con los componentes de la ESECI (Distrito Tecnológico, zonas industriales, servicios empresariales) — la estructura ecológica y la socioeconómica no comparten ni un solo puente verificado en las 45 relaciones documentadas." },
+  { s:"areas_de_resiliencia_climatica", t:"zonas_industriales", cat:"e1-e3", tipo:"vacio", relacion:null, fuente:"inferencia", articulo:null, pagina:null, cita:null,
+    analisis:"Las Áreas de Resiliencia Climática no tienen ningún puente confirmado hacia las Zonas Industriales u otro componente de la ESECI, pese a que estas últimas son, típicamente, infraestructura de alto impacto ambiental." },
+  { s:"rios", t:"sistema_de_sitios_sagrados", cat:"e1-e4", tipo:"vacio", relacion:null, fuente:"inferencia", articulo:null, pagina:null, cita:null,
+    analisis:"No hay relación registrada que conecte el Sistema Hídrico con los Sitios Sagrados o el patrimonio de la EIP, aunque el centro histórico de Bogotá se fundó junto a los ríos San Francisco/Vicachá, hoy canalizados." },
+  { s:"distrito_centro_tecnologico_e_innovacion", t:"patrimonio_natural", cat:"e3-e4", tipo:"vacio", relacion:null, fuente:"inferencia", articulo:null, pagina:null, cita:null,
+    analisis:"Ningún puente confirmado entre los componentes económicos de la ESECI y la protección patrimonial de la EIP, pese a que la presión inmobiliaria/comercial sobre zonas patrimoniales es un conflicto documentado (La Candelaria, Chapinero)." },
+];
+
+/* ==========================================================
+   GRADO REAL — de aquí sale cuáles son los hubs, no de una
+   categoría administrativa. Los "vacío" NO cuentan como conexión.
+   ========================================================== */
+function computeDegrees() {
+  const deg = {};
+  ODS_NODES.forEach(n => { deg[n.id] = 0; });
+  RAW_EDGES.forEach(e => {
+    if (e.tipo === "vacio") return;
+    if (deg[e.s] === undefined || deg[e.t] === undefined) return;
+    deg[e.s]++; deg[e.t]++;
+  });
+  return deg;
+}
+
+/* ==========================================================
+   LAYOUT — malla densa tipo "red de mundo pequeño": los 4 grupos
+   parten de centros cercanos entre sí (no en esquinas separadas)
+   y un layout de fuerzas (repulsión entre todos los nodos +
+   atracción por arista) los relaja hasta verse como una sola red,
+   no 4 islas.
+   ========================================================== */
+const CANVAS = { w: 1700, h: 1500 };
+const HUB_CENTERS = (() => {
+  const cx = CANVAS.w / 2, cy = CANVAS.h / 2, R = 260;
+  const centers = {};
+  ["e1","e2","e3","e4"].forEach((cat, i) => {
+    const angle = (Math.PI / 2) * i - Math.PI / 4;
+    centers[cat] = { x: cx + Math.cos(angle) * R, y: cy + Math.sin(angle) * R };
+  });
+  return centers;
+})();
+
+function layoutNetwork() {
+  const deg = computeDegrees();
+  ODS_NODES.forEach(n => {
+    const center = HUB_CENTERS[n.cat];
+    const spread = 130;
+    n.x = center.x + (Math.random() - 0.5) * spread * 2;
+    n.y = center.y + (Math.random() - 0.5) * spread * 2;
+    n.color = STRUCT_STYLE[n.cat].color;
+    n.vx = 0; n.vy = 0; n.fixed = false;
+    const d = deg[n.id] || 0;
+    n.r = 26 + Math.sqrt(d) * 13; // el tamaño real sale del grado, no de una etiqueta
+  });
+
+  // Relajación por fuerzas (Fruchterman-Reingold simplificado), corrida
+  // una sola vez al cargar para que el layout inicial ya se vea como red.
+  const nodes = ODS_NODES;
+  const k = 150;
+  for (let iter = 0; iter < 260; iter++) {
+    const disp = {};
+    nodes.forEach(n => { disp[n.id] = { x: 0, y: 0 }; });
+
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const a = nodes[i], b = nodes[j];
+        let dx = a.x - b.x, dy = a.y - b.y;
+        let dist = Math.sqrt(dx * dx + dy * dy) || 0.01;
+        const force = (k * k) / dist;
+        const ux = dx / dist, uy = dy / dist;
+        disp[a.id].x += ux * force; disp[a.id].y += uy * force;
+        disp[b.id].x -= ux * force; disp[b.id].y -= uy * force;
+      }
+    }
+    RAW_EDGES.forEach(e => {
+      const a = nodeById(e.s), b = nodeById(e.t);
+      if (!a || !b) return;
+      let dx = a.x - b.x, dy = a.y - b.y;
+      let dist = Math.sqrt(dx * dx + dy * dy) || 0.01;
+      const force = (dist * dist) / k * 0.5;
+      const ux = dx / dist, uy = dy / dist;
+      disp[a.id].x -= ux * force; disp[a.id].y -= uy * force;
+      disp[b.id].x += ux * force; disp[b.id].y += uy * force;
+    });
+    // gravedad débil hacia el centro de su propia estructura (para que sigan agrupadas por color)
+    nodes.forEach(n => {
+      const c = HUB_CENTERS[n.cat];
+      disp[n.id].x += (c.x - n.x) * 0.02;
+      disp[n.id].y += (c.y - n.y) * 0.02;
+    });
+    const temp = Math.max(1, 12 * (1 - iter / 260));
+    nodes.forEach(n => {
+      const d = disp[n.id];
+      const dist = Math.sqrt(d.x * d.x + d.y * d.y) || 0.01;
+      const capped = Math.min(dist, temp * 10);
+      n.x += (d.x / dist) * capped;
+      n.y += (d.y / dist) * capped;
+      n.x = Math.max(60, Math.min(CANVAS.w - 60, n.x));
+      n.y = Math.max(60, Math.min(CANVAS.h - 60, n.y));
+    });
+  }
+
+  nodes.forEach(n => { n.homeX = n.x; n.homeY = n.y; });
+}
+layoutNetwork();
+
+RAW_EDGES.forEach(edge => {
+  const s = nodeById(edge.s), t = nodeById(edge.t);
+  if (!s || !t) { console.warn("Arista con nodo inexistente:", edge.s, edge.t); return; }
+  edge.restLength = Math.hypot(t.x - s.x, t.y - s.y);
+});
+
+/* ==========================================================
+   ZOOM / PAN
+   ========================================================== */
+const viewState = { x: 0, y: 0, scale: 1, minScale: 0.35, maxScale: 3.5 };
+let baseViewBox = null;
+
+function applyZoomPan(svg) {
+  if (!baseViewBox) return;
+  const [bx, by, bw, bh] = baseViewBox;
+  const w = bw / viewState.scale, h = bh / viewState.scale;
+  const x = bx + (bw - w) / 2 + viewState.x;
+  const y = by + (bh - h) / 2 + viewState.y;
+  svg.setAttribute("viewBox", `${x} ${y} ${w} ${h}`);
+}
+
+function setupZoomPan(svg) {
+  const vb = svg.getAttribute("viewBox").split(" ").map(Number);
+  baseViewBox = vb;
+
+  svg.addEventListener("wheel", (e) => {
+    e.preventDefault();
+    const delta = e.deltaY > 0 ? 0.9 : 1.1;
+    viewState.scale = Math.min(viewState.maxScale, Math.max(viewState.minScale, viewState.scale * delta));
+    applyZoomPan(svg);
+  }, { passive: false });
+
+  let panning = false, lastX = 0, lastY = 0;
+  svg.addEventListener("pointerdown", (e) => {
+    if (e.target !== svg) return;
+    panning = true; lastX = e.clientX; lastY = e.clientY;
+    svg.classList.add("panning");
+  });
+  window.addEventListener("pointermove", (e) => {
+    if (!panning) return;
+    const vb2 = svg.getAttribute("viewBox").split(" ").map(Number);
+    const scaleFactor = vb2[2] / svg.clientWidth;
+    viewState.x -= (e.clientX - lastX) * scaleFactor;
+    viewState.y -= (e.clientY - lastY) * scaleFactor;
+    lastX = e.clientX; lastY = e.clientY;
+    applyZoomPan(svg);
+  });
+  window.addEventListener("pointerup", () => { panning = false; svg.classList.remove("panning"); });
+
+  document.getElementById("zoomIn")?.addEventListener("click", () => { viewState.scale = Math.min(viewState.maxScale, viewState.scale * 1.25); applyZoomPan(svg); });
+  document.getElementById("zoomOut")?.addEventListener("click", () => { viewState.scale = Math.max(viewState.minScale, viewState.scale / 1.25); applyZoomPan(svg); });
+  document.getElementById("zoomReset")?.addEventListener("click", () => { viewState.scale = 1; viewState.x = 0; viewState.y = 0; applyZoomPan(svg); });
+}
+
+/* -------- defs -------- */
+function buildDefs(svg) {
+  const defs = document.createElementNS(SVG_NS, "defs");
+  const uniqueColors = [...new Set(ODS_NODES.map(n => n.color))];
+  uniqueColors.forEach(color => {
+    const filter = document.createElementNS(SVG_NS, "filter");
+    filter.setAttribute("id", "glow-" + color.replace("#", ""));
+    filter.setAttribute("x", "-60%"); filter.setAttribute("y", "-60%");
+    filter.setAttribute("width", "220%"); filter.setAttribute("height", "220%");
+    const blur = document.createElementNS(SVG_NS, "feGaussianBlur");
+    blur.setAttribute("stdDeviation", "3"); blur.setAttribute("result", "blur");
+    const merge = document.createElementNS(SVG_NS, "feMerge");
+    ["blur", "blur", "SourceGraphic"].forEach(ref => {
+      const m = document.createElementNS(SVG_NS, "feMergeNode"); m.setAttribute("in", ref); merge.appendChild(m);
+    });
+    filter.appendChild(blur); filter.appendChild(merge);
+    defs.appendChild(filter);
+  });
+  // marcadores de flecha: uno por color relevante (directa=Soporte naranja / Resiliencia azul / vacio rojo)
+  const arrowColors = { "directa-Soporte": RELACION_STYLE.Soporte.color, "directa-Resiliencia": RELACION_STYLE.Resiliencia.color, "vacio": TYPE_STYLE.vacio.color };
+  Object.entries(arrowColors).forEach(([key, color]) => {
+    const marker = document.createElementNS(SVG_NS, "marker");
+    marker.setAttribute("id", "arrow-" + key);
+    marker.setAttribute("viewBox", "0 0 10 10");
+    marker.setAttribute("refX", "8"); marker.setAttribute("refY", "5");
+    marker.setAttribute("markerWidth", "6"); marker.setAttribute("markerHeight", "6");
+    marker.setAttribute("orient", "auto-start-reverse");
+    const path = document.createElementNS(SVG_NS, "path");
+    path.setAttribute("d", "M0,0 L10,5 L0,10 z");
+    path.setAttribute("fill", color);
+    marker.appendChild(path);
+    defs.appendChild(marker);
+  });
+  svg.appendChild(defs);
+}
+
+// Color del trazo: "vacio" siempre rojo; el resto usa la dimensión Soporte/Resiliencia
+// (independiente del estilo de línea directa/indirecta).
+function edgeColor(edge) {
+  if (edge.tipo === "vacio") return TYPE_STYLE.vacio.color;
+  return (edge.relacion && RELACION_STYLE[edge.relacion]) ? RELACION_STYLE[edge.relacion].color : TYPE_STYLE[edge.tipo].color;
+}
+function arrowMarkerId(edge) {
+  if (edge.tipo === "vacio") return "arrow-vacio";
+  if (edge.relacion) return "arrow-directa-" + edge.relacion;
+  return null;
+}
+
+function edgePathData(edge, s, t) {
+  const dx = t.x - s.x, dy = t.y - s.y;
+  const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+  const ux = dx / dist, uy = dy / dist;
+  const startPad = s.r + 2, endPad = t.r + 8;
+  const x1 = s.x + ux * startPad, y1 = s.y + uy * startPad;
+  const x2 = t.x - ux * endPad, y2 = t.y - uy * endPad;
+  return `M${x1},${y1} L${x2},${y2}`;
+}
+
+function drawEdges(svg) {
+  const g = document.createElementNS(SVG_NS, "g");
+  g.setAttribute("class", "edges-layer");
+  RAW_EDGES.forEach((edge, i) => {
+    const s = nodeById(edge.s), t = nodeById(edge.t);
+    if (!s || !t) return;
+    const color = edgeColor(edge);
+    const d = edgePathData(edge, s, t);
+
+    const group = document.createElementNS(SVG_NS, "g");
+    group.setAttribute("class", "edge-group edge-" + edge.tipo);
+    group.setAttribute("data-index", i);
+    group.setAttribute("data-type", edge.tipo);
+    group.setAttribute("data-cat", edge.cat);
+    group.setAttribute("data-source", edge.s);
+    group.setAttribute("data-target", edge.t);
+    group.style.setProperty("--edge-color", color);
+
+    const hit = document.createElementNS(SVG_NS, "path");
+    hit.setAttribute("d", d); hit.setAttribute("class", "ods-edge edge-hit");
+
+    const visual = document.createElementNS(SVG_NS, "path");
+    visual.setAttribute("d", d);
+    visual.setAttribute("class", "ods-edge edge-visual");
+    visual.setAttribute("stroke", color);
+    visual.setAttribute("stroke-width", edge.tipo === "vacio" ? 2.4 : edge.tipo === "directa" ? 2.2 : 1.4);
+    if (edge.tipo !== "directa") visual.setAttribute("stroke-dasharray", edge.tipo === "vacio" ? "3,6" : "5,4");
+    const markerId = arrowMarkerId(edge);
+    if (markerId) visual.setAttribute("marker-end", `url(#${markerId})`);
+    visual.setAttribute("opacity", edge.tipo === "indirecta" ? "0.55" : "0.95");
+
+    group.appendChild(visual); group.appendChild(hit);
+    group.addEventListener("click", (ev) => { ev.stopPropagation(); showEdgeInfo(i); });
+    g.appendChild(group);
+    edge._el = { visual, hit, d };
+  });
+  svg.appendChild(g);
+}
+
+function drawNodes(svg) {
+  const g = document.createElementNS(SVG_NS, "g");
+  g.setAttribute("class", "nodes-layer");
+  ODS_NODES.forEach(node => {
+    const group = document.createElementNS(SVG_NS, "g");
+    group.setAttribute("class", "ods-node ods-node-" + node.cat);
+    group.setAttribute("data-id", node.id);
+    group.setAttribute("data-cat", node.cat);
+
+    const circle = document.createElementNS(SVG_NS, "circle");
+    circle.setAttribute("class", "node-ring");
+    circle.setAttribute("cx", node.x); circle.setAttribute("cy", node.y); circle.setAttribute("r", node.r);
+    circle.setAttribute("stroke", node.color);
+    circle.setAttribute("stroke-width", 2.5);
+    circle.setAttribute("filter", "url(#glow-" + node.color.replace("#", "") + ")");
+
+    const fo = document.createElementNS(SVG_NS, "foreignObject");
+    const size = node.r * 2.2;
+    fo.setAttribute("x", node.x - size / 2); fo.setAttribute("y", node.y - size / 2);
+    fo.setAttribute("width", size); fo.setAttribute("height", size);
+
+    const wrapper = document.createElementNS(XHTML_NS, "div");
+    wrapper.setAttribute("class", "node-inner");
+    wrapper.setAttribute("style", "width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;pointer-events:none;");
+
+    const iconEl = document.createElementNS(XHTML_NS, "i");
+    iconEl.setAttribute("class", "fa-solid " + node.icon + " node-icon");
+    iconEl.setAttribute("style", `color:${node.color}; font-size:${node.r * 0.4}px; margin:1px 0;`);
+
+    const nameEl = document.createElementNS(XHTML_NS, "div");
+    nameEl.setAttribute("class", "node-name");
+    nameEl.setAttribute("style", `font-size:${Math.max(node.r * 0.145, 7)}px; padding:0 3px; font-weight:700; color:#e7eaf2; line-height:1.15; white-space:pre-line;`);
+    nameEl.textContent = node.name;
+
+    const fuenteDot = document.createElementNS(XHTML_NS, "div");
+    fuenteDot.setAttribute("style", `width:6px;height:6px;border-radius:50%;background:${FUENTE_STYLE[node.fuente].color};margin-top:2px;`);
+
+    wrapper.appendChild(iconEl); wrapper.appendChild(nameEl); wrapper.appendChild(fuenteDot);
+    fo.appendChild(wrapper);
+    group.appendChild(circle); group.appendChild(fo);
+    attachNodeClickHandler(group, node.id);
+    attachNodeDragHandler(group, node);
+    g.appendChild(group);
+    node._el = { group, circle, fo };
+  });
+  svg.appendChild(g);
+}
+
+/* -------- física de interacción (arrastre) -------- */
+const PHYSICS = { spring: 0.045, anchor: 0.02, damping: 0.82, minVel: 0.02 };
+
+function updatePositions() {
+  ODS_NODES.forEach(n => {
+    if (!n._el) return;
+    n._el.circle.setAttribute("cx", n.x); n._el.circle.setAttribute("cy", n.y);
+    const size = n.r * 2.2;
+    n._el.fo.setAttribute("x", n.x - size / 2); n._el.fo.setAttribute("y", n.y - size / 2);
+  });
+  RAW_EDGES.forEach(edge => {
+    if (!edge._el) return;
+    const s = nodeById(edge.s), t = nodeById(edge.t);
+    if (!s || !t) return;
+    const d = edgePathData(edge, s, t);
+    edge._el.visual.setAttribute("d", d); edge._el.hit.setAttribute("d", d);
+  });
+}
+
+let physicsRunning = false;
+function physicsStep() {
+  let moving = false;
+  RAW_EDGES.forEach(edge => {
+    const s = nodeById(edge.s), t = nodeById(edge.t);
+    if (!s || !t) return;
+    const dx = t.x - s.x, dy = t.y - s.y;
+    const dist = Math.hypot(dx, dy) || 1;
+    const diff = (dist - edge.restLength) * PHYSICS.spring;
+    const fx = (dx / dist) * diff, fy = (dy / dist) * diff;
+    if (!s.fixed) { s.vx += fx; s.vy += fy; }
+    if (!t.fixed) { t.vx -= fx; t.vy -= fy; }
+  });
+  ODS_NODES.forEach(n => {
+    if (n.fixed) { n.vx = 0; n.vy = 0; return; }
+    n.vx += (n.homeX - n.x) * PHYSICS.anchor;
+    n.vy += (n.homeY - n.y) * PHYSICS.anchor;
+    n.vx *= PHYSICS.damping; n.vy *= PHYSICS.damping;
+    n.x += n.vx; n.y += n.vy;
+    if (Math.abs(n.vx) > PHYSICS.minVel || Math.abs(n.vy) > PHYSICS.minVel) moving = true;
+  });
+  updatePositions();
+  if (moving || ODS_NODES.some(n => n.fixed)) requestAnimationFrame(physicsStep);
+  else physicsRunning = false;
+}
+function wakePhysics() { if (!physicsRunning) { physicsRunning = true; requestAnimationFrame(physicsStep); } }
+
+function attachNodeDragHandler(group, node) {
+  const svg = document.getElementById("networkViz");
+  let dragging = false, moved = false, startClientX = 0, startClientY = 0;
+  function toSvgPoint(clientX, clientY) {
+    const pt = svg.createSVGPoint(); pt.x = clientX; pt.y = clientY;
+    const m = svg.getScreenCTM().inverse();
+    return pt.matrixTransform(m);
+  }
+  group.addEventListener("pointerdown", (e) => {
+    e.stopPropagation();
+    dragging = true; moved = false; startClientX = e.clientX; startClientY = e.clientY;
+    node.fixed = true; group.classList.add("dragging"); group.setPointerCapture(e.pointerId); wakePhysics();
+  });
+  group.addEventListener("pointermove", (e) => {
+    if (!dragging) return;
+    if (Math.hypot(e.clientX - startClientX, e.clientY - startClientY) > 4) moved = true;
+    const p = toSvgPoint(e.clientX, e.clientY);
+    node.x = p.x; node.y = p.y; node.vx = 0; node.vy = 0;
+    updatePositions(); wakePhysics();
+  });
+  function endDrag(e) {
+    if (!dragging) return;
+    dragging = false; node.fixed = false; group.classList.remove("dragging");
+    try { group.releasePointerCapture(e.pointerId); } catch (err) {}
+    wakePhysics();
+    if (moved) { group.dataset.suppressClick = "1"; setTimeout(() => { delete group.dataset.suppressClick; }, 0); }
+  }
+  group.addEventListener("pointerup", endDrag);
+  group.addEventListener("pointercancel", endDrag);
+}
+
+function renderNetwork() {
+  const svg = document.getElementById("networkViz");
+  if (!svg) return;
+  svg.innerHTML = "";
+  buildDefs(svg); drawEdges(svg); drawNodes(svg); setupZoomPan(svg);
+}
+
+/* -------- paneles de información -------- */
+function fuenteBadgeHTML(fuente) {
+  const st = FUENTE_STYLE[fuente] || FUENTE_STYLE.inferencia;
+  return `<span class="fuente-badge" style="color:${st.color};background:${st.color}22;border:1px solid ${st.color}55;"><i class="fa-solid ${st.icon}"></i> ${st.label}</span>`;
+}
+function relacionBadgeHTML(relacion) {
+  if (!relacion || !RELACION_STYLE[relacion]) return "";
+  const st = RELACION_STYLE[relacion];
+  return `<span class="fuente-badge" style="color:${st.color};background:${st.color}22;border:1px solid ${st.color}55;"><i class="fa-solid fa-arrow-right-arrow-left"></i> ${st.label}</span>`;
+}
+
+function showEdgeInfo(index) {
+  const edge = RAW_EDGES[index];
+  const s = nodeById(edge.s), t = nodeById(edge.t);
+  document.querySelectorAll(".edge-group").forEach(el => el.classList.remove("edge-selected"));
+  document.querySelector(`.edge-group[data-index="${index}"]`)?.classList.add("edge-selected");
+  document.querySelectorAll(".ods-node").forEach(el => el.classList.remove("node-selected"));
+
+  const label = (n) => n.name.replace(/\n/g, " ");
+  document.getElementById("edgeInfoTitle").textContent = `${label(s)} → ${label(t)}`;
+  const typeEl = document.getElementById("edgeInfoType");
+  const color = edgeColor(edge);
+  typeEl.innerHTML = TYPE_STYLE[edge.tipo].label + (edge.cat ? " · " + edge.cat.toUpperCase() : "");
+  typeEl.style.color = color; typeEl.style.background = color + "26";
+
+  document.getElementById("edgeInfoFuente").innerHTML = fuenteBadgeHTML(edge.fuente) + " " + relacionBadgeHTML(edge.relacion);
+  document.getElementById("edgeInfoQuote").textContent = edge.cita ? edge.cita : "(No hay cita literal disponible para esta relación — ver análisis abajo.)";
+  document.getElementById("edgeInfoAnalisis").textContent = edge.analisis || "";
+  document.getElementById("edgeInfoPage").textContent = (edge.articulo ? edge.articulo : "Sin artículo específico") + (edge.pagina ? ` · p. ${edge.pagina}` : "");
+  document.getElementById("edgeInfoPanel").classList.add("visible");
+  document.getElementById("nodeInfoPanel")?.classList.remove("visible");
+
+  document.querySelectorAll(".matrix-row[data-edge]").forEach(row => row.classList.toggle("row-highlight", Number(row.dataset.edge) === index));
+}
+function hideEdgeInfo() {
+  document.getElementById("edgeInfoPanel").classList.remove("visible");
+  document.querySelectorAll(".edge-group").forEach(el => el.classList.remove("edge-selected"));
+  document.querySelectorAll(".matrix-row[data-edge]").forEach(row => row.classList.remove("row-highlight"));
+}
+
+function showNodeInfo(id) {
+  const node = nodeById(id);
+  if (!node) return;
+  document.querySelectorAll(".ods-node").forEach(el => el.classList.remove("node-selected"));
+  document.querySelector(`.ods-node[data-id="${id}"]`)?.classList.add("node-selected");
+
+  const deg = computeDegrees()[id] || 0;
+  document.getElementById("nodeInfoTitle").textContent = node.name.replace(/\n/g, " ") + (node.suplementario ? " (suplementario)" : "");
+  document.getElementById("nodeInfoStruct").innerHTML = `<span class="swatch-tag" style="background:${node.color}"></span> ${STRUCT_STYLE[node.cat].label} · grado real: ${deg}`;
+  document.getElementById("nodeInfoFuente").innerHTML = fuenteBadgeHTML(node.fuente);
+
+  // artículo/página/cita: se toman de la primera arista de este nodo que tenga la mejor evidencia disponible
+  const relEdges = RAW_EDGES.filter(e => e.s === id || e.t === id);
+  const bestEdge = relEdges.find(e => e.fuente === "cita_literal") || relEdges[0];
+  document.getElementById("nodeInfoArticulo").textContent = bestEdge ? (bestEdge.articulo || "—") + (bestEdge.pagina ? ` · p. ${bestEdge.pagina}` : "") : "—";
+  document.getElementById("nodeInfoQuote").textContent = bestEdge && bestEdge.cita ? bestEdge.cita : "(Sin cita literal verificada para este componente — ver relaciones asociadas en la tabla.)";
+  document.getElementById("nodeInfoNota").textContent = node.suplementario
+    ? "Nodo suplementario: no forma parte de la Matriz completa (Excel) del equipo, pero se incluye por su valor narrativo para el hallazgo 'general vs. particular'."
+    : (bestEdge ? bestEdge.analisis || "" : "");
+
+  const mapaWrap = document.getElementById("nodeInfoMapaWrap");
+  mapaWrap.style.display = "none";
+
+  document.getElementById("nodeInfoPanel").classList.add("visible");
+  document.getElementById("edgeInfoPanel")?.classList.remove("visible");
+}
+function hideNodeInfo() {
+  document.getElementById("nodeInfoPanel").classList.remove("visible");
+  document.querySelectorAll(".ods-node").forEach(el => el.classList.remove("node-selected"));
+}
+
+/* -------- visibilidad / leyenda -------- */
+const typeOff = new Set(), nodeOff = new Set(), catOff = new Set();
+function refreshEdgeVisibility() {
+  document.querySelectorAll(".edge-group").forEach(group => {
+    const type = group.dataset.type, cat = group.dataset.cat, s = group.dataset.source, t = group.dataset.target;
+    const catBits = cat.split("-");
+    const hidden = typeOff.has(type) || nodeOff.has(s) || nodeOff.has(t) || catBits.some(c => catOff.has(c));
+    group.classList.toggle("hidden-edge", hidden);
+  });
+  document.querySelectorAll(".ods-node").forEach(node => {
+    node.classList.toggle("hidden-node", nodeOff.has(node.dataset.id));
+  });
+}
+function toggleNode(id) {
+  const group = document.querySelector(`.ods-node[data-id="${id}"]`);
+  if (!group) return;
+  if (nodeOff.has(id)) { nodeOff.delete(id); group.classList.remove("node-off"); }
+  else { nodeOff.add(id); group.classList.add("node-off"); }
+  refreshEdgeVisibility();
+}
+
+function attachNodeClickHandler(group, id) {
+  let count = 0, timer = null;
+  group.addEventListener("click", (ev) => {
+    ev.stopPropagation();
+    if (group.dataset.suppressClick) return;
+    count++;
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(() => {
+      if (count === 1) showNodeInfo(id);
+      else if (count === 2) toggleNode(id);
+      else if (count >= 3) toggleNodeFlow(id);
+      count = 0;
+    }, 300);
+  });
+}
+
+let spotlight = null;
+function clearSpotlight() { spotlight = null; document.querySelectorAll(".insight-card").forEach(c => c.classList.remove("active")); applySpotlightState(); }
+function setSpotlightNodes(nodeIds, expand) { spotlight = { mode:"nodes", nodes:new Set(nodeIds), expand:!!expand }; applySpotlightState(); }
+function setSpotlightTypes(types) { spotlight = { mode:"types", types }; applySpotlightState(); }
+function setSpotlightCats(cats) { spotlight = { mode:"cats", cats }; applySpotlightState(); }
+
+function applySpotlightState() {
+  let visibleNodes = null, visibleEdges = null;
+  if (spotlight && spotlight.mode === "nodes") {
+    visibleNodes = new Set(spotlight.nodes); visibleEdges = new Set();
+    RAW_EDGES.forEach((edge, i) => {
+      const sIn = spotlight.nodes.has(edge.s), tIn = spotlight.nodes.has(edge.t);
+      if (spotlight.expand) { if (sIn || tIn) { visibleEdges.add(i); visibleNodes.add(edge.s); visibleNodes.add(edge.t); } }
+      else if (sIn && tIn) visibleEdges.add(i);
+    });
+  } else if (spotlight && spotlight.mode === "types") {
+    visibleEdges = new Set(); visibleNodes = new Set();
+    RAW_EDGES.forEach((edge, i) => { if (spotlight.types.includes(edge.tipo)) { visibleEdges.add(i); visibleNodes.add(edge.s); visibleNodes.add(edge.t); } });
+  } else if (spotlight && spotlight.mode === "cats") {
+    visibleNodes = new Set(); visibleEdges = new Set();
+    RAW_EDGES.forEach((edge, i) => { if (spotlight.cats.some(c => edge.cat.split("-").includes(c))) { visibleEdges.add(i); visibleNodes.add(edge.s); visibleNodes.add(edge.t); } });
+  }
+  document.querySelectorAll(".ods-node").forEach(el => el.classList.toggle("node-focus-dim", visibleNodes ? !visibleNodes.has(el.dataset.id) : false));
+  document.querySelectorAll(".edge-group").forEach(el => el.classList.toggle("edge-focus-dim", visibleEdges ? !visibleEdges.has(Number(el.dataset.index)) : false));
+}
+function toggleNodeFlow(id) {
+  const already = spotlight && spotlight.mode === "nodes" && spotlight.expand && spotlight.nodes.size === 1 && spotlight.nodes.has(id);
+  if (already) clearSpotlight(); else setSpotlightNodes([id], true);
+}
+
+function toggleInsight(key) {
+  const card = document.querySelector(`.insight-card[data-insight="${key}"]`);
+  if (!card) return;
+  if (card.classList.contains("active")) { clearSpotlight(); return; }
+  document.querySelectorAll(".insight-card").forEach(c => c.classList.remove("active"));
+  if (key === "todas") { clearSpotlight(); return; }
+  if (["directa","indirecta","vacio"].includes(key)) setSpotlightTypes([key]);
+  else if (["e1","e2","e3","e4"].includes(key)) setSpotlightCats([key]);
+  card.classList.add("active");
+}
+
+function setupLegendToggle() {
+  document.querySelectorAll(".legend-item input").forEach(input => {
+    input.addEventListener("change", (e) => {
+      const item = e.target.closest(".legend-item");
+      const mode = item.dataset.mode, val = item.dataset.type || item.dataset.cat;
+      if (e.target.checked) { if (mode === "type") typeOff.delete(val); else catOff.delete(val); }
+      else { if (mode === "type") typeOff.add(val); else catOff.add(val); }
+      item.classList.toggle("off", !e.target.checked);
+      refreshEdgeVisibility();
+    });
+  });
+  document.getElementById("edgeInfoClose")?.addEventListener("click", hideEdgeInfo);
+  document.getElementById("nodeInfoClose")?.addEventListener("click", hideNodeInfo);
+}
+
+/* -------- métricas -------- */
+function computeMetrics() {
+  const deg = computeDegrees();
+  const nodeCount = ODS_NODES.length;
+  const edgeCount = RAW_EDGES.length;
+  const vacios = RAW_EDGES.filter(e => e.tipo === "vacio").length;
+  const directas = RAW_EDGES.filter(e => e.tipo === "directa").length;
+  const indirectas = RAW_EDGES.filter(e => e.tipo === "indirecta").length;
+  const porFuente = { cita_literal:0, indice_oficial:0, fuente_secundaria:0, inferencia:0, inventario_pendiente:0 };
+  [...ODS_NODES, ...RAW_EDGES].forEach(x => { if (x.fuente) porFuente[x.fuente] = (porFuente[x.fuente]||0)+1; });
+  let maxId = null, maxDeg = -1;
+  ODS_NODES.forEach(n => { if ((deg[n.id]||0) > maxDeg) { maxDeg = deg[n.id]||0; maxId = n.id; } });
+  return { nodeCount, edgeCount, vacios, directas, indirectas, porFuente, deg, maxId, maxDeg };
+}
+
+function renderMetrics() {
+  const m = computeMetrics();
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  set("metricNodes", m.nodeCount);
+  set("metricEdges", m.edgeCount);
+  set("metricVacios", m.vacios);
+  set("metricDirectas", m.directas);
+  set("metricCitaLiteral", m.porFuente.cita_literal);
+  set("metricIndiceOficial", m.porFuente.inventario_pendiente);
+  set("metricInferencia", m.porFuente.inferencia);
+  const hubNode = nodeById(m.maxId);
+  set("metricHub", hubNode ? hubNode.name.replace(/\n/g," ") + ` (grado ${m.maxDeg})` : "—");
+
+  Object.keys(STRUCT_STYLE).forEach(cat => {
+    const el = document.getElementById("struct-" + cat);
+    const nCount = ODS_NODES.filter(n => n.cat === cat).length;
+    if (el) el.textContent = `${STRUCT_STYLE[cat].label}: ${STRUCT_STYLE[cat].articulos} · ${nCount} componentes en la red`;
+  });
+}
+
+function renderMatrix() {
+  const container = document.getElementById("matrixRows");
+  if (!container) return;
+  container.innerHTML = "";
+  RAW_EDGES.forEach((edge, i) => {
+    const s = nodeById(edge.s), t = nodeById(edge.t);
+    if (!s || !t) return;
+    const row = document.createElement("div");
+    row.className = "matrix-row"; row.dataset.edge = i;
+    const color = edgeColor(edge);
+    row.innerHTML = `
+      <div class="matrix-cell"><span class="swatch-tag" style="background:${s.color}"></span> ${edge.cat.toUpperCase()}</div>
+      <div class="matrix-cell">${s.name.replace(/\n/g," ")} → ${t.name.replace(/\n/g," ")}</div>
+      <div class="matrix-cell"><span class="alignment-tag" style="background:${color}26;color:${color}">${TYPE_STYLE[edge.tipo].label}</span></div>
+      <div class="matrix-cell">${fuenteBadgeHTML(edge.fuente)}</div>
+      <div class="matrix-cell">${edge.articulo || "—"}${edge.pagina ? " · p."+edge.pagina : ""}</div>
+      <div class="matrix-cell quote-cell">${edge.analisis || ""}</div>
+    `;
+    row.addEventListener("click", () => showEdgeInfo(i));
+    container.appendChild(row);
+  });
+}
+
+function filterNetwork(mode) {
+  document.querySelectorAll(".network-controls .control-btn").forEach(btn => btn.classList.remove("active"));
+  if (window.event && window.event.currentTarget) window.event.currentTarget.classList.add("active");
+  typeOff.clear(); catOff.clear();
+  document.querySelectorAll(".legend-item input").forEach(inp => { inp.checked = true; inp.closest(".legend-item").classList.remove("off"); });
+
+  const groups = {
+    all: null,
+    vacio: { types: ["vacio"] },
+    directa: { types: ["directa"] },
+    indirecta: { types: ["indirecta"] },
+    e1: { cats: ["e1"] }, e2: { cats: ["e2"] }, e3: { cats: ["e3"] }, e4: { cats: ["e4"] },
+  };
+  const active = groups[mode];
+  if (!active) { refreshEdgeVisibility(); return; }
+  if (active.types) ["directa","indirecta","vacio"].forEach(t => { if (!active.types.includes(t)) typeOff.add(t); });
+  if (active.cats) Object.keys(STRUCT_STYLE).forEach(c => { if (!active.cats.includes(c)) catOff.add(c); });
+
+  document.querySelectorAll(".legend-item[data-mode='type']").forEach(item => {
+    const show = !active.types || active.types.includes(item.dataset.type);
+    item.querySelector("input").checked = show; item.classList.toggle("off", !show);
+  });
+  document.querySelectorAll(".legend-item[data-mode='cat']").forEach(item => {
+    const show = !active.cats || active.cats.includes(item.dataset.cat);
+    item.querySelector("input").checked = show; item.classList.toggle("off", !show);
+  });
+  refreshEdgeVisibility();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  renderNetwork();
+  setupLegendToggle();
+  renderMetrics();
+  renderMatrix();
+  document.getElementById("networkViz")?.addEventListener("click", () => { hideEdgeInfo(); hideNodeInfo(); });
+});
