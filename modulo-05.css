@@ -493,3 +493,91 @@ html, body {
   background: #2a3f5a;
   border-radius: 2px;
 }
+
+/* Sidebar global del portal: visible en el Módulo 05. */
+.layout { padding-left: 90px; }
+.portal-sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  z-index: 1200;
+  width: 90px;
+  min-width: 90px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 18px 0 14px;
+  background: #080c0c;
+  border-right: 1px solid rgba(255,255,255,.08);
+}
+.portal-brand {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 26px;
+  border: 1px solid #2fbfae;
+  border-radius: 50%;
+  color: #2fbfae;
+  font-size: 22px;
+  box-shadow: 0 0 18px rgba(39,205,196,.2);
+}
+.portal-nav { display: flex; flex-direction: column; gap: 11px; }
+.portal-item {
+  position: relative;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(160,190,180,.2);
+  border-radius: 50%;
+  background: #101716;
+  color: #73827b;
+  text-decoration: none;
+  font-size: 10px;
+  font-weight: 700;
+  transition: .16s ease;
+}
+.portal-item i { font-size: 15px; }
+.portal-item:hover,
+.portal-item.active {
+  color: #2fbfae;
+  border-color: #2fbfae;
+  background: rgba(39,205,196,.08);
+  box-shadow: 0 0 17px rgba(39,205,196,.25);
+}
+.portal-item::after {
+  content: attr(title);
+  position: absolute;
+  left: 56px;
+  top: 50%;
+  transform: translateY(-50%) translateX(-5px);
+  opacity: 0;
+  pointer-events: none;
+  white-space: nowrap;
+  padding: 7px 10px;
+  border: 1px solid rgba(39,205,196,.45);
+  border-radius: 6px;
+  background: #17211e;
+  color: #e3f2ed;
+  font-size: 10px;
+  z-index: 1300;
+  transition: .16s;
+}
+.portal-item:hover::after { opacity: 1; transform: translateY(-50%); }
+.portal-avatar {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  margin-top: auto;
+  border: 1px solid #2fbfae;
+  border-radius: 50%;
+  color: #2fbfae;
+  font-size: 11px;
+}
+@media (max-width: 900px) {
+  .layout { padding-left: 72px; }
+  .portal-sidebar { width: 72px; min-width: 72px; }
+  .portal-item::after { left: 50px; }
+}
