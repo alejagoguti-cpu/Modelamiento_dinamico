@@ -6618,3 +6618,39 @@ Need update styles maybe `display:none` for quote-backdrop means if old openQuot
 .net-layout > .col.right::-webkit-scrollbar-thumb:hover {
   background: rgba(70,214,208,.72) !important;
 }
+
+/* Un solo icono para el hallazgo: se elimina el icono externo que se superponía
+   al título; el icono interno del bloque gráfico permanece separado. */
+.net-body > .net-stage > .network-finding .network-finding-icon {
+  display: none !important;
+}
+.net-body > .net-stage > .network-finding {
+  display: block !important;
+  padding: 13px 14px 14px !important;
+}
+.net-body > .net-stage > .network-finding .network-finding-kicker {
+  display: block !important;
+  margin: 0 0 8px !important;
+  padding: 0 !important;
+}
+.net-body > .net-stage > .network-finding .network-finding-text {
+  display: block !important;
+  margin: 0 !important;
+}
+
+/* Selector real de la versión pública: el hallazgo visible está dentro de .welcome. */
+.welcome > .network-finding {
+  display: block !important;
+  padding: 13px 18px 15px !important;
+}
+.welcome > .network-finding .network-finding-icon {
+  display: none !important;
+}
+.welcome > .network-finding .network-finding-kicker {
+  display: block !important;
+  margin: 0 0 8px !important;
+}
+.welcome > .network-finding .network-finding-text {
+  display: block !important;
+  margin: 0 !important;
+}
