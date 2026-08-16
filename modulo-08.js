@@ -342,7 +342,7 @@ function drawNodes(svg) {
     circle.setAttribute("filter", "url(#glow-" + node.color.replace("#", "") + ")");
 
     const fo = document.createElementNS(SVG_NS, "foreignObject");
-    const size = node.r * 2.2;
+    const size = node.r * 1.9;
     fo.setAttribute("x", node.x - size / 2); fo.setAttribute("y", node.y - size / 2);
     fo.setAttribute("width", size); fo.setAttribute("height", size);
 
@@ -360,11 +360,11 @@ function drawNodes(svg) {
 
     const iconEl = document.createElementNS(XHTML_NS, "i");
     iconEl.setAttribute("class", "fa-solid " + node.icon + " node-icon");
-    iconEl.setAttribute("style", `color:${node.color}; font-size:${node.r * 0.42}px; margin:1px 0;`);
+    iconEl.setAttribute("style", `color:${node.color}; font-size:${node.r * 0.44}px; margin:1px 0;`);
 
     const nameEl = document.createElementNS(XHTML_NS, "div");
     nameEl.setAttribute("class", "node-name");
-    nameEl.setAttribute("style", `font-size:${Math.max(node.r * 0.155, 7.5)}px; padding:0 3px; font-weight:700; color:#e7eaf2; line-height:1.15; white-space:pre-line;`);
+    nameEl.setAttribute("style", `font-size:${Math.max(node.r * 0.145, 6)}px; padding:0 3px; font-weight:600; color:var(--text-dim); line-height:1.05; white-space:pre-line;`);
     nameEl.textContent = node.name;
 
     wrapper.appendChild(numEl); wrapper.appendChild(iconEl); wrapper.appendChild(nameEl);
