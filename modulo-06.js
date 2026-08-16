@@ -1402,6 +1402,13 @@ function changePnZoom(delta) {
 function setupPnZoom() {
   document.getElementById("pnZoomIn")?.addEventListener("click", () => changePnZoom(0.25));
   document.getElementById("pnZoomOut")?.addEventListener("click", () => changePnZoom(-0.25));
+
+  const svg = document.getElementById("pnViz");
+  svg?.addEventListener("wheel", (event) => {
+    /* La rueda solo controla la red; no desplaza la página mientras el cursor está sobre ella. */
+    event.preventDefault();
+    changePnZoom(event.deltaY < 0 ? 0.10 : -0.10);
+  }, { passive: false });
 }
 
 /* -------- conecta el panel derecho "1. Relaciones que favorecen los ODS" -------- */
