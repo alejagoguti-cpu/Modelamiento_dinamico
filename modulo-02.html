@@ -41,57 +41,54 @@
         <div class="icon-btn"><i class="fa-regular fa-bell"></i><span class="dot"></span></div>
         <div class="icon-btn"><i class="fa-solid fa-sun"></i></div>
         <div class="icon-btn"><i class="fa-solid fa-user"></i></div>
+        <i class="fa-solid fa-chevron-down topbar-chevron"></i>
       </div>
-    </div>
-
-    <div class="welcome">
-      <div class="welcome-eyebrow">INGENIERÍA INVERSA</div>
-      <h2>Una ciudad que no cabe en el POT</h2>
-      <p class="welcome-sub">Ingeniería inversa al Modelo de Ocupación Territorial (MOT)</p>
-    </div>
-
-    <div class="quote-card">
-      <div class="quote-mark">&ldquo;</div>
-      <p>Realizamos una ingeniería inversa al Modelo de Ocupación Territorial (MOT). Desarmamos el decreto para ver cómo interactúan realmente sus partes en el territorio.</p>
     </div>
 
     <!-- RED -->
     <div class="network-section">
-      <div class="network-header">
-        <h3><i class="fa-solid fa-sitemap"></i> Red de las 4 Estructuras — hubs por peso real en artículos</h3>
-        <div class="network-controls">
-          <button class="control-btn active" onclick="filterNetwork('all')">Todos</button>
-          <button class="control-btn" onclick="filterNetwork('vacio')">Vacíos</button>
-          <button class="control-btn" onclick="filterNetwork('directa')">Directas</button>
-          <button class="control-btn" onclick="filterNetwork('indirecta')">Indirectas</button>
-          <button class="control-btn" onclick="filterNetwork('e1')">E. Ecológica</button>
-          <button class="control-btn" onclick="filterNetwork('e2')">E. Funcional</button>
-          <button class="control-btn" onclick="filterNetwork('e3')">E. Socioeconómica</button>
-          <button class="control-btn" onclick="filterNetwork('e4')">E. Patrimonio</button>
-        </div>
+      <div class="welcome">
+        <div class="welcome-eyebrow">INGENIERÍA INVERSA</div>
+        <h2><span class="h2-plain">Una ciudad que</span> <span class="h2-accent">no cabe en el POT</span></h2>
+        <p class="welcome-sub">Ingeniería inversa al Modelo de Ocupación Territorial (MOT)</p>
       </div>
 
-      <div class="network-viz-wrap">
+      <div class="network-body">
         <div class="network-canvas">
-          <svg id="networkViz" viewBox="250 150 2500 2700" preserveAspectRatio="xMidYMid meet"></svg>
+          <svg id="networkViz" viewBox="0 0 2600 3200" preserveAspectRatio="xMidYMid meet"></svg>
           <div class="zoom-controls">
             <button id="zoomIn" title="Acercar"><i class="fa-solid fa-plus"></i></button>
             <button id="zoomOut" title="Alejar"><i class="fa-solid fa-minus"></i></button>
             <button id="zoomReset" title="Restablecer"><i class="fa-solid fa-compress"></i></button>
           </div>
+          <div class="map-scale" title="Escala aproximada — silueta esquemática de Bogotá, no cartografía oficial">
+            <i class="fa-solid fa-location-arrow"></i>
+            <div class="map-scale-bar">
+              <span>0</span><span>5</span><span>10</span><span>15 km</span>
+            </div>
+          </div>
         </div>
 
         <div class="network-sidebar">
+          <div class="quote-card">
+            <div class="quote-mark">&ldquo;</div>
+            <p>Realizamos una ingeniería inversa al Modelo de Ocupación Territorial (MOT). Desarmamos el decreto para ver cómo interactúan realmente sus partes en el territorio.</p>
+            <div class="quote-attr">– Equipo Bogotá Viva</div>
+          </div>
+
           <aside class="network-legend" id="networkLegend">
             <div class="legend-title">Tipos de relación</div>
             <label class="legend-item" data-mode="type" data-type="directa">
-              <input type="checkbox" checked><span class="legend-swatch swatch-directa-neutral"></span> Directa (respaldo real)
+              <input type="checkbox" checked><span class="legend-swatch swatch-directa-neutral"></span>
+              <span class="legend-text"><strong>Directa</strong><small>Respaldo explícito del POT</small></span>
             </label>
             <label class="legend-item" data-mode="type" data-type="indirecta">
-              <input type="checkbox" checked><span class="legend-swatch swatch-indirecta-neutral"></span> Indirecta (inferencia)
+              <input type="checkbox" checked><span class="legend-swatch swatch-indirecta-neutral"></span>
+              <span class="legend-text"><strong>Indirecta</strong><small>Relación funcional intermedia</small></span>
             </label>
             <label class="legend-item legend-item-minor" data-mode="type" data-type="vacio">
-              <input type="checkbox" checked><span class="legend-swatch swatch-vacio-neutral"></span> Vacío (ausencia documentada)
+              <input type="checkbox" checked><span class="legend-swatch swatch-vacio-neutral"></span>
+              <span class="legend-text"><strong>Vacío</strong><small>Ausencia documentada entre estructuras</small></span>
             </label>
 
             <div class="legend-divider"></div>
@@ -101,19 +98,44 @@
 
             <div class="legend-divider"></div>
             <div class="legend-title">Categorías del POT</div>
-            <label class="legend-item" data-mode="cat" data-cat="e1"><input type="checkbox" checked><span class="legend-swatch swatch-e1"></span> 1. Ecológica Principal</label>
-            <label class="legend-item" data-mode="cat" data-cat="e2"><input type="checkbox" checked><span class="legend-swatch swatch-e2"></span> 2. Funcional y del Cuidado</label>
-            <label class="legend-item" data-mode="cat" data-cat="e3"><input type="checkbox" checked><span class="legend-swatch swatch-e3"></span> 3. Socioeconómica Creativa</label>
-            <label class="legend-item" data-mode="cat" data-cat="e4"><input type="checkbox" checked><span class="legend-swatch swatch-e4"></span> 4. Integradora de Patrimonio</label>
-            <div class="struct-count" id="struct-e1"></div>
-            <div class="struct-count" id="struct-e2"></div>
-            <div class="struct-count" id="struct-e3"></div>
-            <div class="struct-count" id="struct-e4"></div>
+            <label class="legend-item cat-item" data-mode="cat" data-cat="e1">
+              <input type="checkbox" checked>
+              <span class="cat-icon" style="color:#5cd6d1;border-color:#5cd6d1;"><i class="fa-solid fa-droplet"></i></span>
+              <span class="cat-name">Ecológica Principal</span>
+              <span class="cat-count" id="struct-e1"></span>
+            </label>
+            <label class="legend-item cat-item" data-mode="cat" data-cat="e2">
+              <input type="checkbox" checked>
+              <span class="cat-icon" style="color:#ef9f54;border-color:#ef9f54;"><i class="fa-solid fa-people-roof"></i></span>
+              <span class="cat-name">Funcional y del Cuidado</span>
+              <span class="cat-count" id="struct-e2"></span>
+            </label>
+            <label class="legend-item cat-item" data-mode="cat" data-cat="e3">
+              <input type="checkbox" checked>
+              <span class="cat-icon" style="color:#fac47b;border-color:#fac47b;"><i class="fa-solid fa-building-columns"></i></span>
+              <span class="cat-name">Socioeconómica Creativa</span>
+              <span class="cat-count" id="struct-e3"></span>
+            </label>
+            <label class="legend-item cat-item" data-mode="cat" data-cat="e4">
+              <input type="checkbox" checked>
+              <span class="cat-icon" style="color:#fb8d84;border-color:#fb8d84;"><i class="fa-solid fa-landmark"></i></span>
+              <span class="cat-name">Integradora de Patrimonio</span>
+              <span class="cat-count" id="struct-e4"></span>
+            </label>
 
             <div class="legend-divider"></div>
-            <div class="legend-hint">Scroll: zoom · Arrastrar fondo: mover lienzo · Clic en bola: ficha documental · Doble clic: apagar/encender · Triple clic: ver solo su flujo · Clic en línea: ver el análisis.</div>
+            <div class="legend-footer-row">
+              <button class="control-btn active" onclick="filterNetwork('all')">Todas</button>
+              <button class="control-btn" onclick="filterNetwork('vacio')">Vacíos</button>
+              <button class="control-btn" onclick="filterNetwork('directa')">Directas</button>
+            </div>
           </aside>
         </div>
+      </div>
+
+      <div class="network-footer-actions">
+        <button class="btn-primary" onclick="document.querySelector('.analysis-container').scrollIntoView({behavior:'smooth'})">Explorar relaciones en detalle <i class="fa-solid fa-arrow-right"></i></button>
+        <button class="btn-secondary" onclick="document.querySelector('.synergies-section').scrollIntoView({behavior:'smooth'})"><i class="fa-solid fa-chart-simple"></i> Ver hallazgos clave</button>
       </div>
     </div>
 
