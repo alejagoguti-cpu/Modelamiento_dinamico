@@ -1294,7 +1294,11 @@
       b.addEventListener("click", () => {
         $$(".side-item").forEach((x) => x.classList.remove("active"));
         b.classList.add("active");
-        const scenarioBySidebar = ["30min", "empleo", "carbono"];
+        if (index === 2) {
+          window.location.href = "modulo-03.html";
+          return;
+        }
+        const scenarioBySidebar = ["30min", "empleo"];
         if (scenarioBySidebar[index]) {
           openNetwork(scenarioBySidebar[index]);
         } else {
