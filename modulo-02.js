@@ -317,16 +317,15 @@ function computeDegrees() {
    Los "vacío" (ausencias entre estructuras) quedan como líneas largas
    que cruzan de un centro a otro, igual que en la referencia.
    ========================================================== */
-// Lienzo alargado norte-sur (como la silueta real de Bogotá) — los 4 hubs se
-// distribuyen dentro de la silueta, en una disposición irregular como la
-// referencia (no un diamante geométrico perfecto), dejando que el mesh de
-// satélites llene el espacio entre ellos.
-const CANVAS = { w: 2600, h: 3200 };
+// Lienzo panorámico — los 4 hubs en disposición de diamante amplio, con
+// espacio suficiente para que cada satélite muestre su ícono + nombre
+// completo sin solaparse con los demás.
+const CANVAS = { w: 3400, h: 3000 };
 const HUB_CENTERS = {
-  e1: { x: 950,  y: 850 },   // Humedales / Ecológica — noroccidente
-  e2: { x: 1750, y: 780 },   // Actuaciones estratégicas / Funcional — nororiente
-  e3: { x: 980,  y: 2050 },  // Corazones productivos / Socioeconómica — centro-sur
-  e4: { x: 1820, y: 2000 },  // Infraestructuras / Patrimonio — suroriente
+  e1: { x: 1150, y: 760 },   // Ecológica Principal — noroccidente
+  e2: { x: 2350, y: 820 },   // Funcional y del Cuidado — nororiente
+  e3: { x: 1050, y: 2260 },  // Socioeconómica Creativa — suroccidente
+  e4: { x: 2400, y: 2200 },  // Integradora de Patrimonio — suroriente
 };
 
 function layoutNetwork() {
@@ -335,7 +334,7 @@ function layoutNetwork() {
     n.color = STRUCT_STYLE[n.cat].color;
     n.vx = 0; n.vy = 0; n.fixed = false; n.isMainHub = false;
     const d = deg[n.id] || 0;
-    n.r = 22 + Math.pow(d, 1.35) * 10; // radio "temático" (sale del grado real) — se usa para el hub y para el espaciado angular
+    n.r = 62 + Math.pow(d, 1.35) * 14; // radio "temático" (sale del grado real) — mínimo suficiente para que quepan ícono+nombre legibles, hubs claramente más grandes
     n._deg = d;
   });
 
@@ -349,20 +348,19 @@ function layoutNetwork() {
 
     const hub = group[0];
     hub.x = center.x; hub.y = center.y; hub.isMainHub = true;
-    hub.collR = hub.r; // el hub sí ocupa su radio temático completo
+    hub.collR = hub.r; // el hub ocupa su radio temático completo
     const rest = group.slice(1);
-    rest.forEach(n => { n.collR = Math.max(n.r * 0.32, 5) + 4; }); // satélite: radio visual real (punto pequeño)
+    rest.forEach(n => { n.collR = n.r; }); // satélite: también dibuja su círculo+texto completo (radio real, no un punto)
 
     // hasta 3 anillos concéntricos según grado real, para que los componentes
-    // algo conectados queden más cerca del hub y los periféricos más lejos.
-    // Los satélites se DIBUJAN como puntos pequeños (collR), aunque su "peso"
-    // temático (n.r) siga saliendo del grado real — así el mesh queda denso
-    // y compacto, como en la referencia, sin sacrificar el tamaño-por-grado.
+    // algo conectados queden más cerca del hub y los periféricos más lejos —
+    // igual lectura visual que la referencia (satélites bien separados, cada
+    // uno con su propio nombre visible).
     const ringHigh = rest.filter(n => n._deg >= 3);
     const ringMid  = rest.filter(n => n._deg === 1 || n._deg === 2);
     const ringLow  = rest.filter(n => n._deg === 0);
 
-    const GAP = 16;
+    const GAP = 40;
     function placeRing(ringNodes, minRadius, angleSpan, angleStart) {
       if (!ringNodes.length) return minRadius;
       const sumDiam = ringNodes.reduce((s, n) => s + 2 * n.collR + GAP, 0);
@@ -384,12 +382,12 @@ function layoutNetwork() {
     const outward = Math.atan2(center.y - cy, center.x - cx) || 0;
     hub._outwardAngle = outward;
     const n = rest.length;
-    const angleSpan = Math.min(Math.PI * 1.7, Math.PI * 0.55 + n * (Math.PI / 9));
+    const angleSpan = Math.min(Math.PI * 1.6, Math.PI * 0.5 + n * (Math.PI / 10));
     const angleStart = outward - angleSpan / 2;
 
-    const rHigh = placeRing(ringHigh, hub.r + 60, angleSpan, angleStart);
-    const rMid = placeRing(ringMid, rHigh + 55, angleSpan, angleStart);
-    placeRing(ringLow, rMid + 50, angleSpan, angleStart);
+    const rHigh = placeRing(ringHigh, hub.r + 140, angleSpan, angleStart);
+    const rMid = placeRing(ringMid, rHigh + (ringHigh[0] ? Math.max(...ringHigh.map(n => n.r)) : 0) + 110, angleSpan, angleStart);
+    placeRing(ringLow, rMid + (ringMid[0] ? Math.max(...ringMid.map(n => n.r)) : 0) + 100, angleSpan, angleStart);
   });
 
   // ---- 2. Resolución de colisiones por radio real (red de seguridad) ----
@@ -717,6 +715,11 @@ function drawEdges(svg) {
   const g = document.createElementNS(SVG_NS, "g");
   g.setAttribute("class", "edges-layer");
   RAW_EDGES.forEach((edge, i) => {
+    // Las relaciones "vacío" (ausencias documentadas entre estructuras) ya NO
+    // se dibujan en la red visual — quedan solo como hallazgo en la tabla y en
+    // las tarjetas de "hallazgos clave", para que la red se lea limpia con
+    // únicamente relaciones reales (directa/indirecta).
+    if (edge.tipo === "vacio") return;
     const s = nodeById(edge.s), t = nodeById(edge.t);
     if (!s || !t) return;
     const color = edgeColor(edge);
@@ -757,6 +760,10 @@ function drawEdges(svg) {
 // El resto de los 36 componentes reales se muestran como puntos de color sólido,
 // sin texto dentro — igual que los puntitos del mesh de fondo de la referencia —
 // para no saturar la vista; su ficha completa sigue disponible al hacer clic.
+// TODOS los nodos (hub y satélite) llevan círculo con anillo + ícono + nombre
+// dentro — el tamaño (radio, ícono, texto) escala con el grado real, así que
+// los hubs se leen mucho más grandes que la periferia sin dejar de mostrar
+// la etiqueta de cada componente.
 function drawNodes(svg) {
   const g = document.createElementNS(SVG_NS, "g");
   g.setAttribute("class", "nodes-layer");
@@ -766,74 +773,37 @@ function drawNodes(svg) {
     group.setAttribute("data-id", node.id);
     group.setAttribute("data-cat", node.cat);
 
-    if (node.isMainHub) {
-      // Hub principal: círculo con anillo + ícono dentro, etiqueta de texto AL LADO (fuera del círculo).
-      const circle = document.createElementNS(SVG_NS, "circle");
-      circle.setAttribute("class", "node-ring node-ring-hub");
-      circle.setAttribute("cx", node.x); circle.setAttribute("cy", node.y); circle.setAttribute("r", node.r);
-      circle.setAttribute("fill", "#0a0a0a");
-      circle.setAttribute("stroke", node.color);
-      circle.setAttribute("stroke-width", 2.5);
-      circle.setAttribute("filter", "url(#glow-" + node.color.replace("#", "") + ")");
+    const circle = document.createElementNS(SVG_NS, "circle");
+    circle.setAttribute("class", "node-ring" + (node.isMainHub ? " node-ring-hub" : ""));
+    circle.setAttribute("cx", node.x); circle.setAttribute("cy", node.y); circle.setAttribute("r", node.r);
+    circle.setAttribute("fill", "#0a0a0a");
+    circle.setAttribute("stroke", node.color);
+    circle.setAttribute("stroke-width", node.isMainHub ? 2.5 : 1.6);
+    circle.setAttribute("filter", "url(#glow-" + node.color.replace("#", "") + ")");
 
-      const fo = document.createElementNS(SVG_NS, "foreignObject");
-      const size = node.r * 1.3;
-      fo.setAttribute("x", node.x - size / 2); fo.setAttribute("y", node.y - size / 2);
-      fo.setAttribute("width", size); fo.setAttribute("height", size);
-      const iconWrap = document.createElementNS(XHTML_NS, "div");
-      iconWrap.setAttribute("style", "width:100%;height:100%;display:flex;align-items:center;justify-content:center;pointer-events:none;");
-      const iconEl = document.createElementNS(XHTML_NS, "i");
-      iconEl.setAttribute("class", "fa-solid " + node.icon);
-      iconEl.setAttribute("style", `color:${node.color}; font-size:${node.r * 0.75}px;`);
-      iconWrap.appendChild(iconEl);
-      fo.appendChild(iconWrap);
+    const fo = document.createElementNS(SVG_NS, "foreignObject");
+    const size = node.r * 1.8;
+    fo.setAttribute("x", node.x - size / 2); fo.setAttribute("y", node.y - size / 2);
+    fo.setAttribute("width", size); fo.setAttribute("height", size);
 
-      // etiqueta lateral (fuera del círculo, hacia afuera del centro del lienzo).
-      // El viewBox usa coordenadas ~3x más grandes que los píxeles de pantalla
-      // reales, así que la fuente y la caja se escalan para verse legibles.
-      const labelSize = { w: 560, h: 170 };
-      const outward = node._outwardAngle || 0;
-      const labelDX = Math.cos(outward) >= 0 ? node.r + 34 : -(node.r + 34 + labelSize.w);
-      const labelFO = document.createElementNS(SVG_NS, "foreignObject");
-      labelFO.setAttribute("x", node.x + labelDX);
-      labelFO.setAttribute("y", node.y - labelSize.h / 2);
-      labelFO.setAttribute("width", labelSize.w);
-      labelFO.setAttribute("height", labelSize.h);
-      const labelWrap = document.createElementNS(XHTML_NS, "div");
-      const alignStyle = Math.cos(outward) >= 0 ? "text-align:left;" : "text-align:right;";
-      labelWrap.setAttribute("style", `width:100%; height:100%; display:flex; align-items:center; ${alignStyle} pointer-events:none;`);
-      const labelText = document.createElementNS(XHTML_NS, "div");
-      labelText.setAttribute("style", `font-size:42px; font-weight:700; color:#f2f3f6; line-height:1.25; font-family:'Space Grotesk',sans-serif; white-space:pre-line; text-shadow:0 2px 8px rgba(0,0,0,0.8);`);
-      labelText.textContent = node.name.replace(/\n/g, " ");
-      labelWrap.appendChild(labelText);
-      labelFO.appendChild(labelWrap);
+    const wrapper = document.createElementNS(XHTML_NS, "div");
+    wrapper.setAttribute("style", "width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;pointer-events:none;padding:2px;");
 
-      group.appendChild(circle); group.appendChild(fo); group.appendChild(labelFO);
-      attachNodeClickHandler(group, node.id);
-      attachNodeDragHandler(group, node);
-      g.appendChild(group);
-      node._el = { group, circle, fo, labelFO, labelDX, labelH: labelSize.h };
-    } else {
-      // Satélite: punto sólido de color, sin texto — tamaño por grado real.
-      const dot = document.createElementNS(SVG_NS, "circle");
-      dot.setAttribute("class", "node-dot");
-      dot.setAttribute("cx", node.x); dot.setAttribute("cy", node.y); dot.setAttribute("r", Math.max(node.r * 0.32, 5));
-      dot.setAttribute("fill", node.color);
-      dot.setAttribute("opacity", "0.92");
-      const ring = document.createElementNS(SVG_NS, "circle");
-      ring.setAttribute("class", "node-dot-ring");
-      ring.setAttribute("cx", node.x); ring.setAttribute("cy", node.y); ring.setAttribute("r", Math.max(node.r * 0.32, 5) + 4);
-      ring.setAttribute("fill", "none");
-      ring.setAttribute("stroke", node.color);
-      ring.setAttribute("stroke-width", "1");
-      ring.setAttribute("opacity", "0.35");
+    const iconEl = document.createElementNS(XHTML_NS, "i");
+    iconEl.setAttribute("class", "fa-solid " + node.icon);
+    iconEl.setAttribute("style", `color:${node.color}; font-size:${Math.max(node.r * (node.isMainHub ? 0.42 : 0.34), 15)}px;`);
 
-      group.appendChild(ring); group.appendChild(dot);
-      attachNodeClickHandler(group, node.id);
-      attachNodeDragHandler(group, node);
-      g.appendChild(group);
-      node._el = { group, circle: dot, ring };
-    }
+    const nameEl = document.createElementNS(XHTML_NS, "div");
+    nameEl.setAttribute("style", `font-size:${Math.max(node.r * 0.16, 15)}px; padding:0 3px; font-weight:700; color:#f2f3f6; line-height:1.15; white-space:pre-line; text-align:center; font-family:'Inter',sans-serif;`);
+    nameEl.textContent = node.name;
+
+    wrapper.appendChild(iconEl); wrapper.appendChild(nameEl);
+    fo.appendChild(wrapper);
+    group.appendChild(circle); group.appendChild(fo);
+    attachNodeClickHandler(group, node.id);
+    attachNodeDragHandler(group, node);
+    g.appendChild(group);
+    node._el = { group, circle, fo };
   });
   svg.appendChild(g);
 }
@@ -845,16 +815,8 @@ function updatePositions() {
   ODS_NODES.forEach(n => {
     if (!n._el) return;
     n._el.circle.setAttribute("cx", n.x); n._el.circle.setAttribute("cy", n.y);
-    if (n.isMainHub) {
-      const size = n.r * 1.3;
-      n._el.fo.setAttribute("x", n.x - size / 2); n._el.fo.setAttribute("y", n.y - size / 2);
-      if (n._el.labelFO) {
-        n._el.labelFO.setAttribute("x", n.x + n._el.labelDX);
-        n._el.labelFO.setAttribute("y", n.y - n._el.labelH / 2);
-      }
-    } else if (n._el.ring) {
-      n._el.ring.setAttribute("cx", n.x); n._el.ring.setAttribute("cy", n.y);
-    }
+    const size = n.r * 1.8;
+    n._el.fo.setAttribute("x", n.x - size / 2); n._el.fo.setAttribute("y", n.y - size / 2);
   });
   RAW_EDGES.forEach(edge => {
     if (!edge._el) return;
@@ -927,7 +889,7 @@ function renderNetwork() {
   const svg = document.getElementById("networkViz");
   if (!svg) return;
   svg.innerHTML = "";
-  buildDefs(svg); buildMapBackground(svg); buildAmbientMesh(svg); drawEdges(svg); drawNodes(svg); setupZoomPan(svg);
+  buildDefs(svg); buildAmbientMesh(svg); drawEdges(svg); drawNodes(svg); setupZoomPan(svg);
 }
 
 /* -------- paneles de información -------- */
@@ -1157,21 +1119,20 @@ function renderMatrix() {
 }
 
 function filterNetwork(mode) {
-  document.querySelectorAll(".network-controls .control-btn").forEach(btn => btn.classList.remove("active"));
+  document.querySelectorAll(".legend-footer-row .control-btn").forEach(btn => btn.classList.remove("active"));
   if (window.event && window.event.currentTarget) window.event.currentTarget.classList.add("active");
   typeOff.clear(); catOff.clear();
   document.querySelectorAll(".legend-item input").forEach(inp => { inp.checked = true; inp.closest(".legend-item").classList.remove("off"); });
 
   const groups = {
     all: null,
-    vacio: { types: ["vacio"] },
     directa: { types: ["directa"] },
     indirecta: { types: ["indirecta"] },
     e1: { cats: ["e1"] }, e2: { cats: ["e2"] }, e3: { cats: ["e3"] }, e4: { cats: ["e4"] },
   };
   const active = groups[mode];
   if (!active) { refreshEdgeVisibility(); return; }
-  if (active.types) ["directa","indirecta","vacio"].forEach(t => { if (!active.types.includes(t)) typeOff.add(t); });
+  if (active.types) ["directa","indirecta"].forEach(t => { if (!active.types.includes(t)) typeOff.add(t); });
   if (active.cats) Object.keys(STRUCT_STYLE).forEach(c => { if (!active.cats.includes(c)) catOff.add(c); });
 
   document.querySelectorAll(".legend-item[data-mode='type']").forEach(item => {
