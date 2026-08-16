@@ -6515,3 +6515,50 @@ body {
 ---
 
 Need update styles maybe `display:none` for quote-backdrop means if old openQuoteModal still called no popup. Fine. But user wants all info in tooltip.
+
+/* Corrección definitiva del icono del Hallazgo Principal:
+   el icono ocupa una celda propia y el texto comienza debajo de la cabecera. */
+.net-body > .net-stage > .network-finding {
+  display: grid !important;
+  grid-template-columns: 32px minmax(0, 1fr) !important;
+  column-gap: 9px !important;
+  row-gap: 0 !important;
+  align-items: start !important;
+  padding: 13px 14px 14px !important;
+}
+.net-body > .net-stage > .network-finding .network-finding-icon {
+  position: static !important;
+  grid-column: 1 !important;
+  grid-row: 1 !important;
+  width: 30px !important;
+  height: 30px !important;
+  margin: 0 !important;
+  align-self: start !important;
+}
+.net-body > .net-stage > .network-finding .network-finding-kicker {
+  grid-column: 2 !important;
+  grid-row: 1 !important;
+  margin: 4px 0 0 !important;
+  padding: 0 !important;
+  align-self: start !important;
+}
+.net-body > .net-stage > .network-finding .network-finding-text {
+  grid-column: 1 / -1 !important;
+  grid-row: 2 !important;
+  margin: 8px 0 0 !important;
+  min-width: 0 !important;
+}
+.net-body > .net-stage > .network-finding .finding-card-title,
+.net-body > .net-stage > .network-finding .finding-card-summary {
+  overflow-wrap: anywhere;
+}
+@media (max-width: 640px) {
+  .net-body > .net-stage > .network-finding {
+    grid-template-columns: 28px minmax(0, 1fr) !important;
+    column-gap: 7px !important;
+  }
+  .net-body > .net-stage > .network-finding .network-finding-icon {
+    width: 27px !important;
+    height: 27px !important;
+  }
+}
