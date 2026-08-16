@@ -2607,25 +2607,40 @@ const iconSize = Math.max(28, Math.round(R * 0.52));
       g.addEventListener('mousemove', moveTooltip);
       g.addEventListener('mouseleave', hideTooltip);
 
-      // Ciclo de interacción: 1 clic = enfocar; 2 = deseleccionar;
-      // 3 = ocultar el nodo y sus conexiones. No se mueve la red.
-      let clickCount = 0;
-      let clickTimer = null;
+      // Ciclo de interacción robusto: 1 clic = enfocar; 2 = deseleccionar;
+      // 3 clics = ocultar el nodo y su cascada de conexiones. Se usa
+      // event.detail para no depender de una ventana artificial de 320 ms.
+      let fallbackCount = 0;
+      let fallbackTimer = null;
       g.addEventListener('click', ev => {
         ev.stopPropagation();
-        clickCount += 1;
-        if (clickTimer) clearTimeout(clickTimer);
-        clickTimer = setTimeout(() => {
-          if (clickCount === 1) {
-            focusConcept(id);
-          } else if (clickCount === 2) {
-            deselectLocal(id);
-            clearFocus();
-          } else if (clickCount >= 3) {
-            hideNodeAndConnections(id);
-          }
-          clickCount = 0;
-        }, 320);
+        const count = Number(ev.detail) || 0;
+        if (count >= 3) {
+          fallbackCount = 0;
+          if (fallbackTimer) clearTimeout(fallbackTimer);
+          hideNodeAndConnections(id);
+          return;
+        }
+        if (count === 2) {
+          fallbackCount = 0;
+          if (fallbackTimer) clearTimeout(fallbackTimer);
+          deselectLocal(id);
+          clearFocus();
+          return;
+        }
+        if (count === 1) {
+          focusConcept(id);
+          return;
+        }
+        // Fallback para eventos sintéticos o navegadores que no entreguen detail.
+        fallbackCount += 1;
+        if (fallbackTimer) clearTimeout(fallbackTimer);
+        fallbackTimer = setTimeout(() => {
+          if (fallbackCount >= 3) hideNodeAndConnections(id);
+          else if (fallbackCount === 2) { deselectLocal(id); clearFocus(); }
+          else focusConcept(id);
+          fallbackCount = 0;
+        }, 650);
       });
 
       gNodes.appendChild(g);
@@ -2987,6 +3002,9 @@ function resetAll() {
 }
 
 function selectRelation(id) {
+  // El tooltip corto solo sirve como previsualización al pasar el cursor.
+  // Al hacer clic debe desaparecer para dejar visible el popup documental completo.
+  hideTooltip();
   // Los atributos data-rel del SVG llegan como texto; el modelo usa IDs numéricos.
   // Normalizar aquí evita que el clic del hitbox no encuentre la relación.
   const normalizedId = Number(id);
