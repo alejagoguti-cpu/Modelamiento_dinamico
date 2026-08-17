@@ -84,6 +84,68 @@ td { border-color: var(--m02-border-soft) !important; color: var(--m02-dim) !imp
   font-family: 'Space Grotesk', sans-serif !important;
   letter-spacing: 1.5px !important;
 }
+/* Subtítulos y etiquetas auxiliares */
+.welcome-sub, .welcome > p, .hero-copy > p, .sidebar-left > .desc {
+  color: var(--m02-dim) !important;
+  font-family: Inter, system-ui, sans-serif !important;
+  font-size: 13.5px !important;
+  line-height: 1.6 !important;
+  max-width: 700px;
+}
+.simulation-kicker, .panel-kicker, .network-kicker, .welcome-eyebrow {
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  line-height: 1.2 !important;
+  margin-bottom: 10px !important;
+}
+/* Controles compactos con la misma geometría del Módulo 02 */
+.control-btn, .tab, .reset-btn, .outline-btn, .danger-btn, .btn-builder, .btn-primary, .btn-secondary {
+  font-family: Inter, system-ui, sans-serif !important;
+  font-weight: 600 !important;
+  transition: background .2s ease, border-color .2s ease, color .2s ease, filter .2s ease !important;
+}
+.control-btn, .tab {
+  border-radius: 6px !important;
+  font-size: 11px !important;
+  padding: 6px 10px !important;
+}
+.control-btn:hover, .control-btn.active, .tab:hover, .tab.active {
+  border-color: var(--m02-teal) !important;
+  color: var(--m02-teal) !important;
+  background: rgba(70,214,208,.08) !important;
+}
+.reset-btn, .outline-btn, .danger-btn, .btn-builder {
+  border-radius: 8px !important;
+  font-size: 12px !important;
+  padding: 8px 12px !important;
+}
+.btn-primary, .btn-secondary {
+  border-radius: 10px !important;
+  font-size: 13px !important;
+  padding: 12px 20px !important;
+}
+.outline-btn, .btn-secondary, .reset-btn {
+  background: rgba(255,255,255,.03) !important;
+  border: 1px solid var(--m02-border) !important;
+  color: var(--m02-dim) !important;
+}
+.outline-btn:hover, .btn-secondary:hover, .reset-btn:hover {
+  border-color: var(--m02-teal) !important;
+  color: var(--m02-teal) !important;
+}
+.btn-primary {
+  background: linear-gradient(135deg, #1f7a74, #175f5a) !important;
+  color: #eafffb !important;
+  border: 0 !important;
+}
+.danger-btn { border-color: var(--m02-copper) !important; color: var(--m02-copper) !important; background: transparent !important; }
+/* El Módulo 05 ubica su título en una columna estrecha: conserva la jerarquía sin desbordarse. */
+.sidebar-left > h1 { font-size: 31px !important; line-height: .98 !important; letter-spacing: -.045em !important; margin-bottom: 10px !important; }
+.metric-box a, .btn-compare { font-family: Inter, system-ui, sans-serif !important; font-size: 11px !important; font-weight: 600 !important; color: var(--m02-teal) !important; }
+.btn-compare { border-radius: 8px !important; border: 1px solid var(--m02-border) !important; background: rgba(255,255,255,.03) !important; padding: 8px 12px !important; }
+.btn-compare:hover, .metric-box a:hover { border-color: var(--m02-teal) !important; color: var(--m02-teal) !important; }
+.plazo-btn { font-family: Inter, system-ui, sans-serif !important; }
 @media (max-width: 900px) {
   .welcome > h2, .hero-copy > h1, .sidebar-left > h1 { font-size: 38px !important; }
+  .welcome-sub, .welcome > p, .hero-copy > p, .sidebar-left > .desc { font-size: 13px !important; }
 }
