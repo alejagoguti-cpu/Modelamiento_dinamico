@@ -4350,3 +4350,38 @@ body { position:relative !important; }
 .network-node.hub-large .node-fa-icon { font-size: 24px !important; }
 /* Las categorías se conservan en filtros, no como textos flotantes en el lienzo. */
 .category-halos { display: none !important; }
+
+/* Contraste reforzado para lectura ejecutiva sobre Carbon */
+.network-edge.direct {
+  stroke: #46D6D0 !important;
+  stroke-width: 3px !important;
+  opacity: .98 !important;
+  stroke-dasharray: none !important;
+}
+.network-edge.indirect {
+  stroke: #B9C8C5 !important;
+  stroke-width: 2px !important;
+  opacity: .78 !important;
+  stroke-dasharray: 7 5 !important;
+}
+.network-edge.support {
+  stroke: #F5A623 !important;
+  stroke-width: 2.8px !important;
+  opacity: .98 !important;
+  stroke-dasharray: none !important;
+}
+.network-edge.result {
+  stroke: #FF9B70 !important;
+  stroke-width: 2.8px !important;
+  opacity: .98 !important;
+  stroke-dasharray: none !important;
+}
+.network-edge-hit { stroke-width: 18px !important; }
+.network-edge:hover,
+.network-edge:focus,
+.network-edge.highlight {
+  stroke-width: 4.2px !important;
+  opacity: 1 !important;
+  filter: drop-shadow(0 0 5px currentColor) !important;
+}
+.network-edge.dimmed { opacity: .12 !important; }
