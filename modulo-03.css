@@ -8007,3 +8007,26 @@ html,body{background:var(--m02-bg)!important;color:var(--m02-text)!important;fon
 #gRels path.rel.resiliencia.indirecta,
 #gRels path.rel.resiliencia.indirecta.intra,
 #gRels path.rel.resiliencia.indirecta.inter { stroke:#64e4d5 !important; opacity:.48 !important; stroke-width:1.5px !important; stroke-dasharray:6 5 !important; }
+
+/* Tabla inferior M03: réplica visual de la tabla de relaciones del M02. */
+.m03-relations-table{margin-top:18px;background:rgba(11,12,15,.92);border:1px solid rgba(111,231,216,.18);border-radius:12px;overflow:hidden;min-width:0}
+.m03-table-header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:15px 18px;border-bottom:1px solid rgba(111,231,216,.14);background:linear-gradient(90deg,rgba(70,214,208,.07),rgba(232,154,108,.035))}
+.m03-table-header h2{margin:0;color:#f2f3f6;font-size:14px;letter-spacing:.02em;font-weight:800}.m03-table-header h2 i{color:#46d6d0;margin-right:8px}.m03-table-header span{color:#9aa5ad;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.m03-table-scroll{overflow-x:auto;max-height:620px;overflow-y:auto}
+.m03-table-row{display:grid;grid-template-columns:150px minmax(220px,1.15fr) minmax(150px,.8fr) minmax(170px,.9fr) 100px minmax(300px,1.5fr);gap:0;align-items:stretch;border-bottom:1px solid rgba(159,176,181,.10);min-width:1090px}
+.m03-table-row>div{padding:12px 13px;color:#c8d0d4;font-size:11px;line-height:1.45;border-right:1px solid rgba(159,176,181,.08)}.m03-table-row>div:last-child{border-right:0}.m03-table-head{position:sticky;top:0;z-index:2;background:#12171a;border-bottom:1px solid rgba(70,214,208,.35)}.m03-table-head>div{padding:11px 13px;color:#46d6d0;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em}.m03-table-system{color:#e89a6c!important;font-weight:800}.m03-table-relation{color:#f2f3f6!important;font-weight:700}.m03-table-analysis{color:#aab4b8!important}.m03-type-pill{display:inline-block;padding:3px 7px;border-radius:999px;border:1px solid rgba(232,154,108,.32);color:#e89a6c;font-size:10px;font-weight:700}.m03-type-pill.indirecta{border-color:rgba(70,214,208,.34);color:#46d6d0}.m03-table-row.is-off{opacity:.42}.m03-table-row:hover{background:rgba(70,214,208,.045)}
+@media (max-width:900px){.m03-table-scroll{max-height:480px}.m03-table-row{grid-template-columns:130px 200px 140px 160px 90px 260px;min-width:980px}.m03-table-row>div{font-size:10px;padding:10px}}
+
+/* La tabla vive debajo del canvas; no debe ser encogida por la columna flex del tablero. */
+.net-layout>.col:last-child{overflow:visible!important;height:auto!important;min-height:0!important}
+.m03-relations-table{display:block!important;flex:0 0 auto!important;height:auto!important;min-height:668px!important;overflow:hidden!important}
+.m03-table-scroll{display:block!important;height:620px!important;max-height:620px!important;overflow:auto!important}
+
+/* La tabla completa requiere crecimiento vertical del documento; se conserva el tablero superior sin recortes. */
+.app{height:auto!important;min-height:100vh!important;overflow:visible!important}
+.main{height:auto!important;min-height:100vh!important;overflow:visible!important}
+.net-layout{overflow:visible!important;height:auto!important}
+.net-layout>.col:last-child{height:auto!important;overflow:visible!important}
+
+/* La tabla inferior extiende la página; html/body no deben fijarse al alto del viewport. */
+html,body{height:auto!important;min-height:100%!important;overflow-x:hidden!important;overflow-y:auto!important}

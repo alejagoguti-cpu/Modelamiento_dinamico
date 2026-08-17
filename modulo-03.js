@@ -2432,9 +2432,9 @@ function computeLayoutClean() {
     minX=Math.min(minX,p.x-r); maxX=Math.max(maxX,p.x+r);
     minY=Math.min(minY,p.y-r); maxY=Math.max(maxY,p.y+r);
   });
-  // Misma proporción de canvas que M02 (2235 × 1712), con margen
-  // suficiente para los 47 conceptos del M03 sin comprimirlos visualmente.
-  BASE_VB = { x:0, y:0, w:2235, h:1712 };
+  // El viewBox se ajusta al área real ocupada por la red para eliminar
+  // franjas vacías y hacer que los 47 conceptos llenen el canvas.
+  BASE_VB = { x:minX, y:minY, w:maxX-minX, h:maxY-minY };
   vb = Object.assign({}, BASE_VB);
 }
 
@@ -2475,16 +2475,27 @@ function wrapLabel(text, maxChars = 15) {
 // Las curvas anteriores desplazaban visualmente el recorrido y hacían parecer
 // que algunas relaciones terminaban en nodos equivocados, especialmente cuando
 // había muchos enlaces cruzados. La relación sigue usando sus endpoints reales.
-function curvePath(a, b, rA, rB) {
+function curvePath(a, b, rA, rB, relation = {}) {
   const dx = b.x - a.x;
   const dy = b.y - a.y;
   const len = Math.hypot(dx, dy) || 1;
   const ux = dx / len;
   const uy = dy / len;
-  const gap = 3;
+  const gap = 6;
   const p1 = { x: a.x + ux * (rA + gap), y: a.y + uy * (rA + gap) };
   const p2 = { x: b.x - ux * (rB + gap), y: b.y - uy * (rB + gap) };
-  return `M${p1.x.toFixed(1)},${p1.y.toFixed(1)} L${p2.x.toFixed(1)},${p2.y.toFixed(1)}`;
+  const mx = (p1.x + p2.x) / 2;
+  const my = (p1.y + p2.y) / 2;
+  // Curvatura corta y alternada: conserva endpoints reales, separa líneas
+  // paralelas y evita la acumulación de trazos en el centro del lienzo.
+  const sign = ((Number(relation.id) || 0) % 2 ? 1 : -1);
+  const inter = relation.sO !== relation.sD;
+  const bend = inter ? Math.min(72, Math.max(28, len * 0.08)) : Math.min(42, Math.max(16, len * 0.05));
+  const nx = -uy * bend * sign;
+  const ny = ux * bend * sign;
+  const c1 = { x: mx + nx * 0.72, y: my + ny * 0.72 };
+  const c2 = { x: mx + nx, y: my + ny };
+  return `M${p1.x.toFixed(1)},${p1.y.toFixed(1)} C${c1.x.toFixed(1)},${c1.y.toFixed(1)} ${c2.x.toFixed(1)},${c2.y.toFixed(1)} ${p2.x.toFixed(1)},${p2.y.toFixed(1)}`;
 }
 
 
@@ -2530,7 +2541,7 @@ function render() {
     const a = drawPos[r.from] || layout[r.from], b = drawPos[r.to] || layout[r.to];
     const rA = nodeR[r.from];
     const rB = nodeR[r.to];
-    const d = curvePath(a, b, rA, rB);
+    const d = curvePath(a, b, rA, rB, r);
     const kind = r.tipo === 'Soporte' ? 'soporte' : 'resiliencia';
     const evidence = String(r.evid || 'Directa').toLowerCase().startsWith('ind') ? 'indirecta' : 'directa';
     const cls = ['rel', kind, evidence, r.sO === r.sD ? 'intra' : 'inter'];
@@ -2550,7 +2561,7 @@ function render() {
     const path = el('path', {
       class: cls.join(' '),
       d,
-      'marker-end': `url(#ar-${kind})`,
+      'marker-end': (r.tipo === 'Soporte' || r.tipo === 'Resiliencia') ? `url(#ar-${kind})` : 'none',
       'data-rel': r.id
     });
     const hit = el('path', { class: 'rel-hit', d, 'data-rel': r.id });
@@ -2740,8 +2751,32 @@ function updateHiddenNodesIndicator() {
   indicator.title = count ? 'Nodos ocultados con triple clic' : 'Todos los nodos visibles';
 }
 
+function renderM03RelationTable() {
+  const host = document.getElementById('m03RelationRows');
+  const count = document.getElementById('m03TableCount');
+  if (!host) return;
+  const rows = model.relations;
+  if (count) count.textContent = `${rows.length} relaciones documentadas`;
+  host.innerHTML = rows.map((r, i) => {
+    const type = `${r.evid || 'Directa'} · ${r.tipo || 'Soporte'}`;
+    const source = r.fuente || r.source || r.seccion || 'POT';
+    const page = r.pag ? `p. ${r.pag}` : '—';
+    const analysis = relationExplanation(r);
+    const relation = `${r.cO} → ${r.cD}`;
+    return `<div class="m03-table-row ${relActive(r) ? '' : 'is-off'}" data-rel-row="${r.id}">
+      <div class="m03-table-system">${esc(r.sO)} → ${esc(r.sD)}</div>
+      <div class="m03-table-relation">${esc(relation)}</div>
+      <div><span class="m03-type-pill ${String(r.evid || '').toLowerCase().startsWith('ind') ? 'indirecta' : 'directa'}">${esc(type)}</span></div>
+      <div>${esc(source)}</div>
+      <div>${esc(page)}</div>
+      <div class="m03-table-analysis">${esc(analysis)}</div>
+    </div>`;
+  }).join('');
+}
+
 function updateMetrics() {
   const total = model.relations.length;
+  renderM03RelationTable();
   const active = model.relations.filter(relActive).length;
   const pct = total ? Math.round((active / total) * 100) : 0;
   const comp = components();
@@ -3542,6 +3577,10 @@ document.addEventListener('DOMContentLoaded', () => {
     conventionsHost.insertBefore(networkToolbar, anchor);
   }
 
+  // Evita que el navegador restaure un scroll interno antiguo del panel derecho;
+  // el módulo debe abrir como M02, mostrando primero el hallazgo principal.
+  const rightColumn = document.querySelector('.net-layout > .col:first-child');
+  if (rightColumn) rightColumn.scrollTop = 0;
   buildModel();
   SYS.forEach(s => {
     const count = document.getElementById('m03-count-' + s);

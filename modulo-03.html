@@ -7,8 +7,33 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="modulo-03.css">
+<link rel="stylesheet" href="modulo-03.css?v=network-integrated-v3">
 <link rel="stylesheet" href="network06-shared.css">
+<style id="m03-final-layout">
+html,body{height:auto!important;min-height:100vh!important;overflow-x:hidden!important;overflow-y:auto!important}
+.app{height:auto!important;min-height:100vh!important;overflow:visible!important}
+.main,.app>.main{height:auto!important;min-height:100vh!important;overflow:visible!important}
+.net-layout{height:auto!important;overflow:visible!important}
+.net-layout>.col:last-child{height:auto!important;overflow:visible!important}
+.m03-relations-table{display:block!important;height:668px!important;min-height:668px!important;flex:0 0 auto!important;overflow:hidden!important}
+.m03-table-scroll{display:block!important;height:620px!important;max-height:620px!important;overflow:auto!important}
+/* Red limpia: líneas finas, sin blanco/azul dominante; los tipos usan cobre y teal. */
+#gRels path.rel.directa,#gRels path.rel.directa.intra,#gRels path.rel.directa.inter{stroke:#8f9b9d!important;opacity:.48!important;stroke-width:1.55px!important}
+#gRels path.rel.indirecta,#gRels path.rel.indirecta.intra,#gRels path.rel.indirecta.inter{stroke:#7d898b!important;opacity:.30!important;stroke-width:1.15px!important;stroke-dasharray:5 6!important}
+#gRels path.rel.soporte,#gRels path.rel.soporte.directa,#gRels path.rel.soporte.directa.intra,#gRels path.rel.soporte.directa.inter{stroke:#e89a6c!important;opacity:.64!important;stroke-width:1.8px!important}
+#gRels path.rel.resiliencia,#gRels path.rel.resiliencia.directa,#gRels path.rel.resiliencia.directa.intra,#gRels path.rel.resiliencia.directa.inter{stroke:#46d6d0!important;opacity:.62!important;stroke-width:1.75px!important}
+#gRels path.rel.indirecta.soporte,#gRels path.rel.indirecta.soporte.intra,#gRels path.rel.indirecta.soporte.inter{stroke:#e89a6c!important;opacity:.40!important;stroke-width:1.3px!important;stroke-dasharray:5 6!important}
+#gRels path.rel.indirecta.resiliencia,#gRels path.rel.indirecta.resiliencia.intra,#gRels path.rel.indirecta.resiliencia.inter{stroke:#46d6d0!important;opacity:.38!important;stroke-width:1.25px!important;stroke-dasharray:5 6!important}
+#gRels path.rel.directa,#gRels path.rel.directa.intra,#gRels path.rel.directa.inter{opacity:.24!important;stroke-width:1.35px!important}
+#gRels path.rel.indirecta,#gRels path.rel.indirecta.intra,#gRels path.rel.indirecta.inter{opacity:.14!important;stroke-width:1px!important}
+#gRels path.rel.soporte,#gRels path.rel.soporte.directa,#gRels path.rel.soporte.directa.intra,#gRels path.rel.soporte.directa.inter{opacity:.44!important;stroke-width:1.55px!important}
+#gRels path.rel.resiliencia,#gRels path.rel.resiliencia.directa,#gRels path.rel.resiliencia.directa.intra,#gRels path.rel.resiliencia.directa.inter{opacity:.42!important;stroke-width:1.5px!important}
+#gRels path.rel.indirecta.soporte,#gRels path.rel.indirecta.soporte.intra,#gRels path.rel.indirecta.soporte.inter{opacity:.24!important;stroke-width:1.1px!important}
+#gRels path.rel.indirecta.resiliencia,#gRels path.rel.indirecta.resiliencia.intra,#gRels path.rel.indirecta.resiliencia.inter{opacity:.22!important;stroke-width:1.05px!important}
+#gRels path.rel.sel{stroke:#f2f3f6!important;opacity:1!important;stroke-width:3px!important}
+.tooltip{background:#101417!important;border-color:rgba(70,214,208,.28)!important;color:#e8eeee!important;box-shadow:0 8px 26px rgba(0,0,0,.55)!important}
+.tooltip .tt-type,.tooltip .tt-page{color:#9aa8a8!important}
+</style>
 </head>
 <body>
 <div class="app">
@@ -20,39 +45,24 @@
     <p id="insightText">La ESECI presenta más conexiones en esta red porque el POT relaciona movilidad, vivienda, equipamientos, empleo y productividad: transporte y sector productivo (p. 164), vivienda y acceso al empleo (p. 169), equipamientos y generación de empleo (p. 171), y conectividad multimodal, productividad y empleo (p. 171). Esta mayor centralidad es un resultado calculado a partir de las relaciones documentadas; no es una frase literal de una sola página del POT. En contraste, la EEP se define como un sistema de áreas y corredores que sostiene la biodiversidad y los servicios ecosistémicos (p. 72, art. 42), e incluye humedales, ríos y quebradas (p. 92).</p>
   </aside>
 
-  <!-- SIDEBAR · misma identidad visual de SÍNTESIS / Módulo 07 -->
-  <aside class="sidebar">
-    <div class="brand-mark">⌂</div>
-    <nav class="side-nav" aria-label="Navegación del portal">
-      <a class="side-item" href="dashboard.html" title="Dashboard" aria-label="Dashboard">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5M5.5 10.5V20h13v-9.5M9 20v-5h6v5" /></svg>
-      </a>
-      <a class="side-item" href="modulo-01.html" title="01 · Construir la Red" aria-label="Construir la Red">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="7" r="2" /><circle cx="18" cy="5" r="2" /><circle cx="14" cy="18" r="2" /><circle cx="7" cy="17" r="2" /><path d="m7.7 8.2 4.9 7.2M8 7.2l8-1.4M9 16.7l3.2.8M16.8 6.8l-1.8 9" /></svg>
-      </a>
-      <a class="side-item" href="modulo-02.html" title="02 · Medir la Red" aria-label="Medir la Red">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="2.5" /><circle cx="6" cy="17" r="2.5" /><circle cx="18" cy="17" r="2.5" /><path d="M10.7 7.1 7.3 14.8M13.3 7.1l3.4 7.7M8.5 17h7" /></svg>
-      </a>
-      <a class="side-item active" href="modulo-03.html" title="03 · Discurso vs Realidad" aria-label="Discurso vs Realidad">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" /><path d="m16 16 5 5M10.5 7v7M7 10.5h7" /></svg>
-      </a>
-      <a class="side-item" href="modulo-04.html" title="04 · Macromodelos" aria-label="Macromodelos">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" /><circle cx="8" cy="6" r="2" /><circle cx="15" cy="12" r="2" /><circle cx="10" cy="18" r="2" /></svg>
-      </a>
-      <a class="side-item" href="modulo-05.html" title="05 · Navegador Multiescalar" aria-label="Navegador Multiescalar">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" /><path d="m16 16 5 5M10.5 7v7M7 10.5h7" /></svg>
-      </a>
-      <a class="side-item" href="modulo-07.html" title="07 · SÍNTESIS" aria-label="SÍNTESIS">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5M4 19h16M7 15l3-4 3 2 5-7" /><path d="M18 4h3v3" /></svg>
-      </a>
-      <a class="side-item" href="modulo-08.html" title="08 · Modelo Propio" aria-label="Modelo Propio">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17 12 4l8 13M7 17h10M9 13h6" /></svg>
-      </a>
-      <a class="side-item" href="modulo-06.html" title="06 · POT ↔ ODS" aria-label="POT a ODS">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4v16l14-8z" /><path d="M4 21h16M7 21v-2M12 21v-2M17 21v-2" /></svg>
-      </a>
+  <!-- SIDEBAR · réplica exacta del Módulo 02 -->
+  <aside class="sidebar sidebar-icons-only">
+    <div class="brand-icon"><i class="fa-solid fa-diagram-project"></i></div>
+    <nav class="icon-nav" aria-label="Navegación del portal">
+      <a href="dashboard.html" class="icon-nav-item" title="Dashboard"><i class="fa-solid fa-house"></i></a>
+      <a href="modulo-01.html" class="icon-nav-item" title="Construir la Red"><i class="fa-solid fa-diagram-project"></i></a>
+      <a href="modulo-02.html" class="icon-nav-item" title="Medir la Red"><i class="fa-solid fa-chart-simple"></i></a>
+      <a href="modulo-03.html" class="icon-nav-item active" title="Discurso vs Realidad"><i class="fa-solid fa-eye"></i></a>
+      <a href="modulo-04.html" class="icon-nav-item" title="Macromodelos"><i class="fa-solid fa-bullseye"></i></a>
+      <a href="modulo-05.html" class="icon-nav-item" title="Lo que no está"><i class="fa-solid fa-magnifying-glass"></i></a>
+      <a href="modulo-06.html" class="icon-nav-item" title="POT ↔ ODS"><i class="fa-solid fa-earth-americas"></i></a>
+      <a href="modulo-07.html" class="icon-nav-item" title="SÍNTESIS"><i class="fa-solid fa-flask"></i></a>
+      <a href="modulo-08.html" class="icon-nav-item" title="Modelo Propio"><i class="fa-solid fa-city"></i></a>
     </nav>
-    <div class="sidebar-bottom">RA</div>
+    <div class="icon-nav-footer">
+      <a href="configuracion.html" class="icon-nav-item" title="Configuración"><i class="fa-solid fa-gear"></i></a>
+      <a href="demo.html" class="icon-nav-item" title="Salir"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
+    </div>
   </aside>
   <main class="main">
 
@@ -94,7 +104,7 @@
           <div class="legend-title m03-reference-title m03-color-title">Color de la línea</div>
           <div class="m03-line-colors">
             <div class="legend-static-item"><span class="legend-swatch" style="background:#f5a623;border-color:#f5a623;"></span> Soporte (sostiene / habilita)</div>
-            <div class="legend-static-item"><span class="legend-swatch" style="background:#5b8def;border-color:#5b8def;"></span> Resiliencia (conectividad ecosistémica / clima)</div>
+            <div class="legend-static-item"><span class="legend-swatch" style="background:#46d6d0;border-color:#46d6d0;"></span> Resiliencia (conectividad ecosistémica / clima)</div>
           </div>
           <div class="legend-divider m03-reference-divider m03-divider-after-colors"></div>
         </div>
@@ -325,6 +335,16 @@
           </div>
         </section>
 
+        <section class="m03-relations-table" aria-label="Tabla completa de relaciones">
+          <div class="m03-table-header"><h2><i class="fa-solid fa-table"></i> Tabla completa de relaciones</h2><span id="m03TableCount">68 relaciones documentadas</span></div>
+          <div class="m03-table-scroll">
+            <div class="m03-table-row m03-table-head">
+              <div>Estructura</div><div>Relación</div><div>Tipo</div><div>Fuente</div><div>Artículo / página</div><div>Análisis</div>
+            </div>
+            <div id="m03RelationRows"></div>
+          </div>
+        </section>
+
         <div class="pcard">
           <h2>Estado de la red</h2>
           <div class="stat-grid">
@@ -364,6 +384,6 @@
     </article>
   </div>
 
-<script src="modulo-03.js?v=indirectas-20260816"></script>
+<script src="modulo-03.js?v=m02-network-v2"></script>
 </body>
 </html>
