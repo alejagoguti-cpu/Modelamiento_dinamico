@@ -2536,7 +2536,7 @@ function render() {
     const rB = nodeR[r.to];
     const d = curvePath(a, b, rA, rB);
     const kind = r.tipo === 'Soporte' ? 'soporte' : 'resiliencia';
-    const cls = ['rel', kind];
+    const cls = ['rel', kind, r.sO === r.sD ? 'intra' : 'inter'];
     if (r.linea === 'Punteada') cls.push('punteada');
     if (r.porVerificar) cls.push('por-verificar');
     if (selectedRel === r.id) cls.push('sel');
