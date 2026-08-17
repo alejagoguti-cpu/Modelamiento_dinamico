@@ -47,10 +47,17 @@
 
     <!-- RED -->
     <div class="network-section">
-      <div class="welcome">
-        <div class="welcome-eyebrow">INGENIERÍA INVERSA</div>
-        <h2><span class="h2-plain">Una ciudad que</span> <span class="h2-accent">no cabe en el POT</span></h2>
-        <p class="welcome-sub">Ingeniería inversa al Modelo de Ocupación Territorial (MOT)</p>
+      <div class="welcome welcome-with-quote">
+        <div class="welcome-main">
+          <div class="welcome-eyebrow">INGENIERÍA INVERSA</div>
+          <h2><span class="h2-plain">Una ciudad que</span> <span class="h2-accent">no cabe en el POT</span></h2>
+          <p class="welcome-sub">Ingeniería inversa al Modelo de Ocupación Territorial (MOT)</p>
+        </div>
+        <div class="quote-card welcome-quote-card">
+          <div class="quote-mark">&ldquo;</div>
+          <p>Realizamos una ingeniería inversa al Modelo de Ocupación Territorial (MOT). Desarmamos el decreto para ver cómo interactúan realmente sus partes en el territorio.</p>
+          <div class="quote-attr">— Equipo Bogotá Viva</div>
+        </div>
       </div>
 
       <div class="network-body">
@@ -73,6 +80,25 @@
           </div>
           <div class="humedales-overlay-body" id="humedalesOverlayBody">
             <!-- imagen + hotspots + ficha lateral se generan dinámicamente -->
+          </div>
+        </div>
+
+        <!-- VISTA AMPLIADA: plano de movilidad. Sustituye la red principal, igual
+             que el overlay de humedales, tras la animación de "Ver hallazgos clave". -->
+        <div class="movilidad-overlay" id="movilidadOverlay" style="display:none;">
+          <div class="movilidad-overlay-header">
+            <div class="movilidad-overlay-title">El POT no evalúa cómo se mueve la ciudad</div>
+            <button class="humedales-overlay-close" id="movilidadOverlayClose" type="button" aria-label="Cerrar">&times;</button>
+          </div>
+          <div class="movilidad-overlay-body">
+            <div class="movilidad-overlay-image-wrap">
+              <img id="movilidadOverlayImg" alt="Plano del sistema de movilidad del POT" class="movilidad-overlay-image" />
+            </div>
+            <div class="movilidad-overlay-sidebar">
+              <div class="movilidad-nota-naranja">
+                El POT reconoce que la localización de las viviendas y las fuentes de empleo produce tiempos de viaje, y que el transporte público debe contribuir a reducirlos. Sin embargo, la representación no permite ver completamente quién se desplaza, hacia qué lugar, en qué horario, con qué frecuencia, cuántos transbordos realiza, cuánto espera ni qué sucede cuando la red se congestiona o falla.
+              </div>
+            </div>
           </div>
         </div>
 
@@ -135,12 +161,12 @@
               <button class="control-btn" onclick="filterNetwork('indirecta')">Indirectas</button>
             </div>
           </aside>
-        </div>
-      </div>
 
-      <div class="network-footer-actions">
-        <button class="btn-primary" onclick="document.querySelector('.analysis-container').scrollIntoView({behavior:'smooth'})">Explorar relaciones en detalle <i class="fa-solid fa-arrow-right"></i></button>
-        <button class="btn-secondary" onclick="document.querySelector('.synergies-section').scrollIntoView({behavior:'smooth'})"><i class="fa-solid fa-chart-simple"></i> Ver hallazgos clave</button>
+          <div class="network-sidebar-actions">
+            <button class="btn-primary" id="btnExplorarRelaciones">Explorar relaciones en detalle <i class="fa-solid fa-arrow-right"></i></button>
+            <button class="btn-secondary" id="btnVerHallazgos"><i class="fa-solid fa-chart-simple"></i> Ver hallazgos clave</button>
+          </div>
+        </div>
       </div>
     </div>
 
