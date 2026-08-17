@@ -4078,3 +4078,25 @@ body { overflow: hidden !important; }
 .network-node.layer-red .node-name,
 .network-node.layer-warm .node-name,
 .network-node.layer-green .node-name { color:#f2f3f6 !important; }
+
+/* Trazado limpio: rutas curvas suaves, sin doble línea visual */
+.network-edge { fill:none !important; stroke-linecap:round !important; stroke-linejoin:round !important; }
+.network-edge-hit { fill:none !important; stroke:transparent !important; stroke-width:14px !important; pointer-events:stroke !important; }
+.network-edge-hit.edge-type-hidden,
+.network-edge-hit.hidden-network-edge { pointer-events:none !important; }
+.network-edge.direct { opacity:.72 !important; stroke-width:1.5px !important; }
+.network-edge.indirect { opacity:.42 !important; stroke-width:1.1px !important; stroke-dasharray:5 5 !important; }
+.network-edge.support { opacity:.68 !important; stroke-width:1.7px !important; }
+.network-edge.result { opacity:.78 !important; stroke-width:1.9px !important; }
+.network-edge:hover,
+.network-edge.highlight { opacity:1 !important; stroke-width:2.8px !important; }
+
+/* Segunda capa de limpieza visual para redes densas */
+.network-edge { filter:none !important; }
+.network-edge.direct { opacity:.48 !important; stroke-width:1.2px !important; }
+.network-edge.indirect { opacity:.18 !important; stroke-width:.9px !important; stroke-dasharray:4 6 !important; }
+.network-edge.support { opacity:.56 !important; stroke-width:1.35px !important; }
+.network-edge.result { opacity:.62 !important; stroke-width:1.5px !important; }
+.network-edge.highlight,
+.network-edge:hover { opacity:1 !important; stroke-width:2.8px !important; filter:drop-shadow(0 0 3px currentColor) !important; }
+.network-edge-hit { stroke-width:16px !important; }

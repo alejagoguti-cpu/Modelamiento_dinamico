@@ -480,72 +480,42 @@
       return q[label] || label;
     };
     const layoutNetwork = (item) => {
-      const degree = item.nodes.map((_, i) =>
-        item.edges.reduce((n, [a, b]) => n + (a === i || b === i ? 1 : 0), 0),
-      );
-      const order = item.nodes
-          .map((_, i) => i)
-          .sort((a, b) => degree[b] - degree[a]),
-        maxDegree = Math.max(...degree, 1);
-      const centers = [
-        [210, 190],
-        [610, 160],
-        [1030, 185],
-        [330, 520],
-        [760, 500],
-        [1160, 520],
+      const degree = item.nodes.map((_, i) => item.edges.reduce((n, [a, b]) => n + (a === i || b === i ? 1 : 0), 0));
+      const order = item.nodes.map((_, i) => i).sort((a, b) => degree[b] - degree[a]);
+      const slots = [
+        [150,110],[390,110],[650,110],[910,110],[1170,110],
+        [150,290],[390,290],[650,290],[910,290],[1170,290],
+        [150,490],[390,490],[650,490],[910,490],[1170,490],
+        [150,690],[390,690],[650,690],[910,690],[1170,690],
+        [270,800],[510,800],[750,800],[990,800],[1230,800],
       ];
+      const hubSlots = [7, 12, 17, 22];
       order.forEach((nodeIndex, rank) => {
-        const cluster = rank % centers.length,
-          local = Math.floor(rank / centers.length),
-          [cx, cy] = centers[cluster],
-          angle = local * 1.72 + cluster * 0.55,
-          radius = local === 0 ? 0 : 72 + (local - 1) * 42;
-        item.nodes[nodeIndex][1] = Math.max(
-          60,
-          Math.min(1340, cx + Math.cos(angle) * radius),
-        );
-        item.nodes[nodeIndex][2] = Math.max(
-          60,
-          Math.min(840, cy + Math.sin(angle) * radius),
-        );
+        const slotIndex = rank < hubSlots.length ? hubSlots[rank] : ([...Array(slots.length).keys()].filter(s => !hubSlots.includes(s))[rank - hubSlots.length] || rank % slots.length);
+        const [x, y] = slots[slotIndex];
+        item.nodes[nodeIndex][1] = x;
+        item.nodes[nodeIndex][2] = y;
         const d = degree[nodeIndex];
-        item.nodes[nodeIndex][3] =
-          d <= 2 ? 22 : d <= 4 ? 32 : d <= 6 ? 46 : d <= 9 ? 64 : 84;
+        item.nodes[nodeIndex][3] = d <= 2 ? 24 : d <= 4 ? 32 : d <= 6 ? 42 : d <= 9 ? 56 : 72;
       });
-      /* Seis comunidades distribuidas: no existe una fila ni un centro dominante. */
-      /* Relajación de colisiones: evita que radios grandes invadan nodos vecinos. */
-      for (let pass = 0; pass < 14; pass++) {
-        for (let i = 0; i < item.nodes.length; i++) {
-          for (let j = i + 1; j < item.nodes.length; j++) {
-            const A = item.nodes[i],
-              B = item.nodes[j],
-              dx = B[1] - A[1],
-              dy = B[2] - A[2],
-              distance = Math.hypot(dx, dy) || 0.01,
-              minimum = A[3] + B[3] + 42;
-            if (distance >= minimum) continue;
-            const ux = dx / distance,
-              uy = dy / distance,
-              push = (minimum - distance) / 2,
-              aWeight = degree[i] >= degree[j] ? 0.35 : 0.65,
-              bWeight = 1 - aWeight;
-            A[1] = Math.max(55, Math.min(1345, A[1] - ux * push * aWeight));
-            A[2] = Math.max(55, Math.min(845, A[2] - uy * push * aWeight));
-            B[1] = Math.max(55, Math.min(1345, B[1] + ux * push * bWeight));
-            B[2] = Math.max(55, Math.min(845, B[2] + uy * push * bWeight));
-          }
+      for (let pass = 0; pass < 8; pass++) {
+        for (let i = 0; i < item.nodes.length; i++) for (let j = i + 1; j < item.nodes.length; j++) {
+          const A = item.nodes[i], B = item.nodes[j], dx = B[1] - A[1], dy = B[2] - A[2], dist = Math.hypot(dx, dy) || 1, min = A[3] + B[3] + 34;
+          if (dist >= min) continue;
+          const ux = dx / dist, uy = dy / dist, push = (min - dist) / 2;
+          A[1] = Math.max(70, Math.min(1330, A[1] - ux * push * .5)); A[2] = Math.max(60, Math.min(840, A[2] - uy * push * .5));
+          B[1] = Math.max(70, Math.min(1330, B[1] + ux * push * .5)); B[2] = Math.max(60, Math.min(840, B[2] + uy * push * .5));
         }
       }
     };
-    const lines = (item) =>
-      item.edges
-        .map(([a, b, t], i) => {
-          const A = item.nodes[a],
-            B = item.nodes[b];
-          return `<line class="network-edge ${t}" data-edge-index="${i}" marker-end="url(#arrow-${t})" x1="${A[1]}" y1="${A[2]}" x2="${B[1]}" y2="${B[2]}"/><line class="network-edge-hit ${t}" data-edge-index="${i}" data-edge-type="${t}" tabindex="0" x1="${A[1]}" y1="${A[2]}" x2="${B[1]}" y2="${B[2]}"/>`;
-        })
-        .join("");
+    const lines = (item) => item.edges.map(([a, b, t], i) => {
+      const A = item.nodes[a], B = item.nodes[b], dx = B[1] - A[1], dy = B[2] - A[2], len = Math.hypot(dx, dy) || 1;
+      const bend = ((i % 5) - 2) * 22;
+      const nx = -dy / len, ny = dx / len;
+      const cx = (A[1] + B[1]) / 2 + nx * bend, cy = (A[2] + B[2]) / 2 + ny * bend;
+      const d = `M ${A[1]} ${A[2]} Q ${cx.toFixed(1)} ${cy.toFixed(1)} ${B[1]} ${B[2]}`;
+      return `<path class="network-edge ${t}" data-edge-index="${i}" marker-end="url(#arrow-${t})" d="${d}"/><path class="network-edge-hit ${t}" data-edge-index="${i}" data-edge-type="${t}" tabindex="0" d="${d}"/>`;
+    }).join("");
     const iconSvg = (label) => {
       const s = label.toLowerCase();
       const icon = /río|quebrada|agua|humedal/.test(s)
