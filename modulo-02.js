@@ -961,7 +961,8 @@ const HUMEDALES_CASOS = {
     cita: "El Humedal La Vaca, en Patio Bonito, parte de una antigua laguna muisca gobernada por el cacique Techovita, es un reservorio de agua, plantas y animales protegido por la comunidad.", pagina: "103" },
 };
 
-function showHumedalesOverlay() {
+function showHumedalesOverlay(opts) {
+  const animateIn = !!(opts && opts.animateIn);
   hideNodeInfo();
   hideEdgeInfo();
   document.querySelectorAll(".ods-node").forEach(el => el.classList.remove("node-selected"));
@@ -1005,6 +1006,7 @@ function showHumedalesOverlay() {
         <img src="${HUMEDALES_RED_IMG_B64}" alt="Mapa-red de humedales de Bogotá con sus relaciones" class="humedales-overlay-image" />
         <svg class="humedales-overlay-lines" viewBox="0 0 100 56.25" preserveAspectRatio="none">${linesHTML}</svg>
         ${hotspotsHTML}
+        <div class="humedal-convenciones-frame"></div>
       </div>
       <div class="humedal-popup" id="humedalPopup" style="display:none;"></div>
       <div class="humedal-ramsar-float" id="humedalRamsarFloat">
@@ -1065,7 +1067,50 @@ function showHumedalesOverlay() {
   });
 
   document.querySelector(".network-canvas").style.display = "none";
-  document.getElementById("humedalesOverlay").style.display = "flex";
+  const overlayEl = document.getElementById("humedalesOverlay");
+  overlayEl.style.display = "flex";
+  if (animateIn) {
+    overlayEl.classList.remove("overlay-entering");
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        overlayEl.classList.add("overlay-entering");
+        const clear = () => overlayEl.classList.remove("overlay-entering");
+        overlayEl.addEventListener("animationend", clear, { once: true });
+        setTimeout(clear, 700); // red de seguridad: nunca dejar el overlay pegado en opacity 0
+      });
+    });
+  }
+}
+
+/* Animación del botón "Explorar relaciones en detalle": acerca la cámara
+   hacia el nodo Humedales en la red principal (como si la vista se metiera
+   dentro del mapa) y, justo cuando el zoom cubre toda la pantalla, entra al
+   overlay ampliado de humedales ya existente con un fundido suave. */
+function explorarRelacionesConAnimacion() {
+  const svg = document.getElementById("networkViz");
+  const nodeEl = document.querySelector('.ods-node[data-id="humedales"]');
+  if (!svg || !nodeEl) { showHumedalesOverlay(); return; }
+
+  const humedal = nodeById("humedales");
+  const vb = svg.viewBox.baseVal;
+  // Origen del zoom = posición real del nodo Humedales dentro del viewBox,
+  // convertido a % del propio SVG (para usar como transform-origin en CSS).
+  const originXPct = ((humedal.x - vb.x) / vb.width) * 100;
+  const originYPct = ((humedal.y - vb.y) / vb.height) * 100;
+  svg.style.transformOrigin = `${originXPct}% ${originYPct}%`;
+
+  svg.classList.add("zoom-into-humedales");
+  const onDone = () => {
+    svg.removeEventListener("transitionend", onDone);
+    showHumedalesOverlay({ animateIn: true });
+    // Deja el SVG listo (sin zoom ni clase) para la próxima vez que se muestre
+    // la red principal, ya con la vista reseteada.
+    svg.classList.remove("zoom-into-humedales");
+    svg.style.transformOrigin = "";
+  };
+  svg.addEventListener("transitionend", onDone, { once: true });
+  // Red de seguridad por si transitionend no dispara (pestaña en segundo plano, etc.)
+  setTimeout(() => { if (svg.classList.contains("zoom-into-humedales") && document.getElementById("humedalesOverlay").style.display !== "flex") onDone(); }, 1200);
 }
 
 /* Muestra la cita de una LÍNEA de conexión (no de un humedal puntual) en un
@@ -1327,6 +1372,95 @@ function hideMovilidadModal() {
   document.getElementById("movilidadModalOverlay").style.display = "none";
 }
 
+/* Vista de página completa del plano de movilidad (distinta del modal): la
+   abre la animación de "Ver hallazgos clave", igual que el overlay de
+   humedales sustituye la red principal en el mismo espacio. */
+const HALLAZGOS_NODOS_SOBREVIVIENTES = ["transporte_publico", "equipamientos", "vivienda", "servicios_empresariales", "ciclorutas", "red_vial"];
+
+function showMovilidadOverlay(opts) {
+  const animateIn = !!(opts && opts.animateIn);
+  hideNodeInfo();
+  hideEdgeInfo();
+  document.querySelector(".network-canvas").style.display = "none";
+  document.getElementById("humedalesOverlay").style.display = "none";
+  const img = document.getElementById("movilidadOverlayImg");
+  if (img && !img.src) img.src = MOVILIDAD_MAP_IMG_B64;
+  const overlayEl = document.getElementById("movilidadOverlay");
+  overlayEl.style.display = "flex";
+  if (animateIn) {
+    overlayEl.classList.remove("overlay-entering");
+    // Dos rAF (no un simple reflow síncrono) para garantizar que el navegador
+    // ya pintó el frame con display:flex antes de arrancar la animación —
+    // evita que la animación quede "congelada" en el tiempo 0 cuando se
+    // dispara justo dentro de otro evento de transición encadenado.
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        overlayEl.classList.add("overlay-entering");
+        const clear = () => overlayEl.classList.remove("overlay-entering");
+        overlayEl.addEventListener("animationend", clear, { once: true });
+        setTimeout(clear, 700); // red de seguridad: nunca dejar el overlay pegado en opacity 0
+      });
+    });
+  }
+}
+function hideMovilidadOverlay() {
+  document.getElementById("movilidadOverlay").style.display = "none";
+  document.querySelector(".network-canvas").style.display = "";
+}
+
+/* Animación del botón "Ver hallazgos clave": efecto tipo "corte de luz" — los
+   nodos y aristas que NO forman parte de la relación
+   Transporte Público / Equipamientos / Vivienda / Servicios Empresariales /
+   Ciclorutas / Red Vial parpadean y se apagan, mientras esos 6 sobreviven
+   con un brillo. Después de un instante, la vista pasa al plano de
+   movilidad (segunda pantalla) con un fundido. */
+function verHallazgosConAnimacion() {
+  deactivateRelHighlight();
+  document.querySelectorAll(".insight-card").forEach(c => c.classList.remove("active"));
+
+  const survivors = new Set(HALLAZGOS_NODOS_SOBREVIVIENTES);
+  const survivorEdges = new Set();
+  RAW_EDGES.forEach((edge, i) => {
+    if (survivors.has(edge.s) && survivors.has(edge.t)) survivorEdges.add(i);
+  });
+
+  document.querySelectorAll(".ods-node").forEach(el => {
+    if (!survivors.has(el.dataset.id)) el.classList.add("blackout-flicker");
+    else el.classList.add("blackout-surviving");
+  });
+  document.querySelectorAll(".edge-group").forEach(el => {
+    if (!survivorEdges.has(Number(el.dataset.index))) el.classList.add("blackout-flicker");
+  });
+
+  setTimeout(() => {
+    // Deja el estado final del "apagón" aplicado con el spotlight normal
+    // (mismo sistema que usan los demás hallazgos), y limpia las clases de
+    // animación para no repetir el parpadeo si se vuelve a esta vista.
+    setSpotlightNodes(HALLAZGOS_NODOS_SOBREVIVIENTES, false);
+    document.querySelectorAll(".blackout-flicker").forEach(el => el.classList.remove("blackout-flicker"));
+    document.querySelectorAll(".blackout-surviving").forEach(el => el.classList.remove("blackout-surviving"));
+
+    // Breve pausa para que se vea la red ya "apagada" antes de pasar al plano.
+    setTimeout(() => {
+      const svg = document.getElementById("networkViz");
+      svg?.classList.add("zoom-into-humedales"); // reutiliza la misma animación de acercamiento genérica
+      const onDone = () => {
+        svg?.removeEventListener("transitionend", onDone);
+        showMovilidadOverlay({ animateIn: true });
+        svg?.classList.remove("zoom-into-humedales");
+        if (svg) svg.style.transformOrigin = "";
+      };
+      if (svg) {
+        svg.style.transformOrigin = "50% 50%";
+        svg.addEventListener("transitionend", onDone, { once: true });
+        setTimeout(() => { if (svg.classList.contains("zoom-into-humedales")) onDone(); }, 1200);
+      } else {
+        showMovilidadOverlay({ animateIn: true });
+      }
+    }, 650);
+  }, 950);
+}
+
 /* Activa/desactiva el modo "relación resaltada": reutiliza el sistema de
    spotlight existente (mismo mecanismo que los botones de hallazgos clave)
    para atenuar el resto de la red y dejar solo Vivienda↔Transporte
@@ -1455,6 +1589,7 @@ function setupLegendToggle() {
   document.getElementById("edgeInfoClose")?.addEventListener("click", hideEdgeInfo);
   document.getElementById("nodeInfoClose")?.addEventListener("click", hideNodeInfo);
   document.getElementById("humedalesOverlayClose")?.addEventListener("click", hideHumedalesOverlay);
+  document.getElementById("movilidadOverlayClose")?.addEventListener("click", () => { hideMovilidadOverlay(); clearSpotlight(); });
 }
 
 /* -------- métricas -------- */
@@ -1554,4 +1689,6 @@ document.addEventListener("DOMContentLoaded", () => {
   renderMetrics();
   renderMatrix();
   document.getElementById("networkViz")?.addEventListener("click", () => { hideEdgeInfo(); hideNodeInfo(); });
+  document.getElementById("btnExplorarRelaciones")?.addEventListener("click", explorarRelacionesConAnimacion);
+  document.getElementById("btnVerHallazgos")?.addEventListener("click", verHallazgosConAnimacion);
 });
