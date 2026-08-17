@@ -7855,3 +7855,14 @@ Need update styles maybe `display:none` for quote-backdrop means if old openQuot
 #gRels path.rel.inter.punteada { opacity: .028 !important; }
 #gRels path.rel.intra.sel,
 #gRels path.rel.inter.sel { opacity: .98 !important; }
+
+
+/* Tratamiento de aristas equivalente al Módulo 02, con prioridad por tipo. */
+#gRels path.rel.directa.intra { opacity: .62 !important; stroke-width: 1.35px !important; }
+#gRels path.rel.directa.inter { opacity: .30 !important; stroke-width: 1.1px !important; }
+#gRels path.rel.indirecta.intra { opacity: .22 !important; stroke-width: 1px !important; stroke-dasharray: 5 4 !important; }
+#gRels path.rel.indirecta.inter { opacity: .10 !important; stroke-width: .9px !important; stroke-dasharray: 5 4 !important; }
+#gRels path.rel.punteada { stroke-dasharray: 2 7 !important; }
+#gRels path.rel.sel,
+#gRels path.rel.directa.sel,
+#gRels path.rel.indirecta.sel { opacity: 1 !important; stroke-width: 2.2px !important; filter: drop-shadow(0 0 5px currentColor) !important; }
