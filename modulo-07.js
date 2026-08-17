@@ -546,10 +546,15 @@
         rings.forEach((ring, ringIndex) => {
           const radius = 155 + ringIndex * 125;
           ring.forEach((nodeIndex, position) => {
-            const angle = outward - span / 2 + ((position + .5) / ring.length) * span;
+            // Variación determinista: rompe la simetría sin producir saltos entre recargas.
+            const seed = (nodeIndex * 47 + ringIndex * 71 + position * 29 + categoryIds.indexOf(group.category) * 113) % 997;
+            const jitter = seed / 997 - .5;
+            const angle = outward - span / 2 + ((position + .5) / ring.length) * span + jitter * .22;
+            const radiusJitter = jitter * 42 + ((position % 3) - 1) * 12;
+            const tangent = jitter * 34;
             const node = item.nodes[nodeIndex];
-            node[1] = cx + Math.cos(angle) * radius;
-            node[2] = cy + Math.sin(angle) * radius * .82;
+            node[1] = cx + Math.cos(angle) * (radius + radiusJitter) - Math.sin(angle) * tangent;
+            node[2] = cy + Math.sin(angle) * (radius + radiusJitter) * .82 + Math.cos(angle) * tangent * .72;
             node[3] = radiusFor(degree[nodeIndex]);
             node._layoutHub = false;
           });
