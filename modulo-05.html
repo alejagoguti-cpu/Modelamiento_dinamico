@@ -1,230 +1,95 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RAPOT · Módulo 05 · Navegador Multiescalar</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="modulo-05.css">
-</head>
-<body>
-<div class="layout">
-  <!-- SIDEBAR GLOBAL DEL PORTAL -->
-  <aside class="portal-sidebar" aria-label="Navegación del portal">
-    <div class="portal-brand">⌂</div>
-    <nav class="portal-nav">
-      <a class="portal-item" href="dashboard.html" title="Dashboard"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5M5.5 10.5V20h13v-9.5M9 20v-5h6v5" /></svg></a>
-      <a class="portal-item" href="modulo-01.html" title="01 · Construir la Red"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="7" r="2" /><circle cx="18" cy="5" r="2" /><circle cx="14" cy="18" r="2" /><circle cx="7" cy="17" r="2" /><path d="m7.7 8.2 4.9 7.2M8 7.2l8-1.4M9 16.7l3.2.8M16.8 6.8l-1.8 9" /></svg></a>
-      <a class="portal-item" href="modulo-02.html" title="02 · Medir la Red"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="2.5" /><circle cx="6" cy="17" r="2.5" /><circle cx="18" cy="17" r="2.5" /><path d="M10.7 7.1 7.3 14.8M13.3 7.1l3.4 7.7M8.5 17h7" /></svg></a>
-      <a class="portal-item" href="modulo-03.html" title="03 · Discurso vs Realidad"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" /><path d="m16 16 5 5M10.5 7v7M7 10.5h7" /></svg></a>
-      <a class="portal-item" href="modulo-04.html" title="04 · Macromodelos"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" /><circle cx="8" cy="6" r="2" /><circle cx="15" cy="12" r="2" /><circle cx="10" cy="18" r="2" /></svg></a>
-      <a class="portal-item active" href="modulo-05.html" title="05 · Navegador Multiescalar"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" /><path d="m16 16 5 5M10.5 7v7M7 10.5h7" /></svg></a>
-      <a class="portal-item" href="modulo-07.html" title="07 · SÍNTESIS"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5M4 19h16M7 15l3-4 3 2 5-7" /><path d="M18 4h3v3" /></svg></a>
-      <a class="portal-item" href="modulo-08.html" title="08 · Modelo Propio"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17 12 4l8 13M7 17h10M9 13h6" /></svg></a>
-      <a class="portal-item" href="modulo-06.html" title="06 · POT ↔ ODS"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4v16l14-8z" /><path d="M4 21h16M7 21v-2M12 21v-2M17 21v-2" /></svg></a>
-    </nav>
-    <div class="portal-avatar">RA</div>
-  </aside>
-  <!-- TOPBAR -->
-  <div class="topbar">
-    <div class="topbar-left">
-      <span class="breadcrumb">PORTAL HEURÍSTICO</span>
-      <span class="sep">Pantalla 4 de 7</span>
-    </div>
-    <div class="topbar-right">
-      <span>Centro de ayuda</span>
-      <i class="fa-solid fa-bell"></i>
-    </div>
-  </div>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Navegador multiescalar con las capas del DWG de Kennedy." />
+    <title>Navegador Multiescalar — Zoom de Eames</title>
+    <link rel="stylesheet" href="modulo-05.css" />
+  </head>
+  <body>
+    <main class="nm-shell">
+      <aside class="nm-rail" aria-label="Navegación del portal">
+        <div class="nm-rail-mark" aria-hidden="true"></div>
+        <div class="nm-rail-line" aria-hidden="true"></div>
+        <div class="nm-rail-dots" aria-hidden="true"><span class="active"></span><span></span><span></span><span></span></div>
+        <span class="nm-rail-user">RA</span>
+      </aside>
 
-  <div class="main">
-    <!-- SIDEBAR LEFT -->
-    <aside class="sidebar-left">
-      <div class="nav-top">
-        <i class="fa-solid fa-home"></i>
-        <i class="fa-solid fa-wrench"></i>
-        <i class="fa-solid fa-layer-group"></i>
-      </div>
+      <section class="nm-workspace">
+        <header class="nm-topbar">
+          <div class="nm-crumbs"><span>NAVEGADOR MULTIESCALAR</span><i></i><span>ATLAS DWG · BOGOTÁ</span></div>
+          <div class="nm-status"><span class="nm-pulse"></span><span>Plano DWG conectado</span></div>
+        </header>
 
-      <div class="logo">
-        <i class="fa-solid fa-check"></i>
-      </div>
-
-      <h1>Navegador Multiescalar</h1>
-      <p>El Zoom de Eames</p>
-
-      <div class="desc">Explora Bogotá desde múltiples escalas para entender su estructura y gestionar la proximidad de manera inteligente.</div>
-
-      <div class="tabs">
-        <button class="tab active" data-scale="macro">Macro</button>
-        <button class="tab" data-scale="meso">Meso</button>
-        <button class="tab" data-scale="micro">Micro</button>
-      </div>
-
-      <div class="vistas">
-        <div class="vistas-label">Vistas alternativas</div>
-        <div class="vista-item">
-          <i class="fa-solid fa-globe"></i>
-          <span>Región Metropolitana<br/>20 municipios conectados</span>
-          <i class="fa-solid fa-arrow-right"></i>
-        </div>
-        <div class="vista-item">
-          <i class="fa-solid fa-map"></i>
-          <span>Barrio Vital /<br/>Manzanas del Cuidado<br/>Unidad de proximidad</span>
-          <i class="fa-solid fa-arrow-right"></i>
-        </div>
-      </div>
-
-      <div class="legend">
-        <div class="legend-label">Leyenda</div>
-        <div class="legend-item">
-          <span class="dot upl"></span> UPL seleccionada
-        </div>
-        <div class="legend-item">
-          <span class="dot upl-focus"></span> UPL con foco estratégico
-        </div>
-        <div class="legend-item">
-          <span class="line"></span> Límite de Bogotá
-        </div>
-      </div>
-
-      <div class="upz-list" id="item-list"></div>
-
-      <div class="user">AV</div>
-    </aside>
-
-    <!-- CENTER MAP -->
-    <div class="map-section">
-      <div id="map"></div>
-      <div class="map-controls">
-        <button class="ctrl">+</button>
-        <div class="compass"></div>
-        <button class="ctrl">−</button>
-      </div>
-    </div>
-
-    <!-- SIDEBAR RIGHT -->
-    <aside class="sidebar-right">
-      <div class="escalas">
-        <div class="escala-label">LAS 3 ESCALAS DEL PROYECTO</div>
-        
-        <div class="escala-item macro-box">
-          <i class="fa-solid fa-globe"></i>
-          <div>
-            <strong>Macro</strong>
-            <p>Región Metropolitana<br/>Conectividad y flujos regionales</p>
-          </div>
-        </div>
-
-        <div class="escala-item meso-box">
-          <div class="box-icon">33</div>
-          <div>
-            <strong>Meso</strong>
-            <p>33 UPL<br/>Gestión de proximidad y equidad territorial</p>
-          </div>
-        </div>
-
-        <div class="escala-item micro-box">
-          <div class="box-icon">🏘️</div>
-          <div>
-            <strong>Micro</strong>
-            <p>Barrio / Manzana<br/>Experiencias cotidianas y diseño de intervenciones</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="detail">
-        <h2 id="detail-title">UPL SELECCIONADA: 19 · FONTIBÓN</h2>
-        <i class="fa-solid fa-star"></i>
-      </div>
-
-      <div class="detail-text" id="detail-description">
-        <p>La escala Meso (33 UPL) es el corazón del proyecto. Es aquí donde se gestiona la proximidad para lograr la ciudad de los 30 minutos <span style="font-size: 8px; color: #7a8fa0;">[4, 59; 212]</span></p>
-        <p><strong>Estrategia Bogotá Viva</strong></p>
-      </div>
-
-      <div class="metrics">
-        <div class="metric-box">
-          <div class="metric-number">32%</div>
-          <div class="metric-label">DÉFICIT DE SERVICIOS</div>
-          <div class="metric-desc">Déficit modo en UPL seleccionada vs. 21% promedio ciudad</div>
-          <div class="metric-chart"></div>
-          <a href="#">Ver detalle →</a>
-        </div>
-
-        <div class="metric-box">
-          <div class="metric-number">68%</div>
-          <div class="metric-label">EMPLEO CERCANO</div>
-          <div class="metric-desc">Empleo accesible en 30 min vs. 50% promedio ciudad</div>
-          <div class="metric-chart"></div>
-          <a href="#">Ver detalle →</a>
-        </div>
-
-        <div class="metric-box">
-          <div class="metric-number">74%</div>
-          <div class="metric-label">PROXIMIDAD (CIUDAD 30 MIN)</div>
-          <div class="metric-desc">Población con acceso a 8 servicios esenciales en 30 min</div>
-          <div class="metric-chart"></div>
-          <a href="#">Ver detalle →</a>
-        </div>
-
-        <div class="metric-box compare">
-          <div class="metric-label">COMPARAR UPL</div>
-          <button class="btn-compare">+ Agregar UPL</button>
-        </div>
-      </div>
-    </aside>
-  </div>
-</div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-
-<!-- MODAL EEP -->
-<div id="eepModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); z-index: 1000; overflow: auto; padding: 20px;">
-  <div style="background: #0a0e17; border: 1px solid #2fd4c8; border-radius: 8px; margin: 40px auto; max-width: 1000px; max-height: 85vh; position: relative; padding: 25px;">
-    <button onclick="closeEepModal()" style="position: absolute; top: 20px; right: 20px; background: none; border: none; color: #2fd4c8; font-size: 28px; cursor: pointer; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">✕</button>
-    
-    <div style="margin-bottom: 25px;">
-      <h2 style="color: #2fd4c8; margin: 0 0 8px 0; font-size: 20px;">Estructura Ecológica Principal</h2>
-      <p style="color: #7a8fa0; font-size: 11px; margin: 0;">Modo Analítico // Nodos = 14</p>
-    </div>
-    
-    <div style="display: flex; gap: 25px;">
-      <div id="eepMapContainer" style="flex: 1; height: 500px; background: #1a2332; border-radius: 6px; border: 1px solid #2a3f5a; position: relative;"></div>
-      
-      <div style="width: 200px; flex-shrink: 0;">
-        <div style="background: #1a2332; border: 1px solid #2a3f5a; border-radius: 6px; padding: 16px;">
-          <div style="color: #2fd4c8; font-size: 10px; font-weight: 700; margin-bottom: 16px; text-transform: uppercase;">Leyenda de Capas</div>
-          
-          <div style="margin-bottom: 16px;">
-            <div style="display: flex; align-items: center; gap: 8px; font-size: 10px; color: #fff; margin-bottom: 8px;">
-              <div style="width: 10px; height: 10px; border: 2px solid #2fd4c8; border-radius: 50%;"></div>
-              <span>Nodos Principales</span>
+        <div class="nm-content">
+          <aside class="nm-panel">
+            <div class="nm-brand-row">
+              <img src="/manus-storage/nm-logo-topographic_3750fb16.png" alt="Símbolo topográfico del Navegador Multiescalar" />
+              <p>ATLAS URBANO<br />LECTURA TERRITORIAL</p>
             </div>
-            <div style="display: flex; align-items: center; gap: 8px; font-size: 10px; color: #fff;">
-              <div style="width: 10px; height: 10px; border: 2px solid #2fd4c8; border-radius: 50%;"></div>
-              <span>Conexiones Activas</span>
-            </div>
-          </div>
-          
-          <div>
-            <div style="color: #2fd4c8; font-size: 10px; font-weight: 700; margin-bottom: 12px; text-transform: uppercase;">Convenciones</div>
-            <div style="font-size: 9px; color: #7a8fa0; line-height: 1.6;">
-              <div style="margin-bottom: 6px;">— Directa</div>
-              <div style="margin-bottom: 6px;">- - - Indirecta</div>
-              <div style="margin-bottom: 6px;">— Soporte</div>
-              <div>— Resiliencia</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 
-<script src="modulo-05.js"></script>
-</body>
+            <div class="nm-heading">
+              <p class="nm-kicker">LECTURAS DE BOGOTÁ</p>
+              <h1>Navegador<br />Multiescalar</h1>
+              <p class="nm-subtitle">El Zoom de Eames</p>
+            </div>
+
+            <p class="nm-intro">Cada escala revela una estructura distinta del plano: flujos, unidades intermedias y límites de planeación.</p>
+            <p class="nm-scale-label">⌁ &nbsp; ESCALA DE ANÁLISIS</p>
+
+            <div class="nm-scale-switcher" role="tablist" aria-label="Escala cartográfica">
+              <button class="nm-scale-button is-active" type="button" data-scale="macro" role="tab" aria-selected="true">
+                <span class="nm-scale-number">01</span><span><strong>⌘ &nbsp;Macro</strong><small>Red de conectividad</small></span><b>›</b>
+              </button>
+              <button class="nm-scale-button" type="button" data-scale="meso" role="tab" aria-selected="false">
+                <span class="nm-scale-number">02</span><span><strong>◇ &nbsp;Meso</strong><small>33 unidades intermedias</small></span><b>›</b>
+              </button>
+              <button class="nm-scale-button" type="button" data-scale="micro" role="tab" aria-selected="false">
+                <span class="nm-scale-number">03</span><span><strong>⌾ &nbsp;Micro</strong><small>5 polígonos de planeación</small></span><b>›</b>
+              </button>
+            </div>
+
+            <p class="nm-data-source">▱ &nbsp; Fuente: <strong>mapaupzkennedy.dwg</strong></p>
+          </aside>
+
+          <section class="nm-map-stage" aria-label="Mapa de la capa DWG activa">
+            <canvas id="dwg-map" class="nm-dwg-canvas" role="img" aria-label="Plano DWG: capa Vías"></canvas>
+
+            <div class="nm-map-header">
+              <p>CAPA DWG ACTIVA</p>
+              <h2 id="layer-name">Vías</h2>
+              <span id="layer-status" class="nm-layer-state"><i></i>Visible</span>
+            </div>
+
+            <div class="nm-map-legend">
+              <span id="legend-swatch" class="nm-legend-swatch"></span>
+              <div><small>GEOMETRÍA EN PANTALLA</small><strong id="geometry-count">16.962 trazos de vía</strong></div>
+            </div>
+
+            <div class="nm-map-controls" aria-label="Controles del mapa">
+              <button id="zoom-in" type="button" aria-label="Acercar mapa">+</button>
+              <button id="map-reset" type="button" aria-label="Recentrar capa">◉</button>
+              <button id="zoom-out" type="button" aria-label="Alejar mapa">−</button>
+            </div>
+
+            <article class="nm-layer-card">
+              <div class="nm-card-image" id="card-image"></div>
+              <div class="nm-card-content">
+                <p id="card-scale">LECTURA MACRO</p>
+                <h3 id="card-title">Vías</h3>
+                <strong id="card-count">16.962 <small>trazos de vía</small></strong>
+                <i></i>
+                <p id="card-copy">Lee la estructura vial que conecta el territorio y organiza los flujos metropolitanos.</p>
+                <p id="card-error" class="nm-card-error" hidden>No fue posible mostrar la capa. Revisa la ruta del archivo GeoJSON.</p>
+              </div>
+            </article>
+
+            <p class="nm-coordinate-readout">4.620° N <i></i> 74.050° O</p>
+          </section>
+        </div>
+      </section>
+    </main>
+    <script src="modulo-05.js" defer></script>
+  </body>
 </html>
