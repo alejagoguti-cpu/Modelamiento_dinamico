@@ -101,6 +101,13 @@ body {
 .topbar-chevron { font-size: 11px; color: var(--text-faint); margin-left: 2px; }
 
 .welcome { margin-bottom: 22px; }
+.welcome-with-quote { display: flex; align-items: flex-start; justify-content: space-between; gap: 32px; }
+.welcome-main { flex: 1; min-width: 0; }
+.quote-card.welcome-quote-card { width: 360px; flex-shrink: 0; margin-top: 4px; }
+@media (max-width: 1100px) {
+  .welcome-with-quote { flex-direction: column; }
+  .welcome-quote-card { width: 100%; }
+}
 .welcome-eyebrow { font-size: 12px; font-weight: 700; letter-spacing: 1.5px; color: var(--teal); margin-bottom: 10px; position: relative; padding-left: 16px; }
 .welcome-eyebrow::before { content: ""; position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 9px; height: 2px; background: var(--teal); }
 .welcome h2 { font-family: 'Space Grotesk', sans-serif; font-size: 54px; font-weight: 700; margin-bottom: 12px; letter-spacing: -1px; line-height: 1.1; }
@@ -180,6 +187,23 @@ body {
   width: 100%; height: 780px; background: #05070a;
   border: 1px solid var(--border);
   display: block;
+  transform-origin: 50% 50%;
+  transition: transform 0.85s cubic-bezier(0.62, 0, 0.85, 0.44), opacity 0.5s ease 0.35s;
+}
+/* Animación "explorar relaciones en detalle": zoom rápido hacia el nodo
+   Humedales (como si la cámara se acercara al mapa) antes de entrar al
+   overlay ampliado. transform-origin se fija dinámicamente en JS al punto
+   exacto del nodo antes de aplicar esta clase. */
+#networkViz.zoom-into-humedales { transform: scale(7); opacity: 0; }
+
+/* El overlay de humedales entra con un fundido + acercamiento suave, como
+   continuación natural del zoom del paso anterior. */
+.humedales-overlay.overlay-entering {
+  animation: humedalesOverlayIn 0.5s ease both;
+}
+@keyframes humedalesOverlayIn {
+  from { opacity: 0; transform: scale(1.06); }
+  to { opacity: 1; transform: scale(1); }
 }
 
 /* Escala tipo "0 5 10 15 km" de la referencia — silueta esquemática, aclarado en el title. */
@@ -253,18 +277,20 @@ body {
 }
 .control-btn:hover, .control-btn.active { border-color: var(--teal); color: var(--teal); background: rgba(47,212,200,0.08); }
 
-/* Botones inferiores tipo la referencia ("Explorar relaciones en detalle" / "Ver hallazgos clave") */
+/* Botones "Explorar relaciones en detalle" / "Ver hallazgos clave": ahora
+   viven en el sidebar, al lado de la red (no abajo de toda la sección). */
 .network-footer-actions { display: flex; gap: 12px; margin-top: 20px; }
+.network-sidebar-actions { display: flex; flex-direction: column; gap: 10px; margin-top: auto; padding-top: 4px; }
 .btn-primary {
   background: linear-gradient(135deg, #1f7a74, #175f5a); color: #eafffb; border: none;
   padding: 12px 20px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer;
-  display: flex; align-items: center; gap: 10px; transition: filter .15s;
+  display: flex; align-items: center; justify-content: center; gap: 10px; transition: filter .15s; width: 100%;
 }
 .btn-primary:hover { filter: brightness(1.12); }
 .btn-secondary {
   background: rgba(255,255,255,0.03); color: var(--text-dim); border: 1px solid var(--border);
   padding: 12px 20px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer;
-  display: flex; align-items: center; gap: 10px; transition: all .15s;
+  display: flex; align-items: center; justify-content: center; gap: 10px; transition: all .15s; width: 100%;
 }
 .btn-secondary:hover { border-color: var(--text-dim); color: var(--text); }
 
@@ -428,12 +454,22 @@ body {
 /* Texto introductorio: flota PEGADO a la esquina del propio mapa (no en un
    panel lateral aparte), y se oculta mientras hay un popup de humedal abierto. */
 .humedal-ramsar-float {
-  position: absolute; left: 14px; bottom: 14px; z-index: 6;
+  position: absolute; right: 14px; top: 14px; z-index: 6;
   width: min(360px, 42%);
   background: rgba(8, 11, 14, 0.92); backdrop-filter: blur(3px);
   border: 1px solid rgba(92, 214, 209, 0.3); border-radius: 10px;
   padding: 12px 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.45);
   transition: opacity 0.15s ease, transform 0.15s ease;
+}
+/* Marco "Convenciones" (ya viene dibujado en la propia foto, esquina inferior
+   izquierda): se le agrega un borde verde neón encima, en la posición exacta
+   medida sobre la imagen, sin tapar su contenido. */
+.humedal-convenciones-frame {
+  position: absolute; left: 0%; bottom: 0%; z-index: 5;
+  width: 24%; height: 40%;
+  border: 2px solid #39ff6a; border-radius: 6px;
+  box-shadow: 0 0 10px 1px rgba(57, 255, 106, 0.55), inset 0 0 14px rgba(57, 255, 106, 0.12);
+  pointer-events: none;
 }
 .humedal-ramsar-float .humedal-caso-cita { margin-bottom: 8px; }
 .humedal-ramsar-float .humedal-hint { padding: 8px 0 0; border-top: 1px solid var(--border-soft); margin-top: 4px; }
@@ -471,17 +507,27 @@ body {
    este botón es SOLO la zona clicable — completamente invisible en reposo
    para no duplicar el anillo que ya trae la imagen, y solo se resalta con un
    aro fino al pasar el mouse o al seleccionar, como referencia de foco. */
+/* La foto original trae el círculo + su texto ya dibujados, pero al hacer
+   zoom se pixelan (son parte de la imagen rasterizada). Por eso el hotspot
+   ahora CALCA el círculo real con fondo NEGRO sólido (tapa el círculo viejo
+   borroso de la foto) y dibuja el texto con HTML/CSS reales encima — así el
+   texto se mantiene nítido a cualquier nivel de zoom, sea cual sea. */
 .humedal-hotspot {
   position: absolute; transform: translate(-50%, -50%);
   border-radius: 50%;
-  background: transparent; border: 2px solid transparent;
+  background: #05070a; border: 2px solid var(--hotspot-color, #2fd4c8);
+  box-shadow: 0 0 6px -1px var(--hotspot-color, #2fd4c8), inset 0 0 8px rgba(0,0,0,0.6);
   cursor: pointer; padding: 2px; overflow: hidden;
   display: flex; align-items: center; justify-content: center;
   transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
   z-index: 2;
 }
 .humedal-hotspot-label {
-  display: none;
+  display: block;
+  font-family: 'Inter', sans-serif; font-weight: 700; color: #ffffff;
+  text-align: center; line-height: 1.08; white-space: pre-line;
+  max-width: 100%; overflow: hidden;
+  pointer-events: none;
 }
 .humedal-hotspot:hover,
 .humedal-hotspot.active {
@@ -528,6 +574,59 @@ body {
 
 footer { text-align: center; margin-top: 34px; font-size: 12px; color: var(--text-faint); }
 footer span { color: var(--teal); }
+
+/* VISTA AMPLIADA: plano de movilidad (tras la animación "Ver hallazgos clave") */
+.movilidad-overlay {
+  width: 100%; height: 780px; background: #05070a;
+  border: 1px solid var(--border); border-radius: 12px;
+  display: none; flex-direction: column; overflow: hidden;
+}
+.movilidad-overlay.overlay-entering { animation: humedalesOverlayIn 0.5s ease both; }
+.movilidad-overlay-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px; border-bottom: 1px solid var(--border-soft);
+  background: rgba(239, 149, 82, 0.08); flex-shrink: 0;
+}
+.movilidad-overlay-title { font-size: 15px; font-weight: 700; color: #f2f3f6; line-height: 1.3; padding-right: 12px; }
+.movilidad-overlay-body { flex: 1; display: flex; min-height: 0; }
+.movilidad-overlay-image-wrap {
+  flex: 1; min-width: 0; background: #0a0a0a;
+  display: flex; align-items: center; justify-content: center; overflow: auto; padding: 16px;
+}
+.movilidad-overlay-image { max-width: 100%; max-height: 100%; display: block; border-radius: 6px; }
+.movilidad-overlay-sidebar {
+  width: 320px; flex-shrink: 0; border-left: 1px solid var(--border-soft);
+  background: rgba(255,255,255,0.02); padding: 18px; display: flex; align-items: flex-start;
+}
+.movilidad-nota-naranja {
+  background: linear-gradient(135deg, rgba(239, 149, 82, 0.10), rgba(239, 149, 82, 0.02));
+  border: 1px solid rgba(239, 149, 82, 0.45); border-radius: 12px;
+  padding: 16px 18px; font-size: 12.5px; color: #d7dae2; line-height: 1.6;
+  box-shadow: 0 0 14px rgba(239, 149, 82, 0.08);
+}
+
+/* ANIMACIÓN "APAGÓN" (Ver hallazgos clave): parpadeo tipo corte de luz sobre
+   los nodos/aristas que NO forman parte de la relación destacada, antes de
+   quedar completamente atenuados por el spotlight normal. */
+@keyframes blackoutFlicker {
+  0%   { opacity: 1; }
+  8%   { opacity: 0.15; }
+  15%  { opacity: 0.9; }
+  24%  { opacity: 0.1; }
+  32%  { opacity: 0.7; }
+  45%  { opacity: 0.08; }
+  60%  { opacity: 0.5; }
+  75%  { opacity: 0.05; }
+  100% { opacity: 0.12; }
+}
+.ods-node.blackout-flicker, .edge-group.blackout-flicker {
+  animation: blackoutFlicker 0.9s steps(1, end) both;
+}
+@keyframes blackoutGlow {
+  0%, 100% { filter: drop-shadow(0 0 6px currentColor); }
+  50% { filter: drop-shadow(0 0 14px currentColor) drop-shadow(0 0 22px currentColor); }
+}
+.ods-node.blackout-surviving .node-ring { animation: blackoutGlow 0.9s ease both; }
 
 /* RESPONSIVE */
 @media (max-width: 1400px) {
