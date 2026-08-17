@@ -461,3 +461,65 @@ td { border-color: var(--m02-border-soft) !important; color: var(--m02-dim) !imp
     fill: #e89a6c !important;
   }
 }
+
+/* Sidebar del Módulo 05: su wrapper es .layout, no .app. */
+@media (min-width: 821px) {
+  body.module02-reference-page > .layout {
+    padding-left: 64px !important;
+    position: relative !important;
+  }
+  body.module02-reference-page > .layout > .sidebar.sidebar-icons-only {
+    position: fixed !important;
+    inset: 0 auto 0 0 !important;
+    z-index: 1200 !important;
+    width: 64px !important;
+    min-width: 64px !important;
+    height: 100vh !important;
+    flex: 0 0 64px !important;
+    align-items: center !important;
+    padding: 18px 0 !important;
+    background: var(--m02-carbon) !important;
+    border-right: 1px solid var(--m02-border) !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  body.module02-reference-page > .layout > .sidebar.sidebar-icons-only .brand-icon {
+    width: 34px !important;
+    height: 34px !important;
+    min-height: 34px !important;
+    margin: 0 0 26px !important;
+    border-radius: 10px !important;
+    background: linear-gradient(135deg, var(--m02-teal), #1a9d94) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: #06110f !important;
+    font-size: 15px !important;
+  }
+  body.module02-reference-page > .layout > .sidebar.sidebar-icons-only .icon-nav,
+  body.module02-reference-page > .layout > .sidebar.sidebar-icons-only .icon-nav-footer {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    align-items: center !important;
+  }
+  body.module02-reference-page > .layout > .sidebar.sidebar-icons-only .icon-nav-footer { margin-top: auto !important; }
+  body.module02-reference-page > .layout > .sidebar.sidebar-icons-only .icon-nav-item {
+    width: 40px !important;
+    height: 40px !important;
+    min-height: 40px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border-radius: 10px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: var(--m02-dim) !important;
+    font-size: 15px !important;
+    line-height: 1 !important;
+    text-decoration: none !important;
+  }
+  body.module02-reference-page > .layout > .sidebar.sidebar-icons-only .icon-nav-item:hover { background: rgba(255,255,255,.05) !important; color: var(--m02-text) !important; }
+  body.module02-reference-page > .layout > .sidebar.sidebar-icons-only .icon-nav-item.active { background: var(--m02-teal-dim) !important; color: var(--m02-teal) !important; }
+  body.module02-reference-page > .layout > .sidebar.sidebar-icons-only .icon-nav-footer { width: 100% !important; }
+}
