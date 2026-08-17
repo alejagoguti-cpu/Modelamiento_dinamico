@@ -594,3 +594,33 @@ body.module02-reference-page > .app > .main,
 body.module02-reference-page > .layout > .main {
   background: transparent !important;
 }
+
+/* Corrección final según referencia: página negra; patrón de puntos dentro de la red. */
+body.module02-reference-page {
+  background: #05070a !important;
+}
+body.module02-reference-page::before {
+  opacity: 0 !important;
+}
+body.module02-reference-page > .app,
+body.module02-reference-page > .layout,
+body.module02-reference-page .app-shell,
+body.module02-reference-page > .app > .main,
+body.module02-reference-page > .layout > .main {
+  background: #05070a !important;
+  background-image: none !important;
+}
+body.module02-reference-page .network-canvas,
+body.module02-reference-page .network-viz-wrap,
+body.module02-reference-page #networkViz,
+body.module02-reference-page #gNetwork,
+body.module02-reference-page .redes-network-svg,
+body.module02-reference-page .network-canvas svg {
+  background-color: #0c0c0c !important;
+  background-image:
+    radial-gradient(circle at 16px 16px, rgba(70,214,208,.20) 0 1px, transparent 1.6px),
+    radial-gradient(circle at 74px 58px, rgba(232,154,108,.14) 0 1px, transparent 1.6px),
+    linear-gradient(28deg, transparent 49.7%, rgba(70,214,208,.035) 49.8%, rgba(70,214,208,.035) 50%, transparent 50.2%),
+    linear-gradient(-28deg, transparent 49.7%, rgba(232,154,108,.028) 49.8%, rgba(232,154,108,.028) 50%, transparent 50.2%) !important;
+  background-size: 96px 84px, 132px 108px, 220px 180px, 260px 210px !important;
+}
