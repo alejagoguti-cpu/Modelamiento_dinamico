@@ -250,3 +250,177 @@ td { border-color: var(--m02-border-soft) !important; color: var(--m02-dim) !imp
 .app > .sidebar.sidebar-icons-only .icon-nav-item:hover { background: rgba(255,255,255,.05) !important; color: var(--m02-text) !important; }
 .app > .sidebar.sidebar-icons-only .icon-nav-item.active { background: var(--m02-teal-dim) !important; color: var(--m02-teal) !important; }
 .app > .sidebar.sidebar-icons-only .icon-nav-footer { width: 100% !important; }
+
+/* Referencia visual desktop del Módulo 02 para Módulos 03 y 04. */
+@media (min-width: 821px) {
+  body.module02-reference-page {
+    background: #0a0a0a !important;
+    color: #e7eaf2 !important;
+    font-family: 'Inter', sans-serif !important;
+  }
+  body.module02-reference-page::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: .42;
+    background-image:
+      radial-gradient(circle at 18% 24%, rgba(47,212,200,.20) 0 1px, transparent 1.7px),
+      radial-gradient(circle at 76% 66%, rgba(239,149,82,.16) 0 1px, transparent 1.8px),
+      linear-gradient(28deg, transparent 49.7%, rgba(47,212,200,.055) 49.8%, rgba(47,212,200,.055) 50%, transparent 50.1%),
+      linear-gradient(-22deg, transparent 49.7%, rgba(239,149,82,.045) 49.8%, rgba(239,149,82,.045) 50%, transparent 50.1%);
+    background-size: 240px 190px, 310px 260px, 360px 260px, 430px 310px;
+    mix-blend-mode: screen;
+  }
+  body.module02-reference-page > .app,
+  body.module02-reference-page > .layout {
+    position: relative;
+    z-index: 1;
+  }
+  body.module02-reference-page h1,
+  body.module02-reference-page h2,
+  body.module02-reference-page h3,
+  body.module02-reference-page .hero-copy h1,
+  body.module02-reference-page .welcome h2,
+  body.module02-reference-page .network-head h2,
+  body.module02-reference-page .network-modal-head h2 {
+    font-family: 'Space Grotesk', sans-serif !important;
+  }
+  body.module02-reference-page > .app > .main > h1,
+  body.module02-reference-page .hero-copy > h1,
+  body.module02-reference-page .welcome > h2,
+  body.module02-reference-page .main > h1 {
+    font-size: 54px !important;
+    line-height: 1.1 !important;
+    letter-spacing: -1px !important;
+    font-weight: 700 !important;
+    color: #f2f3f6 !important;
+    margin-bottom: 12px !important;
+  }
+  body.module02-reference-page .hero-copy > h1 em,
+  body.module02-reference-page .hero-copy > h1 span,
+  body.module02-reference-page .main > h1 em,
+  body.module02-reference-page .main > h1 span {
+    background: linear-gradient(90deg, #f2f3f6 0%, #e9695c 55%, #d28b36 100%) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+  }
+  body.module02-reference-page .hero-copy > p,
+  body.module02-reference-page .welcome-sub,
+  body.module02-reference-page .welcome > p,
+  body.module02-reference-page .main > p {
+    color: #8891a5 !important;
+    font-size: 15px !important;
+    line-height: 1.6 !important;
+    max-width: 700px !important;
+  }
+  body.module02-reference-page .panel,
+  body.module02-reference-page .network-card,
+  body.module02-reference-page .network-panel,
+  body.module02-reference-page .network-modal-box,
+  body.module02-reference-page .conventions,
+  body.module02-reference-page .workspace,
+  body.module02-reference-page .card {
+    background: #121828 !important;
+    border-color: rgba(255,255,255,.07) !important;
+  }
+}
+
+/* Prioridad final: títulos y subtítulos desktop idénticos al Módulo 02. */
+@media (min-width: 821px) {
+  body.module02-reference-page .welcome > h2,
+  body.module02-reference-page .main > .welcome h2,
+  body.module02-reference-page .hero-copy > h1 {
+    font-family: 'Space Grotesk', sans-serif !important;
+    font-size: 54px !important;
+    font-weight: 700 !important;
+    line-height: 1.1 !important;
+    letter-spacing: -1px !important;
+    color: #f2f3f6 !important;
+    margin-bottom: 12px !important;
+    text-shadow: 0 0 24px rgba(47,212,200,.08) !important;
+  }
+  body.module02-reference-page .welcome > h2 span,
+  body.module02-reference-page .main > .welcome h2 span,
+  body.module02-reference-page .hero-copy > h1 .h2-plain {
+    color: #f2f3f6 !important;
+    -webkit-text-fill-color: #f2f3f6 !important;
+  }
+  body.module02-reference-page .welcome > h2 em,
+  body.module02-reference-page .main > .welcome h2 em,
+  body.module02-reference-page .hero-copy > h1 em {
+    font-style: normal !important;
+    background: linear-gradient(90deg, #f2f3f6 0%, #e9695c 55%, #d28b36 100%) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    color: transparent !important;
+  }
+  body.module02-reference-page .welcome > p,
+  body.module02-reference-page .main > .welcome p,
+  body.module02-reference-page .hero-copy > p {
+    color: #8891a5 !important;
+    font-family: Inter, system-ui, sans-serif !important;
+    font-size: 13.5px !important;
+    line-height: 1.6 !important;
+    max-width: 700px !important;
+  }
+}
+
+/* Corrección de superficies: el Módulo 02 usa negro neutro, no azul carbón. */
+@media (min-width: 821px) {
+  body.module02-reference-page .panel,
+  body.module02-reference-page .network-section,
+  body.module02-reference-page .network-card,
+  body.module02-reference-page .network-panel,
+  body.module02-reference-page .network-modal-box,
+  body.module02-reference-page .conventions,
+  body.module02-reference-page .workspace,
+  body.module02-reference-page .card,
+  body.module02-reference-page .pcard {
+    background: #0c0c0c !important;
+    border-color: rgba(255,255,255,.07) !important;
+  }
+  body.module02-reference-page .network-canvas,
+  body.module02-reference-page .network-viz,
+  body.module02-reference-page .network-canvas svg,
+  body.module02-reference-page #networkViz,
+  body.module02-reference-page #gNetwork {
+    background-color: #05070a !important;
+  }
+  body.module02-reference-page::before {
+    opacity: .62;
+    background-size: 220px 180px, 290px 230px, 330px 240px, 390px 280px;
+  }
+}
+
+/* Patrón de fondo más visible y sin azul para la composición desktop de referencia. */
+@media (min-width: 821px) {
+  body.module02-reference-page::before {
+    opacity: .82;
+    background-image:
+      radial-gradient(circle at 12% 20%, rgba(47,212,200,.34) 0 1.3px, transparent 2px),
+      radial-gradient(circle at 78% 24%, rgba(239,149,82,.28) 0 1.2px, transparent 2px),
+      radial-gradient(circle at 62% 78%, rgba(47,212,200,.22) 0 1px, transparent 1.8px),
+      linear-gradient(30deg, transparent 49.75%, rgba(47,212,200,.095) 49.9%, rgba(47,212,200,.095) 50.1%, transparent 50.25%),
+      linear-gradient(-26deg, transparent 49.75%, rgba(239,149,82,.075) 49.9%, rgba(239,149,82,.075) 50.1%, transparent 50.25%);
+    background-size: 190px 155px, 270px 215px, 340px 260px, 310px 235px, 410px 300px;
+  }
+  body.module02-reference-page .layer-blue,
+  body.module02-reference-page .blue,
+  body.module02-reference-page .node-blue,
+  body.module02-reference-page .swatch-blue,
+  body.module02-reference-page [data-color="blue"] {
+    color: var(--m02-copper) !important;
+    background-color: var(--m02-copper) !important;
+    border-color: var(--m02-copper) !important;
+    stroke: var(--m02-copper) !important;
+  }
+  body.module02-reference-page .network-edge.layer-blue,
+  body.module02-reference-page path.layer-blue,
+  body.module02-reference-page line.layer-blue {
+    stroke: var(--m02-copper) !important;
+  }
+}
