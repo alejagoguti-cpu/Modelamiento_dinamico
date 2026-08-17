@@ -505,24 +505,75 @@
     };
     const layoutNetwork = (item) => {
       const degree = item.nodes.map((_, i) => item.edges.reduce((n, [a, b]) => n + (a === i || b === i ? 1 : 0), 0));
-      const xs = item.nodes.map((node) => node[1]), ys = item.nodes.map((node) => node[2]);
-      const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
-      const scaleX = 1160 / Math.max(1, maxX - minX), scaleY = 700 / Math.max(1, maxY - minY);
-      item.nodes.forEach((node, index) => {
-        const d = degree[index];
-        node[1] = 120 + (node[1] - minX) * scaleX;
-        node[2] = 100 + (node[2] - minY) * scaleY;
-        node[3] = d <= 2 ? 40 : d <= 4 ? 48 : d <= 6 ? 58 : d <= 9 ? 70 : 82;
+      const centerByCategory = {
+        "care-health": [165,235],
+        "education": [470,175],
+        "mobility": [790,235],
+        "housing-employment": [220,610],
+        "access-goals": [665,620],
+        "economic-activity": [165,220],
+        "human-capital": [470,175],
+        "labor-mobility": [790,220],
+        "territorial-equity": [220,650],
+        "employment-results": [665,650],
+        "emissions-air": [165,220],
+        "clean-transit": [470,175],
+        "clean-infrastructure": [790,220],
+        "modal-change": [220,650],
+        "environmental-health": [665,650],
+      };
+      const fallbackCenters = [[165,235],[470,175],[790,235],[220,610],[665,620],[470,420]];
+      const categoryIds = [...new Set(item._categories || [])];
+      const groups = categoryIds.map((category, categoryIndex) => ({
+        category,
+        nodes: item.nodes.map((_, index) => index).filter((index) => item._categories[index] === category).sort((a, b) => degree[b] - degree[a]),
+        center: centerByCategory[category] || fallbackCenters[categoryIndex % fallbackCenters.length],
+      })).filter((group) => group.nodes.length);
+      const radiusFor = (d) => d <= 2 ? 40 : d <= 4 ? 48 : d <= 6 ? 58 : d <= 9 ? 70 : 82;
+      groups.forEach((group) => {
+        const [cx, cy] = group.center;
+        const hubIndex = group.nodes[0];
+        const hub = item.nodes[hubIndex];
+        hub[1] = cx; hub[2] = cy; hub[3] = radiusFor(degree[hubIndex]); hub._layoutHub = true;
+        const rest = group.nodes.slice(1);
+        const outward = Math.atan2(cy - 450, cx - 700) || 0;
+        const span = Math.min(1.45, .72 + rest.length * .13);
+        const rings = [
+          rest.filter((index) => degree[index] >= 4),
+          rest.filter((index) => degree[index] >= 2 && degree[index] < 4),
+          rest.filter((index) => degree[index] < 2),
+        ].filter((ring) => ring.length);
+        rings.forEach((ring, ringIndex) => {
+          const radius = 155 + ringIndex * 125;
+          ring.forEach((nodeIndex, position) => {
+            const angle = outward - span / 2 + ((position + .5) / ring.length) * span;
+            const node = item.nodes[nodeIndex];
+            node[1] = cx + Math.cos(angle) * radius;
+            node[2] = cy + Math.sin(angle) * radius * .82;
+            node[3] = radiusFor(degree[nodeIndex]);
+            node._layoutHub = false;
+          });
+        });
       });
-      for (let pass = 0; pass < 12; pass++) {
+      for (let pass = 0; pass < 90; pass++) {
+        let moved = false;
         for (let i = 0; i < item.nodes.length; i++) for (let j = i + 1; j < item.nodes.length; j++) {
-          const A = item.nodes[i], B = item.nodes[j], dx = B[1] - A[1], dy = B[2] - A[2], dist = Math.hypot(dx, dy) || 1, min = A[3] + B[3] + 28;
+          const A = item.nodes[i], B = item.nodes[j];
+          const dx = B[1] - A[1], dy = B[2] - A[2], dist = Math.hypot(dx, dy) || 1;
+          const min = A[3] + B[3] + 34;
           if (dist >= min) continue;
           const ux = dx / dist, uy = dy / dist, push = (min - dist) / 2;
-          A[1] = Math.max(72, Math.min(1328, A[1] - ux * push * .5)); A[2] = Math.max(68, Math.min(822, A[2] - uy * push * .5));
-          B[1] = Math.max(72, Math.min(1328, B[1] + ux * push * .5)); B[2] = Math.max(68, Math.min(822, B[2] + uy * push * .5));
+          if (!A._layoutHub) { A[1] -= ux * push; A[2] -= uy * push; }
+          if (!B._layoutHub) { B[1] += ux * push; B[2] += uy * push; }
+          moved = true;
         }
+        item.nodes.forEach((node) => {
+          node[1] = Math.max(70, Math.min(900, node[1]));
+          node[2] = Math.max(70, Math.min(810, node[2]));
+        });
+        if (!moved) break;
       }
+      item.nodes.forEach((node) => { delete node._layoutHub; });
     };
     const lines = (item) => item.edges.map(([a, b, t], i) => {
       const A = item.nodes[a], B = item.nodes[b];
