@@ -509,11 +509,8 @@
       }
     };
     const lines = (item) => item.edges.map(([a, b, t], i) => {
-      const A = item.nodes[a], B = item.nodes[b], dx = B[1] - A[1], dy = B[2] - A[2], len = Math.hypot(dx, dy) || 1;
-      const bend = ((i % 5) - 2) * 22;
-      const nx = -dy / len, ny = dx / len;
-      const cx = (A[1] + B[1]) / 2 + nx * bend, cy = (A[2] + B[2]) / 2 + ny * bend;
-      const d = `M ${A[1]} ${A[2]} Q ${cx.toFixed(1)} ${cy.toFixed(1)} ${B[1]} ${B[2]}`;
+      const A = item.nodes[a], B = item.nodes[b];
+      const d = `M ${A[1]} ${A[2]} L ${B[1]} ${B[2]}`;
       return `<path class="network-edge ${t}" data-edge-index="${i}" marker-end="url(#arrow-${t})" d="${d}"/><path class="network-edge-hit ${t}" data-edge-index="${i}" data-edge-type="${t}" tabindex="0" d="${d}"/>`;
     }).join("");
     const iconSvg = (label) => {
