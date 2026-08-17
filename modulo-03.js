@@ -2412,7 +2412,7 @@ function computeLayoutClean() {
     const p = layout[id] || { x:1320, y:1140 };
     const margin = nodeR[id] + 70;
     p.x = Math.max(margin, Math.min(2220 - margin, p.x));
-    p.y = Math.max(margin, Math.min(1720 - margin, p.y));
+    p.y = Math.max(margin, Math.min(1530 - margin, p.y));
     layout[id] = p;
   });
   for (let pass = 0; pass < 3; pass++) {
@@ -2432,7 +2432,9 @@ function computeLayoutClean() {
     minX=Math.min(minX,p.x-r); maxX=Math.max(maxX,p.x+r);
     minY=Math.min(minY,p.y-r); maxY=Math.max(maxY,p.y+r);
   });
-  BASE_VB = { x:minX, y:minY, w:maxX-minX, h:maxY-minY };
+  // Misma proporción de canvas que M02 (2235 × 1712), con margen
+  // suficiente para los 47 conceptos del M03 sin comprimirlos visualmente.
+  BASE_VB = { x:0, y:0, w:2235, h:1712 };
   vb = Object.assign({}, BASE_VB);
 }
 

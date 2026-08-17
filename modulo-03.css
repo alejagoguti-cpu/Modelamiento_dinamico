@@ -7993,3 +7993,17 @@ html,body{background:var(--m02-bg)!important;color:var(--m02-text)!important;fon
 #gRels path.rel.rel-off { opacity:.08 !important; }
 #gRels path.rel.sel,
 #gRels path.rel:hover { opacity:1 !important; stroke:#fff !important; stroke-width:3.5px !important; filter:drop-shadow(0 0 4px #fff) !important; }
+
+/* Prioridad cromática final: tipo de relación define el color; evidencia define línea. */
+#gRels path.rel.soporte.directa,
+#gRels path.rel.soporte.directa.intra,
+#gRels path.rel.soporte.directa.inter { stroke:#f2a25f !important; opacity:.84 !important; stroke-width:2.35px !important; }
+#gRels path.rel.resiliencia.directa,
+#gRels path.rel.resiliencia.directa.intra,
+#gRels path.rel.resiliencia.directa.inter { stroke:#64e4d5 !important; opacity:.78 !important; stroke-width:2.2px !important; }
+#gRels path.rel.soporte.indirecta,
+#gRels path.rel.soporte.indirecta.intra,
+#gRels path.rel.soporte.indirecta.inter { stroke:#f2a25f !important; opacity:.52 !important; stroke-width:1.55px !important; stroke-dasharray:6 5 !important; }
+#gRels path.rel.resiliencia.indirecta,
+#gRels path.rel.resiliencia.indirecta.intra,
+#gRels path.rel.resiliencia.indirecta.inter { stroke:#64e4d5 !important; opacity:.48 !important; stroke-width:1.5px !important; stroke-dasharray:6 5 !important; }
