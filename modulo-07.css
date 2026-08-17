@@ -4513,3 +4513,30 @@ body { position:relative !important; }
     animation: none !important;
   }
 }
+
+/* Legibilidad reforzada tras ampliar los radios de los nodos */
+.network-node.node-small .node-name {
+  font-size: 7px !important;
+  line-height: 1.08 !important;
+  letter-spacing: -.05px;
+}
+.network-node.node-small .node-fa-icon {
+  font-size: 16px !important;
+}
+.network-node.hub-medium .node-name {
+  font-size: 10.5px !important;
+  line-height: 1.08 !important;
+}
+.network-node.hub-medium .node-fa-icon {
+  font-size: 21px !important;
+}
+.network-node.hub-large .node-name {
+  font-size: 12.5px !important;
+  line-height: 1.08 !important;
+}
+.network-node.hub-large .node-fa-icon {
+  font-size: 28px !important;
+}
+.network-node.central-node .node-name {
+  font-size: 10.5px !important;
+}

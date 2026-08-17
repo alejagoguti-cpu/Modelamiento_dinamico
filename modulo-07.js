@@ -529,7 +529,8 @@
         nodes: item.nodes.map((_, index) => index).filter((index) => item._categories[index] === category).sort((a, b) => degree[b] - degree[a]),
         center: centerByCategory[category] || fallbackCenters[categoryIndex % fallbackCenters.length],
       })).filter((group) => group.nodes.length);
-      const radiusFor = (d) => d <= 2 ? 40 : d <= 4 ? 48 : d <= 6 ? 58 : d <= 9 ? 70 : 82;
+      const radiusFor = (d) => d <= 2 ? 52 : d <= 4 ? 64 : d <= 6 ? 76 : d <= 9 ? 90 : 104;
+      item._centralIndices = groups.map((group) => group.nodes[0]);
       groups.forEach((group) => {
         const [cx, cy] = group.center;
         const hubIndex = group.nodes[0];
@@ -560,12 +561,12 @@
           });
         });
       });
-      for (let pass = 0; pass < 90; pass++) {
+      for (let pass = 0; pass < 150; pass++) {
         let moved = false;
         for (let i = 0; i < item.nodes.length; i++) for (let j = i + 1; j < item.nodes.length; j++) {
           const A = item.nodes[i], B = item.nodes[j];
           const dx = B[1] - A[1], dy = B[2] - A[2], dist = Math.hypot(dx, dy) || 1;
-          const min = A[3] + B[3] + 34;
+          const min = A[3] + B[3] + 42;
           if (dist >= min) continue;
           const ux = dx / dist, uy = dy / dist, push = (min - dist) / 2;
           if (!A._layoutHub) { A[1] -= ux * push; A[2] -= uy * push; }
@@ -573,8 +574,8 @@
           moved = true;
         }
         item.nodes.forEach((node) => {
-          node[1] = Math.max(70, Math.min(900, node[1]));
-          node[2] = Math.max(70, Math.min(810, node[2]));
+          node[1] = Math.max(50, Math.min(980, node[1]));
+          node[2] = Math.max(50, Math.min(830, node[2]));
         });
         if (!moved) break;
       }
@@ -641,7 +642,7 @@
       item.nodes
         .map(([label, x, y, r, type, icon], i) => {
           const display = quantify(label),
-            maxChars = r >= 70 ? 18 : r >= 55 ? 15 : r >= 40 ? 12 : 9,
+            maxChars = r >= 90 ? 22 : r >= 70 ? 18 : r >= 52 ? 15 : 11,
             rows = display
               .split(/\n|\\n/)
               .flatMap((row) => {
@@ -653,7 +654,7 @@
               .slice(0, 2);
           const sizeClass =
               r >= 70 ? "hub-large" : r >= 48 ? "hub-medium" : "node-small",
-            centralClass = type === "central" || r >= 48 ? "central-node" : "",
+            centralClass = type === "central" || item._centralIndices?.includes(i) ? "central-node" : "",
             iconY = r >= 44 ? y - 9 : y - 5,
             labelY = y + (r >= 44 ? 10 : 7),
             lineGap = r >= 44 ? 10 : 7;
