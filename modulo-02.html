@@ -55,7 +55,7 @@
 
       <div class="network-body">
         <div class="network-canvas">
-          <svg id="networkViz" viewBox="0 0 2644 2294" preserveAspectRatio="xMidYMid meet"></svg>
+          <svg id="networkViz" viewBox="0 0 2644 2150" preserveAspectRatio="xMidYMid meet"></svg>
         </div>
 
         <!-- VISTA AMPLIADA: red de Humedales. Sustituye la red principal en el mismo
@@ -64,6 +64,11 @@
         <div class="humedales-overlay" id="humedalesOverlay" style="display:none;">
           <div class="humedales-overlay-header">
             <div class="humedales-overlay-title">El POT no entiende los humedales como territorios dinámicos</div>
+            <div class="humedales-zoom-controls">
+              <button class="humedales-zoom-btn" id="humedalesZoomOut" type="button" aria-label="Alejar">&minus;</button>
+              <button class="humedales-zoom-btn" id="humedalesZoomReset" type="button" aria-label="Restablecer zoom">&#8859;</button>
+              <button class="humedales-zoom-btn" id="humedalesZoomIn" type="button" aria-label="Acercar">&#43;</button>
+            </div>
             <button class="humedales-overlay-close" id="humedalesOverlayClose" type="button" aria-label="Cerrar">&times;</button>
           </div>
           <div class="humedales-overlay-body" id="humedalesOverlayBody">
