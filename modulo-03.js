@@ -2752,13 +2752,13 @@ function renderM03RelationTable() {
     const page = r.pag ? `p. ${r.pag}` : '—';
     const analysis = relationExplanation(r);
     const relation = `${r.cO} → ${r.cD}`;
-    return `<div class="m03-table-row ${relActive(r) ? '' : 'is-off'}" data-rel-row="${r.id}">
-      <div class="m03-table-system">${esc(r.sO)} → ${esc(r.sD)}</div>
-      <div class="m03-table-relation">${esc(relation)}</div>
-      <div><span class="m03-type-pill ${String(r.evid || '').toLowerCase().startsWith('ind') ? 'indirecta' : 'directa'}">${esc(type)}</span></div>
-      <div>${esc(source)}</div>
-      <div>${esc(page)}</div>
-      <div class="m03-table-analysis">${esc(analysis)}</div>
+    return `<div class="matrix-row ${relActive(r) ? '' : 'is-off'}" data-rel-row="${r.id}">
+      <div class="matrix-cell m03-table-system">${esc(r.sO)} → ${esc(r.sD)}</div>
+      <div class="matrix-cell m03-table-relation">${esc(relation)}</div>
+      <div class="matrix-cell"><span class="m03-type-pill ${String(r.evid || '').toLowerCase().startsWith('ind') ? 'indirecta' : 'directa'}">${esc(type)}</span></div>
+      <div class="matrix-cell">${esc(source)}</div>
+      <div class="matrix-cell">${esc(page)}</div>
+      <div class="matrix-cell matrix-analysis m03-table-analysis">${esc(analysis)}</div>
     </div>`;
   }).join('');
 }
