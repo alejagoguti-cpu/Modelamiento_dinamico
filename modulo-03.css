@@ -7981,3 +7981,15 @@ html,body{background:var(--m02-bg)!important;color:var(--m02-text)!important;fon
   #gRels path.rel.directa.inter { opacity:.92 !important; stroke-width:2px !important; }
 }
 
+
+/* M03 alineado al lenguaje visual de M02: jerarquía de líneas limpia. */
+#gRels path.rel { visibility:visible !important; filter:none !important; stroke-opacity:1 !important; }
+#gRels path.rel.directa { opacity:.78 !important; stroke-width:2.15px !important; }
+#gRels path.rel.indirecta { opacity:.46 !important; stroke-width:1.35px !important; stroke-dasharray:6 5 !important; }
+#gRels path.rel.soporte { opacity:.84 !important; stroke:#f2a25f !important; stroke-width:2.35px !important; }
+#gRels path.rel.resiliencia { opacity:.78 !important; stroke:#64e4d5 !important; stroke-width:2.2px !important; }
+#gRels path.rel.indirecta.soporte { opacity:.52 !important; stroke:#f2a25f !important; stroke-width:1.55px !important; stroke-dasharray:6 5 !important; }
+#gRels path.rel.indirecta.resiliencia { opacity:.48 !important; stroke:#64e4d5 !important; stroke-width:1.5px !important; stroke-dasharray:6 5 !important; }
+#gRels path.rel.rel-off { opacity:.08 !important; }
+#gRels path.rel.sel,
+#gRels path.rel:hover { opacity:1 !important; stroke:#fff !important; stroke-width:3.5px !important; filter:drop-shadow(0 0 4px #fff) !important; }

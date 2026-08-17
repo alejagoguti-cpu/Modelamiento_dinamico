@@ -2383,13 +2383,13 @@ function computeLayout() {
 // endpoints, citas, páginas ni la lógica de activación de las relaciones.
 function computeLayoutClean() {
   const centers = {
-    EEP: { x: 820, y: 780 }, EFC: { x: 1710, y: 690 },
-    ESECI: { x: 1010, y: 1500 }, EIP: { x: 1830, y: 1430 }
+    EEP: { x: 520, y: 470 }, EFC: { x: 1540, y: 470 },
+    ESECI: { x: 560, y: 1190 }, EIP: { x: 1570, y: 1160 }
   };
   const slots = [
-    [-360,-210],[-180,-300],[20,-330],[220,-265],[390,-120],
-    [-410,35],[-245,105],[-65,55],[145,110],[335,55],
-    [-350,245],[-170,315],[35,255],[235,325],[395,220]
+    [-350,-220],[-175,-330],[20,-350],[215,-285],[360,-150],
+    [-390,20],[-220,120],[-25,65],[170,125],[360,50],
+    [-330,245],[-150,340],[45,275],[220,345],[370,220]
   ];
   const ids = Object.keys(model.concepts);
   const hubIds = new Set();
@@ -2410,15 +2410,9 @@ function computeLayoutClean() {
   ids.forEach(id => {
     const c = model.concepts[id];
     const p = layout[id] || { x:1320, y:1140 };
-    const cross = c.rels.some(r => r.sO !== r.sD);
-    if (cross && !hubIds.has(id)) {
-      const target = c.sys === 'EEP' ? {x:1160,y:1010} : c.sys === 'EFC' ? {x:1510,y:970} : c.sys === 'ESECI' ? {x:1270,y:1260} : {x:1530,y:1230};
-      p.x = p.x * 0.78 + target.x * 0.22;
-      p.y = p.y * 0.78 + target.y * 0.22;
-    }
-    const margin = nodeR[id] + 90;
-    p.x = Math.max(margin, Math.min(2644 - margin, p.x));
-    p.y = Math.max(margin, Math.min(2294 - margin, p.y));
+    const margin = nodeR[id] + 70;
+    p.x = Math.max(margin, Math.min(2220 - margin, p.x));
+    p.y = Math.max(margin, Math.min(1720 - margin, p.y));
     layout[id] = p;
   });
   for (let pass = 0; pass < 3; pass++) {
@@ -2627,10 +2621,10 @@ const iconSize = Math.max(28, Math.round(R * 0.52));
       wrapper.setAttribute('style', 'width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;transform:translateY(-13%);pointer-events:none;text-align:center;');
       const iconEl = document.createElementNS('http://www.w3.org/1999/xhtml', 'i');
       iconEl.setAttribute('class', `fa-solid ${c.icon} node-icon`);
-      iconEl.setAttribute('style', `color:${model.systems[s].color};font-size:${R * 0.44}px;line-height:1;margin:1px 0;`);
+      iconEl.setAttribute('style', `color:${model.systems[s].color};font-size:${Math.max(15, R * 0.34)}px !important;line-height:1;margin:1px 0;`);
       const nameEl = document.createElementNS('http://www.w3.org/1999/xhtml', 'div');
       nameEl.setAttribute('class', 'node-name');
-      nameEl.setAttribute('style', `font-family:Inter,sans-serif;font-size:${Math.max(R * 0.145, 6)}px;padding:0 3px;font-weight:600;color:var(--text-dim);line-height:1.05;white-space:normal;`);
+      nameEl.setAttribute('style', `font-family:Inter,sans-serif;font-size:${Math.max(9, Math.min(18, R * 0.16))}px !important;padding:0 3px;font-weight:700;color:#f2f3f6;line-height:1.08;white-space:normal;text-align:center;text-shadow:0 1px 3px #05070a;`);
       nameEl.textContent = c.label;
       wrapper.appendChild(iconEl); wrapper.appendChild(nameEl);
       fo.appendChild(wrapper);
