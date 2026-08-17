@@ -497,28 +497,14 @@
     };
     const layoutNetwork = (item) => {
       const degree = item.nodes.map((_, i) => item.edges.reduce((n, [a, b]) => n + (a === i || b === i ? 1 : 0), 0));
-      const order = item.nodes.map((_, i) => i).sort((a, b) => degree[b] - degree[a]);
-      const cx = 700, cy = 445;
-      const hubAngles = [-Math.PI * 0.78, -Math.PI * 0.22, Math.PI * 0.22, Math.PI * 0.78];
-      const hubRadius = 255;
-      const outer = Math.max(0, order.length - 5);
-      order.forEach((nodeIndex, rank) => {
-        const node = item.nodes[nodeIndex];
-        const d = degree[nodeIndex];
+      const xs = item.nodes.map((node) => node[1]), ys = item.nodes.map((node) => node[2]);
+      const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
+      const scaleX = 1160 / Math.max(1, maxX - minX), scaleY = 700 / Math.max(1, maxY - minY);
+      item.nodes.forEach((node, index) => {
+        const d = degree[index];
+        node[1] = 120 + (node[1] - minX) * scaleX;
+        node[2] = 100 + (node[2] - minY) * scaleY;
         node[3] = d <= 2 ? 24 : d <= 4 ? 32 : d <= 6 ? 42 : d <= 9 ? 56 : 66;
-        if (rank === 0) {
-          node[1] = cx;
-          node[2] = cy;
-        } else if (rank <= 4) {
-          const angle = hubAngles[rank - 1];
-          node[1] = cx + Math.cos(angle) * hubRadius;
-          node[2] = cy + Math.sin(angle) * hubRadius;
-        } else {
-          const angle = -Math.PI * 0.92 + ((rank - 5) / Math.max(1, outer - 1)) * Math.PI * 1.84;
-          const radius = 405 + (rank % 2) * 22;
-          node[1] = cx + Math.cos(angle) * radius;
-          node[2] = cy + Math.sin(angle) * radius * 0.78;
-        }
       });
       for (let pass = 0; pass < 12; pass++) {
         for (let i = 0; i < item.nodes.length; i++) for (let j = i + 1; j < item.nodes.length; j++) {
