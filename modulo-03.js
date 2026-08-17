@@ -3536,6 +3536,10 @@ document.addEventListener('DOMContentLoaded', () => {
     closeInsight.addEventListener('click', () => insightPopup.classList.add('is-hidden'));
   }
 
+  const conventionsHost = document.getElementById('module03Conventions');
+  const networkToolbar = document.querySelector('.net-card .net-toolbar');
+  if (conventionsHost && networkToolbar) conventionsHost.appendChild(networkToolbar);
+
   buildModel();
   computeLayout();
 
