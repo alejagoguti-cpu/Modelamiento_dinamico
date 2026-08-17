@@ -997,7 +997,10 @@
       details.hidden = false;
       const groups = $$(".network-node", canvas),
         edges = $$(".network-edge", canvas);
-      groups.forEach((g) => g.classList.remove("selected", "dimmed"));
+      groups.forEach((g) => {
+        g.classList.remove("selected", "connected", "dimmed");
+        g.removeAttribute("data-node-focus");
+      });
       edges.forEach((e) => e.classList.remove("highlight", "dimmed"));
       if (index === null) {
         details.innerHTML =
@@ -1010,8 +1013,16 @@
         if (b === index) linked.push({ index: a, type: t, edge: i });
       });
       groups.forEach((g, i) => {
-        if (i === index) g.classList.add("selected");
-        else if (!linked.some((v) => v.index === i)) g.classList.add("dimmed");
+        if (i === index) {
+          g.classList.add("selected");
+          g.setAttribute("data-node-focus", "selected");
+        } else if (linked.some((v) => v.index === i)) {
+          g.classList.add("connected");
+          g.setAttribute("data-node-focus", "connected");
+        } else {
+          g.classList.add("dimmed");
+          g.setAttribute("data-node-focus", "dimmed");
+        }
       });
       edges.forEach((e, i) =>
         linked.some((v) => v.edge === i)

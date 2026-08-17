@@ -4385,3 +4385,33 @@ body { position:relative !important; }
   filter: drop-shadow(0 0 5px currentColor) !important;
 }
 .network-edge.dimmed { opacity: .12 !important; }
+
+/* Foco interactivo de red: nodo seleccionado y vecindad conectada */
+.network-node.connected {
+  opacity: 1 !important;
+  filter: saturate(1.15) !important;
+}
+.network-node.connected > circle {
+  stroke-width: 3px !important;
+  filter: drop-shadow(0 0 7px currentColor) !important;
+}
+.network-node.selected {
+  opacity: 1 !important;
+  z-index: 5;
+}
+.network-node.selected > circle {
+  stroke: #ffffff !important;
+  stroke-width: 4px !important;
+  filter: drop-shadow(0 0 8px #46D6D0) drop-shadow(0 0 17px rgba(70,214,208,.8)) !important;
+}
+.network-node.dimmed {
+  opacity: .18 !important;
+  filter: saturate(.35) !important;
+}
+.network-edge.highlight {
+  opacity: 1 !important;
+  filter: drop-shadow(0 0 5px currentColor) !important;
+}
+.network-edge.dimmed {
+  opacity: .08 !important;
+}
