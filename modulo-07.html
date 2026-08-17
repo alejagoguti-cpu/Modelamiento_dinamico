@@ -13,7 +13,7 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
-    <link rel="stylesheet" href="modulo-07.css?v=no-blue-v2" />
+    <link rel="stylesheet" href="modulo-07.css?v=legend-m02-v1" />
 <link rel="stylesheet" href="network06-shared.css">
   </head>
   <body>
@@ -216,35 +216,40 @@
               <small id="nodeSearchCount" aria-live="polite"></small>
             </label>
             <div id="categoryFilters" class="category-filters" aria-label="Categorías temáticas"></div>
-            <div
-              class="toolbar-conventions"
-              aria-label="Convenciones de la red"
-            >
-              <b>Convenciones</b>
-              <label class="toolbar-convention all-conventions"><input type="checkbox" id="edge-filter-all" checked /><i></i> Todas</label>
-              <label class="toolbar-convention direct"><input type="checkbox" class="edge-filter" data-edge-type="direct" checked /><i></i>Directa</label>
-              <label class="toolbar-convention indirect"><input type="checkbox" class="edge-filter" data-edge-type="indirect" checked /><i></i>Indirecta</label>
-              <label class="toolbar-convention support"><input type="checkbox" class="edge-filter" data-edge-type="support" checked /><i></i>Soporte</label>
-              <label class="toolbar-convention result"><input type="checkbox" class="edge-filter" data-edge-type="result" checked /><i></i>Resultado</label>
-              <div class="toolbar-layers-summary">
-                <b><i class="fa-solid fa-layer-group"></i> Capas del sistema</b>
-                <span
-                >
-                <small
-                  ><strong class="layer-red-text">Capa Roja · Ecológica</strong>
-                  Soporte vital y EEP · POT, pág. 112</small
-                >
-                <small
-                  ><strong class="layer-warm-text"
-                    >Capa Cobre · Determinista</strong
-                  >
-                  Vías, Metro y redes · POT, pág. 170</small
-                >
-                <small
-                  ><strong class="layer-green-text">Capa Verde · Social</strong>
-                  Ciudadanos y empresas con agencia · POT, pág. 218</small
-                >
-              </div>
+            <div class="network-legend toolbar-conventions" aria-label="Convenciones de la red">
+              <div class="legend-title">Tipos de relación</div>
+              <label class="legend-item toolbar-convention all-conventions">
+                <input type="checkbox" id="edge-filter-all" checked>
+                <span class="legend-swatch swatch-directa-neutral"></span>
+                <span class="legend-text"><strong>Todas</strong><small>Mostrar todas las relaciones</small></span>
+              </label>
+              <label class="legend-item toolbar-convention direct">
+                <input type="checkbox" class="edge-filter" data-edge-type="direct" checked>
+                <span class="legend-swatch swatch-directa-neutral"></span>
+                <span class="legend-text"><strong>Directa</strong><small>Respaldo explícito del POT</small></span>
+              </label>
+              <label class="legend-item toolbar-convention indirect">
+                <input type="checkbox" class="edge-filter" data-edge-type="indirect" checked>
+                <span class="legend-swatch swatch-indirecta-neutral"></span>
+                <span class="legend-text"><strong>Indirecta</strong><small>Relación funcional intermedia</small></span>
+              </label>
+              <div class="legend-divider"></div>
+              <div class="legend-title">Color de la línea</div>
+              <label class="legend-item toolbar-convention support">
+                <input type="checkbox" class="edge-filter" data-edge-type="support" checked>
+                <span class="legend-swatch swatch-support"></span>
+                <span class="legend-text"><strong>Soporte</strong><small>Sostiene / habilita</small></span>
+              </label>
+              <label class="legend-item toolbar-convention result">
+                <input type="checkbox" class="edge-filter" data-edge-type="result" checked>
+                <span class="legend-swatch swatch-result"></span>
+                <span class="legend-text"><strong>Resultado</strong><small>Produce / transforma</small></span>
+              </label>
+              <div class="legend-divider"></div>
+              <div class="legend-title">Capas del sistema</div>
+              <div class="legend-static-item layer-summary-item"><span class="legend-swatch layer-red-swatch"></span><span><strong class="layer-red-text">Capa Roja · Ecológica</strong><small>Soporte vital y EEP · POT, pág. 112</small></span></div>
+              <div class="legend-static-item layer-summary-item"><span class="legend-swatch layer-warm-swatch"></span><span><strong class="layer-warm-text">Capa Cobre · Determinista</strong><small>Vías, Metro y redes · POT, pág. 170</small></span></div>
+              <div class="legend-static-item layer-summary-item"><span class="legend-swatch layer-green-swatch"></span><span><strong class="layer-green-text">Capa Verde · Social</strong><small>Ciudadanos y empresas con agencia · POT, pág. 218</small></span></div>
             </div>
           </div>
           <div id="networkCanvas" class="network-canvas"></div>
