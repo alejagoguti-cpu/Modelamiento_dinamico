@@ -3540,7 +3540,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const conventionsHost = document.getElementById('module03Conventions');
   const networkToolbar = document.querySelector('.net-card .net-toolbar');
-  if (conventionsHost && networkToolbar) conventionsHost.appendChild(networkToolbar);
+  if (conventionsHost && networkToolbar) {
+    const anchor = conventionsHost.children[1] || null;
+    conventionsHost.insertBefore(networkToolbar, anchor);
+  }
 
   buildModel();
   SYS.forEach(s => {
