@@ -2623,7 +2623,7 @@ const iconSize = Math.max(28, Math.round(R * 0.52));
       });
       const wrapper = document.createElementNS('http://www.w3.org/1999/xhtml', 'div');
       wrapper.setAttribute('class', 'node-inner');
-      wrapper.setAttribute('style', 'width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;transform:translateY(-7%);pointer-events:none;text-align:center;');
+      wrapper.setAttribute('style', 'width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;transform:translateY(-13%);pointer-events:none;text-align:center;');
       const iconEl = document.createElementNS('http://www.w3.org/1999/xhtml', 'i');
       iconEl.setAttribute('class', `fa-solid ${c.icon} node-icon`);
       iconEl.setAttribute('style', `color:${model.systems[s].color};font-size:${R * 0.44}px;line-height:1;margin:1px 0;`);
@@ -3535,10 +3535,6 @@ document.addEventListener('DOMContentLoaded', () => {
   if (closeInsight && insightPopup) {
     closeInsight.addEventListener('click', () => insightPopup.classList.add('is-hidden'));
   }
-
-  const networkFinding = document.getElementById('networkFinding');
-  const welcomeElement = document.querySelector('.welcome');
-  if (networkFinding && welcomeElement) welcomeElement.append(networkFinding);
 
   buildModel();
   computeLayout();
