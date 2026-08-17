@@ -2283,10 +2283,10 @@ function computeLayout() {
   // satélites en anillos amplios y sin simulación de fuerzas que compacte
   // toda la red en un bloque. Las relaciones y sus extremos no cambian.
   const HUB_CENTERS = {
-    EEP: { x: 720, y: 760 },
-    EFC: { x: 1880, y: 760 },
-    ESECI: { x: 880, y: 1650 },
-    EIP: { x: 1800, y: 1650 }
+    EEP: { x: 800, y: 650 },
+    EFC: { x: 1840, y: 650 },
+    ESECI: { x: 800, y: 1640 },
+    EIP: { x: 1840, y: 1640 }
   };
   const CANVAS = { w: 2644, h: 2294 };
   const ids = Object.keys(model.concepts);
@@ -2304,14 +2304,14 @@ function computeLayout() {
     const rest = group.slice(1);
     const innerCount = Math.min(6, Math.ceil(rest.length / 2));
     const rings = [rest.slice(0, innerCount), rest.slice(innerCount)];
-    const ringBases = [330, 590];
+    const ringBases = [380, 650];
 
     rings.forEach((ring, ringIndex) => {
       if (!ring.length) return;
+      const rotation = ({ EEP: -3 * Math.PI / 4, EFC: -Math.PI / 4, ESECI: 3 * Math.PI / 4, EIP: Math.PI / 4 })[sys];
+      const span = Math.PI * 1.25;
       const circumference = ring.reduce((sum, id) => sum + 2 * nodeR[id] + GAP, 0);
-      const radius = Math.max(ringBases[ringIndex], circumference / (2 * Math.PI));
-      const rotation = (sys === 'EFC' || sys === 'EIP') ? -Math.PI / 2 : Math.PI / 2;
-      const span = Math.PI * 1.82;
+      const radius = Math.max(ringBases[ringIndex], circumference / span);
       ring.forEach((id, i) => {
         const angle = rotation - span / 2 + ((i + 0.5) / ring.length) * span;
         pos[id] = {
@@ -2322,6 +2322,31 @@ function computeLayout() {
     });
   });
 
+  // Desbloqueo final de colisiones: los hubs se mantienen fijos y solo se
+  // desplazan satélites, preservando la simetría general de la plantilla.
+  const hubIds = new Set(SYS.map(sys => model.systems[sys].concepts.slice().sort((a, b) =>
+    (model.concepts[b].deg - model.concepts[a].deg) || a.localeCompare(b))[0]));
+  for (let pass = 0; pass < 180; pass++) {
+    let moved = false;
+    for (let i = 0; i < ids.length; i++) {
+      for (let j = i + 1; j < ids.length; j++) {
+        const aId = ids[i], bId = ids[j];
+        const a = pos[aId], b = pos[bId];
+        let dx = a.x - b.x, dy = a.y - b.y;
+        let d = Math.hypot(dx, dy) || 0.001;
+        const required = nodeR[aId] + nodeR[bId] + 54;
+        if (d >= required) continue;
+        dx /= d; dy /= d;
+        const push = (required - d) * 0.56;
+        if (hubIds.has(aId) && !hubIds.has(bId)) { b.x -= dx * push * 1.8; b.y -= dy * push * 1.8; }
+        else if (hubIds.has(bId) && !hubIds.has(aId)) { a.x += dx * push * 1.8; a.y += dy * push * 1.8; }
+        else if (!hubIds.has(aId) && !hubIds.has(bId)) { a.x += dx * push; a.y += dy * push; b.x -= dx * push; b.y -= dy * push; }
+        moved = true;
+      }
+    }
+    if (!moved) break;
+  }
+
   // Seguridad de límites, preservando el aire entre grupos.
   ids.forEach(id => {
     const p = pos[id] || { x: CANVAS.w / 2, y: CANVAS.h / 2 };
@@ -2329,6 +2354,17 @@ function computeLayout() {
     p.x = Math.max(margin, Math.min(CANVAS.w - margin, p.x));
     p.y = Math.max(margin, Math.min(CANVAS.h - margin, p.y));
     layout[id] = p;
+  });
+
+  // Microajustes simétricos para evitar que los nodos de borde queden
+  // comprimidos contra el límite del canvas en estructuras con muchos enlaces.
+  const edgeOffsets = {
+    'EFC::Servicios sociales': { x: 260, y: 544 },
+    'ESECI::Producción artesanal': { x: -110, y: -70 },
+    'ESECI::Sistema de educación': { x: 30, y: -80 }
+  };
+  Object.entries(edgeOffsets).forEach(([id, delta]) => {
+    if (layout[id]) { layout[id].x += delta.x; layout[id].y += delta.y; }
   });
 
   // ViewBox estable, panorámico y equivalente al encuadre de referencia.
