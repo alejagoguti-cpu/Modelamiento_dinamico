@@ -190,4 +190,11 @@ td { border-color: var(--m02-border-soft) !important; color: var(--m02-dim) !imp
   .welcome > h2, .hero-copy > h1, .app > .main > .welcome h2 { font-size: 30px !important; line-height: 1.08 !important; overflow-wrap: normal !important; word-break: normal !important; }
   .topbar-actions .icon-btn { width: 28px !important; height: 28px !important; }
   .btn-primary, .btn-secondary, .outline-btn { width: 100% !important; justify-content: center !important; }
+  .network-controls { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 6px !important; width: 100% !important; }
+  .network-controls > button, .network-controls > .control-btn { width: 100% !important; min-width: 0 !important; }
+  .network-footer-actions, .action-buttons, .dashboard-footer, .net-btns { display: grid !important; grid-template-columns: 1fr !important; gap: 8px !important; width: 100% !important; }
+  .network-footer-actions > *, .action-buttons > *, .dashboard-footer > *, .net-btns > * { width: 100% !important; justify-content: center !important; }
+  .zoom-controls, .network-zoom-controls, .network06-zoom-controls, .humedales-zoom-controls { max-width: 100% !important; }
+  .tabs { display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 6px !important; }
+  button, a.outline-btn { min-height: 32px; }
 }
