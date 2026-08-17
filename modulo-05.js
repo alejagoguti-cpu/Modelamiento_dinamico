@@ -1,453 +1,137 @@
-let upzData = [];
-let barrosData = [];
-let currentSelection = null;
-const humedales = [
-  {id: 'h1', nombre: "Humedal Burro", lat: 4.644296801427965, lng: -74.15052710000018, area: 18.5},
-  {id: 'h2', nombre: "Humedal El Techo", lat: 4.645366863767807, lng: -74.14136322378499, area: 32.2},
-  {id: 'h3', nombre: "Humedal Vaca", lat: 4.627282592850425, lng: -74.15947984079249, area: 24.8},
-];
+/* Topografía Nocturna: Macro=vías, Meso=capa 0 y Micro=UPZ. */
+(function () {
+  "use strict";
 
-const map = L.map('map').setView([4.60, -74.08], 11);
+  /* Si vas a usar los tres archivos fuera de este proyecto, descarga los GeoJSON
+     y reemplaza las rutas manus-storage por "vias.geojson", "capa0.geojson" y "upz.geojson". */
+  const layers = {
+    macro: {
+      name: "Vías", color: "#ff936e", soft: "rgba(255,147,110,.18)",
+      source: "/manus-storage/vias_70683c38.geojson", count: "16.962", entity: "trazos de vía",
+      text: "Lee la estructura vial que conecta el territorio y organiza los flujos metropolitanos.",
+      image: "/manus-storage/nm-macro-ambient_367fa1e0.png"
+    },
+    meso: {
+      name: "Capa 0", color: "#45e1d1", soft: "rgba(69,225,209,.18)",
+      source: "/manus-storage/capa0_4150571e.geojson", count: "33", entity: "polígonos",
+      text: "Observa los polígonos contenidos en la capa 0 del plano para interpretar la organización intermedia.",
+      image: "/manus-storage/nm-meso-ambient_8b52d549.png"
+    },
+    micro: {
+      name: "UPZ", color: "#ddeb75", soft: "rgba(221,235,117,.18)",
+      source: "/manus-storage/upz_f15b94cf.geojson", count: "5", entity: "polígonos UPZ",
+      text: "Acércate a los límites UPZ para reconocer unidades de planeación y decisiones de proximidad.",
+      image: "/manus-storage/nm-micro-ambient_3f449db0.png"
+    }
+  };
 
-L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {
-  attribution: '© CartoDB',
-  maxZoom: 19
-}).addTo(map);
+  const canvas = document.getElementById("dwg-map");
+  const context = canvas.getContext("2d");
+  const buttons = Array.from(document.querySelectorAll("[data-scale]"));
+  const dom = {
+    layerName: document.getElementById("layer-name"), status: document.getElementById("layer-status"),
+    geometry: document.getElementById("geometry-count"), swatch: document.getElementById("legend-swatch"),
+    cardScale: document.getElementById("card-scale"), cardTitle: document.getElementById("card-title"),
+    cardCount: document.getElementById("card-count"), cardCopy: document.getElementById("card-copy"),
+    cardImage: document.getElementById("card-image"), cardError: document.getElementById("card-error")
+  };
+  const cache = new Map();
+  const view = { zoom: 1, panX: 0, panY: 0, dragging: false, pointerX: 0, pointerY: 0 };
+  let activeId = "macro";
+  let activeData = null;
 
-let upzLayers = {};
-let upzLabels = {};
-let barriosLayers = {};
-let barrioLabels = {};
-let humedalLayers = {};
-let humedalMarkers = {};
-let eepNodos = [];
-let eepLayers = {};
-let networkLines = [];
-let currentMode = 'meso';
-
-// Cargar UPZ (MACRO)
-fetch('upz_bogota.geojson')
-  .then(r => r.json())
-  .then(data => {
-    upzData = data.features.map(f => f.properties);
-    
-    data.features.forEach((feature, idx) => {
-      const props = feature.properties;
-      const code = props.uplcodigo.split('UPZ')[1]?.trim() || props.id;
-      
-      const coords = feature.geometry.coordinates;
-      
-      const labelDiv = L.divIcon({
-        html: `<div style="width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; background: transparent; color: #2fd4c8; font-weight: 700; font-size: 9px; border: 1.5px solid #2fd4c8; border-radius: 50%; text-shadow: 0 0 6px rgba(0,0,0,0.8);">${code}</div>`,
-        className: 'upz-label-marker',
-        iconSize: [24, 24],
-        iconAnchor: [12, 12]
-      });
-      
-      const marker = L.marker([coords[1], coords[0]], { icon: labelDiv, interactive: false });
-      upzLabels[props.id] = marker;
-    });
-    
-    renderItemList();
-  });
-
-// Cargar Barrios (MESO)
-fetch('barrios_bogota.geojson')
-  .then(r => r.json())
-  .then(data => {
-    barrosData = data.features.map(f => f.properties);
-    
-    data.features.forEach((feature, idx) => {
-      const props = feature.properties;
-      const coords = feature.geometry.coordinates;
-      
-      const labelDiv = L.divIcon({
-        html: `<div style="width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; background: transparent; color: #2fd4c8; font-weight: 700; font-size: 7px; border: 1px solid #2fd4c8; border-radius: 50%; text-shadow: 0 0 4px rgba(0,0,0,0.8);">${props.codigo}</div>`,
-        className: 'barrio-label-marker',
-        iconSize: [16, 16],
-        iconAnchor: [8, 8]
-      });
-      
-      const marker = L.marker([coords[1], coords[0]], { icon: labelDiv, interactive: false });
-      barrioLabels[props.id] = marker;
-    });
-  });
-
-// Cargar nodos de la red EEP
-fetch('red_eep.geojson')
-  .then(r => r.json())
-  .then(data => {
-    eepNodos = data.features;
-  });
-
-function renderItemList() {
-  const container = document.getElementById('item-list');
-  container.innerHTML = '';
-  
-  if (currentMode === 'macro') {
-    upzData.forEach(upz => {
-      const div = document.createElement('div');
-      div.className = 'upz-item' + (currentSelection?.id === upz.id ? ' active' : '');
-      div.innerHTML = `${upz.uplcodigo}`;
-      div.onclick = () => selectUPZ(upz);
-      container.appendChild(div);
-    });
-  } else if (currentMode === 'meso') {
-    barrosData.forEach(barrio => {
-      const div = document.createElement('div');
-      div.className = 'upz-item' + (currentSelection?.id === barrio.id ? ' active' : '');
-      div.innerHTML = `${barrio.codigo} - ${barrio.nombre}`;
-      div.onclick = () => selectBarrio(barrio);
-      container.appendChild(div);
-    });
-  } else if (currentMode === 'micro') {
-    humedales.forEach(h => {
-      const div = document.createElement('div');
-      div.className = 'upz-item humedal-card' + (currentSelection?.id === h.id ? ' active' : '');
-      div.innerHTML = `
-        <div style="display: flex; flex-direction: column; gap: 6px;">
-          <strong style="color: #2fd4c8; font-size: 11px;">${h.nombre}</strong>
-          <div style="font-size: 9px; color: #7a8fa0;">
-            <div>📍 ${h.lat.toFixed(4)}, ${h.lng.toFixed(4)}</div>
-            <div>📏 Área: ${h.area} ha</div>
-          </div>
-        </div>
-      `;
-      div.onclick = () => selectHumedal(h);
-      container.appendChild(div);
-    });
+  function getPaths(geometry) {
+    const c = geometry.coordinates;
+    if (geometry.type === "LineString") return [{ points: c, closed: false }];
+    if (geometry.type === "MultiLineString") return c.map(points => ({ points, closed: false }));
+    if (geometry.type === "Polygon") return c.map(points => ({ points, closed: true }));
+    if (geometry.type === "MultiPolygon") return c.flatMap(polygon => polygon.map(points => ({ points, closed: true })));
+    return [];
   }
-}
 
-function selectUPZ(upz) {
-  currentSelection = upz;
-  
-  document.getElementById('detail-title').textContent = `UPZ SELECCIONADA: ${upz.uplcodigo.toUpperCase()}`;
-  
-  document.getElementById('detail-description').innerHTML = `
-    <p><strong>${upz.nombre}</strong></p>
-    <p>Zona de Planeamiento de Bogotá</p>
-  `;
-  
-  renderItemList();
-}
-
-function selectBarrio(barrio) {
-  currentSelection = barrio;
-  
-  document.getElementById('detail-title').textContent = `${barrio.nombre.toUpperCase()}`;
-  
-  document.getElementById('detail-description').innerHTML = `
-    <p><strong>${barrio.nombre}</strong></p>
-    <p style="margin-top: 10px;">Barrio de Bogotá</p>
-    <p style="font-size: 9px; color: #7a8fa0; margin-top: 8px;">Código: ${barrio.codigo}</p>
-  `;
-  
-  renderItemList();
-}
-
-function showEepNetwork() {
-  Object.values(eepLayers).forEach(layer => {
-    try { map.removeLayer(layer); } catch(e) {}
-  });
-  eepLayers = {};
-  
-  if (eepNodos.length === 0) return;
-  
-  const conexiones = [
-    {from: 'h1', to: 'rio', tipo: 'directa'},
-    {from: 'h1', to: 'ce', tipo: 'directa'},
-    {from: 'h1', to: 'qb', tipo: 'indirecta'},
-    {from: 'h1', to: 'ap', tipo: 'indirecta'},
-    {from: 'rio', to: 'corr', tipo: 'directa'},
-    {from: 'rio', to: 'ec', tipo: 'indirecta'},
-    {from: 'ce', to: 'cp', tipo: 'directa'},
-    {from: 'ce', to: 'rf', tipo: 'directa'},
-    {from: 'qb', to: 'ru', tipo: 'indirecta'},
-    {from: 'qb', to: 'pb', tipo: 'indirecta'},
-    {from: 'ap', to: 'rf', tipo: 'directa'},
-    {from: 'cm', to: 'cv', tipo: 'indirecta'}
-  ];
-  
-  conexiones.forEach(conn => {
-    const nodoFrom = eepNodos.find(n => n.properties.id === conn.from);
-    const nodoTo = eepNodos.find(n => n.properties.id === conn.to);
-    
-    if (nodoFrom && nodoTo) {
-      const coords = nodoFrom.geometry.coordinates;
-      const coordsTo = nodoTo.geometry.coordinates;
-      
-      const dashArray = conn.tipo === 'indirecta' ? '5, 3' : '0';
-      const lineColor = conn.tipo === 'indirecta' ? '#ff9552' : '#2fd4c8';
-      
-      const line = L.polyline([
-        [coords[1], coords[0]],
-        [coordsTo[1], coordsTo[0]]
-      ], {
-        color: lineColor,
-        weight: 2,
-        opacity: 0.7,
-        dashArray: dashArray
-      }).addTo(map);
-      
-      eepLayers['conn_' + conn.from + '_' + conn.to] = line;
-    }
-  });
-  
-  eepNodos.forEach(nodo => {
-    const coords = nodo.geometry.coordinates;
-    const props = nodo.properties;
-    
-    let radius = 15;
-    if (props.tipo === 'nodo_secundario') radius = 10;
-    if (props.tipo === 'nodo_terciario') radius = 7;
-    
-    const circle = L.circleMarker([coords[1], coords[0]], {
-      radius: radius,
-      fillColor: '#2fd4c8',
-      color: '#0a0e17',
-      weight: 2,
-      opacity: 0.9,
-      fillOpacity: 0.8
-    })
-    .bindPopup(`<strong>${props.nombre}</strong>`)
-    .addTo(map);
-    
-    eepLayers['nodo_' + props.id] = circle;
-    
-    const labelDiv = L.divIcon({
-      html: `<div style="font-size: 7px; color: #fff; text-align: center; font-weight: 600; text-shadow: 0 0 3px rgba(0,0,0,0.8); width: 50px;">${props.nombre}</div>`,
-      className: 'eep-label',
-      iconSize: [50, 16],
-      iconAnchor: [25, 8]
-    });
-    
-    const label = L.marker([coords[1], coords[0]], { icon: labelDiv, interactive: false }).addTo(map);
-    eepLayers['label_' + props.id] = label;
-  });
-}
-
-function selectHumedal(h) {
-  currentSelection = h;
-  
-  networkLines.forEach(line => map.removeLayer(line));
-  networkLines = [];
-  
-  map.setView([h.lat, h.lng], 13);
-  
-  humedales.forEach(other => {
-    if (other.id !== h.id) {
-      const line = L.polyline([
-        [h.lat, h.lng],
-        [other.lat, other.lng]
-      ], {
-        color: '#2fd4c8',
-        weight: 2,
-        opacity: 0.5,
-        dashArray: '5, 5'
-      }).addTo(map);
-      
-      networkLines.push(line);
-    }
-  });
-  
-  showEepNetwork();
-  openEepModal(h);
-  
-  document.getElementById('detail-title').textContent = `HUMEDAL SELECCIONADO: ${h.nombre.toUpperCase()}`;
-  
-  document.getElementById('detail-description').innerHTML = `
-    <p><strong>Estructura Ecológica Principal (EEP)</strong></p>
-    <p>La EEP es la integración de áreas de origen natural que tienen una oferta ambiental significativa, es ordenadora del territorio y garante de los equilibrios ecosistémicos, del agua y la riqueza hídrica.</p>
-    <p><strong>Relación Cuerpo Hídrico - Verde - Ecosistemas:</strong></p>
-    <p>Los humedales son elementos clave de la EEP. Regulan el ciclo del agua, proveen hábitat para fauna silvestre y flora nativa, actúan como corredores ecológicos y mitigar el riesgo climático.</p>
-    <p style="font-size: 9px; color: #7a8fa0; margin-top: 8px;">📍 ${h.lat.toFixed(4)}, ${h.lng.toFixed(4)}<br/>📏 Área: ${h.area} ha</p>
-    <p style="font-size: 8px; color: #7a8fa0;">POT Bogotá Reverdece 2022-2035</p>
-    <p style="margin-top: 10px; font-size: 9px;"><strong>Relaciones en la red EEP:</strong></p>
-    <p style="font-size: 8px;">— Línea sólida teal = Relación directa<br/>— Línea punteada naranja = Relación indirecta</p>
-  `;
-  
-  renderItemList();
-}
-
-function openEepModal(humedal) {
-  const modal = document.getElementById('eepModal');
-  if (!modal) return;
-  
-  modal.style.display = 'block';
-  
-  // Esperar a que el DOM se renderice
-  setTimeout(() => {
-    const container = document.getElementById('eepMapContainer');
-    if (!container) return;
-    
-    // Limpiar contenedor
-    container.innerHTML = '';
-    
-    // Crear mini-mapa
-    const miniMap = L.map(container, {
-      zoomControl: true,
-      attributionControl: true
-    }).setView([4.63, -74.15], 12);
-    
-    L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {
-      attribution: '© CartoDB',
-      maxZoom: 19
-    }).addTo(miniMap);
-    
-    // Dibujar red EEP en el mini-mapa
-    if (eepNodos.length > 0) {
-      const conexiones = [
-        {from: 'h1', to: 'rio', tipo: 'directa'},
-        {from: 'h1', to: 'ce', tipo: 'directa'},
-        {from: 'h1', to: 'qb', tipo: 'indirecta'},
-        {from: 'h1', to: 'ap', tipo: 'indirecta'},
-        {from: 'rio', to: 'corr', tipo: 'directa'},
-        {from: 'rio', to: 'ec', tipo: 'indirecta'},
-        {from: 'ce', to: 'cp', tipo: 'directa'},
-        {from: 'ce', to: 'rf', tipo: 'directa'},
-        {from: 'qb', to: 'ru', tipo: 'indirecta'},
-        {from: 'qb', to: 'pb', tipo: 'indirecta'},
-        {from: 'ap', to: 'rf', tipo: 'directa'},
-        {from: 'cm', to: 'cv', tipo: 'indirecta'}
-      ];
-      
-      conexiones.forEach(conn => {
-        const nodoFrom = eepNodos.find(n => n.properties.id === conn.from);
-        const nodoTo = eepNodos.find(n => n.properties.id === conn.to);
-        
-        if (nodoFrom && nodoTo) {
-          const coords = nodoFrom.geometry.coordinates;
-          const coordsTo = nodoTo.geometry.coordinates;
-          
-          const dashArray = conn.tipo === 'indirecta' ? '5, 3' : '0';
-          const lineColor = conn.tipo === 'indirecta' ? '#ff9552' : '#2fd4c8';
-          
-          L.polyline([
-            [coords[1], coords[0]],
-            [coordsTo[1], coordsTo[0]]
-          ], {
-            color: lineColor,
-            weight: 2,
-            opacity: 0.7,
-            dashArray: dashArray
-          }).addTo(miniMap);
-        }
-      });
-      
-      eepNodos.forEach(nodo => {
-        const coords = nodo.geometry.coordinates;
-        const props = nodo.properties;
-        
-        let radius = 15;
-        if (props.tipo === 'nodo_secundario') radius = 10;
-        if (props.tipo === 'nodo_terciario') radius = 7;
-        
-        L.circleMarker([coords[1], coords[0]], {
-          radius: radius,
-          fillColor: '#2fd4c8',
-          color: '#0a0e17',
-          weight: 2,
-          opacity: 0.9,
-          fillOpacity: 0.8
-        })
-        .bindPopup(`<strong>${props.nombre}</strong>`)
-        .addTo(miniMap);
-        
-        const labelDiv = L.divIcon({
-          html: `<div style="font-size: 7px; color: #fff; text-align: center; font-weight: 600; text-shadow: 0 0 3px rgba(0,0,0,0.8); width: 50px;">${props.nombre}</div>`,
-          className: 'eep-label',
-          iconSize: [50, 16],
-          iconAnchor: [25, 8]
-        });
-        
-        L.marker([coords[1], coords[0]], { icon: labelDiv, interactive: false }).addTo(miniMap);
-      });
-    }
-    
-    // Ajustar tamaño del mapa
-    miniMap.invalidateSize();
-  }, 100);
-}
-
-function closeEepModal() {
-  const modal = document.getElementById('eepModal');
-  if (modal) {
-    modal.style.display = 'none';
+  function withOpacity(hex, opacity) {
+    const raw = hex.replace("#", "");
+    const number = parseInt(raw.length === 3 ? raw.split("").map(x => x + x).join("") : raw, 16);
+    return `rgba(${(number >> 16) & 255}, ${(number >> 8) & 255}, ${number & 255}, ${opacity})`;
   }
-}
 
-document.querySelectorAll('.tab').forEach(btn => {
-  btn.addEventListener('click', function(e) {
-    document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
-    this.classList.add('active');
-    
-    const scale = this.dataset.scale;
-    
-    Object.values(barrioLabels).forEach(marker => {
-      try { map.removeLayer(marker); } catch(e) {}
-    });
-    Object.values(humedalLayers).forEach(layer => {
-      try { map.removeLayer(layer); } catch(e) {}
-    });
-    Object.values(humedalMarkers).forEach(marker => {
-      try { map.removeLayer(marker); } catch(e) {}
-    });
-    networkLines.forEach(line => {
-      try { map.removeLayer(line); } catch(e) {}
-    });
-    Object.values(eepLayers).forEach(layer => {
-      try { map.removeLayer(layer); } catch(e) {}
-    });
-    networkLines = [];
-    eepLayers = {};
-    
-    if (scale === 'macro') {
-      currentMode = 'macro';
-      map.setView([4.60, -74.08], 10);
-      Object.values(upzLabels).forEach(marker => marker.addTo(map));
-    } else if (scale === 'meso') {
-      currentMode = 'meso';
-      map.setView([4.60, -74.08], 12);
-      Object.values(barrioLabels).forEach(marker => marker.addTo(map));
-      Object.values(upzLabels).forEach(marker => {
-        try { map.removeLayer(marker); } catch(e) {}
+  function boundsOf(collection) {
+    let minLng = Infinity, maxLng = -Infinity, minLat = Infinity, maxLat = -Infinity;
+    collection.features.forEach(feature => getPaths(feature.geometry).forEach(path => path.points.forEach(([lng, lat]) => {
+      minLng = Math.min(minLng, lng); maxLng = Math.max(maxLng, lng);
+      minLat = Math.min(minLat, lat); maxLat = Math.max(maxLat, lat);
+    })));
+    return { minLng, maxLng, minLat, maxLat };
+  }
+
+  function draw() {
+    const rect = canvas.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.round(rect.width * dpr); canvas.height = Math.round(rect.height * dpr);
+    context.setTransform(dpr, 0, 0, dpr, 0, 0);
+    context.fillStyle = "#071119"; context.fillRect(0, 0, rect.width, rect.height);
+    context.lineWidth = 1; context.strokeStyle = "rgba(124,171,182,.12)";
+    for (let x = -56; x <= rect.width + 56; x += 56) { context.beginPath(); context.moveTo(x, 0); context.lineTo(x, rect.height); context.stroke(); }
+    for (let y = -56; y <= rect.height + 56; y += 56) { context.beginPath(); context.moveTo(0, y); context.lineTo(rect.width, y); context.stroke(); }
+    if (!activeData) return;
+
+    const layer = layers[activeId], bounds = boundsOf(activeData);
+    if (!Number.isFinite(bounds.minLng)) return;
+    const spanLng = Math.max(bounds.maxLng - bounds.minLng, .00001), spanLat = Math.max(bounds.maxLat - bounds.minLat, .00001);
+    const padding = Math.min(100, Math.max(46, rect.width * .08));
+    const baseScale = Math.min((rect.width - padding * 2) / spanLng, (rect.height - padding * 2) / spanLat);
+    const scale = baseScale * view.zoom, centerLng = (bounds.minLng + bounds.maxLng) / 2, centerLat = (bounds.minLat + bounds.maxLat) / 2;
+    const point = ([lng, lat]) => [rect.width / 2 + (lng - centerLng) * scale + view.panX, rect.height / 2 - (lat - centerLat) * scale + view.panY];
+    context.save(); context.shadowColor = withOpacity(layer.color, activeId === "macro" ? .42 : .28); context.shadowBlur = activeId === "macro" ? 5 : 10; context.lineJoin = "round"; context.lineCap = "round";
+    activeData.features.forEach(feature => {
+      const polygon = feature.geometry.type.includes("Polygon");
+      getPaths(feature.geometry).forEach(path => {
+        if (path.points.length < 2) return;
+        context.beginPath(); path.points.forEach((p, index) => { const [x, y] = point(p); index ? context.lineTo(x, y) : context.moveTo(x, y); }); if (path.closed) context.closePath();
+        context.strokeStyle = layer.color; context.globalAlpha = polygon ? .94 : .84; context.lineWidth = polygon ? 1.45 : .7; context.stroke();
+        if (polygon) { context.globalAlpha = .17; context.fillStyle = layer.soft; context.fill(); }
       });
-    } else if (scale === 'micro') {
-      currentMode = 'micro';
-      
-      humedales.forEach(h => {
-        const circle = L.circle([h.lat, h.lng], {
-          radius: 1500,
-          color: '#4ade80',
-          weight: 2,
-          opacity: 0.8,
-          fillColor: '#4ade80',
-          fillOpacity: 0.3
-        })
-        .on('click', () => selectHumedal(h))
-        .addTo(map);
-        
-        humedalLayers[h.id] = circle;
-        
-        const marker = L.circleMarker([h.lat, h.lng], {
-          radius: 8,
-          fillColor: '#4ade80',
-          color: '#2d8a5f',
-          weight: 2,
-          opacity: 0.8,
-          fillOpacity: 0.7
-        })
-        .on('click', () => selectHumedal(h))
-        .addTo(map);
-        
-        humedalMarkers[h.id] = marker;
-      });
-      
-      const group = new L.featureGroup(Object.values(humedalLayers));
-      map.fitBounds(group.getBounds().pad(0.2));
-    }
-    
-    renderItemList();
-  });
-});
+    });
+    context.restore();
+    context.fillStyle = withOpacity(layer.color, .72); context.font = '600 9px "IBM Plex Sans", sans-serif';
+    context.fillText(`DWG / ${layer.name.toUpperCase()} / ${activeData.features.length} ELEMENTOS`, 18, rect.height - 19);
+  }
+
+  function resetView() { view.zoom = 1; view.panX = 0; view.panY = 0; draw(); }
+  function updateInfo(layerId) {
+    const layer = layers[layerId]; document.documentElement.style.setProperty("--active", layer.color); document.documentElement.style.setProperty("--active-soft", layer.soft);
+    dom.layerName.textContent = layer.name; dom.geometry.textContent = `${layer.count} ${layer.entity}`;
+    dom.cardScale.textContent = `LECTURA ${layerId.toUpperCase()}`; dom.cardTitle.textContent = layer.name;
+    dom.cardCount.innerHTML = `${layer.count} <small>${layer.entity}</small>`; dom.cardCopy.textContent = layer.text;
+    dom.cardImage.style.backgroundImage = `linear-gradient(180deg, ${withOpacity(layer.color,.1)}, rgba(2,7,10,.62)), url('${layer.image}')`;
+    canvas.setAttribute("aria-label", `Plano DWG: capa ${layer.name}`);
+    buttons.forEach(button => { const active = button.dataset.scale === layerId; button.classList.toggle("is-active", active); button.setAttribute("aria-selected", String(active)); });
+  }
+
+  async function loadLayer(layerId) {
+    activeId = layerId; updateInfo(layerId); resetView(); activeData = null; dom.cardError.hidden = true;
+    dom.status.classList.add("is-loading"); dom.status.lastChild.textContent = "Cargando capa"; draw();
+    try {
+      const layer = layers[layerId];
+      if (!cache.has(layer.source)) {
+        const response = await fetch(layer.source); if (!response.ok) throw new Error("GeoJSON no disponible"); cache.set(layer.source, await response.json());
+      }
+      activeData = cache.get(layer.source); draw(); dom.status.lastChild.textContent = "Visible";
+    } catch (error) {
+      console.error(error); dom.status.lastChild.textContent = "Error de capa"; dom.cardError.hidden = false;
+    } finally { dom.status.classList.remove("is-loading"); }
+  }
+
+  buttons.forEach(button => button.addEventListener("click", () => loadLayer(button.dataset.scale)));
+  document.getElementById("zoom-in").addEventListener("click", () => { view.zoom = Math.min(view.zoom * 1.24, 7); draw(); });
+  document.getElementById("zoom-out").addEventListener("click", () => { view.zoom = Math.max(view.zoom / 1.24, .72); draw(); });
+  document.getElementById("map-reset").addEventListener("click", resetView);
+  canvas.addEventListener("pointerdown", event => { view.dragging = true; view.pointerX = event.clientX; view.pointerY = event.clientY; canvas.setPointerCapture(event.pointerId); });
+  canvas.addEventListener("pointermove", event => { if (!view.dragging) return; view.panX += event.clientX - view.pointerX; view.panY += event.clientY - view.pointerY; view.pointerX = event.clientX; view.pointerY = event.clientY; draw(); });
+  canvas.addEventListener("pointerup", event => { view.dragging = false; canvas.releasePointerCapture(event.pointerId); });
+  canvas.addEventListener("pointerleave", () => { view.dragging = false; });
+  canvas.addEventListener("wheel", event => { event.preventDefault(); view.zoom = Math.min(7, Math.max(.72, view.zoom * (event.deltaY > 0 ? .9 : 1.11))); draw(); }, { passive: false });
+  new ResizeObserver(draw).observe(canvas);
+  loadLayer("macro");
+})();
