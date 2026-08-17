@@ -562,3 +562,35 @@ body.module02-reference-page [style*="#60a5fa"] {
   border-color: var(--m02-teal) !important;
   background-color: rgba(70,214,208,.14) !important;
 }
+
+/* Alcance correcto de fondos: página Carbon con patrón; negro profundo solo en redes. */
+body.module02-reference-page,
+body.module02-reference-page > .app,
+body.module02-reference-page > .layout,
+body.module02-reference-page .app-shell,
+body.module02-reference-page > .app > .main,
+body.module02-reference-page > .layout > .main {
+  background: var(--m02-carbon) !important;
+}
+body.module02-reference-page > .app > .main,
+body.module02-reference-page > .layout > .main,
+body.module02-reference-page .app-shell {
+  background-image: none !important;
+}
+body.module02-reference-page .network-canvas,
+body.module02-reference-page .network-viz-wrap,
+body.module02-reference-page #networkViz,
+body.module02-reference-page #gNetwork,
+body.module02-reference-page .redes-network-svg,
+body.module02-reference-page .network-canvas svg {
+  background-color: #05070a !important;
+}
+
+/* El patrón pertenece al fondo de página; los wrappers no deben taparlo con un negro sólido. */
+body.module02-reference-page > .app,
+body.module02-reference-page > .layout,
+body.module02-reference-page .app-shell,
+body.module02-reference-page > .app > .main,
+body.module02-reference-page > .layout > .main {
+  background: transparent !important;
+}
