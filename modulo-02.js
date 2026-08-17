@@ -71,6 +71,7 @@ const FUENTE_STYLE = {
   fuente_secundaria:    { color: "#f5c945", label: "Fuente secundaria (ABC POT / prensa oficial)",    icon: "fa-newspaper" },
   inferencia:           { color: "#ef9552", label: "Inferencia razonada del equipo",                 icon: "fa-lightbulb" },
   inventario_pendiente: { color: "#8b93a8", label: "Inventario previo (Nivel B/C — cita sin validar)", icon: "fa-hourglass-half" },
+  por_verificar:        { color: "#e0a94c", label: "Aportado por la usuaria — pendiente de comprobar contra el PDF", icon: "fa-magnifying-glass" },
 };
 
 /* ==========================================================
@@ -272,6 +273,129 @@ const RAW_EDGES = [
     articulo:"Art. 50", pagina:"79-80", cita:null,
     analisis:"Su nombre oficial completo es 'Reserva Forestal Regional Productora del Norte de Bogotá D.C., Thomas van der Hammen' — administrativamente es un caso particular de la categoría Reservas forestales." },
 
+
+  // ==== Relaciones ampliadas (39), fuente: "relaciones_POT_ampliadas_usuario.xlsx" aportado por la usuaria ====
+  // Igual que las 45 originales, estas 39 son también 100% intra-estructura -- no agregan nuevos puentes entre EEP/EFC/ESECI/EIP, pero sí enriquecen y densifican cada estructura por dentro.
+  // fuente:"por_verificar" = la propia hoja "Revisión documental" del Excel de la usuaria marca la relación como
+  // pendiente de comprobar contra el PDF oficial del POT — se muestra en la red con badge visual distinto (ámbar).
+  { s:"humedales", t:"rios", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"22",
+    cita:"El POT presenta el sistema hídrico y señala que los humedales hacen parte de las estructuras que aseguran el abastecimiento hídrico y los servicios ecosistémicos.",
+    analisis:"Fuente: Tabla aportada por la usuaria" },
+  { s:"humedales", t:"cerros_orientales", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"59",
+    cita:"El POT identifica un conector “Cerros Orientales-río Bogotá” y señala que los conectores incluyen los humedales y parques de montaña.",
+    analisis:"Fuente: Tabla aportada por la usuaria" },
+  { s:"corredores_montanosos", t:"rios", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"22",
+    cita:"El POT incluye conjuntamente “los complejos de páramos, los corredores montañosos, las reservas forestales, los ríos, los humedales” dentro de las estrategias de conectividad y complementariedad de los ecosistemas.",
+    analisis:"Fuente: Tabla aportada por la usuaria" },
+  { s:"complejos_de_paramos", t:"rios", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"22",
+    cita:"El POT los integra al sistema que “aseguran el abastecimiento hídrico y la provisión de bienes y servicios ecosistémicos”. No establece sentido de flecha entre ambos.",
+    analisis:"Fuente: Tabla aportada por la usuaria" },
+  { s:"reservas_forestales", t:"rios", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"22",
+    cita:"El POT incluye reservas forestales y ríos dentro de la estructura hídrica y ecosistémica, pero no establece que uno actúe sobre el otro.",
+    analisis:"Fuente: Tabla aportada por la usuaria" },
+  { s:"areas_de_resiliencia_climatica", t:"coberturas_vegetales", cat:"e1", tipo:"directa", relacion:"Resiliencia", fuente:"cita_literal", articulo:null, pagina:"59",
+    cita:"El POT señala que las áreas de resiliencia “deben contar con intervenciones en coberturas” para optimizar las condiciones ambientales y de resiliencia.",
+    analisis:"Fuente: Tabla aportada por la usuaria" },
+  { s:"coberturas_vegetales", t:"areas_protegidas", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"59",
+    cita:"El POT señala que se priorizan “coberturas vegetales que conecten entre sí las áreas protegidas”.",
+    analisis:"Fuente: Tabla aportada por la usuaria" },
+  { s:"parques_ecologicos_de_montana", t:"coberturas_vegetales", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"54",
+    cita:"El POT muestra el caso del Parque Distrital Ecológico de Montaña Soratama, donde “se priorizan las coberturas vegetales que conectan las áreas protegidas entre sí.”",
+    analisis:"Fuente: Tabla aportada por la usuaria" },
+  { s:"parques_de_borde", t:"coberturas_vegetales", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"54",
+    cita:"El POT incluye los parques de borde dentro de la estrategia de ampliación de áreas verdes y protegidas, junto con las intervenciones de coberturas vegetales.",
+    analisis:"Fuente: Tabla aportada por la usuaria" },
+  { s:"cerros_orientales", t:"rios", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"59",
+    cita:"El POT sí identifica el conector “Cerros Orientales-río Bogotá”, pero eso demuestra conectividad, no que exista una relación unidireccional.",
+    analisis:"Fuente: Tabla aportada por la usuaria" },
+  { s:"servicios_publicos", t:"vivienda", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"143",
+    cita:"El POT plantea el hábitat considerando conjuntamente vivienda, infraestructuras, soportes urbanos y servicios; además, contempla vivienda con servicios.",
+    analisis:"Fuente: Tabla aportada por la usuaria" },
+  { s:"transporte_publico", t:"vivienda", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"156",
+    cita:"El POT habla de tener “vivienda con ciudad”, con acceso al transporte público y servicios sociales e infraestructura.",
+    analisis:"Fuente: Tabla aportada por la usuaria" },
+  { s:"equipamientos", t:"servicios_de_cuidado", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"127",
+    cita:"El POT dice que los equipamientos y las Manzanas del Cuidado son nodos de articulación y que esto cualifica los servicios sociales del Distrito.",
+    analisis:"Fuente: Tabla aportada por la usuaria" },
+  { s:"manzanas_del_cuidado", t:"servicios_sociales", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"123–127",
+    cita:"Las Manzanas agrupan infraestructuras para prestar servicios de manera simultánea y articulada; además, el POT muestra que prestan servicios sociales de cuidado, culturales y recreativos.",
+    analisis:"Fuente: Tabla aportada por la usuaria" },
+  { s:"manzanas_del_cuidado", t:"equipamientos", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"123",
+    cita:"Cada Manzana tiene un equipamiento ancla que se articula con otras infraestructuras.",
+    analisis:"Fuente: Tabla aportada por la usuaria" },
+  { s:"manzanas_del_cuidado", t:"parques", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"123",
+    cita:"El POT menciona explícitamente el parque como una de las infraestructuras articuladas alrededor del equipamiento ancla.",
+    analisis:"Fuente: Tabla aportada por la usuaria" },
+  { s:"corredores_verdes", t:"ciclorutas", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"239",
+    cita:"Los corredores verdes se plantean con ciclorrutas seguras, además de transporte público eléctrico y espacios de encuentro.",
+    analisis:"Fuente: Tabla aportada por la usuaria" },
+  { s:"transporte_publico", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"31",
+    cita:"El POT plantea un sistema multimodal donde el transporte público se alimenta y complementa con corredores verdes, cables y ciclorrutas.",
+    analisis:"Fuente: Tabla aportada por la usuaria" },
+  { s:"vivienda", t:"equipamientos", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"156",
+    cita:"El POT plantea la vivienda integrada con su entorno y cercana a lugares de trabajo, estudio, recreación y a infraestructura de movilidad; por eso podemos analizar la necesidad de articulación vivienda–equipamientos.",
+    analisis:"Fuente: Tabla aportada por la usuaria" },
+  { s:"vivienda", t:"servicios_sociales", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"156",
+    cita:"El POT plantea “vivienda con ciudad”, teniendo cerca servicios sociales e infraestructura.",
+    analisis:"Fuente: Tabla aportada por la usuaria" },
+  { s:"red_vial", t:"vivienda", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"110",
+    cita:"El POT incluye la malla vial local e intermedia entre los soportes que acompañan la escala de proximidad y el cuidado.",
+    analisis:"Fuente: Tabla aportada por la usuaria" },
+  { s:"ciclorutas", t:"vivienda", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"215",
+    cita:"El POT plantea una ciudad conectada mediante transporte multimodal, corredores verdes y ciclorrutas; esto puede analizarse respecto a la integración de las áreas residenciales.",
+    analisis:"Fuente: Tabla aportada por la usuaria" },
+  { s:"centros_financieros", t:"servicios_empresariales", cat:"e3", tipo:"directa", relacion:"Soporte", fuente:"por_verificar", articulo:null, pagina:"92",
+    cita:"Los centros financieros y de servicios empresariales: Centro Internacional, Chapinero, Teleport y otros.",
+    analisis:"Fuente: Fuente indicada: SDP; comprobar contra PDF" },
+  { s:"distrito_centro_tecnologico_e_innovacion", t:"sistema_de_educacion", cat:"e3", tipo:"directa", relacion:"Soporte", fuente:"por_verificar", articulo:null, pagina:"158",
+    cita:"El corazón del campus comprende un área de 247 hectáreas en el centro de la ciudad articulada con las AE Zibo y Reencuentro. Conecta la principal aglomeración de conocimiento del país con las zonas empresariales del occidente y norte de la ciudad.",
+    analisis:"Fuente: Fuente indicada: Bogotá.gov.co; comprobar contra PDF" },
+  { s:"distrito_centro_tecnologico_e_innovacion", t:"zonas_industriales", cat:"e3", tipo:"directa", relacion:"Soporte", fuente:"por_verificar", articulo:null, pagina:"158",
+    cita:"El corazón del campus comprende un área de 247 hectáreas en el centro de la ciudad articulada con las AE Zibo y Reencuentro.",
+    analisis:"Fuente: Fuente indicada: Bogotá.gov.co; comprobar contra PDF" },
+  { s:"distrito_centro_tecnologico_e_innovacion", t:"servicios_empresariales", cat:"e3", tipo:"directa", relacion:"Soporte", fuente:"por_verificar", articulo:null, pagina:"158",
+    cita:"Conecta la principal aglomeración de conocimiento del país con las zonas empresariales del occidente y norte de la ciudad.",
+    analisis:"Fuente: Fuente indicada: Bogotá.gov.co; comprobar contra PDF" },
+  { s:"zonas_de_interes_turistico", t:"plazas_de_mercado", cat:"e3", tipo:"directa", relacion:"Soporte", fuente:"por_verificar", articulo:null, pagina:"92",
+    cita:"Cluster Hotelero y Zonas de Interés Turístico, incluyendo los Corredores inteligentes de turismo (COINT) y los elementos de las Estructuras Ecológica Principal e Integradora de Patrimonios, Cables, Plazas de Mercado y otras infraestructuras con especial vocación turística.",
+    analisis:"Fuente: Fuente indicada: Scribd; comprobar contra PDF" },
+  { s:"centros_de_abastecimiento", t:"produccion_artesanal", cat:"e3", tipo:"indirecta", relacion:"Soporte", fuente:"por_verificar", articulo:null, pagina:"92",
+    cita:"Economías de aglomeración con énfasis de especialización – Corazones productivos de escala urbana- compuestas por: [...] Centros de Abasto Mayorista.",
+    analisis:"Fuente: Texto aportado; comprobar concepto exacto del segundo nodo" },
+  { s:"sistema_de_educacion", t:"servicios_empresariales", cat:"e3", tipo:"directa", relacion:"Soporte", fuente:"por_verificar", articulo:null, pagina:"30",
+    cita:"Los programas de becas de educación universitaria como Jóvenes a la U y de formación para el trabajo como Todos a la U se han enfocado en esas mismas habilidades y tipos de carreras para encuadrar con las necesidades y ofertas de trabajo y emprendimiento presentes y futuras de la ciudad.",
+    analisis:"Fuente: Texto aportado; comprobar contra PDF" },
+  { s:"sistema_de_educacion", t:"zonas_industriales", cat:"e3", tipo:"directa", relacion:"Soporte", fuente:"por_verificar", articulo:null, pagina:"30",
+    cita:"La inversión y ejecución sostenida del pot, el pmss y la inversión en esa educación con calidad y pertinencia, desde la básica hasta la superior, lograrán en conjunto, en la próxima década, el mayor crecimiento en productividad, empleabilidad de calidad y competitividad que haya tenido Bogotá.",
+    analisis:"Fuente: Texto aportado; comprobar contra PDF" },
+  { s:"zonas_industriales", t:"produccion_artesanal", cat:"e3", tipo:"directa", relacion:"Soporte", fuente:"por_verificar", articulo:null, pagina:"30",
+    cita:"Por eso el pot promueve la permanencia de las industrias tradicionales en el tejido urbano y promueve nuevas implantaciones económicas generadoras de empleo formal, articuladas a los entornos urbanos donde se aglomeran saberes y talentos, y en particular aquellos que dan lugar a aglomeraciones especializadas de producción tradicional e industrias creativas, culturales, verdes, digitales y tecnológicas.",
+    analisis:"Fuente: Texto aportado; comprobar contra PDF" },
+  { s:"sistema_de_educacion", t:"produccion_artesanal", cat:"e3", tipo:"indirecta", relacion:"Soporte", fuente:"por_verificar", articulo:null, pagina:"30",
+    cita:"La inversión en educación pública de calidad ha asegurado que desde los colegios se mejoren las habilidades en ciencias, matemáticas, bilingüismo, ingenierías y tecnologías, y los programas de becas de educación universitaria como Jóvenes a la U y de formación para el trabajo como Todos a la U se han enfocado en esas mismas habilidades y tipos de carreras para encuadrar con las necesidades y ofertas de trabajo y emprendimiento presentes y futuras de la ciudad.",
+    analisis:"Fuente: Texto aportado; comprobar contra PDF" },
+  { s:"zonas_industriales", t:"servicios_empresariales", cat:"e3", tipo:"directa", relacion:"Soporte", fuente:"por_verificar", articulo:null, pagina:"30",
+    cita:"El pot protege a las zonas productivas históricas de la expulsión [...] y potencia la oferta de suelo para la localización de nuevas empresas, en especial en la categoría de suelo para grandes servicios metropolitanos.",
+    analisis:"Fuente: Texto aportado; comprobar contra PDF" },
+  { s:"patrimonio_material", t:"patrimonio_inmaterial", cat:"e4", tipo:"directa", relacion:"Soporte", fuente:"por_verificar", articulo:null, pagina:"196",
+    cita:"La EIP inscribe y precisa un sistema de relaciones del patrimonio cultural material, inmaterial y natural en el territorio.",
+    analisis:"Fuente: Texto aportado; comprobar contra PDF" },
+  { s:"patrimonio_material", t:"patrimonio_natural", cat:"e4", tipo:"directa", relacion:"Soporte", fuente:"por_verificar", articulo:null, pagina:"196",
+    cita:"La EIP inscribe y precisa un sistema de relaciones del patrimonio cultural material, inmaterial y natural en el territorio.",
+    analisis:"Fuente: Texto aportado; comprobar contra PDF" },
+  { s:"patrimonio_inmaterial", t:"patrimonio_natural", cat:"e4", tipo:"directa", relacion:"Soporte", fuente:"por_verificar", articulo:null, pagina:"196",
+    cita:"La EIP inscribe y precisa un sistema de relaciones del patrimonio cultural material, inmaterial y natural en el territorio.",
+    analisis:"Fuente: Texto aportado; comprobar contra PDF" },
+  { s:"patrimonio_arqueologico", t:"patrimonio_natural", cat:"e4", tipo:"directa", relacion:"Resiliencia", fuente:"por_verificar", articulo:null, pagina:"198",
+    cita:"Hoy pueden ser referentes de procesos adaptativos y que revelan prácticas de integralidad de la cultura con la naturaleza.",
+    analisis:"Fuente: Texto aportado; comprobar contra PDF" },
+  { s:"patrimonio_arqueologico", t:"patrimonio_material", cat:"e4", tipo:"directa", relacion:"Soporte", fuente:"por_verificar", articulo:null, pagina:"198",
+    cita:"Este patrimonio cultural se convirtió en un referente de movilización.",
+    analisis:"Fuente: Texto aportado; comprobar contra PDF" },
+  { s:"sistema_de_sitios_sagrados", t:"patrimonio_inmaterial", cat:"e4", tipo:"directa", relacion:"Soporte", fuente:"por_verificar", articulo:null, pagina:"186",
+    cita:"Son el testimonio de complejas estrategias de cómo interpretamos y valoramos las huellas del territorio que hoy habitamos.",
+    analisis:"Fuente: Texto aportado; comprobar contra PDF" },
+
   // ==== VACÍOS DE ARTICULACIÓN: hallazgo central — ausencias documentadas entre estructuras.
   //      La Excel corrobora este hallazgo de forma independiente (hoja "Resumen": columna
   //      "Relaciones verificadas intersistema" = 0 en las 4 filas). Estas NO son relaciones del
@@ -322,10 +446,10 @@ function computeDegrees() {
 // completo sin solaparse con los demás.
 const CANVAS = { w: 3400, h: 3000 };
 const HUB_CENTERS = {
-  e1: { x: 1150, y: 760 },   // Ecológica Principal — noroccidente
-  e2: { x: 2350, y: 820 },   // Funcional y del Cuidado — nororiente
-  e3: { x: 1050, y: 2260 },  // Socioeconómica Creativa — suroccidente
-  e4: { x: 2400, y: 2200 },  // Integradora de Patrimonio — suroriente
+  e1: { x: 1250, y: 820 },   // Ecológica Principal — noroccidente
+  e2: { x: 2250, y: 870 },   // Funcional y del Cuidado — nororiente
+  e3: { x: 1150, y: 2180 },  // Socioeconómica Creativa — suroccidente
+  e4: { x: 2300, y: 2130 },  // Integradora de Patrimonio — suroriente
 };
 
 function layoutNetwork() {
@@ -360,7 +484,7 @@ function layoutNetwork() {
     const ringMid  = rest.filter(n => n._deg === 1 || n._deg === 2);
     const ringLow  = rest.filter(n => n._deg === 0);
 
-    const GAP = 40;
+    const GAP = 60;
     function placeRing(ringNodes, minRadius, angleSpan, angleStart) {
       if (!ringNodes.length) return minRadius;
       const sumDiam = ringNodes.reduce((s, n) => s + 2 * n.collR + GAP, 0);
@@ -393,8 +517,9 @@ function layoutNetwork() {
   // ---- 2. Resolución de colisiones por radio real (red de seguridad) ----
   // El layout radial ya evita casi toda superposición por diseño; esta pasada
   // solo destraba los pocos casos límite entre anillos vecinos o estructuras
-  // cercanas, sin mover la red entera.
-  const PAD = 6;
+  // cercanas, sin mover la red entera. PAD generoso: garantiza aire visible
+  // entre cualquier par de bolas, para que las líneas siempre se vean bien.
+  const PAD = 34;
   for (let pass = 0; pass < 120; pass++) {
     let anyOverlap = false;
     for (let i = 0; i < nodes.length; i++) {
@@ -889,7 +1014,26 @@ function renderNetwork() {
   const svg = document.getElementById("networkViz");
   if (!svg) return;
   svg.innerHTML = "";
-  buildDefs(svg); buildAmbientMesh(svg); drawEdges(svg); drawNodes(svg); setupZoomPan(svg);
+  buildDefs(svg); buildMapBackgroundImage(svg); buildAmbientMesh(svg); drawEdges(svg); drawNodes(svg); setupZoomPan(svg);
+}
+
+// Capa de fondo con el mapa real de Bogotá (aportado por la usuaria), oculta por
+// defecto (opacity 0) y sin bloquear clics. Se activa/desactiva desde
+// toggleMapBackground() únicamente mientras el nodo "Humedales" está seleccionado,
+// directamente sobre el mismo lienzo de la red — sin abrir ningún panel aparte.
+function buildMapBackgroundImage(svg) {
+  const img = document.createElementNS(SVG_NS, "image");
+  img.setAttribute("id", "mapBackgroundImg");
+  img.setAttribute("href", "assets/mapa_bogota_usuaria.webp");
+  img.setAttribute("x", 0);
+  img.setAttribute("y", 0);
+  img.setAttribute("width", CANVAS.w);
+  img.setAttribute("height", CANVAS.h);
+  img.setAttribute("preserveAspectRatio", "xMidYMid slice");
+  img.setAttribute("opacity", "0");
+  img.setAttribute("pointer-events", "none");
+  img.style.transition = "opacity 0.4s ease";
+  svg.appendChild(img);
 }
 
 /* -------- paneles de información -------- */
@@ -953,14 +1097,30 @@ function showNodeInfo(id) {
     : (bestEdge ? bestEdge.analisis || "" : "");
 
   const mapaWrap = document.getElementById("nodeInfoMapaWrap");
-  mapaWrap.style.display = "none";
+  if (id === "humedales") {
+    document.getElementById("nodeInfoMapa").href = "https://mapas.bogota.gov.co/";
+    mapaWrap.style.display = "block";
+  } else {
+    mapaWrap.style.display = "none";
+  }
+
+  toggleMapBackground(id === "humedales");
 
   document.getElementById("nodeInfoPanel").classList.add("visible");
   document.getElementById("edgeInfoPanel")?.classList.remove("visible");
 }
+
+// Muestra/oculta, directamente sobre la red (mismo lienzo, sin abrir nada aparte),
+// el mapa real de Bogotá aportado por la usuaria, en baja opacidad, como fondo
+// detrás de los nodos y líneas. Se activa solo mientras "Humedales" está seleccionado.
+function toggleMapBackground(show) {
+  const img = document.getElementById("mapBackgroundImg");
+  if (img) img.setAttribute("opacity", show ? "0.22" : "0");
+}
 function hideNodeInfo() {
   document.getElementById("nodeInfoPanel").classList.remove("visible");
   document.querySelectorAll(".ods-node").forEach(el => el.classList.remove("node-selected"));
+  toggleMapBackground(false);
 }
 
 /* -------- visibilidad / leyenda -------- */
