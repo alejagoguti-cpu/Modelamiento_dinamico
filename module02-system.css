@@ -149,3 +149,37 @@ td { border-color: var(--m02-border-soft) !important; color: var(--m02-dim) !imp
   .welcome > h2, .hero-copy > h1, .sidebar-left > h1 { font-size: 38px !important; }
   .welcome-sub, .welcome > p, .hero-copy > p, .sidebar-left > .desc { font-size: 13px !important; }
 }
+
+/* Auditoría responsive móvil: evitar recortes y desbordamientos horizontales */
+@media (max-width: 768px) {
+  html, body { width: 100% !important; min-width: 0 !important; height: auto !important; min-height: 100% !important; overflow-x: hidden !important; overflow-y: auto !important; }
+  .app, .layout, .main, .dashboard { width: 100% !important; max-width: 100vw !important; min-width: 0 !important; height: auto !important; min-height: 100vh !important; overflow: visible !important; }
+  .sidebar, .portal-sidebar, .app > .sidebar { display: none !important; }
+  .main { margin: 0 !important; padding: 16px 14px 32px !important; }
+  .topbar { width: 100% !important; min-width: 0 !important; }
+  .network-section, .network-card, .network-panel, .network-body, .network-viz-wrap, .network-canvas, .workspace, .net-layout, .panel, .card { min-width: 0 !important; max-width: 100% !important; }
+  .network-body, .network-viz-wrap, .workspace, .net-layout { grid-template-columns: 1fr !important; flex-direction: column !important; }
+  .network-sidebar, .network-aside, .conventions, .sidebar-right, .sidebar-left, .pn-sidebar { width: 100% !important; min-width: 0 !important; max-width: 100% !important; position: static !important; }
+  .network-sidebar, .network-aside, .conventions, .pn-sidebar { order: 2 !important; }
+  .network-canvas, .network-viz-wrap, .network-card { order: 1 !important; }
+  #networkViz, #pnViz, svg, canvas { max-width: 100% !important; }
+  .table-wrap, .table-container, .data-table-wrap { max-width: 100% !important; overflow-x: auto !important; }
+  .welcome > h2, .hero-copy > h1 { max-width: 100% !important; overflow-wrap: normal !important; word-break: normal !important; }
+  .network-controls, .tabs, .legend-footer-row, .action-buttons { flex-wrap: wrap !important; max-width: 100% !important; }
+  .control-btn, .tab, .outline-btn, .btn-primary, .btn-secondary, .btn-builder { max-width: 100% !important; }
+  /* El módulo 05 usa tres columnas en escritorio; en móvil debe seguir flujo vertical. */
+  .layout { display: block !important; }
+  .layout > .topbar { height: auto !important; min-height: 40px !important; }
+  .layout > .main { display: flex !important; flex-direction: column !important; gap: 0 !important; background: var(--m02-carbon) !important; }
+  .layout .sidebar-left, .layout .map-section, .layout .sidebar-right { flex: none !important; width: 100% !important; height: auto !important; min-height: 0 !important; overflow: visible !important; }
+  .layout .sidebar-left { order: 1 !important; padding: 16px !important; }
+  .layout .map-section { order: 2 !important; height: 360px !important; min-height: 360px !important; }
+  .layout .sidebar-right { order: 3 !important; padding: 16px !important; }
+  .layout #map { width: 100% !important; height: 360px !important; min-height: 360px !important; }
+}
+@media (max-width: 430px) {
+  .main { padding-left: 10px !important; padding-right: 10px !important; }
+  .welcome > h2, .hero-copy > h1, .app > .main > .welcome h2 { font-size: 30px !important; line-height: 1.08 !important; overflow-wrap: normal !important; word-break: normal !important; }
+  .topbar-actions .icon-btn { width: 28px !important; height: 28px !important; }
+  .btn-primary, .btn-secondary, .outline-btn { width: 100% !important; justify-content: center !important; }
+}
