@@ -383,7 +383,7 @@ body {
 .humedales-overlay-image { width: 100%; height: 100%; object-fit: contain; object-position: center; display: block; image-rendering: auto; }
 .humedales-overlay-lines {
   position: absolute; inset: 0; width: 100%; height: 100%;
-  pointer-events: none; z-index: 4; overflow: visible;
+  pointer-events: none; z-index: 1; overflow: visible;
 }
 .humedales-overlay-lines .humedal-line-visible {
   stroke: #6fe6df; stroke-width: 0.15; stroke-dasharray: 0.6 0.45;
@@ -424,42 +424,68 @@ body {
    extra sobre los 3 nodos de la relación Vivienda↔Transporte Público↔
    Servicios Empresariales (Empleo) mientras el checkbox está activo. */
 .ods-node.rel-highlight-glow .node-ring { filter: drop-shadow(0 0 8px rgba(239, 149, 82, 0.9)); cursor: pointer; }
-.humedales-overlay-sidebar {
-  width: 300px; flex-shrink: 0; overflow-y: auto; border-left: 1px solid var(--border-soft);
-  background: rgba(255,255,255,0.02);
+
+/* Texto introductorio: flota PEGADO a la esquina del propio mapa (no en un
+   panel lateral aparte), y se oculta mientras hay un popup de humedal abierto. */
+.humedal-ramsar-float {
+  position: absolute; left: 14px; bottom: 14px; z-index: 6;
+  width: min(360px, 42%);
+  background: rgba(8, 11, 14, 0.92); backdrop-filter: blur(3px);
+  border: 1px solid rgba(92, 214, 209, 0.3); border-radius: 10px;
+  padding: 12px 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.45);
+  transition: opacity 0.15s ease, transform 0.15s ease;
 }
-.humedal-hint { font-size: 11.5px; color: var(--text-faint); padding: 14px 12px; line-height: 1.4; font-style: italic; }
+.humedal-ramsar-float .humedal-caso-cita { margin-bottom: 8px; }
+.humedal-ramsar-float .humedal-hint { padding: 8px 0 0; border-top: 1px solid var(--border-soft); margin-top: 4px; }
+.humedal-ramsar-float-hidden { opacity: 0; pointer-events: none; transform: translateY(6px); }
+.humedal-hint { font-size: 11.5px; color: var(--text-faint); line-height: 1.4; font-style: italic; }
 .humedal-caso-detalle { border-bottom: none; }
 .humedal-back-btn {
-  margin: 10px 12px; padding: 8px 10px; width: calc(100% - 24px);
+  margin: 10px 0 0; padding: 8px 10px; width: 100%;
   background: rgba(92, 214, 209, 0.08); border: 1px solid rgba(92, 214, 209, 0.3);
   color: var(--teal); border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer;
 }
 .humedal-back-btn:hover { background: rgba(92, 214, 209, 0.15); }
 
-/* El círculo visual (anillo + glow) YA viene dibujado en la foto original;
-   este botón es solo la zona clicable — invisible en reposo para no duplicar
-   el anillo, y solo se resalta con un aro fino al pasar el mouse o seleccionar. */
+/* POPUP flotante de humedal/conexión: aparece PEGADO al mapa, anclado al
+   punto exacto donde se hizo clic (nunca fuera del cuadro — ver
+   showHumedalPopup en JS, que calcula la posición y voltea el lado si haría
+   falta espacio). */
+.humedal-popup {
+  position: absolute; z-index: 10; width: 260px; max-width: 80%;
+  background: rgba(8, 11, 14, 0.97); backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 138, 76, 0.45); border-radius: 10px;
+  padding: 12px 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.55), 0 0 0 1px rgba(0,0,0,0.2);
+  pointer-events: auto;
+}
+.humedal-popup .humedal-caso-nombre { color: #ff8a4c; }
+.humedal-popup::before {
+  content: ""; position: absolute; top: 50%; left: -7px; margin-top: -6px;
+  border: 6px solid transparent; border-right-color: rgba(255, 138, 76, 0.45);
+}
+.humedal-popup.humedal-popup-flip::before {
+  left: auto; right: -7px; border-right-color: transparent; border-left-color: rgba(255, 138, 76, 0.45);
+}
+
+/* El círculo visual (anillo + glow) YA viene dibujado en la foto corregida;
+   este botón es SOLO la zona clicable — completamente invisible en reposo
+   para no duplicar el anillo que ya trae la imagen, y solo se resalta con un
+   aro fino al pasar el mouse o al seleccionar, como referencia de foco. */
 .humedal-hotspot {
   position: absolute; transform: translate(-50%, -50%);
   border-radius: 50%;
-  background: #0a0a0a; border: 2px solid var(--hotspot-color, #2fd4c8);
-  box-shadow: 0 0 8px -1px var(--hotspot-color, #2fd4c8), inset 0 0 6px rgba(0,0,0,0.5);
+  background: transparent; border: 2px solid transparent;
   cursor: pointer; padding: 2px; overflow: hidden;
   display: flex; align-items: center; justify-content: center;
   transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
   z-index: 2;
 }
 .humedal-hotspot-label {
-  display: block;
-  font-family: 'Inter', sans-serif; font-weight: 700; color: #ffffff;
-  text-align: center; line-height: 1.08; white-space: pre-line;
-  max-width: 100%; overflow: hidden;
-  pointer-events: none;
+  display: none;
 }
 .humedal-hotspot:hover,
 .humedal-hotspot.active {
-  transform: translate(-50%, -50%) scale(1.08);
+  transform: translate(-50%, -50%) scale(1.04);
   border-color: #ff8a4c;
   box-shadow: 0 0 0 3px rgba(255, 138, 76, 0.25), 0 0 14px rgba(255, 138, 76, 0.85);
   z-index: 3;
