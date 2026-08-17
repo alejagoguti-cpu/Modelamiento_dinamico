@@ -1023,6 +1023,18 @@
         if (i === index) {
           g.classList.add("selected");
           g.setAttribute("data-node-focus", "selected");
+          if (g.classList.contains("central-node")) {
+            const halo = g.querySelector(".node-central-halo");
+            halo?.getAnimations?.().forEach((animation) => animation.cancel());
+            halo?.animate?.(
+              [
+                { opacity: .5, transform: "scale(.9)" },
+                { opacity: 1, transform: "scale(1.1)" },
+                { opacity: 1, transform: "scale(1)" },
+              ],
+              { duration: 560, easing: "cubic-bezier(.22,.8,.25,1)", fill: "forwards" },
+            );
+          }
         } else if (linked.some((v) => v.index === i)) {
           g.classList.add("connected");
           g.setAttribute("data-node-focus", "connected");

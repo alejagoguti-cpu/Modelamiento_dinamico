@@ -4477,3 +4477,39 @@ body { position:relative !important; }
   font-weight: 800 !important;
   text-shadow: 0 0 5px currentColor;
 }
+
+/* Transiciones suaves al seleccionar nodos centrales */
+.network-node.central-node > .node-ring,
+.network-node.central-node .node-central-halo {
+  transition: stroke-width .36s ease, stroke .36s ease, opacity .36s ease, filter .36s ease, r .36s ease;
+}
+.network-edge,
+.network-edge-hit {
+  transition: stroke-width .32s ease, opacity .32s ease, filter .32s ease;
+}
+.network-node.central-node.selected > .node-ring {
+  stroke: #ffffff !important;
+  stroke-width: 5px !important;
+  filter: drop-shadow(0 0 8px #ffffff) drop-shadow(0 0 18px #46D6D0) !important;
+}
+.network-node.central-node.selected .node-central-halo {
+  opacity: 1 !important;
+  animation: central-select-pop .56s ease-out 1;
+}
+.network-node.central-node.connected .node-central-halo {
+  opacity: .98 !important;
+}
+@keyframes central-select-pop {
+  0% { opacity: .55; r: 8px; }
+  55% { opacity: 1; r: 13px; }
+  100% { opacity: 1; r: 8px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .network-node.central-node > .node-ring,
+  .network-node.central-node .node-central-halo,
+  .network-edge,
+  .network-edge-hit {
+    transition: none !important;
+    animation: none !important;
+  }
+}
