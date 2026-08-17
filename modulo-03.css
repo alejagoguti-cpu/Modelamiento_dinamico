@@ -7601,3 +7601,52 @@ Need update styles maybe `display:none` for quote-backdrop means if old openQuot
 @media (max-width: 820px) {
   .module03-structure-legend { margin-bottom: 10px; }
 }
+
+
+/* Igualación exacta con la convención visual del Módulo 02. */
+.module03-conventions .relation-filter {
+  height: auto !important;
+  min-height: 29px !important;
+  width: 100% !important;
+  padding: 0 !important;
+  gap: 10px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: #8891a5 !important;
+  font: 400 12px/1.2 Inter,sans-serif !important;
+}
+.module03-conventions .relation-filter input,
+.m03-system-check {
+  width: 14px !important;
+  height: 14px !important;
+  border-radius: 4px !important;
+  accent-color: #2fd4c8 !important;
+}
+.m03-layer-toggle {
+  min-height: 0 !important;
+  padding: 7px 0 !important;
+  gap: 10px !important;
+  font: 400 12px/1.2 Inter,sans-serif !important;
+}
+.m03-cat-name {
+  font: 400 12px/1.2 Inter,sans-serif !important;
+}
+.m03-cat-name small {
+  margin-top: 2px !important;
+  font: 400 10px/1.2 Inter,sans-serif !important;
+}
+.m03-filter-actions {
+  gap: 8px !important;
+  margin-top: 13px !important;
+  padding-top: 11px !important;
+}
+.m03-filter-action {
+  width: auto !important;
+  min-width: 0 !important;
+  height: 26px !important;
+  min-height: 26px !important;
+  padding: 6px 10px !important;
+  border-radius: 6px !important;
+  font: 600 11px/1 Arial,sans-serif !important;
+}
