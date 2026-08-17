@@ -177,7 +177,7 @@ body {
 .network-body { display: flex; gap: 20px; align-items: stretch; }
 .network-canvas { position: relative; flex: 1; min-width: 0; align-self: flex-start; border-radius: 12px; overflow: hidden; }
 #networkViz {
-  width: 100%; height: 620px; background: #05070a;
+  width: 100%; height: 860px; background: #05070a;
   border: 1px solid var(--border);
   display: block;
 }
@@ -326,7 +326,7 @@ body {
 /* VISTA AMPLIADA DE HUMEDALES: ocupa el mismo espacio que la red principal
    (misma altura ~620px que #networkViz) mientras está activa. */
 .humedales-overlay {
-  width: 100%; height: 620px; background: #05070a;
+  width: 100%; height: 860px; background: #05070a;
   border: 1px solid var(--border); border-radius: 12px;
   display: none; flex-direction: column; overflow: hidden;
 }
@@ -343,7 +343,7 @@ body {
 .humedales-overlay-close:hover { color: #f2f3f6; }
 .humedales-overlay-body { flex: 1; display: flex; min-height: 0; }
 .humedales-overlay-image-wrap { position: relative; flex: 1; min-width: 0; background: #0a0a0a; }
-.humedales-overlay-image { width: 100%; height: 100%; object-fit: contain; display: block; }
+.humedales-overlay-image { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges; }
 .humedales-overlay-sidebar {
   width: 300px; flex-shrink: 0; overflow-y: auto; border-left: 1px solid var(--border-soft);
   background: rgba(255,255,255,0.02);
@@ -359,19 +359,20 @@ body {
 
 .humedal-hotspot {
   position: absolute; transform: translate(-50%, -50%);
-  width: 22px; height: 22px; border-radius: 50%;
+  width: 32px; height: 32px; border-radius: 50%;
   background: none; border: none; cursor: pointer; padding: 0;
   display: flex; align-items: center; justify-content: center;
 }
 .humedal-hotspot-dot {
-  width: 14px; height: 14px; border-radius: 50%;
-  background: rgba(92, 214, 209, 0.35); border: 2px solid #5cd6d1;
-  box-shadow: 0 0 8px rgba(92, 214, 209, 0.6);
+  width: 20px; height: 20px; border-radius: 50%;
+  background: rgba(92, 214, 209, 0.45); border: 3px solid #5cd6d1;
+  box-shadow: 0 0 0 4px rgba(92, 214, 209, 0.18), 0 0 14px rgba(92, 214, 209, 0.85);
   transition: transform 0.15s ease, background 0.15s ease;
 }
 .humedal-hotspot:hover .humedal-hotspot-dot,
 .humedal-hotspot.active .humedal-hotspot-dot {
-  transform: scale(1.35); background: rgba(92, 214, 209, 0.65);
+  transform: scale(1.35); background: rgba(255, 138, 76, 0.75); border-color: #ff8a4c;
+  box-shadow: 0 0 0 5px rgba(255, 138, 76, 0.22), 0 0 16px rgba(255, 138, 76, 0.9);
 }
 
 /* ANALYSIS / MATRIX */
