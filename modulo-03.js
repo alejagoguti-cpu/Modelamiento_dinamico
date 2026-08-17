@@ -2279,162 +2279,62 @@ function relActive(r) {
 // evita que las conexiones queden demasiado comprimidas, partiendo siempre
 // del layout original para conservar el agrupamiento por estructura.
 function computeLayout() {
-  const ids = Object.keys(layout);
-  const n = ids.length;
+  // Distribución panorámica tipo Módulo 02: cuatro hubs separados,
+  // satélites en anillos amplios y sin simulación de fuerzas que compacte
+  // toda la red en un bloque. Las relaciones y sus extremos no cambian.
+  const HUB_CENTERS = {
+    EEP: { x: 720, y: 760 },
+    EFC: { x: 1880, y: 760 },
+    ESECI: { x: 880, y: 1650 },
+    EIP: { x: 1800, y: 1650 }
+  };
+  const CANVAS = { w: 2644, h: 2294 };
+  const ids = Object.keys(model.concepts);
   const pos = {};
-  const sysOf = {};
-  ids.forEach((id, i) => {
-    // pequeño jitter inicial para no arrancar con nodos exactamente
-    // simétricos/pegados, lo que ayuda a que la relajación encuentre un
-    // acomodo más limpio en vez de quedarse atascada en el layout original
-    const jx = ((i * 37) % 23 - 11) * 2.1;
-    const jy = ((i * 53) % 19 - 9) * 2.1;
-    pos[id] = { x: layout[id].x + jx, y: layout[id].y + jy };
-    sysOf[id] = model.concepts[id].sys;
-  });
+  const GAP = 72;
 
-  const edges = model.relations.map(r => ({ a: r.from, b: r.to }));
-
-  const ITER = 420;
-  const REPEL = 145000;          // separa cualquier par de nodos que se acerque demasiado
-  const SPRING = 0.016;          // mantiene cerca a los nodos conectados
-  const GAP = 92;                // aire mínimo extra entre los bordes de dos nodos
-  const CENTER_PULL = 0.0016;    // atracción muy suave al centro global
-  const CROSS_SYS_PUSH = 7.4e6;  // empuje adicional de largo alcance entre estructuras distintas
-  const CLUSTER_PULL = 0.010;    // atracción suave hacia el centroide de la propia estructura
-
-  for (let it = 0; it < ITER; it++) {
-    const force = {};
-    ids.forEach(id => (force[id] = { x: 0, y: 0 }));
-
-    // 1) repulsión entre todos los pares: evita solapes entre nodos, y
-    //    empuja un poco más fuerte entre nodos de estructuras distintas
-    //    para que cada estructura se distinga como un grupo aparte
-    for (let i = 0; i < n; i++) {
-      const idA = ids[i], a = pos[idA];
-      for (let j = i + 1; j < n; j++) {
-        const idB = ids[j], b = pos[idB];
-        const dx = a.x - b.x, dy = a.y - b.y;
-        const dist = Math.hypot(dx, dy) || 0.001;
-        const minDist = nodeR[idA] + nodeR[idB] + GAP;
-        const sameSys = sysOf[idA] === sysOf[idB];
-
-        if (dist < minDist * 2.2) {
-          const overlap = Math.max(0, minDist - dist) + 1;
-          const f = (REPEL * overlap) / (dist * dist + 500);
-          const ux = dx / dist, uy = dy / dist;
-          force[idA].x += ux * f; force[idA].y += uy * f;
-          force[idB].x -= ux * f; force[idB].y -= uy * f;
-        }
-
-        // empuje suave de largo alcance solo entre estructuras distintas,
-        // para separar visualmente los "territorios" de cada color
-        if (!sameSys) {
-          const fSep = CROSS_SYS_PUSH / (dist * dist + 9000);
-          const ux = dx / dist, uy = dy / dist;
-          force[idA].x += ux * fSep; force[idA].y += uy * fSep;
-          force[idB].x -= ux * fSep; force[idB].y -= uy * fSep;
-        }
-      }
-    }
-
-    // 2) resorte entre nodos conectados: los mantiene relativamente cerca
-    edges.forEach(({ a: idA, b: idB }) => {
-      const a = pos[idA], b = pos[idB];
-      const dx = b.x - a.x, dy = b.y - a.y;
-      const dist = Math.hypot(dx, dy) || 0.001;
-      const rest = nodeR[idA] + nodeR[idB] + 150;
-      const f = SPRING * (dist - rest);
-      const ux = dx / dist, uy = dy / dist;
-      force[idA].x += ux * f; force[idA].y += uy * f;
-      force[idB].x -= ux * f; force[idB].y -= uy * f;
-    });
-
-    // 3) atracción suave al centroide de la propia estructura: agrupa
-    //    visualmente cada color sin volverlo rígido (los resortes y la
-    //    repulsión de arriba siguen mandando en la forma final)
-    const centroid = {};
-    const count = {};
-    SYS.forEach(s => { centroid[s] = { x: 0, y: 0 }; count[s] = 0; });
-    ids.forEach(id => {
-      const s = sysOf[id];
-      centroid[s].x += pos[id].x; centroid[s].y += pos[id].y; count[s]++;
-    });
-    SYS.forEach(s => { if (count[s]) { centroid[s].x /= count[s]; centroid[s].y /= count[s]; } });
-    ids.forEach(id => {
-      const s = sysOf[id];
-      force[id].x += (centroid[s].x - pos[id].x) * CLUSTER_PULL;
-      force[id].y += (centroid[s].y - pos[id].y) * CLUSTER_PULL;
-    });
-
-    // 4) atracción suave al centro para que la red no se disperse sin límite
-    ids.forEach(id => {
-      force[id].x += -pos[id].x * CENTER_PULL;
-      force[id].y += -pos[id].y * CENTER_PULL;
-    });
-
-    // el movimiento se va "enfriando" a medida que avanzan las iteraciones
-    const damp = Math.max(0, 1 - it / (ITER * 1.1));
-    ids.forEach(id => {
-      pos[id].x += force[id].x * damp;
-      pos[id].y += force[id].y * damp;
-    });
-  }
-
-  // Distribución horizontal limpia: cada estructura ocupa una zona amplia,
-  // pero sus nodos se escalonan en filas para que las conexiones sean legibles.
-  // No se inventan relaciones ni se cambian los datos; solo se modifica su posición.
-  const zoneX = { EEP: -1150, EFC: -390, ESECI: 390, EIP: 1150 };
-  const zoneStep = { EEP: 205, EFC: 215, ESECI: 205, EIP: 235 };
-  const rowY = [-720, -310, 100, 510, 920];
-  SYS.forEach(s => {
-    const group = model.systems[s].concepts.slice().sort((a, b) =>
+  SYS.forEach(sys => {
+    const center = HUB_CENTERS[sys];
+    const group = model.systems[sys].concepts.slice().sort((a, b) =>
       (model.concepts[b].deg - model.concepts[a].deg) || a.localeCompare(b));
-    const cols = group.length <= 6 ? 2 : group.length <= 12 ? 3 : 4;
-    group.forEach((id, index) => {
-      const row = Math.floor(index / cols);
-      const col = index % cols;
-      const offset = (col - (cols - 1) / 2) * zoneStep[s];
-      pos[id] = {
-        x: zoneX[s] + offset,
-        y: rowY[row % rowY.length] + ((col % 2) * 42 - 21)
-      };
+    if (!group.length) return;
+
+    const hub = group[0];
+    pos[hub] = { x: center.x, y: center.y };
+    const rest = group.slice(1);
+    const innerCount = Math.min(6, Math.ceil(rest.length / 2));
+    const rings = [rest.slice(0, innerCount), rest.slice(innerCount)];
+    const ringBases = [330, 590];
+
+    rings.forEach((ring, ringIndex) => {
+      if (!ring.length) return;
+      const circumference = ring.reduce((sum, id) => sum + 2 * nodeR[id] + GAP, 0);
+      const radius = Math.max(ringBases[ringIndex], circumference / (2 * Math.PI));
+      const rotation = (sys === 'EFC' || sys === 'EIP') ? -Math.PI / 2 : Math.PI / 2;
+      const span = Math.PI * 1.82;
+      ring.forEach((id, i) => {
+        const angle = rotation - span / 2 + ((i + 0.5) / ring.length) * span;
+        pos[id] = {
+          x: center.x + Math.cos(angle) * radius,
+          y: center.y + Math.sin(angle) * radius
+        };
+      });
     });
   });
 
-  // Relajación final de colisiones: separa bordes reales de los círculos,
-  // no solo sus centros, y mantiene la red dentro de un campo amplio.
-  for (let pass = 0; pass < 260; pass++) {
-    let moved = false;
-    for (let i = 0; i < ids.length; i++) {
-      for (let j = i + 1; j < ids.length; j++) {
-        const aId = ids[i], bId = ids[j];
-        const a = pos[aId], b = pos[bId];
-        let dx = a.x - b.x, dy = a.y - b.y;
-        let dist = Math.hypot(dx, dy) || 0.001;
-        const required = nodeR[aId] + nodeR[bId] + 72;
-        if (dist < required) {
-          const push = (required - dist) * 0.52;
-          dx /= dist; dy /= dist;
-          a.x += dx * push; a.y += dy * push;
-          b.x -= dx * push; b.y -= dy * push;
-          moved = true;
-        }
-      }
-    }
-    ids.forEach(id => {
-      pos[id].x = Math.max(-1750, Math.min(1750, pos[id].x));
-      pos[id].y = Math.max(-1350, Math.min(1350, pos[id].y));
-    });
-    if (!moved) break;
-  }
-  ids.forEach(id => { layout[id] = pos[id]; });
+  // Seguridad de límites, preservando el aire entre grupos.
+  ids.forEach(id => {
+    const p = pos[id] || { x: CANVAS.w / 2, y: CANVAS.h / 2 };
+    const margin = nodeR[id] + 96;
+    p.x = Math.max(margin, Math.min(CANVAS.w - margin, p.x));
+    p.y = Math.max(margin, Math.min(CANVAS.h - margin, p.y));
+    layout[id] = p;
+  });
 
-  // recalcula el viewBox para que "Centrar vista" encuadre bien la red ya
-  // relajada (puede haber quedado un poco más grande que el original)
+  // ViewBox estable, panorámico y equivalente al encuadre de referencia.
   let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
   ids.forEach(id => {
-    const p = pos[id], r = nodeR[id] + 82; // margen compacto para las etiquetas
+    const p = layout[id], r = nodeR[id] + 112;
     minX = Math.min(minX, p.x - r); maxX = Math.max(maxX, p.x + r);
     minY = Math.min(minY, p.y - r); maxY = Math.max(maxY, p.y + r);
   });
