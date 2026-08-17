@@ -498,35 +498,46 @@
     const layoutNetwork = (item) => {
       const degree = item.nodes.map((_, i) => item.edges.reduce((n, [a, b]) => n + (a === i || b === i ? 1 : 0), 0));
       const order = item.nodes.map((_, i) => i).sort((a, b) => degree[b] - degree[a]);
-      const slots = [
-        [150,110],[390,110],[650,110],[910,110],[1170,110],
-        [150,290],[390,290],[650,290],[910,290],[1170,290],
-        [150,490],[390,490],[650,490],[910,490],[1170,490],
-        [150,690],[390,690],[650,690],[910,690],[1170,690],
-        [270,800],[510,800],[750,800],[990,800],[1230,800],
-      ];
-      const hubSlots = [7, 12, 17, 22];
+      const cx = 700, cy = 445;
+      const hubAngles = [-Math.PI * 0.78, -Math.PI * 0.22, Math.PI * 0.22, Math.PI * 0.78];
+      const hubRadius = 255;
+      const outer = Math.max(0, order.length - 5);
       order.forEach((nodeIndex, rank) => {
-        const slotIndex = rank < hubSlots.length ? hubSlots[rank] : ([...Array(slots.length).keys()].filter(s => !hubSlots.includes(s))[rank - hubSlots.length] || rank % slots.length);
-        const [x, y] = slots[slotIndex];
-        item.nodes[nodeIndex][1] = x;
-        item.nodes[nodeIndex][2] = y;
+        const node = item.nodes[nodeIndex];
         const d = degree[nodeIndex];
-        item.nodes[nodeIndex][3] = d <= 2 ? 24 : d <= 4 ? 32 : d <= 6 ? 42 : d <= 9 ? 56 : 72;
+        node[3] = d <= 2 ? 24 : d <= 4 ? 32 : d <= 6 ? 42 : d <= 9 ? 56 : 66;
+        if (rank === 0) {
+          node[1] = cx;
+          node[2] = cy;
+        } else if (rank <= 4) {
+          const angle = hubAngles[rank - 1];
+          node[1] = cx + Math.cos(angle) * hubRadius;
+          node[2] = cy + Math.sin(angle) * hubRadius;
+        } else {
+          const angle = -Math.PI * 0.92 + ((rank - 5) / Math.max(1, outer - 1)) * Math.PI * 1.84;
+          const radius = 405 + (rank % 2) * 22;
+          node[1] = cx + Math.cos(angle) * radius;
+          node[2] = cy + Math.sin(angle) * radius * 0.78;
+        }
       });
-      for (let pass = 0; pass < 8; pass++) {
+      for (let pass = 0; pass < 12; pass++) {
         for (let i = 0; i < item.nodes.length; i++) for (let j = i + 1; j < item.nodes.length; j++) {
-          const A = item.nodes[i], B = item.nodes[j], dx = B[1] - A[1], dy = B[2] - A[2], dist = Math.hypot(dx, dy) || 1, min = A[3] + B[3] + 34;
+          const A = item.nodes[i], B = item.nodes[j], dx = B[1] - A[1], dy = B[2] - A[2], dist = Math.hypot(dx, dy) || 1, min = A[3] + B[3] + 28;
           if (dist >= min) continue;
           const ux = dx / dist, uy = dy / dist, push = (min - dist) / 2;
-          A[1] = Math.max(70, Math.min(1330, A[1] - ux * push * .5)); A[2] = Math.max(60, Math.min(840, A[2] - uy * push * .5));
-          B[1] = Math.max(70, Math.min(1330, B[1] + ux * push * .5)); B[2] = Math.max(60, Math.min(840, B[2] + uy * push * .5));
+          A[1] = Math.max(72, Math.min(1328, A[1] - ux * push * .5)); A[2] = Math.max(68, Math.min(822, A[2] - uy * push * .5));
+          B[1] = Math.max(72, Math.min(1328, B[1] + ux * push * .5)); B[2] = Math.max(68, Math.min(822, B[2] + uy * push * .5));
         }
       }
     };
     const lines = (item) => item.edges.map(([a, b, t], i) => {
       const A = item.nodes[a], B = item.nodes[b];
-      const d = `M ${A[1]} ${A[2]} L ${B[1]} ${B[2]}`;
+      const dx = B[1] - A[1], dy = B[2] - A[2], distance = Math.hypot(dx, dy) || 1;
+      const ux = dx / distance, uy = dy / distance;
+      const startPad = A[3] + 2, endPad = B[3] + 7;
+      const x1 = A[1] + ux * startPad, y1 = A[2] + uy * startPad;
+      const x2 = B[1] - ux * endPad, y2 = B[2] - uy * endPad;
+      const d = `M ${x1.toFixed(1)} ${y1.toFixed(1)} L ${x2.toFixed(1)} ${y2.toFixed(1)}`;
       return `<path class="network-edge ${t}" data-edge-index="${i}" marker-end="url(#arrow-${t})" d="${d}"/><path class="network-edge-hit ${t}" data-edge-index="${i}" data-edge-type="${t}" tabindex="0" d="${d}"/>`;
     }).join("");
     const iconSvg = (label) => {

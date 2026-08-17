@@ -4230,3 +4230,85 @@ body { position:relative !important; }
   .network-modal { align-items:flex-start !important; overflow-y:auto !important; }
   .network-modal-box { margin:8px 0 !important; }
 }
+
+/* Referencia visual Módulo 02: red limpia, abierta y legible */
+.network-edge {
+  fill: none !important;
+  vector-effect: non-scaling-stroke;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: opacity .18s ease, stroke-width .18s ease, filter .18s ease;
+}
+.network-edge.direct {
+  stroke: #d7dae2 !important;
+  stroke-width: 2.2px !important;
+  stroke-dasharray: none !important;
+  opacity: .95 !important;
+}
+.network-edge.indirect {
+  stroke: #8b93a8 !important;
+  stroke-width: 1.4px !important;
+  stroke-dasharray: 5 4 !important;
+  opacity: .55 !important;
+}
+.network-edge.support {
+  stroke: #f5a623 !important;
+  stroke-width: 2.2px !important;
+  stroke-dasharray: none !important;
+  opacity: .9 !important;
+}
+.network-edge.result {
+  stroke: #e89a6c !important;
+  stroke-width: 2.2px !important;
+  stroke-dasharray: none !important;
+  opacity: .92 !important;
+}
+.network-edge-hit {
+  fill: none !important;
+  stroke: transparent !important;
+  stroke-width: 12px !important;
+  pointer-events: stroke;
+}
+.network-edge:hover,
+.network-edge:focus,
+.network-edge.highlight {
+  stroke-width: 3.2px !important;
+  opacity: 1 !important;
+  filter: drop-shadow(0 0 4px currentColor);
+}
+.network-edge.dimmed { opacity: .08 !important; }
+.network-edge.hidden-network-edge,
+.network-edge-hit.hidden-network-edge { visibility: hidden !important; }
+.network-node > circle {
+  fill: #0a0a0a !important;
+  stroke-width: 2.5px !important;
+}
+.network-node.layer-green > circle {
+  stroke: #46d6d0 !important;
+  filter: drop-shadow(0 0 6px rgba(70,214,208,.72));
+}
+.network-node.layer-warm > circle {
+  stroke: #e89a6c !important;
+  filter: drop-shadow(0 0 6px rgba(232,154,108,.72));
+}
+.network-node.layer-red > circle {
+  stroke: #ef6f6f !important;
+  filter: drop-shadow(0 0 6px rgba(239,111,111,.62));
+}
+.network-node.central > circle {
+  stroke-width: 3px !important;
+  filter: drop-shadow(0 0 8px currentColor) drop-shadow(0 0 16px currentColor);
+}
+.network-node .node-label {
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 700 !important;
+  fill: #f2f3f6 !important;
+  stroke: #0b0c0f !important;
+  stroke-width: 3px !important;
+  paint-order: stroke;
+}
+.network-node.layer-green .node-label { fill: #f2f3f6 !important; }
+.network-node.layer-warm .node-label { fill: #f2f3f6 !important; }
+.network-node.layer-red .node-label { fill: #f2f3f6 !important; }
+.network-node.hidden-network-node { display: block !important; opacity: 0 !important; pointer-events: none; }
+.network-node.selected > circle { filter: drop-shadow(0 0 8px #fff) !important; }
