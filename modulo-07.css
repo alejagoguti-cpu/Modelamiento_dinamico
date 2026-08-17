@@ -3629,8 +3629,8 @@ auto {
    ========================================================== */
 :root {
   --m02-bg: #0a0a0a;
-  --m02-panel: #121828;
-  --m02-panel-alt: #0f1522;
+  --m02-panel: #141518;
+  --m02-panel-alt: #101716;
   --m02-border: rgba(255,255,255,.07);
   --m02-text: #e7eaf2;
   --m02-dim: #8891a5;
@@ -3742,8 +3742,8 @@ body { overflow-x: hidden !important; font-family: Inter, sans-serif !important;
 :root {
   --bg: #0a0a0a;
   --sidebar: #0a0a0a;
-  --panel: #121828;
-  --panel-alt: #0f1522;
+  --panel: #141518;
+  --panel-alt: #101716;
   --border: rgba(255,255,255,.07);
   --border-soft: rgba(255,255,255,.04);
   --text: #e7eaf2;
