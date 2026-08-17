@@ -4415,3 +4415,65 @@ body { position:relative !important; }
 .network-edge.dimmed {
   opacity: .08 !important;
 }
+
+/* Jerarquía reforzada para nodos centrales */
+.network-node.central {
+  z-index: 4;
+}
+.network-node.central .node-central-halo {
+  opacity: .95;
+  filter: drop-shadow(0 0 5px currentColor) drop-shadow(0 0 12px currentColor);
+  animation: central-pulse 3.8s ease-in-out infinite;
+}
+.network-node.central > .node-ring {
+  stroke-width: 4px !important;
+  filter: drop-shadow(0 0 8px currentColor) drop-shadow(0 0 18px currentColor) !important;
+}
+.network-node.central .node-inner {
+  font-weight: 800 !important;
+  letter-spacing: .08px;
+}
+.network-node.central .node-fa-icon {
+  font-size: 25px !important;
+  filter: drop-shadow(0 0 7px currentColor) !important;
+}
+.network-node.central .node-name {
+  font-size: 8.8px !important;
+  font-weight: 800 !important;
+  text-shadow: 0 0 5px currentColor;
+}
+.network-node.hub-medium:not(.central) > .node-ring,
+.network-node.hub-large:not(.central) > .node-ring {
+  stroke-width: 2.8px !important;
+  filter: drop-shadow(0 0 5px currentColor) !important;
+}
+@keyframes central-pulse {
+  0%, 100% { opacity: .68; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.035); }
+}
+
+/* Alias efectivo para hubs centrales del renderizador de Síntesis */
+.network-node.central-node {
+  z-index: 4;
+}
+.network-node.central-node .node-central-halo {
+  opacity: .95;
+  filter: drop-shadow(0 0 5px currentColor) drop-shadow(0 0 12px currentColor);
+  animation: central-pulse 3.8s ease-in-out infinite;
+}
+.network-node.central-node > .node-ring {
+  stroke-width: 4px !important;
+  filter: drop-shadow(0 0 8px currentColor) drop-shadow(0 0 18px currentColor) !important;
+}
+.network-node.central-node .node-inner {
+  font-weight: 800 !important;
+}
+.network-node.central-node .node-fa-icon {
+  font-size: 25px !important;
+  filter: drop-shadow(0 0 7px currentColor) !important;
+}
+.network-node.central-node .node-name {
+  font-size: 8.8px !important;
+  font-weight: 800 !important;
+  text-shadow: 0 0 5px currentColor;
+}
