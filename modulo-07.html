@@ -17,39 +17,41 @@
 <link rel="stylesheet" href="network06-shared.css">
   </head>
   <body>
-    <div class="app-shell">
-      <aside class="sidebar">
-        <div class="brand-mark">⌂</div>
-        <nav class="side-nav" aria-label="Navegación del portal">
-          <a class="side-item" href="dashboard.html" title="Dashboard" aria-label="Dashboard"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5M5.5 10.5V20h13v-9.5M9 20v-5h6v5" /></svg></a>
-          <a class="side-item" href="modulo-01.html" title="01 · Construir la Red" aria-label="Construir la Red"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="7" r="2" /><circle cx="18" cy="5" r="2" /><circle cx="14" cy="18" r="2" /><circle cx="7" cy="17" r="2" /><path d="m7.7 8.2 4.9 7.2M8 7.2l8-1.4M9 16.7l3.2.8M16.8 6.8l-1.8 9" /></svg></a>
-          <a class="side-item" href="modulo-02.html" title="02 · Medir la Red" aria-label="Medir la Red"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="2.5" /><circle cx="6" cy="17" r="2.5" /><circle cx="18" cy="17" r="2.5" /><path d="M10.7 7.1 7.3 14.8M13.3 7.1l3.4 7.7M8.5 17h7" /></svg></a>
-          <a class="side-item" href="modulo-03.html" title="03 · Discurso vs Realidad" aria-label="Discurso vs Realidad"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" /><path d="m16 16 5 5M10.5 7v7M7 10.5h6" /></svg></a>
-          <a class="side-item" href="modulo-04.html" title="04 · Macromodelos" aria-label="Macromodelos"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" /><circle cx="8" cy="6" r="2" /><circle cx="15" cy="12" r="2" /><circle cx="10" cy="18" r="2" /></svg></a>
-          <a class="side-item" href="modulo-05.html" title="05 · Navegador Multiescalar" aria-label="Navegador Multiescalar"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" /><path d="m16 16 5 5M10.5 7v7M7 10.5h7" /></svg></a>
-          <a class="side-item active" href="modulo-07.html" title="07 · SÍNTESIS" aria-label="SÍNTESIS"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5M4 19h16M7 15l3-4 3 2 5-7" /><path d="M18 4h3v3" /></svg></a>
-          <a class="side-item" href="modulo-08.html" title="08 · Modelo Propio" aria-label="Modelo Propio"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17 12 4l8 13M7 17h10M9 13h6" /></svg></a>
-          <a class="side-item" href="modulo-06.html" title="06 · POT ↔ ODS" aria-label="POT a ODS"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4v16l14-8z" /><path d="M4 21h16M7 21v-2M12 21v-2M17 21v-2" /></svg></a>
+    <div class="app">
+      <aside class="sidebar sidebar-icons-only">
+        <div class="brand-icon"><i class="fa-solid fa-diagram-project"></i></div>
+        <nav class="icon-nav" aria-label="Navegación del portal">
+          <a href="dashboard.html" class="icon-nav-item" title="Dashboard"><i class="fa-solid fa-house"></i></a>
+          <a href="modulo-01.html" class="icon-nav-item" title="Construir la Red"><i class="fa-solid fa-diagram-project"></i></a>
+          <a href="modulo-02.html" class="icon-nav-item" title="Medir la Red"><i class="fa-solid fa-chart-simple"></i></a>
+          <a href="modulo-03.html" class="icon-nav-item" title="Discurso vs Realidad"><i class="fa-solid fa-eye"></i></a>
+          <a href="modulo-04.html" class="icon-nav-item" title="Macromodelos"><i class="fa-solid fa-bullseye"></i></a>
+          <a href="modulo-05.html" class="icon-nav-item" title="Lo que no está"><i class="fa-solid fa-magnifying-glass"></i></a>
+          <a href="modulo-06.html" class="icon-nav-item" title="POT ↔ ODS"><i class="fa-solid fa-earth-americas"></i></a>
+          <a href="modulo-07.html" class="icon-nav-item active" title="SÍNTESIS"><i class="fa-solid fa-flask"></i></a>
+          <a href="modulo-08.html" class="icon-nav-item" title="Modelo Propio"><i class="fa-solid fa-city"></i></a>
         </nav>
-        <div class="sidebar-bottom">RA</div>
+        <div class="icon-nav-footer">
+          <a href="configuracion.html" class="icon-nav-item" title="Configuración"><i class="fa-solid fa-gear"></i></a>
+          <a href="demo.html" class="icon-nav-item" title="Salir"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
+        </div>
       </aside>
 
-      <main class="dashboard">
+      <main class="main">
         <header class="topbar">
-          <div class="portal-title">
-            <strong>PORTAL HEURÍSTICO</strong><span></span
-            ><small>Pantalla 7 de 7</small>
-          </div>
-          <div class="top-actions">
-            <button id="helpBtn" class="top-btn">Centro de ayuda&nbsp; ?</button
-            ><button id="bellBtn" class="bell-btn">♧<i></i></button>
+          <div class="topbar-brand"><i class="fa-solid fa-circle-nodes"></i> Bogotá Viva: Simulación Urbana</div>
+          <div class="topbar-actions">
+            <div class="icon-btn" id="bellBtn"><i class="fa-regular fa-bell"></i><span class="dot"></span></div>
+            <div class="icon-btn"><i class="fa-solid fa-sun"></i></div>
+            <div class="icon-btn"><i class="fa-solid fa-user"></i></div>
+            <i class="fa-solid fa-chevron-down topbar-chevron"></i>
           </div>
         </header>
 
         <section class="hero-grid">
           <div class="hero-copy">
-            <div class="eyebrow"><b></b> RESULTADOS FINALES DEL SISTEMA</div>
-            <h1>Dashboard de<br /><em>Emergencia e Impacto</em></h1>
+            <div class="eyebrow"><b></b> SÍNTESIS DEL SISTEMA</div>
+            <h1><span class="h2-plain">Síntesis</span><br /><em>territorial</em></h1>
             <p>
               Resultados integrados del sistema Bogotá Viva.<br />Impacto
               urbano, desempeño económico y ambiental<br />bajo el escenario
@@ -91,7 +93,7 @@
               </div>
             </header>
             <div class="metric-body metric-focus">
-              <div class="focus-icon">⌁</div>
+              <div class="focus-icon"><i class="fa-solid fa-clock" aria-hidden="true"></i></div>
               <div class="focus-copy">
                 <small>INDICADOR CLAVE</small>
                 <strong>Acceso a servicios y oportunidades</strong>
@@ -99,9 +101,9 @@
               </div>
             </div>
             <footer>
-              <span>♣ <b>33</b><small>UPL del modelo</small></span
-              ><span>⌖ <b>45</b><small>Manzanas del Cuidado</small></span
-              ><span>◷ <b>26–62 min</b><small>Brecha de viaje</small></span>
+              <span><i class="fa-solid fa-building" aria-hidden="true"></i> <b>33</b><small>UPL del modelo</small></span
+              ><span><i class="fa-solid fa-heart" aria-hidden="true"></i> <b>45</b><small>Manzanas del Cuidado</small></span
+              ><span><i class="fa-solid fa-clock" aria-hidden="true"></i> <b>26–62 min</b><small>Brecha de viaje</small></span>
             </footer>
           </article>
           <article class="metric-card orange">
@@ -119,7 +121,7 @@
               </div>
             </header>
             <div class="metric-body metric-focus">
-              <div class="focus-icon">↗</div>
+              <div class="focus-icon"><i class="fa-solid fa-arrow-trend-up" aria-hidden="true"></i></div>
               <div class="focus-copy">
                 <small>INDICADOR CLAVE</small>
                 <strong>Crecimiento de la población ocupada</strong>
@@ -127,10 +129,10 @@
               </div>
             </div>
             <footer>
-              <span>▣ <b>910.509</b><small>Empleos potenciales</small></span
-              ><span>▥ <b>7%</b><small>Desempleo escenario alto</small></span
+              <span><i class="fa-solid fa-briefcase" aria-hidden="true"></i> <b>910.509</b><small>Empleos potenciales</small></span
+              ><span><i class="fa-solid fa-chart-line" aria-hidden="true"></i> <b>7%</b><small>Desempleo escenario alto</small></span
               ><span
-                >⌂ <b>10 / 33</b><small>UPL con superávit laboral</small></span
+                ><i class="fa-solid fa-city" aria-hidden="true"></i> <b>10 / 33</b><small>UPL con superávit laboral</small></span>
               >
             </footer>
           </article>
@@ -149,7 +151,7 @@
               </div>
             </header>
             <div class="metric-body metric-focus">
-              <div class="focus-icon">◌</div>
+              <div class="focus-icon"><i class="fa-solid fa-leaf" aria-hidden="true"></i></div>
               <div class="focus-copy">
                 <small>INDICADOR CLAVE</small>
                 <strong>Transición hacia viajes limpios</strong>
@@ -157,9 +159,9 @@
               </div>
             </div>
             <footer>
-              <span>♧ <b>47%</b><small>GEI del transporte</small></span
-              ><span>♧ <b>18%</b><small>PM fino del transporte</small></span
-              ><span>⌁ <b>2040</b><small>Flota pública eléctrica</small></span>
+              <span><i class="fa-solid fa-smog" aria-hidden="true"></i> <b>47%</b><small>GEI del transporte</small></span
+              ><span><i class="fa-solid fa-wind" aria-hidden="true"></i> <b>18%</b><small>PM fino del transporte</small></span
+              ><span><i class="fa-solid fa-bus" aria-hidden="true"></i> <b>2040</b><small>Flota pública eléctrica</small></span>
             </footer>
           </article>
         </section>

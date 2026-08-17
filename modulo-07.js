@@ -394,25 +394,25 @@
     };
     const thematicCatalog = {
       "30min": [
-        { id: "care-health", label: "Cuidado y salud", color: "#46d6d0" },
-        { id: "education", label: "Educación y equipamientos", color: "#7fe6de" },
-        { id: "mobility", label: "Movilidad y proximidad", color: "#e89a6c" },
-        { id: "housing-employment", label: "Vivienda y empleo", color: "#c79cff" },
-        { id: "access-goals", label: "Acceso y metas", color: "#f4c95d" },
+        { id: "care-health", label: "Cuidado y salud", color: "#2fd4c8" },
+        { id: "education", label: "Educación y equipamientos", color: "#5b8def" },
+        { id: "mobility", label: "Movilidad y proximidad", color: "#ef9552" },
+        { id: "housing-employment", label: "Vivienda y empleo", color: "#a276f2" },
+        { id: "access-goals", label: "Acceso y metas", color: "#f5c945" },
       ],
       empleo: [
-        { id: "economic-activity", label: "Actividad económica", color: "#e89a6c" },
-        { id: "human-capital", label: "Capital humano", color: "#7fe6de" },
-        { id: "labor-mobility", label: "Movilidad laboral", color: "#46d6d0" },
-        { id: "territorial-equity", label: "Equidad territorial", color: "#c79cff" },
-        { id: "employment-results", label: "Resultados de empleo", color: "#f4c95d" },
+        { id: "economic-activity", label: "Actividad económica", color: "#ef9552" },
+        { id: "human-capital", label: "Capital humano", color: "#5b8def" },
+        { id: "labor-mobility", label: "Movilidad laboral", color: "#2fd4c8" },
+        { id: "territorial-equity", label: "Equidad territorial", color: "#a276f2" },
+        { id: "employment-results", label: "Resultados de empleo", color: "#f5c945" },
       ],
       carbono: [
-        { id: "clean-transit", label: "Transporte limpio", color: "#46d6d0" },
-        { id: "clean-infrastructure", label: "Infraestructura limpia", color: "#7fe6de" },
-        { id: "emissions-air", label: "Emisiones y aire", color: "#e89a6c" },
-        { id: "modal-change", label: "Cambio modal", color: "#c79cff" },
-        { id: "environmental-health", label: "Salud ambiental", color: "#f4c95d" },
+        { id: "clean-transit", label: "Transporte limpio", color: "#2fd4c8" },
+        { id: "clean-infrastructure", label: "Infraestructura limpia", color: "#5b8def" },
+        { id: "emissions-air", label: "Emisiones y aire", color: "#ef9552" },
+        { id: "modal-change", label: "Cambio modal", color: "#a276f2" },
+        { id: "environmental-health", label: "Salud ambiental", color: "#f5c945" },
       ],
     };
     function thematicCategory(key, label) {
@@ -580,7 +580,7 @@
                                           )
                                         ? "fa-people-group"
                                         : "fa-circle-nodes";
-      return `<foreignObject class="node-icon-svg" x="-14" y="-14" width="28" height="28"><div xmlns="http://www.w3.org/1999/xhtml" class="node-fa-icon"><i class="fa-solid ${icon}" aria-hidden="true"></i></div></foreignObject>`;
+      return `<i class="fa-solid ${icon} node-fa-icon" aria-hidden="true"></i>`;
     };
     const nodes = (item) =>
       item.nodes
@@ -608,7 +608,8 @@
             return counts;
           }, {});
           const relationType = ["direct", "indirect", "support", "result"].sort((a, b) => (relationCounts[b] || 0) - (relationCounts[a] || 0))[0];
-          return `<g class="network-node floating-node ${sizeClass} ${type || ""} relation-${relationType} ${layer(label)} category-${category}" data-node-index="${i}" data-relation-type="${relationType}" data-category="${category}" tabindex="0" role="button" aria-label="${esc(clean(display))}" style="--node-color:${categoryColor};color:${categoryColor}"><circle class="node-ring" cx="${x}" cy="${y}" r="${r}" style="fill:rgba(8,11,18,.6);stroke:${categoryColor};stroke-width:2.5;filter:drop-shadow(0 0 5px ${categoryColor})"/><g class="node-icon-wrap" transform="translate(${x} ${iconY})">${iconSvg(label)}</g><text class="node-label" x="${x}" y="${labelY}">${rows.map((row, j) => `<tspan x="${x}" dy="${j ? lineGap : 0}">${esc(row)}</tspan>`).join("")}</text></g>`;
+          const labelText = rows.join(" ");
+          return `<g class="network-node floating-node ${sizeClass} ${type || ""} relation-${relationType} ${layer(label)} category-${category}" data-node-index="${i}" data-relation-type="${relationType}" data-category="${category}" tabindex="0" role="button" aria-label="${esc(clean(display))}" transform="translate(${x} ${y})" style="--node-color:${categoryColor};color:${categoryColor}"><circle class="node-ring" cx="0" cy="0" r="${r}" fill="#0a0a0a" stroke="${categoryColor}" stroke-width="${r >= 44 ? 2.5 : 1.6}"/><foreignObject class="node-content" x="${-r * 0.9}" y="${-r * 0.9}" width="${r * 1.8}" height="${r * 1.8}"><div xmlns="http://www.w3.org/1999/xhtml" class="node-inner" style="color:${categoryColor} !important"><span class="node-icon-wrap" style="color:${categoryColor} !important">${iconSvg(label).replace('node-fa-icon"', `node-fa-icon" style="color:${categoryColor} !important"`)}</span><span class="node-name">${esc(labelText)}</span></div></foreignObject></g>`;
         })
         .join("");
     const categoryHalos = (item) => {
