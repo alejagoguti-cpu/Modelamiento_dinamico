@@ -523,3 +523,42 @@ td { border-color: var(--m02-border-soft) !important; color: var(--m02-dim) !imp
   body.module02-reference-page > .layout > .sidebar.sidebar-icons-only .icon-nav-item.active { background: var(--m02-teal-dim) !important; color: var(--m02-teal) !important; }
   body.module02-reference-page > .layout > .sidebar.sidebar-icons-only .icon-nav-footer { width: 100% !important; }
 }
+
+/* Normalización cromática final: elimina variantes azules heredadas de CSS antiguos. */
+body.module02-reference-page {
+  --blue: var(--m02-teal) !important;
+  --cyan: var(--m02-teal) !important;
+  --teal: var(--m02-teal) !important;
+  --accent: var(--m02-teal) !important;
+  --green: var(--m02-teal) !important;
+  --green-soft: rgba(70,214,208,.14) !important;
+  --orange: var(--m02-copper) !important;
+  --yellow: var(--m02-copper) !important;
+  --purple: var(--m02-copper) !important;
+  --primary: var(--m02-teal) !important;
+  --secondary: var(--m02-copper) !important;
+}
+body.module02-reference-page .blue,
+body.module02-reference-page .green,
+body.module02-reference-page .teal,
+body.module02-reference-page .cyan {
+  background-color: var(--m02-teal) !important;
+  border-color: var(--m02-teal) !important;
+  color: var(--m02-teal) !important;
+}
+body.module02-reference-page .orange,
+body.module02-reference-page .yellow,
+body.module02-reference-page .purple,
+body.module02-reference-page .copper {
+  background-color: var(--m02-copper) !important;
+  border-color: var(--m02-copper) !important;
+  color: var(--m02-copper) !important;
+}
+body.module02-reference-page [style*="#5b8def"],
+body.module02-reference-page [style*="#3b82f6"],
+body.module02-reference-page [style*="#2563eb"],
+body.module02-reference-page [style*="#60a5fa"] {
+  color: var(--m02-teal) !important;
+  border-color: var(--m02-teal) !important;
+  background-color: rgba(70,214,208,.14) !important;
+}
