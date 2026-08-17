@@ -376,6 +376,22 @@
       "Dos Regiotram regionales",
       "Meta: reducir 50% las emisiones GEI",
     ]);
+    const removeNodeByLabel = (key, matcher) => {
+      const item = networks[key];
+      const removed = item.nodes.findIndex((node) => matcher.test(clean(node[0])));
+      if (removed < 0) return;
+      const remap = new Map();
+      item.nodes = item.nodes.filter((_, index) => {
+        if (index === removed) return false;
+        remap.set(index, remap.size);
+        return true;
+      });
+      item.edges = item.edges
+        .filter(([a, b]) => a !== removed && b !== removed)
+        .map(([a, b, type]) => [remap.get(a), remap.get(b), type]);
+      item._categories = item.nodes.map((node) => thematicCategory(key, node[0]));
+    };
+    removeNodeByLabel("30min", /^33 Unidades de Planeamiento Local$/);
     const layer = (label) => {
       const s = label.toLowerCase();
       if (
