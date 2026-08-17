@@ -2475,27 +2475,16 @@ function wrapLabel(text, maxChars = 15) {
 // Las curvas anteriores desplazaban visualmente el recorrido y hacían parecer
 // que algunas relaciones terminaban en nodos equivocados, especialmente cuando
 // había muchos enlaces cruzados. La relación sigue usando sus endpoints reales.
-function curvePath(a, b, rA, rB, relation = {}) {
+function curvePath(a, b, rA, rB) {
   const dx = b.x - a.x;
   const dy = b.y - a.y;
   const len = Math.hypot(dx, dy) || 1;
   const ux = dx / len;
   const uy = dy / len;
-  const gap = 6;
+  const gap = 3;
   const p1 = { x: a.x + ux * (rA + gap), y: a.y + uy * (rA + gap) };
   const p2 = { x: b.x - ux * (rB + gap), y: b.y - uy * (rB + gap) };
-  const mx = (p1.x + p2.x) / 2;
-  const my = (p1.y + p2.y) / 2;
-  // Curvatura corta y alternada: conserva endpoints reales, separa líneas
-  // paralelas y evita la acumulación de trazos en el centro del lienzo.
-  const sign = ((Number(relation.id) || 0) % 2 ? 1 : -1);
-  const inter = relation.sO !== relation.sD;
-  const bend = inter ? Math.min(72, Math.max(28, len * 0.08)) : Math.min(42, Math.max(16, len * 0.05));
-  const nx = -uy * bend * sign;
-  const ny = ux * bend * sign;
-  const c1 = { x: mx + nx * 0.72, y: my + ny * 0.72 };
-  const c2 = { x: mx + nx, y: my + ny };
-  return `M${p1.x.toFixed(1)},${p1.y.toFixed(1)} C${c1.x.toFixed(1)},${c1.y.toFixed(1)} ${c2.x.toFixed(1)},${c2.y.toFixed(1)} ${p2.x.toFixed(1)},${p2.y.toFixed(1)}`;
+  return `M${p1.x.toFixed(1)},${p1.y.toFixed(1)} L${p2.x.toFixed(1)},${p2.y.toFixed(1)}`;
 }
 
 
@@ -2541,7 +2530,7 @@ function render() {
     const a = drawPos[r.from] || layout[r.from], b = drawPos[r.to] || layout[r.to];
     const rA = nodeR[r.from];
     const rB = nodeR[r.to];
-    const d = curvePath(a, b, rA, rB, r);
+    const d = curvePath(a, b, rA, rB);
     const kind = r.tipo === 'Soporte' ? 'soporte' : 'resiliencia';
     const evidence = String(r.evid || 'Directa').toLowerCase().startsWith('ind') ? 'indirecta' : 'directa';
     const cls = ['rel', kind, evidence, r.sO === r.sD ? 'intra' : 'inter'];
