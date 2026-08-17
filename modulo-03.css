@@ -7650,3 +7650,39 @@ Need update styles maybe `display:none` for quote-backdrop means if old openQuot
   border-radius: 6px !important;
   font: 600 11px/1 Arial,sans-serif !important;
 }
+
+
+/* Título del Módulo 03 igual al tratamiento visual del Módulo 02. */
+.app > .main > .welcome .simulation-kicker {
+  margin-bottom: 10px !important;
+  padding-left: 16px !important;
+  color: #46d6d0 !important;
+  font: 700 12px/1 Inter,sans-serif !important;
+  letter-spacing: 1.5px !important;
+}
+.app > .main > .welcome .simulation-kicker::before {
+  left: 0 !important;
+  width: 9px !important;
+  height: 2px !important;
+  background: #46d6d0 !important;
+}
+.app > .main > .welcome h2 {
+  margin-bottom: 12px !important;
+  font: 700 54px/1.1 "Space Grotesk",sans-serif !important;
+  letter-spacing: -1px !important;
+}
+.app > .main > .welcome h2 span {
+  color: #f2f3f6 !important;
+}
+.app > .main > .welcome h2 em {
+  background: linear-gradient(90deg,#f2f3f6 0%,#e9695c 55%,#d28b36 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+  font-style: normal !important;
+}
+.app > .main > .welcome .simulation-subtitle {
+  color: #8891a5 !important;
+  font: 400 15px/1.6 Inter,sans-serif !important;
+}
