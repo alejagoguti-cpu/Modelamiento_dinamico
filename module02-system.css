@@ -424,3 +424,40 @@ td { border-color: var(--m02-border-soft) !important; color: var(--m02-dim) !imp
     stroke: var(--m02-copper) !important;
   }
 }
+
+/* Módulo 01: resiliencia se expresa en Copper dentro de la paleta aprobada, sin cambiar su semántica. */
+@media (min-width: 821px) {
+  body.module02-reference-page .insight-card[style*="#5b8def"],
+  body.module02-reference-page [style*="#5b8def"] {
+    --insight-color: #e89a6c !important;
+    color: #e89a6c !important;
+    border-color: #e89a6c !important;
+  }
+  body.module02-reference-page .swatch-resiliencia,
+  body.module02-reference-page .swatch-e2,
+  body.module02-reference-page .alignment-tag.res,
+  body.module02-reference-page .alignment-tag.desc {
+    background-color: rgba(232,154,108,.16) !important;
+    border-color: #e89a6c !important;
+    color: #e89a6c !important;
+  }
+  body.module02-reference-page .network-edge.resiliencia,
+  body.module02-reference-page .edge.resiliencia,
+  body.module02-reference-page path.resiliencia,
+  body.module02-reference-page line.resiliencia {
+    stroke: #e89a6c !important;
+  }
+}
+
+@media (min-width: 821px) {
+  body.module02-reference-page svg [stroke="#5b8def"],
+  body.module02-reference-page svg [style*="rgb(91, 141, 239)"],
+  body.module02-reference-page svg [style*="#5b8def"] {
+    stroke: #e89a6c !important;
+  }
+  body.module02-reference-page svg [fill="#5b8def"],
+  body.module02-reference-page svg [style*="fill: rgb(91, 141, 239)"],
+  body.module02-reference-page svg [style*="fill: #5b8def"] {
+    fill: #e89a6c !important;
+  }
+}
