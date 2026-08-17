@@ -392,6 +392,17 @@
         return "layer-warm";
       return "layer-green";
     };
+    const layerColor = (layerName) => ({
+      "layer-red": "#ef6f6f",
+      "layer-warm": "#e89a6c",
+      "layer-green": "#46d6d0",
+    }[layerName] || "#46d6d0");
+    const edgeColor = {
+      direct: "#d7dae2",
+      indirect: "#8b93a8",
+      support: "#f5a623",
+      result: "#d9824e",
+    };
     const thematicCatalog = {
       "30min": [
         { id: "care-health", label: "Cuidado y salud", color: "#2fd4c8" },
@@ -602,7 +613,7 @@
             labelY = y + (r >= 44 ? 10 : 7),
             lineGap = r >= 44 ? 10 : 7;
           const category = item._categories?.[i] || "access-goals";
-          const categoryColor = (thematicCatalog[item._key] || []).find((entry) => entry.id === category)?.color || "#46d6d0";
+          const categoryColor = layerColor(layer(label));
           const relationCounts = item.edges.reduce((counts, edge) => {
             if (edge[0] === i || edge[1] === i) counts[edge[2]] = (counts[edge[2]] || 0) + 1;
             return counts;
@@ -1000,7 +1011,7 @@
       $("#networkCount").textContent =
         `${item.nodes.length} nodos · ${item.edges.length} conexiones`;
       $("#networkExplanation").textContent = item.text;
-      canvas.innerHTML = `<svg viewBox="0 0 1400 900" role="img" aria-label="${esc(item.title)}"><defs><marker id="arrow-direct" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 7 3.5 0 7Z" fill="#e89a6c"/></marker><marker id="arrow-indirect" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 7 3.5 0 7Z" fill="#d9824e"/></marker><marker id="arrow-support" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 7 3.5 0 7Z" fill="#e0b447"/></marker><marker id="arrow-result" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 7 3.5 0 7Z" fill="#ff6eaa"/></marker></defs><g id="networkViewport">${categoryHalos(item)}${lines(item)}${nodes(item)}</g></svg>`;
+      canvas.innerHTML = `<svg viewBox="0 0 1400 900" role="img" aria-label="${esc(item.title)}"><defs><marker id="arrow-direct" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 7 3.5 0 7Z" fill="#d7dae2"/></marker><marker id="arrow-indirect" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 7 3.5 0 7Z" fill="#8b93a8"/></marker><marker id="arrow-support" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 7 3.5 0 7Z" fill="#f5a623"/></marker><marker id="arrow-result" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 7 3.5 0 7Z" fill="#d9824e"/></marker></defs><g id="networkViewport">${categoryHalos(item)}${lines(item)}${nodes(item)}</g></svg>`;
       alignModule02ReferenceShell();
       document.body.dataset.activeNetwork = key;
       hiddenNodes = new Set();

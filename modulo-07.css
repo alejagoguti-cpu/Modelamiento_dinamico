@@ -4033,3 +4033,48 @@ body { overflow: hidden !important; }
 .network-legend .layer-red-text { color:#ef6f6f !important; font-size:11px !important; }
 .network-legend .layer-warm-text { color:#e89a6c !important; font-size:11px !important; }
 .network-legend .layer-green-text { color:#46d6d0 !important; font-size:11px !important; }
+
+/* Títulos con el mismo gradiente y halo suave de Módulo 02 */
+.hero-copy h1 .h2-plain,
+.hero-copy h1 { color:#f2f3f6 !important; font-family:'Space Grotesk',sans-serif !important; font-weight:600 !important; }
+.hero-copy h1 em {
+  background:linear-gradient(90deg,#f2f3f6 0%,#e9695c 55%,#d28b36 100%) !important;
+  -webkit-background-clip:text !important;
+  background-clip:text !important;
+  -webkit-text-fill-color:transparent !important;
+  color:transparent !important;
+  text-shadow:0 0 18px rgba(233,105,92,.16) !important;
+}
+.network-modal-head h2 {
+  font-family:'Space Grotesk',sans-serif !important;
+  font-weight:600 !important;
+  background:linear-gradient(90deg,#f2f3f6 0%,#46d6d0 48%,#e89a6c 100%) !important;
+  -webkit-background-clip:text !important;
+  background-clip:text !important;
+  -webkit-text-fill-color:transparent !important;
+  color:transparent !important;
+  text-shadow:0 0 18px rgba(70,214,208,.14) !important;
+}
+.network-legend > .legend-title {
+  color:#8e96a8 !important;
+  text-shadow:0 0 8px rgba(70,214,208,.10) !important;
+}
+.network-kicker { text-shadow:0 0 10px rgba(70,214,208,.22) !important; }
+
+/* Correspondencia cromática definitiva entre convenciones, líneas, nodos e iconos */
+.network-edge.direct { stroke:#d7dae2 !important; }
+.network-edge.indirect { stroke:#8b93a8 !important; }
+.network-edge.support { stroke:#f5a623 !important; }
+.network-edge.result { stroke:#d9824e !important; }
+.network-node.layer-red > circle { stroke:#ef6f6f !important; filter:drop-shadow(0 0 5px rgba(239,111,111,.55)) !important; }
+.network-node.layer-warm > circle { stroke:#e89a6c !important; filter:drop-shadow(0 0 5px rgba(232,154,108,.55)) !important; }
+.network-node.layer-green > circle { stroke:#46d6d0 !important; filter:drop-shadow(0 0 5px rgba(70,214,208,.55)) !important; }
+.network-node.layer-red .node-icon-svg,
+.network-node.layer-red .node-fa-icon { color:#ef6f6f !important; stroke:#ef6f6f !important; }
+.network-node.layer-warm .node-icon-svg,
+.network-node.layer-warm .node-fa-icon { color:#e89a6c !important; stroke:#e89a6c !important; }
+.network-node.layer-green .node-icon-svg,
+.network-node.layer-green .node-fa-icon { color:#46d6d0 !important; stroke:#46d6d0 !important; }
+.network-node.layer-red .node-name,
+.network-node.layer-warm .node-name,
+.network-node.layer-green .node-name { color:#f2f3f6 !important; }
