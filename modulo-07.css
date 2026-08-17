@@ -8,7 +8,7 @@
   --teal: #46d6d0;
   --orange: #e89a6c;
   --red: #d9824e;
-  --blue: #7fd6ce;
+  --copper: #e89a6c;
   --green: #8fd7c8;
 }
 * {
@@ -614,7 +614,7 @@ button {
   height: min(720px, 90vh);
   overflow: auto;
   background: #191817;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(232, 154, 108, 0.62);
   border-radius: 16px;
   box-shadow: 0 24px 90px #000;
   padding: 24px 26px;
@@ -724,9 +724,9 @@ button {
   stroke: var(--red);
   filter: drop-shadow(0 0 7px rgba(239, 111, 111, 0.45));
 }
-.network-node.layer-blue circle {
-  stroke: var(--blue);
-  filter: drop-shadow(0 0 7px rgba(97, 169, 230, 0.4));
+.network-node.layer-warm circle {
+  stroke: var(--copper);
+  filter: drop-shadow(0 0 7px rgba(232, 154, 108, 0.4));
 }
 .network-node.layer-green circle {
   stroke: var(--green);
@@ -766,9 +766,9 @@ button {
   background: var(--red);
   box-shadow: 0 0 8px var(--red);
 }
-.layer-item.blue > i {
-  background: var(--blue);
-  box-shadow: 0 0 8px var(--blue);
+.layer-item.warm > i {
+  background: var(--copper);
+  box-shadow: 0 0 8px var(--copper);
 }
 .layer-item.green > i {
   background: var(--green);
@@ -923,9 +923,9 @@ button {
   background: rgba(239, 111, 111, 0.16);
   color: var(--red);
 }
-.node-details .node-badge.blue {
-  background: rgba(97, 169, 230, 0.16);
-  color: var(--blue);
+.node-details .node-badge.warm {
+  background: rgba(232, 154, 108, 0.16);
+  color: var(--copper);
 }
 .node-details .node-badge.green {
   background: rgba(53, 211, 160, 0.16);
@@ -962,8 +962,8 @@ button {
 .network-node.layer-red .node-icon {
   fill: var(--red);
 }
-.network-node.layer-blue .node-icon {
-  fill: var(--blue);
+.network-node.layer-warm .node-icon {
+  fill: var(--copper);
 }
 .network-node.layer-green .node-icon {
   fill: var(--green);
@@ -1058,8 +1058,8 @@ button {
 .network-node.layer-red .node-icon-svg {
   color: var(--red);
 }
-.network-node.layer-blue .node-icon-svg {
-  color: var(--blue);
+.network-node.layer-warm .node-icon-svg {
+  color: var(--copper);
 }
 .network-node.layer-green .node-icon-svg {
   color: var(--green);
@@ -1282,7 +1282,7 @@ button {
 .network-node text {
   font-size: 12px;
   paint-order: stroke;
-  stroke: #0b1110;
+  stroke: #0b0c0f;
   stroke-width: 3px;
   stroke-linejoin: round;
 }
@@ -1586,7 +1586,7 @@ button {
   fill: #edf6ef;
   text-anchor: middle;
   paint-order: stroke;
-  stroke: #0b1218;
+  stroke: #0b0c0f;
   stroke-width: 2.5px;
   stroke-linejoin: round;
 }
@@ -1594,15 +1594,15 @@ button {
   font-size: 8px !important;
 }
 .network-edge {
-  stroke: #55b7ff;
+  stroke: #e89a6c;
   stroke-width: 1.15;
   opacity: 0.78;
 }
 .network-edge.direct {
-  stroke: #55b7ff;
+  stroke: #e89a6c;
 }
 .network-edge.indirect {
-  stroke: #b27cff;
+  stroke: #d9824e;
   stroke-dasharray: 4 4;
   opacity: 0.72;
 }
@@ -1663,19 +1663,19 @@ button {
 
 /* Tratamiento neón inspirado en la referencia visual */
 .network-canvas {
-  background: #0d1422;
-  border: 1px solid rgba(91, 133, 209, 0.2);
+  background: #0b0c0f;
+  border: 1px solid rgba(232, 154, 108, 0.2);
   background-image: radial-gradient(
     circle at 50% 45%,
-    rgba(31, 61, 103, 0.18),
+    rgba(68, 45, 30, 0.18),
     transparent 56%
   );
 }
 .network-canvas svg {
-  background: #0d1422;
+  background: #0b0c0f;
 }
 .network-node > circle {
-  fill: #07141a;
+  fill: #0b0c0f;
   stroke-width: 2.8;
 }
 .network-node.layer-green > circle {
@@ -1683,10 +1683,10 @@ button {
   filter: drop-shadow(0 0 5px #38ef88)
     drop-shadow(0 0 13px rgba(56, 239, 136, 0.72));
 }
-.network-node.layer-blue > circle {
-  stroke: #5594ff;
-  filter: drop-shadow(0 0 5px #5594ff)
-    drop-shadow(0 0 13px rgba(85, 148, 255, 0.72));
+.network-node.layer-warm > circle {
+  stroke: #e89a6c;
+  filter: drop-shadow(0 0 5px #e89a6c)
+    drop-shadow(0 0 13px rgba(232, 154, 108, 0.72));
 }
 .network-node.layer-red > circle {
   stroke: #ff5a69;
@@ -1713,7 +1713,7 @@ button {
   font-weight: 800;
   letter-spacing: 0.05px;
   fill: #f8fbff;
-  stroke: #07101b;
+  stroke: #0b0c0f;
   stroke-width: 3px;
 }
 .network-node.central .node-label {
@@ -1724,9 +1724,9 @@ button {
   color: #38ef88;
   fill: #f7fffb;
 }
-.network-node.layer-blue .node-icon-svg,
-.network-node.layer-blue .node-label {
-  color: #5594ff;
+.network-node.layer-warm .node-icon-svg,
+.network-node.layer-warm .node-label {
+  color: #e89a6c;
   fill: #f7fbff;
 }
 .network-node.layer-red .node-icon-svg,
@@ -1744,7 +1744,7 @@ button {
   stroke-width: 2.3px;
 }
 .network-edge.indirect {
-  stroke: #a876ff;
+  stroke: #d9824e;
   stroke-width: 2px;
   stroke-dasharray: 6 5;
 }
@@ -1772,18 +1772,18 @@ button {
 .network-node.layer-green {
   --icon-color: #38ef88;
 }
-.network-node.layer-blue {
-  --icon-color: #5594ff;
+.network-node.layer-warm {
+  --icon-color: #e89a6c;
 }
 .network-node.layer-red {
   --icon-color: #ff5a69;
 }
 .network-node .node-label {
   fill: #f8fbff !important;
-  stroke: #07101b !important;
+  stroke: #0b0c0f !important;
 }
 .network-node.layer-green .node-icon-svg,
-.network-node.layer-blue .node-icon-svg,
+.network-node.layer-warm .node-icon-svg,
 .network-node.layer-red .node-icon-svg {
   fill: none !important;
   stroke: var(--icon-color) !important;
@@ -1850,7 +1850,7 @@ button {
 
 /* Canvas orgánico para comunidades causales */
 .network-canvas svg {
-  background: #0d1422;
+  background: #0b0c0f;
 }
 .network-node {
   transform-box: fill-box;
@@ -2055,7 +2055,7 @@ button {
 .network-node.layer-green {
   --icon-color: #2fbfae;
 }
-.network-node.layer-blue {
+.network-node.layer-warm {
   --icon-color: #ef8b3c;
 }
 .network-node.layer-red {
@@ -2704,7 +2704,7 @@ body {
   stroke: var(--lab-teal) !important;
   filter: drop-shadow(0 0 4px rgba(70, 214, 208, 0.55)) !important;
 }
-.network-node.layer-blue > circle {
+.network-node.layer-warm > circle {
   stroke: var(--lab-teal-soft) !important;
   filter: drop-shadow(0 0 4px rgba(127, 230, 222, 0.42)) !important;
 }
@@ -3082,7 +3082,7 @@ body {
 .network-node.layer-green {
   --node-glow: #46d6d0;
 }
-.network-node.layer-blue {
+.network-node.layer-warm {
   --node-glow: #7fe6de;
 }
 .network-node.layer-red {
@@ -3299,7 +3299,7 @@ body {
 .layer-red-text {
   color: #e89a6c;
 }
-.layer-blue-text {
+.layer-warm-text {
   color: #7fe6de;
 }
 .layer-green-text {
@@ -3636,7 +3636,7 @@ auto {
   --m02-dim: #8891a5;
   --m02-faint: #5a6274;
   --m02-teal: #2fd4c8;
-  --m02-blue: #5b8def;
+  --m02-blue: #e89a6c;
   --m02-purple: #a276f2;
   --m02-green: #4ade80;
   --m02-yellow: #f5c945;
@@ -3751,7 +3751,7 @@ body { overflow-x: hidden !important; font-family: Inter, sans-serif !important;
   --text-faint: #5a6274;
   --teal: #2fd4c8;
   --teal-dim: rgba(47,212,200,.12);
-  --blue: #5b8def;
+  --blue: #e89a6c;
   --purple: #a276f2;
   --green: #4ade80;
   --yellow: #f5c945;

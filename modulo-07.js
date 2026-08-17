@@ -389,27 +389,27 @@
           s,
         )
       )
-        return "layer-blue";
+        return "layer-warm";
       return "layer-green";
     };
     const thematicCatalog = {
       "30min": [
         { id: "care-health", label: "Cuidado y salud", color: "#2fd4c8" },
-        { id: "education", label: "Educación y equipamientos", color: "#5b8def" },
+        { id: "education", label: "Educación y equipamientos", color: "#e89a6c" },
         { id: "mobility", label: "Movilidad y proximidad", color: "#ef9552" },
         { id: "housing-employment", label: "Vivienda y empleo", color: "#a276f2" },
         { id: "access-goals", label: "Acceso y metas", color: "#f5c945" },
       ],
       empleo: [
         { id: "economic-activity", label: "Actividad económica", color: "#ef9552" },
-        { id: "human-capital", label: "Capital humano", color: "#5b8def" },
+        { id: "human-capital", label: "Capital humano", color: "#e89a6c" },
         { id: "labor-mobility", label: "Movilidad laboral", color: "#2fd4c8" },
         { id: "territorial-equity", label: "Equidad territorial", color: "#a276f2" },
         { id: "employment-results", label: "Resultados de empleo", color: "#f5c945" },
       ],
       carbono: [
         { id: "clean-transit", label: "Transporte limpio", color: "#2fd4c8" },
-        { id: "clean-infrastructure", label: "Infraestructura limpia", color: "#5b8def" },
+        { id: "clean-infrastructure", label: "Infraestructura limpia", color: "#e89a6c" },
         { id: "emissions-air", label: "Emisiones y aire", color: "#ef9552" },
         { id: "modal-change", label: "Cambio modal", color: "#a276f2" },
         { id: "environmental-health", label: "Salud ambiental", color: "#f5c945" },
@@ -733,8 +733,8 @@
       const l = layer(label);
       return l === "layer-red"
         ? "Capa Roja · Ecológica"
-        : l === "layer-blue"
-          ? "Capa Azul · Determinista"
+        : l === "layer-warm"
+          ? "Capa Cobre · Determinista"
           : "Capa Verde · Social";
     };
     const showNodeTip = (item, index, event) => {
@@ -983,8 +983,8 @@
         name =
           l === "layer-red"
             ? "Capa Roja · Ecológica"
-            : l === "layer-blue"
-              ? "Capa Azul · Determinista"
+            : l === "layer-warm"
+              ? "Capa Cobre · Determinista"
               : "Capa Verde · Social",
         info = nodeInfo(n[0]);
       details.innerHTML = `<h3><span class="panel-icon teal"><i class="fa-solid fa-crosshairs"></i></span>Inspección del nodo</h3><span class="node-badge ${l.replace("layer-", "")}">${name}</span><p class="node-name">${esc(info.n)}</p><p class="node-meta"><b>${linked.length}</b> conexiones reales en esta red</p><div class="node-fact"><b>${esc(info.value)}</b><small>Unidad: ${esc(info.unit)}</small></div><p class="node-explanation"><strong>Explicación:</strong> ${esc(info.role)}</p><p class="node-source">Fuente: ${esc(info.source)}</p><h4>Relaciones conectadas</h4><ul class="node-connections">${linked.map((v) => `<li>${esc(clean(item.nodes[v.index][0]))} <small>· ${v.type === "support" ? "soporte" : v.type === "indirect" ? "indirecta" : v.type === "result" ? "resultado" : "directa"}</small></li>`).join("")}</ul>`;
@@ -1000,7 +1000,7 @@
       $("#networkCount").textContent =
         `${item.nodes.length} nodos · ${item.edges.length} conexiones`;
       $("#networkExplanation").textContent = item.text;
-      canvas.innerHTML = `<svg viewBox="0 0 1400 900" role="img" aria-label="${esc(item.title)}"><defs><marker id="arrow-direct" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 7 3.5 0 7Z" fill="#55b7ff"/></marker><marker id="arrow-indirect" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 7 3.5 0 7Z" fill="#b27cff"/></marker><marker id="arrow-support" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 7 3.5 0 7Z" fill="#e0b447"/></marker><marker id="arrow-result" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 7 3.5 0 7Z" fill="#ff6eaa"/></marker></defs><g id="networkViewport">${categoryHalos(item)}${lines(item)}${nodes(item)}</g></svg>`;
+      canvas.innerHTML = `<svg viewBox="0 0 1400 900" role="img" aria-label="${esc(item.title)}"><defs><marker id="arrow-direct" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 7 3.5 0 7Z" fill="#e89a6c"/></marker><marker id="arrow-indirect" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 7 3.5 0 7Z" fill="#d9824e"/></marker><marker id="arrow-support" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 7 3.5 0 7Z" fill="#e0b447"/></marker><marker id="arrow-result" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 7 3.5 0 7Z" fill="#ff6eaa"/></marker></defs><g id="networkViewport">${categoryHalos(item)}${lines(item)}${nodes(item)}</g></svg>`;
       alignModule02ReferenceShell();
       document.body.dataset.activeNetwork = key;
       hiddenNodes = new Set();
