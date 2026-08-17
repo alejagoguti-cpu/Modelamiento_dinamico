@@ -177,7 +177,7 @@ body {
 .network-body { display: flex; gap: 20px; align-items: stretch; }
 .network-canvas { position: relative; flex: 1; min-width: 0; align-self: flex-start; border-radius: 12px; overflow: hidden; }
 #networkViz {
-  width: 100%; height: 860px; background: #05070a;
+  width: 100%; height: 1050px; background: #05070a;
   border: 1px solid var(--border);
   display: block;
 }
@@ -326,7 +326,7 @@ body {
 /* VISTA AMPLIADA DE HUMEDALES: ocupa el mismo espacio que la red principal
    (misma altura ~620px que #networkViz) mientras está activa. */
 .humedales-overlay {
-  width: 100%; height: 860px; background: #05070a;
+  width: 100%; height: 1050px; background: #05070a;
   border: 1px solid var(--border); border-radius: 12px;
   display: none; flex-direction: column; overflow: hidden;
 }
@@ -342,8 +342,21 @@ body {
 }
 .humedales-overlay-close:hover { color: #f2f3f6; }
 .humedales-overlay-body { flex: 1; display: flex; min-height: 0; }
-.humedales-overlay-image-wrap { position: relative; flex: 1; min-width: 0; background: #0a0a0a; }
-.humedales-overlay-image { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges; }
+.humedales-overlay-image-wrap {
+  position: relative; flex: 1; min-width: 0; background: #0a0a0a;
+  display: flex; align-items: center; justify-content: center; overflow: hidden;
+}
+/* Contenedor interno con la proporción REAL de la foto (1920x1080 = 16:9).
+   Los hotspots se posicionan en % relativo a ESTE div, que siempre coincide
+   exactamente con el área visible de la imagen (sin franjas), sin importar
+   el tamaño del contenedor exterior. */
+.humedales-overlay-image-frame {
+  position: relative;
+  /* Tamaño final calculado por JS (fitImageFrame) para que SIEMPRE respete
+     exactamente la proporción 16:9 real de la foto dentro del espacio
+     disponible, sin las inconsistencias de aspect-ratio dentro de flexbox. */
+}
+.humedales-overlay-image { width: 100%; height: 100%; object-fit: contain; object-position: center; display: block; image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges; }
 .humedales-overlay-sidebar {
   width: 300px; flex-shrink: 0; overflow-y: auto; border-left: 1px solid var(--border-soft);
   background: rgba(255,255,255,0.02);
@@ -357,22 +370,27 @@ body {
 }
 .humedal-back-btn:hover { background: rgba(92, 214, 209, 0.15); }
 
+/* El círculo visual (anillo + glow) YA viene dibujado en la foto original;
+   este botón es solo la zona clicable — invisible en reposo para no duplicar
+   el anillo, y solo se resalta con un aro fino al pasar el mouse o seleccionar. */
 .humedal-hotspot {
   position: absolute; transform: translate(-50%, -50%);
-  width: 32px; height: 32px; border-radius: 50%;
-  background: none; border: none; cursor: pointer; padding: 0;
+  border-radius: 50%;
+  background: transparent; border: 2px solid transparent;
+  cursor: pointer; padding: 2px;
   display: flex; align-items: center; justify-content: center;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
 }
-.humedal-hotspot-dot {
-  width: 20px; height: 20px; border-radius: 50%;
-  background: rgba(92, 214, 209, 0.45); border: 3px solid #5cd6d1;
-  box-shadow: 0 0 0 4px rgba(92, 214, 209, 0.18), 0 0 14px rgba(92, 214, 209, 0.85);
-  transition: transform 0.15s ease, background 0.15s ease;
+.humedal-hotspot-label {
+  font-family: 'Inter', sans-serif; font-weight: 700; color: #ffffff;
+  text-align: center; line-height: 1.15; white-space: pre-line;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.9), 0 0 6px rgba(0,0,0,0.6); pointer-events: none;
 }
-.humedal-hotspot:hover .humedal-hotspot-dot,
-.humedal-hotspot.active .humedal-hotspot-dot {
-  transform: scale(1.35); background: rgba(255, 138, 76, 0.75); border-color: #ff8a4c;
-  box-shadow: 0 0 0 5px rgba(255, 138, 76, 0.22), 0 0 16px rgba(255, 138, 76, 0.9);
+.humedal-hotspot:hover,
+.humedal-hotspot.active {
+  transform: translate(-50%, -50%) scale(1.05);
+  border-color: #ff8a4c;
+  box-shadow: 0 0 0 3px rgba(255, 138, 76, 0.25), 0 0 14px rgba(255, 138, 76, 0.7);
 }
 
 /* ANALYSIS / MATRIX */
