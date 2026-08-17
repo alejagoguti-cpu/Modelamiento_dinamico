@@ -3010,8 +3010,10 @@ function toggleSystem(s) {
 function updateSwitches() {
   SYS.forEach(s => {
     const b = document.querySelector('.scenario-btn[data-sys="' + s + '"]');
-    if (!b) return;
+    const check = document.querySelector('.m03-system-check[data-sys="' + s + '"]');
     const off = !state[s];
+    if (check) check.checked = !off;
+    if (!b) return;
     // en este módulo, "active" = escenario de apagado encendido
     b.classList.toggle('active', off);
     const st = b.querySelector('.sys-state');
@@ -3541,6 +3543,26 @@ document.addEventListener('DOMContentLoaded', () => {
   if (conventionsHost && networkToolbar) conventionsHost.appendChild(networkToolbar);
 
   buildModel();
+  SYS.forEach(s => {
+    const count = document.getElementById('m03-count-' + s);
+    if (count) count.textContent = model.systems[s].concepts.length;
+  });
+  document.querySelectorAll('.m03-system-check').forEach(input => {
+    input.addEventListener('change', () => {
+      const s = input.dataset.sys;
+      if (state[s] !== input.checked) toggleSystem(s);
+    });
+  });
+  document.querySelectorAll('.m03-filter-action').forEach(button => {
+    button.addEventListener('click', () => {
+      const key = button.dataset.rel;
+      document.querySelectorAll('.relation-filter-input').forEach(input => {
+        input.checked = key === 'all' || input.dataset.relationFilter === key;
+        input.dispatchEvent(new Event('change', { bubbles: true }));
+      });
+      document.querySelectorAll('.m03-filter-action').forEach(b => b.classList.toggle('active', b === button));
+    });
+  });
   computeLayout();
 
   // interruptores = los botones de escenario del módulo
