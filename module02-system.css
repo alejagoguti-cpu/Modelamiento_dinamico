@@ -53,3 +53,37 @@ td { border-color: var(--m02-border-soft) !important; color: var(--m02-dim) !imp
 .builder-block, .builder-panel, .insight-card, .time-panel, .system-card, .plazo-section, .plazo-toggle { background: var(--m02-surface) !important; border-color: var(--m02-border) !important; }
 .plazo-desc, .plazo-how, .plazo-header p { color: var(--m02-dim) !important; }
 .system-card .system-icon, .insight-card .insight-icon { background: rgba(70,214,208,.12) !important; color: var(--m02-teal) !important; }
+
+/* Títulos principales unificados con la referencia del Módulo 02 */
+.welcome > h2, .hero-copy > h1, .sidebar-left > h1 {
+  font-family: 'Space Grotesk', sans-serif !important;
+  font-size: 54px !important;
+  font-weight: 700 !important;
+  line-height: 1.1 !important;
+  letter-spacing: -1px !important;
+  color: #f2f3f6 !important;
+  margin-bottom: 12px !important;
+  text-shadow: 0 0 24px rgba(70,214,208,.08) !important;
+}
+.welcome > h2 span, .hero-copy > h1 .h2-plain, .hero-copy > h1 span {
+  color: #f2f3f6 !important;
+  background: none !important;
+  -webkit-text-fill-color: #f2f3f6 !important;
+}
+.welcome > h2 em, .welcome > h2 .h2-accent, .hero-copy > h1 em {
+  font-style: normal !important;
+  background: linear-gradient(90deg, #f2f3f6 0%, var(--m02-teal) 55%, var(--m02-copper) 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+  text-shadow: none !important;
+}
+.welcome-eyebrow, .simulation-kicker, .hero-copy > .eyebrow, .sidebar-left > p {
+  color: var(--m02-teal) !important;
+  font-family: 'Space Grotesk', sans-serif !important;
+  letter-spacing: 1.5px !important;
+}
+@media (max-width: 900px) {
+  .welcome > h2, .hero-copy > h1, .sidebar-left > h1 { font-size: 38px !important; }
+}
