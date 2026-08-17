@@ -290,6 +290,12 @@ const RAW_EDGES = [
     analisis:"Fuente: Texto aportado; comprobar contra PDF" },
 
   // ==== PUENTES REALES ENTRE ESTRUCTURAS, aportados directamente por la usuaria (tablas nuevas) ====
+  { s:"humedales", t:"vivienda", cat:"e1-e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:null,
+    cita:"La expansión de vivienda sobre rondas de humedal es uno de los conflictos urbanos más documentados de Bogotá (Jaboque, Tibanica, Capellanía).",
+    analisis:"Puente real EEP↔EFC, aportado directamente por la usuaria — reemplaza el vacío documentado anteriormente." },
+  { s:"humedales", t:"red_vial", cat:"e1-e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"49–50",
+    cita:"Con respecto a los humedales de la ciudad, dentro del POT únicamente se identificó un conflicto de malla vial arterial con la Reserva Distrital de Humedal Capellanía, en Fontibón.",
+    analisis:"Puente real EEP↔EFC, aportado directamente por la usuaria." },
   { s:"equipamientos", t:"servicios_empresariales", cat:"e2-e3", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"1150",
     cita:"El POT afirma que la distribución de equipamientos compensa desequilibrios en el acceso a empleos dignos.",
     analisis:"Puente real EFC↔ESECI: 'Empleo' se trata aquí como el mismo concepto que Servicios Empresariales." },
@@ -319,8 +325,6 @@ const RAW_EDGES = [
   //      La Excel corrobora este hallazgo de forma independiente (hoja "Resumen": columna
   //      "Relaciones verificadas intersistema" = 0 en las 4 filas). Estas NO son relaciones del
   //      texto: son la ausencia documentada de un puente, ligada a un componente real del inventario. ====
-  { s:"humedales", t:"vivienda", cat:"e1-e2", tipo:"vacio", relacion:"Soporte", fuente:"inferencia", articulo:null, pagina:null, cita:null,
-    analisis:"No existe ningún artículo confirmado (ni en la matriz de 45 relaciones del equipo, ni en el índice oficial) que articule Humedales (EEP) con la producción de Vivienda (EFC) — pese a que la expansión de vivienda sobre rondas de humedal es uno de los conflictos urbanos más documentados de Bogotá (Jaboque, Tibanica, Capellanía)." },
   { s:"humedales", t:"manzanas_del_cuidado", cat:"e1-e2", tipo:"vacio", relacion:"Soporte", fuente:"inferencia", articulo:null, pagina:null, cita:null,
     analisis:"Las Manzanas del Cuidado se promocionan cercanas a espacios verdes, pero no hay mecanismo articulado, ni en la matriz de relaciones ni en el índice oficial, que conecte su localización con la protección de humedales." },
   { s:"rios", t:"transporte_publico", cat:"e1-e2", tipo:"vacio", relacion:"Resiliencia", fuente:"inferencia", articulo:null, pagina:null, cita:null,
@@ -367,10 +371,10 @@ const HUMEDALES_RED_IMG_B64 = "data:image/webp;base64,UklGRmq/AwBXRUJQVlA4IF6/Aw
 
 const CANVAS = { w: 3400, h: 2500 };
 const HUB_CENTERS = {
-  e1: { x: 1050, y: 920 },   // Ecológica Principal — noroccidente
-  e2: { x: 2050, y: 940 },   // Funcional y del Cuidado — nororiente
-  e3: { x: 1150, y: 1620 },  // Socioeconómica Creativa — suroccidente (cerca de e2 y e4: ahora tiene puentes reales con ambas)
-  e4: { x: 2000, y: 1600 },  // Integradora de Patrimonio — suroriente
+  e1: { x: 1250, y: 1050 },  // Ecológica Principal (hub: Humedales) — más cerca del centro
+  e2: { x: 1900, y: 1060 },  // Funcional y del Cuidado (hub: Vivienda) — más cerca del centro
+  e3: { x: 1350, y: 1470 },  // Socioeconómica Creativa (hub: Servicios Empresariales) — más cerca del centro
+  e4: { x: 1850, y: 1460 },  // Integradora de Patrimonio (hub: Patrimonio Material) — más cerca del centro
 };
 
 function layoutNetwork() {
@@ -969,29 +973,33 @@ function showNodeInfo(id) {
 // espacio del lienzo, por la foto de la sub-red de humedales (aportada por la
 // usuaria) con hotspots clicables sobre cada humedal individual. Al hacer clic
 // en un hotspot se muestra su cita literal + página del POT en la ficha lateral. ----
+// x, y: centro exacto del círculo real en la foto (% de ancho/alto de imagen).
+// diam: diámetro real de cada círculo en la foto (% del ancho de imagen) — medido
+// directamente sobre la imagen original, por eso varía de un humedal a otro.
+// label: el mismo texto que ya aparece escrito dentro del círculo en la foto.
 const HUMEDALES_CASOS = {
-  torca_guaymaral: { nombre: "Humedal Torca–Guaymaral", x: 59.6, y: 11.4,
+  torca_guaymaral: { nombre: "Humedal Torca–Guaymaral", label: "Humedal\nTorca-\nGuaymaral", x: 58.93, y: 11.66, diam: 3.15,
     cita: "El POT reconoce 15 humedales en Bogotá; estos son los casos que el documento desarrolla o nombra de manera específica en los fragmentos analizados.", pagina: "77" },
-  la_conejera: { nombre: "Humedal La Conejera", x: 40.0, y: 29.9,
+  la_conejera: { nombre: "Humedal La Conejera", label: "Humedal La\nConejera", x: 39.82, y: 30.64, diam: 2.95,
     cita: "11 de los humedales de Bogotá, como el de La Conejera, tienen certificación Ramsar, la máxima distinción internacional en la conservación de estos ecosistemas.", pagina: "77" },
-  tibabuyes: { nombre: "Humedal Tibabuyes", x: 40.35, y: 40.2,
+  tibabuyes: { nombre: "Humedal Tibabuyes", label: "Humedal\nTibabuyes", x: 40.52, y: 40.36, diam: 2.06,
     cita: "Peñalosa consideró útil endurecer el humedal Tibabuyes y, orgulloso de su obra, decidió continuarla en su segundo mandato superponiéndole una ciclovía de concreto.", pagina: null,
     conclusion: "El polígono es útil para establecer límites jurídicos, responsabilidades y restricciones de uso, pero es insuficiente para representar todo lo que ocurre en el humedal. No muestra por sí solo los flujos de agua, los cambios estacionales, los recorridos de las especies, los usos comunitarios ni las presiones de la infraestructura." },
-  ciclorutas_humedal: { nombre: "Ciclorutas sobre el sistema de humedales", x: 45.0, y: 47.5,
+  ciclorutas_humedal: { nombre: "Ciclorutas sobre el sistema de humedales", label: "Ciclorutas", x: 45.07, y: 47.45, diam: 2.45,
     cita: "Peñalosa consideró útil endurecer el humedal Tibabuyes y, orgulloso de su obra, decidió continuarla en su segundo mandato superponiéndole una ciclovía de concreto.", pagina: null },
-  cordoba: { nombre: "Humedal Córdoba", x: 51.5, y: 54.5,
+  cordoba: { nombre: "Humedal Córdoba", label: "Humedal\nCórdoba", x: 51.75, y: 54.03, diam: 2.13,
     cita: "Humedal Córdoba regula el agua, previene inundaciones y es el hogar de las aves, murciélagos e insectos que polinizan nuestras plantas.", pagina: "56" },
-  santa_maria_del_lago: { nombre: "Humedal Santa María del Lago", x: 45.9, y: 58.3,
+  santa_maria_del_lago: { nombre: "Humedal Santa María del Lago", label: "Humedal\nSanta María\ndel Lago", x: 46.08, y: 58.31, diam: 2.27,
     cita: "La transferencia de derechos de construcción y desarrollo de predios ubicados en suelo de protección nos permite asegurar mejores condiciones para la preservación de ecosistemas como el humedal Santa María del Lago, en la localidad de Engativá.", pagina: "221–222" },
-  fauna_y_flora: { nombre: "Fauna y flora asociada al sistema de humedales", x: 49.25, y: 59.9,
+  fauna_y_flora: { nombre: "Fauna y flora asociada al sistema de humedales", label: "Fauna y\nflora", x: 49.18, y: 60.00, diam: 2.78,
     cita: "El POT reconoce 15 humedales en Bogotá. Estos son los casos que el POT desarrolla o nombra de manera específica en los fragmentos analizados; esto no significa que sean los únicos humedales existentes, sino que son los que reciben mayor visibilidad dentro del documento.", pagina: "77" },
-  suelo_de_proteccion: { nombre: "Suelo de protección", x: 44.85, y: 64.3,
+  suelo_de_proteccion: { nombre: "Suelo de protección", label: "suelo de\nprotección", x: 44.03, y: 65.45, diam: 2.18,
     cita: "La transferencia de derechos de construcción y desarrollo de predios ubicados en suelo de protección nos permite asegurar mejores condiciones para la preservación de ecosistemas como el humedal Santa María del Lago, en la localidad de Engativá.", pagina: "221–222" },
-  malla_via: { nombre: "Malla vial (conflicto con Capellanía)", x: 39.75, y: 67.6,
+  malla_via: { nombre: "Malla vial (conflicto con Capellanía)", label: "Malla vía", x: 39.41, y: 68.25, diam: 3.52,
     cita: "Con respecto a los humedales de la ciudad, dentro del POT únicamente se identificó un conflicto de malla vial arterial con la Reserva Distrital de Humedal Capellanía, en Fontibón.", pagina: "49–50" },
-  capellania: { nombre: "Humedal Capellanía", x: 35.15, y: 72.4,
+  capellania: { nombre: "Humedal Capellanía", label: "Humedal\nCapellanía", x: 35.12, y: 72.50, diam: 2.09,
     cita: "Para permitir el paso de la vía, el POT plantea reducir parte del ecosistema y modificar sus áreas. Capellanía pasa de 27,03 hectáreas a 29,32 hectáreas mediante una operación de sustracción y ampliación en otros sectores.", pagina: "49–50" },
-  la_vaca: { nombre: "Humedal La Vaca", x: 35.15, y: 93.4,
+  la_vaca: { nombre: "Humedal La Vaca", label: "Humedal\nla vaca", x: 35.01, y: 93.50, diam: 2.10,
     cita: "El Humedal La Vaca, en Patio Bonito, parte de una antigua laguna muisca gobernada por el cacique Techovita, es un reservorio de agua, plantas y animales protegido por la comunidad.", pagina: "103" },
 };
 
@@ -1002,16 +1010,23 @@ function showHumedalesOverlay() {
   document.querySelector('.ods-node[data-id="humedales"]')?.classList.add("node-selected");
 
   const body = document.getElementById("humedalesOverlayBody");
+  // diam está medido como % del ANCHO de la imagen; convertido a % del propio
+  // frame (que tiene el mismo ancho que la imagen real gracias a aspect-ratio),
+  // por eso basta usar el mismo valor para width/height (círculo perfecto).
   const hotspotsHTML = Object.entries(HUMEDALES_CASOS).map(([key, c]) => `
-    <button type="button" class="humedal-hotspot" data-key="${key}" style="left:${c.x}%; top:${c.y}%;" title="${c.nombre}">
-      <span class="humedal-hotspot-dot"></span>
+    <button type="button" class="humedal-hotspot" data-key="${key}"
+      style="left:${c.x}%; top:${c.y}%; width:${c.diam}%; height:${c.diam * (16/9)}%;"
+      title="${c.nombre}" data-lines="${c.label.split("\n").length}">
+      <span class="humedal-hotspot-label">${c.label}</span>
     </button>
   `).join("");
 
   body.innerHTML = `
     <div class="humedales-overlay-image-wrap">
-      <img src="${HUMEDALES_RED_IMG_B64}" alt="Mapa-red de humedales de Bogotá con sus relaciones" class="humedales-overlay-image" />
-      ${hotspotsHTML}
+      <div class="humedales-overlay-image-frame" id="humedalesImageFrame">
+        <img src="${HUMEDALES_RED_IMG_B64}" alt="Mapa-red de humedales de Bogotá con sus relaciones" class="humedales-overlay-image" />
+        ${hotspotsHTML}
+      </div>
     </div>
     <div class="humedales-overlay-sidebar" id="humedalesOverlaySidebar">
       <div class="humedal-ramsar">
@@ -1021,6 +1036,23 @@ function showHumedalesOverlay() {
       <div class="humedal-hint">Haz clic en cualquier punto del mapa para ver la cita y la página del POT.</div>
     </div>
   `;
+
+  // Calcula el font-size EN PÍXELES REALES una vez que el frame ya está
+  // renderizado en el DOM, así el texto siempre calza dentro de cada círculo
+  // sin importar el tamaño de pantalla o cuántas líneas tenga el label.
+  requestAnimationFrame(() => {
+    const frame = document.getElementById("humedalesImageFrame");
+    if (!frame) return;
+    const frameRect = frame.getBoundingClientRect();
+    body.querySelectorAll(".humedal-hotspot").forEach(btn => {
+      const btnRect = btn.getBoundingClientRect();
+      const diamPx = Math.min(btnRect.width, btnRect.height);
+      const lines = Number(btn.dataset.lines) || 1;
+      const fontSize = Math.max(diamPx / (lines + 1.5), 8);
+      const label = btn.querySelector(".humedal-hotspot-label");
+      if (label) label.style.fontSize = fontSize.toFixed(1) + "px";
+    });
+  });
 
   body.querySelectorAll(".humedal-hotspot").forEach(btn => {
     btn.addEventListener("click", (ev) => {
