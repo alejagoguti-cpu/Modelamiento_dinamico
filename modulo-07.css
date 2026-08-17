@@ -4312,3 +4312,41 @@ body { position:relative !important; }
 .network-node.layer-red .node-label { fill: #f2f3f6 !important; }
 .network-node.hidden-network-node { display: block !important; opacity: 0 !important; pointer-events: none; }
 .network-node.selected > circle { filter: drop-shadow(0 0 8px #fff) !important; }
+
+/* Legibilidad de etiquetas dentro de los nodos */
+.network-node .node-content { pointer-events: none; }
+.network-node .node-inner {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 3px !important;
+  width: 100% !important;
+  height: 100% !important;
+  padding: 3px !important;
+  box-sizing: border-box !important;
+  text-align: center !important;
+  font-family: 'Inter', sans-serif !important;
+}
+.network-node .node-icon-wrap { line-height: 1 !important; }
+.network-node .node-name {
+  display: block !important;
+  max-width: 100% !important;
+  color: #f2f3f6 !important;
+  font-size: 9.2px !important;
+  font-weight: 700 !important;
+  line-height: 1.05 !important;
+  letter-spacing: -.05px !important;
+  text-align: center !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  paint-order: stroke !important;
+  text-shadow: 0 1px 3px #0b0c0f !important;
+}
+.network-node.hub-medium .node-name { font-size: 10px !important; }
+.network-node.hub-large .node-name { font-size: 11px !important; }
+.network-node .node-fa-icon { font-size: 15px !important; }
+.network-node.hub-medium .node-fa-icon { font-size: 19px !important; }
+.network-node.hub-large .node-fa-icon { font-size: 24px !important; }
+/* Las categorías se conservan en filtros, no como textos flotantes en el lienzo. */
+.category-halos { display: none !important; }

@@ -322,6 +322,25 @@
       }
       item._categories = item.nodes.map((node) => thematicCategory(key, node[0]));
     };
+    const removeNodeByLabel = (key, matcher) => {
+      const item = networks[key];
+      const removed = item.nodes.findIndex((node) => matcher.test(clean(node[0])));
+      if (removed < 0) return;
+      const remap = new Map();
+      item.nodes = item.nodes.filter((_, index) => {
+        if (index === removed) return false;
+        remap.set(index, remap.size);
+        return true;
+      });
+      item.edges = item.edges
+        .filter(([a, b]) => a !== removed && b !== removed)
+        .map(([a, b, type]) => [remap.get(a), remap.get(b), type]);
+      item._categories = item.nodes.map((node) => thematicCategory(key, node[0]));
+    };
+    removeNodeByLabel("30min", /^(33 Unidades de Planeamiento Local|Empleo formal)$/);
+    removeNodeByLabel("empleo", /^(Empleo formal y productividad|Productividad por trabajador)/);
+    removeNodeByLabel("carbono", /^Viajes limpios$/);
+
     fillTo30("30min", [
       "160 Proyectos Integrales de Proximidad",
       "Redes peatonales y ciclistas",
@@ -376,22 +395,11 @@
       "Dos Regiotram regionales",
       "Meta: reducir 50% las emisiones GEI",
     ]);
-    const removeNodeByLabel = (key, matcher) => {
-      const item = networks[key];
-      const removed = item.nodes.findIndex((node) => matcher.test(clean(node[0])));
-      if (removed < 0) return;
-      const remap = new Map();
-      item.nodes = item.nodes.filter((_, index) => {
-        if (index === removed) return false;
-        remap.set(index, remap.size);
-        return true;
-      });
-      item.edges = item.edges
-        .filter(([a, b]) => a !== removed && b !== removed)
-        .map(([a, b, type]) => [remap.get(a), remap.get(b), type]);
-      item._categories = item.nodes.map((node) => thematicCategory(key, node[0]));
-    };
-    removeNodeByLabel("30min", /^33 Unidades de Planeamiento Local$/);
+    // Limpieza final después de completar cada dataset: evita reinsertar agregadores.
+    removeNodeByLabel("30min", /^(33 Unidades de Planeamiento Local|Empleo formal)$/);
+    removeNodeByLabel("empleo", /^(Empleo formal y productividad|Productividad por trabajador)/);
+    removeNodeByLabel("carbono", /^Viajes limpios$/);
+
     const layer = (label) => {
       const s = label.toLowerCase();
       if (
@@ -504,7 +512,7 @@
         const d = degree[index];
         node[1] = 120 + (node[1] - minX) * scaleX;
         node[2] = 100 + (node[2] - minY) * scaleY;
-        node[3] = d <= 2 ? 24 : d <= 4 ? 32 : d <= 6 ? 42 : d <= 9 ? 56 : 66;
+        node[3] = d <= 2 ? 40 : d <= 4 ? 48 : d <= 6 ? 58 : d <= 9 ? 70 : 82;
       });
       for (let pass = 0; pass < 12; pass++) {
         for (let i = 0; i < item.nodes.length; i++) for (let j = i + 1; j < item.nodes.length; j++) {
@@ -577,7 +585,7 @@
       item.nodes
         .map(([label, x, y, r, type, icon], i) => {
           const display = quantify(label),
-            maxChars = r >= 58 ? 15 : r >= 44 ? 12 : r >= 32 ? 9 : 7,
+            maxChars = r >= 70 ? 18 : r >= 55 ? 15 : r >= 40 ? 12 : 9,
             rows = display
               .split(/\n|\\n/)
               .flatMap((row) => {
@@ -588,7 +596,7 @@
               })
               .slice(0, 2);
           const sizeClass =
-              r >= 58 ? "hub-large" : r >= 44 ? "hub-medium" : "node-small",
+              r >= 70 ? "hub-large" : r >= 48 ? "hub-medium" : "node-small",
             iconY = r >= 44 ? y - 9 : y - 5,
             labelY = y + (r >= 44 ? 10 : 7),
             lineGap = r >= 44 ? 10 : 7;
@@ -603,17 +611,7 @@
           return `<g class="network-node floating-node ${sizeClass} ${type || ""} relation-${relationType} ${layer(label)} category-${category}" data-node-index="${i}" data-relation-type="${relationType}" data-category="${category}" tabindex="0" role="button" aria-label="${esc(clean(display))}" transform="translate(${x} ${y})" style="--node-color:${categoryColor};color:${categoryColor}"><circle class="node-ring" cx="0" cy="0" r="${r}" fill="#0a0a0a" stroke="${categoryColor}" stroke-width="${r >= 44 ? 2.5 : 1.6}"/><foreignObject class="node-content" x="${-r * 0.9}" y="${-r * 0.9}" width="${r * 1.8}" height="${r * 1.8}"><div xmlns="http://www.w3.org/1999/xhtml" class="node-inner" style="color:${categoryColor} !important"><span class="node-icon-wrap" style="color:${categoryColor} !important">${iconSvg(label).replace('node-fa-icon"', `node-fa-icon" style="color:${categoryColor} !important"`)}</span><span class="node-name">${esc(labelText)}</span></div></foreignObject></g>`;
         })
         .join("");
-    const categoryHalos = (item) => {
-      const categories = thematicCatalog[item._key] || [];
-      return `<g class="category-halos">${categories.map((category) => {
-        const indices = item._categories.map((value, index) => value === category.id ? index : -1).filter((index) => index >= 0);
-        if (!indices.length) return "";
-        const xs = indices.map((index) => item.nodes[index][1]), ys = indices.map((index) => item.nodes[index][2]);
-        const minX = Math.max(18, Math.min(...xs) - 52), maxX = Math.min(1382, Math.max(...xs) + 52);
-        const minY = Math.max(26, Math.min(...ys) - 52), maxY = Math.min(874, Math.max(...ys) + 52);
-        return `<g class="category-halo" data-category="${category.id}"><rect x="${minX}" y="${minY}" width="${Math.max(110, maxX - minX)}" height="${Math.max(90, maxY - minY)}" rx="28" style="--category-color:${category.color}"/><text x="${minX + 14}" y="${minY + 18}">${esc(category.label)}</text></g>`;
-      }).join("")}</g>`;
-    };
+    const categoryHalos = () => "";
     const modal = $("#networkModal"),
       canvas = $("#networkCanvas"),
       details = $("#nodeDetails");
