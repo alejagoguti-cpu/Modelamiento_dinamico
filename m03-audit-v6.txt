@@ -1,0 +1,14 @@
+Auditoría Módulo 03 — v6
+
+- Relaciones SVG activas renderizadas: 68.
+- Hitboxes interactivos: 68.
+- Opacidad computada de las relaciones visibles: 1.0 para las 68; anchos: 2.4 px y 1.8 px según tipo.
+- Marcadores SVG: ar-soporte y ar-resiliencia; ambos display inline, opacity 1, con rellenos naranja y teal.
+- Prueba de clic: relación data-rel=1 seleccionada correctamente; evBox contiene estructura origen/destino, conceptos Vivienda → Empleo, tipo Soporte, lectura Directa, sección del POT, explicación causal, cita textual y Página 169.
+- Nodos renderizados: 47.
+- Se agregó override CSS con especificidad superior para neutralizar reglas antiguas que forzaban opacity 0.045/0.018 en relaciones inter-hub.
+- computeLayoutClean fue reemplazado por distribución descentralizada con hubs dispersos, corredores para conceptos intersistema y separación corta anti-superposición.
+- No se observaron errores de JavaScript en consola durante recarga y pruebas.
+- Pendiente: confirmación del usuario antes de commit/push; no se ha publicado ningún cambio.
+
+Nota visual: las cajas rojas numeradas de la captura son marcadores de anotación del navegador, no parte del diseño del portal.

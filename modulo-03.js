@@ -2378,6 +2378,70 @@ function computeLayout() {
   vb = Object.assign({}, BASE_VB);
 }
 
+// Distribución integrada de referencia: cuatro hubs descentralizados y una
+// malla abierta de satélites. Las posiciones son deterministas y no alteran
+// endpoints, citas, páginas ni la lógica de activación de las relaciones.
+function computeLayoutClean() {
+  const centers = {
+    EEP: { x: 820, y: 780 }, EFC: { x: 1710, y: 690 },
+    ESECI: { x: 1010, y: 1500 }, EIP: { x: 1830, y: 1430 }
+  };
+  const slots = [
+    [-360,-210],[-180,-300],[20,-330],[220,-265],[390,-120],
+    [-410,35],[-245,105],[-65,55],[145,110],[335,55],
+    [-350,245],[-170,315],[35,255],[235,325],[395,220]
+  ];
+  const ids = Object.keys(model.concepts);
+  const hubIds = new Set();
+  SYS.forEach(sys => {
+    const center = centers[sys];
+    const group = model.systems[sys].concepts.slice().sort((a,b) =>
+      (model.concepts[b].deg - model.concepts[a].deg) || a.localeCompare(b));
+    if (!group.length) return;
+    const hub = group[0];
+    hubIds.add(hub);
+    layout[hub] = { x:center.x, y:center.y };
+    group.slice(1).forEach((id, i) => {
+      const s = slots[i % slots.length];
+      const cycle = Math.floor(i / slots.length);
+      layout[id] = { x:center.x + s[0] + cycle * 42, y:center.y + s[1] + cycle * 30 };
+    });
+  });
+  ids.forEach(id => {
+    const c = model.concepts[id];
+    const p = layout[id] || { x:1320, y:1140 };
+    const cross = c.rels.some(r => r.sO !== r.sD);
+    if (cross && !hubIds.has(id)) {
+      const target = c.sys === 'EEP' ? {x:1160,y:1010} : c.sys === 'EFC' ? {x:1510,y:970} : c.sys === 'ESECI' ? {x:1270,y:1260} : {x:1530,y:1230};
+      p.x = p.x * 0.78 + target.x * 0.22;
+      p.y = p.y * 0.78 + target.y * 0.22;
+    }
+    const margin = nodeR[id] + 90;
+    p.x = Math.max(margin, Math.min(2644 - margin, p.x));
+    p.y = Math.max(margin, Math.min(2294 - margin, p.y));
+    layout[id] = p;
+  });
+  for (let pass = 0; pass < 3; pass++) {
+    ids.forEach((aId, i) => ids.slice(i + 1).forEach(bId => {
+      const a = layout[aId], b = layout[bId];
+      const min = nodeR[aId] + nodeR[bId] + 28;
+      let dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy);
+      if (d >= min) return;
+      if (!d) { dx = 1; dy = 0; d = 1; }
+      const push = (min - d) / d * 0.5;
+      if (!hubIds.has(aId)) { a.x -= dx * push; a.y -= dy * push; }
+      if (!hubIds.has(bId)) { b.x += dx * push; b.y += dy * push; }
+    }));
+  }
+  let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
+  ids.forEach(id => { const p=layout[id], r=nodeR[id]+100;
+    minX=Math.min(minX,p.x-r); maxX=Math.max(maxX,p.x+r);
+    minY=Math.min(minY,p.y-r); maxY=Math.max(maxY,p.y+r);
+  });
+  BASE_VB = { x:minX, y:minY, w:maxX-minX, h:maxY-minY };
+  vb = Object.assign({}, BASE_VB);
+}
+
 // ---------------------------------------------------------------------
 // 3. RENDER
 // ---------------------------------------------------------------------
@@ -3503,7 +3567,7 @@ document.addEventListener('DOMContentLoaded', () => {
       document.querySelectorAll('.m03-filter-action').forEach(b => b.classList.toggle('active', b === button));
     });
   });
-  computeLayout();
+  computeLayoutClean();
 
   // interruptores = los botones de escenario del módulo
   document.querySelectorAll('.scenario-btn[data-sys]').forEach(b =>
