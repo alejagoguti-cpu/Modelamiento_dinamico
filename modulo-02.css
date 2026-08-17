@@ -317,6 +317,12 @@ body {
 .node-info-mapa a { color: var(--teal); font-size: 12px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
 .node-info-mapa a:hover { text-decoration: underline; }
 
+.node-info-schematic-map { margin-top: 12px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-soft); }
+.schematic-map-label { font-size: 9.5px; color: var(--text-faint); padding: 6px 8px 4px; line-height: 1.3; }
+.schematic-map-svg { width: 100%; height: auto; display: block; background: #0a0a0a; }
+.schematic-map-img { width: 100%; height: auto; display: block; background: #0a0a0a; }
+.schematic-map-hint { font-size: 10px; color: var(--text-faint); padding: 4px 8px 8px; line-height: 1.3; font-style: italic; }
+
 /* ANALYSIS / MATRIX */
 .analysis-container { display: grid; gap: 20px; margin-bottom: 28px; }
 .analysis-card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
