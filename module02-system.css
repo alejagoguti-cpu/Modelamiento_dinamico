@@ -140,7 +140,7 @@ td { border-color: var(--m02-border-soft) !important; color: var(--m02-dim) !imp
 }
 .danger-btn { border-color: var(--m02-copper) !important; color: var(--m02-copper) !important; background: transparent !important; }
 /* El Módulo 05 ubica su título en una columna estrecha: conserva la jerarquía sin desbordarse. */
-.sidebar-left > h1 { font-size: 31px !important; line-height: .98 !important; letter-spacing: -.045em !important; margin-bottom: 10px !important; }
+.sidebar-left > h1 { font-size: clamp(31px, 3.4vw, 54px) !important; line-height: 1.1 !important; letter-spacing: -1px !important; margin-bottom: 12px !important; }
 .metric-box a, .btn-compare { font-family: Inter, system-ui, sans-serif !important; font-size: 11px !important; font-weight: 600 !important; color: var(--m02-teal) !important; }
 .btn-compare { border-radius: 8px !important; border: 1px solid var(--m02-border) !important; background: rgba(255,255,255,.03) !important; padding: 8px 12px !important; }
 .btn-compare:hover, .metric-box a:hover { border-color: var(--m02-teal) !important; color: var(--m02-teal) !important; }
@@ -176,6 +176,14 @@ td { border-color: var(--m02-border-soft) !important; color: var(--m02-dim) !imp
   .layout .map-section { order: 2 !important; height: 360px !important; min-height: 360px !important; }
   .layout .sidebar-right { order: 3 !important; padding: 16px !important; }
   .layout #map { width: 100% !important; height: 360px !important; min-height: 360px !important; }
+}
+/* Igualdad final con el título del Módulo 02: degradado exacto coral/cobre. */
+.app > .main > .welcome h2 em, .app > .main > .welcome h2 .h2-accent, .hero-copy > h1 em, .sidebar-left > h1 em {
+  background: linear-gradient(90deg, #f2f3f6 0%, #e9695c 55%, #d28b36 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
 }
 @media (max-width: 430px) {
   .main { padding-left: 10px !important; padding-right: 10px !important; }
