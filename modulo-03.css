@@ -7866,3 +7866,40 @@ Need update styles maybe `display:none` for quote-backdrop means if old openQuot
 #gRels path.rel.sel,
 #gRels path.rel.directa.sel,
 #gRels path.rel.indirecta.sel { opacity: 1 !important; stroke-width: 2.2px !important; filter: drop-shadow(0 0 5px currentColor) !important; }
+
+/* Limpieza final de trazos: el mapa prioriza nodos y deja las relaciones como contexto. */
+#gRels path.rel-glow { display:none !important; opacity:0 !important; filter:none !important; }
+#gRels path.rel { opacity:.085 !important; stroke-width:.8px !important; filter:none !important; }
+#gRels path.rel.intra { opacity:.14 !important; stroke-width:.9px !important; }
+#gRels path.rel.inter { opacity:.045 !important; stroke-width:.7px !important; }
+#gRels path.rel.indirecta { opacity:.028 !important; stroke-width:.65px !important; stroke-dasharray:4 8 !important; }
+#gRels path.rel.inter.indirecta { opacity:.018 !important; }
+#gRels path.rel.sel,
+#gRels path.rel:hover { opacity:1 !important; stroke-width:2.6px !important; filter:drop-shadow(0 0 4px currentColor) !important; }
+#gRels path.rel-hit { opacity:0 !important; stroke:transparent !important; stroke-width:22px !important; pointer-events:stroke !important; }
+#gRels path.rel-hit:hover { opacity:0 !important; }
+#gRels path.rel.rel-off { opacity:0 !important; visibility:hidden !important; pointer-events:none !important; }
+/* Una sola trayectoria visible por relación; evita duplicación de cintas y glows. */
+#gRels { isolation:isolate; }
+.g-concept, #gNodes .concept { isolation:isolate; }
+
+@media (max-width:760px){
+  #gRels path.rel { opacity:.065 !important; stroke-width:.75px !important; }
+  #gRels path.rel.intra { opacity:.11 !important; }
+  #gRels path.rel.inter { opacity:.028 !important; }
+}
+
+.comparison-note { display:none !important; }
+
+/* Fin de la capa de limpieza visual del Módulo 03. */
+
+
+/* Corrección de especificidad: prevalece sobre las reglas anteriores del módulo. */
+#gRels path.rel.directa.intra { opacity:.14 !important; stroke-width:.9px !important; filter:none !important; }
+#gRels path.rel.directa.inter { opacity:.045 !important; stroke-width:.7px !important; filter:none !important; }
+#gRels path.rel.indirecta.intra { opacity:.028 !important; stroke-width:.65px !important; filter:none !important; stroke-dasharray:4 8 !important; }
+#gRels path.rel.indirecta.inter { opacity:.018 !important; stroke-width:.6px !important; filter:none !important; stroke-dasharray:4 8 !important; }
+#gRels path.rel.sel,
+#gRels path.rel.directa.sel,
+#gRels path.rel.indirecta.sel,
+#gRels path.rel:hover { opacity:1 !important; stroke-width:2.6px !important; filter:drop-shadow(0 0 4px currentColor) !important; }
