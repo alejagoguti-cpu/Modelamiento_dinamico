@@ -25,6 +25,73 @@ let eepLayers = {};
 let networkLines = [];
 let currentMode = 'meso';
 
+// ÚNICO BLOQUE AGREGADO: capas reales extraídas de mapaupzkennedy.dwg.
+// Los tres GeoJSON deben estar en la misma carpeta que modulo-05.html.
+const dwgScaleConfig = {
+  macro: {
+    file: 'vias.geojson', color: '#ff9552', weight: 2, fillOpacity: 0,
+    title: 'MACRO · CAPA DWG: VÍAS',
+    description: '<p><strong>Vías</strong></p><p>La escala Macro muestra la red de vías del archivo DWG.</p>'
+  },
+  meso: {
+    file: 'capa0.geojson', color: '#2fd4c8', weight: 2, fillOpacity: 0.12,
+    title: 'MESO · CAPA DWG: 0',
+    description: '<p><strong>Capa 0</strong></p><p>La escala Meso muestra los polígonos de la capa 0 del archivo DWG.</p>'
+  },
+  micro: {
+    file: 'upz.geojson', color: '#4ade80', weight: 2.5, fillOpacity: 0.16,
+    title: 'MICRO · CAPA DWG: UPZ',
+    description: '<p><strong>UPZ</strong></p><p>La escala Micro muestra los polígonos de la capa UPZ del archivo DWG.</p>'
+  }
+};
+const dwgCache = {};
+let activeDwgLayer = null;
+let dwgLoadId = 0;
+
+function activateDwgLayer(scale) {
+  const config = dwgScaleConfig[scale];
+  const loadId = ++dwgLoadId;
+  currentMode = scale;
+  currentSelection = null;
+
+  if (activeDwgLayer) map.removeLayer(activeDwgLayer);
+  document.getElementById('detail-title').textContent = config.title;
+  document.getElementById('detail-description').innerHTML = config.description;
+  document.getElementById('item-list').innerHTML = '<div class="upz-item">Cargando capa DWG…</div>';
+
+  const getData = dwgCache[scale]
+    ? Promise.resolve(dwgCache[scale])
+    : fetch(config.file).then(response => {
+        if (!response.ok) throw new Error(`No se pudo cargar ${config.file}`);
+        return response.json();
+      }).then(data => (dwgCache[scale] = data));
+
+  getData.then(data => {
+    // No dibuja respuestas antiguas si el usuario cambió de pestaña rápidamente.
+    if (loadId !== dwgLoadId) return;
+
+    activeDwgLayer = L.geoJSON(data, {
+      style: {
+        color: config.color,
+        weight: config.weight,
+        opacity: 0.9,
+        fillColor: config.color,
+        fillOpacity: config.fillOpacity
+      }
+    }).addTo(map);
+
+    const bounds = activeDwgLayer.getBounds();
+    if (bounds.isValid()) map.fitBounds(bounds.pad(0.12));
+    document.getElementById('item-list').innerHTML =
+      `<div class="upz-item active"><strong>${config.title}</strong><br><span>Archivo: ${config.file}</span></div>`;
+  }).catch(error => {
+    console.error(error);
+    if (loadId !== dwgLoadId) return;
+    document.getElementById('item-list').innerHTML =
+      `<div class="upz-item"><strong>No se pudo cargar ${config.file}</strong><br><span>Verifica que esté en la misma carpeta del módulo.</span></div>`;
+  });
+}
+
 // Cargar UPZ (MACRO)
 fetch('upz_bogota.geojson')
   .then(r => r.json())
@@ -378,76 +445,16 @@ function closeEepModal() {
 }
 
 document.querySelectorAll('.tab').forEach(btn => {
-  btn.addEventListener('click', function(e) {
+  btn.addEventListener('click', function() {
     document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
     this.classList.add('active');
-    
-    const scale = this.dataset.scale;
-    
-    Object.values(barrioLabels).forEach(marker => {
-      try { map.removeLayer(marker); } catch(e) {}
-    });
-    Object.values(humedalLayers).forEach(layer => {
-      try { map.removeLayer(layer); } catch(e) {}
-    });
-    Object.values(humedalMarkers).forEach(marker => {
-      try { map.removeLayer(marker); } catch(e) {}
-    });
-    networkLines.forEach(line => {
-      try { map.removeLayer(line); } catch(e) {}
-    });
-    Object.values(eepLayers).forEach(layer => {
-      try { map.removeLayer(layer); } catch(e) {}
-    });
-    networkLines = [];
-    eepLayers = {};
-    
-    if (scale === 'macro') {
-      currentMode = 'macro';
-      map.setView([4.60, -74.08], 10);
-      Object.values(upzLabels).forEach(marker => marker.addTo(map));
-    } else if (scale === 'meso') {
-      currentMode = 'meso';
-      map.setView([4.60, -74.08], 12);
-      Object.values(barrioLabels).forEach(marker => marker.addTo(map));
-      Object.values(upzLabels).forEach(marker => {
-        try { map.removeLayer(marker); } catch(e) {}
-      });
-    } else if (scale === 'micro') {
-      currentMode = 'micro';
-      
-      humedales.forEach(h => {
-        const circle = L.circle([h.lat, h.lng], {
-          radius: 1500,
-          color: '#4ade80',
-          weight: 2,
-          opacity: 0.8,
-          fillColor: '#4ade80',
-          fillOpacity: 0.3
-        })
-        .on('click', () => selectHumedal(h))
-        .addTo(map);
-        
-        humedalLayers[h.id] = circle;
-        
-        const marker = L.circleMarker([h.lat, h.lng], {
-          radius: 8,
-          fillColor: '#4ade80',
-          color: '#2d8a5f',
-          weight: 2,
-          opacity: 0.8,
-          fillOpacity: 0.7
-        })
-        .on('click', () => selectHumedal(h))
-        .addTo(map);
-        
-        humedalMarkers[h.id] = marker;
-      });
-      
-      const group = new L.featureGroup(Object.values(humedalLayers));
-      map.fitBounds(group.getBounds().pad(0.2));
-    }
-    
-    renderItemList();
+    activateDwgLayer(this.dataset.scale);
   });
 });
+
+// Controles + y − que ya existen en el HTML base.
+document.querySelector('.map-controls .ctrl:first-child').addEventListener('click', () => map.zoomIn());
+document.querySelector('.map-controls .ctrl:last-child').addEventListener('click', () => map.zoomOut());
+
+// El HTML base tiene Macro activo al iniciar.
+activateDwgLayer('macro');
