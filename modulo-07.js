@@ -1000,6 +1000,7 @@
         `${item.nodes.length} nodos · ${item.edges.length} conexiones`;
       $("#networkExplanation").textContent = item.text;
       canvas.innerHTML = `<svg viewBox="0 0 1400 900" role="img" aria-label="${esc(item.title)}"><defs><marker id="arrow-direct" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 7 3.5 0 7Z" fill="#55b7ff"/></marker><marker id="arrow-indirect" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 7 3.5 0 7Z" fill="#b27cff"/></marker><marker id="arrow-support" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 7 3.5 0 7Z" fill="#e0b447"/></marker><marker id="arrow-result" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 7 3.5 0 7Z" fill="#ff6eaa"/></marker></defs><g id="networkViewport">${categoryHalos(item)}${lines(item)}${nodes(item)}</g></svg>`;
+      alignModule02ReferenceShell();
       document.body.dataset.activeNetwork = key;
       hiddenNodes = new Set();
       clickCycle = { index: null, count: 0 };
@@ -1351,5 +1352,17 @@
         hide($("#modal"));
       }
     });
+
+    /* UI/UX de referencia del Módulo 02: la información permanece intacta;
+       solo se reubican los controles visuales en la columna derecha. */
+    function alignModule02ReferenceShell() {
+      const aside = document.querySelector(".network-aside");
+      const conventions = document.querySelector(".toolbar-conventions");
+      const categories = document.querySelector("#categoryFilters");
+      if (!aside) return;
+      if (categories && categories.parentElement !== aside) aside.prepend(categories);
+      if (conventions && conventions.parentElement !== aside) aside.appendChild(conventions);
+    }
+    alignModule02ReferenceShell();
   });
 })();
