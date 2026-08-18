@@ -408,29 +408,53 @@ body {
   pointer-events: none; z-index: 1; overflow: visible;
 }
 .humedales-overlay-lines .humedal-line-visible {
-  stroke: #6fe6df; stroke-width: 0.15; stroke-dasharray: 0.6 0.45;
-  opacity: 0.85; transition: stroke 0.15s ease, opacity 0.15s ease;
+  stroke: #ff9d2e; stroke-width: 0.22; stroke-dasharray: 0.7 0.5;
+  stroke-linecap: round; opacity: 1;
+  filter: drop-shadow(0 0 0.35px rgba(255,157,46,0.9)) drop-shadow(0 0 1.1px rgba(255,140,20,0.5));
+  transition: stroke 0.15s ease, opacity 0.15s ease, stroke-width 0.15s ease;
 }
 .humedales-overlay-lines .humedal-line-hit {
   stroke: transparent; stroke-dasharray: none; stroke-width: 1.4;
   opacity: 1; pointer-events: stroke; cursor: pointer;
 }
 .humedales-overlay-lines .humedal-line-group.clickable:hover .humedal-line-visible {
-  stroke: #ff8a4c; opacity: 1; stroke-width: 0.22;
+  stroke: #ffc46b; stroke-width: 0.3;
+  filter: drop-shadow(0 0 0.5px rgba(255,196,107,1)) drop-shadow(0 0 2px rgba(255,157,46,0.65));
 }
 
 /* Texto introductorio: flota PEGADO a la esquina del propio mapa (no en un
    panel lateral aparte), y se oculta mientras hay un popup de humedal abierto. */
 .humedal-ramsar-float {
-  position: absolute; right: 14px; top: 14px; z-index: 6;
-  width: min(360px, 42%);
-  background: rgba(8, 11, 14, 0.92); backdrop-filter: blur(3px);
-  border: 1px solid rgba(92, 214, 209, 0.3); border-radius: 10px;
-  padding: 12px 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.45);
+  position: relative; z-index: 6; width: 100%;
+  background:
+    linear-gradient(rgba(9,13,17,0.94), rgba(9,13,17,0.94)) padding-box,
+    linear-gradient(140deg, rgba(92,214,209,0.85), rgba(92,214,209,0.12) 42%, rgba(255,157,46,0.55)) border-box;
+  border: 1px solid transparent; border-radius: 12px;
+  backdrop-filter: blur(6px);
+  padding: 15px 17px 14px;
+  box-shadow: 0 10px 34px rgba(0,0,0,0.55), 0 0 0 1px rgba(92,214,209,0.07),
+              0 0 26px -6px rgba(92,214,209,0.35);
   transition: opacity 0.15s ease, transform 0.15s ease;
 }
-.humedal-ramsar-float .humedal-caso-cita { margin-bottom: 8px; }
-.humedal-ramsar-float .humedal-hint { padding: 8px 0 0; border-top: 1px solid var(--border-soft); margin-top: 4px; }
+/* Filete luminoso superior */
+.humedal-ramsar-float::before {
+  content: ""; position: absolute; left: 17px; right: 17px; top: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(92,214,209,0.95), transparent);
+  opacity: 0.9;
+}
+.humedal-ramsar-float .humedal-caso-cita {
+  margin-bottom: 10px; font-style: normal; font-size: 12px;
+  line-height: 1.5; color: #e8ebf1; letter-spacing: 0.005em; text-wrap: pretty;
+}
+.humedal-ramsar-float .humedal-caso-pagina {
+  font-size: 11px; line-height: 1.5; color: #a7aeba; margin-top: 0;
+  padding-left: 10px; border-left: 2px solid rgba(92,214,209,0.45); text-wrap: pretty;
+}
+.humedal-ramsar-float .humedal-hint {
+  padding: 9px 0 0; border-top: 1px solid rgba(255,255,255,0.08);
+  margin-top: 12px; font-style: normal; font-size: 11px;
+  color: #ff9d2e; letter-spacing: 0.02em;
+}
 .humedal-ramsar-float-hidden { opacity: 0; pointer-events: none; transform: translateY(6px); }
 .humedal-hint { font-size: 11.5px; color: var(--text-faint); line-height: 1.4; font-style: italic; }
 .humedal-caso-detalle { border-bottom: none; }
@@ -633,8 +657,8 @@ footer span { color: var(--teal); }
 .movilidad-highlight-ring {
   position: absolute; transform: translate(-50%, -50%);
   border-radius: 50%; pointer-events: none; z-index: 2;
-  border: 3px solid #ff8a1f;
-  box-shadow: 0 0 10px 2px rgba(255, 138, 31, 0.65), inset 0 0 10px rgba(255, 138, 31, 0.25);
+  border: 1.5px solid #ff8a1f;
+  box-shadow: 0 0 7px 1px rgba(255, 138, 31, 0.5), inset 0 0 7px rgba(255, 138, 31, 0.18);
 }
 
 /* Único hotspot restante: RegioTram↔Metro, la única relación que la
@@ -721,4 +745,15 @@ footer span { color: var(--teal); }
 @media (max-width: 768px) {
   .sidebar { display: none; }
   .main { padding: 16px 20px 40px; }
+}
+
+/* Trazo rosa calcado sobre la línea de la foto del plano de movilidad. */
+.movilidad-trazo-rosa {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  pointer-events: none; z-index: 5; overflow: visible;
+}
+.movilidad-trazo-rosa polyline {
+  fill: none; stroke: #ff4fa8; stroke-width: 0.55;
+  stroke-linecap: round; stroke-linejoin: round;
+  filter: drop-shadow(0 0 0.5px rgba(255,79,168,0.95)) drop-shadow(0 0 2px rgba(255,79,168,0.6));
 }
