@@ -90,28 +90,21 @@
             <div class="movilidad-overlay-title">El POT no evalúa cómo se mueve la ciudad</div>
             <button class="humedales-overlay-close" id="movilidadOverlayClose" type="button" aria-label="Cerrar">&times;</button>
           </div>
-          <div class="movilidad-overlay-body">
-            <div class="movilidad-overlay-image-wrap">
-              <img id="movilidadOverlayImg" alt="Plano del sistema de movilidad del POT" class="movilidad-overlay-image" />
-            </div>
+          <div class="movilidad-overlay-body" id="movilidadOverlayBody">
+            <!-- imagen + líneas neón + hotspots clicables se generan dinámicamente -->
             <div class="movilidad-overlay-sidebar">
               <div class="movilidad-nota-naranja">
-                El POT reconoce que la localización de las viviendas y las fuentes de empleo produce tiempos de viaje, y que el transporte público debe contribuir a reducirlos. Sin embargo, la representación no permite ver completamente quién se desplaza, hacia qué lugar, en qué horario, con qué frecuencia, cuántos transbordos realiza, cuánto espera ni qué sucede cuando la red se congestiona o falla.
+                <p>El POT formula un modelo concreto, propone un sistema multimodal, una ciudad de proximidad y grandes proyectos como el Metro, los Regiotram, los cables y las ciclorrutas. Sin embargo, esa relación aparece representada principalmente mediante infraestructuras, localizaciones, líneas, estaciones y metas de tiempo.</p>
+                <p>Y muestra qué componentes deben conectarse y qué proyectos deberían producir esa conexión, pero representa de manera mucho más limitada el funcionamiento cotidiano de la movilidad: quién se desplaza, a qué hora, con qué frecuencia, mediante cuántos transbordos, con qué tiempo de espera, bajo qué condiciones de congestión y con qué desigualdad de acceso.</p>
               </div>
+              <button type="button" class="movilidad-conclusion-btn" id="movilidadConclusionBtn">
+                <i class="fa-solid fa-circle-info"></i> Ver conclusión de la red de movilidad
+              </button>
             </div>
           </div>
         </div>
 
         <div class="network-sidebar">
-          <div class="rel-highlight-card">
-            <label class="rel-highlight-label">
-              <input type="checkbox" id="relHighlightToggle">
-              <span class="rel-highlight-swatch"></span>
-              <span class="rel-highlight-text">Vivienda, Empleo y Transporte Público</span>
-            </label>
-            <div class="rel-highlight-hint">Resalta esta relación en la red y muestra el plano de movilidad al hacer clic en cualquiera de los tres nodos.</div>
-          </div>
-
           <aside class="network-legend" id="networkLegend">
             <div class="legend-title">Tipos de relación</div>
             <label class="legend-item" data-mode="type" data-type="directa">
@@ -197,20 +190,6 @@
       <div class="node-info-schematic-map" id="nodeInfoSchematicMap" style="display:none;"></div>
       <div class="node-info-mapa" id="nodeInfoMapaWrap" style="display:none;">
         <a id="nodeInfoMapa" href="#" target="_blank" rel="noopener"><i class="fa-solid fa-map-location-dot"></i> Ver cartografía / geoportal oficial</a>
-      </div>
-    </div>
-
-    <!-- MODAL: plano de movilidad, aparece al hacer clic en Vivienda / Servicios
-         Empresariales / Transporte Público mientras la relación está resaltada -->
-    <div class="movilidad-modal-overlay" id="movilidadModalOverlay" style="display:none;">
-      <div class="movilidad-modal">
-        <div class="movilidad-modal-header">
-          <span>Sistema de Movilidad — POT Bogotá Reverdece 2022–2035</span>
-          <button class="movilidad-modal-close" id="movilidadModalClose" type="button" aria-label="Cerrar">&times;</button>
-        </div>
-        <div class="movilidad-modal-body">
-          <img id="movilidadModalImg" alt="Plano del sistema de movilidad del POT" />
-        </div>
       </div>
     </div>
 
