@@ -1,3 +1,5 @@
+console.log("INFO: Módulo 05 ha sido cargado - code 01");
+
 let upzData = [];
 let barrosData = [];
 let currentSelection = null;
@@ -23,7 +25,16 @@ let humedalMarkers = {};
 let eepNodos = [];
 let eepLayers = {};
 let networkLines = [];
-let currentMode = 'meso';
+let currentMode = 'macro'; // Inicializado explícitamente en macro
+
+// --- VARIABLE PARA LA CAPA DE VÍAS ---
+let viasLayer = null;
+
+// --- VARIABLE PARA LA CAPA 0 (AUTOCAD) ---
+let capa0Layer = null;
+
+// --- VARIABLE PARA LA CAPA UPZ (AUTOCAD - MICRO) ---
+let capaUpzLayer = null;
 
 // Cargar UPZ (MACRO)
 fetch('upz_bogota.geojson')
@@ -46,6 +57,11 @@ fetch('upz_bogota.geojson')
       
       const marker = L.marker([coords[1], coords[0]], { icon: labelDiv, interactive: false });
       upzLabels[props.id] = marker;
+      
+      // Mostrar por defecto si estamos en macro
+      if (currentMode === 'macro') {
+        marker.addTo(map);
+      }
     });
     
     renderItemList();
@@ -79,6 +95,120 @@ fetch('red_eep.geojson')
   .then(data => {
     eepNodos = data.features;
   });
+
+// --- FETCH PARA CARGAR LA CAPA DE VÍAS CON ALINEACIÓN PRECISA BASADA EN EL DORADO ---
+fetch('vias.geojson')
+  .then(r => {
+    if (!r.ok) throw new Error("Archivo vias_bogota.geojson no encontrado");
+    return r.json();
+  })
+  .then(data => {
+    const latOffset = +0.02890;  // Desplazamiento exacto hacia el norte
+    const lngOffset = -0.14375; // Desplazamiento exacto hacia el oeste
+    
+    const scale = 1.0;
+    const centerLng = -74.08;
+    const centerLat = 4.60;
+
+    const canvasRenderer = L.canvas({ padding: 0.5 });
+
+    viasLayer = L.geoJSON(data, {
+      renderer: canvasRenderer,
+      style: function (feature) {
+        return {
+          color: "#46d6d0",
+          weight: 1,
+          opacity: 0.6
+        };
+      },
+      interactive: false,
+      coordsToLatLng: function (coords) {
+        return new L.LatLng(
+          centerLat + ((coords[1] - centerLat) * scale) + latOffset,
+          centerLng + ((coords[0] - centerLng) * scale) + lngOffset
+        );
+      }
+    });
+
+    if (currentMode === 'macro') {
+      viasLayer.addTo(map);
+    }
+  })
+  .catch(err => console.warn("Aviso: No se pudo cargar la capa de vías.", err));
+
+// Cargar Capa 0 de AutoCAD (Para modo MESO)
+fetch('capa0.geojson') 
+  .then(r => {
+    if (!r.ok) throw new Error("Archivo de capa 0 no encontrado");
+    return r.json();
+  })
+  .then(data => {
+    const latOffset = 0.0285; 
+    const lngOffset = -0.1455; 
+    const scale = 1.01; 
+    const centerLat = 4.60;  
+    const centerLng = -74.08; 
+
+    capa0Layer = L.geoJSON(data, {
+      style: function (feature) {
+        return {
+          color: "#eab308", 
+          weight: 1.5,
+          opacity: 0.8
+        };
+      },
+      interactive: false,
+      coordsToLatLng: function (coords) {
+        return new L.LatLng(
+          centerLat + ((coords[1] - centerLat) * scale) + latOffset,
+          centerLng + ((coords[0] - centerLng) * scale) + lngOffset
+        );
+      }
+    });
+
+    if (currentMode === 'meso') {
+      capa0Layer.addTo(map);
+    }
+  })
+  .catch(err => console.warn("Aviso: No se pudo cargar la capa 0 de AutoCAD.", err));
+
+// Cargar Capa UPZ de AutoCAD (Para modo MICRO)
+fetch('upz.geojson') 
+  .then(r => {
+    if (!r.ok) throw new Error("Archivo upz.geojson no encontrado");
+    return r.json();
+  })
+  .then(data => {
+    // Valores por defecto: ajusta estos parámetros según la ubicación real de tu CAD
+    const latOffset = 0.0283; 
+    const lngOffset = -0.1440; 
+    const scale = 1.0; 
+    const centerLat = 4.60;  
+    const centerLng = -74.08; 
+
+    capaUpzLayer = L.geoJSON(data, {
+      style: function (feature) {
+        return {
+          color: "#ec4899", // Rosa/magenta para diferenciar de las otras capas
+          weight: 1.5,
+          opacity: 0.8
+        };
+      },
+      interactive: false,
+      coordsToLatLng: function (coords) {
+        return new L.LatLng(
+          centerLat + ((coords[1] - centerLat) * scale) + latOffset,
+          centerLng + ((coords[0] - centerLng) * scale) + lngOffset
+        );
+      }
+    });
+
+    if (currentMode === 'micro') {
+      capaUpzLayer.addTo(map);
+    }
+  })
+  .catch(err => console.warn("Aviso: No se pudo cargar la capa UPZ de AutoCAD.", err));
+// --------------------------------------------------------------------------
 
 function renderItemList() {
   const container = document.getElementById('item-list');
@@ -121,28 +251,22 @@ function renderItemList() {
 
 function selectUPZ(upz) {
   currentSelection = upz;
-  
   document.getElementById('detail-title').textContent = `UPZ SELECCIONADA: ${upz.uplcodigo.toUpperCase()}`;
-  
   document.getElementById('detail-description').innerHTML = `
     <p><strong>${upz.nombre}</strong></p>
     <p>Zona de Planeamiento de Bogotá</p>
   `;
-  
   renderItemList();
 }
 
 function selectBarrio(barrio) {
   currentSelection = barrio;
-  
   document.getElementById('detail-title').textContent = `${barrio.nombre.toUpperCase()}`;
-  
   document.getElementById('detail-description').innerHTML = `
     <p><strong>${barrio.nombre}</strong></p>
     <p style="margin-top: 10px;">Barrio de Bogotá</p>
     <p style="font-size: 9px; color: #7a8fa0; margin-top: 8px;">Código: ${barrio.codigo}</p>
   `;
-  
   renderItemList();
 }
 
@@ -176,7 +300,6 @@ function showEepNetwork() {
     if (nodoFrom && nodoTo) {
       const coords = nodoFrom.geometry.coordinates;
       const coordsTo = nodoTo.geometry.coordinates;
-      
       const dashArray = conn.tipo === 'indirecta' ? '5, 3' : '0';
       const lineColor = conn.tipo === 'indirecta' ? '#ff9552' : '#2fd4c8';
       
@@ -229,7 +352,6 @@ function showEepNetwork() {
 
 function selectHumedal(h) {
   currentSelection = h;
-  
   networkLines.forEach(line => map.removeLayer(line));
   networkLines = [];
   
@@ -246,7 +368,6 @@ function selectHumedal(h) {
         opacity: 0.5,
         dashArray: '5, 5'
       }).addTo(map);
-      
       networkLines.push(line);
     }
   });
@@ -255,7 +376,6 @@ function selectHumedal(h) {
   openEepModal(h);
   
   document.getElementById('detail-title').textContent = `HUMEDAL SELECCIONADO: ${h.nombre.toUpperCase()}`;
-  
   document.getElementById('detail-description').innerHTML = `
     <p><strong>Estructura Ecológica Principal (EEP)</strong></p>
     <p>La EEP es la integración de áreas de origen natural que tienen una oferta ambiental significativa, es ordenadora del territorio y garante de los equilibrios ecosistémicos, del agua y la riqueza hídrica.</p>
@@ -266,25 +386,19 @@ function selectHumedal(h) {
     <p style="margin-top: 10px; font-size: 9px;"><strong>Relaciones en la red EEP:</strong></p>
     <p style="font-size: 8px;">— Línea sólida teal = Relación directa<br/>— Línea punteada naranja = Relación indirecta</p>
   `;
-  
   renderItemList();
 }
 
 function openEepModal(humedal) {
   const modal = document.getElementById('eepModal');
   if (!modal) return;
-  
   modal.style.display = 'block';
   
-  // Esperar a que el DOM se renderice
   setTimeout(() => {
     const container = document.getElementById('eepMapContainer');
     if (!container) return;
     
-    // Limpiar contenedor
     container.innerHTML = '';
-    
-    // Crear mini-mapa
     const miniMap = L.map(container, {
       zoomControl: true,
       attributionControl: true
@@ -295,7 +409,6 @@ function openEepModal(humedal) {
       maxZoom: 19
     }).addTo(miniMap);
     
-    // Dibujar red EEP en el mini-mapa
     if (eepNodos.length > 0) {
       const conexiones = [
         {from: 'h1', to: 'rio', tipo: 'directa'},
@@ -319,7 +432,6 @@ function openEepModal(humedal) {
         if (nodoFrom && nodoTo) {
           const coords = nodoFrom.geometry.coordinates;
           const coordsTo = nodoTo.geometry.coordinates;
-          
           const dashArray = conn.tipo === 'indirecta' ? '5, 3' : '0';
           const lineColor = conn.tipo === 'indirecta' ? '#ff9552' : '#2fd4c8';
           
@@ -338,7 +450,6 @@ function openEepModal(humedal) {
       eepNodos.forEach(nodo => {
         const coords = nodo.geometry.coordinates;
         const props = nodo.properties;
-        
         let radius = 15;
         if (props.tipo === 'nodo_secundario') radius = 10;
         if (props.tipo === 'nodo_terciario') radius = 7;
@@ -364,8 +475,6 @@ function openEepModal(humedal) {
         L.marker([coords[1], coords[0]], { icon: labelDiv, interactive: false }).addTo(miniMap);
       });
     }
-    
-    // Ajustar tamaño del mapa
     miniMap.invalidateSize();
   }, 100);
 }
@@ -383,6 +492,21 @@ document.querySelectorAll('.tab').forEach(btn => {
     this.classList.add('active');
     
     const scale = this.dataset.scale;
+    
+    // LIMPIEZA ADICIONAL: Quitar vías si cambiamos de escala
+    if (viasLayer) {
+      try { map.removeLayer(viasLayer); } catch(e) {}
+    }
+
+    // LIMPIEZA ADICIONAL: Quitar la Capa 0 si cambiamos de escala
+    if (capa0Layer) {
+      try { map.removeLayer(capa0Layer); } catch(e) {}
+    }
+
+    // LIMPIEZA ADICIONAL: Quitar la Capa UPZ si cambiamos de escala
+    if (capaUpzLayer) {
+      try { map.removeLayer(capaUpzLayer); } catch(e) {}
+    }
     
     Object.values(barrioLabels).forEach(marker => {
       try { map.removeLayer(marker); } catch(e) {}
@@ -404,8 +528,14 @@ document.querySelectorAll('.tab').forEach(btn => {
     
     if (scale === 'macro') {
       currentMode = 'macro';
-      map.setView([4.60, -74.08], 10);
+      map.setView([4.60, -74.08], 11);
       Object.values(upzLabels).forEach(marker => marker.addTo(map));
+      
+      // AÑADIR CAPA DE VÍAS EN ESCALA MACRO
+      if (viasLayer) {
+        viasLayer.addTo(map);
+      }
+      
     } else if (scale === 'meso') {
       currentMode = 'meso';
       map.setView([4.60, -74.08], 12);
@@ -413,9 +543,20 @@ document.querySelectorAll('.tab').forEach(btn => {
       Object.values(upzLabels).forEach(marker => {
         try { map.removeLayer(marker); } catch(e) {}
       });
+
+      // AÑADIR CAPA 0 (AUTOCAD) EN ESCALA MESO
+      if (capa0Layer) {
+        capa0Layer.addTo(map);
+      }
+
     } else if (scale === 'micro') {
       currentMode = 'micro';
       
+      // AÑADIR CAPA UPZ (AUTOCAD) EN ESCALA MICRO
+      if (capaUpzLayer) {
+        capaUpzLayer.addTo(map);
+      }
+
       humedales.forEach(h => {
         const circle = L.circle([h.lat, h.lng], {
           radius: 1500,
