@@ -900,18 +900,18 @@ function showNodeInfo(id) {
 // encima de los hotspots para que sigan siendo visibles con el nuevo diseño
 // de bolitas de fondo sólido.
 const HUMEDAL_LINEAS = [
-  { a: { x: 15.1, y: 26.6 }, b: { x: 27.3, y: 50.6 },
+  { a: { x: 15.1, y: 27.6 }, b: { x: 26.5, y: 50.6 },
     cita: "La Reserva Forestal Thomas van der Hammen incluye los Humedales de La Conejera y Torca-Guaymaral.", pagina: "56", }, // torca_guaymaral ↔ la_conejera
-  { a: { x: 15.1, y: 26.6 }, b: { x: 53.8, y: 48.1 }, }, // torca_guaymaral ↔ malla_via
-  { a: { x: 27.3, y: 50.6 }, b: { x: 53.8, y: 48.1 }, }, // la_conejera ↔ malla_via
-  { a: { x: 37.3, y: 46 }, b: { x: 46.4, y: 47.3 }, }, // tibabuyes ↔ ciclorutas_humedal
-  { a: { x: 46.4, y: 47.3 }, b: { x: 53.8, y: 48.1 }, }, // ciclorutas_humedal ↔ malla_via
-  { a: { x: 39.7, y: 35.6 }, b: { x: 62.2, y: 38.8 }, }, // cordoba ↔ fauna_y_flora
-  { a: { x: 48.6, y: 40.6 }, b: { x: 55.6, y: 40 }, }, // santa_maria_del_lago ↔ suelo_de_proteccion
-  { a: { x: 48.6, y: 40.6 }, b: { x: 53.8, y: 48.1 }, }, // santa_maria_del_lago ↔ malla_via
-  { a: { x: 53.8, y: 48.1 }, b: { x: 51.6, y: 58.8 },
+  { a: { x: 15.5, y: 25.9 }, b: { x: 53.3, y: 47.3 }, }, // torca_guaymaral ↔ malla_via
+  { a: { x: 27.7, y: 50.7 }, b: { x: 52, y: 50.5 }, }, // la_conejera ↔ malla_via
+  { a: { x: 37.6, y: 46.4 }, b: { x: 46.3, y: 47.7 }, }, // tibabuyes ↔ ciclorutas_humedal
+  { a: { x: 48.7, y: 39.9 }, b: { x: 55.2, y: 45.3 }, }, // ciclorutas_humedal ↔ malla_via
+  { a: { x: 40.5, y: 35.2 }, b: { x: 61.9, y: 35.5 }, }, // cordoba ↔ fauna_y_flora
+  { a: { x: 48.8, y: 40.4 }, b: { x: 55.2, y: 40.2 }, }, // santa_maria_del_lago ↔ suelo_de_proteccion
+  { a: { x: 52.3, y: 99.7 }, b: { x: 52.3, y: 99.5 }, }, // santa_maria_del_lago ↔ malla_via
+  { a: { x: 54.8, y: 51 }, b: { x: 52.2, y: 58.5 },
     cita: "Con respecto a los humedales de la ciudad, dentro del POT únicamente se identificó un conflicto de malla vial arterial con la Reserva Distrital de Humedal Capellanía, en Fontibón.", pagina: "49–50", }, // malla_via ↔ capellania
-  { a: { x: 62.2, y: 38.8 }, b: { x: 67.4, y: 72.4 }, }, // fauna_y_flora ↔ la_vaca
+  { a: { x: 62.7, y: 38.7 }, b: { x: 66.7, y: 71.9 }, }, // fauna_y_flora ↔ la_vaca
 ];
 
 const HUMEDALES_CASOS = {
