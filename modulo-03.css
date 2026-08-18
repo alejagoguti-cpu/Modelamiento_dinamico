@@ -8049,3 +8049,55 @@ html,body{height:auto!important;min-height:100%!important;overflow-x:hidden!impo
 @media (max-width: 560px) {
   .net-stage { height: 340px !important; min-height: 340px !important; }
 }
+
+/* Animación sutil de nodos: el grupo conserva su posición y solo respiran
+   el anillo y el contenido interno, evitando mover las conexiones. */
+@keyframes m03-node-breathe {
+  0%, 100% { transform: scale(1); opacity: .94; }
+  50% { transform: scale(1.035); opacity: 1; }
+}
+@keyframes m03-node-float {
+  0%, 100% { transform: translateY(-13%); }
+  50% { transform: translateY(-16%); }
+}
+#svg #gNodes > .concept .node-fill {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: m03-node-breathe 4.8s ease-in-out infinite;
+}
+#svg #gNodes > .concept .node-inner {
+  animation: m03-node-float 5.6s ease-in-out infinite;
+}
+#svg #gNodes > .concept:nth-child(3n) .node-fill,
+#svg #gNodes > .concept:nth-child(3n) .node-inner { animation-delay: -1.8s; }
+#svg #gNodes > .concept:nth-child(4n) .node-fill,
+#svg #gNodes > .concept:nth-child(4n) .node-inner { animation-delay: -3.1s; }
+#svg #gNodes > .concept.node-off .node-fill,
+#svg #gNodes > .concept.node-hidden .node-fill,
+#svg #gNodes > .concept.sys-off .node-fill,
+#svg #gNodes > .concept.node-off .node-inner,
+#svg #gNodes > .concept.node-hidden .node-inner,
+#svg #gNodes > .concept.sys-off .node-inner {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  #svg #gNodes > .concept .node-fill,
+  #svg #gNodes > .concept .node-inner {
+    animation: none !important;
+  }
+}
+
+/* Selector reforzado para el contenido HTML dentro de foreignObject. */
+#gNodes > g.concept .node-fill {
+  animation: m03-node-breathe 4.8s ease-in-out infinite !important;
+}
+#gNodes > g.concept foreignObject .node-inner {
+  animation: m03-node-float 5.6s ease-in-out infinite !important;
+  will-change: transform;
+}
+#gNodes > g.concept:nth-child(3n) foreignObject .node-inner { animation-delay: -1.8s !important; }
+#gNodes > g.concept:nth-child(4n) foreignObject .node-inner { animation-delay: -3.1s !important; }
+@media (prefers-reduced-motion: reduce) {
+  #gNodes > g.concept .node-fill,
+  #gNodes > g.concept foreignObject .node-inner { animation: none !important; }
+}
