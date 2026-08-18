@@ -215,7 +215,12 @@ body {
 
 .network-legend {
   width: 100%; background: #111111; border: 1px solid var(--border-soft); border-radius: 10px;
-  padding: 16px 16px 14px; display: flex; flex-direction: column; gap: 10px; align-self: flex-start;
+  padding: 16px 16px 14px; display: flex; flex-direction: column; gap: 14px; align-self: flex-start;
+}
+.legend-section-box {
+  border: 1px solid rgba(92, 214, 209, 0.35); border-radius: 10px;
+  padding: 12px 12px 10px; display: flex; flex-direction: column; gap: 10px;
+  background: rgba(92, 214, 209, 0.03);
 }
 .legend-title { font-family: 'Space Grotesk', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 1px; color: var(--text-faint); text-transform: uppercase; margin-bottom: 2px; }
 .legend-item { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--text-dim); cursor: pointer; user-select: none; transition: color .15s, opacity .15s; }
@@ -271,7 +276,7 @@ body {
 /* Botones "Explorar relaciones en detalle" / "Ver hallazgos clave": ahora
    viven en el sidebar, al lado de la red (no abajo de toda la sección). */
 .network-footer-actions { display: flex; gap: 12px; margin-top: 20px; }
-.network-sidebar-actions { display: flex; flex-direction: column; gap: 10px; margin-top: auto; padding-top: 4px; }
+.network-sidebar-actions { display: flex; flex-direction: column; gap: 10px; padding-top: 4px; }
 .btn-primary {
   background: linear-gradient(135deg, #1f7a74, #175f5a); color: #eafffb; border: none;
   padding: 12px 20px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer;
@@ -531,7 +536,7 @@ footer span { color: var(--teal); }
 
 /* VISTA AMPLIADA: plano de movilidad (tras la animación "Ver hallazgos clave") */
 .movilidad-overlay {
-  width: 100%; height: 780px; background: #05070a;
+  width: 100%; min-height: 780px; background: #05070a;
   border: 1px solid var(--border); border-radius: 12px;
   display: none; flex-direction: column; overflow: hidden;
 }
@@ -542,10 +547,11 @@ footer span { color: var(--teal); }
   background: rgba(239, 149, 82, 0.08); flex-shrink: 0;
 }
 .movilidad-overlay-title { font-size: 15px; font-weight: 700; color: #f2f3f6; line-height: 1.3; padding-right: 12px; }
-.movilidad-overlay-body { flex: 1; display: flex; min-height: 0; }
+.movilidad-overlay-body { flex: 1; display: flex; min-height: 0; padding: 16px; }
 .movilidad-overlay-image-wrap {
   position: relative; flex: 1; min-width: 0; background: #0a0a0a;
   display: flex; align-items: center; justify-content: center; overflow: hidden;
+  border-radius: 8px;
 }
 /* Mismo patrón que humedales-overlay-image-frame: contenedor con la
    proporción REAL de la foto (16:9), calculado por JS (fitMovilidadFrame)
@@ -556,12 +562,20 @@ footer span { color: var(--teal); }
   position: absolute; inset: 0; width: 100%; height: 100%;
   pointer-events: none; z-index: 1; overflow: visible;
 }
-.movilidad-overlay-sidebar {
-  width: 320px; flex-shrink: 0; border-left: 1px solid var(--border-soft);
-  background: rgba(255,255,255,0.02); padding: 18px; display: flex; flex-direction: column;
-  align-items: stretch; gap: 14px; overflow-y: auto;
+.movilidad-overlay-lines .movilidad-neon-line-img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: contain; object-position: center;
+}
+/* Nota + botón de conclusión: ahora debajo del plano, alineados a la
+   izquierda, para no tapar la leyenda de "Convenciones" que trae la propia
+   foto en su esquina derecha. */
+.movilidad-overlay-footer {
+  flex-shrink: 0; border-top: 1px solid var(--border-soft);
+  background: rgba(255,255,255,0.02); padding: 16px 18px 18px;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 12px;
 }
 .movilidad-nota-naranja {
+  width: 100%; max-width: 720px;
   background: linear-gradient(135deg, rgba(239, 149, 82, 0.10), rgba(239, 149, 82, 0.02));
   border: 1px solid rgba(239, 149, 82, 0.45); border-radius: 12px;
   padding: 16px 18px; font-size: 12.5px; color: #d7dae2; line-height: 1.6;
@@ -572,26 +586,44 @@ footer span { color: var(--teal); }
 
 .movilidad-conclusion-btn {
   display: flex; align-items: center; justify-content: center; gap: 8px;
-  width: 100%; padding: 11px 14px; border-radius: 10px; cursor: pointer;
+  padding: 11px 20px; border-radius: 10px; cursor: pointer;
   background: rgba(92, 214, 209, 0.08); border: 1px solid rgba(92, 214, 209, 0.35);
   color: var(--teal); font-size: 12.5px; font-weight: 700;
   transition: background 0.15s ease, border-color 0.15s ease;
 }
 .movilidad-conclusion-btn:hover { background: rgba(92, 214, 209, 0.16); border-color: rgba(92, 214, 209, 0.55); }
 
-/* Corredores resaltados a mano por la usuaria sobre la foto (ej. Corredor
-   verde de la carrera séptima): se redibujan en SVG, encima de la imagen
-   base, con un glow neón — mismo patrón que humedal-line-visible pero en
-   verde brillante y más grueso, ya que aquí representan un corredor real
-   (no una simple línea de conexión punteada). */
-.movilidad-overlay-lines .movilidad-neon-line {
-  fill: none; stroke: #39ff6a; stroke-width: 0.35; stroke-linecap: round;
-  opacity: 0.95;
-  filter: drop-shadow(0 0 3px #39ff6a) drop-shadow(0 0 7px rgba(57,255,106,0.85));
+/* Líneas reales de movilidad (metro, RegioTram, corredor verde cra 7): cada
+   una es una máscara-imagen calcada pixel a pixel de la línea que YA está
+   dibujada en la foto del POT (no un trazo inventado a mano) — por eso se
+   superpone siempre exactamente encima del trazo real, sin importar el
+   zoom o el tamaño de pantalla. El color+glow neón se aplica con filtros
+   CSS sobre esa misma máscara, nunca redibujando la línea desde cero. */
+.movilidad-overlay-lines .movilidad-neon-line-img {
+  filter:
+    drop-shadow(0 0 3px var(--neon-color, #39ff6a))
+    drop-shadow(0 0 9px var(--neon-color, #39ff6a))
+    brightness(1.35) saturate(1.4);
+  mix-blend-mode: screen;
+  transition: filter 0.15s ease;
 }
-.movilidad-overlay-lines .movilidad-hit-line {
-  fill: none; stroke: transparent; stroke-width: 1.6; stroke-linecap: round;
-  pointer-events: stroke; cursor: pointer;
+/* Botón invisible sobre un punto de referencia de cada línea — abre el
+   popup con la cita correspondiente sin necesidad de un hit-test de SVG. */
+.movilidad-line-hotspot {
+  position: absolute; transform: translate(-50%, -50%);
+  width: 26px; height: 26px; border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid var(--neon-color, #39ff6a);
+  box-shadow: 0 0 8px 1px var(--neon-color, #39ff6a);
+  cursor: pointer; z-index: 2;
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+.movilidad-line-hotspot i { color: #fff; font-size: 9px; pointer-events: none; }
+.movilidad-line-hotspot:hover, .movilidad-line-hotspot.active {
+  transform: translate(-50%, -50%) scale(1.3);
+  background: rgba(255, 255, 255, 0.14);
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--neon-color, #39ff6a) 22%, transparent), 0 0 16px var(--neon-color, #39ff6a);
 }
 
 /* Anillo naranja extra sobre "Empleos" y "Vivienda de interés social" (ya
@@ -605,41 +637,40 @@ footer span { color: var(--teal); }
   box-shadow: 0 0 10px 2px rgba(255, 138, 31, 0.65), inset 0 0 10px rgba(255, 138, 31, 0.25);
 }
 
-/* Hotspots clicables sobre las relaciones del plano de movilidad (Empleo↔
-   corredor verde, 1RA/2NDA línea de metro, regiotram↔metro): igual que los
-   hotspots de humedales, un botón invisible en reposo con un pequeño
-   indicador que se resalta al pasar el mouse. */
+/* Único hotspot restante: RegioTram↔Metro, la única relación que la
+   usuaria pidió sin tener un trazo propio dibujado a mano — un punto
+   pequeño y discreto sobre el cruce real, no un círculo grande. */
 .movilidad-hotspot {
   position: absolute; transform: translate(-50%, -50%);
-  width: 34px; height: 34px; border-radius: 50%;
-  background: rgba(57, 255, 106, 0.10); border: 2px solid rgba(57, 255, 106, 0.65);
-  box-shadow: 0 0 8px 1px rgba(57, 255, 106, 0.35);
+  width: 20px; height: 20px; border-radius: 50%;
+  background: rgba(255, 210, 80, 0.12); border: 2px solid rgba(255, 210, 80, 0.7);
+  box-shadow: 0 0 6px 1px rgba(255, 210, 80, 0.35);
   cursor: pointer; z-index: 3;
   display: flex; align-items: center; justify-content: center;
   transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
 }
-.movilidad-hotspot i { color: #eafff1; font-size: 12px; pointer-events: none; }
+.movilidad-hotspot i { color: #fff4d6; font-size: 8px; pointer-events: none; }
 .movilidad-hotspot:hover, .movilidad-hotspot.active {
-  transform: translate(-50%, -50%) scale(1.15);
-  background: rgba(57, 255, 106, 0.22);
-  box-shadow: 0 0 0 4px rgba(57, 255, 106, 0.18), 0 0 16px rgba(57, 255, 106, 0.9);
+  transform: translate(-50%, -50%) scale(1.25);
+  background: rgba(255, 210, 80, 0.25);
+  box-shadow: 0 0 0 4px rgba(255, 210, 80, 0.18), 0 0 14px rgba(255, 210, 80, 0.9);
 }
 
 .movilidad-popup {
   position: absolute; z-index: 10; width: 270px; max-width: 82%;
   background: rgba(8, 11, 14, 0.97); backdrop-filter: blur(4px);
-  border: 1px solid rgba(57, 255, 106, 0.45); border-radius: 10px;
+  border: 1px solid rgba(47, 212, 200, 0.45); border-radius: 10px;
   padding: 12px 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.55), 0 0 0 1px rgba(0,0,0,0.2);
   pointer-events: auto; font-size: 12.5px; color: #d7dae2; line-height: 1.55;
 }
-.movilidad-popup .movilidad-popup-titulo { color: #39ff6a; font-weight: 700; font-size: 12.5px; margin-bottom: 8px; }
+.movilidad-popup .movilidad-popup-titulo { color: var(--teal); font-weight: 700; font-size: 12.5px; margin-bottom: 8px; }
 .movilidad-popup .movilidad-popup-cita { font-style: italic; color: #f2f3f6; }
 .movilidad-popup::before {
   content: ""; position: absolute; top: 50%; left: -7px; margin-top: -6px;
-  border: 6px solid transparent; border-right-color: rgba(57, 255, 106, 0.45);
+  border: 6px solid transparent; border-right-color: rgba(47, 212, 200, 0.45);
 }
 .movilidad-popup.movilidad-popup-flip::before {
-  left: auto; right: -7px; border-right-color: transparent; border-left-color: rgba(57, 255, 106, 0.45);
+  left: auto; right: -7px; border-right-color: transparent; border-left-color: rgba(47, 212, 200, 0.45);
 }
 .movilidad-back-btn {
   margin: 10px 0 0; padding: 8px 10px; width: 100%;
