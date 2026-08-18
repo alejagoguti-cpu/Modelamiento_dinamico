@@ -8434,3 +8434,47 @@ body.module02-reference-page .btn-question { line-height:1.3 !important; }
   .network-metrics-strip { grid-template-columns: 1fr !important; min-height: 0 !important; }
   .network-metric { min-height: 62px !important; padding: 8px 10px !important; }
 }
+
+/* Corrección definitiva de overflow horizontal en M03. */
+body.module02-reference-page,
+body.module02-reference-page .app,
+body.module02-reference-page .main,
+body.module02-reference-page .net-layout,
+body.module02-reference-page .network-metrics-strip,
+body.module02-reference-page .m03-relations-table {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+@media (min-width: 1000px) {
+  body.module02-reference-page .main,
+  body.module02-reference-page .welcome,
+  body.module02-reference-page .net-layout,
+  body.module02-reference-page .network-metrics-strip,
+  body.module02-reference-page .m03-relations-table {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  body.module02-reference-page .net-layout {
+    grid-template-columns: minmax(0, 1fr) 260px !important;
+    gap: 20px !important;
+  }
+}
+@media (max-width: 999px) {
+  body.module02-reference-page .net-layout {
+    grid-template-columns: minmax(0, 1fr) !important;
+    width: 100% !important;
+  }
+  body.module02-reference-page .net-layout > .col.right {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  body.module02-reference-page .network-metrics-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+@media (max-width: 640px) {
+  body.module02-reference-page .network-metrics-strip {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
