@@ -321,36 +321,36 @@ const HUB_CENTERS = {
    cualquier bola; el layout automático ya no las recalcula.
    ========================================================== */
 const NODE_POS = {
-  rios: { x: 590, y: 800 },
-  quebradas: { x: 477, y: 638 },
-  humedales: { x: 1155, y: 692 },
+  rios: { x: 465, y: 824 },
+  quebradas: { x: 661, y: 581 },
+  humedales: { x: 1022, y: 591 },
   complejos_de_paramos: { x: 352, y: 449 },
   coberturas_vegetales: { x: 509, y: 297 },
   areas_de_resiliencia_climatica: { x: 639, y: 112 },
-  areas_protegidas: { x: 800, y: 258 },
+  areas_protegidas: { x: 771, y: 421 },
   reservas_forestales: { x: 1086, y: 132 },
-  equipamientos: { x: 1244, y: 271 },
+  equipamientos: { x: 1190, y: 347 },
   servicios_sociales: { x: 1429, y: 104 },
-  vivienda: { x: 1605, y: 723 },
+  vivienda: { x: 1450, y: 783 },
   ciclorutas: { x: 1689, y: 98 },
-  transporte_publico: { x: 1762, y: 361 },
-  red_vial: { x: 2057, y: 170 },
-  corredores_verdes: { x: 1984, y: 475 },
-  manzanas_del_cuidado: { x: 1918, y: 668 },
-  parques: { x: 1737, y: 985 },
-  distrito_centro_tecnologico_e_innovacion: { x: 1259, y: 1420 },
-  servicios_empresariales: { x: 1211, y: 967 },
-  sistema_de_educacion: { x: 1043, y: 1371 },
+  transporte_publico: { x: 1686, y: 539 },
+  red_vial: { x: 2022, y: 306 },
+  corredores_verdes: { x: 2014, y: 810 },
+  manzanas_del_cuidado: { x: 1485, y: 445 },
+  parques: { x: 1732, y: 884 },
+  distrito_centro_tecnologico_e_innovacion: { x: 1244, y: 1298 },
+  servicios_empresariales: { x: 1055, y: 918 },
+  sistema_de_educacion: { x: 992, y: 1253 },
   centros_de_abastecimiento: { x: 921, y: 1601 },
-  plazas_de_mercado: { x: 768, y: 1228 },
+  plazas_de_mercado: { x: 758, y: 1173 },
   zonas_industriales: { x: 679, y: 1576 },
   produccion_artesanal: { x: 486, y: 1312 },
   zonas_de_interes_turistico: { x: 498, y: 1054 },
-  centros_financieros: { x: 699, y: 929 },
+  centros_financieros: { x: 727, y: 873 },
   patrimonio_inmaterial: { x: 2017, y: 991 },
   patrimonio_arqueologico: { x: 1862, y: 1430 },
-  patrimonio_natural: { x: 1442, y: 1542 },
-  patrimonio_material: { x: 1526, y: 1106 },
+  patrimonio_natural: { x: 1442, y: 1406 },
+  patrimonio_material: { x: 1399, y: 1026 },
   comunidades: { x: 1684, y: 1179 },
 };
 
@@ -899,13 +899,18 @@ function showNodeInfo(id) {
 // ilustran la red hídrica/funcional entre ellos). Se redibujan en SVG por
 // encima de los hotspots para que sigan siendo visibles con el nuevo diseño
 // de bolitas de fondo sólido.
-const HUMEDAL_CONEXIONES = [
-  { par: ["torca_guaymaral", "la_conejera"],
-    cita: "La Reserva Forestal Thomas van der Hammen incluye los Humedales de La Conejera y Torca-Guaymaral.", pagina: "56" },
-  { par: ["torca_guaymaral", "fauna_y_flora"] },
-  { par: ["torca_guaymaral", "la_vaca"] },
-  { par: ["tibabuyes", "ciclorutas_humedal"] },
-  { par: ["la_conejera", "malla_via"] },
+const HUMEDAL_LINEAS = [
+  { a: { x: 15.1, y: 27.6 }, b: { x: 26.5, y: 50.6 },
+    cita: "La Reserva Forestal Thomas van der Hammen incluye los Humedales de La Conejera y Torca-Guaymaral.", pagina: "56", } , // torca_guaymaral ↔ la_conejera
+  { a: { x: 15.5, y: 25.9 }, b: { x: 53.3, y: 47.3 }, } , // torca_guaymaral ↔ malla_via
+  { a: { x: 27.7, y: 50.7 }, b: { x: 52, y: 50.5 }, } , // la_conejera ↔ malla_via
+  { a: { x: 37.6, y: 46.4 }, b: { x: 46.3, y: 47.7 }, } , // tibabuyes ↔ ciclorutas_humedal
+  { a: { x: 48.7, y: 39.9 }, b: { x: 55.2, y: 45.3 }, } , // ciclorutas_humedal ↔ malla_via
+  { a: { x: 40.5, y: 35.2 }, b: { x: 61.9, y: 35.5 }, } , // cordoba ↔ fauna_y_flora
+  { a: { x: 48.8, y: 40.4 }, b: { x: 55.2, y: 40.2 }, } , // santa_maria_del_lago ↔ suelo_de_proteccion
+  { a: { x: 54.8, y: 51 }, b: { x: 52.2, y: 58.5 },
+    cita: "Con respecto a los humedales de la ciudad, dentro del POT únicamente se identificó un conflicto de malla vial arterial con la Reserva Distrital de Humedal Capellanía, en Fontibón.", pagina: "49–50", } , // malla_via ↔ capellania
+  { a: { x: 62.7, y: 38.7 }, b: { x: 66.7, y: 71.9 }, } , // fauna_y_flora ↔ la_vaca
 ];
 
 const HUMEDALES_CASOS = {
@@ -959,10 +964,9 @@ function showHumedalesOverlay(opts) {
   // Cada línea lleva una segunda línea invisible más gruesa por encima, que
   // sirve como área de clic más generosa (las líneas finas son difíciles de
   // acertar con el mouse); si la conexión tiene "cita", es clicable.
-  const linesHTML = HUMEDAL_CONEXIONES.map((conn, idx) => {
-    const [aKey, bKey] = conn.par;
-    const a = HUMEDALES_CASOS[aKey], b = HUMEDALES_CASOS[bKey];
-    if (!a || !b) return "";
+  const linesHTML = HUMEDAL_LINEAS.map((conn, idx) => {
+    // Coordenadas absolutas calcadas sobre la foto (x, y en % del ancho / alto).
+    const a = conn.a, b = conn.b;
     const y1 = a.y * 0.5625, y2 = b.y * 0.5625;
     const clickable = !!conn.cita;
     return `
@@ -1033,7 +1037,7 @@ function showHumedalesOverlay(opts) {
   body.querySelectorAll(".humedal-line-hit").forEach(line => {
     line.addEventListener("click", (ev) => {
       ev.stopPropagation();
-      const conn = HUMEDAL_CONEXIONES[Number(line.dataset.conn)];
+      const conn = HUMEDAL_LINEAS[Number(line.dataset.conn)];
       if (conn && conn.cita) showHumedalConexionDetalle(conn, line);
     });
   });
