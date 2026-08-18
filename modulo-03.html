@@ -396,12 +396,19 @@ html,body{height:auto!important;min-height:100vh!important;overflow-x:hidden!imp
 .m03-relations-table .m03-type-pill.indirecta{background:rgba(232,154,108,.10)!important;color:#e89a6c!important;border-color:rgba(232,154,108,.25)!important}
 .m03-relations-table .matrix-row.is-off{opacity:.42!important}
 @media(min-width:1000px){
-  .network-metrics-strip,.m03-relations-table{width:calc(100% + 380px)!important;margin-left:-33px!important}
+  .network-metrics-strip,.m03-relations-table{width:100%!important;margin-left:0!important;margin-right:0!important}
   .network-metrics-strip{grid-template-columns:repeat(4,minmax(0,1fr))!important}
-  .m03-full-width-metrics,.m03-full-width-table,.m03-full-width-state{width:calc(100% - 68px)!important;margin-left:34px!important;margin-right:34px!important}
-.m03-full-width-metrics{margin-top:200px!important}
-.m03-full-width-state{margin-top:20px!important;margin-bottom:28px!important;background:#111416!important;border:1px solid rgba(255,255,255,.10)!important;border-radius:12px!important;padding:20px!important}
+  .m03-full-width-metrics,.m03-full-width-table,.m03-full-width-state{width:100%!important;margin-left:0!important;margin-right:0!important}
+  .m03-full-width-metrics{margin-top:12px!important}
+  .m03-full-width-state{margin-top:20px!important;margin-bottom:28px!important;background:#111416!important;border:1px solid rgba(255,255,255,.10)!important;border-radius:12px!important;padding:20px!important}
+  /* Proporción horizontal del Módulo 02: 791 px de canvas + 20 px + 260 px de panel. */
+  .app .main .welcome,
+  .app .main .net-layout,
+  .app .main .network-metrics-strip,
+  .app .main .m03-relations-table{width:1071px!important;max-width:1071px!important}
+  .app .main .net-layout{grid-template-columns:minmax(0,791px) 260px!important;gap:20px!important}
 }
+
 html,body{scrollbar-color:#46d6d0 #0b0c0f!important;scrollbar-width:thin!important}
 html::-webkit-scrollbar,body::-webkit-scrollbar,.m03-table-scroll::-webkit-scrollbar{width:10px;height:10px}
 html::-webkit-scrollbar-track,body::-webkit-scrollbar-track,.m03-table-scroll::-webkit-scrollbar-track{background:#0b0c0f!important;border-left:1px solid rgba(70,214,208,.08)}
