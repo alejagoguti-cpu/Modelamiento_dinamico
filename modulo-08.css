@@ -17,15 +17,12 @@
   --pink: #f76fb0;
   --orange: #ef9552;
 
-  /* colores de estructura — idénticos a los usados en Módulo 02 (Medir la Red) */
-  --struct-eco: #5cd6d1;    /* = e1 Estructura Ecológica Principal en módulo 02 */
-  --struct-func: #ef9f54;   /* = e2 Estructura Funcional y del Cuidado en módulo 02 */
-  --struct-patrim: #fb8d84; /* = e4 Estructura Integradora de Patrimonios en módulo 02 */
+  /* colores de estructura (reutilizados de Construir la Red) */
+  --struct-eco: #2fd4c8;
+  --struct-func: #f5a623;
+  --struct-patrim: #f76fb0;
   --actor-color: #eef0f6;
   --mediador-color: #7d8ea3;
-
-  /* degradé de título, idéntico al .h2-accent de módulo 02 */
-  --title-gradient: linear-gradient(90deg, #f2f3f6 0%, #e9695c 55%, #d28b36 100%);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -40,96 +37,42 @@ body {
 
 .app { display: flex; min-height: 100vh; }
 
-/* SIDEBAR — solo iconos */
+/* SIDEBAR — solo íconos, sin texto (idéntico al módulo 02) */
 .sidebar {
-  width: 64px;
-  flex-shrink: 0;
-  background: var(--sidebar);
+  width: 230px; flex-shrink: 0; background: var(--sidebar);
   border-right: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px 0;
+  display: flex; flex-direction: column; padding: 20px 14px;
 }
-
-.brand { display: flex; align-items: center; justify-content: center; padding: 0 0 22px 0; }
-
-.brand .mark {
-  width: 36px; height: 36px; border-radius: 10px;
+.sidebar.sidebar-icons-only {
+  width: 64px; align-items: center; padding: 18px 0;
+}
+.brand-icon {
+  width: 34px; height: 34px; border-radius: 10px; margin-bottom: 26px;
   background: linear-gradient(135deg, var(--teal), #1a9d94);
   display: flex; align-items: center; justify-content: center;
-  color: #06110f; font-size: 16px;
+  color: #06110f; font-size: 15px;
 }
-
-.brand span { display: none; }
-
-.nav-group { margin-bottom: 14px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-.nav-group:first-of-type { margin-bottom: 0; }
-
-.nav-label { display: none; }
-
-.nav-item {
-  position: relative;
-  display: flex; align-items: center; justify-content: center;
-  width: 40px; height: 40px; border-radius: 10px;
-  color: var(--text-dim); font-size: 13px; font-weight: 500;
-  cursor: pointer; transition: background .15s, color .15s;
-  white-space: nowrap; text-decoration: none;
+.icon-nav { display: flex; flex-direction: column; gap: 8px; align-items: center; }
+.icon-nav + .icon-nav {
+  margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border);
 }
-
-.nav-item .num { display: none; }
-.nav-item i { width: auto; text-align: center; font-size: 16px; }
-.nav-item:hover { background: rgba(255,255,255,0.06); color: var(--text); }
-.nav-item.active { background: var(--teal-dim); color: var(--teal); }
-.nav-item.active .num { color: var(--teal); }
-
-/* separador visual entre grupos de navegación */
-.nav-group + .nav-group::before {
-  content: "";
-  display: block;
-  width: 26px; height: 1px;
-  background: var(--border);
-  margin: 4px auto 10px;
+.icon-nav-item {
+  width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center;
+  color: var(--text-dim); font-size: 15px; text-decoration: none; transition: background .15s, color .15s;
 }
-
-/* tooltip al pasar el cursor, ya que el texto se ocultó */
-.nav-item::after {
-  content: attr(data-label);
-  position: absolute;
-  left: calc(100% + 10px);
-  top: 50%;
-  transform: translateY(-50%);
-  background: var(--panel);
-  border: 1px solid var(--border);
-  color: var(--text);
-  font-size: 12px;
-  font-weight: 500;
-  padding: 6px 10px;
-  border-radius: 6px;
-  white-space: nowrap;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity .12s;
-  z-index: 50;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.35);
-}
-.nav-item:hover::after { opacity: 1; }
+.icon-nav-item:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+.icon-nav-item.active { background: var(--teal-dim); color: var(--teal); }
+.icon-nav-footer { margin-top: auto; display: flex; flex-direction: column; gap: 8px; align-items: center; }
 
 .sidebar-footer {
-  margin-top: auto; border-top: 1px solid var(--border); padding-top: 14px;
-  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  margin-top: auto; border-top: 1px solid var(--border); padding-top: 12px; display: flex; align-items: center; gap: 10px;
 }
-
 .avatar-sm {
-  width: 34px; height: 34px; border-radius: 50%;
-  background: var(--panel); border: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 11px; font-weight: 700; color: var(--text-dim); flex-shrink: 0;
+  width: 32px; height: 32px; border-radius: 50%; background: var(--panel); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: var(--text-dim); flex-shrink: 0;
 }
-
 .user-meta { display: none; }
-
-.logout-btn { background: none; border: none; color: var(--text-faint); font-size: 14px; cursor: pointer; padding: 4px; text-decoration: none; }
+.logout-btn { background: none; border: none; color: var(--text-faint); font-size: 13px; cursor: pointer; padding: 4px; text-decoration: none; }
 .logout-btn:hover { color: var(--pink); }
 
 /* MAIN */
@@ -147,7 +90,7 @@ body {
 .search-box i { font-size: 12px; }
 
 .icon-btn {
-  width: 34px; height: 34px; border-radius: 8px;
+  width: 34px; height: 34px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
   background: var(--panel); border: 1px solid var(--border); color: var(--text-dim);
   font-size: 13px; position: relative;
@@ -196,13 +139,9 @@ body {
 
 .hero-title {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 34px; font-weight: 800; line-height: 1.15; margin-bottom: 6px; letter-spacing: -0.5px;
+  font-size: 54px; font-weight: 700; line-height: 1.1; margin-bottom: 12px; letter-spacing: -1px;
 }
-.hero-title .hero-plain { color: #f2f3f6; }
-.hero-accent {
-  background: var(--title-gradient);
-  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-}
+.hero-accent { color: var(--teal); }
 
 .hero-sub {
   font-size: 15px; color: var(--text-dim); font-weight: 500; margin-bottom: 24px;
