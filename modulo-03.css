@@ -8267,3 +8267,110 @@ html,body{height:auto!important;min-height:100%!important;overflow-x:hidden!impo
   right: auto !important;
   bottom: auto !important;
 }
+
+/* M03: referencia geométrica y compositiva del Módulo 02 */
+
+/* M03: referencia geométrica y compositiva del Módulo 02 */
+body.module02-reference-page {
+  background:#0a0a0a !important;
+  color:#e7eaf2 !important;
+  font-family:'Inter',sans-serif !important;
+}
+body.module02-reference-page .main {
+  padding:22px 34px 50px !important;
+  min-width:0 !important;
+  overflow-y:auto !important;
+}
+body.module02-reference-page .topbar {
+  margin-bottom:26px !important;
+}
+body.module02-reference-page .welcome {
+  margin-bottom:22px !important;
+  padding:0 !important;
+}
+body.module02-reference-page .welcome h2 {
+  font-family:'Space Grotesk',sans-serif !important;
+  font-size:54px !important;
+  line-height:1.1 !important;
+  letter-spacing:-1px !important;
+  margin-bottom:12px !important;
+}
+body.module02-reference-page .net-layout {
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) 260px !important;
+  gap:20px !important;
+  align-items:start !important;
+  width:100% !important;
+  height:auto !important;
+  min-height:0 !important;
+  overflow:visible !important;
+  padding:0 !important;
+}
+body.module02-reference-page .net-layout > .col:not(.right) { min-width:0 !important; }
+body.module02-reference-page .net-layout > .col.right {
+  min-width:0 !important;
+  width:260px !important;
+  display:flex !important;
+  flex-direction:column !important;
+  gap:14px !important;
+  overflow:visible !important;
+}
+body.module02-reference-page .net-layout > .col:not(.right) > .net-card {
+  width:100% !important;
+  min-width:0 !important;
+  height:auto !important;
+  border-radius:12px !important;
+  background:#05070a !important;
+}
+body.module02-reference-page .net-layout > .col:not(.right) > .net-card .net-stage {
+  height:780px !important;
+  min-height:780px !important;
+  background:#05070a !important;
+}
+body.module02-reference-page .net-layout > .col:not(.right) > .net-card .net-body { min-height:0 !important; }
+body.module02-reference-page #svg {
+  width:100% !important;
+  height:780px !important;
+  display:block !important;
+  background:#05070a !important;
+}
+body.module02-reference-page .net-toolbar {
+  background:#111111 !important;
+  border-bottom:1px solid rgba(255,255,255,.07) !important;
+  min-height:54px !important;
+}
+body.module02-reference-page .network-metrics-strip,
+body.module02-reference-page .m03-relations-table,
+body.module02-reference-page .m03-full-width-state {
+  width:100% !important;
+  margin-left:0 !important;
+  margin-right:0 !important;
+}
+body.module02-reference-page .network-metrics-strip { margin-top:20px !important; margin-bottom:24px !important; }
+body.module02-reference-page .m03-relations-table { margin-top:0 !important; }
+body.module02-reference-page .m03-table-scroll { max-height:620px !important; overflow:auto !important; }
+body.module02-reference-page .module03-reference-legend,
+body.module02-reference-page .net-layout > .col.right > .pcard,
+body.module02-reference-page .module03-side-finding {
+  width:100% !important;
+  box-sizing:border-box !important;
+}
+body.module02-reference-page .module03-reference-legend {
+  background:#111111 !important;
+  border:1px solid rgba(255,255,255,.04) !important;
+  border-radius:10px !important;
+  padding:16px !important;
+}
+body.module02-reference-page .scenario-buttons { gap:8px !important; }
+body.module02-reference-page .scenario-btn { min-height:60px !important; }
+body.module02-reference-page .m03-cat-name,
+body.module02-reference-page .btn-title,
+body.module02-reference-page .btn-question { line-height:1.3 !important; }
+@media (max-width:900px) {
+  body.module02-reference-page .main { padding:18px 16px 34px !important; }
+  body.module02-reference-page .net-layout { display:flex !important; flex-direction:column !important; }
+  body.module02-reference-page .net-layout > .col.right { width:100% !important; }
+  body.module02-reference-page .net-layout > .col:not(.right) > .net-card,
+  body.module02-reference-page .net-layout > .col:not(.right) > .net-card .net-stage,
+  body.module02-reference-page #svg { height:560px !important; min-height:560px !important; }
+}

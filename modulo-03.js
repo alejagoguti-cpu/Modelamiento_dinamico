@@ -2382,59 +2382,85 @@ function computeLayout() {
 // malla abierta de satélites. Las posiciones son deterministas y no alteran
 // endpoints, citas, páginas ni la lógica de activación de las relaciones.
 function computeLayoutClean() {
-  const centers = {
-    EEP: { x: 520, y: 470 }, EFC: { x: 1540, y: 470 },
-    ESECI: { x: 560, y: 1190 }, EIP: { x: 1570, y: 1160 }
+  // Plantilla geométrica del Módulo 02: lienzo panorámico, cuatro hubs
+  // separados en diamante y satélites abiertos hacia el exterior. Solo se
+  // cambian posiciones; relaciones, citas, páginas y estados POT permanecen.
+  const CANVAS = { w: 2500, h: 1820 };
+  const HUB_CENTERS = {
+    EEP: { x: 870, y: 620 },
+    EFC: { x: 1700, y: 560 },
+    ESECI: { x: 1150, y: 1280 },
+    EIP: { x: 1980, y: 1310 }
   };
-  const slots = [
-    [-350,-220],[-175,-330],[20,-350],[215,-285],[360,-150],
-    [-390,20],[-220,120],[-25,65],[170,125],[360,50],
-    [-330,245],[-150,340],[45,275],[220,345],[370,220]
-  ];
   const ids = Object.keys(model.concepts);
-  const hubIds = new Set();
+  const centerCanvas = { x: CANVAS.w / 2, y: CANVAS.h / 2 };
+  const GAP = 130;
+  const pos = {};
+
   SYS.forEach(sys => {
-    const center = centers[sys];
-    const group = model.systems[sys].concepts.slice().sort((a,b) =>
+    const center = HUB_CENTERS[sys];
+    const group = model.systems[sys].concepts.slice().sort((a, b) =>
       (model.concepts[b].deg - model.concepts[a].deg) || a.localeCompare(b));
     if (!group.length) return;
+
     const hub = group[0];
-    hubIds.add(hub);
-    layout[hub] = { x:center.x, y:center.y };
-    group.slice(1).forEach((id, i) => {
-      const s = slots[i % slots.length];
-      const cycle = Math.floor(i / slots.length);
-      layout[id] = { x:center.x + s[0] + cycle * 42, y:center.y + s[1] + cycle * 30 };
+    pos[hub] = { x: center.x, y: center.y };
+    const rest = group.slice(1);
+    const ringHigh = rest.filter(id => model.concepts[id].deg >= 3);
+    const ringMid = rest.filter(id => model.concepts[id].deg === 1 || model.concepts[id].deg === 2);
+    const ringLow = rest.filter(id => model.concepts[id].deg === 0);
+    const rings = [ringHigh, ringMid, ringLow];
+    const outward = Math.atan2(center.y - centerCanvas.y, center.x - centerCanvas.x);
+    const span = Math.min(Math.PI * 1.6, Math.PI * 0.5 + rest.length * (Math.PI / 10));
+    let previousRadius = nodeR[hub] + 170;
+
+    rings.forEach((ring, ringIndex) => {
+      if (!ring.length) return;
+      const circumference = ring.reduce((sum, id) => sum + 2 * nodeR[id] + GAP, 0);
+      const radius = Math.max(previousRadius, circumference / Math.max(span, 1));
+      ring.forEach((id, i) => {
+        const angle = outward - span / 2 + ((i + 0.5) / ring.length) * span;
+        pos[id] = {
+          x: center.x + Math.cos(angle) * radius,
+          y: center.y + Math.sin(angle) * radius
+        };
+      });
+      previousRadius = radius + Math.max(...ring.map(id => nodeR[id])) + 140;
     });
   });
+
   ids.forEach(id => {
-    const c = model.concepts[id];
-    const p = layout[id] || { x:1320, y:1140 };
-    const margin = nodeR[id] + 70;
-    p.x = Math.max(margin, Math.min(2220 - margin, p.x));
-    p.y = Math.max(margin, Math.min(1530 - margin, p.y));
+    const p = pos[id] || { x: centerCanvas.x, y: centerCanvas.y };
+    const margin = nodeR[id] + 28;
+    p.x = Math.max(margin, Math.min(CANVAS.w - margin, p.x));
+    p.y = Math.max(margin, Math.min(CANVAS.h - margin, p.y));
     layout[id] = p;
   });
-  for (let pass = 0; pass < 3; pass++) {
-    ids.forEach((aId, i) => ids.slice(i + 1).forEach(bId => {
-      const a = layout[aId], b = layout[bId];
-      const min = nodeR[aId] + nodeR[bId] + 28;
-      let dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy);
-      if (d >= min) return;
-      if (!d) { dx = 1; dy = 0; d = 1; }
-      const push = (min - d) / d * 0.5;
-      if (!hubIds.has(aId)) { a.x -= dx * push; a.y -= dy * push; }
-      if (!hubIds.has(bId)) { b.x += dx * push; b.y += dy * push; }
-    }));
+
+  // Desbloqueo suave, sin recolocar hubs ni compactar la red.
+  const hubIds = new Set(SYS.map(sys => model.systems[sys].concepts.slice().sort((a, b) =>
+    (model.concepts[b].deg - model.concepts[a].deg) || a.localeCompare(b))[0]));
+  for (let pass = 0; pass < 24; pass++) {
+    let moved = false;
+    for (let i = 0; i < ids.length; i++) {
+      for (let j = i + 1; j < ids.length; j++) {
+        const aId = ids[i], bId = ids[j];
+        const a = layout[aId], b = layout[bId];
+        let dx = b.x - a.x, dy = b.y - a.y;
+        const d = Math.hypot(dx, dy) || 0.01;
+        const required = nodeR[aId] + nodeR[bId] + 78;
+        if (d >= required) continue;
+        dx /= d; dy /= d;
+        const push = (required - d) * 0.35;
+        if (!hubIds.has(aId)) { a.x -= dx * push; a.y -= dy * push; }
+        if (!hubIds.has(bId)) { b.x += dx * push; b.y += dy * push; }
+        moved = true;
+      }
+    }
+    if (!moved) break;
   }
-  let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
-  ids.forEach(id => { const p=layout[id], r=nodeR[id]+100;
-    minX=Math.min(minX,p.x-r); maxX=Math.max(maxX,p.x+r);
-    minY=Math.min(minY,p.y-r); maxY=Math.max(maxY,p.y+r);
-  });
-  // El viewBox se ajusta al área real ocupada por la red para eliminar
-  // franjas vacías y hacer que los 47 conceptos llenen el canvas.
-  BASE_VB = { x:minX, y:minY, w:maxX-minX, h:maxY-minY };
+
+  BASE_VB = { x: 0, y: 0, w: CANVAS.w, h: CANVAS.h };
   vb = Object.assign({}, BASE_VB);
 }
 
