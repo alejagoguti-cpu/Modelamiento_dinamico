@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="modulo-03.css?v=network-integrated-v3">
+<link rel="stylesheet" href="modulo-03.css?v=popup-off-v4">
 <link rel="stylesheet" href="network06-shared.css">
 <style id="m03-final-layout">
 html,body{height:auto!important;min-height:100vh!important;overflow-x:hidden!important;overflow-y:auto!important}
@@ -86,7 +86,8 @@ html,body{height:auto!important;min-height:100vh!important;overflow-x:hidden!imp
       <!-- ================= PANEL DE INFORMACIÓN ================= -->
       <div class="col right">
 
-        <aside class="network-finding module03-side-finding" id="networkFinding" aria-live="polite">
+        <aside class="network-finding module03-side-finding m03-popup" id="networkFinding" aria-live="polite" aria-hidden="true" style="display:none">
+          <button type="button" class="m03-popup-close" id="findingPopupClose" aria-label="Cerrar hallazgo"><i class="fa-solid fa-xmark"></i></button>
           <div class="network-finding-icon" aria-hidden="true"><i class="fa-solid fa-lightbulb"></i></div>
           <div class="network-finding-kicker">HALLAZGO PRINCIPAL</div>
           <div class="network-finding-text" id="networkFindingText">
@@ -341,7 +342,7 @@ html,body{height:auto!important;min-height:100vh!important;overflow-x:hidden!imp
     </article>
   </div>
 
-<script src="modulo-03.js?v=m02-network-v2"></script>
+<script src="modulo-03.js?v=popup-off-v4"></script>
 <style id="m03-final-visual-fix">
 /* Capa final: vence los overrides compartidos que estaban recortando la tabla. */
 .app .main .net-layout{height:auto!important;min-height:0!important;overflow:visible!important}

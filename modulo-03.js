@@ -2527,6 +2527,9 @@ function render() {
     if (r.porVerificar) return;
     if (!relationPassesFilters(r)) return;
     const active = relActive(r);
+    // Una estructura OFF no deja líneas fantasma: la relación no se dibuja.
+    // Los datos permanecen intactos y volverán al activar el sistema.
+    if (!active) return;
     const a = drawPos[r.from] || layout[r.from], b = drawPos[r.to] || layout[r.to];
     const rA = nodeR[r.from];
     const rB = nodeR[r.to];
@@ -2579,6 +2582,9 @@ function render() {
       const activeRels = c.rels.filter(relActive).length;
       const isolated = activeRels === 0;
       const off = offNodes.has(id);
+      // OFF de estructura o nodo: no se pinta ningún círculo ni etiqueta.
+      // El modelo y la posición se conservan para restaurarlos después.
+      if (sysOff || off) return;
       const R = nodeR[id];
 const iconSize = Math.max(28, Math.round(R * 0.52));
       // Etiquetas más grandes y legibles, manteniendo proporción con el nodo.
@@ -3008,11 +3014,15 @@ function updateNetworkFinding(off, active, total) {
 // ---------------------------------------------------------------------
 // 5. INTERACCIÓN
 // ---------------------------------------------------------------------
-function showStructureInsight() {
-  // El hallazgo superior (#networkFinding) es el único hallazgo contextual.
-  // El popup lateral anterior duplicaba la información y tapaba el escenario.
-  const popup = document.getElementById('eseCIInsight');
-  if (popup) popup.classList.add('is-hidden');
+function showStructureInsight(system, isOff) {
+  const popup = document.getElementById('networkFinding');
+  if (!popup) return;
+  popup.classList.add('is-open');
+  popup.style.setProperty('display', 'block', 'important');
+  popup.setAttribute('aria-hidden', 'false');
+  if (system) popup.dataset.system = system;
+  popup.dataset.state = isOff ? 'off' : 'on';
+  animateFindingElement(popup);
 }
 
 function toggleSystem(s) {
@@ -3557,6 +3567,20 @@ document.addEventListener('DOMContentLoaded', () => {
   const insightPopup = document.getElementById('eseCIInsight');
   if (closeInsight && insightPopup) {
     closeInsight.addEventListener('click', () => insightPopup.classList.add('is-hidden'));
+  }
+
+  const findingPopup = document.getElementById('networkFinding');
+  const findingPopupClose = document.getElementById('findingPopupClose');
+  if (findingPopup && findingPopupClose) {
+    findingPopup.style.setProperty('display', 'none', 'important');
+    findingPopup.classList.remove('is-open');
+    findingPopup.setAttribute('aria-hidden', 'true');
+    findingPopupClose.addEventListener('click', event => {
+      event.stopPropagation();
+      findingPopup.classList.remove('is-open');
+      findingPopup.style.setProperty('display', 'none', 'important');
+      findingPopup.setAttribute('aria-hidden', 'true');
+    });
   }
 
   const conventionsHost = document.getElementById('module03Conventions');
