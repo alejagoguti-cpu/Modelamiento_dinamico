@@ -900,42 +900,43 @@ function showNodeInfo(id) {
 // encima de los hotspots para que sigan siendo visibles con el nuevo diseño
 // de bolitas de fondo sólido.
 const HUMEDAL_LINEAS = [
-  { a: { x: 15.1, y: 27.6 }, b: { x: 26.5, y: 50.6 },
-    cita: "La Reserva Forestal Thomas van der Hammen incluye los Humedales de La Conejera y Torca-Guaymaral.", pagina: "56", } , // torca_guaymaral ↔ la_conejera
-  { a: { x: 15.5, y: 25.9 }, b: { x: 53.3, y: 47.3 }, } , // torca_guaymaral ↔ malla_via
-  { a: { x: 27.7, y: 50.7 }, b: { x: 52, y: 50.5 }, } , // la_conejera ↔ malla_via
-  { a: { x: 37.6, y: 46.4 }, b: { x: 46.3, y: 47.7 }, } , // tibabuyes ↔ ciclorutas_humedal
-  { a: { x: 48.7, y: 39.9 }, b: { x: 55.2, y: 45.3 }, } , // ciclorutas_humedal ↔ malla_via
-  { a: { x: 40.5, y: 35.2 }, b: { x: 61.9, y: 35.5 }, } , // cordoba ↔ fauna_y_flora
-  { a: { x: 48.8, y: 40.4 }, b: { x: 55.2, y: 40.2 }, } , // santa_maria_del_lago ↔ suelo_de_proteccion
-  { a: { x: 54.8, y: 51 }, b: { x: 52.2, y: 58.5 },
-    cita: "Con respecto a los humedales de la ciudad, dentro del POT únicamente se identificó un conflicto de malla vial arterial con la Reserva Distrital de Humedal Capellanía, en Fontibón.", pagina: "49–50", } , // malla_via ↔ capellania
-  { a: { x: 62.7, y: 38.7 }, b: { x: 66.7, y: 71.9 }, } , // fauna_y_flora ↔ la_vaca
+  { a: { x: 15.1, y: 26.6 }, b: { x: 27.3, y: 50.6 },
+    cita: "La Reserva Forestal Thomas van der Hammen incluye los Humedales de La Conejera y Torca-Guaymaral.", pagina: "56", }, // torca_guaymaral ↔ la_conejera
+  { a: { x: 15.1, y: 26.6 }, b: { x: 53.8, y: 48.1 }, }, // torca_guaymaral ↔ malla_via
+  { a: { x: 27.3, y: 50.6 }, b: { x: 53.8, y: 48.1 }, }, // la_conejera ↔ malla_via
+  { a: { x: 37.3, y: 46 }, b: { x: 46.4, y: 47.3 }, }, // tibabuyes ↔ ciclorutas_humedal
+  { a: { x: 46.4, y: 47.3 }, b: { x: 53.8, y: 48.1 }, }, // ciclorutas_humedal ↔ malla_via
+  { a: { x: 39.7, y: 35.6 }, b: { x: 62.2, y: 38.8 }, }, // cordoba ↔ fauna_y_flora
+  { a: { x: 48.6, y: 40.6 }, b: { x: 55.6, y: 40 }, }, // santa_maria_del_lago ↔ suelo_de_proteccion
+  { a: { x: 48.6, y: 40.6 }, b: { x: 53.8, y: 48.1 }, }, // santa_maria_del_lago ↔ malla_via
+  { a: { x: 53.8, y: 48.1 }, b: { x: 51.6, y: 58.8 },
+    cita: "Con respecto a los humedales de la ciudad, dentro del POT únicamente se identificó un conflicto de malla vial arterial con la Reserva Distrital de Humedal Capellanía, en Fontibón.", pagina: "49–50", }, // malla_via ↔ capellania
+  { a: { x: 62.2, y: 38.8 }, b: { x: 67.4, y: 72.4 }, }, // fauna_y_flora ↔ la_vaca
 ];
 
 const HUMEDALES_CASOS = {
-  torca_guaymaral: { nombre: "Humedal Torca–Guaymaral", label: "Humedal\nTorca-\nGuaymaral", x: 14.9, y: 29.5, diam: 3.4, color: "#2fd4c8",
+  torca_guaymaral: { nombre: "Humedal Torca–Guaymaral", label: "Humedal\nTorca-\nGuaymaral", x: 15.1, y: 26.6, diam: 3.4, color: "#2fd4c8",
     cita: "El POT reconoce 15 humedales en Bogotá; estos son los casos que el documento desarrolla o nombra de manera específica en los fragmentos analizados.", pagina: "77" },
-  la_conejera: { nombre: "Humedal La Conejera", label: "Humedal La\nConejera", x: 27.3, y: 48.7, diam: 3.8, color: "#2fd4c8",
+  la_conejera: { nombre: "Humedal La Conejera", label: "Humedal La\nConejera", x: 27.3, y: 50.6, diam: 3.8, color: "#2fd4c8",
     cita: "11 de los humedales de Bogotá, como el de La Conejera, tienen certificación Ramsar, la máxima distinción internacional en la conservación de estos ecosistemas.", pagina: "77" },
-  tibabuyes: { nombre: "Humedal Tibabuyes", label: "Humedal\nTibabuyes", x: 37.2, y: 48.4, diam: 2.7, color: "#2fd4c8",
+  tibabuyes: { nombre: "Humedal Tibabuyes", label: "Humedal\nTibabuyes", x: 37.3, y: 46, diam: 2.7, color: "#2fd4c8",
     cita: "Peñalosa consideró útil endurecer el humedal Tibabuyes y, orgulloso de su obra, decidió continuarla en su segundo mandato superponiéndole una ciclovía de concreto.", pagina: null,
     conclusion: "El polígono es útil para establecer límites jurídicos, responsabilidades y restricciones de uso, pero es insuficiente para representar todo lo que ocurre en el humedal. No muestra por sí solo los flujos de agua, los cambios estacionales, los recorridos de las especies, los usos comunitarios ni las presiones de la infraestructura." },
-  ciclorutas_humedal: { nombre: "Ciclorutas sobre el sistema de humedales", label: "Ciclorutas", x: 46.3, y: 45, diam: 3.8, color: "#ef9552",
+  ciclorutas_humedal: { nombre: "Ciclorutas sobre el sistema de humedales", label: "Ciclorutas", x: 46.4, y: 47.3, diam: 3.8, color: "#ef9552",
     cita: "Peñalosa consideró útil endurecer el humedal Tibabuyes y, orgulloso de su obra, decidió continuarla en su segundo mandato superponiéndole una ciclovía de concreto.", pagina: null },
-  cordoba: { nombre: "Humedal Córdoba", label: "Humedal\nCórdoba", x: 39.5, y: 37.7, diam: 3.1, color: "#2fd4c8",
+  cordoba: { nombre: "Humedal Córdoba", label: "Humedal\nCórdoba", x: 39.7, y: 35.6, diam: 3.1, color: "#2fd4c8",
     cita: "Humedal Córdoba regula el agua, previene inundaciones y es el hogar de las aves, murciélagos e insectos que polinizan nuestras plantas.", pagina: "56" },
-  santa_maria_del_lago: { nombre: "Humedal Santa María del Lago", label: "Humedal\nSanta María\ndel Lago", x: 48.3, y: 38.3, diam: 3.3, color: "#2fd4c8",
+  santa_maria_del_lago: { nombre: "Humedal Santa María del Lago", label: "Humedal\nSanta María\ndel Lago", x: 48.6, y: 40.6, diam: 3.3, color: "#2fd4c8",
     cita: "La transferencia de derechos de construcción y desarrollo de predios ubicados en suelo de protección nos permite asegurar mejores condiciones para la preservación de ecosistemas como el humedal Santa María del Lago, en la localidad de Engativá.", pagina: "221–222" },
-  fauna_y_flora: { nombre: "Fauna y flora asociada al sistema de humedales", label: "Fauna y\nflora", x: 62.2, y: 41.1, diam: 4.8, color: "#7d92b3",
+  fauna_y_flora: { nombre: "Fauna y flora asociada al sistema de humedales", label: "Fauna y\nflora", x: 62.2, y: 38.8, diam: 4.8, color: "#7d92b3",
     cita: "El POT reconoce 15 humedales en Bogotá. Estos son los casos que el POT desarrolla o nombra de manera específica en los fragmentos analizados; esto no significa que sean los únicos humedales existentes, sino que son los que reciben mayor visibilidad dentro del documento.", pagina: "77" },
-  suelo_de_proteccion: { nombre: "Suelo de protección", label: "suelo de\nprotección", x: 55.7, y: 37.5, diam: 3.1, color: "#7d92b3",
+  suelo_de_proteccion: { nombre: "Suelo de protección", label: "suelo de\nprotección", x: 55.6, y: 40, diam: 3.1, color: "#7d92b3",
     cita: "La transferencia de derechos de construcción y desarrollo de predios ubicados en suelo de protección nos permite asegurar mejores condiciones para la preservación de ecosistemas como el humedal Santa María del Lago, en la localidad de Engativá.", pagina: "221–222" },
-  malla_via: { nombre: "Malla vial (conflicto con Capellanía)", label: "Malla vía", x: 53.9, y: 51.1, diam: 6.1, color: "#ef9552",
+  malla_via: { nombre: "Malla vial (conflicto con Capellanía)", label: "Malla vía", x: 53.8, y: 48.1, diam: 6.1, color: "#ef9552",
     cita: "Con respecto a los humedales de la ciudad, dentro del POT únicamente se identificó un conflicto de malla vial arterial con la Reserva Distrital de Humedal Capellanía, en Fontibón.", pagina: "49–50" },
-  capellania: { nombre: "Humedal Capellanía", label: "Humedal\nCapellanía", x: 51.6, y: 56.8, diam: 3.4, color: "#2fd4c8",
+  capellania: { nombre: "Humedal Capellanía", label: "Humedal\nCapellanía", x: 51.6, y: 58.8, diam: 3.4, color: "#2fd4c8",
     cita: "Para permitir el paso de la vía, el POT plantea reducir parte del ecosistema y modificar sus áreas. Capellanía pasa de 27,03 hectáreas a 29,32 hectáreas mediante una operación de sustracción y ampliación en otros sectores.", pagina: "49–50" },
-  la_vaca: { nombre: "Humedal La Vaca", label: "Humedal\nla vaca", x: 67.6, y: 75.7, diam: 3.4, color: "#2fd4c8",
+  la_vaca: { nombre: "Humedal La Vaca", label: "Humedal\nla vaca", x: 67.4, y: 72.4, diam: 3.4, color: "#2fd4c8",
     cita: "El Humedal La Vaca, en Patio Bonito, parte de una antigua laguna muisca gobernada por el cacique Techovita, es un reservorio de agua, plantas y animales protegido por la comunidad.", pagina: "103" },
 };
 
