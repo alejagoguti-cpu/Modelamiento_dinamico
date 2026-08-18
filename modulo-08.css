@@ -141,7 +141,10 @@ body {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 54px; font-weight: 700; line-height: 1.1; margin-bottom: 12px; letter-spacing: -1px;
 }
-.hero-accent { color: var(--teal); }
+.hero-accent {
+  background: linear-gradient(90deg, #f2f3f6 0%, #e9695c 55%, #d28b36 100%);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+}
 
 .hero-sub {
   font-size: 15px; color: var(--text-dim); font-weight: 500; margin-bottom: 24px;
