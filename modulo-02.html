@@ -16,6 +16,8 @@
     <div class="brand-icon"><i class="fa-solid fa-diagram-project"></i></div>
 
     <nav class="icon-nav">
+      <a href="dashboard.html" class="icon-nav-item" title="Dashboard"><i class="fa-solid fa-house"></i></a>
+      <a href="modulo-01.html" class="icon-nav-item" title="Construir la Red"><i class="fa-solid fa-diagram-project"></i></a>
       <a href="modulo-02.html" class="icon-nav-item active" title="Medir la Red"><i class="fa-solid fa-chart-simple"></i></a>
       <a href="modulo-03.html" class="icon-nav-item" title="Discurso vs Realidad"><i class="fa-solid fa-eye"></i></a>
       <a href="modulo-04.html" class="icon-nav-item" title="Macromodelos"><i class="fa-solid fa-bullseye"></i></a>
@@ -49,12 +51,11 @@
         <div class="welcome-main">
           <div class="welcome-eyebrow">INGENIERÍA INVERSA</div>
           <h2><span class="h2-plain">Una ciudad que</span> <span class="h2-accent">no cabe en el POT</span></h2>
-          <p class="welcome-sub">Ingeniería inversa al Modelo de Ocupación Territorial (MOT)</p>
+          <p class="welcome-sub">Ingeniería inversa al Modelo de Ordenamiento Territorial (MOT)</p>
         </div>
         <div class="quote-card welcome-quote-card">
           <div class="quote-mark">&ldquo;</div>
-          <p>Realizamos una ingeniería inversa al Modelo de Ocupación Territorial (MOT). Desarmamos el decreto para ver cómo interactúan realmente sus partes en el territorio.</p>
-          <div class="quote-attr">— Equipo Bogotá Viva</div>
+          <p>Realizamos una ingeniería inversa al Modelo de Ordenamiento Territorial (MOT). Desarmamos el decreto para ver cómo interactúan realmente sus partes en el territorio.</p>
         </div>
       </div>
 
@@ -90,62 +91,66 @@
           </div>
           <div class="movilidad-overlay-body" id="movilidadOverlayBody">
             <!-- imagen + líneas neón + hotspots clicables se generan dinámicamente -->
-            <div class="movilidad-overlay-sidebar">
-              <div class="movilidad-nota-naranja">
-                <p>El POT formula un modelo concreto, propone un sistema multimodal, una ciudad de proximidad y grandes proyectos como el Metro, los Regiotram, los cables y las ciclorrutas. Sin embargo, esa relación aparece representada principalmente mediante infraestructuras, localizaciones, líneas, estaciones y metas de tiempo.</p>
-                <p>Y muestra qué componentes deben conectarse y qué proyectos deberían producir esa conexión, pero representa de manera mucho más limitada el funcionamiento cotidiano de la movilidad: quién se desplaza, a qué hora, con qué frecuencia, mediante cuántos transbordos, con qué tiempo de espera, bajo qué condiciones de congestión y con qué desigualdad de acceso.</p>
-              </div>
-              <button type="button" class="movilidad-conclusion-btn" id="movilidadConclusionBtn">
-                <i class="fa-solid fa-circle-info"></i> Ver conclusión de la red de movilidad
-              </button>
+          </div>
+          <div class="movilidad-overlay-footer">
+            <div class="movilidad-nota-naranja">
+              <p>El POT formula un modelo concreto, propone un sistema multimodal, una ciudad de proximidad y grandes proyectos como el Metro, los Regiotram, los cables y las ciclorrutas. Sin embargo, esa relación aparece representada principalmente mediante infraestructuras, localizaciones, líneas, estaciones y metas de tiempo.</p>
+              <p>Y muestra qué componentes deben conectarse y qué proyectos deberían producir esa conexión, pero representa de manera mucho más limitada el funcionamiento cotidiano de la movilidad: quién se desplaza, a qué hora, con qué frecuencia, mediante cuántos transbordos, con qué tiempo de espera, bajo qué condiciones de congestión y con qué desigualdad de acceso.</p>
             </div>
+            <button type="button" class="movilidad-conclusion-btn" id="movilidadConclusionBtn">
+              <i class="fa-solid fa-circle-info"></i> Ver conclusión de la red de movilidad
+            </button>
           </div>
         </div>
 
         <div class="network-sidebar">
           <aside class="network-legend" id="networkLegend">
-            <div class="legend-title">Tipos de relación</div>
-            <label class="legend-item" data-mode="type" data-type="directa">
-              <input type="checkbox" checked><span class="legend-swatch swatch-directa-neutral"></span>
-              <span class="legend-text"><strong>Directa</strong><small>Respaldo explícito del POT</small></span>
-            </label>
-            <label class="legend-item" data-mode="type" data-type="indirecta">
-              <input type="checkbox" checked><span class="legend-swatch swatch-indirecta-neutral"></span>
-              <span class="legend-text"><strong>Indirecta</strong><small>Relación funcional intermedia</small></span>
-            </label>
-            <div class="legend-divider"></div>
-            <div class="legend-title">Color de la línea</div>
-            <div class="legend-static-item"><span class="legend-swatch" style="background:#f5a623;border-color:#f5a623;"></span> Soporte (sostiene / habilita)</div>
-            <div class="legend-static-item"><span class="legend-swatch" style="background:#5b8def;border-color:#5b8def;"></span> Resiliencia</div>
+            <div class="legend-section-box">
+              <div class="legend-title">Tipos de relación</div>
+              <label class="legend-item" data-mode="type" data-type="directa">
+                <input type="checkbox" checked><span class="legend-swatch swatch-directa-neutral"></span>
+                <span class="legend-text"><strong>Directa</strong><small>Respaldo explícito del POT</small></span>
+              </label>
+              <label class="legend-item" data-mode="type" data-type="indirecta">
+                <input type="checkbox" checked><span class="legend-swatch swatch-indirecta-neutral"></span>
+                <span class="legend-text"><strong>Indirecta</strong><small>Relación funcional intermedia</small></span>
+              </label>
+            </div>
 
-            <div class="legend-divider"></div>
-            <div class="legend-title">Categorías del POT</div>
-            <label class="legend-item cat-item" data-mode="cat" data-cat="e1">
-              <input type="checkbox" checked>
-              <span class="cat-icon" style="color:#5cd6d1;border-color:#5cd6d1;"><i class="fa-solid fa-droplet"></i></span>
-              <span class="cat-name">Ecológica Principal</span>
-              <span class="cat-count" id="struct-e1"></span>
-            </label>
-            <label class="legend-item cat-item" data-mode="cat" data-cat="e2">
-              <input type="checkbox" checked>
-              <span class="cat-icon" style="color:#ef9f54;border-color:#ef9f54;"><i class="fa-solid fa-people-roof"></i></span>
-              <span class="cat-name">Funcional y del Cuidado</span>
-              <span class="cat-count" id="struct-e2"></span>
-            </label>
-            <label class="legend-item cat-item" data-mode="cat" data-cat="e3">
-              <input type="checkbox" checked>
-              <span class="cat-icon" style="color:#fac47b;border-color:#fac47b;"><i class="fa-solid fa-building-columns"></i></span>
-              <span class="cat-name">Socioeconómica Creativa</span>
-              <span class="cat-count" id="struct-e3"></span>
-            </label>
-            <label class="legend-item cat-item" data-mode="cat" data-cat="e4">
-              <input type="checkbox" checked>
-              <span class="cat-icon" style="color:#fb8d84;border-color:#fb8d84;"><i class="fa-solid fa-landmark"></i></span>
-              <span class="cat-name">Integradora de Patrimonio</span>
-              <span class="cat-count" id="struct-e4"></span>
-            </label>
+            <div class="legend-section-box">
+              <div class="legend-title">Color de la línea</div>
+              <div class="legend-static-item"><span class="legend-swatch" style="background:#f5a623;border-color:#f5a623;"></span> Soporte (sostiene / habilita)</div>
+              <div class="legend-static-item"><span class="legend-swatch" style="background:#5b8def;border-color:#5b8def;"></span> Resiliencia</div>
+            </div>
 
-            <div class="legend-divider"></div>
+            <div class="legend-section-box">
+              <div class="legend-title">Categorías del POT</div>
+              <label class="legend-item cat-item" data-mode="cat" data-cat="e1">
+                <input type="checkbox" checked>
+                <span class="cat-icon" style="color:#5cd6d1;border-color:#5cd6d1;"><i class="fa-solid fa-droplet"></i></span>
+                <span class="cat-name">Ecológica Principal</span>
+                <span class="cat-count" id="struct-e1"></span>
+              </label>
+              <label class="legend-item cat-item" data-mode="cat" data-cat="e2">
+                <input type="checkbox" checked>
+                <span class="cat-icon" style="color:#ef9f54;border-color:#ef9f54;"><i class="fa-solid fa-people-roof"></i></span>
+                <span class="cat-name">Funcional y del Cuidado</span>
+                <span class="cat-count" id="struct-e2"></span>
+              </label>
+              <label class="legend-item cat-item" data-mode="cat" data-cat="e3">
+                <input type="checkbox" checked>
+                <span class="cat-icon" style="color:#fac47b;border-color:#fac47b;"><i class="fa-solid fa-building-columns"></i></span>
+                <span class="cat-name">Socioeconómica Creativa</span>
+                <span class="cat-count" id="struct-e3"></span>
+              </label>
+              <label class="legend-item cat-item" data-mode="cat" data-cat="e4">
+                <input type="checkbox" checked>
+                <span class="cat-icon" style="color:#fb8d84;border-color:#fb8d84;"><i class="fa-solid fa-landmark"></i></span>
+                <span class="cat-name">Integradora de Patrimonio</span>
+                <span class="cat-count" id="struct-e4"></span>
+              </label>
+            </div>
+
             <div class="legend-footer-row">
               <button class="control-btn active" onclick="filterNetwork('all')">Todas</button>
               <button class="control-btn" onclick="filterNetwork('directa')">Directas</button>
@@ -188,26 +193,6 @@
       <div class="node-info-schematic-map" id="nodeInfoSchematicMap" style="display:none;"></div>
       <div class="node-info-mapa" id="nodeInfoMapaWrap" style="display:none;">
         <a id="nodeInfoMapa" href="#" target="_blank" rel="noopener"><i class="fa-solid fa-map-location-dot"></i> Ver cartografía / geoportal oficial</a>
-      </div>
-    </div>
-
-    <!-- TABLA DE RELACIONES (generada dinámicamente — antes había una tabla estática que no coincidía con los datos reales) -->
-    <div class="analysis-container">
-      <div class="analysis-card full-width">
-        <div class="card-header">
-          <h3><i class="fa-solid fa-table"></i> Tabla completa de relaciones</h3>
-        </div>
-        <div class="matrix-container">
-          <div class="matrix-row header">
-            <div class="matrix-cell header-cell">Estructura</div>
-            <div class="matrix-cell header-cell">Relación</div>
-            <div class="matrix-cell header-cell">Tipo</div>
-            <div class="matrix-cell header-cell">Fuente</div>
-            <div class="matrix-cell header-cell">Artículo / página</div>
-            <div class="matrix-cell header-cell">Análisis</div>
-          </div>
-          <div id="matrixRows"></div>
-        </div>
       </div>
     </div>
 
