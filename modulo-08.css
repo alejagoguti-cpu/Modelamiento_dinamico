@@ -1,6 +1,6 @@
 :root {
-  --bg: #0a0e17;
-  --sidebar: #0c1120;
+  --bg: #0a0a0a;
+  --sidebar: #0a0a0a;
   --panel: #121828;
   --panel-alt: #0f1522;
   --border: rgba(255,255,255,0.07);
@@ -16,6 +16,7 @@
   --yellow: #f5c945;
   --pink: #f76fb0;
   --orange: #ef9552;
+  --red: #ef4444;
 
   /* colores de estructura (reutilizados de Construir la Red) */
   --struct-eco: #2fd4c8;
@@ -195,13 +196,7 @@ body {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 34px; font-weight: 800; line-height: 1.15; margin-bottom: 6px; letter-spacing: -0.5px;
 }
-.hero-accent {
-  background: linear-gradient(90deg, var(--teal), #7de8df 55%, #b6f3ec);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: var(--teal);
-}
+.hero-accent { color: var(--teal); }
 
 .hero-sub {
   font-size: 15px; color: var(--text-dim); font-weight: 500; margin-bottom: 24px;
