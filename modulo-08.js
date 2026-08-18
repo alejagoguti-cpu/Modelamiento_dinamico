@@ -1,450 +1,681 @@
-:root {
-  --bg: #0a0a0a;
-  --sidebar: #0a0a0a;
-  --panel: #121828;
-  --panel-alt: #0f1522;
-  --border: rgba(255,255,255,0.07);
-  --border-soft: rgba(255,255,255,0.04);
-  --text: #e7eaf2;
-  --text-dim: #8891a5;
-  --text-faint: #5a6274;
-  --teal: #2fd4c8;
-  --teal-dim: rgba(47,212,200,0.12);
-  --blue: #5b8def;
-  --purple: #a276f2;
-  --green: #4ade80;
-  --yellow: #f5c945;
-  --pink: #f76fb0;
-  --orange: #ef9552;
+/* ==========================================================
+   UN NUEVO MODELO DE LECTURA — Módulo 09
+   Implementa la metodología del paper "Un nuevo modelo de lectura
+   para un territorio dinámico":
+   - Los COMPONENTES TERRITORIALES son los mismos ya documentados en
+     las 4 estructuras del POT (Construir la Red, módulo 01): EEP, EFS,
+     ESE y EIP, aquí consolidados en una sola red.
+   - Los ACTORES y MEDIADORES son nodos independientes (no partes de un
+     componente): se activan con "Activar Dimensión Dinámica".
+   - Las SITUACIONES no agregan nodos: cambian intensidad/opacidad de
+     relaciones ya existentes (hora pico, lluvias, obras, etc.).
+   - Color de nodo = estructura de referencia. Ícono = tipo de nodo.
+   - Línea continua = directa documentada. Punteada = indirecta o
+     interpretativa. Flecha = dirección sustentada. Grosor = intensidad.
 
-  /* colores de estructura — idénticos a los usados en Módulo 02 (Medir la Red) */
-  --struct-eco: #5cd6d1;    /* = e1 Estructura Ecológica Principal en módulo 02 */
-  --struct-func: #ef9f54;   /* = e2 Estructura Funcional y del Cuidado en módulo 02 */
-  --struct-patrim: #fb8d84; /* = e4 Estructura Integradora de Patrimonios en módulo 02 */
-  --actor-color: #eef0f6;
-  --mediador-color: #7d8ea3;
+   NOTA: las citas y páginas del POT reutilizan, donde el par de
+   componentes coincide, el mismo sustento documental del módulo 01.
+   Las relaciones que cruzan estructuras (p. ej. Humedales–Servicios
+   empresariales) son interpretativas y están marcadas como tal —
+   reemplázalas por la cita exacta si cuentas con ella.
+   ========================================================== */
 
-  /* degradé de título, idéntico al .h2-accent de módulo 02 */
-  --title-gradient: linear-gradient(90deg, #f2f3f6 0%, #e9695c 55%, #d28b36 100%);
+const SVG_NS = "http://www.w3.org/2000/svg";
+const XHTML_NS = "http://www.w3.org/1999/xhtml";
+
+const STRUCT_COLOR = {
+  eco: "#2fd4c8",
+  func: "#f5a623",
+  patrim: "#f76fb0",
+  actor: "#eef0f6",
+  mediador: "#7d8ea3",
+};
+
+/* -------- Componentes territoriales (31, red consolidada del POT) -------- */
+const BASE_NODES = [
+  { id: "quebradas", name: "QUEBRADAS", icon: "fa-water", struct: "eco", x: 171, y: 69, r: 24 },
+  { id: "complejo_paramos", name: "COMPLEJO DE\nPÁRAMOS", icon: "fa-mountain-sun", struct: "eco", x: 337, y: 71, r: 24 },
+  { id: "reservas_forestales", name: "RESERVAS\nFORESTALES", icon: "fa-tree", struct: "eco", x: 284, y: 131, r: 29 },
+  { id: "areas_protegidas", name: "ÁREAS\nPROTEGIDAS", icon: "fa-shield", struct: "eco", x: 166, y: 168, r: 27 },
+  { id: "areas_resiliencia", name: "ÁREAS DE\nRESILIENCIA", icon: "fa-cloud-sun", struct: "eco", x: 70, y: 201, r: 26 },
+  { id: "humedales", name: "HUMEDALES", icon: "fa-droplet", struct: "eco", x: 250, y: 232, r: 54 },
+  { id: "rios", name: "RÍOS", icon: "fa-water", struct: "eco", x: 162, y: 296, r: 32 },
+  { id: "coberturas_vegetales", name: "COBERTURAS\nVEGETALES", icon: "fa-spa", struct: "eco", x: 116, y: 359, r: 32 },
+
+  { id: "corredores_verdes", name: "CORREDORES\nVERDES", icon: "fa-leaf", struct: "func", x: 748, y: 180, r: 27 },
+  { id: "transporte_publico", name: "TRANSPORTE\nPÚBLICO", icon: "fa-bus", struct: "func", x: 499, y: 123, r: 38 },
+  { id: "servicios_sociales", name: "SERVICIOS\nSOCIALES", icon: "fa-hand-holding-heart", struct: "func", x: 450, y: 54, r: 24 },
+  { id: "equipamientos", name: "EQUIPAMIENTOS", icon: "fa-building", struct: "func", x: 600, y: 109, r: 34 },
+  { id: "ciclorrutas", name: "CICLORRUTAS", icon: "fa-bicycle", struct: "func", x: 643, y: 37, r: 24 },
+  { id: "vivienda", name: "VIVIENDA", icon: "fa-house", struct: "func", x: 561, y: 207, r: 58 },
+  { id: "red_vial", name: "RED VIAL", icon: "fa-road", struct: "func", x: 664, y: 193, r: 29 },
+  { id: "manzanas_cuidado", name: "MANZANAS\nDEL CUIDADO", icon: "fa-share-nodes", struct: "func", x: 627, y: 289, r: 32 },
+  { id: "parques", name: "PARQUES", icon: "fa-tree-city", struct: "func", x: 682, y: 355, r: 24 },
+
+  { id: "servicios_empresariales", name: "SERVICIOS\nEMPRESARIALES", icon: "fa-briefcase", struct: "func", x: 355, y: 466, r: 52 },
+  { id: "produccion_artesanal", name: "PRODUCCIÓN\nARTESANAL", icon: "fa-gem", struct: "func", x: 243, y: 441, r: 24 },
+  { id: "centros_financieros", name: "CENTROS\nFINANCIEROS", icon: "fa-building-columns", struct: "func", x: 156, y: 468, r: 24 },
+  { id: "plazas_mercado", name: "PLAZAS DE\nMERCADO", icon: "fa-store", struct: "func", x: 250, y: 532, r: 24 },
+  { id: "zonas_industriales", name: "ZONAS\nINDUSTRIALES", icon: "fa-industry", struct: "func", x: 470, y: 495, r: 34 },
+  { id: "distrito_tecnologico", name: "DISTRITO CENTRO\nTECNOLÓGICO", icon: "fa-share-nodes", struct: "func", x: 423, y: 577, r: 27 },
+  { id: "sistema_educacion", name: "SISTEMA DE\nEDUCACIÓN", icon: "fa-graduation-cap", struct: "func", x: 323, y: 589, r: 27 },
+  { id: "zonas_interes_turistico", name: "ZONAS INTERÉS\nTURÍSTICO", icon: "fa-map-location-dot", struct: "func", x: 531, y: 559, r: 24 },
+  { id: "centros_abastecimiento", name: "CENTROS DE\nABASTECIMIENTO", icon: "fa-truck", struct: "func", x: 304, y: 657, r: 24 },
+
+  { id: "patrimonio_material", name: "PATRIMONIO\nMATERIAL", icon: "fa-landmark", struct: "patrim", x: 664, y: 484, r: 34 },
+  { id: "patrimonio_natural", name: "PATRIMONIO\nNATURAL", icon: "fa-mountain", struct: "patrim", x: 759, y: 462, r: 34 },
+  { id: "patrimonio_inmaterial", name: "PATRIMONIO\nINMATERIAL", icon: "fa-masks-theater", struct: "patrim", x: 699, y: 577, r: 27 },
+  { id: "patrimonio_arqueologico", name: "PATRIMONIO\nARQUEOLÓGICO", icon: "fa-monument", struct: "patrim", x: 729, y: 654, r: 24 },
+  { id: "comunidades_patrimonio", name: "COMUNIDADES", icon: "fa-people-group", struct: "patrim", x: 834, y: 450, r: 27 },
+];
+
+/* -------- Actores: nodos independientes, no partes de un componente -------- */
+const ACTOR_NODES = [
+  { id: "habitantes", name: "HABITANTES", icon: "fa-person", x: 395, y: 150, r: 22 },
+  { id: "estudiantes", name: "ESTUDIANTES", icon: "fa-user-graduate", x: 130, y: 610, r: 22 },
+  { id: "trabajadores", name: "TRABAJADORES", icon: "fa-user-tie", x: 600, y: 600, r: 22 },
+  { id: "personas_cuidadoras", name: "PERSONAS\nCUIDADORAS", icon: "fa-hands-holding-child", x: 800, y: 280, r: 22 },
+  { id: "comunidades_actor", name: "COMUNIDADES", icon: "fa-people-group", x: 50, y: 330, r: 22 },
+  { id: "operadores_transporte", name: "OPERADORES DE\nTRANSPORTE", icon: "fa-id-badge", x: 820, y: 90, r: 22 },
+  { id: "aves", name: "AVES", icon: "fa-dove", x: 170, y: 150, r: 20 },
+];
+
+/* -------- Mediadores: qué permite que la relación ocurra -------- */
+const MEDIADOR_NODES = [
+  { id: "estaciones", name: "ESTACIONES", icon: "fa-train-subway", x: 540, y: 150, r: 20 },
+  { id: "andenes", name: "ANDENES", icon: "fa-person-walking", x: 740, y: 230, r: 20 },
+  { id: "senderos", name: "SENDEROS", icon: "fa-shoe-prints", x: 140, y: 220, r: 20 },
+  { id: "puentes_peatonales", name: "PUENTES\nPEATONALES", icon: "fa-bridge", x: 60, y: 340, r: 20 },
+];
+
+const ALL_DYNAMIC_NODES = [...ACTOR_NODES, ...MEDIADOR_NODES];
+
+function nodeKind(id) {
+  if (BASE_NODES.some(n => n.id === id)) return "componente";
+  if (ACTOR_NODES.some(n => n.id === id)) return "actor";
+  if (MEDIADOR_NODES.some(n => n.id === id)) return "mediador";
+  return "componente";
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
-  font-family: 'Inter', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  font-size: 14px;
-  -webkit-font-smoothing: antialiased;
+function findNode(id) {
+  return BASE_NODES.find(n => n.id === id) || ALL_DYNAMIC_NODES.find(n => n.id === id);
 }
 
-.app { display: flex; min-height: 100vh; }
+/* -------- Relaciones entre componentes territoriales -------- */
+/* tipo: "directa" (línea continua) | "indirecta" (línea punteada, incluye
+   relaciones interpretativas sin cita textual). dirigida: si hay flecha. */
+const BASE_EDGES = [
+  { s: "quebradas", t: "humedales", tipo: "directa", dirigida: true, evidencia: "El POT reconoce las quebradas como afluentes que alimentan el sistema de humedales urbanos.", page: "p. 196", critica: "La relación es hídrica y unidireccional aguas abajo; no muestra la variación estacional del caudal." },
+  { s: "complejo_paramos", t: "reservas_forestales", tipo: "directa", dirigida: true, evidencia: "Los complejos de páramo sostienen ecológicamente las reservas forestales protegidas.", page: "p. 198", critica: "La relación se documenta a escala regional; no distingue reservas específicas." },
+  { s: "reservas_forestales", t: "humedales", tipo: "indirecta", dirigida: true, evidencia: "Las reservas forestales regulan indirectamente el régimen hídrico de los humedales cercanos.", page: "p. 198", critica: "Es una relación de regulación ambiental, no de conexión física directa." },
+  { s: "areas_protegidas", t: "humedales", tipo: "directa", dirigida: true, evidencia: "Las áreas protegidas incluyen la ronda de protección de los humedales.", page: "p. 200", critica: "La protección normativa no garantiza por sí sola el estado ecológico del humedal." },
+  { s: "areas_resiliencia", t: "coberturas_vegetales", tipo: "directa", dirigida: true, evidencia: "Las áreas de resiliencia climática dependen de la conservación de coberturas vegetales.", page: "p. 201", critica: "La dependencia es ecológica; no incorpora el efecto de la urbanización sobre esas coberturas." },
+  { s: "humedales", t: "rios", tipo: "directa", dirigida: true, evidencia: "Los humedales hacen parte del sistema hídrico junto con los ríos de la ciudad.", page: "p. 196", critica: "La relación no distingue temporada seca de temporada de lluvias, donde la intensidad cambia." },
+  { s: "humedales", t: "coberturas_vegetales", tipo: "directa", dirigida: true, evidencia: "Los humedales sostienen las coberturas vegetales de su ronda hidráulica.", page: "p. 197", critica: "No especifica qué franja de ronda queda realmente cubierta en la práctica." },
+  { s: "humedales", t: "servicios_empresariales", tipo: "indirecta", dirigida: true, evidencia: "Relación interpretativa: la cercanía de actividad empresarial condiciona el régimen de uso del suelo alrededor del humedal.", page: null, critica: "No hay cita textual del POT para este cruce; se incluye porque ambos aparecen en el mismo corredor territorial." },
+  { s: "vivienda", t: "transporte_publico", tipo: "directa", dirigida: true, evidencia: "La vivienda se conecta con el resto de la ciudad a través del transporte público.", page: "p. 30", critica: "La conexión documentada no dice nada sobre tiempos de espera ni transbordos reales." },
+  { s: "vivienda", t: "equipamientos", tipo: "directa", dirigida: true, evidencia: "La vivienda se articula con los sistemas de cuidado y equipamientos comunitarios.", page: "p. 29", critica: "No diferencia el tipo de equipamiento ni su distancia real a la vivienda." },
+  { s: "vivienda", t: "red_vial", tipo: "directa", dirigida: true, evidencia: "La vivienda se conecta con el resto de la ciudad a través de la red vial.", page: "p. 30", critica: "Es una relación de accesibilidad general, no de calidad de la malla vial." },
+  { s: "vivienda", t: "manzanas_cuidado", tipo: "directa", dirigida: true, evidencia: "Las Manzanas del Cuidado se organizan alrededor de la vivienda cercana.", page: "p. 32", critica: "El radio de proximidad real varía según el barrio y no está fijado en el documento." },
+  { s: "vivienda", t: "comunidades_patrimonio", tipo: "indirecta", dirigida: true, evidencia: "Relación interpretativa: la vivienda del sector se asocia con las comunidades que sostienen su patrimonio.", page: null, critica: "Es una lectura territorial, no una relación explícitamente documentada en el POT." },
+  { s: "transporte_publico", t: "servicios_sociales", tipo: "indirecta", dirigida: true, evidencia: "El transporte público facilita, sin ser la única vía, el acceso a servicios sociales.", page: "p. 29", critica: "No es exclusiva: hay otros modos de acceso a servicios sociales no representados aquí." },
+  { s: "transporte_publico", t: "ciclorrutas", tipo: "indirecta", dirigida: true, evidencia: "El transporte público se complementa con la red de ciclorrutas en los últimos tramos del viaje.", page: "p. 39", critica: "La intermodalidad depende de infraestructura de transbordo que no siempre existe." },
+  { s: "equipamientos", t: "corredores_verdes", tipo: "directa", dirigida: true, evidencia: "Los equipamientos se articulan con los corredores verdes urbanos cercanos.", page: "p. 40", critica: "La articulación física no siempre implica continuidad peatonal real." },
+  { s: "manzanas_cuidado", t: "parques", tipo: "directa", dirigida: true, evidencia: "Las Manzanas del Cuidado incluyen parques como parte de sus servicios de proximidad.", page: "p. 40", critica: "No especifica el estándar mínimo de área verde por Manzana." },
+  { s: "servicios_empresariales", t: "produccion_artesanal", tipo: "directa", dirigida: true, evidencia: "Los servicios empresariales impulsan la producción artesanal local.", page: "p. 60", critica: "La relación es de impulso económico, no de encadenamiento productivo formalizado." },
+  { s: "servicios_empresariales", t: "centros_financieros", tipo: "directa", dirigida: true, evidencia: "Los servicios empresariales dependen del respaldo de los centros financieros.", page: "p. 55", critica: "No distingue financiamiento formal de informal, ambos presentes en el territorio." },
+  { s: "servicios_empresariales", t: "plazas_mercado", tipo: "directa", dirigida: true, evidencia: "Los servicios empresariales se articulan con las plazas de mercado del sector.", page: "p. 60", critica: "La plaza de mercado tiene una lógica de escala barrial distinta a la empresarial." },
+  { s: "servicios_empresariales", t: "zonas_industriales", tipo: "directa", dirigida: true, evidencia: "Los servicios empresariales se complementan con las zonas industriales cercanas.", page: "p. 48", critica: "No aborda el conflicto de usos entre industria y otros usos urbanos." },
+  { s: "servicios_empresariales", t: "distrito_tecnologico", tipo: "directa", dirigida: true, evidencia: "Los servicios empresariales se apoyan en el Distrito Centro Tecnológico e Innovación.", page: "p. 46", critica: "El distrito es un proyecto de escala mayor; su efecto local aún no está evaluado." },
+  { s: "servicios_empresariales", t: "sistema_educacion", tipo: "directa", dirigida: true, evidencia: "El sistema de educación forma el talento humano de los servicios empresariales.", page: "p. 53", critica: "La formación de talento humano es un proceso de largo plazo, no inmediato." },
+  { s: "zonas_industriales", t: "patrimonio_material", tipo: "indirecta", dirigida: true, evidencia: "Relación interpretativa: la actividad industrial cercana condiciona la conservación del patrimonio material.", page: null, critica: "No hay cita textual; se infiere del cruce territorial entre ambos usos." },
+  { s: "zonas_industriales", t: "zonas_interes_turistico", tipo: "indirecta", dirigida: false, evidencia: "Relación interpretativa: ambos usos conviven en el mismo corredor sin una jerarquía definida.", page: null, critica: "La convivencia puede ser complementaria o conflictiva según el caso concreto." },
+  { s: "patrimonio_material", t: "patrimonio_natural", tipo: "directa", dirigida: true, evidencia: "El patrimonio material y el patrimonio natural comparten un mismo sistema de conservación.", page: "p. 196", critica: "No define un mecanismo de gestión conjunta entre ambos tipos de patrimonio." },
+  { s: "patrimonio_natural", t: "comunidades_patrimonio", tipo: "directa", dirigida: true, evidencia: "Las comunidades son testimonio y sostén del patrimonio natural del territorio.", page: "p. 186", critica: "No distingue qué comunidad específica ejerce ese sostén en cada caso." },
+  { s: "patrimonio_natural", t: "patrimonio_inmaterial", tipo: "directa", dirigida: true, evidencia: "El patrimonio natural y el patrimonio inmaterial se reconocen como un sistema integrado.", page: "p. 196", critica: "La integración normativa no implica una gestión articulada en la práctica." },
+  { s: "patrimonio_inmaterial", t: "patrimonio_arqueologico", tipo: "indirecta", dirigida: true, evidencia: "Relación interpretativa: el patrimonio inmaterial documenta prácticas asociadas a hallazgos arqueológicos del sector.", page: null, critica: "Es una asociación temática, no una relación de manejo documentada." },
+  { s: "distrito_tecnologico", t: "zonas_interes_turistico", tipo: "indirecta", dirigida: true, evidencia: "El Distrito Centro Tecnológico e Innovación incrementa el valor turístico de la zona.", page: "p. 50", critica: "El efecto turístico proyectado aún no tiene evidencia de resultado." },
+  { s: "centros_abastecimiento", t: "sistema_educacion", tipo: "indirecta", dirigida: false, evidencia: "Relación interpretativa: ambos comparten el mismo corredor de servicios del sector.", page: null, critica: "La coincidencia espacial no implica una relación funcional comprobada." },
+];
 
-/* SIDEBAR — solo iconos */
-.sidebar {
-  width: 64px;
-  flex-shrink: 0;
-  background: var(--sidebar);
-  border-right: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px 0;
+/* -------- Relaciones actor/mediador → componente (dimensión dinámica) -------- */
+const DYNAMIC_EDGES = [
+  { s: "habitantes", t: "transporte_publico", tipo: "indirecta", dirigida: true, evidencia: "Los habitantes son quienes usan cotidianamente el transporte público.", page: null, actores: "Habitantes", critica: "El uso no es homogéneo: cambia con la edad, el ingreso y la movilidad reducida." },
+  { s: "habitantes", t: "vivienda", tipo: "indirecta", dirigida: true, evidencia: "Los habitantes son quienes ocupan y sostienen la vivienda día a día.", page: null, actores: "Habitantes", critica: "La ocupación real puede diferir del uso previsto por el POT (subarriendo, hacinamiento)." },
+  { s: "estudiantes", t: "sistema_educacion", tipo: "indirecta", dirigida: true, evidencia: "Los estudiantes son actores centrales del sistema de educación del sector.", page: null, actores: "Estudiantes", critica: "No todos los estudiantes acceden al sistema de educación más cercano a su vivienda." },
+  { s: "trabajadores", t: "servicios_empresariales", tipo: "indirecta", dirigida: true, evidencia: "Los trabajadores activan diariamente los servicios empresariales del sector.", page: null, actores: "Trabajadores", critica: "La relación no distingue empleo formal de informal, con condiciones muy distintas." },
+  { s: "trabajadores", t: "zonas_industriales", tipo: "indirecta", dirigida: true, evidencia: "Los trabajadores operan y sostienen la actividad de las zonas industriales.", page: null, actores: "Trabajadores", critica: "El desplazamiento de los trabajadores hacia la zona industrial no siempre es corto." },
+  { s: "personas_cuidadoras", t: "manzanas_cuidado", tipo: "indirecta", dirigida: true, evidencia: "Las personas cuidadoras son quienes usan y sostienen las Manzanas del Cuidado.", page: null, actores: "Personas cuidadoras", critica: "El diseño de la Manzana no siempre responde a los tiempos reales del cuidado." },
+  { s: "comunidades_actor", t: "humedales", tipo: "indirecta", dirigida: true, evidencia: "Las comunidades vecinas protegen y usan cotidianamente el humedal.", page: null, actores: "Comunidades", critica: "No toda comunidad vecina tiene el mismo nivel de organización para proteger el humedal." },
+  { s: "operadores_transporte", t: "transporte_publico", tipo: "indirecta", dirigida: true, evidencia: "Los operadores de transporte son quienes ponen en funcionamiento el sistema.", page: null, actores: "Operadores de transporte", critica: "La calidad del servicio depende de condiciones laborales no representadas en la red." },
+  { s: "aves", t: "humedales", tipo: "indirecta", dirigida: true, evidencia: "Las aves migratorias y residentes dependen del ecosistema del humedal.", page: null, actores: "Aves (especies concretas)", critica: "La relación cambia según la temporada migratoria, no es constante todo el año." },
+  { s: "estaciones", t: "transporte_publico", tipo: "directa", dirigida: false, evidencia: "Las estaciones son el mediador físico que hace posible el uso del transporte público.", page: null, critica: "El número y ubicación real de estaciones condiciona la equidad de acceso." },
+  { s: "andenes", t: "red_vial", tipo: "directa", dirigida: false, evidencia: "Los andenes son el mediador que permite el uso peatonal de la red vial.", page: null, critica: "El estado físico del andén no está representado, solo su existencia." },
+  { s: "senderos", t: "humedales", tipo: "directa", dirigida: false, evidencia: "Los senderos median el uso comunitario y recreativo del humedal.", page: null, actores: "Comunidades", critica: "Un exceso de senderos puede presionar ecológicamente el borde del humedal." },
+  { s: "senderos", t: "areas_protegidas", tipo: "directa", dirigida: false, evidencia: "Los senderos permiten el recorrido controlado dentro de áreas protegidas.", page: null, critica: "El control real del recorrido depende de mantenimiento y señalización." },
+  { s: "puentes_peatonales", t: "rios", tipo: "directa", dirigida: false, evidencia: "Los puentes peatonales median el cruce seguro sobre los ríos urbanos.", page: null, critica: "No todos los tramos del río cuentan con un puente peatonal cercano." },
+];
+
+function edgeKey(e) { return e.s + "→" + e.t; }
+
+/* -------- Situaciones: cambian intensidad de relaciones ya existentes -------- */
+const SITUACIONES = [
+  {
+    id: "hora_pico_manana", label: "Hora pico (mañana)", icon: "fa-sun",
+    desc: "Aumenta el peso visual de las relaciones entre Vivienda, Transporte público y los lugares de empleo.",
+    boost: ["vivienda→transporte_publico", "habitantes→transporte_publico", "trabajadores→servicios_empresariales"],
+    dim: [],
+  },
+  {
+    id: "hora_pico_tarde", label: "Hora pico (tarde)", icon: "fa-cloud-sun",
+    desc: "Cambia la intensidad de las relaciones de regreso hacia la vivienda.",
+    boost: ["transporte_publico→servicios_sociales", "vivienda→transporte_publico", "habitantes→vivienda"],
+    dim: [],
+  },
+  {
+    id: "mantenimiento", label: "Mantenimiento", icon: "fa-screwdriver-wrench",
+    desc: "Atenúa o interrumpe temporalmente la relación con una estación o servicio.",
+    boost: [],
+    dim: ["estaciones→transporte_publico"],
+  },
+  {
+    id: "obra_vial", label: "Obra vial", icon: "fa-triangle-exclamation",
+    desc: "Modifica las relaciones entre la Red vial, el Transporte público y los recorridos cotidianos.",
+    boost: ["andenes→red_vial"],
+    dim: ["vivienda→red_vial"],
+  },
+  {
+    id: "cierre_estacion", label: "Cierre de estación", icon: "fa-ban",
+    desc: "Desactiva un punto de acceso y activa rutas alternativas.",
+    boost: ["andenes→red_vial"],
+    dim: ["estaciones→transporte_publico"],
+  },
+  {
+    id: "temporada_lluvias", label: "Temporada de lluvias", icon: "fa-cloud-showers-heavy",
+    desc: "Aumenta la intensidad de las relaciones hídricas entre Quebradas, Ríos y Humedales.",
+    boost: ["quebradas→humedales", "humedales→rios", "humedales→coberturas_vegetales"],
+    dim: [],
+  },
+  {
+    id: "temporada_seca", label: "Temporada seca", icon: "fa-sun-plant-wilt",
+    desc: "Reduce la intensidad de las relaciones hídricas y cambia la lectura del sistema.",
+    boost: [],
+    dim: ["quebradas→humedales", "humedales→rios", "humedales→coberturas_vegetales"],
+  },
+  {
+    id: "intervencion_vial", label: "Intervención vial", icon: "fa-road-barrier",
+    desc: "Resalta la relación conflictiva entre una obra cercana y el humedal.",
+    boost: ["humedales→servicios_empresariales"],
+    dim: ["reservas_forestales→humedales"],
+  },
+  {
+    id: "uso_comunitario", label: "Uso comunitario", icon: "fa-people-group",
+    desc: "Resalta las relaciones entre comunidades, senderos y humedales.",
+    boost: ["comunidades_actor→humedales", "senderos→humedales"],
+    dim: [],
+  },
+];
+
+/* -------- estado global -------- */
+let agencyOn = false;
+let viewMode = "todas";
+let activeSituacion = null;
+const nodeOff = new Set();
+
+/* -------- física -------- */
+[...BASE_NODES, ...ALL_DYNAMIC_NODES].forEach(n => {
+  n.homeX = n.x; n.homeY = n.y; n.vx = 0; n.vy = 0;
+  n.fixed = (n.id === "vivienda" || n.id === "humedales" || n.id === "servicios_empresariales");
+});
+
+function allActiveEdges() {
+  return agencyOn ? [...BASE_EDGES, ...DYNAMIC_EDGES] : BASE_EDGES;
 }
 
-.brand { display: flex; align-items: center; justify-content: center; padding: 0 0 22px 0; }
+BASE_EDGES.concat(DYNAMIC_EDGES).forEach(e => {
+  const s = findNode(e.s), t = findNode(e.t);
+  if (!s || !t) return;
+  e.restLength = Math.hypot(t.x - s.x, t.y - s.y) || 200;
+});
 
-.brand .mark {
-  width: 36px; height: 36px; border-radius: 10px;
-  background: linear-gradient(135deg, var(--teal), #1a9d94);
-  display: flex; align-items: center; justify-content: center;
-  color: #06110f; font-size: 16px;
+/* -------- defs: glow + flechas -------- */
+function buildDefs(svg) {
+  const defs = document.createElementNS(SVG_NS, "defs");
+  Object.values(STRUCT_COLOR).forEach(color => {
+    const filter = document.createElementNS(SVG_NS, "filter");
+    filter.setAttribute("id", "rd-glow-" + color.replace("#", ""));
+    filter.setAttribute("x", "-60%"); filter.setAttribute("y", "-60%");
+    filter.setAttribute("width", "220%"); filter.setAttribute("height", "220%");
+    const blur = document.createElementNS(SVG_NS, "feGaussianBlur");
+    blur.setAttribute("stdDeviation", "3"); blur.setAttribute("result", "blur");
+    const merge = document.createElementNS(SVG_NS, "feMerge");
+    ["blur", "blur", "SourceGraphic"].forEach(ref => {
+      const m = document.createElementNS(SVG_NS, "feMergeNode");
+      m.setAttribute("in", ref);
+      merge.appendChild(m);
+    });
+    filter.appendChild(blur); filter.appendChild(merge);
+    defs.appendChild(filter);
+  });
+
+  const marker = document.createElementNS(SVG_NS, "marker");
+  marker.setAttribute("id", "rd-arrow");
+  marker.setAttribute("viewBox", "0 0 10 10");
+  marker.setAttribute("refX", "8"); marker.setAttribute("refY", "5");
+  marker.setAttribute("markerWidth", "6.5"); marker.setAttribute("markerHeight", "6.5");
+  marker.setAttribute("orient", "auto-start-reverse");
+  const path = document.createElementNS(SVG_NS, "path");
+  path.setAttribute("d", "M0,0 L10,5 L0,10 z");
+  path.setAttribute("fill", "#c9cedb");
+  marker.appendChild(path);
+  defs.appendChild(marker);
+
+  svg.appendChild(defs);
 }
 
-.brand span { display: none; }
-
-.nav-group { margin-bottom: 14px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-.nav-group:first-of-type { margin-bottom: 0; }
-
-.nav-label { display: none; }
-
-.nav-item {
-  position: relative;
-  display: flex; align-items: center; justify-content: center;
-  width: 40px; height: 40px; border-radius: 10px;
-  color: var(--text-dim); font-size: 13px; font-weight: 500;
-  cursor: pointer; transition: background .15s, color .15s;
-  white-space: nowrap; text-decoration: none;
+function edgePathData(s, t) {
+  const dx = t.x - s.x, dy = t.y - s.y;
+  const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+  const ux = dx / dist, uy = dy / dist;
+  const startPad = s.r + 2, endPad = t.r + 7;
+  const x1 = s.x + ux * startPad, y1 = s.y + uy * startPad;
+  const x2 = t.x - ux * endPad, y2 = t.y - uy * endPad;
+  return `M${x1},${y1} L${x2},${y2}`;
 }
 
-.nav-item .num { display: none; }
-.nav-item i { width: auto; text-align: center; font-size: 16px; }
-.nav-item:hover { background: rgba(255,255,255,0.06); color: var(--text); }
-.nav-item.active { background: var(--teal-dim); color: var(--teal); }
-.nav-item.active .num { color: var(--teal); }
-
-/* separador visual entre grupos de navegación */
-.nav-group + .nav-group::before {
-  content: "";
-  display: block;
-  width: 26px; height: 1px;
-  background: var(--border);
-  margin: 4px auto 10px;
+function edgeIntensity(e) {
+  let w = 1.3, op = 0.55;
+  if (activeSituacion) {
+    const sit = SITUACIONES.find(s => s.id === activeSituacion);
+    const key = edgeKey(e);
+    if (sit.boost.includes(key)) { w = 3; op = 1; }
+    else if (sit.dim.includes(key)) { w = 0.8; op = 0.15; }
+    else { op = 0.22; }
+  }
+  return { w, op };
 }
 
-/* tooltip al pasar el cursor, ya que el texto se ocultó */
-.nav-item::after {
-  content: attr(data-label);
-  position: absolute;
-  left: calc(100% + 10px);
-  top: 50%;
-  transform: translateY(-50%);
-  background: var(--panel);
-  border: 1px solid var(--border);
-  color: var(--text);
-  font-size: 12px;
-  font-weight: 500;
-  padding: 6px 10px;
-  border-radius: 6px;
-  white-space: nowrap;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity .12s;
-  z-index: 50;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.35);
-}
-.nav-item:hover::after { opacity: 1; }
+function drawEdges(svg) {
+  const g = document.createElementNS(SVG_NS, "g");
+  g.setAttribute("class", "edges-layer");
 
-.sidebar-footer {
-  margin-top: auto; border-top: 1px solid var(--border); padding-top: 14px;
-  display: flex; flex-direction: column; align-items: center; gap: 10px;
-}
+  allActiveEdges().forEach((edge, i) => {
+    const s = findNode(edge.s), t = findNode(edge.t);
+    if (!s || !t) return;
+    const group = document.createElementNS(SVG_NS, "g");
+    group.setAttribute("class", "rd-edge-group");
+    group.dataset.index = i;
+    group.dataset.source = edge.s;
+    group.dataset.target = edge.t;
+    group.dataset.dynamic = DYNAMIC_EDGES.includes(edge) ? "1" : "0";
 
-.avatar-sm {
-  width: 34px; height: 34px; border-radius: 50%;
-  background: var(--panel); border: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 11px; font-weight: 700; color: var(--text-dim); flex-shrink: 0;
-}
+    const { w, op } = edgeIntensity(edge);
+    const d = edgePathData(s, t);
 
-.user-meta { display: none; }
+    const visual = document.createElementNS(SVG_NS, "path");
+    visual.setAttribute("class", "rd-edge");
+    visual.setAttribute("d", d);
+    visual.setAttribute("stroke", "#c9cedb");
+    visual.setAttribute("stroke-width", w);
+    visual.setAttribute("opacity", op);
+    if (edge.tipo === "indirecta") visual.setAttribute("stroke-dasharray", "5,5");
+    if (edge.dirigida) visual.setAttribute("marker-end", "url(#rd-arrow)");
 
-.logout-btn { background: none; border: none; color: var(--text-faint); font-size: 14px; cursor: pointer; padding: 4px; text-decoration: none; }
-.logout-btn:hover { color: var(--pink); }
+    const hit = document.createElementNS(SVG_NS, "path");
+    hit.setAttribute("class", "rd-edge-hit");
+    hit.setAttribute("d", d);
 
-/* MAIN */
-.main { flex: 1; padding: 22px 34px 50px; min-width: 0; overflow-y: auto; }
+    group.appendChild(visual);
+    group.appendChild(hit);
+    group.addEventListener("click", () => showEdgeInfo(edge, i));
+    g.appendChild(group);
+    edge._el = { visual, hit, group };
+  });
 
-.topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
-.topbar h1 { font-family: 'Space Grotesk', sans-serif; font-size: 19px; font-weight: 600; }
-.topbar-actions { display: flex; align-items: center; gap: 14px; }
-
-.search-box {
-  display: flex; align-items: center; gap: 8px;
-  background: var(--panel); border: 1px solid var(--border); border-radius: 8px;
-  padding: 8px 14px; color: var(--text-faint); font-size: 13px; width: 230px;
-}
-.search-box i { font-size: 12px; }
-
-.icon-btn {
-  width: 34px; height: 34px; border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
-  background: var(--panel); border: 1px solid var(--border); color: var(--text-dim);
-  font-size: 13px; position: relative;
-}
-.icon-btn .dot { position: absolute; top: 6px; right: 7px; width: 6px; height: 6px; border-radius: 50%; background: var(--pink); }
-
-/* ===================== HERO — GESTOR DE LECTURA ===================== */
-.hero-reader {
-  background: radial-gradient(circle at 15% 0%, rgba(47,212,200,0.10), transparent 55%),
-              radial-gradient(circle at 90% 10%, rgba(239,149,82,0.10), transparent 50%),
-              var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 28px 30px 26px;
-  margin-bottom: 22px;
+  svg.appendChild(g);
 }
 
-.hero-top { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; margin-bottom: 18px; }
+function drawNodes(svg) {
+  const g = document.createElementNS(SVG_NS, "g");
+  g.setAttribute("class", "nodes-layer");
 
-.hero-eyebrow {
-  display: flex; align-items: center; gap: 10px;
-  font-size: 11px; font-weight: 700; letter-spacing: 2px; color: var(--teal);
-}
-.hero-eyebrow .eyebrow-line { width: 22px; height: 2px; background: var(--teal); border-radius: 2px; }
+  const list = agencyOn ? [...BASE_NODES, ...ALL_DYNAMIC_NODES] : BASE_NODES;
 
-.agency-toggle {
-  display: flex; align-items: center; gap: 10px;
-  background: var(--panel-alt); border: 1px solid var(--border);
-  border-radius: 999px; padding: 7px 16px 7px 7px;
-  color: var(--text-dim); font-size: 12.5px; font-weight: 700;
-  cursor: pointer; transition: all .2s;
-}
-.agency-toggle:hover { border-color: var(--teal); }
+  list.forEach(node => {
+    const kind = nodeKind(node.id);
+    const color = kind === "componente" ? STRUCT_COLOR[node.struct] : STRUCT_COLOR[kind];
 
-.agency-switch {
-  width: 38px; height: 21px; border-radius: 999px;
-  background: #232c3d; position: relative; flex-shrink: 0; transition: background .2s;
-}
-.agency-knob {
-  position: absolute; top: 2.5px; left: 3px; width: 16px; height: 16px; border-radius: 50%;
-  background: #8a93a8; transition: transform .2s, background .2s;
-}
-.agency-toggle.on .agency-switch { background: rgba(47,212,200,0.35); }
-.agency-toggle.on .agency-knob { background: var(--teal); transform: translateX(16px); }
-.agency-toggle.on { color: var(--teal); border-color: var(--teal); }
+    const group = document.createElementNS(SVG_NS, "g");
+    group.setAttribute("class", "rd-node");
+    group.dataset.id = node.id;
+    group.dataset.kind = kind;
 
-.hero-title {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 34px; font-weight: 800; line-height: 1.15; margin-bottom: 6px; letter-spacing: -0.5px;
-}
-.hero-title .hero-plain { color: #f2f3f6; }
-.hero-accent {
-  background: var(--title-gradient);
-  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-}
+    const circle = document.createElementNS(SVG_NS, "circle");
+    circle.setAttribute("class", "node-ring");
+    circle.setAttribute("cx", node.x); circle.setAttribute("cy", node.y); circle.setAttribute("r", node.r);
+    circle.setAttribute("stroke", color);
+    circle.setAttribute("stroke-width", node.id === "vivienda" ? 3.2 : (kind === "componente" ? 2.2 : 1.6));
+    circle.setAttribute("filter", "url(#rd-glow-" + color.replace("#", "") + ")");
+    if (kind !== "componente") circle.setAttribute("stroke-dasharray", "3,2");
 
-.hero-sub {
-  font-size: 15px; color: var(--text-dim); font-weight: 500; margin-bottom: 24px;
-  display: flex; align-items: center; gap: 10px;
-}
-.hero-sub i { color: var(--orange); font-size: 13px; }
+    const fo = document.createElementNS(SVG_NS, "foreignObject");
+    const size = node.r * 2.3;
+    fo.setAttribute("x", node.x - size / 2); fo.setAttribute("y", node.y - size / 2);
+    fo.setAttribute("width", size); fo.setAttribute("height", size);
 
-.hero-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 22px; }
+    const wrapper = document.createElementNS(XHTML_NS, "div");
+    wrapper.setAttribute("style",
+      "width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;pointer-events:none;");
 
-.compare-card {
-  background: var(--panel-alt); border: 1px solid var(--border); border-radius: 12px;
-  padding: 18px;
-}
-.compare-static { border-color: var(--border); }
-.compare-dynamic { border-color: rgba(47,212,200,0.35); box-shadow: 0 0 0 1px rgba(47,212,200,0.12) inset; }
+    const iconEl = document.createElementNS(XHTML_NS, "i");
+    iconEl.setAttribute("class", "fa-solid " + node.icon + " node-icon");
+    iconEl.setAttribute("style", `color:${color}; font-size:${node.r * 0.4}px; margin:1px 0;`);
 
-.compare-head {
-  display: flex; align-items: center; gap: 8px;
-  font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 700; margin-bottom: 4px;
-}
-.compare-static .compare-head { color: var(--text-dim); }
-.compare-static .compare-head i { color: var(--text-faint); }
-.compare-dynamic .compare-head { color: var(--teal); }
-.compare-dynamic .compare-head i { color: var(--teal); }
+    const nameEl = document.createElementNS(XHTML_NS, "div");
+    nameEl.setAttribute("class", "node-name");
+    nameEl.setAttribute("style", `font-size:${Math.max(node.r * 0.16, 7)}px; padding:0 3px; white-space:pre-line;`);
+    nameEl.textContent = node.name;
 
-.compare-desc { font-size: 12px; color: var(--text-faint); margin-bottom: 12px; }
+    wrapper.appendChild(iconEl); wrapper.appendChild(nameEl);
+    fo.appendChild(wrapper);
 
-.compare-viz {
-  height: 130px; border-radius: 10px; background: rgba(0,0,0,0.2);
-  border: 1px solid var(--border-soft); margin-bottom: 14px; position: relative; overflow: hidden;
-}
-.compare-viz svg { width: 100%; height: 100%; }
-.static-blob { fill: rgba(139,145,165,0.18); stroke: var(--text-faint); stroke-width: 1.5; }
+    group.appendChild(circle);
+    group.appendChild(fo);
+    attachNodeClick(group, node.id);
+    attachNodeDrag(group, node);
+    g.appendChild(group);
 
-.dyn-core { fill: rgba(47,212,200,0.16); stroke: var(--teal); stroke-width: 2; }
-.dyn-node { fill: rgba(239,149,82,0.18); stroke: var(--orange); stroke-width: 1.5; animation: dynPulse 2.4s ease-in-out infinite; }
-.dyn-line { stroke: rgba(47,212,200,0.45); stroke-width: 1.2; stroke-dasharray: 4,3; animation: dynDash 1.6s linear infinite; }
-@keyframes dynPulse { 0%,100% { opacity: 0.55; } 50% { opacity: 1; } }
-@keyframes dynDash { to { stroke-dashoffset: -14; } }
+    node._el = { group, circle, fo };
+  });
 
-.compare-list { list-style: none; display: flex; flex-direction: column; gap: 7px; }
-.compare-list li { font-size: 12px; color: var(--text-dim); display: flex; align-items: center; gap: 8px; }
-.compare-static .compare-list li i { color: var(--text-faint); font-size: 9px; }
-.compare-dynamic .compare-list li i { color: var(--teal); font-size: 11px; }
-
-.hero-quote {
-  border-left: 3px solid var(--orange);
-  background: rgba(239,149,82,0.06);
-  border-radius: 0 10px 10px 0;
-  padding: 14px 18px;
-  display: flex; flex-direction: column; gap: 6px;
-}
-.hero-quote i.fa-quote-left { color: var(--orange); font-size: 13px; opacity: .6; }
-.hero-quote p { font-size: 13.5px; color: var(--text); line-height: 1.6; font-style: italic; }
-.hero-quote span { font-size: 11.5px; color: var(--text-faint); font-weight: 600; }
-
-/* ===================== STATS ===================== */
-.reader-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 22px; }
-
-.stat-card {
-  background: var(--panel); border: 1px solid var(--border); border-radius: 12px;
-  padding: 16px; display: flex; flex-direction: column; gap: 6px; position: relative;
-  transition: opacity .2s;
-}
-.stat-icon {
-  width: 34px; height: 34px; border-radius: 9px; display: flex; align-items: center; justify-content: center;
-  background: color-mix(in srgb, var(--stat-color, var(--teal)) 18%, transparent);
-  color: var(--stat-color, var(--teal)); font-size: 14px; margin-bottom: 2px;
-}
-.stat-value { font-family: 'Space Grotesk', sans-serif; font-size: 24px; font-weight: 800; color: var(--stat-color, var(--teal)); }
-.stat-label { font-size: 11.5px; color: var(--text-dim); font-weight: 600; }
-.stat-card.stat-inactive { opacity: 0.35; }
-
-/* ===================== SITUACIONES ===================== */
-.situaciones-panel {
-  background: var(--panel); border: 1px solid var(--border); border-radius: 12px;
-  padding: 18px 20px; margin-bottom: 22px;
-}
-.situaciones-head h3 {
-  font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 700;
-  display: flex; align-items: center; gap: 8px; margin-bottom: 4px;
-}
-.situaciones-head h3 i { color: var(--teal); font-size: 13px; }
-.situaciones-head p { font-size: 12px; color: var(--text-faint); margin-bottom: 14px; }
-
-.situaciones-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
-
-.situacion-btn {
-  display: flex; align-items: center; gap: 8px;
-  background: var(--panel-alt); border: 1px solid var(--border-soft);
-  color: var(--text-dim); padding: 8px 13px; border-radius: 999px;
-  font-size: 12px; font-weight: 600; cursor: pointer; transition: all .2s;
-}
-.situacion-btn i { font-size: 11px; }
-.situacion-btn:hover { border-color: var(--text-dim); color: var(--text); }
-.situacion-btn.active { border-color: var(--orange); color: var(--orange); background: rgba(239,149,82,0.1); }
-
-.situacion-desc {
-  font-size: 12px; color: var(--text-faint); border-top: 1px solid var(--border-soft);
-  padding-top: 12px; line-height: 1.5;
+  svg.appendChild(g);
 }
 
-/* ===================== NETWORK SECTION ===================== */
-.network-section {
-  background: var(--panel); border: 1px solid var(--border); border-radius: 12px;
-  padding: 20px; margin-bottom: 22px;
-}
-.network-header {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 16px; flex-wrap: wrap; gap: 10px;
-}
-.network-header h3 {
-  font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 700;
-  display: flex; align-items: center; gap: 8px;
-}
-.network-header h3 i { color: var(--teal); font-size: 13px; }
-.network-controls { display: flex; gap: 8px; flex-wrap: wrap; }
-
-.control-btn {
-  background: var(--panel-alt); border: 1px solid var(--border-soft); color: var(--text-dim);
-  padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all .2s;
-}
-.control-btn:hover, .control-btn.active { border-color: var(--teal); color: var(--teal); background: rgba(47,212,200,0.05); }
-
-.network-viz-wrap { display: flex; gap: 16px; align-items: stretch; }
-
-#readerViz {
-  flex: 1; min-width: 0; width: 100%; height: 680px;
-  background: var(--panel-alt); border: 1px solid var(--border); border-radius: 8px; display: block;
+function updatePositions() {
+  const list = agencyOn ? [...BASE_NODES, ...ALL_DYNAMIC_NODES] : BASE_NODES;
+  list.forEach(n => {
+    if (!n._el) return;
+    n._el.circle.setAttribute("cx", n.x);
+    n._el.circle.setAttribute("cy", n.y);
+    const size = n.r * 2.3;
+    n._el.fo.setAttribute("x", n.x - size / 2);
+    n._el.fo.setAttribute("y", n.y - size / 2);
+  });
+  allActiveEdges().forEach(edge => {
+    if (!edge._el) return;
+    const s = findNode(edge.s), t = findNode(edge.t);
+    if (!s || !t) return;
+    const d = edgePathData(s, t);
+    edge._el.visual.setAttribute("d", d);
+    edge._el.hit.setAttribute("d", d);
+  });
 }
 
-.network-sidebar { width: 230px; flex-shrink: 0; display: flex; flex-direction: column; gap: 16px; }
+const PHYSICS = { spring: 0.045, anchor: 0.02, damping: 0.82, minVel: 0.02 };
+let physicsRunning = false;
 
-.network-legend {
-  width: 100%; background: var(--panel-alt); border: 1px solid var(--border-soft); border-radius: 8px;
-  padding: 16px 14px; display: flex; flex-direction: column; gap: 10px; align-self: flex-start;
+function physicsStep() {
+  let moving = false;
+  const nodes = agencyOn ? [...BASE_NODES, ...ALL_DYNAMIC_NODES] : BASE_NODES;
+
+  for (let i = 0; i < nodes.length; i++) {
+    for (let j = i + 1; j < nodes.length; j++) {
+      const ni = nodes[i], nj = nodes[j];
+      const dx = nj.x - ni.x, dy = nj.y - ni.y;
+      const dist = Math.hypot(dx, dy) || 1;
+      const minDist = ni.r + nj.r + 26;
+      if (dist < minDist) {
+        const force = (minDist - dist) * 0.08;
+        const fx = (dx / dist) * force, fy = (dy / dist) * force;
+        if (!ni.fixed) { ni.vx -= fx; ni.vy -= fy; }
+        if (!nj.fixed) { nj.vx += fx; nj.vy += fy; }
+      }
+    }
+  }
+
+  allActiveEdges().forEach(edge => {
+    const s = findNode(edge.s), t = findNode(edge.t);
+    if (!s || !t) return;
+    const dx = t.x - s.x, dy = t.y - s.y;
+    const dist = Math.hypot(dx, dy) || 1;
+    const diff = (dist - edge.restLength) * PHYSICS.spring;
+    const fx = (dx / dist) * diff, fy = (dy / dist) * diff;
+    if (!s.fixed) { s.vx += fx; s.vy += fy; }
+    if (!t.fixed) { t.vx -= fx; t.vy -= fy; }
+  });
+
+  nodes.forEach(n => {
+    if (n.fixed) { n.vx = 0; n.vy = 0; return; }
+    n.vx += (n.homeX - n.x) * PHYSICS.anchor;
+    n.vy += (n.homeY - n.y) * PHYSICS.anchor;
+    n.vx *= PHYSICS.damping; n.vy *= PHYSICS.damping;
+    n.x += n.vx; n.y += n.vy;
+    if (Math.abs(n.vx) > PHYSICS.minVel || Math.abs(n.vy) > PHYSICS.minVel) moving = true;
+  });
+
+  updatePositions();
+  if (moving) requestAnimationFrame(physicsStep);
+  else physicsRunning = false;
 }
-.legend-title {
-  font-family: 'Space Grotesk', sans-serif; font-size: 10.5px; font-weight: 700; letter-spacing: 1px;
-  color: var(--text-faint); text-transform: uppercase; margin-bottom: 2px;
-}
-.legend-item { display: flex; align-items: center; gap: 10px; font-size: 11.5px; color: var(--text-dim); }
-.legend-item.legend-static { cursor: default; }
-.legend-divider { height: 1px; background: var(--border-soft); margin: 2px 0; }
-.legend-hint { font-size: 10.5px; color: var(--text-faint); line-height: 1.5; }
 
-.legend-line { width: 24px; height: 0; border-top: 2px solid var(--text-dim); flex-shrink: 0; }
-.legend-line.dashed { border-top-style: dashed; }
-.legend-line.thick { border-top-width: 3px; border-top-color: var(--teal); }
-.legend-line.arrowed { position: relative; border-top-color: var(--text-dim); }
-.legend-line.arrowed::after {
-  content: ""; position: absolute; right: -1px; top: -3px;
-  border: 4px solid transparent; border-left-color: var(--text-dim);
+function wakePhysics() {
+  if (!physicsRunning) { physicsRunning = true; requestAnimationFrame(physicsStep); }
 }
 
-.legend-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
-.legend-ic { width: 16px; text-align: center; flex-shrink: 0; font-size: 12px; }
+function attachNodeDrag(group, node) {
+  const svg = document.getElementById("readerViz");
+  let dragging = false, moved = false, startX = 0, startY = 0;
 
-/* EDGE INFO PANEL */
-.edge-info-panel {
-  display: none; width: 100%; background: var(--panel-alt); border: 1px solid var(--teal);
-  box-shadow: 0 0 14px rgba(47,212,200,0.15); border-radius: 8px; padding: 14px;
+  function toSvgPoint(cx, cy) {
+    const pt = svg.createSVGPoint();
+    pt.x = cx; pt.y = cy;
+    return pt.matrixTransform(svg.getScreenCTM().inverse());
+  }
+
+  group.addEventListener("pointerdown", e => {
+    dragging = true; moved = false; startX = e.clientX; startY = e.clientY;
+    node.fixed = true;
+    group.classList.add("dragging");
+    group.setPointerCapture(e.pointerId);
+    wakePhysics();
+  });
+  group.addEventListener("pointermove", e => {
+    if (!dragging) return;
+    if (Math.hypot(e.clientX - startX, e.clientY - startY) > 4) moved = true;
+    const p = toSvgPoint(e.clientX, e.clientY);
+    node.x = p.x; node.y = p.y; node.vx = 0; node.vy = 0;
+    updatePositions(); wakePhysics();
+  });
+  function endDrag(e) {
+    if (!dragging) return;
+    dragging = false;
+    node.fixed = (node.id === "vivienda" || node.id === "humedales" || node.id === "servicios_empresariales");
+    group.classList.remove("dragging");
+    try { group.releasePointerCapture(e.pointerId); } catch (err) {}
+    wakePhysics();
+    if (moved) { group.dataset.suppressClick = "1"; setTimeout(() => delete group.dataset.suppressClick, 0); }
+  }
+  group.addEventListener("pointerup", endDrag);
+  group.addEventListener("pointercancel", endDrag);
 }
-.edge-info-panel.visible { display: block; }
-.edge-info-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
-#edgeInfoTitle { font-family: 'Space Grotesk', sans-serif; font-size: 12.5px; font-weight: 700; color: var(--teal); line-height: 1.3; }
-.edge-info-close { background: none; border: none; color: var(--text-faint); font-size: 18px; line-height: 1; cursor: pointer; padding: 0 0 0 6px; flex-shrink: 0; }
-.edge-info-close:hover { color: var(--pink); }
 
-.edge-info-row { margin-bottom: 10px; }
-.edge-info-row:last-child { margin-bottom: 0; }
-.edge-info-label {
-  font-size: 9.5px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
-  color: var(--text-faint); margin-bottom: 4px;
+function attachNodeClick(group, id) {
+  group.addEventListener("click", () => {
+    if (group.dataset.suppressClick) return;
+    toggleNodeOff(id);
+  });
 }
-.edge-info-value { font-size: 11.5px; color: var(--text); line-height: 1.5; }
-.edge-info-quote {
-  font-size: 11px; color: var(--text-dim); line-height: 1.5; font-style: italic;
-  border-left: 2px solid var(--border); padding-left: 9px;
+
+function toggleNodeOff(id) {
+  const group = document.querySelector(`.rd-node[data-id="${id}"]`);
+  if (!group) return;
+  if (nodeOff.has(id)) { nodeOff.delete(id); group.classList.remove("node-off"); }
+  else { nodeOff.add(id); group.classList.add("node-off"); }
+  refreshEdgeVisibility();
 }
-.edge-info-page { font-size: 10.5px; color: var(--text-faint); font-weight: 600; margin-top: 4px; }
 
-/* SVG node/edge styling */
-.rd-node { cursor: pointer; touch-action: none; }
-.rd-node.dragging { cursor: grabbing; }
-.rd-node .node-ring { fill: rgba(8,11,18,0.65); transition: opacity .2s; }
-.rd-node .node-inner { font-family: 'Inter', sans-serif; color: var(--text); text-align: center; transition: opacity .2s; }
-.rd-node .node-icon { line-height: 1; }
-.rd-node .node-name { color: var(--text-dim); font-weight: 600; line-height: 1.05; }
-
-.rd-node.node-off .node-ring { opacity: 0.14; }
-.rd-node.node-off .node-inner { opacity: 0.22; }
-
-.rd-edge-group { cursor: pointer; transition: opacity .2s; }
-.rd-edge-group.hidden-edge { display: none; }
-.rd-edge-group.edge-focus-dim { opacity: 0.06; }
-
-.rd-edge { fill: none; pointer-events: none; transition: opacity .15s, filter .15s, stroke-width .25s; }
-.rd-edge-hit { fill: none; stroke: transparent; stroke-width: 12; pointer-events: stroke; }
-
-.rd-edge-group:hover .rd-edge { opacity: 1 !important; filter: drop-shadow(0 0 4px var(--edge-glow, var(--teal))); }
-.rd-edge-group.edge-selected .rd-edge { opacity: 1 !important; filter: drop-shadow(0 0 6px var(--edge-glow, var(--teal))); }
-
-/* ===================== SYNERGIES ===================== */
-.synergies-section { margin-bottom: 22px; }
-.synergies-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-
-.synergy-card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 20px; display: flex; gap: 16px; }
-.synergy-card.success { background: linear-gradient(135deg, rgba(74,222,128,0.08), rgba(74,222,128,0.02)); border-color: rgba(74,222,128,0.2); }
-.synergy-card.conflict { background: linear-gradient(135deg, rgba(247,111,176,0.08), rgba(247,111,176,0.02)); border-color: rgba(247,111,176,0.2); }
-
-.synergy-icon {
-  width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center;
-  font-size: 18px; flex-shrink: 0; background: var(--panel-alt); color: var(--teal);
+function refreshEdgeVisibility() {
+  document.querySelectorAll(".rd-edge-group").forEach(group => {
+    const s = group.dataset.source, t = group.dataset.target;
+    group.classList.toggle("hidden-edge", nodeOff.has(s) || nodeOff.has(t));
+  });
 }
-.synergy-card.success .synergy-icon { background: rgba(74,222,128,0.15); color: var(--green); }
-.synergy-card.conflict .synergy-icon { background: rgba(247,111,176,0.15); color: var(--pink); }
 
-.synergy-content h4 { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 10px; }
-.synergy-content ul { list-style: none; }
-.synergy-content li { font-size: 11.5px; color: var(--text-dim); padding: 6px 0; border-bottom: 1px solid var(--border-soft); line-height: 1.5; }
-.synergy-content li:last-child { border-bottom: none; }
-.synergy-content li strong { color: var(--text); }
+/* -------- panel de relación (clic en línea) -------- */
+function showEdgeInfo(edge, index) {
+  const s = findNode(edge.s), t = findNode(edge.t);
+  document.querySelectorAll(".rd-edge-group").forEach(el => el.classList.remove("edge-selected"));
+  document.querySelector(`.rd-edge-group[data-index="${index}"]`)?.classList.add("edge-selected");
 
-footer { text-align: center; padding: 24px 0 6px; color: var(--text-faint); font-size: 11.5px; }
-footer span { color: var(--teal); }
+  document.getElementById("edgeInfoTitle").textContent = `${s.name.replace(/\n/g, " ")} → ${t.name.replace(/\n/g, " ")}`;
 
-/* RESPONSIVE */
-@media (max-width: 1300px) {
-  .hero-compare { grid-template-columns: 1fr; }
-  .reader-stats { grid-template-columns: repeat(2, 1fr); }
+  const dirTxt = edge.dirigida ? "Dirigida (con sentido sustentado)" : "Sin dirección única";
+  const tipoTxt = edge.tipo === "directa" ? "Directa (línea continua)" : "Indirecta (línea punteada)";
+  document.getElementById("edgeInfoConvencion").textContent = `${tipoTxt} · ${dirTxt}`;
+
+  document.getElementById("edgeInfoEvidencia").textContent = edge.evidencia
+    ? `"${edge.evidencia}"` : "Sin evidencia registrada.";
+  document.getElementById("edgeInfoPage").textContent = edge.page ? `Fuente: ${edge.page}` : "Relación interpretativa — sin cita textual del POT.";
+
+  const actoresRelacionados = [];
+  if (edge.actores) actoresRelacionados.push(edge.actores);
+  DYNAMIC_EDGES.forEach(de => {
+    if ((de.s === edge.s || de.t === edge.s || de.s === edge.t || de.t === edge.t) && de.actores && !actoresRelacionados.includes(de.actores)) {
+      if (agencyOn) actoresRelacionados.push(de.actores);
+    }
+  });
+  document.getElementById("edgeInfoActores").textContent = actoresRelacionados.length
+    ? actoresRelacionados.join(" · ") : "No hay actores asociados activos en esta vista.";
+
+  const situacionesQueAfectan = SITUACIONES.filter(sit => sit.boost.includes(edgeKey(edge)) || sit.dim.includes(edgeKey(edge)))
+    .map(sit => sit.label);
+  document.getElementById("edgeInfoSituacion").textContent = situacionesQueAfectan.length
+    ? situacionesQueAfectan.join(" · ") : "Sin situación registrada que la module.";
+
+  document.getElementById("edgeInfoCritica").textContent = edge.critica || "—";
+
+  document.getElementById("edgeInfoPanel").classList.add("visible");
 }
-@media (max-width: 1100px) {
-  .synergies-grid { grid-template-columns: 1fr; }
+
+function hideEdgeInfo() {
+  document.getElementById("edgeInfoPanel").classList.remove("visible");
+  document.querySelectorAll(".rd-edge-group").forEach(el => el.classList.remove("edge-selected"));
 }
-@media (max-width: 900px) {
-  .network-viz-wrap { flex-direction: column; }
-  .network-sidebar { width: 100%; flex-direction: row; flex-wrap: wrap; }
-  #readerViz { height: 480px; }
+
+/* -------- render principal -------- */
+function renderNetwork() {
+  const svg = document.getElementById("readerViz");
+  if (!svg) return;
+  svg.innerHTML = "";
+  buildDefs(svg);
+  drawEdges(svg);
+  drawNodes(svg);
+  refreshEdgeVisibility();
+  applyViewMode();
 }
-@media (max-width: 768px) {
-  .sidebar { display: none; }
-  .main { padding: 16px 20px 40px; }
-  .hero-title { font-size: 26px; }
+
+/* -------- toggle: Activar Dimensión Dinámica -------- */
+function toggleAgency() {
+  agencyOn = !agencyOn;
+  const btn = document.getElementById("agencyToggle");
+  btn.classList.toggle("on", agencyOn);
+  document.getElementById("statActoresCard").classList.toggle("stat-inactive", !agencyOn);
+  document.getElementById("statMediadoresCard").classList.toggle("stat-inactive", !agencyOn);
+  renderNetwork();
+  updateStats();
+  renderDynamicViz();
+}
+
+/* -------- filtro Todas / Componentes / Actores y mediadores -------- */
+function filterView(mode) {
+  viewMode = mode;
+  document.querySelectorAll(".network-controls .control-btn").forEach(b => b.classList.toggle("active", b.dataset.view === mode));
+  if (mode === "actores" && !agencyOn) toggleAgency();
+  else applyViewMode();
+}
+
+function applyViewMode() {
+  document.querySelectorAll(".rd-node").forEach(el => {
+    const kind = el.dataset.kind;
+    let dim = false;
+    if (viewMode === "componentes") dim = kind !== "componente";
+    if (viewMode === "actores") dim = kind === "componente" && !isComponenteConectadoADinamico(el.dataset.id);
+    el.classList.toggle("node-focus-dim", dim);
+  });
+  document.querySelectorAll(".rd-edge-group").forEach(el => {
+    const isDyn = el.dataset.dynamic === "1";
+    let dim = false;
+    if (viewMode === "componentes") dim = isDyn;
+    el.classList.toggle("edge-focus-dim", dim);
+  });
+}
+
+function isComponenteConectadoADinamico(id) {
+  return DYNAMIC_EDGES.some(e => e.s === id || e.t === id);
+}
+
+/* -------- situaciones -------- */
+function renderSituacionesRow() {
+  const row = document.getElementById("situacionesRow");
+  row.innerHTML = SITUACIONES.map(s => `
+    <button class="situacion-btn" data-sit="${s.id}" onclick="setSituacion('${s.id}')">
+      <i class="fa-solid ${s.icon}"></i> ${s.label}
+    </button>
+  `).join("");
+}
+
+function setSituacion(id) {
+  if (activeSituacion === id) { activeSituacion = null; }
+  else { activeSituacion = id; }
+  document.querySelectorAll(".situacion-btn").forEach(b => b.classList.toggle("active", b.dataset.sit === activeSituacion));
+  const desc = document.getElementById("situacionDesc");
+  if (activeSituacion) {
+    desc.textContent = SITUACIONES.find(s => s.id === activeSituacion).desc;
+  } else {
+    desc.textContent = "Sin situación activa: todas las relaciones se leen en su intensidad documental de base.";
+  }
+  renderNetwork();
+}
+
+/* -------- stats -------- */
+function updateStats() {
+  document.getElementById("statComponentes").textContent = BASE_NODES.length;
+  document.getElementById("statActores").textContent = agencyOn ? ACTOR_NODES.length : "—";
+  document.getElementById("statMediadores").textContent = agencyOn ? MEDIADOR_NODES.length : "—";
+  document.getElementById("statRelaciones").textContent = allActiveEdges().length;
+}
+
+/* -------- mini-viz "Lectura Dinámica" del hero (decorativo) -------- */
+function renderDynamicViz() {
+  const el = document.getElementById("dynamicViz");
+  if (!el) return;
+  el.innerHTML = `
+    <svg viewBox="0 0 260 170">
+      <circle cx="130" cy="85" r="30" class="dyn-core"/>
+      ${[[50,30],[210,30],[45,140],[215,140],[130,20]].map(([x,y],i) => `
+        <line x1="130" y1="85" x2="${x}" y2="${y}" class="dyn-line" style="animation-delay:${i*0.15}s" />
+        <circle cx="${x}" cy="${y}" r="12" class="dyn-node" style="animation-delay:${i*0.15}s" />
+      `).join("")}
+    </svg>
+  `;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  renderSituacionesRow();
+  renderNetwork();
+  updateStats();
+  renderDynamicViz();
+  document.getElementById("edgeInfoClose")?.addEventListener("click", hideEdgeInfo);
+  window.addEventListener("resize", () => {
+    const svg = document.getElementById("readerViz");
+    if (svg) { svg.setAttribute("width", svg.clientWidth); svg.setAttribute("height", svg.clientHeight); }
+  });
+});
+
+if (typeof window !== "undefined") {
+  window.__readerBaseNodes = BASE_NODES;
+  window.__readerActorNodes = ACTOR_NODES;
+  window.__readerMediadorNodes = MEDIADOR_NODES;
+  window.__readerBaseEdges = BASE_EDGES;
+  window.__readerDynamicEdges = DYNAMIC_EDGES;
 }
