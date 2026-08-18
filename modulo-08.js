@@ -1,5 +1,5 @@
 /* ==========================================================
-   UN NUEVO MODELO DE LECTURA — Módulo 09
+   UN NUEVO MODELO DE LECTURA — Módulo 08
    Implementa la metodología del paper "Un nuevo modelo de lectura
    para un territorio dinámico":
    - Los COMPONENTES TERRITORIALES son los mismos ya documentados en
