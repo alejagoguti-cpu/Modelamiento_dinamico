@@ -1,251 +1,449 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RAPOT · Un Nuevo Modelo de Lectura</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="stylesheet" href="modulo-08.css">
-</head>
-<body>
-<div class="app">
+:root {
+  --bg: #0a0e17;
+  --sidebar: #0c1120;
+  --panel: #121828;
+  --panel-alt: #0f1522;
+  --border: rgba(255,255,255,0.07);
+  --border-soft: rgba(255,255,255,0.04);
+  --text: #e7eaf2;
+  --text-dim: #8891a5;
+  --text-faint: #5a6274;
+  --teal: #2fd4c8;
+  --teal-dim: rgba(47,212,200,0.12);
+  --blue: #5b8def;
+  --purple: #a276f2;
+  --green: #4ade80;
+  --yellow: #f5c945;
+  --pink: #f76fb0;
+  --orange: #ef9552;
 
-  <aside class="sidebar">
-    <div class="brand">
-      <div class="mark"><i class="fa-solid fa-diagram-project"></i></div>
-      <span>RAPOT</span>
-    </div>
+  /* colores de estructura (reutilizados de Construir la Red) */
+  --struct-eco: #2fd4c8;
+  --struct-func: #f5a623;
+  --struct-patrim: #f76fb0;
+  --actor-color: #eef0f6;
+  --mediador-color: #7d8ea3;
+}
 
-    <div class="nav-group">
-      <a href="modulo-02.html" class="nav-item" data-label="02 · Medir la Red"><i class="fa-solid fa-chart-simple"></i></a>
-      <a href="modulo-03.html" class="nav-item" data-label="03 · Discurso vs Realidad"><i class="fa-solid fa-eye"></i></a>
-      <a href="modulo-04.html" class="nav-item" data-label="04 · Macromodelos"><i class="fa-solid fa-bullseye"></i></a>
-      <a href="modulo-05.html" class="nav-item" data-label="05 · Lo que no está"><i class="fa-solid fa-magnifying-glass"></i></a>
-      <a href="modulo-06.html" class="nav-item" data-label="06 · POT ↔ ODS"><i class="fa-solid fa-earth-americas"></i></a>
-      <a href="modulo-07.html" class="nav-item" data-label="07 · Simulador"><i class="fa-solid fa-flask"></i></a>
-      <a href="modulo-08.html" class="nav-item active" data-label="08 · Lectura Dinámica"><i class="fa-solid fa-wave-square"></i></a>
-    </div>
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-    <div class="nav-group">
-      <a href="proyectos.html" class="nav-item" data-label="Proyectos"><i class="fa-solid fa-folder"></i></a>
-      <a href="fuentes.html" class="nav-item" data-label="Fuentes y Documentos"><i class="fa-solid fa-file-lines"></i></a>
-      <a href="favoritos.html" class="nav-item" data-label="Favoritos"><i class="fa-regular fa-star"></i></a>
-      <a href="reportes.html" class="nav-item" data-label="Reportes"><i class="fa-solid fa-chart-pie"></i></a>
-      <a href="configuracion.html" class="nav-item" data-label="Configuración"><i class="fa-solid fa-gear"></i></a>
-    </div>
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+}
 
-    <div class="sidebar-footer">
-      <div class="avatar-sm">EU</div>
-      <div class="user-meta">
-        <div class="name">Equipo Urbano</div>
-        <div class="role">Administrador</div>
-      </div>
-      <a href="demo.html" class="logout-btn"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
-    </div>
-  </aside>
+.app { display: flex; min-height: 100vh; }
 
-  <main class="main">
+/* SIDEBAR — solo iconos */
+.sidebar {
+  width: 68px;
+  flex-shrink: 0;
+  background: var(--sidebar);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 0;
+}
 
-    <div class="topbar">
-      <h1>Un Nuevo Modelo de Lectura</h1>
-      <div class="topbar-actions">
-        <div class="search-box"><i class="fa-solid fa-magnifying-glass"></i> Buscar en el sistema...</div>
-        <div class="icon-btn"><i class="fa-regular fa-bell"></i><span class="dot"></span></div>
-        <div class="icon-btn"><i class="fa-regular fa-circle-question"></i></div>
-        <div class="avatar-sm">EU</div>
-      </div>
-    </div>
+.brand { display: flex; align-items: center; justify-content: center; padding: 0 0 22px 0; }
 
-    <!-- HERO: GESTOR DE LECTURA -->
-    <section class="hero-reader">
-      <div class="hero-top">
-        <div class="hero-eyebrow"><span class="eyebrow-line"></span> GESTOR DE LECTURA</div>
-        <button class="agency-toggle" id="agencyToggle" onclick="toggleAgency()">
-          <span class="agency-switch"><span class="agency-knob"></span></span>
-          <span>Activar Dimensión Dinámica</span>
-        </button>
-      </div>
+.brand .mark {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: linear-gradient(135deg, var(--teal), #1a9d94);
+  display: flex; align-items: center; justify-content: center;
+  color: #06110f; font-size: 16px;
+}
 
-      <h2 class="hero-title">Un Nuevo Modelo de <span class="hero-accent">Lectura para el POT</span></h2>
-      <p class="hero-sub">Del Componente Aislado <i class="fa-solid fa-arrow-right-long"></i> a la Relación Viva</p>
+.brand span { display: none; }
 
-      <div class="hero-compare">
-        <div class="compare-card compare-static">
-          <div class="compare-head"><i class="fa-solid fa-circle-dot"></i> Lectura Estática</div>
-          <p class="compare-desc">El componente del POT como dato fijo en el territorio.</p>
-          <div class="compare-viz" id="staticViz">
-            <svg viewBox="0 0 260 170"><circle cx="130" cy="85" r="46" class="static-blob"/></svg>
-          </div>
-          <ul class="compare-list">
-            <li><i class="fa-solid fa-circle-dot"></i> Relación aislada</li>
-            <li><i class="fa-solid fa-circle-dot"></i> Sin actores ni mediadores</li>
-            <li><i class="fa-solid fa-circle-dot"></i> Intensidad única y fija</li>
-          </ul>
-        </div>
+.nav-group { margin-bottom: 14px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.nav-group:first-of-type { margin-bottom: 0; }
 
-        <div class="compare-card compare-dynamic">
-          <div class="compare-head"><i class="fa-solid fa-wave-square"></i> Lectura Dinámica</div>
-          <p class="compare-desc">El componente como nodo activo dentro de una red de relaciones.</p>
-          <div class="compare-viz" id="dynamicViz"></div>
-          <ul class="compare-list">
-            <li><i class="fa-solid fa-check"></i> Incluye actores y mediadores</li>
-            <li><i class="fa-solid fa-check"></i> Cambia según la situación</li>
-            <li><i class="fa-solid fa-check"></i> Intensidad variable</li>
-          </ul>
-        </div>
-      </div>
+.nav-label { display: none; }
 
-      <blockquote class="hero-quote">
-        <i class="fa-solid fa-quote-left"></i>
-        <p>Una relación territorial no es un dato fijo: depende de quién la usa, qué la hace posible y en qué momento ocurre.</p>
-        <span>Equipo POT Reverse Engineering</span>
-      </blockquote>
-    </section>
+.nav-item {
+  position: relative;
+  display: flex; align-items: center; justify-content: center;
+  width: 40px; height: 40px; border-radius: 10px;
+  color: var(--text-dim); font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: background .15s, color .15s;
+  white-space: nowrap; text-decoration: none;
+}
 
-    <!-- STATS -->
-    <div class="reader-stats" id="readerStats">
-      <div class="stat-card" style="--stat-color:#2fd4c8;">
-        <div class="stat-icon"><i class="fa-solid fa-circle-nodes"></i></div>
-        <div class="stat-value" id="statComponentes">—</div>
-        <div class="stat-label">Componentes territoriales</div>
-      </div>
-      <div class="stat-card" style="--stat-color:#f5a623;" id="statActoresCard">
-        <div class="stat-icon"><i class="fa-solid fa-people-group"></i></div>
-        <div class="stat-value" id="statActores">—</div>
-        <div class="stat-label">Actores</div>
-      </div>
-      <div class="stat-card" style="--stat-color:#7d8ea3;" id="statMediadoresCard">
-        <div class="stat-icon"><i class="fa-solid fa-signs-post"></i></div>
-        <div class="stat-value" id="statMediadores">—</div>
-        <div class="stat-label">Mediadores</div>
-      </div>
-      <div class="stat-card" style="--stat-color:#f76fb0;">
-        <div class="stat-icon"><i class="fa-solid fa-link"></i></div>
-        <div class="stat-value" id="statRelaciones">—</div>
-        <div class="stat-label">Relaciones activas</div>
-      </div>
-    </div>
+.nav-item .num { display: none; }
+.nav-item i { width: auto; text-align: center; font-size: 16px; }
+.nav-item:hover { background: rgba(255,255,255,0.06); color: var(--text); }
+.nav-item.active { background: var(--teal-dim); color: var(--teal); }
+.nav-item.active .num { color: var(--teal); }
 
-    <!-- SITUACIONES: estados que modifican la intensidad de la red -->
-    <div class="situaciones-panel">
-      <div class="situaciones-head">
-        <h3><i class="fa-solid fa-clock-rotate-left"></i> Situaciones — qué momento quieres leer</h3>
-        <p>Cada situación no agrega nodos nuevos: cambia la intensidad, el grosor o la visibilidad de relaciones que ya existen.</p>
-      </div>
-      <div class="situaciones-row" id="situacionesRow"></div>
-      <div class="situacion-desc" id="situacionDesc">Sin situación activa: todas las relaciones se leen en su intensidad documental de base.</div>
-    </div>
+/* separador visual entre grupos de navegación */
+.nav-group + .nav-group::before {
+  content: "";
+  display: block;
+  width: 26px; height: 1px;
+  background: var(--border);
+  margin: 4px auto 10px;
+}
 
-    <!-- RED -->
-    <div class="network-section">
-      <div class="network-header">
-        <h3><i class="fa-solid fa-share-nodes"></i> Red de Lectura Dinámica del POT</h3>
-        <div class="network-controls">
-          <button class="control-btn active" data-view="todas" onclick="filterView('todas')">Todas</button>
-          <button class="control-btn" data-view="componentes" onclick="filterView('componentes')">Componentes</button>
-          <button class="control-btn" data-view="actores" onclick="filterView('actores')">Actores y mediadores</button>
-        </div>
-      </div>
+/* tooltip al pasar el cursor, ya que el texto se ocultó */
+.nav-item::after {
+  content: attr(data-label);
+  position: absolute;
+  left: calc(100% + 10px);
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 6px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .12s;
+  z-index: 50;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+}
+.nav-item:hover::after { opacity: 1; }
 
-      <div class="network-viz-wrap">
-        <svg id="readerViz" viewBox="0 0 1060 800" preserveAspectRatio="xMidYMid meet"></svg>
+.sidebar-footer {
+  margin-top: auto; border-top: 1px solid var(--border); padding-top: 14px;
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+}
 
-        <div class="network-sidebar">
-          <aside class="network-legend">
-            <div class="legend-title">Convenciones de línea</div>
-            <div class="legend-item legend-static"><span class="legend-line solid"></span> Directa (documentada)</div>
-            <div class="legend-item legend-static"><span class="legend-line dashed"></span> Indirecta / interpretativa</div>
-            <div class="legend-item legend-static"><span class="legend-line arrowed"></span> Dirección sustentada</div>
-            <div class="legend-item legend-static"><span class="legend-line thick"></span> Mayor intensidad</div>
+.avatar-sm {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: var(--panel); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; color: var(--text-dim); flex-shrink: 0;
+}
 
-            <div class="legend-title">Color = estructura</div>
-            <div class="legend-item legend-static"><span class="legend-dot" style="background:#2fd4c8;"></span> Ecológica principal</div>
-            <div class="legend-item legend-static"><span class="legend-dot" style="background:#f5a623;"></span> Funcional y socioeconómica</div>
-            <div class="legend-item legend-static"><span class="legend-dot" style="background:#f76fb0;"></span> Integradora de patrimonios</div>
+.user-meta { display: none; }
 
-            <div class="legend-title">Ícono = tipo de nodo</div>
-            <div class="legend-item legend-static"><i class="fa-solid fa-circle-nodes legend-ic" style="color:#c9cedb;"></i> Componente territorial</div>
-            <div class="legend-item legend-static"><i class="fa-solid fa-person legend-ic" style="color:#eef0f6;"></i> Actor</div>
-            <div class="legend-item legend-static"><i class="fa-solid fa-signs-post legend-ic" style="color:#7d8ea3;"></i> Mediador</div>
+.logout-btn { background: none; border: none; color: var(--text-faint); font-size: 14px; cursor: pointer; padding: 4px; text-decoration: none; }
+.logout-btn:hover { color: var(--pink); }
 
-            <div class="legend-divider"></div>
-            <div class="legend-hint">Clic en una línea: ver nodos, convención, evidencia, actores y lectura crítica.<br>
-            Clic en una bola: apagarla junto con sus líneas.<br>
-            Arrastra una bola: las conectadas la siguen.</div>
-          </aside>
+/* MAIN */
+.main { flex: 1; padding: 22px 34px 50px; min-width: 0; overflow-y: auto; }
 
-          <div class="edge-info-panel" id="edgeInfoPanel">
-            <div class="edge-info-header">
-              <span id="edgeInfoTitle">Relación</span>
-              <button class="edge-info-close" id="edgeInfoClose" type="button" aria-label="Cerrar">&times;</button>
-            </div>
+.topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+.topbar h1 { font-family: 'Space Grotesk', sans-serif; font-size: 19px; font-weight: 600; }
+.topbar-actions { display: flex; align-items: center; gap: 14px; }
 
-            <div class="edge-info-row">
-              <div class="edge-info-label">Convención</div>
-              <div class="edge-info-value" id="edgeInfoConvencion">—</div>
-            </div>
-            <div class="edge-info-row">
-              <div class="edge-info-label">Evidencia</div>
-              <div class="edge-info-quote" id="edgeInfoEvidencia">—</div>
-              <div class="edge-info-page" id="edgeInfoPage"></div>
-            </div>
-            <div class="edge-info-row">
-              <div class="edge-info-label">Actores asociados</div>
-              <div class="edge-info-value" id="edgeInfoActores">—</div>
-            </div>
-            <div class="edge-info-row">
-              <div class="edge-info-label">Situación que la modifica</div>
-              <div class="edge-info-value" id="edgeInfoSituacion">—</div>
-            </div>
-            <div class="edge-info-row">
-              <div class="edge-info-label">Lectura crítica</div>
-              <div class="edge-info-quote" id="edgeInfoCritica">—</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+.search-box {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--panel); border: 1px solid var(--border); border-radius: 8px;
+  padding: 8px 14px; color: var(--text-faint); font-size: 13px; width: 230px;
+}
+.search-box i { font-size: 12px; }
 
-    <!-- LO QUE DEMUESTRA -->
-    <div class="synergies-section">
-      <div class="synergies-grid">
-        <div class="synergy-card success">
-          <div class="synergy-icon"><i class="fa-solid fa-diagram-project"></i></div>
-          <div class="synergy-content">
-            <h4>Lo que ya reconoce el POT</h4>
-            <ul>
-              <li><strong>Componentes documentados:</strong> los nodos coloreados por estructura son los mismos componentes ya identificados en las 4 estructuras del POT (EEP, EFS, ESE, EIP).</li>
-              <li><strong>Relaciones directas:</strong> las líneas continuas citan página y frase exacta del documento.</li>
-              <li><strong>Nada se compone:</strong> ningún nodo contiene a otro — cada uno es independiente, incluso dentro de la misma estructura.</li>
-            </ul>
-          </div>
-        </div>
+.icon-btn {
+  width: 34px; height: 34px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--panel); border: 1px solid var(--border); color: var(--text-dim);
+  font-size: 13px; position: relative;
+}
+.icon-btn .dot { position: absolute; top: 6px; right: 7px; width: 6px; height: 6px; border-radius: 50%; background: var(--pink); }
 
-        <div class="synergy-card conflict">
-          <div class="synergy-icon"><i class="fa-solid fa-eye-low-vision"></i></div>
-          <div class="synergy-content">
-            <h4>Lo que esta lectura agrega</h4>
-            <ul>
-              <li><strong>Actores:</strong> quién usa, opera, protege o transforma cada relación — no es lo mismo un estudiante que una persona cuidadora.</li>
-              <li><strong>Mediadores:</strong> qué hace posible la relación en la práctica — estaciones, andenes, senderos, puentes peatonales.</li>
-              <li><strong>Situaciones:</strong> una relación no tiene una intensidad única — cambia en hora pico, en temporada de lluvias, durante una obra.</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
+/* ===================== HERO — GESTOR DE LECTURA ===================== */
+.hero-reader {
+  background: radial-gradient(circle at 15% 0%, rgba(47,212,200,0.10), transparent 55%),
+              radial-gradient(circle at 90% 10%, rgba(239,149,82,0.10), transparent 50%),
+              var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px 30px 26px;
+  margin-bottom: 22px;
+}
 
-    <footer>
-      "No se trata de representar la ciudad, sino de comprenderla para transformarla." — <span>Equipo POT Reverse Engineering</span>
-    </footer>
+.hero-top { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; margin-bottom: 18px; }
 
-  </main>
+.hero-eyebrow {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 11px; font-weight: 700; letter-spacing: 2px; color: var(--teal);
+}
+.hero-eyebrow .eyebrow-line { width: 22px; height: 2px; background: var(--teal); border-radius: 2px; }
 
-</div>
+.agency-toggle {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--panel-alt); border: 1px solid var(--border);
+  border-radius: 999px; padding: 7px 16px 7px 7px;
+  color: var(--text-dim); font-size: 12.5px; font-weight: 700;
+  cursor: pointer; transition: all .2s;
+}
+.agency-toggle:hover { border-color: var(--teal); }
 
-<script src="modulo-08.js"></script>
+.agency-switch {
+  width: 38px; height: 21px; border-radius: 999px;
+  background: #232c3d; position: relative; flex-shrink: 0; transition: background .2s;
+}
+.agency-knob {
+  position: absolute; top: 2.5px; left: 3px; width: 16px; height: 16px; border-radius: 50%;
+  background: #8a93a8; transition: transform .2s, background .2s;
+}
+.agency-toggle.on .agency-switch { background: rgba(47,212,200,0.35); }
+.agency-toggle.on .agency-knob { background: var(--teal); transform: translateX(16px); }
+.agency-toggle.on { color: var(--teal); border-color: var(--teal); }
 
-</body>
-</html>
+.hero-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 34px; font-weight: 800; line-height: 1.15; margin-bottom: 6px; letter-spacing: -0.5px;
+}
+.hero-accent {
+  background: linear-gradient(90deg, var(--teal), #7de8df 55%, #b6f3ec);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: var(--teal);
+}
+
+.hero-sub {
+  font-size: 15px; color: var(--text-dim); font-weight: 500; margin-bottom: 24px;
+  display: flex; align-items: center; gap: 10px;
+}
+.hero-sub i { color: var(--orange); font-size: 13px; }
+
+.hero-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 22px; }
+
+.compare-card {
+  background: var(--panel-alt); border: 1px solid var(--border); border-radius: 12px;
+  padding: 18px;
+}
+.compare-static { border-color: var(--border); }
+.compare-dynamic { border-color: rgba(47,212,200,0.35); box-shadow: 0 0 0 1px rgba(47,212,200,0.12) inset; }
+
+.compare-head {
+  display: flex; align-items: center; gap: 8px;
+  font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 700; margin-bottom: 4px;
+}
+.compare-static .compare-head { color: var(--text-dim); }
+.compare-static .compare-head i { color: var(--text-faint); }
+.compare-dynamic .compare-head { color: var(--teal); }
+.compare-dynamic .compare-head i { color: var(--teal); }
+
+.compare-desc { font-size: 12px; color: var(--text-faint); margin-bottom: 12px; }
+
+.compare-viz {
+  height: 130px; border-radius: 10px; background: rgba(0,0,0,0.2);
+  border: 1px solid var(--border-soft); margin-bottom: 14px; position: relative; overflow: hidden;
+}
+.compare-viz svg { width: 100%; height: 100%; }
+.static-blob { fill: rgba(139,145,165,0.18); stroke: var(--text-faint); stroke-width: 1.5; }
+
+.dyn-core { fill: rgba(47,212,200,0.16); stroke: var(--teal); stroke-width: 2; }
+.dyn-node { fill: rgba(239,149,82,0.18); stroke: var(--orange); stroke-width: 1.5; animation: dynPulse 2.4s ease-in-out infinite; }
+.dyn-line { stroke: rgba(47,212,200,0.45); stroke-width: 1.2; stroke-dasharray: 4,3; animation: dynDash 1.6s linear infinite; }
+@keyframes dynPulse { 0%,100% { opacity: 0.55; } 50% { opacity: 1; } }
+@keyframes dynDash { to { stroke-dashoffset: -14; } }
+
+.compare-list { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+.compare-list li { font-size: 12px; color: var(--text-dim); display: flex; align-items: center; gap: 8px; }
+.compare-static .compare-list li i { color: var(--text-faint); font-size: 9px; }
+.compare-dynamic .compare-list li i { color: var(--teal); font-size: 11px; }
+
+.hero-quote {
+  border-left: 3px solid var(--orange);
+  background: rgba(239,149,82,0.06);
+  border-radius: 0 10px 10px 0;
+  padding: 14px 18px;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.hero-quote i.fa-quote-left { color: var(--orange); font-size: 13px; opacity: .6; }
+.hero-quote p { font-size: 13.5px; color: var(--text); line-height: 1.6; font-style: italic; }
+.hero-quote span { font-size: 11.5px; color: var(--text-faint); font-weight: 600; }
+
+/* ===================== STATS ===================== */
+.reader-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 22px; }
+
+.stat-card {
+  background: var(--panel); border: 1px solid var(--border); border-radius: 12px;
+  padding: 16px; display: flex; flex-direction: column; gap: 6px; position: relative;
+  transition: opacity .2s;
+}
+.stat-icon {
+  width: 34px; height: 34px; border-radius: 9px; display: flex; align-items: center; justify-content: center;
+  background: color-mix(in srgb, var(--stat-color, var(--teal)) 18%, transparent);
+  color: var(--stat-color, var(--teal)); font-size: 14px; margin-bottom: 2px;
+}
+.stat-value { font-family: 'Space Grotesk', sans-serif; font-size: 24px; font-weight: 800; color: var(--stat-color, var(--teal)); }
+.stat-label { font-size: 11.5px; color: var(--text-dim); font-weight: 600; }
+.stat-card.stat-inactive { opacity: 0.35; }
+
+/* ===================== SITUACIONES ===================== */
+.situaciones-panel {
+  background: var(--panel); border: 1px solid var(--border); border-radius: 12px;
+  padding: 18px 20px; margin-bottom: 22px;
+}
+.situaciones-head h3 {
+  font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 700;
+  display: flex; align-items: center; gap: 8px; margin-bottom: 4px;
+}
+.situaciones-head h3 i { color: var(--teal); font-size: 13px; }
+.situaciones-head p { font-size: 12px; color: var(--text-faint); margin-bottom: 14px; }
+
+.situaciones-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+
+.situacion-btn {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--panel-alt); border: 1px solid var(--border-soft);
+  color: var(--text-dim); padding: 8px 13px; border-radius: 999px;
+  font-size: 12px; font-weight: 600; cursor: pointer; transition: all .2s;
+}
+.situacion-btn i { font-size: 11px; }
+.situacion-btn:hover { border-color: var(--text-dim); color: var(--text); }
+.situacion-btn.active { border-color: var(--orange); color: var(--orange); background: rgba(239,149,82,0.1); }
+
+.situacion-desc {
+  font-size: 12px; color: var(--text-faint); border-top: 1px solid var(--border-soft);
+  padding-top: 12px; line-height: 1.5;
+}
+
+/* ===================== NETWORK SECTION ===================== */
+.network-section {
+  background: var(--panel); border: 1px solid var(--border); border-radius: 12px;
+  padding: 20px; margin-bottom: 22px;
+}
+.network-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px; flex-wrap: wrap; gap: 10px;
+}
+.network-header h3 {
+  font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 700;
+  display: flex; align-items: center; gap: 8px;
+}
+.network-header h3 i { color: var(--teal); font-size: 13px; }
+.network-controls { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.control-btn {
+  background: var(--panel-alt); border: 1px solid var(--border-soft); color: var(--text-dim);
+  padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all .2s;
+}
+.control-btn:hover, .control-btn.active { border-color: var(--teal); color: var(--teal); background: rgba(47,212,200,0.05); }
+
+.network-viz-wrap { display: flex; gap: 16px; align-items: stretch; }
+
+#readerViz {
+  flex: 1; min-width: 0; width: 100%; height: 680px;
+  background: var(--panel-alt); border: 1px solid var(--border); border-radius: 8px; display: block;
+}
+
+.network-sidebar { width: 230px; flex-shrink: 0; display: flex; flex-direction: column; gap: 16px; }
+
+.network-legend {
+  width: 100%; background: var(--panel-alt); border: 1px solid var(--border-soft); border-radius: 8px;
+  padding: 16px 14px; display: flex; flex-direction: column; gap: 10px; align-self: flex-start;
+}
+.legend-title {
+  font-family: 'Space Grotesk', sans-serif; font-size: 10.5px; font-weight: 700; letter-spacing: 1px;
+  color: var(--text-faint); text-transform: uppercase; margin-bottom: 2px;
+}
+.legend-item { display: flex; align-items: center; gap: 10px; font-size: 11.5px; color: var(--text-dim); }
+.legend-item.legend-static { cursor: default; }
+.legend-divider { height: 1px; background: var(--border-soft); margin: 2px 0; }
+.legend-hint { font-size: 10.5px; color: var(--text-faint); line-height: 1.5; }
+
+.legend-line { width: 24px; height: 0; border-top: 2px solid var(--text-dim); flex-shrink: 0; }
+.legend-line.dashed { border-top-style: dashed; }
+.legend-line.thick { border-top-width: 3px; border-top-color: var(--teal); }
+.legend-line.arrowed { position: relative; border-top-color: var(--text-dim); }
+.legend-line.arrowed::after {
+  content: ""; position: absolute; right: -1px; top: -3px;
+  border: 4px solid transparent; border-left-color: var(--text-dim);
+}
+
+.legend-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+.legend-ic { width: 16px; text-align: center; flex-shrink: 0; font-size: 12px; }
+
+/* EDGE INFO PANEL */
+.edge-info-panel {
+  display: none; width: 100%; background: var(--panel-alt); border: 1px solid var(--teal);
+  box-shadow: 0 0 14px rgba(47,212,200,0.15); border-radius: 8px; padding: 14px;
+}
+.edge-info-panel.visible { display: block; }
+.edge-info-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+#edgeInfoTitle { font-family: 'Space Grotesk', sans-serif; font-size: 12.5px; font-weight: 700; color: var(--teal); line-height: 1.3; }
+.edge-info-close { background: none; border: none; color: var(--text-faint); font-size: 18px; line-height: 1; cursor: pointer; padding: 0 0 0 6px; flex-shrink: 0; }
+.edge-info-close:hover { color: var(--pink); }
+
+.edge-info-row { margin-bottom: 10px; }
+.edge-info-row:last-child { margin-bottom: 0; }
+.edge-info-label {
+  font-size: 9.5px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
+  color: var(--text-faint); margin-bottom: 4px;
+}
+.edge-info-value { font-size: 11.5px; color: var(--text); line-height: 1.5; }
+.edge-info-quote {
+  font-size: 11px; color: var(--text-dim); line-height: 1.5; font-style: italic;
+  border-left: 2px solid var(--border); padding-left: 9px;
+}
+.edge-info-page { font-size: 10.5px; color: var(--text-faint); font-weight: 600; margin-top: 4px; }
+
+/* SVG node/edge styling */
+.rd-node { cursor: pointer; touch-action: none; }
+.rd-node.dragging { cursor: grabbing; }
+.rd-node .node-ring { fill: rgba(8,11,18,0.65); transition: opacity .2s; }
+.rd-node .node-inner { font-family: 'Inter', sans-serif; color: var(--text); text-align: center; transition: opacity .2s; }
+.rd-node .node-icon { line-height: 1; }
+.rd-node .node-name { color: var(--text-dim); font-weight: 600; line-height: 1.05; }
+
+.rd-node.node-off .node-ring { opacity: 0.14; }
+.rd-node.node-off .node-inner { opacity: 0.22; }
+
+.rd-edge-group { cursor: pointer; transition: opacity .2s; }
+.rd-edge-group.hidden-edge { display: none; }
+.rd-edge-group.edge-focus-dim { opacity: 0.06; }
+
+.rd-edge { fill: none; pointer-events: none; transition: opacity .15s, filter .15s, stroke-width .25s; }
+.rd-edge-hit { fill: none; stroke: transparent; stroke-width: 12; pointer-events: stroke; }
+
+.rd-edge-group:hover .rd-edge { opacity: 1 !important; filter: drop-shadow(0 0 4px var(--edge-glow, var(--teal))); }
+.rd-edge-group.edge-selected .rd-edge { opacity: 1 !important; filter: drop-shadow(0 0 6px var(--edge-glow, var(--teal))); }
+
+/* ===================== SYNERGIES ===================== */
+.synergies-section { margin-bottom: 22px; }
+.synergies-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+.synergy-card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 20px; display: flex; gap: 16px; }
+.synergy-card.success { background: linear-gradient(135deg, rgba(74,222,128,0.08), rgba(74,222,128,0.02)); border-color: rgba(74,222,128,0.2); }
+.synergy-card.conflict { background: linear-gradient(135deg, rgba(247,111,176,0.08), rgba(247,111,176,0.02)); border-color: rgba(247,111,176,0.2); }
+
+.synergy-icon {
+  width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0; background: var(--panel-alt); color: var(--teal);
+}
+.synergy-card.success .synergy-icon { background: rgba(74,222,128,0.15); color: var(--green); }
+.synergy-card.conflict .synergy-icon { background: rgba(247,111,176,0.15); color: var(--pink); }
+
+.synergy-content h4 { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 10px; }
+.synergy-content ul { list-style: none; }
+.synergy-content li { font-size: 11.5px; color: var(--text-dim); padding: 6px 0; border-bottom: 1px solid var(--border-soft); line-height: 1.5; }
+.synergy-content li:last-child { border-bottom: none; }
+.synergy-content li strong { color: var(--text); }
+
+footer { text-align: center; padding: 24px 0 6px; color: var(--text-faint); font-size: 11.5px; }
+footer span { color: var(--teal); }
+
+/* RESPONSIVE */
+@media (max-width: 1300px) {
+  .hero-compare { grid-template-columns: 1fr; }
+  .reader-stats { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 1100px) {
+  .synergies-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 900px) {
+  .network-viz-wrap { flex-direction: column; }
+  .network-sidebar { width: 100%; flex-direction: row; flex-wrap: wrap; }
+  #readerViz { height: 480px; }
+}
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+  .main { padding: 16px 20px 40px; }
+  .hero-title { font-size: 26px; }
+}
