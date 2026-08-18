@@ -2285,7 +2285,7 @@ function computeLayoutClean() {
   // Plantilla geométrica del Módulo 02: lienzo panorámico, cuatro hubs
   // separados en diamante y satélites abiertos hacia el exterior. Solo se
   // cambian posiciones; relaciones, citas, páginas y estados POT permanecen.
-  const CANVAS = { w: 2500, h: 1820 };
+  const CANVAS = { w: 2800, h: 2100 };
   const HUB_CENTERS = {
     EEP: { x: 870, y: 620 },
     EFC: { x: 1700, y: 560 },
@@ -2294,7 +2294,7 @@ function computeLayoutClean() {
   };
   const ids = Object.keys(model.concepts);
   const centerCanvas = { x: CANVAS.w / 2, y: CANVAS.h / 2 };
-  const GAP = 130;
+  const GAP = 190;
   const pos = {};
 
   SYS.forEach(sys => {
@@ -2312,7 +2312,7 @@ function computeLayoutClean() {
     const rings = [ringHigh, ringMid, ringLow];
     const outward = Math.atan2(center.y - centerCanvas.y, center.x - centerCanvas.x);
     const span = Math.min(Math.PI * 1.6, Math.PI * 0.5 + rest.length * (Math.PI / 10));
-    let previousRadius = nodeR[hub] + 170;
+    let previousRadius = nodeR[hub] + 230;
 
     rings.forEach((ring, ringIndex) => {
       if (!ring.length) return;
@@ -2325,7 +2325,7 @@ function computeLayoutClean() {
           y: center.y + Math.sin(angle) * radius
         };
       });
-      previousRadius = radius + Math.max(...ring.map(id => nodeR[id])) + 140;
+      previousRadius = radius + Math.max(...ring.map(id => nodeR[id])) + 200;
     });
   });
 
