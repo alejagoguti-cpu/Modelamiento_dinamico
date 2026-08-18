@@ -766,3 +766,26 @@ body.module02-reference-page .network-metrics-strip {
     padding-right: 16px !important;
   }
 }
+
+/* Módulo 03: todos los bloques principales comparten la guía izquierda de la tabla. */
+@media (min-width: 821px) {
+  body.module02-reference-page .net-layout {
+    padding-left: 0 !important;
+  }
+  body.module02-reference-page .network-metrics-strip {
+    margin-left: 0 !important;
+  }
+  body.module02-reference-page .net-stage,
+  body.module02-reference-page .network-metrics-strip,
+  body.module02-reference-page .m03-relations-table {
+    box-sizing: border-box !important;
+  }
+}
+@media (max-width: 820px) {
+  body.module02-reference-page .net-layout {
+    padding-left: 0 !important;
+  }
+  body.module02-reference-page .network-metrics-strip {
+    margin-left: 0 !important;
+  }
+}

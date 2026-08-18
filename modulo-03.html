@@ -34,7 +34,7 @@ html,body{height:auto!important;min-height:100vh!important;overflow-x:hidden!imp
 .tooltip{background:#101417!important;border-color:rgba(70,214,208,.28)!important;color:#e8eeee!important;box-shadow:0 8px 26px rgba(0,0,0,.55)!important}
 .tooltip .tt-type,.tooltip .tt-page{color:#9aa8a8!important}
 </style>
-    <link rel="stylesheet" href="module02-system.css?v=spacing-v2">
+    <link rel="stylesheet" href="module02-system.css?v=spacing-v3">
 </head>
 <body class="module02-reference-page">
 <div class="app">
@@ -342,7 +342,7 @@ html,body{height:auto!important;min-height:100vh!important;overflow-x:hidden!imp
     </article>
   </div>
 
-<script src="modulo-03.js?v=popup-off-v4"></script>
+<script src="modulo-03.js?v=off-clean-v6"></script>
 <style id="m03-final-visual-fix">
 /* Capa final: vence los overrides compartidos que estaban recortando la tabla. */
 .app .main .net-layout{height:auto!important;min-height:0!important;overflow:visible!important}
@@ -359,7 +359,13 @@ html,body{height:auto!important;min-height:100vh!important;overflow-x:hidden!imp
 .m03-relations-table{display:block!important;height:668px!important;min-height:668px!important;overflow:hidden!important}
 .m03-table-scroll{display:block!important;height:620px!important;max-height:620px!important;overflow:auto!important}
 .net-stage{height:500px!important;min-height:500px!important;max-height:500px!important;overflow:hidden!important}
-.net-stage svg{height:500px!important;min-height:500px!important;max-height:500px!important;width:100%!important;display:block!important}
+  .net-stage svg{height:500px!important;min-height:500px!important;max-height:500px!important;width:100%!important;display:block!important}
+  /* Guía horizontal común con la tabla y los indicadores, como en el Módulo 02. */
+  .app .main .net-layout{padding-left:0!important}
+  .app .main .net-layout>.col:first-child{margin-left:0!important}
+  .app .main .network-metrics-strip{margin-left:0!important}
+  .app .main .m03-relations-table{margin-left:0!important}
+
 .net-card{height:auto!important;overflow:visible!important}
 .app .main .net-body{height:500px!important;min-height:500px!important;max-height:500px!important;overflow:hidden!important}
 .app .main .net-card{height:auto!important;min-height:0!important;max-height:none!important}

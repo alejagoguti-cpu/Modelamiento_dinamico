@@ -2685,6 +2685,7 @@ const iconSize = Math.max(28, Math.round(R * 0.52));
     });
   });
 
+  purgeInactiveSvg();
 }
 
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -3644,3 +3645,27 @@ document.addEventListener('DOMContentLoaded', () => {
     '| Resiliencia:', r.filter(x => x.tipo === 'Resiliencia').length,
     '| Conceptos:', Object.keys(model.concepts).length);
 });
+
+// Limpieza defensiva: ninguna relación o nodo inactivo puede quedar flotando
+// aunque un render anterior o un navegador cacheado haya dejado descendientes SVG.
+function purgeInactiveSvg() {
+  const gRels = document.getElementById('gRels');
+  const gNodes = document.getElementById('gNodes');
+  if (gRels) {
+    gRels.querySelectorAll('[data-rel]').forEach(node => {
+      const rel = model.relations.find(r => String(r.id) === String(node.dataset.rel));
+      if (!rel || !relationPassesFilters(rel) || !relActive(rel)) node.remove();
+    });
+  }
+  if (gNodes) {
+    gNodes.querySelectorAll('[data-id]').forEach(node => {
+      const id = node.dataset.id;
+      const concept = model.concepts[id];
+      if (!concept || !state[concept.sys] || offNodes.has(id)) node.remove();
+    });
+  }
+  ['gGuides','gMembers'].forEach(id => {
+    const group = document.getElementById(id);
+    if (group) group.querySelectorAll('[data-rel],[data-id]').forEach(node => node.remove());
+  });
+}
