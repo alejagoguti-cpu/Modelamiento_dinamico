@@ -315,6 +315,48 @@ const HUB_CENTERS = {
   e4: { x: 1980, y: 1310 },  // Integradora de Patrimonio (hub: Patrimonio Material) — inferior derecha, con margen extra al borde
 };
 
+/* ==========================================================
+   POSICIONES FIJAS DE LOS NODOS — definidas en el wireframe.
+   Coordenadas en el lienzo 2500 x 1820. Editar aquí para mover
+   cualquier bola; el layout automático ya no las recalcula.
+   ========================================================== */
+const NODE_POS = {
+  rios: { x: 590, y: 800 },
+  quebradas: { x: 477, y: 638 },
+  humedales: { x: 1155, y: 692 },
+  complejos_de_paramos: { x: 352, y: 449 },
+  coberturas_vegetales: { x: 509, y: 297 },
+  areas_de_resiliencia_climatica: { x: 639, y: 112 },
+  areas_protegidas: { x: 800, y: 258 },
+  reservas_forestales: { x: 1086, y: 132 },
+  equipamientos: { x: 1244, y: 271 },
+  servicios_sociales: { x: 1429, y: 104 },
+  vivienda: { x: 1605, y: 723 },
+  ciclorutas: { x: 1689, y: 98 },
+  transporte_publico: { x: 1762, y: 361 },
+  red_vial: { x: 2057, y: 170 },
+  corredores_verdes: { x: 1984, y: 475 },
+  manzanas_del_cuidado: { x: 1918, y: 668 },
+  parques: { x: 1737, y: 985 },
+  distrito_centro_tecnologico_e_innovacion: { x: 1259, y: 1420 },
+  servicios_empresariales: { x: 1211, y: 967 },
+  sistema_de_educacion: { x: 1043, y: 1371 },
+  centros_de_abastecimiento: { x: 921, y: 1601 },
+  plazas_de_mercado: { x: 768, y: 1228 },
+  zonas_industriales: { x: 679, y: 1576 },
+  produccion_artesanal: { x: 486, y: 1312 },
+  zonas_de_interes_turistico: { x: 498, y: 1054 },
+  centros_financieros: { x: 699, y: 929 },
+  patrimonio_inmaterial: { x: 2017, y: 991 },
+  patrimonio_arqueologico: { x: 1862, y: 1430 },
+  patrimonio_natural: { x: 1442, y: 1542 },
+  patrimonio_material: { x: 1526, y: 1106 },
+  comunidades: { x: 1684, y: 1179 },
+};
+
+// Los 4 hubs principales (bola grande) por estructura.
+const HUB_IDS = ["humedales", "vivienda", "servicios_empresariales", "patrimonio_material"];
+
 function layoutNetwork() {
   const deg = computeDegrees();
   ODS_NODES.forEach(n => {
@@ -327,86 +369,24 @@ function layoutNetwork() {
 
   const nodes = ODS_NODES;
 
-  // ---- 1. Layout radial determinístico por estructura ----
-  ["e1", "e2", "e3", "e4"].forEach(cat => {
-    const center = HUB_CENTERS[cat];
-    const group = nodes.filter(n => n.cat === cat).sort((a, b) => b._deg - a._deg);
-    if (!group.length) return;
-
-    const hub = group[0];
-    hub.x = center.x; hub.y = center.y; hub.isMainHub = true;
-    hub.collR = hub.r; // el hub ocupa su radio temático completo
-    const rest = group.slice(1);
-    rest.forEach(n => { n.collR = n.r; }); // satélite: también dibuja su círculo+texto completo (radio real, no un punto)
-
-    // hasta 3 anillos concéntricos según grado real, para que los componentes
-    // algo conectados queden más cerca del hub y los periféricos más lejos —
-    // igual lectura visual que la referencia (satélites bien separados, cada
-    // uno con su propio nombre visible).
-    const ringHigh = rest.filter(n => n._deg >= 3);
-    const ringMid  = rest.filter(n => n._deg === 1 || n._deg === 2);
-    const ringLow  = rest.filter(n => n._deg === 0);
-
-    const GAP = 130;
-    function placeRing(ringNodes, minRadius, angleSpan, angleStart) {
-      if (!ringNodes.length) return minRadius;
-      const sumDiam = ringNodes.reduce((s, n) => s + 2 * n.collR + GAP, 0);
-      const neededR = Math.max(minRadius, sumDiam / angleSpan);
-      ringNodes.forEach((n, i) => {
-        const angle = angleStart + ((i + 0.5) / ringNodes.length) * angleSpan;
-        n.x = center.x + Math.cos(angle) * neededR;
-        n.y = center.y + Math.sin(angle) * neededR;
-      });
-      return neededR;
-    }
-
-    // ángulo "hacia afuera" del centro del canvas: cada estructura abre su
-    // abanico de satélites hacia el borde del lienzo, no hacia el centro,
-    // para que las 4 estructuras no se invadan entre sí. El ancho del abanico
-    // escala con la cantidad de satélites — pocos nodos = abanico angosto
-    // apuntando derecho hacia afuera; muchos nodos = abanico más amplio.
-    const cx = CANVAS.w / 2, cy = CANVAS.h / 2;
-    const outward = Math.atan2(center.y - cy, center.x - cx) || 0;
-    hub._outwardAngle = outward;
-    const n = rest.length;
-    const angleSpan = Math.min(Math.PI * 1.6, Math.PI * 0.5 + n * (Math.PI / 10));
-    const angleStart = outward - angleSpan / 2;
-
-    const rHigh = placeRing(ringHigh, hub.r + 170, angleSpan, angleStart);
-    const rMid = placeRing(ringMid, rHigh + (ringHigh[0] ? Math.max(...ringHigh.map(n => n.r)) : 0) + 140, angleSpan, angleStart);
-    placeRing(ringLow, rMid + (ringMid[0] ? Math.max(...ringMid.map(n => n.r)) : 0) + 125, angleSpan, angleStart);
+  // ---- 1. Posiciones fijas definidas por el equipo (lienzo 2500 x 1820) ----
+  // Sustituyen al layout radial automático: cada bola queda exactamente donde
+  // se colocó en el wireframe. Para mover una, cambia su par x/y en NODE_POS.
+  nodes.forEach(n => {
+    n.collR = n.r;
+    const p = NODE_POS[n.id];
+    if (p) { n.x = p.x; n.y = p.y; }
+    else { n.x = CANVAS.w / 2; n.y = CANVAS.h / 2; }
+    n.isMainHub = (HUB_IDS.indexOf(n.id) !== -1);
+    if (n.isMainHub) n._outwardAngle = Math.atan2(n.y - CANVAS.h / 2, n.x - CANVAS.w / 2) || 0;
   });
 
-  // ---- 2. Resolución de colisiones por radio real (red de seguridad) ----
-  // El layout radial ya evita casi toda superposición por diseño; esta pasada
-  // solo destraba los pocos casos límite entre anillos vecinos o estructuras
-  // cercanas, sin mover la red entera. PAD generoso: garantiza aire visible
-  // entre cualquier par de bolas, para que las líneas siempre se vean bien.
-  const PAD = 85;
-  for (let pass = 0; pass < 120; pass++) {
-    let anyOverlap = false;
-    for (let i = 0; i < nodes.length; i++) {
-      for (let j = i + 1; j < nodes.length; j++) {
-        const a = nodes[i], b = nodes[j];
-        if (a.isMainHub && b.isMainHub) continue; // no mover los 4 hubs principales entre sí
-        let dx = b.x - a.x, dy = b.y - a.y;
-        let dist = Math.sqrt(dx * dx + dy * dy) || 0.01;
-        const minDist = a.collR + b.collR + PAD;
-        if (dist < minDist) {
-          anyOverlap = true;
-          const overlap = (minDist - dist) / 2;
-          const ux = dx / dist, uy = dy / dist;
-          a.x -= ux * overlap; a.y -= uy * overlap;
-          b.x += ux * overlap; b.y += uy * overlap;
-        }
-      }
-    }
-    nodes.forEach(n => {
-      n.x = Math.max(n.collR + 20, Math.min(CANVAS.w - n.collR - 20, n.x));
-      n.y = Math.max(n.collR + 20, Math.min(CANVAS.h - n.collR - 20, n.y));
-    });
-    if (!anyOverlap) break;
-  }
+  // ---- 2. Solo se recorta al lienzo; NO hay resolucion de colisiones,
+  //         para que ninguna bola se desplace de su sitio. ----
+  nodes.forEach(n => {
+    n.x = Math.max(n.collR + 20, Math.min(CANVAS.w - n.collR - 20, n.x));
+    n.y = Math.max(n.collR + 20, Math.min(CANVAS.h - n.collR - 20, n.y));
+  });
 
   nodes.forEach(n => { n.homeX = n.x; n.homeY = n.y; });
 }
