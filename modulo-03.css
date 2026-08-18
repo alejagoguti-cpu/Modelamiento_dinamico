@@ -8374,3 +8374,32 @@ body.module02-reference-page .btn-question { line-height:1.3 !important; }
   body.module02-reference-page .net-layout > .col:not(.right) > .net-card .net-stage,
   body.module02-reference-page #svg { height:560px !important; min-height:560px !important; }
 }
+
+/* Corrección final de alineación: el canvas del M03 debe compartir el viewport vertical del M02. */
+@media (min-width:901px) {
+  body.module02-reference-page .app > .main > .net-layout > .col:not(.right) > .net-card,
+  body.module02-reference-page .app > .main > .net-layout > .col:not(.right) > .net-card .net-body,
+  body.module02-reference-page .app > .main > .net-layout > .col:not(.right) > .net-card .net-stage,
+  body.module02-reference-page .app > .main > .net-layout > .col:not(.right) > .net-card #stage {
+    height:780px !important;
+    min-height:780px !important;
+    max-height:780px !important;
+    overflow:hidden !important;
+  }
+  body.module02-reference-page .app > .main > .net-layout > .col:not(.right) > .net-card #svg {
+    height:780px !important;
+    min-height:780px !important;
+    max-height:780px !important;
+  }
+}
+@media (max-width:900px) {
+  body.module02-reference-page .app > .main > .net-layout > .col:not(.right) > .net-card,
+  body.module02-reference-page .app > .main > .net-layout > .col:not(.right) > .net-card .net-body,
+  body.module02-reference-page .app > .main > .net-layout > .col:not(.right) > .net-card .net-stage,
+  body.module02-reference-page .app > .main > .net-layout > .col:not(.right) > .net-card #stage,
+  body.module02-reference-page .app > .main > .net-layout > .col:not(.right) > .net-card #svg {
+    height:560px !important;
+    min-height:560px !important;
+    max-height:560px !important;
+  }
+}
