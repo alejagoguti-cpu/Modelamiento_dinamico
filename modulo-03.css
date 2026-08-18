@@ -8170,3 +8170,100 @@ html,body{height:auto!important;min-height:100%!important;overflow-x:hidden!impo
     max-height: calc(100vh - 92px) !important;
   }
 }
+
+/* Composición final del Hallazgo: icono separado y texto respirable. */
+#networkFinding.m03-popup.is-open {
+  display: grid !important;
+  grid-template-columns: 42px minmax(0, 1fr) !important;
+  grid-template-rows: auto auto !important;
+  column-gap: 13px !important;
+  row-gap: 7px !important;
+  align-items: start !important;
+  width: min(450px, calc(100vw - 112px)) !important;
+  padding: 20px 22px 22px 20px !important;
+}
+#networkFinding.m03-popup .network-finding-icon {
+  grid-column: 1 !important;
+  grid-row: 1 / span 2 !important;
+  width: 38px !important;
+  height: 38px !important;
+  margin: 2px 0 0 !important;
+  border-radius: 10px !important;
+  background: rgba(232,154,108,.16) !important;
+  border: 1px solid rgba(232,154,108,.42) !important;
+  color: #e89a6c !important;
+  font-size: 17px !important;
+  box-shadow: none !important;
+}
+#networkFinding.m03-popup .network-finding-kicker {
+  grid-column: 2 !important;
+  grid-row: 1 !important;
+  padding: 0 30px 7px 0 !important;
+  margin: 0 !important;
+  border-bottom: 1px solid rgba(232,154,108,.26) !important;
+  color: #e89a6c !important;
+  font-size: 10px !important;
+  letter-spacing: .13em !important;
+  line-height: 1.2 !important;
+}
+#networkFinding.m03-popup .network-finding-text {
+  grid-column: 2 !important;
+  grid-row: 2 !important;
+  min-width: 0 !important;
+  padding: 0 28px 0 0 !important;
+}
+#networkFinding.m03-popup .finding-card-title {
+  margin: 0 0 10px !important;
+  color: #f2f3f6 !important;
+  font-family: 'Space Grotesk', Inter, sans-serif !important;
+  font-size: clamp(17px, 1.7vw, 22px) !important;
+  line-height: 1.14 !important;
+  letter-spacing: -.015em !important;
+  text-wrap: balance !important;
+}
+#networkFinding.m03-popup .finding-card-summary {
+  margin: 0 !important;
+  max-width: 34em !important;
+  color: #c2cbd0 !important;
+  font-family: Inter, sans-serif !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  line-height: 1.52 !important;
+  letter-spacing: .005em !important;
+  text-align: left !important;
+  text-wrap: pretty !important;
+}
+#networkFinding.m03-popup .finding-card-summary b {
+  color: #f2f3f6 !important;
+  font-weight: 800 !important;
+}
+#networkFinding.m03-popup .finding-card-details {
+  margin-top: 12px !important;
+  padding-top: 10px !important;
+  border-top: 1px solid rgba(255,255,255,.1) !important;
+  color: #8f9ba2 !important;
+  font-size: 11px !important;
+  line-height: 1.45 !important;
+}
+@media (max-width: 820px) {
+  #networkFinding.m03-popup.is-open {
+    grid-template-columns: 34px minmax(0,1fr) !important;
+    column-gap: 10px !important;
+    width: min(430px, calc(100vw - 76px)) !important;
+    padding: 16px 16px 18px 15px !important;
+  }
+  #networkFinding.m03-popup .network-finding-icon { width: 32px !important; height: 32px !important; font-size: 14px !important; }
+  #networkFinding.m03-popup .finding-card-title { font-size: 16px !important; }
+  #networkFinding.m03-popup .finding-card-summary { font-size: 11px !important; line-height: 1.45 !important; }
+}
+
+/* Vence la posición absoluta heredada del icono del hallazgo. */
+#networkFinding.m03-popup.is-open .network-finding-icon,
+#networkFinding.m03-popup.is-open .network-finding-kicker,
+#networkFinding.m03-popup.is-open .network-finding-text {
+  position: static !important;
+  left: auto !important;
+  top: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+}
