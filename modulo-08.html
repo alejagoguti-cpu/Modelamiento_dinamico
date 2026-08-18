@@ -25,7 +25,7 @@
       <a href="modulo-05.html" class="nav-item" data-label="05 · Lo que no está"><i class="fa-solid fa-magnifying-glass"></i></a>
       <a href="modulo-06.html" class="nav-item" data-label="06 · POT ↔ ODS"><i class="fa-solid fa-earth-americas"></i></a>
       <a href="modulo-07.html" class="nav-item" data-label="07 · Simulador"><i class="fa-solid fa-flask"></i></a>
-      <a href="modulo-08.html" class="nav-item active" data-label="08 · Lectura Dinámica"><i class="fa-solid fa-city"></i></a>
+      <a href="modulo-08.html" class="nav-item active" data-label="08 · Lectura Dinámica"><i class="fa-solid fa-wave-square"></i></a>
     </div>
 
     <div class="nav-group">
@@ -58,76 +58,6 @@
       </div>
     </div>
 
-    <!-- RED -->
-    <div class="network-section">
-      <div class="network-header">
-        <h3><i class="fa-solid fa-share-nodes"></i> Red de Lectura Dinámica del POT</h3>
-        <div class="network-controls">
-          <button class="control-btn active" data-view="todas" onclick="filterView('todas')">Todas</button>
-          <button class="control-btn" data-view="componentes" onclick="filterView('componentes')">Componentes</button>
-          <button class="control-btn" data-view="actores" onclick="filterView('actores')">Actores y mediadores</button>
-        </div>
-      </div>
-
-      <div class="network-viz-wrap">
-        <svg id="readerViz" viewBox="0 0 1060 800" preserveAspectRatio="xMidYMid meet"></svg>
-
-        <div class="network-sidebar">
-          <aside class="network-legend">
-            <div class="legend-title">Convenciones de línea</div>
-            <div class="legend-item legend-static"><span class="legend-line solid"></span> Directa (documentada)</div>
-            <div class="legend-item legend-static"><span class="legend-line dashed"></span> Indirecta / interpretativa</div>
-            <div class="legend-item legend-static"><span class="legend-line arrowed"></span> Dirección sustentada</div>
-            <div class="legend-item legend-static"><span class="legend-line thick"></span> Mayor intensidad</div>
-
-            <div class="legend-title">Color = estructura</div>
-            <div class="legend-item legend-static"><span class="legend-dot" style="background:#2fd4c8;"></span> Ecológica principal</div>
-            <div class="legend-item legend-static"><span class="legend-dot" style="background:#f5a623;"></span> Funcional y socioeconómica</div>
-            <div class="legend-item legend-static"><span class="legend-dot" style="background:#f76fb0;"></span> Integradora de patrimonios</div>
-
-            <div class="legend-title">Ícono = tipo de nodo</div>
-            <div class="legend-item legend-static"><i class="fa-solid fa-circle-nodes legend-ic" style="color:#c9cedb;"></i> Componente territorial</div>
-            <div class="legend-item legend-static"><i class="fa-solid fa-person legend-ic" style="color:#eef0f6;"></i> Actor</div>
-            <div class="legend-item legend-static"><i class="fa-solid fa-signs-post legend-ic" style="color:#7d8ea3;"></i> Mediador</div>
-
-            <div class="legend-divider"></div>
-            <div class="legend-hint">Clic en una línea: ver nodos, convención, evidencia, actores y lectura crítica.<br>
-            Clic en una bola: apagarla junto con sus líneas.<br>
-            Arrastra una bola: las conectadas la siguen.</div>
-          </aside>
-
-          <div class="edge-info-panel" id="edgeInfoPanel">
-            <div class="edge-info-header">
-              <span id="edgeInfoTitle">Relación</span>
-              <button class="edge-info-close" id="edgeInfoClose" type="button" aria-label="Cerrar">&times;</button>
-            </div>
-
-            <div class="edge-info-row">
-              <div class="edge-info-label">Convención</div>
-              <div class="edge-info-value" id="edgeInfoConvencion">—</div>
-            </div>
-            <div class="edge-info-row">
-              <div class="edge-info-label">Evidencia</div>
-              <div class="edge-info-quote" id="edgeInfoEvidencia">—</div>
-              <div class="edge-info-page" id="edgeInfoPage"></div>
-            </div>
-            <div class="edge-info-row">
-              <div class="edge-info-label">Actores asociados</div>
-              <div class="edge-info-value" id="edgeInfoActores">—</div>
-            </div>
-            <div class="edge-info-row">
-              <div class="edge-info-label">Situación que la modifica</div>
-              <div class="edge-info-value" id="edgeInfoSituacion">—</div>
-            </div>
-            <div class="edge-info-row">
-              <div class="edge-info-label">Lectura crítica</div>
-              <div class="edge-info-quote" id="edgeInfoCritica">—</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- HERO: GESTOR DE LECTURA -->
     <section class="hero-reader">
       <div class="hero-top">
@@ -138,7 +68,7 @@
         </button>
       </div>
 
-      <h2 class="hero-title">Un Nuevo Modelo de <span class="hero-accent">Lectura para el POT</span></h2>
+      <h2 class="hero-title"><span class="hero-plain">Un Nuevo Modelo de Lectura</span> <span class="hero-accent">Dinámica del POT</span></h2>
       <p class="hero-sub">Del Componente Aislado <i class="fa-solid fa-arrow-right-long"></i> a la Relación Viva</p>
 
       <div class="hero-compare">
@@ -206,6 +136,76 @@
       </div>
       <div class="situaciones-row" id="situacionesRow"></div>
       <div class="situacion-desc" id="situacionDesc">Sin situación activa: todas las relaciones se leen en su intensidad documental de base.</div>
+    </div>
+
+    <!-- RED -->
+    <div class="network-section">
+      <div class="network-header">
+        <h3><i class="fa-solid fa-share-nodes"></i> Red de Lectura Dinámica del POT</h3>
+        <div class="network-controls">
+          <button class="control-btn active" data-view="todas" onclick="filterView('todas')">Todas</button>
+          <button class="control-btn" data-view="componentes" onclick="filterView('componentes')">Componentes</button>
+          <button class="control-btn" data-view="actores" onclick="filterView('actores')">Actores y mediadores</button>
+        </div>
+      </div>
+
+      <div class="network-viz-wrap">
+        <svg id="readerViz" viewBox="0 0 1060 800" preserveAspectRatio="xMidYMid meet"></svg>
+
+        <div class="network-sidebar">
+          <aside class="network-legend">
+            <div class="legend-title">Convenciones de línea</div>
+            <div class="legend-item legend-static"><span class="legend-line solid"></span> Directa (documentada)</div>
+            <div class="legend-item legend-static"><span class="legend-line dashed"></span> Indirecta / interpretativa</div>
+            <div class="legend-item legend-static"><span class="legend-line arrowed"></span> Dirección sustentada</div>
+            <div class="legend-item legend-static"><span class="legend-line thick"></span> Mayor intensidad</div>
+
+            <div class="legend-title">Color = estructura</div>
+            <div class="legend-item legend-static"><span class="legend-dot" style="background:#5cd6d1;"></span> Ecológica principal</div>
+            <div class="legend-item legend-static"><span class="legend-dot" style="background:#ef9f54;"></span> Funcional y socioeconómica</div>
+            <div class="legend-item legend-static"><span class="legend-dot" style="background:#fb8d84;"></span> Integradora de patrimonios</div>
+
+            <div class="legend-title">Ícono = tipo de nodo</div>
+            <div class="legend-item legend-static"><i class="fa-solid fa-circle-nodes legend-ic" style="color:#c9cedb;"></i> Componente territorial</div>
+            <div class="legend-item legend-static"><i class="fa-solid fa-person legend-ic" style="color:#eef0f6;"></i> Actor</div>
+            <div class="legend-item legend-static"><i class="fa-solid fa-signs-post legend-ic" style="color:#7d8ea3;"></i> Mediador</div>
+
+            <div class="legend-divider"></div>
+            <div class="legend-hint">Clic en una línea: ver nodos, convención, evidencia, actores y lectura crítica.<br>
+            Clic en una bola: apagarla junto con sus líneas.<br>
+            Arrastra una bola: las conectadas la siguen.</div>
+          </aside>
+
+          <div class="edge-info-panel" id="edgeInfoPanel">
+            <div class="edge-info-header">
+              <span id="edgeInfoTitle">Relación</span>
+              <button class="edge-info-close" id="edgeInfoClose" type="button" aria-label="Cerrar">&times;</button>
+            </div>
+
+            <div class="edge-info-row">
+              <div class="edge-info-label">Convención</div>
+              <div class="edge-info-value" id="edgeInfoConvencion">—</div>
+            </div>
+            <div class="edge-info-row">
+              <div class="edge-info-label">Evidencia</div>
+              <div class="edge-info-quote" id="edgeInfoEvidencia">—</div>
+              <div class="edge-info-page" id="edgeInfoPage"></div>
+            </div>
+            <div class="edge-info-row">
+              <div class="edge-info-label">Actores asociados</div>
+              <div class="edge-info-value" id="edgeInfoActores">—</div>
+            </div>
+            <div class="edge-info-row">
+              <div class="edge-info-label">Situación que la modifica</div>
+              <div class="edge-info-value" id="edgeInfoSituacion">—</div>
+            </div>
+            <div class="edge-info-row">
+              <div class="edge-info-label">Lectura crítica</div>
+              <div class="edge-info-quote" id="edgeInfoCritica">—</div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- LO QUE DEMUESTRA -->
