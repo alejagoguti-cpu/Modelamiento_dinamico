@@ -679,3 +679,41 @@ body.module02-reference-page .metric-grid > .metric-card.orange footer i {
   color: var(--m02-teal) !important;
   background-color: var(--m02-teal) !important;
 }
+
+/* Sidebar única y clicable para todos los módulos 01–08. */
+@media (min-width: 821px) {
+  body.module02-reference-page > .app > .sidebar.sidebar-icons-only,
+  body.module02-reference-page > .layout > .sidebar.sidebar-icons-only {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    width: 64px !important;
+    min-width: 64px !important;
+    height: 100vh !important;
+    z-index: 2000 !important;
+    pointer-events: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+  }
+  body.module02-reference-page .sidebar.sidebar-icons-only .icon-nav,
+  body.module02-reference-page .sidebar.sidebar-icons-only .icon-nav-footer {
+    position: relative !important;
+    z-index: 2001 !important;
+    pointer-events: auto !important;
+  }
+  body.module02-reference-page .sidebar.sidebar-icons-only .icon-nav-item {
+    position: relative !important;
+    z-index: 2002 !important;
+    pointer-events: auto !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  body.module02-reference-page > .app > .main,
+  body.module02-reference-page > .layout > .main {
+    min-width: 0 !important;
+  }
+}
