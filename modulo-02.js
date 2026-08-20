@@ -434,4 +434,522 @@ function computeMetrics() {
   const edgeCount = RAW_EDGES.length;
   const vacios = RAW_EDGES.filter(e => e.tipo === "vacio").length;
   const directas = RAW_EDGES.filter(e => e.tipo === "directa").length;
-  const indirectas = RAW_EDGES.filter(e => e
+  const indirectas = RAW_EDGES.filter(e => e.tipo === "indirecta").length;
+  const porFuente = {};
+  RAW_EDGES.forEach(e => { porFuente[e.fuente] = (porFuente[e.fuente]||0)+1; });
+  let maxId = null, maxDeg = 0;
+  Object.entries(deg).forEach(([id, d]) => { if (d > maxDeg) { maxDeg = d; maxId = id; } });
+  return { nodeCount, edgeCount, vacios, directas, indirectas, porFuente, maxId, maxDeg };
+}
+
+function updateMetrics() {
+  const m = computeMetrics();
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  set("metricNodes", m.nodeCount);
+  set("metricEdges", m.edgeCount);
+  set("metricVacios", m.vacios);
+  set("metricDirectas", m.directas);
+  set("metricCitaLiteral", m.porFuente.cita_literal || 0);
+  set("metricIndiceOficial", m.porFuente.inventario_pendiente || 0);
+  set("metricInferencia", m.porFuente.inferencia || 0);
+  const hubNode = nodeById(m.maxId);
+  set("metricHub", hubNode ? hubNode.name.replace(/\n/g," ") + ` (grado ${m.maxDeg})` : "—");
+  Object.keys(STRUCT_STYLE).forEach(cat => {
+    const el = document.getElementById("struct-" + cat);
+    const nCount = ODS_NODES.filter(n => n.cat === cat).length;
+    if (el) el.textContent = String(nCount);
+  });
+}
+
+/* ---------- MATRIZ ---------- */
+function renderMatrix() {
+  const container = document.getElementById("matrixRows");
+  if (!container) return;
+  container.innerHTML = "";
+  RAW_EDGES.forEach((edge, i) => {
+    const s = nodeById(edge.s), t = nodeById(edge.t);
+    if (!s || !t) return;
+    const row = document.createElement("div");
+    row.className = "matrix-row"; row.dataset.edge = i;
+    const color = edgeColor(edge);
+    row.innerHTML = `
+      <div class="matrix-cell"><span class="swatch-tag" style="background:${s.color}"></span> ${edge.cat.toUpperCase()}</div>
+      <div class="matrix-cell">${s.name.replace(/\n/g," ")} → ${t.name.replace(/\n/g," ")}</div>
+      <div class="matrix-cell"><span class="alignment-tag" style="background:${color}26;color:${color}">${TYPE_STYLE[edge.tipo].label}</span></div>
+      <div class="matrix-cell">${fuenteBadgeHTML(edge.fuente)}</div>
+      <div class="matrix-cell">${edge.articulo||"—"}${edge.pagina ? " · p."+edge.pagina : ""}</div>
+      <div class="matrix-cell quote-cell">${edge.analisis||""}</div>`;
+    container.appendChild(row);
+  });
+}
+
+/* ---------- VISIBILIDAD / LEYENDA ---------- */
+const typeOff = new Set(), nodeOff = new Set(), catOff = new Set();
+function refreshEdgeVisibility() {
+  document.querySelectorAll(".edge-group").forEach(el => {
+    const type = el.dataset.type, cat = el.dataset.cat;
+    const hide = typeOff.has(type) || catOff.has(cat);
+    el.classList.toggle("hidden-edge", hide);
+  });
+  document.querySelectorAll(".ods-node").forEach(el => {
+    const cat = el.dataset.cat;
+    const hide = catOff.has(cat);
+    el.classList.toggle("node-off", hide);
+  });
+}
+
+/* ---------- OVERLAY HUMEDALES ---------- */
+function showHumedalesOverlay(opts) {
+  const animateIn = !!(opts && opts.animateIn);
+  hideNodeInfo(); hideEdgeInfo();
+  document.querySelectorAll(".ods-node").forEach(el => el.classList.remove("node-selected"));
+  document.querySelector('.ods-node[data-id="humedales"]')?.classList.add("node-selected");
+
+  const legend = document.getElementById("networkLegend");
+  if (legend) legend.style.display = "none";
+  const ramsar = document.getElementById("humedalRamsarFloat");
+  if (ramsar) ramsar.style.display = "";
+  const acts = document.getElementById("networkSidebarActions");
+  if (acts) acts.style.display = "none";
+
+  const body = document.getElementById("humedalesOverlayBody");
+  const hotspotsHTML = Object.entries(HUMEDALES_CASOS).map(([key, c]) =>
+    `<button type="button" class="humedal-hotspot" data-key="${key}"
+      style="left:${c.x}%; top:${c.y}%; width:${c.diam}%; height:${c.diam*(16/9)}%; --hotspot-color:${c.color||"#2fd4c8"};"
+      title="${c.nombre}">
+      <span class="humedal-hotspot-label">${c.label}</span>
+    </button>`
+  ).join("");
+
+  const linesHTML = HUMEDAL_LINEAS.map((conn, idx) => {
+    const a = conn.a, b = conn.b;
+    const y1 = a.y * 0.5625, y2 = b.y * 0.5625;
+    const clickable = !!conn.cita;
+    return `<g class="${clickable ? "humedal-line-group clickable" : "humedal-line-group"}">
+      <line class="humedal-line-visible" x1="${a.x}" y1="${y1}" x2="${b.x}" y2="${y2}" />
+      ${clickable ? `<line class="humedal-line-hit" data-conn="${idx}" x1="${a.x}" y1="${y1}" x2="${b.x}" y2="${y2}" />` : ""}
+    </g>`;
+  }).join("");
+
+  body.innerHTML = `
+    <div class="humedales-overlay-image-wrap" id="humedalesImageWrap">
+      <div class="humedales-overlay-image-frame" id="humedalesImageFrame">
+        <svg class="humedales-overlay-lines" viewBox="0 0 100 56.25" preserveAspectRatio="none">${linesHTML}</svg>
+        ${hotspotsHTML}
+      </div>
+      <div class="humedal-popup" id="humedalPopup" style="display:none;"></div>
+    </div>`;
+
+  document.querySelector(".network-canvas").style.display = "none";
+  const overlayEl = document.getElementById("humedalesOverlay");
+  overlayEl.style.display = "flex";
+  if (animateIn) {
+    overlayEl.classList.remove("overlay-entering");
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        overlayEl.classList.add("overlay-entering");
+        const clear = () => overlayEl.classList.remove("overlay-entering");
+        overlayEl.addEventListener("animationend", clear, { once: true });
+        setTimeout(clear, 700);
+      });
+    });
+  }
+  fitImageFrame();
+  setupHumedalesZoom();
+  wireHumedalHotspots();
+}
+
+function hideHumedalesOverlay() {
+  const legend = document.getElementById("networkLegend");
+  if (legend) legend.style.display = "";
+  const ramsar = document.getElementById("humedalRamsarFloat");
+  if (ramsar) ramsar.style.display = "none";
+  const acts = document.getElementById("networkSidebarActions");
+  if (acts) acts.style.display = "";
+  document.getElementById("humedalesOverlay").style.display = "none";
+  document.querySelector(".network-canvas").style.display = "";
+  document.querySelectorAll(".ods-node").forEach(el => el.classList.remove("node-selected"));
+  resetHumedalesZoom();
+}
+
+/* ---------- OVERLAY MOVILIDAD ---------- */
+function showMovilidadOverlay(opts) {
+  const animateIn = !!(opts && opts.animateIn);
+  hideNodeInfo(); hideEdgeInfo();
+
+  const body = document.getElementById("movilidadOverlayBody");
+  const highlightRingsHTML = Object.entries(MOVILIDAD_CIRCULOS).map(([key, c]) =>
+    `<div class="movilidad-bola" data-key="${key}"
+      style="left:${c.x}%; top:${c.y}%; width:${c.diam}%; height:${(c.diam*MOVILIDAD_ASPECT).toFixed(3)}%;">
+      <span>${(c.label||"").replace(/\n/g, "<br>")}</span>
+    </div>`
+  ).join("");
+
+  const lineasHTML = MOVILIDAD_CORREDORES_NEON.map(l =>
+    `<img class="movilidad-neon-line-img" data-corredor="${l.id}" src="${l.img}"
+      style="--neon-color:${l.color};" alt="" />`
+  ).join("");
+
+  const trazoRosaHTML = `<svg class="movilidad-trazo-rosa" viewBox="0 0 100 ${MOVILIDAD_VIEWBOX_H}" preserveAspectRatio="none">
+    ${MOVILIDAD_LINEAS_ROSA.map(l => {
+      const pts = l.puntos.map(p => p[0] + "," + (p[1]*MOVILIDAD_VIEWBOX_H/100)).join(" ");
+      return `<polyline data-linea="${l.id}" style="--linea-color:${l.color}" points="${pts}" />
+              <polyline class="movilidad-trazo-hit" data-linea="${l.id}" points="${pts}" />`;
+    }).join("")}
+  </svg>`;
+
+  body.innerHTML = `
+    <div class="movilidad-overlay-image-wrap" id="movilidadImageWrap">
+      <div class="movilidad-overlay-image-frame" id="movilidadImageFrame">
+        ${lineasHTML}
+        ${trazoRosaHTML}
+        ${highlightRingsHTML}
+      </div>
+      <div class="movilidad-popup" id="movilidadPopup" style="display:none;"></div>
+    </div>
+    <div class="movilidad-nota-naranja">
+      <p><strong>Hallazgo principal:</strong> El POT proyecta el sistema de movilidad como un conjunto de trazados y equipamientos, pero no mide cómo se mueve realmente la ciudad. Las líneas y los círculos del plano indican dónde llegará la infraestructura, no los tiempos de viaje, los transbordos, los desplazamientos de cuidado ni los recorridos que la gente ya hace todos los días.</p>
+    </div>`;
+
+  document.querySelector(".network-canvas").style.display = "none";
+  const overlayEl = document.getElementById("movilidadOverlay");
+  overlayEl.style.display = "flex";
+  if (animateIn) {
+    overlayEl.classList.remove("overlay-entering");
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        overlayEl.classList.add("overlay-entering");
+        const clear = () => overlayEl.classList.remove("overlay-entering");
+        overlayEl.addEventListener("animationend", clear, { once: true });
+        setTimeout(clear, 700);
+      });
+    });
+  }
+  fitMovilidadFrame();
+  wireMovilidadHotspots();
+}
+
+function hideMovilidadOverlay() {
+  document.getElementById("movilidadOverlay").style.display = "none";
+  document.querySelector(".network-canvas").style.display = "";
+  document.querySelectorAll(".ods-node").forEach(el => el.classList.remove("node-selected"));
+}
+
+/* ---------- ZOOM HUMEDALES ---------- */
+const humedalesZoomState = { scale:1, tx:0, ty:0 };
+const HUMEDALES_ZOOM_MIN = 1, HUMEDALES_ZOOM_MAX = 6;
+
+function applyHumedalesZoom() {
+  const frame = document.getElementById("humedalesImageFrame");
+  if (!frame) return;
+  const { scale, tx, ty } = humedalesZoomState;
+  frame.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
+}
+function clampHumedalesPan() {
+  const wrap = document.querySelector(".humedales-overlay-image-wrap");
+  const frame = document.getElementById("humedalesImageFrame");
+  if (!wrap || !frame) return;
+  const { scale } = humedalesZoomState;
+  const extraW = (frame.offsetWidth*scale - frame.offsetWidth)/2;
+  const extraH = (frame.offsetHeight*scale - frame.offsetHeight)/2;
+  const maxTx = Math.max(0, extraW), maxTy = Math.max(0, extraH);
+  humedalesZoomState.tx = Math.max(-maxTx, Math.min(maxTx, humedalesZoomState.tx));
+  humedalesZoomState.ty = Math.max(-maxTy, Math.min(maxTy, humedalesZoomState.ty));
+}
+function setHumedalesZoom(newScale, cx, cy) {
+  const wrap = document.querySelector(".humedales-overlay-image-wrap");
+  if (!wrap) return;
+  const clamped = Math.max(HUMEDALES_ZOOM_MIN, Math.min(HUMEDALES_ZOOM_MAX, newScale));
+  const rect = wrap.getBoundingClientRect();
+  const px = (cx !== undefined ? cx : rect.width/2) - rect.width/2;
+  const py = (cy !== undefined ? cy : rect.height/2) - rect.height/2;
+  const prevScale = humedalesZoomState.scale;
+  const ratio = clamped/prevScale;
+  humedalesZoomState.tx = px - (px - humedalesZoomState.tx)*ratio;
+  humedalesZoomState.ty = py - (py - humedalesZoomState.ty)*ratio;
+  humedalesZoomState.scale = clamped;
+  clampHumedalesPan();
+  applyHumedalesZoom();
+}
+function resetHumedalesZoom() {
+  humedalesZoomState.scale = 1; humedalesZoomState.tx = 0; humedalesZoomState.ty = 0;
+  applyHumedalesZoom();
+}
+
+function setupHumedalesZoom() {
+  const wrap = document.querySelector(".humedales-overlay-image-wrap");
+  document.getElementById("humedalesZoomIn")?.addEventListener("click", () => setHumedalesZoom(humedalesZoomState.scale*1.4));
+  document.getElementById("humedalesZoomOut")?.addEventListener("click", () => setHumedalesZoom(humedalesZoomState.scale/1.4));
+  document.getElementById("humedalesZoomReset")?.addEventListener("click", resetHumedalesZoom);
+  document.getElementById("humedalesOverlayBody")?.addEventListener("wheel", (ev) => {
+    const w = document.querySelector(".humedales-overlay-image-wrap");
+    if (!w || !w.contains(ev.target)) return;
+    ev.preventDefault();
+    const rect = w.getBoundingClientRect();
+    const cx = ev.clientX - rect.left, cy = ev.clientY - rect.top;
+    const delta = ev.deltaY < 0 ? 1.15 : 1/1.15;
+    setHumedalesZoom(humedalesZoomState.scale*delta, cx, cy);
+  }, { passive:false });
+
+  let panning=false, startX=0, startY=0, startTx=0, startTy=0, moved=false;
+  document.getElementById("humedalesOverlayBody")?.addEventListener("pointerdown", (ev) => {
+    const w = document.querySelector(".humedales-overlay-image-wrap");
+    if (!w || !w.contains(ev.target)) return;
+    if (humedalesZoomState.scale <= 1) return;
+    panning=true; moved=false;
+    startX=ev.clientX; startY=ev.clientY;
+    startTx=humedalesZoomState.tx; startTy=humedalesZoomState.ty;
+    w.classList.add("panning");
+    w.setPointerCapture?.(ev.pointerId);
+  });
+  document.getElementById("humedalesOverlayBody")?.addEventListener("pointermove", (ev) => {
+    if (!panning) return;
+    const dx=ev.clientX-startX, dy=ev.clientY-startY;
+    if (Math.abs(dx)>3 || Math.abs(dy)>3) moved=true;
+    humedalesZoomState.tx = startTx+dx;
+    humedalesZoomState.ty = startTy+dy;
+    clampHumedalesPan();
+    applyHumedalesZoom();
+  });
+  function endPan(ev) {
+    if (!panning) { moved=false; return; }
+    panning=false;
+    document.querySelector(".humedales-overlay-image-wrap")?.classList.remove("panning");
+    if (moved) setTimeout(() => { moved=false; }, 0);
+  }
+  document.getElementById("humedalesOverlayBody")?.addEventListener("pointerup", endPan);
+  document.getElementById("humedalesOverlayBody")?.addEventListener("pointercancel", endPan);
+  document.getElementById("humedalesOverlayBody")?.addEventListener("click", (ev) => {
+    if (moved) { ev.stopPropagation(); ev.preventDefault(); moved=false; return; }
+    if (!ev.target.closest(".humedal-hotspot") && !ev.target.closest(".humedal-line-hit") && !ev.target.closest("#humedalPopup")) {
+      hideHumedalPopup();
+    }
+  }, true);
+}
+
+/* ---------- FIT FRAMES ---------- */
+function fitImageFrame() {
+  const wrap = document.getElementById("humedalesImageWrap");
+  const frame = document.getElementById("humedalesImageFrame");
+  if (!wrap || !frame) return;
+  const wrapW=wrap.clientWidth, wrapH=wrap.clientHeight;
+  if (!wrapW || !wrapH) return;
+  const ratio = 16/9;
+  let w=wrapW, h=w/ratio;
+  if (h>wrapH) { h=wrapH; w=h*ratio; }
+  frame.style.width=w+"px"; frame.style.height=h+"px";
+}
+function fitMovilidadFrame() {
+  const wrap = document.getElementById("movilidadImageWrap");
+  const frame = document.getElementById("movilidadImageFrame");
+  if (!wrap || !frame) return;
+  const wrapW=wrap.clientWidth, wrapH=wrap.clientHeight;
+  if (!wrapW || !wrapH) return;
+  const ratio = 16/9;
+  let w=wrapW, h=w/ratio;
+  if (h>wrapH) { h=wrapH; w=h*ratio; }
+  frame.style.width=w+"px"; frame.style.height=h+"px";
+}
+
+/* ---------- POPUPS HUMEDAL ---------- */
+let humedalPopupAnchor = null;
+function showHumedalPopup(innerHTML, xPct, yPct) {
+  const popup = document.getElementById("humedalPopup");
+  const wrap = document.getElementById("humedalesImageWrap");
+  const frame = document.getElementById("humedalesImageFrame");
+  if (!popup || !wrap || !frame) return;
+  humedalPopupAnchor = { x:xPct, y:yPct };
+  document.getElementById("humedalRamsarFloat")?.classList.add("humedal-ramsar-float-hidden");
+  popup.innerHTML = innerHTML;
+  popup.style.display = "block";
+
+  const wrapRect = wrap.getBoundingClientRect();
+  const frameRect = frame.getBoundingClientRect();
+  const absX = frameRect.left + (xPct/100)*frameRect.width - wrapRect.left;
+  const absY = frameRect.top + (yPct/100)*frameRect.height - wrapRect.top;
+
+  const popupW = 260, popupH = 150;
+  let left = absX + 12, top = absY - popupH/2;
+  let flip = false;
+  if (left + popupW > wrapRect.width) { left = absX - popupW - 12; flip = true; }
+  if (top < 0) top = 10;
+  if (top + popupH > wrapRect.height) top = wrapRect.height - popupH - 10;
+
+  popup.style.left = left+"px"; popup.style.top = top+"px";
+  popup.classList.toggle("humedal-popup-flip", flip);
+  document.getElementById("humedalPopupCloseBtn")?.addEventListener("click", hideHumedalPopup);
+}
+function hideHumedalPopup() {
+  const popup = document.getElementById("humedalPopup");
+  if (popup) { popup.style.display="none"; popup.innerHTML=""; }
+  humedalPopupAnchor = null;
+  document.querySelectorAll(".humedal-hotspot").forEach(b => b.classList.remove("active"));
+  document.getElementById("humedalRamsarFloat")?.classList.remove("humedal-ramsar-float-hidden");
+}
+
+function showHumedalCasoDetalle(key) {
+  const c = HUMEDALES_CASOS[key];
+  if (!c) return;
+  const html = `
+    <div class="humedal-caso humedal-caso-detalle">
+      <div class="humedal-caso-nombre">${c.nombre}</div>
+      <div class="humedal-caso-cita">"${c.cita}"</div>
+      <div class="humedal-caso-pagina">POT${c.pagina ? ", p. "+c.pagina : ""}</div>
+    </div>
+    <button type="button" class="humedal-back-btn" id="humedalPopupCloseBtn">Cerrar</button>`;
+  showHumedalPopup(html, c.x, c.y);
+}
+
+function showHumedalConexionDetalle(conn, lineEl) {
+  const [aKey, bKey] = conn.par;
+  const a = HUMEDALES_CASOS[aKey], b = HUMEDALES_CASOS[bKey];
+  const html = `
+    <div class="humedal-caso humedal-caso-detalle">
+      <div class="humedal-caso-nombre">${a?.nombre||aKey} ↔ ${b?.nombre||bKey}</div>
+      <div class="humedal-caso-cita">"${conn.cita}"</div>
+      <div class="humedal-caso-pagina">POT${conn.pagina ? ", p. "+conn.pagina : ""}</div>
+    </div>
+    <button type="button" class="humedal-back-btn" id="humedalPopupCloseBtn">Cerrar</button>`;
+  const midX = a && b ? (a.x+b.x)/2 : 50;
+  const midY = a && b ? (a.y+b.y)/2 : 50;
+  showHumedalPopup(html, midX, midY);
+}
+
+function wireHumedalHotspots() {
+  document.querySelectorAll(".humedal-hotspot").forEach(btn => {
+    btn.addEventListener("click", (ev) => {
+      ev.stopPropagation();
+      document.querySelectorAll(".humedal-hotspot").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      showHumedalCasoDetalle(btn.dataset.key);
+    });
+  });
+  document.querySelectorAll(".humedal-line-hit").forEach(line => {
+    line.addEventListener("click", (ev) => {
+      ev.stopPropagation();
+      const idx = parseInt(line.dataset.conn);
+      const conn = HUMEDAL_LINEAS[idx];
+      if (conn) showHumedalConexionDetalle(conn, line);
+    });
+  });
+}
+
+/* ---------- POPUPS MOVILIDAD ---------- */
+function showMovilidadPopup(innerHTML, xPct, yPct) {
+  const popup = document.getElementById("movilidadPopup");
+  const wrap = document.getElementById("movilidadImageWrap");
+  const frame = document.getElementById("movilidadImageFrame");
+  if (!popup || !wrap || !frame) return;
+  popup.innerHTML = innerHTML;
+  popup.style.display = "block";
+
+  const wrapRect = wrap.getBoundingClientRect();
+  const frameRect = frame.getBoundingClientRect();
+  const absX = frameRect.left + (xPct/100)*frameRect.width - wrapRect.left;
+  const absY = frameRect.top + (yPct/100)*frameRect.height - wrapRect.top;
+
+  const popupW = 270, popupH = 160;
+  let left = absX + 12, top = absY - popupH/2;
+  let flip = false;
+  if (left + popupW > wrapRect.width) { left = absX - popupW - 12; flip = true; }
+  if (top < 0) top = 10;
+  if (top + popupH > wrapRect.height) top = wrapRect.height - popupH - 10;
+
+  popup.style.left = left+"px"; popup.style.top = top+"px";
+  popup.classList.toggle("movilidad-popup-flip", flip);
+  document.getElementById("movilidadPopupCloseBtn")?.addEventListener("click", () => { popup.style.display="none"; popup.innerHTML=""; });
+}
+
+function showMovilidadCorredorDetalle(corredorId) {
+  const corredor = MOVILIDAD_CORREDORES_NEON.find(l => l.id === corredorId);
+  if (!corredor) return;
+  const html = `
+    <div class="movilidad-popup-titulo">${corredor.titulo}</div>
+    <div class="movilidad-popup-cita">"${corredor.cita}"</div>
+    ${corredor.pagina ? `<div class="humedal-caso-pagina">${corredor.pagina}</div>` : ""}
+    <button type="button" class="movilidad-back-btn" id="movilidadPopupCloseBtn">Cerrar</button>`;
+  showMovilidadPopup(html, corredor.anchor[0], corredor.anchor[1]);
+}
+
+function wireMovilidadHotspots() {
+  document.querySelectorAll(".movilidad-trazo-hit").forEach(line => {
+    line.addEventListener("click", (ev) => {
+      ev.stopPropagation();
+      showMovilidadCorredorDetalle(line.dataset.linea);
+    });
+  });
+}
+
+/* ---------- ANIMACIONES HALLAZGOS ---------- */
+function verHallazgosConAnimacion() {
+  document.querySelectorAll(".blackout-flicker").forEach(el => el.classList.remove("blackout-flicker"));
+  document.querySelectorAll(".blackout-surviving").forEach(el => el.classList.remove("blackout-surviving"));
+
+  setTimeout(() => {
+    const svg = document.getElementById("networkViz");
+    svg?.classList.add("zoom-into-humedales");
+    const onDone = () => {
+      svg?.removeEventListener("transitionend", onDone);
+      showMovilidadOverlay({ animateIn:true });
+      svg?.classList.remove("zoom-into-humedales");
+      if (svg) svg.style.transformOrigin = "";
+    };
+    if (svg) {
+      svg.style.transformOrigin = "50% 50%";
+      svg.addEventListener("transitionend", onDone, { once:true });
+      setTimeout(() => { if (svg.classList.contains("zoom-into-humedales")) onDone(); }, 3200);
+    } else { showMovilidadOverlay({ animateIn:true }); }
+  }, 650);
+}
+
+function explorarRelacionesConAnimacion() {
+  const svg = document.getElementById("networkViz");
+  const nodeEl = document.querySelector('.ods-node[data-id="humedales"]');
+  if (!svg || !nodeEl) { showHumedalesOverlay(); return; }
+  const humedal = nodeById("humedales");
+  const vb = svg.viewBox.baseVal;
+  const originXPct = ((humedal.x - vb.x)/vb.width)*100;
+  const originYPct = ((humedal.y - vb.y)/vb.height)*100;
+  svg.style.transformOrigin = `${originXPct}% ${originYPct}%`;
+  svg.classList.add("zoom-into-humedales");
+  const onDone = () => {
+    svg.removeEventListener("transitionend", onDone);
+    showHumedalesOverlay({ animateIn:true });
+    svg.classList.remove("zoom-into-humedales");
+    svg.style.transformOrigin = "";
+  };
+  svg.addEventListener("transitionend", onDone, { once:true });
+  setTimeout(() => { if (svg.classList.contains("zoom-into-humedales") && document.getElementById("humedalesOverlay").style.display !== "flex") onDone(); }, 3200);
+}
+
+/* ---------- INICIALIZACIÓN ---------- */
+document.addEventListener("DOMContentLoaded", () => {
+  renderNetwork();
+  updateMetrics();
+  renderMatrix();
+
+  // Leyenda
+  document.querySelectorAll(".legend-item input").forEach(input => {
+    input.addEventListener("change", (e) => {
+      const item = e.target.closest(".legend-item");
+      const mode = item.dataset.mode, val = item.dataset.type || item.dataset.cat;
+      if (e.target.checked) { if (mode==="type") typeOff.delete(val); else catOff.delete(val); }
+      else { if (mode==="type") typeOff.add(val); else catOff.add(val); }
+      item.classList.toggle("off", !e.target.checked);
+      refreshEdgeVisibility();
+    });
+  });
+
+  document.getElementById("edgeInfoClose")?.addEventListener("click", hideEdgeInfo);
+  document.getElementById("nodeInfoClose")?.addEventListener("click", hideNodeInfo);
+  document.getElementById("humedalesOverlayClose")?.addEventListener("click", hideHumedalesOverlay);
+  document.getElementById("movilidadOverlayClose")?.addEventListener("click", () => { hideMovilidadOverlay(); });
+  document.getElementById("networkViz")?.addEventListener("click", () => { hideEdgeInfo(); hideNodeInfo(); });
+  document.getElementById("btnVerHallazgos")?.addEventListener("click", verHallazgosConAnimacion);
+  document.getElementById("btnExplorarRelaciones")?.addEventListener("click", explorarRelacionesConAnimacion);
+
+  window.addEventListener("resize", () => {
+    if (document.getElementById("humedalesOverlay")?.style.display === "flex") fitImageFrame();
+    if (document.getElementById("movilidadOverlay")?.style.display === "flex") fitMovilidadFrame();
+  });
+});
