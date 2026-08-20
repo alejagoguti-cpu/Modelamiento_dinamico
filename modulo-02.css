@@ -587,7 +587,7 @@ footer span { color: var(--teal); }
   pointer-events: none; z-index: 1; overflow: visible;
 }
 .movilidad-overlay-lines .movilidad-neon-line-img {
-  opacity: 0.85; filter: saturate(0.55) brightness(0.9);
+  opacity: 0.48; filter: saturate(0.35) brightness(0.82);
   position: absolute; inset: 0; width: 100%; height: 100%;
   object-fit: contain; object-position: center;
 }
@@ -625,11 +625,11 @@ footer span { color: var(--teal); }
    zoom o el tamaño de pantalla. El color+glow neón se aplica con filtros
    CSS sobre esa misma máscara, nunca redibujando la línea desde cero. */
 .movilidad-overlay-lines .movilidad-neon-line-img {
-  opacity: 0.85; filter: saturate(0.55) brightness(0.9);
+  opacity: 0.48; filter: saturate(0.35) brightness(0.82);
   filter:
+    drop-shadow(0 0 1px var(--neon-color, #39ff6a))
     drop-shadow(0 0 3px var(--neon-color, #39ff6a))
-    drop-shadow(0 0 9px var(--neon-color, #39ff6a))
-    brightness(1.35) saturate(1.4);
+    brightness(1.05) saturate(0.85);
   mix-blend-mode: screen;
   transition: filter 0.15s ease;
 }

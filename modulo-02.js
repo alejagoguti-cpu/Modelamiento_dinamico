@@ -1428,7 +1428,6 @@ const MOVILIDAD_LINEAS_ROSA = [
   { id: "regiotram_occidente", color: "#d28b36", rel: "regiotram_norte", etiqueta: "RegioTram", puntos: [[33.96,28.15],[34.83,29.41],[35.33,30.96],[35.83,32.52],[36.38,34.07],[36.92,35.63],[37.5,37.19],[38.38,38.74],[39.25,40.3],[40.13,41.48],[41,43.04],[41.38,44.59],[41.71,46.15],[42.08,47.7],[42.46,49.26],[42.79,50.81],[43.21,52.37],[42.33,53.93],[41.46,55.48],[40.58,57.04],[39.71,58.59],[38.83,60.15],[37.96,61.7],[37.08,63.26],[36.21,64.81],[35.33,66.37],[34.46,67.93],[33.92,69.48],[33.29,71.04],[33.33,72.59],[33.33,74.15],[33.42,75.7],[33.46,77.26],[33.54,78.81],[33.58,80.37],[33.63,81.93],[33.71,83.48],[33.75,85.04],[33.46,86.59],[32.79,88.15],[32.08,89.7],[31.33,91.26],[30.67,92.81],[29.92,94.37],[30.08,95.19]] },
   { id: "regiotram_norte", color: "#d28b36", rel: "regiotram_norte", etiqueta: "RegioTram", puntos: [[3.96,26.22],[5.63,26.07],[7.29,26.81],[8.96,27.56],[10.63,28.3],[12.29,28.3],[13.96,28.22],[15.63,27.7],[17.29,27.7],[18.96,27.26],[20.63,27.33],[22.29,27.48],[23.96,27.48],[25.62,27.63],[27.29,27.7],[28.96,27.78],[30.63,27.85],[32.29,27.93],[33.96,28]] },
   { id: "primera_linea_metro", color: "#ff9d2e", rel: "primera_linea_metro", etiqueta: "1.ª línea del metro", puntos: [[23.54,54.44],[23.67,52.89],[24.54,51.33],[25.42,50.74],[26.29,50.52],[27.17,50.22],[28.04,49.48],[28.92,48.44],[29.79,47.26],[30.67,46.52],[31.54,46.74],[32.42,48.07],[33.29,49.19],[34.17,50.3],[34.88,49.11],[35.75,47.56],[36.63,46],[37.5,44.44],[38.29,42.89],[39.17,41.33],[40.04,39.78],[40.92,38.22],[41.79,36.96],[42.67,37.56],[43.54,37.78],[44.42,38.07],[45.29,38.3],[46.17,38.59],[47.04,38.89],[47.92,39.11],[48.79,40.15],[49.42,41.7],[49,43.26],[48.13,44.81],[47.33,46.37],[47.46,47.93],[47.79,49.48],[48.17,51.04],[48.58,52.59],[48.92,54.15],[49.25,55.7],[49.71,57.26],[50.5,58.81],[50.38,60.37],[50.63,61.93],[51,63.48],[51.42,65.04],[51.83,66.59],[51.75,68.15],[51.79,69.7],[51.79,71.26],[51.83,72.81],[51.33,74],[50.46,74.52],[49.58,75.11],[48.71,75.85],[47.83,77.41],[46.96,78.96],[46.58,80.52],[47.17,82.07],[48.04,83.63],[48.92,84.37],[49.79,84.96],[50.67,85.63],[51.54,86.52],[52.42,87.48],[53.29,88.37],[54.17,89.85]] },
-  { id: "segunda_linea_metro", color: "#f76fb0", rel: "segunda_linea_metro", etiqueta: "2.ª línea del metro", puntos: [[42.67,37.56],[42.25,35.3],[41.45,33.1],[40.2,30.8],[38.6,28.6],[36.7,26.4],[34.4,24.5],[31.8,22.8],[29.2,21.2]] },
 ];
 
 const MOVILIDAD_CORREDORES_NEON = [
@@ -1461,12 +1460,6 @@ const MOVILIDAD_RELACIONES = {
     titulo: "Primera Línea del Metro",
     cita: "\\u201cCon el Metro no solo llegan trenes eléctricos y estaciones, también llega más progreso social. A Kennedy, por ejemplo, con la Primera Línea llega una nueva Manzana del Cuidado, un nuevo centro deportivo de alto rendimiento, un velódromo para los jóvenes y deportistas, también un nuevo parque metropolitano. A Suba le llegan nuevos colegios y una universidad pública, un logro que lideraron los mismos jóvenes. Además, una biblioteca, un centro cultural por el que ha luchado el Cabildo Muisca, cerca de 15.000 viviendas de interés social y un parque lineal.\\u201d",
     pagina: "Página 78",
-  },
-  segunda_linea_metro: {
-    x: 38.6, y: 28.6, sinPunto: true,
-    titulo: "Segunda Línea del Metro",
-    cita: "La Segunda Línea del Metro se conecta con la Primera Línea en el nodo central del plano; por eso se representa como una derivación rosada que sube hacia el norte.",
-    pagina: "Conexión con la Primera Línea",
   },
   regiotram_metro: {
     x: 35.0, y: 20.5,
