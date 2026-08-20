@@ -587,6 +587,7 @@ footer span { color: var(--teal); }
   pointer-events: none; z-index: 1; overflow: visible;
 }
 .movilidad-overlay-lines .movilidad-neon-line-img {
+  opacity: 0.85; filter: saturate(0.55) brightness(0.9);
   position: absolute; inset: 0; width: 100%; height: 100%;
   object-fit: contain; object-position: center;
 }
@@ -624,6 +625,7 @@ footer span { color: var(--teal); }
    zoom o el tamaño de pantalla. El color+glow neón se aplica con filtros
    CSS sobre esa misma máscara, nunca redibujando la línea desde cero. */
 .movilidad-overlay-lines .movilidad-neon-line-img {
+  opacity: 0.85; filter: saturate(0.55) brightness(0.9);
   filter:
     drop-shadow(0 0 3px var(--neon-color, #39ff6a))
     drop-shadow(0 0 9px var(--neon-color, #39ff6a))
@@ -686,6 +688,7 @@ footer span { color: var(--teal); }
   border: 1px solid rgba(47, 212, 200, 0.45); border-radius: 10px;
   padding: 12px 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.55), 0 0 0 1px rgba(0,0,0,0.2);
   pointer-events: auto; font-size: 12.5px; color: #d7dae2; line-height: 1.55;
+  overflow-y: auto; overscroll-behavior: contain;
 }
 .movilidad-popup .movilidad-popup-titulo { color: var(--teal); font-weight: 700; font-size: 12.5px; margin-bottom: 8px; }
 .movilidad-popup .movilidad-popup-cita { font-style: italic; color: #f2f3f6; }
@@ -750,10 +753,63 @@ footer span { color: var(--teal); }
 /* Trazo rosa calcado sobre la línea de la foto del plano de movilidad. */
 .movilidad-trazo-rosa {
   position: absolute; inset: 0; width: 100%; height: 100%;
-  pointer-events: none; z-index: 5; overflow: visible;
+  pointer-events: none; z-index: 6; overflow: visible;
+  /* el svg no captura clics; solo la capa de impacto de cada trazo lo hace */
 }
-.movilidad-trazo-rosa polyline {
-  fill: none; stroke: #ff4fa8; stroke-width: 0.55;
+.movilidad-trazo-rosa .movilidad-trazo-hit {
+  stroke: transparent; stroke-width: 1.6; fill: none; filter: none;
+  pointer-events: stroke; cursor: pointer;
+}
+.movilidad-trazo-rosa polyline:not(.movilidad-trazo-hit) {
+  fill: none; stroke: var(--linea-color, #e9695c); stroke-width: 0.32;
   stroke-linecap: round; stroke-linejoin: round;
-  filter: drop-shadow(0 0 0.5px rgba(255,79,168,0.95)) drop-shadow(0 0 2px rgba(255,79,168,0.6));
+  stroke-dasharray: 0.3 0.95;
+  color: var(--linea-color, #e9695c);
+  filter: drop-shadow(0 0 1px currentColor);
+  animation: movilidadTrazoFlujo 5.5s linear infinite;
+}
+@keyframes movilidadTrazoFlujo { to { stroke-dashoffset: -2.5; } }
+@media (prefers-reduced-motion: reduce) {
+  .movilidad-trazo-rosa polyline:not(.movilidad-trazo-hit) { animation: none; }
+}
+
+/* Copia de las bolas naranjas de la foto del plano de movilidad: mismo tamaño
+   y posición, fondo negro, letra blanca y aro naranja con leve brillo. */
+.movilidad-bola {
+  position: absolute; transform: translate(-50%, -50%) scale(1.1);
+  border-radius: 50%; box-sizing: border-box;
+  background: #060606;
+  border: 2px solid #ff9d2e;
+  box-shadow: 0 0 0 1px rgba(255,157,46,0.25), 0 0 12px -2px rgba(255,157,46,0.6);
+  display: grid; place-items: center; text-align: center;
+  z-index: 7; pointer-events: none; overflow: hidden;
+  container-type: size;
+}
+.movilidad-bola span {
+  /* La tipografía se escala al diámetro de la bola (container query units),
+     así la etiqueta siempre cabe dentro del círculo, como en la foto. */
+  color: #fff; font-size: 13cqw; line-height: 1.05;
+  max-width: 100%; overflow-wrap: anywhere;
+  font-weight: 600; letter-spacing: 0.01em; padding: 0 6%;
+  text-wrap: pretty;
+}
+
+/* Modo edición de trazos (tecla L). */
+.movilidad-trazo-rosa.editando { pointer-events: auto; }
+.movilidad-vertice {
+  fill: #fff; stroke: #111; stroke-width: 0.12;
+  cursor: grab; pointer-events: auto;
+}
+.movilidad-vertice:active { cursor: grabbing; }
+.movilidad-edit-bar {
+  position: absolute; top: 12px; left: 12px; z-index: 40;
+  display: flex; align-items: center; gap: 10px;
+  padding: 7px 12px; border-radius: 8px;
+  background: rgba(12, 14, 18, 0.88); border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #f2f2f2; font-size: 12px; letter-spacing: .02em;
+}
+.movilidad-edit-bar button {
+  padding: 4px 10px; border-radius: 6px; cursor: pointer;
+  background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.28);
+  color: #fff; font-size: 11px;
 }
