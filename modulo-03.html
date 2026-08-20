@@ -308,20 +308,6 @@ html,body{height:auto!important;min-height:100vh!important;overflow-x:hidden!imp
       </div>
     </section>
 
-    <section class="pcard m03-full-width-state">
-      <h2>Estado de la red</h2>
-      <div class="stat-grid">
-        <div class="stat wide"><div class="lbl">Relaciones activas</div><div class="val accent" id="mRelAct">—</div><div class="bar-track"><div class="bar-fill" id="mBar" style="width:100%"></div></div></div>
-        <div class="stat"><div class="lbl">Red activa</div><div class="val" id="mPct">—</div></div>
-        <div class="stat"><div class="lbl">Relaciones totales</div><div class="val" id="mRelTot">—</div></div>
-        <div class="stat"><div class="lbl">Nodos totales</div><div class="val" id="mNodTot">—</div></div>
-        <div class="stat"><div class="lbl">Nodos activos</div><div class="val" id="mNodAct">—</div></div>
-        <div class="stat"><div class="lbl">Componentes conectados</div><div class="val" id="mComp">—</div></div>
-        <div class="stat"><div class="lbl">Componente principal</div><div class="val" id="mMain">—</div></div>
-        <div class="stat"><div class="lbl">Conceptos aislados</div><div class="val" id="mIso">—</div></div>
-        <div class="stat wide"><div class="lbl">Sistema más conectado con los demás</div><div class="val" id="mCentral">—</div></div>
-      </div>
-    </section>
   </main>
 </div>
 
@@ -397,9 +383,8 @@ html,body{height:auto!important;min-height:100vh!important;overflow-x:hidden!imp
 @media(min-width:1000px){
   .network-metrics-strip,.m03-relations-table{width:100%!important;margin-left:0!important;margin-right:0!important}
   .network-metrics-strip{grid-template-columns:repeat(4,minmax(0,1fr))!important}
-  .m03-full-width-metrics,.m03-full-width-table,.m03-full-width-state{width:100%!important;margin-left:0!important;margin-right:0!important}
+  .m03-full-width-metrics,.m03-full-width-table{width:100%!important;margin-left:0!important;margin-right:0!important}
   .m03-full-width-metrics{margin-top:12px!important}
-  .m03-full-width-state{margin-top:20px!important;margin-bottom:28px!important;background:#111416!important;border:1px solid rgba(255,255,255,.10)!important;border-radius:12px!important;padding:20px!important}
   /* Proporción horizontal del Módulo 02: 791 px de canvas + 20 px + 260 px de panel. */
   .app .main .welcome,
   .app .main .net-layout,
