@@ -335,7 +335,7 @@ const NODE_POS = {
   ciclorutas: { x: 1689, y: 98 },
   transporte_publico: { x: 1686, y: 539 },
   red_vial: { x: 2022, y: 306 },
-  corredores_verdes: { x: 2014, y: 810 },
+  corredores_verdes: { x: 34.7, y: 97.9 },
   manzanas_del_cuidado: { x: 1485, y: 445 },
   parques: { x: 1732, y: 884 },
   distrito_centro_tecnologico_e_innovacion: { x: 1244, y: 1298 },
@@ -1392,17 +1392,17 @@ const MOVILIDAD_ASPECT = 16 / 9;
 const MOVILIDAD_VIEWBOX_H = 100 / MOVILIDAD_ASPECT;
 
 const MOVILIDAD_CIRCULOS = {
-  empleos: { x: 64.0, y: 34.5, diam: 6.3, resaltar: true },
-  vivienda_interes_social: { x: 24.5, y: 39.7, diam: 5.4, resaltar: true },
-  universidades: { x: 31.0, y: 37.2, diam: 6.0 },
-  biblioteca: { x: 36.0, y: 39.8, diam: 6.0 },
-  colegios: { x: 18.0, y: 47.3, diam: 6.4 },
-  centro_cultural: { x: 31.0, y: 58.0, diam: 6.2 },
-  corredores_verdes: { x: 26.5, y: 75.0, diam: 6.3 },
-  ciclorutas_mov: { x: 38.3, y: 78.2, diam: 6.3 },
-  parque_metropolitano: { x: 60.5, y: 47.7, diam: 6.5 },
-  centro_deportivo: { x: 58.5, y: 65.7, diam: 6.5 },
-  manzana_cuidado: { x: 63.5, y: 76.8, diam: 6.3 },
+  empleos: { x: 64.5, y: 34.5, diam: 4.8, label: "Empleos", resaltar: true },
+  vivienda_interes_social: { x: 25.1, y: 40.4, diam: 4.5, label: "Vivienda de\ninterés social", resaltar: true },
+  universidades: { x: 31, y: 33.3, diam: 4.1, label: "Universidades" },
+  biblioteca: { x: 35.6, y: 40.6, diam: 4.6, label: "Biblioteca" },
+  colegios: { x: 18.8, y: 47.1, diam: 4.8, label: "Colegios" },
+  centro_cultural: { x: 31.5, y: 58.9, diam: 4.8, label: "Centro\ncultural" },
+  corredores_verdes: { x: 27.3, y: 77, diam: 4.8, label: "Corredores\nverdes" },
+  ciclorutas_mov: { x: 38.7, y: 80.6, diam: 5.6, label: "Ciclorutas" },
+  parque_metropolitano: { x: 57.9, y: 50.4, diam: 5.1, label: "Parque\nmetropolitano" },
+  centro_deportivo: { x: 56.4, y: 66.3, diam: 4.7, label: "Centro\ndeportivo" },
+  manzana_cuidado: { x: 64.5, y: 73.7, diam: 4.7, label: "Manzana\ndel cuidado" },
 };
 
 // Las líneas reales de movilidad (metro, RegioTram, corredor verde cra 7)
@@ -1423,30 +1423,23 @@ const MOVILIDAD_TRAZO_ROSA = [
   [30.2, 22.1], [33.1, 25.0], [35.6, 28.0], [38.4, 31.4], [40.6, 34.2], [42.6, 37.1],
 ];
 
+const MOVILIDAD_LINEAS_ROSA = [
+  { id: "regiotram_ramal_centro", color: "#d28b36", rel: "regiotram_norte", puntos: [[50.9,45],[50,46.8],[49.2,48.6],[48.5,50.6],[47.9,52.6],[47.6,54.2]] },
+  { id: "regiotram_occidente", color: "#d28b36", rel: "regiotram_norte", puntos: [[33.96,28.15],[34.83,29.41],[35.33,30.96],[35.83,32.52],[36.38,34.07],[36.92,35.63],[37.5,37.19],[38.38,38.74],[39.25,40.3],[40.13,41.48],[41,43.04],[41.38,44.59],[41.71,46.15],[42.08,47.7],[42.46,49.26],[42.79,50.81],[43.21,52.37],[42.33,53.93],[41.46,55.48],[40.58,57.04],[39.71,58.59],[38.83,60.15],[37.96,61.7],[37.08,63.26],[36.21,64.81],[35.33,66.37],[34.46,67.93],[33.92,69.48],[33.29,71.04],[33.33,72.59],[33.33,74.15],[33.42,75.7],[33.46,77.26],[33.54,78.81],[33.58,80.37],[33.63,81.93],[33.71,83.48],[33.75,85.04],[33.46,86.59],[32.79,88.15],[32.08,89.7],[31.33,91.26],[30.67,92.81],[29.92,94.37],[30.08,95.19]] },
+  { id: "regiotram_norte", color: "#d28b36", rel: "regiotram_norte", puntos: [[3.96,26.22],[5.63,26.07],[7.29,26.81],[8.96,27.56],[10.63,28.3],[12.29,28.3],[13.96,28.22],[15.63,28.15],[17.29,27.7],[18.96,27.26],[20.63,27.33],[22.29,27.48],[23.96,27.48],[25.62,27.63],[27.29,27.7],[28.96,27.78],[30.63,27.85],[32.29,27.93],[33.96,28]] },
+  { id: "lineas_metro_1_2", color: "#e9695c", rel: "primera_linea_metro", puntos: [[23.54,54.44],[23.67,52.89],[24.54,51.33],[25.42,50.74],[26.29,50.52],[27.17,50.22],[28.04,49.48],[28.92,48.44],[29.79,47.26],[30.67,46.52],[31.54,46.74],[32.42,48.07],[33.29,49.19],[34.17,50.3],[34.88,49.11],[35.75,47.56],[36.63,46],[37.5,44.44],[38.29,42.89],[39.17,41.33],[40.04,39.78],[40.92,38.22],[41.79,36.96],[42.67,37.56],[43.54,37.78],[44.42,38.07],[45.29,38.3],[46.17,38.59],[47.04,38.89],[47.92,39.11],[48.79,40.15],[49.42,41.7],[49,43.26],[48.13,44.81],[47.33,46.37],[47.46,47.93],[47.79,49.48],[48.17,51.04],[48.58,52.59],[48.92,54.15],[49.25,55.7],[49.71,57.26],[50.5,58.81],[50.38,60.37],[50.63,61.93],[51,63.48],[51.42,65.04],[51.83,66.59],[51.75,68.15],[51.79,69.7],[51.79,71.26],[51.83,72.81],[51.33,74],[50.46,74.52],[49.58,75.11],[48.71,75.85],[47.83,77.41],[46.96,78.96],[46.58,80.52],[47.17,82.07],[48.04,83.63],[48.92,84.37],[49.79,84.96],[50.67,85.63],[51.54,86.52],[52.42,87.48],[53.29,88.37],[54.17,89.85]] },
+];
+
 const MOVILIDAD_CORREDORES_NEON = [
   {
     id: "corredor_verde_cra7",
     img: MOVILIDAD_LINEA_CORREDOR_IMG,
-    color: "#39ff6a",
+    color: "#6f9a6b",
     anchor: [40.8, 21.4],
+    // recorrido del trazo verde en la foto (%), solo para el área clicable
+    hitPuntos: [[34.6,27.3],[36.0,29.1],[37.4,30.9],[38.8,32.6],[40.2,34.3],[42.1,35.9]],
     titulo: "Empleo ↔ Corredor verde de la carrera séptima",
     cita: 'El POT dice que este corredor atraviesa: "Las localidades de Santa Fe, Chapinero y Usaquén, pero sirve a más de tres millones de bogotanos que vienen a trabajar, estudiar o pasar desde todas las localidades de la ciudad e incluso desde la región."',
-  },
-  {
-    id: "linea_metro",
-    img: MOVILIDAD_LINEA_METRO_IMG,
-    color: "#ff4fa8",
-    anchor: [45.0, 55.0],
-    titulo: "Sistema de metro (1ra, 2nda y 3ra línea)",
-    cita: "En la Primera Línea llega una nueva Manzana del Cuidado, un nuevo centro deportivo de alto rendimiento, un velódromo para los jóvenes y deportistas, también un nuevo parque metropolitano. A Suba le llegan nuevos colegios y una universidad pública, además una biblioteca, un centro cultural, cerca de 15.000 viviendas de interés social y un parque lineal.",
-  },
-  {
-    id: "linea_regiotram",
-    img: MOVILIDAD_LINEA_REGIOTRAM_IMG,
-    color: "#ff8c14",
-    anchor: [15.0, 27.0],
-    titulo: "Sistema de RegioTram (del Norte y de Occidente)",
-    cita: '"Cinco de ellas se conectarán con otros corredores de transporte masivo, que incluye el futuro RegioTram del Norte, lo que garantizará la conexión de la ciudad con la región."',
   },
 ];
 
@@ -1455,6 +1448,19 @@ const MOVILIDAD_CORREDORES_NEON = [
 // regiotram/metro visible en la foto (no un círculo inventado — solo el
 // área exacta del cruce).
 const MOVILIDAD_RELACIONES = {
+  regiotram_norte: {
+    x: 19.0, y: 27.5, sinPunto: true,
+    titulo: "RegioTram del Norte",
+    cita: "\u201cCinco de ellas se conectar\u00e1n con otros corredores de transporte masivo, que incluye el futuro RegioTram del Norte, lo que garantizar\u00e1 la conexi\u00f3n de la ciudad con la regi\u00f3n.\u201d",
+  },
+  // Detalle de la 1ra Línea de Metro: se dispara al tocar el trazo rosa
+  // (sin punto propio en el plano; x/y solo ancla el popup).
+  primera_linea_metro: {
+    x: 47.0, y: 81.0, sinPunto: true,
+    titulo: "Primera Línea del Metro",
+    cita: "\u201cCon el Metro no solo llegan trenes eléctricos y estaciones, también llega más progreso social. A Kennedy, por ejemplo, con la Primera Línea llega una nueva Manzana del Cuidado, un nuevo centro deportivo de alto rendimiento, un velódromo para los jóvenes y deportistas, también un nuevo parque metropolitano. A Suba le llegan nuevos colegios y una universidad pública, un logro que lideraron los mismos jóvenes. Además, una biblioteca, un centro cultural por el que ha luchado el Cabildo Muisca, cerca de 15.000 viviendas de interés social y un parque lineal.\u201d",
+    pagina: "Página 78",
+  },
   regiotram_metro: {
     x: 35.0, y: 20.5,
     titulo: "RegioTram ↔ Metro",
@@ -1469,6 +1475,13 @@ let movilidadClickOutsideWired = false;
 
 function showMovilidadOverlay(opts) {
   const animateIn = !!(opts && opts.animateIn);
+  // El panel lateral de este zoom reemplaza a la leyenda de la red inicial.
+  const legendM = document.getElementById("networkLegend");
+  if (legendM) legendM.style.display = "none";
+  const actsM = document.getElementById("networkSidebarActions");
+  if (actsM) actsM.style.display = "none";
+  const panelM = document.getElementById("movilidadPanelLateral");
+  if (panelM) panelM.style.display = "";
   hideNodeInfo();
   hideEdgeInfo();
   document.querySelector(".network-canvas").style.display = "none";
@@ -1476,11 +1489,14 @@ function showMovilidadOverlay(opts) {
 
   const body = document.getElementById("movilidadOverlayBody");
 
+  // Las bolas naranjas de la foto se COPIAN encima, una por una, con el mismo
+  // tamaño y posición: fondo negro, letra blanca y aro naranja con leve brillo.
   const highlightRingsHTML = Object.entries(MOVILIDAD_CIRCULOS)
-    .filter(([, c]) => c.resaltar)
     .map(([key, c]) => `
-      <div class="movilidad-highlight-ring" data-key="${key}"
-        style="left:${c.x}%; top:${c.y}%; width:${c.diam}%; height:${(c.diam * MOVILIDAD_ASPECT).toFixed(3)}%;"></div>
+      <div class="movilidad-bola" data-key="${key}"
+        style="left:${c.x}%; top:${c.y}%; width:${c.diam}%; height:${(c.diam * MOVILIDAD_ASPECT).toFixed(3)}%;">
+        <span>${(c.label || "").replace(/\n/g, "<br>")}</span>
+      </div>
     `).join("");
 
   // Cada línea (metro, RegioTram, corredor verde) es una máscara-imagen
@@ -1494,9 +1510,10 @@ function showMovilidadOverlay(opts) {
   `).join("");
   const trazoRosaHTML = `
     <svg class="movilidad-trazo-rosa" viewBox="0 0 100 ${MOVILIDAD_VIEWBOX_H}" preserveAspectRatio="none">
-      <polyline points="${MOVILIDAD_TRAZO_ROSA.map(p => p[0] + "," + (p[1] * MOVILIDAD_VIEWBOX_H / 100)).join(" ")}" />
+      ${MOVILIDAD_LINEAS_ROSA.map(l => { const pts = l.puntos.map(p => p[0] + "," + (p[1] * MOVILIDAD_VIEWBOX_H / 100)).join(" "); return `<polyline data-linea="${l.id}" style="--linea-color:${l.color}" points="${pts}" /><polyline class="movilidad-trazo-hit" data-linea="${l.id}" points="${pts}" />`; }).join("")}
+      ${MOVILIDAD_CORREDORES_NEON.filter(l => l.hitPuntos).map(l => { const pts = l.hitPuntos.map(p => p[0] + "," + (p[1] * MOVILIDAD_VIEWBOX_H / 100)).join(" "); return `<polyline class="movilidad-trazo-hit" data-corredor="${l.id}" points="${pts}" />`; }).join("")}
     </svg>`;
-  const lineaHotspotsHTML = MOVILIDAD_CORREDORES_NEON.map(l => `
+  const lineaHotspotsHTML = [].map(l => `
     <button type="button" class="movilidad-line-hotspot" data-corredor="${l.id}"
       style="left:${l.anchor[0]}%; top:${l.anchor[1]}%; --neon-color:${l.color};" title="${l.titulo}">
       <i class="fa-solid fa-circle-dot"></i>
@@ -1505,7 +1522,7 @@ function showMovilidadOverlay(opts) {
 
   // La única relación sin trazo propio dibujado (RegioTram↔Metro) se marca
   // con un pequeño punto clicable sobre el cruce real de esas dos líneas.
-  const hotspotsHTML = Object.entries(MOVILIDAD_RELACIONES).map(([key, rel]) => `
+  const hotspotsHTML = Object.entries(MOVILIDAD_RELACIONES).filter(([, rel]) => !rel.sinPunto).map(([key, rel]) => `
     <button type="button" class="movilidad-hotspot" data-key="${key}" style="left:${rel.x}%; top:${rel.y}%;" title="${rel.titulo}">
       <i class="fa-solid fa-circle-dot"></i>
     </button>
@@ -1547,6 +1564,18 @@ function showMovilidadOverlay(opts) {
       btn.classList.add("active");
     });
   });
+  body.querySelectorAll(".movilidad-trazo-hit").forEach(hit => {
+    hit.addEventListener("click", (ev) => {
+      ev.stopPropagation();
+      if (hit.dataset.corredor) { showMovilidadCorredorDetalle(hit.dataset.corredor); return; }
+      const linea = MOVILIDAD_LINEAS_ROSA.find(l => l.id === hit.dataset.linea);
+      const rel = MOVILIDAD_RELACIONES[linea?.rel || "primera_linea_metro"];
+      if (rel) showMovilidadRelacionDetalle(rel, hit);
+    });
+  });
+  // --- Modo edición de líneas (tecla L): arrastra los vértices, "Copiar"
+  // imprime las coordenadas en consola para pegarlas en el código. ---
+  wireMovilidadEdicionLineas(body);
   body.querySelectorAll(".movilidad-line-hotspot").forEach(btn => {
     btn.addEventListener("click", (ev) => {
       ev.stopPropagation();
@@ -1562,6 +1591,7 @@ function showMovilidadOverlay(opts) {
     movilidadClickOutsideWired = true;
     document.getElementById("movilidadOverlayBody")?.addEventListener("click", (ev) => {
       if (!ev.target.closest(".movilidad-hotspot") && !ev.target.closest(".movilidad-line-hotspot") &&
+          !ev.target.closest(".movilidad-trazo-hit") &&
           !ev.target.closest("#movilidadPopup") && !ev.target.closest("#movilidadConclusionBtn")) {
         hideMovilidadPopup();
       }
@@ -1587,6 +1617,12 @@ function showMovilidadOverlay(opts) {
   }
 }
 function hideMovilidadOverlay() {
+  const legendM = document.getElementById("networkLegend");
+  if (legendM) legendM.style.display = "";
+  const actsM = document.getElementById("networkSidebarActions");
+  if (actsM) actsM.style.display = "";
+  const panelM = document.getElementById("movilidadPanelLateral");
+  if (panelM) panelM.style.display = "none";
   document.getElementById("movilidadOverlay").style.display = "none";
   document.querySelector(".network-canvas").style.display = "";
   hideMovilidadPopup();
@@ -1615,6 +1651,7 @@ function showMovilidadRelacionDetalle(rel, anchorEl) {
   const html = `
     <div class="movilidad-popup-titulo">${rel.titulo}</div>
     <div class="movilidad-popup-cita">${rel.cita}</div>
+    ${rel.pagina ? `<div class="humedal-caso-pagina">${rel.pagina}</div>` : ""}
     <button type="button" class="movilidad-back-btn" id="movilidadPopupCloseBtn">Cerrar</button>
   `;
   showMovilidadPopup(html, rel.x, rel.y);
@@ -1651,6 +1688,9 @@ function showMovilidadPopup(innerHTML, xPct, yPct) {
   movilidadPopupAnchor = { x: xPct, y: yPct };
   popup.innerHTML = innerHTML;
   popup.style.display = "block";
+  // Con citas largas el popup podría crecer más que el wrap (que recorta con
+  // overflow:hidden), así que se limita a la altura disponible y hace scroll.
+  popup.style.maxHeight = Math.max(120, wrap.clientHeight - 12) + "px";
 
   const wrapRect = wrap.getBoundingClientRect();
   const frameRect = frame.getBoundingClientRect();
@@ -1954,3 +1994,81 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("btnVerHallazgos")?.addEventListener("click", verHallazgosConAnimacion);
   document.getElementById("btnExplorarRelaciones")?.addEventListener("click", explorarRelacionesConAnimacion);
 });
+
+
+// Modo edición de trazos: se activa con la tecla L sobre el zoom de movilidad.
+function wireMovilidadEdicionLineas(body) {
+  const svg = body.querySelector(".movilidad-trazo-rosa");
+  if (!svg) return;
+  let on = false;
+  const NS = "http://www.w3.org/2000/svg";
+  const scaleY = MOVILIDAD_VIEWBOX_H / 100;
+
+  function pintarHandles() {
+    svg.querySelectorAll(".movilidad-vertice").forEach(n => n.remove());
+    if (!on) return;
+    MOVILIDAD_LINEAS_ROSA.forEach(l => {
+      l.puntos.forEach((p, i) => {
+        const c = document.createElementNS(NS, "circle");
+        c.setAttribute("class", "movilidad-vertice");
+        c.setAttribute("cx", p[0]);
+        c.setAttribute("cy", p[1] * scaleY);
+        c.setAttribute("r", 0.5);
+        c.dataset.linea = l.id;
+        c.dataset.idx = i;
+        svg.appendChild(c);
+      });
+    });
+  }
+
+  function redibujar(id) {
+    const l = MOVILIDAD_LINEAS_ROSA.find(x => x.id === id);
+    const pts = l.puntos.map(p => p[0] + "," + (p[1] * scaleY)).join(" ");
+    svg.querySelectorAll('[data-linea="' + id + '"]').forEach(n => {
+      if (n.tagName === "polyline") n.setAttribute("points", pts);
+    });
+  }
+
+  let drag = null;
+  svg.addEventListener("pointerdown", (ev) => {
+    const h = ev.target.closest(".movilidad-vertice");
+    if (!on || !h) return;
+    ev.preventDefault(); ev.stopPropagation();
+    drag = h; h.setPointerCapture(ev.pointerId);
+  });
+  svg.addEventListener("pointermove", (ev) => {
+    if (!drag) return;
+    const r = svg.getBoundingClientRect();
+    const x = +(((ev.clientX - r.left) / r.width) * 100).toFixed(2);
+    const y = +(((ev.clientY - r.top) / r.height) * 100).toFixed(2);
+    const l = MOVILIDAD_LINEAS_ROSA.find(x2 => x2.id === drag.dataset.linea);
+    l.puntos[+drag.dataset.idx] = [x, y];
+    drag.setAttribute("cx", x); drag.setAttribute("cy", y * scaleY);
+    redibujar(l.id);
+  });
+  svg.addEventListener("pointerup", () => { drag = null; });
+
+  const barra = document.createElement("div");
+  barra.className = "movilidad-edit-bar";
+  barra.style.display = "none";
+  barra.innerHTML = '<span>Edición de líneas</span><button type="button">Copiar coordenadas</button>';
+  barra.querySelector("button").addEventListener("click", () => {
+    const txt = MOVILIDAD_LINEAS_ROSA.map(l =>
+      '{ id: "' + l.id + '", color: "' + l.color + '", rel: "' + l.rel + '", puntos: ' + JSON.stringify(l.puntos) + ' },'
+    ).join("\n");
+    console.log(txt);
+    navigator.clipboard?.writeText(txt);
+    barra.querySelector("button").textContent = "Copiado ✓";
+    setTimeout(() => { barra.querySelector("button").textContent = "Copiar coordenadas"; }, 1500);
+  });
+  svg.parentElement.appendChild(barra);
+
+  document.addEventListener("keydown", (ev) => {
+    if (ev.key !== "l" && ev.key !== "L") return;
+    if (/input|textarea/i.test(document.activeElement?.tagName || "")) return;
+    on = !on;
+    svg.classList.toggle("editando", on);
+    barra.style.display = on ? "flex" : "none";
+    pintarHandles();
+  });
+}
