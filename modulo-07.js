@@ -341,6 +341,15 @@
     removeNodeByLabel("empleo", /^(Empleo formal y productividad|Productividad por trabajador)/);
     removeNodeByLabel("carbono", /^Viajes limpios$/);
 
+    const removeAllNodesByLabel = (key, matcher) => {
+      let found = true;
+      while (found) {
+        const before = networks[key].nodes.length;
+        removeNodeByLabel(key, matcher);
+        found = networks[key].nodes.length < before;
+      }
+    };
+
     fillTo30("30min", [
       "160 Proyectos Integrales de Proximidad",
       "Redes peatonales y ciclistas",
@@ -353,7 +362,24 @@
        redundante cuando la red ya contiene colegios, universidades, jardines,
        centros de salud y demás equipamientos específicos. Se elimina después
        de completar el dataset para no generar nodos artificiales duplicados. */
-    removeNodeByLabel("30min", /^Equipamientos\s+sociales$/);
+    [
+      /^Equipamientos\s+sociales$/,
+      /^Meta:\s+acceso\s+en\s+30\s+minutos$/,
+      /^Tiempo\s+máximo\s+de\s+acceso:\s+30\s+min$/,
+      /^Tiempo\s+medio\s+de\s+viaje$/,
+      /^Acceso\s+a\s+servicios$/,
+      /^Oferta\s+de\s+cuidado$/,
+      /^Distancia\s+a\s+salud$/,
+      /^Cobertura\s+educativa$/,
+      /^Conectividad\s+peatonal$/,
+      /^Calidad\s+del\s+espacio\s+público$/,
+      /^Centralidad\s+urbana$/,
+      /^Población\s+vulnerable$/,
+      /^Tiempo\s+de\s+cuidado$/,
+      /^160\s+Proyectos\s+Integrales\s+de\s+Proximidad/,
+      /^Redes\s+peatonales\s+y\s+bicicleta$/,
+      /^Red\s+peatonal\s+y\s+bicicleta$/,
+    ].forEach((matcher) => removeAllNodesByLabel("30min", matcher));
     fillTo30("empleo", [
       "Meta regional: 40% del PIB",
       "Sectores productivos en zonas deficitarias",
