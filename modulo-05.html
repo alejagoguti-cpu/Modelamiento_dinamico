@@ -3,230 +3,238 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RAPOT · Módulo 05 · Navegador Multiescalar</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+<title>RAPOT · Las Escalas — 33 UPL</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="modulo-05.css">
-    <link rel="stylesheet" href="module02-system.css?v=spacing-v3">
 </head>
-<body class="module02-reference-page">
-<div class="layout">
-  <!-- SIDEBAR GLOBAL DEL PORTAL -->
-  <aside class="sidebar sidebar-icons-only">
-    <div class="brand-icon"><i class="fa-solid fa-diagram-project"></i></div>
-    <nav class="icon-nav">
-      <a href="modulo-02.html" class="icon-nav-item" title="Medir la Red"><i class="fa-solid fa-chart-simple"></i></a>
-      <a href="modulo-03.html" class="icon-nav-item" title="Discurso vs Realidad"><i class="fa-solid fa-eye"></i></a>
-      <a href="modulo-04.html" class="icon-nav-item" title="Macromodelos"><i class="fa-solid fa-bullseye"></i></a>
-      <a href="modulo-05.html" class="icon-nav-item active" title="Lo que no está"><i class="fa-solid fa-magnifying-glass"></i></a>
-      <a href="modulo-06.html" class="icon-nav-item" title="POT ↔ ODS"><i class="fa-solid fa-earth-americas"></i></a>
-      <a href="modulo-07.html" class="icon-nav-item" title="Simulador"><i class="fa-solid fa-flask"></i></a>
-      <a href="modulo-08.html" class="icon-nav-item" title="Modelo Propio"><i class="fa-solid fa-city"></i></a>
-    </nav>
-    <div class="icon-nav-footer">
-      <a href="configuracion.html" class="icon-nav-item" title="Configuración"><i class="fa-solid fa-gear"></i></a>
-      <a href="demo.html" class="icon-nav-item" title="Salir"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
+<body>
+<div class="app">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="mark"><i class="fa-solid fa-diagram-project"></i></div>
+      <span>RAPOT</span>
+    </div>
+
+    <div class="nav-group">
+      <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-house"></i> Dashboard</a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-label">MÓDULOS</div>
+      <a href="modulo-01.html" class="nav-item"><span class="num">01</span><i class="fa-solid fa-diagram-project"></i> Una ciudad que no cabe en el POT</a>
+      <a href="modulo-02.html" class="nav-item"><span class="num">02</span><i class="fa-solid fa-chart-simple"></i> Medir la Red</a>
+      <a href="modulo-03.html" class="nav-item"><span class="num">03</span><i class="fa-solid fa-eye"></i> Discurso vs Realidad</a>
+      <a href="modulo-04.html" class="nav-item"><span class="num">04</span><i class="fa-solid fa-bullseye"></i> Macromodelos</a>
+      <a href="modulo-05.html" class="nav-item active"><span class="num">05</span><i class="fa-solid fa-layer-group"></i> Las Escalas — 33 UPL</a>
+      <a href="modulo-06.html" class="nav-item"><span class="num">06</span><i class="fa-solid fa-hourglass-half"></i> El Tiempo Ausente</a>
+      <a href="modulo-07.html" class="nav-item"><span class="num">07</span><i class="fa-solid fa-scale-balanced"></i> Postura Crítica</a>
+      <a href="modulo-08.html" class="nav-item"><span class="num">08</span><i class="fa-solid fa-flask"></i> Simulador</a>
+      <a href="modulo-09.html" class="nav-item"><span class="num">09</span><i class="fa-solid fa-atom"></i> Modelo Propio</a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-label">GESTIÓN</div>
+      <a href="proyectos.html" class="nav-item"><i class="fa-solid fa-folder"></i> Proyectos</a>
+      <a href="fuentes.html" class="nav-item"><i class="fa-solid fa-file-lines"></i> Fuentes y Documentos</a>
+      <a href="favoritos.html" class="nav-item"><i class="fa-solid fa-star"></i> Favoritos</a>
+      <a href="reportes.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Reportes</a>
+      <a href="configuracion.html" class="nav-item"><i class="fa-solid fa-gear"></i> Configuración</a>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="avatar-sm">EU</div>
+      <div class="user-meta">
+        <div class="name">Equipo Urbano</div>
+        <div class="role">Administrador</div>
+      </div>
+      <a href="demo.html" class="logout-btn"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
     </div>
   </aside>
-  <!-- TOPBAR -->
-  <div class="topbar">
-    <div class="topbar-left">
-      <span class="breadcrumb">PORTAL HEURÍSTICO</span>
-      <span class="sep">Pantalla 4 de 7</span>
-    </div>
-    <div class="topbar-right">
-      <span>Centro de ayuda</span>
-      <i class="fa-solid fa-bell"></i>
-    </div>
-  </div>
 
-  <div class="main">
-    <!-- SIDEBAR LEFT -->
-    <aside class="sidebar-left">
-      <div class="nav-top">
-        <i class="fa-solid fa-home"></i>
-        <i class="fa-solid fa-wrench"></i>
-        <i class="fa-solid fa-layer-group"></i>
-      </div>
+  <main class="main">
 
-      <div class="logo">
-        <i class="fa-solid fa-check"></i>
-      </div>
-
-      <h1>Navegador Multiescalar</h1>
-      <p>El Zoom de Eames</p>
-
-      <div class="desc">Explora Bogotá desde múltiples escalas para entender su estructura y gestionar la proximidad de manera inteligente.</div>
-
-      <div class="tabs">
-        <button class="tab active" data-scale="macro">Macro</button>
-        <button class="tab" data-scale="meso">Meso</button>
-        <button class="tab" data-scale="micro">Micro</button>
-      </div>
-
-      <div class="vistas">
-        <div class="vistas-label">Vistas alternativas</div>
-        <div class="vista-item">
-          <i class="fa-solid fa-globe"></i>
-          <span>Región Metropolitana<br/>20 municipios conectados</span>
-          <i class="fa-solid fa-arrow-right"></i>
-        </div>
-        <div class="vista-item">
-          <i class="fa-solid fa-map"></i>
-          <span>Barrio Vital /<br/>Manzanas del Cuidado<br/>Unidad de proximidad</span>
-          <i class="fa-solid fa-arrow-right"></i>
-        </div>
-      </div>
-
-      <div class="legend">
-        <div class="legend-label">Leyenda</div>
-        <div class="legend-item">
-          <span class="dot upl"></span> UPL seleccionada
-        </div>
-        <div class="legend-item">
-          <span class="dot upl-focus"></span> UPL con foco estratégico
-        </div>
-        <div class="legend-item">
-          <span class="line"></span> Límite de Bogotá
-        </div>
-      </div>
-
-      <div class="upz-list" id="item-list"></div>
-
-      <div class="user">AV</div>
-    </aside>
-
-    <!-- CENTER MAP -->
-    <div class="map-section">
-      <div id="map"></div>
-      <div class="map-controls">
-        <button class="ctrl">+</button>
-        <div class="compass"></div>
-        <button class="ctrl">−</button>
+    <div class="topbar">
+      <h1>Las Escalas</h1>
+      <div class="topbar-actions">
+        <div class="search-box"><i class="fa-solid fa-magnifying-glass"></i> Buscar en el sistema...</div>
+        <div class="icon-btn"><i class="fa-regular fa-bell"></i><span class="dot"></span></div>
+        <div class="icon-btn"><i class="fa-regular fa-circle-question"></i></div>
+        <div class="avatar-sm">EU</div>
       </div>
     </div>
 
-    <!-- SIDEBAR RIGHT -->
-    <aside class="sidebar-right">
-      <div class="escalas">
-        <div class="escala-label">LAS 3 ESCALAS DEL PROYECTO</div>
-        
-        <div class="escala-item macro-box">
-          <i class="fa-solid fa-globe"></i>
-          <div>
-            <strong>Macro</strong>
-            <p>Región Metropolitana<br/>Conectividad y flujos regionales</p>
+    <div class="welcome">
+      <h2>Las escalas: el zoom de Eames — el corazón del proyecto es la escala Meso</h2>
+      <p>La plataforma es multiescalar: pasa de lo <strong>Macro</strong> (región metropolitana, art. 6 — MOT multiescalar) a lo <strong>Micro</strong> (barrio y manzana). Pero nuestro foco es la escala <strong>Meso: las 33 Unidades de Planeamiento Local (UPL)</strong> del Art. 9. Es en este nivel donde el POT busca institucionalizar la <strong>proximidad</strong> —recorridos de 15 a 30 minutos— para equilibrar cargas de servicios y empleo en el territorio, y donde se puede evaluar si la meta de la <strong>ciudad de los 30 minutos</strong> es viable en cada unidad.</p>
+    </div>
+
+    <!-- INSIGHTS -->
+    <div class="ods-insight-stats" id="odsInsightStats">
+      <div class="insight-card" data-insight="macro" style="--insight-color:#2fd4c8;" onclick="toggleInsight('macro')">
+        <div class="insight-icon"><i class="fa-solid fa-globe"></i></div>
+        <div class="insight-title">Macro — región</div>
+      </div>
+      <div class="insight-card" data-insight="meso" style="--insight-color:#5b8def;">
+        <div class="insight-icon"><i class="fa-solid fa-layer-group"></i></div>
+        <div class="insight-title">Meso — 33 UPL</div>
+      </div>
+      <div class="insight-card" data-insight="micro" style="--insight-color:#a276f2;">
+        <div class="insight-icon"><i class="fa-solid fa-person-walking"></i></div>
+        <div class="insight-title">Micro — 30 minutos</div>
+      </div>
+      <div class="insight-card" data-insight="todos" style="--insight-color:#4ade80;" onclick="toggleInsight('todos')">
+        <div class="insight-icon"><i class="fa-solid fa-diagram-project"></i></div>
+        <div class="insight-title">Ver toda la red</div>
+      </div>
+    </div>
+
+    <!-- RED: ESCALAS -->
+    <div class="network-section">
+      <div class="network-header">
+        <h3><i class="fa-solid fa-layer-group"></i> La red de escalas — del MOT regional a la manzana de cuidado</h3>
+        <div class="network-controls">
+          <button class="control-btn active" onclick="filterNetwork('all')">Todos</button>
+          <button class="control-btn" onclick="filterNetwork('macro')">Macro</button>
+          <button class="control-btn" onclick="filterNetwork('meso')">Meso</button>
+          <button class="control-btn" onclick="filterNetwork('micro')">Micro</button>
+        </div>
+      </div>
+
+      <div class="network-viz-wrap">
+        <svg id="networkViz" viewBox="0 0 1470 560" preserveAspectRatio="xMidYMid meet"></svg>
+
+        <div class="network-sidebar">
+          <aside class="network-legend" id="networkLegend">
+            <div class="legend-title">Escalas</div>
+
+            <label class="legend-item" data-type="macro">
+              <input type="checkbox" checked>
+              <span class="legend-swatch swatch-comp"></span>
+              Macro — región metropolitana
+            </label>
+
+            <label class="legend-item" data-type="meso">
+              <input type="checkbox" checked>
+              <span class="legend-swatch swatch-func"></span>
+              Meso — 33 UPL
+            </label>
+
+            <label class="legend-item" data-type="micro">
+              <input type="checkbox" checked>
+              <span class="legend-swatch swatch-causal"></span>
+              Micro — barrio / manzana
+            </label>
+
+            <div class="legend-divider"></div>
+            <div class="legend-hint">Clic en una línea: ver la relación y la página del POT.<br>Doble clic en una bola: apagarla/encenderla.<br>Triple clic en una bola: ver solo su flujo.<br>Los nodos se arrastran y las conectadas lo siguen.</div>
+          </aside>
+
+          <div class="edge-info-panel" id="edgeInfoPanel">
+            <div class="edge-info-header">
+              <span id="edgeInfoTitle">Relación</span>
+              <button class="edge-info-close" id="edgeInfoClose" type="button" aria-label="Cerrar">&times;</button>
+            </div>
+            <div class="edge-info-type" id="edgeInfoType"></div>
+            <div class="edge-info-quote" id="edgeInfoQuote"></div>
+            <div class="edge-info-page" id="edgeInfoPage"></div>
           </div>
         </div>
+      </div>
+    </div>
 
-        <div class="escala-item meso-box">
-          <div class="box-icon">33</div>
-          <div>
-            <strong>Meso</strong>
-            <p>33 UPL<br/>Gestión de proximidad y equidad territorial</p>
+    <!-- TABLA UPL -->
+    <div class="analysis-container">
+      <div class="analysis-card full-width">
+        <div class="card-header">
+          <h3><i class="fa-solid fa-table-list"></i> Las 33 Unidades de Planeamiento Local — Art. 9, Decreto 555</h3>
+        </div>
+        <div class="matrix-container">
+          <div class="matrix-row header">
+            <div class="matrix-cell header-cell" style="flex:0.4;min-width:42px;">N.°</div>
+            <div class="matrix-cell header-cell">UPL</div>
+            <div class="matrix-cell header-cell">Localidad(es)</div>
+            <div class="matrix-cell header-cell" style="flex:1.4;">¿Proximidad viable?</div>
           </div>
         </div>
+      </div>
+    </div>
 
-        <div class="escala-item micro-box">
-          <div class="box-icon">🏘️</div>
-          <div>
-            <strong>Micro</strong>
-            <p>Barrio / Manzana<br/>Experiencias cotidianas y diseño de intervenciones</p>
+    <!-- SINERGIAS: VIABILIDAD -->
+    <div class="synergies-section">
+      <div class="synergies-grid">
+        <div class="synergy-card success">
+          <div class="synergy-icon"><i class="fa-solid fa-people-roof"></i></div>
+          <div class="synergy-content">
+            <h4>¿Dónde la proximidad es más viable?</h4>
+            <ul>
+              <li>UPL densas y mixtas: <strong>Centro Histórico, Chapinero, Barrios Unidos, Teusaquillo</strong> — empleo, equipamientos y vivienda ya conviven a escala de caminata.</li>
+              <li>UPL con Metro en llegada: <strong>Tintal y Kennedy</strong> (línea 1) — nueva Manzana del Cuidado, velódromo, parque metropolitano, colegios.</li>
+              <li>UPL con eje corredores verdes: <strong>Suba, Usaquén, Fontibón, Salitre</strong> — DOT alrededor de infraestructura de movilidad.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="synergy-card conflict">
+          <div class="synergy-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+          <div class="synergy-content">
+            <h4>¿Dónde la proximidad enfrenta mayor tensión?</h4>
+            <ul>
+              <li>UPL de borde rural: <strong>Sumapaz, Cerros Orientales, Torca</strong> — lógica de conectividad ecosistémica, no de proximidad de servicios.</li>
+              <li>UPL con déficit de soportes: <strong>Cuenca del Tunjuelo, Arborizadora, Edén, Porvenir</strong> — el propio Parágrafo 2 exige ahí los ámbitos integrales de cuidado.</li>
+              <li>UPL transfronterizas: <strong>Usme-Entrenubes, Restrepo</strong> — la vida cotidiana cruza el límite de la UPL.</li>
+            </ul>
           </div>
         </div>
       </div>
+    </div>
 
-      <div class="detail">
-        <h2 id="detail-title">UPL SELECCIONADA: 19 · FONTIBÓN</h2>
-        <i class="fa-solid fa-star"></i>
-      </div>
-
-      <div class="detail-text" id="detail-description">
-        <p>La escala Meso (33 UPL) es el corazón del proyecto. Es aquí donde se gestiona la proximidad para lograr la ciudad de los 30 minutos <span style="font-size: 8px; color: #7a8fa0;">[4, 59; 212]</span></p>
-        <p><strong>Estrategia Bogotá Viva</strong></p>
-      </div>
-
-      <div class="metrics">
-        <div class="metric-box">
-          <div class="metric-number">32%</div>
-          <div class="metric-label">DÉFICIT DE SERVICIOS</div>
-          <div class="metric-desc">Déficit modo en UPL seleccionada vs. 21% promedio ciudad</div>
-          <div class="metric-chart"></div>
-          <a href="#">Ver detalle →</a>
+    <!-- RECOMENDACIONES -->
+    <div class="recommendations-section">
+      <h3><i class="fa-solid fa-compass"></i> La escala Meso como laboratorio de la ciudad de los 30 minutos</h3>
+      <div class="recommendations-grid">
+        <div class="rec-card">
+          <div class="rec-number">R1</div>
+          <div class="rec-content">
+            <h4>Medir la proximidad real por UPL</h4>
+            <p>Para cada una de las 33 UPL, contrastar la oferta declarada de equipamientos con los recorridos reales (tiempo, transbordos, congestión) — no con la distancia en línea recta del mapa.</p>
+            <div class="rec-impact"><span class="impact-badge">Diagnóstico</span></div>
+          </div>
         </div>
-
-        <div class="metric-box">
-          <div class="metric-number">68%</div>
-          <div class="metric-label">EMPLEO CERCANO</div>
-          <div class="metric-desc">Empleo accesible en 30 min vs. 50% promedio ciudad</div>
-          <div class="metric-chart"></div>
-          <a href="#">Ver detalle →</a>
+        <div class="rec-card">
+          <div class="rec-number">R2</div>
+          <div class="rec-content">
+            <h4>Focalizar las UPL con déficit</h4>
+            <p>El Parágrafo 2 del Art. 9 ya identifica las UPL con déficit cuantitativo y cualitativo de soportes; allí deben ir primero las Manzanas del Cuidado y los ámbitos integrales de cuidado.</p>
+            <div class="rec-impact"><span class="impact-badge">Equidad</span></div>
+          </div>
         </div>
-
-        <div class="metric-box">
-          <div class="metric-number">74%</div>
-          <div class="metric-label">PROXIMIDAD (CIUDAD 30 MIN)</div>
-          <div class="metric-desc">Población con acceso a 8 servicios esenciales en 30 min</div>
-          <div class="metric-chart"></div>
-          <a href="#">Ver detalle →</a>
+        <div class="rec-card">
+          <div class="rec-number">R3</div>
+          <div class="rec-content">
+            <h4>La UPL como unidad de simulación</h4>
+            <p>El Art. 9 exige procesos de planeación participativa por UPL en 2 años: cada UPL es la unidad natural donde correr simulaciones de agentes antes de decidir actuaciones urbanísticas.</p>
+            <div class="rec-impact"><span class="impact-badge">Anticipación</span></div>
+          </div>
         </div>
-
-        <div class="metric-box compare">
-          <div class="metric-label">COMPARAR UPL</div>
-          <button class="btn-compare">+ Agregar UPL</button>
+        <div class="rec-card">
+          <div class="rec-number">R4</div>
+          <div class="rec-content">
+            <h4>Del POT a la vida cotidiana</h4>
+            <p>La ciudad de los 30 minutos no se declara: se vive. La plataforma traduce el art. 9 —"recorridos de entre 15 y 30 minutos"— en trayectorias de agentes verificables, como en el simulador (módulo 08).</p>
+            <div class="rec-impact"><span class="impact-badge">Simulación</span></div>
+          </div>
         </div>
       </div>
-    </aside>
-  </div>
+    </div>
+
+    <footer>
+      "La escala Meso (33 UPL) es el corazón del proyecto: es aquí donde se gestiona la proximidad."
+      <span> — RAPOT · Las Escalas</span>
+    </footer>
+  </main>
 </div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-
-<!-- MODAL EEP -->
-<div id="eepModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); z-index: 1000; overflow: auto; padding: 20px;">
-  <div style="background: #0a0e17; border: 1px solid #2fd4c8; border-radius: 8px; margin: 40px auto; max-width: 1000px; max-height: 85vh; position: relative; padding: 25px;">
-    <button onclick="closeEepModal()" style="position: absolute; top: 20px; right: 20px; background: none; border: none; color: #2fd4c8; font-size: 28px; cursor: pointer; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">✕</button>
-    
-    <div style="margin-bottom: 25px;">
-      <h2 style="color: #2fd4c8; margin: 0 0 8px 0; font-size: 20px;">Estructura Ecológica Principal</h2>
-      <p style="color: #7a8fa0; font-size: 11px; margin: 0;">Modo Analítico // Nodos = 14</p>
-    </div>
-    
-    <div style="display: flex; gap: 25px;">
-      <div id="eepMapContainer" style="flex: 1; height: 500px; background: #1a2332; border-radius: 6px; border: 1px solid #2a3f5a; position: relative;"></div>
-      
-      <div style="width: 200px; flex-shrink: 0;">
-        <div style="background: #1a2332; border: 1px solid #2a3f5a; border-radius: 6px; padding: 16px;">
-          <div style="color: #2fd4c8; font-size: 10px; font-weight: 700; margin-bottom: 16px; text-transform: uppercase;">Leyenda de Capas</div>
-          
-          <div style="margin-bottom: 16px;">
-            <div style="display: flex; align-items: center; gap: 8px; font-size: 10px; color: #fff; margin-bottom: 8px;">
-              <div style="width: 10px; height: 10px; border: 2px solid #2fd4c8; border-radius: 50%;"></div>
-              <span>Nodos Principales</span>
-            </div>
-            <div style="display: flex; align-items: center; gap: 8px; font-size: 10px; color: #fff;">
-              <div style="width: 10px; height: 10px; border: 2px solid #2fd4c8; border-radius: 50%;"></div>
-              <span>Conexiones Activas</span>
-            </div>
-          </div>
-          
-          <div>
-            <div style="color: #2fd4c8; font-size: 10px; font-weight: 700; margin-bottom: 12px; text-transform: uppercase;">Convenciones</div>
-            <div style="font-size: 9px; color: #7a8fa0; line-height: 1.6;">
-              <div style="margin-bottom: 6px;">— Directa</div>
-              <div style="margin-bottom: 6px;">- - - Indirecta</div>
-              <div style="margin-bottom: 6px;">— Soporte</div>
-              <div>— Resiliencia</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
 <script src="modulo-05.js"></script>
 </body>
 </html>

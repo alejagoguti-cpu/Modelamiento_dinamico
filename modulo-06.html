@@ -3,37 +3,61 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RAPOT · POT ↔ ODS</title>
+<title>RAPOT · El Tiempo Ausente</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="stylesheet" href="modulo-06.css?v=rapot-final-2">
-    <link rel="stylesheet" href="module02-system.css?v=spacing-v3">
+<link rel="stylesheet" href="modulo-06.css">
 </head>
-<body class="module02-reference-page">
+<body>
 <div class="app">
 
-  <aside class="sidebar sidebar-icons-only">
-    <div class="brand-icon"><i class="fa-solid fa-diagram-project"></i></div>
-    <nav class="icon-nav">
-      <a href="modulo-02.html" class="icon-nav-item" title="Medir la Red"><i class="fa-solid fa-chart-simple"></i></a>
-      <a href="modulo-03.html" class="icon-nav-item" title="Discurso vs Realidad"><i class="fa-solid fa-eye"></i></a>
-      <a href="modulo-04.html" class="icon-nav-item" title="Macromodelos"><i class="fa-solid fa-bullseye"></i></a>
-      <a href="modulo-05.html" class="icon-nav-item" title="Lo que no está"><i class="fa-solid fa-magnifying-glass"></i></a>
-      <a href="modulo-06.html" class="icon-nav-item active" title="POT ↔ ODS"><i class="fa-solid fa-earth-americas"></i></a>
-      <a href="modulo-07.html" class="icon-nav-item" title="Simulador"><i class="fa-solid fa-flask"></i></a>
-      <a href="modulo-08.html" class="icon-nav-item" title="Modelo Propio"><i class="fa-solid fa-city"></i></a>
-    </nav>
-    <div class="icon-nav-footer">
-      <a href="configuracion.html" class="icon-nav-item" title="Configuración"><i class="fa-solid fa-gear"></i></a>
-      <a href="demo.html" class="icon-nav-item" title="Salir"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="mark"><i class="fa-solid fa-diagram-project"></i></div>
+      <span>RAPOT</span>
+    </div>
+
+    <div class="nav-group">
+      <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-house"></i> Dashboard</a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-label">MÓDULOS</div>
+      <a href="modulo-01.html" class="nav-item"><span class="num">01</span><i class="fa-solid fa-diagram-project"></i> Una ciudad que no cabe en el POT</a>
+      <a href="modulo-02.html" class="nav-item"><span class="num">02</span><i class="fa-solid fa-chart-simple"></i> Medir la Red</a>
+      <a href="modulo-03.html" class="nav-item"><span class="num">03</span><i class="fa-solid fa-eye"></i> Discurso vs Realidad</a>
+      <a href="modulo-04.html" class="nav-item"><span class="num">04</span><i class="fa-solid fa-bullseye"></i> Macromodelos</a>
+      <a href="modulo-05.html" class="nav-item"><span class="num">05</span><i class="fa-solid fa-layer-group"></i> Las Escalas — 33 UPL</a>
+      <a href="modulo-06.html" class="nav-item active"><span class="num">06</span><i class="fa-solid fa-hourglass-half"></i> El Tiempo Ausente</a>
+      <a href="modulo-07.html" class="nav-item"><span class="num">07</span><i class="fa-solid fa-scale-balanced"></i> Postura Crítica</a>
+      <a href="modulo-08.html" class="nav-item"><span class="num">08</span><i class="fa-solid fa-flask"></i> Simulador</a>
+      <a href="modulo-09.html" class="nav-item"><span class="num">09</span><i class="fa-solid fa-atom"></i> Modelo Propio</a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-label">GESTIÓN</div>
+      <a href="proyectos.html" class="nav-item"><i class="fa-solid fa-folder"></i> Proyectos</a>
+      <a href="fuentes.html" class="nav-item"><i class="fa-solid fa-file-lines"></i> Fuentes y Documentos</a>
+      <a href="favoritos.html" class="nav-item"><i class="fa-solid fa-star"></i> Favoritos</a>
+      <a href="reportes.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Reportes</a>
+      <a href="configuracion.html" class="nav-item"><i class="fa-solid fa-gear"></i> Configuración</a>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="avatar-sm">EU</div>
+      <div class="user-meta">
+        <div class="name">Equipo Urbano</div>
+        <div class="role">Administrador</div>
+      </div>
+      <a href="demo.html" class="logout-btn"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
     </div>
   </aside>
 
   <main class="main">
 
     <div class="topbar">
-      <h1>POT ↔ ODS</h1>
+      <h1>El Tiempo Ausente</h1>
       <div class="topbar-actions">
         <div class="search-box"><i class="fa-solid fa-magnifying-glass"></i> Buscar en el sistema...</div>
         <div class="icon-btn"><i class="fa-regular fa-bell"></i><span class="dot"></span></div>
@@ -43,123 +67,82 @@
     </div>
 
     <div class="welcome">
-      <h2>POT ↔ ODS</h2>
-      <p>Analiza cómo las relaciones del POT favorecen, limitan o entran en conflicto con los ODS.</p>
+      <h2>El POT sí tiene tiempo. Pero solo tiene un tipo de tiempo.</h2>
+      <p>El POT tiene tiempo programático: sabe qué debe haber pasado en el año 13, tiene plazos duros, vigencias por etapas, un aparato de seguimiento y evaluación. Lo que no tiene es <strong>tiempo dinámico</strong>. No hay propagación, no hay cascadas, no hay agentes ni emergencia: todo se declara como meta, no como comportamiento. Aquí exploramos la regla generativa más explícita del Plan —la escalera de incentivos del Art. 304— para mostrar lo que el instrumento escribe pero no corre.</p>
     </div>
 
-    <!-- NETWORK VISUALIZATION (red POT ↔ ODS) -->
+    <!-- INSIGHTS -->
+    <div class="ods-insight-stats" id="odsInsightStats">
+      <div class="insight-card" data-insight="programatico" style="--insight-color:#5b8def;" onclick="toggleInsight('programatico')">
+        <div class="insight-icon"><i class="fa-solid fa-calendar-days"></i></div>
+        <div class="insight-title">Tiempo programático</div>
+      </div>
+      <div class="insight-card" data-insight="propagacion" style="--insight-color:#ef9552;">
+        <div class="insight-icon"><i class="fa-solid fa-wave-square"></i></div>
+        <div class="insight-title">Sin propagación</div>
+      </div>
+      <div class="insight-card" data-insight="cascadas" style="--insight-color:#f76fb0;">
+        <div class="insight-icon"><i class="fa-solid fa-link-slash"></i></div>
+        <div class="insight-title">Sin cascadas</div>
+      </div>
+      <div class="insight-card" data-insight="emergencia" style="--insight-color:#a276f2;">
+        <div class="insight-icon"><i class="fa-solid fa-people-group"></i></div>
+        <div class="insight-title">Sin agentes ni emergencia</div>
+      </div>
+      <div class="insight-card" data-insight="todos" style="--insight-color:#4ade80;" onclick="toggleInsight('todos')">
+        <div class="insight-icon"><i class="fa-solid fa-diagram-project"></i></div>
+        <div class="insight-title">Ver toda la red</div>
+      </div>
+    </div>
+
+    <!-- RED: ESCALERA ART. 304 -->
     <div class="network-section">
       <div class="network-header">
-        <h3><i class="fa-solid fa-sitemap"></i> Red POT ↔ ODS Interactiva</h3>
+        <h3><i class="fa-solid fa-stairs"></i> La escalera de incentivos — Art. 304: la regla que el POT escribe pero no corre</h3>
         <div class="network-controls">
           <button class="control-btn active" onclick="filterNetwork('all')">Todos</button>
-          <button class="control-btn" onclick="filterNetwork('aligned')">Alineados</button>
-          <button class="control-btn" onclick="filterNetwork('conflicts')">Conflictos</button>
-        </div>
-      </div>
-
-      <div class="fc-bar">
-        <div class="fc-group fc-findings">
-          <span class="fc-label"><i class="fa-solid fa-magnifying-glass-chart"></i> Hallazgos</span>
-          <button class="fc-chip" type="button" data-finding="ods1">ODS 1</button>
-          <button class="fc-chip" type="button" data-finding="ods13">ODS 13</button>
-          <button class="fc-chip" type="button" data-finding="ods9">ODS 9</button>
-          <button class="fc-chip" type="button" data-finding="edge:ods1->ods13">ODS 1 ↔ ODS 13</button>
-        </div>
-        <div class="fc-divider"></div>
-        <div class="fc-group fc-contradictions">
-          <span class="fc-label"><i class="fa-solid fa-triangle-exclamation"></i> Contradicción</span>
-          <button class="fc-chip fc-chip-red" type="button" data-contradiction="ods16">ODS 16</button>
-          <button class="fc-chip fc-chip-red" type="button" data-contradiction="ods14">ODS 14</button>
-          <button class="fc-chip fc-chip-red" type="button" data-contradiction="ods11">ODS 11</button>
+          <button class="control-btn" onclick="filterNetwork('escalera')">Escalera IC</button>
+          <button class="control-btn" onclick="filterNetwork('ausente')">Lo ausente</button>
         </div>
       </div>
 
       <div class="network-viz-wrap">
-        <!-- ODS INSIGHTS (antes: fila horizontal arriba de la red; ahora al lado izquierdo) -->
-        <div class="ods-insight-stats" id="odsInsightStats">
-          <div class="insight-card" data-insight="conectados" style="--insight-color:#4ade80;" onclick="toggleInsight('conectados')">
-            <div class="insight-icon"><i class="fa-solid fa-diagram-project"></i></div>
-            <div class="insight-title">ODS más conectados</div>
-          </div>
-
-          <div class="insight-card" data-insight="hubs" style="--insight-color:#46d6d0;" onclick="toggleInsight('hubs')">
-            <div class="insight-icon"><i class="fa-solid fa-circle-nodes"></i></div>
-            <div class="insight-title">Hubs</div>
-          </div>
-
-          <div class="insight-card" data-insight="puentes" style="--insight-color:#f5c945;" onclick="toggleInsight('puentes')">
-            <div class="insight-icon"><i class="fa-solid fa-bridge"></i></div>
-            <div class="insight-title">Puentes</div>
-          </div>
-
-          <div class="insight-card" data-insight="perifericos" style="--insight-color:#8891a5;" onclick="toggleInsight('perifericos')">
-            <div class="insight-icon"><i class="fa-solid fa-satellite"></i></div>
-            <div class="insight-title">Periféricos</div>
-          </div>
-
-          <div class="insight-card" data-insight="predominantes" style="--insight-color:#f76fb0;" onclick="toggleInsight('predominantes')">
-            <div class="insight-icon"><i class="fa-solid fa-code-branch"></i></div>
-            <div class="insight-title">Relaciones predominantes</div>
-          </div>
-        </div>
-
-        <div class="network-canvas">
-          <svg id="networkViz" viewBox="0 0 1470 780" preserveAspectRatio="xMidYMid meet"></svg>
-          <div class="network-zoom-controls" aria-label="Controles de zoom de la red superior">
-            <button id="networkZoomIn" type="button" aria-label="Acercar la red superior">+</button>
-            <span id="networkZoomLevel" aria-live="polite">100%</span>
-            <button id="networkZoomOut" type="button" aria-label="Alejar la red superior">−</button>
-          </div>
-
-          <div class="finding-popup" id="findingPopup">
-            <button class="finding-popup-close" id="findingPopupClose" type="button" aria-label="Cerrar">&times;</button>
-            <div class="finding-popup-badge" id="findingPopupBadge"><i class="fa-solid fa-magnifying-glass-chart"></i> Hallazgo</div>
-            <div class="finding-popup-title" id="findingPopupTitle"></div>
-            <div class="finding-popup-text" id="findingPopupText"></div>
-          </div>
-
-          <div class="finding-stack" id="findingStack"></div>
-        </div>
+        <svg id="networkViz" viewBox="0 0 1470 560" preserveAspectRatio="xMidYMid meet"></svg>
 
         <div class="network-sidebar">
-          <aside class="network-legend compact" id="networkLegend">
-            <div class="legend-title">Convenciones</div>
+          <aside class="network-legend" id="networkLegend">
+            <div class="legend-title">Capas</div>
 
-            <label class="legend-item" data-type="comp">
+            <label class="legend-item" data-type="escalera">
               <input type="checkbox" checked>
               <span class="legend-swatch swatch-comp"></span>
-              Complementarias
+              Escalera de incentivos (Art. 304)
             </label>
 
-            <label class="legend-item" data-type="causal">
+            <label class="legend-item" data-type="ausente">
               <input type="checkbox" checked>
               <span class="legend-swatch swatch-causal"></span>
-              Causal
-            </label>
-
-            <label class="legend-item" data-type="cond">
-              <input type="checkbox" checked>
-              <span class="legend-swatch swatch-cond"></span>
-              Condicionamiento
+              Lo que la norma no ve
             </label>
 
             <div class="legend-divider"></div>
-
+            <div class="legend-title">Categoría</div>
             <div class="legend-item legend-static">
               <span class="legend-swatch swatch-directa"></span>
-              Directa
-              <span class="legend-swatch swatch-nodirecta" style="margin-left:10px;"></span>
-              No directa
+              Regla / incentivo declarado
+            </div>
+            <div class="legend-item legend-static">
+              <span class="legend-swatch swatch-nodirecta"></span>
+              Proceso no modelado
             </div>
 
             <div class="legend-divider"></div>
-            <div class="legend-hint">Clic en línea: sustento.<br>Doble clic: apagar/encender.<br>Triple clic: ver solo su flujo.</div>
+            <div class="legend-hint">Clic en una línea: ver la relación y el sustento.<br>Doble clic en una bola: apagarla/encenderla.<br>Triple clic en una bola: ver solo su flujo.<br>Los nodos se arrastran y las conectadas lo siguen.</div>
           </aside>
 
           <div class="edge-info-panel" id="edgeInfoPanel">
             <div class="edge-info-header">
-              <span id="edgeInfoTitle">Conexión</span>
+              <span id="edgeInfoTitle">Relación</span>
               <button class="edge-info-close" id="edgeInfoClose" type="button" aria-label="Cerrar">&times;</button>
             </div>
             <div class="edge-info-type" id="edgeInfoType"></div>
@@ -170,64 +153,108 @@
       </div>
     </div>
 
-    <footer>
-      "No se trata de representar la ciudad, sino de comprenderla para transformarla." — <span>Equipo POT Reverse Engineering</span>
-    </footer>
-
-    <!-- RED DE ESTRUCTURAS DEL POT (estática, se ve completa, sin zoom ni arrastre) -->
-    <div class="pn-section">
-      <div class="network-header">
-        <h3><i class="fa-solid fa-diagram-project"></i> Red de Relaciones del POT (Estructuras)</h3>
-      </div>
-
-      <div class="pn-wrap">
-        <aside class="pn-sidebar">
-          <div class="pn-findings-panel">
-            <div class="pn-findings-title">1. Relaciones que favorecen los ODS</div>
-            <button class="pn-finding-item" type="button" data-pn-finding="movilidad">
-              Red vial, corredores verdes y ciclorutas → Transporte, equipamientos y ecosistemas
-              <span class="pn-finding-ods">ODS 9 · 11 · 13</span>
-            </button>
-            <button class="pn-finding-item" type="button" data-pn-finding="distrito">
-              Distrito Centro Tecnológico → Servicios empresariales
-              <span class="pn-finding-ods">ODS 9 · 8</span>
-            </button>
-            <button class="pn-finding-item" type="button" data-pn-finding="humedales">
-              Humedales → Áreas de resiliencia climática
-              <span class="pn-finding-ods">ODS 13</span>
-            </button>
+    <!-- HALLAZGOS -->
+    <div class="synergies-section">
+      <div class="synergies-grid">
+        <div class="synergy-card success">
+          <div class="synergy-icon"><i class="fa-solid fa-stairs"></i></div>
+          <div class="synergy-content">
+            <h4>La escalera está escrita</h4>
+            <ul>
+              <li><strong>5.0</strong> — sin englobe: índice de construcción efectivo máximo base.</li>
+              <li><strong>6.0</strong> — con englobe de esquina y cesión del área común.</li>
+              <li><strong>7.0</strong> — incluyendo la totalidad de los predios de una manzana.</li>
+            </ul>
           </div>
-          <div class="pn-legend-hint">
-            Clic en un renglón: resalta la relación en la red y muestra los ODS con los que se vincula.<br>
-            Clic en cualquier línea de la red: muestra su sustento documental.
-          </div>
-        </aside>
-
-        <div class="pn-canvas">
-          <svg id="pnViz" viewBox="0 0 800 620" preserveAspectRatio="xMidYMid meet"></svg>
-          <div class="pn-zoom-controls" aria-label="Controles de zoom de la red">
-            <button id="pnZoomIn" type="button" aria-label="Acercar la red">+</button>
-            <span id="pnZoomLevel" aria-live="polite">100%</span>
-            <button id="pnZoomOut" type="button" aria-label="Alejar la red">−</button>
-          </div>
-
-          <div class="pn-sustento-panel" id="pnSustentoPanel">
-            <button class="pn-sustento-close" id="pnSustentoClose" type="button" aria-label="Cerrar">&times;</button>
-            <div class="pn-sustento-badge"><i class="fa-solid fa-quote-left"></i> Sustento</div>
-            <div class="pn-sustento-title" id="pnSustentoTitle"></div>
-            <div class="pn-sustento-type" id="pnSustentoTipo"></div>
-            <div class="pn-sustento-ods" id="pnSustentoOds"></div>
-            <div id="pnSustentoQuotes"></div>
+        </div>
+        <div class="synergy-card conflict">
+          <div class="synergy-icon"><i class="fa-solid fa-magnifying-glass-chart"></i></div>
+          <div class="synergy-content">
+            <h4>La pregunta que el POT no responde</h4>
+            <ul>
+              <li>¿Qué ciudad resulta cuando <strong>miles de propietarios</strong> responden al incentivo al mismo tiempo?</li>
+              <li>¿Dónde se engloba primero? ¿Quién queda fuera?</li>
+              <li>¿Qué presión emerge sobre infraestructura, agua y transporte?</li>
+            </ul>
           </div>
         </div>
       </div>
     </div>
 
+    <!-- MATRIZ -->
+    <div class="analysis-container">
+      <div class="analysis-card full-width">
+        <div class="card-header">
+          <h3><i class="fa-solid fa-hourglass-half"></i> Dos tiempos del POT — lo que programa y lo que no puede ver</h3>
+        </div>
+        <div class="matrix-container">
+          <div class="matrix-row header">
+            <div class="matrix-cell header-cell">Tiempo</div>
+            <div class="matrix-cell header-cell">Qué hace el POT</div>
+            <div class="matrix-cell header-cell">Evidencia</div>
+            <div class="matrix-cell header-cell">Lo que queda sin responder</div>
+          </div>
+          <div class="matrix-row">
+            <div class="matrix-cell"><span class="alignment-tag strong">Programático</span></div>
+            <div class="matrix-cell">Fija plazos duros, vigencias por etapas, seguimiento y evaluación (T13, T15, T16).</div>
+            <div class="matrix-cell">Decreto 555, Libro I — temporalidad del plan</div>
+            <div class="matrix-cell">Sabe qué debe pasar en el año 13; no sabe qué pasa en el día a día.</div>
+          </div>
+          <div class="matrix-row">
+            <div class="matrix-cell"><span class="conflict-tag">Dinámico — ausencia</span></div>
+            <div class="matrix-cell">No modela propagación, cascadas ni comportamiento agregado de agentes.</div>
+            <div class="matrix-cell">El riesgo son mapas estáticos de amenaza; la caída de una subestación no tiene consecuencias modelables.</div>
+            <div class="matrix-cell">Cómo cambia la red, con qué intensidad, de qué depende, qué desigualdad produce y qué ocurre cuando falla.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RECOMENDACIONES -->
+    <div class="recommendations-section">
+      <h3><i class="fa-solid fa-compass"></i> De la ausencia a la propuesta</h3>
+      <div class="recommendations-grid">
+        <div class="rec-card">
+          <div class="rec-number">R1</div>
+          <div class="rec-content">
+            <h4>Correr las reglas antes de autorizarlas</h4>
+            <p>Toda regla generativa del POT —como la escalera del Art. 304— debería probarse en simulación de agentes antes de aplicarse, para anticipar los resultados emergentes que el decreto no puede ver.</p>
+            <div class="rec-impact"><span class="impact-badge">Prevención</span></div>
+          </div>
+        </div>
+        <div class="rec-card">
+          <div class="rec-number">R2</div>
+          <div class="rec-content">
+            <h4>Modelar el día a día, no solo el año 13</h4>
+            <p>El seguimiento y evaluación del plan mide cumplimiento de metas; una capa de monitoreo dinámico mediría cómo funciona la ciudad entre revisiones.</p>
+            <div class="rec-impact"><span class="impact-badge">Monitoreo</span></div>
+          </div>
+        </div>
+        <div class="rec-card">
+          <div class="rec-number">R3</div>
+          <div class="rec-content">
+            <h4>Incorporar propagación y cascadas</h4>
+            <p>Los riesgos deberían modelarse como procesos que viajan (cuenca, corredor, red vial), no como mapas estáticos de amenaza: así la caída de una subestación tendría consecuencias previsibles.</p>
+            <div class="rec-impact"><span class="impact-badge">Resiliencia</span></div>
+          </div>
+        </div>
+        <div class="rec-card">
+          <div class="rec-number">R4</div>
+          <div class="rec-content">
+            <h4>Del decreto al termostato</h4>
+            <p>Combinar la regla escrita (la escalera) con la simulación corrida (los módulos 08 y 09): el POT declara, la plataforma prueba; el ajuste deja de esperar el ciclo de revisión.</p>
+            <div class="rec-impact"><span class="impact-badge">Complemento</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      "Tiene la regla. No corre la simulación."
+      <span> — RAPOT · El Tiempo Ausente</span>
+    </footer>
   </main>
-
 </div>
-
-<script src="modulo-06.js?v=palette-v6"></script>
-
+<script src="modulo-06.js"></script>
 </body>
 </html>

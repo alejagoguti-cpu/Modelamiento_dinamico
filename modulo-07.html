@@ -1,315 +1,348 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Portal Heurístico · Dashboard de Emergencia e Impacto</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
-    <link rel="stylesheet" href="network06-shared.css">
-    <link rel="stylesheet" href="modulo-07.css?v=module02-alignment-v1" />
-      <link rel="stylesheet" href="module02-system.css?v=spacing-v3">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAPOT · Postura Crítica</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="modulo-07.css">
 </head>
-  <body class="module02-reference-page">
-    <div class="app">
-      <aside class="sidebar sidebar-icons-only">
-    <div class="brand-icon"><i class="fa-solid fa-diagram-project"></i></div>
-    <nav class="icon-nav">
-      <a href="modulo-02.html" class="icon-nav-item" title="Medir la Red"><i class="fa-solid fa-chart-simple"></i></a>
-      <a href="modulo-03.html" class="icon-nav-item" title="Discurso vs Realidad"><i class="fa-solid fa-eye"></i></a>
-      <a href="modulo-04.html" class="icon-nav-item" title="Macromodelos"><i class="fa-solid fa-bullseye"></i></a>
-      <a href="modulo-05.html" class="icon-nav-item" title="Lo que no está"><i class="fa-solid fa-magnifying-glass"></i></a>
-      <a href="modulo-06.html" class="icon-nav-item" title="POT ↔ ODS"><i class="fa-solid fa-earth-americas"></i></a>
-      <a href="modulo-07.html" class="icon-nav-item active" title="Simulador"><i class="fa-solid fa-flask"></i></a>
-      <a href="modulo-08.html" class="icon-nav-item" title="Modelo Propio"><i class="fa-solid fa-city"></i></a>
-    </nav>
-    <div class="icon-nav-footer">
-      <a href="configuracion.html" class="icon-nav-item" title="Configuración"><i class="fa-solid fa-gear"></i></a>
-      <a href="demo.html" class="icon-nav-item" title="Salir"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
+<body>
+<div class="app">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="mark"><i class="fa-solid fa-diagram-project"></i></div>
+      <span>RAPOT</span>
+    </div>
+
+    <div class="nav-group">
+      <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-house"></i> Dashboard</a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-label">MÓDULOS</div>
+      <a href="modulo-01.html" class="nav-item"><span class="num">01</span><i class="fa-solid fa-diagram-project"></i> Una ciudad que no cabe en el POT</a>
+      <a href="modulo-02.html" class="nav-item"><span class="num">02</span><i class="fa-solid fa-chart-simple"></i> Medir la Red</a>
+      <a href="modulo-03.html" class="nav-item"><span class="num">03</span><i class="fa-solid fa-eye"></i> Discurso vs Realidad</a>
+      <a href="modulo-04.html" class="nav-item"><span class="num">04</span><i class="fa-solid fa-bullseye"></i> Macromodelos</a>
+      <a href="modulo-05.html" class="nav-item"><span class="num">05</span><i class="fa-solid fa-layer-group"></i> Las Escalas — 33 UPL</a>
+      <a href="modulo-06.html" class="nav-item"><span class="num">06</span><i class="fa-solid fa-hourglass-half"></i> El Tiempo Ausente</a>
+      <a href="modulo-07.html" class="nav-item active"><span class="num">07</span><i class="fa-solid fa-scale-balanced"></i> Postura Crítica</a>
+      <a href="modulo-08.html" class="nav-item"><span class="num">08</span><i class="fa-solid fa-flask"></i> Simulador</a>
+      <a href="modulo-09.html" class="nav-item"><span class="num">09</span><i class="fa-solid fa-atom"></i> Modelo Propio</a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-label">GESTIÓN</div>
+      <a href="proyectos.html" class="nav-item"><i class="fa-solid fa-folder"></i> Proyectos</a>
+      <a href="fuentes.html" class="nav-item"><i class="fa-solid fa-file-lines"></i> Fuentes y Documentos</a>
+      <a href="favoritos.html" class="nav-item"><i class="fa-solid fa-star"></i> Favoritos</a>
+      <a href="reportes.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Reportes</a>
+      <a href="configuracion.html" class="nav-item"><i class="fa-solid fa-gear"></i> Configuración</a>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="avatar-sm">EU</div>
+      <div class="user-meta">
+        <div class="name">Equipo Urbano</div>
+        <div class="role">Administrador</div>
+      </div>
+      <a href="demo.html" class="logout-btn"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
     </div>
   </aside>
 
-      <main class="main">
-        <header class="topbar">
-          <div class="topbar-brand"><i class="fa-solid fa-circle-nodes"></i> Bogotá Viva: Simulación Urbana</div>
-          <div class="topbar-actions">
-            <div class="icon-btn" id="bellBtn"><i class="fa-regular fa-bell"></i><span class="dot"></span></div>
-            <div class="icon-btn"><i class="fa-solid fa-sun"></i></div>
-            <div class="icon-btn"><i class="fa-solid fa-user"></i></div>
-            <i class="fa-solid fa-chevron-down topbar-chevron"></i>
-          </div>
-        </header>
+  <main class="main">
 
-        <section class="hero-grid">
-          <div class="hero-copy">
-            <div class="eyebrow"><b></b> SÍNTESIS DEL SISTEMA</div>
-            <h1><span class="h2-plain">Síntesis</span><br /><em>territorial</em></h1>
-            <p>
-              Resultados integrados del sistema Bogotá Viva.<br />Impacto
-              urbano, desempeño económico y ambiental<br />bajo el escenario
-              óptimo actual.
-            </p>
-            <button id="exportBtn" class="outline-btn">
-              ⇩ &nbsp;Guardar reporte final
-            </button>
-            <a id="downloadDeckBtn" class="outline-btn deck-download" href="M_dulo_07___REDSEG_N_EL_POT.pdf" download="SINTESIS_Modulo_07.pdf" aria-label="Descargar presentación SÍNTESIS en PDF">
-              ⇩ &nbsp;Descargar SÍNTESIS
-            </a>
-          </div>
-          <article class="hero-visual" aria-label="Modelo urbano principal">
-            <div class="urban-mesh" aria-hidden="true">
-              <span class="mesh-line line-a"></span><span class="mesh-line line-b"></span><span class="mesh-line line-c"></span>
-              <span class="mesh-route route-a"></span><span class="mesh-route route-b"></span>
-              <div class="city-silhouette">
-                <i class="tower tower-1"></i><i class="tower tower-2"></i><i class="tower tower-3"></i><i class="tower tower-4"></i><i class="tower tower-5"></i><i class="tower tower-6"></i><i class="tower tower-7"></i>
-              </div>
-            </div>
-            <div class="hero-visual-caption"><span class="signal-dot"></span><span>BOGOTÁ VIVA</span><b>MODELO URBANO · ESCENARIO ÓPTIMO 2040</b></div>
-            <button id="diagnoseBtn" class="danger-btn hero-diagnose">Ver diagnóstico crítico</button>
-          </article>
-        </section>
-
-        <section class="metric-grid">
-          <article class="metric-card cyan">
-            <header>
-              <button
-                class="metric-number network-trigger"
-                data-network="30min"
-                title="Abrir red de Ciudad de los 30 minutos"
-              >
-                1
-              </button>
-              <div>
-                <strong>Ciudad de los 30 minutos</strong
-                ><small>Acceso equitativo a servicios y oportunidades</small>
-              </div>
-            </header>
-            <div class="metric-body metric-focus">
-              <div class="focus-icon"><i class="fa-solid fa-clock" aria-hidden="true"></i></div>
-              <div class="focus-copy">
-                <small>INDICADOR CLAVE</small>
-                <strong>Acceso a servicios y oportunidades</strong>
-                <span><i></i>Meta de proximidad · 2035</span>
-              </div>
-            </div>
-            <footer>
-              <span><i class="fa-solid fa-building" aria-hidden="true"></i> <b>33</b><small>UPL del modelo</small></span
-              ><span><i class="fa-solid fa-heart" aria-hidden="true"></i> <b>45</b><small>Manzanas del Cuidado</small></span
-              ><span><i class="fa-solid fa-clock" aria-hidden="true"></i> <b>26–62 min</b><small>Brecha de viaje</small></span>
-            </footer>
-          </article>
-          <article class="metric-card orange">
-            <header>
-              <button
-                class="metric-number network-trigger"
-                data-network="empleo"
-                title="Abrir red de Productividad y empleo"
-              >
-                2
-              </button>
-              <div>
-                <strong>Productividad y empleo</strong
-                ><small>Crecimiento económico inclusivo y sostenible</small>
-              </div>
-            </header>
-            <div class="metric-body metric-focus">
-              <div class="focus-icon"><i class="fa-solid fa-arrow-trend-up" aria-hidden="true"></i></div>
-              <div class="focus-copy">
-                <small>INDICADOR CLAVE</small>
-                <strong>Crecimiento de la población ocupada</strong>
-                <span><i></i>Escenario alto · productividad inclusiva</span>
-              </div>
-            </div>
-            <footer>
-              <span><i class="fa-solid fa-briefcase" aria-hidden="true"></i> <b>910.509</b><small>Empleos potenciales</small></span
-              ><span><i class="fa-solid fa-chart-line" aria-hidden="true"></i> <b>7%</b><small>Desempleo escenario alto</small></span
-              ><span
-                ><i class="fa-solid fa-city" aria-hidden="true"></i> <b>10 / 33</b><small>UPL con superávit laboral</small></span>
-              >
-            </footer>
-          </article>
-          <article class="metric-card cyan">
-            <header>
-              <button
-                class="metric-number network-trigger"
-                data-network="carbono"
-                title="Abrir red de Descarbonización"
-              >
-                3
-              </button>
-              <div>
-                <strong>Descarbonización</strong
-                ><small>Reducción de emisiones y calidad del aire</small>
-              </div>
-            </header>
-            <div class="metric-body metric-focus">
-              <div class="focus-icon"><i class="fa-solid fa-leaf" aria-hidden="true"></i></div>
-              <div class="focus-copy">
-                <small>INDICADOR CLAVE</small>
-                <strong>Transición hacia viajes limpios</strong>
-                <span><i></i>Meta de descarbonización · 2035</span>
-              </div>
-            </div>
-            <footer>
-              <span><i class="fa-solid fa-smog" aria-hidden="true"></i> <b>47%</b><small>GEI del transporte</small></span
-              ><span><i class="fa-solid fa-wind" aria-hidden="true"></i> <b>18%</b><small>PM fino del transporte</small></span
-              ><span><i class="fa-solid fa-bus" aria-hidden="true"></i> <b>2040</b><small>Flota pública eléctrica</small></span>
-            </footer>
-          </article>
-        </section>
-
-        <footer class="dashboard-footer">
-          <span>Modelo activo: <b>Bogotá Viva · Escenario Óptimo 2040</b></span
-          ><span>Simulación completada: <b>Hoy, 08:42</b></span
-          ><span>Confianza del modelo: <b>Alta</b> <i></i></span
-          ><button id="exportBottom">⇩ &nbsp; Guardar síntesis</button>
-        </footer>
-      </main>
+    <div class="topbar">
+      <h1>Postura Crítica</h1>
+      <div class="topbar-actions">
+        <div class="search-box"><i class="fa-solid fa-magnifying-glass"></i> Buscar en el sistema...</div>
+        <div class="icon-btn"><i class="fa-regular fa-bell"></i><span class="dot"></span></div>
+        <div class="icon-btn"><i class="fa-regular fa-circle-question"></i></div>
+        <div class="avatar-sm">EU</div>
+      </div>
     </div>
-    <div id="networkModal" class="network-modal hidden">
-      <div class="network-modal-box">
-        <button id="networkModalClose" class="network-close">×</button>
-        <div class="network-modal-head">
-          <div>
-            <div class="network-kicker">
-              MODO ANALÍTICO // RELACIONES DEL MODELO
-            </div>
-            <h2 id="networkTitle">Red analítica</h2>
-            <p id="networkSubtitle">
-              Nodos y conexiones que explican el indicador.
-            </p>
-          </div>
-          <div class="network-count" id="networkCount">—</div>
+
+    <div class="welcome">
+      <h2>Postura crítica — el POT es un instrumento necesario, pero no suficiente</h2>
+      <p>Con todo lo anterior, nuestra respuesta es clara: <strong>el POT es un instrumento necesario, pero no suficiente</strong> para comprender e intervenir a Bogotá como sistema complejo. No decimos esto para descartarlo: su función jurídico-administrativa —fijar competencias, autorizar usos, declarar protecciones, darle exigibilidad legal al modelo— la cumple bien, y ninguna simulación puede reemplazar esa función normativa. <strong>El problema aparece cuando ese instrumento jurídico se convierte, además, en el único modelo explicativo de cómo funciona la ciudad.</strong> Aquí los tres hallazgos de toda la ingeniería inversa se convierten en un mismo argumento.</p>
+    </div>
+
+    <!-- INSIGHTS -->
+    <div class="ods-insight-stats" id="odsInsightStats">
+      <div class="insight-card" data-insight="h1" style="--insight-color:#4ade80;" onclick="toggleInsight('h1')">
+        <div class="insight-icon"><i class="fa-solid fa-cubes"></i></div>
+        <div class="insight-title">Hallazgo 1 — Objetos, no flujos</div>
+      </div>
+
+      <div class="insight-card" data-insight="h2" style="--insight-color:#f5c945;" onclick="toggleInsight('h2')">
+        <div class="insight-icon"><i class="fa-solid fa-diagram-project"></i></div>
+        <div class="insight-title">Hallazgo 2 — Red de mundo pequeño</div>
+      </div>
+
+      <div class="insight-card" data-insight="h3" style="--insight-color:#f76fb0;" onclick="toggleInsight('h3')">
+        <div class="insight-icon"><i class="fa-solid fa-forward"></i></div>
+        <div class="insight-title">Hallazgo 3 — Reglas sin simulación</div>
+      </div>
+
+      <div class="insight-card" data-insight="reloj" style="--insight-color:#2fd4c8;" onclick="toggleInsight('reloj')">
+        <div class="insight-icon"><i class="fa-solid fa-temperature-low"></i></div>
+        <div class="insight-title">Reloj vs Termostato</div>
+      </div>
+
+      <div class="insight-card" data-insight="todos" style="--insight-color:#a276f2;" onclick="toggleInsight('todos')">
+        <div class="insight-icon"><i class="fa-solid fa-diagram-project"></i></div>
+        <div class="insight-title">Ver toda la red</div>
+      </div>
+    </div>
+
+    <!-- RED -->
+    <div class="network-section">
+      <div class="network-header">
+        <h3><i class="fa-solid fa-scale-balanced"></i> Red argumentativa — los tres hallazgos y la evidencia que los sostiene</h3>
+        <div class="network-controls">
+          <button class="control-btn active" onclick="filterNetwork('all')">Todos</button>
+          <button class="control-btn" onclick="filterNetwork('hallazgo_1')">Hallazgo 1</button>
+          <button class="control-btn" onclick="filterNetwork('hallazgo_2')">Hallazgo 2</button>
+          <button class="control-btn" onclick="filterNetwork('hallazgo_3')">Hallazgo 3</button>
+          <button class="control-btn" onclick="filterNetwork('consecuencia')">Consecuencia</button>
         </div>
-        <div class="network-modal-content">
-          <div
-            class="network-toolbar"
-            aria-label="Controles de navegación de la red"
-          >
-            <button type="button" id="networkZoomOut" title="Alejar">−</button
-            ><button
-              type="button"
-              id="networkZoomReset"
-              title="Restablecer vista"
-            >
-              100%</button
-            ><button
-              type="button"
-              id="networkRestore"
-              title="Restablecer toda la red"
-            >
-              Restablecer red</button
-            ><button type="button" id="networkZoomIn" title="Acercar">+</button
-            ><span>Arrastra el fondo para desplazarte</span>
-            <a id="downloadDeckModalBtn" class="network-deck-download" href="M_dulo_07___REDSEG_N_EL_POT.pdf" download="SINTESIS_Modulo_07.pdf" aria-label="Descargar presentación SÍNTESIS en PDF">⇩ Descargar SÍNTESIS</a>
-            <label class="node-search" for="nodeSearchInput">
-              <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
-              <input id="nodeSearchInput" type="search" placeholder="Buscar nodo..." autocomplete="off" />
-              <small id="nodeSearchCount" aria-live="polite"></small>
+      </div>
+
+      <div class="network-viz-wrap">
+        <svg id="networkViz" viewBox="0 0 1470 780" preserveAspectRatio="xMidYMid meet"></svg>
+
+        <div class="network-sidebar">
+          <aside class="network-legend" id="networkLegend">
+            <div class="legend-title">Capas del argumento</div>
+
+            <label class="legend-item" data-type="hallazgo_1">
+              <input type="checkbox" checked>
+              <span class="legend-swatch swatch-hallazgo1"></span>
+              Hallazgo 1 — ciudad como objetos localizados
             </label>
-            <div id="categoryFilters" class="category-filters" aria-label="Categorías temáticas"></div>
-            <div class="network-legend toolbar-conventions" aria-label="Convenciones de la red">
-              <div class="legend-title">Tipos de relación</div>
-              <label class="legend-item toolbar-convention all-conventions">
-                <input type="checkbox" id="edge-filter-all" checked>
-                <span class="legend-swatch swatch-directa-neutral"></span>
-                <span class="legend-text"><strong>Todas</strong><small>Mostrar todas las relaciones</small></span>
-              </label>
-              <label class="legend-item toolbar-convention direct">
-                <input type="checkbox" class="edge-filter" data-edge-type="direct" checked>
-                <span class="legend-swatch swatch-directa-neutral"></span>
-                <span class="legend-text"><strong>Directa</strong><small>Respaldo explícito del POT</small></span>
-              </label>
-              <label class="legend-item toolbar-convention indirect">
-                <input type="checkbox" class="edge-filter" data-edge-type="indirect" checked>
-                <span class="legend-swatch swatch-indirecta-neutral"></span>
-                <span class="legend-text"><strong>Indirecta</strong><small>Relación funcional intermedia</small></span>
-              </label>
-              <div class="legend-divider"></div>
-              <div class="legend-title">Color de la línea</div>
-              <label class="legend-item toolbar-convention support">
-                <input type="checkbox" class="edge-filter" data-edge-type="support" checked>
-                <span class="legend-swatch swatch-support"></span>
-                <span class="legend-text"><strong>Soporte</strong><small>Sostiene / habilita</small></span>
-              </label>
-              <label class="legend-item toolbar-convention result">
-                <input type="checkbox" class="edge-filter" data-edge-type="result" checked>
-                <span class="legend-swatch swatch-result"></span>
-                <span class="legend-text"><strong>Resultado</strong><small>Produce / transforma</small></span>
-              </label>
 
+            <label class="legend-item" data-type="hallazgo_2">
+              <input type="checkbox" checked>
+              <span class="legend-swatch swatch-hallazgo2"></span>
+              Hallazgo 2 — red de "mundo pequeño"
+            </label>
+
+            <label class="legend-item" data-type="hallazgo_3">
+              <input type="checkbox" checked>
+              <span class="legend-swatch swatch-hallazgo3"></span>
+              Hallazgo 3 — reglas generativas sin simulación
+            </label>
+
+            <label class="legend-item" data-type="consecuencia">
+              <input type="checkbox" checked>
+              <span class="legend-swatch swatch-consecuencia"></span>
+              Consecuencia — lo que el POT no puede ver
+            </label>
+
+            <div class="legend-divider"></div>
+            <div class="legend-title">Categoría de nodo</div>
+            <div class="legend-item legend-static">
+              <span class="legend-swatch swatch-node-hallazgo"></span>
+              Hallazgo — lo que la red reveló
+            </div>
+            <div class="legend-item legend-static">
+              <span class="legend-swatch swatch-node-evidencia"></span>
+              Evidencia — caso o artículo del POT
+            </div>
+            <div class="legend-item legend-static">
+              <span class="legend-swatch swatch-node-consecuencia"></span>
+              Consecuencia — límite del instrumento
+            </div>
+
+            <div class="legend-divider"></div>
+            <div class="legend-hint">Clic en una línea: ver la relación, el sustento y la página del POT.<br>Doble clic en una bola: apagarla/encenderla.<br>Triple clic en una bola: ver solo su flujo.<br>Los nodos se arrastran y las conectadas lo siguen.</div>
+          </aside>
+
+          <div class="edge-info-panel" id="edgeInfoPanel">
+            <div class="edge-info-header">
+              <span id="edgeInfoTitle">Relación</span>
+              <button class="edge-info-close" id="edgeInfoClose" type="button" aria-label="Cerrar">&times;</button>
+            </div>
+            <div class="edge-info-type" id="edgeInfoType"></div>
+            <div class="edge-info-quote" id="edgeInfoQuote"></div>
+            <div class="edge-info-page" id="edgeInfoPage"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOS TRES HALLAZGOS -->
+    <div class="synergies-section">
+      <div class="synergies-grid">
+        <div class="synergy-card success">
+          <div class="synergy-icon"><i class="fa-solid fa-cubes"></i></div>
+          <div class="synergy-content">
+            <h4>Hallazgo 1 — Objetos localizados, no sistema de flujos</h4>
+            <p>El POT construye la ciudad como <strong>la suma de objetos localizados</strong> —humedales, equipamientos, corredores— y no como un sistema abierto de flujos, dependencias, actores y transformaciones. Autorizar una actividad no significa producirla: prohibir un resultado no garantiza que desaparezcan las relaciones que lo generan.</p>
+          </div>
+        </div>
+
+        <div class="synergy-card conflict">
+          <div class="synergy-icon"><i class="fa-solid fa-diagram-project"></i></div>
+          <div class="synergy-content">
+            <h4>Hallazgo 2 — Red de "mundo pequeño" entre estructuras</h4>
+            <p>La arquitectura del plan produce una red de <strong>"mundo pequeño"</strong>: estructuras densas hacia adentro y prácticamente aisladas entre sí. El propio texto no lo evidencia porque se lee linealmente, artículo por artículo; la red lo revela de un vistazo.</p>
+          </div>
+        </div>
+
+        <div class="synergy-card success">
+          <div class="synergy-icon"><i class="fa-solid fa-forward"></i></div>
+          <div class="synergy-content">
+            <h4>Hallazgo 3 — Reglas generativas sin mecanismo de anticipación</h4>
+            <p>El plan formula reglas generativas —como la escalera de incentivos del Art. 304— sin ningún mecanismo que le permita <strong>anticipar lo que esas reglas producen</strong> cuando miles de agentes actúan sobre ellas al mismo tiempo.</p>
+          </div>
+        </div>
+
+        <div class="synergy-card conflict">
+          <div class="synergy-icon"><i class="fa-solid fa-scale-balanced"></i></div>
+          <div class="synergy-content">
+            <h4>La postura — necesario pero no suficiente</h4>
+            <p>El POT necesita ser <strong>complementado —no sustituido—</strong> por modelos capaces de representar lo que su propia naturaleza jurídica no puede: la dinámica, la emergencia y la autoorganización del territorio real. Eso es exactamente lo que proponen los módulos siguientes.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RELOJ VS TERMOSTATO -->
+    <div class="multirrol-section">
+      <div class="section-header">
+        <h3><i class="fa-solid fa-temperature-low"></i> Reloj vs termostato — dos modelos de gobernanza urbana</h3>
+        <p>¿Cómo debe gobernar un instrumento territorial: midiendo períodos o regulando procesos? El POT actual opera como un reloj; nuestra propuesta apunta a un termostato. Pase el cursor sobre cada tarjeta para ver qué cambia en la práctica.</p>
+      </div>
+
+      <div class="comparison-wrap">
+        <div class="comparison-col reloj" id="colReloj">
+          <div class="comparison-icon"><i class="fa-solid fa-clock"></i></div>
+          <h4>El POT como reloj</h4>
+          <p>Se revisa cada cierto período, cumple ciclos programáticos y reporta vigencias. Está bien diseñado para <strong>programar</strong>, no para <strong>reaccionar</strong>.</p>
+          <div class="comparison-list">
+            <div class="comp-item"><i class="fa-solid fa-calendar-days"></i><span>Tiempo programático: plazos duros, etapas, seguimiento y evaluación (T13, T15, T16).</span></div>
+            <div class="comp-item"><i class="fa-solid fa-pause"></i><span>Entre revisiones, la norma no "ve" la ciudad: la ciudad sigue funcionando, la norma no responde.</span></div>
+            <div class="comp-item"><i class="fa-solid fa-file-signature"></i><span>Los cambios llegan por modificación del decreto, no por retroalimentación de la dinámica real.</span></div>
+          </div>
+        </div>
+
+        <div class="comparison-vs">VS</div>
+
+        <div class="comparison-col termostato" id="colTermostato">
+          <div class="comparison-icon"><i class="fa-solid fa-temperature-half"></i></div>
+          <h4>El POT como termostato</h4>
+          <p>Monitorea continuamente, detecta desviaciones, <strong>retroalimenta y adapta</strong> la norma mientras la ciudad responde — no solo cuando toca actualizar el decreto.</p>
+          <div class="comparison-list">
+            <div class="comp-item"><i class="fa-solid fa-wave-square"></i><span>Monitoreo en vivo: simulaciones de agentes que reportan lo que la norma produce en el día a día.</span></div>
+            <div class="comp-item"><i class="fa-solid fa-bell"></i><span>Alertas tempranas: cuando una regla genera resultados no esperados (englobe, desplazamiento, presión sobre humedales), la señal llega antes de la próxima revisión.</span></div>
+            <div class="comp-item"><i class="fa-solid fa-rotate"></i><span>Adaptación continua: la norma se calibra con evidencia emergente, sin esperar el ciclo político de revisión.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MATRIZ ARGUMENTATIVA -->
+    <div class="analysis-container">
+      <div class="analysis-card full-width">
+        <div class="card-header">
+          <h3><i class="fa-solid fa-table-list"></i> Matriz argumentativa — los tres hallazgos contra el texto del POT</h3>
+        </div>
+        <div class="matrix-container">
+          <div class="matrix-row header">
+            <div class="matrix-cell header-cell">#</div>
+            <div class="matrix-cell header-cell">Hallazgo</div>
+            <div class="matrix-cell header-cell">Evidencia en el POT</div>
+            <div class="matrix-cell header-cell">Página / Art.</div>
+            <div class="matrix-cell header-cell">Consecuencia</div>
+          </div>
+
+          <div class="matrix-row" data-edge="0">
+            <div class="matrix-cell">1</div>
+            <div class="matrix-cell"><span class="legend-swatch swatch-hallazgo1" style="margin-right:6px;"></span>Objetos localizados, no flujos</div>
+            <div class="matrix-cell">El POT reconoce relaciones territoriales, pero las representa principalmente como relaciones espaciales, normativas y proyectadas</div>
+            <div class="matrix-cell">Estructuras del Libro II (Arts. 11, 50, 100)</div>
+            <div class="matrix-cell">Tiempos, flujos, intensidades, dependencias, conflictos e intercambios quedan fuera del modelo declarado</div>
+          </div>
+
+          <div class="matrix-row" data-edge="1">
+            <div class="matrix-cell">2</div>
+            <div class="matrix-cell"><span class="legend-swatch swatch-hallazgo2" style="margin-right:6px;"></span>Red de "mundo pequeño"</div>
+            <div class="matrix-cell">Estructuras densas hacia adentro y prácticamente aisladas entre sí; hubs y periféricos con distribución desigual</div>
+            <div class="matrix-cell">Art. 100 — "estructura dinámica" declarada, mapa fijo operado</div>
+            <div class="matrix-cell">El texto no evidencia la desconexión porque se lee artículo por artículo; la red lo muestra de un vistazo</div>
+          </div>
+
+          <div class="matrix-row" data-edge="2">
+            <div class="matrix-cell">3</div>
+            <div class="matrix-cell"><span class="legend-swatch swatch-hallazgo3" style="margin-right:6px;"></span>Reglas generativas sin simulación</div>
+            <div class="matrix-cell">Escalera de incentivos del Art. 304 (IC 5.0 / 6.0 / 7.0) escrita para producir un comportamiento colectivo</div>
+            <div class="matrix-cell">Decreto 555, Art. 304 (Libro III)</div>
+            <div class="matrix-cell">Ningún mecanismo anticipa qué ciudad resulta cuando miles de propietarios responden a la regla al mismo tiempo</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RECOMENDACIONES -->
+    <div class="recommendations-section">
+      <h3><i class="fa-solid fa-compass"></i> De la postura a la propuesta — qué implican los tres hallazgos</h3>
+      <div class="recommendations-grid">
+        <div class="rec-card">
+          <div class="rec-number">R1</div>
+          <div class="rec-content">
+            <h4>Complementar, no sustituir</h4>
+            <p>El POT cumple su función jurídico-administrativa; la simulación no puede reemplazarla. La propuesta es una capa adicional: modelos dinámicos que corran junto a la norma y reporten lo que el decreto no puede ver.</p>
+            <div class="rec-impact">
+              <span class="impact-badge">Complemento</span>
             </div>
           </div>
-          <div id="networkCanvas" class="network-canvas"></div>
-          <aside class="network-aside">
-            <div id="nodeDetails" class="network-panel node-details">
-              <h3>
-                <span class="panel-icon teal"
-                  ><i class="fa-solid fa-crosshairs"></i></span
-                >Inspección del nodo
-              </h3>
-              <p>
-                Haz clic en un nodo para ver cuántas conexiones tiene y con qué
-                elementos se relaciona.
-              </p>
+        </div>
+        <div class="rec-card">
+          <div class="rec-number">R2</div>
+          <div class="rec-content">
+            <h4>Leer el POT como red, no solo como texto</h4>
+            <p>La lectura lineal artículo por artículo oculta la desconexión entre estructuras. La ingeniería inversa relacional revela lo que el texto no evidencia: la arquitectura "mundo pequeño" y los elementos periféricos.</p>
+            <div class="rec-impact">
+              <span class="impact-badge">Método</span>
             </div>
-            <div class="network-panel indicator-panel">
-              <h3>
-                <span class="panel-icon teal"
-                  ><i class="fa-solid fa-wave-square"></i></span
-                >Lectura del indicador
-              </h3>
-              <p id="networkExplanation"></p>
-              <div id="networkMetricGrid" class="network-metric-grid">
-                <div class="network-mini-card teal">
-                  <i class="fa-solid fa-cloud"></i><strong>47%</strong
-                  ><span>Indicador principal</span>
-                </div>
-                <div class="network-mini-card warm">
-                  <i class="fa-solid fa-sun"></i><strong>18%</strong
-                  ><span>Indicador crítico</span>
-                </div>
-                <div class="network-mini-card teal">
-                  <i class="fa-solid fa-train-tram"></i><strong>77%</strong
-                  ><span>Meta del escenario</span>
-                </div>
-                <div class="network-mini-card teal">
-                  <i class="fa-solid fa-bolt"></i><strong>100%</strong
-                  ><span>Meta futura</span>
-                </div>
-                <div class="network-mini-card warm">
-                  <i class="fa-solid fa-leaf"></i><strong>72%</strong
-                  ><span>Reducción prevista</span>
-                </div>
-              </div>
+          </div>
+        </div>
+        <div class="rec-card">
+          <div class="rec-number">R3</div>
+          <div class="rec-content">
+            <h4>Correr las reglas generativas antes de autorizarlas</h4>
+            <p>Toda regla del POT que induzca comportamiento colectivo —como el Art. 304— debería probarse en simulación de agentes antes de aplicarse, para anticipar resultados emergentes y ajustar incentivos.</p>
+            <div class="rec-impact">
+              <span class="impact-badge">Prevención</span>
             </div>
-          </aside>
+          </div>
+        </div>
+        <div class="rec-card">
+          <div class="rec-number">R4</div>
+          <div class="rec-content">
+            <h4>Transitar del reloj al termostato</h4>
+            <p>El instrumento debe pasar de ciclos programáticos de revisión a monitoreo continuo con retroalimentación: alertas tempranas cuando las reglas generan resultados no esperados en el territorio real.</p>
+            <div class="rec-impact">
+              <span class="impact-badge">Gobernanza</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-    <div id="modal" class="modal hidden">
-      <div class="modal-box">
-        <button id="modalClose">×</button>
-        <h2>Diagnóstico crítico</h2>
-        <p>
-          El sistema entra en condición de colapso cuando el tiempo de viaje
-          supera los 30 minutos o la resiliencia urbana cae por debajo del
-          umbral operativo.
-        </p>
-        <div class="modal-stats">
-          <b>24%<small>Acceso objetivo</small></b
-          ><b>73/100<small>Resiliencia</small></b
-          ><b>77%<small>Viajes limpios</small></b>
-        </div>
-      </div>
-    </div>
-    <script src="modulo-07.js?v=arrows-m02-v1"></script>
-  </body>
+
+    <footer>
+      <blockquote>
+        "Autorizar una actividad no significa producirla. Prohibir un resultado no garantiza que desaparezcan las relaciones que lo generan."
+        <cite>— RAPOT · Postura crítica · Ingeniería inversa del POT</cite>
+      </blockquote>
+    </footer>
+  </main>
+</div>
+<script src="modulo-07.js"></script>
+</body>
 </html>

@@ -1,1440 +1,612 @@
-(() => {
-  "use strict";
-  const start = (fn) =>
-    document.readyState === "loading"
-      ? document.addEventListener("DOMContentLoaded", fn, { once: true })
-      : fn();
-  start(() => {
-    const $ = (s, r = document) => r.querySelector(s),
-      $$ = (s, r = document) => [...r.querySelectorAll(s)];
-    const toast = (text) => {
-      let e = $("#dashboardToast");
-      if (!e) {
-        e = document.createElement("div");
-        e.id = "dashboardToast";
-        e.className = "dashboard-toast";
-        document.body.appendChild(e);
-      }
-      e.textContent = text;
-      e.classList.add("show");
-      clearTimeout(toast.t);
-      toast.t = setTimeout(() => e.classList.remove("show"), 2400);
-    };
-    const show = (e) => e && e.classList.remove("hidden"),
-      hide = (e) => e && e.classList.add("hidden"),
-      esc = (v) =>
-        String(v)
-          .replaceAll("&", "&amp;")
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          .replaceAll('"', "&quot;"),
-      clean = (v) => String(v).replaceAll("\\n", " ");
-    const networks = {
-      "30min": {
-        title: "Ciudad de los 30 minutos",
-        subtitle:
-          "Modo analítico // Nodos de proximidad, cuidado e infraestructura",
-        count: "14 nodos · 22 conexiones",
-        text: "La red explica cómo las 33 Unidades de Planeamiento Local articulan la proximidad: servicios de cuidado, salud, educación, vivienda, empleo, espacio público y transporte deben quedar accesibles en un máximo de 30 minutos caminando, en bicicleta o en transporte público. Los 160 Proyectos Integrales de Proximidad convierten esta meta en intervenciones construidas con la ciudadanía. Fuente base: Secretaría Distrital de Planeación, noticia ¡La ciudad de los 30 minutos se consolida en Bogotá!, 29 de noviembre de 2023.",
-        nodes: [
-          ["33 Unidades de Planeamiento Local", 390, 230, 58, "central", "⌖"],
-          ["Manzanas\\ndel Cuidado", 145, 105, 42, "", "♥"],
-          ["Centros\\nde salud", 160, 350, 37, "", "✚"],
-          ["Jardines\\ninfantiles", 355, 82, 38, "", "✚"],
-          ["Colegios y\\nuniversidades", 605, 94, 40, "", "▦"],
-          ["Transporte\\npúblico", 635, 290, 45, "", "▣"],
-          ["Empleo\\nformal", 425, 390, 40, "", "▤"],
-          ["Meta: acceso\\nen 30 minutos", 720, 215, 42, "result", "↗"],
-          ["Vivienda\\ndigna VIS/VIP", 185, 225, 35, "", "⌂"],
-          ["Cuidado\\ncomunitario", 315, 340, 36, "", "♥"],
-          ["Equipamientos\\nsociales", 520, 335, 38, "", "▥"],
-          ["Actividades\\nde ocio y cultura", 590, 410, 32, "", "▤"],
-          ["Tiempo máximo\\nde acceso: 30 min", 90, 245, 34, "", "◷"],
-          ["Redes peatonales\\ny bicicleta", 465, 115, 33, "", "⌁"],
-        ],
-        edges: [
-          [0, 1, "direct"],
-          [0, 2, "support"],
-          [0, 3, "direct"],
-          [0, 4, "direct"],
-          [0, 5, "support"],
-          [0, 6, "direct"],
-          [0, 7, "result"],
-          [0, 8, "direct"],
-          [0, 9, "support"],
-          [0, 10, "direct"],
-          [0, 11, "indirect"],
-          [0, 12, "indirect"],
-          [0, 13, "support"],
-          [1, 9, "direct"],
-          [2, 10, "direct"],
-          [3, 4, "indirect"],
-          [5, 6, "direct"],
-          [5, 13, "support"],
-          [8, 12, "indirect"],
-          [9, 10, "direct"],
-          [10, 11, "direct"],
-          [6, 7, "result"],
-        ],
-      },
-      empleo: {
-        title: "Productividad y empleo",
-        subtitle: "Modo analítico // Actores, UPL y economía territorial",
-        count: "14 nodos · 22 conexiones",
-        text: "La red representa la apuesta del POT por una ciudad menos segregada y con productividad descentralizada. Conecta sectores productivos, servicios metropolitanos, incentivos urbanísticos y económicos, equipamientos públicos, transporte, vivienda y mejoramiento de barrios para acercar el empleo a las zonas deficitarias. El archivo oficial destaca la localización de actividades productivas en Rafael Uribe Uribe, Tunjuelito, Ciudad Bolívar y Bosa, así como el uso flexible del suelo y la adaptación del POT a los barrios populares.",
-        nodes: [
-          ["Empleo formal y\\nproductividad", 390, 230, 58, "central", "▥"],
-          ["Sectores\\nproductivos", 135, 100, 42, "result", "↗"],
-          ["Zonas deficitarias\\nde empleo", 125, 350, 38, "", "⌖"],
-          ["Zonas superavitarias\\nde empleo", 390, 80, 38, "", "▥"],
-          ["Descentralización\\nde oportunidades", 650, 100, 42, "support", "⌖"],
-          ["Servicios\\nmetropolitanos", 660, 330, 42, "", "◈"],
-          ["Vivienda y\\nsoportes urbanos", 390, 410, 36, "", "⌂"],
-          ["Transporte\\ny bicicleta", 175, 225, 36, "", "▣"],
-          ["Industrias creativas\\ny del conocimiento", 700, 220, 36, "", "⇄"],
-          ["Industrias\\nverdes", 205, 470, 32, "", "♙"],
-          ["Equipamientos\\npúblicos", 535, 455, 35, "", "▦"],
-          ["Manzanas del Cuidado\\ncerca del transporte", 70, 220, 33, "", "▤"],
-          ["Empresas e\\nindustria", 550, 195, 39, "", "◉"],
-          ["Reubicación de\\nactividades productivas", 700, 450, 35, "", "◆"],
-        ],
-        edges: [
-          [0, 1, "result"],
-          [0, 2, "direct"],
-          [0, 3, "direct"],
-          [0, 4, "support"],
-          [0, 5, "direct"],
-          [0, 6, "direct"],
-          [0, 7, "indirect"],
-          [0, 8, "support"],
-          [0, 9, "direct"],
-          [0, 10, "direct"],
-          [0, 11, "indirect"],
-          [0, 12, "direct"],
-          [0, 13, "support"],
-          [2, 4, "indirect"],
-          [5, 6, "direct"],
-          [5, 12, "direct"],
-          [7, 8, "indirect"],
-          [9, 10, "direct"],
-          [3, 12, "direct"],
-          [1, 13, "result"],
-          [6, 10, "support"],
-        ],
-      },
-      carbono: {
-        title: "Descarbonización de la movilidad",
-        subtitle:
-          "Modo analítico // Infraestructura limpia, emisiones y transición",
-        count: "14 nodos · 23 conexiones",
-        text: "La red representa la hoja de ruta del POT para descarbonizar la movilidad: una red férrea urbana y regional con Metro y Regiotram, seis cables aéreos, corredores verdes, red peatonal, bicicleta y transporte público eléctrico. También incorpora carga a gas, salida progresiva del diésel, construcción sostenible, separación de residuos y localización de actividades cerca del transporte para reducir desplazamientos. El archivo oficial fija metas de 11 corredores de alta capacidad, 218 km de red peatonal mejorada, 564 km de infraestructura ciclista y una reducción del 50% de las emisiones de gases de efecto invernadero.",
-        nodes: [
-          ["Viajes\\nlimpios", 390, 230, 58, "central", "⌁"],
-          ["Red férrea\\nurbana y regional", 110, 90, 38, "support", "▣"],
-          ["Cuatro líneas\\nde Metro", 350, 70, 35, "", "▣"],
-          ["Regiotram\\nOccidente y Norte", 590, 85, 35, "", "▥"],
-          ["Corredores\\nverdes", 670, 315, 42, "support", "♧"],
-          ["Red peatonal y\\nmicromovilidad", 390, 430, 45, "support", "♢"],
-          ["Transporte público\\neléctrico", 115, 330, 40, "result", "⚡"],
-          ["Reducción de\\nemisiones GEI", 390, 125, 38, "layer-red", "◌"],
-          ["Calidad del aire\\ny material particulado", 620, 205, 37, "layer-red", "◌"],
-          ["Transporte de\\ncarga a gas", 145, 220, 34, "", "⚡"],
-          ["Construcción\\nsostenible", 680, 450, 36, "support", "▣"],
-          ["Manejo de residuos\\ny separación en fuente", 545, 420, 35, "", "⌂"],
-          ["Calles\\ncompletas", 180, 455, 33, "", "▤"],
-          ["Peatón como\\nprioridad", 70, 190, 34, "layer-red", "♧"],
-        ],
-        edges: [
-          [0, 1, "support"],
-          [0, 2, "direct"],
-          [0, 3, "direct"],
-          [0, 4, "support"],
-          [0, 5, "support"],
-          [0, 6, "result"],
-          [0, 7, "indirect"],
-          [0, 8, "indirect"],
-          [0, 9, "direct"],
-          [0, 10, "direct"],
-          [0, 11, "direct"],
-          [0, 12, "support"],
-          [0, 13, "indirect"],
-          [4, 5, "direct"],
-          [1, 2, "indirect"],
-          [5, 11, "direct"],
-          [6, 9, "direct"],
-          [10, 11, "support"],
-          [12, 10, "direct"],
-          [7, 8, "direct"],
-          [8, 13, "result"],
-          [2, 3, "indirect"],
-        ],
-      },
-    };
-    const expandNetwork = (key, extraNodes, extraEdges) => {
-      const item = networks[key];
-      const offset = item.nodes.length;
-      item._key = key;
-      item.edges = item.edges || [];
-      item.nodes.push(...extraNodes);
-      item.edges.push(
-        ...extraEdges.map(([a, b, t]) => [a + offset, b + offset, t]),
-      );
-      item._categories = item.nodes.map((node) => thematicCategory(key, node[0]));
-    };
-    expandNetwork(
-      "30min",
-      [
-        ["Tiempo medio de viaje", 70, 70, 30, "", "◷"],
-        ["Acceso a servicios", 250, 45, 31, "result", "◉"],
-        ["Oferta de cuidado", 505, 45, 30, "", "♥"],
-        ["Distancia a salud", 735, 95, 29, "", "↔"],
-        ["Cobertura educativa", 735, 185, 30, "", "▦"],
-        ["Conectividad peatonal", 70, 390, 30, "", "⌁"],
-        ["Calidad del espacio público", 275, 470, 32, "", "⌂"],
-        ["Centralidad urbana", 520, 470, 30, "", "◎"],
-        ["Población vulnerable", 735, 375, 31, "", "♙"],
-        ["Tiempo de cuidado", 70, 485, 28, "", "◷"],
-      ],
-      [
-        [0, 1, "direct"],
-        [1, 2, "support"],
-        [2, 3, "direct"],
-        [3, 4, "indirect"],
-        [4, 7, "support"],
-        [5, 6, "direct"],
-        [6, 7, "indirect"],
-        [7, 8, "support"],
-        [8, 9, "indirect"],
-        [9, 0, "result"],
-      ],
-    );
-    expandNetwork(
-      "empleo",
-      [
-        ["Incentivos urbanísticos\\ny económicos", 70, 70, 31, "result", "↗"],
-        ["Transferencia de oportunidades\\ny derechos urbanísticos", 250, 42, 30, "", "▤"],
-        ["Uso flexible\\ndel suelo", 505, 42, 30, "", "✓"],
-        ["Acceso territorial\\nal empleo", 735, 85, 31, "", "◎"],
-        ["Economía del\\ncuidado", 735, 175, 30, "", "♥"],
-        ["Educación\\nsuperior", 70, 395, 31, "", "▦"],
-        ["Industrias del\\nconocimiento", 260, 470, 30, "", "✦"],
-        ["Mejoramiento de\\nbarrios populares", 500, 470, 31, "support", "▥"],
-        ["Acupuntura urbana\\ny urbanismo táctico", 735, 370, 33, "", "⇄"],
-        ["Participación\\nterritorial", 70, 475, 29, "", "♙"],
-      ],
-      [
-        [0, 1, "direct"],
-        [1, 2, "direct"],
-        [2, 3, "result"],
-        [3, 4, "support"],
-        [4, 9, "indirect"],
-        [5, 6, "direct"],
-        [6, 7, "support"],
-        [7, 8, "direct"],
-        [8, 9, "indirect"],
-        [9, 0, "result"],
-      ],
-    );
-    expandNetwork(
-      "carbono",
-      [
-        ["Sistemas de alta\\ncapacidad", 70, 70, 31, "", "⇄"],
-        ["Intermodalidad", 250, 42, 31, "", "◌"],
-        ["Flota sin\\ndiésel", 505, 42, 32, "layer-red", "◌"],
-        ["Corredores verdes\\narborizados", 735, 90, 30, "layer-red", "◌"],
-        ["Andenes, plazas\\ny parques conectados", 735, 180, 32, "layer-red", "♧"],
-        ["Infraestructura\\nde carga", 70, 395, 31, "result", "⚡"],
-        ["Disminución del\\nvehículo particular", 260, 470, 31, "", "▣"],
-        ["Actividades y servicios\\ncerca del transporte", 500, 470, 31, "support", "↗"],
-        ["Conexión regional\\nSabana y Soacha", 735, 365, 30, "", "◷"],
-        ["Salud ambiental", 70, 475, 31, "layer-red", "♥"],
-      ],
-      [
-        [0, 1, "direct"],
-        [1, 2, "direct"],
-        [2, 3, "result"],
-        [3, 4, "support"],
-        [4, 9, "result"],
-        [5, 6, "support"],
-        [6, 7, "direct"],
-        [7, 8, "direct"],
-        [8, 0, "indirect"],
-        [9, 5, "result"],
-      ],
-    );
-    const fillTo30 = (key, labels) => {
-      const item = networks[key],
-        canonical = (value) =>
-          clean(value).toLowerCase().replace(/\s+/g, " ").trim(),
-        seen = new Map(),
-        remap = [];
-      item.nodes.forEach((node, index) => {
-        const id = canonical(node[0]);
-        if (seen.has(id)) remap[index] = seen.get(id);
-        else {
-          seen.set(id, item.nodes.length ? [...seen.values()].length : 0);
-          remap[index] = seen.get(id);
-        }
-      });
-      if (seen.size !== item.nodes.length) {
-        const uniqueNodes = [];
-        const firstIndex = new Map();
-        item.nodes.forEach((node, index) => {
-          const id = canonical(node[0]);
-          if (!firstIndex.has(id)) {
-            firstIndex.set(id, uniqueNodes.length);
-            uniqueNodes.push(node);
-          }
-          remap[index] = firstIndex.get(id);
-        });
-        const uniqueEdges = [],
-          edgeKeys = new Set();
-        item.edges.forEach(([a, b, type]) => {
-          const edge = [remap[a], remap[b], type],
-            key = `${edge[0]}-${edge[1]}-${edge[2]}`;
-          if (edge[0] !== edge[1] && !edgeKeys.has(key)) {
-            edgeKeys.add(key);
-            uniqueEdges.push(edge);
-          }
-        });
-        item.nodes = uniqueNodes;
-        item.edges = uniqueEdges;
-      }
-      const need = Math.max(0, 30 - item.nodes.length),
-        offset = item.nodes.length,
-        used = new Set(item.nodes.map((node) => canonical(node[0])));
-      for (let i = 0; i < need; i++) {
-        const base = labels[i % labels.length];
-        let label = base,
-          suffix = 2;
-        while (used.has(canonical(label)))
-          label = `${base} · componente ${suffix++}`;
-        used.add(canonical(label));
-        const col = i % 6,
-          row = Math.floor(i / 6);
-        item.nodes.push([label, 70 + col * 210, 70 + row * 86, 25, "", ""]);
-        const target = i % 4 === 0 ? 0 : offset + i - 1;
-        item.edges.push([
-          target,
-          offset + i,
-          i % 5 === 0 ? "support" : i % 3 === 0 ? "indirect" : "direct",
-        ]);
-      }
-      item._categories = item.nodes.map((node) => thematicCategory(key, node[0]));
-    };
-    const removeNodeByLabel = (key, matcher) => {
-      const item = networks[key];
-      const removed = item.nodes.findIndex((node) => matcher.test(clean(node[0])));
-      if (removed < 0) return;
-      const remap = new Map();
-      item.nodes = item.nodes.filter((_, index) => {
-        if (index === removed) return false;
-        remap.set(index, remap.size);
-        return true;
-      });
-      item.edges = item.edges
-        .filter(([a, b]) => a !== removed && b !== removed)
-        .map(([a, b, type]) => [remap.get(a), remap.get(b), type]);
-      item._categories = item.nodes.map((node) => thematicCategory(key, node[0]));
-    };
-    removeNodeByLabel("30min", /^(33 Unidades de Planeamiento Local|Empleo formal)$/);
-    removeNodeByLabel("empleo", /^(Empleo formal y productividad|Productividad por trabajador)/);
-    removeNodeByLabel("carbono", /^Viajes limpios$/);
+/* ==========================================================
+   RAPOT — MÓDULO 07: POSTURA CRÍTICA — Bogotá Viva
+   Red argumentativa: los tres hallazgos contra el texto del POT.
 
-    fillTo30("30min", [
-      "160 Proyectos Integrales de Proximidad",
-      "Redes peatonales y ciclistas",
-      "UPL Occidente: Fontibón y Engativá",
-      "UPL Centro Ampliado: Chapinero y Teusaquillo",
-      "UPL Suroccidente: Bosa y Kennedy",
-      "UPL Rural: Cerros, Tunjuelo y Sumapaz",
-    ]);
-    fillTo30("empleo", [
-      "Meta regional: 40% del PIB",
-      "Sectores productivos en zonas deficitarias",
-      "Actividad productiva en Bosa y Ciudad Bolívar",
-      "Actividad productiva en Rafael Uribe y Tunjuelito",
-      "Equipamientos sin restricción de uso del suelo",
-      "Tiempo de desplazamiento al trabajo",
-      "Productividad por trabajador · COP",
-      "Empresas activas · #",
-      "Nuevas empresas · #",
-      "Cierre de empresas · #",
-      "Vacantes · #",
-      "Formación técnica · #",
-      "Graduados · #",
-      "Inserción laboral · %",
-      "Innovación · índice",
-      "Patentes · #",
-      "Inversión privada · COP",
-      "Inversión pública · COP",
-      "UPL con déficit · 23",
-      "UPL con superávit · 10",
-      "Centralidad económica · índice",
-      "Acceso a transporte · %",
-      "Costo de transporte · COP",
-      "Tiempo al empleo · min",
-      "Vivienda cerca del empleo · %",
-      "Suelo productivo · ha",
-      "Suelo mixto · ha",
-      "Comercio local · #",
-      "Servicios empresariales · #",
-      "Cadenas productivas · #",
-      "Economía del cuidado · #",
-      "Población activa · #",
-      "Población ocupada · #",
-      "Población desempleada · #",
-      "Migración laboral · %",
-      "Productividad territorial · índice",
-    ]);
-    fillTo30("carbono", [
-      "11 corredores de alta capacidad",
-      "218 km de red peatonal mejorada",
-      "564 km de infraestructura para bicicleta",
-      "Seis cables aéreos nuevos",
-      "Dos Regiotram regionales",
-      "Meta: reducir 50% las emisiones GEI",
-    ]);
-    // Limpieza final después de completar cada dataset: evita reinsertar agregadores.
-    removeNodeByLabel("30min", /^(33 Unidades de Planeamiento Local|Empleo formal)$/);
-    removeNodeByLabel("empleo", /^(Empleo formal y productividad|Productividad por trabajador)/);
-    removeNodeByLabel("carbono", /^Viajes limpios$/);
+   Nodos:
+   - hallazgo (teal): los tres hallazgos de la ingeniería inversa
+   - evidencia (morado): casos y artículos del POT que los sostienen
+   - consecuencia (rojo): lo que el POT no puede ver
 
-    const layer = (label) => {
-      const s = label.toLowerCase();
-      if (
-        /río|humedal|ecosistema|emisiones|pm fino|aire|corredor verde|área protegida|parques ecológicos/.test(
-          s,
-        )
-      )
-        return "layer-red";
-      if (
-        /metro|regiotram|férrea|alta capacidad|cable|transporte|peatonal|micromovilidad|intermodalidad|hospital|centro|colegio|ciclorruta|carga|taxis|flota pública|vehículos|eléctrico/.test(
-          s,
-        )
-      )
-        return "layer-warm";
-      return "layer-green";
-    };
-    const layerColor = (layerName) => ({
-      "layer-red": "#ef6f6f",
-      "layer-warm": "#e89a6c",
-      "layer-green": "#46d6d0",
-    }[layerName] || "#46d6d0");
-    const edgeColor = {
-      direct: "#d7dae2",
-      indirect: "#8b93a8",
-      support: "#f5a623",
-      result: "#d9824e",
-    };
-    const thematicCatalog = {
-      "30min": [
-        { id: "care-health", label: "Cuidado y salud", color: "#2fd4c8" },
-        { id: "education", label: "Educación y equipamientos", color: "#e89a6c" },
-        { id: "mobility", label: "Movilidad y proximidad", color: "#ef9552" },
-        { id: "housing-employment", label: "Vivienda y empleo", color: "#a276f2" },
-        { id: "access-goals", label: "Acceso y metas", color: "#f5c945" },
-      ],
-      empleo: [
-        { id: "economic-activity", label: "Actividad económica", color: "#ef9552" },
-        { id: "human-capital", label: "Capital humano", color: "#e89a6c" },
-        { id: "labor-mobility", label: "Movilidad laboral", color: "#2fd4c8" },
-        { id: "territorial-equity", label: "Equidad territorial", color: "#a276f2" },
-        { id: "employment-results", label: "Resultados de empleo", color: "#f5c945" },
-      ],
-      carbono: [
-        { id: "clean-transit", label: "Transporte limpio", color: "#2fd4c8" },
-        { id: "clean-infrastructure", label: "Infraestructura limpia", color: "#e89a6c" },
-        { id: "emissions-air", label: "Emisiones y aire", color: "#ef9552" },
-        { id: "modal-change", label: "Cambio modal", color: "#a276f2" },
-        { id: "environmental-health", label: "Salud ambiental", color: "#f5c945" },
-      ],
-    };
-    function thematicCategory(key, label) {
-      const s = clean(label).toLowerCase();
-      if (key === "30min") {
-        if (/cuidado|salud|hospital/.test(s)) return "care-health";
-        if (/colegio|educación|equipamiento/.test(s)) return "education";
-        if (/transporte|peatonal|viaje|distancia|tiempo|conectividad/.test(s)) return "mobility";
-        if (/vivienda|empleo|comercio/.test(s)) return "housing-employment";
-        return "access-goals";
-      }
-      if (key === "empleo") {
-        if (/empresa|actividad|productividad|innovación|inversión|comercio|sectores productivos|servicios metropolitanos|industrias|reubicación/.test(s)) return "economic-activity";
-        if (/educación|formación|graduados|salario|capital|patentes|conocimiento/.test(s)) return "human-capital";
-        if (/transporte|movilidad|tiempo|acceso|vivienda|equipamientos|manzanas del cuidado|uso flexible/.test(s)) return "labor-mobility";
-        if (/upl|segregación|género|participación|territorial|incentivos|transferencia|deficitarias|superavitarias|barrios populares|bosa|ciudad bolívar|rafael uribe|tunjuelito/.test(s)) return "territorial-equity";
-        return "employment-results";
-      }
-      if (/emisiones|gei|pm|aire|salud respiratoria/.test(s)) return /salud/.test(s) ? "environmental-health" : "emissions-air";
-      if (/metro|regiotram|cable|ciclorruta|transporte|flota|taxis|viajes/.test(s)) return "clean-transit";
-      if (/carga|electrificación|infraestructura|corredor/.test(s)) return "clean-infrastructure";
-      if (/cambio modal|demanda|combustible|velocidad/.test(s)) return "modal-change";
-      return "environmental-health";
-    }
-    const quantify = (label) => {
-      const q = {
-        "UPL · 33": "UPL\n33 unidades",
-        "33 Unidades de Planeamiento Local": "UPL\n33 unidades",
-        "160 Proyectos Integrales de Proximidad": "160 PIP",
-        "Redes peatonales y ciclistas": "Red peatonal\ny bicicleta",
-        "Espacio público local reverdecido": "Espacio público\nreverdecido",
-        "Vivienda VIS y VIP": "Vivienda\nVIS/VIP",
-        "Empleo formal cercano": "Empleo formal\ncercano",
-        "UPL Occidente: Fontibón y Engativá": "Occidente\nFontibón · Engativá",
-        "UPL Centro Ampliado: Chapinero y Teusaquillo": "Centro ampliado\nChapinero · Teusaquillo",
-        "UPL Suroccidente: Bosa y Kennedy": "Suroccidente\nBosa · Kennedy",
-        "UPL Rural: Cerros, Tunjuelo y Sumapaz": "Rural\nCerros · Tunjuelo · Sumapaz",
-        "Manzanas\\ndel Cuidado": "Manzanas\ndel Cuidado",
-        "Centros\\nde salud": "Centros\nde salud",
-        "Jardines\\ninfantiles": "Jardines\ninfantiles",
-        "Colegios y\\nuniversidades": "Colegios y\nuniversidades",
-        "Tiempo máximo\\nde acceso: 30 min": "Acceso máximo\n30 minutos",
-        "Meta: acceso\\nen 30 minutos": "Meta: acceso\n30 minutos",
-        "910.509\\nnuevos empleos": "Empleo\n910.509",
-        "10 / 33 UPL\\nsuperávit": "Superávit\n10/33 UPL",
-        "13 UPL\\nperiféricas": "Periferia\n13 UPL",
-        "47% GEI\\ntransporte": "GEI\n47% transporte",
-        "18% PM\\nfino": "PM fino\n18% transporte",
-        "Viajes\\nlimpios 77%": "Viajes limpios\n77% · 2035",
-        "Flota pública\\n2040": "Flota eléctrica\n100% · 2040",
-        "5 líneas\\nde Metro": "Metro\n5 líneas",
-        "1.000 km\\nciclorrutas": "Ciclorrutas\n1.000 km",
-      };
-      return q[label] || label;
-    };
-    const layoutNetwork = (item) => {
-      const degree = item.nodes.map((_, i) => item.edges.reduce((n, [a, b]) => n + (a === i || b === i ? 1 : 0), 0));
-      const centerByCategory = {
-        "care-health": [165,235],
-        "education": [470,175],
-        "mobility": [790,235],
-        "housing-employment": [220,610],
-        "access-goals": [665,620],
-        "economic-activity": [165,220],
-        "human-capital": [470,175],
-        "labor-mobility": [790,220],
-        "territorial-equity": [220,650],
-        "employment-results": [665,650],
-        "emissions-air": [165,220],
-        "clean-transit": [470,175],
-        "clean-infrastructure": [790,220],
-        "modal-change": [220,650],
-        "environmental-health": [665,650],
-      };
-      const fallbackCenters = [[165,235],[470,175],[790,235],[220,610],[665,620],[470,420]];
-      const categoryIds = [...new Set(item._categories || [])];
-      const groups = categoryIds.map((category, categoryIndex) => ({
-        category,
-        nodes: item.nodes.map((_, index) => index).filter((index) => item._categories[index] === category).sort((a, b) => degree[b] - degree[a]),
-        center: centerByCategory[category] || fallbackCenters[categoryIndex % fallbackCenters.length],
-      })).filter((group) => group.nodes.length);
-      const radiusFor = (d) => d <= 2 ? 52 : d <= 4 ? 64 : d <= 6 ? 76 : d <= 9 ? 90 : 104;
-      item._centralIndices = groups.map((group) => group.nodes[0]);
-      groups.forEach((group) => {
-        const [cx, cy] = group.center;
-        const hubIndex = group.nodes[0];
-        const hub = item.nodes[hubIndex];
-        hub[1] = cx; hub[2] = cy; hub[3] = radiusFor(degree[hubIndex]); hub._layoutHub = true;
-        const rest = group.nodes.slice(1);
-        const outward = Math.atan2(cy - 450, cx - 700) || 0;
-        const span = Math.min(1.45, .72 + rest.length * .13);
-        const rings = [
-          rest.filter((index) => degree[index] >= 4),
-          rest.filter((index) => degree[index] >= 2 && degree[index] < 4),
-          rest.filter((index) => degree[index] < 2),
-        ].filter((ring) => ring.length);
-        rings.forEach((ring, ringIndex) => {
-          const radius = 155 + ringIndex * 125;
-          ring.forEach((nodeIndex, position) => {
-            // Variación determinista: rompe la simetría sin producir saltos entre recargas.
-            const seed = (nodeIndex * 47 + ringIndex * 71 + position * 29 + categoryIds.indexOf(group.category) * 113) % 997;
-            const jitter = seed / 997 - .5;
-            const angle = outward - span / 2 + ((position + .5) / ring.length) * span + jitter * .22;
-            const radiusJitter = jitter * 42 + ((position % 3) - 1) * 12;
-            const tangent = jitter * 34;
-            const node = item.nodes[nodeIndex];
-            node[1] = cx + Math.cos(angle) * (radius + radiusJitter) - Math.sin(angle) * tangent;
-            node[2] = cy + Math.sin(angle) * (radius + radiusJitter) * .82 + Math.cos(angle) * tangent * .72;
-            node[3] = radiusFor(degree[nodeIndex]);
-            node._layoutHub = false;
-          });
-        });
-      });
-      for (let pass = 0; pass < 150; pass++) {
-        let moved = false;
-        for (let i = 0; i < item.nodes.length; i++) for (let j = i + 1; j < item.nodes.length; j++) {
-          const A = item.nodes[i], B = item.nodes[j];
-          const dx = B[1] - A[1], dy = B[2] - A[2], dist = Math.hypot(dx, dy) || 1;
-          const min = A[3] + B[3] + 42;
-          if (dist >= min) continue;
-          const ux = dx / dist, uy = dy / dist, push = (min - dist) / 2;
-          if (!A._layoutHub) { A[1] -= ux * push; A[2] -= uy * push; }
-          if (!B._layoutHub) { B[1] += ux * push; B[2] += uy * push; }
-          moved = true;
-        }
-        item.nodes.forEach((node) => {
-          node[1] = Math.max(50, Math.min(980, node[1]));
-          node[2] = Math.max(50, Math.min(830, node[2]));
-        });
-        if (!moved) break;
-      }
-      item.nodes.forEach((node) => { delete node._layoutHub; });
-    };
-    const lines = (item) => item.edges.map(([a, b, t], i) => {
-      const A = item.nodes[a], B = item.nodes[b];
-      const dx = B[1] - A[1], dy = B[2] - A[2], distance = Math.hypot(dx, dy) || 1;
-      const ux = dx / distance, uy = dy / distance;
-      const startPad = A[3] + 2, endPad = B[3] + 7;
-      const x1 = A[1] + ux * startPad, y1 = A[2] + uy * startPad;
-      const x2 = B[1] - ux * endPad, y2 = B[2] - uy * endPad;
-      const d = `M ${x1.toFixed(1)} ${y1.toFixed(1)} L ${x2.toFixed(1)} ${y2.toFixed(1)}`;
-      return `<path class="network-edge ${t}" data-edge-index="${i}" marker-end="url(#arrow-${t})" d="${d}"/><path class="network-edge-hit ${t}" data-edge-index="${i}" data-edge-type="${t}" tabindex="0" d="${d}"/>`;
-    }).join("");
-    const iconSvg = (label) => {
-      const s = label.toLowerCase();
-      const icon = /río|quebrada|agua|humedal/.test(s)
-        ? "fa-water"
-        : /cerro|páramo|montaña|corredor verde|parques ecológicos/.test(s)
-          ? "fa-mountain"
-          : /área protegida|reserva/.test(s)
-            ? "fa-shield-halved"
-            : /bosque|vegetal|ecosistema|parque/.test(s)
-              ? "fa-tree"
-              : /resiliencia|temperatura|emisiones|gei|pm|aire/.test(s)
-                ? "fa-temperature-half"
-                : /cuidado|manzana|salud|hospital/.test(s)
-                  ? "fa-heart"
-                  : /colegio|educación|formación|graduados/.test(s)
-                    ? "fa-graduation-cap"
-                    : /metro|regiotram|cable|transporte|bus|viajes|flota/.test(
-                          s,
-                        )
-                      ? "fa-bus"
-                      : /ciclorruta|bicicleta|peatonal/.test(s)
-                        ? "fa-bicycle"
-                        : /carga|electrificación|eléctric/.test(s)
-                          ? "fa-bolt"
-                          : /vivienda|hogares|residencial/.test(s)
-                            ? "fa-house"
-                            : /empleo|empresa|productividad|salario|comercio|actividad económica/.test(
-                                  s,
-                                )
-                              ? "fa-briefcase"
-                              : /innovación|investigación|patentes/.test(s)
-                                ? "fa-diagram-project"
-                                : /internet|conectividad|red/.test(s)
-                                  ? "fa-network-wired"
-                                  : /tiempo|espera|velocidad|congestión/.test(s)
-                                    ? "fa-clock"
-                                    : /inversión|suelo|densidad|centralidad/.test(
-                                          s,
-                                        )
-                                      ? "fa-building"
-                                      : /población|upl|periféricas|segregación|participación/.test(
-                                            s,
-                                          )
-                                        ? "fa-people-group"
-                                        : "fa-circle-nodes";
-      return `<i class="fa-solid ${icon} node-fa-icon" aria-hidden="true"></i>`;
-    };
-    const nodes = (item) =>
-      item.nodes
-        .map(([label, x, y, r, type, icon], i) => {
-          const display = quantify(label),
-            maxChars = r >= 90 ? 22 : r >= 70 ? 18 : r >= 52 ? 15 : 11,
-            rows = display
-              .split(/\n|\\n/)
-              .flatMap((row) => {
-                const value = row.trim().toUpperCase();
-                return value.length <= maxChars
-                  ? [value]
-                  : [value.slice(0, maxChars - 1) + "…"];
-              })
-              .slice(0, 2);
-          const sizeClass =
-              r >= 70 ? "hub-large" : r >= 48 ? "hub-medium" : "node-small",
-            centralClass = type === "central" || item._centralIndices?.includes(i) ? "central-node" : "",
-            iconY = r >= 44 ? y - 9 : y - 5,
-            labelY = y + (r >= 44 ? 10 : 7),
-            lineGap = r >= 44 ? 10 : 7;
-          const category = item._categories?.[i] || "access-goals";
-          const categoryColor = layerColor(layer(label));
-          const relationCounts = item.edges.reduce((counts, edge) => {
-            if (edge[0] === i || edge[1] === i) counts[edge[2]] = (counts[edge[2]] || 0) + 1;
-            return counts;
-          }, {});
-          const relationType = ["direct", "indirect", "support", "result"].sort((a, b) => (relationCounts[b] || 0) - (relationCounts[a] || 0))[0];
-          const labelText = rows.join(" ");
-          const centralRing = centralClass ? `<circle class="node-central-halo" cx="0" cy="0" r="${r + 8}" fill="none" stroke="${categoryColor}" stroke-width="2" stroke-dasharray="3 5"/>` : "";
-          return `<g class="network-node floating-node ${sizeClass} ${centralClass} ${type || ""} relation-${relationType} ${layer(label)} category-${category}" data-node-index="${i}" data-relation-type="${relationType}" data-category="${category}" tabindex="0" role="button" aria-label="${esc(clean(display))}" transform="translate(${x} ${y})" style="--node-color:${categoryColor};color:${categoryColor}">${centralRing}<circle class="node-ring" cx="0" cy="0" r="${r}" fill="#0a0a0a" stroke="${categoryColor}" stroke-width="${centralClass ? 4 : (r >= 44 ? 2.5 : 1.6)}" style="${centralClass ? `stroke-width:4px !important;filter:drop-shadow(0 0 8px ${categoryColor}) drop-shadow(0 0 18px ${categoryColor}) !important;` : ""}"/><foreignObject class="node-content" x="${-r * 0.9}" y="${-r * 0.9}" width="${r * 1.8}" height="${r * 1.8}"><div xmlns="http://www.w3.org/1999/xhtml" class="node-inner" style="color:${categoryColor} !important"><span class="node-icon-wrap" style="color:${categoryColor} !important">${iconSvg(label).replace('node-fa-icon"', `node-fa-icon" style="color:${categoryColor} !important"`)}</span><span class="node-name">${esc(labelText)}</span></div></foreignObject></g>`;
-        })
-        .join("");
-    const categoryHalos = () => "";
-    const modal = $("#networkModal"),
-      canvas = $("#networkCanvas"),
-      details = $("#nodeDetails");
-    let zoom = 1,
-      panX = 0,
-      panY = 0,
-      drag = null,
-      hiddenNodes = new Set(),
-      clickCycle = { index: null, count: 0 };
-    const updateZoom = () => {
-      const viewport = $("#networkViewport", canvas);
-      if (!viewport) return;
-      viewport.setAttribute(
-        "transform",
-        `translate(${panX} ${panY}) scale(${zoom})`,
-      );
-      $("#networkZoomReset").textContent = `${Math.round(zoom * 100)}%`;
-    };
-    const nodeTip = document.createElement("div");
-    nodeTip.className = "node-hover-tip";
-    nodeTip.setAttribute("aria-hidden", "true");
-    document.body.appendChild(nodeTip);
-    const connectionTip = document.createElement("div");
-    connectionTip.className = "connection-citation-tip";
-    connectionTip.setAttribute("aria-hidden", "true");
-    document.body.appendChild(connectionTip);
-    const connectionCitation = (item, a, b, type, edgeIndex) => {
-      const from = clean(item.nodes[a][0]),
-        to = clean(item.nodes[b][0]),
-        networkKey = document.body.dataset.activeNetwork || "30min",
-        relation =
-          type === "support"
-            ? "SOPORTE"
-            : type === "result"
-              ? "RESULTADO"
-              : type === "indirect"
-                ? "INDIRECTA"
-                : "DIRECTA";
-      const catalog = {
-        "30min": {
-          pages: [
-            "POT, pág. 38 (PDF adjunto)",
-            "POT, págs. 59–60 (PDF adjunto)",
-            "POT, pág. 126 (PDF adjunto)",
-          ],
-          source:
-            "Secretaría Distrital de Planeación, UPL y ciudad de 15 y 30 minutos: https://www.sdp.gov.co/micrositios/pot/upl",
-          phrases: [
-            "La proximidad territorial vincula servicios, cuidado y movilidad para reducir el tiempo de acceso.",
-            "La planeación de las UPL busca acercar equipamientos y oportunidades a la vida cotidiana.",
-            "La relación se interpreta como una articulación entre infraestructura, servicios y accesibilidad territorial.",
-          ],
-        },
-        empleo: {
-          pages: [
-            "POT, págs. 161–164 (PDF adjunto)",
-            "POT, pág. 165 (PDF adjunto)",
-            "POT, pág. 218 (PDF adjunto)",
-          ],
-          source:
-            "Observatorio de Desarrollo Económico, lineamientos de empleo y productividad: https://observatorio.desarrolloeconomico.gov.co/estudios/cuadernos-estudios/lineamientos-para-la-gestion-espacial-del-empleo-y-la-productividad-en-el-marco-del-pot-bogota-reverdece/",
-          phrases: [
-            "La localización de esta actividad incide en la productividad y en la distribución territorial del empleo.",
-            "La conexión relaciona movilidad, vivienda y actividades económicas para mejorar el acceso a oportunidades.",
-            "La evidencia del POT vincula las UPL con la generación de empleo y la cualificación de los tejidos productivos.",
-          ],
-        },
-        carbono: {
-          pages: [
-            "POT, págs. 229–231 (PDF adjunto)",
-            "POT, págs. 241–243 (PDF adjunto)",
-            "POT, pág. 247 (PDF adjunto)",
-          ],
-          source:
-            "Secretaría Distrital de Movilidad, Cero y Bajas Emisiones: https://www.movilidadbogota.gov.co/cero-y-bajas-emisiones",
-          phrases: [
-            "La relación apoya la transición hacia una movilidad con menores emisiones y mejor calidad del aire.",
-            "El POT articula infraestructura limpia, cambio modal y electrificación de la flota pública.",
-            "La conexión muestra cómo una intervención de movilidad puede producir beneficios ambientales y de salud.",
-          ],
-        },
-      };
-      const evidence = catalog[networkKey] || catalog["30min"],
-        phrase = evidence.phrases[edgeIndex % evidence.phrases.length],
-        page = evidence.pages[edgeIndex % evidence.pages.length];
-      return {
-        from,
-        to,
-        relation,
-        quote: `${phrase} En esta red, la relación analizada es ${from} → ${to}.`,
-        page,
-        source: evidence.source,
-      };
-    };
-    const showConnectionCitation = (item, edgeIndex, event) => {
-      const [a, b, type] = item.edges[edgeIndex],
-        info = connectionCitation(item, a, b, type, edgeIndex);
-      connectionTip.innerHTML = `<strong>${esc(info.from)} → ${esc(info.to)}</strong><span class="citation-relation">${esc(info.relation)}</span><blockquote>“${esc(info.quote)}”</blockquote><small><b>${esc(info.page)}</b><br>${esc(info.source)}</small>`;
-      const x = event.clientX || 520,
-        y = event.clientY || 180;
-      connectionTip.style.left = `${Math.max(12, Math.min(x + 16, window.innerWidth - 390))}px`;
-      connectionTip.style.top = `${Math.max(12, Math.min(y + 16, window.innerHeight - 190))}px`;
-      connectionTip.classList.add("visible");
-    };
-    const hideConnectionCitation = () =>
-      connectionTip.classList.remove("visible");
-    const layerLabel = (label) => {
-      const l = layer(label);
-      return l === "layer-red"
-        ? "Capa Roja · Ecológica"
-        : l === "layer-warm"
-          ? "Capa Cobre · Determinista"
-          : "Capa Verde · Social";
-    };
-    const showNodeTip = (item, index, event) => {
-      const node = item.nodes[index],
-        info = nodeInfo(node[0]);
-      const linked = item.edges
-        .filter(([a, b]) => a === index || b === index)
-        .map(([a, b]) => clean(item.nodes[a === index ? b : a][0]));
-      const type =
-        node[4] === "central"
-          ? "Nodo principal"
-          : node[4] === "result"
-            ? "Nodo resultado"
-            : "Variable auxiliar";
-      nodeTip.innerHTML = `<strong>${esc(info.n)}</strong><span>${layerLabel(node[0])} · ${type}</span><b>${linked.length} conexiones</b><small>${esc(info.value)} · ${esc(info.unit)}</small><em>Conecta con: ${esc(linked.slice(0, 4).join(", "))}${linked.length > 4 ? " y más" : ""}</em>`;
-      const x = event.clientX || 520,
-        y = event.clientY || 180;
-      nodeTip.style.left = `${Math.max(12, Math.min(x + 14, window.innerWidth - 330))}px`;
-      nodeTip.style.top = `${Math.max(12, Math.min(y + 14, window.innerHeight - 190))}px`;
-      nodeTip.classList.add("visible");
-    };
-    const hideNodeTip = () => nodeTip.classList.remove("visible");
-    const nodeInfo = (label) => {
-      const s = clean(label).toLowerCase();
-      const catalog = [
-        [
-          /upl/,
-          [
-            "Unidad de Planeamiento Local",
-            "33 unidades territoriales",
-            "UPL",
-            "Organiza la proximidad y permite comparar acceso, empleo y servicios entre sectores.",
-            "POT, indicador de ciudad de 30 minutos.",
-          ],
-        ],
-        [
-          /manzanas/,
-          [
-            "Manzanas del Cuidado",
-            "45 equipamientos de cuidado",
-            "manzanas",
-            "Acercan servicios de cuidado a la población y reducen tiempos de desplazamiento.",
-            "POT, red de cuidado.",
-          ],
-        ],
-        [
-          /hospital/,
-          [
-            "Hospitales",
-            "24 hospitales",
-            "hospitales",
-            "Aumentan la cobertura efectiva de salud y reducen la distancia a servicios esenciales.",
-            "POT, estructura de servicios.",
-          ],
-        ],
-        [
-          /centros/,
-          [
-            "Centros de salud",
-            "41 centros",
-            "centros",
-            "Funcionan como oferta de salud de proximidad conectada con las UPL.",
-            "POT, estructura de servicios.",
-          ],
-        ],
-        [
-          /colegios|educación/,
-          [
-            "Oferta educativa",
-            "80 colegios / educación superior",
-            "equipamientos",
-            "Eleva la cobertura educativa y modifica el acceso a oportunidades.",
-            "POT, equipamientos sociales.",
-          ],
-        ],
-        [
-          /brecha|tiempo medio|tiempo de cuidado/,
-          [
-            "Tiempo y brecha de viaje",
-            "26–62 minutos",
-            "minutos",
-            "Es una variable de fricción: cuando sube, disminuye el acceso a empleo, cuidado y servicios.",
-            "POT, ciudad de 30 minutos.",
-          ],
-        ],
-        [
-          /empleo|nuevos empleos/,
-          [
-            "Empleo potencial",
-            "910.509 empleos / +24%",
-            "empleos",
-            "Resultado de la articulación entre actividad económica, formación, vivienda y movilidad.",
-            "POT, productividad y empleo.",
-          ],
-        ],
-        [
-          /superávit|upl periféricas/,
-          [
-            "Distribución territorial del empleo",
-            "10 de 33 UPL / 13 UPL periféricas",
-            "UPL",
-            "Mide si el empleo se concentra o se distribuye de forma equilibrada.",
-            "POT, productividad y empleo.",
-          ],
-        ],
-        [
-          /47%|gei|emisiones/,
-          [
-            "Gases de efecto invernadero",
-            "47% asociado al transporte",
-            "% GEI",
-            "Al aumentar la motorización y el combustible, aumenta la presión climática.",
-            "POT, descarbonización.",
-          ],
-        ],
-        [
-          /18%|pm fino|material particulado/,
-          [
-            "Material particulado fino",
-            "18% asociado al transporte",
-            "% PM",
-            "Representa presión sobre la calidad del aire y la salud respiratoria.",
-            "POT, calidad del aire.",
-          ],
-        ],
-        [
-          /viajes|cambio modal/,
-          [
-            "Viajes en modos limpios",
-            "77% meta 2035",
-            "% de viajes",
-            "El cambio modal reduce emisiones cuando desplaza viajes contaminantes hacia transporte limpio.",
-            "POT, descarbonización.",
-          ],
-        ],
-        [
-          /flota|electrificación|taxis/,
-          [
-            "Electrificación de flota",
-            "100% de flota pública · 2040",
-            "% de flota",
-            "Reduce emisiones por viaje y depende de infraestructura de carga y política pública.",
-            "POT, transición energética.",
-          ],
-        ],
-        [
-          /metro|regiotram|cables|transporte/,
-          [
-            "Infraestructura de movilidad",
-            "Metro, RegioTram, cables y transporte",
-            "sistema",
-            "Conecta vivienda, empleo y servicios; es una variable determinista de soporte.",
-            "POT, pág. 170.",
-          ],
-        ],
-        [
-          /aire|salud respiratoria/,
-          [
-            "Calidad del aire y salud",
-            "Variable ambiental de resultado",
-            "presión ambiental",
-            "Resume el efecto de emisiones y material particulado sobre la población.",
-            "POT, capa ecológica.",
-          ],
-        ],
-      ];
-      for (const [rx, v] of catalog)
-        if (rx.test(s))
-          return { n: v[0], value: v[1], unit: v[2], role: v[3], source: v[4] };
-      return {
-        n: clean(label),
-        value: "Variable del modelo",
-        unit: "cualitativa",
-        role: "Conecta otras variables y participa en el resultado del indicador.",
-        source: "Relación documentada del modelo POT.",
-      };
-    };
-    const applyHiddenState = () => {
-      $$(".network-node", canvas).forEach((g) => {
-        g.classList.toggle(
-          "hidden-network-node",
-          hiddenNodes.has(Number(g.dataset.nodeIndex)),
-        );
-      });
-      $$(".network-edge, .network-edge-hit", canvas).forEach((e) => {
-        const edgeIndex = Number(e.dataset.edgeIndex);
-        const [a, b] =
-          networks[document.body.dataset.activeNetwork || "30min"].edges[
-            edgeIndex
-          ] || [];
-        e.classList.toggle(
-          "hidden-network-edge",
-          hiddenNodes.has(a) || hiddenNodes.has(b),
-        );
-      });
-    };
-    const hideNodeAndConnections = (item, index) => {
-      hiddenNodes.add(index);
-      let changed = true;
-      while (changed) {
-        changed = false;
-        item.nodes.forEach((_, nodeIndex) => {
-          if (hiddenNodes.has(nodeIndex)) return;
-          const visibleNeighbors = item.edges
-            .filter(([a, b]) => a === nodeIndex || b === nodeIndex)
-            .map(([a, b]) => (a === nodeIndex ? b : a))
-            .filter((neighbor) => !hiddenNodes.has(neighbor));
-          if (!visibleNeighbors.length) {
-            hiddenNodes.add(nodeIndex);
-            changed = true;
-          }
-        });
-      }
-      applyHiddenState();
-      details.innerHTML =
-        "<h3>Nodo oculto</h3><p>Se ocultó el nodo y cualquier elemento que quedara sin una relación visible. Usa <b>Restablecer red</b> para restaurarlo.</p>";
-    };
-    const selectNode = (item, index) => {
-      details.classList.toggle("is-active", index !== null);
-      details.hidden = false;
-      const groups = $$(".network-node", canvas),
-        edges = $$(".network-edge", canvas);
-      groups.forEach((g) => {
-        g.classList.remove("selected", "connected", "dimmed");
-        g.removeAttribute("data-node-focus");
-      });
-      edges.forEach((e) => e.classList.remove("highlight", "dimmed"));
-      if (index === null) {
-        details.innerHTML =
-          "<h3>Inspección del nodo</h3><p>Haz clic en un nodo para ver sus conexiones reales.</p>";
-        return;
-      }
-      const linked = [];
-      item.edges.forEach(([a, b, t], i) => {
-        if (a === index) linked.push({ index: b, type: t, edge: i });
-        if (b === index) linked.push({ index: a, type: t, edge: i });
-      });
-      groups.forEach((g, i) => {
-        if (i === index) {
-          g.classList.add("selected");
-          g.setAttribute("data-node-focus", "selected");
-          if (g.classList.contains("central-node")) {
-            const halo = g.querySelector(".node-central-halo");
-            halo?.getAnimations?.().forEach((animation) => animation.cancel());
-            halo?.animate?.(
-              [
-                { opacity: .5, transform: "scale(.9)" },
-                { opacity: 1, transform: "scale(1.1)" },
-                { opacity: 1, transform: "scale(1)" },
-              ],
-              { duration: 560, easing: "cubic-bezier(.22,.8,.25,1)", fill: "forwards" },
-            );
-          }
-        } else if (linked.some((v) => v.index === i)) {
-          g.classList.add("connected");
-          g.setAttribute("data-node-focus", "connected");
-        } else {
-          g.classList.add("dimmed");
-          g.setAttribute("data-node-focus", "dimmed");
-        }
-      });
-      edges.forEach((e, i) =>
-        linked.some((v) => v.edge === i)
-          ? e.classList.add("highlight")
-          : e.classList.add("dimmed"),
-      );
-      const n = item.nodes[index],
-        l = layer(n[0]),
-        name =
-          l === "layer-red"
-            ? "Capa Roja · Ecológica"
-            : l === "layer-warm"
-              ? "Capa Cobre · Determinista"
-              : "Capa Verde · Social",
-        info = nodeInfo(n[0]);
-      details.innerHTML = `<h3><span class="panel-icon teal"><i class="fa-solid fa-crosshairs"></i></span>Inspección del nodo</h3><span class="node-badge ${l.replace("layer-", "")}">${name}</span><p class="node-name">${esc(info.n)}</p><p class="node-meta"><b>${linked.length}</b> conexiones reales en esta red</p><div class="node-fact"><b>${esc(info.value)}</b><small>Unidad: ${esc(info.unit)}</small></div><p class="node-explanation"><strong>Explicación:</strong> ${esc(info.role)}</p><p class="node-source">Fuente: ${esc(info.source)}</p><h4>Relaciones conectadas</h4><ul class="node-connections">${linked.map((v) => `<li>${esc(clean(item.nodes[v.index][0]))} <small>· ${v.type === "support" ? "soporte" : v.type === "indirect" ? "indirecta" : v.type === "result" ? "resultado" : "directa"}</small></li>`).join("")}</ul>`;
-      requestAnimationFrame(() =>
-        details.scrollIntoView({ block: "nearest", behavior: "smooth" }),
-      );
-    };
-    const openNetwork = (key) => {
-      const item = networks[key];
-      layoutNetwork(item);
-      $("#networkTitle").textContent = item.title;
-      $("#networkSubtitle").textContent = item.subtitle;
-      $("#networkCount").textContent =
-        `${item.nodes.length} nodos · ${item.edges.length} conexiones`;
-      $("#networkExplanation").textContent = item.text;
-      canvas.innerHTML = `<svg viewBox="0 0 1400 900" role="img" aria-label="${esc(item.title)}"><defs><marker id="arrow-direct" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d7dae2"/></marker><marker id="arrow-indirect" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#8b93a8"/></marker><marker id="arrow-support" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f5a623"/></marker><marker id="arrow-result" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d9824e"/></marker></defs><g id="networkViewport">${categoryHalos(item)}${lines(item)}${nodes(item)}</g></svg>`;
-      alignModule02ReferenceShell();
-      document.body.dataset.activeNetwork = key;
-      hiddenNodes = new Set();
-      clickCycle = { index: null, count: 0 };
-      zoom = 1;
-      panX = 0;
-      panY = 0;
-      updateZoom();
-      show(modal);
-      selectNode(item, null);
-      const categoryFilters = $("#categoryFilters");
-      if (categoryFilters) {
-        categoryFilters.innerHTML = `<b>Temas</b>${(thematicCatalog[key] || []).map((category) => `<label class="category-filter" style="--category-color:${category.color}"><input type="checkbox" data-category-filter="${category.id}" checked /><i></i>${esc(category.label)}</label>`).join("")}`;
-        const applyCategoryFilters = () => {
-          const active = new Set($$("[data-category-filter]", categoryFilters).filter((input) => input.checked).map((input) => input.dataset.categoryFilter));
-          const categoryHidden = new Set(item.nodes.map((node, index) => active.has(item._categories[index]) ? null : index).filter((index) => index !== null));
-          let changed = true;
-          while (changed) {
-            changed = false;
-            item.nodes.forEach((_, nodeIndex) => {
-              if (categoryHidden.has(nodeIndex)) return;
-              const visibleNeighbors = item.edges
-                .filter(([a, b]) => a === nodeIndex || b === nodeIndex)
-                .map(([a, b]) => (a === nodeIndex ? b : a))
-                .filter((neighbor) => !categoryHidden.has(neighbor) && !hiddenNodes.has(neighbor));
-              if (!visibleNeighbors.length) {
-                categoryHidden.add(nodeIndex);
-                changed = true;
-              }
-            });
-          }
-          $$(".network-node", canvas).forEach((node) => {
-            const index = Number(node.dataset.nodeIndex);
-            const hidden = categoryHidden.has(index) || hiddenNodes.has(index);
-            node.classList.toggle("category-hidden", categoryHidden.has(index));
-            node.classList.toggle("hidden-network-node", hidden);
-          });
-          $$(".network-edge, .network-edge-hit", canvas).forEach((edge) => {
-            const [a, b] = item.edges[Number(edge.dataset.edgeIndex)] || [];
-            const hidden = categoryHidden.has(a) || categoryHidden.has(b) || hiddenNodes.has(a) || hiddenNodes.has(b);
-            edge.classList.toggle("category-hidden", hidden);
-            edge.classList.toggle("hidden-network-edge", hidden);
-          });
-          $$(".category-halo", canvas).forEach((halo) => {
-            const hidden = !active.has(halo.dataset.category);
-            halo.classList.toggle("category-hidden", hidden);
-          });
-        };
-        $$('[data-category-filter]', categoryFilters).forEach((input) => input.addEventListener("change", applyCategoryFilters));
-      }
-      const searchInput = $("#nodeSearchInput"),
-        searchCount = $("#nodeSearchCount");
-      if (searchInput) {
-        searchInput.value = "";
-        searchInput.oninput = () => {
-          const query = clean(searchInput.value).toLowerCase().trim(),
-            groups = $$(".network-node", canvas),
-            matches = item.nodes
-              .map((node, index) => ({ index, label: clean(node[0]).toLowerCase() }))
-              .filter((node) => !query || node.label.includes(query));
-          groups.forEach((group, index) => {
-            const match = !query || matches.some((item) => item.index === index);
-            group.classList.toggle("search-match", Boolean(query && match));
-            group.classList.toggle("search-dimmed", Boolean(query && !match));
-          });
-          if (searchCount) {
-            searchCount.textContent = query ? `${matches.length} resultado${matches.length === 1 ? "" : "s"}` : "";
-          }
-          if (matches.length === 1 && query) selectNode(item, matches[0].index);
-          else if (!query) selectNode(item, null);
-        };
-      }
-      const svg = $("svg", canvas);
-      svg.addEventListener(
-        "wheel",
-        (e) => {
-          e.preventDefault();
-          zoom = Math.max(
-            0.55,
-            Math.min(2.4, zoom + (e.deltaY < 0 ? 0.12 : -0.12)),
-          );
-          updateZoom();
-        },
-        { passive: false },
-      );
-      const activePointers = new Map();
-      let pinchGesture = null;
-      const pointerMidpoint = () => {
-        const points = [...activePointers.values()];
-        return {
-          x: (points[0].x + points[1].x) / 2,
-          y: (points[0].y + points[1].y) / 2,
-        };
-      };
-      const pointerDistance = () => {
-        const points = [...activePointers.values()];
-        return Math.hypot(points[1].x - points[0].x, points[1].y - points[0].y);
-      };
-      svg.addEventListener("pointerdown", (e) => {
-        if (e.pointerType === "touch") {
-          activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
-          svg.setPointerCapture(e.pointerId);
-          if (activePointers.size === 2) {
-            drag = null;
-            const midpoint = pointerMidpoint();
-            pinchGesture = {
-              distance: pointerDistance(),
-              midpoint,
-              zoom,
-              panX,
-              panY,
-            };
-            svg.classList.add("is-pinch-zooming");
-          } else if (activePointers.size === 1 && !e.target.closest(".network-node")) {
-            drag = { x: e.clientX, y: e.clientY, panX, panY, pointerId: e.pointerId };
-            svg.classList.add("is-dragging");
-          }
-          return;
-        }
-        if (e.target.closest(".network-node")) return;
-        drag = { x: e.clientX, y: e.clientY, panX, panY, pointerId: e.pointerId };
-        svg.setPointerCapture(e.pointerId);
-        svg.classList.add("is-dragging");
-      });
-      svg.addEventListener("pointermove", (e) => {
-        if (e.pointerType === "touch") {
-          if (!activePointers.has(e.pointerId)) return;
-          activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
-          if (activePointers.size >= 2 && pinchGesture) {
-            const midpoint = pointerMidpoint();
-            zoom = Math.max(
-              0.55,
-              Math.min(2.4, pinchGesture.zoom * (pointerDistance() / pinchGesture.distance)),
-            );
-            panX = pinchGesture.panX + (midpoint.x - pinchGesture.midpoint.x) * 1.35;
-            panY = pinchGesture.panY + (midpoint.y - pinchGesture.midpoint.y) * 1.35;
-            updateZoom();
-          } else if (drag && drag.pointerId === e.pointerId) {
-            panX = drag.panX + (e.clientX - drag.x) * 1.5;
-            panY = drag.panY + (e.clientY - drag.y) * 1.5;
-            updateZoom();
-          }
-          return;
-        }
-        if (!drag || drag.pointerId !== e.pointerId) return;
-        panX = drag.panX + (e.clientX - drag.x) * 1.5;
-        panY = drag.panY + (e.clientY - drag.y) * 1.5;
-        updateZoom();
-      });
-      ["pointerup", "pointercancel"].forEach((eventName) =>
-        svg.addEventListener(eventName, (e) => {
-          if (e.pointerType === "touch") {
-            activePointers.delete(e.pointerId);
-            if (activePointers.size < 2) pinchGesture = null;
-            if (!activePointers.size || drag?.pointerId === e.pointerId) drag = null;
-          } else if (drag?.pointerId === e.pointerId) {
-            drag = null;
-          }
-          svg.classList.remove("is-dragging", "is-pinch-zooming");
-        }),
-      );
-      $$(".network-edge-hit", canvas).forEach((line) => {
-        const edgeIndex = Number(line.dataset.edgeIndex);
-        line.setAttribute("tabindex", "0");
-        line.addEventListener("click", (e) => {
-          e.stopPropagation();
-          showConnectionCitation(item, edgeIndex, e);
-        });
-        line.addEventListener("keydown", (e) => {
-          if (e.key === "Enter" || e.key === " ")
-            showConnectionCitation(item, edgeIndex, {
-              clientX: 520,
-              clientY: 180,
-            });
-        });
-      });
-      $$(".network-node", canvas).forEach((g) => {
-        const index = Number(g.dataset.nodeIndex);
-        const fn = () => {
-          if (clickCycle.index !== index) clickCycle = { index, count: 0 };
-          clickCycle.count += 1;
-          if (clickCycle.count === 1) selectNode(item, index);
-          else if (clickCycle.count === 2) selectNode(item, null);
-          else {
-            hideNodeAndConnections(item, index);
-            clickCycle = { index, count: 0 };
-          }
-        };
-        g.addEventListener("click", (e) => {
-          e.stopPropagation();
-          fn();
-        });
-        g.addEventListener("keydown", (e) => {
-          if (e.key === "Enter" || e.key === " ") fn();
-        });
-        g.addEventListener("mouseenter", (e) => showNodeTip(item, index, e));
-        g.addEventListener("mousemove", (e) => showNodeTip(item, index, e));
-        g.addEventListener("mouseleave", hideNodeTip);
-        g.addEventListener("focus", () =>
-          showNodeTip(item, index, { clientX: 520, clientY: 180 }),
-        );
-        g.addEventListener("blur", hideNodeTip);
-      });
-    };
-    $$(".network-trigger").forEach((b) =>
-      b.addEventListener("click", () => openNetwork(b.dataset.network)),
-    );
-    $("#networkZoomIn")?.addEventListener("click", () => {
-      zoom = Math.min(2.4, zoom + 0.15);
-      updateZoom();
-    });
-    $("#networkZoomOut")?.addEventListener("click", () => {
-      zoom = Math.max(0.55, zoom - 0.15);
-      updateZoom();
-    });
-    $("#networkZoomReset")?.addEventListener("click", () => {
-      zoom = 1;
-      panX = 0;
-      panY = 0;
-      updateZoom();
-    });
-      $("#networkRestore")?.addEventListener("click", () => {
-        hiddenNodes.clear();
-      $$(".hidden-network-node", canvas).forEach((g) =>
-        g.classList.remove("hidden-network-node"),
-      );
-      $$(".hidden-network-edge", canvas).forEach((e) =>
-        e.classList.remove("hidden-network-edge"),
-      );
-      $$(".network-node", canvas).forEach((g) =>
-        g.classList.remove("selected", "dimmed"),
-      );
-      $$(".network-edge", canvas).forEach((e) =>
-        e.classList.remove("highlight", "dimmed"),
-      );
-      zoom = 1;
-      panX = 0;
-      panY = 0;
-      updateZoom();
-      selectNode(
-        networks[document.body.dataset.activeNetwork || "30min"],
-        null,
-      );
-      clickCycle = { index: null, count: 0 };
-      toast("Red restablecida");
-    });
-      const allFilter = $("#edge-filter-all");
-      const applyEdgeFilters = () => {
-        const filters = $$(".edge-filter");
-        const enabled = new Set(
-          filters
-            .filter((input) => input.checked)
-            .map((input) => input.dataset.edgeType),
-        );
-        ["direct", "indirect", "support", "result"].forEach((type) => {
-          const visible = enabled.has(type);
-          $$(`.network-edge.${type}, .network-edge-hit.${type}`, canvas).forEach(
-            (edge) => edge.classList.toggle("edge-type-hidden", !visible),
-          );
-        });
-        if (allFilter) {
-          const active = filters.filter((input) => input.checked).length;
-          allFilter.checked = active === filters.length;
-          allFilter.indeterminate = active > 0 && active < filters.length;
-          allFilter.setAttribute(
-            "aria-label",
-            allFilter.checked
-              ? "Deseleccionar todas las convenciones"
-              : "Seleccionar todas las convenciones",
-          );
-        }
-      };
-      $$(".edge-filter").forEach((input) =>
-        input.addEventListener("change", applyEdgeFilters),
-      );
-      allFilter?.addEventListener("change", () => {
-        $$(".edge-filter").forEach(
-          (input) => (input.checked = allFilter.checked),
-        );
-        applyEdgeFilters();
-      });
-      $("#networkRestore")?.addEventListener("click", () => {
-        $$(".edge-filter").forEach((input) => (input.checked = true));
-        applyEdgeFilters();
-      });
-      applyEdgeFilters();
-      $("#networkModalClose")?.addEventListener("click", () => hide(modal));
-    modal?.addEventListener("click", (e) => {
-      if (e.target === modal) hide(modal);
-    });
-    $$(".side-item").forEach((x) => x.classList.remove("active"));
-    $$(".side-item")[6]?.classList.add("active");
-    $$(".side-item").forEach((b, index) =>
-      b.addEventListener("click", () => {
-        $$(".side-item").forEach((x) => x.classList.remove("active"));
-        b.classList.add("active");
-        if (index === 2) {
-          window.location.href = "modulo-03.html";
-          return;
-        }
-        const scenarioBySidebar = ["30min", "empleo"];
-        if (scenarioBySidebar[index]) {
-          openNetwork(scenarioBySidebar[index]);
-        } else {
-          toast(b.title + " seleccionado");
-        }
-      }),
-    );
-    $("#helpBtn")?.addEventListener("click", () =>
-      toast("Usa 1, 2 y 3 para abrir redes con más nodos e iconos."),
-    );
-    $("#bellBtn")?.addEventListener("click", () =>
-      toast("No hay alertas nuevas."),
-    );
-    $("#diagnoseBtn")?.addEventListener("click", () => show($("#modal")));
-    $("#modalClose")?.addEventListener("click", () => hide($("#modal")));
-    $("#modal")?.addEventListener("click", (e) => {
-      if (e.target.id === "modal") hide(e.currentTarget);
-    });
-    $$(".close-card").forEach((b) =>
-      b.addEventListener("click", () =>
-        b.closest(".interaction-card")?.remove(),
-      ),
-    );
-    const exportReport = () => {
-      const blob = new Blob(
-          [
-            "Dashboard de Emergencia e Impacto\nRedes ampliadas con nodos semánticos y clasificación por capas.",
-          ],
-          { type: "text/plain" },
-        ),
-        url = URL.createObjectURL(blob),
-        a = document.createElement("a");
-      a.href = url;
-      a.download = "reporte-emergencia-impacto.txt";
-      a.click();
-      URL.revokeObjectURL(url);
-      toast("Reporte guardado");
-    };
-    $("#exportBtn")?.addEventListener("click", exportReport);
-    $("#exportBottom")?.addEventListener("click", exportReport);
-    $$("select").forEach((s) =>
-      s.addEventListener("change", () =>
-        toast("Periodo actualizado: " + s.value),
-      ),
-    );
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") {
-        hide(modal);
-        hide($("#modal"));
-      }
-    });
+   Tipos de arista:
+   - hallazgo_1  → verde  continua, con flecha
+   - hallazgo_2  → amarillo punteada, con flecha
+   - hallazgo_3  → rosa   continua, con flecha
+   - consecuencia→ azul   discontinua, sin flecha
+   ========================================================== */
 
-    /* UI/UX de referencia del Módulo 02: la información permanece intacta;
-       solo se reubican los controles visuales en la columna derecha. */
-    function alignModule02ReferenceShell() {
-      const aside = document.querySelector(".network-aside");
-      const conventions = document.querySelector(".toolbar-conventions");
-      const categories = document.querySelector("#categoryFilters");
-      if (!aside) return;
-      if (categories && categories.parentElement !== aside) aside.prepend(categories);
-      if (conventions && conventions.parentElement !== aside) aside.appendChild(conventions);
-    }
-    alignModule02ReferenceShell();
+const SVG_NS = "http://www.w3.org/2000/svg";
+
+/* -------- Nodos -------- */
+const ODS_NODES = [
+  /* hallazgos */
+  { id: "h1",        cat: "hallazgo",  name: "HALLAZGO 1\nOBJETOS,\nNO FLUJOS",            icon: "fa-cubes",           color: "#4ade80", x: 420,  y: 380, r: 58 },
+  { id: "h2",        cat: "hallazgo",  name: "HALLAZGO 2\nMUNDO\nPEQUEÑO",                 icon: "fa-diagram-project", color: "#f5c945", x: 735,  y: 260, r: 56 },
+  { id: "h3",        cat: "hallazgo",  name: "HALLAZGO 3\nREGLAS SIN\nSIMULACIÓN",         icon: "fa-forward",         color: "#f76fb0", x: 1050, y: 380, r: 58 },
+  /* evidencias */
+  { id: "ar11",      cat: "evidencia", name: "ART. 11,\nPAR. 1\nCONECTORES",               icon: "fa-link-slash",      color: "#a276f2", x: 250,  y: 200, r: 50 },
+  { id: "art50",     cat: "evidencia", name: "ART. 50\nVAN DER\nHAMMEN",                   icon: "fa-mountain-sun",    color: "#a276f2", x: 230,  y: 470, r: 50 },
+  { id: "capellania",cat: "evidencia", name: "CAPELLANÍA\n27,03 → 29,32 HA",               icon: "fa-water",           color: "#a276f2", x: 470,  y: 620, r: 54 },
+  { id: "art100",    cat: "evidencia", name: "ART. 100\nESECI\n\"DINÁMICA\"",              icon: "fa-city",            color: "#a276f2", x: 640,  y: 90,  r: 52 },
+  { id: "metro",     cat: "evidencia", name: "METRO:\nKENNEDY /\nSUBA",                    icon: "fa-train-subway",    color: "#a276f2", x: 830,  y: 110, r: 54 },
+  { id: "art304",    cat: "evidencia", name: "ART. 304\nIC 5.0 / 6.0\n/ 7.0",              icon: "fa-stairs",          color: "#a276f2", x: 1240, y: 240, r: 54 },
+  /* consecuencias */
+  { id: "noflujos",  cat: "consecuencia", name: "NO VE\nTiempos, flujos,\nintensidades",  icon: "fa-wave-square",     color: "#ef4444", x: 160,  y: 340, r: 52 },
+  { id: "noconex",   cat: "consecuencia", name: "NO ARTICULA\nEstructuras aisladas\nentre sí",                       icon: "fa-unlink",          color: "#ef4444", x: 735,  y: 470, r: 54 },
+  { id: "noanticipa",cat: "consecuencia", name: "NO ANTICIPA\nResultados emergentes\nde miles de agentes",           icon: "fa-hourglass-end",   color: "#ef4444", x: 1330, y: 430, r: 56 },
+  { id: "reloj",     cat: "consecuencia", name: "RELOJ\nPrograma, no\nreacciona",           icon: "fa-clock",           color: "#5b8def", x: 1330, y: 620, r: 50 },
+];
+
+ODS_NODES.forEach(n => {
+  n.homeX = n.x; n.homeY = n.y;
+  n.vx = 0; n.vy = 0;
+  n.fixed = false;
+});
+
+/* -------- Tipos de arista -------- */
+const TYPE_STYLE = {
+  hallazgo_1:  { color: "#4ade80", width: 2.6, label: "Hallazgo 1 — objetos localizados, no flujos", arrow: true,  dash: null },
+  hallazgo_2:  { color: "#f5c945", width: 2.6, label: "Hallazgo 2 — red de mundo pequeño entre estructuras", arrow: true,  dash: "5 4" },
+  hallazgo_3:  { color: "#f76fb0", width: 2.6, label: "Hallazgo 3 — reglas generativas sin simulación", arrow: true,  dash: null },
+  consecuencia:{ color: "#5b8def", width: 2.2, label: "Consecuencia — lo que el POT no puede ver", arrow: false, dash: "6 5" },
+};
+
+/* -------- Aristas -------- */
+const RAW_EDGES = [
+  /* --- Hallazgo 1: objetos localizados, no flujos --- */
+  { s: "h1",         t: "ar11",       type: "hallazgo_1", directa: true, pagina: 11, paginaTexto: "Decreto 555, Art. 11, Parágrafo 1", sustento: "\u201C...los conectores ecosistémicos no hacen parte de la Estructura Ecológica Principal, ni constituyen afectación o suelo de protección, salvo cuando se traslapen con la EEP.\u201D — el POT reconoce la conexión ecológica pero jurídicamente la deja fuera de la estructura que protege: el flujo existe, el objeto no." },
+  { s: "h1",         t: "art50",      type: "hallazgo_1", directa: true, pagina: 50, paginaTexto: "Decreto 555, Art. 50", sustento: "El Art. 50 reconoce a la Reserva Van der Hammen únicamente \u201Ccomo área de conservación in situ\u201D, remitiendo su régimen de usos al Plan de Manejo Ambiental de 2014 de la CAR. El decreto la nombra, pero no describe su comportamiento ecológico." },
+  { s: "h1",         t: "capellania", type: "hallazgo_1", directa: true, paginaTexto: "\u201CBogotá Reverdece\u201D — documento oficial de balance", sustento: "\u201C...amplía en otros puntos del humedal las áreas que se sustraerán para la vía; así, Capellanía pasa de tener 27,03 ha a tener 29,32 ha.\u201D — el límite de protección se mueve para darle paso a la infraestructura, no al revés: el objeto protege la obra, no el ecosistema." },
+
+  /* --- Hallazgo 2: red de mundo pequeño --- */
+  { s: "h2",         t: "art100",     type: "hallazgo_2", directa: true, pagina: 100, paginaTexto: "Decreto 555, Art. 100", sustento: "El Art. 100 define la Estructura Socioeconómica, Creativa y de Innovación como \u201Cuna estructura dinámica, que modela y transforma constantemente el territorio urbano y rural\u201D. El propio texto usa la palabra \u201Cdinámica\u201D — pero la representa con un mapa fijo y una tabla de áreas de actividad, no con ningún proceso que pueda transformarse." },
+  { s: "h2",         t: "metro",      type: "hallazgo_2", directa: true, paginaTexto: "\u201CBogotá Reverdece\u201D — capítulo del Metro", sustento: "\u201C...con el Metro no solo llegan trenes eléctricos y estaciones, también llega más progreso social...\u201D — Kennedy: Manzana del Cuidado, centro deportivo, velódromo, parque metropolitano; Suba: colegios, universidad, biblioteca, centro cultural, ~15.000 VIS. El POT dice qué debe conectarse, pero no muestra cómo esas relaciones cambian, con qué intensidad y bajo qué desigualdad de acceso." },
+
+  /* --- Hallazgo 3: reglas generativas sin simulación --- */
+  { s: "h3",         t: "art304",     type: "hallazgo_3", directa: true, pagina: 304, paginaTexto: "Decreto 555, Art. 304 (Libro III)", sustento: "La escalera de incentivos: proyectos sin englobe \u201Cpueden alcanzar un índice de construcción efectivo máximo de cinco (5.0)\u201D; con englobe de esquina y cesión, \u201Cseis (6.0)\u201D; y los que incluyan \u201Cla totalidad de los predios de una manzana podrán alcanzar un índice de construcción efectivo máximo de siete (7.0)\u201D. Una escalera escrita para producir un comportamiento colectivo — englobar manzanas enteras." },
+
+  /* --- Consecuencias: lo que el POT no puede ver --- */
+  { s: "h1",         t: "noflujos",   type: "consecuencia", directa: true, paginaTexto: "Consecuencia del Hallazgo 1", sustento: "Porque el plan modela objetos y no flujos, los tiempos, flujos, intensidades, dependencias, conflictos e intercambios de la ciudad real quedan fuera del modelo declarado: el POT dice qué debe conectarse, pero no muestra con qué precisión cómo esas relaciones cambian." },
+  { s: "h2",         t: "noconex",    type: "consecuencia", directa: true, paginaTexto: "Consecuencia del Hallazgo 2", sustento: "La arquitectura \u201Cmundo pequeño\u201D produce estructuras densas hacia adentro y prácticamente aisladas entre sí. El propio texto no lo evidencia porque solo se lee de manera lineal, artículo por artículo: hace falta la ingeniería inversa relacional para verlo." },
+  { s: "h3",         t: "noanticipa", type: "consecuencia", directa: true, paginaTexto: "Consecuencia del Hallazgo 3", sustento: "El POT sí escribe reglas generativas (Art. 304), pero no tiene ningún dispositivo para anticipar qué ciudad resulta cuando miles de propietarios responden a ese incentivo al mismo tiempo. Tiene la regla. No corre la simulación." },
+  { s: "h3",         t: "reloj",      type: "consecuencia", directa: true, paginaTexto: "Consecuencia transversal — tiempo programático", sustento: "El POT tiene tiempo, pero solo un tipo de tiempo: programático (plazos, vigencias, seguimiento y evaluación). No tiene tiempo dinámico: nada viaja por la red, no hay cascadas ni fallo en cadena, no hay agentes cuya conducta agregada produzca resultados." },
+  { s: "noflujos",   t: "noanticipa", type: "consecuencia", directa: true, paginaTexto: "Los tres hallazgos son un mismo argumento", sustento: "Los tres hallazgos convergen: un modelo de objetos (H1) que se organiza como red aislada (H2) y que declara reglas sin correrlas (H3) no puede representar la dinámica, la emergencia y la autoorganización del territorio real." },
+  { s: "noanticipa", t: "reloj",      type: "consecuencia", directa: true, paginaTexto: "El puente a la propuesta", sustento: "De aquí nace la postura: el POT es un instrumento necesario (su función jurídica la cumple bien), pero no suficiente. Necesita ser complementado —no sustituido— por modelos capaces de representar la dinámica, la emergencia y la autoorganización." },
+];
+
+RAW_EDGES.forEach(edge => {
+  const s = nodeById(edge.s), t = nodeById(edge.t);
+  if (!s || !t) return;
+  edge.restLength = Math.hypot(t.x - s.x, t.y - s.y);
+});
+
+function nodeById(id) { return ODS_NODES.find(n => n.id === id); }
+
+/* -------- defs -------- */
+function buildDefs(svg) {
+  const defs = document.createElementNS(SVG_NS, "defs");
+  const uniqueColors = [...new Set(ODS_NODES.map(n => n.color))];
+  uniqueColors.forEach(color => {
+    const filter = document.createElementNS(SVG_NS, "filter");
+    filter.setAttribute("id", "glow-" + color.replace("#", ""));
+    filter.setAttribute("x", "-60%"); filter.setAttribute("y", "-60%");
+    filter.setAttribute("width", "220%"); filter.setAttribute("height", "220%");
+    const blur = document.createElementNS(SVG_NS, "feGaussianBlur");
+    blur.setAttribute("stdDeviation", "3.2"); blur.setAttribute("result", "blur");
+    const merge = document.createElementNS(SVG_NS, "feMerge");
+    ["blur", "blur", "SourceGraphic"].forEach(ref => {
+      const m = document.createElementNS(SVG_NS, "feMergeNode");
+      m.setAttribute("in", ref);
+      merge.appendChild(m);
+    });
+    filter.appendChild(blur); filter.appendChild(merge);
+    defs.appendChild(filter);
   });
-})();
+
+  Object.entries(TYPE_STYLE).forEach(([type, style]) => {
+    const marker = document.createElementNS(SVG_NS, "marker");
+    marker.setAttribute("id", "arrow-" + type);
+    marker.setAttribute("viewBox", "0 0 10 10");
+    marker.setAttribute("refX", "8"); marker.setAttribute("refY", "5");
+    marker.setAttribute("markerWidth", "7"); marker.setAttribute("markerHeight", "7");
+    marker.setAttribute("orient", "auto-start-reverse");
+    const path = document.createElementNS(SVG_NS, "path");
+    path.setAttribute("d", "M0,0 L10,5 L0,10 z");
+    path.setAttribute("fill", style.color);
+    marker.appendChild(path);
+    defs.appendChild(marker);
+  });
+
+  svg.appendChild(defs);
+}
+
+function edgePathData(edge, s, t) {
+  const dx = t.x - s.x, dy = t.y - s.y;
+  const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+  const ux = dx / dist, uy = dy / dist;
+  const startPad = s.r + 2;
+  const endPad = t.r + 8;
+  const x1 = s.x + ux * startPad, y1 = s.y + uy * startPad;
+  const x2 = t.x - ux * endPad,   y2 = t.y - uy * endPad;
+
+  if (edge.curve) {
+    const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+    const px = -uy, py = ux;
+    const cx = mx + px * edge.curve, cy = my + py * edge.curve;
+    return `M${x1},${y1} Q${cx},${cy} ${x2},${y2}`;
+  }
+  return `M${x1},${y1} L${x2},${y2}`;
+}
+
+/* -------- física -------- */
+let rafId = null;
+let dragging = null;
+let dragOffsetX = 0, dragOffsetY = 0;
+let moved = false;
+
+function wakePhysics() {
+  if (rafId) return;
+  rafId = requestAnimationFrame(tick);
+}
+
+function tick() {
+  rafId = null;
+  let active = false;
+  const k = 0.012;          /* resorte */
+  const homeK = 0.006;      /* ancla */
+  const damp = 0.82;
+
+  RAW_EDGES.forEach(edge => {
+    const s = nodeById(edge.s), t = nodeById(edge.t);
+    if (!s || !t) return;
+    const dx = t.x - s.x, dy = t.y - s.y;
+    const dist = Math.hypot(dx, dy) || 1;
+    const force = (dist - edge.restLength) * k;
+    const fx = (dx / dist) * force;
+    const fy = (dy / dist) * force;
+    s.vx += fx; s.vy += fy;
+    t.vx -= fx; t.vy -= fy;
+  });
+
+  ODS_NODES.forEach(n => {
+    if (n.fixed) return;
+    n.vx += (n.homeX - n.x) * homeK;
+    n.vy += (n.homeY - n.y) * homeK;
+    n.vx *= damp; n.vy *= damp;
+    n.x += n.vx; n.y += n.vy;
+    if (Math.abs(n.vx) > 0.02 || Math.abs(n.vy) > 0.02) active = true;
+  });
+
+  updatePositions();
+
+  if (active) wakePhysics();
+}
+
+function updatePositions() {
+  ODS_NODES.forEach(n => {
+    const group = document.querySelector(`.ods-node[data-id="${n.id}"]`);
+    if (group) group.setAttribute("transform", `translate(${n.x},${n.y})`);
+  });
+  RAW_EDGES.forEach((edge, i) => {
+    const s = nodeById(edge.s), t = nodeById(edge.t);
+    if (!s || !t) return;
+    const line = document.querySelector(`.edge-hit[data-index="${i}"]`);
+    const vis = document.querySelector(`.edge-vis[data-index="${i}"]`);
+    if (!line) return;
+    const d = edgePathData(edge, s, t);
+    line.setAttribute("d", d);
+    if (vis) vis.setAttribute("d", d);
+  });
+}
+
+/* -------- dibujar -------- */
+function renderNetwork() {
+  const svg = document.getElementById("networkViz");
+  if (!svg) return;
+  svg.innerHTML = "";
+  buildDefs(svg);
+  drawEdges(svg);
+  drawNodes(svg);
+}
+
+function drawEdges(svg) {
+  RAW_EDGES.forEach((edge, i) => {
+    const s = nodeById(edge.s), t = nodeById(edge.t);
+    if (!s || !t) return;
+    const style = TYPE_STYLE[edge.type];
+
+    const group = document.createElementNS(SVG_NS, "g");
+    group.setAttribute("class", "edge-group");
+    group.setAttribute("data-index", i);
+    group.setAttribute("data-type", edge.type);
+    group.setAttribute("data-source", edge.s);
+    group.setAttribute("data-target", edge.t);
+
+    const hit = document.createElementNS(SVG_NS, "path");
+    hit.setAttribute("class", "edge-hit");
+    hit.setAttribute("data-index", i);
+    hit.setAttribute("fill", "none");
+    hit.setAttribute("stroke", "transparent");
+    hit.setAttribute("stroke-width", "16");
+    hit.style.cursor = "pointer";
+
+    const vis = document.createElementNS(SVG_NS, "path");
+    vis.setAttribute("class", "edge-vis");
+    vis.setAttribute("data-index", i);
+    vis.setAttribute("fill", "none");
+    vis.setAttribute("stroke", style.color);
+    vis.setAttribute("stroke-width", style.width);
+    vis.setAttribute("opacity", "0.75");
+    if (style.dash) vis.setAttribute("stroke-dasharray", style.dash);
+    if (style.arrow) vis.setAttribute("marker-end", `url(#arrow-${edge.type})`);
+
+    group.appendChild(hit);
+    group.appendChild(vis);
+    svg.appendChild(group);
+
+    hit.addEventListener("click", () => showEdgeInfo(i));
+  });
+  updatePositions();
+}
+
+function drawNodes(svg) {
+  const catLabel = { hallazgo: "HALLAZGO", evidencia: "EVIDENCIA", consecuencia: "CONSECUENCIA" };
+  ODS_NODES.forEach(n => {
+    const group = document.createElementNS(SVG_NS, "g");
+    group.setAttribute("class", "ods-node ods-node-" + n.cat);
+    group.setAttribute("data-id", n.id);
+    group.setAttribute("data-cat", n.cat);
+    group.setAttribute("transform", `translate(${n.x},${n.y})`);
+
+    const circle = document.createElementNS(SVG_NS, "circle");
+    circle.setAttribute("r", n.r);
+    circle.setAttribute("fill", "#141b2d");
+    circle.setAttribute("stroke", n.color);
+    circle.setAttribute("stroke-width", "3");
+    circle.setAttribute("filter", `url(#glow-${n.color.replace("#", "")})`);
+    group.appendChild(circle);
+
+    if (n.cat !== "hallazgo") {
+      const ring = document.createElementNS(SVG_NS, "circle");
+      ring.setAttribute("r", n.r + 6);
+      ring.setAttribute("fill", "none");
+      ring.setAttribute("stroke", n.color);
+      ring.setAttribute("stroke-width", "1.5");
+      ring.setAttribute("stroke-dasharray", "4 4");
+      ring.setAttribute("opacity", "0.6");
+      group.appendChild(ring);
+    }
+
+    const iconG = document.createElementNS(SVG_NS, "g");
+    iconG.setAttribute("transform", "translate(-14,-30)");
+    const icon = document.createElementNS(SVG_NS, "text");
+    icon.setAttribute("class", "fa " + n.icon);
+    icon.setAttribute("fill", n.color);
+    icon.setAttribute("font-size", "24");
+    icon.setAttribute("text-anchor", "middle");
+    iconG.appendChild(icon);
+    group.appendChild(iconG);
+
+    const nameLines = n.name.split("\n");
+    nameLines.forEach((line, li) => {
+      const text = document.createElementNS(SVG_NS, "text");
+      text.setAttribute("y", 8 + li * 16);
+      text.setAttribute("text-anchor", "middle");
+      text.setAttribute("fill", "#e8ecf4");
+      text.setAttribute("font-size", "11");
+      text.setAttribute("font-weight", "700");
+      text.setAttribute("font-family", "Space Grotesk, sans-serif");
+      text.textContent = line;
+      group.appendChild(text);
+    });
+
+    const catTag = document.createElementNS(SVG_NS, "text");
+    catTag.setAttribute("y", 8 + nameLines.length * 16);
+    catTag.setAttribute("text-anchor", "middle");
+    catTag.setAttribute("fill", n.color);
+    catTag.setAttribute("font-size", "9");
+    catTag.setAttribute("font-weight", "600");
+    catTag.textContent = catLabel[n.cat];
+    group.appendChild(catTag);
+
+    attachDragHandlers(group, n);
+    attachNodeClickHandler(group, n.id);
+    svg.appendChild(group);
+  });
+}
+
+/* -------- arrastre -------- */
+function attachDragHandlers(group, node) {
+  group.style.cursor = "grab";
+
+  function startDrag(e) {
+    if (e.button && e.button !== 0) return;
+    e.preventDefault();
+    const pt = svgPoint(e);
+    dragging = node;
+    dragOffsetX = pt.x - node.x;
+    dragOffsetY = pt.y - node.y;
+    node.fixed = true;
+    moved = false;
+    group.classList.add("dragging");
+    group.setPointerCapture(e.pointerId);
+  }
+
+  function onDrag(e) {
+    if (dragging !== node) return;
+    const pt = svgPoint(e);
+    const newX = pt.x - dragOffsetX;
+    const newY = pt.y - dragOffsetY;
+    if (Math.hypot(newX - node.x, newY - node.y) > 2) moved = true;
+    node.x = newX; node.y = newY;
+    updatePositions();
+  }
+
+  function endDrag(e) {
+    if (dragging !== node) return;
+    dragging = null;
+    node.fixed = false;
+    group.classList.remove("dragging");
+    try { group.releasePointerCapture(e.pointerId); } catch (err) {}
+    wakePhysics();
+    if (moved) {
+      group.dataset.suppressClick = "1";
+      setTimeout(() => { delete group.dataset.suppressClick; }, 0);
+    }
+  }
+
+  group.addEventListener("pointerdown", startDrag);
+  group.addEventListener("pointermove", onDrag);
+  group.addEventListener("pointerup", endDrag);
+  group.addEventListener("pointercancel", endDrag);
+}
+
+function svgPoint(e) {
+  const svg = document.getElementById("networkViz");
+  const pt = svg.createSVGPoint();
+  pt.x = e.clientX; pt.y = e.clientY;
+  return pt.matrixTransform(svg.getScreenCTM().inverse());
+}
+
+/* -------- panel de sustento -------- */
+function showEdgeInfo(index) {
+  const edge = RAW_EDGES[index];
+  const s = nodeById(edge.s), t = nodeById(edge.t);
+  const style = TYPE_STYLE[edge.type];
+
+  document.querySelectorAll(".edge-group").forEach(el => el.classList.remove("edge-selected"));
+  document.querySelector(`.edge-group[data-index="${index}"]`)?.classList.add("edge-selected");
+
+  const label = (n) => n.name.replace(/\n/g, " ");
+  document.getElementById("edgeInfoTitle").textContent = `${label(s)} → ${label(t)}`;
+
+  const typeEl = document.getElementById("edgeInfoType");
+  typeEl.textContent = style.label + (edge.directa ? " · Directa" : " · Inferida");
+  typeEl.style.color = style.color;
+  typeEl.style.background = style.color + "26";
+
+  document.getElementById("edgeInfoQuote").textContent = edge.sustento;
+  document.getElementById("edgeInfoPage").textContent =
+    edge.paginaTexto ? `Referencia: ${edge.paginaTexto}` : (edge.pagina != null ? `Página POT: p. ${edge.pagina}` : "Referencia: por confirmar");
+
+  document.getElementById("edgeInfoPanel").classList.add("visible");
+
+  document.querySelectorAll(".matrix-row[data-edge]").forEach(row => {
+    row.classList.toggle("row-highlight", Number(row.dataset.edge) === index);
+  });
+}
+
+function hideEdgeInfo() {
+  document.getElementById("edgeInfoPanel").classList.remove("visible");
+  document.querySelectorAll(".edge-group").forEach(el => el.classList.remove("edge-selected"));
+  document.querySelectorAll(".matrix-row[data-edge]").forEach(row => row.classList.remove("row-highlight"));
+}
+
+/* -------- visibilidad -------- */
+const typeOff = new Set();
+const nodeOff = new Set();
+
+function refreshEdgeVisibility() {
+  document.querySelectorAll(".edge-group").forEach(group => {
+    const type = group.dataset.type;
+    const s = group.dataset.source;
+    const t = group.dataset.target;
+    const hidden = typeOff.has(type) || nodeOff.has(s) || nodeOff.has(t);
+    group.classList.toggle("hidden-edge", hidden);
+  });
+}
+
+function toggleNode(id) {
+  const group = document.querySelector(`.ods-node[data-id="${id}"]`);
+  if (!group) return;
+  if (nodeOff.has(id)) {
+    nodeOff.delete(id);
+    group.classList.remove("node-off");
+  } else {
+    nodeOff.add(id);
+    group.classList.add("node-off");
+  }
+  refreshEdgeVisibility();
+}
+
+function attachNodeClickHandler(group, id) {
+  let count = 0;
+  let timer = null;
+  group.addEventListener("click", () => {
+    if (group.dataset.suppressClick) return;
+    count++;
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(() => {
+      if (count === 2) {
+        toggleNode(id);
+      } else if (count >= 3) {
+        toggleNodeFlow(id);
+      }
+      count = 0;
+    }, 320);
+  });
+}
+
+/* -------- spotlight -------- */
+let spotlight = null;
+
+function clearSpotlight() {
+  spotlight = null;
+  document.querySelectorAll(".insight-card").forEach(c => c.classList.remove("active"));
+  applySpotlightState();
+}
+
+function setSpotlightNodes(nodeIds, expand) {
+  spotlight = { mode: "nodes", nodes: new Set(nodeIds), expand: !!expand };
+  applySpotlightState();
+}
+
+function setSpotlightTypes(types) {
+  spotlight = { mode: "types", types };
+  applySpotlightState();
+}
+
+function applySpotlightState() {
+  let visibleNodes = null;
+  let visibleEdges = null;
+
+  if (spotlight && spotlight.mode === "nodes") {
+    visibleNodes = new Set(spotlight.nodes);
+    visibleEdges = new Set();
+    RAW_EDGES.forEach((edge, i) => {
+      const sIn = spotlight.nodes.has(edge.s);
+      const tIn = spotlight.nodes.has(edge.t);
+      if (spotlight.expand) {
+        if (sIn || tIn) {
+          visibleEdges.add(i);
+          visibleNodes.add(edge.s);
+          visibleNodes.add(edge.t);
+        }
+      } else {
+        if (sIn && tIn) visibleEdges.add(i);
+      }
+    });
+  } else if (spotlight && spotlight.mode === "types") {
+    visibleEdges = new Set();
+    RAW_EDGES.forEach((edge, i) => {
+      if (spotlight.types.includes(edge.type)) visibleEdges.add(i);
+    });
+  }
+
+  document.querySelectorAll(".ods-node").forEach(el => {
+    const id = el.dataset.id;
+    const dim = visibleNodes ? !visibleNodes.has(id) : false;
+    el.classList.toggle("node-focus-dim", dim);
+    el.classList.toggle("node-focus-active", !!(spotlight && spotlight.mode === "nodes" && spotlight.nodes.has(id)));
+  });
+
+  document.querySelectorAll(".edge-group").forEach(el => {
+    const idx = Number(el.dataset.index);
+    const dim = visibleEdges ? !visibleEdges.has(idx) : false;
+    el.classList.toggle("edge-focus-dim", dim);
+  });
+}
+
+function toggleNodeFlow(id) {
+  const already = spotlight && spotlight.mode === "nodes" && spotlight.expand &&
+                   spotlight.nodes.size === 1 && spotlight.nodes.has(id);
+  if (already) {
+    clearSpotlight();
+  } else {
+    setSpotlightNodes([id], true);
+  }
+}
+
+/* -------- insights -------- */
+const NODE_INSIGHTS = {
+  h1: ["h1", "ar11", "art50", "capellania", "noflujos"],
+  h2: ["h2", "art100", "metro", "noconex"],
+  h3: ["h3", "art304", "noanticipa", "reloj"],
+  reloj: ["noflujos", "noanticipa", "reloj"],
+};
+
+const TYPE_KEY = {
+  hallazgo_1: "hallazgo_1",
+  hallazgo_2: "hallazgo_2",
+  hallazgo_3: "hallazgo_3",
+  consecuencia: "consecuencia",
+};
+
+function toggleInsight(key) {
+  const card = document.querySelector(`.insight-card[data-insight="${key}"]`);
+  if (!card) return;
+
+  if (card.classList.contains("active")) {
+    clearSpotlight();
+    return;
+  }
+
+  if (TYPE_KEY[key]) {
+    setSpotlightTypes([TYPE_KEY[key]]);
+  } else if (key === "todos") {
+    setSpotlightNodes(ODS_NODES.map(n => n.id), false);
+  } else if (NODE_INSIGHTS[key] && NODE_INSIGHTS[key].length) {
+    setSpotlightNodes(NODE_INSIGHTS[key], true);
+  } else {
+    setSpotlightNodes(ODS_NODES.map(n => n.id), false);
+  }
+
+  card.classList.add("active");
+}
+
+/* -------- leyenda -------- */
+function setupLegendToggle() {
+  document.querySelectorAll(".legend-item input").forEach(input => {
+    input.addEventListener("change", (e) => {
+      const item = e.target.closest(".legend-item");
+      const type = item.dataset.type;
+      if (e.target.checked) typeOff.delete(type); else typeOff.add(type);
+      item.classList.toggle("off", !e.target.checked);
+      refreshEdgeVisibility();
+    });
+  });
+
+  document.getElementById("edgeInfoClose")?.addEventListener("click", hideEdgeInfo);
+}
+
+/* -------- filtros -------- */
+function filterNetwork(mode) {
+  document.querySelectorAll(".network-controls .control-btn").forEach(btn => btn.classList.remove("active"));
+  const btnLabels = { all: "todos", hallazgo_1: "hallazgo 1", hallazgo_2: "hallazgo 2", hallazgo_3: "hallazgo 3", consecuencia: "consecuencia" };
+  const btn = [...document.querySelectorAll(".network-controls .control-btn")].find(b => b.textContent.trim().toLowerCase() === btnLabels[mode]);
+  (btn || document.querySelector(`.network-controls .control-btn`)).classList.add("active");
+
+  const groups = {
+    all: ["hallazgo_1", "hallazgo_2", "hallazgo_3", "consecuencia"],
+    hallazgo_1: ["hallazgo_1"],
+    hallazgo_2: ["hallazgo_2"],
+    hallazgo_3: ["hallazgo_3"],
+    consecuencia: ["consecuencia"],
+  };
+  const activeTypes = groups[mode] || groups.all;
+
+  document.querySelectorAll(".legend-item[data-type]").forEach(item => {
+    const type = item.dataset.type;
+    const input = item.querySelector("input");
+    const show = activeTypes.includes(type);
+    input.checked = show;
+    item.classList.toggle("off", !show);
+    if (show) typeOff.delete(type); else typeOff.add(type);
+  });
+  refreshEdgeVisibility();
+
+  /* Mantener sincronizada la tarjeta de insight correspondiente */
+  const insightMap = { hallazgo_1: "h1", hallazgo_2: "h2", hallazgo_3: "h3", consecuencia: "reloj" };
+  document.querySelectorAll(".insight-card").forEach(c => c.classList.remove("active"));
+  if (mode !== "all" && insightMap[mode]) {
+    const card = document.querySelector(`.insight-card[data-insight="${insightMap[mode]}"]`);
+    if (card) card.classList.add("active");
+    setSpotlightTypes(activeTypes);
+  } else {
+    clearSpotlight();
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  renderNetwork();
+  setupLegendToggle();
+});
