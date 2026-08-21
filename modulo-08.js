@@ -28,6 +28,7 @@ const STRUCT_COLOR = {
   func: "#f5a623",
   patrim: "#f76fb0",
   actor: "#eef0f6",
+  agente: "#ff5c8a",
   mediador: "#7d8ea3",
   simulador: "#b08cff",
 };
@@ -89,18 +90,26 @@ const MEDIADOR_NODES = [
   { id: "puentes_peatonales", name: "PUENTES\nPEATONALES", icon: "fa-bridge", x: 60, y: 340, r: 20 },
 ];
 
+const AGENT_NODES = [
+  { id: "agente_cuidadora", name: "AGENTE\nCUIDADORA", icon: "fa-person-dress", x: 455, y: 292, r: 25 },
+  { id: "agente_trabajador", name: "AGENTE\nTRABAJADOR", icon: "fa-person-walking", x: 540, y: 292, r: 25 },
+  { id: "agente_ninez", name: "AGENTE\nNIÑEZ", icon: "fa-child-reaching", x: 575, y: 350, r: 25 },
+  { id: "agente_riesgo", name: "AGENTE EN\nRIESGO", icon: "fa-triangle-exclamation", x: 420, y: 350, r: 25 },
+];
+
 const SIMULATOR_NODES = [
   { id: "personas_sim", name: "PERSONAS\nAGENTES DE CUIDADO", icon: "fa-people-arrows", struct: "simulador", x: 492, y: 342, r: 42 },
   { id: "viviendas_sim", name: "VIVIENDAS\nHABITABILIDAD", icon: "fa-house-chimney-user", struct: "simulador", x: 610, y: 430, r: 42 },
   { id: "ecosistemas_sim", name: "ECOSISTEMAS\nMATRIZ ORDENADORA", icon: "fa-water", struct: "simulador", x: 372, y: 430, r: 42 },
 ];
 
-const ALL_DYNAMIC_NODES = [...ACTOR_NODES, ...MEDIADOR_NODES, ...SIMULATOR_NODES];
+const ALL_DYNAMIC_NODES = [...ACTOR_NODES, ...MEDIADOR_NODES, ...AGENT_NODES, ...SIMULATOR_NODES];
 
 function nodeKind(id) {
   if (BASE_NODES.some(n => n.id === id)) return "componente";
   if (ACTOR_NODES.some(n => n.id === id)) return "actor";
   if (MEDIADOR_NODES.some(n => n.id === id)) return "mediador";
+  if (AGENT_NODES.some(n => n.id === id)) return "agente";
   if (SIMULATOR_NODES.some(n => n.id === id)) return "simulador";
   return "componente";
 }
@@ -148,6 +157,14 @@ const BASE_EDGES = [
 
 /* -------- Relaciones actor/mediador → componente (dimensión dinámica) -------- */
 const DYNAMIC_EDGES = [
+  { s: "agente_cuidadora", t: "personas_sim", tipo: "directa", dirigida: true, evidencia: "La agente cuidadora organiza una trayectoria diaria para resolver tareas de cuidado y servicios de proximidad.", page: "Módulo Simulador", actores: "Agente cuidadora", critica: "La ruta depende del tiempo disponible, la fatiga y la simultaneidad de tareas, no de una distancia abstracta." },
+  { s: "agente_trabajador", t: "personas_sim", tipo: "directa", dirigida: true, evidencia: "El agente trabajador combina vivienda, transporte y empleo en una trayectoria cotidiana que cambia según la hora y la accesibilidad.", page: "Módulo Simulador", actores: "Agente trabajador", critica: "El POT localiza usos, pero no observa la cadena completa de desplazamientos ni los tiempos de espera." },
+  { s: "agente_ninez", t: "personas_sim", tipo: "directa", dirigida: true, evidencia: "La niñez depende de recorridos seguros hacia educación, cuidado, parques y espacio público cercano.", page: "Módulo Simulador", actores: "Agente niñez", critica: "La seguridad del recorrido no se reduce a la existencia de un equipamiento: depende de cruces, andenes y acompañamiento." },
+  { s: "agente_riesgo", t: "viviendas_sim", tipo: "indirecta", dirigida: true, evidencia: "Cuando el acceso formal falla, el agente puede autoconstruir en una ladera de riesgo como respuesta de supervivencia.", page: "Escenario de informalidad", actores: "Agente en riesgo", critica: "La informalidad es una dinámica de acceso y supervivencia, no solamente una categoría morfológica." },
+  { s: "agente_cuidadora", t: "manzanas_cuidado", tipo: "directa", dirigida: true, evidencia: "La agente cuidadora usa las Manzanas del Cuidado para resolver necesidades dentro de un rango de 15 minutos caminando.", page: "Módulo Simulador", actores: "Agente cuidadora", critica: "El radio real se mide por tiempo vivido, barreras y continuidad peatonal." },
+  { s: "agente_trabajador", t: "transporte_publico", tipo: "directa", dirigida: true, evidencia: "El transporte público conecta vivienda y trabajo, y su accesibilidad cambia con la hora pico o el cierre de una estación.", page: "Módulo Simulador", actores: "Agente trabajador", critica: "El flujo no es constante: una interrupción redistribuye las rutas y el estrés del agente." },
+  { s: "agente_ninez", t: "andenes", tipo: "directa", dirigida: true, evidencia: "El andén funciona como mediador de un recorrido seguro hacia equipamientos, cuidado y parques.", page: "Módulo Simulador", actores: "Agente niñez", critica: "Si el andén se rompe o se inunda, la trayectoria formal deja de ser utilizable." },
+  { s: "agente_riesgo", t: "ecosistemas_sim", tipo: "indirecta", dirigida: true, evidencia: "La localización de la vivienda informal expone al agente a pendientes, escorrentía y amenazas ambientales.", page: "Escenario de informalidad", actores: "Agente en riesgo · Ecosistemas", critica: "La matriz ambiental condiciona las decisiones de localización y no opera como un simple telón de fondo." },
   { s: "personas_sim", t: "viviendas_sim", tipo: "directa", dirigida: true, evidencia: "La vivienda es el nodo de origen y retorno de cada agente de cuidado; sus condiciones de habitabilidad modifican el estrés, la salud y el tiempo disponible.", page: "Módulo Simulador", actores: "Personas · Viviendas", critica: "El POT fija usos y estándares, pero no corre la trayectoria diaria ni la experiencia acumulada de sus habitantes." },
   { s: "personas_sim", t: "ecosistemas_sim", tipo: "directa", dirigida: true, evidencia: "Las personas recorren una ciudad atravesada por conectores ecosistémicos, escorrentías y espacios públicos seguros; el entorno modifica las rutas posibles.", page: "Módulo Simulador", actores: "Personas · Ecosistemas", critica: "El recorrido no es una línea recta: depende de fatiga, tiempo disponible, simultaneidad del cuidado y condiciones ambientales." },
   { s: "ecosistemas_sim", t: "viviendas_sim", tipo: "directa", dirigida: true, evidencia: "La matriz ecológica ordena el borde urbano mediante comportamiento hídrico, mitigación del riesgo y sistemas urbanos de drenaje sostenible.", page: "Módulo Simulador", actores: "Ecosistemas · Viviendas", critica: "El polígono de protección no permite anticipar por sí solo cómo una inundación o la escorrentía afectan la vivienda de borde." },
@@ -179,19 +196,19 @@ const SITUACIONES = [
   {
     id: "ciudad_15_minutos", label: "Ciudad de 15 minutos", icon: "fa-person-walking",
     desc: "Resalta las trayectorias de cuidado: el acceso se mide como tiempo caminando, fatiga y simultaneidad de servicios, no como distancia en línea recta.",
-    boost: ["personas_sim→manzanas_cuidado", "personas_sim→viviendas_sim", "personas_sim→ecosistemas_sim"],
+    boost: ["personas_sim→manzanas_cuidado", "personas_sim→viviendas_sim", "personas_sim→ecosistemas_sim", "agente_cuidadora→manzanas_cuidado", "agente_cuidadora→personas_sim", "agente_ninez→andenes"],
     dim: [],
   },
   {
     id: "vivienda_informal", label: "Autoconstrucción en riesgo", icon: "fa-house-crack",
     desc: "Activa el escenario en que la falta de vivienda formal empuja a un agente a autoconstruirse en una ladera de riesgo por supervivencia.",
-    boost: ["personas_sim→vivienda", "viviendas_sim→vivienda", "ecosistemas_sim→viviendas_sim"],
+    boost: ["personas_sim→vivienda", "viviendas_sim→vivienda", "ecosistemas_sim→viviendas_sim", "agente_riesgo→viviendas_sim", "agente_riesgo→ecosistemas_sim"],
     dim: ["vivienda→equipamientos"],
   },
   {
     id: "perturbacion", label: "Sismo / inundación", icon: "fa-house-tsunami",
     desc: "Simula una perturbación que rompe el andén o la ruta formal: los agentes se autodeterminan y buscan el espacio público seguro más cercano.",
-    boost: ["ecosistemas_sim→viviendas_sim", "personas_sim→ecosistemas_sim", "personas_sim→viviendas_sim"],
+    boost: ["ecosistemas_sim→viviendas_sim", "personas_sim→ecosistemas_sim", "personas_sim→viviendas_sim", "agente_ninez→andenes", "agente_riesgo→ecosistemas_sim"],
     dim: ["vivienda→red_vial", "vivienda→transporte_publico"],
   },
   {

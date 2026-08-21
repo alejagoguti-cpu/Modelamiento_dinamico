@@ -22,6 +22,7 @@
   --struct-func: #f5a623;
   --struct-patrim: #f76fb0;
   --actor-color: #eef0f6;
+  --agente-color: #ff5c8a;
   --mediador-color: #7d8ea3;
 }
 
@@ -278,6 +279,7 @@ body {
 .principle-housing > i, .principle-housing strong { color: var(--orange); }
 .principle-ecosystems { border-color: rgba(47,212,200,.38); }
 .principle-ecosystems > i, .principle-ecosystems strong { color: var(--teal); }
+.simulator-agent-key { color: var(--agente-color); font-weight: 700; }
 .network-controls { display: flex; gap: 8px; flex-wrap: wrap; }
 
 .control-btn {
