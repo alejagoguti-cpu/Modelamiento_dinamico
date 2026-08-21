@@ -116,7 +116,7 @@ const AGENT_NODES = [
 const SIMULATOR_NODES = [
   { id: "personas_sim", name: "PERSONAS\nAGENTES DE CUIDADO", icon: "fa-people-arrows", struct: "simulador", x: 492, y: 342, r: 42 },
   { id: "viviendas_sim", name: "VIVIENDAS\nHABITABILIDAD", icon: "fa-house-chimney-user", struct: "simulador", x: 610, y: 430, r: 42 },
-  { id: "ecosistemas_sim", name: "ECOSISTEMAS\nMATRIZ ORDENADORA", icon: "fa-water", struct: "simulador", x: 372, y: 430, r: 42 },
+  { id: "ecosistemas_sim", name: "ECOSISTEMAS\nMATRIZ ORDENADORA", icon: "fa-water", struct: "simulador", x: 270, y: 520, r: 42 },
 ];
 
 const ALL_DYNAMIC_NODES = [...ACTOR_NODES, ...MEDIADOR_NODES, ...AGENT_NODES, ...SIMULATOR_NODES];
@@ -557,7 +557,7 @@ function updatePositions() {
   });
 }
 
-const PHYSICS = { spring: 0.045, anchor: 0.02, damping: 0.82, minVel: 0.02 };
+const PHYSICS = { spring: 0.035, anchor: 0.014, damping: 0.82, minVel: 0.02 };
 let physicsRunning = false;
 
 function physicsStep() {
@@ -569,9 +569,9 @@ function physicsStep() {
       const ni = nodes[i], nj = nodes[j];
       const dx = nj.x - ni.x, dy = nj.y - ni.y;
       const dist = Math.hypot(dx, dy) || 1;
-      const minDist = ni.r + nj.r + 26;
+      const minDist = ni.r + nj.r + 44;
       if (dist < minDist) {
-        const force = (minDist - dist) * 0.08;
+        const force = (minDist - dist) * 0.14;
         const fx = (dx / dist) * force, fy = (dy / dist) * force;
         if (!ni.fixed) { ni.vx -= fx; ni.vy -= fy; }
         if (!nj.fixed) { nj.vx += fx; nj.vy += fy; }
@@ -745,6 +745,7 @@ function renderNetwork() {
   drawNodes(svg);
   refreshEdgeVisibility();
   applyViewMode();
+  wakePhysics();
 }
 
 /* -------- toggle: Activar Dimensión Dinámica -------- */
