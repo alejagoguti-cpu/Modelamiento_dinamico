@@ -935,7 +935,7 @@ const HUMEDALES_CASOS = {
   malla_via: { nombre: "Malla vial (conflicto con Capellanía)", label: "Malla vía", x: 53.8, y: 48.1, diam: 6.1, color: "#ef9552",
     cita: "Con respecto a los humedales de la ciudad, dentro del POT únicamente se identificó un conflicto de malla vial arterial con la Reserva Distrital de Humedal Capellanía, en Fontibón.", pagina: "49–50" },
   capellania: { nombre: "Humedal Capellanía", label: "Humedal\nCapellanía", x: 51.6, y: 58.8, diam: 3.4, color: "#2fd4c8",
-    cita: "Dentro del POT únicamente se identificó un conflicto de malla vial arterial con la Reserva Distrital de Humedal Capellanía, en Fontibón... es necesario reducir parte de este ecosistema para poder habilitar el paso de la vía. No obstante, el POT Bogotá Reverdece reconoce el área para la vía y amplía en otros puntos del humedal las áreas que se sustraerán para la vía; así, Capellanía pasa de tener 27,03 ha... a tener 29,32 ha.", pagina: "49–50" },
+    cita: "Dentro del POT solo se nombra Reserva Distrital de Humedal Capellanía, en Fontibón debido a que tiene un conflicto de malla vial arterial con la ... \"es necesario reducir parte de este ecosistema para poder habilitar el paso de la vía. No obstante, el POT Bogotá Reverdece reconoce el área para la vía y amplía en otros puntos del humedal las áreas que se sustraerán para la vía; así, Capellanía pasa de tener 27,03 ha... a tener 29,32 ha.\"", pagina: "49–50" },
   la_vaca: { nombre: "Humedal La Vaca", label: "Humedal\nla vaca", x: 67.4, y: 72.4, diam: 3.4, color: "#2fd4c8",
     cita: "El Humedal La Vaca, en Patio Bonito, parte de una antigua laguna muisca gobernada por el cacique Techovita, es un reservorio de agua, plantas y animales protegido por la comunidad.", pagina: "103" },
 };
