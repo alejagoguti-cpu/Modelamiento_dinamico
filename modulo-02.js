@@ -1446,24 +1446,9 @@ const MOVILIDAD_TRAZO_ROSA = [
 ];
 
 const MOVILIDAD_LINEAS_ROSA = [
-  { id: "regiotram_ramal_centro", color: "#ffc06a", rel: "regiotram_norte", etiqueta: "", puntos: [[50.9,45],[50,46.8],[49.2,48.6],[48.5,50.6],[47.9,52.6],[47.6,54.2]] },
-  { id: "regiotram_occidente", color: "#ffc06a", rel: "regiotram_norte", etiqueta: "", puntos: [[33.96,28.15],[34.83,29.41],[35.33,30.96],[35.83,32.52],[36.38,34.07],[36.92,35.63],[37.5,37.19],[38.38,38.74],[39.25,40.3],[40.13,41.48],[41,43.04],[41.38,44.59],[41.71,46.15],[42.08,47.7],[42.46,49.26],[42.79,50.81],[43.21,52.37],[42.33,53.93],[41.46,55.48],[40.58,57.04],[39.71,58.59],[38.83,60.15],[37.96,61.7],[37.08,63.26],[36.21,64.81],[35.33,66.37],[34.46,67.93],[33.92,69.48],[33.29,71.04],[33.33,72.59],[33.33,74.15],[33.42,75.7],[33.46,77.26],[33.54,78.81],[33.58,80.37],[33.63,81.93],[33.71,83.48],[33.75,85.04],[33.46,86.59],[32.79,88.15],[32.08,89.7],[31.33,91.26],[30.67,92.81],[29.92,94.37],[30.08,95.19]] },
-  { id: "regiotram_norte", color: "#ffc06a", rel: "regiotram_norte", etiqueta: "", puntos: [[3.96,26.22],[5.63,26.07],[7.29,26.81],[8.96,27.56],[10.63,28.3],[12.29,28.3],[13.96,28.22],[15.63,27.7],[17.29,27.7],[18.96,27.26],[20.63,27.33],[22.29,27.48],[23.96,27.48],[25.62,27.63],[27.29,27.7],[28.96,27.78],[30.63,27.85],[32.29,27.93],[33.96,28]] },
-  { id: "linea_verde_referencia", color: "#36e319", rel: "linea_verde_referencia", etiqueta: "", puntos: [[22.5,43.5],[25,40],[28.5,37.5],[31,35.5],[34,36],[37.5,39],[40.5,38],[43,34],[45,31],[47.5,28],[50,26],[53,25],[56,25],[59,27],[59.5,32],[59,39],[57,45],[54,49],[51,53],[47,57],[44,64],[43.8,71]] },
 ];
 
-const MOVILIDAD_CORREDORES_NEON = [
-  {
-    id: "corredor_verde_cra7",
-    img: MOVILIDAD_LINEA_CORREDOR_IMG,
-    color: "#6f9a6b",
-    anchor: [40.8, 21.4],
-    // recorrido del trazo verde en la foto (%), solo para el área clicable
-    hitPuntos: [[34.6,27.3],[36.0,29.1],[37.4,30.9],[38.8,32.6],[40.2,34.3],[42.1,35.9]],
-    titulo: "Empleo ↔ Corredor verde de la carrera séptima",
-    cita: 'El POT dice que este corredor atraviesa: "Las localidades de Santa Fe, Chapinero y Usaquén, pero sirve a más de tres millones de bogotanos que vienen a trabajar, estudiar o pasar desde todas las localidades de la ciudad e incluso desde la región."',
-  },
-];
+const MOVILIDAD_CORREDORES_NEON = [];
 
 // Relación adicional (RegioTram↔Metro): no tiene un trazo propio dibujado
 // por la usuaria, así que se ancla como punto clicable sobre el cruce real
