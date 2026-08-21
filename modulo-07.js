@@ -349,6 +349,11 @@
       "UPL Suroccidente: Bosa y Kennedy",
       "UPL Rural: Cerros, Tunjuelo y Sumapaz",
     ]);
+    /* Depuración semántica: “Equipamientos sociales” es un nodo paraguas
+       redundante cuando la red ya contiene colegios, universidades, jardines,
+       centros de salud y demás equipamientos específicos. Se elimina después
+       de completar el dataset para no generar nodos artificiales duplicados. */
+    removeNodeByLabel("30min", /^Equipamientos\s+sociales$/);
     fillTo30("empleo", [
       "Meta regional: 40% del PIB",
       "Sectores productivos en zonas deficitarias",
