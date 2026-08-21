@@ -95,6 +95,10 @@ const AGENT_NODES = [
   { id: "agente_trabajador", name: "AGENTE\nTRABAJADOR", icon: "fa-person-walking", x: 540, y: 292, r: 25 },
   { id: "agente_ninez", name: "AGENTE\nNIÑEZ", icon: "fa-child-reaching", x: 575, y: 350, r: 25 },
   { id: "agente_riesgo", name: "AGENTE EN\nRIESGO", icon: "fa-triangle-exclamation", x: 420, y: 350, r: 25 },
+  { id: "agente_migrante", name: "AGENTE\nMIGRANTE", icon: "fa-person-walking-luggage", x: 350, y: 315, r: 25 },
+  { id: "agente_discapacidad", name: "AGENTE CON\nMOVILIDAD REDUCIDA", icon: "fa-wheelchair", x: 650, y: 315, r: 25 },
+  { id: "agente_comerciante", name: "AGENTE\nCOMERCIANTE", icon: "fa-store", x: 350, y: 370, r: 25 },
+  { id: "agente_mayor", name: "AGENTE\nMAYOR", icon: "fa-person-cane", x: 650, y: 370, r: 25 },
 ];
 
 const SIMULATOR_NODES = [
@@ -104,6 +108,17 @@ const SIMULATOR_NODES = [
 ];
 
 const ALL_DYNAMIC_NODES = [...ACTOR_NODES, ...MEDIADOR_NODES, ...AGENT_NODES, ...SIMULATOR_NODES];
+
+const LIVE_SCRIPTS = {
+  agente_cuidadora: "Aquí muestro que el cuidado no es una actividad invisible: la agente encadena llevar, acompañar, comprar y regresar. Su recorrido se mide por tiempo, fatiga y barreras, no por un círculo geométrico.",
+  agente_trabajador: "Este agente conecta vivienda, transporte y empleo. Si cambia la hora o aparece una congestión, cambia también su estrés, su tiempo disponible y la ruta que puede sostener.",
+  agente_ninez: "La niñez necesita una red segura, no solamente un colegio localizado. Un cruce peligroso, un andén roto o una inundación pueden hacer imposible el recorrido previsto.",
+  agente_riesgo: "Este agente representa una decisión de supervivencia: cuando no hay acceso formal, la vivienda se autoconstruye en una ladera y el riesgo aparece como resultado del sistema.",
+  agente_migrante: "El agente migrante muestra que el acceso no es igual para todos. La distancia a vivienda, empleo y servicios se combina con redes de apoyo y barreras económicas.",
+  agente_discapacidad: "Este agente obliga a medir la ciudad por accesibilidad efectiva. Una ruta existe en el mapa, pero deja de existir si no tiene continuidad, pendiente habitable o cruce seguro.",
+  agente_comerciante: "El comerciante conecta vivienda, abastecimiento, movilidad y economía cotidiana. Una obra vial puede mejorar una conexión y al mismo tiempo cortar su clientela y su ingreso.",
+  agente_mayor: "El agente mayor hace visible que el tiempo y la seguridad tienen otra escala. Un recorrido de quince minutos para una persona puede ser mucho más largo para otra.",
+};
 
 function nodeKind(id) {
   if (BASE_NODES.some(n => n.id === id)) return "componente";
@@ -165,6 +180,14 @@ const DYNAMIC_EDGES = [
   { s: "agente_trabajador", t: "transporte_publico", tipo: "directa", dirigida: true, evidencia: "El transporte público conecta vivienda y trabajo, y su accesibilidad cambia con la hora pico o el cierre de una estación.", page: "Módulo Simulador", actores: "Agente trabajador", critica: "El flujo no es constante: una interrupción redistribuye las rutas y el estrés del agente." },
   { s: "agente_ninez", t: "andenes", tipo: "directa", dirigida: true, evidencia: "El andén funciona como mediador de un recorrido seguro hacia equipamientos, cuidado y parques.", page: "Módulo Simulador", actores: "Agente niñez", critica: "Si el andén se rompe o se inunda, la trayectoria formal deja de ser utilizable." },
   { s: "agente_riesgo", t: "ecosistemas_sim", tipo: "indirecta", dirigida: true, evidencia: "La localización de la vivienda informal expone al agente a pendientes, escorrentía y amenazas ambientales.", page: "Escenario de informalidad", actores: "Agente en riesgo · Ecosistemas", critica: "La matriz ambiental condiciona las decisiones de localización y no opera como un simple telón de fondo." },
+  { s: "agente_migrante", t: "viviendas_sim", tipo: "indirecta", dirigida: true, evidencia: "El acceso a vivienda se cruza con redes de apoyo, empleo, arriendo y localización de servicios.", page: "Módulo Simulador", actores: "Agente migrante", critica: "La formalidad de la vivienda no explica por sí sola la capacidad de permanecer y acceder a la ciudad." },
+  { s: "agente_migrante", t: "servicios_sociales", tipo: "directa", dirigida: true, evidencia: "El agente migrante depende de servicios sociales y redes de cuidado para estabilizar su trayectoria urbana.", page: "Módulo Simulador", actores: "Agente migrante", critica: "La red normativa no muestra la secuencia de trámites, esperas y desplazamientos necesarios para acceder." },
+  { s: "agente_discapacidad", t: "andenes", tipo: "directa", dirigida: true, evidencia: "La continuidad y calidad del andén determinan si la ruta es realmente accesible.", page: "Módulo Simulador", actores: "Agente con movilidad reducida", critica: "La presencia de infraestructura no equivale a accesibilidad efectiva." },
+  { s: "agente_discapacidad", t: "estaciones", tipo: "directa", dirigida: true, evidencia: "Las estaciones deben funcionar como intercambiadores accesibles entre vivienda, trabajo y servicios.", page: "Módulo Simulador", actores: "Agente con movilidad reducida", critica: "Una estación aislada no resuelve el último tramo del viaje." },
+  { s: "agente_comerciante", t: "plazas_mercado", tipo: "directa", dirigida: true, evidencia: "El comercio cotidiano conecta abastecimiento, empleo y recorridos de proximidad.", page: "Módulo Simulador", actores: "Agente comerciante", critica: "El cierre de una vía puede transformar la economía local aunque la infraestructura principal siga funcionando." },
+  { s: "agente_comerciante", t: "red_vial", tipo: "indirecta", dirigida: true, evidencia: "La actividad comercial depende de accesos peatonales, carga, transporte y continuidad de la red vial.", page: "Módulo Simulador", actores: "Agente comerciante", critica: "La red vial se mide también por los efectos que produce sobre ingresos y permanencia." },
+  { s: "agente_mayor", t: "parques", tipo: "directa", dirigida: true, evidencia: "Los parques y espacios de proximidad sostienen actividad física, encuentro y cuidado cotidiano.", page: "Módulo Simulador", actores: "Agente mayor", critica: "La proximidad debe considerar descanso, sombra, seguridad y continuidad, no solo distancia." },
+  { s: "agente_mayor", t: "servicios_sociales", tipo: "directa", dirigida: true, evidencia: "El agente mayor requiere una red de servicios sociales conectada con la vivienda y los recorridos cotidianos.", page: "Módulo Simulador", actores: "Agente mayor", critica: "La oferta localizada no garantiza acceso si el recorrido es inseguro o demasiado exigente." },
   { s: "personas_sim", t: "viviendas_sim", tipo: "directa", dirigida: true, evidencia: "La vivienda es el nodo de origen y retorno de cada agente de cuidado; sus condiciones de habitabilidad modifican el estrés, la salud y el tiempo disponible.", page: "Módulo Simulador", actores: "Personas · Viviendas", critica: "El POT fija usos y estándares, pero no corre la trayectoria diaria ni la experiencia acumulada de sus habitantes." },
   { s: "personas_sim", t: "ecosistemas_sim", tipo: "directa", dirigida: true, evidencia: "Las personas recorren una ciudad atravesada por conectores ecosistémicos, escorrentías y espacios públicos seguros; el entorno modifica las rutas posibles.", page: "Módulo Simulador", actores: "Personas · Ecosistemas", critica: "El recorrido no es una línea recta: depende de fatiga, tiempo disponible, simultaneidad del cuidado y condiciones ambientales." },
   { s: "ecosistemas_sim", t: "viviendas_sim", tipo: "directa", dirigida: true, evidencia: "La matriz ecológica ordena el borde urbano mediante comportamiento hídrico, mitigación del riesgo y sistemas urbanos de drenaje sostenible.", page: "Módulo Simulador", actores: "Ecosistemas · Viviendas", critica: "El polígono de protección no permite anticipar por sí solo cómo una inundación o la escorrentía afectan la vivienda de borde." },
@@ -189,6 +212,33 @@ const DYNAMIC_EDGES = [
   { s: "puentes_peatonales", t: "rios", tipo: "directa", dirigida: false, evidencia: "Los puentes peatonales median el cruce seguro sobre los ríos urbanos.", page: null, critica: "No todos los tramos del río cuentan con un puente peatonal cercano." },
 ];
 
+/* -------- Cadenas de interacción: la red no termina en una relación aislada -------- */
+const CHAIN_EDGES = [
+  { s: "agente_cuidadora", t: "viviendas_sim", tipo: "directa", dirigida: true, evidencia: "La vivienda es origen y retorno de la cadena diaria de cuidado.", page: "Módulo Simulador", actores: "Agente cuidadora · Viviendas", critica: "El cuidado reorganiza la jornada alrededor del lugar donde se habita.", live: "Puedes decir: “La vivienda no es un punto: es el origen y el regreso de una cadena de tareas.”" },
+  { s: "viviendas_sim", t: "andenes", tipo: "directa", dirigida: true, evidencia: "El andén convierte la vivienda en un recorrido peatonal posible.", page: "Módulo Simulador", actores: "Viviendas · Andenes", critica: "La habitabilidad depende también de poder salir y llegar de forma segura.", live: "Puedes decir: “Aquí conectamos el interior de la vivienda con la primera condición urbana: poder caminar hasta la red.”" },
+  { s: "andenes", t: "estaciones", tipo: "directa", dirigida: true, evidencia: "Los andenes conectan el origen cotidiano con las estaciones y sus intercambios.", page: "Módulo Simulador", actores: "Andenes · Estaciones", critica: "Una estación no es accesible si el último tramo está roto o discontinuo.", live: "Puedes decir: “La estación empieza antes de la estación: empieza en la continuidad del andén.”" },
+  { s: "estaciones", t: "transporte_publico", tipo: "directa", dirigida: true, evidencia: "Las estaciones activan el servicio de transporte y permiten el transbordo.", page: "Módulo Simulador", actores: "Estaciones · Transporte público", critica: "El sistema cambia cuando una estación se cierra o se congestiona.", live: "Puedes decir: “El transporte es una red temporal: si un nodo falla, la trayectoria completa se reorganiza.”" },
+  { s: "transporte_publico", t: "servicios_empresariales", tipo: "indirecta", dirigida: true, evidencia: "El transporte conecta los hogares con los lugares de empleo y actividad económica.", page: "Módulo Simulador", actores: "Transporte · Trabajo", critica: "El mapa muestra conexión, pero no muestra el tiempo perdido ni la desigualdad del viaje.", live: "Puedes decir: “La conexión con el empleo no se mide solo porque exista una línea: se mide por el tiempo que le roba o le devuelve al agente.”" },
+  { s: "agente_trabajador", t: "viviendas_sim", tipo: "directa", dirigida: true, evidencia: "El trabajador sale de la vivienda y retorna a ella bajo condiciones cambiantes de transporte y empleo.", page: "Módulo Simulador", actores: "Agente trabajador · Viviendas", critica: "La jornada laboral y la vivienda se afectan mutuamente mediante tiempo y estrés.", live: "Puedes decir: “El agente trabaja en la ciudad, pero la ciudad también entra a su casa convertida en cansancio y tiempo de retorno.”" },
+  { s: "viviendas_sim", t: "equipamientos", tipo: "directa", dirigida: true, evidencia: "La vivienda se articula con educación, salud, cuidado y otros equipamientos.", page: "Módulo Simulador", actores: "Viviendas · Equipamientos", critica: "La proximidad normativa no garantiza acceso efectivo.", live: "Puedes decir: “La pregunta no es si el equipamiento existe, sino si este hogar puede llegar a él.”" },
+  { s: "equipamientos", t: "sistema_educacion", tipo: "directa", dirigida: true, evidencia: "Los equipamientos educativos reciben y organizan trayectorias de estudiantes y cuidadores.", page: "Módulo Simulador", actores: "Equipamientos · Educación", critica: "La trayectoria educativa depende de horarios, seguridad y acompañamiento.", live: "Puedes decir: “Un colegio produce muchas trayectorias alrededor: estudiantes, cuidadores, transporte y comercio.”" },
+  { s: "manzanas_cuidado", t: "parques", tipo: "directa", dirigida: true, evidencia: "Las Manzanas del Cuidado se apoyan en parques y espacio público de proximidad.", page: "Módulo Simulador", actores: "Cuidado · Parques", critica: "El espacio público debe sostener descanso, juego, acompañamiento y seguridad.", live: "Puedes decir: “El cuidado no ocurre dentro de un edificio aislado: se extiende por la red de espacio público.”" },
+  { s: "agente_ninez", t: "sistema_educacion", tipo: "directa", dirigida: true, evidencia: "La trayectoria de la niñez conecta vivienda, andenes, cuidado y educación.", page: "Módulo Simulador", actores: "Agente niñez · Educación", critica: "La ruta escolar puede cambiar por una barrera mínima que el plano no registra.", live: "Puedes decir: “Para la niñez, una interrupción pequeña en la red puede convertirse en una interrupción total del acceso.”" },
+  { s: "agente_migrante", t: "vivienda", tipo: "indirecta", dirigida: true, evidencia: "La búsqueda de arriendo y vivienda formal conecta redes de apoyo con el mercado urbano.", page: "Módulo Simulador", actores: "Agente migrante · Vivienda", critica: "El acceso residencial está mediado por ingreso, información y redes sociales.", live: "Puedes decir: “La vivienda no se asigna de manera abstracta: cada agente llega con recursos y barreras diferentes.”" },
+  { s: "agente_discapacidad", t: "vivienda_sim", tipo: "directa", dirigida: true, evidencia: "La vivienda y el espacio público deben formar una cadena accesible de origen a destino.", page: "Módulo Simulador", actores: "Agente con movilidad reducida", critica: "Una barrera en un solo tramo invalida toda la cadena de accesibilidad.", live: "Puedes decir: “La accesibilidad no es una propiedad de un punto: es una propiedad de toda la ruta.”" },
+  { s: "agente_comerciante", t: "centros_abastecimiento", tipo: "directa", dirigida: true, evidencia: "El agente comerciante conecta abastecimiento, ventas, vivienda y movilidad cotidiana.", page: "Módulo Simulador", actores: "Agente comerciante · Abastecimiento", critica: "La economía barrial depende de conexiones pequeñas que el modelo oficial suele dejar fuera.", live: "Puedes decir: “Esta conexión demuestra que la movilidad también es ingreso, abastecimiento y permanencia económica.”" },
+  { s: "centros_abastecimiento", t: "plazas_mercado", tipo: "directa", dirigida: true, evidencia: "Los centros de abastecimiento alimentan circuitos de comercio y consumo local.", page: "Módulo Simulador", actores: "Abastecimiento · Plazas", critica: "La red de alimentos tiene tiempos, cargas y dependencias que no aparecen en un polígono de uso.", live: "Puedes decir: “La ciudad se sostiene por cadenas de abastecimiento, no solo por edificios localizados.”" },
+  { s: "agente_mayor", t: "viviendas_sim", tipo: "directa", dirigida: true, evidencia: "La vivienda es base de la autonomía, el cuidado y la salud cotidiana de las personas mayores.", page: "Módulo Simulador", actores: "Agente mayor · Viviendas", critica: "La habitabilidad debe medirse por autonomía y seguridad, no únicamente por metros cuadrados.", live: "Puedes decir: “Los mismos metros cuadrados pueden producir experiencias muy distintas según quién habita la vivienda.”" },
+  { s: "agente_mayor", t: "parques", tipo: "directa", dirigida: true, evidencia: "Los parques sostienen recorridos cortos, actividad física y encuentro social.", page: "Módulo Simulador", actores: "Agente mayor · Parques", critica: "La proximidad requiere sombra, descanso, continuidad y seguridad.", live: "Puedes decir: “Para este agente, la distancia se convierte en pausas, pendientes y sensación de seguridad.”" },
+  { s: "ecosistemas_sim", t: "quebradas", tipo: "directa", dirigida: true, evidencia: "La matriz ecológica se expresa en flujos de agua que atraviesan el territorio.", page: "Módulo Simulador", actores: "Ecosistemas · Quebradas", critica: "El agua no respeta la separación rígida entre categorías urbanas.", live: "Puedes decir: “El ecosistema no es el fondo del mapa: es un flujo que atraviesa y reorganiza la ciudad.”" },
+  { s: "quebradas", t: "humedales", tipo: "directa", dirigida: true, evidencia: "Las quebradas conducen escorrentías hacia humedales y otros cuerpos de agua.", page: "Módulo Simulador", actores: "Quebradas · Humedales", critica: "La intensidad del vínculo cambia con la lluvia y la ocupación del suelo.", live: "Puedes decir: “Cuando llueve, esta conexión se activa y el agua convierte el mapa en una secuencia física.”" },
+  { s: "humedales", t: "andenes", tipo: "indirecta", dirigida: true, evidencia: "La condición hídrica del humedal puede modificar la continuidad de recorridos y bordes urbanos.", page: "Módulo Simulador", actores: "Humedales · Andenes", critica: "El límite ecológico y el recorrido cotidiano se afectan mutuamente.", live: "Puedes decir: “Una inundación no es solamente un problema ambiental: también es una interrupción de movilidad.”" },
+  { s: "rios", t: "puentes_peatonales", tipo: "directa", dirigida: true, evidencia: "Los puentes permiten que la red peatonal atraviese el sistema hídrico.", page: "Módulo Simulador", actores: "Ríos · Puentes", critica: "Si el cruce falla, la ciudad se fragmenta aunque los destinos sigan cerca.", live: "Puedes decir: “La resiliencia aparece cuando el sistema mantiene el cruce, no solamente cuando dibuja el río.”" },
+  { s: "agente_riesgo", t: "puentes_peatonales", tipo: "indirecta", dirigida: true, evidencia: "En una perturbación, el agente busca cruces y espacios públicos seguros fuera de la ruta habitual.", page: "Escenario de perturbación", actores: "Agente en riesgo · Puentes", critica: "La evacuación es una decisión adaptativa, no una ruta fija del plano.", live: "Puedes decir: “Cuando la ruta formal se rompe, el agente busca el siguiente puente, parque o espacio seguro disponible.”" },
+];
+
+const ALL_DYNAMIC_EDGES = [...DYNAMIC_EDGES, ...CHAIN_EDGES];
+
 function edgeKey(e) { return e.s + "→" + e.t; }
 
 /* -------- Situaciones: cambian intensidad de relaciones ya existentes -------- */
@@ -196,24 +246,28 @@ const SITUACIONES = [
   {
     id: "ciudad_15_minutos", label: "Ciudad de 15 minutos", icon: "fa-person-walking",
     desc: "Resalta las trayectorias de cuidado: el acceso se mide como tiempo caminando, fatiga y simultaneidad de servicios, no como distancia en línea recta.",
+    live: "Puedes decir: “Aquí el POT deja de ser una lista de lugares y se convierte en una prueba de tiempo. La pregunta es si una agente puede encadenar cuidado, compras y regreso sin agotar su tiempo disponible.”",
     boost: ["personas_sim→manzanas_cuidado", "personas_sim→viviendas_sim", "personas_sim→ecosistemas_sim", "agente_cuidadora→manzanas_cuidado", "agente_cuidadora→personas_sim", "agente_ninez→andenes"],
     dim: [],
   },
   {
     id: "vivienda_informal", label: "Autoconstrucción en riesgo", icon: "fa-house-crack",
     desc: "Activa el escenario en que la falta de vivienda formal empuja a un agente a autoconstruirse en una ladera de riesgo por supervivencia.",
+    live: "Puedes decir: “La informalidad no aparece como una falla aislada: emerge cuando el sistema no ofrece una vivienda accesible. El agente resuelve su supervivencia, pero aumenta su exposición al riesgo.”",
     boost: ["personas_sim→vivienda", "viviendas_sim→vivienda", "ecosistemas_sim→viviendas_sim", "agente_riesgo→viviendas_sim", "agente_riesgo→ecosistemas_sim"],
     dim: ["vivienda→equipamientos"],
   },
   {
     id: "perturbacion", label: "Sismo / inundación", icon: "fa-house-tsunami",
     desc: "Simula una perturbación que rompe el andén o la ruta formal: los agentes se autodeterminan y buscan el espacio público seguro más cercano.",
+    live: "Puedes decir: “El sismo o la inundación muestran lo que el plano no puede anticipar: cuando se rompe el andén, la ruta oficial deja de existir y los agentes deben encontrar otra salida en tiempo real.”",
     boost: ["ecosistemas_sim→viviendas_sim", "personas_sim→ecosistemas_sim", "personas_sim→viviendas_sim", "agente_ninez→andenes", "agente_riesgo→ecosistemas_sim"],
     dim: ["vivienda→red_vial", "vivienda→transporte_publico"],
   },
   {
     id: "hora_pico_manana", label: "Hora pico (mañana)", icon: "fa-sun",
     desc: "Aumenta el peso visual de las relaciones entre Vivienda, Transporte público y los lugares de empleo.",
+    live: "Puedes decir: “En hora pico vemos que la infraestructura no se mueve sola: son miles de trayectorias simultáneas las que cargan la red y redistribuyen el tiempo perdido.”",
     boost: ["vivienda→transporte_publico", "habitantes→transporte_publico", "trabajadores→servicios_empresariales"],
     dim: [],
   },
@@ -226,6 +280,7 @@ const SITUACIONES = [
   {
     id: "mantenimiento", label: "Mantenimiento", icon: "fa-screwdriver-wrench",
     desc: "Atenúa o interrumpe temporalmente la relación con una estación o servicio.",
+    live: "Puedes decir: “El mantenimiento no elimina la ciudad: obliga a los agentes a cambiar de ruta, esperar más o abandonar el viaje. Esa adaptación es la dinámica que el POT no ejecuta.”",
     boost: [],
     dim: ["estaciones→transporte_publico"],
   },
@@ -280,10 +335,10 @@ const nodeOff = new Set();
 });
 
 function allActiveEdges() {
-  return agencyOn ? [...BASE_EDGES, ...DYNAMIC_EDGES] : BASE_EDGES;
+  return agencyOn ? [...BASE_EDGES, ...ALL_DYNAMIC_EDGES] : BASE_EDGES;
 }
 
-BASE_EDGES.concat(DYNAMIC_EDGES).forEach(e => {
+BASE_EDGES.concat(ALL_DYNAMIC_EDGES).forEach(e => {
   const s = findNode(e.s), t = findNode(e.t);
   if (!s || !t) return;
   e.restLength = Math.hypot(t.x - s.x, t.y - s.y) || 200;
@@ -358,7 +413,7 @@ function drawEdges(svg) {
     group.dataset.index = i;
     group.dataset.source = edge.s;
     group.dataset.target = edge.t;
-    group.dataset.dynamic = DYNAMIC_EDGES.includes(edge) ? "1" : "0";
+    group.dataset.dynamic = ALL_DYNAMIC_EDGES.includes(edge) ? "1" : "0";
 
     const { w, op } = edgeIntensity(edge);
     const d = edgePathData(s, t);
@@ -553,8 +608,25 @@ function attachNodeDrag(group, node) {
 function attachNodeClick(group, id) {
   group.addEventListener("click", () => {
     if (group.dataset.suppressClick) return;
+    if (nodeKind(id) === "agente") { showNodeLiveScript(id); return; }
     toggleNodeOff(id);
   });
+}
+
+function showNodeLiveScript(id) {
+  const node = findNode(id);
+  const panel = document.getElementById("edgeInfoPanel");
+  if (!node || !panel) return;
+  document.querySelectorAll(".rd-edge-group").forEach(el => el.classList.remove("edge-selected"));
+  document.getElementById("edgeInfoTitle").textContent = node.name.replace(/\n/g, " ");
+  document.getElementById("edgeInfoConvencion").textContent = "Agente / estado dinámico";
+  document.getElementById("edgeInfoEvidencia").textContent = "Este nodo cambia su trayectoria según el estado de la ciudad.";
+  document.getElementById("edgeInfoPage").textContent = "Módulo Simulador";
+  document.getElementById("edgeInfoActores").textContent = DYNAMIC_EDGES.filter(e => e.s === id || e.t === id).map(e => (findNode(e.s)?.name || e.s).replace(/\n/g, " ") + " → " + (findNode(e.t)?.name || e.t).replace(/\n/g, " ")).join(" · ") || "Sin relaciones activas.";
+  document.getElementById("edgeInfoSituacion").textContent = SITUACIONES.filter(sit => sit.boost.some(k => k.startsWith(id + "→")) || sit.dim.some(k => k.startsWith(id + "→"))).map(s => s.label).join(" · ") || "Todas las situaciones de base.";
+  document.getElementById("edgeInfoCritica").textContent = "El nodo no representa una población fija: representa decisiones, restricciones y cambios en el tiempo.";
+  document.getElementById("edgeInfoLiveScript").textContent = LIVE_SCRIPTS[id] || "Este agente permite explicar cómo una regla del POT se transforma en una experiencia cotidiana.";
+  panel.classList.add("visible");
 }
 
 function toggleNodeOff(id) {
@@ -590,7 +662,7 @@ function showEdgeInfo(edge, index) {
 
   const actoresRelacionados = [];
   if (edge.actores) actoresRelacionados.push(edge.actores);
-  DYNAMIC_EDGES.forEach(de => {
+  ALL_DYNAMIC_EDGES.forEach(de => {
     if ((de.s === edge.s || de.t === edge.s || de.s === edge.t || de.t === edge.t) && de.actores && !actoresRelacionados.includes(de.actores)) {
       if (agencyOn) actoresRelacionados.push(de.actores);
     }
@@ -604,6 +676,7 @@ function showEdgeInfo(edge, index) {
     ? situacionesQueAfectan.join(" · ") : "Sin situación registrada que la module.";
 
   document.getElementById("edgeInfoCritica").textContent = edge.critica || "—";
+  document.getElementById("edgeInfoLiveScript").textContent = edge.live || `Lo que puedes decir: “Esta conexión muestra que ${s.name.replace(/\n/g, " ")} no funciona de manera aislada: cambia cuando cambia la vida cotidiana, la infraestructura o el ambiente.”`;
 
   document.getElementById("edgeInfoPanel").classList.add("visible");
 }
@@ -680,8 +753,11 @@ function setSituacion(id) {
   else { activeSituacion = id; }
   document.querySelectorAll(".situacion-btn").forEach(b => b.classList.toggle("active", b.dataset.sit === activeSituacion));
   const desc = document.getElementById("situacionDesc");
-  if (activeSituacion) {
-    desc.textContent = SITUACIONES.find(s => s.id === activeSituacion).desc;
+    if (activeSituacion) {
+    const selected = SITUACIONES.find(s => s.id === activeSituacion);
+    desc.textContent = selected.desc;
+    document.getElementById("edgeInfoLiveScript").textContent = selected.live;
+    document.getElementById("edgeInfoPanel").classList.add("visible");
   } else {
     desc.textContent = "Sin situación activa: todas las relaciones se leen en su intensidad documental de base.";
   }

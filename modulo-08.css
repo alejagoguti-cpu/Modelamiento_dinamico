@@ -281,6 +281,8 @@ body {
 .principle-ecosystems > i, .principle-ecosystems strong { color: var(--teal); }
 .simulator-agent-key { color: var(--agente-color); font-weight: 700; }
 .network-controls { display: flex; gap: 8px; flex-wrap: wrap; }
+.edge-info-live { margin-top: 12px; padding: 12px 13px; border: 1px solid rgba(255,92,138,.55); border-left: 3px solid #ff5c8a; border-radius: 9px; background: linear-gradient(135deg, rgba(255,92,138,.13), rgba(176,140,255,.10)); color: #fff1f6; font-size: 12px; line-height: 1.55; box-shadow: 0 0 18px rgba(255,92,138,.10); }
+.edge-info-live::before { content: "QUÉ DECIR EN VIVO"; display: block; margin-bottom: 5px; color: #ff8eb0; font-size: 10px; font-weight: 800; letter-spacing: .12em; }
 
 .control-btn {
   background: var(--panel-alt); border: 1px solid var(--border-soft); color: var(--text-dim);
