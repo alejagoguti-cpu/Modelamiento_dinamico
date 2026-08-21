@@ -887,3 +887,65 @@ footer span { color: var(--teal); }
   color: #ffffff !important;
 }
 #nodeInfoPanel #nodeInfoMapa a { color: #ffffff !important; }
+
+
+/* Módulo Simulador: de las reglas escritas a la simulación viva. */
+.simulador-pot-modulo {
+  width: min(100%, 980px);
+  margin: 28px auto 0;
+  padding: 30px;
+  border: 1px solid rgba(92, 214, 209, 0.32);
+  border-radius: 14px;
+  background: linear-gradient(145deg, rgba(11, 21, 24, 0.97), rgba(10, 12, 14, 0.97));
+  color: #f2f3f6;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.24);
+}
+.simulador-pot-modulo h2 {
+  margin: 0 0 22px;
+  color: #5cd6d1;
+  font-size: clamp(1.35rem, 2.3vw, 1.95rem);
+  line-height: 1.25;
+}
+.simulador-pot-modulo p {
+  margin: 0 0 17px;
+  color: #f2f3f6;
+  font-size: 1rem;
+  line-height: 1.72;
+  text-align: justify;
+}
+.simulador-pot-pilar {
+  margin: 22px 0;
+  padding: 20px 22px;
+  border-left: 3px solid rgba(92, 214, 209, 0.78);
+  border-radius: 0 10px 10px 0;
+  background: rgba(92, 214, 209, 0.06);
+}
+.simulador-pot-pilar h3 {
+  margin: 0 0 9px;
+  color: #ffb35a;
+  font-size: 1.1rem;
+}
+.simulador-pot-pilar p { margin-bottom: 0; }
+.simulador-pot-cita {
+  margin: 24px 0;
+  padding: 20px 22px;
+  border-left: 3px solid #ffb35a;
+  border-radius: 0 10px 10px 0;
+  background: rgba(255, 179, 90, 0.07);
+  color: #ffffff;
+  font-size: 1rem;
+  line-height: 1.72;
+}
+.simulador-pot-cita strong { color: #ffcf8a; }
+.simulador-pot-cierre {
+  margin-top: 24px !important;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.16);
+  color: #ffffff !important;
+  font-weight: 600;
+}
+@media (max-width: 700px) {
+  .simulador-pot-modulo { padding: 22px 18px; }
+  .simulador-pot-modulo p { text-align: left; }
+  .simulador-pot-pilar, .simulador-pot-cita { padding: 16px 17px; }
+}
