@@ -488,7 +488,7 @@ body {
 
 .finding-popup-text {
   font-size: 11.5px;
-  color: var(--text-dim);
+  color: #ffffff !important;
   line-height: 1.55;
 }
 
@@ -564,7 +564,7 @@ body {
 
 .finding-card-text {
   font-size: 11.5px;
-  color: #1c2a33;
+  color: #ffffff !important;
   line-height: 1.45;
 }
 
