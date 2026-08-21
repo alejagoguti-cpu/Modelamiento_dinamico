@@ -757,13 +757,13 @@ footer span { color: var(--teal); }
   /* el svg no captura clics; solo la capa de impacto de cada trazo lo hace */
 }
 .movilidad-trazo-rosa .movilidad-trazo-hit {
-  stroke: transparent; stroke-width: 1.6; fill: none; filter: none;
+  stroke: transparent; stroke-width: 0.9; fill: none; filter: none;
   pointer-events: stroke; cursor: pointer;
 }
 .movilidad-trazo-rosa polyline:not(.movilidad-trazo-hit) {
-  fill: none; stroke: var(--linea-color, #e9695c); stroke-width: 0.48;
+  fill: none; stroke: var(--linea-color, #e9695c); stroke-width: 0.18;
   stroke-linecap: round; stroke-linejoin: round;
-  stroke-dasharray: 0.7 0.85;
+  stroke-dasharray: 0.35 0.7;
   color: var(--linea-color, #e9695c);
   filter: drop-shadow(0 0 1px currentColor);
   animation: movilidadTrazoFlujo 5.5s linear infinite;
@@ -816,7 +816,7 @@ footer span { color: var(--teal); }
 
 /* Etiqueta de línea: identifica sin ambigüedad la 1.ª y 2.ª línea del metro. */
 .movilidad-line-label {
-  font-family: 'Space Grotesk', sans-serif; font-size: 1.8px; font-weight: 700;
+  font-family: 'Space Grotesk', sans-serif; font-size: 1.45px; font-weight: 700;
   paint-order: stroke; stroke: #05070a; stroke-width: 0.55px; stroke-linejoin: round;
   pointer-events: none; letter-spacing: 0.05px;
 }
