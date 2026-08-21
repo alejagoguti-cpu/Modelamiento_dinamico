@@ -1,57 +1,47 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RAPOT · Simulador</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="modulo-08.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAPOT · Un Nuevo Modelo de Lectura</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="modulo-08.css">
 </head>
 <body>
 <div class="app">
-  <aside class="sidebar">
-    <div class="brand">
-      <div class="mark"><i class="fa-solid fa-diagram-project"></i></div>
-      <span>RAPOT</span>
-    </div>
-    <div class="nav-group">
-      <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-house"></i> Dashboard</a>
-    </div>
-    <div class="nav-group">
-      <div class="nav-label">MÓDULOS</div>
-      <a href="modulo-01.html" class="nav-item"><span class="num">01</span><i class="fa-solid fa-diagram-project"></i> Construir la Red</a>
-      <a href="modulo-02.html" class="nav-item"><span class="num">02</span><i class="fa-solid fa-chart-simple"></i> Medir la Red</a>
-      <a href="modulo-03.html" class="nav-item"><span class="num">03</span><i class="fa-solid fa-eye"></i> Discurso vs Realidad</a>
-      <a href="modulo-04.html" class="nav-item"><span class="num">04</span><i class="fa-solid fa-bullseye"></i> Macromodelos</a>
-      <a href="modulo-05.html" class="nav-item"><span class="num">05</span><i class="fa-solid fa-magnifying-glass"></i> Lo que no está</a>
-      <a href="modulo-06.html" class="nav-item"><span class="num">06</span><i class="fa-solid fa-earth-americas"></i> POT ↔ ODS</a>
-      <a href="modulo-07.html" class="nav-item"><span class="num">07</span><i class="fa-solid fa-flask"></i> Simulador</a>
-      <a href="modulo-08.html" class="nav-item active"><span class="num">08</span><i class="fa-solid fa-city"></i> Modelo Propio</a>
-      <a href="modulo-09.html" class="nav-item"><span class="num">09</span><i class="fa-solid fa-atom"></i> Modelo Vivo</a>
-    </div>
-    <div class="nav-group">
-      <div class="nav-label">GESTIÓN</div>
-      <a href="proyectos.html" class="nav-item"><i class="fa-solid fa-folder"></i> Proyectos</a>
-      <a href="fuentes.html" class="nav-item"><i class="fa-solid fa-file-lines"></i> Fuentes y Documentos</a>
-      <a href="favoritos.html" class="nav-item"><i class="fa-solid fa-star"></i> Favoritos</a>
-      <a href="reportes.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Reportes</a>
-      <a href="configuracion.html" class="nav-item"><i class="fa-solid fa-gear"></i> Configuración</a>
-    </div>
-    <div class="sidebar-footer">
-      <div class="avatar-sm">EU</div>
-      <div class="user-meta">
-        <div class="name">Equipo Urbano</div>
-        <div class="role">Administrador</div>
-      </div>
-      <a href="demo.html" class="logout-btn"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
+
+  <aside class="sidebar sidebar-icons-only">
+    <div class="brand-icon"><i class="fa-solid fa-diagram-project"></i></div>
+
+    <nav class="icon-nav">
+      <a href="modulo-02.html" class="icon-nav-item" title="02 · Medir la Red"><i class="fa-solid fa-chart-simple"></i></a>
+      <a href="modulo-03.html" class="icon-nav-item" title="03 · Discurso vs Realidad"><i class="fa-solid fa-eye"></i></a>
+      <a href="modulo-04.html" class="icon-nav-item" title="04 · Macromodelos"><i class="fa-solid fa-bullseye"></i></a>
+      <a href="modulo-05.html" class="icon-nav-item" title="05 · Lo que no está"><i class="fa-solid fa-magnifying-glass"></i></a>
+      <a href="modulo-06.html" class="icon-nav-item" title="06 · POT ↔ ODS"><i class="fa-solid fa-earth-americas"></i></a>
+      <a href="modulo-07.html" class="icon-nav-item" title="07 · Simulador"><i class="fa-solid fa-flask"></i></a>
+      <a href="modulo-08.html" class="icon-nav-item active" title="08 · Lectura Dinámica"><i class="fa-solid fa-wave-square"></i></a>
+    </nav>
+
+    <nav class="icon-nav">
+      <a href="proyectos.html" class="icon-nav-item" title="Proyectos"><i class="fa-solid fa-folder"></i></a>
+      <a href="fuentes.html" class="icon-nav-item" title="Fuentes y Documentos"><i class="fa-solid fa-file-lines"></i></a>
+      <a href="favoritos.html" class="icon-nav-item" title="Favoritos"><i class="fa-regular fa-star"></i></a>
+      <a href="reportes.html" class="icon-nav-item" title="Reportes"><i class="fa-solid fa-chart-pie"></i></a>
+    </nav>
+
+    <div class="icon-nav-footer">
+      <a href="configuracion.html" class="icon-nav-item" title="Configuración"><i class="fa-solid fa-gear"></i></a>
+      <a href="demo.html" class="icon-nav-item" title="Salir"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
     </div>
   </aside>
+
   <main class="main">
+
     <div class="topbar">
-      <h1>Simulador — Activar Agencia</h1>
+      <h1>Un Nuevo Modelo de Lectura</h1>
       <div class="topbar-actions">
         <div class="search-box"><i class="fa-solid fa-magnifying-glass"></i> Buscar en el sistema...</div>
         <div class="icon-btn"><i class="fa-regular fa-bell"></i><span class="dot"></span></div>
@@ -59,199 +49,196 @@
         <div class="avatar-sm">EU</div>
       </div>
     </div>
-    <div class="welcome">
-      <h2>Polígono estático vs agente dinámico — la ciudad que el POT no corre</h2>
-      <p>El POT ve la manzana como <strong>polígono con atributos</strong>: zona, clasificación, metros cuadrados, índice de construcción. Pero esa misma manzana es habitada por personas que <strong>caminan, evitan obstáculos y responden a la lluvia</strong>. Este simulador pone lado a lado las dos lecturas: a la izquierda, la manzana del decreto (inmóvil, sin tiempo); a la derecha, el mismo suelo con <strong>agentes vivos</strong> que responden a las reglas del POT en tiempo real. El interruptor "Activar Agencia" enciende la ciudad social sobre la ciudad física. <em>(Fase propositiva: propuesta de simulación contrastable.)</em></p>
-    </div>
 
-    <!-- SWITCH DE AGENCIA -->
-    <div class="switch-section">
-      <div class="switch-card">
-        <div class="switch-icon"><i class="fa-solid fa-toggle-off" id="switchIcon"></i></div>
-        <div class="switch-content">
-          <h3>Modo POT — la manzana como polígono</h3>
-          <p>Por defecto, el lienzo muestra lo que el decreto representa: polígonos con atributos (zona, IC, clasificación), equipamientos como símbolos estáticos y obstáculos como líneas. Sin personas, sin tiempo, sin perturbaciones.</p>
-        </div>
-        <div class="switch-toggle-wrap">
-          <label class="switch-toggle" id="agencySwitch">
-            <input type="checkbox" id="agencyInput">
-            <span class="switch-slider"></span>
-          </label>
-          <div class="switch-label" id="switchLabel">Activar Agencia</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- SIMULADOR -->
+    <!-- RED -->
     <div class="network-section">
       <div class="network-header">
-        <h3><i class="fa-solid fa-city"></i> El lienzo compartido — misma manzana, dos modelos</h3>
-        <div class="network-controls" id="simControls">
-          <button class="control-btn active" id="btnPause" onclick="togglePause()"><i class="fa-solid fa-pause"></i> Pausa</button>
-          <button class="control-btn" onclick="triggerDisturb('sismo')"><i class="fa-solid fa-house-crack"></i> Sismo</button>
-          <button class="control-btn" onclick="triggerDisturb('inundacion')"><i class="fa-solid fa-water"></i> Inundación</button>
-          <button class="control-btn" onclick="triggerDisturb('informalidad')"><i class="fa-solid fa-people-group"></i> Informalidad</button>
-          <button class="control-btn" onclick="resetSim()"><i class="fa-solid fa-rotate-right"></i> Reiniciar</button>
+        <h3><i class="fa-solid fa-share-nodes"></i> Red de Lectura Dinámica del POT</h3>
+        <div class="network-controls">
+          <button class="control-btn active" data-view="todas" onclick="filterView('todas')">Todas</button>
+          <button class="control-btn" data-view="componentes" onclick="filterView('componentes')">Componentes</button>
+          <button class="control-btn" data-view="actores" onclick="filterView('actores')">Actores y mediadores</button>
         </div>
       </div>
-      <div class="sim-viz-wrap">
-        <canvas id="simCanvas" width="1180" height="520"></canvas>
+
+      <div class="network-viz-wrap">
+        <svg id="readerViz" viewBox="0 0 1060 800" preserveAspectRatio="xMidYMid meet"></svg>
+
         <div class="network-sidebar">
-          <aside class="network-legend" id="networkLegend">
-            <div class="legend-title">Escena</div>
-            <div class="legend-item legend-static">
-              <span class="legend-swatch" style="border-color:#f5c945;"></span>
-              Equipamiento ancla — destino de cuidado (15 min)
-            </div>
-            <div class="legend-item legend-static">
-              <span class="legend-swatch" style="border-color:#f76fb0;"></span>
-              Cuidadoras — agentes con metas y fatiga
-            </div>
-            <div class="legend-item legend-static">
-              <span class="legend-swatch" style="border-color:#f5c945; border-top-style:dashed;"></span>
-              Vendedor informal — repulsión (Arts. 146–147)
-            </div>
-            <div class="legend-item legend-static">
-              <span class="legend-swatch" style="border-color:#8b93a8;"></span>
-              Poste no soterrado — obstáculo (Art. 153)
-            </div>
-            <div class="legend-item legend-static">
-              <span class="legend-swatch" style="border-color:#4ade80;"></span>
-              Franja de paisajismo — mitiga fatiga (Art. 155)
-            </div>
+          <aside class="network-legend">
+            <div class="legend-title">Convenciones de línea</div>
+            <div class="legend-item legend-static"><span class="legend-line solid"></span> Directa (documentada)</div>
+            <div class="legend-item legend-static"><span class="legend-line dashed"></span> Indirecta / interpretativa</div>
+            <div class="legend-item legend-static"><span class="legend-line arrowed"></span> Dirección sustentada</div>
+            <div class="legend-item legend-static"><span class="legend-line thick"></span> Mayor intensidad</div>
+
+            <div class="legend-title">Color = estructura</div>
+            <div class="legend-item legend-static"><span class="legend-dot" style="background:#2fd4c8;"></span> Ecológica principal</div>
+            <div class="legend-item legend-static"><span class="legend-dot" style="background:#f5a623;"></span> Funcional y socioeconómica</div>
+            <div class="legend-item legend-static"><span class="legend-dot" style="background:#f76fb0;"></span> Integradora de patrimonios</div>
+
+            <div class="legend-title">Ícono = tipo de nodo</div>
+            <div class="legend-item legend-static"><i class="fa-solid fa-circle-nodes legend-ic" style="color:#c9cedb;"></i> Componente territorial</div>
+            <div class="legend-item legend-static"><i class="fa-solid fa-person legend-ic" style="color:#eef0f6;"></i> Actor</div>
+            <div class="legend-item legend-static"><i class="fa-solid fa-signs-post legend-ic" style="color:#7d8ea3;"></i> Mediador</div>
+
             <div class="legend-divider"></div>
-            <div class="legend-title">Métricas en vivo</div>
-            <div class="sim-metrics" id="simMetrics">
-              <div class="metric"><span class="metric-label">Agentes activos</span><span class="metric-value" id="mAgents">0</span></div>
-              <div class="metric"><span class="metric-label">Metas alcanzadas</span><span class="metric-value" id="mMeta">0</span></div>
-              <div class="metric"><span class="metric-label">Colisiones evitadas</span><span class="metric-value" id="mCol">0</span></div>
-              <div class="metric"><span class="metric-label">Trayecto promedio</span><span class="metric-value" id="mDist">0 m</span></div>
-              <div class="metric"><span class="metric-label">Estado</span><span class="metric-value" id="mState">Modo POT</span></div>
-            </div>
-            <div class="legend-hint" id="simHint">
-              Enciende <strong>Activar Agencia</strong> para que las cuidadoras caminen por el andén respondiendo a las reglas del POT. Prueba las perturbaciones: sismo, inundación e informalidad.
-            </div>
+            <div class="legend-hint">Clic en una línea: ver nodos, convención, evidencia, actores y lectura crítica.<br>
+            Clic en una bola: apagarla junto con sus líneas.<br>
+            Arrastra una bola: las conectadas la siguen.</div>
           </aside>
-        </div>
-      </div>
-    </div>
 
-    <!-- REGLAS QUE EJECUTA EL MODELO -->
-    <div class="recommendations-section">
-      <h3><i class="fa-solid fa-gears"></i> Las reglas del POT traducidas a simulación</h3>
-      <div class="recommendations-grid">
-        <div class="rec-card">
-          <div class="rec-number">R1</div>
-          <div class="rec-content">
-            <h4>Fuerza de atracción (Anexo 4 · ciudad de 15 minutos)</h4>
-            <p>Cada cuidadora se dirige al equipamiento ancla dentro de su radio de 15 minutos. Si el destino cae fuera del radio, el tiempo de trayecto crece y con él el costo real del cuidado: <strong>la norma de proximidad se mide en metros caminados, no en kilómetros de corredor</strong>.</p>
-            <div class="rec-impact"><span class="impact-badge" style="background:rgba(91,141,239,0.15);color:#5b8def;">Fuerza: atracción</span></div>
-          </div>
-        </div>
-        <div class="rec-card">
-          <div class="rec-number">R2</div>
-          <div class="rec-content">
-            <h4>Fuerza de colisión (Arts. 146–147 · Art. 153)</h4>
-            <p>Los vendedores informales y los postes no soterrados actúan como repulsiones en el andén. El POT regula la conducta de cada actor, pero <strong>no modela su efecto conjunto</strong> sobre el peatón: en la simulación, cada obstáculo desvía la trayectoria y alarga el trayecto real.</p>
-            <div class="rec-impact"><span class="impact-badge" style="background:rgba(247,111,176,0.15);color:#f76fb0;">Fuerza: repulsión</span></div>
-          </div>
-        </div>
-        <div class="rec-card">
-          <div class="rec-number">R3</div>
-          <div class="rec-content">
-            <h4>Fuerza de fricción (Arts. 154–155)</h4>
-            <p>El ancho del andén fija la velocidad y la franja de paisajismo arborizado mitiga la fatiga. Cada norma de perfil es, en el modelo, <strong>un coeficiente de fricción</strong>: andén estrecho = más lento y más cansancio; franja verde = menos fatiga acumulada.</p>
-            <div class="rec-impact"><span class="impact-badge" style="background:rgba(162,118,242,0.15);color:#a276f2;">Fuerza: fricción</span></div>
-          </div>
-        </div>
-        <div class="rec-card">
-          <div class="rec-number">R4</div>
-          <div class="rec-content">
-            <h4>Perturbaciones (Anexo 3 · Art. 97 · Art. 186 · Arts. 499–505)</h4>
-            <p>El sismo lleva a los agentes al parque seguro más cercano; la inundación pone a prueba los SUDS y humedales que protegen el andén; la informalidad empuja a los excluidos del VIS/VIP a la ladera. El POT las anticipa con reglas estáticas: <strong>la ciudad las responde con procesos en curso</strong>.</p>
-            <div class="rec-impact"><span class="impact-badge" style="background:rgba(245,201,69,0.15);color:#f5c945;">Eventos: perturbación</span></div>
+          <div class="edge-info-panel" id="edgeInfoPanel">
+            <div class="edge-info-header">
+              <span id="edgeInfoTitle">Relación</span>
+              <button class="edge-info-close" id="edgeInfoClose" type="button" aria-label="Cerrar">&times;</button>
+            </div>
+
+            <div class="edge-info-row">
+              <div class="edge-info-label">Convención</div>
+              <div class="edge-info-value" id="edgeInfoConvencion">—</div>
+            </div>
+            <div class="edge-info-row">
+              <div class="edge-info-label">Evidencia</div>
+              <div class="edge-info-quote" id="edgeInfoEvidencia">—</div>
+              <div class="edge-info-page" id="edgeInfoPage"></div>
+            </div>
+            <div class="edge-info-row">
+              <div class="edge-info-label">Actores asociados</div>
+              <div class="edge-info-value" id="edgeInfoActores">—</div>
+            </div>
+            <div class="edge-info-row">
+              <div class="edge-info-label">Situación que la modifica</div>
+              <div class="edge-info-value" id="edgeInfoSituacion">—</div>
+            </div>
+            <div class="edge-info-row">
+              <div class="edge-info-label">Lectura crítica</div>
+              <div class="edge-info-quote" id="edgeInfoCritica">—</div>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- HALLAZGOS -->
+    <!-- HERO: GESTOR DE LECTURA -->
+    <section class="hero-reader">
+      <div class="hero-top">
+        <div class="hero-eyebrow"><span class="eyebrow-line"></span> GESTOR DE LECTURA</div>
+        <button class="agency-toggle" id="agencyToggle" onclick="toggleAgency()">
+          <span class="agency-switch"><span class="agency-knob"></span></span>
+          <span>Activar Dimensión Dinámica</span>
+        </button>
+      </div>
+
+      <h2 class="hero-title">Un Nuevo Modelo de <span class="hero-accent">Lectura para el POT</span></h2>
+      <p class="hero-sub">Del Componente Aislado <i class="fa-solid fa-arrow-right-long"></i> a la Relación Viva</p>
+
+      <div class="hero-compare">
+        <div class="compare-card compare-static">
+          <div class="compare-head"><i class="fa-solid fa-circle-dot"></i> Lectura Estática</div>
+          <p class="compare-desc">El componente del POT como dato fijo en el territorio.</p>
+          <div class="compare-viz" id="staticViz">
+            <svg viewBox="0 0 260 170"><circle cx="130" cy="85" r="46" class="static-blob"/></svg>
+          </div>
+          <ul class="compare-list">
+            <li><i class="fa-solid fa-circle-dot"></i> Relación aislada</li>
+            <li><i class="fa-solid fa-circle-dot"></i> Sin actores ni mediadores</li>
+            <li><i class="fa-solid fa-circle-dot"></i> Intensidad única y fija</li>
+          </ul>
+        </div>
+
+        <div class="compare-card compare-dynamic">
+          <div class="compare-head"><i class="fa-solid fa-wave-square"></i> Lectura Dinámica</div>
+          <p class="compare-desc">El componente como nodo activo dentro de una red de relaciones.</p>
+          <div class="compare-viz" id="dynamicViz"></div>
+          <ul class="compare-list">
+            <li><i class="fa-solid fa-check"></i> Incluye actores y mediadores</li>
+            <li><i class="fa-solid fa-check"></i> Cambia según la situación</li>
+            <li><i class="fa-solid fa-check"></i> Intensidad variable</li>
+          </ul>
+        </div>
+      </div>
+
+      <blockquote class="hero-quote">
+        <i class="fa-solid fa-quote-left"></i>
+        <p>Una relación territorial no es un dato fijo: depende de quién la usa, qué la hace posible y en qué momento ocurre.</p>
+        <span>Equipo POT Reverse Engineering</span>
+      </blockquote>
+    </section>
+
+    <!-- STATS -->
+    <div class="reader-stats" id="readerStats">
+      <div class="stat-card" style="--stat-color:#2fd4c8;">
+        <div class="stat-icon"><i class="fa-solid fa-circle-nodes"></i></div>
+        <div class="stat-value" id="statComponentes">—</div>
+        <div class="stat-label">Componentes territoriales</div>
+      </div>
+      <div class="stat-card" style="--stat-color:#f5a623;" id="statActoresCard">
+        <div class="stat-icon"><i class="fa-solid fa-people-group"></i></div>
+        <div class="stat-value" id="statActores">—</div>
+        <div class="stat-label">Actores</div>
+      </div>
+      <div class="stat-card" style="--stat-color:#7d8ea3;" id="statMediadoresCard">
+        <div class="stat-icon"><i class="fa-solid fa-signs-post"></i></div>
+        <div class="stat-value" id="statMediadores">—</div>
+        <div class="stat-label">Mediadores</div>
+      </div>
+      <div class="stat-card" style="--stat-color:#f76fb0;">
+        <div class="stat-icon"><i class="fa-solid fa-link"></i></div>
+        <div class="stat-value" id="statRelaciones">—</div>
+        <div class="stat-label">Relaciones activas</div>
+      </div>
+    </div>
+
+    <!-- SITUACIONES: estados que modifican la intensidad de la red -->
+    <div class="situaciones-panel">
+      <div class="situaciones-head">
+        <h3><i class="fa-solid fa-clock-rotate-left"></i> Situaciones — qué momento quieres leer</h3>
+        <p>Cada situación no agrega nodos nuevos: cambia la intensidad, el grosor o la visibilidad de relaciones que ya existen.</p>
+      </div>
+      <div class="situaciones-row" id="situacionesRow"></div>
+      <div class="situacion-desc" id="situacionDesc">Sin situación activa: todas las relaciones se leen en su intensidad documental de base.</div>
+    </div>
+
+
+    <!-- LO QUE DEMUESTRA -->
     <div class="synergies-section">
       <div class="synergies-grid">
         <div class="synergy-card success">
-          <div class="synergy-icon"><i class="fa-solid fa-person-walking"></i></div>
+          <div class="synergy-icon"><i class="fa-solid fa-diagram-project"></i></div>
           <div class="synergy-content">
-            <h4>Hallazgo 1 — la distancia real no es la distancia del mapa</h4>
-            <p>En el decreto, la cuidadora está a 400 metros del equipamiento. En la simulación, los postes y los vendedores desvían su ruta: el trayecto efectivo puede ser un 30% más largo. La ciudad de 15 minutos se juega en el andén, no en la cartografía.</p>
+            <h4>Lo que ya reconoce el POT</h4>
+            <ul>
+              <li><strong>Componentes documentados:</strong> los nodos coloreados por estructura son los mismos componentes ya identificados en las 4 estructuras del POT (EEP, EFS, ESE, EIP).</li>
+              <li><strong>Relaciones directas:</strong> las líneas continuas citan página y frase exacta del documento.</li>
+              <li><strong>Nada se compone:</strong> ningún nodo contiene a otro — cada uno es independiente, incluso dentro de la misma estructura.</li>
+            </ul>
           </div>
         </div>
-        <div class="synergy-card conflict">
-          <div class="synergy-icon"><i class="fa-solid fa-scale-unbalanced"></i></div>
-          <div class="synergy-content">
-            <h4>Hallazgo 2 — la norma acierta en lo declarado y falla en lo vivido</h4>
-            <p>El POT declara proximidad y la simulación la verifica o la contradice: cuando la agencia está activa, las trayectorias de miles de agentes revelan dónde la norma protege de verdad y dónde solo la describe.</p>
-          </div>
-        </div>
-        <div class="synergy-card success">
-          <div class="synergy-icon"><i class="fa-solid fa-bolt"></i></div>
-          <div class="synergy-content">
-            <h4>Hallazgo 3 — las perturbaciones miden la resiliencia real</h4>
-            <p>Ante la lluvia, los SUDS (Art. 186) absorben y el andén sigue usable; ante el sismo, los agentes fluyen hacia el parque seguro (Anexo 3). Lo que el decreto fija como atributo de amenaza es, en la simulación, un <strong>proceso que se puede observar y mejorar</strong>.</p>
-          </div>
-        </div>
-        <div class="synergy-card conflict">
-          <div class="synergy-icon"><i class="fa-solid fa-rotate"></i></div>
-          <div class="synergy-content">
-            <h4>Hallazgo 4 — de reloj a termostato</h4>
-            <p>El POT funciona como un reloj: se revisa cada cierto período. El simulador propone un termostato: <strong>monitorear, retroalimentar, alertar y adaptar</strong> la norma mientras la ciudad responde, no solo cuando toca actualizar el decreto.</p>
-          </div>
-        </div>
-      </div>
-    </div>
 
-    <!-- CIERRE -->
-    <div class="recommendations-section">
-      <h3><i class="fa-solid fa-flag-checkered"></i> Cierre — por qué este simulador es el modelo alternativo</h3>
-      <div class="recommendations-grid">
-        <div class="rec-card">
-          <div class="rec-number">C1</div>
-          <div class="rec-content">
-            <h4>El POT redacta reglas generativas y no las ejecuta</h4>
-            <p>Los Arts. 261, 283 y 304 son reglas que producen forma urbana, pero el decreto nunca las corre. Este simulador las ejecuta: miles de agentes responden a las mismas normas al mismo tiempo, y el resultado se compara con la ciudad observada.</p>
-          </div>
-        </div>
-        <div class="rec-card">
-          <div class="rec-number">C2</div>
-          <div class="rec-content">
-            <h4>La simulación hace verificable la propuesta</h4>
-            <p>Cada hallazgo se mide: trayectos, fatiga, colisiones, tiempos de evacuación. La propuesta deja de ser retórica y se convierte en un experimento: cambiar un parámetro (ancho de andén, ubicación del equipamiento, franja verde) y ver qué pasa.</p>
-          </div>
-        </div>
-        <div class="rec-card">
-          <div class="rec-number">C3</div>
-          <div class="rec-content">
-            <h4>El contraste POT vs simulación revela lo subrepresentado</h4>
-            <p>Donde la simulación y el decreto divergen — trayecto real vs distancia cartográfica, respuesta autoorganizada vs equipamiento estático — está exactamente lo que la red del POT deja por fuera (Módulos 03 y 05).</p>
-          </div>
-        </div>
-        <div class="rec-card">
-          <div class="rec-number">C4</div>
-          <div class="rec-content">
-            <h4>El modelo alternativo es un sistema, no un documento</h4>
-            <p>La ciudad no cabe en un corte: es una película de agentes, reglas y perturbaciones. El simulador es el formato correcto para un POT que quiere dejar de ser solo el plano y empezar a ser el <strong>modelo que corre</strong>.</p>
+        <div class="synergy-card conflict">
+          <div class="synergy-icon"><i class="fa-solid fa-eye-low-vision"></i></div>
+          <div class="synergy-content">
+            <h4>Lo que esta lectura agrega</h4>
+            <ul>
+              <li><strong>Actores:</strong> quién usa, opera, protege o transforma cada relación — no es lo mismo un estudiante que una persona cuidadora.</li>
+              <li><strong>Mediadores:</strong> qué hace posible la relación en la práctica — estaciones, andenes, senderos, puentes peatonales.</li>
+              <li><strong>Situaciones:</strong> una relación no tiene una intensidad única — cambia en hora pico, en temporada de lluvias, durante una obra.</li>
+            </ul>
           </div>
         </div>
       </div>
     </div>
 
     <footer>
-      <blockquote>
-        "El POT nos dice qué debería pasar en trece años. Nosotros simulamos qué pasa mañana, cuando miles de personas responden a esas mismas reglas al mismo tiempo."
-        <cite>— RAPOT · Ingeniería inversa del POT · Fase propositiva</cite>
-      </blockquote>
+      "No se trata de representar la ciudad, sino de comprenderla para transformarla." — <span>Equipo POT Reverse Engineering</span>
     </footer>
+
   </main>
+
 </div>
+
 <script src="modulo-08.js"></script>
+
 </body>
 </html>

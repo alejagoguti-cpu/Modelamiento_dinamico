@@ -1,483 +1,393 @@
-/* ============ Módulo 04 — Macromodelos ============ */
-(function () {
-  "use strict";
+let upzData = [];
+let barriosData = [];
+let currentSelection = null;
+const humedales = [
+  {id: 'h1', nombre: "Humedal Burro", lat: 4.644296801427965, lng: -74.15052710000018, area: 18.5},
+  {id: 'h2', nombre: "Humedal El Techo", lat: 4.645366863767807, lng: -74.14136322378499, area: 32.2},
+  {id: 'h3', nombre: "Humedal Vaca", lat: 4.627282592850425, lng: -74.15947984079249, area: 24.8},
+];
 
-  const SVG_NS = "http://www.w3.org/2000/svg";
+const mapElement = document.getElementById('map');
+const map = mapElement && window.L ? L.map('map').setView([4.60, -74.08], 11) : null;
 
-  /* ---------- datos ---------- */
-  const ODS_NODES = [
-    { id: "tecnocratico",    name: "TECNOCRÁTICO",        sub: "índices, mapas, IC/ESECI",   type: "operativo",   x: 250, y: 150 },
-    { id: "productivista",   name: "PRODUCTIVISTA /\nDESARROLLISTA", sub: "\"competitividad\"", type: "operativo",   x: 500, y: 110 },
-    { id: "economicista",    name: "ECONOMICISTA /\nMERCANTILISTA", sub: "suelo como activo",  type: "operativo",   x: 760, y: 150 },
-    { id: "ambientalista",   name: "AMBIENTALISTA",       sub: "emergencia climática",         type: "subordinado", x: 1010, y: 150 },
-    { id: "comunitario",     name: "COMUNITARIO /\nDEL CUIDADO",     sub: "Manzanas del Cuidado", type: "subordinado", x: 1230, y: 110 },
-    { id: "estatista",       name: "JURÍDICO-ESTATISTA",  sub: "decreto, plazos T13/T15/T16",  type: "declarado",   x: 250, y: 420 },
-    { id: "neoliberal",      name: "NEOLIBERAL\n(residuo)",           sub: "mercado de vivienda",    type: "residual",  x: 500, y: 460 },
-    { id: "colectivista",    name: "COLECTIVISTA /\nCOMUNAL",         sub: "acción comunal residual", type: "residual", x: 760, y: 460 },
-    { id: "participativo",   name: "PARTICIPATIVO",       sub: "cabildo abierto 2021",         type: "declarado",   x: 1010, y: 420 },
-    { id: "modelovivo",      name: "MODELO PROPIO:\nCIUDAD VIVA",     sub: "agentes + emergencia",   type: "declarado",   x: 1230, y: 420 },
-  ];
+if (map) {
+  L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {
+    attribution: '© CartoDB',
+    maxZoom: 19
+  }).addTo(map);
+}
 
-  /* Tipos de arista:
-     declarada   = lo que el discurso afirma (verde, sólida)
-     subordinada = declarado pero estructuralmente débil (amarillo, discontinua)
-     operativa   = inferida por ingeniería inversa (rojo, sólida, flecha)
-     residual    = presente pero lateral (gris, discontinua) */
-  const RAW_EDGES = [
-    { s: "estatista",    t: "tecnocratico",   type: "operativa",
-      quote: "El seguimiento y evaluación (Libro I) convierte el cumplimiento normativo en el criterio rector del plan: el Estado ordena, el índice gobierna.",
-      page: "Referencia: Decreto 555, Libro I — seguimiento y evaluación; Art. 304 (escalera IC)." },
-    { s: "tecnocratico", t: "economicista",   type: "operativa",
-      quote: "Los instrumentos técnicos (IC, CESI, ESECI, TDR, cesiones) convierten el suelo en un activo financiero que la norma debe \"capturar\": la arquitectura normativa es una máquina de valor.",
-      page: "Referencia: Decreto 555, Art. 283–292 (TDR) y Art. 304 (cesiones por englobe, esquina, totalidad)." },
-    { s: "economicista", t: "productivista",  type: "operativa",
-      quote: "\"La ciudad compacta, articulada y sostenible... es la plataforma productiva para una mayor competitividad\" (Art. 11, Parágrafo 1): la sostenibilidad se declara como medio, la productividad como fin.",
-      page: "Referencia: Decreto 555, Art. 11 Parágrafo 1, p. 642 aprox." },
-    { s: "productivista",t: "ambientalista",  type: "subordinada",
-      quote: "La Estrategia de Estructuración Ecológica y Paisajística se declara estructura principal, pero en la red sus conectores son mayoritariamente discontinuos, indirectos o de resiliencia: no ancla operativamente el sistema.",
-      page: "Referencia: Decreto 555, Art. 11 — EEP (p. 539) y red del Módulo 01." },
-    { s: "comunitario",  t: "productivista",  type: "subordinada",
-      quote: "Las Manzanas del Cuidado se insertan como \"anclas\" sobre equipamientos existentes: el cuidado se apoya en la estructura funcional sin transformar su lógica.",
-      page: "Referencia: Decreto 555, Art. 11 Parágrafo 1 (\"equipamientos existentes como anclas\")." },
-    { s: "ambientalista",t: "economicista",   type: "subordinada",
-      quote: "\"La emergencia climática exige un plan que la enfrente\" (p. 18), pero las actuaciones ecológicas operan \"en coordinación con\" la estructura funcional: la naturaleza queda subordinada a la infraestructura.",
-      page: "Referencia: Bogotá Reverdece, p. 18; Decreto 555, Art. 11." },
-    { s: "estatista",    t: "participativo",  type: "declarada",
-      quote: "El POT surge de un cabildo abierto en pandemia (2021) y el Art. 9 Parágrafo 1 ordena la planeación participativa por UPL: el discurso democrático es explícito.",
-      page: "Referencia: Decreto 555, Art. 9 Parágrafo 1." },
-    { s: "participativo",t: "estatista",      type: "residual",
-      quote: "La participación se institucionaliza como mecanismo de consulta en plazos definidos: se canaliza dentro de la jerarquía jurídica, no la disputa.",
-      page: "Referencia: Decreto 555, Art. 9 y proceso de cabildo abierto 2021." },
-    { s: "neoliberal",   t: "economicista",   type: "residual",
-      quote: "La vivienda sigue produciéndose por el mercado con subsidios de demanda y oferta; la especulación del suelo (Capellanía: 27,03 → 29,32 ha) sigue siendo la fuerza que la norma captura, no elimina.",
-      page: "Referencia: Decreto 555, Capellanía (Art. 20 aprox.) y política de vivienda VIS/VIP." },
-    { s: "colectivista", t: "estatista",      type: "residual",
-      quote: "Las organizaciones comunales y comunitarias aparecen como actores de consulta y veeduría: presentes en el texto, periféricos en la estructura.",
-      page: "Referencia: Decreto 555 — participación comunitaria (artículos de participación)." },
-    { s: "modelovivo",   t: "tecnocratico",   type: "declarada",
-      quote: "Nuestro modelo propio parte de agentes dinámicos que se autoorganizan: la ingeniería inversa de los macromodelos es el punto de partida del Módulo 09.",
-      page: "Referencia: Módulo 09 — Modelo Propio (Bogotá Viva)." },
-    { s: "ambientalista",t: "estatista",      type: "declarada",
-      quote: "El Estado se declara garante de la EEP y de los objetivos de carbono: la voluntad jurídica es explícita y fuerte.",
-      page: "Referencia: Decreto 555, Art. 11 — Objetivos EEP (p. 539–546)." },
-  ];
+let upzLayers = {};
+let upzLabels = {};
+let barriosLayers = {};
+let barrioLabels = {};
+let humedalLayers = {};
+let humedalMarkers = {};
+let eepNodos = [];
+let eepLayers = {};
+let networkLines = [];
+let currentMode = 'meso';
 
-  const NODE_COLORS = {
-    operativo:   "#ef4444",
-    declarado:   "#4ade80",
-    subordinado: "#f5c945",
-    residual:    "#94a3b8",
-  };
-  const EDGE_COLORS = {
-    operativa:   "#ef4444",
-    subordinada: "#f5c945",
-    declarada:   "#4ade80",
-    residual:    "#94a3b8",
-  };
-  const EDGE_STYLE = {
-    operativa:   { dash: [],   arrow: true,  width: 2.4 },
-    subordinada: { dash: [6,4], arrow: true, width: 1.8 },
-    declarada:   { dash: [],   arrow: false, width: 1.8 },
-    residual:    { dash: [4,4], arrow: false, width: 1.3 },
-  };
-
-  const NODE_INSIGHTS = {
-    operativo:   ["tecnocratico", "productivista", "economicista"],
-    declarado:   ["estatista", "participativo", "modelovivo"],
-    subordinado: ["ambientalista", "comunitario"],
-    residual:    ["neoliberal", "colectivista"],
-    todos:       ODS_NODES.map(n => n.id),
-  };
-
-  /* ---------- DOM ---------- */
-  const svg = document.getElementById("networkViz");
-  let svgRect;
-  function refreshRect() { svgRect = svg.getBoundingClientRect(); }
-
-  let rawW, rawH;
-  (function () {
-    const m = svg.getAttribute("viewBox").split(" ").map(Number);
-    rawW = m[2]; rawH = m[3];
-  })();
-
-  const typeOff = new Set();
-  const nodeOff = new Set();
-  let spotlight = null;
-
-  /* ---------- render ---------- */
-  function mk(tag, attrs = {}) {
-    const el = document.createElementNS(SVG_NS, tag);
-    for (const k in attrs) el.setAttribute(k, attrs[k]);
-    return el;
-  }
-
-  function renderNetwork() {
-    svg.innerHTML = "";
-    svgRect = svg.getBoundingClientRect();
-
-    const defs = mk("defs");
-    RAW_EDGES.forEach((edge, i) => {
-      const marker = mk("marker", {
-        id: `arrow-${i}`, markerWidth: "10", markerHeight: "8", refX: "9", refY: "4",
-        orient: "auto", markerUnits: "strokeWidth"
+// Cargar UPZ (MACRO)
+fetch('upz_bogota.geojson')
+  .then(r => r.json())
+  .then(data => {
+    upzData = data.features.map(f => f.properties);
+    
+    data.features.forEach((feature, idx) => {
+      const props = feature.properties;
+      const code = props.uplcodigo.split('UPZ')[1]?.trim() || props.id;
+      
+      const coords = feature.geometry.coordinates;
+      
+      const labelDiv = L.divIcon({
+        html: `<div style="width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; background: transparent; color: #2fd4c8; font-weight: 700; font-size: 9px; border: 1.5px solid #2fd4c8; border-radius: 50%; text-shadow: 0 0 6px rgba(0,0,0,0.8);">${code}</div>`,
+        className: 'upz-label-marker',
+        iconSize: [24, 24],
+        iconAnchor: [12, 12]
       });
-      const path = mk("path", {
-        d: "M0,0 L10,4 L0,8 Z",
-        fill: EDGE_COLORS[edge.type] || "#fff",
-        opacity: "0.9"
-      });
-      marker.appendChild(path);
-      defs.appendChild(marker);
+      
+      const marker = L.marker([coords[1], coords[0]], { icon: labelDiv, interactive: false });
+      upzLabels[props.id] = marker;
     });
+    
+    renderItemList();
+  });
+
+// Cargar Barrios (MESO)
+fetch('barrios_bogota.geojson')
+  .then(r => r.json())
+  .then(data => {
+    barriosData = data.features.map(f => f.properties);
+    
+    data.features.forEach((feature, idx) => {
+      const props = feature.properties;
+      const coords = feature.geometry.coordinates;
+      
+      const labelDiv = L.divIcon({
+        html: `<div style="width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; background: transparent; color: #2fd4c8; font-weight: 700; font-size: 7px; border: 1px solid #2fd4c8; border-radius: 50%; text-shadow: 0 0 4px rgba(0,0,0,0.8);">${props.codigo}</div>`,
+        className: 'barrio-label-marker',
+        iconSize: [16, 16],
+        iconAnchor: [8, 8]
+      });
+      
+      const marker = L.marker([coords[1], coords[0]], { icon: labelDiv, interactive: false });
+      barrioLabels[props.id] = marker;
+    });
+  });
+
+// Cargar nodos de la red EEP
+fetch('red_eep.geojson')
+  .then(r => r.json())
+  .then(data => {
+    eepNodos = data.features;
+  });
+
+function renderItemList() {
+  const container = document.getElementById('item-list');
+  container.innerHTML = '';
+  
+  if (currentMode === 'macro') {
+    upzData.forEach(upz => {
+      const div = document.createElement('div');
+      div.className = 'upz-item' + (currentSelection?.id === upz.id ? ' active' : '');
+      div.innerHTML = `${upz.uplcodigo}`;
+      div.onclick = () => selectUPZ(upz);
+      container.appendChild(div);
+    });
+  } else if (currentMode === 'meso') {
+    barriosData.forEach(barrio => {
+      const div = document.createElement('div');
+      div.className = 'upz-item' + (currentSelection?.id === barrio.id ? ' active' : '');
+      div.innerHTML = `${barrio.codigo} - ${barrio.nombre}`;
+      div.onclick = () => selectBarrio(barrio);
+      container.appendChild(div);
+    });
+  } else if (currentMode === 'micro') {
+    humedales.forEach(h => {
+      const div = document.createElement('div');
+      div.className = 'upz-item humedal-card' + (currentSelection?.id === h.id ? ' active' : '');
+      div.innerHTML = `
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+          <strong style="color: #2fd4c8; font-size: 11px;">${h.nombre}</strong>
+          <div style="font-size: 9px; color: #7a8fa0;">
+            <div>📍 ${h.lat.toFixed(4)}, ${h.lng.toFixed(4)}</div>
+            <div>📏 Área: ${h.area} ha</div>
+          </div>
+        </div>
+      `;
+      div.onclick = () => selectHumedal(h);
+      container.appendChild(div);
+    });
+  }
+}
+
+function selectUPZ(upz) {
+  currentSelection = upz;
+  
+  document.getElementById('detail-title').textContent = `UPZ SELECCIONADA: ${upz.uplcodigo.toUpperCase()}`;
+  
+  document.getElementById('detail-description').innerHTML = `
+    <p><strong>${upz.nombre}</strong></p>
+    <p>Zona de Planeamiento de Bogotá</p>
+  `;
+  
+  renderItemList();
+}
+
+function selectBarrio(barrio) {
+  currentSelection = barrio;
+  
+  document.getElementById('detail-title').textContent = `${barrio.nombre.toUpperCase()}`;
+  
+  document.getElementById('detail-description').innerHTML = `
+    <p><strong>${barrio.nombre}</strong></p>
+    <p style="margin-top: 10px;">Barrio de Bogotá</p>
+    <p style="font-size: 9px; color: #7a8fa0; margin-top: 8px;">Código: ${barrio.codigo}</p>
+  `;
+  
+  renderItemList();
+}
+
+function showEepNetwork() {
+  Object.values(eepLayers).forEach(layer => {
+    try { map.removeLayer(layer); } catch(e) {}
+  });
+  eepLayers = {};
+  
+  if (eepNodos.length === 0) return;
+  
+  const conexiones = [
+    {from: 'h1', to: 'rio', tipo: 'directa'},
+    {from: 'h1', to: 'ce', tipo: 'directa'},
+    {from: 'h1', to: 'qb', tipo: 'indirecta'},
+    {from: 'h1', to: 'ap', tipo: 'indirecta'},
+    {from: 'rio', to: 'corr', tipo: 'directa'},
+    {from: 'rio', to: 'ec', tipo: 'indirecta'},
+    {from: 'ce', to: 'cp', tipo: 'directa'},
+    {from: 'ce', to: 'rf', tipo: 'directa'},
+    {from: 'qb', to: 'ru', tipo: 'indirecta'},
+    {from: 'qb', to: 'pb', tipo: 'indirecta'},
+    {from: 'ap', to: 'rf', tipo: 'directa'},
+    {from: 'cm', to: 'cv', tipo: 'indirecta'}
+  ];
+  
+  conexiones.forEach(conn => {
+    const nodoFrom = eepNodos.find(n => n.properties.id === conn.from);
+    const nodoTo = eepNodos.find(n => n.properties.id === conn.to);
+    
+    if (nodoFrom && nodoTo) {
+      const coords = nodoFrom.geometry.coordinates;
+      const coordsTo = nodoTo.geometry.coordinates;
+      
+      const dashArray = conn.tipo === 'indirecta' ? '5, 3' : '0';
+      const lineColor = conn.tipo === 'indirecta' ? '#ff9552' : '#2fd4c8';
+      
+      const line = L.polyline([
+        [coords[1], coords[0]],
+        [coordsTo[1], coordsTo[0]]
+      ], {
+        color: lineColor,
+        weight: 2,
+        opacity: 0.7,
+        dashArray: dashArray
+      }).addTo(map);
+      
+      eepLayers['conn_' + conn.from + '_' + conn.to] = line;
+    }
+  });
+  
+  eepNodos.forEach((nodo, index) => {
+    const coords = nodo.geometry.coordinates;
+    const props = nodo.properties;
+    const icon = /río|agua|quebrada|humedal/i.test(props.nombre) ? 'fa-water' : /parque|bosque|cerro|veget/i.test(props.nombre) ? 'fa-tree' : 'fa-leaf';
+    const nodeDiv = L.divIcon({
+      html: `<div class="module06-leaflet-node" style="--node-color:#58d68d;--float-delay:${(index % 9) * -0.42}s"><span class="module06-leaflet-num">${index + 1}</span><i class="fa-solid ${icon}"></i><span class="module06-leaflet-name">${props.nombre}</span></div>`,
+      className: 'module06-leaflet-icon',
+      iconSize: [76, 76],
+      iconAnchor: [38, 38]
+    });
+    const marker = L.marker([coords[1], coords[0]], { icon: nodeDiv })
+      .bindPopup(`<strong>${props.nombre}</strong>`)
+      .addTo(map);
+    eepLayers['nodo_' + props.id] = marker;
+  });
+}
+
+function selectHumedal(h) {
+  currentSelection = h;
+  
+  networkLines.forEach(line => map.removeLayer(line));
+  networkLines = [];
+  
+  map.setView([h.lat, h.lng], 13);
+  
+  humedales.forEach(other => {
+    if (other.id !== h.id) {
+      const line = L.polyline([
+        [h.lat, h.lng],
+        [other.lat, other.lng]
+      ], {
+        color: '#2fd4c8',
+        weight: 2,
+        opacity: 0.5,
+        dashArray: '5, 5'
+      }).addTo(map);
+      
+      networkLines.push(line);
+    }
+  });
+  
+  showEepNetwork();
+  
+  document.getElementById('detail-title').textContent = `HUMEDAL SELECCIONADO: ${h.nombre.toUpperCase()}`;
+  
+  document.getElementById('detail-description').innerHTML = `
+    <p><strong>Estructura Ecológica Principal (EEP)</strong></p>
+    <p>La EEP es la integración de áreas de origen natural que tienen una oferta ambiental significativa, es ordenadora del territorio y garante de los equilibrios ecosistémicos, del agua y la riqueza hídrica.</p>
+    <p><strong>Relación Cuerpo Hídrico - Verde - Ecosistemas:</strong></p>
+    <p>Los humedales son elementos clave de la EEP. Regulan el ciclo del agua, proveen hábitat para fauna silvestre y flora nativa, actúan como corredores ecológicos y mitigar el riesgo climático.</p>
+    <p style="font-size: 9px; color: #7a8fa0; margin-top: 8px;">📍 ${h.lat.toFixed(4)}, ${h.lng.toFixed(4)}<br/>📏 Área: ${h.area} ha</p>
+    <p style="font-size: 8px; color: #7a8fa0;">POT Bogotá Reverdece 2022-2035</p>
+    <p style="margin-top: 10px; font-size: 9px;"><strong>Relaciones en la red EEP:</strong></p>
+    <p style="font-size: 8px;">— Línea sólida teal = Relación directa<br/>— Línea punteada naranja = Relación indirecta</p>
+  `;
+  
+  renderItemList();
+}
+
+document.querySelectorAll('.tab').forEach(btn => {
+  btn.addEventListener('click', function(e) {
+    document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+    
+    const scale = this.dataset.scale;
+    
+    Object.values(barrioLabels).forEach(marker => {
+      try { map.removeLayer(marker); } catch(e) {}
+    });
+    Object.values(humedalLayers).forEach(layer => {
+      try { map.removeLayer(layer); } catch(e) {}
+    });
+    Object.values(humedalMarkers).forEach(marker => {
+      try { map.removeLayer(marker); } catch(e) {}
+    });
+    networkLines.forEach(line => {
+      try { map.removeLayer(line); } catch(e) {}
+    });
+    Object.values(eepLayers).forEach(layer => {
+      try { map.removeLayer(layer); } catch(e) {}
+    });
+    networkLines = [];
+    eepLayers = {};
+    
+    if (scale === 'macro') {
+      currentMode = 'macro';
+      map.setView([4.60, -74.08], 10);
+      Object.values(upzLabels).forEach(marker => marker.addTo(map));
+    } else if (scale === 'meso') {
+      currentMode = 'meso';
+      map.setView([4.60, -74.08], 12);
+      Object.values(barrioLabels).forEach(marker => marker.addTo(map));
+      Object.values(upzLabels).forEach(marker => {
+        try { map.removeLayer(marker); } catch(e) {}
+      });
+    } else if (scale === 'micro') {
+      currentMode = 'micro';
+      
+      humedales.forEach(h => {
+        const circle = L.circle([h.lat, h.lng], {
+          radius: 1500,
+          color: '#4ade80',
+          weight: 2,
+          opacity: 0.8,
+          fillColor: '#4ade80',
+          fillOpacity: 0.3
+        })
+        .on('click', () => selectHumedal(h))
+        .addTo(map);
+        
+        humedalLayers[h.id] = circle;
+        
+        const marker = L.circleMarker([h.lat, h.lng], {
+          radius: 8,
+          fillColor: '#4ade80',
+          color: '#2d8a5f',
+          weight: 2,
+          opacity: 0.8,
+          fillOpacity: 0.7
+        })
+        .on('click', () => selectHumedal(h))
+        .addTo(map);
+        
+        humedalMarkers[h.id] = marker;
+      });
+      
+      const group = new L.featureGroup(Object.values(humedalLayers));
+      map.fitBounds(group.getBounds().pad(0.2));
+    }
+    
+    renderItemList();
+  });
+});
+
+
+/* Zoom compatible con el lenguaje interactivo del Módulo 06. */
+(() => {
+  function setupModule06Zoom() {
+    const svg = document.getElementById('networkViz');
+    const wrap = svg?.parentElement;
+    if (!svg || svg.dataset.module06ZoomReady === '1') return;
+    svg.dataset.module06ZoomReady = '1';
+    const initial = svg.getAttribute('viewBox').trim().split(/\s+/).map(Number);
+    if (initial.length !== 4 || initial.some(Number.isNaN)) return;
+    let scale = 1;
+    const [x,y,w,h] = initial;
+    const level = wrap?.querySelector('.network06-zoom-level');
+    const update = () => {
+      const nw=w/scale, nh=h/scale;
+      svg.setAttribute('viewBox', `${x+(w-nw)/2} ${y+(h-nh)/2} ${nw} ${nh}`);
+      if (level) level.textContent = `${Math.round(scale*100)}%`;
+    };
+    const change = delta => { scale=Math.min(2.25,Math.max(.75,+(scale+delta).toFixed(2))); update(); };
+    wrap?.querySelector('.network06-zoom-in')?.addEventListener('click',()=>change(.25));
+    wrap?.querySelector('.network06-zoom-out')?.addEventListener('click',()=>change(-.25));
+    svg.addEventListener('wheel', e => { e.preventDefault(); change(e.deltaY<0?.10:-.10); }, {passive:false});
+  }
+  document.addEventListener('DOMContentLoaded', setupModule06Zoom);
+})();
+
+/* Renderizador SVG compartido con POT ↔ ODS para la lectura Macromodelos. */
+(() => {
+  const svg = document.getElementById('networkViz');
+  if (!svg) return;
+  const NS = 'http://www.w3.org/2000/svg';
+  const systems = [
+    { id:'ambiental', label:'Ambientalista', color:'#58d68d', icon:'fa-leaf', x:250, y:370, r:76 },
+    { id:'humanista', label:'Humanista', color:'#ef8b3c', icon:'fa-people-group', x:610, y:350, r:102 },
+    { id:'socio', label:'Socioeconómico', color:'#eab04c', icon:'fa-chart-line', x:940, y:205, r:64 },
+    { id:'gob', label:'Gobernanza', color:'#4ade80', icon:'fa-landmark', x:950, y:500, r:64 },
+    { id:'funcional', label:'Funcionalista', color:'#a879ff', icon:'fa-network-wired', x:610, y:635, r:64 }
+  ];
+  const links = [[0,1],[1,2],[1,3],[1,4],[0,3],[0,2]];
+  const el = (tag, attrs={}) => { const n=document.createElementNS(NS,tag); Object.entries(attrs).forEach(([k,v])=>n.setAttribute(k,v)); return n; };
+  const render = () => {
+    svg.innerHTML = '';
+    svg.setAttribute('viewBox','0 0 1200 760');
+    const defs = el('defs');
+    systems.forEach(s => { const f=el('filter',{id:`glow-${s.color.slice(1)}`,x:'-80%',y:'-80%',width:'260%',height:'260%'}); f.appendChild(el('feGaussianBlur',{stdDeviation:'4',result:'blur'})); const merge=el('feMerge'); merge.appendChild(el('feMergeNode',{in:'blur'})); merge.appendChild(el('feMergeNode',{in:'SourceGraphic'})); f.appendChild(merge); defs.appendChild(f); });
     svg.appendChild(defs);
-
-    // aristas (hit)
-    RAW_EDGES.forEach((edge, i) => {
-      const sNode = ODS_NODES.find(n => n.id === edge.s);
-      const tNode = ODS_NODES.find(n => n.id === edge.t);
-      const style = EDGE_STYLE[edge.type] || EDGE_STYLE.operativa;
-      const curv = 0.18;
-      const mx = (sNode.x + tNode.x) / 2;
-      const my = (sNode.y + tNode.y) / 2 - Math.abs(tNode.x - sNode.x) * curv;
-      const d = `M${sNode.x},${sNode.y} Q${mx},${my} ${tNode.x},${tNode.y}`;
-
-      const g = mk("g", { class: "edge-group", "data-index": i });
-
-      const visual = mk("path", {
-        class: "ods-edge edge-visual",
-        d: d,
-        stroke: EDGE_COLORS[edge.type] || "#fff",
-        "stroke-width": style.width,
-        fill: "none",
-        opacity: "0.85",
-        "stroke-dasharray": style.dash.join(" ") || undefined,
-        "marker-end": style.arrow ? `url(#arrow-${i})` : undefined,
-      });
-      const hit = mk("path", {
-        class: "ods-edge edge-hit",
-        d: d,
-      });
-      g.appendChild(visual);
-      g.appendChild(hit);
-      svg.appendChild(g);
-
-      hit.addEventListener("click", (ev) => {
-        ev.stopPropagation();
-        showEdgeInfo(i);
-      });
+    const lines=el('g',{class:'network06-links'});
+    links.forEach(([a,b])=>{const A=systems[a],B=systems[b]; lines.appendChild(el('line',{x1:A.x,y1:A.y,x2:B.x,y2:B.y,class:'network-edge',stroke:'#46d6d0','stroke-width':'2','stroke-opacity':'.65'}));});
+    svg.appendChild(lines);
+    systems.forEach((s,i)=>{
+      const g=el('g',{class:'network-node floating-node',transform:`translate(${s.x} ${s.y})`,style:`--node-color:${s.color};--node-filter:url(#glow-${s.color.slice(1)});color:${s.color}`,'data-node-index':i,tabindex:'0',role:'button','aria-label':s.label});
+      g.appendChild(el('circle',{class:'node-ring',r:s.r,fill:'rgba(8,11,18,.6)',stroke:s.color,'stroke-width':'2.5',filter:`url(#glow-${s.color.slice(1)})`}));
+      const fo=el('foreignObject',{x:-s.r*.95,y:-s.r*.95,width:s.r*1.9,height:s.r*1.9});
+      const wrap=document.createElementNS('http://www.w3.org/1999/xhtml','div'); wrap.className='node-inner'; wrap.style.cssText='width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-align:center;pointer-events:none;font-family:Inter,sans-serif;';
+      wrap.innerHTML=`<span class="node-num" style="font-family:'Space Grotesk';font-weight:800;color:${s.color};font-size:${Math.max(s.r*.2,12)}px;line-height:1">${i+1}</span><i class="fa-solid ${s.icon} node-icon" style="color:${s.color};font-size:${s.r*.38}px;line-height:1"></i><span class="node-name" style="color:var(--text-dim);font-size:${Math.max(s.r*.14,8)}px;font-weight:600;line-height:1.05">${s.label}</span>`;
+      fo.appendChild(wrap); g.appendChild(fo); g.addEventListener('click',()=>{document.getElementById('selectionNote').textContent=`Sistema seleccionado: ${s.label}`;}); svg.appendChild(g);
     });
-
-    // nodos
-    ODS_NODES.forEach((node, i) => {
-      const g = mk("g", {
-        class: "ods-node ods-node-" + node.type,
-        "data-id": node.id,
-        "data-node-index": i,
-        transform: `translate(${node.x},${node.y})`,
-      });
-
-      const isMultiline = node.name.includes("\n");
-      const labelH = isMultiline ? 52 : 34;
-      const totalH = 34 + labelH;
-
-      const ring = mk("circle", {
-        class: "node-ring",
-        r: 17,
-        stroke: NODE_COLORS[node.type],
-        "stroke-width": "2",
-      });
-      const inner = mk("g", { class: "node-inner" });
-      const dot = mk("circle", { cx: 0, cy: -17, r: 4.2, fill: NODE_COLORS[node.type] });
-      const name = mk("text", { class: "node-num", y: isMultiline ? "-6" : "-8", "text-anchor": "middle" });
-      node.name.split("\n").forEach((line, li) => {
-        const tspan = mk("tspan", { x: "0", dy: li === 0 ? "0" : "11" });
-        tspan.textContent = line;
-        name.appendChild(tspan);
-      });
-      const sub = mk("text", {
-        class: "node-name",
-        y: isMultiline ? "13" : "8",
-        "text-anchor": "middle",
-      });
-      sub.textContent = node.sub;
-
-      inner.appendChild(dot);
-      inner.appendChild(name);
-      inner.appendChild(sub);
-      g.appendChild(ring);
-      g.appendChild(inner);
-      svg.appendChild(g);
-
-      // interacciones
-      let lastClick = 0, clicks = 0, timer = null;
-      g.addEventListener("click", (ev) => {
-        ev.stopPropagation();
-        clicks++;
-        if (clicks === 1) {
-          timer = setTimeout(() => { toggleNodeOnOff(node.id); clicks = 0; }, 260);
-        } else if (clicks === 3) {
-          clearTimeout(timer);
-          clicks = 0;
-          toggleNodeFlow(node.id);
-        }
-      });
-
-      g.addEventListener("mousedown", (ev) => {
-        ev.preventDefault();
-        startDrag(node.id, ev.clientX, ev.clientY);
-      });
-      g.addEventListener("touchstart", (ev) => {
-        const t = ev.touches[0];
-        startDrag(node.id, t.clientX, t.clientY);
-      }, { passive: true });
-    });
-  }
-
-  /* ---------- drag ---------- */
-  let dragId = null, dragOffX = 0, dragOffY = 0;
-  function startDrag(id, cx, cy) {
-    const node = ODS_NODES.find(n => n.id === id);
-    const p = toSVG(cx, cy);
-    dragId = id;
-    dragOffX = p.x - node.x;
-    dragOffY = p.y - node.y;
-  }
-  function toSVG(cx, cy) {
-    return {
-      x: ((cx - svgRect.left) / svgRect.width) * rawW,
-      y: ((cy - svgRect.top) / svgRect.height) * rawH,
-    };
-  }
-  window.addEventListener("mousemove", (ev) => {
-    if (!dragId) return;
-    const node = ODS_NODES.find(n => n.id === dragId);
-    const p = toSVG(ev.clientX, ev.clientY);
-    node.x = Math.min(Math.max(40, p.x - dragOffX), rawW - 40);
-    node.y = Math.min(Math.max(30, p.y - dragOffY), rawH - 30);
-    redrawNode(node.id);
-    redrawEdgesOf(node.id);
-  });
-  window.addEventListener("touchmove", (ev) => {
-    if (!dragId) return;
-    const t = ev.touches[0];
-    const node = ODS_NODES.find(n => n.id === dragId);
-    const p = toSVG(t.clientX, t.clientY);
-    node.x = Math.min(Math.max(40, p.x - dragOffX), rawW - 40);
-    node.y = Math.min(Math.max(30, p.y - dragOffY), rawH - 30);
-    redrawNode(node.id);
-    redrawEdgesOf(node.id);
-  }, { passive: true });
-  window.addEventListener("mouseup", () => { dragId = null; });
-  window.addEventListener("touchend", () => { dragId = null; });
-
-  function redrawNode(id) {
-    const node = ODS_NODES.find(n => n.id === id);
-    const el = svg.querySelector(`.ods-node[data-id="${id}"]`);
-    if (el) el.setAttribute("transform", `translate(${node.x},${node.y})`);
-  }
-  function redrawEdgesOf(nodeId) {
-    RAW_EDGES.forEach((edge, i) => {
-      if (edge.s !== nodeId && edge.t !== nodeId) return;
-      const sNode = ODS_NODES.find(n => n.id === edge.s);
-      const tNode = ODS_NODES.find(n => n.id === edge.t);
-      const g = svg.querySelector(`.edge-group[data-index="${i}"]`);
-      if (!g) return;
-      const style = EDGE_STYLE[edge.type] || EDGE_STYLE.operativa;
-      const curv = 0.18;
-      const mx = (sNode.x + tNode.x) / 2;
-      const my = (sNode.y + tNode.y) / 2 - Math.abs(tNode.x - sNode.x) * curv;
-      const d = `M${sNode.x},${sNode.y} Q${mx},${my} ${tNode.x},${tNode.y}`;
-      g.querySelectorAll(".ods-edge").forEach(p => p.setAttribute("d", d));
-    });
-  }
-
-  /* ---------- panel de sustento ---------- */
-  const panel = document.getElementById("edgeInfoPanel");
-  const infoTitle = document.getElementById("edgeInfoTitle");
-  const infoType = document.getElementById("edgeInfoType");
-  const infoQuote = document.getElementById("edgeInfoQuote");
-  const infoPage = document.getElementById("edgeInfoPage");
-  const closeBtn = document.getElementById("edgeInfoClose");
-
-  function showEdgeInfo(idx) {
-    const edge = RAW_EDGES[idx];
-    const sNode = ODS_NODES.find(n => n.id === edge.s);
-    const tNode = ODS_NODES.find(n => n.id === edge.t);
-    infoTitle.textContent = `${sNode.name.replace(/\n/g, " ")} → ${tNode.name.replace(/\n/g, " ")}`;
-    infoType.textContent = edge.type.toUpperCase();
-    infoType.style.background = (EDGE_COLORS[edge.type] || "#fff") + "26";
-    infoType.style.color = EDGE_COLORS[edge.type] || "#fff";
-    infoQuote.textContent = edge.quote;
-    infoPage.textContent = edge.page;
-
-    svg.querySelectorAll(".edge-group").forEach(el => el.classList.remove("edge-selected"));
-    const g = svg.querySelector(`.edge-group[data-index="${idx}"]`);
-    if (g) g.classList.add("edge-selected");
-
-    panel.classList.add("visible");
-    requestAnimationFrame(() => {
-      panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
-    });
-  }
-  function hideEdgeInfo() {
-    panel.classList.remove("visible");
-    svg.querySelectorAll(".edge-group").forEach(el => el.classList.remove("edge-selected"));
-  }
-  closeBtn.addEventListener("click", hideEdgeInfo);
-  svg.addEventListener("click", () => { if (panel.classList.contains("visible")) hideEdgeInfo(); });
-
-  /* ---------- spotlight / filtros ---------- */
-  function clearSpotlight() {
-    spotlight = null;
-    document.querySelectorAll(".insight-card").forEach(c => c.classList.remove("active"));
-    applySpotlightState();
-  }
-  function setSpotlightNodes(nodeIds, expand) {
-    spotlight = { mode: "nodes", nodes: new Set(nodeIds), expand: !!expand };
-    document.querySelectorAll(".insight-card").forEach(c => c.classList.remove("active"));
-    applySpotlightState();
-  }
-  function applySpotlightState() {
-    let visibleNodes = null;
-    let visibleEdges = null;
-
-    if (spotlight && spotlight.mode === "nodes") {
-      visibleNodes = new Set(spotlight.nodes);
-      visibleEdges = new Set();
-      RAW_EDGES.forEach((edge, i) => {
-        const sIn = spotlight.nodes.has(edge.s);
-        const tIn = spotlight.nodes.has(edge.t);
-        if (spotlight.expand) {
-          if (sIn || tIn) {
-            visibleEdges.add(i);
-            visibleNodes.add(edge.s);
-            visibleNodes.add(edge.t);
-          }
-        } else {
-          if (sIn && tIn) visibleEdges.add(i);
-        }
-      });
-    } else {
-      visibleNodes = new Set(ODS_NODES.map(n => n.id));
-      visibleEdges = new Set(RAW_EDGES.map((_, i) => i));
-    }
-
-    document.querySelectorAll(".ods-node").forEach(el => {
-      const id = el.dataset.id;
-      const dim = visibleNodes ? !visibleNodes.has(id) : false;
-      el.classList.toggle("node-focus-dim", dim);
-      el.classList.toggle("node-focus-active", !!(spotlight && spotlight.mode === "nodes" && spotlight.nodes.has(id)));
-    });
-
-    document.querySelectorAll(".edge-group").forEach(el => {
-      const idx = Number(el.dataset.index);
-      const dim = visibleEdges ? !visibleEdges.has(idx) : false;
-      el.classList.toggle("edge-focus-dim", dim);
-    });
-  }
-
-  function toggleNodeFlow(id) {
-    const already = spotlight && spotlight.mode === "nodes" && spotlight.expand &&
-                    spotlight.nodes.size === 1 && spotlight.nodes.has(id);
-    if (already) {
-      clearSpotlight();
-    } else {
-      setSpotlightNodes([id], true);
-    }
-  }
-
-  function toggleInsight(key) {
-    const card = document.querySelector(`.insight-card[data-insight="${key}"]`);
-    if (!card) return;
-
-    if (card.classList.contains("active")) {
-      clearSpotlight();
-      return;
-    }
-
-    if (NODE_INSIGHTS[key] && NODE_INSIGHTS[key].length) {
-      setSpotlightNodes(NODE_INSIGHTS[key], true);
-    } else {
-      setSpotlightNodes(ODS_NODES.map(n => n.id), false);
-    }
-
-    card.classList.add("active");
-  }
-  window.toggleInsight = toggleInsight;
-
-  /* ---------- leyenda ---------- */
-  document.querySelectorAll(".network-legend .legend-item").forEach(item => {
-    const input = item.querySelector("input");
-    item.addEventListener("click", (ev) => {
-      ev.preventDefault();
-      const type = item.dataset.type;
-      input.checked = !input.checked;
-      item.classList.toggle("off", !input.checked);
-      if (input.checked) typeOff.delete(type); else typeOff.add(type);
-      refreshEdgeVisibility();
-    });
-  });
-
-  function refreshEdgeVisibility() {
-    RAW_EDGES.forEach((edge, i) => {
-      const g = svg.querySelector(`.edge-group[data-index="${i}"]`);
-      if (!g) return;
-      const typeOff2 = typeOff.has(edge.type);
-      const sOff = nodeOff.has(edge.s);
-      const tOff = nodeOff.has(edge.t);
-      const hide = typeOff2 || sOff || tOff;
-      g.classList.toggle("hidden-edge", hide);
-    });
-  }
-
-  function toggleNodeOnOff(id) {
-    const nodeOffNow = nodeOff.has(id);
-    if (nodeOffNow) nodeOff.delete(id); else nodeOff.add(id);
-    const el = svg.querySelector(`.ods-node[data-id="${id}"]`);
-    if (el) el.classList.toggle("node-off", !nodeOffNow);
-    refreshEdgeVisibility();
-  }
-
-  /* ---------- filtros de control ---------- */
-  function filterNetwork(mode) {
-    document.querySelectorAll(".network-controls .control-btn").forEach(btn => btn.classList.remove("active"));
-    const btn = [...document.querySelectorAll(".network-controls .control-btn")].find(b => b.textContent.trim() === ({ all: "Todos", operativo: "Operativos", declarado: "Declarados", subordinado: "Subordinados", residual: "Residuales" }[mode]));
-    (btn || document.querySelector(".network-controls .control-btn")).classList.add("active");
-
-    const groups = {
-      all: ["operativo", "declarado", "subordinado", "residual"],
-      operativo: ["operativo"],
-      declarado: ["declarado"],
-      subordinado: ["subordinado"],
-      residual: ["residual"],
-    };
-    const activeTypes = groups[mode] || groups.all;
-
-    document.querySelectorAll(".network-legend .legend-item[data-type]").forEach(item => {
-      const type = item.dataset.type;
-      const input = item.querySelector("input");
-      const show = activeTypes.includes(type);
-      input.checked = show;
-      item.classList.toggle("off", !show);
-      if (show) typeOff.delete(type); else typeOff.add(type);
-    });
-    refreshEdgeVisibility();
-
-    if (mode !== "all") {
-      setSpotlightNodes(NODE_INSIGHTS[mode] || ODS_NODES.map(n => n.id), true);
-      const card = document.querySelector(`.insight-card[data-insight="${mode}"]`);
-      if (card) card.classList.add("active");
-    } else {
-      clearSpotlight();
-    }
-  }
-  window.showEdgeInfo = showEdgeInfo;
-  window.filterNetwork = filterNetwork;
-  window.hideEdgeInfo = hideEdgeInfo;
-  window.toggleNodeOnOff = toggleNodeOnOff;
-  window.toggleNodeFlow = toggleNodeFlow;
-
-  /* ---------- init ---------- */
-  window.addEventListener("resize", () => { refreshRect(); });
-  renderNetwork();
+  };
+  render();
 })();

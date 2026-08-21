@@ -3,690 +3,403 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RAPOT · Discurso vs Realidad</title>
+<title>RAPOT · Módulo 03 · Discurso vs Realidad</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="stylesheet" href="modulo-03.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="modulo-03.css?v=popup-card-v6">
+<link rel="stylesheet" href="network06-shared.css">
+<style id="m03-final-layout">
+html,body{height:auto!important;min-height:100vh!important;overflow-x:hidden!important;overflow-y:auto!important}
+.app{height:auto!important;min-height:100vh!important;overflow:visible!important}
+.main,.app>.main{height:auto!important;min-height:100vh!important;overflow:visible!important}
+.net-layout{height:auto!important;overflow:visible!important}
+.net-layout>.col:last-child{height:auto!important;overflow:visible!important}
+.m03-relations-table{display:block!important;height:668px!important;min-height:668px!important;flex:0 0 auto!important;overflow:hidden!important}
+.m03-table-scroll{display:block!important;height:620px!important;max-height:620px!important;overflow:auto!important}
+/* Red limpia: líneas finas, sin blanco/azul dominante; los tipos usan cobre y teal. */
+#gRels path.rel.directa,#gRels path.rel.directa.intra,#gRels path.rel.directa.inter{stroke:#8f9b9d!important;opacity:.48!important;stroke-width:1.55px!important}
+#gRels path.rel.indirecta,#gRels path.rel.indirecta.intra,#gRels path.rel.indirecta.inter{stroke:#7d898b!important;opacity:.30!important;stroke-width:1.15px!important;stroke-dasharray:5 6!important}
+#gRels path.rel.soporte,#gRels path.rel.soporte.directa,#gRels path.rel.soporte.directa.intra,#gRels path.rel.soporte.directa.inter{stroke:#e89a6c!important;opacity:.64!important;stroke-width:1.8px!important}
+#gRels path.rel.resiliencia,#gRels path.rel.resiliencia.directa,#gRels path.rel.resiliencia.directa.intra,#gRels path.rel.resiliencia.directa.inter{stroke:#46d6d0!important;opacity:.62!important;stroke-width:1.75px!important}
+#gRels path.rel.indirecta.soporte,#gRels path.rel.indirecta.soporte.intra,#gRels path.rel.indirecta.soporte.inter{stroke:#e89a6c!important;opacity:.40!important;stroke-width:1.3px!important;stroke-dasharray:5 6!important}
+#gRels path.rel.indirecta.resiliencia,#gRels path.rel.indirecta.resiliencia.intra,#gRels path.rel.indirecta.resiliencia.inter{stroke:#46d6d0!important;opacity:.38!important;stroke-width:1.25px!important;stroke-dasharray:5 6!important}
+#gRels path.rel.directa,#gRels path.rel.directa.intra,#gRels path.rel.directa.inter{opacity:.24!important;stroke-width:1.35px!important}
+#gRels path.rel.indirecta,#gRels path.rel.indirecta.intra,#gRels path.rel.indirecta.inter{opacity:.14!important;stroke-width:1px!important}
+#gRels path.rel.soporte,#gRels path.rel.soporte.directa,#gRels path.rel.soporte.directa.intra,#gRels path.rel.soporte.directa.inter{opacity:.44!important;stroke-width:1.55px!important}
+#gRels path.rel.resiliencia,#gRels path.rel.resiliencia.directa,#gRels path.rel.resiliencia.directa.intra,#gRels path.rel.resiliencia.directa.inter{opacity:.42!important;stroke-width:1.5px!important}
+#gRels path.rel.indirecta.soporte,#gRels path.rel.indirecta.soporte.intra,#gRels path.rel.indirecta.soporte.inter{opacity:.24!important;stroke-width:1.1px!important}
+#gRels path.rel.indirecta.resiliencia,#gRels path.rel.indirecta.resiliencia.intra,#gRels path.rel.indirecta.resiliencia.inter{opacity:.22!important;stroke-width:1.05px!important}
+#gRels path.rel.sel{stroke:#f2f3f6!important;opacity:1!important;stroke-width:3px!important}
+.tooltip{background:#101417!important;border-color:rgba(70,214,208,.28)!important;color:#e8eeee!important;box-shadow:0 8px 26px rgba(0,0,0,.55)!important}
+.tooltip .tt-type,.tooltip .tt-page{color:#9aa8a8!important}
+</style>
+    <link rel="stylesheet" href="module02-system.css?v=spacing-v3">
 </head>
-<body>
+<body class="module02-reference-page">
 <div class="app">
-
-  <aside class="sidebar">
-    <div class="brand">
-      <div class="mark"><i class="fa-solid fa-diagram-project"></i></div>
-      <span>RAPOT</span>
-    </div>
-
-    <div class="nav-group">
-      <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-house"></i> Dashboard</a>
-    </div>
-
-    <div class="nav-group">
-      <div class="nav-label">MÓDULOS</div>
-      <a href="modulo-01.html" class="nav-item"><span class="num">01</span><i class="fa-solid fa-diagram-project"></i> Construir la Red</a>
-      <a href="modulo-02.html" class="nav-item"><span class="num">02</span><i class="fa-solid fa-chart-simple"></i> Medir la Red</a>
-      <a href="modulo-03.html" class="nav-item active"><span class="num">03</span><i class="fa-solid fa-eye"></i> Discurso vs Realidad</a>
-      <a href="modulo-04.html" class="nav-item"><span class="num">04</span><i class="fa-solid fa-bullseye"></i> Macromodelos</a>
-      <a href="modulo-05.html" class="nav-item"><span class="num">05</span><i class="fa-solid fa-magnifying-glass"></i> Lo que no está</a>
-      <a href="modulo-06.html" class="nav-item"><span class="num">06</span><i class="fa-solid fa-earth-americas"></i> POT ↔ ODS</a>
-      <a href="modulo-07.html" class="nav-item"><span class="num">07</span><i class="fa-solid fa-flask"></i> Simulador</a>
-      <a href="modulo-08.html" class="nav-item"><span class="num">08</span><i class="fa-solid fa-city"></i> Modelo Propio</a>
-    </div>
-
-    <div class="nav-group">
-      <div class="nav-label">GESTIÓN</div>
-      <a href="proyectos.html" class="nav-item"><i class="fa-solid fa-folder"></i> Proyectos</a>
-      <a href="fuentes.html" class="nav-item"><i class="fa-solid fa-file-lines"></i> Fuentes y Documentos</a>
-      <a href="favoritos.html" class="nav-item"><i class="fa-solid fa-star"></i> Favoritos</a>
-      <a href="reportes.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Reportes</a>
-      <a href="configuracion.html" class="nav-item"><i class="fa-solid fa-gear"></i> Configuración</a>
-    </div>
-
-    <div class="sidebar-footer">
-      <div class="avatar-sm">EU</div>
-      <div class="user-meta">
-        <div class="name">Equipo Urbano</div>
-        <div class="role">Administrador</div>
-      </div>
-      <a href="demo.html" class="logout-btn"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
-    </div>
+  <aside class="insight-popup is-hidden" id="eseCIInsight" aria-label="Explicación de las conexiones de ESECI">
+    <button type="button" class="insight-close" id="closeInsight" aria-label="Cerrar explicación">×</button>
+    <div class="insight-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+    <div class="insight-kicker">Hallazgo</div>
+    <h3 id="insightTitle">Hallazgo de la red</h3>
+    <p id="insightText">La ESECI presenta más conexiones en esta red porque el POT relaciona movilidad, vivienda, equipamientos, empleo y productividad: transporte y sector productivo (p. 164), vivienda y acceso al empleo (p. 169), equipamientos y generación de empleo (p. 171), y conectividad multimodal, productividad y empleo (p. 171). Esta mayor centralidad es un resultado calculado a partir de las relaciones documentadas; no es una frase literal de una sola página del POT. En contraste, la EEP se define como un sistema de áreas y corredores que sostiene la biodiversidad y los servicios ecosistémicos (p. 72, art. 42), e incluye humedales, ríos y quebradas (p. 92).</p>
   </aside>
 
+  <!-- SIDEBAR · réplica exacta del Módulo 02 -->
+  <aside class="sidebar sidebar-icons-only">
+    <div class="brand-icon"><i class="fa-solid fa-diagram-project"></i></div>
+    <nav class="icon-nav">
+      <a href="modulo-02.html" class="icon-nav-item" title="Medir la Red"><i class="fa-solid fa-chart-simple"></i></a>
+      <a href="modulo-03.html" class="icon-nav-item active" title="Discurso vs Realidad"><i class="fa-solid fa-eye"></i></a>
+      <a href="modulo-04.html" class="icon-nav-item" title="Macromodelos"><i class="fa-solid fa-bullseye"></i></a>
+      <a href="modulo-05.html" class="icon-nav-item" title="Lo que no está"><i class="fa-solid fa-magnifying-glass"></i></a>
+      <a href="modulo-06.html" class="icon-nav-item" title="POT ↔ ODS"><i class="fa-solid fa-earth-americas"></i></a>
+      <a href="modulo-07.html" class="icon-nav-item" title="Simulador"><i class="fa-solid fa-flask"></i></a>
+      <a href="modulo-08.html" class="icon-nav-item" title="Modelo Propio"><i class="fa-solid fa-city"></i></a>
+    </nav>
+    <div class="icon-nav-footer">
+      <a href="configuracion.html" class="icon-nav-item" title="Configuración"><i class="fa-solid fa-gear"></i></a>
+      <a href="demo.html" class="icon-nav-item" title="Salir"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
+    </div>
+  </aside>
   <main class="main">
 
     <div class="topbar">
-      <h1>Discurso vs Realidad</h1>
+      <div class="topbar-brand"><i class="fa-solid fa-share-nodes"></i> Bogotá Viva: Simulación Urbana</div>
       <div class="topbar-actions">
-        <div class="search-box"><i class="fa-solid fa-magnifying-glass"></i> Buscar en el sistema...</div>
         <div class="icon-btn"><i class="fa-regular fa-bell"></i><span class="dot"></span></div>
-        <div class="icon-btn"><i class="fa-regular fa-circle-question"></i></div>
-        <div class="avatar-sm">EU</div>
+        <div class="icon-btn"><i class="fa-solid fa-sun"></i></div>
+        <div class="icon-btn"><i class="fa-solid fa-user"></i></div>
+        <i class="fa-solid fa-chevron-down topbar-chevron"></i>
       </div>
     </div>
 
     <div class="welcome">
-      <h2>Discurso vs Realidad</h2>
-      <p>Mapea las relaciones del texto del POT — dependencias, condicionamientos, causales, funcionales, complementariedades, conflictos, jerarquías y retroalimentaciones — y compara lo que el modelo <strong>dice que es</strong> con lo que <strong>parece ser</strong> cuando se le hace ingeniería inversa a su arquitectura relacional.</p>
+      <div class="simulation-kicker">MOTOR DE SIMULACIÓN Y ACTIVIDADES</div>
+      <h2><span>Simulación e</span> <em>Indicadores</em></h2>
     </div>
 
-    <!-- INSIGHTS: tarjetas clicables para explorar la red -->
-    <div class="ods-insight-stats" id="odsInsightStats">
-      <div class="insight-card" data-insight="dependencias" style="--insight-color:#5b8def;" onclick="toggleInsight('dependencias')">
-        <div class="insight-icon"><i class="fa-solid fa-link"></i></div>
-        <div class="insight-title">Dependencias</div>
-      </div>
+    <div class="net-layout">
 
-      <div class="insight-card" data-insight="condicionamientos" style="--insight-color:#2fd4c8;" onclick="toggleInsight('condicionamientos')">
-        <div class="insight-icon"><i class="fa-solid fa-sliders"></i></div>
-        <div class="insight-title">Condicionamientos</div>
-      </div>
+      <!-- ================= PANEL DE INFORMACIÓN ================= -->
+      <div class="col right">
 
-      <div class="insight-card" data-insight="causales" style="--insight-color:#ef9552;" onclick="toggleInsight('causales')">
-        <div class="insight-icon"><i class="fa-solid fa-bolt"></i></div>
-        <div class="insight-title">Relaciones causales</div>
-      </div>
+        <aside class="network-finding module03-side-finding m03-popup" id="networkFinding" aria-live="polite" aria-hidden="true" style="display:none">
+          <button type="button" class="m03-popup-close" id="findingPopupClose" aria-label="Cerrar hallazgo"><i class="fa-solid fa-xmark"></i></button>
+          <div class="network-finding-icon" aria-hidden="true"><i class="fa-solid fa-lightbulb"></i></div>
+          <div class="network-finding-kicker">HALLAZGO PRINCIPAL</div>
+          <div class="network-finding-text" id="networkFindingText">
+            <h3 class="finding-card-title">ESECI articula más conexiones</h3>
+            <p class="finding-card-summary">La ESECI tiene más conexiones porque el POT usa el ordenamiento territorial para impulsar la economía, el empleo y la productividad. Por eso relaciona cosas como la movilidad, la vivienda, los equipamientos y la conectividad con las actividades económicas. En cambio, la EEP cumple principalmente una función ambiental: ordenar y proteger el territorio a través del agua, los ecosistemas y la biodiversidad.</p>
+            <div class="finding-card-details" id="findingCardDetails" hidden>La ESECI tiene más conexiones porque el POT usa el ordenamiento territorial para impulsar la economía, el empleo y la productividad. Por eso relaciona cosas como la movilidad, la vivienda, los equipamientos y la conectividad con las actividades económicas. En cambio, la EEP cumple principalmente una función ambiental: ordenar y proteger el territorio a través del agua, los ecosistemas y la biodiversidad.</div>
+          </div>
+        </aside>
 
-      <div class="insight-card" data-insight="funcionales" style="--insight-color:#a276f2;" onclick="toggleInsight('funcionales')">
-        <div class="insight-icon"><i class="fa-solid fa-gears"></i></div>
-        <div class="insight-title">Funcionales</div>
-      </div>
-
-      <div class="insight-card" data-insight="complementariedades" style="--insight-color:#4ade80;" onclick="toggleInsight('complementariedades')">
-        <div class="insight-icon"><i class="fa-solid fa-puzzle-piece"></i></div>
-        <div class="insight-title">Complementariedades</div>
-      </div>
-
-      <div class="insight-card" data-insight="conflictos" style="--insight-color:#ef4444;" onclick="toggleInsight('conflictos')">
-        <div class="insight-icon"><i class="fa-solid fa-bolt-lightning"></i></div>
-        <div class="insight-title">Conflictos</div>
-      </div>
-
-      <div class="insight-card" data-insight="jerarquias" style="--insight-color:#f76fb0;" onclick="toggleInsight('jerarquias')">
-        <div class="insight-icon"><i class="fa-solid fa-layer-group"></i></div>
-        <div class="insight-title">Jerarquías</div>
-      </div>
-
-      <div class="insight-card" data-insight="retroalimentaciones" style="--insight-color:#f5c945;" onclick="toggleInsight('retroalimentaciones')">
-        <div class="insight-icon"><i class="fa-solid fa-rotate"></i></div>
-        <div class="insight-title">Retroalimentaciones</div>
-      </div>
-
-      <div class="insight-card" data-insight="todos" style="--insight-color:#2fd4c8;" onclick="toggleInsight('todos')">
-        <div class="insight-icon"><i class="fa-solid fa-diagram-project"></i></div>
-        <div class="insight-title">Ver toda la red</div>
-      </div>
-    </div>
-
-    <!-- RED CONCEPTUAL -->
-    <div class="network-section">
-      <div class="network-header">
-        <h3><i class="fa-solid fa-sitemap"></i> Red de Relaciones del POT — Interactiva</h3>
-        <div class="network-controls">
-          <button class="control-btn active" onclick="filterNetwork('all')">Todos</button>
-          <button class="control-btn" onclick="filterNetwork('dependencia')">Dependencias</button>
-          <button class="control-btn" onclick="filterNetwork('condicionamiento')">Condicionamientos</button>
-          <button class="control-btn" onclick="filterNetwork('causal')">Causales</button>
-          <button class="control-btn" onclick="filterNetwork('funcional')">Funcionales</button>
-          <button class="control-btn" onclick="filterNetwork('complementariedad')">Complementariedades</button>
-          <button class="control-btn" onclick="filterNetwork('conflicto')">Conflictos</button>
-          <button class="control-btn" onclick="filterNetwork('jerarquia')">Jerarquías</button>
-          <button class="control-btn" onclick="filterNetwork('retroalimentacion')">Retroalimentaciones</button>
+        <div class="pcard escenarios-card">
+          <h2>Escenario: ¿qué pasa si apagamos una estructura?</h2>
+          <div class="scenario-buttons">
+            <button class="scenario-btn" data-sys="EEP">
+              <i class="fa-solid fa-circle-minus"></i>
+              <span class="sys-state">ON</span>
+              <span class="row-num">1</span>
+              <span class="row-icon"><i class="fa-solid fa-leaf" aria-hidden="true"></i></span>
+              <span class="btn-title">Sin Estructura Ecológica Principal</span>
+              <span class="btn-question">¿Qué pasaría si no existiera la EEP?</span>
+            </button>
+            <button class="scenario-btn" data-sys="EFC">
+              <i class="fa-solid fa-circle-minus"></i>
+              <span class="sys-state">ON</span>
+              <span class="row-num">2</span>
+              <span class="row-icon"><i class="fa-solid fa-heart" aria-hidden="true"></i></span>
+              <span class="btn-title">Sin Estructura Funcional y del Cuidado</span>
+              <span class="btn-question">¿Qué pasaría si no existiera la EFC?</span>
+            </button>
+            <button class="scenario-btn" data-sys="ESECI">
+              <i class="fa-solid fa-circle-minus"></i>
+              <span class="sys-state">ON</span>
+              <span class="row-num">3</span>
+              <span class="row-icon"><i class="fa-solid fa-lightbulb" aria-hidden="true"></i></span>
+              <span class="btn-title">Sin Estructura Socioeconómica, Creativa y de Innovación</span>
+              <span class="btn-question">¿Qué pasaría si no existiera la ESECI?</span>
+            </button>
+            <button class="scenario-btn" data-sys="EIP">
+              <i class="fa-solid fa-circle-minus"></i>
+              <span class="sys-state">ON</span>
+              <span class="row-num">4</span>
+              <span class="row-icon"><i class="fa-solid fa-landmark" aria-hidden="true"></i></span>
+              <span class="btn-title">Sin Estructura Integradora de Patrimonios</span>
+              <span class="btn-question">¿Qué pasaría si no existiera la EIP?</span>
+            </button>
+          </div>
+          <button class="btn net-side-reset" id="btnReset"><i class="fa-solid fa-arrows-rotate"></i> Reactivar todas</button>
         </div>
+
+        <aside class="module03-reference-legend" aria-label="Convenciones de la red del Módulo 03">
+        <div class="module03-conventions" id="module03Conventions" aria-label="Convenciones de la red">
+          <div class="legend-title m03-reference-title">Tipos de relación</div>
+          <div class="legend-divider m03-reference-divider m03-divider-before-colors"></div>
+          <div class="legend-title m03-reference-title m03-color-title">Color de la línea</div>
+          <div class="m03-line-colors">
+            <div class="legend-static-item"><span class="legend-swatch" style="background:#f5a623;border-color:#f5a623;"></span> Soporte (sostiene / habilita)</div>
+            <div class="legend-static-item"><span class="legend-swatch" style="background:#46d6d0;border-color:#46d6d0;"></span> Resiliencia (conectividad ecosistémica / clima)</div>
+          </div>
+          <div class="legend-divider m03-reference-divider m03-divider-after-colors"></div>
+        </div>
+        <div class="module03-structure-legend" aria-label="Estructuras de la simulación">
+          <div class="m03-legend-heading">CATEGORÍAS DE LA SIMULACIÓN</div>
+          <label class="m03-layer-toggle" data-sys="EEP"><input type="checkbox" class="m03-system-check" data-sys="EEP" checked><span class="m03-cat-icon eep"><i class="fa-solid fa-leaf" aria-hidden="true"></i></span><span class="m03-cat-name">Estructura Ecológica Principal<small>EEP · soporte vital y ambiental</small></span><strong id="m03-count-EEP">—</strong></label>
+          <label class="m03-layer-toggle" data-sys="EFC"><input type="checkbox" class="m03-system-check" data-sys="EFC" checked><span class="m03-cat-icon efc"><i class="fa-solid fa-heart" aria-hidden="true"></i></span><span class="m03-cat-name">Estructura Funcional y del Cuidado<small>EFC · movilidad, vivienda y cuidado</small></span><strong id="m03-count-EFC">—</strong></label>
+          <label class="m03-layer-toggle" data-sys="ESECI"><input type="checkbox" class="m03-system-check" data-sys="ESECI" checked><span class="m03-cat-icon eseci"><i class="fa-solid fa-lightbulb" aria-hidden="true"></i></span><span class="m03-cat-name">Estructura Socioeconómica, Creativa y de Innovación<small>ESECI · empleo, economía y productividad</small></span><strong id="m03-count-ESECI">—</strong></label>
+          <label class="m03-layer-toggle" data-sys="EIP"><input type="checkbox" class="m03-system-check" data-sys="EIP" checked><span class="m03-cat-icon eip"><i class="fa-solid fa-landmark" aria-hidden="true"></i></span><span class="m03-cat-name">Estructura Integradora de Patrimonios<small>EIP · patrimonio material e inmaterial</small></span><strong id="m03-count-EIP">—</strong></label>
+          <div class="m03-filter-actions"><button type="button" class="m03-filter-action active" data-rel="all">Todas</button><button type="button" class="m03-filter-action" data-rel="directa">Directas</button><button type="button" class="m03-filter-action" data-rel="indirecta">Indirectas</button></div>
+        </div>
+        </aside>
+
+        <div class="pcard" id="evCard">
+          <div id="evBox"></div>
+        </div>
+
+        <div class="pcard">
+          <h2>Escenario de nodo crítico
+            <span class="hint">Apaga el nodo más conectado y observa qué se rompe.</span>
+          </h2>
+          <p class="node-question" id="nodeQuestion">—</p>
+          <label class="node-label" for="nodeSelect">Concepto a desconectar</label>
+          <select id="nodeSelect" class="node-select"></select>
+          <p class="node-impact" id="nodeImpact">—</p>
+          <button class="btn node-sim-btn" id="btnNodeSim"><i class="fa-solid fa-power-off"></i> Simular sin este nodo</button>
+        </div>
+
+        <div class="pcard">
+          <h2>Nodos puente
+            <span class="hint">Conceptos que se relacionan con las tres estructuras distintas a la suya. Se detectan solos.</span>
+          </h2>
+          <div id="bridgeList"></div>
+        </div>
+
+        <div class="pcard">
+          <h2>Simulación del apagado</h2>
+          <div id="simBox"></div>
+        </div>
+
+        <div class="pcard">
+          <h2>Hallazgo de la simulación</h2>
+          <div class="finding" id="finding">—</div>
+        </div>
+
+        <div class="pcard">
+          <h2>Conexiones con otros sistemas
+            <span class="hint">Relaciones activas que cruzan de una estructura a otra. Es la medida del hallazgo principal y se calcula desde los datos.</span>
+          </h2>
+          <div id="rankList"></div>
+          <div id="topSys"></div>
+          <p class="note">
+            La centralidad de la red <b>no equivale a la jerarquía normativa del POT</b>. El POT define la
+            EEP como “primera ordenante” del territorio; esta red mide algo distinto: qué estructura resulta
+            <b>más articuladora</b> según las relaciones explícitas construidas a partir del documento.
+          </p>
+        </div>
+
+        <div class="pcard">
+          <h2>¿Qué sistema genera mayor dependencia?
+            <span class="hint">Relaciones que desaparecerían si ese sistema se apagara (como origen o destino).</span>
+          </h2>
+          <div id="compareList"></div>
+        </div>
+
       </div>
 
-      <div class="network-viz-wrap">
-        <svg id="networkViz" viewBox="0 0 1470 780" preserveAspectRatio="xMidYMid meet"></svg>
-
-        <div class="network-sidebar">
-          <aside class="network-legend" id="networkLegend">
-            <div class="legend-title">Convenciones</div>
-
-            <label class="legend-item" data-type="dependencia">
-              <input type="checkbox" checked>
-              <span class="legend-swatch swatch-dependencia"></span>
-              Dependencia
-            </label>
-
-            <label class="legend-item" data-type="condicionamiento">
-              <input type="checkbox" checked>
-              <span class="legend-swatch swatch-condicionamiento"></span>
-              Condicionamiento
-            </label>
-
-            <label class="legend-item" data-type="causal">
-              <input type="checkbox" checked>
-              <span class="legend-swatch swatch-causal"></span>
-              Relación causal
-            </label>
-
-            <label class="legend-item" data-type="funcional">
-              <input type="checkbox" checked>
-              <span class="legend-swatch swatch-funcional"></span>
-              Relación funcional
-            </label>
-
-            <label class="legend-item" data-type="complementariedad">
-              <input type="checkbox" checked>
-              <span class="legend-swatch swatch-complementariedad"></span>
-              Complementariedad
-            </label>
-
-            <label class="legend-item" data-type="conflicto">
-              <input type="checkbox" checked>
-              <span class="legend-swatch swatch-conflicto"></span>
-              Conflicto
-            </label>
-
-            <label class="legend-item" data-type="jerarquia">
-              <input type="checkbox" checked>
-              <span class="legend-swatch swatch-jerarquia"></span>
-              Jerarquía
-            </label>
-
-            <label class="legend-item" data-type="retroalimentacion">
-              <input type="checkbox" checked>
-              <span class="legend-swatch swatch-retroalimentacion"></span>
-              Retroalimentación
-            </label>
-
-            <div class="legend-title">Tipo de línea</div>
-            <div class="legend-item legend-static">
-              <span class="legend-swatch swatch-solida"></span>
-              Relación directa — continua
+      <!-- ================= RED + ESTADO ================= -->
+      <div class="col">
+        <div class="pcard net-card">
+          <div class="net-toolbar">
+            <div class="legend relation-filters" aria-label="Filtros de relaciones">
+              <label class="legend-item relation-filter" data-filter-label="directa">
+                <input type="checkbox" class="relation-filter-input" data-relation-filter="directa" checked>
+                <span class="lg-line"></span><span>Relación directa</span>
+              </label>
+              <label class="legend-item relation-filter" data-filter-label="indirecta">
+                <input type="checkbox" class="relation-filter-input" data-relation-filter="indirecta" checked>
+                <span class="lg-line dashed"></span><span>Relación indirecta</span>
+              </label>
+              <label class="legend-item relation-filter" data-filter-label="soporte">
+                <input type="checkbox" class="relation-filter-input" data-relation-filter="soporte" checked>
+                <span class="lg-dot soporte"></span><span>Soporte</span>
+              </label>
+              <label class="legend-item relation-filter" data-filter-label="resiliencia">
+                <input type="checkbox" class="relation-filter-input" data-relation-filter="resiliencia" checked>
+                <span class="lg-dot resiliencia"></span><span>Resiliencia</span>
+              </label>
             </div>
-            <div class="legend-item legend-static">
-              <span class="legend-swatch swatch-punteada"></span>
-              Retroalimentación — punteada
+            <div class="net-btns">
+              <span class="hidden-nodes-indicator is-clear" id="hiddenNodesIndicator" aria-live="polite"><i class="fa-solid fa-eye-slash"></i><span id="hiddenNodesText">Sin nodos ocultos</span></span>
+              <button class="btn" id="btnFit"><i class="fa-solid fa-arrows-rotate"></i> Centrar vista</button>
             </div>
-            <div class="legend-item legend-static">
-              <span class="legend-swatch swatch-doble"></span>
-              Jerarquía — doble línea
-            </div>
-            <div class="legend-item legend-static">
-              <span class="legend-swatch swatch-sinflecha"></span>
-              Complementariedad / conflicto — sin flecha
-            </div>
+          </div>
 
-            <div class="legend-divider"></div>
-            <div class="legend-hint">Clic en una línea: ver la relación, el tipo y la frase exacta del POT con su página.<br>Doble clic en una bola: apagarla/encenderla.<br>Triple clic en una bola: ver solo su flujo.</div>
-          </aside>
-
-          <div class="edge-info-panel" id="edgeInfoPanel">
-            <div class="edge-info-header">
-              <span id="edgeInfoTitle">Relación</span>
-              <button class="edge-info-close" id="edgeInfoClose" type="button" aria-label="Cerrar">&times;</button>
+          <div class="net-body">
+            <div class="net-stage" id="stage">
+              <div class="zoom-controls" aria-label="Controles de zoom">
+                <button type="button" class="zoom-btn" id="btnZoomOut" aria-label="Alejar" title="Alejar">−</button>
+                <span class="zoom-value" id="zoomValue">100%</span>
+                <button type="button" class="zoom-btn" id="btnZoomIn" aria-label="Acercar" title="Acercar">+</button>
+                <button type="button" class="zoom-btn zoom-reset" id="btnZoomReset" aria-label="Restablecer zoom" title="Restablecer zoom"><i class="fa-solid fa-crosshairs"></i></button>
+              </div>
+              <svg id="svg" xmlns="http://www.w3.org/2000/svg" viewBox="-1964 -1937 3927 3910">
+                <defs>
+                  <marker id="ar-soporte" viewBox="0 0 10 10" refX="9" refY="5"
+                          markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse">
+                    <path d="M0,0 L10,5 L0,10 z" fill="#f0a15c"></path>
+                  </marker>
+                  <marker id="ar-resiliencia" viewBox="0 0 10 10" refX="9" refY="5"
+                          markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse">
+                    <path d="M0,0 L10,5 L0,10 z" fill="#2fbfae"></path>
+                  </marker>
+                  <linearGradient id="grad-eep" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#45d6c5"></stop>
+                    <stop offset="100%" stop-color="#1f8f82"></stop>
+                  </linearGradient>
+                  <linearGradient id="grad-efc" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#ffb37a"></stop>
+                    <stop offset="100%" stop-color="#e8763c"></stop>
+                  </linearGradient>
+                  <linearGradient id="grad-eseci" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#f5c26b"></stop>
+                    <stop offset="100%" stop-color="#d9902e"></stop>
+                  </linearGradient>
+                  <linearGradient id="grad-eip" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#ff8f8f"></stop>
+                    <stop offset="100%" stop-color="#d94f5c"></stop>
+                  </linearGradient>
+                  <!-- desenfoque para que las relaciones se vean como una cinta sólida difuminada, sin neón -->
+                  <filter id="rel-blur" x="-60%" y="-60%" width="220%" height="220%">
+                    <feGaussianBlur stdDeviation="7"></feGaussianBlur>
+                  </filter>
+                </defs>
+                <g id="gGuides"></g>
+                <g id="gMembers"></g>
+                <g id="gRels"></g>
+                <g id="gNodes"></g>
+              </svg>
+              <div class="weak-banner hidden" id="weakBanner">
+                <i class="fa-solid fa-link-slash"></i>
+                <span id="weakBannerText"></span>
+              </div>
+              <div class="tooltip" id="tooltip"></div>
             </div>
-            <div class="edge-info-type" id="edgeInfoType"></div>
-            <div class="edge-info-quote" id="edgeInfoQuote"></div>
-            <div class="edge-info-page" id="edgeInfoPage"></div>
           </div>
         </div>
+
       </div>
     </div>
 
-    <!-- TABLA DE SUSTENTO -->
-    <div class="analysis-container">
+    <section class="network-metrics-strip m03-full-width-metrics" aria-label="Indicadores principales de la red">
+      <div class="network-metric"><div class="network-metric-icon"><i class="fa-solid fa-network-wired"></i></div><div><span class="network-metric-label">RED ACTIVA</span><strong id="metricActive">—</strong><small id="metricActiveSub">Estructuras territoriales</small></div></div>
+      <div class="network-metric"><div class="network-metric-icon"><i class="fa-solid fa-share-nodes"></i></div><div><span class="network-metric-label">RELACIONES TOTALES</span><strong id="metricRelations">—</strong><small>Relaciones verificadas</small></div></div>
+      <div class="network-metric"><div class="network-metric-icon"><i class="fa-solid fa-wave-square"></i></div><div><span class="network-metric-label">NODOS ACTIVOS</span><strong id="metricNodes">—</strong><small id="metricNodesSub">del total de conceptos</small></div></div>
+      <div class="network-metric connectivity-metric"><div class="metric-ring"><span id="metricConnectivity">—</span></div><div><span class="network-metric-label">CONECTIVIDAD MEDIA</span><strong id="metricConnectivityValue">—</strong><small>Relaciones activas</small></div></div>
+    </section>
+
+    <section class="m03-relations-table analysis-container m03-full-width-table" aria-label="Tabla completa de relaciones">
       <div class="analysis-card full-width">
-        <div class="card-header">
-          <h3><i class="fa-solid fa-table"></i> Tabla de Relaciones — Red del POT (26 aristas)</h3>
-        </div>
-
-        <div class="matrix-container">
-          <div class="matrix-row header">
-            <div class="matrix-cell header-cell">#</div>
-            <div class="matrix-cell header-cell">Relación</div>
-            <div class="matrix-cell header-cell">Línea</div>
-            <div class="matrix-cell header-cell">Color</div>
-            <div class="matrix-cell header-cell">Tipo</div>
-            <div class="matrix-cell header-cell">Página POT / Fuente</div>
-            <div class="matrix-cell header-cell">Texto exacto y sustento</div>
-          </div>
-
-          <div class="matrix-row" data-edge="0">
-            <div class="matrix-cell">1</div>
-            <div class="matrix-cell">Metro ➞ Transporte público</div>
-            <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-dependencia" style="margin:0;"></span> Azul</div>
-            <div class="matrix-cell"><span class="alignment-tag dep">Dependencia</span></div>
-            <div class="matrix-cell">p. 30</div>
-            <div class="matrix-cell quote-cell">“...conectadas por un sistema multimodal de transporte público... basadas en la red Metro y alimentadas por los demás modos y medios de transporte público como los corredores verdes, los cables y las ciclorrutas.” La estructura de transporte público depende funcionalmente de la red Metro: el sistema multimodal se organiza alrededor de ella.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="1">
-            <div class="matrix-cell">2</div>
-            <div class="matrix-cell">Corredores verdes ➞ Transporte público</div>
-            <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-dependencia" style="margin:0;"></span> Azul</div>
-            <div class="matrix-cell"><span class="alignment-tag dep">Dependencia</span></div>
-            <div class="matrix-cell">p. 239–241</div>
-            <div class="matrix-cell quote-cell">“...además del Metro, y para alimentarlo y complementarlo, están los corredores verdes, con diseño ecosistémico, transporte público eléctrico, ciclorrutas seguras y andenes, plazas y espacios de encuentro...” Los corredores verdes contienen los modos de transporte público eléctrico: su existencia y trazado dependen de la función de alimentar el sistema de transporte.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="2">
-            <div class="matrix-cell">3</div>
-            <div class="matrix-cell">Corredores verdes ➞ Ciclorrutas</div>
-            <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-dependencia" style="margin:0;"></span> Azul</div>
-            <div class="matrix-cell"><span class="alignment-tag dep">Dependencia</span></div>
-            <div class="matrix-cell">p. 239–241</div>
-            <div class="matrix-cell quote-cell">“...además del Metro, y para alimentarlo y complementarlo, están los corredores verdes, con diseño ecosistémico, transporte público eléctrico, ciclorrutas seguras y andenes, plazas y espacios de encuentro...” Los corredores verdes contienen e imponen a las ciclorrutas seguras: la cicloinfraestructura depende del trazado del corredor.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="3">
-            <div class="matrix-cell">4</div>
-            <div class="matrix-cell">Equipamientos ➞ Manzanas del Cuidado</div>
-            <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-dependencia" style="margin:0;"></span> Azul</div>
-            <div class="matrix-cell"><span class="alignment-tag dep">Dependencia</span></div>
-            <div class="matrix-cell">p. 125</div>
-            <div class="matrix-cell quote-cell">“Aprovechar los equipamientos existentes como anclas de las Manzanas del Cuidado, para que en estos diferentes entidades del Distrito cuiden a quienes nos cuidan, fue el cuello de botella que se resolvió con el pot.” Las Manzanas del Cuidado dependen de los equipamientos existentes: sin anclas, no hay manzanas.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="4">
-            <div class="matrix-cell">5</div>
-            <div class="matrix-cell">Manzanas del Cuidado ➞ Servicios sociales</div>
-            <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-dependencia" style="margin:0;"></span> Azul</div>
-            <div class="matrix-cell"><span class="alignment-tag dep">Dependencia</span></div>
-            <div class="matrix-cell">p. 126</div>
-            <div class="matrix-cell quote-cell">“...cualifica los servicios sociales del Distrito y hace efectiva la articulación interinstitucional.” Los servicios sociales dependen de las Manzanas del Cuidado para articularse: la cualificación declarada opera a través de ellas.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="5">
-            <div class="matrix-cell">6</div>
-            <div class="matrix-cell">Servicios sociales ➞ Servicios de cuidado</div>
-            <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-dependencia" style="margin:0;"></span> Azul</div>
-            <div class="matrix-cell"><span class="alignment-tag dep">Dependencia</span></div>
-            <div class="matrix-cell">p. 122</div>
-            <div class="matrix-cell quote-cell">“Las Manzanas del Cuidado son áreas acotadas que agrupan diversas infraestructuras para brindar servicios de manera simultánea y articulada a las personas cuidadoras, a quienes ellas cuidan y a sus familias.” Los servicios de cuidado dependen de la infraestructura social agrupada: el servicio no existe sin el equipamiento que lo contiene.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="6">
-            <div class="matrix-cell">7</div>
-            <div class="matrix-cell">Metro ➞ Vivienda VIS/PIP</div>
-            <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-condicionamiento" style="margin:0;"></span> Turquesa</div>
-            <div class="matrix-cell"><span class="alignment-tag cond">Condicionamiento</span></div>
-            <div class="matrix-cell">p. 43</div>
-            <div class="matrix-cell quote-cell">“Además del Metro, Bogotá necesita con urgencia ampliar sus entradas y salidas, tapar más huecos, hacer más vías, ciclorrutas, cables y corredores verdes con buses eléctricos para que el transporte público de calidad llegue a todas partes, conecte a la gente, la saque del trancón y la contaminación.” La inversión en Metro condiciona el valor y la localización de la vivienda: la accesibilidad que promete el Metro se capitaliza en el mercado de suelo.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="7">
-            <div class="matrix-cell">8</div>
-            <div class="matrix-cell">Vivienda VIS/PIP ➞ Equipamientos</div>
-            <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-condicionamiento" style="margin:0;"></span> Turquesa</div>
-            <div class="matrix-cell"><span class="alignment-tag cond">Condicionamiento</span></div>
-            <div class="matrix-cell">p. 126</div>
-            <div class="matrix-cell quote-cell">“Por un lado, priorizamos que los colegios o equipamientos educativos estén cerca de la vivienda o incluso cerca del trabajo de los padres.” La localización de la vivienda condiciona la ubicación de los equipamientos: la ciudad educativa se planea a partir del mapa de vivienda.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="8">
-            <div class="matrix-cell">9</div>
-            <div class="matrix-cell">Corredores verdes ➞ Transporte público</div>
-            <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-condicionamiento" style="margin:0;"></span> Turquesa</div>
-            <div class="matrix-cell"><span class="alignment-tag cond">Condicionamiento</span></div>
-            <div class="matrix-cell">p. 30</div>
-            <div class="matrix-cell quote-cell">“...conectadas por un sistema multimodal de transporte público... basadas en la red Metro y alimentadas por los demás modos... como los corredores verdes...” La cobertura del transporte público está condicionada por los corredores verdes: el modo eléctrico se define por el trazado ambiental.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="9">
-            <div class="matrix-cell">10</div>
-            <div class="matrix-cell">Ciclorrutas ➞ Metro</div>
-            <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-condicionamiento" style="margin:0;"></span> Turquesa</div>
-            <div class="matrix-cell"><span class="alignment-tag cond">Condicionamiento</span></div>
-            <div class="matrix-cell">p. 43</div>
-            <div class="matrix-cell quote-cell">“...hacer más vías, ciclorrutas, cables y corredores verdes con buses eléctricos para que el transporte público de calidad llegue a todas partes...” La expansión de ciclorrutas se condiciona al objetivo de conectar con la red Metro: la cicloinfraestructura se diseña como alimentadora del sistema principal.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="10">
-            <div class="matrix-cell">11</div>
-            <div class="matrix-cell">EEP / Estructura ecológica ➞ Metro</div>
-            <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-causal" style="margin:0;"></span> Naranja</div>
-            <div class="matrix-cell"><span class="alignment-tag causal">Relación causal</span></div>
-            <div class="matrix-cell">p. 30</div>
-            <div class="matrix-cell quote-cell">“...basadas en la red Metro y alimentadas por los demás modos...” La existencia de la red Metro como núcleo causa la subordinación del resto de modos: sin el Metro, el sistema multimodal no tendría la estructura que el POT describe.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="11">
-            <div class="matrix-cell">12</div>
-            <div class="matrix-cell">Corredores verdes ➞ Servicios sociales</div>
-            <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-causal" style="margin:0;"></span> Naranja</div>
-            <div class="matrix-cell"><span class="alignment-tag causal">Relación causal</span></div>
-            <div class="matrix-cell">p. 30</div>
-            <div class="matrix-cell quote-cell">“...corredores verdes, con diseño ecosistémico, transporte público eléctrico, ciclorrutas seguras y andenes, plazas y espacios de encuentro...” Los corredores verdes causan mejoras en los servicios sociales: el diseño ecosistémico reduce la carga térmica y de contaminación sobre la salud de quienes usan los servicios cercanos.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="12">
-            <div class="matrix-cell">13</div>
-            <div class="matrix-cell">Manzanas del Cuidado ➞ Servicios sociales</div>
-            <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-causal" style="margin:0;"></span> Naranja</div>
-            <div class="matrix-cell"><span class="alignment-tag causal">Relación causal</span></div>
-            <div class="matrix-cell">p. 126</div>
-            <div class="matrix-cell quote-cell">“...cualifica los servicios sociales del Distrito y hace efectiva la articulación interinstitucional.” La articulación de las Manzanas causa la cualificación de los servicios sociales: la simultaneidad del servicio es la causa directa del resultado declarado.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="13">
-            <div class="matrix-cell">14</div>
-            <div class="matrix-cell">EEP / Estructura ecológica ➞ Río Bogotá (cuenca)</div>
-            <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-causal" style="margin:0;"></span> Naranja</div>
-            <div class="matrix-cell"><span class="alignment-tag causal">Relación causal</span></div>
-            <div class="matrix-cell">Fuente: CCB, Observaciones al POT</div>
-            <div class="matrix-cell quote-cell">El POT omite el Plan de Ordenación y Manejo de la Cuenca del Río Bogotá en su jerarquía de instrumentos, pese a que la estructura ecológica depende directamente de la cuenca. La salud de la cuenca causa la funcionalidad de la estructura ecológica: si la cuenca se degrada, la EEP pierde su base hidrográfica.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="14">
-            <div class="matrix-cell">15</div>
-            <div class="matrix-cell">Metro ➞ Corredores verdes</div>
-            <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-funcional" style="margin:0;"></span> Morado</div>
-            <div class="matrix-cell"><span class="alignment-tag func">Relación funcional</span></div>
-            <div class="matrix-cell">p. 239–241</div>
-            <div class="matrix-cell quote-cell">“...además del Metro, y para alimentarlo y complementarlo, están los corredores verdes...” Los corredores verdes tienen la función de alimentar y complementar el Metro: su propósito estructural se define en relación con el sistema de transporte.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="15">
-            <div class="matrix-cell">16</div>
-            <div class="matrix-cell">Equipamientos ➞ Servicios sociales</div>
-            <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-funcional" style="margin:0;"></span> Morado</div>
-            <div class="matrix-cell"><span class="alignment-tag func">Relación funcional</span></div>
-            <div class="matrix-cell">p. 126</div>
-            <div class="matrix-cell quote-cell">“Por un lado, priorizamos que los colegios o equipamientos educativos estén cerca de la vivienda...” Los equipamientos funcionan como provisión física de los servicios sociales: su localización es la materialización del servicio.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="16">
-            <div class="matrix-cell">17</div>
-            <div class="matrix-cell">Patrimonio cultural ➞ EEP / EIP</div>
-            <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-funcional" style="margin:0;"></span> Morado</div>
-            <div class="matrix-cell"><span class="alignment-tag func">Relación funcional</span></div>
-            <div class="matrix-cell">p. 196</div>
-            <div class="matrix-cell quote-cell">“la EIP inscribe y precisa un sistema de relaciones del patrimonio cultural material, inmaterial y natural en el territorio.” El patrimonio cultural funciona como contenido de la EIP: su sistema de relaciones se precisa dentro de la estructura ecológica.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="17">
-            <div class="matrix-cell">18</div>
-            <div class="matrix-cell">Corredores verdes ➞ Ciclorrutas</div>
-            <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-complementariedad" style="margin:0;"></span> Verde</div>
-            <div class="matrix-cell"><span class="alignment-tag comp">Complementariedad</span></div>
-            <div class="matrix-cell">p. 239–241</div>
-            <div class="matrix-cell quote-cell">“...están los corredores verdes, con diseño ecosistémico, transporte público eléctrico, ciclorrutas seguras y andenes, plazas y espacios de encuentro...” Corredores verdes y ciclorrutas se complementan: el corredor aporta el trazado y la ciclorruta el modo activo; ambos se necesitan para el diseño ecosistémico completo.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="18">
-            <div class="matrix-cell">19</div>
-            <div class="matrix-cell">Manzanas del Cuidado ➞ Equipamientos</div>
-            <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-complementariedad" style="margin:0;"></span> Verde</div>
-            <div class="matrix-cell"><span class="alignment-tag comp">Complementariedad</span></div>
-            <div class="matrix-cell">p. 125</div>
-            <div class="matrix-cell quote-cell">“Aprovechar los equipamientos existentes como anclas de las Manzanas del Cuidado...” Manzanas del Cuidado y equipamientos se complementan: la manzana aporta la articulación social y el equipamiento la infraestructura; juntos forman el sistema de cuidado sin duplicarlo.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="19">
-            <div class="matrix-cell">20</div>
-            <div class="matrix-cell">Transporte público ➞ Ciclorrutas</div>
-            <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-complementariedad" style="margin:0;"></span> Verde</div>
-            <div class="matrix-cell"><span class="alignment-tag comp">Complementariedad</span></div>
-            <div class="matrix-cell">p. 43</div>
-            <div class="matrix-cell quote-cell">“...hacer más vías, ciclorrutas, cables y corredores verdes con buses eléctricos para que el transporte público de calidad llegue a todas partes...” El transporte público masivo y la ciclorruta se complementan: el bus eléctrico cubre distancias largas y la bicicleta las de proximidad; la calidad del transporte depende de ambos.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="20">
-            <div class="matrix-cell">21</div>
-            <div class="matrix-cell">Metro ➞ Patrimonio cultural</div>
-            <div class="matrix-cell">Continua</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-conflicto" style="margin:0;"></span> Rojo</div>
-            <div class="matrix-cell"><span class="alignment-tag conf">Conflicto</span></div>
-            <div class="matrix-cell">p. 186 / p. 43</div>
-            <div class="matrix-cell quote-cell">“...son el testimonio de complejas estrategias de cómo interpretamos y valoramos las huellas del territorio que habitamos.” (p. 186) y p. 43: el Metro avanza sobre territorios con huellas patrimoniales sin que la red de transporte declare mecanismos de protección del patrimonio arqueológico en su trazado; los dos sistemas compiten por el mismo suelo.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="21">
-            <div class="matrix-cell">22</div>
-            <div class="matrix-cell">Metro ➞ EEP / Estructura ecológica</div>
-            <div class="matrix-cell">Doble línea</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-jerarquia" style="margin:0;"></span> Rosa</div>
-            <div class="matrix-cell"><span class="alignment-tag jer">Jerarquía</span></div>
-            <div class="matrix-cell">p. 30</div>
-            <div class="matrix-cell quote-cell">“...basadas en la red Metro y alimentadas por los demás modos...” La red Metro ocupa el primer nivel de la jerarquía de transporte: todos los demás modos se definen como “alimentadores” de ella, sin simetría entre modos.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="22">
-            <div class="matrix-cell">23</div>
-            <div class="matrix-cell">Patrimonio cultural ➞ EEP / EIP</div>
-            <div class="matrix-cell">Doble línea</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-jerarquia" style="margin:0;"></span> Rosa</div>
-            <div class="matrix-cell"><span class="alignment-tag jer">Jerarquía</span></div>
-            <div class="matrix-cell">p. 196</div>
-            <div class="matrix-cell quote-cell">“la EIP inscribe y precisa un sistema de relaciones del patrimonio cultural material, inmaterial y natural en el territorio.” El patrimonio queda jerárquicamente subordinado a la EIP: la EIP “inscribe” al patrimonio, no al revés; el patrimonio hereda la posición de la estructura ecológica.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="23">
-            <div class="matrix-cell">24</div>
-            <div class="matrix-cell">Transporte público ➞ Corredores verdes</div>
-            <div class="matrix-cell">Doble línea</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-jerarquia" style="margin:0;"></span> Rosa</div>
-            <div class="matrix-cell"><span class="alignment-tag jer">Jerarquía</span></div>
-            <div class="matrix-cell">p. 30</div>
-            <div class="matrix-cell quote-cell">“...conectadas por un sistema multimodal de transporte público... basadas en la red Metro y alimentadas por los demás modos...” El sistema de transporte ordena jerárquicamente a los corredores verdes: estos son “modos y medios” que alimentan, no estructuras autónomas con propósito propio.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="24">
-            <div class="matrix-cell">25</div>
-            <div class="matrix-cell">Vivienda VIS/PIP ➞ Metro</div>
-            <div class="matrix-cell">Punteada</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-retroalimentacion" style="margin:0;"></span> Amarillo</div>
-            <div class="matrix-cell"><span class="alignment-tag retro">Retroalimentación</span></div>
-            <div class="matrix-cell">p. 43</div>
-            <div class="matrix-cell quote-cell">“...para que el transporte público de calidad llegue a todas partes, conecte a la gente, la saque del trancón y la contaminación.” El Metro aumenta el valor del suelo y la vivienda se encarece cerca de las estaciones; el encarecimiento expulsa a la población que el Metro pretendía conectar, que demanda más transporte público: el sistema se realimenta negativamente.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="25">
-            <div class="matrix-cell">26</div>
-            <div class="matrix-cell">Corredores verdes ➞ Transporte público</div>
-            <div class="matrix-cell">Punteada</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-retroalimentacion" style="margin:0;"></span> Amarillo</div>
-            <div class="matrix-cell"><span class="alignment-tag retro">Retroalimentación</span></div>
-            <div class="matrix-cell">p. 30</div>
-            <div class="matrix-cell quote-cell">“...basadas en la red Metro y alimentadas por los demás modos...” Los corredores verdes alimentan al transporte público, pero la expansión del transporte público exige más corredores: cada ampliación del sistema multimodal reclama nuevo trazado verde, realimentando la dependencia.</div>
-          </div>
-
-          <div class="matrix-row" data-edge="26">
-            <div class="matrix-cell">27</div>
-            <div class="matrix-cell">Servicios sociales ➞ Manzanas del Cuidado</div>
-            <div class="matrix-cell">Punteada</div>
-            <div class="matrix-cell"><span class="legend-swatch swatch-retroalimentacion" style="margin:0;"></span> Amarillo</div>
-            <div class="matrix-cell"><span class="alignment-tag retro">Retroalimentación</span></div>
-            <div class="matrix-cell">p. 126</div>
-            <div class="matrix-cell quote-cell">“...cualifica los servicios sociales del Distrito y hace efectiva la articulación interinstitucional.” Los servicios sociales cualifican las Manzanas, pero las Manzanas demandan más servicios sociales para mantener la articulación: la cualificación genera demanda que exige más cualificación.</div>
-          </div>
-        </div>
+        <div class="card-header m03-table-header"><h3><i class="fa-solid fa-table"></i> Tabla completa de relaciones</h3><span id="m03TableCount">68 relaciones documentadas</span></div>
+        <div class="matrix-container m03-table-scroll"><div class="matrix-row header"><div class="matrix-cell header-cell">Estructura</div><div class="matrix-cell header-cell">Relación</div><div class="matrix-cell header-cell">Tipo</div><div class="matrix-cell header-cell">Fuente</div><div class="matrix-cell header-cell">Artículo / página</div><div class="matrix-cell header-cell">Análisis</div></div><div id="m03RelationRows"></div></div>
       </div>
-    </div>
-
-    <!-- LECTURA DE LA RED -->
-    <div class="synergies-section">
-      <div class="synergies-grid">
-        <div class="synergy-card success">
-          <div class="synergy-icon"><i class="fa-solid fa-eye-low-vision"></i></div>
-          <div class="synergy-content">
-            <h4>Lo que el modelo dice que es</h4>
-            <ul>
-              <li><strong>Discurso multimodal y ecosistémico:</strong> el POT declara un sistema de transporte “basado en la red Metro y alimentado por los demás modos” (p. 30) y corredores verdes “con diseño ecosistémico” (p. 239–241)</li>
-              <li><strong>Discurso del cuidado:</strong> las Manzanas del Cuidado se presentan como política articulada que “cualifica los servicios sociales del Distrito” (p. 126)</li>
-              <li><strong>Discurso patrimonial:</strong> “el testimonio de complejas estrategias de cómo interpretamos y valoramos las huellas del territorio” (p. 186)</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="synergy-card conflict">
-          <div class="synergy-icon"><i class="fa-solid fa-diagram-project"></i></div>
-          <div class="synergy-content">
-            <h4>Lo que el modelo parece ser</h4>
-            <ul>
-              <li><strong>Arquitectura de subordinación:</strong> el Metro ocupa el primer nivel jerárquico y todos los demás modos — incluidos los corredores verdes, declarados ecosistémicos — se definen como “alimentadores” (p. 30)</li>
-              <li><strong>Realimentación negativa:</strong> el Metro encarece el suelo y expulsa a la población que pretendía conectar, que a su vez demanda más transporte público (p. 43)</li>
-              <li><strong>Cuidado dependiente:</strong> las Manzanas del Cuidado no tienen estructura propia: dependen de los equipamientos existentes como “anclas” (p. 125)</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- CASO: LOTE VACÍO MULTIRROL -->
-    <div class="analysis-container">
-      <div class="analysis-card full-width">
-        <div class="card-header">
-          <h3><i class="fa-solid fa-shapes"></i> Caso que lo demuestra — ¿un lote vacío es simplemente "suelo sin desarrollar"?</h3>
-        </div>
-        <div class="matrix-container">
-          <div class="matrix-row header">
-            <div class="matrix-cell header-cell">Perspectiva</div>
-            <div class="matrix-cell header-cell" style="flex:1.6;">Rol del lote vacío según esa lectura</div>
-            <div class="matrix-cell header-cell">Sistema al que pertenece</div>
-          </div>
-          <div class="matrix-row">
-            <div class="matrix-cell" style="font-weight:700;">Categoría administrativa (POT)</div>
-            <div class="matrix-cell" style="flex:1.6;color:var(--text-dim);">Suelo sin desarrollar: una categoría de uso pendiente en la cartografía fija, a la espera de habilitación</div>
-            <div class="matrix-cell">Norma urbana</div>
-          </div>
-          <div class="matrix-row">
-            <div class="matrix-cell" style="font-weight:700;">Ecosistema</div>
-            <div class="matrix-cell" style="flex:1.6;color:var(--text-dim);">Hábitat temporal y refugio de especies; reservorio de biodiversidad espontánea; espacio de infiltración y corredor ecológico puntual</div>
-            <div class="matrix-cell">Estructura Ecológica</div>
-          </div>
-          <div class="matrix-row">
-            <div class="matrix-cell" style="font-weight:700;">Sociedad / comunidad</div>
-            <div class="matrix-cell" style="flex:1.6;color:var(--text-dim);">Lugar de apropiación comunitaria: canchas improvisadas, huertas, juegos infantiles</div>
-            <div class="matrix-cell">Ciudad social</div>
-          </div>
-          <div class="matrix-row">
-            <div class="matrix-cell" style="font-weight:700;">Mercado</div>
-            <div class="matrix-cell" style="flex:1.6;color:var(--text-dim);">Espacio de oportunidad inmobiliaria: valor de expectación que produce especulación de suelo</div>
-            <div class="matrix-cell">Mercado inmobiliario</div>
-          </div>
-          <div class="matrix-row">
-            <div class="matrix-cell" style="font-weight:700;">Síntesis sistémica</div>
-            <div class="matrix-cell" style="flex:1.6;color:var(--text-dim);">El componente puede ser <strong style="color:var(--text);">varias de estas cosas simultáneamente</strong>: los componentes de la ciudad no poseen una única labor, ni pertenecen a un único sistema. Ese multirrol es lo que el POT no puede representar con una categoría única.</div>
-            <div class="matrix-cell">Modelo vivo (Módulo 09)</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- CIERRE ARGUMENTATIVO -->
-    <div class="synergies-section">
-      <div class="synergies-grid">
-        <div class="synergy-card success">
-          <div class="synergy-icon"><i class="fa-solid fa-shield-halved"></i></div>
-          <div class="synergy-content">
-            <h4>Lo que el POT hace bien</h4>
-            <ul>
-              <li>Es un <strong>instrumento jurídico-administrativo</strong> necesario: fija competencias, autoriza usos, declara protecciones y le da exigibilidad legal a un modelo de ciudad.</li>
-              <li>Esa función normativa ninguna simulación por sí sola puede reemplazarla.</li>
-            </ul>
-          </div>
-        </div>
-        <div class="synergy-card conflict">
-          <div class="synergy-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
-          <div class="synergy-content">
-            <h4>El problema: cuando el instrumento jurídico es el único modelo explicativo</h4>
-            <ul>
-              <li><strong>Primer hallazgo:</strong> el POT construye la ciudad como una suma de objetos localizados, no como un sistema de flujos.</li>
-              <li><strong>Segundo hallazgo:</strong> produce una red de “mundo pequeño” —estructuras densas hacia adentro y aisladas entre sí— que el texto no evidencia porque solo se lee línea por línea.</li>
-              <li><strong>Tercer hallazgo:</strong> formula reglas generativas (Art. 304: IC 5.0 / 6.0 / 7.0) sin ningún mecanismo para anticipar lo que producen cuando miles de agentes actúan sobre ellas al mismo tiempo.</li>
-              <li><strong>Conclusión:</strong> autorizar una actividad no significa producirla, y prohibir un resultado no garantiza que desaparezcan las relaciones que lo generan. Por eso el POT necesita ser complementado —no sustituido— por modelos capaces de representar la dinámica, la emergencia y la autoorganización del territorio real.</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- RECOMENDACIONES -->
-    <div class="recommendations-section">
-      <h3><i class="fa-solid fa-lightbulb"></i> Recomendaciones para contrastar Discurso vs Realidad</h3>
-
-      <div class="recommendations-grid">
-        <div class="rec-card">
-          <div class="rec-number">1</div>
-          <div class="rec-content">
-            <h4>Declarar explícitamente las jerarquías</h4>
-            <p>Nombre como subordinación lo que hoy aparece como relación implícita (Metro ➞ demás modos, EIP ➞ patrimonio, transporte ➞ corredores verdes), para hacer visible la arquitectura jerárquica del modelo.
-            <div class="rec-impact">
-              <span class="impact-badge">Impacto: +21%</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="rec-card">
-          <div class="rec-number">2</div>
-          <div class="rec-content">
-            <h4>Neutralizar la realimentación negativa del suelo</h4>
-            <p>Acoplar las políticas de vivienda VIS/PIP al desarrollo del Metro con mecanismos anticapitalización del suelo, para que la accesibilidad no expulse a la población que el sistema debe conectar.
-            <div class="rec-impact">
-              <span class="impact-badge">Impacto: +19%</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="rec-card">
-          <div class="rec-number">3</div>
-          <div class="rec-content">
-            <h4>Dar autonomía estructural al cuidado y al patrimonio</h4>
-            <p>Conectar operativamente las Manzanas del Cuidado y el patrimonio cultural con la movilidad y la vivienda, más allá de su función de “anclas” o de “inscripción” simbólica.
-            <div class="rec-impact">
-              <span class="impact-badge">Impacto: +15%</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="rec-card">
-          <div class="rec-number">4</div>
-          <div class="rec-content">
-            <h4>Harmonizar la dependencia ambiental y territorial</h4>
-            <p>Incluir el Plan de Ordenación y Manejo de la Cuenca del Río Bogotá como instrumento de jerarquía superior a la estructura ecológica, según lo señalan las observaciones técnicas al POT.
-            <div class="rec-impact">
-              <span class="impact-badge">Impacto: +13%</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- BOTONES DE ACCIÓN -->
-    <div class="action-buttons">
-      <button class="btn-primary" onclick="generateODSReport()">
-        <i class="fa-solid fa-file-pdf"></i> Generar Reporte de Relaciones
-      </button>
-      <button class="btn-secondary" onclick="downloadAlignment()">
-        <i class="fa-solid fa-download"></i> Descargar Tabla
-      </button>
-      <button class="btn-secondary" onclick="shareAnalysis()">
-        <i class="fa-solid fa-share-nodes"></i> Compartir Análisis
-      </button>
-    </div>
-
-    <footer>
-      "No se trata de representar la ciudad, sino de comprenderla para transformarla." — <span>Equipo POT Reverse Engineering</span>
-    </footer>
+    </section>
 
   </main>
-
 </div>
 
-<script src="modulo-03.js"></script>
+  <!-- POPUP DE CITA: se abre al hacer clic sobre una conexión -->
+  <div class="quote-backdrop hidden" id="quoteBackdrop" role="dialog" aria-modal="true" aria-label="Cita documental de la conexión">
+    <article class="quote-modal">
+      <button class="modal-close" id="quoteClose" type="button" aria-label="Cerrar cita">×</button>
+      <h3 class="quote-rel" id="quoteRel"></h3>
+      <div class="quote-tags" id="quoteTags"></div>
+      <div class="quote-explanation-label">EXPLICACIÓN</div>
+      <p class="quote-explanation" id="quoteExplanation"></p>
+      <blockquote class="quote-text" id="quoteText"></blockquote>
+      <div class="quote-foot">
+        <div class="quote-page" id="quotePage"></div>
+        <div class="quote-sec" id="quoteSec"></div>
+      </div>
+    </article>
+  </div>
 
+<script src="modulo-03.js?v=off-clean-v6"></script>
+<style id="m03-final-visual-fix">
+/* Capa final: vence los overrides compartidos que estaban recortando la tabla. */
+.app .main .net-layout{height:auto!important;min-height:0!important;overflow:visible!important}
+.app .main .net-layout>.col{height:auto!important;min-height:0!important;overflow:visible!important}
+.app .main .net-layout>.col:first-child{height:500px!important;min-height:500px!important;max-height:500px!important;overflow:visible!important}
+.app .main .net-layout>.col:not(.right){height:500px!important;min-height:500px!important;max-height:500px!important;overflow:visible!important}
+.app .main .net-layout{grid-auto-rows:500px!important;height:500px!important;min-height:500px!important;max-height:500px!important}
+.app .main .net-layout>.col:not(.right){align-self:start!important}
+.app .main .net-layout>.col.right{height:500px!important;min-height:500px!important;max-height:500px!important;overflow-y:auto!important;overflow-x:hidden!important;scrollbar-color:#46d6d0 #0b0c0f!important;scrollbar-width:thin!important}
+.app .main .net-layout>.col.right::-webkit-scrollbar{width:8px}
+.app .main .net-layout>.col.right::-webkit-scrollbar-track{background:#0b0c0f!important}
+.app .main .net-layout>.col.right::-webkit-scrollbar-thumb{background:#277d7a!important;border:2px solid #0b0c0f!important;border-radius:8px}
+.app .main .net-layout>.col:last-child{height:auto!important;overflow:visible!important}
+.m03-relations-table{display:block!important;height:668px!important;min-height:668px!important;overflow:hidden!important}
+.m03-table-scroll{display:block!important;height:620px!important;max-height:620px!important;overflow:auto!important}
+.net-stage{height:500px!important;min-height:500px!important;max-height:500px!important;overflow:hidden!important}
+  .net-stage svg{height:500px!important;min-height:500px!important;max-height:500px!important;width:100%!important;display:block!important}
+  /* Guía horizontal común con la tabla y los indicadores, como en el Módulo 02. */
+  .app .main .net-layout{padding-left:0!important}
+  .app .main .net-layout>.col:first-child{margin-left:0!important}
+  .app .main .network-metrics-strip{margin-left:0!important}
+  .app .main .m03-relations-table{margin-left:0!important}
+
+.net-card{height:auto!important;overflow:visible!important}
+.app .main .net-body{height:500px!important;min-height:500px!important;max-height:500px!important;overflow:hidden!important}
+.app .main .net-card{height:auto!important;min-height:0!important;max-height:none!important}
+.app>.main>.net-layout>.col:not(.right)>.net-card{height:auto!important;min-height:0!important;max-height:none!important;overflow:visible!important}
+.welcome h1,.welcome h2{font-size:clamp(40px,4.25vw,54px)!important;line-height:1.02!important;letter-spacing:-.045em!important;max-width:920px!important;margin-bottom:10px!important}
+.module03-reference-legend,.m03-reference-legend,.m03-filter-action,.zoom-controls,.icon-btn,.scenario-btn{background:#111416!important;border-color:rgba(70,214,208,.22)!important}
+.welcome{border-top:0!important}
+.app>.main>.welcome{border-top:0!important}
+.network-finding{background:linear-gradient(145deg,#151817,#101313)!important;border-color:rgba(232,154,108,.35)!important}
+/* Tabla: réplica visual del patrón matrix del Módulo 02. */
+.m03-relations-table.analysis-container{display:block!important;margin:10px 0 28px!important}
+.m03-relations-table .analysis-card{display:block!important;background:#111416!important;border:1px solid rgba(255,255,255,.10)!important;border-radius:12px!important;padding:20px!important}
+.m03-relations-table .card-header{display:flex!important;align-items:center!important;justify-content:space-between!important;margin-bottom:20px!important}
+.m03-relations-table .card-header h3{font-family:'Space Grotesk',sans-serif!important;font-size:14px!important;font-weight:700!important;color:#e9edf1!important;display:flex!important;align-items:center!important;gap:8px!important;margin:0!important}
+.m03-relations-table .card-header h3 i{color:#46d6d0!important;font-size:13px!important}
+.m03-relations-table #m03TableCount{font-size:10px!important;color:#9aa8a8!important;letter-spacing:.3px!important}
+.m03-relations-table .matrix-container{border:1px solid rgba(255,255,255,.10)!important;border-radius:8px!important;overflow:hidden!important;height:620px!important;max-height:620px!important}
+.m03-relations-table .matrix-row{display:flex!important;border-bottom:1px solid rgba(255,255,255,.07)!important;cursor:pointer!important;min-height:46px!important}
+.m03-relations-table .matrix-row:hover{background:rgba(255,255,255,.025)!important}
+.m03-relations-table .matrix-row:last-child{border-bottom:none!important}
+.m03-relations-table .matrix-row.header{background:#171b1d!important;cursor:default!important;min-height:38px!important}
+.m03-relations-table .matrix-row.header:hover{background:#171b1d!important}
+.m03-relations-table .matrix-cell{flex:1!important;min-width:0!important;padding:12px 14px!important;font-size:11.5px!important;line-height:1.4!important;color:#c8d0d0!important;border-right:1px solid rgba(255,255,255,.07)!important;display:flex!important;align-items:center!important;overflow-wrap:anywhere!important}
+.m03-relations-table .matrix-cell:last-child{border-right:none!important}
+.m03-relations-table .matrix-cell.header-cell{font-weight:700!important;color:#e9edf1!important;font-size:11px!important}
+.m03-relations-table .matrix-analysis{flex:2!important;color:#9aa8a8!important;font-size:11px!important;line-height:1.45!important}
+.m03-relations-table .m03-type-pill{display:inline-flex!important;align-items:center!important;padding:4px 8px!important;border-radius:4px!important;font-size:10px!important;font-weight:700!important;white-space:nowrap!important;background:rgba(70,214,208,.10)!important;color:#46d6d0!important;border:1px solid rgba(70,214,208,.25)!important}
+.m03-relations-table .m03-type-pill.indirecta{background:rgba(232,154,108,.10)!important;color:#e89a6c!important;border-color:rgba(232,154,108,.25)!important}
+.m03-relations-table .matrix-row.is-off{opacity:.42!important}
+@media(min-width:1000px){
+  .network-metrics-strip,.m03-relations-table{width:100%!important;margin-left:0!important;margin-right:0!important}
+  .network-metrics-strip{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+  .m03-full-width-metrics,.m03-full-width-table{width:100%!important;margin-left:0!important;margin-right:0!important}
+  .m03-full-width-metrics{margin-top:12px!important}
+  /* Proporción horizontal del Módulo 02: 791 px de canvas + 20 px + 260 px de panel. */
+  .app .main .welcome,
+  .app .main .net-layout,
+  .app .main .network-metrics-strip,
+  .app .main .m03-relations-table{width:100%!important;max-width:100%!important;box-sizing:border-box!important}
+  .app .main .net-layout{grid-template-columns:minmax(0,1fr) 260px!important;gap:20px!important}
+}
+
+html,body{scrollbar-color:#46d6d0 #0b0c0f!important;scrollbar-width:thin!important}
+html::-webkit-scrollbar,body::-webkit-scrollbar,.m03-table-scroll::-webkit-scrollbar{width:10px;height:10px}
+html::-webkit-scrollbar-track,body::-webkit-scrollbar-track,.m03-table-scroll::-webkit-scrollbar-track{background:#0b0c0f!important;border-left:1px solid rgba(70,214,208,.08)}
+html::-webkit-scrollbar-thumb,body::-webkit-scrollbar-thumb,.m03-table-scroll::-webkit-scrollbar-thumb{background:#277d7a!important;border:2px solid #0b0c0f!important;border-radius:8px}
+html::-webkit-scrollbar-thumb:hover,body::-webkit-scrollbar-thumb:hover,.m03-table-scroll::-webkit-scrollbar-thumb:hover{background:#46d6d0!important}
+@media(max-width:900px){.m03-relations-table .matrix-cell{padding:10px 8px!important;font-size:10px!important}.m03-relations-table .matrix-analysis{display:none!important}.m03-relations-table .matrix-cell{flex:1!important}}
+
+</style>
 </body>
 </html>

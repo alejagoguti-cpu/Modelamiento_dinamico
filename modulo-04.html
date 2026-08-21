@@ -1,293 +1,79 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RAPOT · Macromodelos</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="stylesheet" href="modulo-04.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RAPOT · Redes conceptuales del POT</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="modulo-04.css">
+<link rel="stylesheet" href="network06-shared.css">
+<link rel="stylesheet" href="sidebar-unified.css">
+    <link rel="stylesheet" href="module02-system.css?v=spacing-v3">
 </head>
-<body>
-<div class="app">
-
-  <aside class="sidebar">
-    <div class="brand">
-      <div class="mark"><i class="fa-solid fa-diagram-project"></i></div>
-      <span>RAPOT</span>
-    </div>
-
-    <div class="nav-group">
-      <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-house"></i> Dashboard</a>
-    </div>
-
-    <div class="nav-group">
-      <div class="nav-label">MÓDULOS</div>
-      <a href="modulo-01.html" class="nav-item"><span class="num">01</span><i class="fa-solid fa-diagram-project"></i> Una ciudad que no cabe en el POT</a>
-      <a href="modulo-02.html" class="nav-item"><span class="num">02</span><i class="fa-solid fa-chart-simple"></i> Medir la Red</a>
-      <a href="modulo-03.html" class="nav-item"><span class="num">03</span><i class="fa-solid fa-eye"></i> Discurso vs Realidad</a>
-      <a href="modulo-04.html" class="nav-item active"><span class="num">04</span><i class="fa-solid fa-bullseye"></i> Macromodelos</a>
-      <a href="modulo-05.html" class="nav-item"><span class="num">05</span><i class="fa-solid fa-layer-group"></i> Las Escalas — 33 UPL</a>
-      <a href="modulo-06.html" class="nav-item"><span class="num">06</span><i class="fa-solid fa-hourglass-half"></i> El Tiempo Ausente</a>
-      <a href="modulo-07.html" class="nav-item"><span class="num">07</span><i class="fa-solid fa-scale-balanced"></i> Postura Crítica</a>
-      <a href="modulo-08.html" class="nav-item"><span class="num">08</span><i class="fa-solid fa-flask"></i> Simulador</a>
-      <a href="modulo-09.html" class="nav-item"><span class="num">09</span><i class="fa-solid fa-atom"></i> Modelo Propio</a>
-    </div>
-
-    <div class="nav-group">
-      <div class="nav-label">GESTIÓN</div>
-      <a href="proyectos.html" class="nav-item"><i class="fa-solid fa-folder"></i> Proyectos</a>
-      <a href="fuentes.html" class="nav-item"><i class="fa-solid fa-file-lines"></i> Fuentes y Documentos</a>
-      <a href="favoritos.html" class="nav-item"><i class="fa-solid fa-star"></i> Favoritos</a>
-      <a href="reportes.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Reportes</a>
-      <a href="configuracion.html" class="nav-item"><i class="fa-solid fa-gear"></i> Configuración</a>
-    </div>
-
-    <div class="sidebar-footer">
-      <div class="avatar-sm">EU</div>
-      <div class="user-meta">
-        <div class="name">Equipo Urbano</div>
-        <div class="role">Administrador</div>
-      </div>
-      <a href="demo.html" class="logout-btn"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
+<body class="module02-reference-page">
+  <div class="app">
+    <aside class="sidebar sidebar-icons-only">
+    <div class="brand-icon"><i class="fa-solid fa-diagram-project"></i></div>
+    <nav class="icon-nav">
+      <a href="modulo-02.html" class="icon-nav-item" title="Medir la Red"><i class="fa-solid fa-chart-simple"></i></a>
+      <a href="modulo-03.html" class="icon-nav-item" title="Discurso vs Realidad"><i class="fa-solid fa-eye"></i></a>
+      <a href="modulo-04.html" class="icon-nav-item active" title="Macromodelos"><i class="fa-solid fa-bullseye"></i></a>
+      <a href="modulo-05.html" class="icon-nav-item" title="Lo que no está"><i class="fa-solid fa-magnifying-glass"></i></a>
+      <a href="modulo-06.html" class="icon-nav-item" title="POT ↔ ODS"><i class="fa-solid fa-earth-americas"></i></a>
+      <a href="modulo-07.html" class="icon-nav-item" title="Simulador"><i class="fa-solid fa-flask"></i></a>
+      <a href="modulo-08.html" class="icon-nav-item" title="Modelo Propio"><i class="fa-solid fa-city"></i></a>
+    </nav>
+    <div class="icon-nav-footer">
+      <a href="configuracion.html" class="icon-nav-item" title="Configuración"><i class="fa-solid fa-gear"></i></a>
+      <a href="demo.html" class="icon-nav-item" title="Salir"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
     </div>
   </aside>
 
-  <main class="main">
+    <main class="main">
+      <header class="topbar"><div><span class="eyebrow">MÓDULO 04</span><h1>Macromodelos del POT</h1></div><div class="avatar-sm">EU</div></header>
+      <section class="welcome">
+        <h2>Dos lecturas conectadas sobre lo que entendemos del POT</h2>
+        <p>Elimina el modelo central y observa dos redes conceptuales: una <strong>ambientalista</strong> y otra <strong>humanista</strong>. Haz clic en los sistemas humanistas para desplegar sus conceptos concretos y explorar sus conexiones.</p>
+      </section>
 
-    <div class="topbar">
-      <h1>Macromodelos</h1>
-      <div class="topbar-actions">
-        <div class="search-box"><i class="fa-solid fa-magnifying-glass"></i> Buscar en el sistema...</div>
-        <div class="icon-btn"><i class="fa-regular fa-bell"></i><span class="dot"></span></div>
-        <div class="icon-btn"><i class="fa-regular fa-circle-question"></i></div>
-        <div class="avatar-sm">EU</div>
-      </div>
-    </div>
-
-    <div class="welcome">
-      <h2>Macromodelos — ¿de dónde surge este modelo de ciudad?</h2>
-      <p>El POT no surge de la nada. Es producido por <strong>otros modelos</strong>: instituciones, equipos técnicos, disciplinas, marcos jurídicos, paradigmas económicos y formas históricas de comprender qué es una ciudad. Aquí hacemos <strong>ingeniería inversa</strong>: distinguimos entre <strong>lo que el modelo dice que es</strong> (modelo declarado) y <strong>lo que parece ser</strong> cuando analizamos su arquitectura relacional (modelo operativo). La pregunta con sustento: ¿qué evidencias dentro de la estructura del POT permiten inferir que determinados macromodelos tienen mayor influencia que otros?</p>
-    </div>
-
-    <!-- INSIGHTS -->
-    <div class="ods-insight-stats" id="odsInsightStats">
-      <div class="insight-card" data-insight="operativo" style="--insight-color:#ef4444;" onclick="toggleInsight('operativo')">
-        <div class="insight-icon"><i class="fa-solid fa-gears"></i></div>
-        <div class="insight-title">Operativos dominantes</div>
-      </div>
-      <div class="insight-card" data-insight="declarado" style="--insight-color:#4ade80;" onclick="toggleInsight('declarado')">
-        <div class="insight-icon"><i class="fa-solid fa-bullhorn"></i></div>
-        <div class="insight-title">Declarados fuertes</div>
-      </div>
-      <div class="insight-card" data-insight="subordinado" style="--insight-color:#f5c945;" onclick="toggleInsight('subordinado')">
-        <div class="insight-icon"><i class="fa-solid fa-arrow-trend-down"></i></div>
-        <div class="insight-title">Subordinados declarados</div>
-      </div>
-      <div class="insight-card" data-insight="residual" style="--insight-color:#94a3b8;" onclick="toggleInsight('residual')">
-        <div class="insight-icon"><i class="fa-solid fa-ghost"></i></div>
-        <div class="insight-title">Residuales</div>
-      </div>
-      <div class="insight-card" data-insight="todos" style="--insight-color:#4ade80;" onclick="toggleInsight('todos')">
-        <div class="insight-icon"><i class="fa-solid fa-diagram-project"></i></div>
-        <div class="insight-title">Ver toda la red</div>
-      </div>
-    </div>
-
-    <!-- RED -->
-    <div class="network-section">
-      <div class="network-header">
-        <h3><i class="fa-solid fa-bullseye"></i> La red de macromodelos — lo que el POT dice y lo que su estructura hace</h3>
-        <div class="network-controls">
-          <button class="control-btn active" onclick="filterNetwork('all')">Todos</button>
-          <button class="control-btn" onclick="filterNetwork('operativo')">Operativos</button>
-          <button class="control-btn" onclick="filterNetwork('declarado')">Declarados</button>
-          <button class="control-btn" onclick="filterNetwork('subordinado')">Subordinados</button>
-          <button class="control-btn" onclick="filterNetwork('residual')">Residuales</button>
-        </div>
-      </div>
-
-      <div class="network-viz-wrap">
-        <svg id="networkViz" viewBox="0 0 1470 560" preserveAspectRatio="xMidYMid meet"></svg>
-
-        <div class="network-sidebar">
-          <aside class="network-legend" id="networkLegend">
-            <div class="legend-title">Macromodelos</div>
-
-            <label class="legend-item" data-type="operativo">
-              <input type="checkbox" checked>
-              <span class="legend-swatch swatch-comp"></span>
-              Operativo dominante
-            </label>
-
-            <label class="legend-item" data-type="declarado">
-              <input type="checkbox" checked>
-              <span class="legend-swatch swatch-func"></span>
-              Declarado fuerte
-            </label>
-
-            <label class="legend-item" data-type="subordinado">
-              <input type="checkbox" checked>
-              <span class="legend-swatch swatch-causal"></span>
-              Subordinado declarado
-            </label>
-
-            <label class="legend-item" data-type="residual">
-              <input type="checkbox" checked>
-              <span class="legend-swatch swatch-social"></span>
-              Residual
-            </label>
-
-            <div class="legend-divider"></div>
-            <div class="legend-hint">Clic en una línea: ver la relación y el sustento.<br>Doble clic en una bola: apagarla/encenderla.<br>Triple clic en una bola: ver solo su flujo.<br>Los nodos se arrastran y las conectadas lo siguen.</div>
-          </aside>
-
-          <div class="edge-info-panel" id="edgeInfoPanel">
-            <div class="edge-info-header">
-              <span id="edgeInfoTitle">Relación</span>
-              <button class="edge-info-close" id="edgeInfoClose" type="button" aria-label="Cerrar">&times;</button>
-            </div>
-            <div class="edge-info-type" id="edgeInfoType"></div>
-            <div class="edge-info-quote" id="edgeInfoQuote"></div>
-            <div class="edge-info-page" id="edgeInfoPage"></div>
+      <section class="workspace">
+        <aside class="conventions panel">
+          <div class="panel-kicker">GUÍA DE LECTURA</div>
+          <h2>Convenciones</h2>
+          <p class="muted">Los colores identifican el tipo de concepto y las líneas muestran cómo se relacionan dentro de la lectura del POT.</p>
+          <div class="legend-group">
+            <h3>Red ambientalista</h3>
+            <label><span class="dot green"></span>Concepto ambiental concreto</label>
+            <label><span class="line green-line"></span>Conexión ambiental</label>
+            <label><span class="dot green-soft"></span>Red ecológica relacionada</label>
           </div>
-        </div>
-      </div>
-    </div>
+          <div class="legend-group">
+            <h3>Red humanista</h3>
+            <label><span class="dot orange"></span>Sistema humanista</label>
+            <label><span class="dot yellow"></span>Sistema socioeconómico</label>
+            <label><span class="dot blue"></span>Sistema de gobernanza</label>
+            <label><span class="dot purple"></span>Sistema funcionalista</label>
+          </div>
+          <div class="legend-group">
+            <h3>Relación</h3>
+            <label><span class="line connection"></span>Conexión entre conceptos</label>
+            <label><span class="line dashed"></span>Conexión transversal</label>
+          </div>
+          <div class="hint"><i class="fa-solid fa-hand-pointer"></i><span>Haz clic en una bola del lado humanista para mostrar u ocultar sus conceptos.</span></div>
+        </aside>
 
-    <!-- DECLARADO vs OPERATIVO -->
-    <div class="synergies-section">
-      <div class="synergies-grid">
-        <div class="synergy-card success">
-          <div class="synergy-icon"><i class="fa-solid fa-book-open"></i></div>
-          <div class="synergy-content">
-            <h4>Lo que el modelo dice que es</h4>
-            <ul>
-              <li>Un plan <strong>ambiental y cuidador</strong>: "emergencia climática", EEP, Manzanas del Cuidado, ciudad de proximidad.</li>
-              <li>Un plan <strong>inclusivo</strong>: hábitat sostenible, vivienda VIS/VIP, protección a moradores.</li>
-              <li>Un plan <strong>participativo</strong>: cabildo abierto, planeación participativa por UPL (Art. 9, Parágrafo 1).</li>
-            </ul>
-          </div>
-        </div>
-        <div class="synergy-card conflict">
-          <div class="synergy-icon"><i class="fa-solid fa-microscope"></i></div>
-          <div class="synergy-content">
-            <h4>Lo que el modelo parece ser — ingeniería inversa</h4>
-            <ul>
-              <li>Su arquitectura relacional <strong>subordina sistemáticamente</strong> los componentes ecológicos y de cuidado a dinámicas funcionales, inmobiliarias y de infraestructura.</li>
-              <li>Los <strong>instrumentos técnicos</strong> (IC, CESI, ESECI, TDR, captura de valor) organizan la ciudad como <strong>activo productivo</strong>.</li>
-              <li>El modelo <strong>declarado es ambientalista-comunitario</strong>; el modelo <strong>operativo es tecnocrático-productivista</strong> con fuerte anclaje económico.</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- MATRIZ -->
-    <div class="analysis-container">
-      <div class="analysis-card full-width">
-        <div class="card-header">
-          <h3><i class="fa-solid fa-table-list"></i> Matriz declarado vs. operativo — evidencias estructurales</h3>
-        </div>
-        <div class="matrix-container">
-          <div class="matrix-row header">
-            <div class="matrix-cell header-cell">Macromodelo</div>
-            <div class="matrix-cell header-cell">Posición declarada</div>
-            <div class="matrix-cell header-cell" style="flex:1.6;">Evidencia estructural (arquitectura relacional)</div>
-            <div class="matrix-cell header-cell">Posición operativa</div>
-          </div>
-          <div class="matrix-row">
-            <div class="matrix-cell" style="font-weight:700;">Tecnocrático</div>
-            <div class="matrix-cell">Implícito</div>
-            <div class="matrix-cell" style="flex:1.6;color:var(--text-dim);">Los índices (IC, CESI, ESECI), los mapas CG y la escalera del Art. 304 estructuran todas las demás relaciones: el plan se gobierna con números.</div>
-            <div class="matrix-cell" style="font-weight:700;color:#ef4444;">Dominante</div>
-          </div>
-          <div class="matrix-row">
-            <div class="matrix-cell" style="font-weight:700;">Productivista / desarrollista</div>
-            <div class="matrix-cell">Central (discurso de "competitividad con inclusión")</div>
-            <div class="matrix-cell" style="flex:1.6;color:var(--text-dim);">"Especialización inteligente del territorio" (Art. 9, estr. 3) y "plataforma productiva" (Art. 11 Par. 1): la estructura conecta territorio con empleo y mercado.</div>
-            <div class="matrix-cell" style="font-weight:700;color:#ef4444;">Dominante</div>
-          </div>
-          <div class="matrix-row">
-            <div class="matrix-cell" style="font-weight:700;">Economicista / mercantilista</div>
-            <div class="matrix-cell">Matizada ("captura pública del valor")</div>
-            <div class="matrix-cell" style="flex:1.6;color:var(--text-dim);">TDR, cesiones del Art. 304 (englobe, esquina, totalidad de predios) y subsidios tratan el suelo como activo financiero que el plan debe capturar.</div>
-            <div class="matrix-cell" style="font-weight:700;color:#ef4444;">Dominante</div>
-          </div>
-          <div class="matrix-row">
-            <div class="matrix-cell" style="font-weight:700;">Ambientalista</div>
-            <div class="matrix-cell">Central (emergencia climática, EEP, Bogotá Reverdece)</div>
-            <div class="matrix-cell" style="flex:1.6;color:var(--text-dim);">En la red (módulo 01) las aristas ecológicas son mayoritariamente discontinuas, indirectas o de resiliencia: la EEP no ancla operativamente el sistema.</div>
-            <div class="matrix-cell" style="font-weight:700;color:#f5c945;">Subordinada</div>
-          </div>
-          <div class="matrix-row">
-            <div class="matrix-cell" style="font-weight:700;">Comunitario / del cuidado</div>
-            <div class="matrix-cell">Muy visible (Manzanas del Cuidado, p. 122)</div>
-            <div class="matrix-cell" style="flex:1.6;color:var(--text-dim);">Las Manzanas se insertan como "anclas" sobre equipamientos existentes: el cuidado se apoya en la estructura funcional sin transformar su lógica.</div>
-            <div class="matrix-cell" style="font-weight:700;color:#f5c945;">Subordinada</div>
-          </div>
-          <div class="matrix-row">
-            <div class="matrix-cell" style="font-weight:700;">Jurídico-estatista</div>
-            <div class="matrix-cell">Explícito (decreto, Concejo, plazos T13/T15/T16)</div>
-            <div class="matrix-cell" style="flex:1.6;color:var(--text-dim);">El seguimiento y evaluación mide cumplimiento de metas programáticas: el Estado ordena con plazos, pero no modela comportamientos dinámicos.</div>
-            <div class="matrix-cell" style="font-weight:700;color:#4ade80;">Fuerte</div>
-          </div>
-          <div class="matrix-row">
-            <div class="matrix-cell" style="font-weight:700;">Neoliberal (residuo)</div>
-            <div class="matrix-cell">Ausente en el discurso (se critica el modelo anterior)</div>
-            <div class="matrix-cell" style="flex:1.6;color:var(--text-dim);">La vivienda sigue produciéndose por el mercado con subsidios; la especulación del suelo (Capellanía 27,03→29,32 ha) sigue siendo la fuerza que la norma intenta capturar, no eliminar.</div>
-            <div class="matrix-cell" style="font-weight:700;color:#94a3b8;">Residual</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- RECOMENDACIONES -->
-    <div class="recommendations-section">
-      <h3><i class="fa-solid fa-compass"></i> Aprender a desarmar modelos</h3>
-      <div class="recommendations-grid">
-        <div class="rec-card">
-          <div class="rec-number">R1</div>
-          <div class="rec-content">
-            <h4>Separar el discurso de la arquitectura relacional</h4>
-            <p>No basta con leer lo que el POT dice: hay que medir qué nodos anclan realmente el sistema y cuáles quedan como ornamento discursivo.</p>
-            <div class="rec-impact"><span class="impact-badge">Método</span></div>
-          </div>
-        </div>
-        <div class="rec-card">
-          <div class="rec-number">R2</div>
-          <div class="rec-content">
-            <h4>Hacer ingeniería inversa sistemática</h4>
-            <p>Para cada componente del plan, rastrear sus supuestos: ¿qué institución, disciplina o paradigma lo produce? Los módulos 01–03 ya lo hacen con redes.</p>
-            <div class="rec-impact"><span class="impact-badge">Análisis</span></div>
-          </div>
-        </div>
-        <div class="rec-card">
-          <div class="rec-number">R3</div>
-          <div class="rec-content">
-            <h4>Contrastar modelo declarado y operativo</h4>
-            <p>La diferencia entre ambos (aquí: ambientalista declarado vs. tecnocrático-productivista operativo) es el espacio donde nace la crítica y la propuesta.</p>
-            <div class="rec-impact"><span class="impact-badge">Crítica</span></div>
-          </div>
-        </div>
-        <div class="rec-card">
-          <div class="rec-number">R4</div>
-          <div class="rec-content">
-            <h4>Construir el modelo propio sobre supuestos explícitos</h4>
-            <p>El módulo 09 parte de aquí: si la ciudad emerge de agentes y no de polígonos, el macromodelo de fondo cambia — de la ciudad-máquina a la ciudad-viva.</p>
-            <div class="rec-impact"><span class="impact-badge">Propuesta</span></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <footer>
-      "No se trata de seleccionar una etiqueta, sino de encontrar en la estructura del plan la evidencia de qué macromodelos mandan."
-      <span> — RAPOT · Macromodelos</span>
-    </footer>
-  </main>
-</div>
-<script src="modulo-04.js"></script>
+        <section class="network-card panel">
+          <div class="network-head"><div><div class="panel-kicker">RED CONCEPTUAL INTERACTIVA</div><h2>Ambientalista ↔ Humanista</h2></div><button id="resetBtn" class="reset-btn"><i class="fa-solid fa-rotate-left"></i> Restablecer</button></div>
+          <div id="selectionNote" class="selection-note">Selecciona un sistema de la red humanista.</div>
+          <svg id="networkViz" viewBox="0 0 1200 760" role="img" aria-label="Red conceptual ambientalista y humanista del POT"></svg>
+<div class="network06-zoom-controls" aria-label="Controles de zoom de la red"><button class="network06-zoom-in" type="button">+</button><span class="network06-zoom-level">100%</span><button class="network06-zoom-out" type="button">−</button></div>
+          <div id="conceptDetail" class="concept-detail" aria-live="polite"><strong>Cómo leer la red</strong><span>La bola ambientalista contiene conceptos ecológicos concretos. La bola humanista es mayor y se conecta con tres sistemas: socioeconómico, gobernanza y funcionalista.</span></div>
+        </section>
+      </section>
+    </main>
+  </div>
+  <script src="modulo-04.js?module06-style-v1"></script>
 </body>
 </html>
