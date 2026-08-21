@@ -470,6 +470,48 @@
     abstractEmployment.forEach((matcher) => removeAllNodesByLabel("empleo", matcher));
     abstractCarbon.forEach((matcher) => removeAllNodesByLabel("carbono", matcher));
 
+    const mergeNodesByLabel = (key, primaryMatcher, duplicateMatchers) => {
+      const item = networks[key];
+      const primary = item.nodes.findIndex((node) => primaryMatcher.test(clean(node[0])));
+      if (primary < 0) return;
+      const duplicates = item.nodes
+        .map((node, index) => ({ index, label: clean(node[0]) }))
+        .filter(({ index, label }) => index !== primary && duplicateMatchers.some((matcher) => matcher.test(label)))
+        .map(({ index }) => index);
+      if (!duplicates.length) return;
+      const duplicateSet = new Set(duplicates);
+      const oldToNew = new Map();
+      const kept = [];
+      item.nodes.forEach((node, index) => {
+        if (duplicateSet.has(index)) return;
+        oldToNew.set(index, kept.length);
+        kept.push(node);
+      });
+      const primaryNew = oldToNew.get(primary);
+      duplicates.forEach((index) => oldToNew.set(index, primaryNew));
+      const edgeKeys = new Set();
+      item.edges = item.edges
+        .map(([a, b, type]) => [oldToNew.get(a), oldToNew.get(b), type])
+        .filter(([a, b, type]) => a !== b && Number.isInteger(a) && Number.isInteger(b) && !edgeKeys.has(`${a}-${b}-${type}`))
+        .filter(([a, b, type]) => {
+          const keyName = `${a}-${b}-${type}`;
+          if (edgeKeys.has(keyName)) return false;
+          edgeKeys.add(keyName);
+          return true;
+        });
+      item.nodes = kept;
+      item._categories = item.nodes.map((node) => thematicCategory(key, node[0]));
+    };
+
+    mergeNodesByLabel("carbono", /^Red férrea\s+urbana y regional$/, [
+      /^Cuatro líneas\s+de Metro$/,
+      /^Regiotram\s+Occidente y Norte$/,
+    ]);
+    mergeNodesByLabel("carbono", /^Corredores verdes$/, [
+      /^Corredores verdes arborizados$/,
+      /^Andenes, plazas y parques conectados$/,
+    ]);
+
     const layer = (label) => {
       const s = label.toLowerCase();
       if (
