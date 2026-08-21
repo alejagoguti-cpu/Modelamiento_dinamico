@@ -1427,7 +1427,7 @@ const MOVILIDAD_LINEAS_ROSA = [
   { id: "regiotram_ramal_centro", color: "#ffc06a", rel: "regiotram_norte", etiqueta: "", puntos: [[50.9,45],[50,46.8],[49.2,48.6],[48.5,50.6],[47.9,52.6],[47.6,54.2]] },
   { id: "regiotram_occidente", color: "#ffc06a", rel: "regiotram_norte", etiqueta: "", puntos: [[33.96,28.15],[34.83,29.41],[35.33,30.96],[35.83,32.52],[36.38,34.07],[36.92,35.63],[37.5,37.19],[38.38,38.74],[39.25,40.3],[40.13,41.48],[41,43.04],[41.38,44.59],[41.71,46.15],[42.08,47.7],[42.46,49.26],[42.79,50.81],[43.21,52.37],[42.33,53.93],[41.46,55.48],[40.58,57.04],[39.71,58.59],[38.83,60.15],[37.96,61.7],[37.08,63.26],[36.21,64.81],[35.33,66.37],[34.46,67.93],[33.92,69.48],[33.29,71.04],[33.33,72.59],[33.33,74.15],[33.42,75.7],[33.46,77.26],[33.54,78.81],[33.58,80.37],[33.63,81.93],[33.71,83.48],[33.75,85.04],[33.46,86.59],[32.79,88.15],[32.08,89.7],[31.33,91.26],[30.67,92.81],[29.92,94.37],[30.08,95.19]] },
   { id: "regiotram_norte", color: "#ffc06a", rel: "regiotram_norte", etiqueta: "", puntos: [[3.96,26.22],[5.63,26.07],[7.29,26.81],[8.96,27.56],[10.63,28.3],[12.29,28.3],[13.96,28.22],[15.63,27.7],[17.29,27.7],[18.96,27.26],[20.63,27.33],[22.29,27.48],[23.96,27.48],[25.62,27.63],[27.29,27.7],[28.96,27.78],[30.63,27.85],[32.29,27.93],[33.96,28]] },
-  { id: "primera_linea_metro", color: "#47b9ff", rel: "primera_linea_metro", etiqueta: "", puntos: [[42.67,37.56],[44.2,39.8],[46.1,42.3],[48.4,44.8],[50.8,47.1],[53.1,49.3],[55.1,51.4],[56.8,53.8],[58.0,56.2],[57.2,60.2],[56.3,64.7],[54.8,68.8],[52.6,72.8],[49.2,75.2],[46.6,77.0]] },
+  { id: "primera_linea_metro", color: "#47b9ff", rel: "primera_linea_metro", etiqueta: "", puntos: [[0,48],[6,48],[13,48],[18,45],[22,42],[24,44],[29,43],[35,28],[40,29],[44,31],[48,36],[51,41],[50,48],[47,55],[44,61],[44,68],[46,74],[43,77],[38,78]] },
 ];
 
 const MOVILIDAD_CORREDORES_NEON = [
@@ -1510,7 +1510,7 @@ function showMovilidadOverlay(opts) {
   `).join("");
   const trazoRosaHTML = `
     <svg class="movilidad-trazo-rosa" viewBox="0 0 100 ${MOVILIDAD_VIEWBOX_H}" preserveAspectRatio="none">
-      ${MOVILIDAD_LINEAS_ROSA.map(l => { const pts = l.puntos.map(p => p[0] + "," + (p[1] * MOVILIDAD_VIEWBOX_H / 100)).join(" "); return `<polyline data-linea="${l.id}" style="--linea-color:${l.color}" points="${pts}" /><polyline class="movilidad-trazo-hit" data-linea="${l.id}" points="${pts}" />${l.etiqueta ? `<text class="movilidad-line-label" x="${l.puntos[Math.min(3, l.puntos.length - 1)][0]}" y="${(l.puntos[Math.min(3, l.puntos.length - 1)][1] * MOVILIDAD_VIEWBOX_H / 100) - 1.6}" fill="${l.color}">${l.etiqueta}</text>` : ""}`; }).join("")}
+      ${MOVILIDAD_LINEAS_ROSA.map(l => { const pts = l.puntos.map(p => p[0] + "," + (p[1] * MOVILIDAD_VIEWBOX_H / 100)).join(" "); return `<polyline class="movilidad-line-${l.id}" data-linea="${l.id}" style="--linea-color:${l.color}" points="${pts}" /><polyline class="movilidad-trazo-hit" data-linea="${l.id}" points="${pts}" />${l.etiqueta ? `<text class="movilidad-line-label" x="${l.puntos[Math.min(3, l.puntos.length - 1)][0]}" y="${(l.puntos[Math.min(3, l.puntos.length - 1)][1] * MOVILIDAD_VIEWBOX_H / 100) - 1.6}" fill="${l.color}">${l.etiqueta}</text>` : ""}`; }).join("")}
       ${MOVILIDAD_CORREDORES_NEON.filter(l => l.hitPuntos).map(l => { const pts = l.hitPuntos.map(p => p[0] + "," + (p[1] * MOVILIDAD_VIEWBOX_H / 100)).join(" "); return `<polyline class="movilidad-trazo-hit" data-corredor="${l.id}" points="${pts}" />`; }).join("")}
     </svg>`;
   const lineaHotspotsHTML = [].map(l => `
