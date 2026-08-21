@@ -795,7 +795,7 @@ footer span { color: var(--teal); }
   animation: movilidadTrazoFlujo 5.5s linear infinite;
 }
 @keyframes movilidadTrazoFlujo { to { stroke-dashoffset: -2.5; } }
-.movilidad-trazo-rosa polyline.movilidad-line-primera_linea_metro { stroke-dasharray: none; }
+.movilidad-trazo-rosa polyline.movilidad-line-linea_verde_referencia { stroke-dasharray: none; animation: none; }
 @media (prefers-reduced-motion: reduce) {
   .movilidad-trazo-rosa polyline:not(.movilidad-trazo-hit) { animation: none; }
 }
