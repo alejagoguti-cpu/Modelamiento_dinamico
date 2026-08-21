@@ -949,3 +949,14 @@ footer span { color: var(--teal); }
   .simulador-pot-modulo p { text-align: left; }
   .simulador-pot-pilar, .simulador-pot-cita { padding: 16px 17px; }
 }
+
+
+/* Legibilidad reforzada para los textos de los pop-ups ODS y POT. */
+#nodeInfoPanel .edge-info-quote,
+#nodeInfoPanel .edge-info-analisis,
+#nodeInfoPanel .edge-info-page,
+#edgeInfoPanel .edge-info-quote,
+#edgeInfoPanel .edge-info-analisis,
+#edgeInfoPanel .edge-info-page {
+  color: #ffffff !important;
+}
