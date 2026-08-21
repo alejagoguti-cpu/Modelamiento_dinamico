@@ -371,12 +371,15 @@ body {
 .humedales-overlay-title { font-size: 15px; font-weight: 700; color: #f2f3f6; line-height: 1.3; padding-right: 12px; }
 .humedales-gestos { display: flex; flex-wrap: wrap; gap: 6px; }
 .humedales-gesto-btn {
-  border: 1px solid rgba(92,214,209,0.35); border-radius: 999px; padding: 5px 10px;
-  background: rgba(92,214,209,0.08); color: #b8f3ee; font-size: 10.5px; line-height: 1.2;
-  cursor: pointer; transition: background .15s, border-color .15s, color .15s;
+  border: 1px solid rgba(255,196,107,0.9); border-radius: 999px; padding: 6px 12px;
+  background: linear-gradient(180deg, rgba(255,196,107,0.28), rgba(92,214,209,0.16));
+  color: #fff4d6; font-size: 11px; font-weight: 800; line-height: 1.2;
+  text-shadow: 0 0 7px rgba(255,196,107,0.95); box-shadow: 0 0 10px rgba(255,196,107,0.42), inset 0 0 8px rgba(255,255,255,0.08);
+  cursor: pointer; transition: transform .15s, background .15s, border-color .15s, color .15s, box-shadow .15s;
 }
 .humedales-gesto-btn:hover, .humedales-gesto-btn.active {
-  background: rgba(92,214,209,0.2); border-color: rgba(92,214,209,0.75); color: #fff;
+  transform: translateY(-1px); background: linear-gradient(180deg, rgba(255,196,107,0.55), rgba(92,214,209,0.3));
+  border-color: #fff1c2; color: #fff; box-shadow: 0 0 16px rgba(255,196,107,0.85), inset 0 0 10px rgba(255,255,255,0.16);
 }
 .humedales-overlay-close {
   background: none; border: none; color: var(--text-faint); font-size: 22px; line-height: 1;
@@ -399,20 +402,21 @@ body {
 }
 .humedales-overlay-image-wrap.panning { cursor: grabbing; }
 .humedales-gesto-preview {
-  position: absolute; top: 14px; right: 14px; z-index: 20; width: min(310px, 42%);
-  padding: 7px; border: 1px solid rgba(255,255,255,0.8); border-radius: 14px;
-  background: rgba(5,7,10,0.88); box-shadow: 0 10px 28px rgba(0,0,0,0.55);
+  position: absolute; top: 14px; right: 14px; z-index: 20; width: min(620px, 84%);
+  padding: 10px; border: 1px solid rgba(255,255,255,0.9); border-radius: 16px;
+  background: rgba(5,7,10,0.92); box-shadow: 0 14px 36px rgba(0,0,0,0.68), 0 0 18px rgba(255,196,107,0.22);
 }
-.humedales-gesto-preview img { display: block; width: 100%; height: auto; max-height: 210px; object-fit: contain; border-radius: 9px; }
+.humedales-gesto-preview img { display: block; width: 100%; height: auto; max-height: 420px; object-fit: contain; border-radius: 10px; }
 .humedales-gesto-preview-close {
   position: absolute; top: 4px; right: 5px; width: 22px; height: 22px; border-radius: 50%;
   border: 1px solid rgba(255,255,255,0.65); background: rgba(0,0,0,0.62); color: #fff;
   cursor: pointer; line-height: 1; font-size: 15px;
 }
 @media (max-width: 700px) {
-  .humedales-gesto-preview { width: min(245px, 58%); }
+  .humedales-gesto-preview { width: min(490px, 92%); }
+  .humedales-gesto-preview img { max-height: 340px; }
   .humedales-gestos { gap: 4px; }
-  .humedales-gesto-btn { font-size: 9.5px; padding: 4px 7px; }
+  .humedales-gesto-btn { font-size: 10px; padding: 5px 8px; }
 }
 /* Contenedor interno con la proporción REAL de la foto (1920x1080 = 16:9).
    Los hotspots se posicionan en % relativo a ESTE div, que siempre coincide
