@@ -1019,7 +1019,19 @@ const PN_EDGES = [
   { s: "p_areas_de_resiliencia_climatica", t: "p_patrimonio_natural", tipo: "resiliencia", directa: false, sinFlecha: false, pagina: "72", articulo: "", frase: "Así mismo, creamos las Áreas de Resiliencia Climática y Protección por Riesgo…" },
 ];
 
-function pnNodeById(id) { return PN_NODES.find(n => n.id === id); }
+/* Nodos paraguas retirados de la visualización porque duplican entidades específicas.
+   Se conservan en PN_NODES como fuente histórica, pero no se renderizan ni generan líneas.
+   “Sistema de educación” y “Servicios empresariales” se conservan porque el dataset actual
+   no contiene nodos separados de colegios/universidades ni una categoría económica equivalente
+   que los sustituya sin perder trazabilidad. */
+const PN_CONNECTOR_NODE_IDS = new Set([
+  "p_equipamientos",
+  "p_servicios_sociales",
+]);
+const PN_VISIBLE_NODES = PN_NODES.filter(n => !PN_CONNECTOR_NODE_IDS.has(n.id));
+const PN_VISIBLE_EDGES = PN_EDGES.filter(e => !PN_CONNECTOR_NODE_IDS.has(e.s) && !PN_CONNECTOR_NODE_IDS.has(e.t));
+
+function pnNodeById(id) { return PN_VISIBLE_NODES.find(n => n.id === id); }
 
 /* -------- 3 relaciones destacadas: "favorecen los ODS" -------- */
 const PN_ODS_COLOR = { 8: "#A21942", 9: "#FD6925", 11: "#FD9D24", 13: "#3F7E44" };
@@ -1029,7 +1041,6 @@ const PN_FAVORABLE_GROUPS = {
     title: "Movilidad y ecosistemas conectados",
     edges: [
       ["p_red_vial", "p_transporte_publico"],
-      ["p_red_vial", "p_equipamientos"],
       ["p_corredores_verdes", "p_ciclorutas"],
       ["p_corredores_verdes", "p_transporte_publico"],
       ["p_ciclorutas", "p_areas_de_resiliencia_climatica"],
@@ -1156,7 +1167,7 @@ function drawPnEdges(svg) {
   g.setAttribute("class", "pn-edges-layer");
   const pnColors = { soporte: "#ef9552", resiliencia: "#46d6d0" };
 
-  PN_EDGES.forEach((edge, i) => {
+  PN_VISIBLE_EDGES.forEach((edge, i) => {
     const s = pnNodeById(edge.s), t = pnNodeById(edge.t);
     if (!s || !t) return;
     const color = pnColors[edge.tipo];
@@ -1193,7 +1204,7 @@ function drawPnNodes(svg) {
   const g = document.createElementNS(SVG_NS, "g");
   g.setAttribute("class", "pn-nodes-layer");
 
-  PN_NODES.forEach((node, index) => {
+  PN_VISIBLE_NODES.forEach((node, index) => {
     const group = document.createElementNS(SVG_NS, "g");
     group.setAttribute("class", "pn-node floating-node");
     group.style.setProperty("--float-delay", `${((index * 0.13) % 2.2).toFixed(2)}s`);
@@ -1335,7 +1346,7 @@ function togglePnFavorableGroup(key) {
   pnActiveGroup = key;
 
   const activeKeys = new Set(group.edges.map(([s, t]) => pnEdgeKey(s, t)));
-  PN_EDGES.forEach((edge, i) => {
+  PN_VISIBLE_EDGES.forEach((edge, i) => {
     if (!edge._el) return;
     const on = activeKeys.has(pnEdgeKey(edge.s, edge.t));
     edge._el.group.classList.toggle("pn-edge-highlight", on);
@@ -1366,7 +1377,7 @@ function clearPnHighlight() {
 
 /* -------- panel "Sustento" (clic en cualquier línea de la red de estructuras) -------- */
 function showPnEdgeInfo(index) {
-  const edge = PN_EDGES[index];
+  const edge = PN_VISIBLE_EDGES[index];
   const s = pnNodeById(edge.s), t = pnNodeById(edge.t);
   if (!s || !t) return;
 
