@@ -877,3 +877,14 @@ footer span { color: var(--teal); }
   .red-principal-reflexion { padding: 22px 18px 24px; }
   .red-principal-reflexion p { text-align: left; }
 }
+
+
+/* Texto legible de las tarjetas Hallazgo del nodo. */
+#nodeInfoPanel,
+#nodeInfoPanel #nodeInfoTitle,
+#nodeInfoPanel #nodeInfoArticulo,
+#nodeInfoPanel #nodeInfoQuote,
+#nodeInfoPanel #nodeInfoNota {
+  color: #ffffff !important;
+}
+#nodeInfoPanel #nodeInfoMapa a { color: #ffffff !important; }
