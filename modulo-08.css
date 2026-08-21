@@ -390,3 +390,79 @@ footer span { color: var(--teal); }
   .main { padding: 16px 20px 40px; }
   .hero-title { font-size: 26px; }
 }
+
+
+/* ===================== REDISEÑO: DE REGLAS A SIMULACIÓN ===================== */
+.hero-lead {
+  max-width: 860px;
+  margin: 4px 0 24px;
+  color: #d9e2e8;
+  font-size: 15px;
+  line-height: 1.7;
+  letter-spacing: 0.01em;
+}
+.reader-pillars {
+  margin-top: 24px;
+  padding-top: 22px;
+  border-top: 1px solid rgba(92, 214, 209, 0.22);
+}
+.reader-pillars-kicker {
+  color: var(--orange);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  margin-bottom: 6px;
+}
+.reader-pillars h3 {
+  margin-bottom: 14px;
+  color: #f2f4f7;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 17px;
+}
+.reader-pillars-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.reader-pillar {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  min-height: 108px;
+  padding: 15px;
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  background: linear-gradient(145deg, rgba(255,255,255,0.035), rgba(255,255,255,0.012));
+}
+.reader-pillar-people { border-color: rgba(247,111,176,0.28); }
+.reader-pillar-homes { border-color: rgba(239,149,82,0.3); }
+.reader-pillar-eco { border-color: rgba(47,212,200,0.3); }
+.reader-pillar-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  border-radius: 8px;
+  color: var(--teal);
+  background: rgba(47,212,200,0.12);
+}
+.reader-pillar-people .reader-pillar-icon { color: var(--pink); background: rgba(247,111,176,0.12); }
+.reader-pillar-homes .reader-pillar-icon { color: var(--orange); background: rgba(239,149,82,0.12); }
+.reader-pillar h4 {
+  margin: 1px 0 5px;
+  color: #f2f4f7;
+  font-size: 13px;
+  font-weight: 800;
+}
+.reader-pillar p {
+  margin: 0;
+  color: var(--text-dim);
+  font-size: 11.5px;
+  line-height: 1.45;
+}
+@media (max-width: 760px) {
+  .reader-pillars-grid { grid-template-columns: 1fr; }
+  .hero-lead { font-size: 14px; }
+}
