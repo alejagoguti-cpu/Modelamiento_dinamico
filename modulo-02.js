@@ -995,6 +995,10 @@ function showHumedalesOverlay(opts) {
         ${hotspotsHTML}
       </div>
       <div class="humedal-popup" id="humedalPopup" style="display:none;"></div>
+      <div class="humedales-gesto-preview" id="humedalesGestoPreview" style="display:none;">
+        <button type="button" class="humedales-gesto-preview-close" id="humedalesGestoPreviewClose" aria-label="Cerrar imagen">&times;</button>
+        <img id="humedalesGestoPreviewImg" alt="" />
+      </div>
 
     </div>
   `;
@@ -1038,6 +1042,24 @@ function showHumedalesOverlay(opts) {
       body.querySelectorAll(".humedal-hotspot").forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
     });
+  });
+
+  document.querySelectorAll(".humedales-gesto-btn").forEach(btn => {
+    btn.onclick = () => {
+      const preview = document.getElementById("humedalesGestoPreview");
+      const image = document.getElementById("humedalesGestoPreviewImg");
+      if (!preview || !image) return;
+      image.src = btn.dataset.src;
+      image.alt = btn.textContent.trim();
+      preview.style.display = "block";
+      document.querySelectorAll(".humedales-gesto-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+    };
+  });
+  document.getElementById("humedalesGestoPreviewClose")?.addEventListener("click", () => {
+    const preview = document.getElementById("humedalesGestoPreview");
+    if (preview) preview.style.display = "none";
+    document.querySelectorAll(".humedales-gesto-btn").forEach(b => b.classList.remove("active"));
   });
 
   body.querySelectorAll(".humedal-line-hit").forEach(line => {
