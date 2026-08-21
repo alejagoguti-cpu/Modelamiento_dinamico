@@ -789,9 +789,9 @@ footer span { color: var(--teal); }
   /* La tipografía se escala al diámetro de la bola (container query units),
      así la etiqueta siempre cabe dentro del círculo, como en la foto. */
   color: #fff; font-size: 13cqw; line-height: 1.05;
-  max-width: 100%; overflow-wrap: anywhere;
+  max-width: 100%; overflow-wrap: normal; word-break: keep-all; hyphens: none;
   font-weight: 600; letter-spacing: 0.01em; padding: 0 6%;
-  text-wrap: pretty;
+  text-wrap: balance;
 }
 
 /* Modo edición de trazos (tecla L). */
