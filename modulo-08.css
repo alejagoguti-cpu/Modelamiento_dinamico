@@ -80,6 +80,10 @@ body {
 
 .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
 .topbar h1 { font-family: 'Space Grotesk', sans-serif; font-size: 19px; font-weight: 600; }
+.module-title { margin: 2px 0 22px; padding: 22px 26px 20px; border-left: 3px solid var(--teal); background: linear-gradient(90deg, rgba(47,212,200,.07), transparent 72%); border-radius: 0 12px 12px 0; }
+.module-title-heading { font-family: 'Space Grotesk', sans-serif; font-size: clamp(34px, 4.8vw, 58px); font-weight: 700; line-height: 1.08; letter-spacing: -1.5px; margin: 8px 0 10px; }
+.module-title p { display: flex; align-items: center; gap: 9px; color: var(--text-dim); font-size: 14px; font-weight: 500; }
+.module-title p i { color: var(--orange); font-size: 12px; }
 .topbar-actions { display: flex; align-items: center; gap: 14px; }
 
 .search-box {
@@ -261,6 +265,19 @@ body {
   display: flex; align-items: center; gap: 8px;
 }
 .network-header h3 i { color: var(--teal); font-size: 13px; }
+.network-heading-copy { min-width: 260px; }
+.network-heading-copy p { margin-top: 5px; color: var(--text-faint); font-size: 11.5px; line-height: 1.45; max-width: 620px; }
+.simulator-principles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 4px 0 20px; }
+.simulator-principle { display: flex; align-items: center; gap: 10px; min-height: 58px; padding: 10px 12px; border: 1px solid var(--border-soft); border-radius: 10px; background: rgba(255,255,255,.025); }
+.simulator-principle > i { font-size: 18px; flex: 0 0 24px; text-align: center; }
+.simulator-principle strong { display: block; font-family: 'Space Grotesk', sans-serif; font-size: 13px; margin-bottom: 3px; }
+.simulator-principle span { display: block; color: var(--text-faint); font-size: 10.5px; line-height: 1.35; }
+.principle-people { border-color: rgba(176,140,255,.38); }
+.principle-people > i, .principle-people strong { color: #b08cff; }
+.principle-housing { border-color: rgba(245,166,35,.38); }
+.principle-housing > i, .principle-housing strong { color: var(--orange); }
+.principle-ecosystems { border-color: rgba(47,212,200,.38); }
+.principle-ecosystems > i, .principle-ecosystems strong { color: var(--teal); }
 .network-controls { display: flex; gap: 8px; flex-wrap: wrap; }
 
 .control-btn {
@@ -375,6 +392,7 @@ footer span { color: var(--teal); }
 /* RESPONSIVE */
 @media (max-width: 1300px) {
   .hero-compare { grid-template-columns: 1fr; }
+  .simulator-principles { grid-template-columns: 1fr; }
   .reader-stats { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 1100px) {
@@ -389,6 +407,7 @@ footer span { color: var(--teal); }
   .sidebar { display: none; }
   .main { padding: 16px 20px 40px; }
   .hero-title { font-size: 26px; }
+  .module-title-heading { font-size: 32px; }
 }
 
 

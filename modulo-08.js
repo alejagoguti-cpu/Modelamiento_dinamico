@@ -29,6 +29,7 @@ const STRUCT_COLOR = {
   patrim: "#f76fb0",
   actor: "#eef0f6",
   mediador: "#7d8ea3",
+  simulador: "#b08cff",
 };
 
 /* -------- Componentes territoriales (31, red consolidada del POT) -------- */
@@ -88,12 +89,19 @@ const MEDIADOR_NODES = [
   { id: "puentes_peatonales", name: "PUENTES\nPEATONALES", icon: "fa-bridge", x: 60, y: 340, r: 20 },
 ];
 
-const ALL_DYNAMIC_NODES = [...ACTOR_NODES, ...MEDIADOR_NODES];
+const SIMULATOR_NODES = [
+  { id: "personas_sim", name: "PERSONAS\nAGENTES DE CUIDADO", icon: "fa-people-arrows", struct: "simulador", x: 492, y: 342, r: 42 },
+  { id: "viviendas_sim", name: "VIVIENDAS\nHABITABILIDAD", icon: "fa-house-chimney-user", struct: "simulador", x: 610, y: 430, r: 42 },
+  { id: "ecosistemas_sim", name: "ECOSISTEMAS\nMATRIZ ORDENADORA", icon: "fa-water", struct: "simulador", x: 372, y: 430, r: 42 },
+];
+
+const ALL_DYNAMIC_NODES = [...ACTOR_NODES, ...MEDIADOR_NODES, ...SIMULATOR_NODES];
 
 function nodeKind(id) {
   if (BASE_NODES.some(n => n.id === id)) return "componente";
   if (ACTOR_NODES.some(n => n.id === id)) return "actor";
   if (MEDIADOR_NODES.some(n => n.id === id)) return "mediador";
+  if (SIMULATOR_NODES.some(n => n.id === id)) return "simulador";
   return "componente";
 }
 
@@ -140,6 +148,14 @@ const BASE_EDGES = [
 
 /* -------- Relaciones actor/mediador → componente (dimensión dinámica) -------- */
 const DYNAMIC_EDGES = [
+  { s: "personas_sim", t: "viviendas_sim", tipo: "directa", dirigida: true, evidencia: "La vivienda es el nodo de origen y retorno de cada agente de cuidado; sus condiciones de habitabilidad modifican el estrés, la salud y el tiempo disponible.", page: "Módulo Simulador", actores: "Personas · Viviendas", critica: "El POT fija usos y estándares, pero no corre la trayectoria diaria ni la experiencia acumulada de sus habitantes." },
+  { s: "personas_sim", t: "ecosistemas_sim", tipo: "directa", dirigida: true, evidencia: "Las personas recorren una ciudad atravesada por conectores ecosistémicos, escorrentías y espacios públicos seguros; el entorno modifica las rutas posibles.", page: "Módulo Simulador", actores: "Personas · Ecosistemas", critica: "El recorrido no es una línea recta: depende de fatiga, tiempo disponible, simultaneidad del cuidado y condiciones ambientales." },
+  { s: "ecosistemas_sim", t: "viviendas_sim", tipo: "directa", dirigida: true, evidencia: "La matriz ecológica ordena el borde urbano mediante comportamiento hídrico, mitigación del riesgo y sistemas urbanos de drenaje sostenible.", page: "Módulo Simulador", actores: "Ecosistemas · Viviendas", critica: "El polígono de protección no permite anticipar por sí solo cómo una inundación o la escorrentía afectan la vivienda de borde." },
+  { s: "personas_sim", t: "manzanas_cuidado", tipo: "directa", dirigida: true, evidencia: "Cada agente tiene una trayectoria cotidiana orientada a resolver necesidades en un rango de 15 minutos caminando, con enfoque de género y derechos del Sistema Distrital de Cuidado.", page: "Módulo Simulador", actores: "Personas cuidadoras", critica: "Los 15 minutos se prueban como tiempo vivido y red accesible, no como un círculo abstracto medido en línea recta." },
+  { s: "viviendas_sim", t: "vivienda", tipo: "directa", dirigida: true, evidencia: "El Artículo 384 fija 36 m² como área mínima de una vivienda VIS o VIP y el Parágrafo 1 exige 42 m² de área mínima habitable para acreditar la obligación urbanística.", page: "Art. 384", actores: "Viviendas", critica: "La norma establece una condición inicial; la simulación observa el mejoramiento progresivo, el hacinamiento y sus efectos sobre la vida cotidiana." },
+  { s: "ecosistemas_sim", t: "humedales", tipo: "directa", dirigida: true, evidencia: "Los ecosistemas se modelan como actores: conectores, escorrentía, mitigación de riesgo y drenaje sostenible interactúan con la movilidad y la estabilidad urbana.", page: "Módulo Simulador", actores: "Ecosistemas", critica: "El entorno deja de ser un fondo inerte y pasa a modificar físicamente las decisiones de agentes y viviendas." },
+  { s: "personas_sim", t: "vivienda", tipo: "indirecta", dirigida: true, evidencia: "Cuando no existe acceso a vivienda formal, un agente puede autoconstruir en una ladera de riesgo por supervivencia.", page: "Escenario de informalidad", actores: "Personas · Viviendas", critica: "La autoorganización informal aparece como resultado emergente, no como una excepción que el plan pueda resolver solo con una categoría." },
+  { s: "personas_sim", t: "ecosistemas_sim", tipo: "indirecta", dirigida: true, evidencia: "Ante un sismo o una inundación, los agentes pueden abandonar la ruta prevista y autodeterminar una evacuación hacia el espacio público seguro más cercano.", page: "Escenarios de perturbación", actores: "Personas · Ecosistemas", critica: "La ciudad se observa mientras está siendo: una ruta formal puede romperse y producir nuevas decisiones en tiempo real." },
   { s: "habitantes", t: "transporte_publico", tipo: "indirecta", dirigida: true, evidencia: "Los habitantes son quienes usan cotidianamente el transporte público.", page: null, actores: "Habitantes", critica: "El uso no es homogéneo: cambia con la edad, el ingreso y la movilidad reducida." },
   { s: "habitantes", t: "vivienda", tipo: "indirecta", dirigida: true, evidencia: "Los habitantes son quienes ocupan y sostienen la vivienda día a día.", page: null, actores: "Habitantes", critica: "La ocupación real puede diferir del uso previsto por el POT (subarriendo, hacinamiento)." },
   { s: "estudiantes", t: "sistema_educacion", tipo: "indirecta", dirigida: true, evidencia: "Los estudiantes son actores centrales del sistema de educación del sector.", page: null, actores: "Estudiantes", critica: "No todos los estudiantes acceden al sistema de educación más cercano a su vivienda." },
@@ -160,6 +176,24 @@ function edgeKey(e) { return e.s + "→" + e.t; }
 
 /* -------- Situaciones: cambian intensidad de relaciones ya existentes -------- */
 const SITUACIONES = [
+  {
+    id: "ciudad_15_minutos", label: "Ciudad de 15 minutos", icon: "fa-person-walking",
+    desc: "Resalta las trayectorias de cuidado: el acceso se mide como tiempo caminando, fatiga y simultaneidad de servicios, no como distancia en línea recta.",
+    boost: ["personas_sim→manzanas_cuidado", "personas_sim→viviendas_sim", "personas_sim→ecosistemas_sim"],
+    dim: [],
+  },
+  {
+    id: "vivienda_informal", label: "Autoconstrucción en riesgo", icon: "fa-house-crack",
+    desc: "Activa el escenario en que la falta de vivienda formal empuja a un agente a autoconstruirse en una ladera de riesgo por supervivencia.",
+    boost: ["personas_sim→vivienda", "viviendas_sim→vivienda", "ecosistemas_sim→viviendas_sim"],
+    dim: ["vivienda→equipamientos"],
+  },
+  {
+    id: "perturbacion", label: "Sismo / inundación", icon: "fa-house-tsunami",
+    desc: "Simula una perturbación que rompe el andén o la ruta formal: los agentes se autodeterminan y buscan el espacio público seguro más cercano.",
+    boost: ["ecosistemas_sim→viviendas_sim", "personas_sim→ecosistemas_sim", "personas_sim→viviendas_sim"],
+    dim: ["vivienda→red_vial", "vivienda→transporte_publico"],
+  },
   {
     id: "hora_pico_manana", label: "Hora pico (mañana)", icon: "fa-sun",
     desc: "Aumenta el peso visual de las relaciones entre Vivienda, Transporte público y los lugares de empleo.",
@@ -217,7 +251,7 @@ const SITUACIONES = [
 ];
 
 /* -------- estado global -------- */
-let agencyOn = false;
+let agencyOn = true;
 let viewMode = "todas";
 let activeSituacion = null;
 const nodeOff = new Set();
@@ -489,7 +523,7 @@ function attachNodeDrag(group, node) {
   function endDrag(e) {
     if (!dragging) return;
     dragging = false;
-    node.fixed = (node.id === "vivienda" || node.id === "humedales" || node.id === "servicios_empresariales");
+    node.fixed = (node.id === "vivienda" || node.id === "humedales" || node.id === "servicios_empresariales" || SIMULATOR_NODES.some(n => n.id === node.id));
     group.classList.remove("dragging");
     try { group.releasePointerCapture(e.pointerId); } catch (err) {}
     wakePhysics();
@@ -661,6 +695,10 @@ function renderDynamicViz() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  const agencyButton = document.getElementById("agencyToggle");
+  agencyButton?.classList.toggle("on", agencyOn);
+  document.getElementById("statActoresCard")?.classList.toggle("stat-inactive", !agencyOn);
+  document.getElementById("statMediadoresCard")?.classList.toggle("stat-inactive", !agencyOn);
   renderSituacionesRow();
   renderNetwork();
   updateStats();
