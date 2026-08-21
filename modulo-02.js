@@ -1044,22 +1044,23 @@ function showHumedalesOverlay(opts) {
     });
   });
 
-  document.querySelectorAll(".humedales-gesto-btn").forEach(btn => {
-    btn.onclick = () => {
+  document.querySelectorAll(".humedales-gesto-inline").forEach(btn => {
+    btn.onclick = (ev) => {
+      ev.stopPropagation();
       const preview = document.getElementById("humedalesGestoPreview");
       const image = document.getElementById("humedalesGestoPreviewImg");
       if (!preview || !image) return;
       image.src = btn.dataset.src;
       image.alt = btn.textContent.trim();
       preview.style.display = "block";
-      document.querySelectorAll(".humedales-gesto-btn").forEach(b => b.classList.remove("active"));
+      document.querySelectorAll(".humedales-gesto-inline").forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
     };
   });
   document.getElementById("humedalesGestoPreviewClose")?.addEventListener("click", () => {
     const preview = document.getElementById("humedalesGestoPreview");
     if (preview) preview.style.display = "none";
-    document.querySelectorAll(".humedales-gesto-btn").forEach(b => b.classList.remove("active"));
+    document.querySelectorAll(".humedales-gesto-inline").forEach(b => b.classList.remove("active"));
   });
 
   body.querySelectorAll(".humedal-line-hit").forEach(line => {

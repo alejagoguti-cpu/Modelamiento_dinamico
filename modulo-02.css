@@ -369,17 +369,15 @@ body {
 }
 .humedales-overlay-title-block { min-width: 0; display: flex; flex-direction: column; gap: 8px; }
 .humedales-overlay-title { font-size: 15px; font-weight: 700; color: #f2f3f6; line-height: 1.3; padding-right: 12px; }
-.humedales-gestos { display: flex; flex-wrap: wrap; gap: 6px; }
-.humedales-gesto-btn {
-  border: 1px solid rgba(255,196,107,0.9); border-radius: 999px; padding: 6px 12px;
-  background: linear-gradient(180deg, rgba(255,196,107,0.28), rgba(92,214,209,0.16));
-  color: #fff4d6; font-size: 11px; font-weight: 800; line-height: 1.2;
-  text-shadow: 0 0 7px rgba(255,196,107,0.95); box-shadow: 0 0 10px rgba(255,196,107,0.42), inset 0 0 8px rgba(255,255,255,0.08);
-  cursor: pointer; transition: transform .15s, background .15s, border-color .15s, color .15s, box-shadow .15s;
+.humedales-gesto-inline {
+  appearance: none; border: 0; border-bottom: 1px solid rgba(255,196,107,0.95); padding: 0 2px;
+  background: rgba(255,196,107,0.16); color: #fff0bd; font: inherit; font-weight: 800;
+  text-shadow: 0 0 7px rgba(255,196,107,0.95); box-shadow: 0 0 8px rgba(255,196,107,0.35);
+  cursor: pointer; transition: background .15s, color .15s, text-shadow .15s, box-shadow .15s;
 }
-.humedales-gesto-btn:hover, .humedales-gesto-btn.active {
-  transform: translateY(-1px); background: linear-gradient(180deg, rgba(255,196,107,0.55), rgba(92,214,209,0.3));
-  border-color: #fff1c2; color: #fff; box-shadow: 0 0 16px rgba(255,196,107,0.85), inset 0 0 10px rgba(255,255,255,0.16);
+.humedales-gesto-inline:hover, .humedales-gesto-inline.active {
+  background: rgba(255,196,107,0.42); color: #fff; text-shadow: 0 0 10px rgba(255,196,107,1);
+  box-shadow: 0 0 14px rgba(255,196,107,0.8);
 }
 .humedales-overlay-close {
   background: none; border: none; color: var(--text-faint); font-size: 22px; line-height: 1;
@@ -415,8 +413,6 @@ body {
 @media (max-width: 700px) {
   .humedales-gesto-preview { width: min(490px, 92%); }
   .humedales-gesto-preview img { max-height: 340px; }
-  .humedales-gestos { gap: 4px; }
-  .humedales-gesto-btn { font-size: 10px; padding: 5px 8px; }
 }
 /* Contenedor interno con la proporción REAL de la foto (1920x1080 = 16:9).
    Los hotspots se posicionan en % relativo a ESTE div, que siempre coincide
