@@ -80,6 +80,18 @@ const ACTOR_NODES = [
   { id: "comunidades_actor", name: "COMUNIDADES", icon: "fa-people-group", x: 50, y: 330, r: 22 },
   { id: "operadores_transporte", name: "OPERADORES DE\nTRANSPORTE", icon: "fa-id-badge", x: 820, y: 90, r: 22 },
   { id: "aves", name: "AVES", icon: "fa-dove", x: 170, y: 150, r: 20 },
+  { id: "planeadores_pot", name: "PLANEADORES\nDEL POT", icon: "fa-compass-drafting", x: 905, y: 120, r: 22 },
+  { id: "autoridad_ambiental", name: "AUTORIDAD\nAMBIENTAL", icon: "fa-leaf", x: 930, y: 245, r: 22 },
+  { id: "constructores", name: "CONSTRUCTORES", icon: "fa-helmet-safety", x: 920, y: 370, r: 22 },
+  { id: "arrendadores", name: "ARRENDADORES", icon: "fa-key", x: 920, y: 500, r: 22 },
+  { id: "personal_salud", name: "PERSONAL DE\nSALUD", icon: "fa-user-doctor", x: 875, y: 625, r: 22 },
+  { id: "emergencias", name: "EMERGENCIAS", icon: "fa-truck-medical", x: 720, y: 730, r: 22 },
+  { id: "conductores", name: "CONDUCTORES", icon: "fa-steering-wheel", x: 540, y: 735, r: 22 },
+  { id: "ciclistas_actor", name: "CICLISTAS", icon: "fa-person-biking", x: 360, y: 735, r: 22 },
+  { id: "repartidores", name: "REPARTIDORES", icon: "fa-box", x: 180, y: 735, r: 22 },
+  { id: "organizaciones_barriales", name: "ORGANIZACIONES\nBARRIALES", icon: "fa-people-roof", x: 40, y: 555, r: 22 },
+  { id: "mantenimiento_urbano", name: "MANTENIMIENTO\nURBANO", icon: "fa-screwdriver-wrench", x: 45, y: 455, r: 22 },
+  { id: "cuidados_salud", name: "REDES DE\nCUIDADO", icon: "fa-heart-pulse", x: 50, y: 95, r: 22 },
 ];
 
 /* -------- Mediadores: qué permite que la relación ocurra -------- */
@@ -237,7 +249,35 @@ const CHAIN_EDGES = [
   { s: "agente_riesgo", t: "puentes_peatonales", tipo: "indirecta", dirigida: true, evidencia: "En una perturbación, el agente busca cruces y espacios públicos seguros fuera de la ruta habitual.", page: "Escenario de perturbación", actores: "Agente en riesgo · Puentes", critica: "La evacuación es una decisión adaptativa, no una ruta fija del plano.", live: "Puedes decir: “Cuando la ruta formal se rompe, el agente busca el siguiente puente, parque o espacio seguro disponible.”" },
 ];
 
-const ALL_DYNAMIC_EDGES = [...DYNAMIC_EDGES, ...CHAIN_EDGES];
+const ACTANT_EDGES = [
+  { s: "planeadores_pot", t: "vivienda", tipo: "directa", dirigida: true, evidencia: "Los planeadores traducen reglas de ordenamiento en localizaciones, estándares y autorizaciones.", page: "Módulo Simulador", actores: "Planeadores · POT", critica: "La regla escrita no muestra las trayectorias que produce al ser aplicada por miles de agentes.", live: "Puedes decir: “El planeador escribe la regla, pero esta red pregunta qué ocurre después, cuando la regla entra en contacto con habitantes, mercados y riesgos.”" },
+  { s: "planeadores_pot", t: "equipamientos", tipo: "directa", dirigida: true, evidencia: "La planificación distribuye equipamientos y organiza sus relaciones con la vivienda.", page: "Módulo Simulador", actores: "Planeadores · Equipamientos", critica: "La localización no garantiza uso ni accesibilidad cotidiana.", live: "Puedes decir: “Planear un equipamiento no es lo mismo que comprobar quién puede llegar a él y en cuánto tiempo.”" },
+  { s: "planeadores_pot", t: "ecosistemas_sim", tipo: "indirecta", dirigida: true, evidencia: "El POT formula una matriz ecológica que debe ordenar el crecimiento urbano.", page: "Módulo Simulador", actores: "Planeadores · Ecosistemas", critica: "La matriz se vuelve dinámica cuando el agua y el riesgo modifican las decisiones urbanas.", live: "Puedes decir: “El ecosistema no es una capa decorativa: obliga a que la planificación responda a flujos y perturbaciones.”" },
+  { s: "autoridad_ambiental", t: "humedales", tipo: "directa", dirigida: true, evidencia: "La autoridad ambiental define condiciones de manejo y protección de los humedales.", page: "Módulo Simulador", actores: "Autoridad ambiental · Humedales", critica: "La delimitación jurídica no agota el comportamiento ecológico del humedal.", live: "Puedes decir: “La autoridad fija un límite, pero el agua, las especies y las comunidades hacen que el ecosistema continúe más allá de ese borde.”" },
+  { s: "autoridad_ambiental", t: "rios", tipo: "directa", dirigida: true, evidencia: "La regulación ambiental interviene sobre cuerpos de agua y sus zonas de manejo.", page: "Módulo Simulador", actores: "Autoridad ambiental · Ríos", critica: "La gestión requiere observar cambios temporales de caudal, contaminación y ocupación.", live: "Puedes decir: “El río exige una lectura temporal: no se comporta igual en sequía, lluvia o emergencia.”" },
+  { s: "constructores", t: "vivienda", tipo: "directa", dirigida: true, evidencia: "Los constructores materializan estándares de vivienda, densidad y mejoramiento.", page: "Art. 384 · Módulo Simulador", actores: "Constructores · Viviendas", critica: "La regla de 36/42 m² no muestra por sí sola hacinamiento, adaptación ni calidad de vida.", live: "Puedes decir: “Aquí la norma se vuelve materia: los 36 y 42 metros cuadrados se convierten en condiciones reales de habitabilidad.”" },
+  { s: "constructores", t: "red_vial", tipo: "directa", dirigida: true, evidencia: "La construcción modifica simultáneamente vivienda, vías, andenes y accesos.", page: "Módulo Simulador", actores: "Constructores · Red vial", critica: "Una obra puede mejorar la conexión para unos agentes y producir barreras temporales para otros.", live: "Puedes decir: “La infraestructura no tiene un efecto único: mientras construye una conexión, también puede interrumpir recorridos.”" },
+  { s: "arrendadores", t: "vivienda", tipo: "directa", dirigida: true, evidencia: "El mercado de arriendo media el acceso cotidiano a la vivienda.", page: "Módulo Simulador", actores: "Arrendadores · Vivienda", critica: "La oferta formal puede ser inaccesible aunque exista físicamente.", live: "Puedes decir: “La vivienda disponible no es automáticamente vivienda accesible: el ingreso y el arriendo filtran quién puede habitarla.”" },
+  { s: "arrendadores", t: "agente_migrante", tipo: "indirecta", dirigida: true, evidencia: "Las condiciones de arriendo afectan permanencia, movilidad residencial y acceso de hogares migrantes.", page: "Módulo Simulador", actores: "Arrendadores · Agente migrante", critica: "La exclusión residencial puede empujar al hacinamiento o a localizaciones más expuestas.", live: "Puedes decir: “La informalidad también puede producirse dentro del mercado de arriendo, cuando el agente no tiene capacidad de elegir.”" },
+  { s: "personal_salud", t: "servicios_sociales", tipo: "directa", dirigida: true, evidencia: "El personal de salud activa los servicios sociales y sus recorridos de atención.", page: "Módulo Simulador", actores: "Personal de salud · Servicios sociales", critica: "La cobertura no se mide solo por número de instituciones, sino por tiempo de acceso y continuidad.", live: "Puedes decir: “La salud es una red de atención: necesita vivienda, transporte, cuidado y tiempo, no solo un edificio.”" },
+  { s: "personal_salud", t: "viviendas_sim", tipo: "indirecta", dirigida: true, evidencia: "La habitabilidad de la vivienda condiciona riesgos de salud y necesidades de cuidado.", page: "Módulo Simulador", actores: "Personal de salud · Viviendas", critica: "El estándar espacial debe conectarse con ventilación, hacinamiento, estrés y salud.", live: "Puedes decir: “La vivienda se convierte en salud: sus condiciones producen bienestar o aumentan la carga de atención.”" },
+  { s: "emergencias", t: "areas_resiliencia", tipo: "directa", dirigida: true, evidencia: "Los servicios de emergencia requieren áreas de resiliencia y espacios públicos para responder a perturbaciones.", page: "Escenario de perturbación", actores: "Emergencias · Áreas de resiliencia", critica: "La evacuación depende de rutas que sigan disponibles bajo presión.", live: "Puedes decir: “La resiliencia no es un dibujo: es la capacidad de llegar, evacuar y cuidar cuando la red cambia.”" },
+  { s: "emergencias", t: "puentes_peatonales", tipo: "directa", dirigida: true, evidencia: "Los cruces y puentes hacen posible la respuesta de emergencia y la evacuación peatonal.", page: "Escenario de perturbación", actores: "Emergencias · Puentes", critica: "Un puente bloqueado puede aislar a toda una parte de la red.", live: "Puedes decir: “En emergencia, un mediador pequeño puede convertirse en el cuello de botella de toda la ciudad.”" },
+  { s: "conductores", t: "transporte_publico", tipo: "directa", dirigida: true, evidencia: "Los conductores hacen operativo el sistema de transporte y sus frecuencias.", page: "Módulo Simulador", actores: "Conductores · Transporte público", critica: "La operación cotidiana y las condiciones laborales no aparecen en la lectura normativa.", live: "Puedes decir: “El sistema funciona porque hay actores que lo operan; la infraestructura sola no produce movilidad.”" },
+  { s: "conductores", t: "red_vial", tipo: "directa", dirigida: true, evidencia: "Los conductores producen flujos, congestión y tiempos variables sobre la red vial.", page: "Módulo Simulador", actores: "Conductores · Red vial", critica: "La misma vía cambia de comportamiento según la hora, la demanda y una perturbación.", live: "Puedes decir: “La vía no tiene un comportamiento fijo: lo producen los flujos que la usan simultáneamente.”" },
+  { s: "ciclistas_actor", t: "ciclorrutas", tipo: "directa", dirigida: true, evidencia: "Las personas ciclistas activan la ciclorruta como infraestructura cotidiana de movilidad.", page: "Módulo Simulador", actores: "Ciclistas · Ciclorrutas", critica: "La continuidad y seguridad de la red determinan si el modo es viable.", live: "Puedes decir: “La ciclorruta funciona como red solo si conecta origen, destino y seguridad en toda la trayectoria.”" },
+  { s: "ciclistas_actor", t: "corredores_verdes", tipo: "indirecta", dirigida: true, evidencia: "La movilidad ciclista puede articularse con corredores verdes y espacio público.", page: "Módulo Simulador", actores: "Ciclistas · Corredores verdes", critica: "La integración entre movilidad y ecología requiere continuidad real, no solo superposición cartográfica.", live: "Puedes decir: “Aquí se cruzan dos redes: la ecológica y la de movilidad, y ambas dependen de continuidad.”" },
+  { s: "repartidores", t: "red_vial", tipo: "directa", dirigida: true, evidencia: "Los repartidores dependen de la red vial, los andenes y la proximidad de los destinos.", page: "Módulo Simulador", actores: "Repartidores · Red vial", critica: "La economía de entrega introduce flujos pequeños y constantes que el POT no modela.", live: "Puedes decir: “Los repartidores revelan una ciudad de microtrayectorias que no aparece cuando solo miramos grandes corredores.”" },
+  { s: "repartidores", t: "centros_abastecimiento", tipo: "directa", dirigida: true, evidencia: "Los repartidores conectan centros de abastecimiento con hogares y comercios.", page: "Módulo Simulador", actores: "Repartidores · Abastecimiento", critica: "El abastecimiento depende de horarios, accesos, carga y condiciones de la calle.", live: "Puedes decir: “La ciudad también se mueve por entregas: si se interrumpe el último tramo, se interrumpe el abastecimiento.”" },
+  { s: "organizaciones_barriales", t: "comunidades_actor", tipo: "directa", dirigida: true, evidencia: "Las organizaciones barriales coordinan usos, cuidado, defensa del territorio y respuesta comunitaria.", page: "Módulo Simulador", actores: "Organizaciones · Comunidades", critica: "La capacidad de organización local cambia la respuesta del sistema.", live: "Puedes decir: “La comunidad no es un receptor pasivo del POT: también interpreta, cuida y responde.”" },
+  { s: "organizaciones_barriales", t: "humedales", tipo: "directa", dirigida: true, evidencia: "Las organizaciones barriales participan en la apropiación y protección cotidiana de los humedales.", page: "Módulo Simulador", actores: "Organizaciones · Humedales", critica: "La protección ecológica requiere prácticas y vigilancia comunitaria, no solo delimitación.", live: "Puedes decir: “El humedal existe jurídicamente, pero también existe socialmente por las prácticas que lo sostienen.”" },
+  { s: "mantenimiento_urbano", t: "andenes", tipo: "directa", dirigida: true, evidencia: "El mantenimiento urbano conserva la continuidad física de los recorridos peatonales.", page: "Módulo Simulador", actores: "Mantenimiento · Andenes", critica: "La infraestructura solo funciona mientras se mantiene.", live: "Puedes decir: “El andén no es una línea permanente: es un estado que puede mejorar, deteriorarse o romperse.”" },
+  { s: "mantenimiento_urbano", t: "estaciones", tipo: "directa", dirigida: true, evidencia: "El mantenimiento sostiene la operación y accesibilidad de estaciones y nodos de transporte.", page: "Módulo Simulador", actores: "Mantenimiento · Estaciones", critica: "El cierre temporal redistribuye recorridos y cargas sobre otros nodos.", live: "Puedes decir: “Una estación no es solo un punto: necesita mantenimiento para seguir siendo una conexión.”" },
+  { s: "cuidados_salud", t: "personas_cuidadoras", tipo: "directa", dirigida: true, evidencia: "Las redes de cuidado sostienen a quienes cuidan y a quienes requieren atención.", page: "Módulo Simulador", actores: "Redes de cuidado · Personas cuidadoras", critica: "La carga de cuidado se distribuye de manera desigual y cambia con la disponibilidad de servicios.", live: "Puedes decir: “El cuidado tiene actores detrás: redes familiares, comunitarias y de salud que sostienen la vida cotidiana.”" },
+  { s: "cuidados_salud", t: "manzanas_cuidado", tipo: "directa", dirigida: true, evidencia: "Las redes de cuidado activan el uso de las Manzanas del Cuidado y sus servicios asociados.", page: "Módulo Simulador", actores: "Redes de cuidado · Manzanas", critica: "La infraestructura de cuidado necesita conectarse con tiempo, transporte y vivienda.", live: "Puedes decir: “La Manzana del Cuidado solo funciona si la red completa permite llegar, permanecer y regresar.”" },
+];
+
+const ALL_DYNAMIC_EDGES = [...DYNAMIC_EDGES, ...CHAIN_EDGES, ...ACTANT_EDGES];
 
 function edgeKey(e) { return e.s + "→" + e.t; }
 
@@ -686,6 +726,15 @@ function hideEdgeInfo() {
   document.querySelectorAll(".rd-edge-group").forEach(el => el.classList.remove("edge-selected"));
 }
 
+function toggleFindingsPanel(force) {
+  const panel = document.getElementById("findingsSidePanel");
+  if (!panel) return;
+  const open = typeof force === "boolean" ? force : !panel.classList.contains("visible");
+  panel.classList.toggle("visible", open);
+  panel.setAttribute("aria-hidden", String(!open));
+  document.getElementById("findingsToggle")?.classList.toggle("active", open);
+}
+
 /* -------- render principal -------- */
 function renderNetwork() {
   const svg = document.getElementById("readerViz");
@@ -797,6 +846,8 @@ document.addEventListener("DOMContentLoaded", () => {
   updateStats();
   renderDynamicViz();
   document.getElementById("edgeInfoClose")?.addEventListener("click", hideEdgeInfo);
+  document.getElementById("findingsToggle")?.addEventListener("click", () => toggleFindingsPanel());
+  document.getElementById("findingsClose")?.addEventListener("click", () => toggleFindingsPanel(false));
   window.addEventListener("resize", () => {
     const svg = document.getElementById("readerViz");
     if (svg) { svg.setAttribute("width", svg.clientWidth); svg.setAttribute("height", svg.clientHeight); }
@@ -808,5 +859,6 @@ if (typeof window !== "undefined") {
   window.__readerActorNodes = ACTOR_NODES;
   window.__readerMediadorNodes = MEDIADOR_NODES;
   window.__readerBaseEdges = BASE_EDGES;
-  window.__readerDynamicEdges = DYNAMIC_EDGES;
+  window.__readerDynamicEdges = ALL_DYNAMIC_EDGES;
+  window.__readerActantEdges = ACTANT_EDGES;
 }
