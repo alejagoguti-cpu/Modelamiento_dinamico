@@ -431,6 +431,45 @@
     removeNodeByLabel("empleo", /^(Empleo formal y productividad|Productividad por trabajador)/);
     removeNodeByLabel("carbono", /^Viajes limpios$/);
 
+    /* Depuración categorial de las dos redes restantes:
+       se conservan entidades, infraestructuras y actividades concretas;
+       se retiran hubs abstractos, metas, indicadores, cifras y capas de resultado. */
+    const abstractEmployment = [
+      /Empleo formal y\s+productividad/,
+      /Descentralización de oportunidades/,
+      /Servicios metropolitanos/,
+      /Vivienda y\s+soportes urbanos/,
+      /Equipamientos públicos/,
+      /Empresas e\s+industria/,
+      /Reubicación de\s+actividades productivas/,
+      /Incentivos urbanísticos\s+y\s+económicos/,
+      /Transferencia de oportunidades\s+y\s+derechos urbanísticos/,
+      /^Uso flexible del suelo$/,
+      /Acceso territorial\s+al empleo/,
+      /Acupuntura urbana\s+y\s+urbanismo táctico/,
+      /^Participación territorial$/,
+      /Equipamientos sin restricción de uso del suelo/,
+      /^(Meta regional|Tiempo de desplazamiento|Productividad por trabajador|Empresas activas|Nuevas empresas|Cierre de empresas|Vacantes|Formación técnica|Graduados|Inserción laboral|Innovación|Patentes|Inversión privada|Inversión pública|UPL con déficit|UPL con superávit|Centralidad económica|Acceso a transporte|Costo de transporte|Tiempo al empleo|Vivienda cerca del empleo|Suelo productivo|Suelo mixto|Comercio local|Servicios empresariales|Cadenas productivas|Economía del cuidado|Población activa|Población ocupada|Población desempleada|Migración laboral|Productividad territorial)/,
+    ];
+    const abstractCarbon = [
+      /Viajes limpios/,
+      /Reducción de\s+emisiones GEI/,
+      /Calidad del aire\s+y\s+material particulado/,
+      /Peatón como\s+prioridad/,
+      /Disminución del\s+vehículo particular/,
+      /^Salud ambiental$/,
+      /^Sistemas de alta\s+capacidad$/,
+      /^Intermodalidad$/,
+      /^Flota sin\s+diésel$/,
+      /^Actividades y servicios\s+cerca del transporte$/,
+      /^Seis cables aéreos nuevos$/,
+      /^Dos Regiotram regionales$/,
+      /^Meta:/,
+      /\b\d+\s*(?:km|corredores|cables|Regiotram)/,
+    ];
+    abstractEmployment.forEach((matcher) => removeAllNodesByLabel("empleo", matcher));
+    abstractCarbon.forEach((matcher) => removeAllNodesByLabel("carbono", matcher));
+
     const layer = (label) => {
       const s = label.toLowerCase();
       if (
