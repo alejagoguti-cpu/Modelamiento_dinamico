@@ -71,6 +71,19 @@
         <svg id="readerViz" viewBox="0 0 1060 800" preserveAspectRatio="xMidYMid meet"></svg>
 
         <div class="network-sidebar">
+          <button class="findings-toggle" id="findingsToggle" type="button"><i class="fa-solid fa-lightbulb"></i> Hallazgo y conclusión</button>
+          <div class="findings-side-panel" id="findingsSidePanel" aria-hidden="true">
+            <div class="findings-side-header"><span>Hallazgo y conclusión</span><button class="edge-info-close" id="findingsClose" type="button" aria-label="Cerrar">&times;</button></div>
+            <div class="finding-side-kicker">LO QUE LA RED HACE VISIBLE</div>
+            <h4>El POT no opera como una cadena lineal</h4>
+            <p>La red muestra que una regla territorial solo se vuelve real cuando atraviesa agentes, instituciones, mercados, infraestructuras, mediadores y ecosistemas. Una modificación en vivienda, movilidad o agua redistribuye tiempos, riesgos y posibilidades de acceso.</p>
+            <div class="finding-side-kicker">HALLAZGO</div>
+            <p><strong>La ciudad funciona como un sistema de dependencias cruzadas:</strong> los agentes no recorren objetos aislados, sino cadenas de cuidado, vivienda, transporte, empleo, abastecimiento, salud y evacuación.</p>
+            <div class="finding-side-kicker">CONCLUSIÓN</div>
+            <p>El POT es indispensable como instrumento jurídico, pero insuficiente como modelo explicativo único. La simulación agrega la capa que permite observar la ciudad mientras cambia: quién queda conectado, quién acumula fatiga, qué infraestructura se rompe y cómo responden las comunidades y los ecosistemas.</p>
+            <div class="finding-side-speech"><strong>Qué decir en vivo:</strong><br>“La conclusión de esta red es que la ciudad no se comporta como el texto que la regula. El POT fija reglas y localizaciones; la simulación muestra las relaciones, los efectos acumulados y las decisiones que aparecen cuando esas reglas se encuentran con la vida cotidiana.”</div>
+          </div>
+
           <aside class="network-legend">
             <div class="legend-title">Convenciones de línea</div>
             <div class="legend-item legend-static"><span class="legend-line solid"></span> Directa (documentada)</div>
@@ -97,18 +110,6 @@
             Arrastra una bola: las conectadas la siguen.</div>
           </aside>
 
-          <button class="findings-toggle active" id="findingsToggle" type="button"><i class="fa-solid fa-lightbulb"></i> Hallazgo y conclusión</button>
-          <div class="findings-side-panel visible" id="findingsSidePanel" aria-hidden="false">
-            <div class="findings-side-header"><span>Hallazgo y conclusión</span><button class="edge-info-close" id="findingsClose" type="button" aria-label="Cerrar">&times;</button></div>
-            <div class="finding-side-kicker">LO QUE LA RED HACE VISIBLE</div>
-            <h4>El POT no opera como una cadena lineal</h4>
-            <p>La red muestra que una regla territorial solo se vuelve real cuando atraviesa agentes, instituciones, mercados, infraestructuras, mediadores y ecosistemas. Una modificación en vivienda, movilidad o agua redistribuye tiempos, riesgos y posibilidades de acceso.</p>
-            <div class="finding-side-kicker">HALLAZGO</div>
-            <p><strong>La ciudad funciona como un sistema de dependencias cruzadas:</strong> los agentes no recorren objetos aislados, sino cadenas de cuidado, vivienda, transporte, empleo, abastecimiento, salud y evacuación.</p>
-            <div class="finding-side-kicker">CONCLUSIÓN</div>
-            <p>El POT es indispensable como instrumento jurídico, pero insuficiente como modelo explicativo único. La simulación agrega la capa que permite observar la ciudad mientras cambia: quién queda conectado, quién acumula fatiga, qué infraestructura se rompe y cómo responden las comunidades y los ecosistemas.</p>
-            <div class="finding-side-speech"><strong>Qué decir en vivo:</strong><br>“La conclusión de esta red es que la ciudad no se comporta como el texto que la regula. El POT fija reglas y localizaciones; la simulación muestra las relaciones, los efectos acumulados y las decisiones que aparecen cuando esas reglas se encuentran con la vida cotidiana.”</div>
-          </div>
 
           <div class="edge-info-panel" id="edgeInfoPanel">
             <div class="edge-info-header">
