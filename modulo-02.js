@@ -908,7 +908,6 @@ const HUMEDAL_LINEAS = [
   { a: { x: 48.7, y: 39.9 }, b: { x: 55.2, y: 45.3 }, }, // ciclorutas_humedal ↔ malla_via
   { a: { x: 40.5, y: 35.2 }, b: { x: 61.9, y: 35.5 }, }, // cordoba ↔ fauna_y_flora
   { a: { x: 48.8, y: 40.4 }, b: { x: 55.2, y: 40.2 }, }, // santa_maria_del_lago ↔ suelo_de_proteccion
-  { a: { x: 52.3, y: 99.7 }, b: { x: 52.3, y: 99.5 }, }, // santa_maria_del_lago ↔ malla_via
   { a: { x: 54.8, y: 51 }, b: { x: 52.2, y: 58.5 },
     cita: "Con respecto a los humedales de la ciudad, dentro del POT únicamente se identificó un conflicto de malla vial arterial con la Reserva Distrital de Humedal Capellanía, en Fontibón.", pagina: "49–50", }, // malla_via ↔ capellania
   { a: { x: 62.7, y: 38.7 }, b: { x: 66.7, y: 71.9 }, }, // fauna_y_flora ↔ la_vaca
