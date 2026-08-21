@@ -901,7 +901,7 @@ function showNodeInfo(id) {
 // de bolitas de fondo sólido.
 const HUMEDAL_LINEAS = [
   { a: { x: 15.1, y: 27.6 }, b: { x: 26.5, y: 50.6 },
-    cita: "La Reserva Forestal Thomas van der Hammen incluye los Humedales de La Conejera y Torca-Guaymaral.", pagina: "56", }, // torca_guaymaral ↔ la_conejera
+    cita: "El Decreto 555, en su Artículo 50, reconoce a la Reserva Van der Hammen únicamente 'como área de conservación in situ', remitiendo su régimen de usos al Plan de Manejo Ambiental del 2014 de la CAR. El decreto la nombra, pero no describe su comportamiento ecológico.", pagina: "56", }, // torca_guaymaral ↔ la_conejera
   { a: { x: 15.5, y: 25.9 }, b: { x: 53.3, y: 47.3 }, }, // torca_guaymaral ↔ malla_via
   { a: { x: 27.7, y: 50.7 }, b: { x: 52, y: 50.5 }, }, // la_conejera ↔ malla_via
   { a: { x: 37.6, y: 46.4 }, b: { x: 46.3, y: 47.7 }, }, // tibabuyes ↔ ciclorutas_humedal
