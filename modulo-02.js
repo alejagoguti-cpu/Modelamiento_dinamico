@@ -935,7 +935,7 @@ const HUMEDALES_CASOS = {
   malla_via: { nombre: "Malla vial (conflicto con Capellanía)", label: "Malla vía", x: 53.8, y: 48.1, diam: 6.1, color: "#ef9552",
     cita: "Con respecto a los humedales de la ciudad, dentro del POT únicamente se identificó un conflicto de malla vial arterial con la Reserva Distrital de Humedal Capellanía, en Fontibón.", pagina: "49–50" },
   capellania: { nombre: "Humedal Capellanía", label: "Humedal\nCapellanía", x: 51.6, y: 58.8, diam: 3.4, color: "#2fd4c8",
-    cita: "Solo desde Capellanía en Fontibón", pagina: "49–50" },
+    cita: "Para permitir el paso de la vía, el POT plantea reducir parte del ecosistema y modificar sus áreas. Capellanía pasa de 27,03 hectáreas a 29,32 hectáreas mediante una operación de sustracción y ampliación en otros sectores.", pagina: "49–50" },
   la_vaca: { nombre: "Humedal La Vaca", label: "Humedal\nla vaca", x: 67.4, y: 72.4, diam: 3.4, color: "#2fd4c8",
     cita: "El Humedal La Vaca, en Patio Bonito, parte de una antigua laguna muisca gobernada por el cacique Techovita, es un reservorio de agua, plantas y animales protegido por la comunidad.", pagina: "103" },
 };
