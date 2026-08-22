@@ -740,3 +740,152 @@ html, body {
 }
 
 /* End black reference treatment */
+
+/* Paleta exacta de referencia del Módulo 01 */
+html,
+body {
+  background: #0a0e17 !important;
+  color: #e7eaf2 !important;
+}
+
+.layout,
+.topbar,
+.main,
+.sidebar-left,
+.map-section,
+.sidebar-right {
+  background: #0a0e17 !important;
+}
+
+.sidebar-left,
+.sidebar-right {
+  background: #0c1120 !important;
+  border-color: rgba(255,255,255,0.07) !important;
+}
+
+.main {
+  background: rgba(255,255,255,0.07) !important;
+}
+
+.topbar {
+  background: #0a0e17 !important;
+  border-color: rgba(255,255,255,0.04) !important;
+  color: #8891a5 !important;
+}
+
+.sidebar-left h1 {
+  font-family: 'Space Grotesk', sans-serif !important;
+  color: #e7eaf2 !important;
+}
+
+.sidebar-left .desc,
+.nav-top,
+.nav-top i,
+.topbar-right,
+.vistas-label,
+.legend-label,
+.legend-item,
+.escala-label,
+.escala-item p,
+.metric-label,
+.metric-desc {
+  color: #8891a5 !important;
+}
+
+.tabs .tab {
+  background: #0f1522 !important;
+  border-color: rgba(255,255,255,0.07) !important;
+  color: #8891a5 !important;
+}
+
+.tabs .tab.active,
+.tabs .tab:hover {
+  background: rgba(47,212,200,0.12) !important;
+  border-color: #2fd4c8 !important;
+  color: #2fd4c8 !important;
+}
+
+.vista-item,
+.upz-item.humedal-card,
+.escala-item,
+.metric-box {
+  background: #121828 !important;
+  border-color: rgba(255,255,255,0.07) !important;
+}
+
+.natural-box,
+.cultural-box,
+.tecnologico-box,
+.metaverso-box {
+  background: #121828 !important;
+  border-color: rgba(255,255,255,0.07) !important;
+}
+
+.escala-item strong,
+.sidebar-left .user {
+  color: #e7eaf2 !important;
+}
+
+.vista-item i:first-child,
+.vista-item:hover,
+.upz-item:hover,
+.upz-item.active,
+.nav-top i:hover {
+  color: #2fd4c8 !important;
+  border-color: #2fd4c8 !important;
+}
+
+.logo,
+.user,
+.ctrl {
+  border-color: #2fd4c8 !important;
+  color: #2fd4c8 !important;
+}
+
+.leaflet-container,
+#map,
+.metric-chart,
+.compass {
+  background: #0f1522 !important;
+}
+
+/* End exact Module 01 palette */
+
+/* Acentos semánticos exactos de la referencia del Módulo 01 */
+.natural-box {
+  background: rgba(74,222,128,0.12) !important;
+}
+
+.cultural-box {
+  background: rgba(91,141,239,0.12) !important;
+}
+
+.tecnologico-box {
+  background: rgba(239,149,82,0.12) !important;
+}
+
+.metaverso-box {
+  background: rgba(162,118,242,0.12) !important;
+}
+
+.natural-box > i {
+  color: #4ade80 !important;
+}
+
+.cultural-box > i {
+  color: #5b8def !important;
+}
+
+.tecnologico-box > i {
+  color: #ef9552 !important;
+}
+
+.metaverso-box > i {
+  color: #a276f2 !important;
+}
+
+.sidebar.sidebar-icons-only {
+  background: #0c1120 !important;
+}
+
+/* End semantic Module 01 accents */
