@@ -857,7 +857,7 @@ body {
 }
 
 .cultural-box {
-  background: rgba(91,141,239,0.12) !important;
+  background: rgba(70,214,208,0.12) !important;
 }
 
 .tecnologico-box {
@@ -873,7 +873,7 @@ body {
 }
 
 .cultural-box > i {
-  color: #5b8def !important;
+  color: #46d6d0 !important;
 }
 
 .tecnologico-box > i {
@@ -889,3 +889,42 @@ body {
 }
 
 /* End semantic Module 01 accents */
+
+/* Corrección final: cero azul visible */
+.sidebar-left,
+.sidebar-right,
+.vista-item,
+.upz-item.humedal-card,
+.escala-item,
+.metric-box,
+.tabs .tab {
+  background: #111111 !important;
+}
+
+.leaflet-container,
+#map,
+.metric-chart,
+.compass {
+  background: #050506 !important;
+}
+
+.cultural-box {
+  background: rgba(70,214,208,0.12) !important;
+}
+
+.cultural-box > i {
+  color: #46d6d0 !important;
+}
+
+/* Sustituir cualquier referencia cromática azul heredada por un acento neutro/teal */
+.tabs .tab,
+.escala-item p,
+.vistas-label,
+.legend-label,
+.legend-item,
+.metric-label,
+.metric-desc {
+  color: #aab2bc !important;
+}
+
+/* End neutral palette correction */
