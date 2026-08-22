@@ -429,3 +429,36 @@ body.module02-reference-page .compass {
 }
 
 /* End Módulo 05 polish */
+
+/* Composición final: el mapa debe ser el protagonista, no una columna estrecha */
+@media (min-width: 821px) {
+  body.module02-reference-page > .layout > .main {
+    grid-template-columns: 290px minmax(0, 1fr) 300px !important;
+  }
+
+  body.module02-reference-page .sidebar-left {
+    padding-left: 22px !important;
+    padding-right: 22px !important;
+  }
+
+  body.module02-reference-page .sidebar-right {
+    padding-left: 18px !important;
+    padding-right: 18px !important;
+  }
+
+  body.module02-reference-page .sidebar-left > h1 {
+    max-width: 250px !important;
+    font-size: clamp(34px, 3vw, 48px) !important;
+  }
+
+  body.module02-reference-page .sidebar-left > .desc {
+    max-width: 246px !important;
+    font-size: 12px !important;
+  }
+}
+
+body.module02-reference-page .map-section {
+  min-width: 0 !important;
+}
+
+/* End final composition */
