@@ -10,9 +10,10 @@ La actividad está integrada en `modulo-05.html`, la vista **Navegador Multiesca
 | Recorrido | El carro sigue una geometría real de `vias.geojson`, alineada sobre el mapa cartográfico a color. |
 | Movimiento | `W`/flecha arriba acelera; `S`/flecha abajo frena; `A-D` o flechas laterales desplazan el carro dentro del ancho de la vía. |
 | Física | Aceleración, velocidad máxima, fricción y pérdida de velocidad después de una salida o impacto. En curvas cerradas el agarre lateral baja con la velocidad, aumenta la inercia y el carro recupera el derrape de forma progresiva. |
-| Colisiones | El vehículo no atraviesa el obstáculo: se detiene, pierde velocidad y se descuenta una vida. |
+| Colisiones | El vehículo no atraviesa el obstáculo: se detiene, pierde velocidad y se descuenta una vida. Motos y ciclistas tienen impactos diferenciados. |
 | Vida | Tres vidas representadas en el HUD; al llegar a cero la ruta se detiene. |
 | Reinicio | `R` restablece distancia, velocidad y vidas. |
+| Tráfico | Carros, TransMilenio, SITP, motos y ciclistas circulan continuamente; los ciclistas se ubican en el borde/ciclovía y las motos usan posiciones laterales de carril. |
 | Mundo | La ruta se mantiene activa y el mapa se redibuja alrededor del carro conforme avanza. |
 
 Los archivos principales son `modulo-05-drive.js`, que controla la simulación y el render del vehículo, `modulo-05.js`, que expone el mapa Leaflet y carga la red vial, `modulo-05.html`, que contiene el overlay dentro del mapa, y `modulo-05-polish.css`, que contiene el HUD arcade.
