@@ -35,3 +35,17 @@ Las colisiones con carros, motos, buses, TransMilenio y postes aplican retroceso
 Metaverso incluye una pista instrumental original de fondo en `assets/bogota-infinite-drive-background.wav`. La música comienza después de la primera interacción del usuario, como exige el bloqueo de reproducción automática del navegador.
 
 El motor sintetiza efectos ligeros de motor, aceleración, frenado y derrape mediante Web Audio API, y reproduce un impacto cuando el carro choca con tráfico u obstáculos. El botón `🔊` permite silenciar o restaurar todo el audio y el deslizador permite ajustar el volumen. La música se mantiene en loop y deja espacio de mezcla para los efectos.
+
+## Marcador competitivo y temporizador
+
+El HUD del modo Metaverso muestra **score**, **tiempo** y **distancia** durante la carrera. El score aumenta según la velocidad y la distancia recorrida, recibe una penalización de 100 puntos por colisiones con tráfico u obstáculos y de 250 puntos por pasar un semáforo en rojo; nunca baja de cero.
+
+El temporizador comienza cuando el jugador acelera o cuando el vehículo alcanza una velocidad mínima, continúa mientras el carro conserva inercia y se detiene al entrar en `GAME OVER`. Al reiniciar con `R`, el score, el tiempo, la distancia y la vida vuelven a sus valores iniciales. En caso de muerte, el HUD conserva el score final para comparar el siguiente intento.
+
+| Métrica | Regla | Visualización |
+| --- | --- | --- |
+| Score | Distancia recorrida a velocidad arcade, con penalizaciones por golpes | Marcador grande en puntos, con cinco dígitos |
+| Tiempo | Se inicia con el movimiento y se congela en `GAME OVER` | Minutos, segundos y décimas |
+| Distancia | Metros recorridos sobre las vías reales cargadas | Kilómetros con dos decimales |
+
+Los controles de competencia son `WASD` o las flechas para conducir y `R` para reiniciar. En la verificación manual, una aceleración de prueba produjo `00014 PTS`, `00:02.8` y `0.01 km` en el HUD, confirmando que las tres métricas se actualizan juntas.

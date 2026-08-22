@@ -437,6 +437,8 @@ body.module02-reference-page .compass {
 .drive-hud{position:absolute;top:22px;left:22px;display:flex;flex-direction:column;gap:2px;padding:12px 16px;background:rgba(255,255,255,.94);border:2px solid #e8b34c;box-shadow:5px 5px 0 rgba(0,0,0,.35);color:#f4ebda;pointer-events:none;}
 .drive-kicker{font:700 10px/1 'Space Grotesk',sans-serif;letter-spacing:.16em;color:#46d6d0;}
 .drive-hud strong{font:800 28px/1 'Space Grotesk',sans-serif;color:#173b43;}
+.drive-race-meta{display:flex;gap:14px;align-items:center;color:#60736b;font:800 9px/1.2 'Space Grotesk',sans-serif;letter-spacing:.08em;}
+.drive-race-meta b{color:#173b43;font-size:12px;letter-spacing:.02em;}
 .drive-hud small{font:700 9px/1.3 'Space Grotesk',sans-serif;letter-spacing:.08em;color:#c6d1c2;}
 .drive-help{position:absolute;left:22px;bottom:20px;padding:8px 11px;background:rgba(10,18,19,.92);border-left:4px solid #46d6d0;color:#f4ebda;font:700 10px/1.2 'Space Grotesk',sans-serif;letter-spacing:.05em;pointer-events:none;}
 .drive-audio{position:absolute;right:22px;bottom:20px;display:flex;align-items:center;gap:8px;padding:7px 10px;background:rgba(10,18,19,.92);border:1px solid rgba(70,214,208,.6);pointer-events:auto;box-shadow:3px 3px 0 rgba(0,0,0,.25);}
