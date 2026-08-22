@@ -615,3 +615,36 @@ body.module02-reference-page .sidebar-left > h1 {
 }
 
 /* End header cleanup */
+
+/* Identidad Bogotá Viva homologada con Módulo 01 */
+body.module02-reference-page .topbar {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
+body.module02-reference-page .topbar-brand {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  color: var(--m05-white) !important;
+  font-family: 'Space Grotesk', sans-serif !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  letter-spacing: -.15px !important;
+  white-space: nowrap !important;
+}
+
+body.module02-reference-page .topbar-brand i {
+  color: var(--m05-teal) !important;
+  font-size: 15px !important;
+}
+
+@media (max-width: 520px) {
+  body.module02-reference-page .topbar-brand {
+    font-size: 13px !important;
+    gap: 8px !important;
+  }
+}
+
+/* End Bogotá Viva identity */
