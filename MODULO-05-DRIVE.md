@@ -22,3 +22,9 @@ Los archivos principales son `modulo-05-drive.js`, que controla la simulación y
 ## Ejecución local
 
 Desde la carpeta del repositorio se puede abrir `modulo-05.html` mediante un servidor estático, por ejemplo `python3 -m http.server 4173`, y visitar `http://localhost:4173/modulo-05.html`. Es importante utilizar un servidor HTTP porque el navegador bloquea la carga de `vias.geojson` cuando se abre el archivo directamente con `file://`.
+
+## Controles y colisiones verificadas
+
+El motor registra `keydown` y `keyup` en la ventana: `↑`/`W` acelera, `↓`/`S` frena, y `←`/`A` y `→`/`D` giran con inercia lateral. La actualización es continua mediante `requestAnimationFrame`, no por casillas.
+
+Las colisiones con carros, motos, buses, TransMilenio y postes aplican retroceso, pérdida de velocidad, reducción de vida y descuento de score. Al llegar a cero aparece `GAME OVER`; `R` reinicia la partida.
