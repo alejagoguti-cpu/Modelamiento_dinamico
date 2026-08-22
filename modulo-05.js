@@ -12,7 +12,7 @@ const humedales = [
 const map = L.map('map').setView([4.60, -74.08], 11);
 window.bogotaLeafletMap = map;
 
-L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {
+L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {
   attribution: '© CartoDB',
   maxZoom: 19
 }).addTo(map);
@@ -359,7 +359,7 @@ function openEepModal(humedal) {
       attributionControl: true
     }).setView([4.63, -74.15], 12);
     
-    L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {
+    L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {
       attribution: '© CartoDB',
       maxZoom: 19
     }).addTo(miniMap);

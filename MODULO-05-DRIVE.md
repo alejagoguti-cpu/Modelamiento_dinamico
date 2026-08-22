@@ -6,8 +6,8 @@ La actividad está integrada en `modulo-05.html`, la vista **Navegador Multiesca
 
 | Regla | Implementación |
 | --- | --- |
-| Vista | Planta, con el vehículo centrado en el mapa. |
-| Recorrido | El carro sigue una geometría real de `vias.geojson`. |
+| Vista | Planta, con el vehículo centrado en el mapa a color. |
+| Recorrido | El carro sigue una geometría real de `vias.geojson`, alineada sobre el mapa cartográfico a color. |
 | Movimiento | `W`/flecha arriba acelera; `S`/flecha abajo frena; `A-D` o flechas laterales desplazan el carro dentro del ancho de la vía. |
 | Física | Aceleración, velocidad máxima, fricción y pérdida de velocidad después de una salida o impacto. En curvas cerradas el agarre lateral baja con la velocidad, aumenta la inercia y el carro recupera el derrape de forma progresiva. |
 | Colisiones | El vehículo no atraviesa el obstáculo: se detiene, pierde velocidad y se descuenta una vida. |
