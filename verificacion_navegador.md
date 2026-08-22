@@ -23,3 +23,8 @@ Se ingresaron `Parque El Tintal, Bogotá` y `Biblioteca El Tintal, Bogotá`. Nom
 ## Ruta verificada
 
 La prueba completó geocodificación y routing: `Parque Metropolitano El Tintal → Biblioteca El Tintal`, aproximadamente 1,0 km y 2 minutos sobre la red vial. La consola confirmó `mapReady: true`, `mode: real` y `routeLoaded: true`; la línea se dibuja sobre el mapa y el panel actualiza la métrica.
+
+
+## Corrección de calles confirmada
+
+La nueva capa GeoJSON funciona: la consulta natural devolvió 12.267 elementos OSM, de los cuales 11.776 tramos viales se dibujan como líneas teal de alto contraste, diferenciando autopistas, arteriales, colectoras y calles residenciales. La captura de verificación muestra la red completa superpuesta sobre el mapa base, el recuadro de la UPL 13 y los lugares consultados.

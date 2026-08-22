@@ -231,6 +231,9 @@
 
   function addMapLayers() {
     if (!state.map || state.map.getSource("upl-focus")) return;
+    state.map.addSource("osm-streets", { type: "geojson", data: { type: "FeatureCollection", features: [] } });
+    state.map.addLayer({ id: "osm-streets-casing", type: "line", source: "osm-streets", layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": "#ffffff", "line-width": ["interpolate", ["linear"], ["zoom"], 10, 1.6, 13, 3.2, 16, 6], "line-opacity": .78 } });
+    state.map.addLayer({ id: "osm-streets", type: "line", source: "osm-streets", layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": ["match", ["get", "highway"], "motorway", "#d56c75", "trunk", "#df8e5a", "primary", "#e6a95a", "secondary", "#4cb2a9", "tertiary", "#58a9a4", "residential", "#2d9790", "living_street", "#50aaa2", "service", "#74bab2", "#4a9f99"], "line-width": ["interpolate", ["linear"], ["zoom"], 10, .55, 13, 1.15, 16, 2.5], "line-opacity": .93 } });
     state.map.addSource("upl-focus", { type: "geojson", data: { type: "FeatureCollection", features: [] } });
     state.map.addLayer({ id: "upl-focus-fill", type: "fill", source: "upl-focus", paint: { "fill-color": "#24d5c6", "fill-opacity": .10 } });
     state.map.addLayer({ id: "upl-focus-line", type: "line", source: "upl-focus", paint: { "line-color": "#149e96", "line-width": 2, "line-dasharray": [2, 2], "line-opacity": .9 } });
@@ -298,7 +301,20 @@
   function featurePoint(element) {
     if (element.type === "node" && element.lat != null && element.lon != null) return [Number(element.lon), Number(element.lat)];
     if (element.center && element.center.lat != null && element.center.lon != null) return [Number(element.center.lon), Number(element.center.lat)];
+    if (Array.isArray(element.geometry) && element.geometry[0]?.lat != null && element.geometry[0]?.lon != null) return [Number(element.geometry[0].lon), Number(element.geometry[0].lat)];
     return null;
+  }
+
+  function streetFeature(element) {
+    if (element.type !== "way" || !element.tags?.highway || !Array.isArray(element.geometry) || element.geometry.length < 2) return null;
+    const coordinates = element.geometry.map((point) => [Number(point.lon), Number(point.lat)]).filter((point) => Number.isFinite(point[0]) && Number.isFinite(point[1]));
+    if (coordinates.length < 2) return null;
+    return { type: "Feature", properties: { highway: element.tags.highway, name: element.tags.name || "Calle sin nombre", osmId: element.id }, geometry: { type: "LineString", coordinates } };
+  }
+
+  function updateStreetLayer(features) {
+    if (!state.map || !state.map.getSource("osm-streets")) return;
+    state.map.getSource("osm-streets").setData({ type: "FeatureCollection", features });
   }
 
   function featureName(element) {
@@ -315,13 +331,21 @@
     clearPlaceMarkers();
     if (!state.map || !window.maplibregl) return;
     const seen = new Set();
+    const streetFeatures = [];
     let placeCount = 0;
     let roadCount = 0;
-    elements.slice(0, 180).forEach((element) => {
+    elements.forEach((element) => {
+      const street = streetFeature(element);
+      if (street) {
+        streetFeatures.push(street);
+        roadCount += 1;
+      }
+    });
+    updateStreetLayer(streetFeatures);
+    elements.slice(0, 220).forEach((element) => {
       const point = featurePoint(element);
       if (!point) return;
       const tags = element.tags || {};
-      if (tags.highway) roadCount += 1;
       const key = `${point[0].toFixed(5)},${point[1].toFixed(5)}`;
       if (tags.highway || seen.has(key)) return;
       seen.add(key);
@@ -338,7 +362,7 @@
   function buildOverpassQuery(upl, scaleKey) {
     const b = `${(upl.lat - .025).toFixed(5)},${(upl.lon - .03).toFixed(5)},${(upl.lat + .025).toFixed(5)},${(upl.lon + .03).toFixed(5)}`;
     const scale = SCALE_DATA[scaleKey];
-    return `[out:json][timeout:25];(${scale.overpass(b)}way["highway"]["name"](${b}););out center tags;`;
+    return `[out:json][timeout:25];(${scale.overpass(b)}way["highway"](${b}););out geom tags;`;
   }
 
   async function fetchOverpass(upl, scaleKey) {
@@ -362,6 +386,7 @@
   function renderProceduralMarkers() {
     if (!state.map || !state.selectedUpl || !window.maplibregl) return;
     clearPlaceMarkers();
+    updateStreetLayer([]);
     const scale = SCALE_DATA[state.selectedScale];
     const offsets = [[-.012,.008],[.010,.010],[-.007,-.009],[.014,-.006],[-.017,-.003],[.002,.017]];
     offsets.forEach(([dx,dy], index) => {
