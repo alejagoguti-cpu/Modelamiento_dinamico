@@ -48,3 +48,8 @@ La página mantiene el mapa real y la red vial visible. En la carga final, la in
 ## GitHub Pages
 
 La URL pública `https://alejagoguti-cpu.github.io/Modelamiento_dinamico/navegador-multiescalar.html` fue comprobada directamente. El JavaScript está cargado, MapLibre está listo, el modo es `real`, existen 4 botones de escala, 33 opciones UPL y el botón de ruta. Por tanto, esa URL ejecuta la aplicación; la URL `github.com/.../blob/main/...` solo muestra el archivo como código fuente.
+
+
+## Publicación final 217cfda
+
+GitHub Pages terminó el build del commit `217cfda`. La URL pública carga el navegador con JavaScript activo, MapLibre listo, 4 botones de escala, 4 tarjetas de escala, 33 UPL, botón de modo procedural/real, botón de ruta y botón `Usar PMTiles local`. La portada pública fue actualizada para enlazar al navegador multiescalar y mostrar 9 módulos.
