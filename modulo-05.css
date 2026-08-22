@@ -633,3 +633,110 @@ html, body {
   stroke-linecap: round;
   stroke-linejoin: round;
 }
+
+/* Tratamiento negro inspirado en el Módulo 01: las superficies no compiten
+   con el contenido; los colores quedan reservados para estados y acentos. */
+.layout,
+.topbar,
+.main,
+.sidebar-left,
+.map-section,
+.sidebar-right {
+  background: #0b0b0c !important;
+}
+
+.vista-item,
+.upz-item.humedal-card,
+.escalas,
+.escala-item,
+.metric-box,
+.tab {
+  background: #111111 !important;
+  border-color: rgba(255,255,255,.10) !important;
+}
+
+.natural-box,
+.cultural-box,
+.tecnologico-box,
+.metaverso-box {
+  background: #111111 !important;
+  border: 1px solid rgba(255,255,255,.08) !important;
+}
+
+.tab.active {
+  background: rgba(70,214,208,.08) !important;
+  border-color: #46d6d0 !important;
+  color: #46d6d0 !important;
+}
+
+.leaflet-container,
+#map,
+.metric-chart,
+.compass,
+.ctrl {
+  background-color: #050506 !important;
+}
+
+.escala-item strong,
+.metric-label,
+.metric-desc,
+.vista-item,
+.legend-item,
+.vistas-label,
+.legend-label {
+  color: #aab2bc !important;
+}
+
+.escala-item strong {
+  color: #f2f3f6 !important;
+}
+
+.sidebar-left h1 {
+  color: #f2f3f6 !important;
+}
+
+.sidebar-left .desc {
+  color: #aab2bc !important;
+}
+
+.nav-top,
+.nav-top i,
+.topbar,
+.topbar-right {
+  color: #aab2bc !important;
+}
+
+.nav-top i:hover {
+  color: #46d6d0 !important;
+}
+
+.natural-box > i,
+.cultural-box > i,
+.tecnologico-box > i,
+.metaverso-box > i {
+  color: #aab2bc !important;
+}
+
+.vista-item i:first-child,
+.vista-item i:last-child {
+  color: #aab2bc !important;
+}
+
+.vista-item:hover,
+.upz-item:hover,
+.tab:hover {
+  border-color: #46d6d0 !important;
+}
+
+@media (max-width: 520px) {
+  .layout,
+  .topbar,
+  .main,
+  .sidebar-left,
+  .map-section,
+  .sidebar-right {
+    background: #0b0b0c !important;
+  }
+}
+
+/* End black reference treatment */
