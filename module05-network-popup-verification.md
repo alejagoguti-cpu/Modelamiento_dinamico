@@ -19,3 +19,11 @@ La auditoría técnica confirmó: `mapNetworkNodes: 0`, `modalOpen: true`, `popu
 Se añadieron controles `−`, `100%` y `+` al pop-up. La prueba del botón `+` actualizó el indicador a 118% y el viewport pasó a `scale(1.18)`, confirmando que el zoom se aplica al diagrama sin cerrar el pop-up. El canvas quedó marcado como interactivo para soportar rueda y arrastre.
 
 La auditoría final del pop-up confirmó: transición de opacidad de 0.26 s y transformación de 0.32 s, fondo `rgb(11, 12, 15)`, borde turquesa tenue, título Space Grotesk en blanco, zoom reiniciado a 100%, viewport interactivo activo y `mapNodes: 0`. Esto confirma que el diseño mantiene la base visual del Módulo 01 y que la red permanece fuera del mapa.
+
+Auditoría cromática de Natural: 10 nodos en el pop-up y 0 nodos de red en el mapa principal. Los nodos secundarios usan relleno `rgb(5, 7, 10)`, borde teal `rgb(70, 214, 208)`, grosor 1.35 px, halo teal y texto blanco Space Grotesk. El hub usa el mismo relleno, borde cobre `rgb(232, 154, 108)`, grosor 1.8 px y halo cobre. La jerarquía coincide con la convención de la referencia.
+
+La validación de Cultural confirmó 10 nodos en el pop-up y 0 nodos de red en el mapa principal. Los secundarios usan relleno `rgb(5, 7, 10)` con borde teal `rgb(70, 214, 208)` y los hubs usan el mismo relleno con borde cobre `rgb(232, 154, 108)`, manteniendo la jerarquía cromática entre escalas.
+
+Tecnológico fue probado con 10 nodos y su red se abrió correctamente en el pop-up. La distribución conserva secundarios teal, hubs cobre, fondo negro y conexiones directas teal/indirectas cobre, sin nodos superpuestos en el mapa principal.
+
+Metaverso fue validado con 10 nodos. Sus secundarios mantienen borde teal, los hubs borde cobre, todos con relleno negro y texto blanco. La paleta es consistente con Natural, Cultural y Tecnológico y no se introdujeron tonos azules.

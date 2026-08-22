@@ -1083,3 +1083,51 @@ body.module02-reference-page .popup-network-svg {
 }
 
 /* End popup motion and controls */
+
+/* Ajuste final de nodos según la paleta del Módulo 01 */
+body.module02-reference-page .popup-node circle {
+  fill: #05070a !important;
+  stroke: #46d6d0 !important;
+  stroke-width: 1.35 !important;
+  filter: drop-shadow(0 0 5px rgba(70,214,208,.30)) !important;
+}
+
+body.module02-reference-page .popup-node.hub circle {
+  fill: #05070a !important;
+  stroke: #e89a6c !important;
+  stroke-width: 1.8 !important;
+  filter: drop-shadow(0 0 6px rgba(232,154,108,.34)) !important;
+}
+
+body.module02-reference-page .popup-node text {
+  fill: #f2f3f6 !important;
+  font-family: 'Space Grotesk', Inter, sans-serif !important;
+  font-size: 9px !important;
+  font-weight: 700 !important;
+  letter-spacing: .18px !important;
+}
+
+body.module02-reference-page .popup-node:hover circle,
+body.module02-reference-page .popup-node:focus-visible circle,
+body.module02-reference-page .popup-node.selected circle {
+  fill: rgba(70,214,208,.12) !important;
+  stroke: #46d6d0 !important;
+  stroke-width: 2.7 !important;
+  filter: drop-shadow(0 0 8px rgba(70,214,208,.42)) !important;
+}
+
+body.module02-reference-page .popup-node.hub:hover circle,
+body.module02-reference-page .popup-node.hub:focus-visible circle,
+body.module02-reference-page .popup-node.hub.selected circle {
+  fill: rgba(232,154,108,.12) !important;
+  stroke: #e89a6c !important;
+  filter: drop-shadow(0 0 9px rgba(232,154,108,.45)) !important;
+}
+
+@media (max-width: 700px) {
+  body.module02-reference-page .popup-node text {
+    font-size: 8px !important;
+  }
+}
+
+/* End final node palette */

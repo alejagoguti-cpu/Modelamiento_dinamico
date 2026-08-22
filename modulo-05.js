@@ -875,7 +875,7 @@ function renderScaleNetworkPopup(mode) {
     const from = nodes[fromId];
     const to = nodes[toId];
     if (!from || !to) return '';
-    const color = type === 'indirecta' ? '#e89a6c' : definition.accent;
+    const color = type === 'indirecta' ? '#e89a6c' : '#46d6d0';
     const className = type === 'indirecta' ? 'popup-edge indirect' : 'popup-edge direct';
     return `<line class="${className}" x1="${from.x.toFixed(1)}" y1="${from.y.toFixed(1)}" x2="${to.x.toFixed(1)}" y2="${to.y.toFixed(1)}" stroke="${color}" marker-end="url(#arrow-${type})" />`;
   }).join('');
