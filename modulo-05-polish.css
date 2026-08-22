@@ -973,3 +973,113 @@ body.module02-reference-page .scale-network-hint {
 }
 
 /* End scale network pop-up */
+
+/* Transición refinada y controles del pop-up */
+body.module02-reference-page .scale-network-dialog {
+  opacity: 0 !important;
+  transform: translateY(16px) scale(.975) !important;
+  transform-origin: 50% 46% !important;
+  transition: opacity .26s ease, transform .32s cubic-bezier(.22,.8,.24,1) !important;
+}
+
+body.module02-reference-page .scale-network-modal.open .scale-network-dialog {
+  opacity: 1 !important;
+  transform: translateY(0) scale(1) !important;
+}
+
+body.module02-reference-page .scale-network-modal {
+  transition: opacity .26s ease, background-color .26s ease !important;
+}
+
+body.module02-reference-page .scale-network-actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  margin-left: auto !important;
+  margin-right: 10px !important;
+}
+
+body.module02-reference-page .scale-network-zoom {
+  width: 30px !important;
+  height: 30px !important;
+  display: grid !important;
+  place-items: center !important;
+  padding: 0 !important;
+  border: 1px solid rgba(255,255,255,.14) !important;
+  border-radius: 7px !important;
+  background: #111111 !important;
+  color: #aab2bc !important;
+  font-family: Inter, sans-serif !important;
+  font-size: 17px !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+}
+
+body.module02-reference-page .scale-network-zoom-value {
+  width: 48px !important;
+  font-size: 9px !important;
+  letter-spacing: .2px !important;
+}
+
+body.module02-reference-page .scale-network-zoom:hover,
+body.module02-reference-page .scale-network-zoom:focus-visible {
+  border-color: #46d6d0 !important;
+  color: #46d6d0 !important;
+  outline: none !important;
+}
+
+body.module02-reference-page .scale-network-canvas {
+  position: relative !important;
+  overflow: hidden !important;
+  cursor: grab !important;
+  touch-action: none !important;
+}
+
+body.module02-reference-page .scale-network-canvas.is-dragging {
+  cursor: grabbing !important;
+}
+
+body.module02-reference-page .popup-network-viewport {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 360px !important;
+  display: grid !important;
+  place-items: center !important;
+  transform-origin: 50% 50% !important;
+  will-change: transform !important;
+}
+
+body.module02-reference-page .popup-network-svg {
+  flex: 0 0 auto !important;
+  user-select: none !important;
+  -webkit-user-drag: none !important;
+}
+
+@media (max-width: 700px) {
+  body.module02-reference-page .scale-network-dialog-head {
+    flex-wrap: wrap !important;
+  }
+
+  body.module02-reference-page .scale-network-actions {
+    order: 3 !important;
+    width: 100% !important;
+    margin: 4px 0 0 !important;
+  }
+
+  body.module02-reference-page .scale-network-close {
+    margin-left: 0 !important;
+  }
+
+  body.module02-reference-page .popup-network-viewport {
+    min-height: 330px !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.module02-reference-page .scale-network-modal,
+  body.module02-reference-page .scale-network-dialog {
+    transition: none !important;
+  }
+}
+
+/* End popup motion and controls */

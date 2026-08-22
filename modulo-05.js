@@ -760,6 +760,78 @@ const scaleNetworkDescriptions = {
 };
 
 let scalePopupSelectedNode = null;
+const scaleNetworkViewState = { scale: 1, x: 0, y: 0 };
+
+function updateScaleNetworkViewport() {
+  const viewport = document.getElementById('scaleNetworkViewport');
+  if (!viewport) return;
+  viewport.style.transform = `translate(${scaleNetworkViewState.x}px, ${scaleNetworkViewState.y}px) scale(${scaleNetworkViewState.scale})`;
+  const zoomValue = document.getElementById('scaleNetworkZoomReset');
+  if (zoomValue) zoomValue.textContent = `${Math.round(scaleNetworkViewState.scale * 100)}%`;
+}
+
+function setScaleNetworkZoom(nextScale, resetPosition = false) {
+  scaleNetworkViewState.scale = Math.max(.72, Math.min(2.4, nextScale));
+  if (resetPosition) {
+    scaleNetworkViewState.x = 0;
+    scaleNetworkViewState.y = 0;
+  }
+  updateScaleNetworkViewport();
+}
+
+function resetScaleNetworkView() {
+  scaleNetworkViewState.scale = 1;
+  scaleNetworkViewState.x = 0;
+  scaleNetworkViewState.y = 0;
+  updateScaleNetworkViewport();
+}
+
+function setupScaleNetworkViewport() {
+  const canvas = document.getElementById('scaleNetworkCanvas');
+  const viewport = document.getElementById('scaleNetworkViewport');
+  if (!canvas || !viewport || canvas.dataset.interactive === 'true') return;
+  canvas.dataset.interactive = 'true';
+  let dragging = false;
+  let startX = 0;
+  let startY = 0;
+  let originX = 0;
+  let originY = 0;
+
+  canvas.addEventListener('wheel', event => {
+    event.preventDefault();
+    setScaleNetworkZoom(scaleNetworkViewState.scale + (event.deltaY < 0 ? .12 : -.12));
+  }, { passive: false });
+
+  canvas.addEventListener('pointerdown', event => {
+    if (event.button !== 0 && event.pointerType !== 'touch') return;
+    dragging = true;
+    startX = event.clientX;
+    startY = event.clientY;
+    originX = scaleNetworkViewState.x;
+    originY = scaleNetworkViewState.y;
+    canvas.classList.add('is-dragging');
+    canvas.setPointerCapture?.(event.pointerId);
+  });
+
+  canvas.addEventListener('pointermove', event => {
+    if (!dragging) return;
+    scaleNetworkViewState.x = originX + event.clientX - startX;
+    scaleNetworkViewState.y = originY + event.clientY - startY;
+    updateScaleNetworkViewport();
+  });
+
+  const stopDragging = event => {
+    if (!dragging) return;
+    dragging = false;
+    canvas.classList.remove('is-dragging');
+    canvas.releasePointerCapture?.(event.pointerId);
+  };
+  canvas.addEventListener('pointerup', stopDragging);
+  canvas.addEventListener('pointercancel', stopDragging);
+  canvas.addEventListener('pointerleave', event => {
+    if (event.pointerType === 'mouse') stopDragging(event);
+  });
+}
 
 function splitPopupLabel(label) {
   const words = label.split(' ');
@@ -820,7 +892,7 @@ function renderScaleNetworkPopup(mode) {
     </g>`;
   }).join('');
 
-  canvas.innerHTML = `<svg class="popup-network-svg" viewBox="0 0 1000 544" role="img" aria-label="${definition.title}">
+  canvas.innerHTML = `<div id="scaleNetworkViewport" class="popup-network-viewport"><svg class="popup-network-svg" viewBox="0 0 1000 544" role="img" aria-label="${definition.title}">
     <defs>
       <filter id="popupGlowTeal" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
       <filter id="popupGlowCopper" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
@@ -829,8 +901,10 @@ function renderScaleNetworkPopup(mode) {
     </defs>
     <g class="popup-edges">${edgeMarkup}</g>
     <g class="popup-nodes">${nodeMarkup}</g>
-  </svg>`;
+  </svg></div>`;
 
+  resetScaleNetworkView();
+  setupScaleNetworkViewport();
   canvas.querySelectorAll('.popup-node').forEach(nodeElement => {
     const selectNode = () => {
       canvas.querySelectorAll('.popup-node').forEach(item => item.classList.remove('selected'));
@@ -878,4 +952,18 @@ document.getElementById('scaleNetworkModal')?.addEventListener('click', event =>
 });
 document.addEventListener('keydown', event => {
   if (event.key === 'Escape') closeScaleNetworkModal();
+});
+
+// Controles de zoom del diagrama, compartidos por las cuatro redes.
+document.getElementById('scaleNetworkZoomIn')?.addEventListener('click', event => {
+  event.stopPropagation();
+  setScaleNetworkZoom(scaleNetworkViewState.scale + .18);
+});
+document.getElementById('scaleNetworkZoomOut')?.addEventListener('click', event => {
+  event.stopPropagation();
+  setScaleNetworkZoom(scaleNetworkViewState.scale - .18);
+});
+document.getElementById('scaleNetworkZoomReset')?.addEventListener('click', event => {
+  event.stopPropagation();
+  resetScaleNetworkView();
 });
