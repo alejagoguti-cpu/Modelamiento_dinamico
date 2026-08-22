@@ -928,3 +928,292 @@ body {
 }
 
 /* End neutral palette correction */
+
+/* Refinamiento UI/UX: jerarquía, ritmo y legibilidad */
+body.module02-reference-page > .layout {
+  background: #0b0c0f !important;
+  min-height: 100vh;
+}
+
+body.module02-reference-page > .layout > .topbar {
+  background: #0b0c0f !important;
+  border-bottom-color: rgba(255,255,255,.08) !important;
+  padding: 0 22px !important;
+}
+
+body.module02-reference-page > .layout > .main {
+  background: #0b0c0f !important;
+  gap: 1px !important;
+}
+
+body.module02-reference-page .sidebar-left,
+body.module02-reference-page .sidebar-right {
+  background: #0b0c0f !important;
+  border-color: rgba(255,255,255,.08) !important;
+}
+
+body.module02-reference-page .sidebar-left {
+  padding: 24px 22px 26px !important;
+}
+
+body.module02-reference-page .nav-top {
+  gap: 10px !important;
+  margin-bottom: 22px !important;
+  color: #78818d !important;
+}
+
+body.module02-reference-page .nav-top i {
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  border-radius: 6px;
+}
+
+body.module02-reference-page .logo {
+  width: 38px !important;
+  height: 38px !important;
+  margin-bottom: 20px !important;
+  border-color: #46d6d0 !important;
+  color: #46d6d0 !important;
+  box-shadow: 0 0 16px rgba(70,214,208,.16) !important;
+}
+
+body.module02-reference-page .sidebar-left > h1 {
+  margin-bottom: 14px !important;
+  color: #f2f3f6 !important;
+  text-shadow: 0 0 24px rgba(70,214,208,.08) !important;
+}
+
+body.module02-reference-page .sidebar-left > .desc {
+  max-width: 290px !important;
+  margin-bottom: 22px !important;
+  color: #aab2bc !important;
+  font-size: 13px !important;
+  line-height: 1.55 !important;
+}
+
+body.module02-reference-page .tabs {
+  gap: 8px !important;
+  margin-bottom: 24px !important;
+}
+
+body.module02-reference-page .tabs .tab {
+  min-height: 42px !important;
+  padding: 10px 8px !important;
+  border-radius: 8px !important;
+  border-color: rgba(255,255,255,.12) !important;
+  background: #111111 !important;
+  color: #8891a5 !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  line-height: 1.15 !important;
+  letter-spacing: .1px !important;
+}
+
+body.module02-reference-page .tabs .tab.active {
+  background: rgba(70,214,208,.12) !important;
+  border-color: #46d6d0 !important;
+  color: #46d6d0 !important;
+  box-shadow: 0 0 0 1px rgba(70,214,208,.10) inset !important;
+}
+
+body.module02-reference-page .vistas,
+body.module02-reference-page .legend {
+  margin-bottom: 22px !important;
+}
+
+body.module02-reference-page .vistas-label,
+body.module02-reference-page .legend-label,
+body.module02-reference-page .escala-label {
+  color: #78818d !important;
+  font-size: 9px !important;
+  letter-spacing: .9px !important;
+}
+
+body.module02-reference-page .vista-item {
+  min-height: 52px;
+  padding: 12px !important;
+  background: #121212 !important;
+  border-color: rgba(255,255,255,.09) !important;
+  border-radius: 8px !important;
+  line-height: 1.35 !important;
+}
+
+body.module02-reference-page .vista-item i:first-child {
+  color: #46d6d0 !important;
+}
+
+body.module02-reference-page .vista-item i:last-child {
+  color: #78818d !important;
+}
+
+body.module02-reference-page .legend {
+  padding-bottom: 16px !important;
+  border-bottom-color: rgba(255,255,255,.08) !important;
+}
+
+body.module02-reference-page .legend-item {
+  color: #8891a5 !important;
+  line-height: 1.4 !important;
+}
+
+body.module02-reference-page .sidebar-right {
+  padding: 24px 20px 26px !important;
+}
+
+body.module02-reference-page .escalas {
+  display: grid !important;
+  gap: 8px !important;
+  margin-bottom: 24px !important;
+  padding-bottom: 20px !important;
+  border-bottom-color: rgba(255,255,255,.08) !important;
+}
+
+body.module02-reference-page .escala-item {
+  min-height: 62px;
+  margin-bottom: 0 !important;
+  padding: 12px !important;
+  border: 1px solid rgba(255,255,255,.08) !important;
+  border-radius: 9px !important;
+  gap: 10px !important;
+}
+
+body.module02-reference-page .escala-item strong {
+  margin-bottom: 4px !important;
+  color: #f2f3f6 !important;
+  font-size: 10px !important;
+}
+
+body.module02-reference-page .escala-item p {
+  color: #8891a5 !important;
+  line-height: 1.35 !important;
+}
+
+body.module02-reference-page .detail {
+  margin-bottom: 14px !important;
+}
+
+body.module02-reference-page .detail h2 {
+  font-family: 'Space Grotesk', sans-serif !important;
+  font-size: 12px !important;
+  letter-spacing: .4px !important;
+  color: #46d6d0 !important;
+}
+
+body.module02-reference-page .detail-text {
+  font-size: 10px !important;
+  line-height: 1.55 !important;
+  color: #8891a5 !important;
+  border-bottom-color: rgba(255,255,255,.08) !important;
+}
+
+body.module02-reference-page .metrics {
+  gap: 10px !important;
+}
+
+body.module02-reference-page .metric-box {
+  padding: 16px !important;
+  background: #121212 !important;
+  border-color: rgba(255,255,255,.09) !important;
+  border-radius: 10px !important;
+}
+
+body.module02-reference-page .metric-number {
+  margin-bottom: 6px !important;
+  color: #46d6d0 !important;
+  font-family: 'Space Grotesk', sans-serif !important;
+  font-size: 27px !important;
+}
+
+body.module02-reference-page .metric-label {
+  color: #78818d !important;
+  letter-spacing: .5px !important;
+}
+
+body.module02-reference-page .metric-desc {
+  color: #8891a5 !important;
+  line-height: 1.4 !important;
+}
+
+body.module02-reference-page .metric-chart {
+  height: 5px !important;
+  margin: 10px 0 12px !important;
+  background: #050506 !important;
+  border: 1px solid rgba(255,255,255,.06) !important;
+}
+
+body.module02-reference-page .metric-box a {
+  color: #46d6d0 !important;
+  font-size: 9px !important;
+  font-weight: 600 !important;
+}
+
+body.module02-reference-page .btn-compare {
+  min-height: 40px;
+  padding: 10px 12px !important;
+  border-radius: 8px !important;
+  border-color: #46d6d0 !important;
+  color: #46d6d0 !important;
+  font-size: 10px !important;
+}
+
+@media (max-width: 1100px) and (min-width: 821px) {
+  body.module02-reference-page > .layout > .main {
+    grid-template-columns: minmax(280px, 320px) minmax(360px, 1fr) minmax(280px, 320px) !important;
+  }
+}
+
+@media (max-width: 820px) {
+  body.module02-reference-page > .layout {
+    min-height: 100vh !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  body.module02-reference-page > .layout > .topbar {
+    min-height: 40px !important;
+  }
+
+  body.module02-reference-page > .layout > .main {
+    grid-template-columns: minmax(0, 1fr) !important;
+    overflow: visible !important;
+    padding-top: 18px !important;
+    padding-bottom: 32px !important;
+  }
+
+  body.module02-reference-page .sidebar-left,
+  body.module02-reference-page .map-section,
+  body.module02-reference-page .sidebar-right {
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+
+  body.module02-reference-page .map-section {
+    min-height: 460px !important;
+  }
+
+  body.module02-reference-page #map {
+    min-height: 460px !important;
+  }
+}
+
+@media (max-width: 520px) {
+  body.module02-reference-page .sidebar-left,
+  body.module02-reference-page .sidebar-right {
+    padding: 20px 16px !important;
+  }
+
+  body.module02-reference-page .tabs .tab {
+    min-height: 44px !important;
+    font-size: 10px !important;
+  }
+
+  body.module02-reference-page .sidebar-left > h1 {
+    font-size: 38px !important;
+  }
+}
+
+/* End UI/UX refinement */
