@@ -72,8 +72,35 @@
           <div id="conceptDetail" class="concept-detail" aria-live="polite"><strong>Cómo leer la red</strong><span>La bola ambientalista contiene conceptos ecológicos concretos. La bola humanista es mayor y se conecta con tres sistemas: socioeconómico, gobernanza y funcionalista.</span></div>
         </section>
       </section>
+
+      <section class="drive-challenge panel" aria-labelledby="driveTitle">
+        <div class="drive-head">
+          <div>
+            <div class="panel-kicker">PUNTOS EXTRA · DESAFÍO DEL MÓDULO 04</div>
+            <h2 id="driveTitle">Modelamiento dinámico: Bogotá Infinite Drive</h2>
+            <p class="drive-intro">Una simulación interactiva de movilidad urbana: conduce, descubre nuevos segmentos y observa cómo una regla física simple transforma velocidad, colisión y vida.</p>
+          </div>
+          <div class="drive-status"><span class="status-dot"></span> MUNDO PROCEDURAL ACTIVO</div>
+        </div>
+        <div class="drive-layout">
+          <div class="drive-stage-wrap">
+            <canvas id="bogotaDriveCanvas" width="1200" height="620" tabindex="0" aria-label="Simulación de conducción infinita por Bogotá"></canvas>
+            <div class="drive-hud drive-hud-left"><span class="drive-label">DISTANCIA</span><strong id="driveDistance">0.00 km</strong><span id="driveLocality">CHAPINERO · SEGMENTO 00</span></div>
+            <div class="drive-hud drive-hud-right"><span class="drive-label">INTEGRIDAD</span><strong id="driveHealth">♥ ♥ ♥</strong><div class="drive-health-track"><i id="driveHealthFill"></i></div><span id="driveMessage">VÍA ABIERTA</span></div>
+            <div class="drive-hud drive-speed"><strong id="driveSpeed">000</strong><span>KM/H</span></div>
+            <div id="driveToast" class="drive-toast" role="status" aria-live="polite"></div>
+            <div id="driveGameOver" class="drive-game-over" hidden><strong>RUTA DETENIDA</strong><span>Presiona R o toca reiniciar para volver a manejar.</span></div>
+          </div>
+          <aside class="drive-info">
+            <div class="drive-info-block"><span class="panel-kicker">REGLAS DEL MODELO</span><p>El carro conserva inercia, no atraviesa obstáculos y pierde vida cuando el volumen del vehículo intersecta un hueco, taxi, bus o cono.</p></div>
+            <div class="drive-legend"><span><i class="legend-swatch swatch-red"></i> TransMilenio</span><span><i class="legend-swatch swatch-yellow"></i> Taxi</span><span><i class="legend-swatch swatch-hole"></i> Hueco</span><span><i class="legend-swatch swatch-green"></i> Ciclovía</span></div>
+            <div class="drive-controls"><span class="panel-kicker">CONTROLES</span><div><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd><em>conducir</em></div><div><kbd>R</kbd><em>reiniciar la ruta</em></div><button id="driveReset" type="button">REINICIAR SIMULACIÓN</button></div>
+          </aside>
+        </div>
+      </section>
     </main>
   </div>
   <script src="modulo-04.js?module06-style-v1"></script>
+  <script src="modulo-04-drive.js?v=module04-infinite-drive-1"></script>
 </body>
 </html>

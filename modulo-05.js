@@ -10,6 +10,7 @@ const humedales = [
 ];
 
 const map = L.map('map').setView([4.60, -74.08], 11);
+window.bogotaLeafletMap = map;
 
 L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {
   attribution: '© CartoDB',
@@ -23,7 +24,7 @@ let humedalMarkers = {};
 let eepNodos = [];
 let eepLayers = {};
 let networkLines = [];
-let currentMode = 'natural'; // Escala inicial: Natural
+let currentMode = 'tecnologico'; // Escala inicial: Tecnológico, red vial jugable activa
 
 // --- VARIABLE PARA LA CAPA DE VÍAS ---
 let viasLayer = null;

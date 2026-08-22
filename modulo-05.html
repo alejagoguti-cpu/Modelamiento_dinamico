@@ -59,9 +59,9 @@
       <div class="desc">Explora Bogotá desde múltiples escalas para entender su estructura y gestionar la proximidad de manera inteligente.</div>
 
         <div class="tabs">
-        <button class="tab active" data-scale="natural">Natural</button>
+        <button class="tab" data-scale="natural">Natural</button>
         <button class="tab" data-scale="cultural">Cultural</button>
-        <button class="tab" data-scale="tecnologico">Tecnológico</button>
+        <button class="tab active" data-scale="tecnologico">Tecnológico</button>
         <button class="tab" data-scale="metaverso">Metaverso</button>
       </div>
 
@@ -100,6 +100,16 @@
     <!-- CENTER MAP -->
     <div class="map-section">
       <div id="map"></div>
+      <div id="driveOverlay" class="drive-overlay" aria-label="Juego de conducción sobre el mapa de Bogotá">
+        <canvas id="multiscaleDriveCanvas" width="920" height="760"></canvas>
+        <div class="drive-hud">
+          <span class="drive-kicker">BOGOTÁ INFINITE DRIVE</span>
+          <strong id="multiDriveDistance">0.00 km</strong>
+          <small id="multiDriveStatus">CARGANDO CALLES REALES</small>
+        </div>
+        <div class="drive-help">WASD / FLECHAS · conducir &nbsp; R · reiniciar</div>
+        <div id="multiDriveToast" class="drive-toast" aria-live="polite"></div>
+      </div>
       <div class="map-controls">
         <button class="ctrl">+</button>
         <div class="compass"></div>
@@ -215,6 +225,7 @@
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="./modulo-05-drive.js?v=multiscale-drive-1"></script>
 
 <!-- MODAL EEP -->
 <div id="eepModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); z-index: 1000; overflow: auto; padding: 20px;">
@@ -260,5 +271,6 @@
 </div>
 
 <script src="modulo-05.js"></script>
+<script src="modulo-05-drive.js?v=multiscale-drive-2"></script>
 </body>
 </html>
