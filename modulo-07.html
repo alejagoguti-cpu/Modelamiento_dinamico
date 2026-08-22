@@ -76,6 +76,37 @@
           </article>
         </section>
 
+        <section class="cartography-section" aria-labelledby="cartographyTitle">
+          <div class="cartography-heading">
+            <div>
+              <div class="eyebrow"><b></b> CARTOGRAFÍA DEL SIMULADOR</div>
+              <h2 id="cartographyTitle">Una cartografía que puede correr la ciudad</h2>
+              <p>La versión base no depende de servicios externos: dibuja el territorio como una red procedural de agentes, calles, flujos y perturbaciones. El bonus permite sustituir esta base por calles reales cuando se habiliten fuentes geográficas.</p>
+            </div>
+            <span class="cartography-status"><i></i> BASE ACTIVA · SIN APIS</span>
+          </div>
+          <div class="cartography-card">
+            <div class="cartography-visual" aria-label="Mapa procedural de agentes y flujos urbanos">
+              <div class="map-grid-lines"></div>
+              <span class="map-river river-1"></span><span class="map-river river-2"></span>
+              <span class="map-road road-1"></span><span class="map-road road-2"></span><span class="map-road road-3"></span><span class="map-road road-4"></span><span class="map-road road-5"></span>
+              <span class="map-route route-1"></span><span class="map-route route-2"></span><span class="map-route route-3"></span>
+              <span class="map-node node-a">A</span><span class="map-node node-b">V</span><span class="map-node node-c">E</span><span class="map-node node-d">R</span>
+              <div class="map-label label-1">AGENTES</div><div class="map-label label-2">VIVIENDA</div><div class="map-label label-3">ECOSISTEMAS</div><div class="map-label label-4">15 MIN</div>
+            </div>
+            <div class="cartography-spec">
+              <div class="spec-kicker">VERSIÓN BASE — TODO PROCEDURAL, CERO APIs EXTERNAS</div>
+              <div class="spec-row"><strong>render</strong><span>PixiJS · Kaboom.js · p5.js</span></div>
+              <div class="spec-row"><strong>físicas</strong><span>Matter.js · o a mano</span></div>
+              <div class="spec-divider"></div>
+              <div class="spec-kicker bonus"># BONUS — CALLES REALES</div>
+              <div class="spec-row"><strong>mapa</strong><span>MapLibre GL JS · Mapbox GL · Overpass API (OSM)</span></div>
+              <div class="spec-row"><strong>ruta</strong><span>OSRM · Mapbox Directions · Nominatim (geocoding)</span></div>
+              <p class="spec-note">La base procedural permite probar agentes y reglas sin depender de una conexión. Las calles reales son una capa opcional para contrastar la simulación con la ciudad existente.</p>
+            </div>
+          </div>
+        </section>
+
         <section class="metric-grid">
           <article class="metric-card cyan">
             <header>
