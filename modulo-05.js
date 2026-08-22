@@ -118,7 +118,7 @@ fetch('capa0.geojson')
     capa0Layer = L.geoJSON(data, {
       style: function (feature) {
         return {
-          color: "#eab308", 
+          color: "#e89a6c",
           weight: 1.5,
           opacity: 0.8
         };
@@ -155,7 +155,7 @@ fetch('upz.geojson')
     capaUpzLayer = L.geoJSON(data, {
       style: function (feature) {
         return {
-          color: "#ec4899", // Rosa/magenta para diferenciar de las otras capas
+          color: "#46d6d0", // Turquesa para la capa de detalle
           weight: 1.5,
           opacity: 0.8
         };
@@ -186,8 +186,8 @@ function renderItemList() {
       div.className = 'upz-item humedal-card' + (currentSelection?.id === h.id ? ' active' : '');
       div.innerHTML = `
         <div style="display: flex; flex-direction: column; gap: 6px;">
-          <strong style="color: #2fd4c8; font-size: 11px;">${h.nombre}</strong>
-          <div style="font-size: 9px; color: #7a8fa0;">
+          <strong style="color: #46d6d0; font-size: 11px;">${h.nombre}</strong>
+          <div style="font-size: 9px; color: #aab2bc;">
             <div>Ubicación: ${h.lat.toFixed(4)}, ${h.lng.toFixed(4)}</div>
             <div>Área: ${h.area} ha</div>
           </div>
@@ -215,7 +215,7 @@ function renderItemList() {
   } else if (currentMode === 'metaverso') {
     const div = document.createElement('div');
     div.className = 'upz-item active';
-    div.innerHTML = '<strong>Modelo digital integrado</strong><br><span style="font-size:9px;color:#7a8fa0;">Capas Natural, Cultural y Tecnológica superpuestas</span>';
+    div.innerHTML = '<strong>Modelo digital integrado</strong><br><span style="font-size:9px;color:#aab2bc;">Capas Natural, Cultural y Tecnológica superpuestas</span>';
     container.appendChild(div);
   }
 }
@@ -236,7 +236,7 @@ function selectBarrio(barrio) {
   document.getElementById('detail-description').innerHTML = `
     <p><strong>${barrio.nombre}</strong></p>
     <p style="margin-top: 10px;">Barrio de Bogotá</p>
-    <p style="font-size: 9px; color: #7a8fa0; margin-top: 8px;">Código: ${barrio.codigo}</p>
+    <p style="font-size: 9px; color: #aab2bc; margin-top: 8px;">Código: ${barrio.codigo}</p>
   `;
   renderItemList();
 }
@@ -272,7 +272,7 @@ function showEepNetwork() {
       const coords = nodoFrom.geometry.coordinates;
       const coordsTo = nodoTo.geometry.coordinates;
       const dashArray = conn.tipo === 'indirecta' ? '5, 3' : '0';
-      const lineColor = conn.tipo === 'indirecta' ? '#ff9552' : '#2fd4c8';
+      const lineColor = conn.tipo === 'indirecta' ? '#e89a6c' : '#46d6d0';
       
       const line = L.polyline([
         [coords[1], coords[0]],
@@ -298,8 +298,8 @@ function showEepNetwork() {
     
     const circle = L.circleMarker([coords[1], coords[0]], {
       radius: radius,
-      fillColor: '#2fd4c8',
-      color: '#0a0e17',
+      fillColor: '#46d6d0',
+      color: '#0a0a0a',
       weight: 2,
       opacity: 0.9,
       fillOpacity: 0.8
@@ -334,7 +334,7 @@ function selectHumedal(h) {
         [h.lat, h.lng],
         [other.lat, other.lng]
       ], {
-        color: '#2fd4c8',
+        color: '#46d6d0',
         weight: 2,
         opacity: 0.5,
         dashArray: '5, 5'
@@ -352,8 +352,8 @@ function selectHumedal(h) {
     <p>La EEP es la integración de áreas de origen natural que tienen una oferta ambiental significativa, es ordenadora del territorio y garante de los equilibrios ecosistémicos, del agua y la riqueza hídrica.</p>
     <p><strong>Relación Cuerpo Hídrico - Verde - Ecosistemas:</strong></p>
     <p>Los humedales son elementos clave de la EEP. Regulan el ciclo del agua, proveen hábitat para fauna silvestre y flora nativa, actúan como corredores ecológicos y mitigar el riesgo climático.</p>
-    <p style="font-size: 9px; color: #7a8fa0; margin-top: 8px;">📍 ${h.lat.toFixed(4)}, ${h.lng.toFixed(4)}<br/>📏 Área: ${h.area} ha</p>
-    <p style="font-size: 8px; color: #7a8fa0;">POT Bogotá Reverdece 2022-2035</p>
+    <p style="font-size: 9px; color: #aab2bc; margin-top: 8px;">📍 ${h.lat.toFixed(4)}, ${h.lng.toFixed(4)}<br/>📏 Área: ${h.area} ha</p>
+    <p style="font-size: 8px; color: #aab2bc;">POT Bogotá Reverdece 2022-2035</p>
     <p style="margin-top: 10px; font-size: 9px;"><strong>Relaciones en la red EEP:</strong></p>
     <p style="font-size: 8px;">— Línea sólida teal = Relación directa<br/>— Línea punteada naranja = Relación indirecta</p>
   `;
@@ -404,7 +404,7 @@ function openEepModal(humedal) {
           const coords = nodoFrom.geometry.coordinates;
           const coordsTo = nodoTo.geometry.coordinates;
           const dashArray = conn.tipo === 'indirecta' ? '5, 3' : '0';
-          const lineColor = conn.tipo === 'indirecta' ? '#ff9552' : '#2fd4c8';
+          const lineColor = conn.tipo === 'indirecta' ? '#e89a6c' : '#46d6d0';
           
           L.polyline([
             [coords[1], coords[0]],
@@ -427,8 +427,8 @@ function openEepModal(humedal) {
         
         L.circleMarker([coords[1], coords[0]], {
           radius: radius,
-          fillColor: '#2fd4c8',
-          color: '#0a0e17',
+          fillColor: '#46d6d0',
+          color: '#0a0a0a',
           weight: 2,
           opacity: 0.9,
           fillOpacity: 0.8
