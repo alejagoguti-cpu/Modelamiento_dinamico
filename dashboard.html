@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAPOT · Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+<div class="app">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="mark"><i class="fa-solid fa-diagram-project"></i></div>
+      <span>RAPOT</span>
+    </div>
+
+    <div class="nav-group">
+      <a href="dashboard.html" class="nav-item active"><i class="fa-solid fa-house"></i> Dashboard</a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-label">MÓDULOS</div>
+      <a href="modulo-01.html" class="nav-item"><span class="num">01</span><i class="fa-solid fa-diagram-project"></i> Una ciudad que no cabe en el POT</a>
+      <a href="modulo-02.html" class="nav-item"><span class="num">02</span><i class="fa-solid fa-chart-simple"></i> Medir la Red</a>
+      <a href="modulo-03.html" class="nav-item"><span class="num">03</span><i class="fa-solid fa-eye"></i> Discurso vs Realidad</a>
+      <a href="modulo-04.html" class="nav-item"><span class="num">04</span><i class="fa-solid fa-bullseye"></i> Macromodelos</a>
+      <a href="modulo-05.html" class="nav-item"><span class="num">05</span><i class="fa-solid fa-layer-group"></i> Las Escalas — 33 UPL</a>
+      <a href="navegador-multiescalar.html" class="nav-item"><span class="num">MAPA</span><i class="fa-solid fa-magnifying-glass-location"></i> Navegador Multiescalar</a>
+      <a href="modulo-06.html" class="nav-item"><span class="num">06</span><i class="fa-solid fa-hourglass-half"></i> El Tiempo Ausente</a>
+      <a href="modulo-07.html" class="nav-item"><span class="num">07</span><i class="fa-solid fa-scale-balanced"></i> Postura Crítica</a>
+      <a href="modulo-08.html" class="nav-item"><span class="num">08</span><i class="fa-solid fa-flask"></i> Simulador</a>
+      <a href="modulo-09.html" class="nav-item"><span class="num">09</span><i class="fa-solid fa-atom"></i> Modelo Propio</a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-label">GESTIÓN</div>
+      <a href="proyectos.html" class="nav-item"><i class="fa-solid fa-folder"></i> Proyectos</a>
+      <a href="fuentes.html" class="nav-item"><i class="fa-solid fa-file-lines"></i> Fuentes y Documentos</a>
+      <a href="favoritos.html" class="nav-item"><i class="fa-solid fa-star"></i> Favoritos</a>
+      <a href="reportes.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Reportes</a>
+      <a href="configuracion.html" class="nav-item"><i class="fa-solid fa-gear"></i> Configuración</a>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="avatar-sm">EU</div>
+      <div class="user-meta">
+        <div class="name">Equipo Urbano</div>
+        <div class="role">Administrador</div>
+      </div>
+      <a href="demo.html" class="logout-btn"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <h1>Dashboard</h1>
+      <div class="topbar-actions">
+        <div class="avatar-sm">EU</div>
+      </div>
+    </div>
+
+    <div class="welcome hero">
+      <h2>Bogotá Viva — Ingeniería inversa del POT</h2>
+      <p>RAPOT nos permite explorar las relaciones del modelo de ordenamiento territorial para comprender cómo las decisiones territoriales configuran el modelo urbano de Bogotá. La realidad de la ciudad no es una verdad absoluta que simplemente se copia de un plano: es cultura, naturaleza y tecnología que se transforman cada día con nuestras maneras de habitar.</p>
+    </div>
+
+    <div class="grid">
+      <div class="card" onclick="location.href='modulo-01.html'">
+        <div class="card-icon" style="background:rgba(47,212,200,.15);color:#2fd4c8;"><i class="fa-solid fa-diagram-project"></i></div>
+        <div class="card-body">
+          <h3>01 · Una ciudad que no cabe en el POT</h3>
+          <p>Las 4 estructuras del POT construidas como una sola red: ecológica, funcional y del cuidado, socioeconómica creativa e innovación, e integradora de patrimonio.</p>
+          <div class="card-link">Abrir módulo <i class="fa-solid fa-arrow-right"></i></div>
+        </div>
+      </div>
+
+      <div class="card" onclick="location.href='modulo-02.html'">
+        <div class="card-icon" style="background:rgba(247,111,176,.15);color:#f76fb0;"><i class="fa-solid fa-chart-simple"></i></div>
+        <div class="card-body">
+          <h3>02 · Medir la Red</h3>
+          <p>Las tensiones internas del POT: incoherencias, contradicciones, desconexiones, jerarquías implícitas y elementos discursivamente importantes pero estructuralmente periféricos.</p>
+          <div class="card-link">Abrir módulo <i class="fa-solid fa-arrow-right"></i></div>
+        </div>
+      </div>
+
+      <div class="card" onclick="location.href='modulo-03.html'">
+        <div class="card-icon" style="background:rgba(91,141,239,.15);color:#5b8def;"><i class="fa-solid fa-eye"></i></div>
+        <div class="card-body">
+          <h3>03 · Discurso vs Realidad</h3>
+          <p>Compara la importancia discursiva con la importancia estructural y detecta contradicciones: lo que el modelo dice que es vs lo que su arquitectura relacional parece ser.</p>
+          <div class="card-link">Abrir módulo <i class="fa-solid fa-arrow-right"></i></div>
+        </div>
+      </div>
+
+      <div class="card" onclick="location.href='modulo-04.html'">
+        <div class="card-icon" style="background:rgba(239,68,68,.15);color:#ef4444;"><i class="fa-solid fa-bullseye"></i></div>
+        <div class="card-body">
+          <h3>04 · Macromodelos</h3>
+          <p>¿De dónde surge este modelo de ciudad? Ingeniería inversa: tecnocrático, productivista, economicista, ambientalista, estatista — modelo declarado vs modelo operativo.</p>
+          <div class="card-link">Abrir módulo <i class="fa-solid fa-arrow-right"></i></div>
+        </div>
+      </div>
+
+      <div class="card" onclick="location.href='modulo-05.html'">
+        <div class="card-icon" style="background:rgba(162,118,242,.15);color:#a276f2;"><i class="fa-solid fa-layer-group"></i></div>
+        <div class="card-body">
+          <h3>05 · Las Escalas — 33 UPL</h3>
+          <p>El zoom de Eames: de la región metropolitana (Macro) a la manzana (Micro), con foco en las 33 UPL donde se gestiona la proximidad de la ciudad de los 30 minutos.</p>
+          <div class="card-link">Abrir módulo <i class="fa-solid fa-arrow-right"></i></div>
+        </div>
+      </div>
+
+      <div class="card card-featured" onclick="location.href='navegador-multiescalar.html'">
+        <div class="card-icon" style="background:rgba(40,209,199,.15);color:#28d1c7;"><i class="fa-solid fa-magnifying-glass-location"></i></div>
+        <div class="card-body">
+          <h3>Mapa · Navegador Multiescalar</h3>
+          <p>Calles reales de Bogotá, 33 UPL, cuatro escalas temáticas, equipamientos OSM y rutas sobre la red vial.</p>
+          <div class="card-link">Abrir navegador <i class="fa-solid fa-arrow-right"></i></div>
+        </div>
+      </div>
+
+      <div class="card" onclick="location.href='modulo-06.html'">
+        <div class="card-icon" style="background:rgba(245,201,69,.15);color:#f5c945;"><i class="fa-solid fa-hourglass-half"></i></div>
+        <div class="card-body">
+          <h3>06 · El Tiempo Ausente</h3>
+          <p>La escalera de incentivos del Art. 304 (IC 5.0 / 6.0 / 7.0): el POT tiene la regla generativa, pero no corre la simulación de lo que miles de agentes producen con ella.</p>
+          <div class="card-link">Abrir módulo <i class="fa-solid fa-arrow-right"></i></div>
+        </div>
+      </div>
+
+      <div class="card" onclick="location.href='modulo-07.html'">
+        <div class="card-icon" style="background:rgba(47,212,200,.15);color:#2fd4c8;"><i class="fa-solid fa-scale-balanced"></i></div>
+        <div class="card-body">
+          <h3>07 · Postura Crítica</h3>
+          <p>El POT es un instrumento necesario pero no suficiente: reloj programático vs termostato dinámico, y los tres hallazgos que convierten ese juicio en argumento.</p>
+          <div class="card-link">Abrir módulo <i class="fa-solid fa-arrow-right"></i></div>
+        </div>
+      </div>
+
+      <div class="card" onclick="location.href='modulo-08.html'">
+        <div class="card-icon" style="background:rgba(74,222,128,.15);color:#4ade80;"><i class="fa-solid fa-flask"></i></div>
+        <div class="card-body">
+          <h3>08 · Simulador</h3>
+          <p>Polígono estático vs agente dinámico: agentes de cuidado, perturbaciones y el switch "Activar Agencia" que corre lo que el POT escribe pero nunca ejecuta.</p>
+          <div class="card-link">Abrir módulo <i class="fa-solid fa-arrow-right"></i></div>
+        </div>
+      </div>
+
+      <div class="card" onclick="location.href='modulo-09.html'">
+        <div class="card-icon" style="background:rgba(162,118,242,.15);color:#a276f2;"><i class="fa-solid fa-atom"></i></div>
+        <div class="card-body">
+          <h3>09 · Modelo Propio</h3>
+          <p>Bogotá Viva: la red de personas, viviendas y ecosistemas donde la ciudad emerge como sistema de agentes — no como suma de objetos localizados.</p>
+          <div class="card-link">Abrir módulo <i class="fa-solid fa-arrow-right"></i></div>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      "El POT nos dice qué debería pasar en trece años. Nosotros simulamos qué pasa mañana."
+      <span> — RAPOT · Bogotá Viva</span>
+    </footer>
+  </main>
+</div>
+</body>
+</html>
