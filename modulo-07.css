@@ -4743,3 +4743,8 @@ body { position:relative !important; }
 .map-source-note { position: absolute; z-index: 4; right: 10px; bottom: 9px; color: rgba(242,236,227,.62); font-size: 8px; pointer-events: none; }
 .cartography-marker { display: grid; place-items: center; width: 27px; height: 27px; border: 2px solid var(--marker-color); border-radius: 50%; background: #07100f; box-shadow: 0 0 13px var(--marker-color); color: var(--marker-color); font-size: 10px; font-weight: 900; }
 @media (max-width: 720px) { .map-source-note { display: none; } .map-controls button { font-size: 8px; padding: 6px 7px; } }
+
+.procedural-simulation { position: absolute; inset: 0; z-index: 2; pointer-events: none; overflow: hidden; }
+.procedural-simulation canvas { display: block; width: 100% !important; height: 100% !important; opacity: .82; }
+.real-map-shell .map-live-badge { z-index: 6; }
+.real-map-shell .map-source-note { z-index: 6; }

@@ -1576,6 +1576,26 @@
       document.getElementById("loadOsrmRoute")?.addEventListener("click", loadRoute);
       document.getElementById("resetCartography")?.addEventListener("click", () => { if (map.getLayer("osm-streets")) map.removeLayer("osm-streets"); if (map.getSource("osm-streets")) map.removeSource("osm-streets"); if (map.getLayer("osrm-route")) map.removeLayer("osrm-route"); if (map.getSource("osrm-route")) map.removeSource("osrm-route"); setStatus("CARTOGRAFÍA PROCEDURAL ACTIVA"); map.flyTo({ center: [-74.09,4.64], zoom: 10.85 }); });
     }
+    function initProceduralSimulation() {
+      const holder = document.getElementById("proceduralSimulation");
+      if (!holder || !window.p5 || !window.Matter) return;
+      const { Engine, Bodies, Composite, Body } = window.Matter;
+      new window.p5((p) => {
+        let engine, agents = [], roads = [], w = 700, h = 330;
+        const palette = ["#f76fb0", "#f5a623", "#46d6d0", "#b08cff"];
+        p.setup = () => {
+          const canvas = p.createCanvas(holder.clientWidth || 700, holder.clientHeight || 330);
+          canvas.parent(holder); canvas.elt.setAttribute("aria-label", "Agentes procedurales en movimiento");
+          canvas.elt.style.pointerEvents = "none";
+          w = p.width; h = p.height; engine = Engine.create({ enableSleeping: false }); engine.gravity.x = 0; engine.gravity.y = 0;
+          roads = [[.04,.72,.94,.18],[.08,.28,.92,.78],[.18,.08,.76,.92],[.02,.52,.98,.52],[.32,.05,.55,.96]];
+          agents = Array.from({ length: 18 }, (_, i) => { const body = Bodies.circle(35 + (i * 37) % Math.max(100, w - 70), 35 + (i * 23) % Math.max(100, h - 70), 5, { restitution: 1, frictionAir: .025, label: "agente" }); Composite.add(engine.world, body); Body.setVelocity(body, { x: (i % 2 ? 1 : -1) * (.25 + (i % 3) * .12), y: i % 3 === 0 ? .18 : -.14 }); return { body, color: palette[i % palette.length], role: ["cuidado", "trabajo", "niñez", "evacuación"][i % 4] }; });
+        };
+        p.draw = () => { p.clear(); p.noFill(); p.strokeWeight(1); roads.forEach((r, i) => { p.stroke(i % 2 ? "rgba(232,154,108,.55)" : "rgba(70,214,208,.55)"); p.line(r[0] * w, r[1] * h, r[2] * w, r[3] * h); }); p.stroke("rgba(242,236,227,.18)"); for (let x = 0; x < w; x += 38) p.line(x, 0, x + 110, h); for (let y = 28; y < h; y += 44) p.line(0, y, w, y - 70); Engine.update(engine, 1000 / 60); agents.forEach((a) => { const b = a.body; if (b.position.x < 12 || b.position.x > w - 12) Body.setVelocity(b, { x: -b.velocity.x, y: b.velocity.y }); if (b.position.y < 12 || b.position.y > h - 12) Body.setVelocity(b, { x: b.velocity.x, y: -b.velocity.y }); p.noStroke(); p.fill(a.color); p.circle(b.position.x, b.position.y, 9); p.fill("rgba(7,16,15,.9)"); p.circle(b.position.x, b.position.y, 3); }); p.fill("rgba(242,236,227,.7)"); p.textSize(9); p.textStyle(p.BOLD); p.text("AGENTES EN MOVIMIENTO · MATTER.JS", 14, h - 12); };
+        p.windowResized = () => { const nw = holder.clientWidth || 700; const nh = holder.clientHeight || 330; p.resizeCanvas(nw, nh); w = nw; h = nh; };
+      });
+    }
+    initProceduralSimulation();
     initRealCartography();
   });
 })();

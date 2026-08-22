@@ -18,6 +18,8 @@
       <link rel="stylesheet" href="module02-system.css?v=spacing-v3">
     <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" />
     <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.11.1/lib/p5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/matter-js@0.20.0/build/matter.min.js"></script>
 </head>
   <body class="module02-reference-page">
     <div class="app">
@@ -90,6 +92,7 @@
           <div class="cartography-card">
             <div class="cartography-visual real-map-shell" aria-label="Cartografía interactiva de Bogotá con calles y rutas">
               <div id="realCartographyMap" class="real-cartography-map"></div>
+              <div id="proceduralSimulation" class="procedural-simulation" aria-label="Simulación procedural de agentes y flujos"></div>
               <div class="map-live-badge"><i></i><span id="mapDataStatus">CARTOGRAFÍA PROCEDURAL ACTIVA</span></div>
               <div class="map-controls" aria-label="Controles de cartografía">
                 <button type="button" id="loadOsmStreets">Cargar calles OSM</button>
