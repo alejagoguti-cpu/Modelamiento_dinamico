@@ -23,7 +23,7 @@ let humedalMarkers = {};
 let eepNodos = [];
 let eepLayers = {};
 let networkLines = [];
-let currentMode = 'macro'; // Inicializado explícitamente en macro
+let currentMode = 'natural'; // Escala inicial: Natural
 
 // --- VARIABLE PARA LA CAPA DE VÍAS ---
 let viasLayer = null;
@@ -96,7 +96,7 @@ fetch('vias.geojson')
       }
     });
 
-    if (currentMode === 'macro') {
+    if (currentMode === 'tecnologico' || currentMode === 'metaverso') {
       viasLayer.addTo(map);
     }
   })
@@ -132,7 +132,7 @@ fetch('capa0.geojson')
       }
     });
 
-    if (currentMode === 'meso') {
+    if (currentMode === 'cultural' || currentMode === 'metaverso') {
       capa0Layer.addTo(map);
     }
   })
@@ -169,7 +169,7 @@ fetch('upz.geojson')
       }
     });
 
-    if (currentMode === 'micro') {
+    if (currentMode === 'tecnologico' || currentMode === 'metaverso') {
       capaUpzLayer.addTo(map);
     }
   })
@@ -180,23 +180,7 @@ function renderItemList() {
   const container = document.getElementById('item-list');
   container.innerHTML = '';
   
-  if (currentMode === 'macro') {
-    upzData.forEach(upz => {
-      const div = document.createElement('div');
-      div.className = 'upz-item' + (currentSelection?.id === upz.id ? ' active' : '');
-      div.innerHTML = `${upz.uplcodigo}`;
-      div.onclick = () => selectUPZ(upz);
-      container.appendChild(div);
-    });
-  } else if (currentMode === 'meso') {
-    barrosData.forEach(barrio => {
-      const div = document.createElement('div');
-      div.className = 'upz-item' + (currentSelection?.id === barrio.id ? ' active' : '');
-      div.innerHTML = `${barrio.codigo} - ${barrio.nombre}`;
-      div.onclick = () => selectBarrio(barrio);
-      container.appendChild(div);
-    });
-  } else if (currentMode === 'micro') {
+  if (currentMode === 'natural') {
     humedales.forEach(h => {
       const div = document.createElement('div');
       div.className = 'upz-item humedal-card' + (currentSelection?.id === h.id ? ' active' : '');
@@ -204,14 +188,35 @@ function renderItemList() {
         <div style="display: flex; flex-direction: column; gap: 6px;">
           <strong style="color: #2fd4c8; font-size: 11px;">${h.nombre}</strong>
           <div style="font-size: 9px; color: #7a8fa0;">
-            <div>📍 ${h.lat.toFixed(4)}, ${h.lng.toFixed(4)}</div>
-            <div>📏 Área: ${h.area} ha</div>
+            <div>Ubicación: ${h.lat.toFixed(4)}, ${h.lng.toFixed(4)}</div>
+            <div>Área: ${h.area} ha</div>
           </div>
         </div>
       `;
       div.onclick = () => selectHumedal(h);
       container.appendChild(div);
     });
+  } else if (currentMode === 'cultural') {
+    barrosData.forEach(barrio => {
+      const div = document.createElement('div');
+      div.className = 'upz-item' + (currentSelection?.id === barrio.id ? ' active' : '');
+      div.innerHTML = `${barrio.codigo} - ${barrio.nombre}`;
+      div.onclick = () => selectBarrio(barrio);
+      container.appendChild(div);
+    });
+  } else if (currentMode === 'tecnologico') {
+    upzData.forEach(upz => {
+      const div = document.createElement('div');
+      div.className = 'upz-item' + (currentSelection?.id === upz.id ? ' active' : '');
+      div.innerHTML = `${upz.uplcodigo}`;
+      div.onclick = () => selectUPZ(upz);
+      container.appendChild(div);
+    });
+  } else if (currentMode === 'metaverso') {
+    const div = document.createElement('div');
+    div.className = 'upz-item active';
+    div.innerHTML = '<strong>Modelo digital integrado</strong><br><span style="font-size:9px;color:#7a8fa0;">Capas Natural, Cultural y Tecnológica superpuestas</span>';
+    container.appendChild(div);
   }
 }
 
@@ -489,31 +494,10 @@ document.querySelectorAll('.tab').forEach(btn => {
     networkLines = [];
     eepLayers = {};
     
-    if (scale === 'macro') {
-      currentMode = 'macro';
-      map.setView([4.60, -74.08], 11);
-      // AÑADIR CAPA DE VÍAS EN ESCALA MACRO
-      if (viasLayer) {
-        viasLayer.addTo(map);
-      }
-      
-    } else if (scale === 'meso') {
-      currentMode = 'meso';
-      map.setView([4.60, -74.08], 12);
-      
-      // AÑADIR CAPA 0 (AUTOCAD) EN ESCALA MESO
-      if (capa0Layer) {
-        capa0Layer.addTo(map);
-      }
-
-    } else if (scale === 'micro') {
-      currentMode = 'micro';
-      
-      // AÑADIR CAPA UPZ (AUTOCAD) EN ESCALA MICRO
-      if (capaUpzLayer) {
-        capaUpzLayer.addTo(map);
-      }
-
+    if (scale === 'natural') {
+      currentMode = 'natural';
+      map.setView([4.63, -74.15], 12);
+      if (capaUpzLayer) capaUpzLayer.addTo(map);
       humedales.forEach(h => {
         const circle = L.circle([h.lat, h.lng], {
           radius: 1500,
@@ -522,12 +506,8 @@ document.querySelectorAll('.tab').forEach(btn => {
           opacity: 0.8,
           fillColor: '#4ade80',
           fillOpacity: 0.3
-        })
-        .on('click', () => selectHumedal(h))
-        .addTo(map);
-        
+        }).on('click', () => selectHumedal(h)).addTo(map);
         humedalLayers[h.id] = circle;
-        
         const marker = L.circleMarker([h.lat, h.lng], {
           radius: 8,
           fillColor: '#4ade80',
@@ -535,15 +515,36 @@ document.querySelectorAll('.tab').forEach(btn => {
           weight: 2,
           opacity: 0.8,
           fillOpacity: 0.7
-        })
-        .on('click', () => selectHumedal(h))
-        .addTo(map);
-        
+        }).on('click', () => selectHumedal(h)).addTo(map);
         humedalMarkers[h.id] = marker;
       });
-      
       const group = new L.featureGroup(Object.values(humedalLayers));
-      map.fitBounds(group.getBounds().pad(0.2));
+      if (Object.keys(humedalLayers).length) map.fitBounds(group.getBounds().pad(0.2));
+    } else if (scale === 'cultural') {
+      currentMode = 'cultural';
+      map.setView([4.60, -74.08], 12);
+      if (capa0Layer) capa0Layer.addTo(map);
+    } else if (scale === 'tecnologico') {
+      currentMode = 'tecnologico';
+      map.setView([4.60, -74.08], 11);
+      if (viasLayer) viasLayer.addTo(map);
+    } else if (scale === 'metaverso') {
+      currentMode = 'metaverso';
+      map.setView([4.60, -74.08], 11);
+      if (viasLayer) viasLayer.addTo(map);
+      if (capa0Layer) capa0Layer.addTo(map);
+      if (capaUpzLayer) capaUpzLayer.addTo(map);
+      humedales.forEach(h => {
+        const marker = L.circleMarker([h.lat, h.lng], {
+          radius: 7,
+          fillColor: '#4ade80',
+          color: '#2d8a5f',
+          weight: 2,
+          opacity: 0.8,
+          fillOpacity: 0.7
+        }).on('click', () => selectHumedal(h)).addTo(map);
+        humedalMarkers[h.id] = marker;
+      });
     }
     
     renderItemList();
