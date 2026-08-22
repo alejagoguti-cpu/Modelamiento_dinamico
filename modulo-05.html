@@ -108,6 +108,11 @@
           <small id="multiDriveStatus">CARGANDO CALLES REALES</small>
         </div>
         <div class="drive-help">WASD / FLECHAS · conducir &nbsp; R · reiniciar</div>
+        <div class="drive-audio" aria-label="Controles de audio">
+          <button id="driveMute" type="button" aria-pressed="false" title="Silenciar audio">🔊</button>
+          <input id="driveVolume" type="range" min="0" max="1" step="0.05" value="0.42" aria-label="Volumen">
+        </div>
+        <audio id="driveMusic" src="assets/bogota-infinite-drive-background.wav" loop preload="auto"></audio>
         <div id="multiDriveToast" class="drive-toast" aria-live="polite"></div>
       </div>
       <div class="map-controls">

@@ -28,3 +28,10 @@ Desde la carpeta del repositorio se puede abrir `modulo-05.html` mediante un ser
 El motor registra `keydown` y `keyup` en la ventana: `↑`/`W` acelera, `↓`/`S` frena, y `←`/`A` y `→`/`D` giran con inercia lateral. La actualización es continua mediante `requestAnimationFrame`, no por casillas.
 
 Las colisiones con carros, motos, buses, TransMilenio y postes aplican retroceso, pérdida de velocidad, reducción de vida y descuento de score. Al llegar a cero aparece `GAME OVER`; `R` reinicia la partida.
+
+
+## Audio del juego
+
+Metaverso incluye una pista instrumental original de fondo en `assets/bogota-infinite-drive-background.wav`. La música comienza después de la primera interacción del usuario, como exige el bloqueo de reproducción automática del navegador.
+
+El motor sintetiza efectos ligeros de motor, aceleración, frenado y derrape mediante Web Audio API, y reproduce un impacto cuando el carro choca con tráfico u obstáculos. El botón `🔊` permite silenciar o restaurar todo el audio y el deslizador permite ajustar el volumen. La música se mantiene en loop y deja espacio de mezcla para los efectos.
