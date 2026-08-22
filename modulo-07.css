@@ -4728,3 +4728,18 @@ body { position:relative !important; }
 .spec-row { display: grid; grid-template-columns: 76px 1fr; gap: 12px; align-items: baseline; padding-bottom: 9px; border-bottom: 1px solid rgba(201,193,182,.12); color: var(--text); font-family: "Space Grotesk", Inter, sans-serif; font-size: 13px; }.spec-row strong { color: var(--muted); font-family: Inter, Arial, sans-serif; font-size: 10px; font-weight: 700; }.spec-row span { line-height: 1.35; }.spec-divider { height: 1px; background: rgba(201,193,182,.18); }.spec-note { margin: 0; color: var(--muted); font-size: 10px; line-height: 1.5; }
 @media (max-width: 1080px) { .cartography-heading { flex-direction: column; gap: 10px; } .cartography-card { grid-template-columns: 1fr; } .cartography-spec { border-top: 1px solid rgba(201,193,182,.15); border-left: 0; } }
 @media (max-width: 720px) { .cartography-section { margin-inline: 4px; padding: 13px; } .cartography-heading h2 { font-size: 21px; } .cartography-spec { padding: 18px; } }
+
+/* Cartografía funcional MapLibre + capas públicas */
+.real-map-shell { position: relative; min-height: 330px; background: #07100f; }
+.real-cartography-map { position: absolute; inset: 0; min-height: 330px; }
+.real-cartography-map .maplibregl-canvas { outline: none; }
+.real-map-shell .maplibregl-ctrl-group { border: 1px solid rgba(70,214,208,.35); border-radius: 6px; overflow: hidden; background: rgba(7,16,15,.86); }
+.real-map-shell .maplibregl-ctrl-group button { filter: invert(1) hue-rotate(140deg); }
+.map-live-badge { position: absolute; z-index: 4; top: 12px; left: 12px; display: flex; align-items: center; gap: 6px; padding: 7px 9px; border: 1px solid rgba(70,214,208,.45); border-radius: 999px; background: rgba(7,16,15,.88); color: var(--teal); font-size: 8px; font-weight: 900; letter-spacing: .08em; pointer-events: none; }
+.map-live-badge i { width: 6px; height: 6px; border-radius: 50%; background: var(--teal); box-shadow: 0 0 9px var(--teal); }
+.map-live-badge.live { border-color: rgba(247,111,176,.6); color: #f76fb0; }.map-live-badge.live i { background: #f76fb0; box-shadow: 0 0 9px #f76fb0; }
+.map-controls { position: absolute; z-index: 5; left: 12px; bottom: 12px; display: flex; gap: 6px; flex-wrap: wrap; max-width: 90%; }
+.map-controls button { padding: 7px 9px; border: 1px solid rgba(201,193,182,.3); border-radius: 5px; background: rgba(8,13,13,.9); color: var(--text); font-size: 9px; transition: .18s ease; }.map-controls button:hover { border-color: var(--teal); color: var(--teal); transform: translateY(-1px); }
+.map-source-note { position: absolute; z-index: 4; right: 10px; bottom: 9px; color: rgba(242,236,227,.62); font-size: 8px; pointer-events: none; }
+.cartography-marker { display: grid; place-items: center; width: 27px; height: 27px; border: 2px solid var(--marker-color); border-radius: 50%; background: #07100f; box-shadow: 0 0 13px var(--marker-color); color: var(--marker-color); font-size: 10px; font-weight: 900; }
+@media (max-width: 720px) { .map-source-note { display: none; } .map-controls button { font-size: 8px; padding: 6px 7px; } }

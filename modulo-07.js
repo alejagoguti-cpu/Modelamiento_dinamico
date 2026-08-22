@@ -1548,5 +1548,34 @@
       if (conventions && conventions.parentElement !== aside) aside.appendChild(conventions);
     }
     alignModule02ReferenceShell();
+
+    // Cartografía funcional: base procedural + capas públicas opcionales.
+    function initRealCartography() {
+      const el = document.getElementById("realCartographyMap");
+      if (!el || !window.maplibregl) return;
+      const status = document.getElementById("mapDataStatus");
+      const setStatus = (text, live = false) => { if (status) status.textContent = text; status?.parentElement?.classList.toggle("live", live); };
+      const procedural = { type: "FeatureCollection", features: [
+        [[-74.16,4.67],[-74.13,4.66],[-74.10,4.65],[-74.07,4.64],[-74.03,4.62]],
+        [[-74.14,4.59],[-74.11,4.61],[-74.08,4.64],[-74.06,4.68],[-74.05,4.72]],
+        [[-74.17,4.63],[-74.13,4.63],[-74.09,4.62],[-74.05,4.61],[-74.01,4.60]],
+        [[-74.12,4.72],[-74.11,4.68],[-74.10,4.64],[-74.09,4.60],[-74.08,4.56]],
+        [[-74.06,4.70],[-74.07,4.67],[-74.08,4.64],[-74.09,4.61],[-74.10,4.58]],
+        [[-74.18,4.60],[-74.14,4.58],[-74.10,4.57],[-74.06,4.56],[-74.02,4.55]],
+      ].map((coordinates) => ({ type: "Feature", properties: { layer: "procedural" }, geometry: { type: "LineString", coordinates } })) };
+      const map = new maplibregl.Map({ container: el, center: [-74.09, 4.64], zoom: 10.85, minZoom: 9, maxZoom: 16, attributionControl: false, style: { version: 8, sources: { procedural: { type: "geojson", data: procedural } }, layers: [
+        { id: "background", type: "background", paint: { "background-color": "#07100f" } },
+        { id: "procedural-roads", type: "line", source: "procedural", paint: { "line-color": "#46d6d0", "line-width": 2, "line-opacity": .68 } },
+      ] } });
+      map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
+      const point = (id, coords, label, color) => { const marker = document.createElement("div"); marker.className = "cartography-marker"; marker.style.setProperty("--marker-color", color); marker.title = label; marker.textContent = id; new maplibregl.Marker({ element: marker }).setLngLat(coords).addTo(map); };
+      map.on("load", () => { point("A", [-74.13,4.66], "Agentes", "#f5a623"); point("V", [-74.09,4.64], "Vivienda", "#f76fb0"); point("E", [-74.05,4.61], "Ecosistemas", "#46d6d0"); point("R", [-74.08,4.57], "Ruta", "#b08cff"); setStatus("CARTOGRAFÍA PROCEDURAL ACTIVA"); });
+      const loadOsm = async () => { const query = `[out:json][timeout:20];way[highway~"^(motorway|trunk|primary|secondary|tertiary)$"](around:4200,4.64,-74.09);out geom;`; setStatus("CARGANDO CALLES OSM…"); try { let response; for (const endpoint of ["https://overpass-api.de/api/interpreter", "https://overpass.private.coffee/api/interpreter"]) { try { response = await fetch(`${endpoint}?data=${encodeURIComponent(query)}`, { headers: { Accept: "application/json" } }); if (response.ok) break; } catch (error) { /* prueba el siguiente endpoint público */ } } if (!response?.ok) throw new Error("Overpass sin respuesta"); const data = await response.json(); const features = data.elements.filter((x) => x.geometry?.length > 1).map((x) => ({ type: "Feature", properties: { highway: x.tags?.highway || "road" }, geometry: { type: "LineString", coordinates: x.geometry.map((p) => [p.lon, p.lat]) } })); const geo = { type: "FeatureCollection", features }; if (map.getSource("osm-streets")) map.getSource("osm-streets").setData(geo); else { map.addSource("osm-streets", { type: "geojson", data: geo }); map.addLayer({ id: "osm-streets", type: "line", source: "osm-streets", paint: { "line-color": "#e89a6c", "line-width": ["interpolate", ["linear"], ["zoom"], 10, 1, 14, 3], "line-opacity": .8 } }); } setStatus(`${features.length} CALLES OSM CARGADAS`, true); } catch (error) { setStatus("NO SE PUDIERON CARGAR CALLES OSM"); toast("Overpass no respondió; continúa la base procedural"); } };
+      const loadRoute = async () => { const coords = [[-74.13,4.66],[-74.09,4.64],[-74.05,4.61],[-74.08,4.57]]; setStatus("CALCULANDO RUTA OSRM…"); try { const response = await fetch(`https://router.project-osrm.org/route/v1/driving/${coords.map((c) => c.join(",")).join(";")}?overview=full&geometries=geojson`); if (!response.ok) throw new Error("OSRM " + response.status); const data = await response.json(); const route = data.routes?.[0]?.geometry; if (!route) throw new Error("Sin ruta"); if (map.getSource("osrm-route")) map.getSource("osrm-route").setData(route); else { map.addSource("osrm-route", { type: "geojson", data: route }); map.addLayer({ id: "osrm-route", type: "line", source: "osrm-route", paint: { "line-color": "#f76fb0", "line-width": 4, "line-opacity": .95 } }); } setStatus("RUTA OSRM ACTIVA", true); } catch (error) { setStatus("NO SE PUDO CALCULAR LA RUTA"); toast("OSRM no respondió; conserva los flujos procedurales"); } };
+      document.getElementById("loadOsmStreets")?.addEventListener("click", loadOsm);
+      document.getElementById("loadOsrmRoute")?.addEventListener("click", loadRoute);
+      document.getElementById("resetCartography")?.addEventListener("click", () => { if (map.getLayer("osm-streets")) map.removeLayer("osm-streets"); if (map.getSource("osm-streets")) map.removeSource("osm-streets"); if (map.getLayer("osrm-route")) map.removeLayer("osrm-route"); if (map.getSource("osrm-route")) map.removeSource("osrm-route"); setStatus("CARTOGRAFÍA PROCEDURAL ACTIVA"); map.flyTo({ center: [-74.09,4.64], zoom: 10.85 }); });
+    }
+    initRealCartography();
   });
 })();

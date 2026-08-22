@@ -16,6 +16,8 @@
     <link rel="stylesheet" href="network06-shared.css">
     <link rel="stylesheet" href="modulo-07.css?v=module02-alignment-v1" />
       <link rel="stylesheet" href="module02-system.css?v=spacing-v3">
+    <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" />
+    <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 </head>
   <body class="module02-reference-page">
     <div class="app">
@@ -86,13 +88,15 @@
             <span class="cartography-status"><i></i> BASE ACTIVA · SIN APIS</span>
           </div>
           <div class="cartography-card">
-            <div class="cartography-visual" aria-label="Mapa procedural de agentes y flujos urbanos">
-              <div class="map-grid-lines"></div>
-              <span class="map-river river-1"></span><span class="map-river river-2"></span>
-              <span class="map-road road-1"></span><span class="map-road road-2"></span><span class="map-road road-3"></span><span class="map-road road-4"></span><span class="map-road road-5"></span>
-              <span class="map-route route-1"></span><span class="map-route route-2"></span><span class="map-route route-3"></span>
-              <span class="map-node node-a">A</span><span class="map-node node-b">V</span><span class="map-node node-c">E</span><span class="map-node node-d">R</span>
-              <div class="map-label label-1">AGENTES</div><div class="map-label label-2">VIVIENDA</div><div class="map-label label-3">ECOSISTEMAS</div><div class="map-label label-4">15 MIN</div>
+            <div class="cartography-visual real-map-shell" aria-label="Cartografía interactiva de Bogotá con calles y rutas">
+              <div id="realCartographyMap" class="real-cartography-map"></div>
+              <div class="map-live-badge"><i></i><span id="mapDataStatus">CARTOGRAFÍA PROCEDURAL ACTIVA</span></div>
+              <div class="map-controls" aria-label="Controles de cartografía">
+                <button type="button" id="loadOsmStreets">Cargar calles OSM</button>
+                <button type="button" id="loadOsrmRoute">Mostrar ruta OSRM</button>
+                <button type="button" id="resetCartography">Restablecer</button>
+              </div>
+              <div class="map-source-note">MapLibre GL JS · OpenStreetMap · Overpass · OSRM</div>
             </div>
             <div class="cartography-spec">
               <div class="spec-kicker">VERSIÓN BASE — TODO PROCEDURAL, CERO APIs EXTERNAS</div>
