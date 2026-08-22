@@ -43,3 +43,8 @@ Tras dos desplazamientos rápidos del mapa, la aplicación conservó un único `
 ## Verificación final de rendimiento
 
 La página mantiene el mapa real y la red vial visible. En la carga final, la interfaz muestra la nota de carga por área visible, `Nivel meso · 5 jerarquías visibles`, 2.952 tramos y 82 lugares para la UPL 13. El archivo JavaScript pasó `node --check`, y el script local de generación PMTiles pasó `bash -n`.
+
+
+## GitHub Pages
+
+La URL pública `https://alejagoguti-cpu.github.io/Modelamiento_dinamico/navegador-multiescalar.html` fue comprobada directamente. El JavaScript está cargado, MapLibre está listo, el modo es `real`, existen 4 botones de escala, 33 opciones UPL y el botón de ruta. Por tanto, esa URL ejecuta la aplicación; la URL `github.com/.../blob/main/...` solo muestra el archivo como código fuente.
