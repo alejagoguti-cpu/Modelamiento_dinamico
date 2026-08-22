@@ -83,6 +83,7 @@
           <div><span class="mode-dot" id="modeDot"></span><strong id="modeTitle">Calles reales</strong><small id="modeDetail">OpenStreetMap · consulta bajo demanda</small></div>
           <button id="modeToggle" class="mode-toggle" role="switch" aria-checked="true"><span></span></button>
         </div>
+        <div class="source-mode-row"><span><i class="fa-solid fa-database"></i> Fuente vial</span><button id="localTilesBtn" class="local-tiles-btn" type="button"><i class="fa-solid fa-hard-drive"></i> Usar PMTiles local</button></div>
       </section>
 
       <section class="map-panel" aria-label="Mapa de Bogotá">
@@ -109,10 +110,11 @@
         </div>
 
         <div class="right-section"><div class="block-label">LECTURA DE LA ESCALA ACTIVA</div><p id="scaleReading">La escala natural hace visibles el agua, los humedales y la estructura ecológica como sistemas vivos que atraviesan el límite administrativo.</p></div>
-        <div class="right-section source-section"><div class="block-label">FUENTES Y TRANSPARENCIA</div><p>La base cartográfica procede de OpenStreetMap. Los puntos destacados se consultan desde Overpass bajo demanda. El servicio puede tardar o no estar disponible; en ese caso, Bogotá Viva activa su red procedural de respaldo.</p><div class="source-pills"><span>MapLibre</span><span>OSM</span><span>Overpass</span><span>Nominatim</span><span>OSRM</span></div></div>
+        <div class="right-section source-section"><div class="block-label">FUENTES Y TRANSPARENCIA</div><p>La base cartográfica procede de OpenStreetMap. Puedes usar Overpass bajo demanda o generar un PMTiles/MVT local para que la red vial funcione sin consultas externas. Si un servicio no responde, Bogotá Viva activa su red procedural de respaldo.</p><div class="source-pills"><span>MapLibre</span><span>OSM</span><span>Overpass</span><span>PMTiles</span><span>Nominatim</span><span>OSRM</span></div></div>
       </aside>
     </main>
   </div>
+  <script src="https://unpkg.com/pmtiles@3.2.0/dist/pmtiles.js"></script>
   <script type="module">
     import * as maplibregl from "https://unpkg.com/maplibre-gl@6.5.0/dist/maplibre-gl.mjs";
     window.maplibregl = maplibregl;

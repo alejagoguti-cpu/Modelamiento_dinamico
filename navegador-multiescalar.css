@@ -90,6 +90,12 @@ a { color:inherit; text-decoration:none; }
 .primary-btn:hover { background:#66e8dd; transform:translateY(-1px); }
 .icon-btn { width:32px; color:#9ca6ad; border-color:rgba(255,255,255,.12); background:#171c23; }
 .icon-btn:hover { color:#fff; border-color:rgba(255,255,255,.3); }
+.source-mode-row { margin-top:9px; padding-top:9px; display:flex; align-items:center; justify-content:space-between; gap:8px; border-top:1px solid rgba(255,255,255,.08); color:#77848c; font-size:9px; }
+.source-mode-row > span { display:flex; align-items:center; gap:5px; }
+.source-mode-row > span i { color:#24bdb3; }
+.local-tiles-btn { padding:6px 8px; border:1px solid rgba(36,189,179,.35); border-radius:5px; color:#9de4de; background:rgba(36,189,179,.08); font:600 8px Inter,sans-serif; cursor:pointer; transition:.18s ease; }
+.local-tiles-btn:hover, .local-tiles-btn.is-active { color:#102220; background:#24bdb3; }
+.local-tiles-btn:disabled { opacity:.55; cursor:wait; }
 .data-mode-row { margin-top:5px; padding:12px 0; display:flex; align-items:center; justify-content:space-between; border-top:1px solid rgba(255,255,255,.08); }
 .data-mode-row > div { display:grid; grid-template-columns:13px 1fr; column-gap:6px; align-items:center; }
 .data-mode-row .mode-dot { grid-row:1 / span 2; margin-left:2px; }

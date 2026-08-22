@@ -11,6 +11,7 @@
   const NOMINATIM_ENDPOINT = "https://nominatim.openstreetmap.org/search";
   const OSRM_ENDPOINT = "https://router.project-osrm.org/route/v1/driving";
   const OSM_ATTRIBUTION = "© OpenStreetMap contributors";
+  const LOCAL_PMTILES_PATH = "./tiles/bogota-roads.pmtiles";
   const CACHE = new Map();
   const CACHE_MAX_ENTRIES = 16;
   const VIEWPORT_DEBOUNCE_MS = 420;
@@ -20,6 +21,9 @@
     selectedUpl: null,
     selectedScale: "natural",
     dataMode: "real",
+    streetSource: "overpass",
+    pmtilesArchive: null,
+    pmtilesProtocol: null,
     currentView: "barrio",
     placeMarkers: [],
     uplMarker: null,
@@ -166,6 +170,77 @@
       if (state.map.getLayer(id)) state.map.setFilter(id, filter);
     });
     setText("#roadLevel", `Nivel ${viewportLevel()} · ${classes.length} jerarquías visibles`);
+  }
+
+  function localPmtilesUrl() {
+    return new URL(LOCAL_PMTILES_PATH, window.location.href).href;
+  }
+
+  function updateLocalTilesButton(active, pending = false) {
+    const button = $("#localTilesBtn");
+    if (!button) return;
+    button.classList.toggle("is-active", active);
+    button.disabled = pending;
+    button.innerHTML = pending
+      ? '<i class="fa-solid fa-spinner fa-spin"></i> Cargando PMTiles…'
+      : active
+        ? '<i class="fa-solid fa-hard-drive"></i> PMTiles local activo'
+        : '<i class="fa-solid fa-hard-drive"></i> Usar PMTiles local';
+  }
+
+  function removeLocalRoadLayers() {
+    if (!state.map) return;
+    ["local-roads-casing", "local-roads"].forEach((id) => {
+      if (state.map.getLayer(id)) state.map.removeLayer(id);
+    });
+    if (state.map.getSource("local-roads-source")) state.map.removeSource("local-roads-source");
+    state.pmtilesArchive = null;
+  }
+
+  async function enableLocalPmtiles() {
+    if (!state.mapReady || !window.pmtiles) throw new Error("pmtiles.js no está cargado");
+    updateLocalTilesButton(false, true);
+    const url = localPmtilesUrl();
+    const response = await fetch(url, { method: "HEAD", cache: "no-store" });
+    if (!response.ok) throw new Error("No existe tiles/bogota-roads.pmtiles todavía");
+    if (!state.pmtilesProtocol) {
+      state.pmtilesProtocol = new pmtiles.Protocol();
+      maplibregl.addProtocol("pmtiles", state.pmtilesProtocol.tile);
+    }
+    const archive = new pmtiles.PMTiles(url);
+    state.pmtilesProtocol.add(archive);
+    state.pmtilesArchive = archive;
+    if (!state.map.getSource("local-roads-source")) {
+      state.map.addSource("local-roads-source", { type: "vector", url: `pmtiles://${url}`, attribution: OSM_ATTRIBUTION });
+      state.map.addLayer({ id: "local-roads-casing", type: "line", source: "local-roads-source", "source-layer": "roads", layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": "#ffffff", "line-width": ["interpolate", ["linear"], ["zoom"], 10, 1.6, 13, 3.2, 16, 6], "line-opacity": .8 } }, "upl-focus-fill");
+      state.map.addLayer({ id: "local-roads", type: "line", source: "local-roads-source", "source-layer": "roads", layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": ["match", ["get", "highway"], "motorway", "#d56c75", "trunk", "#df8e5a", "primary", "#e6a95a", "secondary", "#4cb2a9", "tertiary", "#58a9a4", "residential", "#2d9790", "living_street", "#50aaa2", "service", "#74bab2", "#4a9f99"], "line-width": ["interpolate", ["linear"], ["zoom"], 10, .55, 13, 1.15, 16, 2.5], "line-opacity": .95 } }, "upl-focus-fill");
+    }
+    state.streetSource = "pmtiles";
+    updateLocalTilesButton(true);
+    setText("#modeDetail", "PMTiles local · sin consulta vial externa");
+    setText("#metricRoads", "MVT");
+    setText("#connectionLabel", "Red vial local conectada");
+    showToast("PMTiles local activo: la red vial ya no depende de Overpass.");
+    applyRoadZoomFilter();
+  }
+
+  function disableLocalPmtiles() {
+    removeLocalRoadLayers();
+    state.streetSource = "overpass";
+    updateLocalTilesButton(false);
+    setText("#modeDetail", "OpenStreetMap · consulta bajo demanda");
+    setText("#connectionLabel", "Mapa real conectado");
+    loadScaleData();
+  }
+
+  async function toggleLocalPmtiles() {
+    try {
+      if (state.streetSource === "pmtiles") disableLocalPmtiles();
+      else await enableLocalPmtiles();
+    } catch (error) {
+      updateLocalTilesButton(false);
+      showToast(`${error.message}. Genera el archivo con tools/build-bogota-roads-pmtiles.sh.`, "error");
+    }
   }
 
   function scheduleViewportLoad(immediate = false) {
@@ -414,7 +489,7 @@
         roadCount += 1;
       }
     });
-    updateStreetLayer(streetFeatures);
+    if (state.streetSource === "overpass") updateStreetLayer(streetFeatures);
     elements.slice(0, 220).forEach((element) => {
       const point = featurePoint(element);
       if (!point) return;
@@ -429,7 +504,7 @@
       placeCount += 1;
     });
     setText("#metricPlaces", placeCount ? String(placeCount) : "0");
-    setText("#metricRoads", roadCount ? String(roadCount) : "—");
+    setText("#metricRoads", state.streetSource === "pmtiles" ? "MVT" : (roadCount ? String(roadCount) : "—"));
   }
 
   function buildOverpassQuery(upl, scaleKey, bbox = null) {
@@ -602,6 +677,7 @@
       refreshFavorite();
       showToast(state.favorite ? "UPL guardada en favoritas." : "UPL retirada de favoritas.");
     });
+    $("#localTilesBtn")?.addEventListener("click", toggleLocalPmtiles);
     $("#modeToggle")?.addEventListener("click", () => {
       state.dataMode = state.dataMode === "real" ? "procedural" : "real";
       const real = state.dataMode === "real";
@@ -630,7 +706,7 @@
         if (!state.mapReady && !window.maplibregl) useProceduralFallback("MapLibre no respondió a tiempo; se activó la lectura procedural.");
       }, 9000);
     }
-    window.BogotaVivaNavigator = { state, UPLS, SCALE_DATA, setScale, focusSelectedUpl, loadScaleData, calculateRoute, useProceduralFallback };
+    window.BogotaVivaNavigator = { state, UPLS, SCALE_DATA, setScale, focusSelectedUpl, loadScaleData, calculateRoute, useProceduralFallback, toggleLocalPmtiles };
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
