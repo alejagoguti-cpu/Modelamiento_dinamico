@@ -12,6 +12,8 @@
   const OSRM_ENDPOINT = "https://router.project-osrm.org/route/v1/driving";
   const OSM_ATTRIBUTION = "© OpenStreetMap contributors";
   const CACHE = new Map();
+  const CACHE_MAX_ENTRIES = 16;
+  const VIEWPORT_DEBOUNCE_MS = 420;
   const state = {
     map: null,
     mapReady: false,
@@ -26,6 +28,9 @@
     routeStart: null,
     routeEnd: null,
     queryToken: 0,
+    activeQueryKey: "",
+    overpassController: null,
+    viewportDebounceTimer: null,
     proceduralMarkers: [],
     favorite: false,
   };
@@ -107,6 +112,68 @@
   function setText(selector, value) {
     const el = $(selector);
     if (el) el.textContent = value;
+  }
+
+  function rememberCache(key, value) {
+    if (CACHE.has(key)) CACHE.delete(key);
+    CACHE.set(key, value);
+    while (CACHE.size > CACHE_MAX_ENTRIES) CACHE.delete(CACHE.keys().next().value);
+  }
+
+  function getViewportBBox() {
+    if (!state.map) return null;
+    const bounds = state.map.getBounds();
+    const west = bounds.getWest();
+    const south = bounds.getSouth();
+    const east = bounds.getEast();
+    const north = bounds.getNorth();
+    const lonPad = Math.max((east - west) * 0.08, 0.003);
+    const latPad = Math.max((north - south) * 0.08, 0.003);
+    return {
+      west: Math.max(-74.6, west - lonPad),
+      south: Math.max(3.8, south - latPad),
+      east: Math.min(-73.5, east + lonPad),
+      north: Math.min(5.2, north + latPad),
+    };
+  }
+
+  function bboxString(bbox) {
+    return [bbox.south, bbox.west, bbox.north, bbox.east].map((value) => Number(value).toFixed(5)).join(",");
+  }
+
+  function viewportLevel() {
+    const zoom = state.map?.getZoom?.() ?? 13;
+    if (zoom < 12) return "macro";
+    if (zoom < 14.5) return "meso";
+    return "micro";
+  }
+
+  function roadClassesForLevel(level) {
+    if (level === "macro") return ["motorway", "trunk", "primary", "secondary"];
+    if (level === "meso") return ["motorway", "trunk", "primary", "secondary", "tertiary"];
+    return ["motorway", "trunk", "primary", "secondary", "tertiary", "residential", "living_street", "service", "unclassified"];
+  }
+
+  function roadRegexForLevel(level) {
+    return `^(${roadClassesForLevel(level).join("|")})$`;
+  }
+
+  function applyRoadZoomFilter() {
+    if (!state.map) return;
+    const classes = roadClassesForLevel(viewportLevel());
+    const filter = ["in", ["get", "highway"], ["literal", classes]];
+    ["osm-streets", "osm-streets-casing"].forEach((id) => {
+      if (state.map.getLayer(id)) state.map.setFilter(id, filter);
+    });
+    setText("#roadLevel", `Nivel ${viewportLevel()} · ${classes.length} jerarquías visibles`);
+  }
+
+  function scheduleViewportLoad(immediate = false) {
+    if (!state.mapReady || state.dataMode !== "real") return;
+    window.clearTimeout(state.viewportDebounceTimer);
+    const run = () => loadScaleData({ fromViewport: true });
+    if (immediate) run();
+    else state.viewportDebounceTimer = window.setTimeout(run, VIEWPORT_DEBOUNCE_MS);
   }
 
   function showToast(message, kind = "info") {
@@ -211,6 +278,11 @@
     try {
       state.map = new maplibregl.Map({ container: "map", style, center: BOGOTA, zoom: 11.3, attributionControl: true, maxZoom: 19 });
       state.map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-left");
+      state.map.on("zoom", applyRoadZoomFilter);
+      state.map.on("moveend", () => {
+        applyRoadZoomFilter();
+        scheduleViewportLoad();
+      });
       state.map.on("load", () => {
         state.mapReady = true;
         addMapLayers();
@@ -218,6 +290,7 @@
         focusSelectedUpl(false);
         setText("#connectionLabel", "Mapa real conectado");
         showToast("Mapa real listo. Selecciona una escala para consultar la red local.");
+        applyRoadZoomFilter();
         loadScaleData();
       });
       state.map.on("error", (event) => {
@@ -359,28 +432,24 @@
     setText("#metricRoads", roadCount ? String(roadCount) : "—");
   }
 
-  function buildOverpassQuery(upl, scaleKey) {
-    const b = `${(upl.lat - .025).toFixed(5)},${(upl.lon - .03).toFixed(5)},${(upl.lat + .025).toFixed(5)},${(upl.lon + .03).toFixed(5)}`;
+  function buildOverpassQuery(upl, scaleKey, bbox = null) {
+    const fallback = { west: upl.lon - .03, south: upl.lat - .025, east: upl.lon + .03, north: upl.lat + .025 };
+    const b = bboxString(bbox || fallback);
     const scale = SCALE_DATA[scaleKey];
-    return `[out:json][timeout:25];(${scale.overpass(b)}way["highway"](${b}););out geom tags;`;
+    const roadLevel = state.map ? viewportLevel() : "meso";
+    return `[out:json][timeout:25];(${scale.overpass(b)}way["highway"~"${roadRegexForLevel(roadLevel)}"](${b}););out geom tags;`;
   }
 
-  async function fetchOverpass(upl, scaleKey) {
-    const key = `overpass:${upl.num}:${scaleKey}`;
+  async function fetchOverpass(upl, scaleKey, bbox, signal) {
+    const key = `overpass:${upl.num}:${scaleKey}:${bboxString(bbox)}`;
     if (CACHE.has(key)) return CACHE.get(key);
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 28000);
-    try {
-      const url = `${OVERPASS_ENDPOINT}?data=${encodeURIComponent(buildOverpassQuery(upl, scaleKey))}`;
-      const response = await fetch(url, { signal: controller.signal, headers: { Accept: "application/json" } });
-      if (!response.ok) throw new Error(`Overpass HTTP ${response.status}`);
-      const json = await response.json();
-      const elements = Array.isArray(json.elements) ? json.elements : [];
-      CACHE.set(key, elements);
-      return elements;
-    } finally {
-      clearTimeout(timeout);
-    }
+    const url = `${OVERPASS_ENDPOINT}?data=${encodeURIComponent(buildOverpassQuery(upl, scaleKey, bbox))}`;
+    const response = await fetch(url, { signal, headers: { Accept: "application/json" } });
+    if (!response.ok) throw new Error(`Overpass HTTP ${response.status}`);
+    const json = await response.json();
+    const elements = Array.isArray(json.elements) ? json.elements : [];
+    rememberCache(key, elements);
+    return elements;
   }
 
   function renderProceduralMarkers() {
@@ -401,11 +470,21 @@
     setText("#metricRoads", "6");
   }
 
-  async function loadScaleData() {
+  async function loadScaleData({ fromViewport = false } = {}) {
     if (!state.mapReady || !state.selectedUpl) return;
+    const bbox = getViewportBBox();
+    if (!bbox) return;
+    const queryKey = `${state.selectedUpl.num}:${state.selectedScale}:${bboxString(bbox)}`;
+    if (queryKey === state.activeQueryKey && fromViewport) return;
+    state.activeQueryKey = queryKey;
     const token = ++state.queryToken;
+    if (state.overpassController) state.overpassController.abort();
+    const controller = new AbortController();
+    state.overpassController = controller;
+    const timeout = window.setTimeout(() => controller.abort(), 28000);
     const scale = SCALE_DATA[state.selectedScale];
     if (state.dataMode !== "real") {
+      window.clearTimeout(timeout);
       renderProceduralMarkers();
       setText("#connectionLabel", "Modo procedural de respaldo");
       return;
@@ -414,17 +493,20 @@
     setText("#metricPlaces", "…");
     setText("#metricRoads", "…");
     setText("#connectionLabel", "Consultando OSM…");
-    showToast(`Consultando ${scale.label.toLowerCase()} en calles reales…`);
+    showToast(`Consultando ${scale.label.toLowerCase()} en el área visible…`);
     try {
-      const elements = await fetchOverpass(state.selectedUpl, state.selectedScale);
-      if (token !== state.queryToken) return;
+      const elements = await fetchOverpass(state.selectedUpl, state.selectedScale, bbox, controller.signal);
+      if (token !== state.queryToken || controller.signal.aborted) return;
       renderPlaces(elements);
       setText("#connectionLabel", "Mapa real conectado");
-      showToast(`${elements.length} elementos OSM recibidos en el radio exploratorio.`);
+      showToast(`${elements.length} elementos OSM recibidos en el área visible.`);
     } catch (error) {
+      if (controller.signal.aborted || token !== state.queryToken) return;
       console.warn("Overpass no respondió", error);
-      if (token !== state.queryToken) return;
       useProceduralFallback("Overpass no respondió; se muestran capas procedurales de respaldo.");
+    } finally {
+      window.clearTimeout(timeout);
+      if (state.overpassController === controller) state.overpassController = null;
     }
   }
 

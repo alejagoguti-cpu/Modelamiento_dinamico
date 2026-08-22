@@ -28,3 +28,18 @@ La prueba completó geocodificación y routing: `Parque Metropolitano El Tintal 
 ## Corrección de calles confirmada
 
 La nueva capa GeoJSON funciona: la consulta natural devolvió 12.267 elementos OSM, de los cuales 11.776 tramos viales se dibujan como líneas teal de alto contraste, diferenciando autopistas, arteriales, colectoras y calles residenciales. La captura de verificación muestra la red completa superpuesta sobre el mapa base, el recuadro de la UPL 13 y los lugares consultados.
+
+
+## Optimización de consultas por viewport
+
+El navegador mantiene `mapReady: true` y `mode: real`. La carga inicial de la UPL 13 se resolvió con 2.952 tramos y 82 lugares en el bbox visible, frente a la consulta anterior de más de 11.000 tramos para un radio fijo. La interfaz muestra `Nivel meso · 5 jerarquías visibles`, y el estado de conexión vuelve a `Mapa real conectado`. El código incorpora debounce de 420 ms, caché limitada a 16 entradas y cancelación de la consulta anterior mediante `AbortController`.
+
+
+## Prueba de cancelación
+
+Tras dos desplazamientos rápidos del mapa, la aplicación conservó un único `activeQueryKey` para el bbox visible y no dejó un controlador de Overpass colgado (`controllerActive: false` una vez terminada la respuesta). El debounce configurado es de 420 ms, por lo que los movimientos intermedios no generan una consulta por cada evento.
+
+
+## Verificación final de rendimiento
+
+La página mantiene el mapa real y la red vial visible. En la carga final, la interfaz muestra la nota de carga por área visible, `Nivel meso · 5 jerarquías visibles`, 2.952 tramos y 82 lugares para la UPL 13. El archivo JavaScript pasó `node --check`, y el script local de generación PMTiles pasó `bash -n`.
