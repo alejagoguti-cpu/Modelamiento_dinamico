@@ -723,3 +723,253 @@ body.module02-reference-page .leaflet-marker-icon.scale-network-arrow {
 }
 
 /* End scale network treatment */
+
+/* Pop-up de red multiescala: la red se presenta fuera del mapa principal */
+body.module02-reference-page.scale-modal-open {
+  overflow: hidden !important;
+}
+
+body.module02-reference-page .scale-network-modal {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 5000 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 28px !important;
+  background: rgba(0,0,0,.84) !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transition: opacity .18s ease !important;
+}
+
+body.module02-reference-page .scale-network-modal.open {
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+body.module02-reference-page .scale-network-dialog {
+  width: min(1120px, 96vw) !important;
+  max-height: min(780px, 92vh) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(70,214,208,.42) !important;
+  border-radius: 12px !important;
+  background: #0b0c0f !important;
+  box-shadow: 0 0 0 1px rgba(255,255,255,.05) inset, 0 18px 70px rgba(0,0,0,.7), 0 0 34px rgba(70,214,208,.08) !important;
+}
+
+body.module02-reference-page .scale-network-dialog-head {
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: 20px !important;
+  padding: 21px 24px 17px !important;
+  border-bottom: 1px solid rgba(255,255,255,.09) !important;
+}
+
+body.module02-reference-page .scale-network-kicker {
+  margin-bottom: 8px !important;
+  color: #78818d !important;
+  font-family: 'Space Grotesk', sans-serif !important;
+  font-size: 9px !important;
+  font-weight: 600 !important;
+  letter-spacing: 1.4px !important;
+}
+
+body.module02-reference-page #scaleNetworkTitle {
+  margin: 0 0 7px !important;
+  color: #f2f3f6 !important;
+  font-family: 'Space Grotesk', sans-serif !important;
+  font-size: 26px !important;
+  line-height: 1.1 !important;
+}
+
+body.module02-reference-page #scaleNetworkDescription {
+  margin: 0 !important;
+  color: #aab2bc !important;
+  font-size: 11px !important;
+  line-height: 1.45 !important;
+}
+
+body.module02-reference-page .scale-network-close {
+  flex: 0 0 34px !important;
+  width: 34px !important;
+  height: 34px !important;
+  padding: 0 !important;
+  border: 1px solid rgba(255,255,255,.14) !important;
+  border-radius: 8px !important;
+  background: #111111 !important;
+  color: #aab2bc !important;
+  font-size: 24px !important;
+  font-weight: 300 !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+}
+
+body.module02-reference-page .scale-network-close:hover,
+body.module02-reference-page .scale-network-close:focus-visible {
+  border-color: #46d6d0 !important;
+  color: #46d6d0 !important;
+  outline: none !important;
+}
+
+body.module02-reference-page .scale-network-canvas {
+  min-height: 0 !important;
+  flex: 1 1 auto !important;
+  padding: 12px 18px 8px !important;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(70,214,208,.055), transparent 45%),
+    #050506 !important;
+}
+
+body.module02-reference-page .popup-network-svg {
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 360px !important;
+  max-height: 57vh !important;
+  overflow: visible !important;
+  background-image:
+    radial-gradient(circle at 18px 18px, rgba(70,214,208,.16) 0 1px, transparent 1.4px),
+    radial-gradient(circle at 82px 60px, rgba(232,154,108,.10) 0 1px, transparent 1.4px) !important;
+  background-size: 92px 82px, 132px 108px !important;
+}
+
+body.module02-reference-page .popup-edge {
+  fill: none !important;
+  stroke-linecap: round !important;
+  vector-effect: non-scaling-stroke !important;
+}
+
+body.module02-reference-page .popup-edge.direct {
+  opacity: .9 !important;
+  stroke-width: 1.7 !important;
+}
+
+body.module02-reference-page .popup-edge.indirect {
+  opacity: .75 !important;
+  stroke-width: 1.25 !important;
+  stroke-dasharray: 7 7 !important;
+}
+
+body.module02-reference-page .popup-node {
+  cursor: pointer !important;
+  outline: none !important;
+}
+
+body.module02-reference-page .popup-node circle {
+  fill: #0c0d0f !important;
+  stroke: #46d6d0 !important;
+  stroke-width: 1.4 !important;
+  filter: url(#popupGlowTeal) !important;
+  transition: stroke-width .16s ease, fill .16s ease !important;
+}
+
+body.module02-reference-page .popup-node.hub circle {
+  stroke: #e89a6c !important;
+  stroke-width: 1.9 !important;
+  filter: url(#popupGlowCopper) !important;
+}
+
+body.module02-reference-page .popup-node text {
+  fill: #f2f3f6 !important;
+  font-family: Inter, sans-serif !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  letter-spacing: .25px !important;
+  text-anchor: middle !important;
+  pointer-events: none !important;
+}
+
+body.module02-reference-page .popup-node:hover circle,
+body.module02-reference-page .popup-node:focus-visible circle,
+body.module02-reference-page .popup-node.selected circle {
+  fill: rgba(70,214,208,.14) !important;
+  stroke-width: 3 !important;
+}
+
+body.module02-reference-page .popup-node.hub:hover circle,
+body.module02-reference-page .popup-node.hub:focus-visible circle,
+body.module02-reference-page .popup-node.hub.selected circle {
+  fill: rgba(232,154,108,.14) !important;
+  stroke: #e89a6c !important;
+}
+
+body.module02-reference-page .scale-network-dialog-foot {
+  display: flex !important;
+  align-items: center !important;
+  gap: 18px !important;
+  flex-wrap: wrap !important;
+  padding: 13px 24px 15px !important;
+  border-top: 1px solid rgba(255,255,255,.09) !important;
+  color: #aab2bc !important;
+  font-size: 10px !important;
+}
+
+body.module02-reference-page .scale-network-dialog-foot > span {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+}
+
+body.module02-reference-page .scale-legend-line {
+  width: 24px !important;
+  height: 0 !important;
+  display: inline-block !important;
+  border-top: 2px solid #46d6d0 !important;
+}
+
+body.module02-reference-page .scale-legend-line.indirect {
+  border-top: 2px dashed #e89a6c !important;
+}
+
+body.module02-reference-page .scale-network-hint {
+  margin-left: auto !important;
+  color: #78818d !important;
+}
+
+@media (max-width: 700px) {
+  body.module02-reference-page .scale-network-modal {
+    padding: 12px !important;
+  }
+
+  body.module02-reference-page .scale-network-dialog {
+    width: 100% !important;
+    max-height: 94vh !important;
+  }
+
+  body.module02-reference-page .scale-network-dialog-head {
+    padding: 17px 16px 14px !important;
+  }
+
+  body.module02-reference-page #scaleNetworkTitle {
+    font-size: 21px !important;
+  }
+
+  body.module02-reference-page .scale-network-canvas {
+    padding: 8px 6px !important;
+  }
+
+  body.module02-reference-page .popup-network-svg {
+    min-height: 330px !important;
+    max-height: 58vh !important;
+  }
+
+  body.module02-reference-page .popup-node text {
+    font-size: 9px !important;
+  }
+
+  body.module02-reference-page .scale-network-dialog-foot {
+    padding: 11px 16px 13px !important;
+    gap: 10px 15px !important;
+  }
+
+  body.module02-reference-page .scale-network-hint {
+    width: 100% !important;
+    margin-left: 0 !important;
+  }
+}
+
+/* End scale network pop-up */

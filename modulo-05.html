@@ -189,6 +189,26 @@
   </div>
 </div>
 
+<!-- POP-UP DE RED MULTIESCALA -->
+<div id="scaleNetworkModal" class="scale-network-modal" aria-hidden="true">
+  <div class="scale-network-dialog" role="dialog" aria-modal="true" aria-labelledby="scaleNetworkTitle">
+    <div class="scale-network-dialog-head">
+      <div>
+        <div class="scale-network-kicker">RED MULTIESCALA · BOGOTÁ VIVA</div>
+        <h2 id="scaleNetworkTitle">Red Natural</h2>
+        <p id="scaleNetworkDescription">Relaciones entre sistemas y entidades concretas del territorio.</p>
+      </div>
+      <button id="scaleNetworkClose" class="scale-network-close" type="button" aria-label="Cerrar red">×</button>
+    </div>
+    <div id="scaleNetworkCanvas" class="scale-network-canvas" aria-label="Diagrama de red de la escala seleccionada"></div>
+    <div class="scale-network-dialog-foot">
+      <span><i class="scale-legend-line direct"></i> Relación directa</span>
+      <span><i class="scale-legend-line indirect"></i> Relación indirecta</span>
+      <span class="scale-network-hint">Haz clic en un nodo para identificarlo</span>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 
 <!-- MODAL EEP -->

@@ -323,27 +323,10 @@ function showEepNetwork() {
 
 function selectHumedal(h) {
   currentSelection = h;
-  networkLines.forEach(line => map.removeLayer(line));
+  networkLines.forEach(line => { try { map.removeLayer(line); } catch (e) {} });
   networkLines = [];
   
   map.setView([h.lat, h.lng], 13);
-  
-  humedales.forEach(other => {
-    if (other.id !== h.id) {
-      const line = L.polyline([
-        [h.lat, h.lng],
-        [other.lat, other.lng]
-      ], {
-        color: '#46d6d0',
-        weight: 2,
-        opacity: 0.5,
-        dashArray: '5, 5'
-      }).addTo(map);
-      networkLines.push(line);
-    }
-  });
-  
-  showEepNetwork();
   openEepModal(h);
   
   document.getElementById('detail-title').textContent = `HUMEDAL SELECCIONADO: ${h.nombre.toUpperCase()}`;
@@ -549,7 +532,7 @@ document.querySelectorAll('.tab').forEach(btn => {
     }
     
     renderItemList();
-    showScaleNetwork(scale);
+    openScaleNetworkModal(scale);
   });
 });
 
@@ -763,5 +746,136 @@ function showScaleNetwork(mode) {
   }
 }
 
-// La red Natural aparece desde la carga inicial; los botones la regeneran por escala.
-showScaleNetwork('natural');
+// Las redes se muestran únicamente al pulsar una escala y viven dentro del pop-up.
+
+
+/* ========================================================================
+   POP-UP DE RED · la red vive aquí, no sobre el mapa principal
+   ======================================================================== */
+const scaleNetworkDescriptions = {
+  natural: 'Sistemas hídricos, estructura ecológica y cobertura vegetal conectados.',
+  cultural: 'Patrimonio, memoria urbana, barrios y prácticas culturales relacionadas.',
+  tecnologico: 'Movilidad, datos, infraestructura y conectividad territorial.',
+  metaverso: 'Capas digitales, modelos urbanos y escenarios de exploración virtual.'
+};
+
+let scalePopupSelectedNode = null;
+
+function splitPopupLabel(label) {
+  const words = label.split(' ');
+  const lines = [];
+  let line = '';
+  words.forEach(word => {
+    const next = line ? `${line} ${word}` : word;
+    if (next.length > 15 && line) {
+      lines.push(line);
+      line = word;
+    } else {
+      line = next;
+    }
+  });
+  if (line) lines.push(line);
+  return lines.slice(0, 3);
+}
+
+function popupNetworkPositions(definition) {
+  const lats = definition.nodes.map(node => node.lat);
+  const lngs = definition.nodes.map(node => node.lng);
+  const minLat = Math.min(...lats);
+  const maxLat = Math.max(...lats);
+  const minLng = Math.min(...lngs);
+  const maxLng = Math.max(...lngs);
+  const latRange = Math.max(maxLat - minLat, 0.001);
+  const lngRange = Math.max(maxLng - minLng, 0.001);
+  return Object.fromEntries(definition.nodes.map(node => [node.id, {
+    ...node,
+    x: 72 + ((node.lng - minLng) / lngRange) * 856,
+    y: 62 + ((maxLat - node.lat) / latRange) * 420
+  }]));
+}
+
+function renderScaleNetworkPopup(mode) {
+  const canvas = document.getElementById('scaleNetworkCanvas');
+  const definition = scaleNetworks[mode];
+  if (!canvas || !definition) return;
+  const nodes = popupNetworkPositions(definition);
+  const edgeMarkup = definition.edges.map(([fromId, toId, type]) => {
+    const from = nodes[fromId];
+    const to = nodes[toId];
+    if (!from || !to) return '';
+    const color = type === 'indirecta' ? '#e89a6c' : definition.accent;
+    const className = type === 'indirecta' ? 'popup-edge indirect' : 'popup-edge direct';
+    return `<line class="${className}" x1="${from.x.toFixed(1)}" y1="${from.y.toFixed(1)}" x2="${to.x.toFixed(1)}" y2="${to.y.toFixed(1)}" stroke="${color}" marker-end="url(#arrow-${type})" />`;
+  }).join('');
+
+  const nodeMarkup = definition.nodes.map(node => {
+    const p = nodes[node.id];
+    const radius = node.hub ? 42 : 29;
+    const lines = splitPopupLabel(node.label);
+    const firstY = p.y - ((lines.length - 1) * 7);
+    const labelMarkup = lines.map((line, index) => `<tspan x="${p.x.toFixed(1)}" dy="${index === 0 ? 0 : 14}">${line}</tspan>`).join('');
+    return `<g class="popup-node ${node.hub ? 'hub' : ''}" data-node-id="${node.id}" tabindex="0" role="button" aria-label="${node.label}">
+      <circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${radius}" />
+      <text x="${p.x.toFixed(1)}" y="${firstY.toFixed(1)}">${labelMarkup}</text>
+    </g>`;
+  }).join('');
+
+  canvas.innerHTML = `<svg class="popup-network-svg" viewBox="0 0 1000 544" role="img" aria-label="${definition.title}">
+    <defs>
+      <filter id="popupGlowTeal" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      <filter id="popupGlowCopper" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      <marker id="arrow-direct" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#46d6d0" /></marker>
+      <marker id="arrow-indirecta" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#e89a6c" /></marker>
+    </defs>
+    <g class="popup-edges">${edgeMarkup}</g>
+    <g class="popup-nodes">${nodeMarkup}</g>
+  </svg>`;
+
+  canvas.querySelectorAll('.popup-node').forEach(nodeElement => {
+    const selectNode = () => {
+      canvas.querySelectorAll('.popup-node').forEach(item => item.classList.remove('selected'));
+      nodeElement.classList.add('selected');
+      const node = nodes[nodeElement.dataset.nodeId];
+      scalePopupSelectedNode = node;
+      const description = document.getElementById('scaleNetworkDescription');
+      if (description && node) description.textContent = `${node.label} · ${definition.title}`;
+    };
+    nodeElement.addEventListener('click', selectNode);
+    nodeElement.addEventListener('keydown', event => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        selectNode();
+      }
+    });
+  });
+}
+
+function openScaleNetworkModal(mode) {
+  const modal = document.getElementById('scaleNetworkModal');
+  const definition = scaleNetworks[mode];
+  if (!modal || !definition) return;
+  scalePopupSelectedNode = null;
+  document.getElementById('scaleNetworkTitle').textContent = definition.title;
+  document.getElementById('scaleNetworkDescription').textContent = scaleNetworkDescriptions[mode];
+  renderScaleNetworkPopup(mode);
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('scale-modal-open');
+  document.getElementById('scaleNetworkClose')?.focus();
+}
+
+function closeScaleNetworkModal() {
+  const modal = document.getElementById('scaleNetworkModal');
+  if (!modal) return;
+  modal.classList.remove('open');
+  modal.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('scale-modal-open');
+}
+
+document.getElementById('scaleNetworkClose')?.addEventListener('click', closeScaleNetworkModal);
+document.getElementById('scaleNetworkModal')?.addEventListener('click', event => {
+  if (event.target.id === 'scaleNetworkModal') closeScaleNetworkModal();
+});
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape') closeScaleNetworkModal();
+});
