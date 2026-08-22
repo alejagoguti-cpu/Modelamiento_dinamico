@@ -2,14 +2,14 @@
 
 La actividad está integrada en `modulo-05.html`, la vista **Navegador Multiescalar**. El juego no se encuentra en Macromodelos: aparece como una capa de conducción sobre el mapa central de Bogotá.
 
-> El mapa Leaflet existente es el mundo del juego. El carro se proyecta con las mismas coordenadas y la misma transformación de `vias.geojson` que usa la capa vial del navegador.
+> El mapa Leaflet existente es el mundo del juego. El carro se proyecta con las mismas coordenadas y la misma transformación de `vias.geojson` que usa la capa vial del navegador. El derrape usa una fuerza de dirección creciente con la velocidad y un agarre lateral variable: a mayor velocidad, más desplazamiento lateral y recuperación más lenta.
 
 | Regla | Implementación |
 | --- | --- |
 | Vista | Planta, con el vehículo centrado en el mapa. |
 | Recorrido | El carro sigue una geometría real de `vias.geojson`. |
 | Movimiento | `W`/flecha arriba acelera; `S`/flecha abajo frena; `A-D` o flechas laterales desplazan el carro dentro del ancho de la vía. |
-| Física | Aceleración, velocidad máxima, fricción y pérdida de velocidad después de una salida o impacto. |
+| Física | Aceleración, velocidad máxima, fricción y pérdida de velocidad después de una salida o impacto. En curvas cerradas el agarre lateral baja con la velocidad, aumenta la inercia y el carro recupera el derrape de forma progresiva. |
 | Colisiones | El vehículo no atraviesa el obstáculo: se detiene, pierde velocidad y se descuenta una vida. |
 | Vida | Tres vidas representadas en el HUD; al llegar a cero la ruta se detiene. |
 | Reinicio | `R` restablece distancia, velocidad y vidas. |
