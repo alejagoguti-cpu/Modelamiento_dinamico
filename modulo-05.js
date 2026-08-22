@@ -24,7 +24,8 @@ let humedalMarkers = {};
 let eepNodos = [];
 let eepLayers = {};
 let networkLines = [];
-let currentMode = 'tecnologico'; // Escala inicial: Tecnológico, red vial jugable activa
+let currentMode = 'tecnologico'; // El juego se reserva exclusivamente para Metaverso
+function syncDriveVisibility() { const overlay = document.getElementById('driveOverlay'); const visible = currentMode === 'metaverso'; if (overlay) { overlay.style.display = visible ? '' : 'none'; overlay.setAttribute('aria-hidden', String(!visible)); } if (visible && window.bogotaDriveFocus) window.bogotaDriveFocus(); }
 
 // --- VARIABLE PARA LA CAPA DE VÍAS ---
 let viasLayer = null;
@@ -533,7 +534,9 @@ document.querySelectorAll('.tab').forEach(btn => {
     }
     
     renderItemList();
-    openScaleNetworkModal(scale);
+    if (scale === 'metaverso') closeScaleNetworkModal();
+    else openScaleNetworkModal(scale);
+    syncDriveVisibility();
   });
 });
 
