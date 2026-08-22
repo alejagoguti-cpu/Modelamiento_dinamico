@@ -493,6 +493,7 @@ document.querySelectorAll('.tab').forEach(btn => {
     });
     networkLines = [];
     eepLayers = {};
+    clearScaleNetwork();
     
     if (scale === 'natural') {
       currentMode = 'natural';
@@ -548,5 +549,219 @@ document.querySelectorAll('.tab').forEach(btn => {
     }
     
     renderItemList();
+    showScaleNetwork(scale);
   });
 });
+
+/* ========================================================================
+   REDES MULTIESCALA · renderizador visual común del Módulo 05
+   ======================================================================== */
+const scaleNetworkLayers = [];
+
+const scaleNetworks = {
+  natural: {
+    title: 'Red Natural',
+    accent: '#46d6d0',
+    nodes: [
+      { id: 'humedales', label: 'HUMEDALES', lat: 4.630, lng: -74.150, hub: true },
+      { id: 'rios', label: 'RÍOS', lat: 4.665, lng: -74.165 },
+      { id: 'quebradas', label: 'QUEBRADAS', lat: 4.612, lng: -74.182 },
+      { id: 'areas_protegidas', label: 'ÁREAS PROTEGIDAS', lat: 4.662, lng: -74.120 },
+      { id: 'reservas_forestales', label: 'RESERVAS FORESTALES', lat: 4.690, lng: -74.150 },
+      { id: 'cobertura_vegetal', label: 'COBERTURA VEGETAL', lat: 4.650, lng: -74.205 },
+      { id: 'parques', label: 'PARQUES', lat: 4.620, lng: -74.105 },
+      { id: 'rondas_hidricas', label: 'RONDAS HÍDRICAS', lat: 4.595, lng: -74.195 },
+      { id: 'bosques_urbanos', label: 'BOSQUES URBANOS', lat: 4.585, lng: -74.115 },
+      { id: 'paramos', label: 'COMPLEJO DE PÁRAMOS', lat: 4.715, lng: -74.185 }
+    ],
+    edges: [
+      ['humedales', 'rios', 'directa'],
+      ['humedales', 'areas_protegidas', 'directa'],
+      ['humedales', 'quebradas', 'indirecta'],
+      ['humedales', 'reservas_forestales', 'directa'],
+      ['rios', 'rondas_hidricas', 'directa'],
+      ['quebradas', 'rondas_hidricas', 'indirecta'],
+      ['areas_protegidas', 'cobertura_vegetal', 'directa'],
+      ['reservas_forestales', 'paramos', 'indirecta'],
+      ['areas_protegidas', 'parques', 'indirecta'],
+      ['cobertura_vegetal', 'bosques_urbanos', 'directa'],
+      ['parques', 'bosques_urbanos', 'indirecta']
+    ]
+  },
+  cultural: {
+    title: 'Red Cultural',
+    accent: '#e89a6c',
+    nodes: [
+      { id: 'patrimonio_material', label: 'PATRIMONIO MATERIAL', lat: 4.615, lng: -74.075, hub: true },
+      { id: 'patrimonio_inmaterial', label: 'PATRIMONIO INMATERIAL', lat: 4.635, lng: -74.045, hub: true },
+      { id: 'museos', label: 'MUSEOS', lat: 4.640, lng: -74.085 },
+      { id: 'bibliotecas', label: 'BIBLIOTECAS', lat: 4.595, lng: -74.105 },
+      { id: 'plazas_mercado', label: 'PLAZAS DE MERCADO', lat: 4.605, lng: -74.120 },
+      { id: 'barrios', label: 'BARRIOS', lat: 4.650, lng: -74.115 },
+      { id: 'centros_historicos', label: 'CENTROS HISTÓRICOS', lat: 4.625, lng: -74.100 },
+      { id: 'zonas_turisticas', label: 'ZONAS DE INTERÉS TURÍSTICO', lat: 4.675, lng: -74.070 },
+      { id: 'equipamientos_culturales', label: 'EQUIPAMIENTOS CULTURALES', lat: 4.570, lng: -74.080 },
+      { id: 'artesanias', label: 'PRODUCCIÓN ARTESANAL', lat: 4.585, lng: -74.055 }
+    ],
+    edges: [
+      ['patrimonio_material', 'museos', 'directa'],
+      ['patrimonio_material', 'centros_historicos', 'directa'],
+      ['patrimonio_material', 'patrimonio_inmaterial', 'indirecta'],
+      ['patrimonio_inmaterial', 'zonas_turisticas', 'directa'],
+      ['patrimonio_inmaterial', 'artesanias', 'directa'],
+      ['museos', 'bibliotecas', 'indirecta'],
+      ['centros_historicos', 'barrios', 'directa'],
+      ['barrios', 'plazas_mercado', 'indirecta'],
+      ['bibliotecas', 'equipamientos_culturales', 'directa'],
+      ['plazas_mercado', 'artesanias', 'indirecta']
+    ]
+  },
+  tecnologico: {
+    title: 'Red Tecnológica',
+    accent: '#e89a6c',
+    nodes: [
+      { id: 'red_vial', label: 'RED VIAL', lat: 4.635, lng: -74.100, hub: true },
+      { id: 'transporte_publico', label: 'TRANSPORTE PÚBLICO', lat: 4.605, lng: -74.070, hub: true },
+      { id: 'red_ferrrea', label: 'RED FÉRREA', lat: 4.665, lng: -74.095 },
+      { id: 'ciclorutas', label: 'CICLORRUTAS', lat: 4.655, lng: -74.135 },
+      { id: 'nodos_digitales', label: 'NODOS DIGITALES', lat: 4.680, lng: -74.145 },
+      { id: 'internet_publico', label: 'INTERNET PÚBLICO', lat: 4.585, lng: -74.135 },
+      { id: 'datos_abiertos', label: 'DATOS ABIERTOS', lat: 4.575, lng: -74.080 },
+      { id: 'centro_tecnologico', label: 'CENTRO TECNOLÓGICO', lat: 4.625, lng: -74.045 },
+      { id: 'recarga_electrica', label: 'RECARGA ELÉCTRICA', lat: 4.685, lng: -74.055 },
+      { id: 'semaforizacion', label: 'SEMAFORIZACIÓN', lat: 4.550, lng: -74.105 }
+    ],
+    edges: [
+      ['red_vial', 'transporte_publico', 'directa'],
+      ['red_vial', 'red_ferrrea', 'directa'],
+      ['red_vial', 'ciclorutas', 'indirecta'],
+      ['transporte_publico', 'nodos_digitales', 'directa'],
+      ['transporte_publico', 'internet_publico', 'indirecta'],
+      ['red_ferrrea', 'recarga_electrica', 'directa'],
+      ['nodos_digitales', 'centro_tecnologico', 'directa'],
+      ['internet_publico', 'datos_abiertos', 'indirecta'],
+      ['datos_abiertos', 'centro_tecnologico', 'directa'],
+      ['ciclorutas', 'semaforizacion', 'indirecta'],
+      ['red_vial', 'semaforizacion', 'directa']
+    ]
+  },
+  metaverso: {
+    title: 'Red Metaverso',
+    accent: '#46d6d0',
+    nodes: [
+      { id: 'gemelo_digital', label: 'GEMELO DIGITAL', lat: 4.630, lng: -74.100, hub: true },
+      { id: 'modelos_3d', label: 'MODELOS 3D', lat: 4.665, lng: -74.130, hub: true },
+      { id: 'capas_gis', label: 'CAPAS GIS', lat: 4.680, lng: -74.085 },
+      { id: 'plataformas_bim', label: 'PLATAFORMAS BIM', lat: 4.650, lng: -74.055 },
+      { id: 'nodos_iot', label: 'NODOS IoT', lat: 4.605, lng: -74.045 },
+      { id: 'visualizacion_vr', label: 'VISUALIZACIÓN VR', lat: 4.575, lng: -74.065 },
+      { id: 'laboratorios_urbanos', label: 'LABORATORIOS URBANOS', lat: 4.565, lng: -74.115 },
+      { id: 'datos_territoriales', label: 'DATOS TERRITORIALES', lat: 4.600, lng: -74.150 },
+      { id: 'escenarios_simulados', label: 'ESCENARIOS SIMULADOS', lat: 4.700, lng: -74.115 },
+      { id: 'sensores_urbanos', label: 'SENSORES URBANOS', lat: 4.640, lng: -74.180 }
+    ],
+    edges: [
+      ['gemelo_digital', 'modelos_3d', 'directa'],
+      ['gemelo_digital', 'capas_gis', 'directa'],
+      ['gemelo_digital', 'datos_territoriales', 'directa'],
+      ['modelos_3d', 'plataformas_bim', 'directa'],
+      ['modelos_3d', 'escenarios_simulados', 'indirecta'],
+      ['capas_gis', 'sensores_urbanos', 'indirecta'],
+      ['plataformas_bim', 'nodos_iot', 'directa'],
+      ['nodos_iot', 'sensores_urbanos', 'directa'],
+      ['datos_territoriales', 'laboratorios_urbanos', 'indirecta'],
+      ['laboratorios_urbanos', 'visualizacion_vr', 'directa'],
+      ['escenarios_simulados', 'visualizacion_vr', 'indirecta']
+    ]
+  }
+};
+
+function clearScaleNetwork() {
+  scaleNetworkLayers.forEach(layer => {
+    try { map.removeLayer(layer); } catch (e) {}
+  });
+  scaleNetworkLayers.length = 0;
+}
+
+function networkLabel(label) {
+  const words = label.split(' ');
+  const lines = [];
+  let line = '';
+  words.forEach(word => {
+    const candidate = line ? `${line} ${word}` : word;
+    if (candidate.length > 14 && line) {
+      lines.push(line);
+      line = word;
+    } else {
+      line = candidate;
+    }
+  });
+  if (line) lines.push(line);
+  return lines.slice(0, 3).join('<br>');
+}
+
+function networkArrow(from, to, color, type) {
+  const mid = [(from.lat + to.lat) / 2, (from.lng + to.lng) / 2];
+  const angle = Math.atan2(to.lat - from.lat, to.lng - from.lng) * 180 / Math.PI;
+  const arrow = L.marker(mid, {
+    interactive: false,
+    icon: L.divIcon({
+      className: 'scale-network-arrow',
+      html: `<span style="color:${color}; transform:rotate(${angle}deg)">${type === 'indirecta' ? '◇' : '➤'}</span>`,
+      iconSize: [18, 18],
+      iconAnchor: [9, 9]
+    })
+  }).addTo(map);
+  scaleNetworkLayers.push(arrow);
+}
+
+function showScaleNetwork(mode) {
+  clearScaleNetwork();
+  const definition = scaleNetworks[mode];
+  if (!definition) return;
+  const centerLat = definition.nodes.reduce((sum, node) => sum + node.lat, 0) / definition.nodes.length;
+  const centerLng = definition.nodes.reduce((sum, node) => sum + node.lng, 0) / definition.nodes.length;
+  const spreadFactor = 2.15;
+  const nodes = Object.fromEntries(definition.nodes.map(node => [node.id, {
+    ...node,
+    lat: centerLat + (node.lat - centerLat) * spreadFactor,
+    lng: centerLng + (node.lng - centerLng) * spreadFactor
+  }]));
+
+  definition.edges.forEach(([fromId, toId, type]) => {
+    const from = nodes[fromId];
+    const to = nodes[toId];
+    if (!from || !to) return;
+    const color = type === 'indirecta' ? '#e89a6c' : definition.accent;
+    const line = L.polyline([[from.lat, from.lng], [to.lat, to.lng]], {
+      color,
+      weight: type === 'indirecta' ? 1.4 : 2.2,
+      opacity: type === 'indirecta' ? 0.72 : 0.9,
+      dashArray: type === 'indirecta' ? '6, 6' : null,
+      interactive: false
+    }).addTo(map);
+    scaleNetworkLayers.push(line);
+    networkArrow(from, to, color, type);
+  });
+
+  definition.nodes.forEach(node => {
+    const size = node.hub ? 84 : 54;
+    const marker = L.marker([node.lat, node.lng], {
+      icon: L.divIcon({
+        className: 'scale-network-node-wrap',
+        html: `<div class="scale-network-node ${node.hub ? 'hub' : ''}" style="--node-accent:${definition.accent};--node-size:${size}px"><span>${networkLabel(node.label)}</span></div>`,
+        iconSize: [size, size],
+        iconAnchor: [size / 2, size / 2]
+      })
+    }).bindPopup(`<strong>${node.label}</strong><br><span>${definition.title}</span>`).addTo(map);
+    scaleNetworkLayers.push(marker);
+  });
+
+  const networkBounds = L.latLngBounds(Object.values(nodes).map(node => [node.lat, node.lng]));
+  if (networkBounds.isValid()) {
+    map.fitBounds(networkBounds.pad(0.10), { maxZoom: 12, animate: false });
+  }
+}
+
+// La red Natural aparece desde la carga inicial; los botones la regeneran por escala.
+showScaleNetwork('natural');

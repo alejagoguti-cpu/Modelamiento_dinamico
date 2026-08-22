@@ -648,3 +648,78 @@ body.module02-reference-page .topbar-brand i {
 }
 
 /* End Bogotá Viva identity */
+
+/* Redes de escala dentro del mapa: nodos circulares y conexiones visibles */
+body.module02-reference-page .scale-network-node-wrap,
+body.module02-reference-page .scale-network-arrow,
+body.module02-reference-page .eep-label {
+  background: transparent !important;
+  border: 0 !important;
+}
+
+body.module02-reference-page .scale-network-node {
+  width: var(--node-size) !important;
+  height: var(--node-size) !important;
+  box-sizing: border-box !important;
+  display: grid !important;
+  place-items: center !important;
+  padding: 5px !important;
+  border: 1.5px solid var(--node-accent) !important;
+  border-radius: 50% !important;
+  background: rgba(10,10,10,.94) !important;
+  color: #f2f3f6 !important;
+  text-align: center !important;
+  font-family: Inter, sans-serif !important;
+  font-size: 6px !important;
+  font-weight: 700 !important;
+  line-height: 1.08 !important;
+  letter-spacing: .15px !important;
+  text-shadow: 0 1px 5px rgba(0,0,0,.95) !important;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.05) inset,
+    0 0 10px color-mix(in srgb, var(--node-accent) 42%, transparent),
+    0 0 18px color-mix(in srgb, var(--node-accent) 15%, transparent) !important;
+}
+
+body.module02-reference-page .scale-network-node.hub {
+  border-width: 2px !important;
+  font-size: 7px !important;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.07) inset,
+    0 0 14px color-mix(in srgb, var(--node-accent) 55%, transparent),
+    0 0 26px color-mix(in srgb, var(--node-accent) 18%, transparent) !important;
+}
+
+body.module02-reference-page .scale-network-node span {
+  display: block !important;
+  max-width: 100% !important;
+  overflow-wrap: anywhere !important;
+}
+
+body.module02-reference-page .scale-network-arrow {
+  width: 18px !important;
+  height: 18px !important;
+  display: grid !important;
+  place-items: center !important;
+  pointer-events: none !important;
+}
+
+body.module02-reference-page .scale-network-arrow span {
+  display: block !important;
+  font-size: 13px !important;
+  line-height: 1 !important;
+  text-shadow: 0 0 5px rgba(0,0,0,.95) !important;
+}
+
+body.module02-reference-page .leaflet-marker-icon.scale-network-node-wrap,
+body.module02-reference-page .leaflet-marker-icon.scale-network-arrow {
+  margin: 0 !important;
+}
+
+@supports not (color: color-mix(in srgb, white, black)) {
+  body.module02-reference-page .scale-network-node {
+    box-shadow: 0 0 12px rgba(70,214,208,.25) !important;
+  }
+}
+
+/* End scale network treatment */
