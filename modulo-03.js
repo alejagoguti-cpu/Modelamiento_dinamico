@@ -3407,16 +3407,22 @@ function initPanZoom() {
   const svg = document.getElementById('svg');
 
   let dragging = false, moved = false, sx = 0, sy = 0, ox = 0, oy = 0;
+  let lastX = 0, lastY = 0, velocityX = 0, velocityY = 0, releaseFrame = 0;
   stage.addEventListener('pointerdown', e => {
     dragging = true;
     moved = false;
     sx = e.clientX; sy = e.clientY; ox = vb.x; oy = vb.y;
+    lastX = e.clientX; lastY = e.clientY; velocityX = 0; velocityY = 0;
+    cancelAnimationFrame(releaseFrame);
     // No capturamos el puntero todavía: así un clic sobre un nodo llega al SVG.
   });
   stage.addEventListener('pointermove', e => {
     if (!dragging) return;
     const dx = e.clientX - sx;
     const dy = e.clientY - sy;
+    velocityX = e.clientX - lastX;
+    velocityY = e.clientY - lastY;
+    lastX = e.clientX; lastY = e.clientY;
     if (!moved && Math.hypot(dx, dy) < 5) return;
     if (!moved) {
       moved = true;
@@ -3429,9 +3435,26 @@ function initPanZoom() {
     applyVB();
   });
   const end = () => {
+    const wasMoved = moved;
     dragging = false;
     moved = false;
     stage.classList.remove('panning');
+    if (!wasMoved) return;
+    const rect = svg.getBoundingClientRect();
+    const momentumX = -(velocityX / Math.max(rect.width, 1)) * vb.w * 0.18;
+    const momentumY = -(velocityY / Math.max(rect.height, 1)) * vb.h * 0.18;
+    const start = performance.now();
+    const duration = 720;
+    const spring = t => 1 - Math.exp(-7 * t) * Math.cos(14 * t);
+    const settle = now => {
+      const t = Math.min(1, (now - start) / duration);
+      const k = spring(t);
+      vb.x += momentumX * (k - (t === 0 ? 0 : spring(Math.max(0, t - 0.016))));
+      vb.y += momentumY * (k - (t === 0 ? 0 : spring(Math.max(0, t - 0.016))));
+      applyVB();
+      if (t < 1) releaseFrame = requestAnimationFrame(settle);
+    };
+    releaseFrame = requestAnimationFrame(settle);
   };
   stage.addEventListener('pointerup', end);
   stage.addEventListener('pointercancel', end);

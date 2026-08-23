@@ -669,6 +669,8 @@ button {
   gap: 18px;
   margin-top: 17px;
 }
+#stage { touch-action: none; cursor: grab; }
+#stage.panning { cursor: grabbing; }
 .network-canvas {
   min-height: 480px;
   background:
