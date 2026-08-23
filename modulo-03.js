@@ -2337,7 +2337,7 @@ function computeLayoutClean() {
     layout[id] = p;
   });
 
-  // Desbloqueo suave, sin recolocar hubs ni compactar la red.
+  // Reacomodo suave: el layout se recalcula con los radios y grados del escenario actual.
   const hubIds = new Set(SYS.map(sys => model.systems[sys].concepts.slice().sort((a, b) =>
     ((model.concepts[b].activeDeg ?? model.concepts[b].deg) - (model.concepts[a].activeDeg ?? model.concepts[a].deg)) || a.localeCompare(b))[0]));
   for (let pass = 0; pass < 24; pass++) {
@@ -2513,7 +2513,7 @@ function render() {
     model.systems[s].concepts.forEach((id, index) => {
       const c = model.concepts[id];
       const p = drawPos[id] || layout[id];
-      const activeRels = c.rels.filter(relActive).length;
+      const activeRels = activeDegree(c);
       const isolated = activeRels === 0;
       const off = offNodes.has(id);
       // OFF de estructura o nodo: no se pinta ningún círculo ni etiqueta.
@@ -2817,22 +2817,25 @@ function updateWeakBanner(active, total) {
 // NODOS PUENTE: conceptos que se relacionan con las TRES estructuras
 // distintas a la suya. Son las costuras de la red.
 // ---------------------------------------------------------------------
+function activeDegree(c) {
+  return c.rels.filter(relActive).length;
+}
 function structuresTouched(c) {
   const set = new Set();
-  c.rels.forEach(r => {
+  c.rels.filter(relActive).forEach(r => {
     const otro = r.from === c.id ? r.sD : r.sO;
     if (otro !== c.sys) set.add(otro);
   });
   return set;
 }
-const isBridge = c => structuresTouched(c).size >= 3;
+const isBridge = c => state[c.sys] && structuresTouched(c).size >= 3;
 
 function updateBridgePanel() {
   const box = document.getElementById('bridgeList');
   if (!box) return;
   const lista = Object.values(model.concepts)
     .filter(isBridge)
-    .map(c => ({ c, deg: c.rels.length }))
+    .map(c => ({ c, deg: activeDegree(c) }))
     .sort((a, b) => b.deg - a.deg);
 
   if (!lista.length) { box.innerHTML = '<p class="ev-empty">Ningún concepto conecta con las tres estructuras restantes.</p>'; return; }
