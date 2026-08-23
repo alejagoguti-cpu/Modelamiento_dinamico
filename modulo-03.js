@@ -7,9 +7,6 @@
 
 // 98 relaciones: 68 sustentadas con frase textual del POT, 7 marcadas 'por
 // verificar' por la propia tabla y 23 agregadas a pedido, pendientes de frase.
-
-// Network data from Módulo 02 (POT · LA RED IMPLÍCITA)
-
 const POT_DATA = {
  "sistemas": {
   "EEP": {
@@ -35,8 +32,8 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "RÍOS",
    "icon": "fa-water",
-   "x": NaN,
-   "y": NaN,
+   "x": -700,
+   "y": -700,
    "r": 80,
    "deg": 5
   },
@@ -45,8 +42,8 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "QUEBRADAS",
    "icon": "fa-water",
-   "x": NaN,
-   "y": NaN,
+   "x": -500,
+   "y": -700,
    "r": 40,
    "deg": 1
   },
@@ -55,8 +52,8 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "HUMEDALES",
    "icon": "fa-droplet",
-   "x": NaN,
-   "y": NaN,
+   "x": -300,
+   "y": -700,
    "r": 110,
    "deg": 8
   },
@@ -65,8 +62,8 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "COMPLEJOS DE PÁRAMOS",
    "icon": "fa-mountain",
-   "x": NaN,
-   "y": NaN,
+   "x": -100,
+   "y": -700,
    "r": 50,
    "deg": 2
   },
@@ -75,8 +72,8 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "COBERTURAS VEGETALES",
    "icon": "fa-leaf",
-   "x": NaN,
-   "y": NaN,
+   "x": 100,
+   "y": -700,
    "r": 50,
    "deg": 2
   },
@@ -85,8 +82,8 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "ÁREAS DE RESILIENCIA CLIMÁTICA",
    "icon": "fa-shield-heart",
-   "x": NaN,
-   "y": NaN,
+   "x": 300,
+   "y": -700,
    "r": 60,
    "deg": 3
   },
@@ -95,8 +92,8 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "ÁREAS PROTEGIDAS",
    "icon": "fa-shield-halved",
-   "x": NaN,
-   "y": NaN,
+   "x": 500,
+   "y": -700,
    "r": 60,
    "deg": 3
   },
@@ -105,8 +102,8 @@ const POT_DATA = {
    "sys": "EEP",
    "label": "RESERVAS FORESTALES",
    "icon": "fa-tree-city",
-   "x": NaN,
-   "y": NaN,
+   "x": 700,
+   "y": -700,
    "r": 60,
    "deg": 3
   },
@@ -115,8 +112,8 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "EQUIPAMIENTOS",
    "icon": "fa-school",
-   "x": NaN,
-   "y": NaN,
+   "x": -700,
+   "y": -500,
    "r": 70,
    "deg": 4
   },
@@ -125,8 +122,8 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "SERVICIOS SOCIALES",
    "icon": "fa-people-roof",
-   "x": NaN,
-   "y": NaN,
+   "x": -500,
+   "y": -500,
    "r": 50,
    "deg": 2
   },
@@ -135,8 +132,8 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "VIVIENDA",
    "icon": "fa-house",
-   "x": NaN,
-   "y": NaN,
+   "x": -300,
+   "y": -500,
    "r": 80,
    "deg": 5
   },
@@ -145,8 +142,8 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "CICLORUTAS",
    "icon": "fa-person-biking",
-   "x": NaN,
-   "y": NaN,
+   "x": -100,
+   "y": -500,
    "r": 50,
    "deg": 2
   },
@@ -155,8 +152,8 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "TRANSPORTE PÚBLICO",
    "icon": "fa-bus",
-   "x": NaN,
-   "y": NaN,
+   "x": 100,
+   "y": -500,
    "r": 90,
    "deg": 6
   },
@@ -165,8 +162,8 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "RED VIAL",
    "icon": "fa-road",
-   "x": NaN,
-   "y": NaN,
+   "x": 300,
+   "y": -500,
    "r": 70,
    "deg": 4
   },
@@ -175,8 +172,8 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "CORREDORES VERDES",
    "icon": "fa-seedling",
-   "x": NaN,
-   "y": NaN,
+   "x": 500,
+   "y": -500,
    "r": 50,
    "deg": 2
   },
@@ -185,8 +182,8 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "MANZANAS DEL CUIDADO",
    "icon": "fa-building-shield",
-   "x": NaN,
-   "y": NaN,
+   "x": 700,
+   "y": -500,
    "r": 80,
    "deg": 5
   },
@@ -195,8 +192,8 @@ const POT_DATA = {
    "sys": "EFC",
    "label": "PARQUES",
    "icon": "fa-tree",
-   "x": NaN,
-   "y": NaN,
+   "x": -700,
+   "y": -300,
    "r": 40,
    "deg": 1
   },
@@ -205,8 +202,8 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "DISTRITO CENTRO TECNOLÓGICO E INNOVACIÓN",
    "icon": "fa-microchip",
-   "x": NaN,
-   "y": NaN,
+   "x": -500,
+   "y": -300,
    "r": 80,
    "deg": 5
   },
@@ -215,8 +212,8 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "SERVICIOS EMPRESARIALES",
    "icon": "fa-briefcase",
-   "x": NaN,
-   "y": NaN,
+   "x": -300,
+   "y": -300,
    "r": 110,
    "deg": 8
   },
@@ -225,8 +222,8 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "SISTEMA DE EDUCACIÓN",
    "icon": "fa-graduation-cap",
-   "x": NaN,
-   "y": NaN,
+   "x": -100,
+   "y": -300,
    "r": 60,
    "deg": 3
   },
@@ -235,8 +232,8 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "CENTROS DE ABASTECIMIENTO",
    "icon": "fa-warehouse",
-   "x": NaN,
-   "y": NaN,
+   "x": 100,
+   "y": -300,
    "r": 40,
    "deg": 1
   },
@@ -245,8 +242,8 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "PLAZAS DE MERCADO",
    "icon": "fa-store",
-   "x": NaN,
-   "y": NaN,
+   "x": 300,
+   "y": -300,
    "r": 60,
    "deg": 3
   },
@@ -255,8 +252,8 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "ZONAS INDUSTRIALES",
    "icon": "fa-industry",
-   "x": NaN,
-   "y": NaN,
+   "x": 500,
+   "y": -300,
    "r": 80,
    "deg": 5
   },
@@ -265,8 +262,8 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "PRODUCCIÓN ARTESANAL",
    "icon": "fa-hammer",
-   "x": NaN,
-   "y": NaN,
+   "x": 700,
+   "y": -300,
    "r": 60,
    "deg": 3
   },
@@ -275,8 +272,8 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "ZONAS DE INTERÉS TURÍSTICO",
    "icon": "fa-camera",
-   "x": NaN,
-   "y": NaN,
+   "x": -700,
+   "y": -100,
    "r": 50,
    "deg": 2
   },
@@ -285,8 +282,8 @@ const POT_DATA = {
    "sys": "ESECI",
    "label": "CENTROS FINANCIEROS",
    "icon": "fa-building-columns",
-   "x": NaN,
-   "y": NaN,
+   "x": -500,
+   "y": -100,
    "r": 40,
    "deg": 1
   },
@@ -295,8 +292,8 @@ const POT_DATA = {
    "sys": "EIP",
    "label": "PATRIMONIO INMATERIAL",
    "icon": "fa-masks-theater",
-   "x": NaN,
-   "y": NaN,
+   "x": -300,
+   "y": -100,
    "r": 60,
    "deg": 3
   },
@@ -305,8 +302,8 @@ const POT_DATA = {
    "sys": "EIP",
    "label": "PATRIMONIO ARQUEOLÓGICO",
    "icon": "fa-monument",
-   "x": NaN,
-   "y": NaN,
+   "x": -100,
+   "y": -100,
    "r": 40,
    "deg": 1
   },
@@ -315,8 +312,8 @@ const POT_DATA = {
    "sys": "EIP",
    "label": "PATRIMONIO NATURAL",
    "icon": "fa-leaf",
-   "x": NaN,
-   "y": NaN,
+   "x": 100,
+   "y": -100,
    "r": 80,
    "deg": 5
   },
@@ -325,8 +322,8 @@ const POT_DATA = {
    "sys": "EIP",
    "label": "PATRIMONIO MATERIAL",
    "icon": "fa-landmark",
-   "x": NaN,
-   "y": NaN,
+   "x": 300,
+   "y": -100,
    "r": 80,
    "deg": 5
   },
@@ -335,8 +332,8 @@ const POT_DATA = {
    "sys": "EIP",
    "label": "COMUNIDADES",
    "icon": "fa-people-group",
-   "x": NaN,
-   "y": NaN,
+   "x": 500,
+   "y": -100,
    "r": 50,
    "deg": 2
   }
@@ -603,7 +600,6 @@ const POT_DATA = {
    "type": "support"
   }
  ]
-}
 };
 
 const SYS = ['EEP', 'EFC', 'EIP', 'ESECI'];
