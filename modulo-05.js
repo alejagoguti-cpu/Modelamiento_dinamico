@@ -389,8 +389,9 @@
     });
     summary.innerHTML = Object.entries(API_LAYERS).filter(([key]) => state.apiLayers[key]).map(([key, layer]) => {
       const status = state.apiLayerStatus[key] || "idle";
-      const label = status === "loading" ? "cargando" : status === "ok" ? "lista" : status === "error" ? "falló" : "pendiente";
-      return `<span class="api-summary-item is-${status}"><i class="fa-solid ${layer.icon}" style="color:${layer.color}"></i><strong>${layer.label}</strong><b>${counts[key]}</b><em>${label}</em></span>`;
+      const label = status === "loading" ? "consultando" : status === "ok" ? "lista" : status === "error" ? "falló" : status === "pending" ? "respaldo visible" : "pendiente";
+      const count = status === "pending" && counts[key] === 0 ? "—" : counts[key];
+      return `<span class="api-summary-item is-${status}"><i class="fa-solid ${layer.icon}" style="color:${layer.color}"></i><strong>${layer.label}</strong><b>${count}</b><em>${label}</em></span>`;
     }).join("") || "<span>Ninguna capa activa.</span>";
   }
 
@@ -670,9 +671,10 @@
     const priority = ["natural", "amenities", "transport", "water", "green", "parks", "culture", "commerce", "education", "health", "care", "boundaries", "roads"];
     const activeKeys = Object.keys(API_LAYERS).filter((key) => state.apiLayers[key]).sort((a, b) => priority.indexOf(a) - priority.indexOf(b));
     if (!activeKeys.length) return [];
-    activeKeys.forEach((key) => { state.apiLayerStatus[key] = "loading"; });
+    /* El respaldo ya está visible; las tarjetas esperan datos sin fingir un cero. */
+    activeKeys.forEach((key) => { state.apiLayerStatus[key] = "pending"; });
     renderApiSummary([]);
-    setText("#connectionLabel", `Consultando OSM… 0/${activeKeys.length} capas`);
+    setText("#connectionLabel", `Respaldo visible · consultando OSM 0/${activeKeys.length} capas`);
 
     /* Carga progresiva: cada lote se dibuja al llegar y no bloquea toda la cartografía. */
     const results = [];
@@ -743,11 +745,11 @@
     }
     clearPlaceMarkers();
     renderProceduralMarkers();
-    setText("#metricPlaces", "…");
-    setText("#metricRoads", "…");
-    Object.keys(API_LAYERS).forEach((key) => { state.apiLayerStatus[key] = state.apiLayers[key] ? "loading" : "idle"; });
+    setText("#metricPlaces", "6");
+    setText("#metricRoads", "6");
+    Object.keys(API_LAYERS).forEach((key) => { state.apiLayerStatus[key] = state.apiLayers[key] ? "pending" : "idle"; });
     renderApiSummary([]);
-    setText("#connectionLabel", "Consultando OSM…");
+    setText("#connectionLabel", "Respaldo visible · consultando OSM…");
     showToast(`Consultando todas las capas API de ${scale.label.toLowerCase()} en el área visible…`);
     try {
       const elements = await fetchVisibleApiLayers(state.selectedUpl, state.selectedScale, bbox, controller.signal);
