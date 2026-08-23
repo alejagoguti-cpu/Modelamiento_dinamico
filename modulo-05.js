@@ -820,6 +820,8 @@
       updateUplPanel(upl);
       state.currentView = "barrio";
       $$(".view-card").forEach((button) => button.classList.toggle("is-active", button.dataset.view === "barrio"));
+      /* Evita que el select conserve el foco y capture el siguiente gesto de scroll. */
+      event.target.blur();
       focusSelectedUpl(true);
       loadScaleData();
     });
