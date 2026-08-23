@@ -857,24 +857,24 @@ function isNodeIsolated(conceptId) {
 // malla abierta de satélites. Las posiciones son deterministas y no alteran
 // endpoints, citas, páginas ni la lógica de activación de las relaciones.
 function computeLayoutClean() {
-  // Layout por cuadrantes: cada estructura ocupa una zona clara del lienzo,
-  // con un hub central y satélites en una cuadrícula. Así se conserva la
-  // lectura de pertenencia sin lanzar los nodos al borde ni amontonarlos.
-  const CANVAS = { w: 3000, h: 2400 };
+  // Layout compacto e integrado: los cuatro hubs quedan próximos y los
+  // satélites orbitan en una malla común. Así las relaciones cruzadas forman
+  // una red legible, en lugar de cuatro cuadrantes aislados.
+  const CANVAS = { w: 2400, h: 1700 };
   const HUB_CENTERS = {
-    EEP: { x: 750, y: 720 },
-    EFC: { x: 2250, y: 720 },
-    ESECI: { x: 750, y: 1680 },
-    EIP: { x: 2250, y: 1680 }
+    EEP: { x: 660, y: 540 },
+    EFC: { x: 1700, y: 560 },
+    ESECI: { x: 980, y: 1220 },
+    EIP: { x: 1770, y: 1210 }
   };
-  const SLOT_DX = 420;
-  const SLOT_DY = 380;
+  const SLOT_DX = 260;
+  const SLOT_DY = 190;
   const slots = [
-    [-1, -2], [0, -2], [1, -2],
     [-1, -1], [0, -1], [1, -1],
     [-1, 0], [1, 0],
     [-1, 1], [0, 1], [1, 1],
-    [-1, 2], [0, 2], [1, 2]
+    [-1, 2], [0, 2], [1, 2],
+    [-1, -2], [0, -2], [1, -2]
   ];
   const ids = Object.values(model.concepts)
     .filter(c => !offNodes.has(c.id) && activeDegree(c) > 0)
@@ -956,35 +956,11 @@ function curvePath(a, b, rA, rB) {
   return `M${p1.x.toFixed(1)},${p1.y.toFixed(1)} L${p2.x.toFixed(1)},${p2.y.toFixed(1)}`;
 }
 
-// Rutas curvadas y agrupadas por par de estructuras: las conexiones siguen
-// corredores visuales distintos en lugar de apilarse todas como diagonales.
+// Todas las relaciones son segmentos rectos entre los bordes de los nodos.
+// No se desplazan por carriles curvos: la geometría conserva exactamente el
+// origen y el destino para que la red se lea como una malla conectada.
 function relationPath(r, a, b, rA, rB) {
-  const straight = curvePath(a, b, rA, rB);
-  if (r.sO === r.sD) return straight;
-  const key = [r.sO, r.sD].sort().join('|');
-  const pair = model.relations.filter(q => q.sO !== q.sD && [q.sO, q.sD].sort().join('|') === key).sort((x, y) => x.id - y.id);
-  const lane = Math.max(0, pair.findIndex(q => q.id === r.id));
-  const centeredLane = lane - (pair.length - 1) / 2;
-  const baseOffset = {
-    'EEP|EFC': -120,
-    'EEP|EIP': 90,
-    'EEP|ESECI': -95,
-    'EFC|EIP': 95,
-    'EFC|ESECI': -90,
-    'EIP|ESECI': 120
-  }[key] ?? 80;
-  const dx = b.x - a.x;
-  const dy = b.y - a.y;
-  const len = Math.hypot(dx, dy) || 1;
-  const ux = dx / len;
-  const uy = dy / len;
-  const gap = 3;
-  const p1 = { x: a.x + ux * (rA + gap), y: a.y + uy * (rA + gap) };
-  const p2 = { x: b.x - ux * (rB + gap), y: b.y - uy * (rB + gap) };
-  const offset = baseOffset + centeredLane * 30;
-  const mid = { x: (p1.x + p2.x) / 2, y: (p1.y + p2.y) / 2 };
-  const control = { x: mid.x - uy * offset, y: mid.y + ux * offset };
-  return `M${p1.x.toFixed(1)},${p1.y.toFixed(1)} Q${control.x.toFixed(1)},${control.y.toFixed(1)} ${p2.x.toFixed(1)},${p2.y.toFixed(1)}`;
+  return curvePath(a, b, rA, rB);
 }
 
 

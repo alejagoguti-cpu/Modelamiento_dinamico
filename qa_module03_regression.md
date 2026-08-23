@@ -25,3 +25,21 @@ La versión local restaurada muestra 31 nodos y 52 relaciones. La geometría act
 ## Prueba de interacción
 
 La prueba local alternó los cuatro botones de escenario en orden EEP → EFC → ESECI → EIP y luego pulsó “Reactivar todas”. Los estados observados fueron 52 relaciones/31 nodos al inicio, 36/23 tras apagar EEP, 20/14 tras apagar EFC, 6/5 tras apagar ESECI y 0/0 con las cuatro apagadas. El restablecimiento devolvió 52 relaciones, 31 nodos y las cuatro estructuras activas. El render no produjo errores durante la secuencia.
+
+## Publicación verificada
+
+Fuente pública revisada: https://alejagoguti-cpu.github.io/Modelamiento_dinamico/modulo-03.html?qa=nodes-color-fix-v1
+
+GitHub Pages devolvió estado `built`. El HTML público ahora referencia `modulo-03.js?v=nodes-color-fix-v1` y el JavaScript público contiene `SYSTEM_COLORS`, por lo que ya no se sirve la versión con `model.systems[s].color` indefinido.
+
+Commit publicado: `9b1e053`.
+
+## Validación pública definitiva
+
+La URL pública `https://alejagoguti-cpu.github.io/Modelamiento_dinamico/modulo-03.html?qa=nodes-color-fix-v1-final` carga la pantalla esperada. El DOM público confirma 31 grupos de nodos, 31 anillos, 31 etiquetas `.node-name` y 52 relaciones `.rel`. Los indicadores muestran 4 estructuras activas, 52 relaciones, 31 nodos y 52 activas. Los anillos reciben colores teal de EEP y las demás estructuras usan el mapa fallback publicado.
+
+## Ajuste de red integrada
+
+Se reemplazó la distribución por cuadrantes aislados por un layout compacto: lienzo 2400×1700, hubs próximos y satélites en una malla común. Se reemplazó la función de rutas curvas por segmentos rectos recortados al borde de cada nodo.
+
+En local, el DOM confirma 31 nodos y 52 relaciones; 0 rutas contienen comandos de curva (`Q/C/A/S`) y las 52 relaciones usan segmentos `L`. La extensión de nodos quedó x=400–2030 y y=350–1410 dentro del viewBox 2400×1700.
