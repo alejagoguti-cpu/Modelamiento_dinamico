@@ -4950,11 +4950,15 @@ body {
 /* Transición visible de la red al cambiar el escenario. */
 .reflow-enter { animation: network-reflow-enter .62s cubic-bezier(.22,.8,.28,1) both; }
 #gRels .reflow-enter { stroke-dashoffset: 18; animation: network-link-enter .72s ease-out both; }
-#gNodes .concept.reflow-enter { animation: network-node-enter .66s cubic-bezier(.2,.85,.3,1) both; transform-box: fill-box; transform-origin: center; }
+#gNodes .concept.reflow-enter { animation: network-node-enter .66s cubic-bezier(.2,.85,.3,1) both; }
+#gNodes .concept.deg-high.reflow-enter .node-fill { animation: hub-reflow 1.15s cubic-bezier(.2,.8,.2,1) both; }
+#gNodes .concept.deg-mid.reflow-enter .node-fill { animation: node-reflow .82s ease-out both; }
 @keyframes network-reflow-enter { from { opacity: 0; } to { opacity: 1; } }
 @keyframes network-link-enter { from { opacity: 0; stroke-dashoffset: 18; } to { opacity: .68; stroke-dashoffset: 0; } }
 @keyframes network-node-enter { 0% { opacity: 0; filter: saturate(.55) brightness(.8); } 55% { opacity: 1; filter: saturate(1.35) brightness(1.22); } 100% { opacity: 1; filter: saturate(1) brightness(1); } }
-@media (prefers-reduced-motion: reduce) { .reflow-enter, #gRels .reflow-enter, #gNodes .concept.reflow-enter { animation: none !important; } }
+@keyframes hub-reflow { 0% { stroke-width: 1.5; filter: brightness(.85); } 45% { stroke-width: 6; filter: brightness(1.35); } 100% { stroke-width: 3; filter: brightness(1); } }
+@keyframes node-reflow { 0% { stroke-width: 2; } 50% { stroke-width: 5; } 100% { stroke-width: 3; } }
+@media (prefers-reduced-motion: reduce) { .reflow-enter, #gRels .reflow-enter, #gNodes .concept.reflow-enter, #gNodes .concept.reflow-enter .node-fill { animation: none !important; } }
 
 /* Aviso sobre el propio diagrama */
 .weak-banner {
