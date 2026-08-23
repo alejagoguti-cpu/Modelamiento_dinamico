@@ -1127,6 +1127,7 @@ const scaleNetworkDescriptions = {
 
 let scalePopupSelectedNode = null;
 let scalePopupMode = 'natural';
+let nodeDetailState = { mode: 'natural', id: null };
 const scalePopupHiddenNodes = new Set();
 const scaleNetworkViewState = { scale: 1, x: 0, y: 0 };
 
@@ -1234,6 +1235,115 @@ function popupNetworkPositions(definition) {
   }]));
 }
 
+const popupNodeContexts = {
+  natural: {
+    humedales: 'Ecosistema de regulación hídrica, hábitat y soporte para la resiliencia climática.',
+    rios: 'Estructura azul que conecta nacimientos, rondas hídricas y cursos urbanos.',
+    quebradas: 'Red de drenaje menor que articula agua, suelo y corredores ecológicos.',
+    areas_protegidas: 'Ámbito de conservación que enlaza cobertura, cerros y parques.',
+    reservas_forestales: 'Reserva de cobertura arbórea que conecta páramos y conservación.',
+    cobertura_vegetal: 'Capa vegetal que articula bosques urbanos, coberturas y biodiversidad.',
+    parques: 'Espacios verdes que conectan parques ecológicos y soluciones de lluvia.',
+    rondas_hidricas: 'Franja de protección que vincula cuerpos de agua y suelo permeable.',
+    bosques_urbanos: 'Infraestructura verde urbana para sombra, hábitat y conectividad.',
+    paramos: 'Complejo altoandino que sostiene regulación hídrica y paisaje ecológico.',
+    cerros_orientales: 'Sistema montañoso de protección, conectividad ecológica y paisaje.',
+    paramos_andinos: 'Ecosistema de alta montaña asociado a nacimientos y recarga hídrica.',
+    bosques_andinos: 'Cobertura de montaña que conecta vegetación y fauna urbana.',
+    nacimientos_agua: 'Origen de flujos hídricos que alimentan la red azul.',
+    quebradas_urbanas: 'Cursos de agua urbanos que traducen la estructura hídrica al territorio.',
+    rios_urbanos: 'Tramos fluviales urbanos que llevan la red natural a la ciudad.',
+    humedales_urbanos: 'Ámbitos urbanos de agua que combinan regulación, biodiversidad y uso público.',
+    rondas_rio: 'Bordes fluviales que conectan agua, infiltración y espacio abierto.',
+    recarga_hidrica: 'Zona de alimentación del sistema hídrico subterráneo y superficial.',
+    infiltracion_agua: 'Proceso que permite que el agua ingrese al suelo y reduzca escorrentías.',
+    corredores_ecologicos: 'Conectores territoriales para el movimiento de especies y flujos ecológicos.',
+    coberturas_vegetales: 'Superficies vegetales que prolongan la conectividad de la estructura verde.',
+    jardines_lluvia: 'Soluciones basadas en naturaleza para retener e infiltrar agua.',
+    arbolado_urbano: 'Red de árboles urbanos que aporta sombra, hábitat y continuidad vegetal.',
+    parques_ecologicos: 'Espacios protegidos de uso ecológico y conexión territorial.',
+    fauna_urbana: 'Especies y comunidades que hacen visible la biodiversidad urbana.',
+    suelo_permeable: 'Superficie que permite infiltración y soporte para la resiliencia climática.',
+    restauracion_ecologica: 'Proceso de recuperación de funciones ecológicas y conectividad.',
+    resiliencia_climatica: 'Capacidad territorial para absorber impactos y sostener funciones ambientales.',
+    areas_conservacion: 'Ámbitos de protección que consolidan corredores y valores naturales.'
+  }
+};
+
+function getPopupNodeContext(mode, node) {
+  return popupNodeContexts[mode]?.[node.id] || `${node.label} participa en la red ${scaleNetworks[mode]?.title || 'territorial'} como componente relacionado con otros conceptos.`;
+}
+
+function setNodeDetailList(selector, edges, nodesById, direction) {
+  const list = document.getElementById(selector);
+  if (!list) return;
+  list.replaceChildren();
+  if (!edges.length) {
+    const empty = document.createElement('li');
+    empty.className = 'node-detail-empty';
+    empty.textContent = direction === 'out' ? 'Sin conexiones de salida activas.' : 'Sin conexiones de entrada activas.';
+    list.appendChild(empty);
+    return;
+  }
+  edges.forEach(([fromId, toId, type]) => {
+    const targetId = direction === 'out' ? toId : fromId;
+    const target = nodesById[targetId];
+    const item = document.createElement('li');
+    item.append(target?.label || targetId);
+    const relation = document.createElement('em');
+    relation.textContent = ` · ${type}`;
+    item.appendChild(relation);
+    list.appendChild(item);
+  });
+}
+
+function openNodeDetailModal(mode, nodeId) {
+  const definition = scaleNetworks[mode];
+  const node = definition?.nodes.find(item => item.id === nodeId);
+  if (!definition || !node || scalePopupHiddenNodes.has(nodeId)) return;
+  const activeEdges = definition.edges.filter(([fromId, toId]) => !scalePopupHiddenNodes.has(fromId) && !scalePopupHiddenNodes.has(toId));
+  const outgoing = activeEdges.filter(([fromId]) => fromId === nodeId);
+  const incoming = activeEdges.filter(([, toId]) => toId === nodeId);
+  const allConnections = [...outgoing, ...incoming];
+  const nodesById = Object.fromEntries(definition.nodes.map(item => [item.id, item]));
+  nodeDetailState = { mode, id: nodeId };
+  document.getElementById('nodeDetailKicker').textContent = `${definition.title} · FICHA INTERACTIVA`;
+  document.getElementById('nodeDetailTitle').textContent = node.label;
+  document.getElementById('nodeDetailRole').textContent = node.hub ? 'Hub estructurante · concentra relaciones activas' : 'Componente conectado · participa en la red activa';
+  document.getElementById('nodeDetailSummary').textContent = getPopupNodeContext(mode, node);
+  document.getElementById('nodeDetailDegree').textContent = String(allConnections.length);
+  document.getElementById('nodeDetailDirect').textContent = String(allConnections.filter(([, , type]) => type === 'directa').length);
+  document.getElementById('nodeDetailIndirect').textContent = String(allConnections.filter(([, , type]) => type === 'indirecta').length);
+  document.getElementById('nodeDetailHub').textContent = node.hub ? 'Hub' : 'Nodo';
+  setNodeDetailList('nodeDetailOutgoing', outgoing, nodesById, 'out');
+  setNodeDetailList('nodeDetailIncoming', incoming, nodesById, 'in');
+  const modal = document.getElementById('nodeDetailModal');
+  modal?.classList.add('open');
+  modal?.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('node-detail-open');
+  document.getElementById('nodeDetailClose')?.focus();
+}
+
+function closeNodeDetailModal() {
+  const modal = document.getElementById('nodeDetailModal');
+  if (!modal) return;
+  modal.classList.remove('open');
+  modal.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('node-detail-open');
+}
+
+function focusNodeConnections() {
+  const { mode, id } = nodeDetailState;
+  closeNodeDetailModal();
+  document.querySelectorAll('#scaleNetworkCanvas .popup-node').forEach(item => item.classList.toggle('selected', item.dataset.nodeId === id));
+  document.querySelectorAll('#scaleNetworkCanvas .popup-edge').forEach(edge => {
+    edge.classList.toggle('emphasis', edge.dataset.from === id || edge.dataset.to === id);
+  });
+  const description = document.getElementById('scaleNetworkDescription');
+  const node = scaleNetworks[mode]?.nodes.find(item => item.id === id);
+  if (description && node) description.textContent = `${node.label} · conexiones resaltadas`;
+}
+
 function renderScaleNetworkPopup(mode) {
   const canvas = document.getElementById('scaleNetworkCanvas');
   const definition = scaleNetworks[mode];
@@ -1245,7 +1355,7 @@ function renderScaleNetworkPopup(mode) {
     if (!from || !to || scalePopupHiddenNodes.has(fromId) || scalePopupHiddenNodes.has(toId)) return '';
     const color = type === 'indirecta' ? '#e89a6c' : '#46d6d0';
     const className = type === 'indirecta' ? 'popup-edge indirect' : 'popup-edge direct';
-    return `<line class="${className}" x1="${from.x.toFixed(1)}" y1="${from.y.toFixed(1)}" x2="${to.x.toFixed(1)}" y2="${to.y.toFixed(1)}" stroke="${color}" marker-end="url(#arrow-${type})" />`;
+    return `<line class="${className}" data-from="${fromId}" data-to="${toId}" x1="${from.x.toFixed(1)}" y1="${from.y.toFixed(1)}" x2="${to.x.toFixed(1)}" y2="${to.y.toFixed(1)}" stroke="${color}" marker-end="url(#arrow-${type})" />`;
   }).join('');
 
   const popupIconGlyphs = {
@@ -1304,6 +1414,7 @@ function renderScaleNetworkPopup(mode) {
     const openNodeDetail = () => {
       selectNode();
       if (mode === 'natural' && node?.id === 'humedales') openWetlandImageModal();
+      else if (node?.id) openNodeDetailModal(mode, node.id);
     };
     const togglePopupNode = () => {
       if (!node) return;
@@ -1392,6 +1503,15 @@ document.getElementById('wetlandImageModal')?.addEventListener('click', event =>
 });
 document.addEventListener('keydown', event => {
   if (event.key === 'Escape') closeWetlandImageModal();
+});
+
+document.getElementById('nodeDetailClose')?.addEventListener('click', closeNodeDetailModal);
+document.getElementById('nodeDetailFocus')?.addEventListener('click', focusNodeConnections);
+document.getElementById('nodeDetailModal')?.addEventListener('click', event => {
+  if (event.target.id === 'nodeDetailModal') closeNodeDetailModal();
+});
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape') closeNodeDetailModal();
 });
 
 function openScaleNetworkModal(mode) {

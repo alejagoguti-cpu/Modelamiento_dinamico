@@ -63,3 +63,17 @@ El plano original pesa 333.810 bytes (2048×1345). Se generó `assets/planosnico
 `openWetlandImageModal()` abre el visor de inmediato con la vista previa y en paralelo promueve la imagen completa cuando termina `decode`. La precarga completa se inicia en segundo plano 650 ms después del arranque y se reutiliza mediante una promesa compartida para no duplicar peticiones.
 
 La prueba pública de rendimiento confirmó apertura del visor en aproximadamente 331 ms con la vista previa, y promoción posterior a la imagen completa de 2048×1345. El triple clic continuó apagando HUMEDALES sin abrir la imagen: 29 nodos y 36 relaciones; `Reactivar nodos` restauró 30 nodos y 42 relaciones.
+
+## Verificación pública image-fast-v1
+
+GitHub Pages compiló en estado `built`; la vista previa y el plano completo respondieron con HTTP 200 y el HTML público contiene el preload de `planosnico-preview.webp` y `data-full-src="assets/planosnico.webp"`. La prueba pública abrió el visor en aproximadamente 331 ms, confirmó el preload y la resolución completa 2048×1345 disponible después. El triple clic siguió dejando 29 nodos y 36 relaciones, con el visor de imagen cerrado.
+
+## Preparación de fichas y estabilidad
+
+La versión local incorpora el modal `nodeDetailModal`, métricas de conexiones activas, listas de entrada/salida y el botón de resaltar conexiones. La red Natural permanece en 30 nodos y 42 relaciones antes de ejecutar la secuencia de pruebas.
+
+## Fichas interactivas y estabilidad secuencial
+
+El doble clic en `RÍOS` abrió una ficha con función contextual, 4 conexiones activas, 3 directas, 1 indirecta y listas de entrada/salida. El botón `Resaltar conexiones` cerró la ficha, mantuvo abierta la red y resaltó sus 4 enlaces.
+
+La secuencia de triple clic `HUMEDALES → RÍOS → RESILIENCIA CLIMÁTICA` produjo 36, 33 y 31 relaciones activas respectivamente, con 29, 28 y 27 nodos visibles. Cada nodo apagado desapareció y solo se retiraron sus relaciones. Todas las conexiones restantes continuaron siendo elementos SVG `<line>`, con 0 rutas curvas, y la geometría se mantuvo dentro de x=72–928 e y=62–482. `Reactivar nodos` restauró 30 nodos y 42 relaciones.

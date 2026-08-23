@@ -11,7 +11,7 @@
   <link href="https://unpkg.com/maplibre-gl@6.5.0/dist/maplibre-gl.css" rel="stylesheet">
   <link rel="stylesheet" href="modulo-05.css?v=minimal-v4">
   <link rel="stylesheet" href="site-theme.css?v=minimal-v4">
-  <link rel="stylesheet" href="modulo-05-popup.css?v=image-fast-v1">
+  <link rel="stylesheet" href="modulo-05-popup.css?v=node-details-v1">
   <link rel="preload" as="image" href="assets/planosnico-preview.webp" type="image/webp" fetchpriority="high">
 </head>
 <body>
@@ -122,12 +122,48 @@
     </div>
   </div>
 
+  <div id="nodeDetailModal" class="node-detail-modal" aria-hidden="true">
+    <div class="node-detail-dialog" role="dialog" aria-modal="true" aria-labelledby="nodeDetailTitle">
+      <header class="node-detail-head">
+        <div>
+          <span id="nodeDetailKicker" class="node-detail-kicker">DETALLE DE NODO</span>
+          <h2 id="nodeDetailTitle">Concepto</h2>
+          <p id="nodeDetailRole">Componente conectado</p>
+        </div>
+        <button id="nodeDetailClose" class="node-detail-close" type="button" aria-label="Cerrar detalle">×</button>
+      </header>
+      <div class="node-detail-body">
+        <p id="nodeDetailSummary" class="node-detail-summary"></p>
+        <div class="node-detail-metrics" aria-label="Métricas del nodo">
+          <div><strong id="nodeDetailDegree">0</strong><span>conexiones activas</span></div>
+          <div><strong id="nodeDetailDirect">0</strong><span>directas</span></div>
+          <div><strong id="nodeDetailIndirect">0</strong><span>indirectas</span></div>
+          <div><strong id="nodeDetailHub">—</strong><span>posición estructural</span></div>
+        </div>
+        <div class="node-detail-columns">
+          <section>
+            <h3>Conexiones de salida</h3>
+            <ul id="nodeDetailOutgoing"></ul>
+          </section>
+          <section>
+            <h3>Conexiones de entrada</h3>
+            <ul id="nodeDetailIncoming"></ul>
+          </section>
+        </div>
+      </div>
+      <footer class="node-detail-foot">
+        <button id="nodeDetailFocus" class="node-detail-focus" type="button">Resaltar conexiones</button>
+        <span>El triple clic apaga este nodo.</span>
+      </footer>
+    </div>
+  </div>
+
   <script src="https://unpkg.com/pmtiles@3.2.0/dist/pmtiles.js"></script>
   <script type="module">
     import * as maplibregl from "https://unpkg.com/maplibre-gl@6.5.0/dist/maplibre-gl.mjs";
     window.maplibregl = maplibregl;
     window.dispatchEvent(new Event("maplibre-ready"));
   </script>
-  <script src="modulo-05.js?v=image-fast-v1"></script>
+  <script src="modulo-05.js?v=node-details-v1"></script>
 </body>
 </html>
