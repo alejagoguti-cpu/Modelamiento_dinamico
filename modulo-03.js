@@ -2280,10 +2280,10 @@ function computeLayoutClean() {
   // lectura de pertenencia sin lanzar los nodos al borde ni amontonarlos.
   const CANVAS = { w: 3000, h: 2400 };
   const HUB_CENTERS = {
-    EEP: { x: 750, y: 650 },
-    EFC: { x: 2250, y: 650 },
-    ESECI: { x: 750, y: 1750 },
-    EIP: { x: 2250, y: 1750 }
+    EEP: { x: 750, y: 720 },
+    EFC: { x: 2250, y: 720 },
+    ESECI: { x: 750, y: 1680 },
+    EIP: { x: 2250, y: 1680 }
   };
   const SLOT_DX = 360;
   const SLOT_DY = 320;
