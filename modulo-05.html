@@ -11,7 +11,8 @@
   <link href="https://unpkg.com/maplibre-gl@6.5.0/dist/maplibre-gl.css" rel="stylesheet">
   <link rel="stylesheet" href="modulo-05.css?v=minimal-v4">
   <link rel="stylesheet" href="site-theme.css?v=minimal-v4">
-  <link rel="stylesheet" href="modulo-05-popup.css?v=triple-click-v2">
+  <link rel="stylesheet" href="modulo-05-popup.css?v=image-fast-v1">
+  <link rel="preload" as="image" href="assets/planosnico-preview.webp" type="image/webp" fetchpriority="high">
 </head>
 <body>
   <div class="app-shell">
@@ -115,7 +116,7 @@
           <strong>Cargando plano de HUMEDALES</strong>
           <span>Imagen satelital integrada como evidencia visual de la red natural.</span>
         </div>
-        <img id="wetlandImage" src="assets/planosnico.webp" alt="Plano satelital de Bogotá para el detalle de HUMEDALES" hidden>
+        <img id="wetlandImage" src="assets/planosnico-preview.webp" data-full-src="assets/planosnico.webp" alt="Plano satelital de Bogotá para el detalle de HUMEDALES" decoding="async" fetchpriority="high" hidden>
       </div>
       <footer class="wetland-image-foot">HUMEDALES · soporte ecológico, regulación hídrica y resiliencia climática</footer>
     </div>
@@ -127,6 +128,6 @@
     window.maplibregl = maplibregl;
     window.dispatchEvent(new Event("maplibre-ready"));
   </script>
-  <script src="modulo-05.js?v=triple-click-v2"></script>
+  <script src="modulo-05.js?v=image-fast-v1"></script>
 </body>
 </html>

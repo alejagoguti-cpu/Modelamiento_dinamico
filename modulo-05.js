@@ -1341,18 +1341,41 @@ function renderScaleNetworkPopup(mode) {
   });
 }
 
-function openWetlandImageModal() {
+let wetlandImagePromise = null;
+
+function preloadWetlandImage() {
+  const image = document.getElementById('wetlandImage');
+  const fullSrc = image?.dataset.fullSrc;
+  if (!fullSrc) return Promise.resolve(null);
+  if (wetlandImagePromise) return wetlandImagePromise;
+  wetlandImagePromise = new Promise(resolve => {
+    const preloader = new Image();
+    preloader.decoding = 'async';
+    preloader.fetchPriority = 'low';
+    preloader.onload = () => resolve(preloader);
+    preloader.onerror = () => resolve(null);
+    preloader.src = fullSrc;
+  });
+  return wetlandImagePromise;
+}
+
+async function openWetlandImageModal() {
   const modal = document.getElementById('wetlandImageModal');
   if (!modal) return;
   const image = document.getElementById('wetlandImage');
   const empty = document.getElementById('wetlandImageEmpty');
-  const hasImage = Boolean(image?.getAttribute('src'));
-  if (image) image.hidden = !hasImage;
-  if (empty) empty.hidden = hasImage;
+  const hasPreview = Boolean(image?.getAttribute('src'));
+  if (image) image.hidden = !hasPreview;
+  if (empty) empty.hidden = hasPreview;
   modal.classList.add('open');
   modal.setAttribute('aria-hidden', 'false');
   document.body.classList.add('wetland-modal-open');
   document.getElementById('wetlandImageClose')?.focus();
+  const fullImage = await preloadWetlandImage();
+  if (fullImage && image && image.dataset.fullSrc) {
+    image.src = image.dataset.fullSrc;
+    image.dataset.fullReady = 'true';
+  }
 }
 
 function closeWetlandImageModal() {
@@ -1437,6 +1460,7 @@ document.getElementById('scaleNetworkZoomReset')?.addEventListener('click', even
         if (!state.mapReady && !window.maplibregl) useProceduralFallback("MapLibre no respondió a tiempo; se activó la lectura procedural.");
       }, 9000);
     }
+    window.setTimeout(preloadWetlandImage, 650);
     window.BogotaVivaNavigator = { state, UPLS, SCALE_DATA, setScale, focusSelectedUpl, loadScaleData, calculateRoute, useProceduralFallback, toggleLocalPmtiles };
   }
 

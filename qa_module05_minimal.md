@@ -51,3 +51,15 @@ Commit final de integración de imagen: `321f24b`.
 ## Triple clic
 
 La interacción quedó separada por secuencia temporal: 1 clic selecciona, 2 clics abre el detalle de HUMEDALES y 3 clics apaga el nodo. La prueba local confirmó que dos clics abren `wetlandImageModal` con 30 nodos y 42 relaciones; tres clics no abren la imagen, ocultan HUMEDALES y dejan 29 nodos y 36 relaciones; el botón `Reactivar nodos` devuelve 30 nodos y 42 relaciones.
+
+## Publicación triple-click-v2
+
+GitHub Pages compiló en estado `built` y la versión pública `triple-click-v2-final` muestra 30 nodos Natural con iconos y el texto de ayuda `1 clic selecciona · 2 clics abre detalle · 3 clics apaga`. El botón `Reactivar nodos` está disponible dentro del pop-up.
+
+## Optimización de carga del plano
+
+El plano original pesa 333.810 bytes (2048×1345). Se generó `assets/planosnico-preview.webp` de 122.946 bytes (1024×673), una reducción aproximada del 63,2% para la apertura inicial. El HTML precarga únicamente la vista previa y usa `data-full-src="assets/planosnico.webp"` para solicitar la imagen completa de forma progresiva.
+
+`openWetlandImageModal()` abre el visor de inmediato con la vista previa y en paralelo promueve la imagen completa cuando termina `decode`. La precarga completa se inicia en segundo plano 650 ms después del arranque y se reutiliza mediante una promesa compartida para no duplicar peticiones.
+
+La prueba pública de rendimiento confirmó apertura del visor en aproximadamente 331 ms con la vista previa, y promoción posterior a la imagen completa de 2048×1345. El triple clic continuó apagando HUMEDALES sin abrir la imagen: 29 nodos y 36 relaciones; `Reactivar nodos` restauró 30 nodos y 42 relaciones.
