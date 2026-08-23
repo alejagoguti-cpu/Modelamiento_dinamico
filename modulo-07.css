@@ -4810,3 +4810,9 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 .burro-focus-label::after { content: ""; position: absolute; left: 50%; bottom: -10px; width: 12px; height: 12px; transform: translateX(-50%) rotate(45deg); border-right: 2px solid #76fff0; border-bottom: 2px solid #76fff0; background: #000; }
 .burro-focus-label b { display: block; color: #76fff0; font-size: 12px; letter-spacing: .08em; }
 .burro-focus-label span { display: block; margin-top: 3px; color: #fff; font-size: 9px; }
+
+/* Secuencia de apertura: Bogotá completa → Humedal El Burro → subsistemas */
+.subsystem-bubble.is-pending { opacity: 0; transform: translate(-50%, -50%) scale(.88); pointer-events: none; }
+.subsystem-bubble.is-visible { opacity: 1; animation: subsystem-arrive .72s cubic-bezier(.23,1,.32,1) both; }
+@keyframes subsystem-arrive { from { opacity: 0; transform: translate(-50%, -50%) scale(.88); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+@media (prefers-reduced-motion: reduce) { .subsystem-bubble.is-visible { animation: none; } }
