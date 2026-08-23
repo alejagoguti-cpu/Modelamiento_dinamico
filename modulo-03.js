@@ -2300,15 +2300,15 @@ function computeLayoutClean() {
   SYS.forEach(sys => {
     const center = HUB_CENTERS[sys];
     const group = model.systems[sys].concepts.slice().sort((a, b) =>
-      (model.concepts[b].deg - model.concepts[a].deg) || a.localeCompare(b));
+      ((model.concepts[b].activeDeg ?? model.concepts[b].deg) - (model.concepts[a].activeDeg ?? model.concepts[a].deg)) || a.localeCompare(b));
     if (!group.length) return;
 
     const hub = group[0];
     pos[hub] = { x: center.x, y: center.y };
     const rest = group.slice(1);
-    const ringHigh = rest.filter(id => model.concepts[id].deg >= 3);
-    const ringMid = rest.filter(id => model.concepts[id].deg === 1 || model.concepts[id].deg === 2);
-    const ringLow = rest.filter(id => model.concepts[id].deg === 0);
+    const ringHigh = rest.filter(id => (model.concepts[id].activeDeg ?? model.concepts[id].deg) >= 3);
+    const ringMid = rest.filter(id => (model.concepts[id].activeDeg ?? model.concepts[id].deg) === 1 || (model.concepts[id].activeDeg ?? model.concepts[id].deg) === 2);
+    const ringLow = rest.filter(id => (model.concepts[id].activeDeg ?? model.concepts[id].deg) === 0);
     const rings = [ringHigh, ringMid, ringLow];
     const outward = Math.atan2(center.y - centerCanvas.y, center.x - centerCanvas.x);
     const span = Math.min(Math.PI * 1.6, Math.PI * 0.5 + rest.length * (Math.PI / 10));
@@ -2339,7 +2339,7 @@ function computeLayoutClean() {
 
   // Desbloqueo suave, sin recolocar hubs ni compactar la red.
   const hubIds = new Set(SYS.map(sys => model.systems[sys].concepts.slice().sort((a, b) =>
-    (model.concepts[b].deg - model.concepts[a].deg) || a.localeCompare(b))[0]));
+    ((model.concepts[b].activeDeg ?? model.concepts[b].deg) - (model.concepts[a].activeDeg ?? model.concepts[a].deg)) || a.localeCompare(b))[0]));
   for (let pass = 0; pass < 24; pass++) {
     let moved = false;
     for (let i = 0; i < ids.length; i++) {
@@ -2429,6 +2429,12 @@ function lossRatioOf(c) {
   return c.rels.filter(r => !relActive(r)).length / total;
 }
 
+function recomputeActiveGraph() {
+  Object.values(model.concepts).forEach(c => {
+    c.activeDeg = c.rels.filter(relActive).length;
+    nodeR[c.id] = Math.max(30, 30 + c.activeDeg * 15);
+  });
+}
 function computeDrift() {
   Object.values(model.concepts).forEach(c => {
     const p = layout[c.id];
@@ -2437,6 +2443,8 @@ function computeDrift() {
 }
 
 function render() {
+  recomputeActiveGraph();
+  computeLayoutClean();
   computeDrift();
   const gGuides = document.getElementById('gGuides');
   const gMembers = document.getElementById('gMembers');
@@ -2919,22 +2927,26 @@ function updateNetworkFinding(off, active, total) {
     }
   };
 
+  const activeHubs = SYS.filter(s => state[s]).map(s => {
+    const hub = model.systems[s].concepts.slice().sort((a, b) => (model.concepts[b].activeDeg ?? 0) - (model.concepts[a].activeDeg ?? 0))[0];
+    return hub ? `${esc(model.concepts[hub].label)} (${model.concepts[hub].activeDeg ?? 0})` : '';
+  }).filter(Boolean).join(' · ');
   if (!off.length) {
-    title.textContent = 'ESECI articula más conexiones';
-    summary.textContent = 'La ESECI tiene más conexiones porque el POT usa el ordenamiento territorial para impulsar la economía, el empleo y la productividad. Por eso relaciona cosas como la movilidad, la vivienda, los equipamientos y la conectividad con las actividades económicas. En cambio, la EEP cumple principalmente una función ambiental: ordenar y proteger el territorio a través del agua, los ecosistemas y la biodiversidad.';
+    title.textContent = 'Red completa · hubs por conectividad';
+    summary.innerHTML = 'La red está completa. El tamaño de cada nodo se calcula con sus conexiones activas y los hubs actuales son: <b>' + activeHubs + '</b>.';
     animateFindingElement(document.getElementById('networkFinding'));
     return;
   }
 
   if (off.length === 1 && findings[off[0]]) {
     title.textContent = findings[off[0]].title;
-    summary.textContent = findings[off[0]].text + ` En esta simulación desaparecen ${total - active} relaciones.`;
+    summary.innerHTML = findings[off[0]].text + ` En esta simulación desaparecen <b>${total - active}</b> relaciones. Los hubs se recalcularon: <b>${activeHubs || 'no quedan estructuras activas'}</b>.`;
     animateFindingElement(document.getElementById('networkFinding'));
     return;
   }
 
   title.textContent = 'Escenario combinado';
-  summary.textContent = `Al apagar ${off.join(' + ')}, desaparecen ${total - active} relaciones y quedan ${active} activas. La red muestra la dependencia interna de este modelo.`;
+  summary.innerHTML = `Al apagar <b>${off.join(' + ')}</b>, desaparecen <b>${total - active}</b> relaciones y quedan <b>${active}</b> activas. Los hubs se recalcularon según las conexiones restantes: <b>${activeHubs || 'ninguno'}</b>.`;
   animateFindingElement(document.getElementById('networkFinding'));
 }
 
