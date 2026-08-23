@@ -18,7 +18,7 @@
   const CACHE = new Map();
   const CACHE_MAX_ENTRIES = 16;
   const VIEWPORT_DEBOUNCE_MS = 420;
-  const OVERPASS_ENDPOINT_TIMEOUT_MS = 9000;
+  const OVERPASS_ENDPOINT_TIMEOUT_MS = 18000;
   const state = {
     map: null,
     mapReady: false,
@@ -725,8 +725,14 @@
 
   async function loadScaleData({ fromViewport = false } = {}) {
     if (!state.mapReady || !state.selectedUpl) return;
-    const bbox = getViewportBBox();
-    if (!bbox) return;
+    const rawBbox = getViewportBBox();
+    if (!rawBbox) return;
+    /* En móvil el viewport puede cubrir demasiada ciudad; acotamos cada consulta para que Overpass responda. */
+    const centerLon = (rawBbox.west + rawBbox.east) / 2;
+    const centerLat = (rawBbox.south + rawBbox.north) / 2;
+    const halfWidth = Math.min((rawBbox.east - rawBbox.west) / 2, 0.035);
+    const halfHeight = Math.min((rawBbox.north - rawBbox.south) / 2, 0.028);
+    const bbox = { west: centerLon - halfWidth, south: centerLat - halfHeight, east: centerLon + halfWidth, north: centerLat + halfHeight };
     const layerKey = Object.entries(state.apiLayers).filter(([, enabled]) => enabled).map(([key]) => key).join("|");
     const queryKey = `${state.selectedUpl.num}:${state.selectedScale}:${layerKey}:${bboxString(bbox)}`;
     if (queryKey === state.activeQueryKey && fromViewport) return;
@@ -735,7 +741,7 @@
     if (state.overpassController) state.overpassController.abort();
     const controller = new AbortController();
     state.overpassController = controller;
-    const timeout = window.setTimeout(() => controller.abort(), 28000);
+    const timeout = window.setTimeout(() => controller.abort(), 90000);
     const scale = SCALE_DATA[state.selectedScale];
     if (state.dataMode !== "real") {
       window.clearTimeout(timeout);
