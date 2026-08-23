@@ -1138,6 +1138,7 @@ const scaleNetworkFlowState = {
   ambientStartedAt: 0,
   particles: [],
 };
+const popupNodeRadiusState = new Map();
 
 function cancelScaleNetworkFlowLoop() {
   if (scaleNetworkFlowState.rafId !== null) {
@@ -1439,11 +1440,49 @@ function setNodeDetailList(selector, edges, nodesById, direction) {
   });
 }
 
+function getActivePopupTopology(definition) {
+  const activeNodeIds = new Set(definition.nodes.filter(node => !scalePopupHiddenNodes.has(node.id)).map(node => node.id));
+  const activeEdges = definition.edges.filter(([fromId, toId]) => activeNodeIds.has(fromId) && activeNodeIds.has(toId));
+  const activeDegrees = Object.fromEntries(definition.nodes.map(node => [node.id, 0]));
+  activeEdges.forEach(([fromId, toId]) => {
+    activeDegrees[fromId] += 1;
+    activeDegrees[toId] += 1;
+  });
+  const maxDegree = Math.max(0, ...definition.nodes.filter(node => activeNodeIds.has(node.id)).map(node => activeDegrees[node.id]));
+  const hubThreshold = maxDegree >= 2 ? Math.max(2, Math.ceil(maxDegree * .72)) : Infinity;
+  const activeHubIds = new Set(definition.nodes.filter(node => activeNodeIds.has(node.id) && activeDegrees[node.id] >= hubThreshold).map(node => node.id));
+  return { activeNodeIds, activeEdges, activeDegrees, activeHubIds, maxDegree };
+}
+
+function animatePopupNodeSizes() {
+  const circles = [...document.querySelectorAll('#scaleNetworkCanvas .popup-node circle[data-start-radius]')];
+  const records = circles.map(circle => ({
+    circle,
+    start: Number(circle.dataset.startRadius),
+    target: Number(circle.dataset.targetRadius)
+  })).filter(record => Number.isFinite(record.start) && Number.isFinite(record.target) && record.start !== record.target);
+  if (!records.length) return;
+  const startedAt = performance.now();
+  const duration = 360;
+  const frame = now => {
+    const progress = Math.min(1, (now - startedAt) / duration);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    records.forEach(({ circle, start, target }) => {
+      circle.setAttribute('r', (start + (target - start) * eased).toFixed(2));
+    });
+    if (progress < 1) window.requestAnimationFrame(frame);
+    else records.forEach(({ circle, target }) => circle.setAttribute('r', target.toFixed(2)));
+  };
+  window.requestAnimationFrame(frame);
+}
+
 function openNodeDetailModal(mode, nodeId) {
   const definition = scaleNetworks[mode];
   const node = definition?.nodes.find(item => item.id === nodeId);
   if (!definition || !node || scalePopupHiddenNodes.has(nodeId)) return;
-  const activeEdges = definition.edges.filter(([fromId, toId]) => !scalePopupHiddenNodes.has(fromId) && !scalePopupHiddenNodes.has(toId));
+  const { activeEdges, activeDegrees, activeHubIds } = getActivePopupTopology(definition);
+  const activeDegree = activeDegrees[nodeId] || 0;
+  const isActiveHub = activeHubIds.has(nodeId);
   const outgoing = activeEdges.filter(([fromId]) => fromId === nodeId);
   const incoming = activeEdges.filter(([, toId]) => toId === nodeId);
   const allConnections = [...outgoing, ...incoming];
@@ -1451,12 +1490,12 @@ function openNodeDetailModal(mode, nodeId) {
   nodeDetailState = { mode, id: nodeId };
   document.getElementById('nodeDetailKicker').textContent = `${definition.title} · FICHA INTERACTIVA`;
   document.getElementById('nodeDetailTitle').textContent = node.label;
-  document.getElementById('nodeDetailRole').textContent = node.hub ? 'Hub estructurante · concentra relaciones activas' : 'Componente conectado · participa en la red activa';
+  document.getElementById('nodeDetailRole').textContent = isActiveHub ? `Hub activo · concentra ${activeDegree} conexiones` : activeDegree ? `Nodo activo · ${activeDegree} conexiones` : 'Nodo activo sin conexiones';
   document.getElementById('nodeDetailSummary').textContent = getPopupNodeContext(mode, node);
   document.getElementById('nodeDetailDegree').textContent = String(allConnections.length);
   document.getElementById('nodeDetailDirect').textContent = String(allConnections.filter(([, , type]) => type === 'directa').length);
   document.getElementById('nodeDetailIndirect').textContent = String(allConnections.filter(([, , type]) => type === 'indirecta').length);
-  document.getElementById('nodeDetailHub').textContent = node.hub ? 'Hub' : 'Nodo';
+  document.getElementById('nodeDetailHub').textContent = isActiveHub ? 'Hub activo' : activeDegree ? 'Nodo activo' : 'Aislado';
   setNodeDetailList('nodeDetailOutgoing', outgoing, nodesById, 'out');
   setNodeDetailList('nodeDetailIncoming', incoming, nodesById, 'in');
   const modal = document.getElementById('nodeDetailModal');
@@ -1491,7 +1530,8 @@ function renderScaleNetworkPopup(mode) {
   const definition = scaleNetworks[mode];
   if (!canvas || !definition) return;
   const nodes = popupNetworkPositions(definition);
-  const edgeMarkup = definition.edges.map(([fromId, toId, type]) => {
+  const { activeEdges, activeDegrees, activeHubIds, maxDegree } = getActivePopupTopology(definition);
+  const edgeMarkup = activeEdges.map(([fromId, toId, type]) => {
     const from = nodes[fromId];
     const to = nodes[toId];
     if (!from || !to || scalePopupHiddenNodes.has(fromId) || scalePopupHiddenNodes.has(toId)) return '';
@@ -1512,14 +1552,20 @@ function renderScaleNetworkPopup(mode) {
   };
   const nodeMarkup = definition.nodes.filter(node => !scalePopupHiddenNodes.has(node.id)).map(node => {
     const p = nodes[node.id];
-    const radius = node.hub ? 36 : 24;
+    const activeDegree = activeDegrees[node.id] || 0;
+    const activeHub = activeHubIds.has(node.id);
+    const normalizedDegree = maxDegree ? activeDegree / maxDegree : 0;
+    const radius = Number((16 + normalizedDegree * 19 + (activeHub ? 2 : 0)).toFixed(2));
+    const radiusKey = `${mode}:${node.id}`;
+    const previousRadius = popupNodeRadiusState.get(radiusKey) ?? radius;
+    popupNodeRadiusState.set(radiusKey, radius);
     const lines = splitPopupLabel(node.label);
     const firstY = p.y + (lines.length > 1 ? 1 : 4);
     const glyph = popupIconGlyphs[node.icon] || '';
     const iconMarkup = glyph ? `<text class="popup-node-icon" x="${p.x.toFixed(1)}" y="${(p.y - radius * .48).toFixed(1)}">${glyph}</text>` : '';
     const labelMarkup = lines.map((line, index) => `<tspan x="${p.x.toFixed(1)}" dy="${index === 0 ? 0 : 11}">${line}</tspan>`).join('');
-    return `<g class="popup-node ${node.hub ? 'hub' : ''}" data-node-id="${node.id}" tabindex="0" role="button" aria-label="${node.label}">
-      <circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${radius}" />
+    return `<g class="popup-node ${activeHub ? 'hub' : ''}" data-node-id="${node.id}" data-active-degree="${activeDegree}" data-active-hub="${activeHub}" tabindex="0" role="button" aria-label="${node.label}: ${activeDegree} conexiones activas">
+      <circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${previousRadius}" data-start-radius="${previousRadius}" data-target-radius="${radius}" />
       ${iconMarkup}
       <text x="${p.x.toFixed(1)}" y="${firstY.toFixed(1)}">${labelMarkup}</text>
     </g>`;
@@ -1542,6 +1588,7 @@ function renderScaleNetworkPopup(mode) {
   resetScaleNetworkView();
   setupScaleNetworkViewport();
   buildScaleNetworkFlow();
+  animatePopupNodeSizes();
   canvas.querySelectorAll('.popup-node').forEach(nodeElement => {
     const node = nodes[nodeElement.dataset.nodeId];
     let clickCount = 0;
