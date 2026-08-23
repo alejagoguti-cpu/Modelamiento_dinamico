@@ -2285,14 +2285,16 @@ function computeLayoutClean() {
     ESECI: { x: 1150, y: 1280 },
     EIP: { x: 1980, y: 1310 }
   };
-  const ids = Object.keys(model.concepts);
+  const ids = Object.values(model.concepts)
+    .filter(c => !offNodes.has(c.id) && activeDegree(c) > 0)
+    .map(c => c.id);
   const centerCanvas = { x: CANVAS.w / 2, y: CANVAS.h / 2 };
   const GAP = 190;
   const pos = {};
 
   SYS.forEach(sys => {
     const center = HUB_CENTERS[sys];
-    const group = model.systems[sys].concepts.slice().filter(id => !offNodes.has(id)).sort((a, b) =>
+    const group = model.systems[sys].concepts.slice().filter(id => !offNodes.has(id) && activeDegree(model.concepts[id]) > 0).sort((a, b) =>
       ((model.concepts[b].activeDeg ?? model.concepts[b].deg) - (model.concepts[a].activeDeg ?? model.concepts[a].deg)) || a.localeCompare(b));
     if (!group.length) return;
 
@@ -2331,7 +2333,7 @@ function computeLayoutClean() {
   });
 
   // Reacomodo suave: el layout se recalcula con los radios y grados del escenario actual.
-  const hubIds = new Set(SYS.map(sys => model.systems[sys].concepts.slice().filter(id => !offNodes.has(id)).sort((a, b) =>
+  const hubIds = new Set(SYS.map(sys => model.systems[sys].concepts.slice().filter(id => !offNodes.has(id) && activeDegree(model.concepts[id]) > 0).sort((a, b) =>
     ((model.concepts[b].activeDeg ?? model.concepts[b].deg) - (model.concepts[a].activeDeg ?? model.concepts[a].deg)) || a.localeCompare(b))[0]));
   for (let pass = 0; pass < 24; pass++) {
     let moved = false;
@@ -2404,6 +2406,37 @@ function curvePath(a, b, rA, rB) {
   const p1 = { x: a.x + ux * (rA + gap), y: a.y + uy * (rA + gap) };
   const p2 = { x: b.x - ux * (rB + gap), y: b.y - uy * (rB + gap) };
   return `M${p1.x.toFixed(1)},${p1.y.toFixed(1)} L${p2.x.toFixed(1)},${p2.y.toFixed(1)}`;
+}
+
+// Rutas curvadas y agrupadas por par de estructuras: las conexiones siguen
+// corredores visuales distintos en lugar de apilarse todas como diagonales.
+function relationPath(r, a, b, rA, rB) {
+  const straight = curvePath(a, b, rA, rB);
+  if (r.sO === r.sD) return straight;
+  const key = [r.sO, r.sD].sort().join('|');
+  const pair = model.relations.filter(q => q.sO !== q.sD && [q.sO, q.sD].sort().join('|') === key).sort((x, y) => x.id - y.id);
+  const lane = Math.max(0, pair.findIndex(q => q.id === r.id));
+  const centeredLane = lane - (pair.length - 1) / 2;
+  const baseOffset = {
+    'EEP|EFC': -120,
+    'EEP|EIP': 90,
+    'EEP|ESECI': -95,
+    'EFC|EIP': 95,
+    'EFC|ESECI': -90,
+    'EIP|ESECI': 120
+  }[key] ?? 80;
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  const len = Math.hypot(dx, dy) || 1;
+  const ux = dx / len;
+  const uy = dy / len;
+  const gap = 3;
+  const p1 = { x: a.x + ux * (rA + gap), y: a.y + uy * (rA + gap) };
+  const p2 = { x: b.x - ux * (rB + gap), y: b.y - uy * (rB + gap) };
+  const offset = baseOffset + centeredLane * 30;
+  const mid = { x: (p1.x + p2.x) / 2, y: (p1.y + p2.y) / 2 };
+  const control = { x: mid.x - uy * offset, y: mid.y + ux * offset };
+  return `M${p1.x.toFixed(1)},${p1.y.toFixed(1)} Q${control.x.toFixed(1)},${control.y.toFixed(1)} ${p2.x.toFixed(1)},${p2.y.toFixed(1)}`;
 }
 
 
@@ -2544,7 +2577,7 @@ function render() {
     const a = drawPos[r.from] || layout[r.from], b = drawPos[r.to] || layout[r.to];
     const rA = nodeR[r.from];
     const rB = nodeR[r.to];
-    const d = curvePath(a, b, rA, rB);
+    const d = relationPath(r, a, b, rA, rB);
     const kind = r.tipo === 'Soporte' ? 'soporte' : 'resiliencia';
     const evidence = String(r.evid || 'Directa').toLowerCase().startsWith('ind') ? 'indirecta' : 'directa';
     const cls = ['rel', kind, evidence, r.sO === r.sD ? 'intra' : 'inter'];
@@ -2595,9 +2628,10 @@ function render() {
       const activeRels = activeDegree(c);
       const isolated = activeRels === 0;
       const off = offNodes.has(id);
-      // OFF de estructura o nodo: no se pinta ningún círculo ni etiqueta.
-      // El modelo y la posición se conservan para restaurarlos después.
-      if (sysOff || off) return;
+      // OFF de estructura, nodo o concepto aislado: no se pinta ningún
+      // círculo ni etiqueta flotante. El modelo permanece disponible para
+      // recalcularse si vuelve a tener una relación activa.
+      if (sysOff || off || isolated) return;
       const R = nodeR[id];
 const iconSize = Math.max(28, Math.round(R * 0.52));
       // Etiquetas más grandes y legibles, manteniendo proporción con el nodo.
@@ -2697,40 +2731,37 @@ const iconSize = Math.max(28, Math.round(R * 0.52));
       g.addEventListener('pointercancel', finishNodeDrag);
       g.addEventListener('lostpointercapture', finishNodeDrag);
 
-      // Ciclo de interacción robusto: 1 clic = enfocar; 2 = deseleccionar;
-      // 3 clics = ocultar el nodo y su cascada de conexiones. Se usa
-      // event.detail para no depender de una ventana artificial de 320 ms.
-      let fallbackCount = 0;
-      let fallbackTimer = null;
+      // Interacción determinista: un toque enfoca; dos toques dentro de
+      // 420 ms ocultan el nodo y su cascada. Se admite además dblclick para
+      // navegadores de escritorio que no entregan un detail consistente.
+      let lastTapAt = 0;
+      let tapTimer = null;
+      let skipDblClickUntil = 0;
+      const clearTapTimer = () => { if (tapTimer) { clearTimeout(tapTimer); tapTimer = null; } };
+      const hideFromDoubleTap = () => {
+        clearTapTimer();
+        lastTapAt = 0;
+        skipDblClickUntil = performance.now() + 500;
+        hideNodeAndConnections(id);
+      };
       g.addEventListener('click', ev => {
         ev.stopPropagation();
+        const now = performance.now();
         const count = Number(ev.detail) || 0;
-        if (count >= 3) {
-          fallbackCount = 0;
-          if (fallbackTimer) clearTimeout(fallbackTimer);
-          hideNodeAndConnections(id);
+        if (count >= 2 || now - lastTapAt < 420) {
+          hideFromDoubleTap();
           return;
         }
-        if (count === 2) {
-          fallbackCount = 0;
-          if (fallbackTimer) clearTimeout(fallbackTimer);
-          deselectLocal(id);
-          clearFocus();
-          return;
-        }
-        if (count === 1) {
-          focusConcept(id);
-          return;
-        }
-        // Fallback para eventos sintéticos o navegadores que no entreguen detail.
-        fallbackCount += 1;
-        if (fallbackTimer) clearTimeout(fallbackTimer);
-        fallbackTimer = setTimeout(() => {
-          if (fallbackCount >= 3) hideNodeAndConnections(id);
-          else if (fallbackCount === 2) { deselectLocal(id); clearFocus(); }
-          else focusConcept(id);
-          fallbackCount = 0;
-        }, 650);
+        lastTapAt = now;
+        clearTapTimer();
+        tapTimer = setTimeout(() => {
+          if (lastTapAt === now) { focusConcept(id); lastTapAt = 0; }
+        }, 300);
+      });
+      g.addEventListener('dblclick', ev => {
+        ev.stopPropagation();
+        if (performance.now() < skipDblClickUntil) { skipDblClickUntil = 0; return; }
+        hideFromDoubleTap();
       });
 
       gNodes.appendChild(g);
@@ -2761,7 +2792,7 @@ function components() {
   const adj = {};
   const nodes = [];
   Object.values(model.concepts).forEach(c => {
-    if (!state[c.sys]) return;
+    if (!state[c.sys] || offNodes.has(c.id) || !c.rels.some(relActive)) return;
     nodes.push(c.id);
     adj[c.id] = [];
   });
@@ -2793,11 +2824,12 @@ function updateHiddenNodesIndicator() {
   const indicator = document.getElementById('hiddenNodesIndicator');
   const text = document.getElementById('hiddenNodesText');
   if (!indicator || !text) return;
-  const count = offNodes.size;
+  const disconnected = Object.values(model.concepts).filter(c => state[c.sys] && !offNodes.has(c.id) && !c.rels.some(relActive)).length;
+  const count = offNodes.size + disconnected;
   indicator.classList.toggle('is-clear', count === 0);
   indicator.classList.toggle('has-hidden', count > 0);
-  text.textContent = count ? `${count} nodo${count === 1 ? '' : 's'} oculto${count === 1 ? '' : 's'}` : 'Sin nodos ocultos';
-  indicator.title = count ? 'Nodos ocultados con triple clic' : 'Todos los nodos visibles';
+  text.textContent = count ? `${count} nodo${count === 1 ? '' : 's'} fuera de la red` : 'Sin nodos fuera de la red';
+  indicator.title = count ? `${offNodes.size} ocultados manualmente · ${disconnected} sin conexiones activas` : 'Todos los nodos tienen conexiones activas';
 }
 
 function renderM03RelationTable() {
