@@ -4849,3 +4849,8 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 .evidence-grid p { margin: 0; color: rgba(242,236,227,.76); font-size: 11px; line-height: 1.45; }
 .evidence-grid b { color: #fff; }
 @media (max-width: 760px) { .part-one-map-tools { grid-template-columns: 1fr; } .layer-controls, .evidence-grid { grid-template-columns: 1fr; } }
+
+/* Identificación del perímetro administrativo de Kennedy */
+.kennedy-boundary-badge { position: absolute; z-index: 6; top: 46px; left: 12px; display: inline-flex; align-items: center; gap: 7px; max-width: calc(100% - 24px); padding: 7px 9px; border: 1px dashed rgba(118,255,240,.82); border-radius: 6px; background: rgba(0,0,0,.82); color: #76fff0; font-size: 9px; font-weight: 800; letter-spacing: .08em; pointer-events: none; }
+.kennedy-boundary-badge i { display: block; width: 12px; height: 0; border-top: 2px dashed #76fff0; }
+@media (max-width: 720px) { .kennedy-boundary-badge { top: 44px; font-size: 8px; } }
