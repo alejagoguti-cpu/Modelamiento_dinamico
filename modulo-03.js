@@ -859,6 +859,12 @@ const POT_DATA = {
    "evid": "Directa",
    "tipo": "Soporte"
   }
+ ],
+ "vb": [
+  -98.2,
+  -35.0,
+  2253.1,
+  1768.9
  ]
 };
 
