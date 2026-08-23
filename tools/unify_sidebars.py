@@ -4,7 +4,6 @@ import re
 root = Path('/home/ubuntu/Modelamiento_dinamico')
 icons = [
     ('index.html', 'fa-house', 'Inicio'),
-    ('modulo-01.html', 'fa-diagram-project', '01 · Construir la red'),
     ('modulo-02.html', 'fa-chart-simple', '02 · Medir la red'),
     ('modulo-03.html', 'fa-eye', '03 · Discurso vs realidad'),
     ('modulo-04.html', 'fa-bullseye', '04 · Macromodelos'),
@@ -52,4 +51,4 @@ for path in sorted(root.glob('modulo-*.html')):
     print(f'actualizado {path.name}')
 
 # Ensure the module-02 template itself remains the source-compatible shape.
-print('sidebar unificada en 9 módulos')
+print('sidebar unificada en 8 módulos')

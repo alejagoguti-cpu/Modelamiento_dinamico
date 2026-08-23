@@ -20,7 +20,7 @@ from urllib.request import Request, urlopen
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_URL = "https://alejagoguti-cpu.github.io/Modelamiento_dinamico/modulo-05.html"
-MODULES = [f"modulo-{i:02d}.html" for i in range(1, 10)]
+MODULES = [f"modulo-{i:02d}.html" for i in range(2, 10)]
 
 
 class AssetParser(HTMLParser):
