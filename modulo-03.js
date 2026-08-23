@@ -2254,7 +2254,7 @@ function buildModel() {
   // grados heredados de conexiones que fueron retiradas por falta de evidencia.
   Object.values(model.concepts).forEach(c => {
     c.deg = c.rels.length;
-    nodeR[c.id] = Math.max(38, 34 + c.deg * 13);
+    nodeR[c.id] = Math.max(36, 30 + c.deg * 11);
   });
 }
 
@@ -2275,85 +2275,50 @@ function relActive(r) {
 // malla abierta de satélites. Las posiciones son deterministas y no alteran
 // endpoints, citas, páginas ni la lógica de activación de las relaciones.
 function computeLayoutClean() {
-  // Plantilla geométrica del Módulo 02: lienzo panorámico, cuatro hubs
-  // separados en diamante y satélites abiertos hacia el exterior. Solo se
-  // cambian posiciones; relaciones, citas, páginas y estados POT permanecen.
-  const CANVAS = { w: 2800, h: 2100 };
+  // Layout por cuadrantes: cada estructura ocupa una zona clara del lienzo,
+  // con un hub central y satélites en una cuadrícula. Así se conserva la
+  // lectura de pertenencia sin lanzar los nodos al borde ni amontonarlos.
+  const CANVAS = { w: 3000, h: 2400 };
   const HUB_CENTERS = {
-    EEP: { x: 870, y: 620 },
-    EFC: { x: 1700, y: 560 },
-    ESECI: { x: 1150, y: 1280 },
-    EIP: { x: 1980, y: 1310 }
+    EEP: { x: 750, y: 650 },
+    EFC: { x: 2250, y: 650 },
+    ESECI: { x: 750, y: 1750 },
+    EIP: { x: 2250, y: 1750 }
   };
+  const SLOT_DX = 360;
+  const SLOT_DY = 320;
+  const slots = [
+    [-1, -2], [0, -2], [1, -2],
+    [-1, -1], [0, -1], [1, -1],
+    [-1, 0], [1, 0],
+    [-1, 1], [0, 1], [1, 1],
+    [-1, 2], [0, 2], [1, 2]
+  ];
   const ids = Object.values(model.concepts)
     .filter(c => !offNodes.has(c.id) && activeDegree(c) > 0)
     .map(c => c.id);
-  const centerCanvas = { x: CANVAS.w / 2, y: CANVAS.h / 2 };
-  const GAP = 190;
   const pos = {};
 
   SYS.forEach(sys => {
     const center = HUB_CENTERS[sys];
-    const group = model.systems[sys].concepts.slice().filter(id => !offNodes.has(id) && activeDegree(model.concepts[id]) > 0).sort((a, b) =>
-      ((model.concepts[b].activeDeg ?? model.concepts[b].deg) - (model.concepts[a].activeDeg ?? model.concepts[a].deg)) || a.localeCompare(b));
+    const group = model.systems[sys].concepts.slice()
+      .filter(id => !offNodes.has(id) && activeDegree(model.concepts[id]) > 0)
+      .sort((a, b) => ((model.concepts[b].activeDeg ?? model.concepts[b].deg) - (model.concepts[a].activeDeg ?? model.concepts[a].deg)) || a.localeCompare(b));
     if (!group.length) return;
-
-    const hub = group[0];
-    pos[hub] = { x: center.x, y: center.y };
-    const rest = group.slice(1);
-    const ringHigh = rest.filter(id => (model.concepts[id].activeDeg ?? model.concepts[id].deg) >= 3);
-    const ringMid = rest.filter(id => (model.concepts[id].activeDeg ?? model.concepts[id].deg) === 1 || (model.concepts[id].activeDeg ?? model.concepts[id].deg) === 2);
-    const ringLow = rest.filter(id => (model.concepts[id].activeDeg ?? model.concepts[id].deg) === 0);
-    const rings = [ringHigh, ringMid, ringLow];
-    const outward = Math.atan2(center.y - centerCanvas.y, center.x - centerCanvas.x);
-    const span = Math.min(Math.PI * 1.6, Math.PI * 0.5 + rest.length * (Math.PI / 10));
-    let previousRadius = nodeR[hub] + 230;
-
-    rings.forEach((ring, ringIndex) => {
-      if (!ring.length) return;
-      const circumference = ring.reduce((sum, id) => sum + 2 * nodeR[id] + GAP, 0);
-      const radius = Math.max(previousRadius, circumference / Math.max(span, 1));
-      ring.forEach((id, i) => {
-        const angle = outward - span / 2 + ((i + 0.5) / ring.length) * span;
-        pos[id] = {
-          x: center.x + Math.cos(angle) * radius,
-          y: center.y + Math.sin(angle) * radius
-        };
-      });
-      previousRadius = radius + Math.max(...ring.map(id => nodeR[id])) + 200;
+    pos[group[0]] = { x: center.x, y: center.y };
+    group.slice(1).forEach((id, index) => {
+      const slot = slots[index] || [0, 2];
+      pos[id] = { x: center.x + slot[0] * SLOT_DX, y: center.y + slot[1] * SLOT_DY };
     });
   });
 
   ids.forEach(id => {
-    const p = pos[id] || { x: centerCanvas.x, y: centerCanvas.y };
-    const margin = nodeR[id] + 28;
+    const p = pos[id] || { x: CANVAS.w / 2, y: CANVAS.h / 2 };
+    const margin = nodeR[id] + 34;
     p.x = Math.max(margin, Math.min(CANVAS.w - margin, p.x));
     p.y = Math.max(margin, Math.min(CANVAS.h - margin, p.y));
     layout[id] = p;
   });
-
-  // Reacomodo suave: el layout se recalcula con los radios y grados del escenario actual.
-  const hubIds = new Set(SYS.map(sys => model.systems[sys].concepts.slice().filter(id => !offNodes.has(id) && activeDegree(model.concepts[id]) > 0).sort((a, b) =>
-    ((model.concepts[b].activeDeg ?? model.concepts[b].deg) - (model.concepts[a].activeDeg ?? model.concepts[a].deg)) || a.localeCompare(b))[0]));
-  for (let pass = 0; pass < 24; pass++) {
-    let moved = false;
-    for (let i = 0; i < ids.length; i++) {
-      for (let j = i + 1; j < ids.length; j++) {
-        const aId = ids[i], bId = ids[j];
-        const a = layout[aId], b = layout[bId];
-        let dx = b.x - a.x, dy = b.y - a.y;
-        const d = Math.hypot(dx, dy) || 0.01;
-        const required = nodeR[aId] + nodeR[bId] + 78;
-        if (d >= required) continue;
-        dx /= d; dy /= d;
-        const push = (required - d) * 0.35;
-        if (!hubIds.has(aId)) { a.x -= dx * push; a.y -= dy * push; }
-        if (!hubIds.has(bId)) { b.x += dx * push; b.y += dy * push; }
-        moved = true;
-      }
-    }
-    if (!moved) break;
-  }
 
   BASE_VB = { x: 0, y: 0, w: CANVAS.w, h: CANVAS.h };
   vb = Object.assign({}, BASE_VB);
@@ -2458,7 +2423,7 @@ function lossRatioOf(c) {
 function recomputeActiveGraph() {
   Object.values(model.concepts).forEach(c => {
     c.activeDeg = c.rels.filter(relActive).length;
-    nodeR[c.id] = Math.max(30, 30 + c.activeDeg * 15);
+    nodeR[c.id] = Math.max(36, 30 + c.activeDeg * 11);
   });
 }
 function computeDrift() {

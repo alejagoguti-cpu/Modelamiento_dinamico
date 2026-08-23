@@ -8512,3 +8512,11 @@ body.module02-reference-page .m03-relations-table {
 }
 #svg .concept.just-released { animation: drag-release-pulse .82s cubic-bezier(.2,.85,.3,1) both; }
 @media (prefers-reduced-motion: reduce) { #svg .concept.just-released { animation: none; } }
+
+
+/* Red limpia: los enlaces internos quedan como contexto; los puentes entre
+   estructuras conservan protagonismo sin saturar la lectura del grafo. */
+#gRels > .rel.intra { opacity: .28; stroke-width: 1.5; }
+#gRels > .rel.inter { opacity: .68; stroke-width: 1.9; }
+#gRels > .rel.inter.punteada { opacity: .54; }
+#gRels > .rel:hover, #gRels > .rel.sel { opacity: 1; stroke-width: 4.5; }
