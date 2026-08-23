@@ -11,7 +11,7 @@
   <link href="https://unpkg.com/maplibre-gl@6.5.0/dist/maplibre-gl.css" rel="stylesheet">
   <link rel="stylesheet" href="modulo-05.css?v=minimal-v4">
   <link rel="stylesheet" href="site-theme.css?v=minimal-v4">
-  <link rel="stylesheet" href="modulo-05-popup.css?v=dynamic-degree-v1">
+  <link rel="stylesheet" href="modulo-05-popup.css?v=dynamic-degree-v2">
   <link rel="preload" as="image" href="assets/planosnico-preview.webp" type="image/webp" fetchpriority="high">
 </head>
 <body>
@@ -100,7 +100,7 @@
           <span id="scaleNetworkFlowStatus" class="scale-network-flow-status" role="status" aria-live="polite">Flujo activo</span>
         </div>
         <button id="scaleNetworkRestore" class="scale-network-restore" type="button">Reactivar nodos</button>
-        <span class="scale-network-hint">1 clic selecciona · 2 clics abre detalle · 3 clics apaga</span>
+        <span class="scale-network-hint">1 clic selecciona · 2 clics abre detalle · 3 clics apaga · tamaño = conexiones activas</span>
       </footer>
     </div>
   </div>
@@ -158,7 +158,7 @@
       </div>
       <footer class="node-detail-foot">
         <button id="nodeDetailFocus" class="node-detail-focus" type="button">Resaltar conexiones</button>
-        <span>El triple clic apaga este nodo.</span>
+        <span>El triple clic apaga este nodo · el tamaño responde a su grado activo.</span>
       </footer>
     </div>
   </div>
@@ -169,6 +169,6 @@
     window.maplibregl = maplibregl;
     window.dispatchEvent(new Event("maplibre-ready"));
   </script>
-  <script src="modulo-05.js?v=dynamic-degree-v1"></script>
+  <script src="modulo-05.js?v=dynamic-degree-v2"></script>
 </body>
 </html>
