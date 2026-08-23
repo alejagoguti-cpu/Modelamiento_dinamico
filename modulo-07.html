@@ -89,15 +89,15 @@
             <div>
               <div class="eyebrow"><b></b> CARTOGRAFÍA DEL SIMULADOR</div>
               <h2 id="cartographyTitle">Una cartografía que puede correr la ciudad</h2>
-              <p>La versión base no depende de servicios externos: dibuja el territorio como una red procedural de agentes, calles, flujos y perturbaciones. El bonus permite sustituir esta base por calles reales cuando se habiliten fuentes geográficas.</p>
+              <p>La cartografía real de Bogotá se muestra como un plano monocromático de OpenStreetMap. Sobre ella se superponen la red procedural, las calles consultadas por Overpass y las rutas calculadas con OSRM.</p>
             </div>
-            <span class="cartography-status"><i></i> BASE ACTIVA · SIN APIS</span>
+            <span class="cartography-status"><i></i> MAPA OSM · PLANO MONOCROMÁTICO</span>
           </div>
           <div class="cartography-card">
             <div class="cartography-visual real-map-shell" aria-label="Cartografía interactiva de Bogotá con calles y rutas">
               <div id="realCartographyMap" class="real-cartography-map"></div>
               <div id="proceduralSimulation" class="procedural-simulation" aria-label="Simulación procedural de agentes y flujos"></div>
-              <div class="map-live-badge"><i></i><span id="mapDataStatus">CARTOGRAFÍA PROCEDURAL ACTIVA</span></div>
+              <div class="map-live-badge"><i></i><span id="mapDataStatus">MAPA OSM MONOCROMÁTICO · CARGANDO CALLES</span></div>
               <div class="map-controls" aria-label="Controles de cartografía">
                 <button type="button" id="loadOsmStreets">Cargar calles OSM</button>
                 <button type="button" id="loadOsrmRoute">Mostrar ruta OSRM</button>
@@ -106,14 +106,14 @@
               <div class="map-source-note">MapLibre GL JS · OpenStreetMap · Overpass · OSRM</div>
             </div>
             <div class="cartography-spec">
-              <div class="spec-kicker">VERSIÓN BASE — TODO PROCEDURAL, CERO APIs EXTERNAS</div>
+              <div class="spec-kicker">MAPA REAL — OSM MONOCROMÁTICO + SIMULACIÓN</div>
               <div class="spec-row"><strong>render</strong><span>PixiJS · Kaboom.js · p5.js</span></div>
               <div class="spec-row"><strong>físicas</strong><span>Matter.js · o a mano</span></div>
               <div class="spec-divider"></div>
               <div class="spec-kicker bonus"># BONUS — CALLES REALES</div>
               <div class="spec-row"><strong>mapa</strong><span>MapLibre GL JS · Mapbox GL · Overpass API (OSM)</span></div>
               <div class="spec-row"><strong>ruta</strong><span>OSRM · Mapbox Directions · Nominatim (geocoding)</span></div>
-              <p class="spec-note">La base procedural permite probar agentes y reglas sin depender de una conexión. Las calles reales son una capa opcional para contrastar la simulación con la ciudad existente.</p>
+              <p class="spec-note">El plano base usa teselas reales de OpenStreetMap en blanco y negro. Overpass añade calles reales y OSRM permite visualizar rutas sobre la cartografía; la capa procedural permanece como lectura analítica superpuesta.</p>
             </div>
           </div>
         </section>
