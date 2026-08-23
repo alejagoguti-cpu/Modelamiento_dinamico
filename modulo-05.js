@@ -457,8 +457,9 @@
         { id: "osm-gray-fallback-layer", type: "raster", source: "osm-gray-fallback", paint: { "raster-saturation": -1, "raster-contrast": 0.28, "raster-brightness-min": 0.00, "raster-brightness-max": 0.24, "raster-opacity": 0.58 } },
       ],
     };
+    const synthesisStyle = "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json";
     try {
-      state.map = new maplibregl.Map({ container: "map", style, center: BOGOTA, zoom: 11.3, minZoom: 9, maxZoom: 19, attributionControl: true, maxBounds: [[-74.45, 4.35], [-73.75, 4.95]] });
+      state.map = new maplibregl.Map({ container: "map", style: synthesisStyle, center: BOGOTA, zoom: 11.3, minZoom: 9, maxZoom: 19, attributionControl: true, maxBounds: [[-74.45, 4.35], [-73.75, 4.95]] });
       state.map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-left");
       state.map.on("zoom", applyRoadZoomFilter);
       state.map.on("moveend", () => {
