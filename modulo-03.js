@@ -8,164 +8,160 @@
 // 98 relaciones: 68 sustentadas con frase textual del POT, 7 marcadas 'por
 // verificar' por la propia tabla y 23 agregadas a pedido, pendientes de frase.
 const POT_DATA = {
- "sistemas": {
-  "EEP": {
-   "nombre": "Estructura Ecológica Principal",
-   "color": "#5cd6d1"
-  },
-  "EFC": {
-   "nombre": "Estructura Funcional y del Cuidado",
-   "color": "#ef9f54"
-  },
-  "ESECI": {
-   "nombre": "Estructura Socioeconómica, Creativa y de Innovación",
-   "color": "#fac47b"
-  },
-  "EIP": {
-   "nombre": "Estructura Integradora de Patrimonios",
-   "color": "#fb8d84"
-  }
- },
  "nodos": [
   {
    "id": "EEP::RÍOS",
    "sys": "EEP",
    "label": "RÍOS",
    "icon": "fa-water",
-   "x": 465.0,
-   "y": 824.0,
-   "r": 88.1,
-   "deg": 5
+   "x": 465,
+   "y": 824,
+   "cat": "e1",
+   "deg": 4,
+   "r": 62
   },
   {
    "id": "EEP::QUEBRADAS",
    "sys": "EEP",
    "label": "QUEBRADAS",
    "icon": "fa-water",
-   "x": 661.0,
-   "y": 581.0,
-   "r": 39.5,
-   "deg": 1
+   "x": 661,
+   "y": 581,
+   "cat": "e1",
+   "deg": 1,
+   "r": 38
   },
   {
    "id": "EEP::HUMEDALES",
    "sys": "EEP",
    "label": "HUMEDALES",
    "icon": "fa-droplet",
-   "x": 1022.0,
-   "y": 591.0,
-   "r": 132.9,
-   "deg": 8
+   "x": 1022,
+   "y": 591,
+   "cat": "e1",
+   "deg": 8,
+   "r": 94
   },
   {
    "id": "EEP::COMPLEJOS DE PÁRAMOS",
    "sys": "EEP",
    "label": "COMPLEJOS DE PÁRAMOS",
    "icon": "fa-mountain",
-   "x": 352.0,
-   "y": 449.0,
-   "r": 49.8,
-   "deg": 2
+   "x": 352,
+   "y": 449,
+   "cat": "e1",
+   "deg": 2,
+   "r": 46
   },
   {
    "id": "EEP::COBERTURAS VEGETALES",
    "sys": "EEP",
    "label": "COBERTURAS VEGETALES",
    "icon": "fa-leaf",
-   "x": 509.0,
-   "y": 297.0,
-   "r": 49.8,
-   "deg": 2
+   "x": 509,
+   "y": 297,
+   "cat": "e1",
+   "deg": 2,
+   "r": 46
   },
   {
    "id": "EEP::ÁREAS DE RESILIENCIA CLIMÁTICA",
    "sys": "EEP",
    "label": "ÁREAS DE RESILIENCIA CLIMÁTICA",
    "icon": "fa-shield-heart",
-   "x": 639.0,
-   "y": 112.0,
-   "r": 61.6,
-   "deg": 3
+   "x": 639,
+   "y": 112,
+   "cat": "e1",
+   "deg": 3,
+   "r": 54
   },
   {
    "id": "EEP::ÁREAS PROTEGIDAS",
    "sys": "EEP",
    "label": "ÁREAS PROTEGIDAS",
    "icon": "fa-shield-halved",
-   "x": 771.0,
-   "y": 421.0,
-   "r": 61.6,
-   "deg": 3
+   "x": 771,
+   "y": 421,
+   "cat": "e1",
+   "deg": 3,
+   "r": 54
   },
   {
    "id": "EEP::RESERVAS FORESTALES",
    "sys": "EEP",
    "label": "RESERVAS FORESTALES",
    "icon": "fa-tree-city",
-   "x": 1086.0,
-   "y": 132.0,
-   "r": 61.6,
-   "deg": 3
+   "x": 1086,
+   "y": 132,
+   "cat": "e1",
+   "deg": 3,
+   "r": 54
   },
   {
    "id": "EFC::EQUIPAMIENTOS",
    "sys": "EFC",
    "label": "EQUIPAMIENTOS",
    "icon": "fa-school",
-   "x": 1190.0,
-   "y": 347.0,
-   "r": 74.4,
-   "deg": 4
+   "x": 1190,
+   "y": 347,
+   "cat": "e2",
+   "deg": 4,
+   "r": 62
   },
   {
    "id": "EFC::SERVICIOS SOCIALES",
    "sys": "EFC",
    "label": "SERVICIOS SOCIALES",
    "icon": "fa-people-roof",
-   "x": 1429.0,
-   "y": 104.0,
-   "r": 49.8,
-   "deg": 2
+   "x": 1429,
+   "y": 104,
+   "cat": "e2",
+   "deg": 2,
+   "r": 46
   },
   {
    "id": "EFC::VIVIENDA",
    "sys": "EFC",
    "label": "VIVIENDA",
    "icon": "fa-house",
-   "x": 1450.0,
-   "y": 783.0,
-   "r": 88.1,
-   "deg": 5
+   "x": 1450,
+   "y": 783,
+   "cat": "e2",
+   "deg": 5,
+   "r": 70
   },
   {
    "id": "EFC::CICLORUTAS",
    "sys": "EFC",
    "label": "CICLORUTAS",
    "icon": "fa-person-biking",
-   "x": 1689.0,
-   "y": 98.0,
-   "r": 49.8,
-   "deg": 2
+   "x": 1689,
+   "y": 98,
+   "cat": "e2",
+   "deg": 2,
+   "r": 46
   },
   {
    "id": "EFC::TRANSPORTE PÚBLICO",
    "sys": "EFC",
    "label": "TRANSPORTE PÚBLICO",
    "icon": "fa-bus",
-   "x": 1686.0,
-   "y": 539.0,
-   "r": 102.4,
-   "deg": 6
+   "x": 1686,
+   "y": 539,
+   "cat": "e2",
+   "deg": 6,
+   "r": 78
   },
   {
    "id": "EFC::RED VIAL",
    "sys": "EFC",
    "label": "RED VIAL",
    "icon": "fa-road",
-   "x": 2022.0,
-   "y": 306.0,
-   "r": 74.4,
-   "deg": 4
+   "x": 2022,
+   "y": 306,
+   "cat": "e2",
+   "deg": 4,
+   "r": 62
   },
   {
    "id": "EFC::CORREDORES VERDES",
@@ -174,168 +170,185 @@ const POT_DATA = {
    "icon": "fa-seedling",
    "x": 34.7,
    "y": 97.9,
-   "r": 49.8,
-   "deg": 2
+   "cat": "e2",
+   "deg": 2,
+   "r": 46
   },
   {
    "id": "EFC::MANZANAS DEL CUIDADO",
    "sys": "EFC",
    "label": "MANZANAS DEL CUIDADO",
    "icon": "fa-building-shield",
-   "x": 1485.0,
-   "y": 445.0,
-   "r": 88.1,
-   "deg": 5
+   "x": 1485,
+   "y": 445,
+   "cat": "e2",
+   "deg": 5,
+   "r": 70
   },
   {
    "id": "EFC::PARQUES",
    "sys": "EFC",
    "label": "PARQUES",
    "icon": "fa-tree",
-   "x": 1732.0,
-   "y": 884.0,
-   "r": 39.5,
-   "deg": 1
+   "x": 1732,
+   "y": 884,
+   "cat": "e2",
+   "deg": 1,
+   "r": 38
   },
   {
    "id": "ESECI::DISTRITO CENTRO TECNOLÓGICO E INNOVACIÓN",
    "sys": "ESECI",
    "label": "DISTRITO CENTRO TECNOLÓGICO E INNOVACIÓN",
    "icon": "fa-microchip",
-   "x": 1244.0,
-   "y": 1298.0,
-   "r": 88.1,
-   "deg": 5
+   "x": 1244,
+   "y": 1298,
+   "cat": "e3",
+   "deg": 5,
+   "r": 70
   },
   {
    "id": "ESECI::SERVICIOS EMPRESARIALES",
    "sys": "ESECI",
    "label": "SERVICIOS EMPRESARIALES",
    "icon": "fa-briefcase",
-   "x": 1055.0,
-   "y": 918.0,
-   "r": 132.9,
-   "deg": 8
+   "x": 1055,
+   "y": 918,
+   "cat": "e3",
+   "deg": 8,
+   "r": 94
   },
   {
    "id": "ESECI::SISTEMA DE EDUCACIÓN",
    "sys": "ESECI",
    "label": "SISTEMA DE EDUCACIÓN",
    "icon": "fa-graduation-cap",
-   "x": 992.0,
-   "y": 1253.0,
-   "r": 61.6,
-   "deg": 3
+   "x": 992,
+   "y": 1253,
+   "cat": "e3",
+   "deg": 3,
+   "r": 54
   },
   {
    "id": "ESECI::CENTROS DE ABASTECIMIENTO",
    "sys": "ESECI",
    "label": "CENTROS DE ABASTECIMIENTO",
    "icon": "fa-warehouse",
-   "x": 921.0,
-   "y": 1601.0,
-   "r": 39.5,
-   "deg": 1
+   "x": 921,
+   "y": 1601,
+   "cat": "e3",
+   "deg": 1,
+   "r": 38
   },
   {
    "id": "ESECI::PLAZAS DE MERCADO",
    "sys": "ESECI",
    "label": "PLAZAS DE MERCADO",
    "icon": "fa-store",
-   "x": 758.0,
-   "y": 1173.0,
-   "r": 61.6,
-   "deg": 3
+   "x": 758,
+   "y": 1173,
+   "cat": "e3",
+   "deg": 3,
+   "r": 54
   },
   {
    "id": "ESECI::ZONAS INDUSTRIALES",
    "sys": "ESECI",
    "label": "ZONAS INDUSTRIALES",
    "icon": "fa-industry",
-   "x": 679.0,
-   "y": 1576.0,
-   "r": 88.1,
-   "deg": 5
+   "x": 679,
+   "y": 1576,
+   "cat": "e3",
+   "deg": 5,
+   "r": 70
   },
   {
    "id": "ESECI::PRODUCCIÓN ARTESANAL",
    "sys": "ESECI",
    "label": "PRODUCCIÓN ARTESANAL",
    "icon": "fa-hammer",
-   "x": 486.0,
-   "y": 1312.0,
-   "r": 61.6,
-   "deg": 3
+   "x": 486,
+   "y": 1312,
+   "cat": "e3",
+   "deg": 3,
+   "r": 54
   },
   {
    "id": "ESECI::ZONAS DE INTERÉS TURÍSTICO",
    "sys": "ESECI",
    "label": "ZONAS DE INTERÉS TURÍSTICO",
    "icon": "fa-camera",
-   "x": 498.0,
-   "y": 1054.0,
-   "r": 49.8,
-   "deg": 2
+   "x": 498,
+   "y": 1054,
+   "cat": "e3",
+   "deg": 2,
+   "r": 46
   },
   {
    "id": "ESECI::CENTROS FINANCIEROS",
    "sys": "ESECI",
    "label": "CENTROS FINANCIEROS",
    "icon": "fa-building-columns",
-   "x": 727.0,
-   "y": 873.0,
-   "r": 39.5,
-   "deg": 1
+   "x": 727,
+   "y": 873,
+   "cat": "e3",
+   "deg": 1,
+   "r": 38
   },
   {
    "id": "EIP::PATRIMONIO INMATERIAL",
    "sys": "EIP",
    "label": "PATRIMONIO INMATERIAL",
    "icon": "fa-masks-theater",
-   "x": 2017.0,
-   "y": 991.0,
-   "r": 61.6,
-   "deg": 3
+   "x": 2017,
+   "y": 991,
+   "cat": "e4",
+   "deg": 3,
+   "r": 54
   },
   {
    "id": "EIP::PATRIMONIO ARQUEOLÓGICO",
    "sys": "EIP",
    "label": "PATRIMONIO ARQUEOLÓGICO",
    "icon": "fa-monument",
-   "x": 1862.0,
-   "y": 1430.0,
-   "r": 39.5,
-   "deg": 1
+   "x": 1862,
+   "y": 1430,
+   "cat": "e4",
+   "deg": 1,
+   "r": 38
   },
   {
    "id": "EIP::PATRIMONIO NATURAL",
    "sys": "EIP",
    "label": "PATRIMONIO NATURAL",
    "icon": "fa-leaf",
-   "x": 1442.0,
-   "y": 1406.0,
-   "r": 88.1,
-   "deg": 5
+   "x": 1442,
+   "y": 1406,
+   "cat": "e4",
+   "deg": 5,
+   "r": 70
   },
   {
    "id": "EIP::PATRIMONIO MATERIAL",
    "sys": "EIP",
    "label": "PATRIMONIO MATERIAL",
    "icon": "fa-landmark",
-   "x": 1399.0,
-   "y": 1026.0,
-   "r": 88.1,
-   "deg": 5
+   "x": 1399,
+   "y": 1026,
+   "cat": "e4",
+   "deg": 5,
+   "r": 70
   },
   {
    "id": "EIP::COMUNIDADES",
    "sys": "EIP",
    "label": "COMUNIDADES",
    "icon": "fa-people-group",
-   "x": 1684.0,
-   "y": 1179.0,
-   "r": 49.8,
-   "deg": 2
+   "x": 1684,
+   "y": 1179,
+   "cat": "e4",
+   "deg": 2,
+   "r": 46
   }
  ],
  "relaciones": [
@@ -344,527 +357,377 @@ const POT_DATA = {
    "cO": "QUEBRADAS",
    "sD": "EEP",
    "cD": "HUMEDALES",
-   "type": "support",
-   "linea": "Sólida",
-   "evid": "Directa",
-   "tipo": "Soporte"
+   "type": "support"
   },
   {
    "sO": "EEP",
    "cO": "HUMEDALES",
    "sD": "EEP",
    "cD": "RÍOS",
-   "type": "support",
-   "linea": "Sólida",
-   "evid": "Directa",
-   "tipo": "Soporte"
+   "type": "support"
   },
   {
    "sO": "EEP",
    "cO": "RÍOS",
    "sD": "EEP",
    "cD": "COMPLEJOS DE PÁRAMOS",
-   "type": "support",
-   "linea": "Sólida",
-   "evid": "Directa",
-   "tipo": "Soporte"
+   "type": "support"
   },
   {
    "sO": "EEP",
    "cO": "ÁREAS DE RESILIENCIA CLIMÁTICA",
    "sD": "EEP",
    "cD": "COBERTURAS VEGETALES",
-   "type": "support",
-   "linea": "Sólida",
-   "evid": "Directa",
-   "tipo": "Soporte"
+   "type": "resilience"
   },
   {
    "sO": "EEP",
    "cO": "HUMEDALES",
    "sD": "EEP",
    "cD": "ÁREAS DE RESILIENCIA CLIMÁTICA",
-   "type": "support",
-   "linea": "Sólida",
-   "evid": "Directa",
-   "tipo": "Soporte"
+   "type": "support"
   },
   {
    "sO": "EEP",
    "cO": "ÁREAS PROTEGIDAS",
    "sD": "EEP",
    "cD": "HUMEDALES",
-   "type": "support",
-   "linea": "Sólida",
-   "evid": "Directa",
-   "tipo": "Soporte"
+   "type": "support"
   },
   {
    "sO": "EEP",
    "cO": "ÁREAS PROTEGIDAS",
    "sD": "EEP",
    "cD": "RESERVAS FORESTALES",
-   "type": "support",
-   "linea": "Sólida",
-   "evid": "Directa",
-   "tipo": "Soporte"
+   "type": "support"
   },
   {
    "sO": "EEP",
    "cO": "RESERVAS FORESTALES",
    "sD": "EEP",
    "cD": "HUMEDALES",
-   "type": "support",
-   "linea": "Sólida",
-   "evid": "Directa",
-   "tipo": "Soporte"
+   "type": "resilience"
   },
   {
    "sO": "EFC",
    "cO": "EQUIPAMIENTOS",
    "sD": "EFC",
    "cD": "VIVIENDA",
-   "type": "support",
-   "linea": "Sólida",
-   "evid": "Directa",
-   "tipo": "Soporte"
+   "type": "support"
   },
   {
    "sO": "EFC",
    "cO": "CICLORUTAS",
    "sD": "EFC",
    "cD": "TRANSPORTE PÚBLICO",
-   "type": "support",
-   "linea": "Sólida",
-   "evid": "Directa",
-   "tipo": "Soporte"
+   "type": "resilience"
   },
   {
    "sO": "EFC",
    "cO": "TRANSPORTE PÚBLICO",
    "sD": "EFC",
    "cD": "VIVIENDA",
-   "type": "support",
-   "linea": "Sólida",
-   "evid": "Directa",
-   "tipo": "Soporte"
+   "type": "support"
   },
   {
    "sO": "EFC",
    "cO": "RED VIAL",
    "sD": "EFC",
    "cD": "TRANSPORTE PÚBLICO",
-   "type": "support",
-   "linea": "Sólida",
-   "evid": "Directa",
-   "tipo": "Soporte"
+   "type": "support"
   },
   {
    "sO": "EFC",
    "cO": "RED VIAL",
    "sD": "EFC",
    "cD": "EQUIPAMIENTOS",
-   "type": "support",
-   "linea": "Sólida",
-   "evid": "Directa",
-   "tipo": "Soporte"
+   "type": "support"
   },
   {
    "sO": "EFC",
    "cO": "CORREDORES VERDES",
    "sD": "EFC",
    "cD": "CICLORUTAS",
-   "type": "support",
-   "linea": "Sólida",
-   "evid": "Directa",
-   "tipo": "Soporte"
+   "type": "support"
   },
   {
    "sO": "EFC",
    "cO": "CORREDORES VERDES",
    "sD": "EFC",
    "cD": "TRANSPORTE PÚBLICO",
-   "type": "support",
-   "linea": "Sólida",
-   "evid": "Directa",
-   "tipo": "Soporte"
+   "type": "support"
   },
   {
    "sO": "EFC",
    "cO": "MANZANAS DEL CUIDADO",
    "sD": "EFC",
    "cD": "SERVICIOS SOCIALES",
-   "type": "support",
-   "linea": "Sólida",
-   "evid": "Directa",
-   "tipo": "Soporte"
+   "type": "support"
   },
   {
    "sO": "EFC",
    "cO": "MANZANAS DEL CUIDADO",
    "sD": "EFC",
    "cD": "EQUIPAMIENTOS",
-   "type": "support",
-   "linea": "Sólida",
-   "evid": "Directa",
-   "tipo": "Soporte"
+   "type": "support"
   },
   {
    "sO": "EFC",
    "cO": "MANZANAS DEL CUIDADO",
    "sD": "EFC",
    "cD": "PARQUES",
-   "type": "support",
-   "linea": "Sólida",
-   "evid": "Directa",
-   "tipo": "Soporte"
+   "type": "support"
   },
   {
    "sO": "ESECI",
    "cO": "DISTRITO CENTRO TECNOLÓGICO E INNOVACIÓN",
    "sD": "ESECI",
    "cD": "SERVICIOS EMPRESARIALES",
-   "type": "support",
-   "linea": "Sólida",
-   "evid": "Directa",
-   "tipo": "Soporte"
+   "type": "support"
   },
   {
    "sO": "ESECI",
    "cO": "DISTRITO CENTRO TECNOLÓGICO E INNOVACIÓN",
    "sD": "ESECI",
    "cD": "SISTEMA DE EDUCACIÓN",
-   "type": "support",
-   "linea": "Sólida",
-   "evid": "Directa",
-   "tipo": "Soporte"
+   "type": "support"
   },
   {
    "sO": "ESECI",
    "cO": "PLAZAS DE MERCADO",
    "sD": "ESECI",
    "cD": "SERVICIOS EMPRESARIALES",
-   "type": "support",
-   "linea": "Sólida",
-   "evid": "Directa",
-   "tipo": "Soporte"
+   "type": "support"
   },
   {
    "sO": "ESECI",
    "cO": "ZONAS INDUSTRIALES",
    "sD": "ESECI",
    "cD": "SERVICIOS EMPRESARIALES",
-   "type": "support",
-   "linea": "Sólida",
-   "evid": "Directa",
-   "tipo": "Soporte"
+   "type": "support"
   },
   {
    "sO": "ESECI",
    "cO": "ZONAS INDUSTRIALES",
    "sD": "ESECI",
    "cD": "PRODUCCIÓN ARTESANAL",
-   "type": "support",
-   "linea": "Sólida",
-   "evid": "Directa",
-   "tipo": "Soporte"
+   "type": "support"
   },
   {
    "sO": "ESECI",
    "cO": "ZONAS DE INTERÉS TURÍSTICO",
    "sD": "ESECI",
    "cD": "PLAZAS DE MERCADO",
-   "type": "support",
-   "linea": "Sólida",
-   "evid": "Directa",
-   "tipo": "Soporte"
+   "type": "support"
   },
   {
    "sO": "ESECI",
    "cO": "CENTROS FINANCIEROS",
    "sD": "ESECI",
    "cD": "SERVICIOS EMPRESARIALES",
-   "type": "support",
-   "linea": "Sólida",
-   "evid": "Directa",
-   "tipo": "Soporte"
+   "type": "support"
   },
   {
    "sO": "EIP",
    "cO": "PATRIMONIO ARQUEOLÓGICO",
    "sD": "EIP",
    "cD": "PATRIMONIO NATURAL",
-   "type": "support",
-   "linea": "Sólida",
-   "evid": "Directa",
-   "tipo": "Soporte"
+   "type": "support"
   },
   {
    "sO": "EIP",
    "cO": "PATRIMONIO NATURAL",
    "sD": "EIP",
    "cD": "PATRIMONIO INMATERIAL",
-   "type": "support",
-   "linea": "Sólida",
-   "evid": "Directa",
-   "tipo": "Soporte"
+   "type": "support"
   },
   {
    "sO": "EIP",
    "cO": "PATRIMONIO MATERIAL",
    "sD": "EIP",
    "cD": "PATRIMONIO NATURAL",
-   "type": "support",
-   "linea": "Sólida",
-   "evid": "Directa",
-   "tipo": "Soporte"
+   "type": "support"
   },
   {
    "sO": "EIP",
    "cO": "PATRIMONIO MATERIAL",
    "sD": "EIP",
    "cD": "PATRIMONIO INMATERIAL",
-   "type": "support",
-   "linea": "Sólida",
-   "evid": "Directa",
-   "tipo": "Soporte"
+   "type": "support"
   },
   {
    "sO": "EEP",
    "cO": "RESERVAS FORESTALES",
    "sD": "EEP",
    "cD": "RÍOS",
-   "type": "support",
-   "linea": "Sólida",
-   "evid": "Directa",
-   "tipo": "Soporte"
+   "type": "support"
   },
   {
    "sO": "EEP",
    "cO": "COBERTURAS VEGETALES",
    "sD": "EEP",
    "cD": "ÁREAS PROTEGIDAS",
-   "type": "support",
-   "linea": "Sólida",
-   "evid": "Directa",
-   "tipo": "Soporte"
+   "type": "support"
   },
   {
    "sO": "EFC",
    "cO": "VIVIENDA",
    "sD": "EFC",
    "cD": "SERVICIOS SOCIALES",
-   "type": "support",
-   "linea": "Sólida",
-   "evid": "Directa",
-   "tipo": "Soporte"
+   "type": "support"
   },
   {
    "sO": "EFC",
    "cO": "RED VIAL",
    "sD": "EFC",
    "cD": "VIVIENDA",
-   "type": "support",
-   "linea": "Sólida",
-   "evid": "Directa",
-   "tipo": "Soporte"
+   "type": "support"
   },
   {
    "sO": "ESECI",
    "cO": "DISTRITO CENTRO TECNOLÓGICO E INNOVACIÓN",
    "sD": "ESECI",
    "cD": "ZONAS INDUSTRIALES",
-   "type": "support",
-   "linea": "Sólida",
-   "evid": "Directa",
-   "tipo": "Soporte"
+   "type": "support"
   },
   {
    "sO": "ESECI",
    "cO": "CENTROS DE ABASTECIMIENTO",
    "sD": "ESECI",
    "cD": "PRODUCCIÓN ARTESANAL",
-   "type": "support",
-   "linea": "Sólida",
-   "evid": "Directa",
-   "tipo": "Soporte"
+   "type": "support"
   },
   {
    "sO": "ESECI",
    "cO": "SISTEMA DE EDUCACIÓN",
    "sD": "ESECI",
    "cD": "SERVICIOS EMPRESARIALES",
-   "type": "support",
-   "linea": "Sólida",
-   "evid": "Directa",
-   "tipo": "Soporte"
+   "type": "support"
   },
   {
    "sO": "ESECI",
    "cO": "SISTEMA DE EDUCACIÓN",
    "sD": "ESECI",
    "cD": "PRODUCCIÓN ARTESANAL",
-   "type": "support",
-   "linea": "Sólida",
-   "evid": "Directa",
-   "tipo": "Soporte"
+   "type": "support"
   },
   {
    "sO": "EEP",
    "cO": "HUMEDALES",
    "sD": "EFC",
    "cD": "RED VIAL",
-   "type": "support",
-   "linea": "Sólida",
-   "evid": "Directa",
-   "tipo": "Soporte"
+   "type": "support"
   },
   {
    "sO": "EEP",
    "cO": "HUMEDALES",
    "sD": "EIP",
    "cD": "PATRIMONIO NATURAL",
-   "type": "support",
-   "linea": "Sólida",
-   "evid": "Directa",
-   "tipo": "Soporte"
+   "type": "resilience"
   },
   {
    "sO": "EFC",
    "cO": "EQUIPAMIENTOS",
    "sD": "ESECI",
    "cD": "SERVICIOS EMPRESARIALES",
-   "type": "support",
-   "linea": "Sólida",
-   "evid": "Directa",
-   "tipo": "Soporte"
+   "type": "support"
   },
   {
    "sO": "EFC",
    "cO": "VIVIENDA",
    "sD": "ESECI",
    "cD": "ZONAS INDUSTRIALES",
-   "type": "support",
-   "linea": "Sólida",
-   "evid": "Directa",
-   "tipo": "Soporte"
+   "type": "support"
   },
   {
    "sO": "EFC",
    "cO": "TRANSPORTE PÚBLICO",
    "sD": "ESECI",
    "cD": "SERVICIOS EMPRESARIALES",
-   "type": "support",
-   "linea": "Sólida",
-   "evid": "Directa",
-   "tipo": "Soporte"
+   "type": "support"
   },
   {
    "sO": "EFC",
    "cO": "MANZANAS DEL CUIDADO",
    "sD": "ESECI",
    "cD": "SERVICIOS EMPRESARIALES",
-   "type": "support",
-   "linea": "Sólida",
-   "evid": "Directa",
-   "tipo": "Soporte"
+   "type": "support"
   },
   {
    "sO": "EIP",
    "cO": "PATRIMONIO MATERIAL",
    "sD": "ESECI",
    "cD": "ZONAS DE INTERÉS TURÍSTICO",
-   "type": "support",
-   "linea": "Sólida",
-   "evid": "Directa",
-   "tipo": "Soporte"
+   "type": "support"
   },
   {
    "sO": "EIP",
    "cO": "PATRIMONIO MATERIAL",
    "sD": "ESECI",
    "cD": "PLAZAS DE MERCADO",
-   "type": "support",
-   "linea": "Sólida",
-   "evid": "Directa",
-   "tipo": "Soporte"
+   "type": "support"
   },
   {
    "sO": "EIP",
    "cO": "PATRIMONIO MATERIAL",
    "sD": "EIP",
    "cD": "COMUNIDADES",
-   "type": "support",
-   "linea": "Sólida",
-   "evid": "Directa",
-   "tipo": "Soporte"
+   "type": "resilience"
   },
   {
    "sO": "EIP",
    "cO": "PATRIMONIO INMATERIAL",
    "sD": "EIP",
    "cD": "COMUNIDADES",
-   "type": "support",
-   "linea": "Sólida",
-   "evid": "Directa",
-   "tipo": "Soporte"
+   "type": "resilience"
   },
   {
    "sO": "EEP",
    "cO": "HUMEDALES",
    "sD": "EFC",
    "cD": "MANZANAS DEL CUIDADO",
-   "type": "support",
-   "linea": "Sólida",
-   "evid": "Directa",
-   "tipo": "Soporte"
+   "type": "support"
   },
   {
    "sO": "EEP",
    "cO": "RÍOS",
    "sD": "EFC",
    "cD": "TRANSPORTE PÚBLICO",
-   "type": "support",
-   "linea": "Sólida",
-   "evid": "Directa",
-   "tipo": "Soporte"
+   "type": "resilience"
   },
   {
    "sO": "EEP",
    "cO": "COMPLEJOS DE PÁRAMOS",
    "sD": "ESECI",
    "cD": "DISTRITO CENTRO TECNOLÓGICO E INNOVACIÓN",
-   "type": "support",
-   "linea": "Sólida",
-   "evid": "Directa",
-   "tipo": "Soporte"
+   "type": "support"
   },
   {
    "sO": "EEP",
    "cO": "ÁREAS DE RESILIENCIA CLIMÁTICA",
    "sD": "ESECI",
    "cD": "ZONAS INDUSTRIALES",
-   "type": "support",
-   "linea": "Sólida",
-   "evid": "Directa",
-   "tipo": "Soporte"
+   "type": "resilience"
   },
   {
    "sO": "ESECI",
    "cO": "DISTRITO CENTRO TECNOLÓGICO E INNOVACIÓN",
    "sD": "EIP",
    "cD": "PATRIMONIO NATURAL",
-   "type": "support",
-   "linea": "Sólida",
-   "evid": "Directa",
-   "tipo": "Soporte"
+   "type": "support"
   }
  ],
  "vb": [
-  -98.2,
-  -35.0,
-  2253.1,
-  1768.9
+  -59.3,
+  3.9000000000000057,
+  2175.3,
+  1691.1
+ ],
+ "sistemas": [
+  "EEP",
+  "EFC",
+  "ESECI",
+  "EIP"
  ]
 };
 
