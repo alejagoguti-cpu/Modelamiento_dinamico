@@ -58,6 +58,7 @@
       boundaries: false, utilities: false, street: false,
     },
     apiLayerStatus: {},
+    apiLayerElements: {},
   };
 
   const UPLS = [
@@ -386,17 +387,12 @@
   function renderApiSummary(elements) {
     const summary = $("#apiSummary");
     if (!summary) return;
-    const counts = Object.fromEntries(Object.keys(API_LAYERS).map((key) => [key, 0]));
-    elements.forEach((element) => {
-      const tags = element.tags || {};
-      Object.entries(API_LAYERS).forEach(([key, layer]) => {
-        if (layer.match?.(tags, element)) counts[key] += 1;
-      });
-    });
     summary.innerHTML = Object.entries(API_LAYERS).filter(([key]) => state.apiLayers[key]).map(([key, layer]) => {
       const status = state.apiLayerStatus[key] || "idle";
-      const label = status === "loading" ? "consultando" : status === "ok" ? "lista" : status === "error" ? "falló" : status === "pending" ? "respaldo visible" : "pendiente";
-      const count = status === "pending" && counts[key] === 0 ? "—" : counts[key];
+      const sourceElements = Array.isArray(state.apiLayerElements[key]) ? state.apiLayerElements[key] : [];
+      const uniqueCount = new Set(sourceElements.map((element) => `${element.type}/${element.id}`)).size;
+      const label = status === "loading" || status === "pending" ? "consultando" : status === "ok" && uniqueCount ? "lista" : status === "ok" ? "sin resultados" : status === "error" ? "reintentar" : "apagada";
+      const count = status === "pending" || status === "loading" ? "…" : uniqueCount;
       return `<span class="api-summary-item is-${status}"><i class="fa-solid ${layer.icon}" style="color:${layer.color}"></i><strong>${layer.label}</strong><b>${count}</b><em>${label}</em></span>`;
     }).join("") || "<span>Ninguna capa activa.</span>";
   }
@@ -734,19 +730,20 @@
     const activeKeys = Object.keys(API_LAYERS).filter((key) => state.apiLayers[key]).sort((a, b) => priority.indexOf(a) - priority.indexOf(b));
     if (!activeKeys.length) return [];
     /* El respaldo ya está visible; las tarjetas esperan datos sin fingir un cero. */
-    activeKeys.forEach((key) => { state.apiLayerStatus[key] = "pending"; });
+    activeKeys.forEach((key) => { state.apiLayerStatus[key] = "pending"; state.apiLayerElements[key] = []; });
     renderApiSummary([]);
     setText("#connectionLabel", `Respaldo visible · consultando OSM 0/${activeKeys.length} capas`);
 
     /* Carga progresiva: cada lote se dibuja al llegar y no bloquea toda la cartografía. */
     const results = [];
     let completed = 0;
-    for (let index = 0; index < activeKeys.length; index += 2) {
-      const batch = activeKeys.slice(index, index + 2);
+    for (let index = 0; index < activeKeys.length; index += 4) {
+      const batch = activeKeys.slice(index, index + 4);
       const settled = await Promise.allSettled(batch.map((key) => fetchOverpass(upl, scaleKey, bbox, signal, key)));
       settled.forEach((result, offset) => {
         const key = batch[offset];
         state.apiLayerStatus[key] = result.status === "fulfilled" ? "ok" : "error";
+        state.apiLayerElements[key] = result.status === "fulfilled" ? result.value : [];
         if (result.status === "fulfilled") results.push(...result.value);
         completed += 1;
         const unique = new Map();
