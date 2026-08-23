@@ -1694,10 +1694,14 @@
       { match: /rondas?/i, icon: "fa-wave-square", label: "Ronda" },
       { match: /escorrent/i, icon: "fa-cloud-rain", label: "Escorrentía" },
       { match: /suelo/i, icon: "fa-layer-group", label: "Suelo" },
-      { match: /aves?/i, icon: "fa-dove", label: "Aves" },
+      { match: /migratori/i, icon: "fa-dove", label: "Migratorias", className: "bird-migratory" },
+      { match: /resident/i, icon: "fa-dove", label: "Residentes", className: "bird-resident" },
       { match: /arañas?/i, icon: "fa-spider", label: "Arañas" },
       { match: /insectos?/i, icon: "fa-bug", label: "Insectos" },
-      { match: /vegetación|junco|enea|kikuyo/i, icon: "fa-leaf", label: "Vegetación" },
+      { match: /junco/i, icon: "fa-leaf", label: "Junco", className: "leaf-transparent" },
+      { match: /enea/i, icon: "fa-leaf", label: "Enea", className: "leaf-transparent" },
+      { match: /kikuyo/i, icon: "fa-leaf", label: "Kikuyo", className: "leaf-transparent" },
+      { match: /vegetación/i, icon: "fa-seedling", label: "Vegetación", className: "leaf-transparent" },
       { match: /avenida/i, icon: "fa-road", label: "Avenida" },
       { match: /edific/i, icon: "fa-building", label: "Edificaciones" },
       { match: /ciclorruta/i, icon: "fa-person-biking", label: "Ciclorruta" },
@@ -1725,7 +1729,7 @@
         components.style.left = `clamp(8px, ${Math.max(7, Math.min(item.x - 8, 62))}%, calc(100% - 320px))`;
         components.style.top = `clamp(72px, ${Math.min(item.y + 10, 72)}%, calc(100% - 170px))`;
         const visuals = getComponentVisuals(item);
-        components.innerHTML = `<strong><i class="fa-solid fa-sparkles"></i> QUÉ PARTES O COMPONENTES SE ANALIZAN</strong><div class="component-visual-strip">${visuals.map((visual) => `<span class="component-visual" title="${visual.label}"><i class="fa-solid ${visual.icon}"></i><em>${visual.label}</em></span>`).join("")}</div><p>${item.componentsText || item.components.join(", ")}</p>`;
+        components.innerHTML = `<strong><i class="fa-solid fa-sparkles"></i> QUÉ PARTES O COMPONENTES SE ANALIZAN</strong><div class="component-visual-strip">${visuals.map((visual) => `<span class="component-visual ${visual.className || ""}" title="${visual.label}" aria-label="${visual.label}"><i class="fa-solid ${visual.icon}"></i><em>${visual.label}</em></span>`).join("")}</div><p>${item.componentsText || item.components.join(", ")}</p>`;
         subsystemBubbles.appendChild(components);
         const purpose = document.createElement("aside");
         purpose.className = "subsystem-purpose-panel active";

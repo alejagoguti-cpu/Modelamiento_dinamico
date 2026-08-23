@@ -4885,3 +4885,20 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 .subsystem-components > strong i { margin-right: 4px; color: var(--bubble-color); }
 @keyframes component-icon-in { from { opacity: 0; transform: translateY(5px) scale(.88); } to { opacity: 1; transform: translateY(0) scale(1); } }
 @media (max-width: 720px) { .component-visual { padding: 6px; } .component-visual em { font-size: 8px; } .component-visual i { width: 20px; height: 20px; font-size: 11px; } }
+
+/* Fauna y vegetación vivas dentro del panel de componentes */
+.component-visual.bird-migratory { overflow: hidden; }
+.component-visual.bird-migratory i { animation: bird-migration 2.6s ease-in-out infinite; }
+.component-visual.bird-resident i { animation: bird-resting 2.8s ease-in-out infinite; }
+.component-visual.leaf-transparent { border-color: color-mix(in srgb, var(--bubble-color) 44%, transparent); background: transparent; box-shadow: none; }
+.component-visual.leaf-transparent i { background: transparent; box-shadow: none; filter: drop-shadow(0 0 4px color-mix(in srgb, var(--bubble-color) 48%, transparent)); }
+@keyframes bird-migration { 0%, 100% { transform: translateX(-3px) translateY(2px) rotate(-5deg); } 45% { transform: translateX(6px) translateY(-3px) rotate(5deg); } 70% { transform: translateX(12px) translateY(1px) rotate(-2deg); } }
+@keyframes bird-resting { 0%, 100% { transform: translateY(1px) rotate(0deg); } 15% { transform: translateY(-1px) rotate(-3deg); } 30% { transform: translateY(1px) rotate(2deg); } 55% { transform: translateY(0) rotate(0deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .component-visual.bird-migratory i, .component-visual.bird-resident i { animation: none; }
+}
+
+/* Hojas y vegetación sin tarjeta de fondo */
+.component-visual.leaf-transparent { min-width: 30px; padding: 2px 4px; border: 0; background: transparent !important; box-shadow: none !important; }
+.component-visual.leaf-transparent i { width: 25px; height: 25px; background: transparent !important; border: 0; box-shadow: none !important; }
+.component-visual.leaf-transparent em { color: var(--bubble-color); }
