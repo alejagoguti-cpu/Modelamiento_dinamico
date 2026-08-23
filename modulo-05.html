@@ -9,8 +9,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
   <link href="https://unpkg.com/maplibre-gl@6.5.0/dist/maplibre-gl.css" rel="stylesheet">
-  <link rel="stylesheet" href="modulo-05.css?v=ux-guide-v2">
-  <link rel="stylesheet" href="site-theme.css?v=ux-guide-v2">
+  <link rel="stylesheet" href="modulo-05.css?v=minimal-v3">
+  <link rel="stylesheet" href="site-theme.css?v=minimal-v3">
 </head>
 <body>
   <div class="app-shell">
@@ -72,7 +72,7 @@
           <p id="uplTag" class="field-note">Selecciona una UPL para enfocar la exploración.</p>
         </div>
 
-        <div class="panel-block route-block">
+        <details class="advanced-section route-section"><summary><span><i class="fa-solid fa-route"></i> Ruta opcional</span><small>Calcular un recorrido real</small></summary><div class="advanced-section-body"><div class="panel-block route-block">
           <div class="block-label"><i class="fa-solid fa-person-walking"></i> RUTA OPCIONAL SOBRE CALLES REALES</div>
           <label class="sr-only" for="routeStart">Origen</label>
           <div class="input-wrap"><i class="fa-solid fa-location-dot"></i><input id="routeStart" type="text" placeholder="Origen · lugar o dirección"></div>
@@ -81,20 +81,24 @@
           <div class="route-actions"><button id="routeBtn" class="primary-btn"><i class="fa-solid fa-route"></i> Calcular ruta</button><button id="clearRouteBtn" class="icon-btn" title="Limpiar ruta" aria-label="Limpiar ruta"><i class="fa-solid fa-xmark"></i></button></div>
           <p id="routeStatus" class="field-note">Nominatim geocodifica y OSRM calcula la ruta. Las consultas se hacen solo al solicitarla.</p>
           <p class="field-note performance-note"><i class="fa-solid fa-gauge-high"></i> Las calles se consultan por el área visible, con espera de 420 ms y cancelación de peticiones anteriores.</p>
-        </div>
+        </div></div></details>
 
+        <details class="advanced-section map-source-section"><summary><span><i class="fa-solid fa-map"></i> Mapa y fuente</span><small id="mapSourceSummary">OSM · mapa real</small></summary><div class="advanced-section-body">
         <div class="data-mode-row">
           <div><span class="mode-dot" id="modeDot"></span><strong id="modeTitle">Calles reales</strong><small id="modeDetail">OpenStreetMap · consulta bajo demanda</small></div>
           <button id="modeToggle" class="mode-toggle" role="switch" aria-checked="true"><span></span></button>
         </div>
         <div class="source-mode-row"><span><i class="fa-solid fa-database"></i> Fuente vial</span><button id="localTilesBtn" class="local-tiles-btn" type="button"><i class="fa-solid fa-hard-drive"></i> Usar PMTiles local</button></div>
+        </div></details>
+
+        <details class="advanced-section data-section"><summary><span><i class="fa-solid fa-layer-group"></i> Capas de datos</span><small id="apiSummaryHint">7 activas · 28 disponibles</small></summary><div class="advanced-section-body">
         <div class="panel-block api-layers-block">
           <div class="block-label"><span class="step-label">4</span> ENCIENDE CAPAS DE DATOS</div>
           <div class="api-layer-actions"><button id="apiSelectAll" type="button">Activar las 28</button><button id="apiClearAll" type="button">Apagar todas</button></div>
           <div class="api-status-key" aria-label="Estados de las capas"><span><i class="status-key-dot is-on"></i> Activa</span><span><i class="status-key-dot is-loading"></i> Consultando</span><span><i class="status-key-dot is-off"></i> Apagada</span></div>
           <div id="apiLayerToggles" class="api-layer-toggles" role="group" aria-label="Capas de datos OpenStreetMap"></div>
           <p class="field-note">Activa una o varias categorías. Las pepitas aparecen en el mapa y los números indican grupos de datos cercanos.</p>
-        </div>
+        </div></div></details>
       </section>
 
       <section class="map-panel" aria-label="Mapa de Bogotá">

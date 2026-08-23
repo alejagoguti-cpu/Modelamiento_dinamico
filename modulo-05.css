@@ -278,3 +278,20 @@ a { color:inherit; text-decoration:none; }
   .how-to-steps { grid-template-columns:1fr 1fr; gap:7px; }
   .how-to-steps em { font-size:8px; }
 }
+
+/* Minimal UX v3: tareas avanzadas colapsables, mapa como foco principal. */
+.advanced-section{margin:10px 0;border:1px solid rgba(143,231,223,.16);border-radius:12px;background:rgba(10,15,21,.58);overflow:hidden}
+.advanced-section>summary{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px;padding:10px 12px;color:#eef8f6;cursor:pointer;list-style:none;user-select:none}
+.advanced-section>summary::-webkit-details-marker{display:none}
+.advanced-section>summary::after{content:"＋";color:#45d8ca;font-size:18px;line-height:1}
+.advanced-section[open]>summary::after{content:"−"}
+.advanced-section>summary span{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.advanced-section>summary span i{color:#45d8ca}
+.advanced-section>summary small{margin-left:auto;color:#8ca3a6;font-size:10px;white-space:nowrap}
+.advanced-section-body{padding:0 12px 12px;border-top:1px solid rgba(143,231,223,.1)}
+.advanced-section-body>.panel-block,.advanced-section-body>.data-mode-row,.advanced-section-body>.source-mode-row{margin-left:0;margin-right:0}
+.route-section .block-label,.map-source-section .data-mode-row,.map-source-section .source-mode-row,.data-section .block-label{display:none}
+.data-section .api-layers-block{padding-top:10px}
+.data-section .api-layer-toggles{max-height:330px;overflow-y:auto;scrollbar-width:thin}
+.api-summary-list{contain:content}
+@media (max-width:760px){.control-panel{padding-bottom:14px}.how-to{margin-bottom:12px}.panel-block{margin-bottom:12px}.advanced-section>summary{min-height:48px;padding:12px}.advanced-section>summary small{font-size:9px}.data-section .api-layers-block{padding-top:8px}.data-section .api-layer-toggles{max-height:280px}}
