@@ -434,9 +434,9 @@
         "carto-gray-fallback": {
           type: "raster",
           tiles: [
-            "https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
-            "https://b.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
-            "https://c.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
+              "https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png",
+            "https://b.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png",
+            "https://c.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png",
           ],
           tileSize: 256,
           attribution: "© OpenStreetMap © CARTO",
@@ -451,10 +451,10 @@
         },
       },
       layers: [
-        { id: "map-background", type: "background", paint: { "background-color": "#111617" } },
-        { id: "bogota-gray-local-layer", type: "raster", source: "bogota-gray-local", paint: { "raster-saturation": -1, "raster-contrast": 0.12, "raster-brightness-min": 0.18, "raster-brightness-max": 0.88, "raster-opacity": 1 } },
-        { id: "carto-gray-fallback-layer", type: "raster", source: "carto-gray-fallback", paint: { "raster-saturation": -1, "raster-contrast": 0.08, "raster-brightness-min": 0.16, "raster-brightness-max": 0.90, "raster-opacity": 0.92 } },
-        { id: "osm-gray-fallback-layer", type: "raster", source: "osm-gray-fallback", paint: { "raster-saturation": -1, "raster-contrast": 0.16, "raster-brightness-min": 0.12, "raster-brightness-max": 0.86, "raster-opacity": 0.72 } },
+        { id: "map-background", type: "background", paint: { "background-color": "#05070a" } },
+        { id: "bogota-gray-local-layer", type: "raster", source: "bogota-gray-local", paint: { "raster-saturation": -1, "raster-contrast": 0.34, "raster-brightness-min": 0.00, "raster-brightness-max": 0.22, "raster-opacity": 0.96 } },
+        { id: "carto-gray-fallback-layer", type: "raster", source: "carto-gray-fallback", paint: { "raster-saturation": -1, "raster-contrast": 0.22, "raster-brightness-min": 0.00, "raster-brightness-max": 0.46, "raster-opacity": 0.94 } },
+        { id: "osm-gray-fallback-layer", type: "raster", source: "osm-gray-fallback", paint: { "raster-saturation": -1, "raster-contrast": 0.28, "raster-brightness-min": 0.00, "raster-brightness-max": 0.24, "raster-opacity": 0.58 } },
       ],
     };
     try {
