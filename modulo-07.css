@@ -4800,9 +4800,9 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 .cartography-base-image { filter: grayscale(1) invert(1) contrast(1.45) brightness(.82) !important; }
 
 /* Seis subsistemas exactos de El Burro */
-.subsystem-bubble { width: 112px; height: 112px; white-space: pre-line; line-height: 1.22; font-size: 9px; }
+.subsystem-bubble { width: 92px; height: 92px; white-space: pre-line; line-height: 1.18; font-size: 8px; }
 .subsystem-actants small { display: block; margin: 7px 0 10px; padding-top: 7px; border-top: 1px solid rgba(255,255,255,.16); color: var(--bubble-color); font-size: 10px; line-height: 1.35; }
-@media (max-width: 720px) { .subsystem-bubble { width: 82px; height: 82px; font-size: 7px; } }
+@media (max-width: 720px) { .subsystem-bubble { width: 70px; height: 70px; font-size: 6px; } }
 
 .real-cartography-map .maplibregl-canvas { opacity: 1 !important; background: transparent !important; }
 
