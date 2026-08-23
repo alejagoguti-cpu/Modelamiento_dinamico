@@ -11,6 +11,7 @@
   <link href="https://unpkg.com/maplibre-gl@6.5.0/dist/maplibre-gl.css" rel="stylesheet">
   <link rel="stylesheet" href="modulo-05.css?v=minimal-v3">
   <link rel="stylesheet" href="site-theme.css?v=minimal-v3">
+  <link rel="stylesheet" href="modulo-05-popup.css?v=popup-v3">
 </head>
 <body>
   <div class="app-shell">
@@ -130,6 +131,31 @@
       </aside>
     </main>
   </div>
+
+  <div id="scaleNetworkModal" class="scale-network-modal" aria-hidden="true">
+    <div class="scale-network-dialog" role="dialog" aria-modal="true" aria-labelledby="scaleNetworkTitle">
+      <header class="scale-network-dialog-head">
+        <div class="scale-network-heading">
+          <span class="scale-network-kicker">RED MULTIESCALA · BOGOTÁ VIVA</span>
+          <h2 id="scaleNetworkTitle">Red Natural</h2>
+          <p id="scaleNetworkDescription">Relaciones entre sistemas y entidades concretas del territorio.</p>
+        </div>
+        <div class="scale-network-actions" aria-label="Controles del diagrama">
+          <button id="scaleNetworkZoomOut" class="scale-network-zoom" type="button" aria-label="Alejar red">−</button>
+          <button id="scaleNetworkZoomReset" class="scale-network-zoom scale-network-zoom-value" type="button" aria-label="Restablecer zoom">100%</button>
+          <button id="scaleNetworkZoomIn" class="scale-network-zoom" type="button" aria-label="Acercar red">+</button>
+          <button id="scaleNetworkClose" class="scale-network-close" type="button" aria-label="Cerrar red">×</button>
+        </div>
+      </header>
+      <div id="scaleNetworkCanvas" class="scale-network-canvas" aria-label="Diagrama de red de la escala seleccionada"></div>
+      <footer class="scale-network-dialog-foot">
+        <span><i class="scale-legend-line direct"></i> Relación directa</span>
+        <span><i class="scale-legend-line indirect"></i> Relación indirecta</span>
+        <span class="scale-network-hint">Haz clic en un nodo para identificarlo</span>
+      </footer>
+    </div>
+  </div>
+
   <script src="https://unpkg.com/pmtiles@3.2.0/dist/pmtiles.js"></script>
   <script type="module">
     import * as maplibregl from "https://unpkg.com/maplibre-gl@6.5.0/dist/maplibre-gl.mjs";

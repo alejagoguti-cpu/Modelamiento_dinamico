@@ -415,6 +415,7 @@
     renderScaleCards();
     setText("#scaleReading", SCALE_DATA[scaleKey].reading);
     if (shouldQuery && state.mapReady) loadScaleData();
+    openScaleNetworkModal(scaleKey);
   }
 
   function initializeMap() {
@@ -945,6 +946,341 @@
     });
   }
 
+const scaleNetworks = {
+  natural: {
+    title: 'Red Natural',
+    accent: '#46d6d0',
+    nodes: [
+      { id: 'humedales', label: 'HUMEDALES', lat: 4.630, lng: -74.150, hub: true },
+      { id: 'rios', label: 'RÍOS', lat: 4.665, lng: -74.165 },
+      { id: 'quebradas', label: 'QUEBRADAS', lat: 4.612, lng: -74.182 },
+      { id: 'areas_protegidas', label: 'ÁREAS PROTEGIDAS', lat: 4.662, lng: -74.120 },
+      { id: 'reservas_forestales', label: 'RESERVAS FORESTALES', lat: 4.690, lng: -74.150 },
+      { id: 'cobertura_vegetal', label: 'COBERTURA VEGETAL', lat: 4.650, lng: -74.205 },
+      { id: 'parques', label: 'PARQUES', lat: 4.620, lng: -74.105 },
+      { id: 'rondas_hidricas', label: 'RONDAS HÍDRICAS', lat: 4.595, lng: -74.195 },
+      { id: 'bosques_urbanos', label: 'BOSQUES URBANOS', lat: 4.585, lng: -74.115 },
+      { id: 'paramos', label: 'COMPLEJO DE PÁRAMOS', lat: 4.715, lng: -74.185 }
+    ],
+    edges: [
+      ['humedales', 'rios', 'directa'],
+      ['humedales', 'areas_protegidas', 'directa'],
+      ['humedales', 'quebradas', 'indirecta'],
+      ['humedales', 'reservas_forestales', 'directa'],
+      ['rios', 'rondas_hidricas', 'directa'],
+      ['quebradas', 'rondas_hidricas', 'indirecta'],
+      ['areas_protegidas', 'cobertura_vegetal', 'directa'],
+      ['reservas_forestales', 'paramos', 'indirecta'],
+      ['areas_protegidas', 'parques', 'indirecta'],
+      ['cobertura_vegetal', 'bosques_urbanos', 'directa'],
+      ['parques', 'bosques_urbanos', 'indirecta']
+    ]
+  },
+  cultural: {
+    title: 'Red Cultural',
+    accent: '#e89a6c',
+    nodes: [
+      { id: 'patrimonio_material', label: 'PATRIMONIO MATERIAL', lat: 4.615, lng: -74.075, hub: true },
+      { id: 'patrimonio_inmaterial', label: 'PATRIMONIO INMATERIAL', lat: 4.635, lng: -74.045, hub: true },
+      { id: 'museos', label: 'MUSEOS', lat: 4.640, lng: -74.085 },
+      { id: 'bibliotecas', label: 'BIBLIOTECAS', lat: 4.595, lng: -74.105 },
+      { id: 'plazas_mercado', label: 'PLAZAS DE MERCADO', lat: 4.605, lng: -74.120 },
+      { id: 'barrios', label: 'BARRIOS', lat: 4.650, lng: -74.115 },
+      { id: 'centros_historicos', label: 'CENTROS HISTÓRICOS', lat: 4.625, lng: -74.100 },
+      { id: 'zonas_turisticas', label: 'ZONAS DE INTERÉS TURÍSTICO', lat: 4.675, lng: -74.070 },
+      { id: 'equipamientos_culturales', label: 'EQUIPAMIENTOS CULTURALES', lat: 4.570, lng: -74.080 },
+      { id: 'artesanias', label: 'PRODUCCIÓN ARTESANAL', lat: 4.585, lng: -74.055 }
+    ],
+    edges: [
+      ['patrimonio_material', 'museos', 'directa'],
+      ['patrimonio_material', 'centros_historicos', 'directa'],
+      ['patrimonio_material', 'patrimonio_inmaterial', 'indirecta'],
+      ['patrimonio_inmaterial', 'zonas_turisticas', 'directa'],
+      ['patrimonio_inmaterial', 'artesanias', 'directa'],
+      ['museos', 'bibliotecas', 'indirecta'],
+      ['centros_historicos', 'barrios', 'directa'],
+      ['barrios', 'plazas_mercado', 'indirecta'],
+      ['bibliotecas', 'equipamientos_culturales', 'directa'],
+      ['plazas_mercado', 'artesanias', 'indirecta']
+    ]
+  },
+  tecnologico: {
+    title: 'Red Tecnológica',
+    accent: '#e89a6c',
+    nodes: [
+      { id: 'red_vial', label: 'RED VIAL', lat: 4.635, lng: -74.100, hub: true },
+      { id: 'transporte_publico', label: 'TRANSPORTE PÚBLICO', lat: 4.605, lng: -74.070, hub: true },
+      { id: 'red_ferrrea', label: 'RED FÉRREA', lat: 4.665, lng: -74.095 },
+      { id: 'ciclorutas', label: 'CICLORRUTAS', lat: 4.655, lng: -74.135 },
+      { id: 'nodos_digitales', label: 'NODOS DIGITALES', lat: 4.680, lng: -74.145 },
+      { id: 'internet_publico', label: 'INTERNET PÚBLICO', lat: 4.585, lng: -74.135 },
+      { id: 'datos_abiertos', label: 'DATOS ABIERTOS', lat: 4.575, lng: -74.080 },
+      { id: 'centro_tecnologico', label: 'CENTRO TECNOLÓGICO', lat: 4.625, lng: -74.045 },
+      { id: 'recarga_electrica', label: 'RECARGA ELÉCTRICA', lat: 4.685, lng: -74.055 },
+      { id: 'semaforizacion', label: 'SEMAFORIZACIÓN', lat: 4.550, lng: -74.105 }
+    ],
+    edges: [
+      ['red_vial', 'transporte_publico', 'directa'],
+      ['red_vial', 'red_ferrrea', 'directa'],
+      ['red_vial', 'ciclorutas', 'indirecta'],
+      ['transporte_publico', 'nodos_digitales', 'directa'],
+      ['transporte_publico', 'internet_publico', 'indirecta'],
+      ['red_ferrrea', 'recarga_electrica', 'directa'],
+      ['nodos_digitales', 'centro_tecnologico', 'directa'],
+      ['internet_publico', 'datos_abiertos', 'indirecta'],
+      ['datos_abiertos', 'centro_tecnologico', 'directa'],
+      ['ciclorutas', 'semaforizacion', 'indirecta'],
+      ['red_vial', 'semaforizacion', 'directa']
+    ]
+  },
+  metaverso: {
+    title: 'Red Metaverso',
+    accent: '#46d6d0',
+    nodes: [
+      { id: 'gemelo_digital', label: 'GEMELO DIGITAL', lat: 4.630, lng: -74.100, hub: true },
+      { id: 'modelos_3d', label: 'MODELOS 3D', lat: 4.665, lng: -74.130, hub: true },
+      { id: 'capas_gis', label: 'CAPAS GIS', lat: 4.680, lng: -74.085 },
+      { id: 'plataformas_bim', label: 'PLATAFORMAS BIM', lat: 4.650, lng: -74.055 },
+      { id: 'nodos_iot', label: 'NODOS IoT', lat: 4.605, lng: -74.045 },
+      { id: 'visualizacion_vr', label: 'VISUALIZACIÓN VR', lat: 4.575, lng: -74.065 },
+      { id: 'laboratorios_urbanos', label: 'LABORATORIOS URBANOS', lat: 4.565, lng: -74.115 },
+      { id: 'datos_territoriales', label: 'DATOS TERRITORIALES', lat: 4.600, lng: -74.150 },
+      { id: 'escenarios_simulados', label: 'ESCENARIOS SIMULADOS', lat: 4.700, lng: -74.115 },
+      { id: 'sensores_urbanos', label: 'SENSORES URBANOS', lat: 4.640, lng: -74.180 }
+    ],
+    edges: [
+      ['gemelo_digital', 'modelos_3d', 'directa'],
+      ['gemelo_digital', 'capas_gis', 'directa'],
+      ['gemelo_digital', 'datos_territoriales', 'directa'],
+      ['modelos_3d', 'plataformas_bim', 'directa'],
+      ['modelos_3d', 'escenarios_simulados', 'indirecta'],
+      ['capas_gis', 'sensores_urbanos', 'indirecta'],
+      ['plataformas_bim', 'nodos_iot', 'directa'],
+      ['nodos_iot', 'sensores_urbanos', 'directa'],
+      ['datos_territoriales', 'laboratorios_urbanos', 'indirecta'],
+      ['laboratorios_urbanos', 'visualizacion_vr', 'directa'],
+      ['escenarios_simulados', 'visualizacion_vr', 'indirecta']
+    ]
+  }
+};
+/* ========================================================================
+   POP-UP DE RED · la red vive aquí, no sobre el mapa principal
+   ======================================================================== */
+const scaleNetworkDescriptions = {
+  natural: 'Sistemas hídricos, estructura ecológica y cobertura vegetal conectados.',
+  cultural: 'Patrimonio, memoria urbana, barrios y prácticas culturales relacionadas.',
+  tecnologico: 'Movilidad, datos, infraestructura y conectividad territorial.',
+  metaverso: 'Capas digitales, modelos urbanos y escenarios de exploración virtual.'
+};
+
+let scalePopupSelectedNode = null;
+const scaleNetworkViewState = { scale: 1, x: 0, y: 0 };
+
+function updateScaleNetworkViewport() {
+  const viewport = document.getElementById('scaleNetworkViewport');
+  if (!viewport) return;
+  viewport.style.transform = `translate(${scaleNetworkViewState.x}px, ${scaleNetworkViewState.y}px) scale(${scaleNetworkViewState.scale})`;
+  const zoomValue = document.getElementById('scaleNetworkZoomReset');
+  if (zoomValue) zoomValue.textContent = `${Math.round(scaleNetworkViewState.scale * 100)}%`;
+}
+
+function setScaleNetworkZoom(nextScale, resetPosition = false) {
+  scaleNetworkViewState.scale = Math.max(.72, Math.min(2.4, nextScale));
+  if (resetPosition) {
+    scaleNetworkViewState.x = 0;
+    scaleNetworkViewState.y = 0;
+  }
+  updateScaleNetworkViewport();
+}
+
+function resetScaleNetworkView() {
+  scaleNetworkViewState.scale = 1;
+  scaleNetworkViewState.x = 0;
+  scaleNetworkViewState.y = 0;
+  updateScaleNetworkViewport();
+}
+
+function setupScaleNetworkViewport() {
+  const canvas = document.getElementById('scaleNetworkCanvas');
+  const viewport = document.getElementById('scaleNetworkViewport');
+  if (!canvas || !viewport || canvas.dataset.interactive === 'true') return;
+  canvas.dataset.interactive = 'true';
+  let dragging = false;
+  let startX = 0;
+  let startY = 0;
+  let originX = 0;
+  let originY = 0;
+
+  canvas.addEventListener('wheel', event => {
+    event.preventDefault();
+    setScaleNetworkZoom(scaleNetworkViewState.scale + (event.deltaY < 0 ? .12 : -.12));
+  }, { passive: false });
+
+  canvas.addEventListener('pointerdown', event => {
+    if (event.button !== 0 && event.pointerType !== 'touch') return;
+    dragging = true;
+    startX = event.clientX;
+    startY = event.clientY;
+    originX = scaleNetworkViewState.x;
+    originY = scaleNetworkViewState.y;
+    canvas.classList.add('is-dragging');
+    canvas.setPointerCapture?.(event.pointerId);
+  });
+
+  canvas.addEventListener('pointermove', event => {
+    if (!dragging) return;
+    scaleNetworkViewState.x = originX + event.clientX - startX;
+    scaleNetworkViewState.y = originY + event.clientY - startY;
+    updateScaleNetworkViewport();
+  });
+
+  const stopDragging = event => {
+    if (!dragging) return;
+    dragging = false;
+    canvas.classList.remove('is-dragging');
+    canvas.releasePointerCapture?.(event.pointerId);
+  };
+  canvas.addEventListener('pointerup', stopDragging);
+  canvas.addEventListener('pointercancel', stopDragging);
+  canvas.addEventListener('pointerleave', event => {
+    if (event.pointerType === 'mouse') stopDragging(event);
+  });
+}
+
+function splitPopupLabel(label) {
+  const words = label.split(' ');
+  const lines = [];
+  let line = '';
+  words.forEach(word => {
+    const next = line ? `${line} ${word}` : word;
+    if (next.length > 15 && line) {
+      lines.push(line);
+      line = word;
+    } else {
+      line = next;
+    }
+  });
+  if (line) lines.push(line);
+  return lines.slice(0, 3);
+}
+
+function popupNetworkPositions(definition) {
+  const lats = definition.nodes.map(node => node.lat);
+  const lngs = definition.nodes.map(node => node.lng);
+  const minLat = Math.min(...lats);
+  const maxLat = Math.max(...lats);
+  const minLng = Math.min(...lngs);
+  const maxLng = Math.max(...lngs);
+  const latRange = Math.max(maxLat - minLat, 0.001);
+  const lngRange = Math.max(maxLng - minLng, 0.001);
+  return Object.fromEntries(definition.nodes.map(node => [node.id, {
+    ...node,
+    x: 72 + ((node.lng - minLng) / lngRange) * 856,
+    y: 62 + ((maxLat - node.lat) / latRange) * 420
+  }]));
+}
+
+function renderScaleNetworkPopup(mode) {
+  const canvas = document.getElementById('scaleNetworkCanvas');
+  const definition = scaleNetworks[mode];
+  if (!canvas || !definition) return;
+  const nodes = popupNetworkPositions(definition);
+  const edgeMarkup = definition.edges.map(([fromId, toId, type]) => {
+    const from = nodes[fromId];
+    const to = nodes[toId];
+    if (!from || !to) return '';
+    const color = type === 'indirecta' ? '#e89a6c' : '#46d6d0';
+    const className = type === 'indirecta' ? 'popup-edge indirect' : 'popup-edge direct';
+    return `<line class="${className}" x1="${from.x.toFixed(1)}" y1="${from.y.toFixed(1)}" x2="${to.x.toFixed(1)}" y2="${to.y.toFixed(1)}" stroke="${color}" marker-end="url(#arrow-${type})" />`;
+  }).join('');
+
+  const nodeMarkup = definition.nodes.map(node => {
+    const p = nodes[node.id];
+    const radius = node.hub ? 42 : 29;
+    const lines = splitPopupLabel(node.label);
+    const firstY = p.y - ((lines.length - 1) * 7);
+    const labelMarkup = lines.map((line, index) => `<tspan x="${p.x.toFixed(1)}" dy="${index === 0 ? 0 : 14}">${line}</tspan>`).join('');
+    return `<g class="popup-node ${node.hub ? 'hub' : ''}" data-node-id="${node.id}" tabindex="0" role="button" aria-label="${node.label}">
+      <circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${radius}" />
+      <text x="${p.x.toFixed(1)}" y="${firstY.toFixed(1)}">${labelMarkup}</text>
+    </g>`;
+  }).join('');
+
+  canvas.innerHTML = `<div id="scaleNetworkViewport" class="popup-network-viewport"><svg class="popup-network-svg" viewBox="0 0 1000 544" role="img" aria-label="${definition.title}">
+    <defs>
+      <filter id="popupGlowTeal" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      <filter id="popupGlowCopper" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      <marker id="arrow-direct" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#46d6d0" /></marker>
+      <marker id="arrow-indirecta" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#e89a6c" /></marker>
+    </defs>
+    <g class="popup-edges">${edgeMarkup}</g>
+    <g class="popup-nodes">${nodeMarkup}</g>
+  </svg></div>`;
+
+  resetScaleNetworkView();
+  setupScaleNetworkViewport();
+  canvas.querySelectorAll('.popup-node').forEach(nodeElement => {
+    const selectNode = () => {
+      canvas.querySelectorAll('.popup-node').forEach(item => item.classList.remove('selected'));
+      nodeElement.classList.add('selected');
+      const node = nodes[nodeElement.dataset.nodeId];
+      scalePopupSelectedNode = node;
+      const description = document.getElementById('scaleNetworkDescription');
+      if (description && node) description.textContent = `${node.label} · ${definition.title}`;
+    };
+    nodeElement.addEventListener('click', selectNode);
+    nodeElement.addEventListener('keydown', event => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        selectNode();
+      }
+    });
+  });
+}
+
+function openScaleNetworkModal(mode) {
+  const modal = document.getElementById('scaleNetworkModal');
+  const definition = scaleNetworks[mode];
+  if (!modal || !definition) return;
+  scalePopupSelectedNode = null;
+  document.getElementById('scaleNetworkTitle').textContent = definition.title;
+  document.getElementById('scaleNetworkDescription').textContent = scaleNetworkDescriptions[mode];
+  renderScaleNetworkPopup(mode);
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('scale-modal-open');
+  document.getElementById('scaleNetworkClose')?.focus();
+}
+
+function closeScaleNetworkModal() {
+  const modal = document.getElementById('scaleNetworkModal');
+  if (!modal) return;
+  modal.classList.remove('open');
+  modal.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('scale-modal-open');
+}
+
+document.getElementById('scaleNetworkClose')?.addEventListener('click', closeScaleNetworkModal);
+document.getElementById('scaleNetworkModal')?.addEventListener('click', event => {
+  if (event.target.id === 'scaleNetworkModal') closeScaleNetworkModal();
+});
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape') closeScaleNetworkModal();
+});
+
+// Controles de zoom del diagrama, compartidos por las cuatro redes.
+document.getElementById('scaleNetworkZoomIn')?.addEventListener('click', event => {
+  event.stopPropagation();
+  setScaleNetworkZoom(scaleNetworkViewState.scale + .18);
+});
+document.getElementById('scaleNetworkZoomOut')?.addEventListener('click', event => {
+  event.stopPropagation();
+  setScaleNetworkZoom(scaleNetworkViewState.scale - .18);
+});
+document.getElementById('scaleNetworkZoomReset')?.addEventListener('click', event => {
+  event.stopPropagation();
+  resetScaleNetworkView();
+});
   function boot() {
     const defaultUpl = UPLS.find((upl) => upl.num === 13) || UPLS[0];
     state.selectedUpl = defaultUpl;
