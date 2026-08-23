@@ -3441,16 +3441,19 @@ function initPanZoom() {
     stage.classList.remove('panning');
     if (!wasMoved) return;
     const rect = svg.getBoundingClientRect();
-    const momentumX = -(velocityX / Math.max(rect.width, 1)) * vb.w * 0.18;
-    const momentumY = -(velocityY / Math.max(rect.height, 1)) * vb.h * 0.18;
+    const momentumX = -(velocityX / Math.max(rect.width, 1)) * vb.w * 0.10;
+    const momentumY = -(velocityY / Math.max(rect.height, 1)) * vb.h * 0.10;
+    const releaseX = vb.x;
+    const releaseY = vb.y;
     const start = performance.now();
-    const duration = 720;
-    const spring = t => 1 - Math.exp(-7 * t) * Math.cos(14 * t);
+    const duration = 880;
+    /* Resorte amortiguado: pequeño overshoot, una sola oscilación y reposo. */
+    const spring = t => 1 - Math.exp(-6.4 * t) * Math.cos(11.5 * t);
     const settle = now => {
       const t = Math.min(1, (now - start) / duration);
       const k = spring(t);
-      vb.x += momentumX * (k - (t === 0 ? 0 : spring(Math.max(0, t - 0.016))));
-      vb.y += momentumY * (k - (t === 0 ? 0 : spring(Math.max(0, t - 0.016))));
+      vb.x = releaseX + momentumX * k;
+      vb.y = releaseY + momentumY * k;
       applyVB();
       if (t < 1) releaseFrame = requestAnimationFrame(settle);
     };
