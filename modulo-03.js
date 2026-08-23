@@ -2826,8 +2826,10 @@ function updateMetrics() {
   });
 
   const bar = document.getElementById('mBar');
-  bar.style.width = pct + '%';
-  bar.style.background = pct === 100 ? 'var(--eep)' : pct >= 60 ? 'var(--eseci)' : 'var(--danger)';
+  if (bar) {
+    bar.style.width = pct + '%';
+    bar.style.background = pct === 100 ? 'var(--eep)' : pct >= 60 ? 'var(--eseci)' : 'var(--danger)';
+  }
 
   // ---- centralidad saliente (calculada, nunca fija) ----
   const rank = SYS.map(s => ({ s, out: crossLinks(s), inc: incoming(s), on: state[s] }))
