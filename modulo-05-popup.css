@@ -179,17 +179,6 @@ body.scale-modal-open {
   transition: transform .18s cubic-bezier(.22,.75,.3,1);
 }
 
-.popup-network-viewport.is-bouncing {
-  animation: popup-network-bounce .62s cubic-bezier(.2,.85,.3,1);
-}
-
-@keyframes popup-network-bounce {
-  0% { transform: translate(var(--network-x, 0px), var(--network-y, 0px)) scale(var(--network-scale, 1)); }
-  35% { transform: translate(var(--network-x, 0px), var(--network-y, 0px)) scale(calc(var(--network-scale, 1) * 1.035)); }
-  62% { transform: translate(var(--network-x, 0px), var(--network-y, 0px)) scale(calc(var(--network-scale, 1) * .985)); }
-  82% { transform: translate(var(--network-x, 0px), var(--network-y, 0px)) scale(calc(var(--network-scale, 1) * 1.012)); }
-  100% { transform: translate(var(--network-x, 0px), var(--network-y, 0px)) scale(var(--network-scale, 1)); }
-}
 
 .popup-network-svg {
   display: block;
@@ -218,6 +207,13 @@ body.scale-modal-open {
   stroke-width: 1.45;
   stroke-dasharray: 7 7;
   opacity: .74;
+}
+
+.popup-edge.bridge {
+  stroke-width: 3.2;
+  stroke-dasharray: none;
+  opacity: 1;
+  filter: drop-shadow(0 0 4px rgba(70,214,208,.55));
 }
 
 .popup-node {

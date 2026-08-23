@@ -1303,9 +1303,6 @@ function resetScaleNetworkFlow() {
 function updateScaleNetworkViewport() {
   const viewport = document.getElementById('scaleNetworkViewport');
   if (!viewport) return;
-  viewport.style.setProperty('--network-x', `${scaleNetworkViewState.x}px`);
-  viewport.style.setProperty('--network-y', `${scaleNetworkViewState.y}px`);
-  viewport.style.setProperty('--network-scale', scaleNetworkViewState.scale);
   viewport.style.transform = `translate(${scaleNetworkViewState.x}px, ${scaleNetworkViewState.y}px) scale(${scaleNetworkViewState.scale})`;
   const zoomValue = document.getElementById('scaleNetworkZoomReset');
   if (zoomValue) zoomValue.textContent = `${Math.round(scaleNetworkViewState.scale * 100)}%`;
@@ -1366,10 +1363,7 @@ function setupScaleNetworkViewport() {
     dragging = false;
     canvas.classList.remove('is-dragging');
     if (canvas.hasPointerCapture?.(event.pointerId)) canvas.releasePointerCapture(event.pointerId);
-    viewport.classList.remove('is-bouncing');
-    void viewport.offsetWidth;
-    viewport.classList.add('is-bouncing');
-    window.setTimeout(() => viewport.classList.remove('is-bouncing'), 620);
+
   };
   canvas.addEventListener('pointerup', stopDragging);
   canvas.addEventListener('pointercancel', stopDragging);
@@ -1588,7 +1582,8 @@ function renderScaleNetworkPopup(mode) {
     const to = nodes[toId];
     if (!from || !to || scalePopupHiddenNodes.has(fromId) || scalePopupHiddenNodes.has(toId)) return '';
     const color = type === 'indirecta' ? '#e89a6c' : '#46d6d0';
-    const className = type === 'indirecta' ? 'popup-edge indirect' : 'popup-edge direct';
+    const isBridge = from.y > 295 && to.y > 295;
+    const className = `${type === 'indirecta' ? 'popup-edge indirect' : 'popup-edge direct'}${isBridge ? ' bridge' : ''}`;
     return `<line class="${className}" data-from="${fromId}" data-to="${toId}" x1="${from.x.toFixed(1)}" y1="${from.y.toFixed(1)}" x2="${to.x.toFixed(1)}" y2="${to.y.toFixed(1)}" stroke="${color}" marker-end="url(#arrow-${type})" />`;
   }).join('');
 
@@ -1646,12 +1641,6 @@ function renderScaleNetworkPopup(mode) {
   updateScaleNetworkStats(definition);
   canvas.querySelectorAll('.popup-node').forEach(nodeElement => {
     const node = nodes[nodeElement.dataset.nodeId];
-    let clickCount = 0;
-    let clickTimer = null;
-    const resetClickSequence = () => {
-      clickCount = 0;
-      clickTimer = null;
-    };
     const selectNode = () => {
       canvas.querySelectorAll('.popup-node').forEach(item => item.classList.remove('selected'));
       nodeElement.classList.add('selected');
@@ -1673,24 +1662,13 @@ function renderScaleNetworkPopup(mode) {
       const description = document.getElementById('scaleNetworkDescription');
       if (description) description.textContent = `${node.label} apagado · se retiraron sus relaciones activas`;
     };
-    nodeElement.addEventListener('click', () => {
-      clickCount += 1;
-      if (clickTimer) window.clearTimeout(clickTimer);
-      if (clickCount === 1) {
-        clickTimer = window.setTimeout(() => {
-          resetClickSequence();
-          selectNode();
-        }, 260);
-      } else if (clickCount === 2) {
-        clickTimer = window.setTimeout(() => {
-          resetClickSequence();
-          openNodeDetail();
-        }, 240);
-      } else {
-        if (clickTimer) window.clearTimeout(clickTimer);
-        resetClickSequence();
-        togglePopupNode();
-      }
+    nodeElement.addEventListener('click', event => {
+      if (event.detail === 1) selectNode();
+      if (event.detail === 3) togglePopupNode();
+    });
+    nodeElement.addEventListener('dblclick', event => {
+      event.preventDefault();
+      openNodeDetail();
     });
     nodeElement.addEventListener('keydown', event => {
       if (event.key === 'Enter' || event.key === ' ') {
