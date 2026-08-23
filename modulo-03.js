@@ -732,6 +732,18 @@ const POT_DATA = {
 };
 
 const SYS = ['EEP', 'EFC', 'EIP', 'ESECI'];
+const SYSTEM_COLORS = {
+  EEP: '#5cd6d1',
+  EFC: '#ef9f54',
+  EIP: '#fb8d84',
+  ESECI: '#fac47b'
+};
+const SYSTEM_NAMES = {
+  EEP: 'Estructura Ecológica Principal',
+  EFC: 'Estructura Funcional y del Cuidado',
+  EIP: 'Estructura Integradora de Patrimonios',
+  ESECI: 'Estructura Socioeconómica, Creativa y de Innovación'
+};
 
 // Estado del simulador: true = sistema activo
 const state = { EEP: true, EFC: true, EIP: true, ESECI: true };
@@ -770,7 +782,18 @@ function buildModel() {
   model.systems = {}; model.concepts = {}; model.relations = [];
 
   SYS.forEach(s => {
-    model.systems[s] = Object.assign({ code: s, concepts: [] }, POT_DATA.sistemas[s]);
+    const source = POT_DATA.sistemas && !Array.isArray(POT_DATA.sistemas)
+      ? (POT_DATA.sistemas[s] || {})
+      : {};
+    model.systems[s] = Object.assign({
+      code: s,
+      concepts: [],
+      nombre: SYSTEM_NAMES[s],
+      color: SYSTEM_COLORS[s]
+    }, source);
+    // La fuente histórica guarda a veces solo el catálogo de códigos; el
+    // color no puede quedar undefined porque interrumpe la creación del SVG.
+    model.systems[s].color = model.systems[s].color || SYSTEM_COLORS[s];
   });
 
   POT_DATA.nodos.forEach(n => {
@@ -787,7 +810,18 @@ function buildModel() {
   POT_DATA.relaciones.filter(r => (r.frase && r.pag && r.pag !== '—' && !r.porVerificar && !r.sinFrase) || (!r.frase && r.sO && r.cO && r.sD && r.cD)).forEach(r => {
     const from = conceptId(r.sO, r.cO);
     const to = conceptId(r.sD, r.cD);
-    const rel = Object.assign({}, r, { from, to });
+    const relationType = r.tipo || (r.type === 'resilience' || r.type === 'resiliencia'
+      ? 'Resiliencia'
+      : 'Soporte');
+    const evidenceType = r.evid || (r.evidence === 'indirect' || r.evidence === 'indirecta'
+      ? 'Indirecta'
+      : 'Directa');
+    const rel = Object.assign({}, r, {
+      from,
+      to,
+      tipo: relationType,
+      evid: evidenceType
+    });
     model.relations.push(rel);
     model.concepts[from].rels.push(rel);
     model.concepts[to].rels.push(rel);
