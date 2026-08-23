@@ -918,10 +918,11 @@ function buildModel() {
   POT_DATA.relaciones.filter(r => (r.frase && r.pag && r.pag !== '—' && !r.porVerificar && !r.sinFrase) || (!r.frase && r.sO && r.cO && r.sD && r.cD)).forEach(r => {
     const from = conceptId(r.sO, r.cO);
     const to = conceptId(r.sD, r.cD);
+    if (!model.concepts[from] || !model.concepts[to]) return; // Skip if nodes don't exist
     const rel = Object.assign({}, r, { from, to });
     model.relations.push(rel);
-    model.concepts[from].rels.push(rel);
-    model.concepts[to].rels.push(rel);
+    if (model.concepts[from]) model.concepts[from].rels.push(rel);
+    if (model.concepts[to]) model.concepts[to].rels.push(rel);
   });
 
   // El tamaño se recalcula con las relaciones verificadas visibles, no con
