@@ -1,0 +1,45 @@
+openapi: 3.0.3
+info:
+  title: RAPOT API (esqueleto)
+  version: '0.1.0'
+  description: API esqueleto para exponer datos y servicios de RAPOT. Rellenar con endpoints reales cuando se diseñe la API.
+servers:
+  - url: https://api.example.com
+paths:
+  /nodes:
+    get:
+      summary: Listar nodos
+      responses:
+        '200':
+          description: Lista de nodos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    name:
+                      type: string
+  /edges:
+    get:
+      summary: Listar aristas / relaciones
+      responses:
+        '200':
+          description: Lista de relaciones
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    source:
+                      type: string
+                    target:
+                      type: string
+                    type:
+                      type: string
+components: {}
