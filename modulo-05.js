@@ -1454,6 +1454,25 @@ function getActivePopupTopology(definition) {
   return { activeNodeIds, activeEdges, activeDegrees, activeHubIds, maxDegree };
 }
 
+function updateScaleNetworkStats(definition = scaleNetworks[scalePopupMode]) {
+  if (!definition) return;
+  const { activeNodeIds, activeEdges, activeDegrees, activeHubIds } = getActivePopupTopology(definition);
+  const setStat = (id, value) => {
+    const element = document.getElementById(id);
+    if (element) element.textContent = String(value);
+  };
+  setStat('scaleStatsActiveNodes', activeNodeIds.size);
+  setStat('scaleStatsChangedNodes', scalePopupHiddenNodes.size);
+  setStat('scaleStatsActiveHubs', activeHubIds.size);
+  setStat('scaleStatsActiveEdges', activeEdges.length);
+  const selectedId = scalePopupSelectedNode?.id;
+  const selectedNode = definition.nodes.find(node => node.id === selectedId);
+  const selectedDegree = selectedNode ? activeDegrees[selectedNode.id] || 0 : null;
+  const selectedLabel = document.getElementById('scaleStatsSelectedNode');
+  if (selectedLabel) selectedLabel.textContent = selectedNode ? `${selectedNode.label} · grado actual` : 'Selecciona un nodo';
+  setStat('scaleStatsSelectedDegree', selectedDegree === null ? '—' : selectedDegree);
+}
+
 function animatePopupNodeSizes() {
   const circles = [...document.querySelectorAll('#scaleNetworkCanvas .popup-node circle[data-start-radius]')];
   const records = circles.map(circle => ({
@@ -1591,6 +1610,7 @@ function renderScaleNetworkPopup(mode) {
   setupScaleNetworkViewport();
   buildScaleNetworkFlow();
   animatePopupNodeSizes();
+  updateScaleNetworkStats(definition);
   canvas.querySelectorAll('.popup-node').forEach(nodeElement => {
     const node = nodes[nodeElement.dataset.nodeId];
     let clickCount = 0;
@@ -1603,6 +1623,7 @@ function renderScaleNetworkPopup(mode) {
       canvas.querySelectorAll('.popup-node').forEach(item => item.classList.remove('selected'));
       nodeElement.classList.add('selected');
       scalePopupSelectedNode = node;
+      updateScaleNetworkStats(definition);
       const description = document.getElementById('scaleNetworkDescription');
       if (description && node) description.textContent = `${node.label} · ${definition.title}`;
     };
@@ -1738,7 +1759,9 @@ function closeScaleNetworkModal() {
 
 document.getElementById('scaleNetworkRestore')?.addEventListener('click', () => {
   scalePopupHiddenNodes.clear();
+  scalePopupSelectedNode = null;
   renderScaleNetworkPopup(scalePopupMode);
+  updateScaleNetworkStats(scaleNetworks[scalePopupMode]);
   const description = document.getElementById('scaleNetworkDescription');
   if (description) description.textContent = scaleNetworkDescriptions[scalePopupMode];
 });

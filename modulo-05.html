@@ -11,7 +11,7 @@
   <link href="https://unpkg.com/maplibre-gl@6.5.0/dist/maplibre-gl.css" rel="stylesheet">
   <link rel="stylesheet" href="modulo-05.css?v=minimal-v4">
   <link rel="stylesheet" href="site-theme.css?v=minimal-v4">
-  <link rel="stylesheet" href="modulo-05-popup.css?v=svg-icons-v1">
+  <link rel="stylesheet" href="modulo-05-popup.css?v=stats-v1">
   <link rel="preload" as="image" href="assets/planosnico-preview.webp" type="image/webp" fetchpriority="high">
 </head>
 <body>
@@ -92,6 +92,13 @@
       </header>
       <div id="scaleNetworkCanvas" class="scale-network-canvas" aria-label="Red de conceptos de la escala seleccionada"></div>
       <footer class="scale-network-dialog-foot">
+        <section class="scale-network-stats" aria-label="Estadísticas en tiempo real de la red">
+          <div class="scale-network-stat"><strong id="scaleStatsActiveNodes">0</strong><span>Nodos activos</span></div>
+          <div class="scale-network-stat"><strong id="scaleStatsChangedNodes">0</strong><span>Nodos cambiados</span></div>
+          <div class="scale-network-stat"><strong id="scaleStatsActiveHubs">0</strong><span>Hubs activos</span></div>
+          <div class="scale-network-stat"><strong id="scaleStatsActiveEdges">0</strong><span>Conexiones activas</span></div>
+          <div class="scale-network-stat selected"><strong id="scaleStatsSelectedDegree">—</strong><span id="scaleStatsSelectedNode">Grado actual</span></div>
+        </section>
         <span><i class="scale-legend-line direct"></i> Relación directa</span>
         <span><i class="scale-legend-line indirect"></i> Relación indirecta</span>
         <div class="scale-network-flow-controls" role="group" aria-label="Simulación de flujo de agua">
@@ -169,6 +176,6 @@
     window.maplibregl = maplibregl;
     window.dispatchEvent(new Event("maplibre-ready"));
   </script>
-  <script src="modulo-05.js?v=svg-icons-v1"></script>
+  <script src="modulo-05.js?v=stats-v1"></script>
 </body>
 </html>
