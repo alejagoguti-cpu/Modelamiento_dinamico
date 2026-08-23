@@ -289,6 +289,91 @@ body.scale-modal-open {
   color: var(--popup-faint);
 }
 
+.scale-network-flow-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
+.scale-network-flow-btn {
+  min-height: 26px;
+  padding: 5px 9px;
+  border: 1px solid rgba(70,214,208,.42);
+  border-radius: 6px;
+  background: rgba(70,214,208,.08);
+  color: var(--popup-teal);
+  font: 700 9px/1 Inter, sans-serif;
+  cursor: pointer;
+  transition: border-color .16s ease, background .16s ease, color .16s ease;
+}
+
+.scale-network-flow-btn.secondary {
+  border-color: rgba(255,255,255,.16);
+  background: #111;
+  color: var(--popup-dim);
+}
+
+.scale-network-flow-btn:hover,
+.scale-network-flow-btn:focus-visible {
+  border-color: var(--popup-teal);
+  background: rgba(70,214,208,.16);
+  color: #fff;
+  outline: none;
+}
+
+.scale-network-flow-btn.secondary:hover,
+.scale-network-flow-btn.secondary:focus-visible {
+  border-color: rgba(232,154,108,.66);
+  color: var(--popup-copper);
+}
+
+.scale-network-flow-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--popup-dim);
+  font: 600 9px/1 Inter, sans-serif;
+  white-space: nowrap;
+}
+
+.scale-network-flow-status::before {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--popup-teal);
+  box-shadow: 0 0 8px rgba(70,214,208,.75);
+  content: '';
+}
+
+.scale-network-flow-status.is-paused::before {
+  background: var(--popup-faint);
+  box-shadow: none;
+}
+
+.popup-flow-layer {
+  pointer-events: none;
+  overflow: visible;
+}
+
+.water-particle {
+  fill: #b9fff8;
+  filter: drop-shadow(0 0 4px rgba(70,214,208,.95));
+  opacity: .94;
+  pointer-events: none;
+}
+
+.water-particle.indirect {
+  fill: #ffd3b7;
+  filter: drop-shadow(0 0 4px rgba(232,154,108,.92));
+}
+
+.water-particle.core {
+  fill: #fff;
+  opacity: 1;
+}
+
+
 @media (max-width: 700px) {
   .scale-network-modal {
     padding: 10px;
@@ -350,6 +435,11 @@ body.scale-modal-open {
     gap: 9px 14px;
     min-height: 44px;
     padding: 10px 15px 12px;
+  }
+
+  .scale-network-flow-controls {
+    width: 100%;
+    order: 3;
   }
 
   .scale-network-hint {

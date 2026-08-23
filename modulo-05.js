@@ -1130,6 +1130,113 @@ let scalePopupMode = 'natural';
 let nodeDetailState = { mode: 'natural', id: null };
 const scalePopupHiddenNodes = new Set();
 const scaleNetworkViewState = { scale: 1, x: 0, y: 0 };
+const scaleNetworkFlowState = {
+  running: true,
+  rafId: null,
+  lastTime: 0,
+  particles: [],
+};
+
+function cancelScaleNetworkFlowLoop() {
+  if (scaleNetworkFlowState.rafId !== null) {
+    window.cancelAnimationFrame(scaleNetworkFlowState.rafId);
+    scaleNetworkFlowState.rafId = null;
+  }
+  scaleNetworkFlowState.lastTime = 0;
+}
+
+function updateScaleNetworkFlowStatus(edgeCount = document.querySelectorAll('#scaleNetworkCanvas .popup-edge').length) {
+  const toggle = document.getElementById('scaleNetworkFlowToggle');
+  const status = document.getElementById('scaleNetworkFlowStatus');
+  const label = scaleNetworkFlowState.running ? 'Flujo hídrico activo' : 'Flujo hídrico pausado';
+  if (toggle) {
+    toggle.textContent = scaleNetworkFlowState.running ? 'Pausar flujo' : 'Reanudar flujo';
+    toggle.setAttribute('aria-pressed', String(scaleNetworkFlowState.running));
+  }
+  if (status) {
+    status.textContent = `${label} · ${edgeCount} conexiones`;
+    status.classList.toggle('is-paused', !scaleNetworkFlowState.running);
+  }
+}
+
+function animateScaleNetworkFlow(timestamp) {
+  if (!scaleNetworkFlowState.running || !scaleNetworkFlowState.particles.length) {
+    scaleNetworkFlowState.rafId = null;
+    return;
+  }
+  const previous = scaleNetworkFlowState.lastTime || timestamp;
+  const delta = Math.min(64, Math.max(0, timestamp - previous));
+  scaleNetworkFlowState.lastTime = timestamp;
+  scaleNetworkFlowState.particles.forEach(particle => {
+    particle.progress = (particle.progress + delta * particle.speed) % 1;
+    const x = particle.x1 + (particle.x2 - particle.x1) * particle.progress;
+    const y = particle.y1 + (particle.y2 - particle.y1) * particle.progress;
+    particle.element.setAttribute('cx', x.toFixed(2));
+    particle.element.setAttribute('cy', y.toFixed(2));
+  });
+  scaleNetworkFlowState.rafId = window.requestAnimationFrame(animateScaleNetworkFlow);
+}
+
+function setScaleNetworkFlowRunning(running) {
+  scaleNetworkFlowState.running = Boolean(running);
+  cancelScaleNetworkFlowLoop();
+  updateScaleNetworkFlowStatus();
+  if (scaleNetworkFlowState.running && scaleNetworkFlowState.particles.length) {
+    scaleNetworkFlowState.rafId = window.requestAnimationFrame(animateScaleNetworkFlow);
+  }
+}
+
+function buildScaleNetworkFlow(resetProgress = false) {
+  cancelScaleNetworkFlowLoop();
+  scaleNetworkFlowState.particles = [];
+  const svg = document.querySelector('#scaleNetworkCanvas .popup-network-svg');
+  const layer = svg?.querySelector('.popup-flow-layer');
+  if (!svg || !layer) {
+    updateScaleNetworkFlowStatus(0);
+    return;
+  }
+  layer.replaceChildren();
+  const svgNamespace = 'http://www.w3.org/2000/svg';
+  const edges = [...svg.querySelectorAll('.popup-edge')];
+  edges.forEach((edge, edgeIndex) => {
+    const x1 = Number(edge.getAttribute('x1'));
+    const y1 = Number(edge.getAttribute('y1'));
+    const x2 = Number(edge.getAttribute('x2'));
+    const y2 = Number(edge.getAttribute('y2'));
+    if (![x1, y1, x2, y2].every(Number.isFinite)) return;
+    const isIndirect = edge.classList.contains('indirect');
+    const count = isIndirect ? 1 : 2;
+    for (let index = 0; index < count; index += 1) {
+      const particle = document.createElementNS(svgNamespace, 'circle');
+      particle.setAttribute('class', `water-particle${isIndirect ? ' indirect' : ''}${index === 0 ? ' core' : ''}`);
+      particle.setAttribute('r', index === 0 ? '3.1' : '2.1');
+      particle.setAttribute('aria-hidden', 'true');
+      layer.appendChild(particle);
+      const initialProgress = (index / count + edgeIndex * .037 + (resetProgress ? 0 : .08)) % 1;
+      const initialX = x1 + (x2 - x1) * initialProgress;
+      const initialY = y1 + (y2 - y1) * initialProgress;
+      particle.setAttribute('cx', initialX.toFixed(2));
+      particle.setAttribute('cy', initialY.toFixed(2));
+      scaleNetworkFlowState.particles.push({
+        element: particle,
+        x1,
+        y1,
+        x2,
+        y2,
+        progress: initialProgress,
+        speed: isIndirect ? .00016 : .00023 + (edgeIndex % 4) * .000012
+      });
+    }
+  });
+  updateScaleNetworkFlowStatus(edges.length);
+  if (scaleNetworkFlowState.running && scaleNetworkFlowState.particles.length) {
+    scaleNetworkFlowState.rafId = window.requestAnimationFrame(animateScaleNetworkFlow);
+  }
+}
+
+function resetScaleNetworkFlow() {
+  buildScaleNetworkFlow(true);
+}
 
 function updateScaleNetworkViewport() {
   const viewport = document.getElementById('scaleNetworkViewport');
@@ -1173,6 +1280,7 @@ function setupScaleNetworkViewport() {
 
   canvas.addEventListener('pointerdown', event => {
     if (event.button !== 0 && event.pointerType !== 'touch') return;
+    if (event.target?.closest?.('.popup-node')) return;
     dragging = true;
     startX = event.clientX;
     startY = event.clientY;
@@ -1391,11 +1499,13 @@ function renderScaleNetworkPopup(mode) {
       <marker id="arrow-indirecta" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#e89a6c" /></marker>
     </defs>
     <g class="popup-edges">${edgeMarkup}</g>
+    <g class="popup-flow-layer" aria-hidden="true"></g>
     <g class="popup-nodes">${nodeMarkup}</g>
   </svg></div>`;
 
   resetScaleNetworkView();
   setupScaleNetworkViewport();
+  buildScaleNetworkFlow();
   canvas.querySelectorAll('.popup-node').forEach(nodeElement => {
     const node = nodes[nodeElement.dataset.nodeId];
     let clickCount = 0;
@@ -1519,6 +1629,7 @@ function openScaleNetworkModal(mode) {
   const definition = scaleNetworks[mode];
   if (!modal || !definition) return;
   scalePopupMode = mode;
+  scaleNetworkFlowState.running = true;
   scalePopupHiddenNodes.clear();
   scalePopupSelectedNode = null;
   document.getElementById('scaleNetworkTitle').textContent = definition.title;
@@ -1533,6 +1644,7 @@ function openScaleNetworkModal(mode) {
 function closeScaleNetworkModal() {
   const modal = document.getElementById('scaleNetworkModal');
   if (!modal) return;
+  cancelScaleNetworkFlowLoop();
   modal.classList.remove('open');
   modal.setAttribute('aria-hidden', 'true');
   document.body.classList.remove('scale-modal-open');
@@ -1543,6 +1655,14 @@ document.getElementById('scaleNetworkRestore')?.addEventListener('click', () => 
   renderScaleNetworkPopup(scalePopupMode);
   const description = document.getElementById('scaleNetworkDescription');
   if (description) description.textContent = scaleNetworkDescriptions[scalePopupMode];
+});
+document.getElementById('scaleNetworkFlowToggle')?.addEventListener('click', event => {
+  event.stopPropagation();
+  setScaleNetworkFlowRunning(!scaleNetworkFlowState.running);
+});
+document.getElementById('scaleNetworkFlowReset')?.addEventListener('click', event => {
+  event.stopPropagation();
+  resetScaleNetworkFlow();
 });
 document.getElementById('scaleNetworkClose')?.addEventListener('click', closeScaleNetworkModal);
 document.getElementById('scaleNetworkModal')?.addEventListener('click', event => {
@@ -1581,7 +1701,7 @@ document.getElementById('scaleNetworkZoomReset')?.addEventListener('click', even
       }, 9000);
     }
     window.setTimeout(preloadWetlandImage, 650);
-    window.BogotaVivaNavigator = { state, UPLS, SCALE_DATA, setScale, focusSelectedUpl, loadScaleData, calculateRoute, useProceduralFallback, toggleLocalPmtiles };
+    window.BogotaVivaNavigator = { state, UPLS, SCALE_DATA, setScale, focusSelectedUpl, loadScaleData, calculateRoute, useProceduralFallback, toggleLocalPmtiles, setScaleNetworkFlowRunning, resetScaleNetworkFlow, getScaleNetworkFlowState: () => ({ running: scaleNetworkFlowState.running, particles: scaleNetworkFlowState.particles.length, edges: document.querySelectorAll('#scaleNetworkCanvas .popup-edge').length }) };
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
