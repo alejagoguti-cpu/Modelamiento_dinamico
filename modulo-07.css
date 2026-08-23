@@ -4742,9 +4742,9 @@ body { position:relative !important; }
 .map-controls button { padding: 7px 9px; border: 1px solid rgba(201,193,182,.3); border-radius: 5px; background: rgba(8,13,13,.9); color: var(--text); font-size: 9px; transition: .18s ease; }.map-controls button:hover { border-color: var(--teal); color: var(--teal); transform: translateY(-1px); }
 .map-source-note { position: absolute; z-index: 4; right: 10px; bottom: 9px; color: rgba(242,236,227,.62); font-size: 8px; pointer-events: none; }
 .cartography-marker { display: grid; place-items: center; width: 27px; height: 27px; border: 2px solid var(--marker-color); border-radius: 50%; background: #07100f; box-shadow: 0 0 13px var(--marker-color); color: var(--marker-color); font-size: 10px; font-weight: 900; }
-@media (max-width: 720px) { .map-source-note { display: none; } .map-controls button { font-size: 8px; padding: 6px 7px; } }
+@media (max-width: 720px) { .real-map-shell { min-height: 430px; } .real-cartography-map { min-height: 430px; } .map-source-note { display: none; } .map-live-badge { top: 10px; left: 10px; max-width: calc(100% - 20px); font-size: 9px; } .map-controls { left: 10px; right: 10px; bottom: 10px; max-width: none; padding: 7px; border: 1px solid rgba(70,214,208,.25); border-radius: 10px; background: rgba(7,16,15,.82); backdrop-filter: blur(8px); } .map-controls button { flex: 1 1 30%; min-height: 38px; font-size: 10px; padding: 8px 6px; } }
 
 .procedural-simulation { position: absolute; inset: 0; z-index: 2; pointer-events: none; overflow: hidden; }
-.procedural-simulation canvas { display: block; width: 100% !important; height: 100% !important; opacity: .82; }
+.procedural-simulation canvas { display: block; width: 100% !important; height: 100% !important; opacity: .18; mix-blend-mode: multiply; }
 .real-map-shell .map-live-badge { z-index: 6; }
 .real-map-shell .map-source-note { z-index: 6; }
