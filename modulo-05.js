@@ -623,14 +623,14 @@
     const fallback = { west: upl.lon - .03, south: upl.lat - .025, east: upl.lon + .03, north: upl.lat + .025 };
     const b = bboxString(bbox || fallback);
     const roadLevel = state.map ? viewportLevel() : "meso";
-    const keys = layerKey ? [layerKey] : Object.keys(API_LAYERS).filter((key) => state.apiLayers[key]);
+    const keys = layerKey ? [layerKey] : Object.keys(API_LAYERS).filter((key) => state.apiLayers[key] && key !== "roads");
     const clauses = keys.flatMap((key) => {
       if (!state.apiLayers[key]) return [];
       if (key === "roads") return [`way["highway"~"${roadRegexForLevel(roadLevel)}"](${b});`];
       return [API_LAYERS[key].query(b)];
     });
-    /* La consulta combinada prioriza conteos y puntos; las geometrías viales pesadas se reservan para consultas específicas. */
-    const output = layerKey === "roads" || state.apiLayers.roads ? "out center geom tags;" : "out center tags;";
+    /* La consulta combinada prioriza conteos y puntos; la geometría vial pesada se consulta aparte. */
+    const output = layerKey === "roads" ? "out geom tags;" : "out center tags;";
     return `[out:json][timeout:18];(${clauses.join("")});${output}`;
   }
 
@@ -674,9 +674,23 @@
 
     /* Una consulta combinada reduce esperas, duplicados y presión sobre Overpass. */
     try {
-      const combined = await fetchOverpass(upl, scaleKey, bbox, signal, null);
+      let combined = await fetchOverpass(upl, scaleKey, bbox, signal, null);
       if (signal.aborted) throw new DOMException("Consulta cancelada", "AbortError");
-      activeKeys.forEach((key) => { state.apiLayerStatus[key] = "ok"; });
+      activeKeys.filter((key) => key !== "roads").forEach((key) => { state.apiLayerStatus[key] = "ok"; });
+      renderApiSummary(combined);
+      setText("#connectionLabel", `Datos OSM · ${combined.length.toLocaleString("es-CO")} elementos; calles en consulta`);
+      if (state.apiLayers.roads) {
+        state.apiLayerStatus.roads = "loading";
+        try {
+          const roads = await fetchOverpass(upl, scaleKey, bbox, signal, "roads");
+          combined = combined.concat(roads);
+          state.apiLayerStatus.roads = "ok";
+        } catch (roadError) {
+          if (signal.aborted) throw roadError;
+          state.apiLayerStatus.roads = "error";
+          console.warn("La geometría vial no respondió", roadError);
+        }
+      }
       renderApiSummary(combined);
       setText("#connectionLabel", `Datos OSM listos · ${combined.length.toLocaleString("es-CO")} elementos`);
       const uniqueCombined = new Map();
