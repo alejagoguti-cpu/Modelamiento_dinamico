@@ -21,3 +21,15 @@ Commit publicado tras integrar la rama remota: `183b1ec`.
 ## Pop-up de red por escala
 
 Se reincorporó la estructura del pop-up de redes al HTML y el CSS `modulo-05-popup.css`. Al pulsar `Natural`, el pop-up abre `Red Natural` con 10 nodos, 1 hub (`HUMEDALES`), 11 relaciones, 6 directas y 5 indirectas. Las relaciones se renderizan mediante elementos SVG `<line>`; los 2 elementos `<path>` detectados corresponden únicamente a las puntas de flecha de los marcadores SVG, no a curvas de conexión. Se conservan los 4 botones de escala y el selector de UPL.
+
+## Validación pública del pop-up
+
+GitHub Pages quedó en estado `built` y el enlace público ya incluye `modulo-05-popup.css?v=minimal-popup-v1`, el modal `#scaleNetworkModal` y `modulo-05.js?v=minimal-popup-v1`. Al pulsar Natural se abre `Red Natural` con 10 nodos, 1 hub, 11 relaciones (6 directas y 5 indirectas). Todas las relaciones son elementos SVG `<line>`; la selección de nodo funciona y el cierre mediante `×` funciona. El mapa y el selector de UPL permanecen presentes detrás del pop-up.
+
+## Red Natural ampliada e iconografía
+
+La red Natural pasó de 10 a 30 nodos, es decir, se añadieron 20 conceptos ecológicos: cerros orientales, páramos andinos, bosques andinos, nacimientos y recarga hídrica, humedales y ríos urbanos, corredores ecológicos, coberturas vegetales, jardines de lluvia, arbolado urbano, parques ecológicos, fauna urbana, suelo permeable, restauración ecológica, resiliencia climática y áreas de conservación, entre otros.
+
+Cada nodo tiene un icono Font Awesome dentro del SVG. La prueba local confirmó 30 nodos, 30 iconos y 42 relaciones rectas. Se corrigió una primera codificación que mostraba el texto literal `\\uf...`; ahora los iconos se renderizan como símbolos visibles.
+
+El doble clic sobre `HUMEDALES` abre el visor `#wetlandImageModal`, conserva la red Natural abierta detrás y muestra un espacio preparado para la imagen del usuario. Como la imagen todavía no ha sido enviada, el visor muestra el estado `Imagen pendiente de envío`.

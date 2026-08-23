@@ -11,7 +11,7 @@
   <link href="https://unpkg.com/maplibre-gl@6.5.0/dist/maplibre-gl.css" rel="stylesheet">
   <link rel="stylesheet" href="modulo-05.css?v=minimal-v4">
   <link rel="stylesheet" href="site-theme.css?v=minimal-v4">
-  <link rel="stylesheet" href="modulo-05-popup.css?v=minimal-popup-v1">
+  <link rel="stylesheet" href="modulo-05-popup.css?v=natural-30-icons-v1">
 </head>
 <body>
   <div class="app-shell">
@@ -98,12 +98,34 @@
     </div>
   </div>
 
+  <div id="wetlandImageModal" class="wetland-image-modal" aria-hidden="true">
+    <div class="wetland-image-dialog" role="dialog" aria-modal="true" aria-labelledby="wetlandImageTitle">
+      <header class="wetland-image-head">
+        <div>
+          <span class="wetland-image-kicker">DETALLE DE RED NATURAL</span>
+          <h2 id="wetlandImageTitle">Humedales</h2>
+          <p id="wetlandImageDescription">Haz doble clic en HUMEDALES para consultar su imagen y su función dentro de la red.</p>
+        </div>
+        <button id="wetlandImageClose" class="wetland-image-close" type="button" aria-label="Cerrar imagen">×</button>
+      </header>
+      <div class="wetland-image-body">
+        <div id="wetlandImageEmpty" class="wetland-image-empty">
+          <i class="fa-solid fa-image" aria-hidden="true"></i>
+          <strong>Imagen pendiente de envío</strong>
+          <span>Cuando envíes la imagen, la colocaré aquí sin cambiar la red.</span>
+        </div>
+        <img id="wetlandImage" alt="Imagen de HUMEDALES" hidden>
+      </div>
+      <footer class="wetland-image-foot">HUMEDALES · soporte ecológico, regulación hídrica y resiliencia climática</footer>
+    </div>
+  </div>
+
   <script src="https://unpkg.com/pmtiles@3.2.0/dist/pmtiles.js"></script>
   <script type="module">
     import * as maplibregl from "https://unpkg.com/maplibre-gl@6.5.0/dist/maplibre-gl.mjs";
     window.maplibregl = maplibregl;
     window.dispatchEvent(new Event("maplibre-ready"));
   </script>
-  <script src="modulo-05.js?v=minimal-popup-v1"></script>
+  <script src="modulo-05.js?v=natural-30-icons-v1"></script>
 </body>
 </html>

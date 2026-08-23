@@ -952,29 +952,80 @@ const scaleNetworks = {
     title: 'Red Natural',
     accent: '#46d6d0',
     nodes: [
-      { id: 'humedales', label: 'HUMEDALES', lat: 4.630, lng: -74.150, hub: true },
-      { id: 'rios', label: 'RÍOS', lat: 4.665, lng: -74.165 },
-      { id: 'quebradas', label: 'QUEBRADAS', lat: 4.612, lng: -74.182 },
-      { id: 'areas_protegidas', label: 'ÁREAS PROTEGIDAS', lat: 4.662, lng: -74.120 },
-      { id: 'reservas_forestales', label: 'RESERVAS FORESTALES', lat: 4.690, lng: -74.150 },
-      { id: 'cobertura_vegetal', label: 'COBERTURA VEGETAL', lat: 4.650, lng: -74.205 },
-      { id: 'parques', label: 'PARQUES', lat: 4.620, lng: -74.105 },
-      { id: 'rondas_hidricas', label: 'RONDAS HÍDRICAS', lat: 4.595, lng: -74.195 },
-      { id: 'bosques_urbanos', label: 'BOSQUES URBANOS', lat: 4.585, lng: -74.115 },
-      { id: 'paramos', label: 'COMPLEJO DE PÁRAMOS', lat: 4.715, lng: -74.185 }
+      { id: 'humedales', label: 'HUMEDALES', lat: 4.630, lng: -74.150, hub: true, icon: 'fa-droplet' },
+      { id: 'rios', label: 'RÍOS', lat: 4.665, lng: -74.165, icon: 'fa-water' },
+      { id: 'quebradas', label: 'QUEBRADAS', lat: 4.612, lng: -74.182, icon: 'fa-water' },
+      { id: 'areas_protegidas', label: 'ÁREAS PROTEGIDAS', lat: 4.662, lng: -74.120, icon: 'fa-shield-halved' },
+      { id: 'reservas_forestales', label: 'RESERVAS FORESTALES', lat: 4.690, lng: -74.150, hub: true, icon: 'fa-tree' },
+      { id: 'cobertura_vegetal', label: 'COBERTURA VEGETAL', lat: 4.650, lng: -74.205, icon: 'fa-leaf' },
+      { id: 'parques', label: 'PARQUES', lat: 4.620, lng: -74.105, icon: 'fa-tree' },
+      { id: 'rondas_hidricas', label: 'RONDAS HÍDRICAS', lat: 4.595, lng: -74.195, icon: 'fa-water' },
+      { id: 'bosques_urbanos', label: 'BOSQUES URBANOS', lat: 4.585, lng: -74.115, hub: true, icon: 'fa-tree' },
+      { id: 'paramos', label: 'COMPLEJO DE PÁRAMOS', lat: 4.715, lng: -74.185, icon: 'fa-mountain' },
+      { id: 'cerros_orientales', label: 'CERROS ORIENTALES', lat: 4.735, lng: -74.055, hub: true, icon: 'fa-mountain' },
+      { id: 'paramos_andinos', label: 'PÁRAMOS ANDINOS', lat: 4.710, lng: -74.075, icon: 'fa-mountain' },
+      { id: 'bosques_andinos', label: 'BOSQUES ANDINOS', lat: 4.690, lng: -74.090, icon: 'fa-tree' },
+      { id: 'nacimientos_agua', label: 'NACIMIENTOS DE AGUA', lat: 4.680, lng: -74.120, icon: 'fa-droplet' },
+      { id: 'quebradas_urbanas', label: 'QUEBRADAS URBANAS', lat: 4.610, lng: -74.210, icon: 'fa-water' },
+      { id: 'rios_urbanos', label: 'RÍOS URBANOS', lat: 4.650, lng: -74.080, icon: 'fa-water' },
+      { id: 'humedales_urbanos', label: 'HUMEDALES URBANOS', lat: 4.600, lng: -74.150, icon: 'fa-droplet' },
+      { id: 'rondas_rio', label: 'RONDAS DE RÍO', lat: 4.625, lng: -74.080, icon: 'fa-water' },
+      { id: 'recarga_hidrica', label: 'RECARGA HÍDRICA', lat: 4.670, lng: -74.065, icon: 'fa-droplet' },
+      { id: 'infiltracion_agua', label: 'INFILTRACIÓN DE AGUA', lat: 4.640, lng: -74.090, icon: 'fa-droplet' },
+      { id: 'corredores_ecologicos', label: 'CORREDORES ECOLÓGICOS', lat: 4.630, lng: -74.050, icon: 'fa-leaf' },
+      { id: 'coberturas_vegetales', label: 'COBERTURAS VEGETALES', lat: 4.605, lng: -74.095, icon: 'fa-leaf' },
+      { id: 'jardines_lluvia', label: 'JARDINES DE LLUVIA', lat: 4.585, lng: -74.150, icon: 'fa-leaf' },
+      { id: 'arbolado_urbano', label: 'ARBOLADO URBANO', lat: 4.620, lng: -74.030, icon: 'fa-tree' },
+      { id: 'parques_ecologicos', label: 'PARQUES ECOLÓGICOS', lat: 4.645, lng: -74.045, icon: 'fa-tree' },
+      { id: 'fauna_urbana', label: 'FAUNA URBANA', lat: 4.675, lng: -74.035, icon: 'fa-eye' },
+      { id: 'suelo_permeable', label: 'SUELO PERMEABLE', lat: 4.570, lng: -74.135, icon: 'fa-leaf' },
+      { id: 'restauracion_ecologica', label: 'RESTAURACIÓN ECOLÓGICA', lat: 4.715, lng: -74.040, icon: 'fa-shield-halved' },
+      { id: 'resiliencia_climatica', label: 'RESILIENCIA CLIMÁTICA', lat: 4.575, lng: -74.085, icon: 'fa-temperature-half' },
+      { id: 'areas_conservacion', label: 'ÁREAS DE CONSERVACIÓN', lat: 4.700, lng: -74.030, icon: 'fa-shield-halved' }
     ],
     edges: [
       ['humedales', 'rios', 'directa'],
       ['humedales', 'areas_protegidas', 'directa'],
       ['humedales', 'quebradas', 'indirecta'],
       ['humedales', 'reservas_forestales', 'directa'],
+      ['humedales', 'humedales_urbanos', 'directa'],
+      ['humedales', 'resiliencia_climatica', 'indirecta'],
       ['rios', 'rondas_hidricas', 'directa'],
+      ['rios', 'rios_urbanos', 'directa'],
+      ['rios', 'nacimientos_agua', 'indirecta'],
       ['quebradas', 'rondas_hidricas', 'indirecta'],
+      ['quebradas', 'quebradas_urbanas', 'directa'],
       ['areas_protegidas', 'cobertura_vegetal', 'directa'],
-      ['reservas_forestales', 'paramos', 'indirecta'],
+      ['areas_protegidas', 'cerros_orientales', 'directa'],
       ['areas_protegidas', 'parques', 'indirecta'],
+      ['reservas_forestales', 'paramos', 'indirecta'],
+      ['reservas_forestales', 'bosques_andinos', 'directa'],
+      ['reservas_forestales', 'areas_conservacion', 'directa'],
+      ['cerros_orientales', 'paramos_andinos', 'directa'],
+      ['cerros_orientales', 'bosques_andinos', 'directa'],
+      ['paramos_andinos', 'nacimientos_agua', 'directa'],
+      ['paramos_andinos', 'recarga_hidrica', 'indirecta'],
+      ['bosques_andinos', 'cobertura_vegetal', 'directa'],
+      ['bosques_andinos', 'fauna_urbana', 'indirecta'],
       ['cobertura_vegetal', 'bosques_urbanos', 'directa'],
-      ['parques', 'bosques_urbanos', 'indirecta']
+      ['cobertura_vegetal', 'coberturas_vegetales', 'directa'],
+      ['coberturas_vegetales', 'arbolado_urbano', 'directa'],
+      ['parques', 'parques_ecologicos', 'indirecta'],
+      ['parques', 'jardines_lluvia', 'directa'],
+      ['parques_ecologicos', 'corredores_ecologicos', 'directa'],
+      ['corredores_ecologicos', 'fauna_urbana', 'indirecta'],
+      ['rondas_hidricas', 'suelo_permeable', 'directa'],
+      ['rios_urbanos', 'rondas_rio', 'directa'],
+      ['rondas_rio', 'infiltracion_agua', 'directa'],
+      ['humedales_urbanos', 'jardines_lluvia', 'indirecta'],
+      ['humedales_urbanos', 'fauna_urbana', 'directa'],
+      ['recarga_hidrica', 'infiltracion_agua', 'directa'],
+      ['infiltracion_agua', 'suelo_permeable', 'directa'],
+      ['suelo_permeable', 'resiliencia_climatica', 'directa'],
+      ['resiliencia_climatica', 'restauracion_ecologica', 'directa'],
+      ['restauracion_ecologica', 'areas_conservacion', 'indirecta'],
+      ['arbolado_urbano', 'jardines_lluvia', 'indirecta'],
+      ['areas_conservacion', 'corredores_ecologicos', 'directa']
     ]
   },
   cultural: {
@@ -1195,14 +1246,27 @@ function renderScaleNetworkPopup(mode) {
     return `<line class="${className}" x1="${from.x.toFixed(1)}" y1="${from.y.toFixed(1)}" x2="${to.x.toFixed(1)}" y2="${to.y.toFixed(1)}" stroke="${color}" marker-end="url(#arrow-${type})" />`;
   }).join('');
 
+  const popupIconGlyphs = {
+    'fa-droplet': '\uf043',
+    'fa-water': '\uf773',
+    'fa-shield-halved': '\uf132',
+    'fa-tree': '\uf1bb',
+    'fa-leaf': '\uf06c',
+    'fa-mountain': '\uf6fc',
+    'fa-eye': '\uf06e',
+    'fa-temperature-half': '\uf2c9'
+  };
   const nodeMarkup = definition.nodes.map(node => {
     const p = nodes[node.id];
-    const radius = node.hub ? 42 : 29;
+    const radius = node.hub ? 36 : 24;
     const lines = splitPopupLabel(node.label);
-    const firstY = p.y - ((lines.length - 1) * 7);
-    const labelMarkup = lines.map((line, index) => `<tspan x="${p.x.toFixed(1)}" dy="${index === 0 ? 0 : 14}">${line}</tspan>`).join('');
+    const firstY = p.y + (lines.length > 1 ? 1 : 4);
+    const glyph = popupIconGlyphs[node.icon] || '';
+    const iconMarkup = glyph ? `<text class="popup-node-icon" x="${p.x.toFixed(1)}" y="${(p.y - radius * .48).toFixed(1)}">${glyph}</text>` : '';
+    const labelMarkup = lines.map((line, index) => `<tspan x="${p.x.toFixed(1)}" dy="${index === 0 ? 0 : 11}">${line}</tspan>`).join('');
     return `<g class="popup-node ${node.hub ? 'hub' : ''}" data-node-id="${node.id}" tabindex="0" role="button" aria-label="${node.label}">
       <circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${radius}" />
+      ${iconMarkup}
       <text x="${p.x.toFixed(1)}" y="${firstY.toFixed(1)}">${labelMarkup}</text>
     </g>`;
   }).join('');
@@ -1221,15 +1285,37 @@ function renderScaleNetworkPopup(mode) {
   resetScaleNetworkView();
   setupScaleNetworkViewport();
   canvas.querySelectorAll('.popup-node').forEach(nodeElement => {
+    const node = nodes[nodeElement.dataset.nodeId];
+    let clickTimer = null;
     const selectNode = () => {
       canvas.querySelectorAll('.popup-node').forEach(item => item.classList.remove('selected'));
       nodeElement.classList.add('selected');
-      const node = nodes[nodeElement.dataset.nodeId];
       scalePopupSelectedNode = node;
       const description = document.getElementById('scaleNetworkDescription');
       if (description && node) description.textContent = `${node.label} · ${definition.title}`;
     };
-    nodeElement.addEventListener('click', selectNode);
+    const openNodeDetail = () => {
+      selectNode();
+      if (mode === 'natural' && node?.id === 'humedales') openWetlandImageModal();
+    };
+    nodeElement.addEventListener('click', () => {
+      if (clickTimer) {
+        window.clearTimeout(clickTimer);
+        clickTimer = null;
+        openNodeDetail();
+        return;
+      }
+      clickTimer = window.setTimeout(() => {
+        clickTimer = null;
+        selectNode();
+      }, 230);
+    });
+    nodeElement.addEventListener('dblclick', event => {
+      event.preventDefault();
+      if (clickTimer) window.clearTimeout(clickTimer);
+      clickTimer = null;
+      openNodeDetail();
+    });
     nodeElement.addEventListener('keydown', event => {
       if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault();
@@ -1238,6 +1324,36 @@ function renderScaleNetworkPopup(mode) {
     });
   });
 }
+
+function openWetlandImageModal() {
+  const modal = document.getElementById('wetlandImageModal');
+  if (!modal) return;
+  const image = document.getElementById('wetlandImage');
+  const empty = document.getElementById('wetlandImageEmpty');
+  const hasImage = Boolean(image?.getAttribute('src'));
+  if (image) image.hidden = !hasImage;
+  if (empty) empty.hidden = hasImage;
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('wetland-modal-open');
+  document.getElementById('wetlandImageClose')?.focus();
+}
+
+function closeWetlandImageModal() {
+  const modal = document.getElementById('wetlandImageModal');
+  if (!modal) return;
+  modal.classList.remove('open');
+  modal.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('wetland-modal-open');
+}
+
+document.getElementById('wetlandImageClose')?.addEventListener('click', closeWetlandImageModal);
+document.getElementById('wetlandImageModal')?.addEventListener('click', event => {
+  if (event.target.id === 'wetlandImageModal') closeWetlandImageModal();
+});
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape') closeWetlandImageModal();
+});
 
 function openScaleNetworkModal(mode) {
   const modal = document.getElementById('scaleNetworkModal');
