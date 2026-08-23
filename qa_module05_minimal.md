@@ -33,3 +33,9 @@ La red Natural pasó de 10 a 30 nodos, es decir, se añadieron 20 conceptos ecol
 Cada nodo tiene un icono Font Awesome dentro del SVG. La prueba local confirmó 30 nodos, 30 iconos y 42 relaciones rectas. Se corrigió una primera codificación que mostraba el texto literal `\\uf...`; ahora los iconos se renderizan como símbolos visibles.
 
 El doble clic sobre `HUMEDALES` abre el visor `#wetlandImageModal`, conserva la red Natural abierta detrás y muestra un espacio preparado para la imagen del usuario. Como la imagen todavía no ha sido enviada, el visor muestra el estado `Imagen pendiente de envío`.
+
+## Verificación pública de ampliación
+
+La versión pública `natural-30-icons-v1-final` compiló en estado `built` y sirve los archivos con caché `natural-30-icons-v1`. Al abrir Natural, el DOM público muestra 30 nodos con iconos SVG visibles, incluyendo HUMEDALES, RÍOS, CERROS ORIENTALES, PÁRAMOS, BOSQUES, COBERTURAS y RESILIENCIA CLIMÁTICA. La red contiene 42 relaciones. El mapa OSM monocromático, sus calles y el selector de UPL permanecen disponibles detrás del pop-up.
+
+La prueba pública de doble clic confirmó: `nodeFound: true`, 30 nodos, 30 iconos, 42 relaciones, `imageModalOpen: true`, título `Humedales`, mapa presente y red Natural todavía abierta detrás. El visor muestra el placeholder porque la imagen real aún está pendiente de envío.
