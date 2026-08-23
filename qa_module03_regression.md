@@ -43,3 +43,17 @@ La URL pública `https://alejagoguti-cpu.github.io/Modelamiento_dinamico/modulo-
 Se reemplazó la distribución por cuadrantes aislados por un layout compacto: lienzo 2400×1700, hubs próximos y satélites en una malla común. Se reemplazó la función de rutas curvas por segmentos rectos recortados al borde de cada nodo.
 
 En local, el DOM confirma 31 nodos y 52 relaciones; 0 rutas contienen comandos de curva (`Q/C/A/S`) y las 52 relaciones usan segmentos `L`. La extensión de nodos quedó x=400–2030 y y=350–1410 dentro del viewBox 2400×1700.
+
+## Verificación pública del trazado recto
+
+La URL pública `https://alejagoguti-cpu.github.io/Modelamiento_dinamico/modulo-03.html?qa=straight-integrated-v1-final` ya carga el nuevo layout. La consola confirma 31 nodos, 52 relaciones, 0 rutas curvas y 52 rutas rectas con segmento `L`, dentro de un viewBox 2400×1700. Los indicadores permanecen en 4 estructuras, 52 relaciones, 31 nodos y 52 activas.
+
+Commit del ajuste: `144657e`.
+
+## Recálculo dinámico de tamaño
+
+Se añadió `drawRadius` para separar el radio pintado del radio objetivo. `recomputeActiveGraph()` calcula `activeDeg` filtrando `relActive`, y `animateNetworkReflow()` interpola el radio, el hitbox, el foreignObject, el icono, la etiqueta y la geometría de las flechas.
+
+Prueba local con EEP: HUMEDALES pasa de radio 118 y 8 conexiones a desaparecer por pertenecer a la estructura apagada; TRANSPORTE PÚBLICO pasa de 96 a 85 con 6→5 conexiones activas; PATRIMONIO NATURAL pasa de 85 a 74 con 5→4; SERVICIOS EMPRESARIALES conserva 118 con 8 conexiones. Tras reactivar todo, los radios regresan a 118, 96, 85 y 118 respectivamente.
+
+La prueba del nodo crítico HUMEDALES también funciona: antes había 31 nodos, 52 relaciones y HUMEDALES tenía radio 118 con 8 conexiones; al simular su apagado, HUMEDALES desaparece, PATRIMONIO NATURAL baja de radio 85 a 74 porque pasa de 5 a 4 conexiones activas, y el resto conserva el tamaño correspondiente a sus grados activos. El restablecimiento devuelve la red completa.

@@ -972,6 +972,9 @@ function relationPath(r, a, b, rA, rB) {
 // pertenecen a la estructura apagada (ver "sys-off"/"rel-off").
 // ---------------------------------------------------------------------
 const drawPos = {};
+// Radio que está pintado en pantalla. Se separa de nodeR para poder animar
+// suavemente el cambio de tamaño al apagar o reactivar una estructura.
+const drawRadius = {};
 
 function lossRatioOf(c) {
   const total = c.rels.length;
@@ -981,9 +984,15 @@ function lossRatioOf(c) {
 
 function recomputeActiveGraph() {
   Object.values(model.concepts).forEach(c => {
+    // El radio nunca usa el grado histórico: solo cuenta relaciones activas
+    // después de aplicar estado de estructuras, filtros y nodos apagados.
     c.activeDeg = c.rels.filter(relActive).length;
-    nodeR[c.id] = Math.max(36, 30 + c.activeDeg * 11);
+    nodeR[c.id] = c.activeDeg > 0 ? Math.max(36, 30 + c.activeDeg * 11) : 30;
   });
+}
+
+function radiusFor(id) {
+  return Number.isFinite(drawRadius[id]) ? drawRadius[id] : (nodeR[id] || 36);
 }
 function computeDrift() {
   Object.keys(layout).forEach(id => {
@@ -993,9 +1002,11 @@ function computeDrift() {
 }
 
 let networkReflowFrame = 0;
-function animateNetworkReflow(targets, fromPositions) {
+function animateNetworkReflow(targets, fromPositions, fromRadii, targetRadii) {
   cancelAnimationFrame(networkReflowFrame);
   const from = fromPositions || Object.fromEntries(Object.keys(targets).map(id => [id, { ...targets[id] }]));
+  const startR = fromRadii || {};
+  const endR = targetRadii || {};
   const started = performance.now();
   const duration = 920;
   const tick = now => {
@@ -1006,10 +1017,16 @@ function animateNetworkReflow(targets, fromPositions) {
       const a = from[id] || targets[id];
       const b = targets[id];
       drawPos[id] = { x: a.x + (b.x - a.x) * eased, y: a.y + (b.y - a.y) * eased };
+      const start = Number.isFinite(startR[id]) ? startR[id] : endR[id];
+      const end = Number.isFinite(endR[id]) ? endR[id] : nodeR[id];
+      drawRadius[id] = start + (end - start) * eased;
     });
     updateGraphGeometry();
     if (t < 1) networkReflowFrame = requestAnimationFrame(tick);
-    else Object.keys(targets).forEach(id => { drawPos[id] = { ...targets[id] }; });
+    else Object.keys(targets).forEach(id => {
+      drawPos[id] = { ...targets[id] };
+      drawRadius[id] = endR[id] ?? nodeR[id];
+    });
   };
   networkReflowFrame = requestAnimationFrame(tick);
 }
@@ -1017,14 +1034,31 @@ function animateNetworkReflow(targets, fromPositions) {
 const nodeDrag = { active: null, pointerId: null, startX: 0, startY: 0, base: null, delta: { x: 0, y: 0 }, raf: 0 };
 function updateGraphGeometry() {
   document.querySelectorAll('#gNodes .concept').forEach(g => {
-    const p = drawPos[g.getAttribute('data-id')];
+    const id = g.getAttribute('data-id');
+    const p = drawPos[id];
+    const radius = radiusFor(id);
     if (p) g.setAttribute('transform', `translate(${p.x.toFixed(1)},${p.y.toFixed(1)})`);
+    const ring = g.querySelector('.node-ring');
+    const hit = g.querySelector('.node-hit');
+    const fo = g.querySelector('foreignObject');
+    if (ring) ring.setAttribute('r', radius.toFixed(1));
+    if (hit) hit.setAttribute('r', (radius + 24).toFixed(1));
+    if (fo) {
+      fo.setAttribute('x', (-radius * 0.95).toFixed(1));
+      fo.setAttribute('y', (-radius * 0.95).toFixed(1));
+      fo.setAttribute('width', (radius * 1.9).toFixed(1));
+      fo.setAttribute('height', (radius * 1.9).toFixed(1));
+    }
+    const icon = g.querySelector('.node-icon');
+    const name = g.querySelector('.node-name');
+    if (icon) icon.style.fontSize = `${Math.max(15, radius * 0.34)}px`;
+    if (name) name.style.fontSize = `${Math.max(9, Math.min(18, radius * 0.16))}px`;
   });
   document.querySelectorAll('#gRels path[data-rel]').forEach(path => {
     const r = model.relations.find(x => String(x.id) === path.getAttribute('data-rel'));
     if (!r || !relActive(r)) return;
     const a = drawPos[r.from], b = drawPos[r.to];
-    if (a && b) path.setAttribute('d', relationPath(r, a, b, nodeR[r.from], nodeR[r.to]));
+    if (a && b) path.setAttribute('d', relationPath(r, a, b, radiusFor(r.from), radiusFor(r.to)));
   });
 }
 function paintDraggedGraph() {
@@ -1075,9 +1109,17 @@ function render() {
   const previousPositions = Object.keys(drawPos).length
     ? Object.fromEntries(Object.keys(drawPos).map(id => [id, { ...drawPos[id] }]))
     : null;
+  const previousRadii = Object.keys(drawRadius).length
+    ? Object.fromEntries(Object.keys(drawRadius).map(id => [id, drawRadius[id]]))
+    : null;
   recomputeActiveGraph();
   computeLayoutClean();
   const targets = Object.fromEntries(Object.keys(layout).map(id => [id, { ...layout[id] }]));
+  const targetRadii = Object.fromEntries(Object.keys(targets).map(id => [id, nodeR[id]]));
+  Object.keys(drawRadius).forEach(id => { if (!targets[id]) delete drawRadius[id]; });
+  Object.keys(targetRadii).forEach(id => {
+    if (!Number.isFinite(drawRadius[id])) drawRadius[id] = targetRadii[id];
+  });
   if (previousPositions) Object.keys(targets).forEach(id => { drawPos[id] = previousPositions[id] || targets[id]; });
   else computeDrift();
   const gGuides = document.getElementById('gGuides');
@@ -1099,8 +1141,8 @@ function render() {
     // Los datos permanecen intactos y volverán al activar el sistema.
     if (!active) return;
     const a = drawPos[r.from] || layout[r.from], b = drawPos[r.to] || layout[r.to];
-    const rA = nodeR[r.from];
-    const rB = nodeR[r.to];
+    const rA = radiusFor(r.from);
+    const rB = radiusFor(r.to);
     const d = relationPath(r, a, b, rA, rB);
     const kind = r.tipo === 'Soporte' ? 'soporte' : 'resiliencia';
     const evidence = String(r.evid || 'Directa').toLowerCase().startsWith('ind') ? 'indirecta' : 'directa';
@@ -1156,7 +1198,8 @@ function render() {
       // círculo ni etiqueta flotante. El modelo permanece disponible para
       // recalcularse si vuelve a tener una relación activa.
       if (sysOff || off || isolated) return;
-      const R = nodeR[id];
+      const targetR = nodeR[id];
+      const R = radiusFor(id);
 const iconSize = Math.max(28, Math.round(R * 0.52));
       // Etiquetas más grandes y legibles, manteniendo proporción con el nodo.
       const fontSize = Math.max(26, Math.min(44, R * 0.28));
@@ -1299,7 +1342,7 @@ const iconSize = Math.max(28, Math.round(R * 0.52));
   });
 
   purgeInactiveSvg();
-  if (previousPositions) animateNetworkReflow(targets, previousPositions);
+  if (previousPositions || previousRadii) animateNetworkReflow(targets, previousPositions, previousRadii, targetRadii);
 }
 
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
