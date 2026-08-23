@@ -809,6 +809,11 @@ function relActive(r) {
   return Boolean(state[r.sO] && state[r.sD] && nodeOn(r.from) && nodeOn(r.to));
 }
 
+function isNodeIsolated(conceptId) {
+  const c = model.concepts[conceptId];
+  return !c || !c.rels.some(relActive);
+}
+
 // Las posiciones de partida vienen de POT_DATA (agrupadas por estructura),
 // pero muchas quedaban demasiado pegadas / superpuestas. Aquí se relajan con
 // una simulación simple de fuerzas: se separan los nodos que se solapan y se
@@ -828,8 +833,8 @@ function computeLayoutClean() {
     ESECI: { x: 750, y: 1680 },
     EIP: { x: 2250, y: 1680 }
   };
-  const SLOT_DX = 360;
-  const SLOT_DY = 320;
+  const SLOT_DX = 420;
+  const SLOT_DY = 380;
   const slots = [
     [-1, -2], [0, -2], [1, -2],
     [-1, -1], [0, -1], [1, -1],
@@ -1240,37 +1245,43 @@ const iconSize = Math.max(28, Math.round(R * 0.52));
       g.addEventListener('pointercancel', finishNodeDrag);
       g.addEventListener('lostpointercapture', finishNodeDrag);
 
-      // Interacción determinista: un toque enfoca; dos toques dentro de
-      // 420 ms ocultan el nodo y su cascada. Se admite además dblclick para
-      // navegadores de escritorio que no entregan un detail consistente.
-      let lastTapAt = 0;
-      let tapTimer = null;
-      let skipDblClickUntil = 0;
-      const clearTapTimer = () => { if (tapTimer) { clearTimeout(tapTimer); tapTimer = null; } };
+      // Detección de doble clic confiable en móvil (touch) y escritorio (click/dblclick)
+      let lastClickTime = 0;
       const hideFromDoubleTap = () => {
-        clearTapTimer();
-        lastTapAt = 0;
-        skipDblClickUntil = performance.now() + 500;
         hideNodeAndConnections(id);
       };
-      g.addEventListener('click', ev => {
-        ev.stopPropagation();
+
+      const handleDoubleClick = (ev) => {
         const now = performance.now();
-        const count = Number(ev.detail) || 0;
-        if (count >= 2 || now - lastTapAt < 420) {
+        if (now - lastClickTime < 300) {
+          ev.stopPropagation();
           hideFromDoubleTap();
-          return;
+          lastClickTime = 0;
+        } else {
+          lastClickTime = now;
+          focusConcept(id);
         }
-        lastTapAt = now;
-        clearTapTimer();
-        tapTimer = setTimeout(() => {
-          if (lastTapAt === now) { focusConcept(id); lastTapAt = 0; }
-        }, 300);
-      });
+      };
+
+      // Desktop: dblclick event
       g.addEventListener('dblclick', ev => {
         ev.stopPropagation();
-        if (performance.now() < skipDblClickUntil) { skipDblClickUntil = 0; return; }
         hideFromDoubleTap();
+      });
+
+      // Mobile: click count + touch events
+      g.addEventListener('click', ev => {
+        ev.stopPropagation();
+        if (ev.detail >= 2) {
+          hideFromDoubleTap();
+        } else {
+          handleDoubleClick(ev);
+        }
+      });
+
+      // Fallback para touch devices
+      g.addEventListener('touchend', ev => {
+        if (ev.touches.length === 0) handleDoubleClick(ev);
       });
 
       gNodes.appendChild(g);
