@@ -555,23 +555,23 @@
     renderApiSummary(elements);
   }
 
-  function buildOverpassQuery(upl, scaleKey, bbox = null) {
+  function buildOverpassQuery(upl, scaleKey, bbox = null, layerKey = null) {
     const fallback = { west: upl.lon - .03, south: upl.lat - .025, east: upl.lon + .03, north: upl.lat + .025 };
     const b = bboxString(bbox || fallback);
     const roadLevel = state.map ? viewportLevel() : "meso";
-    const clauses = [];
-    if (state.apiLayers.roads) clauses.push(`way["highway"~"${roadRegexForLevel(roadLevel)}"](${b});`);
-    Object.entries(API_LAYERS).forEach(([key, layer]) => {
-      if (key !== "roads" && state.apiLayers[key]) clauses.push(layer.query(b));
+    const keys = layerKey ? [layerKey] : Object.keys(API_LAYERS).filter((key) => state.apiLayers[key]);
+    const clauses = keys.flatMap((key) => {
+      if (!state.apiLayers[key]) return [];
+      if (key === "roads") return [`way["highway"~"${roadRegexForLevel(roadLevel)}"](${b});`];
+      return [API_LAYERS[key].query(b)];
     });
-    return `[out:json][timeout:25];(${clauses.join("")});out center geom tags;`;
+    return `[out:json][timeout:18];(${clauses.join("")});out center geom tags;`;
   }
 
-  async function fetchOverpass(upl, scaleKey, bbox, signal) {
-    const layerKey = Object.entries(state.apiLayers).filter(([, enabled]) => enabled).map(([key]) => key).join("|");
+  async function fetchOverpass(upl, scaleKey, bbox, signal, layerKey) {
     const key = `overpass:${upl.num}:${scaleKey}:${layerKey}:${bboxString(bbox)}`;
     if (CACHE.has(key)) return CACHE.get(key);
-    const query = buildOverpassQuery(upl, scaleKey, bbox);
+    const query = buildOverpassQuery(upl, scaleKey, bbox, layerKey);
     let lastError = null;
     for (const endpoint of OVERPASS_ENDPOINTS) {
       try {
@@ -588,6 +588,27 @@
       }
     }
     throw lastError || new Error("Ningún servidor Overpass respondió");
+  }
+
+  async function fetchVisibleApiLayers(upl, scaleKey, bbox, signal) {
+    const activeKeys = Object.keys(API_LAYERS).filter((key) => state.apiLayers[key]);
+    if (!activeKeys.length) return [];
+    const results = [];
+    let completed = 0;
+    for (let index = 0; index < activeKeys.length; index += 3) {
+      const batch = activeKeys.slice(index, index + 3);
+      const settled = await Promise.allSettled(batch.map((key) => fetchOverpass(upl, scaleKey, bbox, signal, key)));
+      settled.forEach((result, offset) => {
+        if (result.status === "fulfilled") results.push(...result.value);
+        completed += 1;
+        setText("#connectionLabel", `Consultando OSM… ${completed}/${activeKeys.length} capas`);
+      });
+      if (signal.aborted) throw new DOMException("Consulta cancelada", "AbortError");
+    }
+    const unique = new Map();
+    results.forEach((element) => unique.set(`${element.type}/${element.id}`, element));
+    if (!results.length) throw new Error("Ningún servidor Overpass respondió");
+    return [...unique.values()];
   }
 
   function renderProceduralMarkers() {
@@ -635,7 +656,7 @@
     setText("#connectionLabel", "Consultando OSM…");
     showToast(`Consultando ${scale.label.toLowerCase()} en el área visible…`);
     try {
-      const elements = await fetchOverpass(state.selectedUpl, state.selectedScale, bbox, controller.signal);
+      const elements = await fetchVisibleApiLayers(state.selectedUpl, state.selectedScale, bbox, controller.signal);
       if (token !== state.queryToken || controller.signal.aborted) return;
       renderPlaces(elements);
       setText("#connectionLabel", "Mapa real conectado");
