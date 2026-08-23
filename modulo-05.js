@@ -729,38 +729,31 @@
     const priority = ["natural", "amenities", "transport", "water", "green", "parks", "culture", "commerce", "education", "health", "care", "boundaries", "roads"];
     const activeKeys = Object.keys(API_LAYERS).filter((key) => state.apiLayers[key]).sort((a, b) => priority.indexOf(a) - priority.indexOf(b));
     if (!activeKeys.length) return [];
-    /* El respaldo ya está visible; las tarjetas esperan datos sin fingir un cero. */
     activeKeys.forEach((key) => { state.apiLayerStatus[key] = "pending"; state.apiLayerElements[key] = []; });
     renderApiSummary([]);
-    setText("#connectionLabel", `Respaldo visible · consultando OSM 0/${activeKeys.length} capas`);
+    setText("#connectionLabel", `Consultando OSM · 0/${activeKeys.length} categorías`);
 
-    /* Carga progresiva: cada lote se dibuja al llegar y no bloquea toda la cartografía. */
-    const results = [];
-    let completed = 0;
-    for (let index = 0; index < activeKeys.length; index += 4) {
-      const batch = activeKeys.slice(index, index + 4);
-      const settled = await Promise.allSettled(batch.map((key) => fetchOverpass(upl, scaleKey, bbox, signal, key)));
-      settled.forEach((result, offset) => {
-        const key = batch[offset];
-        state.apiLayerStatus[key] = result.status === "fulfilled" ? "ok" : "error";
-        state.apiLayerElements[key] = result.status === "fulfilled" ? result.value : [];
-        if (result.status === "fulfilled") results.push(...result.value);
-        completed += 1;
-        const unique = new Map();
-        results.forEach((element) => unique.set(`${element.type}/${element.id}`, element));
-        const visibleResults = [...unique.values()];
-        /* El mapa y los contadores se actualizan después de cada respuesta. */
-        renderPlaces(visibleResults);
-        renderApiSummary(visibleResults);
-        setText("#connectionLabel", `Datos OSM parciales · ${completed}/${activeKeys.length} capas · ${visibleResults.length.toLocaleString("es-CO")} elementos`);
-      });
-      if (signal.aborted) throw new DOMException("Consulta cancelada", "AbortError");
-    }
+    /* Una sola petición evita que Overpass bloquee el navegador por 28 solicitudes
+       simultáneas. La respuesta se reparte localmente por las etiquetas de cada capa. */
+    const queryKeys = activeKeys.filter((key) => key !== "roads");
+    const combined = await fetchOverpass(upl, scaleKey, bbox, signal, null);
     const unique = new Map();
-    results.forEach((element) => unique.set(`${element.type}/${element.id}`, element));
-    if (!results.length) throw new Error("Ningún servidor Overpass respondió");
-    setText("#connectionLabel", `Datos OSM listos · ${unique.size.toLocaleString("es-CO")} elementos`);
-    return [...unique.values()];
+    combined.forEach((element) => unique.set(`${element.type}/${element.id}`, element));
+    const allElements = [...unique.values()];
+    activeKeys.forEach((key) => {
+      if (key === "roads") {
+        state.apiLayerStatus[key] = state.localRoadCount ? "ok" : "pending";
+        state.apiLayerElements[key] = state.localRoadFeatures;
+        return;
+      }
+      const layer = API_LAYERS[key];
+      state.apiLayerElements[key] = allElements.filter((element) => layer.match?.(element.tags || {}, element));
+      state.apiLayerStatus[key] = "ok";
+    });
+    renderPlaces(allElements);
+    renderApiSummary(allElements);
+    setText("#connectionLabel", `Datos OSM listos · ${allElements.length.toLocaleString("es-CO")} elementos · ${queryKeys.length} categorías clasificadas`);
+    return allElements;
   }
 
   function renderProceduralMarkers() {
