@@ -84,6 +84,11 @@
           <button id="modeToggle" class="mode-toggle" role="switch" aria-checked="true"><span></span></button>
         </div>
         <div class="source-mode-row"><span><i class="fa-solid fa-database"></i> Fuente vial</span><button id="localTilesBtn" class="local-tiles-btn" type="button"><i class="fa-solid fa-hard-drive"></i> Usar PMTiles local</button></div>
+        <div class="panel-block api-layers-block">
+          <div class="block-label"><i class="fa-solid fa-layer-group"></i> CAPAS DISPONIBLES EN LA API</div>
+          <div id="apiLayerToggles" class="api-layer-toggles" role="group" aria-label="Capas de datos OpenStreetMap"></div>
+          <p class="field-note">Cada capa consulta datos OSM dentro del área visible. Puedes combinar varias capas.</p>
+        </div>
       </section>
 
       <section class="map-panel" aria-label="Mapa de Bogotá">
@@ -108,6 +113,7 @@
           <article class="metric-card"><strong id="metricPlaces">—</strong><span>lugares OSM</span><small>equipamientos y actividades</small></article>
           <article class="metric-card"><strong id="metricRoute">—</strong><span>ruta calculada</span><small>distancia sobre la red</small></article>
         </div>
+        <div class="api-summary" aria-live="polite"><div class="block-label">RESUMEN DE DATOS API</div><div id="apiSummary" class="api-summary-list"><span>Activa una capa para consultar sus elementos.</span></div></div>
 
         <div class="right-section"><div class="block-label">LECTURA DE LA ESCALA ACTIVA</div><p id="scaleReading">La escala natural hace visibles el agua, los humedales y la estructura ecológica como sistemas vivos que atraviesan el límite administrativo.</p></div>
         <div class="right-section source-section"><div class="block-label">FUENTES Y TRANSPARENCIA</div><p>La base cartográfica procede de OpenStreetMap. Puedes usar Overpass bajo demanda o generar un PMTiles/MVT local para que la red vial funcione sin consultas externas. Si un servicio no responde, Bogotá Viva activa su red procedural de respaldo.</p><div class="source-pills"><span>MapLibre</span><span>OSM</span><span>Overpass</span><span>PMTiles</span><span>Nominatim</span><span>OSRM</span></div></div>

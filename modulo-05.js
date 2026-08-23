@@ -7,7 +7,10 @@
   "use strict";
 
   const BOGOTA = [-74.10, 4.66];
-  const OVERPASS_ENDPOINT = "https://overpass-api.de/api/interpreter";
+  const OVERPASS_ENDPOINTS = [
+    "https://overpass-api.de/api/interpreter",
+    "https://overpass.kumi.systems/api/interpreter",
+  ];
   const NOMINATIM_ENDPOINT = "https://nominatim.openstreetmap.org/search";
   const OSRM_ENDPOINT = "https://router.project-osrm.org/route/v1/driving";
   const OSM_ATTRIBUTION = "© OpenStreetMap contributors";
@@ -37,6 +40,7 @@
     viewportDebounceTimer: null,
     proceduralMarkers: [],
     favorite: false,
+    apiLayers: { roads: true, natural: true, amenities: true, transport: true, commerce: true, culture: true, leisure: true, boundaries: true },
   };
 
   const UPLS = [
@@ -104,6 +108,17 @@
       overpass: (b) => `\n        (node["amenity"~"school|library|community_centre|social_facility"](${b});node["shop"](${b}););\n      `,
       fallback: ["Punto de interacción", "Escenario inmersivo", "Nodo comunitario", "Lugar simulado"],
     },
+  };
+
+  const API_LAYERS = {
+    roads: { label: "Calles", icon: "fa-road", color: "#2baaa0", query: (b) => `way["highway"](${b});` },
+    natural: { label: "Naturaleza", icon: "fa-leaf", color: "#24d5c6", query: (b) => `nwr["natural"](${b});nwr["waterway"](${b});` },
+    amenities: { label: "Equipamientos", icon: "fa-building-columns", color: "#e59461", query: (b) => `nwr["amenity"](${b});` },
+    transport: { label: "Transporte", icon: "fa-bus", color: "#4eb5ed", query: (b) => `nwr["public_transport"](${b});node["highway"="bus_stop"](${b});` },
+    commerce: { label: "Comercio y empleo", icon: "fa-store", color: "#f1bd61", query: (b) => `nwr["shop"](${b});nwr["office"](${b});` },
+    culture: { label: "Patrimonio y cultura", icon: "fa-landmark", color: "#e59461", query: (b) => `nwr["historic"](${b});nwr["tourism"](${b});nwr["amenity"="place_of_worship"](${b});` },
+    leisure: { label: "Parques y recreación", icon: "fa-tree-city", color: "#b682ee", query: (b) => `nwr["leisure"](${b});` },
+    boundaries: { label: "Límites y barrios", icon: "fa-draw-polygon", color: "#b8c5cc", query: (b) => `relation["boundary"](${b});` },
   };
 
   const $ = (selector) => document.querySelector(selector);
@@ -311,6 +326,38 @@
     select.innerHTML = UPLS.map((upl) => `<option value="${upl.num}">${String(upl.num).padStart(2,"0")} · ${escapeHtml(upl.name)} · ${escapeHtml(upl.localidad)}</option>`).join("");
   }
 
+  function renderApiLayerToggles() {
+    const wrap = $("#apiLayerToggles");
+    if (!wrap) return;
+    wrap.innerHTML = Object.entries(API_LAYERS).map(([key, layer]) => `<button type="button" class="api-layer-toggle${state.apiLayers[key] ? " is-active" : ""}" data-api-layer="${key}" aria-pressed="${state.apiLayers[key]}" style="--layer-color:${layer.color}"><i class="fa-solid ${layer.icon}"></i><span>${layer.label}</span></button>`).join("");
+    $$(".api-layer-toggle").forEach((button) => button.addEventListener("click", () => {
+      const key = button.dataset.apiLayer;
+      state.apiLayers[key] = !state.apiLayers[key];
+      button.classList.toggle("is-active", state.apiLayers[key]);
+      button.setAttribute("aria-pressed", String(state.apiLayers[key]));
+      state.activeQueryKey = "";
+      if (state.mapReady) loadScaleData();
+    }));
+  }
+
+  function renderApiSummary(elements) {
+    const summary = $("#apiSummary");
+    if (!summary) return;
+    const counts = Object.fromEntries(Object.keys(API_LAYERS).map((key) => [key, 0]));
+    elements.forEach((element) => {
+      const tags = element.tags || {};
+      if (tags.highway) counts.roads += 1;
+      if (tags.natural || tags.waterway) counts.natural += 1;
+      if (tags.amenity) counts.amenities += 1;
+      if (tags.public_transport || tags.highway === "bus_stop") counts.transport += 1;
+      if (tags.shop || tags.office) counts.commerce += 1;
+      if (tags.historic || tags.tourism || tags.amenity === "place_of_worship") counts.culture += 1;
+      if (tags.leisure) counts.leisure += 1;
+      if (element.type === "relation" && tags.boundary) counts.boundaries += 1;
+    });
+    summary.innerHTML = Object.entries(API_LAYERS).filter(([key]) => state.apiLayers[key]).map(([key, layer]) => `<span><i class="fa-solid ${layer.icon}" style="color:${layer.color}"></i><strong>${layer.label}</strong><b>${counts[key]}</b></span>`).join("") || "<span>Ninguna capa activa.</span>";
+  }
+
   function renderScaleCards() {
     const wrap = $("#scaleCards");
     if (!wrap) return;
@@ -505,26 +552,42 @@
     });
     setText("#metricPlaces", placeCount ? String(placeCount) : "0");
     setText("#metricRoads", state.streetSource === "pmtiles" ? "MVT" : (roadCount ? String(roadCount) : "—"));
+    renderApiSummary(elements);
   }
 
   function buildOverpassQuery(upl, scaleKey, bbox = null) {
     const fallback = { west: upl.lon - .03, south: upl.lat - .025, east: upl.lon + .03, north: upl.lat + .025 };
     const b = bboxString(bbox || fallback);
-    const scale = SCALE_DATA[scaleKey];
     const roadLevel = state.map ? viewportLevel() : "meso";
-    return `[out:json][timeout:25];(${scale.overpass(b)}way["highway"~"${roadRegexForLevel(roadLevel)}"](${b}););out geom tags;`;
+    const clauses = [];
+    if (state.apiLayers.roads) clauses.push(`way["highway"~"${roadRegexForLevel(roadLevel)}"](${b});`);
+    Object.entries(API_LAYERS).forEach(([key, layer]) => {
+      if (key !== "roads" && state.apiLayers[key]) clauses.push(layer.query(b));
+    });
+    return `[out:json][timeout:25];(${clauses.join("")});out center geom tags;`;
   }
 
   async function fetchOverpass(upl, scaleKey, bbox, signal) {
-    const key = `overpass:${upl.num}:${scaleKey}:${bboxString(bbox)}`;
+    const layerKey = Object.entries(state.apiLayers).filter(([, enabled]) => enabled).map(([key]) => key).join("|");
+    const key = `overpass:${upl.num}:${scaleKey}:${layerKey}:${bboxString(bbox)}`;
     if (CACHE.has(key)) return CACHE.get(key);
-    const url = `${OVERPASS_ENDPOINT}?data=${encodeURIComponent(buildOverpassQuery(upl, scaleKey, bbox))}`;
-    const response = await fetch(url, { signal, headers: { Accept: "application/json" } });
-    if (!response.ok) throw new Error(`Overpass HTTP ${response.status}`);
-    const json = await response.json();
-    const elements = Array.isArray(json.elements) ? json.elements : [];
-    rememberCache(key, elements);
-    return elements;
+    const query = buildOverpassQuery(upl, scaleKey, bbox);
+    let lastError = null;
+    for (const endpoint of OVERPASS_ENDPOINTS) {
+      try {
+        const url = `${endpoint}?data=${encodeURIComponent(query)}`;
+        const response = await fetch(url, { signal, headers: { Accept: "application/json" } });
+        if (!response.ok) throw new Error(`Overpass HTTP ${response.status}`);
+        const json = await response.json();
+        const elements = Array.isArray(json.elements) ? json.elements : [];
+        rememberCache(key, elements);
+        return elements;
+      } catch (error) {
+        if (signal.aborted) throw error;
+        lastError = error;
+      }
+    }
+    throw lastError || new Error("Ningún servidor Overpass respondió");
   }
 
   function renderProceduralMarkers() {
@@ -543,13 +606,15 @@
     });
     setText("#metricPlaces", String(offsets.length));
     setText("#metricRoads", "6");
+    renderApiSummary([]);
   }
 
   async function loadScaleData({ fromViewport = false } = {}) {
     if (!state.mapReady || !state.selectedUpl) return;
     const bbox = getViewportBBox();
     if (!bbox) return;
-    const queryKey = `${state.selectedUpl.num}:${state.selectedScale}:${bboxString(bbox)}`;
+    const layerKey = Object.entries(state.apiLayers).filter(([, enabled]) => enabled).map(([key]) => key).join("|");
+    const queryKey = `${state.selectedUpl.num}:${state.selectedScale}:${layerKey}:${bboxString(bbox)}`;
     if (queryKey === state.activeQueryKey && fromViewport) return;
     state.activeQueryKey = queryKey;
     const token = ++state.queryToken;
@@ -697,6 +762,7 @@
     state.selectedUpl = defaultUpl;
     renderUplSelect();
     renderScaleCards();
+    renderApiLayerToggles();
     updateUplPanel(defaultUpl);
     bindEvents();
     if (window.maplibregl) initializeMap();
