@@ -1681,7 +1681,7 @@
       color: row.color,
       x: [14, 39, 75, 87, 65, 22][index],
       y: [18, 13, 18, 63, 86, 82][index],
-      components: row.components.split(/, | y /).map((value) => value.trim()).filter(Boolean),
+      componentsText: row.components,
       process: row.process,
       partsPurpose: row.partsPurpose,
       totalPurpose: row.totalPurpose,
@@ -1701,7 +1701,7 @@
         components.style.setProperty("--bubble-color", item.color);
         components.style.left = `clamp(8px, ${Math.max(7, Math.min(item.x - 8, 62))}%, calc(100% - 320px))`;
         components.style.top = `clamp(72px, ${Math.min(item.y + 10, 72)}%, calc(100% - 170px))`;
-        components.innerHTML = `<strong>COMPONENTES QUE ANALIZA</strong><div>${item.components.map((component) => `<button type="button" style="--bubble-color:${item.color}">${component}</button>`).join("")}</div>`;
+        components.innerHTML = `<strong>QUÉ PARTES O COMPONENTES SE ANALIZAN</strong><p>${item.componentsText || item.components.join(", ")}</p>`;
         subsystemBubbles.appendChild(components);
         const purpose = document.createElement("aside");
         purpose.className = "subsystem-purpose-panel active";

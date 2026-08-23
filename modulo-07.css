@@ -4867,3 +4867,7 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 .subsystem-purpose-panel .purpose-category { display: inline-block; margin: 2px 0 6px; padding: 5px 8px; border: 1px solid var(--bubble-color); border-radius: 999px; color: var(--bubble-color); font-size: 11px; }
 .subsystem-purpose-panel .purpose-justification { color: rgba(242,236,227,.64); font-style: italic; }
 @media (max-width: 720px) { .subsystem-purpose-panel { top: 78px; right: 10px; max-height: 48%; } .subsystem-components { left: 10px !important; top: auto !important; bottom: 76px; width: calc(100% - 20px); } }
+
+/* Componentes como descripción integrada de la tabla, no como listado */
+.subsystem-components { width: min(330px, calc(100% - 24px)); }
+.subsystem-components p { margin: 0; color: rgba(242,236,227,.86); font-size: 10px; line-height: 1.5; }
