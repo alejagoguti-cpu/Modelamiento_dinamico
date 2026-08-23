@@ -40,8 +40,17 @@
     viewportDebounceTimer: null,
     proceduralMarkers: [],
     favorite: false,
-    apiLayers: { roads: true, natural: true, amenities: true, transport: true, commerce: true, culture: true, leisure: true, boundaries: true },
-    apiLayerStatus: { roads: "idle", natural: "idle", amenities: "idle", transport: "idle", commerce: "idle", culture: "idle", leisure: "idle", boundaries: "idle" },
+    apiLayers: {
+      roads: true, walking: false, transport: true, rail: false, aerial: false,
+      natural: true, water: false, green: false,
+      amenities: true, education: false, health: false, care: false, civic: false, services: false,
+      commerce: true, food: false, industrial: false,
+      residential: false, buildings: false, landuse: false,
+      parks: true, sports: false,
+      culture: true, tourism: false, memorial: false,
+      boundaries: true, utilities: false, street: false,
+    },
+    apiLayerStatus: {},
   };
 
   const UPLS = [
@@ -112,14 +121,34 @@
   };
 
   const API_LAYERS = {
-    roads: { label: "Calles", icon: "fa-road", color: "#2baaa0", query: (b) => `way["highway"](${b});` },
-    natural: { label: "Naturaleza", icon: "fa-leaf", color: "#24d5c6", query: (b) => `nwr["natural"](${b});nwr["waterway"](${b});` },
-    amenities: { label: "Equipamientos", icon: "fa-building-columns", color: "#e59461", query: (b) => `nwr["amenity"](${b});` },
-    transport: { label: "Transporte", icon: "fa-bus", color: "#4eb5ed", query: (b) => `nwr["public_transport"](${b});node["highway"="bus_stop"](${b});` },
-    commerce: { label: "Comercio y empleo", icon: "fa-store", color: "#f1bd61", query: (b) => `nwr["shop"](${b});nwr["office"](${b});` },
-    culture: { label: "Patrimonio y cultura", icon: "fa-landmark", color: "#e59461", query: (b) => `nwr["historic"](${b});nwr["tourism"](${b});nwr["amenity"="place_of_worship"](${b});` },
-    leisure: { label: "Parques y recreación", icon: "fa-tree-city", color: "#b682ee", query: (b) => `nwr["leisure"](${b});` },
-    boundaries: { label: "Límites y barrios", icon: "fa-draw-polygon", color: "#b8c5cc", query: (b) => `relation["boundary"](${b});` },
+    roads: { label: "Calles", group: "Movilidad", icon: "fa-road", color: "#2baaa0", defaultActive: true, query: (b) => `way["highway"](${b});`, match: (t) => Boolean(t.highway) },
+    walking: { label: "Peatonal y bici", group: "Movilidad", icon: "fa-person-walking", color: "#72d6b5", defaultActive: false, query: (b) => `way["highway"~"^(footway|path|pedestrian|cycleway|steps|bridleway)$"](${b});`, match: (t) => /^(footway|path|pedestrian|cycleway|steps|bridleway)$/.test(t.highway || "") },
+    transport: { label: "Transporte público", group: "Movilidad", icon: "fa-bus", color: "#4eb5ed", defaultActive: true, query: (b) => `nwr["public_transport"](${b});node["highway"="bus_stop"](${b});`, match: (t) => Boolean(t.public_transport || t.highway === "bus_stop") },
+    rail: { label: "Ferrocarril y metro", group: "Movilidad", icon: "fa-train-subway", color: "#7c9cff", defaultActive: false, query: (b) => `nwr["railway"](${b});`, match: (t) => Boolean(t.railway) },
+    aerial: { label: "Cables y aéreo", group: "Movilidad", icon: "fa-cable-car", color: "#9b8cff", defaultActive: false, query: (b) => `nwr["aerialway"](${b});nwr["aeroway"](${b});`, match: (t) => Boolean(t.aerialway || t.aeroway) },
+    natural: { label: "Naturaleza", group: "Ambiente", icon: "fa-leaf", color: "#24d5c6", defaultActive: true, query: (b) => `nwr["natural"](${b});nwr["waterway"](${b});`, match: (t) => Boolean(t.natural || t.waterway) },
+    water: { label: "Agua y humedales", group: "Ambiente", icon: "fa-water", color: "#56b9e9", defaultActive: false, query: (b) => `nwr["waterway"](${b});nwr["natural"~"^(water|wetland|bay|spring|hot_spring)$"](${b});`, match: (t) => Boolean(t.waterway || /^(water|wetland|bay|spring|hot_spring)$/.test(t.natural || "")) },
+    green: { label: "Bosques y cobertura", group: "Ambiente", icon: "fa-tree", color: "#6dd48c", defaultActive: false, query: (b) => `nwr["natural"~"^(tree|wood|scrub|heath|grassland)$"](${b});nwr["landuse"~"^(forest|orchard|vineyard|allotments)$"](${b});`, match: (t) => /^(tree|wood|scrub|heath|grassland)$/.test(t.natural || "") || /^(forest|orchard|vineyard|allotments)$/.test(t.landuse || "") },
+    amenities: { label: "Equipamientos", group: "Servicios", icon: "fa-building-columns", color: "#e59461", defaultActive: true, query: (b) => `nwr["amenity"](${b});`, match: (t) => Boolean(t.amenity) },
+    education: { label: "Educación", group: "Servicios", icon: "fa-graduation-cap", color: "#f0c36e", defaultActive: false, query: (b) => `nwr["amenity"~"^(school|kindergarten|college|university|library|music_school)$"](${b});`, match: (t) => /^(school|kindergarten|college|university|library|music_school)$/.test(t.amenity || "") },
+    health: { label: "Salud", group: "Servicios", icon: "fa-heart-pulse", color: "#f08383", defaultActive: false, query: (b) => `nwr["amenity"~"^(hospital|clinic|doctors|dentist|pharmacy|veterinary)$"](${b});`, match: (t) => /^(hospital|clinic|doctors|dentist|pharmacy|veterinary)$/.test(t.amenity || "") },
+    care: { label: "Cuidado y comunidad", group: "Servicios", icon: "fa-hands-holding-child", color: "#f4a6c2", defaultActive: false, query: (b) => `nwr["amenity"~"^(social_facility|community_centre|childcare|nursing_home|shelter)$"](${b});`, match: (t) => /^(social_facility|community_centre|childcare|nursing_home|shelter)$/.test(t.amenity || "") },
+    civic: { label: "Cívico y público", group: "Servicios", icon: "fa-landmark-dome", color: "#d9b5ff", defaultActive: false, query: (b) => `nwr["amenity"~"^(townhall|public_building|courthouse|post_office|police|fire_station|prison)$"](${b});`, match: (t) => /^(townhall|public_building|courthouse|post_office|police|fire_station|prison)$/.test(t.amenity || "") },
+    services: { label: "Servicios urbanos", group: "Servicios", icon: "fa-droplet", color: "#72b8d8", defaultActive: false, query: (b) => `nwr["amenity"~"^(bank|atm|fuel|parking|toilets|waste_basket|recycling|drinking_water)$"](${b});`, match: (t) => /^(bank|atm|fuel|parking|toilets|waste_basket|recycling|drinking_water)$/.test(t.amenity || "") },
+    commerce: { label: "Comercio y empleo", group: "Economía", icon: "fa-store", color: "#f1bd61", defaultActive: true, query: (b) => `nwr["shop"](${b});nwr["office"](${b});`, match: (t) => Boolean(t.shop || t.office) },
+    food: { label: "Alimentos y mercados", group: "Economía", icon: "fa-utensils", color: "#ff9d62", defaultActive: false, query: (b) => `nwr["amenity"~"^(restaurant|cafe|fast_food|bar|food_court|marketplace)$"](${b});`, match: (t) => /^(restaurant|cafe|fast_food|bar|food_court|marketplace)$/.test(t.amenity || "") },
+    industrial: { label: "Industria y producción", group: "Economía", icon: "fa-industry", color: "#cf9b72", defaultActive: false, query: (b) => `nwr["landuse"~"^(industrial|commercial|retail)$"](${b});nwr["man_made"](${b});`, match: (t) => /^(industrial|commercial|retail)$/.test(t.landuse || "") || Boolean(t.man_made) },
+    residential: { label: "Vivienda", group: "Territorio", icon: "fa-house", color: "#d7a4e8", defaultActive: false, query: (b) => `nwr["landuse"="residential"](${b});nwr["building"~"^(apartments|residential|house|detached|semidetached_house|terrace)$"](${b});`, match: (t) => t.landuse === "residential" || /^(apartments|residential|house|detached|semidetached_house|terrace)$/.test(t.building || "") },
+    buildings: { label: "Edificaciones", group: "Territorio", icon: "fa-building", color: "#c2a7b8", defaultActive: false, query: (b) => `nwr["building"](${b});`, match: (t) => Boolean(t.building) },
+    landuse: { label: "Usos del suelo", group: "Territorio", icon: "fa-layer-group", color: "#b8a477", defaultActive: false, query: (b) => `nwr["landuse"](${b});nwr["landcover"](${b});`, match: (t) => Boolean(t.landuse || t.landcover) },
+    parks: { label: "Parques y recreación", group: "Ambiente", icon: "fa-tree-city", color: "#b682ee", defaultActive: true, query: (b) => `nwr["leisure"](${b});`, match: (t) => Boolean(t.leisure) },
+    sports: { label: "Deporte", group: "Ambiente", icon: "fa-futbol", color: "#a985ec", defaultActive: false, query: (b) => `nwr["leisure"~"^(sports_centre|pitch|stadium|track|swimming_pool|fitness_centre)$"](${b});`, match: (t) => /^(sports_centre|pitch|stadium|track|swimming_pool|fitness_centre)$/.test(t.leisure || "") },
+    culture: { label: "Patrimonio y cultura", group: "Cultura", icon: "fa-landmark", color: "#e59461", defaultActive: true, query: (b) => `nwr["historic"](${b});nwr["amenity"~"^(place_of_worship|arts_centre|theatre|cinema|museum)$"](${b});`, match: (t) => Boolean(t.historic) || /^(place_of_worship|arts_centre|theatre|cinema|museum)$/.test(t.amenity || "") },
+    tourism: { label: "Turismo y atracciones", group: "Cultura", icon: "fa-camera-retro", color: "#ed9ac2", defaultActive: false, query: (b) => `nwr["tourism"](${b});`, match: (t) => Boolean(t.tourism) },
+    memorial: { label: "Memoria y monumentos", group: "Cultura", icon: "fa-monument", color: "#dd8e7f", defaultActive: false, query: (b) => `nwr["historic"~"^(memorial|monument|wayside_shrine|ruins)$"](${b});`, match: (t) => /^(memorial|monument|wayside_shrine|ruins)$/.test(t.historic || "") },
+    boundaries: { label: "Límites y barrios", group: "Territorio", icon: "fa-draw-polygon", color: "#b8c5cc", defaultActive: true, query: (b) => `relation["boundary"](${b});nwr["place"](${b});`, match: (t) => Boolean(t.boundary || t.place) },
+    utilities: { label: "Infraestructura técnica", group: "Infraestructura", icon: "fa-tower-broadcast", color: "#89c8dc", defaultActive: false, query: (b) => `nwr["power"](${b});nwr["man_made"~"^(water_tower|wastewater_plant|communications_tower|silo)$"](${b});`, match: (t) => Boolean(t.power) || /^(water_tower|wastewater_plant|communications_tower|silo)$/.test(t.man_made || "") },
+    street: { label: "Mobiliario vial", group: "Infraestructura", icon: "fa-traffic-light", color: "#d8d08b", defaultActive: false, query: (b) => `nwr["highway"~"^(street_lamp|traffic_signals|crossing|bus_stop)$"](${b});nwr["amenity"~"^(bench|bicycle_parking|shelter)$"](${b});`, match: (t) => /^(street_lamp|traffic_signals|crossing|bus_stop)$/.test(t.highway || "") || /^(bench|bicycle_parking|shelter)$/.test(t.amenity || "") },
   };
 
   const $ = (selector) => document.querySelector(selector);
@@ -330,7 +359,12 @@
   function renderApiLayerToggles() {
     const wrap = $("#apiLayerToggles");
     if (!wrap) return;
-    wrap.innerHTML = Object.entries(API_LAYERS).map(([key, layer]) => `<button type="button" class="api-layer-toggle${state.apiLayers[key] ? " is-active" : ""}" data-api-layer="${key}" aria-pressed="${state.apiLayers[key]}" style="--layer-color:${layer.color}"><i class="fa-solid ${layer.icon}"></i><span>${layer.label}</span></button>`).join("");
+    const groups = new Map();
+    Object.entries(API_LAYERS).forEach(([key, layer]) => {
+      if (!groups.has(layer.group)) groups.set(layer.group, []);
+      groups.get(layer.group).push([key, layer]);
+    });
+    wrap.innerHTML = [...groups.entries()].map(([group, entries]) => `<section class="api-layer-group"><div class="api-layer-group-label">${group}</div><div class="api-layer-group-grid">${entries.map(([key, layer]) => `<button type="button" class="api-layer-toggle${state.apiLayers[key] ? " is-active" : ""}" data-api-layer="${key}" aria-pressed="${state.apiLayers[key]}" style="--layer-color:${layer.color}"><i class="fa-solid ${layer.icon}"></i><span>${layer.label}</span></button>`).join("")}</div></section>`).join("");
     $$(".api-layer-toggle").forEach((button) => button.addEventListener("click", () => {
       const key = button.dataset.apiLayer;
       state.apiLayers[key] = !state.apiLayers[key];
@@ -347,14 +381,9 @@
     const counts = Object.fromEntries(Object.keys(API_LAYERS).map((key) => [key, 0]));
     elements.forEach((element) => {
       const tags = element.tags || {};
-      if (tags.highway) counts.roads += 1;
-      if (tags.natural || tags.waterway) counts.natural += 1;
-      if (tags.amenity) counts.amenities += 1;
-      if (tags.public_transport || tags.highway === "bus_stop") counts.transport += 1;
-      if (tags.shop || tags.office) counts.commerce += 1;
-      if (tags.historic || tags.tourism || tags.amenity === "place_of_worship") counts.culture += 1;
-      if (tags.leisure) counts.leisure += 1;
-      if (element.type === "relation" && tags.boundary) counts.boundaries += 1;
+      Object.entries(API_LAYERS).forEach(([key, layer]) => {
+        if (layer.match?.(tags, element)) counts[key] += 1;
+      });
     });
     summary.innerHTML = Object.entries(API_LAYERS).filter(([key]) => state.apiLayers[key]).map(([key, layer]) => {
       const status = state.apiLayerStatus[key] || "idle";
@@ -519,12 +548,18 @@
 
   function featureName(element) {
     const tags = element.tags || {};
-    return tags.name || tags["name:es"] || tags.amenity || tags.tourism || tags.historic || tags.highway || "Lugar OSM";
+    return tags.name || tags["name:es"] || tags.amenity || tags.shop || tags.office || tags.leisure || tags.natural || tags.waterway || tags.landuse || tags.building || tags.railway || tags.tourism || tags.historic || tags.place || tags.man_made || tags.highway || "Lugar OSM";
   }
 
   function featureType(element) {
     const tags = element.tags || {};
-    return tags.highway ? "calle" : tags.natural || tags.waterway || tags.leisure || tags.historic || tags.tourism || tags.amenity || "lugar";
+    if (tags.highway) return tags.highway === "bus_stop" ? "parada de transporte" : "calle";
+    return tags.amenity || tags.shop || tags.office || tags.leisure || tags.natural || tags.waterway || tags.landuse || tags.building || tags.railway || tags.tourism || tags.historic || tags.place || tags.man_made || "lugar";
+  }
+
+  function featureLayer(element) {
+    const tags = element.tags || {};
+    return Object.entries(API_LAYERS).find(([, layer]) => layer.match?.(tags, element)) || null;
   }
 
   function renderPlaces(elements) {
@@ -551,7 +586,12 @@
       seen.add(key);
       const markerEl = document.createElement("div");
       markerEl.className = "place-marker";
-      const marker = new maplibregl.Marker({ element: markerEl, anchor: "center" }).setLngLat(point).setPopup(new maplibregl.Popup({ offset: 9, className: "place-popup" }).setHTML(`<strong>${escapeHtml(featureName(element))}</strong><span>${escapeHtml(featureType(element))} · OpenStreetMap</span>`)).addTo(state.map);
+      const matchedLayer = featureLayer(element);
+      if (matchedLayer) {
+        markerEl.style.background = matchedLayer[1].color;
+        markerEl.title = matchedLayer[1].label;
+      }
+      const marker = new maplibregl.Marker({ element: markerEl, anchor: "center" }).setLngLat(point).setPopup(new maplibregl.Popup({ offset: 9, className: "place-popup" }).setHTML(`<strong>${escapeHtml(featureName(element))}</strong><span>${escapeHtml(featureType(element))} · OpenStreetMap${matchedLayer ? ` · ${escapeHtml(matchedLayer[1].label)}` : ""}</span>`)).addTo(state.map);
       state.placeMarkers.push(marker);
       placeCount += 1;
     });
@@ -756,7 +796,16 @@
     }
   }
 
+  function setAllApiLayers(enabled) {
+    Object.keys(API_LAYERS).forEach((key) => { state.apiLayers[key] = enabled; });
+    state.activeQueryKey = "";
+    renderApiLayerToggles();
+    if (state.mapReady) loadScaleData();
+  }
+
   function bindEvents() {
+    $("#apiSelectAll")?.addEventListener("click", () => setAllApiLayers(true));
+    $("#apiClearAll")?.addEventListener("click", () => setAllApiLayers(false));
     $("#uplSelect")?.addEventListener("change", (event) => {
       const upl = UPLS.find((item) => String(item.num) === event.target.value);
       if (!upl) return;

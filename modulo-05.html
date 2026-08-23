@@ -86,9 +86,10 @@
         </div>
         <div class="source-mode-row"><span><i class="fa-solid fa-database"></i> Fuente vial</span><button id="localTilesBtn" class="local-tiles-btn" type="button"><i class="fa-solid fa-hard-drive"></i> Usar PMTiles local</button></div>
         <div class="panel-block api-layers-block">
-          <div class="block-label"><i class="fa-solid fa-layer-group"></i> CAPAS DISPONIBLES EN LA API</div>
+          <div class="block-label"><i class="fa-solid fa-layer-group"></i> CATÁLOGO API · 28 CATEGORÍAS OSM</div>
+          <div class="api-layer-actions"><button id="apiSelectAll" type="button">Activar todo</button><button id="apiClearAll" type="button">Limpiar</button></div>
           <div id="apiLayerToggles" class="api-layer-toggles" role="group" aria-label="Capas de datos OpenStreetMap"></div>
-          <p class="field-note">Cada capa consulta datos OSM dentro del área visible. Puedes combinar varias capas.</p>
+          <p class="field-note">Cada categoría consulta etiquetas OSM específicas dentro del área visible. Puedes combinar varias capas.</p>
         </div>
       </section>
 
@@ -127,6 +128,6 @@
     window.maplibregl = maplibregl;
     window.dispatchEvent(new Event("maplibre-ready"));
   </script>
-  <script src="modulo-05.js?v=api-status-20260823"></script>
+  <script src="modulo-05.js?v=osm-catalog-28-20260823"></script>
 </body>
 </html>
