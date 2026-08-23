@@ -4919,3 +4919,17 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 @keyframes process-flow { to { stroke-dashoffset: -18; } }
 @media (max-width: 720px) { .process-network-canvas { height: 138px; } .process-network-node { max-width: 68px; font-size: 7px; } }
 @media (prefers-reduced-motion: reduce) { .process-network-canvas line { animation: none; } }
+
+/* Pájaros en movimiento dentro de la red biótica */
+.process-network-bird { position: absolute; z-index: 3; display: grid; place-items: center; width: 18px; height: 18px; color: #d9fff1; pointer-events: none; filter: drop-shadow(0 0 5px color-mix(in srgb, var(--bubble-color) 76%, transparent)); }
+.process-network-bird i { font-size: 13px; }
+.process-network-bird.migratory { animation: bird-network-flight 5.4s linear infinite; }
+.process-network-bird.bird-two { animation-delay: -2.7s; animation-duration: 6.6s; }
+.process-network-bird.resident { color: #a7e7b8; animation: bird-network-rest 2.5s ease-in-out infinite; }
+.process-network-bird.bird-three { left: 10%; top: 68%; }
+.process-network-bird.bird-four { left: 25%; top: 76%; animation-delay: -1.2s; }
+.process-network-bird.bird-one { left: -8%; top: 38%; }
+.process-network-bird.bird-two { left: -14%; top: 62%; }
+@keyframes bird-network-flight { 0% { transform: translateX(0) translateY(8px) rotate(-8deg); opacity: 0; } 8% { opacity: 1; } 28% { transform: translateX(75px) translateY(-14px) rotate(7deg); } 52% { transform: translateX(165px) translateY(7px) rotate(-4deg); } 78% { transform: translateX(260px) translateY(-12px) rotate(8deg); } 92% { opacity: 1; } 100% { transform: translateX(360px) translateY(4px) rotate(-6deg); opacity: 0; } }
+@keyframes bird-network-rest { 0%, 100% { transform: translateY(1px) rotate(0deg); } 35% { transform: translateY(-2px) rotate(-4deg); } 65% { transform: translateY(0) rotate(3deg); } }
+@media (prefers-reduced-motion: reduce) { .process-network-bird { animation: none !important; } .process-network-bird.migratory { left: 42%; top: 38%; } }
