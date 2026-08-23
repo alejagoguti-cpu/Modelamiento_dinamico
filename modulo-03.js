@@ -31,187 +31,311 @@ const POT_DATA = {
    "id": "EEP::RÍOS",
    "sys": "EEP",
    "label": "RÍOS",
-   "icon": "fa-water"
+   "icon": "fa-water",
+   "x": 465.0,
+   "y": 824.0,
+   "r": 88.1,
+   "deg": 5
   },
   {
    "id": "EEP::QUEBRADAS",
    "sys": "EEP",
    "label": "QUEBRADAS",
-   "icon": "fa-water"
+   "icon": "fa-water",
+   "x": 661.0,
+   "y": 581.0,
+   "r": 39.5,
+   "deg": 1
   },
   {
    "id": "EEP::HUMEDALES",
    "sys": "EEP",
    "label": "HUMEDALES",
-   "icon": "fa-droplet"
+   "icon": "fa-droplet",
+   "x": 1022.0,
+   "y": 591.0,
+   "r": 132.9,
+   "deg": 8
   },
   {
    "id": "EEP::COMPLEJOS DE PÁRAMOS",
    "sys": "EEP",
    "label": "COMPLEJOS DE PÁRAMOS",
-   "icon": "fa-mountain"
+   "icon": "fa-mountain",
+   "x": 352.0,
+   "y": 449.0,
+   "r": 49.8,
+   "deg": 2
   },
   {
    "id": "EEP::COBERTURAS VEGETALES",
    "sys": "EEP",
    "label": "COBERTURAS VEGETALES",
-   "icon": "fa-leaf"
+   "icon": "fa-leaf",
+   "x": 509.0,
+   "y": 297.0,
+   "r": 49.8,
+   "deg": 2
   },
   {
    "id": "EEP::ÁREAS DE RESILIENCIA CLIMÁTICA",
    "sys": "EEP",
    "label": "ÁREAS DE RESILIENCIA CLIMÁTICA",
-   "icon": "fa-shield-heart"
+   "icon": "fa-shield-heart",
+   "x": 639.0,
+   "y": 112.0,
+   "r": 61.6,
+   "deg": 3
   },
   {
    "id": "EEP::ÁREAS PROTEGIDAS",
    "sys": "EEP",
    "label": "ÁREAS PROTEGIDAS",
-   "icon": "fa-shield-halved"
+   "icon": "fa-shield-halved",
+   "x": 771.0,
+   "y": 421.0,
+   "r": 61.6,
+   "deg": 3
   },
   {
    "id": "EEP::RESERVAS FORESTALES",
    "sys": "EEP",
    "label": "RESERVAS FORESTALES",
-   "icon": "fa-tree-city"
+   "icon": "fa-tree-city",
+   "x": 1086.0,
+   "y": 132.0,
+   "r": 61.6,
+   "deg": 3
   },
   {
    "id": "EFC::EQUIPAMIENTOS",
    "sys": "EFC",
    "label": "EQUIPAMIENTOS",
-   "icon": "fa-school"
+   "icon": "fa-school",
+   "x": 1190.0,
+   "y": 347.0,
+   "r": 74.4,
+   "deg": 4
   },
   {
    "id": "EFC::SERVICIOS SOCIALES",
    "sys": "EFC",
    "label": "SERVICIOS SOCIALES",
-   "icon": "fa-people-roof"
+   "icon": "fa-people-roof",
+   "x": 1429.0,
+   "y": 104.0,
+   "r": 49.8,
+   "deg": 2
   },
   {
    "id": "EFC::VIVIENDA",
    "sys": "EFC",
    "label": "VIVIENDA",
-   "icon": "fa-house"
+   "icon": "fa-house",
+   "x": 1450.0,
+   "y": 783.0,
+   "r": 88.1,
+   "deg": 5
   },
   {
    "id": "EFC::CICLORUTAS",
    "sys": "EFC",
    "label": "CICLORUTAS",
-   "icon": "fa-person-biking"
+   "icon": "fa-person-biking",
+   "x": 1689.0,
+   "y": 98.0,
+   "r": 49.8,
+   "deg": 2
   },
   {
    "id": "EFC::TRANSPORTE PÚBLICO",
    "sys": "EFC",
    "label": "TRANSPORTE PÚBLICO",
-   "icon": "fa-bus"
+   "icon": "fa-bus",
+   "x": 1686.0,
+   "y": 539.0,
+   "r": 102.4,
+   "deg": 6
   },
   {
    "id": "EFC::RED VIAL",
    "sys": "EFC",
    "label": "RED VIAL",
-   "icon": "fa-road"
+   "icon": "fa-road",
+   "x": 2022.0,
+   "y": 306.0,
+   "r": 74.4,
+   "deg": 4
   },
   {
    "id": "EFC::CORREDORES VERDES",
    "sys": "EFC",
    "label": "CORREDORES VERDES",
-   "icon": "fa-seedling"
+   "icon": "fa-seedling",
+   "x": 34.7,
+   "y": 97.9,
+   "r": 49.8,
+   "deg": 2
   },
   {
    "id": "EFC::MANZANAS DEL CUIDADO",
    "sys": "EFC",
    "label": "MANZANAS DEL CUIDADO",
-   "icon": "fa-building-shield"
+   "icon": "fa-building-shield",
+   "x": 1485.0,
+   "y": 445.0,
+   "r": 88.1,
+   "deg": 5
   },
   {
    "id": "EFC::PARQUES",
    "sys": "EFC",
    "label": "PARQUES",
-   "icon": "fa-tree"
+   "icon": "fa-tree",
+   "x": 1732.0,
+   "y": 884.0,
+   "r": 39.5,
+   "deg": 1
   },
   {
    "id": "ESECI::DISTRITO CENTRO TECNOLÓGICO E INNOVACIÓN",
    "sys": "ESECI",
    "label": "DISTRITO CENTRO TECNOLÓGICO E INNOVACIÓN",
-   "icon": "fa-microchip"
+   "icon": "fa-microchip",
+   "x": 1244.0,
+   "y": 1298.0,
+   "r": 88.1,
+   "deg": 5
   },
   {
    "id": "ESECI::SERVICIOS EMPRESARIALES",
    "sys": "ESECI",
    "label": "SERVICIOS EMPRESARIALES",
-   "icon": "fa-briefcase"
+   "icon": "fa-briefcase",
+   "x": 1055.0,
+   "y": 918.0,
+   "r": 132.9,
+   "deg": 8
   },
   {
    "id": "ESECI::SISTEMA DE EDUCACIÓN",
    "sys": "ESECI",
    "label": "SISTEMA DE EDUCACIÓN",
-   "icon": "fa-graduation-cap"
+   "icon": "fa-graduation-cap",
+   "x": 992.0,
+   "y": 1253.0,
+   "r": 61.6,
+   "deg": 3
   },
   {
    "id": "ESECI::CENTROS DE ABASTECIMIENTO",
    "sys": "ESECI",
    "label": "CENTROS DE ABASTECIMIENTO",
-   "icon": "fa-warehouse"
+   "icon": "fa-warehouse",
+   "x": 921.0,
+   "y": 1601.0,
+   "r": 39.5,
+   "deg": 1
   },
   {
    "id": "ESECI::PLAZAS DE MERCADO",
    "sys": "ESECI",
    "label": "PLAZAS DE MERCADO",
-   "icon": "fa-store"
+   "icon": "fa-store",
+   "x": 758.0,
+   "y": 1173.0,
+   "r": 61.6,
+   "deg": 3
   },
   {
    "id": "ESECI::ZONAS INDUSTRIALES",
    "sys": "ESECI",
    "label": "ZONAS INDUSTRIALES",
-   "icon": "fa-industry"
+   "icon": "fa-industry",
+   "x": 679.0,
+   "y": 1576.0,
+   "r": 88.1,
+   "deg": 5
   },
   {
    "id": "ESECI::PRODUCCIÓN ARTESANAL",
    "sys": "ESECI",
    "label": "PRODUCCIÓN ARTESANAL",
-   "icon": "fa-hammer"
+   "icon": "fa-hammer",
+   "x": 486.0,
+   "y": 1312.0,
+   "r": 61.6,
+   "deg": 3
   },
   {
    "id": "ESECI::ZONAS DE INTERÉS TURÍSTICO",
    "sys": "ESECI",
    "label": "ZONAS DE INTERÉS TURÍSTICO",
-   "icon": "fa-camera"
+   "icon": "fa-camera",
+   "x": 498.0,
+   "y": 1054.0,
+   "r": 49.8,
+   "deg": 2
   },
   {
    "id": "ESECI::CENTROS FINANCIEROS",
    "sys": "ESECI",
    "label": "CENTROS FINANCIEROS",
-   "icon": "fa-building-columns"
+   "icon": "fa-building-columns",
+   "x": 727.0,
+   "y": 873.0,
+   "r": 39.5,
+   "deg": 1
   },
   {
    "id": "EIP::PATRIMONIO INMATERIAL",
    "sys": "EIP",
    "label": "PATRIMONIO INMATERIAL",
-   "icon": "fa-masks-theater"
+   "icon": "fa-masks-theater",
+   "x": 2017.0,
+   "y": 991.0,
+   "r": 61.6,
+   "deg": 3
   },
   {
    "id": "EIP::PATRIMONIO ARQUEOLÓGICO",
    "sys": "EIP",
    "label": "PATRIMONIO ARQUEOLÓGICO",
-   "icon": "fa-monument"
+   "icon": "fa-monument",
+   "x": 1862.0,
+   "y": 1430.0,
+   "r": 39.5,
+   "deg": 1
   },
   {
    "id": "EIP::PATRIMONIO NATURAL",
    "sys": "EIP",
    "label": "PATRIMONIO NATURAL",
-   "icon": "fa-leaf"
+   "icon": "fa-leaf",
+   "x": 1442.0,
+   "y": 1406.0,
+   "r": 88.1,
+   "deg": 5
   },
   {
    "id": "EIP::PATRIMONIO MATERIAL",
    "sys": "EIP",
    "label": "PATRIMONIO MATERIAL",
-   "icon": "fa-landmark"
+   "icon": "fa-landmark",
+   "x": 1399.0,
+   "y": 1026.0,
+   "r": 88.1,
+   "deg": 5
   },
   {
    "id": "EIP::COMUNIDADES",
    "sys": "EIP",
    "label": "COMUNIDADES",
-   "icon": "fa-people-group"
+   "icon": "fa-people-group",
+   "x": 1684.0,
+   "y": 1179.0,
+   "r": 49.8,
+   "deg": 2
   }
  ],
  "relaciones": [
