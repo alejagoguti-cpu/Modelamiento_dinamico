@@ -2299,7 +2299,7 @@ function computeLayoutClean() {
 
   SYS.forEach(sys => {
     const center = HUB_CENTERS[sys];
-    const group = model.systems[sys].concepts.slice().sort((a, b) =>
+    const group = model.systems[sys].concepts.slice().filter(id => !offNodes.has(id)).sort((a, b) =>
       ((model.concepts[b].activeDeg ?? model.concepts[b].deg) - (model.concepts[a].activeDeg ?? model.concepts[a].deg)) || a.localeCompare(b));
     if (!group.length) return;
 
@@ -2338,7 +2338,7 @@ function computeLayoutClean() {
   });
 
   // Reacomodo suave: el layout se recalcula con los radios y grados del escenario actual.
-  const hubIds = new Set(SYS.map(sys => model.systems[sys].concepts.slice().sort((a, b) =>
+  const hubIds = new Set(SYS.map(sys => model.systems[sys].concepts.slice().filter(id => !offNodes.has(id)).sort((a, b) =>
     ((model.concepts[b].activeDeg ?? model.concepts[b].deg) - (model.concepts[a].activeDeg ?? model.concepts[a].deg)) || a.localeCompare(b))[0]));
   for (let pass = 0; pass < 24; pass++) {
     let moved = false;
@@ -2933,7 +2933,7 @@ function updateNetworkFinding(off, active, total) {
   };
 
   const activeHubs = SYS.filter(s => state[s]).map(s => {
-    const hub = model.systems[s].concepts.slice().sort((a, b) => (model.concepts[b].activeDeg ?? 0) - (model.concepts[a].activeDeg ?? 0))[0];
+    const hub = model.systems[s].concepts.slice().filter(id => !offNodes.has(id)).sort((a, b) => (model.concepts[b].activeDeg ?? 0) - (model.concepts[a].activeDeg ?? 0))[0];
     return hub ? `${esc(model.concepts[hub].label)} (${model.concepts[hub].activeDeg ?? 0})` : '';
   }).filter(Boolean).join(' · ');
   if (!off.length) {
