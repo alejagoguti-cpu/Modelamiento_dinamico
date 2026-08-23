@@ -673,36 +673,7 @@
     renderApiSummary([]);
     setText("#connectionLabel", `Consultando OSM… 0/${activeKeys.length} capas`);
 
-    /* Una consulta combinada reduce esperas, duplicados y presión sobre Overpass. */
-    try {
-      let combined = await fetchOverpass(upl, scaleKey, bbox, signal, null);
-      if (signal.aborted) throw new DOMException("Consulta cancelada", "AbortError");
-      activeKeys.filter((key) => key !== "roads").forEach((key) => { state.apiLayerStatus[key] = "ok"; });
-      renderApiSummary(combined);
-      setText("#connectionLabel", `Datos OSM · ${combined.length.toLocaleString("es-CO")} elementos; calles en consulta`);
-      if (state.apiLayers.roads) {
-        state.apiLayerStatus.roads = "loading";
-        try {
-          const roads = await fetchOverpass(upl, scaleKey, bbox, signal, "roads");
-          combined = combined.concat(roads);
-          state.apiLayerStatus.roads = "ok";
-        } catch (roadError) {
-          if (signal.aborted) throw roadError;
-          state.apiLayerStatus.roads = "error";
-          console.warn("La geometría vial no respondió", roadError);
-        }
-      }
-      renderApiSummary(combined);
-      setText("#connectionLabel", `Datos OSM listos · ${combined.length.toLocaleString("es-CO")} elementos`);
-      const uniqueCombined = new Map();
-      combined.forEach((element) => uniqueCombined.set(`${element.type}/${element.id}`, element));
-      return [...uniqueCombined.values()];
-    } catch (combinedError) {
-      if (signal.aborted) throw combinedError;
-      console.warn("Consulta combinada falló; se intenta por lotes", combinedError);
-    }
-
-    /* Respaldo por lotes: permite que categorías parciales sobrevivan a un fallo. */
+    /* Carga progresiva: cada lote se dibuja al llegar y no bloquea toda la cartografía. */
     const results = [];
     let completed = 0;
     for (let index = 0; index < activeKeys.length; index += 2) {
@@ -713,14 +684,20 @@
         state.apiLayerStatus[key] = result.status === "fulfilled" ? "ok" : "error";
         if (result.status === "fulfilled") results.push(...result.value);
         completed += 1;
-        renderApiSummary(results);
-        setText("#connectionLabel", `Consultando OSM… ${completed}/${activeKeys.length} capas`);
+        const unique = new Map();
+        results.forEach((element) => unique.set(`${element.type}/${element.id}`, element));
+        const visibleResults = [...unique.values()];
+        /* El mapa y los contadores se actualizan después de cada respuesta. */
+        renderPlaces(visibleResults);
+        renderApiSummary(visibleResults);
+        setText("#connectionLabel", `Datos OSM parciales · ${completed}/${activeKeys.length} capas · ${visibleResults.length.toLocaleString("es-CO")} elementos`);
       });
       if (signal.aborted) throw new DOMException("Consulta cancelada", "AbortError");
     }
     const unique = new Map();
     results.forEach((element) => unique.set(`${element.type}/${element.id}`, element));
     if (!results.length) throw new Error("Ningún servidor Overpass respondió");
+    setText("#connectionLabel", `Datos OSM listos · ${unique.size.toLocaleString("es-CO")} elementos`);
     return [...unique.values()];
   }
 
