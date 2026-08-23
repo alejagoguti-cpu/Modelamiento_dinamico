@@ -11,25 +11,26 @@
 </head>
 <body>
 <div class="app">
-<aside class="sidebar sidebar-icons-only" aria-label="Navegación principal">
-  <a class="brand-icon" href="index.html" title="Bogotá Viva · Inicio" aria-label="Inicio"><i class="fa-solid fa-diagram-project"></i></a>
-  <nav class="icon-nav" aria-label="Módulos">
-    <a href="index.html" class="icon-nav-item" title="Inicio"><i class="fa-solid fa-house"></i></a>
-    <a href="modulo-01.html" class="icon-nav-item active" title="01 · Construir la red"><i class="fa-solid fa-diagram-project"></i></a>
-    <a href="modulo-02.html" class="icon-nav-item" title="02 · Medir la red"><i class="fa-solid fa-chart-simple"></i></a>
-    <a href="modulo-03.html" class="icon-nav-item" title="03 · Discurso vs realidad"><i class="fa-solid fa-eye"></i></a>
-    <a href="modulo-04.html" class="icon-nav-item" title="04 · Macromodelos"><i class="fa-solid fa-bullseye"></i></a>
-    <a href="modulo-05.html" class="icon-nav-item" title="05 · Navegador multiescalar"><i class="fa-solid fa-magnifying-glass-location"></i></a>
-    <a href="modulo-06.html" class="icon-nav-item" title="06 · POT ↔ ODS"><i class="fa-solid fa-earth-americas"></i></a>
-    <a href="modulo-07.html" class="icon-nav-item" title="07 · Simulador"><i class="fa-solid fa-flask"></i></a>
-    <a href="modulo-08.html" class="icon-nav-item" title="08 · Lectura dinámica"><i class="fa-solid fa-wave-square"></i></a>
-    <a href="modulo-09.html" class="icon-nav-item" title="09 · Modelo propio"><i class="fa-solid fa-atom"></i></a>
-  </nav>
-  <div class="icon-nav-footer">
-    <a href="configuracion.html" class="icon-nav-item" title="Configuración"><i class="fa-solid fa-gear"></i></a>
-    <a href="demo.html" class="icon-nav-item" title="Salir"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
-  </div>
-</aside>
+    <aside class="sidebar sidebar-icons-only">
+    <a class="brand-icon" href="index.html" title="Bogotá Viva · Inicio" aria-label="Inicio"><i class="fa-solid fa-diagram-project"></i></a>
+    <nav class="icon-nav" aria-label="Módulos">
+      <a href="index.html" class="icon-nav-item" title="Inicio"><i class="fa-solid fa-house"></i></a>
+      <a href="modulo-01.html" class="icon-nav-item active" title="01 · Construir la red"><i class="fa-solid fa-diagram-project"></i></a>
+      <a href="modulo-02.html" class="icon-nav-item" title="02 · Medir la red"><i class="fa-solid fa-chart-simple"></i></a>
+      <a href="modulo-03.html" class="icon-nav-item" title="03 · Discurso vs realidad"><i class="fa-solid fa-eye"></i></a>
+      <a href="modulo-04.html" class="icon-nav-item" title="04 · Macromodelos"><i class="fa-solid fa-bullseye"></i></a>
+      <a href="modulo-05.html" class="icon-nav-item" title="05 · Navegador multiescalar"><i class="fa-solid fa-magnifying-glass-location"></i></a>
+      <a href="modulo-06.html" class="icon-nav-item" title="06 · POT ↔ ODS"><i class="fa-solid fa-earth-americas"></i></a>
+      <a href="modulo-07.html" class="icon-nav-item" title="07 · Simulador"><i class="fa-solid fa-flask"></i></a>
+      <a href="modulo-08.html" class="icon-nav-item" title="08 · Lectura dinámica"><i class="fa-solid fa-wave-square"></i></a>
+      <a href="modulo-09.html" class="icon-nav-item" title="09 · Modelo propio"><i class="fa-solid fa-atom"></i></a>
+    </nav>
+
+    <div class="icon-nav-footer">
+      <a href="configuracion.html" class="icon-nav-item" title="Configuración"><i class="fa-solid fa-gear"></i></a>
+      <a href="demo.html" class="icon-nav-item" title="Salir"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
+    </div>
+  </aside>
 <main class="main">
   <header class="topbar">
     <div class="topbar-brand"><i class="fa-solid fa-share-nodes"></i> Bogotá Viva: Simulación Urbana</div>
@@ -45,12 +46,6 @@
       <div class="network-wrap"><div class="network-canvas" id="networkCanvas"><svg id="networkSvg" viewBox="0 0 920 650" preserveAspectRatio="none" aria-label="Red de relaciones del POT"></svg></div></div>
       <div class="network-legend"><div class="legend-item" style="color:var(--orange)"><span class="swatch"></span>Soporte</div><div class="legend-item" style="color:var(--blue)"><span class="swatch"></span>Resiliencia</div><div class="legend-item" style="color:#adb9b7"><span class="swatch dashed"></span>Relación discontinua / indirecta</div><div class="legend-item">Haz clic en nodos o líneas para leer la evidencia.</div></div>
     </section>
-    <aside class="side-stack">
-      <section class="card"><div class="eyebrow">FILTRO DE LECTURA</div><h2>Selecciona las estructuras</h2><p>La red muestra cuatro arquitecturas que el POT usa para ordenar el territorio.</p><div class="filters"><button class="filter active" data-filter="all">Todas</button><button class="filter" data-filter="EEP">EEP</button><button class="filter" data-filter="EFC">EFC</button><button class="filter" data-filter="ESECI">ESECI</button><button class="filter" data-filter="EIP">EIP</button></div></section>
-      <section class="card"><div class="eyebrow">LAS CUATRO ESTRUCTURAS</div><div class="structure eep"><i class="fa-solid fa-leaf"></i><div><strong>EEP · Estructura Ecológica Principal</strong><small>Agua, cerros, humedales, bosques y resiliencia climática.</small></div></div><div class="structure efc"><i class="fa-solid fa-heart"></i><div><strong>EFC · Funcional y del Cuidado</strong><small>Movilidad, vivienda, equipamientos y servicios de cuidado.</small></div></div><div class="structure eseci"><i class="fa-solid fa-lightbulb"></i><div><strong>ESECI · Socioeconómica, Creativa e Innovación</strong><small>Empleo, abastecimiento, producción e innovación.</small></div></div><div class="structure eip"><i class="fa-solid fa-landmark"></i><div><strong>EIP · Integradora de Patrimonios</strong><small>Memoria, patrimonio natural, material e inmaterial.</small></div></div></section>
-      <section class="card"><div class="eyebrow">LECTURA INICIAL</div><h2>La estructura es una hipótesis</h2><p>Este módulo no pretende cerrar la definición de ciudad. Hace visible qué componentes el POT conecta explícitamente y permite preguntar qué actores, especies, procesos y relaciones quedan fuera.</p><div class="stat-grid"><div class="stat"><b id="nodeCount">0</b><span>conceptos modelados</span></div><div class="stat"><b id="supportCount">0</b><span>relaciones de soporte</span></div><div class="stat"><b id="resilienceCount">0</b><span>relaciones de resiliencia</span></div><div class="stat"><b>4</b><span>estructuras activas</span></div></div></section>
-      <section class="card"><div class="eyebrow">FUENTES Y TRANSPARENCIA</div><p class="source">Relaciones construidas a partir de las fuentes y textos de trabajo del POT. La página indicada en cada vínculo funciona como rastro de verificación para la bitácora.</p><div class="footer-note">Bogotá Viva · Ingeniería inversa del modelo urbano</div></section>
-    </aside>
   </div>
 </main>
 <div class="popup" id="relationPopup" role="dialog" aria-modal="false"><button class="popup-close" id="popupClose" aria-label="Cerrar">×</button><div class="popup-kicker">EVIDENCIA DE LA RED</div><h3 id="popupTitle">Relación</h3><p id="popupText"></p><span class="popup-page" id="popupPage"></span></div>
