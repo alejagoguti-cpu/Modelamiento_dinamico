@@ -11,7 +11,7 @@
   <link href="https://unpkg.com/maplibre-gl@6.5.0/dist/maplibre-gl.css" rel="stylesheet">
   <link rel="stylesheet" href="modulo-05.css?v=minimal-v4">
   <link rel="stylesheet" href="site-theme.css?v=minimal-v4">
-  <link rel="stylesheet" href="modulo-05-popup.css?v=wetland-image-v1">
+  <link rel="stylesheet" href="modulo-05-popup.css?v=triple-click-v2">
 </head>
 <body>
   <div class="app-shell">
@@ -93,7 +93,8 @@
       <footer class="scale-network-dialog-foot">
         <span><i class="scale-legend-line direct"></i> Relación directa</span>
         <span><i class="scale-legend-line indirect"></i> Relación indirecta</span>
-        <span class="scale-network-hint">Haz clic en un nodo para identificarlo</span>
+        <button id="scaleNetworkRestore" class="scale-network-restore" type="button">Reactivar nodos</button>
+        <span class="scale-network-hint">1 clic selecciona · 2 clics abre detalle · 3 clics apaga</span>
       </footer>
     </div>
   </div>
@@ -126,6 +127,6 @@
     window.maplibregl = maplibregl;
     window.dispatchEvent(new Event("maplibre-ready"));
   </script>
-  <script src="modulo-05.js?v=wetland-image-v1"></script>
+  <script src="modulo-05.js?v=triple-click-v2"></script>
 </body>
 </html>

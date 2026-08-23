@@ -1126,6 +1126,8 @@ const scaleNetworkDescriptions = {
 };
 
 let scalePopupSelectedNode = null;
+let scalePopupMode = 'natural';
+const scalePopupHiddenNodes = new Set();
 const scaleNetworkViewState = { scale: 1, x: 0, y: 0 };
 
 function updateScaleNetworkViewport() {
@@ -1240,7 +1242,7 @@ function renderScaleNetworkPopup(mode) {
   const edgeMarkup = definition.edges.map(([fromId, toId, type]) => {
     const from = nodes[fromId];
     const to = nodes[toId];
-    if (!from || !to) return '';
+    if (!from || !to || scalePopupHiddenNodes.has(fromId) || scalePopupHiddenNodes.has(toId)) return '';
     const color = type === 'indirecta' ? '#e89a6c' : '#46d6d0';
     const className = type === 'indirecta' ? 'popup-edge indirect' : 'popup-edge direct';
     return `<line class="${className}" x1="${from.x.toFixed(1)}" y1="${from.y.toFixed(1)}" x2="${to.x.toFixed(1)}" y2="${to.y.toFixed(1)}" stroke="${color}" marker-end="url(#arrow-${type})" />`;
@@ -1256,7 +1258,7 @@ function renderScaleNetworkPopup(mode) {
     'fa-eye': '\uf06e',
     'fa-temperature-half': '\uf2c9'
   };
-  const nodeMarkup = definition.nodes.map(node => {
+  const nodeMarkup = definition.nodes.filter(node => !scalePopupHiddenNodes.has(node.id)).map(node => {
     const p = nodes[node.id];
     const radius = node.hub ? 36 : 24;
     const lines = splitPopupLabel(node.label);
@@ -1286,7 +1288,12 @@ function renderScaleNetworkPopup(mode) {
   setupScaleNetworkViewport();
   canvas.querySelectorAll('.popup-node').forEach(nodeElement => {
     const node = nodes[nodeElement.dataset.nodeId];
+    let clickCount = 0;
     let clickTimer = null;
+    const resetClickSequence = () => {
+      clickCount = 0;
+      clickTimer = null;
+    };
     const selectNode = () => {
       canvas.querySelectorAll('.popup-node').forEach(item => item.classList.remove('selected'));
       nodeElement.classList.add('selected');
@@ -1298,23 +1305,32 @@ function renderScaleNetworkPopup(mode) {
       selectNode();
       if (mode === 'natural' && node?.id === 'humedales') openWetlandImageModal();
     };
+    const togglePopupNode = () => {
+      if (!node) return;
+      scalePopupHiddenNodes.add(node.id);
+      scalePopupSelectedNode = null;
+      renderScaleNetworkPopup(mode);
+      const description = document.getElementById('scaleNetworkDescription');
+      if (description) description.textContent = `${node.label} apagado · se retiraron sus relaciones activas`;
+    };
     nodeElement.addEventListener('click', () => {
-      if (clickTimer) {
-        window.clearTimeout(clickTimer);
-        clickTimer = null;
-        openNodeDetail();
-        return;
-      }
-      clickTimer = window.setTimeout(() => {
-        clickTimer = null;
-        selectNode();
-      }, 230);
-    });
-    nodeElement.addEventListener('dblclick', event => {
-      event.preventDefault();
+      clickCount += 1;
       if (clickTimer) window.clearTimeout(clickTimer);
-      clickTimer = null;
-      openNodeDetail();
+      if (clickCount === 1) {
+        clickTimer = window.setTimeout(() => {
+          resetClickSequence();
+          selectNode();
+        }, 260);
+      } else if (clickCount === 2) {
+        clickTimer = window.setTimeout(() => {
+          resetClickSequence();
+          openNodeDetail();
+        }, 240);
+      } else {
+        if (clickTimer) window.clearTimeout(clickTimer);
+        resetClickSequence();
+        togglePopupNode();
+      }
     });
     nodeElement.addEventListener('keydown', event => {
       if (event.key === 'Enter' || event.key === ' ') {
@@ -1359,6 +1375,8 @@ function openScaleNetworkModal(mode) {
   const modal = document.getElementById('scaleNetworkModal');
   const definition = scaleNetworks[mode];
   if (!modal || !definition) return;
+  scalePopupMode = mode;
+  scalePopupHiddenNodes.clear();
   scalePopupSelectedNode = null;
   document.getElementById('scaleNetworkTitle').textContent = definition.title;
   document.getElementById('scaleNetworkDescription').textContent = scaleNetworkDescriptions[mode];
@@ -1377,6 +1395,12 @@ function closeScaleNetworkModal() {
   document.body.classList.remove('scale-modal-open');
 }
 
+document.getElementById('scaleNetworkRestore')?.addEventListener('click', () => {
+  scalePopupHiddenNodes.clear();
+  renderScaleNetworkPopup(scalePopupMode);
+  const description = document.getElementById('scaleNetworkDescription');
+  if (description) description.textContent = scaleNetworkDescriptions[scalePopupMode];
+});
 document.getElementById('scaleNetworkClose')?.addEventListener('click', closeScaleNetworkModal);
 document.getElementById('scaleNetworkModal')?.addEventListener('click', event => {
   if (event.target.id === 'scaleNetworkModal') closeScaleNetworkModal();

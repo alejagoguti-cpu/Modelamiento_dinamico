@@ -39,3 +39,15 @@ El doble clic sobre `HUMEDALES` abre el visor `#wetlandImageModal`, conserva la 
 La versión pública `natural-30-icons-v1-final` compiló en estado `built` y sirve los archivos con caché `natural-30-icons-v1`. Al abrir Natural, el DOM público muestra 30 nodos con iconos SVG visibles, incluyendo HUMEDALES, RÍOS, CERROS ORIENTALES, PÁRAMOS, BOSQUES, COBERTURAS y RESILIENCIA CLIMÁTICA. La red contiene 42 relaciones. El mapa OSM monocromático, sus calles y el selector de UPL permanecen disponibles detrás del pop-up.
 
 La prueba pública de doble clic confirmó: `nodeFound: true`, 30 nodos, 30 iconos, 42 relaciones, `imageModalOpen: true`, título `Humedales`, mapa presente y red Natural todavía abierta detrás. El visor muestra el placeholder porque la imagen real aún está pendiente de envío.
+
+## Imagen satelital publicada
+
+Se copió `PLANOSNICO.webp` a `assets/planosnico.webp` y se conectó al visor de HUMEDALES. La comprobación HTTP pública devolvió `200`, el HTML referencia la imagen y GitHub Pages compiló en estado `built`. La versión pública muestra la red Natural ampliada con iconos y el mapa OSM monocromático detrás.
+
+La vista pública final mostró el visor `DETALLE DE RED NATURAL` abierto sobre la red, con la imagen satelital de `PLANOSNICO.webp` visible dentro del modal. La red Natural ampliada permanece detrás, con sus nodos e iconos; el mapa monocromático y el selector de UPL siguen disponibles al cerrar el visor.
+
+Commit final de integración de imagen: `321f24b`.
+
+## Triple clic
+
+La interacción quedó separada por secuencia temporal: 1 clic selecciona, 2 clics abre el detalle de HUMEDALES y 3 clics apaga el nodo. La prueba local confirmó que dos clics abren `wetlandImageModal` con 30 nodos y 42 relaciones; tres clics no abren la imagen, ocultan HUMEDALES y dejan 29 nodos y 36 relaciones; el botón `Reactivar nodos` devuelve 30 nodos y 42 relaciones.

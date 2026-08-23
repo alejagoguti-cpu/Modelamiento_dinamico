@@ -514,3 +514,23 @@ body.wetland-modal-open { overflow: hidden; }
   .popup-node.hub .popup-node-icon { font-size: 14px; }
   .popup-node text:not(.popup-node-icon) { font-size: 7px; }
 }
+
+
+.scale-network-restore {
+  padding: 6px 9px;
+  border: 1px solid rgba(70,214,208,.26);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--popup-teal);
+  font: 600 9px/1 Inter, sans-serif;
+  cursor: pointer;
+}
+.scale-network-restore:hover,
+.scale-network-restore:focus-visible {
+  border-color: var(--popup-teal);
+  background: rgba(70,214,208,.08);
+  outline: none;
+}
+@media (max-width: 700px) {
+  .scale-network-restore { padding: 5px 7px; font-size: 8px; }
+}
