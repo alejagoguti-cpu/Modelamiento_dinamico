@@ -9,8 +9,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
   <link href="https://unpkg.com/maplibre-gl@6.5.0/dist/maplibre-gl.css" rel="stylesheet">
-  <link rel="stylesheet" href="modulo-05.css?v=api-catalog-v2">
-  <link rel="stylesheet" href="site-theme.css?v=api-catalog-v2">
+  <link rel="stylesheet" href="modulo-05.css?v=ux-guide-v1">
+  <link rel="stylesheet" href="site-theme.css?v=ux-guide-v1">
 </head>
 <body>
   <div class="app-shell">
@@ -44,9 +44,13 @@
         <div class="eyebrow"><span class="eyebrow-line"></span> BOGOTÁ VIVA · 05B</div>
         <h1>Navegador<br><span>Multiescalar</span></h1>
         <p class="intro">Explora Bogotá sobre sus calles reales y cambia de escala para leer cómo se conectan la estructura natural, la memoria, la infraestructura y la proximidad cotidiana.</p>
+        <div class="how-to" aria-label="Cómo usar el navegador multiescalar">
+          <div class="how-to-title"><i class="fa-solid fa-compass"></i> Cómo usar este módulo</div>
+          <div class="how-to-steps"><span><b>1</b><em>Elige una escala</em></span><span><b>2</b><em>Selecciona una UPL</em></span><span><b>3</b><em>Enciende una capa</em></span><span><b>4</b><em>Lee las pepitas</em></span></div>
+        </div>
 
         <div class="panel-block">
-          <div class="block-label">ESCALA DE LECTURA</div>
+          <div class="block-label"><span class="step-label">1</span> ELIGE UNA ESCALA</div>
           <div class="scale-grid" role="tablist" aria-label="Escalas temáticas">
             <button class="scale-btn is-active" data-scale="natural" role="tab" aria-selected="true"><i class="fa-solid fa-droplet"></i><span>Natural</span></button>
             <button class="scale-btn" data-scale="cultural" role="tab" aria-selected="false"><i class="fa-solid fa-landmark"></i><span>Cultural</span></button>
@@ -56,20 +60,20 @@
         </div>
 
         <div class="panel-block">
-          <div class="block-label">VISTAS ALTERNATIVAS</div>
+          <div class="block-label"><span class="step-label">2</span> CAMBIA LA VISTA</div>
           <button class="view-card" data-view="region"><span class="view-icon"><i class="fa-solid fa-earth-americas"></i></span><span><strong>Región Metropolitana</strong><small>20 municipios conectados</small></span><i class="fa-solid fa-arrow-right"></i></button>
           <button class="view-card" data-view="barrio"><span class="view-icon"><i class="fa-solid fa-building-user"></i></span><span><strong>Barrio Vital /<br>Manzanas del Cuidado</strong><small>Unidad de proximidad</small></span><i class="fa-solid fa-arrow-right"></i></button>
         </div>
 
         <div class="panel-block">
-          <div class="block-label">UPL · UNIDAD DE PROXIMIDAD</div>
+          <div class="block-label"><span class="step-label">3</span> ELIGE UNA UPL</div>
           <label class="sr-only" for="uplSelect">Seleccionar UPL</label>
           <select id="uplSelect"></select>
           <p id="uplTag" class="field-note">Selecciona una UPL para enfocar la exploración.</p>
         </div>
 
         <div class="panel-block route-block">
-          <div class="block-label"><i class="fa-solid fa-person-walking"></i> RUTA SOBRE CALLES REALES</div>
+          <div class="block-label"><i class="fa-solid fa-person-walking"></i> RUTA OPCIONAL SOBRE CALLES REALES</div>
           <label class="sr-only" for="routeStart">Origen</label>
           <div class="input-wrap"><i class="fa-solid fa-location-dot"></i><input id="routeStart" type="text" placeholder="Origen · lugar o dirección"></div>
           <label class="sr-only" for="routeEnd">Destino</label>
@@ -85,17 +89,18 @@
         </div>
         <div class="source-mode-row"><span><i class="fa-solid fa-database"></i> Fuente vial</span><button id="localTilesBtn" class="local-tiles-btn" type="button"><i class="fa-solid fa-hard-drive"></i> Usar PMTiles local</button></div>
         <div class="panel-block api-layers-block">
-          <div class="block-label"><i class="fa-solid fa-layer-group"></i> CATÁLOGO API · 28 CATEGORÍAS OSM</div>
-          <div class="api-layer-actions"><button id="apiSelectAll" type="button">Activar todo</button><button id="apiClearAll" type="button">Limpiar</button></div>
+          <div class="block-label"><span class="step-label">4</span> ENCIENDE CAPAS DE DATOS</div>
+          <div class="api-layer-actions"><button id="apiSelectAll" type="button">Activar las 28</button><button id="apiClearAll" type="button">Apagar todas</button></div>
+          <div class="api-status-key" aria-label="Estados de las capas"><span><i class="status-key-dot is-on"></i> Activa</span><span><i class="status-key-dot is-loading"></i> Consultando</span><span><i class="status-key-dot is-off"></i> Apagada</span></div>
           <div id="apiLayerToggles" class="api-layer-toggles" role="group" aria-label="Capas de datos OpenStreetMap"></div>
-          <p class="field-note">Cada categoría consulta etiquetas OSM específicas dentro del área visible. Puedes combinar varias capas.</p>
+          <p class="field-note">Activa una o varias categorías. Las pepitas aparecen en el mapa y los números indican grupos de datos cercanos.</p>
         </div>
       </section>
 
       <section class="map-panel" aria-label="Mapa de Bogotá">
         <div id="map" class="map-canvas"></div>
         <div class="map-headline"><div><span class="map-kicker">EXPLORACIÓN EN VIVO</span><h2 id="mapTitle">UPL 13 · Tintal</h2><p id="mapSubtitle">Bogotá · calles, equipamientos y estructura natural</p></div><div class="map-actions"><button id="locateBtn" class="map-action" title="Volver a la UPL seleccionada"><i class="fa-solid fa-crosshairs"></i></button><button id="fullScreenBtn" class="map-action" title="Pantalla completa"><i class="fa-solid fa-expand"></i></button></div></div>
-        <div class="map-legend"><span><i class="legend-road"></i>Red vial OSM</span><span><i class="legend-place"></i>Equipamientos</span><span><i class="legend-upl"></i>UPL seleccionada</span><span id="roadLevel" class="road-level">Nivel meso · 5 jerarquías visibles</span></div>
+        <div class="map-legend"><span><i class="legend-road"></i>Red vial OSM</span><span><i class="legend-place"></i>Pepitas OSM</span><span><i class="legend-upl"></i>UPL seleccionada</span><span id="roadLevel" class="road-level">Nivel meso · 5 jerarquías visibles</span></div>
         <div class="map-toast" id="mapToast" role="status" aria-live="polite"><i class="fa-solid fa-circle-info"></i><span>Inicializando mapa real…</span></div>
         <div class="map-attribution-note">Datos de calles y lugares: <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap contributors</a> · Visualización exploratoria RAPOT</div>
       </section>
@@ -127,6 +132,6 @@
     window.maplibregl = maplibregl;
     window.dispatchEvent(new Event("maplibre-ready"));
   </script>
-  <script src="modulo-05.js?v=api-catalog-v2"></script>
+  <script src="modulo-05.js?v=ux-guide-v1"></script>
 </body>
 </html>
