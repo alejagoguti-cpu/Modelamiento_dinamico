@@ -612,7 +612,9 @@
       if (key === "roads") return [`way["highway"~"${roadRegexForLevel(roadLevel)}"](${b});`];
       return [API_LAYERS[key].query(b)];
     });
-    return `[out:json][timeout:18];(${clauses.join("")});out center geom tags;`;
+    /* La consulta combinada prioriza conteos y puntos; las geometrías viales pesadas se reservan para consultas específicas. */
+    const output = layerKey === "roads" || state.apiLayers.roads ? "out center geom tags;" : "out center tags;";
+    return `[out:json][timeout:18];(${clauses.join("")});${output}`;
   }
 
   async function fetchOverpass(upl, scaleKey, bbox, signal, layerKey) {
