@@ -667,7 +667,8 @@
   }
 
   async function fetchVisibleApiLayers(upl, scaleKey, bbox, signal) {
-    const activeKeys = Object.keys(API_LAYERS).filter((key) => state.apiLayers[key]);
+    const priority = ["natural", "amenities", "transport", "water", "green", "parks", "culture", "commerce", "education", "health", "care", "boundaries", "roads"];
+    const activeKeys = Object.keys(API_LAYERS).filter((key) => state.apiLayers[key]).sort((a, b) => priority.indexOf(a) - priority.indexOf(b));
     if (!activeKeys.length) return [];
     activeKeys.forEach((key) => { state.apiLayerStatus[key] = "loading"; });
     renderApiSummary([]);
