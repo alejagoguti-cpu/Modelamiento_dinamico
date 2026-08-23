@@ -465,6 +465,8 @@
     state.map.addSource("osm-streets", { type: "geojson", data: { type: "FeatureCollection", features: [] } });
     state.map.addLayer({ id: "osm-streets-casing", type: "line", source: "osm-streets", layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": "#ffffff", "line-width": ["interpolate", ["linear"], ["zoom"], 10, 1.6, 13, 3.2, 16, 6], "line-opacity": .78 } });
     state.map.addLayer({ id: "osm-streets", type: "line", source: "osm-streets", layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": ["match", ["get", "highway"], "motorway", "#d56c75", "trunk", "#df8e5a", "primary", "#e6a95a", "secondary", "#4cb2a9", "tertiary", "#58a9a4", "residential", "#2d9790", "living_street", "#50aaa2", "service", "#74bab2", "#4a9f99"], "line-width": ["interpolate", ["linear"], ["zoom"], 10, .55, 13, 1.15, 16, 2.5], "line-opacity": .93 } });
+    state.map.addSource("osm-places", { type: "geojson", data: { type: "FeatureCollection", features: [] } });
+    state.map.addLayer({ id: "osm-places", type: "circle", source: "osm-places", paint: { "circle-radius": ["interpolate", ["linear"], ["zoom"], 9, 1.2, 12, 2.2, 15, 4], "circle-color": ["coalesce", ["get", "color"], "#e8925c"], "circle-opacity": .72, "circle-stroke-color": "#ffffff", "circle-stroke-width": .5, "circle-stroke-opacity": .55 } });
     state.map.addSource("upl-focus", { type: "geojson", data: { type: "FeatureCollection", features: [] } });
     state.map.addLayer({ id: "upl-focus-fill", type: "fill", source: "upl-focus", paint: { "fill-color": "#24d5c6", "fill-opacity": .10 } });
     state.map.addLayer({ id: "upl-focus-line", type: "line", source: "upl-focus", paint: { "line-color": "#149e96", "line-width": 2, "line-dasharray": [2, 2], "line-opacity": .9 } });
@@ -527,6 +529,7 @@
     state.placeMarkers = [];
     state.proceduralMarkers.forEach((marker) => marker.remove());
     state.proceduralMarkers = [];
+    updatePlaceLayer([]);
   }
 
   function featurePoint(element) {
@@ -546,6 +549,11 @@
   function updateStreetLayer(features) {
     if (!state.map || !state.map.getSource("osm-streets")) return;
     state.map.getSource("osm-streets").setData({ type: "FeatureCollection", features });
+  }
+
+  function updatePlaceLayer(features) {
+    if (!state.map || !state.map.getSource("osm-places")) return;
+    state.map.getSource("osm-places").setData({ type: "FeatureCollection", features });
   }
 
   function featureName(element) {
@@ -569,6 +577,7 @@
     if (!state.map || !window.maplibregl) return;
     const seen = new Set();
     const streetFeatures = [];
+    const placeFeatures = [];
     let placeCount = 0;
     let roadCount = 0;
     elements.forEach((element) => {
@@ -579,6 +588,15 @@
       }
     });
     if (state.streetSource === "overpass") updateStreetLayer(streetFeatures);
+    elements.forEach((element) => {
+      const point = featurePoint(element);
+      const tags = element.tags || {};
+      if (!point || tags.highway) return;
+      const matchedLayer = featureLayer(element);
+      placeFeatures.push({ type: "Feature", properties: { color: matchedLayer?.[1].color || "#e8925c", osmId: element.id, label: featureName(element) }, geometry: { type: "Point", coordinates: point } });
+    });
+    updatePlaceLayer(placeFeatures);
+    placeCount = placeFeatures.length;
     elements.slice(0, 220).forEach((element) => {
       const point = featurePoint(element);
       if (!point) return;
@@ -595,7 +613,6 @@
       }
       const marker = new maplibregl.Marker({ element: markerEl, anchor: "center" }).setLngLat(point).setPopup(new maplibregl.Popup({ offset: 9, className: "place-popup" }).setHTML(`<strong>${escapeHtml(featureName(element))}</strong><span>${escapeHtml(featureType(element))} · OpenStreetMap${matchedLayer ? ` · ${escapeHtml(matchedLayer[1].label)}` : ""}</span>`)).addTo(state.map);
       state.placeMarkers.push(marker);
-      placeCount += 1;
     });
     setText("#metricPlaces", placeCount ? String(placeCount) : "0");
     setText("#metricRoads", state.streetSource === "pmtiles" ? "MVT" : (roadCount ? String(roadCount) : "—"));
