@@ -4871,3 +4871,17 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 /* Componentes como descripción integrada de la tabla, no como listado */
 .subsystem-components { width: min(330px, calc(100% - 24px)); }
 .subsystem-components p { margin: 0; color: rgba(242,236,227,.86); font-size: 10px; line-height: 1.5; }
+
+/* Componentes con iconografía temática: visuales, no burbujas de composición */
+.component-visual-strip { display: flex; flex-wrap: wrap; gap: 7px; margin: 8px 0 10px; }
+.component-visual { display: inline-flex; align-items: center; gap: 6px; min-width: 42px; padding: 7px 8px; border: 1px solid color-mix(in srgb, var(--bubble-color) 58%, transparent); border-radius: 10px; background: linear-gradient(145deg, color-mix(in srgb, var(--bubble-color) 17%, transparent), rgba(255,255,255,.04)); color: #fff; box-shadow: inset 0 0 10px color-mix(in srgb, var(--bubble-color) 12%, transparent); animation: component-icon-in .35s both; }
+.component-visual:nth-child(2) { animation-delay: .04s; }
+.component-visual:nth-child(3) { animation-delay: .08s; }
+.component-visual:nth-child(4) { animation-delay: .12s; }
+.component-visual:nth-child(5) { animation-delay: .16s; }
+.component-visual:nth-child(6) { animation-delay: .20s; }
+.component-visual i { display: grid; place-items: center; width: 22px; height: 22px; border-radius: 7px; background: color-mix(in srgb, var(--bubble-color) 24%, #101216); color: var(--bubble-color); font-size: 13px; filter: drop-shadow(0 0 5px color-mix(in srgb, var(--bubble-color) 45%, transparent)); }
+.component-visual em { color: rgba(255,255,255,.86); font-size: 9px; font-style: normal; line-height: 1.1; }
+.subsystem-components > strong i { margin-right: 4px; color: var(--bubble-color); }
+@keyframes component-icon-in { from { opacity: 0; transform: translateY(5px) scale(.88); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@media (max-width: 720px) { .component-visual { padding: 6px; } .component-visual em { font-size: 8px; } .component-visual i { width: 20px; height: 20px; font-size: 11px; } }

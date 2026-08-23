@@ -1688,6 +1688,29 @@
       category: row.category,
       justification: row.justification
     }));
+    const componentVisuals = [
+      { match: /espejo de agua/i, icon: "fa-water", label: "Agua" },
+      { match: /canal/i, icon: "fa-arrows-left-right-to-line", label: "Canal" },
+      { match: /rondas?/i, icon: "fa-wave-square", label: "Ronda" },
+      { match: /escorrent/i, icon: "fa-cloud-rain", label: "Escorrentía" },
+      { match: /suelo/i, icon: "fa-layer-group", label: "Suelo" },
+      { match: /aves?/i, icon: "fa-dove", label: "Aves" },
+      { match: /arañas?/i, icon: "fa-spider", label: "Arañas" },
+      { match: /insectos?/i, icon: "fa-bug", label: "Insectos" },
+      { match: /vegetación|junco|enea|kikuyo/i, icon: "fa-leaf", label: "Vegetación" },
+      { match: /avenida/i, icon: "fa-road", label: "Avenida" },
+      { match: /edific/i, icon: "fa-building", label: "Edificaciones" },
+      { match: /ciclorruta/i, icon: "fa-person-biking", label: "Ciclorruta" },
+      { match: /senderos?/i, icon: "fa-person-walking", label: "Senderos" },
+      { match: /personas|habitantes|visitantes/i, icon: "fa-person", label: "Personas" },
+      { match: /junta/i, icon: "fa-people-group", label: "Junta" },
+      { match: /organizaciones?/i, icon: "fa-hands-holding-circle", label: "Organización" },
+      { match: /jardín botánico/i, icon: "fa-seedling", label: "Jardín Botánico" },
+      { match: /secretaría/i, icon: "fa-landmark", label: "Secretaría" },
+      { match: /ciudad limpia|residuos/i, icon: "fa-recycle", label: "Residuos" },
+      { match: /biblioteca/i, icon: "fa-book-open", label: "Biblioteca" }
+    ];
+    const getComponentVisuals = (item) => componentVisuals.filter((visual) => visual.match.test(item.componentsText || ""));
     const drawSubsystems = ({ hidden = false } = {}) => {
       if (!subsystemBubbles) return;
       subsystemBubbles.dataset.revealState = hidden ? "pending" : "complete";
@@ -1701,7 +1724,8 @@
         components.style.setProperty("--bubble-color", item.color);
         components.style.left = `clamp(8px, ${Math.max(7, Math.min(item.x - 8, 62))}%, calc(100% - 320px))`;
         components.style.top = `clamp(72px, ${Math.min(item.y + 10, 72)}%, calc(100% - 170px))`;
-        components.innerHTML = `<strong>QUÉ PARTES O COMPONENTES SE ANALIZAN</strong><p>${item.componentsText || item.components.join(", ")}</p>`;
+        const visuals = getComponentVisuals(item);
+        components.innerHTML = `<strong><i class="fa-solid fa-sparkles"></i> QUÉ PARTES O COMPONENTES SE ANALIZAN</strong><div class="component-visual-strip">${visuals.map((visual) => `<span class="component-visual" title="${visual.label}"><i class="fa-solid ${visual.icon}"></i><em>${visual.label}</em></span>`).join("")}</div><p>${item.componentsText || item.components.join(", ")}</p>`;
         subsystemBubbles.appendChild(components);
         const purpose = document.createElement("aside");
         purpose.className = "subsystem-purpose-panel active";
