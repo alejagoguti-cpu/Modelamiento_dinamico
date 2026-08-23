@@ -42,15 +42,15 @@
     proceduralMarkers: [],
     favorite: false,
     apiLayers: {
-      /* Carga inicial ligera: el resto de las 28 capas se activa bajo demanda. */
-      roads: true, walking: false, transport: false, rail: false, aerial: false,
-      natural: true, water: false, green: false,
-      amenities: true, education: false, health: false, care: false, civic: false, services: false,
-      commerce: false, food: false, industrial: false,
-      residential: false, buildings: false, landuse: false,
-      parks: false, sports: false,
-      culture: false, tourism: false, memorial: false,
-      boundaries: false, utilities: false, street: false,
+      /* Las 28 categorías se cargan automáticamente; cada consulta conserva timeout y fallback. */
+      roads: true, walking: true, transport: true, rail: true, aerial: true,
+      natural: true, water: true, green: true,
+      amenities: true, education: true, health: true, care: true, civic: true, services: true,
+      commerce: true, food: true, industrial: true,
+      residential: true, buildings: true, landuse: true,
+      parks: true, sports: true,
+      culture: true, tourism: true, memorial: true,
+      boundaries: true, utilities: true, street: true,
     },
     apiLayerStatus: {},
   };
@@ -770,7 +770,7 @@
     Object.keys(API_LAYERS).forEach((key) => { state.apiLayerStatus[key] = state.apiLayers[key] ? "loading" : "idle"; });
     renderApiSummary([]);
     setText("#connectionLabel", "Consultando OSM…");
-    showToast(`Consultando ${scale.label.toLowerCase()} en el área visible… Las demás capas se activan bajo demanda.`);
+    showToast(`Consultando todas las capas API de ${scale.label.toLowerCase()} en el área visible…`);
     try {
       const elements = await fetchVisibleApiLayers(state.selectedUpl, state.selectedScale, bbox, controller.signal);
       if (token !== state.queryToken || controller.signal.aborted) return;
