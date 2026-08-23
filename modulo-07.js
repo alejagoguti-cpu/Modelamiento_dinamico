@@ -1511,7 +1511,7 @@
     const exportReport = () => {
       const blob = new Blob(
           [
-            "Dashboard de Emergencia e Impacto\nRedes ampliadas con nodos semánticos y clasificación por capas.",
+            "Síntesis de Emergencia e Impacto\nRedes ampliadas con nodos semánticos y clasificación por capas.",
           ],
           { type: "text/plain" },
         ),
