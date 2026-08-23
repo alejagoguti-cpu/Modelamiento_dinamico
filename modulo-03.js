@@ -817,6 +817,9 @@ function buildModel() {
       ? 'Indirecta'
       : 'Directa');
     const rel = Object.assign({}, r, {
+      // La fuente histórica no siempre trae id. Un índice estable evita que
+      // purgeInactiveSvg() confunda todas las relaciones con undefined.
+      id: model.relations.length,
       from,
       to,
       tipo: relationType,

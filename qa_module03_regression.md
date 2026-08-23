@@ -57,3 +57,21 @@ Se añadió `drawRadius` para separar el radio pintado del radio objetivo. `reco
 Prueba local con EEP: HUMEDALES pasa de radio 118 y 8 conexiones a desaparecer por pertenecer a la estructura apagada; TRANSPORTE PÚBLICO pasa de 96 a 85 con 6→5 conexiones activas; PATRIMONIO NATURAL pasa de 85 a 74 con 5→4; SERVICIOS EMPRESARIALES conserva 118 con 8 conexiones. Tras reactivar todo, los radios regresan a 118, 96, 85 y 118 respectivamente.
 
 La prueba del nodo crítico HUMEDALES también funciona: antes había 31 nodos, 52 relaciones y HUMEDALES tenía radio 118 con 8 conexiones; al simular su apagado, HUMEDALES desaparece, PATRIMONIO NATURAL baja de radio 85 a 74 porque pasa de 5 a 4 conexiones activas, y el resto conserva el tamaño correspondiente a sus grados activos. El restablecimiento devuelve la red completa.
+
+## Verificación pública del recálculo de radios
+
+En `https://alejagoguti-cpu.github.io/Modelamiento_dinamico/modulo-03.html?qa=active-radius-v1-final`, HUMEDALES inicia con radio 118 y 8 conexiones. Al apagar EEP, TRANSPORTE PÚBLICO cambia de radio 96 a 85 al pasar de 6 a 5 conexiones activas, y PATRIMONIO NATURAL cambia de 85 a 74 al pasar de 5 a 4. El cambio se observa durante la interpolación (radio intermedio 85.1 y 74.1) y al reactivar todo los valores regresan a 96 y 85. SERVICIOS EMPRESARIALES conserva radio 118 con 8 conexiones.
+
+La corrección está publicada en el commit `f3ad002` y la compilación de GitHub Pages está en estado `built`.
+
+## Regresión encontrada al apagar un nodo
+
+La prueba controlada confirmó que antes del apagado hay 52 relaciones visibles y 31 nodos. Después de ocultar HUMEDALES, el modelo conserva 44 relaciones activas y 29 nodos, pero el DOM queda con 0 paths visibles. La causa es que la fuente remota no trae `r.id`; todos los paths reciben `data-rel="undefined"`. `purgeInactiveSvg()` busca el primer registro con id undefined —que pertenece al nodo apagado— y elimina también las relaciones activas restantes. Las rutas siguen siendo rectas, pero desaparecen por esta limpieza defectuosa.
+
+Corrección: asignar un identificador numérico estable a cada relación al construir `model.relations`.
+
+## Verificación de flechas tras apagar un nodo
+
+La causa adicional encontrada fue que la fuente remota no traía `id` en las relaciones. Al apagar HUMEDALES, `purgeInactiveSvg()` veía `data-rel="undefined"` y eliminaba todas las flechas, aunque el modelo mantuviera 44 relaciones activas. Se asignó un índice estable a cada relación al construir el modelo.
+
+La prueba local después del arreglo confirma: red inicial 31 nodos/52 relaciones/52 segmentos rectos; con HUMEDALES apagado, 29 nodos/44 relaciones/44 segmentos rectos; al reactivar, 31 nodos/52 relaciones/52 segmentos rectos. En ambos estados hay 0 rutas con comandos de curva y los límites de la malla permanecen compactos alrededor de x=400–2030, y=350–1410.
