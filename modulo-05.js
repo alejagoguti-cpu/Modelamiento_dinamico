@@ -649,10 +649,28 @@
   async function fetchVisibleApiLayers(upl, scaleKey, bbox, signal) {
     const activeKeys = Object.keys(API_LAYERS).filter((key) => state.apiLayers[key]);
     if (!activeKeys.length) return [];
-    const results = [];
-    let completed = 0;
     activeKeys.forEach((key) => { state.apiLayerStatus[key] = "loading"; });
     renderApiSummary([]);
+    setText("#connectionLabel", `Consultando OSM… 0/${activeKeys.length} capas`);
+
+    /* Una consulta combinada reduce esperas, duplicados y presión sobre Overpass. */
+    try {
+      const combined = await fetchOverpass(upl, scaleKey, bbox, signal, null);
+      if (signal.aborted) throw new DOMException("Consulta cancelada", "AbortError");
+      activeKeys.forEach((key) => { state.apiLayerStatus[key] = "ok"; });
+      renderApiSummary(combined);
+      setText("#connectionLabel", `Datos OSM listos · ${combined.length.toLocaleString("es-CO")} elementos`);
+      const uniqueCombined = new Map();
+      combined.forEach((element) => uniqueCombined.set(`${element.type}/${element.id}`, element));
+      return [...uniqueCombined.values()];
+    } catch (combinedError) {
+      if (signal.aborted) throw combinedError;
+      console.warn("Consulta combinada falló; se intenta por lotes", combinedError);
+    }
+
+    /* Respaldo por lotes: permite que categorías parciales sobrevivan a un fallo. */
+    const results = [];
+    let completed = 0;
     for (let index = 0; index < activeKeys.length; index += 2) {
       const batch = activeKeys.slice(index, index + 2);
       const settled = await Promise.allSettled(batch.map((key) => fetchOverpass(upl, scaleKey, bbox, signal, key)));
