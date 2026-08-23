@@ -295,8 +295,10 @@ html,body{height:auto!important;min-height:100vh!important;overflow-x:hidden!imp
 
     <section class="network-metrics-strip m03-full-width-metrics" aria-label="Indicadores principales de la red">
       <div class="network-metric"><div class="network-metric-icon"><i class="fa-solid fa-network-wired"></i></div><div><span class="network-metric-label">RED ACTIVA</span><strong id="metricActive">—</strong><small id="metricActiveSub">Estructuras territoriales</small></div></div>
-      <div class="network-metric"><div class="network-metric-icon"><i class="fa-solid fa-share-nodes"></i></div><div><span class="network-metric-label">RELACIONES TOTALES</span><strong id="metricRelations">—</strong><small>Relaciones verificadas</small></div></div>
+      <div class="network-metric"><div class="network-metric-icon"><i class="fa-solid fa-share-nodes"></i></div><div><span class="network-metric-label">RELACIONES ACTIVAS</span><strong id="metricRelations">—</strong><small id="metricRelationsSub">de las verificadas</small></div></div>
       <div class="network-metric"><div class="network-metric-icon"><i class="fa-solid fa-wave-square"></i></div><div><span class="network-metric-label">NODOS ACTIVOS</span><strong id="metricNodes">—</strong><small id="metricNodesSub">del total de conceptos</small></div></div>
+      <div class="network-metric"><div class="network-metric-icon"><i class="fa-solid fa-circle-nodes"></i></div><div><span class="network-metric-label">HUBS CONECTADOS</span><strong id="metricHubs">—</strong><small id="metricHubsSub">hubs con relaciones activas</small></div></div>
+      <div class="network-metric"><div class="network-metric-icon"><i class="fa-solid fa-bridge"></i></div><div><span class="network-metric-label">PUENTES ACTIVOS</span><strong id="metricBridges">—</strong><small id="metricBridgesSub">puentes entre estructuras</small></div></div>
       <div class="network-metric connectivity-metric"><div class="metric-ring"><span id="metricConnectivity">—</span></div><div><span class="network-metric-label">CONECTIVIDAD MEDIA</span><strong id="metricConnectivityValue">—</strong><small>Relaciones activas</small></div></div>
     </section>
 
@@ -381,7 +383,7 @@ html,body{height:auto!important;min-height:100vh!important;overflow-x:hidden!imp
 .m03-relations-table .matrix-row.is-off{opacity:.42!important}
 @media(min-width:1000px){
   .network-metrics-strip,.m03-relations-table{width:100%!important;margin-left:0!important;margin-right:0!important}
-  .network-metrics-strip{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+  .network-metrics-strip{grid-template-columns:repeat(6,minmax(0,1fr))!important}
   .m03-full-width-metrics,.m03-full-width-table{width:100%!important;margin-left:0!important;margin-right:0!important}
   .m03-full-width-metrics{margin-top:12px!important}
   /* Proporción horizontal del Módulo 02: 791 px de canvas + 20 px + 260 px de panel. */

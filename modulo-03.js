@@ -2222,7 +2222,6 @@ const nodeR = {};
 const NODE_VISUAL_SCALE = 1.12;
 // Relaciones ESECI que permanecen visibles al apagar la tarjeta socioeconómica.
 // Corresponden a las dos primeras relaciones ESECI del archivo de datos.
-const ESECI_RETAINED_REL_IDS = new Set([9, 10]);
 
 function buildModel() {
   model.systems = {}; model.concepts = {}; model.relations = [];
@@ -2264,13 +2263,7 @@ function buildModel() {
 const nodeOn = id => !offNodes.has(id);
 
 function relActive(r) {
-  // Al apagar ESECI, se conservan únicamente las relaciones 9 y 10.
-  // El sistema del otro extremo sí debe continuar encendido.
-  if ((r.sO === 'ESECI' || r.sD === 'ESECI') && ESECI_RETAINED_REL_IDS.has(r.id)) {
-    const otherSystem = r.sO === 'ESECI' ? r.sD : r.sO;
-    return state[otherSystem] && nodeOn(r.from) && nodeOn(r.to);
-  }
-  return state[r.sO] && state[r.sD] && nodeOn(r.from) && nodeOn(r.to);
+  return Boolean(state[r.sO] && state[r.sD] && nodeOn(r.from) && nodeOn(r.to));
 }
 
 // Las posiciones de partida vienen de POT_DATA (agrupadas por estructura),
@@ -2442,6 +2435,59 @@ function computeDrift() {
   });
 }
 
+const nodeDrag = { active: null, pointerId: null, startX: 0, startY: 0, base: null, delta: { x: 0, y: 0 }, raf: 0 };
+function updateGraphGeometry() {
+  document.querySelectorAll('#gNodes .concept').forEach(g => {
+    const p = drawPos[g.getAttribute('data-id')];
+    if (p) g.setAttribute('transform', `translate(${p.x.toFixed(1)},${p.y.toFixed(1)})`);
+  });
+  document.querySelectorAll('#gRels path[data-rel]').forEach(path => {
+    const r = model.relations.find(x => String(x.id) === path.getAttribute('data-rel'));
+    if (!r || !relActive(r)) return;
+    const a = drawPos[r.from], b = drawPos[r.to];
+    if (a && b) path.setAttribute('d', curvePath(a, b, nodeR[r.from], nodeR[r.to]));
+  });
+}
+function paintDraggedGraph() {
+  const d = nodeDrag.delta;
+  const activeId = nodeDrag.active;
+  Object.values(model.concepts).forEach(c => {
+    const base = nodeDrag.base[c.id];
+    if (!base) return;
+    if (c.id === activeId) {
+      drawPos[c.id] = { x: base.x + d.x, y: base.y + d.y };
+      return;
+    }
+    const distance = Math.hypot(base.x - nodeDrag.base[activeId].x, base.y - nodeDrag.base[activeId].y);
+    const follow = Math.max(0.14, Math.min(0.62, 0.62 - distance / 5200));
+    drawPos[c.id] = { x: base.x + d.x * follow, y: base.y + d.y * follow };
+  });
+  updateGraphGeometry();
+}
+function releaseDraggedGraph() {
+  if (!nodeDrag.active) return;
+  const activeId = nodeDrag.active;
+  const startPositions = nodeDrag.base;
+  const released = Object.fromEntries(Object.keys(startPositions).map(id => [id, { ...drawPos[id] }]));
+  const dragged = { ...released[activeId] };
+  const started = performance.now();
+  cancelAnimationFrame(nodeDrag.raf);
+  const settle = now => {
+    const t = Math.min(1, (now - started) / 820);
+    const spring = 1 - Math.exp(-7.2 * t) * Math.cos(10.5 * t);
+    Object.values(model.concepts).forEach(c => {
+      if (c.id === activeId) { drawPos[c.id] = dragged; return; }
+      const from = released[c.id], to = startPositions[c.id];
+      if (!from || !to) return;
+      drawPos[c.id] = { x: from.x + (to.x - from.x) * spring, y: from.y + (to.y - from.y) * spring };
+    });
+    updateGraphGeometry();
+    if (t < 1) nodeDrag.raf = requestAnimationFrame(settle);
+  };
+  nodeDrag.raf = requestAnimationFrame(settle);
+  nodeDrag.active = null; nodeDrag.pointerId = null; nodeDrag.base = null;
+}
+
 function render() {
   recomputeActiveGraph();
   computeLayoutClean();
@@ -2581,6 +2627,34 @@ const iconSize = Math.max(28, Math.round(R * 0.52));
       g.addEventListener('mousemove', moveTooltip);
       g.addEventListener('mouseleave', hideTooltip);
 
+      // Arrastre del nodo: el nodo tomado mueve toda la red con un seguimiento
+      // elástico; al soltar, los demás conceptos vuelven con un resorte amortiguado.
+      g.addEventListener('pointerdown', ev => {
+        if (ev.button !== 0) return;
+        ev.stopPropagation();
+        cancelAnimationFrame(nodeDrag.raf);
+        nodeDrag.active = id;
+        nodeDrag.pointerId = ev.pointerId;
+        nodeDrag.startX = ev.clientX;
+        nodeDrag.startY = ev.clientY;
+        nodeDrag.base = Object.fromEntries(Object.keys(drawPos).map(key => [key, { ...drawPos[key] }]));
+        nodeDrag.delta = { x: 0, y: 0 };
+        g.setPointerCapture?.(ev.pointerId);
+      });
+      g.addEventListener('pointermove', ev => {
+        if (nodeDrag.active !== id || nodeDrag.pointerId !== ev.pointerId) return;
+        ev.stopPropagation();
+        const rect = document.getElementById('svg').getBoundingClientRect();
+        nodeDrag.delta = { x: (ev.clientX - nodeDrag.startX) * vb.w / Math.max(rect.width, 1), y: (ev.clientY - nodeDrag.startY) * vb.h / Math.max(rect.height, 1) };
+        paintDraggedGraph();
+      });
+      g.addEventListener('pointerup', ev => {
+        if (nodeDrag.active !== id || nodeDrag.pointerId !== ev.pointerId) return;
+        ev.stopPropagation();
+        g.releasePointerCapture?.(ev.pointerId);
+        releaseDraggedGraph();
+      });
+
       // Ciclo de interacción robusto: 1 clic = enfocar; 2 = deseleccionar;
       // 3 clics = ocultar el nodo y su cascada de conexiones. Se usa
       // event.detail para no depender de una ventana artificial de 320 ms.
@@ -2636,7 +2710,7 @@ const crossLinks = s => model.relations.filter(r =>
   r.sO !== r.sD && (r.sO === s || r.sD === s) && relActive(r)).length;
 const incoming = s => model.relations.filter(r => r.sD === s && relActive(r)).length;
 // relaciones que desaparecerían si ese sistema se apagara (desde red completa)
-const incident = s => model.relations.filter(r => r.sO === s || r.sD === s).length;
+const incident = s => model.relations.filter(r => (r.sO === s || r.sD === s) && relActive(r)).length;
 
 function components() {
   // La red visible son los conceptos y las relaciones documentadas.
@@ -2729,14 +2803,27 @@ function updateMetrics() {
   const activeSystems = SYS.filter(s => state[s]).length;
   set('metricActive', activeSystems);
   set('metricActiveSub', activeSystems === SYS.length ? 'Estructuras activas' : `de ${SYS.length} estructuras activas`);
-  set('metricRelations', total);
+  set('metricRelations', active);
+  set('metricRelationsSub', `de ${total} verificadas`);
   set('metricNodes', comp.totalNodes);
   set('metricNodesSub', `de ${totalNodes} conceptos activos`);
+  const activeHubs = SYS.filter(s => state[s]).reduce((count, s) => {
+    return count + model.systems[s].concepts.some(id => !offNodes.has(id) && activeDegree(model.concepts[id]) > 0) ? 1 : 0;
+  }, 0);
+  const activeBridges = Object.values(model.concepts).filter(isBridge).length;
+  set('metricHubs', activeHubs);
+  set('metricHubsSub', `${activeHubs} de ${SYS.filter(s => state[s]).length} estructuras`);
+  set('metricBridges', activeBridges);
+  set('metricBridgesSub', activeBridges === 1 ? 'puente entre estructuras' : 'puentes entre estructuras');
   set('metricConnectivity', pct + '%');
   set('metricConnectivityValue', `${active} activas`);
   const metricRing = document.querySelector('.metric-ring');
   if (metricRing) metricRing.style.setProperty('--connectivity', pct + '%');
   updateHiddenNodesIndicator();
+  SYS.forEach(s => {
+    const count = document.getElementById('m03-count-' + s);
+    if (count) count.textContent = model.systems[s].concepts.filter(id => state[s] && !offNodes.has(id) && activeDegree(model.concepts[id]) > 0).length;
+  });
 
   const bar = document.getElementById('mBar');
   bar.style.width = pct + '%';
