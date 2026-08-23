@@ -189,6 +189,12 @@ a { color:inherit; text-decoration:none; }
 .api-summary-list i { font-size:9px; }
 .api-summary-list strong { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-weight:500; }
 .api-summary-list b { margin-left:auto; color:#dce9e9; font-size:9px; }
+.api-summary-list em { font-style:normal; font-size:7px; letter-spacing:.04em; text-transform:uppercase; color:#6e7c86; }
+.api-summary-list .is-loading { border-color:rgba(47,212,200,.28); }
+.api-summary-list .is-loading em { color:#2fd4c8; }
+.api-summary-list .is-ok em { color:#58d68d; }
+.api-summary-list .is-error { border-color:rgba(232,154,108,.45); }
+.api-summary-list .is-error em { color:#e89a6c; }
 .source-pills { display:flex; flex-wrap:wrap; gap:5px; margin-top:11px; }
 .source-pills span { padding:4px 6px; border:1px solid rgba(255,255,255,.1); border-radius:4px; color:#7e8e96; font-size:8px; }
 .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }

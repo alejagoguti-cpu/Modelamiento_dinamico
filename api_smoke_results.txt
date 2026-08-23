@@ -1,0 +1,4 @@
+overpass_principal: OK (elements=1)
+overpass_respaldo: FAIL (JSONDecodeError: Expecting value: line 1 column 1 (char 0))
+nominatim: OK (results=1)
+osrm: OK (code=Ok routes=1)

@@ -1,0 +1,204 @@
+--- API/endpoints modulo05 ---
+10:  const OVERPASS_ENDPOINTS = [
+11:    "https://overpass-api.de/api/interpreter",
+12:    "https://overpass.kumi.systems/api/interpreter",
+14:  const NOMINATIM_ENDPOINT = "https://nominatim.openstreetmap.org/search";
+15:  const OSRM_ENDPOINT = "https://router.project-osrm.org/route/v1/driving";
+17:  const LOCAL_PMTILES_PATH = "./tiles/bogota-roads.pmtiles";
+27:    streetSource: "overpass",
+28:    pmtilesArchive: null,
+29:    pmtilesProtocol: null,
+39:    overpassController: null,
+43:    apiLayers: { roads: true, natural: true, amenities: true, transport: true, commerce: true, culture: true, leisure: true, boundaries: true },
+87:      overpass: (b) => `\n        (way["waterway"](${b});node["waterway"](${b});way["natural"~"water|wetland|wood|scrub"](${b});node["natural"~"water|wetland|wood|scrub"](${b});way["leisure"="park"](${b}););\n      `,
+94:      overpass: (b) => `\n        (node["historic"](${b});way["historic"](${b});node["tourism"](${b});node["amenity"="place_of_worship"](${b}););\n      `,
+101:      overpass: (b) => `\n        (way["highway"]["name"](${b});node["public_transport"](${b});node["amenity"](${b});node["office"](${b}););\n      `,
+108:      overpass: (b) => `\n        (node["amenity"~"school|library|community_centre|social_facility"](${b});node["shop"](${b}););\n      `,
+200:      ? '<i class="fa-solid fa-spinner fa-spin"></i> Cargando PMTiles…'
+202:        ? '<i class="fa-solid fa-hard-drive"></i> PMTiles local activo'
+203:        : '<i class="fa-solid fa-hard-drive"></i> Usar PMTiles local';
+212:    state.pmtilesArchive = null;
+216:    if (!state.mapReady || !window.pmtiles) throw new Error("pmtiles.js no está cargado");
+220:    if (!response.ok) throw new Error("No existe tiles/bogota-roads.pmtiles todavía");
+221:    if (!state.pmtilesProtocol) {
+222:      state.pmtilesProtocol = new pmtiles.Protocol();
+223:      maplibregl.addProtocol("pmtiles", state.pmtilesProtocol.tile);
+225:    const archive = new pmtiles.PMTiles(url);
+226:    state.pmtilesProtocol.add(archive);
+227:    state.pmtilesArchive = archive;
+229:      state.map.addSource("local-roads-source", { type: "vector", url: `pmtiles://${url}`, attribution: OSM_ATTRIBUTION });
+230:      state.map.addLayer({ id: "local-roads-casing", type: "line", source: "local-roads-source", "source-layer": "roads", layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": "#ffffff", "line-width": ["interpolate", ["linear"], ["zoom"], 10, 1.6, 13, 3.2, 16, 6], "line-opacity": .8 } }, "upl-focus-fill");
+231:      state.map.addLayer({ id: "local-roads", type: "line", source: "local-roads-source", "source-layer": "roads", layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": ["match", ["get", "highway"], "motorway", "#d56c75", "trunk", "#df8e5a", "primary", "#e6a95a", "secondary", "#4cb2a9", "tertiary", "#58a9a4", "residential", "#2d9790", "living_street", "#50aaa2", "service", "#74bab2", "#4a9f99"], "line-width": ["interpolate", ["linear"], ["zoom"], 10, .55, 13, 1.15, 16, 2.5], "line-opacity": .95 } }, "upl-focus-fill");
+233:    state.streetSource = "pmtiles";
+235:    setText("#modeDetail", "PMTiles local · sin consulta vial externa");
+238:    showToast("PMTiles local activo: la red vial ya no depende de Overpass.");
+244:    state.streetSource = "overpass";
+253:      if (state.streetSource === "pmtiles") disableLocalPmtiles();
+257:      showToast(`${error.message}. Genera el archivo con tools/build-bogota-roads-pmtiles.sh.`, "error");
+332:    wrap.innerHTML = Object.entries(API_LAYERS).map(([key, layer]) => `<button type="button" class="api-layer-toggle${state.apiLayers[key] ? " is-active" : ""}" data-api-layer="${key}" aria-pressed="${state.apiLayers[key]}" style="--layer-color:${layer.color}"><i class="fa-solid ${layer.icon}"></i><span>${layer.label}</span></button>`).join("");
+333:    $$(".api-layer-toggle").forEach((button) => button.addEventListener("click", () => {
+335:      state.apiLayers[key] = !state.apiLayers[key];
+336:      button.classList.toggle("is-active", state.apiLayers[key]);
+337:      button.setAttribute("aria-pressed", String(state.apiLayers[key]));
+358:    summary.innerHTML = Object.entries(API_LAYERS).filter(([key]) => state.apiLayers[key]).map(([key, layer]) => `<span><i class="fa-solid ${layer.icon}" style="color:${layer.color}"></i><strong>${layer.label}</strong><b>${counts[key]}</b></span>`).join("") || "<span>Ninguna capa activa.</span>";
+398:      layers: [{ id: "osm-raster-layer", type: "raster", source: "osm-raster" }],
+539:    if (state.streetSource === "overpass") updateStreetLayer(streetFeatures);
+554:    setText("#metricRoads", state.streetSource === "pmtiles" ? "MVT" : (roadCount ? String(roadCount) : "—"));
+558:  function buildOverpassQuery(upl, scaleKey, bbox = null, layerKey = null) {
+562:    const keys = layerKey ? [layerKey] : Object.keys(API_LAYERS).filter((key) => state.apiLayers[key]);
+564:      if (!state.apiLayers[key]) return [];
+571:  async function fetchOverpass(upl, scaleKey, bbox, signal, layerKey) {
+572:    const key = `overpass:${upl.num}:${scaleKey}:${layerKey}:${bboxString(bbox)}`;
+574:    const query = buildOverpassQuery(upl, scaleKey, bbox, layerKey);
+576:    for (const endpoint of OVERPASS_ENDPOINTS) {
+594:    const activeKeys = Object.keys(API_LAYERS).filter((key) => state.apiLayers[key]);
+637:    const layerKey = Object.entries(state.apiLayers).filter(([, enabled]) => enabled).map(([key]) => key).join("|");
+638:    const queryKey = `${state.selectedUpl.num}:${state.selectedScale}:${layerKey}:${bboxString(bbox)}`;
+642:    if (state.overpassController) state.overpassController.abort();
+643:    const controller = new AbortController();
+644:    state.overpassController = controller;
+670:      if (state.overpassController === controller) state.overpassController = null;
+697:    setText("#routeStatus", "Nominatim geocodifica y OSRM calcula la ruta. Las consultas se hacen solo al solicitarla.");
+704:    if (!response.ok) throw new Error(`Nominatim HTTP ${response.status}`);
+716:    setText("#routeStatus", "Buscando origen y destino en Nominatim…");
+719:      setText("#routeStatus", "Calculando recorrido vial real con OSRM…");
+720:      const routeUrl = `${OSRM_ENDPOINT}/${start.lon},${start.lat};${end.lon},${end.lat}?overview=full&geometries=geojson&steps=false`;
+722:      if (!response.ok) throw new Error(`OSRM HTTP ${response.status}`);
+724:      if (json.code !== "Ok" || !json.routes?.length) throw new Error("OSRM no encontró una ruta vial.");
+732:      showToast("Ruta real calculada sobre la red vial de OSRM.");
+--- CSS fuentes y colores ---
+     10 font-family: "Space Grotesk"
+      6 font-family: "Space Grotesk", Inter, sans-serif
+     14 font-family: 'Inter', sans-serif
+      3 font-family: 'Inter', sans-serif !important
+      2 font-family: 'Space Grotesk', 'Inter', sans-serif
+      3 font-family: 'Space Grotesk', Inter, sans-serif !important
+     41 font-family: 'Space Grotesk', sans-serif
+     16 font-family: 'Space Grotesk', sans-serif !important
+      1 font-family: Arial, sans-serif !important
+      1 font-family: Georgia, serif
+      2 font-family: Inter, "Space Grotesk", Arial, sans-serif
+      3 font-family: Inter, Arial, sans-serif
+      2 font-family: Inter, Arial, sans-serif !important
+      1 font-family: Inter, sans-serif
+      9 font-family: Inter, sans-serif !important
+      2 font-family: Inter, system-ui, sans-serif
+      7 font-family: Inter, system-ui, sans-serif !important
+      1 font-family: Space Grotesk, sans-serif !important
+      4 font-family: inherit
+      6 font-family:'Inter', sans-serif
+      1 font-family:'Inter',sans-serif !important
+     26 font-family:'Space Grotesk', sans-serif
+      7 font-family:'Space Grotesk',sans-serif
+      8 font-family:'Space Grotesk',sans-serif !important
+      6 font-family:'Space Grotesk',sans-serif!important
+      1 font-family:Inter,Arial,sans-serif
+      1 font-family:Inter,Arial,sans-serif!important
+      5 font-family:Inter,sans-serif
+      2 font-family:Inter,sans-serif !important
+      2 font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif
+      2 font-family:Space Grotesk,sans-serif !important
+    204 #46d6d0
+    104 #e89a6c
+     61 #fff
+     54 #f2f3f6
+     48 #0b0c0f
+     39 #2fbfae
+     36 #f2ece3
+     35 #141518
+     33 rgba(255,255,255,.08
+     32 #8e877f
+     30 #2fd4c8
+     28 #c9c1b6
+     28 #8891a5
+     26 #7fe6de
+     25 #06110f
+     24 #05070a
+     22 rgba(255,255,255,.09
+     22 #d9824e
+     22 #0a0a0a
+     19 rgba(70,214,208,.08
+     19 rgba(255,255,255,.07
+     19 #ffffff
+     19 #e7eaf2
+     17 #f76fb0
+     16 rgba(255,255,255,0.04
+     16 #ef6f6f
+     16 #58d68d
+     16 #1a9d94
+     16 #101716
+     15 rgba(70,214,208,.18
+     15 rgba(0,0,0,0.4
+     14 rgba(47,212,200,0.12
+     14 #f5c945
+     14 #d7dae2
+     14 #5b8def
+     13 rgba(70,214,208,.16
+     13 rgba(70,214,208,.12
+     13 #f1f3f4
+     13 #111111
+     12 rgba(70, 214, 208, 0.18
+     12 rgba(255,255,255,0.08
+     12 #ef9552
+     12 #5a6274
+     11 rgba(70,214,208,.06
+     11 #f5a623
+     11 #e9695c
+     11 #d28b36
+     10 rgba(70,214,208,.55
+     10 rgba(70, 214, 208, 0.22
+     10 rgba(255,255,255,.12
+     10 #ef8b3c
+     10 #a276f2
+     10 #4ade80
+     10 #2b8f88
+     10 #14211f
+      9 rgba(70,214,208,.45
+      9 rgba(70,214,208,.14
+      9 rgba(47,212,200,0.35
+      9 rgba(255,255,255,0.07
+      9 rgba(255,255,255,0.05
+      9 rgba(11,12,15,.72
+      9 rgba(0,0,0,.25
+      9 #8b93a8
+      9 #121828
+      8 rgba(91,141,239,0.14
+      8 rgba(70,214,208,.22
+      8 rgba(255, 255, 255, 0.1
+      8 #ff5a69
+      8 #38ef88
+      8 #22b3a8
+      8 #080c0c
+      8 #06120f
+      7 rgba(70,214,208,.8
+      7 rgba(255,255,255,.9
+      7 rgba(255,255,255,.10
+      7 rgba(201, 193, 182, 0.18
+      7 #f3efe9
+      7 #f3a3a3
+      7 #eab04c
+      7 #e3f2ed
+      7 #7be0a6
+      7 #73827b
+      7 #39ff6a
+      7 #101316
+      6 rgba(70,214,208,.48
+      6 rgba(70,214,208,.38
+      6 rgba(70,214,208,.2
+      6 rgba(70, 214, 208, 0.28
+      6 rgba(70, 214, 208, 0.2
+      6 rgba(70, 214, 208, 0.16
+      6 rgba(70, 214, 208, 0.12
+      6 rgba(70, 214, 208, 0.035
+      6 rgba(47,212,200,0.45
+      6 rgba(40,209,199,.12
+      6 rgba(39, 205, 196, 0.06
+      6 rgba(255,255,255,.05
+      6 rgba(255,255,255,.04
+      6 rgba(255, 255, 255, 0.035
+      6 rgba(201, 193, 182, 0.14
+      6 rgba(160, 190, 180, 0.12
+--- HTML/CSS/JS ---
+HTML 9
+CSS 9
+JS 9

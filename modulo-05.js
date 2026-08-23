@@ -41,6 +41,7 @@
     proceduralMarkers: [],
     favorite: false,
     apiLayers: { roads: true, natural: true, amenities: true, transport: true, commerce: true, culture: true, leisure: true, boundaries: true },
+    apiLayerStatus: { roads: "idle", natural: "idle", amenities: "idle", transport: "idle", commerce: "idle", culture: "idle", leisure: "idle", boundaries: "idle" },
   };
 
   const UPLS = [
@@ -355,7 +356,11 @@
       if (tags.leisure) counts.leisure += 1;
       if (element.type === "relation" && tags.boundary) counts.boundaries += 1;
     });
-    summary.innerHTML = Object.entries(API_LAYERS).filter(([key]) => state.apiLayers[key]).map(([key, layer]) => `<span><i class="fa-solid ${layer.icon}" style="color:${layer.color}"></i><strong>${layer.label}</strong><b>${counts[key]}</b></span>`).join("") || "<span>Ninguna capa activa.</span>";
+    summary.innerHTML = Object.entries(API_LAYERS).filter(([key]) => state.apiLayers[key]).map(([key, layer]) => {
+      const status = state.apiLayerStatus[key] || "idle";
+      const label = status === "loading" ? "cargando" : status === "ok" ? "lista" : status === "error" ? "falló" : "pendiente";
+      return `<span class="api-summary-item is-${status}"><i class="fa-solid ${layer.icon}" style="color:${layer.color}"></i><strong>${layer.label}</strong><b>${counts[key]}</b><em>${label}</em></span>`;
+    }).join("") || "<span>Ninguna capa activa.</span>";
   }
 
   function renderScaleCards() {
@@ -575,8 +580,12 @@
     let lastError = null;
     for (const endpoint of OVERPASS_ENDPOINTS) {
       try {
-        const url = `${endpoint}?data=${encodeURIComponent(query)}`;
-        const response = await fetch(url, { signal, headers: { Accept: "application/json" } });
+        const response = await fetch(endpoint, {
+          method: "POST",
+          signal,
+          headers: { Accept: "application/json", "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" },
+          body: `data=${encodeURIComponent(query)}`,
+        });
         if (!response.ok) throw new Error(`Overpass HTTP ${response.status}`);
         const json = await response.json();
         const elements = Array.isArray(json.elements) ? json.elements : [];
@@ -595,12 +604,17 @@
     if (!activeKeys.length) return [];
     const results = [];
     let completed = 0;
-    for (let index = 0; index < activeKeys.length; index += 3) {
-      const batch = activeKeys.slice(index, index + 3);
+    activeKeys.forEach((key) => { state.apiLayerStatus[key] = "loading"; });
+    renderApiSummary([]);
+    for (let index = 0; index < activeKeys.length; index += 2) {
+      const batch = activeKeys.slice(index, index + 2);
       const settled = await Promise.allSettled(batch.map((key) => fetchOverpass(upl, scaleKey, bbox, signal, key)));
       settled.forEach((result, offset) => {
+        const key = batch[offset];
+        state.apiLayerStatus[key] = result.status === "fulfilled" ? "ok" : "error";
         if (result.status === "fulfilled") results.push(...result.value);
         completed += 1;
+        renderApiSummary(results);
         setText("#connectionLabel", `Consultando OSM… ${completed}/${activeKeys.length} capas`);
       });
       if (signal.aborted) throw new DOMException("Consulta cancelada", "AbortError");
@@ -653,6 +667,8 @@
     clearPlaceMarkers();
     setText("#metricPlaces", "…");
     setText("#metricRoads", "…");
+    Object.keys(API_LAYERS).forEach((key) => { state.apiLayerStatus[key] = state.apiLayers[key] ? "loading" : "idle"; });
+    renderApiSummary([]);
     setText("#connectionLabel", "Consultando OSM…");
     showToast(`Consultando ${scale.label.toLowerCase()} en el área visible…`);
     try {
@@ -673,6 +689,7 @@
 
   function useProceduralFallback(message) {
     state.dataMode = "procedural";
+    Object.keys(API_LAYERS).forEach((key) => { state.apiLayerStatus[key] = state.apiLayers[key] ? "error" : "idle"; });
     const toggle = $("#modeToggle");
     if (toggle) { toggle.classList.remove("is-on"); toggle.setAttribute("aria-checked", "false"); }
     const dot = $("#modeDot");
