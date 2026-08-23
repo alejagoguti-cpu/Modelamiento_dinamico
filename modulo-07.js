@@ -1564,8 +1564,8 @@
         [[-74.18,4.60],[-74.14,4.58],[-74.10,4.57],[-74.06,4.56],[-74.02,4.55]],
       ].map((coordinates) => ({ type: "Feature", properties: { layer: "procedural" }, geometry: { type: "LineString", coordinates } })) };
       const map = new maplibregl.Map({ container: el, center: [-74.09, 4.64], zoom: 10.85, minZoom: 9, maxZoom: 16, attributionControl: false, style: { version: 8, sources: { "osm-gray": { type: "raster", tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"], tileSize: 256, attribution: "© OpenStreetMap contributors" }, procedural: { type: "geojson", data: procedural } }, layers: [
-        { id: "osm-gray-base", type: "raster", source: "osm-gray", paint: { "raster-saturation": -1, "raster-contrast": 0.18, "raster-brightness-min": 0.12, "raster-brightness-max": 0.88, "raster-opacity": 0.9 } },
         { id: "background", type: "background", paint: { "background-color": "#07100f" } },
+        { id: "osm-gray-base", type: "raster", source: "osm-gray", paint: { "raster-saturation": -1, "raster-contrast": 0.18, "raster-brightness-min": 0.12, "raster-brightness-max": 0.88, "raster-opacity": 0.9 } },
         { id: "procedural-roads", type: "line", source: "procedural", paint: { "line-color": "#46d6d0", "line-width": 2, "line-opacity": .68 } },
       ] } });
       map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
