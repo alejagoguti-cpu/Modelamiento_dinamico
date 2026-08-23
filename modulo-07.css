@@ -4748,3 +4748,16 @@ body { position:relative !important; }
 .procedural-simulation canvas { display: block; width: 100% !important; height: 100% !important; opacity: .18; mix-blend-mode: multiply; }
 .real-map-shell .map-live-badge { z-index: 6; }
 .real-map-shell .map-source-note { z-index: 6; }
+
+/* Cartografía protagonista: mapa oscuro a todo el ancho */
+.cartography-card { display: block !important; }
+.cartography-visual.real-map-shell { min-height: 610px; height: min(70vh, 720px); width: 100%; background: #050908; border-color: rgba(70,214,208,.28); }
+.real-cartography-map { min-height: 610px; height: 100%; }
+.real-map-shell .map-controls { max-width: calc(100% - 24px); }
+.real-map-shell .map-controls button#identifySubsystems { border-color: rgba(247,111,176,.7); color: #f76fb0; font-weight: 800; }
+.real-map-shell .map-controls button#identifySubsystems.active { background: #f76fb0; color: #080b0b; }
+.subsystems-panel { position: absolute; z-index: 7; left: 16px; top: 16px; width: min(390px, calc(100% - 32px)); padding: 16px 18px; border: 1px solid rgba(70,214,208,.72); border-left: 4px solid #f76fb0; border-radius: 8px; background: rgba(5,9,8,.94); box-shadow: 0 12px 35px rgba(0,0,0,.42); color: #f2ece3; }
+.subsystems-panel[hidden] { display: none; }
+.subsystems-panel strong { display: block; margin-bottom: 8px; color: #76fff0; font-size: 11px; letter-spacing: .12em; }
+.subsystems-panel span { display: block; color: rgba(242,236,227,.8); font-size: 12px; line-height: 1.55; }
+@media (max-width: 720px) { .cartography-visual.real-map-shell, .real-cartography-map { min-height: 500px; height: 68vh; } }

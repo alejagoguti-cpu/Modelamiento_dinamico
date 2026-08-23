@@ -18,8 +18,6 @@
       <link rel="stylesheet" href="module02-system.css?v=spacing-v3">
     <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" />
     <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/p5@1.11.1/lib/p5.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/matter-js@0.20.0/build/matter.min.js"></script>
 </head>
   <body class="module02-reference-page">
     <div class="app">
@@ -70,29 +68,25 @@
         </section>
 
         <section class="cartography-section" aria-labelledby="cartographyTitle">
-          <div class="cartography-heading">
-            <div>
-              <div class="eyebrow"><b></b> CARTOGRAFÍA DEL SIMULADOR</div>
-              <h2 id="cartographyTitle">Una cartografía que puede correr la ciudad</h2>
-              <p>La versión base no depende de servicios externos: dibuja el territorio como una red procedural de agentes, calles, flujos y perturbaciones. El bonus permite sustituir esta base por calles reales cuando se habiliten fuentes geográficas.</p>
-            </div>
-            <span class="cartography-status"><i></i> BASE ACTIVA · SIN APIS</span>
-          </div>
+          <div class="cartography-heading compact-heading"><div class="eyebrow"><b></b> CARTOGRAFÍA DE BOGOTÁ · HUMEDAL EL BURRO</div><span class="cartography-status"><i></i> MODO OSCURO</span></div>
           <div class="cartography-card">
             <div class="cartography-visual real-map-shell" aria-label="Cartografía interactiva de Bogotá con calles y rutas">
               <div id="realCartographyMap" class="real-cartography-map"></div>
-              <div id="proceduralSimulation" class="procedural-simulation" aria-label="Simulación procedural de agentes y flujos"></div>
               <div class="map-live-badge"><i></i><span id="mapDataStatus">CARTOGRAFÍA PROCEDURAL ACTIVA</span></div>
               <div class="map-controls" aria-label="Controles de cartografía">
                 <button type="button" id="loadOsmStreets">Cargar calles OSM</button>
                 <button type="button" id="loadOsrmRoute">Mostrar ruta OSRM</button>
                 <button type="button" id="resetCartography">Restablecer</button>
+                <button type="button" id="identifySubsystems">Identificar los subsistemas</button>
               </div>
               <div class="map-source-note">MapLibre GL JS · OpenStreetMap · Overpass · OSRM</div>
+                        </div>
+            <div id="subsystemsPanel" class="subsystems-panel" hidden>
+              <strong>SUBSISTEMAS IDENTIFICADOS</strong>
+              <span>Agua · humedal · movilidad · espacio público · vivienda · biodiversidad · comunidad</span>
             </div>
           </div>
         </section>
-
         <section class="metric-grid">
           <article class="metric-card cyan">
             <header>
