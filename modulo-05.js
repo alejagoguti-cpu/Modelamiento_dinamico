@@ -1,973 +1,714 @@
-console.log("INFO: Módulo 05 ha sido cargado - code 01");
+/*
+ * Bogotá Viva · Navegador Multiescalar
+ * Mapa base real con OSM/MapLibre + consultas públicas bajo demanda.
+ * El modo procedural funciona como respaldo cuando un servicio no responde.
+ */
+(() => {
+  "use strict";
 
-let upzData = [];
-let barrosData = [];
-let currentSelection = null;
-const humedales = [
-  {id: 'h1', nombre: "Humedal Burro", lat: 4.644296801427965, lng: -74.15052710000018, area: 18.5},
-  {id: 'h2', nombre: "Humedal El Techo", lat: 4.645366863767807, lng: -74.14136322378499, area: 32.2},
-  {id: 'h3', nombre: "Humedal Vaca", lat: 4.627282592850425, lng: -74.15947984079249, area: 24.8},
-];
-
-const map = L.map('map').setView([4.60, -74.08], 11);
-window.bogotaLeafletMap = map;
-
-L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {
-  attribution: '© CartoDB',
-  maxZoom: 19
-}).addTo(map);
-
-let upzLayers = {};
-let barriosLayers = {};
-let humedalLayers = {};
-let humedalMarkers = {};
-let eepNodos = [];
-let eepLayers = {};
-let networkLines = [];
-let currentMode = 'tecnologico'; // El juego se reserva exclusivamente para Metaverso
-function syncDriveVisibility() { const overlay = document.getElementById('driveOverlay'); const visible = currentMode === 'metaverso'; if (overlay) { overlay.style.display = visible ? '' : 'none'; overlay.setAttribute('aria-hidden', String(!visible)); } if (visible && window.bogotaDriveFocus) window.bogotaDriveFocus(); }
-
-// --- VARIABLE PARA LA CAPA DE VÍAS ---
-let viasLayer = null;
-
-// --- VARIABLE PARA LA CAPA 0 (AUTOCAD) ---
-let capa0Layer = null;
-
-// --- VARIABLE PARA LA CAPA UPZ (AUTOCAD - MICRO) ---
-let capaUpzLayer = null;
-
-// Cargar UPZ (MACRO)
-fetch('upz_bogota.geojson')
-  .then(r => r.json())
-  .then(data => {
-    upzData = data.features.map(f => f.properties);
-    
-    // Los códigos de las UPL se mantienen únicamente en la lista lateral.
-    // No se crean marcadores ni círculos dentro del mapa.
-    renderItemList();
-  });
-
-// Cargar Barrios (MESO)
-fetch('barrios_bogota.geojson')
-  .then(r => r.json())
-  .then(data => {
-    barrosData = data.features.map(f => f.properties);
-    
-    // Los códigos de los barrios se mantienen únicamente en la lista lateral.
-    // No se crean marcadores ni círculos dentro del mapa.
-  });
-
-// Cargar nodos de la red EEP
-fetch('red_eep.geojson')
-  .then(r => r.json())
-  .then(data => {
-    eepNodos = data.features;
-  });
-
-// --- FETCH PARA CARGAR LA CAPA DE VÍAS CON ALINEACIÓN PRECISA BASADA EN EL DORADO ---
-fetch('vias.geojson')
-  .then(r => {
-    if (!r.ok) throw new Error("Archivo vias_bogota.geojson no encontrado");
-    return r.json();
-  })
-  .then(data => {
-    const latOffset = +0.02890;  // Desplazamiento exacto hacia el norte
-    const lngOffset = -0.14375; // Desplazamiento exacto hacia el oeste
-    
-    const scale = 1.0;
-    const centerLng = -74.08;
-    const centerLat = 4.60;
-
-    const canvasRenderer = L.canvas({ padding: 0.5 });
-
-    viasLayer = L.geoJSON(data, {
-      renderer: canvasRenderer,
-      style: function (feature) {
-        return {
-          color: "#46d6d0",
-          weight: 1,
-          opacity: 0.6
-        };
-      },
-      interactive: false,
-      coordsToLatLng: function (coords) {
-        return new L.LatLng(
-          centerLat + ((coords[1] - centerLat) * scale) + latOffset,
-          centerLng + ((coords[0] - centerLng) * scale) + lngOffset
-        );
-      }
-    });
-
-    if (currentMode === 'tecnologico' || currentMode === 'metaverso') {
-      viasLayer.addTo(map);
-    }
-  })
-  .catch(err => console.warn("Aviso: No se pudo cargar la capa de vías.", err));
-
-// Cargar Capa 0 de AutoCAD (Para modo MESO)
-fetch('capa0.geojson') 
-  .then(r => {
-    if (!r.ok) throw new Error("Archivo de capa 0 no encontrado");
-    return r.json();
-  })
-  .then(data => {
-    const latOffset = 0.0285; 
-    const lngOffset = -0.1455; 
-    const scale = 1.01; 
-    const centerLat = 4.60;  
-    const centerLng = -74.08; 
-
-    capa0Layer = L.geoJSON(data, {
-      style: function (feature) {
-        return {
-          color: "#e89a6c",
-          weight: 1.5,
-          opacity: 0.8
-        };
-      },
-      interactive: false,
-      coordsToLatLng: function (coords) {
-        return new L.LatLng(
-          centerLat + ((coords[1] - centerLat) * scale) + latOffset,
-          centerLng + ((coords[0] - centerLng) * scale) + lngOffset
-        );
-      }
-    });
-
-    if (currentMode === 'cultural' || currentMode === 'metaverso') {
-      capa0Layer.addTo(map);
-    }
-  })
-  .catch(err => console.warn("Aviso: No se pudo cargar la capa 0 de AutoCAD.", err));
-
-// Cargar Capa UPZ de AutoCAD (Para modo MICRO)
-fetch('upz.geojson') 
-  .then(r => {
-    if (!r.ok) throw new Error("Archivo upz.geojson no encontrado");
-    return r.json();
-  })
-  .then(data => {
-    // Valores por defecto: ajusta estos parámetros según la ubicación real de tu CAD
-    const latOffset = 0.0283; 
-    const lngOffset = -0.1440; 
-    const scale = 1.0; 
-    const centerLat = 4.60;  
-    const centerLng = -74.08; 
-
-    capaUpzLayer = L.geoJSON(data, {
-      style: function (feature) {
-        return {
-          color: "#46d6d0", // Turquesa para la capa de detalle
-          weight: 1.5,
-          opacity: 0.8
-        };
-      },
-      interactive: false,
-      coordsToLatLng: function (coords) {
-        return new L.LatLng(
-          centerLat + ((coords[1] - centerLat) * scale) + latOffset,
-          centerLng + ((coords[0] - centerLng) * scale) + lngOffset
-        );
-      }
-    });
-
-    if (currentMode === 'tecnologico' || currentMode === 'metaverso') {
-      capaUpzLayer.addTo(map);
-    }
-  })
-  .catch(err => console.warn("Aviso: No se pudo cargar la capa UPZ de AutoCAD.", err));
-// --------------------------------------------------------------------------
-
-function renderItemList() {
-  const container = document.getElementById('item-list');
-  container.innerHTML = '';
-  
-  if (currentMode === 'natural') {
-    humedales.forEach(h => {
-      const div = document.createElement('div');
-      div.className = 'upz-item humedal-card' + (currentSelection?.id === h.id ? ' active' : '');
-      div.innerHTML = `
-        <div style="display: flex; flex-direction: column; gap: 6px;">
-          <strong style="color: #46d6d0; font-size: 11px;">${h.nombre}</strong>
-          <div style="font-size: 9px; color: #aab2bc;">
-            <div>Ubicación: ${h.lat.toFixed(4)}, ${h.lng.toFixed(4)}</div>
-            <div>Área: ${h.area} ha</div>
-          </div>
-        </div>
-      `;
-      div.onclick = () => selectHumedal(h);
-      container.appendChild(div);
-    });
-  } else if (currentMode === 'cultural') {
-    barrosData.forEach(barrio => {
-      const div = document.createElement('div');
-      div.className = 'upz-item' + (currentSelection?.id === barrio.id ? ' active' : '');
-      div.innerHTML = `${barrio.codigo} - ${barrio.nombre}`;
-      div.onclick = () => selectBarrio(barrio);
-      container.appendChild(div);
-    });
-  } else if (currentMode === 'tecnologico') {
-    upzData.forEach(upz => {
-      const div = document.createElement('div');
-      div.className = 'upz-item' + (currentSelection?.id === upz.id ? ' active' : '');
-      div.innerHTML = `${upz.uplcodigo}`;
-      div.onclick = () => selectUPZ(upz);
-      container.appendChild(div);
-    });
-  } else if (currentMode === 'metaverso') {
-    const div = document.createElement('div');
-    div.className = 'upz-item active';
-    div.innerHTML = '<strong>Modelo digital integrado</strong><br><span style="font-size:9px;color:#aab2bc;">Capas Natural, Cultural y Tecnológica superpuestas</span>';
-    container.appendChild(div);
-  }
-}
-
-function selectUPZ(upz) {
-  currentSelection = upz;
-  document.getElementById('detail-title').textContent = `UPZ SELECCIONADA: ${upz.uplcodigo.toUpperCase()}`;
-  document.getElementById('detail-description').innerHTML = `
-    <p><strong>${upz.nombre}</strong></p>
-    <p>Zona de Planeamiento de Bogotá</p>
-  `;
-  renderItemList();
-}
-
-function selectBarrio(barrio) {
-  currentSelection = barrio;
-  document.getElementById('detail-title').textContent = `${barrio.nombre.toUpperCase()}`;
-  document.getElementById('detail-description').innerHTML = `
-    <p><strong>${barrio.nombre}</strong></p>
-    <p style="margin-top: 10px;">Barrio de Bogotá</p>
-    <p style="font-size: 9px; color: #aab2bc; margin-top: 8px;">Código: ${barrio.codigo}</p>
-  `;
-  renderItemList();
-}
-
-function showEepNetwork() {
-  Object.values(eepLayers).forEach(layer => {
-    try { map.removeLayer(layer); } catch(e) {}
-  });
-  eepLayers = {};
-  
-  if (eepNodos.length === 0) return;
-  
-  const conexiones = [
-    {from: 'h1', to: 'rio', tipo: 'directa'},
-    {from: 'h1', to: 'ce', tipo: 'directa'},
-    {from: 'h1', to: 'qb', tipo: 'indirecta'},
-    {from: 'h1', to: 'ap', tipo: 'indirecta'},
-    {from: 'rio', to: 'corr', tipo: 'directa'},
-    {from: 'rio', to: 'ec', tipo: 'indirecta'},
-    {from: 'ce', to: 'cp', tipo: 'directa'},
-    {from: 'ce', to: 'rf', tipo: 'directa'},
-    {from: 'qb', to: 'ru', tipo: 'indirecta'},
-    {from: 'qb', to: 'pb', tipo: 'indirecta'},
-    {from: 'ap', to: 'rf', tipo: 'directa'},
-    {from: 'cm', to: 'cv', tipo: 'indirecta'}
-  ];
-  
-  conexiones.forEach(conn => {
-    const nodoFrom = eepNodos.find(n => n.properties.id === conn.from);
-    const nodoTo = eepNodos.find(n => n.properties.id === conn.to);
-    
-    if (nodoFrom && nodoTo) {
-      const coords = nodoFrom.geometry.coordinates;
-      const coordsTo = nodoTo.geometry.coordinates;
-      const dashArray = conn.tipo === 'indirecta' ? '5, 3' : '0';
-      const lineColor = conn.tipo === 'indirecta' ? '#e89a6c' : '#46d6d0';
-      
-      const line = L.polyline([
-        [coords[1], coords[0]],
-        [coordsTo[1], coordsTo[0]]
-      ], {
-        color: lineColor,
-        weight: 2,
-        opacity: 0.7,
-        dashArray: dashArray
-      }).addTo(map);
-      
-      eepLayers['conn_' + conn.from + '_' + conn.to] = line;
-    }
-  });
-  
-  eepNodos.forEach(nodo => {
-    const coords = nodo.geometry.coordinates;
-    const props = nodo.properties;
-    
-    let radius = 15;
-    if (props.tipo === 'nodo_secundario') radius = 10;
-    if (props.tipo === 'nodo_terciario') radius = 7;
-    
-    const circle = L.circleMarker([coords[1], coords[0]], {
-      radius: radius,
-      fillColor: '#46d6d0',
-      color: '#0a0a0a',
-      weight: 2,
-      opacity: 0.9,
-      fillOpacity: 0.8
-    })
-    .bindPopup(`<strong>${props.nombre}</strong>`)
-    .addTo(map);
-    
-    eepLayers['nodo_' + props.id] = circle;
-    
-    const labelDiv = L.divIcon({
-      html: `<div style="font-size: 7px; color: #fff; text-align: center; font-weight: 600; text-shadow: 0 0 3px rgba(0,0,0,0.8); width: 50px;">${props.nombre}</div>`,
-      className: 'eep-label',
-      iconSize: [50, 16],
-      iconAnchor: [25, 8]
-    });
-    
-    const label = L.marker([coords[1], coords[0]], { icon: labelDiv, interactive: false }).addTo(map);
-    eepLayers['label_' + props.id] = label;
-  });
-}
-
-function selectHumedal(h) {
-  currentSelection = h;
-  networkLines.forEach(line => { try { map.removeLayer(line); } catch (e) {} });
-  networkLines = [];
-  
-  map.setView([h.lat, h.lng], 13);
-  openEepModal(h);
-  
-  document.getElementById('detail-title').textContent = `HUMEDAL SELECCIONADO: ${h.nombre.toUpperCase()}`;
-  document.getElementById('detail-description').innerHTML = `
-    <p><strong>Estructura Ecológica Principal (EEP)</strong></p>
-    <p>La EEP es la integración de áreas de origen natural que tienen una oferta ambiental significativa, es ordenadora del territorio y garante de los equilibrios ecosistémicos, del agua y la riqueza hídrica.</p>
-    <p><strong>Relación Cuerpo Hídrico - Verde - Ecosistemas:</strong></p>
-    <p>Los humedales son elementos clave de la EEP. Regulan el ciclo del agua, proveen hábitat para fauna silvestre y flora nativa, actúan como corredores ecológicos y mitigar el riesgo climático.</p>
-    <p style="font-size: 9px; color: #aab2bc; margin-top: 8px;">📍 ${h.lat.toFixed(4)}, ${h.lng.toFixed(4)}<br/>📏 Área: ${h.area} ha</p>
-    <p style="font-size: 8px; color: #aab2bc;">POT Bogotá Reverdece 2022-2035</p>
-    <p style="margin-top: 10px; font-size: 9px;"><strong>Relaciones en la red EEP:</strong></p>
-    <p style="font-size: 8px;">— Línea sólida teal = Relación directa<br/>— Línea punteada naranja = Relación indirecta</p>
-  `;
-  renderItemList();
-}
-
-function openEepModal(humedal) {
-  const modal = document.getElementById('eepModal');
-  if (!modal) return;
-  modal.style.display = 'block';
-  
-  setTimeout(() => {
-    const container = document.getElementById('eepMapContainer');
-    if (!container) return;
-    
-    container.innerHTML = '';
-    const miniMap = L.map(container, {
-      zoomControl: true,
-      attributionControl: true
-    }).setView([4.63, -74.15], 12);
-    
-    L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {
-      attribution: '© CartoDB',
-      maxZoom: 19
-    }).addTo(miniMap);
-    
-    if (eepNodos.length > 0) {
-      const conexiones = [
-        {from: 'h1', to: 'rio', tipo: 'directa'},
-        {from: 'h1', to: 'ce', tipo: 'directa'},
-        {from: 'h1', to: 'qb', tipo: 'indirecta'},
-        {from: 'h1', to: 'ap', tipo: 'indirecta'},
-        {from: 'rio', to: 'corr', tipo: 'directa'},
-        {from: 'rio', to: 'ec', tipo: 'indirecta'},
-        {from: 'ce', to: 'cp', tipo: 'directa'},
-        {from: 'ce', to: 'rf', tipo: 'directa'},
-        {from: 'qb', to: 'ru', tipo: 'indirecta'},
-        {from: 'qb', to: 'pb', tipo: 'indirecta'},
-        {from: 'ap', to: 'rf', tipo: 'directa'},
-        {from: 'cm', to: 'cv', tipo: 'indirecta'}
-      ];
-      
-      conexiones.forEach(conn => {
-        const nodoFrom = eepNodos.find(n => n.properties.id === conn.from);
-        const nodoTo = eepNodos.find(n => n.properties.id === conn.to);
-        
-        if (nodoFrom && nodoTo) {
-          const coords = nodoFrom.geometry.coordinates;
-          const coordsTo = nodoTo.geometry.coordinates;
-          const dashArray = conn.tipo === 'indirecta' ? '5, 3' : '0';
-          const lineColor = conn.tipo === 'indirecta' ? '#e89a6c' : '#46d6d0';
-          
-          L.polyline([
-            [coords[1], coords[0]],
-            [coordsTo[1], coordsTo[0]]
-          ], {
-            color: lineColor,
-            weight: 2,
-            opacity: 0.7,
-            dashArray: dashArray
-          }).addTo(miniMap);
-        }
-      });
-      
-      eepNodos.forEach(nodo => {
-        const coords = nodo.geometry.coordinates;
-        const props = nodo.properties;
-        let radius = 15;
-        if (props.tipo === 'nodo_secundario') radius = 10;
-        if (props.tipo === 'nodo_terciario') radius = 7;
-        
-        L.circleMarker([coords[1], coords[0]], {
-          radius: radius,
-          fillColor: '#46d6d0',
-          color: '#0a0a0a',
-          weight: 2,
-          opacity: 0.9,
-          fillOpacity: 0.8
-        })
-        .bindPopup(`<strong>${props.nombre}</strong>`)
-        .addTo(miniMap);
-        
-        const labelDiv = L.divIcon({
-          html: `<div style="font-size: 7px; color: #fff; text-align: center; font-weight: 600; text-shadow: 0 0 3px rgba(0,0,0,0.8); width: 50px;">${props.nombre}</div>`,
-          className: 'eep-label',
-          iconSize: [50, 16],
-          iconAnchor: [25, 8]
-        });
-        
-        L.marker([coords[1], coords[0]], { icon: labelDiv, interactive: false }).addTo(miniMap);
-      });
-    }
-    miniMap.invalidateSize();
-  }, 100);
-}
-
-function closeEepModal() {
-  const modal = document.getElementById('eepModal');
-  if (modal) {
-    modal.style.display = 'none';
-  }
-}
-
-document.querySelectorAll('.tab').forEach(btn => {
-  btn.addEventListener('click', function(e) {
-    document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
-    this.classList.add('active');
-    
-    const scale = this.dataset.scale;
-    
-    // LIMPIEZA ADICIONAL: Quitar vías si cambiamos de escala
-    if (viasLayer) {
-      try { map.removeLayer(viasLayer); } catch(e) {}
-    }
-
-    // LIMPIEZA ADICIONAL: Quitar la Capa 0 si cambiamos de escala
-    if (capa0Layer) {
-      try { map.removeLayer(capa0Layer); } catch(e) {}
-    }
-
-    // LIMPIEZA ADICIONAL: Quitar la Capa UPZ si cambiamos de escala
-    if (capaUpzLayer) {
-      try { map.removeLayer(capaUpzLayer); } catch(e) {}
-    }
-    
-    Object.values(humedalLayers).forEach(layer => {
-      try { map.removeLayer(layer); } catch(e) {}
-    });
-    Object.values(humedalMarkers).forEach(marker => {
-      try { map.removeLayer(marker); } catch(e) {}
-    });
-    networkLines.forEach(line => {
-      try { map.removeLayer(line); } catch(e) {}
-    });
-    Object.values(eepLayers).forEach(layer => {
-      try { map.removeLayer(layer); } catch(e) {}
-    });
-    networkLines = [];
-    eepLayers = {};
-    clearScaleNetwork();
-    
-    if (scale === 'natural') {
-      currentMode = 'natural';
-      map.setView([4.63, -74.15], 12);
-      if (capaUpzLayer) capaUpzLayer.addTo(map);
-      humedales.forEach(h => {
-        const circle = L.circle([h.lat, h.lng], {
-          radius: 1500,
-          color: '#4ade80',
-          weight: 2,
-          opacity: 0.8,
-          fillColor: '#4ade80',
-          fillOpacity: 0.3
-        }).on('click', () => selectHumedal(h)).addTo(map);
-        humedalLayers[h.id] = circle;
-        const marker = L.circleMarker([h.lat, h.lng], {
-          radius: 8,
-          fillColor: '#4ade80',
-          color: '#2d8a5f',
-          weight: 2,
-          opacity: 0.8,
-          fillOpacity: 0.7
-        }).on('click', () => selectHumedal(h)).addTo(map);
-        humedalMarkers[h.id] = marker;
-      });
-      const group = new L.featureGroup(Object.values(humedalLayers));
-      if (Object.keys(humedalLayers).length) map.fitBounds(group.getBounds().pad(0.2));
-    } else if (scale === 'cultural') {
-      currentMode = 'cultural';
-      map.setView([4.60, -74.08], 12);
-      if (capa0Layer) capa0Layer.addTo(map);
-    } else if (scale === 'tecnologico') {
-      currentMode = 'tecnologico';
-      map.setView([4.60, -74.08], 11);
-      if (viasLayer) viasLayer.addTo(map);
-    } else if (scale === 'metaverso') {
-      currentMode = 'metaverso';
-      map.setView([4.60, -74.08], 11);
-      if (viasLayer) viasLayer.addTo(map);
-      if (capa0Layer) capa0Layer.addTo(map);
-      if (capaUpzLayer) capaUpzLayer.addTo(map);
-      humedales.forEach(h => {
-        const marker = L.circleMarker([h.lat, h.lng], {
-          radius: 7,
-          fillColor: '#4ade80',
-          color: '#2d8a5f',
-          weight: 2,
-          opacity: 0.8,
-          fillOpacity: 0.7
-        }).on('click', () => selectHumedal(h)).addTo(map);
-        humedalMarkers[h.id] = marker;
-      });
-    }
-    
-    renderItemList();
-    if (scale === 'metaverso') closeScaleNetworkModal();
-    else openScaleNetworkModal(scale);
-    syncDriveVisibility();
-  });
-});
-
-/* ========================================================================
-   REDES MULTIESCALA · renderizador visual común del Módulo 05
-   ======================================================================== */
-const scaleNetworkLayers = [];
-
-const scaleNetworks = {
-  natural: {
-    title: 'Red Natural',
-    accent: '#46d6d0',
-    nodes: [
-      { id: 'humedales', label: 'HUMEDALES', lat: 4.630, lng: -74.150, hub: true },
-      { id: 'rios', label: 'RÍOS', lat: 4.665, lng: -74.165 },
-      { id: 'quebradas', label: 'QUEBRADAS', lat: 4.612, lng: -74.182 },
-      { id: 'areas_protegidas', label: 'ÁREAS PROTEGIDAS', lat: 4.662, lng: -74.120 },
-      { id: 'reservas_forestales', label: 'RESERVAS FORESTALES', lat: 4.690, lng: -74.150 },
-      { id: 'cobertura_vegetal', label: 'COBERTURA VEGETAL', lat: 4.650, lng: -74.205 },
-      { id: 'parques', label: 'PARQUES', lat: 4.620, lng: -74.105 },
-      { id: 'rondas_hidricas', label: 'RONDAS HÍDRICAS', lat: 4.595, lng: -74.195 },
-      { id: 'bosques_urbanos', label: 'BOSQUES URBANOS', lat: 4.585, lng: -74.115 },
-      { id: 'paramos', label: 'COMPLEJO DE PÁRAMOS', lat: 4.715, lng: -74.185 }
-    ],
-    edges: [
-      ['humedales', 'rios', 'directa'],
-      ['humedales', 'areas_protegidas', 'directa'],
-      ['humedales', 'quebradas', 'indirecta'],
-      ['humedales', 'reservas_forestales', 'directa'],
-      ['rios', 'rondas_hidricas', 'directa'],
-      ['quebradas', 'rondas_hidricas', 'indirecta'],
-      ['areas_protegidas', 'cobertura_vegetal', 'directa'],
-      ['reservas_forestales', 'paramos', 'indirecta'],
-      ['areas_protegidas', 'parques', 'indirecta'],
-      ['cobertura_vegetal', 'bosques_urbanos', 'directa'],
-      ['parques', 'bosques_urbanos', 'indirecta']
-    ]
-  },
-  cultural: {
-    title: 'Red Cultural',
-    accent: '#e89a6c',
-    nodes: [
-      { id: 'patrimonio_material', label: 'PATRIMONIO MATERIAL', lat: 4.615, lng: -74.075, hub: true },
-      { id: 'patrimonio_inmaterial', label: 'PATRIMONIO INMATERIAL', lat: 4.635, lng: -74.045, hub: true },
-      { id: 'museos', label: 'MUSEOS', lat: 4.640, lng: -74.085 },
-      { id: 'bibliotecas', label: 'BIBLIOTECAS', lat: 4.595, lng: -74.105 },
-      { id: 'plazas_mercado', label: 'PLAZAS DE MERCADO', lat: 4.605, lng: -74.120 },
-      { id: 'barrios', label: 'BARRIOS', lat: 4.650, lng: -74.115 },
-      { id: 'centros_historicos', label: 'CENTROS HISTÓRICOS', lat: 4.625, lng: -74.100 },
-      { id: 'zonas_turisticas', label: 'ZONAS DE INTERÉS TURÍSTICO', lat: 4.675, lng: -74.070 },
-      { id: 'equipamientos_culturales', label: 'EQUIPAMIENTOS CULTURALES', lat: 4.570, lng: -74.080 },
-      { id: 'artesanias', label: 'PRODUCCIÓN ARTESANAL', lat: 4.585, lng: -74.055 }
-    ],
-    edges: [
-      ['patrimonio_material', 'museos', 'directa'],
-      ['patrimonio_material', 'centros_historicos', 'directa'],
-      ['patrimonio_material', 'patrimonio_inmaterial', 'indirecta'],
-      ['patrimonio_inmaterial', 'zonas_turisticas', 'directa'],
-      ['patrimonio_inmaterial', 'artesanias', 'directa'],
-      ['museos', 'bibliotecas', 'indirecta'],
-      ['centros_historicos', 'barrios', 'directa'],
-      ['barrios', 'plazas_mercado', 'indirecta'],
-      ['bibliotecas', 'equipamientos_culturales', 'directa'],
-      ['plazas_mercado', 'artesanias', 'indirecta']
-    ]
-  },
-  tecnologico: {
-    title: 'Red Tecnológica',
-    accent: '#e89a6c',
-    nodes: [
-      { id: 'red_vial', label: 'RED VIAL', lat: 4.635, lng: -74.100, hub: true },
-      { id: 'transporte_publico', label: 'TRANSPORTE PÚBLICO', lat: 4.605, lng: -74.070, hub: true },
-      { id: 'red_ferrrea', label: 'RED FÉRREA', lat: 4.665, lng: -74.095 },
-      { id: 'ciclorutas', label: 'CICLORRUTAS', lat: 4.655, lng: -74.135 },
-      { id: 'nodos_digitales', label: 'NODOS DIGITALES', lat: 4.680, lng: -74.145 },
-      { id: 'internet_publico', label: 'INTERNET PÚBLICO', lat: 4.585, lng: -74.135 },
-      { id: 'datos_abiertos', label: 'DATOS ABIERTOS', lat: 4.575, lng: -74.080 },
-      { id: 'centro_tecnologico', label: 'CENTRO TECNOLÓGICO', lat: 4.625, lng: -74.045 },
-      { id: 'recarga_electrica', label: 'RECARGA ELÉCTRICA', lat: 4.685, lng: -74.055 },
-      { id: 'semaforizacion', label: 'SEMAFORIZACIÓN', lat: 4.550, lng: -74.105 }
-    ],
-    edges: [
-      ['red_vial', 'transporte_publico', 'directa'],
-      ['red_vial', 'red_ferrrea', 'directa'],
-      ['red_vial', 'ciclorutas', 'indirecta'],
-      ['transporte_publico', 'nodos_digitales', 'directa'],
-      ['transporte_publico', 'internet_publico', 'indirecta'],
-      ['red_ferrrea', 'recarga_electrica', 'directa'],
-      ['nodos_digitales', 'centro_tecnologico', 'directa'],
-      ['internet_publico', 'datos_abiertos', 'indirecta'],
-      ['datos_abiertos', 'centro_tecnologico', 'directa'],
-      ['ciclorutas', 'semaforizacion', 'indirecta'],
-      ['red_vial', 'semaforizacion', 'directa']
-    ]
-  },
-  metaverso: {
-    title: 'Red Metaverso',
-    accent: '#46d6d0',
-    nodes: [
-      { id: 'gemelo_digital', label: 'GEMELO DIGITAL', lat: 4.630, lng: -74.100, hub: true },
-      { id: 'modelos_3d', label: 'MODELOS 3D', lat: 4.665, lng: -74.130, hub: true },
-      { id: 'capas_gis', label: 'CAPAS GIS', lat: 4.680, lng: -74.085 },
-      { id: 'plataformas_bim', label: 'PLATAFORMAS BIM', lat: 4.650, lng: -74.055 },
-      { id: 'nodos_iot', label: 'NODOS IoT', lat: 4.605, lng: -74.045 },
-      { id: 'visualizacion_vr', label: 'VISUALIZACIÓN VR', lat: 4.575, lng: -74.065 },
-      { id: 'laboratorios_urbanos', label: 'LABORATORIOS URBANOS', lat: 4.565, lng: -74.115 },
-      { id: 'datos_territoriales', label: 'DATOS TERRITORIALES', lat: 4.600, lng: -74.150 },
-      { id: 'escenarios_simulados', label: 'ESCENARIOS SIMULADOS', lat: 4.700, lng: -74.115 },
-      { id: 'sensores_urbanos', label: 'SENSORES URBANOS', lat: 4.640, lng: -74.180 }
-    ],
-    edges: [
-      ['gemelo_digital', 'modelos_3d', 'directa'],
-      ['gemelo_digital', 'capas_gis', 'directa'],
-      ['gemelo_digital', 'datos_territoriales', 'directa'],
-      ['modelos_3d', 'plataformas_bim', 'directa'],
-      ['modelos_3d', 'escenarios_simulados', 'indirecta'],
-      ['capas_gis', 'sensores_urbanos', 'indirecta'],
-      ['plataformas_bim', 'nodos_iot', 'directa'],
-      ['nodos_iot', 'sensores_urbanos', 'directa'],
-      ['datos_territoriales', 'laboratorios_urbanos', 'indirecta'],
-      ['laboratorios_urbanos', 'visualizacion_vr', 'directa'],
-      ['escenarios_simulados', 'visualizacion_vr', 'indirecta']
-    ]
-  }
-};
-
-function clearScaleNetwork() {
-  scaleNetworkLayers.forEach(layer => {
-    try { map.removeLayer(layer); } catch (e) {}
-  });
-  scaleNetworkLayers.length = 0;
-}
-
-function networkLabel(label) {
-  const words = label.split(' ');
-  const lines = [];
-  let line = '';
-  words.forEach(word => {
-    const candidate = line ? `${line} ${word}` : word;
-    if (candidate.length > 14 && line) {
-      lines.push(line);
-      line = word;
-    } else {
-      line = candidate;
-    }
-  });
-  if (line) lines.push(line);
-  return lines.slice(0, 3).join('<br>');
-}
-
-function networkArrow(from, to, color, type) {
-  const mid = [(from.lat + to.lat) / 2, (from.lng + to.lng) / 2];
-  const angle = Math.atan2(to.lat - from.lat, to.lng - from.lng) * 180 / Math.PI;
-  const arrow = L.marker(mid, {
-    interactive: false,
-    icon: L.divIcon({
-      className: 'scale-network-arrow',
-      html: `<span style="color:${color}; transform:rotate(${angle}deg)">${type === 'indirecta' ? '◇' : '➤'}</span>`,
-      iconSize: [18, 18],
-      iconAnchor: [9, 9]
-    })
-  }).addTo(map);
-  scaleNetworkLayers.push(arrow);
-}
-
-function showScaleNetwork(mode) {
-  clearScaleNetwork();
-  const definition = scaleNetworks[mode];
-  if (!definition) return;
-  const centerLat = definition.nodes.reduce((sum, node) => sum + node.lat, 0) / definition.nodes.length;
-  const centerLng = definition.nodes.reduce((sum, node) => sum + node.lng, 0) / definition.nodes.length;
-  const spreadFactor = 2.15;
-  const nodes = Object.fromEntries(definition.nodes.map(node => [node.id, {
-    ...node,
-    lat: centerLat + (node.lat - centerLat) * spreadFactor,
-    lng: centerLng + (node.lng - centerLng) * spreadFactor
-  }]));
-
-  definition.edges.forEach(([fromId, toId, type]) => {
-    const from = nodes[fromId];
-    const to = nodes[toId];
-    if (!from || !to) return;
-    const color = type === 'indirecta' ? '#e89a6c' : definition.accent;
-    const line = L.polyline([[from.lat, from.lng], [to.lat, to.lng]], {
-      color,
-      weight: type === 'indirecta' ? 1.4 : 2.2,
-      opacity: type === 'indirecta' ? 0.72 : 0.9,
-      dashArray: type === 'indirecta' ? '6, 6' : null,
-      interactive: false
-    }).addTo(map);
-    scaleNetworkLayers.push(line);
-    networkArrow(from, to, color, type);
-  });
-
-  definition.nodes.forEach(node => {
-    const size = node.hub ? 84 : 54;
-    const marker = L.marker([node.lat, node.lng], {
-      icon: L.divIcon({
-        className: 'scale-network-node-wrap',
-        html: `<div class="scale-network-node ${node.hub ? 'hub' : ''}" style="--node-accent:${definition.accent};--node-size:${size}px"><span>${networkLabel(node.label)}</span></div>`,
-        iconSize: [size, size],
-        iconAnchor: [size / 2, size / 2]
-      })
-    }).bindPopup(`<strong>${node.label}</strong><br><span>${definition.title}</span>`).addTo(map);
-    scaleNetworkLayers.push(marker);
-  });
-
-  const networkBounds = L.latLngBounds(Object.values(nodes).map(node => [node.lat, node.lng]));
-  if (networkBounds.isValid()) {
-    map.fitBounds(networkBounds.pad(0.10), { maxZoom: 12, animate: false });
-  }
-}
-
-// Las redes se muestran únicamente al pulsar una escala y viven dentro del pop-up.
-
-
-/* ========================================================================
-   POP-UP DE RED · la red vive aquí, no sobre el mapa principal
-   ======================================================================== */
-const scaleNetworkDescriptions = {
-  natural: 'Sistemas hídricos, estructura ecológica y cobertura vegetal conectados.',
-  cultural: 'Patrimonio, memoria urbana, barrios y prácticas culturales relacionadas.',
-  tecnologico: 'Movilidad, datos, infraestructura y conectividad territorial.',
-  metaverso: 'Capas digitales, modelos urbanos y escenarios de exploración virtual.'
-};
-
-let scalePopupSelectedNode = null;
-const scaleNetworkViewState = { scale: 1, x: 0, y: 0 };
-
-function updateScaleNetworkViewport() {
-  const viewport = document.getElementById('scaleNetworkViewport');
-  if (!viewport) return;
-  viewport.style.transform = `translate(${scaleNetworkViewState.x}px, ${scaleNetworkViewState.y}px) scale(${scaleNetworkViewState.scale})`;
-  const zoomValue = document.getElementById('scaleNetworkZoomReset');
-  if (zoomValue) zoomValue.textContent = `${Math.round(scaleNetworkViewState.scale * 100)}%`;
-}
-
-function setScaleNetworkZoom(nextScale, resetPosition = false) {
-  scaleNetworkViewState.scale = Math.max(.72, Math.min(2.4, nextScale));
-  if (resetPosition) {
-    scaleNetworkViewState.x = 0;
-    scaleNetworkViewState.y = 0;
-  }
-  updateScaleNetworkViewport();
-}
-
-function resetScaleNetworkView() {
-  scaleNetworkViewState.scale = 1;
-  scaleNetworkViewState.x = 0;
-  scaleNetworkViewState.y = 0;
-  updateScaleNetworkViewport();
-}
-
-function setupScaleNetworkViewport() {
-  const canvas = document.getElementById('scaleNetworkCanvas');
-  const viewport = document.getElementById('scaleNetworkViewport');
-  if (!canvas || !viewport || canvas.dataset.interactive === 'true') return;
-  canvas.dataset.interactive = 'true';
-  let dragging = false;
-  let startX = 0;
-  let startY = 0;
-  let originX = 0;
-  let originY = 0;
-
-  canvas.addEventListener('wheel', event => {
-    event.preventDefault();
-    setScaleNetworkZoom(scaleNetworkViewState.scale + (event.deltaY < 0 ? .12 : -.12));
-  }, { passive: false });
-
-  canvas.addEventListener('pointerdown', event => {
-    if (event.button !== 0 && event.pointerType !== 'touch') return;
-    dragging = true;
-    startX = event.clientX;
-    startY = event.clientY;
-    originX = scaleNetworkViewState.x;
-    originY = scaleNetworkViewState.y;
-    canvas.classList.add('is-dragging');
-    canvas.setPointerCapture?.(event.pointerId);
-  });
-
-  canvas.addEventListener('pointermove', event => {
-    if (!dragging) return;
-    scaleNetworkViewState.x = originX + event.clientX - startX;
-    scaleNetworkViewState.y = originY + event.clientY - startY;
-    updateScaleNetworkViewport();
-  });
-
-  const stopDragging = event => {
-    if (!dragging) return;
-    dragging = false;
-    canvas.classList.remove('is-dragging');
-    canvas.releasePointerCapture?.(event.pointerId);
+  const BOGOTA = [-74.10, 4.66];
+  const OVERPASS_ENDPOINT = "https://overpass-api.de/api/interpreter";
+  const NOMINATIM_ENDPOINT = "https://nominatim.openstreetmap.org/search";
+  const OSRM_ENDPOINT = "https://router.project-osrm.org/route/v1/driving";
+  const OSM_ATTRIBUTION = "© OpenStreetMap contributors";
+  const LOCAL_PMTILES_PATH = "./tiles/bogota-roads.pmtiles";
+  const CACHE = new Map();
+  const CACHE_MAX_ENTRIES = 16;
+  const VIEWPORT_DEBOUNCE_MS = 420;
+  const state = {
+    map: null,
+    mapReady: false,
+    selectedUpl: null,
+    selectedScale: "natural",
+    dataMode: "real",
+    streetSource: "overpass",
+    pmtilesArchive: null,
+    pmtilesProtocol: null,
+    currentView: "barrio",
+    placeMarkers: [],
+    uplMarker: null,
+    uplLabelMarker: null,
+    routeLayerReady: false,
+    routeStart: null,
+    routeEnd: null,
+    queryToken: 0,
+    activeQueryKey: "",
+    overpassController: null,
+    viewportDebounceTimer: null,
+    proceduralMarkers: [],
+    favorite: false,
   };
-  canvas.addEventListener('pointerup', stopDragging);
-  canvas.addEventListener('pointercancel', stopDragging);
-  canvas.addEventListener('pointerleave', event => {
-    if (event.pointerType === 'mouse') stopDragging(event);
-  });
-}
 
-function splitPopupLabel(label) {
-  const words = label.split(' ');
-  const lines = [];
-  let line = '';
-  words.forEach(word => {
-    const next = line ? `${line} ${word}` : word;
-    if (next.length > 15 && line) {
-      lines.push(line);
-      line = word;
-    } else {
-      line = next;
-    }
-  });
-  if (line) lines.push(line);
-  return lines.slice(0, 3);
-}
+  const UPLS = [
+    [1,"Sumapaz","Sumapaz","Borde rural — conectividad ecosistémica, no proximidad de servicios",-74.32,4.27],
+    [2,"Cuenca del Tunjuelo","Usme–Ciudad Bolívar","Déficit de soportes — ámbito integral de cuidado",-74.15,4.45],
+    [3,"Arborizadora","Ciudad Bolívar","Déficit de soportes — ámbito integral de cuidado",-74.16,4.53],
+    [4,"Lucero","Ciudad Bolívar","Déficit de soportes — ámbito integral de cuidado",-74.16,4.56],
+    [5,"Usme–Entrenubes","Usme–San Cristóbal","UPL transfronteriza — la vida cotidiana cruza el límite",-74.10,4.52],
+    [6,"Cerros Orientales","Usme–San Cristóbal–Santa Fé–Chapinero–Usaquén","Conectividad ecosistémica — no aplica lógica de proximidad",-74.06,4.67],
+    [7,"Torca","Suba–Usaquén","Borde rural — conectividad ecosistémica",-74.03,4.80],
+    [8,"Britalia","Suba","Proximidad viable — equipamientos barriales",-74.08,4.74],
+    [9,"Suba","Suba","Eje corredores verdes — DOT alrededor del Metro",-74.10,4.75],
+    [10,"Tibabuyes","Suba","Proximidad viable — equipamientos barriales",-74.14,4.75],
+    [11,"Engativá","Engativá","Proximidad viable — mixtura de usos",-74.13,4.70],
+    [12,"Fontibón","Fontibón","Eje corredores verdes — DOT alrededor del Metro",-74.15,4.68],
+    [13,"Tintal","Kennedy","Alta viabilidad — Línea 1 del Metro, Manzana del Cuidado, velódromo y parque metropolitano",-74.15,4.64],
+    [14,"Patio Bonito","Kennedy","Proximidad viable — equipamientos barriales",-74.16,4.62],
+    [15,"Porvenir","Bosa–Kennedy","Déficit de soportes — ámbito integral de cuidado",-74.18,4.61],
+    [16,"Edén","Bosa–Kennedy","Déficit de soportes — ámbito integral de cuidado",-74.18,4.59],
+    [17,"Bosa","Bosa–Kennedy","Proximidad viable — centralidad existente",-74.19,4.60],
+    [18,"Kennedy","Kennedy–Bosa","Alta viabilidad — Línea 1 del Metro, nueva Manzana del Cuidado",-74.15,4.63],
+    [19,"Tunjuelito","Tunjuelito","Proximidad viable — equipamientos barriales",-74.14,4.58],
+    [20,"Rafael Uribe","Rafael Uribe–Usme","UPL transfronteriza — la vida cotidiana cruza el límite",-74.12,4.56],
+    [21,"San Cristóbal","San Cristóbal","Proximidad viable — equipamientos barriales",-74.08,4.56],
+    [22,"Restrepo","Antonio Nariño–Rafael Uribe","UPL transfronteriza — la vida cotidiana cruza el límite",-74.10,4.58],
+    [23,"Centro Histórico","La Candelaria–Mártires–Santa Fé","Alta viabilidad — densa y mixta, proximidad a escala de caminata",-74.073,4.60],
+    [24,"Chapinero","Chapinero","Alta viabilidad — densa y mixta",-74.06,4.65],
+    [25,"Usaquén","Usaquén","Eje corredores verdes — DOT alrededor del Metro",-74.03,4.70],
+    [26,"Toberín","Usaquén","Proximidad viable — equipamientos barriales",-74.04,4.74],
+    [27,"Niza","Suba","Proximidad viable — equipamientos barriales",-74.08,4.71],
+    [28,"Rincón de Suba","Suba","Proximidad viable — equipamientos barriales",-74.11,4.72],
+    [29,"Tabora","Engativá","Proximidad viable — equipamientos barriales",-74.11,4.70],
+    [30,"Salitre","Fontibón–Engativá","Eje corredores verdes — DOT",-74.11,4.67],
+    [31,"Puente Aranda","Puente Aranda","Proximidad viable — equipamientos barriales",-74.11,4.62],
+    [32,"Teusaquillo","Teusaquillo","Alta viabilidad — densa y mixta",-74.08,4.64],
+    [33,"Barrios Unidos","Barrios Unidos","Alta viabilidad — densa y mixta",-74.08,4.68],
+  ].map(([num,name,localidad,tag,lon,lat]) => ({num,name,localidad,tag,lon,lat}));
 
-function popupNetworkPositions(definition) {
-  const lats = definition.nodes.map(node => node.lat);
-  const lngs = definition.nodes.map(node => node.lng);
-  const minLat = Math.min(...lats);
-  const maxLat = Math.max(...lats);
-  const minLng = Math.min(...lngs);
-  const maxLng = Math.max(...lngs);
-  const latRange = Math.max(maxLat - minLat, 0.001);
-  const lngRange = Math.max(maxLng - minLng, 0.001);
-  return Object.fromEntries(definition.nodes.map(node => [node.id, {
-    ...node,
-    x: 72 + ((node.lng - minLng) / lngRange) * 856,
-    y: 62 + ((maxLat - node.lat) / latRange) * 420
-  }]));
-}
+  const SCALE_DATA = {
+    natural: {
+      label: "Natural", icon: "fa-droplet", color: "#24d5c6",
+      subtitle: "Agua, humedales y estructura ecológica",
+      reading: "La escala natural hace visibles el agua, los humedales y la estructura ecológica como sistemas vivos que atraviesan el límite administrativo.",
+      overpass: (b) => `\n        (way["waterway"](${b});node["waterway"](${b});way["natural"~"water|wetland|wood|scrub"](${b});node["natural"~"water|wetland|wood|scrub"](${b});way["leisure"="park"](${b}););\n      `,
+      fallback: ["Humedal / área de agua", "Parque ecológico", "Corredor verde", "Cobertura vegetal"],
+    },
+    cultural: {
+      label: "Cultural", icon: "fa-landmark", color: "#e59461",
+      subtitle: "Patrimonio, barrios y memoria urbana",
+      reading: "La escala cultural superpone patrimonio, prácticas barriales y lugares de memoria sobre la red cotidiana: el territorio no es solo soporte físico.",
+      overpass: (b) => `\n        (node["historic"](${b});way["historic"](${b});node["tourism"](${b});node["amenity"="place_of_worship"](${b}););\n      `,
+      fallback: ["Lugar patrimonial", "Plaza de barrio", "Equipamiento cultural", "Sitio de memoria"],
+    },
+    tecnologico: {
+      label: "Tecnológico", icon: "fa-microchip", color: "#4eb5ed",
+      subtitle: "Datos, redes y movilidad inteligente",
+      reading: "La escala tecnológica permite leer las calles como una red de conectividad: movilidad, transporte público, equipamientos y datos se co-producen.",
+      overpass: (b) => `\n        (way["highway"]["name"](${b});node["public_transport"](${b});node["amenity"](${b});node["office"](${b}););\n      `,
+      fallback: ["Parada de transporte", "Equipamiento", "Conector vial", "Nodo de datos"],
+    },
+    metaverso: {
+      label: "Metaverso", icon: "fa-cubes", color: "#b682ee",
+      subtitle: "Modelo digital y escenarios inmersivos",
+      reading: "El metaverso no reemplaza el territorio: añade una capa de escenarios para probar cómo cambiaría la experiencia urbana si se modifican sus relaciones.",
+      overpass: (b) => `\n        (node["amenity"~"school|library|community_centre|social_facility"](${b});node["shop"](${b}););\n      `,
+      fallback: ["Punto de interacción", "Escenario inmersivo", "Nodo comunitario", "Lugar simulado"],
+    },
+  };
 
-function renderScaleNetworkPopup(mode) {
-  const canvas = document.getElementById('scaleNetworkCanvas');
-  const definition = scaleNetworks[mode];
-  if (!canvas || !definition) return;
-  const nodes = popupNetworkPositions(definition);
-  const edgeMarkup = definition.edges.map(([fromId, toId, type]) => {
-    const from = nodes[fromId];
-    const to = nodes[toId];
-    if (!from || !to) return '';
-    const color = type === 'indirecta' ? '#e89a6c' : '#46d6d0';
-    const className = type === 'indirecta' ? 'popup-edge indirect' : 'popup-edge direct';
-    return `<line class="${className}" x1="${from.x.toFixed(1)}" y1="${from.y.toFixed(1)}" x2="${to.x.toFixed(1)}" y2="${to.y.toFixed(1)}" stroke="${color}" marker-end="url(#arrow-${type})" />`;
-  }).join('');
+  const $ = (selector) => document.querySelector(selector);
+  const $$ = (selector) => [...document.querySelectorAll(selector)];
 
-  const nodeMarkup = definition.nodes.map(node => {
-    const p = nodes[node.id];
-    const radius = node.hub ? 42 : 29;
-    const lines = splitPopupLabel(node.label);
-    const firstY = p.y - ((lines.length - 1) * 7);
-    const labelMarkup = lines.map((line, index) => `<tspan x="${p.x.toFixed(1)}" dy="${index === 0 ? 0 : 14}">${line}</tspan>`).join('');
-    return `<g class="popup-node ${node.hub ? 'hub' : ''}" data-node-id="${node.id}" tabindex="0" role="button" aria-label="${node.label}">
-      <circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${radius}" />
-      <text x="${p.x.toFixed(1)}" y="${firstY.toFixed(1)}">${labelMarkup}</text>
-    </g>`;
-  }).join('');
+  function escapeHtml(value) {
+    return String(value || "").replace(/[&<>'"]/g, (char) => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;","\"":"&quot;"}[char]));
+  }
 
-  canvas.innerHTML = `<div id="scaleNetworkViewport" class="popup-network-viewport"><svg class="popup-network-svg" viewBox="0 0 1000 544" role="img" aria-label="${definition.title}">
-    <defs>
-      <filter id="popupGlowTeal" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-      <filter id="popupGlowCopper" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-      <marker id="arrow-direct" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#46d6d0" /></marker>
-      <marker id="arrow-indirecta" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#e89a6c" /></marker>
-    </defs>
-    <g class="popup-edges">${edgeMarkup}</g>
-    <g class="popup-nodes">${nodeMarkup}</g>
-  </svg></div>`;
+  function setText(selector, value) {
+    const el = $(selector);
+    if (el) el.textContent = value;
+  }
 
-  resetScaleNetworkView();
-  setupScaleNetworkViewport();
-  canvas.querySelectorAll('.popup-node').forEach(nodeElement => {
-    const selectNode = () => {
-      canvas.querySelectorAll('.popup-node').forEach(item => item.classList.remove('selected'));
-      nodeElement.classList.add('selected');
-      const node = nodes[nodeElement.dataset.nodeId];
-      scalePopupSelectedNode = node;
-      const description = document.getElementById('scaleNetworkDescription');
-      if (description && node) description.textContent = `${node.label} · ${definition.title}`;
+  function rememberCache(key, value) {
+    if (CACHE.has(key)) CACHE.delete(key);
+    CACHE.set(key, value);
+    while (CACHE.size > CACHE_MAX_ENTRIES) CACHE.delete(CACHE.keys().next().value);
+  }
+
+  function getViewportBBox() {
+    if (!state.map) return null;
+    const bounds = state.map.getBounds();
+    const west = bounds.getWest();
+    const south = bounds.getSouth();
+    const east = bounds.getEast();
+    const north = bounds.getNorth();
+    const lonPad = Math.max((east - west) * 0.08, 0.003);
+    const latPad = Math.max((north - south) * 0.08, 0.003);
+    return {
+      west: Math.max(-74.6, west - lonPad),
+      south: Math.max(3.8, south - latPad),
+      east: Math.min(-73.5, east + lonPad),
+      north: Math.min(5.2, north + latPad),
     };
-    nodeElement.addEventListener('click', selectNode);
-    nodeElement.addEventListener('keydown', event => {
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        selectNode();
+  }
+
+  function bboxString(bbox) {
+    return [bbox.south, bbox.west, bbox.north, bbox.east].map((value) => Number(value).toFixed(5)).join(",");
+  }
+
+  function viewportLevel() {
+    const zoom = state.map?.getZoom?.() ?? 13;
+    if (zoom < 12) return "macro";
+    if (zoom < 14.5) return "meso";
+    return "micro";
+  }
+
+  function roadClassesForLevel(level) {
+    if (level === "macro") return ["motorway", "trunk", "primary", "secondary"];
+    if (level === "meso") return ["motorway", "trunk", "primary", "secondary", "tertiary"];
+    return ["motorway", "trunk", "primary", "secondary", "tertiary", "residential", "living_street", "service", "unclassified"];
+  }
+
+  function roadRegexForLevel(level) {
+    return `^(${roadClassesForLevel(level).join("|")})$`;
+  }
+
+  function applyRoadZoomFilter() {
+    if (!state.map) return;
+    const classes = roadClassesForLevel(viewportLevel());
+    const filter = ["in", ["get", "highway"], ["literal", classes]];
+    ["osm-streets", "osm-streets-casing"].forEach((id) => {
+      if (state.map.getLayer(id)) state.map.setFilter(id, filter);
+    });
+    setText("#roadLevel", `Nivel ${viewportLevel()} · ${classes.length} jerarquías visibles`);
+  }
+
+  function localPmtilesUrl() {
+    return new URL(LOCAL_PMTILES_PATH, window.location.href).href;
+  }
+
+  function updateLocalTilesButton(active, pending = false) {
+    const button = $("#localTilesBtn");
+    if (!button) return;
+    button.classList.toggle("is-active", active);
+    button.disabled = pending;
+    button.innerHTML = pending
+      ? '<i class="fa-solid fa-spinner fa-spin"></i> Cargando PMTiles…'
+      : active
+        ? '<i class="fa-solid fa-hard-drive"></i> PMTiles local activo'
+        : '<i class="fa-solid fa-hard-drive"></i> Usar PMTiles local';
+  }
+
+  function removeLocalRoadLayers() {
+    if (!state.map) return;
+    ["local-roads-casing", "local-roads"].forEach((id) => {
+      if (state.map.getLayer(id)) state.map.removeLayer(id);
+    });
+    if (state.map.getSource("local-roads-source")) state.map.removeSource("local-roads-source");
+    state.pmtilesArchive = null;
+  }
+
+  async function enableLocalPmtiles() {
+    if (!state.mapReady || !window.pmtiles) throw new Error("pmtiles.js no está cargado");
+    updateLocalTilesButton(false, true);
+    const url = localPmtilesUrl();
+    const response = await fetch(url, { method: "HEAD", cache: "no-store" });
+    if (!response.ok) throw new Error("No existe tiles/bogota-roads.pmtiles todavía");
+    if (!state.pmtilesProtocol) {
+      state.pmtilesProtocol = new pmtiles.Protocol();
+      maplibregl.addProtocol("pmtiles", state.pmtilesProtocol.tile);
+    }
+    const archive = new pmtiles.PMTiles(url);
+    state.pmtilesProtocol.add(archive);
+    state.pmtilesArchive = archive;
+    if (!state.map.getSource("local-roads-source")) {
+      state.map.addSource("local-roads-source", { type: "vector", url: `pmtiles://${url}`, attribution: OSM_ATTRIBUTION });
+      state.map.addLayer({ id: "local-roads-casing", type: "line", source: "local-roads-source", "source-layer": "roads", layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": "#ffffff", "line-width": ["interpolate", ["linear"], ["zoom"], 10, 1.6, 13, 3.2, 16, 6], "line-opacity": .8 } }, "upl-focus-fill");
+      state.map.addLayer({ id: "local-roads", type: "line", source: "local-roads-source", "source-layer": "roads", layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": ["match", ["get", "highway"], "motorway", "#d56c75", "trunk", "#df8e5a", "primary", "#e6a95a", "secondary", "#4cb2a9", "tertiary", "#58a9a4", "residential", "#2d9790", "living_street", "#50aaa2", "service", "#74bab2", "#4a9f99"], "line-width": ["interpolate", ["linear"], ["zoom"], 10, .55, 13, 1.15, 16, 2.5], "line-opacity": .95 } }, "upl-focus-fill");
+    }
+    state.streetSource = "pmtiles";
+    updateLocalTilesButton(true);
+    setText("#modeDetail", "PMTiles local · sin consulta vial externa");
+    setText("#metricRoads", "MVT");
+    setText("#connectionLabel", "Red vial local conectada");
+    showToast("PMTiles local activo: la red vial ya no depende de Overpass.");
+    applyRoadZoomFilter();
+  }
+
+  function disableLocalPmtiles() {
+    removeLocalRoadLayers();
+    state.streetSource = "overpass";
+    updateLocalTilesButton(false);
+    setText("#modeDetail", "OpenStreetMap · consulta bajo demanda");
+    setText("#connectionLabel", "Mapa real conectado");
+    loadScaleData();
+  }
+
+  async function toggleLocalPmtiles() {
+    try {
+      if (state.streetSource === "pmtiles") disableLocalPmtiles();
+      else await enableLocalPmtiles();
+    } catch (error) {
+      updateLocalTilesButton(false);
+      showToast(`${error.message}. Genera el archivo con tools/build-bogota-roads-pmtiles.sh.`, "error");
+    }
+  }
+
+  function scheduleViewportLoad(immediate = false) {
+    if (!state.mapReady || state.dataMode !== "real") return;
+    window.clearTimeout(state.viewportDebounceTimer);
+    const run = () => loadScaleData({ fromViewport: true });
+    if (immediate) run();
+    else state.viewportDebounceTimer = window.setTimeout(run, VIEWPORT_DEBOUNCE_MS);
+  }
+
+  function showToast(message, kind = "info") {
+    const toast = $("#mapToast");
+    if (!toast) return;
+    toast.classList.toggle("is-error", kind === "error");
+    toast.innerHTML = `<i class="fa-solid ${kind === "error" ? "fa-triangle-exclamation" : "fa-circle-info"}"></i><span>${escapeHtml(message)}</span>`;
+    toast.classList.add("is-visible");
+    window.clearTimeout(showToast.timer);
+    showToast.timer = window.setTimeout(() => toast.classList.remove("is-visible"), 3600);
+  }
+
+  function getDeficit(upl) {
+    if (/Déficit/i.test(upl.tag)) return "46%";
+    if (/Alta viabilidad/i.test(upl.tag)) return "18%";
+    if (/Borde rural|Conectividad/i.test(upl.tag)) return "—";
+    return "32%";
+  }
+
+  function getStrategy(upl) {
+    if (/Déficit/i.test(upl.tag)) return "Priorizar un ámbito integral de cuidado y llevar servicios a la vida cotidiana.";
+    if (/Borde rural|Conectividad/i.test(upl.tag)) return "Proteger la conectividad ecosistémica sin forzar una lógica urbana de proximidad.";
+    if (/Metro|DOT|corredores/i.test(upl.tag)) return "Conectar soporte urbano, cuidado y transporte alrededor de la proximidad.";
+    return "Conectar soporte urbano, cuidado y ecosistemas en la unidad cotidiana.";
+  }
+
+  function makeBounds(upl, view = "barrio") {
+    if (view === "region") return [[-74.38, 4.40], [-73.88, 4.90]];
+    const width = view === "barrio" ? .022 : .035;
+    const height = view === "barrio" ? .018 : .028;
+    return [[upl.lon - width, upl.lat - height], [upl.lon + width, upl.lat + height]];
+  }
+
+  function updateUplPanel(upl) {
+    state.selectedUpl = upl;
+    setText("#selectedUplName", `${upl.num} · ${upl.name.toUpperCase()}`);
+    setText("#selectedUplDescription", `${upl.tag}. Localidades relacionadas: ${upl.localidad}.`);
+    setText("#strategyText", getStrategy(upl));
+    setText("#metricDeficit", getDeficit(upl));
+    setText("#mapTitle", `UPL ${upl.num} · ${upl.name}`);
+    setText("#mapSubtitle", `${upl.localidad} · calles, equipamientos y estructura natural`);
+    setText("#uplTag", `UPL ${upl.num} · ${upl.name}: ${upl.tag}`);
+    const select = $("#uplSelect");
+    if (select) select.value = String(upl.num);
+    state.favorite = localStorage.getItem(`bogota-viva-fav-${upl.num}`) === "1";
+    refreshFavorite();
+  }
+
+  function refreshFavorite() {
+    const button = $("#favoriteBtn");
+    if (!button) return;
+    button.classList.toggle("is-favorite", state.favorite);
+    button.innerHTML = `<i class="fa-${state.favorite ? "solid" : "regular"} fa-star"></i>`;
+    button.setAttribute("aria-label", state.favorite ? "Quitar de favoritas" : "Marcar como favorita");
+  }
+
+  function renderUplSelect() {
+    const select = $("#uplSelect");
+    if (!select) return;
+    select.innerHTML = UPLS.map((upl) => `<option value="${upl.num}">${String(upl.num).padStart(2,"0")} · ${escapeHtml(upl.name)} · ${escapeHtml(upl.localidad)}</option>`).join("");
+  }
+
+  function renderScaleCards() {
+    const wrap = $("#scaleCards");
+    if (!wrap) return;
+    wrap.innerHTML = Object.entries(SCALE_DATA).map(([key, scale]) => `<button class="scale-card${key === state.selectedScale ? " is-active" : ""}" data-scale="${key}"><span class="card-icon"><i class="fa-solid ${scale.icon}"></i></span><span><strong>${scale.label}</strong><small>${scale.subtitle}</small></span></button>`).join("");
+    $$(".scale-card").forEach((button) => button.addEventListener("click", () => setScale(button.dataset.scale)));
+  }
+
+  function setScale(scaleKey, shouldQuery = true) {
+    if (!SCALE_DATA[scaleKey]) return;
+    state.selectedScale = scaleKey;
+    $$(".scale-btn").forEach((button) => {
+      const active = button.dataset.scale === scaleKey;
+      button.classList.toggle("is-active", active);
+      button.setAttribute("aria-selected", String(active));
+    });
+    renderScaleCards();
+    setText("#scaleReading", SCALE_DATA[scaleKey].reading);
+    if (shouldQuery && state.mapReady) loadScaleData();
+  }
+
+  function initializeMap() {
+    if (!window.maplibregl) {
+      useProceduralFallback("MapLibre no pudo cargarse; se activó la lectura procedural.");
+      return;
+    }
+    const style = {
+      version: 8,
+      sources: {
+        "osm-raster": {
+          type: "raster",
+          tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
+          tileSize: 256,
+          minzoom: 0,
+          maxzoom: 19,
+          attribution: OSM_ATTRIBUTION,
+        },
+      },
+      layers: [{ id: "osm-raster-layer", type: "raster", source: "osm-raster" }],
+    };
+    try {
+      state.map = new maplibregl.Map({ container: "map", style, center: BOGOTA, zoom: 11.3, attributionControl: true, maxZoom: 19 });
+      state.map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-left");
+      state.map.on("zoom", applyRoadZoomFilter);
+      state.map.on("moveend", () => {
+        applyRoadZoomFilter();
+        scheduleViewportLoad();
+      });
+      state.map.on("load", () => {
+        state.mapReady = true;
+        addMapLayers();
+        updateUplPanel(state.selectedUpl);
+        focusSelectedUpl(false);
+        setText("#connectionLabel", "Mapa real conectado");
+        showToast("Mapa real listo. Selecciona una escala para consultar la red local.");
+        applyRoadZoomFilter();
+        loadScaleData();
+      });
+      state.map.on("error", (event) => {
+        if (event?.error?.status === 404) showToast("Una tesela no respondió; el mapa continuará con caché del navegador.", "error");
+      });
+    } catch (error) {
+      console.warn("No se pudo inicializar MapLibre", error);
+      useProceduralFallback("No se pudo inicializar el mapa real; se activó el respaldo procedural.");
+    }
+  }
+
+  function addMapLayers() {
+    if (!state.map || state.map.getSource("upl-focus")) return;
+    state.map.addSource("osm-streets", { type: "geojson", data: { type: "FeatureCollection", features: [] } });
+    state.map.addLayer({ id: "osm-streets-casing", type: "line", source: "osm-streets", layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": "#ffffff", "line-width": ["interpolate", ["linear"], ["zoom"], 10, 1.6, 13, 3.2, 16, 6], "line-opacity": .78 } });
+    state.map.addLayer({ id: "osm-streets", type: "line", source: "osm-streets", layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": ["match", ["get", "highway"], "motorway", "#d56c75", "trunk", "#df8e5a", "primary", "#e6a95a", "secondary", "#4cb2a9", "tertiary", "#58a9a4", "residential", "#2d9790", "living_street", "#50aaa2", "service", "#74bab2", "#4a9f99"], "line-width": ["interpolate", ["linear"], ["zoom"], 10, .55, 13, 1.15, 16, 2.5], "line-opacity": .93 } });
+    state.map.addSource("upl-focus", { type: "geojson", data: { type: "FeatureCollection", features: [] } });
+    state.map.addLayer({ id: "upl-focus-fill", type: "fill", source: "upl-focus", paint: { "fill-color": "#24d5c6", "fill-opacity": .10 } });
+    state.map.addLayer({ id: "upl-focus-line", type: "line", source: "upl-focus", paint: { "line-color": "#149e96", "line-width": 2, "line-dasharray": [2, 2], "line-opacity": .9 } });
+    state.map.addSource("route", { type: "geojson", data: { type: "FeatureCollection", features: [] } });
+    state.map.addLayer({ id: "route-casing", type: "line", source: "route", paint: { "line-color": "#ffffff", "line-width": 7, "line-opacity": .75 } });
+    state.map.addLayer({ id: "route-line", type: "line", source: "route", paint: { "line-color": "#24bdb3", "line-width": 4, "line-opacity": .95 } });
+  }
+
+  function updateFocusLayer() {
+    if (!state.map || !state.map.getSource("upl-focus") || !state.selectedUpl) return;
+    const [[west, south], [east, north]] = makeBounds(state.selectedUpl, state.currentView);
+    state.map.getSource("upl-focus").setData({ type: "FeatureCollection", features: [{ type: "Feature", properties: { label: "radio exploratorio" }, geometry: { type: "Polygon", coordinates: [[[west,south],[east,south],[east,north],[west,north],[west,south]]] } }] });
+  }
+
+  function clearUplMarkers() {
+    [state.uplMarker, state.uplLabelMarker].forEach((marker) => { if (marker) marker.remove(); });
+    state.uplMarker = null;
+    state.uplLabelMarker = null;
+  }
+
+  function renderUplMarkers() {
+    if (!state.map || !state.selectedUpl || !window.maplibregl) return;
+    clearUplMarkers();
+    const markerEl = document.createElement("div");
+    markerEl.className = "upl-marker";
+    markerEl.title = `UPL ${state.selectedUpl.num} · ${state.selectedUpl.name}`;
+    markerEl.addEventListener("click", () => showToast(`UPL ${state.selectedUpl.num}: el recuadro es un radio exploratorio, no un límite legal.`));
+    state.uplMarker = new maplibregl.Marker({ element: markerEl, anchor: "center" }).setLngLat([state.selectedUpl.lon, state.selectedUpl.lat]).addTo(state.map);
+    const labelEl = document.createElement("div");
+    labelEl.className = "upl-label";
+    labelEl.textContent = `UPL ${state.selectedUpl.num} · ${state.selectedUpl.name}`;
+    state.uplLabelMarker = new maplibregl.Marker({ element: labelEl, anchor: "bottom-left" }).setLngLat([state.selectedUpl.lon + .005, state.selectedUpl.lat + .008]).addTo(state.map);
+  }
+
+  function focusSelectedUpl(animate = true) {
+    if (!state.map || !state.selectedUpl) return;
+    updateFocusLayer();
+    renderUplMarkers();
+    state.map.fitBounds(makeBounds(state.selectedUpl, state.currentView), { padding: 44, duration: animate ? 700 : 0, maxZoom: state.currentView === "barrio" ? 15.2 : 12.4 });
+  }
+
+  function switchView(view) {
+    state.currentView = view;
+    $$(".view-card").forEach((button) => button.classList.toggle("is-active", button.dataset.view === view));
+    if (view === "region") {
+      setText("#mapTitle", "Región Metropolitana");
+      setText("#mapSubtitle", "20 municipios conectados · escala macro");
+      if (state.map) state.map.fitBounds(makeBounds(state.selectedUpl, "region"), { padding: 38, duration: 700, maxZoom: 11.2 });
+      showToast("Vista macro: el mapa se abre a la región; la UPL permanece como referencia.");
+    } else {
+      updateUplPanel(state.selectedUpl);
+      focusSelectedUpl(true);
+      showToast("Vista barrio vital: lectura de proximidad alrededor de la UPL seleccionada.");
+    }
+    updateFocusLayer();
+  }
+
+  function clearPlaceMarkers() {
+    state.placeMarkers.forEach((marker) => marker.remove());
+    state.placeMarkers = [];
+    state.proceduralMarkers.forEach((marker) => marker.remove());
+    state.proceduralMarkers = [];
+  }
+
+  function featurePoint(element) {
+    if (element.type === "node" && element.lat != null && element.lon != null) return [Number(element.lon), Number(element.lat)];
+    if (element.center && element.center.lat != null && element.center.lon != null) return [Number(element.center.lon), Number(element.center.lat)];
+    if (Array.isArray(element.geometry) && element.geometry[0]?.lat != null && element.geometry[0]?.lon != null) return [Number(element.geometry[0].lon), Number(element.geometry[0].lat)];
+    return null;
+  }
+
+  function streetFeature(element) {
+    if (element.type !== "way" || !element.tags?.highway || !Array.isArray(element.geometry) || element.geometry.length < 2) return null;
+    const coordinates = element.geometry.map((point) => [Number(point.lon), Number(point.lat)]).filter((point) => Number.isFinite(point[0]) && Number.isFinite(point[1]));
+    if (coordinates.length < 2) return null;
+    return { type: "Feature", properties: { highway: element.tags.highway, name: element.tags.name || "Calle sin nombre", osmId: element.id }, geometry: { type: "LineString", coordinates } };
+  }
+
+  function updateStreetLayer(features) {
+    if (!state.map || !state.map.getSource("osm-streets")) return;
+    state.map.getSource("osm-streets").setData({ type: "FeatureCollection", features });
+  }
+
+  function featureName(element) {
+    const tags = element.tags || {};
+    return tags.name || tags["name:es"] || tags.amenity || tags.tourism || tags.historic || tags.highway || "Lugar OSM";
+  }
+
+  function featureType(element) {
+    const tags = element.tags || {};
+    return tags.highway ? "calle" : tags.natural || tags.waterway || tags.leisure || tags.historic || tags.tourism || tags.amenity || "lugar";
+  }
+
+  function renderPlaces(elements) {
+    clearPlaceMarkers();
+    if (!state.map || !window.maplibregl) return;
+    const seen = new Set();
+    const streetFeatures = [];
+    let placeCount = 0;
+    let roadCount = 0;
+    elements.forEach((element) => {
+      const street = streetFeature(element);
+      if (street) {
+        streetFeatures.push(street);
+        roadCount += 1;
       }
     });
-  });
-}
+    if (state.streetSource === "overpass") updateStreetLayer(streetFeatures);
+    elements.slice(0, 220).forEach((element) => {
+      const point = featurePoint(element);
+      if (!point) return;
+      const tags = element.tags || {};
+      const key = `${point[0].toFixed(5)},${point[1].toFixed(5)}`;
+      if (tags.highway || seen.has(key)) return;
+      seen.add(key);
+      const markerEl = document.createElement("div");
+      markerEl.className = "place-marker";
+      const marker = new maplibregl.Marker({ element: markerEl, anchor: "center" }).setLngLat(point).setPopup(new maplibregl.Popup({ offset: 9, className: "place-popup" }).setHTML(`<strong>${escapeHtml(featureName(element))}</strong><span>${escapeHtml(featureType(element))} · OpenStreetMap</span>`)).addTo(state.map);
+      state.placeMarkers.push(marker);
+      placeCount += 1;
+    });
+    setText("#metricPlaces", placeCount ? String(placeCount) : "0");
+    setText("#metricRoads", state.streetSource === "pmtiles" ? "MVT" : (roadCount ? String(roadCount) : "—"));
+  }
 
-function openScaleNetworkModal(mode) {
-  const modal = document.getElementById('scaleNetworkModal');
-  const definition = scaleNetworks[mode];
-  if (!modal || !definition) return;
-  scalePopupSelectedNode = null;
-  document.getElementById('scaleNetworkTitle').textContent = definition.title;
-  document.getElementById('scaleNetworkDescription').textContent = scaleNetworkDescriptions[mode];
-  renderScaleNetworkPopup(mode);
-  modal.classList.add('open');
-  modal.setAttribute('aria-hidden', 'false');
-  document.body.classList.add('scale-modal-open');
-  document.getElementById('scaleNetworkClose')?.focus();
-}
+  function buildOverpassQuery(upl, scaleKey, bbox = null) {
+    const fallback = { west: upl.lon - .03, south: upl.lat - .025, east: upl.lon + .03, north: upl.lat + .025 };
+    const b = bboxString(bbox || fallback);
+    const scale = SCALE_DATA[scaleKey];
+    const roadLevel = state.map ? viewportLevel() : "meso";
+    return `[out:json][timeout:25];(${scale.overpass(b)}way["highway"~"${roadRegexForLevel(roadLevel)}"](${b}););out geom tags;`;
+  }
 
-function closeScaleNetworkModal() {
-  const modal = document.getElementById('scaleNetworkModal');
-  if (!modal) return;
-  modal.classList.remove('open');
-  modal.setAttribute('aria-hidden', 'true');
-  document.body.classList.remove('scale-modal-open');
-}
+  async function fetchOverpass(upl, scaleKey, bbox, signal) {
+    const key = `overpass:${upl.num}:${scaleKey}:${bboxString(bbox)}`;
+    if (CACHE.has(key)) return CACHE.get(key);
+    const url = `${OVERPASS_ENDPOINT}?data=${encodeURIComponent(buildOverpassQuery(upl, scaleKey, bbox))}`;
+    const response = await fetch(url, { signal, headers: { Accept: "application/json" } });
+    if (!response.ok) throw new Error(`Overpass HTTP ${response.status}`);
+    const json = await response.json();
+    const elements = Array.isArray(json.elements) ? json.elements : [];
+    rememberCache(key, elements);
+    return elements;
+  }
 
-document.getElementById('scaleNetworkClose')?.addEventListener('click', closeScaleNetworkModal);
-document.getElementById('scaleNetworkModal')?.addEventListener('click', event => {
-  if (event.target.id === 'scaleNetworkModal') closeScaleNetworkModal();
-});
-document.addEventListener('keydown', event => {
-  if (event.key === 'Escape') closeScaleNetworkModal();
-});
+  function renderProceduralMarkers() {
+    if (!state.map || !state.selectedUpl || !window.maplibregl) return;
+    clearPlaceMarkers();
+    updateStreetLayer([]);
+    const scale = SCALE_DATA[state.selectedScale];
+    const offsets = [[-.012,.008],[.010,.010],[-.007,-.009],[.014,-.006],[-.017,-.003],[.002,.017]];
+    offsets.forEach(([dx,dy], index) => {
+      const markerEl = document.createElement("div");
+      markerEl.className = "place-marker";
+      markerEl.style.background = scale.color;
+      const label = scale.fallback[index % scale.fallback.length];
+      const marker = new maplibregl.Marker({ element: markerEl, anchor: "center" }).setLngLat([state.selectedUpl.lon + dx, state.selectedUpl.lat + dy]).setPopup(new maplibregl.Popup({ offset: 9, className: "place-popup" }).setHTML(`<strong>${escapeHtml(label)}</strong><span>capa procedural de respaldo · no es un dato OSM</span>`)).addTo(state.map);
+      state.proceduralMarkers.push(marker);
+    });
+    setText("#metricPlaces", String(offsets.length));
+    setText("#metricRoads", "6");
+  }
 
-// Controles de zoom del diagrama, compartidos por las cuatro redes.
-document.getElementById('scaleNetworkZoomIn')?.addEventListener('click', event => {
-  event.stopPropagation();
-  setScaleNetworkZoom(scaleNetworkViewState.scale + .18);
-});
-document.getElementById('scaleNetworkZoomOut')?.addEventListener('click', event => {
-  event.stopPropagation();
-  setScaleNetworkZoom(scaleNetworkViewState.scale - .18);
-});
-document.getElementById('scaleNetworkZoomReset')?.addEventListener('click', event => {
-  event.stopPropagation();
-  resetScaleNetworkView();
-});
+  async function loadScaleData({ fromViewport = false } = {}) {
+    if (!state.mapReady || !state.selectedUpl) return;
+    const bbox = getViewportBBox();
+    if (!bbox) return;
+    const queryKey = `${state.selectedUpl.num}:${state.selectedScale}:${bboxString(bbox)}`;
+    if (queryKey === state.activeQueryKey && fromViewport) return;
+    state.activeQueryKey = queryKey;
+    const token = ++state.queryToken;
+    if (state.overpassController) state.overpassController.abort();
+    const controller = new AbortController();
+    state.overpassController = controller;
+    const timeout = window.setTimeout(() => controller.abort(), 28000);
+    const scale = SCALE_DATA[state.selectedScale];
+    if (state.dataMode !== "real") {
+      window.clearTimeout(timeout);
+      renderProceduralMarkers();
+      setText("#connectionLabel", "Modo procedural de respaldo");
+      return;
+    }
+    clearPlaceMarkers();
+    setText("#metricPlaces", "…");
+    setText("#metricRoads", "…");
+    setText("#connectionLabel", "Consultando OSM…");
+    showToast(`Consultando ${scale.label.toLowerCase()} en el área visible…`);
+    try {
+      const elements = await fetchOverpass(state.selectedUpl, state.selectedScale, bbox, controller.signal);
+      if (token !== state.queryToken || controller.signal.aborted) return;
+      renderPlaces(elements);
+      setText("#connectionLabel", "Mapa real conectado");
+      showToast(`${elements.length} elementos OSM recibidos en el área visible.`);
+    } catch (error) {
+      if (controller.signal.aborted || token !== state.queryToken) return;
+      console.warn("Overpass no respondió", error);
+      useProceduralFallback("Overpass no respondió; se muestran capas procedurales de respaldo.");
+    } finally {
+      window.clearTimeout(timeout);
+      if (state.overpassController === controller) state.overpassController = null;
+    }
+  }
+
+  function useProceduralFallback(message) {
+    state.dataMode = "procedural";
+    const toggle = $("#modeToggle");
+    if (toggle) { toggle.classList.remove("is-on"); toggle.setAttribute("aria-checked", "false"); }
+    const dot = $("#modeDot");
+    if (dot) dot.style.background = "#f1bd61";
+    setText("#modeTitle", "Simulación procedural");
+    setText("#modeDetail", "respaldo local · sin consultas externas");
+    setText("#connectionLabel", "Modo procedural de respaldo");
+    if (state.mapReady) renderProceduralMarkers();
+    showToast(message, "error");
+  }
+
+  function updateRouteSource(geojson) {
+    if (!state.map || !state.map.getSource("route")) return;
+    state.map.getSource("route").setData(geojson || { type: "FeatureCollection", features: [] });
+  }
+
+  function clearRoute() {
+    state.routeStart = null;
+    state.routeEnd = null;
+    updateRouteSource({ type: "FeatureCollection", features: [] });
+    setText("#metricRoute", "—");
+    setText("#routeStatus", "Nominatim geocodifica y OSRM calcula la ruta. Las consultas se hacen solo al solicitarla.");
+  }
+
+  async function geocode(query) {
+    const clean = `${query}, Bogotá, Colombia`;
+    const url = `${NOMINATIM_ENDPOINT}?format=jsonv2&limit=1&addressdetails=1&accept-language=es&q=${encodeURIComponent(clean)}`;
+    const response = await fetch(url, { headers: { Accept: "application/json" } });
+    if (!response.ok) throw new Error(`Nominatim HTTP ${response.status}`);
+    const results = await response.json();
+    if (!results.length) throw new Error(`No encontré: ${query}`);
+    return { lon: Number(results[0].lon), lat: Number(results[0].lat), label: results[0].display_name };
+  }
+
+  async function calculateRoute() {
+    const startQuery = $("#routeStart")?.value.trim();
+    const endQuery = $("#routeEnd")?.value.trim();
+    if (!startQuery || !endQuery) { setText("#routeStatus", "Escribe un origen y un destino para calcular la ruta."); return; }
+    const button = $("#routeBtn");
+    if (button) { button.disabled = true; button.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Consultando…`; }
+    setText("#routeStatus", "Buscando origen y destino en Nominatim…");
+    try {
+      const [start, end] = await Promise.all([geocode(startQuery), geocode(endQuery)]);
+      setText("#routeStatus", "Calculando recorrido vial real con OSRM…");
+      const routeUrl = `${OSRM_ENDPOINT}/${start.lon},${start.lat};${end.lon},${end.lat}?overview=full&geometries=geojson&steps=false`;
+      const response = await fetch(routeUrl, { headers: { Accept: "application/json" } });
+      if (!response.ok) throw new Error(`OSRM HTTP ${response.status}`);
+      const json = await response.json();
+      if (json.code !== "Ok" || !json.routes?.length) throw new Error("OSRM no encontró una ruta vial.");
+      const route = json.routes[0];
+      state.routeStart = start;
+      state.routeEnd = end;
+      updateRouteSource({ type: "FeatureCollection", features: [{ type: "Feature", properties: { distance: route.distance, duration: route.duration }, geometry: route.geometry }] });
+      setText("#metricRoute", `${(route.distance / 1000).toFixed(1)} km`);
+      setText("#routeStatus", `${start.label.split(",")[0]} → ${end.label.split(",")[0]} · ${(route.duration / 60).toFixed(0)} min estimados sobre la red vial.`);
+      state.map.fitBounds([[start.lon,start.lat],[end.lon,end.lat]], { padding:80, duration:700, maxZoom:15 });
+      showToast("Ruta real calculada sobre la red vial de OSRM.");
+    } catch (error) {
+      console.warn("No se pudo calcular la ruta", error);
+      setText("#routeStatus", `No fue posible calcularla: ${error.message}. Puedes seguir explorando el mapa real o activar el respaldo procedural.`);
+      showToast("La ruta pública no respondió. El mapa real continúa disponible.", "error");
+    } finally {
+      if (button) { button.disabled = false; button.innerHTML = `<i class="fa-solid fa-route"></i> Calcular ruta`; }
+    }
+  }
+
+  function bindEvents() {
+    $("#uplSelect")?.addEventListener("change", (event) => {
+      const upl = UPLS.find((item) => String(item.num) === event.target.value);
+      if (!upl) return;
+      updateUplPanel(upl);
+      state.currentView = "barrio";
+      $$(".view-card").forEach((button) => button.classList.toggle("is-active", button.dataset.view === "barrio"));
+      focusSelectedUpl(true);
+      loadScaleData();
+    });
+    $$(".scale-btn").forEach((button) => button.addEventListener("click", () => setScale(button.dataset.scale)));
+    $$(".view-card").forEach((button) => button.addEventListener("click", () => switchView(button.dataset.view)));
+    $("#locateBtn")?.addEventListener("click", () => { state.currentView = "barrio"; updateUplPanel(state.selectedUpl); focusSelectedUpl(true); });
+    $("#fullScreenBtn")?.addEventListener("click", () => { const element = $(".map-panel"); if (!document.fullscreenElement) element?.requestFullscreen?.(); else document.exitFullscreen?.(); });
+    $("#routeBtn")?.addEventListener("click", calculateRoute);
+    $("#clearRouteBtn")?.addEventListener("click", clearRoute);
+    $("#routeStart")?.addEventListener("keydown", (event) => { if (event.key === "Enter") calculateRoute(); });
+    $("#routeEnd")?.addEventListener("keydown", (event) => { if (event.key === "Enter") calculateRoute(); });
+    $("#favoriteBtn")?.addEventListener("click", () => {
+      state.favorite = !state.favorite;
+      localStorage.setItem(`bogota-viva-fav-${state.selectedUpl.num}`, state.favorite ? "1" : "0");
+      refreshFavorite();
+      showToast(state.favorite ? "UPL guardada en favoritas." : "UPL retirada de favoritas.");
+    });
+    $("#localTilesBtn")?.addEventListener("click", toggleLocalPmtiles);
+    $("#modeToggle")?.addEventListener("click", () => {
+      state.dataMode = state.dataMode === "real" ? "procedural" : "real";
+      const real = state.dataMode === "real";
+      const toggle = $("#modeToggle");
+      toggle.classList.toggle("is-on", real);
+      toggle.setAttribute("aria-checked", String(real));
+      const dot = $("#modeDot");
+      if (dot) dot.style.background = real ? "var(--teal)" : "#f1bd61";
+      setText("#modeTitle", real ? "Calles reales" : "Simulación procedural");
+      setText("#modeDetail", real ? "OpenStreetMap · consulta bajo demanda" : "respaldo local · sin consultas externas");
+      loadScaleData();
+    });
+  }
+
+  function boot() {
+    const defaultUpl = UPLS.find((upl) => upl.num === 13) || UPLS[0];
+    state.selectedUpl = defaultUpl;
+    renderUplSelect();
+    renderScaleCards();
+    updateUplPanel(defaultUpl);
+    bindEvents();
+    if (window.maplibregl) initializeMap();
+    else {
+      window.addEventListener("maplibre-ready", initializeMap, { once: true });
+      window.setTimeout(() => {
+        if (!state.mapReady && !window.maplibregl) useProceduralFallback("MapLibre no respondió a tiempo; se activó la lectura procedural.");
+      }, 9000);
+    }
+    window.BogotaVivaNavigator = { state, UPLS, SCALE_DATA, setScale, focusSelectedUpl, loadScaleData, calculateRoute, useProceduralFallback, toggleLocalPmtiles };
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+  else boot();
+})();

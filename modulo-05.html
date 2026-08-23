@@ -1,280 +1,125 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RAPOT · Módulo 05 · Navegador Multiescalar</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="module02-system.css?v=spacing-v3">
-    <link rel="stylesheet" href="modulo-05.css?v=module01-palette">
-    <link rel="stylesheet" href="modulo-05-polish.css?v=ux-v2">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bogotá Viva · Módulo 05 · Navegador Multiescalar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link href="https://unpkg.com/maplibre-gl@6.5.0/dist/maplibre-gl.css" rel="stylesheet">
+  <link rel="stylesheet" href="modulo-05.css">
 </head>
-<body class="module02-reference-page">
-<div class="layout">
-  <!-- SIDEBAR GLOBAL DEL PORTAL -->
-  <aside class="sidebar sidebar-icons-only">
-    <div class="brand-icon"><i class="fa-solid fa-diagram-project"></i></div>
-    <nav class="icon-nav">
-      <a href="modulo-02.html" class="icon-nav-item" title="Medir la Red"><i class="fa-solid fa-chart-simple"></i></a>
-      <a href="modulo-03.html" class="icon-nav-item" title="Discurso vs Realidad"><i class="fa-solid fa-eye"></i></a>
-      <a href="modulo-04.html" class="icon-nav-item" title="Macromodelos"><i class="fa-solid fa-bullseye"></i></a>
-      <a href="modulo-05.html" class="icon-nav-item active" title="Lo que no está"><i class="fa-solid fa-magnifying-glass"></i></a>
-      <a href="modulo-06.html" class="icon-nav-item" title="POT ↔ ODS"><i class="fa-solid fa-earth-americas"></i></a>
-      <a href="modulo-07.html" class="icon-nav-item" title="Simulador"><i class="fa-solid fa-flask"></i></a>
-      <a href="modulo-08.html" class="icon-nav-item" title="Modelo Propio"><i class="fa-solid fa-city"></i></a>
-    </nav>
-    <div class="icon-nav-footer">
-      <a href="configuracion.html" class="icon-nav-item" title="Configuración"><i class="fa-solid fa-gear"></i></a>
-      <a href="demo.html" class="icon-nav-item" title="Salir"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
-    </div>
-  </aside>
-  <!-- TOPBAR -->
-  <div class="topbar">
-    <div class="topbar-brand"><i class="fa-solid fa-circle-nodes"></i> Bogotá Viva: Simulación Urbana</div>
-    <div class="topbar-right">
-      <span>Centro de ayuda</span>
-      <i class="fa-solid fa-bell"></i>
-    </div>
-  </div>
-
-  <div class="main">
-    <!-- SIDEBAR LEFT -->
-    <aside class="sidebar-left">
-      <div class="nav-top">
-        <i class="fa-solid fa-home"></i>
-        <i class="fa-solid fa-wrench"></i>
-        <i class="fa-solid fa-layer-group"></i>
-      </div>
-
-      <div class="logo">
-        <i class="fa-solid fa-check"></i>
-      </div>
-
-      <h1>Navegador Multiescalar</h1>
-
-
-      <div class="desc">Explora Bogotá desde múltiples escalas para entender su estructura y gestionar la proximidad de manera inteligente.</div>
-
-        <div class="tabs">
-        <button class="tab" data-scale="natural">Natural</button>
-        <button class="tab" data-scale="cultural">Cultural</button>
-        <button class="tab active" data-scale="tecnologico">Tecnológico</button>
-        <button class="tab" data-scale="metaverso">Metaverso</button>
-      </div>
-
-      <div class="vistas">
-        <div class="vistas-label">Vistas alternativas</div>
-        <div class="vista-item">
-          <i class="fa-solid fa-globe"></i>
-          <span>Región Metropolitana<br/>20 municipios conectados</span>
-          <i class="fa-solid fa-arrow-right"></i>
-        </div>
-        <div class="vista-item">
-          <i class="fa-solid fa-map"></i>
-          <span>Barrio Vital /<br/>Manzanas del Cuidado<br/>Unidad de proximidad</span>
-          <i class="fa-solid fa-arrow-right"></i>
-        </div>
-      </div>
-
-      <div class="legend">
-        <div class="legend-label">Leyenda</div>
-        <div class="legend-item">
-          <span class="dot upl"></span> UPL seleccionada
-        </div>
-        <div class="legend-item">
-          <span class="dot upl-focus"></span> UPL con foco estratégico
-        </div>
-        <div class="legend-item">
-          <span class="line"></span> Límite de Bogotá
-        </div>
-      </div>
-
-      <div class="upz-list" id="item-list"></div>
-
-      <div class="user">AV</div>
-    </aside>
-
-    <!-- CENTER MAP -->
-    <div class="map-section">
-      <div id="map"></div>
-      <div id="driveOverlay" class="drive-overlay" aria-label="Juego de conducción sobre el mapa de Bogotá" style="display:none" aria-hidden="true">
-        <canvas id="multiscaleDriveCanvas" width="920" height="760"></canvas>
-        <div class="drive-hud">
-          <span class="drive-kicker">BOGOTÁ INFINITE DRIVE</span>
-          <strong id="multiDriveScore">00000 PTS</strong>
-          <div class="drive-race-meta"><span>TIEMPO <b id="multiDriveTimer">00:00.0</b></span><span>DISTANCIA <b id="multiDriveDistance">0.00 km</b></span></div>
-          <small id="multiDriveStatus">CARGANDO CALLES REALES</small>
-        </div>
-        <div class="drive-help">WASD / FLECHAS · conducir &nbsp; R · reiniciar</div>
-        <div class="drive-audio" aria-label="Controles de audio">
-          <button id="driveMute" type="button" aria-pressed="false" title="Silenciar audio">🔊</button>
-          <input id="driveVolume" type="range" min="0" max="1" step="0.05" value="0.42" aria-label="Volumen">
-        </div>
-        <audio id="driveMusic" src="assets/bogota-infinite-drive-background.wav" loop preload="auto"></audio>
-        <div id="multiDriveToast" class="drive-toast" aria-live="polite"></div>
-      </div>
-      <div class="map-controls">
-        <button class="ctrl">+</button>
-        <div class="compass"></div>
-        <button class="ctrl">−</button>
-      </div>
-    </div>
-
-    <!-- SIDEBAR RIGHT -->
-    <aside class="sidebar-right">
-      <div class="escalas">
-        <div class="escala-label">LAS 4 ESCALAS DEL PROYECTO</div>
-        
-        <div class="escala-item natural-box">
-          <i class="fa-solid fa-leaf"></i>
-          <div>
-            <strong>Natural</strong>
-            <p>Agua, humedales y estructura ecológica<br/>Sistemas vivos que ordenan el territorio</p>
-          </div>
-        </div>
-
-        <div class="escala-item cultural-box">
-          <i class="fa-solid fa-landmark"></i>
-          <div>
-            <strong>Cultural</strong>
-            <p>Patrimonio, barrios y memoria urbana<br/>Identidades y prácticas del territorio</p>
-          </div>
-        </div>
-
-        <div class="escala-item tecnologico-box">
-          <i class="fa-solid fa-microchip"></i>
-          <div>
-            <strong>Tecnológico</strong>
-            <p>Datos, redes y movilidad inteligente<br/>Infraestructura para conectar Bogotá</p>
-          </div>
-        </div>
-
-        <div class="escala-item metaverso-box">
-          <i class="fa-solid fa-cubes"></i>
-          <div>
-            <strong>Metaverso</strong>
-            <p>Modelo digital y escenarios inmersivos<br/>Exploración virtual de la ciudad</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="detail">
-        <h2 id="detail-title">UPL SELECCIONADA: 19 · FONTIBÓN</h2>
-        <i class="fa-solid fa-star"></i>
-      </div>
-
-      <div class="detail-text" id="detail-description">
-        <p>Las cuatro escalas permiten leer Bogotá desde sus sistemas naturales, culturales, tecnológicos y virtuales, conectando la estructura territorial con experiencias de proximidad e innovación urbana <span style="font-size: 8px; color: #aab2bc;">[4, 59; 212]</span></p>
-        <p><strong>Estrategia Bogotá Viva</strong></p>
-      </div>
-
-      <div class="metrics">
-        <div class="metric-box">
-          <div class="metric-number">32%</div>
-          <div class="metric-label">DÉFICIT DE SERVICIOS</div>
-          <div class="metric-desc">Déficit modo en UPL seleccionada vs. 21% promedio ciudad</div>
-          <div class="metric-chart"></div>
-          <a href="#">Ver detalle →</a>
-        </div>
-
-        <div class="metric-box">
-          <div class="metric-number">68%</div>
-          <div class="metric-label">EMPLEO CERCANO</div>
-          <div class="metric-desc">Empleo accesible en 30 min vs. 50% promedio ciudad</div>
-          <div class="metric-chart"></div>
-          <a href="#">Ver detalle →</a>
-        </div>
-
-        <div class="metric-box">
-          <div class="metric-number">74%</div>
-          <div class="metric-label">PROXIMIDAD (CIUDAD 30 MIN)</div>
-          <div class="metric-desc">Población con acceso a 8 servicios esenciales en 30 min</div>
-          <div class="metric-chart"></div>
-          <a href="#">Ver detalle →</a>
-        </div>
-
-        <div class="metric-box compare">
-          <div class="metric-label">COMPARAR UPL</div>
-          <button class="btn-compare">+ Agregar UPL</button>
-        </div>
+<body>
+  <div class="app-shell">
+    <aside class="side-rail" aria-label="Navegación principal">
+      <a class="brand-mark" href="dashboard.html" aria-label="Volver al dashboard"><i class="fa-solid fa-diagram-project"></i></a>
+      <nav class="rail-nav">
+        <a href="dashboard.html" title="Dashboard"><i class="fa-solid fa-chart-column"></i><span>Dashboard</span></a>
+        <a href="modulo-01.html" title="Construir la red"><i class="fa-solid fa-circle-nodes"></i><span>01</span></a>
+        <a href="modulo-02.html" title="Medir la red"><i class="fa-solid fa-chart-simple"></i><span>02</span></a>
+        <a href="modulo-03.html" title="Discurso vs realidad"><i class="fa-solid fa-eye"></i><span>03</span></a>
+        <a href="modulo-04.html" title="Macromodelos"><i class="fa-solid fa-bullseye"></i><span>04</span></a>
+        <a href="modulo-05.html" title="Las escalas"><i class="fa-solid fa-layer-group"></i><span>05</span></a>
+        <a class="is-active" href="modulo-05.html" title="Navegador multiescalar"><i class="fa-solid fa-magnifying-glass-location"></i><span>MAPA</span></a>
+        <a href="modulo-06.html" title="El tiempo ausente"><i class="fa-solid fa-hourglass-half"></i><span>06</span></a>
+        <a href="modulo-07.html" title="Postura crítica"><i class="fa-solid fa-scale-balanced"></i><span>07</span></a>
+        <a href="modulo-08.html" title="Simulador"><i class="fa-solid fa-flask"></i><span>08</span></a>
+        <a href="modulo-09.html" title="Modelo propio"><i class="fa-solid fa-atom"></i><span>09</span></a>
+      </nav>
+      <div class="rail-bottom">
+        <a href="fuentes.html" title="Fuentes"><i class="fa-solid fa-book"></i><span>Fuentes</span></a>
+        <a href="configuracion.html" title="Configuración"><i class="fa-solid fa-gear"></i><span>Configuración</span></a>
       </div>
     </aside>
-  </div>
-</div>
 
-<!-- POP-UP DE RED MULTIESCALA -->
-<div id="scaleNetworkModal" class="scale-network-modal" aria-hidden="true">
-  <div class="scale-network-dialog" role="dialog" aria-modal="true" aria-labelledby="scaleNetworkTitle">
-    <div class="scale-network-dialog-head">
-      <div>
-        <div class="scale-network-kicker">RED MULTIESCALA · BOGOTÁ VIVA</div>
-        <h2 id="scaleNetworkTitle">Red Natural</h2>
-        <p id="scaleNetworkDescription">Relaciones entre sistemas y entidades concretas del territorio.</p>
-      </div>
-      <div class="scale-network-actions" aria-label="Controles del diagrama">
-        <button id="scaleNetworkZoomOut" class="scale-network-zoom" type="button" aria-label="Alejar red">−</button>
-        <button id="scaleNetworkZoomReset" class="scale-network-zoom scale-network-zoom-value" type="button" aria-label="Restablecer zoom">100%</button>
-        <button id="scaleNetworkZoomIn" class="scale-network-zoom" type="button" aria-label="Acercar red">+</button>
-      </div>
-      <button id="scaleNetworkClose" class="scale-network-close" type="button" aria-label="Cerrar red">×</button>
-    </div>
-    <div id="scaleNetworkCanvas" class="scale-network-canvas" aria-label="Diagrama de red de la escala seleccionada"></div>
-    <div class="scale-network-dialog-foot">
-      <span><i class="scale-legend-line direct"></i> Relación directa</span>
-      <span><i class="scale-legend-line indirect"></i> Relación indirecta</span>
-      <span class="scale-network-hint">Haz clic en un nodo para identificarlo</span>
-    </div>
-  </div>
-</div>
+    <header class="topbar">
+      <div class="topbar-title"><i class="fa-solid fa-route"></i><strong>Bogotá Viva:</strong> Simulación Urbana</div>
+      <div class="topbar-status"><span class="status-dot"></span><span id="connectionLabel">Mapa real preparado</span><span class="separator">·</span><span>OSM</span><span class="topbar-help">Centro de ayuda <i class="fa-solid fa-bell"></i></span></div>
+    </header>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-<!-- MODAL EEP -->
-<div id="eepModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); z-index: 1000; overflow: auto; padding: 20px;">
-  <div style="background: #0a0a0a; border: 1px solid #46d6d0; border-radius: 8px; margin: 40px auto; max-width: 1000px; max-height: 85vh; position: relative; padding: 25px;">
-    <button onclick="closeEepModal()" style="position: absolute; top: 20px; right: 20px; background: none; border: none; color: #46d6d0; font-size: 28px; cursor: pointer; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">✕</button>
-    
-    <div style="margin-bottom: 25px;">
-      <h2 style="color: #46d6d0; margin: 0 0 8px 0; font-size: 20px;">Estructura Ecológica Principal</h2>
-      <p style="color: #aab2bc; font-size: 11px; margin: 0;">Modo Analítico // Nodos = 14</p>
-    </div>
-    
-    <div style="display: flex; gap: 25px;">
-      <div id="eepMapContainer" style="flex: 1; height: 500px; background: #111111; border-radius: 6px; border: 1px solid rgba(255,255,255,.11); position: relative;"></div>
-      
-      <div style="width: 200px; flex-shrink: 0;">
-        <div style="background: #111111; border: 1px solid rgba(255,255,255,.11); border-radius: 6px; padding: 16px;">
-          <div style="color: #46d6d0; font-size: 10px; font-weight: 700; margin-bottom: 16px; text-transform: uppercase;">Leyenda de Capas</div>
-          
-          <div style="margin-bottom: 16px;">
-            <div style="display: flex; align-items: center; gap: 8px; font-size: 10px; color: #fff; margin-bottom: 8px;">
-              <div style="width: 10px; height: 10px; border: 2px solid #46d6d0; border-radius: 50%;"></div>
-              <span>Nodos Principales</span>
-            </div>
-            <div style="display: flex; align-items: center; gap: 8px; font-size: 10px; color: #fff;">
-              <div style="width: 10px; height: 10px; border: 2px solid #46d6d0; border-radius: 50%;"></div>
-              <span>Conexiones Activas</span>
-            </div>
-          </div>
-          
-          <div>
-            <div style="color: #46d6d0; font-size: 10px; font-weight: 700; margin-bottom: 12px; text-transform: uppercase;">Convenciones</div>
-            <div style="font-size: 9px; color: #aab2bc; line-height: 1.6;">
-              <div style="margin-bottom: 6px;">— Directa</div>
-              <div style="margin-bottom: 6px;">- - - Indirecta</div>
-              <div style="margin-bottom: 6px;">— Soporte</div>
-              <div>— Resiliencia</div>
-            </div>
+    <main class="workspace">
+      <section class="control-panel" aria-label="Controles del navegador">
+        <div class="eyebrow"><span class="eyebrow-line"></span> BOGOTÁ VIVA · 05B</div>
+        <h1>Navegador<br><span>Multiescalar</span></h1>
+        <p class="intro">Explora Bogotá sobre sus calles reales y cambia de escala para leer cómo se conectan la estructura natural, la memoria, la infraestructura y la proximidad cotidiana.</p>
+
+        <div class="panel-block">
+          <div class="block-label">ESCALA DE LECTURA</div>
+          <div class="scale-grid" role="tablist" aria-label="Escalas temáticas">
+            <button class="scale-btn is-active" data-scale="natural" role="tab" aria-selected="true"><i class="fa-solid fa-droplet"></i><span>Natural</span></button>
+            <button class="scale-btn" data-scale="cultural" role="tab" aria-selected="false"><i class="fa-solid fa-landmark"></i><span>Cultural</span></button>
+            <button class="scale-btn" data-scale="tecnologico" role="tab" aria-selected="false"><i class="fa-solid fa-microchip"></i><span>Tecnológico</span></button>
+            <button class="scale-btn" data-scale="metaverso" role="tab" aria-selected="false"><i class="fa-solid fa-cubes"></i><span>Metaverso</span></button>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
-</div>
 
-<script src="modulo-05.js"></script>
-<script src="modulo-05-drive.js?v=multiscale-drive-7"></script>
+        <div class="panel-block">
+          <div class="block-label">VISTAS ALTERNATIVAS</div>
+          <button class="view-card" data-view="region"><span class="view-icon"><i class="fa-solid fa-earth-americas"></i></span><span><strong>Región Metropolitana</strong><small>20 municipios conectados</small></span><i class="fa-solid fa-arrow-right"></i></button>
+          <button class="view-card" data-view="barrio"><span class="view-icon"><i class="fa-solid fa-building-user"></i></span><span><strong>Barrio Vital /<br>Manzanas del Cuidado</strong><small>Unidad de proximidad</small></span><i class="fa-solid fa-arrow-right"></i></button>
+        </div>
+
+        <div class="panel-block">
+          <div class="block-label">UPL · UNIDAD DE PROXIMIDAD</div>
+          <label class="sr-only" for="uplSelect">Seleccionar UPL</label>
+          <select id="uplSelect"></select>
+          <p id="uplTag" class="field-note">Selecciona una UPL para enfocar la exploración.</p>
+        </div>
+
+        <div class="panel-block route-block">
+          <div class="block-label"><i class="fa-solid fa-person-walking"></i> RUTA SOBRE CALLES REALES</div>
+          <label class="sr-only" for="routeStart">Origen</label>
+          <div class="input-wrap"><i class="fa-solid fa-location-dot"></i><input id="routeStart" type="text" placeholder="Origen · lugar o dirección"></div>
+          <label class="sr-only" for="routeEnd">Destino</label>
+          <div class="input-wrap"><i class="fa-solid fa-flag-checkered"></i><input id="routeEnd" type="text" placeholder="Destino · lugar o dirección"></div>
+          <div class="route-actions"><button id="routeBtn" class="primary-btn"><i class="fa-solid fa-route"></i> Calcular ruta</button><button id="clearRouteBtn" class="icon-btn" title="Limpiar ruta" aria-label="Limpiar ruta"><i class="fa-solid fa-xmark"></i></button></div>
+          <p id="routeStatus" class="field-note">Nominatim geocodifica y OSRM calcula la ruta. Las consultas se hacen solo al solicitarla.</p>
+          <p class="field-note performance-note"><i class="fa-solid fa-gauge-high"></i> Las calles se consultan por el área visible, con espera de 420 ms y cancelación de peticiones anteriores.</p>
+        </div>
+
+        <div class="data-mode-row">
+          <div><span class="mode-dot" id="modeDot"></span><strong id="modeTitle">Calles reales</strong><small id="modeDetail">OpenStreetMap · consulta bajo demanda</small></div>
+          <button id="modeToggle" class="mode-toggle" role="switch" aria-checked="true"><span></span></button>
+        </div>
+        <div class="source-mode-row"><span><i class="fa-solid fa-database"></i> Fuente vial</span><button id="localTilesBtn" class="local-tiles-btn" type="button"><i class="fa-solid fa-hard-drive"></i> Usar PMTiles local</button></div>
+      </section>
+
+      <section class="map-panel" aria-label="Mapa de Bogotá">
+        <div id="map" class="map-canvas"></div>
+        <div class="map-headline"><div><span class="map-kicker">EXPLORACIÓN EN VIVO</span><h2 id="mapTitle">UPL 13 · Tintal</h2><p id="mapSubtitle">Bogotá · calles, equipamientos y estructura natural</p></div><div class="map-actions"><button id="locateBtn" class="map-action" title="Volver a la UPL seleccionada"><i class="fa-solid fa-crosshairs"></i></button><button id="fullScreenBtn" class="map-action" title="Pantalla completa"><i class="fa-solid fa-expand"></i></button></div></div>
+        <div class="map-legend"><span><i class="legend-road"></i>Red vial OSM</span><span><i class="legend-place"></i>Equipamientos</span><span><i class="legend-upl"></i>UPL seleccionada</span><span id="roadLevel" class="road-level">Nivel meso · 5 jerarquías visibles</span></div>
+        <div class="map-toast" id="mapToast" role="status" aria-live="polite"><i class="fa-solid fa-circle-info"></i><span>Inicializando mapa real…</span></div>
+        <div class="map-attribution-note">Datos de calles y lugares: <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap contributors</a> · Visualización exploratoria RAPOT</div>
+      </section>
+
+      <aside class="insight-panel" aria-label="Lectura multiescalar">
+        <div class="panel-label">LAS 4 ESCALAS DEL PROYECTO</div>
+        <div id="scaleCards" class="scale-cards"></div>
+
+        <div class="selected-upl-head"><div><span class="panel-label accent-label">UPL SELECCIONADA</span><h3 id="selectedUplName">13 · TINTAL</h3></div><button id="favoriteBtn" class="favorite-btn" title="Marcar como favorita" aria-label="Marcar como favorita"><i class="fa-regular fa-star"></i></button></div>
+        <p id="selectedUplDescription" class="selected-upl-description"></p>
+        <div class="strategy-callout"><span>Estrategia Bogotá Viva</span><strong id="strategyText">Conectar soporte urbano, cuidado y ecosistemas en la unidad cotidiana.</strong></div>
+
+        <div class="metrics-grid">
+          <article class="metric-card"><strong id="metricDeficit">32%</strong><span>déficit de servicios</span><small id="metricDeficitNote">lectura exploratoria frente al promedio urbano</small></article>
+          <article class="metric-card"><strong id="metricRoads">—</strong><span>tramos consultados</span><small>red vial en el bbox visible</small></article>
+          <article class="metric-card"><strong id="metricPlaces">—</strong><span>lugares OSM</span><small>equipamientos y actividades</small></article>
+          <article class="metric-card"><strong id="metricRoute">—</strong><span>ruta calculada</span><small>distancia sobre la red</small></article>
+        </div>
+
+        <div class="right-section"><div class="block-label">LECTURA DE LA ESCALA ACTIVA</div><p id="scaleReading">La escala natural hace visibles el agua, los humedales y la estructura ecológica como sistemas vivos que atraviesan el límite administrativo.</p></div>
+        <div class="right-section source-section"><div class="block-label">FUENTES Y TRANSPARENCIA</div><p>La base cartográfica procede de OpenStreetMap. Puedes usar Overpass bajo demanda o generar un PMTiles/MVT local para que la red vial funcione sin consultas externas. Si un servicio no responde, Bogotá Viva activa su red procedural de respaldo.</p><div class="source-pills"><span>MapLibre</span><span>OSM</span><span>Overpass</span><span>PMTiles</span><span>Nominatim</span><span>OSRM</span></div></div>
+      </aside>
+    </main>
+  </div>
+  <script src="https://unpkg.com/pmtiles@3.2.0/dist/pmtiles.js"></script>
+  <script type="module">
+    import * as maplibregl from "https://unpkg.com/maplibre-gl@6.5.0/dist/maplibre-gl.mjs";
+    window.maplibregl = maplibregl;
+    window.dispatchEvent(new Event("maplibre-ready"));
+  </script>
+  <script src="modulo-05.js"></script>
 </body>
 </html>
