@@ -777,9 +777,10 @@
       setText("#connectionLabel", "Mapa real conectado");
       showToast(`${elements.length} elementos OSM recibidos en el área visible.`);
     } catch (error) {
-      if (controller.signal.aborted || token !== state.queryToken) return;
-      console.warn("Overpass no respondió", error);
-      useProceduralFallback("Overpass no respondió; se muestran capas procedurales de respaldo.");
+      /* Un timeout propio no debe dejar las tarjetas congeladas en “cargando”. */
+      if (token !== state.queryToken) return;
+      console.warn("Overpass no respondió o excedió el tiempo límite", error);
+      useProceduralFallback("Overpass tardó demasiado; se muestran los datos de respaldo y puedes reintentar las capas API.");
     } finally {
       window.clearTimeout(timeout);
       if (state.overpassController === controller) state.overpassController = null;
