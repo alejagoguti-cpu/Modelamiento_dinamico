@@ -3,9 +3,9 @@ import io, math
 import requests
 from PIL import Image, ImageOps, ImageEnhance
 
-OUT = Path(__file__).resolve().parents[1] / "assets" / "bogota-osm-gray.jpg"
+OUT = Path(__file__).resolve().parents[1] / "assets" / "bogota-osm-detail-gray.jpg"
 OUT.parent.mkdir(parents=True, exist_ok=True)
-Z = 11
+Z = 13
 WEST, SOUTH, EAST, NORTH = -74.25, 4.50, -73.95, 4.82
 
 def tile_xy(lon, lat, z):
