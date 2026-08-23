@@ -1041,7 +1041,11 @@ const scaleNetworks = {
       { id: 'centros_historicos', label: 'CENTROS HISTÓRICOS', lat: 4.625, lng: -74.100 },
       { id: 'zonas_turisticas', label: 'ZONAS DE INTERÉS TURÍSTICO', lat: 4.675, lng: -74.070 },
       { id: 'equipamientos_culturales', label: 'EQUIPAMIENTOS CULTURALES', lat: 4.570, lng: -74.080 },
-      { id: 'artesanias', label: 'PRODUCCIÓN ARTESANAL', lat: 4.585, lng: -74.055 }
+      { id: 'artesanias', label: 'PRODUCCIÓN ARTESANAL', lat: 4.585, lng: -74.055 },
+      { id: 'rutas_patrimoniales', label: 'RUTAS PATRIMONIALES', lat: 4.555, lng: -74.105 },
+      { id: 'mercados_barriales', label: 'MERCADOS BARRIALES', lat: 4.565, lng: -74.135 },
+      { id: 'centros_comunitarios', label: 'CENTROS COMUNITARIOS', lat: 4.545, lng: -74.075 },
+      { id: 'escuelas_musica', label: 'ESCUELAS DE MÚSICA', lat: 4.555, lng: -74.045 }
     ],
     edges: [
       ['patrimonio_material', 'museos', 'directa'],
@@ -1053,7 +1057,12 @@ const scaleNetworks = {
       ['centros_historicos', 'barrios', 'directa'],
       ['barrios', 'plazas_mercado', 'indirecta'],
       ['bibliotecas', 'equipamientos_culturales', 'directa'],
-      ['plazas_mercado', 'artesanias', 'indirecta']
+      ['plazas_mercado', 'artesanias', 'indirecta'],
+      ['artesanias', 'rutas_patrimoniales', 'directa'],
+      ['rutas_patrimoniales', 'mercados_barriales', 'indirecta'],
+      ['mercados_barriales', 'centros_comunitarios', 'directa'],
+      ['centros_comunitarios', 'escuelas_musica', 'indirecta'],
+      ['escuelas_musica', 'patrimonio_inmaterial', 'directa']
     ]
   },
   tecnologico: {
@@ -1069,7 +1078,11 @@ const scaleNetworks = {
       { id: 'datos_abiertos', label: 'DATOS ABIERTOS', lat: 4.575, lng: -74.080 },
       { id: 'centro_tecnologico', label: 'CENTRO TECNOLÓGICO', lat: 4.625, lng: -74.045 },
       { id: 'recarga_electrica', label: 'RECARGA ELÉCTRICA', lat: 4.685, lng: -74.055 },
-      { id: 'semaforizacion', label: 'SEMAFORIZACIÓN', lat: 4.550, lng: -74.105 }
+      { id: 'semaforizacion', label: 'SEMAFORIZACIÓN', lat: 4.550, lng: -74.105 },
+      { id: 'electrolineras', label: 'ELECTROLINERAS', lat: 4.555, lng: -74.160 },
+      { id: 'fibra_optica', label: 'FIBRA ÓPTICA', lat: 4.565, lng: -74.120 },
+      { id: 'centros_datos', label: 'CENTROS DE DATOS', lat: 4.545, lng: -74.065 },
+      { id: 'subestaciones', label: 'SUBESTACIONES', lat: 4.555, lng: -74.045 }
     ],
     edges: [
       ['red_vial', 'transporte_publico', 'directa'],
@@ -1082,7 +1095,12 @@ const scaleNetworks = {
       ['internet_publico', 'datos_abiertos', 'indirecta'],
       ['datos_abiertos', 'centro_tecnologico', 'directa'],
       ['ciclorutas', 'semaforizacion', 'indirecta'],
-      ['red_vial', 'semaforizacion', 'directa']
+      ['red_vial', 'semaforizacion', 'directa'],
+      ['semaforizacion', 'electrolineras', 'directa'],
+      ['electrolineras', 'fibra_optica', 'indirecta'],
+      ['fibra_optica', 'centros_datos', 'directa'],
+      ['centros_datos', 'subestaciones', 'indirecta'],
+      ['subestaciones', 'red_vial', 'directa']
     ]
   },
   metaverso: {
@@ -1098,7 +1116,11 @@ const scaleNetworks = {
       { id: 'laboratorios_urbanos', label: 'LABORATORIOS URBANOS', lat: 4.565, lng: -74.115 },
       { id: 'datos_territoriales', label: 'DATOS TERRITORIALES', lat: 4.600, lng: -74.150 },
       { id: 'escenarios_simulados', label: 'ESCENARIOS SIMULADOS', lat: 4.700, lng: -74.115 },
-      { id: 'sensores_urbanos', label: 'SENSORES URBANOS', lat: 4.640, lng: -74.180 }
+      { id: 'sensores_urbanos', label: 'SENSORES URBANOS', lat: 4.640, lng: -74.180 },
+      { id: 'escaneo_urbano', label: 'ESCANEO URBANO', lat: 4.555, lng: -74.165 },
+      { id: 'nube_puntos', label: 'NUBE DE PUNTOS', lat: 4.565, lng: -74.120 },
+      { id: 'simulador_movilidad', label: 'SIMULADOR DE MOVILIDAD', lat: 4.545, lng: -74.075 },
+      { id: 'laboratorio_inmersivo', label: 'LABORATORIO INMERSIVO', lat: 4.555, lng: -74.045 }
     ],
     edges: [
       ['gemelo_digital', 'modelos_3d', 'directa'],
@@ -1111,7 +1133,12 @@ const scaleNetworks = {
       ['nodos_iot', 'sensores_urbanos', 'directa'],
       ['datos_territoriales', 'laboratorios_urbanos', 'indirecta'],
       ['laboratorios_urbanos', 'visualizacion_vr', 'directa'],
-      ['escenarios_simulados', 'visualizacion_vr', 'indirecta']
+      ['escenarios_simulados', 'visualizacion_vr', 'indirecta'],
+      ['visualizacion_vr', 'escaneo_urbano', 'directa'],
+      ['escaneo_urbano', 'nube_puntos', 'indirecta'],
+      ['nube_puntos', 'simulador_movilidad', 'directa'],
+      ['simulador_movilidad', 'laboratorio_inmersivo', 'indirecta'],
+      ['laboratorio_inmersivo', 'gemelo_digital', 'directa']
     ]
   }
 };
@@ -1129,7 +1156,7 @@ let scalePopupSelectedNode = null;
 let scalePopupMode = 'natural';
 let nodeDetailState = { mode: 'natural', id: null };
 const scalePopupHiddenNodes = new Set();
-const scaleNetworkViewState = { scale: 1, x: 0, y: 0 };
+const scaleNetworkViewState = { scale: 1.12, x: 0, y: 0 };
 const scaleNetworkFlowState = {
   running: true,
   rafId: null,
@@ -1276,6 +1303,9 @@ function resetScaleNetworkFlow() {
 function updateScaleNetworkViewport() {
   const viewport = document.getElementById('scaleNetworkViewport');
   if (!viewport) return;
+  viewport.style.setProperty('--network-x', `${scaleNetworkViewState.x}px`);
+  viewport.style.setProperty('--network-y', `${scaleNetworkViewState.y}px`);
+  viewport.style.setProperty('--network-scale', scaleNetworkViewState.scale);
   viewport.style.transform = `translate(${scaleNetworkViewState.x}px, ${scaleNetworkViewState.y}px) scale(${scaleNetworkViewState.scale})`;
   const zoomValue = document.getElementById('scaleNetworkZoomReset');
   if (zoomValue) zoomValue.textContent = `${Math.round(scaleNetworkViewState.scale * 100)}%`;
@@ -1291,7 +1321,7 @@ function setScaleNetworkZoom(nextScale, resetPosition = false) {
 }
 
 function resetScaleNetworkView() {
-  scaleNetworkViewState.scale = 1;
+  scaleNetworkViewState.scale = 1.12;
   scaleNetworkViewState.x = 0;
   scaleNetworkViewState.y = 0;
   updateScaleNetworkViewport();
@@ -1315,7 +1345,6 @@ function setupScaleNetworkViewport() {
 
   canvas.addEventListener('pointerdown', event => {
     if (event.button !== 0 && event.pointerType !== 'touch') return;
-    if (event.target?.closest?.('.popup-node')) return;
     dragging = true;
     startX = event.clientX;
     startY = event.clientY;
@@ -1336,7 +1365,11 @@ function setupScaleNetworkViewport() {
     if (!dragging) return;
     dragging = false;
     canvas.classList.remove('is-dragging');
-    canvas.releasePointerCapture?.(event.pointerId);
+    if (canvas.hasPointerCapture?.(event.pointerId)) canvas.releasePointerCapture(event.pointerId);
+    viewport.classList.remove('is-bouncing');
+    void viewport.offsetWidth;
+    viewport.classList.add('is-bouncing');
+    window.setTimeout(() => viewport.classList.remove('is-bouncing'), 620);
   };
   canvas.addEventListener('pointerup', stopDragging);
   canvas.addEventListener('pointercancel', stopDragging);
@@ -1373,8 +1406,8 @@ function popupNetworkPositions(definition) {
   const lngRange = Math.max(maxLng - minLng, 0.001);
   return Object.fromEntries(definition.nodes.map(node => [node.id, {
     ...node,
-    x: 72 + ((node.lng - minLng) / lngRange) * 856,
-    y: 62 + ((maxLat - node.lat) / latRange) * 420
+    x: 54 + ((node.lng - minLng) / lngRange) * 892,
+    y: 48 + ((maxLat - node.lat) / latRange) * 452
   }]));
 }
 
@@ -1574,7 +1607,7 @@ function renderScaleNetworkPopup(mode) {
     const activeDegree = activeDegrees[node.id] || 0;
     const activeHub = activeHubIds.has(node.id);
     const normalizedDegree = maxDegree ? activeDegree / maxDegree : 0;
-    const radius = Number((16 + normalizedDegree * 19 + (activeHub ? 2 : 0)).toFixed(2));
+    const radius = Number((20 + normalizedDegree * 23 + (activeHub ? 3 : 0)).toFixed(2));
     const radiusKey = `${mode}:${node.id}`;
     const previousRadius = popupNodeRadiusState.get(radiusKey) ?? radius;
     popupNodeRadiusState.set(radiusKey, radius);
@@ -1584,7 +1617,7 @@ function renderScaleNetworkPopup(mode) {
     const iconX = p.x - 12;
     const iconY = p.y - radius * .48 - 12;
     const iconMarkup = iconSvg ? `<svg class="popup-node-icon" x="${iconX.toFixed(1)}" y="${iconY.toFixed(1)}" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">${iconSvg}</svg>` : '';
-    const labelMarkup = lines.map((line, index) => `<tspan x="${p.x.toFixed(1)}" dy="${index === 0 ? 0 : 11}">${line}</tspan>`).join('');
+    const labelMarkup = lines.map((line, index) => `<tspan x="${p.x.toFixed(1)}" dy="${index === 0 ? 0 : 14}">${line}</tspan>`).join('');
     return `<g class="popup-node ${activeHub ? 'hub' : ''}" data-node-id="${node.id}" data-active-degree="${activeDegree}" data-active-hub="${activeHub}" tabindex="0" role="button" aria-label="${node.label}: ${activeDegree} conexiones activas">
       <circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${previousRadius}" data-start-radius="${previousRadius}" data-target-radius="${radius}" />
       ${iconMarkup}
