@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Portal Heurístico · Bogotá Viva</title>
+    <title>Portal Heurístico · Dashboard de Emergencia e Impacto</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap"
@@ -20,24 +20,20 @@
     <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/p5@1.11.1/lib/p5.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/matter-js@0.20.0/build/matter.min.js"></script>
-  <link rel="stylesheet" href="site-theme.css?v=20260823">
 </head>
   <body class="module02-reference-page">
     <div class="app">
-              <aside class="sidebar sidebar-icons-only">
-    <a class="brand-icon" href="index.html" title="Bogotá Viva · Inicio" aria-label="Inicio"><i class="fa-solid fa-diagram-project"></i></a>
-    <nav class="icon-nav" aria-label="Módulos">
-      <a href="index.html" class="icon-nav-item" title="Inicio"><i class="fa-solid fa-house"></i></a>
-      <a href="modulo-02.html" class="icon-nav-item" title="02 · Medir la red"><i class="fa-solid fa-chart-simple"></i></a>
-      <a href="modulo-03.html" class="icon-nav-item" title="03 · Discurso vs realidad"><i class="fa-solid fa-eye"></i></a>
-      <a href="modulo-04.html" class="icon-nav-item" title="04 · Macromodelos"><i class="fa-solid fa-bullseye"></i></a>
-      <a href="modulo-05.html" class="icon-nav-item" title="05 · Navegador multiescalar"><i class="fa-solid fa-magnifying-glass-location"></i></a>
-      <a href="modulo-06.html" class="icon-nav-item" title="06 · POT ↔ ODS"><i class="fa-solid fa-earth-americas"></i></a>
-      <a href="modulo-07.html" class="icon-nav-item active" title="07 · Simulador"><i class="fa-solid fa-flask"></i></a>
-      <a href="modulo-08.html" class="icon-nav-item" title="08 · Lectura dinámica"><i class="fa-solid fa-wave-square"></i></a>
-      <a href="modulo-09.html" class="icon-nav-item" title="09 · Modelo propio"><i class="fa-solid fa-atom"></i></a>
+      <aside class="sidebar sidebar-icons-only">
+    <div class="brand-icon"><i class="fa-solid fa-diagram-project"></i></div>
+    <nav class="icon-nav">
+      <a href="modulo-02.html" class="icon-nav-item" title="Medir la Red"><i class="fa-solid fa-chart-simple"></i></a>
+      <a href="modulo-03.html" class="icon-nav-item" title="Discurso vs Realidad"><i class="fa-solid fa-eye"></i></a>
+      <a href="modulo-04.html" class="icon-nav-item" title="Macromodelos"><i class="fa-solid fa-bullseye"></i></a>
+      <a href="modulo-05.html" class="icon-nav-item" title="Lo que no está"><i class="fa-solid fa-magnifying-glass"></i></a>
+      <a href="modulo-06.html" class="icon-nav-item" title="POT ↔ ODS"><i class="fa-solid fa-earth-americas"></i></a>
+      <a href="modulo-07.html" class="icon-nav-item active" title="Simulador"><i class="fa-solid fa-flask"></i></a>
+      <a href="modulo-08.html" class="icon-nav-item" title="Modelo Propio"><i class="fa-solid fa-city"></i></a>
     </nav>
-
     <div class="icon-nav-footer">
       <a href="configuracion.html" class="icon-nav-item" title="Configuración"><i class="fa-solid fa-gear"></i></a>
       <a href="demo.html" class="icon-nav-item" title="Salir"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
@@ -71,17 +67,6 @@
               ⇩ &nbsp;Descargar SÍNTESIS
             </a>
           </div>
-          <article class="hero-visual" aria-label="Modelo urbano principal">
-            <div class="urban-mesh" aria-hidden="true">
-              <span class="mesh-line line-a"></span><span class="mesh-line line-b"></span><span class="mesh-line line-c"></span>
-              <span class="mesh-route route-a"></span><span class="mesh-route route-b"></span>
-              <div class="city-silhouette">
-                <i class="tower tower-1"></i><i class="tower tower-2"></i><i class="tower tower-3"></i><i class="tower tower-4"></i><i class="tower tower-5"></i><i class="tower tower-6"></i><i class="tower tower-7"></i>
-              </div>
-            </div>
-            <div class="hero-visual-caption"><span class="signal-dot"></span><span>BOGOTÁ VIVA</span><b>MODELO URBANO · ESCENARIO ÓPTIMO 2040</b></div>
-            <button id="diagnoseBtn" class="danger-btn hero-diagnose">Ver diagnóstico crítico</button>
-          </article>
         </section>
 
         <section class="cartography-section" aria-labelledby="cartographyTitle">
@@ -89,31 +74,21 @@
             <div>
               <div class="eyebrow"><b></b> CARTOGRAFÍA DEL SIMULADOR</div>
               <h2 id="cartographyTitle">Una cartografía que puede correr la ciudad</h2>
-              <p>La cartografía real de Bogotá se muestra como un plano monocromático de OpenStreetMap. Sobre ella se superponen la red procedural, las calles consultadas por Overpass y las rutas calculadas con OSRM.</p>
+              <p>La versión base no depende de servicios externos: dibuja el territorio como una red procedural de agentes, calles, flujos y perturbaciones. El bonus permite sustituir esta base por calles reales cuando se habiliten fuentes geográficas.</p>
             </div>
-            <span class="cartography-status"><i></i> MAPA OSM · PLANO MONOCROMÁTICO</span>
+            <span class="cartography-status"><i></i> BASE ACTIVA · SIN APIS</span>
           </div>
           <div class="cartography-card">
             <div class="cartography-visual real-map-shell" aria-label="Cartografía interactiva de Bogotá con calles y rutas">
               <div id="realCartographyMap" class="real-cartography-map"></div>
               <div id="proceduralSimulation" class="procedural-simulation" aria-label="Simulación procedural de agentes y flujos"></div>
-              <div class="map-live-badge"><i></i><span id="mapDataStatus">MAPA OSM MONOCROMÁTICO · CARGANDO CALLES</span></div>
+              <div class="map-live-badge"><i></i><span id="mapDataStatus">CARTOGRAFÍA PROCEDURAL ACTIVA</span></div>
               <div class="map-controls" aria-label="Controles de cartografía">
                 <button type="button" id="loadOsmStreets">Cargar calles OSM</button>
                 <button type="button" id="loadOsrmRoute">Mostrar ruta OSRM</button>
                 <button type="button" id="resetCartography">Restablecer</button>
               </div>
               <div class="map-source-note">MapLibre GL JS · OpenStreetMap · Overpass · OSRM</div>
-            </div>
-            <div class="cartography-spec">
-              <div class="spec-kicker">MAPA REAL — OSM MONOCROMÁTICO + SIMULACIÓN</div>
-              <div class="spec-row"><strong>render</strong><span>PixiJS · Kaboom.js · p5.js</span></div>
-              <div class="spec-row"><strong>físicas</strong><span>Matter.js · o a mano</span></div>
-              <div class="spec-divider"></div>
-              <div class="spec-kicker bonus"># BONUS — CALLES REALES</div>
-              <div class="spec-row"><strong>mapa</strong><span>MapLibre GL JS · Mapbox GL · Overpass API (OSM)</span></div>
-              <div class="spec-row"><strong>ruta</strong><span>OSRM · Mapbox Directions · Nominatim (geocoding)</span></div>
-              <p class="spec-note">El plano base usa teselas reales de OpenStreetMap en blanco y negro. Overpass añade calles reales y OSRM permite visualizar rutas sobre la cartografía; la capa procedural permanece como lectura analítica superpuesta.</p>
             </div>
           </div>
         </section>
