@@ -25,7 +25,9 @@
     selectedUpl: null,
     selectedScale: "natural",
     dataMode: "real",
-    streetSource: "overpass",
+    streetSource: "local-geojson",
+    localRoadFeatures: [],
+    localRoadCount: 0,
     pmtilesArchive: null,
     pmtilesProtocol: null,
     currentView: "barrio",
@@ -43,14 +45,17 @@
     favorite: false,
     apiLayers: {
       /* Las 28 categorías se cargan automáticamente; cada consulta conserva timeout y fallback. */
-      roads: true, walking: true, transport: true, rail: true, aerial: true,
-      natural: true, water: true, green: true,
-      amenities: true, education: true, health: true, care: true, civic: true, services: true,
-      commerce: true, food: true, industrial: true,
-      residential: true, buildings: true, landuse: true,
-      parks: true, sports: true,
-      culture: true, tourism: true, memorial: true,
-      boundaries: true, utilities: true, street: true,
+      // Arranque ligero: mantiene las 28 categorías disponibles, pero consulta
+      // primero las capas que dan una lectura útil y rápida. “Activar todo”
+      // conserva el acceso explícito a las 28 categorías.
+      roads: true, walking: false, transport: true, rail: false, aerial: false,
+      natural: true, water: false, green: false,
+      amenities: true, education: false, health: false, care: false, civic: false, services: false,
+      commerce: true, food: false, industrial: false,
+      residential: false, buildings: false, landuse: false,
+      parks: true, sports: false,
+      culture: true, tourism: false, memorial: false,
+      boundaries: false, utilities: false, street: false,
     },
     apiLayerStatus: {},
   };
@@ -273,7 +278,8 @@
 
   function disableLocalPmtiles() {
     removeLocalRoadLayers();
-    state.streetSource = "overpass";
+    state.streetSource = state.localRoadFeatures.length ? "local-geojson" : "overpass";
+    if (state.streetSource === "local-geojson") updateStreetLayer(state.localRoadFeatures);
     updateLocalTilesButton(false);
     setText("#modeDetail", "OpenStreetMap · consulta bajo demanda");
     setText("#connectionLabel", "Mapa real conectado");
@@ -423,7 +429,22 @@
     const style = {
       version: 8,
       sources: {
-        "osm-raster": {
+        "bogota-gray-local": {
+          type: "image",
+          url: "assets/bogota-osm-detail-gray.jpg",
+          coordinates: [[-74.25, 4.82], [-73.95, 4.82], [-73.95, 4.50], [-74.25, 4.50]],
+        },
+        "carto-gray-fallback": {
+          type: "raster",
+          tiles: [
+            "https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
+            "https://b.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
+            "https://c.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
+          ],
+          tileSize: 256,
+          attribution: "© OpenStreetMap © CARTO",
+        },
+        "osm-gray-fallback": {
           type: "raster",
           tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
           tileSize: 256,
@@ -432,10 +453,15 @@
           attribution: OSM_ATTRIBUTION,
         },
       },
-      layers: [{ id: "osm-raster-layer", type: "raster", source: "osm-raster" }],
+      layers: [
+        { id: "map-background", type: "background", paint: { "background-color": "#111617" } },
+        { id: "bogota-gray-local-layer", type: "raster", source: "bogota-gray-local", paint: { "raster-saturation": -1, "raster-contrast": 0.12, "raster-brightness-min": 0.18, "raster-brightness-max": 0.88, "raster-opacity": 1 } },
+        { id: "carto-gray-fallback-layer", type: "raster", source: "carto-gray-fallback", paint: { "raster-saturation": -1, "raster-contrast": 0.08, "raster-brightness-min": 0.16, "raster-brightness-max": 0.90, "raster-opacity": 0.92 } },
+        { id: "osm-gray-fallback-layer", type: "raster", source: "osm-gray-fallback", paint: { "raster-saturation": -1, "raster-contrast": 0.16, "raster-brightness-min": 0.12, "raster-brightness-max": 0.86, "raster-opacity": 0.72 } },
+      ],
     };
     try {
-      state.map = new maplibregl.Map({ container: "map", style, center: BOGOTA, zoom: 11.3, attributionControl: true, maxZoom: 19 });
+      state.map = new maplibregl.Map({ container: "map", style, center: BOGOTA, zoom: 11.3, minZoom: 9, maxZoom: 19, attributionControl: true, maxBounds: [[-74.45, 4.35], [-73.75, 4.95]] });
       state.map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-left");
       state.map.on("zoom", applyRoadZoomFilter);
       state.map.on("moveend", () => {
@@ -449,8 +475,9 @@
         focusSelectedUpl(false);
         setText("#connectionLabel", "Cargando OSM · respaldo visible");
         renderProceduralMarkers();
-        showToast("Mapa listo. Se muestra el respaldo mientras llegan los datos OSM.");
+        showToast("Mapa monocromático listo. Se muestran las calles locales mientras llegan los datos OSM.");
         applyRoadZoomFilter();
+        loadLocalRoadFallback();
         loadScaleData();
       });
       state.map.on("error", (event) => {
@@ -553,6 +580,31 @@
     state.map.getSource("osm-streets").setData({ type: "FeatureCollection", features });
   }
 
+  async function loadLocalRoadFallback() {
+    if (!state.map || !state.mapReady) return;
+    try {
+      const response = await fetch("./vias.geojson", { cache: "force-cache" });
+      if (!response.ok) throw new Error(`GeoJSON vial HTTP ${response.status}`);
+      const json = await response.json();
+      const features = (json.features || []).filter((feature) => feature.geometry && ["LineString", "MultiLineString"].includes(feature.geometry.type)).map((feature) => ({
+        ...feature,
+        properties: { ...(feature.properties || {}), highway: feature.properties?.highway || feature.properties?.fclass || "residential", source: "GeoJSON local" },
+      }));
+      state.localRoadFeatures = features;
+      state.localRoadCount = features.length;
+      if (state.streetSource !== "pmtiles") {
+        state.streetSource = "local-geojson";
+        updateStreetLayer(features);
+        setText("#metricRoads", features.length.toLocaleString("es-CO"));
+        setText("#modeDetail", "GeoJSON vial local · OSM bajo demanda");
+        setText("#connectionLabel", "Mapa OSM monocromático listo · 16.962 calles locales");
+      }
+    } catch (error) {
+      console.warn("No se pudo cargar el respaldo vial local", error);
+      if (state.streetSource === "local-geojson") state.streetSource = "overpass";
+    }
+  }
+
   function updatePlaceLayer(features) {
     if (!state.map || !state.map.getSource("osm-places")) return;
     state.map.getSource("osm-places").setData({ type: "FeatureCollection", features });
@@ -589,7 +641,8 @@
         roadCount += 1;
       }
     });
-    if (state.streetSource === "overpass") updateStreetLayer(streetFeatures);
+    if (state.streetSource === "overpass" && streetFeatures.length) updateStreetLayer(streetFeatures);
+    else if (!streetFeatures.length && state.localRoadFeatures.length) updateStreetLayer(state.localRoadFeatures);
     elements.forEach((element) => {
       const point = featurePoint(element);
       const tags = element.tags || {};
@@ -617,7 +670,7 @@
       state.placeMarkers.push(marker);
     });
     setText("#metricPlaces", placeCount ? String(placeCount) : "0");
-    setText("#metricRoads", state.streetSource === "pmtiles" ? "MVT" : (roadCount ? String(roadCount) : "—"));
+    setText("#metricRoads", state.streetSource === "pmtiles" ? "MVT" : (state.streetSource === "local-geojson" && state.localRoadCount ? state.localRoadCount.toLocaleString("es-CO") : (roadCount ? roadCount.toLocaleString("es-CO") : "—")));
     renderApiSummary(elements);
   }
 
@@ -712,7 +765,7 @@
   function renderProceduralMarkers() {
     if (!state.map || !state.selectedUpl || !window.maplibregl) return;
     clearPlaceMarkers();
-    updateStreetLayer([]);
+    updateStreetLayer(state.streetSource === "local-geojson" ? state.localRoadFeatures : []);
     const scale = SCALE_DATA[state.selectedScale];
     const offsets = [[-.012,.008],[.010,.010],[-.007,-.009],[.014,-.006],[-.017,-.003],[.002,.017]];
     offsets.forEach(([dx,dy], index) => {
