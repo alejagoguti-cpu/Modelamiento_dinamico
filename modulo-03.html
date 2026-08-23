@@ -231,6 +231,9 @@ html,body{height:auto!important;min-height:100vh!important;overflow-x:hidden!imp
             <div class="net-btns">
               <span class="hidden-nodes-indicator is-clear" id="hiddenNodesIndicator" aria-live="polite"><i class="fa-solid fa-eye-slash"></i><span id="hiddenNodesText">Sin nodos ocultos</span></span>
               <button class="btn" id="btnFit"><i class="fa-solid fa-arrows-rotate"></i> Centrar vista</button>
+              <button class="btn export-btn" id="btnExportVideo" type="button"><i class="fa-solid fa-video"></i> Exportar video</button>
+              <button class="btn export-btn" id="btnExportGif" type="button"><i class="fa-solid fa-film"></i> Exportar GIF</button>
+              <span class="export-status" id="exportStatus" aria-live="polite"></span>
             </div>
           </div>
 
@@ -323,7 +326,7 @@ html,body{height:auto!important;min-height:100vh!important;overflow-x:hidden!imp
     </article>
   </div>
 
-<script src="modulo-03.js?v=off-clean-v6"></script>
+<script src="modulo-03.js?v=export-network-v1"></script>
 <style id="m03-final-visual-fix">
 /* Capa final: vence los overrides compartidos que estaban recortando la tabla. */
 .app .main .net-layout{height:auto!important;min-height:0!important;overflow:visible!important}

@@ -3402,6 +3402,114 @@ function zoomAt(factor, clientX, clientY) {
   applyVB();
 }
 
+function exportStatus(text) {
+  const el = document.getElementById('exportStatus');
+  if (el) el.textContent = text;
+}
+function waitMs(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
+async function svgCaptureImage() {
+  const source = document.getElementById('svg');
+  const clone = source.cloneNode(true);
+  const css = await fetch('modulo-03.css?v=export-network-v1', { cache: 'no-store' }).then(r => r.ok ? r.text() : '').catch(() => '');
+  const inline = document.createElementNS('http://www.w3.org/2000/svg', 'style');
+  inline.textContent = css;
+  clone.insertBefore(inline, clone.firstChild);
+  clone.setAttribute('width', '1200');
+  clone.setAttribute('height', '760');
+  const text = new XMLSerializer().serializeToString(clone);
+  const image = new Image();
+  image.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(text);
+  await new Promise((resolve, reject) => { image.onload = resolve; image.onerror = reject; });
+  return image;
+}
+function downloadExport(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename; a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1500);
+}
+async function captureNetworkFrames(onFrame) {
+  const canvas = document.createElement('canvas');
+  canvas.width = 1200; canvas.height = 760;
+  const ctx = canvas.getContext('2d', { alpha: false });
+  const fps = 12, frames = [];
+  const draw = async () => {
+    const image = await svgCaptureImage();
+    ctx.fillStyle = '#0b0c0f'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+    const frame = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    if (onFrame) await onFrame(canvas, frame);
+    return frame;
+  };
+  const candidate = SYS.find(s => state[s]);
+  frames.push(await draw());
+  for (let i = 0; i < 8; i++) { await waitMs(1000 / fps); frames.push(await draw()); }
+  if (candidate) {
+    toggleSystem(candidate);
+    const finding = document.getElementById('networkFinding');
+    if (finding) { finding.style.setProperty('display', 'none', 'important'); finding.setAttribute('aria-hidden', 'true'); }
+    for (let i = 0; i < 18; i++) { await waitMs(1000 / fps); frames.push(await draw()); }
+    toggleSystem(candidate);
+    if (finding) { finding.style.setProperty('display', 'none', 'important'); finding.setAttribute('aria-hidden', 'true'); }
+    for (let i = 0; i < 8; i++) { await waitMs(1000 / fps); frames.push(await draw()); }
+  }
+  return { canvas, frames, fps };
+}
+async function exportNetworkVideo() {
+  const button = document.getElementById('btnExportVideo');
+  if (!window.MediaRecorder || !HTMLCanvasElement.prototype.captureStream) {
+    exportStatus('Este navegador no admite video WebM.'); return;
+  }
+  button.disabled = true; exportStatus('Grabando reestructuración…');
+  try {
+    const fps = 12;
+    let recorder;
+    const chunks = [];
+    let finished;
+    await captureNetworkFrames((canvas) => {
+      if (!recorder) {
+        const stream = canvas.captureStream(fps);
+        const mime = MediaRecorder.isTypeSupported('video/webm;codecs=vp9') ? 'video/webm;codecs=vp9' : 'video/webm';
+        recorder = new MediaRecorder(stream, { mimeType: mime });
+        recorder.ondataavailable = e => e.data.size && chunks.push(e.data);
+        finished = new Promise(resolve => { recorder.onstop = resolve; });
+        recorder.start();
+      }
+    });
+    if (!recorder) throw new Error('No se pudo iniciar la grabación');
+    recorder.stop(); await finished;
+    downloadExport(new Blob(chunks, { type: 'video/webm' }), 'bogota-viva-red-reestructuracion.webm');
+    exportStatus('Video WebM descargado.');
+  } catch (error) { console.error(error); exportStatus('No se pudo exportar el video.'); }
+  finally { button.disabled = false; }
+}
+async function loadGifEncoder() {
+  if (window.GIF) return;
+  await new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.js';
+    script.onload = resolve; script.onerror = reject; document.head.appendChild(script);
+  });
+}
+async function exportNetworkGif() {
+  const button = document.getElementById('btnExportGif');
+  button.disabled = true; exportStatus('Preparando GIF…');
+  try {
+    await loadGifEncoder();
+    const { canvas, frames, fps } = await captureNetworkFrames();
+    const gif = new GIF({ workers: 2, quality: 8, width: canvas.width, height: canvas.height, workerScript: 'https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.worker.js' });
+    frames.forEach(frame => { const frameCanvas = document.createElement('canvas'); frameCanvas.width = canvas.width; frameCanvas.height = canvas.height; frameCanvas.getContext('2d').putImageData(frame, 0, 0); gif.addFrame(frameCanvas, { delay: 1000 / fps, copy: true }); });
+    gif.on('progress', p => exportStatus(`Generando GIF… ${Math.round(p * 100)}%`));
+    gif.on('finished', blob => { downloadExport(blob, 'bogota-viva-red-reestructuracion.gif'); exportStatus('GIF descargado.'); button.disabled = false; });
+    gif.render();
+  } catch (error) { console.error(error); exportStatus('GIF no disponible; prueba Exportar video.'); button.disabled = false; }
+}
+function initNetworkExport() {
+  const video = document.getElementById('btnExportVideo');
+  const gif = document.getElementById('btnExportGif');
+  if (video) video.addEventListener('click', exportNetworkVideo);
+  if (gif) gif.addEventListener('click', exportNetworkGif);
+}
 function initPanZoom() {
   const stage = document.getElementById('stage');
   const svg = document.getElementById('svg');
@@ -3600,6 +3708,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initQuoteModal();
   initNodeScenario();
   initPanZoom();
+  initNetworkExport();
   initRelationFilters();
   applyVB();
   render();

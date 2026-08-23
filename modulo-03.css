@@ -4196,7 +4196,12 @@ body {
 .lg-dot.soporte { background: var(--soporte); }
 .lg-dot.resiliencia { background: var(--resiliencia); }
 
-.net-btns { display: flex; gap: 6px; }
+.net-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+.export-btn { border-color: rgba(70,214,208,.42); color: #46d6d0; }
+.export-btn:hover { background: rgba(70,214,208,.12); box-shadow: 0 0 14px rgba(70,214,208,.18); }
+.export-btn:disabled { opacity: .55; cursor: wait; }
+.export-status { width: 100%; color: #91aaa5; font-size: 10px; min-height: 14px; }
+@media (max-width: 720px) { .net-btns .export-btn { flex: 1 1 145px; min-height: 38px; } .export-status { font-size: 11px; } }
 
 .btn {
   background: var(--panel-alt);
