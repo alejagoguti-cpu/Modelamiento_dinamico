@@ -587,21 +587,29 @@ body.wetland-modal-open { overflow: hidden; }
 
 /* Iconografía SVG para la red Natural ampliada. */
 .popup-node-icon {
-  fill: var(--popup-teal);
+  display: block;
+  overflow: visible;
+  fill: currentColor;
   color: var(--popup-teal);
-  font-family: 'Font Awesome 6 Free';
-  font-size: 15px;
-  font-weight: 900;
-  text-anchor: middle;
-  dominant-baseline: central;
   pointer-events: none;
 }
-.popup-node.hub .popup-node-icon { fill: var(--popup-copper); color: var(--popup-copper); font-size: 17px; }
+.popup-node-icon .icon-stroke {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.popup-node-icon .icon-cut {
+  fill: none;
+  stroke: var(--popup-canvas);
+  stroke-width: 1.25;
+  stroke-linecap: round;
+}
+.popup-node.hub .popup-node-icon { color: var(--popup-copper); }
 .popup-node text:not(.popup-node-icon) { font-size: 8px; }
 .popup-node.hub text:not(.popup-node-icon) { font-size: 8.5px; }
 @media (max-width: 700px) {
-  .popup-node-icon { font-size: 12px; }
-  .popup-node.hub .popup-node-icon { font-size: 14px; }
   .popup-node text:not(.popup-node-icon) { font-size: 7px; }
 }
 

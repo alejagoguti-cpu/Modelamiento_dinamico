@@ -1540,15 +1540,15 @@ function renderScaleNetworkPopup(mode) {
     return `<line class="${className}" data-from="${fromId}" data-to="${toId}" x1="${from.x.toFixed(1)}" y1="${from.y.toFixed(1)}" x2="${to.x.toFixed(1)}" y2="${to.y.toFixed(1)}" stroke="${color}" marker-end="url(#arrow-${type})" />`;
   }).join('');
 
-  const popupIconGlyphs = {
-    'fa-droplet': '\uf043',
-    'fa-water': '\uf773',
-    'fa-shield-halved': '\uf132',
-    'fa-tree': '\uf1bb',
-    'fa-leaf': '\uf06c',
-    'fa-mountain': '\uf6fc',
-    'fa-eye': '\uf06e',
-    'fa-temperature-half': '\uf2c9'
+  const popupIconSvg = {
+    'fa-droplet': '<path d="M12 2.5C9 6.2 5.8 9.8 5.8 14.1a6.2 6.2 0 0 0 12.4 0C18.2 9.8 15 6.2 12 2.5Z"/>',
+    'fa-water': '<g class="icon-stroke"><path d="M3 9.5h18M5 14h14M8 18.5h8"/></g>',
+    'fa-shield-halved': '<path d="M12 2.8 19 5.5v5.4c0 4.6-2.7 8.1-7 10.3-4.3-2.2-7-5.7-7-10.3V5.5L12 2.8Z"/><path class="icon-cut" d="M12 3v17.9"/>',
+    'fa-tree': '<path d="m12 2 7 9h-4l3 4h-5v6h-2v-6H6l3-4H5l7-9Z"/><path class="icon-stroke" d="M5 21h14"/>',
+    'fa-leaf': '<path d="M20.5 3.5C11 3.5 4.5 7.8 4.5 13c0 3.8 3.3 6.5 7.2 6.5 4.8 0 8.8-5 8.8-16Z"/><path class="icon-stroke" d="M4.5 20.5c3.1-4.1 6.3-6.5 11.4-9.1"/>',
+    'fa-mountain': '<path d="m3 20 6.1-9 3.2 4.3 2.4-3.3L21 20H3Z"/><path d="m7.3 8.2 2.2-3.2 2.1 3.2Z"/>',
+    'fa-eye': '<g class="icon-stroke"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.7"/></g>',
+    'fa-temperature-half': '<path d="M10 5a2 2 0 0 1 4 0v7.6a5 5 0 1 1-4 0V5Z"/><path class="icon-stroke" d="M12 7v8"/>'
   };
   const nodeMarkup = definition.nodes.filter(node => !scalePopupHiddenNodes.has(node.id)).map(node => {
     const p = nodes[node.id];
@@ -1561,8 +1561,10 @@ function renderScaleNetworkPopup(mode) {
     popupNodeRadiusState.set(radiusKey, radius);
     const lines = splitPopupLabel(node.label);
     const firstY = p.y + (lines.length > 1 ? 1 : 4);
-    const glyph = popupIconGlyphs[node.icon] || '';
-    const iconMarkup = glyph ? `<text class="popup-node-icon" x="${p.x.toFixed(1)}" y="${(p.y - radius * .48).toFixed(1)}">${glyph}</text>` : '';
+    const iconSvg = popupIconSvg[node.icon] || '';
+    const iconX = p.x - 12;
+    const iconY = p.y - radius * .48 - 12;
+    const iconMarkup = iconSvg ? `<svg class="popup-node-icon" x="${iconX.toFixed(1)}" y="${iconY.toFixed(1)}" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">${iconSvg}</svg>` : '';
     const labelMarkup = lines.map((line, index) => `<tspan x="${p.x.toFixed(1)}" dy="${index === 0 ? 0 : 11}">${line}</tspan>`).join('');
     return `<g class="popup-node ${activeHub ? 'hub' : ''}" data-node-id="${node.id}" data-active-degree="${activeDegree}" data-active-hub="${activeHub}" tabindex="0" role="button" aria-label="${node.label}: ${activeDegree} conexiones activas">
       <circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${previousRadius}" data-start-radius="${previousRadius}" data-target-radius="${radius}" />
