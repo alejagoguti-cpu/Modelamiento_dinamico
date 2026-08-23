@@ -1,0 +1,14 @@
+{
+  "status": "PASS",
+  "timestamp": "2026-08-23T04:36:36.008523+00:00",
+  "url": "https://alejagoguti-cpu.github.io/Modelamiento_dinamico/modulo-05.html?qa=all-modules-final",
+  "checks": {
+    "recursos_locales": [],
+    "javascript": [],
+    "sidebars": [],
+    "consistencia_visual_y_navegacion": [],
+    "contrato_modulo_05": [],
+    "sitio_publico": []
+  },
+  "failures": 0
+}

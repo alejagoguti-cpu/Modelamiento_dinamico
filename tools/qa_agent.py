@@ -90,6 +90,20 @@ def check_sidebars() -> list[str]:
     return failures
 
 
+def check_site_consistency() -> list[str]:
+    failures = []
+    for name in ["index.html", *MODULES]:
+        path = ROOT / name
+        if not path.exists():
+            continue
+        text = path.read_text(encoding="utf-8", errors="ignore")
+        if "site-theme.css" not in text:
+            failures.append(f"{name}: no enlaza site-theme.css")
+        if "dashboard.html" in text:
+            failures.append(f"{name}: conserva una referencia a dashboard.html")
+    return failures
+
+
 def check_module05_contract() -> list[str]:
     failures = []
     html = (ROOT / "modulo-05.html").read_text(encoding="utf-8", errors="ignore")
@@ -114,18 +128,23 @@ def check_module05_contract() -> list[str]:
 
 def check_public(url: str) -> list[str]:
     failures = []
-    try:
-        request = Request(url, headers={"User-Agent": "BogotaViva-QA/1.0"})
-        with urlopen(request, timeout=20) as response:
-            body = response.read().decode("utf-8", errors="ignore")
-            if response.status != 200:
-                failures.append(f"sitio público: HTTP {response.status}")
-            if "modulo-05.js" not in body:
-                failures.append("sitio público: no carga modulo-05.js")
-            if "CATÁLOGO API · 28 CATEGORÍAS OSM" not in body:
-                failures.append("sitio público: no muestra el catálogo de 28 categorías")
-    except Exception as exc:
-        failures.append(f"sitio público: {exc}")
+    base = url.rsplit("/", 1)[0]
+    pages = ["index.html", *MODULES]
+    for page in pages:
+        page_url = url if page == "modulo-05.html" and url.rstrip("/").endswith(page) else urljoin(base + "/", page)
+        try:
+            request = Request(page_url, headers={"User-Agent": "BogotaViva-QA/1.0"})
+            with urlopen(request, timeout=20) as response:
+                body = response.read().decode("utf-8", errors="ignore")
+                if response.status != 200:
+                    failures.append(f"{page}: HTTP {response.status}")
+                if page == "modulo-05.html":
+                    if "modulo-05.js" not in body:
+                        failures.append("modulo-05 público: no carga modulo-05.js")
+                    if "CATÁLOGO API · 28 CATEGORÍAS OSM" not in body:
+                        failures.append("modulo-05 público: no muestra el catálogo de 28 categorías")
+        except Exception as exc:
+            failures.append(f"{page}: {exc}")
     return failures
 
 
@@ -140,6 +159,7 @@ def main() -> int:
         "recursos_locales": check_local_assets(),
         "javascript": check_javascript(),
         "sidebars": check_sidebars(),
+        "consistencia_visual_y_navegacion": check_site_consistency(),
         "contrato_modulo_05": check_module05_contract(),
     }
     if not args.skip_public:
