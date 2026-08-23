@@ -18,6 +18,7 @@
   const CACHE = new Map();
   const CACHE_MAX_ENTRIES = 16;
   const VIEWPORT_DEBOUNCE_MS = 420;
+  const OVERPASS_ENDPOINT_TIMEOUT_MS = 9000;
   const state = {
     map: null,
     mapReady: false,
@@ -444,8 +445,9 @@
         addMapLayers();
         updateUplPanel(state.selectedUpl);
         focusSelectedUpl(false);
-        setText("#connectionLabel", "Mapa real conectado");
-        showToast("Mapa real listo. Selecciona una escala para consultar la red local.");
+        setText("#connectionLabel", "Cargando OSM · respaldo visible");
+        renderProceduralMarkers();
+        showToast("Mapa listo. Se muestra el respaldo mientras llegan los datos OSM.");
         applyRoadZoomFilter();
         loadScaleData();
       });
@@ -619,10 +621,13 @@
     const query = buildOverpassQuery(upl, scaleKey, bbox, layerKey);
     let lastError = null;
     for (const endpoint of OVERPASS_ENDPOINTS) {
+      const endpointController = new AbortController();
+      const endpointTimer = window.setTimeout(() => endpointController.abort(), OVERPASS_ENDPOINT_TIMEOUT_MS);
+      const requestSignal = AbortSignal.any ? AbortSignal.any([signal, endpointController.signal]) : signal;
       try {
         const response = await fetch(endpoint, {
           method: "POST",
-          signal,
+          signal: requestSignal,
           headers: { Accept: "application/json", "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" },
           body: `data=${encodeURIComponent(query)}`,
         });
@@ -634,6 +639,8 @@
       } catch (error) {
         if (signal.aborted) throw error;
         lastError = error;
+      } finally {
+        window.clearTimeout(endpointTimer);
       }
     }
     throw lastError || new Error("Ningún servidor Overpass respondió");
@@ -705,6 +712,7 @@
       return;
     }
     clearPlaceMarkers();
+    renderProceduralMarkers();
     setText("#metricPlaces", "…");
     setText("#metricRoads", "…");
     Object.keys(API_LAYERS).forEach((key) => { state.apiLayerStatus[key] = state.apiLayers[key] ? "loading" : "idle"; });
