@@ -82,9 +82,38 @@
               </div>
               <div class="map-source-note">MapLibre GL JS · CARTO Vector tiles · OpenStreetMap · Overpass · OSRM</div>
                         </div>
+            <aside class="part-one-map-tools" aria-label="Herramientas de la Parte I">
+              <div class="layer-panel">
+                <div class="layer-panel-heading"><strong>MAPEO DE SUBSISTEMAS</strong><small>Activa una capa para ver dónde se ubican sus componentes.</small></div>
+                <div id="subsystemLayerControls" class="layer-controls"></div>
+              </div>
+              <div class="temporal-panel">
+                <div class="layer-panel-heading"><strong>ESTADOS DEL TERRITORIO</strong><small>El territorio cambia; no es un polígono fijo.</small></div>
+                <div id="temporalStateControls" class="temporal-state-controls" role="group" aria-label="Estados temporales"></div>
+                <p id="temporalStateDescription" class="temporal-description"></p>
+              </div>
+            </aside>
             <div id="subsystemsPanel" class="subsystems-panel" hidden>
               <strong>12 SUBSISTEMAS IDENTIFICADOS</strong>
               <span>Agua · suelo · vegetación · fauna · hábitat · borde · movilidad · comunidad · restauración · gestión · presiones · transformación histórica</span>
+            </div>
+            <div class="part-one-note"><strong>Mapeo de subsistemas:</strong> el mapa muestra dónde están los subsistemas presentes en el sector. Los componentes aparecen agrupados dentro de cada subsistema. Las relaciones entre subsistemas se explican en la tabla y en el panel de evidencia, no mediante composición.</div>
+            <div class="part-one-table-wrap">
+              <table class="part-one-table">
+                <thead><tr><th>Subsistema dinámico</th><th>Componentes concretos</th><th>Proceso que cambia en el tiempo</th><th>Categoría de Ackoff y Gharajedaghi</th><th>Justificación</th></tr></thead>
+                <tbody id="partOneTableBody"></tbody>
+              </table>
+            </div>
+            <div class="part-one-evidence">
+              <h3>Evidencias verificadas del sector</h3>
+              <div class="evidence-grid">
+                <p><b>Historia territorial.</b> El Jardín Botánico indica que El Burro hacía parte de la extinta Laguna El Tintal.</p>
+                <p><b>Biodiversidad.</b> Se reportan 36 especies de aves: 27 residentes permanentes y 9 migratorias; también se registran arañas e insectos.</p>
+                <p><b>Funciones ecológicas.</b> Las arañas actúan como controladores biológicos y algunos insectos cumplen funciones de polinización y depredación.</p>
+                <p><b>Vegetación.</b> Se identifican especies vegetales nativas, invasoras y exóticas.</p>
+                <p><b>Tensionantes.</b> Contaminación atmosférica y auditiva por la Avenida Ciudad de Cali, escombros en la ZMPA, residuos del Canal Los Ángeles y edificios que obstruyen la llegada de aves.</p>
+                <p><b>Manejo.</b> Se realizan cerramientos, reintroducción de nativas, control de invasoras, mantenimiento, compostaje, educación y seguimiento de la restauración.</p>
+              </div>
             </div>
           </div>
         </section>
