@@ -2482,8 +2482,10 @@ function render() {
     if (cls.includes('punteada')) glowCls.push('punteada');
     if (cls.includes('sel')) glowCls.push('sel');
     if (!active) glowCls.push('rel-off');
+    glowCls.push('reflow-enter');
     const glow = el('path', { class: glowCls.join(' '), d, 'data-rel': r.id });
 
+    cls.push('reflow-enter');
     const path = el('path', {
       class: cls.join(' '),
       d,
@@ -2537,7 +2539,7 @@ const iconSize = Math.max(28, Math.round(R * 0.52));
       if (isBridge(c)) cls.push('bridge');
 
       const g = el('g', {
-        class: cls.join(' '),
+        class: cls.concat('reflow-enter').join(' '),
         transform: `translate(${p.x.toFixed(1)},${p.y.toFixed(1)})`,
         style: `--sys:${model.systems[s].color};--node-filter:url(#glow-${model.systems[s].color.replace('#', '')})`,
         'data-id': id

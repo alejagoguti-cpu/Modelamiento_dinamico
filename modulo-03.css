@@ -4947,6 +4947,14 @@ body {
 
 /* Las relaciones ya no se mueven ni estiran: solo cambian de opacidad */
 .rel { transition: opacity 0.4s ease; }
+/* Transición visible de la red al cambiar el escenario. */
+.reflow-enter { animation: network-reflow-enter .62s cubic-bezier(.22,.8,.28,1) both; }
+#gRels .reflow-enter { stroke-dashoffset: 18; animation: network-link-enter .72s ease-out both; }
+#gNodes .concept.reflow-enter { animation: network-node-enter .66s cubic-bezier(.2,.85,.3,1) both; transform-box: fill-box; transform-origin: center; }
+@keyframes network-reflow-enter { from { opacity: 0; } to { opacity: 1; } }
+@keyframes network-link-enter { from { opacity: 0; stroke-dashoffset: 18; } to { opacity: .68; stroke-dashoffset: 0; } }
+@keyframes network-node-enter { 0% { opacity: 0; filter: saturate(.55) brightness(.8); } 55% { opacity: 1; filter: saturate(1.35) brightness(1.22); } 100% { opacity: 1; filter: saturate(1) brightness(1); } }
+@media (prefers-reduced-motion: reduce) { .reflow-enter, #gRels .reflow-enter, #gNodes .concept.reflow-enter { animation: none !important; } }
 
 /* Aviso sobre el propio diagrama */
 .weak-banner {
