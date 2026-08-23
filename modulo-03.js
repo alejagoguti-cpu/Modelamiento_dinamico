@@ -2940,7 +2940,10 @@ function updateBridgePanel() {
     `<p class="note">${porESECI} de ${lista.length} nodos puente pertenecen a la ESECI: es la estructura que cose la red.</p>`;
 }
 
-const set = (id, html) => { document.getElementById(id).innerHTML = html; };
+const set = (id, html) => {
+  const target = document.getElementById(id);
+  if (target) target.innerHTML = html;
+};
 
 function updateSimPanel(active, total, rank) {
   const off = SYS.filter(s => !state[s]);
