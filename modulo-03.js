@@ -3549,12 +3549,87 @@ function waitMs(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
 async function svgCaptureImage() {
   const source = document.getElementById('svg');
   const clone = source.cloneNode(true);
-  const css = await fetch('modulo-03.css?v=export-network-v1', { cache: 'no-store' }).then(r => r.ok ? r.text() : '').catch(() => '');
-  const inline = document.createElementNS('http://www.w3.org/2000/svg', 'style');
-  inline.textContent = css;
-  clone.insertBefore(inline, clone.firstChild);
+  const ns = 'http://www.w3.org/2000/svg';
+  const make = (tag, attrs = {}) => {
+    const node = document.createElementNS(ns, tag);
+    Object.entries(attrs).forEach(([key, value]) => node.setAttribute(key, String(value)));
+    return node;
+  };
+  clone.setAttribute('xmlns', ns);
   clone.setAttribute('width', '1200');
   clone.setAttribute('height', '760');
+  clone.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+
+  // El video se genera como SVG serializado. foreignObject (HTML + Font Awesome)
+  // se pierde en Android/Chromium al convertir data:image/svg+xml a canvas; por
+  // eso la exportación usa únicamente primitivas SVG nativas.
+  const defs = clone.querySelector('defs');
+  const bg = make('rect', { x: vb.x, y: vb.y, width: vb.w, height: vb.h, fill: '#0b0c0f', class: 'export-bg' });
+  clone.insertBefore(bg, defs ? defs.nextSibling : clone.firstChild);
+
+  const nodeGroups = [...clone.querySelectorAll('#gNodes > g.concept')];
+  const sourceGroups = [...source.querySelectorAll('#gNodes > g.concept')];
+  nodeGroups.forEach((group, index) => {
+    const sourceGroup = sourceGroups[index];
+    const ring = group.querySelector('.node-ring, .node-fill');
+    const sourceLabel = sourceGroup?.querySelector('.node-name');
+    const label = sourceLabel?.textContent?.trim() || group.getAttribute('data-id')?.split('::').pop() || 'Concepto';
+    const color = ring?.getAttribute('stroke') || '#f0a15c';
+    const radius = Number(ring?.getAttribute('r')) || 70;
+    const opacity = sourceGroup ? getComputedStyle(sourceGroup).opacity : '1';
+    group.setAttribute('opacity', opacity);
+    group.classList.remove('node-appear', 'reflow-enter', 'dragging', 'just-released');
+    group.querySelectorAll('foreignObject, .node-hit').forEach(el => el.remove());
+    if (!ring) return;
+    ring.removeAttribute('filter');
+    ring.setAttribute('fill', '#111a19');
+    ring.setAttribute('fill-opacity', '0.96');
+    ring.setAttribute('stroke', color);
+    ring.setAttribute('stroke-width', Math.max(6, radius * 0.055));
+
+    const accent = make('circle', { cx: 0, cy: -radius * 0.43, r: Math.max(7, radius * 0.13), fill: color });
+    accent.setAttribute('fill-opacity', '0.95');
+    group.appendChild(accent);
+
+    const text = make('text', {
+      x: 0,
+      y: radius * 0.02,
+      'text-anchor': 'middle',
+      'font-family': 'Arial, sans-serif',
+      'font-size': Math.max(20, Math.min(34, radius * 0.22)),
+      'font-weight': '700',
+      fill: '#f2f3f6',
+      stroke: '#05070d',
+      'stroke-width': '2.4',
+      'paint-order': 'stroke',
+      'pointer-events': 'none'
+    });
+    const words = label.split(/\s+/);
+    const lines = words.length > 2 ? [words.slice(0, Math.ceil(words.length / 2)).join(' '), words.slice(Math.ceil(words.length / 2)).join(' ')] : [label];
+    lines.slice(0, 2).forEach((line, lineIndex) => {
+      const tspan = make('tspan', { x: 0, dy: lineIndex === 0 ? (lines.length === 1 ? 0 : -4) : 18 });
+      tspan.textContent = line.length > 20 ? line.slice(0, 19) + '…' : line;
+      text.appendChild(tspan);
+    });
+    group.appendChild(text);
+  });
+
+  // Los trazos reciben atributos inline: el canvas no depende de hojas CSS
+  // externas ni de variables CSS al rasterizar el data URI.
+  clone.querySelectorAll('#gRels > path.rel').forEach(path => {
+    const color = path.classList.contains('resiliencia') ? '#2fbfae' : '#f0a15c';
+    path.setAttribute('fill', 'none');
+    path.setAttribute('stroke', color);
+    path.setAttribute('stroke-width', path.classList.contains('sel') ? '5' : '2.6');
+    path.setAttribute('opacity', path.classList.contains('rel-off') ? '0.08' : '0.84');
+    path.classList.remove('reflow-enter');
+    if (path.classList.contains('punteada')) path.setAttribute('stroke-dasharray', '9 7');
+  });
+  clone.querySelectorAll('#gRels > path.rel-hit').forEach(path => path.remove());
+  const inline = make('style');
+  inline.textContent = `.export-bg{display:block} #gGuides line,#gGuides circle{opacity:.24} #gMembers path{opacity:.22} #gNodes .concept{animation:none!important} #gRels path{vector-effect:non-scaling-stroke}`;
+  clone.insertBefore(inline, clone.firstChild);
+
   const text = new XMLSerializer().serializeToString(clone);
   const image = new Image();
   image.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(text);
