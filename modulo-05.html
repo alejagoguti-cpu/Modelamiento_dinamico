@@ -9,9 +9,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
   <link href="https://unpkg.com/maplibre-gl@6.5.0/dist/maplibre-gl.css" rel="stylesheet">
-  <link rel="stylesheet" href="modulo-05.css?v=minimal-v3">
-  <link rel="stylesheet" href="site-theme.css?v=minimal-v3">
-  <link rel="stylesheet" href="modulo-05-popup.css?v=popup-v3">
+  <link rel="stylesheet" href="modulo-05.css?v=minimal-v4">
+  <link rel="stylesheet" href="site-theme.css?v=minimal-v4">
 </head>
 <body>
   <div class="app-shell">
@@ -44,12 +43,6 @@
       <section class="control-panel" aria-label="Controles del navegador">
         <div class="eyebrow"><span class="eyebrow-line"></span> BOGOTÁ VIVA · 05B</div>
         <h1>Navegador<br><span>Multiescalar</span></h1>
-        <p class="intro">Explora Bogotá sobre sus calles reales y cambia de escala para leer cómo se conectan la estructura natural, la memoria, la infraestructura y la proximidad cotidiana.</p>
-        <div class="how-to" aria-label="Cómo usar el navegador multiescalar">
-          <div class="how-to-title"><i class="fa-solid fa-compass"></i> Cómo usar este módulo</div>
-          <div class="how-to-steps"><span><b>1</b><em>Elige una escala</em></span><span><b>2</b><em>Selecciona una UPL</em></span><span><b>3</b><em>Enciende una capa</em></span><span><b>4</b><em>Lee las pepitas</em></span></div>
-        </div>
-
         <div class="panel-block">
           <div class="block-label"><span class="step-label">1</span> ELIGE UNA ESCALA</div>
           <div class="scale-grid" role="tablist" aria-label="Escalas temáticas">
@@ -61,107 +54,30 @@
         </div>
 
         <div class="panel-block">
-          <div class="block-label"><span class="step-label">2</span> CAMBIA LA VISTA</div>
-          <button class="view-card" data-view="region"><span class="view-icon"><i class="fa-solid fa-earth-americas"></i></span><span><strong>Región Metropolitana</strong><small>20 municipios conectados</small></span><i class="fa-solid fa-arrow-right"></i></button>
-          <button class="view-card" data-view="barrio"><span class="view-icon"><i class="fa-solid fa-building-user"></i></span><span><strong>Barrio Vital /<br>Manzanas del Cuidado</strong><small>Unidad de proximidad</small></span><i class="fa-solid fa-arrow-right"></i></button>
-        </div>
-
-        <div class="panel-block">
-          <div class="block-label"><span class="step-label">3</span> ELIGE UNA UPL</div>
+          <div class="block-label"><span class="step-label">2</span> ELIGE UNA UPL</div>
           <label class="sr-only" for="uplSelect">Seleccionar UPL</label>
           <select id="uplSelect"></select>
           <p id="uplTag" class="field-note">Selecciona una UPL para enfocar la exploración.</p>
         </div>
 
-        <details class="advanced-section route-section"><summary><span><i class="fa-solid fa-route"></i> Ruta opcional</span><small>Calcular un recorrido real</small></summary><div class="advanced-section-body"><div class="panel-block route-block">
-          <div class="block-label"><i class="fa-solid fa-person-walking"></i> RUTA OPCIONAL SOBRE CALLES REALES</div>
-          <label class="sr-only" for="routeStart">Origen</label>
-          <div class="input-wrap"><i class="fa-solid fa-location-dot"></i><input id="routeStart" type="text" placeholder="Origen · lugar o dirección"></div>
-          <label class="sr-only" for="routeEnd">Destino</label>
-          <div class="input-wrap"><i class="fa-solid fa-flag-checkered"></i><input id="routeEnd" type="text" placeholder="Destino · lugar o dirección"></div>
-          <div class="route-actions"><button id="routeBtn" class="primary-btn"><i class="fa-solid fa-route"></i> Calcular ruta</button><button id="clearRouteBtn" class="icon-btn" title="Limpiar ruta" aria-label="Limpiar ruta"><i class="fa-solid fa-xmark"></i></button></div>
-          <p id="routeStatus" class="field-note">Nominatim geocodifica y OSRM calcula la ruta. Las consultas se hacen solo al solicitarla.</p>
-          <p class="field-note performance-note"><i class="fa-solid fa-gauge-high"></i> Las calles se consultan por el área visible, con espera de 420 ms y cancelación de peticiones anteriores.</p>
-        </div></div></details>
-
-        <details class="advanced-section map-source-section"><summary><span><i class="fa-solid fa-map"></i> Mapa y fuente</span><small id="mapSourceSummary">OSM · mapa real</small></summary><div class="advanced-section-body">
-        <div class="data-mode-row">
-          <div><span class="mode-dot" id="modeDot"></span><strong id="modeTitle">Calles reales</strong><small id="modeDetail">OpenStreetMap · consulta bajo demanda</small></div>
-          <button id="modeToggle" class="mode-toggle" role="switch" aria-checked="true"><span></span></button>
-        </div>
-        <div class="source-mode-row"><span><i class="fa-solid fa-database"></i> Fuente vial</span><button id="localTilesBtn" class="local-tiles-btn" type="button"><i class="fa-solid fa-hard-drive"></i> Usar PMTiles local</button></div>
-        </div></details>
-
-        <details class="advanced-section data-section"><summary><span><i class="fa-solid fa-layer-group"></i> Capas de datos</span><small id="apiSummaryHint">7 activas · 28 disponibles</small></summary><div class="advanced-section-body">
-        <div class="panel-block api-layers-block">
-          <div class="block-label"><span class="step-label">4</span> ENCIENDE CAPAS DE DATOS</div>
-          <div class="api-layer-actions"><button id="apiSelectAll" type="button">Activar las 28</button><button id="apiClearAll" type="button">Apagar todas</button></div>
-          <div class="api-status-key" aria-label="Estados de las capas"><span><i class="status-key-dot is-on"></i> Activa</span><span><i class="status-key-dot is-loading"></i> Consultando</span><span><i class="status-key-dot is-off"></i> Apagada</span></div>
-          <div id="apiLayerToggles" class="api-layer-toggles" role="group" aria-label="Capas de datos OpenStreetMap"></div>
-          <p class="field-note">Activa una o varias categorías. Las pepitas aparecen en el mapa y los números indican grupos de datos cercanos.</p>
-        </div></div></details>
       </section>
 
       <section class="map-panel" aria-label="Mapa de Bogotá">
         <div id="map" class="map-canvas"></div>
-        <div class="map-headline"><div><span class="map-kicker">EXPLORACIÓN EN VIVO</span><h2 id="mapTitle">UPL 13 · Tintal</h2><p id="mapSubtitle">Bogotá · calles, equipamientos y estructura natural</p></div><div class="map-actions"><button id="locateBtn" class="map-action" title="Volver a la UPL seleccionada"><i class="fa-solid fa-crosshairs"></i></button><button id="fullScreenBtn" class="map-action" title="Pantalla completa"><i class="fa-solid fa-expand"></i></button></div></div>
+        <div class="map-headline"><div><span class="map-kicker">EXPLORACIÓN EN VIVO</span><h2 id="mapTitle">UPL 13 · Tintal</h2><p id="mapSubtitle">Bogotá · calles, equipamientos y estructura natural</p></div></div>
         <div class="map-legend"><span><i class="legend-road"></i>Red vial OSM</span><span><i class="legend-place"></i>Pepitas OSM</span><span><i class="legend-upl"></i>UPL seleccionada</span><span id="roadLevel" class="road-level">Nivel meso · 5 jerarquías visibles</span></div>
         <div class="map-toast" id="mapToast" role="status" aria-live="polite"><i class="fa-solid fa-circle-info"></i><span>Inicializando mapa real…</span></div>
         <div class="map-attribution-note">Datos de calles y lugares: <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap contributors</a> · Visualización exploratoria RAPOT</div>
       </section>
 
-      <aside class="insight-panel" aria-label="Lectura multiescalar">
-        <div class="panel-label">LAS 4 ESCALAS DEL PROYECTO</div>
-        <div id="scaleCards" class="scale-cards"></div>
-
-        <div class="selected-upl-head"><div><span class="panel-label accent-label">UPL SELECCIONADA</span><h3 id="selectedUplName">13 · TINTAL</h3></div><button id="favoriteBtn" class="favorite-btn" title="Marcar como favorita" aria-label="Marcar como favorita"><i class="fa-regular fa-star"></i></button></div>
-        <p id="selectedUplDescription" class="selected-upl-description"></p>
-        <div class="strategy-callout"><span>Estrategia Bogotá Viva</span><strong id="strategyText">Conectar soporte urbano, cuidado y ecosistemas en la unidad cotidiana.</strong></div>
-
-        <div class="metrics-grid">
-          <article class="metric-card"><strong id="metricDeficit">32%</strong><span>déficit de servicios</span><small id="metricDeficitNote">lectura exploratoria frente al promedio urbano</small></article>
-          <article class="metric-card"><strong id="metricRoads">—</strong><span>tramos consultados</span><small>red vial en el bbox visible</small></article>
-          <article class="metric-card"><strong id="metricPlaces">—</strong><span>lugares OSM</span><small>equipamientos y actividades</small></article>
-          <article class="metric-card"><strong id="metricRoute">—</strong><span>ruta calculada</span><small>distancia sobre la red</small></article>
-        </div>
-        <div class="api-summary" aria-live="polite"><div class="block-label">RESUMEN DE DATOS API</div><div id="apiSummary" class="api-summary-list"><span>Activa una capa para consultar sus elementos.</span></div></div>
-
-        <div class="right-section"><div class="block-label">LECTURA DE LA ESCALA ACTIVA</div><p id="scaleReading">La escala natural hace visibles el agua, los humedales y la estructura ecológica como sistemas vivos que atraviesan el límite administrativo.</p></div>
-        <div class="right-section source-section"><div class="block-label">FUENTES Y TRANSPARENCIA</div><p>La base cartográfica procede de OpenStreetMap. Puedes usar Overpass bajo demanda o generar un PMTiles/MVT local para que la red vial funcione sin consultas externas. Si un servicio no responde, Bogotá Viva activa su red procedural de respaldo.</p><div class="source-pills"><span>MapLibre</span><span>OSM</span><span>Overpass</span><span>PMTiles</span><span>Nominatim</span><span>OSRM</span></div></div>
-      </aside>
     </main>
   </div>
-
-  <div id="scaleNetworkModal" class="scale-network-modal" aria-hidden="true">
-    <div class="scale-network-dialog" role="dialog" aria-modal="true" aria-labelledby="scaleNetworkTitle">
-      <header class="scale-network-dialog-head">
-        <div class="scale-network-heading">
-          <span class="scale-network-kicker">RED MULTIESCALA · BOGOTÁ VIVA</span>
-          <h2 id="scaleNetworkTitle">Red Natural</h2>
-          <p id="scaleNetworkDescription">Relaciones entre sistemas y entidades concretas del territorio.</p>
-        </div>
-        <div class="scale-network-actions" aria-label="Controles del diagrama">
-          <button id="scaleNetworkZoomOut" class="scale-network-zoom" type="button" aria-label="Alejar red">−</button>
-          <button id="scaleNetworkZoomReset" class="scale-network-zoom scale-network-zoom-value" type="button" aria-label="Restablecer zoom">100%</button>
-          <button id="scaleNetworkZoomIn" class="scale-network-zoom" type="button" aria-label="Acercar red">+</button>
-          <button id="scaleNetworkClose" class="scale-network-close" type="button" aria-label="Cerrar red">×</button>
-        </div>
-      </header>
-      <div id="scaleNetworkCanvas" class="scale-network-canvas" aria-label="Diagrama de red de la escala seleccionada"></div>
-      <footer class="scale-network-dialog-foot">
-        <span><i class="scale-legend-line direct"></i> Relación directa</span>
-        <span><i class="scale-legend-line indirect"></i> Relación indirecta</span>
-        <span class="scale-network-hint">Haz clic en un nodo para identificarlo</span>
-      </footer>
-    </div>
-  </div>
-
   <script src="https://unpkg.com/pmtiles@3.2.0/dist/pmtiles.js"></script>
   <script type="module">
     import * as maplibregl from "https://unpkg.com/maplibre-gl@6.5.0/dist/maplibre-gl.mjs";
     window.maplibregl = maplibregl;
     window.dispatchEvent(new Event("maplibre-ready"));
   </script>
-  <script src="modulo-05.js?v=popup-fix-a3732c1"></script>
+  <script src="modulo-05.js?v=minimal-v4"></script>
 </body>
 </html>
