@@ -4902,3 +4902,20 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 .component-visual.leaf-transparent { min-width: 30px; padding: 2px 4px; border: 0; background: transparent !important; box-shadow: none !important; }
 .component-visual.leaf-transparent i { width: 25px; height: 25px; background: transparent !important; border: 0; box-shadow: none !important; }
 .component-visual.leaf-transparent em { color: var(--bubble-color); }
+
+/* Redes internas: relaciones entre unidades específicas, sin composición jerárquica */
+.process-network { margin-top: 12px; padding-top: 10px; border-top: 1px solid color-mix(in srgb, var(--bubble-color) 38%, transparent); }
+.process-network > strong { display: block; margin-bottom: 3px; color: var(--bubble-color); font-size: 9px; letter-spacing: .08em; }
+.process-network > strong i { margin-right: 4px; }
+.process-network > small { display: block; color: rgba(255,255,255,.62); font-size: 8px; line-height: 1.3; }
+.process-network-canvas { position: relative; height: 150px; margin: 6px 0 3px; overflow: hidden; border: 1px solid color-mix(in srgb, var(--bubble-color) 26%, transparent); border-radius: 10px; background: radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--bubble-color) 12%, transparent), rgba(0,0,0,.18) 62%); }
+.process-network-canvas svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.process-network-canvas line { stroke: color-mix(in srgb, var(--bubble-color) 68%, #fff); stroke-width: 1.2; stroke-dasharray: 3 3; opacity: .62; animation: process-flow 2.8s linear infinite; }
+.process-network-node { position: absolute; display: flex; align-items: center; gap: 3px; max-width: 82px; transform: translate(-50%, -50%); color: #fff; font-size: 8px; line-height: 1.08; text-align: center; }
+.process-network-node i { flex: 0 0 auto; color: var(--bubble-color); font-size: 13px; filter: drop-shadow(0 0 4px color-mix(in srgb, var(--bubble-color) 58%, transparent)); }
+.process-network-node em { font-style: normal; text-wrap: balance; }
+.process-network-node:hover { z-index: 2; color: var(--bubble-color); }
+.process-network-legend { margin-top: 3px; font-style: italic; }
+@keyframes process-flow { to { stroke-dashoffset: -18; } }
+@media (max-width: 720px) { .process-network-canvas { height: 138px; } .process-network-node { max-width: 68px; font-size: 7px; } }
+@media (prefers-reduced-motion: reduce) { .process-network-canvas line { animation: none; } }
