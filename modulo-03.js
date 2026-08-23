@@ -692,27 +692,21 @@ function computeLayoutClean() {
   // Layout por cuadrantes: cada estructura ocupa una zona clara del lienzo,
   // con un hub central y satélites en una cuadrícula. Así se conserva la
   // lectura de pertenencia sin lanzar los nodos al borde ni amontonarlos.
-  const CANVAS = { w: 3000, h: 2700 };
+  const CANVAS = { w: 3000, h: 2400 };
   const HUB_CENTERS = {
-    EEP: { x: 750, y: 900 },
-    EFC: { x: 2250, y: 900 },
-    ESECI: { x: 750, y: 1800 },
-    EIP: { x: 2250, y: 1800 }
+    EEP: { x: 750, y: 720 },
+    EFC: { x: 2250, y: 720 },
+    ESECI: { x: 750, y: 1680 },
+    EIP: { x: 2250, y: 1680 }
   };
-  const SLOT_DX = 260;
-  const SLOT_DY = 270;
-  // Los satélites de los sistemas superiores solo ocupan filas superiores;
-  // los de los sistemas inferiores solo filas inferiores. El hub queda como
-  // ancla central y no hay nodos de cuadrantes vecinos superpuestos.
-  const slotsTop = [
-    [-2, -2], [-1, -2], [0, -2], [1, -2], [2, -2],
-    [-2, -1], [-1, -1], [0, -1], [1, -1], [2, -1],
-    [-2, 0], [-1, 0], [1, 0]
-  ];
-  const slotsBottom = [
-    [-2, 0], [-1, 0], [1, 0], [2, 0],
-    [-2, 1], [-1, 1], [0, 1], [1, 1], [2, 1],
-    [-2, 2], [-1, 2], [0, 2], [1, 2]
+  const SLOT_DX = 360;
+  const SLOT_DY = 320;
+  const slots = [
+    [-1, -2], [0, -2], [1, -2],
+    [-1, -1], [0, -1], [1, -1],
+    [-1, 0], [1, 0],
+    [-1, 1], [0, 1], [1, 1],
+    [-1, 2], [0, 2], [1, 2]
   ];
   const ids = Object.values(model.concepts)
     .filter(c => !offNodes.has(c.id) && activeDegree(c) > 0)
@@ -726,7 +720,6 @@ function computeLayoutClean() {
       .sort((a, b) => ((model.concepts[b].activeDeg ?? model.concepts[b].deg) - (model.concepts[a].activeDeg ?? model.concepts[a].deg)) || a.localeCompare(b));
     if (!group.length) return;
     pos[group[0]] = { x: center.x, y: center.y };
-    const slots = (sys === 'EEP' || sys === 'EFC') ? slotsTop : slotsBottom;
     group.slice(1).forEach((id, index) => {
       const slot = slots[index] || [0, 2];
       pos[id] = { x: center.x + slot[0] * SLOT_DX, y: center.y + slot[1] * SLOT_DY };
