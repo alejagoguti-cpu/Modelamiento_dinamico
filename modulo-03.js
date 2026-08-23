@@ -2312,6 +2312,7 @@ function computeLayoutClean() {
     });
   });
 
+  Object.keys(layout).forEach(id => { if (!ids.includes(id)) delete layout[id]; });
   ids.forEach(id => {
     const p = pos[id] || { x: CANVAS.w / 2, y: CANVAS.h / 2 };
     const margin = nodeR[id] + 34;
@@ -2427,9 +2428,9 @@ function recomputeActiveGraph() {
   });
 }
 function computeDrift() {
-  Object.values(model.concepts).forEach(c => {
-    const p = layout[c.id];
-    drawPos[c.id] = { x: p.x, y: p.y };
+  Object.keys(layout).forEach(id => {
+    const p = layout[id];
+    if (p) drawPos[id] = { x: p.x, y: p.y };
   });
 }
 
@@ -2465,7 +2466,7 @@ function updateGraphGeometry() {
     const r = model.relations.find(x => String(x.id) === path.getAttribute('data-rel'));
     if (!r || !relActive(r)) return;
     const a = drawPos[r.from], b = drawPos[r.to];
-    if (a && b) path.setAttribute('d', curvePath(a, b, nodeR[r.from], nodeR[r.to]));
+    if (a && b) path.setAttribute('d', relationPath(r, a, b, nodeR[r.from], nodeR[r.to]));
   });
 }
 function paintDraggedGraph() {
@@ -2518,7 +2519,7 @@ function render() {
     : null;
   recomputeActiveGraph();
   computeLayoutClean();
-  const targets = Object.fromEntries(Object.values(model.concepts).map(c => [c.id, { ...layout[c.id] }]));
+  const targets = Object.fromEntries(Object.keys(layout).map(id => [id, { ...layout[id] }]));
   if (previousPositions) Object.keys(targets).forEach(id => { drawPos[id] = previousPositions[id] || targets[id]; });
   else computeDrift();
   const gGuides = document.getElementById('gGuides');
