@@ -4761,3 +4761,31 @@ body { position:relative !important; }
 .subsystems-panel strong { display: block; margin-bottom: 8px; color: #76fff0; font-size: 11px; letter-spacing: .12em; }
 .subsystems-panel span { display: block; color: rgba(242,236,227,.8); font-size: 12px; line-height: 1.55; }
 @media (max-width: 720px) { .cartography-visual.real-map-shell, .real-cartography-map { min-height: 500px; height: 68vh; } }
+
+/* Modo didáctico: fondo negro animado y subsistemas interactivos */
+body.module02-reference-page { background: #020303; }
+body.module02-reference-page::before { content: ""; position: fixed; inset: -18%; z-index: -1; pointer-events: none; background: conic-gradient(from 40deg at 35% 42%, rgba(56,239,136,.08), transparent 22%, rgba(247,111,176,.07), transparent 48%, rgba(75,215,239,.08), transparent 72%); filter: blur(32px) saturate(1.6); animation: psychedelic-drift 18s ease-in-out infinite alternate; }
+@keyframes psychedelic-drift { from { transform: rotate(-4deg) scale(1); } to { transform: rotate(8deg) scale(1.12); } }
+.hero-copy h1 { white-space: nowrap; font-size: clamp(2rem, 5vw, 4.8rem); }
+.hero-copy h1 br { display: none; }
+.cartography-visual.real-map-shell { min-height: 680px; height: min(78vh, 780px); background: #000; }
+.real-cartography-map { min-height: 680px; height: 100%; filter: grayscale(1) contrast(1.18) brightness(.58); }
+.map-live-badge { color: #fff !important; border-color: rgba(255,255,255,.5) !important; }
+.map-live-badge i { background: #fff !important; box-shadow: 0 0 9px #fff !important; }
+.real-map-shell .map-controls button { border-color: rgba(255,255,255,.56); color: #fff; background: rgba(0,0,0,.86); }
+.real-map-shell .map-controls button:hover, .real-map-shell .map-controls button.active { border-color: #f76fb0; color: #fff; background: rgba(247,111,176,.24); }
+.subsystem-bubbles { position: absolute; inset: 0; z-index: 5; pointer-events: none; }
+.subsystem-bubble { position: absolute; transform: translate(-50%, -50%); width: 76px; height: 76px; padding: 7px; pointer-events: auto; cursor: pointer; border: 2px solid var(--bubble-color); border-radius: 50%; background: rgba(0,0,0,.9); box-shadow: 0 0 12px color-mix(in srgb, var(--bubble-color) 70%, transparent), inset 0 0 13px color-mix(in srgb, var(--bubble-color) 18%, transparent); color: #fff; font-size: 9px; font-weight: 900; letter-spacing: .05em; transition: transform .2s ease, box-shadow .2s ease; }
+.subsystem-bubble:hover, .subsystem-bubble.active { transform: translate(-50%, -50%) scale(1.16); box-shadow: 0 0 20px var(--bubble-color), inset 0 0 20px color-mix(in srgb, var(--bubble-color) 28%, transparent); }
+.subsystem-actants { position: absolute; z-index: 8; width: min(310px, calc(100% - 24px)); padding: 13px 15px; pointer-events: auto; border: 1px solid var(--bubble-color); border-left: 4px solid var(--bubble-color); border-radius: 9px; background: rgba(0,0,0,.95); box-shadow: 0 12px 28px rgba(0,0,0,.65); color: #fff; animation: bubble-in .22s ease-out; }
+@keyframes bubble-in { from { opacity: 0; transform: translateY(8px) scale(.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
+.subsystem-actants strong { display: block; color: var(--bubble-color); font-size: 12px; letter-spacing: .08em; margin-bottom: 6px; }
+.subsystem-actants span { display: block; color: rgba(255,255,255,.82); font-size: 11px; line-height: 1.42; margin-bottom: 9px; }
+.subsystem-actants div { display: flex; flex-wrap: wrap; gap: 5px; }
+.subsystem-actants i { padding: 4px 6px; border: 1px solid color-mix(in srgb, var(--bubble-color) 65%, transparent); border-radius: 999px; color: #fff; font-size: 9px; font-style: normal; }
+@media (max-width: 720px) { .hero-copy h1 { white-space: normal; font-size: 2.25rem; } .cartography-visual.real-map-shell, .real-cartography-map { min-height: 560px; height: 72vh; } .subsystem-bubble { width: 62px; height: 62px; font-size: 7px; } }
+
+/* Ajustes finales de legibilidad */
+.hero-copy h1 em { margin-left: .16em; }
+.real-cartography-map { background: #000 !important; }
+.maplibregl-canvas { background: #000 !important; }
