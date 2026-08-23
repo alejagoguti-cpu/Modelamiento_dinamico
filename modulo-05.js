@@ -646,12 +646,17 @@
       const endpointTimer = window.setTimeout(() => endpointController.abort(), OVERPASS_ENDPOINT_TIMEOUT_MS);
       const requestSignal = AbortSignal.any ? AbortSignal.any([signal, endpointController.signal]) : signal;
       try {
-        const response = await fetch(endpoint, {
-          method: "POST",
-          signal: requestSignal,
-          headers: { Accept: "application/json", "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" },
-          body: `data=${encodeURIComponent(query)}`,
-        });
+        const queryParam = `?data=${encodeURIComponent(query)}`;
+        let response = await fetch(`${endpoint}${queryParam}`, { method: "GET", signal: requestSignal, headers: { Accept: "application/json" } });
+        /* Algunos relays aceptan POST pero no GET; se conserva un segundo intento. */
+        if (!response.ok) {
+          response = await fetch(endpoint, {
+            method: "POST",
+            signal: requestSignal,
+            headers: { Accept: "application/json", "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" },
+            body: `data=${encodeURIComponent(query)}`,
+          });
+        }
         if (!response.ok) throw new Error(`Overpass HTTP ${response.status}`);
         const json = await response.json();
         const elements = Array.isArray(json.elements) ? json.elements : [];
