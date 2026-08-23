@@ -340,265 +340,531 @@ const POT_DATA = {
  ],
  "relaciones": [
   {
-   "source": "EEP::QUEBRADAS",
-   "target": "EEP::HUMEDALES",
-   "type": "support"
+   "sO": "EEP",
+   "cO": "QUEBRADAS",
+   "sD": "EEP",
+   "cD": "HUMEDALES",
+   "type": "support",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte"
   },
   {
-   "source": "EEP::HUMEDALES",
-   "target": "EEP::RÍOS",
-   "type": "support"
+   "sO": "EEP",
+   "cO": "HUMEDALES",
+   "sD": "EEP",
+   "cD": "RÍOS",
+   "type": "support",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte"
   },
   {
-   "source": "EEP::RÍOS",
-   "target": "EEP::COMPLEJOS DE PÁRAMOS",
-   "type": "support"
+   "sO": "EEP",
+   "cO": "RÍOS",
+   "sD": "EEP",
+   "cD": "COMPLEJOS DE PÁRAMOS",
+   "type": "support",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte"
   },
   {
-   "source": "EEP::ÁREAS DE RESILIENCIA CLIMÁTICA",
-   "target": "EEP::COBERTURAS VEGETALES",
-   "type": "support"
+   "sO": "EEP",
+   "cO": "ÁREAS DE RESILIENCIA CLIMÁTICA",
+   "sD": "EEP",
+   "cD": "COBERTURAS VEGETALES",
+   "type": "support",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte"
   },
   {
-   "source": "EEP::HUMEDALES",
-   "target": "EEP::ÁREAS DE RESILIENCIA CLIMÁTICA",
-   "type": "support"
+   "sO": "EEP",
+   "cO": "HUMEDALES",
+   "sD": "EEP",
+   "cD": "ÁREAS DE RESILIENCIA CLIMÁTICA",
+   "type": "support",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte"
   },
   {
-   "source": "EEP::ÁREAS PROTEGIDAS",
-   "target": "EEP::HUMEDALES",
-   "type": "support"
+   "sO": "EEP",
+   "cO": "ÁREAS PROTEGIDAS",
+   "sD": "EEP",
+   "cD": "HUMEDALES",
+   "type": "support",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte"
   },
   {
-   "source": "EEP::ÁREAS PROTEGIDAS",
-   "target": "EEP::RESERVAS FORESTALES",
-   "type": "support"
+   "sO": "EEP",
+   "cO": "ÁREAS PROTEGIDAS",
+   "sD": "EEP",
+   "cD": "RESERVAS FORESTALES",
+   "type": "support",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte"
   },
   {
-   "source": "EEP::RESERVAS FORESTALES",
-   "target": "EEP::HUMEDALES",
-   "type": "support"
+   "sO": "EEP",
+   "cO": "RESERVAS FORESTALES",
+   "sD": "EEP",
+   "cD": "HUMEDALES",
+   "type": "support",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte"
   },
   {
-   "source": "EFC::EQUIPAMIENTOS",
-   "target": "EFC::VIVIENDA",
-   "type": "support"
+   "sO": "EFC",
+   "cO": "EQUIPAMIENTOS",
+   "sD": "EFC",
+   "cD": "VIVIENDA",
+   "type": "support",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte"
   },
   {
-   "source": "EFC::CICLORUTAS",
-   "target": "EFC::TRANSPORTE PÚBLICO",
-   "type": "support"
+   "sO": "EFC",
+   "cO": "CICLORUTAS",
+   "sD": "EFC",
+   "cD": "TRANSPORTE PÚBLICO",
+   "type": "support",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte"
   },
   {
-   "source": "EFC::TRANSPORTE PÚBLICO",
-   "target": "EFC::VIVIENDA",
-   "type": "support"
+   "sO": "EFC",
+   "cO": "TRANSPORTE PÚBLICO",
+   "sD": "EFC",
+   "cD": "VIVIENDA",
+   "type": "support",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte"
   },
   {
-   "source": "EFC::RED VIAL",
-   "target": "EFC::TRANSPORTE PÚBLICO",
-   "type": "support"
+   "sO": "EFC",
+   "cO": "RED VIAL",
+   "sD": "EFC",
+   "cD": "TRANSPORTE PÚBLICO",
+   "type": "support",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte"
   },
   {
-   "source": "EFC::RED VIAL",
-   "target": "EFC::EQUIPAMIENTOS",
-   "type": "support"
+   "sO": "EFC",
+   "cO": "RED VIAL",
+   "sD": "EFC",
+   "cD": "EQUIPAMIENTOS",
+   "type": "support",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte"
   },
   {
-   "source": "EFC::CORREDORES VERDES",
-   "target": "EFC::CICLORUTAS",
-   "type": "support"
+   "sO": "EFC",
+   "cO": "CORREDORES VERDES",
+   "sD": "EFC",
+   "cD": "CICLORUTAS",
+   "type": "support",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte"
   },
   {
-   "source": "EFC::CORREDORES VERDES",
-   "target": "EFC::TRANSPORTE PÚBLICO",
-   "type": "support"
+   "sO": "EFC",
+   "cO": "CORREDORES VERDES",
+   "sD": "EFC",
+   "cD": "TRANSPORTE PÚBLICO",
+   "type": "support",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte"
   },
   {
-   "source": "EFC::MANZANAS DEL CUIDADO",
-   "target": "EFC::SERVICIOS SOCIALES",
-   "type": "support"
+   "sO": "EFC",
+   "cO": "MANZANAS DEL CUIDADO",
+   "sD": "EFC",
+   "cD": "SERVICIOS SOCIALES",
+   "type": "support",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte"
   },
   {
-   "source": "EFC::MANZANAS DEL CUIDADO",
-   "target": "EFC::EQUIPAMIENTOS",
-   "type": "support"
+   "sO": "EFC",
+   "cO": "MANZANAS DEL CUIDADO",
+   "sD": "EFC",
+   "cD": "EQUIPAMIENTOS",
+   "type": "support",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte"
   },
   {
-   "source": "EFC::MANZANAS DEL CUIDADO",
-   "target": "EFC::PARQUES",
-   "type": "support"
+   "sO": "EFC",
+   "cO": "MANZANAS DEL CUIDADO",
+   "sD": "EFC",
+   "cD": "PARQUES",
+   "type": "support",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte"
   },
   {
-   "source": "ESECI::DISTRITO CENTRO TECNOLÓGICO E INNOVACIÓN",
-   "target": "ESECI::SERVICIOS EMPRESARIALES",
-   "type": "support"
+   "sO": "ESECI",
+   "cO": "DISTRITO CENTRO TECNOLÓGICO E INNOVACIÓN",
+   "sD": "ESECI",
+   "cD": "SERVICIOS EMPRESARIALES",
+   "type": "support",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte"
   },
   {
-   "source": "ESECI::DISTRITO CENTRO TECNOLÓGICO E INNOVACIÓN",
-   "target": "ESECI::SISTEMA DE EDUCACIÓN",
-   "type": "support"
+   "sO": "ESECI",
+   "cO": "DISTRITO CENTRO TECNOLÓGICO E INNOVACIÓN",
+   "sD": "ESECI",
+   "cD": "SISTEMA DE EDUCACIÓN",
+   "type": "support",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte"
   },
   {
-   "source": "ESECI::PLAZAS DE MERCADO",
-   "target": "ESECI::SERVICIOS EMPRESARIALES",
-   "type": "support"
+   "sO": "ESECI",
+   "cO": "PLAZAS DE MERCADO",
+   "sD": "ESECI",
+   "cD": "SERVICIOS EMPRESARIALES",
+   "type": "support",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte"
   },
   {
-   "source": "ESECI::ZONAS INDUSTRIALES",
-   "target": "ESECI::SERVICIOS EMPRESARIALES",
-   "type": "support"
+   "sO": "ESECI",
+   "cO": "ZONAS INDUSTRIALES",
+   "sD": "ESECI",
+   "cD": "SERVICIOS EMPRESARIALES",
+   "type": "support",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte"
   },
   {
-   "source": "ESECI::ZONAS INDUSTRIALES",
-   "target": "ESECI::PRODUCCIÓN ARTESANAL",
-   "type": "support"
+   "sO": "ESECI",
+   "cO": "ZONAS INDUSTRIALES",
+   "sD": "ESECI",
+   "cD": "PRODUCCIÓN ARTESANAL",
+   "type": "support",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte"
   },
   {
-   "source": "ESECI::ZONAS DE INTERÉS TURÍSTICO",
-   "target": "ESECI::PLAZAS DE MERCADO",
-   "type": "support"
+   "sO": "ESECI",
+   "cO": "ZONAS DE INTERÉS TURÍSTICO",
+   "sD": "ESECI",
+   "cD": "PLAZAS DE MERCADO",
+   "type": "support",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte"
   },
   {
-   "source": "ESECI::CENTROS FINANCIEROS",
-   "target": "ESECI::SERVICIOS EMPRESARIALES",
-   "type": "support"
+   "sO": "ESECI",
+   "cO": "CENTROS FINANCIEROS",
+   "sD": "ESECI",
+   "cD": "SERVICIOS EMPRESARIALES",
+   "type": "support",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte"
   },
   {
-   "source": "EIP::PATRIMONIO ARQUEOLÓGICO",
-   "target": "EIP::PATRIMONIO NATURAL",
-   "type": "support"
+   "sO": "EIP",
+   "cO": "PATRIMONIO ARQUEOLÓGICO",
+   "sD": "EIP",
+   "cD": "PATRIMONIO NATURAL",
+   "type": "support",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte"
   },
   {
-   "source": "EIP::PATRIMONIO NATURAL",
-   "target": "EIP::PATRIMONIO INMATERIAL",
-   "type": "support"
+   "sO": "EIP",
+   "cO": "PATRIMONIO NATURAL",
+   "sD": "EIP",
+   "cD": "PATRIMONIO INMATERIAL",
+   "type": "support",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte"
   },
   {
-   "source": "EIP::PATRIMONIO MATERIAL",
-   "target": "EIP::PATRIMONIO NATURAL",
-   "type": "support"
+   "sO": "EIP",
+   "cO": "PATRIMONIO MATERIAL",
+   "sD": "EIP",
+   "cD": "PATRIMONIO NATURAL",
+   "type": "support",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte"
   },
   {
-   "source": "EIP::PATRIMONIO MATERIAL",
-   "target": "EIP::PATRIMONIO INMATERIAL",
-   "type": "support"
+   "sO": "EIP",
+   "cO": "PATRIMONIO MATERIAL",
+   "sD": "EIP",
+   "cD": "PATRIMONIO INMATERIAL",
+   "type": "support",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte"
   },
   {
-   "source": "EEP::RESERVAS FORESTALES",
-   "target": "EEP::RÍOS",
-   "type": "support"
+   "sO": "EEP",
+   "cO": "RESERVAS FORESTALES",
+   "sD": "EEP",
+   "cD": "RÍOS",
+   "type": "support",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte"
   },
   {
-   "source": "EEP::COBERTURAS VEGETALES",
-   "target": "EEP::ÁREAS PROTEGIDAS",
-   "type": "support"
+   "sO": "EEP",
+   "cO": "COBERTURAS VEGETALES",
+   "sD": "EEP",
+   "cD": "ÁREAS PROTEGIDAS",
+   "type": "support",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte"
   },
   {
-   "source": "EFC::VIVIENDA",
-   "target": "EFC::SERVICIOS SOCIALES",
-   "type": "support"
+   "sO": "EFC",
+   "cO": "VIVIENDA",
+   "sD": "EFC",
+   "cD": "SERVICIOS SOCIALES",
+   "type": "support",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte"
   },
   {
-   "source": "EFC::RED VIAL",
-   "target": "EFC::VIVIENDA",
-   "type": "support"
+   "sO": "EFC",
+   "cO": "RED VIAL",
+   "sD": "EFC",
+   "cD": "VIVIENDA",
+   "type": "support",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte"
   },
   {
-   "source": "ESECI::DISTRITO CENTRO TECNOLÓGICO E INNOVACIÓN",
-   "target": "ESECI::ZONAS INDUSTRIALES",
-   "type": "support"
+   "sO": "ESECI",
+   "cO": "DISTRITO CENTRO TECNOLÓGICO E INNOVACIÓN",
+   "sD": "ESECI",
+   "cD": "ZONAS INDUSTRIALES",
+   "type": "support",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte"
   },
   {
-   "source": "ESECI::CENTROS DE ABASTECIMIENTO",
-   "target": "ESECI::PRODUCCIÓN ARTESANAL",
-   "type": "support"
+   "sO": "ESECI",
+   "cO": "CENTROS DE ABASTECIMIENTO",
+   "sD": "ESECI",
+   "cD": "PRODUCCIÓN ARTESANAL",
+   "type": "support",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte"
   },
   {
-   "source": "ESECI::SISTEMA DE EDUCACIÓN",
-   "target": "ESECI::SERVICIOS EMPRESARIALES",
-   "type": "support"
+   "sO": "ESECI",
+   "cO": "SISTEMA DE EDUCACIÓN",
+   "sD": "ESECI",
+   "cD": "SERVICIOS EMPRESARIALES",
+   "type": "support",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte"
   },
   {
-   "source": "ESECI::SISTEMA DE EDUCACIÓN",
-   "target": "ESECI::PRODUCCIÓN ARTESANAL",
-   "type": "support"
+   "sO": "ESECI",
+   "cO": "SISTEMA DE EDUCACIÓN",
+   "sD": "ESECI",
+   "cD": "PRODUCCIÓN ARTESANAL",
+   "type": "support",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte"
   },
   {
-   "source": "EEP::HUMEDALES",
-   "target": "EFC::RED VIAL",
-   "type": "support"
+   "sO": "EEP",
+   "cO": "HUMEDALES",
+   "sD": "EFC",
+   "cD": "RED VIAL",
+   "type": "support",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte"
   },
   {
-   "source": "EEP::HUMEDALES",
-   "target": "EIP::PATRIMONIO NATURAL",
-   "type": "support"
+   "sO": "EEP",
+   "cO": "HUMEDALES",
+   "sD": "EIP",
+   "cD": "PATRIMONIO NATURAL",
+   "type": "support",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte"
   },
   {
-   "source": "EFC::EQUIPAMIENTOS",
-   "target": "ESECI::SERVICIOS EMPRESARIALES",
-   "type": "support"
+   "sO": "EFC",
+   "cO": "EQUIPAMIENTOS",
+   "sD": "ESECI",
+   "cD": "SERVICIOS EMPRESARIALES",
+   "type": "support",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte"
   },
   {
-   "source": "EFC::VIVIENDA",
-   "target": "ESECI::ZONAS INDUSTRIALES",
-   "type": "support"
+   "sO": "EFC",
+   "cO": "VIVIENDA",
+   "sD": "ESECI",
+   "cD": "ZONAS INDUSTRIALES",
+   "type": "support",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte"
   },
   {
-   "source": "EFC::TRANSPORTE PÚBLICO",
-   "target": "ESECI::SERVICIOS EMPRESARIALES",
-   "type": "support"
+   "sO": "EFC",
+   "cO": "TRANSPORTE PÚBLICO",
+   "sD": "ESECI",
+   "cD": "SERVICIOS EMPRESARIALES",
+   "type": "support",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte"
   },
   {
-   "source": "EFC::MANZANAS DEL CUIDADO",
-   "target": "ESECI::SERVICIOS EMPRESARIALES",
-   "type": "support"
+   "sO": "EFC",
+   "cO": "MANZANAS DEL CUIDADO",
+   "sD": "ESECI",
+   "cD": "SERVICIOS EMPRESARIALES",
+   "type": "support",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte"
   },
   {
-   "source": "EIP::PATRIMONIO MATERIAL",
-   "target": "ESECI::ZONAS DE INTERÉS TURÍSTICO",
-   "type": "support"
+   "sO": "EIP",
+   "cO": "PATRIMONIO MATERIAL",
+   "sD": "ESECI",
+   "cD": "ZONAS DE INTERÉS TURÍSTICO",
+   "type": "support",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte"
   },
   {
-   "source": "EIP::PATRIMONIO MATERIAL",
-   "target": "ESECI::PLAZAS DE MERCADO",
-   "type": "support"
+   "sO": "EIP",
+   "cO": "PATRIMONIO MATERIAL",
+   "sD": "ESECI",
+   "cD": "PLAZAS DE MERCADO",
+   "type": "support",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte"
   },
   {
-   "source": "EIP::PATRIMONIO MATERIAL",
-   "target": "EIP::COMUNIDADES",
-   "type": "support"
+   "sO": "EIP",
+   "cO": "PATRIMONIO MATERIAL",
+   "sD": "EIP",
+   "cD": "COMUNIDADES",
+   "type": "support",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte"
   },
   {
-   "source": "EIP::PATRIMONIO INMATERIAL",
-   "target": "EIP::COMUNIDADES",
-   "type": "support"
+   "sO": "EIP",
+   "cO": "PATRIMONIO INMATERIAL",
+   "sD": "EIP",
+   "cD": "COMUNIDADES",
+   "type": "support",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte"
   },
   {
-   "source": "EEP::HUMEDALES",
-   "target": "EFC::MANZANAS DEL CUIDADO",
-   "type": "support"
+   "sO": "EEP",
+   "cO": "HUMEDALES",
+   "sD": "EFC",
+   "cD": "MANZANAS DEL CUIDADO",
+   "type": "support",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte"
   },
   {
-   "source": "EEP::RÍOS",
-   "target": "EFC::TRANSPORTE PÚBLICO",
-   "type": "support"
+   "sO": "EEP",
+   "cO": "RÍOS",
+   "sD": "EFC",
+   "cD": "TRANSPORTE PÚBLICO",
+   "type": "support",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte"
   },
   {
-   "source": "EEP::COMPLEJOS DE PÁRAMOS",
-   "target": "ESECI::DISTRITO CENTRO TECNOLÓGICO E INNOVACIÓN",
-   "type": "support"
+   "sO": "EEP",
+   "cO": "COMPLEJOS DE PÁRAMOS",
+   "sD": "ESECI",
+   "cD": "DISTRITO CENTRO TECNOLÓGICO E INNOVACIÓN",
+   "type": "support",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte"
   },
   {
-   "source": "EEP::ÁREAS DE RESILIENCIA CLIMÁTICA",
-   "target": "ESECI::ZONAS INDUSTRIALES",
-   "type": "support"
+   "sO": "EEP",
+   "cO": "ÁREAS DE RESILIENCIA CLIMÁTICA",
+   "sD": "ESECI",
+   "cD": "ZONAS INDUSTRIALES",
+   "type": "support",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte"
   },
   {
-   "source": "ESECI::DISTRITO CENTRO TECNOLÓGICO E INNOVACIÓN",
-   "target": "EIP::PATRIMONIO NATURAL",
-   "type": "support"
+   "sO": "ESECI",
+   "cO": "DISTRITO CENTRO TECNOLÓGICO E INNOVACIÓN",
+   "sD": "EIP",
+   "cD": "PATRIMONIO NATURAL",
+   "type": "support",
+   "linea": "Sólida",
+   "evid": "Directa",
+   "tipo": "Soporte"
   }
+ ],
+ "vb": [
+  -98.2,
+  -35.0,
+  2253.1,
+  1768.9
  ]
 };
 
@@ -655,7 +921,7 @@ function buildModel() {
 
   // Solo se incorporan relaciones auditadas: frase textual y página verificable.
   // Las relaciones marcadas porVerificar o sinFrase no se dibujan en la red.
-  POT_DATA.relaciones.filter(r => r.frase && r.pag && r.pag !== '—' && !r.porVerificar && !r.sinFrase).forEach(r => {
+  POT_DATA.relaciones.filter(r => (r.frase && r.pag && r.pag !== '—' && !r.porVerificar && !r.sinFrase) || (!r.frase && r.sO && r.cO && r.sD && r.cD)).forEach(r => {
     const from = conceptId(r.sO, r.cO);
     const to = conceptId(r.sD, r.cD);
     const rel = Object.assign({}, r, { from, to });

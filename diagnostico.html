@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Diagnóstico Módulo 03</title>
+<style>
+body { font-family: monospace; background: #0f0f0f; color: #00ff00; padding: 20px; }
+.ok { color: #00ff00; }
+.error { color: #ff0000; }
+.warn { color: #ffff00; }
+.section { margin: 20px 0; border: 1px solid #444; padding: 10px; }
+pre { background: #1a1a1a; padding: 10px; overflow-x: auto; }
+</style>
+</head>
+<body>
+<h1>🔍 DIAGNÓSTICO MÓDULO 03</h1>
+<div id="results"></div>
+
+<script>
+const results = document.getElementById('results');
+
+function log(msg, type = 'info') {
+  const div = document.createElement('div');
+  div.className = type === 'ok' ? 'ok' : type === 'error' ? 'error' : 'warn';
+  div.textContent = msg;
+  results.appendChild(div);
+}
+
+function section(title) {
+  const div = document.createElement('div');
+  div.className = 'section';
+  const h = document.createElement('h3');
+  h.textContent = title;
+  div.appendChild(h);
+  results.appendChild(div);
+  return div;
+}
+
+// Test 1: Archivos
+section('📁 ARCHIVOS');
+const files = ['modulo-03.html', 'modulo-03.js', 'modulo-03.css'];
+for (const f of files) {
+  fetch(f, { method: 'HEAD' })
+    .then(r => log(`✓ ${f} [${r.status}]`, 'ok'))
+    .catch(e => log(`✗ ${f} [${e.message}]`, 'error'));
+}
+
+// Test 2: DOM Elements
+setTimeout(() => {
+  section('🏗️ ELEMENTOS DOM');
+  const elements = [
+    'svg',
+    'gNodes',
+    'gRels',
+    'gGuides',
+    'stage'
+  ];
+
+  for (const id of elements) {
+    const el = document.getElementById(id);
+    if (el) {
+      log(`✓ ${id} encontrado`, 'ok');
+    } else {
+      log(`✗ ${id} NO ENCONTRADO`, 'error');
+    }
+  }
+
+  // Test 3: Script execution
+  section('📜 JAVASCRIPT');
+
+  // Crear contexto de prueba
+  const testDiv = document.createElement('div');
+  testDiv.id = 'test-container';
+  testDiv.innerHTML = `
+    <svg id="svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+      <g id="gNodes"></g>
+      <g id="gRels"></g>
+      <g id="gGuides"></g>
+    </svg>
+  `;
+  document.body.appendChild(testDiv);
+
+  // Cargar modulo-03.js en un context de prueba
+  const script = document.createElement('script');
+  script.src = 'modulo-03.js?t=' + Date.now();
+  script.onload = () => {
+    log('✓ modulo-03.js cargado', 'ok');
+
+    // Verificar variables globales
+    setTimeout(() => {
+      section('🔧 VARIABLES GLOBALES');
+
+      if (typeof POT_DATA !== 'undefined') {
+        log(`✓ POT_DATA definida (${POT_DATA.nodos.length} nodos)`, 'ok');
+      } else {
+        log('✗ POT_DATA NO definida', 'error');
+      }
+
+      if (typeof model !== 'undefined') {
+        log(`✓ model definida`, 'ok');
+      } else {
+        log('✗ model NO definida', 'error');
+      }
+
+      if (typeof buildModel === 'function') {
+        log('✓ buildModel() existe', 'ok');
+        try {
+          buildModel();
+          log(`  → buildModel() ejecutada (${Object.keys(model.concepts).length} conceptos)`, 'ok');
+        } catch (e) {
+          log(`  → ERROR en buildModel(): ${e.message}`, 'error');
+        }
+      } else {
+        log('✗ buildModel() NO existe', 'error');
+      }
+
+      if (typeof render === 'function') {
+        log('✓ render() existe', 'ok');
+        try {
+          render();
+          const nodes = document.querySelectorAll('[data-id]').length;
+          log(`  → render() ejecutada (${nodes} nodos dibujados)`, nodes > 0 ? 'ok' : 'warn');
+        } catch (e) {
+          log(`  → ERROR en render(): ${e.message}`, 'error');
+        }
+      } else {
+        log('✗ render() NO existe', 'error');
+      }
+    }, 100);
+  };
+
+  script.onerror = () => {
+    log('✗ Error cargando modulo-03.js', 'error');
+  };
+
+  document.body.appendChild(script);
+}, 500);
+</script>
+</body>
+</html>
