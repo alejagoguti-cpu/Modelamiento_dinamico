@@ -1133,7 +1133,9 @@ const scaleNetworkViewState = { scale: 1, x: 0, y: 0 };
 const scaleNetworkFlowState = {
   running: true,
   rafId: null,
+  ambientRafId: null,
   lastTime: 0,
+  ambientStartedAt: 0,
   particles: [],
 };
 
@@ -1143,6 +1145,37 @@ function cancelScaleNetworkFlowLoop() {
     scaleNetworkFlowState.rafId = null;
   }
   scaleNetworkFlowState.lastTime = 0;
+}
+
+function cancelScaleNetworkAmbientLoop() {
+  if (scaleNetworkFlowState.ambientRafId !== null) {
+    window.cancelAnimationFrame(scaleNetworkFlowState.ambientRafId);
+    scaleNetworkFlowState.ambientRafId = null;
+  }
+  scaleNetworkFlowState.ambientStartedAt = 0;
+  const scene = document.querySelector('#scaleNetworkCanvas .popup-network-scene');
+  scene?.removeAttribute('transform');
+}
+
+function animateScaleNetworkAmbient(timestamp) {
+  const scene = document.querySelector('#scaleNetworkCanvas .popup-network-scene');
+  if (!scene) {
+    scaleNetworkFlowState.ambientRafId = null;
+    return;
+  }
+  if (!scaleNetworkFlowState.ambientStartedAt) scaleNetworkFlowState.ambientStartedAt = timestamp;
+  const elapsed = timestamp - scaleNetworkFlowState.ambientStartedAt;
+  const driftX = Math.sin(elapsed * .00034) * 2.8;
+  const driftY = Math.cos(elapsed * .00027) * 1.8;
+  const breath = 1 + Math.sin(elapsed * .00022) * .0025;
+  scene.setAttribute('transform', `translate(500 272) scale(${breath.toFixed(5)}) translate(${(driftX - 500).toFixed(2)} ${(driftY - 272).toFixed(2)})`);
+  scaleNetworkFlowState.ambientRafId = window.requestAnimationFrame(animateScaleNetworkAmbient);
+}
+
+function startScaleNetworkAmbientLoop() {
+  if (scaleNetworkFlowState.ambientRafId !== null) return;
+  if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+  scaleNetworkFlowState.ambientRafId = window.requestAnimationFrame(animateScaleNetworkAmbient);
 }
 
 function updateScaleNetworkFlowStatus(edgeCount = document.querySelectorAll('#scaleNetworkCanvas .popup-edge').length) {
@@ -1196,6 +1229,7 @@ function buildScaleNetworkFlow(resetProgress = false) {
     return;
   }
   layer.replaceChildren();
+  startScaleNetworkAmbientLoop();
   const svgNamespace = 'http://www.w3.org/2000/svg';
   const edges = [...svg.querySelectorAll('.popup-edge')];
   edges.forEach((edge, edgeIndex) => {
@@ -1498,9 +1532,11 @@ function renderScaleNetworkPopup(mode) {
       <marker id="arrow-direct" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#46d6d0" /></marker>
       <marker id="arrow-indirecta" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#e89a6c" /></marker>
     </defs>
-    <g class="popup-edges">${edgeMarkup}</g>
-    <g class="popup-flow-layer" aria-hidden="true"></g>
-    <g class="popup-nodes">${nodeMarkup}</g>
+    <g class="popup-network-scene">
+      <g class="popup-edges">${edgeMarkup}</g>
+      <g class="popup-flow-layer" aria-hidden="true"></g>
+      <g class="popup-nodes">${nodeMarkup}</g>
+    </g>
   </svg></div>`;
 
   resetScaleNetworkView();
@@ -1645,6 +1681,7 @@ function closeScaleNetworkModal() {
   const modal = document.getElementById('scaleNetworkModal');
   if (!modal) return;
   cancelScaleNetworkFlowLoop();
+  cancelScaleNetworkAmbientLoop();
   modal.classList.remove('open');
   modal.setAttribute('aria-hidden', 'true');
   document.body.classList.remove('scale-modal-open');
