@@ -3070,6 +3070,9 @@ function toggleSystem(s) {
   updateSwitches();
   render();
   updateMetrics();
+  // Actualización explícita: el popup debe reflejar el clic actual incluso
+  // cuando el navegador conserva una pintura anterior durante el reflow.
+  updateNetworkFinding(SYS.filter(system => !state[system]), model.relations.filter(relActive).length, model.relations.length);
 }
 
 function updateSwitches() {
@@ -3192,6 +3195,7 @@ function hideNodeAndConnections(id) {
   clearEvidence();
   render();
   updateMetrics();
+  updateNetworkFinding(SYS.filter(system => !state[system]), model.relations.filter(relActive).length, model.relations.length);
   if (document.getElementById('nodeSelect')) { syncNodeBtn(); updateNodeImpact(); }
 }
 
