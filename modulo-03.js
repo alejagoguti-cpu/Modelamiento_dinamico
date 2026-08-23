@@ -2435,6 +2435,28 @@ function computeDrift() {
   });
 }
 
+let networkReflowFrame = 0;
+function animateNetworkReflow(targets, fromPositions) {
+  cancelAnimationFrame(networkReflowFrame);
+  const from = fromPositions || Object.fromEntries(Object.keys(targets).map(id => [id, { ...targets[id] }]));
+  const started = performance.now();
+  const duration = 920;
+  const tick = now => {
+    const t = Math.min(1, (now - started) / duration);
+    // Resorte suave: sobrepasa levemente el objetivo y se estabiliza sin saltos.
+    const eased = 1 - Math.exp(-6.4 * t) * Math.cos(9.6 * t);
+    Object.keys(targets).forEach(id => {
+      const a = from[id] || targets[id];
+      const b = targets[id];
+      drawPos[id] = { x: a.x + (b.x - a.x) * eased, y: a.y + (b.y - a.y) * eased };
+    });
+    updateGraphGeometry();
+    if (t < 1) networkReflowFrame = requestAnimationFrame(tick);
+    else Object.keys(targets).forEach(id => { drawPos[id] = { ...targets[id] }; });
+  };
+  networkReflowFrame = requestAnimationFrame(tick);
+}
+
 const nodeDrag = { active: null, pointerId: null, startX: 0, startY: 0, base: null, delta: { x: 0, y: 0 }, raf: 0 };
 function updateGraphGeometry() {
   document.querySelectorAll('#gNodes .concept').forEach(g => {
@@ -2467,6 +2489,10 @@ function paintDraggedGraph() {
 function releaseDraggedGraph() {
   if (!nodeDrag.active) return;
   const activeId = nodeDrag.active;
+  const activeElement = [...document.querySelectorAll('#gNodes .concept')].find(el => el.getAttribute('data-id') === activeId);
+  activeElement?.classList.remove('dragging');
+  activeElement?.classList.add('just-released');
+  window.setTimeout(() => activeElement?.classList.remove('just-released'), 900);
   const startPositions = nodeDrag.base;
   const released = Object.fromEntries(Object.keys(startPositions).map(id => [id, { ...drawPos[id] }]));
   const dragged = { ...released[activeId] };
@@ -2489,9 +2515,14 @@ function releaseDraggedGraph() {
 }
 
 function render() {
+  const previousPositions = Object.keys(drawPos).length
+    ? Object.fromEntries(Object.keys(drawPos).map(id => [id, { ...drawPos[id] }]))
+    : null;
   recomputeActiveGraph();
   computeLayoutClean();
-  computeDrift();
+  const targets = Object.fromEntries(Object.values(model.concepts).map(c => [c.id, { ...layout[c.id] }]));
+  if (previousPositions) Object.keys(targets).forEach(id => { drawPos[id] = previousPositions[id] || targets[id]; });
+  else computeDrift();
   const gGuides = document.getElementById('gGuides');
   const gMembers = document.getElementById('gMembers');
   const gRels = document.getElementById('gRels');
@@ -2591,6 +2622,13 @@ const iconSize = Math.max(28, Math.round(R * 0.52));
         'data-id': id
       });
 
+      const hit = el('circle', {
+        class: 'node-hit',
+        r: R + 24,
+        fill: 'transparent',
+        'pointer-events': 'all'
+      });
+      g.appendChild(hit);
       const ring = el('circle', {
         class: 'node-fill node-ring',
         r: R,
@@ -2639,7 +2677,8 @@ const iconSize = Math.max(28, Math.round(R * 0.52));
         nodeDrag.startY = ev.clientY;
         nodeDrag.base = Object.fromEntries(Object.keys(drawPos).map(key => [key, { ...drawPos[key] }]));
         nodeDrag.delta = { x: 0, y: 0 };
-        g.setPointerCapture?.(ev.pointerId);
+        g.classList.add('dragging');
+        try { g.setPointerCapture?.(ev.pointerId); } catch (error) { console.debug('Captura de puntero no disponible:', error); }
       });
       g.addEventListener('pointermove', ev => {
         if (nodeDrag.active !== id || nodeDrag.pointerId !== ev.pointerId) return;
@@ -2648,12 +2687,15 @@ const iconSize = Math.max(28, Math.round(R * 0.52));
         nodeDrag.delta = { x: (ev.clientX - nodeDrag.startX) * vb.w / Math.max(rect.width, 1), y: (ev.clientY - nodeDrag.startY) * vb.h / Math.max(rect.height, 1) };
         paintDraggedGraph();
       });
-      g.addEventListener('pointerup', ev => {
+      const finishNodeDrag = ev => {
         if (nodeDrag.active !== id || nodeDrag.pointerId !== ev.pointerId) return;
         ev.stopPropagation();
-        g.releasePointerCapture?.(ev.pointerId);
+        try { g.releasePointerCapture?.(ev.pointerId); } catch (error) { /* ya liberado */ }
         releaseDraggedGraph();
-      });
+      };
+      g.addEventListener('pointerup', finishNodeDrag);
+      g.addEventListener('pointercancel', finishNodeDrag);
+      g.addEventListener('lostpointercapture', finishNodeDrag);
 
       // Ciclo de interacción robusto: 1 clic = enfocar; 2 = deseleccionar;
       // 3 clics = ocultar el nodo y su cascada de conexiones. Se usa
@@ -2696,6 +2738,7 @@ const iconSize = Math.max(28, Math.round(R * 0.52));
   });
 
   purgeInactiveSvg();
+  if (previousPositions) animateNetworkReflow(targets, previousPositions);
 }
 
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
