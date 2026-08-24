@@ -367,6 +367,10 @@ let agencyOn = true;
 let viewMode = "todas";
 let activeSituacion = null;
 const nodeOff = new Set();
+let cityZoom = 1;
+const CITY_ZOOM_MIN = 1;
+const CITY_ZOOM_MAX = 3.4;
+const CITY_ZOOM_TITLE_THRESHOLD = 1.35;
 
 /* -------- física -------- */
 [...BASE_NODES, ...ALL_DYNAMIC_NODES].forEach(n => {
@@ -481,19 +485,15 @@ function drawEdges(svg) {
   svg.appendChild(g);
 }
 
+const INITIAL_CITY_NODE_NUMBERS = new Set(
+  (typeof CITY_DATA_SUBSYSTEMS === "undefined" ? [] : CITY_DATA_SUBSYSTEMS)
+    .flatMap(subsystem => (CITY_DATA_NODES || []).filter(node => node.subsystem === subsystem).slice(0, 5).map(node => node.n))
+);
+
 function cityDataFilterMatches(node, filter) {
-  if (!filter || filter === "all") return true;
-  const groups = {
-    "Agua y ambiente": n => (n.n >= 1 && n.n <= 26) || (n.n >= 135 && n.n <= 137),
-    "Ciudad construida": n => n.n >= 27 && n.n <= 42,
-    "Movilidad": n => n.n >= 43 && n.n <= 56,
-    "Agentes y comunidad": n => (n.n >= 57 && n.n <= 68) || (n.n >= 105 && n.n <= 110) || (n.n >= 126 && n.n <= 130),
-    "Vivienda, empleo y cuidado": n => n.n >= 69 && n.n <= 94,
-    "Patrimonio": n => n.n >= 95 && n.n <= 104,
-    "Servicios y materiales": n => n.n >= 115 && n.n <= 134,
-    "Región e información": n => n.n >= 135 && n.n <= 140,
-  };
-  return groups[filter]?.(node) ?? node.subsystem === filter;
+  if (!filter || filter === "initial") return INITIAL_CITY_NODE_NUMBERS.has(node.n);
+  if (filter === "all") return true;
+  return node.subsystem === filter;
 }
 
 function setCityDataFilter(filter) {
@@ -502,23 +502,31 @@ function setCityDataFilter(filter) {
 }
 
 function cityDataPointPosition(node, index, visibleCount) {
-  const normalized = (node.n * 0.61803398875) % 1;
-  const theta = normalized * Math.PI * 2 + ((index % 7) - 3) * .045;
-  const bands = Math.max(1, Math.ceil(Math.sqrt(visibleCount / 2)));
-  const band = index % bands;
-  const radius = 52 + ((band / Math.max(1, bands - 1)) * 236) + Math.sin(index * 1.7) * 10;
   const center = [530, 395];
   const subsystemCenters = {
-    "Hídrico": [270, 235], "Biótico": [235, 475], "Físico-urbano": [570, 195],
-    "Movilidad": [805, 300], "Social-comunitario": [790, 505], "Socioeconómico y ocupación": [560, 620],
-    "Cuidado y servicios": [330, 650], "Patrimonio y memoria": [855, 645], "Institucional y gestión": [100, 360],
-    "Energía y servicios públicos": [170, 630], "Abastecimiento y economía circular": [930, 410], "Regional y flujos abiertos": [520, 80],
+    "Sistema hídrico": [235, 205],
+    "Sistema biótico": [215, 470],
+    "Sistema físico-urbano": [555, 175],
+    "Sistema de movilidad": [835, 275],
+    "Sistema de cuidado, servicios y espacio público": [315, 660],
+    "Sistema socioeconómico y de ocupación": [555, 620],
+    "Sistema social-comunitario": [820, 505],
+    "Sistema patrimonial y de memoria": [850, 665],
+    "Sistema institucional de gestión": [105, 355],
   };
   const [cx, cy] = subsystemCenters[node.subsystem] || center;
-  const spread = Math.min(1, visibleCount / 42);
+  const filter = window.currentCityDataFilter || "initial";
+  const localNodes = (CITY_DATA_NODES || []).filter(item => item.subsystem === node.subsystem && cityDataFilterMatches(item, filter));
+  const localIndex = Math.max(0, localNodes.findIndex(item => item.n === node.n));
+  const ring = Math.floor(localIndex / 5);
+  const slot = localIndex % 5;
+  const count = Math.max(1, localNodes.length);
+  const theta = (slot / Math.min(5, count)) * Math.PI * 2 + ring * .46 + (node.n % 3) * .08;
+  const radius = 18 + ring * 22 + Math.sin(node.n * 1.47) * 3;
+  const compression = filter === "all" ? 1 : 1.12;
   return {
-    x: cx + Math.cos(theta) * radius * spread * .58,
-    y: cy + Math.sin(theta) * radius * spread * .46,
+    x: cx + Math.cos(theta) * radius * 1.18 * compression,
+    y: cy + Math.sin(theta) * radius * .82 * compression,
   };
 }
 
@@ -531,7 +539,7 @@ function showCityTableNodeInfo(node) {
   document.getElementById("edgeInfoTitle").textContent = node.name;
   document.getElementById("edgeInfoConvencion").textContent = `Nodo concreto · ${node.subsystem}`;
   document.getElementById("edgeInfoEvidencia").textContent = `“${node.name}” aparece como nodo observable en la Red ampliada de Bogotá como territorio dinámico.`;
-  document.getElementById("edgeInfoPage").textContent = `Tabla · nodo ${node.n} de 140`;
+  document.getElementById("edgeInfoPage").textContent = `Tabla · nodo ${node.n} de 150`;
   document.getElementById("edgeInfoActores").textContent = `Tipo de nodo: ${node.type}`;
   document.getElementById("edgeInfoSituacion").textContent = `Subsistema: ${node.subsystem}`;
   document.getElementById("edgeInfoCritica").textContent = "La tabla evita convertir el subsistema en un objeto abstracto: aquí se observa un lugar, agente, flujo, infraestructura o proceso concreto.";
@@ -539,35 +547,59 @@ function showCityTableNodeInfo(node) {
   panel.classList.add("visible");
 }
 
+function subsystemDisplayName(subsystem) {
+  return String(subsystem || '').replace(/^Sistema\s+/, '');
+}
+
+function subsystemTitleLines(subsystem) {
+  const words = subsystemDisplayName(subsystem).split(/\s+/).filter(Boolean);
+  const lines = [];
+  let current = '';
+  words.forEach(word => {
+    const candidate = current ? `${current} ${word}` : word;
+    if (candidate.length > 18 && current) { lines.push(current); current = word; }
+    else current = candidate;
+  });
+  if (current) lines.push(current);
+  return lines.slice(0, 3);
+}
+
 function drawCityDataCloud(svg) {
   if (typeof CITY_DATA_NODES === "undefined") return;
-  const filter = window.currentCityDataFilter || "all";
+  const filter = window.currentCityDataFilter || "initial";
   const visible = CITY_DATA_NODES.filter(node => cityDataFilterMatches(node, filter));
   const field = document.createElementNS(SVG_NS, "g");
   field.setAttribute("class", "city-table-field");
-  field.setAttribute("aria-hidden", "true");
+  const content = document.createElementNS(SVG_NS, "g");
+  content.setAttribute("class", "city-table-zoom-content");
   const fibers = document.createElementNS(SVG_NS, "g");
   fibers.setAttribute("class", "city-table-fibers");
   const points = document.createElementNS(SVG_NS, "g");
   points.setAttribute("class", "city-table-points");
+  const titles = document.createElementNS(SVG_NS, "g");
+  titles.setAttribute("class", "city-table-cluster-titles");
   const groups = {};
+
   visible.forEach((node, index) => {
     const p = cityDataPointPosition(node, index, visible.length);
     const color = CITY_DATA_SUBSYSTEM_COLORS[node.subsystem] || "#c9cedb";
-    if (!groups[node.subsystem]) groups[node.subsystem] = { node, points: [] };
+    if (!groups[node.subsystem]) groups[node.subsystem] = { subsystem: node.subsystem, color, points: [] };
     groups[node.subsystem].points.push({ node, ...p });
+
     const dot = document.createElementNS(SVG_NS, "circle");
-    dot.setAttribute("class", `city-table-point rd-node ${node.type.includes("Agente") || node.type.includes("Usuarios") ? "city-table-agent" : ""}`);
+    const isAgent = /Agente|Usuarios|Organización|Agentes|Comunidad|Personas|Comerciantes|Productores/i.test(node.type);
+    dot.setAttribute("class", `city-table-point rd-node ${isAgent ? "city-table-agent" : ""}`);
     dot.dataset.tableId = String(node.n);
     dot.dataset.id = `table-${node.n}`;
-    dot.dataset.kind = node.type.includes("Agente") || node.type.includes("Usuarios") || node.type.includes("Organización") ? "actor" : "componente";
+    dot.dataset.kind = isAgent ? "actor" : "componente";
     dot.setAttribute("role", "button");
     dot.setAttribute("tabindex", "0");
     dot.setAttribute("aria-label", `${node.name} · ${node.subsystem} · ${node.type}`);
     dot.addEventListener("click", (event) => { event.stopPropagation(); showCityTableNodeInfo(node); });
     dot.addEventListener("keydown", (event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); showCityTableNodeInfo(node); } });
-    dot.setAttribute("cx", p.x.toFixed(1)); dot.setAttribute("cy", p.y.toFixed(1));
-    dot.setAttribute("r", (node.type.includes("Humedal") || node.type.includes("Río") ? 2.5 : 1.55).toFixed(2));
+    dot.setAttribute("cx", p.x.toFixed(1));
+    dot.setAttribute("cy", p.y.toFixed(1));
+    dot.setAttribute("r", (node.n <= 12 || node.n === 21 || node.n === 26 ? 2.8 : (isAgent ? 2.1 : 1.7)).toFixed(2));
     dot.style.setProperty("--table-color", color);
     dot.style.setProperty("--table-delay", `${-((node.n % 24) * .13).toFixed(2)}s`);
     dot.setAttribute("data-table-node", String(node.n));
@@ -576,28 +608,122 @@ function drawCityDataCloud(svg) {
     dot.appendChild(title);
     points.appendChild(dot);
   });
+
   Object.values(groups).forEach((group, groupIndex) => {
     const list = group.points;
-    const color = CITY_DATA_SUBSYSTEM_COLORS[group.node.subsystem] || "#c9cedb";
     const center = list.reduce((acc, item) => ({ x: acc.x + item.x / list.length, y: acc.y + item.y / list.length }), { x: 0, y: 0 });
+    const radius = Math.max(23, Math.min(38, 18 + list.length * 1.05));
+
+    const bubble = document.createElementNS(SVG_NS, "circle");
+    bubble.setAttribute("class", "city-table-cluster");
+    bubble.setAttribute("cx", center.x.toFixed(1));
+    bubble.setAttribute("cy", center.y.toFixed(1));
+    bubble.setAttribute("r", radius.toFixed(1));
+    bubble.style.setProperty("--table-color", group.color);
+    bubble.dataset.subsystem = group.subsystem;
+    bubble.setAttribute("aria-label", group.subsystem);
+    fibers.appendChild(bubble);
+
     const core = document.createElementNS(SVG_NS, "circle");
-    core.setAttribute("class", "city-table-cluster-core"); core.setAttribute("cx", center.x); core.setAttribute("cy", center.y); core.setAttribute("r", 3.3);
-    core.style.setProperty("--table-color", color); fibers.appendChild(core);
-    list.slice(0, Math.min(18, list.length)).forEach((item, index) => {
+    core.setAttribute("class", "city-table-cluster-core");
+    core.setAttribute("cx", center.x.toFixed(1));
+    core.setAttribute("cy", center.y.toFixed(1));
+    core.setAttribute("r", "3.2");
+    core.style.setProperty("--table-color", group.color);
+    fibers.appendChild(core);
+
+    list.slice(0, Math.min(22, list.length)).forEach((item, index) => {
       const fiber = document.createElementNS(SVG_NS, "path");
       fiber.setAttribute("class", "city-table-fiber");
-      const bend = ((index % 2 ? -1 : 1) * (8 + (index % 5) * 2));
+      const bend = ((index % 2 ? -1 : 1) * (7 + (index % 5) * 1.8));
       const dx = item.x - center.x, dy = item.y - center.y;
       const length = Math.max(1, Math.hypot(dx, dy));
       const nx = -dy / length, ny = dx / length;
       const c1x = center.x + dx * .38 + nx * bend, c1y = center.y + dy * .38 + ny * bend;
       const c2x = center.x + dx * .78 - nx * bend, c2y = center.y + dy * .78 - ny * bend;
       fiber.setAttribute("d", `M${center.x.toFixed(1)},${center.y.toFixed(1)} C${c1x.toFixed(1)},${c1y.toFixed(1)} ${c2x.toFixed(1)},${c2y.toFixed(1)} ${item.x.toFixed(1)},${item.y.toFixed(1)}`);
-      fiber.style.setProperty("--table-color", color); fiber.style.setProperty("--table-delay", `${-(groupIndex * .7 + index * .09).toFixed(2)}s`);
+      fiber.style.setProperty("--table-color", group.color);
+      fiber.style.setProperty("--table-delay", `${-(groupIndex * .7 + index * .09).toFixed(2)}s`);
       fibers.appendChild(fiber);
     });
+
+    const labelGroup = document.createElementNS(SVG_NS, "g");
+    labelGroup.setAttribute("class", "city-table-cluster-title");
+    labelGroup.setAttribute("data-subsystem", group.subsystem);
+    labelGroup.setAttribute("transform", `translate(${center.x.toFixed(1)} ${center.y.toFixed(1)})`);
+    const labelCircle = document.createElementNS(SVG_NS, "circle");
+    labelCircle.setAttribute("class", "city-table-cluster-title-ring");
+    labelCircle.setAttribute("r", Math.max(16, radius - 2).toFixed(1));
+    labelCircle.style.setProperty("--table-color", group.color);
+    labelGroup.appendChild(labelCircle);
+    const text = document.createElementNS(SVG_NS, "text");
+    text.setAttribute("class", "city-table-cluster-title-text");
+    text.setAttribute("text-anchor", "middle");
+    text.setAttribute("dominant-baseline", "middle");
+    const lines = subsystemTitleLines(group.subsystem);
+    const lineHeight = 5.1;
+    lines.forEach((line, lineIndex) => {
+      const tspan = document.createElementNS(SVG_NS, "tspan");
+      tspan.setAttribute("x", "0");
+      tspan.setAttribute("dy", lineIndex === 0 ? `${-((lines.length - 1) * lineHeight) / 2}` : `${lineHeight}`);
+      tspan.textContent = line;
+      text.appendChild(tspan);
+    });
+    labelGroup.appendChild(text);
+    titles.appendChild(labelGroup);
   });
-  field.appendChild(fibers); field.appendChild(points); svg.appendChild(field);
+
+  content.appendChild(fibers);
+  content.appendChild(points);
+  content.appendChild(titles);
+  field.appendChild(content);
+  svg.appendChild(field);
+  applyCityZoom();
+}
+
+function applyCityZoom() {
+  const svg = document.getElementById("readerViz");
+  const content = svg?.querySelector(".city-table-zoom-content");
+  if (!svg || !content) return;
+  const cx = 530, cy = 395;
+  const tx = cx - cx * cityZoom;
+  const ty = cy - cy * cityZoom;
+  content.setAttribute("transform", `translate(${tx.toFixed(1)} ${ty.toFixed(1)}) scale(${cityZoom.toFixed(3)})`);
+  svg.classList.toggle("city-zoomed", cityZoom >= CITY_ZOOM_TITLE_THRESHOLD);
+  const value = document.getElementById("cityZoomValue");
+  if (value) value.textContent = `${Math.round(cityZoom * 100)}%`;
+}
+
+function setCityZoom(nextZoom) {
+  cityZoom = Math.max(CITY_ZOOM_MIN, Math.min(CITY_ZOOM_MAX, Number(nextZoom) || CITY_ZOOM_MIN));
+  applyCityZoom();
+}
+
+function setupCityZoom() {
+  const svg = document.getElementById("readerViz");
+  if (!svg || svg.dataset.zoomReady === "1") return;
+  svg.dataset.zoomReady = "1";
+  document.getElementById("cityZoomIn")?.addEventListener("click", () => setCityZoom(cityZoom + .25));
+  document.getElementById("cityZoomOut")?.addEventListener("click", () => setCityZoom(cityZoom - .25));
+  document.getElementById("cityZoomReset")?.addEventListener("click", () => setCityZoom(1));
+  svg.addEventListener("wheel", event => {
+    event.preventDefault();
+    setCityZoom(cityZoom + (event.deltaY < 0 ? .16 : -.16));
+  }, { passive: false });
+  let pinchDistance = null;
+  svg.addEventListener("touchstart", event => {
+    if (event.touches.length === 2) {
+      pinchDistance = Math.hypot(event.touches[0].clientX - event.touches[1].clientX, event.touches[0].clientY - event.touches[1].clientY);
+    }
+  }, { passive: true });
+  svg.addEventListener("touchmove", event => {
+    if (event.touches.length !== 2 || !pinchDistance) return;
+    event.preventDefault();
+    const next = Math.hypot(event.touches[0].clientX - event.touches[1].clientX, event.touches[0].clientY - event.touches[1].clientY);
+    setCityZoom(cityZoom + (next - pinchDistance) * .003);
+    pinchDistance = next;
+  }, { passive: false });
+  svg.addEventListener("touchend", () => { pinchDistance = null; }, { passive: true });
 }
 
 function drawNodes(svg) {
@@ -962,6 +1088,8 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("statMediadoresCard")?.classList.toggle("stat-inactive", !agencyOn);
   renderSituacionesRow();
   renderNetwork();
+  setupCityZoom();
+  applyCityZoom();
   updateStats();
   renderDynamicViz();
   document.getElementById("edgeInfoClose")?.addEventListener("click", hideEdgeInfo);

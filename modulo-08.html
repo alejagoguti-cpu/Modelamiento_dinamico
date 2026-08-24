@@ -55,23 +55,32 @@
     <!-- RED -->
     <div class="network-section">
       <div class="network-header">
-        <div class="network-heading-copy"><h3><i class="fa-solid fa-share-nodes"></i> Red de datos relacionales de la ciudad</h3><p>La ciudad aparece como un campo de datos vivos: <span class="simulator-agent-key">cientos de puntos y trayectorias</span> conectan ecosistemas, vivienda, cuidado, movilidad, patrimonio y agentes.</p></div>
+        <div class="network-heading-copy"><h3><i class="fa-solid fa-share-nodes"></i> Red de datos relacionales de la ciudad</h3><p>La ciudad aparece como un campo de datos vivos: <span class="simulator-agent-key">150 nodos generales y dinámicos</span> conectan ecosistemas, infraestructura, cuidado, movilidad, patrimonio, agentes e instituciones.</p></div>
         <div class="network-controls">
-          <button class="control-btn active" data-view="todas" onclick="filterView('todas')">Todas</button>
+          <button class="control-btn active" data-view="todas" onclick="filterView('todas')">Todos los nodos</button>
           <button class="control-btn" data-view="componentes" onclick="filterView('componentes')">Componentes</button>
-          <button class="control-btn" data-view="actores" onclick="filterView('actores')">Actores y mediadores</button>
+          <button class="control-btn" data-view="actores" onclick="filterView('actores')">Agentes y actores</button>
+        </div>
+        <div class="city-zoom-controls" aria-label="Controles de zoom de la red">
+          <span>Zoom</span>
+          <button type="button" id="cityZoomOut" aria-label="Alejar">−</button>
+          <output id="cityZoomValue" aria-live="polite">100%</output>
+          <button type="button" id="cityZoomIn" aria-label="Acercar">+</button>
+          <button type="button" id="cityZoomReset">Restablecer</button>
         </div>
         <label class="city-data-filter-label" for="cityDataFilter">Datos de la tabla
           <select id="cityDataFilter" class="city-data-filter" onchange="setCityDataFilter(this.value)">
-            <option value="all">Red ampliada · vista 140 nodos</option>
-            <option value="Agua y ambiente">Agua y ambiente · 1–26, 135–137</option>
-            <option value="Ciudad construida">Ciudad construida · 27–42</option>
-            <option value="Movilidad">Movilidad · 43–56</option>
-            <option value="Agentes y comunidad">Agentes y comunidad · 57–68, 105–110, 126–130</option>
-            <option value="Vivienda, empleo y cuidado">Vivienda, empleo y cuidado · 69–94</option>
-            <option value="Patrimonio">Patrimonio · 95–104</option>
-            <option value="Servicios y materiales">Servicios y materiales · 115–134</option>
-            <option value="Región e información">Región e información · 135–140</option>
+            <option value="initial">Red inicial · 45 nodos representativos</option>
+            <option value="all">Red completa · 150 nodos</option>
+            <option value="Sistema hídrico">Sistema hídrico · 19 nodos</option>
+            <option value="Sistema biótico">Sistema biótico · 14 nodos</option>
+            <option value="Sistema físico-urbano">Sistema físico-urbano · 26 nodos</option>
+            <option value="Sistema de movilidad">Sistema de movilidad · 11 nodos</option>
+            <option value="Sistema de cuidado, servicios y espacio público">Sistema de cuidado, servicios y espacio público · 10 nodos</option>
+            <option value="Sistema socioeconómico y de ocupación">Sistema socioeconómico y de ocupación · 22 nodos</option>
+            <option value="Sistema social-comunitario">Sistema social-comunitario · 14 nodos</option>
+            <option value="Sistema patrimonial y de memoria">Sistema patrimonial y de memoria · 10 nodos</option>
+            <option value="Sistema institucional de gestión">Sistema institucional de gestión · 24 nodos</option>
           </select>
         </label>
       </div>
@@ -94,29 +103,24 @@
           </div>
 
           <aside class="network-legend">
-            <div class="legend-title">Lectura de la red</div>
-            <div class="legend-item legend-static"><span class="legend-data-cloud"></span> Puntos = registros territoriales</div><div class="legend-item legend-static"><span class="legend-line solid"></span> Directa (documentada)</div>
-            <div class="legend-item legend-static"><span class="legend-line dashed"></span> Indirecta / interpretativa</div>
-            <div class="legend-item legend-static"><span class="legend-line arrowed"></span> Dirección sustentada</div>
-            <div class="legend-item legend-static"><span class="legend-line thick"></span> Mayor intensidad</div>
+            <div class="legend-title">Convenciones de la tabla</div>
+            <div class="legend-item legend-static"><span class="legend-data-cloud"></span> Punto = nodo general</div>
+            <div class="legend-item legend-static"><span class="legend-line solid"></span> Fibra = relación de flujo o transformación</div>
+            <div class="legend-item legend-static"><span class="legend-dot" style="background:#ffffff;"></span> Bola = título del subsistema al acercar</div>
 
-            <div class="legend-title">Color = estructura</div>
-            <div class="legend-item legend-static"><span class="legend-dot" style="background:#2fd4c8;"></span> Ecológica principal</div>
-            <div class="legend-item legend-static"><span class="legend-dot" style="background:#f5a623;"></span> Funcional y socioeconómica</div>
-            <div class="legend-item legend-static"><span class="legend-dot" style="background:#f76fb0;"></span> Integradora de patrimonios</div>
-            <div class="legend-item legend-static"><span class="legend-dot" style="background:#b08cff;"></span> Pilares del simulador</div>
-
-            <div class="legend-title">Ícono = tipo de nodo</div>
-            <div class="legend-item legend-static"><i class="fa-solid fa-circle-nodes legend-ic" style="color:#c9cedb;"></i> Componente territorial</div>
-            <div class="legend-item legend-static"><i class="fa-solid fa-person legend-ic" style="color:#eef0f6;"></i> Actor</div>
-            <div class="legend-item legend-static"><i class="fa-solid fa-signs-post legend-ic" style="color:#7d8ea3;"></i> Mediador</div>
-            <div class="legend-item legend-static"><i class="fa-solid fa-people-arrows legend-ic" style="color:#b08cff;"></i> Pilar del simulador</div>
-            <div class="legend-item legend-static"><i class="fa-solid fa-person-dress legend-ic" style="color:#ff5c8a;"></i> Agente / estado dinámico</div>
+            <div class="legend-title">Color = subsistema</div>
+            <div class="legend-item legend-static"><span class="legend-dot" style="background:#43c7d7;"></span> Sistema hídrico</div>
+            <div class="legend-item legend-static"><span class="legend-dot" style="background:#6bcf8f;"></span> Sistema biótico</div>
+            <div class="legend-item legend-static"><span class="legend-dot" style="background:#b7c0cb;"></span> Sistema físico-urbano</div>
+            <div class="legend-item legend-static"><span class="legend-dot" style="background:#f1cf5b;"></span> Sistema de movilidad</div>
+            <div class="legend-item legend-static"><span class="legend-dot" style="background:#c6a0e9;"></span> Sistema de cuidado, servicios y espacio público</div>
+            <div class="legend-item legend-static"><span class="legend-dot" style="background:#e98b67;"></span> Sistema socioeconómico y de ocupación</div>
+            <div class="legend-item legend-static"><span class="legend-dot" style="background:#ef9a4b;"></span> Sistema social-comunitario</div>
+            <div class="legend-item legend-static"><span class="legend-dot" style="background:#f07bb1;"></span> Sistema patrimonial y de memoria</div>
+            <div class="legend-item legend-static"><span class="legend-dot" style="background:#9d8be8;"></span> Sistema institucional de gestión</div>
 
             <div class="legend-divider"></div>
-            <div class="legend-hint">Clic en una línea: ver evidencia y lectura crítica.<br>
-            Clic en una bola: apagarla junto con sus relaciones.<br>
-            Arrastra una bola: las conectadas la siguen.</div>
+            <div class="legend-hint">La vista inicial muestra 45 nodos para facilitar la lectura. Usa el selector para activar los 150. Acerca con la rueda o los controles: aparecerá el título dentro de cada bola de subsistema.</div>
           </aside>
 
 

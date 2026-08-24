@@ -1,157 +1,926 @@
-/* Datos base: Red ampliada de Bogotá como territorio dinámico · 140 nodos */
+// Fuente: 150nodosgeneralesreclasificadosenlossubsistemasexistentes.md
+// Nombres, clasificación y tipos transcritos de la tabla adjunta.
 const CITY_DATA_NODES = [
-  { n: 1, name: "Río Bogotá", subsystem: "Hídrico", type: "Río" },
-  { n: 2, name: "Río Fucha", subsystem: "Hídrico", type: "Río" },
-  { n: 3, name: "Río Tunjuelo", subsystem: "Hídrico", type: "Río" },
-  { n: 4, name: "Río Salitre", subsystem: "Hídrico", type: "Río" },
-  { n: 5, name: "Canal Los Ángeles", subsystem: "Hídrico", type: "Canal" },
-  { n: 6, name: "Canal Cundinamarca", subsystem: "Hídrico", type: "Canal" },
-  { n: 7, name: "Humedal El Burro", subsystem: "Hídrico", type: "Humedal" },
-  { n: 8, name: "Humedal La Vaca", subsystem: "Hídrico", type: "Humedal" },
-  { n: 9, name: "Humedal Capellanía", subsystem: "Hídrico", type: "Humedal" },
-  { n: 10, name: "Humedal Tibabuyes", subsystem: "Hídrico", type: "Humedal" },
-  { n: 11, name: "Humedal Córdoba", subsystem: "Hídrico", type: "Humedal" },
-  { n: 12, name: "Escorrentía de lluvia sobre superficies impermeables", subsystem: "Hídrico", type: "Flujo" },
-  { n: 13, name: "Aves migratorias", subsystem: "Biótico", type: "Organismos móviles" },
-  { n: 14, name: "Tingua de pico rojo", subsystem: "Biótico", type: "Ave" },
-  { n: 15, name: "Monjita", subsystem: "Biótico", type: "Ave" },
-  { n: 16, name: "Chamón", subsystem: "Biótico", type: "Ave" },
-  { n: 17, name: "Garza blanca", subsystem: "Biótico", type: "Ave" },
-  { n: 18, name: "Mirla patinaranja", subsystem: "Biótico", type: "Ave" },
-  { n: 19, name: "Colibrí chillón", subsystem: "Biótico", type: "Ave" },
-  { n: 20, name: "Arañas tejedoras", subsystem: "Biótico", type: "Artrópodos" },
-  { n: 21, name: "Caballito del diablo", subsystem: "Biótico", type: "Insecto" },
-  { n: 22, name: "Mosca abeja", subsystem: "Biótico", type: "Insecto" },
-  { n: 23, name: "Junco", subsystem: "Biótico", type: "Planta" },
-  { n: 24, name: "Enea", subsystem: "Biótico", type: "Planta" },
-  { n: 25, name: "Buchón de agua", subsystem: "Biótico", type: "Planta acuática" },
-  { n: 26, name: "Pasto kikuyo", subsystem: "Biótico", type: "Planta terrestre" },
-  { n: 27, name: "Avenida Ciudad de Cali", subsystem: "Físico-urbano", type: "Vía" },
-  { n: 28, name: "Avenida de las Américas", subsystem: "Físico-urbano", type: "Vía" },
-  { n: 29, name: "Avenida Longitudinal de Occidente", subsystem: "Físico-urbano", type: "Corredor vial" },
-  { n: 30, name: "Avenida Boyacá", subsystem: "Físico-urbano", type: "Vía" },
-  { n: 31, name: "Cerramiento perimetral del humedal El Burro", subsystem: "Físico-urbano", type: "Cerramiento" },
-  { n: 32, name: "Edificios residenciales de El Castillo", subsystem: "Físico-urbano", type: "Edificaciones" },
-  { n: 33, name: "Edificios residenciales de Castilla", subsystem: "Físico-urbano", type: "Edificaciones" },
-  { n: 34, name: "Edificios residenciales de Valladolid", subsystem: "Físico-urbano", type: "Edificaciones" },
-  { n: 35, name: "Sendero peatonal del humedal El Burro", subsystem: "Físico-urbano", type: "Sendero" },
-  { n: 36, name: "Ciclorruta de la Avenida Ciudad de Cali", subsystem: "Físico-urbano", type: "Infraestructura ciclista" },
-  { n: 37, name: "Andén de acceso al humedal", subsystem: "Físico-urbano", type: "Andén" },
-  { n: 38, name: "Superficie pavimentada del borde", subsystem: "Físico-urbano", type: "Superficie" },
-  { n: 39, name: "Relleno de escombros en la ZMPA", subsystem: "Físico-urbano", type: "Relleno" },
-  { n: 40, name: "Puente sobre el Canal Los Ángeles", subsystem: "Físico-urbano", type: "Puente" },
-  { n: 41, name: "Alumbrado del borde urbano", subsystem: "Físico-urbano", type: "Iluminación" },
-  { n: 42, name: "Estación de tratamiento de agua", subsystem: "Físico-urbano", type: "Infraestructura técnica" },
-  { n: 43, name: "TransMilenio", subsystem: "Movilidad", type: "Sistema de transporte" },
-  { n: 44, name: "Troncal de la Avenida de las Américas", subsystem: "Movilidad", type: "Corredor de transporte" },
-  { n: 45, name: "Troncal de la Avenida Ciudad de Cali", subsystem: "Movilidad", type: "Corredor de transporte" },
-  { n: 46, name: "Primera Línea del Metro de Bogotá", subsystem: "Movilidad", type: "Proyecto férreo" },
-  { n: 47, name: "Regiotram de Occidente", subsystem: "Movilidad", type: "Proyecto férreo" },
-  { n: 48, name: "Bus zonal del SITP", subsystem: "Movilidad", type: "Vehículo" },
-  { n: 49, name: "Ruta alimentadora hacia El Tintal", subsystem: "Movilidad", type: "Ruta de bus" },
-  { n: 50, name: "Ciclorruta de la Avenida Ciudad de Cali", subsystem: "Movilidad", type: "Recorrido ciclista" },
-  { n: 51, name: "Recorrido peatonal desde El Castillo", subsystem: "Movilidad", type: "Recorrido" },
-  { n: 52, name: "Cruce peatonal de la Avenida Ciudad de Cali", subsystem: "Movilidad", type: "Cruce" },
-  { n: 53, name: "Acceso peatonal al humedal El Burro", subsystem: "Movilidad", type: "Acceso" },
-  { n: 54, name: "Tiempo de espera en paradero", subsystem: "Movilidad", type: "Variable temporal" },
-  { n: 55, name: "Congestión vehicular en la Avenida Ciudad de Cali", subsystem: "Movilidad", type: "Condición de circulación" },
-  { n: 56, name: "Viajes entre vivienda y empleo", subsystem: "Movilidad", type: "Flujo de personas" },
-  { n: 57, name: "Habitantes de Kennedy", subsystem: "Social-comunitario", type: "Agente colectivo" },
-  { n: 58, name: "Habitantes de El Castillo", subsystem: "Social-comunitario", type: "Comunidad barrial" },
-  { n: 59, name: "Habitantes de Castilla", subsystem: "Social-comunitario", type: "Comunidad barrial" },
-  { n: 60, name: "Habitantes de Valladolid", subsystem: "Social-comunitario", type: "Comunidad barrial" },
-  { n: 61, name: "Visitantes del humedal El Burro", subsystem: "Social-comunitario", type: "Usuarios" },
-  { n: 62, name: "Observadores de aves", subsystem: "Social-comunitario", type: "Grupo de usuarios" },
-  { n: 63, name: "Juntas de Acción Comunal", subsystem: "Social-comunitario", type: "Organización" },
-  { n: 64, name: "Colectivos ambientales locales", subsystem: "Social-comunitario", type: "Organización" },
-  { n: 65, name: "Estudiantes del Colegio Liceo El Castillo", subsystem: "Social-comunitario", type: "Grupo educativo" },
-  { n: 66, name: "Guías de educación ambiental", subsystem: "Social-comunitario", type: "Agentes educativos" },
-  { n: 67, name: "Vendedores del borde urbano", subsystem: "Social-comunitario", type: "Agentes económicos locales" },
-  { n: 68, name: "Jornadas comunitarias de limpieza", subsystem: "Social-comunitario", type: "Actividad colectiva" },
-  { n: 69, name: "Viviendas de Patio Bonito", subsystem: "Socioeconómico y ocupación", type: "Uso residencial" },
-  { n: 70, name: "Viviendas de El Tintal", subsystem: "Socioeconómico y ocupación", type: "Uso residencial" },
-  { n: 71, name: "Viviendas de Osorio II", subsystem: "Socioeconómico y ocupación", type: "Uso residencial" },
-  { n: 72, name: "Viviendas de Osorio III", subsystem: "Socioeconómico y ocupación", type: "Uso residencial" },
-  { n: 73, name: "Viviendas de Castilla", subsystem: "Socioeconómico y ocupación", type: "Uso residencial" },
-  { n: 74, name: "Viviendas de El Castillo", subsystem: "Socioeconómico y ocupación", type: "Uso residencial" },
-  { n: 75, name: "Comercio de la Avenida Ciudad de Cali", subsystem: "Socioeconómico y ocupación", type: "Actividad comercial" },
-  { n: 76, name: "Centro Comercial Tintal Plaza", subsystem: "Socioeconómico y ocupación", type: "Equipamiento comercial" },
-  { n: 77, name: "Biblioteca El Tintal", subsystem: "Socioeconómico y ocupación", type: "Equipamiento cultural" },
-  { n: 78, name: "Parque El Tintal", subsystem: "Socioeconómico y ocupación", type: "Espacio de uso público" },
-  { n: 79, name: "Actividad industrial de Puente Aranda", subsystem: "Socioeconómico y ocupación", type: "Actividad productiva" },
-  { n: 80, name: "Servicios empresariales del Centro Internacional", subsystem: "Socioeconómico y ocupación", type: "Actividad de servicios" },
-  { n: 81, name: "Plaza de mercado de Kennedy", subsystem: "Socioeconómico y ocupación", type: "Abastecimiento" },
-  { n: 82, name: "Empleos localizados en el occidente de Bogotá", subsystem: "Socioeconómico y ocupación", type: "Localización laboral" },
-  { n: 83, name: "Colegio Liceo El Castillo", subsystem: "Cuidado y servicios", type: "Equipamiento educativo" },
-  { n: 84, name: "Biblioteca Pública El Tintal", subsystem: "Cuidado y servicios", type: "Equipamiento cultural" },
-  { n: 85, name: "Hospital de Kennedy", subsystem: "Cuidado y servicios", type: "Equipamiento de salud" },
-  { n: 86, name: "Hospital del Sur", subsystem: "Cuidado y servicios", type: "Equipamiento de salud" },
-  { n: 87, name: "Centro de Desarrollo Comunitario", subsystem: "Cuidado y servicios", type: "Equipamiento social" },
-  { n: 88, name: "Parque El Porvenir", subsystem: "Cuidado y servicios", type: "Parque" },
-  { n: 89, name: "Parque Metropolitano El Tunal", subsystem: "Cuidado y servicios", type: "Parque" },
-  { n: 90, name: "Centros de atención a primera infancia", subsystem: "Cuidado y servicios", type: "Servicio de cuidado" },
-  { n: 91, name: "Comedores comunitarios", subsystem: "Cuidado y servicios", type: "Servicio alimentario" },
-  { n: 92, name: "Parques de bolsillo del entorno barrial", subsystem: "Cuidado y servicios", type: "Espacio público" },
-  { n: 93, name: "Andenes de acceso a equipamientos", subsystem: "Cuidado y servicios", type: "Infraestructura peatonal" },
-  { n: 94, name: "Tiempo de viaje hacia el hospital más cercano", subsystem: "Cuidado y servicios", type: "Variable temporal" },
-  { n: 95, name: "Estación de la Sabana", subsystem: "Patrimonio y memoria", type: "Bien cultural material" },
-  { n: 96, name: "Cementerio Central de Bogotá", subsystem: "Patrimonio y memoria", type: "Bien cultural material" },
-  { n: 97, name: "Plaza de Bolívar", subsystem: "Patrimonio y memoria", type: "Espacio patrimonial" },
-  { n: 98, name: "Museo del Oro", subsystem: "Patrimonio y memoria", type: "Equipamiento cultural" },
-  { n: 99, name: "Iglesia de San Bernardino de Bosa", subsystem: "Patrimonio y memoria", type: "Bien cultural material" },
-  { n: 100, name: "Sitio arqueológico reconocido por el POT", subsystem: "Patrimonio y memoria", type: "Sitio arqueológico" },
-  { n: 101, name: "Paisaje natural del humedal El Burro", subsystem: "Patrimonio y memoria", type: "Paisaje valorado" },
-  { n: 102, name: "Memoria comunitaria del humedal El Burro", subsystem: "Patrimonio y memoria", type: "Memoria colectiva" },
-  { n: 103, name: "Prácticas de observación de aves", subsystem: "Patrimonio y memoria", type: "Práctica cultural" },
-  { n: 104, name: "Relatos barriales sobre la transformación del humedal", subsystem: "Patrimonio y memoria", type: "Memoria oral" },
-  { n: 105, name: "Jardín Botánico de Bogotá", subsystem: "Institucional y gestión", type: "Entidad pública" },
-  { n: 106, name: "Secretaría Distrital de Ambiente", subsystem: "Institucional y gestión", type: "Entidad pública" },
-  { n: 107, name: "Empresa de Acueducto y Alcantarillado de Bogotá", subsystem: "Institucional y gestión", type: "Empresa pública" },
-  { n: 108, name: "Instituto de Desarrollo Urbano", subsystem: "Institucional y gestión", type: "Entidad pública" },
-  { n: 109, name: "Secretaría Distrital de Movilidad", subsystem: "Institucional y gestión", type: "Entidad pública" },
-  { n: 110, name: "Alcaldía Local de Kennedy", subsystem: "Institucional y gestión", type: "Autoridad local" },
-  { n: 111, name: "Plan de Manejo Ambiental del humedal El Burro", subsystem: "Institucional y gestión", type: "Instrumento de manejo" },
-  { n: 112, name: "Programa de monitoreo del humedal El Burro", subsystem: "Institucional y gestión", type: "Acción de seguimiento" },
-  { n: 113, name: "Jornada institucional de mantenimiento", subsystem: "Institucional y gestión", type: "Acción de manejo" },
-  { n: 114, name: "Presupuesto para restauración ecológica", subsystem: "Institucional y gestión", type: "Recurso de intervención" },
-  { n: 115, name: "Subestación eléctrica urbana", subsystem: "Energía y servicios públicos", type: "Infraestructura energética" },
-  { n: 116, name: "Línea de transmisión eléctrica", subsystem: "Energía y servicios públicos", type: "Red energética" },
-  { n: 117, name: "Transformador de distribución barrial", subsystem: "Energía y servicios públicos", type: "Equipo técnico" },
-  { n: 118, name: "Alumbrado público de la Avenida Ciudad de Cali", subsystem: "Energía y servicios públicos", type: "Servicio energético" },
-  { n: 119, name: "Consumo eléctrico residencial", subsystem: "Energía y servicios públicos", type: "Flujo de energía" },
-  { n: 120, name: "Consumo eléctrico comercial", subsystem: "Energía y servicios públicos", type: "Flujo de energía" },
-  { n: 121, name: "Red de acueducto del occidente de Bogotá", subsystem: "Energía y servicios públicos", type: "Red de agua" },
-  { n: 122, name: "Red de alcantarillado sanitario", subsystem: "Energía y servicios públicos", type: "Red de saneamiento" },
-  { n: 123, name: "Contenedor de residuos del borde del humedal", subsystem: "Energía y servicios públicos", type: "Infraestructura de residuos" },
-  { n: 124, name: "Ruta de recolección de residuos", subsystem: "Energía y servicios públicos", type: "Recorrido de servicio" },
-  { n: 125, name: "Residuos acumulados en el borde", subsystem: "Energía y servicios públicos", type: "Material acumulado" },
-  { n: 126, name: "Plaza de mercado de Corabastos", subsystem: "Abastecimiento y economía circular", type: "Equipamiento de abasto" },
-  { n: 127, name: "Camiones de distribución de alimentos", subsystem: "Abastecimiento y economía circular", type: "Agentes móviles" },
-  { n: 128, name: "Comerciantes de Corabastos", subsystem: "Abastecimiento y economía circular", type: "Agentes económicos" },
-  { n: 129, name: "Recorrido de alimentos hacia los barrios", subsystem: "Abastecimiento y economía circular", type: "Flujo de bienes" },
-  { n: 130, name: "Recicladores de oficio", subsystem: "Abastecimiento y economía circular", type: "Agentes laborales" },
-  { n: 131, name: "Material reciclable recuperado", subsystem: "Abastecimiento y economía circular", type: "Flujo de materiales" },
-  { n: 132, name: "Compost producido en el sector", subsystem: "Abastecimiento y economía circular", type: "Material transformado" },
-  { n: 133, name: "Huertas urbanas comunitarias", subsystem: "Abastecimiento y economía circular", type: "Lugar productivo" },
-  { n: 134, name: "Productores rurales de la Sabana", subsystem: "Abastecimiento y economía circular", type: "Agentes regionales" },
-  { n: 135, name: "Páramo de Sumapaz", subsystem: "Regional y flujos abiertos", type: "Ecosistema regional" },
-  { n: 136, name: "Reserva Thomas van der Hammen", subsystem: "Regional y flujos abiertos", type: "Área ambiental" },
-  { n: 137, name: "Cerros Orientales", subsystem: "Regional y flujos abiertos", type: "Sistema montañoso" },
-  { n: 138, name: "Municipios proveedores de agua a Bogotá", subsystem: "Regional y flujos abiertos", type: "Agentes territoriales" },
-  { n: 139, name: "Viajes diarios desde municipios vecinos", subsystem: "Regional y flujos abiertos", type: "Flujo de personas" },
-  { n: 140, name: "Información ambiental compartida entre entidades", subsystem: "Regional y flujos abiertos", type: "Flujo de información" },
+  {
+    "n": 1,
+    "name": "Ríos",
+    "subsystem": "Sistema hídrico",
+    "type": "Cuerpos de agua"
+  },
+  {
+    "n": 2,
+    "name": "Quebradas",
+    "subsystem": "Sistema hídrico",
+    "type": "Cuerpos de agua"
+  },
+  {
+    "n": 3,
+    "name": "Humedales",
+    "subsystem": "Sistema hídrico",
+    "type": "Cuerpos de agua"
+  },
+  {
+    "n": 4,
+    "name": "Canales",
+    "subsystem": "Sistema hídrico",
+    "type": "Infraestructura hídrica"
+  },
+  {
+    "n": 5,
+    "name": "Lagunas",
+    "subsystem": "Sistema hídrico",
+    "type": "Cuerpos de agua"
+  },
+  {
+    "n": 6,
+    "name": "Nacimientos de agua",
+    "subsystem": "Sistema hídrico",
+    "type": "Punto hídrico"
+  },
+  {
+    "n": 7,
+    "name": "Escorrentía de lluvia",
+    "subsystem": "Sistema hídrico",
+    "type": "Flujo de agua"
+  },
+  {
+    "n": 8,
+    "name": "Infiltración del agua",
+    "subsystem": "Sistema hídrico",
+    "type": "Proceso hídrico"
+  },
+  {
+    "n": 9,
+    "name": "Nivel del agua",
+    "subsystem": "Sistema hídrico",
+    "type": "Condición variable"
+  },
+  {
+    "n": 10,
+    "name": "Sedimentos transportados por el agua",
+    "subsystem": "Sistema hídrico",
+    "type": "Material móvil"
+  },
+  {
+    "n": 11,
+    "name": "Aves migratorias",
+    "subsystem": "Sistema biótico",
+    "type": "Organismos móviles"
+  },
+  {
+    "n": 12,
+    "name": "Aves residentes",
+    "subsystem": "Sistema biótico",
+    "type": "Organismos móviles"
+  },
+  {
+    "n": 13,
+    "name": "Mamíferos urbanos",
+    "subsystem": "Sistema biótico",
+    "type": "Organismos móviles"
+  },
+  {
+    "n": 14,
+    "name": "Reptiles urbanos",
+    "subsystem": "Sistema biótico",
+    "type": "Organismos móviles"
+  },
+  {
+    "n": 15,
+    "name": "Anfibios",
+    "subsystem": "Sistema biótico",
+    "type": "Organismos móviles"
+  },
+  {
+    "n": 16,
+    "name": "Insectos polinizadores",
+    "subsystem": "Sistema biótico",
+    "type": "Organismos móviles"
+  },
+  {
+    "n": 17,
+    "name": "Arañas tejedoras",
+    "subsystem": "Sistema biótico",
+    "type": "Artrópodos"
+  },
+  {
+    "n": 18,
+    "name": "Vegetación acuática",
+    "subsystem": "Sistema biótico",
+    "type": "Plantas"
+  },
+  {
+    "n": 19,
+    "name": "Vegetación ribereña",
+    "subsystem": "Sistema biótico",
+    "type": "Plantas"
+  },
+  {
+    "n": 20,
+    "name": "Especies invasoras",
+    "subsystem": "Sistema biótico",
+    "type": "Organismos introducidos"
+  },
+  {
+    "n": 21,
+    "name": "Suelos saturados",
+    "subsystem": "Sistema hídrico",
+    "type": "Condición del suelo"
+  },
+  {
+    "n": 22,
+    "name": "Suelos permeables",
+    "subsystem": "Sistema hídrico",
+    "type": "Condición del suelo"
+  },
+  {
+    "n": 23,
+    "name": "Suelos compactados",
+    "subsystem": "Sistema hídrico",
+    "type": "Condición del suelo"
+  },
+  {
+    "n": 24,
+    "name": "Superficies impermeables",
+    "subsystem": "Sistema hídrico",
+    "type": "Superficie urbana"
+  },
+  {
+    "n": 25,
+    "name": "Taludes inestables",
+    "subsystem": "Sistema hídrico",
+    "type": "Condición física"
+  },
+  {
+    "n": 26,
+    "name": "Zonas de inundación",
+    "subsystem": "Sistema hídrico",
+    "type": "Área de amenaza"
+  },
+  {
+    "n": 27,
+    "name": "Zonas de encharcamiento",
+    "subsystem": "Sistema institucional de gestión",
+    "type": "Área de amenaza"
+  },
+  {
+    "n": 28,
+    "name": "Zonas de remoción en masa",
+    "subsystem": "Sistema institucional de gestión",
+    "type": "Área de amenaza"
+  },
+  {
+    "n": 29,
+    "name": "Temperatura superficial alta",
+    "subsystem": "Sistema institucional de gestión",
+    "type": "Condición espacial"
+  },
+  {
+    "n": 30,
+    "name": "Daños por lluvias intensas",
+    "subsystem": "Sistema institucional de gestión",
+    "type": "Evento territorial"
+  },
+  {
+    "n": 31,
+    "name": "Vías arteriales",
+    "subsystem": "Sistema físico-urbano",
+    "type": "Infraestructura vial"
+  },
+  {
+    "n": 32,
+    "name": "Vías locales",
+    "subsystem": "Sistema físico-urbano",
+    "type": "Infraestructura vial"
+  },
+  {
+    "n": 33,
+    "name": "Edificaciones residenciales",
+    "subsystem": "Sistema físico-urbano",
+    "type": "Construcciones"
+  },
+  {
+    "n": 34,
+    "name": "Edificaciones comerciales",
+    "subsystem": "Sistema físico-urbano",
+    "type": "Construcciones"
+  },
+  {
+    "n": 35,
+    "name": "Edificaciones industriales",
+    "subsystem": "Sistema físico-urbano",
+    "type": "Construcciones"
+  },
+  {
+    "n": 36,
+    "name": "Cerramientos",
+    "subsystem": "Sistema físico-urbano",
+    "type": "Elementos de borde"
+  },
+  {
+    "n": 37,
+    "name": "Andenes",
+    "subsystem": "Sistema físico-urbano",
+    "type": "Espacio construido"
+  },
+  {
+    "n": 38,
+    "name": "Puentes",
+    "subsystem": "Sistema físico-urbano",
+    "type": "Infraestructura de conexión"
+  },
+  {
+    "n": 39,
+    "name": "Ciclorrutas construidas",
+    "subsystem": "Sistema físico-urbano",
+    "type": "Infraestructura ciclista"
+  },
+  {
+    "n": 40,
+    "name": "Superficies pavimentadas",
+    "subsystem": "Sistema físico-urbano",
+    "type": "Superficie construida"
+  },
+  {
+    "n": 41,
+    "name": "Transporte público",
+    "subsystem": "Sistema de movilidad",
+    "type": "Medio de transporte"
+  },
+  {
+    "n": 42,
+    "name": "Transporte privado",
+    "subsystem": "Sistema de movilidad",
+    "type": "Medio de transporte"
+  },
+  {
+    "n": 43,
+    "name": "Bicicletas",
+    "subsystem": "Sistema de movilidad",
+    "type": "Medio de transporte"
+  },
+  {
+    "n": 44,
+    "name": "Peatones",
+    "subsystem": "Sistema de movilidad",
+    "type": "Usuarios móviles"
+  },
+  {
+    "n": 45,
+    "name": "Carga urbana",
+    "subsystem": "Sistema de movilidad",
+    "type": "Flujo de bienes"
+  },
+  {
+    "n": 46,
+    "name": "Estaciones de transporte",
+    "subsystem": "Sistema de movilidad",
+    "type": "Infraestructura"
+  },
+  {
+    "n": 47,
+    "name": "Paraderos",
+    "subsystem": "Sistema de movilidad",
+    "type": "Infraestructura"
+  },
+  {
+    "n": 48,
+    "name": "Recorridos diarios",
+    "subsystem": "Sistema de movilidad",
+    "type": "Flujo de personas"
+  },
+  {
+    "n": 49,
+    "name": "Tiempo de viaje",
+    "subsystem": "Sistema de movilidad",
+    "type": "Variable temporal"
+  },
+  {
+    "n": 50,
+    "name": "Congestión vehicular",
+    "subsystem": "Sistema de movilidad",
+    "type": "Condición variable"
+  },
+  {
+    "n": 51,
+    "name": "Viviendas",
+    "subsystem": "Sistema socioeconómico y de ocupación",
+    "type": "Uso residencial"
+  },
+  {
+    "n": 52,
+    "name": "Barrios",
+    "subsystem": "Sistema socioeconómico y de ocupación",
+    "type": "Área urbana"
+  },
+  {
+    "n": 53,
+    "name": "Manzanas urbanas",
+    "subsystem": "Sistema socioeconómico y de ocupación",
+    "type": "Organización espacial"
+  },
+  {
+    "n": 54,
+    "name": "Densidad residencial",
+    "subsystem": "Sistema socioeconómico y de ocupación",
+    "type": "Condición espacial"
+  },
+  {
+    "n": 55,
+    "name": "Áreas de expansión",
+    "subsystem": "Sistema socioeconómico y de ocupación",
+    "type": "Área de transformación"
+  },
+  {
+    "n": 56,
+    "name": "Áreas de renovación",
+    "subsystem": "Sistema socioeconómico y de ocupación",
+    "type": "Área de transformación"
+  },
+  {
+    "n": 57,
+    "name": "Cambios de uso del suelo",
+    "subsystem": "Sistema socioeconómico y de ocupación",
+    "type": "Proceso territorial"
+  },
+  {
+    "n": 58,
+    "name": "Construcciones nuevas",
+    "subsystem": "Sistema socioeconómico y de ocupación",
+    "type": "Proceso de transformación"
+  },
+  {
+    "n": 59,
+    "name": "Lotes vacantes",
+    "subsystem": "Sistema socioeconómico y de ocupación",
+    "type": "Área disponible"
+  },
+  {
+    "n": 60,
+    "name": "Ocupación del borde ambiental",
+    "subsystem": "Sistema socioeconómico y de ocupación",
+    "type": "Proceso de transformación"
+  },
+  {
+    "n": 61,
+    "name": "Empleos",
+    "subsystem": "Sistema socioeconómico y de ocupación",
+    "type": "Actividad laboral"
+  },
+  {
+    "n": 62,
+    "name": "Actividades productivas",
+    "subsystem": "Sistema socioeconómico y de ocupación",
+    "type": "Actividad económica"
+  },
+  {
+    "n": 63,
+    "name": "Comercio local",
+    "subsystem": "Sistema socioeconómico y de ocupación",
+    "type": "Actividad económica"
+  },
+  {
+    "n": 64,
+    "name": "Industrias",
+    "subsystem": "Sistema socioeconómico y de ocupación",
+    "type": "Actividad económica"
+  },
+  {
+    "n": 65,
+    "name": "Servicios empresariales",
+    "subsystem": "Sistema socioeconómico y de ocupación",
+    "type": "Actividad económica"
+  },
+  {
+    "n": 66,
+    "name": "Centros financieros",
+    "subsystem": "Sistema socioeconómico y de ocupación",
+    "type": "Actividad económica"
+  },
+  {
+    "n": 67,
+    "name": "Centros de innovación",
+    "subsystem": "Sistema socioeconómico y de ocupación",
+    "type": "Actividad de conocimiento"
+  },
+  {
+    "n": 68,
+    "name": "Zonas de abastecimiento",
+    "subsystem": "Sistema socioeconómico y de ocupación",
+    "type": "Actividad de distribución"
+  },
+  {
+    "n": 69,
+    "name": "Trabajo informal",
+    "subsystem": "Sistema socioeconómico y de ocupación",
+    "type": "Actividad laboral"
+  },
+  {
+    "n": 70,
+    "name": "Viajes entre vivienda y empleo",
+    "subsystem": "Sistema socioeconómico y de ocupación",
+    "type": "Flujo socioeconómico"
+  },
+  {
+    "n": 71,
+    "name": "Colegios",
+    "subsystem": "Sistema de cuidado, servicios y espacio público",
+    "type": "Equipamiento educativo"
+  },
+  {
+    "n": 72,
+    "name": "Universidades",
+    "subsystem": "Sistema de cuidado, servicios y espacio público",
+    "type": "Equipamiento educativo"
+  },
+  {
+    "n": 73,
+    "name": "Bibliotecas",
+    "subsystem": "Sistema de cuidado, servicios y espacio público",
+    "type": "Equipamiento cultural"
+  },
+  {
+    "n": 74,
+    "name": "Hospitales",
+    "subsystem": "Sistema de cuidado, servicios y espacio público",
+    "type": "Equipamiento de salud"
+  },
+  {
+    "n": 75,
+    "name": "Centros de salud",
+    "subsystem": "Sistema de cuidado, servicios y espacio público",
+    "type": "Equipamiento de salud"
+  },
+  {
+    "n": 76,
+    "name": "Centros de cuidado infantil",
+    "subsystem": "Sistema de cuidado, servicios y espacio público",
+    "type": "Equipamiento de cuidado"
+  },
+  {
+    "n": 77,
+    "name": "Comedores comunitarios",
+    "subsystem": "Sistema de cuidado, servicios y espacio público",
+    "type": "Servicio social"
+  },
+  {
+    "n": 78,
+    "name": "Parques",
+    "subsystem": "Sistema de cuidado, servicios y espacio público",
+    "type": "Espacio público"
+  },
+  {
+    "n": 79,
+    "name": "Plazas públicas",
+    "subsystem": "Sistema de cuidado, servicios y espacio público",
+    "type": "Espacio público"
+  },
+  {
+    "n": 80,
+    "name": "Tiempo de acceso a servicios",
+    "subsystem": "Sistema de cuidado, servicios y espacio público",
+    "type": "Variable temporal"
+  },
+  {
+    "n": 81,
+    "name": "Habitantes",
+    "subsystem": "Sistema social-comunitario",
+    "type": "Agentes residentes"
+  },
+  {
+    "n": 82,
+    "name": "Visitantes",
+    "subsystem": "Sistema social-comunitario",
+    "type": "Agentes usuarios"
+  },
+  {
+    "n": 83,
+    "name": "Organizaciones ambientales",
+    "subsystem": "Sistema social-comunitario",
+    "type": "Agentes colectivos"
+  },
+  {
+    "n": 84,
+    "name": "Juntas de Acción Comunal",
+    "subsystem": "Sistema social-comunitario",
+    "type": "Agentes colectivos"
+  },
+  {
+    "n": 85,
+    "name": "Colectivos culturales",
+    "subsystem": "Sistema social-comunitario",
+    "type": "Agentes colectivos"
+  },
+  {
+    "n": 86,
+    "name": "Organizaciones de mujeres",
+    "subsystem": "Sistema social-comunitario",
+    "type": "Agentes colectivos"
+  },
+  {
+    "n": 87,
+    "name": "Personas cuidadoras",
+    "subsystem": "Sistema social-comunitario",
+    "type": "Agentes sociales"
+  },
+  {
+    "n": 88,
+    "name": "Vendedores ambulantes",
+    "subsystem": "Sistema social-comunitario",
+    "type": "Agentes económicos"
+  },
+  {
+    "n": 89,
+    "name": "Recorridos comunitarios",
+    "subsystem": "Sistema social-comunitario",
+    "type": "Práctica colectiva"
+  },
+  {
+    "n": 90,
+    "name": "Jornadas comunitarias",
+    "subsystem": "Sistema social-comunitario",
+    "type": "Acción colectiva"
+  },
+  {
+    "n": 91,
+    "name": "Patrimonio cultural material",
+    "subsystem": "Sistema patrimonial y de memoria",
+    "type": "Bien cultural"
+  },
+  {
+    "n": 92,
+    "name": "Patrimonio cultural inmaterial",
+    "subsystem": "Sistema patrimonial y de memoria",
+    "type": "Práctica cultural"
+  },
+  {
+    "n": 93,
+    "name": "Patrimonio natural",
+    "subsystem": "Sistema patrimonial y de memoria",
+    "type": "Lugar valorado"
+  },
+  {
+    "n": 94,
+    "name": "Patrimonio arqueológico",
+    "subsystem": "Sistema patrimonial y de memoria",
+    "type": "Sitio cultural"
+  },
+  {
+    "n": 95,
+    "name": "Paisajes urbanos",
+    "subsystem": "Sistema patrimonial y de memoria",
+    "type": "Paisaje"
+  },
+  {
+    "n": 96,
+    "name": "Paisajes rurales",
+    "subsystem": "Sistema patrimonial y de memoria",
+    "type": "Paisaje"
+  },
+  {
+    "n": 97,
+    "name": "Memorias barriales",
+    "subsystem": "Sistema patrimonial y de memoria",
+    "type": "Memoria colectiva"
+  },
+  {
+    "n": 98,
+    "name": "Relatos sobre ríos y humedales",
+    "subsystem": "Sistema patrimonial y de memoria",
+    "type": "Memoria oral"
+  },
+  {
+    "n": 99,
+    "name": "Prácticas de observación de aves",
+    "subsystem": "Sistema patrimonial y de memoria",
+    "type": "Práctica cultural"
+  },
+  {
+    "n": 100,
+    "name": "Recorridos patrimoniales",
+    "subsystem": "Sistema patrimonial y de memoria",
+    "type": "Práctica de movilidad"
+  },
+  {
+    "n": 101,
+    "name": "Redes de acueducto",
+    "subsystem": "Sistema físico-urbano",
+    "type": "Red de agua"
+  },
+  {
+    "n": 102,
+    "name": "Redes de alcantarillado",
+    "subsystem": "Sistema físico-urbano",
+    "type": "Red sanitaria"
+  },
+  {
+    "n": 103,
+    "name": "Redes de drenaje pluvial",
+    "subsystem": "Sistema físico-urbano",
+    "type": "Red hídrica"
+  },
+  {
+    "n": 104,
+    "name": "Subestaciones eléctricas",
+    "subsystem": "Sistema físico-urbano",
+    "type": "Infraestructura energética"
+  },
+  {
+    "n": 105,
+    "name": "Redes eléctricas",
+    "subsystem": "Sistema físico-urbano",
+    "type": "Red energética"
+  },
+  {
+    "n": 106,
+    "name": "Alumbrado público",
+    "subsystem": "Sistema físico-urbano",
+    "type": "Servicio urbano"
+  },
+  {
+    "n": 107,
+    "name": "Redes de gas",
+    "subsystem": "Sistema físico-urbano",
+    "type": "Red energética"
+  },
+  {
+    "n": 108,
+    "name": "Redes de telecomunicaciones",
+    "subsystem": "Sistema físico-urbano",
+    "type": "Red de información"
+  },
+  {
+    "n": 109,
+    "name": "Consumo de agua",
+    "subsystem": "Sistema físico-urbano",
+    "type": "Flujo de recursos"
+  },
+  {
+    "n": 110,
+    "name": "Consumo de energía",
+    "subsystem": "Sistema físico-urbano",
+    "type": "Flujo de recursos"
+  },
+  {
+    "n": 111,
+    "name": "Residuos domésticos",
+    "subsystem": "Sistema institucional de gestión",
+    "type": "Material descartado"
+  },
+  {
+    "n": 112,
+    "name": "Residuos comerciales",
+    "subsystem": "Sistema institucional de gestión",
+    "type": "Material descartado"
+  },
+  {
+    "n": 113,
+    "name": "Residuos de construcción",
+    "subsystem": "Sistema institucional de gestión",
+    "type": "Material descartado"
+  },
+  {
+    "n": 114,
+    "name": "Residuos acumulados en canales",
+    "subsystem": "Sistema institucional de gestión",
+    "type": "Material móvil"
+  },
+  {
+    "n": 115,
+    "name": "Contenedores de residuos",
+    "subsystem": "Sistema institucional de gestión",
+    "type": "Infraestructura"
+  },
+  {
+    "n": 116,
+    "name": "Rutas de recolección",
+    "subsystem": "Sistema institucional de gestión",
+    "type": "Recorrido de servicio"
+  },
+  {
+    "n": 117,
+    "name": "Recicladores de oficio",
+    "subsystem": "Sistema social-comunitario",
+    "type": "Agentes laborales"
+  },
+  {
+    "n": 118,
+    "name": "Material reciclable recuperado",
+    "subsystem": "Sistema social-comunitario",
+    "type": "Flujo de materiales"
+  },
+  {
+    "n": 119,
+    "name": "Compostaje",
+    "subsystem": "Sistema social-comunitario",
+    "type": "Proceso de transformación"
+  },
+  {
+    "n": 120,
+    "name": "Escombros en bordes ambientales",
+    "subsystem": "Sistema social-comunitario",
+    "type": "Material acumulado"
+  },
+  {
+    "n": 121,
+    "name": "Jardín Botánico de Bogotá",
+    "subsystem": "Sistema institucional de gestión",
+    "type": "Agente institucional"
+  },
+  {
+    "n": 122,
+    "name": "Secretaría Distrital de Ambiente",
+    "subsystem": "Sistema institucional de gestión",
+    "type": "Agente institucional"
+  },
+  {
+    "n": 123,
+    "name": "Empresa de Acueducto de Bogotá",
+    "subsystem": "Sistema institucional de gestión",
+    "type": "Agente institucional"
+  },
+  {
+    "n": 124,
+    "name": "Secretaría Distrital de Movilidad",
+    "subsystem": "Sistema institucional de gestión",
+    "type": "Agente institucional"
+  },
+  {
+    "n": 125,
+    "name": "Instituto de Desarrollo Urbano",
+    "subsystem": "Sistema institucional de gestión",
+    "type": "Agente institucional"
+  },
+  {
+    "n": 126,
+    "name": "Alcaldías locales",
+    "subsystem": "Sistema institucional de gestión",
+    "type": "Agente institucional"
+  },
+  {
+    "n": 127,
+    "name": "Empresas de servicios públicos",
+    "subsystem": "Sistema institucional de gestión",
+    "type": "Agentes organizacionales"
+  },
+  {
+    "n": 128,
+    "name": "Normas de uso del suelo",
+    "subsystem": "Sistema institucional de gestión",
+    "type": "Instrumento normativo"
+  },
+  {
+    "n": 129,
+    "name": "Planes de manejo ambiental",
+    "subsystem": "Sistema institucional de gestión",
+    "type": "Instrumento de gestión"
+  },
+  {
+    "n": 130,
+    "name": "Presupuestos de intervención",
+    "subsystem": "Sistema institucional de gestión",
+    "type": "Recurso de decisión"
+  },
+  {
+    "n": 131,
+    "name": "Cerros Orientales",
+    "subsystem": "Sistema biótico",
+    "type": "Ecosistema regional"
+  },
+  {
+    "n": 132,
+    "name": "Páramo de Sumapaz",
+    "subsystem": "Sistema biótico",
+    "type": "Ecosistema regional"
+  },
+  {
+    "n": 133,
+    "name": "Sabana de Bogotá",
+    "subsystem": "Sistema biótico",
+    "type": "Territorio regional"
+  },
+  {
+    "n": 134,
+    "name": "Municipios proveedores de agua",
+    "subsystem": "Sistema hídrico",
+    "type": "Agentes territoriales"
+  },
+  {
+    "n": 135,
+    "name": "Municipios receptores de residuos",
+    "subsystem": "Sistema institucional de gestión",
+    "type": "Agentes territoriales"
+  },
+  {
+    "n": 136,
+    "name": "Viajes desde municipios vecinos",
+    "subsystem": "Sistema de movilidad",
+    "type": "Flujo de personas"
+  },
+  {
+    "n": 137,
+    "name": "Carga que entra a Bogotá",
+    "subsystem": "Sistema socioeconómico y de ocupación",
+    "type": "Flujo de bienes"
+  },
+  {
+    "n": 138,
+    "name": "Alimentos que llegan a Bogotá",
+    "subsystem": "Sistema socioeconómico y de ocupación",
+    "type": "Flujo de recursos"
+  },
+  {
+    "n": 139,
+    "name": "Aves que atraviesan la ciudad",
+    "subsystem": "Sistema biótico",
+    "type": "Flujo ecológico"
+  },
+  {
+    "n": 140,
+    "name": "Información ambiental entre entidades",
+    "subsystem": "Sistema institucional de gestión",
+    "type": "Flujo de información"
+  },
+  {
+    "n": 141,
+    "name": "Lluvia",
+    "subsystem": "Sistema hídrico",
+    "type": "Fenómeno atmosférico"
+  },
+  {
+    "n": 142,
+    "name": "Temperatura del aire",
+    "subsystem": "Sistema físico-urbano",
+    "type": "Condición variable"
+  },
+  {
+    "n": 143,
+    "name": "Viento",
+    "subsystem": "Sistema físico-urbano",
+    "type": "Flujo atmosférico"
+  },
+  {
+    "n": 144,
+    "name": "Radiación solar",
+    "subsystem": "Sistema físico-urbano",
+    "type": "Flujo energético"
+  },
+  {
+    "n": 145,
+    "name": "Humedad del aire",
+    "subsystem": "Sistema físico-urbano",
+    "type": "Condición variable"
+  },
+  {
+    "n": 146,
+    "name": "Concentración de material particulado",
+    "subsystem": "Sistema institucional de gestión",
+    "type": "Medición ambiental"
+  },
+  {
+    "n": 147,
+    "name": "Ruido del tráfico",
+    "subsystem": "Sistema institucional de gestión",
+    "type": "Presión ambiental observable"
+  },
+  {
+    "n": 148,
+    "name": "Sombra de edificaciones",
+    "subsystem": "Sistema físico-urbano",
+    "type": "Condición espacial"
+  },
+  {
+    "n": 149,
+    "name": "Temperatura del borde urbano",
+    "subsystem": "Sistema físico-urbano",
+    "type": "Condición variable"
+  },
+  {
+    "n": 150,
+    "name": "Variación estacional de lluvias",
+    "subsystem": "Sistema hídrico",
+    "type": "Variación temporal"
+  }
 ];
 const CITY_DATA_SUBSYSTEM_COLORS = {
-  "Hídrico": "#43c7d7",
-  "Biótico": "#6bcf8f",
-  "Físico-urbano": "#b7c0cb",
-  "Movilidad": "#f1cf5b",
-  "Social-comunitario": "#ef9a4b",
-  "Socioeconómico y ocupación": "#e98b67",
-  "Cuidado y servicios": "#c6a0e9",
-  "Patrimonio y memoria": "#f07bb1",
-  "Institucional y gestión": "#9d8be8",
-  "Energía y servicios públicos": "#7d8ea3",
-  "Abastecimiento y economía circular": "#d2b84b",
-  "Regional y flujos abiertos": "#4eb4a8",
+  "Sistema hídrico": "#43c7d7",
+  "Sistema biótico": "#6bcf8f",
+  "Sistema físico-urbano": "#b7c0cb",
+  "Sistema de movilidad": "#f1cf5b",
+  "Sistema de cuidado, servicios y espacio público": "#c6a0e9",
+  "Sistema socioeconómico y de ocupación": "#e98b67",
+  "Sistema social-comunitario": "#ef9a4b",
+  "Sistema patrimonial y de memoria": "#f07bb1",
+  "Sistema institucional de gestión": "#9d8be8"
 };
+const CITY_DATA_SUBSYSTEMS = [
+  "Sistema hídrico",
+  "Sistema biótico",
+  "Sistema institucional de gestión",
+  "Sistema físico-urbano",
+  "Sistema de movilidad",
+  "Sistema socioeconómico y de ocupación",
+  "Sistema de cuidado, servicios y espacio público",
+  "Sistema social-comunitario",
+  "Sistema patrimonial y de memoria"
+];
