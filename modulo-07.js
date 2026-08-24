@@ -1893,13 +1893,13 @@
       if (!subsystemBubbles) return;
       const systems = mode === "systems";
       const rows = systems ? territorySystems : submodelRows;
-      const positions = systems ? [[29,36],[40,22],[58,20],[72,36],[61,62],[38,64]] : [[27,35],[37,22],[53,17],[68,28],[71,50],[58,68],[38,66]];
+      const positions = systems ? [[16,25],[34,14],[66,14],[84,25],[73,75],[27,75]] : [[14,25],[31,14],[56,13],[85,25],[86,52],[66,79],[25,77]];
       const colors = ["#56b8d4", "#68d391", "#b8c0c8", "#f1cf5b", "#ee9a4b", "#e58d62", "#b28be8"];
       const systemIcons = ["fa-droplet", "fa-feather-pointed", "fa-building", "fa-route", "fa-people-group", "fa-house-chimney"];
       const submodelIcons = ["fa-water", "fa-feather-pointed", "fa-city", "fa-person-walking", "fa-house-chimney", "fa-people-arrows", "fa-arrows-rotate"];
       const label = (row) => systems ? row.name : row.name.replace(/^Submodelo de /, "");
       const icon = (index) => (systems ? systemIcons : submodelIcons)[index] || "fa-circle-nodes";
-      const nodes = rows.map((row, index) => { const [x,y] = positions[index]; return `<button type="button" class="map-network-node ${systems ? "map-system-node" : "map-submodel-node"}" data-map-network-index="${index}" style="--node-x:${x}%;--node-y:${y}%;--node-color:${row.color || colors[index]}"><i class="map-network-node-icon fa-solid ${icon(index)}" aria-hidden="true"></i><strong>${label(row)}</strong></button>`; }).join("");
+      const nodes = rows.map((row, index) => { const [x,y] = positions[index]; const stretchAngle = Math.atan2(50 - y, 50 - x) * 180 / Math.PI; return `<button type="button" class="map-network-node ${systems ? "map-system-node" : "map-submodel-node"}" data-map-network-index="${index}" style="--node-x:${x}%;--node-y:${y}%;--node-color:${row.color || colors[index]};--stretch-angle:${stretchAngle.toFixed(1)}deg"><span class="map-network-stretch" aria-hidden="true"></span><i class="map-network-node-icon fa-solid ${icon(index)}" aria-hidden="true"></i><strong>${label(row)}</strong></button>`; }).join("");
       const relationPairs = systems
         ? [[0,1],[0,2],[0,5],[1,2],[1,3],[1,5],[2,3],[2,4],[3,4],[3,5],[4,5]]
         : [[0,1],[0,2],[1,2],[1,3],[2,3],[2,4],[3,4],[3,5],[4,5],[4,6],[5,6],[0,6],[1,5]];
@@ -1912,20 +1912,20 @@
         const unit = (vx, vy) => { const size = Math.max(.001, Math.hypot(vx, vy)); return [vx / size, vy / size]; };
         const normalPoint = (px, py, tx, ty, width) => [px - ty * width, py + tx * width];
         const [ux, uy] = unit(dx, dy);
-        const startGap = Math.min(8.3, length * .16);
-        const endGap = Math.min(8.3, length * .16);
+        const startGap = Math.min(6.55, length * .13);
+        const endGap = Math.min(6.55, length * .13);
         const start = [x + ux * startGap, y + uy * startGap];
         const end = [nx - ux * endGap, ny - uy * endGap];
         const mid = [(start[0] + end[0]) / 2 - (dy / length) * bend * .62, (start[1] + end[1]) / 2 + (dx / length) * bend * .62];
         const [t0x, t0y] = unit(mid[0] - start[0], mid[1] - start[1]);
         const [tmx, tmy] = unit(end[0] - start[0], end[1] - start[1]);
         const [t1x, t1y] = unit(end[0] - mid[0], end[1] - mid[1]);
-        const left0 = normalPoint(start[0], start[1], t0x, t0y, .82);
-        const leftM = normalPoint(mid[0], mid[1], tmx, tmy, .15);
-        const left1 = normalPoint(end[0], end[1], t1x, t1y, .13);
-        const right0 = normalPoint(start[0], start[1], t0x, t0y, -.82);
-        const rightM = normalPoint(mid[0], mid[1], tmx, tmy, -.15);
-        const right1 = normalPoint(end[0], end[1], t1x, t1y, -.13);
+        const left0 = normalPoint(start[0], start[1], t0x, t0y, .26);
+        const leftM = normalPoint(mid[0], mid[1], tmx, tmy, .075);
+        const left1 = normalPoint(end[0], end[1], t1x, t1y, .26);
+        const right0 = normalPoint(start[0], start[1], t0x, t0y, -.26);
+        const rightM = normalPoint(mid[0], mid[1], tmx, tmy, -.075);
+        const right1 = normalPoint(end[0], end[1], t1x, t1y, -.26);
         const point = ([px, py]) => `${px.toFixed(2)} ${py.toFixed(2)}`;
         const path = `M ${point(left0)} Q ${point(leftM)} ${point(left1)} L ${point(right1)} Q ${point(rightM)} ${point(right0)} Z`;
         const bondColor = row.color || colors[fromIndex];
