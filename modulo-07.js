@@ -1780,12 +1780,14 @@
       const overlay = document.createElement("div");
       overlay.className = "subsystem-formation-overlay";
       overlay.setAttribute("aria-hidden", "true");
-      overlay.innerHTML = `<div class="formation-mass"><span class="formation-core"></span>${Array.from({ length: 6 }, (_, index) => `<span class="formation-cell" style="--cell-index:${index};--cell-angle:${index * 60}deg;--cell-angle-reverse:${index * -60}deg"><span>${index + 1}</span></span>`).join("")}</div>`;
+      overlay.innerHTML = `<div class="formation-mass"><span class="formation-core"></span>${Array.from({ length: 6 }, (_, index) => `<span class="formation-cell" style="--cell-index:${index};--cell-angle:${index * 60}deg;--cell-angle-reverse:${index * -60}deg"></span>`).join("")}</div>`;
       shell.appendChild(overlay);
       requestAnimationFrame(() => overlay.classList.add("formation-visible"));
       window.setTimeout(() => overlay.classList.add("formation-condensing"), 650);
-      window.setTimeout(() => overlay.classList.add("formation-separating"), 1400);
-      window.setTimeout(() => { overlay.remove(); drawSubsystems({ hidden: true }); revealSubsystems(160); }, 3800);
+      window.setTimeout(() => overlay.classList.add("formation-separating"), 1450);
+      window.setTimeout(() => overlay.classList.add("formation-stretching"), 2050);
+      window.setTimeout(() => overlay.classList.add("formation-released"), 2850);
+      window.setTimeout(() => { overlay.remove(); drawSubsystems({ hidden: true }); revealSubsystems(160); }, 5200);
     };
     const runCartographyOpening = (map) => {
       if (!map || map.__openingPlayed) return;
