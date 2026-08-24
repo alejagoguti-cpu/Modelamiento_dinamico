@@ -1579,12 +1579,12 @@
     const initPartOneControls = (map, layers) => {
       const controls = document.getElementById("subsystemLayerControls");
       if (controls) {
-        controls.innerHTML = partOneLayerMeta.map((meta) => `<label class="layer-toggle"><input type="checkbox" data-layer-toggle="${meta.id}"><span class="layer-swatch" style="--layer-color:${meta.color}"></span><span><b>${meta.label}</b><small>${meta.description}</small></span></label>`).join("");
+        controls.innerHTML = partOneLayerMeta.map((meta) => `<label class="layer-toggle"><input type="checkbox" data-layer-toggle="${meta.id}"${meta.id === "hidrico" ? " checked" : ""}><span class="layer-swatch" style="--layer-color:${meta.color}"></span><span><b>${meta.label}</b><small>${meta.description}</small></span></label>`).join("");
         controls.querySelectorAll("[data-layer-toggle]").forEach((input) => input.addEventListener("change", () => {
           const meta = partOneLayerMeta.find((item) => item.id === input.dataset.layerToggle);
           const layer = layers.find((item) => item.id === input.dataset.layerToggle);
           if (!meta || !layer) return;
-          [layer.fill, layer.line, layer.point, ...(layer.extras || [])].forEach((id) => { if (map.getLayer(id)) map.setLayoutProperty(id, "visibility", input.checked ? "visible" : "none"); }); (layer.markers || []).forEach((marker) => { marker.getElement().style.display = input.checked ? "grid" : "none"; });
+          (meta.id === "hidrico" ? [layer.point, ...(layer.extras || [])] : [layer.fill, layer.line, layer.point, ...(layer.extras || [])]).forEach((id) => { if (map.getLayer(id)) map.setLayoutProperty(id, "visibility", input.checked ? "visible" : "none"); }); (layer.markers || []).forEach((marker) => { marker.getElement().style.display = input.checked ? "grid" : "none"; marker.getElement().classList.toggle("is-visible", input.checked); });
           announceCartography(input.checked ? `${meta.label.toUpperCase()} · CAPA ACTIVA` : "CAPAS DEL MAPA · VISTA BASE", input.checked);
         }));
       }
@@ -1643,7 +1643,7 @@
         });
         const waterBubbleData = [{ label: "Espejo de agua", coords: [-74.159,4.641] }, { label: "Ronda norte", coords: [-74.160,4.646] }, { label: "Ronda sur", coords: [-74.158,4.635] }, { label: "Canal Los Ángeles", coords: [-74.174,4.645] }, { label: "Entrada de agua", coords: [-74.166,4.644] }, { label: "Salida de agua", coords: [-74.153,4.639] }, { label: "Escorrentías", coords: [-74.167,4.651] }];
         waterBubbleData.forEach(({ label, coords }) => { const markerEl = document.createElement("div"); markerEl.className = "water-map-bubble"; markerEl.style.display = "none"; markerEl.innerHTML = `<span class="water-map-bubble-core"><i class="fa-solid fa-droplet"></i></span><span class="water-map-bubble-label">${label}</span>`; const marker = new maplibregl.Marker({ element: markerEl, anchor: "center" }).setLngLat(coords).addTo(map); waterMarkers.push(marker); });
-        const waterLayer = partOneMapLayers.find((layer) => layer.id === "hidrico"); if (waterLayer) waterLayer.markers = waterMarkers;
+        const waterLayer = partOneMapLayers.find((layer) => layer.id === "hidrico"); if (waterLayer) waterLayer.markers = waterMarkers; map.__waterMarkers = waterMarkers;
         initPartOneControls(map, partOneMapLayers);
         const burroMarker = document.createElement("div"); burroMarker.className = "burro-focus-label"; burroMarker.innerHTML = "<b>HUMEDAL EL BURRO</b><span>Reserva · agua · borde urbano</span>"; new maplibregl.Marker({ element: burroMarker, anchor: "bottom" }).setLngLat([-74.159, 4.64]).addTo(map); setStatus("BOGOTÁ · LECTURA GENERAL", true); window.setTimeout(() => runCartographyOpening(map), 850); });
       const loadOsm = async () => { const query = `[out:json][timeout:20];way[highway~"^(motorway|trunk|primary|secondary|tertiary)$"](around:4200,4.64,-74.09);out geom;`; setStatus("CARGANDO CALLES OSM…"); const controller = new AbortController(); const timer = window.setTimeout(() => controller.abort(), 12000); try { let response; for (const endpoint of ["https://overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter", "https://overpass.private.coffee/api/interpreter"]) { try { response = await fetch(`${endpoint}?data=${encodeURIComponent(query)}`, { signal: controller.signal, headers: { Accept: "application/json" } }); if (response.ok) break; } catch (error) { /* prueba el siguiente endpoint público */ } } if (!response?.ok) throw new Error("Overpass sin respuesta"); const data = await response.json(); const features = data.elements.filter((x) => x.geometry?.length > 1).map((x) => ({ type: "Feature", properties: { highway: x.tags?.highway || "road" }, geometry: { type: "LineString", coordinates: x.geometry.map((p) => [p.lon, p.lat]) } })); const geo = { type: "FeatureCollection", features }; if (map.getSource("osm-streets")) map.getSource("osm-streets").setData(geo); else { map.addSource("osm-streets", { type: "geojson", data: geo }); map.addLayer({ id: "osm-streets", type: "line", source: "osm-streets", paint: { "line-color": "#e89a6c", "line-width": ["interpolate", ["linear"], ["zoom"], 10, 1, 14, 3], "line-opacity": .8 } }); } setStatus(`${features.length} CALLES OSM CARGADAS`, true); } catch (error) { setStatus("MAPA OSM DISPONIBLE · CALLES EN RESPALDO"); toast("Overpass no respondió; el plano monocromático sigue disponible"); } finally { window.clearTimeout(timer); } };
@@ -1761,6 +1761,7 @@
       window.setTimeout(() => { subsystemBubbles.dataset.revealState = "complete"; }, Math.max(0, bubbles.length - 1) * stagger + 700);
     };
     const announceCartography = (text, live = false) => { const node = document.getElementById("mapDataStatus"); if (node) node.textContent = text; node?.parentElement?.classList.toggle("live", live); };
+    const showWaterMarkers = (map, stagger = 90) => { (map?.__waterMarkers || []).forEach((marker, index) => { const element = marker.getElement(); element.style.display = "grid"; window.setTimeout(() => element.classList.add("is-visible"), index * stagger); }); };
     const runCartographyOpening = (map) => {
       if (!map || map.__openingPlayed) return;
       map.__openingPlayed = true;
@@ -1768,6 +1769,7 @@
       if (reduced) {
         map.jumpTo({ center: [-74.159, 4.64], zoom: 13.65 });
         announceCartography("HUMEDAL EL BURRO · SUBSISTEMAS ACTIVOS", true);
+        showWaterMarkers(map, 0);
         revealSubsystems(0);
         return;
       }
@@ -1778,7 +1780,8 @@
         map.flyTo({ center: [-74.159, 4.64], zoom: 13.65, duration: 3600, essential: true });
       }, 700);
       window.setTimeout(() => {
-        announceCartography("HUMEDAL EL BURRO · SUBSISTEMAS ACTIVOS", true);
+        announceCartography("HUMEDAL EL BURRO · AGUA Y SUBSISTEMAS ACTIVOS", true);
+        showWaterMarkers(map, 110);
         revealSubsystems(170);
       }, 4450);
     };
