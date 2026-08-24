@@ -160,6 +160,16 @@ a { color:inherit; text-decoration:none; }
 .map-toast { position:absolute; top:89px; left:20px; max-width:240px; padding:8px 11px; display:flex; align-items:center; gap:7px; border-radius:5px; color:#344b4d; background:rgba(255,255,255,.83); box-shadow:0 4px 14px rgba(0,0,0,.13); font-size:9px; opacity:0; transform:translateY(-4px); transition:.22s ease; pointer-events:none; }
 .map-toast.is-visible { opacity:1; transform:translateY(0); }
 .map-toast i { color:#159f98; }
+.upl-zoom-indicator { position:absolute; z-index:7; top:70px; left:50%; min-width:220px; max-width:calc(100% - 40px); padding:8px 12px; display:flex; align-items:center; gap:9px; border:1px solid rgba(21,157,150,.42); border-radius:7px; color:#244447; background:rgba(255,255,255,.9); box-shadow:0 6px 18px rgba(25,56,53,.2); opacity:0; transform:translate(-50%,-8px); transition:opacity .2s ease,transform .2s ease; pointer-events:none; }
+.upl-zoom-indicator:not([hidden]).is-visible { opacity:1; transform:translate(-50%,0); }
+.upl-zoom-indicator > i { color:#159d96; font-size:13px; animation:upl-zoom-indicator-pulse 1.05s ease-in-out infinite; }
+.upl-zoom-indicator > span:not(.upl-zoom-progress) { min-width:0; display:grid; gap:2px; }
+.upl-zoom-indicator strong { overflow:hidden; color:#183f42; font-size:10px; line-height:1.2; text-overflow:ellipsis; white-space:nowrap; }
+.upl-zoom-indicator small { color:#657b7d; font-size:8px; line-height:1.2; }
+.upl-zoom-progress { position:relative; width:34px; height:3px; flex:0 0 34px; overflow:hidden; border-radius:999px; background:rgba(21,157,150,.18); }
+.upl-zoom-progress::after { content:""; position:absolute; inset:0 auto 0 -100%; width:100%; border-radius:inherit; background:#159d96; animation:upl-zoom-progress 1.25s ease-in-out infinite; }
+@keyframes upl-zoom-indicator-pulse { 0%,100% { opacity:.55; transform:scale(.9); } 50% { opacity:1; transform:scale(1.08); } }
+@keyframes upl-zoom-progress { 0% { transform:translateX(0); } 100% { transform:translateX(200%); } }
 .map-attribution-note { position:absolute; right:8px; bottom:4px; color:#4b595b; font-size:8px; text-shadow:0 1px 2px #fff; pointer-events:auto; }
 .map-attribution-note a { text-decoration:underline; }
 .map-attribution-note a:hover { color:#008c83; }

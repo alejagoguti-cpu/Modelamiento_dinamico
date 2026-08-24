@@ -42,6 +42,7 @@
     overpassController: null,
     viewportDebounceTimer: null,
     uplFocusTransitionToken: 0,
+    uplZoomTarget: null,
     proceduralMarkers: [],
     favorite: false,
     apiLayers: {
@@ -466,6 +467,7 @@
       state.map.on("moveend", () => {
         applyRoadZoomFilter();
         scheduleViewportLoad();
+        if (!state.map.isMoving?.() && isUplZoomTargetReached()) hideUplZoomIndicator();
       });
       state.map.on("load", () => {
         state.mapReady = true;
@@ -508,7 +510,69 @@
   let uplFocusTransitionFrame = null;
   let uplFocusTransitionTimer = null;
   let uplFocusExitTimer = null;
+  let uplZoomIndicatorHideTimer = null;
+  let uplZoomIndicatorFinishTimer = null;
+  let uplZoomIndicatorToken = 0;
   let uplFocusExitMarkers = [];
+
+  function showUplZoomIndicator(upl) {
+    const indicator = $("#uplZoomIndicator");
+    if (!indicator || !upl) return;
+    const label = $("#uplZoomIndicatorLabel");
+    const hint = $("#uplZoomIndicatorHint");
+    if (uplZoomIndicatorHideTimer !== null) {
+      window.clearTimeout(uplZoomIndicatorHideTimer);
+      uplZoomIndicatorHideTimer = null;
+    }
+    if (uplZoomIndicatorFinishTimer !== null) {
+      window.clearTimeout(uplZoomIndicatorFinishTimer);
+      uplZoomIndicatorFinishTimer = null;
+    }
+    const token = ++uplZoomIndicatorToken;
+    if (label) label.textContent = `Enfocando UPL ${upl.num} · ${upl.name}`;
+    if (hint) hint.textContent = state.currentView === "region" ? "Ajustando la vista regional" : "Ajustando la vista de proximidad";
+    indicator.hidden = false;
+    indicator.setAttribute("aria-busy", "true");
+    indicator.classList.remove("is-visible");
+    window.requestAnimationFrame(() => {
+      if (token === uplZoomIndicatorToken) indicator.classList.add("is-visible");
+    });
+    uplZoomIndicatorFinishTimer = window.setTimeout(() => {
+      if (token === uplZoomIndicatorToken) hideUplZoomIndicator();
+    }, 1800);
+  }
+
+  function hideUplZoomIndicator(immediate = false) {
+    const indicator = $("#uplZoomIndicator");
+    if (!indicator) return;
+    if (uplZoomIndicatorHideTimer !== null) {
+      window.clearTimeout(uplZoomIndicatorHideTimer);
+      uplZoomIndicatorHideTimer = null;
+    }
+    if (uplZoomIndicatorFinishTimer !== null) {
+      window.clearTimeout(uplZoomIndicatorFinishTimer);
+      uplZoomIndicatorFinishTimer = null;
+    }
+    const token = ++uplZoomIndicatorToken;
+    indicator.setAttribute("aria-busy", "false");
+    indicator.classList.remove("is-visible");
+    const hide = () => {
+      if (token !== uplZoomIndicatorToken) return;
+      indicator.hidden = true;
+      uplZoomIndicatorHideTimer = null;
+    };
+    if (immediate) hide();
+    else uplZoomIndicatorHideTimer = window.setTimeout(hide, 220);
+  }
+
+  function isUplZoomTargetReached() {
+    if (!state.map || !state.uplZoomTarget) return true;
+    const center = state.map.getCenter?.();
+    const zoom = state.map.getZoom?.();
+    if (!center || typeof zoom !== "number") return false;
+    const [targetLng, targetLat] = state.uplZoomTarget.center;
+    return Math.abs(center.lng - targetLng) < .001 && Math.abs(center.lat - targetLat) < .001 && Math.abs(zoom - state.uplZoomTarget.zoom) < .15;
+  }
 
   function setUplFocusLayerOpacity(fillOpacity, lineOpacity) {
     if (!state.map) return;
@@ -574,6 +638,7 @@
 
   function transitionUplFocusVisual(targeted = true) {
     if (!state.map || !state.selectedUpl) return;
+    showUplZoomIndicator(state.selectedUpl);
     cancelUplFocusTransition();
     const token = state.uplFocusTransitionToken;
     fadeOutUplMarkers(180);
@@ -627,6 +692,8 @@
     const maxZoom = state.currentView === "barrio" ? 15.2 : 12.4;
     const padding = state.currentView === "barrio" ? 44 : 38;
     if (!animate || typeof state.map.flyTo !== "function") {
+      state.uplZoomTarget = null;
+      hideUplZoomIndicator(true);
       state.map.fitBounds(bounds, { padding, duration: 0, maxZoom });
       return;
     }
@@ -634,7 +701,8 @@
       ? state.map.cameraForBounds(bounds, { padding })
       : null;
     const targetZoom = Math.min(maxZoom, Math.max(10, Number(camera?.zoom) || (state.currentView === "barrio" ? 14.2 : 11.2)));
-    const targetCenter = camera?.center || [state.selectedUpl.lon, state.selectedUpl.lat];
+    const targetCenter = camera?.center ? [camera.center.lng, camera.center.lat] : [state.selectedUpl.lon, state.selectedUpl.lat];
+    state.uplZoomTarget = { center: targetCenter, zoom: targetZoom };
     state.map.flyTo({
       center: targetCenter,
       zoom: targetZoom,
@@ -655,7 +723,12 @@
       setText("#mapTitle", "Región Metropolitana");
       setText("#mapSubtitle", "20 municipios conectados · escala macro");
       transitionUplFocusVisual(false);
-      if (state.map) state.map.fitBounds(makeBounds(state.selectedUpl, "region"), { padding: 38, duration: 700, maxZoom: 11.2 });
+      if (state.map) {
+        const regionBounds = makeBounds(state.selectedUpl, "region");
+        const regionCamera = state.map.cameraForBounds?.(regionBounds, { padding: 38 });
+        state.uplZoomTarget = regionCamera?.center ? { center: [regionCamera.center.lng, regionCamera.center.lat], zoom: Math.min(11.2, regionCamera.zoom) } : null;
+        state.map.fitBounds(regionBounds, { padding: 38, duration: 700, maxZoom: 11.2 });
+      }
       showToast("Vista macro: el mapa se abre a la región; la UPL permanece como referencia.");
     } else {
       updateUplPanel(state.selectedUpl);
