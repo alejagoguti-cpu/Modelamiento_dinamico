@@ -1656,7 +1656,8 @@
         submodelsQuestion?.setAttribute("aria-expanded", "true");
       }
       setSubmodelsMode(mode);
-      submodelsWorkspace?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      renderMapNetwork(mode === "subsystems" ? "systems" : "submodels");
+      document.querySelector(".cartography-section")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
     };
     directSubsystemsBtn?.addEventListener("click", () => openSubmodelsFromDirectButton("subsystems"));
     directSubmodelsBtn?.addEventListener("click", () => openSubmodelsFromDirectButton("submodels"));
@@ -1742,7 +1743,7 @@
       document.getElementById("loadOsmStreets")?.addEventListener("click", loadOsm);
       /* Las calles OSM quedan como acción manual y no se cargan al abrir el mapa. */
       document.getElementById("loadOsrmRoute")?.addEventListener("click", loadRoute);
-      document.getElementById("resetCartography")?.addEventListener("click", () => { if (map.getLayer("osm-streets")) map.removeLayer("osm-streets"); if (map.getSource("osm-streets")) map.removeSource("osm-streets"); if (map.getLayer("osrm-route")) map.removeLayer("osrm-route"); if (map.getSource("osrm-route")) map.removeSource("osrm-route"); clearSubsystemPoints(); drawSubsystems({ hidden: false }); map.jumpTo({ center: [-74.150,4.642], zoom: 13.65 }); setStatus("HUMEDAL EL BURRO · CARTOGRAFÍA LISTA", true); });
+      document.getElementById("resetCartography")?.addEventListener("click", () => { if (map.getLayer("osm-streets")) map.removeLayer("osm-streets"); if (map.getSource("osm-streets")) map.removeSource("osm-streets"); if (map.getLayer("osrm-route")) map.removeLayer("osrm-route"); if (map.getSource("osrm-route")) map.removeSource("osrm-route"); clearSubsystemPoints(); drawSubsystems({ hidden: true }); map.jumpTo({ center: [-74.150,4.642], zoom: 13.65 }); setStatus("HUMEDAL EL BURRO · CARTOGRAFÍA LISTA", true); });
     }
     function initProceduralSimulation() {
       const holder = document.getElementById("proceduralSimulation");
@@ -1768,7 +1769,7 @@
       if (!subsystemsPanel) return;
       subsystemsPanel.hidden = !subsystemsPanel.hidden;
       identifySubsystems.classList.toggle("active", !subsystemsPanel.hidden);
-      if (subsystemBubbles?.dataset.revealState !== "complete") revealSubsystems(80);
+      if (!subsystemsPanel.hidden) renderMapNetwork("systems"); else clearMapNetwork();
     });
     const subsystemBubbles = document.getElementById("subsystemBubbles");
     const subsystemData = partOneRows.map((row, index) => ({
@@ -1887,31 +1888,32 @@
       "Gestión institucional y manejo": { note: "coordinación, restauración y toma de decisiones", nodes: [{ id: "jardin", label: "Jardín Botánico", x: 16, y: 50 }, { id: "ambiente", label: "Secretaría de Ambiente", x: 50, y: 20 }, { id: "residuos", label: "Ciudad Limpia", x: 84, y: 50 }, { id: "restauracion", label: "Restauración", x: 50, y: 80 }, { id: "seguimiento", label: "Seguimiento", x: 84, y: 80 }], edges: [{ a: "jardin", b: "ambiente", label: "regulación" }, { a: "ambiente", b: "residuos", label: "manejo" }, { a: "jardin", b: "restauracion", label: "acción" }, { a: "restauracion", b: "seguimiento", label: "evaluación" }, { a: "seguimiento", b: "ambiente", label: "decisión" }] }
     };
     const renderSubsystemNetwork = (item) => { const graph = subsystemNetworks[item.name]; if (!graph) return ""; const byId = Object.fromEntries(graph.nodes.map((node) => [node.id, node])); const wildlife = item.name === "Sistema biótico del humedal" ? `<span class="process-network-bird migratory bird-one" aria-label="Ave migratoria volando"><i class="fa-solid fa-crow"></i></span><span class="process-network-bird migratory bird-two" aria-label="Ave migratoria volando"><i class="fa-solid fa-crow"></i></span><span class="process-network-bird resident bird-three" aria-label="Ave residente en el hábitat"><i class="fa-solid fa-crow"></i></span><span class="process-network-bird resident bird-four" aria-label="Ave residente en el hábitat"><i class="fa-solid fa-crow"></i></span>` : ""; return `<section class="process-network" style="--bubble-color:${item.color}"><strong><i class="fa-solid fa-diagram-project"></i> RED INTERNA · RELACIONES</strong><small>${graph.note}</small><div class="process-network-canvas"><svg viewBox="0 0 100 100" aria-hidden="true">${graph.edges.map((edge) => { const a = byId[edge.a]; const b = byId[edge.b]; return `<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}"><title>${edge.label}</title></line>`; }).join("")}</svg>${wildlife}${graph.nodes.map((node) => `<span class="process-network-node" style="left:${node.x}%;top:${node.y}%" title="${node.label}"><i class="fa-solid fa-circle-dot"></i><em>${node.label}</em></span>`).join("")}</div><small class="process-network-legend">Las líneas muestran procesos de relación entre unidades del mismo nivel.</small></section>`; };
-    const drawSubsystems = ({ hidden = false } = {}) => {
+    const renderMapNetwork = (mode = "systems") => {
       if (!subsystemBubbles) return;
-      subsystemBubbles.dataset.revealState = hidden ? "pending" : "complete";
-      subsystemBubbles.innerHTML = subsystemData.map((item, index) => `<button class="subsystem-bubble${hidden ? " is-pending" : " is-visible"}" data-subsystem="${index}" style="--bubble-color:${item.color};left:${item.x}%;top:${item.y}%" title="${item.name}">${item.short}</button>`).join("");
-      subsystemBubbles.querySelectorAll(".subsystem-bubble").forEach((button) => button.addEventListener("click", () => {
-        const item = subsystemData[Number(button.dataset.subsystem)];
-        subsystemBubbles.querySelectorAll(".subsystem-components, .subsystem-purpose-panel").forEach((node) => node.remove());
-        subsystemBubbles.querySelectorAll(".subsystem-bubble").forEach((node) => node.classList.remove("active"));
-        renderSubsystemPoints(item);
-        button.classList.add("active");
-        const components = document.createElement("div");
-        components.className = "subsystem-components active";
-        components.style.setProperty("--bubble-color", item.color);
-        components.style.left = `clamp(8px, ${Math.max(7, Math.min(item.x - 8, 62))}%, calc(100% - 320px))`;
-        components.style.top = `clamp(72px, ${Math.min(item.y + 10, 72)}%, calc(100% - 170px))`;
-        const visuals = getComponentVisuals(item);
-        components.innerHTML = `<div class="subsystem-panel-heading"><strong><i class="fa-solid fa-sparkles"></i> QUÉ PARTES O COMPONENTES SE ANALIZAN</strong><button type="button" class="subsystem-panel-close" aria-label="Cerrar panel de componentes" title="Cerrar"><i class="fa-solid fa-xmark"></i></button></div><div class="component-visual-strip">${visuals.map((visual) => `<span class="component-visual ${visual.className || ""}" title="${visual.label}" aria-label="${visual.label}"><i class="fa-solid ${visual.icon}"></i><em>${visual.label}</em></span>`).join("")}</div><p>${item.componentsText || item.components.join(", ")}</p>${renderSubsystemNetwork(item)}`;
-        subsystemBubbles.appendChild(components);
-        const purpose = document.createElement("aside");
-        purpose.className = "subsystem-purpose-panel active";
-        purpose.style.setProperty("--bubble-color", item.color);
-        purpose.innerHTML = `<div class="subsystem-panel-heading"><strong>${item.name}</strong><button type="button" class="subsystem-panel-close" aria-label="Cerrar panel de propósito" title="Cerrar"><i class="fa-solid fa-xmark"></i></button></div><h4>¿Las partes tienen propósito propio?</h4><p>${item.partsPurpose}</p><h4>¿La totalidad tiene propósito propio?</h4><p>${item.totalPurpose}</p><h4>Por ende, la categoría es:</h4><b class="purpose-category">${item.category}</b><p class="purpose-justification">${item.justification}</p><h4>Qué cambia en el tiempo</h4><p>${item.process}</p>`;
-        subsystemBubbles.appendChild(purpose); const closePanels = (event) => { event?.stopPropagation(); components.remove(); purpose.remove(); button.classList.remove("active"); clearSubsystemPoints(); }; components.querySelector(".subsystem-panel-close")?.addEventListener("click", closePanels); purpose.querySelector(".subsystem-panel-close")?.addEventListener("click", closePanels);
+      const systems = mode === "systems";
+      const rows = systems ? territorySystems : submodelRows;
+      const positions = systems ? [[12,18],[50,9],[88,18],[88,80],[50,91],[12,80]] : [[14,18],[50,8],[86,18],[91,54],[76,88],[25,88],[9,54]];
+      const colors = ["#56b8d4", "#68d391", "#b8c0c8", "#f1cf5b", "#ee9a4b", "#e58d62", "#b28be8"];
+      const label = (row) => systems ? row.name : row.name.replace(/^Submodelo de /, "");
+      const nodes = rows.map((row, index) => { const [x,y] = positions[index]; return `<button type="button" class="map-network-node ${systems ? "map-system-node" : "map-submodel-node"}" data-map-network-index="${index}" style="--node-x:${x}%;--node-y:${y}%;--node-color:${row.color || colors[index]}"><span></span><strong>${label(row)}</strong></button>`; }).join("");
+      const edges = rows.map((row, index) => { const [x,y] = positions[index]; return `<line x1="50%" y1="50%" x2="${x}%" y2="${y}%" style="--edge-color:${row.color || colors[index]}"></line>`; }).join("") + rows.slice(0, -1).map((row, index) => { const [x,y] = positions[index], [nx,ny] = positions[index + 1]; return `<line class="secondary" x1="${x}%" y1="${y}%" x2="${nx}%" y2="${ny}%" style="--edge-color:${row.color || colors[index]}"></line>`; }).join("");
+      subsystemBubbles.dataset.revealState = "complete";
+      subsystemBubbles.innerHTML = `<div class="map-network-stage ${systems ? "systems-network" : "submodels-network"}"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${edges}</svg><div class="map-network-core"><span></span><strong>HUMEDAL<br>EL BURRO</strong></div>${nodes}</div><div id="mapNetworkDetail" class="map-network-detail" hidden></div>`;
+      subsystemBubbles.querySelectorAll(".map-network-node").forEach((button) => button.addEventListener("click", () => {
+        const row = rows[Number(button.dataset.mapNetworkIndex)];
+        subsystemBubbles.querySelectorAll(".map-network-node").forEach((node) => node.classList.toggle("selected", node === button));
+        const detail = document.getElementById("mapNetworkDetail");
+        if (!detail) return;
+        const color = row.color || colors[Number(button.dataset.mapNetworkIndex)];
+        const parts = systems ? row.components : row.parts;
+        const general = systems ? `Las partes ${row.partsPurpose.toLowerCase()} tienen propósito propio y la totalidad ${row.totalPurpose.toLowerCase()} tiene propósito propio.` : row.partsWhy;
+        const burro = systems ? row.process : row.totalWhy;
+        detail.innerHTML = `<div class="map-network-detail-head"><span style="--detail-color:${color}"></span><strong>${label(row)}</strong><b>${systems ? row.category : row.category}</b><button type="button" class="subsystem-panel-close" id="mapNetworkDetailClose" aria-label="Cerrar detalle"><i class="fa-solid fa-xmark"></i></button></div><div class="map-network-detail-grid"><div><small>${systems ? "PARTES / COMPONENTES" : "SISTEMAS QUE FUNCIONAN COMO SUS PARTES"}</small><p>${parts}</p></div><div><small>${systems ? "LECTURA GENERAL" : "¿LAS PARTES TIENEN PROPÓSITO? · ¿POR QUÉ?"}</small><p>${general}</p></div><div><small>${systems ? "EN EL HUMEDAL EL BURRO" : "¿LA TOTALIDAD TIENE PROPÓSITO? · ¿POR QUÉ?"}</small><p>${burro}</p></div><div><small>QUÉ CAMBIA EN EL TIEMPO</small><p>${row.process}</p></div></div>`;
+        detail.hidden = false;
+        detail.querySelector("#mapNetworkDetailClose")?.addEventListener("click", () => { detail.hidden = true; });
       }));
     };
+    const drawSubsystems = ({ hidden = false } = {}) => { if (!subsystemBubbles) return; subsystemBubbles.dataset.revealState = hidden ? "pending" : "complete"; if (hidden) { subsystemBubbles.replaceChildren(); return; } renderMapNetwork("systems"); };
     const revealSubsystems = (stagger = 150) => {
       if (!subsystemBubbles) return;
       const bubbles = [...subsystemBubbles.querySelectorAll(".subsystem-bubble")];
@@ -1944,7 +1946,7 @@
       if (reduced) {
         map.jumpTo({ center: [-74.150, 4.642], zoom: 13.65 });
         announceCartography("HUMEDAL EL BURRO · AGUA Y SUBSISTEMAS", true);
-        drawSubsystems({ hidden: false });
+        drawSubsystems({ hidden: true });
         return;
       }
       announceCartography("BOGOTÁ · LECTURA GENERAL", true);
@@ -1960,7 +1962,7 @@
       }, 2250);
       window.setTimeout(() => {
         announceCartography("HUMEDAL EL BURRO · SUBSISTEMAS VISIBLES", true);
-        drawSubsystems({ hidden: false });
+        drawSubsystems({ hidden: true });
       }, 4800);
     };
     const setupCartographyEntrance = (map) => {

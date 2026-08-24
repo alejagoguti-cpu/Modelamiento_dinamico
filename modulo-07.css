@@ -5101,3 +5101,34 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 .submodels-table th:nth-child(2) { min-width: 250px; }
 .submodels-table th:nth-child(4), .submodels-table th:nth-child(6) { min-width: 285px; }
 .submodels-table th:nth-child(8) { min-width: 240px; }
+
+/* Red relacional integrada en la cartografía principal */
+.subsystem-bubbles.network-active { inset: 0; z-index: 8; pointer-events: auto; }
+.map-network-stage { position: absolute; inset: 0; overflow: hidden; background: radial-gradient(circle at 50% 50%, rgba(118,255,240,.12), transparent 24%), rgba(2,8,10,.18); }
+.map-network-stage::after { content: ""; position: absolute; inset: 9%; border: 1px solid rgba(118,255,240,.12); border-radius: 50%; pointer-events: none; }
+.map-network-stage > svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.map-network-stage > svg line { stroke: var(--edge-color); stroke-width: .38; stroke-opacity: .8; stroke-dasharray: 2 2.8; animation: map-network-flow 3.4s linear infinite; filter: drop-shadow(0 0 3px var(--edge-color)); vector-effect: non-scaling-stroke; }
+.map-network-stage > svg line.secondary { stroke-width: .25; stroke-opacity: .46; stroke-dasharray: 1.4 3.2; animation-duration: 5.2s; }
+@keyframes map-network-flow { to { stroke-dashoffset: -22; } }
+.map-network-core { position: absolute; left: 50%; top: 50%; z-index: 2; width: 108px; height: 108px; transform: translate(-50%,-50%); display: grid; place-items: center; border: 1px solid rgba(255,255,255,.92); border-radius: 50%; background: radial-gradient(circle, rgba(118,255,240,.23), rgba(4,13,16,.92) 68%); box-shadow: 0 0 22px rgba(118,255,240,.34), inset 0 0 20px rgba(118,255,240,.16); text-align: center; }
+.map-network-core span { position: absolute; width: 28px; height: 28px; border: 1px solid rgba(118,255,240,.8); border-radius: 50%; animation: map-network-pulse 2.2s ease-out infinite; }
+.map-network-core strong { color: #fff; font-size: 9px; line-height: 1.2; letter-spacing: .04em; }
+@keyframes map-network-pulse { 0% { transform: scale(.8); opacity: .62; } 100% { transform: scale(3.2); opacity: 0; } }
+.map-network-node { position: absolute; left: var(--node-x); top: var(--node-y); z-index: 3; width: 112px; min-height: 78px; transform: translate(-50%,-50%); display: grid; place-items: center; align-content: center; gap: 5px; padding: 10px 7px; border: 1px solid var(--node-color); border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--node-color) 28%, #071011), rgba(4,10,13,.93) 72%); color: #fff; box-shadow: 0 0 17px color-mix(in srgb, var(--node-color) 48%, transparent), inset 0 0 14px color-mix(in srgb, var(--node-color) 18%, transparent); cursor: pointer; text-align: center; animation: map-network-node-breathe 3.4s ease-in-out infinite; }
+.map-network-node:hover, .map-network-node.selected { transform: translate(-50%,-50%) scale(1.1); border-width: 2px; box-shadow: 0 0 28px color-mix(in srgb, var(--node-color) 75%, transparent), inset 0 0 18px color-mix(in srgb, var(--node-color) 24%, transparent); }
+.map-network-node span { width: 11px; height: 11px; border-radius: 50%; background: var(--node-color); box-shadow: 0 0 12px var(--node-color); }
+.map-network-node strong { max-width: 94px; color: #fff; font-size: 8px; line-height: 1.13; }
+.map-submodel-node { width: 108px; min-height: 74px; }
+.map-submodel-node strong { font-size: 7.5px; }
+@keyframes map-network-node-breathe { 0%,100% { filter: brightness(.9); } 50% { filter: brightness(1.18); } }
+.map-network-detail { position: absolute; left: 2%; right: 2%; bottom: 2%; z-index: 5; max-height: 38%; overflow: auto; padding: 11px 13px; border: 1px solid rgba(118,255,240,.34); border-radius: 8px; background: rgba(3,10,12,.94); color: rgba(242,236,227,.8); box-shadow: 0 0 20px rgba(0,0,0,.5); font-size: 9px; line-height: 1.35; }
+.map-network-detail-head { display: flex; align-items: center; gap: 7px; margin-bottom: 7px; }
+.map-network-detail-head > span { width: 10px; height: 10px; flex: 0 0 auto; border-radius: 50%; background: var(--detail-color); box-shadow: 0 0 9px var(--detail-color); }
+.map-network-detail-head strong { color: #fff; font-size: 11px; }
+.map-network-detail-head b { padding: 3px 6px; border: 1px solid rgba(118,255,240,.36); border-radius: 999px; color: #76fff0; font-size: 7px; }
+.map-network-detail-head .subsystem-panel-close { margin-left: auto; }
+.map-network-detail-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 7px 12px; }
+.map-network-detail-grid div { min-width: 0; }
+.map-network-detail-grid small { color: #76fff0; font-size: 7px; font-weight: 800; letter-spacing: .07em; }
+.map-network-detail-grid p { margin: 3px 0 0; color: rgba(242,236,227,.78); }
+@media (max-width: 760px) { .map-network-node { width: 78px; min-height: 60px; padding: 7px 4px; } .map-network-node strong { font-size: 6.5px; } .map-submodel-node { width: 74px; min-height: 58px; } .map-submodel-node strong { font-size: 6px; } .map-network-core { width: 82px; height: 82px; } .map-network-core strong { font-size: 7px; } .map-network-detail { max-height: 48%; } .map-network-detail-grid { grid-template-columns: 1fr; } }
