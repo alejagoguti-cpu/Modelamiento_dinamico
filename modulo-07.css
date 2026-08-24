@@ -5495,3 +5495,54 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 .map-network-stage > svg .map-network-bond-soft { opacity: .035 !important; filter: blur(.35px) !important; }
 .map-network-stage > svg .map-network-bond { opacity: .66 !important; }
 .map-network-node { background: radial-gradient(circle at 48% 44%, color-mix(in srgb, var(--node-color) 34%, rgba(8,18,21,.82)), rgba(8,15,18,.94) 76%) !important; box-shadow: 0 0 0 5px color-mix(in srgb, var(--node-color) 7%, transparent), 0 0 15px color-mix(in srgb, var(--node-color) 20%, transparent) !important; }
+
+/* MÓDULO 07 · UNIONES META-BALL · acabado final */
+.map-network-stage > svg .map-network-bond-soft {
+  opacity: .035 !important;
+  filter: blur(.34px) !important;
+  stroke: none !important;
+  fill: var(--bond-gradient) !important;
+}
+.map-network-stage > svg .map-network-bond {
+  opacity: .46 !important;
+  filter: none !important;
+  stroke: none !important;
+  fill: var(--bond-gradient) !important;
+}
+.map-network-stage > svg .map-network-bond-flow {
+  fill: none !important;
+  stroke: transparent !important;
+  stroke-width: .1 !important;
+  pointer-events: none !important;
+}
+.map-network-stage > svg .map-network-pulse {
+  opacity: .92;
+  pointer-events: none;
+  filter: drop-shadow(0 0 1.6px var(--bond-color));
+  animation: module07-pulse-breathe 2.8s ease-in-out infinite;
+}
+.map-network-stage > svg .map-network-pulse-secondary { opacity: .72; animation-delay: -1.4s; }
+.map-network-node {
+  border-radius: 47% 53% 51% 49% !important;
+  animation: module07-node-metaball-float 21s ease-in-out infinite !important;
+  transform-origin: center center;
+}
+.map-network-node:nth-child(3n + 1) { animation-delay: -5.5s !important; }
+.map-network-node:nth-child(3n + 2) { animation-delay: -11s !important; }
+.map-network-node:nth-child(4n) { animation-delay: -16s !important; }
+@keyframes module07-node-metaball-float {
+  0%, 100% { transform: translate(-50%,-50%) translate3d(0,0,0) scale(1); border-radius: 47% 53% 51% 49%; }
+  25% { transform: translate(-50%,-50%) translate3d(1.8px,-1.4px,0) scale(1.012); border-radius: 54% 46% 48% 52%; }
+  50% { transform: translate(-50%,-50%) translate3d(-1.2px,1.8px,0) scale(.992); border-radius: 49% 51% 55% 45%; }
+  75% { transform: translate(-50%,-50%) translate3d(-1.8px,-.8px,0) scale(1.006); border-radius: 44% 56% 49% 51%; }
+}
+@keyframes module07-pulse-breathe {
+  0%, 100% { opacity: .58; transform: scale(.86); }
+  50% { opacity: 1; transform: scale(1.14); }
+}
+.map-network-node:hover, .map-network-node.selected {
+  border-radius: 45% 55% 52% 48% !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .map-network-node, .map-network-stage > svg .map-network-pulse { animation: none !important; }
+}

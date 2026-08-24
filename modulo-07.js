@@ -1909,31 +1909,48 @@
         if (!row || !other) return "";
         const [x, y] = positions[fromIndex], [nx, ny] = positions[toIndex];
         const dx = nx - x, dy = ny - y, length = Math.max(1, Math.hypot(dx, dy));
-        const bend = (edgeIndex % 2 ? -1 : 1) * Math.min(6.2, length * .105);
+        const bend = (edgeIndex % 2 ? -1 : 1) * Math.min(7.5, length * .12);
         const unit = (vx, vy) => { const size = Math.max(.001, Math.hypot(vx, vy)); return [vx / size, vy / size]; };
         const normalPoint = (px, py, tx, ty, width) => [px - ty * width, py + tx * width];
         const [ux, uy] = unit(dx, dy);
-        const start = [x + ux * Math.min(1.35, length * .03), y + uy * Math.min(1.35, length * .03)];
-        const end = [nx - ux * Math.min(1.35, length * .03), ny - uy * Math.min(1.35, length * .03)];
+        const start = [x + ux * .15, y + uy * .15];
+        const end = [nx - ux * .15, ny - uy * .15];
         const mid = [(start[0] + end[0]) / 2 - (dy / length) * bend, (start[1] + end[1]) / 2 + (dx / length) * bend];
-        const [t0x, t0y] = unit(mid[0] - start[0], mid[1] - start[1]);
-        const [tmx, tmy] = unit(end[0] - start[0], end[1] - start[1]);
-        const [t1x, t1y] = unit(end[0] - mid[0], end[1] - mid[1]);
-        const endWidth = .58;
-        const midWidth = .18;
-        const left0 = normalPoint(start[0], start[1], t0x, t0y, endWidth);
-        const leftM = normalPoint(mid[0], mid[1], tmx, tmy, midWidth);
-        const left1 = normalPoint(end[0], end[1], t1x, t1y, endWidth);
-        const right0 = normalPoint(start[0], start[1], t0x, t0y, -endWidth);
-        const rightM = normalPoint(mid[0], mid[1], tmx, tmy, -midWidth);
-        const right1 = normalPoint(end[0], end[1], t1x, t1y, -endWidth);
+        const curvePoint = (t) => {
+          const mt = 1 - t;
+          return [mt * mt * start[0] + 2 * mt * t * mid[0] + t * t * end[0], mt * mt * start[1] + 2 * mt * t * mid[1] + t * t * end[1]];
+        };
+        const curveTangent = (t) => unit(2 * (1 - t) * (mid[0] - start[0]) + 2 * t * (end[0] - mid[0]), 2 * (1 - t) * (mid[1] - start[1]) + 2 * t * (end[1] - mid[1]));
+        const shoulder = Math.min(2.45, Math.max(1.7, length * .06));
+        const widthAt = (t) => .08 + shoulder * Math.pow(Math.abs(.5 - t) * 2, 3.6);
+        const ts = [0, .16, .33, .5, .67, .84, 1];
+        const left = [], right = [];
+        ts.forEach((t) => {
+          const [px, py] = curvePoint(t);
+          const [tx, ty] = curveTangent(t);
+          const width = widthAt(t);
+          left.push(normalPoint(px, py, tx, ty, width));
+          right.push(normalPoint(px, py, tx, ty, -width));
+        });
         const point = ([px, py]) => `${px.toFixed(2)} ${py.toFixed(2)}`;
-        const path = `M ${point(left0)} Q ${point(leftM)} ${point(left1)} L ${point(right1)} Q ${point(rightM)} ${point(right0)} Z`;
+        const smoothSide = (points) => {
+          let d = `M ${point(points[0])}`;
+          for (let i = 1; i < points.length - 1; i++) {
+            const next = [(points[i][0] + points[i + 1][0]) / 2, (points[i][1] + points[i + 1][1]) / 2];
+            d += ` Q ${point(points[i])} ${point(next)}`;
+          }
+          d += ` Q ${point(points[points.length - 1])} ${point(points[points.length - 1])}`;
+          return d;
+        };
+        const path = `${smoothSide(left)} L ${point(right[right.length - 1])} ${smoothSide([...right].reverse()).replace(/^M [^Q]+/, "")} Z`;
+        const centerPath = `M ${point(start)} Q ${point(mid)} ${point(end)}`;
         const sourceColor = row.color || colors[fromIndex];
         const targetColor = other.color || colors[toIndex];
         const gradientId = `map-network-gradient-${systems ? "systems" : "submodels"}-${edgeIndex}`;
-        gradientDefs.push(`<linearGradient id="${gradientId}" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="${sourceColor}" stop-opacity=".86"/><stop offset="50%" stop-color="${sourceColor}" stop-opacity=".58"/><stop offset="100%" stop-color="${targetColor}" stop-opacity=".86"/></linearGradient>`);
-        return `<g class="map-network-bond-group" style="--bond-color:${sourceColor};--bond-gradient:url(#${gradientId})"><path class="map-network-bond-soft" d="${path}"/><path class="map-network-bond" d="${path}"><title>Relación entre ${label(row)} y ${label(other)}</title></path></g>`;
+        const pathId = `map-network-flow-${systems ? "systems" : "submodels"}-${edgeIndex}`;
+        const duration = (7.5 + (edgeIndex % 4) * 1.15).toFixed(2);
+        gradientDefs.push(`<linearGradient id="${gradientId}" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="${sourceColor}" stop-opacity=".82"/><stop offset="50%" stop-color="${sourceColor}" stop-opacity=".42"/><stop offset="100%" stop-color="${targetColor}" stop-opacity=".82"/></linearGradient>`);
+        return `<g class="map-network-bond-group" style="--bond-color:${sourceColor};--bond-gradient:url(#${gradientId})"><path id="${pathId}" class="map-network-bond-flow" d="${centerPath}" pathLength="1"/><path class="map-network-bond-soft" d="${path}"/><path class="map-network-bond" d="${path}"><title>Relación entre ${label(row)} y ${label(other)}</title></path><circle class="map-network-pulse" r=".42" fill="${sourceColor}"><animateMotion dur="${duration}s" begin="-${(edgeIndex * .7).toFixed(2)}s" repeatCount="indefinite" rotate="auto"><mpath href="#${pathId}"/></animateMotion></circle><circle class="map-network-pulse map-network-pulse-secondary" r=".34" fill="${targetColor}"><animateMotion dur="${duration}s" begin="-${(edgeIndex * .7 + 3.2).toFixed(2)}s" repeatCount="indefinite" rotate="auto"><mpath href="#${pathId}"/></animateMotion></circle></g>`;
       }).join("");
       subsystemBubbles.dataset.revealState = "complete";
       subsystemBubbles.classList.add("network-active");
