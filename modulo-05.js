@@ -1913,6 +1913,189 @@ function renderScaleNetworkPopup(mode) {
 }
 
 let wetlandImagePromise = null;
+const wetlandImageZoomState = {
+  scale: 1,
+  x: 0,
+  y: 0,
+  pointerId: null,
+  dragging: false,
+  startX: 0,
+  startY: 0,
+  originX: 0,
+  originY: 0,
+  pointers: new Map(),
+  pinchDistance: null,
+  pinchStartScale: 1
+};
+
+function getWetlandImageFitScale() {
+  const viewport = document.getElementById('wetlandImageViewport');
+  const image = document.getElementById('wetlandImage');
+  if (!viewport || !image) return 1;
+  const naturalWidth = Number(image.naturalWidth || image.width || image.offsetWidth);
+  const naturalHeight = Number(image.naturalHeight || image.height || image.offsetHeight);
+  if (!naturalWidth || !naturalHeight || !viewport.clientWidth || !viewport.clientHeight) return 1;
+  const horizontalFit = Math.max(0.1, (viewport.clientWidth - 24) / naturalWidth);
+  const verticalFit = Math.max(0.1, (viewport.clientHeight - 24) / naturalHeight);
+  return Math.min(1, horizontalFit, verticalFit);
+}
+
+function getWetlandImageEffectiveScale() {
+  return getWetlandImageFitScale() * wetlandImageZoomState.scale;
+}
+
+function clampWetlandImagePan() {
+  const viewport = document.getElementById('wetlandImageViewport');
+  const image = document.getElementById('wetlandImage');
+  if (!viewport || !image) return;
+  const naturalWidth = Number(image.naturalWidth || image.width || image.offsetWidth);
+  const naturalHeight = Number(image.naturalHeight || image.height || image.offsetHeight);
+  if (!naturalWidth || !naturalHeight) return;
+  const effectiveScale = getWetlandImageEffectiveScale();
+  const scaledWidth = naturalWidth * effectiveScale;
+  const scaledHeight = naturalHeight * effectiveScale;
+  const maxX = Math.max(0, (scaledWidth - viewport.clientWidth) / 2);
+  const maxY = Math.max(0, (scaledHeight - viewport.clientHeight) / 2);
+  wetlandImageZoomState.x = Math.max(-maxX, Math.min(maxX, wetlandImageZoomState.x));
+  wetlandImageZoomState.y = Math.max(-maxY, Math.min(maxY, wetlandImageZoomState.y));
+}
+
+function updateWetlandImageZoomLabel() {
+  const label = document.getElementById('wetlandImageZoomReset');
+  if (label) label.textContent = `${Math.round(wetlandImageZoomState.scale * 100)}%`;
+}
+
+function applyWetlandImageZoom() {
+  const viewport = document.getElementById('wetlandImageViewport');
+  const image = document.getElementById('wetlandImage');
+  if (!viewport || !image) return;
+  const naturalWidth = Number(image.naturalWidth || image.width || image.offsetWidth);
+  const naturalHeight = Number(image.naturalHeight || image.height || image.offsetHeight);
+  if (!naturalWidth || !naturalHeight) {
+    updateWetlandImageZoomLabel();
+    return;
+  }
+  image.style.width = `${naturalWidth}px`;
+  image.style.height = `${naturalHeight}px`;
+  viewport.classList.toggle('is-zoomed', wetlandImageZoomState.scale > 1.01);
+  clampWetlandImagePan();
+  const scale = getWetlandImageEffectiveScale();
+  const centeredX = -(naturalWidth * scale) / 2 + wetlandImageZoomState.x;
+  const centeredY = -(naturalHeight * scale) / 2 + wetlandImageZoomState.y;
+  image.style.transform = `translate3d(${centeredX.toFixed(1)}px, ${centeredY.toFixed(1)}px, 0) scale(${scale.toFixed(4)})`;
+  updateWetlandImageZoomLabel();
+}
+
+function setWetlandImageZoom(nextScale) {
+  wetlandImageZoomState.scale = Math.max(.75, Math.min(4, Number(nextScale) || 1));
+  applyWetlandImageZoom();
+}
+
+function resetWetlandImageZoom() {
+  wetlandImageZoomState.scale = 1;
+  wetlandImageZoomState.x = 0;
+  wetlandImageZoomState.y = 0;
+  wetlandImageZoomState.dragging = false;
+  wetlandImageZoomState.pointerId = null;
+  wetlandImageZoomState.pointers.clear();
+  wetlandImageZoomState.pinchDistance = null;
+  wetlandImageZoomState.pinchStartScale = 1;
+  applyWetlandImageZoom();
+}
+
+function setupWetlandImageZoom() {
+  const viewport = document.getElementById('wetlandImageViewport');
+  const zoomIn = document.getElementById('wetlandImageZoomIn');
+  const zoomOut = document.getElementById('wetlandImageZoomOut');
+  const zoomReset = document.getElementById('wetlandImageZoomReset');
+  if (!viewport || viewport.dataset.zoomReady === 'true') return;
+  viewport.dataset.zoomReady = 'true';
+  zoomIn?.addEventListener('click', event => {
+    event.preventDefault();
+    event.stopPropagation();
+    setWetlandImageZoom(wetlandImageZoomState.scale + .25);
+  });
+  zoomOut?.addEventListener('click', event => {
+    event.preventDefault();
+    event.stopPropagation();
+    setWetlandImageZoom(wetlandImageZoomState.scale - .25);
+  });
+  zoomReset?.addEventListener('click', event => {
+    event.preventDefault();
+    event.stopPropagation();
+    resetWetlandImageZoom();
+  });
+  viewport.addEventListener('wheel', event => {
+    event.preventDefault();
+    setWetlandImageZoom(wetlandImageZoomState.scale + (event.deltaY < 0 ? .2 : -.2));
+  }, { passive: false });
+  const capturePointer = pointerId => {
+    try { viewport.setPointerCapture?.(pointerId); } catch { /* El gesto continúa aunque el navegador no capture el puntero. */ }
+  };
+  const releasePointer = pointerId => {
+    try {
+      if (viewport.hasPointerCapture?.(pointerId)) viewport.releasePointerCapture(pointerId);
+    } catch { /* No todos los entornos conservan la captura después de pointerup. */ }
+  };
+  viewport.addEventListener('pointerdown', event => {
+    if (event.pointerType === 'mouse' && event.button !== 0) return;
+    event.preventDefault();
+    wetlandImageZoomState.pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+    capturePointer(event.pointerId);
+    if (wetlandImageZoomState.pointers.size >= 2) {
+      const [first, second] = [...wetlandImageZoomState.pointers.values()];
+      wetlandImageZoomState.pinchDistance = Math.hypot(second.x - first.x, second.y - first.y);
+      wetlandImageZoomState.pinchStartScale = wetlandImageZoomState.scale;
+      wetlandImageZoomState.dragging = false;
+      wetlandImageZoomState.pointerId = null;
+      viewport.classList.remove('is-dragging');
+      return;
+    }
+    if (wetlandImageZoomState.scale <= 1.01) return;
+    wetlandImageZoomState.dragging = true;
+    wetlandImageZoomState.pointerId = event.pointerId;
+    wetlandImageZoomState.startX = event.clientX;
+    wetlandImageZoomState.startY = event.clientY;
+    wetlandImageZoomState.originX = wetlandImageZoomState.x;
+    wetlandImageZoomState.originY = wetlandImageZoomState.y;
+    viewport.classList.add('is-dragging');
+  });
+  viewport.addEventListener('pointermove', event => {
+    if (!wetlandImageZoomState.pointers.has(event.pointerId)) return;
+    event.preventDefault();
+    wetlandImageZoomState.pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+    if (wetlandImageZoomState.pointers.size >= 2) {
+      const [first, second] = [...wetlandImageZoomState.pointers.values()];
+      const distance = Math.hypot(second.x - first.x, second.y - first.y);
+      if (wetlandImageZoomState.pinchDistance > 0) {
+        setWetlandImageZoom(wetlandImageZoomState.pinchStartScale * distance / wetlandImageZoomState.pinchDistance);
+      }
+      return;
+    }
+    if (!wetlandImageZoomState.dragging || event.pointerId !== wetlandImageZoomState.pointerId) return;
+    wetlandImageZoomState.x = wetlandImageZoomState.originX + event.clientX - wetlandImageZoomState.startX;
+    wetlandImageZoomState.y = wetlandImageZoomState.originY + event.clientY - wetlandImageZoomState.startY;
+    applyWetlandImageZoom();
+  });
+  const stopPan = event => {
+    wetlandImageZoomState.pointers.delete(event.pointerId);
+    if (wetlandImageZoomState.pointers.size < 2) {
+      wetlandImageZoomState.pinchDistance = null;
+      wetlandImageZoomState.pinchStartScale = wetlandImageZoomState.scale;
+    }
+    if (wetlandImageZoomState.pointerId === event.pointerId) {
+      wetlandImageZoomState.dragging = false;
+      wetlandImageZoomState.pointerId = null;
+      viewport.classList.remove('is-dragging');
+    }
+    releasePointer(event.pointerId);
+  };
+  viewport.addEventListener('pointerup', stopPan);
+  viewport.addEventListener('pointercancel', stopPan);
+  viewport.addEventListener('lostpointercapture', stopPan);
+  window.addEventListener('resize', applyWetlandImageZoom);
+  resetWetlandImageZoom();
+}
 
 function getWetlandAssetUrl(source) {
   if (!source) return '';
@@ -1962,11 +2145,15 @@ async function openWetlandImageModal() {
   const empty = document.getElementById('wetlandImageEmpty');
   const previewSrc = getWetlandAssetUrl(image?.getAttribute('src'));
   const fullSrc = getWetlandAssetUrl(image?.dataset.fullSrc);
+  resetWetlandImageZoom();
   if (image && previewSrc) image.src = previewSrc;
   setWetlandImageState(image, empty, Boolean(previewSrc));
   if (image) {
     image.onerror = () => setWetlandImageState(image, empty, false);
-    image.onload = () => setWetlandImageState(image, empty, true);
+    image.onload = () => {
+      setWetlandImageState(image, empty, true);
+      applyWetlandImageZoom();
+    };
   }
   modal.classList.add('open');
   modal.setAttribute('aria-hidden', 'false');
@@ -1977,12 +2164,16 @@ async function openWetlandImageModal() {
     image.src = fullImage.src || fullSrc;
     setWetlandImageState(image, empty, true);
     image.dataset.fullReady = 'true';
+    applyWetlandImageZoom();
   }
 }
+
+setupWetlandImageZoom();
 
 function closeWetlandImageModal() {
   const modal = document.getElementById('wetlandImageModal');
   if (!modal) return;
+  resetWetlandImageZoom();
   modal.classList.remove('open');
   modal.setAttribute('aria-hidden', 'true');
   document.body.classList.remove('wetland-modal-open');

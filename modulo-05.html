@@ -11,7 +11,7 @@
   <link href="https://unpkg.com/maplibre-gl@6.5.0/dist/maplibre-gl.css" rel="stylesheet">
   <link rel="stylesheet" href="modulo-05.css?v=minimal-v4">
   <link rel="stylesheet" href="site-theme.css?v=minimal-v4">
-  <link rel="stylesheet" href="modulo-05-popup.css?v=stats-cue-v1">
+  <link rel="stylesheet" href="modulo-05-popup.css?v=wetland-zoom-v1">
   <link rel="preload" as="image" href="assets/planosnico-preview.webp" type="image/webp" fetchpriority="high">
 </head>
 <body>
@@ -120,17 +120,26 @@
         <div>
           <span class="wetland-image-kicker">DETALLE DE RED NATURAL</span>
           <h2 id="wetlandImageTitle">Humedales</h2>
-          <p id="wetlandImageDescription">Haz doble clic en HUMEDALES para consultar su imagen y su función dentro de la red.</p>
+          <p id="wetlandImageDescription">Amplía y desplaza el plano para consultar su imagen y su función dentro de la red.</p>
         </div>
         <button id="wetlandImageClose" class="wetland-image-close" type="button" aria-label="Cerrar imagen">×</button>
       </header>
       <div class="wetland-image-body">
-        <div id="wetlandImageEmpty" class="wetland-image-empty">
-          <i class="fa-solid fa-image" aria-hidden="true"></i>
-          <strong>Cargando plano de HUMEDALES</strong>
-          <span>Imagen satelital integrada como evidencia visual de la red natural.</span>
+        <div class="wetland-image-toolbar" role="group" aria-label="Controles de zoom del plano">
+          <span class="wetland-image-toolbar-label">Inspección del plano</span>
+          <button id="wetlandImageZoomOut" class="wetland-image-zoom-btn" type="button" aria-label="Alejar imagen">−</button>
+          <button id="wetlandImageZoomReset" class="wetland-image-zoom-value" type="button" aria-label="Restablecer zoom">100%</button>
+          <button id="wetlandImageZoomIn" class="wetland-image-zoom-btn" type="button" aria-label="Acercar imagen">+</button>
+          <span class="wetland-image-toolbar-help">rueda, arrastra o pellizca</span>
         </div>
-        <img id="wetlandImage" src="assets/planosnico-preview.webp" data-full-src="assets/planosnico.webp" alt="Plano satelital de Bogotá para el detalle de HUMEDALES" decoding="async" fetchpriority="high">
+        <div id="wetlandImageViewport" class="wetland-image-viewport">
+          <div id="wetlandImageEmpty" class="wetland-image-empty">
+            <i class="fa-solid fa-image" aria-hidden="true"></i>
+            <strong>Cargando plano de HUMEDALES</strong>
+            <span>Imagen satelital integrada como evidencia visual de la red natural.</span>
+          </div>
+          <img id="wetlandImage" src="assets/planosnico-preview.webp" data-full-src="assets/planosnico.webp" alt="Plano satelital de Bogotá para el detalle de HUMEDALES" decoding="async" fetchpriority="high">
+        </div>
         <a id="wetlandImageDirectLink" class="wetland-image-direct-link" href="assets/planosnico.webp" target="_blank" rel="noopener" hidden>Abrir el plano directamente</a>
       </div>
       <footer class="wetland-image-foot">HUMEDALES · soporte ecológico, regulación hídrica y resiliencia climática</footer>
@@ -179,6 +188,6 @@
     window.maplibregl = maplibregl;
     window.dispatchEvent(new Event("maplibre-ready"));
   </script>
-  <script src="modulo-05.js?v=stats-cue-v1"></script>
+  <script src="modulo-05.js?v=wetland-zoom-v1"></script>
 </body>
 </html>
