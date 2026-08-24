@@ -24,6 +24,9 @@
     mapReady: false,
     mapHoverPopup: null,
     hoveredMapFeatureKey: "",
+    mapHoverFeatureState: null,
+    mapHoverPulseRaf: null,
+    mapHoverPulseLastAt: -Infinity,
     selectedUpl: null,
     selectedScale: "natural",
     dataMode: "real",
@@ -510,18 +513,86 @@
     return `<strong>${escapeHtml(String(label))}</strong><span>${escapeHtml(String(type))} · ${escapeHtml(String(category))} · OpenStreetMap${osmId}</span>`;
   }
 
+  function setMapHoverHaloOpacity(opacity) {
+    if (!state.map) return;
+    const expression = ["case", ["boolean", ["feature-state", "hover"], false], opacity, 0];
+    try {
+      if (state.map.getLayer("osm-places-hover")) state.map.setPaintProperty("osm-places-hover", "circle-opacity", expression);
+      if (state.map.getLayer("osm-place-clusters-hover")) state.map.setPaintProperty("osm-place-clusters-hover", "circle-opacity", expression);
+    } catch (error) {
+      console.debug("No se pudo actualizar el pulso de los puntos OSM", error);
+    }
+  }
+
+  function animateMapHoverPulse(timestamp) {
+    if (!state.map || !state.mapHoverFeatureState) {
+      state.mapHoverPulseRaf = null;
+      return;
+    }
+    if (timestamp - state.mapHoverPulseLastAt >= 70) {
+      const pulse = (Math.sin(timestamp * .006) + 1) / 2;
+      setMapHoverHaloOpacity(.12 + pulse * .22);
+      state.mapHoverPulseLastAt = timestamp;
+    }
+    state.mapHoverPulseRaf = window.requestAnimationFrame(animateMapHoverPulse);
+  }
+
+  function startMapHoverPulse() {
+    if (state.mapHoverPulseRaf !== null || window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches) return;
+    state.mapHoverPulseRaf = window.requestAnimationFrame(animateMapHoverPulse);
+  }
+
+  function stopMapHoverPulse() {
+    if (state.mapHoverPulseRaf !== null) window.cancelAnimationFrame(state.mapHoverPulseRaf);
+    state.mapHoverPulseRaf = null;
+    state.mapHoverPulseLastAt = -Infinity;
+    setMapHoverHaloOpacity(.2);
+  }
+
+  function clearMapHoverFeatureState() {
+    if (!state.map || !state.mapHoverFeatureState || typeof state.map.removeFeatureState !== "function") return;
+    try {
+      state.map.removeFeatureState({ source: "osm-places", id: state.mapHoverFeatureState.id });
+    } catch (error) {
+      console.debug("No se pudo limpiar el brillo del punto OSM", error);
+    }
+    state.mapHoverFeatureState = null;
+  }
+
+  function setMapHoverFeatureState(feature, layerId) {
+    if (!state.map || typeof state.map.setFeatureState !== "function") return;
+    const properties = feature?.properties || {};
+    const id = feature?.id ?? properties.cluster_id ?? properties.osmId;
+    const kind = layerId === "osm-place-clusters" || layerId === "osm-place-cluster-count" ? "cluster" : "point";
+    if (id === undefined || id === null) return;
+    if (state.mapHoverFeatureState?.id === id && state.mapHoverFeatureState?.kind === kind) return;
+    clearMapHoverFeatureState();
+    try {
+      state.map.setFeatureState({ source: "osm-places", id }, { hover: true });
+      state.mapHoverFeatureState = { id, kind };
+      startMapHoverPulse();
+    } catch (error) {
+      console.debug("No se pudo activar el brillo del punto OSM", error);
+    }
+  }
+
   function setupMapHoverTooltips() {
     if (!state.map || !window.maplibregl || state.mapHoverPopup) return;
     state.mapHoverPopup = new maplibregl.Popup({ closeButton: false, closeOnClick: false, closeOnMove: false, offset: 10, className: "map-hover-popup", maxWidth: "260px" });
     const hide = () => {
       state.mapHoverPopup?.remove();
+      clearMapHoverFeatureState();
+      stopMapHoverPulse();
       state.hoveredMapFeatureKey = "";
       if (state.map) state.map.getCanvas().style.cursor = "";
     };
     const show = (event, layerId) => {
       const feature = event?.features?.[0];
       if (!feature || !state.map) return;
-      const featureKey = `${layerId}/${feature.id ?? feature.properties?.osmId ?? feature.properties?.point_count ?? "point"}`;
+      const properties = feature.properties || {};
+      const featureId = feature.id ?? properties.cluster_id ?? properties.osmId ?? "point";
+      const featureKey = `osm-places/${featureId}`;
+      setMapHoverFeatureState(feature, layerId);
       state.map.getCanvas().style.cursor = "pointer";
       if (state.hoveredMapFeatureKey !== featureKey) {
         state.hoveredMapFeatureKey = featureKey;
@@ -543,8 +614,10 @@
     state.map.addLayer({ id: "osm-streets", type: "line", source: "osm-streets", layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": ["match", ["get", "highway"], "motorway", "#d56c75", "trunk", "#df8e5a", "primary", "#e6a95a", "secondary", "#4cb2a9", "tertiary", "#58a9a4", "residential", "#2d9790", "living_street", "#50aaa2", "service", "#74bab2", "#4a9f99"], "line-width": ["interpolate", ["linear"], ["zoom"], 10, .55, 13, 1.15, 16, 2.5], "line-opacity": .93 } });
     state.map.addSource("osm-places", { type: "geojson", data: { type: "FeatureCollection", features: [] }, cluster: true, clusterMaxZoom: 14, clusterRadius: 34 });
     state.map.addLayer({ id: "osm-place-clusters", type: "circle", source: "osm-places", filter: ["has", "point_count"], paint: { "circle-radius": ["step", ["get", "point_count"], 9, 20, 12, 100, 16, 500, 21, 2000, 27], "circle-color": ["step", ["get", "point_count"], "#24d5c6", 100, "#e6b85c", 500, "#e8925c", 2000, "#d86b84"], "circle-opacity": .94, "circle-stroke-color": "#0d1718", "circle-stroke-width": 2, "circle-stroke-opacity": .9 } });
+    state.map.addLayer({ id: "osm-place-clusters-hover", type: "circle", source: "osm-places", filter: ["has", "point_count"], paint: { "circle-radius": ["step", ["get", "point_count"], 13, 20, 16, 100, 20, 500, 25, 2000, 31], "circle-color": "#70eee6", "circle-opacity": ["case", ["boolean", ["feature-state", "hover"], false], .2, 0], "circle-stroke-color": "#b7fffa", "circle-stroke-width": ["case", ["boolean", ["feature-state", "hover"], false], 2.5, 0], "circle-stroke-opacity": ["case", ["boolean", ["feature-state", "hover"], false], .9, 0] } });
     state.map.addLayer({ id: "osm-place-cluster-count", type: "symbol", source: "osm-places", filter: ["has", "point_count"], layout: { "text-field": ["to-string", ["get", "point_count_abbreviated"]], "text-size": 10, "text-font": ["Open Sans Bold", "Arial Unicode MS Bold"] }, paint: { "text-color": "#07100f", "text-halo-color": "#f2eee7", "text-halo-width": 1 } });
     state.map.addLayer({ id: "osm-places", type: "circle", source: "osm-places", filter: ["!", ["has", "point_count"]], paint: { "circle-radius": ["interpolate", ["linear"], ["zoom"], 9, 3.5, 12, 5.5, 15, 8], "circle-color": ["coalesce", ["get", "color"], "#e8925c"], "circle-opacity": .96, "circle-stroke-color": "#ffffff", "circle-stroke-width": 1.4, "circle-stroke-opacity": .95 } });
+    state.map.addLayer({ id: "osm-places-hover", type: "circle", source: "osm-places", filter: ["!", ["has", "point_count"]], paint: { "circle-radius": ["interpolate", ["linear"], ["zoom"], 9, 7, 12, 9, 15, 12], "circle-color": "#70eee6", "circle-opacity": ["case", ["boolean", ["feature-state", "hover"], false], .24, 0], "circle-stroke-color": "#b7fffa", "circle-stroke-width": ["case", ["boolean", ["feature-state", "hover"], false], 2.5, 0], "circle-stroke-opacity": ["case", ["boolean", ["feature-state", "hover"], false], .95, 0] } });
     setupMapHoverTooltips();
     state.map.addSource("upl-focus", { type: "geojson", data: { type: "FeatureCollection", features: [] } });
     state.map.addLayer({ id: "upl-focus-fill", type: "fill", source: "upl-focus", paint: { "fill-color": "#24d5c6", "fill-opacity": .10 } });
@@ -912,7 +985,7 @@
       const tags = element.tags || {};
       if (!point || tags.highway) return;
       const matchedLayer = featureLayer(element);
-      placeFeatures.push({ type: "Feature", properties: { color: matchedLayer?.[1].color || "#e8925c", osmId: element.id, label: featureName(element), featureType: featureType(element), layerLabel: matchedLayer?.[1].label || "Punto OSM", source: "OpenStreetMap" }, geometry: { type: "Point", coordinates: point } });
+      placeFeatures.push({ type: "Feature", id: `${element.type}/${element.id}`, properties: { color: matchedLayer?.[1].color || "#e8925c", osmId: element.id, label: featureName(element), featureType: featureType(element), layerLabel: matchedLayer?.[1].label || "Punto OSM", source: "OpenStreetMap" }, geometry: { type: "Point", coordinates: point } });
     });
     updatePlaceLayer(placeFeatures);
     placeCount = placeFeatures.length;
