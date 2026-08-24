@@ -5189,3 +5189,53 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 @keyframes network-line-breathe { from { opacity: .27; } to { opacity: .52; } }
 .map-network-node:hover, .map-network-node.selected { animation-play-state: paused !important; }
 @media (prefers-reduced-motion: reduce) { .map-network-node, .map-network-node::before, .map-network-node-icon, .map-network-stage > svg line { animation: none !important; } }
+
+/* Animación visible de bolas flotantes: movimiento amplio, suave y desfasado */
+.map-network-node { animation: network-node-float-visible 6.4s ease-in-out infinite !important; }
+.map-network-node:nth-child(3n + 1) { animation-duration: 7.6s !important; animation-delay: -1.2s !important; }
+.map-network-node:nth-child(3n + 2) { animation-duration: 5.8s !important; animation-delay: -2.9s !important; }
+.map-network-node:nth-child(4n) { animation-duration: 8.4s !important; animation-delay: -4.1s !important; }
+@keyframes network-node-float-visible {
+  0%, 100% { transform: translate(-50%,-50%) translate3d(0,0,0) scale(1); border-radius: 50%; }
+  22% { transform: translate(-50%,-50%) translate3d(12px,-9px,0) scale(1.035); border-radius: 47% 53% 51% 49%; }
+  48% { transform: translate(-50%,-50%) translate3d(-9px,13px,0) scale(.975); border-radius: 53% 47% 48% 52%; }
+  74% { transform: translate(-50%,-50%) translate3d(-14px,-5px,0) scale(1.025); border-radius: 49% 51% 54% 46%; }
+}
+.map-network-node:hover, .map-network-node.selected { animation-play-state: paused !important; }
+@media (prefers-reduced-motion: reduce) { .map-network-node { animation: none !important; } }
+
+/* Puentes orgánicos tipo burbuja pegada: reemplazan por completo las líneas rectas */
+.map-network-stage > svg line { display: none !important; }
+.map-network-stage > svg .map-network-bonds { pointer-events: none; overflow: visible; }
+.map-network-stage > svg .map-network-bond-group { pointer-events: none; }
+.map-network-stage > svg .map-network-bond-soft,
+.map-network-stage > svg .map-network-bond {
+  fill: none;
+  stroke: var(--bond-color);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+.map-network-stage > svg .map-network-bond-soft {
+  stroke-width: 22;
+  stroke-opacity: .16;
+  filter: blur(2.7px);
+  animation: map-network-bond-soft-breathe 4.8s ease-in-out infinite alternate;
+}
+.map-network-stage > svg .map-network-bond {
+  stroke-width: 9.5;
+  stroke-opacity: .54;
+  filter: url(#network-gel-filter);
+  animation: map-network-bond-breathe 4.8s ease-in-out infinite alternate;
+}
+.map-network-stage > svg .map-network-bond:nth-child(3n + 1) { animation-delay: -1.4s; }
+.map-network-stage > svg .map-network-bond:nth-child(3n + 2) { animation-delay: -2.8s; }
+@keyframes map-network-bond-soft-breathe {
+  from { stroke-width: 17; stroke-opacity: .10; }
+  to { stroke-width: 28; stroke-opacity: .23; }
+}
+@keyframes map-network-bond-breathe {
+  from { stroke-width: 7.5; stroke-opacity: .34; }
+  to { stroke-width: 13.5; stroke-opacity: .66; }
+}
+@media (prefers-reduced-motion: reduce) { .map-network-stage > svg .map-network-bond { animation: none; } }

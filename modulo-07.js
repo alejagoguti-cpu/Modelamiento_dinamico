@@ -1900,10 +1900,19 @@
       const label = (row) => systems ? row.name : row.name.replace(/^Submodelo de /, "");
       const icon = (index) => (systems ? systemIcons : submodelIcons)[index] || "fa-circle-nodes";
       const nodes = rows.map((row, index) => { const [x,y] = positions[index]; return `<button type="button" class="map-network-node ${systems ? "map-system-node" : "map-submodel-node"}" data-map-network-index="${index}" style="--node-x:${x}%;--node-y:${y}%;--node-color:${row.color || colors[index]}"><i class="map-network-node-icon fa-solid ${icon(index)}" aria-hidden="true"></i><strong>${label(row)}</strong></button>`; }).join("");
-      const edges = rows.flatMap((row, index) => rows.slice(index + 1).map((other, offset) => { const [x,y] = positions[index], [nx,ny] = positions[index + offset + 1]; return `<line x1="${x}%" y1="${y}%" x2="${nx}%" y2="${ny}%" style="--edge-color:${row.color || colors[index]}"></line>`; })).join("");
+      const bonds = rows.flatMap((row, index) => rows.slice(index + 1).map((other, offset) => {
+        const [x, y] = positions[index], [nx, ny] = positions[index + offset + 1];
+        const dx = nx - x, dy = ny - y, length = Math.max(1, Math.hypot(dx, dy));
+        const bend = ((index + offset) % 2 ? -1 : 1) * Math.min(6.5, length * .16);
+        const cx = (x + nx) / 2 - (dy / length) * bend;
+        const cy = (y + ny) / 2 + (dx / length) * bend;
+        const bondColor = row.color || colors[index];
+        const path = `M ${x} ${y} Q ${cx.toFixed(2)} ${cy.toFixed(2)} ${nx} ${ny}`;
+        return `<g class="map-network-bond-group" style="--bond-color:${bondColor}"><path class="map-network-bond-soft" d="${path}"/><path class="map-network-bond" d="${path}"><title>Relación entre ${label(row)} y ${label(other)}</title></path></g>`;
+      })).join("");
       subsystemBubbles.dataset.revealState = "complete";
       subsystemBubbles.classList.add("network-active");
-      subsystemBubbles.innerHTML = `<div class="map-network-stage ${systems ? "systems-network" : "submodels-network"}"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${edges}</svg>${nodes}</div>`;
+      subsystemBubbles.innerHTML = `<div class="map-network-stage ${systems ? "systems-network" : "submodels-network"}"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><defs><filter id="network-gel-filter" x="-25%" y="-25%" width="150%" height="150%"><feGaussianBlur stdDeviation="1.35" result="soft"/><feMerge><feMergeNode in="soft"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><g class="map-network-bonds">${bonds}</g></svg>${nodes}</div>`;
       subsystemBubbles.querySelectorAll(".map-network-node").forEach((button) => button.addEventListener("click", () => {
         const row = rows[Number(button.dataset.mapNetworkIndex)];
         subsystemBubbles.querySelectorAll(".map-network-node").forEach((node) => node.classList.toggle("selected", node === button));
