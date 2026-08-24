@@ -306,8 +306,13 @@
             ]
         };
 
+        const PHYSICS = { spring: 0.045, damping: 0.82, minVel: 0.02 };
         const BASE_NODE_SIZE = 35;
         const SIZE_MULTIPLIER = 3;
+
+        let animationRunning = false;
+        let draggedNode = null;
+
         const POSITIONS = {
             'gemelo_digital': { x: 600, y: 250 },
             'modelos_3d': { x: 950, y: 200 },
@@ -329,12 +334,20 @@
             activeNodes: new Set(),
             selectedNode: null,
             clickCounts: new Map(),
-            clickTimers: new Map()
+            clickTimers: new Map(),
+            nodes: {}
         };
 
         networkData.nodes.forEach(node => {
             state.activeNodes.add(node.id);
             state.clickCounts.set(node.id, 0);
+            state.nodes[node.id] = {
+                x: POSITIONS[node.id].x,
+                y: POSITIONS[node.id].y,
+                vx: 0,
+                vy: 0,
+                fixed: false
+            };
         });
 
         function isNodeActive(nodeId) {
@@ -461,20 +474,142 @@
             });
         }
 
+        function physicsStep() {
+            let moving = false;
+
+            networkData.edges.forEach(edge => {
+                const source = state.nodes[edge.source];
+                const target = state.nodes[edge.target];
+                if (!source || !target) return;
+
+                const dx = target.x - source.x;
+                const dy = target.y - source.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                const restLength = 100;
+                const angle = Math.atan2(dy, dx);
+
+                const fx = Math.cos(angle) * (dist - restLength) * PHYSICS.spring;
+                const fy = Math.sin(angle) * (dist - restLength) * PHYSICS.spring;
+
+                if (!source.fixed) {
+                    source.vx += fx;
+                    source.vy += fy;
+                }
+                if (!target.fixed) {
+                    target.vx -= fx;
+                    target.vy -= fy;
+                }
+            });
+
+            Object.keys(state.nodes).forEach(nodeId => {
+                const n = state.nodes[nodeId];
+                if (n.fixed) {
+                    n.vx = 0;
+                    n.vy = 0;
+                    return;
+                }
+
+                n.vx *= PHYSICS.damping;
+                n.vy *= PHYSICS.damping;
+
+                if (Math.abs(n.vx) > PHYSICS.minVel || Math.abs(n.vy) > PHYSICS.minVel) {
+                    moving = true;
+                }
+
+                n.x += n.vx;
+                n.y += n.vy;
+            });
+
+            updateNodePositions();
+
+            if (moving || draggedNode) {
+                requestAnimationFrame(physicsStep);
+            } else {
+                animationRunning = false;
+            }
+        }
+
+        function startPhysics() {
+            if (!animationRunning) {
+                animationRunning = true;
+                requestAnimationFrame(physicsStep);
+            }
+        }
+
+        function updateNodePositions() {
+            const svg = document.getElementById('networkSvg');
+            svg.querySelectorAll('.node-circle').forEach(circle => {
+                const nodeId = circle.getAttribute('data-id');
+                const node = state.nodes[nodeId];
+                if (node) {
+                    circle.setAttribute('cx', node.x);
+                    circle.setAttribute('cy', node.y);
+                }
+            });
+
+            svg.querySelectorAll('.node-label').forEach(text => {
+                const nodeId = text.getAttribute('data-id');
+                const node = state.nodes[nodeId];
+                if (node) {
+                    text.setAttribute('x', node.x);
+                    text.setAttribute('y', node.y);
+                }
+            });
+
+            svg.querySelectorAll('.edge').forEach(line => {
+                const sourceId = line.getAttribute('data-source');
+                const targetId = line.getAttribute('data-target');
+                const source = state.nodes[sourceId];
+                const target = state.nodes[targetId];
+                if (source && target) {
+                    line.setAttribute('x1', source.x);
+                    line.setAttribute('y1', source.y);
+                    line.setAttribute('x2', target.x);
+                    line.setAttribute('y2', target.y);
+                }
+            });
+        }
+
+        function handleNodeDragStart(nodeId, e) {
+            draggedNode = nodeId;
+            state.nodes[nodeId].fixed = true;
+            startPhysics();
+        }
+
+        function handleNodeDragMove(nodeId, e) {
+            if (draggedNode !== nodeId) return;
+
+            const svg = document.getElementById('networkSvg');
+            const svgRect = svg.getBoundingClientRect();
+            const x = (e.clientX - svgRect.left) / svgRect.width * 1300;
+            const y = (e.clientY - svgRect.top) / svgRect.height * 650;
+
+            state.nodes[nodeId].x = x;
+            state.nodes[nodeId].y = y;
+            updateNodePositions();
+        }
+
+        function handleNodeDragEnd(nodeId, e) {
+            if (draggedNode !== nodeId) return;
+            draggedNode = null;
+            state.nodes[nodeId].fixed = false;
+            startPhysics();
+        }
+
         function render() {
             const svg = document.getElementById('networkSvg');
             svg.innerHTML = '';
             const svgNS = 'http://www.w3.org/2000/svg';
 
             networkData.edges.forEach(edge => {
-                const sourcePos = POSITIONS[edge.source];
-                const targetPos = POSITIONS[edge.target];
+                const source = state.nodes[edge.source];
+                const target = state.nodes[edge.target];
 
                 const line = document.createElementNS(svgNS, 'line');
-                line.setAttribute('x1', sourcePos.x);
-                line.setAttribute('y1', sourcePos.y);
-                line.setAttribute('x2', targetPos.x);
-                line.setAttribute('y2', targetPos.y);
+                line.setAttribute('x1', source.x);
+                line.setAttribute('y1', source.y);
+                line.setAttribute('x2', target.x);
+                line.setAttribute('y2', target.y);
                 line.setAttribute('class', `edge ${edge.type}`);
                 line.setAttribute('data-source', edge.source);
                 line.setAttribute('data-target', edge.target);
@@ -482,12 +617,12 @@
             });
 
             networkData.nodes.forEach(node => {
-                const pos = POSITIONS[node.id];
+                const nodeState = state.nodes[node.id];
                 const size = getNodeSize(node.id);
 
                 const circle = document.createElementNS(svgNS, 'circle');
-                circle.setAttribute('cx', pos.x);
-                circle.setAttribute('cy', pos.y);
+                circle.setAttribute('cx', nodeState.x);
+                circle.setAttribute('cy', nodeState.y);
                 circle.setAttribute('r', size);
                 circle.setAttribute('fill', 'none');
                 circle.setAttribute('stroke', node.color);
@@ -495,16 +630,22 @@
                 circle.setAttribute('class', 'node-circle');
                 circle.setAttribute('data-id', node.id);
 
+                circle.addEventListener('pointerdown', (e) => {
+                    e.stopPropagation();
+                    handleNodeDragStart(node.id, e);
+                });
+
                 circle.addEventListener('click', (e) => {
                     e.stopPropagation();
                     handleNodeClick(node.id);
                 });
 
                 const text = document.createElementNS(svgNS, 'text');
-                text.setAttribute('x', pos.x);
-                text.setAttribute('y', pos.y);
+                text.setAttribute('x', nodeState.x);
+                text.setAttribute('y', nodeState.y);
                 text.setAttribute('class', 'node-label');
                 text.setAttribute('fill', node.color);
+                text.setAttribute('data-id', node.id);
                 text.textContent = node.label;
 
                 svg.appendChild(circle);
@@ -514,6 +655,18 @@
             svg.setAttribute('viewBox', '0 0 1300 650');
         }
 
+        document.addEventListener('pointermove', (e) => {
+            if (draggedNode) {
+                handleNodeDragMove(draggedNode, e);
+            }
+        });
+
+        document.addEventListener('pointerup', (e) => {
+            if (draggedNode) {
+                handleNodeDragEnd(draggedNode, e);
+            }
+        });
+
         document.addEventListener('click', closePopup);
         document.querySelector('.canvas-wrapper').addEventListener('click', (e) => {
             if (e.target.tagName === 'svg') closePopup();
@@ -521,6 +674,7 @@
 
         render();
         updateStatistics();
+        startPhysics();
     </script>
 </body>
 </html>
