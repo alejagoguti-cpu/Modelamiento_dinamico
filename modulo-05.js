@@ -1257,7 +1257,9 @@ function buildScaleNetworkFlow(resetProgress = false) {
     return;
   }
   layer.replaceChildren();
-  startScaleNetworkAmbientLoop();
+  // La red se mantiene geométricamente estable mientras se arrastra: la escala
+  // se controla solo desde la rueda y los botones explícitos del pop-up.
+  cancelScaleNetworkAmbientLoop();
   const svgNamespace = 'http://www.w3.org/2000/svg';
   const edges = [...svg.querySelectorAll('.popup-edge')];
   edges.forEach((edge, edgeIndex) => {
@@ -1330,19 +1332,25 @@ function setupScaleNetworkViewport() {
   if (!canvas || !viewport || canvas.dataset.interactive === 'true') return;
   canvas.dataset.interactive = 'true';
   let dragging = false;
+  let activePointerId = null;
   let startX = 0;
   let startY = 0;
   let originX = 0;
   let originY = 0;
 
   canvas.addEventListener('wheel', event => {
+    // El gesto de desplazamiento no puede convertirse en zoom; el pinch del
+    // trackpad (ctrl+wheel) tampoco cambia la escala de la red.
     event.preventDefault();
+    if (dragging || event.ctrlKey) return;
     setScaleNetworkZoom(scaleNetworkViewState.scale + (event.deltaY < 0 ? .12 : -.12));
   }, { passive: false });
 
   canvas.addEventListener('pointerdown', event => {
-    if (event.button !== 0 && event.pointerType !== 'touch') return;
+    if (!event.isPrimary || (event.pointerType === 'mouse' && event.button !== 0)) return;
+    event.preventDefault();
     dragging = true;
+    activePointerId = event.pointerId;
     startX = event.clientX;
     startY = event.clientY;
     originX = scaleNetworkViewState.x;
@@ -1352,24 +1360,23 @@ function setupScaleNetworkViewport() {
   });
 
   canvas.addEventListener('pointermove', event => {
-    if (!dragging) return;
+    if (!dragging || event.pointerId !== activePointerId) return;
+    event.preventDefault();
     scaleNetworkViewState.x = originX + event.clientX - startX;
     scaleNetworkViewState.y = originY + event.clientY - startY;
     updateScaleNetworkViewport();
   });
 
   const stopDragging = event => {
-    if (!dragging) return;
+    if (!dragging || (activePointerId !== null && event.pointerId !== activePointerId)) return;
     dragging = false;
     canvas.classList.remove('is-dragging');
     if (canvas.hasPointerCapture?.(event.pointerId)) canvas.releasePointerCapture(event.pointerId);
-
+    activePointerId = null;
   };
   canvas.addEventListener('pointerup', stopDragging);
   canvas.addEventListener('pointercancel', stopDragging);
-  canvas.addEventListener('pointerleave', event => {
-    if (event.pointerType === 'mouse') stopDragging(event);
-  });
+  canvas.addEventListener('lostpointercapture', stopDragging);
 }
 
 function splitPopupLabel(label) {

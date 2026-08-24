@@ -169,6 +169,10 @@ body.scale-modal-open {
   cursor: grabbing;
 }
 
+.scale-network-canvas.is-dragging .popup-network-viewport {
+  transition: none;
+}
+
 .popup-network-viewport {
   width: 100%;
   height: 100%;
