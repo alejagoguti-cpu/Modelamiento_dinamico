@@ -4950,3 +4950,17 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 .process-network-bird i { color: #050505 !important; -webkit-text-stroke: .35px rgba(255,255,255,.48); }
 .process-network-bird { background: #c9f6d8; border-color: #f4fff8; box-shadow: 0 0 0 3px rgba(201,246,216,.22), 0 0 13px rgba(201,246,216,.62); }
 .process-network-bird.resident { background: #a9e5b7; border-color: #effff3; }
+
+/* Ajuste solicitado: panel de componentes un poco más grande, sin tapar toda la cartografía */
+.subsystem-components { width: min(380px, calc(100% - 350px)) !important; padding: 16px 18px !important; border-radius: 12px; }
+.subsystem-components > strong { font-size: 11px !important; line-height: 1.25; }
+.subsystem-components > p { font-size: 11px !important; line-height: 1.55 !important; }
+.component-visual-strip { gap: 8px; margin: 10px 0 12px; }
+.component-visual { min-width: 48px; padding: 8px 9px; }
+.component-visual i { width: 25px; height: 25px; font-size: 14px; }
+.component-visual em { font-size: 9.5px; }
+@media (max-width: 720px) { .subsystem-components { width: calc(100% - 20px) !important; padding: 14px !important; } .component-visual { padding: 7px; } }
+
+/* Vías finas con brillo tenue y uniforme */
+.real-cartography-map .maplibregl-canvas { filter: brightness(1.08) contrast(1.04); }
+.map-road, .map-route { height: 2px; opacity: .72; filter: drop-shadow(0 0 3px rgba(220,255,247,.46)); }
