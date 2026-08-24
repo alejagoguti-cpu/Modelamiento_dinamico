@@ -40,7 +40,7 @@
       <header class="topbar"><div><span class="eyebrow">MÓDULO 04</span><h1>Macromodelos del POT</h1></div><div class="avatar-sm">EU</div></header>
       <section class="welcome">
         <h2>Dos lecturas conectadas sobre lo que entendemos del POT</h2>
-        <p>Elimina el modelo central y observa dos redes conceptuales: una <strong>ambientalista</strong> y otra <strong>humanista</strong>. Haz clic en los sistemas humanistas para desplegar sus conceptos concretos y explorar sus conexiones.</p>
+        <p>Observa cinco macromodelos analíticos y sus relaciones. Cada uno permite leer una dimensión distinta de los objetivos del POT. Haz clic en cualquier macromodelo para consultar la frase literal del Artículo 5 que busca analizar.</p>
       </section>
 
       <section class="workspace">
@@ -49,32 +49,27 @@
           <h2>Convenciones</h2>
           <p class="muted">Los colores identifican el tipo de concepto y las líneas muestran cómo se relacionan dentro de la lectura del POT.</p>
           <div class="legend-group">
-            <h3>Red ambientalista</h3>
-            <label><span class="dot green"></span>Concepto ambiental concreto</label>
-            <label><span class="line green-line"></span>Conexión ambiental</label>
-            <label><span class="dot green-soft"></span>Red ecológica relacionada</label>
-          </div>
-          <div class="legend-group">
-            <h3>Red humanista</h3>
-            <label><span class="dot orange"></span>Sistema humanista</label>
-            <label><span class="dot yellow"></span>Sistema socioeconómico</label>
-            <label><span class="dot blue"></span>Sistema de gobernanza</label>
-            <label><span class="dot purple"></span>Sistema funcionalista</label>
+            <h3>Macromodelos</h3>
+            <label><span class="dot green"></span>Ambiental</label>
+            <label><span class="dot orange"></span>Humanista-social</label>
+            <label><span class="dot yellow"></span>Económico-productivo</label>
+            <label><span class="dot blue"></span>Político-institucional y de gobernanza</label>
+            <label><span class="dot purple"></span>Cultural-territorial</label>
           </div>
           <div class="legend-group">
             <h3>Relación</h3>
             <label><span class="line connection"></span>Conexión entre conceptos</label>
             <label><span class="line dashed"></span>Conexión transversal</label>
           </div>
-          <div class="hint"><i class="fa-solid fa-hand-pointer"></i><span>Haz clic en una bola del lado humanista para mostrar u ocultar sus conceptos.</span></div>
+          <div class="hint"><i class="fa-solid fa-hand-pointer"></i><span>Haz clic en cualquier macromodelo para leer los objetivos del POT que permite analizar.</span></div>
         </aside>
 
         <section class="network-card panel">
-          <div class="network-head"><div><div class="panel-kicker">RED CONCEPTUAL INTERACTIVA</div><h2>Ambientalista ↔ Humanista</h2></div><button id="resetBtn" class="reset-btn"><i class="fa-solid fa-rotate-left"></i> Restablecer</button></div>
-          <div id="selectionNote" class="selection-note">Selecciona un sistema de la red humanista.</div>
+          <div class="network-head"><div><div class="panel-kicker">MACROMODELOS DE ANÁLISIS</div><h2>Objetivos del POT en relación</h2></div><button id="resetBtn" class="reset-btn"><i class="fa-solid fa-rotate-left"></i> Restablecer</button></div>
+          <div id="selectionNote" class="selection-note">Selecciona un macromodelo para leer el objetivo del POT que busca analizar.</div>
           <svg id="networkViz" viewBox="0 0 1200 760" role="img" aria-label="Red conceptual ambientalista y humanista del POT"></svg>
 <div class="network06-zoom-controls" aria-label="Controles de zoom de la red"><button class="network06-zoom-in" type="button">+</button><span class="network06-zoom-level">100%</span><button class="network06-zoom-out" type="button">−</button></div>
-          <div id="conceptDetail" class="concept-detail" aria-live="polite"><strong>Cómo leer la red</strong><span>La bola ambientalista contiene conceptos ecológicos concretos. La bola humanista es mayor y se conecta con tres sistemas: socioeconómico, gobernanza y funcionalista.</span></div>
+          <div id="conceptDetail" class="concept-detail" aria-live="polite"><strong>Cómo leer la red</strong><span>Cada bolita representa un macromodelo. Al hacer clic, aparece la frase literal del objetivo del POT que ese macromodelo permite analizar.</span></div>
         </section>
       </section>
 

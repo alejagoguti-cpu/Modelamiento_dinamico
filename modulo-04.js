@@ -362,12 +362,21 @@ document.querySelectorAll('.tab').forEach(btn => {
   const svg = document.getElementById('networkViz');
   if (!svg) return;
   const NS = 'http://www.w3.org/2000/svg';
+  const POT_OBJECTIVES = {
+    1: 'Proteger la estructura ecológica principal y los paisajes bogotanos y generar las condiciones de una relación más armoniosa y sostenible de la ciudad con su entorno rural. El Distrito Capital busca proteger, consolidar, conectar y apropiar socialmente, todos los elementos de importancia paisajística y ambiental, para mejorar la calidad vida de sus habitantes, actuales y futuros, y la calidad de los ecosistemas urbanos, rurales, distritales y regionales.',
+    2: 'Incrementar la capacidad de resiliencia del territorio frente a la ocurrencia de desastres derivados de la variabilidad y del cambio climático. El Distrito Capital incorpora la gestión del riesgo en el ordenamiento territorial y la implementación de medidas de adaptación y mitigación que incidan en la protección de la vida y el bienestar de la población.',
+    3: 'Mejorar el ambiente urbano y de los asentamientos rurales. El Distrito Capital busca mejorar la calidad ambiental de los entornos construidos, promoviendo la calidad del aire, la protección frente al ruido, el control del riesgo tecnológico, la disminución y el control de la contaminación de los cuerpos hídricos y, en general, la reducción de los impactos ambientales del desarrollo territorial.',
+    4: 'Revitalizar la ciudad a través de intervenciones y proyectos de calidad. El Distrito Capital busca revitalizar y embellecer la ciudad, incentivando la producción de vivienda y soluciones habitacionales que promuevan la conservación de los barrios y edificios de importancia arquitectónica y urbanística, cualificando los barrios consolidados, y los asentamientos legalizados, desarrollando nuevas piezas ejemplares de ciudad y focalizando el mejoramiento integral y la renovación urbana en la modalidad de revitalización en sectores estratégicos, promoviendo la permanencia de moradores, unidades productivas y propietarios en los proyectos que transforman el territorio.',
+    5: 'Promover el dinamismo, la reactivación económica y la creación de empleos. El Distrito Capital busca cualificar las zonas de aglomeración económica existentes y asegurar la disponibilidad de espacios adaptados a las nuevas necesidades de empresas industriales, teniendo en cuenta la necesaria evolución de las actividades de producción y las posibilidades de una cohabitación de actividades productivas y residenciales. Así mismo, promueve la permanencia de las industrias tradicionales en el tejido urbano, mejorando los entornos urbanos donde se aglomeran dichas industrias tradicionales, y el reconocimiento de la vivienda como un espacio con potencial productivo y de generación de ingresos para las familias.',
+    6: 'Reducir los desequilibrios y desigualdades para un territorio más solidario y cuidador. El Distrito Capital busca corregir la inequidad en el acceso a los servicios públicos y sociales de la ciudad y avanzar hacia la convergencia de la calidad de vida en los diversos territorios que lo conforman, promoviendo la territorialización del Sistema Distrital de Cuidado, facilitando la localización de equipamientos, soluciones habitacionales y actividades generadoras de empleo. Para lograr este objetivo el Distrito establece mecanismos de traslado de cargas urbanísticas a las zonas más deficitarias de la ciudad para la habilitación de equipamientos y de espacio público, así como adoptar decisiones y adelantar acciones encaminadas a generar una red de movilidad sostenible, limpia, segura, asequible y eficiente que reduzca las desigualdades en el acceso a las oportunidades urbanas, especialmente para los hogares más vulnerables.',
+    7: 'Alcanzar el Desarrollo Rural Sostenible. El Distrito Capital busca conciliar la necesidad de generar mayor valor agregado en las prácticas agrícolas, pecuarias y turísticas que se desarrollan en suelo rural, con la exigencia de preservación ambiental de sus áreas protegidas de importancia ecosistémica y paisajística y la puesta en valor de las formas de vida campesina.'
+  };
   const systems = [
-    { id:'ambiental', label:'Ambientalista', color:'#58d68d', icon:'fa-leaf', x:250, y:370, r:76 },
-    { id:'humanista', label:'Humanista', color:'#ef8b3c', icon:'fa-people-group', x:610, y:350, r:102 },
-    { id:'socio', label:'Socioeconómico', color:'#eab04c', icon:'fa-chart-line', x:940, y:205, r:64 },
-    { id:'gob', label:'Gobernanza', color:'#4ade80', icon:'fa-landmark', x:950, y:500, r:64 },
-    { id:'funcional', label:'Funcionalista', color:'#a879ff', icon:'fa-network-wired', x:610, y:635, r:64 }
+    { id:'ambiental', label:'Ambiental', color:'#58d68d', icon:'fa-leaf', x:250, y:370, r:76, objectives:[1,2,3,7], partial:[6] },
+    { id:'humanista', label:'Humanista-social', color:'#ef8b3c', icon:'fa-people-group', x:610, y:350, r:102, objectives:[3,4,6], partial:[1,5] },
+    { id:'socio', label:'Económico-productivo', color:'#eab04c', icon:'fa-chart-line', x:940, y:205, r:64, objectives:[5], partial:[4,6,7] },
+    { id:'gob', label:'Político-institucional y de gobernanza', color:'#4ade80', icon:'fa-landmark', x:950, y:500, r:64, objectives:[2,4,6], partial:[1,3,7] },
+    { id:'funcional', label:'Cultural-territorial', color:'#a879ff', icon:'fa-network-wired', x:610, y:635, r:64, objectives:[1,4,7], partial:[5,6] }
   ];
   const links = [[0,1],[1,2],[1,3],[1,4],[0,3],[0,2]];
   const el = (tag, attrs={}) => { const n=document.createElementNS(NS,tag); Object.entries(attrs).forEach(([k,v])=>n.setAttribute(k,v)); return n; };
@@ -380,13 +389,26 @@ document.querySelectorAll('.tab').forEach(btn => {
     const lines=el('g',{class:'network06-links'});
     links.forEach(([a,b])=>{const A=systems[a],B=systems[b]; lines.appendChild(el('line',{x1:A.x,y1:A.y,x2:B.x,y2:B.y,class:'network-edge',stroke:'#46d6d0','stroke-width':'2','stroke-opacity':'.65'}));});
     svg.appendChild(lines);
+    const showMacroObjective = (s) => {
+      const detail = document.getElementById('conceptDetail');
+      const note = document.getElementById('selectionNote');
+      if (!detail) return;
+      systems.forEach(other => document.querySelector(`[data-node-index="${systems.indexOf(other)}"]`)?.classList.remove('selected'));
+      const selected = document.querySelector(`[data-node-index="${systems.indexOf(s)}"]`);
+      selected?.classList.add('selected');
+      if (note) note.textContent = `Macromodelo seleccionado: ${s.label}. Objetivos principales: ${s.objectives.join(', ')}${s.partial?.length ? ` · Aportes parciales: ${s.partial.join(', ')}` : ''}.`;
+      detail.innerHTML = `<strong>Objetivos del POT que busca analizar · ${s.label}</strong><div class="objective-list">${s.objectives.map(number => `<article class="objective-card"><span>Objetivo ${number} · Artículo 5 · Relación principal</span><p>“${POT_OBJECTIVES[number]}”</p></article>`).join('')}${s.partial?.length ? `<div class="objective-partial"><strong>También aporta parcialmente a los objetivos ${s.partial.join(', ')}.</strong> La tabla los relaciona como cruces analíticos, no como el objetivo central de este macromodelo.</div>` : ''}</div>`;
+    };
     systems.forEach((s,i)=>{
       const g=el('g',{class:'network-node floating-node',transform:`translate(${s.x} ${s.y})`,style:`--node-color:${s.color};--node-filter:url(#glow-${s.color.slice(1)});color:${s.color}`,'data-node-index':i,tabindex:'0',role:'button','aria-label':s.label});
       g.appendChild(el('circle',{class:'node-ring',r:s.r,fill:'rgba(8,11,18,.6)',stroke:s.color,'stroke-width':'2.5',filter:`url(#glow-${s.color.slice(1)})`}));
       const fo=el('foreignObject',{x:-s.r*.95,y:-s.r*.95,width:s.r*1.9,height:s.r*1.9});
       const wrap=document.createElementNS('http://www.w3.org/1999/xhtml','div'); wrap.className='node-inner'; wrap.style.cssText='width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-align:center;pointer-events:none;font-family:Inter,sans-serif;';
       wrap.innerHTML=`<span class="node-num" style="font-family:'Space Grotesk';font-weight:800;color:${s.color};font-size:${Math.max(s.r*.2,12)}px;line-height:1">${i+1}</span><i class="fa-solid ${s.icon} node-icon" style="color:${s.color};font-size:${s.r*.38}px;line-height:1"></i><span class="node-name" style="color:var(--text-dim);font-size:${Math.max(s.r*.14,8)}px;font-weight:600;line-height:1.05">${s.label}</span>`;
-      fo.appendChild(wrap); g.appendChild(fo); g.addEventListener('click',()=>{document.getElementById('selectionNote').textContent=`Sistema seleccionado: ${s.label}`;}); svg.appendChild(g);
+      fo.appendChild(wrap); g.appendChild(fo);
+      g.addEventListener('click',()=>showMacroObjective(s));
+      g.addEventListener('keydown', event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); showMacroObjective(s); } });
+      svg.appendChild(g);
     });
   };
   render();
