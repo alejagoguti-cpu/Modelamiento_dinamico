@@ -210,10 +210,27 @@ body.scale-modal-open {
 }
 
 .popup-edge.bridge {
-  stroke-width: 3.2;
+  stroke-width: 3.8;
   stroke-dasharray: none;
   opacity: 1;
-  filter: drop-shadow(0 0 4px rgba(70,214,208,.55));
+  filter: drop-shadow(0 0 5px rgba(70,214,208,.72));
+}
+
+.popup-edge.bridge.indirect {
+  stroke: var(--popup-copper);
+  filter: drop-shadow(0 0 5px rgba(232,154,108,.68));
+}
+
+.popup-bridge-label text {
+  fill: var(--popup-copper);
+  font: 700 10px/1 'Space Grotesk', Inter, sans-serif;
+  letter-spacing: 1.4px;
+  opacity: .92;
+}
+
+.scale-legend-line.bridge {
+  border-top: 3px solid var(--popup-teal);
+  filter: drop-shadow(0 0 3px rgba(70,214,208,.65));
 }
 
 .popup-node {

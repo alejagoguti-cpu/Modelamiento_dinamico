@@ -1582,9 +1582,9 @@ function renderScaleNetworkPopup(mode) {
     const to = nodes[toId];
     if (!from || !to || scalePopupHiddenNodes.has(fromId) || scalePopupHiddenNodes.has(toId)) return '';
     const color = type === 'indirecta' ? '#e89a6c' : '#46d6d0';
-    const isBridge = from.y > 295 && to.y > 295;
+    const isBridge = from.y > 285 && to.y > 285;
     const className = `${type === 'indirecta' ? 'popup-edge indirect' : 'popup-edge direct'}${isBridge ? ' bridge' : ''}`;
-    return `<line class="${className}" data-from="${fromId}" data-to="${toId}" x1="${from.x.toFixed(1)}" y1="${from.y.toFixed(1)}" x2="${to.x.toFixed(1)}" y2="${to.y.toFixed(1)}" stroke="${color}" marker-end="url(#arrow-${type})" />`;
+    return `<line class="${className}" data-from="${fromId}" data-to="${toId}" data-bridge="${isBridge}" x1="${from.x.toFixed(1)}" y1="${from.y.toFixed(1)}" x2="${to.x.toFixed(1)}" y2="${to.y.toFixed(1)}" stroke="${color}" marker-end="url(#arrow-${type})" />`;
   }).join('');
 
   const popupIconSvg = {
@@ -1628,6 +1628,7 @@ function renderScaleNetworkPopup(mode) {
       <marker id="arrow-indirecta" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#e89a6c" /></marker>
     </defs>
     <g class="popup-network-scene">
+      <g class="popup-bridge-label" aria-hidden="true"><text x="54" y="530">PUENTES INFERIORES</text></g>
       <g class="popup-edges">${edgeMarkup}</g>
       <g class="popup-flow-layer" aria-hidden="true"></g>
       <g class="popup-nodes">${nodeMarkup}</g>
