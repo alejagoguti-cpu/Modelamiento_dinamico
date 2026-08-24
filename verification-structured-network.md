@@ -45,3 +45,9 @@ Evidencia visual pública: `/home/ubuntu/screenshots/alejagoguti-cpu_gith_2026-0
 Se reemplazó la etiqueta SVG de tamaño fijo por una composición que calcula líneas, fuente, alto de línea y ancho máximo según el radio real de cada nodo. Las etiquetas se mantienen centradas dentro del círculo y se comprimen solo cuando la línea supera el ancho útil; no se cambia ningún nombre ni la información del popup. También se separaron los últimos pares cercanos de Natural en la franja inferior.
 
 Resultado de auditoría sobre las cuatro escalas: Natural 30 nodos, Cultural 14, Tecnológico 14 y Metaverso 14; `textOutside: 0` y `overlaps: 0` en todas las escalas. El flujo acuático siguió activo durante la prueba.
+
+## Verificación pública del layout — commit d3c51ab
+
+GitHub Pages cargó `modulo-05.js?v=text-fit-v4`. La auditoría pública confirmó en Natural, Cultural, Tecnológico y Metaverso: `textOutside: 0`, `overlaps: 0`, flujo activo y todas las etiquetas contenidas dentro del nodo. En Natural se mantuvieron 30 nodos, 42 conexiones y 71 partículas de agua; el flujo cambió de posición durante la comprobación. La vista pública final quedó abierta en Natural para evidencia visual.
+
+Evidencia visual pública: `/home/ubuntu/screenshots/alejagoguti-cpu_gith_2026-08-24_02-28-34_2806.webp`.
