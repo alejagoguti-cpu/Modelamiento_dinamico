@@ -1710,13 +1710,21 @@ function renderScaleNetworkPopup(mode) {
       const description = document.getElementById('scaleNetworkDescription');
       if (description) description.textContent = `${node.label} apagado · se retiraron sus relaciones activas`;
     };
+    let clickCount = 0;
+    let clickTimer = null;
     nodeElement.addEventListener('click', event => {
-      if (event.detail === 1) selectNode();
-      if (event.detail === 3) togglePopupNode();
-    });
-    nodeElement.addEventListener('dblclick', event => {
       event.preventDefault();
-      openNodeDetail();
+      event.stopPropagation();
+      clickCount += 1;
+      if (clickTimer) window.clearTimeout(clickTimer);
+      clickTimer = window.setTimeout(() => {
+        const sequence = clickCount;
+        clickCount = 0;
+        clickTimer = null;
+        if (sequence >= 3) togglePopupNode();
+        else if (sequence === 2) openNodeDetail();
+        else selectNode();
+      }, 320);
     });
     nodeElement.addEventListener('keydown', event => {
       if (event.key === 'Enter' || event.key === ' ') {
