@@ -1738,13 +1738,13 @@
         components.style.left = `clamp(8px, ${Math.max(7, Math.min(item.x - 8, 62))}%, calc(100% - 320px))`;
         components.style.top = `clamp(72px, ${Math.min(item.y + 10, 72)}%, calc(100% - 170px))`;
         const visuals = getComponentVisuals(item);
-        components.innerHTML = `<strong><i class="fa-solid fa-sparkles"></i> QUÉ PARTES O COMPONENTES SE ANALIZAN</strong><div class="component-visual-strip">${visuals.map((visual) => `<span class="component-visual ${visual.className || ""}" title="${visual.label}" aria-label="${visual.label}"><i class="fa-solid ${visual.icon}"></i><em>${visual.label}</em></span>`).join("")}</div><p>${item.componentsText || item.components.join(", ")}</p>${renderSubsystemNetwork(item)}`;
+        components.innerHTML = `<div class="subsystem-panel-heading"><strong><i class="fa-solid fa-sparkles"></i> QUÉ PARTES O COMPONENTES SE ANALIZAN</strong><button type="button" class="subsystem-panel-close" aria-label="Cerrar panel de componentes" title="Cerrar"><i class="fa-solid fa-xmark"></i></button></div><div class="component-visual-strip">${visuals.map((visual) => `<span class="component-visual ${visual.className || ""}" title="${visual.label}" aria-label="${visual.label}"><i class="fa-solid ${visual.icon}"></i><em>${visual.label}</em></span>`).join("")}</div><p>${item.componentsText || item.components.join(", ")}</p>${renderSubsystemNetwork(item)}`;
         subsystemBubbles.appendChild(components);
         const purpose = document.createElement("aside");
         purpose.className = "subsystem-purpose-panel active";
         purpose.style.setProperty("--bubble-color", item.color);
-        purpose.innerHTML = `<strong>${item.name}</strong><h4>¿Las partes tienen propósito propio?</h4><p>${item.partsPurpose}</p><h4>¿La totalidad tiene propósito propio?</h4><p>${item.totalPurpose}</p><h4>Por ende, la categoría es:</h4><b class="purpose-category">${item.category}</b><p class="purpose-justification">${item.justification}</p><h4>Qué cambia en el tiempo</h4><p>${item.process}</p>`;
-        subsystemBubbles.appendChild(purpose);
+        purpose.innerHTML = `<div class="subsystem-panel-heading"><strong>${item.name}</strong><button type="button" class="subsystem-panel-close" aria-label="Cerrar panel de propósito" title="Cerrar"><i class="fa-solid fa-xmark"></i></button></div><h4>¿Las partes tienen propósito propio?</h4><p>${item.partsPurpose}</p><h4>¿La totalidad tiene propósito propio?</h4><p>${item.totalPurpose}</p><h4>Por ende, la categoría es:</h4><b class="purpose-category">${item.category}</b><p class="purpose-justification">${item.justification}</p><h4>Qué cambia en el tiempo</h4><p>${item.process}</p>`;
+        subsystemBubbles.appendChild(purpose); const closePanels = (event) => { event?.stopPropagation(); components.remove(); purpose.remove(); button.classList.remove("active"); }; components.querySelector(".subsystem-panel-close")?.addEventListener("click", closePanels); purpose.querySelector(".subsystem-panel-close")?.addEventListener("click", closePanels);
       }));
     };
     const revealSubsystems = (stagger = 150) => {
