@@ -523,11 +523,11 @@ function showCityTableNodeInfo(node) {
   const selected = document.querySelector(`.rd-node[data-table-id="${node.n}"]`);
   selected?.classList.add("edge-selected");
   document.getElementById("edgeInfoTitle").textContent = node.name;
-  document.getElementById("edgeInfoConvencion").textContent = `Nodo concreto · ${node.subsystem}`;
-  document.getElementById("edgeInfoEvidencia").textContent = `“${node.name}” aparece como nodo observable en la Red ampliada de Bogotá como territorio dinámico.`;
+  document.getElementById("edgeInfoConvencion").textContent = node.name;
+  document.getElementById("edgeInfoEvidencia").textContent = node.subsystem;
   document.getElementById("edgeInfoPage").textContent = `Tabla · nodo ${node.n} de 150`;
-  document.getElementById("edgeInfoActores").textContent = `Tipo de nodo: ${node.type}`;
-  document.getElementById("edgeInfoSituacion").textContent = `Subsistema: ${node.subsystem}`;
+  document.getElementById("edgeInfoActores").textContent = node.type;
+  document.getElementById("edgeInfoSituacion").textContent = "Registro completo de la tabla · nodo observable del sistema urbano";
   document.getElementById("edgeInfoCritica").textContent = "La tabla evita convertir el subsistema en un objeto abstracto: aquí se observa un lugar, agente, flujo, infraestructura o proceso concreto.";
   document.getElementById("edgeInfoLiveScript").textContent = `Qué decir: “Aquí no estoy mostrando el sistema como una categoría vacía; estoy mostrando ${node.name}, un elemento concreto que puede relacionarse con otros elementos de la ciudad.”`;
   panel.classList.add("visible");
@@ -550,6 +550,24 @@ function subsystemTitleLines(subsystem) {
   return lines.slice(0, 3);
 }
 
+function cityDataIcon(node) {
+  const text = `${node.name || ""} ${node.type || ""}`.toLowerCase();
+  if (/(agua|hídric|lluvia|escorrentía|drenaje|canal|río|humedal|cuerpo)/i.test(text)) return "fa-droplet";
+  if (/(ave|pájaro|organismo móvil|fauna|animal|artrópodo|insecto|araña)/i.test(text)) return "fa-feather-pointed";
+  if (/(planta|veget|árbol|flora|cobertura verde)/i.test(text)) return "fa-seedling";
+  if (/(atmosfér|clima|viento|lluvia|variación temporal|estacional)/i.test(text)) return "fa-cloud-sun";
+  if (/(vivienda|residencial|construcción|edificación|superficie construida|espacio construido)/i.test(text)) return "fa-house";
+  if (/(vial|carretera|calle|red vial|vehículo|transporte|movilidad|ciclista|ciclorruta)/i.test(text)) return "fa-road";
+  if (/(flujo de personas|usuario|agente|habitante|población|comunidad|organización|actor)/i.test(text)) return "fa-people-group";
+  if (/(equipamiento|salud|educativ|colegio|cuidado|servicio social)/i.test(text)) return "fa-building";
+  if (/(económ|comerc|mercado|empleo|laboral|bienes|productor|empresa)/i.test(text)) return "fa-store";
+  if (/(patrimonio|cultural|memoria|paisaje|sitio|lugar valorado)/i.test(text)) return "fa-landmark";
+  if (/(institucional|normativo|gestión|decisión|pot|entidad)/i.test(text)) return "fa-scale-balanced";
+  if (/(red|infraestructura|energét|sanitaria|material|recurso)/i.test(text)) return "fa-network-wired";
+  if (/(amenaza|riesgo|presión|evento|transformación|condición)/i.test(text)) return "fa-triangle-exclamation";
+  return "fa-circle-nodes";
+}
+
 function drawCityDataCloud(svg) {
   if (typeof CITY_DATA_NODES === "undefined") return;
   const filter = window.currentCityDataFilter || "all";
@@ -562,8 +580,9 @@ function drawCityDataCloud(svg) {
   visible.forEach((node, index) => {
     const p = cityDataPointPosition(node, index, visible.length);
     const color = CITY_DATA_SUBSYSTEM_COLORS[node.subsystem] || "#c9cedb";
-    const dot = document.createElementNS(SVG_NS, "circle");
     const isAgent = /Agente|Usuarios|Organización|Agentes|Comunidad|Personas|Comerciantes|Productores/i.test(node.type);
+    const radius = isAgent ? 16 : 14;
+    const dot = document.createElementNS(SVG_NS, "g");
     dot.setAttribute("class", `city-table-point rd-node ${isAgent ? "city-table-agent" : ""}`);
     dot.dataset.tableId = String(node.n);
     dot.dataset.id = `table-${node.n}`;
@@ -573,14 +592,44 @@ function drawCityDataCloud(svg) {
     dot.setAttribute("aria-label", `${node.name} · ${node.subsystem} · ${node.type}`);
     dot.addEventListener("click", (event) => { event.stopPropagation(); showCityTableNodeInfo(node); });
     dot.addEventListener("keydown", (event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); showCityTableNodeInfo(node); } });
-    dot.setAttribute("cx", p.x.toFixed(1));
-    dot.setAttribute("cy", p.y.toFixed(1));
-    dot.setAttribute("r", (isAgent ? 3.5 : 3.1).toFixed(2));
     dot.style.setProperty("--table-color", color);
     dot.style.setProperty("--table-delay", `${-((node.n % 24) * .13).toFixed(2)}s`);
     dot.setAttribute("data-table-node", String(node.n));
+
+    const halo = document.createElementNS(SVG_NS, "circle");
+    halo.setAttribute("class", "city-table-node-halo");
+    halo.setAttribute("cx", p.x.toFixed(1));
+    halo.setAttribute("cy", p.y.toFixed(1));
+    halo.setAttribute("r", (radius + 3).toFixed(1));
+    halo.setAttribute("stroke", color);
+
+    const circle = document.createElementNS(SVG_NS, "circle");
+    circle.setAttribute("class", "city-table-node-ring");
+    circle.setAttribute("cx", p.x.toFixed(1));
+    circle.setAttribute("cy", p.y.toFixed(1));
+    circle.setAttribute("r", radius.toFixed(1));
+    circle.setAttribute("stroke", color);
+    circle.setAttribute("fill", color);
+
+    const fo = document.createElementNS(SVG_NS, "foreignObject");
+    fo.setAttribute("class", "city-table-node-content");
+    fo.setAttribute("x", (p.x - radius).toFixed(1));
+    fo.setAttribute("y", (p.y - radius).toFixed(1));
+    fo.setAttribute("width", (radius * 2).toFixed(1));
+    fo.setAttribute("height", (radius * 2).toFixed(1));
+    const wrapper = document.createElementNS(XHTML_NS, "div");
+    wrapper.setAttribute("class", "city-table-node-inner");
+    const iconEl = document.createElementNS(XHTML_NS, "i");
+    iconEl.setAttribute("class", `fa-solid ${cityDataIcon(node)}`);
+    iconEl.setAttribute("aria-hidden", "true");
+    wrapper.appendChild(iconEl);
+    fo.appendChild(wrapper);
+
     const title = document.createElementNS(SVG_NS, "title");
     title.textContent = `${node.n}. ${node.name} · ${node.subsystem} · ${node.type}`;
+    dot.appendChild(halo);
+    dot.appendChild(circle);
+    dot.appendChild(fo);
     dot.appendChild(title);
     points.appendChild(dot);
   });
