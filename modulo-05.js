@@ -33,6 +33,12 @@
     streetSource: "local-geojson",
     localRoadFeatures: [],
     localRoadCount: 0,
+    placeFeatures: [],
+    placePointRecords: [],
+    categoryVisibility: {},
+    hoveredClusterFeatures: [],
+    hoveredClusterId: null,
+    activeClusterForExport: null,
     pmtilesArchive: null,
     pmtilesProtocol: null,
     currentView: "barrio",
@@ -507,6 +513,7 @@
     }
     const categoryCounts = new Map();
     const names = [];
+    const isProcedural = leaves.some((leaf) => leaf?.properties?.source === "Simulación procedural");
     leaves.forEach((leaf) => {
       const leafProperties = leaf?.properties || {};
       const category = String(leafProperties.layerLabel || leafProperties.featureType || "Puntos sin categoría");
@@ -517,7 +524,7 @@
     const categories = [...categoryCounts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 3).map(([category, total]) => `${escapeHtml(category)} (${total})`).join(" · ");
     const sampleCount = leaves.length < count ? `Muestra ${leaves.length} de ${count}` : `${leaves.length} elementos`;
     const references = names.slice(0, 3).map((name) => escapeHtml(name)).join(" · ");
-    return `<strong>${count.toLocaleString("es-CO")} elementos OSM</strong><span><b>Categorías:</b> ${categories || "Sin clasificar"}<br><b>${sampleCount}:</b> ${references || "sin nombres disponibles"}</span>`;
+    return `<strong>${count.toLocaleString("es-CO")} ${isProcedural ? "elementos en el mapa" : "elementos OSM"}</strong><span><b>Categorías:</b> ${categories || "Sin clasificar"}<br><b>${sampleCount}:</b> ${references || "sin nombres disponibles"}</span>`;
   }
 
   function mapHoverTooltipHtml(feature, layerId, leaves = null) {
@@ -527,8 +534,9 @@
     const label = properties.label || "Lugar OSM";
     const type = properties.featureType || "lugar";
     const category = properties.layerLabel || "Punto OSM";
+    const source = properties.source || "OpenStreetMap";
     const osmId = properties.osmId ? ` · ID ${escapeHtml(String(properties.osmId))}` : "";
-    return `<strong>${escapeHtml(String(label))}</strong><span>${escapeHtml(String(type))} · ${escapeHtml(String(category))} · OpenStreetMap${osmId}</span>`;
+    return `<strong>${escapeHtml(String(label))}</strong><span>${escapeHtml(String(type))} · ${escapeHtml(String(category))} · ${escapeHtml(String(source))}${osmId}</span>`;
   }
 
   function requestClusterLeaves(source, clusterId, limit = 40, offset = 0) {
@@ -557,8 +565,13 @@
     if (clusterId === undefined || clusterId === null || !count || !state.map) return;
     try {
       const leaves = await requestClusterLeaves(state.map.getSource("osm-places"), clusterId, Math.min(count, 40), 0);
-      if (state.hoveredMapFeatureKey !== featureKey || !state.mapHoverPopup) return;
-      state.mapHoverPopup.setHTML(mapHoverTooltipHtml(feature, layerId, leaves)).addTo(state.map);
+      const exportLeaves = count > leaves.length ? await requestClusterLeaves(state.map.getSource("osm-places"), clusterId, count, 0) : leaves;
+      if (state.activeClusterForExport?.featureKey !== featureKey) return;
+      state.hoveredClusterId = clusterId;
+      state.hoveredClusterFeatures = leaves;
+      state.activeClusterForExport = { clusterId, count, featureKey, leaves: exportLeaves, previewLeaves: leaves };
+      if (state.hoveredMapFeatureKey === featureKey && state.mapHoverPopup) state.mapHoverPopup.setHTML(mapHoverTooltipHtml(feature, layerId, leaves)).addTo(state.map);
+      updateExportButtons();
     } catch (error) {
       console.debug("No se pudo resumir el cluster OSM", error);
     }
@@ -635,6 +648,8 @@
       clearMapHoverFeatureState();
       stopMapHoverPulse();
       state.hoveredMapFeatureKey = "";
+      state.hoveredClusterId = null;
+      state.hoveredClusterFeatures = [];
       if (state.map) state.map.getCanvas().style.cursor = "";
     };
     const show = (event, layerId) => {
@@ -643,12 +658,19 @@
       const properties = feature.properties || {};
       const featureId = feature.id ?? properties.cluster_id ?? properties.osmId ?? "point";
       const featureKey = `osm-places/${featureId}`;
+      const isCluster = layerId === "osm-place-clusters" || layerId === "osm-place-cluster-count";
       setMapHoverFeatureState(feature, layerId);
       state.map.getCanvas().style.cursor = "pointer";
       if (state.hoveredMapFeatureKey !== featureKey) {
         state.hoveredMapFeatureKey = featureKey;
+        if (isCluster) {
+          const clusterId = properties.cluster_id ?? feature.id;
+          const count = Number(properties.point_count) || 0;
+          state.activeClusterForExport = { clusterId, count, featureKey, leaves: null };
+        }
         state.mapHoverPopup.setHTML(mapHoverTooltipHtml(feature, layerId));
-        if (layerId === "osm-place-clusters" || layerId === "osm-place-cluster-count") enrichClusterTooltip(feature, layerId, featureKey);
+        updateExportButtons();
+        if (isCluster) enrichClusterTooltip(feature, layerId, featureKey);
       }
       state.mapHoverPopup.setLngLat(event.lngLat).addTo(state.map);
     };
@@ -947,7 +969,15 @@
     state.placeMarkers = [];
     state.proceduralMarkers.forEach((marker) => marker.remove());
     state.proceduralMarkers = [];
+    state.placeFeatures = [];
+    state.placePointRecords = [];
+    state.hoveredClusterFeatures = [];
+    state.hoveredClusterId = null;
+    state.activeClusterForExport = null;
     updatePlaceLayer([]);
+    updateMapCategoryFilters();
+    setText("#mapDataSummary", "Sin puntos cargados.");
+    updateExportButtons();
   }
 
   function featurePoint(element) {
@@ -1015,13 +1045,99 @@
     return Object.entries(API_LAYERS).find(([, layer]) => layer.match?.(tags, element)) || null;
   }
 
-  function renderPlaces(elements) {
-    clearPlaceMarkers();
+  function placeCategoryKey(label) {
+    return String(label || "Punto OSM").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "punto-osm";
+  }
+
+  function placeFeatureCategory(feature) {
+    return String(feature?.properties?.layerLabel || feature?.properties?.featureType || "Punto OSM");
+  }
+
+  function placeFeatureCategoryKey(feature) {
+    return String(feature?.properties?.layerKey || placeCategoryKey(placeFeatureCategory(feature)));
+  }
+
+  function updateMapCategoryFilters() {
+    const container = $("#mapCategoryFilters");
+    if (!container) return;
+    const counts = new Map();
+    state.placeFeatures.forEach((feature) => {
+      const label = placeFeatureCategory(feature);
+      const key = placeFeatureCategoryKey(feature);
+      counts.set(key, { key, label, count: (counts.get(key)?.count || 0) + 1 });
+    });
+    if (!counts.size) {
+      container.innerHTML = `<span class="field-note">Las categorías aparecerán cuando carguen los puntos.</span>`;
+      return;
+    }
+    const categories = [...counts.values()].sort((a, b) => b.count - a.count || a.label.localeCompare(b.label, "es"));
+    categories.forEach(({ key }) => {
+      if (state.categoryVisibility[key] === undefined) state.categoryVisibility[key] = true;
+    });
+    Object.keys(state.categoryVisibility).forEach((key) => { if (!counts.has(key)) delete state.categoryVisibility[key]; });
+    container.innerHTML = [`<button class="map-category-filter map-category-all is-active" type="button" data-category="__all" aria-pressed="true">Todas <small>${state.placeFeatures.length}</small></button>`, ...categories.map(({ key, label, count }) => `<button class="map-category-filter${state.categoryVisibility[key] !== false ? " is-active" : ""}" type="button" data-category="${escapeHtml(key)}" aria-pressed="${state.categoryVisibility[key] !== false}" title="Mostrar u ocultar ${escapeHtml(label)}"><span class="map-category-dot"></span>${escapeHtml(label)} <small>${count}</small></button>`)].join("");
+    container.querySelectorAll(".map-category-filter").forEach((button) => button.addEventListener("click", () => {
+      const key = button.dataset.category;
+      if (key === "__all") Object.keys(state.categoryVisibility).forEach((category) => { state.categoryVisibility[category] = true; });
+      else state.categoryVisibility[key] = state.categoryVisibility[key] === false;
+      applyPlaceCategoryFilter();
+    }));
+  }
+
+  function renderHtmlPlaceMarkers(records) {
     if (!state.map || !window.maplibregl) return;
     const seen = new Set();
+    records.slice(0, 36).forEach(({ element, point, matchedLayer }) => {
+      if (!point || element.tags?.highway) return;
+      const key = `${point[0].toFixed(5)},${point[1].toFixed(5)}`;
+      if (seen.has(key)) return;
+      seen.add(key);
+      const markerEl = document.createElement("div");
+      markerEl.className = "place-marker";
+      if (matchedLayer) {
+        markerEl.style.background = matchedLayer[1].color;
+        markerEl.title = matchedLayer[1].label;
+      }
+      const marker = new maplibregl.Marker({ element: markerEl, anchor: "center" }).setLngLat(point).setPopup(new maplibregl.Popup({ offset: 9, className: "place-popup" }).setHTML(`<strong>${escapeHtml(featureName(element))}</strong><span>${escapeHtml(featureType(element))} · OpenStreetMap${matchedLayer ? ` · ${escapeHtml(matchedLayer[1].label)}` : ""}</span>`)).addTo(state.map);
+      markerEl.addEventListener("mouseenter", () => marker.togglePopup());
+      markerEl.addEventListener("mouseleave", () => marker.getPopup()?.remove());
+      state.placeMarkers.push(marker);
+    });
+  }
+
+  function applyPlaceCategoryFilter() {
+    if (!state.map) return;
+    clearMapHoverFeatureState();
+    stopMapHoverPulse();
+    state.mapHoverPopup?.remove();
+    state.hoveredMapFeatureKey = "";
+    state.activeClusterForExport = null;
+    state.hoveredClusterFeatures = [];
+    state.hoveredClusterId = null;
+    const visibleFeatures = state.placeFeatures.filter((feature) => state.categoryVisibility[placeFeatureCategoryKey(feature)] !== false);
+    const visibleRecords = state.placePointRecords.filter(({ feature }) => state.categoryVisibility[placeFeatureCategoryKey(feature)] !== false);
+    updatePlaceLayer(visibleFeatures);
+    state.placeMarkers.forEach((marker) => marker.remove());
+    state.placeMarkers = [];
+    renderHtmlPlaceMarkers(visibleRecords);
+    const visibleCategories = new Set(visibleFeatures.map((feature) => placeFeatureCategory(feature))).size;
+    setText("#metricPlaces", String(visibleFeatures.length));
+    setText("#mapDataSummary", `${visibleFeatures.length.toLocaleString("es-CO")} puntos visibles · ${visibleCategories} categorías activas`);
+    const filters = $("#mapCategoryFilters");
+    filters?.querySelectorAll(".map-category-filter").forEach((button) => {
+      const active = button.dataset.category === "__all" ? Object.values(state.categoryVisibility).every(Boolean) : state.categoryVisibility[button.dataset.category] !== false;
+      button.classList.toggle("is-active", active);
+      button.setAttribute("aria-pressed", String(active));
+    });
+    updateExportButtons();
+  }
+
+  function renderPlaces(elements) {
+    clearPlaceMarkers();
+    state.placeFeatures = [];
+    state.placePointRecords = [];
+    if (!state.map || !window.maplibregl) return;
     const streetFeatures = [];
-    const placeFeatures = [];
-    let placeCount = 0;
     let roadCount = 0;
     elements.forEach((element) => {
       const street = streetFeature(element);
@@ -1037,34 +1153,113 @@
       const tags = element.tags || {};
       if (!point || tags.highway) return;
       const matchedLayer = featureLayer(element);
-      placeFeatures.push({ type: "Feature", id: `${element.type}/${element.id}`, properties: { color: matchedLayer?.[1].color || "#e8925c", osmId: element.id, label: featureName(element), featureType: featureType(element), layerLabel: matchedLayer?.[1].label || "Punto OSM", source: "OpenStreetMap" }, geometry: { type: "Point", coordinates: point } });
+      const feature = { type: "Feature", id: `${element.type}/${element.id}`, properties: { color: matchedLayer?.[1].color || "#e8925c", osmId: element.id, label: featureName(element), featureType: featureType(element), layerKey: matchedLayer?.[0] || "other", layerLabel: matchedLayer?.[1].label || "Punto OSM", source: "OpenStreetMap" }, geometry: { type: "Point", coordinates: point } };
+      state.placeFeatures.push(feature);
+      state.placePointRecords.push({ element, point, matchedLayer, feature });
     });
-    updatePlaceLayer(placeFeatures);
-    placeCount = placeFeatures.length;
-    /* Los círculos vectoriales son la capa principal; los marcadores HTML quedan
-       limitados a una muestra para no ocultar las pepitas bajo una telaraña. */
-    elements.slice(0, 36).forEach((element) => {
-      const point = featurePoint(element);
-      if (!point) return;
-      const tags = element.tags || {};
-      const key = `${point[0].toFixed(5)},${point[1].toFixed(5)}`;
-      if (tags.highway || seen.has(key)) return;
-      seen.add(key);
-      const markerEl = document.createElement("div");
-      markerEl.className = "place-marker";
-      const matchedLayer = featureLayer(element);
-      if (matchedLayer) {
-        markerEl.style.background = matchedLayer[1].color;
-        markerEl.title = matchedLayer[1].label;
-      }
-      const marker = new maplibregl.Marker({ element: markerEl, anchor: "center" }).setLngLat(point).setPopup(new maplibregl.Popup({ offset: 9, className: "place-popup" }).setHTML(`<strong>${escapeHtml(featureName(element))}</strong><span>${escapeHtml(featureType(element))} · OpenStreetMap${matchedLayer ? ` · ${escapeHtml(matchedLayer[1].label)}` : ""}</span>`)).addTo(state.map);
-      markerEl.addEventListener("mouseenter", () => marker.togglePopup());
-      markerEl.addEventListener("mouseleave", () => marker.getPopup()?.remove());
-      state.placeMarkers.push(marker);
-    });
-    setText("#metricPlaces", placeCount ? String(placeCount) : "0");
+    updateMapCategoryFilters();
+    applyPlaceCategoryFilter();
     setText("#metricRoads", state.streetSource === "pmtiles" ? "MVT" : (state.streetSource === "local-geojson" && state.localRoadCount ? state.localRoadCount.toLocaleString("es-CO") : (roadCount ? roadCount.toLocaleString("es-CO") : "—")));
     renderApiSummary(elements);
+  }
+
+  function getFilteredPlaceFeatures() {
+    return state.placeFeatures.filter((feature) => state.categoryVisibility[placeFeatureCategoryKey(feature)] !== false);
+  }
+
+  function getVisiblePlaceFeatures() {
+    const features = getFilteredPlaceFeatures();
+    const bounds = state.map?.getBounds?.();
+    if (!bounds || typeof bounds.contains !== "function") return features;
+    return features.filter((feature) => {
+      const coordinates = feature?.geometry?.coordinates;
+      return Array.isArray(coordinates) && coordinates.length >= 2 && Number.isFinite(Number(coordinates[0])) && Number.isFinite(Number(coordinates[1])) && bounds.contains([Number(coordinates[0]), Number(coordinates[1])]);
+    });
+  }
+
+  function normalizeExportFeature(feature) {
+    const coordinates = feature?.geometry?.coordinates;
+    if (!Array.isArray(coordinates) || coordinates.length < 2) return null;
+    const properties = feature.properties || {};
+    const longitude = Number(coordinates[0]);
+    const latitude = Number(coordinates[1]);
+    if (!Number.isFinite(longitude) || !Number.isFinite(latitude)) return null;
+    return {
+      osm_id: properties.osmId ?? "",
+      nombre: properties.label || "Lugar OSM",
+      tipo: properties.featureType || "lugar",
+      categoria: properties.layerLabel || "Punto OSM",
+      fuente: properties.source || "OpenStreetMap",
+      longitud: longitude,
+      latitud: latitude,
+    };
+  }
+
+  function exportFeatureCollection(features) {
+    return {
+      type: "FeatureCollection",
+      features: features.map((feature) => {
+        const properties = normalizeExportFeature(feature);
+        if (!properties) return null;
+        return { type: "Feature", id: feature.id, properties, geometry: { type: "Point", coordinates: [properties.longitud, properties.latitud] } };
+      }).filter(Boolean),
+    };
+  }
+
+  function csvCell(value) {
+    const text = String(value ?? "");
+    const needsQuotes = text.includes(",") || text.includes(String.fromCharCode(10)) || text.includes(String.fromCharCode(13));
+    return needsQuotes ? `"${text.replace(/"/g, '""')}"` : text;
+  }
+
+  function exportCsv(features) {
+    const columns = ["osm_id", "nombre", "tipo", "categoria", "fuente", "longitud", "latitud"];
+    const rows = features.map(normalizeExportFeature).filter(Boolean).map((row) => columns.map((column) => csvCell(row[column])).join(","));
+    const lineBreak = String.fromCharCode(13, 10);
+    return String.fromCharCode(0xfeff) + columns.join(",") + lineBreak + rows.join(lineBreak) + lineBreak;
+  }
+
+  function downloadText(content, mimeType, filename) {
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = filename;
+    anchor.style.display = "none";
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    window.setTimeout(() => URL.revokeObjectURL(url), 1200);
+  }
+
+  function updateExportButtons() {
+    const visibleCount = getVisiblePlaceFeatures().length;
+    const cluster = state.activeClusterForExport;
+    const clusterCount = Array.isArray(cluster?.leaves) ? cluster.leaves.length : 0;
+    ["#exportVisibleCsv", "#exportVisibleGeojson"].forEach((selector) => { const button = $(selector); if (button) button.disabled = visibleCount === 0; });
+    ["#exportClusterCsv", "#exportClusterGeojson"].forEach((selector) => { const button = $(selector); if (button) button.disabled = clusterCount === 0; });
+    if (cluster && cluster.leaves === null) setText("#mapClusterSummary", `Cluster de ${cluster.count.toLocaleString("es-CO")} elementos · preparando datos…`);
+    else if (clusterCount) setText("#mapClusterSummary", `Cluster de ${cluster.count.toLocaleString("es-CO")} elementos · ${clusterCount} listos para exportar.`);
+    else setText("#mapClusterSummary", "Pasa el cursor sobre un cluster para habilitar su exportación.");
+  }
+
+  function exportPlaceData(format, scope) {
+    const sourceFeatures = scope === "cluster" ? (state.activeClusterForExport?.leaves || []) : getVisiblePlaceFeatures();
+    const features = sourceFeatures.map((feature) => ({ ...feature, properties: { ...(feature.properties || {}) } }));
+    const rows = features.map(normalizeExportFeature).filter(Boolean);
+    if (!rows.length) {
+      showToast(scope === "cluster" ? "Todavía no hay un cluster listo para exportar." : "No hay puntos visibles para exportar.", "error");
+      updateExportButtons();
+      return;
+    }
+    const stamp = new Date().toISOString().slice(0, 10);
+    const prefix = scope === "cluster" ? "cluster-osm" : "puntos-osm-visibles";
+    if (format === "geojson") {
+      downloadText(JSON.stringify(exportFeatureCollection(features), null, 2), "application/geo+json;charset=utf-8", `${prefix}-${stamp}.geojson`);
+    } else {
+      downloadText(exportCsv(features), "text/csv;charset=utf-8", `${prefix}-${stamp}.csv`);
+    }
+    showToast(`${rows.length.toLocaleString("es-CO")} ${scope === "cluster" ? "elementos del cluster" : "puntos visibles"} exportados en ${format.toUpperCase()}.`);
   }
 
   function buildOverpassQuery(upl, scaleKey, bbox = null, layerKey = null) {
@@ -1155,17 +1350,14 @@
     updateStreetLayer(state.streetSource === "local-geojson" ? state.localRoadFeatures : []);
     const scale = SCALE_DATA[state.selectedScale];
     const offsets = [[-.012,.008],[.010,.010],[-.007,-.009],[.014,-.006],[-.017,-.003],[.002,.017]];
-    offsets.forEach(([dx,dy], index) => {
-      const markerEl = document.createElement("div");
-      markerEl.className = "place-marker";
-      markerEl.style.background = scale.color;
+    state.placeFeatures = offsets.map(([dx, dy], index) => {
+      const coordinates = [state.selectedUpl.lon + dx, state.selectedUpl.lat + dy];
       const label = scale.fallback[index % scale.fallback.length];
-      const marker = new maplibregl.Marker({ element: markerEl, anchor: "center" }).setLngLat([state.selectedUpl.lon + dx, state.selectedUpl.lat + dy]).setPopup(new maplibregl.Popup({ offset: 9, className: "place-popup" }).setHTML(`<strong>${escapeHtml(label)}</strong><span>capa procedural de respaldo · no es un dato OSM</span>`)).addTo(state.map);
-      markerEl.addEventListener("mouseenter", () => marker.togglePopup());
-      markerEl.addEventListener("mouseleave", () => marker.getPopup()?.remove());
-      state.proceduralMarkers.push(marker);
+      return { type: "Feature", id: `procedural/${state.selectedScale}/${index}`, properties: { color: scale.color, osmId: "", label, featureType: "respaldo procedural", layerKey: "procedural", layerLabel: `Respaldo · ${scale.label}`, source: "Simulación procedural" }, geometry: { type: "Point", coordinates } };
     });
-    setText("#metricPlaces", String(offsets.length));
+    state.placePointRecords = [];
+    updateMapCategoryFilters();
+    applyPlaceCategoryFilter();
     setText("#metricRoads", "6");
     renderApiSummary([]);
   }
@@ -1314,6 +1506,10 @@
     $$(".scale-btn").forEach((button) => button.addEventListener("click", () => setScale(button.dataset.scale)));
     $$(".view-card").forEach((button) => button.addEventListener("click", () => switchView(button.dataset.view)));
     $("#locateBtn")?.addEventListener("click", () => { state.currentView = "barrio"; updateUplPanel(state.selectedUpl); focusSelectedUpl(true); });
+    $("#exportVisibleCsv")?.addEventListener("click", () => exportPlaceData("csv", "visible"));
+    $("#exportVisibleGeojson")?.addEventListener("click", () => exportPlaceData("geojson", "visible"));
+    $("#exportClusterCsv")?.addEventListener("click", () => exportPlaceData("csv", "cluster"));
+    $("#exportClusterGeojson")?.addEventListener("click", () => exportPlaceData("geojson", "cluster"));
     $("#fullScreenBtn")?.addEventListener("click", () => { const element = $(".map-panel"); if (!document.fullscreenElement) element?.requestFullscreen?.(); else document.exitFullscreen?.(); });
     $("#routeBtn")?.addEventListener("click", calculateRoute);
     $("#clearRouteBtn")?.addEventListener("click", clearRoute);
@@ -2692,7 +2888,7 @@ document.getElementById('scaleNetworkZoomReset')?.addEventListener('click', even
       }, 9000);
     }
     window.setTimeout(preloadWetlandImage, 650);
-    window.BogotaVivaNavigator = { state, UPLS, SCALE_DATA, setScale, focusSelectedUpl, loadScaleData, calculateRoute, useProceduralFallback, toggleLocalPmtiles, setScaleNetworkFlowRunning, resetScaleNetworkFlow, getScaleNetworkFlowState: () => ({ running: scaleNetworkFlowState.running, particles: scaleNetworkFlowState.particles.length, edges: document.querySelectorAll('#scaleNetworkCanvas .popup-edge').length }) };
+    window.BogotaVivaNavigator = { state, UPLS, SCALE_DATA, setScale, focusSelectedUpl, loadScaleData, calculateRoute, useProceduralFallback, toggleLocalPmtiles, setScaleNetworkFlowRunning, resetScaleNetworkFlow, applyPlaceCategoryFilter, updateMapCategoryFilters, updateExportButtons, getFilteredPlaceFeatures, getVisiblePlaceFeatures, exportPlaceData, exportCsv, exportFeatureCollection, getScaleNetworkFlowState: () => ({ running: scaleNetworkFlowState.running, particles: scaleNetworkFlowState.particles.length, edges: document.querySelectorAll('#scaleNetworkCanvas .popup-edge').length }) };
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);

@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
   <link href="https://unpkg.com/maplibre-gl@6.5.0/dist/maplibre-gl.css" rel="stylesheet">
-  <link rel="stylesheet" href="modulo-05.css?v=map-hover-glow-v1">
+  <link rel="stylesheet" href="modulo-05.css?v=map-filter-export-v1">
   <link rel="stylesheet" href="site-theme.css?v=minimal-v4">
   <link rel="stylesheet" href="modulo-05-popup.css?v=wetland-zoom-v1">
   <link rel="preload" as="image" href="assets/planosnico-preview.webp" type="image/webp" fetchpriority="high">
@@ -60,6 +60,27 @@
           <label class="sr-only" for="uplSelect">Seleccionar UPL</label>
           <select id="uplSelect"></select>
           <p id="uplTag" class="field-note">Selecciona una UPL para enfocar la exploración.</p>
+        </div>
+
+        <div class="panel-block map-data-tools">
+          <div class="block-label"><span class="step-label">3</span> FILTRA Y EXPORTA</div>
+          <div id="mapCategoryFilters" class="map-category-filters" role="group" aria-label="Filtrar puntos por categoría" aria-live="polite"><span class="field-note">Las categorías aparecerán cuando carguen los puntos.</span></div>
+          <div class="map-export-group">
+            <span class="map-export-label">MAPA VISIBLE</span>
+            <div class="map-export-row" role="group" aria-label="Exportar puntos visibles del mapa">
+              <button id="exportVisibleCsv" class="map-export-btn" type="button" disabled>CSV</button>
+              <button id="exportVisibleGeojson" class="map-export-btn" type="button" disabled>GeoJSON</button>
+            </div>
+          </div>
+          <div class="map-export-group map-cluster-export">
+            <span class="map-export-label">ÚLTIMO CLUSTER</span>
+            <div class="map-export-row" role="group" aria-label="Exportar puntos del último cluster">
+              <button id="exportClusterCsv" class="map-export-btn" type="button" disabled>CSV</button>
+              <button id="exportClusterGeojson" class="map-export-btn" type="button" disabled>GeoJSON</button>
+            </div>
+          </div>
+          <p id="mapDataSummary" class="field-note">Sin puntos cargados.</p>
+          <p id="mapClusterSummary" class="field-note">Pasa el cursor sobre un cluster para habilitar su exportación.</p>
         </div>
 
       </section>
@@ -189,6 +210,6 @@
     window.maplibregl = maplibregl;
     window.dispatchEvent(new Event("maplibre-ready"));
   </script>
-  <script src="modulo-05.js?v=cluster-relevant-v1"></script>
+  <script src="modulo-05.js?v=map-filter-export-v1"></script>
 </body>
 </html>
