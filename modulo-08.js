@@ -481,6 +481,101 @@ function drawEdges(svg) {
   svg.appendChild(g);
 }
 
+function drawCityDataCloud(svg) {
+  const field = document.createElementNS(SVG_NS, "g");
+  field.setAttribute("class", "city-data-field");
+  field.setAttribute("aria-hidden", "true");
+  const palette = ["#2fd4c8", "#f5a623", "#f76fb0", "#b08cff", "#7d8ea3", "#eef0f6"];
+  const clusters = [
+    { id: "ecologia", cx: 250, cy: 232, color: "#2fd4c8", spread: 2.15, reach: 230, lanes: 20, points: 18, phase: .2 },
+    { id: "ciudad", cx: 570, cy: 205, color: "#f5a623", spread: 2.05, reach: 220, lanes: 18, points: 17, phase: 1.7 },
+    { id: "patrimonio", cx: 700, cy: 540, color: "#f76fb0", spread: 1.95, reach: 190, lanes: 17, points: 16, phase: 2.8 },
+    { id: "agentes", cx: 460, cy: 355, color: "#b08cff", spread: 2.35, reach: 155, lanes: 18, points: 15, phase: 3.6 },
+    { id: "cuidado", cx: 325, cy: 520, color: "#7d8ea3", spread: 1.9, reach: 175, lanes: 15, points: 15, phase: 4.5 },
+  ];
+  const noise = (seed) => (Math.sin(seed * 12.9898 + 78.233) * 43758.5453) % 1;
+  const point = (x, y) => `${x.toFixed(1)} ${y.toFixed(1)}`;
+  const addDot = (group, x, y, radius, color, index) => {
+    const dot = document.createElementNS(SVG_NS, "circle");
+    dot.setAttribute("class", "data-point");
+    dot.setAttribute("cx", x.toFixed(1)); dot.setAttribute("cy", y.toFixed(1));
+    dot.setAttribute("r", radius.toFixed(2));
+    dot.style.setProperty("--point-color", color);
+    dot.style.setProperty("--point-delay", `${((index % 19) * .16).toFixed(2)}s`);
+    group.appendChild(dot);
+  };
+  clusters.forEach((cluster, clusterIndex) => {
+    const group = document.createElementNS(SVG_NS, "g");
+    group.setAttribute("class", `data-cluster data-cluster-${cluster.id}`);
+    group.style.setProperty("--cluster-color", cluster.color);
+    group.style.setProperty("--cluster-delay", `${(-cluster.phase).toFixed(2)}s`);
+    const core = document.createElementNS(SVG_NS, "circle");
+    core.setAttribute("class", "data-cluster-core");
+    core.setAttribute("cx", cluster.cx); core.setAttribute("cy", cluster.cy); core.setAttribute("r", 7);
+    group.appendChild(core);
+    const fanCount = cluster.lanes;
+    for (let lane = 0; lane < fanCount; lane += 1) {
+      const ratio = fanCount === 1 ? 0 : lane / (fanCount - 1) - .5;
+      const angle = cluster.phase + ratio * cluster.spread;
+      const length = cluster.reach * (.72 + Math.abs(ratio) * .33 + Math.abs(noise(clusterIndex * 31 + lane)) * .18);
+      const bend = (noise(clusterIndex * 71 + lane * 3) - .5) * 85;
+      const sx = cluster.cx + Math.cos(angle) * 5;
+      const sy = cluster.cy + Math.sin(angle) * 5;
+      const tx = cluster.cx + Math.cos(angle) * length;
+      const ty = cluster.cy + Math.sin(angle) * length;
+      const nx = -Math.sin(angle), ny = Math.cos(angle);
+      const c1x = cluster.cx + Math.cos(angle) * length * .30 + nx * bend;
+      const c1y = cluster.cy + Math.sin(angle) * length * .30 + ny * bend;
+      const c2x = cluster.cx + Math.cos(angle) * length * .78 - nx * bend * .55;
+      const c2y = cluster.cy + Math.sin(angle) * length * .78 - ny * bend * .55;
+      const fiber = document.createElementNS(SVG_NS, "path");
+      fiber.setAttribute("class", "data-fiber");
+      fiber.setAttribute("d", `M${point(sx, sy)} C${point(c1x, c1y)} ${point(c2x, c2y)} ${point(tx, ty)}`);
+      fiber.style.setProperty("--fiber-color", cluster.color);
+      fiber.style.setProperty("--fiber-delay", `${(-cluster.phase - lane * .08).toFixed(2)}s`);
+      group.appendChild(fiber);
+      for (let p = 1; p <= cluster.points; p += 1) {
+        const t = p / (cluster.points + 1);
+        const wave = Math.sin((p + lane * .7 + cluster.phase) * 1.45) * (1.4 + t * 2.1);
+        const px = cluster.cx + Math.cos(angle) * length * t + nx * (bend * (t * (1 - t)) + wave);
+        const py = cluster.cy + Math.sin(angle) * length * t + ny * (bend * (t * (1 - t)) + wave);
+        const color = (p + lane + clusterIndex) % 17 === 0 ? palette[(clusterIndex + 2) % palette.length] : cluster.color;
+        addDot(group, px, py, .72 + ((p + lane) % 4) * .14, color, clusterIndex * 1000 + lane * 30 + p);
+      }
+    }
+    field.appendChild(group);
+  });
+  const bridgePairs = [[0, 1], [0, 3], [1, 2], [3, 4], [4, 2]];
+  bridgePairs.forEach(([a, b], bridgeIndex) => {
+    const from = clusters[a], to = clusters[b];
+    const group = document.createElementNS(SVG_NS, "g");
+    group.setAttribute("class", "data-bridge");
+    group.style.setProperty("--bridge-color", from.color);
+    const dx = to.cx - from.cx, dy = to.cy - from.cy, len = Math.max(1, Math.hypot(dx, dy));
+    const nx = -dy / len, ny = dx / len;
+    for (let lane = -2; lane <= 2; lane += 1) {
+      const offset = lane * 3.1;
+      const sx = from.cx + nx * offset, sy = from.cy + ny * offset;
+      const tx = to.cx + nx * offset, ty = to.cy + ny * offset;
+      const bend = (bridgeIndex % 2 ? -1 : 1) * (10 + Math.abs(lane) * 3);
+      const c1x = sx + dx * .34 + nx * bend, c1y = sy + dy * .34 + ny * bend;
+      const c2x = sx + dx * .72 - nx * bend, c2y = sy + dy * .72 - ny * bend;
+      const fiber = document.createElementNS(SVG_NS, "path");
+      fiber.setAttribute("class", "data-fiber data-fiber-bridge");
+      fiber.setAttribute("d", `M${point(sx, sy)} C${point(c1x, c1y)} ${point(c2x, c2y)} ${point(tx, ty)}`);
+      fiber.style.setProperty("--fiber-color", from.color);
+      group.appendChild(fiber);
+      for (let p = 1; p < 22; p += 1) {
+        const t = p / 22;
+        const wave = Math.sin((p + bridgeIndex * 4) * .9) * 2.2;
+        addDot(group, sx + dx * t + nx * (bend * t * (1 - t) + wave), sy + dy * t + ny * (bend * t * (1 - t) + wave), .62 + (p % 3) * .12, from.color, 9000 + bridgeIndex * 100 + p);
+      }
+    }
+    field.appendChild(group);
+  });
+  svg.appendChild(field);
+}
+
 function drawNodes(svg) {
   const g = document.createElementNS(SVG_NS, "g");
   g.setAttribute("class", "nodes-layer");
@@ -741,6 +836,7 @@ function renderNetwork() {
   if (!svg) return;
   svg.innerHTML = "";
   buildDefs(svg);
+  drawCityDataCloud(svg);
   drawEdges(svg);
   drawNodes(svg);
   refreshEdgeVisibility();

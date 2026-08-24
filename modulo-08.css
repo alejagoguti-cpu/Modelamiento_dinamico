@@ -584,3 +584,36 @@ footer span { color: var(--teal); }
   .reader-findings-grid { grid-template-columns: 1fr; }
   .reader-findings-grid::before, .reader-findings-grid::after { display: none; }
 }
+
+
+/* ===================== BIG DATA · CAMPO RELACIONAL ===================== */
+#readerViz {
+  background:
+    radial-gradient(circle at 38% 28%, rgba(47,212,200,.07), transparent 28%),
+    radial-gradient(circle at 72% 34%, rgba(247,111,176,.06), transparent 27%),
+    radial-gradient(circle at 42% 76%, rgba(176,140,255,.06), transparent 30%),
+    #0b1018;
+  overflow: visible;
+}
+.city-data-field { pointer-events: none; }
+.data-cluster { transform-box: fill-box; transform-origin: center; animation: dataClusterDrift 16s ease-in-out infinite; animation-delay: var(--cluster-delay); }
+.data-cluster-core { fill: var(--cluster-color); opacity: .82; filter: drop-shadow(0 0 7px var(--cluster-color)); }
+.data-fiber { fill: none; stroke: var(--fiber-color); stroke-width: .68; stroke-linecap: round; opacity: .27; stroke-dasharray: 1.4 5.8; animation: dataFiberFlow 5.8s linear infinite; animation-delay: var(--fiber-delay); }
+.data-fiber-bridge { stroke-width: .86; opacity: .36; stroke-dasharray: 1 4.5; }
+.data-point { fill: var(--point-color); opacity: .72; animation: dataPointPulse 3.8s ease-in-out infinite; animation-delay: var(--point-delay); }
+.data-cluster-ecologia .data-point { opacity: .82; }
+.data-cluster-ciudad .data-point { opacity: .72; }
+.data-cluster-patrimonio .data-point { opacity: .74; }
+.data-cluster-agentes .data-point { opacity: .86; }
+.data-cluster-cuidado .data-point { opacity: .68; }
+.legend-data-cloud { width: 12px; height: 12px; flex: 0 0 12px; border-radius: 50%; background: radial-gradient(circle, #eef0f6 0 18%, #2fd4c8 21% 38%, transparent 42%), #2fd4c8; box-shadow: 0 0 7px rgba(47,212,200,.55); }
+#readerViz .rd-edge { stroke: #b8c3d4 !important; stroke-width: .72 !important; opacity: .18 !important; }
+#readerViz .rd-edge-group.edge-focus-dim { opacity: .16; }
+#readerViz .rd-edge-group:hover .rd-edge, #readerViz .rd-edge-group.edge-selected .rd-edge { stroke-width: 1.5 !important; opacity: .92 !important; }
+#readerViz .rd-edge-hit { stroke-width: 18; }
+@keyframes dataFiberFlow { to { stroke-dashoffset: -28; } }
+@keyframes dataPointPulse { 0%, 100% { opacity: .38; } 50% { opacity: .9; } }
+@keyframes dataClusterDrift { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(2px, -2px) scale(1.008); } }
+@media (prefers-reduced-motion: reduce) {
+  .data-cluster, .data-fiber, .data-point { animation: none; }
+}
