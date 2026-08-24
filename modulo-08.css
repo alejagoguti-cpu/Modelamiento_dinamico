@@ -683,3 +683,71 @@ footer span { color: var(--teal); }
 #readerViz .flat-city-table-points .city-table-point:hover .city-table-node-ring, #readerViz .flat-city-table-points .city-table-point:focus .city-table-node-ring { fill-opacity: .78; stroke: #fff; stroke-width: 2.4px; }
 #readerViz .flat-city-table-points .city-table-point.edge-selected .city-table-node-ring { fill-opacity: .86; stroke: #fff; stroke-width: 2.8px; }
 @keyframes cityTableNodeBreath { 0%, 100% { opacity: .46; transform: scale(.94); transform-origin: center; } 50% { opacity: .82; transform: scale(1.05); transform-origin: center; } }
+
+
+/* ===================== RED RELACIONAL · 165 CONEXIONES ===================== */
+#readerViz .city-table-relations { pointer-events: auto; }
+#readerViz .city-relation { cursor: pointer; outline: none; }
+#readerViz .city-relation-line {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  transition: opacity .22s ease, stroke-width .22s ease;
+}
+#readerViz .city-relation-flow {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  stroke-dasharray: 1 8;
+  animation: cityRelationFlow 5.4s linear infinite;
+  animation-delay: var(--relation-delay);
+  pointer-events: none;
+}
+#readerViz .city-relation-hit {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 16px;
+  stroke-linecap: round;
+  pointer-events: stroke;
+}
+#readerViz .city-relation:hover .city-relation-line,
+#readerViz .city-relation:focus .city-relation-line,
+#readerViz .city-relation.edge-selected .city-relation-line {
+  opacity: .96 !important;
+  stroke-width: 2.1px !important;
+}
+#readerViz .city-relation:hover .city-relation-flow,
+#readerViz .city-relation:focus .city-relation-flow,
+#readerViz .city-relation.edge-selected .city-relation-flow { opacity: .86 !important; }
+#readerViz .city-relation.relation-focus .city-relation-line { filter: drop-shadow(0 0 2px currentColor); }
+#readerViz .city-relation.relation-dim { opacity: .68; }
+#readerViz .flat-city-table-points { position: relative; z-index: 2; }
+#readerViz .flat-city-table-points .situation-affected .city-table-node-ring {
+  fill-opacity: .88;
+  stroke-width: 2.2px;
+}
+#readerViz .flat-city-table-points .situation-affected .city-table-node-halo {
+  fill-opacity: .22;
+  opacity: .96;
+  animation-duration: 2.8s;
+}
+@keyframes cityRelationFlow { to { stroke-dashoffset: -46; } }
+@media (prefers-reduced-motion: reduce) {
+  #readerViz .city-relation-flow { animation: none; }
+}
+
+.legend-line-sample,
+.legend-flow-sample {
+  display: inline-block;
+  width: 24px;
+  height: 0;
+  flex: 0 0 24px;
+  border-top: 2px solid var(--teal);
+  opacity: .78;
+}
+.legend-line-sample.dashed { border-top-style: dashed; border-top-color: var(--pink); }
+.legend-flow-sample { border-top-style: dotted; border-top-color: var(--orange); animation: legendFlow 2.2s linear infinite; }
+@keyframes legendFlow { to { transform: translateX(3px); opacity: .42; } }
+@media (prefers-reduced-motion: reduce) { .legend-flow-sample { animation: none; } }

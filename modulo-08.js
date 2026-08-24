@@ -568,6 +568,186 @@ function cityDataIcon(node) {
   return "fa-circle-nodes";
 }
 
+const CITY_DATA_RELATION_DEGREES = (() => {
+  const degrees = {};
+  if (typeof CITY_DATA_RELATIONS === "undefined") return degrees;
+  CITY_DATA_RELATIONS.forEach(relation => {
+    degrees[relation.source] = (degrees[relation.source] || 0) + 1;
+    degrees[relation.target] = (degrees[relation.target] || 0) + 1;
+  });
+  return degrees;
+})();
+
+const CITY_SITUATION_MATCHERS = {
+  ciudad_15_minutos: {
+    include: [/cuidado|servicios|peaton|anden|recorrido|tiempo de acceso|vivienda|barrio|habitante|transporte|comercio/i],
+    dim: [/industria|carga que entra|residuos de construcción/i],
+  },
+  vivienda_informal: {
+    include: [/vivienda|construcciones|lotes|ocupación|borde|taludes|remoción|barrios|trabajo informal|residencial/i],
+    dim: [/patrimonio arqueológico|universidades|redes de telecomunicaciones/i],
+  },
+  perturbacion: {
+    include: [/inundación|encharcamiento|lluvia|escorrentía|nivel del agua|sedimento|daño|riesgo|anden|vía|evacuación|drenaje|residuo/i],
+    dim: [/patrimonio|centros financieros|comercio local/i],
+  },
+  hora_pico_manana: {
+    include: [/transporte|congestión|tiempo de viaje|recorrido|empleo|viaje|vivienda|habitante|vía|peatón/i],
+    dim: [/humedal|vegetación|patrimonio|compostaje/i],
+  },
+  hora_pico_tarde: {
+    include: [/vivienda|transporte|habitante|recorrido|tiempo|empleo|viaje|comercio|barrio/i],
+    dim: [/páramo|río|humedal|vegetación|patrimonio/i],
+  },
+  mantenimiento: {
+    include: [/estación|paradero|anden|vía|red|drenaje|contenedor|ruta de recolección|ciclorruta|alumbrado/i],
+    dim: [/lotes vacantes|patrimonio arqueológico|aves migratorias/i],
+  },
+  obra_vial: {
+    include: [/vía|construcción|paviment|borde|anden|transporte|tráfico|ruido|ciclorruta|escorrentía/i],
+    dim: [/humedal|vegetación|aves|patrimonio natural/i],
+  },
+  cierre_estacion: {
+    include: [/estación|transporte|paradero|recorrido|tiempo de viaje|anden|vía|peatón/i],
+    dim: [/universidad|biblioteca|parque/i],
+  },
+  temporada_lluvias: {
+    include: [/lluvia|agua|río|quebrada|humedal|canal|sedimento|suelo|inundación|encharcamiento|drenaje|nivel|infiltración|humedad/i],
+    dim: [/temperatura superficial alta|consumo de energía|superficies pavimentadas/i],
+  },
+  temporada_seca: {
+    include: [/agua|río|quebrada|humedal|canal|suelo|nivel|infiltración|vegetación|aves|humedad|temperatura/i],
+    dim: [/lluvia|escorrentía|drenaje|inundación|encharcamiento/i],
+  },
+  intervencion_vial: {
+    include: [/vía|construcción|ocupación|borde|transporte|anden|paviment|ciclorruta|tráfico|ruido|suelo/i],
+    dim: [/humedal|vegetación acuática|aves migratorias|patrimonio natural/i],
+  },
+  uso_comunitario: {
+    include: [/comunidad|habitante|visitante|organización|junta|recorrido|humedal|patrimonio|parque|biblioteca|colectivo|memoria|observación de aves|comercio local/i],
+    dim: [/red eléctrica|consumo de energía|industria|carga urbana/i],
+  },
+};
+
+function cityRelationSearchText(relation) {
+  return `${relation.source} ${relation.target} ${relation.relation} ${relation.process}`;
+}
+
+function cityRelationIntensity(relation) {
+  let result = { width: .72, opacity: .19, active: false, dim: false };
+  if (!activeSituacion) return result;
+  const matcher = CITY_SITUATION_MATCHERS[activeSituacion];
+  if (!matcher) return result;
+  const text = cityRelationSearchText(relation);
+  const isDim = matcher.dim.some(pattern => pattern.test(text));
+  const isActive = matcher.include.some(pattern => pattern.test(text));
+  if (isDim && !isActive) return { width: .38, opacity: .055, active: false, dim: true };
+  if (isActive) return { width: 1.62, opacity: .86, active: true, dim: false };
+  return { width: .34, opacity: .045, active: false, dim: true };
+}
+
+function cityNodeIsAffected(node) {
+  if (!activeSituacion) return false;
+  const matcher = CITY_SITUATION_MATCHERS[activeSituacion];
+  if (!matcher) return false;
+  const text = `${node.name} ${node.type}`;
+  return matcher.include.some(pattern => pattern.test(text));
+}
+
+function cityDataRelationPath(a, b, radiusA, radiusB, index) {
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  const distance = Math.hypot(dx, dy) || 1;
+  const ux = dx / distance;
+  const uy = dy / distance;
+  const nx = -uy;
+  const ny = ux;
+  const startPad = Math.min(radiusA + 2, distance * .30);
+  const endPad = Math.min(radiusB + 2, distance * .30);
+  const x1 = a.x + ux * startPad;
+  const y1 = a.y + uy * startPad;
+  const x2 = b.x - ux * endPad;
+  const y2 = b.y - uy * endPad;
+  const bend = (((index * 17) % 9) - 4) * 4.5;
+  const cx = (x1 + x2) / 2 + nx * bend;
+  const cy = (y1 + y2) / 2 + ny * bend;
+  return `M ${x1.toFixed(1)} ${y1.toFixed(1)} Q ${cx.toFixed(1)} ${cy.toFixed(1)} ${x2.toFixed(1)} ${y2.toFixed(1)}`;
+}
+
+function showCityRelationInfo(relation, index) {
+  const sourceNode = CITY_DATA_NODES.find(node => node.name === relation.source);
+  const targetNode = CITY_DATA_NODES.find(node => node.name === relation.target);
+  const panel = document.getElementById("edgeInfoPanel");
+  if (!sourceNode || !targetNode || !panel) return;
+  document.querySelectorAll(".city-relation").forEach(el => el.classList.remove("edge-selected"));
+  document.querySelector(`.city-relation[data-relation-index="${index}"]`)?.classList.add("edge-selected");
+  document.querySelectorAll(".rd-node").forEach(el => el.classList.remove("edge-selected"));
+  document.querySelector(`.rd-node[data-table-id="${sourceNode.n}"]`)?.classList.add("edge-selected");
+  document.querySelector(`.rd-node[data-table-id="${targetNode.n}"]`)?.classList.add("edge-selected");
+  document.getElementById("edgeInfoTitle").textContent = `${relation.source} ↔ ${relation.target}`;
+  document.getElementById("edgeInfoConvencion").textContent = `${relation.relation} · ${relation.directness === "directa" ? "Línea continua" : "Línea punteada"}`;
+  document.getElementById("edgeInfoEvidencia").textContent = `${sourceNode.subsystem} ↔ ${targetNode.subsystem}`;
+  document.getElementById("edgeInfoPage").textContent = `Tabla de relaciones · relación ${relation.n} de 165`;
+  document.getElementById("edgeInfoActores").textContent = relation.process;
+  document.getElementById("edgeInfoSituacion").textContent = activeSituacion ? (SITUACIONES.find(s => s.id === activeSituacion)?.label || "Situación activa") : "Lectura de base";
+  document.getElementById("edgeInfoCritica").textContent = `Proceso observable: ${relation.process}.`;
+  document.getElementById("edgeInfoLiveScript").textContent = `Qué decir: “Esta relación muestra ${relation.relation} entre ${relation.source} y ${relation.target}: ${relation.process}.”`;
+  panel.classList.add("visible");
+}
+
+function drawCityDataRelations(field, visible, positionsByName) {
+  if (typeof CITY_DATA_RELATIONS === "undefined") return;
+  const visibleNames = new Set(visible.map(node => node.name));
+  const edges = document.createElementNS(SVG_NS, "g");
+  edges.setAttribute("class", "city-table-relations");
+  CITY_DATA_RELATIONS.forEach((relation, index) => {
+    if (!visibleNames.has(relation.source) || !visibleNames.has(relation.target)) return;
+    const sourceNode = CITY_DATA_NODES.find(node => node.name === relation.source);
+    const targetNode = CITY_DATA_NODES.find(node => node.name === relation.target);
+    const a = positionsByName.get(relation.source);
+    const b = positionsByName.get(relation.target);
+    if (!sourceNode || !targetNode || !a || !b) return;
+    const group = document.createElementNS(SVG_NS, "g");
+    group.setAttribute("class", "city-relation");
+    group.dataset.relationIndex = String(index);
+    group.dataset.source = relation.source;
+    group.dataset.target = relation.target;
+    group.setAttribute("role", "button");
+    group.setAttribute("tabindex", "0");
+    group.setAttribute("aria-label", `${relation.source} y ${relation.target} · ${relation.relation}`);
+    const color = CITY_DATA_SUBSYSTEM_COLORS[sourceNode.subsystem] || "#c9cedb";
+    const intensity = cityRelationIntensity(relation);
+    const d = cityDataRelationPath(a, b, 19 + Math.min(CITY_DATA_RELATION_DEGREES[relation.source] || 0, 16) * .55, 19 + Math.min(CITY_DATA_RELATION_DEGREES[relation.target] || 0, 16) * .55, index);
+    const line = document.createElementNS(SVG_NS, "path");
+    line.setAttribute("class", "city-relation-line");
+    line.setAttribute("d", d);
+    line.setAttribute("stroke", color);
+    line.setAttribute("stroke-width", intensity.width);
+    line.setAttribute("opacity", intensity.opacity);
+    if (relation.directness !== "directa") line.setAttribute("stroke-dasharray", "4 5");
+    const flow = document.createElementNS(SVG_NS, "path");
+    flow.setAttribute("class", "city-relation-flow");
+    flow.setAttribute("d", d);
+    flow.setAttribute("stroke", color);
+    flow.setAttribute("stroke-width", Math.max(.55, intensity.width * .7));
+    flow.setAttribute("opacity", intensity.active ? .52 : .16);
+    flow.setAttribute("stroke-dasharray", "1 8");
+    flow.style.setProperty("--relation-delay", `${-((index % 18) * .22).toFixed(2)}s`);
+    const hit = document.createElementNS(SVG_NS, "path");
+    hit.setAttribute("class", "city-relation-hit");
+    hit.setAttribute("d", d);
+    group.classList.toggle("relation-focus", intensity.active);
+    group.classList.toggle("relation-dim", intensity.dim);
+    group.appendChild(line);
+    group.appendChild(flow);
+    group.appendChild(hit);
+    group.addEventListener("click", event => { event.stopPropagation(); showCityRelationInfo(relation, index); });
+    group.addEventListener("keydown", event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); showCityRelationInfo(relation, index); } });
+    edges.appendChild(group);
+  });
+  field.appendChild(edges);
+}
+
 function drawCityDataCloud(svg) {
   if (typeof CITY_DATA_NODES === "undefined") return;
   const filter = window.currentCityDataFilter || "all";
@@ -576,12 +756,15 @@ function drawCityDataCloud(svg) {
   field.setAttribute("class", "city-table-field flat-city-table-field");
   const points = document.createElementNS(SVG_NS, "g");
   points.setAttribute("class", "city-table-points flat-city-table-points");
+  const positionsByName = new Map();
 
   visible.forEach((node, index) => {
     const p = cityDataPointPosition(node, index, visible.length);
+    positionsByName.set(node.name, p);
     const color = CITY_DATA_SUBSYSTEM_COLORS[node.subsystem] || "#c9cedb";
     const isAgent = /Agente|Usuarios|Organización|Agentes|Comunidad|Personas|Comerciantes|Productores/i.test(node.type);
-    const radius = isAgent ? 26 : 23;
+    const degree = CITY_DATA_RELATION_DEGREES[node.name] || 0;
+    const radius = Math.min(30, Math.max(21, 21 + Math.min(degree, 15) * .52)) + (isAgent ? 2 : 0);
     const dot = document.createElementNS(SVG_NS, "g");
     dot.setAttribute("class", `city-table-point rd-node ${isAgent ? "city-table-agent" : ""}`);
     dot.dataset.tableId = String(node.n);
@@ -590,11 +773,12 @@ function drawCityDataCloud(svg) {
     dot.setAttribute("role", "button");
     dot.setAttribute("tabindex", "0");
     dot.setAttribute("aria-label", `${node.name} · ${node.subsystem} · ${node.type}`);
-    dot.addEventListener("click", (event) => { event.stopPropagation(); showCityTableNodeInfo(node); });
-    dot.addEventListener("keydown", (event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); showCityTableNodeInfo(node); } });
+    dot.addEventListener("click", event => { event.stopPropagation(); showCityTableNodeInfo(node); });
+    dot.addEventListener("keydown", event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); showCityTableNodeInfo(node); } });
     dot.style.setProperty("--table-color", color);
     dot.style.setProperty("--table-delay", `${-((node.n % 24) * .13).toFixed(2)}s`);
     dot.setAttribute("data-table-node", String(node.n));
+    dot.classList.toggle("situation-affected", cityNodeIsAffected(node));
 
     const halo = document.createElementNS(SVG_NS, "circle");
     halo.setAttribute("class", "city-table-node-halo");
@@ -634,6 +818,7 @@ function drawCityDataCloud(svg) {
     points.appendChild(dot);
   });
 
+  drawCityDataRelations(field, visible, positionsByName);
   field.appendChild(points);
   svg.appendChild(field);
 }
