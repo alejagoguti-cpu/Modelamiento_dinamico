@@ -1437,7 +1437,40 @@ function splitPopupLabel(label) {
   return lines.slice(0, 3);
 }
 
+const popupLayoutOverrides = {
+  // Grafo orgánico: hubs separados, satélites alrededor y una continuidad
+  // inferior reconocible. Las coordenadas son deliberadamente irregulares
+  // para evitar tanto la telaraña radial como la lectura de mapa conceptual.
+  natural: {
+    humedales: [160, 235], rios: [300, 105], areas_protegidas: [445, 185], reservas_forestales: [610, 95], cerros_orientales: [790, 145], paramos: [900, 235],
+    quebradas: [95, 335], cobertura_vegetal: [250, 285], parques: [405, 315], paramos_andinos: [610, 255], bosques_andinos: [755, 300], nacimientos_agua: [910, 360],
+    rondas_hidricas: [120, 425], bosques_urbanos: [290, 390], quebradas_urbanas: [445, 435], rios_urbanos: [570, 370], recarga_hidrica: [725, 405], corredores_ecologicos: [890, 435],
+    humedales_urbanos: [120, 450], rondas_rio: [270, 430], infiltracion_agua: [430, 465], coberturas_vegetales: [585, 435], jardines_lluvia: [740, 465], arbolado_urbano: [885, 440],
+    parques_ecologicos: [190, 495], fauna_urbana: [350, 480], suelo_permeable: [510, 500], restauracion_ecologica: [670, 480], resiliencia_climatica: [820, 500], areas_conservacion: [940, 475]
+  },
+  cultural: {
+    patrimonio_material: [260, 150], patrimonio_inmaterial: [720, 120], museos: [90, 270], centros_historicos: [330, 250], zonas_turisticas: [550, 220], artesanias: [840, 260],
+    bibliotecas: [150, 380], barrios: [380, 345], plazas_mercado: [590, 370], equipamientos_culturales: [830, 380], rutas_patrimoniales: [190, 475], mercados_barriales: [390, 445], centros_comunitarios: [620, 485], escuelas_musica: [850, 455]
+  },
+  tecnologico: {
+    red_vial: [300, 150], transporte_publico: [700, 120], red_ferrrea: [100, 270], ciclorutas: [280, 250], nodos_digitales: [480, 220], internet_publico: [690, 260], recarga_electrica: [900, 300],
+    datos_abiertos: [170, 380], centro_tecnologico: [400, 350], semaforizacion: [620, 390], electrolineras: [840, 380], fibra_optica: [250, 475], centros_datos: [520, 450], subestaciones: [800, 485]
+  },
+  metaverso: {
+    gemelo_digital: [300, 130], modelos_3d: [700, 110], capas_gis: [100, 250], plataformas_bim: [290, 230], nodos_iot: [490, 270], sensores_urbanos: [700, 235], escenarios_simulados: [900, 280],
+    datos_territoriales: [170, 380], laboratorios_urbanos: [400, 350], visualizacion_vr: [620, 390], escaneo_urbano: [840, 360], nube_puntos: [260, 475], simulador_movilidad: [520, 450], laboratorio_inmersivo: [800, 485]
+  }
+};
+
 function popupNetworkPositions(definition) {
+  const mode = Object.keys(scaleNetworks).find(key => scaleNetworks[key] === definition);
+  const override = popupLayoutOverrides[mode];
+  if (override) {
+    return Object.fromEntries(definition.nodes.map(node => {
+      const [x, y] = override[node.id] || [500, 270];
+      return [node.id, { ...node, x, y }];
+    }));
+  }
   const lats = definition.nodes.map(node => node.lat);
   const lngs = definition.nodes.map(node => node.lng);
   const minLat = Math.min(...lats);
@@ -1451,6 +1484,12 @@ function popupNetworkPositions(definition) {
     x: 54 + ((node.lng - minLng) / lngRange) * 892,
     y: 48 + ((maxLat - node.lat) / latRange) * 452
   }]));
+}
+
+function popupEdgePath(from, to) {
+  // Conexión recta: conserva la lectura de grafo del módulo de referencia
+  // y evita las esquinas repetitivas de una estructura tipo organigrama.
+  return `M ${from.x.toFixed(1)} ${from.y.toFixed(1)} L ${to.x.toFixed(1)} ${to.y.toFixed(1)}`;
 }
 
 const popupNodeContexts = {
@@ -1644,7 +1683,7 @@ function renderScaleNetworkPopup(mode) {
     const color = type === 'indirecta' ? '#e89a6c' : '#46d6d0';
     const isBridge = from.y > 285 && to.y > 285;
     const className = `${type === 'indirecta' ? 'popup-edge indirect' : 'popup-edge direct'}${isBridge ? ' bridge' : ''}`;
-    return `<line class="${className}" data-from="${fromId}" data-to="${toId}" data-bridge="${isBridge}" x1="${from.x.toFixed(1)}" y1="${from.y.toFixed(1)}" x2="${to.x.toFixed(1)}" y2="${to.y.toFixed(1)}" stroke="${color}" marker-end="url(#arrow-${type})" />`;
+    return `<path class="${className}" data-from="${fromId}" data-to="${toId}" data-bridge="${isBridge}" d="${popupEdgePath(from, to)}" stroke="${color}" marker-end="url(#arrow-${type})" />`;
   }).join('');
 
   const popupIconSvg = {
