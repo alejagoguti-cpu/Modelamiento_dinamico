@@ -5460,13 +5460,13 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 .map-network-stage > svg .map-network-bond-soft { opacity: .08 !important; filter: blur(.65px) !important; }
 .map-network-stage > svg .map-network-bond { opacity: .72 !important; filter: none !important; }
 .map-network-node {
-  width: 106px !important;
-  height: 106px !important;
-  min-height: 106px !important;
+  width: 94px !important;
+  height: 94px !important;
+  min-height: 94px !important;
   padding: 10px 8px !important;
   overflow: visible !important;
   border: 1px solid color-mix(in srgb, var(--node-color) 80%, white) !important;
-  border-radius: 50% !important;
+  border-radius: 49% 52% 48% 51% !important;
   background: radial-gradient(circle at 48% 44%, color-mix(in srgb, var(--node-color) 28%, rgba(8,18,21,.84)), rgba(8,15,18,.92) 74%) !important;
   box-shadow: 0 0 0 7px color-mix(in srgb, var(--node-color) 9%, transparent), 0 0 18px color-mix(in srgb, var(--node-color) 24%, transparent) !important;
   animation: module07-node-drift-slow 25s ease-in-out infinite !important;
@@ -5475,17 +5475,17 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 .map-network-node-icon { display: block !important; position: relative; z-index: 2; color: var(--node-color) !important; font-size: 17px !important; filter: none !important; }
 .map-network-node strong { position: relative; z-index: 2; max-width: 92px; color: #f7fafb !important; font-size: 8px !important; line-height: 1.12 !important; text-wrap: balance; }
 .map-network-node:hover, .map-network-node.selected { transform: translate(-50%,-50%) scale(1.06) !important; box-shadow: 0 0 0 8px color-mix(in srgb, var(--node-color) 13%, transparent), 0 0 24px color-mix(in srgb, var(--node-color) 40%, transparent) !important; }
-.map-submodel-node { width: 100px !important; height: 100px !important; min-height: 100px !important; }
+.map-submodel-node { width: 88px !important; height: 88px !important; min-height: 88px !important; }
 .map-network-stage > svg .map-network-bond-group:nth-child(3n + 1) .map-network-bond { opacity: .62 !important; }
 .map-network-stage > svg .map-network-bond-group:nth-child(3n + 2) .map-network-bond { opacity: .78 !important; }
 @keyframes module07-node-drift-slow {
-  0%, 100% { transform: translate(-50%,-50%) translate3d(0,0,0) scale(1); }
-  35% { transform: translate(-50%,-50%) translate3d(2px,-2px,0) scale(1.008); }
-  70% { transform: translate(-50%,-50%) translate3d(-2px,2px,0) scale(.994); }
+  0%, 100% { transform: translate(-50%,-50%) translate3d(0,0,0) scale(1); border-radius: 49% 52% 48% 51%; }
+  35% { transform: translate(-50%,-50%) translate3d(2px,-2px,0) scale(1.008); border-radius: 53% 47% 51% 49%; }
+  70% { transform: translate(-50%,-50%) translate3d(-2px,2px,0) scale(.994); border-radius: 47% 53% 49% 51%; }
 }
 @media (max-width: 760px) {
-  .map-network-node { width: 76px !important; height: 76px !important; min-height: 76px !important; padding: 7px 5px !important; }
-  .map-submodel-node { width: 72px !important; height: 72px !important; min-height: 72px !important; }
+  .map-network-node { width: 72px !important; height: 72px !important; min-height: 72px !important; padding: 7px 5px !important; }
+  .map-submodel-node { width: 68px !important; height: 68px !important; min-height: 68px !important; }
   .map-network-node-icon { font-size: 13px !important; }
   .map-network-node strong { font-size: 6.5px !important; }
 }

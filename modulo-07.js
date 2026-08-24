@@ -1893,7 +1893,7 @@
       if (!subsystemBubbles) return;
       const systems = mode === "systems";
       const rows = systems ? territorySystems : submodelRows;
-      const positions = systems ? [[16,25],[34,14],[66,14],[84,25],[73,75],[27,75]] : [[14,25],[31,14],[56,13],[85,25],[86,52],[66,79],[25,77]];
+      const positions = systems ? [[12,22],[32,8],[70,8],[88,22],[76,86],[24,86]] : [[10,22],[28,7],[58,7],[90,22],[90,58],[68,88],[16,88]];
       const colors = ["#56b8d4", "#68d391", "#b8c0c8", "#f1cf5b", "#ee9a4b", "#e58d62", "#b28be8"];
       const systemIcons = ["fa-droplet", "fa-feather-pointed", "fa-building", "fa-route", "fa-people-group", "fa-house-chimney"];
       const submodelIcons = ["fa-water", "fa-feather-pointed", "fa-city", "fa-person-walking", "fa-house-chimney", "fa-people-arrows", "fa-arrows-rotate"];
@@ -1909,7 +1909,7 @@
         if (!row || !other) return "";
         const [x, y] = positions[fromIndex], [nx, ny] = positions[toIndex];
         const dx = nx - x, dy = ny - y, length = Math.max(1, Math.hypot(dx, dy));
-        const bend = (edgeIndex % 2 ? -1 : 1) * Math.min(4.2, length * .085);
+        const bend = (edgeIndex % 2 ? -1 : 1) * Math.min(6.2, length * .105);
         const unit = (vx, vy) => { const size = Math.max(.001, Math.hypot(vx, vy)); return [vx / size, vy / size]; };
         const normalPoint = (px, py, tx, ty, width) => [px - ty * width, py + tx * width];
         const [ux, uy] = unit(dx, dy);
