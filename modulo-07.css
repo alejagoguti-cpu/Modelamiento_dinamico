@@ -5215,23 +5215,23 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
   pointer-events: none;
 }
 .map-network-stage > svg .map-network-bond-soft {
-  opacity: .035;
-  filter: blur(.8px);
+  opacity: .018;
+  filter: blur(.45px);
   animation: map-network-bond-soft-breathe 4.8s ease-in-out infinite alternate;
 }
 .map-network-stage > svg .map-network-bond {
-  opacity: .19;
-  filter: url(#network-gel-filter);
+  opacity: .26;
+  filter: none;
   animation: map-network-bond-breathe 4.8s ease-in-out infinite alternate;
 }
 .map-network-stage > svg .map-network-bond:nth-child(3n + 1) { animation-delay: -1.4s; }
 .map-network-stage > svg .map-network-bond:nth-child(3n + 2) { animation-delay: -2.8s; }
 @keyframes map-network-bond-soft-breathe {
-  from { opacity: .02; transform: scaleX(.985); transform-origin: center; }
-  to { opacity: .06; transform: scaleX(1.015); transform-origin: center; }
+  from { opacity: .01; transform: scaleX(.99); transform-origin: center; }
+  to { opacity: .028; transform: scaleX(1.01); transform-origin: center; }
 }
 @keyframes map-network-bond-breathe {
-  from { opacity: .14; }
-  to { opacity: .24; }
+  from { opacity: .21; }
+  to { opacity: .30; }
 }
 @media (prefers-reduced-motion: reduce) { .map-network-stage > svg .map-network-bond, .map-network-stage > svg .map-network-bond-soft { animation: none; } }

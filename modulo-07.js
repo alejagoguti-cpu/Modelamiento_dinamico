@@ -1900,28 +1900,37 @@
       const label = (row) => systems ? row.name : row.name.replace(/^Submodelo de /, "");
       const icon = (index) => (systems ? systemIcons : submodelIcons)[index] || "fa-circle-nodes";
       const nodes = rows.map((row, index) => { const [x,y] = positions[index]; return `<button type="button" class="map-network-node ${systems ? "map-system-node" : "map-submodel-node"}" data-map-network-index="${index}" style="--node-x:${x}%;--node-y:${y}%;--node-color:${row.color || colors[index]}"><i class="map-network-node-icon fa-solid ${icon(index)}" aria-hidden="true"></i><strong>${label(row)}</strong></button>`; }).join("");
-      const bonds = rows.flatMap((row, index) => rows.slice(index + 1).map((other, offset) => {
-        const [x, y] = positions[index], [nx, ny] = positions[index + offset + 1];
+      const relationPairs = systems
+        ? [[0,1],[0,2],[0,5],[1,2],[1,3],[1,5],[2,3],[2,4],[3,4],[3,5],[4,5]]
+        : [[0,1],[0,2],[1,2],[1,3],[2,3],[2,4],[3,4],[3,5],[4,5],[4,6],[5,6],[0,6],[1,5]];
+      const bonds = relationPairs.map(([fromIndex, toIndex], edgeIndex) => {
+        const row = rows[fromIndex], other = rows[toIndex];
+        if (!row || !other) return "";
+        const [x, y] = positions[fromIndex], [nx, ny] = positions[toIndex];
         const dx = nx - x, dy = ny - y, length = Math.max(1, Math.hypot(dx, dy));
-        const bend = ((index + offset) % 2 ? -1 : 1) * Math.min(6.5, length * .16);
-        const cx = (x + nx) / 2 - (dy / length) * bend;
-        const cy = (y + ny) / 2 + (dx / length) * bend;
+        const bend = (edgeIndex % 2 ? -1 : 1) * Math.min(5, length * .11);
         const unit = (vx, vy) => { const size = Math.max(.001, Math.hypot(vx, vy)); return [vx / size, vy / size]; };
         const normalPoint = (px, py, tx, ty, width) => [px - ty * width, py + tx * width];
-        const [t0x, t0y] = unit(cx - x, cy - y);
-        const [tmx, tmy] = unit(nx - x, ny - y);
-        const [t1x, t1y] = unit(nx - cx, ny - cy);
-        const left0 = normalPoint(x, y, t0x, t0y, 1.65);
-        const leftM = normalPoint(cx, cy, tmx, tmy, .34);
-        const left1 = normalPoint(nx, ny, t1x, t1y, 1.65);
-        const right0 = normalPoint(x, y, t0x, t0y, -1.65);
-        const rightM = normalPoint(cx, cy, tmx, tmy, -.34);
-        const right1 = normalPoint(nx, ny, t1x, t1y, -1.65);
+        const [ux, uy] = unit(dx, dy);
+        const startGap = Math.min(8.3, length * .16);
+        const endGap = Math.min(8.3, length * .16);
+        const start = [x + ux * startGap, y + uy * startGap];
+        const end = [nx - ux * endGap, ny - uy * endGap];
+        const mid = [(start[0] + end[0]) / 2 - (dy / length) * bend * .62, (start[1] + end[1]) / 2 + (dx / length) * bend * .62];
+        const [t0x, t0y] = unit(mid[0] - start[0], mid[1] - start[1]);
+        const [tmx, tmy] = unit(end[0] - start[0], end[1] - start[1]);
+        const [t1x, t1y] = unit(end[0] - mid[0], end[1] - mid[1]);
+        const left0 = normalPoint(start[0], start[1], t0x, t0y, .82);
+        const leftM = normalPoint(mid[0], mid[1], tmx, tmy, .15);
+        const left1 = normalPoint(end[0], end[1], t1x, t1y, .13);
+        const right0 = normalPoint(start[0], start[1], t0x, t0y, -.82);
+        const rightM = normalPoint(mid[0], mid[1], tmx, tmy, -.15);
+        const right1 = normalPoint(end[0], end[1], t1x, t1y, -.13);
         const point = ([px, py]) => `${px.toFixed(2)} ${py.toFixed(2)}`;
         const path = `M ${point(left0)} Q ${point(leftM)} ${point(left1)} L ${point(right1)} Q ${point(rightM)} ${point(right0)} Z`;
-        const bondColor = row.color || colors[index];
+        const bondColor = row.color || colors[fromIndex];
         return `<g class="map-network-bond-group" style="--bond-color:${bondColor}"><path class="map-network-bond-soft" d="${path}"/><path class="map-network-bond" d="${path}"><title>Relación entre ${label(row)} y ${label(other)}</title></path></g>`;
-      })).join("");
+      }).join("");
       subsystemBubbles.dataset.revealState = "complete";
       subsystemBubbles.classList.add("network-active");
       subsystemBubbles.innerHTML = `<div class="map-network-stage ${systems ? "systems-network" : "submodels-network"}"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><defs><filter id="network-gel-filter" x="-25%" y="-25%" width="150%" height="150%"><feGaussianBlur stdDeviation="1.35" result="soft"/><feMerge><feMergeNode in="soft"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><g class="map-network-bonds">${bonds}</g></svg>${nodes}</div>`;
