@@ -173,6 +173,11 @@ body.scale-modal-open {
   transition: none;
 }
 
+.popup-network-viewport.is-bouncing {
+  filter: drop-shadow(0 0 7px rgba(70,214,208,.48));
+  transition: none;
+}
+
 .popup-network-viewport {
   width: 100%;
   height: 100%;

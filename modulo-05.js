@@ -1157,6 +1157,7 @@ let scalePopupMode = 'natural';
 let nodeDetailState = { mode: 'natural', id: null };
 const scalePopupHiddenNodes = new Set();
 const scaleNetworkViewState = { scale: 1.12, x: 0, y: 0 };
+let scaleNetworkReturnRafId = null;
 const scaleNetworkFlowState = {
   running: true,
   rafId: null,
@@ -1320,10 +1321,45 @@ function setScaleNetworkZoom(nextScale, resetPosition = false) {
 }
 
 function resetScaleNetworkView() {
+  cancelScaleNetworkReturnAnimation();
   scaleNetworkViewState.scale = 1.12;
   scaleNetworkViewState.x = 0;
   scaleNetworkViewState.y = 0;
   updateScaleNetworkViewport();
+}
+
+function cancelScaleNetworkReturnAnimation() {
+  if (scaleNetworkReturnRafId !== null) {
+    window.cancelAnimationFrame(scaleNetworkReturnRafId);
+    scaleNetworkReturnRafId = null;
+  }
+  document.querySelector('#scaleNetworkCanvas .popup-network-viewport')?.classList.remove('is-bouncing');
+}
+
+function animateScaleNetworkReturn(originX, originY, deltaX, deltaY) {
+  const viewport = document.querySelector('#scaleNetworkCanvas .popup-network-viewport');
+  if (!viewport || (Math.abs(deltaX) < 1 && Math.abs(deltaY) < 1)) return;
+  cancelScaleNetworkReturnAnimation();
+  const startedAt = performance.now();
+  const duration = 760;
+  viewport.classList.add('is-bouncing');
+  const frame = timestamp => {
+    const progress = Math.min(1, (timestamp - startedAt) / duration);
+    const spring = Math.pow(1 - progress, 2.1) * Math.cos(progress * Math.PI * 5.2);
+    scaleNetworkViewState.x = originX + deltaX * spring;
+    scaleNetworkViewState.y = originY + deltaY * spring;
+    updateScaleNetworkViewport();
+    if (progress < 1) {
+      scaleNetworkReturnRafId = window.requestAnimationFrame(frame);
+      return;
+    }
+    scaleNetworkViewState.x = originX;
+    scaleNetworkViewState.y = originY;
+    updateScaleNetworkViewport();
+    viewport.classList.remove('is-bouncing');
+    scaleNetworkReturnRafId = null;
+  };
+  scaleNetworkReturnRafId = window.requestAnimationFrame(frame);
 }
 
 function setupScaleNetworkViewport() {
@@ -1343,12 +1379,14 @@ function setupScaleNetworkViewport() {
     // trackpad (ctrl+wheel) tampoco cambia la escala de la red.
     event.preventDefault();
     if (dragging || event.ctrlKey) return;
+    cancelScaleNetworkReturnAnimation();
     setScaleNetworkZoom(scaleNetworkViewState.scale + (event.deltaY < 0 ? .12 : -.12));
   }, { passive: false });
 
   canvas.addEventListener('pointerdown', event => {
     if (!event.isPrimary || (event.pointerType === 'mouse' && event.button !== 0)) return;
     event.preventDefault();
+    cancelScaleNetworkReturnAnimation();
     dragging = true;
     activePointerId = event.pointerId;
     startX = event.clientX;
@@ -1373,6 +1411,9 @@ function setupScaleNetworkViewport() {
     canvas.classList.remove('is-dragging');
     if (canvas.hasPointerCapture?.(event.pointerId)) canvas.releasePointerCapture(event.pointerId);
     activePointerId = null;
+    const deltaX = scaleNetworkViewState.x - originX;
+    const deltaY = scaleNetworkViewState.y - originY;
+    if (Math.hypot(deltaX, deltaY) > 2) animateScaleNetworkReturn(originX, originY, deltaX, deltaY);
   };
   canvas.addEventListener('pointerup', stopDragging);
   canvas.addEventListener('pointercancel', stopDragging);
