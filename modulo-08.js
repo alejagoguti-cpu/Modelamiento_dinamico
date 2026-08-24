@@ -534,8 +534,9 @@ function cityDataOrganicLayout(visible) {
     };
   });
 
-  // Relajación corta y determinista: separa las bolitas sin convertirlas en una cuadrícula.
-  for (let iteration = 0; iteration < 96; iteration += 1) {
+  // Relajación determinista: misma separación libre para todos los pares,
+  // conservando la forma orgánica y evitando una cuadrícula rígida.
+  for (let iteration = 0; iteration < 180; iteration += 1) {
     for (let i = 0; i < points.length; i += 1) {
       const a = points[i];
       for (let j = i + 1; j < points.length; j += 1) {
@@ -544,9 +545,9 @@ function cityDataOrganicLayout(visible) {
         let dy = b.y - a.y;
         let distance = Math.hypot(dx, dy);
         if (!distance) { dx = .5; dy = .25; distance = .56; }
-        const desired = a.r + b.r + 11;
+        const desired = a.r + b.r + 22;
         if (distance < desired) {
-          const push = (desired - distance) * .16;
+          const push = (desired - distance) * .34;
           const ux = dx / distance;
           const uy = dy / distance;
           a.x -= ux * push; a.y -= uy * push;
@@ -554,8 +555,8 @@ function cityDataOrganicLayout(visible) {
         }
       }
       // Mantiene una nube centrada y abierta, no una caja de celdas.
-      a.x += (center.x - a.x) * .0015;
-      a.y += (center.y - a.y) * .0015;
+      a.x += (center.x - a.x) * .00045;
+      a.y += (center.y - a.y) * .00045;
       a.x = Math.max(40 + a.r, Math.min(1020 - a.r, a.x));
       a.y = Math.max(38 + a.r, Math.min(762 - a.r, a.y));
     }
