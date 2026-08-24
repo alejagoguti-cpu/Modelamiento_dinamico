@@ -5416,3 +5416,31 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
   0%, 100% { transform: translate(40px, -50%) rotate(var(--stretch-angle)) scaleX(.96) scaleY(.94); opacity: .58; }
   50% { transform: translate(40px, -50%) rotate(var(--stretch-angle)) scaleX(1.04) scaleY(1.04); opacity: .7; }
 }
+
+
+/* Corrección final según la referencia: sin masas añadidas, sin cuñas, sin iconos */
+.map-network-node {
+  overflow: visible !important;
+  border: 1px solid color-mix(in srgb, var(--node-color) 72%, white) !important;
+  background: color-mix(in srgb, var(--node-color) 22%, rgba(7,13,16,.9)) !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+.map-network-node::before,
+.map-network-node::after,
+.map-network-node .map-network-stretch { display: none !important; }
+.map-network-node-icon { display: none !important; }
+.map-network-node strong { font-size: 8px !important; line-height: 1.1 !important; }
+.map-network-stage > svg .map-network-bond-soft { opacity: .05 !important; filter: none !important; }
+.map-network-stage > svg .map-network-bond {
+  opacity: .38 !important;
+  filter: none !important;
+  stroke: none !important;
+}
+@keyframes network-node-float-slow {
+  0%, 100% { transform: translate(-50%,-50%) translate3d(0,0,0) scale(1); border-radius: 50% 50% 49% 51%; }
+  25% { transform: translate(-50%,-50%) translate3d(3px,-2px,0) scale(1.006); border-radius: 54% 46% 48% 52%; }
+  50% { transform: translate(-50%,-50%) translate3d(-2px,3px,0) scale(.997); border-radius: 52% 48% 45% 55%; }
+  75% { transform: translate(-50%,-50%) translate3d(-3px,-1px,0) scale(1.004); border-radius: 48% 52% 54% 46%; }
+}
+.map-network-node:hover, .map-network-node.selected { box-shadow: none !important; }
