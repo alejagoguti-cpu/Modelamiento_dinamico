@@ -399,7 +399,10 @@
     const wrap = $("#scaleCards");
     if (!wrap) return;
     wrap.innerHTML = Object.entries(SCALE_DATA).map(([key, scale]) => `<button class="scale-card${key === state.selectedScale ? " is-active" : ""}" data-scale="${key}"><span class="card-icon"><i class="fa-solid ${scale.icon}"></i></span><span><strong>${scale.label}</strong><small>${scale.subtitle}</small></span></button>`).join("");
-    $$(".scale-card").forEach((button) => button.addEventListener("click", () => setScale(button.dataset.scale)));
+    $$(".scale-card").forEach((button) => button.addEventListener("click", () => {
+      setScale(button.dataset.scale);
+      openScaleNetworkModal(button.dataset.scale);
+    }));
   }
 
   function setScale(scaleKey, shouldQuery = true) {
@@ -869,7 +872,10 @@
       focusSelectedUpl(true);
       loadScaleData();
     });
-    $$(".scale-btn").forEach((button) => button.addEventListener("click", () => setScale(button.dataset.scale)));
+    $$(".scale-btn").forEach((button) => button.addEventListener("click", () => {
+      setScale(button.dataset.scale);
+      openScaleNetworkModal(button.dataset.scale);
+    }));
     $$(".view-card").forEach((button) => button.addEventListener("click", () => switchView(button.dataset.view)));
     $("#locateBtn")?.addEventListener("click", () => { state.currentView = "barrio"; updateUplPanel(state.selectedUpl); focusSelectedUpl(true); });
     $("#fullScreenBtn")?.addEventListener("click", () => { const element = $(".map-panel"); if (!document.fullscreenElement) element?.requestFullscreen?.(); else document.exitFullscreen?.(); });

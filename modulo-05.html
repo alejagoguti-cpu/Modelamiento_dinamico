@@ -120,6 +120,52 @@
         <div class="right-section source-section"><div class="block-label">FUENTES Y TRANSPARENCIA</div><p>La base cartográfica procede de OpenStreetMap. Puedes usar Overpass bajo demanda o generar un PMTiles/MVT local para que la red vial funcione sin consultas externas. Si un servicio no responde, Bogotá Viva activa su red procedural de respaldo.</p><div class="source-pills"><span>MapLibre</span><span>OSM</span><span>Overpass</span><span>PMTiles</span><span>Nominatim</span><span>OSRM</span></div></div>
       </aside>
     </main>
+
+    <!-- Scale Network Modal -->
+    <div id="scaleNetworkModal" class="scale-network-modal" role="dialog" aria-hidden="true" aria-modal="true">
+      <div class="scale-network-overlay"></div>
+      <div class="scale-network-content">
+        <div class="scale-network-header">
+          <div>
+            <h2 id="scaleNetworkTitle">Red Natural</h2>
+            <p id="scaleNetworkDescription">Agua, humedales y estructura ecológica</p>
+          </div>
+          <div class="scale-network-controls">
+            <button id="scaleNetworkWetlandImage" class="btn-secondary" hidden title="Ver imagen de humedal"><i class="fa-solid fa-image"></i> Humedal</button>
+            <button id="scaleNetworkZoomIn" class="btn-icon" title="Ampliar"><i class="fa-solid fa-plus"></i></button>
+            <button id="scaleNetworkZoomOut" class="btn-icon" title="Reducir"><i class="fa-solid fa-minus"></i></button>
+            <button id="scaleNetworkZoomReset" class="btn-icon" title="Restablecer"><i class="fa-solid fa-expand"></i></button>
+            <button id="scaleNetworkClose" class="btn-icon" title="Cerrar"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+        </div>
+        <div id="scaleNetworkCanvas" class="scale-network-canvas"></div>
+      </div>
+    </div>
+
+    <!-- Node Detail Modal -->
+    <div id="nodeDetailModal" class="node-detail-modal" role="dialog" aria-hidden="true" aria-modal="true">
+      <div class="node-detail-overlay"></div>
+      <div class="node-detail-content">
+        <div class="node-detail-header">
+          <h2 id="nodeDetailTitle">Nodo</h2>
+          <button id="nodeDetailClose" class="btn-icon" title="Cerrar"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="node-detail-body">
+          <p id="nodeDetailDescription"></p>
+          <div id="nodeDetailConnections" class="node-detail-connections"></div>
+          <button id="nodeDetailFocus" class="btn-secondary">Ver conexiones activas</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Wetland Image Modal -->
+    <div id="wetlandImageModal" class="wetland-image-modal" role="dialog" aria-hidden="true" aria-modal="true">
+      <div class="wetland-image-overlay"></div>
+      <div class="wetland-image-content">
+        <button id="wetlandImageClose" class="btn-icon" title="Cerrar"><i class="fa-solid fa-xmark"></i></button>
+        <img id="wetlandImageElement" src="" alt="Humedal" />
+      </div>
+    </div>
   </div>
   <script src="https://unpkg.com/pmtiles@3.2.0/dist/pmtiles.js"></script>
   <script type="module">
