@@ -501,19 +501,66 @@ function setCityDataFilter(filter) {
   renderNetwork();
 }
 
-function cityDataPointPosition(node, index, visibleCount) {
-  // Cuadrícula dispersa y determinista: los 150 nodos ocupan todo el cuadrado.
-  const columns = 15;
-  const rows = 10;
-  const ordinal = Math.max(0, Number(node.n || index + 1) - 1);
-  const column = ordinal % columns;
-  const row = Math.floor(ordinal / columns);
-  const jitterX = Math.sin((ordinal + 1) * 12.9898) * 10;
-  const jitterY = Math.cos((ordinal + 1) * 78.233) * 9;
-  return {
-    x: 38 + column * (984 / (columns - 1)) + jitterX,
-    y: 38 + row * (724 / (rows - 1)) + jitterY,
-  };
+function cityDataNodeRadius(node) {
+  const degree = CITY_DATA_RELATION_DEGREES[node.name] || 0;
+  // La escala sigue el grado real: hubs de la tabla claramente mayores.
+  if (degree >= 15) return 64;
+  if (degree >= 10) return 51;
+  if (degree >= 7) return 39;
+  if (degree >= 4) return 29;
+  if (degree >= 2) return 20;
+  return 14;
+}
+
+function cityDataOrganicLayout(visible) {
+  const center = { x: 530, y: 400 };
+  const goldenAngle = Math.PI * (3 - Math.sqrt(5));
+  const sorted = [...visible].sort((a, b) => {
+    const degreeDelta = (CITY_DATA_RELATION_DEGREES[b.name] || 0) - (CITY_DATA_RELATION_DEGREES[a.name] || 0);
+    return degreeDelta || a.n - b.n;
+  });
+  const points = sorted.map((node, order) => {
+    const degree = CITY_DATA_RELATION_DEGREES[node.name] || 0;
+    const ring = degree >= 15 ? 142 : degree >= 10 ? 206 : degree >= 7 ? 278 : degree >= 4 ? 338 : degree >= 2 ? 376 : 408;
+    const angle = order * goldenAngle + Math.sin(node.n * 9.17) * .48;
+    const radiusJitter = Math.sin(node.n * 4.61) * 20;
+    const ellipseX = 1.34;
+    const ellipseY = .82;
+    return {
+      node,
+      x: center.x + Math.cos(angle) * (ring + radiusJitter) * ellipseX,
+      y: center.y + Math.sin(angle) * (ring + radiusJitter) * ellipseY,
+      r: cityDataNodeRadius(node),
+    };
+  });
+
+  // Relajación corta y determinista: separa las bolitas sin convertirlas en una cuadrícula.
+  for (let iteration = 0; iteration < 96; iteration += 1) {
+    for (let i = 0; i < points.length; i += 1) {
+      const a = points[i];
+      for (let j = i + 1; j < points.length; j += 1) {
+        const b = points[j];
+        let dx = b.x - a.x;
+        let dy = b.y - a.y;
+        let distance = Math.hypot(dx, dy);
+        if (!distance) { dx = .5; dy = .25; distance = .56; }
+        const desired = a.r + b.r + 11;
+        if (distance < desired) {
+          const push = (desired - distance) * .16;
+          const ux = dx / distance;
+          const uy = dy / distance;
+          a.x -= ux * push; a.y -= uy * push;
+          b.x += ux * push; b.y += uy * push;
+        }
+      }
+      // Mantiene una nube centrada y abierta, no una caja de celdas.
+      a.x += (center.x - a.x) * .0015;
+      a.y += (center.y - a.y) * .0015;
+      a.x = Math.max(40 + a.r, Math.min(1020 - a.r, a.x));
+      a.y = Math.max(38 + a.r, Math.min(762 - a.r, a.y));
+    }
+  }
+  return new Map(points.map(point => [point.node.name, { x: point.x, y: point.y }]));
 }
 
 function showCityTableNodeInfo(node) {
@@ -717,7 +764,7 @@ function drawCityDataRelations(field, visible, positionsByName) {
     group.setAttribute("aria-label", `${relation.source} y ${relation.target} · ${relation.relation}`);
     const color = CITY_DATA_SUBSYSTEM_COLORS[sourceNode.subsystem] || "#c9cedb";
     const intensity = cityRelationIntensity(relation);
-    const d = cityDataRelationPath(a, b, 19 + Math.min(CITY_DATA_RELATION_DEGREES[relation.source] || 0, 16) * .55, 19 + Math.min(CITY_DATA_RELATION_DEGREES[relation.target] || 0, 16) * .55, index);
+    const d = cityDataRelationPath(a, b, cityDataNodeRadius(sourceNode), cityDataNodeRadius(targetNode), index);
     const line = document.createElementNS(SVG_NS, "path");
     line.setAttribute("class", "city-relation-line");
     line.setAttribute("d", d);
@@ -756,15 +803,14 @@ function drawCityDataCloud(svg) {
   field.setAttribute("class", "city-table-field flat-city-table-field");
   const points = document.createElementNS(SVG_NS, "g");
   points.setAttribute("class", "city-table-points flat-city-table-points");
-  const positionsByName = new Map();
+  const positionsByName = cityDataOrganicLayout(visible);
 
-  visible.forEach((node, index) => {
-    const p = cityDataPointPosition(node, index, visible.length);
-    positionsByName.set(node.name, p);
+  visible.forEach((node) => {
+    const p = positionsByName.get(node.name);
     const color = CITY_DATA_SUBSYSTEM_COLORS[node.subsystem] || "#c9cedb";
     const isAgent = /Agente|Usuarios|Organización|Agentes|Comunidad|Personas|Comerciantes|Productores/i.test(node.type);
     const degree = CITY_DATA_RELATION_DEGREES[node.name] || 0;
-    const radius = Math.min(30, Math.max(21, 21 + Math.min(degree, 15) * .52)) + (isAgent ? 2 : 0);
+    const radius = cityDataNodeRadius(node) + (isAgent ? 2 : 0);
     const dot = document.createElementNS(SVG_NS, "g");
     dot.setAttribute("class", `city-table-point rd-node ${isAgent ? "city-table-agent" : ""}`);
     dot.dataset.tableId = String(node.n);
@@ -778,6 +824,7 @@ function drawCityDataCloud(svg) {
     dot.style.setProperty("--table-color", color);
     dot.style.setProperty("--table-delay", `${-((node.n % 24) * .13).toFixed(2)}s`);
     dot.setAttribute("data-table-node", String(node.n));
+    dot.setAttribute("data-degree", String(degree));
     dot.classList.toggle("situation-affected", cityNodeIsAffected(node));
 
     const halo = document.createElementNS(SVG_NS, "circle");
