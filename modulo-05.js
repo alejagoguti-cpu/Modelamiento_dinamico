@@ -43,6 +43,11 @@
     viewportDebounceTimer: null,
     uplFocusTransitionToken: 0,
     uplZoomTarget: null,
+    uplFocusLineBaseOpacity: .9,
+    uplFocusLineBaseWidth: 2,
+    uplFocusLineAnimationRaf: null,
+    uplFocusLineLastUpdateAt: -Infinity,
+    uplFocusLineLastPhase: -1,
     proceduralMarkers: [],
     favorite: false,
     apiLayers: {
@@ -502,6 +507,7 @@
     state.map.addSource("upl-focus", { type: "geojson", data: { type: "FeatureCollection", features: [] } });
     state.map.addLayer({ id: "upl-focus-fill", type: "fill", source: "upl-focus", paint: { "fill-color": "#24d5c6", "fill-opacity": .10 } });
     state.map.addLayer({ id: "upl-focus-line", type: "line", source: "upl-focus", paint: { "line-color": "#149e96", "line-width": 2, "line-dasharray": [2, 2], "line-opacity": .9 } });
+    startUplFocusLineAnimation();
     state.map.addSource("route", { type: "geojson", data: { type: "FeatureCollection", features: [] } });
     state.map.addLayer({ id: "route-casing", type: "line", source: "route", paint: { "line-color": "#ffffff", "line-width": 7, "line-opacity": .75 } });
     state.map.addLayer({ id: "route-line", type: "line", source: "route", paint: { "line-color": "#24bdb3", "line-width": 4, "line-opacity": .95 } });
@@ -574,8 +580,40 @@
     return Math.abs(center.lng - targetLng) < .001 && Math.abs(center.lat - targetLat) < .001 && Math.abs(zoom - state.uplZoomTarget.zoom) < .15;
   }
 
+  function animateUplFocusLine(timestamp) {
+    if (!state.map || !state.map.getLayer("upl-focus-line")) {
+      state.uplFocusLineAnimationRaf = null;
+      return;
+    }
+    if (timestamp - state.uplFocusLineLastUpdateAt >= 40) {
+      const elapsed = timestamp % 2400;
+      const pulse = (Math.sin(elapsed * .0031) + 1) / 2;
+      const phase = Math.floor(timestamp / 140) % 2;
+      const opacity = state.uplFocusLineBaseOpacity * (.82 + pulse * .18);
+      const width = state.uplFocusLineBaseWidth * (.88 + pulse * .18);
+      try {
+        state.map.setPaintProperty("upl-focus-line", "line-opacity", opacity);
+        state.map.setPaintProperty("upl-focus-line", "line-width", width);
+        if (phase !== state.uplFocusLineLastPhase) {
+          state.map.setPaintProperty("upl-focus-line", "line-dasharray", phase ? [2.4, 1.8] : [1.8, 2.4]);
+          state.uplFocusLineLastPhase = phase;
+        }
+        state.uplFocusLineLastUpdateAt = timestamp;
+      } catch (error) {
+        console.debug("No se pudo animar el borde de la UPL", error);
+      }
+    }
+    state.uplFocusLineAnimationRaf = window.requestAnimationFrame(animateUplFocusLine);
+  }
+
+  function startUplFocusLineAnimation() {
+    if (state.uplFocusLineAnimationRaf !== null || window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches) return;
+    state.uplFocusLineAnimationRaf = window.requestAnimationFrame(animateUplFocusLine);
+  }
+
   function setUplFocusLayerOpacity(fillOpacity, lineOpacity) {
     if (!state.map) return;
+    state.uplFocusLineBaseOpacity = lineOpacity;
     try {
       if (state.map.getLayer("upl-focus-fill")) state.map.setPaintProperty("upl-focus-fill", "fill-opacity", fillOpacity);
       if (state.map.getLayer("upl-focus-line")) state.map.setPaintProperty("upl-focus-line", "line-opacity", lineOpacity);
