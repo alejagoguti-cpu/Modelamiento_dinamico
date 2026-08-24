@@ -667,3 +667,12 @@ footer span { color: var(--teal); }
 @keyframes cityTableClusterBreath { 0%, 100% { opacity: .46; transform: scale(.96); transform-origin: center; } 50% { opacity: .75; transform: scale(1.04); transform-origin: center; } }
 @media (max-width: 900px) { .city-zoom-controls { width: 100%; justify-content: flex-start; } }
 @media (prefers-reduced-motion: reduce) { #readerViz .city-table-zoom-content { transition: none; } .city-table-cluster, .city-table-cluster-title { animation: none; transition: none; } }
+
+/* Módulo 08 · vista plana de 150 nodos */
+.city-zoom-controls { display: none !important; }
+.city-table-cluster, .city-table-cluster-core, .city-table-cluster-title, .city-table-fiber { display: none !important; }
+#readerViz .flat-city-table-field { transform: none !important; }
+#readerViz .flat-city-table-points { pointer-events: auto; }
+#readerViz .flat-city-table-points .city-table-point { r: 3.1px; fill: var(--table-color) !important; opacity: .92 !important; stroke: rgba(5,10,15,.85); stroke-width: .28px; vector-effect: non-scaling-stroke; }
+#readerViz .flat-city-table-points .city-table-agent { r: 3.6px; }
+#readerViz .flat-city-table-points .city-table-point:hover, #readerViz .flat-city-table-points .city-table-point:focus { opacity: 1 !important; stroke: #fff; stroke-width: .9px; }

@@ -61,17 +61,10 @@
           <button class="control-btn" data-view="componentes" onclick="filterView('componentes')">Componentes</button>
           <button class="control-btn" data-view="actores" onclick="filterView('actores')">Agentes y actores</button>
         </div>
-        <div class="city-zoom-controls" aria-label="Controles de zoom de la red">
-          <span>Zoom</span>
-          <button type="button" id="cityZoomOut" aria-label="Alejar">−</button>
-          <output id="cityZoomValue" aria-live="polite">100%</output>
-          <button type="button" id="cityZoomIn" aria-label="Acercar">+</button>
-          <button type="button" id="cityZoomReset">Restablecer</button>
-        </div>
         <label class="city-data-filter-label" for="cityDataFilter">Datos de la tabla
           <select id="cityDataFilter" class="city-data-filter" onchange="setCityDataFilter(this.value)">
-            <option value="initial">Red inicial · 45 nodos representativos</option>
-            <option value="all">Red completa · 150 nodos</option>
+            <option value="all" selected>Red completa · 150 nodos</option>
+            <option value="initial">Vista reducida</option>
             <option value="Sistema hídrico">Sistema hídrico · 19 nodos</option>
             <option value="Sistema biótico">Sistema biótico · 14 nodos</option>
             <option value="Sistema físico-urbano">Sistema físico-urbano · 26 nodos</option>
@@ -106,7 +99,7 @@
             <div class="legend-title">Convenciones de la tabla</div>
             <div class="legend-item legend-static"><span class="legend-data-cloud"></span> Punto = nodo general</div>
             <div class="legend-item legend-static"><span class="legend-line solid"></span> Fibra = relación de flujo o transformación</div>
-            <div class="legend-item legend-static"><span class="legend-dot" style="background:#ffffff;"></span> Bola = título del subsistema al acercar</div>
+            <div class="legend-item legend-static"><span class="legend-dot" style="background:#ffffff;"></span> Punto = nodo de la tabla</div>
 
             <div class="legend-title">Color = subsistema</div>
             <div class="legend-item legend-static"><span class="legend-dot" style="background:#43c7d7;"></span> Sistema hídrico</div>
@@ -120,7 +113,7 @@
             <div class="legend-item legend-static"><span class="legend-dot" style="background:#9d8be8;"></span> Sistema institucional de gestión</div>
 
             <div class="legend-divider"></div>
-            <div class="legend-hint">La vista inicial muestra 45 nodos para facilitar la lectura. Usa el selector para activar los 150. Acerca con la rueda o los controles: aparecerá el título dentro de cada bola de subsistema.</div>
+            <div class="legend-hint">Los 150 nodos están visibles desde el inicio y ocupan todo el cuadrado. El color de cada punto corresponde al subsistema de la tabla. Las conexiones se definirán en el siguiente paso.</div>
           </aside>
 
 
