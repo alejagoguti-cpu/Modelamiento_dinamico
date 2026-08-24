@@ -990,3 +990,102 @@ body.node-detail-open { overflow: hidden; }
 .wetland-image-direct-link[hidden] {
   display: none !important;
 }
+
+
+/* Confirmación visual del primer clic: indica que la red espera el segundo clic. */
+.scale-network-click-status {
+  align-items: center;
+  gap: 6px;
+  color: var(--popup-teal);
+  font: 700 9px/1 Inter, sans-serif;
+  letter-spacing: .02em;
+  white-space: nowrap;
+}
+
+.scale-network-click-status::before {
+  width: 6px;
+  height: 6px;
+  flex: 0 0 6px;
+  border-radius: 50%;
+  background: var(--popup-teal);
+  box-shadow: 0 0 0 0 rgba(70,214,208,.7);
+  content: '';
+  animation: popupClickStatusPulse 1s ease-in-out infinite;
+}
+
+.scale-network-click-status[hidden] {
+  display: none !important;
+}
+
+.scale-network-click-status.is-pending {
+  display: inline-flex;
+  animation: popupClickStatusIn .18s ease-out both;
+}
+
+.popup-node.click-pending circle {
+  stroke: #fff;
+  stroke-width: 2.2;
+  filter: url(#popupGlowTeal);
+  animation: popupNodeClickPulse 1s ease-in-out infinite;
+}
+
+.popup-click-cue {
+  pointer-events: none;
+  animation: popupClickCueIn .18s ease-out both;
+}
+
+.popup-click-cue rect {
+  fill: rgba(7,18,21,.94);
+  stroke: rgba(70,214,208,.82);
+  stroke-width: 1;
+}
+
+.popup-click-cue circle {
+  fill: var(--popup-teal);
+  filter: url(#popupGlowTeal);
+  animation: popupClickStatusPulse 1s ease-in-out infinite;
+}
+
+.popup-click-cue text {
+  fill: #e8ffff;
+  font: 700 8px/1 Inter, sans-serif;
+  letter-spacing: .06em;
+}
+
+@keyframes popupClickStatusPulse {
+  0%, 100% { opacity: .45; box-shadow: 0 0 0 0 rgba(70,214,208,.72); }
+  50% { opacity: 1; box-shadow: 0 0 0 5px rgba(70,214,208,0); }
+}
+
+@keyframes popupNodeClickPulse {
+  0%, 100% { opacity: .82; }
+  50% { opacity: 1; }
+}
+
+@keyframes popupClickStatusIn {
+  from { opacity: 0; transform: translateY(3px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes popupClickCueIn {
+  from { opacity: 0; transform: translateY(3px); transform-origin: center; }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 700px) {
+  .scale-network-click-status {
+    width: 100%;
+    order: 4;
+    font-size: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scale-network-click-status::before,
+  .scale-network-click-status.is-pending,
+  .popup-node.click-pending circle,
+  .popup-click-cue,
+  .popup-click-cue circle {
+    animation: none !important;
+  }
+}

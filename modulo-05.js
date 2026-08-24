@@ -1406,6 +1406,7 @@ function setupScaleNetworkViewport() {
 
   canvas.addEventListener('pointerdown', event => {
     if (!event.isPrimary || (event.pointerType === 'mouse' && event.button !== 0)) return;
+    if (event.target instanceof Element && event.target.closest('.popup-node')) return;
     event.preventDefault();
     cancelScaleNetworkReturnAnimation();
     dragging = true;
@@ -1704,6 +1705,60 @@ function focusNodeConnections() {
   if (description && node) description.textContent = `${node.label} · conexiones resaltadas`;
 }
 
+function clearScaleNetworkClickCue() {
+  const status = document.getElementById('scaleNetworkClickStatus');
+  if (status) {
+    status.hidden = true;
+    status.textContent = '';
+    status.classList.remove('is-pending');
+  }
+  document.querySelectorAll('#scaleNetworkCanvas .popup-node.click-pending').forEach(node => node.classList.remove('click-pending'));
+  document.querySelector('#scaleNetworkCanvas .popup-click-cue')?.remove();
+}
+
+function showScaleNetworkClickCue(nodeElement, node) {
+  clearScaleNetworkClickCue();
+  if (!nodeElement || !node) return;
+  const status = document.getElementById('scaleNetworkClickStatus');
+  if (status) {
+    status.hidden = false;
+    status.textContent = `Esperando segundo clic · ${node.label}`;
+    status.classList.add('is-pending');
+  }
+  nodeElement.classList.add('click-pending');
+  const svg = document.querySelector('#scaleNetworkCanvas .popup-network-svg');
+  const scene = svg?.querySelector('.popup-network-scene');
+  const circle = nodeElement.querySelector('circle');
+  if (!svg || !scene || !circle) return;
+  const cx = Number(circle.getAttribute('cx')) || 0;
+  const cy = Number(circle.getAttribute('cy')) || 0;
+  const radius = Number(circle.getAttribute('r')) || 20;
+  const width = 148;
+  const height = 19;
+  const x = Math.max(6, Math.min(1000 - width - 6, cx - width / 2));
+  const y = Math.max(6, cy - radius - 30);
+  const ns = 'http://www.w3.org/2000/svg';
+  const cue = document.createElementNS(ns, 'g');
+  cue.setAttribute('class', 'popup-click-cue');
+  cue.setAttribute('aria-hidden', 'true');
+  const background = document.createElementNS(ns, 'rect');
+  background.setAttribute('x', x.toFixed(1));
+  background.setAttribute('y', y.toFixed(1));
+  background.setAttribute('width', String(width));
+  background.setAttribute('height', String(height));
+  background.setAttribute('rx', '5');
+  const dot = document.createElementNS(ns, 'circle');
+  dot.setAttribute('cx', (x + 10).toFixed(1));
+  dot.setAttribute('cy', (y + height / 2).toFixed(1));
+  dot.setAttribute('r', '3');
+  const label = document.createElementNS(ns, 'text');
+  label.setAttribute('x', (x + 18).toFixed(1));
+  label.setAttribute('y', (y + 12.5).toFixed(1));
+  label.textContent = 'ESPERANDO 2.º CLIC';
+  cue.append(background, dot, label);
+  scene.appendChild(cue);
+}
+
 function renderScaleNetworkPopup(mode) {
   const canvas = document.getElementById('scaleNetworkCanvas');
   const definition = scaleNetworks[mode];
@@ -1828,11 +1883,15 @@ function renderScaleNetworkPopup(mode) {
       if (now - lastClickAt > clickSequenceWindow) clickCount = 0;
       lastClickAt = now;
       clickCount = Math.min(4, clickCount + 1);
+      selectNode();
+      if (clickCount === 1) showScaleNetworkClickCue(nodeElement, node);
+      else clearScaleNetworkClickCue();
       if (clickTimer) window.clearTimeout(clickTimer);
       clickTimer = window.setTimeout(() => {
         const sequence = clickCount;
         clickCount = 0;
         clickTimer = null;
+        clearScaleNetworkClickCue();
         if (sequence >= 3) togglePopupNode();
         else if (sequence === 2) openNodeDoubleAction();
         else openNodeInfo();
