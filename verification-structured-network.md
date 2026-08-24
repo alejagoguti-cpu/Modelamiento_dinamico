@@ -39,3 +39,9 @@ Resultado local: Natural 42 conexiones / 71 partículas; Cultural 15 / 24; Tecno
 GitHub Pages cargó `modulo-05.js?v=water-flow-fixed-v1`. En Natural se verificaron 42 conexiones y 71 partículas; en Cultural, 15 conexiones y 24 partículas; en Tecnológico, 16 conexiones y 26 partículas; en Metaverso, 16 conexiones y 26 partículas. En las cuatro escalas las partículas cambiaron de posición con el flujo activo y ninguna permaneció en 0,0. La ficha de RÍOS continuó abriendo correctamente y el doble clic en HUMEDALES mostró la imagen con dimensiones naturales 2048 × 1345; al finalizar, los tres modales quedaron cerrados.
 
 Evidencia visual pública: `/home/ubuntu/screenshots/alejagoguti-cpu_gith_2026-08-24_02-19-23_8055.webp`.
+
+## Ajuste de etiquetas y separación — verificación local
+
+Se reemplazó la etiqueta SVG de tamaño fijo por una composición que calcula líneas, fuente, alto de línea y ancho máximo según el radio real de cada nodo. Las etiquetas se mantienen centradas dentro del círculo y se comprimen solo cuando la línea supera el ancho útil; no se cambia ningún nombre ni la información del popup. También se separaron los últimos pares cercanos de Natural en la franja inferior.
+
+Resultado de auditoría sobre las cuatro escalas: Natural 30 nodos, Cultural 14, Tecnológico 14 y Metaverso 14; `textOutside: 0` y `overlaps: 0` en todas las escalas. El flujo acuático siguió activo durante la prueba.

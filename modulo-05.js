@@ -1444,13 +1444,18 @@ function setupScaleNetworkViewport() {
   canvas.addEventListener('lostpointercapture', stopDragging);
 }
 
-function splitPopupLabel(label) {
-  const words = label.split(' ');
+function splitPopupLabel(label, radius = 20) {
+  const safeRadius = Math.max(14, Number(radius) || 20);
+  const maxWidth = Math.max(18, safeRadius * 1.55);
+  const fontSize = Number(Math.max(5.4, Math.min(9.2, safeRadius * 0.28)).toFixed(2));
+  const lineHeight = Number(Math.max(6.2, Math.min(9.5, fontSize * 1.08)).toFixed(2));
+  const maxChars = Math.max(6, Math.floor(maxWidth / (fontSize * 0.62)));
+  const words = String(label || '').trim().split(/\s+/).filter(Boolean);
   const lines = [];
   let line = '';
   words.forEach(word => {
     const next = line ? `${line} ${word}` : word;
-    if (next.length > 15 && line) {
+    if (next.length > maxChars && line) {
       lines.push(line);
       line = word;
     } else {
@@ -1458,7 +1463,12 @@ function splitPopupLabel(label) {
     }
   });
   if (line) lines.push(line);
-  return lines.slice(0, 3);
+  return {
+    lines: (lines.length ? lines : [String(label || '')]).slice(0, 3),
+    fontSize,
+    lineHeight,
+    maxWidth
+  };
 }
 
 const popupLayoutOverrides = {
@@ -1468,9 +1478,9 @@ const popupLayoutOverrides = {
   natural: {
     humedales: [160, 235], rios: [300, 105], areas_protegidas: [445, 185], reservas_forestales: [610, 95], cerros_orientales: [790, 145], paramos: [900, 235],
     quebradas: [95, 335], cobertura_vegetal: [250, 285], parques: [405, 315], paramos_andinos: [610, 255], bosques_andinos: [755, 300], nacimientos_agua: [910, 360],
-    rondas_hidricas: [120, 425], bosques_urbanos: [290, 390], quebradas_urbanas: [445, 435], rios_urbanos: [570, 370], recarga_hidrica: [725, 405], corredores_ecologicos: [890, 435],
-    humedales_urbanos: [120, 450], rondas_rio: [270, 430], infiltracion_agua: [430, 465], coberturas_vegetales: [585, 435], jardines_lluvia: [740, 465], arbolado_urbano: [885, 440],
-    parques_ecologicos: [190, 495], fauna_urbana: [350, 480], suelo_permeable: [510, 500], restauracion_ecologica: [670, 480], resiliencia_climatica: [820, 500], areas_conservacion: [940, 475]
+    rondas_hidricas: [75, 395], bosques_urbanos: [290, 390], quebradas_urbanas: [390, 430], rios_urbanos: [570, 370], recarga_hidrica: [725, 405], corredores_ecologicos: [830, 420],
+    humedales_urbanos: [150, 430], rondas_rio: [285, 440], infiltracion_agua: [470, 465], coberturas_vegetales: [585, 435], jardines_lluvia: [740, 465], arbolado_urbano: [940, 460],
+    parques_ecologicos: [190, 495], fauna_urbana: [350, 480], suelo_permeable: [530, 505], restauracion_ecologica: [670, 480], resiliencia_climatica: [820, 500], areas_conservacion: [975, 525]
   },
   cultural: {
     patrimonio_material: [260, 150], patrimonio_inmaterial: [720, 120], museos: [90, 270], centros_historicos: [330, 250], zonas_turisticas: [550, 220], artesanias: [840, 260],
@@ -1731,17 +1741,25 @@ function renderScaleNetworkPopup(mode) {
     // animar ni recalcular los radios de los nodos restantes.
     const previousRadius = radius;
     popupNodeRadiusState.set(radiusKey, radius);
-    const lines = splitPopupLabel(node.label);
-    const firstY = p.y + (lines.length > 1 ? 1 : 4);
+    const labelLayout = splitPopupLabel(node.label, radius);
+    const lines = labelLayout.lines;
+    const firstY = p.y - ((lines.length - 1) * labelLayout.lineHeight + labelLayout.fontSize) / 2 + labelLayout.fontSize * .82;
     const iconSvg = popupIconSvg[node.icon] || '';
     const iconX = p.x - 12;
     const iconY = p.y - radius * .48 - 12;
     const iconMarkup = iconSvg ? `<svg class="popup-node-icon" x="${iconX.toFixed(1)}" y="${iconY.toFixed(1)}" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">${iconSvg}</svg>` : '';
-    const labelMarkup = lines.map((line, index) => `<tspan x="${p.x.toFixed(1)}" dy="${index === 0 ? 0 : 14}">${line}</tspan>`).join('');
+    const labelMarkup = lines.map((line, index) => {
+      const estimatedWidth = line.length * labelLayout.fontSize * .62;
+      const fit = estimatedWidth > labelLayout.maxWidth
+        ? ` textLength="${labelLayout.maxWidth.toFixed(1)}" lengthAdjust="spacingAndGlyphs"`
+        : '';
+      const y = firstY + index * labelLayout.lineHeight;
+      return `<tspan x="${p.x.toFixed(1)}" y="${y.toFixed(1)}"${fit}>${line}</tspan>`;
+    }).join('');
     return `<g class="popup-node ${activeHub ? 'hub' : ''}" data-node-id="${node.id}" data-active-degree="${activeDegree}" data-active-hub="${activeHub}" tabindex="0" role="button" aria-label="${node.label}: ${activeDegree} conexiones activas">
       <circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${previousRadius}" data-start-radius="${previousRadius}" data-target-radius="${radius}" />
       ${iconMarkup}
-      <text x="${p.x.toFixed(1)}" y="${firstY.toFixed(1)}">${labelMarkup}</text>
+      <text x="${p.x.toFixed(1)}" y="${firstY.toFixed(1)}" style="font-size:${labelLayout.fontSize}px;line-height:${labelLayout.lineHeight}px;">${labelMarkup}</text>
     </g>`;
   }).join('');
 
