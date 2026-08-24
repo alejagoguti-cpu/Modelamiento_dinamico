@@ -372,13 +372,14 @@ document.querySelectorAll('.tab').forEach(btn => {
     7: 'Alcanzar el Desarrollo Rural Sostenible. El Distrito Capital busca conciliar la necesidad de generar mayor valor agregado en las prácticas agrícolas, pecuarias y turísticas que se desarrollan en suelo rural, con la exigencia de preservación ambiental de sus áreas protegidas de importancia ecosistémica y paisajística y la puesta en valor de las formas de vida campesina.'
   };
   const systems = [
-    { id:'ambiental', label:'Ambiental', color:'#58d68d', icon:'fa-leaf', x:250, y:370, r:76, objectives:[1,2,3,7], partial:[6] },
-    { id:'humanista', label:'Humanista-social', color:'#ef8b3c', icon:'fa-people-group', x:610, y:350, r:102, objectives:[3,4,6], partial:[1,5] },
-    { id:'socio', label:'Económico-productivo', color:'#eab04c', icon:'fa-chart-line', x:940, y:205, r:64, objectives:[5], partial:[4,6,7] },
-    { id:'gob', label:'Político-institucional y de gobernanza', color:'#4ade80', icon:'fa-landmark', x:950, y:500, r:64, objectives:[2,4,6], partial:[1,3,7] },
-    { id:'funcional', label:'Cultural-territorial', color:'#a879ff', icon:'fa-network-wired', x:610, y:635, r:64, objectives:[1,4,7], partial:[5,6] }
+    { id:'ambiental', label:'Ambiental', color:'#58d68d', icon:'fa-leaf', x:230, y:380, r:82, objectives:[1,2,3], partial:[], description:'Estructura ecológica principal, paisajes, ecosistemas, agua, contaminación, riesgo, cambio climático y relación urbano-rural.' },
+    { id:'humanista', label:'Humanista-social', color:'#ef8b3c', icon:'fa-people-group', x:600, y:370, r:136, objectives:[6], partial:[], description:'Calidad de vida, vivienda, cuidado, equidad, acceso a servicios y reducción de desigualdades.' },
+    { id:'socio', label:'Económico-productivo', color:'#eab04c', icon:'fa-chart-line', x:990, y:210, r:72, objectives:[5], partial:[], description:'Empleo, empresas, actividades productivas, aglomeraciones económicas y relación entre vivienda y trabajo.' },
+    { id:'cultural', label:'Cultural-territorial', color:'#a879ff', icon:'fa-landmark', x:930, y:570, r:82, objectives:[4,7], partial:[], description:'Patrimonio, memoria, identidad, apropiación social, permanencia de moradores, barrios, paisajes culturales y formas de vida campesina.' },
+    { id:'tecnologico', label:'Tecnológico-infraestructural', color:'#55b7d9', icon:'fa-road', x:220, y:650, r:72, objectives:[], partial:[], description:'Transporte público, Metro, Regiotram, red vial, ciclorrutas, servicios públicos, equipamientos e infraestructura urbana.', noObjective:true }
   ];
-  const links = [[0,1],[1,2],[1,3],[1,4],[0,3],[0,2]];
+  // La tabla solicita eliminar las líneas visibles: la red se lee por nodos, tamaños y clasificación.
+  const links = [];
   const el = (tag, attrs={}) => { const n=document.createElementNS(NS,tag); Object.entries(attrs).forEach(([k,v])=>n.setAttribute(k,v)); return n; };
   const render = () => {
     svg.innerHTML = '';
@@ -396,8 +397,8 @@ document.querySelectorAll('.tab').forEach(btn => {
       systems.forEach(other => document.querySelector(`[data-node-index="${systems.indexOf(other)}"]`)?.classList.remove('selected'));
       const selected = document.querySelector(`[data-node-index="${systems.indexOf(s)}"]`);
       selected?.classList.add('selected');
-      if (note) note.textContent = `Macromodelo seleccionado: ${s.label}. Objetivos principales: ${s.objectives.join(', ')}${s.partial?.length ? ` · Aportes parciales: ${s.partial.join(', ')}` : ''}.`;
-      detail.innerHTML = `<strong>Objetivos del POT que busca analizar · ${s.label}</strong><div class="objective-list">${s.objectives.map(number => `<article class="objective-card"><span>Objetivo ${number} · Artículo 5 · Relación principal</span><p>“${POT_OBJECTIVES[number]}”</p></article>`).join('')}${s.partial?.length ? `<div class="objective-partial"><strong>También aporta parcialmente a los objetivos ${s.partial.join(', ')}.</strong> La tabla los relaciona como cruces analíticos, no como el objetivo central de este macromodelo.</div>` : ''}</div>`;
+      if (note) note.textContent = s.noObjective ? `Macromodelo seleccionado: ${s.label}. La tabla no le asigna ningún objetivo como clasificación principal.` : `Macromodelo seleccionado: ${s.label}. Objetivo${s.objectives.length > 1 ? 's' : ''} principal${s.objectives.length > 1 ? 'es' : ''}: ${s.objectives.join(', ')}.`;
+      detail.innerHTML = `<strong>Qué analiza · ${s.label}</strong><div class="objective-description">${s.description}</div><div class="objective-list">${s.objectives.length ? s.objectives.map(number => `<article class="objective-card"><span>Objetivo ${number} · Artículo 5 · Clasificación exclusiva</span><p>“${POT_OBJECTIVES[number]}”</p></article>`).join('') : `<div class="objective-partial"><strong>Ningún objetivo como clasificación principal.</strong> La tabla lo propone como macromodelo útil para analizar cómo funciona materialmente la ciudad, pero no traslada artificialmente el objetivo 6 a esta categoría.</div>`}</div>`;
     };
     systems.forEach((s,i)=>{
       const g=el('g',{class:'network-node floating-node',transform:`translate(${s.x} ${s.y})`,style:`--node-color:${s.color};--node-filter:url(#glow-${s.color.slice(1)});color:${s.color}`,'data-node-index':i,tabindex:'0',role:'button','aria-label':s.label});
