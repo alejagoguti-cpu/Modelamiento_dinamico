@@ -5546,3 +5546,33 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 @media (prefers-reduced-motion: reduce) {
   .map-network-node, .map-network-stage > svg .map-network-pulse { animation: none !important; }
 }
+
+/* Primera red · ajuste natural para los nodos azul y verde */
+.systems-network .map-network-node[data-map-network-index="0"] {
+  width: 106px !important;
+  height: 106px !important;
+  min-height: 106px !important;
+  border-radius: 54% 46% 51% 49% !important;
+  animation-duration: 29s !important;
+}
+.systems-network .map-network-node[data-map-network-index="1"] {
+  width: 102px !important;
+  height: 102px !important;
+  min-height: 102px !important;
+  border-radius: 48% 52% 56% 44% !important;
+  animation-duration: 26s !important;
+}
+.systems-network .map-network-pulse {
+  opacity: .46 !important;
+  filter: none !important;
+  animation-duration: 4.8s !important;
+}
+.systems-network .map-network-pulse-secondary {
+  opacity: .16 !important;
+  animation-duration: 6.6s !important;
+}
+.systems-network > svg .map-network-bond { opacity: .40 !important; }
+@media (max-width: 760px) {
+  .systems-network .map-network-node[data-map-network-index="0"] { width: 80px !important; height: 80px !important; min-height: 80px !important; }
+  .systems-network .map-network-node[data-map-network-index="1"] { width: 78px !important; height: 78px !important; min-height: 78px !important; }
+}
