@@ -194,6 +194,11 @@ a { color:inherit; text-decoration:none; }
 .upl-label { padding:4px 6px; border:1px solid rgba(16,142,135,.45); border-radius:4px; color:#126b68; background:rgba(255,255,255,.84); box-shadow:0 2px 8px rgba(0,0,0,.12); font-size:9px; white-space:nowrap; }
 .place-marker { width:11px; height:11px; border:2px solid #fff; border-radius:50%; background:#e8925c; box-shadow:0 1px 5px rgba(0,0,0,.3); }
 .place-popup .maplibregl-popup-content { padding:10px 12px; color:#253436; border-radius:6px; font-size:10px; }
+.map-hover-popup .maplibregl-popup-content { min-width:150px; max-width:260px; padding:9px 11px; border:1px solid rgba(36,213,198,.45); border-radius:7px; color:#dbe9e5; background:rgba(7,14,17,.94); box-shadow:0 7px 20px rgba(0,0,0,.32),0 0 0 1px rgba(255,255,255,.05); font-size:10px; }
+.map-hover-popup .maplibregl-popup-tip { border-top-color:rgba(7,14,17,.94); border-bottom-color:rgba(7,14,17,.94); }
+.map-hover-popup strong { display:block; overflow:hidden; color:#46d6d0; font-size:11px; line-height:1.25; text-overflow:ellipsis; white-space:nowrap; }
+.map-hover-popup span { display:block; margin-top:4px; color:#b7c9c5; font-size:9px; line-height:1.35; }
+.map-hover-popup a { color:inherit; }
 .place-popup strong { display:block; margin-bottom:4px; font-size:11px; }
 .place-popup span { color:#6a7779; }
 .route-line { filter:drop-shadow(0 1px 2px rgba(255,255,255,.8)); }

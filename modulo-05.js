@@ -22,6 +22,8 @@
   const state = {
     map: null,
     mapReady: false,
+    mapHoverPopup: null,
+    hoveredMapFeatureKey: "",
     selectedUpl: null,
     selectedScale: "natural",
     dataMode: "real",
@@ -495,6 +497,45 @@
     }
   }
 
+  function mapHoverTooltipHtml(feature, layerId) {
+    const properties = feature?.properties || {};
+    const count = Number(properties.point_count);
+    if ((layerId === "osm-place-clusters" || layerId === "osm-place-cluster-count" || Number.isFinite(count)) && count > 0) {
+      return `<strong>${count.toLocaleString("es-CO")} elementos OSM</strong><span>Acerca el mapa para consultar cada circulito.</span>`;
+    }
+    const label = properties.label || "Lugar OSM";
+    const type = properties.featureType || "lugar";
+    const category = properties.layerLabel || "Punto OSM";
+    const osmId = properties.osmId ? ` · ID ${escapeHtml(String(properties.osmId))}` : "";
+    return `<strong>${escapeHtml(String(label))}</strong><span>${escapeHtml(String(type))} · ${escapeHtml(String(category))} · OpenStreetMap${osmId}</span>`;
+  }
+
+  function setupMapHoverTooltips() {
+    if (!state.map || !window.maplibregl || state.mapHoverPopup) return;
+    state.mapHoverPopup = new maplibregl.Popup({ closeButton: false, closeOnClick: false, closeOnMove: false, offset: 10, className: "map-hover-popup", maxWidth: "260px" });
+    const hide = () => {
+      state.mapHoverPopup?.remove();
+      state.hoveredMapFeatureKey = "";
+      if (state.map) state.map.getCanvas().style.cursor = "";
+    };
+    const show = (event, layerId) => {
+      const feature = event?.features?.[0];
+      if (!feature || !state.map) return;
+      const featureKey = `${layerId}/${feature.id ?? feature.properties?.osmId ?? feature.properties?.point_count ?? "point"}`;
+      state.map.getCanvas().style.cursor = "pointer";
+      if (state.hoveredMapFeatureKey !== featureKey) {
+        state.hoveredMapFeatureKey = featureKey;
+        state.mapHoverPopup.setHTML(mapHoverTooltipHtml(feature, layerId));
+      }
+      state.mapHoverPopup.setLngLat(event.lngLat).addTo(state.map);
+    };
+    ["osm-places", "osm-place-clusters", "osm-place-cluster-count"].forEach((layerId) => {
+      state.map.on("mouseenter", layerId, (event) => show(event, layerId));
+      state.map.on("mousemove", layerId, (event) => show(event, layerId));
+      state.map.on("mouseleave", layerId, hide);
+    });
+  }
+
   function addMapLayers() {
     if (!state.map || state.map.getSource("upl-focus")) return;
     state.map.addSource("osm-streets", { type: "geojson", data: { type: "FeatureCollection", features: [] } });
@@ -504,6 +545,7 @@
     state.map.addLayer({ id: "osm-place-clusters", type: "circle", source: "osm-places", filter: ["has", "point_count"], paint: { "circle-radius": ["step", ["get", "point_count"], 9, 20, 12, 100, 16, 500, 21, 2000, 27], "circle-color": ["step", ["get", "point_count"], "#24d5c6", 100, "#e6b85c", 500, "#e8925c", 2000, "#d86b84"], "circle-opacity": .94, "circle-stroke-color": "#0d1718", "circle-stroke-width": 2, "circle-stroke-opacity": .9 } });
     state.map.addLayer({ id: "osm-place-cluster-count", type: "symbol", source: "osm-places", filter: ["has", "point_count"], layout: { "text-field": ["to-string", ["get", "point_count_abbreviated"]], "text-size": 10, "text-font": ["Open Sans Bold", "Arial Unicode MS Bold"] }, paint: { "text-color": "#07100f", "text-halo-color": "#f2eee7", "text-halo-width": 1 } });
     state.map.addLayer({ id: "osm-places", type: "circle", source: "osm-places", filter: ["!", ["has", "point_count"]], paint: { "circle-radius": ["interpolate", ["linear"], ["zoom"], 9, 3.5, 12, 5.5, 15, 8], "circle-color": ["coalesce", ["get", "color"], "#e8925c"], "circle-opacity": .96, "circle-stroke-color": "#ffffff", "circle-stroke-width": 1.4, "circle-stroke-opacity": .95 } });
+    setupMapHoverTooltips();
     state.map.addSource("upl-focus", { type: "geojson", data: { type: "FeatureCollection", features: [] } });
     state.map.addLayer({ id: "upl-focus-fill", type: "fill", source: "upl-focus", paint: { "fill-color": "#24d5c6", "fill-opacity": .10 } });
     state.map.addLayer({ id: "upl-focus-line", type: "line", source: "upl-focus", paint: { "line-color": "#149e96", "line-width": 2, "line-dasharray": [2, 2], "line-opacity": .9 } });
@@ -870,7 +912,7 @@
       const tags = element.tags || {};
       if (!point || tags.highway) return;
       const matchedLayer = featureLayer(element);
-      placeFeatures.push({ type: "Feature", properties: { color: matchedLayer?.[1].color || "#e8925c", osmId: element.id, label: featureName(element) }, geometry: { type: "Point", coordinates: point } });
+      placeFeatures.push({ type: "Feature", properties: { color: matchedLayer?.[1].color || "#e8925c", osmId: element.id, label: featureName(element), featureType: featureType(element), layerLabel: matchedLayer?.[1].label || "Punto OSM", source: "OpenStreetMap" }, geometry: { type: "Point", coordinates: point } });
     });
     updatePlaceLayer(placeFeatures);
     placeCount = placeFeatures.length;
@@ -891,6 +933,8 @@
         markerEl.title = matchedLayer[1].label;
       }
       const marker = new maplibregl.Marker({ element: markerEl, anchor: "center" }).setLngLat(point).setPopup(new maplibregl.Popup({ offset: 9, className: "place-popup" }).setHTML(`<strong>${escapeHtml(featureName(element))}</strong><span>${escapeHtml(featureType(element))} · OpenStreetMap${matchedLayer ? ` · ${escapeHtml(matchedLayer[1].label)}` : ""}</span>`)).addTo(state.map);
+      markerEl.addEventListener("mouseenter", () => marker.togglePopup());
+      markerEl.addEventListener("mouseleave", () => marker.getPopup()?.remove());
       state.placeMarkers.push(marker);
     });
     setText("#metricPlaces", placeCount ? String(placeCount) : "0");
@@ -992,6 +1036,8 @@
       markerEl.style.background = scale.color;
       const label = scale.fallback[index % scale.fallback.length];
       const marker = new maplibregl.Marker({ element: markerEl, anchor: "center" }).setLngLat([state.selectedUpl.lon + dx, state.selectedUpl.lat + dy]).setPopup(new maplibregl.Popup({ offset: 9, className: "place-popup" }).setHTML(`<strong>${escapeHtml(label)}</strong><span>capa procedural de respaldo · no es un dato OSM</span>`)).addTo(state.map);
+      markerEl.addEventListener("mouseenter", () => marker.togglePopup());
+      markerEl.addEventListener("mouseleave", () => marker.getPopup()?.remove());
       state.proceduralMarkers.push(marker);
     });
     setText("#metricPlaces", String(offsets.length));
