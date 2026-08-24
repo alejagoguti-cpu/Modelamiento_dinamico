@@ -1108,6 +1108,18 @@ let scalePopupMode = 'natural';
 let nodeDetailState = { mode: 'natural', id: null };
 const scalePopupHiddenNodes = new Set();
 const scaleNetworkViewState = { scale: 1.12, x: 0, y: 0 };
+const scalePopupNodeDragState = {
+  active: false,
+  element: null,
+  node: null,
+  dragStartX: 0,
+  dragStartY: 0,
+  nodeStartX: 0,
+  nodeStartY: 0,
+  velocityX: 0,
+  velocityY: 0,
+  animationId: null
+};
 let scaleNetworkReturnRafId = null;
 const scaleNetworkFlowState = {
   running: true,
@@ -1394,6 +1406,109 @@ function setupScaleNetworkViewport() {
   canvas.addEventListener('pointerup', stopDragging);
   canvas.addEventListener('pointercancel', stopDragging);
   canvas.addEventListener('lostpointercapture', stopDragging);
+
+  // Handlers globales para drag de nodos individuales
+  document.addEventListener('pointermove', event => {
+    if (!scalePopupNodeDragState.active) return;
+    const { element, nodeStartX, nodeStartY, dragStartX, dragStartY } = scalePopupNodeDragState;
+    if (!element) return;
+
+    const deltaX = event.clientX - dragStartX;
+    const deltaY = event.clientY - dragStartY;
+
+    const newX = nodeStartX + deltaX * 0.8;
+    const newY = nodeStartY + deltaY * 0.8;
+
+    const circle = element.querySelector('circle');
+    if (circle) {
+      circle.setAttribute('cx', newX.toFixed(1));
+      circle.setAttribute('cy', newY.toFixed(1));
+    }
+
+    const text = element.querySelector('text');
+    if (text) text.setAttribute('x', newX.toFixed(1));
+
+    const icon = element.querySelector('.popup-node-icon');
+    if (icon && circle) {
+      const iconRadius = parseFloat(circle.getAttribute('r')) || 20;
+      const iconY = newY - iconRadius * 0.48 - 12;
+      icon.setAttribute('y', iconY.toFixed(1));
+      icon.setAttribute('x', (newX - 12).toFixed(1));
+    }
+
+    scalePopupNodeDragState.velocityX = deltaX * 0.03;
+    scalePopupNodeDragState.velocityY = deltaY * 0.03;
+
+    event.preventDefault();
+    event.stopPropagation();
+  });
+
+  document.addEventListener('pointerup', event => {
+    if (!scalePopupNodeDragState.active) return;
+    const { element, nodeStartX, nodeStartY, velocityX, velocityY, animationId } = scalePopupNodeDragState;
+    if (!element) return;
+
+    scalePopupNodeDragState.active = false;
+    element.classList.remove('dragging-node');
+
+    const SPRING_CONST = 0.045;
+    const DAMPING = 0.82;
+    const circle = element.querySelector('circle');
+    if (!circle) return;
+
+    let currentVelX = velocityX;
+    let currentVelY = velocityY;
+
+    const animatePhysics = () => {
+      let currentX = parseFloat(circle.getAttribute('cx')) || nodeStartX;
+      let currentY = parseFloat(circle.getAttribute('cy')) || nodeStartY;
+
+      const forceX = (nodeStartX - currentX) * SPRING_CONST;
+      const forceY = (nodeStartY - currentY) * SPRING_CONST;
+
+      currentVelX = (currentVelX + forceX) * DAMPING;
+      currentVelY = (currentVelY + forceY) * DAMPING;
+
+      currentX += currentVelX;
+      currentY += currentVelY;
+
+      const dist = Math.hypot(currentX - nodeStartX, currentY - nodeStartY);
+      const velMag = Math.hypot(currentVelX, currentVelY);
+
+      circle.setAttribute('cx', currentX.toFixed(1));
+      circle.setAttribute('cy', currentY.toFixed(1));
+
+      const text = element.querySelector('text');
+      if (text) text.setAttribute('x', currentX.toFixed(1));
+
+      const icon = element.querySelector('.popup-node-icon');
+      if (icon) {
+        const iconRadius = parseFloat(circle.getAttribute('r')) || 20;
+        const iconY = currentY - iconRadius * 0.48 - 12;
+        icon.setAttribute('y', iconY.toFixed(1));
+        icon.setAttribute('x', (currentX - 12).toFixed(1));
+      }
+
+      if (dist > 0.1 || velMag > 0.1) {
+        scalePopupNodeDragState.animationId = requestAnimationFrame(animatePhysics);
+      } else {
+        circle.setAttribute('cx', nodeStartX.toFixed(1));
+        circle.setAttribute('cy', nodeStartY.toFixed(1));
+        if (text) text.setAttribute('x', nodeStartX.toFixed(1));
+        if (icon) {
+          const iconRadius = parseFloat(circle.getAttribute('r')) || 20;
+          const iconY = nodeStartY - iconRadius * 0.48 - 12;
+          icon.setAttribute('y', iconY.toFixed(1));
+          icon.setAttribute('x', (nodeStartX - 12).toFixed(1));
+        }
+      }
+    };
+
+    if (animationId) cancelAnimationFrame(animationId);
+    if (Math.hypot(velocityX, velocityY) > 0.1) {
+      scalePopupNodeDragState.animationId = requestAnimationFrame(animatePhysics);
+    }
+  });
 }
 
 function splitPopupLabel(label, radius = 20) {
@@ -1899,6 +2014,36 @@ function renderScaleNetworkPopup(mode) {
         event.preventDefault();
         selectNode();
       }
+    });
+
+    // Drag & drop con spring physics
+    nodeElement.addEventListener('pointerdown', event => {
+      if (event.pointerType !== 'mouse' && event.pointerType !== 'touch' && event.pointerType !== 'pen') return;
+      if (event.button && event.button !== 0) return;
+
+      // Estado global de arrastre
+      scalePopupNodeDragState.active = true;
+      scalePopupNodeDragState.element = nodeElement;
+      scalePopupNodeDragState.node = node;
+      scalePopupNodeDragState.dragStartX = event.clientX;
+      scalePopupNodeDragState.dragStartY = event.clientY;
+      scalePopupNodeDragState.velocityX = 0;
+      scalePopupNodeDragState.velocityY = 0;
+
+      const circle = nodeElement.querySelector('circle');
+      if (circle) {
+        scalePopupNodeDragState.nodeStartX = parseFloat(circle.getAttribute('cx')) || 0;
+        scalePopupNodeDragState.nodeStartY = parseFloat(circle.getAttribute('cy')) || 0;
+      }
+
+      if (scalePopupNodeDragState.animationId) {
+        cancelAnimationFrame(scalePopupNodeDragState.animationId);
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+      selectNode();
+      nodeElement.classList.add('dragging-node');
     });
   });
 }

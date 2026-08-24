@@ -247,3 +247,12 @@ a { color:inherit; text-decoration:none; }
 @media (max-width:1200px) { .workspace { grid-template-columns:260px minmax(400px,1fr) 272px; } .control-panel { padding-left:19px; padding-right:17px; } .insight-panel { padding-left:16px; padding-right:16px; } .control-panel h1 { font-size:35px; } }
 @media (max-width:920px) { body { overflow:auto; } .app-shell { min-height:100vh; grid-template-columns:64px 1fr; grid-template-rows:47px auto; } .app-shell > .sidebar.sidebar-icons-only { grid-column:1; grid-row:1 / -1; } .workspace { grid-column:2; grid-template-columns:1fr; grid-template-rows:auto minmax(470px,65vh) auto; overflow:visible; } .control-panel, .insight-panel { overflow:visible; border:0; } .control-panel { padding:26px 22px; order:1; } .map-panel { order:2; min-height:520px; } .insight-panel { order:3; padding:22px; } .app-shell > .sidebar .icon-nav-item { width:40px; } .topbar { padding:0 12px; } .topbar-status { display:none; } .intro { max-width:520px; } .scale-grid { max-width:420px; } .panel-block { max-width:520px; } .metrics-grid { max-width:520px; } }
 @media (max-width:560px) { .road-level { width:100%; padding:3px 0 0; border-left:0; border-top:1px solid rgba(57,75,75,.24); } .app-shell { grid-template-columns:64px 1fr; grid-template-rows:55px auto; } .app-shell > .sidebar.sidebar-icons-only { grid-column:1; grid-row:1 / -1; } .topbar { grid-column:2; grid-row:1; } .workspace { grid-column:2; grid-row:2; } .topbar-title { font-size:12px; } .control-panel h1 { font-size:38px; } .map-panel { min-height:430px; } .map-headline h2 { font-size:17px; } .map-legend { left:9px; bottom:20px; gap:7px; flex-wrap:wrap; max-width:210px; } .map-attribution-note { display:none; } }
+
+/* Drag & drop con physics para nodos */
+.popup-node { cursor: grab; transition: opacity 0.15s ease; }
+.popup-node:hover { opacity: 1.1; }
+.popup-node:active { cursor: grabbing; }
+.popup-node.dragging-node { opacity: 1.2; filter: drop-shadow(0 0 12px rgba(70, 214, 208, 0.4)); }
+.popup-node circle { transition: none; }
+.popup-node text { transition: none; }
+.popup-node .popup-node-icon { transition: none; }
