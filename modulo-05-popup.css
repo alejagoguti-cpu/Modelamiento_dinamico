@@ -896,3 +896,39 @@ body.wetland-modal-open { overflow: hidden; }
 }
 
 body.node-detail-open { overflow: hidden; }
+
+
+/* Compatibilidad web de escritorio: evita que estilos heredados o caché visual oculten el pop-up. */
+.scale-network-modal {
+  z-index: 9999;
+}
+
+.scale-network-modal.open {
+  display: grid !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+.scale-network-modal.open .scale-network-dialog {
+  display: grid !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  transform: translateY(0) scale(1) !important;
+}
+
+.scale-network-dialog {
+  max-width: calc(100vw - 32px);
+  max-height: calc(100vh - 32px);
+}
+
+.scale-network-stats {
+  flex: 0 0 100%;
+}
+
+@media (min-width: 701px) {
+  .scale-network-dialog {
+    width: min(1120px, calc(100vw - 32px));
+    height: min(720px, calc(100vh - 32px));
+  }
+}
