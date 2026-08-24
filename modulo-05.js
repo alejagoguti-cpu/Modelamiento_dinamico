@@ -41,6 +41,7 @@
     activeQueryKey: "",
     overpassController: null,
     viewportDebounceTimer: null,
+    uplFocusTransitionToken: 0,
     proceduralMarkers: [],
     favorite: false,
     apiLayers: {
@@ -504,6 +505,89 @@
     state.map.addLayer({ id: "route-line", type: "line", source: "route", paint: { "line-color": "#24bdb3", "line-width": 4, "line-opacity": .95 } });
   }
 
+  let uplFocusTransitionFrame = null;
+  let uplFocusTransitionTimer = null;
+  let uplFocusExitTimer = null;
+  let uplFocusExitMarkers = [];
+
+  function setUplFocusLayerOpacity(fillOpacity, lineOpacity) {
+    if (!state.map) return;
+    try {
+      if (state.map.getLayer("upl-focus-fill")) state.map.setPaintProperty("upl-focus-fill", "fill-opacity", fillOpacity);
+      if (state.map.getLayer("upl-focus-line")) state.map.setPaintProperty("upl-focus-line", "line-opacity", lineOpacity);
+    } catch (error) {
+      console.debug("No se pudo actualizar la opacidad del foco UPL", error);
+    }
+  }
+
+  function removeUplFocusExitMarkers() {
+    if (uplFocusExitTimer !== null) {
+      window.clearTimeout(uplFocusExitTimer);
+      uplFocusExitTimer = null;
+    }
+    uplFocusExitMarkers.forEach((marker) => marker.remove());
+    uplFocusExitMarkers = [];
+  }
+
+  function cancelUplFocusTransition() {
+    state.uplFocusTransitionToken += 1;
+    if (uplFocusTransitionFrame !== null) {
+      window.cancelAnimationFrame(uplFocusTransitionFrame);
+      uplFocusTransitionFrame = null;
+    }
+    if (uplFocusTransitionTimer !== null) {
+      window.clearTimeout(uplFocusTransitionTimer);
+      uplFocusTransitionTimer = null;
+    }
+    removeUplFocusExitMarkers();
+  }
+
+  function animateUplFocusLayerOpacity(targetFill, targetLine, duration, token) {
+    if (uplFocusTransitionFrame !== null) window.cancelAnimationFrame(uplFocusTransitionFrame);
+    const start = performance.now();
+    const startFill = 0;
+    const startLine = 0;
+    const tick = (now) => {
+      if (token !== state.uplFocusTransitionToken) return;
+      const progress = Math.max(0, Math.min(1, (now - start) / duration));
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setUplFocusLayerOpacity(startFill + (targetFill - startFill) * eased, startLine + (targetLine - startLine) * eased);
+      if (progress < 1) uplFocusTransitionFrame = window.requestAnimationFrame(tick);
+      else uplFocusTransitionFrame = null;
+    };
+    uplFocusTransitionFrame = window.requestAnimationFrame(tick);
+  }
+
+  function fadeOutUplMarkers(duration) {
+    removeUplFocusExitMarkers();
+    const markers = [state.uplMarker, state.uplLabelMarker].filter(Boolean);
+    state.uplMarker = null;
+    state.uplLabelMarker = null;
+    uplFocusExitMarkers = markers;
+    markers.forEach((marker) => marker.getElement?.().classList.add("is-deselecting"));
+    uplFocusExitTimer = window.setTimeout(() => {
+      uplFocusExitMarkers.forEach((marker) => marker.remove());
+      uplFocusExitMarkers = [];
+      uplFocusExitTimer = null;
+    }, duration);
+  }
+
+  function transitionUplFocusVisual(targeted = true) {
+    if (!state.map || !state.selectedUpl) return;
+    cancelUplFocusTransition();
+    const token = state.uplFocusTransitionToken;
+    fadeOutUplMarkers(180);
+    setUplFocusLayerOpacity(0, 0);
+    uplFocusTransitionTimer = window.setTimeout(() => {
+      if (token !== state.uplFocusTransitionToken) return;
+      updateFocusLayer();
+      renderUplMarkers(targeted);
+      setUplFocusLayerOpacity(0, 0);
+      animateUplFocusLayerOpacity(.10, .90, 360, token);
+      uplFocusTransitionTimer = null;
+    }, 180);
+  }
+
   function updateFocusLayer() {
     if (!state.map || !state.map.getSource("upl-focus") || !state.selectedUpl) return;
     const [[west, south], [east, north]] = makeBounds(state.selectedUpl, state.currentView);
@@ -532,8 +616,13 @@
 
   function focusSelectedUpl(animate = true) {
     if (!state.map || !state.selectedUpl) return;
-    updateFocusLayer();
-    renderUplMarkers(animate);
+    if (animate) transitionUplFocusVisual(true);
+    else {
+      cancelUplFocusTransition();
+      updateFocusLayer();
+      renderUplMarkers(false);
+      setUplFocusLayerOpacity(.10, .90);
+    }
     const bounds = makeBounds(state.selectedUpl, state.currentView);
     const maxZoom = state.currentView === "barrio" ? 15.2 : 12.4;
     const padding = state.currentView === "barrio" ? 44 : 38;
@@ -565,6 +654,7 @@
     if (view === "region") {
       setText("#mapTitle", "Región Metropolitana");
       setText("#mapSubtitle", "20 municipios conectados · escala macro");
+      transitionUplFocusVisual(false);
       if (state.map) state.map.fitBounds(makeBounds(state.selectedUpl, "region"), { padding: 38, duration: 700, maxZoom: 11.2 });
       showToast("Vista macro: el mapa se abre a la región; la UPL permanece como referencia.");
     } else {
@@ -572,7 +662,6 @@
       focusSelectedUpl(true);
       showToast("Vista barrio vital: lectura de proximidad alrededor de la UPL seleccionada.");
     }
-    updateFocusLayer();
   }
 
   function clearPlaceMarkers() {
