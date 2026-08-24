@@ -1089,3 +1089,37 @@ body.node-detail-open { overflow: hidden; }
     animation: none !important;
   }
 }
+
+
+/* Acceso directo al plano: alternativa explícita al doble clic de HUMEDALES. */
+.scale-network-wetland-btn {
+  min-height: 26px;
+  padding: 5px 10px;
+  border: 1px solid rgba(70,214,208,.62);
+  border-radius: 6px;
+  color: #e8ffff;
+  background: rgba(70,214,208,.15);
+  font: 700 9px/1 Inter, sans-serif;
+  cursor: pointer;
+  transition: border-color .16s ease, background .16s ease, color .16s ease, box-shadow .16s ease;
+}
+
+.scale-network-wetland-btn:hover,
+.scale-network-wetland-btn:focus-visible {
+  border-color: var(--popup-teal);
+  background: rgba(70,214,208,.28);
+  color: #fff;
+  box-shadow: 0 0 12px rgba(70,214,208,.2);
+  outline: none;
+}
+
+.scale-network-wetland-btn[hidden] {
+  display: none !important;
+}
+
+@media (max-width: 700px) {
+  .scale-network-wetland-btn {
+    width: 100%;
+    order: 3;
+  }
+}

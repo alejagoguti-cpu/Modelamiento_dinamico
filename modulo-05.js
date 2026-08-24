@@ -1764,6 +1764,12 @@ function renderScaleNetworkPopup(mode) {
   const definition = scaleNetworks[mode];
   if (!canvas || !definition) return;
   const nodes = popupNetworkPositions(definition);
+  const wetlandButton = document.getElementById('scaleNetworkWetlandImage');
+  if (wetlandButton) {
+    const available = mode === 'natural' && !scalePopupHiddenNodes.has('humedales');
+    wetlandButton.hidden = !available;
+    wetlandButton.disabled = !available;
+  }
   const { activeEdges, activeDegrees, visualHubIds, visualDegrees, visualMaxDegree } = getActivePopupTopology(definition);
   const edgeMarkup = activeEdges.map(([fromId, toId, type]) => {
     const from = nodes[fromId];
@@ -2003,12 +2009,18 @@ function openScaleNetworkModal(mode) {
   const modal = document.getElementById('scaleNetworkModal');
   const definition = scaleNetworks[mode];
   if (!modal || !definition) return;
+  clearScaleNetworkClickCue();
   scalePopupMode = mode;
   scaleNetworkFlowState.running = true;
   scalePopupHiddenNodes.clear();
   scalePopupSelectedNode = null;
   document.getElementById('scaleNetworkTitle').textContent = definition.title;
   document.getElementById('scaleNetworkDescription').textContent = scaleNetworkDescriptions[mode];
+  const wetlandButton = document.getElementById('scaleNetworkWetlandImage');
+  if (wetlandButton) {
+    wetlandButton.hidden = mode !== 'natural';
+    wetlandButton.disabled = mode !== 'natural';
+  }
   renderScaleNetworkPopup(mode);
   modal.classList.add('open');
   modal.setAttribute('aria-hidden', 'false');
@@ -2019,6 +2031,7 @@ function openScaleNetworkModal(mode) {
 function closeScaleNetworkModal() {
   const modal = document.getElementById('scaleNetworkModal');
   if (!modal) return;
+  clearScaleNetworkClickCue();
   cancelScaleNetworkFlowLoop();
   cancelScaleNetworkAmbientLoop();
   modal.classList.remove('open');
@@ -2026,7 +2039,23 @@ function closeScaleNetworkModal() {
   document.body.classList.remove('scale-modal-open');
 }
 
+document.getElementById('scaleNetworkWetlandImage')?.addEventListener('click', event => {
+  event.preventDefault();
+  event.stopPropagation();
+  const definition = scaleNetworks.natural;
+  const wetland = definition?.nodes.find(node => node.id === 'humedales');
+  if (!wetland || scalePopupMode !== 'natural' || scalePopupHiddenNodes.has(wetland.id)) return;
+  clearScaleNetworkClickCue();
+  document.querySelectorAll('#scaleNetworkCanvas .popup-node').forEach(item => item.classList.toggle('selected', item.dataset.nodeId === wetland.id));
+  scalePopupSelectedNode = wetland;
+  updateScaleNetworkStats(definition);
+  const description = document.getElementById('scaleNetworkDescription');
+  if (description) description.textContent = `${wetland.label} · ${definition.title}`;
+  openWetlandImageModal();
+});
+
 document.getElementById('scaleNetworkRestore')?.addEventListener('click', () => {
+  clearScaleNetworkClickCue();
   scalePopupHiddenNodes.clear();
   scalePopupSelectedNode = null;
   renderScaleNetworkPopup(scalePopupMode);
