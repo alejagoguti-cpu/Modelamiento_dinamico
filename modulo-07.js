@@ -1645,7 +1645,7 @@
         waterBubbleData.forEach(({ label, coords }) => { const markerEl = document.createElement("div"); markerEl.className = "water-map-bubble"; markerEl.style.display = "none"; markerEl.innerHTML = `<span class="water-map-bubble-core"><i class="fa-solid fa-droplet"></i></span><span class="water-map-bubble-label">${label}</span>`; const marker = new maplibregl.Marker({ element: markerEl, anchor: "center" }).setLngLat(coords).addTo(map); waterMarkers.push(marker); });
         const waterLayer = partOneMapLayers.find((layer) => layer.id === "hidrico"); if (waterLayer) waterLayer.markers = waterMarkers; map.__waterMarkers = waterMarkers;
         initPartOneControls(map, partOneMapLayers);
-        const burroMarker = document.createElement("div"); burroMarker.className = "burro-focus-label"; burroMarker.innerHTML = "<b>HUMEDAL EL BURRO</b><span>Reserva · agua · borde urbano</span>"; new maplibregl.Marker({ element: burroMarker, anchor: "bottom" }).setLngLat([-74.159, 4.64]).addTo(map); setStatus("BOGOTÁ · LECTURA GENERAL", true); window.setTimeout(() => runCartographyOpening(map), 850); });
+        const burroMarker = document.createElement("div"); burroMarker.className = "burro-focus-label"; burroMarker.innerHTML = "<b>HUMEDAL EL BURRO</b><span>Reserva · agua · borde urbano</span>"; new maplibregl.Marker({ element: burroMarker, anchor: "bottom" }).setLngLat([-74.159, 4.64]).addTo(map); setStatus("BOGOTÁ · LECTURA GENERAL", true); setupCartographyEntrance(map); });
       const loadOsm = async () => { const query = `[out:json][timeout:20];way[highway~"^(motorway|trunk|primary|secondary|tertiary)$"](around:4200,4.64,-74.09);out geom;`; setStatus("CARGANDO CALLES OSM…"); const controller = new AbortController(); const timer = window.setTimeout(() => controller.abort(), 12000); try { let response; for (const endpoint of ["https://overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter", "https://overpass.private.coffee/api/interpreter"]) { try { response = await fetch(`${endpoint}?data=${encodeURIComponent(query)}`, { signal: controller.signal, headers: { Accept: "application/json" } }); if (response.ok) break; } catch (error) { /* prueba el siguiente endpoint público */ } } if (!response?.ok) throw new Error("Overpass sin respuesta"); const data = await response.json(); const features = data.elements.filter((x) => x.geometry?.length > 1).map((x) => ({ type: "Feature", properties: { highway: x.tags?.highway || "road" }, geometry: { type: "LineString", coordinates: x.geometry.map((p) => [p.lon, p.lat]) } })); const geo = { type: "FeatureCollection", features }; if (map.getSource("osm-streets")) map.getSource("osm-streets").setData(geo); else { map.addSource("osm-streets", { type: "geojson", data: geo }); map.addLayer({ id: "osm-streets", type: "line", source: "osm-streets", paint: { "line-color": "#e89a6c", "line-width": ["interpolate", ["linear"], ["zoom"], 10, 1, 14, 3], "line-opacity": .8 } }); } setStatus(`${features.length} CALLES OSM CARGADAS`, true); } catch (error) { setStatus("MAPA OSM DISPONIBLE · CALLES EN RESPALDO"); toast("Overpass no respondió; el plano monocromático sigue disponible"); } finally { window.clearTimeout(timer); } };
       const loadRoute = async () => { const coords = [[-74.13,4.66],[-74.09,4.64],[-74.05,4.61],[-74.08,4.57]]; setStatus("CALCULANDO RUTA OSRM…"); try { const response = await fetch(`https://router.project-osrm.org/route/v1/driving/${coords.map((c) => c.join(",")).join(";")}?overview=full&geometries=geojson`); if (!response.ok) throw new Error("OSRM " + response.status); const data = await response.json(); const route = data.routes?.[0]?.geometry; if (!route) throw new Error("Sin ruta"); if (map.getSource("osrm-route")) map.getSource("osrm-route").setData(route); else { map.addSource("osrm-route", { type: "geojson", data: route }); map.addLayer({ id: "osrm-route", type: "line", source: "osrm-route", paint: { "line-color": "#f76fb0", "line-width": 4, "line-opacity": .95 } }); } setStatus("RUTA OSRM ACTIVA", true); } catch (error) { setStatus("NO SE PUDO CALCULAR LA RUTA"); toast("OSRM no respondió; conserva los flujos procedurales"); } };
       document.getElementById("loadOsmStreets")?.addEventListener("click", loadOsm);
@@ -1762,28 +1762,65 @@
     };
     const announceCartography = (text, live = false) => { const node = document.getElementById("mapDataStatus"); if (node) node.textContent = text; node?.parentElement?.classList.toggle("live", live); };
     const showWaterMarkers = (map, stagger = 90) => { (map?.__waterMarkers || []).forEach((marker, index) => { const element = marker.getElement(); element.style.display = "grid"; window.setTimeout(() => element.classList.add("is-visible"), index * stagger); }); };
+    const createSubsystemFormation = (map) => {
+      const shell = map?.getContainer()?.parentElement;
+      if (!shell) return;
+      shell.querySelector(".subsystem-formation-overlay")?.remove();
+      const overlay = document.createElement("div");
+      overlay.className = "subsystem-formation-overlay";
+      overlay.setAttribute("aria-hidden", "true");
+      overlay.innerHTML = `<div class="formation-mass"><span class="formation-core"></span>${Array.from({ length: 6 }, (_, index) => `<span class="formation-cell" style="--cell-index:${index}"></span>`).join("")}</div>`;
+      shell.appendChild(overlay);
+      requestAnimationFrame(() => overlay.classList.add("formation-visible"));
+      window.setTimeout(() => overlay.classList.add("formation-condensing"), 650);
+      window.setTimeout(() => overlay.classList.add("formation-separating"), 1400);
+      window.setTimeout(() => { overlay.remove(); drawSubsystems({ hidden: true }); revealSubsystems(160); }, 2750);
+    };
     const runCartographyOpening = (map) => {
       if (!map || map.__openingPlayed) return;
       map.__openingPlayed = true;
       const reduced = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
       if (reduced) {
         map.jumpTo({ center: [-74.159, 4.64], zoom: 13.65 });
-        announceCartography("HUMEDAL EL BURRO · SUBSISTEMAS ACTIVOS", true);
+        announceCartography("HUMEDAL EL BURRO · AGUA Y SUBSISTEMAS", true);
         showWaterMarkers(map, 0);
-        revealSubsystems(0);
+        createSubsystemFormation(map);
         return;
       }
       announceCartography("BOGOTÁ · LECTURA GENERAL", true);
+      map.stop();
       map.jumpTo({ center: [-74.09, 4.64], zoom: 10.55 });
       window.setTimeout(() => {
-        announceCartography("APROXIMACIÓN · HUMEDAL EL BURRO", true);
-        map.flyTo({ center: [-74.159, 4.64], zoom: 13.65, duration: 3600, essential: true });
-      }, 700);
+        announceCartography("KENNEDY · PERÍMETRO ADMINISTRATIVO", true);
+        map.flyTo({ center: [-74.151, 4.625], zoom: 12.05, duration: 1800, essential: true });
+      }, 450);
       window.setTimeout(() => {
-        announceCartography("HUMEDAL EL BURRO · AGUA Y SUBSISTEMAS ACTIVOS", true);
+        announceCartography("APROXIMACIÓN · HUMEDAL EL BURRO", true);
+        map.flyTo({ center: [-74.159, 4.64], zoom: 13.65, duration: 2200, essential: true });
+      }, 2250);
+      window.setTimeout(() => {
+        announceCartography("HUMEDAL EL BURRO · EL AGUA SE ACTIVA", true);
         showWaterMarkers(map, 110);
-        revealSubsystems(170);
-      }, 4450);
+        createSubsystemFormation(map);
+      }, 4800);
+    };
+    const setupCartographyEntrance = (map) => {
+      const section = document.querySelector(".cartography-section");
+      if (!map || !section) return runCartographyOpening(map);
+      const maybePlay = () => {
+        if ((window.scrollY || window.pageYOffset || 0) < 90 || map.__openingPlayed) return;
+        const rect = section.getBoundingClientRect();
+        if (rect.top < window.innerHeight * .78 && rect.bottom > window.innerHeight * .18) {
+          map.__openingScrollHandler && window.removeEventListener("scroll", map.__openingScrollHandler);
+          map.__openingObserver?.disconnect();
+          runCartographyOpening(map);
+        }
+      };
+      const observer = "IntersectionObserver" in window ? new IntersectionObserver(maybePlay, { threshold: [.28, .55], rootMargin: "-6% 0px -12%" }) : null;
+      map.__openingObserver = observer;
+      map.__openingScrollHandler = maybePlay;
+      observer?.observe(section);
+      window.addEventListener("scroll", maybePlay, { passive: true });
     };
     drawSubsystems({ hidden: true });
     initRealCartography();
