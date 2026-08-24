@@ -639,11 +639,17 @@ body.wetland-modal-open { overflow: hidden; }
 }
 .wetland-image-body img {
   display: block;
+  width: auto;
   max-width: 100%;
+  height: auto;
   max-height: min(540px, 62vh);
   object-fit: contain;
   border: 1px solid rgba(70,214,208,.22);
   border-radius: 8px;
+}
+.wetland-image-body img[hidden],
+.wetland-image-empty[hidden] {
+  display: none !important;
 }
 .wetland-image-empty {
   max-width: 420px;

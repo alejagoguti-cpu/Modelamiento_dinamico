@@ -1810,8 +1810,14 @@ async function openWetlandImageModal() {
   const image = document.getElementById('wetlandImage');
   const empty = document.getElementById('wetlandImageEmpty');
   const hasPreview = Boolean(image?.getAttribute('src'));
-  if (image) image.hidden = !hasPreview;
-  if (empty) empty.hidden = hasPreview;
+  if (image) {
+    image.hidden = !hasPreview;
+    image.style.display = hasPreview ? 'block' : 'none';
+  }
+  if (empty) {
+    empty.hidden = hasPreview;
+    empty.style.display = hasPreview ? 'none' : 'grid';
+  }
   modal.classList.add('open');
   modal.setAttribute('aria-hidden', 'false');
   document.body.classList.add('wetland-modal-open');
@@ -1819,6 +1825,12 @@ async function openWetlandImageModal() {
   const fullImage = await preloadWetlandImage();
   if (fullImage && image && image.dataset.fullSrc) {
     image.src = image.dataset.fullSrc;
+    image.hidden = false;
+    image.style.display = 'block';
+    if (empty) {
+      empty.hidden = true;
+      empty.style.display = 'none';
+    }
     image.dataset.fullReady = 'true';
   }
 }
