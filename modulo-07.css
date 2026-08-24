@@ -4975,3 +4975,8 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 .subsystem-panel-close { flex: 0 0 auto; display: grid; place-items: center; width: 28px; height: 28px; margin: -4px -5px 0 0; border: 1px solid rgba(255,255,255,.35); border-radius: 50%; background: rgba(255,255,255,.08); color: #fff; cursor: pointer; transition: background .18s ease, border-color .18s ease, transform .18s ease; }
 .subsystem-panel-close:hover, .subsystem-panel-close:focus-visible { border-color: var(--bubble-color); background: color-mix(in srgb, var(--bubble-color) 30%, transparent); color: #fff; transform: scale(1.08); outline: none; }
 .subsystem-purpose-panel .subsystem-panel-heading > strong { color: var(--bubble-color); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
+
+/* Burbujas temáticas del subsistema hídrico */
+.water-map-bubble { display: grid; grid-template-columns: 24px auto; align-items: center; gap: 7px; pointer-events: none; transform: translate(-50%, -50%); filter: drop-shadow(0 2px 5px rgba(0,0,0,.55)); }
+.water-map-bubble-core { display: grid; place-items: center; width: 24px; height: 24px; border: 1px solid rgba(187,230,235,.82); border-radius: 50%; background: rgba(65,132,150,.9); box-shadow: 0 0 0 4px rgba(93,158,178,.16), 0 0 10px rgba(93,158,178,.28); color: #d9f2f3; font-size: 11px; }
+.water-map-bubble-label { white-space: nowrap; padding: 4px 7px; border: 1px solid rgba(146,203,211,.45); border-radius: 999px; background: rgba(5,18,21,.9); color: #c7e8ea; font-size: 10px; line-height: 1; letter-spacing: .02em; }
