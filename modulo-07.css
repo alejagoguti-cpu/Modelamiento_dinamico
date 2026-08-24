@@ -5160,3 +5160,32 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 .subsystem-bubbles.network-active .map-network-node { pointer-events: auto !important; z-index: 4; touch-action: manipulation; }
 .subsystem-bubbles.network-active .map-network-node-icon,
 .subsystem-bubbles.network-active .map-network-node strong { pointer-events: none; }
+
+/* Composición orgánica tipo racimo, basada en la referencia visual */
+.map-network-stage { background: radial-gradient(circle at 50% 46%, rgba(118,255,240,.07), transparent 42%), rgba(2,8,10,.08) !important; }
+.map-network-stage::after { inset: 15% 23%; border-color: rgba(190,232,226,.1); filter: blur(.2px); }
+.map-network-stage > svg line { stroke-width: .28 !important; stroke-opacity: .38 !important; stroke-dasharray: 1.2 3.6 !important; filter: drop-shadow(0 0 2px var(--edge-color)); }
+.map-network-node { width: 112px !important; height: 112px !important; min-height: 112px !important; padding: 12px 10px !important; overflow: visible !important; border: 1px solid color-mix(in srgb, var(--node-color) 56%, #dcefea) !important; background: color-mix(in srgb, var(--node-color) 17%, rgba(11,25,25,.57)) !important; box-shadow: 0 0 0 13px color-mix(in srgb, var(--node-color) 10%, transparent), 0 0 22px color-mix(in srgb, var(--node-color) 28%, transparent), inset 0 0 22px color-mix(in srgb, var(--node-color) 11%, transparent) !important; backdrop-filter: blur(2px); }
+.map-network-node::before { content: ""; position: absolute; inset: -13px; z-index: -1; border-radius: 50%; background: color-mix(in srgb, var(--node-color) 9%, transparent); border: 1px solid color-mix(in srgb, var(--node-color) 20%, transparent); pointer-events: none; }
+.map-network-node::after { content: ""; position: absolute; inset: 12px; z-index: -1; border-radius: 50%; background: color-mix(in srgb, var(--node-color) 13%, transparent); opacity: .8; pointer-events: none; }
+.map-network-node:hover, .map-network-node.selected { transform: translate(-50%,-50%) scale(1.08) !important; box-shadow: 0 0 0 15px color-mix(in srgb, var(--node-color) 12%, transparent), 0 0 30px color-mix(in srgb, var(--node-color) 44%, transparent), inset 0 0 25px color-mix(in srgb, var(--node-color) 18%, transparent) !important; }
+.map-network-node-icon { position: relative; z-index: 1; font-size: 18px !important; color: color-mix(in srgb, var(--node-color) 78%, #f5fffb) !important; }
+.map-network-node strong { position: relative; z-index: 1; font-size: 8px !important; line-height: 1.08 !important; }
+.map-submodel-node { width: 104px !important; height: 104px !important; min-height: 104px !important; }
+@media (max-width: 760px) { .map-network-node { width: 76px !important; height: 76px !important; min-height: 76px !important; padding: 8px 6px !important; } .map-submodel-node { width: 72px !important; height: 72px !important; min-height: 72px !important; } .map-network-node::before { inset: -9px; } .map-network-node::after { inset: 8px; } .map-network-node-icon { font-size: 13px !important; } .map-network-node strong { font-size: 6.5px !important; } }
+
+/* Movimiento orgánico de las bolas, inspirado en la referencia de formas flotantes */
+.map-network-node { animation: network-node-float 7.5s ease-in-out infinite !important; will-change: transform; }
+.map-network-node:nth-child(3n + 1) { animation-duration: 8.6s !important; animation-delay: -1.8s !important; }
+.map-network-node:nth-child(3n + 2) { animation-duration: 6.9s !important; animation-delay: -3.2s !important; }
+.map-network-node:nth-child(4n) { animation-duration: 9.4s !important; animation-delay: -5.4s !important; }
+.map-network-node::before { animation: network-halo-float 6.8s ease-in-out infinite; }
+.map-network-node:nth-child(2n)::before { animation-duration: 8.2s; animation-delay: -2.7s; }
+.map-network-node-icon { animation: network-icon-drift 5.4s ease-in-out infinite; }
+.map-network-stage > svg line { animation: map-network-flow 3.8s linear infinite, network-line-breathe 4.8s ease-in-out infinite alternate !important; }
+@keyframes network-node-float { 0%,100% { transform: translate(-50%,-50%) translate3d(0,0,0) scale(1); } 25% { transform: translate(-50%,-50%) translate3d(7px,-5px,0) scale(1.018); } 52% { transform: translate(-50%,-50%) translate3d(-4px,7px,0) scale(.986); } 78% { transform: translate(-50%,-50%) translate3d(-8px,-2px,0) scale(1.012); } }
+@keyframes network-halo-float { 0%,100% { transform: scale(.94); opacity: .68; } 50% { transform: scale(1.13); opacity: .98; } }
+@keyframes network-icon-drift { 0%,100% { transform: translateY(0) rotate(0deg); } 45% { transform: translateY(-2px) rotate(-3deg); } 72% { transform: translateY(1px) rotate(2deg); } }
+@keyframes network-line-breathe { from { opacity: .27; } to { opacity: .52; } }
+.map-network-node:hover, .map-network-node.selected { animation-play-state: paused !important; }
+@media (prefers-reduced-motion: reduce) { .map-network-node, .map-network-node::before, .map-network-node-icon, .map-network-stage > svg line { animation: none !important; } }
