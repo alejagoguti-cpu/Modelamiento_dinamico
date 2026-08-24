@@ -1635,7 +1635,6 @@ function renderScaleNetworkPopup(mode) {
       <marker id="arrow-indirecta" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#e89a6c" /></marker>
     </defs>
     <g class="popup-network-scene">
-      <g class="popup-bridge-label" aria-hidden="true"><text x="54" y="530">PUENTES INFERIORES</text></g>
       <g class="popup-edges">${edgeMarkup}</g>
       <g class="popup-flow-layer" aria-hidden="true"></g>
       <g class="popup-nodes">${nodeMarkup}</g>

@@ -11,7 +11,7 @@
   <link href="https://unpkg.com/maplibre-gl@6.5.0/dist/maplibre-gl.css" rel="stylesheet">
   <link rel="stylesheet" href="modulo-05.css?v=minimal-v4">
   <link rel="stylesheet" href="site-theme.css?v=minimal-v4">
-  <link rel="stylesheet" href="modulo-05-popup.css?v=drag-v3">
+  <link rel="stylesheet" href="modulo-05-popup.css?v=drag-v4">
   <link rel="preload" as="image" href="assets/planosnico-preview.webp" type="image/webp" fetchpriority="high">
 </head>
 <body>
@@ -101,7 +101,6 @@
         </section>
         <span><i class="scale-legend-line direct"></i> Relación directa</span>
         <span><i class="scale-legend-line indirect"></i> Relación indirecta</span>
-        <span><i class="scale-legend-line bridge"></i> Puente inferior</span>
         <div class="scale-network-flow-controls" role="group" aria-label="Simulación de flujo de agua">
           <button id="scaleNetworkFlowToggle" class="scale-network-flow-btn" type="button" aria-pressed="true">Pausar flujo</button>
           <button id="scaleNetworkFlowReset" class="scale-network-flow-btn secondary" type="button">Reiniciar flujo</button>
@@ -177,6 +176,6 @@
     window.maplibregl = maplibregl;
     window.dispatchEvent(new Event("maplibre-ready"));
   </script>
-  <script src="modulo-05.js?v=drag-v3"></script>
+  <script src="modulo-05.js?v=drag-v4"></script>
 </body>
 </html>
