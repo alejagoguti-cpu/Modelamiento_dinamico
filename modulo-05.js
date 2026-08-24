@@ -483,6 +483,7 @@
       state.map.on("moveend", () => {
         applyRoadZoomFilter();
         scheduleViewportLoad();
+        updateExportButtons();
         if (!state.map.isMoving?.() && isUplZoomTargetReached()) hideUplZoomIndicator();
       });
       state.map.on("load", () => {
@@ -1120,9 +1121,8 @@
     state.placeMarkers.forEach((marker) => marker.remove());
     state.placeMarkers = [];
     renderHtmlPlaceMarkers(visibleRecords);
-    const visibleCategories = new Set(visibleFeatures.map((feature) => placeFeatureCategory(feature))).size;
     setText("#metricPlaces", String(visibleFeatures.length));
-    setText("#mapDataSummary", `${visibleFeatures.length.toLocaleString("es-CO")} puntos visibles · ${visibleCategories} categorías activas`);
+    updatePlaceDataSummary();
     const filters = $("#mapCategoryFilters");
     filters?.querySelectorAll(".map-category-filter").forEach((button) => {
       const active = button.dataset.category === "__all" ? Object.values(state.categoryVisibility).every(Boolean) : state.categoryVisibility[button.dataset.category] !== false;
@@ -1232,7 +1232,15 @@
     window.setTimeout(() => URL.revokeObjectURL(url), 1200);
   }
 
+  function updatePlaceDataSummary() {
+    const visibleCount = getVisiblePlaceFeatures().length;
+    const visibleCategories = new Set(getFilteredPlaceFeatures().map((feature) => placeFeatureCategory(feature))).size;
+    if (state.placeFeatures.length) setText("#mapDataSummary", `${visibleCount.toLocaleString("es-CO")} puntos en la vista · ${visibleCategories} categorías activas`);
+    else setText("#mapDataSummary", "Sin puntos cargados.");
+  }
+
   function updateExportButtons() {
+    updatePlaceDataSummary();
     const visibleCount = getVisiblePlaceFeatures().length;
     const cluster = state.activeClusterForExport;
     const clusterCount = Array.isArray(cluster?.leaves) ? cluster.leaves.length : 0;
