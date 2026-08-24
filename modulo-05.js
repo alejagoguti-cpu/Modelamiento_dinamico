@@ -1369,6 +1369,7 @@ function setupScaleNetworkViewport() {
   canvas.dataset.interactive = 'true';
   let dragging = false;
   let activePointerId = null;
+  let pointerMoved = false;
   let startX = 0;
   let startY = 0;
   let originX = 0;
@@ -1388,6 +1389,7 @@ function setupScaleNetworkViewport() {
     event.preventDefault();
     cancelScaleNetworkReturnAnimation();
     dragging = true;
+    pointerMoved = false;
     activePointerId = event.pointerId;
     startX = event.clientX;
     startY = event.clientY;
@@ -1400,6 +1402,7 @@ function setupScaleNetworkViewport() {
   canvas.addEventListener('pointermove', event => {
     if (!dragging || event.pointerId !== activePointerId) return;
     event.preventDefault();
+    if (Math.hypot(event.clientX - startX, event.clientY - startY) > 6) pointerMoved = true;
     scaleNetworkViewState.x = originX + event.clientX - startX;
     scaleNetworkViewState.y = originY + event.clientY - startY;
     updateScaleNetworkViewport();
@@ -1408,6 +1411,7 @@ function setupScaleNetworkViewport() {
   const stopDragging = event => {
     if (!dragging || (activePointerId !== null && event.pointerId !== activePointerId)) return;
     dragging = false;
+    if (pointerMoved) canvas.dataset.suppressNodeClick = 'true';
     canvas.classList.remove('is-dragging');
     if (canvas.hasPointerCapture?.(event.pointerId)) canvas.releasePointerCapture(event.pointerId);
     activePointerId = null;
@@ -1701,9 +1705,11 @@ function renderScaleNetworkPopup(mode) {
     const activeDegree = activeDegrees[node.id] || 0;
     const activeHub = visualHubIds.has(node.id);
     const normalizedDegree = visualMaxDegree ? (visualDegrees[node.id] || 0) / visualMaxDegree : 0;
-    const radius = Number((20 + normalizedDegree * 23 + (activeHub ? 3 : 0)).toFixed(2));
+    const radius = Number((16 + normalizedDegree * 17 + (activeHub ? 2 : 0)).toFixed(2));
     const radiusKey = `${mode}:${node.id}`;
-    const previousRadius = popupNodeRadiusState.get(radiusKey) ?? radius;
+    // El tamaño visual es determinista y estable: apagar un nodo no debe
+    // animar ni recalcular los radios de los nodos restantes.
+    const previousRadius = radius;
     popupNodeRadiusState.set(radiusKey, radius);
     const lines = splitPopupLabel(node.label);
     const firstY = p.y + (lines.length > 1 ? 1 : 4);
@@ -1736,7 +1742,6 @@ function renderScaleNetworkPopup(mode) {
   resetScaleNetworkView();
   setupScaleNetworkViewport();
   buildScaleNetworkFlow();
-  animatePopupNodeSizes();
   updateScaleNetworkStats(definition);
   canvas.querySelectorAll('.popup-node').forEach(nodeElement => {
     const node = nodes[nodeElement.dataset.nodeId];
@@ -1748,13 +1753,22 @@ function renderScaleNetworkPopup(mode) {
       const description = document.getElementById('scaleNetworkDescription');
       if (description && node) description.textContent = `${node.label} · ${definition.title}`;
     };
-    const openNodeDetail = () => {
+    const openNodeInfo = () => {
+      if (node?.id) {
+        selectNode();
+        openNodeDetailModal(mode, node.id);
+      }
+    };
+    const openNodeDoubleAction = () => {
+      if (!node?.id) return;
       selectNode();
-      if (mode === 'natural' && node?.id === 'humedales') openWetlandImageModal();
-      else if (node?.id) openNodeDetailModal(mode, node.id);
+      if (mode === 'natural' && node.id === 'humedales') openWetlandImageModal();
+      else openNodeDetailModal(mode, node.id);
     };
     const togglePopupNode = () => {
       if (!node) return;
+      closeNodeDetailModal();
+      closeWetlandImageModal();
       scalePopupHiddenNodes.add(node.id);
       scalePopupSelectedNode = null;
       renderScaleNetworkPopup(mode);
@@ -1763,19 +1777,27 @@ function renderScaleNetworkPopup(mode) {
     };
     let clickCount = 0;
     let clickTimer = null;
+    let lastClickAt = 0;
     nodeElement.addEventListener('click', event => {
       event.preventDefault();
       event.stopPropagation();
-      clickCount += 1;
+      if (canvas.dataset.suppressNodeClick === 'true') {
+        canvas.dataset.suppressNodeClick = 'false';
+        return;
+      }
+      const now = performance.now();
+      if (now - lastClickAt > 620) clickCount = 0;
+      lastClickAt = now;
+      clickCount = Math.min(4, clickCount + 1);
       if (clickTimer) window.clearTimeout(clickTimer);
       clickTimer = window.setTimeout(() => {
         const sequence = clickCount;
         clickCount = 0;
         clickTimer = null;
         if (sequence >= 3) togglePopupNode();
-        else if (sequence === 2) openNodeDetail();
-        else selectNode();
-      }, 320);
+        else if (sequence === 2) openNodeDoubleAction();
+        else openNodeInfo();
+      }, 260);
     });
     nodeElement.addEventListener('keydown', event => {
       if (event.key === 'Enter' || event.key === ' ') {
