@@ -5094,3 +5094,10 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 .territory-component-chips { display: flex; flex-wrap: wrap; gap: 5px; }
 .territory-component-chips span { padding: 5px 7px; border: 1px solid rgba(255,255,255,.17); border-radius: 999px; background: rgba(255,255,255,.06); color: #fff; font-size: 9px; }
 @media (max-width: 760px) { .territory-reading-section h2 { font-size: 16px; } .territory-network-stage { height: 360px; } .territory-network-node { width: 86px; min-height: 65px; padding: 8px 5px; } .territory-network-node strong { font-size: 8px; } .territory-network-core { width: 92px; height: 92px; } .territory-network-core strong { font-size: 8px; } }
+
+/* Tabla completa de submodelos: conserva todas las columnas del formato de referencia */
+.submodels-table { min-width: 1500px; }
+.submodels-table th:first-child { min-width: 190px; }
+.submodels-table th:nth-child(2) { min-width: 250px; }
+.submodels-table th:nth-child(4), .submodels-table th:nth-child(6) { min-width: 285px; }
+.submodels-table th:nth-child(8) { min-width: 240px; }
