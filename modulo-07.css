@@ -4945,3 +4945,8 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 @keyframes bird-network-flight-visible { 0%, 100% { transform: translate(0, 6px) rotate(-8deg); } 25% { transform: translate(48px, -18px) rotate(8deg); } 50% { transform: translate(102px, 3px) rotate(-4deg); } 75% { transform: translate(154px, -16px) rotate(8deg); } }
 @keyframes bird-network-rest-visible { 0%, 100% { transform: translateY(1px) rotate(0deg); } 40% { transform: translateY(-4px) rotate(-5deg); } 70% { transform: translateY(1px) rotate(4deg); } }
 @media (max-width: 720px) { .process-network-bird { width: 24px; height: 24px; } .process-network-bird i { font-size: 15px; } }
+
+/* Siluetas negras de aves: no emojis ni palomas de paz */
+.process-network-bird i { color: #050505 !important; -webkit-text-stroke: .35px rgba(255,255,255,.48); }
+.process-network-bird { background: #c9f6d8; border-color: #f4fff8; box-shadow: 0 0 0 3px rgba(201,246,216,.22), 0 0 13px rgba(201,246,216,.62); }
+.process-network-bird.resident { background: #a9e5b7; border-color: #effff3; }
