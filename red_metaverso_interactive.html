@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Red Metaverso - Bogotá Viva (Interactivo)</title>
+    <title>Red Metaverso - Interactiva (1-2-3 Clics)</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -22,7 +22,7 @@
             height: 100vh;
         }
         .sidebar {
-            width: 200px;
+            width: 250px;
             background: #111827;
             padding: 20px;
             overflow-y: auto;
@@ -37,15 +37,30 @@
         }
         .sidebar-item {
             padding: 10px;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             border-left: 3px solid transparent;
             cursor: pointer;
-            font-size: 0.85em;
+            font-size: 0.8em;
             transition: all 0.2s;
+            border-radius: 4px;
         }
         .sidebar-item:hover {
             border-left-color: #5cd6d1;
             padding-left: 15px;
+            color: #5cd6d1;
+            background: rgba(92, 214, 209, 0.1);
+        }
+        .instructions {
+            background: rgba(92, 214, 209, 0.1);
+            border: 1px solid #5cd6d1;
+            border-radius: 6px;
+            padding: 12px;
+            font-size: 0.75em;
+            margin-bottom: 20px;
+            line-height: 1.6;
+            color: #d1d5db;
+        }
+        .instructions strong {
             color: #5cd6d1;
         }
         .main-content {
@@ -79,10 +94,18 @@
         .node-circle {
             cursor: pointer;
             transition: all 0.2s;
+            filter: drop-shadow(0 0 8px rgba(92, 214, 209, 0.3));
         }
         .node-circle:hover {
-            filter: brightness(1.3);
-            r: 45;
+            filter: drop-shadow(0 0 16px rgba(92, 214, 209, 0.6));
+        }
+        .node-circle.selected {
+            filter: drop-shadow(0 0 20px rgba(255, 193, 7, 1)) !important;
+            stroke-width: 3 !important;
+        }
+        .node-circle.disabled {
+            opacity: 0.2;
+            pointer-events: none;
         }
         .node-label {
             font-size: 11px;
@@ -92,51 +115,10 @@
             pointer-events: none;
             user-select: none;
         }
-        .tooltip {
-            position: absolute;
-            background: rgba(15, 23, 42, 0.95);
-            border: 2px solid #5cd6d1;
-            border-radius: 8px;
-            padding: 15px;
-            font-size: 0.85em;
-            pointer-events: none;
-            z-index: 1000;
-            min-width: 250px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(10px);
-            display: none;
-        }
-        .tooltip.visible {
-            display: block;
-        }
-        .tooltip-title {
-            font-weight: 700;
-            color: #5cd6d1;
-            margin-bottom: 8px;
-            font-size: 1.05em;
-        }
-        .tooltip-desc {
-            color: #d1d5db;
-            margin-bottom: 12px;
-            line-height: 1.4;
-        }
-        .tooltip-stat {
-            display: flex;
-            justify-content: space-between;
-            padding: 6px 0;
-            border-bottom: 1px solid #374151;
-            color: #9ca3af;
-        }
-        .tooltip-stat:last-child {
-            border-bottom: none;
-        }
-        .tooltip-value {
-            color: #5cd6d1;
-            font-weight: 600;
-        }
         .edge {
             stroke-width: 1.5;
             fill: none;
+            transition: opacity 0.2s;
         }
         .edge.directa {
             stroke: #5cd6d1;
@@ -145,6 +127,75 @@
         .edge.indirecta {
             stroke: #8b93a8;
             stroke-dasharray: 5,5;
+        }
+        .edge.disabled {
+            opacity: 0.1;
+        }
+        .popup {
+            position: absolute;
+            background: rgba(15, 23, 42, 0.95);
+            border: 2px solid #5cd6d1;
+            border-radius: 12px;
+            padding: 20px;
+            font-size: 0.9em;
+            z-index: 1000;
+            min-width: 320px;
+            max-width: 400px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            display: none;
+        }
+        .popup.visible {
+            display: block;
+            animation: popupIn 0.2s ease-out;
+        }
+        @keyframes popupIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        .popup-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            color: #9ca3af;
+            font-size: 1.2em;
+            transition: color 0.2s;
+        }
+        .popup-close:hover {
+            color: #5cd6d1;
+        }
+        .popup-title {
+            font-weight: 700;
+            color: #5cd6d1;
+            margin-bottom: 12px;
+            font-size: 1.2em;
+        }
+        .popup-desc {
+            color: #d1d5db;
+            margin-bottom: 16px;
+            line-height: 1.6;
+        }
+        .popup-stat {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #374151;
+            color: #9ca3af;
+            font-size: 0.9em;
+        }
+        .popup-stat:last-child {
+            border-bottom: none;
+        }
+        .popup-value {
+            color: #5cd6d1;
+            font-weight: 600;
         }
         .controls {
             padding: 15px 20px;
@@ -155,188 +206,85 @@
         }
         .badge {
             display: inline-block;
-            padding: 3px 8px;
+            padding: 4px 10px;
             background: rgba(92, 214, 209, 0.2);
             border: 1px solid #5cd6d1;
             border-radius: 4px;
-            margin-right: 5px;
-            margin-bottom: 5px;
-            font-size: 0.8em;
+            margin-right: 8px;
+            margin-bottom: 8px;
+            font-size: 0.75em;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="sidebar">
-            <h3>🔗 Navegación</h3>
-            <div class="sidebar-item">Inicio</div>
-            <div class="sidebar-item">Módulos</div>
-            <div class="sidebar-item">Metodología</div>
-            <div class="sidebar-item">Caso Humedal</div>
+            <h3>📡 Interacción</h3>
+            <div class="instructions">
+                <strong>1 clic:</strong> Selecciona<br>
+                <strong>2 clics:</strong> Detalle<br>
+                <strong>3 clics:</strong> Apaga
+            </div>
 
-            <h3 style="margin-top: 20px;">📊 Estadísticas</h3>
+            <h3>📊 Estadísticas</h3>
             <div class="sidebar-item">
-                <i class="fas fa-circle" style="color: #5cd6d1;"></i> 14 Nodos
+                <i class="fas fa-circle" style="color: #5cd6d1;"></i> <span id="nodeCount">14</span> Nodos
             </div>
             <div class="sidebar-item">
-                <i class="fas fa-link" style="color: #5cd6d1;"></i> 16 Conexiones
+                <i class="fas fa-link" style="color: #5cd6d1;"></i> <span id="edgeCount">16</span> Conexiones
             </div>
             <div class="sidebar-item">
-                <i class="fas fa-hub" style="color: #ef9f54;"></i> 3 Hubs Activos
+                <i class="fas fa-check-circle" style="color: #10b981;"></i> <span id="activeCount">14</span> Activos
+            </div>
+            <div class="sidebar-item">
+                <i class="fas fa-times-circle" style="color: #ef4444;"></i> <span id="inactiveCount">0</span> Apagados
             </div>
         </div>
 
         <div class="main-content">
             <div class="header">
                 <h1>Red Metaverso</h1>
-                <p>Capas digitales, modelos urbanos y escenarios de exploración virtual.</p>
+                <p>Capas digitales, modelos urbanos y escenarios de exploración virtual. Tamaño = conexiones activas.</p>
             </div>
 
             <div class="canvas-wrapper">
                 <svg id="networkSvg"></svg>
-                <div class="tooltip" id="tooltip"></div>
+                <div class="popup" id="popup">
+                    <span class="popup-close" onclick="closePopup()">✕</span>
+                    <div class="popup-title" id="popupTitle"></div>
+                    <div class="popup-desc" id="popupDesc"></div>
+                    <div class="popup-stat">
+                        <span>Conexiones Activas</span>
+                        <span class="popup-value" id="popupConnections"></span>
+                    </div>
+                </div>
             </div>
 
             <div class="controls">
-                <div style="margin-bottom: 10px;">
                 <span class="badge">━ Relación directa</span>
                 <span class="badge">┈ Relación indirecta</span>
-                </div>
-                <p>💡 Pasa el cursor sobre los nodos para ver detalles y conexiones activas</p>
+                <p style="margin-top: 10px;">💡 El tamaño de cada nodo es proporcional a sus conexiones activas. Apagar un hub reduce el tamaño de los nodos conectados.</p>
             </div>
         </div>
     </div>
 
     <script>
-        // Datos de la red
         const networkData = {
             nodes: [
-                {
-                    id: 'gemelo_digital',
-                    label: 'Gemelo\nDigital',
-                    desc: 'Réplica digital de espacios y procesos urbanos',
-                    x: 600,
-                    y: 250,
-                    color: '#ef9f54',
-                    size: 45
-                },
-                {
-                    id: 'modelos_3d',
-                    label: 'Modelos\n3D',
-                    desc: 'Representaciones tridimensionales de geometría urbana',
-                    x: 950,
-                    y: 200,
-                    color: '#fb8d84',
-                    size: 40
-                },
-                {
-                    id: 'algoritmo_IA',
-                    label: 'Algoritmo\nIA',
-                    desc: 'Sistemas de inteligencia artificial para análisis predictivo',
-                    x: 550,
-                    y: 350,
-                    color: '#5cd6d1',
-                    size: 38
-                },
-                {
-                    id: 'capas_datos',
-                    label: 'Capas\nde Datos',
-                    desc: 'Infraestructura de información geoespacial',
-                    x: 420,
-                    y: 310,
-                    color: '#fac47b',
-                    size: 36
-                },
-                {
-                    id: 'sensores_IoT',
-                    label: 'Sensores\nIoT',
-                    desc: 'Dispositivos para captura de datos en tiempo real',
-                    x: 800,
-                    y: 400,
-                    color: '#5cd6d1',
-                    size: 35
-                },
-                {
-                    id: 'simulacion_urbana',
-                    label: 'Simulación\nUrbana',
-                    desc: 'Escenarios de cambio territorial y comportamiento',
-                    x: 750,
-                    y: 480,
-                    color: '#ef9f54',
-                    size: 42
-                },
-                {
-                    id: 'realidad_virtual',
-                    label: 'Realidad\nVirtual',
-                    desc: 'Espacios inmersivos para exploración y análisis',
-                    x: 950,
-                    y: 430,
-                    color: '#5cd6d1',
-                    size: 39
-                },
-                {
-                    id: 'inteligencia_colectiva',
-                    label: 'Inteligencia\nColectiva',
-                    desc: 'Participación y co-creación de ciudadanos',
-                    x: 600,
-                    y: 550,
-                    color: '#fac47b',
-                    size: 37
-                },
-                {
-                    id: 'bases_datos',
-                    label: 'Bases de\nDatos',
-                    desc: 'Almacenamiento y gestión de información urbana',
-                    x: 500,
-                    y: 450,
-                    color: '#fb8d84',
-                    size: 34
-                },
-                {
-                    id: 'visualizacion',
-                    label: 'Visualización\nAvanzada',
-                    desc: 'Herramientas de representación visual interactiva',
-                    x: 1100,
-                    y: 500,
-                    color: '#5cd6d1',
-                    size: 38
-                },
-                {
-                    id: 'automatizacion',
-                    label: 'Automatización\nde Procesos',
-                    desc: 'Optimización de workflows urbanos',
-                    x: 350,
-                    y: 500,
-                    color: '#ef9f54',
-                    size: 36
-                },
-                {
-                    id: 'gobernanza_digital',
-                    label: 'Gobernanza\nDigital',
-                    desc: 'Marco institucional y políticas de datos',
-                    x: 450,
-                    y: 200,
-                    color: '#fac47b',
-                    size: 35
-                },
-                {
-                    id: 'ecosistema_creativo',
-                    label: 'Ecosistema\nCreativo',
-                    desc: 'Comunidades de innovadores y creadores',
-                    x: 1150,
-                    y: 300,
-                    color: '#fb8d84',
-                    size: 34
-                },
-                {
-                    id: 'infraestructura_digital',
-                    label: 'Infraestructura\nDigital',
-                    desc: 'Red de conectividad y servidores',
-                    x: 800,
-                    y: 150,
-                    color: '#5cd6d1',
-                    size: 37
-                }
+                { id: 'gemelo_digital', label: 'Gemelo\nDigital', desc: 'Réplica digital de espacios y procesos urbanos', color: '#ef9f54' },
+                { id: 'modelos_3d', label: 'Modelos\n3D', desc: 'Representaciones tridimensionales de geometría urbana', color: '#fb8d84' },
+                { id: 'algoritmo_IA', label: 'Algoritmo\nIA', desc: 'Sistemas de inteligencia artificial para análisis predictivo', color: '#5cd6d1' },
+                { id: 'capas_datos', label: 'Capas\nde Datos', desc: 'Infraestructura de información geoespacial', color: '#fac47b' },
+                { id: 'sensores_IoT', label: 'Sensores\nIoT', desc: 'Dispositivos para captura de datos en tiempo real', color: '#5cd6d1' },
+                { id: 'simulacion_urbana', label: 'Simulación\nUrbana', desc: 'Escenarios de cambio territorial y comportamiento', color: '#ef9f54' },
+                { id: 'realidad_virtual', label: 'Realidad\nVirtual', desc: 'Espacios inmersivos para exploración y análisis', color: '#5cd6d1' },
+                { id: 'inteligencia_colectiva', label: 'Inteligencia\nColectiva', desc: 'Participación y co-creación de ciudadanos', color: '#fac47b' },
+                { id: 'bases_datos', label: 'Bases de\nDatos', desc: 'Almacenamiento y gestión de información urbana', color: '#fb8d84' },
+                { id: 'visualizacion', label: 'Visualización\nAvanzada', desc: 'Herramientas de representación visual interactiva', color: '#5cd6d1' },
+                { id: 'automatizacion', label: 'Automatización\nde Procesos', desc: 'Optimización de workflows urbanos', color: '#ef9f54' },
+                { id: 'gobernanza_digital', label: 'Gobernanza\nDigital', desc: 'Marco institucional y políticas de datos', color: '#fac47b' },
+                { id: 'ecosistema_creativo', label: 'Ecosistema\nCreativo', desc: 'Comunidades de innovadores y creadores', color: '#fb8d84' },
+                { id: 'infraestructura_digital', label: 'Infraestructura\nDigital', desc: 'Red de conectividad y servidores', color: '#5cd6d1' }
             ],
             edges: [
                 { source: 'gemelo_digital', target: 'modelos_3d', type: 'directa' },
@@ -358,87 +306,221 @@
             ]
         };
 
-        // Calcular conexiones por nodo
-        const connectionCount = {};
+        const BASE_NODE_SIZE = 35;
+        const SIZE_MULTIPLIER = 3;
+        const POSITIONS = {
+            'gemelo_digital': { x: 600, y: 250 },
+            'modelos_3d': { x: 950, y: 200 },
+            'algoritmo_IA': { x: 550, y: 350 },
+            'capas_datos': { x: 420, y: 310 },
+            'sensores_IoT': { x: 800, y: 400 },
+            'simulacion_urbana': { x: 750, y: 480 },
+            'realidad_virtual': { x: 950, y: 430 },
+            'inteligencia_colectiva': { x: 600, y: 550 },
+            'bases_datos': { x: 500, y: 450 },
+            'visualizacion': { x: 1100, y: 500 },
+            'automatizacion': { x: 350, y: 500 },
+            'gobernanza_digital': { x: 450, y: 200 },
+            'ecosistema_creativo': { x: 1150, y: 300 },
+            'infraestructura_digital': { x: 800, y: 150 }
+        };
+
+        const state = {
+            activeNodes: new Set(),
+            selectedNode: null,
+            clickCounts: new Map(),
+            clickTimers: new Map()
+        };
+
         networkData.nodes.forEach(node => {
-            connectionCount[node.id] = 0;
-        });
-        networkData.edges.forEach(edge => {
-            connectionCount[edge.source]++;
-            connectionCount[edge.target]++;
+            state.activeNodes.add(node.id);
+            state.clickCounts.set(node.id, 0);
         });
 
-        // Renderizar SVG
-        const svg = document.getElementById('networkSvg');
-        const svgNS = 'http://www.w3.org/2000/svg';
+        function isNodeActive(nodeId) {
+            return state.activeNodes.has(nodeId);
+        }
 
-        // Dibujar aristas
-        networkData.edges.forEach(edge => {
-            const sourceNode = networkData.nodes.find(n => n.id === edge.source);
-            const targetNode = networkData.nodes.find(n => n.id === edge.target);
+        function getActiveConnectionCount(nodeId) {
+            let count = 0;
+            networkData.edges.forEach(edge => {
+                if ((edge.source === nodeId && isNodeActive(edge.target)) ||
+                    (edge.target === nodeId && isNodeActive(edge.source))) {
+                    count++;
+                }
+            });
+            return count;
+        }
 
-            const line = document.createElementNS(svgNS, 'line');
-            line.setAttribute('x1', sourceNode.x);
-            line.setAttribute('y1', sourceNode.y);
-            line.setAttribute('x2', targetNode.x);
-            line.setAttribute('y2', targetNode.y);
-            line.setAttribute('class', `edge ${edge.type}`);
-            svg.appendChild(line);
-        });
+        function getNodeSize(nodeId) {
+            if (!isNodeActive(nodeId)) return BASE_NODE_SIZE * 0.5;
+            const connections = getActiveConnectionCount(nodeId);
+            return BASE_NODE_SIZE + (connections * SIZE_MULTIPLIER);
+        }
 
-        // Dibujar nodos
-        const tooltip = document.getElementById('tooltip');
-        networkData.nodes.forEach(node => {
-            // Círculo
-            const circle = document.createElementNS(svgNS, 'circle');
-            circle.setAttribute('cx', node.x);
-            circle.setAttribute('cy', node.y);
-            circle.setAttribute('r', node.size);
-            circle.setAttribute('fill', 'none');
-            circle.setAttribute('stroke', node.color);
-            circle.setAttribute('stroke-width', '2');
-            circle.setAttribute('class', 'node-circle');
-            circle.setAttribute('data-id', node.id);
+        function updateStatistics() {
+            const activeCount = state.activeNodes.size;
+            const inactiveCount = networkData.nodes.length - activeCount;
+            document.getElementById('activeCount').textContent = activeCount;
+            document.getElementById('inactiveCount').textContent = inactiveCount;
+        }
 
-            // Label
-            const text = document.createElementNS(svgNS, 'text');
-            text.setAttribute('x', node.x);
-            text.setAttribute('y', node.y);
-            text.setAttribute('class', 'node-label');
-            text.setAttribute('fill', node.color);
-            text.textContent = node.label;
+        function handleNodeClick(nodeId) {
+            const current = state.clickCounts.get(nodeId) || 0;
+            const newCount = current + 1;
+            state.clickCounts.set(nodeId, newCount);
 
-            // Eventos del nodo
-            circle.addEventListener('mouseenter', (e) => {
-                const connections = connectionCount[node.id];
-                tooltip.classList.add('visible');
-                tooltip.innerHTML = `
-                    <div class="tooltip-title">${node.label.replace(/\n/g, ' ')}</div>
-                    <div class="tooltip-desc">${node.desc}</div>
-                    <div class="tooltip-stat">
-                        <span>Conexiones Activas</span>
-                        <span class="tooltip-value">${connections}</span>
-                    </div>
-                `;
+            if (state.clickTimers.has(nodeId)) {
+                clearTimeout(state.clickTimers.get(nodeId));
+            }
 
-                const rect = e.target.getBoundingClientRect();
-                tooltip.style.left = (rect.left + 60) + 'px';
-                tooltip.style.top = (rect.top - 120) + 'px';
+            if (newCount === 1) {
+                selectNode(nodeId);
+                state.clickTimers.set(nodeId, setTimeout(() => {
+                    state.clickCounts.set(nodeId, 0);
+                }, 300));
+            } else if (newCount === 2) {
+                showPopup(nodeId);
+                state.clickTimers.set(nodeId, setTimeout(() => {
+                    state.clickCounts.set(nodeId, 0);
+                }, 300));
+            } else if (newCount >= 3) {
+                toggleNode(nodeId);
+                state.clickCounts.set(nodeId, 0);
+            }
+        }
 
-                circle.style.filter = 'brightness(1.3)';
+        function selectNode(nodeId) {
+            if (state.selectedNode) {
+                const prevCircle = document.querySelector(`[data-id="${state.selectedNode}"]`);
+                if (prevCircle) prevCircle.classList.remove('selected');
+            }
+            state.selectedNode = nodeId;
+            const circle = document.querySelector(`[data-id="${nodeId}"]`);
+            if (circle) circle.classList.add('selected');
+        }
+
+        function showPopup(nodeId) {
+            const node = networkData.nodes.find(n => n.id === nodeId);
+            if (!node) return;
+
+            const connections = getActiveConnectionCount(nodeId);
+            const popup = document.getElementById('popup');
+            document.getElementById('popupTitle').textContent = node.label.replace(/\n/g, ' ');
+            document.getElementById('popupDesc').textContent = node.desc;
+            document.getElementById('popupConnections').textContent = connections;
+
+            popup.classList.add('visible');
+
+            const circle = document.querySelector(`[data-id="${nodeId}"]`);
+            if (circle) {
+                const rect = circle.getBoundingClientRect();
+                popup.style.left = (rect.left + 60) + 'px';
+                popup.style.top = Math.max(10, rect.top - 150) + 'px';
+            }
+        }
+
+        function closePopup() {
+            document.getElementById('popup').classList.remove('visible');
+        }
+
+        function toggleNode(nodeId) {
+            if (state.activeNodes.has(nodeId)) {
+                state.activeNodes.delete(nodeId);
+            } else {
+                state.activeNodes.add(nodeId);
+            }
+
+            updateVisualization();
+            updateStatistics();
+        }
+
+        function updateVisualization() {
+            const svg = document.getElementById('networkSvg');
+
+            svg.querySelectorAll('.edge').forEach(edge => {
+                const sourceId = edge.getAttribute('data-source');
+                const targetId = edge.getAttribute('data-target');
+                if (!isNodeActive(sourceId) || !isNodeActive(targetId)) {
+                    edge.classList.add('disabled');
+                } else {
+                    edge.classList.remove('disabled');
+                }
             });
 
-            circle.addEventListener('mouseleave', () => {
-                tooltip.classList.remove('visible');
-                circle.style.filter = 'none';
+            svg.querySelectorAll('.node-circle').forEach(circle => {
+                const nodeId = circle.getAttribute('data-id');
+                const newSize = getNodeSize(nodeId);
+                circle.setAttribute('r', newSize);
+
+                if (!isNodeActive(nodeId)) {
+                    circle.classList.add('disabled');
+                } else {
+                    circle.classList.remove('disabled');
+                }
+            });
+        }
+
+        function render() {
+            const svg = document.getElementById('networkSvg');
+            svg.innerHTML = '';
+            const svgNS = 'http://www.w3.org/2000/svg';
+
+            networkData.edges.forEach(edge => {
+                const sourcePos = POSITIONS[edge.source];
+                const targetPos = POSITIONS[edge.target];
+
+                const line = document.createElementNS(svgNS, 'line');
+                line.setAttribute('x1', sourcePos.x);
+                line.setAttribute('y1', sourcePos.y);
+                line.setAttribute('x2', targetPos.x);
+                line.setAttribute('y2', targetPos.y);
+                line.setAttribute('class', `edge ${edge.type}`);
+                line.setAttribute('data-source', edge.source);
+                line.setAttribute('data-target', edge.target);
+                svg.appendChild(line);
             });
 
-            svg.appendChild(circle);
-            svg.appendChild(text);
+            networkData.nodes.forEach(node => {
+                const pos = POSITIONS[node.id];
+                const size = getNodeSize(node.id);
+
+                const circle = document.createElementNS(svgNS, 'circle');
+                circle.setAttribute('cx', pos.x);
+                circle.setAttribute('cy', pos.y);
+                circle.setAttribute('r', size);
+                circle.setAttribute('fill', 'none');
+                circle.setAttribute('stroke', node.color);
+                circle.setAttribute('stroke-width', '2');
+                circle.setAttribute('class', 'node-circle');
+                circle.setAttribute('data-id', node.id);
+
+                circle.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    handleNodeClick(node.id);
+                });
+
+                const text = document.createElementNS(svgNS, 'text');
+                text.setAttribute('x', pos.x);
+                text.setAttribute('y', pos.y);
+                text.setAttribute('class', 'node-label');
+                text.setAttribute('fill', node.color);
+                text.textContent = node.label;
+
+                svg.appendChild(circle);
+                svg.appendChild(text);
+            });
+
+            svg.setAttribute('viewBox', '0 0 1300 650');
+        }
+
+        document.addEventListener('click', closePopup);
+        document.querySelector('.canvas-wrapper').addEventListener('click', (e) => {
+            if (e.target.tagName === 'svg') closePopup();
         });
 
-        // Ajustar viewBox
-        svg.setAttribute('viewBox', '0 0 1300 650');
+        render();
+        updateStatistics();
     </script>
 </body>
 </html>
