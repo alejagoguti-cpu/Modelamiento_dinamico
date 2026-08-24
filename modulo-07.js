@@ -1557,6 +1557,17 @@
       { name: "Prácticas comunitarias", color: "#ee9a4b", components: "Habitantes, visitantes, estudiantes, juntas de acción comunal, organizaciones ambientales, actividades pedagógicas y jornadas de cuidado.", process: "Las prácticas aumentan, disminuyen o se reorganizan según accesos, conflictos, actividades y participación.", partsPurpose: "Sí. Las personas y organizaciones pueden decidir participar, visitar, cuidar, reclamar, recorrer o no participar; cada actor puede tener intereses y objetivos diferentes.", totalPurpose: "Sí. La totalidad coordina prácticas colectivas de cuidado, participación, educación y uso del territorio.", category: "Social.", justification: "Las partes y la totalidad tienen objetivos, reglas y capacidad de decisión colectiva." },
       { name: "Gestión institucional y manejo", color: "#b28be8", components: "Jardín Botánico, Secretaría de Ambiente, UAESP, Ciudad Limpia, Hospital del Sur, instituciones educativas, organizaciones, programas de restauración, mantenimiento y seguimiento.", process: "Cambian programas, responsabilidades, coordinaciones, prioridades y decisiones de manejo.", partsPurpose: "Sí. Cada entidad u organización tiene funciones, responsabilidades, intereses y objetivos propios.", totalPurpose: "Sí. La gestión como totalidad coordina decisiones, responsabilidades y acciones de manejo con objetivos institucionales.", category: "Social.", justification: "Las entidades y organizaciones actúan con propósitos propios y la gestión coordina una finalidad colectiva." }
     ];
+    const table3Rows = [
+      { name: "Hídrico", color: "#5d9eb2", components: "Espejo de agua, suelo húmedo, escorrentías, lluvias, rondas, sedimentos y Canal Los Ángeles.", partsPurpose: "No", totalPurpose: "No", category: "Determinista" },
+      { name: "Biótico", color: "#68d391", components: "Aves residentes y migratorias, arañas, insectos, vegetación nativa, invasora y exótica, refugios y lugares de alimentación.", partsPurpose: "Algunas sí y otras no", totalPurpose: "No", category: "Ecológico" },
+      { name: "Infraestructura y borde urbano", color: "#a6adb7", components: "Avenida Ciudad de Cali, edificios, cerramientos, senderos, ciclorruta, canal construido y áreas urbanizadas.", partsPurpose: "No", totalPurpose: "No", category: "Determinista" },
+      { name: "Movilidad y accesibilidad", color: "#f1cf5b", components: "Avenida, ciclorruta, senderos, peatones, ciclistas, visitantes, recorridos, accesos y Biblioteca El Tintal.", partsPurpose: "Sí", totalPurpose: "Sí", category: "Social" },
+      { name: "Social-comunitario", color: "#ee9a4b", components: "Habitantes, visitantes, estudiantes, juntas de acción comunal, grupos ambientales y actividades pedagógicas.", partsPurpose: "Sí", totalPurpose: "Sí", category: "Social" },
+      { name: "Socioeconómico y de ocupación urbana", color: "#e58d62", components: "Barrios, viviendas, población, equipamientos, usos del suelo, actividades de servicio, propietarios, empresas y autoridades.", partsPurpose: "Sí", totalPurpose: "Sí", category: "Social" },
+      { name: "Institucional de manejo", color: "#b28be8", components: "Jardín Botánico, Secretaría de Ambiente, Empresa de Acueducto, UAESP, Ciudad Limpia, Hospital del Sur y organizaciones locales.", partsPurpose: "Sí", totalPurpose: "Sí", category: "Social" },
+      { name: "Restauración", color: "#7fc8a9", components: "Reintroducción de especies nativas, control de invasoras, mantenimiento, compostaje, seguimiento, educación y recuperación del hábitat.", partsPurpose: "Sí", totalPurpose: "Sí", category: "Social" },
+      { name: "Presiones y conflictos territoriales", color: "#d987a5", components: "Residuos, escombros, ruido, emisiones, tráfico, edificios, urbanización, usos incompatibles y decisiones de manejo.", partsPurpose: "Algunas sí y otras no", totalPurpose: "No", category: "Ecológico" }
+    ];
     const temporalStates = [
       { id: "historico", label: "Histórico", description: "El Burro hacía parte de la antigua Laguna El Tintal y tenía una extensión mayor.", zoom: 11.4 },
       { id: "transformacion", label: "Transformación", description: "Reducción del área, urbanización y fragmentación asociada a la Avenida Ciudad de Cali.", zoom: 12.35 },
@@ -1574,7 +1585,7 @@
     const renderPartOneTable = () => {
       const body = document.getElementById("partOneTableBody");
       if (!body) return;
-      body.innerHTML = partOneRows.map((row) => `<tr><th scope="row"><span class="table-color" style="--table-color:${row.color}"></span>${row.name}</th><td>${row.components}</td><td>${row.process}</td><td>${row.category}</td><td>${row.justification}</td></tr>`).join("");
+      body.innerHTML = table3Rows.map((row) => `<tr><th scope="row"><span class="table-color" style="--table-color:${row.color}"></span>${row.name}</th><td>${row.components}</td><td>${row.partsPurpose}</td><td>${row.totalPurpose}</td><td>${row.category}</td></tr>`).join("");
     };
     const initPartOneControls = (map, layers) => {
       const controls = document.getElementById("subsystemLayerControls");
