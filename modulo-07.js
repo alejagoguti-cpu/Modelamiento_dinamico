@@ -1901,7 +1901,8 @@
       const nodes = rows.map((row, index) => { const [x,y] = positions[index]; return `<button type="button" class="map-network-node ${systems ? "map-system-node" : "map-submodel-node"}" data-map-network-index="${index}" style="--node-x:${x}%;--node-y:${y}%;--node-color:${row.color || colors[index]}"><i class="map-network-node-icon fa-solid ${icon(index)}" aria-hidden="true"></i><strong>${label(row)}</strong></button>`; }).join("");
       const edges = rows.flatMap((row, index) => rows.slice(index + 1).map((other, offset) => { const [x,y] = positions[index], [nx,ny] = positions[index + offset + 1]; return `<line x1="${x}%" y1="${y}%" x2="${nx}%" y2="${ny}%" style="--edge-color:${row.color || colors[index]}"></line>`; })).join("");
       subsystemBubbles.dataset.revealState = "complete";
-      subsystemBubbles.innerHTML = `<div class="map-network-stage ${systems ? "systems-network" : "submodels-network"}"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${edges}</svg>${nodes}</div><div id="mapNetworkDetail" class="map-network-detail" hidden></div>`;
+      subsystemBubbles.classList.add("network-active");
+      subsystemBubbles.innerHTML = `<div class="map-network-stage ${systems ? "systems-network" : "submodels-network"}"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${edges}</svg>${nodes}</div>`;
       subsystemBubbles.querySelectorAll(".map-network-node").forEach((button) => button.addEventListener("click", () => {
         const row = rows[Number(button.dataset.mapNetworkIndex)];
         subsystemBubbles.querySelectorAll(".map-network-node").forEach((node) => node.classList.toggle("selected", node === button));
@@ -1927,7 +1928,8 @@
         if (systems) renderSubsystemPoints(subsystemData[Number(button.dataset.mapNetworkIndex)]);
       }));
     };
-    const drawSubsystems = ({ hidden = false } = {}) => { if (!subsystemBubbles) return; subsystemBubbles.dataset.revealState = hidden ? "pending" : "complete"; if (hidden) { subsystemBubbles.replaceChildren(); return; } renderMapNetwork("systems"); };
+    const clearMapNetwork = () => { if (!subsystemBubbles) return; subsystemBubbles.classList.remove("network-active"); subsystemBubbles.replaceChildren(); clearSubsystemPoints(); };
+    const drawSubsystems = ({ hidden = false } = {}) => { if (!subsystemBubbles) return; subsystemBubbles.dataset.revealState = hidden ? "pending" : "complete"; if (hidden) { clearMapNetwork(); return; } renderMapNetwork("systems"); };
     const revealSubsystems = (stagger = 150) => {
       if (!subsystemBubbles) return;
       const bubbles = [...subsystemBubbles.querySelectorAll(".subsystem-bubble")];
