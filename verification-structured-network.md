@@ -33,3 +33,9 @@ Evidencia visual: `/home/ubuntu/screenshots/alejagoguti-cpu_gith_2026-08-24_01-1
 El flujo no había sido eliminado del código: las partículas y el ciclo `requestAnimationFrame` seguían presentes, pero `buildScaleNetworkFlow()` intentaba leer `x1`, `y1`, `x2`, `y2` de elementos `<path>`. Como las conexiones orgánicas usan `d="M x y L x y"`, `Number(null)` convertía los extremos ausentes en 0 y dejaba las partículas en 0,0, fuera de la red. Se añadió un lector compatible con atributos de línea y rutas SVG.
 
 Resultado local: Natural 42 conexiones / 71 partículas; Cultural 15 / 24; Tecnológico 16 / 26; Metaverso 16 / 26. En las cuatro escalas las partículas iniciaron dentro del SVG y cambiaron de posición durante 950 ms. Pausar mantuvo las posiciones estables y Reanudar volvió a moverlas. La ficha de RÍOS abrió correctamente y el doble clic de HUMEDALES abrió `wetlandImageModal` con `planosnico.webp` visible, sin abrir simultáneamente la ficha.
+
+## Verificación pública posterior al despliegue — commit 258fa34
+
+GitHub Pages cargó `modulo-05.js?v=water-flow-fixed-v1`. En Natural se verificaron 42 conexiones y 71 partículas; en Cultural, 15 conexiones y 24 partículas; en Tecnológico, 16 conexiones y 26 partículas; en Metaverso, 16 conexiones y 26 partículas. En las cuatro escalas las partículas cambiaron de posición con el flujo activo y ninguna permaneció en 0,0. La ficha de RÍOS continuó abriendo correctamente y el doble clic en HUMEDALES mostró la imagen con dimensiones naturales 2048 × 1345; al finalizar, los tres modales quedaron cerrados.
+
+Evidencia visual pública: `/home/ubuntu/screenshots/alejagoguti-cpu_gith_2026-08-24_02-19-23_8055.webp`.
