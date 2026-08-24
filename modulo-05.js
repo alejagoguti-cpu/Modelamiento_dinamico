@@ -1523,10 +1523,22 @@ function getActivePopupTopology(definition) {
     activeDegrees[fromId] += 1;
     activeDegrees[toId] += 1;
   });
+
+  // La información estadística sí responde a los nodos apagados, pero la
+  // escala visual no se recalcula: quitar un hub no debe encoger ni agrandar
+  // todos los nodos restantes. Esta topología completa fija radios y hubs.
+  const visualDegrees = Object.fromEntries(definition.nodes.map(node => [node.id, 0]));
+  definition.edges.forEach(([fromId, toId]) => {
+    visualDegrees[fromId] += 1;
+    visualDegrees[toId] += 1;
+  });
+  const visualMaxDegree = Math.max(0, ...Object.values(visualDegrees));
+  const visualHubThreshold = visualMaxDegree >= 2 ? Math.max(2, Math.ceil(visualMaxDegree * .72)) : Infinity;
+  const visualHubIds = new Set(definition.nodes.filter(node => visualDegrees[node.id] >= visualHubThreshold).map(node => node.id));
   const maxDegree = Math.max(0, ...definition.nodes.filter(node => activeNodeIds.has(node.id)).map(node => activeDegrees[node.id]));
   const hubThreshold = maxDegree >= 2 ? Math.max(2, Math.ceil(maxDegree * .72)) : Infinity;
-  const activeHubIds = new Set(definition.nodes.filter(node => activeNodeIds.has(node.id) && activeDegrees[node.id] >= hubThreshold).map(node => node.id));
-  return { activeNodeIds, activeEdges, activeDegrees, activeHubIds, maxDegree };
+  const activeHubIds = new Set(definition.nodes.filter(node => activeNodeIds.has(node.id) && visualHubIds.has(node.id) && activeDegrees[node.id] >= hubThreshold).map(node => node.id));
+  return { activeNodeIds, activeEdges, activeDegrees, activeHubIds, maxDegree, visualDegrees, visualHubIds, visualMaxDegree };
 }
 
 function updateScaleNetworkStats(definition = scaleNetworks[scalePopupMode]) {
@@ -1624,7 +1636,7 @@ function renderScaleNetworkPopup(mode) {
   const definition = scaleNetworks[mode];
   if (!canvas || !definition) return;
   const nodes = popupNetworkPositions(definition);
-  const { activeEdges, activeDegrees, activeHubIds, maxDegree } = getActivePopupTopology(definition);
+  const { activeEdges, activeDegrees, visualHubIds, visualDegrees, visualMaxDegree } = getActivePopupTopology(definition);
   const edgeMarkup = activeEdges.map(([fromId, toId, type]) => {
     const from = nodes[fromId];
     const to = nodes[toId];
@@ -1648,8 +1660,8 @@ function renderScaleNetworkPopup(mode) {
   const nodeMarkup = definition.nodes.filter(node => !scalePopupHiddenNodes.has(node.id)).map(node => {
     const p = nodes[node.id];
     const activeDegree = activeDegrees[node.id] || 0;
-    const activeHub = activeHubIds.has(node.id);
-    const normalizedDegree = maxDegree ? activeDegree / maxDegree : 0;
+    const activeHub = visualHubIds.has(node.id);
+    const normalizedDegree = visualMaxDegree ? (visualDegrees[node.id] || 0) / visualMaxDegree : 0;
     const radius = Number((20 + normalizedDegree * 23 + (activeHub ? 3 : 0)).toFixed(2));
     const radiusKey = `${mode}:${node.id}`;
     const previousRadius = popupNodeRadiusState.get(radiusKey) ?? radius;
