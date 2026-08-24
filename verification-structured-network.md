@@ -13,3 +13,9 @@ En GitHub Pages, la secuencia de dos clics consecutivos sobre el nodo HUMEDALES 
 Fuente pública verificada: https://alejagoguti-cpu.github.io/Modelamiento_dinamico/modulo-05.html?verify=wetland-image-live-c532b4c
 
 Después del doble clic en HUMEDALES, la captura pública mostró la imagen satelital ocupando visualmente el cuerpo del popup. El placeholder desapareció. El elemento tuvo visibilidad efectiva, dimensiones aproximadas de 821 x 540 px, y cargó `https://alejagoguti-cpu.github.io/Modelamiento_dinamico/assets/planosnico.webp` con dimensiones naturales de 2048 x 1345 px. Los recursos versionados fueron `modulo-05.js?v=image-visible-v3` y `modulo-05-popup.css?v=image-visible-v2`.
+
+## Auditoría pública de interacción y estilo — commit f947964
+
+Fuente pública: https://alejagoguti-cpu.github.io/Modelamiento_dinamico/modulo-05.html?verify=interaction-style-live-f947964
+
+La prueba pública confirmó: un clic en RÍOS abre `nodeDetailModal` con título RÍOS, resumen, 3 conexiones de salida y 1 de entrada; dos clics en HUMEDALES abren `wetlandImageModal`, con imagen visible de 821 x 540 px y dimensiones naturales 2048 x 1345, sin placeholder; el tercer clic oculta HUMEDALES, deja 29 nodos y 36 conexiones, y los 29 radios restantes permanecen iguales. Estilos comprobados: arista directa 1.25 px / opacidad .64; puente 1.8 px / opacidad .78; colores azules no detectados. Recursos cargados: `modulo-05.js?v=interaction-stable-v1` y `modulo-05-popup.css?v=calm-network-v1`.
