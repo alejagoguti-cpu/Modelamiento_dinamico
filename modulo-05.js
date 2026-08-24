@@ -516,11 +516,11 @@
     state.uplLabelMarker = null;
   }
 
-  function renderUplMarkers() {
+  function renderUplMarkers(targeted = false) {
     if (!state.map || !state.selectedUpl || !window.maplibregl) return;
     clearUplMarkers();
     const markerEl = document.createElement("div");
-    markerEl.className = "upl-marker";
+    markerEl.className = `upl-marker${targeted ? " is-targeted" : ""}`;
     markerEl.title = `UPL ${state.selectedUpl.num} · ${state.selectedUpl.name}`;
     markerEl.addEventListener("click", () => showToast(`UPL ${state.selectedUpl.num}: el recuadro es un radio exploratorio, no un límite legal.`));
     state.uplMarker = new maplibregl.Marker({ element: markerEl, anchor: "center" }).setLngLat([state.selectedUpl.lon, state.selectedUpl.lat]).addTo(state.map);
@@ -533,8 +533,30 @@
   function focusSelectedUpl(animate = true) {
     if (!state.map || !state.selectedUpl) return;
     updateFocusLayer();
-    renderUplMarkers();
-    state.map.fitBounds(makeBounds(state.selectedUpl, state.currentView), { padding: 44, duration: animate ? 700 : 0, maxZoom: state.currentView === "barrio" ? 15.2 : 12.4 });
+    renderUplMarkers(animate);
+    const bounds = makeBounds(state.selectedUpl, state.currentView);
+    const maxZoom = state.currentView === "barrio" ? 15.2 : 12.4;
+    const padding = state.currentView === "barrio" ? 44 : 38;
+    if (!animate || typeof state.map.flyTo !== "function") {
+      state.map.fitBounds(bounds, { padding, duration: 0, maxZoom });
+      return;
+    }
+    const camera = typeof state.map.cameraForBounds === "function"
+      ? state.map.cameraForBounds(bounds, { padding })
+      : null;
+    const targetZoom = Math.min(maxZoom, Math.max(10, Number(camera?.zoom) || (state.currentView === "barrio" ? 14.2 : 11.2)));
+    const targetCenter = camera?.center || [state.selectedUpl.lon, state.selectedUpl.lat];
+    state.map.flyTo({
+      center: targetCenter,
+      zoom: targetZoom,
+      bearing: 0,
+      pitch: 0,
+      duration: 1250,
+      curve: 1.45,
+      speed: 0.72,
+      essential: true,
+      easing: (t) => 1 - Math.pow(1 - t, 3),
+    });
   }
 
   function switchView(view) {
