@@ -1659,18 +1659,16 @@
         map.on("mouseenter", "subsystem-component-points", () => { map.getCanvas().style.cursor = "pointer"; });
         map.on("mouseleave", "subsystem-component-points", () => { map.getCanvas().style.cursor = ""; });
         map.on("click", "subsystem-component-points", (event) => { const feature = event.features?.[0]; if (!feature) return; const properties = feature.properties || {}; new maplibregl.Popup({ offset: 9, className: "component-point-popup" }).setLngLat(feature.geometry.coordinates).setHTML(`<strong>${escapePointText(properties.label || "Componente")}</strong><span>${escapePointText(properties.code || "Código cartográfico de referencia")} · ${escapePointText(properties.subsystem || "Subsistema")}</span>`).addTo(map); });
-        const waterBubbleData = [{ label: "Espejo de agua", coords: [-74.159,4.641] }, { label: "Ronda norte", coords: [-74.160,4.646] }, { label: "Ronda sur", coords: [-74.158,4.635] }, { label: "Canal Los Ángeles", coords: [-74.174,4.645] }, { label: "Entrada de agua", coords: [-74.166,4.644] }, { label: "Salida de agua", coords: [-74.153,4.639] }, { label: "Escorrentías", coords: [-74.167,4.651] }];
-        waterBubbleData.forEach(({ label, coords }) => { const markerEl = document.createElement("div"); markerEl.className = "water-map-bubble"; markerEl.style.display = "none"; markerEl.innerHTML = `<span class="water-map-bubble-core"><i class="fa-solid fa-droplet"></i></span><span class="water-map-bubble-label">${label}</span>`; const marker = new maplibregl.Marker({ element: markerEl, anchor: "center" }).setLngLat(coords).addTo(map); waterMarkers.push(marker); });
-        const waterLayer = partOneMapLayers.find((layer) => layer.id === "hidrico"); if (waterLayer) waterLayer.markers = waterMarkers; map.__waterMarkers = waterMarkers;
+        /* Las gotitas decorativas se mantienen retiradas; el agua se lee mediante su cartografía y puntos de componentes. */
+        const waterLayer = partOneMapLayers.find((layer) => layer.id === "hidrico"); if (waterLayer) waterLayer.markers = []; map.__waterMarkers = [];
         initPartOneControls(map, partOneMapLayers);
-        const burroMarker = document.createElement("div"); burroMarker.className = "burro-focus-label"; burroMarker.innerHTML = "<b>HUMEDAL EL BURRO</b><span>Reserva · agua · borde urbano</span>"; new maplibregl.Marker({ element: burroMarker, anchor: "bottom" }).setLngLat([-74.159, 4.64]).addTo(map); map.jumpTo({ center: [-74.159, 4.64], zoom: 13.65 }); showWaterMarkers(map, 0); drawSubsystems({ hidden: false }); setStatus("HUMEDAL EL BURRO · CARTOGRAFÍA LISTA", true); });
+        const burroMarker = document.createElement("div"); burroMarker.className = "burro-focus-label"; burroMarker.innerHTML = "<b>HUMEDAL EL BURRO</b><span>Reserva · agua · borde urbano</span>"; new maplibregl.Marker({ element: burroMarker, anchor: "bottom" }).setLngLat([-74.159, 4.65]).addTo(map); setStatus("BOGOTÁ · LECTURA GENERAL", true); setupCartographyEntrance(map); });
       const loadOsm = async () => { const query = `[out:json][timeout:20];way[highway~"^(motorway|trunk|primary|secondary|tertiary)$"](around:4200,4.64,-74.09);out geom;`; setStatus("CARGANDO CALLES OSM…"); const controller = new AbortController(); const timer = window.setTimeout(() => controller.abort(), 12000); try { let response; for (const endpoint of ["https://overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter", "https://overpass.private.coffee/api/interpreter"]) { try { response = await fetch(`${endpoint}?data=${encodeURIComponent(query)}`, { signal: controller.signal, headers: { Accept: "application/json" } }); if (response.ok) break; } catch (error) { /* prueba el siguiente endpoint público */ } } if (!response?.ok) throw new Error("Overpass sin respuesta"); const data = await response.json(); const features = data.elements.filter((x) => x.geometry?.length > 1).map((x) => ({ type: "Feature", properties: { highway: x.tags?.highway || "road" }, geometry: { type: "LineString", coordinates: x.geometry.map((p) => [p.lon, p.lat]) } })); const geo = { type: "FeatureCollection", features }; if (map.getSource("osm-streets")) map.getSource("osm-streets").setData(geo); else { map.addSource("osm-streets", { type: "geojson", data: geo }); map.addLayer({ id: "osm-streets", type: "line", source: "osm-streets", paint: { "line-color": "#8fa7a4", "line-width": ["interpolate", ["linear"], ["zoom"], 10, .7, 14, 1.8], "line-opacity": .62 } }); } setStatus(`${features.length} CALLES OSM CARGADAS`, true); } catch (error) { setStatus("MAPA OSM DISPONIBLE · CALLES EN RESPALDO"); toast("Overpass no respondió; el plano monocromático sigue disponible"); } finally { window.clearTimeout(timer); } };
       const loadRoute = async () => { const coords = [[-74.13,4.66],[-74.09,4.64],[-74.05,4.61],[-74.08,4.57]]; setStatus("CALCULANDO RUTA OSRM…"); try { const response = await fetch(`https://router.project-osrm.org/route/v1/driving/${coords.map((c) => c.join(",")).join(";")}?overview=full&geometries=geojson`); if (!response.ok) throw new Error("OSRM " + response.status); const data = await response.json(); const route = data.routes?.[0]?.geometry; if (!route) throw new Error("Sin ruta"); if (map.getSource("osrm-route")) map.getSource("osrm-route").setData(route); else { map.addSource("osrm-route", { type: "geojson", data: route }); map.addLayer({ id: "osrm-route", type: "line", source: "osrm-route", paint: { "line-color": "#f76fb0", "line-width": 4, "line-opacity": .95 } }); } setStatus("RUTA OSRM ACTIVA", true); } catch (error) { setStatus("NO SE PUDO CALCULAR LA RUTA"); toast("OSRM no respondió; conserva los flujos procedurales"); } };
       document.getElementById("loadOsmStreets")?.addEventListener("click", loadOsm);
-      /* La capa OSM se intenta automáticamente; el botón queda como reintento manual. */
-      /* Las calles OSM ya no se cargan automáticamente para mantener limpia la lectura del mapa. */
+      /* Las calles OSM quedan como acción manual y no se cargan al abrir el mapa. */
       document.getElementById("loadOsrmRoute")?.addEventListener("click", loadRoute);
-      document.getElementById("resetCartography")?.addEventListener("click", () => { if (map.getLayer("osm-streets")) map.removeLayer("osm-streets"); if (map.getSource("osm-streets")) map.removeSource("osm-streets"); if (map.getLayer("osrm-route")) map.removeLayer("osrm-route"); if (map.getSource("osrm-route")) map.removeSource("osrm-route"); clearSubsystemPoints(); showWaterMarkers(map, 0); drawSubsystems({ hidden: false }); map.jumpTo({ center: [-74.159,4.64], zoom: 13.65 }); setStatus("HUMEDAL EL BURRO · CARTOGRAFÍA LISTA", true); });
+      document.getElementById("resetCartography")?.addEventListener("click", () => { if (map.getLayer("osm-streets")) map.removeLayer("osm-streets"); if (map.getSource("osm-streets")) map.removeSource("osm-streets"); if (map.getLayer("osrm-route")) map.removeLayer("osrm-route"); if (map.getSource("osrm-route")) map.removeSource("osrm-route"); clearSubsystemPoints(); drawSubsystems({ hidden: false }); map.jumpTo({ center: [-74.159,4.64], zoom: 13.65 }); setStatus("HUMEDAL EL BURRO · CARTOGRAFÍA LISTA", true); });
     }
     function initProceduralSimulation() {
       const holder = document.getElementById("proceduralSimulation");
@@ -1872,8 +1870,7 @@
       if (reduced) {
         map.jumpTo({ center: [-74.159, 4.64], zoom: 13.65 });
         announceCartography("HUMEDAL EL BURRO · AGUA Y SUBSISTEMAS", true);
-        showWaterMarkers(map, 0);
-        createSubsystemFormation(map);
+        drawSubsystems({ hidden: false });
         return;
       }
       announceCartography("BOGOTÁ · LECTURA GENERAL", true);
@@ -1888,9 +1885,8 @@
         map.flyTo({ center: [-74.159, 4.64], zoom: 13.65, duration: 2200, essential: true });
       }, 2250);
       window.setTimeout(() => {
-        announceCartography("HUMEDAL EL BURRO · EL AGUA SE ACTIVA", true);
-        showWaterMarkers(map, 110);
-        createSubsystemFormation(map);
+        announceCartography("HUMEDAL EL BURRO · SUBSISTEMAS VISIBLES", true);
+        drawSubsystems({ hidden: false });
       }, 4800);
     };
     const setupCartographyEntrance = (map) => {
