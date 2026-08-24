@@ -1248,6 +1248,28 @@ function setScaleNetworkFlowRunning(running) {
   }
 }
 
+function popupEdgeEndpoints(edge) {
+  const attributes = ['x1', 'y1', 'x2', 'y2'].map(name => {
+    const value = edge.getAttribute(name);
+    return value === null ? NaN : Number(value);
+  });
+  if (attributes.every(Number.isFinite)) {
+    const [x1, y1, x2, y2] = attributes;
+    return { x1, y1, x2, y2 };
+  }
+  // Las conexiones del grafo orgánico son rutas rectas `M x y L x y`.
+  // El flujo debe leer esa geometría; Number(null) devolvía 0 y ocultaba
+  // todas las partículas en la esquina superior izquierda del SVG.
+  const values = (edge.getAttribute('d') || '').match(/-?\d+(?:\.\d+)?/g)?.map(Number) || [];
+  if (values.length < 4 || !values.slice(0, 4).every(Number.isFinite)) return null;
+  return {
+    x1: values[0],
+    y1: values[1],
+    x2: values[values.length - 2],
+    y2: values[values.length - 1]
+  };
+}
+
 function buildScaleNetworkFlow(resetProgress = false) {
   cancelScaleNetworkFlowLoop();
   scaleNetworkFlowState.particles = [];
@@ -1264,11 +1286,9 @@ function buildScaleNetworkFlow(resetProgress = false) {
   const svgNamespace = 'http://www.w3.org/2000/svg';
   const edges = [...svg.querySelectorAll('.popup-edge')];
   edges.forEach((edge, edgeIndex) => {
-    const x1 = Number(edge.getAttribute('x1'));
-    const y1 = Number(edge.getAttribute('y1'));
-    const x2 = Number(edge.getAttribute('x2'));
-    const y2 = Number(edge.getAttribute('y2'));
-    if (![x1, y1, x2, y2].every(Number.isFinite)) return;
+    const endpoints = popupEdgeEndpoints(edge);
+    if (!endpoints) return;
+    const { x1, y1, x2, y2 } = endpoints;
     const isIndirect = edge.classList.contains('indirect');
     const count = isIndirect ? 1 : 2;
     for (let index = 0; index < count; index += 1) {
