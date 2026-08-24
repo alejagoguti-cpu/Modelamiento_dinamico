@@ -445,15 +445,25 @@
         applyRoadZoomFilter();
         scheduleViewportLoad();
       });
-      state.map.on("load", () => {
+      state.map.on("load", async () => {
         state.mapReady = true;
         addMapLayers();
         updateUplPanel(state.selectedUpl);
         focusSelectedUpl(false);
-        setText("#connectionLabel", "Cargando OSM · respaldo visible");
+        setText("#connectionLabel", "Intentando cargar PMTiles local…");
         renderProceduralMarkers();
-        showToast("Mapa listo. Se muestra el respaldo mientras llegan los datos OSM.");
         applyRoadZoomFilter();
+
+        // Intentar activar PMTiles automáticamente
+        try {
+          await enableLocalPmtiles();
+          showToast("✓ PMTiles local cargado: datos completos sin CORS");
+        } catch (error) {
+          // Si no hay PMTiles, continuar con Overpass
+          setText("#connectionLabel", "Cargando OSM · respaldo visible");
+          showToast("Mapa listo. Se muestra el respaldo mientras llegan los datos OSM.");
+        }
+
         loadScaleData();
       });
       state.map.on("error", (event) => {
@@ -774,8 +784,10 @@
     } catch (error) {
       /* Un timeout propio no debe dejar las tarjetas congeladas en “cargando”. */
       if (token !== state.queryToken) return;
-      console.warn("Overpass no respondió o excedió el tiempo límite", error);
-      useProceduralFallback("Overpass tardó demasiado; se muestran los datos de respaldo y puedes reintentar las capas API.");
+      console.warn(“Overpass no respondió o excedió el tiempo límite”, error);
+      const isCorsError = error.message.includes(“CORS”) || error.message.includes(“Failed to fetch”);
+      const suggestion = isCorsError ? “ → Usa el botón PMTiles local para datos sin CORS.” : “”;
+      useProceduralFallback(`Overpass tardó demasiado; se muestran los datos de respaldo.${suggestion}`);
     } finally {
       window.clearTimeout(timeout);
       if (state.overpassController === controller) state.overpassController = null;
