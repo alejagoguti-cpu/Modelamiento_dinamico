@@ -500,17 +500,68 @@
     }
   }
 
-  function mapHoverTooltipHtml(feature, layerId) {
+  function clusterTooltipHtml(properties, leaves = null) {
+    const count = Number(properties.point_count) || 0;
+    if (!Array.isArray(leaves) || !leaves.length) {
+      return `<strong>${count.toLocaleString("es-CO")} elementos OSM</strong><span>Resumen OSM · preparando categorías y nombres.</span>`;
+    }
+    const categoryCounts = new Map();
+    const names = [];
+    leaves.forEach((leaf) => {
+      const leafProperties = leaf?.properties || {};
+      const category = String(leafProperties.layerLabel || leafProperties.featureType || "Puntos sin categoría");
+      categoryCounts.set(category, (categoryCounts.get(category) || 0) + 1);
+      const name = String(leafProperties.label || "").trim();
+      if (name && name !== "Lugar OSM" && !names.includes(name)) names.push(name);
+    });
+    const categories = [...categoryCounts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 3).map(([category, total]) => `${escapeHtml(category)} (${total})`).join(" · ");
+    const sampleCount = leaves.length < count ? `Muestra ${leaves.length} de ${count}` : `${leaves.length} elementos`;
+    const references = names.slice(0, 3).map((name) => escapeHtml(name)).join(" · ");
+    return `<strong>${count.toLocaleString("es-CO")} elementos OSM</strong><span><b>Categorías:</b> ${categories || "Sin clasificar"}<br><b>${sampleCount}:</b> ${references || "sin nombres disponibles"}</span>`;
+  }
+
+  function mapHoverTooltipHtml(feature, layerId, leaves = null) {
     const properties = feature?.properties || {};
     const count = Number(properties.point_count);
-    if ((layerId === "osm-place-clusters" || layerId === "osm-place-cluster-count" || Number.isFinite(count)) && count > 0) {
-      return `<strong>${count.toLocaleString("es-CO")} elementos OSM</strong><span>Acerca el mapa para consultar cada circulito.</span>`;
-    }
+    if ((layerId === "osm-place-clusters" || layerId === "osm-place-cluster-count" || Number.isFinite(count)) && count > 0) return clusterTooltipHtml(properties, leaves);
     const label = properties.label || "Lugar OSM";
     const type = properties.featureType || "lugar";
     const category = properties.layerLabel || "Punto OSM";
     const osmId = properties.osmId ? ` · ID ${escapeHtml(String(properties.osmId))}` : "";
     return `<strong>${escapeHtml(String(label))}</strong><span>${escapeHtml(String(type))} · ${escapeHtml(String(category))} · OpenStreetMap${osmId}</span>`;
+  }
+
+  function requestClusterLeaves(source, clusterId, limit = 40, offset = 0) {
+    if (!source || typeof source.getClusterLeaves !== "function") return Promise.resolve([]);
+    return new Promise((resolve, reject) => {
+      let settled = false;
+      const finish = (error, leaves) => {
+        if (settled) return;
+        settled = true;
+        if (error) reject(error);
+        else resolve(Array.isArray(leaves) ? leaves : []);
+      };
+      try {
+        const result = source.getClusterLeaves(clusterId, limit, offset, finish);
+        if (result?.then) result.then((leaves) => finish(null, leaves)).catch((error) => finish(error));
+      } catch (error) {
+        finish(error);
+      }
+    });
+  }
+
+  async function enrichClusterTooltip(feature, layerId, featureKey) {
+    const properties = feature?.properties || {};
+    const clusterId = properties.cluster_id ?? feature.id;
+    const count = Number(properties.point_count) || 0;
+    if (clusterId === undefined || clusterId === null || !count || !state.map) return;
+    try {
+      const leaves = await requestClusterLeaves(state.map.getSource("osm-places"), clusterId, Math.min(count, 40), 0);
+      if (state.hoveredMapFeatureKey !== featureKey || !state.mapHoverPopup) return;
+      state.mapHoverPopup.setHTML(mapHoverTooltipHtml(feature, layerId, leaves)).addTo(state.map);
+    } catch (error) {
+      console.debug("No se pudo resumir el cluster OSM", error);
+    }
   }
 
   function setMapHoverHaloOpacity(opacity) {
@@ -597,6 +648,7 @@
       if (state.hoveredMapFeatureKey !== featureKey) {
         state.hoveredMapFeatureKey = featureKey;
         state.mapHoverPopup.setHTML(mapHoverTooltipHtml(feature, layerId));
+        if (layerId === "osm-place-clusters" || layerId === "osm-place-cluster-count") enrichClusterTooltip(feature, layerId, featureKey);
       }
       state.mapHoverPopup.setLngLat(event.lngLat).addTo(state.map);
     };
