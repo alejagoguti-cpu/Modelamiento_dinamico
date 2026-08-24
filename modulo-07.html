@@ -67,6 +67,17 @@
           </div>
         </section>
 
+        <section class="territory-reading-section" aria-labelledby="territoryReadingTitle">
+          <div class="territory-reading-kicker">LECTURA DEL TERRITORIO</div>
+          <h2 id="territoryReadingTitle">¿Cómo funciona nuestro modelo para comprender el territorio?</h2>
+          <div class="territory-reading-buttons" role="group" aria-label="Lecturas del modelo">
+            <button type="button" id="directSubsystemsBtn" class="territory-reading-button active">Subsistemas del territorio</button>
+            <button type="button" id="directSubmodelsBtn" class="territory-reading-button">Submodelos de nuestro modelo</button>
+          </div>
+          <div id="submodelsWorkspace" class="territory-reading-workspace">
+            <div id="submodelsView" class="submodels-view"></div>
+          </div>
+        </section>
         <section class="cartography-section" aria-labelledby="cartographyTitle">
           <div class="cartography-heading compact-heading"><div class="eyebrow"><b></b> CARTOGRAFÍA DE BOGOTÁ · HUMEDAL EL BURRO</div><span class="cartography-status"><i></i> MODO OSCURO</span></div>
           <div class="cartography-card">
@@ -90,141 +101,13 @@
                 <p id="temporalStateDescription" class="temporal-description"></p>
               </div>
             </aside>
-            <div class="direct-submodel-tabs" role="group" aria-label="Cambiar lectura del territorio">
-              <span>LECTURA DEL MISMO PLANO</span>
-              <button type="button" id="directSubsystemsBtn">Subsistemas del territorio</button>
-              <button type="button" id="directSubmodelsBtn">Submodelos de nuestro modelo</button>
-            </div>
             <div id="subsystemsPanel" class="subsystems-panel" hidden>
-              <strong>12 SUBSISTEMAS IDENTIFICADOS</strong>
-              <span>Agua · suelo · vegetación · fauna · hábitat · borde · movilidad · comunidad · restauración · gestión · presiones · transformación histórica</span>
-            </div>
-            <div class="part-one-note"><strong>Mapeo de subsistemas:</strong> el mapa muestra dónde están los subsistemas presentes en el sector. Los componentes aparecen agrupados dentro de cada subsistema. Las relaciones entre subsistemas se explican en la tabla y en el panel de evidencia, no mediante composición.</div>
-            <section class="submodels-section" aria-labelledby="submodelsTitle">
-              <button type="button" id="submodelsQuestion" class="submodels-question" aria-expanded="false" aria-controls="submodelsWorkspace">¿Cómo funciona nuestro modelo para comprender el territorio?</button>
-              <div id="submodelsWorkspace" class="submodels-workspace" hidden>
-                <div class="submodels-intro"><strong id="submodelsTitle">SUBMODELOS · PARTE II</strong><p>Usamos el mismo plano del Humedal El Burro. La Parte I identifica los subsistemas; la Parte II activa los procesos, flujos y decisiones que hacen que el territorio cambie.</p></div>
-                <div class="submodels-tabs" role="tablist" aria-label="Vistas del territorio">
-                  <button type="button" class="submodel-tab active" id="viewSubsystemsBtn" role="tab" aria-selected="true">Subsistemas del territorio</button>
-                  <button type="button" class="submodel-tab" id="viewSubmodelsBtn" role="tab" aria-selected="false">Submodelos de nuestro modelo</button>
-                </div>
-                <div id="submodelsView" class="submodels-view"></div>
-              </div>
-            </section>
-            <div class="part-one-table-wrap">
-              <table class="part-one-table">
-                <thead><tr><th>Subsistema completo</th><th>Componentes que participan</th><th>Partes con propósito propio</th><th>Totalidad con propósito propio</th><th>Categoría</th></tr></thead>
-                <tbody id="partOneTableBody"></tbody>
-              </table>
-            </div>
-            <div class="part-one-evidence">
-              <h3>Evidencias verificadas del sector</h3>
-              <div class="evidence-grid">
-                <p><b>Historia territorial.</b> El Jardín Botánico indica que El Burro hacía parte de la extinta Laguna El Tintal.</p>
-                <p><b>Biodiversidad.</b> Se reportan 36 especies de aves: 27 residentes permanentes y 9 migratorias; también se registran arañas e insectos.</p>
-                <p><b>Funciones ecológicas.</b> Las arañas actúan como controladores biológicos y algunos insectos cumplen funciones de polinización y depredación.</p>
-                <p><b>Vegetación.</b> Se identifican especies vegetales nativas, invasoras y exóticas.</p>
-                <p><b>Tensionantes.</b> Contaminación atmosférica y auditiva por la Avenida Ciudad de Cali, escombros en la ZMPA, residuos del Canal Los Ángeles y edificios que obstruyen la llegada de aves.</p>
-                <p><b>Manejo.</b> Se realizan cerramientos, reintroducción de nativas, control de invasoras, mantenimiento, compostaje, educación y seguimiento de la restauración.</p>
-              </div>
+              <strong>6 SISTEMAS IDENTIFICADOS</strong>
+              <span>Dinámica hídrica · dinámica biótica · sistema físico-urbano · movilidad · social-comunitario · socioeconómico y de ocupación</span>
             </div>
           </div>
         </section>
-        <section class="metric-grid">
-          <article class="metric-card cyan">
-            <header>
-              <button
-                class="metric-number network-trigger"
-                data-network="30min"
-                title="Abrir red de Ciudad de los 30 minutos"
-              >
-                1
-              </button>
-              <div>
-                <strong>Ciudad de los 30 minutos</strong
-                ><small>Acceso equitativo a servicios y oportunidades</small>
-              </div>
-            </header>
-            <div class="metric-body metric-focus">
-              <div class="focus-icon"><i class="fa-solid fa-clock" aria-hidden="true"></i></div>
-              <div class="focus-copy">
-                <small>INDICADOR CLAVE</small>
-                <strong>Acceso a servicios y oportunidades</strong>
-                <span><i></i>Meta de proximidad · 2035</span>
-              </div>
-            </div>
-            <footer>
-              <span><i class="fa-solid fa-building" aria-hidden="true"></i> <b>33</b><small>UPL del modelo</small></span
-              ><span><i class="fa-solid fa-heart" aria-hidden="true"></i> <b>45</b><small>Manzanas del Cuidado</small></span
-              ><span><i class="fa-solid fa-clock" aria-hidden="true"></i> <b>26–62 min</b><small>Brecha de viaje</small></span>
-            </footer>
-          </article>
-          <article class="metric-card orange">
-            <header>
-              <button
-                class="metric-number network-trigger"
-                data-network="empleo"
-                title="Abrir red de Productividad y empleo"
-              >
-                2
-              </button>
-              <div>
-                <strong>Productividad y empleo</strong
-                ><small>Crecimiento económico inclusivo y sostenible</small>
-              </div>
-            </header>
-            <div class="metric-body metric-focus">
-              <div class="focus-icon"><i class="fa-solid fa-arrow-trend-up" aria-hidden="true"></i></div>
-              <div class="focus-copy">
-                <small>INDICADOR CLAVE</small>
-                <strong>Crecimiento de la población ocupada</strong>
-                <span><i></i>Escenario alto · productividad inclusiva</span>
-              </div>
-            </div>
-            <footer>
-              <span><i class="fa-solid fa-briefcase" aria-hidden="true"></i> <b>910.509</b><small>Empleos potenciales</small></span
-              ><span><i class="fa-solid fa-chart-line" aria-hidden="true"></i> <b>7%</b><small>Desempleo escenario alto</small></span
-              ><span
-                ><i class="fa-solid fa-city" aria-hidden="true"></i> <b>10 / 33</b><small>UPL con superávit laboral</small></span>
-              >
-            </footer>
-          </article>
-          <article class="metric-card cyan">
-            <header>
-              <button
-                class="metric-number network-trigger"
-                data-network="carbono"
-                title="Abrir red de Descarbonización"
-              >
-                3
-              </button>
-              <div>
-                <strong>Descarbonización</strong
-                ><small>Reducción de emisiones y calidad del aire</small>
-              </div>
-            </header>
-            <div class="metric-body metric-focus">
-              <div class="focus-icon"><i class="fa-solid fa-leaf" aria-hidden="true"></i></div>
-              <div class="focus-copy">
-                <small>INDICADOR CLAVE</small>
-                <strong>Transición hacia viajes limpios</strong>
-                <span><i></i>Meta de descarbonización · 2035</span>
-              </div>
-            </div>
-            <footer>
-              <span><i class="fa-solid fa-smog" aria-hidden="true"></i> <b>47%</b><small>GEI del transporte</small></span
-              ><span><i class="fa-solid fa-wind" aria-hidden="true"></i> <b>18%</b><small>PM fino del transporte</small></span
-              ><span><i class="fa-solid fa-bus" aria-hidden="true"></i> <b>2040</b><small>Flota pública eléctrica</small></span>
-            </footer>
-          </article>
-        </section>
 
-        <footer class="dashboard-footer">
-          <span>Modelo activo: <b>Bogotá Viva · Escenario Óptimo 2040</b></span
-          ><span>Simulación completada: <b>Hoy, 08:42</b></span
-          ><span>Confianza del modelo: <b>Alta</b> <i></i></span
-          ><button id="exportBottom">⇩ &nbsp; Guardar síntesis</button>
-        </footer>
       </main>
     </div>
     <div id="networkModal" class="network-modal hidden">
