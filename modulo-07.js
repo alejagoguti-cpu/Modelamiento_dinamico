@@ -1903,37 +1903,41 @@
       const relationPairs = systems
         ? [[0,1],[0,2],[0,5],[1,2],[1,3],[1,5],[2,3],[2,4],[3,4],[3,5],[4,5]]
         : [[0,1],[0,2],[1,2],[1,3],[2,3],[2,4],[3,4],[3,5],[4,5],[4,6],[5,6],[0,6],[1,5]];
+      const gradientDefs = [];
       const bonds = relationPairs.map(([fromIndex, toIndex], edgeIndex) => {
         const row = rows[fromIndex], other = rows[toIndex];
         if (!row || !other) return "";
         const [x, y] = positions[fromIndex], [nx, ny] = positions[toIndex];
         const dx = nx - x, dy = ny - y, length = Math.max(1, Math.hypot(dx, dy));
-        const bend = (edgeIndex % 2 ? -1 : 1) * Math.min(5, length * .11);
+        const bend = (edgeIndex % 2 ? -1 : 1) * Math.min(4.2, length * .085);
         const unit = (vx, vy) => { const size = Math.max(.001, Math.hypot(vx, vy)); return [vx / size, vy / size]; };
         const normalPoint = (px, py, tx, ty, width) => [px - ty * width, py + tx * width];
         const [ux, uy] = unit(dx, dy);
-        const startGap = Math.min(1.25, length * .025);
-        const endGap = Math.min(1.25, length * .025);
-        const start = [x + ux * startGap, y + uy * startGap];
-        const end = [nx - ux * endGap, ny - uy * endGap];
-        const mid = [(start[0] + end[0]) / 2 - (dy / length) * bend * .62, (start[1] + end[1]) / 2 + (dx / length) * bend * .62];
+        const start = [x + ux * Math.min(1.35, length * .03), y + uy * Math.min(1.35, length * .03)];
+        const end = [nx - ux * Math.min(1.35, length * .03), ny - uy * Math.min(1.35, length * .03)];
+        const mid = [(start[0] + end[0]) / 2 - (dy / length) * bend, (start[1] + end[1]) / 2 + (dx / length) * bend];
         const [t0x, t0y] = unit(mid[0] - start[0], mid[1] - start[1]);
         const [tmx, tmy] = unit(end[0] - start[0], end[1] - start[1]);
         const [t1x, t1y] = unit(end[0] - mid[0], end[1] - mid[1]);
-        const left0 = normalPoint(start[0], start[1], t0x, t0y, 1.7);
-        const leftM = normalPoint(mid[0], mid[1], tmx, tmy, .22);
-        const left1 = normalPoint(end[0], end[1], t1x, t1y, 1.7);
-        const right0 = normalPoint(start[0], start[1], t0x, t0y, -1.7);
-        const rightM = normalPoint(mid[0], mid[1], tmx, tmy, -.22);
-        const right1 = normalPoint(end[0], end[1], t1x, t1y, -1.7);
+        const endWidth = .58;
+        const midWidth = .18;
+        const left0 = normalPoint(start[0], start[1], t0x, t0y, endWidth);
+        const leftM = normalPoint(mid[0], mid[1], tmx, tmy, midWidth);
+        const left1 = normalPoint(end[0], end[1], t1x, t1y, endWidth);
+        const right0 = normalPoint(start[0], start[1], t0x, t0y, -endWidth);
+        const rightM = normalPoint(mid[0], mid[1], tmx, tmy, -midWidth);
+        const right1 = normalPoint(end[0], end[1], t1x, t1y, -endWidth);
         const point = ([px, py]) => `${px.toFixed(2)} ${py.toFixed(2)}`;
         const path = `M ${point(left0)} Q ${point(leftM)} ${point(left1)} L ${point(right1)} Q ${point(rightM)} ${point(right0)} Z`;
-        const bondColor = row.color || colors[fromIndex];
-        return `<g class="map-network-bond-group" style="--bond-color:${bondColor}"><path class="map-network-bond-soft" d="${path}"/><path class="map-network-bond" d="${path}"><title>Relación entre ${label(row)} y ${label(other)}</title></path></g>`;
+        const sourceColor = row.color || colors[fromIndex];
+        const targetColor = other.color || colors[toIndex];
+        const gradientId = `map-network-gradient-${systems ? "systems" : "submodels"}-${edgeIndex}`;
+        gradientDefs.push(`<linearGradient id="${gradientId}" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="${sourceColor}" stop-opacity=".86"/><stop offset="50%" stop-color="${sourceColor}" stop-opacity=".58"/><stop offset="100%" stop-color="${targetColor}" stop-opacity=".86"/></linearGradient>`);
+        return `<g class="map-network-bond-group" style="--bond-color:${sourceColor};--bond-gradient:url(#${gradientId})"><path class="map-network-bond-soft" d="${path}"/><path class="map-network-bond" d="${path}"><title>Relación entre ${label(row)} y ${label(other)}</title></path></g>`;
       }).join("");
       subsystemBubbles.dataset.revealState = "complete";
       subsystemBubbles.classList.add("network-active");
-      subsystemBubbles.innerHTML = `<div class="map-network-stage ${systems ? "systems-network" : "submodels-network"}"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><defs><filter id="network-gel-filter" x="-25%" y="-25%" width="150%" height="150%"><feGaussianBlur stdDeviation="1.35" result="soft"/><feMerge><feMergeNode in="soft"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><g class="map-network-bonds">${bonds}</g></svg>${nodes}</div>`;
+      subsystemBubbles.innerHTML = `<div class="map-network-stage ${systems ? "systems-network" : "submodels-network"}"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><defs>${gradientDefs.join("")}</defs><g class="map-network-bonds">${bonds}</g></svg>${nodes}</div>`;
       subsystemBubbles.querySelectorAll(".map-network-node").forEach((button) => button.addEventListener("click", () => {
         const row = rows[Number(button.dataset.mapNetworkIndex)];
         subsystemBubbles.querySelectorAll(".map-network-node").forEach((node) => node.classList.toggle("selected", node === button));
