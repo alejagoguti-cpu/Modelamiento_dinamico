@@ -481,99 +481,123 @@ function drawEdges(svg) {
   svg.appendChild(g);
 }
 
-function drawCityDataCloud(svg) {
-  const field = document.createElementNS(SVG_NS, "g");
-  field.setAttribute("class", "city-data-field");
-  field.setAttribute("aria-hidden", "true");
-  const palette = ["#2fd4c8", "#f5a623", "#f76fb0", "#b08cff", "#7d8ea3", "#eef0f6"];
-  const clusters = [
-    { id: "ecologia", cx: 250, cy: 232, color: "#2fd4c8", spread: 2.15, reach: 230, lanes: 20, points: 18, phase: .2 },
-    { id: "ciudad", cx: 570, cy: 205, color: "#f5a623", spread: 2.05, reach: 220, lanes: 18, points: 17, phase: 1.7 },
-    { id: "patrimonio", cx: 700, cy: 540, color: "#f76fb0", spread: 1.95, reach: 190, lanes: 17, points: 16, phase: 2.8 },
-    { id: "agentes", cx: 460, cy: 355, color: "#b08cff", spread: 2.35, reach: 155, lanes: 18, points: 15, phase: 3.6 },
-    { id: "cuidado", cx: 325, cy: 520, color: "#7d8ea3", spread: 1.9, reach: 175, lanes: 15, points: 15, phase: 4.5 },
-  ];
-  const noise = (seed) => (Math.sin(seed * 12.9898 + 78.233) * 43758.5453) % 1;
-  const point = (x, y) => `${x.toFixed(1)} ${y.toFixed(1)}`;
-  const addDot = (group, x, y, radius, color, index) => {
-    const dot = document.createElementNS(SVG_NS, "circle");
-    dot.setAttribute("class", "data-point");
-    dot.setAttribute("cx", x.toFixed(1)); dot.setAttribute("cy", y.toFixed(1));
-    dot.setAttribute("r", radius.toFixed(2));
-    dot.style.setProperty("--point-color", color);
-    dot.style.setProperty("--point-delay", `${((index % 19) * .16).toFixed(2)}s`);
-    group.appendChild(dot);
+function cityDataFilterMatches(node, filter) {
+  if (!filter || filter === "all") return true;
+  const groups = {
+    "Agua y ambiente": n => (n.n >= 1 && n.n <= 26) || (n.n >= 135 && n.n <= 137),
+    "Ciudad construida": n => n.n >= 27 && n.n <= 42,
+    "Movilidad": n => n.n >= 43 && n.n <= 56,
+    "Agentes y comunidad": n => (n.n >= 57 && n.n <= 68) || (n.n >= 105 && n.n <= 110) || (n.n >= 126 && n.n <= 130),
+    "Vivienda, empleo y cuidado": n => n.n >= 69 && n.n <= 94,
+    "Patrimonio": n => n.n >= 95 && n.n <= 104,
+    "Servicios y materiales": n => n.n >= 115 && n.n <= 134,
+    "Región e información": n => n.n >= 135 && n.n <= 140,
   };
-  clusters.forEach((cluster, clusterIndex) => {
-    const group = document.createElementNS(SVG_NS, "g");
-    group.setAttribute("class", `data-cluster data-cluster-${cluster.id}`);
-    group.style.setProperty("--cluster-color", cluster.color);
-    group.style.setProperty("--cluster-delay", `${(-cluster.phase).toFixed(2)}s`);
+  return groups[filter]?.(node) ?? node.subsystem === filter;
+}
+
+function setCityDataFilter(filter) {
+  window.currentCityDataFilter = filter;
+  renderNetwork();
+}
+
+function cityDataPointPosition(node, index, visibleCount) {
+  const normalized = (node.n * 0.61803398875) % 1;
+  const theta = normalized * Math.PI * 2 + ((index % 7) - 3) * .045;
+  const bands = Math.max(1, Math.ceil(Math.sqrt(visibleCount / 2)));
+  const band = index % bands;
+  const radius = 52 + ((band / Math.max(1, bands - 1)) * 236) + Math.sin(index * 1.7) * 10;
+  const center = [530, 395];
+  const subsystemCenters = {
+    "Hídrico": [270, 235], "Biótico": [235, 475], "Físico-urbano": [570, 195],
+    "Movilidad": [805, 300], "Social-comunitario": [790, 505], "Socioeconómico y ocupación": [560, 620],
+    "Cuidado y servicios": [330, 650], "Patrimonio y memoria": [855, 645], "Institucional y gestión": [100, 360],
+    "Energía y servicios públicos": [170, 630], "Abastecimiento y economía circular": [930, 410], "Regional y flujos abiertos": [520, 80],
+  };
+  const [cx, cy] = subsystemCenters[node.subsystem] || center;
+  const spread = Math.min(1, visibleCount / 42);
+  return {
+    x: cx + Math.cos(theta) * radius * spread * .58,
+    y: cy + Math.sin(theta) * radius * spread * .46,
+  };
+}
+
+function showCityTableNodeInfo(node) {
+  const panel = document.getElementById("edgeInfoPanel");
+  if (!panel || !node) return;
+  document.querySelectorAll(".rd-node").forEach(el => el.classList.remove("edge-selected"));
+  const selected = document.querySelector(`.rd-node[data-table-id="${node.n}"]`);
+  selected?.classList.add("edge-selected");
+  document.getElementById("edgeInfoTitle").textContent = node.name;
+  document.getElementById("edgeInfoConvencion").textContent = `Nodo concreto · ${node.subsystem}`;
+  document.getElementById("edgeInfoEvidencia").textContent = `“${node.name}” aparece como nodo observable en la Red ampliada de Bogotá como territorio dinámico.`;
+  document.getElementById("edgeInfoPage").textContent = `Tabla · nodo ${node.n} de 140`;
+  document.getElementById("edgeInfoActores").textContent = `Tipo de nodo: ${node.type}`;
+  document.getElementById("edgeInfoSituacion").textContent = `Subsistema: ${node.subsystem}`;
+  document.getElementById("edgeInfoCritica").textContent = "La tabla evita convertir el subsistema en un objeto abstracto: aquí se observa un lugar, agente, flujo, infraestructura o proceso concreto.";
+  document.getElementById("edgeInfoLiveScript").textContent = `Qué decir: “Aquí no estoy mostrando el sistema como una categoría vacía; estoy mostrando ${node.name}, un elemento concreto que puede relacionarse con otros elementos de la ciudad.”`;
+  panel.classList.add("visible");
+}
+
+function drawCityDataCloud(svg) {
+  if (typeof CITY_DATA_NODES === "undefined") return;
+  const filter = window.currentCityDataFilter || "all";
+  const visible = CITY_DATA_NODES.filter(node => cityDataFilterMatches(node, filter));
+  const field = document.createElementNS(SVG_NS, "g");
+  field.setAttribute("class", "city-table-field");
+  field.setAttribute("aria-hidden", "true");
+  const fibers = document.createElementNS(SVG_NS, "g");
+  fibers.setAttribute("class", "city-table-fibers");
+  const points = document.createElementNS(SVG_NS, "g");
+  points.setAttribute("class", "city-table-points");
+  const groups = {};
+  visible.forEach((node, index) => {
+    const p = cityDataPointPosition(node, index, visible.length);
+    const color = CITY_DATA_SUBSYSTEM_COLORS[node.subsystem] || "#c9cedb";
+    if (!groups[node.subsystem]) groups[node.subsystem] = { node, points: [] };
+    groups[node.subsystem].points.push({ node, ...p });
+    const dot = document.createElementNS(SVG_NS, "circle");
+    dot.setAttribute("class", `city-table-point rd-node ${node.type.includes("Agente") || node.type.includes("Usuarios") ? "city-table-agent" : ""}`);
+    dot.dataset.tableId = String(node.n);
+    dot.dataset.id = `table-${node.n}`;
+    dot.dataset.kind = node.type.includes("Agente") || node.type.includes("Usuarios") || node.type.includes("Organización") ? "actor" : "componente";
+    dot.setAttribute("role", "button");
+    dot.setAttribute("tabindex", "0");
+    dot.setAttribute("aria-label", `${node.name} · ${node.subsystem} · ${node.type}`);
+    dot.addEventListener("click", (event) => { event.stopPropagation(); showCityTableNodeInfo(node); });
+    dot.addEventListener("keydown", (event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); showCityTableNodeInfo(node); } });
+    dot.setAttribute("cx", p.x.toFixed(1)); dot.setAttribute("cy", p.y.toFixed(1));
+    dot.setAttribute("r", (node.type.includes("Humedal") || node.type.includes("Río") ? 2.5 : 1.55).toFixed(2));
+    dot.style.setProperty("--table-color", color);
+    dot.style.setProperty("--table-delay", `${-((node.n % 24) * .13).toFixed(2)}s`);
+    dot.setAttribute("data-table-node", String(node.n));
+    const title = document.createElementNS(SVG_NS, "title");
+    title.textContent = `${node.n}. ${node.name} · ${node.subsystem} · ${node.type}`;
+    dot.appendChild(title);
+    points.appendChild(dot);
+  });
+  Object.values(groups).forEach((group, groupIndex) => {
+    const list = group.points;
+    const color = CITY_DATA_SUBSYSTEM_COLORS[group.node.subsystem] || "#c9cedb";
+    const center = list.reduce((acc, item) => ({ x: acc.x + item.x / list.length, y: acc.y + item.y / list.length }), { x: 0, y: 0 });
     const core = document.createElementNS(SVG_NS, "circle");
-    core.setAttribute("class", "data-cluster-core");
-    core.setAttribute("cx", cluster.cx); core.setAttribute("cy", cluster.cy); core.setAttribute("r", 7);
-    group.appendChild(core);
-    const fanCount = cluster.lanes;
-    for (let lane = 0; lane < fanCount; lane += 1) {
-      const ratio = fanCount === 1 ? 0 : lane / (fanCount - 1) - .5;
-      const angle = cluster.phase + ratio * cluster.spread;
-      const length = cluster.reach * (.72 + Math.abs(ratio) * .33 + Math.abs(noise(clusterIndex * 31 + lane)) * .18);
-      const bend = (noise(clusterIndex * 71 + lane * 3) - .5) * 85;
-      const sx = cluster.cx + Math.cos(angle) * 5;
-      const sy = cluster.cy + Math.sin(angle) * 5;
-      const tx = cluster.cx + Math.cos(angle) * length;
-      const ty = cluster.cy + Math.sin(angle) * length;
-      const nx = -Math.sin(angle), ny = Math.cos(angle);
-      const c1x = cluster.cx + Math.cos(angle) * length * .30 + nx * bend;
-      const c1y = cluster.cy + Math.sin(angle) * length * .30 + ny * bend;
-      const c2x = cluster.cx + Math.cos(angle) * length * .78 - nx * bend * .55;
-      const c2y = cluster.cy + Math.sin(angle) * length * .78 - ny * bend * .55;
+    core.setAttribute("class", "city-table-cluster-core"); core.setAttribute("cx", center.x); core.setAttribute("cy", center.y); core.setAttribute("r", 3.3);
+    core.style.setProperty("--table-color", color); fibers.appendChild(core);
+    list.slice(0, Math.min(18, list.length)).forEach((item, index) => {
       const fiber = document.createElementNS(SVG_NS, "path");
-      fiber.setAttribute("class", "data-fiber");
-      fiber.setAttribute("d", `M${point(sx, sy)} C${point(c1x, c1y)} ${point(c2x, c2y)} ${point(tx, ty)}`);
-      fiber.style.setProperty("--fiber-color", cluster.color);
-      fiber.style.setProperty("--fiber-delay", `${(-cluster.phase - lane * .08).toFixed(2)}s`);
-      group.appendChild(fiber);
-      for (let p = 1; p <= cluster.points; p += 1) {
-        const t = p / (cluster.points + 1);
-        const wave = Math.sin((p + lane * .7 + cluster.phase) * 1.45) * (1.4 + t * 2.1);
-        const px = cluster.cx + Math.cos(angle) * length * t + nx * (bend * (t * (1 - t)) + wave);
-        const py = cluster.cy + Math.sin(angle) * length * t + ny * (bend * (t * (1 - t)) + wave);
-        const color = (p + lane + clusterIndex) % 17 === 0 ? palette[(clusterIndex + 2) % palette.length] : cluster.color;
-        addDot(group, px, py, .72 + ((p + lane) % 4) * .14, color, clusterIndex * 1000 + lane * 30 + p);
-      }
-    }
-    field.appendChild(group);
+      fiber.setAttribute("class", "city-table-fiber");
+      const bend = ((index % 2 ? -1 : 1) * (8 + (index % 5) * 2));
+      const dx = item.x - center.x, dy = item.y - center.y;
+      const length = Math.max(1, Math.hypot(dx, dy));
+      const nx = -dy / length, ny = dx / length;
+      const c1x = center.x + dx * .38 + nx * bend, c1y = center.y + dy * .38 + ny * bend;
+      const c2x = center.x + dx * .78 - nx * bend, c2y = center.y + dy * .78 - ny * bend;
+      fiber.setAttribute("d", `M${center.x.toFixed(1)},${center.y.toFixed(1)} C${c1x.toFixed(1)},${c1y.toFixed(1)} ${c2x.toFixed(1)},${c2y.toFixed(1)} ${item.x.toFixed(1)},${item.y.toFixed(1)}`);
+      fiber.style.setProperty("--table-color", color); fiber.style.setProperty("--table-delay", `${-(groupIndex * .7 + index * .09).toFixed(2)}s`);
+      fibers.appendChild(fiber);
+    });
   });
-  const bridgePairs = [[0, 1], [0, 3], [1, 2], [3, 4], [4, 2]];
-  bridgePairs.forEach(([a, b], bridgeIndex) => {
-    const from = clusters[a], to = clusters[b];
-    const group = document.createElementNS(SVG_NS, "g");
-    group.setAttribute("class", "data-bridge");
-    group.style.setProperty("--bridge-color", from.color);
-    const dx = to.cx - from.cx, dy = to.cy - from.cy, len = Math.max(1, Math.hypot(dx, dy));
-    const nx = -dy / len, ny = dx / len;
-    for (let lane = -2; lane <= 2; lane += 1) {
-      const offset = lane * 3.1;
-      const sx = from.cx + nx * offset, sy = from.cy + ny * offset;
-      const tx = to.cx + nx * offset, ty = to.cy + ny * offset;
-      const bend = (bridgeIndex % 2 ? -1 : 1) * (10 + Math.abs(lane) * 3);
-      const c1x = sx + dx * .34 + nx * bend, c1y = sy + dy * .34 + ny * bend;
-      const c2x = sx + dx * .72 - nx * bend, c2y = sy + dy * .72 - ny * bend;
-      const fiber = document.createElementNS(SVG_NS, "path");
-      fiber.setAttribute("class", "data-fiber data-fiber-bridge");
-      fiber.setAttribute("d", `M${point(sx, sy)} C${point(c1x, c1y)} ${point(c2x, c2y)} ${point(tx, ty)}`);
-      fiber.style.setProperty("--fiber-color", from.color);
-      group.appendChild(fiber);
-      for (let p = 1; p < 22; p += 1) {
-        const t = p / 22;
-        const wave = Math.sin((p + bridgeIndex * 4) * .9) * 2.2;
-        addDot(group, sx + dx * t + nx * (bend * t * (1 - t) + wave), sy + dy * t + ny * (bend * t * (1 - t) + wave), .62 + (p % 3) * .12, from.color, 9000 + bridgeIndex * 100 + p);
-      }
-    }
-    field.appendChild(group);
-  });
-  svg.appendChild(field);
+  field.appendChild(fibers); field.appendChild(points); svg.appendChild(field);
 }
 
 function drawNodes(svg) {
@@ -837,8 +861,6 @@ function renderNetwork() {
   svg.innerHTML = "";
   buildDefs(svg);
   drawCityDataCloud(svg);
-  drawEdges(svg);
-  drawNodes(svg);
   refreshEdgeVisibility();
   applyViewMode();
   wakePhysics();

@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="modulo-08.css">
   <link rel="stylesheet" href="site-theme.css?v=20260823">
+  <script src="modulo-08-data.js"></script>
 </head>
 <body>
 <div class="app">
@@ -60,6 +61,19 @@
           <button class="control-btn" data-view="componentes" onclick="filterView('componentes')">Componentes</button>
           <button class="control-btn" data-view="actores" onclick="filterView('actores')">Actores y mediadores</button>
         </div>
+        <label class="city-data-filter-label" for="cityDataFilter">Datos de la tabla
+          <select id="cityDataFilter" class="city-data-filter" onchange="setCityDataFilter(this.value)">
+            <option value="all">Red ampliada · vista 140 nodos</option>
+            <option value="Agua y ambiente">Agua y ambiente · 1–26, 135–137</option>
+            <option value="Ciudad construida">Ciudad construida · 27–42</option>
+            <option value="Movilidad">Movilidad · 43–56</option>
+            <option value="Agentes y comunidad">Agentes y comunidad · 57–68, 105–110, 126–130</option>
+            <option value="Vivienda, empleo y cuidado">Vivienda, empleo y cuidado · 69–94</option>
+            <option value="Patrimonio">Patrimonio · 95–104</option>
+            <option value="Servicios y materiales">Servicios y materiales · 115–134</option>
+            <option value="Región e información">Región e información · 135–140</option>
+          </select>
+        </label>
       </div>
 
       <div class="network-viz-wrap">
