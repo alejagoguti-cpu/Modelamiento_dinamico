@@ -5018,3 +5018,11 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 .component-point-popup span { display: block; color: rgba(222,244,245,.76); font: 600 9px/1.35 Inter, sans-serif; letter-spacing: .02em; }
 .component-point-popup .maplibregl-popup-tip { border-top-color: rgba(5,10,11,.96); border-bottom-color: rgba(5,10,11,.96); }
 #realCartographyMap .maplibregl-canvas { cursor: default; }
+
+/* Lectura estable solicitada: sin animación automática de apertura */
+.subsystem-formation-overlay { display: none !important; }
+.subsystem-bubble.is-visible, .subsystem-components, .subsystem-purpose-panel, .component-visual { animation: none !important; }
+.subsystem-panel-close { position: relative; z-index: 30; pointer-events: auto !important; }
+
+/* Los paneles viven dentro de una capa visual sin eventos; sus controles sí deben ser interactivos. */
+.subsystem-components, .subsystem-purpose-panel { pointer-events: auto !important; }
