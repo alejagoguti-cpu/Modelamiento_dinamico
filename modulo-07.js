@@ -1894,23 +1894,37 @@
       const rows = systems ? territorySystems : submodelRows;
       const positions = systems ? [[12,18],[50,9],[88,18],[88,80],[50,91],[12,80]] : [[14,18],[50,8],[86,18],[91,54],[76,88],[25,88],[9,54]];
       const colors = ["#56b8d4", "#68d391", "#b8c0c8", "#f1cf5b", "#ee9a4b", "#e58d62", "#b28be8"];
+      const systemIcons = ["fa-droplet", "fa-feather-pointed", "fa-building", "fa-route", "fa-people-group", "fa-house-chimney"];
+      const submodelIcons = ["fa-water", "fa-feather-pointed", "fa-city", "fa-person-walking", "fa-house-chimney", "fa-people-arrows", "fa-arrows-rotate"];
       const label = (row) => systems ? row.name : row.name.replace(/^Submodelo de /, "");
-      const nodes = rows.map((row, index) => { const [x,y] = positions[index]; return `<button type="button" class="map-network-node ${systems ? "map-system-node" : "map-submodel-node"}" data-map-network-index="${index}" style="--node-x:${x}%;--node-y:${y}%;--node-color:${row.color || colors[index]}"><span></span><strong>${label(row)}</strong></button>`; }).join("");
-      const edges = rows.map((row, index) => { const [x,y] = positions[index]; return `<line x1="50%" y1="50%" x2="${x}%" y2="${y}%" style="--edge-color:${row.color || colors[index]}"></line>`; }).join("") + rows.slice(0, -1).map((row, index) => { const [x,y] = positions[index], [nx,ny] = positions[index + 1]; return `<line class="secondary" x1="${x}%" y1="${y}%" x2="${nx}%" y2="${ny}%" style="--edge-color:${row.color || colors[index]}"></line>`; }).join("");
+      const icon = (index) => (systems ? systemIcons : submodelIcons)[index] || "fa-circle-nodes";
+      const nodes = rows.map((row, index) => { const [x,y] = positions[index]; return `<button type="button" class="map-network-node ${systems ? "map-system-node" : "map-submodel-node"}" data-map-network-index="${index}" style="--node-x:${x}%;--node-y:${y}%;--node-color:${row.color || colors[index]}"><i class="map-network-node-icon fa-solid ${icon(index)}" aria-hidden="true"></i><strong>${label(row)}</strong></button>`; }).join("");
+      const edges = rows.flatMap((row, index) => rows.slice(index + 1).map((other, offset) => { const [x,y] = positions[index], [nx,ny] = positions[index + offset + 1]; return `<line x1="${x}%" y1="${y}%" x2="${nx}%" y2="${ny}%" style="--edge-color:${row.color || colors[index]}"></line>`; })).join("");
       subsystemBubbles.dataset.revealState = "complete";
-      subsystemBubbles.innerHTML = `<div class="map-network-stage ${systems ? "systems-network" : "submodels-network"}"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${edges}</svg><div class="map-network-core"><span></span><strong>HUMEDAL<br>EL BURRO</strong></div>${nodes}</div><div id="mapNetworkDetail" class="map-network-detail" hidden></div>`;
+      subsystemBubbles.innerHTML = `<div class="map-network-stage ${systems ? "systems-network" : "submodels-network"}"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${edges}</svg>${nodes}</div><div id="mapNetworkDetail" class="map-network-detail" hidden></div>`;
       subsystemBubbles.querySelectorAll(".map-network-node").forEach((button) => button.addEventListener("click", () => {
         const row = rows[Number(button.dataset.mapNetworkIndex)];
         subsystemBubbles.querySelectorAll(".map-network-node").forEach((node) => node.classList.toggle("selected", node === button));
-        const detail = document.getElementById("mapNetworkDetail");
-        if (!detail) return;
+        subsystemBubbles.querySelectorAll(".subsystem-components, .subsystem-purpose-panel, .map-network-detail").forEach((node) => node.remove());
         const color = row.color || colors[Number(button.dataset.mapNetworkIndex)];
         const parts = systems ? row.components : row.parts;
-        const general = systems ? `Las partes ${row.partsPurpose.toLowerCase()} tienen propósito propio y la totalidad ${row.totalPurpose.toLowerCase()} tiene propósito propio.` : row.partsWhy;
-        const burro = systems ? row.process : row.totalWhy;
-        detail.innerHTML = `<div class="map-network-detail-head"><span style="--detail-color:${color}"></span><strong>${label(row)}</strong><b>${systems ? row.category : row.category}</b><button type="button" class="subsystem-panel-close" id="mapNetworkDetailClose" aria-label="Cerrar detalle"><i class="fa-solid fa-xmark"></i></button></div><div class="map-network-detail-grid"><div><small>${systems ? "PARTES / COMPONENTES" : "SISTEMAS QUE FUNCIONAN COMO SUS PARTES"}</small><p>${parts}</p></div><div><small>${systems ? "LECTURA GENERAL" : "¿LAS PARTES TIENEN PROPÓSITO? · ¿POR QUÉ?"}</small><p>${general}</p></div><div><small>${systems ? "EN EL HUMEDAL EL BURRO" : "¿LA TOTALIDAD TIENE PROPÓSITO? · ¿POR QUÉ?"}</small><p>${burro}</p></div><div><small>QUÉ CAMBIA EN EL TIEMPO</small><p>${row.process}</p></div></div>`;
-        detail.hidden = false;
-        detail.querySelector("#mapNetworkDetailClose")?.addEventListener("click", () => { detail.hidden = true; });
+        const partsPurpose = row.partsPurpose || "Sí";
+        const totalPurpose = row.totalPurpose || "Sí";
+        const partsWhy = row.partsWhy || `Las partes del sistema se analizan en relación con sus funciones y comportamientos dentro del territorio.`;
+        const totalWhy = row.totalWhy || `La totalidad se analiza por las relaciones que produce entre sus partes y sus efectos en el Humedal El Burro.`;
+        const components = document.createElement("div");
+        components.className = "subsystem-components active map-components-panel";
+        components.style.setProperty("--bubble-color", color);
+        components.innerHTML = `<div class="subsystem-panel-heading"><strong><i class="fa-solid fa-sparkles"></i> QUÉ PARTES O COMPONENTES SE ANALIZAN</strong><button type="button" class="subsystem-panel-close" aria-label="Cerrar panel de componentes"><i class="fa-solid fa-xmark"></i></button></div><p class="panel-scope-label">GENERAL · EN EL TERRITORIO</p><div class="component-visual-strip">${(Array.isArray(parts) ? parts : [parts]).map((part, partIndex) => `<span class="component-visual" style="--bubble-color:${color}"><i class="fa-solid ${systems ? ["fa-droplet","fa-feather-pointed","fa-building","fa-route","fa-people-group","fa-house-chimney"][Number(button.dataset.mapNetworkIndex)] : submodelIcons[Number(button.dataset.mapNetworkIndex)]}"></i><em>${part}</em></span>`).join("")}</div><p class="panel-specific-reading"><b>EN EL HUMEDAL EL BURRO:</b> ${systems ? row.process : row.totalWhy}</p>`;
+        const purpose = document.createElement("aside");
+        purpose.className = "subsystem-purpose-panel active map-purpose-panel";
+        purpose.style.setProperty("--bubble-color", color);
+        purpose.innerHTML = `<div class="subsystem-panel-heading"><strong>${label(row)}</strong><button type="button" class="subsystem-panel-close" aria-label="Cerrar panel de propósito"><i class="fa-solid fa-xmark"></i></button></div><p class="panel-scope-label">ANÁLISIS GENERAL · TABLA DE PROPÓSITO</p><h4>¿Las partes tienen propósito propio?</h4><p><b>${partsPurpose}</b> · ${partsWhy}</p><h4>¿La totalidad tiene propósito propio?</h4><p><b>${totalPurpose}</b> · ${totalWhy}</p><h4>Por ende, la categoría es:</h4><b class="purpose-category">${row.category}</b><h4>Qué cambia en el tiempo</h4><p>${row.process}</p>`;
+        subsystemBubbles.append(components, purpose);
+        const closePanels = (event) => { event?.stopPropagation(); components.remove(); purpose.remove(); clearSubsystemPoints(); button.classList.remove("selected"); };
+        components.querySelector(".subsystem-panel-close")?.addEventListener("click", closePanels);
+        purpose.querySelector(".subsystem-panel-close")?.addEventListener("click", closePanels);
+        if (systems) renderSubsystemPoints(subsystemData[Number(button.dataset.mapNetworkIndex)]);
       }));
     };
     const drawSubsystems = ({ hidden = false } = {}) => { if (!subsystemBubbles) return; subsystemBubbles.dataset.revealState = hidden ? "pending" : "complete"; if (hidden) { subsystemBubbles.replaceChildren(); return; } renderMapNetwork("systems"); };
@@ -1961,8 +1975,7 @@
         map.flyTo({ center: [-74.150, 4.642], zoom: 13.65, duration: 2200, essential: true });
       }, 2250);
       window.setTimeout(() => {
-        announceCartography("HUMEDAL EL BURRO · SUBSISTEMAS VISIBLES", true);
-        drawSubsystems({ hidden: true });
+        announceCartography("HUMEDAL EL BURRO · LISTO PARA ACTIVAR UNA RED", true);
       }, 4800);
     };
     const setupCartographyEntrance = (map) => {

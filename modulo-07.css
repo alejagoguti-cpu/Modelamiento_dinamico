@@ -5132,3 +5132,23 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 .map-network-detail-grid small { color: #76fff0; font-size: 7px; font-weight: 800; letter-spacing: .07em; }
 .map-network-detail-grid p { margin: 3px 0 0; color: rgba(242,236,227,.78); }
 @media (max-width: 760px) { .map-network-node { width: 78px; min-height: 60px; padding: 7px 4px; } .map-network-node strong { font-size: 6.5px; } .map-submodel-node { width: 74px; min-height: 58px; } .map-submodel-node strong { font-size: 6px; } .map-network-core { width: 82px; height: 82px; } .map-network-core strong { font-size: 7px; } .map-network-detail { max-height: 48%; } .map-network-detail-grid { grid-template-columns: 1fr; } }
+
+/* Nodos circulares con iconos para las dos redes */
+.map-network-node { width: 112px; height: 112px; min-height: 0; aspect-ratio: 1 / 1; box-sizing: border-box; border-radius: 50%; }
+.map-submodel-node { width: 108px; height: 108px; min-height: 0; }
+.map-network-node-icon { display: block; color: var(--node-color); font-size: 18px; line-height: 1; filter: drop-shadow(0 0 6px var(--node-color)); }
+.map-network-node strong { display: block; }
+@media (max-width: 760px) { .map-network-node { width: 78px; height: 78px; min-height: 0; } .map-submodel-node { width: 74px; height: 74px; min-height: 0; } .map-network-node-icon { font-size: 13px; } }
+
+/* Paneles de detalle sobre la red cartográfica */
+.map-components-panel, .map-purpose-panel { z-index: 12; pointer-events: auto; }
+.map-components-panel { left: 2% !important; top: 7% !important; width: min(280px, 34%); max-height: 42%; overflow: auto; }
+.map-purpose-panel { right: 2% !important; left: auto !important; top: 7% !important; width: min(280px, 34%); max-height: 48%; overflow: auto; }
+.map-components-panel .component-visual-strip { display: flex; flex-wrap: wrap; gap: 6px; }
+.map-components-panel .component-visual { min-width: 70px; flex: 1 1 70px; }
+.panel-scope-label { margin: 6px 0; color: #76fff0; font-size: 8px; font-weight: 800; letter-spacing: .06em; }
+.panel-specific-reading { color: rgba(242,236,227,.82); font-size: 10px; line-height: 1.35; }
+.panel-specific-reading b { color: #fff; }
+.map-purpose-panel h4 { margin: 8px 0 3px; color: #76fff0; font-size: 9px; }
+.map-purpose-panel p { margin: 0 0 6px; }
+@media (max-width: 760px) { .map-components-panel, .map-purpose-panel { top: auto !important; bottom: 3% !important; width: 45%; max-height: 42%; } .map-components-panel { left: 2% !important; } .map-purpose-panel { right: 2% !important; } }
