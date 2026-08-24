@@ -356,9 +356,8 @@ a { color:inherit; text-decoration:none; }
   top: 20px;
   left: 22px;
 }
-.map-legend,
-.map-actions,
-.how-to,
+  .map-legend,
+  .how-to,
 .view-card,
 .advanced-section {
   display: none !important;
