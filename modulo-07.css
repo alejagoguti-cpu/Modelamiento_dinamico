@@ -4964,3 +4964,7 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 /* Vías finas con brillo tenue y uniforme */
 .real-cartography-map .maplibregl-canvas { filter: brightness(1.08) contrast(1.04); }
 .map-road, .map-route { height: 2px; opacity: .72; filter: drop-shadow(0 0 3px rgba(220,255,247,.46)); }
+
+/* Panel de componentes a la izquierda, como en la referencia del usuario */
+.subsystem-components { left: 16px !important; right: auto !important; top: clamp(84px, 29%, calc(100% - 640px)) !important; width: min(360px, calc(100% - 370px)) !important; }
+/* Solo el contorno administrativo circular/discontinuo se mantiene fino */
