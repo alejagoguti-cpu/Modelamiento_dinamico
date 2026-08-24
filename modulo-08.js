@@ -581,7 +581,7 @@ function drawCityDataCloud(svg) {
     const p = cityDataPointPosition(node, index, visible.length);
     const color = CITY_DATA_SUBSYSTEM_COLORS[node.subsystem] || "#c9cedb";
     const isAgent = /Agente|Usuarios|Organización|Agentes|Comunidad|Personas|Comerciantes|Productores/i.test(node.type);
-    const radius = isAgent ? 16 : 14;
+    const radius = isAgent ? 26 : 23;
     const dot = document.createElementNS(SVG_NS, "g");
     dot.setAttribute("class", `city-table-point rd-node ${isAgent ? "city-table-agent" : ""}`);
     dot.dataset.tableId = String(node.n);
