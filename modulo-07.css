@@ -5210,32 +5210,28 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 .map-network-stage > svg .map-network-bond-group { pointer-events: none; }
 .map-network-stage > svg .map-network-bond-soft,
 .map-network-stage > svg .map-network-bond {
-  fill: none;
-  stroke: var(--bond-color);
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  vector-effect: non-scaling-stroke;
+  fill: var(--bond-color);
+  stroke: none;
+  pointer-events: none;
 }
 .map-network-stage > svg .map-network-bond-soft {
-  stroke-width: 22;
-  stroke-opacity: .16;
-  filter: blur(2.7px);
+  opacity: .035;
+  filter: blur(.8px);
   animation: map-network-bond-soft-breathe 4.8s ease-in-out infinite alternate;
 }
 .map-network-stage > svg .map-network-bond {
-  stroke-width: 9.5;
-  stroke-opacity: .54;
+  opacity: .19;
   filter: url(#network-gel-filter);
   animation: map-network-bond-breathe 4.8s ease-in-out infinite alternate;
 }
 .map-network-stage > svg .map-network-bond:nth-child(3n + 1) { animation-delay: -1.4s; }
 .map-network-stage > svg .map-network-bond:nth-child(3n + 2) { animation-delay: -2.8s; }
 @keyframes map-network-bond-soft-breathe {
-  from { stroke-width: 17; stroke-opacity: .10; }
-  to { stroke-width: 28; stroke-opacity: .23; }
+  from { opacity: .02; transform: scaleX(.985); transform-origin: center; }
+  to { opacity: .06; transform: scaleX(1.015); transform-origin: center; }
 }
 @keyframes map-network-bond-breathe {
-  from { stroke-width: 7.5; stroke-opacity: .34; }
-  to { stroke-width: 13.5; stroke-opacity: .66; }
+  from { opacity: .14; }
+  to { opacity: .24; }
 }
-@media (prefers-reduced-motion: reduce) { .map-network-stage > svg .map-network-bond { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .map-network-stage > svg .map-network-bond, .map-network-stage > svg .map-network-bond-soft { animation: none; } }
