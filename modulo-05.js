@@ -2017,12 +2017,17 @@ function renderScaleNetworkPopup(mode) {
     });
 
     // Drag & drop con spring physics
+    let nodeDragPointerDown = false;
+    let nodeDragConfirmed = false;
+
     nodeElement.addEventListener('pointerdown', event => {
       if (event.pointerType !== 'mouse' && event.pointerType !== 'touch' && event.pointerType !== 'pen') return;
       if (event.button && event.button !== 0) return;
 
-      // Estado global de arrastre
-      scalePopupNodeDragState.active = true;
+      nodeDragPointerDown = true;
+      nodeDragConfirmed = false;
+
+      // Preparar estado de arrastre (pero no activarlo aún)
       scalePopupNodeDragState.element = nodeElement;
       scalePopupNodeDragState.node = node;
       scalePopupNodeDragState.dragStartX = event.clientX;
@@ -2039,11 +2044,32 @@ function renderScaleNetworkPopup(mode) {
       if (scalePopupNodeDragState.animationId) {
         cancelAnimationFrame(scalePopupNodeDragState.animationId);
       }
+    });
 
-      event.preventDefault();
-      event.stopPropagation();
-      selectNode();
-      nodeElement.classList.add('dragging-node');
+    nodeElement.addEventListener('pointermove', event => {
+      if (!nodeDragPointerDown) return;
+
+      const moveDistance = Math.hypot(
+        event.clientX - scalePopupNodeDragState.dragStartX,
+        event.clientY - scalePopupNodeDragState.dragStartY
+      );
+
+      // Confirmar arrastre solo si se mueve más de 8px
+      if (moveDistance > 8 && !nodeDragConfirmed) {
+        nodeDragConfirmed = true;
+        scalePopupNodeDragState.active = true;
+        nodeElement.classList.add('dragging-node');
+      }
+    });
+
+    nodeElement.addEventListener('pointerup', () => {
+      nodeDragPointerDown = false;
+      nodeDragConfirmed = false;
+    });
+
+    nodeElement.addEventListener('pointercancel', () => {
+      nodeDragPointerDown = false;
+      nodeDragConfirmed = false;
     });
   });
 }
