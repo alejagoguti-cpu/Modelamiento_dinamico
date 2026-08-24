@@ -1813,6 +1813,7 @@ function renderScaleNetworkPopup(mode) {
       const description = document.getElementById('scaleNetworkDescription');
       if (description) description.textContent = `${node.label} apagado · se retiraron sus relaciones activas`;
     };
+    const clickSequenceWindow = 900;
     let clickCount = 0;
     let clickTimer = null;
     let lastClickAt = 0;
@@ -1824,7 +1825,7 @@ function renderScaleNetworkPopup(mode) {
         return;
       }
       const now = performance.now();
-      if (now - lastClickAt > 620) clickCount = 0;
+      if (now - lastClickAt > clickSequenceWindow) clickCount = 0;
       lastClickAt = now;
       clickCount = Math.min(4, clickCount + 1);
       if (clickTimer) window.clearTimeout(clickTimer);
@@ -1835,7 +1836,7 @@ function renderScaleNetworkPopup(mode) {
         if (sequence >= 3) togglePopupNode();
         else if (sequence === 2) openNodeDoubleAction();
         else openNodeInfo();
-      }, 260);
+      }, clickSequenceWindow);
     });
     nodeElement.addEventListener('keydown', event => {
       if (event.key === 'Enter' || event.key === ' ') {
@@ -1848,9 +1849,18 @@ function renderScaleNetworkPopup(mode) {
 
 let wetlandImagePromise = null;
 
+function getWetlandAssetUrl(source) {
+  if (!source) return '';
+  try {
+    return new URL(source, document.baseURI).href;
+  } catch {
+    return source;
+  }
+}
+
 function preloadWetlandImage() {
   const image = document.getElementById('wetlandImage');
-  const fullSrc = image?.dataset.fullSrc;
+  const fullSrc = getWetlandAssetUrl(image?.dataset.fullSrc);
   if (!fullSrc) return Promise.resolve(null);
   if (wetlandImagePromise) return wetlandImagePromise;
   wetlandImagePromise = new Promise(resolve => {
@@ -1864,33 +1874,43 @@ function preloadWetlandImage() {
   return wetlandImagePromise;
 }
 
+function setWetlandImageState(image, empty, visible) {
+  if (image) {
+    image.hidden = !visible;
+    image.style.display = visible ? 'block' : 'none';
+  }
+  if (empty) {
+    empty.hidden = visible;
+    empty.style.display = visible ? 'none' : 'grid';
+  }
+  const directLink = document.getElementById('wetlandImageDirectLink');
+  if (directLink) {
+    directLink.hidden = visible;
+    directLink.style.display = visible ? 'none' : 'inline-flex';
+  }
+}
+
 async function openWetlandImageModal() {
   const modal = document.getElementById('wetlandImageModal');
   if (!modal) return;
   const image = document.getElementById('wetlandImage');
   const empty = document.getElementById('wetlandImageEmpty');
-  const hasPreview = Boolean(image?.getAttribute('src'));
+  const previewSrc = getWetlandAssetUrl(image?.getAttribute('src'));
+  const fullSrc = getWetlandAssetUrl(image?.dataset.fullSrc);
+  if (image && previewSrc) image.src = previewSrc;
+  setWetlandImageState(image, empty, Boolean(previewSrc));
   if (image) {
-    image.hidden = !hasPreview;
-    image.style.display = hasPreview ? 'block' : 'none';
-  }
-  if (empty) {
-    empty.hidden = hasPreview;
-    empty.style.display = hasPreview ? 'none' : 'grid';
+    image.onerror = () => setWetlandImageState(image, empty, false);
+    image.onload = () => setWetlandImageState(image, empty, true);
   }
   modal.classList.add('open');
   modal.setAttribute('aria-hidden', 'false');
   document.body.classList.add('wetland-modal-open');
   document.getElementById('wetlandImageClose')?.focus();
   const fullImage = await preloadWetlandImage();
-  if (fullImage && image && image.dataset.fullSrc) {
-    image.src = image.dataset.fullSrc;
-    image.hidden = false;
-    image.style.display = 'block';
-    if (empty) {
-      empty.hidden = true;
-      empty.style.display = 'none';
-    }
+  if (fullImage && image && fullSrc) {
+    image.src = fullImage.src || fullSrc;
+    setWetlandImageState(image, empty, true);
     image.dataset.fullReady = 'true';
   }
 }

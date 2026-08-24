@@ -932,3 +932,61 @@ body.node-detail-open { overflow: hidden; }
     height: min(720px, calc(100vh - 32px));
   }
 }
+
+
+/* Visor robusto de HUMEDALES: el modal abierto siempre ocupa el viewport y la imagen conserva su espacio. */
+.wetland-image-modal {
+  z-index: 10000;
+}
+
+.wetland-image-modal.open {
+  display: grid !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+.wetland-image-modal.open .wetland-image-dialog {
+  display: grid !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  transform: translateY(0) scale(1) !important;
+}
+
+.wetland-image-body img {
+  display: block !important;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: min(540px, 62vh);
+}
+
+.wetland-image-body img[hidden] {
+  display: none !important;
+}
+
+
+.wetland-image-direct-link {
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  margin: 0 auto 14px;
+  padding: 7px 10px;
+  border: 1px solid rgba(70,214,208,.42);
+  border-radius: 6px;
+  color: var(--popup-teal);
+  background: rgba(70,214,208,.08);
+  font: 700 9px/1 Inter, sans-serif;
+  text-decoration: none;
+}
+
+.wetland-image-direct-link:hover,
+.wetland-image-direct-link:focus-visible {
+  border-color: var(--popup-teal);
+  color: #fff;
+  outline: none;
+}
+
+.wetland-image-direct-link[hidden] {
+  display: none !important;
+}
