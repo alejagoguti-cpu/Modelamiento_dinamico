@@ -1580,11 +1580,54 @@
       { id: "social", label: "Social-comunitario", color: "#ee9a4b", description: "Barrios, recorridos, actividades pedagógicas, visitas, juntas y organizaciones." },
       { id: "institucional", label: "Institucional y de manejo", color: "#b28be8", description: "Restauración, mantenimiento, control de invasoras, compostaje, seguimiento y educación ambiental." }
     ];
+    const submodelRows = [
+      { name: "Flujos hídricos y drenaje urbano", scope: "Lluvia, escorrentía, Canal Los Ángeles, entrada de agua, suelo saturado, sedimentos, acumulación, encharcamiento y desbordamiento.", category: "Socioecológico dinámico", why: "El agua responde a condiciones físicas, pero también es modificada por canales, obras, residuos, mantenimiento y decisiones institucionales." },
+      { name: "Conservación ecológico-fluvial", scope: "Relación entre agua, suelo, vegetación, refugios, alimentación, reproducción y desplazamiento de aves.", category: "Ecológico dinámico", why: "Cambia con el nivel del agua, las coberturas vegetales, las especies invasoras y la disponibilidad de refugio." },
+      { name: "Restauración y manejo adaptativo", scope: "Monitoreo, mantenimiento, control de especies invasoras, reintroducción de vegetación nativa y recuperación de hábitats.", category: "Socioecológico dinámico", why: "Relaciona un ecosistema cambiante con actores que observan, deciden, intervienen y ajustan sus acciones." },
+      { name: "Transformación del borde urbano", scope: "Edificaciones, Avenida Ciudad de Cali, cerramientos, ciclorrutas, obras, ruido, emisiones y fragmentación del hábitat.", category: "Sociotécnico dinámico", why: "Combina infraestructura y elementos físicos con decisiones humanas sobre construcción, uso, modificación y mantenimiento." },
+      { name: "Movilidad cotidiana y accesibilidad", scope: "Recorridos de peatones, ciclistas y usuarios del transporte público, accesos, tiempos, horarios, congestión y barreras.", category: "Sociotécnico dinámico", why: "Relaciona vías y ciclorrutas con decisiones de los usuarios, tiempos de espera, congestión y cambios en la accesibilidad." },
+      { name: "Ocupación urbana y actividades", scope: "Vivienda, población, equipamientos, actividades económicas, servicios, usos del suelo y transformación urbana.", category: "Social dinámico", why: "La ocupación cambia por decisiones de habitantes, propietarios, empresas e instituciones, y modifica las presiones del entorno." },
+      { name: "Usos y participación comunitaria", scope: "Visitas, actividades pedagógicas, organizaciones, Juntas de Acción Comunal, apropiación, vigilancia y conflictos.", category: "Social dinámico", why: "Depende de actores con propósitos e intereses; sus acuerdos, conflictos y formas de uso cambian con el tiempo." }
+    ];
+    const renderSubmodelsView = (mode = "subsystems") => {
+      const view = document.getElementById("submodelsView");
+      if (!view) return;
+      if (mode === "subsystems") {
+        const chips = partOneRows.map((row) => `<span class="submodel-chip" style="--submodel-color:${row.color}">${row.name}</span>`).join("");
+        view.innerHTML = `<div class="submodels-reading"><strong>¿De qué está compuesto el territorio?</strong><p>Esta vista conserva la Parte I: muestra lo que existe en el sector del humedal El Burro.</p><div class="submodel-chip-grid">${chips}</div></div>`;
+        return;
+      }
+      const rows = submodelRows.map((row) => `<tr><th>${row.name}</th><td>${row.scope}</td><td><b>${row.category}</b></td><td>${row.why}</td></tr>`).join("");
+      view.innerHTML = `<div class="submodels-reading"><strong>¿Cómo funciona y cambia el territorio?</strong><p>Esta vista convierte los elementos de la Parte I en procesos que el modelo puede observar y analizar sobre el mismo plano.</p><div class="submodel-process-flow"><span>lluvia</span><i>→</i><span>escorrentía</span><i>→</i><span>Canal Los Ángeles</span><i>→</i><span>humedal</span><i>→</i><span>acumulación / salida</span></div><div class="submodels-table-wrap"><table class="submodels-table"><thead><tr><th>Submodelo dinámico</th><th>Qué aborda en El Burro</th><th>Clasificación</th><th>¿Por qué?</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+    };
     const renderPartOneTable = () => {
       const body = document.getElementById("partOneTableBody");
       if (!body) return;
       body.innerHTML = table3Rows.map((row) => `<tr><th scope="row"><span class="table-color" style="--table-color:${row.color}"></span>${row.name}</th><td>${row.components}</td><td>${row.partsPurpose}</td><td>${row.totalPurpose}</td><td>${row.category}</td></tr>`).join("");
     };
+    const submodelsQuestion = document.getElementById("submodelsQuestion");
+    const submodelsWorkspace = document.getElementById("submodelsWorkspace");
+    const viewSubsystemsBtn = document.getElementById("viewSubsystemsBtn");
+    const viewSubmodelsBtn = document.getElementById("viewSubmodelsBtn");
+    const setSubmodelsMode = (mode) => {
+      const isSubsystems = mode === "subsystems";
+      viewSubsystemsBtn?.classList.toggle("active", isSubsystems);
+      viewSubmodelsBtn?.classList.toggle("active", !isSubsystems);
+      viewSubsystemsBtn?.setAttribute("aria-selected", String(isSubsystems));
+      viewSubmodelsBtn?.setAttribute("aria-selected", String(!isSubsystems));
+      renderSubmodelsView(mode);
+      announceCartography(isSubsystems ? "PARTE I · SUBSISTEMAS DEL TERRITORIO" : "PARTE II · SUBMODELOS DINÁMICOS", true);
+    };
+    submodelsQuestion?.addEventListener("click", () => {
+      const open = submodelsWorkspace?.hidden;
+      if (!submodelsWorkspace) return;
+      submodelsWorkspace.hidden = !open;
+      submodelsQuestion.setAttribute("aria-expanded", String(open));
+      if (open) setSubmodelsMode("subsystems");
+    });
+    viewSubsystemsBtn?.addEventListener("click", () => setSubmodelsMode("subsystems"));
+    viewSubmodelsBtn?.addEventListener("click", () => setSubmodelsMode("submodels"));
+    renderSubmodelsView("subsystems");
     const initPartOneControls = (map, layers) => {
       const controls = document.getElementById("subsystemLayerControls");
       if (controls) {
