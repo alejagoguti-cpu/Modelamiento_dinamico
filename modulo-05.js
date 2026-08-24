@@ -1110,6 +1110,7 @@ const scalePopupHiddenNodes = new Set();
 const scaleNetworkViewState = { scale: 1.12, x: 0, y: 0 };
 const scalePopupNodeDragState = {
   active: false,
+  pointerDownActive: false,
   element: null,
   node: null,
   dragStartX: 0,
@@ -1409,10 +1410,24 @@ function setupScaleNetworkViewport() {
 
   // Handlers globales para drag de nodos individuales
   document.addEventListener('pointermove', event => {
-    if (!scalePopupNodeDragState.active) return;
-    const { element, nodeStartX, nodeStartY, dragStartX, dragStartY } = scalePopupNodeDragState;
+    if (!scalePopupNodeDragState.pointerDownActive) return;
+    const { element, dragStartX, dragStartY } = scalePopupNodeDragState;
     if (!element) return;
 
+    const moveDistance = Math.hypot(
+      event.clientX - dragStartX,
+      event.clientY - dragStartY
+    );
+
+    // Activar drag solo si se mueve más de 8px
+    if (moveDistance > 8 && !scalePopupNodeDragState.active) {
+      scalePopupNodeDragState.active = true;
+      element.classList.add('dragging-node');
+    }
+
+    if (!scalePopupNodeDragState.active) return;
+
+    const { nodeStartX, nodeStartY } = scalePopupNodeDragState;
     const deltaX = event.clientX - dragStartX;
     const deltaY = event.clientY - dragStartY;
 
@@ -1438,12 +1453,10 @@ function setupScaleNetworkViewport() {
 
     scalePopupNodeDragState.velocityX = deltaX * 0.03;
     scalePopupNodeDragState.velocityY = deltaY * 0.03;
-
-    event.preventDefault();
-    event.stopPropagation();
   });
 
   document.addEventListener('pointerup', event => {
+    scalePopupNodeDragState.pointerDownActive = false;
     if (!scalePopupNodeDragState.active) return;
     const { element, nodeStartX, nodeStartY, velocityX, velocityY, animationId } = scalePopupNodeDragState;
     if (!element) return;
@@ -2017,15 +2030,9 @@ function renderScaleNetworkPopup(mode) {
     });
 
     // Drag & drop con spring physics
-    let nodeDragPointerDown = false;
-    let nodeDragConfirmed = false;
-
     nodeElement.addEventListener('pointerdown', event => {
       if (event.pointerType !== 'mouse' && event.pointerType !== 'touch' && event.pointerType !== 'pen') return;
       if (event.button && event.button !== 0) return;
-
-      nodeDragPointerDown = true;
-      nodeDragConfirmed = false;
 
       // Preparar estado de arrastre (pero no activarlo aún)
       scalePopupNodeDragState.element = nodeElement;
@@ -2034,6 +2041,7 @@ function renderScaleNetworkPopup(mode) {
       scalePopupNodeDragState.dragStartY = event.clientY;
       scalePopupNodeDragState.velocityX = 0;
       scalePopupNodeDragState.velocityY = 0;
+      scalePopupNodeDragState.pointerDownActive = true;
 
       const circle = nodeElement.querySelector('circle');
       if (circle) {
@@ -2044,32 +2052,6 @@ function renderScaleNetworkPopup(mode) {
       if (scalePopupNodeDragState.animationId) {
         cancelAnimationFrame(scalePopupNodeDragState.animationId);
       }
-    });
-
-    nodeElement.addEventListener('pointermove', event => {
-      if (!nodeDragPointerDown) return;
-
-      const moveDistance = Math.hypot(
-        event.clientX - scalePopupNodeDragState.dragStartX,
-        event.clientY - scalePopupNodeDragState.dragStartY
-      );
-
-      // Confirmar arrastre solo si se mueve más de 8px
-      if (moveDistance > 8 && !nodeDragConfirmed) {
-        nodeDragConfirmed = true;
-        scalePopupNodeDragState.active = true;
-        nodeElement.classList.add('dragging-node');
-      }
-    });
-
-    nodeElement.addEventListener('pointerup', () => {
-      nodeDragPointerDown = false;
-      nodeDragConfirmed = false;
-    });
-
-    nodeElement.addEventListener('pointercancel', () => {
-      nodeDragPointerDown = false;
-      nodeDragConfirmed = false;
     });
   });
 }
