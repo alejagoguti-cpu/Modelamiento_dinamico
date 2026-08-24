@@ -1652,6 +1652,13 @@
           if (meta.id === "hidrico") map.addLayer({ id: labelId, type: "symbol", source: sourceId, filter: ["==", ["get", "kind"], "water-point"], layout: { visibility: "none", "text-field": ["get", "label"], "text-size": ["interpolate", ["linear"], ["zoom"], 10, 9, 14, 12], "text-offset": [0, 1.35], "text-anchor": "top", "text-allow-overlap": true }, paint: { "text-color": "#b9e5ea", "text-halo-color": "#061113", "text-halo-width": 1.5 } });
           partOneMapLayers.push({ id: meta.id, fill: fillId, line: lineId, point: pointId, extras: meta.id === "hidrico" ? [labelId] : [], markers: [] });
         });
+        componentPointMap = map;
+        map.addSource("subsystem-component-points", { type: "geojson", data: { type: "FeatureCollection", features: [] } });
+        map.addLayer({ id: "subsystem-component-point-halo", type: "circle", source: "subsystem-component-points", paint: { "circle-radius": ["interpolate", ["linear"], ["zoom"], 10, 8, 14, 13], "circle-color": ["coalesce", ["get", "color"], "#ffffff"], "circle-opacity": .18, "circle-blur": .35 }, layout: { visibility: "none" } });
+        map.addLayer({ id: "subsystem-component-points", type: "circle", source: "subsystem-component-points", paint: { "circle-radius": ["interpolate", ["linear"], ["zoom"], 10, 3.8, 14, 6.5], "circle-color": ["coalesce", ["get", "color"], "#ffffff"], "circle-opacity": .96, "circle-stroke-color": "#f5ffff", "circle-stroke-width": 1.1, "circle-stroke-opacity": .76 }, layout: { visibility: "none" } });
+        map.on("mouseenter", "subsystem-component-points", () => { map.getCanvas().style.cursor = "pointer"; });
+        map.on("mouseleave", "subsystem-component-points", () => { map.getCanvas().style.cursor = ""; });
+        map.on("click", "subsystem-component-points", (event) => { const feature = event.features?.[0]; if (!feature) return; const properties = feature.properties || {}; new maplibregl.Popup({ offset: 9, className: "component-point-popup" }).setLngLat(feature.geometry.coordinates).setHTML(`<strong>${escapePointText(properties.label || "Componente")}</strong><span>${escapePointText(properties.code || "Código cartográfico de referencia")} · ${escapePointText(properties.subsystem || "Subsistema")}</span>`).addTo(map); });
         const waterBubbleData = [{ label: "Espejo de agua", coords: [-74.159,4.641] }, { label: "Ronda norte", coords: [-74.160,4.646] }, { label: "Ronda sur", coords: [-74.158,4.635] }, { label: "Canal Los Ángeles", coords: [-74.174,4.645] }, { label: "Entrada de agua", coords: [-74.166,4.644] }, { label: "Salida de agua", coords: [-74.153,4.639] }, { label: "Escorrentías", coords: [-74.167,4.651] }];
         waterBubbleData.forEach(({ label, coords }) => { const markerEl = document.createElement("div"); markerEl.className = "water-map-bubble"; markerEl.style.display = "none"; markerEl.innerHTML = `<span class="water-map-bubble-core"><i class="fa-solid fa-droplet"></i></span><span class="water-map-bubble-label">${label}</span>`; const marker = new maplibregl.Marker({ element: markerEl, anchor: "center" }).setLngLat(coords).addTo(map); waterMarkers.push(marker); });
         const waterLayer = partOneMapLayers.find((layer) => layer.id === "hidrico"); if (waterLayer) waterLayer.markers = waterMarkers; map.__waterMarkers = waterMarkers;
@@ -1663,7 +1670,7 @@
       /* La capa OSM se intenta automáticamente; el botón queda como reintento manual. */
       map.once("load", () => window.setTimeout(loadOsm, 450));
       document.getElementById("loadOsrmRoute")?.addEventListener("click", loadRoute);
-      document.getElementById("resetCartography")?.addEventListener("click", () => { if (map.getLayer("osm-streets")) map.removeLayer("osm-streets"); if (map.getSource("osm-streets")) map.removeSource("osm-streets"); if (map.getLayer("osrm-route")) map.removeLayer("osrm-route"); if (map.getSource("osrm-route")) map.removeSource("osrm-route"); setStatus("MAPA OSM + SIMULACIÓN RESTABLECIDA"); map.flyTo({ center: [-74.09,4.64], zoom: 10.85 }); });
+      document.getElementById("resetCartography")?.addEventListener("click", () => { if (map.getLayer("osm-streets")) map.removeLayer("osm-streets"); if (map.getSource("osm-streets")) map.removeSource("osm-streets"); if (map.getLayer("osrm-route")) map.removeLayer("osrm-route"); if (map.getSource("osrm-route")) map.removeSource("osrm-route"); clearSubsystemPoints(); setStatus("MAPA OSM + SIMULACIÓN RESTABLECIDA"); map.flyTo({ center: [-74.09,4.64], zoom: 10.85 }); });
     }
     function initProceduralSimulation() {
       const holder = document.getElementById("proceduralSimulation");
@@ -1703,8 +1710,75 @@
       partsPurpose: row.partsPurpose,
       totalPurpose: row.totalPurpose,
       category: row.category,
-      justification: row.justification
+      justification: row.justification,
+      mapKey: ["hidrico", "biotico", "infraestructura", "movilidad", "social", "institucional"][index]
     }));
+    let componentPointMap = null;
+    const componentPointCatalog = {
+      hidrico: [
+        { coords: [-74.159, 4.641], label: "Espejo de agua", code: "CG-3.2.1" }, { coords: [-74.160, 4.646], label: "Ronda norte", code: "CG-3.2.1" },
+        { coords: [-74.158, 4.635], label: "Ronda sur", code: "CG-3.2.1" }, { coords: [-74.174, 4.645], label: "Canal Los Ángeles", code: "CG-3.2.1" },
+        { coords: [-74.166, 4.644], label: "Entrada de agua", code: "CG-3.2.1" }, { coords: [-74.153, 4.639], label: "Salida de agua", code: "CG-3.2.1" },
+        { coords: [-74.167, 4.651], label: "Escorrentía norte", code: "CU-2.2.10" }, { coords: [-74.162, 4.636], label: "Escorrentía sur", code: "CU-2.2.14" },
+        { coords: [-74.164, 4.644], label: "Suelo húmedo", code: "CU-2.2.14" }, { coords: [-74.157, 4.643], label: "Sedimentos", code: "CG-3.2.1" },
+        { coords: [-74.171, 4.647], label: "Conexión hídrica occidental", code: "CU-4.2.4" }, { coords: [-74.155, 4.638], label: "Acumulación temporal", code: "CU-2.2.10" }
+      ],
+      biotico: [
+        { coords: [-74.165, 4.643], label: "Refugio de fauna occidental", code: "CU-2.1" }, { coords: [-74.162, 4.645], label: "Refugio de fauna central", code: "CU-2.1" },
+        { coords: [-74.157, 4.642], label: "Lugar de alimentación", code: "CU-2.1" }, { coords: [-74.154, 4.644], label: "Lugar de alimentación oriental", code: "CU-2.1" },
+        { coords: [-74.161, 4.638], label: "Vegetación nativa", code: "CU-2.1" }, { coords: [-74.155, 4.640], label: "Vegetación nativa oriental", code: "CU-2.1" },
+        { coords: [-74.166, 4.639], label: "Cobertura vegetal", code: "CU-2.1" }, { coords: [-74.159, 4.646], label: "Aves residentes", code: "CU-2.1" },
+        { coords: [-74.156, 4.645], label: "Aves migratorias", code: "CU-2.1" }, { coords: [-74.163, 4.641], label: "Insectos polinizadores", code: "CU-2.1" },
+        { coords: [-74.158, 4.638], label: "Arañas · control biológico", code: "CU-2.1" }, { coords: [-74.153, 4.642], label: "Vegetación invasora", code: "CU-2.1" }
+      ],
+      infraestructura: [
+        { coords: [-74.159, 4.665], label: "Avenida Ciudad de Cali · norte", code: "CU-4.4.3" }, { coords: [-74.159, 4.655], label: "Avenida Ciudad de Cali · borde", code: "CU-4.4.3" },
+        { coords: [-74.159, 4.646], label: "Avenida Ciudad de Cali · cruce", code: "CU-4.4.3" }, { coords: [-74.159, 4.636], label: "Avenida Ciudad de Cali · sur", code: "CU-4.4.3" },
+        { coords: [-74.151, 4.649], label: "Edificaciones del borde oriental", code: "CU-5.2" }, { coords: [-74.149, 4.647], label: "Edificaciones de actividad urbana", code: "CU-5.2" },
+        { coords: [-74.168, 4.631], label: "Borde construido occidental", code: "CU-5.2" }, { coords: [-74.166, 4.629], label: "Áreas urbanizadas", code: "CU-5.2" },
+        { coords: [-74.162, 4.635], label: "Cerramiento del humedal", code: "CG-3.1" }, { coords: [-74.156, 4.646], label: "Cerramiento oriental", code: "CG-3.1" },
+        { coords: [-74.164, 4.637], label: "Sendero perimetral", code: "CU-4.4.2" }, { coords: [-74.157, 4.638], label: "Canal construido", code: "CG-3.2.1" }
+      ],
+      movilidad: [
+        { coords: [-74.151, 4.632], label: "Ciclorruta · acceso oriental", code: "CU-4.4.2" }, { coords: [-74.156, 4.631], label: "Ciclorruta · tramo sur", code: "CU-4.4.2" },
+        { coords: [-74.164, 4.632], label: "Ciclorruta · borde occidental", code: "CU-4.4.2" }, { coords: [-74.172, 4.636], label: "Ciclorruta · conexión barrial", code: "CU-4.4.2" },
+        { coords: [-74.154, 4.650], label: "Acceso peatonal norte", code: "CU-4.4.3" }, { coords: [-74.158, 4.646], label: "Recorrido peatonal central", code: "CU-4.4.3" },
+        { coords: [-74.161, 4.640], label: "Sendero de visita", code: "CU-4.4.3" }, { coords: [-74.165, 4.635], label: "Acceso peatonal sur", code: "CU-4.4.3" },
+        { coords: [-74.156, 4.633], label: "Biblioteca El Tintal", code: "CU-4.3" }, { coords: [-74.153, 4.636], label: "Conexión biblioteca–humedal", code: "CU-4.3" },
+        { coords: [-74.160, 4.634], label: "Punto de encuentro de visitantes", code: "CU-4.4.1" }, { coords: [-74.166, 4.639], label: "Cruce de recorridos", code: "CU-4.4.1" }
+      ],
+      social: [
+        { coords: [-74.173, 4.647], label: "Barrio del borde occidental", code: "CU-5.2" }, { coords: [-74.169, 4.647], label: "Viviendas próximas al humedal", code: "CU-5.2" },
+        { coords: [-74.148, 4.631], label: "Barrio del borde oriental", code: "CU-5.2" }, { coords: [-74.145, 4.628], label: "Área de actividad urbana", code: "CU-5.2" },
+        { coords: [-74.164, 4.650], label: "Visita y observación", code: "CU-4.3" }, { coords: [-74.158, 4.635], label: "Actividad pedagógica", code: "CU-4.3" },
+        { coords: [-74.153, 4.639], label: "Junta de acción comunal", code: "CU-4.3" }, { coords: [-74.161, 4.645], label: "Grupo ambiental local", code: "CU-4.3" },
+        { coords: [-74.156, 4.647], label: "Encuentro comunitario", code: "CU-4.3" }, { coords: [-74.168, 4.642], label: "Uso comunitario del borde", code: "CU-4.3" },
+        { coords: [-74.151, 4.637], label: "Equipamiento cercano", code: "CU-4.3" }, { coords: [-74.158, 4.649], label: "Punto de educación ambiental", code: "CU-4.3" }
+      ],
+      institutional: [
+        { coords: [-74.163, 4.638], label: "Jardín Botánico · restauración", code: "CU-2.1" }, { coords: [-74.157, 4.648], label: "Seguimiento del humedal", code: "CG-3.1" },
+        { coords: [-74.166, 4.635], label: "Educación ambiental", code: "CU-4.3" }, { coords: [-74.154, 4.646], label: "Secretaría de Ambiente · manejo", code: "CG-3.1" },
+        { coords: [-74.171, 4.644], label: "Acueducto · relación hídrica", code: "CG-3.2.1" }, { coords: [-74.174, 4.645], label: "Ciudad Limpia · residuos", code: "CU-2.2.10" },
+        { coords: [-74.162, 4.642], label: "UAESP · gestión de residuos", code: "CU-2.2.10" }, { coords: [-74.155, 4.638], label: "Mantenimiento y control de invasoras", code: "CU-2.1" },
+        { coords: [-74.160, 4.640], label: "Compostaje y recuperación del hábitat", code: "CU-2.1" }, { coords: [-74.152, 4.644], label: "Organización local de manejo", code: "CU-4.3" },
+        { coords: [-74.159, 4.636], label: "Coordinación de drenaje sostenible", code: "CU-4.2.4" }, { coords: [-74.167, 4.647], label: "Hospital del Sur · entorno de cuidado", code: "CU-4.3" }
+      ]
+    };
+    const escapePointText = (value) => String(value).replace(/[&<>\"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\\\"": "&quot;" }[char] || char));
+    const getComponentPoints = (item) => (componentPointCatalog[item?.mapKey] || []).map((point, index) => ({ ...point, index, color: item.color }));
+    const renderSubsystemPoints = (item) => {
+      const points = getComponentPoints(item);
+      const source = componentPointMap?.getSource("subsystem-component-points");
+      if (!source) return;
+      source.setData({ type: "FeatureCollection", features: points.map((point) => ({ type: "Feature", properties: { label: point.label, code: point.code, color: point.color, subsystem: item.name }, geometry: { type: "Point", coordinates: point.coords } })) });
+      ["subsystem-component-point-halo", "subsystem-component-points"].forEach((layerId) => { if (componentPointMap.getLayer(layerId)) componentPointMap.setLayoutProperty(layerId, "visibility", "visible"); });
+      announceCartography(`${item.name.toUpperCase()} · ${points.length} LOCALIZACIONES DE COMPONENTES`, true);
+    };
+    const clearSubsystemPoints = () => {
+      const source = componentPointMap?.getSource("subsystem-component-points");
+      source?.setData({ type: "FeatureCollection", features: [] });
+      ["subsystem-component-point-halo", "subsystem-component-points"].forEach((layerId) => { if (componentPointMap?.getLayer(layerId)) componentPointMap.setLayoutProperty(layerId, "visibility", "none"); });
+    };
     const componentVisuals = [
       { match: /espejo de agua/i, icon: "fa-water", label: "Agua" },
       { match: /canal/i, icon: "fa-arrows-left-right-to-line", label: "Canal" },
@@ -1748,6 +1822,7 @@
       subsystemBubbles.querySelectorAll(".subsystem-bubble").forEach((button) => button.addEventListener("click", () => {
         const item = subsystemData[Number(button.dataset.subsystem)];
         subsystemBubbles.querySelectorAll(".subsystem-bubble, .subsystem-components, .subsystem-purpose-panel").forEach((node) => node.remove());
+        renderSubsystemPoints(item);
         button.classList.add("active");
         const components = document.createElement("div");
         components.className = "subsystem-components active";
@@ -1761,7 +1836,7 @@
         purpose.className = "subsystem-purpose-panel active";
         purpose.style.setProperty("--bubble-color", item.color);
         purpose.innerHTML = `<div class="subsystem-panel-heading"><strong>${item.name}</strong><button type="button" class="subsystem-panel-close" aria-label="Cerrar panel de propósito" title="Cerrar"><i class="fa-solid fa-xmark"></i></button></div><h4>¿Las partes tienen propósito propio?</h4><p>${item.partsPurpose}</p><h4>¿La totalidad tiene propósito propio?</h4><p>${item.totalPurpose}</p><h4>Por ende, la categoría es:</h4><b class="purpose-category">${item.category}</b><p class="purpose-justification">${item.justification}</p><h4>Qué cambia en el tiempo</h4><p>${item.process}</p>`;
-        subsystemBubbles.appendChild(purpose); const closePanels = (event) => { event?.stopPropagation(); components.remove(); purpose.remove(); button.classList.remove("active"); }; components.querySelector(".subsystem-panel-close")?.addEventListener("click", closePanels); purpose.querySelector(".subsystem-panel-close")?.addEventListener("click", closePanels);
+        subsystemBubbles.appendChild(purpose); const closePanels = (event) => { event?.stopPropagation(); components.remove(); purpose.remove(); button.classList.remove("active"); clearSubsystemPoints(); }; components.querySelector(".subsystem-panel-close")?.addEventListener("click", closePanels); purpose.querySelector(".subsystem-panel-close")?.addEventListener("click", closePanels);
       }));
     };
     const revealSubsystems = (stagger = 150) => {
