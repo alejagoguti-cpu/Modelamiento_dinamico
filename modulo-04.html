@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="module02-system.css?v=spacing-v3">
   <link rel="stylesheet" href="site-theme.css?v=20260823">
   <link rel="stylesheet" href="navigation-unified.css?v=20260824">
+  <link rel="stylesheet" href="responsive-fixes.css?v=2">
 </head>
 <body class="module02-reference-page">
   <div class="app">
@@ -203,6 +204,23 @@ svg:active{cursor:grabbing;}
   #conventions{position:static;width:auto;margin:10px;max-height:none;}
 }
 
+/* ===== RESPONSIVE INTERNO (portrait / <=900px) — apilado sin superposicion ===== */
+@media (orientation:portrait), (max-width:900px){
+  html,body{height:auto;overflow-x:hidden;overflow-y:visible;}
+  /* El layout de 2 columnas pasa a flujo vertical */
+  #app{display:flex;flex-direction:column;height:auto;min-height:0;width:100%;}
+  #sidebar{max-height:none;border-right:0;border-bottom:1px solid var(--line);}
+  #info{min-height:0;}
+  /* El lienzo y sus paneles dejan de ser absolutos y fluyen en orden */
+  #canvas-wrap{display:flex;flex-direction:column;height:auto;min-height:0;}
+  .toolbar{position:static;order:1;justify-content:flex-start;padding:10px 12px 0;}
+  #hud{position:static;order:2;width:auto;margin:10px 12px 0;left:auto;top:auto;}
+  /* GRAFO: altura estricta basada en el ancho (nunca colapsa a 0) */
+  #svg{order:3;width:100%;height:clamp(420px,62vw,560px);min-height:420px;display:block;}
+  #conventions{position:static;order:4;width:auto;margin:10px 12px;max-height:none;top:auto;right:auto;}
+  #conventions.collapsed .conv-body{display:none;}
+  .caption{position:static;order:5;max-width:none;margin:0 12px 14px;}
+}
 </style>
 </head>
 <body>
@@ -489,7 +507,7 @@ if (typeof module !== &quot;undefined&quot;) { module.exports = { NODES, LINKS }
 
   const wrap=document.getElementById(&quot;canvas-wrap&quot;);
   const svg=d3.select(&quot;#svg&quot;);
-  let W=wrap.clientWidth,H=wrap.clientHeight;
+  const measure=()=>{const r=svg.node().getBoundingClientRect();return{w:Math.round(r.width)||wrap.clientWidth,h:Math.round(r.height)||wrap.clientHeight};};let W=measure().w,H=measure().h;
   svg.attr(&quot;viewBox&quot;,[0,0,W,H]);
   const root=svg.append(&quot;g&quot;);
   const zoom=d3.zoom().scaleExtent([0.35,3.5]).on(&quot;zoom&quot;,e=>root.attr(&quot;transform&quot;,e.transform));
@@ -694,7 +712,7 @@ if (typeof module !== &quot;undefined&quot;) { module.exports = { NODES, LINKS }
   };
 
   window.addEventListener(&quot;resize&quot;,()=>{
-    W=wrap.clientWidth;H=wrap.clientHeight;
+    const m=measure();W=m.w;H=m.h;
     svg.attr(&quot;viewBox&quot;,[0,0,W,H]);
     sim.force(&quot;center&quot;,d3.forceCenter(W/2,H/2)); sim.alpha(0.3).restart();
   });
@@ -754,5 +772,6 @@ if (typeof module !== &quot;undefined&quot;) { module.exports = { NODES, LINKS }
   </div>
   <script src="modulo-04.js?module06-style-v1"></script>
   <script src="modulo-04-drive.js?v=module04-infinite-drive-1"></script>
+  <script src="responsive-fixes.js" defer></script>
 </body>
 </html>
