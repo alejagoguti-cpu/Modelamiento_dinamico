@@ -161,8 +161,8 @@ body {
   cursor: pointer; transition: background .2s ease, border-color .2s ease, transform .15s ease;
   animation: welcomeRise .7s cubic-bezier(.22,.8,.32,1) both; animation-delay: .24s;
 }
-.btn-bogota-complejo:hover { background: rgba(255,255,255,0.12); border-color: var(--teal); transform: translateY(-1px); }
-.btn-bogota-complejo.active { color: #0a0a0a; background: var(--teal); border-color: var(--teal); }
+.btn-bogota-complejo:hover { background: rgba(255,255,255,0.12); border-color: var(--text-faint); transform: translateY(-1px); }
+.btn-bogota-complejo.active { color: var(--bg); background: var(--text); border-color: var(--text); }
 
 .bogota-complejo-reveal {
   position: fixed; inset: 0; z-index: 700;
@@ -176,11 +176,12 @@ body {
 .bogota-complejo-reveal .bcr-intro { font-weight: 500; color: rgba(255,255,255,0.85); margin-bottom: 16px; }
 
 /* Panel único: el texto y el mapa de ejemplo van lado a lado, sin necesitar
-   un segundo click — todo aparece junto al abrir "Bogotá como sistema complejo". */
+   un segundo click — todo aparece junto al abrir "Bogotá como sistema complejo".
+   Usa el mismo panel oscuro neutro del resto del sitio (sin acentos de color). */
 .bcr-panel {
   position: relative;
   max-width: 980px; width: 100%; max-height: 90vh; overflow-y: auto;
-  background: var(--panel, #121828); border: 1px solid rgba(47,212,200,0.35);
+  background: var(--panel-alt); border: 1px solid var(--border);
   border-radius: 14px; padding: 26px 28px;
   display: flex; gap: 28px; align-items: flex-start;
   box-shadow: 0 24px 60px rgba(0,0,0,0.6);
@@ -205,7 +206,8 @@ body {
 }
 .bcr-step-num {
   flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%;
-  background: var(--teal); color: #0a0a0a; font-weight: 800; font-size: 12.5px;
+  background: rgba(255,255,255,0.08); border: 1px solid var(--border); color: var(--text);
+  font-weight: 800; font-size: 12.5px;
   display: flex; align-items: center; justify-content: center;
 }
 .bcr-step-body h4 { color: #fff; font-size: 13px; font-weight: 700; margin-bottom: 2px; }
@@ -222,7 +224,7 @@ body {
 .bcr-example-caption { color: rgba(255,255,255,0.7); font-size: 12px; font-weight: 500; line-height: 1.5; margin-top: 12px; text-align: center; }
 .bcr-col-map img {
   width: 100%; max-width: 380px; display: block; border-radius: 10px;
-  border: 1px solid rgba(47,212,200,0.3);
+  border: 1px solid var(--border);
   box-shadow: 0 12px 30px rgba(0,0,0,0.5);
 }
 
