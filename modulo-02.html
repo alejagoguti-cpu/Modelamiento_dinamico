@@ -57,46 +57,45 @@
             <i class="fa-solid fa-diagram-project"></i> Bogotá como sistema complejo
           </button>
           <div class="bogota-complejo-reveal" id="bogotaComplejoReveal" hidden>
-            <p class="bcr-intro">El POT tiene una mirada predominantemente reduccionista en el sentido de que, para poder ordenar Bogotá, descompone la ciudad en partes diferenciables, en lugar de partir de la ciudad como un sistema cuyo comportamiento surge de las interacciones entre todos sus elementos.</p>
-            <div class="bcr-steps">
-              <div class="bcr-step" style="--d:0s">
-                <div class="bcr-step-num">1</div>
-                <div class="bcr-step-body">
-                  <h4>¿Qué elementos existen?</h4>
-                  <p>Comienza por identificar qué elementos existen en el territorio.</p>
+            <div class="bcr-panel">
+              <button type="button" class="bcr-example-close" onclick="toggleBogotaComplejo()" aria-label="Cerrar">✕</button>
+              <div class="bcr-col-text">
+                <p class="bcr-intro">El POT tiene una mirada predominantemente reduccionista en el sentido de que, para poder ordenar Bogotá, descompone la ciudad en partes diferenciables, en lugar de partir de la ciudad como un sistema cuyo comportamiento surge de las interacciones entre todos sus elementos.</p>
+                <div class="bcr-steps">
+                  <div class="bcr-step" style="--d:0s">
+                    <div class="bcr-step-num">1</div>
+                    <div class="bcr-step-body">
+                      <h4>¿Qué elementos existen?</h4>
+                      <p>Comienza por identificar qué elementos existen en el territorio.</p>
+                    </div>
+                  </div>
+                  <div class="bcr-step" style="--d:.18s">
+                    <div class="bcr-step-num">2</div>
+                    <div class="bcr-step-body">
+                      <h4>Clasificación</h4>
+                      <p>Después los clasifica, agrupándolos en categorías y estructuras.</p>
+                    </div>
+                  </div>
+                  <div class="bcr-step" style="--d:.36s">
+                    <div class="bcr-step-num">3</div>
+                    <div class="bcr-step-body">
+                      <h4>¿Qué función cumplen?</h4>
+                      <p>Establece sus características: qué función cumple cada elemento.</p>
+                    </div>
+                  </div>
+                  <div class="bcr-step" style="--d:.54s">
+                    <div class="bcr-step-num">4</div>
+                    <div class="bcr-step-body">
+                      <h4>¿Cómo deben ser regulados?</h4>
+                      <p>Y finalmente determina cómo deben ser regulados.</p>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div class="bcr-step" style="--d:.18s">
-                <div class="bcr-step-num">2</div>
-                <div class="bcr-step-body">
-                  <h4>Clasificación</h4>
-                  <p>Después los clasifica, agrupándolos en categorías y estructuras.</p>
-                </div>
+              <div class="bcr-col-map">
+                <img src="./assets/espacio-publico-bogota-recorte.jpg" alt="Mapa oficial del sistema de espacio público de Bogotá (CU-4.1)">
+                <p class="bcr-example-caption">Ejemplo — Mapa CU-4.1 · Sistema de Espacio Público Peatonal y para el Encuentro (Secretaría Distrital de Planeación, mayo 2021).</p>
               </div>
-              <div class="bcr-step" style="--d:.36s">
-                <div class="bcr-step-num">3</div>
-                <div class="bcr-step-body">
-                  <h4>¿Qué función cumplen?</h4>
-                  <p>Establece sus características: qué función cumple cada elemento.</p>
-                </div>
-              </div>
-              <div class="bcr-step" style="--d:.54s">
-                <div class="bcr-step-num">4</div>
-                <div class="bcr-step-body">
-                  <h4>¿Cómo deben ser regulados?</h4>
-                  <p>Y finalmente determina cómo deben ser regulados.</p>
-                </div>
-              </div>
-            </div>
-            <button type="button" class="bcr-example-btn" id="btnEjemploEspacioPublico" onclick="toggleEjemploEspacioPublico()">
-              <i class="fa-solid fa-map-location-dot"></i> Ver ejemplo: Sistema de Espacio Público
-            </button>
-          </div>
-          <div class="bcr-example-map" id="ejemploEspacioPublicoMap" hidden>
-            <div class="bcr-example-map-inner">
-              <button type="button" class="bcr-example-close" onclick="toggleEjemploEspacioPublico()" aria-label="Cerrar">✕</button>
-              <img src="./assets/espacio-publico-bogota-recorte.jpg" alt="Mapa oficial del sistema de espacio público de Bogotá (CU-4.1)">
-              <p class="bcr-example-caption">Cartografía oficial del POT — Mapa CU-4.1 · Sistema de Espacio Público Peatonal y para el Encuentro (Secretaría Distrital de Planeación, mayo 2021).</p>
             </div>
           </div>
         </div>

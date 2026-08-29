@@ -1966,10 +1966,10 @@ function verPerifericos() {
   btn?.classList.add("active");
 }
 
-// "Bogotá como sistema complicado" — revela la idea de que el POT
-// DESCOMPONE la ciudad en piezas manejables (estructuras, redes, nodos)
-// para poder tomar decisiones sobre el territorio, y resalta en la red
-// un ejemplo concreto de esa descomposición: el nodo "Parques".
+// "Bogotá como sistema complicado" — revela, en un solo panel (texto +
+// mapa de ejemplo juntos, sin un segundo click), la idea de que el POT
+// DESCOMPONE la ciudad en piezas manejables para poder tomar decisiones
+// sobre el territorio, y resalta en la red un ejemplo concreto: "Parques".
 function toggleBogotaComplejo() {
   const btn = document.getElementById("btnBogotaComplejo");
   const reveal = document.getElementById("bogotaComplejoReveal");
@@ -1979,11 +1979,6 @@ function toggleBogotaComplejo() {
     btn.classList.remove("active");
     reveal.hidden = true;
     clearSpotlight();
-    // si el ejemplo del mapa estaba abierto, se cierra junto con el panel
-    const mapa = document.getElementById("ejemploEspacioPublicoMap");
-    const mapaBtn = document.getElementById("btnEjemploEspacioPublico");
-    if (mapa) mapa.hidden = true;
-    if (mapaBtn) mapaBtn.classList.remove("active");
     return;
   }
   btn.classList.add("active");
@@ -1991,23 +1986,11 @@ function toggleBogotaComplejo() {
   clearControlActive();
   setSpotlightNodes(["parques"], true);
 }
-
-// Ejemplo concreto de esa descomposición: el mapa oficial del POT para el
-// Sistema de Espacio Público. Se muestra como superposición ENCIMA de la
-// red (no empuja el contenido hacia abajo), con la referencia bajo el mapa.
-function toggleEjemploEspacioPublico() {
-  const btn = document.getElementById("btnEjemploEspacioPublico");
-  const mapa = document.getElementById("ejemploEspacioPublicoMap");
-  if (!btn || !mapa) return;
-  const yaVisible = !mapa.hidden;
-  mapa.hidden = yaVisible;
-  btn.classList.toggle("active", !yaVisible);
-}
-// Cerrar la superposición al hacer click en el fondo oscuro (fuera de la tarjeta)
+// Cerrar el panel al hacer click en el fondo oscuro (fuera de la tarjeta)
 document.addEventListener("DOMContentLoaded", () => {
-  const mapa = document.getElementById("ejemploEspacioPublicoMap");
-  if (mapa) mapa.addEventListener("click", (ev) => {
-    if (ev.target === mapa) toggleEjemploEspacioPublico();
+  const reveal = document.getElementById("bogotaComplejoReveal");
+  if (reveal) reveal.addEventListener("click", (ev) => {
+    if (ev.target === reveal) toggleBogotaComplejo();
   });
 });
 
