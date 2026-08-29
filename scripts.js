@@ -462,6 +462,11 @@ const relations = {
     }
   };
 
+  // Se expone globalmente para que la animación de "romper la bola" del
+  // hero (en index.html) pueda usar los MISMOS nodos reales (íconos,
+  // nombres) de cada estructura, en vez de bolitas genéricas.
+  window.RAPOT_NETWORKS = NETWORKS;
+
   const SVG_NS = "http://www.w3.org/2000/svg";
   const overlay   = document.getElementById("redes-modal-overlay");
   if (!overlay) return;
