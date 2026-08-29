@@ -859,17 +859,22 @@ function isNodeIsolated(conceptId) {
 // Distribución integrada de referencia: cuatro hubs descentralizados y una
 // malla abierta de satélites. Las posiciones son deterministas y no alteran
 // endpoints, citas, páginas ni la lógica de activación de las relaciones.
+// Centros de cada estructura — se usan tanto para el layout limpio inicial
+// como para la física de tensión (ver más abajo): actúan como un ancla suave
+// que evita que la red se disperse o colapse, sin fijar la posición real de
+// cada nodo (esa la deciden las fuerzas de atracción/repulsión).
+const HUB_CENTERS = {
+  EEP: { x: 660, y: 540 },
+  EFC: { x: 1700, y: 560 },
+  ESECI: { x: 980, y: 1220 },
+  EIP: { x: 1770, y: 1210 }
+};
+
 function computeLayoutClean() {
   // Layout compacto e integrado: los cuatro hubs quedan próximos y los
   // satélites orbitan en una malla común. Así las relaciones cruzadas forman
   // una red legible, en lugar de cuatro cuadrantes aislados.
   const CANVAS = { w: 2400, h: 1700 };
-  const HUB_CENTERS = {
-    EEP: { x: 660, y: 540 },
-    EFC: { x: 1700, y: 560 },
-    ESECI: { x: 980, y: 1220 },
-    EIP: { x: 1770, y: 1210 }
-  };
   const SLOT_DX = 260;
   const SLOT_DY = 190;
   const slots = [
@@ -1087,28 +1092,168 @@ function releaseDraggedGraph() {
   activeElement?.classList.remove('dragging');
   activeElement?.classList.add('just-released');
   window.setTimeout(() => activeElement?.classList.remove('just-released'), 900);
-  const startPositions = nodeDrag.base;
-  const released = Object.fromEntries(Object.keys(startPositions).map(id => [id, { ...drawPos[id] }]));
-  const dragged = { ...released[activeId] };
-  const started = performance.now();
   cancelAnimationFrame(nodeDrag.raf);
-  const settle = now => {
-    const t = Math.min(1, (now - started) / 820);
-    const spring = 1 - Math.exp(-7.2 * t) * Math.cos(10.5 * t);
-    Object.values(model.concepts).forEach(c => {
-      if (c.id === activeId) { drawPos[c.id] = dragged; return; }
-      const from = released[c.id], to = startPositions[c.id];
-      if (!from || !to) return;
-      drawPos[c.id] = { x: from.x + (to.x - from.x) * spring, y: from.y + (to.y - from.y) * spring };
-    });
-    updateGraphGeometry();
-    if (t < 1) nodeDrag.raf = requestAnimationFrame(settle);
-  };
-  nodeDrag.raf = requestAnimationFrame(settle);
+  // La red YA NO vuelve a su posición anterior con un resorte decorativo que
+  // "corrige" el movimiento del usuario: el nodo soltado se queda exactamente
+  // donde se dejó, y es la física de tensión (atracción/repulsión real, ver
+  // TENSION más abajo) la que reacomoda a sus vecinos a partir de ahí — igual
+  // que reaccionaría una red física de verdad, no una animación de vuelta.
+  if (drawPos[activeId]) layout[activeId] = { ...drawPos[activeId] };
+  tensionVel[activeId] = { x: 0, y: 0 };
   nodeDrag.active = null; nodeDrag.pointerId = null; nodeDrag.base = null;
+  wakeTensionPhysics();
+}
+
+/* ==========================================================
+   FUERZA NODAL / TENSIÓN — la red deja de ser una ilustración
+   estática y pasa a tener física real de atracción y repulsión:
+   TODOS los conceptos activos se repelen entre sí (como cargas
+   del mismo signo, para que la red respire y nada quede pegado
+   por casualidad del layout), y cada relación verificada del POT
+   actúa como un resorte que SÍ atrae — con más carga si es de
+   Resiliencia (vínculo sistémico) que si es de Soporte (vínculo
+   más laxo). El resultado: la posición final de cada nodo es
+   consecuencia de una tensión real entre "qué lo atrae" (sus
+   relaciones) y "qué lo repele" (el resto de la red), no de una
+   posición decorativa fija.
+   ========================================================== */
+const TENSION = {
+  enabled: true,
+  canvas: { w: 2400, h: 1700 },
+  repelK: 55000,          // fuerza de repulsión entre cualquier pareja de nodos activos
+  repelMaxDist: 820,      // más allá de esta distancia ya no se sienten
+  attractSoporte: 0.010,  // carga de atracción de un vínculo de Soporte
+  attractResiliencia: 0.020, // la Resiliencia atrae con casi el doble de carga: vínculo sistémico más fuerte
+  restGapSoporte: 90,     // "largo natural" extra del resorte — Soporte deja más aire
+  restGapResiliencia: 40, // Resiliencia ciñe más: el vínculo es más apretado
+  centerPull: 0.006,      // ancla suave hacia el centro de su propia estructura (EEP/EFC/ESECI/EIP)
+  damping: 0.82,
+  minVel: 0.02,
+};
+const tensionVel = {};
+let tensionRAF = 0;
+let tensionWakeTimer = 0;
+
+// Carga de atracción de una relación, en términos legibles para la ficha
+// lateral / tooltip: le da al profesor y al usuario un número concreto de
+// "qué tanto se atraen" dos conceptos, no solo el dibujo.
+function tensionInfoOf(r) {
+  const isResiliencia = r.tipo === 'Resiliencia';
+  return {
+    carga: isResiliencia ? TENSION.attractResiliencia : TENSION.attractSoporte,
+    etiqueta: isResiliencia ? 'Alta (vínculo de Resiliencia)' : 'Media (vínculo de Soporte)',
+  };
+}
+
+function tensionActiveNodeIds() {
+  const ids = [];
+  SYS.forEach(s => {
+    if (!state[s]) return;
+    model.systems[s].concepts.forEach(id => {
+      if (offNodes.has(id)) return;
+      const c = model.concepts[id];
+      if (activeDegree(c) === 0) return;
+      ids.push(id);
+    });
+  });
+  return ids;
+}
+
+function tensionPhysicsStep() {
+  if (!TENSION.enabled) { tensionRAF = 0; return; }
+  const ids = tensionActiveNodeIds();
+  const force = {};
+  ids.forEach(id => {
+    force[id] = { x: 0, y: 0 };
+    if (!tensionVel[id]) tensionVel[id] = { x: 0, y: 0 };
+  });
+
+  // 1) REPULSIÓN — toda pareja de nodos activos se empuja.
+  for (let i = 0; i < ids.length; i++) {
+    for (let j = i + 1; j < ids.length; j++) {
+      const a = ids[i], b = ids[j];
+      const pa = drawPos[a], pb = drawPos[b];
+      if (!pa || !pb) continue;
+      const dx = pb.x - pa.x, dy = pb.y - pa.y;
+      const dist = Math.hypot(dx, dy) || 1;
+      if (dist > TENSION.repelMaxDist) continue;
+      const ux = dx / dist, uy = dy / dist;
+      const mag = TENSION.repelK / (dist * dist);
+      force[a].x -= ux * mag; force[a].y -= uy * mag;
+      force[b].x += ux * mag; force[b].y += uy * mag;
+    }
+  }
+
+  // 2) ATRACCIÓN — cada relación activa es un resorte real (ver tensionInfoOf).
+  model.relations.forEach(r => {
+    if (r.porVerificar || !relationPassesFilters(r)) return;
+    if (!relActive(r)) return;
+    const pa = drawPos[r.from], pb = drawPos[r.to];
+    if (!pa || !pb || !force[r.from] || !force[r.to]) return;
+    const dx = pb.x - pa.x, dy = pb.y - pa.y;
+    const dist = Math.hypot(dx, dy) || 1;
+    const ux = dx / dist, uy = dy / dist;
+    const isResiliencia = r.tipo === 'Resiliencia';
+    const gap = isResiliencia ? TENSION.restGapResiliencia : TENSION.restGapSoporte;
+    const { carga } = tensionInfoOf(r);
+    const rest = radiusFor(r.from) + radiusFor(r.to) + gap;
+    const diff = (dist - rest) * carga;
+    force[r.from].x += ux * diff; force[r.from].y += uy * diff;
+    force[r.to].x -= ux * diff; force[r.to].y -= uy * diff;
+  });
+
+  // 3) ANCLA SUAVE al centro de su propia estructura, para que EEP/EFC/
+  //    ESECI/EIP sigan siendo reconocibles como agrupaciones.
+  ids.forEach(id => {
+    const c = model.concepts[id];
+    const hub = HUB_CENTERS[c.sys];
+    const p = drawPos[id];
+    if (!hub || !p) return;
+    force[id].x += (hub.x - p.x) * TENSION.centerPull;
+    force[id].y += (hub.y - p.y) * TENSION.centerPull;
+  });
+
+  let moving = false;
+  ids.forEach(id => {
+    if (nodeDrag.active === id) return; // mientras se arrastra, lo controla el puntero
+    const v = tensionVel[id];
+    v.x = (v.x + force[id].x) * TENSION.damping;
+    v.y = (v.y + force[id].y) * TENSION.damping;
+    const p = drawPos[id] || layout[id];
+    if (!p) return;
+    const R = radiusFor(id) + 24;
+    const nx = Math.max(R, Math.min(TENSION.canvas.w - R, p.x + v.x));
+    const ny = Math.max(R, Math.min(TENSION.canvas.h - R, p.y + v.y));
+    drawPos[id] = { x: nx, y: ny };
+    if (Math.abs(v.x) > TENSION.minVel || Math.abs(v.y) > TENSION.minVel) moving = true;
+  });
+
+  updateGraphGeometry();
+  tensionRAF = moving ? requestAnimationFrame(tensionPhysicsStep) : 0;
+}
+
+function wakeTensionPhysics() {
+  if (!TENSION.enabled) return;
+  if (!tensionRAF) tensionRAF = requestAnimationFrame(tensionPhysicsStep);
+}
+
+function toggleTensionPhysics() {
+  TENSION.enabled = !TENSION.enabled;
+  const btn = document.getElementById('btnTensionFisica');
+  if (btn) {
+    btn.classList.toggle('active', TENSION.enabled);
+    btn.textContent = TENSION.enabled ? '⚡ Física de tensión: activada' : '⚡ Física de tensión: desactivada';
+  }
+  if (TENSION.enabled) wakeTensionPhysics();
+  else if (tensionRAF) { cancelAnimationFrame(tensionRAF); tensionRAF = 0; }
 }
 
 function render() {
+  // Si la física de tensión estaba corriendo, se detiene aquí: la animación
+  // de reflow (más abajo) va a tomar el control de drawPos durante ~920ms;
+  // al terminar, vuelve a despertar la física desde la nueva composición.
+  cancelAnimationFrame(tensionRAF); tensionRAF = 0;
+  clearTimeout(tensionWakeTimer);
   const previousPositions = Object.keys(drawPos).length
     ? Object.fromEntries(Object.keys(drawPos).map(id => [id, { ...drawPos[id] }]))
     : null;
@@ -1345,7 +1490,16 @@ const iconSize = Math.max(28, Math.round(R * 0.52));
   });
 
   purgeInactiveSvg();
-  if (previousPositions || previousRadii) animateNetworkReflow(targets, previousPositions, previousRadii, targetRadii);
+  if (previousPositions || previousRadii) {
+    animateNetworkReflow(targets, previousPositions, previousRadii, targetRadii);
+    // La física de tensión espera a que termine la animación de reflow
+    // (misma duración, ~920ms) para no pelearse por drawPos con ella;
+    // luego toma el relevo y deja que la red respire por sí sola.
+    clearTimeout(tensionWakeTimer);
+    tensionWakeTimer = setTimeout(wakeTensionPhysics, 960);
+  } else {
+    wakeTensionPhysics();
+  }
 }
 
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -2084,9 +2238,11 @@ const tip = () => document.getElementById('tooltip');
 
 function relationTooltipHTML(r) {
   const explanation = relationExplanation(r);
+  const tension = tensionInfoOf(r);
   return `<div class="tt-sys" style="color:${model.systems[r.sO].color}">${esc(r.sO)} → ${esc(r.sD)}</div>` +
     `<div class="tt-rel">${esc(r.cO)} → ${esc(r.cD)}</div>` +
     `<span class="tt-type">${esc((r.tipo || 'Soporte').toUpperCase())} · ${esc(r.evid || 'Directa')} · p. ${esc(r.pag)}</span>` +
+    `<div class="tt-label">TENSIÓN DE LA RED</div><div class="tt-explanation">Carga de atracción: <b>${esc(tension.etiqueta)}</b> — jala a estos dos conceptos entre sí, mientras el resto de la red los repele.</div>` +
     `<div class="tt-label">EXPLICACIÓN</div><div class="tt-explanation">${esc(explanation)}${r.ejemplo ? `<br><span class="tt-example"><b>Ejemplo:</b> ${esc(r.ejemplo)}</span>` : ""}</div>` +
     `<div class="tt-label">CITA POT</div><div class="tt-quote">${esc(r.frase || 'Cita pendiente de completar')}</div>` +
     `<div class="tt-page">${esc(r.seccion || 'POT')} · p. ${esc(r.pag)}</div>`;
@@ -2524,6 +2680,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('btnReset').addEventListener('click', resetAll);
   const bf=document.getElementById('btnFit'); if(bf) bf.addEventListener('click', resetView);
+  document.getElementById('btnTensionFisica')?.addEventListener('click', toggleTensionPhysics);
 
   clearEvidence();
   initIntro();

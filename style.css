@@ -176,6 +176,20 @@ body{
   color: transparent;
 }
 
+/* ---------- ANIMACIÓN "CASINO" DEL TÍTULO ----------
+   Cada letra gira por caracteres al azar como un carrete de
+   tragamonedas y se va deteniendo en cascada (de izquierda a
+   derecha) hasta quedar fija en el texto real. */
+.hero-copy h1 .scramble-char{
+  display:inline-block;
+  min-width:0.12em;
+}
+.hero-copy h1 .scramble-char.spinning{
+  color:#2fd4c8;
+  -webkit-text-fill-color:#2fd4c8;
+  text-shadow:0 0 10px rgba(47,212,200,.55);
+}
+
 .lead{
   color: var(--text-dim);
   font-size:16px;

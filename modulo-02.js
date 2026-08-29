@@ -96,7 +96,7 @@ const ODS_NODES = [
   { id:"vivienda", cat:"e2", name:"VIVIENDA", icon:"fa-house", fuente:"cita_literal" },
   { id:"ciclorutas", cat:"e2", name:"CICLORUTAS", icon:"fa-person-biking", fuente:"cita_literal" },
   { id:"transporte_publico", cat:"e2", name:"TRANSPORTE\nPÚBLICO", icon:"fa-bus", fuente:"cita_literal" },
-  { id:"red_vial", cat:"e2", name:"RED\nVIAL", icon:"fa-road", fuente:"cita_literal" },
+  { id:"red_vial", cat:"e2", name:"MALLA\nVIAL", icon:"fa-road", fuente:"cita_literal" },
   { id:"corredores_verdes", cat:"e2", name:"CORREDORES\nVERDES", icon:"fa-seedling", fuente:"cita_literal" },
   { id:"manzanas_del_cuidado", cat:"e2", name:"MANZANAS\nDEL CUIDADO", icon:"fa-building-shield", fuente:"cita_literal" },
   { id:"parques", cat:"e2", name:"PARQUES", icon:"fa-tree", fuente:"inventario_pendiente" },
@@ -1948,6 +1948,38 @@ function toggleNodeFlow(id) {
   if (already) clearSpotlight(); else setSpotlightNodes([id], true);
 }
 
+/* ==========================================================
+   HUBS vs PERIFÉRICOS — dos botones en la leyenda que responden
+   a la pregunta del módulo ("¿qué elementos son realmente
+   centrales y cuáles quedan periféricos?"). Reutilizan el mismo
+   spotlight de arriba: iluminan el subconjunto elegido y atenúan
+   el resto de la red, en vivo y sobre el grado real vigente
+   (si hay nodos apagados, la clasificación se recalcula con eso).
+   ========================================================== */
+function clearControlActive() {
+  document.querySelectorAll(".legend-footer-row .control-btn").forEach(b => b.classList.remove("active"));
+}
+function verHubs() {
+  const btn = document.getElementById("btnVerHubs");
+  const yaActivo = btn && btn.classList.contains("active");
+  clearControlActive();
+  if (yaActivo) { clearSpotlight(); return; }
+  setSpotlightNodes(HUB_IDS, true); // true = mostrar también sus vecinos directos
+  btn?.classList.add("active");
+}
+function verPerifericos() {
+  const btn = document.getElementById("btnVerPerifericos");
+  const yaActivo = btn && btn.classList.contains("active");
+  clearControlActive();
+  if (yaActivo) { clearSpotlight(); return; }
+  const deg = computeDegrees(nodosApagados);
+  // Periférico = grado real bajo (≤2 conexiones) sobre la red vigente,
+  // igual que describe el módulo: "pocas conexiones y baja integración".
+  const ids = ODS_NODES.filter(n => (deg[n.id] || 0) <= 2).map(n => n.id);
+  setSpotlightNodes(ids, false);
+  btn?.classList.add("active");
+}
+
 function toggleInsight(key) {
   const card = document.querySelector(`.insight-card[data-insight="${key}"]`);
   if (!card) return;
@@ -2039,7 +2071,8 @@ function renderMatrix() {
 }
 
 function filterNetwork(mode) {
-  document.querySelectorAll(".legend-footer-row .control-btn").forEach(btn => btn.classList.remove("active"));
+  clearControlActive();
+  clearSpotlight();
   if (window.event && window.event.currentTarget) window.event.currentTarget.classList.add("active");
   typeOff.clear(); catOff.clear();
   document.querySelectorAll(".legend-item input").forEach(inp => { inp.checked = true; inp.closest(".legend-item").classList.remove("off"); });

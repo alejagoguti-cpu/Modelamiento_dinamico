@@ -75,8 +75,8 @@
 
     <!-- LEFT: copy -->
     <div class="hero-copy">
-      <h1>
-        Ingeniería inversa <span class="grad">del POT</span>.
+      <h1 id="heroTitle">
+        <span class="scramble-word" id="heroTitlePlain">Ingeniería inversa </span><span class="grad scramble-word" id="heroTitleGrad">del POT.</span>
       </h1>
 
       <p class="lead">
@@ -259,6 +259,61 @@
   </div>
 </div>
 
+<script>
+  /* Animación "casino" del título: cada letra gira por caracteres
+     al azar y se detiene en cascada (como los carretes de una
+     máquina tragamonedas) hasta revelar el texto real. */
+  (function () {
+    const CHARS = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZabcdefghijklmnñopqrstuvwxyz";
+
+    function splitIntoChars(el) {
+      const finalText = el.textContent;
+      el.textContent = "";
+      const items = [];
+      [...finalText].forEach((ch) => {
+        const span = document.createElement("span");
+        span.className = "scramble-char";
+        span.textContent = ch === " " ? "\u00A0" : ch;
+        el.appendChild(span);
+        items.push({ span, ch });
+      });
+      return items;
+    }
+
+    function runCasinoReveal(items, stepMs) {
+      items.forEach((item, i) => {
+        if (item.ch === " ") return;
+        item.span.classList.add("spinning");
+        let ticks = 0;
+        const totalTicks = 10 + i * 2; // cascada: cada letra a la derecha se detiene un poco después
+        const timer = setInterval(() => {
+          if (ticks < totalTicks) {
+            item.span.textContent = CHARS[Math.floor(Math.random() * CHARS.length)];
+            ticks++;
+          } else {
+            item.span.textContent = item.ch;
+            item.span.classList.remove("spinning");
+            clearInterval(timer);
+          }
+        }, stepMs);
+      });
+    }
+
+    function initHeroCasinoTitle() {
+      const plain = document.getElementById("heroTitlePlain");
+      const grad = document.getElementById("heroTitleGrad");
+      if (!plain || !grad) return;
+      const items = [...splitIntoChars(plain), ...splitIntoChars(grad)];
+      runCasinoReveal(items, 40);
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", initHeroCasinoTitle);
+    } else {
+      initHeroCasinoTitle();
+    }
+  })();
+</script>
 <script src="./scripts.js" defer></script>
 </body>
 </html>

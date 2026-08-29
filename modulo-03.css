@@ -4217,6 +4217,7 @@ body {
 }
 
 .btn:hover { color: var(--text); border-color: var(--text-faint); }
+#btnTensionFisica.active { color: #2fd4c8; border-color: #2fd4c8; background: rgba(47,212,200,0.1); }
 
 /* la red ocupa todo el ancho de la tarjeta (el panel de escenarios ahora
    vive en el panel de información de la izquierda, ver .escenarios-card) */
