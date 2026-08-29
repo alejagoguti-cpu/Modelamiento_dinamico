@@ -1993,8 +1993,8 @@ function toggleBogotaComplejo() {
 }
 
 // Ejemplo concreto de esa descomposición: el mapa oficial del POT para el
-// Sistema de Espacio Público, con todo lo que no es Bogotá D.C. en negro —
-// mostrando literalmente hasta dónde "ve" el modelo y dónde deja de mirar.
+// Sistema de Espacio Público. Se muestra como superposición ENCIMA de la
+// red (no empuja el contenido hacia abajo), con la referencia bajo el mapa.
 function toggleEjemploEspacioPublico() {
   const btn = document.getElementById("btnEjemploEspacioPublico");
   const mapa = document.getElementById("ejemploEspacioPublicoMap");
@@ -2003,6 +2003,13 @@ function toggleEjemploEspacioPublico() {
   mapa.hidden = yaVisible;
   btn.classList.toggle("active", !yaVisible);
 }
+// Cerrar la superposición al hacer click en el fondo oscuro (fuera de la tarjeta)
+document.addEventListener("DOMContentLoaded", () => {
+  const mapa = document.getElementById("ejemploEspacioPublicoMap");
+  if (mapa) mapa.addEventListener("click", (ev) => {
+    if (ev.target === mapa) toggleEjemploEspacioPublico();
+  });
+});
 
 function toggleInsight(key) {
   const card = document.querySelector(`.insight-card[data-insight="${key}"]`);

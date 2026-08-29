@@ -91,9 +91,12 @@
             <button type="button" class="bcr-example-btn" id="btnEjemploEspacioPublico" onclick="toggleEjemploEspacioPublico()">
               <i class="fa-solid fa-map-location-dot"></i> Ver ejemplo: Sistema de Espacio Público
             </button>
-            <div class="bcr-example-map" id="ejemploEspacioPublicoMap" hidden>
-              <p class="bcr-example-caption">Cartografía oficial del POT (Mapa CU-4.1 · Sistema de Espacio Público Peatonal y para el Encuentro). En negro, todo lo que no pertenece al Distrito Capital: el mapa solo "ve" lo que decidió delimitar como Bogotá.</p>
-              <img src="./assets/espacio-publico-bogota-recorte.jpg" alt="Mapa del sistema de espacio público de Bogotá, con el territorio fuera del Distrito Capital en negro" loading="lazy">
+          </div>
+          <div class="bcr-example-map" id="ejemploEspacioPublicoMap" hidden>
+            <div class="bcr-example-map-inner">
+              <button type="button" class="bcr-example-close" onclick="toggleEjemploEspacioPublico()" aria-label="Cerrar">✕</button>
+              <img src="./assets/espacio-publico-bogota-recorte.jpg" alt="Mapa oficial del sistema de espacio público de Bogotá (CU-4.1)">
+              <p class="bcr-example-caption">Cartografía oficial del POT — Mapa CU-4.1 · Sistema de Espacio Público Peatonal y para el Encuentro (Secretaría Distrital de Planeación, mayo 2021).</p>
             </div>
           </div>
         </div>
