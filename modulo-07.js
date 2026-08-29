@@ -1597,6 +1597,90 @@
       { id: "social", name: "Sistema social-comunitario", color: "#ee9a4b", components: ["Visitantes", "turismo", "grupos sociales", "formas de uso", "apropiación", "participación", "patrimonio ambiental"], process: "Cambian las visitas, formas de apropiación, actividades educativas, participación, acuerdos y conflictos.", category: "Social" },
       { id: "socioeconomico", name: "Sistema socioeconómico y de ocupación", color: "#e58d62", components: ["Viviendas", "actividades económicas", "servicios", "equipamientos", "usos del suelo", "población", "decisiones de ocupación"], process: "Cambian la población, construcción, demanda de vivienda, servicios, actividades y presiones sobre el borde.", category: "Social" }
     ];
+    // ---------- Sonidos ambiente por dinámica (sintetizados, sin archivos
+    // externos) — cada burbuja del territorio suena distinto al tocarla:
+    // el agua "corre", el pájaro "trina", el tráfico "zumba", etc. ----------
+    const DINAMICA_SOUND = (() => {
+      let ctx = null;
+      const getCtx = () => {
+        if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+        if (ctx.state === "suspended") ctx.resume();
+        return ctx;
+      };
+      // ruido filtrado reutilizable (base de agua / tráfico / multitud)
+      function noiseBuffer(c, seconds) {
+        const buffer = c.createBuffer(1, c.sampleRate * seconds, c.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+        return buffer;
+      }
+      function playFilteredNoise(c, { duration, filterFreq, filterType = "lowpass", q = 0.7, gain = 0.18, fadeOut = duration }) {
+        const src = c.createBufferSource();
+        src.buffer = noiseBuffer(c, duration);
+        const filter = c.createBiquadFilter();
+        filter.type = filterType; filter.frequency.value = filterFreq; filter.Q.value = q;
+        const g = c.createGain();
+        g.gain.setValueAtTime(gain, c.currentTime);
+        g.gain.linearRampToValueAtTime(0, c.currentTime + fadeOut);
+        src.connect(filter); filter.connect(g); g.connect(c.destination);
+        src.start(); src.stop(c.currentTime + duration + 0.05);
+      }
+      function playTone(c, { freq, to, duration, type = "sine", gain = 0.16, delay = 0 }) {
+        const osc = c.createOscillator();
+        osc.type = type; osc.frequency.setValueAtTime(freq, c.currentTime + delay);
+        if (to) osc.frequency.exponentialRampToValueAtTime(to, c.currentTime + delay + duration);
+        const g = c.createGain();
+        g.gain.setValueAtTime(0, c.currentTime + delay);
+        g.gain.linearRampToValueAtTime(gain, c.currentTime + delay + Math.min(0.04, duration / 4));
+        g.gain.linearRampToValueAtTime(0, c.currentTime + delay + duration);
+        osc.connect(g); g.connect(c.destination);
+        osc.start(c.currentTime + delay); osc.stop(c.currentTime + delay + duration + 0.05);
+      }
+      const players = {
+        // Dinámica hídrica: agua corriendo — ruido filtrado que "respira"
+        hidrica: (c) => {
+          playFilteredNoise(c, { duration: 2.2, filterFreq: 900, filterType: "lowpass", gain: 0.22, fadeOut: 2.2 });
+          playFilteredNoise(c, { duration: 1.6, filterFreq: 2200, filterType: "bandpass", q: 1.2, gain: 0.08, fadeOut: 1.6 });
+        },
+        // Dinámica biótica: un pajarito — dos o tres trinos cortos y agudos
+        biotica: (c) => {
+          [0, 0.18, 0.34].forEach((delay, i) => {
+            playTone(c, { freq: 2400 + i * 200, to: 3400 + i * 150, duration: 0.11, type: "sine", gain: 0.14, delay });
+          });
+        },
+        // Sistema físico-urbano: golpes secos de obra/construcción
+        fisico: (c) => {
+          [0, 0.22].forEach((delay) => {
+            playFilteredNoise(c, { duration: 0.09, filterFreq: 350, filterType: "lowpass", gain: 0.3, fadeOut: 0.09 });
+            playTone(c, { freq: 110, to: 60, duration: 0.15, type: "square", gain: 0.12, delay });
+          });
+        },
+        // Sistema de movilidad: motor de fondo + una bocina corta
+        movilidad: (c) => {
+          playTone(c, { freq: 90, duration: 0.9, type: "sawtooth", gain: 0.07 });
+          playTone(c, { freq: 520, duration: 0.22, type: "square", gain: 0.1, delay: 0.15 });
+        },
+        // Sistema social-comunitario: murmullo cálido de voces (acorde suave)
+        social: (c) => {
+          [220, 277, 330].forEach((freq, i) => playTone(c, { freq, duration: 0.8, type: "triangle", gain: 0.06, delay: i * 0.04 }));
+          playFilteredNoise(c, { duration: 0.9, filterFreq: 1400, filterType: "bandpass", q: 0.6, gain: 0.05, fadeOut: 0.9 });
+        },
+        // Sistema socioeconómico y de ocupación: dos tonos tipo "aviso/actividad"
+        socioeconomico: (c) => {
+          playTone(c, { freq: 660, duration: 0.14, type: "sine", gain: 0.14 });
+          playTone(c, { freq: 880, duration: 0.22, type: "sine", gain: 0.14, delay: 0.15 });
+        },
+      };
+      return {
+        play(id) {
+          try {
+            const c = getCtx();
+            (players[id] || (() => {}))(c);
+          } catch (err) { /* audio no disponible: seguimos sin sonido */ }
+        }
+      };
+    })();
+
     const renderTerritoryNetwork = () => {
       const view = document.getElementById("submodelsView");
       if (!view) return;
@@ -1607,6 +1691,7 @@
       view.querySelectorAll("[data-system-id]").forEach((button) => button.addEventListener("click", () => {
         const system = territorySystems.find((item) => item.id === button.dataset.systemId);
         if (!system) return;
+        DINAMICA_SOUND.play(system.id);
         view.querySelectorAll("[data-system-id]").forEach((item) => item.classList.toggle("selected", item === button));
         const detail = document.getElementById("territorySystemDetail");
         if (detail) detail.innerHTML = `<div class="territory-detail-heading"><span style="--detail-color:${system.color}"></span><strong>${system.name}</strong><b>${system.category}</b></div><p>${system.process}</p><div class="territory-component-chips">${system.components.map((item) => `<span>${item}</span>`).join("")}</div>`;
