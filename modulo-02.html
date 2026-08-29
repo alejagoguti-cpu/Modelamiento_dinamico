@@ -53,10 +53,16 @@
           <div class="welcome-eyebrow">INGENIERÍA INVERSA</div>
           <h2><span class="h2-plain">Una ciudad que</span> <span class="h2-accent">no cabe en el POT</span></h2>
           <p class="welcome-sub">Ingeniería inversa al Modelo de Ordenamiento Territorial (MOT)</p>
+          <button type="button" class="btn-bogota-complejo" id="btnBogotaComplejo" onclick="toggleBogotaComplejo()">
+            <i class="fa-solid fa-diagram-project"></i> Bogotá como sistema complicado
+          </button>
+          <div class="bogota-complejo-reveal" id="bogotaComplejoReveal" hidden>
+            <p>El POT descompone Bogotá porque necesita poder ordenar y tomar decisiones sobre el territorio.</p>
+          </div>
         </div>
         <div class="quote-card welcome-quote-card">
           <div class="quote-mark">&ldquo;</div>
-          <p>Realizamos una ingeniería inversa al Modelo de Ordenamiento Territorial (MOT). Desarmamos el decreto para ver cómo interactúan realmente sus partes en el territorio.</p>
+          <p id="welcomeQuoteText" class="quote-focus-in">El POT construye una Bogotá altamente ordenable, clasificable, zonificable y conectable mediante estructuras, redes, soportes y reglas, pero su legibilidad es desigual: representa con mayor precisión los elementos físicos y territoriales y con menor resolución los actores, las interacciones, los flujos y los procesos dinámicos mediante los cuales la ciudad cambia.</p>
         </div>
       </div>
 

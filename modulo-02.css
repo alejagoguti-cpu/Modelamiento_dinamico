@@ -1,3 +1,8 @@
+/* Transición nativa entre páginas (donde el navegador la soporte): ayuda
+   a que el salto desde la portada se sienta como una continuación suave
+   en vez de un corte, encima del efecto de "romper la bola" del hero. */
+@view-transition{ navigation: auto; }
+
 :root {
   --bg: #0a0a0a;
   --sidebar: #0a0a0a;
@@ -127,6 +132,45 @@ body {
 .quote-card .quote-mark { position: absolute; left: 14px; top: 4px; font-size: 30px; font-family: Georgia, serif; color: #d28b36; opacity: 0.75; line-height: 1; }
 .quote-card p { font-size: 12.5px; color: var(--text-dim); line-height: 1.6; }
 .quote-card .quote-attr { font-size: 11.5px; color: #d28b36; font-weight: 600; margin-top: 10px; }
+
+/* La cita entra lentamente desenfocada y se va enfocando, en vez de
+   aparecer ya nítida de golpe — más vida, menos estática. */
+@keyframes quoteFocusIn {
+  0%   { opacity: 0; filter: blur(9px); transform: translateY(10px); }
+  60%  { opacity: 1; }
+  100% { opacity: 1; filter: blur(0); transform: translateY(0); }
+}
+.quote-focus-in { animation: quoteFocusIn 1.6s cubic-bezier(.22,.8,.32,1) both; animation-delay: .15s; }
+
+/* Encabezado del módulo: entra con un leve deslizamiento hacia arriba,
+   para que la página se sienta viva desde el primer instante. */
+@keyframes welcomeRise {
+  0%   { opacity: 0; transform: translateY(14px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.welcome-eyebrow, .welcome h2, .welcome-sub { animation: welcomeRise .7s cubic-bezier(.22,.8,.32,1) both; }
+.welcome h2 { animation-delay: .08s; }
+.welcome-sub { animation-delay: .16s; }
+
+.btn-bogota-complejo {
+  margin-top: 14px;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 16px; font-size: 12.5px; font-weight: 700; font-family: inherit;
+  color: #fff; background: rgba(255,255,255,0.06);
+  border: 1px solid var(--border); border-radius: 9px;
+  cursor: pointer; transition: background .2s ease, border-color .2s ease, transform .15s ease;
+  animation: welcomeRise .7s cubic-bezier(.22,.8,.32,1) both; animation-delay: .24s;
+}
+.btn-bogota-complejo:hover { background: rgba(255,255,255,0.12); border-color: var(--teal); transform: translateY(-1px); }
+.btn-bogota-complejo.active { color: #0a0a0a; background: var(--teal); border-color: var(--teal); }
+
+.bogota-complejo-reveal {
+  margin-top: 12px; max-width: 640px;
+  padding: 14px 18px; border-radius: 10px;
+  background: rgba(47,212,200,0.08); border: 1px solid rgba(47,212,200,0.35);
+  animation: quoteFocusIn 1s cubic-bezier(.22,.8,.32,1) both;
+}
+.bogota-complejo-reveal p { color: #fff; font-size: 13.5px; line-height: 1.55; font-weight: 600; }
 
 /* NOTA METODOLÓGICA */
 .method-note {

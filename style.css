@@ -1,3 +1,8 @@
+/* Transición nativa entre páginas (donde el navegador la soporte): ayuda
+   a que el salto de la portada al módulo 2 se sienta como una continuación
+   suave en vez de un corte, encima del efecto de "romper la bola". */
+@view-transition{ navigation: auto; }
+
 :root{
   --bg: #121010;
   --bg-soft: #1b1817;
@@ -244,8 +249,8 @@ body{
 /* ---------- ANIMACIÓN "ROMPER LA BOLA" (explorar más redes) ----------
    Al hacer click en "Explorar más redes", cada bola del hero se
    encoge y se apaga como si se rompiera, y de su centro salen
-   disparadas bolitas más pequeñas (los componentes que contiene),
-   igual que se organizan luego como satélites en el módulo 2. */
+   disparadas bolitas que CRECEN hasta el tamaño de un nodo satélite
+   (como en el módulo 2) y se conectan entre sí con líneas finas. */
 @keyframes shatterMainCircle{
   0%{ transform:scale(1); opacity:1; }
   35%{ transform:scale(1.08); opacity:1; }
@@ -256,14 +261,37 @@ body{
   25%{ opacity:0; }
   100%{ opacity:0; }
 }
-@keyframes shardFly{
-  0%{ transform:translate(0,0) scale(0.25); opacity:0; }
-  12%{ opacity:1; }
-  100%{ transform:translate(var(--dx), var(--dy)) scale(1); opacity:0; }
+@keyframes shardGrow{
+  0%{ transform:translate(0,0); r:3px; opacity:0; }
+  15%{ opacity:1; }
+  60%{ transform:translate(var(--dx), var(--dy)); r:calc(var(--r-final) * 1px); opacity:1; }
+  100%{ transform:translate(var(--dx), var(--dy)); r:calc(var(--r-final) * 1px); opacity:1; }
+}
+@keyframes shardLinkFadeIn{
+  0%{ opacity:0; }
+  100%{ opacity:0.5; }
 }
 .network-svg.is-shattering .node circle{ transform-box:fill-box; transform-origin:center; animation:shatterMainCircle 900ms ease-in forwards; }
 .network-svg.is-shattering .node text{ animation:shatterMainText 450ms ease-in forwards; }
-.network-svg .shard-burst{ animation:shardFly 900ms cubic-bezier(.22,.8,.32,1) forwards; }
+.network-svg .shard-grow{
+  transform-box:fill-box; transform-origin:center;
+  animation:shardGrow 850ms cubic-bezier(.22,.8,.32,1) forwards;
+}
+.network-svg .shard-link-line{
+  stroke: rgba(255,255,255,0.4); stroke-width:1; stroke-dasharray:3 3;
+  animation: shardLinkFadeIn .6s ease forwards;
+}
+
+/* Velo del mismo color de fondo del sitio que se funde encima justo antes
+   de navegar al módulo 2 — para que el salto entre páginas se sienta como
+   una continuación de la misma red, no como un corte abrupto. */
+.page-transition-veil{
+  position:fixed; inset:0; z-index:9999;
+  background: radial-gradient(circle at 70% 30%, #1b1817, #121010 75%);
+  opacity:0; pointer-events:none;
+  transition: opacity .6s ease;
+}
+.page-transition-veil.is-active{ opacity:1; }
 
 .lead{
   color: var(--text-dim);

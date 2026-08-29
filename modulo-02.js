@@ -225,6 +225,8 @@ const RAW_EDGES = [
   { s:"humedales", t:"red_vial", cat:"e1-e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"49–50",
     cita:"Con respecto a los humedales de la ciudad, dentro del POT únicamente se identificó un conflicto de malla vial arterial con la Reserva Distrital de Humedal Capellanía, en Fontibón.",
     analisis:"Puente real EEP↔EFC, aportado directamente por la usuaria." },
+  { s:"humedales", t:"parques", cat:"e1-e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Puente EEP↔EFC pendiente de verificar contra el texto del POT: los humedales suelen articularse con parques colindantes (zonas de manejo y preservación ambiental), pero falta localizar la frase exacta." },
   { s:"humedales", t:"patrimonio_natural", cat:"e1-e4", tipo:"directa", relacion:"Resiliencia", fuente:"cita_literal", articulo:null, pagina:null,
     cita:"Los humedales, como parte de la Estructura Ecológica Principal, se integran con el patrimonio natural de la ciudad.",
     analisis:"Puente real EEP↔EIP, aportado directamente por la usuaria." },
@@ -1962,6 +1964,27 @@ function verPerifericos() {
   const ids = ODS_NODES.filter(n => (deg[n.id] || 0) <= 2).map(n => n.id);
   setSpotlightNodes(ids, false);
   btn?.classList.add("active");
+}
+
+// "Bogotá como sistema complicado" — revela la idea de que el POT
+// DESCOMPONE la ciudad en piezas manejables (estructuras, redes, nodos)
+// para poder tomar decisiones sobre el territorio, y resalta en la red
+// un ejemplo concreto de esa descomposición: el nodo "Parques".
+function toggleBogotaComplejo() {
+  const btn = document.getElementById("btnBogotaComplejo");
+  const reveal = document.getElementById("bogotaComplejoReveal");
+  if (!btn || !reveal) return;
+  const yaActivo = btn.classList.contains("active");
+  if (yaActivo) {
+    btn.classList.remove("active");
+    reveal.hidden = true;
+    clearSpotlight();
+    return;
+  }
+  btn.classList.add("active");
+  reveal.hidden = false;
+  clearControlActive();
+  setSpotlightNodes(["parques"], true);
 }
 
 function toggleInsight(key) {

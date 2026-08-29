@@ -315,15 +315,18 @@
   })();
 
   /* Animación "se rompe la bola" al hacer click en "Explorar más redes":
-     cada bola del hero se encoge/apaga y de su centro salen disparadas
-     bolitas más pequeñas — como si se abriera y sus componentes
-     empezaran a organizarse, justo antes de entrar al módulo 2. */
+     cada bola del hero se encoge/apaga, de su centro salen bolitas que
+     CRECEN hasta el tamaño de un nodo satélite (como en el módulo 2),
+     se conectan entre sí con líneas finas, y sólo entonces un velo del
+     mismo color de fondo del sitio se funde encima para pasar a la
+     página del módulo 2 — para que se sienta como una continuación de
+     la misma red, no como un corte. */
   (function () {
     const HUB_COLORS = {
-      green:  "rgba(47,191,174,0.95)",
-      purple: "rgba(239,111,111,0.95)",
-      blue:   "rgba(239,139,60,0.95)",
-      yellow: "rgba(234,176,76,0.95)",
+      green:  "#2fbfae",
+      purple: "#ef6f6f",
+      blue:   "#ef8b3c",
+      yellow: "#eab04c",
     };
     const SVG_NS = "http://www.w3.org/2000/svg";
 
@@ -331,28 +334,55 @@
       const colorKey = hubGroup.getAttribute("data-node");
       const color = HUB_COLORS[colorKey] || "#fff";
       const circle = hubGroup.querySelector("circle");
-      if (!circle) return;
+      if (!circle) return [];
       const r = parseFloat(circle.getAttribute("r")) || 50;
       const match = /translate\(([-\d.]+)[, ]+([-\d.]+)\)/.exec(hubGroup.getAttribute("transform") || "");
       const cx = match ? parseFloat(match[1]) : 0;
       const cy = match ? parseFloat(match[2]) : 0;
-      const shardCount = 9;
+      const shardCount = 7;
+      const shards = [];
       for (let i = 0; i < shardCount; i++) {
-        const angle = (Math.PI * 2 * i) / shardCount + Math.random() * 0.4;
-        const dist = r * (1.6 + Math.random() * 1.4);
+        const angle = (Math.PI * 2 * i) / shardCount + Math.random() * 0.35;
+        const dist = r * (1.4 + Math.random() * 1.0);
         const dx = Math.cos(angle) * dist;
         const dy = Math.sin(angle) * dist;
+        const finalR = 10 + Math.random() * 15; // crecen hasta un tamaño "satélite", como en el módulo 2
         const shard = document.createElementNS(SVG_NS, "circle");
         shard.setAttribute("cx", cx);
         shard.setAttribute("cy", cy);
-        shard.setAttribute("r", 4 + Math.random() * 7);
+        shard.setAttribute("r", "3");
         shard.setAttribute("fill", color);
-        shard.setAttribute("class", "shard-burst");
+        shard.setAttribute("fill-opacity", "0.88");
+        shard.setAttribute("stroke", "rgba(255,255,255,0.35)");
+        shard.setAttribute("stroke-width", "1");
+        shard.setAttribute("class", "shard-grow");
         shard.style.setProperty("--dx", dx.toFixed(1) + "px");
         shard.style.setProperty("--dy", dy.toFixed(1) + "px");
+        shard.style.setProperty("--r-final", finalR.toFixed(1));
         shard.style.animationDelay = (Math.random() * 90) + "ms";
         svg.appendChild(shard);
+        shards.push({ cx: cx + dx, cy: cy + dy });
       }
+      return shards;
+    }
+
+    // Une con líneas finas las bolitas resultantes de cada estallido, para
+    // que al asentarse ya parezcan una pequeña red — como las que arman
+    // los satélites alrededor de cada estructura en el módulo 2.
+    function connectShards(svg, groupsOfShards) {
+      const g = document.createElementNS(SVG_NS, "g");
+      g.setAttribute("class", "shard-links");
+      groupsOfShards.forEach((group) => {
+        for (let i = 0; i < group.length; i++) {
+          const a = group[i], b = group[(i + 1) % group.length];
+          const line = document.createElementNS(SVG_NS, "line");
+          line.setAttribute("x1", a.cx); line.setAttribute("y1", a.cy);
+          line.setAttribute("x2", b.cx); line.setAttribute("y2", b.cy);
+          line.setAttribute("class", "shard-link-line");
+          g.appendChild(line);
+        }
+      });
+      svg.appendChild(g);
     }
 
     function initExplorarMasRedesShatter() {
@@ -365,9 +395,24 @@
         ev.preventDefault();
         already = true;
         svg.classList.add("is-shattering");
-        svg.querySelectorAll(".node[data-node]").forEach((hub) => shatterHub(svg, hub));
+        const groupsOfShards = [];
+        svg.querySelectorAll(".node[data-node]").forEach((hub) => {
+          groupsOfShards.push(shatterHub(svg, hub));
+        });
+        window.setTimeout(() => connectShards(svg, groupsOfShards), 560);
+
+        // El velo se funde encima recién cuando las bolitas ya crecieron y
+        // se conectaron (no antes), para que el efecto se lea como "esto
+        // se está reorganizando en la otra página", no como un corte.
+        window.setTimeout(() => {
+          const veil = document.createElement("div");
+          veil.className = "page-transition-veil";
+          document.body.appendChild(veil);
+          requestAnimationFrame(() => veil.classList.add("is-active"));
+        }, 820);
+
         const href = btn.getAttribute("href");
-        window.setTimeout(() => { window.location.href = href; }, 950);
+        window.setTimeout(() => { window.location.href = href; }, 1500);
       });
     }
 
