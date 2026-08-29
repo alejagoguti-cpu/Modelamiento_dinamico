@@ -473,6 +473,32 @@
       initExplorarMasRedesShatter();
     }
   })();
+
+  /* Pequeño "tilt" 3D de la tarjeta de la red al mover el mouse encima:
+     un detalle más de movimiento para que la portada no se sienta estática. */
+  (function () {
+    function initHeroTilt() {
+      const card = document.querySelector(".hero-visual-card");
+      if (!card) return;
+      const MAX_TILT = 4; // grados
+      card.style.transition = "transform .25s ease";
+      card.addEventListener("mousemove", (ev) => {
+        const rect = card.getBoundingClientRect();
+        const px = (ev.clientX - rect.left) / rect.width - 0.5;
+        const py = (ev.clientY - rect.top) / rect.height - 0.5;
+        card.style.transform = `perspective(900px) rotateY(${(px * MAX_TILT).toFixed(2)}deg) rotateX(${(-py * MAX_TILT).toFixed(2)}deg)`;
+      });
+      card.addEventListener("mouseleave", () => {
+        card.style.transform = "perspective(900px) rotateY(0deg) rotateX(0deg)";
+      });
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", initHeroTilt);
+    } else {
+      initHeroTilt();
+    }
+  })();
 </script>
 <script src="./scripts.js" defer></script>
 </body>
