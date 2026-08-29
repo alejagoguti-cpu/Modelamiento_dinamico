@@ -1793,7 +1793,31 @@
         const line = (coordinates, properties = {}) => feature({ type: "LineString", coordinates }, properties);
         const pt = (coordinates, properties = {}) => feature({ type: "Point", coordinates }, properties);
         const layerCollections = {
-          hidrico: { type: "FeatureCollection", features: [...burro.features, ...context.features.filter((item) => item.properties.kind === "canal"), pt([-74.159,4.641], { label: "Espejo de agua", kind: "water-point" }), pt([-74.160,4.646], { label: "Ronda norte", kind: "water-point" }), pt([-74.158,4.635], { label: "Ronda sur", kind: "water-point" }), pt([-74.174,4.645], { label: "Canal Los Ángeles", kind: "water-point" }), pt([-74.166,4.644], { label: "Entrada de agua", kind: "water-point" }), pt([-74.153,4.639], { label: "Salida de agua", kind: "water-point" }), pt([-74.167,4.651], { label: "Escorrentías", kind: "water-point" })] },
+          hidrico: { type: "FeatureCollection", features: [...burro.features, ...context.features.filter((item) => item.properties.kind === "canal"), pt([-74.159,4.641], { label: "Espejo de agua", kind: "water-point" }), pt([-74.160,4.646], { label: "Ronda norte", kind: "water-point" }), pt([-74.158,4.635], { label: "Ronda sur", kind: "water-point" }), pt([-74.174,4.645], { label: "Canal Los Ángeles", kind: "water-point" }), pt([-74.166,4.644], { label: "Entrada de agua", kind: "water-point" }), pt([-74.153,4.639], { label: "Salida de agua", kind: "water-point" }), pt([-74.167,4.651], { label: "Escorrentías", kind: "water-point" }),
+            // Componentes de la dinámica hídrica a escala de Bogotá — cada uno se
+            // conecta con una línea al punto central ("Espejo de agua" = la bolita
+            // de Dinámica hídrica), igual que en el plano de referencia.
+            ...(() => {
+              const HIDRICA_HUB = [-74.159, 4.641];
+              const HIDRICA_COMPONENTS = [
+                { label: "Humedal El Burro", coords: [-74.14987475206779, 4.64210777486686] },
+                { label: "Humedal La Vaca", coords: [-74.16284778855655, 4.62939492240078] },
+                { label: "Río Bogotá", coords: [-74.16768977818305, 4.656422537771954] },
+                { label: "Humedal El Techo", coords: [-74.1413020515684, 4.645452290970931] },
+                { label: "Canal Américas", coords: [-74.15762452847382, 4.64242217040295] },
+                { label: "Canal Castilla", coords: [-74.15759550812774, 4.650327770848862] },
+                { label: "Canal Alsacia", coords: [-74.14794903865601, 4.656271588055773] },
+                { label: "Canal Cl 38 Sur", coords: [-74.17187523380888, 4.646537178378381] },
+                { label: "Pondaje La Magdalena", coords: [-74.15173171372305, 4.662640070581543] },
+                { label: "Canal Los Ángeles (punto)", coords: [-74.14408308171802, 4.6347293508003995] },
+                { label: "Canal Tintal II", coords: [-74.17614285433572, 4.638461556417559] },
+                { label: "Río Fucha", coords: [-74.13071639928444, 4.64914295789523] },
+              ];
+              const points = HIDRICA_COMPONENTS.map((c) => pt(c.coords, { label: c.label, kind: "water-point" }));
+              const links = HIDRICA_COMPONENTS.map((c) => line([c.coords, HIDRICA_HUB], { kind: "hidrica-link" }));
+              return [...points, ...links];
+            })()
+          ] },
           biotico: { type: "FeatureCollection", features: [poly([[-74.166,4.644],[-74.162,4.646],[-74.158,4.643],[-74.160,4.638],[-74.165,4.638],[-74.166,4.644]], { label: "hábitat y vegetación" }), poly([[-74.157,4.646],[-74.153,4.645],[-74.153,4.639],[-74.157,4.637],[-74.160,4.640],[-74.157,4.646]], { label: "hábitat y vegetación" }), pt([-74.157,4.642], { label: "fauna" })] },
           infraestructura: { type: "FeatureCollection", features: [line([[-74.159,4.67],[-74.159,4.65],[-74.159,4.63],[-74.159,4.61]], { label: "Avenida Ciudad de Cali" }), poly([[-74.153,4.651],[-74.148,4.651],[-74.148,4.647],[-74.153,4.647],[-74.153,4.651]], { label: "área construida" }), poly([[-74.169,4.632],[-74.165,4.632],[-74.165,4.628],[-74.169,4.628],[-74.169,4.632]], { label: "borde urbano" })] },
           movilidad: { type: "FeatureCollection", features: [line([[-74.15,4.632],[-74.156,4.631],[-74.164,4.632],[-74.172,4.636]], { label: "ciclorruta" }), line([[-74.154,4.65],[-74.158,4.646],[-74.161,4.64],[-74.165,4.635]], { label: "recorrido peatonal" }), pt([-74.156,4.633], { label: "Biblioteca El Tintal · acceso" })] },
@@ -1806,11 +1830,13 @@
           const sourceId = `part1-${meta.id}`; const fillId = `${sourceId}-fill`; const lineId = `${sourceId}-line`; const pointId = `${sourceId}-point`;
           map.addSource(sourceId, { type: "geojson", data: layerCollections[meta.id] });
           map.addLayer({ id: fillId, type: "fill", source: sourceId, paint: { "fill-color": meta.color, "fill-opacity": .18 }, layout: { visibility: "none" } });
-          map.addLayer({ id: lineId, type: "line", source: sourceId, paint: { "line-color": meta.color, "line-width": ["interpolate", ["linear"], ["zoom"], 10, 1.2, 14, 3], "line-opacity": .86 }, layout: { visibility: "none" } });
+          map.addLayer({ id: lineId, type: "line", source: sourceId, filter: ["!=", ["get", "kind"], "hidrica-link"], paint: { "line-color": meta.color, "line-width": ["interpolate", ["linear"], ["zoom"], 10, 1.2, 14, 3], "line-opacity": .86 }, layout: { visibility: "none" } });
           map.addLayer({ id: pointId, type: "circle", source: sourceId, filter: ["==", ["geometry-type"], "Point"], paint: { "circle-color": meta.color, "circle-radius": meta.id === "hidrico" ? ["interpolate", ["linear"], ["zoom"], 10, 7, 14, 10] : ["interpolate", ["linear"], ["zoom"], 10, 4, 14, 7], "circle-opacity": meta.id === "hidrico" ? .92 : 1, "circle-stroke-color": "#070b0c", "circle-stroke-width": meta.id === "hidrico" ? 2 : 1.5 }, layout: { visibility: "none" } });
           const labelId = `${sourceId}-labels`;
           if (meta.id === "hidrico") map.addLayer({ id: labelId, type: "symbol", source: sourceId, filter: ["==", ["get", "kind"], "water-point"], layout: { visibility: "none", "text-field": ["get", "label"], "text-size": ["interpolate", ["linear"], ["zoom"], 10, 9, 14, 12], "text-offset": [0, 1.35], "text-anchor": "top", "text-allow-overlap": true }, paint: { "text-color": "#b9e5ea", "text-halo-color": "#061113", "text-halo-width": 1.5 } });
-          partOneMapLayers.push({ id: meta.id, fill: fillId, line: lineId, point: pointId, extras: meta.id === "hidrico" ? [labelId] : [], markers: [] });
+          const hidricaLinkId = `${sourceId}-hidrica-links`;
+          if (meta.id === "hidrico") map.addLayer({ id: hidricaLinkId, type: "line", source: sourceId, filter: ["==", ["get", "kind"], "hidrica-link"], paint: { "line-color": "#b9e5ea", "line-width": ["interpolate", ["linear"], ["zoom"], 10, .8, 14, 1.6], "line-opacity": .55, "line-dasharray": [2, 1.6] }, layout: { visibility: "none" } }, pointId);
+          partOneMapLayers.push({ id: meta.id, fill: fillId, line: lineId, point: pointId, extras: meta.id === "hidrico" ? [labelId, hidricaLinkId] : [], markers: [] });
         });
         componentPointMap = map;
         map.addSource("subsystem-component-points", { type: "geojson", data: { type: "FeatureCollection", features: [] } });
