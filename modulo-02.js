@@ -93,7 +93,6 @@ const ODS_NODES = [
   /* ---- ESTRUCTURA FUNCIONAL Y DEL CUIDADO ---- */
   { id:"equipamientos", cat:"e2", name:"EQUIPAMIENTOS", icon:"fa-school", fuente:"cita_literal" },
   { id:"servicios_sociales", cat:"e2", name:"SERVICIOS\nSOCIALES", icon:"fa-people-roof", fuente:"cita_literal" },
-  { id:"vivienda", cat:"e2", name:"VIVIENDA", icon:"fa-house", fuente:"cita_literal" },
   { id:"ciclorutas", cat:"e2", name:"CICLORUTAS", icon:"fa-person-biking", fuente:"cita_literal" },
   { id:"transporte_publico", cat:"e2", name:"TRANSPORTE\nPÚBLICO", icon:"fa-bus", fuente:"cita_literal" },
   { id:"red_vial", cat:"e2", name:"MALLA\nVIAL", icon:"fa-road", fuente:"cita_literal" },
@@ -157,14 +156,9 @@ const RAW_EDGES = [
     analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: Reserva Forestal Protectora Regional]." },
   { s:"reservas_forestales", t:"humedales", cat:"e1", tipo:"directa", relacion:"Resiliencia", fuente:"inventario_pendiente", articulo:"Art. 42", pagina:"72", cita:null,
     analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: conectividad y complementariedad]." },
-  { s:"equipamientos", t:"vivienda", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:"Una ciudad para el empleo y las oportunidades", pagina:"29",
-    cita:"Que sea en suelo de desarrollo o en suelo de renovación urbana, los constructores y desarrolladores inmobiliarios siempre tengan que garantizar diversos tipos de vivienda de interés social y soportes urbanos y equipamientos sociales de calidad para familias de diferentes tamaños y niveles de ingreso que comparten un mismo trozo de ciudad.",
-    analisis:"El POT vincula la vivienda con soportes urbanos y equipamientos sociales de calidad. (Corrige un hallazgo previo erróneo: sí existe una relación real y textual entre Equipamientos y Vivienda dentro de la EFC.)" },
   { s:"ciclorutas", t:"transporte_publico", cat:"e2", tipo:"indirecta", relacion:"Resiliencia", fuente:"cita_literal", articulo:"Art. 159", pagina:"159",
     cita:"Los proyectos de infraestructura de los corredores verdes de alta capacidad, media capacidad y los corredores de baja capacidad deberán incluir intervenciones que permitan su conexión con la red de ciclo infraestructura de la ciudad.",
     analisis:"El POT establece literalmente que los corredores de transporte deben conectarse con la red de cicloinfraestructura." },
-  { s:"transporte_publico", t:"vivienda", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"Art. 88", pagina:"117", cita:null,
-    analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: accesibilidad y conectividad]." },
   { s:"red_vial", t:"transporte_publico", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:"Art. 158–159", pagina:"158–159",
     cita:"La malla arterial: Son las calles que permiten el desarrollo de viajes de alcance urbano, dan soporte a la operación de todos los modos y es el sustrato para la localización de infraestructuras de la red de transporte público de alta y media capacidad.",
     analisis:"El POT define la red vial como soporte de la infraestructura de transporte público." },
@@ -216,12 +210,6 @@ const RAW_EDGES = [
   { s:"cerros_orientales", t:"rios", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"59",
     cita:"El POT sí identifica el conector “Cerros Orientales-río Bogotá”, pero eso demuestra conectividad, no que exista una relación unidireccional.",
     analisis:"Fuente: Tabla aportada por la usuaria" },
-  { s:"vivienda", t:"servicios_sociales", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"156",
-    cita:"El POT plantea “vivienda con ciudad”, teniendo cerca servicios sociales e infraestructura.",
-    analisis:"Fuente: Tabla aportada por la usuaria" },
-  { s:"red_vial", t:"vivienda", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"110",
-    cita:"El POT incluye la malla vial local e intermedia entre los soportes que acompañan la escala de proximidad y el cuidado.",
-    analisis:"Fuente: Tabla aportada por la usuaria" },
   { s:"distrito_centro_tecnologico_e_innovacion", t:"zonas_industriales", cat:"e3", tipo:"directa", relacion:"Soporte", fuente:"por_verificar", articulo:null, pagina:"158",
     cita:"El corazón del campus comprende un área de 247 hectáreas en el centro de la ciudad articulada con las AE Zibo y Reencuentro.",
     analisis:"Fuente: Fuente indicada: Bogotá.gov.co; comprobar contra PDF" },
@@ -243,9 +231,6 @@ const RAW_EDGES = [
   { s:"equipamientos", t:"servicios_empresariales", cat:"e2-e3", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"1150",
     cita:"El POT afirma que la distribución de equipamientos compensa desequilibrios en el acceso a empleos dignos.",
     analisis:"Puente real EFC↔ESECI: 'Empleo' se trata aquí como el mismo concepto que Servicios Empresariales." },
-  { s:"vivienda", t:"zonas_industriales", cat:"e2-e3", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"1229",
-    cita:"El POT explica que los primeros barrios obreros surgieron con la industrialización.",
-    analisis:"Puente real EFC↔ESECI." },
   { s:"transporte_publico", t:"servicios_empresariales", cat:"e2-e3", tipo:"indirecta", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:null,
     cita:"El modelo relaciona el transporte con el acceso a oportunidades de empleo y servicios.",
     analisis:"Puente real EFC↔ESECI: 'Empleo' se trata aquí como el mismo concepto que Servicios Empresariales." },
@@ -334,7 +319,6 @@ const NODE_POS = {
   reservas_forestales: { x: 1086, y: 132 },
   equipamientos: { x: 1190, y: 347 },
   servicios_sociales: { x: 1429, y: 104 },
-  vivienda: { x: 1450, y: 783 },
   ciclorutas: { x: 1689, y: 98 },
   transporte_publico: { x: 1686, y: 539 },
   red_vial: { x: 2022, y: 306 },
@@ -358,7 +342,7 @@ const NODE_POS = {
 };
 
 // Los 4 hubs principales (bola grande) por estructura.
-const HUB_IDS = ["humedales", "vivienda", "servicios_empresariales", "patrimonio_material"];
+const HUB_IDS = ["humedales", "servicios_empresariales", "patrimonio_material"];
 
 function layoutNetwork() {
   const deg = computeDegrees();
@@ -1473,7 +1457,7 @@ function hideNodeInfo() {
 /* Vista de página completa del plano de movilidad: la
    abre la animación de "Ver hallazgos clave", igual que el overlay de
    humedales sustituye la red principal en el mismo espacio. */
-const HALLAZGOS_NODOS_SOBREVIVIENTES = ["transporte_publico", "equipamientos", "vivienda", "servicios_empresariales", "ciclorutas", "red_vial"];
+const HALLAZGOS_NODOS_SOBREVIVIENTES = ["transporte_publico", "equipamientos", "servicios_empresariales", "ciclorutas", "red_vial"];
 
 // Coordenadas medidas directamente sobre la foto HD del plano de movilidad
 // (misma técnica que HUMEDALES_CASOS: % de ancho/alto real de la imagen,

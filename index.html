@@ -102,7 +102,7 @@
       </div>
 
       <div class="cta-row">
-        <a class="btn-primary" href="./modulo-02.html">EXPLORAR MAS REDES <i class="fa-solid fa-arrow-right"></i></a>
+        <a class="btn-primary" href="./modulo-02.html" id="btnExplorarMasRedes">EXPLORAR MAS REDES <i class="fa-solid fa-arrow-right"></i></a>
         <button class="btn-secondary" onclick="document.querySelector('.features')?.scrollIntoView({behavior:'smooth'})">CONOCE LOS 9 MÓDULOS <i class="fa-solid fa-chevron-down"></i></button>
       </div>
     </div>
@@ -311,6 +311,70 @@
       document.addEventListener("DOMContentLoaded", initHeroCasinoTitle);
     } else {
       initHeroCasinoTitle();
+    }
+  })();
+
+  /* Animación "se rompe la bola" al hacer click en "Explorar más redes":
+     cada bola del hero se encoge/apaga y de su centro salen disparadas
+     bolitas más pequeñas — como si se abriera y sus componentes
+     empezaran a organizarse, justo antes de entrar al módulo 2. */
+  (function () {
+    const HUB_COLORS = {
+      green:  "rgba(47,191,174,0.95)",
+      purple: "rgba(239,111,111,0.95)",
+      blue:   "rgba(239,139,60,0.95)",
+      yellow: "rgba(234,176,76,0.95)",
+    };
+    const SVG_NS = "http://www.w3.org/2000/svg";
+
+    function shatterHub(svg, hubGroup) {
+      const colorKey = hubGroup.getAttribute("data-node");
+      const color = HUB_COLORS[colorKey] || "#fff";
+      const circle = hubGroup.querySelector("circle");
+      if (!circle) return;
+      const r = parseFloat(circle.getAttribute("r")) || 50;
+      const match = /translate\(([-\d.]+)[, ]+([-\d.]+)\)/.exec(hubGroup.getAttribute("transform") || "");
+      const cx = match ? parseFloat(match[1]) : 0;
+      const cy = match ? parseFloat(match[2]) : 0;
+      const shardCount = 9;
+      for (let i = 0; i < shardCount; i++) {
+        const angle = (Math.PI * 2 * i) / shardCount + Math.random() * 0.4;
+        const dist = r * (1.6 + Math.random() * 1.4);
+        const dx = Math.cos(angle) * dist;
+        const dy = Math.sin(angle) * dist;
+        const shard = document.createElementNS(SVG_NS, "circle");
+        shard.setAttribute("cx", cx);
+        shard.setAttribute("cy", cy);
+        shard.setAttribute("r", 4 + Math.random() * 7);
+        shard.setAttribute("fill", color);
+        shard.setAttribute("class", "shard-burst");
+        shard.style.setProperty("--dx", dx.toFixed(1) + "px");
+        shard.style.setProperty("--dy", dy.toFixed(1) + "px");
+        shard.style.animationDelay = (Math.random() * 90) + "ms";
+        svg.appendChild(shard);
+      }
+    }
+
+    function initExplorarMasRedesShatter() {
+      const btn = document.getElementById("btnExplorarMasRedes");
+      const svg = document.getElementById("network-svg");
+      if (!btn || !svg) return;
+      let already = false;
+      btn.addEventListener("click", (ev) => {
+        if (already) return; // segundo click: deja navegar normal
+        ev.preventDefault();
+        already = true;
+        svg.classList.add("is-shattering");
+        svg.querySelectorAll(".node[data-node]").forEach((hub) => shatterHub(svg, hub));
+        const href = btn.getAttribute("href");
+        window.setTimeout(() => { window.location.href = href; }, 950);
+      });
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", initExplorarMasRedesShatter);
+    } else {
+      initExplorarMasRedesShatter();
     }
   })();
 </script>
