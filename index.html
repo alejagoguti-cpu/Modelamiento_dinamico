@@ -392,7 +392,7 @@
         shard.style.setProperty("--dx", s.dx.toFixed(1) + "px");
         shard.style.setProperty("--dy", s.dy.toFixed(1) + "px");
         shard.style.setProperty("--r-final", s.rFinal.toFixed(1));
-        shard.style.animationDelay = (Math.random() * 90) + "ms";
+        shard.style.animationDelay = (Math.random() * 160) + "ms";
         svg.appendChild(shard);
 
         if (s.icon) {
@@ -450,7 +450,7 @@
         svg.querySelectorAll(".node[data-node]").forEach((hub) => {
           groupsOfShards.push(shatterHub(svg, hub));
         });
-        window.setTimeout(() => connectShards(svg, groupsOfShards), 560);
+        window.setTimeout(() => connectShards(svg, groupsOfShards), 1050);
 
         // El velo se funde encima recién cuando las bolitas ya crecieron y
         // se conectaron (no antes), para que el efecto se lea como "esto
@@ -460,10 +460,10 @@
           veil.className = "page-transition-veil";
           document.body.appendChild(veil);
           requestAnimationFrame(() => veil.classList.add("is-active"));
-        }, 900);
+        }, 1750);
 
         const href = btn.getAttribute("href");
-        window.setTimeout(() => { window.location.href = href; }, 1550);
+        window.setTimeout(() => { window.location.href = href; }, 2850);
       });
     }
 
