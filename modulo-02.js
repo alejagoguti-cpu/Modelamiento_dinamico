@@ -280,12 +280,15 @@ const RAW_EDGES = [
    GRADO REAL — de aquí sale cuáles son los hubs, no de una
    categoría administrativa. Los "vacío" NO cuentan como conexión.
    ========================================================== */
-function computeDegrees() {
+function computeDegrees(excluir) {
   const deg = {};
   ODS_NODES.forEach(n => { deg[n.id] = 0; });
   RAW_EDGES.forEach(e => {
     if (e.tipo === "vacio") return;
     if (deg[e.s] === undefined || deg[e.t] === undefined) return;
+    // Si el nodo de origen o destino está "apagado", su arista deja de
+    // contar para el grado (= fuerza nodal) de ambos extremos.
+    if (excluir && (excluir.has(e.s) || excluir.has(e.t))) return;
     deg[e.s]++; deg[e.t]++;
   });
   return deg;
@@ -335,7 +338,7 @@ const NODE_POS = {
   ciclorutas: { x: 1689, y: 98 },
   transporte_publico: { x: 1686, y: 539 },
   red_vial: { x: 2022, y: 306 },
-  corredores_verdes: { x: 34.7, y: 97.9 },
+  corredores_verdes: { x: 1520, y: 250 }, // junto a ciclorutas (antes quedaba fuera del lienzo: x:34.7,y:97.9)
   manzanas_del_cuidado: { x: 1485, y: 445 },
   parques: { x: 1732, y: 884 },
   distrito_centro_tecnologico_e_innovacion: { x: 1244, y: 1298 },
@@ -365,6 +368,7 @@ function layoutNetwork() {
     const d = deg[n.id] || 0;
     n.r = 32 + Math.pow(d, 1.25) * 7.5; // radio "temático" (sale del grado real) — bolas notablemente más chicas para que la red respire, conservando legibilidad de ícono+nombre
     n._deg = d;
+    n._degBase = d; // fuerza nodal original, sin ningún nodo apagado — sirve para comparar ANTES ↔ DESPUÉS
   });
 
   const nodes = ODS_NODES;
@@ -752,6 +756,60 @@ function updatePositions() {
   });
 }
 
+/* ==========================================================
+   FUERZA NODAL — la pregunta del módulo es "¿qué pasaría si se
+   apaga este nodo?". Al apagar un nodo, sus aristas dejan de
+   contar en el grado (computeDegrees) de todos los demás, y cada
+   bola se redimensiona en vivo según su NUEVO grado real: los
+   nodos que dependían del apagado "pierden fuerza" (se encogen),
+   los demás la conservan. El nodo apagado se atenúa (gris) y sus
+   aristas quedan tenues, pero siguen visibles como registro del
+   ANTES.
+   ========================================================== */
+const nodosApagados = new Set();
+
+// Reaplica r/tamaño/posición a un solo nodo ya dibujado en el DOM,
+// sin reconstruir toda la red (usado al recalcular fuerza nodal).
+function resizeNodeVisual(n) {
+  if (!n._el) return;
+  const { circle, fo } = n._el;
+  circle.setAttribute("r", n.r);
+  const size = n.r * 1.8;
+  fo.setAttribute("x", n.x - size / 2); fo.setAttribute("y", n.y - size / 2);
+  fo.setAttribute("width", size); fo.setAttribute("height", size);
+  const iconEl = fo.querySelector("i");
+  if (iconEl) iconEl.style.fontSize = Math.max(n.r * (n.isMainHub ? 0.42 : 0.34), 15) + "px";
+  const nameEl = fo.querySelector("div");
+  if (nameEl) nameEl.style.fontSize = Math.max(n.r * 0.16, 15) + "px";
+}
+
+// Recalcula el grado real (fuerza nodal) de TODA la red teniendo en cuenta
+// los nodos actualmente apagados, y redibuja cada bola con su nuevo tamaño.
+function aplicarFuerzaNodal() {
+  const deg = computeDegrees(nodosApagados);
+  ODS_NODES.forEach(n => {
+    const apagado = nodosApagados.has(n.id);
+    const d = deg[n.id] || 0;
+    n._deg = d;
+    n.r = apagado ? 22 : 32 + Math.pow(d, 1.25) * 7.5;
+    n.collR = n.r;
+    resizeNodeVisual(n);
+    if (n._el) n._el.group.classList.toggle("node-apagado", apagado);
+  });
+  updatePositions();
+  document.querySelectorAll(".edge-group").forEach(el => {
+    const s = el.dataset.source, t = el.dataset.target;
+    el.classList.toggle("edge-apagada", nodosApagados.has(s) || nodosApagados.has(t));
+  });
+}
+
+function toggleNodoApagado(id) {
+  if (nodosApagados.has(id)) nodosApagados.delete(id);
+  else nodosApagados.add(id);
+  aplicarFuerzaNodal();
+  showNodeInfo(id); // refresca la ficha con el grado ANTES → DESPUÉS y el botón actualizado
+}
+
 let physicsRunning = false;
 function physicsStep() {
   let moving = false;
@@ -867,10 +925,25 @@ function showNodeInfo(id) {
   document.querySelectorAll(".ods-node").forEach(el => el.classList.remove("node-selected"));
   document.querySelector(`.ods-node[data-id="${id}"]`)?.classList.add("node-selected");
 
-  const deg = computeDegrees()[id] || 0;
+  const apagado = nodosApagados.has(id);
+  const degActual = computeDegrees(nodosApagados)[id] || 0;
+  const degBase = node._degBase !== undefined ? node._degBase : degActual;
+  let gradoHTML = `fuerza nodal (grado real): <b>${degActual}</b>`;
+  if (!apagado && degActual !== degBase) {
+    gradoHTML = `fuerza nodal (grado real): <b>${degBase} → ${degActual}</b> <span style="opacity:.75;">(recalculada al apagar otro nodo)</span>`;
+  } else if (apagado) {
+    gradoHTML = `fuerza nodal: <b>0</b> — nodo apagado (grado original: ${degBase})`;
+  }
   document.getElementById("nodeInfoTitle").textContent = node.name.replace(/\n/g, " ") + (node.suplementario ? " (suplementario)" : "");
-  document.getElementById("nodeInfoStruct").innerHTML = `<span class="swatch-tag" style="background:${node.color}"></span> ${STRUCT_STYLE[node.cat].label} · grado real: ${deg}`;
+  document.getElementById("nodeInfoStruct").innerHTML = `<span class="swatch-tag" style="background:${node.color}"></span> ${STRUCT_STYLE[node.cat].label} · ${gradoHTML}`;
   document.getElementById("nodeInfoFuente").innerHTML = fuenteBadgeHTML(node.fuente);
+
+  const toggleBtn = document.getElementById("nodeInfoToggleBtn");
+  if (toggleBtn) {
+    toggleBtn.textContent = apagado ? "Encender nodo" : "¿Qué pasaría si se apaga este nodo?";
+    toggleBtn.classList.toggle("is-apagado", apagado);
+    toggleBtn.onclick = () => toggleNodoApagado(id);
+  }
 
   // artículo/página/cita: se toman de la primera arista de este nodo que tenga la mejor evidencia disponible
   const relEdges = RAW_EDGES.filter(e => e.s === id || e.t === id);

@@ -306,6 +306,8 @@ body {
 .ods-node.node-off .node-inner { opacity: 0.28; }
 .ods-node { transition: opacity .2s; }
 .ods-node.node-focus-dim { opacity: 0.12; }
+.ods-node.node-apagado { opacity: 0.32; filter: grayscale(1); transition: opacity .35s ease, filter .35s ease; }
+.ods-node.node-apagado .node-ring { stroke-dasharray: 5 4; }
 .ods-node.node-focus-active .node-ring, .ods-node.node-selected .node-ring { filter: drop-shadow(0 0 8px #fff); }
 .ods-node.node-focus-active .node-dot, .ods-node.node-selected .node-dot { filter: drop-shadow(0 0 6px #fff); }
 .ods-node.hidden-node { display: none; }
@@ -314,6 +316,7 @@ body {
 .edge-group.hidden-edge { visibility: hidden; }
 .edge-group { transition: opacity .2s; }
 .edge-group.edge-focus-dim { opacity: 0.05; }
+.edge-group.edge-apagada { opacity: 0.08; transition: opacity .35s ease; }
 .ods-edge.edge-visual { fill: none; pointer-events: none; transition: opacity .15s, filter .15s; }
 .ods-edge.edge-hit { fill: none; stroke: transparent; stroke-width: 12; pointer-events: stroke; }
 .edge-group:hover .edge-visual { opacity: 1 !important; filter: drop-shadow(0 0 4px var(--edge-color)); }
@@ -339,6 +342,16 @@ body {
 .node-info-mapa { margin-top: 12px; border-top: 1px solid var(--border-soft); padding-top: 10px; }
 .node-info-mapa a { color: var(--teal); font-size: 12px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
 .node-info-mapa a:hover { text-decoration: underline; }
+
+.node-toggle-btn {
+  width: 100%; margin: 4px 0 12px; padding: 9px 12px;
+  font-size: 12.5px; font-weight: 700; font-family: inherit;
+  color: #fff; background: rgba(255,255,255,0.08);
+  border: 1px solid var(--border); border-radius: 8px;
+  cursor: pointer; transition: background .2s ease, border-color .2s ease;
+}
+.node-toggle-btn:hover { background: rgba(255,255,255,0.16); border-color: var(--teal); }
+.node-toggle-btn.is-apagado { color: #0a0a0a; background: var(--teal); border-color: var(--teal); }
 
 .node-info-schematic-map { margin-top: 12px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-soft); }
 .schematic-map-label { font-size: 9.5px; color: var(--text-faint); padding: 6px 8px 4px; line-height: 1.3; }
