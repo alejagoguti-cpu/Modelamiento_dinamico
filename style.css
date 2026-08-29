@@ -286,17 +286,17 @@ body{
   0%{ opacity:0; }
   100%{ opacity:0.5; }
 }
-.network-svg.is-shattering .node circle{ transform-box:fill-box; transform-origin:center; animation:shatterMainCircle 1700ms ease-in forwards; }
-.network-svg.is-shattering .node text{ animation:shatterMainText 800ms ease-in forwards; }
+.network-svg.is-shattering .node circle{ transform-box:fill-box; transform-origin:center; animation:shatterMainCircle 2400ms ease-in forwards; }
+.network-svg.is-shattering .node text{ animation:shatterMainText 1100ms ease-in forwards; }
 .network-svg .shard-grow{
   transform-box:fill-box; transform-origin:center;
-  animation:shardGrow 1550ms cubic-bezier(.22,.8,.32,1) forwards;
+  animation:shardGrow 2200ms cubic-bezier(.22,.8,.32,1) forwards;
 }
 .network-svg .shard-link-line{
   stroke: rgba(255,255,255,0.4); stroke-width:1; stroke-dasharray:3 3;
-  animation: shardLinkFadeIn 1s ease forwards;
+  animation: shardLinkFadeIn 1.4s ease forwards;
 }
-.network-svg .shard-icon-fo{ pointer-events:none; opacity:0; animation: shardLinkFadeIn .9s ease forwards; animation-delay:.9s; }
+.network-svg .shard-icon-fo{ pointer-events:none; opacity:0; animation: shardLinkFadeIn 1.2s ease forwards; animation-delay:1.3s; }
 .network-svg .shard-icon{ width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:#fff; text-shadow:0 1px 3px rgba(0,0,0,.5); }
 
 /* Velo del mismo color de fondo del sitio que se funde encima justo antes
@@ -306,7 +306,7 @@ body{
   position:fixed; inset:0; z-index:9999;
   background: radial-gradient(circle at 70% 30%, #1b1817, #121010 75%);
   opacity:0; pointer-events:none;
-  transition: opacity 1s ease;
+  transition: opacity 1.4s ease;
 }
 .page-transition-veil.is-active{ opacity:1; }
 

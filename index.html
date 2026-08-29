@@ -339,7 +339,7 @@
         const dist = r * (1.4 + Math.random() * 1.0);
         shards.push({
           dx: Math.cos(angle) * dist, dy: Math.sin(angle) * dist,
-          rFinal: 10 + Math.random() * 15, color, icon: null,
+          rFinal: 16 + Math.random() * 20, color, icon: null,
           finalX: cx + Math.cos(angle) * dist, finalY: cy + Math.sin(angle) * dist
         });
       }
@@ -362,7 +362,7 @@
       return net.nodes.map((n) => {
         const dx = (n.x - bx) * scale;
         const dy = (n.y - by) * scale;
-        const rFinal = Math.max(9, Math.min(22, n.r * scale * 1.15));
+        const rFinal = Math.max(15, Math.min(34, n.r * scale * 1.55));
         return { dx, dy, rFinal, color, icon: n.icon, finalX: cx + dx, finalY: cy + dy };
       });
     }
@@ -450,7 +450,7 @@
         svg.querySelectorAll(".node[data-node]").forEach((hub) => {
           groupsOfShards.push(shatterHub(svg, hub));
         });
-        window.setTimeout(() => connectShards(svg, groupsOfShards), 1050);
+        window.setTimeout(() => connectShards(svg, groupsOfShards), 1500);
 
         // El velo se funde encima recién cuando las bolitas ya crecieron y
         // se conectaron (no antes), para que el efecto se lea como "esto
@@ -460,10 +460,10 @@
           veil.className = "page-transition-veil";
           document.body.appendChild(veil);
           requestAnimationFrame(() => veil.classList.add("is-active"));
-        }, 1750);
+        }, 2500);
 
         const href = btn.getAttribute("href");
-        window.setTimeout(() => { window.location.href = href; }, 2850);
+        window.setTimeout(() => { window.location.href = href; }, 4000);
       });
     }
 

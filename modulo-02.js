@@ -1979,12 +1979,29 @@ function toggleBogotaComplejo() {
     btn.classList.remove("active");
     reveal.hidden = true;
     clearSpotlight();
+    // si el ejemplo del mapa estaba abierto, se cierra junto con el panel
+    const mapa = document.getElementById("ejemploEspacioPublicoMap");
+    const mapaBtn = document.getElementById("btnEjemploEspacioPublico");
+    if (mapa) mapa.hidden = true;
+    if (mapaBtn) mapaBtn.classList.remove("active");
     return;
   }
   btn.classList.add("active");
   reveal.hidden = false;
   clearControlActive();
   setSpotlightNodes(["parques"], true);
+}
+
+// Ejemplo concreto de esa descomposición: el mapa oficial del POT para el
+// Sistema de Espacio Público, con todo lo que no es Bogotá D.C. en negro —
+// mostrando literalmente hasta dónde "ve" el modelo y dónde deja de mirar.
+function toggleEjemploEspacioPublico() {
+  const btn = document.getElementById("btnEjemploEspacioPublico");
+  const mapa = document.getElementById("ejemploEspacioPublicoMap");
+  if (!btn || !mapa) return;
+  const yaVisible = !mapa.hidden;
+  mapa.hidden = yaVisible;
+  btn.classList.toggle("active", !yaVisible);
 }
 
 function toggleInsight(key) {
