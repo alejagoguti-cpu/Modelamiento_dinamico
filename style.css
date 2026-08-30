@@ -1102,3 +1102,39 @@ body{
 .entry-question{font-size:clamp(17px,1.95vw,28px);}
 .entry-description{font-size:14px;line-height:1.55;}
 @media(max-width:600px){.entry-question{font-size:21px}.entry-description{font-size:13.5px;}}
+
+
+/* ================= AJUSTE FINAL · PORTADA MÁS COMPACTA =================
+   La red de la derecha necesita más aire; el bloque de lectura baja un
+   poco, pero conserva la animación y la jerarquía del index. */
+@media (min-width: 981px) {
+  .hero-inner {
+    grid-template-columns: minmax(300px, 620px) minmax(0, 1fr);
+    gap: 72px;
+  }
+  .hero-copy .feature-grid {
+    max-width: 440px;
+    column-gap: 26px;
+    row-gap: 16px;
+    margin-bottom: 30px;
+    transform: translateY(13px) scale(.95);
+    transform-origin: left top;
+  }
+  .hero-copy .cta-row {
+    transform: translateY(11px) scale(.95);
+    transform-origin: left top;
+  }
+  .feature .f-icon {
+    width: 34px;
+    height: 34px;
+    margin-bottom: 8px;
+  }
+  .feature h3 { font-size: 13px; }
+  .feature p { font-size: 11.5px; line-height: 1.42; }
+  .btn-primary,
+  .btn-secondary {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    font-size: 12px;
+  }
+}

@@ -5757,9 +5757,10 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 /* Línea punteada de verdad (guiones cortos pegados a los puntos, no
    circulitos sueltos) — menos "rara", más clara de seguir. */
 .map-network-stage > svg .kennedy-box-link {
-  fill: none; stroke: rgba(244,248,249,0.86); stroke-width: .13;
+  fill: none; stroke: rgba(244,248,249,0.96); stroke-width: 1.15px;
   stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: none;
-  vector-effect: non-scaling-stroke; opacity: .9;
+  vector-effect: non-scaling-stroke; opacity: .98;
+  filter: drop-shadow(0 0 1px rgba(244,248,249,.32));
 }
 /* Envuelve cada ícono de coordenada junto con su nombre debajo — la
    posición real va en este contenedor, el botón adentro solo se acomoda
