@@ -5660,3 +5660,10 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
   border-radius: 50% !important;
   aspect-ratio: 1 / 1 !important;
 }
+
+/* Líneas que conectan entre sí las 3 sub-bolitas de los submodelos
+   hídricos (triángulo), del mismo color azul de la dinámica hídrica. */
+.map-network-stage > svg .map-submodel-hidrica-link {
+  fill: none; stroke: #56b8d4; stroke-width: .3; stroke-dasharray: 1.4 1;
+  opacity: .8;
+}

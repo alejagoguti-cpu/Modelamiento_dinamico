@@ -2181,12 +2181,32 @@
       const labelId = `map-network-flow-label-${group.prefix}-${i}`;
       return `<span id="${id}" class="map-network-flow-dot" style="left:${proj.x.toFixed(2)}%;top:${proj.y.toFixed(2)}%;background:${group.color}"></span><span id="${labelId}" class="map-network-flow-label" style="left:${proj.x.toFixed(2)}%;top:${proj.y.toFixed(2)}%;color:${group.color}">${c.label}</span>`;
     }).join("")).join("");
+    // Conecta entre sí las 3 sub-bolitas de los submodelos hídricos
+    // (triángulo de líneas), igual que las bolas grandes se conectan.
+    const SUBMODEL_LINK_PAIRS = [[0,1],[1,2],[0,2]];
+    const buildSubmodelLinksSvg = () => {
+      const projs = HIDRICA_SUBMODELS.map((s) => projectToPercent(s.coords));
+      return SUBMODEL_LINK_PAIRS.map(([a, b], i) => {
+        const A = projs[a], B = projs[b];
+        if (!A || !B) return "";
+        return `<path id="map-submodel-hidrica-link-${i}" class="map-submodel-hidrica-link" d="M ${A.x.toFixed(2)} ${A.y.toFixed(2)} L ${B.x.toFixed(2)} ${B.y.toFixed(2)}"/>`;
+      }).join("");
+    };
+    const updateSubmodelLinks = (stage) => {
+      const projs = HIDRICA_SUBMODELS.map((s) => projectToPercent(s.coords));
+      SUBMODEL_LINK_PAIRS.forEach(([a, b], i) => {
+        const A = projs[a], B = projs[b];
+        const el = stage.querySelector(`#map-submodel-hidrica-link-${i}`);
+        if (A && B && el) el.setAttribute("d", `M ${A.x.toFixed(2)} ${A.y.toFixed(2)} L ${B.x.toFixed(2)} ${B.y.toFixed(2)}`);
+      });
+    };
     // Al mover o hacer zoom en el mapa, las líneas, los puntitos y sus
     // nombres se vuelven a calcular para que sigan en su coordenada real.
     const updateFlowGroups = () => {
       if (!subsystemBubbles?.classList.contains("network-active")) return;
       const stage = subsystemBubbles.querySelector(".systems-network");
       if (!stage) return;
+      updateSubmodelLinks(stage);
       const positions = [[6,45],[40,6],[72,10],[95,48],[74,90],[14,88]];
       FLOW_GROUPS.forEach((group) => {
         const [nx, ny] = positions[group.targetIndex];
@@ -2285,7 +2305,7 @@
       }).join("");
       target.dataset.revealState = "complete";
       target.classList.add("network-active");
-      const flowsSvg = (systems && withFlows) ? buildFlowGroupsSvg(positions) : "";
+      const flowsSvg = (systems && withFlows) ? buildFlowGroupsSvg(positions) + buildSubmodelLinksSvg() : "";
       const flowDotsHtml = (systems && withFlows) ? buildFlowDotsHtml() : "";
       target.innerHTML = `<div class="map-network-stage ${systems ? "systems-network" : "submodels-network"}"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><defs>${gradientDefs.join("")}</defs><g class="map-network-flows">${flowsSvg}</g><g class="map-network-bonds">${showBonds ? bonds : ""}</g></svg>${flowDotsHtml}${nodes}${submodelBubblesHtml}</div>`;
       if (hideHidricaBubble) {
