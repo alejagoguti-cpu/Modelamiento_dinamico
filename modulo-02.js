@@ -2073,17 +2073,30 @@ function cerrarModalExplorarRelaciones() {
 
 function abrirMapaVias() {
   cerrarModalExplorarRelaciones();
-  showMovilidadOverlay({ animateIn: true });
+  setTimeout(() => {
+    // Si la red está visible, ejecuta la animación de transición hacia movilidad
+    const svg = document.getElementById("networkViz");
+    if (svg && svg.style.display !== "none") {
+      verHallazgosConAnimacion();
+    } else {
+      showMovilidadOverlay({ animateIn: true });
+    }
+  }, 60);
 }
 
 function abrirMapaHumedales() {
   cerrarModalExplorarRelaciones();
-  explorarRelacionesConAnimacion();
+  setTimeout(() => {
+    // Hace el zoom hacia el nodo Humedales en la red y abre el mapa detallado
+    explorarRelacionesConAnimacion();
+  }, 60);
 }
 
 function abrirMapa3() {
   cerrarModalExplorarRelaciones();
-  showMapa3Overlay({ animateIn: true });
+  setTimeout(() => {
+    showMapa3Overlay({ animateIn: true });
+  }, 60);
 }
 
 function showMapa3Overlay(opts) {
