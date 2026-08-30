@@ -5761,6 +5761,25 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
   stroke-linecap: butt; stroke-dasharray: .7 .5;
   opacity: .92;
 }
+/* Envuelve cada ícono de coordenada junto con su nombre debajo — la
+   posición real va en este contenedor, el botón adentro solo se acomoda
+   en flujo normal (no absoluto), para que quede centrado bajo el nombre. */
+.kennedy-node-wrap {
+  position: absolute; z-index: 6;
+  transform: translate(-50%, -50%);
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  pointer-events: none;
+}
+.kennedy-node-wrap .map-phenomenon-node {
+  position: static !important;
+  transform: none !important;
+  animation: none !important;
+}
+.kennedy-node-label {
+  color: #fff; font-size: 6.5px; font-weight: 700; line-height: 1.1;
+  text-shadow: 0 0 3px rgba(0,0,0,.95), 0 0 2px rgba(0,0,0,.95);
+  white-space: nowrap; pointer-events: none;
+}
 
 /* Más alto todavía: con 9 cajas de texto repartidas en 2 columnas, hace
    falta más espacio vertical para que ninguna se toque con la siguiente. */

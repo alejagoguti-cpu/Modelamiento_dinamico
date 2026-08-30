@@ -1662,8 +1662,8 @@
         color: "#b8c0c8", icon: "fa-road",
         boxCoords: [-74.16367167635484, 4.653798307569035], boxPos: [7, 30],
         coords: [
-          { pos: [-74.14987475206779, 4.64210777486686], icon: "fa-droplet", color: "#56b8d4" },
-          { pos: [-74.15701979872972, 4.6395972438178115], icon: "fa-road", color: "#b8c0c8" },
+          { pos: [-74.14987475206779, 4.64210777486686], icon: "fa-droplet", color: "#56b8d4", label: "Humedal El Burro" },
+          { pos: [-74.15701979872972, 4.6395972438178115], icon: "fa-road", color: "#b8c0c8", label: "Vía" },
         ],
         sections: [{ system: "Modelo Determinista ⟶ Sistema Socio-Ecológico", icon: "fa-gears", submodelos: [
           "Desborde y Control de Crecientes.", "Transferencia de Carga y Vibración.",
@@ -1674,7 +1674,7 @@
       // Humedal La Vaca, debajo y a la izquierda de Modelo Comercial.
       { id: "mitigacion_organica", title: "MODELO DE MITIGACIÓN DE CARGA ORGÁNICA Y RESIDUOS",
         color: "#56b8d4", icon: "fa-recycle", boxPos: [30, 70],
-        coords: [{ pos: [-74.14987475206779, 4.64210777486686], icon: "fa-droplet", color: "#56b8d4" }],
+        coords: [{ pos: [-74.14987475206779, 4.64210777486686], icon: "fa-droplet", color: "#56b8d4", label: "Humedal El Burro" }],
         sections: [{ system: "Modelo Determinista ⟶ Sistema Ecológico", icon: "fa-gears", submodelos: [
           "Ciclo de compostaje y estabilización de residuos orgánicos.", "Dinámica de reducción de carga contaminante antes del vertimiento.",
           "Flujo de recolección y separación en la fuente.", "Ciclo de control de vectores y olores." ] }] },
@@ -1688,8 +1688,8 @@
         color: "#e58d62", icon: "fa-cart-shopping",
         boxCoords: [-74.13517123261519, 4.616655447564548],
         coords: [
-          { pos: [-74.1599146050763, 4.63015596902525], icon: "fa-cart-shopping", color: "#e58d62" },
-          { pos: [-74.16284778855655, 4.62939492240078], icon: "fa-droplet", color: "#56b8d4" },
+          { pos: [-74.1599146050763, 4.63015596902525], icon: "fa-cart-shopping", color: "#e58d62", label: "Corabastos" },
+          { pos: [-74.16284778855655, 4.62939492240078], icon: "fa-droplet", color: "#56b8d4", label: "Humedal La Vaca" },
         ],
         sections: [{ system: "Modelo Social ⟶ Sistema Social", icon: "fa-people-group", submodelos: [
           "Ciclo de generación y descomposición de materia orgánica.", "Dinámica de acumulación y congestión de transporte pesado.",
@@ -1700,8 +1700,11 @@
       { id: "estacion_transporte", title: "MODELO DE OPERACIÓN DE ESTACIÓN DE TRANSPORTE",
         color: "#f1cf5b", icon: "fa-bus", boxPos: [7, 88],
         coords: [
-          { pos: [-74.14541150109216, 4.631221483859855], icon: "fa-bus", color: "#f1cf5b" },
-          { pos: [-74.1599146050763, 4.63015596902525], icon: "fa-cart-shopping", color: "#e58d62" },
+          { pos: [-74.14541150109216, 4.631221483859855], icon: "fa-bus", color: "#f1cf5b", label: "Estación Banderas" },
+          // El ícono naranja de Corabastos ya existe (lo pone la caja
+          // "Modelo Comercial y Logístico"); aquí solo sale la línea hacia
+          // ese mismo punto, sin repetir el ícono.
+          { pos: [-74.1599146050763, 4.63015596902525], icon: "fa-cart-shopping", color: "#e58d62", hideIcon: true },
         ],
         sections: [{ system: "Modelo Determinista ⟶ Sistema Social", icon: "fa-route", submodelos: [
           "Afluencia y transferencia de pasajeros.", "Capacidad y saturación de andenes.",
@@ -2278,7 +2281,13 @@
     };
     // Cajas de texto piloto: nodo circular de color en la coordenada real +
     // línea en L (blanca) hacia la caja de texto fija, igual al referente.
-    const textBoxLinkD = (boxPos, nodeProj) => `M ${boxPos[0].toFixed(2)} ${boxPos[1].toFixed(2)} L ${nodeProj.x.toFixed(2)} ${boxPos[1].toFixed(2)} L ${nodeProj.x.toFixed(2)} ${nodeProj.y.toFixed(2)}`;
+    // Línea "flow": una curva suave en S (como el referente que mandaste),
+    // no un ángulo recto — se ve más natural y menos "chocada" entre sí.
+    const textBoxLinkD = (boxPos, nodeProj) => {
+      const midX = (boxPos[0] + nodeProj.x) / 2;
+      const pt = (px, py) => `${px.toFixed(2)} ${py.toFixed(2)}`;
+      return `M ${pt(boxPos[0], boxPos[1])} C ${pt(midX, boxPos[1])} ${pt(midX, nodeProj.y)} ${pt(nodeProj.x, nodeProj.y)}`;
+    };
     // Si la caja trae "boxCoords" (una coordenada real), su posición en
     // pantalla se calcula proyectando esa coordenada — igual que un nodo —
     // en vez de usar el porcentaje fijo de "boxPos".
@@ -2304,8 +2313,9 @@
       const boxPos = effectiveBoxPos(box);
       const nodesHtml = box.coords.map((c, j) => {
         const proj = declutteredPositions[`box-${i}-${j}`];
-        if (!proj) return "";
-        return `<button type="button" class="map-network-node map-phenomenon-node" id="kennedy-textbox-node-${i}-${j}" style="left:${proj.x.toFixed(2)}%;top:${proj.y.toFixed(2)}%;--node-color:${c.color || box.color}"><i class="map-network-node-icon fa-solid ${c.icon || box.icon}" aria-hidden="true"></i></button>`;
+        if (!proj || c.hideIcon) return "";
+        const labelHtml = c.label ? `<span class="kennedy-node-label">${c.label}</span>` : "";
+        return `<div class="kennedy-node-wrap" id="kennedy-textbox-node-${i}-${j}" style="left:${proj.x.toFixed(2)}%;top:${proj.y.toFixed(2)}%"><button type="button" class="map-network-node map-phenomenon-node" style="--node-color:${c.color || box.color}"><i class="map-network-node-icon fa-solid ${c.icon || box.icon}" aria-hidden="true"></i></button>${labelHtml}</div>`;
       }).join("");
       const sectionsHtml = box.sections.map((section) => {
         const items = section.submodelos.map((s) => `<li><i class="fa-solid ${section.icon} kennedy-item-icon" aria-hidden="true"></i>${s}</li>`).join("");
