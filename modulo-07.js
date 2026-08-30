@@ -1624,83 +1624,92 @@
       { label: "Parque Timiza", coords: [-74.15413020403817, 4.610545190742722] },
       { label: "Parque El Tintal", coords: [-74.15477087019791, 4.644165179130835] },
     ];
+    const FISICO_COMPONENTS = [
+      { label: "Estación Banderas", coords: [-74.14541150109216, 4.631221483859855] },
+      { label: "Biblioteca Pública El Tintal", coords: [-74.15477971743486, 4.642987513146133] },
+      { label: "Corabastos", coords: [-74.1599146050763, 4.63015596902525] },
+      { label: "Av. Ciudad de Cali", coords: [-74.15162630856268, 4.644831758038044] },
+    ];
     // ---------- Sonidos ambiente por dinámica (sintetizados, sin archivos
     // externos) — cada burbuja del territorio suena distinto al tocarla:
     // el agua "corre", el pájaro "trina", el tráfico "zumba", etc. ----------
     const DINAMICA_SOUND = (() => {
-      let ctx = null;
+      let ctx = null, masterGain = null;
       const getCtx = () => {
-        if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+        if (!ctx) {
+          ctx = new (window.AudioContext || window.webkitAudioContext)();
+          // ganancia maestra baja: nada debe sobresaltar, todo suena de fondo
+          masterGain = ctx.createGain();
+          masterGain.gain.value = 0.4;
+          masterGain.connect(ctx.destination);
+        }
         if (ctx.state === "suspended") ctx.resume();
         return ctx;
       };
-      // ruido filtrado reutilizable (base de agua / tráfico / multitud)
+      // ruido filtrado reutilizable (base de agua / ciudad / multitud)
       function noiseBuffer(c, seconds) {
         const buffer = c.createBuffer(1, c.sampleRate * seconds, c.sampleRate);
         const data = buffer.getChannelData(0);
         for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
         return buffer;
       }
-      function playFilteredNoise(c, { duration, filterFreq, filterType = "lowpass", q = 0.7, gain = 0.18, fadeOut = duration }) {
+      function playFilteredNoise(c, { duration, filterFreq, filterType = "lowpass", q = 0.7, gain = 0.12, fadeIn = 0.12, fadeOut = duration }) {
         const src = c.createBufferSource();
         src.buffer = noiseBuffer(c, duration);
         const filter = c.createBiquadFilter();
         filter.type = filterType; filter.frequency.value = filterFreq; filter.Q.value = q;
         const g = c.createGain();
-        g.gain.setValueAtTime(gain, c.currentTime);
+        g.gain.setValueAtTime(0, c.currentTime);
+        g.gain.linearRampToValueAtTime(gain, c.currentTime + fadeIn);
         g.gain.linearRampToValueAtTime(0, c.currentTime + fadeOut);
-        src.connect(filter); filter.connect(g); g.connect(c.destination);
+        src.connect(filter); filter.connect(g); g.connect(masterGain);
         src.start(); src.stop(c.currentTime + duration + 0.05);
       }
-      function playTone(c, { freq, to, duration, type = "sine", gain = 0.16, delay = 0 }) {
+      function playTone(c, { freq, to, duration, type = "sine", gain = 0.1, delay = 0, attack }) {
         const osc = c.createOscillator();
         osc.type = type; osc.frequency.setValueAtTime(freq, c.currentTime + delay);
         if (to) osc.frequency.exponentialRampToValueAtTime(to, c.currentTime + delay + duration);
         const g = c.createGain();
+        const attackTime = attack ?? Math.min(0.09, duration / 3);
         g.gain.setValueAtTime(0, c.currentTime + delay);
-        g.gain.linearRampToValueAtTime(gain, c.currentTime + delay + Math.min(0.04, duration / 4));
+        g.gain.linearRampToValueAtTime(gain, c.currentTime + delay + attackTime);
         g.gain.linearRampToValueAtTime(0, c.currentTime + delay + duration);
-        osc.connect(g); g.connect(c.destination);
+        osc.connect(g); g.connect(masterGain);
         osc.start(c.currentTime + delay); osc.stop(c.currentTime + delay + duration + 0.05);
       }
       const players = {
-        // Dinámica hídrica: agua corriendo — varias capas de ruido filtrado
-        // (grave = caudal, medio y agudo = burbujeo) para que suene a agua real
+        // Dinámica hídrica: agua suave — capas tenues de ruido filtrado
         hidrica: (c) => {
-          playFilteredNoise(c, { duration: 2.4, filterFreq: 700, filterType: "lowpass", gain: 0.2, fadeOut: 2.4 });
-          playFilteredNoise(c, { duration: 1.8, filterFreq: 1800, filterType: "bandpass", q: 1.0, gain: 0.09, fadeOut: 1.8 });
-          playFilteredNoise(c, { duration: 1.2, filterFreq: 3200, filterType: "bandpass", q: 1.4, gain: 0.05, fadeOut: 1.2 });
+          playFilteredNoise(c, { duration: 2.2, filterFreq: 650, filterType: "lowpass", gain: 0.12, fadeOut: 2.2 });
+          playFilteredNoise(c, { duration: 1.6, filterFreq: 1600, filterType: "bandpass", q: 1.0, gain: 0.05, fadeOut: 1.6 });
         },
-        // Dinámica biótica: un pajarito — trinos cortos y agudos con tono
-        // ligeramente distinto cada vez, para que no suene siempre igual
+        // Dinámica biótica: un pajarito lejano — trinos cortos y suaves
         biotica: (c) => {
-          const base = 2200 + Math.random() * 300;
-          [0, 0.16, 0.3].forEach((delay, i) => {
-            playTone(c, { freq: base + i * 220, to: base + i * 220 + 900, duration: 0.1, type: "sine", gain: 0.15, delay });
+          const base = 2100 + Math.random() * 250;
+          [0, 0.2, 0.4].forEach((delay, i) => {
+            playTone(c, { freq: base + i * 180, to: base + i * 180 + 500, duration: 0.13, type: "sine", gain: 0.07, delay, attack: 0.03 });
           });
         },
-        // Sistema físico-urbano: sonido de ciudad — un carro que pasa
-        // (motor sube y baja de tono) más una bocina corta de dos tonos
+        // Sistema físico-urbano: zumbido de ciudad lejana, muy suave y
+        // sostenido — sin bocinas ni golpes, solo un fondo urbano tenue
         fisico: (c) => {
-          playTone(c, { freq: 90, to: 150, duration: 0.35, type: "sawtooth", gain: 0.08 });
-          playTone(c, { freq: 150, to: 70, duration: 0.45, type: "sawtooth", gain: 0.07, delay: 0.35 });
-          playFilteredNoise(c, { duration: 0.8, filterFreq: 500, filterType: "lowpass", gain: 0.06, fadeOut: 0.8 });
-          [370, 415].forEach((freq) => playTone(c, { freq, duration: 0.22, type: "square", gain: 0.08, delay: 0.15 }));
+          playFilteredNoise(c, { duration: 2.4, filterFreq: 320, filterType: "lowpass", gain: 0.09, fadeIn: 0.3, fadeOut: 2.4 });
+          playTone(c, { freq: 95, duration: 1.6, type: "sine", gain: 0.05, attack: 0.4 });
         },
-        // Sistema de movilidad: motor de fondo + una bocina corta
+        // Sistema de movilidad: motor de fondo suave, sin bocina
         movilidad: (c) => {
-          playTone(c, { freq: 90, duration: 0.9, type: "sawtooth", gain: 0.07 });
-          playTone(c, { freq: 520, duration: 0.22, type: "square", gain: 0.1, delay: 0.15 });
+          playTone(c, { freq: 85, duration: 1.1, type: "triangle", gain: 0.06, attack: 0.25 });
+          playFilteredNoise(c, { duration: 1.1, filterFreq: 700, filterType: "lowpass", gain: 0.04, fadeIn: 0.2, fadeOut: 1.1 });
         },
         // Sistema social-comunitario: murmullo cálido de voces (acorde suave)
         social: (c) => {
-          [220, 277, 330].forEach((freq, i) => playTone(c, { freq, duration: 0.8, type: "triangle", gain: 0.06, delay: i * 0.04 }));
-          playFilteredNoise(c, { duration: 0.9, filterFreq: 1400, filterType: "bandpass", q: 0.6, gain: 0.05, fadeOut: 0.9 });
+          [220, 277, 330].forEach((freq, i) => playTone(c, { freq, duration: 0.8, type: "triangle", gain: 0.04, delay: i * 0.05, attack: 0.15 }));
+          playFilteredNoise(c, { duration: 0.9, filterFreq: 1400, filterType: "bandpass", q: 0.6, gain: 0.03, fadeOut: 0.9 });
         },
-        // Sistema socioeconómico y de ocupación: dos tonos tipo "aviso/actividad"
+        // Sistema socioeconómico y de ocupación: dos tonos suaves tipo aviso
         socioeconomico: (c) => {
-          playTone(c, { freq: 660, duration: 0.14, type: "sine", gain: 0.14 });
-          playTone(c, { freq: 880, duration: 0.22, type: "sine", gain: 0.14, delay: 0.15 });
+          playTone(c, { freq: 660, duration: 0.22, type: "sine", gain: 0.07, attack: 0.06 });
+          playTone(c, { freq: 880, duration: 0.3, type: "sine", gain: 0.07, delay: 0.18, attack: 0.06 });
         },
       };
       return {
@@ -1835,7 +1844,9 @@
           biotico: { type: "FeatureCollection", features: [poly([[-74.166,4.644],[-74.162,4.646],[-74.158,4.643],[-74.160,4.638],[-74.165,4.638],[-74.166,4.644]], { label: "hábitat y vegetación" }), poly([[-74.157,4.646],[-74.153,4.645],[-74.153,4.639],[-74.157,4.637],[-74.160,4.640],[-74.157,4.646]], { label: "hábitat y vegetación" }),
             ...BIOTICA_COMPONENTS.map((c) => pt(c.coords, { label: c.label, kind: "bio-point" }))
           ] },
-          infraestructura: { type: "FeatureCollection", features: [line([[-74.159,4.67],[-74.159,4.65],[-74.159,4.63],[-74.159,4.61]], { label: "Avenida Ciudad de Cali" }), poly([[-74.153,4.651],[-74.148,4.651],[-74.148,4.647],[-74.153,4.647],[-74.153,4.651]], { label: "área construida" }), poly([[-74.169,4.632],[-74.165,4.632],[-74.165,4.628],[-74.169,4.628],[-74.169,4.632]], { label: "borde urbano" })] },
+          infraestructura: { type: "FeatureCollection", features: [line([[-74.159,4.67],[-74.159,4.65],[-74.159,4.63],[-74.159,4.61]], { label: "Avenida Ciudad de Cali" }), poly([[-74.153,4.651],[-74.148,4.651],[-74.148,4.647],[-74.153,4.647],[-74.153,4.651]], { label: "área construida" }), poly([[-74.169,4.632],[-74.165,4.632],[-74.165,4.628],[-74.169,4.628],[-74.169,4.632]], { label: "borde urbano" }),
+            ...FISICO_COMPONENTS.map((c) => pt(c.coords, { label: c.label, kind: "fisico-point" }))
+          ] },
           movilidad: { type: "FeatureCollection", features: [line([[-74.15,4.632],[-74.156,4.631],[-74.164,4.632],[-74.172,4.636]], { label: "ciclorruta" }), line([[-74.154,4.65],[-74.158,4.646],[-74.161,4.64],[-74.165,4.635]], { label: "recorrido peatonal" }), pt([-74.156,4.633], { label: "Biblioteca El Tintal · acceso" })] },
           social: { type: "FeatureCollection", features: [poly([[-74.176,4.65],[-74.168,4.65],[-74.168,4.643],[-74.176,4.643],[-74.176,4.65]], { label: "barrio y recorridos" }), poly([[-74.151,4.634],[-74.143,4.634],[-74.143,4.626],[-74.151,4.626],[-74.151,4.634]], { label: "barrio y recorridos" }), pt([-74.164,4.651], { label: "actividad pedagógica" })] },
           institucional: { type: "FeatureCollection", features: [pt([-74.163,4.638], { label: "restauración y mantenimiento" }), pt([-74.157,4.648], { label: "seguimiento" }), pt([-74.166,4.635], { label: "educación ambiental" })] }
@@ -1848,16 +1859,17 @@
           map.addLayer({ id: fillId, type: "fill", source: sourceId, paint: { "fill-color": meta.color, "fill-opacity": .18 }, layout: { visibility: "none" } });
           map.addLayer({ id: lineId, type: "line", source: sourceId, filter: ["!=", ["get", "kind"], "hidrica-link"], paint: { "line-color": meta.color, "line-width": ["interpolate", ["linear"], ["zoom"], 10, 1.2, 14, 3], "line-opacity": .86 }, layout: { visibility: "none" } });
           map.addLayer({ id: pointId, type: "circle", source: sourceId, filter: ["==", ["geometry-type"], "Point"], paint: {
-            "circle-color": ["match", ["get", "kind"], "water-point", "#ffffff", "bio-point", "#ffffff", meta.color],
-            "circle-radius": ["match", ["get", "kind"], "water-point", ["interpolate", ["linear"], ["zoom"], 10, 2.4, 14, 4], "bio-point", ["interpolate", ["linear"], ["zoom"], 10, 2.4, 14, 4], ["interpolate", ["linear"], ["zoom"], 10, 4, 14, 7]],
-            "circle-opacity": ["match", ["get", "kind"], "water-point", .95, "bio-point", .95, 1],
+            "circle-color": ["match", ["get", "kind"], "water-point", "#ffffff", "bio-point", "#ffffff", "fisico-point", "#ffffff", meta.color],
+            "circle-radius": ["match", ["get", "kind"], "water-point", ["interpolate", ["linear"], ["zoom"], 10, 2.4, 14, 4], "bio-point", ["interpolate", ["linear"], ["zoom"], 10, 2.4, 14, 4], "fisico-point", ["interpolate", ["linear"], ["zoom"], 10, 2.4, 14, 4], ["interpolate", ["linear"], ["zoom"], 10, 4, 14, 7]],
+            "circle-opacity": ["match", ["get", "kind"], "water-point", .95, "bio-point", .95, "fisico-point", .95, 1],
             "circle-stroke-color": "#070b0c",
-            "circle-stroke-width": ["match", ["get", "kind"], "water-point", 1, "bio-point", 1, 1.5]
+            "circle-stroke-width": ["match", ["get", "kind"], "water-point", 1, "bio-point", 1, "fisico-point", 1, 1.5]
           }, layout: { visibility: "none" } });
           const labelId = `${sourceId}-labels`;
           if (meta.id === "hidrico") map.addLayer({ id: labelId, type: "symbol", source: sourceId, filter: ["==", ["get", "kind"], "water-point"], layout: { visibility: "none", "text-field": ["get", "label"], "text-size": ["interpolate", ["linear"], ["zoom"], 10, 9, 14, 12], "text-offset": [0, 1.35], "text-anchor": "top", "text-allow-overlap": true }, paint: { "text-color": "#b9e5ea", "text-halo-color": "#061113", "text-halo-width": 1.5 } });
           if (meta.id === "biotico") map.addLayer({ id: labelId, type: "symbol", source: sourceId, filter: ["==", ["get", "kind"], "bio-point"], layout: { visibility: "none", "text-field": ["get", "label"], "text-size": ["interpolate", ["linear"], ["zoom"], 10, 9, 14, 12], "text-offset": [0, 1.35], "text-anchor": "top", "text-allow-overlap": true }, paint: { "text-color": "#c9f2d6", "text-halo-color": "#061309", "text-halo-width": 1.5 } });
-          partOneMapLayers.push({ id: meta.id, fill: fillId, line: lineId, point: pointId, extras: (meta.id === "hidrico" || meta.id === "biotico") ? [labelId] : [], markers: [] });
+          if (meta.id === "infraestructura") map.addLayer({ id: labelId, type: "symbol", source: sourceId, filter: ["==", ["get", "kind"], "fisico-point"], layout: { visibility: "none", "text-field": ["get", "label"], "text-size": ["interpolate", ["linear"], ["zoom"], 10, 9, 14, 12], "text-offset": [0, 1.35], "text-anchor": "top", "text-allow-overlap": true }, paint: { "text-color": "#dfe3e8", "text-halo-color": "#0a0c0d", "text-halo-width": 1.5 } });
+          partOneMapLayers.push({ id: meta.id, fill: fillId, line: lineId, point: pointId, extras: (meta.id === "hidrico" || meta.id === "biotico" || meta.id === "infraestructura") ? [labelId] : [], markers: [] });
           // El checkbox de "Subsistema hídrico" nace marcado, pero las capas nacen
           // ocultas: sin esto, nunca se veía nada hasta desmarcar y volver a marcar.
           if (meta.id === "hidrico") { [pointId, labelId].forEach((id) => map.setLayoutProperty(id, "visibility", "visible")); }
@@ -2046,6 +2058,7 @@
     const FLOW_GROUPS = [
       { components: HIDRICA_COMPONENTS, targetIndex: 0, color: "#b9e5ea", prefix: "hidrica" },
       { components: BIOTICA_COMPONENTS, targetIndex: 1, color: "#c9f2d6", prefix: "biotica" },
+      { components: FISICO_COMPONENTS, targetIndex: 2, color: "#dfe3e8", prefix: "fisico" },
     ];
     const buildFlowGroupsSvg = (positions) => FLOW_GROUPS.map((group) => {
       const [nx, ny] = positions[group.targetIndex];
