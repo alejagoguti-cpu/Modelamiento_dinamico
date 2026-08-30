@@ -5757,7 +5757,7 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 /* Línea punteada de verdad (guiones cortos pegados a los puntos, no
    circulitos sueltos) — menos "rara", más clara de seguir. */
 .map-network-stage > svg .kennedy-box-link {
-  fill: none; stroke: rgba(255,255,255,0.9); stroke-width: .2;
+  fill: none; stroke: rgba(255,255,255,0.9); stroke-width: .1;
   stroke-linecap: butt; stroke-dasharray: .7 .5;
   opacity: .92;
 }

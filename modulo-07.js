@@ -1655,75 +1655,29 @@
     // la localización real se hace con la línea + el nodo circular, que
     // ahora puede ser MÁS DE UNO por caja (coords es un arreglo).
     const KENNEDY_TEXT_BOXES = [
-      // ---------- Columna derecha: cajas ambientales ----------
-      { id: "lavaca", title: "MODELO DE ABSORCIÓN DE IMPACTO",
-        color: "#56b8d4", icon: "fa-droplet",
-        coords: [[-74.16284778855655, 4.62939492240078], [-74.1599146050763, 4.63015596902525], [-74.14987475206779, 4.64210777486686]], boxPos: [93, 8],
-        sections: [{ system: "Modelo Social ⟶ Sistema Ecológico", icon: "fa-leaf", submodelos: [
-          "Ciclo de acumulación y lixiviación de residuos.", "Dinámica de eutrofización y variación de oxígeno.",
-          "Flujo de recarga y fluctuación del nivel hídrico.", "Dinámica de expansión de vegetación acuática." ] }] },
-      { id: "burro", title: "MODELO DE AMORTIGUACIÓN AMBIENTAL",
-        color: "#56b8d4", icon: "fa-droplet", coords: [[-74.14987475206779, 4.64210777486686]], boxPos: [93, 22.5],
-        sections: [{ system: "Modelo Determinista ⟶ Sistema Ecológico", icon: "fa-gears", submodelos: [
-          "Ciclo de escorrentía pluvial y escurrimiento superficial.", "Dinámica de fragmentación de cobertura vegetal.",
-          "Ciclo de variación térmica por efecto de isla de calor.", "Dinámica de absorción hídrica en la franja de ronda." ] }] },
-      { id: "techo", title: "MODELO DE RETENCIÓN HÍDRICA",
-        color: "#56b8d4", icon: "fa-droplet", coords: [[-74.1413020515684, 4.645452290970931]], boxPos: [93, 37],
-        sections: [{ system: "Modelo Determinista ⟶ Sistema Ecológico", icon: "fa-gears", submodelos: [
-          "Ciclo de infiltración y percolación al acuífero.", "Dinámica de retención y amortiguación de picos de lluvia.",
-          "Flujo de intercambio de agua subterránea-superficial.", "Dinámica de reducción del espejo de agua por encajonamiento." ] }] },
-      { id: "tunjuelo", title: "SISTEMA ECOLÓGICO",
-        color: "#56b8d4", icon: "fa-water", coords: [[-74.17429119107521, 4.603360016778938]], boxPos: [93, 51.5],
-        sections: [
-          { system: "Sistema Determinista ⟹ Sub-modelos de ciclos", icon: "fa-gears", submodelos: [
-            "Ciclo hidrológico macro y variación del caudal.", "Dinámica de transporte de sedimentos y erosión." ] },
-          { system: "Sistema Social ⟹ Sub-modelos de dinámicas", icon: "fa-people-group", submodelos: [
-            "Dinámica de riesgo por desbordamiento e inundación.", "Ciclo de concentración de vertimientos." ] },
-        ] },
-      { id: "fauna", title: "MODELO DE CONECTIVIDAD FAUNÍSTICA",
-        color: "#68d391", icon: "fa-paw",
-        coords: [[-74.17429119107521, 4.603360016778938], [-74.16284778855655, 4.62939492240078], [-74.14987475206779, 4.64210777486686], [-74.1413020515684, 4.645452290970931]],
-        boxPos: [93, 68],
-        sections: [{ system: "Modelo Ecológico ⟶ Sistema Animado", icon: "fa-feather-pointed", submodelos: [
-          "Ciclo de migración, refugio y albergue de avifauna.", "Dinámica de dispersión biológica y polinización.",
-          "Flujo de desplazamiento e interrupción por barreras viales.", "Ciclo de presión por especies invasoras y domésticas." ] }] },
-      // Submodelos redactados por mí (no me diste el texto exacto, solo me
-      // pediste que definiera qué contendría este submodelo).
-      { id: "mitigacion_organica", title: "MODELO DE MITIGACIÓN DE CARGA ORGÁNICA Y RESIDUOS",
-        color: "#56b8d4", icon: "fa-recycle", coords: [[-74.16284778855655, 4.62939492240078]], boxPos: [93, 85],
-        sections: [{ system: "Modelo Determinista ⟶ Sistema Ecológico", icon: "fa-gears", submodelos: [
-          "Ciclo de compostaje y estabilización de residuos orgánicos.", "Dinámica de reducción de carga contaminante antes del vertimiento.",
-          "Flujo de recolección y separación en la fuente.", "Ciclo de control de vectores y olores." ] }] },
-      // ---------- Columna izquierda: cajas viales / de infraestructura ----------
-      { id: "avcali", title: "MODELO VIAL Y DE INFRAESTRUCTURA",
-        color: "#b8c0c8", icon: "fa-road", coords: [[-74.15162630856268, 4.644831758038044]], boxPos: [7, 8],
-        sections: [{ system: "Modelo Determinista ⟶ Sistema Determinista", icon: "fa-gears", submodelos: [
-          "Flujo y variación horaria del volumen vehicular.", "Ciclo de escorrentía rápida sobre superficie impermeable.",
-          "Dinámica de dispersión de contaminantes atmosféricos.", "Flujo de barrera y fricción a la movilidad peatonal." ] }] },
-      { id: "canalsf", title: "MODELO DE CONDUCCIÓN HÍDRICA",
-        color: "#56b8d4", icon: "fa-water", coords: [[-74.155, 4.635]], boxPos: [7, 27],
-        sections: [{ system: "Modelo Determinista ⟶ Sistema Ecológico", icon: "fa-gears", submodelos: [
-          "Dinámica de aceleración y velocidad del caudal sobre concreto.", "Ciclo de evacuación y respuesta hidráulica ante lluvias torrenciales.",
-          "Flujo de transporte y sedimentación de residuos en el canal.", "Dinámica de descarga y vertimiento de aguas servidas." ] }] },
-      // Esta caja tiene DOS lugares reales (Biblioteca El Tintal y Portal
-      // Américas): por eso "coords" trae 2 puntos y salen 2 líneas.
-      { id: "bibliotintal_portal", title: "MODELO NODAL EQUIPAMENTAL",
-        color: "#f1cf5b", icon: "fa-building", coords: [[-74.15477971743486, 4.642987513146133], [-74.1615, 4.6255]], boxPos: [7, 46],
-        sections: [{ system: "Modelo Social ⟶ Sistema Social", icon: "fa-people-group", submodelos: [
-          "Flujo de intercambio modal de pasajeros (origen-destino).", "Dinámica de flotación y densidad de población peatonal.",
-          "Ciclo de uso e intensidad del espacio público según hora del día.", "Flujo de interacción socio-cultural con el equipamiento." ] }] },
       // Sale una línea desde Humedal El Burro hacia esta caja (contenido
       // exacto que diste).
       { id: "interaccion_vial", title: "MODELO DE INTERACCIÓN VIAL",
-        color: "#b8c0c8", icon: "fa-road", coords: [[-74.14987475206779, 4.64210777486686]], boxPos: [7, 65],
+        color: "#b8c0c8", icon: "fa-road", coords: [[-74.14987475206779, 4.64210777486686]], boxPos: [7, 30],
         sections: [{ system: "Modelo Determinista ⟶ Sistema Socio-Ecológico", icon: "fa-gears", submodelos: [
           "Desborde y Control de Crecientes.", "Transferencia de Carga y Vibración.",
           "Infiltración de Escorrentía Calzada-Borde.", "Propagación de Ruido y Presión Sonora." ] }] },
+      // Submodelos redactados por mí (no me diste el texto exacto, solo me
+      // pediste que definiera qué contendría este submodelo).
+      { id: "mitigacion_organica", title: "MODELO DE MITIGACIÓN DE CARGA ORGÁNICA Y RESIDUOS",
+        color: "#56b8d4", icon: "fa-recycle", coords: [[-74.16284778855655, 4.62939492240078]], boxPos: [93, 30],
+        sections: [{ system: "Modelo Determinista ⟶ Sistema Ecológico", icon: "fa-gears", submodelos: [
+          "Ciclo de compostaje y estabilización de residuos orgánicos.", "Dinámica de reducción de carga contaminante antes del vertimiento.",
+          "Flujo de recolección y separación en la fuente.", "Ciclo de control de vectores y olores." ] }] },
+      // Esta caja va ANCLADA a su propia coordenada real (la que diste:
+      // 4.616655447564548, -74.13517123261519), no a una posición fija de
+      // pantalla — por eso lleva "boxCoords" en vez de solo "boxPos".
+      // Se conecta con 3 puntos: esa misma coordenada, Corabastos y
+      // Humedal La Vaca.
       { id: "corabastos", title: "MODELO COMERCIAL Y LOGÍSTICO",
         color: "#e58d62", icon: "fa-cart-shopping",
-        // Se conecta con 3 puntos: Corabastos, la nueva coordenada dada, y
-        // Humedal La Vaca.
-        coords: [[-74.1599146050763, 4.63015596902525], [-74.13517123261519, 4.616655447564548], [-74.16284778855655, 4.62939492240078]], boxPos: [7, 88],
+        boxCoords: [-74.13517123261519, 4.616655447564548],
+        coords: [[-74.13517123261519, 4.616655447564548], [-74.1599146050763, 4.63015596902525], [-74.16284778855655, 4.62939492240078]], boxPos: [50, 88],
         sections: [{ system: "Modelo Social ⟶ Sistema Social", icon: "fa-people-group", submodelos: [
           "Ciclo de generación y descomposición de materia orgánica.", "Dinámica de acumulación y congestión de transporte pesado.",
           "Flujo diario de abastecimiento y distribución.", "Ciclo de producción de carga contaminante hídrica." ] }] },
@@ -2300,15 +2254,29 @@
     // Cajas de texto piloto: nodo circular de color en la coordenada real +
     // línea en L (blanca) hacia la caja de texto fija, igual al referente.
     const textBoxLinkD = (boxPos, nodeProj) => `M ${boxPos[0].toFixed(2)} ${boxPos[1].toFixed(2)} L ${nodeProj.x.toFixed(2)} ${boxPos[1].toFixed(2)} L ${nodeProj.x.toFixed(2)} ${nodeProj.y.toFixed(2)}`;
+    // Si la caja trae "boxCoords" (una coordenada real), su posición en
+    // pantalla se calcula proyectando esa coordenada — igual que un nodo —
+    // en vez de usar el porcentaje fijo de "boxPos".
+    const effectiveBoxPos = (box) => {
+      if (box.boxCoords) {
+        const proj = projectToPercent(box.boxCoords);
+        if (proj) return [proj.x, proj.y];
+      }
+      return box.boxPos;
+    };
     // Cada caja puede tener MÁS DE UNA coordenada real (ej. "Biblioteca El
     // Tintal / Portal Américas" son 2 lugares) — sale una línea y un nodo
     // por cada una, todas desde el mismo punto de anclaje de la caja.
-    const buildTextBoxesSvg = () => KENNEDY_TEXT_BOXES.map((box, i) => box.coords.map((c, j) => {
-      const proj = declutteredPositions[`box-${i}-${j}`];
-      if (!proj) return "";
-      return `<path id="kennedy-textbox-link-${i}-${j}" class="kennedy-box-link" d="${textBoxLinkD(box.boxPos, proj)}"/>`;
-    }).join("")).join("");
+    const buildTextBoxesSvg = () => KENNEDY_TEXT_BOXES.map((box, i) => {
+      const boxPos = effectiveBoxPos(box);
+      return box.coords.map((c, j) => {
+        const proj = declutteredPositions[`box-${i}-${j}`];
+        if (!proj) return "";
+        return `<path id="kennedy-textbox-link-${i}-${j}" class="kennedy-box-link" d="${textBoxLinkD(boxPos, proj)}"/>`;
+      }).join("");
+    }).join("");
     const buildTextBoxesHtml = () => KENNEDY_TEXT_BOXES.map((box, i) => {
+      const boxPos = effectiveBoxPos(box);
       const nodesHtml = box.coords.map((c, j) => {
         const proj = declutteredPositions[`box-${i}-${j}`];
         if (!proj) return "";
@@ -2322,18 +2290,21 @@
       // derecha del nodo si está en la mitad izquierda del mapa, a la
       // izquierda del nodo si está en la mitad derecha) para que no se
       // recorte contra el borde del contenedor.
-      const anchorClass = box.boxPos[0] > 50 ? "kennedy-anchor-right" : "kennedy-anchor-left";
-      return `<div class="kennedy-info-box ${anchorClass}" style="left:${box.boxPos[0]}%;top:${box.boxPos[1]}%;--node-color:${box.color}"><i class="kennedy-watermark-icon fa-solid ${box.icon}" aria-hidden="true"></i><h4 class="kennedy-title-line">${box.title}</h4>${sectionsHtml}</div>${nodesHtml}`;
+      const anchorClass = boxPos[0] > 50 ? "kennedy-anchor-right" : "kennedy-anchor-left";
+      return `<div class="kennedy-info-box ${anchorClass}" id="kennedy-box-${i}" style="left:${boxPos[0]}%;top:${boxPos[1]}%;--node-color:${box.color}"><i class="kennedy-watermark-icon fa-solid ${box.icon}" aria-hidden="true"></i><h4 class="kennedy-title-line">${box.title}</h4>${sectionsHtml}</div>${nodesHtml}`;
     }).join("");
     const updateTextBoxes = () => {
       const stage = subsystemBubbles?.querySelector(".systems-network svg .map-network-flows");
       KENNEDY_TEXT_BOXES.forEach((box, i) => {
+        const boxPos = effectiveBoxPos(box);
+        const boxEl = subsystemBubbles?.querySelector(`#kennedy-box-${i}`);
+        if (boxEl) { boxEl.style.left = boxPos[0].toFixed ? boxPos[0].toFixed(2) + "%" : boxPos[0] + "%"; boxEl.style.top = boxPos[1].toFixed ? boxPos[1].toFixed(2) + "%" : boxPos[1] + "%"; }
         box.coords.forEach((c, j) => {
           const proj = declutteredPositions[`box-${i}-${j}`];
           const link = stage?.querySelector(`#kennedy-textbox-link-${i}-${j}`);
           const node = subsystemBubbles?.querySelector(`#kennedy-textbox-node-${i}-${j}`);
           if (!proj) return;
-          if (link) link.setAttribute("d", textBoxLinkD(box.boxPos, proj));
+          if (link) link.setAttribute("d", textBoxLinkD(boxPos, proj));
           if (node) { node.style.left = proj.x.toFixed(2) + "%"; node.style.top = proj.y.toFixed(2) + "%"; }
         });
       });
