@@ -2131,7 +2131,7 @@
       if (!subsystemBubbles?.classList.contains("network-active")) return;
       const stage = subsystemBubbles.querySelector(".systems-network");
       if (!stage) return;
-      const positions = [[12,22],[32,8],[70,8],[88,22],[76,86],[24,86]];
+      const positions = [[8,38],[36,9],[66,13],[93,40],[80,82],[20,80]];
       FLOW_GROUPS.forEach((group) => {
         const [nx, ny] = positions[group.targetIndex];
         group.components.forEach((c, i) => {
@@ -2150,7 +2150,7 @@
       if (!target) return;
       const systems = mode === "systems";
       const rows = systems ? territorySystems : submodelRows;
-      const positions = systems ? [[12,22],[32,8],[70,8],[88,22],[76,86],[24,86]] : [[10,22],[28,7],[58,7],[90,22],[90,58],[68,88],[16,88]];
+      const positions = systems ? [[8,38],[36,9],[66,13],[93,40],[80,82],[20,80]] : [[10,22],[28,7],[58,7],[90,22],[90,58],[68,88],[16,88]];
       const colors = ["#56b8d4", "#68d391", "#b8c0c8", "#f1cf5b", "#ee9a4b", "#e58d62", "#b28be8"];
       const systemIcons = ["fa-droplet", "fa-feather-pointed", "fa-building", "fa-route", "fa-people-group", "fa-house-chimney"];
       const submodelIcons = ["fa-water", "fa-feather-pointed", "fa-city", "fa-person-walking", "fa-house-chimney", "fa-people-arrows", "fa-arrows-rotate"];

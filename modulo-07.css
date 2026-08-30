@@ -5154,8 +5154,8 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 @media (max-width: 760px) { .map-components-panel, .map-purpose-panel { top: auto !important; bottom: 3% !important; width: 45%; max-height: 42%; } .map-components-panel { left: 2% !important; } .map-purpose-panel { right: 2% !important; } }
 
 /* Corrección definitiva de interacción de la red */
-.subsystem-bubbles.network-active { pointer-events: auto !important; z-index: 8 !important; }
-.subsystem-bubbles.network-active .map-network-stage { pointer-events: auto !important; z-index: 1; }
+.subsystem-bubbles.network-active { pointer-events: none !important; z-index: 8 !important; }
+.subsystem-bubbles.network-active .map-network-stage { pointer-events: none !important; z-index: 1; }
 .subsystem-bubbles.network-active .map-network-stage > svg { pointer-events: none !important; z-index: 0; }
 .subsystem-bubbles.network-active .map-network-node { pointer-events: auto !important; z-index: 4; touch-action: manipulation; }
 .subsystem-bubbles.network-active .map-network-node-icon,
