@@ -1723,9 +1723,15 @@
         },
         // Sistema físico-urbano: zumbido de ciudad lejana, muy suave y
         // sostenido — sin bocinas ni golpes, solo un fondo urbano tenue
+        // Sistema físico-urbano: sonido de ciudad — capas de tráfico
+        // lejano y murmullo urbano, con tremolo suave, sin bocinas
         fisico: (c) => {
-          playFilteredNoise(c, { duration: 2.4, filterFreq: 320, filterType: "lowpass", gain: 0.09, fadeIn: 0.3, fadeOut: 2.4 });
-          playTone(c, { freq: 95, duration: 1.6, type: "sine", gain: 0.05, attack: 0.4 });
+          const dur = 3.4;
+          playFilteredNoise(c, { duration: dur, filterFreq: 340, filterType: "lowpass", gain: 0.1, fadeIn: 0.4, fadeOut: dur, lfoRate: 0.22, lfoDepth: 0.3 });
+          playFilteredNoise(c, { duration: dur * 0.85, filterFreq: 950, filterType: "bandpass", q: 0.8, gain: 0.045, fadeIn: 0.6, fadeOut: dur * 0.85, lfoRate: 0.5, lfoDepth: 0.4 });
+          playTone(c, { freq: 90, duration: dur * 0.7, type: "sine", gain: 0.05, attack: 0.5 });
+          // un carro pasando de lejos, muy suave, sin bocina
+          playTone(c, { freq: 65, to: 105, duration: 1.1, type: "triangle", gain: 0.035, delay: 0.7, attack: 0.35 });
         },
         // Sistema de movilidad: motor de fondo suave, sin bocina
         movilidad: (c) => {
@@ -2005,7 +2011,7 @@
       document.getElementById("loadOsmStreets")?.addEventListener("click", loadOsm);
       /* Las calles OSM quedan como acción manual y no se cargan al abrir el mapa. */
       document.getElementById("loadOsrmRoute")?.addEventListener("click", loadRoute);
-      document.getElementById("resetCartography")?.addEventListener("click", () => { if (map.getLayer("osm-streets")) map.removeLayer("osm-streets"); if (map.getSource("osm-streets")) map.removeSource("osm-streets"); if (map.getLayer("osrm-route")) map.removeLayer("osrm-route"); if (map.getSource("osrm-route")) map.removeSource("osrm-route"); clearSubsystemPoints(); drawSubsystems({ hidden: true }); map.jumpTo({ center: [-74.158,4.629], zoom: 12.6 }); setStatus("HUMEDAL EL BURRO · CARTOGRAFÍA LISTA", true); });
+      document.getElementById("resetCartography")?.addEventListener("click", () => { if (map.getLayer("osm-streets")) map.removeLayer("osm-streets"); if (map.getSource("osm-streets")) map.removeSource("osm-streets"); if (map.getLayer("osrm-route")) map.removeLayer("osrm-route"); if (map.getSource("osrm-route")) map.removeSource("osrm-route"); clearSubsystemPoints(); drawSubsystems({ hidden: true }); map.jumpTo({ center: [-74.158,4.629], zoom: 13.3 }); setStatus("HUMEDAL EL BURRO · CARTOGRAFÍA LISTA", true); });
     }
     function initProceduralSimulation() {
       const holder = document.getElementById("proceduralSimulation");
@@ -2308,7 +2314,7 @@
       map.__openingPlayed = true;
       const reduced = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
       if (reduced) {
-        map.jumpTo({ center: [-74.158, 4.629], zoom: 12.6 });
+        map.jumpTo({ center: [-74.158, 4.629], zoom: 13.3 });
         announceCartography("HUMEDAL EL BURRO · AGUA Y SUBSISTEMAS", true);
         drawSubsystems({ hidden: true });
         return;
@@ -2318,15 +2324,15 @@
       map.jumpTo({ center: [-74.09, 4.65], zoom: 9.3 });
       window.setTimeout(() => {
         announceCartography("KENNEDY · PERÍMETRO ADMINISTRATIVO", true);
-        map.flyTo({ center: [-74.158, 4.629], zoom: 12.0, duration: 2400, essential: true });
-      }, 450);
+        map.flyTo({ center: [-74.158, 4.629], zoom: 12.2, duration: 3400, essential: true });
+      }, 600);
       window.setTimeout(() => {
         announceCartography("APROXIMACIÓN · HUMEDAL EL BURRO", true);
-        map.flyTo({ center: [-74.158, 4.629], zoom: 12.6, duration: 2000, essential: true });
-      }, 3050);
+        map.flyTo({ center: [-74.158, 4.629], zoom: 13.3, duration: 3000, essential: true });
+      }, 4000);
       window.setTimeout(() => {
         announceCartography("HUMEDAL EL BURRO · LISTO PARA ACTIVAR UNA RED", true);
-      }, 5300);
+      }, 7300);
     };
     const setupCartographyEntrance = (map) => {
       const section = document.querySelector(".cartography-section");
