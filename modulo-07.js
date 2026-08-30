@@ -1656,7 +1656,10 @@
     // ahora puede ser MÁS DE UNO por caja (coords es un arreglo).
     const KENNEDY_TEXT_BOXES = [
       { id: "lavaca", title: "MODELO DE ABSORCIÓN DE IMPACTO", connection: "Borde oriental de Corabastos / Calle 42F Sur.",
-        color: "#56b8d4", icon: "fa-droplet", coords: [[-74.16284778855655, 4.62939492240078]], boxPos: [8, 50],
+        color: "#56b8d4", icon: "fa-droplet",
+        // Esta caja se conecta con 3 lugares reales: Humedal La Vaca,
+        // Corabastos y Humedal El Burro.
+        coords: [[-74.16284778855655, 4.62939492240078], [-74.1599146050763, 4.63015596902525], [-74.14987475206779, 4.64210777486686]], boxPos: [8, 50],
         sections: [{ system: "Modelo Social ⟶ Sistema Ecológico", icon: "fa-leaf", submodelos: [
           "Ciclo de acumulación y lixiviación de residuos.", "Dinámica de eutrofización y variación de oxígeno.",
           "Flujo de recarga y fluctuación del nivel hídrico.", "Dinámica de expansión/retracción de vegetación invasora." ] }] },
