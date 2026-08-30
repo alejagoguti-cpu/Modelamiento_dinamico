@@ -5724,11 +5724,15 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 .kennedy-anchor-right { transform: translate(-100%, -50%); }
 @media (max-width: 760px) { .kennedy-info-box { width: 150px; } }
 .kennedy-info-box .kennedy-title-line {
-  color: #fff; font-size: 9px; font-weight: 800; line-height: 1.3;
-  margin: 0 0 7px; text-transform: uppercase; letter-spacing: .2px;
+  color: var(--node-color, #fff); font-size: 10px; font-weight: 800; line-height: 1.3;
+  margin: 0 0 4px; text-transform: uppercase; letter-spacing: .2px;
+}
+.kennedy-info-box .kennedy-connection {
+  color: rgba(255,255,255,0.55); font-size: 7px; font-style: italic; line-height: 1.35;
+  margin: 0 0 7px; display: flex; align-items: flex-start; gap: 4px;
   border-bottom: 1px solid rgba(255,255,255,0.25); padding-bottom: 6px;
 }
-.kennedy-info-box .kennedy-macro { color: var(--node-color, #fff); font-weight: 800; }
+.kennedy-info-box .kennedy-connection i { margin-top: 1px; flex-shrink: 0; }
 .kennedy-section + .kennedy-section { margin-top: 7px; }
 .kennedy-info-box .kennedy-mainline {
   color: #dfe3e8; font-size: 7.5px; font-weight: 700; margin: 0 0 3px;

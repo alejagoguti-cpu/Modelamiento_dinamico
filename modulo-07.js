@@ -1639,21 +1639,9 @@
     // Nota: no tengo coordenada exacta de "Portal Américas" — usé una
     // aproximada de referencia general (cerca de Av. Américas / Av.
     // Ciudad de Cali); dime la coordenada exacta si la tienes.
-    const KENNEDY_PHENOMENA = [
-      { id: "canalsf", label: "Canal San Francisco", coords: [-74.155, 4.635], system: "hidrica",
-        phenomenon: "Canalización Rígida y Aceleración de Vertimientos",
-        detail: "El reemplazo del cauce natural por concreto rígido elimina la capacidad de filtrado del suelo. El canal se convierte en un colector acelerado que transporta basura flotante, sedimentos y conexiones erradas de aguas residuales directamente hacia los humedales y el río." },
-      // "burro", "techo", "tunjuelo", "corabastos" y "avcali" ya no van
-      // aquí: cada uno tiene su propia caja de texto completa en
-      // KENNEDY_TEXT_BOXES, con su propio nodo — para no duplicar un
-      // punto encima del ícono en el mismo lugar.
-      { id: "bibliotintal", label: "Biblioteca El Tintal", coords: [-74.15477971743486, 4.642987513146133], system: "fisico",
-        phenomenon: "Equipamiento urbano de borde",
-        detail: "Pendiente de completar (no me diste el detalle de este punto)." },
-      { id: "portalamericas", label: "Portal Américas", coords: [-74.1615, 4.6255], system: "movilidad",
-        phenomenon: "Nodo de movilidad — presión de infraestructura de transporte",
-        detail: "Pendiente de completar (no me diste el detalle de este punto)." },
-    ];
+    // Todos los lugares ahora tienen su caja de texto completa en
+    // KENNEDY_TEXT_BOXES — ya no queda ningún fenómeno "simple" suelto.
+    const KENNEDY_PHENOMENA = [];
     const KENNEDY_SYSTEM_STYLE = {
       hidrica: { color: "#56b8d4", icon: "fa-droplet" },
       fisico: { color: "#b8c0c8", icon: "fa-building" },
@@ -1663,43 +1651,54 @@
     // Ejercicio piloto: cajas de texto EXACTAS al plano de referencia
     // (título + línea de modelos + submodelos), solo para estos 2 nodos
     // por ahora, cada una conectada con una línea en L a su nodo real.
+    // Título = SOLO el modelo (nunca el nombre del lugar). La conexión con
+    // la localización real se hace con la línea + el nodo circular, que
+    // ahora puede ser MÁS DE UNO por caja (coords es un arreglo).
     const KENNEDY_TEXT_BOXES = [
-      { id: "tunjuelo", title: "Río Tunjuelo", macro: "SISTEMA ECOLÓGICO", color: "#56b8d4", icon: "fa-water",
-        coords: [-74.17429119107521, 4.603360016778938], boxPos: [10, 85],
+      { id: "lavaca", title: "MODELO DE ABSORCIÓN DE IMPACTO", connection: "Borde oriental de Corabastos / Calle 42F Sur.",
+        color: "#56b8d4", icon: "fa-droplet", coords: [[-74.16284778855655, 4.62939492240078]], boxPos: [8, 50],
+        sections: [{ system: "Modelo Social ⟶ Sistema Ecológico", icon: "fa-leaf", submodelos: [
+          "Ciclo de acumulación y lixiviación de residuos.", "Dinámica de eutrofización y variación de oxígeno.",
+          "Flujo de recarga y fluctuación del nivel hídrico.", "Dinámica de expansión/retracción de vegetación invasora." ] }] },
+      { id: "burro", title: "MODELO DE AMORTIGUACIÓN AMBIENTAL", connection: "Av. Ciudad de Cali con Calle 6 Sur.",
+        color: "#56b8d4", icon: "fa-droplet", coords: [[-74.14987475206779, 4.64210777486686]], boxPos: [50, 92],
+        sections: [{ system: "Modelo Determinista ⟶ Sistema Ecológico", icon: "fa-gears", submodelos: [
+          "Ciclo de escorrentía pluvial y escurrimiento superficial.", "Dinámica de fragmentación y flujo de fauna local.",
+          "Ciclo de variación térmica por efecto de isla de calor.", "Dinámica de absorción hídrica en la franja de ronda." ] }] },
+      { id: "techo", title: "MODELO DE RETENCIÓN HÍDRICA", connection: "Av. Manuel Cepeda Vargas con Transversal 73.",
+        color: "#56b8d4", icon: "fa-droplet", coords: [[-74.1413020515684, 4.645452290970931]], boxPos: [90, 16],
+        sections: [{ system: "Modelo Determinista ⟶ Sistema Ecológico", icon: "fa-gears", submodelos: [
+          "Ciclo de infiltración y percolación al acuífero.", "Dinámica de retención y amortiguación de picos de lluvia.",
+          "Flujo de intercambio de agua subterránea-superficial.", "Dinámica de reducción del espejo de agua por encajonamiento." ] }] },
+      { id: "corabastos", title: "MODELO COMERCIAL Y LOGÍSTICO", connection: "Polígono entre Av. Poporo Quimbaya y Carrera 80.",
+        color: "#e58d62", icon: "fa-house-chimney", coords: [[-74.1599146050763, 4.63015596902525]], boxPos: [90, 50],
+        sections: [{ system: "Modelo Social ⟶ Sistema Social", icon: "fa-people-group", submodelos: [
+          "Ciclo de generación y descomposición de materia orgánica.", "Dinámica de acumulación y congestión de transporte pesado.",
+          "Flujo diario de abastecimiento y distribución de alimentos.", "Ciclo de producción de aguas residuales y carga contaminante." ] }] },
+      { id: "avcali", title: "MODELO VIAL Y DE INFRAESTRUCTURA", connection: "Corredor vial longitudinal Norte-Sur.",
+        color: "#b8c0c8", icon: "fa-road", coords: [[-74.15162630856268, 4.644831758038044]], boxPos: [50, 8],
+        sections: [{ system: "Modelo Determinista ⟶ Sistema Determinista", icon: "fa-gears", submodelos: [
+          "Flujo y variación horaria del volumen vehicular.", "Ciclo de escorrentía rápida sobre superficie impermeable.",
+          "Dinámica de concentración de contaminantes atmosféricos.", "Flujo de barrera y fricción a la movilidad peatonal." ] }] },
+      // Esta caja tiene DOS lugares reales (Biblioteca El Tintal y Portal
+      // Américas): por eso "coords" trae 2 puntos y salen 2 líneas.
+      { id: "bibliotintal_portal", title: "MODELO NODAL EQUIPAMENTAL", connection: "Intersección Av. Ciudad de Cali con Av. de las Américas.",
+        color: "#f1cf5b", icon: "fa-building", coords: [[-74.15477971743486, 4.642987513146133], [-74.1615, 4.6255]], boxPos: [92, 32],
+        sections: [{ system: "Modelo Social ⟶ Sistema Social", icon: "fa-people-group", submodelos: [
+          "Flujo de intercambio modal de pasajeros (origen-destino).", "Dinámica de flotación y densidad de población peatonal.",
+          "Ciclo de uso e intensidad del espacio público según hora del día.", "Flujo de interacción socio-cultural con el equipamiento." ] }] },
+      { id: "canalsf", title: "MODELO DE CONDUCCIÓN HÍDRICA", connection: "Trazados de drenaje en concreto (Patio Bonito / El Tintal).",
+        color: "#56b8d4", icon: "fa-water", coords: [[-74.155, 4.635]], boxPos: [8, 78],
+        sections: [{ system: "Modelo Determinista ⟶ Sistema Ecológico", icon: "fa-gears", submodelos: [
+          "Dinámica de aceleración y velocidad del caudal sobre concreto.", "Ciclo de evacuación y respuesta hidráulica ante lluvias torrenciales.",
+          "Flujo de transporte y sedimentación de residuos en el canal.", "Dinámica de descarga y vertimiento de aguas servidas." ] }] },
+      { id: "tunjuelo", title: "SISTEMA ECOLÓGICO", connection: "Borde sur-occidental / Límite de Patio Bonito.",
+        color: "#56b8d4", icon: "fa-water", coords: [[-74.17429119107521, 4.603360016778938]], boxPos: [8, 92],
         sections: [
-          { system: "Sistema Determinista", icon: "fa-gears", submodelos: ["Ciclo del agua", "Desembocadura", "Red trófica"] },
-          { system: "Sistema Social", icon: "fa-people-group", submodelos: ["Modelo económico / vertimientos", "Canalizaciones / diques"] },
-        ] },
-      { id: "lavaca", title: "Humedal La Vaca", macro: "SISTEMA ANIMADO", color: "#56b8d4", icon: "fa-droplet",
-        coords: [-74.16284778855655, 4.62939492240078], boxPos: [8, 55],
-        sections: [
-          { system: "Sistema Ecológico", icon: "fa-leaf", submodelos: ["Calidad hídrica", "Vegetación acuática", "Dinámica freática"] },
-          { system: "Sistema Social", icon: "fa-people-group", submodelos: ["Modelo de gestión de residuos", "Vertimiento de lixiviados"] },
-        ] },
-      { id: "burro", title: "Humedal El Burro", macro: "SISTEMA ANIMADO", color: "#56b8d4", icon: "fa-droplet",
-        coords: [-74.14987475206779, 4.64210777486686], boxPos: [50, 90],
-        sections: [
-          { system: "Sistema Ecológico", icon: "fa-leaf", submodelos: ["Cobertura vegetal", "Regulador térmico", "Red biótica"] },
-          { system: "Sistema Determinista", icon: "fa-gears", submodelos: ["Escorrentía sobre asfalto", "Fragmentación por malla vial"] },
-        ] },
-      { id: "techo", title: "Humedal Techo", macro: "SISTEMA ANIMADO", color: "#56b8d4", icon: "fa-droplet",
-        coords: [-74.1413020515684, 4.645452290970931], boxPos: [90, 18],
-        sections: [
-          { system: "Sistema Ecológico", icon: "fa-leaf", submodelos: ["Conservación de masa de agua", "Recarga de acuífero"] },
-          { system: "Sistema Determinista", icon: "fa-gears", submodelos: ["Drenaje pluvial urbano", "Encajonamiento por edificación"] },
-        ] },
-      { id: "corabastos", title: "Corabastos", macro: "SISTEMA SOCIAL", color: "#e58d62", icon: "fa-house-chimney",
-        coords: [-74.1599146050763, 4.63015596902525], boxPos: [90, 55],
-        sections: [
-          { system: "Sistema Social", icon: "fa-people-group", submodelos: ["Abastecimiento masivo", "Dinámica socioespacial"] },
-          { system: "Sistema Determinista", icon: "fa-gears", submodelos: ["Generación de residuos orgánicos", "Movilidad pesada"] },
-        ] },
-      // Nodo de vías: la flechita sale de un punto sobre la Av. Ciudad de
-      // Cali y llega hasta este nodo, con su propia caja (formato simple).
-      { id: "avcali", title: "Av. Ciudad de Cali", macro: "MODELO VIAL Y DE INFRAESTRUCTURA", color: "#b8c0c8", icon: "fa-road",
-        coords: [-74.15162630856268, 4.644831758038044], boxPos: [50, 8],
-        sections: [
-          { system: "Modelo Determinista", icon: "fa-gears", submodelos: ["Modelo de flujo vehicular", "Modelo de impermeabilización", "Modelo de evacuación pluvial", "Modelo de fricción urbana"] },
+          { system: "Sistema Determinista ⟹ Sub-modelos de ciclos", icon: "fa-gears", submodelos: [
+            "Ciclo hidrológico macro y variación del caudal.", "Dinámica de transporte de sedimentos y erosión." ] },
+          { system: "Sistema Social ⟹ Sub-modelos de dinámicas", icon: "fa-people-group", submodelos: [
+            "Dinámica de riesgo por desbordamiento e inundación.", "Ciclo de concentración de vertimientos industriales/domésticos." ] },
         ] },
     ];
     // ---------- Sonidos ambiente por dinámica (sintetizados, sin archivos
@@ -2235,7 +2234,7 @@
     function computeDeclutteredPositions() {
       const items = [];
       KENNEDY_PHENOMENA.forEach((p, i) => { const proj = projectToPercent(p.coords); if (proj) items.push({ key: `phen-${i}`, x: proj.x, y: proj.y }); });
-      KENNEDY_TEXT_BOXES.forEach((b, i) => { const proj = projectToPercent(b.coords); if (proj) items.push({ key: `box-${i}`, x: proj.x, y: proj.y }); });
+      KENNEDY_TEXT_BOXES.forEach((b, i) => { b.coords.forEach((c, j) => { const proj = projectToPercent(c); if (proj) items.push({ key: `box-${i}-${j}`, x: proj.x, y: proj.y }); }); });
       const minDist = 6;
       for (let iter = 0; iter < 10; iter++) {
         for (let a = 0; a < items.length; a++) {
@@ -2275,14 +2274,20 @@
     // Cajas de texto piloto: nodo circular de color en la coordenada real +
     // línea en L (blanca) hacia la caja de texto fija, igual al referente.
     const textBoxLinkD = (boxPos, nodeProj) => `M ${boxPos[0].toFixed(2)} ${boxPos[1].toFixed(2)} L ${nodeProj.x.toFixed(2)} ${boxPos[1].toFixed(2)} L ${nodeProj.x.toFixed(2)} ${nodeProj.y.toFixed(2)}`;
-    const buildTextBoxesSvg = () => KENNEDY_TEXT_BOXES.map((box, i) => {
-      const proj = declutteredPositions[`box-${i}`];
+    // Cada caja puede tener MÁS DE UNA coordenada real (ej. "Biblioteca El
+    // Tintal / Portal Américas" son 2 lugares) — sale una línea y un nodo
+    // por cada una, todas desde el mismo punto de anclaje de la caja.
+    const buildTextBoxesSvg = () => KENNEDY_TEXT_BOXES.map((box, i) => box.coords.map((c, j) => {
+      const proj = declutteredPositions[`box-${i}-${j}`];
       if (!proj) return "";
-      return `<path id="kennedy-textbox-link-${i}" class="kennedy-box-link" d="${textBoxLinkD(box.boxPos, proj)}"/>`;
-    }).join("");
+      return `<path id="kennedy-textbox-link-${i}-${j}" class="kennedy-box-link" d="${textBoxLinkD(box.boxPos, proj)}"/>`;
+    }).join("")).join("");
     const buildTextBoxesHtml = () => KENNEDY_TEXT_BOXES.map((box, i) => {
-      const proj = declutteredPositions[`box-${i}`];
-      const nodeHtml = proj ? `<button type="button" class="map-network-node map-phenomenon-node" id="kennedy-textbox-node-${i}" style="left:${proj.x.toFixed(2)}%;top:${proj.y.toFixed(2)}%;--node-color:${box.color}"><i class="map-network-node-icon fa-solid ${box.icon}" aria-hidden="true"></i></button>` : "";
+      const nodesHtml = box.coords.map((c, j) => {
+        const proj = declutteredPositions[`box-${i}-${j}`];
+        if (!proj) return "";
+        return `<button type="button" class="map-network-node map-phenomenon-node" id="kennedy-textbox-node-${i}-${j}" style="left:${proj.x.toFixed(2)}%;top:${proj.y.toFixed(2)}%;--node-color:${box.color}"><i class="map-network-node-icon fa-solid ${box.icon}" aria-hidden="true"></i></button>`;
+      }).join("");
       const sectionsHtml = box.sections.map((section) => {
         const items = section.submodelos.map((s) => `<li><i class="fa-solid ${section.icon} kennedy-item-icon" aria-hidden="true"></i>${s}</li>`).join("");
         return `<div class="kennedy-section"><p class="kennedy-mainline">${section.system} <span class="kennedy-arrow">⟹</span> Sub-modelos:</p><ul>${items}</ul></div>`;
@@ -2292,17 +2297,19 @@
       // izquierda del nodo si está en la mitad derecha) para que no se
       // recorte contra el borde del contenedor.
       const anchorClass = box.boxPos[0] > 50 ? "kennedy-anchor-right" : "kennedy-anchor-left";
-      return `<div class="kennedy-info-box ${anchorClass}" style="left:${box.boxPos[0]}%;top:${box.boxPos[1]}%;--node-color:${box.color}"><h4 class="kennedy-title-line">${box.title} <span class="kennedy-macro">– ${box.macro}</span></h4>${sectionsHtml}</div>${nodeHtml}`;
+      return `<div class="kennedy-info-box ${anchorClass}" style="left:${box.boxPos[0]}%;top:${box.boxPos[1]}%;--node-color:${box.color}"><h4 class="kennedy-title-line">${box.title}</h4><p class="kennedy-connection"><i class="fa-solid fa-location-dot" aria-hidden="true"></i> ${box.connection}</p>${sectionsHtml}</div>${nodesHtml}`;
     }).join("");
     const updateTextBoxes = () => {
       const stage = subsystemBubbles?.querySelector(".systems-network svg .map-network-flows");
       KENNEDY_TEXT_BOXES.forEach((box, i) => {
-        const proj = declutteredPositions[`box-${i}`];
-        const link = stage?.querySelector(`#kennedy-textbox-link-${i}`);
-        const node = subsystemBubbles?.querySelector(`#kennedy-textbox-node-${i}`);
-        if (!proj) return;
-        if (link) link.setAttribute("d", textBoxLinkD(box.boxPos, proj));
-        if (node) { node.style.left = proj.x.toFixed(2) + "%"; node.style.top = proj.y.toFixed(2) + "%"; }
+        box.coords.forEach((c, j) => {
+          const proj = declutteredPositions[`box-${i}-${j}`];
+          const link = stage?.querySelector(`#kennedy-textbox-link-${i}-${j}`);
+          const node = subsystemBubbles?.querySelector(`#kennedy-textbox-node-${i}-${j}`);
+          if (!proj) return;
+          if (link) link.setAttribute("d", textBoxLinkD(box.boxPos, proj));
+          if (node) { node.style.left = proj.x.toFixed(2) + "%"; node.style.top = proj.y.toFixed(2) + "%"; }
+        });
       });
     };
     // Al mover o hacer zoom en el mapa, las bolitas de fenómenos se
