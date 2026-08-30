@@ -1054,3 +1054,27 @@ body{
   font-weight: 600;
   letter-spacing: 0.3px;
 }
+
+
+/* Ingeniería inversa · modelos complementarios */
+.entry-question{margin:26px 0 10px;color:#f3efe9;font:700 clamp(20px,2.5vw,34px)/1.12 'Space Grotesk',sans-serif;letter-spacing:-.025em;}
+.entry-description{max-width:720px!important;margin-bottom:20px!important;}
+.entry-three-blocks .feature{border-top:2px solid rgba(47,191,174,.5);padding-top:12px;}
+.entry-three-blocks .feature h3{letter-spacing:.08em;font-size:12px;color:#5cd6d1;}
+.home-complementary-models{padding:72px 7vw 92px;background:linear-gradient(180deg,rgba(7,16,28,0),rgba(10,23,36,.88));border-top:1px solid rgba(92,214,209,.12);}
+.home-models-inner{max-width:1180px;margin:0 auto;}
+.home-models-kicker{color:#5cd6d1;font-size:10px;letter-spacing:.16em;font-weight:800;}
+.home-models-inner>h2{max-width:900px;margin:12px 0 28px;color:#f1f5f8;font:700 clamp(24px,3.4vw,46px)/1.08 'Space Grotesk',sans-serif;letter-spacing:-.03em;}
+.home-models-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;}
+.home-model-card{display:flex;align-items:center;gap:14px;min-height:86px;padding:16px 18px;border:1px solid rgba(255,255,255,.1);border-radius:16px;background:rgba(12,23,35,.8);transition:transform .2s ease,border-color .2s ease,background .2s ease;}
+.home-model-card:hover{transform:translateY(-3px);border-color:rgba(92,214,209,.52);background:rgba(20,47,57,.9);}
+.home-model-card>span{display:grid;place-items:center;flex:0 0 44px;width:44px;height:44px;border-radius:13px;color:#5cd6d1;background:rgba(92,214,209,.13);font-size:19px;}
+.home-model-card h3{margin:0 0 6px;color:#f3f6f8;font-size:14px;line-height:1.15;}
+.home-model-card p{margin:0;color:#9eafbd;font-size:11px;line-height:1.35;}
+@media(max-width:900px){.home-models-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media(max-width:600px){.home-complementary-models{padding:52px 20px 62px}.home-models-grid{grid-template-columns:1fr}.home-model-card{min-height:72px}.entry-question{font-size:24px}}
+@media(prefers-reduced-motion:reduce){.home-model-card{transition:none}.home-model-card:hover{transform:none}}
+
+
+.entry-three-blocks{grid-template-columns:repeat(3,minmax(0,1fr));column-gap:22px;max-width:720px;}
+@media(max-width:600px){.entry-three-blocks{grid-template-columns:1fr;row-gap:18px;}}
