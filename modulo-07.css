@@ -5712,9 +5712,10 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
   color: #fff; font-size: 9px; font-weight: 800; line-height: 1.25;
   margin: 0 0 2px; text-transform: uppercase; letter-spacing: .2px;
 }
-.kennedy-info-box .kennedy-subtitle {
-  color: var(--node-color, #fff); font-size: 7.5px; font-weight: 700;
-  text-transform: uppercase; margin: 0 0 6px; letter-spacing: .3px;
+.kennedy-info-box .kennedy-subtitle,
+.kennedy-info-box .kennedy-subtitle-as-title {
+  color: var(--node-color, #fff); font-size: 9px; font-weight: 800;
+  text-transform: uppercase; margin: 0 0 6px; letter-spacing: .3px; line-height: 1.3;
 }
 .kennedy-info-box .kennedy-mainline {
   color: #dfe3e8; font-size: 8px; font-style: italic; margin: 0 0 6px;

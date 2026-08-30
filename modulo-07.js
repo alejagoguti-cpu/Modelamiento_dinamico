@@ -2238,7 +2238,7 @@
       const proj = projectToPercent(box.coords);
       const nodeHtml = proj ? `<button type="button" class="map-network-node map-phenomenon-node" id="kennedy-textbox-node-${i}" style="left:${proj.x.toFixed(2)}%;top:${proj.y.toFixed(2)}%;--node-color:${box.color}"><i class="map-network-node-icon fa-solid ${box.icon}" aria-hidden="true"></i></button>` : "";
       const items = box.submodelos.map((s) => `<li>${s}</li>`).join("");
-      return `<div class="kennedy-info-box" style="left:${box.boxPos[0]}%;top:${box.boxPos[1]}%;--node-color:${box.color}"><h4>${box.title}</h4><p class="kennedy-subtitle">${box.subtitle}</p><p class="kennedy-mainline">${box.mainLine}</p><p class="kennedy-sub-label">Sub-modelos:</p><ul>${items}</ul></div>${nodeHtml}`;
+      return `<div class="kennedy-info-box" style="left:${box.boxPos[0]}%;top:${box.boxPos[1]}%;--node-color:${box.color}"><h4 class="kennedy-subtitle-as-title">${box.subtitle}</h4><p class="kennedy-mainline">${box.mainLine}</p><p class="kennedy-sub-label">Sub-modelos:</p><ul>${items}</ul></div>${nodeHtml}`;
     }).join("");
     const updateTextBoxes = () => {
       const stage = subsystemBubbles?.querySelector(".systems-network svg .map-network-flows");
