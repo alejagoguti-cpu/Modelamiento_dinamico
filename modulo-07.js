@@ -2158,14 +2158,26 @@
       { components: BIOTICA_COMPONENTS, targetIndex: 1, color: "#c9f2d6", prefix: "biotica" },
       { components: FISICO_COMPONENTS, targetIndex: 2, color: "#dfe3e8", prefix: "fisico" },
     ];
-    const buildFlowGroupsSvg = (positions) => FLOW_GROUPS.map((group) => {
+    const buildFlowGroupsSvg = (positions, hideHidricaBubble) => FLOW_GROUPS.map((group) => {
+      const isHidrica = group.prefix === "hidrica";
+      const hubPositions = (isHidrica && hideHidricaBubble)
+        ? HIDRICA_SUBMODELS.map((s) => projectToPercent(s.coords)).filter(Boolean)
+        : null;
       const [nx, ny] = positions[group.targetIndex];
       return group.components.map((c, i) => {
         const proj = projectToPercent(c.coords);
         if (!proj) return "";
+        // La dinámica hídrica ya no tiene una sola bolita central: cada
+        // componente traza su línea hasta el submodelo hídrico más cercano.
+        let targetX = nx, targetY = ny;
+        if (hubPositions && hubPositions.length) {
+          let best = hubPositions[0], bestDist = Infinity;
+          hubPositions.forEach((h) => { const d = Math.hypot(h.x - proj.x, h.y - proj.y); if (d < bestDist) { bestDist = d; best = h; } });
+          targetX = best.x; targetY = best.y;
+        }
         const id = `map-network-flow-${group.prefix}-${i}`;
-        const d = flowCurveD(proj.x, proj.y, nx, ny, fanOffsetFor(group, i));
-        return `<path id="${id}" class="map-network-flow-line" style="--flow-color:${group.color}" d="${d}"/>`;
+        const d = flowCurveD(proj.x, proj.y, targetX, targetY, fanOffsetFor(group, i));
+        return `<path id="${id}" class="map-network-flow-line" d="${d}"/>`;
       }).join("");
     }).join("");
     // Puntitos en HTML (no SVG): el SVG se estira sin conservar proporción
@@ -2201,20 +2213,33 @@
         if (A && B && el) el.setAttribute("d", `M ${A.x.toFixed(2)} ${A.y.toFixed(2)} L ${B.x.toFixed(2)} ${B.y.toFixed(2)}`);
       });
     };
-    // Al mover o hacer zoom en el mapa, las mini-bolitas se recalculan
-    // para que sigan exactamente sobre su coordenada real.
+    // Al mover o hacer zoom en el mapa, las mini-bolitas y las líneas se
+    // recalculan para que sigan exactamente sobre su coordenada real.
     const updateFlowGroups = () => {
       if (!subsystemBubbles?.classList.contains("network-active")) return;
       const stage = subsystemBubbles.querySelector(".systems-network");
       if (!stage) return;
       updateSubmodelLinks(stage);
+      const positions = [[6,45],[40,6],[72,10],[95,48],[74,90],[14,88]];
+      const hubPositionsHidrica = HIDRICA_SUBMODELS.map((s) => projectToPercent(s.coords)).filter(Boolean);
       FLOW_GROUPS.forEach((group) => {
+        const [nx, ny] = positions[group.targetIndex];
+        const isHidrica = group.prefix === "hidrica";
         group.components.forEach((c, i) => {
           const proj = projectToPercent(c.coords);
           const node = subsystemBubbles.querySelector(`#map-mini-node-${group.prefix}-${i}`);
-          if (!proj || !node) return;
-          node.style.left = proj.x.toFixed(2) + "%";
-          node.style.top = proj.y.toFixed(2) + "%";
+          const path = stage.querySelector(`#map-network-flow-${group.prefix}-${i}`);
+          if (!proj) return;
+          if (node) { node.style.left = proj.x.toFixed(2) + "%"; node.style.top = proj.y.toFixed(2) + "%"; }
+          if (path) {
+            let tx = nx, ty = ny;
+            if (isHidrica && hubPositionsHidrica.length) {
+              let best = hubPositionsHidrica[0], bestDist = Infinity;
+              hubPositionsHidrica.forEach((h) => { const d = Math.hypot(h.x - proj.x, h.y - proj.y); if (d < bestDist) { bestDist = d; best = h; } });
+              tx = best.x; ty = best.y;
+            }
+            path.setAttribute("d", flowCurveD(proj.x, proj.y, tx, ty, fanOffsetFor(group, i)));
+          }
         });
       });
       // Las 3 sub-bolitas de dinámica hídrica también se mueven encima de
@@ -2229,7 +2254,13 @@
       if (!target) return;
       const systems = mode === "systems";
       const rows = systems ? territorySystems : submodelRows;
-      const positions = systems ? [[6,45],[40,6],[72,10],[95,48],[74,90],[14,88]] : [[10,22],[28,7],[58,7],[90,22],[90,58],[68,88],[16,88]];
+      const isPlainView = target !== subsystemBubbles;
+      // La vista "solo red" (Subsistemas/Submodelos) usa un acomodo más
+      // compacto y centrado, pensado para un contenedor alto sin mapa —
+      // la vista anclada al mapa usa las posiciones de siempre.
+      const positions = systems
+        ? (isPlainView ? [[18,38],[42,14],[66,16],[86,40],[70,78],[28,80]] : [[6,45],[40,6],[72,10],[95,48],[74,90],[14,88]])
+        : (isPlainView ? [[16,20],[36,10],[58,10],[86,22],[86,52],[62,80],[26,80]] : [[10,22],[28,7],[58,7],[90,22],[90,58],[68,88],[16,88]]);
       const colors = ["#56b8d4", "#68d391", "#b8c0c8", "#f1cf5b", "#ee9a4b", "#e58d62", "#b28be8"];
       const systemIcons = ["fa-droplet", "fa-feather-pointed", "fa-building", "fa-route", "fa-people-group", "fa-house-chimney"];
       const submodelIcons = ["fa-water", "fa-feather-pointed", "fa-city", "fa-person-walking", "fa-house-chimney", "fa-people-arrows", "fa-arrows-rotate"];
@@ -2301,7 +2332,7 @@
       }).join("");
       target.dataset.revealState = "complete";
       target.classList.add("network-active");
-      const flowsSvg = (systems && withFlows) ? buildSubmodelLinksSvg() : "";
+      const flowsSvg = (systems && withFlows) ? buildFlowGroupsSvg(positions, hideHidricaBubble) + buildSubmodelLinksSvg() : "";
       const flowDotsHtml = (systems && withFlows) ? buildFlowDotsHtml() : "";
       target.innerHTML = `<div class="map-network-stage ${systems ? "systems-network" : "submodels-network"}"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><defs>${gradientDefs.join("")}</defs><g class="map-network-flows">${flowsSvg}</g><g class="map-network-bonds">${showBonds ? bonds : ""}</g></svg>${flowDotsHtml}${nodes}${submodelBubblesHtml}</div>`;
       if (hideHidricaBubble) {
@@ -2389,10 +2420,10 @@
       window.setTimeout(() => {
         announceCartography("KENNEDY · PERÍMETRO ADMINISTRATIVO", true);
         map.flyTo({ center: [-74.158, 4.629], zoom: 12.2, duration: 4400, essential: true });
+        // Las bolitas y las líneas solo salen cuando el mapa YA llegó de
+        // verdad al polígono de Kennedy (evento real "moveend"), nunca antes.
+        map.once("moveend", () => { showCartography(); });
       }, 700);
-      // Las bolitas y las líneas (moradas y blancas) ya salen apenas el
-      // zoom llega a Kennedy, no hasta el final del todo.
-      window.setTimeout(() => { showCartography(); }, 5300);
       window.setTimeout(() => {
         announceCartography("APROXIMACIÓN · HUMEDAL EL BURRO", true);
         map.flyTo({ center: [-74.158, 4.629], zoom: 13.3, duration: 3800, essential: true });

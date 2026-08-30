@@ -5236,14 +5236,13 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 }
 @media (prefers-reduced-motion: reduce) { .map-network-stage > svg .map-network-bond, .map-network-stage > svg .map-network-bond-soft { animation: none; } }
 
-/* Líneas rectas y simples (como en el plano de referencia): conectan cada
-   componente geográfico real (humedales, canales, parques...) con la
-   bolita de su dinámica, con un giro de 90° y abiertas en abanico para
-   que no se toquen entre sí. Cada grupo usa el color de su propia dinámica
-   (no todas blancas) para que se entienda de un vistazo qué va a qué. */
+/* Líneas delgaditas y blancas, con un giro de 90° (nunca en diagonal):
+   conectan cada componente geográfico real (humedales, canales, parques,
+   avenidas...) con la bolita de su dinámica, abiertas en abanico para
+   que no se toquen entre sí. */
 .map-network-stage > svg .map-network-flows { pointer-events: none; overflow: visible; }
 .map-network-stage > svg .map-network-flow-line {
-  fill: none; stroke: var(--flow-color, rgba(255,255,255,0.7)); stroke-width: .16;
+  fill: none; stroke: rgba(255,255,255,0.75); stroke-width: .14;
   stroke-dasharray: .9 .8; opacity: .85;
 }
 /* Puntito en HTML (no SVG), para que sea un círculo perfecto sin importar
@@ -5625,14 +5624,14 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 .territory-network-plain-wrap {
   position: relative;
   width: 100%;
-  min-height: 700px;
+  min-height: 860px;
   border-radius: 14px;
   overflow: hidden;
   background: radial-gradient(circle at 50% 40%, rgba(118,255,240,.08), transparent 60%), #07100f;
   border: 1px solid rgba(118,255,240,.18);
 }
 .territory-network-plain { position: absolute; inset: 0; }
-@media (max-width: 720px) { .territory-network-plain-wrap { min-height: 520px; } }
+@media (max-width: 720px) { .territory-network-plain-wrap { min-height: 620px; } }
 
 /* Sub-bolitas de los submodelos de dinámica hídrica: van ancladas encima
    de su lugar real en el mapa (no en una posición fija de la pantalla),
@@ -5677,17 +5676,17 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
   pointer-events: none;
 }
 .map-mini-node-dot {
-  width: 14px; height: 14px;
+  width: 15px; height: 15px;
   border-radius: 50% !important;
   aspect-ratio: 1 / 1 !important;
   background: var(--node-color, #fff);
-  border: 1.5px solid rgba(255,255,255,0.85);
-  box-shadow: 0 0 5px rgba(0,0,0,.8), 0 0 6px var(--node-color, #fff);
+  border: 1.5px solid rgba(255,255,255,0.9);
+  box-shadow: 0 0 4px rgba(0,0,0,.85), 0 0 10px var(--node-color, #fff), 0 0 18px var(--node-color, #fff);
   display: block;
 }
 .map-mini-node strong {
-  color: var(--node-color, #fff);
-  font: 700 8px/1.15 Inter, sans-serif;
-  text-shadow: 0 0 3px rgba(0,0,0,.95), 0 0 2px rgba(0,0,0,.95);
+  color: #fff;
+  font: 800 8px/1.15 Inter, sans-serif;
+  text-shadow: 0 0 3px rgba(0,0,0,.95), 0 0 2px rgba(0,0,0,.95), 0 0 6px var(--node-color, #fff);
   white-space: nowrap;
 }
