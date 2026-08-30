@@ -2228,18 +2228,46 @@
         return { x: (p.x / w) * 100, y: (p.y / h) * 100 };
       } catch (err) { return null; }
     };
+    // Para que las bolitas no queden pegadas/tocándose cuando dos lugares
+    // reales están muy cerca uno del otro, se separan un poco entre sí
+    // (un pequeño empujón), sin perder su ubicación real aproximada.
+    let declutteredPositions = {};
+    function computeDeclutteredPositions() {
+      const items = [];
+      KENNEDY_PHENOMENA.forEach((p, i) => { const proj = projectToPercent(p.coords); if (proj) items.push({ key: `phen-${i}`, x: proj.x, y: proj.y }); });
+      KENNEDY_TEXT_BOXES.forEach((b, i) => { const proj = projectToPercent(b.coords); if (proj) items.push({ key: `box-${i}`, x: proj.x, y: proj.y }); });
+      const minDist = 6;
+      for (let iter = 0; iter < 10; iter++) {
+        for (let a = 0; a < items.length; a++) {
+          for (let b = a + 1; b < items.length; b++) {
+            const dx = items[b].x - items[a].x, dy = items[b].y - items[a].y;
+            const dist = Math.hypot(dx, dy) || 0.0001;
+            if (dist < minDist) {
+              const push = (minDist - dist) / 2;
+              const ux = dx / dist, uy = dy / dist;
+              items[a].x -= ux * push; items[a].y -= uy * push;
+              items[b].x += ux * push; items[b].y += uy * push;
+            }
+          }
+        }
+      }
+      const map = {};
+      items.forEach((it) => { map[it.key] = { x: it.x, y: it.y }; });
+      return map;
+    }
     // Una sola bolita grande (mismo tamaño que las bolas de los sistemas)
     // con su ícono, puesta encima de cada lugar real — sin nombre visible,
     // sin líneas. Aparecen en cascada, suave, no todas de golpe.
     const buildPhenomenaHtml = () => KENNEDY_PHENOMENA.map((p, i) => {
-      const proj = projectToPercent(p.coords);
+      const proj = declutteredPositions[`phen-${i}`];
       if (!proj) return "";
       const style = KENNEDY_SYSTEM_STYLE[p.system] || { color: "#fff", icon: "fa-circle" };
       return `<button type="button" class="map-network-node map-phenomenon-node" id="map-phenomenon-${i}" data-phenomenon-index="${i}" style="left:${proj.x.toFixed(2)}%;top:${proj.y.toFixed(2)}%;--node-color:${style.color};--reveal-delay:${i * 180}ms"><i class="map-network-node-icon fa-solid ${style.icon}" aria-hidden="true"></i></button>`;
     }).join("");
     const updatePhenomenaPositions = () => {
+      declutteredPositions = computeDeclutteredPositions();
       KENNEDY_PHENOMENA.forEach((p, i) => {
-        const proj = projectToPercent(p.coords);
+        const proj = declutteredPositions[`phen-${i}`];
         const el = subsystemBubbles?.querySelector(`#map-phenomenon-${i}`);
         if (proj && el) { el.style.left = proj.x.toFixed(2) + "%"; el.style.top = proj.y.toFixed(2) + "%"; }
       });
@@ -2248,23 +2276,28 @@
     // línea en L (blanca) hacia la caja de texto fija, igual al referente.
     const textBoxLinkD = (boxPos, nodeProj) => `M ${boxPos[0].toFixed(2)} ${boxPos[1].toFixed(2)} L ${nodeProj.x.toFixed(2)} ${boxPos[1].toFixed(2)} L ${nodeProj.x.toFixed(2)} ${nodeProj.y.toFixed(2)}`;
     const buildTextBoxesSvg = () => KENNEDY_TEXT_BOXES.map((box, i) => {
-      const proj = projectToPercent(box.coords);
+      const proj = declutteredPositions[`box-${i}`];
       if (!proj) return "";
       return `<path id="kennedy-textbox-link-${i}" class="kennedy-box-link" d="${textBoxLinkD(box.boxPos, proj)}"/>`;
     }).join("");
     const buildTextBoxesHtml = () => KENNEDY_TEXT_BOXES.map((box, i) => {
-      const proj = projectToPercent(box.coords);
+      const proj = declutteredPositions[`box-${i}`];
       const nodeHtml = proj ? `<button type="button" class="map-network-node map-phenomenon-node" id="kennedy-textbox-node-${i}" style="left:${proj.x.toFixed(2)}%;top:${proj.y.toFixed(2)}%;--node-color:${box.color}"><i class="map-network-node-icon fa-solid ${box.icon}" aria-hidden="true"></i></button>` : "";
       const sectionsHtml = box.sections.map((section) => {
         const items = section.submodelos.map((s) => `<li><i class="fa-solid ${section.icon} kennedy-item-icon" aria-hidden="true"></i>${s}</li>`).join("");
         return `<div class="kennedy-section"><p class="kennedy-mainline">${section.system} <span class="kennedy-arrow">⟹</span> Sub-modelos:</p><ul>${items}</ul></div>`;
       }).join("");
-      return `<div class="kennedy-info-box" style="left:${box.boxPos[0]}%;top:${box.boxPos[1]}%;--node-color:${box.color}"><h4 class="kennedy-title-line">${box.title} <span class="kennedy-macro">– ${box.macro}</span></h4>${sectionsHtml}</div>${nodeHtml}`;
+      // La caja "crece" hacia el lado que sí cabe en la pantalla (a la
+      // derecha del nodo si está en la mitad izquierda del mapa, a la
+      // izquierda del nodo si está en la mitad derecha) para que no se
+      // recorte contra el borde del contenedor.
+      const anchorClass = box.boxPos[0] > 50 ? "kennedy-anchor-right" : "kennedy-anchor-left";
+      return `<div class="kennedy-info-box ${anchorClass}" style="left:${box.boxPos[0]}%;top:${box.boxPos[1]}%;--node-color:${box.color}"><h4 class="kennedy-title-line">${box.title} <span class="kennedy-macro">– ${box.macro}</span></h4>${sectionsHtml}</div>${nodeHtml}`;
     }).join("");
     const updateTextBoxes = () => {
       const stage = subsystemBubbles?.querySelector(".systems-network svg .map-network-flows");
       KENNEDY_TEXT_BOXES.forEach((box, i) => {
-        const proj = projectToPercent(box.coords);
+        const proj = declutteredPositions[`box-${i}`];
         const link = stage?.querySelector(`#kennedy-textbox-link-${i}`);
         const node = subsystemBubbles?.querySelector(`#kennedy-textbox-node-${i}`);
         if (!proj) return;
@@ -2300,6 +2333,7 @@
       // de lugar real (Humedal El Burro, Corabastos, etc.).
       const hideAllSystemBubbles = systems && withFlows;
       const nodes = hideAllSystemBubbles ? "" : rows.map((row, index) => { const [x,y] = positions[index]; return `<button type="button" class="map-network-node ${systems ? "map-system-node" : "map-submodel-node"}" data-map-network-index="${index}" style="--node-x:${x}%;--node-y:${y}%;--node-color:${row.color || colors[index]}"><i class="map-network-node-icon fa-solid ${icon(index)}" aria-hidden="true"></i><strong>${label(row)}</strong></button>`; }).join("");
+      if (hideAllSystemBubbles) declutteredPositions = computeDeclutteredPositions();
       const kennedyBoxesHtml = hideAllSystemBubbles ? buildPhenomenaHtml() + buildTextBoxesHtml() : "";
       const relationPairs = hideAllSystemBubbles ? [] : (systems
         ? [[0,1],[0,2],[0,5],[1,2],[1,3],[1,5],[2,3],[2,4],[3,4],[3,5],[4,5]]
