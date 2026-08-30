@@ -5239,12 +5239,12 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 /* Líneas rectas y simples (como en el plano de referencia): conectan cada
    componente geográfico real (humedales, canales, parques...) con la
    bolita de su dinámica, con un giro de 90° y abiertas en abanico para
-   que no se toquen entre sí. Delgadas y punteadas. Ya no hay conexiones
-   entre las bolas grandes entre sí. */
+   que no se toquen entre sí. Ya no hay conexiones entre las bolas grandes
+   entre sí. Grosor y opacidad subidos para que sí se alcancen a ver. */
 .map-network-stage > svg .map-network-flows { pointer-events: none; overflow: visible; }
 .map-network-stage > svg .map-network-flow-line {
-  fill: none; stroke: rgba(255,255,255,0.5); stroke-width: .12;
-  stroke-dasharray: .5 .7;
+  fill: none; stroke: rgba(255,255,255,0.85); stroke-width: .35;
+  stroke-dasharray: 1.1 .9;
 }
 /* Puntito en HTML (no SVG), para que sea un círculo perfecto sin importar
    la proporción del mapa — chiquito y fijo en la coordenada real. */
@@ -5254,6 +5254,14 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
   background: #ffffff; transform: translate(-50%, -50%);
   box-shadow: 0 0 2px rgba(0,0,0,.6);
   pointer-events: none;
+}
+/* Nombre de lo que se está señalando: chiquito, junto al puntito. */
+.map-network-flow-label {
+  position: absolute; z-index: 2;
+  transform: translate(6px, -50%);
+  color: #fff; font: 700 8px/1.2 Inter, sans-serif;
+  text-shadow: 0 0 3px rgba(0,0,0,.9), 0 0 1px rgba(0,0,0,.9);
+  white-space: nowrap; pointer-events: none;
 }
 
 /* ===================== AJUSTE FINAL · FLOTADO LENTO Y UNIONES ELÁSTICAS ===================== */
@@ -5616,11 +5624,11 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 .territory-network-plain-wrap {
   position: relative;
   width: 100%;
-  min-height: 460px;
+  min-height: 700px;
   border-radius: 14px;
   overflow: hidden;
   background: radial-gradient(circle at 50% 40%, rgba(118,255,240,.08), transparent 60%), #07100f;
   border: 1px solid rgba(118,255,240,.18);
 }
 .territory-network-plain { position: absolute; inset: 0; }
-@media (max-width: 720px) { .territory-network-plain-wrap { min-height: 380px; } }
+@media (max-width: 720px) { .territory-network-plain-wrap { min-height: 520px; } }

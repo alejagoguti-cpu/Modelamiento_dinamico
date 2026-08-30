@@ -1568,8 +1568,8 @@
     ];
     const temporalStates = [
       { id: "historico", label: "Histórico", description: "El Burro hacía parte de la antigua Laguna El Tintal y tenía una extensión mayor.", zoom: 11.4 },
-      { id: "transformacion", label: "Transformación", description: "Reducción del área, urbanización y fragmentación asociada a la Avenida Ciudad de Cali.", zoom: 12.35 },
-      { id: "actual", label: "Actual", description: "Dos fragmentos, presiones urbanas, biodiversidad, participación comunitaria y restauración.", zoom: 13.65 }
+      { id: "transformacion", label: "Transformación", description: "Reducción del área, urbanización y fragmentación asociada a la Avenida Ciudad de Cali.", zoom: 11.6 },
+      { id: "actual", label: "Actual", description: "Dos fragmentos, presiones urbanas, biodiversidad, participación comunitaria y restauración.", zoom: 11.8 }
     ];
 
     const partOneLayerMeta = [
@@ -1928,17 +1928,29 @@
             [-74.16919686693828, 4.629399584041981],
             [-74.16601282780427, 4.632220602237944],
             [-74.16182640597988, 4.63548239049773],
+            [-74.1565649728385, 4.640976777850417],
+            [-74.15592192918001, 4.64010873889262],
             [-74.15749729510853, 4.639246968855656],
             [-74.14673045967228, 4.649430692986774],
-            [-74.13862528302967, 4.6565927311303135]
+            [-74.13862528302967, 4.6565927311303135],
+            [-74.11049632038453, 4.68821351420676]
           ] } },
           { type: "Feature", properties: { label: "Avenida de las Américas" }, geometry: { type: "LineString", coordinates: [
-            [-74.0930, 4.6335], [-74.1000, 4.6330], [-74.1080, 4.6310], [-74.1150, 4.6320],
-            [-74.1250, 4.6330], [-74.1330, 4.6335], [-74.1400, 4.6340], [-74.1480, 4.6350],
-            [-74.1550, 4.6355], [-74.1592, 4.6360], [-74.1660, 4.6375]
+            [-74.15630796889592, 4.639655873553835],
+            [-74.1502522191673, 4.632428898507104],
+            [-74.14149649622178, 4.630699233503572],
+            [-74.12596161183357, 4.629119030783527],
+            [-74.10844006182661, 4.62789831664558],
+            [-74.08683159566945, 4.624876830893459]
+          ] } },
+          { type: "Feature", properties: { label: "Avenida Boyacá" }, geometry: { type: "LineString", coordinates: [
+            [-74.14129179848494, 4.60884108175092],
+            [-74.13774935797123, 4.632539036499758],
+            [-74.11319853892789, 4.664630608439349],
+            [-74.10271508111543, 4.676992365168468]
           ] } }
         ] } });
-        map.addLayer({ id: "avenidas-referencia-line", type: "line", source: "avenidas-referencia", paint: { "line-color": "#b28be8", "line-width": ["interpolate", ["linear"], ["zoom"], 10, 0.8, 14, 1.6], "line-opacity": .85 } });
+        map.addLayer({ id: "avenidas-referencia-line", type: "line", source: "avenidas-referencia", paint: { "line-color": "#b28be8", "line-width": ["interpolate", ["linear"], ["zoom"], 10, 1.4, 14, 2.6], "line-opacity": .88 } });
         map.addLayer({ id: "avenidas-referencia-labels", type: "symbol", source: "avenidas-referencia", layout: { "symbol-placement": "line", "text-field": ["get", "label"], "text-size": 9, "text-offset": [0, -0.8] }, paint: { "text-color": "#d9c8f5", "text-halo-color": "#0a0612", "text-halo-width": 1.3 } });
         map.addSource("subsystem-component-points", { type: "geojson", data: { type: "FeatureCollection", features: [] } });
         map.addLayer({ id: "subsystem-component-point-halo", type: "circle", source: "subsystem-component-points", paint: { "circle-radius": ["interpolate", ["linear"], ["zoom"], 10, 8, 14, 13], "circle-color": ["coalesce", ["get", "color"], "#ffffff"], "circle-opacity": .18, "circle-blur": .35 }, layout: { visibility: "none" } });
@@ -1957,7 +1969,7 @@
       document.getElementById("loadOsmStreets")?.addEventListener("click", loadOsm);
       /* Las calles OSM quedan como acción manual y no se cargan al abrir el mapa. */
       document.getElementById("loadOsrmRoute")?.addEventListener("click", loadRoute);
-      document.getElementById("resetCartography")?.addEventListener("click", () => { if (map.getLayer("osm-streets")) map.removeLayer("osm-streets"); if (map.getSource("osm-streets")) map.removeSource("osm-streets"); if (map.getLayer("osrm-route")) map.removeLayer("osrm-route"); if (map.getSource("osrm-route")) map.removeSource("osrm-route"); clearSubsystemPoints(); drawSubsystems({ hidden: true }); map.jumpTo({ center: [-74.150,4.642], zoom: 13.65 }); setStatus("HUMEDAL EL BURRO · CARTOGRAFÍA LISTA", true); });
+      document.getElementById("resetCartography")?.addEventListener("click", () => { if (map.getLayer("osm-streets")) map.removeLayer("osm-streets"); if (map.getSource("osm-streets")) map.removeSource("osm-streets"); if (map.getLayer("osrm-route")) map.removeLayer("osrm-route"); if (map.getSource("osrm-route")) map.removeSource("osrm-route"); clearSubsystemPoints(); drawSubsystems({ hidden: true }); map.jumpTo({ center: [-74.150,4.642], zoom: 11.8 }); setStatus("HUMEDAL EL BURRO · CARTOGRAFÍA LISTA", true); });
     }
     function initProceduralSimulation() {
       const holder = document.getElementById("proceduralSimulation");
@@ -2104,15 +2116,17 @@
     // Puntitos en HTML (no SVG): el SVG se estira sin conservar proporción
     // (preserveAspectRatio="none"), así que un círculo ahí sale ovalado.
     // En HTML, con ancho = alto en píxeles, siempre quedan perfectamente
-    // redondos, chiquitos y fijos en la coordenada real.
+    // redondos, chiquitos y fijos en la coordenada real. Cada uno lleva
+    // también su nombre, chiquito, para saber qué se está señalando.
     const buildFlowDotsHtml = () => FLOW_GROUPS.map((group) => group.components.map((c, i) => {
       const proj = projectToPercent(c.coords);
       if (!proj) return "";
       const id = `map-network-flow-dot-${group.prefix}-${i}`;
-      return `<span id="${id}" class="map-network-flow-dot" style="left:${proj.x.toFixed(2)}%;top:${proj.y.toFixed(2)}%"></span>`;
+      const labelId = `map-network-flow-label-${group.prefix}-${i}`;
+      return `<span id="${id}" class="map-network-flow-dot" style="left:${proj.x.toFixed(2)}%;top:${proj.y.toFixed(2)}%"></span><span id="${labelId}" class="map-network-flow-label" style="left:${proj.x.toFixed(2)}%;top:${proj.y.toFixed(2)}%">${c.label}</span>`;
     }).join("")).join("");
-    // Al mover o hacer zoom en el mapa, las líneas y los puntitos se vuelven
-    // a calcular para que sigan llegando exactamente a cada bolita.
+    // Al mover o hacer zoom en el mapa, las líneas, los puntitos y sus
+    // nombres se vuelven a calcular para que sigan en su coordenada real.
     const updateFlowGroups = () => {
       if (!subsystemBubbles?.classList.contains("network-active")) return;
       const stage = subsystemBubbles.querySelector(".systems-network");
@@ -2124,9 +2138,11 @@
           const proj = projectToPercent(c.coords);
           const path = stage.querySelector(`#map-network-flow-${group.prefix}-${i}`);
           const dot = stage.querySelector(`#map-network-flow-dot-${group.prefix}-${i}`);
+          const labelEl = stage.querySelector(`#map-network-flow-label-${group.prefix}-${i}`);
           if (!proj) return;
           if (path) path.setAttribute("d", flowCurveD(proj.x, proj.y, nx, ny, fanOffsetFor(group, i)));
           if (dot) { dot.style.left = proj.x.toFixed(2) + "%"; dot.style.top = proj.y.toFixed(2) + "%"; }
+          if (labelEl) { labelEl.style.left = proj.x.toFixed(2) + "%"; labelEl.style.top = proj.y.toFixed(2) + "%"; }
         });
       });
     };
@@ -2256,7 +2272,7 @@
       map.__openingPlayed = true;
       const reduced = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
       if (reduced) {
-        map.jumpTo({ center: [-74.150, 4.642], zoom: 13.65 });
+        map.jumpTo({ center: [-74.150, 4.642], zoom: 11.8 });
         announceCartography("HUMEDAL EL BURRO · AGUA Y SUBSISTEMAS", true);
         drawSubsystems({ hidden: true });
         return;
@@ -2266,11 +2282,11 @@
       map.jumpTo({ center: [-74.09, 4.64], zoom: 10.55 });
       window.setTimeout(() => {
         announceCartography("KENNEDY · PERÍMETRO ADMINISTRATIVO", true);
-        map.flyTo({ center: [-74.151, 4.625], zoom: 12.05, duration: 1800, essential: true });
+        map.flyTo({ center: [-74.151, 4.625], zoom: 11.3, duration: 1800, essential: true });
       }, 450);
       window.setTimeout(() => {
         announceCartography("APROXIMACIÓN · HUMEDAL EL BURRO", true);
-        map.flyTo({ center: [-74.150, 4.642], zoom: 13.65, duration: 2200, essential: true });
+        map.flyTo({ center: [-74.150, 4.642], zoom: 11.8, duration: 2200, essential: true });
       }, 2250);
       window.setTimeout(() => {
         announceCartography("HUMEDAL EL BURRO · LISTO PARA ACTIVAR UNA RED", true);
