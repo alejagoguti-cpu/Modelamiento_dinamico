@@ -1678,7 +1678,7 @@
       // en las coordenadas exactas que diste.
       { id: "mitigacion_organica", title: "MODELO DE MITIGACIÓN DE CARGA ORGÁNICA Y RESIDUOS",
         color: "#56b8d4", icon: "fa-recycle",
-        boxCoords: [-74.1723091682759, 4.642347361339735], boxPos: [30, 70],
+        boxCoords: [-74.1793091682759, 4.642347361339735], boxPos: [30, 70],
         coords: [
           // Lado izquierdo de la caja → izquierda, baja, derecha → lado
           // derecho de Humedal La Vaca.
@@ -2318,9 +2318,14 @@
       const pt = (px, py) => `${px.toFixed(2)} ${py.toFixed(2)}`;
       return `M ${pt(x1, y1)} L ${pt(x1, midY - sign1 * r1)} Q ${pt(x1, midY)} ${pt(x1 + hSign * r1, midY)} L ${pt(x2 - hSign * r2, midY)} Q ${pt(x2, midY)} ${pt(x2, midY + sign2 * r2)} L ${pt(x2, y2)}`;
     }
-    // Cuánto se desplaza cada borde (bolita ~1.1%, caja ~6.2% de ancho —
-    // aproximado, para salir/pegar del lado correcto en vez del centro).
-    const BUBBLE_EDGE = 1.1, BOX_EDGE = 6.2, CORNER_R = 1.6;
+    // El borde de la bolita (46px) y de la caja (188px) se calculan en %
+    // según el ANCHO REAL del contenedor en este momento — antes usaba un
+    // porcentaje fijo que no coincidía con el tamaño real en pantalla, por
+    // eso las líneas quedaban "flotando" sin pegar al borde de verdad.
+    const containerWidthPx = subsystemBubbles?.clientWidth || 1000;
+    const BUBBLE_EDGE = (46 / 2 / containerWidthPx) * 100;
+    const BOX_EDGE = (188 / 2 / containerWidthPx) * 100;
+    const CORNER_R = 1.6;
     const sidePoint = (x, y, side, edge) => side === "left" ? [x - edge, y] : side === "right" ? [x + edge, y] : side === "top" ? [x, y - edge] : [x, y + edge];
     const textBoxLinkD = (boxPos, nodeProj, route) => {
       if (!route) {
@@ -2523,6 +2528,17 @@
           const closePanels = (event) => { event?.stopPropagation(); purpose.remove(); button.classList.remove("selected"); };
           purpose.querySelector(".subsystem-panel-close")?.addEventListener("click", closePanels);
         }));
+        // Los nuevos íconos de conexión (dentro de las cajas de texto) no
+        // tenían NINGÚN sonido — la lista vieja de fenómenos está vacía,
+        // así que el manejador de arriba no hacía nada para ellos. Esto
+        // les da su propio sonido según el color/categoría del punto.
+        const COLOR_TO_SYSTEM = { "#56b8d4": "hidrica", "#b8c0c8": "fisico", "#f1cf5b": "movilidad", "#e58d62": "socioeconomico", "#68d391": "biotica" };
+        target.querySelectorAll(".kennedy-node-wrap .map-phenomenon-node").forEach((button) => {
+          button.addEventListener("click", () => {
+            const color = button.style.getPropertyValue("--node-color").trim();
+            DINAMICA_SOUND.play(COLOR_TO_SYSTEM[color] || "fisico");
+          });
+        });
       }
     };
     const clearMapNetwork = () => { if (!subsystemBubbles) return; subsystemBubbles.classList.remove("network-active"); subsystemBubbles.replaceChildren(); clearSubsystemPoints(); };
