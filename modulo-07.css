@@ -5726,15 +5726,6 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 }
 .kennedy-info-box ul { margin: 0; padding-left: 13px; }
 .kennedy-info-box li { color: #cfd6dc; font-size: 7.5px; line-height: 1.4; margin-bottom: 2px; }
-.kennedy-box-node {
-  position: absolute; z-index: 7;
-  width: 13px; height: 13px; border-radius: 50% !important; aspect-ratio: 1/1 !important;
-  background: var(--node-color, #fff);
-  border: 1.5px solid rgba(255,255,255,0.9);
-  box-shadow: 0 0 5px rgba(0,0,0,.85), 0 0 10px var(--node-color, #fff);
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-}
 .map-network-stage > svg .kennedy-box-link {
   fill: none; stroke: rgba(255,255,255,0.8); stroke-width: .16; stroke-dasharray: .9 .8;
   opacity: .85;

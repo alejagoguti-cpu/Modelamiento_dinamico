@@ -1652,9 +1652,9 @@
       { id: "tunjuelo", label: "Río Tunjuelo", coords: [-74.17429119107521, 4.603360016778938], system: "hidrica",
         phenomenon: "Sobrecarga Hidráulica y Desbordamiento por Colapso Pluvial",
         detail: "Como la ciudad está pavimentada, toda el agua de lluvia de Kennedy corre hacia los canales sin filtrarse. Al llegar al río, sobrepasa la capacidad del cauce, provocando el retorno de aguas servidas e inundaciones en barrios perimetrales." },
-      { id: "corabastos", label: "Corabastos", coords: [-74.1599146050763, 4.63015596902525], system: "socioeconomico",
-        phenomenon: "Generación de Cargas Orgánicas y Lixiviados",
-        detail: "Pendiente de completar (el detalle de este punto quedó incompleto en el texto que me diste)." },
+      // "corabastos" ya no va aquí: ahora tiene su propia caja de texto
+      // completa en KENNEDY_TEXT_BOXES, con su propio nodo — para no
+      // duplicar un punto encima del ícono en el mismo lugar.
       { id: "avcali", label: "Av. Ciudad de Cali", coords: [-74.15162630856268, 4.644831758038044], system: "fisico",
         phenomenon: "Corredor infraestructural — impermeabilización y sello de suelo",
         detail: "Pendiente de completar (no me diste el detalle de este punto)." },
@@ -1677,10 +1677,10 @@
     const KENNEDY_TEXT_BOXES = [
       { id: "lavaca", title: "HUMEDAL LA VACA", subtitle: "MODELO DE ABSORCIÓN DE IMPACTO", mainLine: "Modelo Social ⟶ Sistema Ecológico",
         submodelos: ["Modelo de gestión de residuos.", "Modelo de gestión de lixiviados.", "Modelo de calidad hídrica.", "Modelo de vegetación acuática."],
-        coords: [-74.16284778855655, 4.62939492240078], color: "#56b8d4", boxPos: [10, 62] },
+        coords: [-74.16284778855655, 4.62939492240078], color: "#56b8d4", icon: "fa-droplet", boxPos: [10, 62] },
       { id: "corabastos", title: "CORABASTOS", subtitle: "MODELO COMERCIAL Y LOGÍSTICO", mainLine: "Modelo Social ⟶ Sistema Ecológico",
         submodelos: ["Modelo de planificación comercial.", "Modelo de gestión de residuos orgánicos.", "Modelo de movilidad pesada.", "Modelo de saneamiento ambiental."],
-        coords: [-74.1599146050763, 4.63015596902525], color: "#e58d62", boxPos: [90, 62] },
+        coords: [-74.1599146050763, 4.63015596902525], color: "#e58d62", icon: "fa-house-chimney", boxPos: [90, 62] },
     ];
     // ---------- Sonidos ambiente por dinámica (sintetizados, sin archivos
     // externos) — cada burbuja del territorio suena distinto al tocarla:
@@ -2081,8 +2081,8 @@
         /* Las gotitas decorativas se mantienen retiradas; el agua se lee mediante su cartografía y puntos de componentes. */
         const waterLayer = partOneMapLayers.find((layer) => layer.id === "hidrico"); if (waterLayer) waterLayer.markers = []; map.__waterMarkers = [];
         initPartOneControls(map, partOneMapLayers);
-        map.on("move", updateFlowGroups);
-        map.on("zoom", updateFlowGroups);
+        // Ya NO se recalcula la posición al mover/hacer zoom: una vez que
+        // aparece, queda fija como un plano — sin bailar ni deformarse.
         setStatus("BOGOTÁ · LECTURA GENERAL", true); setupCartographyEntrance(map);
         // El mapa YA está listo (componentPointMap ya asignado arriba):
         // ahora sí es seguro mostrar Cartografía interactiva de una vez,
@@ -2237,7 +2237,7 @@
     }).join("");
     const buildTextBoxesHtml = () => KENNEDY_TEXT_BOXES.map((box, i) => {
       const proj = projectToPercent(box.coords);
-      const nodeHtml = proj ? `<span id="kennedy-textbox-node-${i}" class="kennedy-box-node" style="left:${proj.x.toFixed(2)}%;top:${proj.y.toFixed(2)}%;--node-color:${box.color}"></span>` : "";
+      const nodeHtml = proj ? `<button type="button" class="map-network-node map-phenomenon-node" id="kennedy-textbox-node-${i}" style="left:${proj.x.toFixed(2)}%;top:${proj.y.toFixed(2)}%;--node-color:${box.color}"><i class="map-network-node-icon fa-solid ${box.icon}" aria-hidden="true"></i></button>` : "";
       const items = box.submodelos.map((s) => `<li>${s}</li>`).join("");
       return `<div class="kennedy-info-box" style="left:${box.boxPos[0]}%;top:${box.boxPos[1]}%;--node-color:${box.color}"><h4>${box.title}</h4><p class="kennedy-subtitle">${box.subtitle}</p><p class="kennedy-mainline">${box.mainLine}</p><p class="kennedy-sub-label">Sub-modelos:</p><ul>${items}</ul></div>${nodeHtml}`;
     }).join("");
@@ -2411,6 +2411,18 @@
       window.setTimeout(() => overlay.classList.add("formation-released"), 2850);
       window.setTimeout(() => { overlay.remove(); drawSubsystems({ hidden: true }); revealSubsystems(160); }, 5200);
     };
+    // Una vez el mapa llega a Kennedy, se queda fijo como un plano estático
+    // — ya no se puede mover ni hacer zoom, así las cajas y las bolitas
+    // nunca se desalinean (no hay que recalcular nada después de esto).
+    function freezeMapAsStaticPlan(map) {
+      map.scrollZoom.disable();
+      map.boxZoom.disable();
+      map.dragRotate.disable();
+      map.dragPan.disable();
+      map.keyboard.disable();
+      map.doubleClickZoom.disable();
+      map.touchZoomRotate.disable();
+    }
     const runCartographyOpening = (map) => {
       if (!map || map.__openingPlayed) return;
       map.__openingPlayed = true;
@@ -2419,6 +2431,7 @@
         map.jumpTo({ center: [-74.158, 4.629], zoom: 13.3 });
         announceCartography("HUMEDAL EL BURRO · AGUA Y SUBSISTEMAS", true);
         showCartography();
+        freezeMapAsStaticPlan(map);
         return;
       }
       announceCartography("BOGOTÁ · LECTURA GENERAL", true);
@@ -2434,6 +2447,9 @@
       window.setTimeout(() => {
         announceCartography("APROXIMACIÓN · HUMEDAL EL BURRO", true);
         map.flyTo({ center: [-74.158, 4.629], zoom: 13.3, duration: 3800, essential: true });
+        // Al terminar este último acercamiento, el mapa queda fijo del
+        // todo — como un plano, no como un mapa interactivo.
+        map.once("moveend", () => freezeMapAsStaticPlan(map));
       }, 5300);
       window.setTimeout(() => {
         announceCartography("HUMEDAL EL BURRO · LISTO PARA ACTIVAR UNA RED", true);
