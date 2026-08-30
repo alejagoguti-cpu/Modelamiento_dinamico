@@ -1178,6 +1178,7 @@ const PATRIMONIO_NODOS_SOBREVIVIENTES = [
 
 /* Función maestra para animación de iluminación, desconexión y acercamiento fluido */
 function ejecutarTransicionRed(nodosSobrevivientes, hubId, onComplete) {
+  clearSpotlight();
   document.querySelectorAll(".insight-card").forEach(c => c.classList.remove("active"));
 
   const survivors = new Set(nodosSobrevivientes);
@@ -1204,8 +1205,16 @@ function ejecutarTransicionRed(nodosSobrevivientes, hubId, onComplete) {
     const node = nodeById(hubId) || nodeById("red_vial") || nodeById("humedales");
     if (svg && node) {
       const vb = svg.viewBox.baseVal;
-      const originXPct = ((node.x - vb.x) / vb.width) * 100;
-      const originYPct = ((node.y - vb.y) / vb.height) * 100;
+      const rect = svg.getBoundingClientRect();
+      const scale = Math.min(rect.width / vb.width, rect.height / vb.height);
+      const renderedW = vb.width * scale;
+      const renderedH = vb.height * scale;
+      const offsetX = (rect.width - renderedW) / 2;
+      const offsetY = (rect.height - renderedH) / 2;
+      const nodeXScreen = offsetX + ((node.x - vb.x) * scale);
+      const nodeYScreen = offsetY + ((node.y - vb.y) * scale);
+      const originXPct = (nodeXScreen / rect.width) * 100;
+      const originYPct = (nodeYScreen / rect.height) * 100;
       svg.style.transformOrigin = `${originXPct}% ${originYPct}%`;
       svg.classList.add("zoom-into-humedales");
 
