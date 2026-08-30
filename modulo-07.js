@@ -1793,12 +1793,12 @@
         const line = (coordinates, properties = {}) => feature({ type: "LineString", coordinates }, properties);
         const pt = (coordinates, properties = {}) => feature({ type: "Point", coordinates }, properties);
         const layerCollections = {
-          hidrico: { type: "FeatureCollection", features: [...burro.features, ...context.features.filter((item) => item.properties.kind === "canal"), pt([-74.159,4.641], { label: "Espejo de agua", kind: "water-point" }), pt([-74.160,4.646], { label: "Ronda norte", kind: "water-point" }), pt([-74.158,4.635], { label: "Ronda sur", kind: "water-point" }), pt([-74.174,4.645], { label: "Canal Los Ángeles", kind: "water-point" }), pt([-74.166,4.644], { label: "Entrada de agua", kind: "water-point" }), pt([-74.153,4.639], { label: "Salida de agua", kind: "water-point" }), pt([-74.167,4.651], { label: "Escorrentías", kind: "water-point" }),
+          hidrico: { type: "FeatureCollection", features: [...burro.features, ...context.features.filter((item) => item.properties.kind === "canal"),
             // Componentes de la dinámica hídrica a escala de Bogotá — cada uno se
-            // conecta con una línea al punto central ("Espejo de agua" = la bolita
-            // de Dinámica hídrica), igual que en el plano de referencia.
+            // conecta con una línea al marcador que ya existe en el mapa
+            // (HUMEDAL EL BURRO), como puntos chiquitos y blancos.
             ...(() => {
-              const HIDRICA_HUB = [-74.159, 4.641];
+              const HIDRICA_HUB = [-74.150, 4.642]; // mismo punto del marcador "HUMEDAL EL BURRO" ya existente
               const HIDRICA_COMPONENTS = [
                 { label: "Humedal El Burro", coords: [-74.14987475206779, 4.64210777486686] },
                 { label: "Humedal La Vaca", coords: [-74.16284778855655, 4.62939492240078] },
@@ -1831,7 +1831,7 @@
           map.addSource(sourceId, { type: "geojson", data: layerCollections[meta.id] });
           map.addLayer({ id: fillId, type: "fill", source: sourceId, paint: { "fill-color": meta.color, "fill-opacity": .18 }, layout: { visibility: "none" } });
           map.addLayer({ id: lineId, type: "line", source: sourceId, filter: ["!=", ["get", "kind"], "hidrica-link"], paint: { "line-color": meta.color, "line-width": ["interpolate", ["linear"], ["zoom"], 10, 1.2, 14, 3], "line-opacity": .86 }, layout: { visibility: "none" } });
-          map.addLayer({ id: pointId, type: "circle", source: sourceId, filter: ["==", ["geometry-type"], "Point"], paint: { "circle-color": meta.color, "circle-radius": meta.id === "hidrico" ? ["interpolate", ["linear"], ["zoom"], 10, 7, 14, 10] : ["interpolate", ["linear"], ["zoom"], 10, 4, 14, 7], "circle-opacity": meta.id === "hidrico" ? .92 : 1, "circle-stroke-color": "#070b0c", "circle-stroke-width": meta.id === "hidrico" ? 2 : 1.5 }, layout: { visibility: "none" } });
+          map.addLayer({ id: pointId, type: "circle", source: sourceId, filter: ["==", ["geometry-type"], "Point"], paint: { "circle-color": meta.id === "hidrico" ? "#ffffff" : meta.color, "circle-radius": meta.id === "hidrico" ? ["interpolate", ["linear"], ["zoom"], 10, 2.4, 14, 4] : ["interpolate", ["linear"], ["zoom"], 10, 4, 14, 7], "circle-opacity": meta.id === "hidrico" ? .95 : 1, "circle-stroke-color": "#070b0c", "circle-stroke-width": meta.id === "hidrico" ? 1 : 1.5 }, layout: { visibility: "none" } });
           const labelId = `${sourceId}-labels`;
           if (meta.id === "hidrico") map.addLayer({ id: labelId, type: "symbol", source: sourceId, filter: ["==", ["get", "kind"], "water-point"], layout: { visibility: "none", "text-field": ["get", "label"], "text-size": ["interpolate", ["linear"], ["zoom"], 10, 9, 14, 12], "text-offset": [0, 1.35], "text-anchor": "top", "text-allow-overlap": true }, paint: { "text-color": "#b9e5ea", "text-halo-color": "#061113", "text-halo-width": 1.5 } });
           const hidricaLinkId = `${sourceId}-hidrica-links`;
@@ -2071,6 +2071,7 @@
       subsystemBubbles.innerHTML = `<div class="map-network-stage ${systems ? "systems-network" : "submodels-network"}"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><defs>${gradientDefs.join("")}</defs><g class="map-network-bonds">${bonds}</g></svg>${nodes}</div>`;
       subsystemBubbles.querySelectorAll(".map-network-node").forEach((button) => button.addEventListener("click", () => {
         const row = rows[Number(button.dataset.mapNetworkIndex)];
+        if (row?.id) DINAMICA_SOUND.play(row.id);
         subsystemBubbles.querySelectorAll(".map-network-node").forEach((node) => node.classList.toggle("selected", node === button));
         subsystemBubbles.querySelectorAll(".subsystem-components, .subsystem-purpose-panel, .map-network-detail").forEach((node) => node.remove());
         const color = row.color || colors[Number(button.dataset.mapNetworkIndex)];
