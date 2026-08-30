@@ -1597,6 +1597,30 @@
       { id: "social", name: "Sistema social-comunitario", color: "#ee9a4b", components: ["Visitantes", "turismo", "grupos sociales", "formas de uso", "apropiación", "participación", "patrimonio ambiental"], process: "Cambian las visitas, formas de apropiación, actividades educativas, participación, acuerdos y conflictos.", category: "Social" },
       { id: "socioeconomico", name: "Sistema socioeconómico y de ocupación", color: "#e58d62", components: ["Viviendas", "actividades económicas", "servicios", "equipamientos", "usos del suelo", "población", "decisiones de ocupación"], process: "Cambian la población, construcción, demanda de vivienda, servicios, actividades y presiones sobre el borde.", category: "Social" }
     ];
+
+    // ---------- Componentes geográficos reales de cada dinámica ----------
+    // Se reutilizan tanto para dibujar los puntos en la capa del mapa como
+    // para las líneas de flujo que convergen hacia la bolita de cada
+    // dinámica en la red de burbujas ("Identificar los subsistemas").
+    const HIDRICA_COMPONENTS = [
+      { label: "Humedal El Burro", coords: [-74.14987475206779, 4.64210777486686] },
+      { label: "Humedal La Vaca", coords: [-74.16284778855655, 4.62939492240078] },
+      { label: "Río Bogotá", coords: [-74.16768977818305, 4.656422537771954] },
+      { label: "Humedal El Techo", coords: [-74.1413020515684, 4.645452290970931] },
+      { label: "Canal Américas", coords: [-74.15762452847382, 4.64242217040295] },
+      { label: "Canal Castilla", coords: [-74.15759550812774, 4.650327770848862] },
+      { label: "Canal Alsacia", coords: [-74.14794903865601, 4.656271588055773] },
+      { label: "Canal Cl 38 Sur", coords: [-74.17187523380888, 4.646537178378381] },
+      { label: "Pondaje La Magdalena", coords: [-74.15173171372305, 4.662640070581543] },
+      { label: "Canal Los Ángeles (punto)", coords: [-74.14408308171802, 4.6347293508003995] },
+      { label: "Canal Tintal II", coords: [-74.17614285433572, 4.638461556417559] },
+      { label: "Río Fucha", coords: [-74.13071639928444, 4.64914295789523] },
+    ];
+    const BIOTICA_COMPONENTS = [
+      { label: "Parque Metropolitano Cayetano Cañizares", coords: [-74.16127681309709, 4.6255784034525345] },
+      { label: "Parque Timiza", coords: [-74.15413020403817, 4.610545190742722] },
+      { label: "Parque El Tintal", coords: [-74.15477087019791, 4.644165179130835] },
+    ];
     // ---------- Sonidos ambiente por dinámica (sintetizados, sin archivos
     // externos) — cada burbuja del territorio suena distinto al tocarla:
     // el agua "corre", el pájaro "trina", el tráfico "zumba", etc. ----------
@@ -1794,31 +1818,15 @@
         const pt = (coordinates, properties = {}) => feature({ type: "Point", coordinates }, properties);
         const layerCollections = {
           hidrico: { type: "FeatureCollection", features: [...burro.features, ...context.features.filter((item) => item.properties.kind === "canal"),
-            // Componentes de la dinámica hídrica a escala de Bogotá — cada uno se
-            // conecta con una línea al marcador que ya existe en el mapa
-            // (HUMEDAL EL BURRO), como puntos chiquitos y blancos.
-            ...(() => {
-              const HIDRICA_HUB = [-74.150, 4.642]; // mismo punto del marcador "HUMEDAL EL BURRO" ya existente
-              const HIDRICA_COMPONENTS = [
-                { label: "Humedal El Burro", coords: [-74.14987475206779, 4.64210777486686] },
-                { label: "Humedal La Vaca", coords: [-74.16284778855655, 4.62939492240078] },
-                { label: "Río Bogotá", coords: [-74.16768977818305, 4.656422537771954] },
-                { label: "Humedal El Techo", coords: [-74.1413020515684, 4.645452290970931] },
-                { label: "Canal Américas", coords: [-74.15762452847382, 4.64242217040295] },
-                { label: "Canal Castilla", coords: [-74.15759550812774, 4.650327770848862] },
-                { label: "Canal Alsacia", coords: [-74.14794903865601, 4.656271588055773] },
-                { label: "Canal Cl 38 Sur", coords: [-74.17187523380888, 4.646537178378381] },
-                { label: "Pondaje La Magdalena", coords: [-74.15173171372305, 4.662640070581543] },
-                { label: "Canal Los Ángeles (punto)", coords: [-74.14408308171802, 4.6347293508003995] },
-                { label: "Canal Tintal II", coords: [-74.17614285433572, 4.638461556417559] },
-                { label: "Río Fucha", coords: [-74.13071639928444, 4.64914295789523] },
-              ];
-              const points = HIDRICA_COMPONENTS.map((c) => pt(c.coords, { label: c.label, kind: "water-point" }));
-              const links = HIDRICA_COMPONENTS.map((c) => line([c.coords, HIDRICA_HUB], { kind: "hidrica-link" }));
-              return [...points, ...links];
-            })()
+            // Componentes de la dinámica hídrica a escala de Bogotá, como
+            // puntos chiquitos y blancos. Las líneas que los conectan con la
+            // bolita de "Dinámica hídrica" se dibujan aparte, como flujo
+            // animado sobre la red de burbujas (ver renderMapNetwork).
+            ...HIDRICA_COMPONENTS.map((c) => pt(c.coords, { label: c.label, kind: "water-point" }))
           ] },
-          biotico: { type: "FeatureCollection", features: [poly([[-74.166,4.644],[-74.162,4.646],[-74.158,4.643],[-74.160,4.638],[-74.165,4.638],[-74.166,4.644]], { label: "hábitat y vegetación" }), poly([[-74.157,4.646],[-74.153,4.645],[-74.153,4.639],[-74.157,4.637],[-74.160,4.640],[-74.157,4.646]], { label: "hábitat y vegetación" }), pt([-74.157,4.642], { label: "fauna" })] },
+          biotico: { type: "FeatureCollection", features: [poly([[-74.166,4.644],[-74.162,4.646],[-74.158,4.643],[-74.160,4.638],[-74.165,4.638],[-74.166,4.644]], { label: "hábitat y vegetación" }), poly([[-74.157,4.646],[-74.153,4.645],[-74.153,4.639],[-74.157,4.637],[-74.160,4.640],[-74.157,4.646]], { label: "hábitat y vegetación" }), pt([-74.157,4.642], { label: "fauna" }),
+            ...BIOTICA_COMPONENTS.map((c) => pt(c.coords, { label: c.label, kind: "bio-point" }))
+          ] },
           infraestructura: { type: "FeatureCollection", features: [line([[-74.159,4.67],[-74.159,4.65],[-74.159,4.63],[-74.159,4.61]], { label: "Avenida Ciudad de Cali" }), poly([[-74.153,4.651],[-74.148,4.651],[-74.148,4.647],[-74.153,4.647],[-74.153,4.651]], { label: "área construida" }), poly([[-74.169,4.632],[-74.165,4.632],[-74.165,4.628],[-74.169,4.628],[-74.169,4.632]], { label: "borde urbano" })] },
           movilidad: { type: "FeatureCollection", features: [line([[-74.15,4.632],[-74.156,4.631],[-74.164,4.632],[-74.172,4.636]], { label: "ciclorruta" }), line([[-74.154,4.65],[-74.158,4.646],[-74.161,4.64],[-74.165,4.635]], { label: "recorrido peatonal" }), pt([-74.156,4.633], { label: "Biblioteca El Tintal · acceso" })] },
           social: { type: "FeatureCollection", features: [poly([[-74.176,4.65],[-74.168,4.65],[-74.168,4.643],[-74.176,4.643],[-74.176,4.65]], { label: "barrio y recorridos" }), poly([[-74.151,4.634],[-74.143,4.634],[-74.143,4.626],[-74.151,4.626],[-74.151,4.634]], { label: "barrio y recorridos" }), pt([-74.164,4.651], { label: "actividad pedagógica" })] },
@@ -1831,15 +1839,20 @@
           map.addSource(sourceId, { type: "geojson", data: layerCollections[meta.id] });
           map.addLayer({ id: fillId, type: "fill", source: sourceId, paint: { "fill-color": meta.color, "fill-opacity": .18 }, layout: { visibility: "none" } });
           map.addLayer({ id: lineId, type: "line", source: sourceId, filter: ["!=", ["get", "kind"], "hidrica-link"], paint: { "line-color": meta.color, "line-width": ["interpolate", ["linear"], ["zoom"], 10, 1.2, 14, 3], "line-opacity": .86 }, layout: { visibility: "none" } });
-          map.addLayer({ id: pointId, type: "circle", source: sourceId, filter: ["==", ["geometry-type"], "Point"], paint: { "circle-color": meta.id === "hidrico" ? "#ffffff" : meta.color, "circle-radius": meta.id === "hidrico" ? ["interpolate", ["linear"], ["zoom"], 10, 2.4, 14, 4] : ["interpolate", ["linear"], ["zoom"], 10, 4, 14, 7], "circle-opacity": meta.id === "hidrico" ? .95 : 1, "circle-stroke-color": "#070b0c", "circle-stroke-width": meta.id === "hidrico" ? 1 : 1.5 }, layout: { visibility: "none" } });
+          map.addLayer({ id: pointId, type: "circle", source: sourceId, filter: ["==", ["geometry-type"], "Point"], paint: {
+            "circle-color": ["match", ["get", "kind"], "water-point", "#ffffff", "bio-point", "#ffffff", meta.color],
+            "circle-radius": ["match", ["get", "kind"], "water-point", ["interpolate", ["linear"], ["zoom"], 10, 2.4, 14, 4], "bio-point", ["interpolate", ["linear"], ["zoom"], 10, 2.4, 14, 4], ["interpolate", ["linear"], ["zoom"], 10, 4, 14, 7]],
+            "circle-opacity": ["match", ["get", "kind"], "water-point", .95, "bio-point", .95, 1],
+            "circle-stroke-color": "#070b0c",
+            "circle-stroke-width": ["match", ["get", "kind"], "water-point", 1, "bio-point", 1, 1.5]
+          }, layout: { visibility: "none" } });
           const labelId = `${sourceId}-labels`;
           if (meta.id === "hidrico") map.addLayer({ id: labelId, type: "symbol", source: sourceId, filter: ["==", ["get", "kind"], "water-point"], layout: { visibility: "none", "text-field": ["get", "label"], "text-size": ["interpolate", ["linear"], ["zoom"], 10, 9, 14, 12], "text-offset": [0, 1.35], "text-anchor": "top", "text-allow-overlap": true }, paint: { "text-color": "#b9e5ea", "text-halo-color": "#061113", "text-halo-width": 1.5 } });
-          const hidricaLinkId = `${sourceId}-hidrica-links`;
-          if (meta.id === "hidrico") map.addLayer({ id: hidricaLinkId, type: "line", source: sourceId, filter: ["==", ["get", "kind"], "hidrica-link"], paint: { "line-color": "#b9e5ea", "line-width": ["interpolate", ["linear"], ["zoom"], 10, .8, 14, 1.6], "line-opacity": .55, "line-dasharray": [2, 1.6] }, layout: { visibility: "none" } }, pointId);
-          partOneMapLayers.push({ id: meta.id, fill: fillId, line: lineId, point: pointId, extras: meta.id === "hidrico" ? [labelId, hidricaLinkId] : [], markers: [] });
+          if (meta.id === "biotico") map.addLayer({ id: labelId, type: "symbol", source: sourceId, filter: ["==", ["get", "kind"], "bio-point"], layout: { visibility: "none", "text-field": ["get", "label"], "text-size": ["interpolate", ["linear"], ["zoom"], 10, 9, 14, 12], "text-offset": [0, 1.35], "text-anchor": "top", "text-allow-overlap": true }, paint: { "text-color": "#c9f2d6", "text-halo-color": "#061309", "text-halo-width": 1.5 } });
+          partOneMapLayers.push({ id: meta.id, fill: fillId, line: lineId, point: pointId, extras: (meta.id === "hidrico" || meta.id === "biotico") ? [labelId] : [], markers: [] });
           // El checkbox de "Subsistema hídrico" nace marcado, pero las capas nacen
           // ocultas: sin esto, nunca se veía nada hasta desmarcar y volver a marcar.
-          if (meta.id === "hidrico") { [pointId, labelId, hidricaLinkId].forEach((id) => map.setLayoutProperty(id, "visibility", "visible")); }
+          if (meta.id === "hidrico") { [pointId, labelId].forEach((id) => map.setLayoutProperty(id, "visibility", "visible")); }
         });
         componentPointMap = map;
         map.addSource("subsystem-component-points", { type: "geojson", data: { type: "FeatureCollection", features: [] } });
@@ -1851,7 +1864,9 @@
         /* Las gotitas decorativas se mantienen retiradas; el agua se lee mediante su cartografía y puntos de componentes. */
         const waterLayer = partOneMapLayers.find((layer) => layer.id === "hidrico"); if (waterLayer) waterLayer.markers = []; map.__waterMarkers = [];
         initPartOneControls(map, partOneMapLayers);
-        const burroMarker = document.createElement("div"); burroMarker.className = "burro-focus-label"; burroMarker.innerHTML = "<b>HUMEDAL EL BURRO</b>"; new maplibregl.Marker({ element: burroMarker, anchor: "bottom" }).setLngLat([-74.150, 4.642]).addTo(map); setStatus("BOGOTÁ · LECTURA GENERAL", true); setupCartographyEntrance(map); });
+        map.on("move", updateFlowGroups);
+        map.on("zoom", updateFlowGroups);
+        setStatus("BOGOTÁ · LECTURA GENERAL", true); setupCartographyEntrance(map); });
       const loadOsm = async () => { const query = `[out:json][timeout:20];way[highway~"^(motorway|trunk|primary|secondary|tertiary)$"](around:4200,4.64,-74.09);out geom;`; setStatus("CARGANDO CALLES OSM…"); const controller = new AbortController(); const timer = window.setTimeout(() => controller.abort(), 12000); try { let response; for (const endpoint of ["https://overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter", "https://overpass.private.coffee/api/interpreter"]) { try { response = await fetch(`${endpoint}?data=${encodeURIComponent(query)}`, { signal: controller.signal, headers: { Accept: "application/json" } }); if (response.ok) break; } catch (error) { /* prueba el siguiente endpoint público */ } } if (!response?.ok) throw new Error("Overpass sin respuesta"); const data = await response.json(); const features = data.elements.filter((x) => x.geometry?.length > 1).map((x) => ({ type: "Feature", properties: { highway: x.tags?.highway || "road" }, geometry: { type: "LineString", coordinates: x.geometry.map((p) => [p.lon, p.lat]) } })); const geo = { type: "FeatureCollection", features }; if (map.getSource("osm-streets")) map.getSource("osm-streets").setData(geo); else { map.addSource("osm-streets", { type: "geojson", data: geo }); map.addLayer({ id: "osm-streets", type: "line", source: "osm-streets", paint: { "line-color": "#8fa7a4", "line-width": ["interpolate", ["linear"], ["zoom"], 10, .7, 14, 1.8], "line-opacity": .62 } }); } setStatus(`${features.length} CALLES OSM CARGADAS`, true); } catch (error) { setStatus("MAPA OSM DISPONIBLE · CALLES EN RESPALDO"); toast("Overpass no respondió; el plano monocromático sigue disponible"); } finally { window.clearTimeout(timer); } };
       const loadRoute = async () => { const coords = [[-74.13,4.66],[-74.09,4.64],[-74.05,4.61],[-74.08,4.57]]; setStatus("CALCULANDO RUTA OSRM…"); try { const response = await fetch(`https://router.project-osrm.org/route/v1/driving/${coords.map((c) => c.join(",")).join(";")}?overview=full&geometries=geojson`); if (!response.ok) throw new Error("OSRM " + response.status); const data = await response.json(); const route = data.routes?.[0]?.geometry; if (!route) throw new Error("Sin ruta"); if (map.getSource("osrm-route")) map.getSource("osrm-route").setData(route); else { map.addSource("osrm-route", { type: "geojson", data: route }); map.addLayer({ id: "osrm-route", type: "line", source: "osrm-route", paint: { "line-color": "#f76fb0", "line-width": 4, "line-opacity": .95 } }); } setStatus("RUTA OSRM ACTIVA", true); } catch (error) { setStatus("NO SE PUDO CALCULAR LA RUTA"); toast("OSRM no respondió; conserva los flujos procedurales"); } };
       document.getElementById("loadOsmStreets")?.addEventListener("click", loadOsm);
@@ -2003,6 +2018,57 @@
       "Gestión institucional y manejo": { note: "coordinación, restauración y toma de decisiones", nodes: [{ id: "jardin", label: "Jardín Botánico", x: 16, y: 50 }, { id: "ambiente", label: "Secretaría de Ambiente", x: 50, y: 20 }, { id: "residuos", label: "Ciudad Limpia", x: 84, y: 50 }, { id: "restauracion", label: "Restauración", x: 50, y: 80 }, { id: "seguimiento", label: "Seguimiento", x: 84, y: 80 }], edges: [{ a: "jardin", b: "ambiente", label: "regulación" }, { a: "ambiente", b: "residuos", label: "manejo" }, { a: "jardin", b: "restauracion", label: "acción" }, { a: "restauracion", b: "seguimiento", label: "evaluación" }, { a: "seguimiento", b: "ambiente", label: "decisión" }] }
     };
     const renderSubsystemNetwork = (item) => { const graph = subsystemNetworks[item.name]; if (!graph) return ""; const byId = Object.fromEntries(graph.nodes.map((node) => [node.id, node])); const wildlife = item.name === "Sistema biótico del humedal" ? `<span class="process-network-bird migratory bird-one" aria-label="Ave migratoria volando"><i class="fa-solid fa-crow"></i></span><span class="process-network-bird migratory bird-two" aria-label="Ave migratoria volando"><i class="fa-solid fa-crow"></i></span><span class="process-network-bird resident bird-three" aria-label="Ave residente en el hábitat"><i class="fa-solid fa-crow"></i></span><span class="process-network-bird resident bird-four" aria-label="Ave residente en el hábitat"><i class="fa-solid fa-crow"></i></span>` : ""; return `<section class="process-network" style="--bubble-color:${item.color}"><strong><i class="fa-solid fa-diagram-project"></i> RED INTERNA · RELACIONES</strong><small>${graph.note}</small><div class="process-network-canvas"><svg viewBox="0 0 100 100" aria-hidden="true">${graph.edges.map((edge) => { const a = byId[edge.a]; const b = byId[edge.b]; return `<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}"><title>${edge.label}</title></line>`; }).join("")}</svg>${wildlife}${graph.nodes.map((node) => `<span class="process-network-node" style="left:${node.x}%;top:${node.y}%" title="${node.label}"><i class="fa-solid fa-circle-dot"></i><em>${node.label}</em></span>`).join("")}</div><small class="process-network-legend">Las líneas muestran procesos de relación entre unidades del mismo nivel.</small></section>`; };
+    const projectToPercent = (coords) => {
+      if (!componentPointMap) return null;
+      try {
+        const p = componentPointMap.project(coords);
+        const container = componentPointMap.getContainer();
+        const w = container.clientWidth, h = container.clientHeight;
+        if (!w || !h) return null;
+        return { x: (p.x / w) * 100, y: (p.y / h) * 100 };
+      } catch (err) { return null; }
+    };
+    // Curva simple (no una línea recta) para que cada componente real se
+    // sienta como un flujo que llega a la bolita de su dinámica.
+    const flowCurveD = (x, y, nx, ny, seedIndex) => {
+      const dx = nx - x, dy = ny - y, length = Math.max(1, Math.hypot(dx, dy));
+      const bend = (seedIndex % 2 ? -1 : 1) * Math.min(6, length * .18);
+      const mid = [(x + nx) / 2 - (dy / length) * bend, (y + ny) / 2 + (dx / length) * bend];
+      const pt = (px, py) => `${px.toFixed(2)} ${py.toFixed(2)}`;
+      return `M ${pt(x, y)} Q ${pt(mid[0], mid[1])} ${pt(nx, ny)}`;
+    };
+    const FLOW_GROUPS = [
+      { components: HIDRICA_COMPONENTS, targetIndex: 0, color: "#b9e5ea", prefix: "hidrica" },
+      { components: BIOTICA_COMPONENTS, targetIndex: 1, color: "#c9f2d6", prefix: "biotica" },
+    ];
+    const buildFlowGroupsSvg = (positions) => FLOW_GROUPS.map((group) => {
+      const [nx, ny] = positions[group.targetIndex];
+      return group.components.map((c, i) => {
+        const proj = projectToPercent(c.coords);
+        if (!proj) return "";
+        const id = `map-network-flow-${group.prefix}-${i}`;
+        const d = flowCurveD(proj.x, proj.y, nx, ny, i);
+        const duration = (3.2 + (i % 5) * .5).toFixed(2);
+        return `<g class="map-network-flow-group"><path id="${id}" class="map-network-flow-line" d="${d}" pathLength="1"/><circle class="map-network-flow-pulse" r=".3" fill="${group.color}"><animateMotion dur="${duration}s" begin="-${(i * .4).toFixed(2)}s" repeatCount="indefinite" rotate="auto"><mpath href="#${id}"/></animateMotion></circle></g>`;
+      }).join("");
+    }).join("");
+    // Al mover o hacer zoom en el mapa, las líneas de flujo se vuelven a
+    // calcular para que sigan llegando exactamente a cada bolita.
+    const updateFlowGroups = () => {
+      if (!subsystemBubbles?.classList.contains("network-active")) return;
+      const svg = subsystemBubbles.querySelector(".systems-network svg");
+      if (!svg) return;
+      const positions = [[12,22],[32,8],[70,8],[88,22],[76,86],[24,86]];
+      FLOW_GROUPS.forEach((group) => {
+        const [nx, ny] = positions[group.targetIndex];
+        group.components.forEach((c, i) => {
+          const proj = projectToPercent(c.coords);
+          const path = svg.querySelector(`#map-network-flow-${group.prefix}-${i}`);
+          if (!proj || !path) return;
+          path.setAttribute("d", flowCurveD(proj.x, proj.y, nx, ny, i));
+        });
+      });
+    };
     const renderMapNetwork = (mode = "systems") => {
       if (!subsystemBubbles) return;
       const systems = mode === "systems";
@@ -2068,7 +2134,8 @@
       }).join("");
       subsystemBubbles.dataset.revealState = "complete";
       subsystemBubbles.classList.add("network-active");
-      subsystemBubbles.innerHTML = `<div class="map-network-stage ${systems ? "systems-network" : "submodels-network"}"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><defs>${gradientDefs.join("")}</defs><g class="map-network-bonds">${bonds}</g></svg>${nodes}</div>`;
+      const flowsSvg = systems ? buildFlowGroupsSvg(positions) : "";
+      subsystemBubbles.innerHTML = `<div class="map-network-stage ${systems ? "systems-network" : "submodels-network"}"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><defs>${gradientDefs.join("")}</defs><g class="map-network-flows">${flowsSvg}</g><g class="map-network-bonds">${bonds}</g></svg>${nodes}</div>`;
       subsystemBubbles.querySelectorAll(".map-network-node").forEach((button) => button.addEventListener("click", () => {
         const row = rows[Number(button.dataset.mapNetworkIndex)];
         if (row?.id) DINAMICA_SOUND.play(row.id);
