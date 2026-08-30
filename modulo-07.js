@@ -1656,57 +1656,74 @@
     // ahora puede ser MÁS DE UNO por caja (coords es un arreglo).
     const KENNEDY_TEXT_BOXES = [
       // ---------- Columna derecha: cajas ambientales ----------
-      { id: "lavaca", title: "MODELO DE ABSORCIÓN DE IMPACTO", connection: "Borde oriental de Corabastos / Calle 42F Sur.",
+      { id: "lavaca", title: "MODELO DE ABSORCIÓN DE IMPACTO",
         color: "#56b8d4", icon: "fa-droplet",
         coords: [[-74.16284778855655, 4.62939492240078], [-74.1599146050763, 4.63015596902525], [-74.14987475206779, 4.64210777486686]], boxPos: [93, 8],
         sections: [{ system: "Modelo Social ⟶ Sistema Ecológico", icon: "fa-leaf", submodelos: [
           "Ciclo de acumulación y lixiviación de residuos.", "Dinámica de eutrofización y variación de oxígeno.",
           "Flujo de recarga y fluctuación del nivel hídrico.", "Dinámica de expansión de vegetación acuática." ] }] },
-      { id: "burro", title: "MODELO DE AMORTIGUACIÓN AMBIENTAL", connection: "Av. Ciudad de Cali con Calle 6 Sur.",
-        color: "#56b8d4", icon: "fa-droplet", coords: [[-74.14987475206779, 4.64210777486686]], boxPos: [93, 27],
+      { id: "burro", title: "MODELO DE AMORTIGUACIÓN AMBIENTAL",
+        color: "#56b8d4", icon: "fa-droplet", coords: [[-74.14987475206779, 4.64210777486686]], boxPos: [93, 22.5],
         sections: [{ system: "Modelo Determinista ⟶ Sistema Ecológico", icon: "fa-gears", submodelos: [
           "Ciclo de escorrentía pluvial y escurrimiento superficial.", "Dinámica de fragmentación de cobertura vegetal.",
           "Ciclo de variación térmica por efecto de isla de calor.", "Dinámica de absorción hídrica en la franja de ronda." ] }] },
-      { id: "techo", title: "MODELO DE RETENCIÓN HÍDRICA", connection: "Av. Manuel Cepeda Vargas con Transversal 73.",
-        color: "#56b8d4", icon: "fa-droplet", coords: [[-74.1413020515684, 4.645452290970931]], boxPos: [93, 46],
+      { id: "techo", title: "MODELO DE RETENCIÓN HÍDRICA",
+        color: "#56b8d4", icon: "fa-droplet", coords: [[-74.1413020515684, 4.645452290970931]], boxPos: [93, 37],
         sections: [{ system: "Modelo Determinista ⟶ Sistema Ecológico", icon: "fa-gears", submodelos: [
           "Ciclo de infiltración y percolación al acuífero.", "Dinámica de retención y amortiguación de picos de lluvia.",
           "Flujo de intercambio de agua subterránea-superficial.", "Dinámica de reducción del espejo de agua por encajonamiento." ] }] },
-      { id: "tunjuelo", title: "SISTEMA ECOLÓGICO", connection: "Borde sur-occidental / Límite de Patio Bonito.",
-        color: "#56b8d4", icon: "fa-water", coords: [[-74.17429119107521, 4.603360016778938]], boxPos: [93, 68],
+      { id: "tunjuelo", title: "SISTEMA ECOLÓGICO",
+        color: "#56b8d4", icon: "fa-water", coords: [[-74.17429119107521, 4.603360016778938]], boxPos: [93, 51.5],
         sections: [
           { system: "Sistema Determinista ⟹ Sub-modelos de ciclos", icon: "fa-gears", submodelos: [
             "Ciclo hidrológico macro y variación del caudal.", "Dinámica de transporte de sedimentos y erosión." ] },
           { system: "Sistema Social ⟹ Sub-modelos de dinámicas", icon: "fa-people-group", submodelos: [
             "Dinámica de riesgo por desbordamiento e inundación.", "Ciclo de concentración de vertimientos." ] },
         ] },
-      { id: "fauna", title: "MODELO DE CONECTIVIDAD FAUNÍSTICA", connection: "Franja ambiental continua entre Tunjuelo, humedales y parques.",
+      { id: "fauna", title: "MODELO DE CONECTIVIDAD FAUNÍSTICA",
         color: "#68d391", icon: "fa-paw",
         coords: [[-74.17429119107521, 4.603360016778938], [-74.16284778855655, 4.62939492240078], [-74.14987475206779, 4.64210777486686], [-74.1413020515684, 4.645452290970931]],
-        boxPos: [93, 92],
+        boxPos: [93, 68],
         sections: [{ system: "Modelo Ecológico ⟶ Sistema Animado", icon: "fa-feather-pointed", submodelos: [
           "Ciclo de migración, refugio y albergue de avifauna.", "Dinámica de dispersión biológica y polinización.",
           "Flujo de desplazamiento e interrupción por barreras viales.", "Ciclo de presión por especies invasoras y domésticas." ] }] },
+      // Submodelos redactados por mí (no me diste el texto exacto, solo me
+      // pediste que definiera qué contendría este submodelo).
+      { id: "mitigacion_organica", title: "MODELO DE MITIGACIÓN DE CARGA ORGÁNICA Y RESIDUOS",
+        color: "#56b8d4", icon: "fa-recycle", coords: [[-74.16284778855655, 4.62939492240078]], boxPos: [93, 85],
+        sections: [{ system: "Modelo Determinista ⟶ Sistema Ecológico", icon: "fa-gears", submodelos: [
+          "Ciclo de compostaje y estabilización de residuos orgánicos.", "Dinámica de reducción de carga contaminante antes del vertimiento.",
+          "Flujo de recolección y separación en la fuente.", "Ciclo de control de vectores y olores." ] }] },
       // ---------- Columna izquierda: cajas viales / de infraestructura ----------
-      { id: "avcali", title: "MODELO VIAL Y DE INFRAESTRUCTURA", connection: "Corredor vial longitudinal Norte-Sur.",
-        color: "#b8c0c8", icon: "fa-road", coords: [[-74.15162630856268, 4.644831758038044]], boxPos: [7, 10],
+      { id: "avcali", title: "MODELO VIAL Y DE INFRAESTRUCTURA",
+        color: "#b8c0c8", icon: "fa-road", coords: [[-74.15162630856268, 4.644831758038044]], boxPos: [7, 8],
         sections: [{ system: "Modelo Determinista ⟶ Sistema Determinista", icon: "fa-gears", submodelos: [
           "Flujo y variación horaria del volumen vehicular.", "Ciclo de escorrentía rápida sobre superficie impermeable.",
           "Dinámica de dispersión de contaminantes atmosféricos.", "Flujo de barrera y fricción a la movilidad peatonal." ] }] },
-      { id: "canalsf", title: "MODELO DE CONDUCCIÓN HÍDRICA", connection: "Trazados de drenaje en concreto (Patio Bonito / El Tintal).",
-        color: "#56b8d4", icon: "fa-water", coords: [[-74.155, 4.635]], boxPos: [7, 36],
+      { id: "canalsf", title: "MODELO DE CONDUCCIÓN HÍDRICA",
+        color: "#56b8d4", icon: "fa-water", coords: [[-74.155, 4.635]], boxPos: [7, 27],
         sections: [{ system: "Modelo Determinista ⟶ Sistema Ecológico", icon: "fa-gears", submodelos: [
           "Dinámica de aceleración y velocidad del caudal sobre concreto.", "Ciclo de evacuación y respuesta hidráulica ante lluvias torrenciales.",
           "Flujo de transporte y sedimentación de residuos en el canal.", "Dinámica de descarga y vertimiento de aguas servidas." ] }] },
       // Esta caja tiene DOS lugares reales (Biblioteca El Tintal y Portal
       // Américas): por eso "coords" trae 2 puntos y salen 2 líneas.
-      { id: "bibliotintal_portal", title: "MODELO NODAL EQUIPAMENTAL", connection: "Intersección Av. Ciudad de Cali con Av. de las Américas.",
-        color: "#f1cf5b", icon: "fa-building", coords: [[-74.15477971743486, 4.642987513146133], [-74.1615, 4.6255]], boxPos: [7, 62],
+      { id: "bibliotintal_portal", title: "MODELO NODAL EQUIPAMENTAL",
+        color: "#f1cf5b", icon: "fa-building", coords: [[-74.15477971743486, 4.642987513146133], [-74.1615, 4.6255]], boxPos: [7, 46],
         sections: [{ system: "Modelo Social ⟶ Sistema Social", icon: "fa-people-group", submodelos: [
           "Flujo de intercambio modal de pasajeros (origen-destino).", "Dinámica de flotación y densidad de población peatonal.",
           "Ciclo de uso e intensidad del espacio público según hora del día.", "Flujo de interacción socio-cultural con el equipamiento." ] }] },
-      { id: "corabastos", title: "MODELO COMERCIAL Y LOGÍSTICO", connection: "Polígono entre Av. Poporo Quimbaya y Carrera 80.",
-        color: "#e58d62", icon: "fa-house-chimney", coords: [[-74.1599146050763, 4.63015596902525]], boxPos: [7, 88],
+      // Sale una línea desde Humedal El Burro hacia esta caja (contenido
+      // exacto que diste).
+      { id: "interaccion_vial", title: "MODELO DE INTERACCIÓN VIAL",
+        color: "#b8c0c8", icon: "fa-road", coords: [[-74.14987475206779, 4.64210777486686]], boxPos: [7, 65],
+        sections: [{ system: "Modelo Determinista ⟶ Sistema Socio-Ecológico", icon: "fa-gears", submodelos: [
+          "Desborde y Control de Crecientes.", "Transferencia de Carga y Vibración.",
+          "Infiltración de Escorrentía Calzada-Borde.", "Propagación de Ruido y Presión Sonora." ] }] },
+      { id: "corabastos", title: "MODELO COMERCIAL Y LOGÍSTICO",
+        color: "#e58d62", icon: "fa-cart-shopping",
+        // Se conecta con 3 puntos: Corabastos, la nueva coordenada dada, y
+        // Humedal La Vaca.
+        coords: [[-74.1599146050763, 4.63015596902525], [-74.13517123261519, 4.616655447564548], [-74.16284778855655, 4.62939492240078]], boxPos: [7, 88],
         sections: [{ system: "Modelo Social ⟶ Sistema Social", icon: "fa-people-group", submodelos: [
           "Ciclo de generación y descomposición de materia orgánica.", "Dinámica de acumulación y congestión de transporte pesado.",
           "Flujo diario de abastecimiento y distribución.", "Ciclo de producción de carga contaminante hídrica." ] }] },
@@ -2306,7 +2323,7 @@
       // izquierda del nodo si está en la mitad derecha) para que no se
       // recorte contra el borde del contenedor.
       const anchorClass = box.boxPos[0] > 50 ? "kennedy-anchor-right" : "kennedy-anchor-left";
-      return `<div class="kennedy-info-box ${anchorClass}" style="left:${box.boxPos[0]}%;top:${box.boxPos[1]}%;--node-color:${box.color}"><h4 class="kennedy-title-line">${box.title}</h4><p class="kennedy-connection"><i class="fa-solid fa-location-dot" aria-hidden="true"></i> ${box.connection}</p>${sectionsHtml}</div>${nodesHtml}`;
+      return `<div class="kennedy-info-box ${anchorClass}" style="left:${box.boxPos[0]}%;top:${box.boxPos[1]}%;--node-color:${box.color}"><i class="kennedy-watermark-icon fa-solid ${box.icon}" aria-hidden="true"></i><h4 class="kennedy-title-line">${box.title}</h4>${sectionsHtml}</div>${nodesHtml}`;
     }).join("");
     const updateTextBoxes = () => {
       const stage = subsystemBubbles?.querySelector(".systems-network svg .map-network-flows");
