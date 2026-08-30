@@ -682,11 +682,21 @@ function drawEdges(svg) {
 function drawNodes(svg) {
   const g = document.createElementNS(SVG_NS, "g");
   g.setAttribute("class", "nodes-layer");
-  ODS_NODES.forEach(node => {
+  // Orden de aparición aleatorio (no siempre el mismo), para que la red
+  // se sienta viva desde el primer instante en vez de aparecer de golpe.
+  const revealOrder = ODS_NODES.map((_, i) => i);
+  for (let i = revealOrder.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [revealOrder[i], revealOrder[j]] = [revealOrder[j], revealOrder[i]];
+  }
+  const revealDelay = {};
+  revealOrder.forEach((nodeIndex, order) => { revealDelay[nodeIndex] = order * 70; });
+  ODS_NODES.forEach((node, index) => {
     const group = document.createElementNS(SVG_NS, "g");
-    group.setAttribute("class", "ods-node ods-node-" + node.cat + (node.isMainHub ? " ods-hub" : " ods-satellite"));
+    group.setAttribute("class", "ods-node ods-node-" + node.cat + (node.isMainHub ? " ods-hub" : " ods-satellite") + " ods-node-reveal");
     group.setAttribute("data-id", node.id);
     group.setAttribute("data-cat", node.cat);
+    group.style.setProperty("--reveal-delay", revealDelay[index] + "ms");
 
     const circle = document.createElementNS(SVG_NS, "circle");
     circle.setAttribute("class", "node-ring" + (node.isMainHub ? " node-ring-hub" : ""));

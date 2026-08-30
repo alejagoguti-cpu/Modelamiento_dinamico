@@ -1193,3 +1193,23 @@ footer span { color: var(--teal); }
   .reflection-three-columns article { min-height: 0; border-right: 0; border-bottom: 1px solid rgba(255,255,255,.10); }
   .reflection-three-columns article:last-child { border-bottom: 0; }
 }
+
+/* Aparición escalonada de la red al cargar el módulo 2: cada bola surge
+   de a poco (no todas al tiempo), en un orden distinto cada vez, con un
+   ritmo pausado — así la red se siente viva desde el inicio. */
+.ods-node-reveal {
+  opacity: 0;
+  transform: scale(0.4);
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: odsNodeReveal 0.85s cubic-bezier(.22,.8,.32,1) both;
+  animation-delay: var(--reveal-delay, 0ms);
+}
+@keyframes odsNodeReveal {
+  0% { opacity: 0; transform: scale(0.4); }
+  70% { opacity: 1; transform: scale(1.06); }
+  100% { opacity: 1; transform: scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ods-node-reveal { animation: none; opacity: 1; transform: scale(1); }
+}
