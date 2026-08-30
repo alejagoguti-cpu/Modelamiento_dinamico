@@ -1814,7 +1814,10 @@
     directSubmodelsBtn?.addEventListener("click", () => { openSubmodelsFromDirectButton("submodels"); showPlainNetwork("submodels", directSubmodelsBtn); });
     directCartographyBtn?.addEventListener("click", showCartography);
     renderSubmodelsView("subsystems");
-    showPlainNetwork("systems", directSubsystemsBtn);
+    // Se difiere al siguiente tick: renderMapNetwork se declara más abajo en
+    // este mismo archivo, y llamarla de inmediato aquí rompía todo el script
+    // (error de "usar antes de declarar" que dejaba la página en blanco).
+    setTimeout(() => showPlainNetwork("systems", directSubsystemsBtn), 0);
     const initPartOneControls = (map, layers) => {
       const controls = document.getElementById("subsystemLayerControls");
       if (controls) {
@@ -1915,16 +1918,19 @@
           if (meta.id === "hidrico") { [pointId, labelId].forEach((id) => map.setLayoutProperty(id, "visibility", "visible")); }
         });
         componentPointMap = map;
-        // Avenida Ciudad de Cali y Avenida de las Américas, con su recorrido
-        // completo (trazo aproximado sobre el eje real de cada avenida,
-        // no un levantamiento topográfico exacto), en línea morada delgada.
+        // Avenida Ciudad de Cali (coordenadas reales que diste, de sur a
+        // norte) y Avenida de las Américas, en línea morada delgada.
         map.addSource("avenidas-referencia", { type: "geojson", data: { type: "FeatureCollection", features: [
           { type: "Feature", properties: { label: "Avenida Ciudad de Cali" }, geometry: { type: "LineString", coordinates: [
-            [-74.0935, 4.7565], [-74.1015, 4.7350], [-74.1090, 4.7150], [-74.1145, 4.7065],
-            [-74.1245, 4.6890], [-74.1330, 4.6760], [-74.1440, 4.6640], [-74.1520, 4.6555],
-            [-74.1585, 4.6470], [-74.1592, 4.6415], [-74.1592, 4.6360], [-74.1592, 4.6255],
-            [-74.1620, 4.6140], [-74.1700, 4.6010], [-74.1780, 4.5900], [-74.1860, 4.5790],
-            [-74.1910, 4.5700]
+            [-74.18291458629838, 4.61987589910068],
+            [-74.17783504750913, 4.625197421439991],
+            [-74.17179126952325, 4.627724599104445],
+            [-74.16919686693828, 4.629399584041981],
+            [-74.16601282780427, 4.632220602237944],
+            [-74.16182640597988, 4.63548239049773],
+            [-74.15749729510853, 4.639246968855656],
+            [-74.14673045967228, 4.649430692986774],
+            [-74.13862528302967, 4.6565927311303135]
           ] } },
           { type: "Feature", properties: { label: "Avenida de las Américas" }, geometry: { type: "LineString", coordinates: [
             [-74.0930, 4.6335], [-74.1000, 4.6330], [-74.1080, 4.6310], [-74.1150, 4.6320],
