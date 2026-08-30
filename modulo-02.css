@@ -850,28 +850,25 @@ footer span { color: var(--teal); }
 }
 .movilidad-back-btn:hover { background: rgba(57, 255, 106, 0.15); }
 
-/* ANIMACIÓN "APAGÓN" (Ver hallazgos clave): parpadeo tipo corte de luz sobre
-   los nodos/aristas que NO forman parte de la relación destacada, antes de
-   quedar completamente atenuados por el spotlight normal. */
+/* ANIMACIÓN "ILUMINACIÓN / DESCONEXIÓN": efecto fluido donde los nodos
+   seleccionados se iluminan intensamente y el resto se desconecta suavemente. */
 @keyframes blackoutFlicker {
   0%   { opacity: 1; }
-  8%   { opacity: 0.15; }
-  15%  { opacity: 0.9; }
-  24%  { opacity: 0.1; }
-  32%  { opacity: 0.7; }
-  45%  { opacity: 0.08; }
-  60%  { opacity: 0.5; }
-  75%  { opacity: 0.05; }
-  100% { opacity: 0.12; }
+  15%  { opacity: 0.25; }
+  30%  { opacity: 0.75; }
+  50%  { opacity: 0.15; }
+  75%  { opacity: 0.45; }
+  100% { opacity: 0.1; }
 }
 .ods-node.blackout-flicker, .edge-group.blackout-flicker {
-  animation: blackoutFlicker 0.9s steps(1, end) both;
+  animation: blackoutFlicker 0.48s cubic-bezier(0.2, 0.8, 0.4, 1) both;
 }
 @keyframes blackoutGlow {
-  0%, 100% { filter: drop-shadow(0 0 6px currentColor); }
-  50% { filter: drop-shadow(0 0 14px currentColor) drop-shadow(0 0 22px currentColor); }
+  0%   { filter: drop-shadow(0 0 4px currentColor); }
+  50%  { filter: drop-shadow(0 0 16px currentColor) drop-shadow(0 0 24px currentColor); }
+  100% { filter: drop-shadow(0 0 10px currentColor); }
 }
-.ods-node.blackout-surviving .node-ring { animation: blackoutGlow 0.9s ease both; }
+.ods-node.blackout-surviving .node-ring { animation: blackoutGlow 0.48s ease both; }
 
 /* RESPONSIVE */
 @media (max-width: 1400px) {

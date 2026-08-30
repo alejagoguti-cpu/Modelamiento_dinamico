@@ -1161,57 +1161,107 @@ function showHumedalesOverlay(opts) {
   }
 }
 
-/* Animación fluida de cámara hacia el nodo seleccionado (Humedales o Vías):
-   acerca la cámara de forma suave y sin tirones antes de abrir el overlay ampliado. */
+const HUMEDALES_NODOS_SOBREVIVIENTES = [
+  "humedales", "red_vial", "parques", "patrimonio_natural", 
+  "areas_de_resiliencia_climatica", "areas_protegidas", "reservas_forestales", "rios", "quebradas"
+];
+
+/* Animación "Iluminación + Desconexión + Zoom" para Humedales:
+   Los nodos conectados a Humedales sobreviven y se iluminan intensamente,
+   mientras el resto de la red parpadea y se desconecta de forma fluida.
+   Luego la cámara hace un zoom hacia Humedales y entra al mapa detallado. */
 function explorarRelacionesConAnimacion() {
-  const svg = document.getElementById("networkViz");
-  const nodeEl = document.querySelector('.ods-node[data-id="humedales"]');
-  if (!svg || !nodeEl) { showHumedalesOverlay({ animateIn: true }); return; }
+  document.querySelectorAll(".insight-card").forEach(c => c.classList.remove("active"));
 
-  const humedal = nodeById("humedales");
-  if (humedal) {
-    const vb = svg.viewBox.baseVal;
-    const originXPct = ((humedal.x - vb.x) / vb.width) * 100;
-    const originYPct = ((humedal.y - vb.y) / vb.height) * 100;
-    svg.style.transformOrigin = `${originXPct}% ${originYPct}%`;
-  }
+  const survivors = new Set(HUMEDALES_NODOS_SOBREVIVIENTES);
+  const survivorEdges = new Set();
+  RAW_EDGES.forEach((edge, i) => {
+    if (survivors.has(edge.s) && survivors.has(edge.t)) survivorEdges.add(i);
+  });
 
-  svg.classList.add("zoom-into-humedales");
-  let done = false;
-  const onDone = () => {
-    if (done) return;
-    done = true;
-    showHumedalesOverlay({ animateIn: true });
-    svg.classList.remove("zoom-into-humedales");
-    svg.style.transformOrigin = "";
-  };
-  setTimeout(onDone, 440);
+  // Ilumina los nodos sobrevivientes y desconecta/apaga los demás
+  document.querySelectorAll(".ods-node").forEach(el => {
+    if (!survivors.has(el.dataset.id)) el.classList.add("blackout-flicker");
+    else el.classList.add("blackout-surviving");
+  });
+  document.querySelectorAll(".edge-group").forEach(el => {
+    if (!survivorEdges.has(Number(el.dataset.index))) el.classList.add("blackout-flicker");
+  });
+
+  setTimeout(() => {
+    setSpotlightNodes(HUMEDALES_NODOS_SOBREVIVIENTES, false);
+    document.querySelectorAll(".blackout-flicker").forEach(el => el.classList.remove("blackout-flicker"));
+    document.querySelectorAll(".blackout-surviving").forEach(el => el.classList.remove("blackout-surviving"));
+
+    const svg = document.getElementById("networkViz");
+    const humedal = nodeById("humedales");
+    if (svg && humedal) {
+      const vb = svg.viewBox.baseVal;
+      const originXPct = ((humedal.x - vb.x) / vb.width) * 100;
+      const originYPct = ((humedal.y - vb.y) / vb.height) * 100;
+      svg.style.transformOrigin = `${originXPct}% ${originYPct}%`;
+      svg.classList.add("zoom-into-humedales");
+
+      let done = false;
+      const onDone = () => {
+        if (done) return;
+        done = true;
+        showHumedalesOverlay({ animateIn: true });
+        svg.classList.remove("zoom-into-humedales");
+        svg.style.transformOrigin = "";
+      };
+      setTimeout(onDone, 440);
+    } else {
+      showHumedalesOverlay({ animateIn: true });
+    }
+  }, 480);
 }
 
 function zoomIntoMovilidad() {
-  const svg = document.getElementById("networkViz");
-  if (!svg) { showMovilidadOverlay({ animateIn: true }); return; }
+  document.querySelectorAll(".insight-card").forEach(c => c.classList.remove("active"));
 
-  const node = nodeById("red_vial") || nodeById("transporte_publico");
-  if (node) {
-    const vb = svg.viewBox.baseVal;
-    const originXPct = ((node.x - vb.x) / vb.width) * 100;
-    const originYPct = ((node.y - vb.y) / vb.height) * 100;
-    svg.style.transformOrigin = `${originXPct}% ${originYPct}%`;
-  } else {
-    svg.style.transformOrigin = "50% 50%";
-  }
+  const survivors = new Set(HALLAZGOS_NODOS_SOBREVIVIENTES);
+  const survivorEdges = new Set();
+  RAW_EDGES.forEach((edge, i) => {
+    if (survivors.has(edge.s) && survivors.has(edge.t)) survivorEdges.add(i);
+  });
 
-  svg.classList.add("zoom-into-humedales");
-  let done = false;
-  const onDone = () => {
-    if (done) return;
-    done = true;
-    showMovilidadOverlay({ animateIn: true });
-    svg.classList.remove("zoom-into-humedales");
-    svg.style.transformOrigin = "";
-  };
-  setTimeout(onDone, 440);
+  // Ilumina los nodos sobrevivientes y desconecta/apaga los demás
+  document.querySelectorAll(".ods-node").forEach(el => {
+    if (!survivors.has(el.dataset.id)) el.classList.add("blackout-flicker");
+    else el.classList.add("blackout-surviving");
+  });
+  document.querySelectorAll(".edge-group").forEach(el => {
+    if (!survivorEdges.has(Number(el.dataset.index))) el.classList.add("blackout-flicker");
+  });
+
+  setTimeout(() => {
+    setSpotlightNodes(HALLAZGOS_NODOS_SOBREVIVIENTES, false);
+    document.querySelectorAll(".blackout-flicker").forEach(el => el.classList.remove("blackout-flicker"));
+    document.querySelectorAll(".blackout-surviving").forEach(el => el.classList.remove("blackout-surviving"));
+
+    const svg = document.getElementById("networkViz");
+    const node = nodeById("red_vial") || nodeById("transporte_publico");
+    if (svg && node) {
+      const vb = svg.viewBox.baseVal;
+      const originXPct = ((node.x - vb.x) / vb.width) * 100;
+      const originYPct = ((node.y - vb.y) / vb.height) * 100;
+      svg.style.transformOrigin = `${originXPct}% ${originYPct}%`;
+      svg.classList.add("zoom-into-humedales");
+
+      let done = false;
+      const onDone = () => {
+        if (done) return;
+        done = true;
+        showMovilidadOverlay({ animateIn: true });
+        svg.classList.remove("zoom-into-humedales");
+        svg.style.transformOrigin = "";
+      };
+      setTimeout(onDone, 440);
+    } else {
+      showMovilidadOverlay({ animateIn: true });
+    }
+  }, 480);
 }
 
 /* Muestra la cita de una LÍNEA de conexión (no de un humedal puntual) en un
