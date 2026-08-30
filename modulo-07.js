@@ -1655,10 +1655,16 @@
     // la localización real se hace con la línea + el nodo circular, que
     // ahora puede ser MÁS DE UNO por caja (coords es un arreglo).
     const KENNEDY_TEXT_BOXES = [
-      // Se conecta desde Humedal El Burro (gotita azul).
+      // Ahora ANCLADA a su coordenada real (la que diste), y con 2 puntos:
+      // Humedal El Burro (gotita azul) y el nuevo punto de vía (ícono de
+      // carretera).
       { id: "interaccion_vial", title: "MODELO DE INTERACCIÓN VIAL",
-        color: "#b8c0c8", icon: "fa-road", boxPos: [7, 30],
-        coords: [{ pos: [-74.14987475206779, 4.64210777486686], icon: "fa-droplet", color: "#56b8d4" }],
+        color: "#b8c0c8", icon: "fa-road",
+        boxCoords: [-74.16367167635484, 4.653798307569035], boxPos: [7, 30],
+        coords: [
+          { pos: [-74.14987475206779, 4.64210777486686], icon: "fa-droplet", color: "#56b8d4" },
+          { pos: [-74.15701979872972, 4.6395972438178115], icon: "fa-road", color: "#b8c0c8" },
+        ],
         sections: [{ system: "Modelo Determinista ⟶ Sistema Socio-Ecológico", icon: "fa-gears", submodelos: [
           "Desborde y Control de Crecientes.", "Transferencia de Carga y Vibración.",
           "Infiltración de Escorrentía Calzada-Borde.", "Propagación de Ruido y Presión Sonora." ] }] },
@@ -1688,6 +1694,18 @@
         sections: [{ system: "Modelo Social ⟶ Sistema Social", icon: "fa-people-group", submodelos: [
           "Ciclo de generación y descomposición de materia orgánica.", "Dinámica de acumulación y congestión de transporte pesado.",
           "Flujo diario de abastecimiento y distribución.", "Ciclo de producción de carga contaminante hídrica." ] }] },
+      // Nueva: conecta con Estación Banderas (ícono de bus) y con
+      // Corabastos (carrito), tal como pediste. No me diste la línea
+      // "Modelo X → Sistema Y", así que puse una razonable para el tema.
+      { id: "estacion_transporte", title: "MODELO DE OPERACIÓN DE ESTACIÓN DE TRANSPORTE",
+        color: "#f1cf5b", icon: "fa-bus", boxPos: [7, 88],
+        coords: [
+          { pos: [-74.14541150109216, 4.631221483859855], icon: "fa-bus", color: "#f1cf5b" },
+          { pos: [-74.1599146050763, 4.63015596902525], icon: "fa-cart-shopping", color: "#e58d62" },
+        ],
+        sections: [{ system: "Modelo Determinista ⟶ Sistema Social", icon: "fa-route", submodelos: [
+          "Afluencia y transferencia de pasajeros.", "Capacidad y saturación de andenes.",
+          "Frecuencia y tiempos de la flota." ] }] },
     ];
     // ---------- Sonidos ambiente por dinámica (sintetizados, sin archivos
     // externos) — cada burbuja del territorio suena distinto al tocarla:
