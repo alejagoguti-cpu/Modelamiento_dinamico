@@ -5236,32 +5236,25 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 }
 @media (prefers-reduced-motion: reduce) { .map-network-stage > svg .map-network-bond, .map-network-stage > svg .map-network-bond-soft { animation: none; } }
 
-/* Líneas delgaditas y blancas, con un giro de 90° (nunca en diagonal):
-   conectan cada componente geográfico real (humedales, canales, parques,
-   avenidas...) con la bolita de su dinámica, abiertas en abanico para
-   que no se toquen entre sí. */
 .map-network-stage > svg .map-network-flows { pointer-events: none; overflow: visible; }
-.map-network-stage > svg .map-network-flow-line {
-  fill: none; stroke: rgba(255,255,255,0.75); stroke-width: .14;
-  stroke-dasharray: .9 .8; opacity: .85;
+
+/* Bolita de fenómeno: mismo tamaño y estilo que las bolas de los sistemas,
+   pero solo con el ícono (sin nombre), puesta encima del lugar real.
+   Aparece suave, en cascada, no todas de golpe. */
+.map-phenomenon-node {
+  position: absolute; z-index: 6;
+  opacity: 0; transform: translate(-50%, -50%) scale(0.5);
+  animation: kennedyPhenomenonReveal 0.9s cubic-bezier(.22,.8,.32,1) both;
+  animation-delay: var(--reveal-delay, 0ms);
 }
-/* Puntito en HTML (no SVG), para que sea un círculo perfecto sin importar
-   la proporción del mapa — chiquito y fijo en la coordenada real. */
-.map-network-flow-dot {
-  position: absolute; z-index: 2;
-  width: 6px; height: 6px; border-radius: 50%;
-  transform: translate(-50%, -50%);
-  box-shadow: 0 0 2px rgba(0,0,0,.8);
-  pointer-events: none;
+.map-phenomenon-node strong { display: none; }
+@keyframes kennedyPhenomenonReveal {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+  70% { opacity: 1; transform: translate(-50%, -50%) scale(1.08); }
+  100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
 }
-/* Nombre de lo que se está señalando: chiquito, junto al puntito, del
-   mismo color que su línea y su punto. */
-.map-network-flow-label {
-  position: absolute; z-index: 2;
-  transform: translate(6px, -50%);
-  font: 700 8px/1.2 Inter, sans-serif;
-  text-shadow: 0 0 3px rgba(0,0,0,.95), 0 0 1px rgba(0,0,0,.95);
-  white-space: nowrap; pointer-events: none;
+@media (prefers-reduced-motion: reduce) {
+  .map-phenomenon-node { animation: none; opacity: 1; transform: translate(-50%, -50%) scale(1); }
 }
 
 /* ===================== AJUSTE FINAL · FLOTADO LENTO Y UNIONES ELÁSTICAS ===================== */
@@ -5633,109 +5626,16 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 .territory-network-plain { position: absolute; inset: 0; }
 @media (max-width: 720px) { .territory-network-plain-wrap { min-height: 620px; } }
 
-/* Sub-bolitas de los submodelos de dinámica hídrica: van ancladas encima
-   de su lugar real en el mapa (no en una posición fija de la pantalla),
-   más chicas que las bolitas grandes para no tapar la cartografía. */
-.map-submodel-hidrica-node {
-  width: 64px !important; height: 64px !important; min-height: 64px !important;
-  font-size: 9px;
-  transform: translate(-50%, -50%) !important;
-  animation: none !important;
-  overflow: hidden !important;
-}
-.map-submodel-hidrica-node .map-network-node-icon { font-size: 12px !important; }
-.map-submodel-hidrica-node strong { font-size: 6px !important; line-height: 1.05 !important; max-width: 42px; overflow: hidden; }
-.map-submodel-hidrica-node:hover, .map-submodel-hidrica-node.selected { transform: translate(-50%, -50%) scale(1.08) !important; }
-
-/* Redondez definitiva de TODAS las bolitas, sin excepción (incluye las
-   sub-bolitas de los submodelos hídricos) — selector con id para ganarle
-   a cualquier regla más específica que las siga deformando. */
+/* Redondez definitiva de TODAS las bolitas, sin excepción — selector con
+   id para ganarle a cualquier regla más específica que las deforme. */
 #subsystemBubbles .map-network-node,
 #subsystemBubbles .map-network-node:hover,
 #subsystemBubbles .map-network-node.selected,
-#subsystemBubbles .map-submodel-hidrica-node,
 #territoryNetworkPlain .map-network-node,
 #territoryNetworkPlain .map-network-node:hover,
 #territoryNetworkPlain .map-network-node.selected {
   border-radius: 50% !important;
   aspect-ratio: 1 / 1 !important;
-}
-
-/* Líneas que conectan entre sí las 3 sub-bolitas de los submodelos
-   hídricos (triángulo), en blanco con giro de 90° — igual que las demás. */
-.map-network-stage > svg .map-submodel-hidrica-link {
-  fill: none; stroke: rgba(255,255,255,0.75); stroke-width: .14; stroke-dasharray: .9 .8;
-  opacity: .85;
-}
-
-/* Mini-bolitas de cada coordenada: círculo del color de su modelo + su
-   nombre al lado. Sin líneas hacia ningún centro (por ahora). */
-.map-mini-node {
-  position: absolute; z-index: 2;
-  transform: translate(-50%, -50%);
-  display: flex; flex-direction: column; align-items: center; gap: 3px;
-  pointer-events: none;
-}
-.map-mini-node-dot {
-  width: 15px; height: 15px;
-  border-radius: 50% !important;
-  aspect-ratio: 1 / 1 !important;
-  background: var(--node-color, #fff);
-  border: 1.5px solid rgba(255,255,255,0.9);
-  box-shadow: 0 0 4px rgba(0,0,0,.85), 0 0 10px var(--node-color, #fff), 0 0 18px var(--node-color, #fff);
-  display: block;
-}
-.map-mini-node strong {
-  color: #fff;
-  font: 800 8px/1.15 Inter, sans-serif;
-  text-shadow: 0 0 3px rgba(0,0,0,.95), 0 0 2px rgba(0,0,0,.95), 0 0 6px var(--node-color, #fff);
-  white-space: nowrap;
-}
-
-/* ---------- Cajas de texto de la red hídrica de Kennedy ----------
-   Igual estructura visual que el plano de referencia: recuadro de fondo
-   negro semitransparente con borde blanco delgado, conectado con una
-   línea en L (blanca) hacia un nodo circular de color en el mapa real. */
-.kennedy-info-box {
-  position: absolute; z-index: 6;
-  transform: translate(-8%, -50%);
-  width: 190px;
-  background: rgba(4,6,8,0.82);
-  border: 1px solid rgba(255,255,255,0.65);
-  border-radius: 4px;
-  padding: 8px 10px;
-  pointer-events: none;
-}
-.kennedy-info-box h4 {
-  color: #fff; font-size: 8.5px; font-weight: 800; line-height: 1.25;
-  margin: 0 0 2px; text-transform: uppercase;
-}
-.kennedy-info-box .kennedy-subtitle {
-  color: var(--node-color, #fff); font-size: 7px; font-weight: 700;
-  text-transform: uppercase; margin: 0 0 5px; letter-spacing: .3px;
-}
-.kennedy-info-box .kennedy-mainline {
-  color: #dfe3e8; font-size: 7.5px; font-style: italic; margin: 0 0 5px;
-  border-bottom: 1px solid rgba(255,255,255,0.25); padding-bottom: 5px;
-}
-.kennedy-info-box .kennedy-sub-label {
-  color: rgba(255,255,255,0.6); font-size: 6.5px; font-weight: 700;
-  text-transform: uppercase; margin: 0 0 2px;
-}
-.kennedy-info-box ul { margin: 0; padding-left: 12px; }
-.kennedy-info-box li { color: #cfd6dc; font-size: 7px; line-height: 1.35; margin-bottom: 2px; }
-.kennedy-box-node {
-  position: absolute; z-index: 7;
-  width: 12px; height: 12px; border-radius: 50% !important; aspect-ratio: 1/1 !important;
-  background: var(--node-color, #fff);
-  border: 1.5px solid rgba(255,255,255,0.9);
-  box-shadow: 0 0 5px rgba(0,0,0,.85), 0 0 10px var(--node-color, #fff);
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-}
-.map-network-stage > svg .kennedy-box-link {
-  fill: none; stroke: rgba(255,255,255,0.8); stroke-width: .16; stroke-dasharray: .9 .8;
-  opacity: .85;
 }
 
 /* Banner inferior "PROBLEMA A TRABAJAR", igual que en el plano de
@@ -5761,3 +5661,9 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
   .kennedy-flow-banner { display: none; }
   .kennedy-problem-banner { max-width: 160px; }
 }
+
+/* La superposición completa (bolas + fondo) entra con un fundido suave,
+   no de golpe — para que la aparición se sienta calmada. */
+.map-network-stage { animation: kennedyStageFadeIn .8s ease both; }
+@keyframes kennedyStageFadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .map-network-stage { animation: none; opacity: 1; } }

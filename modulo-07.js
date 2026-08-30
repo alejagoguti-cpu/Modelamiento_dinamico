@@ -1602,6 +1602,8 @@
     // Se reutilizan tanto para dibujar los puntos en la capa del mapa como
     // para las líneas de flujo que convergen hacia la bolita de cada
     // dinámica en la red de burbujas ("Identificar los subsistemas").
+    // Componentes reales que alimentan las capas base del mapa (los
+    // checkboxes "Subsistema hídrico/biótico/infraestructura").
     const HIDRICA_COMPONENTS = [
       { label: "Humedal El Burro", coords: [-74.14987475206779, 4.64210777486686] },
       { label: "Humedal La Vaca", coords: [-74.16284778855655, 4.62939492240078] },
@@ -1629,29 +1631,34 @@
       { label: "Corabastos", coords: [-74.1599146050763, 4.63015596902525] },
       { label: "Av. Ciudad de Cali", coords: [-74.15162630856268, 4.644831758038044] },
     ];
-    // Las 5 cajas de la red hídrica de Kennedy (misma estructura del
-    // plano de referencia: título + línea de modelos + submodelos),
-    // cada una conectada con una línea en L hacia su nodo real en el mapa.
-    // Nota: "Canales Pluviales (San Francisco/Dindalito)" usa una
-    // coordenada aproximada dentro de Kennedy (no tengo el trazado exacto
-    // de esos canales específicos).
-    const KENNEDY_BOXES = [
-      { id: "cali", title: "CORREDOR AV. CIUDAD DE CALI", subtitle: "SISTEMA INFRAESTRUCTURAL", mainLine: "Modelo Antrópico ⟶ Sistema Ecológico",
-        submodelos: ["Modelo de impermeabilización y sello de suelo", "Modelo de fricción por escorrentía superficial", "Modelo de fragmentación hídrica (Humedal El Burro)"],
-        coords: [-74.15162630856268, 4.644831758038044], color: "#ee9a4b", boxPos: [9, 16] },
-      { id: "lavaca", title: "HUMEDAL LA VACA / SECTOR CORABASTOS", subtitle: "SISTEMA FISICOQUÍMICO", mainLine: "Modelo Urbano ⟶ Sistema Hídrico",
-        submodelos: ["Modelo de carga orgánica y lixiviados", "Modelo de eutrofización y pérdida de oxígeno", "Modelo de degradación del espejo de agua"],
-        coords: [-74.16284778855655, 4.62939492240078], color: "#56b8d4", boxPos: [8, 54] },
-      { id: "tunjuelo", title: "RÍO TUNJUELO (CUENCA BAJA)", subtitle: "SISTEMA HIDROMORFODINÁMICO", mainLine: "Modelo Social ⟶ Sistema de Riesgo",
-        submodelos: ["Modelo de caudal pico y aceleración en canales", "Modelo de desbordamiento e inundación (Patio Bonito / Tintal)", "Modelo de capacidad del canal rígido"],
-        coords: [-74.17429119107521, 4.603360016778938], color: "#e5484d", boxPos: [18, 88] },
-      { id: "canales", title: "CANALES PLUVIALES (SAN FRANCISCO / DINDALITO)", subtitle: "SISTEMA HIDRÁULICO", mainLine: "Modelo Determinístico ⟶ Sistema Urbano",
-        submodelos: ["Modelo de conducción pluvial acelerada", "Modelo de acumulación macrocuantitativa de vertimientos"],
-        coords: [-74.155, 4.635], color: "#56b8d4", boxPos: [91, 52] },
-      { id: "techo", title: "HUMEDAL TECHO", subtitle: "SISTEMA DE CONECTIVIDAD", mainLine: "Modelo Animado ⟶ Estructura Ecológica Principal",
-        submodelos: ["Modelo de aislamiento freatimétrico", "Modelo de pérdida de recarga acuífera"],
-        coords: [-74.1413020515684, 4.645452290970931], color: "#56b8d4", boxPos: [88, 14] },
+    // Fenómenos de la red hídrica de Kennedy: un solo lugar → una sola
+    // bolita grande con su ícono (igual tamaño que las bolas de los
+    // sistemas), sin nada más encima. Al hacer click se ve el detalle.
+    const KENNEDY_PHENOMENA = [
+      { id: "burro", label: "Humedal El Burro", coords: [-74.14987475206779, 4.64210777486686], system: "fisico",
+        phenomenon: "Impermeabilización, Fragmentación y Escorrentía Térmica",
+        detail: "La masa de asfalto de la Av. Ciudad de Cali corta la continuidad física del agua. El agua lluvia cae sobre el pavimento caliente y sellado, arrastra aceites y metales pesados, e ingresa al humedal a alta velocidad y temperatura, destruyendo el microclima de la ronda." },
+      { id: "lavaca", label: "Humedal La Vaca", coords: [-74.16284778855655, 4.62939492240078], system: "hidrica",
+        phenomenon: "Eutrofización Acelerada e Inversión de Oxígeno",
+        detail: "Debido a la cercanía con Corabastos y sectores de uso mixto, entran cargas de materia orgánica, lixiviados y detergentes (nitrógeno y fósforo). Esto causa una proliferación masiva de plantas flotantes (buchón) que cubren la superficie, bloquean la luz solar y agotan el oxígeno disuelto en el fondo, matando la vida acuática." },
+      { id: "techo", label: "Humedal Techo", coords: [-74.1413020515684, 4.645452290970931], system: "hidrica",
+        phenomenon: "Aislamiento Freatimétrico y Secado por Encajonamiento",
+        detail: "La infraestructura urbana circundante corta las venas de agua subterránea (acuífero) y los canales naturales que lo alimentaban. El humedal pierde la capacidad de regular su nivel y pasa a depender únicamente del agua de lluvia, sufriendo procesos de colmatación (acumulación de sedimento seco)." },
+      { id: "canales", label: "Canal San Francisco / Canal Dindalito", coords: [-74.155, 4.635], system: "fisico",
+        phenomenon: "Canalización Rígida y Aceleración de Vertimientos",
+        detail: "El reemplazo del cauce natural por concreto rígido elimina la capacidad de filtrado del suelo. El canal se convierte en un colector acelerado que transporta basura flotante, sedimentos y conexiones erradas de aguas residuales directamente hacia los humedales y el río." },
+      { id: "tunjuelo", label: "Río Tunjuelo", coords: [-74.17429119107521, 4.603360016778938], system: "hidrica",
+        phenomenon: "Sobrecarga Hidráulica y Desbordamiento por Colapso Pluvial",
+        detail: "Como la ciudad está pavimentada, toda el agua de lluvia de Kennedy corre hacia los canales sin filtrarse. Al llegar al río, sobrepasa la capacidad del cauce, provocando el retorno de aguas servidas e inundaciones en barrios perimetrales." },
+      { id: "corabastos", label: "Corabastos", coords: [-74.1599146050763, 4.63015596902525], system: "socioeconomico",
+        phenomenon: "Generación de Cargas Orgánicas y Lixiviados",
+        detail: "Pendiente de completar (el detalle de este punto quedó incompleto en el texto que me diste)." },
     ];
+    const KENNEDY_SYSTEM_STYLE = {
+      hidrica: { color: "#56b8d4", icon: "fa-droplet" },
+      fisico: { color: "#b8c0c8", icon: "fa-building" },
+      socioeconomico: { color: "#e58d62", icon: "fa-house-chimney" },
+    };
     // ---------- Sonidos ambiente por dinámica (sintetizados, sin archivos
     // externos) — cada burbuja del territorio suena distinto al tocarla:
     // el agua "corre", el pájaro "trina", el tráfico "zumba", etc. ----------
@@ -2019,7 +2026,7 @@
             [-74.08176, 4.70172]
           ] } }
         ] } });
-        map.addLayer({ id: "avenidas-referencia-line", type: "line", source: "avenidas-referencia", paint: { "line-color": "#b28be8", "line-width": ["interpolate", ["linear"], ["zoom"], 10, 1.4, 14, 2.6], "line-opacity": .88 } });
+        map.addLayer({ id: "avenidas-referencia-line", type: "line", source: "avenidas-referencia", paint: { "line-color": "#b28be8", "line-width": ["interpolate", ["linear"], ["zoom"], 10, 2.4, 14, 4.2], "line-opacity": .92 } });
         map.addLayer({ id: "avenidas-referencia-labels", type: "symbol", source: "avenidas-referencia", layout: { "symbol-placement": "line", "text-field": ["get", "label"], "text-size": 9, "text-offset": [0, -0.8] }, paint: { "text-color": "#d9c8f5", "text-halo-color": "#0a0612", "text-halo-width": 1.3 } });
         map.addSource("subsystem-component-points", { type: "geojson", data: { type: "FeatureCollection", features: [] } });
         map.addLayer({ id: "subsystem-component-point-halo", type: "circle", source: "subsystem-component-points", paint: { "circle-radius": ["interpolate", ["linear"], ["zoom"], 10, 8, 14, 13], "circle-color": ["coalesce", ["get", "color"], "#ffffff"], "circle-opacity": .18, "circle-blur": .35 }, layout: { visibility: "none" } });
@@ -2154,114 +2161,27 @@
         return { x: (p.x / w) * 100, y: (p.y / h) * 100 };
       } catch (err) { return null; }
     };
-    // Línea con un giro de 90° (como un circuito). Cada línea de un mismo
-    // grupo se abre un poco en abanico cerca de la bolita para que no se
-    // amontonen ni se toquen entre sí.
-    const flowCurveD = (x, y, nx, ny, fanOffset) => {
-      const midX = nx + fanOffset;
-      const pt = (px, py) => `${px.toFixed(2)} ${py.toFixed(2)}`;
-      return `M ${pt(x, y)} L ${pt(midX, y)} L ${pt(midX, ny)} L ${pt(nx, ny)}`;
-    };
-    const fanOffsetFor = (group, i) => {
-      const n = group.components.length;
-      const spread = Math.min(5, 22 / Math.max(n, 1));
-      return (i - (n - 1) / 2) * spread;
-    };
-    const FLOW_GROUPS = [
-      { components: HIDRICA_COMPONENTS, targetIndex: 0, color: "#b9e5ea", prefix: "hidrica" },
-      { components: BIOTICA_COMPONENTS, targetIndex: 1, color: "#c9f2d6", prefix: "biotica" },
-      { components: FISICO_COMPONENTS, targetIndex: 2, color: "#dfe3e8", prefix: "fisico" },
-    ];
-    const buildFlowGroupsSvg = (positions, hideHidricaBubble) => FLOW_GROUPS.map((group) => {
-      const isHidrica = group.prefix === "hidrica";
-      const hubPositions = (isHidrica && hideHidricaBubble)
-        ? KENNEDY_BOXES.map((s) => projectToPercent(s.coords)).filter(Boolean)
-        : null;
-      const [nx, ny] = positions[group.targetIndex];
-      return group.components.map((c, i) => {
-        const proj = projectToPercent(c.coords);
-        if (!proj) return "";
-        // La dinámica hídrica ya no tiene una sola bolita central: cada
-        // componente traza su línea hasta el submodelo hídrico más cercano.
-        let targetX = nx, targetY = ny;
-        if (hubPositions && hubPositions.length) {
-          let best = hubPositions[0], bestDist = Infinity;
-          hubPositions.forEach((h) => { const d = Math.hypot(h.x - proj.x, h.y - proj.y); if (d < bestDist) { bestDist = d; best = h; } });
-          targetX = best.x; targetY = best.y;
-        }
-        const id = `map-network-flow-${group.prefix}-${i}`;
-        const d = flowCurveD(proj.x, proj.y, targetX, targetY, fanOffsetFor(group, i));
-        return `<path id="${id}" class="map-network-flow-line" d="${d}"/>`;
-      }).join("");
-    }).join("");
-    // Puntitos en HTML (no SVG): el SVG se estira sin conservar proporción
-    // (preserveAspectRatio="none"), así que un círculo ahí sale ovalado.
-    // En HTML, con ancho = alto en píxeles, siempre quedan perfectamente
-    // redondos, chiquitos y fijos en la coordenada real. Cada uno lleva
-    // también su nombre, chiquito, para saber qué se está señalando.
-    // Cada coordenada se muestra como una mini-bolita con el color de su
-    // propio modelo y su nombre al lado — igual estilo que usamos para
-    // "Humedal La Vaca" y los demás submodelos hídricos.
-    const buildFlowDotsHtml = () => FLOW_GROUPS.map((group) => group.components.map((c, i) => {
-      const proj = projectToPercent(c.coords);
+    // Una sola bolita grande (mismo tamaño que las bolas de los sistemas)
+    // con su ícono, puesta encima de cada lugar real — sin nombre visible,
+    // sin líneas. Aparecen en cascada, suave, no todas de golpe.
+    const buildPhenomenaHtml = () => KENNEDY_PHENOMENA.map((p, i) => {
+      const proj = projectToPercent(p.coords);
       if (!proj) return "";
-      const id = `map-mini-node-${group.prefix}-${i}`;
-      return `<div id="${id}" class="map-mini-node" style="left:${proj.x.toFixed(2)}%;top:${proj.y.toFixed(2)}%;--node-color:${group.color}"><span class="map-mini-node-dot"></span><strong>${c.label}</strong></div>`;
-    }).join("")).join("");
-    // Las 5 cajas de Kennedy: cada una es un recuadro de texto fijo (igual
-    // que en el plano de referencia) conectado con una línea en L (blanca)
-    // hacia un nodo de color puesto exactamente en su coordenada real.
-    const kennedyBoxLinkD = (boxPos, nodeProj) => `M ${boxPos[0].toFixed(2)} ${boxPos[1].toFixed(2)} L ${nodeProj.x.toFixed(2)} ${boxPos[1].toFixed(2)} L ${nodeProj.x.toFixed(2)} ${nodeProj.y.toFixed(2)}`;
-    const buildKennedyBoxesSvg = () => KENNEDY_BOXES.map((box, i) => {
-      const proj = projectToPercent(box.coords);
-      if (!proj) return "";
-      return `<path id="kennedy-box-link-${i}" class="kennedy-box-link" d="${kennedyBoxLinkD(box.boxPos, proj)}"/>`;
+      const style = KENNEDY_SYSTEM_STYLE[p.system] || { color: "#fff", icon: "fa-circle" };
+      return `<button type="button" class="map-network-node map-phenomenon-node" id="map-phenomenon-${i}" data-phenomenon-index="${i}" style="left:${proj.x.toFixed(2)}%;top:${proj.y.toFixed(2)}%;--node-color:${style.color};--reveal-delay:${i * 180}ms"><i class="map-network-node-icon fa-solid ${style.icon}" aria-hidden="true"></i></button>`;
     }).join("");
-    const buildKennedyBoxesHtml = () => KENNEDY_BOXES.map((box, i) => {
-      const proj = projectToPercent(box.coords);
-      const nodeHtml = proj ? `<span id="kennedy-box-node-${i}" class="kennedy-box-node" style="left:${proj.x.toFixed(2)}%;top:${proj.y.toFixed(2)}%;--node-color:${box.color}"></span>` : "";
-      const items = box.submodelos.map((s) => `<li>${s}</li>`).join("");
-      return `<div class="kennedy-info-box" style="left:${box.boxPos[0]}%;top:${box.boxPos[1]}%;--node-color:${box.color}"><h4>${box.title}</h4><p class="kennedy-subtitle">${box.subtitle}</p><p class="kennedy-mainline">${box.mainLine}</p><p class="kennedy-sub-label">Sub-modelos:</p><ul>${items}</ul></div>${nodeHtml}`;
-    }).join("");
-    const updateKennedyBoxes = (stage) => {
-      KENNEDY_BOXES.forEach((box, i) => {
-        const proj = projectToPercent(box.coords);
-        const link = stage.querySelector(`#kennedy-box-link-${i}`);
-        const node = subsystemBubbles.querySelector(`#kennedy-box-node-${i}`);
-        if (!proj) return;
-        if (link) link.setAttribute("d", kennedyBoxLinkD(box.boxPos, proj));
-        if (node) { node.style.left = proj.x.toFixed(2) + "%"; node.style.top = proj.y.toFixed(2) + "%"; }
+    const updatePhenomenaPositions = () => {
+      KENNEDY_PHENOMENA.forEach((p, i) => {
+        const proj = projectToPercent(p.coords);
+        const el = subsystemBubbles?.querySelector(`#map-phenomenon-${i}`);
+        if (proj && el) { el.style.left = proj.x.toFixed(2) + "%"; el.style.top = proj.y.toFixed(2) + "%"; }
       });
     };
-    // Al mover o hacer zoom en el mapa, las mini-bolitas y las líneas se
+    // Al mover o hacer zoom en el mapa, las bolitas de fenómenos se
     // recalculan para que sigan exactamente sobre su coordenada real.
     const updateFlowGroups = () => {
       if (!subsystemBubbles?.classList.contains("network-active")) return;
-      const stage = subsystemBubbles.querySelector(".systems-network");
-      if (!stage) return;
-      updateKennedyBoxes(stage);
-      const positions = [[6,45],[40,6],[72,10],[95,48],[74,90],[14,88]];
-      const hubPositionsHidrica = KENNEDY_BOXES.map((b) => projectToPercent(b.coords)).filter(Boolean);
-      FLOW_GROUPS.forEach((group) => {
-        const [nx, ny] = positions[group.targetIndex];
-        const isHidrica = group.prefix === "hidrica";
-        group.components.forEach((c, i) => {
-          const proj = projectToPercent(c.coords);
-          const node = subsystemBubbles.querySelector(`#map-mini-node-${group.prefix}-${i}`);
-          const path = stage.querySelector(`#map-network-flow-${group.prefix}-${i}`);
-          if (!proj) return;
-          if (node) { node.style.left = proj.x.toFixed(2) + "%"; node.style.top = proj.y.toFixed(2) + "%"; }
-          if (path) {
-            let tx = nx, ty = ny;
-            if (isHidrica && hubPositionsHidrica.length) {
-              let best = hubPositionsHidrica[0], bestDist = Infinity;
-              hubPositionsHidrica.forEach((h) => { const d = Math.hypot(h.x - proj.x, h.y - proj.y); if (d < bestDist) { bestDist = d; best = h; } });
-              tx = best.x; ty = best.y;
-            }
-            path.setAttribute("d", flowCurveD(proj.x, proj.y, tx, ty, fanOffsetFor(group, i)));
-          }
-        });
-      });
+      updatePhenomenaPositions();
     };
     const renderMapNetwork = (mode = "systems", showBonds = true, target = subsystemBubbles, withFlows = true) => {
       if (!target) return;
@@ -2284,7 +2204,7 @@
       // sus 3 submodelos, cada uno puesto encima de su lugar real.
       const hideHidricaBubble = systems && withFlows;
       const nodes = rows.map((row, index) => { if (hideHidricaBubble && index === 0) return ""; const [x,y] = positions[index]; return `<button type="button" class="map-network-node ${systems ? "map-system-node" : "map-submodel-node"}" data-map-network-index="${index}" style="--node-x:${x}%;--node-y:${y}%;--node-color:${row.color || colors[index]}"><i class="map-network-node-icon fa-solid ${icon(index)}" aria-hidden="true"></i><strong>${label(row)}</strong></button>`; }).join("");
-      const kennedyBoxesHtml = hideHidricaBubble ? buildKennedyBoxesHtml() : "";
+      const kennedyBoxesHtml = hideHidricaBubble ? buildPhenomenaHtml() : "";
       const relationPairs = (systems
         ? [[0,1],[0,2],[0,5],[1,2],[1,3],[1,5],[2,3],[2,4],[3,4],[3,5],[4,5]]
         : [[0,1],[0,2],[1,2],[1,3],[2,3],[2,4],[3,4],[3,5],[4,5],[4,6],[5,6],[0,6],[1,5]]
@@ -2340,11 +2260,13 @@
       }).join("");
       target.dataset.revealState = "complete";
       target.classList.add("network-active");
-      const flowsSvg = (systems && withFlows) ? buildFlowGroupsSvg(positions, hideHidricaBubble) + (hideHidricaBubble ? buildKennedyBoxesSvg() : "") : "";
-      const flowDotsHtml = (systems && withFlows) ? buildFlowDotsHtml() : "";
+      const flowsSvg = "";
+      const flowDotsHtml = "";
       target.innerHTML = `<div class="map-network-stage ${systems ? "systems-network" : "submodels-network"}"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><defs>${gradientDefs.join("")}</defs><g class="map-network-flows">${flowsSvg}</g><g class="map-network-bonds">${showBonds ? bonds : ""}</g></svg>${flowDotsHtml}${nodes}${kennedyBoxesHtml}</div>`;
       target.querySelectorAll(".map-network-node").forEach((button) => button.addEventListener("click", () => {
+        if (button.classList.contains("map-phenomenon-node")) return; // tiene su propio manejador, más abajo
         const row = rows[Number(button.dataset.mapNetworkIndex)];
+        if (!row) return;
         if (row?.id) DINAMICA_SOUND.play(row.id);
         target.querySelectorAll(".map-network-node").forEach((node) => node.classList.toggle("selected", node === button));
         target.querySelectorAll(".subsystem-components, .subsystem-purpose-panel, .map-network-detail").forEach((node) => node.remove());
@@ -2368,6 +2290,23 @@
         purpose.querySelector(".subsystem-panel-close")?.addEventListener("click", closePanels);
         if (systems && withFlows) renderSubsystemPoints(subsystemData[Number(button.dataset.mapNetworkIndex)]);
       }));
+      if (hideHidricaBubble) {
+        target.querySelectorAll(".map-phenomenon-node").forEach((button) => button.addEventListener("click", () => {
+          const p = KENNEDY_PHENOMENA[Number(button.dataset.phenomenonIndex)];
+          if (!p) return;
+          DINAMICA_SOUND.play(p.system === "hidrica" ? "hidrica" : p.system === "fisico" ? "fisico" : "socioeconomico");
+          target.querySelectorAll(".map-network-node").forEach((node) => node.classList.toggle("selected", node === button));
+          target.querySelectorAll(".subsystem-components, .subsystem-purpose-panel, .map-network-detail").forEach((node) => node.remove());
+          const style = KENNEDY_SYSTEM_STYLE[p.system] || { color: "#fff" };
+          const purpose = document.createElement("aside");
+          purpose.className = "subsystem-purpose-panel active map-purpose-panel";
+          purpose.style.setProperty("--bubble-color", style.color);
+          purpose.innerHTML = `<div class="subsystem-panel-heading"><strong>${p.label}</strong><button type="button" class="subsystem-panel-close" aria-label="Cerrar panel"><i class="fa-solid fa-xmark"></i></button></div><p class="panel-scope-label">FENÓMENO</p><h4>${p.phenomenon}</h4><p class="panel-scope-label">QUÉ OCURRE</p><p>${p.detail}</p>`;
+          target.append(purpose);
+          const closePanels = (event) => { event?.stopPropagation(); purpose.remove(); button.classList.remove("selected"); };
+          purpose.querySelector(".subsystem-panel-close")?.addEventListener("click", closePanels);
+        }));
+      }
     };
     const clearMapNetwork = () => { if (!subsystemBubbles) return; subsystemBubbles.classList.remove("network-active"); subsystemBubbles.replaceChildren(); clearSubsystemPoints(); };
     const drawSubsystems = ({ hidden = false } = {}) => { if (!subsystemBubbles) return; subsystemBubbles.dataset.revealState = hidden ? "pending" : "complete"; if (hidden) { clearMapNetwork(); return; } renderMapNetwork("systems"); };
