@@ -5236,17 +5236,14 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 }
 @media (prefers-reduced-motion: reduce) { .map-network-stage > svg .map-network-bond, .map-network-stage > svg .map-network-bond-soft { animation: none; } }
 
-/* Líneas de flujo: conectan cada componente geográfico real (humedales,
-   canales, parques...) con la bolita de su dinámica. Curvas y con un punto
-   animado recorriéndolas — se sienten como flujo, no como una línea fija. */
+/* Líneas rectas y simples (como en el plano de referencia): conectan cada
+   componente geográfico real (humedales, canales, parques...) con la
+   bolita de su dinámica. Sin curvas ni animación — un trazo punteado fijo. */
 .map-network-stage > svg .map-network-flows { pointer-events: none; overflow: visible; }
 .map-network-stage > svg .map-network-flow-line {
-  fill: none; stroke: rgba(255,255,255,0.35); stroke-width: .35;
-  stroke-dasharray: 1.2 1.4;
+  fill: none; stroke: rgba(255,255,255,0.55); stroke-width: .3;
+  stroke-dasharray: 1 1.1;
 }
-.map-network-stage > svg .map-network-flow-pulse { filter: drop-shadow(0 0 1.2px currentColor); }
-@media (prefers-reduced-motion: reduce) { .map-network-stage > svg .map-network-flow-pulse { animation: none !important; } }
-
 
 /* ===================== AJUSTE FINAL · FLOTADO LENTO Y UNIONES ELÁSTICAS ===================== */
 .map-network-stage { background: radial-gradient(circle at 50% 50%, rgba(118,255,240,.035), transparent 30%), rgba(2,8,10,.04) !important; }

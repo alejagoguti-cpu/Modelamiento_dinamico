@@ -1661,23 +1661,28 @@
         osc.start(c.currentTime + delay); osc.stop(c.currentTime + delay + duration + 0.05);
       }
       const players = {
-        // Dinámica hídrica: agua corriendo — ruido filtrado que "respira"
+        // Dinámica hídrica: agua corriendo — varias capas de ruido filtrado
+        // (grave = caudal, medio y agudo = burbujeo) para que suene a agua real
         hidrica: (c) => {
-          playFilteredNoise(c, { duration: 2.2, filterFreq: 900, filterType: "lowpass", gain: 0.22, fadeOut: 2.2 });
-          playFilteredNoise(c, { duration: 1.6, filterFreq: 2200, filterType: "bandpass", q: 1.2, gain: 0.08, fadeOut: 1.6 });
+          playFilteredNoise(c, { duration: 2.4, filterFreq: 700, filterType: "lowpass", gain: 0.2, fadeOut: 2.4 });
+          playFilteredNoise(c, { duration: 1.8, filterFreq: 1800, filterType: "bandpass", q: 1.0, gain: 0.09, fadeOut: 1.8 });
+          playFilteredNoise(c, { duration: 1.2, filterFreq: 3200, filterType: "bandpass", q: 1.4, gain: 0.05, fadeOut: 1.2 });
         },
-        // Dinámica biótica: un pajarito — dos o tres trinos cortos y agudos
+        // Dinámica biótica: un pajarito — trinos cortos y agudos con tono
+        // ligeramente distinto cada vez, para que no suene siempre igual
         biotica: (c) => {
-          [0, 0.18, 0.34].forEach((delay, i) => {
-            playTone(c, { freq: 2400 + i * 200, to: 3400 + i * 150, duration: 0.11, type: "sine", gain: 0.14, delay });
+          const base = 2200 + Math.random() * 300;
+          [0, 0.16, 0.3].forEach((delay, i) => {
+            playTone(c, { freq: base + i * 220, to: base + i * 220 + 900, duration: 0.1, type: "sine", gain: 0.15, delay });
           });
         },
-        // Sistema físico-urbano: golpes secos de obra/construcción
+        // Sistema físico-urbano: sonido de ciudad — un carro que pasa
+        // (motor sube y baja de tono) más una bocina corta de dos tonos
         fisico: (c) => {
-          [0, 0.22].forEach((delay) => {
-            playFilteredNoise(c, { duration: 0.09, filterFreq: 350, filterType: "lowpass", gain: 0.3, fadeOut: 0.09 });
-            playTone(c, { freq: 110, to: 60, duration: 0.15, type: "square", gain: 0.12, delay });
-          });
+          playTone(c, { freq: 90, to: 150, duration: 0.35, type: "sawtooth", gain: 0.08 });
+          playTone(c, { freq: 150, to: 70, duration: 0.45, type: "sawtooth", gain: 0.07, delay: 0.35 });
+          playFilteredNoise(c, { duration: 0.8, filterFreq: 500, filterType: "lowpass", gain: 0.06, fadeOut: 0.8 });
+          [370, 415].forEach((freq) => playTone(c, { freq, duration: 0.22, type: "square", gain: 0.08, delay: 0.15 }));
         },
         // Sistema de movilidad: motor de fondo + una bocina corta
         movilidad: (c) => {
@@ -1824,7 +1829,7 @@
             // animado sobre la red de burbujas (ver renderMapNetwork).
             ...HIDRICA_COMPONENTS.map((c) => pt(c.coords, { label: c.label, kind: "water-point" }))
           ] },
-          biotico: { type: "FeatureCollection", features: [poly([[-74.166,4.644],[-74.162,4.646],[-74.158,4.643],[-74.160,4.638],[-74.165,4.638],[-74.166,4.644]], { label: "hábitat y vegetación" }), poly([[-74.157,4.646],[-74.153,4.645],[-74.153,4.639],[-74.157,4.637],[-74.160,4.640],[-74.157,4.646]], { label: "hábitat y vegetación" }), pt([-74.157,4.642], { label: "fauna" }),
+          biotico: { type: "FeatureCollection", features: [poly([[-74.166,4.644],[-74.162,4.646],[-74.158,4.643],[-74.160,4.638],[-74.165,4.638],[-74.166,4.644]], { label: "hábitat y vegetación" }), poly([[-74.157,4.646],[-74.153,4.645],[-74.153,4.639],[-74.157,4.637],[-74.160,4.640],[-74.157,4.646]], { label: "hábitat y vegetación" }),
             ...BIOTICA_COMPONENTS.map((c) => pt(c.coords, { label: c.label, kind: "bio-point" }))
           ] },
           infraestructura: { type: "FeatureCollection", features: [line([[-74.159,4.67],[-74.159,4.65],[-74.159,4.63],[-74.159,4.61]], { label: "Avenida Ciudad de Cali" }), poly([[-74.153,4.651],[-74.148,4.651],[-74.148,4.647],[-74.153,4.647],[-74.153,4.651]], { label: "área construida" }), poly([[-74.169,4.632],[-74.165,4.632],[-74.165,4.628],[-74.169,4.628],[-74.169,4.632]], { label: "borde urbano" })] },
@@ -2028,14 +2033,11 @@
         return { x: (p.x / w) * 100, y: (p.y / h) * 100 };
       } catch (err) { return null; }
     };
-    // Curva simple (no una línea recta) para que cada componente real se
-    // sienta como un flujo que llega a la bolita de su dinámica.
-    const flowCurveD = (x, y, nx, ny, seedIndex) => {
-      const dx = nx - x, dy = ny - y, length = Math.max(1, Math.hypot(dx, dy));
-      const bend = (seedIndex % 2 ? -1 : 1) * Math.min(6, length * .18);
-      const mid = [(x + nx) / 2 - (dy / length) * bend, (y + ny) / 2 + (dx / length) * bend];
+    // Línea recta y simple (como en el plano de referencia): sin curvas ni
+    // animación rara, solo un trazo punteado blanco del punto real a la bolita.
+    const flowCurveD = (x, y, nx, ny) => {
       const pt = (px, py) => `${px.toFixed(2)} ${py.toFixed(2)}`;
-      return `M ${pt(x, y)} Q ${pt(mid[0], mid[1])} ${pt(nx, ny)}`;
+      return `M ${pt(x, y)} L ${pt(nx, ny)}`;
     };
     const FLOW_GROUPS = [
       { components: HIDRICA_COMPONENTS, targetIndex: 0, color: "#b9e5ea", prefix: "hidrica" },
@@ -2047,13 +2049,12 @@
         const proj = projectToPercent(c.coords);
         if (!proj) return "";
         const id = `map-network-flow-${group.prefix}-${i}`;
-        const d = flowCurveD(proj.x, proj.y, nx, ny, i);
-        const duration = (3.2 + (i % 5) * .5).toFixed(2);
-        return `<g class="map-network-flow-group"><path id="${id}" class="map-network-flow-line" d="${d}" pathLength="1"/><circle class="map-network-flow-pulse" r=".3" fill="${group.color}"><animateMotion dur="${duration}s" begin="-${(i * .4).toFixed(2)}s" repeatCount="indefinite" rotate="auto"><mpath href="#${id}"/></animateMotion></circle></g>`;
+        const d = flowCurveD(proj.x, proj.y, nx, ny);
+        return `<path id="${id}" class="map-network-flow-line" d="${d}"/>`;
       }).join("");
     }).join("");
-    // Al mover o hacer zoom en el mapa, las líneas de flujo se vuelven a
-    // calcular para que sigan llegando exactamente a cada bolita.
+    // Al mover o hacer zoom en el mapa, las líneas se vuelven a calcular
+    // para que sigan llegando exactamente a cada bolita.
     const updateFlowGroups = () => {
       if (!subsystemBubbles?.classList.contains("network-active")) return;
       const svg = subsystemBubbles.querySelector(".systems-network svg");
@@ -2065,7 +2066,7 @@
           const proj = projectToPercent(c.coords);
           const path = svg.querySelector(`#map-network-flow-${group.prefix}-${i}`);
           if (!proj || !path) return;
-          path.setAttribute("d", flowCurveD(proj.x, proj.y, nx, ny, i));
+          path.setAttribute("d", flowCurveD(proj.x, proj.y, nx, ny));
         });
       });
     };
