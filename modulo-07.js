@@ -1803,7 +1803,7 @@
         // vuelva a medir su tamaño y a dibujar la red de burbujas.
         requestAnimationFrame(() => {
           componentPointMap?.resize();
-          renderMapNetwork(currentSubmodelsMode === "subsystems" ? "systems" : "submodels");
+          renderMapNetwork(currentSubmodelsMode === "subsystems" ? "systems" : "submodels", false);
           section.scrollIntoView({ behavior: "smooth", block: "nearest" });
         });
       }
@@ -1953,7 +1953,7 @@
       if (!subsystemsPanel) return;
       subsystemsPanel.hidden = !subsystemsPanel.hidden;
       identifySubsystems.classList.toggle("active", !subsystemsPanel.hidden);
-      if (!subsystemsPanel.hidden) renderMapNetwork("systems"); else clearMapNetwork();
+      if (!subsystemsPanel.hidden) renderMapNetwork("systems", false); else clearMapNetwork();
     });
     const subsystemBubbles = document.getElementById("subsystemBubbles");
     const subsystemData = partOneRows.map((row, index) => ({
@@ -2140,7 +2140,7 @@
         });
       });
     };
-    const renderMapNetwork = (mode = "systems") => {
+    const renderMapNetwork = (mode = "systems", showBonds = true) => {
       if (!subsystemBubbles) return;
       const systems = mode === "systems";
       const rows = systems ? territorySystems : submodelRows;
@@ -2207,7 +2207,7 @@
       subsystemBubbles.classList.add("network-active");
       const flowsSvg = systems ? buildFlowGroupsSvg(positions) : "";
       const flowDotsHtml = systems ? buildFlowDotsHtml() : "";
-      subsystemBubbles.innerHTML = `<div class="map-network-stage ${systems ? "systems-network" : "submodels-network"}"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><defs>${gradientDefs.join("")}</defs><g class="map-network-flows">${flowsSvg}</g></svg>${flowDotsHtml}${nodes}</div>`;
+      subsystemBubbles.innerHTML = `<div class="map-network-stage ${systems ? "systems-network" : "submodels-network"}"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><defs>${gradientDefs.join("")}</defs><g class="map-network-flows">${flowsSvg}</g><g class="map-network-bonds">${showBonds ? bonds : ""}</g></svg>${flowDotsHtml}${nodes}</div>`;
       subsystemBubbles.querySelectorAll(".map-network-node").forEach((button) => button.addEventListener("click", () => {
         const row = rows[Number(button.dataset.mapNetworkIndex)];
         if (row?.id) DINAMICA_SOUND.play(row.id);
