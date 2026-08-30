@@ -5667,3 +5667,27 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
   fill: none; stroke: #56b8d4; stroke-width: .3; stroke-dasharray: 1.4 1;
   opacity: .8;
 }
+
+/* Mini-bolitas de cada coordenada: círculo del color de su modelo + su
+   nombre al lado. Sin líneas hacia ningún centro (por ahora). */
+.map-mini-node {
+  position: absolute; z-index: 2;
+  transform: translate(-50%, -50%);
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  pointer-events: none;
+}
+.map-mini-node-dot {
+  width: 14px; height: 14px;
+  border-radius: 50% !important;
+  aspect-ratio: 1 / 1 !important;
+  background: var(--node-color, #fff);
+  border: 1.5px solid rgba(255,255,255,0.85);
+  box-shadow: 0 0 5px rgba(0,0,0,.8), 0 0 6px var(--node-color, #fff);
+  display: block;
+}
+.map-mini-node strong {
+  color: var(--node-color, #fff);
+  font: 700 8px/1.15 Inter, sans-serif;
+  text-shadow: 0 0 3px rgba(0,0,0,.95), 0 0 2px rgba(0,0,0,.95);
+  white-space: nowrap;
+}

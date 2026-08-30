@@ -2173,12 +2173,14 @@
     // En HTML, con ancho = alto en píxeles, siempre quedan perfectamente
     // redondos, chiquitos y fijos en la coordenada real. Cada uno lleva
     // también su nombre, chiquito, para saber qué se está señalando.
+    // Cada coordenada se muestra como una mini-bolita con el color de su
+    // propio modelo y su nombre al lado — igual estilo que usamos para
+    // "Humedal La Vaca" y los demás submodelos hídricos.
     const buildFlowDotsHtml = () => FLOW_GROUPS.map((group) => group.components.map((c, i) => {
       const proj = projectToPercent(c.coords);
       if (!proj) return "";
-      const id = `map-network-flow-dot-${group.prefix}-${i}`;
-      const labelId = `map-network-flow-label-${group.prefix}-${i}`;
-      return `<span id="${id}" class="map-network-flow-dot" style="left:${proj.x.toFixed(2)}%;top:${proj.y.toFixed(2)}%;background:${group.color}"></span><span id="${labelId}" class="map-network-flow-label" style="left:${proj.x.toFixed(2)}%;top:${proj.y.toFixed(2)}%;color:${group.color}">${c.label}</span>`;
+      const id = `map-mini-node-${group.prefix}-${i}`;
+      return `<div id="${id}" class="map-mini-node" style="left:${proj.x.toFixed(2)}%;top:${proj.y.toFixed(2)}%;--node-color:${group.color}"><span class="map-mini-node-dot"></span><strong>${c.label}</strong></div>`;
     }).join("")).join("");
     // Conecta entre sí las 3 sub-bolitas de los submodelos hídricos
     // (triángulo de líneas), igual que las bolas grandes se conectan.
@@ -2199,25 +2201,20 @@
         if (A && B && el) el.setAttribute("d", `M ${A.x.toFixed(2)} ${A.y.toFixed(2)} L ${B.x.toFixed(2)} ${B.y.toFixed(2)}`);
       });
     };
-    // Al mover o hacer zoom en el mapa, las líneas, los puntitos y sus
-    // nombres se vuelven a calcular para que sigan en su coordenada real.
+    // Al mover o hacer zoom en el mapa, las mini-bolitas se recalculan
+    // para que sigan exactamente sobre su coordenada real.
     const updateFlowGroups = () => {
       if (!subsystemBubbles?.classList.contains("network-active")) return;
       const stage = subsystemBubbles.querySelector(".systems-network");
       if (!stage) return;
       updateSubmodelLinks(stage);
-      const positions = [[6,45],[40,6],[72,10],[95,48],[74,90],[14,88]];
       FLOW_GROUPS.forEach((group) => {
-        const [nx, ny] = positions[group.targetIndex];
         group.components.forEach((c, i) => {
           const proj = projectToPercent(c.coords);
-          const path = stage.querySelector(`#map-network-flow-${group.prefix}-${i}`);
-          const dot = stage.querySelector(`#map-network-flow-dot-${group.prefix}-${i}`);
-          const labelEl = stage.querySelector(`#map-network-flow-label-${group.prefix}-${i}`);
-          if (!proj) return;
-          if (path) path.setAttribute("d", flowCurveD(proj.x, proj.y, nx, ny, fanOffsetFor(group, i)));
-          if (dot) { dot.style.left = proj.x.toFixed(2) + "%"; dot.style.top = proj.y.toFixed(2) + "%"; }
-          if (labelEl) { labelEl.style.left = proj.x.toFixed(2) + "%"; labelEl.style.top = proj.y.toFixed(2) + "%"; }
+          const node = subsystemBubbles.querySelector(`#map-mini-node-${group.prefix}-${i}`);
+          if (!proj || !node) return;
+          node.style.left = proj.x.toFixed(2) + "%";
+          node.style.top = proj.y.toFixed(2) + "%";
         });
       });
       // Las 3 sub-bolitas de dinámica hídrica también se mueven encima de
@@ -2304,7 +2301,7 @@
       }).join("");
       target.dataset.revealState = "complete";
       target.classList.add("network-active");
-      const flowsSvg = (systems && withFlows) ? buildFlowGroupsSvg(positions) + buildSubmodelLinksSvg() : "";
+      const flowsSvg = (systems && withFlows) ? buildSubmodelLinksSvg() : "";
       const flowDotsHtml = (systems && withFlows) ? buildFlowDotsHtml() : "";
       target.innerHTML = `<div class="map-network-stage ${systems ? "systems-network" : "submodels-network"}"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><defs>${gradientDefs.join("")}</defs><g class="map-network-flows">${flowsSvg}</g><g class="map-network-bonds">${showBonds ? bonds : ""}</g></svg>${flowDotsHtml}${nodes}${submodelBubblesHtml}</div>`;
       if (hideHidricaBubble) {
