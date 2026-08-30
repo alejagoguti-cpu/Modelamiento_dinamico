@@ -1161,35 +1161,57 @@ function showHumedalesOverlay(opts) {
   }
 }
 
-/* Animación del botón "Explorar relaciones en detalle": acerca la cámara
-   hacia el nodo Humedales en la red principal (como si la vista se metiera
-   dentro del mapa) y, justo cuando el zoom cubre toda la pantalla, entra al
-   overlay ampliado de humedales ya existente con un fundido suave. */
+/* Animación fluida de cámara hacia el nodo seleccionado (Humedales o Vías):
+   acerca la cámara de forma suave y sin tirones antes de abrir el overlay ampliado. */
 function explorarRelacionesConAnimacion() {
   const svg = document.getElementById("networkViz");
   const nodeEl = document.querySelector('.ods-node[data-id="humedales"]');
-  if (!svg || !nodeEl) { showHumedalesOverlay(); return; }
+  if (!svg || !nodeEl) { showHumedalesOverlay({ animateIn: true }); return; }
 
   const humedal = nodeById("humedales");
-  const vb = svg.viewBox.baseVal;
-  // Origen del zoom = posición real del nodo Humedales dentro del viewBox,
-  // convertido a % del propio SVG (para usar como transform-origin en CSS).
-  const originXPct = ((humedal.x - vb.x) / vb.width) * 100;
-  const originYPct = ((humedal.y - vb.y) / vb.height) * 100;
-  svg.style.transformOrigin = `${originXPct}% ${originYPct}%`;
+  if (humedal) {
+    const vb = svg.viewBox.baseVal;
+    const originXPct = ((humedal.x - vb.x) / vb.width) * 100;
+    const originYPct = ((humedal.y - vb.y) / vb.height) * 100;
+    svg.style.transformOrigin = `${originXPct}% ${originYPct}%`;
+  }
 
   svg.classList.add("zoom-into-humedales");
+  let done = false;
   const onDone = () => {
-    svg.removeEventListener("transitionend", onDone);
+    if (done) return;
+    done = true;
     showHumedalesOverlay({ animateIn: true });
-    // Deja el SVG listo (sin zoom ni clase) para la próxima vez que se muestre
-    // la red principal, ya con la vista reseteada.
     svg.classList.remove("zoom-into-humedales");
     svg.style.transformOrigin = "";
   };
-  svg.addEventListener("transitionend", onDone, { once: true });
-  // Red de seguridad por si transitionend no dispara (pestaña en segundo plano, etc.)
-  setTimeout(() => { if (svg.classList.contains("zoom-into-humedales") && document.getElementById("humedalesOverlay").style.display !== "flex") onDone(); }, 3200);
+  setTimeout(onDone, 440);
+}
+
+function zoomIntoMovilidad() {
+  const svg = document.getElementById("networkViz");
+  if (!svg) { showMovilidadOverlay({ animateIn: true }); return; }
+
+  const node = nodeById("red_vial") || nodeById("transporte_publico");
+  if (node) {
+    const vb = svg.viewBox.baseVal;
+    const originXPct = ((node.x - vb.x) / vb.width) * 100;
+    const originYPct = ((node.y - vb.y) / vb.height) * 100;
+    svg.style.transformOrigin = `${originXPct}% ${originYPct}%`;
+  } else {
+    svg.style.transformOrigin = "50% 50%";
+  }
+
+  svg.classList.add("zoom-into-humedales");
+  let done = false;
+  const onDone = () => {
+    if (done) return;
+    done = true;
+    showMovilidadOverlay({ animateIn: true });
+    svg.classList.remove("zoom-into-humedales");
+    svg.style.transformOrigin = "";
+  };
+  setTimeout(onDone, 440);
 }
 
 /* Muestra la cita de una LÍNEA de conexión (no de un humedal puntual) en un
@@ -2074,22 +2096,15 @@ function cerrarModalExplorarRelaciones() {
 function abrirMapaVias() {
   cerrarModalExplorarRelaciones();
   setTimeout(() => {
-    // Si la red está visible, ejecuta la animación de transición hacia movilidad
-    const svg = document.getElementById("networkViz");
-    if (svg && svg.style.display !== "none") {
-      verHallazgosConAnimacion();
-    } else {
-      showMovilidadOverlay({ animateIn: true });
-    }
-  }, 60);
+    zoomIntoMovilidad();
+  }, 40);
 }
 
 function abrirMapaHumedales() {
   cerrarModalExplorarRelaciones();
   setTimeout(() => {
-    // Hace el zoom hacia el nodo Humedales en la red y abre el mapa detallado
     explorarRelacionesConAnimacion();
-  }, 60);
+  }, 40);
 }
 
 function abrirMapa3() {
