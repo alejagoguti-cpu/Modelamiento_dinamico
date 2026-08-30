@@ -1837,6 +1837,9 @@
           const hidricaLinkId = `${sourceId}-hidrica-links`;
           if (meta.id === "hidrico") map.addLayer({ id: hidricaLinkId, type: "line", source: sourceId, filter: ["==", ["get", "kind"], "hidrica-link"], paint: { "line-color": "#b9e5ea", "line-width": ["interpolate", ["linear"], ["zoom"], 10, .8, 14, 1.6], "line-opacity": .55, "line-dasharray": [2, 1.6] }, layout: { visibility: "none" } }, pointId);
           partOneMapLayers.push({ id: meta.id, fill: fillId, line: lineId, point: pointId, extras: meta.id === "hidrico" ? [labelId, hidricaLinkId] : [], markers: [] });
+          // El checkbox de "Subsistema hídrico" nace marcado, pero las capas nacen
+          // ocultas: sin esto, nunca se veía nada hasta desmarcar y volver a marcar.
+          if (meta.id === "hidrico") { [pointId, labelId, hidricaLinkId].forEach((id) => map.setLayoutProperty(id, "visibility", "visible")); }
         });
         componentPointMap = map;
         map.addSource("subsystem-component-points", { type: "geojson", data: { type: "FeatureCollection", features: [] } });
