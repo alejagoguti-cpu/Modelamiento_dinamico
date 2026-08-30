@@ -1615,6 +1615,9 @@
       { label: "Canal Los Ángeles (punto)", coords: [-74.14408308171802, 4.6347293508003995] },
       { label: "Canal Tintal II", coords: [-74.17614285433572, 4.638461556417559] },
       { label: "Río Fucha", coords: [-74.13071639928444, 4.64914295789523] },
+      { label: "Río Tunjuelo", coords: [-74.17429119107521, 4.603360016778938] },
+      { label: "Canal La Fragua", coords: [-74.14667156417178, 4.6070276080744925] },
+      { label: "Lago Timiza", coords: [-74.153124048287, 4.608478220361442] },
     ];
     const BIOTICA_COMPONENTS = [
       { label: "Parque Metropolitano Cayetano Cañizares", coords: [-74.16127681309709, 4.6255784034525345] },
@@ -2033,11 +2036,12 @@
         return { x: (p.x / w) * 100, y: (p.y / h) * 100 };
       } catch (err) { return null; }
     };
-    // Línea recta y simple (como en el plano de referencia): sin curvas ni
-    // animación rara, solo un trazo punteado blanco del punto real a la bolita.
+    // Línea con un solo giro de 90° (como un circuito), más clara que una
+    // diagonal directa — y un puntito blanco fijo exactamente en la
+    // coordenada real, al final de la línea.
     const flowCurveD = (x, y, nx, ny) => {
       const pt = (px, py) => `${px.toFixed(2)} ${py.toFixed(2)}`;
-      return `M ${pt(x, y)} L ${pt(nx, ny)}`;
+      return `M ${pt(x, y)} L ${pt(nx, y)} L ${pt(nx, ny)}`;
     };
     const FLOW_GROUPS = [
       { components: HIDRICA_COMPONENTS, targetIndex: 0, color: "#b9e5ea", prefix: "hidrica" },
@@ -2049,8 +2053,9 @@
         const proj = projectToPercent(c.coords);
         if (!proj) return "";
         const id = `map-network-flow-${group.prefix}-${i}`;
+        const dotId = `map-network-flow-dot-${group.prefix}-${i}`;
         const d = flowCurveD(proj.x, proj.y, nx, ny);
-        return `<path id="${id}" class="map-network-flow-line" d="${d}"/>`;
+        return `<path id="${id}" class="map-network-flow-line" d="${d}"/><circle id="${dotId}" class="map-network-flow-dot" cx="${proj.x.toFixed(2)}" cy="${proj.y.toFixed(2)}" r=".55"/>`;
       }).join("");
     }).join("");
     // Al mover o hacer zoom en el mapa, las líneas se vuelven a calcular
@@ -2065,8 +2070,10 @@
         group.components.forEach((c, i) => {
           const proj = projectToPercent(c.coords);
           const path = svg.querySelector(`#map-network-flow-${group.prefix}-${i}`);
-          if (!proj || !path) return;
-          path.setAttribute("d", flowCurveD(proj.x, proj.y, nx, ny));
+          const dot = svg.querySelector(`#map-network-flow-dot-${group.prefix}-${i}`);
+          if (!proj) return;
+          if (path) path.setAttribute("d", flowCurveD(proj.x, proj.y, nx, ny));
+          if (dot) { dot.setAttribute("cx", proj.x.toFixed(2)); dot.setAttribute("cy", proj.y.toFixed(2)); }
         });
       });
     };
