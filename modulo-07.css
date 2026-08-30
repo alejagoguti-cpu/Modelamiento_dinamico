@@ -5671,3 +5671,16 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 .map-network-stage { animation: kennedyStageFadeIn .8s ease both; }
 @keyframes kennedyStageFadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .map-network-stage { animation: none; opacity: 1; } }
+
+/* FIX DEFINITIVO: varias reglas viejas de "flotado" tenían animation con
+   !important y le ganaban a la animación de aparición de las bolitas de
+   fenómeno, dejándolas con opacidad 0 para siempre (por eso el click
+   funcionaba pero no se veía nada). Esto fuerza que SIEMPRE sean visibles,
+   sin depender de ninguna animación. */
+#subsystemBubbles .map-phenomenon-node,
+#subsystemBubbles .map-phenomenon-node:hover,
+#subsystemBubbles .map-phenomenon-node.selected {
+  opacity: 1 !important;
+  animation: none !important;
+  transform: translate(-50%, -50%) scale(1) !important;
+}
