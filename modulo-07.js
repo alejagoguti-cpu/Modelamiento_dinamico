@@ -1656,55 +1656,68 @@
     // ahora puede ser MÁS DE UNO por caja (coords es un arreglo).
     const KENNEDY_TEXT_BOXES = [
       // Ahora ANCLADA a su coordenada real (la que diste), y con 2 puntos:
-      // Humedal El Burro (gotita azul) y el nuevo punto de vía (ícono de
-      // carretera).
+      // Humedal El Burro (gotita azul) y Av. Ciudad de Cali (ícono de vía).
       { id: "interaccion_vial", title: "MODELO DE INTERACCIÓN VIAL",
         color: "#b8c0c8", icon: "fa-road",
         boxCoords: [-74.16367167635484, 4.653798307569035], boxPos: [7, 30],
         coords: [
-          { pos: [-74.14987475206779, 4.64210777486686], icon: "fa-droplet", color: "#56b8d4", label: "Humedal El Burro" },
-          { pos: [-74.15701979872972, 4.6395972438178115], icon: "fa-road", color: "#b8c0c8", label: "Vía" },
+          // Sale del lado derecho de Humedal El Burro, va a la derecha,
+          // sube, y se pega al lado derecho de esta caja.
+          { pos: [-74.14987475206779, 4.64210777486686], icon: "fa-droplet", color: "#56b8d4", label: "Humedal El Burro",
+            route: { bubbleSide: "right", boxSide: "right", offset: 4, type: "hvh" } },
+          // Sale del lado izquierdo de esta caja, va a la izquierda, baja,
+          // y se pega al lado izquierdo de la bola de Av. Ciudad de Cali.
+          { pos: [-74.15701979872972, 4.6395972438178115], icon: "fa-road", color: "#b8c0c8", label: "Av. Ciudad de Cali",
+            route: { bubbleSide: "left", boxSide: "left", offset: -4, type: "hvh", bendNear: "box" } },
         ],
         sections: [{ system: "Modelo Determinista ⟶ Sistema Socio-Ecológico", icon: "fa-gears", submodelos: [
           "Desborde y Control de Crecientes.", "Transferencia de Carga y Vibración.",
           "Infiltración de Escorrentía Calzada-Borde.", "Propagación de Ruido y Presión Sonora." ] }] },
       // Submodelos redactados por mí (no me diste el texto exacto, solo me
-      // pediste que definiera qué contendría este submodelo). Se conecta
-      // desde Humedal El Burro (gotita azul), y va posicionada al lado de
-      // Humedal La Vaca, debajo y a la izquierda de Modelo Comercial.
+      // pediste que definiera qué contendría este submodelo). Reposicionada
+      // en las coordenadas exactas que diste.
       { id: "mitigacion_organica", title: "MODELO DE MITIGACIÓN DE CARGA ORGÁNICA Y RESIDUOS",
-        color: "#56b8d4", icon: "fa-recycle", boxPos: [30, 70],
-        coords: [{ pos: [-74.14987475206779, 4.64210777486686], icon: "fa-droplet", color: "#56b8d4", label: "Humedal El Burro" }],
+        color: "#56b8d4", icon: "fa-recycle",
+        boxCoords: [-74.1723091682759, 4.642347361339735], boxPos: [30, 70],
+        coords: [
+          // Lado izquierdo de la caja → izquierda, baja, derecha → lado
+          // derecho de Humedal La Vaca.
+          { pos: [-74.16284778855655, 4.62939492240078], icon: "fa-droplet", color: "#56b8d4", label: "Humedal La Vaca",
+            route: { bubbleSide: "right", boxSide: "left", offset: -4, type: "hvh", bendNear: "box" } },
+          // Lado derecho de la caja → derecha, baja, derecha otra vez →
+          // lado izquierdo de Corabastos (el ícono ya lo pone la caja
+          // "Modelo Comercial y Logístico", aquí solo sale la línea).
+          { pos: [-74.1599146050763, 4.63015596902525], icon: "fa-cart-shopping", color: "#e58d62", label: "Corabastos", hideIcon: true,
+            route: { bubbleSide: "left", boxSide: "right", offset: 4, type: "hvh", bendNear: "box" } },
+        ],
         sections: [{ system: "Modelo Determinista ⟶ Sistema Ecológico", icon: "fa-gears", submodelos: [
           "Ciclo de compostaje y estabilización de residuos orgánicos.", "Dinámica de reducción de carga contaminante antes del vertimiento.",
           "Flujo de recolección y separación en la fuente.", "Ciclo de control de vectores y olores." ] }] },
-      // Esta caja va ANCLADA a su propia coordenada real (la que diste:
-      // 4.616655447564548, -74.13517123261519), no a una posición fija de
-      // pantalla — por eso lleva "boxCoords" en vez de solo "boxPos".
-      // Se conecta con Corabastos (carrito de mercado) y con Humedal La
-      // Vaca (gotita azul) — cada punto con SU PROPIO ícono, no el mismo
-      // para los dos.
+      // Corrida un poco a la izquierda, como pediste.
       { id: "corabastos", title: "MODELO COMERCIAL Y LOGÍSTICO",
         color: "#e58d62", icon: "fa-cart-shopping",
-        boxCoords: [-74.13517123261519, 4.616655447564548],
+        boxCoords: [-74.1385, 4.616655447564548],
         coords: [
-          { pos: [-74.1599146050763, 4.63015596902525], icon: "fa-cart-shopping", color: "#e58d62", label: "Corabastos" },
-          { pos: [-74.16284778855655, 4.62939492240078], icon: "fa-droplet", color: "#56b8d4", label: "Humedal La Vaca" },
+          // Lado izquierdo de la caja → izquierda, sube → Corabastos.
+          { pos: [-74.1599146050763, 4.63015596902525], icon: "fa-cart-shopping", color: "#e58d62", label: "Corabastos",
+            route: { bubbleSide: "left", boxSide: "left", offset: -4, type: "hvh", bendNear: "box" } },
+          // Lado derecho de la caja → derecha, sube, izquierda → lado
+          // derecho de Estación Banderas (el ícono lo pone la caja
+          // "Modelo de Operación de Estación de Transporte").
+          { pos: [-74.14541150109216, 4.631221483859855], icon: "fa-bus", color: "#f1cf5b", label: "Estación Banderas", hideIcon: true,
+            route: { bubbleSide: "right", boxSide: "right", offset: 4, type: "hvh", bendNear: "box" } },
         ],
         sections: [{ system: "Modelo Social ⟶ Sistema Social", icon: "fa-people-group", submodelos: [
           "Ciclo de generación y descomposición de materia orgánica.", "Dinámica de acumulación y congestión de transporte pesado.",
           "Flujo diario de abastecimiento y distribución.", "Ciclo de producción de carga contaminante hídrica." ] }] },
-      // Nueva: conecta con Estación Banderas (ícono de bus) y con
-      // Corabastos (carrito), tal como pediste. No me diste la línea
-      // "Modelo X → Sistema Y", así que puse una razonable para el tema.
+      // Nueva coordenada. La línea sale de ARRIBA de la caja (no de un
+      // lado), sube un poco, gira, y baja hacia arriba de Estación Banderas.
       { id: "estacion_transporte", title: "MODELO DE OPERACIÓN DE ESTACIÓN DE TRANSPORTE",
-        color: "#f1cf5b", icon: "fa-bus", boxPos: [7, 88],
+        color: "#f1cf5b", icon: "fa-bus",
+        boxCoords: [-74.12617367570242, 4.636250533800301], boxPos: [7, 88],
         coords: [
-          { pos: [-74.14541150109216, 4.631221483859855], icon: "fa-bus", color: "#f1cf5b", label: "Estación Banderas" },
-          // El ícono naranja de Corabastos ya existe (lo pone la caja
-          // "Modelo Comercial y Logístico"); aquí solo sale la línea hacia
-          // ese mismo punto, sin repetir el ícono.
-          { pos: [-74.1599146050763, 4.63015596902525], icon: "fa-cart-shopping", color: "#e58d62", hideIcon: true },
+          { pos: [-74.14541150109216, 4.631221483859855], icon: "fa-bus", color: "#f1cf5b", label: "Estación Banderas",
+            route: { bubbleSide: "top", boxSide: "top", offset: -4, type: "vhv", bendNear: "box" } },
         ],
         sections: [{ system: "Modelo Determinista ⟶ Sistema Social", icon: "fa-route", submodelos: [
           "Afluencia y transferencia de pasajeros.", "Capacidad y saturación de andenes.",
@@ -2281,12 +2294,47 @@
     };
     // Cajas de texto piloto: nodo circular de color en la coordenada real +
     // línea en L (blanca) hacia la caja de texto fija, igual al referente.
-    // Línea "flow": una curva suave en S (como el referente que mandaste),
-    // no un ángulo recto — se ve más natural y menos "chocada" entre sí.
-    const textBoxLinkD = (boxPos, nodeProj) => {
-      const midX = (boxPos[0] + nodeProj.x) / 2;
+    // Línea recta con giro de 90° REDONDEADO (como tu foto de referencia):
+    // no es una curva en S ni un ángulo filoso — son tramos rectos con una
+    // esquina suave. "hvh" = sale horizontal, gira, termina horizontal.
+    // "vhv" = sale vertical (arriba/abajo), gira, termina vertical.
+    function roundedElbowHVH(x1, y1, x2, y2, offset, r) {
+      const midX = x1 + offset;
+      const sign1 = Math.sign(midX - x1) || 1;
+      const sign2 = Math.sign(x2 - midX) || 1;
+      const vSign = Math.sign(y2 - y1) || 1;
+      const r1 = Math.min(r, Math.abs(offset) || r, Math.abs(y2 - y1) / 2 || r);
+      const r2 = Math.min(r, Math.abs(x2 - midX) || r, Math.abs(y2 - y1) / 2 || r);
       const pt = (px, py) => `${px.toFixed(2)} ${py.toFixed(2)}`;
-      return `M ${pt(boxPos[0], boxPos[1])} C ${pt(midX, boxPos[1])} ${pt(midX, nodeProj.y)} ${pt(nodeProj.x, nodeProj.y)}`;
+      return `M ${pt(x1, y1)} L ${pt(midX - sign1 * r1, y1)} Q ${pt(midX, y1)} ${pt(midX, y1 + vSign * r1)} L ${pt(midX, y2 - vSign * r2)} Q ${pt(midX, y2)} ${pt(midX + sign2 * r2, y2)} L ${pt(x2, y2)}`;
+    }
+    function roundedElbowVHV(x1, y1, x2, y2, offset, r) {
+      const midY = y1 + offset;
+      const sign1 = Math.sign(midY - y1) || 1;
+      const sign2 = Math.sign(y2 - midY) || 1;
+      const hSign = Math.sign(x2 - x1) || 1;
+      const r1 = Math.min(r, Math.abs(offset) || r, Math.abs(x2 - x1) / 2 || r);
+      const r2 = Math.min(r, Math.abs(y2 - midY) || r, Math.abs(x2 - x1) / 2 || r);
+      const pt = (px, py) => `${px.toFixed(2)} ${py.toFixed(2)}`;
+      return `M ${pt(x1, y1)} L ${pt(x1, midY - sign1 * r1)} Q ${pt(x1, midY)} ${pt(x1 + hSign * r1, midY)} L ${pt(x2 - hSign * r2, midY)} Q ${pt(x2, midY)} ${pt(x2, midY + sign2 * r2)} L ${pt(x2, y2)}`;
+    }
+    // Cuánto se desplaza cada borde (bolita ~1.1%, caja ~6.2% de ancho —
+    // aproximado, para salir/pegar del lado correcto en vez del centro).
+    const BUBBLE_EDGE = 1.1, BOX_EDGE = 6.2, CORNER_R = 1.6;
+    const sidePoint = (x, y, side, edge) => side === "left" ? [x - edge, y] : side === "right" ? [x + edge, y] : side === "top" ? [x, y - edge] : [x, y + edge];
+    const textBoxLinkD = (boxPos, nodeProj, route) => {
+      if (!route) {
+        const [x1, y1] = sidePoint(nodeProj.x, nodeProj.y, "right", BUBBLE_EDGE);
+        return roundedElbowHVH(x1, y1, boxPos[0], boxPos[1], (boxPos[0] - x1) * 0.35, CORNER_R);
+      }
+      const [bx, by] = sidePoint(nodeProj.x, nodeProj.y, route.bubbleSide || "right", BUBBLE_EDGE);
+      const [ox, oy] = sidePoint(boxPos[0], boxPos[1], route.boxSide || "left", BOX_EDGE);
+      // "bendNear: box" = el primer quiebre ocurre pegado a la caja (se
+      // arma el trazo empezando desde la caja); si no, se arma desde la
+      // bolita — el resultado visual es la misma línea, solo cambia dónde
+      // queda el primer tramito corto.
+      const fn = route.type === "vhv" ? roundedElbowVHV : roundedElbowHVH;
+      return route.bendNear === "box" ? fn(ox, oy, bx, by, route.offset, CORNER_R) : fn(bx, by, ox, oy, route.offset, CORNER_R);
     };
     // Si la caja trae "boxCoords" (una coordenada real), su posición en
     // pantalla se calcula proyectando esa coordenada — igual que un nodo —
@@ -2306,7 +2354,7 @@
       return box.coords.map((c, j) => {
         const proj = declutteredPositions[`box-${i}-${j}`];
         if (!proj) return "";
-        return `<path id="kennedy-textbox-link-${i}-${j}" class="kennedy-box-link" d="${textBoxLinkD(boxPos, proj)}"/>`;
+        return `<path id="kennedy-textbox-link-${i}-${j}" class="kennedy-box-link" d="${textBoxLinkD(boxPos, proj, c.route)}"/>`;
       }).join("");
     }).join("");
     const buildTextBoxesHtml = () => KENNEDY_TEXT_BOXES.map((box, i) => {
@@ -2339,7 +2387,7 @@
           const link = stage?.querySelector(`#kennedy-textbox-link-${i}-${j}`);
           const node = subsystemBubbles?.querySelector(`#kennedy-textbox-node-${i}-${j}`);
           if (!proj) return;
-          if (link) link.setAttribute("d", textBoxLinkD(boxPos, proj));
+          if (link) link.setAttribute("d", textBoxLinkD(boxPos, proj, c.route));
           if (node) { node.style.left = proj.x.toFixed(2) + "%"; node.style.top = proj.y.toFixed(2) + "%"; }
         });
       });
