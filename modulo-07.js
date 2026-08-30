@@ -1778,6 +1778,8 @@
     });
     viewSubsystemsBtn?.addEventListener("click", () => setSubmodelsMode("subsystems"));
     viewSubmodelsBtn?.addEventListener("click", () => setSubmodelsMode("submodels"));
+    const territoryNetworkPlain = document.getElementById("territoryNetworkPlain");
+    const territoryNetworkPlainWrap = document.getElementById("territoryNetworkPlainWrap");
     const openSubmodelsFromDirectButton = (mode) => {
       if (submodelsWorkspace?.hidden) {
         submodelsWorkspace.hidden = false;
@@ -1786,25 +1788,33 @@
       setSubmodelsMode(mode);
     };
     const directCartographyBtn = document.getElementById("directCartographyBtn");
-    // Los 3 botones muestran la misma cartografía con su red de burbujas
-    // encima; lo único que cambia es si esa red trae o no las conexiones
-    // entre las bolas grandes (sí en Subsistemas/Submodelos, no en
-    // Cartografía interactiva) y cuál botón queda marcado como activo.
-    function showCartography(networkMode, showBonds, activeBtn) {
-      const section = document.getElementById("cartographySection");
-      if (!section) return;
-      section.hidden = false;
+    // Subsistemas y Submodelos muestran SOLO la red (sin mapa, sin líneas de
+    // coordenadas). Cartografía interactiva muestra el mapa real con las
+    // líneas de coordenadas, pero sin conexiones entre las bolas grandes.
+    function showPlainNetwork(networkMode, activeBtn) {
+      const cartoSection = document.getElementById("cartographySection");
+      if (cartoSection) cartoSection.hidden = true;
+      if (territoryNetworkPlainWrap) territoryNetworkPlainWrap.hidden = false;
       [directSubsystemsBtn, directSubmodelsBtn, directCartographyBtn].forEach((btn) => btn?.classList.toggle("active", btn === activeBtn));
+      renderMapNetwork(networkMode, true, territoryNetworkPlain, false);
+    }
+    function showCartography() {
+      const cartoSection = document.getElementById("cartographySection");
+      if (!cartoSection) return;
+      if (territoryNetworkPlainWrap) territoryNetworkPlainWrap.hidden = true;
+      cartoSection.hidden = false;
+      [directSubsystemsBtn, directSubmodelsBtn, directCartographyBtn].forEach((btn) => btn?.classList.toggle("active", btn === directCartographyBtn));
       requestAnimationFrame(() => {
         componentPointMap?.resize();
-        renderMapNetwork(networkMode, showBonds);
-        section.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        renderMapNetwork(currentSubmodelsMode === "subsystems" ? "systems" : "submodels", false, subsystemBubbles, true);
+        cartoSection.scrollIntoView({ behavior: "smooth", block: "nearest" });
       });
     }
-    directSubsystemsBtn?.addEventListener("click", () => { openSubmodelsFromDirectButton("subsystems"); showCartography("systems", true, directSubsystemsBtn); });
-    directSubmodelsBtn?.addEventListener("click", () => { openSubmodelsFromDirectButton("submodels"); showCartography("submodels", true, directSubmodelsBtn); });
-    directCartographyBtn?.addEventListener("click", () => showCartography(currentSubmodelsMode === "subsystems" ? "systems" : "submodels", false, directCartographyBtn));
+    directSubsystemsBtn?.addEventListener("click", () => { openSubmodelsFromDirectButton("subsystems"); showPlainNetwork("systems", directSubsystemsBtn); });
+    directSubmodelsBtn?.addEventListener("click", () => { openSubmodelsFromDirectButton("submodels"); showPlainNetwork("submodels", directSubmodelsBtn); });
+    directCartographyBtn?.addEventListener("click", showCartography);
     renderSubmodelsView("subsystems");
+    showPlainNetwork("systems", directSubsystemsBtn);
     const initPartOneControls = (map, layers) => {
       const controls = document.getElementById("subsystemLayerControls");
       if (controls) {
@@ -2114,8 +2124,8 @@
         });
       });
     };
-    const renderMapNetwork = (mode = "systems", showBonds = true) => {
-      if (!subsystemBubbles) return;
+    const renderMapNetwork = (mode = "systems", showBonds = true, target = subsystemBubbles, withFlows = true) => {
+      if (!target) return;
       const systems = mode === "systems";
       const rows = systems ? territorySystems : submodelRows;
       const positions = systems ? [[12,22],[32,8],[70,8],[88,22],[76,86],[24,86]] : [[10,22],[28,7],[58,7],[90,22],[90,58],[68,88],[16,88]];
@@ -2177,16 +2187,16 @@
         gradientDefs.push(`<linearGradient id="${gradientId}" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="${sourceColor}" stop-opacity=".82"/><stop offset="50%" stop-color="${sourceColor}" stop-opacity=".42"/><stop offset="100%" stop-color="${targetColor}" stop-opacity=".82"/></linearGradient>`);
         return `<g class="map-network-bond-group" style="--bond-color:${sourceColor};--bond-gradient:url(#${gradientId})"><path id="${pathId}" class="map-network-bond-flow" d="${centerPath}" pathLength="1"/><path class="map-network-bond-soft" d="${path}"/><path class="map-network-bond" d="${path}"><title>Relación entre ${label(row)} y ${label(other)}</title></path><circle class="map-network-pulse" r=".42" fill="${sourceColor}"><animateMotion dur="${duration}s" begin="-${(edgeIndex * .7).toFixed(2)}s" repeatCount="indefinite" rotate="auto"><mpath href="#${pathId}"/></animateMotion></circle><circle class="map-network-pulse map-network-pulse-secondary" r=".34" fill="${targetColor}"><animateMotion dur="${duration}s" begin="-${(edgeIndex * .7 + 3.2).toFixed(2)}s" repeatCount="indefinite" rotate="auto"><mpath href="#${pathId}"/></animateMotion></circle></g>`;
       }).join("");
-      subsystemBubbles.dataset.revealState = "complete";
-      subsystemBubbles.classList.add("network-active");
-      const flowsSvg = systems ? buildFlowGroupsSvg(positions) : "";
-      const flowDotsHtml = systems ? buildFlowDotsHtml() : "";
-      subsystemBubbles.innerHTML = `<div class="map-network-stage ${systems ? "systems-network" : "submodels-network"}"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><defs>${gradientDefs.join("")}</defs><g class="map-network-flows">${flowsSvg}</g><g class="map-network-bonds">${showBonds ? bonds : ""}</g></svg>${flowDotsHtml}${nodes}</div>`;
-      subsystemBubbles.querySelectorAll(".map-network-node").forEach((button) => button.addEventListener("click", () => {
+      target.dataset.revealState = "complete";
+      target.classList.add("network-active");
+      const flowsSvg = (systems && withFlows) ? buildFlowGroupsSvg(positions) : "";
+      const flowDotsHtml = (systems && withFlows) ? buildFlowDotsHtml() : "";
+      target.innerHTML = `<div class="map-network-stage ${systems ? "systems-network" : "submodels-network"}"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><defs>${gradientDefs.join("")}</defs><g class="map-network-flows">${flowsSvg}</g><g class="map-network-bonds">${showBonds ? bonds : ""}</g></svg>${flowDotsHtml}${nodes}</div>`;
+      target.querySelectorAll(".map-network-node").forEach((button) => button.addEventListener("click", () => {
         const row = rows[Number(button.dataset.mapNetworkIndex)];
         if (row?.id) DINAMICA_SOUND.play(row.id);
-        subsystemBubbles.querySelectorAll(".map-network-node").forEach((node) => node.classList.toggle("selected", node === button));
-        subsystemBubbles.querySelectorAll(".subsystem-components, .subsystem-purpose-panel, .map-network-detail").forEach((node) => node.remove());
+        target.querySelectorAll(".map-network-node").forEach((node) => node.classList.toggle("selected", node === button));
+        target.querySelectorAll(".subsystem-components, .subsystem-purpose-panel, .map-network-detail").forEach((node) => node.remove());
         const color = row.color || colors[Number(button.dataset.mapNetworkIndex)];
         const parts = systems ? row.components : row.parts;
         const partsPurpose = row.partsPurpose || "Sí";
@@ -2201,11 +2211,11 @@
         purpose.className = "subsystem-purpose-panel active map-purpose-panel";
         purpose.style.setProperty("--bubble-color", color);
         purpose.innerHTML = `<div class="subsystem-panel-heading"><strong>${label(row)}</strong><button type="button" class="subsystem-panel-close" aria-label="Cerrar panel de propósito"><i class="fa-solid fa-xmark"></i></button></div><p class="panel-scope-label">ANÁLISIS GENERAL · TABLA DE PROPÓSITO</p><h4>¿Las partes tienen propósito propio?</h4><p><b>${partsPurpose}</b> · ${partsWhy}</p><h4>¿La totalidad tiene propósito propio?</h4><p><b>${totalPurpose}</b> · ${totalWhy}</p><h4>Por ende, la categoría es:</h4><b class="purpose-category">${row.category}</b><h4>Qué cambia en el tiempo</h4><p>${row.process}</p>`;
-        subsystemBubbles.append(components, purpose);
+        target.append(components, purpose);
         const closePanels = (event) => { event?.stopPropagation(); components.remove(); purpose.remove(); clearSubsystemPoints(); button.classList.remove("selected"); };
         components.querySelector(".subsystem-panel-close")?.addEventListener("click", closePanels);
         purpose.querySelector(".subsystem-panel-close")?.addEventListener("click", closePanels);
-        if (systems) renderSubsystemPoints(subsystemData[Number(button.dataset.mapNetworkIndex)]);
+        if (systems && withFlows) renderSubsystemPoints(subsystemData[Number(button.dataset.mapNetworkIndex)]);
       }));
     };
     const clearMapNetwork = () => { if (!subsystemBubbles) return; subsystemBubbles.classList.remove("network-active"); subsystemBubbles.replaceChildren(); clearSubsystemPoints(); };

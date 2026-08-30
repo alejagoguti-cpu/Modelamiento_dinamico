@@ -5610,3 +5610,17 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 .map-network-node.selected {
   border-radius: 50% !important;
 }
+
+/* Contenedor "solo red" (sin mapa) para Subsistemas y Submodelos: mismo
+   estilo de bolas y conexiones, pero sobre un fondo propio, no el mapa. */
+.territory-network-plain-wrap {
+  position: relative;
+  width: 100%;
+  min-height: 460px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 40%, rgba(118,255,240,.08), transparent 60%), #07100f;
+  border: 1px solid rgba(118,255,240,.18);
+}
+.territory-network-plain { position: absolute; inset: 0; }
+@media (max-width: 720px) { .territory-network-plain-wrap { min-height: 380px; } }
