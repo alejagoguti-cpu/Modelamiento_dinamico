@@ -1655,29 +1655,36 @@
     // la localización real se hace con la línea + el nodo circular, que
     // ahora puede ser MÁS DE UNO por caja (coords es un arreglo).
     const KENNEDY_TEXT_BOXES = [
-      // Sale una línea desde Humedal El Burro hacia esta caja (contenido
-      // exacto que diste).
+      // Se conecta desde Humedal El Burro (gotita azul).
       { id: "interaccion_vial", title: "MODELO DE INTERACCIÓN VIAL",
-        color: "#b8c0c8", icon: "fa-road", coords: [[-74.14987475206779, 4.64210777486686]], boxPos: [7, 30],
+        color: "#b8c0c8", icon: "fa-road", boxPos: [7, 30],
+        coords: [{ pos: [-74.14987475206779, 4.64210777486686], icon: "fa-droplet", color: "#56b8d4" }],
         sections: [{ system: "Modelo Determinista ⟶ Sistema Socio-Ecológico", icon: "fa-gears", submodelos: [
           "Desborde y Control de Crecientes.", "Transferencia de Carga y Vibración.",
           "Infiltración de Escorrentía Calzada-Borde.", "Propagación de Ruido y Presión Sonora." ] }] },
       // Submodelos redactados por mí (no me diste el texto exacto, solo me
-      // pediste que definiera qué contendría este submodelo).
+      // pediste que definiera qué contendría este submodelo). Se conecta
+      // desde Humedal El Burro (gotita azul), y va posicionada al lado de
+      // Humedal La Vaca, debajo y a la izquierda de Modelo Comercial.
       { id: "mitigacion_organica", title: "MODELO DE MITIGACIÓN DE CARGA ORGÁNICA Y RESIDUOS",
-        color: "#56b8d4", icon: "fa-recycle", coords: [[-74.16284778855655, 4.62939492240078]], boxPos: [93, 30],
+        color: "#56b8d4", icon: "fa-recycle", boxPos: [30, 70],
+        coords: [{ pos: [-74.14987475206779, 4.64210777486686], icon: "fa-droplet", color: "#56b8d4" }],
         sections: [{ system: "Modelo Determinista ⟶ Sistema Ecológico", icon: "fa-gears", submodelos: [
           "Ciclo de compostaje y estabilización de residuos orgánicos.", "Dinámica de reducción de carga contaminante antes del vertimiento.",
           "Flujo de recolección y separación en la fuente.", "Ciclo de control de vectores y olores." ] }] },
       // Esta caja va ANCLADA a su propia coordenada real (la que diste:
       // 4.616655447564548, -74.13517123261519), no a una posición fija de
       // pantalla — por eso lleva "boxCoords" en vez de solo "boxPos".
-      // Se conecta con 3 puntos: esa misma coordenada, Corabastos y
-      // Humedal La Vaca.
+      // Se conecta con Corabastos (carrito de mercado) y con Humedal La
+      // Vaca (gotita azul) — cada punto con SU PROPIO ícono, no el mismo
+      // para los dos.
       { id: "corabastos", title: "MODELO COMERCIAL Y LOGÍSTICO",
         color: "#e58d62", icon: "fa-cart-shopping",
         boxCoords: [-74.13517123261519, 4.616655447564548],
-        coords: [[-74.13517123261519, 4.616655447564548], [-74.1599146050763, 4.63015596902525], [-74.16284778855655, 4.62939492240078]], boxPos: [50, 88],
+        coords: [
+          { pos: [-74.1599146050763, 4.63015596902525], icon: "fa-cart-shopping", color: "#e58d62" },
+          { pos: [-74.16284778855655, 4.62939492240078], icon: "fa-droplet", color: "#56b8d4" },
+        ],
         sections: [{ system: "Modelo Social ⟶ Sistema Social", icon: "fa-people-group", submodelos: [
           "Ciclo de generación y descomposición de materia orgánica.", "Dinámica de acumulación y congestión de transporte pesado.",
           "Flujo diario de abastecimiento y distribución.", "Ciclo de producción de carga contaminante hídrica." ] }] },
@@ -2214,7 +2221,7 @@
     function computeDeclutteredPositions() {
       const items = [];
       KENNEDY_PHENOMENA.forEach((p, i) => { const proj = projectToPercent(p.coords); if (proj) items.push({ key: `phen-${i}`, x: proj.x, y: proj.y }); });
-      KENNEDY_TEXT_BOXES.forEach((b, i) => { b.coords.forEach((c, j) => { const proj = projectToPercent(c); if (proj) items.push({ key: `box-${i}-${j}`, x: proj.x, y: proj.y }); }); });
+      KENNEDY_TEXT_BOXES.forEach((b, i) => { b.coords.forEach((c, j) => { const proj = projectToPercent(c.pos); if (proj) items.push({ key: `box-${i}-${j}`, x: proj.x, y: proj.y }); }); });
       const minDist = 6;
       for (let iter = 0; iter < 10; iter++) {
         for (let a = 0; a < items.length; a++) {
@@ -2280,7 +2287,7 @@
       const nodesHtml = box.coords.map((c, j) => {
         const proj = declutteredPositions[`box-${i}-${j}`];
         if (!proj) return "";
-        return `<button type="button" class="map-network-node map-phenomenon-node" id="kennedy-textbox-node-${i}-${j}" style="left:${proj.x.toFixed(2)}%;top:${proj.y.toFixed(2)}%;--node-color:${box.color}"><i class="map-network-node-icon fa-solid ${box.icon}" aria-hidden="true"></i></button>`;
+        return `<button type="button" class="map-network-node map-phenomenon-node" id="kennedy-textbox-node-${i}-${j}" style="left:${proj.x.toFixed(2)}%;top:${proj.y.toFixed(2)}%;--node-color:${c.color || box.color}"><i class="map-network-node-icon fa-solid ${c.icon || box.icon}" aria-hidden="true"></i></button>`;
       }).join("");
       const sectionsHtml = box.sections.map((section) => {
         const items = section.submodelos.map((s) => `<li><i class="fa-solid ${section.icon} kennedy-item-icon" aria-hidden="true"></i>${s}</li>`).join("");
