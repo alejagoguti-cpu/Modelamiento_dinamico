@@ -1659,7 +1659,7 @@
       // Humedal El Burro (gotita azul) y Av. Ciudad de Cali (ícono de vía).
       { id: "interaccion_vial", title: "MODELO DE INTERACCIÓN VIAL",
         color: "#b8c0c8", icon: "fa-road",
-        boxCoords: [-74.16367167635484, 4.653798307569035], boxPos: [7, 30],
+        boxCoords: [-74.16367167635484, 4.653798307569035], boxPos: [7, 30], sound: "hidrica",
         coords: [
           // Sale del lado derecho de Humedal El Burro, va a la derecha,
           // sube, y se pega al lado derecho de esta caja.
@@ -1678,7 +1678,7 @@
       // en las coordenadas exactas que diste.
       { id: "mitigacion_organica", title: "MODELO DE MITIGACIÓN DE CARGA ORGÁNICA Y RESIDUOS",
         color: "#56b8d4", icon: "fa-recycle",
-        boxCoords: [-74.1793091682759, 4.642347361339735], boxPos: [30, 70],
+        boxCoords: [-74.1723091682759, 4.642347361339735], boxPos: [30, 70], screenOffset: [-4.5, 0], sound: "hidrica",
         coords: [
           // Lado izquierdo de la caja → izquierda, baja, derecha → lado
           // derecho de Humedal La Vaca.
@@ -1696,7 +1696,7 @@
       // Corrida un poco a la izquierda, como pediste.
       { id: "corabastos", title: "MODELO COMERCIAL Y LOGÍSTICO",
         color: "#e58d62", icon: "fa-cart-shopping",
-        boxCoords: [-74.1385, 4.616655447564548],
+        boxCoords: [-74.1385, 4.616655447564548], sound: "socioeconomico",
         coords: [
           // Lado izquierdo de la caja → izquierda, sube → Corabastos.
           { pos: [-74.1599146050763, 4.63015596902525], icon: "fa-cart-shopping", color: "#e58d62", label: "Corabastos",
@@ -1714,7 +1714,7 @@
       // lado), sube un poco, gira, y baja hacia arriba de Estación Banderas.
       { id: "estacion_transporte", title: "MODELO DE OPERACIÓN DE ESTACIÓN DE TRANSPORTE",
         color: "#f1cf5b", icon: "fa-bus",
-        boxCoords: [-74.12617367570242, 4.636250533800301], boxPos: [7, 88],
+        boxCoords: [-74.12617367570242, 4.636250533800301], boxPos: [7, 88], sound: "movilidad",
         coords: [
           { pos: [-74.14541150109216, 4.631221483859855], icon: "fa-bus", color: "#f1cf5b", label: "Estación Banderas",
             route: { bubbleSide: "top", boxSide: "top", offset: -4, type: "vhv", bendNear: "box" } },
@@ -2013,6 +2013,7 @@
       ].map((coordinates) => ({ type: "Feature", properties: { layer: "procedural" }, geometry: { type: "LineString", coordinates } })) };
       const map = new maplibregl.Map({ container: el, center: [-74.09, 4.64], zoom: 10.55, minZoom: 10, maxZoom: 17, attributionControl: false, style: {
         version: 8,
+        glyphs: "https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
         sources: {
           "satellite": {
             type: "raster",
@@ -2048,6 +2049,7 @@
           ] },
           movilidad: { type: "FeatureCollection", features: [line([[-74.15,4.632],[-74.156,4.631],[-74.164,4.632],[-74.172,4.636]], { label: "ciclorruta" }), line([[-74.154,4.65],[-74.158,4.646],[-74.161,4.64],[-74.165,4.635]], { label: "recorrido peatonal" }), pt([-74.156,4.633], { label: "Biblioteca El Tintal · acceso" })] },
           social: { type: "FeatureCollection", features: [poly([[-74.176,4.65],[-74.168,4.65],[-74.168,4.643],[-74.176,4.643],[-74.176,4.65]], { label: "barrio y recorridos" }), poly([[-74.151,4.634],[-74.143,4.634],[-74.143,4.626],[-74.151,4.626],[-74.151,4.634]], { label: "barrio y recorridos" }), pt([-74.164,4.651], { label: "actividad pedagógica" })] },
+          socioeconomico: { type: "FeatureCollection", features: [poly([[-74.170,4.651],[-74.160,4.651],[-74.160,4.644],[-74.170,4.644],[-74.170,4.651]], { label: "ocupación urbana" }), poly([[-74.154,4.637],[-74.146,4.637],[-74.146,4.629],[-74.154,4.629],[-74.154,4.637]], { label: "actividad económica" }), pt([-74.157,4.645], { label: "equipamiento y servicios" })] },
           institucional: { type: "FeatureCollection", features: [pt([-74.163,4.638], { label: "restauración y mantenimiento" }), pt([-74.157,4.648], { label: "seguimiento" }), pt([-74.166,4.635], { label: "educación ambiental" })] }
         };
         const partOneMapLayers = [];
@@ -2059,7 +2061,7 @@
           map.addLayer({ id: lineId, type: "line", source: sourceId, filter: ["!=", ["get", "kind"], "hidrica-link"], paint: { "line-color": meta.color, "line-width": ["interpolate", ["linear"], ["zoom"], 10, 1.2, 14, 3], "line-opacity": .86 }, layout: { visibility: "none" } });
           map.addLayer({ id: pointId, type: "circle", source: sourceId, filter: ["==", ["geometry-type"], "Point"], paint: {
             "circle-color": ["match", ["get", "kind"], "water-point", "#ffffff", "bio-point", "#ffffff", "fisico-point", "#ffffff", meta.color],
-            "circle-radius": ["match", ["get", "kind"], "water-point", ["interpolate", ["linear"], ["zoom"], 10, 2.4, 14, 4], "bio-point", ["interpolate", ["linear"], ["zoom"], 10, 2.4, 14, 4], "fisico-point", ["interpolate", ["linear"], ["zoom"], 10, 2.4, 14, 4], ["interpolate", ["linear"], ["zoom"], 10, 4, 14, 7]],
+            "circle-radius": ["interpolate", ["linear"], ["zoom"], 10, 3, 14, 6],
             "circle-opacity": ["match", ["get", "kind"], "water-point", .95, "bio-point", .95, "fisico-point", .95, 1],
             "circle-stroke-color": "#070b0c",
             "circle-stroke-width": ["match", ["get", "kind"], "water-point", 1, "bio-point", 1, "fisico-point", 1, 1.5]
@@ -2248,31 +2250,20 @@
         return { x: (p.x / w) * 100, y: (p.y / h) * 100 };
       } catch (err) { return null; }
     };
-    // Para que las bolitas no queden pegadas/tocándose cuando dos lugares
-    // reales están muy cerca uno del otro, se separan un poco entre sí
-    // (un pequeño empujón), sin perder su ubicación real aproximada.
+    // Las bolitas de lugares reales no se pueden "empujar": si se desplazan
+    // dejan de coincidir con la cartografía y las rutas parecen flotantes.
+    // La separación se resuelve moviendo las cajas, no los puntos geográficos.
     let declutteredPositions = {};
     function computeDeclutteredPositions() {
-      const items = [];
-      KENNEDY_PHENOMENA.forEach((p, i) => { const proj = projectToPercent(p.coords); if (proj) items.push({ key: `phen-${i}`, x: proj.x, y: proj.y }); });
-      KENNEDY_TEXT_BOXES.forEach((b, i) => { b.coords.forEach((c, j) => { const proj = projectToPercent(c.pos); if (proj) items.push({ key: `box-${i}-${j}`, x: proj.x, y: proj.y }); }); });
-      const minDist = 6;
-      for (let iter = 0; iter < 10; iter++) {
-        for (let a = 0; a < items.length; a++) {
-          for (let b = a + 1; b < items.length; b++) {
-            const dx = items[b].x - items[a].x, dy = items[b].y - items[a].y;
-            const dist = Math.hypot(dx, dy) || 0.0001;
-            if (dist < minDist) {
-              const push = (minDist - dist) / 2;
-              const ux = dx / dist, uy = dy / dist;
-              items[a].x -= ux * push; items[a].y -= uy * push;
-              items[b].x += ux * push; items[b].y += uy * push;
-            }
-          }
-        }
-      }
       const map = {};
-      items.forEach((it) => { map[it.key] = { x: it.x, y: it.y }; });
+      KENNEDY_PHENOMENA.forEach((p, i) => {
+        const proj = projectToPercent(p.coords);
+        if (proj) map[`phen-${i}`] = { x: proj.x, y: proj.y };
+      });
+      KENNEDY_TEXT_BOXES.forEach((box, i) => box.coords.forEach((c, j) => {
+        const proj = projectToPercent(c.pos);
+        if (proj) map[`box-${i}-${j}`] = { x: proj.x, y: proj.y };
+      }));
       return map;
     }
     // Una sola bolita grande (mismo tamaño que las bolas de los sistemas)
@@ -2318,26 +2309,58 @@
       const pt = (px, py) => `${px.toFixed(2)} ${py.toFixed(2)}`;
       return `M ${pt(x1, y1)} L ${pt(x1, midY - sign1 * r1)} Q ${pt(x1, midY)} ${pt(x1 + hSign * r1, midY)} L ${pt(x2 - hSign * r2, midY)} Q ${pt(x2, midY)} ${pt(x2, midY + sign2 * r2)} L ${pt(x2, y2)}`;
     }
-    // El borde de la bolita (46px) y de la caja (188px) se calculan en %
-    // según el ANCHO REAL del contenedor en este momento — antes usaba un
-    // porcentaje fijo que no coincidía con el tamaño real en pantalla, por
-    // eso las líneas quedaban "flotando" sin pegar al borde de verdad.
-    const containerWidthPx = subsystemBubbles?.clientWidth || 1000;
-    const BUBBLE_EDGE = (46 / 2 / containerWidthPx) * 100;
-    const BOX_EDGE = (188 / 2 / containerWidthPx) * 100;
-    const CORNER_R = 1.6;
-    const sidePoint = (x, y, side, edge) => side === "left" ? [x - edge, y] : side === "right" ? [x + edge, y] : side === "top" ? [x, y - edge] : [x, y + edge];
-    const textBoxLinkD = (boxPos, nodeProj, route) => {
-      if (!route) {
-        const [x1, y1] = sidePoint(nodeProj.x, nodeProj.y, "right", BUBBLE_EDGE);
-        return roundedElbowHVH(x1, y1, boxPos[0], boxPos[1], (boxPos[0] - x1) * 0.35, CORNER_R);
+    // Las rutas salen del borde geométrico de la bolita y llegan al borde
+    // real de la caja. Primero hay un fallback para el primer render; en
+    // cuanto el DOM existe, updateTextBoxes() mide los rectángulos exactos.
+    const BUBBLE_EDGE = 2.35, CORNER_R = 0.95;
+    const stagePercentRect = (element) => {
+      const stage = subsystemBubbles?.querySelector(".map-network-stage");
+      if (!stage || !element) return null;
+      const sr = stage.getBoundingClientRect(), r = element.getBoundingClientRect();
+      if (!sr.width || !sr.height) return null;
+      return {
+        left: ((r.left - sr.left) / sr.width) * 100,
+        right: ((r.right - sr.left) / sr.width) * 100,
+        top: ((r.top - sr.top) / sr.height) * 100,
+        bottom: ((r.bottom - sr.top) / sr.height) * 100,
+        centerX: (((r.left + r.right) / 2 - sr.left) / sr.width) * 100,
+        centerY: (((r.top + r.bottom) / 2 - sr.top) / sr.height) * 100,
+      };
+    };
+    const sidePoint = (metrics, side, fallbackX, fallbackY, fallbackEdge) => {
+      if (metrics) {
+        if (side === "left") return [metrics.left, metrics.centerY];
+        if (side === "right") return [metrics.right, metrics.centerY];
+        if (side === "top") return [metrics.centerX, metrics.top];
+        return [metrics.centerX, metrics.bottom];
       }
-      const [bx, by] = sidePoint(nodeProj.x, nodeProj.y, route.bubbleSide || "right", BUBBLE_EDGE);
-      const [ox, oy] = sidePoint(boxPos[0], boxPos[1], route.boxSide || "left", BOX_EDGE);
-      // "bendNear: box" = el primer quiebre ocurre pegado a la caja (se
-      // arma el trazo empezando desde la caja); si no, se arma desde la
-      // bolita — el resultado visual es la misma línea, solo cambia dónde
-      // queda el primer tramito corto.
+      return side === "left" ? [fallbackX - fallbackEdge, fallbackY]
+        : side === "right" ? [fallbackX + fallbackEdge, fallbackY]
+        : side === "top" ? [fallbackX, fallbackY - fallbackEdge]
+        : [fallbackX, fallbackY + fallbackEdge];
+    };
+    const boxFallbackMetrics = (boxPos, box) => {
+      const stage = subsystemBubbles?.querySelector(".map-network-stage");
+      const width = stage?.clientWidth ? (188 / stage.clientWidth) * 100 : 18;
+      const height = 14;
+      const right = boxPos[0] > 50 ? boxPos[0] : boxPos[0] + width;
+      const left = boxPos[0] > 50 ? boxPos[0] - width : boxPos[0];
+      return { left, right, top: boxPos[1] - height / 2, bottom: boxPos[1] + height / 2, centerX: (left + right) / 2, centerY: boxPos[1] };
+    };
+    const textBoxLinkD = (boxPos, nodeProj, route, nodeEl = null, boxEl = null, box = null) => {
+      const nodeMetrics = stagePercentRect(nodeEl);
+      const boxMetrics = stagePercentRect(boxEl) || boxFallbackMetrics(boxPos, box);
+      if (!route) {
+        const [x1, y1] = sidePoint(nodeMetrics, "right", nodeProj.x, nodeProj.y, BUBBLE_EDGE);
+        const [x2, y2] = sidePoint(boxMetrics, "left", boxPos[0], boxPos[1], 0);
+        return roundedElbowHVH(x1, y1, x2, y2, (x2 - x1) * 0.35, CORNER_R);
+      }
+      const [bx, by] = sidePoint(nodeMetrics, route.bubbleSide || "right", nodeProj.x, nodeProj.y, BUBBLE_EDGE);
+      const [ox, oy] = sidePoint(boxMetrics, route.boxSide || "left", boxPos[0], boxPos[1], 0);
+      // bendNear: box garantiza el orden visual indicado: primero sale de
+      // la caja en horizontal/vertical y luego entra por el lado pedido de
+      // la bolita. La geometría solo usa segmentos y pequeños arcos en las
+      // esquinas; nunca una curva orgánica.
       const fn = route.type === "vhv" ? roundedElbowVHV : roundedElbowHVH;
       return route.bendNear === "box" ? fn(ox, oy, bx, by, route.offset, CORNER_R) : fn(bx, by, ox, oy, route.offset, CORNER_R);
     };
@@ -2347,19 +2370,22 @@
     const effectiveBoxPos = (box) => {
       if (box.boxCoords) {
         const proj = projectToPercent(box.boxCoords);
-        if (proj) return [proj.x, proj.y];
+        if (proj) {
+          const offset = box.screenOffset || [0, 0];
+          return [proj.x + offset[0], proj.y + offset[1]];
+        }
       }
-      return box.boxPos;
+      return box.boxPos ? [box.boxPos[0] + (box.screenOffset?.[0] || 0), box.boxPos[1] + (box.screenOffset?.[1] || 0)] : box.boxPos;
     };
     // Cada caja puede tener MÁS DE UNA coordenada real (ej. "Biblioteca El
     // Tintal / Portal Américas" son 2 lugares) — sale una línea y un nodo
     // por cada una, todas desde el mismo punto de anclaje de la caja.
     const buildTextBoxesSvg = () => KENNEDY_TEXT_BOXES.map((box, i) => {
       const boxPos = effectiveBoxPos(box);
-      return box.coords.map((c, j) => {
+        return box.coords.map((c, j) => {
         const proj = declutteredPositions[`box-${i}-${j}`];
         if (!proj) return "";
-        return `<path id="kennedy-textbox-link-${i}-${j}" class="kennedy-box-link" d="${textBoxLinkD(boxPos, proj, c.route)}"/>`;
+        return `<path id="kennedy-textbox-link-${i}-${j}" class="kennedy-box-link" d="${textBoxLinkD(boxPos, proj, c.route, null, null, box)}"/>`;
       }).join("");
     }).join("");
     const buildTextBoxesHtml = () => KENNEDY_TEXT_BOXES.map((box, i) => {
@@ -2368,7 +2394,7 @@
         const proj = declutteredPositions[`box-${i}-${j}`];
         if (!proj || c.hideIcon) return "";
         const labelHtml = c.label ? `<span class="kennedy-node-label">${c.label}</span>` : "";
-        return `<div class="kennedy-node-wrap" id="kennedy-textbox-node-${i}-${j}" style="left:${proj.x.toFixed(2)}%;top:${proj.y.toFixed(2)}%"><button type="button" class="map-network-node map-phenomenon-node" style="--node-color:${c.color || box.color}"><i class="map-network-node-icon fa-solid ${c.icon || box.icon}" aria-hidden="true"></i></button>${labelHtml}</div>`;
+        return `<div class="kennedy-node-wrap" id="kennedy-textbox-node-${i}-${j}" style="left:${proj.x.toFixed(2)}%;top:${proj.y.toFixed(2)}%"><button type="button" class="map-network-node map-phenomenon-node" data-kennedy-place="${c.label || "Lugar"}" data-kennedy-sound="${box.sound || "fisico"}" data-kennedy-box-index="${i}" data-kennedy-node-index="${j}" style="--node-color:${c.color || box.color}" aria-label="${c.label || box.title}"><i class="map-network-node-icon fa-solid ${c.icon || box.icon}" aria-hidden="true"></i></button>${labelHtml}</div>`;
       }).join("");
       const sectionsHtml = box.sections.map((section) => {
         const items = section.submodelos.map((s) => `<li><i class="fa-solid ${section.icon} kennedy-item-icon" aria-hidden="true"></i>${s}</li>`).join("");
@@ -2386,13 +2412,19 @@
       KENNEDY_TEXT_BOXES.forEach((box, i) => {
         const boxPos = effectiveBoxPos(box);
         const boxEl = subsystemBubbles?.querySelector(`#kennedy-box-${i}`);
-        if (boxEl) { boxEl.style.left = boxPos[0].toFixed ? boxPos[0].toFixed(2) + "%" : boxPos[0] + "%"; boxEl.style.top = boxPos[1].toFixed ? boxPos[1].toFixed(2) + "%" : boxPos[1] + "%"; }
+        if (boxEl) {
+          boxEl.style.left = boxPos[0].toFixed ? boxPos[0].toFixed(2) + "%" : boxPos[0] + "%";
+          boxEl.style.top = boxPos[1].toFixed ? boxPos[1].toFixed(2) + "%" : boxPos[1] + "%";
+        }
         box.coords.forEach((c, j) => {
           const proj = declutteredPositions[`box-${i}-${j}`];
           const link = stage?.querySelector(`#kennedy-textbox-link-${i}-${j}`);
           const node = subsystemBubbles?.querySelector(`#kennedy-textbox-node-${i}-${j}`);
+          const nodeButton = node?.querySelector(".map-phenomenon-node") || [...(subsystemBubbles?.querySelectorAll(".kennedy-node-wrap") || [])]
+            .find((wrap) => wrap.querySelector(".kennedy-node-label")?.textContent?.trim() === c.label)
+            ?.querySelector(".map-phenomenon-node");
           if (!proj) return;
-          if (link) link.setAttribute("d", textBoxLinkD(boxPos, proj, c.route));
+          if (link) link.setAttribute("d", textBoxLinkD(boxPos, proj, c.route, nodeButton, boxEl, box));
           if (node) { node.style.left = proj.x.toFixed(2) + "%"; node.style.top = proj.y.toFixed(2) + "%"; }
         });
       });
@@ -2485,6 +2517,9 @@
       const flowsSvg = hideAllSystemBubbles ? buildTextBoxesSvg() : "";
       const flowDotsHtml = "";
       target.innerHTML = `<div class="map-network-stage ${systems ? "systems-network" : "submodels-network"}"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><defs>${gradientDefs.join("")}</defs><g class="map-network-flows">${flowsSvg}</g><g class="map-network-bonds">${showBonds ? bonds : ""}</g></svg>${flowDotsHtml}${nodes}${kennedyBoxesHtml}</div>`;
+      // Ya existen los rectángulos reales: corrige en el siguiente frame el
+      // punto de entrada/salida para que ninguna línea quede suspendida.
+      if (hideAllSystemBubbles) requestAnimationFrame(() => updateTextBoxes());
       target.querySelectorAll(".map-network-node").forEach((button) => button.addEventListener("click", () => {
         if (button.classList.contains("map-phenomenon-node")) return; // tiene su propio manejador, más abajo
         const row = rows[Number(button.dataset.mapNetworkIndex)];
@@ -2513,32 +2548,25 @@
         if (systems && withFlows) renderSubsystemPoints(subsystemData[Number(button.dataset.mapNetworkIndex)]);
       }));
       if (hideAllSystemBubbles) {
-        target.querySelectorAll(".map-phenomenon-node").forEach((button) => button.addEventListener("click", () => {
-          const p = KENNEDY_PHENOMENA[Number(button.dataset.phenomenonIndex)];
-          if (!p) return;
-          DINAMICA_SOUND.play(p.system);
+        // Los nodos de lugar tienen su propio click porque el listener general
+        // de la red los deja pasar. El audio vuelve a dispararse aquí, al
+        // igual que en las burbujas de subsistemas y submodelos.
+        target.querySelectorAll(".kennedy-node-wrap .map-phenomenon-node").forEach((button) => button.addEventListener("click", (event) => {
+          event.stopPropagation();
+          const box = KENNEDY_TEXT_BOXES[Number(button.dataset.kennedyBoxIndex)];
+          const place = box?.coords?.[Number(button.dataset.kennedyNodeIndex)];
+          if (!box || !place) return;
+          DINAMICA_SOUND.play(button.dataset.kennedySound || "fisico");
           target.querySelectorAll(".map-network-node").forEach((node) => node.classList.toggle("selected", node === button));
           target.querySelectorAll(".subsystem-components, .subsystem-purpose-panel, .map-network-detail").forEach((node) => node.remove());
-          const style = KENNEDY_SYSTEM_STYLE[p.system] || { color: "#fff" };
           const purpose = document.createElement("aside");
           purpose.className = "subsystem-purpose-panel active map-purpose-panel";
-          purpose.style.setProperty("--bubble-color", style.color);
-          purpose.innerHTML = `<div class="subsystem-panel-heading"><strong>${p.label}</strong><button type="button" class="subsystem-panel-close" aria-label="Cerrar panel"><i class="fa-solid fa-xmark"></i></button></div><p class="panel-scope-label">FENÓMENO</p><h4>${p.phenomenon}</h4><p class="panel-scope-label">QUÉ OCURRE</p><p>${p.detail}</p>`;
+          purpose.style.setProperty("--bubble-color", place.color || box.color || "#fff");
+          purpose.innerHTML = `<div class="subsystem-panel-heading"><strong>${place.label || box.title}</strong><button type="button" class="subsystem-panel-close" aria-label="Cerrar panel"><i class="fa-solid fa-xmark"></i></button></div><p class="panel-scope-label">NODO DEL MODELO</p><h4>${box.title}</h4><p class="panel-scope-label">CONEXIÓN</p><p>Este lugar se conecta con el modelo por el lado ${place.route?.bubbleSide || "derecho"} de la bolita, siguiendo una ruta ortogonal de segmentos rectos con giros redondeados.</p>`;
           target.append(purpose);
-          const closePanels = (event) => { event?.stopPropagation(); purpose.remove(); button.classList.remove("selected"); };
+          const closePanels = (closeEvent) => { closeEvent?.stopPropagation(); purpose.remove(); button.classList.remove("selected"); };
           purpose.querySelector(".subsystem-panel-close")?.addEventListener("click", closePanels);
         }));
-        // Los nuevos íconos de conexión (dentro de las cajas de texto) no
-        // tenían NINGÚN sonido — la lista vieja de fenómenos está vacía,
-        // así que el manejador de arriba no hacía nada para ellos. Esto
-        // les da su propio sonido según el color/categoría del punto.
-        const COLOR_TO_SYSTEM = { "#56b8d4": "hidrica", "#b8c0c8": "fisico", "#f1cf5b": "movilidad", "#e58d62": "socioeconomico", "#68d391": "biotica" };
-        target.querySelectorAll(".kennedy-node-wrap .map-phenomenon-node").forEach((button) => {
-          button.addEventListener("click", () => {
-            const color = button.style.getPropertyValue("--node-color").trim();
-            DINAMICA_SOUND.play(COLOR_TO_SYSTEM[color] || "fisico");
-          });
-        });
       }
     };
     const clearMapNetwork = () => { if (!subsystemBubbles) return; subsystemBubbles.classList.remove("network-active"); subsystemBubbles.replaceChildren(); clearSubsystemPoints(); };

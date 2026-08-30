@@ -1161,35 +1161,95 @@ function showHumedalesOverlay(opts) {
   }
 }
 
-/* Animación del botón "Explorar relaciones en detalle": acerca la cámara
-   hacia el nodo Humedales en la red principal (como si la vista se metiera
-   dentro del mapa) y, justo cuando el zoom cubre toda la pantalla, entra al
-   overlay ampliado de humedales ya existente con un fundido suave. */
+const HUMEDALES_NODOS_SOBREVIVIENTES = [
+  "humedales", "red_vial", "parques", "patrimonio_natural", 
+  "areas_de_resiliencia_climatica", "areas_protegidas", "reservas_forestales", "rios", "quebradas"
+];
+
+const MANZANAS_NODOS_SOBREVIVIENTES = [
+  "manzanas_del_cuidado", "servicios_sociales", "equipamientos", "parques", 
+  "servicios_empresariales", "transporte_publico", "ciclorutas"
+];
+
+const PATRIMONIO_NODOS_SOBREVIVIENTES = [
+  "patrimonio_material", "patrimonio_inmaterial", "patrimonio_natural", 
+  "patrimonio_arqueologico", "comunidades", "zonas_de_interes_turistico", "plazas_de_mercado", "humedales"
+];
+
+/* Función maestra para animación de iluminación, desconexión y acercamiento fluido */
+function ejecutarTransicionRed(nodosSobrevivientes, hubId, onComplete) {
+  document.querySelectorAll(".insight-card").forEach(c => c.classList.remove("active"));
+
+  const survivors = new Set(nodosSobrevivientes);
+  const survivorEdges = new Set();
+  RAW_EDGES.forEach((edge, i) => {
+    if (survivors.has(edge.s) && survivors.has(edge.t)) survivorEdges.add(i);
+  });
+
+  // Ilumina los nodos sobrevivientes y desconecta/apaga los demás
+  document.querySelectorAll(".ods-node").forEach(el => {
+    if (!survivors.has(el.dataset.id)) el.classList.add("blackout-flicker");
+    else el.classList.add("blackout-surviving");
+  });
+  document.querySelectorAll(".edge-group").forEach(el => {
+    if (!survivorEdges.has(Number(el.dataset.index))) el.classList.add("blackout-flicker");
+  });
+
+  setTimeout(() => {
+    setSpotlightNodes(nodosSobrevivientes, false);
+    document.querySelectorAll(".blackout-flicker").forEach(el => el.classList.remove("blackout-flicker"));
+    document.querySelectorAll(".blackout-surviving").forEach(el => el.classList.remove("blackout-surviving"));
+
+    const svg = document.getElementById("networkViz");
+    const node = nodeById(hubId) || nodeById("red_vial") || nodeById("humedales");
+    if (svg && node) {
+      const vb = svg.viewBox.baseVal;
+      const originXPct = ((node.x - vb.x) / vb.width) * 100;
+      const originYPct = ((node.y - vb.y) / vb.height) * 100;
+      svg.style.transformOrigin = `${originXPct}% ${originYPct}%`;
+      svg.classList.add("zoom-into-humedales");
+
+      let done = false;
+      const onDone = () => {
+        if (done) return;
+        done = true;
+        onComplete();
+        svg.classList.remove("zoom-into-humedales");
+        svg.style.transformOrigin = "";
+      };
+      setTimeout(onDone, 440);
+    } else {
+      onComplete();
+    }
+  }, 480);
+}
+
+// Mapa 1: Vías y Movilidad
+function zoomIntoMovilidad() {
+  ejecutarTransicionRed(HALLAZGOS_NODOS_SOBREVIVIENTES, "red_vial", () => {
+    showMovilidadOverlay({ animateIn: true });
+  });
+}
+
+// Mapa 2: Humedales y Territorios Dinámicos
 function explorarRelacionesConAnimacion() {
-  const svg = document.getElementById("networkViz");
-  const nodeEl = document.querySelector('.ods-node[data-id="humedales"]');
-  if (!svg || !nodeEl) { showHumedalesOverlay(); return; }
-
-  const humedal = nodeById("humedales");
-  const vb = svg.viewBox.baseVal;
-  // Origen del zoom = posición real del nodo Humedales dentro del viewBox,
-  // convertido a % del propio SVG (para usar como transform-origin en CSS).
-  const originXPct = ((humedal.x - vb.x) / vb.width) * 100;
-  const originYPct = ((humedal.y - vb.y) / vb.height) * 100;
-  svg.style.transformOrigin = `${originXPct}% ${originYPct}%`;
-
-  svg.classList.add("zoom-into-humedales");
-  const onDone = () => {
-    svg.removeEventListener("transitionend", onDone);
+  ejecutarTransicionRed(HUMEDALES_NODOS_SOBREVIVIENTES, "humedales", () => {
     showHumedalesOverlay({ animateIn: true });
-    // Deja el SVG listo (sin zoom ni clase) para la próxima vez que se muestre
-    // la red principal, ya con la vista reseteada.
-    svg.classList.remove("zoom-into-humedales");
-    svg.style.transformOrigin = "";
-  };
-  svg.addEventListener("transitionend", onDone, { once: true });
-  // Red de seguridad por si transitionend no dispara (pestaña en segundo plano, etc.)
-  setTimeout(() => { if (svg.classList.contains("zoom-into-humedales") && document.getElementById("humedalesOverlay").style.display !== "flex") onDone(); }, 3200);
+  });
+}
+
+// Mapa 3: Manzanas del Cuidado
+function zoomIntoManzanas() {
+  ejecutarTransicionRed(MANZANAS_NODOS_SOBREVIVIENTES, "manzanas_del_cuidado", () => {
+    showManzanasOverlay({ animateIn: true });
+  });
+}
+
+// Mapa 4: Patrimonio
+function zoomIntoPatrimonio() {
+  ejecutarTransicionRed(PATRIMONIO_NODOS_SOBREVIVIENTES, "patrimonio_material", () => {
+    showPatrimonioOverlay({ animateIn: true });
+  });
 }
 
 /* Muestra la cita de una LÍNEA de conexión (no de un humedal puntual) en un
@@ -2036,6 +2096,133 @@ function setupLegendToggle() {
   document.getElementById("nodeInfoClose")?.addEventListener("click", hideNodeInfo);
   document.getElementById("humedalesOverlayClose")?.addEventListener("click", hideHumedalesOverlay);
   document.getElementById("movilidadOverlayClose")?.addEventListener("click", () => { hideMovilidadOverlay(); clearSpotlight(); });
+  document.getElementById("mapa3OverlayClose")?.addEventListener("click", hideMapa3Overlay);
+  
+  // Selector de mapas (modal de exploración en detalle)
+  document.getElementById("modalExplorarClose")?.addEventListener("click", cerrarModalExplorarRelaciones);
+  document.getElementById("modalExplorarRelaciones")?.addEventListener("click", (e) => {
+    if (e.target.id === "modalExplorarRelaciones") cerrarModalExplorarRelaciones();
+  });
+  document.getElementById("btnOpcionMapaVias")?.addEventListener("click", abrirMapaVias);
+  document.getElementById("btnOpcionMapaHumedales")?.addEventListener("click", abrirMapaHumedales);
+  document.getElementById("btnOpcionMapa3")?.addEventListener("click", abrirMapa3);
+
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      cerrarModalExplorarRelaciones();
+    }
+  });
+}
+
+/* ==========================================================
+   MODAL POPUP: SELECTOR DE MAPAS (EXPLORAR RELACIONES EN DETALLE)
+   ========================================================== */
+function abrirModalExplorarRelaciones() {
+  const modal = document.getElementById("modalExplorarRelaciones");
+  if (!modal) return;
+  modal.style.display = "flex";
+  modal.setAttribute("aria-hidden", "false");
+}
+
+function cerrarModalExplorarRelaciones() {
+  const modal = document.getElementById("modalExplorarRelaciones");
+  if (!modal) return;
+  modal.style.display = "none";
+  modal.setAttribute("aria-hidden", "true");
+}
+
+function abrirMapaVias() {
+  cerrarModalExplorarRelaciones();
+  setTimeout(() => {
+    zoomIntoMovilidad();
+  }, 40);
+}
+
+function abrirMapaHumedales() {
+  cerrarModalExplorarRelaciones();
+  setTimeout(() => {
+    explorarRelacionesConAnimacion();
+  }, 40);
+}
+
+function abrirMapaManzanas() {
+  cerrarModalExplorarRelaciones();
+  setTimeout(() => {
+    zoomIntoManzanas();
+  }, 40);
+}
+
+function abrirMapaPatrimonio() {
+  cerrarModalExplorarRelaciones();
+  setTimeout(() => {
+    zoomIntoPatrimonio();
+  }, 40);
+}
+
+function showManzanasOverlay(opts) {
+  const legendM = document.getElementById("networkLegend");
+  if (legendM) legendM.style.display = "none";
+  const actsM = document.getElementById("networkSidebarActions");
+  if (actsM) actsM.style.display = "none";
+  hideNodeInfo();
+  hideEdgeInfo();
+  document.querySelector(".network-canvas").style.display = "none";
+  document.getElementById("humedalesOverlay").style.display = "none";
+  document.getElementById("movilidadOverlay").style.display = "none";
+  const pat = document.getElementById("patrimonioOverlay");
+  if (pat) pat.style.display = "none";
+  
+  const overlay = document.getElementById("manzanasOverlay");
+  if (overlay) {
+    overlay.style.display = "flex";
+    if (opts?.animateIn) {
+      overlay.classList.add("overlay-entering");
+      overlay.addEventListener("animationend", () => overlay.classList.remove("overlay-entering"), { once: true });
+    }
+  }
+}
+
+function hideManzanasOverlay() {
+  const legendM = document.getElementById("networkLegend");
+  if (legendM) legendM.style.display = "";
+  const actsM = document.getElementById("networkSidebarActions");
+  if (actsM) actsM.style.display = "";
+  const overlay = document.getElementById("manzanasOverlay");
+  if (overlay) overlay.style.display = "none";
+  document.querySelector(".network-canvas").style.display = "";
+}
+
+function showPatrimonioOverlay(opts) {
+  const legendM = document.getElementById("networkLegend");
+  if (legendM) legendM.style.display = "none";
+  const actsM = document.getElementById("networkSidebarActions");
+  if (actsM) actsM.style.display = "none";
+  hideNodeInfo();
+  hideEdgeInfo();
+  document.querySelector(".network-canvas").style.display = "none";
+  document.getElementById("humedalesOverlay").style.display = "none";
+  document.getElementById("movilidadOverlay").style.display = "none";
+  const man = document.getElementById("manzanasOverlay");
+  if (man) man.style.display = "none";
+  
+  const overlay = document.getElementById("patrimonioOverlay");
+  if (overlay) {
+    overlay.style.display = "flex";
+    if (opts?.animateIn) {
+      overlay.classList.add("overlay-entering");
+      overlay.addEventListener("animationend", () => overlay.classList.remove("overlay-entering"), { once: true });
+    }
+  }
+}
+
+function hidePatrimonioOverlay() {
+  const legendM = document.getElementById("networkLegend");
+  if (legendM) legendM.style.display = "";
+  const actsM = document.getElementById("networkSidebarActions");
+  if (actsM) actsM.style.display = "";
+  const overlay = document.getElementById("patrimonioOverlay");
+  if (overlay) overlay.style.display = "none";
+  document.querySelector(".network-canvas").style.display = "";
 }
 
 /* -------- métricas -------- */
@@ -2136,7 +2323,18 @@ document.addEventListener("DOMContentLoaded", () => {
   renderMatrix();
   document.getElementById("networkViz")?.addEventListener("click", () => { hideEdgeInfo(); hideNodeInfo(); });
   document.getElementById("btnVerHallazgos")?.addEventListener("click", verHallazgosConAnimacion);
-  document.getElementById("btnExplorarRelaciones")?.addEventListener("click", explorarRelacionesConAnimacion);
+  document.getElementById("btnExplorarRelaciones")?.addEventListener("click", abrirModalExplorarRelaciones);
+
+  // Opciones del modal de mapas
+  document.getElementById("btnOpcionMapaVias")?.addEventListener("click", abrirMapaVias);
+  document.getElementById("btnOpcionMapaHumedales")?.addEventListener("click", abrirMapaHumedales);
+  document.getElementById("btnOpcionMapaManzanas")?.addEventListener("click", abrirMapaManzanas);
+  document.getElementById("btnOpcionMapaPatrimonio")?.addEventListener("click", abrirMapaPatrimonio);
+  document.getElementById("modalExplorarClose")?.addEventListener("click", cerrarModalExplorarRelaciones);
+
+  // Cierre de overlays
+  document.getElementById("manzanasOverlayClose")?.addEventListener("click", hideManzanasOverlay);
+  document.getElementById("patrimonioOverlayClose")?.addEventListener("click", hidePatrimonioOverlay);
 });
 
 

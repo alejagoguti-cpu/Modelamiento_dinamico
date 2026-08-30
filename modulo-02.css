@@ -288,21 +288,25 @@ body {
   border: 1px solid var(--border);
   display: block;
   transform-origin: 50% 50%;
-  transition: transform 2s cubic-bezier(0.62, 0, 0.85, 0.44), opacity 0.8s ease 1.1s;
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
 }
-/* Animación "explorar relaciones en detalle": zoom lento y envolvente hacia
-   el nodo Humedales (como si la cámara se acercara al mapa) antes de entrar
-   al overlay ampliado. transform-origin se fija dinámicamente en JS al punto
-   exacto del nodo antes de aplicar esta clase. */
-#networkViz.zoom-into-humedales { transform: scale(7); opacity: 0; }
+/* Animación "explorar relaciones en detalle": acercamiento suave,
+   rápido y fluido hacia el nodo seleccionado antes de pasar al mapa ampliado */
+#networkViz.zoom-into-humedales {
+  transform: scale(2.1) translateZ(0);
+  opacity: 0;
+}
 
-/* El overlay de humedales entra con un fundido + acercamiento suave, como
-   continuación natural del zoom del paso anterior. */
-.humedales-overlay.overlay-entering {
-  animation: humedalesOverlayIn 0.5s ease both;
+/* Los overlays entran con un fundido y escala suave y limpia */
+.humedales-overlay.overlay-entering,
+.movilidad-overlay.overlay-entering,
+.mapa3-overlay.overlay-entering {
+  animation: smoothOverlayIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
-@keyframes humedalesOverlayIn {
-  from { opacity: 0; transform: scale(1.06); }
+@keyframes smoothOverlayIn {
+  from { opacity: 0; transform: scale(1.02); }
   to { opacity: 1; transform: scale(1); }
 }
 
@@ -846,28 +850,25 @@ footer span { color: var(--teal); }
 }
 .movilidad-back-btn:hover { background: rgba(57, 255, 106, 0.15); }
 
-/* ANIMACIÓN "APAGÓN" (Ver hallazgos clave): parpadeo tipo corte de luz sobre
-   los nodos/aristas que NO forman parte de la relación destacada, antes de
-   quedar completamente atenuados por el spotlight normal. */
+/* ANIMACIÓN "ILUMINACIÓN / DESCONEXIÓN": efecto fluido donde los nodos
+   seleccionados se iluminan intensamente y el resto se desconecta suavemente. */
 @keyframes blackoutFlicker {
   0%   { opacity: 1; }
-  8%   { opacity: 0.15; }
-  15%  { opacity: 0.9; }
-  24%  { opacity: 0.1; }
-  32%  { opacity: 0.7; }
-  45%  { opacity: 0.08; }
-  60%  { opacity: 0.5; }
-  75%  { opacity: 0.05; }
-  100% { opacity: 0.12; }
+  15%  { opacity: 0.25; }
+  30%  { opacity: 0.75; }
+  50%  { opacity: 0.15; }
+  75%  { opacity: 0.45; }
+  100% { opacity: 0.1; }
 }
 .ods-node.blackout-flicker, .edge-group.blackout-flicker {
-  animation: blackoutFlicker 0.9s steps(1, end) both;
+  animation: blackoutFlicker 0.48s cubic-bezier(0.2, 0.8, 0.4, 1) both;
 }
 @keyframes blackoutGlow {
-  0%, 100% { filter: drop-shadow(0 0 6px currentColor); }
-  50% { filter: drop-shadow(0 0 14px currentColor) drop-shadow(0 0 22px currentColor); }
+  0%   { filter: drop-shadow(0 0 4px currentColor); }
+  50%  { filter: drop-shadow(0 0 16px currentColor) drop-shadow(0 0 24px currentColor); }
+  100% { filter: drop-shadow(0 0 10px currentColor); }
 }
-.ods-node.blackout-surviving .node-ring { animation: blackoutGlow 0.9s ease both; }
+.ods-node.blackout-surviving .node-ring { animation: blackoutGlow 0.48s ease both; }
 
 /* RESPONSIVE */
 @media (max-width: 1400px) {
@@ -1228,3 +1229,482 @@ footer span { color: var(--teal); }
 @media (prefers-reduced-motion: reduce) {
   .edge-group-reveal { animation: none; opacity: 1; }
 }
+
+
+/* Palabras clave del modelo de ciudad */
+.quote-focus-in .pot-keyword{
+  color:#5cd6d1;
+  font-weight:800;
+  text-shadow:0 0 10px rgba(92,214,209,.18);
+}
+
+/* ==========================================================
+   MODAL POPUP: SELECTOR DE MAPAS (EXPLORAR RELACIONES EN DETALLE)
+   ========================================================== */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: rgba(0, 0, 0, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: modalBackdropFadeIn 0.25s ease-out;
+}
+
+@keyframes modalBackdropFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-dialog {
+  background: #080808;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 980px;
+  max-height: 92vh;
+  overflow-y: auto;
+  padding: 32px 34px 36px;
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  animation: modalCardScaleIn 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+
+@keyframes modalCardScaleIn {
+  from { opacity: 0; transform: scale(0.94) translateY(12px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.modal-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  color: var(--teal);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.modal-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: #f5f5f5;
+  letter-spacing: -0.01em;
+  margin-bottom: 6px;
+}
+
+.modal-subtitle {
+  font-size: 13.5px;
+  color: var(--text-dim);
+  line-height: 1.45;
+}
+
+.modal-close-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-faint);
+  font-size: 24px;
+  line-height: 1;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.modal-close-btn:hover {
+  background: rgba(239, 68, 68, 0.18);
+  border-color: rgba(239, 68, 68, 0.45);
+  color: #ef4444;
+}
+
+/* GRID DE OPCIONES (4 MAPAS) */
+.map-options-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-top: 22px;
+}
+
+.map-option-card {
+  background: #111111;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.map-option-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: transparent;
+  transition: background 0.2s ease;
+}
+
+.map-option-card:hover {
+  transform: translateY(-4px);
+  background: #161616;
+}
+
+.map-option-card:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 2px;
+}
+
+/* Colores específicos de cada tarjeta */
+.map-option-card.card-vias:hover {
+  border-color: rgba(239, 149, 82, 0.65);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.8), 0 0 16px rgba(239, 149, 82, 0.15);
+}
+.map-option-card.card-vias:hover::before {
+  background: #ef9552;
+}
+
+.map-option-card.card-humedales:hover {
+  border-color: rgba(47, 212, 200, 0.65);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.8), 0 0 16px rgba(47, 212, 200, 0.15);
+}
+.map-option-card.card-humedales:hover::before {
+  background: #2fd4c8;
+}
+
+.map-option-card.card-manzanas:hover {
+  border-color: rgba(247, 111, 176, 0.65);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.8), 0 0 16px rgba(247, 111, 176, 0.15);
+}
+.map-option-card.card-manzanas:hover::before {
+  background: #f76fb0;
+}
+
+.map-option-card.card-patrimonio:hover {
+  border-color: rgba(251, 141, 132, 0.65);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.8), 0 0 16px rgba(251, 141, 132, 0.15);
+}
+.map-option-card.card-patrimonio:hover::before {
+  background: #fb8d84;
+}
+
+.map-option-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.map-option-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 20px;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.badge-vias {
+  background: rgba(239, 149, 82, 0.12);
+  color: #ef9552;
+  border: 1px solid rgba(239, 149, 82, 0.28);
+}
+
+.badge-humedales {
+  background: rgba(47, 212, 200, 0.12);
+  color: #2fd4c8;
+  border: 1px solid rgba(47, 212, 200, 0.28);
+}
+
+.badge-manzanas {
+  background: rgba(247, 111, 176, 0.12);
+  color: #f76fb0;
+  border: 1px solid rgba(247, 111, 176, 0.28);
+}
+
+.badge-patrimonio {
+  background: rgba(251, 141, 132, 0.12);
+  color: #fb8d84;
+  border: 1px solid rgba(251, 141, 132, 0.28);
+}
+
+.map-option-action-arrow {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.04);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-faint);
+  font-size: 10px;
+  transition: all 0.2s ease;
+}
+
+.map-option-card:hover .map-option-action-arrow {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text);
+  transform: translateX(3px);
+}
+
+.map-option-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+
+.card-vias .map-option-icon {
+  background: rgba(239, 149, 82, 0.1);
+  color: #ef9552;
+  border: 1px solid rgba(239, 149, 82, 0.18);
+}
+
+.card-humedales .map-option-icon {
+  background: rgba(47, 212, 200, 0.1);
+  color: #2fd4c8;
+  border: 1px solid rgba(47, 212, 200, 0.18);
+}
+
+.card-manzanas .map-option-icon {
+  background: rgba(247, 111, 176, 0.1);
+  color: #f76fb0;
+  border: 1px solid rgba(247, 111, 176, 0.18);
+}
+
+.card-patrimonio .map-option-icon {
+  background: rgba(251, 141, 132, 0.1);
+  color: #fb8d84;
+  border: 1px solid rgba(251, 141, 132, 0.18);
+}
+
+.map-option-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: #f0f0f0;
+  line-height: 1.25;
+  margin-bottom: 6px;
+}
+
+.map-option-desc {
+  font-size: 11.5px;
+  color: var(--text-dim);
+  line-height: 1.45;
+  margin-bottom: 16px;
+  flex: 1;
+}
+
+.map-option-btn {
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: 8px;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+  border: 1px solid transparent;
+}
+
+.btn-vias {
+  background: rgba(239, 149, 82, 0.14);
+  color: #ef9552;
+  border-color: rgba(239, 149, 82, 0.3);
+}
+.map-option-card.card-vias:hover .btn-vias {
+  background: #ef9552;
+  color: #0c0c0c;
+}
+
+.btn-humedales {
+  background: rgba(47, 212, 200, 0.14);
+  color: #2fd4c8;
+  border-color: rgba(47, 212, 200, 0.3);
+}
+.map-option-card.card-humedales:hover .btn-humedales {
+  background: #2fd4c8;
+  color: #06110f;
+}
+
+.btn-manzanas {
+  background: rgba(247, 111, 176, 0.14);
+  color: #f76fb0;
+  border-color: rgba(247, 111, 176, 0.3);
+}
+.map-option-card.card-manzanas:hover .btn-manzanas {
+  background: #f76fb0;
+  color: #0c0c0c;
+}
+
+.btn-patrimonio {
+  background: rgba(251, 141, 132, 0.14);
+  color: #fb8d84;
+  border-color: rgba(251, 141, 132, 0.3);
+}
+.map-option-card.card-patrimonio:hover .btn-patrimonio {
+  background: #fb8d84;
+  color: #0c0c0c;
+}
+
+@media (max-width: 1100px) {
+  .map-options-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 650px) {
+  .map-options-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ==========================================================
+   OVERLAYS: MANZANAS DEL CUIDADO & PATRIMONIO
+   ========================================================== */
+.manzanas-overlay,
+.patrimonio-overlay {
+  width: 100%;
+  height: 780px;
+  background: #05070a;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.manzanas-overlay-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--border-soft);
+  background: rgba(247, 111, 176, 0.08);
+  flex-shrink: 0;
+}
+
+.patrimonio-overlay-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--border-soft);
+  background: rgba(251, 141, 132, 0.08);
+  flex-shrink: 0;
+}
+
+.manzanas-overlay-title-block,
+.patrimonio-overlay-title-block {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.manzanas-overlay-title,
+.patrimonio-overlay-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #f2f3f6;
+}
+
+.manzanas-overlay-subtitle,
+.patrimonio-overlay-subtitle {
+  font-size: 11.5px;
+  color: var(--text-dim);
+}
+
+.manzanas-overlay-body,
+.patrimonio-overlay-body {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+  background: #080808;
+  position: relative;
+}
+
+.map-placeholder-content {
+  text-align: center;
+  max-width: 540px;
+  padding: 40px 30px;
+  background: #111111;
+  border: 1px dashed rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+}
+
+.map-placeholder-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  font-size: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.map-placeholder-content h3 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 10px;
+}
+
+.map-placeholder-content p {
+  font-size: 13px;
+  color: var(--text-dim);
+  line-height: 1.5;
+  margin-bottom: 18px;
+}
+
+.map-placeholder-hint {
+  font-size: 11.5px;
+  border: 1px solid;
+  padding: 8px 14px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+
