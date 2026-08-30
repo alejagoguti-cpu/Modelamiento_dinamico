@@ -1782,11 +1782,28 @@
         submodelsQuestion?.setAttribute("aria-expanded", "true");
       }
       setSubmodelsMode(mode);
-      renderMapNetwork(mode === "subsystems" ? "systems" : "submodels");
-      document.querySelector(".cartography-section")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
     };
-    directSubsystemsBtn?.addEventListener("click", () => openSubmodelsFromDirectButton("subsystems"));
-    directSubmodelsBtn?.addEventListener("click", () => openSubmodelsFromDirectButton("submodels"));
+    directSubsystemsBtn?.addEventListener("click", () => { setCartographyVisible(false); openSubmodelsFromDirectButton("subsystems"); });
+    directSubmodelsBtn?.addEventListener("click", () => { setCartographyVisible(false); openSubmodelsFromDirectButton("submodels"); });
+    const directCartographyBtn = document.getElementById("directCartographyBtn");
+    function setCartographyVisible(visible) {
+      const section = document.getElementById("cartographySection");
+      if (!section) return;
+      section.hidden = !visible;
+      directCartographyBtn?.classList.toggle("active", visible);
+      if (visible) {
+        directSubsystemsBtn?.classList.remove("active");
+        directSubmodelsBtn?.classList.remove("active");
+        // El mapa se creó mientras estaba oculto: hay que decirle que
+        // vuelva a medir su tamaño y a dibujar la red de burbujas.
+        requestAnimationFrame(() => {
+          componentPointMap?.resize();
+          renderMapNetwork("systems");
+          section.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        });
+      }
+    }
+    directCartographyBtn?.addEventListener("click", () => setCartographyVisible(document.getElementById("cartographySection")?.hidden !== false));
     renderSubmodelsView("subsystems");
     const initPartOneControls = (map, layers) => {
       const controls = document.getElementById("subsystemLayerControls");
@@ -2048,12 +2065,18 @@
         return { x: (p.x / w) * 100, y: (p.y / h) * 100 };
       } catch (err) { return null; }
     };
-    // Línea con un solo giro de 90° (como un circuito), más clara que una
-    // diagonal directa — y un puntito blanco fijo exactamente en la
-    // coordenada real, al final de la línea.
-    const flowCurveD = (x, y, nx, ny) => {
+    // Línea con un giro de 90° (como un circuito). Cada línea de un mismo
+    // grupo se abre un poco en abanico cerca de la bolita para que no se
+    // amontonen ni se toquen entre sí.
+    const flowCurveD = (x, y, nx, ny, fanOffset) => {
+      const midX = nx + fanOffset;
       const pt = (px, py) => `${px.toFixed(2)} ${py.toFixed(2)}`;
-      return `M ${pt(x, y)} L ${pt(nx, y)} L ${pt(nx, ny)}`;
+      return `M ${pt(x, y)} L ${pt(midX, y)} L ${pt(midX, ny)} L ${pt(nx, ny)}`;
+    };
+    const fanOffsetFor = (group, i) => {
+      const n = group.components.length;
+      const spread = Math.min(5, 22 / Math.max(n, 1));
+      return (i - (n - 1) / 2) * spread;
     };
     const FLOW_GROUPS = [
       { components: HIDRICA_COMPONENTS, targetIndex: 0, color: "#b9e5ea", prefix: "hidrica" },
@@ -2067,7 +2090,7 @@
         if (!proj) return "";
         const id = `map-network-flow-${group.prefix}-${i}`;
         const dotId = `map-network-flow-dot-${group.prefix}-${i}`;
-        const d = flowCurveD(proj.x, proj.y, nx, ny);
+        const d = flowCurveD(proj.x, proj.y, nx, ny, fanOffsetFor(group, i));
         return `<path id="${id}" class="map-network-flow-line" d="${d}"/><circle id="${dotId}" class="map-network-flow-dot" cx="${proj.x.toFixed(2)}" cy="${proj.y.toFixed(2)}" r=".55"/>`;
       }).join("");
     }).join("");
@@ -2085,7 +2108,7 @@
           const path = svg.querySelector(`#map-network-flow-${group.prefix}-${i}`);
           const dot = svg.querySelector(`#map-network-flow-dot-${group.prefix}-${i}`);
           if (!proj) return;
-          if (path) path.setAttribute("d", flowCurveD(proj.x, proj.y, nx, ny));
+          if (path) path.setAttribute("d", flowCurveD(proj.x, proj.y, nx, ny, fanOffsetFor(group, i)));
           if (dot) { dot.setAttribute("cx", proj.x.toFixed(2)); dot.setAttribute("cy", proj.y.toFixed(2)); }
         });
       });

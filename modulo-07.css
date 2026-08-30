@@ -5238,10 +5238,12 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 
 /* Líneas rectas y simples (como en el plano de referencia): conectan cada
    componente geográfico real (humedales, canales, parques...) con la
-   bolita de su dinámica, con un solo giro de 90° en vez de una diagonal. */
+   bolita de su dinámica, con un giro de 90° y abiertas en abanico para
+   que no se toquen entre sí. Delgadas y punteadas. */
 .map-network-stage > svg .map-network-flows { pointer-events: none; overflow: visible; }
 .map-network-stage > svg .map-network-flow-line {
-  fill: none; stroke: rgba(255,255,255,0.55); stroke-width: .25;
+  fill: none; stroke: rgba(255,255,255,0.5); stroke-width: .12;
+  stroke-dasharray: .5 .7;
 }
 .map-network-stage > svg .map-network-flow-dot { fill: #ffffff; }
 
@@ -5585,7 +5587,15 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
   .systems-network .map-network-node[data-map-network-index="1"] { width: 78px !important; height: 78px !important; min-height: 78px !important; }
 }
 
-/* Las bolitas deben ser círculos perfectos, no manchas orgánicas "chuecas". */
+/* Las bolitas deben ser círculos perfectos, no manchas orgánicas "chuecas".
+   Selector con el id del contenedor para ganarle a las reglas más
+   específicas (por data-map-network-index) que seguían deformándolas. */
+#subsystemBubbles .map-network-node,
+#subsystemBubbles .map-network-node:hover,
+#subsystemBubbles .map-network-node.selected,
+#subsystemBubbles .map-network-node[data-map-network-index] {
+  border-radius: 50% !important;
+}
 .map-network-node,
 .map-network-node:hover,
 .map-network-node.selected {
