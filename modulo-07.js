@@ -1653,7 +1653,7 @@
         for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
         return buffer;
       }
-      function playFilteredNoise(c, { duration, filterFreq, filterType = "lowpass", q = 0.7, gain = 0.12, fadeIn = 0.12, fadeOut = duration }) {
+      function playFilteredNoise(c, { duration, filterFreq, filterType = "lowpass", q = 0.7, gain = 0.12, fadeIn = 0.12, fadeOut = duration, lfoRate = 0, lfoDepth = 0 }) {
         const src = c.createBufferSource();
         src.buffer = noiseBuffer(c, duration);
         const filter = c.createBiquadFilter();
@@ -1662,7 +1662,20 @@
         g.gain.setValueAtTime(0, c.currentTime);
         g.gain.linearRampToValueAtTime(gain, c.currentTime + fadeIn);
         g.gain.linearRampToValueAtTime(0, c.currentTime + fadeOut);
-        src.connect(filter); filter.connect(g); g.connect(masterGain);
+        src.connect(filter); filter.connect(g);
+        // Tremolo suave (un LFO real modulando el volumen): así el "ruido"
+        // deja de sonar plano y empieza a sentirse como agua que burbujea.
+        if (lfoRate > 0 && lfoDepth > 0) {
+          const lfo = c.createOscillator();
+          lfo.frequency.value = lfoRate;
+          const lfoGain = c.createGain();
+          lfoGain.gain.value = gain * lfoDepth;
+          lfo.connect(lfoGain);
+          lfoGain.connect(g.gain);
+          lfo.start();
+          lfo.stop(c.currentTime + duration + 0.05);
+        }
+        g.connect(masterGain);
         src.start(); src.stop(c.currentTime + duration + 0.05);
       }
       function playTone(c, { freq, to, duration, type = "sine", gain = 0.1, delay = 0, attack }) {
@@ -1678,17 +1691,35 @@
         osc.start(c.currentTime + delay); osc.stop(c.currentTime + delay + duration + 0.05);
       }
       const players = {
-        // Dinámica hídrica: agua suave — capas tenues de ruido filtrado
+        // Dinámica hídrica: agua de verdad — varias capas de ruido filtrado
+        // (caudal grave, burbujeo medio, chispeo agudo) con un tremolo
+        // lento en cada una para que se sienta que fluye, más gotitas
+        // sueltas de agua esparcidas; dura varios segundos, sin prisa.
         hidrica: (c) => {
-          playFilteredNoise(c, { duration: 2.2, filterFreq: 650, filterType: "lowpass", gain: 0.12, fadeOut: 2.2 });
-          playFilteredNoise(c, { duration: 1.6, filterFreq: 1600, filterType: "bandpass", q: 1.0, gain: 0.05, fadeOut: 1.6 });
-        },
-        // Dinámica biótica: un pajarito lejano — trinos cortos y suaves
-        biotica: (c) => {
-          const base = 2100 + Math.random() * 250;
-          [0, 0.2, 0.4].forEach((delay, i) => {
-            playTone(c, { freq: base + i * 180, to: base + i * 180 + 500, duration: 0.13, type: "sine", gain: 0.07, delay, attack: 0.03 });
+          const dur = 4.4;
+          playFilteredNoise(c, { duration: dur, filterFreq: 520, filterType: "lowpass", gain: 0.13, fadeIn: 0.6, fadeOut: dur, lfoRate: 0.32, lfoDepth: 0.45 });
+          playFilteredNoise(c, { duration: dur * 0.85, filterFreq: 1500, filterType: "bandpass", q: 1.1, gain: 0.065, fadeIn: 0.5, fadeOut: dur * 0.85, lfoRate: 0.6, lfoDepth: 0.55 });
+          playFilteredNoise(c, { duration: dur * 0.65, filterFreq: 3200, filterType: "bandpass", q: 1.7, gain: 0.03, fadeIn: 0.4, fadeOut: dur * 0.65, lfoRate: 1.15, lfoDepth: 0.65 });
+          // gotitas sueltas, como salpicaduras, esparcidas en el tiempo
+          [0.4, 1.1, 1.85, 2.6, 3.35, 3.9].forEach((delay) => {
+            playTone(c, { freq: 1700 + Math.random() * 900, to: 1100, duration: 0.1, type: "sine", gain: 0.028, delay, attack: 0.01 });
           });
+        },
+        // Dinámica biótica: dos pajaritos conversando entre la vegetación —
+        // trinos con variación natural de tono y ritmo, no siempre iguales
+        biotica: (c) => {
+          const chirp = (delay, baseFreq, calls) => {
+            let t = delay;
+            for (let i = 0; i < calls; i++) {
+              const f = baseFreq + Math.random() * 350;
+              const dur = 0.08 + Math.random() * 0.06;
+              playTone(c, { freq: f, to: f + 600 + Math.random() * 500, duration: dur, type: "sine", gain: 0.085, delay: t, attack: 0.015 });
+              t += dur + 0.04 + Math.random() * 0.05;
+            }
+          };
+          chirp(0, 2500, 2 + Math.floor(Math.random() * 2));
+          chirp(0.6, 2050, 2); // segundo pajarito, un poco más grave, respondiendo
+          chirp(1.35, 2700, 2 + Math.floor(Math.random() * 2));
         },
         // Sistema físico-urbano: zumbido de ciudad lejana, muy suave y
         // sostenido — sin bocinas ni golpes, solo un fondo urbano tenue
