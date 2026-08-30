@@ -1652,12 +1652,9 @@
       { id: "tunjuelo", label: "Río Tunjuelo", coords: [-74.17429119107521, 4.603360016778938], system: "hidrica",
         phenomenon: "Sobrecarga Hidráulica y Desbordamiento por Colapso Pluvial",
         detail: "Como la ciudad está pavimentada, toda el agua de lluvia de Kennedy corre hacia los canales sin filtrarse. Al llegar al río, sobrepasa la capacidad del cauce, provocando el retorno de aguas servidas e inundaciones en barrios perimetrales." },
-      // "corabastos" ya no va aquí: ahora tiene su propia caja de texto
-      // completa en KENNEDY_TEXT_BOXES, con su propio nodo — para no
-      // duplicar un punto encima del ícono en el mismo lugar.
-      { id: "avcali", label: "Av. Ciudad de Cali", coords: [-74.15162630856268, 4.644831758038044], system: "fisico",
-        phenomenon: "Corredor infraestructural — impermeabilización y sello de suelo",
-        detail: "Pendiente de completar (no me diste el detalle de este punto)." },
+      // "corabastos" y "avcali" ya no van aquí: cada uno tiene su propia
+      // caja de texto completa en KENNEDY_TEXT_BOXES, con su propio nodo —
+      // para no duplicar un punto encima del ícono en el mismo lugar.
       { id: "bibliotintal", label: "Biblioteca El Tintal", coords: [-74.15477971743486, 4.642987513146133], system: "fisico",
         phenomenon: "Equipamiento urbano de borde",
         detail: "Pendiente de completar (no me diste el detalle de este punto)." },
@@ -1681,6 +1678,11 @@
       { id: "corabastos", title: "CORABASTOS", subtitle: "MODELO COMERCIAL Y LOGÍSTICO", mainLine: "Modelo Social ⟶ Sistema Ecológico",
         submodelos: ["Modelo de planificación comercial.", "Modelo de gestión de residuos orgánicos.", "Modelo de movilidad pesada.", "Modelo de saneamiento ambiental."],
         coords: [-74.1599146050763, 4.63015596902525], color: "#e58d62", icon: "fa-house-chimney", boxPos: [90, 62] },
+      // Nodo de vías: la flechita sale de un punto sobre la Av. Ciudad de
+      // Cali y llega hasta este nodo, con su propia caja.
+      { id: "avcali", title: "AV. CIUDAD DE CALI", subtitle: "MODELO VIAL Y DE INFRAESTRUCTURA", mainLine: "Modelo Determinista ⟶ Sistema Ecológico",
+        submodelos: ["Modelo de flujo vehicular.", "Modelo de impermeabilización.", "Modelo de evacuación pluvial.", "Modelo de fricción urbana."],
+        coords: [-74.15162630856268, 4.644831758038044], color: "#b8c0c8", icon: "fa-road", boxPos: [50, 10] },
     ];
     // ---------- Sonidos ambiente por dinámica (sintetizados, sin archivos
     // externos) — cada burbuja del territorio suena distinto al tocarla:
@@ -2059,15 +2061,12 @@
             [-74.08683159566945, 4.624876830893459]
           ] } },
           { type: "Feature", properties: { label: "Avenida Boyacá" }, geometry: { type: "LineString", coordinates: [
-            [-74.1572, 4.5017],
-            [-74.1519, 4.5375],
-            [-74.14660, 4.57329],
-            [-74.14129179848494, 4.60884108175092],
-            [-74.13774935797123, 4.632539036499758],
-            [-74.11319853892789, 4.664630608439349],
-            [-74.10271508111543, 4.676992365168468],
-            [-74.09223, 4.68935],
-            [-74.08176, 4.70172]
+            [-74.14371860090965, 4.584983752398406],
+            [-74.14137757373189, 4.608203450255872],
+            [-74.13773608642116, 4.631493746467614],
+            [-74.13703703329347, 4.636242554055086],
+            [-74.12075222037693, 4.656380463023536],
+            [-74.10944594798171, 4.668726182128907]
           ] } }
         ] } });
         map.addLayer({ id: "avenidas-referencia-line", type: "line", source: "avenidas-referencia", layout: { visibility: "none" }, paint: { "line-color": "#c9a9ef", "line-width": ["interpolate", ["linear"], ["zoom"], 10, 1.7, 14, 3.0], "line-opacity": .62 } });
