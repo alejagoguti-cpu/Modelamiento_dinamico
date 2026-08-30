@@ -1634,17 +1634,19 @@
     // Fenómenos de la red hídrica de Kennedy: un solo lugar → una sola
     // bolita grande con su ícono (igual tamaño que las bolas de los
     // sistemas), sin nada más encima. Al hacer click se ve el detalle.
+    // Los 8 lugares que me diste, cada uno con su propia bolita (aro de
+    // color + ícono, sin relleno) exactamente en su coordenada real.
+    // Nota: no tengo coordenada exacta de "Portal Américas" — usé una
+    // aproximada de referencia general (cerca de Av. Américas / Av.
+    // Ciudad de Cali); dime la coordenada exacta si la tienes.
     const KENNEDY_PHENOMENA = [
-      { id: "burro", label: "Humedal El Burro", coords: [-74.14987475206779, 4.64210777486686], system: "fisico",
+      { id: "burro", label: "Humedal El Burro", coords: [-74.14987475206779, 4.64210777486686], system: "hidrica",
         phenomenon: "Impermeabilización, Fragmentación y Escorrentía Térmica",
         detail: "La masa de asfalto de la Av. Ciudad de Cali corta la continuidad física del agua. El agua lluvia cae sobre el pavimento caliente y sellado, arrastra aceites y metales pesados, e ingresa al humedal a alta velocidad y temperatura, destruyendo el microclima de la ronda." },
-      { id: "lavaca", label: "Humedal La Vaca", coords: [-74.16284778855655, 4.62939492240078], system: "hidrica",
-        phenomenon: "Eutrofización Acelerada e Inversión de Oxígeno",
-        detail: "Debido a la cercanía con Corabastos y sectores de uso mixto, entran cargas de materia orgánica, lixiviados y detergentes (nitrógeno y fósforo). Esto causa una proliferación masiva de plantas flotantes (buchón) que cubren la superficie, bloquean la luz solar y agotan el oxígeno disuelto en el fondo, matando la vida acuática." },
       { id: "techo", label: "Humedal Techo", coords: [-74.1413020515684, 4.645452290970931], system: "hidrica",
         phenomenon: "Aislamiento Freatimétrico y Secado por Encajonamiento",
         detail: "La infraestructura urbana circundante corta las venas de agua subterránea (acuífero) y los canales naturales que lo alimentaban. El humedal pierde la capacidad de regular su nivel y pasa a depender únicamente del agua de lluvia, sufriendo procesos de colmatación (acumulación de sedimento seco)." },
-      { id: "canales", label: "Canal San Francisco / Canal Dindalito", coords: [-74.155, 4.635], system: "fisico",
+      { id: "canalsf", label: "Canal San Francisco", coords: [-74.155, 4.635], system: "hidrica",
         phenomenon: "Canalización Rígida y Aceleración de Vertimientos",
         detail: "El reemplazo del cauce natural por concreto rígido elimina la capacidad de filtrado del suelo. El canal se convierte en un colector acelerado que transporta basura flotante, sedimentos y conexiones erradas de aguas residuales directamente hacia los humedales y el río." },
       { id: "tunjuelo", label: "Río Tunjuelo", coords: [-74.17429119107521, 4.603360016778938], system: "hidrica",
@@ -1653,11 +1655,21 @@
       { id: "corabastos", label: "Corabastos", coords: [-74.1599146050763, 4.63015596902525], system: "socioeconomico",
         phenomenon: "Generación de Cargas Orgánicas y Lixiviados",
         detail: "Pendiente de completar (el detalle de este punto quedó incompleto en el texto que me diste)." },
+      { id: "avcali", label: "Av. Ciudad de Cali", coords: [-74.15162630856268, 4.644831758038044], system: "fisico",
+        phenomenon: "Corredor infraestructural — impermeabilización y sello de suelo",
+        detail: "Pendiente de completar (no me diste el detalle de este punto)." },
+      { id: "bibliotintal", label: "Biblioteca El Tintal", coords: [-74.15477971743486, 4.642987513146133], system: "fisico",
+        phenomenon: "Equipamiento urbano de borde",
+        detail: "Pendiente de completar (no me diste el detalle de este punto)." },
+      { id: "portalamericas", label: "Portal Américas", coords: [-74.1615, 4.6255], system: "movilidad",
+        phenomenon: "Nodo de movilidad — presión de infraestructura de transporte",
+        detail: "Pendiente de completar (no me diste el detalle de este punto)." },
     ];
     const KENNEDY_SYSTEM_STYLE = {
       hidrica: { color: "#56b8d4", icon: "fa-droplet" },
       fisico: { color: "#b8c0c8", icon: "fa-building" },
       socioeconomico: { color: "#e58d62", icon: "fa-house-chimney" },
+      movilidad: { color: "#f1cf5b", icon: "fa-route" },
     };
     // ---------- Sonidos ambiente por dinámica (sintetizados, sin archivos
     // externos) — cada burbuja del territorio suena distinto al tocarla:
@@ -1863,6 +1875,23 @@
       [directSubsystemsBtn, directSubmodelsBtn, directCartographyBtn].forEach((btn) => btn?.classList.toggle("active", btn === activeBtn));
       renderMapNetwork(networkMode, true, territoryNetworkPlain, false);
     }
+    // Las líneas moradas de las avenidas también esperan a que el mapa
+    // llegue a Kennedy — aparecen con un fundido suave, no de una vez.
+    function revealAvenueLines() {
+      if (!componentPointMap) return;
+      ["avenidas-referencia-line", "avenidas-referencia-labels"].forEach((id) => {
+        if (componentPointMap.getLayer(id)) componentPointMap.setLayoutProperty(id, "visibility", "visible");
+      });
+      const targetOpacity = 0.62;
+      let start = null;
+      function step(ts) {
+        if (!start) start = ts;
+        const t = Math.min(1, (ts - start) / 700);
+        if (componentPointMap.getLayer("avenidas-referencia-line")) componentPointMap.setPaintProperty("avenidas-referencia-line", "line-opacity", targetOpacity * t);
+        if (t < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
     function showCartography() {
       const cartoSection = document.getElementById("cartographySection");
       if (!cartoSection) return;
@@ -1878,6 +1907,7 @@
           runCartographyOpening(componentPointMap);
         } else {
           renderMapNetwork(currentSubmodelsMode === "subsystems" ? "systems" : "submodels", false, subsystemBubbles, true);
+          revealAvenueLines();
         }
       });
     }
@@ -2026,8 +2056,8 @@
             [-74.08176, 4.70172]
           ] } }
         ] } });
-        map.addLayer({ id: "avenidas-referencia-line", type: "line", source: "avenidas-referencia", paint: { "line-color": "#c9a9ef", "line-width": ["interpolate", ["linear"], ["zoom"], 10, 1.7, 14, 3.0], "line-opacity": .62 } });
-        map.addLayer({ id: "avenidas-referencia-labels", type: "symbol", source: "avenidas-referencia", layout: { "symbol-placement": "line", "text-field": ["get", "label"], "text-size": 9, "text-offset": [0, -0.8] }, paint: { "text-color": "#d9c8f5", "text-halo-color": "#0a0612", "text-halo-width": 1.3 } });
+        map.addLayer({ id: "avenidas-referencia-line", type: "line", source: "avenidas-referencia", layout: { visibility: "none" }, paint: { "line-color": "#c9a9ef", "line-width": ["interpolate", ["linear"], ["zoom"], 10, 1.7, 14, 3.0], "line-opacity": .62 } });
+        map.addLayer({ id: "avenidas-referencia-labels", type: "symbol", source: "avenidas-referencia", layout: { visibility: "none", "symbol-placement": "line", "text-field": ["get", "label"], "text-size": 9, "text-offset": [0, -0.8] }, paint: { "text-color": "#d9c8f5", "text-halo-color": "#0a0612", "text-halo-width": 1.3 } });
         map.addSource("subsystem-component-points", { type: "geojson", data: { type: "FeatureCollection", features: [] } });
         map.addLayer({ id: "subsystem-component-point-halo", type: "circle", source: "subsystem-component-points", paint: { "circle-radius": ["interpolate", ["linear"], ["zoom"], 10, 8, 14, 13], "circle-color": ["coalesce", ["get", "color"], "#ffffff"], "circle-opacity": .18, "circle-blur": .35 }, layout: { visibility: "none" } });
         map.addLayer({ id: "subsystem-component-points", type: "circle", source: "subsystem-component-points", paint: { "circle-radius": ["interpolate", ["linear"], ["zoom"], 10, 3.8, 14, 6.5], "circle-color": ["coalesce", ["get", "color"], "#ffffff"], "circle-opacity": .96, "circle-stroke-color": "#f5ffff", "circle-stroke-width": 1.1, "circle-stroke-opacity": .76 }, layout: { visibility: "none" } });
@@ -2200,15 +2230,15 @@
       const label = (row) => systems ? row.name : row.name.replace(/^Submodelo de /, "");
       const icon = (index) => (systems ? systemIcons : submodelIcons)[index] || "fa-circle-nodes";
       // Cuando la red está anclada al mapa real (Cartografía interactiva),
-      // la bolita única de "Dinámica hídrica" (índice 0) se reemplaza por
-      // sus 3 submodelos, cada uno puesto encima de su lugar real.
-      const hideHidricaBubble = systems && withFlows;
-      const nodes = rows.map((row, index) => { if (hideHidricaBubble && index === 0) return ""; const [x,y] = positions[index]; return `<button type="button" class="map-network-node ${systems ? "map-system-node" : "map-submodel-node"}" data-map-network-index="${index}" style="--node-x:${x}%;--node-y:${y}%;--node-color:${row.color || colors[index]}"><i class="map-network-node-icon fa-solid ${icon(index)}" aria-hidden="true"></i><strong>${label(row)}</strong></button>`; }).join("");
-      const kennedyBoxesHtml = hideHidricaBubble ? buildPhenomenaHtml() : "";
-      const relationPairs = (systems
+      // NINGUNA bolita abstracta de sistema se muestra — solo las bolitas
+      // de lugar real (Humedal El Burro, Corabastos, etc.).
+      const hideAllSystemBubbles = systems && withFlows;
+      const nodes = hideAllSystemBubbles ? "" : rows.map((row, index) => { const [x,y] = positions[index]; return `<button type="button" class="map-network-node ${systems ? "map-system-node" : "map-submodel-node"}" data-map-network-index="${index}" style="--node-x:${x}%;--node-y:${y}%;--node-color:${row.color || colors[index]}"><i class="map-network-node-icon fa-solid ${icon(index)}" aria-hidden="true"></i><strong>${label(row)}</strong></button>`; }).join("");
+      const kennedyBoxesHtml = hideAllSystemBubbles ? buildPhenomenaHtml() : "";
+      const relationPairs = hideAllSystemBubbles ? [] : (systems
         ? [[0,1],[0,2],[0,5],[1,2],[1,3],[1,5],[2,3],[2,4],[3,4],[3,5],[4,5]]
         : [[0,1],[0,2],[1,2],[1,3],[2,3],[2,4],[3,4],[3,5],[4,5],[4,6],[5,6],[0,6],[1,5]]
-      ).filter(([a, b]) => !(hideHidricaBubble && (a === 0 || b === 0)));
+      );
       const gradientDefs = [];
       const bonds = relationPairs.map(([fromIndex, toIndex], edgeIndex) => {
         const row = rows[fromIndex], other = rows[toIndex];
@@ -2290,11 +2320,11 @@
         purpose.querySelector(".subsystem-panel-close")?.addEventListener("click", closePanels);
         if (systems && withFlows) renderSubsystemPoints(subsystemData[Number(button.dataset.mapNetworkIndex)]);
       }));
-      if (hideHidricaBubble) {
+      if (hideAllSystemBubbles) {
         target.querySelectorAll(".map-phenomenon-node").forEach((button) => button.addEventListener("click", () => {
           const p = KENNEDY_PHENOMENA[Number(button.dataset.phenomenonIndex)];
           if (!p) return;
-          DINAMICA_SOUND.play(p.system === "hidrica" ? "hidrica" : p.system === "fisico" ? "fisico" : "socioeconomico");
+          DINAMICA_SOUND.play(p.system);
           target.querySelectorAll(".map-network-node").forEach((node) => node.classList.toggle("selected", node === button));
           target.querySelectorAll(".subsystem-components, .subsystem-purpose-panel, .map-network-detail").forEach((node) => node.remove());
           const style = KENNEDY_SYSTEM_STYLE[p.system] || { color: "#fff" };
