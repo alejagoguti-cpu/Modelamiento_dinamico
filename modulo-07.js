@@ -1918,7 +1918,10 @@
     // Se difiere al siguiente tick: renderMapNetwork se declara más abajo en
     // este mismo archivo, y llamarla de inmediato aquí rompía todo el script
     // (error de "usar antes de declarar" que dejaba la página en blanco).
-    setTimeout(() => showPlainNetwork("systems", directSubsystemsBtn), 0);
+    // No disparamos aquí "showCartography()": el mapa (satelital, con
+    // teselas por red) puede tardar en cargar, y si se llama antes de
+    // tiempo, las bolitas nunca se crean. Se dispara más abajo, dentro
+    // del evento real de carga del mapa (componentPointMap ya listo).
     const initPartOneControls = (map, layers) => {
       const controls = document.getElementById("subsystemLayerControls");
       if (controls) {
@@ -2069,7 +2072,13 @@
         initPartOneControls(map, partOneMapLayers);
         map.on("move", updateFlowGroups);
         map.on("zoom", updateFlowGroups);
-        setStatus("BOGOTÁ · LECTURA GENERAL", true); setupCartographyEntrance(map); });
+        setStatus("BOGOTÁ · LECTURA GENERAL", true); setupCartographyEntrance(map);
+        // El mapa YA está listo (componentPointMap ya asignado arriba):
+        // ahora sí es seguro mostrar Cartografía interactiva de una vez,
+        // para que las bolitas de lugar salgan sin tener que adivinar
+        // en cuál botón hacer click.
+        showCartography();
+      });
       const loadOsm = async () => { const query = `[out:json][timeout:20];way[highway~"^(motorway|trunk|primary|secondary|tertiary)$"](around:4200,4.64,-74.09);out geom;`; setStatus("CARGANDO CALLES OSM…"); const controller = new AbortController(); const timer = window.setTimeout(() => controller.abort(), 12000); try { let response; for (const endpoint of ["https://overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter", "https://overpass.private.coffee/api/interpreter"]) { try { response = await fetch(`${endpoint}?data=${encodeURIComponent(query)}`, { signal: controller.signal, headers: { Accept: "application/json" } }); if (response.ok) break; } catch (error) { /* prueba el siguiente endpoint público */ } } if (!response?.ok) throw new Error("Overpass sin respuesta"); const data = await response.json(); const features = data.elements.filter((x) => x.geometry?.length > 1).map((x) => ({ type: "Feature", properties: { highway: x.tags?.highway || "road" }, geometry: { type: "LineString", coordinates: x.geometry.map((p) => [p.lon, p.lat]) } })); const geo = { type: "FeatureCollection", features }; if (map.getSource("osm-streets")) map.getSource("osm-streets").setData(geo); else { map.addSource("osm-streets", { type: "geojson", data: geo }); map.addLayer({ id: "osm-streets", type: "line", source: "osm-streets", paint: { "line-color": "#8fa7a4", "line-width": ["interpolate", ["linear"], ["zoom"], 10, .7, 14, 1.8], "line-opacity": .62 } }); } setStatus(`${features.length} CALLES OSM CARGADAS`, true); } catch (error) { setStatus("MAPA OSM DISPONIBLE · CALLES EN RESPALDO"); toast("Overpass no respondió; el plano monocromático sigue disponible"); } finally { window.clearTimeout(timer); } };
       const loadRoute = async () => { const coords = [[-74.13,4.66],[-74.09,4.64],[-74.05,4.61],[-74.08,4.57]]; setStatus("CALCULANDO RUTA OSRM…"); try { const response = await fetch(`https://router.project-osrm.org/route/v1/driving/${coords.map((c) => c.join(",")).join(";")}?overview=full&geometries=geojson`); if (!response.ok) throw new Error("OSRM " + response.status); const data = await response.json(); const route = data.routes?.[0]?.geometry; if (!route) throw new Error("Sin ruta"); if (map.getSource("osrm-route")) map.getSource("osrm-route").setData(route); else { map.addSource("osrm-route", { type: "geojson", data: route }); map.addLayer({ id: "osrm-route", type: "line", source: "osrm-route", paint: { "line-color": "#f76fb0", "line-width": 4, "line-opacity": .95 } }); } setStatus("RUTA OSRM ACTIVA", true); } catch (error) { setStatus("NO SE PUDO CALCULAR LA RUTA"); toast("OSRM no respondió; conserva los flujos procedurales"); } };
       document.getElementById("loadOsmStreets")?.addEventListener("click", loadOsm);
