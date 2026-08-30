@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="modulo-08.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="site-theme.css?v=20260823">
   <script src="modulo-08-data.js"></script>
   <script src="modulo-08-relations.js"></script>
@@ -368,6 +369,29 @@
       </div>
     </div>
 
+    <!-- MAPA DE RUIDO Y TRÁFICO -->
+    <div class="sumo-sim-section">
+      <div class="sumo-sim-heading">
+        <h3><i class="fa-solid fa-volume-high"></i> Mapa de ruido y tráfico</h3>
+        <p>Índice de ruido relativo por vía, calculado a partir del flujo vehicular y la velocidad promedio de la simulación de tráfico en Kennedy.</p>
+      </div>
+      <div class="sumo-sim-card">
+        <div class="noise-map-wrap">
+          <div id="noiseMap"></div>
+          <div class="noise-map-status" id="noiseMapStatus">Cargando datos de tráfico…</div>
+          <div class="noise-map-legend">
+            <h4>Índice de ruido (relativo)</h4>
+            <div class="noise-legend-row"><span class="noise-legend-swatch" style="background:#2e7d5b"></span> Muy bajo</div>
+            <div class="noise-legend-row"><span class="noise-legend-swatch" style="background:#8bc34a"></span> Bajo</div>
+            <div class="noise-legend-row"><span class="noise-legend-swatch" style="background:#f1c40f"></span> Moderado</div>
+            <div class="noise-legend-row"><span class="noise-legend-swatch" style="background:#e67e22"></span> Alto</div>
+            <div class="noise-legend-row"><span class="noise-legend-swatch" style="background:#e5484d"></span> Muy alto</div>
+          </div>
+        </div>
+        <p class="noise-map-note">No es una medición acústica real en decibeles — es un proxy relativo: a mayor flujo vehicular y mayor velocidad, mayor ruido esperado. Datos: SUMO edgedata (<code>osm.net.xml</code> + <code>datos_vias.xml</code>).</p>
+      </div>
+    </div>
+
     <footer>
       "No se trata de representar la ciudad, sino de comprenderla para transformarla." — <span>Equipo POT Reverse Engineering</span>
     </footer>
@@ -378,6 +402,8 @@
 
 <script src="modulo-08.js"></script>
 <script src="modulo-08-sumo.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="modulo-08-noise.js"></script>
 
 </body>
 </html>
