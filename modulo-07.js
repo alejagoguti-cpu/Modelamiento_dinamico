@@ -1918,21 +1918,10 @@
     // Se difiere al siguiente tick: renderMapNetwork se declara más abajo en
     // este mismo archivo, y llamarla de inmediato aquí rompía todo el script
     // (error de "usar antes de declarar" que dejaba la página en blanco).
-    // No disparamos aquí "showCartography()": el mapa (satelital, con
-    // teselas por red) puede tardar en cargar, y si se llama antes de
-    // tiempo, las bolitas nunca se crean. Se dispara más abajo, dentro
-    // del evento real de carga del mapa (componentPointMap ya listo).
-    // Red de seguridad adicional: si por algún motivo el evento "load"
-    // del mapa no llega a disparar la llamada (o tarda), esto reintenta
-    // solo hasta que el mapa esté listo de verdad — así nunca se queda
-    // esperando un click para mostrar las bolitas.
-    // (Diferido con setTimeout: "componentPointMap" se declara más abajo
-    // en este archivo, y llamarlo ya mismo aquí rompía todo el script.)
-    setTimeout(function ensureCartographyAutoShow(attempts) {
-      if (componentPointMap) { showCartography(); return; }
-      if (attempts > 60) return; // ~15s de intentos, luego desiste
-      setTimeout(() => ensureCartographyAutoShow((attempts || 0) + 1), 250);
-    }, 0);
+    // La apertura automática de Cartografía interactiva se dispara desde
+    // dentro del evento real de carga del mapa (más abajo), una sola vez,
+    // para que las bolitas salgan exactamente cuando termina el zoom a
+    // Kennedy — no antes.
     const initPartOneControls = (map, layers) => {
       const controls = document.getElementById("subsystemLayerControls");
       if (controls) {

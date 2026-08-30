@@ -5676,11 +5676,19 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
    !important y le ganaban a la animación de aparición de las bolitas de
    fenómeno, dejándolas con opacidad 0 para siempre (por eso el click
    funcionaba pero no se veía nada). Esto fuerza que SIEMPRE sean visibles,
-   sin depender de ninguna animación. */
+   sin depender de ninguna animación, y con un tamaño chico razonable
+   (no el mismo tamaño gigante de las bolas de los sistemas). */
 #subsystemBubbles .map-phenomenon-node,
 #subsystemBubbles .map-phenomenon-node:hover,
 #subsystemBubbles .map-phenomenon-node.selected {
   opacity: 1 !important;
   animation: none !important;
   transform: translate(-50%, -50%) scale(1) !important;
+  width: 46px !important;
+  height: 46px !important;
+  min-height: 46px !important;
+  padding: 0 !important;
+}
+#subsystemBubbles .map-phenomenon-node .map-network-node-icon {
+  font-size: 15px !important;
 }
