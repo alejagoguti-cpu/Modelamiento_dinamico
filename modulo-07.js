@@ -1975,10 +1975,15 @@
             [-74.08683159566945, 4.624876830893459]
           ] } },
           { type: "Feature", properties: { label: "Avenida Boyacá" }, geometry: { type: "LineString", coordinates: [
+            [-74.1572, 4.5017],
+            [-74.1519, 4.5375],
+            [-74.14660, 4.57329],
             [-74.14129179848494, 4.60884108175092],
             [-74.13774935797123, 4.632539036499758],
             [-74.11319853892789, 4.664630608439349],
-            [-74.10271508111543, 4.676992365168468]
+            [-74.10271508111543, 4.676992365168468],
+            [-74.09223, 4.68935],
+            [-74.08176, 4.70172]
           ] } }
         ] } });
         map.addLayer({ id: "avenidas-referencia-line", type: "line", source: "avenidas-referencia", paint: { "line-color": "#b28be8", "line-width": ["interpolate", ["linear"], ["zoom"], 10, 1.4, 14, 2.6], "line-opacity": .88 } });
@@ -2000,7 +2005,7 @@
       document.getElementById("loadOsmStreets")?.addEventListener("click", loadOsm);
       /* Las calles OSM quedan como acción manual y no se cargan al abrir el mapa. */
       document.getElementById("loadOsrmRoute")?.addEventListener("click", loadRoute);
-      document.getElementById("resetCartography")?.addEventListener("click", () => { if (map.getLayer("osm-streets")) map.removeLayer("osm-streets"); if (map.getSource("osm-streets")) map.removeSource("osm-streets"); if (map.getLayer("osrm-route")) map.removeLayer("osrm-route"); if (map.getSource("osrm-route")) map.removeSource("osrm-route"); clearSubsystemPoints(); drawSubsystems({ hidden: true }); map.jumpTo({ center: [-74.158,4.629], zoom: 12.3 }); setStatus("HUMEDAL EL BURRO · CARTOGRAFÍA LISTA", true); });
+      document.getElementById("resetCartography")?.addEventListener("click", () => { if (map.getLayer("osm-streets")) map.removeLayer("osm-streets"); if (map.getSource("osm-streets")) map.removeSource("osm-streets"); if (map.getLayer("osrm-route")) map.removeLayer("osrm-route"); if (map.getSource("osrm-route")) map.removeSource("osrm-route"); clearSubsystemPoints(); drawSubsystems({ hidden: true }); map.jumpTo({ center: [-74.158,4.629], zoom: 12.6 }); setStatus("HUMEDAL EL BURRO · CARTOGRAFÍA LISTA", true); });
     }
     function initProceduralSimulation() {
       const holder = document.getElementById("proceduralSimulation");
@@ -2162,7 +2167,7 @@
       if (!subsystemBubbles?.classList.contains("network-active")) return;
       const stage = subsystemBubbles.querySelector(".systems-network");
       if (!stage) return;
-      const positions = [[8,38],[36,9],[66,13],[93,40],[80,82],[20,80]];
+      const positions = [[6,45],[40,6],[72,10],[95,48],[74,90],[14,88]];
       FLOW_GROUPS.forEach((group) => {
         const [nx, ny] = positions[group.targetIndex];
         group.components.forEach((c, i) => {
@@ -2181,7 +2186,7 @@
       if (!target) return;
       const systems = mode === "systems";
       const rows = systems ? territorySystems : submodelRows;
-      const positions = systems ? [[8,38],[36,9],[66,13],[93,40],[80,82],[20,80]] : [[10,22],[28,7],[58,7],[90,22],[90,58],[68,88],[16,88]];
+      const positions = systems ? [[6,45],[40,6],[72,10],[95,48],[74,90],[14,88]] : [[10,22],[28,7],[58,7],[90,22],[90,58],[68,88],[16,88]];
       const colors = ["#56b8d4", "#68d391", "#b8c0c8", "#f1cf5b", "#ee9a4b", "#e58d62", "#b28be8"];
       const systemIcons = ["fa-droplet", "fa-feather-pointed", "fa-building", "fa-route", "fa-people-group", "fa-house-chimney"];
       const submodelIcons = ["fa-water", "fa-feather-pointed", "fa-city", "fa-person-walking", "fa-house-chimney", "fa-people-arrows", "fa-arrows-rotate"];
@@ -2303,25 +2308,25 @@
       map.__openingPlayed = true;
       const reduced = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
       if (reduced) {
-        map.jumpTo({ center: [-74.158, 4.629], zoom: 12.3 });
+        map.jumpTo({ center: [-74.158, 4.629], zoom: 12.6 });
         announceCartography("HUMEDAL EL BURRO · AGUA Y SUBSISTEMAS", true);
         drawSubsystems({ hidden: true });
         return;
       }
       announceCartography("BOGOTÁ · LECTURA GENERAL", true);
       map.stop();
-      map.jumpTo({ center: [-74.09, 4.64], zoom: 10.55 });
+      map.jumpTo({ center: [-74.09, 4.65], zoom: 9.3 });
       window.setTimeout(() => {
         announceCartography("KENNEDY · PERÍMETRO ADMINISTRATIVO", true);
-        map.flyTo({ center: [-74.158, 4.629], zoom: 11.9, duration: 1800, essential: true });
+        map.flyTo({ center: [-74.158, 4.629], zoom: 12.0, duration: 2400, essential: true });
       }, 450);
       window.setTimeout(() => {
         announceCartography("APROXIMACIÓN · HUMEDAL EL BURRO", true);
-        map.flyTo({ center: [-74.158, 4.629], zoom: 12.3, duration: 2200, essential: true });
-      }, 2250);
+        map.flyTo({ center: [-74.158, 4.629], zoom: 12.6, duration: 2000, essential: true });
+      }, 3050);
       window.setTimeout(() => {
         announceCartography("HUMEDAL EL BURRO · LISTO PARA ACTIVAR UNA RED", true);
-      }, 4800);
+      }, 5300);
     };
     const setupCartographyEntrance = (map) => {
       const section = document.querySelector(".cartography-section");
