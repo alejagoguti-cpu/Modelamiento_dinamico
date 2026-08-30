@@ -1901,21 +1901,40 @@
             "circle-stroke-width": ["match", ["get", "kind"], "water-point", 1, "bio-point", 1, "fisico-point", 1, 1.5]
           }, layout: { visibility: "none" } });
           const labelId = `${sourceId}-labels`;
-          if (meta.id === "hidrico") map.addLayer({ id: labelId, type: "symbol", source: sourceId, filter: ["==", ["get", "kind"], "water-point"], layout: { visibility: "none", "text-field": ["get", "label"], "text-size": ["interpolate", ["linear"], ["zoom"], 10, 9, 14, 12], "text-offset": [0, 1.35], "text-anchor": "top", "text-allow-overlap": true }, paint: { "text-color": "#b9e5ea", "text-halo-color": "#061113", "text-halo-width": 1.5 } });
-          if (meta.id === "biotico") map.addLayer({ id: labelId, type: "symbol", source: sourceId, filter: ["==", ["get", "kind"], "bio-point"], layout: { visibility: "none", "text-field": ["get", "label"], "text-size": ["interpolate", ["linear"], ["zoom"], 10, 9, 14, 12], "text-offset": [0, 1.35], "text-anchor": "top", "text-allow-overlap": true }, paint: { "text-color": "#c9f2d6", "text-halo-color": "#061309", "text-halo-width": 1.5 } });
-          if (meta.id === "infraestructura") map.addLayer({ id: labelId, type: "symbol", source: sourceId, filter: ["==", ["get", "kind"], "fisico-point"], layout: { visibility: "none", "text-field": ["get", "label"], "text-size": ["interpolate", ["linear"], ["zoom"], 10, 9, 14, 12], "text-offset": [0, 1.35], "text-anchor": "top", "text-allow-overlap": true }, paint: { "text-color": "#dfe3e8", "text-halo-color": "#0a0c0d", "text-halo-width": 1.5 } });
+          if (meta.id === "hidrico") map.addLayer({ id: labelId, type: "symbol", source: sourceId, filter: ["==", ["get", "kind"], "water-point"], layout: { visibility: "none", "text-field": ["get", "label"], "text-size": ["interpolate", ["linear"], ["zoom"], 10, 7, 14, 9], "text-offset": [0, 1.35], "text-anchor": "top", "text-allow-overlap": true }, paint: { "text-color": "#b9e5ea", "text-halo-color": "#061113", "text-halo-width": 1.5 } });
+          if (meta.id === "biotico") map.addLayer({ id: labelId, type: "symbol", source: sourceId, filter: ["==", ["get", "kind"], "bio-point"], layout: { visibility: "none", "text-field": ["get", "label"], "text-size": ["interpolate", ["linear"], ["zoom"], 10, 7, 14, 9], "text-offset": [0, 1.35], "text-anchor": "top", "text-allow-overlap": true }, paint: { "text-color": "#c9f2d6", "text-halo-color": "#061309", "text-halo-width": 1.5 } });
+          if (meta.id === "infraestructura") map.addLayer({ id: labelId, type: "symbol", source: sourceId, filter: ["==", ["get", "kind"], "fisico-point"], layout: { visibility: "none", "text-field": ["get", "label"], "text-size": ["interpolate", ["linear"], ["zoom"], 10, 7, 14, 9], "text-offset": [0, 1.35], "text-anchor": "top", "text-allow-overlap": true }, paint: { "text-color": "#dfe3e8", "text-halo-color": "#0a0c0d", "text-halo-width": 1.5 } });
           partOneMapLayers.push({ id: meta.id, fill: fillId, line: lineId, point: pointId, extras: (meta.id === "hidrico" || meta.id === "biotico" || meta.id === "infraestructura") ? [labelId] : [], markers: [] });
           // El checkbox de "Subsistema hídrico" nace marcado, pero las capas nacen
           // ocultas: sin esto, nunca se veía nada hasta desmarcar y volver a marcar.
           if (meta.id === "hidrico") { [pointId, labelId].forEach((id) => map.setLayoutProperty(id, "visibility", "visible")); }
         });
         componentPointMap = map;
+        // Avenida Ciudad de Cali y Avenida de las Américas, con su recorrido
+        // completo (trazo aproximado sobre el eje real de cada avenida,
+        // no un levantamiento topográfico exacto), en línea morada delgada.
+        map.addSource("avenidas-referencia", { type: "geojson", data: { type: "FeatureCollection", features: [
+          { type: "Feature", properties: { label: "Avenida Ciudad de Cali" }, geometry: { type: "LineString", coordinates: [
+            [-74.0935, 4.7565], [-74.1015, 4.7350], [-74.1090, 4.7150], [-74.1145, 4.7065],
+            [-74.1245, 4.6890], [-74.1330, 4.6760], [-74.1440, 4.6640], [-74.1520, 4.6555],
+            [-74.1585, 4.6470], [-74.1592, 4.6415], [-74.1592, 4.6360], [-74.1592, 4.6255],
+            [-74.1620, 4.6140], [-74.1700, 4.6010], [-74.1780, 4.5900], [-74.1860, 4.5790],
+            [-74.1910, 4.5700]
+          ] } },
+          { type: "Feature", properties: { label: "Avenida de las Américas" }, geometry: { type: "LineString", coordinates: [
+            [-74.0930, 4.6335], [-74.1000, 4.6330], [-74.1080, 4.6310], [-74.1150, 4.6320],
+            [-74.1250, 4.6330], [-74.1330, 4.6335], [-74.1400, 4.6340], [-74.1480, 4.6350],
+            [-74.1550, 4.6355], [-74.1592, 4.6360], [-74.1660, 4.6375]
+          ] } }
+        ] } });
+        map.addLayer({ id: "avenidas-referencia-line", type: "line", source: "avenidas-referencia", paint: { "line-color": "#b28be8", "line-width": ["interpolate", ["linear"], ["zoom"], 10, 0.8, 14, 1.6], "line-opacity": .85 } });
+        map.addLayer({ id: "avenidas-referencia-labels", type: "symbol", source: "avenidas-referencia", layout: { "symbol-placement": "line", "text-field": ["get", "label"], "text-size": 9, "text-offset": [0, -0.8] }, paint: { "text-color": "#d9c8f5", "text-halo-color": "#0a0612", "text-halo-width": 1.3 } });
         map.addSource("subsystem-component-points", { type: "geojson", data: { type: "FeatureCollection", features: [] } });
         map.addLayer({ id: "subsystem-component-point-halo", type: "circle", source: "subsystem-component-points", paint: { "circle-radius": ["interpolate", ["linear"], ["zoom"], 10, 8, 14, 13], "circle-color": ["coalesce", ["get", "color"], "#ffffff"], "circle-opacity": .18, "circle-blur": .35 }, layout: { visibility: "none" } });
         map.addLayer({ id: "subsystem-component-points", type: "circle", source: "subsystem-component-points", paint: { "circle-radius": ["interpolate", ["linear"], ["zoom"], 10, 3.8, 14, 6.5], "circle-color": ["coalesce", ["get", "color"], "#ffffff"], "circle-opacity": .96, "circle-stroke-color": "#f5ffff", "circle-stroke-width": 1.1, "circle-stroke-opacity": .76 }, layout: { visibility: "none" } });
         map.on("mouseenter", "subsystem-component-points", () => { map.getCanvas().style.cursor = "pointer"; });
         map.on("mouseleave", "subsystem-component-points", () => { map.getCanvas().style.cursor = ""; });
-        map.on("click", "subsystem-component-points", (event) => { const feature = event.features?.[0]; if (!feature) return; const properties = feature.properties || {}; new maplibregl.Popup({ offset: 9, className: "component-point-popup" }).setLngLat(feature.geometry.coordinates).setHTML(`<strong>${escapePointText(properties.label || "Componente")}</strong><span>${escapePointText(properties.code || "Código cartográfico de referencia")} · ${escapePointText(properties.subsystem || "Subsistema")}</span>`).addTo(map); });
+        map.on("click", "subsystem-component-points", (event) => { const feature = event.features?.[0]; if (!feature) return; const properties = feature.properties || {}; const meta = properties.code ? `${escapePointText(properties.code)} · ${escapePointText(properties.subsystem || "Subsistema")}` : escapePointText(properties.subsystem || "Subsistema"); new maplibregl.Popup({ offset: 9, className: "component-point-popup" }).setLngLat(feature.geometry.coordinates).setHTML(`<strong>${escapePointText(properties.label || "Componente")}</strong><span>${meta}</span>`).addTo(map); });
         /* Las gotitas decorativas se mantienen retiradas; el agua se lee mediante su cartografía y puntos de componentes. */
         const waterLayer = partOneMapLayers.find((layer) => layer.id === "hidrico"); if (waterLayer) waterLayer.markers = []; map.__waterMarkers = [];
         initPartOneControls(map, partOneMapLayers);
@@ -1972,54 +1991,14 @@
     }));
     let componentPointMap = null;
     const componentPointCatalog = {
-      hidrico: [
-        { coords: [-74.159, 4.641], label: "Espejo de agua", code: "CG-3.2.1" }, { coords: [-74.160, 4.646], label: "Ronda norte", code: "CG-3.2.1" },
-        { coords: [-74.158, 4.635], label: "Ronda sur", code: "CG-3.2.1" }, { coords: [-74.174, 4.645], label: "Canal Los Ángeles", code: "CG-3.2.1" },
-        { coords: [-74.166, 4.644], label: "Entrada de agua", code: "CG-3.2.1" }, { coords: [-74.153, 4.639], label: "Salida de agua", code: "CG-3.2.1" },
-        { coords: [-74.167, 4.651], label: "Escorrentía norte", code: "CU-2.2.10" }, { coords: [-74.162, 4.636], label: "Escorrentía sur", code: "CU-2.2.14" },
-        { coords: [-74.164, 4.644], label: "Suelo húmedo", code: "CU-2.2.14" }, { coords: [-74.157, 4.643], label: "Sedimentos", code: "CG-3.2.1" },
-        { coords: [-74.171, 4.647], label: "Conexión hídrica occidental", code: "CU-4.2.4" }, { coords: [-74.155, 4.638], label: "Acumulación temporal", code: "CU-2.2.10" }
-      ],
-      biotico: [
-        { coords: [-74.165, 4.643], label: "Refugio de fauna occidental", code: "CU-2.1" }, { coords: [-74.162, 4.645], label: "Refugio de fauna central", code: "CU-2.1" },
-        { coords: [-74.157, 4.642], label: "Lugar de alimentación", code: "CU-2.1" }, { coords: [-74.154, 4.644], label: "Lugar de alimentación oriental", code: "CU-2.1" },
-        { coords: [-74.161, 4.638], label: "Vegetación nativa", code: "CU-2.1" }, { coords: [-74.155, 4.640], label: "Vegetación nativa oriental", code: "CU-2.1" },
-        { coords: [-74.166, 4.639], label: "Cobertura vegetal", code: "CU-2.1" }, { coords: [-74.159, 4.646], label: "Aves residentes", code: "CU-2.1" },
-        { coords: [-74.156, 4.645], label: "Aves migratorias", code: "CU-2.1" }, { coords: [-74.163, 4.641], label: "Insectos polinizadores", code: "CU-2.1" },
-        { coords: [-74.158, 4.638], label: "Arañas · control biológico", code: "CU-2.1" }, { coords: [-74.153, 4.642], label: "Vegetación invasora", code: "CU-2.1" }
-      ],
-      infraestructura: [
-        { coords: [-74.159, 4.665], label: "Avenida Ciudad de Cali · norte", code: "CU-4.4.3" }, { coords: [-74.159, 4.655], label: "Avenida Ciudad de Cali · borde", code: "CU-4.4.3" },
-        { coords: [-74.159, 4.646], label: "Avenida Ciudad de Cali · cruce", code: "CU-4.4.3" }, { coords: [-74.159, 4.636], label: "Avenida Ciudad de Cali · sur", code: "CU-4.4.3" },
-        { coords: [-74.151, 4.649], label: "Edificaciones del borde oriental", code: "CU-5.2" }, { coords: [-74.149, 4.647], label: "Edificaciones de actividad urbana", code: "CU-5.2" },
-        { coords: [-74.168, 4.631], label: "Borde construido occidental", code: "CU-5.2" }, { coords: [-74.166, 4.629], label: "Áreas urbanizadas", code: "CU-5.2" },
-        { coords: [-74.162, 4.635], label: "Cerramiento del humedal", code: "CG-3.1" }, { coords: [-74.156, 4.646], label: "Cerramiento oriental", code: "CG-3.1" },
-        { coords: [-74.164, 4.637], label: "Sendero perimetral", code: "CU-4.4.2" }, { coords: [-74.157, 4.638], label: "Canal construido", code: "CG-3.2.1" }
-      ],
-      movilidad: [
-        { coords: [-74.151, 4.632], label: "Ciclorruta · acceso oriental", code: "CU-4.4.2" }, { coords: [-74.156, 4.631], label: "Ciclorruta · tramo sur", code: "CU-4.4.2" },
-        { coords: [-74.164, 4.632], label: "Ciclorruta · borde occidental", code: "CU-4.4.2" }, { coords: [-74.172, 4.636], label: "Ciclorruta · conexión barrial", code: "CU-4.4.2" },
-        { coords: [-74.154, 4.650], label: "Acceso peatonal norte", code: "CU-4.4.3" }, { coords: [-74.158, 4.646], label: "Recorrido peatonal central", code: "CU-4.4.3" },
-        { coords: [-74.161, 4.640], label: "Sendero de visita", code: "CU-4.4.3" }, { coords: [-74.165, 4.635], label: "Acceso peatonal sur", code: "CU-4.4.3" },
-        { coords: [-74.156, 4.633], label: "Biblioteca El Tintal", code: "CU-4.3" }, { coords: [-74.153, 4.636], label: "Conexión biblioteca–humedal", code: "CU-4.3" },
-        { coords: [-74.160, 4.634], label: "Punto de encuentro de visitantes", code: "CU-4.4.1" }, { coords: [-74.166, 4.639], label: "Cruce de recorridos", code: "CU-4.4.1" }
-      ],
-      social: [
-        { coords: [-74.173, 4.647], label: "Barrio del borde occidental", code: "CU-5.2" }, { coords: [-74.169, 4.647], label: "Viviendas próximas al humedal", code: "CU-5.2" },
-        { coords: [-74.148, 4.631], label: "Barrio del borde oriental", code: "CU-5.2" }, { coords: [-74.145, 4.628], label: "Área de actividad urbana", code: "CU-5.2" },
-        { coords: [-74.164, 4.650], label: "Visita y observación", code: "CU-4.3" }, { coords: [-74.158, 4.635], label: "Actividad pedagógica", code: "CU-4.3" },
-        { coords: [-74.153, 4.639], label: "Junta de acción comunal", code: "CU-4.3" }, { coords: [-74.161, 4.645], label: "Grupo ambiental local", code: "CU-4.3" },
-        { coords: [-74.156, 4.647], label: "Encuentro comunitario", code: "CU-4.3" }, { coords: [-74.168, 4.642], label: "Uso comunitario del borde", code: "CU-4.3" },
-        { coords: [-74.151, 4.637], label: "Equipamiento cercano", code: "CU-4.3" }, { coords: [-74.158, 4.649], label: "Punto de educación ambiental", code: "CU-4.3" }
-      ],
-      institutional: [
-        { coords: [-74.163, 4.638], label: "Jardín Botánico · restauración", code: "CU-2.1" }, { coords: [-74.157, 4.648], label: "Seguimiento del humedal", code: "CG-3.1" },
-        { coords: [-74.166, 4.635], label: "Educación ambiental", code: "CU-4.3" }, { coords: [-74.154, 4.646], label: "Secretaría de Ambiente · manejo", code: "CG-3.1" },
-        { coords: [-74.171, 4.644], label: "Acueducto · relación hídrica", code: "CG-3.2.1" }, { coords: [-74.174, 4.645], label: "Ciudad Limpia · residuos", code: "CU-2.2.10" },
-        { coords: [-74.162, 4.642], label: "UAESP · gestión de residuos", code: "CU-2.2.10" }, { coords: [-74.155, 4.638], label: "Mantenimiento y control de invasoras", code: "CU-2.1" },
-        { coords: [-74.160, 4.640], label: "Compostaje y recuperación del hábitat", code: "CU-2.1" }, { coords: [-74.152, 4.644], label: "Organización local de manejo", code: "CU-4.3" },
-        { coords: [-74.159, 4.636], label: "Coordinación de drenaje sostenible", code: "CU-4.2.4" }, { coords: [-74.167, 4.647], label: "Hospital del Sur · entorno de cuidado", code: "CU-4.3" }
-      ]
+      hidrico: HIDRICA_COMPONENTS.map((c) => ({ coords: c.coords, label: c.label, code: null })),
+      biotico: BIOTICA_COMPONENTS.map((c) => ({ coords: c.coords, label: c.label, code: null })),
+      infraestructura: FISICO_COMPONENTS.map((c) => ({ coords: c.coords, label: c.label, code: null })),
+      // Sin coordenadas reales dadas para estos sistemas: no se muestran
+      // bolitas extra al hacer click (antes eran puntos inventados).
+      movilidad: [],
+      social: [],
+      institutional: []
     };
     const escapePointText = (value) => String(value).replace(/[&<>\"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\\\"": "&quot;" }[char] || char));
     const getComponentPoints = (item) => (componentPointCatalog[item?.mapKey] || []).map((point, index) => ({ ...point, index, color: item.color }));
