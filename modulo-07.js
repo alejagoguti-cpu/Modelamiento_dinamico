@@ -1622,7 +1622,6 @@
     const BIOTICA_COMPONENTS = [
       { label: "Parque Metropolitano Cayetano Cañizares", coords: [-74.16127681309709, 4.6255784034525345] },
       { label: "Parque Timiza", coords: [-74.15413020403817, 4.610545190742722] },
-      { label: "Parque El Tintal", coords: [-74.15477087019791, 4.644165179130835] },
     ];
     const FISICO_COMPONENTS = [
       { label: "Estación Banderas", coords: [-74.14541150109216, 4.631221483859855] },
