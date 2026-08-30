@@ -340,6 +340,34 @@
       </div>
     </div>
 
+    <!-- SIMULACIÓN DE MOVILIDAD (SUMO) -->
+    <div class="sumo-sim-section">
+      <div class="sumo-sim-heading">
+        <h3><i class="fa-solid fa-car-side"></i> Simulación de movilidad (SUMO)</h3>
+        <p>Trayectorias vehiculares simuladas sobre la red vial real de Kennedy, exportadas desde SUMO (<code>osm.net.xml</code> + <code>trazado.xml</code>).</p>
+      </div>
+      <div class="sumo-sim-card">
+        <div class="sumo-canvas-wrap">
+          <canvas id="sumoNetCanvas"></canvas>
+          <canvas id="sumoVehCanvas"></canvas>
+          <div class="sumo-sim-overlay" id="sumoStatus">Cargando red vial…</div>
+        </div>
+        <div class="sumo-sim-controls">
+          <button type="button" id="sumoPlayPause" class="sumo-btn" aria-label="Reproducir / pausar"><i class="fa-solid fa-play"></i></button>
+          <input type="range" id="sumoTimeSlider" min="0" max="1000" value="0" step="1" disabled>
+          <span id="sumoTimeLabel">00:00 / 00:00</span>
+          <label class="sumo-speed-label">Velocidad
+            <select id="sumoSpeedSelect">
+              <option value="1">1×</option>
+              <option value="2" selected>2×</option>
+              <option value="4">4×</option>
+              <option value="8">8×</option>
+            </select>
+          </label>
+        </div>
+      </div>
+    </div>
+
     <footer>
       "No se trata de representar la ciudad, sino de comprenderla para transformarla." — <span>Equipo POT Reverse Engineering</span>
     </footer>
@@ -349,6 +377,7 @@
 </div>
 
 <script src="modulo-08.js"></script>
+<script src="modulo-08-sumo.js"></script>
 
 </body>
 </html>
