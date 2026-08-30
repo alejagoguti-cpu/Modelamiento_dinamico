@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Mapa de Ruido y Tráfico - Simulación Kennedy</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        body { margin: 0; font-family: 'Inter', sans-serif; background: #0a0a0a; }
+        #map { height: 100vh; width: 100vw; background: #05070a; }
+
+        .info-panel {
+            position: absolute; top: 14px; right: 14px; z-index: 1000;
+            background: rgba(10,10,10,0.92); color: #eee; padding: 16px 18px;
+            border-radius: 10px; border: 1px solid rgba(255,255,255,0.15);
+            box-shadow: 0 4px 18px rgba(0,0,0,0.45); max-width: 300px;
+        }
+        .info-panel h3 { margin: 0 0 6px; font-size: 16px; font-weight: 700; }
+        .info-panel p { margin: 0; font-size: 12.5px; color: #b7b7b7; line-height: 1.4; }
+        .info-panel .credit { margin-top: 8px; font-size: 10.5px; color: #777; }
+
+        .legend {
+            position: absolute; bottom: 20px; left: 14px; z-index: 1000;
+            background: rgba(10,10,10,0.92); color: #eee; padding: 12px 16px;
+            border-radius: 10px; border: 1px solid rgba(255,255,255,0.15);
+            font-size: 12px; box-shadow: 0 4px 18px rgba(0,0,0,0.45);
+        }
+        .legend h4 { margin: 0 0 8px; font-size: 12.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .3px; }
+        .legend-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+        .legend-swatch { width: 16px; height: 6px; border-radius: 3px; flex-shrink: 0; }
+        .legend p { margin: 8px 0 0; font-size: 10.5px; color: #999; max-width: 220px; line-height: 1.35; }
+
+        .status-badge {
+            position: absolute; top: 14px; left: 14px; z-index: 1000;
+            background: rgba(10,10,10,0.92); color: #eee; padding: 8px 14px;
+            border-radius: 8px; border: 1px solid rgba(255,255,255,0.15);
+            font-size: 12px;
+        }
+
+        .leaflet-popup-content-wrapper { background: #111; color: #eee; border-radius: 8px; }
+        .leaflet-popup-tip { background: #111; }
+        .popup-title { font-weight: 700; font-size: 13px; margin-bottom: 4px; }
+        .popup-row { font-size: 11.5px; color: #bbb; display: flex; justify-content: space-between; gap: 12px; }
+    </style>
+</head>
+<body>
+    <div class="status-badge" id="statusBadge">Cargando datos de tráfico…</div>
+    <div class="info-panel">
+        <h3>Bogotá Simbionte · Ruido</h3>
+        <p>Cada vía está coloreada según un índice de ruido relativo, calculado a partir del flujo vehicular y la velocidad promedio registrados en la simulación de tráfico (Kennedy).</p>
+        <p class="credit">Datos: SUMO edgedata (osm.net.xml + datos_vias.xml)</p>
+    </div>
+    <div class="legend">
+        <h4>Índice de ruido (relativo)</h4>
+        <div class="legend-row"><span class="legend-swatch" style="background:#2e7d5b"></span> Muy bajo</div>
+        <div class="legend-row"><span class="legend-swatch" style="background:#8bc34a"></span> Bajo</div>
+        <div class="legend-row"><span class="legend-swatch" style="background:#f1c40f"></span> Moderado</div>
+        <div class="legend-row"><span class="legend-swatch" style="background:#e67e22"></span> Alto</div>
+        <div class="legend-row"><span class="legend-swatch" style="background:#e5484d"></span> Muy alto</div>
+        <p>No es una medición acústica real en decibeles — es un proxy relativo: a mayor flujo vehicular y mayor velocidad, mayor ruido esperado.</p>
+    </div>
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        var map = L.map('map', { zoomControl: true }).setView([4.629, -74.158], 13);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        var statusBadge = document.getElementById('statusBadge');
+
+        // Escala de color según el índice de ruido calculado (ver
+        // assets/kennedy_noise.json): flujo vehicular + velocidad.
+        function noiseColor(score) {
+            if (score < 12) return '#2e7d5b';
+            if (score < 18) return '#8bc34a';
+            if (score < 24) return '#f1c40f';
+            if (score < 32) return '#e67e22';
+            return '#e5484d';
+        }
+        function noiseWeight(score) {
+            // Las vías más ruidosas se dibujan un poco más gruesas, para
+            // que resalten sobre el resto del mapa.
+            if (score < 12) return 1.5;
+            if (score < 18) return 2;
+            if (score < 24) return 2.5;
+            if (score < 32) return 3;
+            return 3.5;
+        }
+
+        fetch('./assets/kennedy_noise.json')
+            .then(function (r) {
+                if (!r.ok) throw new Error('No se pudo cargar assets/kennedy_noise.json');
+                return r.json();
+            })
+            .then(function (edges) {
+                edges.forEach(function (edge) {
+                    // El archivo trae [lon, lat] por punto; Leaflet espera
+                    // [lat, lon].
+                    var latlngs = edge.shape.map(function (p) { return [p[1], p[0]]; });
+                    var color = noiseColor(edge.noise);
+                    var line = L.polyline(latlngs, {
+                        color: color,
+                        weight: noiseWeight(edge.noise),
+                        opacity: 0.85,
+                    }).addTo(map);
+                    line.bindPopup(
+                        '<div class="popup-title">Vía ' + edge.id + '</div>' +
+                        '<div class="popup-row"><span>Índice de ruido</span><b>' + edge.noise.toFixed(1) + '</b></div>' +
+                        '<div class="popup-row"><span>Velocidad</span><b>' + (edge.speed * 3.6).toFixed(1) + ' km/h</b></div>' +
+                        '<div class="popup-row"><span>Flujo</span><b>' + edge.flow.toFixed(0) + ' veh/h</b></div>' +
+                        '<div class="popup-row"><span>Ocupación</span><b>' + edge.occupancy.toFixed(1) + '%</b></div>'
+                    );
+                });
+                statusBadge.textContent = edges.length + ' vías cargadas · Kennedy';
+                setTimeout(function () { statusBadge.style.opacity = '0'; statusBadge.style.transition = 'opacity .6s ease'; }, 2500);
+            })
+            .catch(function (err) {
+                console.error(err);
+                statusBadge.textContent = 'No se pudo cargar el mapa de ruido (revisa assets/kennedy_noise.json)';
+            });
+    </script>
+</body>
+</html>
