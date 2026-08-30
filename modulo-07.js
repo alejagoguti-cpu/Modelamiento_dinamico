@@ -1784,31 +1784,26 @@
         submodelsQuestion?.setAttribute("aria-expanded", "true");
       }
       setSubmodelsMode(mode);
-      // La red de burbujas de "Cartografía interactiva" se mantiene al día
-      // aunque esa sección esté oculta, para que ya esté lista cuando se abra.
-      renderMapNetwork(mode === "subsystems" ? "systems" : "submodels");
     };
-    directSubsystemsBtn?.addEventListener("click", () => { setCartographyVisible(false); openSubmodelsFromDirectButton("subsystems"); });
-    directSubmodelsBtn?.addEventListener("click", () => { setCartographyVisible(false); openSubmodelsFromDirectButton("submodels"); });
     const directCartographyBtn = document.getElementById("directCartographyBtn");
-    function setCartographyVisible(visible) {
+    // Los 3 botones muestran la misma cartografía con su red de burbujas
+    // encima; lo único que cambia es si esa red trae o no las conexiones
+    // entre las bolas grandes (sí en Subsistemas/Submodelos, no en
+    // Cartografía interactiva) y cuál botón queda marcado como activo.
+    function showCartography(networkMode, showBonds, activeBtn) {
       const section = document.getElementById("cartographySection");
       if (!section) return;
-      section.hidden = !visible;
-      directCartographyBtn?.classList.toggle("active", visible);
-      if (visible) {
-        directSubsystemsBtn?.classList.remove("active");
-        directSubmodelsBtn?.classList.remove("active");
-        // El mapa se creó mientras estaba oculto: hay que decirle que
-        // vuelva a medir su tamaño y a dibujar la red de burbujas.
-        requestAnimationFrame(() => {
-          componentPointMap?.resize();
-          renderMapNetwork(currentSubmodelsMode === "subsystems" ? "systems" : "submodels", false);
-          section.scrollIntoView({ behavior: "smooth", block: "nearest" });
-        });
-      }
+      section.hidden = false;
+      [directSubsystemsBtn, directSubmodelsBtn, directCartographyBtn].forEach((btn) => btn?.classList.toggle("active", btn === activeBtn));
+      requestAnimationFrame(() => {
+        componentPointMap?.resize();
+        renderMapNetwork(networkMode, showBonds);
+        section.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      });
     }
-    directCartographyBtn?.addEventListener("click", () => setCartographyVisible(document.getElementById("cartographySection")?.hidden !== false));
+    directSubsystemsBtn?.addEventListener("click", () => { openSubmodelsFromDirectButton("subsystems"); showCartography("systems", true, directSubsystemsBtn); });
+    directSubmodelsBtn?.addEventListener("click", () => { openSubmodelsFromDirectButton("submodels"); showCartography("submodels", true, directSubmodelsBtn); });
+    directCartographyBtn?.addEventListener("click", () => showCartography(currentSubmodelsMode === "subsystems" ? "systems" : "submodels", false, directCartographyBtn));
     renderSubmodelsView("subsystems");
     const initPartOneControls = (map, layers) => {
       const controls = document.getElementById("subsystemLayerControls");
