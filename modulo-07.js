@@ -1671,6 +1671,17 @@
       socioeconomico: { color: "#e58d62", icon: "fa-house-chimney" },
       movilidad: { color: "#f1cf5b", icon: "fa-route" },
     };
+    // Ejercicio piloto: cajas de texto EXACTAS al plano de referencia
+    // (título + línea de modelos + submodelos), solo para estos 2 nodos
+    // por ahora, cada una conectada con una línea en L a su nodo real.
+    const KENNEDY_TEXT_BOXES = [
+      { id: "lavaca", title: "HUMEDAL LA VACA", subtitle: "MODELO DE ABSORCIÓN DE IMPACTO", mainLine: "Modelo Social ⟶ Sistema Ecológico",
+        submodelos: ["Modelo de gestión de residuos.", "Modelo de gestión de lixiviados.", "Modelo de calidad hídrica.", "Modelo de vegetación acuática."],
+        coords: [-74.16284778855655, 4.62939492240078], color: "#56b8d4", boxPos: [10, 62] },
+      { id: "corabastos", title: "CORABASTOS", subtitle: "MODELO COMERCIAL Y LOGÍSTICO", mainLine: "Modelo Social ⟶ Sistema Ecológico",
+        submodelos: ["Modelo de planificación comercial.", "Modelo de gestión de residuos orgánicos.", "Modelo de movilidad pesada.", "Modelo de saneamiento ambiental."],
+        coords: [-74.1599146050763, 4.63015596902525], color: "#e58d62", boxPos: [90, 62] },
+    ];
     // ---------- Sonidos ambiente por dinámica (sintetizados, sin archivos
     // externos) — cada burbuja del territorio suena distinto al tocarla:
     // el agua "corre", el pájaro "trina", el tráfico "zumba", etc. ----------
@@ -2216,10 +2227,36 @@
         if (proj && el) { el.style.left = proj.x.toFixed(2) + "%"; el.style.top = proj.y.toFixed(2) + "%"; }
       });
     };
+    // Cajas de texto piloto: nodo circular de color en la coordenada real +
+    // línea en L (blanca) hacia la caja de texto fija, igual al referente.
+    const textBoxLinkD = (boxPos, nodeProj) => `M ${boxPos[0].toFixed(2)} ${boxPos[1].toFixed(2)} L ${nodeProj.x.toFixed(2)} ${boxPos[1].toFixed(2)} L ${nodeProj.x.toFixed(2)} ${nodeProj.y.toFixed(2)}`;
+    const buildTextBoxesSvg = () => KENNEDY_TEXT_BOXES.map((box, i) => {
+      const proj = projectToPercent(box.coords);
+      if (!proj) return "";
+      return `<path id="kennedy-textbox-link-${i}" class="kennedy-box-link" d="${textBoxLinkD(box.boxPos, proj)}"/>`;
+    }).join("");
+    const buildTextBoxesHtml = () => KENNEDY_TEXT_BOXES.map((box, i) => {
+      const proj = projectToPercent(box.coords);
+      const nodeHtml = proj ? `<span id="kennedy-textbox-node-${i}" class="kennedy-box-node" style="left:${proj.x.toFixed(2)}%;top:${proj.y.toFixed(2)}%;--node-color:${box.color}"></span>` : "";
+      const items = box.submodelos.map((s) => `<li>${s}</li>`).join("");
+      return `<div class="kennedy-info-box" style="left:${box.boxPos[0]}%;top:${box.boxPos[1]}%;--node-color:${box.color}"><h4>${box.title}</h4><p class="kennedy-subtitle">${box.subtitle}</p><p class="kennedy-mainline">${box.mainLine}</p><p class="kennedy-sub-label">Sub-modelos:</p><ul>${items}</ul></div>${nodeHtml}`;
+    }).join("");
+    const updateTextBoxes = () => {
+      const stage = subsystemBubbles?.querySelector(".systems-network svg .map-network-flows");
+      KENNEDY_TEXT_BOXES.forEach((box, i) => {
+        const proj = projectToPercent(box.coords);
+        const link = stage?.querySelector(`#kennedy-textbox-link-${i}`);
+        const node = subsystemBubbles?.querySelector(`#kennedy-textbox-node-${i}`);
+        if (!proj) return;
+        if (link) link.setAttribute("d", textBoxLinkD(box.boxPos, proj));
+        if (node) { node.style.left = proj.x.toFixed(2) + "%"; node.style.top = proj.y.toFixed(2) + "%"; }
+      });
+    };
     // Al mover o hacer zoom en el mapa, las bolitas de fenómenos se
     // recalculan para que sigan exactamente sobre su coordenada real.
     const updateFlowGroups = () => {
       if (!subsystemBubbles?.classList.contains("network-active")) return;
+      updateTextBoxes();
       updatePhenomenaPositions();
     };
     const renderMapNetwork = (mode = "systems", showBonds = true, target = subsystemBubbles, withFlows = true) => {
@@ -2243,7 +2280,7 @@
       // de lugar real (Humedal El Burro, Corabastos, etc.).
       const hideAllSystemBubbles = systems && withFlows;
       const nodes = hideAllSystemBubbles ? "" : rows.map((row, index) => { const [x,y] = positions[index]; return `<button type="button" class="map-network-node ${systems ? "map-system-node" : "map-submodel-node"}" data-map-network-index="${index}" style="--node-x:${x}%;--node-y:${y}%;--node-color:${row.color || colors[index]}"><i class="map-network-node-icon fa-solid ${icon(index)}" aria-hidden="true"></i><strong>${label(row)}</strong></button>`; }).join("");
-      const kennedyBoxesHtml = hideAllSystemBubbles ? buildPhenomenaHtml() : "";
+      const kennedyBoxesHtml = hideAllSystemBubbles ? buildPhenomenaHtml() + buildTextBoxesHtml() : "";
       const relationPairs = hideAllSystemBubbles ? [] : (systems
         ? [[0,1],[0,2],[0,5],[1,2],[1,3],[1,5],[2,3],[2,4],[3,4],[3,5],[4,5]]
         : [[0,1],[0,2],[1,2],[1,3],[2,3],[2,4],[3,4],[3,5],[4,5],[4,6],[5,6],[0,6],[1,5]]
@@ -2299,7 +2336,7 @@
       }).join("");
       target.dataset.revealState = "complete";
       target.classList.add("network-active");
-      const flowsSvg = "";
+      const flowsSvg = hideAllSystemBubbles ? buildTextBoxesSvg() : "";
       const flowDotsHtml = "";
       target.innerHTML = `<div class="map-network-stage ${systems ? "systems-network" : "submodels-network"}"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><defs>${gradientDefs.join("")}</defs><g class="map-network-flows">${flowsSvg}</g><g class="map-network-bonds">${showBonds ? bonds : ""}</g></svg>${flowDotsHtml}${nodes}${kennedyBoxesHtml}</div>`;
       target.querySelectorAll(".map-network-node").forEach((button) => button.addEventListener("click", () => {
