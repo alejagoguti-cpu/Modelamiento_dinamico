@@ -1228,3 +1228,11 @@ footer span { color: var(--teal); }
 @media (prefers-reduced-motion: reduce) {
   .edge-group-reveal { animation: none; opacity: 1; }
 }
+
+
+/* Palabras clave del modelo de ciudad */
+.quote-focus-in .pot-keyword{
+  color:#5cd6d1;
+  font-weight:800;
+  text-shadow:0 0 10px rgba(92,214,209,.18);
+}

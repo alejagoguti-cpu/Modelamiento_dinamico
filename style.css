@@ -1093,3 +1093,12 @@ body{
 .entry-question{font-size:clamp(18px,2.15vw,30px);}
 .entry-description{font-size:15px;line-height:1.58;}
 @media(max-width:600px){.entry-question{font-size:22px}.entry-description{font-size:14px;}}
+
+
+/* Portada · reducción tipográfica solicitada */
+@media(min-width:981px){
+  .hero-copy h1{font-size:clamp(39px,4.15vw,55px);}
+}
+.entry-question{font-size:clamp(17px,1.95vw,28px);}
+.entry-description{font-size:14px;line-height:1.55;}
+@media(max-width:600px){.entry-question{font-size:21px}.entry-description{font-size:13.5px;}}
