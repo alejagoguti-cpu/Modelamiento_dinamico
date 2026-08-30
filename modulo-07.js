@@ -1655,54 +1655,61 @@
     // la localización real se hace con la línea + el nodo circular, que
     // ahora puede ser MÁS DE UNO por caja (coords es un arreglo).
     const KENNEDY_TEXT_BOXES = [
+      // ---------- Columna derecha: cajas ambientales ----------
       { id: "lavaca", title: "MODELO DE ABSORCIÓN DE IMPACTO", connection: "Borde oriental de Corabastos / Calle 42F Sur.",
         color: "#56b8d4", icon: "fa-droplet",
-        // Esta caja se conecta con 3 lugares reales: Humedal La Vaca,
-        // Corabastos y Humedal El Burro.
-        coords: [[-74.16284778855655, 4.62939492240078], [-74.1599146050763, 4.63015596902525], [-74.14987475206779, 4.64210777486686]], boxPos: [8, 50],
+        coords: [[-74.16284778855655, 4.62939492240078], [-74.1599146050763, 4.63015596902525], [-74.14987475206779, 4.64210777486686]], boxPos: [93, 8],
         sections: [{ system: "Modelo Social ⟶ Sistema Ecológico", icon: "fa-leaf", submodelos: [
           "Ciclo de acumulación y lixiviación de residuos.", "Dinámica de eutrofización y variación de oxígeno.",
-          "Flujo de recarga y fluctuación del nivel hídrico.", "Dinámica de expansión/retracción de vegetación invasora." ] }] },
+          "Flujo de recarga y fluctuación del nivel hídrico.", "Dinámica de expansión de vegetación acuática." ] }] },
       { id: "burro", title: "MODELO DE AMORTIGUACIÓN AMBIENTAL", connection: "Av. Ciudad de Cali con Calle 6 Sur.",
-        color: "#56b8d4", icon: "fa-droplet", coords: [[-74.14987475206779, 4.64210777486686]], boxPos: [50, 92],
+        color: "#56b8d4", icon: "fa-droplet", coords: [[-74.14987475206779, 4.64210777486686]], boxPos: [93, 27],
         sections: [{ system: "Modelo Determinista ⟶ Sistema Ecológico", icon: "fa-gears", submodelos: [
-          "Ciclo de escorrentía pluvial y escurrimiento superficial.", "Dinámica de fragmentación y flujo de fauna local.",
+          "Ciclo de escorrentía pluvial y escurrimiento superficial.", "Dinámica de fragmentación de cobertura vegetal.",
           "Ciclo de variación térmica por efecto de isla de calor.", "Dinámica de absorción hídrica en la franja de ronda." ] }] },
       { id: "techo", title: "MODELO DE RETENCIÓN HÍDRICA", connection: "Av. Manuel Cepeda Vargas con Transversal 73.",
-        color: "#56b8d4", icon: "fa-droplet", coords: [[-74.1413020515684, 4.645452290970931]], boxPos: [90, 16],
+        color: "#56b8d4", icon: "fa-droplet", coords: [[-74.1413020515684, 4.645452290970931]], boxPos: [93, 46],
         sections: [{ system: "Modelo Determinista ⟶ Sistema Ecológico", icon: "fa-gears", submodelos: [
           "Ciclo de infiltración y percolación al acuífero.", "Dinámica de retención y amortiguación de picos de lluvia.",
           "Flujo de intercambio de agua subterránea-superficial.", "Dinámica de reducción del espejo de agua por encajonamiento." ] }] },
-      { id: "corabastos", title: "MODELO COMERCIAL Y LOGÍSTICO", connection: "Polígono entre Av. Poporo Quimbaya y Carrera 80.",
-        color: "#e58d62", icon: "fa-house-chimney", coords: [[-74.1599146050763, 4.63015596902525]], boxPos: [90, 50],
-        sections: [{ system: "Modelo Social ⟶ Sistema Social", icon: "fa-people-group", submodelos: [
-          "Ciclo de generación y descomposición de materia orgánica.", "Dinámica de acumulación y congestión de transporte pesado.",
-          "Flujo diario de abastecimiento y distribución de alimentos.", "Ciclo de producción de aguas residuales y carga contaminante." ] }] },
-      { id: "avcali", title: "MODELO VIAL Y DE INFRAESTRUCTURA", connection: "Corredor vial longitudinal Norte-Sur.",
-        color: "#b8c0c8", icon: "fa-road", coords: [[-74.15162630856268, 4.644831758038044]], boxPos: [50, 8],
-        sections: [{ system: "Modelo Determinista ⟶ Sistema Determinista", icon: "fa-gears", submodelos: [
-          "Flujo y variación horaria del volumen vehicular.", "Ciclo de escorrentía rápida sobre superficie impermeable.",
-          "Dinámica de concentración de contaminantes atmosféricos.", "Flujo de barrera y fricción a la movilidad peatonal." ] }] },
-      // Esta caja tiene DOS lugares reales (Biblioteca El Tintal y Portal
-      // Américas): por eso "coords" trae 2 puntos y salen 2 líneas.
-      { id: "bibliotintal_portal", title: "MODELO NODAL EQUIPAMENTAL", connection: "Intersección Av. Ciudad de Cali con Av. de las Américas.",
-        color: "#f1cf5b", icon: "fa-building", coords: [[-74.15477971743486, 4.642987513146133], [-74.1615, 4.6255]], boxPos: [92, 32],
-        sections: [{ system: "Modelo Social ⟶ Sistema Social", icon: "fa-people-group", submodelos: [
-          "Flujo de intercambio modal de pasajeros (origen-destino).", "Dinámica de flotación y densidad de población peatonal.",
-          "Ciclo de uso e intensidad del espacio público según hora del día.", "Flujo de interacción socio-cultural con el equipamiento." ] }] },
-      { id: "canalsf", title: "MODELO DE CONDUCCIÓN HÍDRICA", connection: "Trazados de drenaje en concreto (Patio Bonito / El Tintal).",
-        color: "#56b8d4", icon: "fa-water", coords: [[-74.155, 4.635]], boxPos: [8, 78],
-        sections: [{ system: "Modelo Determinista ⟶ Sistema Ecológico", icon: "fa-gears", submodelos: [
-          "Dinámica de aceleración y velocidad del caudal sobre concreto.", "Ciclo de evacuación y respuesta hidráulica ante lluvias torrenciales.",
-          "Flujo de transporte y sedimentación de residuos en el canal.", "Dinámica de descarga y vertimiento de aguas servidas." ] }] },
       { id: "tunjuelo", title: "SISTEMA ECOLÓGICO", connection: "Borde sur-occidental / Límite de Patio Bonito.",
-        color: "#56b8d4", icon: "fa-water", coords: [[-74.17429119107521, 4.603360016778938]], boxPos: [8, 92],
+        color: "#56b8d4", icon: "fa-water", coords: [[-74.17429119107521, 4.603360016778938]], boxPos: [93, 68],
         sections: [
           { system: "Sistema Determinista ⟹ Sub-modelos de ciclos", icon: "fa-gears", submodelos: [
             "Ciclo hidrológico macro y variación del caudal.", "Dinámica de transporte de sedimentos y erosión." ] },
           { system: "Sistema Social ⟹ Sub-modelos de dinámicas", icon: "fa-people-group", submodelos: [
-            "Dinámica de riesgo por desbordamiento e inundación.", "Ciclo de concentración de vertimientos industriales/domésticos." ] },
+            "Dinámica de riesgo por desbordamiento e inundación.", "Ciclo de concentración de vertimientos." ] },
         ] },
+      { id: "fauna", title: "MODELO DE CONECTIVIDAD FAUNÍSTICA", connection: "Franja ambiental continua entre Tunjuelo, humedales y parques.",
+        color: "#68d391", icon: "fa-paw",
+        coords: [[-74.17429119107521, 4.603360016778938], [-74.16284778855655, 4.62939492240078], [-74.14987475206779, 4.64210777486686], [-74.1413020515684, 4.645452290970931]],
+        boxPos: [93, 92],
+        sections: [{ system: "Modelo Ecológico ⟶ Sistema Animado", icon: "fa-feather-pointed", submodelos: [
+          "Ciclo de migración, refugio y albergue de avifauna.", "Dinámica de dispersión biológica y polinización.",
+          "Flujo de desplazamiento e interrupción por barreras viales.", "Ciclo de presión por especies invasoras y domésticas." ] }] },
+      // ---------- Columna izquierda: cajas viales / de infraestructura ----------
+      { id: "avcali", title: "MODELO VIAL Y DE INFRAESTRUCTURA", connection: "Corredor vial longitudinal Norte-Sur.",
+        color: "#b8c0c8", icon: "fa-road", coords: [[-74.15162630856268, 4.644831758038044]], boxPos: [7, 10],
+        sections: [{ system: "Modelo Determinista ⟶ Sistema Determinista", icon: "fa-gears", submodelos: [
+          "Flujo y variación horaria del volumen vehicular.", "Ciclo de escorrentía rápida sobre superficie impermeable.",
+          "Dinámica de dispersión de contaminantes atmosféricos.", "Flujo de barrera y fricción a la movilidad peatonal." ] }] },
+      { id: "canalsf", title: "MODELO DE CONDUCCIÓN HÍDRICA", connection: "Trazados de drenaje en concreto (Patio Bonito / El Tintal).",
+        color: "#56b8d4", icon: "fa-water", coords: [[-74.155, 4.635]], boxPos: [7, 36],
+        sections: [{ system: "Modelo Determinista ⟶ Sistema Ecológico", icon: "fa-gears", submodelos: [
+          "Dinámica de aceleración y velocidad del caudal sobre concreto.", "Ciclo de evacuación y respuesta hidráulica ante lluvias torrenciales.",
+          "Flujo de transporte y sedimentación de residuos en el canal.", "Dinámica de descarga y vertimiento de aguas servidas." ] }] },
+      // Esta caja tiene DOS lugares reales (Biblioteca El Tintal y Portal
+      // Américas): por eso "coords" trae 2 puntos y salen 2 líneas.
+      { id: "bibliotintal_portal", title: "MODELO NODAL EQUIPAMENTAL", connection: "Intersección Av. Ciudad de Cali con Av. de las Américas.",
+        color: "#f1cf5b", icon: "fa-building", coords: [[-74.15477971743486, 4.642987513146133], [-74.1615, 4.6255]], boxPos: [7, 62],
+        sections: [{ system: "Modelo Social ⟶ Sistema Social", icon: "fa-people-group", submodelos: [
+          "Flujo de intercambio modal de pasajeros (origen-destino).", "Dinámica de flotación y densidad de población peatonal.",
+          "Ciclo de uso e intensidad del espacio público según hora del día.", "Flujo de interacción socio-cultural con el equipamiento." ] }] },
+      { id: "corabastos", title: "MODELO COMERCIAL Y LOGÍSTICO", connection: "Polígono entre Av. Poporo Quimbaya y Carrera 80.",
+        color: "#e58d62", icon: "fa-house-chimney", coords: [[-74.1599146050763, 4.63015596902525]], boxPos: [7, 88],
+        sections: [{ system: "Modelo Social ⟶ Sistema Social", icon: "fa-people-group", submodelos: [
+          "Ciclo de generación y descomposición de materia orgánica.", "Dinámica de acumulación y congestión de transporte pesado.",
+          "Flujo diario de abastecimiento y distribución.", "Ciclo de producción de carga contaminante hídrica." ] }] },
     ];
     // ---------- Sonidos ambiente por dinámica (sintetizados, sin archivos
     // externos) — cada burbuja del territorio suena distinto al tocarla:
@@ -2103,11 +2110,10 @@
         // Ya NO se recalcula la posición al mover/hacer zoom: una vez que
         // aparece, queda fija como un plano — sin bailar ni deformarse.
         setStatus("BOGOTÁ · LECTURA GENERAL", true); setupCartographyEntrance(map);
-        // El mapa YA está listo (componentPointMap ya asignado arriba):
-        // ahora sí es seguro mostrar Cartografía interactiva de una vez,
-        // para que las bolitas de lugar salgan sin tener que adivinar
-        // en cuál botón hacer click.
-        showCartography();
+        // Cartografía interactiva NO se abre sola: lo primero que se ve al
+        // entrar al módulo son los Subsistemas del territorio (sin mapa).
+        // El vuelo Bogotá→Kennedy solo pasa cuando el usuario hace click en
+        // el botón "Cartografía interactiva".
       });
       const loadOsm = async () => { const query = `[out:json][timeout:20];way[highway~"^(motorway|trunk|primary|secondary|tertiary)$"](around:4200,4.64,-74.09);out geom;`; setStatus("CARGANDO CALLES OSM…"); const controller = new AbortController(); const timer = window.setTimeout(() => controller.abort(), 12000); try { let response; for (const endpoint of ["https://overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter", "https://overpass.private.coffee/api/interpreter"]) { try { response = await fetch(`${endpoint}?data=${encodeURIComponent(query)}`, { signal: controller.signal, headers: { Accept: "application/json" } }); if (response.ok) break; } catch (error) { /* prueba el siguiente endpoint público */ } } if (!response?.ok) throw new Error("Overpass sin respuesta"); const data = await response.json(); const features = data.elements.filter((x) => x.geometry?.length > 1).map((x) => ({ type: "Feature", properties: { highway: x.tags?.highway || "road" }, geometry: { type: "LineString", coordinates: x.geometry.map((p) => [p.lon, p.lat]) } })); const geo = { type: "FeatureCollection", features }; if (map.getSource("osm-streets")) map.getSource("osm-streets").setData(geo); else { map.addSource("osm-streets", { type: "geojson", data: geo }); map.addLayer({ id: "osm-streets", type: "line", source: "osm-streets", paint: { "line-color": "#8fa7a4", "line-width": ["interpolate", ["linear"], ["zoom"], 10, .7, 14, 1.8], "line-opacity": .62 } }); } setStatus(`${features.length} CALLES OSM CARGADAS`, true); } catch (error) { setStatus("MAPA OSM DISPONIBLE · CALLES EN RESPALDO"); toast("Overpass no respondió; el plano monocromático sigue disponible"); } finally { window.clearTimeout(timer); } };
       const loadRoute = async () => { const coords = [[-74.13,4.66],[-74.09,4.64],[-74.05,4.61],[-74.08,4.57]]; setStatus("CALCULANDO RUTA OSRM…"); try { const response = await fetch(`https://router.project-osrm.org/route/v1/driving/${coords.map((c) => c.join(",")).join(";")}?overview=full&geometries=geojson`); if (!response.ok) throw new Error("OSRM " + response.status); const data = await response.json(); const route = data.routes?.[0]?.geometry; if (!route) throw new Error("Sin ruta"); if (map.getSource("osrm-route")) map.getSource("osrm-route").setData(route); else { map.addSource("osrm-route", { type: "geojson", data: route }); map.addLayer({ id: "osrm-route", type: "line", source: "osrm-route", paint: { "line-color": "#f76fb0", "line-width": 4, "line-opacity": .95 } }); } setStatus("RUTA OSRM ACTIVA", true); } catch (error) { setStatus("NO SE PUDO CALCULAR LA RUTA"); toast("OSRM no respondió; conserva los flujos procedurales"); } };
@@ -2540,5 +2546,9 @@
     };
     drawSubsystems({ hidden: true });
     initRealCartography();
+    // Lo primero que se ve al entrar al módulo son los Subsistemas del
+    // territorio (solo la red, sin mapa) — Cartografía interactiva solo
+    // se abre cuando el usuario le hace click a ese botón.
+    showPlainNetwork("systems", directSubsystemsBtn);
   });
 })();
