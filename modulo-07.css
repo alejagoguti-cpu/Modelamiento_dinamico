@@ -5239,13 +5239,22 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 /* Líneas rectas y simples (como en el plano de referencia): conectan cada
    componente geográfico real (humedales, canales, parques...) con la
    bolita de su dinámica, con un giro de 90° y abiertas en abanico para
-   que no se toquen entre sí. Delgadas y punteadas. */
+   que no se toquen entre sí. Delgadas y punteadas. Ya no hay conexiones
+   entre las bolas grandes entre sí. */
 .map-network-stage > svg .map-network-flows { pointer-events: none; overflow: visible; }
 .map-network-stage > svg .map-network-flow-line {
   fill: none; stroke: rgba(255,255,255,0.5); stroke-width: .12;
   stroke-dasharray: .5 .7;
 }
-.map-network-stage > svg .map-network-flow-dot { fill: #ffffff; }
+/* Puntito en HTML (no SVG), para que sea un círculo perfecto sin importar
+   la proporción del mapa — chiquito y fijo en la coordenada real. */
+.map-network-flow-dot {
+  position: absolute; z-index: 2;
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #ffffff; transform: translate(-50%, -50%);
+  box-shadow: 0 0 2px rgba(0,0,0,.6);
+  pointer-events: none;
+}
 
 /* ===================== AJUSTE FINAL · FLOTADO LENTO Y UNIONES ELÁSTICAS ===================== */
 .map-network-stage { background: radial-gradient(circle at 50% 50%, rgba(118,255,240,.035), transparent 30%), rgba(2,8,10,.04) !important; }

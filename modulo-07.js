@@ -1756,7 +1756,9 @@
     const viewSubmodelsBtn = document.getElementById("viewSubmodelsBtn");
     const directSubsystemsBtn = document.getElementById("directSubsystemsBtn");
     const directSubmodelsBtn = document.getElementById("directSubmodelsBtn");
+    let currentSubmodelsMode = "subsystems";
     const setSubmodelsMode = (mode) => {
+      currentSubmodelsMode = mode;
       const isSubsystems = mode === "subsystems";
       directSubsystemsBtn?.classList.toggle("active", isSubsystems);
       directSubmodelsBtn?.classList.toggle("active", !isSubsystems);
@@ -1782,6 +1784,9 @@
         submodelsQuestion?.setAttribute("aria-expanded", "true");
       }
       setSubmodelsMode(mode);
+      // La red de burbujas de "Cartografía interactiva" se mantiene al día
+      // aunque esa sección esté oculta, para que ya esté lista cuando se abra.
+      renderMapNetwork(mode === "subsystems" ? "systems" : "submodels");
     };
     directSubsystemsBtn?.addEventListener("click", () => { setCartographyVisible(false); openSubmodelsFromDirectButton("subsystems"); });
     directSubmodelsBtn?.addEventListener("click", () => { setCartographyVisible(false); openSubmodelsFromDirectButton("submodels"); });
@@ -1798,7 +1803,7 @@
         // vuelva a medir su tamaño y a dibujar la red de burbujas.
         requestAnimationFrame(() => {
           componentPointMap?.resize();
-          renderMapNetwork("systems");
+          renderMapNetwork(currentSubmodelsMode === "subsystems" ? "systems" : "submodels");
           section.scrollIntoView({ behavior: "smooth", block: "nearest" });
         });
       }
@@ -2089,27 +2094,36 @@
         const proj = projectToPercent(c.coords);
         if (!proj) return "";
         const id = `map-network-flow-${group.prefix}-${i}`;
-        const dotId = `map-network-flow-dot-${group.prefix}-${i}`;
         const d = flowCurveD(proj.x, proj.y, nx, ny, fanOffsetFor(group, i));
-        return `<path id="${id}" class="map-network-flow-line" d="${d}"/><circle id="${dotId}" class="map-network-flow-dot" cx="${proj.x.toFixed(2)}" cy="${proj.y.toFixed(2)}" r=".55"/>`;
+        return `<path id="${id}" class="map-network-flow-line" d="${d}"/>`;
       }).join("");
     }).join("");
-    // Al mover o hacer zoom en el mapa, las líneas se vuelven a calcular
-    // para que sigan llegando exactamente a cada bolita.
+    // Puntitos en HTML (no SVG): el SVG se estira sin conservar proporción
+    // (preserveAspectRatio="none"), así que un círculo ahí sale ovalado.
+    // En HTML, con ancho = alto en píxeles, siempre quedan perfectamente
+    // redondos, chiquitos y fijos en la coordenada real.
+    const buildFlowDotsHtml = () => FLOW_GROUPS.map((group) => group.components.map((c, i) => {
+      const proj = projectToPercent(c.coords);
+      if (!proj) return "";
+      const id = `map-network-flow-dot-${group.prefix}-${i}`;
+      return `<span id="${id}" class="map-network-flow-dot" style="left:${proj.x.toFixed(2)}%;top:${proj.y.toFixed(2)}%"></span>`;
+    }).join("")).join("");
+    // Al mover o hacer zoom en el mapa, las líneas y los puntitos se vuelven
+    // a calcular para que sigan llegando exactamente a cada bolita.
     const updateFlowGroups = () => {
       if (!subsystemBubbles?.classList.contains("network-active")) return;
-      const svg = subsystemBubbles.querySelector(".systems-network svg");
-      if (!svg) return;
+      const stage = subsystemBubbles.querySelector(".systems-network");
+      if (!stage) return;
       const positions = [[12,22],[32,8],[70,8],[88,22],[76,86],[24,86]];
       FLOW_GROUPS.forEach((group) => {
         const [nx, ny] = positions[group.targetIndex];
         group.components.forEach((c, i) => {
           const proj = projectToPercent(c.coords);
-          const path = svg.querySelector(`#map-network-flow-${group.prefix}-${i}`);
-          const dot = svg.querySelector(`#map-network-flow-dot-${group.prefix}-${i}`);
+          const path = stage.querySelector(`#map-network-flow-${group.prefix}-${i}`);
+          const dot = stage.querySelector(`#map-network-flow-dot-${group.prefix}-${i}`);
           if (!proj) return;
           if (path) path.setAttribute("d", flowCurveD(proj.x, proj.y, nx, ny, fanOffsetFor(group, i)));
-          if (dot) { dot.setAttribute("cx", proj.x.toFixed(2)); dot.setAttribute("cy", proj.y.toFixed(2)); }
+          if (dot) { dot.style.left = proj.x.toFixed(2) + "%"; dot.style.top = proj.y.toFixed(2) + "%"; }
         });
       });
     };
@@ -2179,7 +2193,8 @@
       subsystemBubbles.dataset.revealState = "complete";
       subsystemBubbles.classList.add("network-active");
       const flowsSvg = systems ? buildFlowGroupsSvg(positions) : "";
-      subsystemBubbles.innerHTML = `<div class="map-network-stage ${systems ? "systems-network" : "submodels-network"}"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><defs>${gradientDefs.join("")}</defs><g class="map-network-flows">${flowsSvg}</g><g class="map-network-bonds">${bonds}</g></svg>${nodes}</div>`;
+      const flowDotsHtml = systems ? buildFlowDotsHtml() : "";
+      subsystemBubbles.innerHTML = `<div class="map-network-stage ${systems ? "systems-network" : "submodels-network"}"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><defs>${gradientDefs.join("")}</defs><g class="map-network-flows">${flowsSvg}</g></svg>${flowDotsHtml}${nodes}</div>`;
       subsystemBubbles.querySelectorAll(".map-network-node").forEach((button) => button.addEventListener("click", () => {
         const row = rows[Number(button.dataset.mapNetworkIndex)];
         if (row?.id) DINAMICA_SOUND.play(row.id);
