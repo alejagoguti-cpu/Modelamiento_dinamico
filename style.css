@@ -1084,3 +1084,12 @@ body{
 @media(min-width:981px){
   .hero-copy h1{font-size:clamp(46px,5.2vw,68px);line-height:1.08;letter-spacing:-1.2px;}
 }
+
+
+/* Portada · ajuste tipográfico sutil */
+@media(min-width:981px){
+  .hero-copy h1{font-size:clamp(42px,4.55vw,60px);}
+}
+.entry-question{font-size:clamp(18px,2.15vw,30px);}
+.entry-description{font-size:15px;line-height:1.58;}
+@media(max-width:600px){.entry-question{font-size:22px}.entry-description{font-size:14px;}}
