@@ -2036,6 +2036,79 @@ function setupLegendToggle() {
   document.getElementById("nodeInfoClose")?.addEventListener("click", hideNodeInfo);
   document.getElementById("humedalesOverlayClose")?.addEventListener("click", hideHumedalesOverlay);
   document.getElementById("movilidadOverlayClose")?.addEventListener("click", () => { hideMovilidadOverlay(); clearSpotlight(); });
+  document.getElementById("mapa3OverlayClose")?.addEventListener("click", hideMapa3Overlay);
+  
+  // Selector de mapas (modal de exploración en detalle)
+  document.getElementById("modalExplorarClose")?.addEventListener("click", cerrarModalExplorarRelaciones);
+  document.getElementById("modalExplorarRelaciones")?.addEventListener("click", (e) => {
+    if (e.target.id === "modalExplorarRelaciones") cerrarModalExplorarRelaciones();
+  });
+  document.getElementById("btnOpcionMapaVias")?.addEventListener("click", abrirMapaVias);
+  document.getElementById("btnOpcionMapaHumedales")?.addEventListener("click", abrirMapaHumedales);
+  document.getElementById("btnOpcionMapa3")?.addEventListener("click", abrirMapa3);
+
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      cerrarModalExplorarRelaciones();
+    }
+  });
+}
+
+/* ==========================================================
+   MODAL POPUP: SELECTOR DE MAPAS (EXPLORAR RELACIONES EN DETALLE)
+   ========================================================== */
+function abrirModalExplorarRelaciones() {
+  const modal = document.getElementById("modalExplorarRelaciones");
+  if (!modal) return;
+  modal.style.display = "flex";
+  modal.setAttribute("aria-hidden", "false");
+}
+
+function cerrarModalExplorarRelaciones() {
+  const modal = document.getElementById("modalExplorarRelaciones");
+  if (!modal) return;
+  modal.style.display = "none";
+  modal.setAttribute("aria-hidden", "true");
+}
+
+function abrirMapaVias() {
+  cerrarModalExplorarRelaciones();
+  showMovilidadOverlay({ animateIn: true });
+}
+
+function abrirMapaHumedales() {
+  cerrarModalExplorarRelaciones();
+  explorarRelacionesConAnimacion();
+}
+
+function abrirMapa3() {
+  cerrarModalExplorarRelaciones();
+  showMapa3Overlay({ animateIn: true });
+}
+
+function showMapa3Overlay(opts) {
+  const legendM = document.getElementById("networkLegend");
+  if (legendM) legendM.style.display = "none";
+  const actsM = document.getElementById("networkSidebarActions");
+  if (actsM) actsM.style.display = "none";
+  hideNodeInfo();
+  hideEdgeInfo();
+  document.querySelector(".network-canvas").style.display = "none";
+  document.getElementById("humedalesOverlay").style.display = "none";
+  document.getElementById("movilidadOverlay").style.display = "none";
+  
+  const overlay3 = document.getElementById("mapa3Overlay");
+  if (overlay3) overlay3.style.display = "flex";
+}
+
+function hideMapa3Overlay() {
+  const legendM = document.getElementById("networkLegend");
+  if (legendM) legendM.style.display = "";
+  const actsM = document.getElementById("networkSidebarActions");
+  if (actsM) actsM.style.display = "";
+  const overlay3 = document.getElementById("mapa3Overlay");
+  if (overlay3) overlay3.style.display = "none";
+  document.querySelector(".network-canvas").style.display = "";
 }
 
 /* -------- métricas -------- */
@@ -2136,7 +2209,7 @@ document.addEventListener("DOMContentLoaded", () => {
   renderMatrix();
   document.getElementById("networkViz")?.addEventListener("click", () => { hideEdgeInfo(); hideNodeInfo(); });
   document.getElementById("btnVerHallazgos")?.addEventListener("click", verHallazgosConAnimacion);
-  document.getElementById("btnExplorarRelaciones")?.addEventListener("click", explorarRelacionesConAnimacion);
+  document.getElementById("btnExplorarRelaciones")?.addEventListener("click", abrirModalExplorarRelaciones);
 });
 
 
