@@ -1217,11 +1217,11 @@ function ejecutarTransicionRed(nodosSobrevivientes, hubId, onComplete) {
         svg.classList.remove("zoom-into-humedales");
         svg.style.transformOrigin = "";
       };
-      setTimeout(onDone, 440);
+      setTimeout(onDone, 1200);
     } else {
       onComplete();
     }
-  }, 480);
+  }, 1200);
 }
 
 // Mapa 1: Vías y Movilidad

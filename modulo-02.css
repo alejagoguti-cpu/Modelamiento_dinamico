@@ -290,7 +290,7 @@ body {
   transform-origin: 50% 50%;
   will-change: transform, opacity;
   transform: translateZ(0);
-  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+  transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s ease;
 }
 /* Animación "explorar relaciones en detalle": acercamiento suave,
    rápido y fluido hacia el nodo seleccionado antes de pasar al mapa ampliado */
@@ -861,14 +861,14 @@ footer span { color: var(--teal); }
   100% { opacity: 0.1; }
 }
 .ods-node.blackout-flicker, .edge-group.blackout-flicker {
-  animation: blackoutFlicker 0.48s cubic-bezier(0.2, 0.8, 0.4, 1) both;
+  animation: blackoutFlicker 1.2s cubic-bezier(0.2, 0.8, 0.4, 1) both;
 }
 @keyframes blackoutGlow {
   0%   { filter: drop-shadow(0 0 4px currentColor); }
   50%  { filter: drop-shadow(0 0 16px currentColor) drop-shadow(0 0 24px currentColor); }
   100% { filter: drop-shadow(0 0 10px currentColor); }
 }
-.ods-node.blackout-surviving .node-ring { animation: blackoutGlow 0.48s ease both; }
+.ods-node.blackout-surviving .node-ring { animation: blackoutGlow 1.2s ease both; }
 
 /* RESPONSIVE */
 @media (max-width: 1400px) {
