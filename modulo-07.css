@@ -5239,28 +5239,29 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 /* Líneas rectas y simples (como en el plano de referencia): conectan cada
    componente geográfico real (humedales, canales, parques...) con la
    bolita de su dinámica, con un giro de 90° y abiertas en abanico para
-   que no se toquen entre sí. Ya no hay conexiones entre las bolas grandes
-   entre sí. Grosor y opacidad subidos para que sí se alcancen a ver. */
+   que no se toquen entre sí. Cada grupo usa el color de su propia dinámica
+   (no todas blancas) para que se entienda de un vistazo qué va a qué. */
 .map-network-stage > svg .map-network-flows { pointer-events: none; overflow: visible; }
 .map-network-stage > svg .map-network-flow-line {
-  fill: none; stroke: rgba(255,255,255,0.85); stroke-width: .35;
-  stroke-dasharray: 1.1 .9;
+  fill: none; stroke: var(--flow-color, rgba(255,255,255,0.7)); stroke-width: .16;
+  stroke-dasharray: .9 .8; opacity: .85;
 }
 /* Puntito en HTML (no SVG), para que sea un círculo perfecto sin importar
    la proporción del mapa — chiquito y fijo en la coordenada real. */
 .map-network-flow-dot {
   position: absolute; z-index: 2;
   width: 6px; height: 6px; border-radius: 50%;
-  background: #ffffff; transform: translate(-50%, -50%);
-  box-shadow: 0 0 2px rgba(0,0,0,.6);
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 2px rgba(0,0,0,.8);
   pointer-events: none;
 }
-/* Nombre de lo que se está señalando: chiquito, junto al puntito. */
+/* Nombre de lo que se está señalando: chiquito, junto al puntito, del
+   mismo color que su línea y su punto. */
 .map-network-flow-label {
   position: absolute; z-index: 2;
   transform: translate(6px, -50%);
-  color: #fff; font: 700 8px/1.2 Inter, sans-serif;
-  text-shadow: 0 0 3px rgba(0,0,0,.9), 0 0 1px rgba(0,0,0,.9);
+  font: 700 8px/1.2 Inter, sans-serif;
+  text-shadow: 0 0 3px rgba(0,0,0,.95), 0 0 1px rgba(0,0,0,.95);
   white-space: nowrap; pointer-events: none;
 }
 

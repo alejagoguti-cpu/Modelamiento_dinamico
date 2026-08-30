@@ -1969,7 +1969,7 @@
       document.getElementById("loadOsmStreets")?.addEventListener("click", loadOsm);
       /* Las calles OSM quedan como acción manual y no se cargan al abrir el mapa. */
       document.getElementById("loadOsrmRoute")?.addEventListener("click", loadRoute);
-      document.getElementById("resetCartography")?.addEventListener("click", () => { if (map.getLayer("osm-streets")) map.removeLayer("osm-streets"); if (map.getSource("osm-streets")) map.removeSource("osm-streets"); if (map.getLayer("osrm-route")) map.removeLayer("osrm-route"); if (map.getSource("osrm-route")) map.removeSource("osrm-route"); clearSubsystemPoints(); drawSubsystems({ hidden: true }); map.jumpTo({ center: [-74.150,4.642], zoom: 11.8 }); setStatus("HUMEDAL EL BURRO · CARTOGRAFÍA LISTA", true); });
+      document.getElementById("resetCartography")?.addEventListener("click", () => { if (map.getLayer("osm-streets")) map.removeLayer("osm-streets"); if (map.getSource("osm-streets")) map.removeSource("osm-streets"); if (map.getLayer("osrm-route")) map.removeLayer("osrm-route"); if (map.getSource("osrm-route")) map.removeSource("osrm-route"); clearSubsystemPoints(); drawSubsystems({ hidden: true }); map.jumpTo({ center: [-74.158,4.629], zoom: 12.3 }); setStatus("HUMEDAL EL BURRO · CARTOGRAFÍA LISTA", true); });
     }
     function initProceduralSimulation() {
       const holder = document.getElementById("proceduralSimulation");
@@ -2110,7 +2110,7 @@
         if (!proj) return "";
         const id = `map-network-flow-${group.prefix}-${i}`;
         const d = flowCurveD(proj.x, proj.y, nx, ny, fanOffsetFor(group, i));
-        return `<path id="${id}" class="map-network-flow-line" d="${d}"/>`;
+        return `<path id="${id}" class="map-network-flow-line" style="--flow-color:${group.color}" d="${d}"/>`;
       }).join("");
     }).join("");
     // Puntitos en HTML (no SVG): el SVG se estira sin conservar proporción
@@ -2123,7 +2123,7 @@
       if (!proj) return "";
       const id = `map-network-flow-dot-${group.prefix}-${i}`;
       const labelId = `map-network-flow-label-${group.prefix}-${i}`;
-      return `<span id="${id}" class="map-network-flow-dot" style="left:${proj.x.toFixed(2)}%;top:${proj.y.toFixed(2)}%"></span><span id="${labelId}" class="map-network-flow-label" style="left:${proj.x.toFixed(2)}%;top:${proj.y.toFixed(2)}%">${c.label}</span>`;
+      return `<span id="${id}" class="map-network-flow-dot" style="left:${proj.x.toFixed(2)}%;top:${proj.y.toFixed(2)}%;background:${group.color}"></span><span id="${labelId}" class="map-network-flow-label" style="left:${proj.x.toFixed(2)}%;top:${proj.y.toFixed(2)}%;color:${group.color}">${c.label}</span>`;
     }).join("")).join("");
     // Al mover o hacer zoom en el mapa, las líneas, los puntitos y sus
     // nombres se vuelven a calcular para que sigan en su coordenada real.
@@ -2272,7 +2272,7 @@
       map.__openingPlayed = true;
       const reduced = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
       if (reduced) {
-        map.jumpTo({ center: [-74.150, 4.642], zoom: 11.8 });
+        map.jumpTo({ center: [-74.158, 4.629], zoom: 12.3 });
         announceCartography("HUMEDAL EL BURRO · AGUA Y SUBSISTEMAS", true);
         drawSubsystems({ hidden: true });
         return;
@@ -2282,11 +2282,11 @@
       map.jumpTo({ center: [-74.09, 4.64], zoom: 10.55 });
       window.setTimeout(() => {
         announceCartography("KENNEDY · PERÍMETRO ADMINISTRATIVO", true);
-        map.flyTo({ center: [-74.151, 4.625], zoom: 11.3, duration: 1800, essential: true });
+        map.flyTo({ center: [-74.158, 4.629], zoom: 11.9, duration: 1800, essential: true });
       }, 450);
       window.setTimeout(() => {
         announceCartography("APROXIMACIÓN · HUMEDAL EL BURRO", true);
-        map.flyTo({ center: [-74.150, 4.642], zoom: 11.8, duration: 2200, essential: true });
+        map.flyTo({ center: [-74.158, 4.629], zoom: 12.3, duration: 2200, essential: true });
       }, 2250);
       window.setTimeout(() => {
         announceCartography("HUMEDAL EL BURRO · LISTO PARA ACTIVAR UNA RED", true);
