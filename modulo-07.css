@@ -5246,7 +5246,11 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
   opacity: 0; transform: translate(-50%, -50%) scale(0.5);
   animation: kennedyPhenomenonReveal 0.9s cubic-bezier(.22,.8,.32,1) both;
   animation-delay: var(--reveal-delay, 0ms);
+  /* Sin relleno: solo el aro y el ícono, como pediste — nada de fondo sólido. */
+  background: rgba(6,10,12,0.35) !important;
+  box-shadow: 0 0 10px color-mix(in srgb, var(--node-color) 55%, transparent) !important;
 }
+.map-phenomenon-node::before, .map-phenomenon-node::after { display: none !important; }
 .map-phenomenon-node strong { display: none; }
 @keyframes kennedyPhenomenonReveal {
   0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }

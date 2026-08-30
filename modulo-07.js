@@ -2026,7 +2026,7 @@
             [-74.08176, 4.70172]
           ] } }
         ] } });
-        map.addLayer({ id: "avenidas-referencia-line", type: "line", source: "avenidas-referencia", paint: { "line-color": "#b28be8", "line-width": ["interpolate", ["linear"], ["zoom"], 10, 2.4, 14, 4.2], "line-opacity": .92 } });
+        map.addLayer({ id: "avenidas-referencia-line", type: "line", source: "avenidas-referencia", paint: { "line-color": "#c9a9ef", "line-width": ["interpolate", ["linear"], ["zoom"], 10, 1.7, 14, 3.0], "line-opacity": .62 } });
         map.addLayer({ id: "avenidas-referencia-labels", type: "symbol", source: "avenidas-referencia", layout: { "symbol-placement": "line", "text-field": ["get", "label"], "text-size": 9, "text-offset": [0, -0.8] }, paint: { "text-color": "#d9c8f5", "text-halo-color": "#0a0612", "text-halo-width": 1.3 } });
         map.addSource("subsystem-component-points", { type: "geojson", data: { type: "FeatureCollection", features: [] } });
         map.addLayer({ id: "subsystem-component-point-halo", type: "circle", source: "subsystem-component-points", paint: { "circle-radius": ["interpolate", ["linear"], ["zoom"], 10, 8, 14, 13], "circle-color": ["coalesce", ["get", "color"], "#ffffff"], "circle-opacity": .18, "circle-blur": .35 }, layout: { visibility: "none" } });

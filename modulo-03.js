@@ -120,17 +120,6 @@ const POT_DATA = {
    "r": 46
   },
   {
-   "id": "EFC::VIVIENDA",
-   "sys": "EFC",
-   "label": "VIVIENDA",
-   "icon": "fa-house",
-   "x": 1450,
-   "y": 783,
-   "cat": "e2",
-   "deg": 5,
-   "r": 70
-  },
-  {
    "id": "EFC::CICLORUTAS",
    "sys": "EFC",
    "label": "CICLORUTAS",
@@ -410,24 +399,10 @@ const POT_DATA = {
   },
   {
    "sO": "EFC",
-   "cO": "EQUIPAMIENTOS",
-   "sD": "EFC",
-   "cD": "VIVIENDA",
-   "type": "support"
-  },
-  {
-   "sO": "EFC",
    "cO": "CICLORUTAS",
    "sD": "EFC",
    "cD": "TRANSPORTE PÚBLICO",
    "type": "resilience"
-  },
-  {
-   "sO": "EFC",
-   "cO": "TRANSPORTE PÚBLICO",
-   "sD": "EFC",
-   "cD": "VIVIENDA",
-   "type": "support"
   },
   {
    "sO": "EFC",
@@ -570,20 +545,6 @@ const POT_DATA = {
    "type": "support"
   },
   {
-   "sO": "EFC",
-   "cO": "VIVIENDA",
-   "sD": "EFC",
-   "cD": "SERVICIOS SOCIALES",
-   "type": "support"
-  },
-  {
-   "sO": "EFC",
-   "cO": "RED VIAL",
-   "sD": "EFC",
-   "cD": "VIVIENDA",
-   "type": "support"
-  },
-  {
    "sO": "ESECI",
    "cO": "DISTRITO CENTRO TECNOLÓGICO E INNOVACIÓN",
    "sD": "ESECI",
@@ -630,13 +591,6 @@ const POT_DATA = {
    "cO": "EQUIPAMIENTOS",
    "sD": "ESECI",
    "cD": "SERVICIOS EMPRESARIALES",
-   "type": "support"
-  },
-  {
-   "sO": "EFC",
-   "cO": "VIVIENDA",
-   "sD": "ESECI",
-   "cD": "ZONAS INDUSTRIALES",
    "type": "support"
   },
   {

@@ -629,6 +629,10 @@ function edgePathData(edge, s, t) {
 function drawEdges(svg) {
   const g = document.createElementNS(SVG_NS, "g");
   g.setAttribute("class", "edges-layer");
+  // Las líneas aparecen DESPUÉS de que las bolas ya se están formando (no
+  // de primeras, que se ve raro) — cada una con su propio pequeño retraso.
+  const edgeBaseDelay = ODS_NODES.length * 70 + 200;
+  let edgeOrderIndex = 0;
   RAW_EDGES.forEach((edge, i) => {
     // Las relaciones "vacío" (ausencias documentadas entre estructuras) ya NO
     // se dibujan en la red visual — quedan solo como hallazgo en la tabla y en
@@ -641,13 +645,15 @@ function drawEdges(svg) {
     const d = edgePathData(edge, s, t);
 
     const group = document.createElementNS(SVG_NS, "g");
-    group.setAttribute("class", "edge-group edge-" + edge.tipo);
+    group.setAttribute("class", "edge-group edge-" + edge.tipo + " edge-group-reveal");
     group.setAttribute("data-index", i);
     group.setAttribute("data-type", edge.tipo);
     group.setAttribute("data-cat", edge.cat);
     group.setAttribute("data-source", edge.s);
     group.setAttribute("data-target", edge.t);
     group.style.setProperty("--edge-color", color);
+    group.style.setProperty("--reveal-delay", (edgeBaseDelay + edgeOrderIndex * 12) + "ms");
+    edgeOrderIndex++;
 
     const hit = document.createElementNS(SVG_NS, "path");
     hit.setAttribute("d", d); hit.setAttribute("class", "ods-edge edge-hit");
