@@ -5646,3 +5646,17 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 .map-submodel-hidrica-node .map-network-node-icon { font-size: 13px !important; }
 .map-submodel-hidrica-node strong { font-size: 7px !important; line-height: 1.05 !important; max-width: 58px; }
 .map-submodel-hidrica-node:hover, .map-submodel-hidrica-node.selected { transform: translate(-50%, -50%) scale(1.08) !important; }
+
+/* Redondez definitiva de TODAS las bolitas, sin excepción (incluye las
+   sub-bolitas de los submodelos hídricos) — selector con id para ganarle
+   a cualquier regla más específica que las siga deformando. */
+#subsystemBubbles .map-network-node,
+#subsystemBubbles .map-network-node:hover,
+#subsystemBubbles .map-network-node.selected,
+#subsystemBubbles .map-submodel-hidrica-node,
+#territoryNetworkPlain .map-network-node,
+#territoryNetworkPlain .map-network-node:hover,
+#territoryNetworkPlain .map-network-node.selected {
+  border-radius: 50% !important;
+  aspect-ratio: 1 / 1 !important;
+}
