@@ -1640,21 +1640,13 @@
     // aproximada de referencia general (cerca de Av. Américas / Av.
     // Ciudad de Cali); dime la coordenada exacta si la tienes.
     const KENNEDY_PHENOMENA = [
-      { id: "burro", label: "Humedal El Burro", coords: [-74.14987475206779, 4.64210777486686], system: "hidrica",
-        phenomenon: "Impermeabilización, Fragmentación y Escorrentía Térmica",
-        detail: "La masa de asfalto de la Av. Ciudad de Cali corta la continuidad física del agua. El agua lluvia cae sobre el pavimento caliente y sellado, arrastra aceites y metales pesados, e ingresa al humedal a alta velocidad y temperatura, destruyendo el microclima de la ronda." },
-      { id: "techo", label: "Humedal Techo", coords: [-74.1413020515684, 4.645452290970931], system: "hidrica",
-        phenomenon: "Aislamiento Freatimétrico y Secado por Encajonamiento",
-        detail: "La infraestructura urbana circundante corta las venas de agua subterránea (acuífero) y los canales naturales que lo alimentaban. El humedal pierde la capacidad de regular su nivel y pasa a depender únicamente del agua de lluvia, sufriendo procesos de colmatación (acumulación de sedimento seco)." },
       { id: "canalsf", label: "Canal San Francisco", coords: [-74.155, 4.635], system: "hidrica",
         phenomenon: "Canalización Rígida y Aceleración de Vertimientos",
         detail: "El reemplazo del cauce natural por concreto rígido elimina la capacidad de filtrado del suelo. El canal se convierte en un colector acelerado que transporta basura flotante, sedimentos y conexiones erradas de aguas residuales directamente hacia los humedales y el río." },
-      { id: "tunjuelo", label: "Río Tunjuelo", coords: [-74.17429119107521, 4.603360016778938], system: "hidrica",
-        phenomenon: "Sobrecarga Hidráulica y Desbordamiento por Colapso Pluvial",
-        detail: "Como la ciudad está pavimentada, toda el agua de lluvia de Kennedy corre hacia los canales sin filtrarse. Al llegar al río, sobrepasa la capacidad del cauce, provocando el retorno de aguas servidas e inundaciones en barrios perimetrales." },
-      // "corabastos" y "avcali" ya no van aquí: cada uno tiene su propia
-      // caja de texto completa en KENNEDY_TEXT_BOXES, con su propio nodo —
-      // para no duplicar un punto encima del ícono en el mismo lugar.
+      // "burro", "techo", "tunjuelo", "corabastos" y "avcali" ya no van
+      // aquí: cada uno tiene su propia caja de texto completa en
+      // KENNEDY_TEXT_BOXES, con su propio nodo — para no duplicar un
+      // punto encima del ícono en el mismo lugar.
       { id: "bibliotintal", label: "Biblioteca El Tintal", coords: [-74.15477971743486, 4.642987513146133], system: "fisico",
         phenomenon: "Equipamiento urbano de borde",
         detail: "Pendiente de completar (no me diste el detalle de este punto)." },
@@ -1672,17 +1664,43 @@
     // (título + línea de modelos + submodelos), solo para estos 2 nodos
     // por ahora, cada una conectada con una línea en L a su nodo real.
     const KENNEDY_TEXT_BOXES = [
-      { id: "lavaca", title: "HUMEDAL LA VACA", subtitle: "MODELO DE ABSORCIÓN DE IMPACTO", mainLine: "Modelo Social ⟶ Sistema Ecológico",
-        submodelos: ["Modelo de gestión de residuos.", "Modelo de gestión de lixiviados.", "Modelo de calidad hídrica.", "Modelo de vegetación acuática."],
-        coords: [-74.16284778855655, 4.62939492240078], color: "#56b8d4", icon: "fa-droplet", boxPos: [10, 62] },
-      { id: "corabastos", title: "CORABASTOS", subtitle: "MODELO COMERCIAL Y LOGÍSTICO", mainLine: "Modelo Social ⟶ Sistema Ecológico",
-        submodelos: ["Modelo de planificación comercial.", "Modelo de gestión de residuos orgánicos.", "Modelo de movilidad pesada.", "Modelo de saneamiento ambiental."],
-        coords: [-74.1599146050763, 4.63015596902525], color: "#e58d62", icon: "fa-house-chimney", boxPos: [90, 62] },
+      { id: "tunjuelo", title: "Río Tunjuelo", macro: "SISTEMA ECOLÓGICO", color: "#56b8d4", icon: "fa-water",
+        coords: [-74.17429119107521, 4.603360016778938], boxPos: [10, 85],
+        sections: [
+          { system: "Sistema Determinista", icon: "fa-gears", submodelos: ["Ciclo del agua", "Desembocadura", "Red trófica"] },
+          { system: "Sistema Social", icon: "fa-people-group", submodelos: ["Modelo económico / vertimientos", "Canalizaciones / diques"] },
+        ] },
+      { id: "lavaca", title: "Humedal La Vaca", macro: "SISTEMA ANIMADO", color: "#56b8d4", icon: "fa-droplet",
+        coords: [-74.16284778855655, 4.62939492240078], boxPos: [8, 55],
+        sections: [
+          { system: "Sistema Ecológico", icon: "fa-leaf", submodelos: ["Calidad hídrica", "Vegetación acuática", "Dinámica freática"] },
+          { system: "Sistema Social", icon: "fa-people-group", submodelos: ["Modelo de gestión de residuos", "Vertimiento de lixiviados"] },
+        ] },
+      { id: "burro", title: "Humedal El Burro", macro: "SISTEMA ANIMADO", color: "#56b8d4", icon: "fa-droplet",
+        coords: [-74.14987475206779, 4.64210777486686], boxPos: [50, 90],
+        sections: [
+          { system: "Sistema Ecológico", icon: "fa-leaf", submodelos: ["Cobertura vegetal", "Regulador térmico", "Red biótica"] },
+          { system: "Sistema Determinista", icon: "fa-gears", submodelos: ["Escorrentía sobre asfalto", "Fragmentación por malla vial"] },
+        ] },
+      { id: "techo", title: "Humedal Techo", macro: "SISTEMA ANIMADO", color: "#56b8d4", icon: "fa-droplet",
+        coords: [-74.1413020515684, 4.645452290970931], boxPos: [90, 18],
+        sections: [
+          { system: "Sistema Ecológico", icon: "fa-leaf", submodelos: ["Conservación de masa de agua", "Recarga de acuífero"] },
+          { system: "Sistema Determinista", icon: "fa-gears", submodelos: ["Drenaje pluvial urbano", "Encajonamiento por edificación"] },
+        ] },
+      { id: "corabastos", title: "Corabastos", macro: "SISTEMA SOCIAL", color: "#e58d62", icon: "fa-house-chimney",
+        coords: [-74.1599146050763, 4.63015596902525], boxPos: [90, 55],
+        sections: [
+          { system: "Sistema Social", icon: "fa-people-group", submodelos: ["Abastecimiento masivo", "Dinámica socioespacial"] },
+          { system: "Sistema Determinista", icon: "fa-gears", submodelos: ["Generación de residuos orgánicos", "Movilidad pesada"] },
+        ] },
       // Nodo de vías: la flechita sale de un punto sobre la Av. Ciudad de
-      // Cali y llega hasta este nodo, con su propia caja.
-      { id: "avcali", title: "AV. CIUDAD DE CALI", subtitle: "MODELO VIAL Y DE INFRAESTRUCTURA", mainLine: "Modelo Determinista ⟶ Sistema Ecológico",
-        submodelos: ["Modelo de flujo vehicular.", "Modelo de impermeabilización.", "Modelo de evacuación pluvial.", "Modelo de fricción urbana."],
-        coords: [-74.15162630856268, 4.644831758038044], color: "#b8c0c8", icon: "fa-road", boxPos: [50, 10] },
+      // Cali y llega hasta este nodo, con su propia caja (formato simple).
+      { id: "avcali", title: "Av. Ciudad de Cali", macro: "MODELO VIAL Y DE INFRAESTRUCTURA", color: "#b8c0c8", icon: "fa-road",
+        coords: [-74.15162630856268, 4.644831758038044], boxPos: [50, 8],
+        sections: [
+          { system: "Modelo Determinista", icon: "fa-gears", submodelos: ["Modelo de flujo vehicular", "Modelo de impermeabilización", "Modelo de evacuación pluvial", "Modelo de fricción urbana"] },
+        ] },
     ];
     // ---------- Sonidos ambiente por dinámica (sintetizados, sin archivos
     // externos) — cada burbuja del territorio suena distinto al tocarla:
@@ -2237,8 +2255,11 @@
     const buildTextBoxesHtml = () => KENNEDY_TEXT_BOXES.map((box, i) => {
       const proj = projectToPercent(box.coords);
       const nodeHtml = proj ? `<button type="button" class="map-network-node map-phenomenon-node" id="kennedy-textbox-node-${i}" style="left:${proj.x.toFixed(2)}%;top:${proj.y.toFixed(2)}%;--node-color:${box.color}"><i class="map-network-node-icon fa-solid ${box.icon}" aria-hidden="true"></i></button>` : "";
-      const items = box.submodelos.map((s) => `<li>${s}</li>`).join("");
-      return `<div class="kennedy-info-box" style="left:${box.boxPos[0]}%;top:${box.boxPos[1]}%;--node-color:${box.color}"><h4 class="kennedy-subtitle-as-title">${box.subtitle}</h4><p class="kennedy-mainline">${box.mainLine}</p><p class="kennedy-sub-label">Sub-modelos:</p><ul>${items}</ul></div>${nodeHtml}`;
+      const sectionsHtml = box.sections.map((section) => {
+        const items = section.submodelos.map((s) => `<li><i class="fa-solid ${section.icon} kennedy-item-icon" aria-hidden="true"></i>${s}</li>`).join("");
+        return `<div class="kennedy-section"><p class="kennedy-mainline">${section.system} <span class="kennedy-arrow">⟹</span> Sub-modelos:</p><ul>${items}</ul></div>`;
+      }).join("");
+      return `<div class="kennedy-info-box" style="left:${box.boxPos[0]}%;top:${box.boxPos[1]}%;--node-color:${box.color}"><h4 class="kennedy-title-line">${box.title} <span class="kennedy-macro">– ${box.macro}</span></h4>${sectionsHtml}</div>${nodeHtml}`;
     }).join("");
     const updateTextBoxes = () => {
       const stage = subsystemBubbles?.querySelector(".systems-network svg .map-network-flows");
@@ -2439,16 +2460,17 @@
       window.setTimeout(() => {
         announceCartography("KENNEDY · PERÍMETRO ADMINISTRATIVO", true);
         map.flyTo({ center: [-74.158, 4.629], zoom: 12.2, duration: 4400, essential: true });
-        // Las bolitas y las líneas solo salen cuando el mapa YA llegó de
-        // verdad al polígono de Kennedy (evento real "moveend"), nunca antes.
-        map.once("moveend", () => { showCartography(); });
       }, 700);
       window.setTimeout(() => {
         announceCartography("APROXIMACIÓN · HUMEDAL EL BURRO", true);
         map.flyTo({ center: [-74.158, 4.629], zoom: 13.3, duration: 3800, essential: true });
-        // Al terminar este último acercamiento, el mapa queda fijo del
-        // todo — como un plano, no como un mapa interactivo.
-        map.once("moveend", () => freezeMapAsStaticPlan(map));
+        // Las bolitas, las cajas y las líneas SOLO salen cuando el mapa YA
+        // terminó TODO el recorrido del zoom (este es el último tramo) y
+        // queda quieto de verdad — nunca antes, nunca a medio zoom.
+        map.once("moveend", () => {
+          showCartography();
+          freezeMapAsStaticPlan(map);
+        });
       }, 5300);
       window.setTimeout(() => {
         announceCartography("HUMEDAL EL BURRO · LISTO PARA ACTIVAR UNA RED", true);
