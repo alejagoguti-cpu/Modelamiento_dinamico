@@ -5757,9 +5757,9 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 /* Línea punteada de verdad (guiones cortos pegados a los puntos, no
    circulitos sueltos) — menos "rara", más clara de seguir. */
 .map-network-stage > svg .kennedy-box-link {
-  fill: none; stroke: rgba(255,255,255,0.9); stroke-width: .1;
-  stroke-linecap: butt; stroke-dasharray: .7 .5;
-  opacity: .92;
+  fill: none; stroke: rgba(244,248,249,0.86); stroke-width: .13;
+  stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: none;
+  vector-effect: non-scaling-stroke; opacity: .9;
 }
 /* Envuelve cada ícono de coordenada junto con su nombre debajo — la
    posición real va en este contenedor, el botón adentro solo se acomoda
@@ -5767,18 +5767,22 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 .kennedy-node-wrap {
   position: absolute; z-index: 6;
   transform: translate(-50%, -50%);
-  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
   pointer-events: none;
 }
 .kennedy-node-wrap .map-phenomenon-node {
   position: static !important;
   transform: none !important;
   animation: none !important;
+  pointer-events: auto !important;
+  cursor: pointer;
 }
 .kennedy-node-label {
+  width: 78px; min-height: 14px;
   color: #fff; font-size: 6.5px; font-weight: 700; line-height: 1.1;
+  text-align: center; text-wrap: balance;
   text-shadow: 0 0 3px rgba(0,0,0,.95), 0 0 2px rgba(0,0,0,.95);
-  white-space: nowrap; pointer-events: none;
+  white-space: normal; pointer-events: none;
 }
 
 /* Más alto todavía: con 9 cajas de texto repartidas en 2 columnas, hace
