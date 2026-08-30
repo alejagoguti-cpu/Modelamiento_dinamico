@@ -5633,3 +5633,16 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 }
 .territory-network-plain { position: absolute; inset: 0; }
 @media (max-width: 720px) { .territory-network-plain-wrap { min-height: 520px; } }
+
+/* Sub-bolitas de los submodelos de dinámica hídrica: van ancladas encima
+   de su lugar real en el mapa (no en una posición fija de la pantalla),
+   más chicas que las bolitas grandes para no tapar la cartografía. */
+.map-submodel-hidrica-node {
+  width: 64px !important; height: 64px !important; min-height: 64px !important;
+  font-size: 9px;
+  transform: translate(-50%, -50%) !important;
+  animation: none !important;
+}
+.map-submodel-hidrica-node .map-network-node-icon { font-size: 13px !important; }
+.map-submodel-hidrica-node strong { font-size: 7px !important; line-height: 1.05 !important; max-width: 58px; }
+.map-submodel-hidrica-node:hover, .map-submodel-hidrica-node.selected { transform: translate(-50%, -50%) scale(1.08) !important; }

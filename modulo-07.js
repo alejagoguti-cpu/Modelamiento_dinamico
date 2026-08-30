@@ -1630,6 +1630,20 @@
       { label: "Corabastos", coords: [-74.1599146050763, 4.63015596902525] },
       { label: "Av. Ciudad de Cali", coords: [-74.15162630856268, 4.644831758038044] },
     ];
+    // La dinámica hídrica ya no es UNA bolita: son 3 submodelos, cada uno
+    // encima del lugar real que analiza (solo en Cartografía interactiva,
+    // donde sí hay mapa para anclarlos).
+    const HIDRICA_SUBMODELS = [
+      { id: "fisicoquimica", label: "Fisicoquímica y Calidad de Agua", place: "Humedal La Vaca", coords: [-74.16284778855655, 4.62939492240078],
+        variables: "Cargas de DBO (Demanda Biológica de Oxígeno), eutrofización, lixiviados de Corabastos, pérdida de oxígeno disuelto.",
+        sustento: "Evalúa la transformación de la composición química del agua ante la presión antrópica." },
+      { id: "hidrodinamico", label: "Hidrodinámico e Infiltración", place: "Humedal El Burro", coords: [-74.14987475206779, 4.64210777486686],
+        variables: "Coeficiente de escorrentía, capacidad de permeabilidad del suelo, impermeabilización por asfalto (Av. Ciudad de Cali), recarga de acuíferos.",
+        sustento: "Evalúa el comportamiento físico y la velocidad del flujo del agua en el espacio." },
+      { id: "hidromorfodinamico", label: "Hidromorfodinámico y Riesgo de Inundación", place: "Río Tunjuelo", coords: [-74.17429119107521, 4.603360016778938],
+        variables: "Caudal pico, capacidad de carga del canal, áreas de desborde, desbordamiento sobre la masa urbana (Patio Bonito/Tintal).",
+        sustento: "Evalúa la interacción entre la geometría del canal/río y los volúmenes de agua acumulados en eventos climáticos." },
+    ];
     // ---------- Sonidos ambiente por dinámica (sintetizados, sin archivos
     // externos) — cada burbuja del territorio suena distinto al tocarla:
     // el agua "corre", el pájaro "trina", el tráfico "zumba", etc. ----------
@@ -2187,6 +2201,13 @@
           if (labelEl) { labelEl.style.left = proj.x.toFixed(2) + "%"; labelEl.style.top = proj.y.toFixed(2) + "%"; }
         });
       });
+      // Las 3 sub-bolitas de dinámica hídrica también se mueven encima de
+      // su lugar real cuando el usuario mueve o hace zoom en el mapa.
+      HIDRICA_SUBMODELS.forEach((sub, i) => {
+        const proj = projectToPercent(sub.coords);
+        const el = subsystemBubbles.querySelector(`#map-submodel-hidrica-${i}`);
+        if (proj && el) { el.style.left = proj.x.toFixed(2) + "%"; el.style.top = proj.y.toFixed(2) + "%"; }
+      });
     };
     const renderMapNetwork = (mode = "systems", showBonds = true, target = subsystemBubbles, withFlows = true) => {
       if (!target) return;
@@ -2198,10 +2219,21 @@
       const submodelIcons = ["fa-water", "fa-feather-pointed", "fa-city", "fa-person-walking", "fa-house-chimney", "fa-people-arrows", "fa-arrows-rotate"];
       const label = (row) => systems ? row.name : row.name.replace(/^Submodelo de /, "");
       const icon = (index) => (systems ? systemIcons : submodelIcons)[index] || "fa-circle-nodes";
-      const nodes = rows.map((row, index) => { const [x,y] = positions[index]; return `<button type="button" class="map-network-node ${systems ? "map-system-node" : "map-submodel-node"}" data-map-network-index="${index}" style="--node-x:${x}%;--node-y:${y}%;--node-color:${row.color || colors[index]}"><i class="map-network-node-icon fa-solid ${icon(index)}" aria-hidden="true"></i><strong>${label(row)}</strong></button>`; }).join("");
-      const relationPairs = systems
+      // Cuando la red está anclada al mapa real (Cartografía interactiva),
+      // la bolita única de "Dinámica hídrica" (índice 0) se reemplaza por
+      // sus 3 submodelos, cada uno puesto encima de su lugar real.
+      const hideHidricaBubble = systems && withFlows;
+      const nodes = rows.map((row, index) => { if (hideHidricaBubble && index === 0) return ""; const [x,y] = positions[index]; return `<button type="button" class="map-network-node ${systems ? "map-system-node" : "map-submodel-node"}" data-map-network-index="${index}" style="--node-x:${x}%;--node-y:${y}%;--node-color:${row.color || colors[index]}"><i class="map-network-node-icon fa-solid ${icon(index)}" aria-hidden="true"></i><strong>${label(row)}</strong></button>`; }).join("");
+      const hidricaColor = territorySystems[0].color;
+      const submodelBubblesHtml = hideHidricaBubble ? HIDRICA_SUBMODELS.map((sub, i) => {
+        const proj = projectToPercent(sub.coords);
+        if (!proj) return "";
+        return `<button type="button" class="map-network-node map-submodel-hidrica-node" id="map-submodel-hidrica-${i}" data-submodel-index="${i}" style="left:${proj.x.toFixed(2)}%;top:${proj.y.toFixed(2)}%;--node-color:${hidricaColor}"><i class="map-network-node-icon fa-solid fa-droplet" aria-hidden="true"></i><strong>${sub.label}</strong></button>`;
+      }).join("") : "";
+      const relationPairs = (systems
         ? [[0,1],[0,2],[0,5],[1,2],[1,3],[1,5],[2,3],[2,4],[3,4],[3,5],[4,5]]
-        : [[0,1],[0,2],[1,2],[1,3],[2,3],[2,4],[3,4],[3,5],[4,5],[4,6],[5,6],[0,6],[1,5]];
+        : [[0,1],[0,2],[1,2],[1,3],[2,3],[2,4],[3,4],[3,5],[4,5],[4,6],[5,6],[0,6],[1,5]]
+      ).filter(([a, b]) => !(hideHidricaBubble && (a === 0 || b === 0)));
       const gradientDefs = [];
       const bonds = relationPairs.map(([fromIndex, toIndex], edgeIndex) => {
         const row = rows[fromIndex], other = rows[toIndex];
@@ -2255,7 +2287,23 @@
       target.classList.add("network-active");
       const flowsSvg = (systems && withFlows) ? buildFlowGroupsSvg(positions) : "";
       const flowDotsHtml = (systems && withFlows) ? buildFlowDotsHtml() : "";
-      target.innerHTML = `<div class="map-network-stage ${systems ? "systems-network" : "submodels-network"}"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><defs>${gradientDefs.join("")}</defs><g class="map-network-flows">${flowsSvg}</g><g class="map-network-bonds">${showBonds ? bonds : ""}</g></svg>${flowDotsHtml}${nodes}</div>`;
+      target.innerHTML = `<div class="map-network-stage ${systems ? "systems-network" : "submodels-network"}"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><defs>${gradientDefs.join("")}</defs><g class="map-network-flows">${flowsSvg}</g><g class="map-network-bonds">${showBonds ? bonds : ""}</g></svg>${flowDotsHtml}${nodes}${submodelBubblesHtml}</div>`;
+      if (hideHidricaBubble) {
+        target.querySelectorAll(".map-submodel-hidrica-node").forEach((button) => button.addEventListener("click", () => {
+          const sub = HIDRICA_SUBMODELS[Number(button.dataset.submodelIndex)];
+          if (!sub) return;
+          DINAMICA_SOUND.play("hidrica");
+          target.querySelectorAll(".map-network-node").forEach((node) => node.classList.toggle("selected", node === button));
+          target.querySelectorAll(".subsystem-components, .subsystem-purpose-panel, .map-network-detail").forEach((node) => node.remove());
+          const purpose = document.createElement("aside");
+          purpose.className = "subsystem-purpose-panel active map-purpose-panel";
+          purpose.style.setProperty("--bubble-color", hidricaColor);
+          purpose.innerHTML = `<div class="subsystem-panel-heading"><strong>Submodelo de ${sub.label}</strong><button type="button" class="subsystem-panel-close" aria-label="Cerrar panel"><i class="fa-solid fa-xmark"></i></button></div><p class="panel-scope-label">${sub.place.toUpperCase()}</p><h4>Variables que analiza</h4><p>${sub.variables}</p><h4>Sustento</h4><p>${sub.sustento}</p>`;
+          target.append(purpose);
+          const closePanels = (event) => { event?.stopPropagation(); purpose.remove(); button.classList.remove("selected"); };
+          purpose.querySelector(".subsystem-panel-close")?.addEventListener("click", closePanels);
+        }));
+      }
       target.querySelectorAll(".map-network-node").forEach((button) => button.addEventListener("click", () => {
         const row = rows[Number(button.dataset.mapNetworkIndex)];
         if (row?.id) DINAMICA_SOUND.play(row.id);
@@ -2316,7 +2364,7 @@
       if (reduced) {
         map.jumpTo({ center: [-74.158, 4.629], zoom: 13.3 });
         announceCartography("HUMEDAL EL BURRO · AGUA Y SUBSISTEMAS", true);
-        drawSubsystems({ hidden: true });
+        showCartography();
         return;
       }
       announceCartography("BOGOTÁ · LECTURA GENERAL", true);
@@ -2324,15 +2372,18 @@
       map.jumpTo({ center: [-74.09, 4.65], zoom: 9.3 });
       window.setTimeout(() => {
         announceCartography("KENNEDY · PERÍMETRO ADMINISTRATIVO", true);
-        map.flyTo({ center: [-74.158, 4.629], zoom: 12.2, duration: 3400, essential: true });
-      }, 600);
+        map.flyTo({ center: [-74.158, 4.629], zoom: 12.2, duration: 4400, essential: true });
+      }, 700);
+      // Las bolitas y las líneas (moradas y blancas) ya salen apenas el
+      // zoom llega a Kennedy, no hasta el final del todo.
+      window.setTimeout(() => { showCartography(); }, 5300);
       window.setTimeout(() => {
         announceCartography("APROXIMACIÓN · HUMEDAL EL BURRO", true);
-        map.flyTo({ center: [-74.158, 4.629], zoom: 13.3, duration: 3000, essential: true });
-      }, 4000);
+        map.flyTo({ center: [-74.158, 4.629], zoom: 13.3, duration: 3800, essential: true });
+      }, 5300);
       window.setTimeout(() => {
         announceCartography("HUMEDAL EL BURRO · LISTO PARA ACTIVAR UNA RED", true);
-      }, 7300);
+      }, 9400);
     };
     const setupCartographyEntrance = (map) => {
       const section = document.querySelector(".cartography-section");
