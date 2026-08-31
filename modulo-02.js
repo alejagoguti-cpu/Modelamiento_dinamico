@@ -2318,9 +2318,9 @@ function filterNetwork(mode) {
 
 /* -------- conclusión modal -------- */
 const MAIN_CONCLUSION_FUNCTIONS = [
-  { title: "1. dependen de múltiples actores", icon: "fa-people-group" },
-  { title: "2. atraviesan diferentes escalas", icon: "fa-arrows-up-down" },
-  { title: "3. producen efectos no previstos", icon: "fa-sparkles" }
+  { title: "1. Dependen de múltiples actores", icon: "fa-users" },
+  { title: "2. Atraviesan diferentes escalas", icon: "fa-expand" },
+  { title: "3. Producen efectos no previstos", icon: "fa-bolt" }
 ];
 
 const MAIN_CONCLUSION_STEP1 = `
