@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -164,7 +164,7 @@
             <button class="humedales-overlay-close" id="manzanasOverlayClose" type="button" aria-label="Cerrar">&times;</button>
           </div>
           <div class="humedales-overlay-body" id="manzanasOverlayBody">
-            <!-- imagen + hotspots + ficha lateral se generan din�micamente -->
+            <!-- imagen + hotspots + ficha lateral se generan din�micamente -->
           </div>
         </div>
 
@@ -358,7 +358,31 @@
       <div class="node-info-mapa" id="nodeInfoMapaWrap" style="display:none;">
         <a id="nodeInfoMapa" href="#" target="_blank" rel="noopener"><i class="fa-solid fa-map-location-dot"></i> Ver cartografía / geoportal oficial</a>
       </div>
+    </div> <!-- END network-sidebar -->
+    
+    <!-- VISTA AMPLIADA 4: Patrimonio -->
+    <div class="patrimonio-overlay" id="patrimonioOverlay" style="display:none;">
+      <div class="patrimonio-overlay-header">
+        <div class="patrimonio-overlay-title-block">
+          <div class="patrimonio-overlay-title" id="patrimonioOverlayTitle">Estructura Integradora de Patrimonios</div>
+          <div class="patrimonio-overlay-subtitle">Patrimonio material, inmaterial, natural y arqueológico articulado con las comunidades</div>
+        </div>
+        <button class="humedales-overlay-close" id="patrimonioOverlayClose" type="button" aria-label="Cerrar">&times;</button>
+      </div>
+      <div class="patrimonio-overlay-body" id="patrimonioOverlayBody">
+        <div class="map-placeholder-content">
+          <div class="map-placeholder-icon" style="background: rgba(251, 141, 132, 0.12); color: #fb8d84;"><i class="fa-solid fa-landmark"></i></div>
+          <h3>Mapa: Estructura de Patrimonios</h3>
+          <p>Espacio preparado para integrar la cartografía de bienes patrimoniales, polígonos de protección, memorias vivas e hitos urbanos.</p>
+          <div class="map-placeholder-hint" style="color: #fb8d84; border-color: rgba(251, 141, 132, 0.25); background: rgba(251, 141, 132, 0.08);">
+            <i class="fa-solid fa-code"></i> Puedes personalizar la vista en <code>modulo-02.js</code> &gt; función <code>showPatrimonioOverlay()</code>.
+          </div>
+        </div>
+      </div>
     </div>
+
+  </div> <!-- END network-body -->
+</div> <!-- END module-content -->
 
     <!-- MODAL POPUP: SELECTOR DE MAPAS (EXPLORAR RELACIONES EN DETALLE) -->
     <div class="modal-backdrop" id="modalExplorarRelaciones" style="display:none;" aria-hidden="true" role="dialog" aria-labelledby="modalExplorarTitle">
@@ -436,5 +460,10 @@
 
 </body>
 </html>
+
+
+
+
+
 
 
