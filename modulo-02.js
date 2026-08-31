@@ -2050,17 +2050,95 @@ function showInitialPopup() {
       <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; margin: 0 0 16px 0 !important; color: #ffffff;">
         Reserva Distrital de Humedal
       </h2>
-      <div style="background: #1a1a1a; border: 1px solid #333333; border-radius: 12px; overflow: hidden; margin-bottom: 16px; animation: slideInCard 0.5s ease-out;">
-        <img src="https://raw.githubusercontent.com/alejagoguti-cpu/Modelamiento_dinamico/main/RESERVA_HUMEDAL.webp" alt="Cartografía de Humedales" style="width: 100%; height: auto; display: block; border-radius: 12px; background: #0a0a0a;">
+      <div style="background: #1a1a1a; border: 1px solid #333333; border-radius: 12px; overflow: hidden; margin-bottom: 16px; animation: slideInCard 0.5s ease-out; position: relative;">
+        <img src="https://raw.githubusercontent.com/alejagoguti-cpu/Modelamiento_dinamico/main/RESERVA_HUMEDAL.webp" alt="Cartografía de Humedales" style="width: 100%; height: auto; display: block; border-radius: 12px; background: #0a0a0a;" id="cartography-img">
+
+        <!-- Nodo: Clasifica (encima de la tabla) -->
+        <div class="cartography-node" data-label="Clasifica" style="position: absolute; left: 8%; top: 45%; transform: translate(-50%, -50%); cursor: pointer;">
+          <div style="width: 40px; height: 40px; background: #2fd4c8; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px rgba(47, 212, 200, 0.6), 0 0 40px rgba(47, 212, 200, 0.3); transition: all 0.3s ease; border: 2px solid rgba(255,255,255,0.2);">
+            <span style="font-size: 18px; font-weight: bold; color: #000;">📊</span>
+          </div>
+          <div style="color: #2fd4c8; font-size: 11px; margin-top: 4px; text-align: center; font-weight: 600; white-space: nowrap;">Clasifica</div>
+        </div>
+
+        <!-- Nodo: Regula (encima de Concertación POT) -->
+        <div class="cartography-node" data-label="Regula" style="position: absolute; left: 18%; top: 12%; transform: translate(-50%, -50%); cursor: pointer;">
+          <div style="width: 40px; height: 40px; background: #ff9d2e; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px rgba(255, 157, 46, 0.6), 0 0 40px rgba(255, 157, 46, 0.3); transition: all 0.3s ease; border: 2px solid rgba(255,255,255,0.2);">
+            <span style="font-size: 18px; font-weight: bold; color: #fff;">⚖️</span>
+          </div>
+          <div style="color: #ff9d2e; font-size: 11px; margin-top: 4px; text-align: center; font-weight: 600; white-space: nowrap;">Regula</div>
+        </div>
+
+        <!-- Nodo: Protege (encima de Áreas que se conservan) -->
+        <div class="cartography-node" data-label="Protege" style="position: absolute; right: 15%; top: 20%; transform: translate(50%, -50%); cursor: pointer;">
+          <div style="width: 40px; height: 40px; background: #5b8def; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px rgba(91, 141, 239, 0.6), 0 0 40px rgba(91, 141, 239, 0.3); transition: all 0.3s ease; border: 2px solid rgba(255,255,255,0.2);">
+            <span style="font-size: 18px; font-weight: bold; color: #fff;">🛡️</span>
+          </div>
+          <div style="color: #5b8def; font-size: 11px; margin-top: 4px; text-align: center; font-weight: 600; white-space: nowrap;">Protege</div>
+        </div>
+
+        <!-- Nodo: Delimita (encima del plano de humedales) -->
+        <div class="cartography-node" data-label="Delimita" style="position: absolute; left: 50%; top: 55%; transform: translate(-50%, -50%); cursor: pointer;">
+          <div style="width: 40px; height: 40px; background: #2fd4c8; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px rgba(47, 212, 200, 0.6), 0 0 40px rgba(47, 212, 200, 0.3); transition: all 0.3s ease; border: 2px solid rgba(255,255,255,0.2);">
+            <span style="font-size: 18px; font-weight: bold; color: #000;">🗺️</span>
+          </div>
+          <div style="color: #2fd4c8; font-size: 11px; margin-top: 4px; text-align: center; font-weight: 600; white-space: nowrap;">Delimita</div>
+        </div>
+
+        <!-- Nodo: Orienta intervenciones (encima del logo POT) -->
+        <div class="cartography-node" data-label="Orienta intervenciones" style="position: absolute; left: 12%; top: 8%; transform: translate(-50%, -50%); cursor: pointer;">
+          <div style="width: 40px; height: 40px; background: #ff9d2e; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px rgba(255, 157, 46, 0.6), 0 0 40px rgba(255, 157, 46, 0.3); transition: all 0.3s ease; border: 2px solid rgba(255,255,255,0.2);">
+            <span style="font-size: 18px; font-weight: bold; color: #fff;">🧭</span>
+          </div>
+          <div style="color: #ff9d2e; font-size: 11px; margin-top: 4px; text-align: center; font-weight: 600; white-space: nowrap; max-width: 60px;">Orienta<br>intervenciones</div>
+        </div>
       </div>
       <p style="font-size: 12px; color: #999999; text-align: center; margin: 0;">
-        17 áreas de reserva distrital de humedal en Bogotá
+        17 áreas de reserva distrital de humedal en Bogotá — Presiona los nodos para más información
       </p>
     `;
 
     const backBtn = modal.querySelector("#back-to-cards");
     if (backBtn) {
       backBtn.addEventListener("click", showCards);
+    }
+
+    // Agregar interactividad a los nodos
+    const nodes = modal.querySelectorAll(".cartography-node");
+    nodes.forEach(node => {
+      node.addEventListener("mouseover", function() {
+        this.querySelector("div").style.transform = "scale(1.2)";
+        this.querySelector("div").style.boxShadow = "0 0 30px rgba(47, 212, 200, 0.9), 0 0 60px rgba(47, 212, 200, 0.5)";
+      });
+      node.addEventListener("mouseout", function() {
+        this.querySelector("div").style.transform = "scale(1)";
+        this.querySelector("div").style.boxShadow = "0 0 20px rgba(47, 212, 200, 0.6), 0 0 40px rgba(47, 212, 200, 0.3)";
+      });
+      node.addEventListener("click", function() {
+        const label = this.getAttribute("data-label");
+        console.log("Nodo clickeado:", label);
+      });
+    });
+
+    // Agregar estilos para los nodos si no existen
+    if (!document.getElementById("cartography-nodes-styles")) {
+      const style = document.createElement("style");
+      style.id = "cartography-nodes-styles";
+      style.innerHTML = `
+        .cartography-node {
+          animation: nodeEnter 0.5s ease-out both;
+        }
+        @keyframes nodeEnter {
+          0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+          100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+        .cartography-node:nth-child(2) { animation-delay: 0.1s; }
+        .cartography-node:nth-child(3) { animation-delay: 0.2s; }
+        .cartography-node:nth-child(4) { animation-delay: 0.3s; }
+        .cartography-node:nth-child(5) { animation-delay: 0.4s; }
+        .cartography-node:nth-child(6) { animation-delay: 0.5s; }
+      `;
+      document.head.appendChild(style);
     }
   }
 
