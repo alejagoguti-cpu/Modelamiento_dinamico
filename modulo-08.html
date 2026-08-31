@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="modulo-08.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link href="https://unpkg.com/maplibre-gl@6.5.0/dist/maplibre-gl.css" rel="stylesheet">
   <link rel="stylesheet" href="site-theme.css?v=20260823">
   <script src="modulo-08-data.js"></script>
   <script src="modulo-08-relations.js"></script>
@@ -349,7 +350,7 @@
       </div>
       <div class="sumo-sim-card">
         <div class="sumo-canvas-wrap">
-          <canvas id="sumoNetCanvas"></canvas>
+          <div id="sumoMap"></div>
           <canvas id="sumoVehCanvas"></canvas>
           <div class="sumo-sim-overlay" id="sumoStatus">Cargando red vial…</div>
         </div>
@@ -401,6 +402,7 @@
 </div>
 
 <script src="modulo-08.js"></script>
+<script src="https://unpkg.com/maplibre-gl@6.5.0/dist/maplibre-gl.js"></script>
 <script src="modulo-08-sumo.js"></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="modulo-08-noise.js"></script>
