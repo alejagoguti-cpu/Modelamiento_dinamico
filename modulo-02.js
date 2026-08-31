@@ -2318,11 +2318,9 @@ function filterNetwork(mode) {
 
 /* -------- conclusión modal -------- */
 const MAIN_CONCLUSION_FUNCTIONS = [
-  { title: "TIEMPO", icon: "fa-clock", tooltip: "cambian en el tiempo" },
-  { title: "ACTORES", icon: "fa-people-group", tooltip: "dependen de múltiples actores" },
-  { title: "ESCALAS", icon: "fa-arrows-up-down", tooltip: "atraviesan diferentes escalas" },
-  { title: "EFECTOS", icon: "fa-sparkles", tooltip: "producen efectos no previstos" },
-  { title: "Orienta intervenciones", icon: "fa-compass", tooltip: "pero tiene límites para representar procesos" }
+  { title: "1. dependen de múltiples actores", icon: "fa-people-group" },
+  { title: "2. atraviesan diferentes escalas", icon: "fa-arrows-up-down" },
+  { title: "3. producen efectos no previstos", icon: "fa-sparkles" }
 ];
 
 const MAIN_CONCLUSION_STEP1 = `
@@ -2333,7 +2331,7 @@ const MAIN_CONCLUSION_STEP1 = `
     <svg id="conclusionNetworkViz" viewBox="0 0 2500 1820" preserveAspectRatio="xMidYMid meet"></svg>
   </div>
   <div class="main-conclusion-answer">
-    <p>Al reconstruir su modelo, encontramos que el POT hace principalmente legibles estructuras, componentes, relaciones funcionales y reglas de intervención. Esto permite construir una representación organizada del territorio</p>
+    <p>tiene límites para representar procesos y cambian en el tiempo.</p>
   </div>
   <button class="main-conclusion-explore-btn" id="mainConclusionNextBtn">DESCUBRIR</button>
 `;
@@ -2343,7 +2341,7 @@ const MAIN_CONCLUSION_STEP2 = `
     ${MAIN_CONCLUSION_FUNCTIONS.map((fn, idx) => `
       <div class="conclusion-function-card" style="--d:${idx * 0.1}s">
         <i class="fa-solid ${fn.icon}"></i>
-        <p class="conclusion-card-text">cambian en el tiempo, dependen de múltiples actores, atraviesan diferentes escalas y producen efectos no previstos</p>
+        <h3>${fn.title}</h3>
       </div>
     `).join('')}
   </div>
