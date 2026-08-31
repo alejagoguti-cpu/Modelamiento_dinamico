@@ -5790,3 +5790,34 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
    falta más espacio vertical para que ninguna se toque con la siguiente. */
 .cartography-visual.real-map-shell { min-height: 900px !important; height: min(92vh, 1040px) !important; }
 @media (max-width: 760px) { .cartography-visual.real-map-shell, .real-cartography-map { min-height: 620px !important; height: 78vh !important; } }
+
+/* ================= ¿QUÉ QUEREMOS HACER VISIBLE? ================= */
+.hero-copy .hero-question {
+  color: #fff; font-weight: 600; font-style: italic; line-height: 1.4;
+  margin: 4px 0; max-width: 420px;
+}
+.visible-elements-section {
+  margin: 12px 10px 18px; padding: 18px; border: 1px solid rgba(118,255,240,.3);
+  border-radius: 10px; background: linear-gradient(135deg, rgba(7,17,16,.98), rgba(10,13,16,.98));
+}
+.visible-elements-section h2 { margin: 7px 0 16px; color: #fff; font: 700 20px/1.15 "Space Grotesk", Inter, sans-serif; }
+.visible-elements-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 12px; margin-bottom: 16px;
+}
+.visible-element-card {
+  border: 1px solid rgba(118,255,240,.28); border-radius: 9px; padding: 14px;
+  background: rgba(118,255,240,.05); display: flex; flex-direction: column; gap: 6px;
+}
+.visible-element-card i { font-size: 18px; color: var(--ve-color, #76fff0); }
+.visible-element-card strong { color: #fff; font-size: 13px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
+.visible-element-card span { color: rgba(242,236,227,.72); font-size: 11px; line-height: 1.45; }
+.ve-agentes { --ve-color: #f1cf5b; }
+.ve-procesos { --ve-color: #ee9a4b; }
+.ve-flujos { --ve-color: #56b8d4; }
+.ve-interacciones { --ve-color: #b28be8; }
+.visible-elements-purpose {
+  border-top: 1px solid rgba(255,255,255,.1); padding-top: 12px; margin: 0;
+  color: rgba(242,236,227,.85); font-size: 12px; line-height: 1.5;
+}
+.visible-elements-purpose strong { color: #76fff0; }
