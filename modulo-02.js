@@ -2386,10 +2386,12 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("btnVerHallazgos")?.addEventListener("click", verHallazgosConAnimacion);
   document.getElementById("btnExplorarRelaciones")?.addEventListener("click", explorarRelacionesConAnimacion);
 
-  // Mostrar popup inicial después de 500ms (cuando la página esté completamente lista)
-  setTimeout(() => {
-    showInitialPopup();
-  }, 500);
+  // Mostrar popup inicial después de 500ms SOLO si estamos en modulo-02.html
+  if (window.location.pathname.includes("modulo-02")) {
+    setTimeout(() => {
+      showInitialPopup();
+    }, 500);
+  }
 });
 
 
