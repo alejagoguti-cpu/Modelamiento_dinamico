@@ -2204,29 +2204,28 @@
     // ciclo o dinámica que ocurre en general en la red hídrica de Bogotá
     // — no es un mapa de un lugar puntual, es un esquema general.
     // Mini-red de un subsistema: sus DINÁMICAS/CICLOS reales (no sustantivos
-    // fijos como "aves" o "vías") conectadas EN CICLO entre sí, mostrando
-    // cómo una lleva a la siguiente — no hay un centro/hub, son las
-    // dinámicas relacionándose directamente unas con otras.
+    // fijos como "aves" o "vías"), con el texto DENTRO de cada bola, y TODAS
+    // conectadas con TODAS (no solo con la siguiente) — para mostrar que
+    // cualquier dinámica puede afectar a cualquier otra, no una secuencia.
     function buildMiniNetworkSvg(items, color, systemId) {
-      const cx = 150, cy = 105, R = 82;
+      const cx = 150, cy = 108, R = 82, nodeR = 34;
       const n = items.length;
       const nodes = items.map((label, i) => {
         const angle = (i / n) * Math.PI * 2 - Math.PI / 2;
         return { label, x: cx + R * Math.cos(angle), y: cy + R * Math.sin(angle) };
       });
-      // cada dinámica conecta con la siguiente, formando un ciclo cerrado
-      const lines = nodes.map((p, i) => {
-        const next = nodes[(i + 1) % n];
-        return `<line x1="${p.x.toFixed(1)}" y1="${p.y.toFixed(1)}" x2="${next.x.toFixed(1)}" y2="${next.y.toFixed(1)}" class="mini-net-line" marker-end="url(#miniCycleArrow-${systemId})"/>`;
-      }).join("");
-      const nodeCircles = nodes.map((p) => `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="8" class="mini-net-node" style="--node-color:${color}"/>`).join("");
-      const labels = nodes.map((p) => {
-        const anchor = p.x > cx + 4 ? "start" : p.x < cx - 4 ? "end" : "middle";
-        const dx = p.x > cx + 4 ? 11 : p.x < cx - 4 ? -11 : 0;
-        return `<text x="${(p.x + dx).toFixed(1)}" y="${(p.y + 3).toFixed(1)}" class="mini-net-label" text-anchor="${anchor}">${p.label}</text>`;
-      }).join("");
-      const marker = `<defs><marker id="miniCycleArrow-${systemId}" markerWidth="6" markerHeight="6" refX="12" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="${color}"/></marker></defs>`;
-      return `<svg viewBox="0 0 300 210" class="mini-network-svg" data-system="${systemId}">${marker}${lines}${nodeCircles}${labels}</svg>`;
+      // TODAS las dinámicas conectadas con TODAS (malla completa)
+      let lines = "";
+      for (let i = 0; i < n; i++) {
+        for (let j = i + 1; j < n; j++) {
+          lines += `<line x1="${nodes[i].x.toFixed(1)}" y1="${nodes[i].y.toFixed(1)}" x2="${nodes[j].x.toFixed(1)}" y2="${nodes[j].y.toFixed(1)}" class="mini-net-line"/>`;
+        }
+      }
+      const nodeCircles = nodes.map((p) =>
+        `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${nodeR}" class="mini-net-node" style="--node-color:${color}"/>` +
+        `<foreignObject x="${(p.x - nodeR + 4).toFixed(1)}" y="${(p.y - nodeR + 4).toFixed(1)}" width="${(nodeR - 4) * 2}" height="${(nodeR - 4) * 2}"><div xmlns="http://www.w3.org/1999/xhtml" class="mini-net-node-text">${p.label}</div></foreignObject>`
+      ).join("");
+      return `<svg viewBox="0 0 300 220" class="mini-network-svg" data-system="${systemId}">${lines}${nodeCircles}</svg>`;
     }
 
     // "Ver toda la red junta": explota los 6 subsistemas con TODOS sus
@@ -2249,19 +2248,21 @@
       let svgParts = [];
       let nodeIndex = 0;
       const allDynamicNodes = [];
-      // las dinámicas de cada sistema, conectadas EN CICLO entre sí
-      // (no a un centro/hub) — se agrupan alrededor de su punto de racimo.
+      // las dinámicas de cada sistema, TODAS conectadas con TODAS entre sí
+      // (malla completa, igual que en la mini-red) — se agrupan alrededor
+      // de su punto de racimo (invisible, sin bola ahí).
       clusters.forEach((cl) => {
         const items = cl.dynamics || cl.components;
-        const satR = 85;
+        const satR = 92;
         const nodesHere = items.map((label, i) => {
           const angle = (i / items.length) * Math.PI * 2 - Math.PI / 2;
           return { label, x: cl.cx + satR * Math.cos(angle), y: cl.cy + satR * Math.sin(angle), color: cl.color, sysId: cl.id };
         });
-        nodesHere.forEach((n, i) => {
-          const next = nodesHere[(i + 1) % nodesHere.length];
-          svgParts.push(`<line x1="${n.x}" y1="${n.y}" x2="${next.x}" y2="${next.y}" class="combined-sat-line" style="--node-color:${cl.color}"/>`);
-        });
+        for (let i = 0; i < nodesHere.length; i++) {
+          for (let j = i + 1; j < nodesHere.length; j++) {
+            svgParts.push(`<line x1="${nodesHere[i].x}" y1="${nodesHere[i].y}" x2="${nodesHere[j].x}" y2="${nodesHere[j].y}" class="combined-sat-line" style="--node-color:${cl.color}"/>`);
+          }
+        }
         allDynamicNodes.push(...nodesHere);
       });
       // conexiones cruzadas por palabras en comun entre dinámicas de
@@ -2283,7 +2284,13 @@
         }
       }
       svgParts.push(...crossLines);
-      const dynCircles = allDynamicNodes.map((n) => `<g class="combined-node combined-sat-node" style="--node-color:${n.color};--node-i:${nodeIndex++}"><circle cx="${n.x}" cy="${n.y}" r="10"/><text x="${n.x}" y="${n.y + 17}" text-anchor="middle" class="combined-sat-label">${n.label}</text></g>`).join("");
+      const nodeR2 = 26;
+      const dynCircles = allDynamicNodes.map((n) =>
+        `<g class="combined-node combined-sat-node" style="--node-color:${n.color};--node-i:${nodeIndex++}">` +
+        `<circle cx="${n.x}" cy="${n.y}" r="${nodeR2}"/>` +
+        `<foreignObject x="${n.x - nodeR2 + 3}" y="${n.y - nodeR2 + 3}" width="${(nodeR2 - 3) * 2}" height="${(nodeR2 - 3) * 2}"><div xmlns="http://www.w3.org/1999/xhtml" class="combined-sat-label">${n.label}</div></foreignObject>` +
+        `</g>`
+      ).join("");
       overlay.innerHTML = `
         <div class="combined-network-panel">
           <div class="combined-network-heading">
