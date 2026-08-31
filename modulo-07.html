@@ -74,59 +74,83 @@
                referente): cada línea es una relación bidireccional real
                entre dos elementos — hazle click para leer qué significa. -->
           <div class="bubble-net-wrap" id="visibleNetworkWrap">
-            <svg class="bubble-net-svg" viewBox="0 0 500 460">
+            <svg class="bubble-net-svg" viewBox="0 0 560 500" role="img" aria-label="Red de agentes, procesos, flujos, interacciones, sistemas y emergencia">
               <defs>
-                <marker id="vnArrowEnd" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#bcd8d4"/></marker>
-                <marker id="vnArrowFeedback" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#ee9a4b"/></marker>
+                <marker id="vnArrowEnd" markerWidth="4.5" markerHeight="4.5" refX="3.7" refY="2.25" orient="auto"><path d="M0,0 L4.5,2.25 L0,4.5 Z" fill="#f1f7f5"/></marker>
               </defs>
-              <!-- Líneas primero, abajo de los círculos -->
+              <!-- Relaciones suaves: cada trazo mantiene su flecha pequeña y su flujo animado. -->
               <g class="bubble-net-edges">
-                <path id="vn-edge-agentes-procesos" class="bubble-edge-hit" d="M 150 95 L 300 78"/>
-                <path class="bubble-edge-visual" d="M 150 95 L 300 78" marker-end="url(#vnArrowEnd)"/>
-                <path id="vn-edge-agentes-flujos" class="bubble-edge-hit" d="M 145 105 L 100 175"/>
-                <path class="bubble-edge-visual" d="M 145 105 L 100 175" marker-end="url(#vnArrowEnd)"/>
-                <path id="vn-edge-agentes-sistemas" class="bubble-edge-hit" d="M 148 118 L 115 255"/>
-                <path class="bubble-edge-visual" d="M 148 118 L 115 255" marker-end="url(#vnArrowEnd)"/>
-                <path id="vn-edge-procesos-flujos" class="bubble-edge-hit" d="M 290 92 L 108 168"/>
-                <path class="bubble-edge-visual" d="M 290 92 L 108 168" marker-end="url(#vnArrowEnd)"/>
-                <path id="vn-edge-procesos-sistemas" class="bubble-edge-hit" d="M 295 100 L 125 250"/>
-                <path class="bubble-edge-visual" d="M 295 100 L 125 250" marker-end="url(#vnArrowEnd)"/>
-                <path id="vn-edge-flujos-sistemas" class="bubble-edge-hit" d="M 105 190 L 112 245"/>
-                <path class="bubble-edge-visual" d="M 105 190 L 112 245" marker-end="url(#vnArrowEnd)"/>
-                <!-- Interacciones (el círculo grande) conecta con TODOS -->
-                <path id="vn-edge-interacciones-agentes" class="bubble-edge-hit bubble-edge-tejido-hit" d="M 320 195 L 165 90"/>
-                <path class="bubble-edge-visual bubble-edge-tejido" d="M 320 195 L 165 90" marker-end="url(#vnArrowEnd)"/>
-                <path id="vn-edge-interacciones-procesos" class="bubble-edge-hit bubble-edge-tejido-hit" d="M 325 175 L 295 85"/>
-                <path class="bubble-edge-visual bubble-edge-tejido" d="M 325 175 L 295 85" marker-end="url(#vnArrowEnd)"/>
-                <path id="vn-edge-interacciones-flujos" class="bubble-edge-hit bubble-edge-tejido-hit" d="M 285 195 L 120 180"/>
-                <path class="bubble-edge-visual bubble-edge-tejido" d="M 285 195 L 120 180" marker-end="url(#vnArrowEnd)"/>
-                <path id="vn-edge-interacciones-sistemas" class="bubble-edge-hit bubble-edge-tejido-hit" d="M 300 225 L 140 262"/>
-                <path class="bubble-edge-visual bubble-edge-tejido" d="M 300 225 L 140 262" marker-end="url(#vnArrowEnd)"/>
-                <path id="vn-edge-interacciones-emergencia" class="bubble-edge-hit bubble-edge-tejido-hit" d="M 300 235 L 265 300"/>
-                <path class="bubble-edge-visual bubble-edge-tejido" d="M 300 235 L 265 300" marker-end="url(#vnArrowEnd)"/>
-                <!-- Retroalimentación de Emergencia: más suave, un solo sentido -->
-                <path id="vn-edge-emergencia-agentes" class="bubble-edge-hit" d="M 235 285 L 165 105"/>
-                <path class="bubble-edge-visual bubble-edge-feedback" d="M 235 285 L 165 105" marker-end="url(#vnArrowFeedback)"/>
-                <path id="vn-edge-emergencia-procesos" class="bubble-edge-hit" d="M 260 280 L 285 100"/>
-                <path class="bubble-edge-visual bubble-edge-feedback" d="M 260 280 L 285 100" marker-end="url(#vnArrowFeedback)"/>
-                <path id="vn-edge-emergencia-sistemas" class="bubble-edge-hit" d="M 220 300 L 135 270"/>
-                <path class="bubble-edge-visual bubble-edge-feedback" d="M 220 300 L 135 270" marker-end="url(#vnArrowFeedback)"/>
+                <path id="vn-edge-agentes-procesos" class="bubble-edge-hit" d="M178 76 C236 27 300 29 321 75"/>
+                <path id="vn-edge-agentes-procesos-visual" class="bubble-edge-visual" d="M178 76 C236 27 300 29 321 75" marker-end="url(#vnArrowEnd)"/>
+                <circle class="bubble-flow-dot" r="2.2"><animateMotion dur="4.8s" begin="0s" repeatCount="indefinite"><mpath href="#vn-edge-agentes-procesos-visual"/></animateMotion></circle>
+
+                <path id="vn-edge-agentes-flujos" class="bubble-edge-hit" d="M102 112 C73 130 62 151 92 176"/>
+                <path id="vn-edge-agentes-flujos-visual" class="bubble-edge-visual" d="M102 112 C73 130 62 151 92 176" marker-end="url(#vnArrowEnd)"/>
+                <circle class="bubble-flow-dot" r="2.2"><animateMotion dur="4.2s" begin=".65s" repeatCount="indefinite"><mpath href="#vn-edge-agentes-flujos-visual"/></animateMotion></circle>
+
+                <path id="vn-edge-agentes-sistemas" class="bubble-edge-hit" d="M103 120 C62 196 77 281 98 304"/>
+                <path id="vn-edge-agentes-sistemas-visual" class="bubble-edge-visual" d="M103 120 C62 196 77 281 98 304" marker-end="url(#vnArrowEnd)"/>
+                <circle class="bubble-flow-dot" r="2.2"><animateMotion dur="5.4s" begin="1.3s" repeatCount="indefinite"><mpath href="#vn-edge-agentes-sistemas-visual"/></animateMotion></circle>
+
+                <path id="vn-edge-procesos-flujos" class="bubble-edge-hit" d="M324 92 C247 130 160 185 113 196"/>
+                <path id="vn-edge-procesos-flujos-visual" class="bubble-edge-visual" d="M324 92 C247 130 160 185 113 196" marker-end="url(#vnArrowEnd)"/>
+                <circle class="bubble-flow-dot" r="2.2"><animateMotion dur="5s" begin="1.9s" repeatCount="indefinite"><mpath href="#vn-edge-procesos-flujos-visual"/></animateMotion></circle>
+
+                <path id="vn-edge-procesos-sistemas" class="bubble-edge-hit" d="M330 105 C283 191 218 289 158 326"/>
+                <path id="vn-edge-procesos-sistemas-visual" class="bubble-edge-visual" d="M330 105 C283 191 218 289 158 326" marker-end="url(#vnArrowEnd)"/>
+                <circle class="bubble-flow-dot" r="2.2"><animateMotion dur="5.7s" begin=".35s" repeatCount="indefinite"><mpath href="#vn-edge-procesos-sistemas-visual"/></animateMotion></circle>
+
+                <path id="vn-edge-flujos-sistemas" class="bubble-edge-hit" d="M83 243 C70 276 85 304 102 313"/>
+                <path id="vn-edge-flujos-sistemas-visual" class="bubble-edge-visual" d="M83 243 C70 276 85 304 102 313" marker-end="url(#vnArrowEnd)"/>
+                <circle class="bubble-flow-dot" r="2.2"><animateMotion dur="4.5s" begin="2.1s" repeatCount="indefinite"><mpath href="#vn-edge-flujos-sistemas-visual"/></animateMotion></circle>
+
+                <path id="vn-edge-interacciones-agentes" class="bubble-edge-hit bubble-edge-tejido-hit" d="M342 170 C294 126 231 94 176 111"/>
+                <path id="vn-edge-interacciones-agentes-visual" class="bubble-edge-visual" d="M342 170 C294 126 231 94 176 111" marker-end="url(#vnArrowEnd)"/>
+                <circle class="bubble-flow-dot" r="2.2"><animateMotion dur="5.1s" begin="1.1s" repeatCount="indefinite"><mpath href="#vn-edge-interacciones-agentes-visual"/></animateMotion></circle>
+
+                <path id="vn-edge-interacciones-procesos" class="bubble-edge-hit bubble-edge-tejido-hit" d="M374 157 C364 130 356 112 355 105"/>
+                <path id="vn-edge-interacciones-procesos-visual" class="bubble-edge-visual" d="M374 157 C364 130 356 112 355 105" marker-end="url(#vnArrowEnd)"/>
+                <circle class="bubble-flow-dot" r="2.2"><animateMotion dur="4s" begin="2.3s" repeatCount="indefinite"><mpath href="#vn-edge-interacciones-procesos-visual"/></animateMotion></circle>
+
+                <path id="vn-edge-interacciones-flujos" class="bubble-edge-hit bubble-edge-tejido-hit" d="M332 217 C267 197 191 189 114 203"/>
+                <path id="vn-edge-interacciones-flujos-visual" class="bubble-edge-visual" d="M332 217 C267 197 191 189 114 203" marker-end="url(#vnArrowEnd)"/>
+                <circle class="bubble-flow-dot" r="2.2"><animateMotion dur="5.3s" begin=".8s" repeatCount="indefinite"><mpath href="#vn-edge-interacciones-flujos-visual"/></animateMotion></circle>
+
+                <path id="vn-edge-interacciones-sistemas" class="bubble-edge-hit bubble-edge-tejido-hit" d="M342 258 C278 294 219 333 167 347"/>
+                <path id="vn-edge-interacciones-sistemas-visual" class="bubble-edge-visual" d="M342 258 C278 294 219 333 167 347" marker-end="url(#vnArrowEnd)"/>
+                <circle class="bubble-flow-dot" r="2.2"><animateMotion dur="5.9s" begin="1.7s" repeatCount="indefinite"><mpath href="#vn-edge-interacciones-sistemas-visual"/></animateMotion></circle>
+
+                <path id="vn-edge-interacciones-emergencia" class="bubble-edge-hit bubble-edge-tejido-hit" d="M355 275 C337 310 325 329 314 334"/>
+                <path id="vn-edge-interacciones-emergencia-visual" class="bubble-edge-visual" d="M355 275 C337 310 325 329 314 334" marker-end="url(#vnArrowEnd)"/>
+                <circle class="bubble-flow-dot" r="2.2"><animateMotion dur="4.6s" begin="2.6s" repeatCount="indefinite"><mpath href="#vn-edge-interacciones-emergencia-visual"/></animateMotion></circle>
+
+                <path id="vn-edge-emergencia-agentes" class="bubble-edge-hit" d="M254 323 C218 262 184 180 160 126"/>
+                <path id="vn-edge-emergencia-agentes-visual" class="bubble-edge-visual" d="M254 323 C218 262 184 180 160 126" marker-end="url(#vnArrowEnd)"/>
+                <circle class="bubble-flow-dot" r="2.2"><animateMotion dur="5.6s" begin=".25s" repeatCount="indefinite"><mpath href="#vn-edge-emergencia-agentes-visual"/></animateMotion></circle>
+
+                <path id="vn-edge-emergencia-procesos" class="bubble-edge-hit" d="M320 345 C357 282 377 194 362 121"/>
+                <path id="vn-edge-emergencia-procesos-visual" class="bubble-edge-visual" d="M320 345 C357 282 377 194 362 121" marker-end="url(#vnArrowEnd)"/>
+                <circle class="bubble-flow-dot" r="2.2"><animateMotion dur="5.8s" begin="1.55s" repeatCount="indefinite"><mpath href="#vn-edge-emergencia-procesos-visual"/></animateMotion></circle>
+
+                <path id="vn-edge-emergencia-sistemas" class="bubble-edge-hit" d="M233 365 C199 352 181 349 168 350"/>
+                <path id="vn-edge-emergencia-sistemas-visual" class="bubble-edge-visual" d="M233 365 C199 352 181 349 168 350" marker-end="url(#vnArrowEnd)"/>
+                <circle class="bubble-flow-dot" r="2.2"><animateMotion dur="4.4s" begin="2.45s" repeatCount="indefinite"><mpath href="#vn-edge-emergencia-sistemas-visual"/></animateMotion></circle>
               </g>
-              <!-- Círculos translúcidos encima, con su ícono adentro -->
+              <!-- Nodos separados para que cada relación se lea sin amontonarse. -->
               <g class="bubble-net-nodes">
-                <circle class="bubble-node bn-agentes" cx="150" cy="90" r="52"/>
-                <circle class="bubble-node bn-procesos" cx="295" cy="75" r="45"/>
-                <circle class="bubble-node bn-flujos" cx="95" cy="180" r="40"/>
-                <circle class="bubble-node bn-interacciones" cx="325" cy="205" r="62"/>
-                <circle class="bubble-node bn-sistemas" cx="112" cy="262" r="48"/>
-                <circle class="bubble-node bn-emergencia" cx="245" cy="300" r="52"/>
+                <circle class="bubble-node bn-agentes" cx="130" cy="82" r="52"/>
+                <circle class="bubble-node bn-procesos" cx="365" cy="76" r="46"/>
+                <circle class="bubble-node bn-flujos" cx="73" cy="203" r="40"/>
+                <circle class="bubble-node bn-interacciones" cx="395" cy="219" r="64"/>
+                <circle class="bubble-node bn-sistemas" cx="118" cy="350" r="50"/>
+                <circle class="bubble-node bn-emergencia" cx="285" cy="370" r="54"/>
               </g>
-              <foreignObject x="98" y="38" width="104" height="104"><div xmlns="http://www.w3.org/1999/xhtml" class="bubble-node-label"><i class="fa-solid fa-people-group"></i><span>Agentes</span></div></foreignObject>
-              <foreignObject x="243" y="30" width="104" height="90"><div xmlns="http://www.w3.org/1999/xhtml" class="bubble-node-label"><i class="fa-solid fa-gears"></i><span>Procesos</span></div></foreignObject>
-              <foreignObject x="45" y="140" width="100" height="80"><div xmlns="http://www.w3.org/1999/xhtml" class="bubble-node-label"><i class="fa-solid fa-arrows-turn-to-dots"></i><span>Flujos</span></div></foreignObject>
-              <foreignObject x="263" y="143" width="124" height="124"><div xmlns="http://www.w3.org/1999/xhtml" class="bubble-node-label"><i class="fa-solid fa-diagram-project"></i><span>Interacciones</span></div></foreignObject>
-              <foreignObject x="62" y="214" width="100" height="96"><div xmlns="http://www.w3.org/1999/xhtml" class="bubble-node-label"><i class="fa-solid fa-circle-nodes"></i><span>Sistemas</span></div></foreignObject>
-              <foreignObject x="193" y="248" width="104" height="104"><div xmlns="http://www.w3.org/1999/xhtml" class="bubble-node-label"><i class="fa-solid fa-sparkles"></i><span>Emergencia</span></div></foreignObject>
+              <foreignObject x="78" y="30" width="104" height="104"><div xmlns="http://www.w3.org/1999/xhtml" class="bubble-node-label"><i class="fa-solid fa-people-group"></i><span>Agentes</span></div></foreignObject>
+              <foreignObject x="313" y="30" width="104" height="92"><div xmlns="http://www.w3.org/1999/xhtml" class="bubble-node-label"><i class="fa-solid fa-gears"></i><span>Procesos</span></div></foreignObject>
+              <foreignObject x="23" y="163" width="100" height="80"><div xmlns="http://www.w3.org/1999/xhtml" class="bubble-node-label"><i class="fa-solid fa-arrows-turn-to-dots"></i><span>Flujos</span></div></foreignObject>
+              <foreignObject x="331" y="155" width="128" height="128"><div xmlns="http://www.w3.org/1999/xhtml" class="bubble-node-label"><i class="fa-solid fa-diagram-project"></i><span>Interacciones</span></div></foreignObject>
+              <foreignObject x="68" y="300" width="100" height="100"><div xmlns="http://www.w3.org/1999/xhtml" class="bubble-node-label"><i class="fa-solid fa-circle-nodes"></i><span>Sistemas</span></div></foreignObject>
+              <foreignObject x="231" y="316" width="108" height="108"><div xmlns="http://www.w3.org/1999/xhtml" class="bubble-node-label"><i class="fa-solid fa-triangle-exclamation"></i><span>Emergencia</span></div></foreignObject>
             </svg>
             <div class="visible-network-tooltip" id="visibleNetworkTooltip" hidden></div>
           </div>
