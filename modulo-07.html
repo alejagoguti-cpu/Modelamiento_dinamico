@@ -70,12 +70,26 @@
           <div class="territory-reading-kicker">EL FENÓMENO CIUDAD</div>
           <h2 id="visibleElementsTitle">¿Qué queremos hacer visible?</h2>
 
-          <!-- Bucle circular, versión simple y robusta: un círculo fijo
-               (sin flechas rotadas a mano, que fallaban) con un puntito
-               animado que recorre el borde marcando el sentido del ciclo. -->
-          <div class="loop-ring-wrap">
-            <div class="loop-ring-circle"></div>
-            <div class="loop-ring-dot"></div>
+          <!-- Red de nodos conectados (no "pasos" en secuencia): cada línea
+               es una relación bidireccional entre dos elementos — hazle
+               click a una línea para leer qué significa esa relación. -->
+          <div class="loop-ring-wrap" id="visibleNetworkWrap">
+            <svg class="visible-network-svg" viewBox="0 0 400 400" aria-hidden="true">
+              <defs>
+                <marker id="vnArrowStart" markerWidth="8" markerHeight="8" refX="1" refY="4" orient="auto-start-reverse"><path d="M8,0 L0,4 L8,8 Z" fill="#76fff0"/></marker>
+                <marker id="vnArrowEnd" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#76fff0"/></marker>
+              </defs>
+              <g class="visible-network-edges">
+                <path id="vn-edge-agentes-procesos" class="visible-network-edge-hit" d="M 200 20 L 340 82"/>
+                <path class="visible-network-edge-visual" d="M 200 20 L 340 82" marker-start="url(#vnArrowStart)" marker-end="url(#vnArrowEnd)"/>
+                <path id="vn-edge-agentes-flujos" class="visible-network-edge-hit" d="M 205 22 L 345 262"/>
+                <path class="visible-network-edge-visual" d="M 205 22 L 345 262" marker-start="url(#vnArrowStart)" marker-end="url(#vnArrowEnd)"/>
+                <path id="vn-edge-agentes-sistemas" class="visible-network-edge-hit" d="M 195 22 L 58 262"/>
+                <path class="visible-network-edge-visual" d="M 195 22 L 58 262" marker-start="url(#vnArrowStart)" marker-end="url(#vnArrowEnd)"/>
+                <path id="vn-edge-procesos-flujos" class="visible-network-edge-hit" d="M 352 95 L 352 257"/>
+                <path class="visible-network-edge-visual" d="M 352 95 L 352 257" marker-start="url(#vnArrowStart)" marker-end="url(#vnArrowEnd)"/>
+              </g>
+            </svg>
             <div class="loop-ring-card loop-pos-1 rs-agentes">
               <i class="fa-solid fa-people-group"></i>
               <strong>Agentes</strong>
@@ -106,10 +120,10 @@
               <p class="reveal-step-question">¿Qué dinámicas están conectadas?</p>
             </div>
             <div class="loop-ring-card loop-pos-6 rs-emergencia">
-              <i class="fa-solid fa-sparkles"></i>
-              <strong>Emergencia</strong>
+              <p class="loop-ring-title-icon"><i class="fa-solid fa-sparkles"></i> Emergencia</p>
               <p class="reveal-step-question">¿Qué patrones aparecen de sus interacciones?</p>
             </div>
+            <div class="visible-network-tooltip" id="visibleNetworkTooltip" hidden></div>
           </div>
 
           <!-- Versión compacta: horizontal, con íconos y una animación de
@@ -141,6 +155,34 @@
 
           <p class="visible-elements-purpose"><strong>¿Para qué?</strong> Para explicar el funcionamiento cotidiano de la ciudad.</p>
         </section>
+        <script>
+          (() => {
+            const relationships = {
+              "vn-edge-agentes-procesos": "Los agentes realizan acciones que producen procesos, y los procesos condicionan las decisiones de los agentes.",
+              "vn-edge-agentes-flujos": "Los agentes generan y utilizan flujos.",
+              "vn-edge-agentes-sistemas": "Los agentes participan en distintos sistemas y también los transforman.",
+              "vn-edge-procesos-flujos": "Los procesos modifican qué circula y cómo circula.",
+            };
+            const wrap = document.getElementById("visibleNetworkWrap");
+            const tooltip = document.getElementById("visibleNetworkTooltip");
+            if (!wrap || !tooltip) return;
+            wrap.querySelectorAll(".visible-network-edge-hit").forEach((hit) => {
+              hit.addEventListener("click", (event) => {
+                event.stopPropagation();
+                const text = relationships[hit.id];
+                if (!text) return;
+                wrap.querySelectorAll(".visible-network-edge-hit").forEach((h) => h.classList.toggle("active", h === hit));
+                tooltip.textContent = text;
+                tooltip.hidden = false;
+              });
+            });
+            document.addEventListener("click", () => {
+              tooltip.hidden = true;
+              wrap.querySelectorAll(".visible-network-edge-hit").forEach((h) => h.classList.remove("active"));
+            });
+            tooltip.addEventListener("click", (event) => event.stopPropagation());
+          })();
+        </script>
 
         <section class="territory-reading-section" aria-labelledby="territoryReadingTitle">
           <div class="territory-reading-kicker">LECTURA DEL TERRITORIO</div>
