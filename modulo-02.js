@@ -2109,13 +2109,23 @@ function showInitialPopup() {
         @keyframes pulseGlow {
           0%, 100% {
             background: #252525;
-            box-shadow: 0 0 0px rgba(255, 157, 46, 0), 0 0 0px rgba(255, 157, 46, 0.2);
+            box-shadow: 0 0 0px rgba(255, 157, 46, 0), 0 0 0px rgba(255, 182, 193, 0);
             transform: scale(1);
           }
-          50% {
+          25% {
             background: #3a2a1a;
             box-shadow: 0 0 28px rgba(255, 157, 46, 0.8), 0 0 50px rgba(255, 100, 0, 0.5), inset 0 0 12px rgba(255, 157, 46, 0.3);
             transform: scale(1.08);
+          }
+          75% {
+            background: #3a1f2a;
+            box-shadow: 0 0 28px rgba(255, 182, 193, 0.7), 0 0 50px rgba(255, 105, 180, 0.4), inset 0 0 12px rgba(255, 182, 193, 0.3);
+            transform: scale(1.08);
+          }
+          100% {
+            background: #252525;
+            box-shadow: 0 0 0px rgba(255, 157, 46, 0), 0 0 0px rgba(255, 182, 193, 0);
+            transform: scale(1);
           }
         }
         @keyframes borderPulse {
@@ -2123,9 +2133,13 @@ function showInitialPopup() {
             border-color: #333333;
             box-shadow: 0 0 0px rgba(255, 157, 46, 0);
           }
-          50% {
+          25% {
             border-color: #664422;
-            box-shadow: 0 0 24px rgba(255, 157, 46, 0.4), 0 0 12px rgba(255, 100, 0, 0.2);
+            box-shadow: 0 0 24px rgba(255, 157, 46, 0.5), 0 0 12px rgba(255, 100, 0, 0.2);
+          }
+          75% {
+            border-color: #664455;
+            box-shadow: 0 0 24px rgba(255, 182, 193, 0.4), 0 0 12px rgba(255, 105, 180, 0.2);
           }
         }
         @keyframes iconSpin {
