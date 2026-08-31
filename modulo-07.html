@@ -70,82 +70,64 @@
           <div class="territory-reading-kicker">EL FENÓMENO CIUDAD</div>
           <h2 id="visibleElementsTitle">¿Qué queremos hacer visible?</h2>
 
-          <!-- Red de nodos conectados (no "pasos" en secuencia): cada línea
-               es una relación bidireccional entre dos elementos — hazle
-               click a una línea para leer qué significa esa relación. -->
-          <div class="loop-ring-wrap" id="visibleNetworkWrap">
-            <svg class="visible-network-svg" viewBox="0 0 400 400" aria-hidden="true">
+          <!-- Red de círculos translúcidos superpuestos (estilo del
+               referente): cada línea es una relación bidireccional real
+               entre dos elementos — hazle click para leer qué significa. -->
+          <div class="bubble-net-wrap" id="visibleNetworkWrap">
+            <svg class="bubble-net-svg" viewBox="0 0 500 460">
               <defs>
-                <marker id="vnArrowStart" markerWidth="8" markerHeight="8" refX="1" refY="4" orient="auto-start-reverse"><path d="M8,0 L0,4 L8,8 Z" fill="#76fff0"/></marker>
-                <marker id="vnArrowEnd" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#76fff0"/></marker>
-                <marker id="vnArrowFeedback" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#ee9a4b"/></marker>
+                <marker id="vnArrowEnd" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#bcd8d4"/></marker>
+                <marker id="vnArrowFeedback" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#ee9a4b"/></marker>
               </defs>
-              <g class="visible-network-edges">
-                <path id="vn-edge-agentes-procesos" class="visible-network-edge-hit" d="M 200 20 L 340 82"/>
-                <path class="visible-network-edge-visual" d="M 200 20 L 340 82" marker-start="url(#vnArrowStart)" marker-end="url(#vnArrowEnd)"/>
-                <path id="vn-edge-agentes-flujos" class="visible-network-edge-hit" d="M 205 22 L 345 262"/>
-                <path class="visible-network-edge-visual" d="M 205 22 L 345 262" marker-start="url(#vnArrowStart)" marker-end="url(#vnArrowEnd)"/>
-                <path id="vn-edge-agentes-sistemas" class="visible-network-edge-hit" d="M 195 22 L 58 262"/>
-                <path class="visible-network-edge-visual" d="M 195 22 L 58 262" marker-start="url(#vnArrowStart)" marker-end="url(#vnArrowEnd)"/>
-                <path id="vn-edge-procesos-flujos" class="visible-network-edge-hit" d="M 352 95 L 352 257"/>
-                <path class="visible-network-edge-visual" d="M 352 95 L 352 257" marker-start="url(#vnArrowStart)" marker-end="url(#vnArrowEnd)"/>
-                <path id="vn-edge-procesos-sistemas" class="visible-network-edge-hit" d="M 340 90 L 60 268"/>
-                <path class="visible-network-edge-visual" d="M 340 90 L 60 268" marker-start="url(#vnArrowStart)" marker-end="url(#vnArrowEnd)"/>
-                <path id="vn-edge-flujos-sistemas" class="visible-network-edge-hit" d="M 340 262 L 62 262"/>
-                <path class="visible-network-edge-visual" d="M 340 262 L 62 262" marker-start="url(#vnArrowStart)" marker-end="url(#vnArrowEnd)"/>
-                <!-- Interacciones conecta con TODOS — el tejido que une los demás -->
-                <path id="vn-edge-interacciones-agentes" class="visible-network-edge-hit" d="M 205 375 L 200 30"/>
-                <path class="visible-network-edge-visual visible-network-edge-tejido" d="M 205 375 L 200 30" marker-start="url(#vnArrowStart)" marker-end="url(#vnArrowEnd)"/>
-                <path id="vn-edge-interacciones-procesos" class="visible-network-edge-hit" d="M 215 372 L 340 90"/>
-                <path class="visible-network-edge-visual visible-network-edge-tejido" d="M 215 372 L 340 90" marker-start="url(#vnArrowStart)" marker-end="url(#vnArrowEnd)"/>
-                <path id="vn-edge-interacciones-flujos" class="visible-network-edge-hit" d="M 225 368 L 345 270"/>
-                <path class="visible-network-edge-visual visible-network-edge-tejido" d="M 225 368 L 345 270" marker-start="url(#vnArrowStart)" marker-end="url(#vnArrowEnd)"/>
-                <path id="vn-edge-interacciones-sistemas" class="visible-network-edge-hit" d="M 178 372 L 60 270"/>
-                <path class="visible-network-edge-visual visible-network-edge-tejido" d="M 178 372 L 60 270" marker-start="url(#vnArrowStart)" marker-end="url(#vnArrowEnd)"/>
-                <path id="vn-edge-interacciones-emergencia" class="visible-network-edge-hit" d="M 190 375 L 58 90"/>
-                <path class="visible-network-edge-visual visible-network-edge-tejido" d="M 190 375 L 58 90" marker-start="url(#vnArrowStart)" marker-end="url(#vnArrowEnd)"/>
+              <!-- Líneas primero, abajo de los círculos -->
+              <g class="bubble-net-edges">
+                <path id="vn-edge-agentes-procesos" class="bubble-edge-hit" d="M 150 95 L 300 78"/>
+                <path class="bubble-edge-visual" d="M 150 95 L 300 78" marker-end="url(#vnArrowEnd)"/>
+                <path id="vn-edge-agentes-flujos" class="bubble-edge-hit" d="M 145 105 L 100 175"/>
+                <path class="bubble-edge-visual" d="M 145 105 L 100 175" marker-end="url(#vnArrowEnd)"/>
+                <path id="vn-edge-agentes-sistemas" class="bubble-edge-hit" d="M 148 118 L 115 255"/>
+                <path class="bubble-edge-visual" d="M 148 118 L 115 255" marker-end="url(#vnArrowEnd)"/>
+                <path id="vn-edge-procesos-flujos" class="bubble-edge-hit" d="M 290 92 L 108 168"/>
+                <path class="bubble-edge-visual" d="M 290 92 L 108 168" marker-end="url(#vnArrowEnd)"/>
+                <path id="vn-edge-procesos-sistemas" class="bubble-edge-hit" d="M 295 100 L 125 250"/>
+                <path class="bubble-edge-visual" d="M 295 100 L 125 250" marker-end="url(#vnArrowEnd)"/>
+                <path id="vn-edge-flujos-sistemas" class="bubble-edge-hit" d="M 105 190 L 112 245"/>
+                <path class="bubble-edge-visual" d="M 105 190 L 112 245" marker-end="url(#vnArrowEnd)"/>
+                <!-- Interacciones (el círculo grande) conecta con TODOS -->
+                <path id="vn-edge-interacciones-agentes" class="bubble-edge-hit bubble-edge-tejido-hit" d="M 320 195 L 165 90"/>
+                <path class="bubble-edge-visual bubble-edge-tejido" d="M 320 195 L 165 90" marker-end="url(#vnArrowEnd)"/>
+                <path id="vn-edge-interacciones-procesos" class="bubble-edge-hit bubble-edge-tejido-hit" d="M 325 175 L 295 85"/>
+                <path class="bubble-edge-visual bubble-edge-tejido" d="M 325 175 L 295 85" marker-end="url(#vnArrowEnd)"/>
+                <path id="vn-edge-interacciones-flujos" class="bubble-edge-hit bubble-edge-tejido-hit" d="M 285 195 L 120 180"/>
+                <path class="bubble-edge-visual bubble-edge-tejido" d="M 285 195 L 120 180" marker-end="url(#vnArrowEnd)"/>
+                <path id="vn-edge-interacciones-sistemas" class="bubble-edge-hit bubble-edge-tejido-hit" d="M 300 225 L 140 262"/>
+                <path class="bubble-edge-visual bubble-edge-tejido" d="M 300 225 L 140 262" marker-end="url(#vnArrowEnd)"/>
+                <path id="vn-edge-interacciones-emergencia" class="bubble-edge-hit bubble-edge-tejido-hit" d="M 300 235 L 265 300"/>
+                <path class="bubble-edge-visual bubble-edge-tejido" d="M 300 235 L 265 300" marker-end="url(#vnArrowEnd)"/>
                 <!-- Retroalimentación de Emergencia: más suave, un solo sentido -->
-                <path id="vn-edge-emergencia-agentes" class="visible-network-edge-hit" d="M 60 70 L 190 25"/>
-                <path class="visible-network-edge-visual visible-network-edge-feedback" d="M 60 70 L 190 25" marker-end="url(#vnArrowFeedback)"/>
-                <path id="vn-edge-emergencia-procesos" class="visible-network-edge-hit" d="M 65 78 L 335 80"/>
-                <path class="visible-network-edge-visual visible-network-edge-feedback" d="M 65 78 L 335 80" marker-end="url(#vnArrowFeedback)"/>
-                <path id="vn-edge-emergencia-sistemas" class="visible-network-edge-hit" d="M 55 95 L 55 255"/>
-                <path class="visible-network-edge-visual visible-network-edge-feedback" d="M 55 95 L 55 255" marker-end="url(#vnArrowFeedback)"/>
+                <path id="vn-edge-emergencia-agentes" class="bubble-edge-hit" d="M 235 285 L 165 105"/>
+                <path class="bubble-edge-visual bubble-edge-feedback" d="M 235 285 L 165 105" marker-end="url(#vnArrowFeedback)"/>
+                <path id="vn-edge-emergencia-procesos" class="bubble-edge-hit" d="M 260 280 L 285 100"/>
+                <path class="bubble-edge-visual bubble-edge-feedback" d="M 260 280 L 285 100" marker-end="url(#vnArrowFeedback)"/>
+                <path id="vn-edge-emergencia-sistemas" class="bubble-edge-hit" d="M 220 300 L 135 270"/>
+                <path class="bubble-edge-visual bubble-edge-feedback" d="M 220 300 L 135 270" marker-end="url(#vnArrowFeedback)"/>
               </g>
+              <!-- Círculos translúcidos encima, con su ícono adentro -->
+              <g class="bubble-net-nodes">
+                <circle class="bubble-node bn-agentes" cx="150" cy="90" r="52"/>
+                <circle class="bubble-node bn-procesos" cx="295" cy="75" r="45"/>
+                <circle class="bubble-node bn-flujos" cx="95" cy="180" r="40"/>
+                <circle class="bubble-node bn-interacciones" cx="325" cy="205" r="62"/>
+                <circle class="bubble-node bn-sistemas" cx="112" cy="262" r="48"/>
+                <circle class="bubble-node bn-emergencia" cx="245" cy="300" r="52"/>
+              </g>
+              <foreignObject x="98" y="38" width="104" height="104"><div xmlns="http://www.w3.org/1999/xhtml" class="bubble-node-label"><i class="fa-solid fa-people-group"></i><span>Agentes</span></div></foreignObject>
+              <foreignObject x="243" y="30" width="104" height="90"><div xmlns="http://www.w3.org/1999/xhtml" class="bubble-node-label"><i class="fa-solid fa-gears"></i><span>Procesos</span></div></foreignObject>
+              <foreignObject x="45" y="140" width="100" height="80"><div xmlns="http://www.w3.org/1999/xhtml" class="bubble-node-label"><i class="fa-solid fa-arrows-turn-to-dots"></i><span>Flujos</span></div></foreignObject>
+              <foreignObject x="263" y="143" width="124" height="124"><div xmlns="http://www.w3.org/1999/xhtml" class="bubble-node-label"><i class="fa-solid fa-diagram-project"></i><span>Interacciones</span></div></foreignObject>
+              <foreignObject x="62" y="214" width="100" height="96"><div xmlns="http://www.w3.org/1999/xhtml" class="bubble-node-label"><i class="fa-solid fa-circle-nodes"></i><span>Sistemas</span></div></foreignObject>
+              <foreignObject x="193" y="248" width="104" height="104"><div xmlns="http://www.w3.org/1999/xhtml" class="bubble-node-label"><i class="fa-solid fa-sparkles"></i><span>Emergencia</span></div></foreignObject>
             </svg>
-            <div class="loop-ring-card loop-pos-1 rs-agentes">
-              <i class="fa-solid fa-people-group"></i>
-              <strong>Agentes</strong>
-              <p class="reveal-step-question">¿Quién actúa?</p>
-              <p class="reveal-step-items">Personas · instituciones · empresas · organizaciones</p>
-            </div>
-            <div class="loop-ring-card loop-pos-2 rs-procesos">
-              <i class="fa-solid fa-gears"></i>
-              <strong>Procesos</strong>
-              <p class="reveal-step-question">¿Qué está cambiando?</p>
-              <p class="reveal-step-items">Escorrentía y drenaje del agua lluvia, crecimiento y densificación de barrios, circulación de nutrientes en humedales, transformación del suelo urbano, sucesión de vegetación.</p>
-            </div>
-            <div class="loop-ring-card loop-pos-3 rs-flujos">
-              <i class="fa-solid fa-arrows-turn-to-dots"></i>
-              <strong>Flujos</strong>
-              <p class="reveal-step-question">¿Qué circula?</p>
-              <p class="reveal-step-items">Personas · agua · energía · bienes · información</p>
-            </div>
-            <div class="loop-ring-card loop-pos-4 rs-interacciones">
-              <i class="fa-solid fa-diagram-project"></i>
-              <strong>Interacciones</strong>
-              <p class="reveal-step-question">¿Cómo se afectan entre sí?</p>
-              <p class="reveal-step-items">Dependencias · conflictos · intercambios · retroalimentaciones</p>
-            </div>
-            <div class="loop-ring-card loop-pos-5 rs-sistemas">
-              <i class="fa-solid fa-circle-nodes"></i>
-              <strong>Sistemas</strong>
-              <p class="reveal-step-question">¿Qué dinámicas están conectadas?</p>
-            </div>
-            <div class="loop-ring-card loop-pos-6 rs-emergencia">
-              <p class="loop-ring-title-icon"><i class="fa-solid fa-sparkles"></i> Emergencia</p>
-              <p class="reveal-step-question">¿Qué patrones aparecen de sus interacciones?</p>
-            </div>
             <div class="visible-network-tooltip" id="visibleNetworkTooltip" hidden></div>
           </div>
 
