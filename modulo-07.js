@@ -2722,20 +2722,20 @@
     // Interacciones) conectan con todos los demás; las de "retroalimentación"
     // (desde Emergencia) son más suaves porque van en un solo sentido.
     const VISIBLE_NETWORK_EDGES = {
-      "vn-edge-agentes-procesos": "Los agentes realizan acciones que producen procesos, y los procesos condicionan las decisiones de los agentes.",
-      "vn-edge-agentes-flujos": "Los agentes generan y utilizan flujos.",
-      "vn-edge-agentes-sistemas": "Los agentes participan en distintos sistemas y también los transforman.",
-      "vn-edge-procesos-flujos": "Los procesos modifican qué circula y cómo circula.",
-      "vn-edge-procesos-sistemas": "Un proceso puede afectar simultáneamente varios sistemas.",
-      "vn-edge-flujos-sistemas": "Los flujos son precisamente los que conectan sistemas diferentes.",
-      "vn-edge-interacciones-agentes": "Las interacciones funcionan como el tejido que conecta a todos los elementos entre sí — no son un paso aparte, están presentes en cada relación.",
-      "vn-edge-interacciones-procesos": "Las interacciones funcionan como el tejido que conecta a todos los elementos entre sí — no son un paso aparte, están presentes en cada relación.",
-      "vn-edge-interacciones-flujos": "Las interacciones funcionan como el tejido que conecta a todos los elementos entre sí — no son un paso aparte, están presentes en cada relación.",
-      "vn-edge-interacciones-sistemas": "Las interacciones funcionan como el tejido que conecta a todos los elementos entre sí — no son un paso aparte, están presentes en cada relación.",
-      "vn-edge-interacciones-emergencia": "Los patrones emergentes aparecen a partir de esas interacciones.",
-      "vn-edge-emergencia-agentes": "Lo que emerge vuelve a modificar el comportamiento de los agentes (retroalimentación).",
-      "vn-edge-emergencia-procesos": "Lo que emerge vuelve a modificar cómo ocurren los procesos (retroalimentación).",
-      "vn-edge-emergencia-sistemas": "Lo que emerge vuelve a modificar el comportamiento del sistema (retroalimentación).",
+      "vn-edge-agentes-procesos": "AGENTES:\nPrimero reconocemos los agentes, es decir, quiénes actúan dentro de la ciudad y toman decisiones.",
+      "vn-edge-agentes-flujos": "AGENTES:\nPrimero reconocemos los agentes, es decir, quiénes actúan dentro de la ciudad y toman decisiones.",
+      "vn-edge-agentes-sistemas": "AGENTES:\nPrimero reconocemos los agentes, es decir, quiénes actúan dentro de la ciudad y toman decisiones.",
+      "vn-edge-procesos-flujos": "PROCESOS:\nEstos agentes participan y generan procesos, que son las transformaciones que están ocurriendo constantemente en el territorio.",
+      "vn-edge-procesos-sistemas": "PROCESOS:\nEstos agentes participan y generan procesos, que son las transformaciones que están ocurriendo constantemente en el territorio.",
+      "vn-edge-flujos-sistemas": "FLUJOS:\nEsos procesos implican también flujos: de personas, agua, energía, bienes e información, que atraviesan y conectan diferentes partes de la ciudad.",
+      "vn-edge-interacciones-agentes": "INTERACCIONES:\nEstos elementos no funcionan de manera independiente. Se afectan entre sí mediante interacciones, que pueden generar dependencias, conflictos, intercambios y retroalimentaciones.",
+      "vn-edge-interacciones-procesos": "INTERACCIONES:\nEstos elementos no funcionan de manera independiente. Se afectan entre sí mediante interacciones, que pueden generar dependencias, conflictos, intercambios y retroalimentaciones.",
+      "vn-edge-interacciones-flujos": "INTERACCIONES:\nEstos elementos no funcionan de manera independiente. Se afectan entre sí mediante interacciones, que pueden generar dependencias, conflictos, intercambios y retroalimentaciones.",
+      "vn-edge-interacciones-sistemas": "INTERACCIONES:\nEstos elementos no funcionan de manera independiente. Se afectan entre sí mediante interacciones, que pueden generar dependencias, conflictos, intercambios y retroalimentaciones.",
+      "vn-edge-interacciones-emergencia": "INTERACCIONES:\nEstos elementos no funcionan de manera independiente. Se afectan entre sí mediante interacciones, que pueden generar dependencias, conflictos, intercambios y retroalimentaciones.",
+      "vn-edge-emergencia-agentes": "EMERGENCIA:\nDe estas múltiples interacciones pueden aparecer patrones emergentes, es decir, comportamientos o fenómenos que no podemos explicar mirando un solo elemento de manera aislada. Aquello que emerge puede modificar nuevamente las condiciones del sistema y generar nuevas respuestas.",
+      "vn-edge-emergencia-procesos": "EMERGENCIA:\nDe estas múltiples interacciones pueden aparecer patrones emergentes, es decir, comportamientos o fenómenos que no podemos explicar mirando un solo elemento de manera aislada. Aquello que emerge puede modificar nuevamente las condiciones del sistema y generar nuevas respuestas.",
+      "vn-edge-emergencia-sistemas": "EMERGENCIA:\nDe estas múltiples interacciones pueden aparecer patrones emergentes, es decir, comportamientos o fenómenos que no podemos explicar mirando un solo elemento de manera aislada. Aquello que emerge puede modificar nuevamente las condiciones del sistema y generar nuevas respuestas.",
     };
     (() => {
       const wrap = document.getElementById("visibleNetworkWrap");

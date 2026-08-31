@@ -6079,3 +6079,80 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
   stroke-width: 3px;
   filter: drop-shadow(0 0 8px rgba(255, 255, 255, .18));
 }
+
+
+/* Pop compacto para la lectura de las relaciones. */
+.visible-elements-section .visible-network-tooltip {
+  width: min(78%, 270px);
+  max-height: 116px;
+  overflow-y: auto;
+  bottom: 10px;
+  padding: 9px 12px;
+  border-radius: 7px;
+  font-size: 10.5px;
+  line-height: 1.38;
+  white-space: pre-line;
+  background: rgba(4, 8, 9, .97);
+  border: 1px solid rgba(118, 255, 240, .72);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, .42);
+}
+
+
+/* ===== Diagrama de construcción del modelo ===== */
+.model-construction-diagram {
+  width: min(94%, 760px);
+  margin: 22px auto 18px;
+  padding: 17px 20px 19px;
+  border: 1px solid rgba(118, 255, 240, .22);
+  border-radius: 14px;
+  background: rgba(3, 8, 9, .7);
+}
+.model-construction-lead {
+  max-width: 680px;
+  margin: 0 auto 17px;
+  color: #dcebe7;
+  font-size: 12.5px;
+  line-height: 1.55;
+  text-align: center;
+}
+.model-construction-flow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.model-construction-step {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 54px;
+  padding: 9px 12px;
+  border: 1px solid rgba(118, 255, 240, .42);
+  border-radius: 10px;
+  background: #050708;
+  color: #f2f7f5;
+  font-size: 10.5px;
+  line-height: 1.25;
+}
+.model-construction-step i { color: #76fff0; font-size: 17px; }
+.model-construction-step b { color: #fff; font-weight: 800; }
+.model-construction-final { border-color: rgba(238, 154, 75, .68); }
+.model-construction-final i { color: #ee9a4b; }
+.model-construction-link {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: rgba(245, 250, 248, .8);
+}
+.model-construction-link span {
+  display: block;
+  width: 22px;
+  border-top: 1px dashed rgba(245, 250, 248, .68);
+}
+.model-construction-link i { font-size: 10px; }
+@media (max-width: 680px) {
+  .model-construction-flow { flex-direction: column; gap: 7px; }
+  .model-construction-link { flex-direction: column; }
+  .model-construction-link span { width: 1px; height: 17px; border-top: 0; border-left: 1px dashed rgba(245, 250, 248, .68); }
+  .model-construction-link i { transform: rotate(90deg); }
+}

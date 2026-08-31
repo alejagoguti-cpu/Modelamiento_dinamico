@@ -155,59 +155,47 @@
             <div class="visible-network-tooltip" id="visibleNetworkTooltip" hidden></div>
           </div>
 
-          <!-- Versión compacta: horizontal, con íconos y una animación de
-               flujo (puntito viajando) en vez de la vertical larga. -->
-          <div class="micro-flow">
-            <div class="micro-flow-step">
-              <i class="fa-solid fa-people-arrows"></i>
-              <span>Agentes, procesos y flujos interactúan</span>
-            </div>
-            <div class="micro-flow-connector"><i class="fa-solid fa-circle micro-flow-dot"></i></div>
-            <div class="micro-flow-step">
-              <i class="fa-solid fa-circle-nodes"></i>
-              <span>Identifican Sistemas</span>
-            </div>
-            <div class="micro-flow-connector"><i class="fa-solid fa-circle micro-flow-dot"></i></div>
-            <div class="micro-flow-step">
-              <i class="fa-solid fa-diagram-project"></i>
-              <span>Los sistemas interactúan entre sí</span>
-            </div>
-            <div class="micro-flow-connector"><i class="fa-solid fa-circle micro-flow-dot"></i></div>
-            <div class="micro-flow-step micro-flow-final">
-              <i class="fa-solid fa-sparkles"></i>
-              <span>Emergen patrones</span>
+          <div class="model-construction-diagram" aria-label="Proceso de construcción del modelo">
+            <p class="model-construction-lead">Para construir nuestro modelo pasamos de identificar componentes aislados a entender una ciudad compuesta por múltiples relaciones, interacciones y retroalimentaciones, de las cuales emergen determinados patrones.</p>
+            <div class="model-construction-flow">
+              <div class="model-construction-step"><i class="fa-solid fa-list-check"></i><span>Componentes<br><b>aislados</b></span></div>
+              <div class="model-construction-link"><span></span><i class="fa-solid fa-chevron-right"></i></div>
+              <div class="model-construction-step"><i class="fa-solid fa-diagram-project"></i><span>Relaciones,<br><b>interacciones y retroalimentaciones</b></span></div>
+              <div class="model-construction-link"><span></span><i class="fa-solid fa-chevron-right"></i></div>
+              <div class="model-construction-step model-construction-final"><i class="fa-solid fa-sparkles"></i><span>Patrones<br><b>emergentes</b></span></div>
             </div>
           </div>
-          <blockquote class="logic-chain-quote">
-            <p>A partir de esta lógica construimos seis sistemas que no funcionan de manera independiente, sino que se encuentran conectados mediante flujos, dependencias y retroalimentaciones.</p>
-          </blockquote>
 
           <p class="visible-elements-purpose"><strong>¿Para qué?</strong> Para explicar el funcionamiento cotidiano de la ciudad.</p>
         </section>
         <script>
           (() => {
-            const relationships = {
-              "vn-edge-agentes-procesos": "Los agentes realizan acciones que producen procesos, y los procesos condicionan las decisiones de los agentes.",
-              "vn-edge-agentes-flujos": "Los agentes generan y utilizan flujos.",
-              "vn-edge-agentes-sistemas": "Los agentes participan en distintos sistemas y también los transforman.",
-              "vn-edge-procesos-flujos": "Los procesos modifican qué circula y cómo circula.",
+            const readings = {
+              agentes: "AGENTES:\nPrimero reconocemos los agentes, es decir, quiénes actúan dentro de la ciudad y toman decisiones.",
+              procesos: "PROCESOS:\nEstos agentes participan y generan procesos, que son las transformaciones que están ocurriendo constantemente en el territorio.",
+              flujos: "FLUJOS:\nEsos procesos implican también flujos: de personas, agua, energía, bienes e información, que atraviesan y conectan diferentes partes de la ciudad.",
+              interacciones: "INTERACCIONES:\nEstos elementos no funcionan de manera independiente. Se afectan entre sí mediante interacciones, que pueden generar dependencias, conflictos, intercambios y retroalimentaciones.",
+              sistemas: "SISTEMAS:\nEstas relaciones conectan diferentes sistemas que coexisten dentro de la ciudad y que pueden afectarse mutuamente.",
+              emergencia: "EMERGENCIA:\nDe estas múltiples interacciones pueden aparecer patrones emergentes, es decir, comportamientos o fenómenos que no podemos explicar mirando un solo elemento de manera aislada. Aquello que emerge puede modificar nuevamente las condiciones del sistema y generar nuevas respuestas."
             };
             const wrap = document.getElementById("visibleNetworkWrap");
             const tooltip = document.getElementById("visibleNetworkTooltip");
             if (!wrap || !tooltip) return;
-            wrap.querySelectorAll(".visible-network-edge-hit").forEach((hit) => {
+            const keyFor = (id) => {
+              const key = id.replace("vn-edge-", "").split("-")[0];
+              return readings[key] ? key : "interacciones";
+            };
+            wrap.querySelectorAll(".bubble-edge-hit").forEach((hit) => {
               hit.addEventListener("click", (event) => {
                 event.stopPropagation();
-                const text = relationships[hit.id];
-                if (!text) return;
-                wrap.querySelectorAll(".visible-network-edge-hit").forEach((h) => h.classList.toggle("active", h === hit));
-                tooltip.textContent = text;
+                wrap.querySelectorAll(".bubble-edge-hit").forEach((h) => h.classList.toggle("active", h === hit));
+                tooltip.textContent = readings[keyFor(hit.id)];
                 tooltip.hidden = false;
               });
             });
             document.addEventListener("click", () => {
               tooltip.hidden = true;
-              wrap.querySelectorAll(".visible-network-edge-hit").forEach((h) => h.classList.remove("active"));
+              wrap.querySelectorAll(".bubble-edge-hit").forEach((h) => h.classList.remove("active"));
             });
             tooltip.addEventListener("click", (event) => event.stopPropagation());
           })();
