@@ -2039,6 +2039,31 @@ function showInitialPopup() {
     </button>
   `;
 
+  // Función para mostrar cartografía
+  function showCartography() {
+    modal.innerHTML = `
+      <div style="margin-bottom: 16px; text-align: left;">
+        <button id="back-to-cards" style="background: none; border: none; color: #ffffff; font-size: 16px; cursor: pointer; padding: 8px; transition: all 0.2s;">
+          ← Volver
+        </button>
+      </div>
+      <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; margin: 0 0 16px 0 !important; color: #ffffff;">
+        Reserva Distrital de Humedal
+      </h2>
+      <div style="background: #0a0a0a; border-radius: 12px; overflow: hidden; margin-bottom: 16px; animation: slideInCard 0.5s ease-out;">
+        <img src="assets/modulo-02/reserva-humedal.png" alt="Cartografía de Humedales" style="width: 100%; height: auto; display: block; border-radius: 12px;">
+      </div>
+      <p style="font-size: 12px; color: #999999; text-align: center; margin: 0;">
+        17 áreas de reserva distrital de humedal en Bogotá
+      </p>
+    `;
+
+    const backBtn = modal.querySelector("#back-to-cards");
+    if (backBtn) {
+      backBtn.addEventListener("click", showCards);
+    }
+  }
+
   // Función para mostrar las 5 cards
   function showCards() {
     modal.innerHTML = `
@@ -2046,33 +2071,33 @@ function showInitialPopup() {
       <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 24px; font-weight: 700; margin: 0 0 28px 0 !important; color: #ffffff;">
         Lo que el POT logra hacer:
       </h2>
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 24px;">
-        <div class="pot-card" style="background: #1a1a1a; border: 1px solid #333333; border-radius: 12px; padding: 20px; text-align: center; cursor: default; animation: slideInCard 0.5s ease-out 0.1s both;">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px;">
+        <div class="pot-card" style="background: #1a1a1a; border: 1px solid #333333; border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; animation: slideInCard 0.5s ease-out 0.1s both;">
           <div class="pot-icon" style="width: 50px; height: 50px; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; background: #252525; border-radius: 8px; transition: all 0.3s ease;">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: #ffffff;"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect></svg>
           </div>
           <p style="font-size: 14px; font-weight: 600; color: #ffffff; margin: 0;">Clasifica</p>
         </div>
-        <div class="pot-card" style="background: #1a1a1a; border: 1px solid #333333; border-radius: 12px; padding: 20px; text-align: center; cursor: default; animation: slideInCard 0.5s ease-out 0.2s both;">
+        <div class="pot-card" style="background: #1a1a1a; border: 1px solid #333333; border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; animation: slideInCard 0.5s ease-out 0.2s both;">
           <div class="pot-icon" style="width: 50px; height: 50px; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; background: #252525; border-radius: 8px; transition: all 0.3s ease;">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: #ffffff;"><path d="M3 12h18M3 6h18M3 18h18"></path></svg>
           </div>
           <p style="font-size: 14px; font-weight: 600; color: #ffffff; margin: 0;">Regula</p>
         </div>
-        <div class="pot-card" style="background: #1a1a1a; border: 1px solid #333333; border-radius: 12px; padding: 20px; text-align: center; cursor: default; animation: slideInCard 0.5s ease-out 0.3s both;">
+        <div class="pot-card" style="background: #1a1a1a; border: 1px solid #333333; border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; animation: slideInCard 0.5s ease-out 0.3s both;">
           <div class="pot-icon" style="width: 50px; height: 50px; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; background: #252525; border-radius: 8px; transition: all 0.3s ease;">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: #ffffff;"><path d="M12 1l8 4v7c0 7-8 11-8 11s-8-4-8-11V5l8-4z"></path></svg>
           </div>
           <p style="font-size: 14px; font-weight: 600; color: #ffffff; margin: 0;">Protege</p>
         </div>
-        <div class="pot-card" style="background: #1a1a1a; border: 1px solid #333333; border-radius: 12px; padding: 20px; text-align: center; cursor: default; animation: slideInCard 0.5s ease-out 0.4s both;">
+        <div class="pot-card" style="background: #1a1a1a; border: 1px solid #333333; border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; animation: slideInCard 0.5s ease-out 0.4s both;">
           <div class="pot-icon" style="width: 50px; height: 50px; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; background: #252525; border-radius: 8px; transition: all 0.3s ease;">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: #ffffff;"><path d="M3 3h18v18H3z"></path><line x1="9" y1="9" x2="15" y2="9"></line><line x1="9" y1="12" x2="15" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
           </div>
           <p style="font-size: 14px; font-weight: 600; color: #ffffff; margin: 0;">Delimita</p>
         </div>
         <div style="grid-column: 1 / -1;">
-          <div class="pot-card" style="background: #1a1a1a; border: 1px solid #333333; border-radius: 12px; padding: 20px; text-align: center; cursor: default; animation: slideInCard 0.5s ease-out 0.5s both;">
+          <div class="pot-card" style="background: #1a1a1a; border: 1px solid #333333; border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; animation: slideInCard 0.5s ease-out 0.5s both;">
             <div class="pot-icon" style="width: 50px; height: 50px; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; background: #252525; border-radius: 8px; transition: all 0.3s ease;">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: #ffffff;"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l4 2"></path></svg>
             </div>
@@ -2080,10 +2105,47 @@ function showInitialPopup() {
           </div>
         </div>
       </div>
-      <button id="popup-btn-close-final" style="background: #222222 !important; color: #ffffff !important; border: 1px solid #444444 !important; padding: 12px 30px !important; border-radius: 8px !important; font-size: 13px !important; font-weight: 600 !important; cursor: pointer !important; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5) !important; transition: all 0.2s !important; animation: slideInCard 0.5s ease-out 0.6s both;">
+      <button id="popup-btn-cartography" style="background: #222222 !important; color: #ffffff !important; border: 1px solid #444444 !important; padding: 12px 30px !important; border-radius: 8px !important; font-size: 13px !important; font-weight: 600 !important; cursor: pointer !important; width: 100% !important; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5) !important; transition: all 0.2s !important; margin-bottom: 8px; animation: slideInCard 0.5s ease-out 0.6s both;">
+        Ver cartografía de humedales
+      </button>
+      <button id="popup-btn-close-final" style="background: #222222 !important; color: #ffffff !important; border: 1px solid #444444 !important; padding: 12px 30px !important; border-radius: 8px !important; font-size: 13px !important; font-weight: 600 !important; cursor: pointer !important; width: 100% !important; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5) !important; transition: all 0.2s !important; animation: slideInCard 0.5s ease-out 0.6s both;">
         Cerrar
       </button>
     `;
+
+    // Agregar eventos a las cards
+    document.querySelectorAll(".pot-card").forEach(card => {
+      card.addEventListener("click", showCartography);
+    });
+
+    // Agregar evento al botón de cartografía
+    const cartBtn = modal.querySelector("#popup-btn-cartography");
+    if (cartBtn) {
+      cartBtn.addEventListener("click", showCartography);
+    }
+
+    // Agregar evento al botón de cerrar
+    const closeBtn = modal.querySelector("#popup-btn-close-final");
+    if (closeBtn) {
+      closeBtn.addEventListener("click", () => {
+        backdrop.style.transition = "opacity 0.3s ease";
+        backdrop.style.opacity = "0";
+        modal.style.transition = "opacity 0.3s ease, transform 0.3s ease";
+        modal.style.opacity = "0";
+        modal.style.transform = "scale(0.95)";
+        setTimeout(() => {
+          backdrop.remove();
+          console.log("✅ Popup cerrado");
+        }, 300);
+      });
+      closeBtn.addEventListener("mouseover", function() {
+        this.style.background = "#333333 !important";
+      });
+      closeBtn.addEventListener("mouseout", function() {
+        this.style.background = "#222222 !important";
+      });
+    }
+  }
 
     // Agregar estilos de animación si no existen
     if (!document.getElementById("cards-animation-styles")) {
