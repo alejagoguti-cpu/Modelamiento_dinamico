@@ -1076,7 +1076,7 @@ body{
 @media(prefers-reduced-motion:reduce){.home-model-card{transition:none}.home-model-card:hover{transform:none}}
 
 
-.entry-three-blocks{grid-template-columns:repeat(3,minmax(0,1fr));column-gap:22px;max-width:720px;}
+.entry-three-blocks{grid-template-columns:repeat(3,minmax(0,1fr));column-gap:22px;max-width:720px;margin-top:32px;}
 @media(max-width:600px){.entry-three-blocks{grid-template-columns:1fr;row-gap:18px;}}
 
 
