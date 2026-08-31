@@ -2496,12 +2496,13 @@
       const label = (row) => systems ? row.name : row.name.replace(/^Submodelo de /, "");
       const icon = (index) => (systems ? systemIcons : submodelIcons)[index] || "fa-circle-nodes";
       const dynamicItems = {
-        hidrica: ["Ciclo de lluvia", "Infiltración y escorrentía", "Circulación y acumulación", "Sedimentos y desborde", "Drenaje y conexión hídrica"],
-        biotica: ["Hábitats y refugios", "Alimento y reproducción", "Llegada y desplazamiento de especies", "Humedad y cobertura vegetal", "Presiones sobre la vida del humedal"],
-        fisico: ["Vías y accesos", "Edificaciones y cerramientos", "Senderos y redes", "Fragmentación del borde", "Transformación de la relación ciudad–humedal"],
-        movilidad: ["Recorridos peatonales", "Rutas de bicicleta y transporte", "Tiempos de viaje", "Congestión y accesibilidad", "Conexiones entre barrios y equipamientos"],
-        social: ["Visita y permanencia", "Cuidado y apropiación", "Educación ambiental", "Participación comunitaria", "Acuerdos y conflictos por el espacio"],
-        socioeconomico: ["Vivienda y ocupación", "Actividades económicas", "Servicios y equipamientos", "Decisiones de localización", "Presiones sobre el borde y el hábitat"]
+        // Componentes concretos y comparables: no son procesos ni conceptos abstractos.
+        hidrica: ["Lluvia", "Cuerpos de agua", "Canales", "Suelo", "Alcantarillas y drenajes"],
+        biotica: ["Aves", "Mamíferos", "Reptiles", "Anfibios", "Insectos"],
+        fisico: ["Calles", "Andenes", "Edificaciones", "Cerramientos", "Redes de servicios"],
+        movilidad: ["Peatones", "Bicicletas", "Buses", "Automóviles", "Motos"],
+        social: ["Habitantes", "Visitantes", "Organizaciones vecinales", "Colegios", "Comerciantes"],
+        socioeconomico: ["Viviendas", "Tiendas", "Bodegas", "Equipamientos", "Parques"]
       };
       // Cuando la red está anclada al mapa real (Cartografía interactiva),
       // NINGUNA bolita abstracta de sistema se muestra — solo las bolitas
@@ -2586,7 +2587,7 @@
         const components = document.createElement("div");
         components.className = "subsystem-components active map-components-panel";
         components.style.setProperty("--bubble-color", color);
-        components.innerHTML = `<div class="subsystem-panel-heading"><strong><i class="fa-solid fa-arrows-rotate"></i> DINÁMICA DEL TERRITORIO</strong><button type="button" class="subsystem-panel-close" aria-label="Cerrar panel de dinámica"><i class="fa-solid fa-xmark"></i></button></div><p class="panel-scope-label">CÓMO CAMBIA EN EL TIEMPO</p><ul class="dynamic-item-list">${(dynamicItems[row.id] || [row.process]).map((item) => `<li><i class="fa-solid fa-circle-dot"></i><span>${item}</span></li>`).join("")}</ul><p class="panel-specific-reading"><b>SEÑALES OBSERVABLES:</b> ${row.process}</p>`;
+        components.innerHTML = `<div class="subsystem-panel-heading"><strong><i class="fa-solid fa-arrows-rotate"></i> DINÁMICA DEL TERRITORIO</strong><button type="button" class="subsystem-panel-close" aria-label="Cerrar panel de dinámica"><i class="fa-solid fa-xmark"></i></button></div><p class="panel-scope-label">QUÉ COMPONE ESTE SUBSISTEMA</p><ul class="dynamic-item-list">${(dynamicItems[row.id] || [row.process]).map((item) => `<li><i class="fa-solid fa-circle-dot"></i><span>${item}</span></li>`).join("")}</ul><p class="panel-scope-label">CÓMO CAMBIA EN EL TIEMPO</p><p class="panel-specific-reading">${row.process}</p><p class="panel-specific-reading"><b>SEÑALES OBSERVABLES:</b> ${row.process}</p>`;
         const purpose = document.createElement("aside");
         purpose.className = "subsystem-purpose-panel active map-purpose-panel";
         purpose.style.setProperty("--bubble-color", color);
