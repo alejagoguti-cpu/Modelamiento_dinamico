@@ -2402,7 +2402,7 @@ function showHumedalMap() {
       <button class="conclusion-map-close" id="conclusionMapClose">← Volver</button>
       <h2>Reserva Distrital de Humedal</h2>
       <div class="conclusion-map-container">
-        <img src="RESERVA_HUMEDAL.webp" alt="Reserva Distrital de Humedal" class="conclusion-map-image">
+        <img src="./assets/RESERVA_HUMEDAL.webp" alt="Reserva Distrital de Humedal" class="conclusion-map-image" onerror="console.log('Imagen no cargó')" onload="console.log('Imagen cargada')"
         <div class="conclusion-nodes-overlay">
           <div class="conclusion-node" style="top: 12%; left: 18%;" title="Orienta"><span>Orienta</span></div>
           <div class="conclusion-node" style="top: 12%; left: 24%;" title="Regula"><span>Regula</span></div>
