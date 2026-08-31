@@ -2190,6 +2190,31 @@
     };
     const escapePointText = (value) => String(value).replace(/[&<>\"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\\\"": "&quot;" }[char] || char));
     const getComponentPoints = (item) => (componentPointCatalog[item?.mapKey] || []).map((point, index) => ({ ...point, index, color: item.color }));
+    // Diagrama ilustrado de "Dinámica hídrica": un río/humedal estilizado
+    // (como el referente que mandaste) con líneas de guía señalando cada
+    // ciclo o dinámica que ocurre ahí — no es un mapa real, es un esquema.
+    const buildHidricaDiagramHtml = () => {
+      // Coordenadas en un lienzo de 400x260. "dot" = punto sobre el río,
+      // "label" = dónde queda el recuadro de texto (siempre en un borde).
+      const callouts = [
+        { dot: [55, 205], label: [60, 240], side: "left", title: "Lluvia y escorrentía", text: "El agua lluvia cae sobre el suelo y las vías, y empieza a moverse ladera abajo." },
+        { dot: [112, 150], label: [40, 105], side: "left", title: "Infiltración en el suelo", text: "Parte del agua se filtra según el tipo de suelo y su capacidad de absorción." },
+        { dot: [175, 100], label: [40, 40], side: "left", title: "Circulación y acumulación", text: "El agua se junta en el canal, sube o baja de nivel según lluvia y pendiente." },
+        { dot: [245, 68], label: [345, 105], side: "right", title: "Sedimentos y arrastre", text: "El flujo arrastra sedimentos que se acumulan o se remueven con el tiempo." },
+        { dot: [310, 40], label: [345, 175], side: "right", title: "Desborde en creciente", text: "En eventos fuertes, el agua sobrepasa el canal y se desborda sobre el borde." },
+        { dot: [365, 22], label: [345, 40], side: "right", title: "Canal Los Ángeles", text: "Punto real de la red hídrica, aguas abajo del sistema del Humedal El Burro." },
+      ];
+      const riverPath = "M 15 225 C 70 210, 65 165, 112 150 C 150 138, 150 112, 175 100 C 205 87, 225 80, 245 68 C 270 54, 285 48, 310 40 C 330 33, 345 30, 365 22";
+      const calloutsSvg = callouts.map((c) =>
+        `<g class="hidrica-callout"><line x1="${c.dot[0]}" y1="${c.dot[1]}" x2="${c.label[0]}" y2="${c.label[1]}" class="hidrica-callout-line"/><circle cx="${c.dot[0]}" cy="${c.dot[1]}" r="3.4" class="hidrica-callout-dot"/></g>`
+      ).join("");
+      const labelsHtml = callouts.map((c, i) => {
+        const leftPct = (c.label[0] / 400) * 100;
+        const topPct = (c.label[1] / 260) * 100;
+        return `<div class="hidrica-callout-label ${c.side === "left" ? "cal-left" : "cal-right"}" style="left:${leftPct}%;top:${topPct}%"><b>${i + 1}. ${c.title}</b><span>${c.text}</span></div>`;
+      }).join("");
+      return `<div class="subsystem-panel-heading"><strong><i class="fa-solid fa-water"></i> DINÁMICA HÍDRICA · CICLOS Y DINÁMICAS</strong><button type="button" class="subsystem-panel-close" aria-label="Cerrar diagrama"><i class="fa-solid fa-xmark"></i></button></div><div class="hidrica-diagram-wrap"><svg viewBox="0 0 400 260" class="hidrica-diagram-svg" preserveAspectRatio="xMidYMid meet"><path d="${riverPath}" class="hidrica-river-path"/>${calloutsSvg}</svg>${labelsHtml}</div>`;
+    };
     const renderSubsystemPoints = (item) => {
       const points = getComponentPoints(item);
       const source = componentPointMap?.getSource("subsystem-component-points");
@@ -2526,7 +2551,7 @@
         if (!row) return;
         if (row?.id) DINAMICA_SOUND.play(row.id);
         target.querySelectorAll(".map-network-node").forEach((node) => node.classList.toggle("selected", node === button));
-        target.querySelectorAll(".subsystem-components, .subsystem-purpose-panel, .map-network-detail").forEach((node) => node.remove());
+        target.querySelectorAll(".subsystem-components, .subsystem-purpose-panel, .subsystem-diagram-panel, .map-network-detail").forEach((node) => node.remove());
         const color = row.color || colors[Number(button.dataset.mapNetworkIndex)];
         const parts = systems ? row.components : row.parts;
         const partsPurpose = row.partsPurpose || "Sí";
@@ -2542,7 +2567,19 @@
         purpose.style.setProperty("--bubble-color", color);
         purpose.innerHTML = `<div class="subsystem-panel-heading"><strong>${label(row)}</strong><button type="button" class="subsystem-panel-close" aria-label="Cerrar panel de propósito"><i class="fa-solid fa-xmark"></i></button></div><p class="panel-scope-label">ANÁLISIS GENERAL · TABLA DE PROPÓSITO</p><h4>¿Las partes tienen propósito propio?</h4><p><b>${partsPurpose}</b> · ${partsWhy}</p><h4>¿La totalidad tiene propósito propio?</h4><p><b>${totalPurpose}</b> · ${totalWhy}</p><h4>Por ende, la categoría es:</h4><b class="purpose-category">${row.category}</b><h4>Qué cambia en el tiempo</h4><p>${row.process}</p>`;
         target.append(components, purpose);
-        const closePanels = (event) => { event?.stopPropagation(); components.remove(); purpose.remove(); clearSubsystemPoints(); button.classList.remove("selected"); };
+        // Diagrama ilustrado (como el referente que mandaste): un río/
+        // humedal estilizado con líneas de guía hacia cada ciclo o dinámica
+        // que ocurre ahí. Por ahora solo existe para "Dinámica hídrica" —
+        // si funciona bien, se hace uno propio para cada uno de los 6.
+        const diagram = document.createElement("aside");
+        if (row.id === "hidrica") {
+          diagram.className = "subsystem-diagram-panel active";
+          diagram.style.setProperty("--bubble-color", color);
+          diagram.innerHTML = buildHidricaDiagramHtml();
+          target.append(diagram);
+          diagram.querySelector(".subsystem-panel-close")?.addEventListener("click", (event) => { event?.stopPropagation(); diagram.remove(); });
+        }
+        const closePanels = (event) => { event?.stopPropagation(); components.remove(); purpose.remove(); diagram.remove(); clearSubsystemPoints(); button.classList.remove("selected"); };
         components.querySelector(".subsystem-panel-close")?.addEventListener("click", closePanels);
         purpose.querySelector(".subsystem-panel-close")?.addEventListener("click", closePanels);
         if (systems && withFlows) renderSubsystemPoints(subsystemData[Number(button.dataset.mapNetworkIndex)]);
@@ -2558,7 +2595,7 @@
           if (!box || !place) return;
           DINAMICA_SOUND.play(button.dataset.kennedySound || "fisico");
           target.querySelectorAll(".map-network-node").forEach((node) => node.classList.toggle("selected", node === button));
-          target.querySelectorAll(".subsystem-components, .subsystem-purpose-panel, .map-network-detail").forEach((node) => node.remove());
+          target.querySelectorAll(".subsystem-components, .subsystem-purpose-panel, .subsystem-diagram-panel, .map-network-detail").forEach((node) => node.remove());
           const purpose = document.createElement("aside");
           purpose.className = "subsystem-purpose-panel active map-purpose-panel";
           purpose.style.setProperty("--bubble-color", place.color || box.color || "#fff");
