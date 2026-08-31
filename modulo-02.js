@@ -1478,6 +1478,30 @@ const MOVILIDAD_RELACIONES = {
 
 const MOVILIDAD_CONCLUSION = "El POT sí plantea que el Metro debe generar conexiones entre distintos ambitos. Sin embargo, al construir su red, algunos componentes aparecen como hubs centrales y otros quedan periféricos, conectados solo a un proyecto o a una estructura específica. Esta distribución desigual muestra que el POT reconoce relaciones, pero no las articula completamente como una red territorial integrada. Además, sus planos representan principalmente líneas, estaciones y localizaciones, sin mostrar cómo esas conexiones funcionan en el tiempo, quién depende de ellas, qué recorridos se producen ni qué ocurre cuando la red se congestiona o falla.";
 
+const MAIN_CONCLUSION_HTML = `
+  <div class="main-conclusion-popup-content">
+    <div class="main-conclusion-title">Nuestra conclusión</div>
+    <div class="main-conclusion-answer">
+      <strong>No completamente.</strong>
+      <p>El POT es necesario para regular jurídicamente Bogotá, pero no es suficiente para comprender por sí solo todos los procesos que producen y transforman la ciudad.</p>
+    </div>
+    <div class="main-conclusion-summary">
+      <div class="conclusion-column">
+        <div class="conclusion-label">1. Lo que sí logra</div>
+        <p>Regula el suelo, delimita áreas, organiza estructuras y orienta proyectos.</p>
+      </div>
+      <div class="conclusion-column">
+        <div class="conclusion-label">2. Lo que deja por fuera</div>
+        <p>No muestra completamente los flujos, los cambios en el tiempo, los actores, los conflictos ni las relaciones entre escalas.</p>
+      </div>
+      <div class="conclusion-column">
+        <div class="conclusion-label">3. La respuesta</div>
+        <p>El POT es necesario, pero no suficiente como único modelo. Debe complementarse con modelos dinámicos, causales, adaptativos y multiescalares.</p>
+      </div>
+    </div>
+  </div>
+`;
+
 let movilidadPopupAnchor = null;
 let movilidadClickOutsideWired = false;
 
@@ -1753,6 +1777,21 @@ function hideMovilidadPopup() {
   if (popup) { popup.style.display = "none"; popup.innerHTML = ""; }
   movilidadPopupAnchor = null;
   document.querySelectorAll(".movilidad-hotspot").forEach(b => b.classList.remove("active"));
+}
+
+function showMainConclusionPopup() {
+  const modal = document.getElementById("mainConclusionModal");
+  if (!modal) return;
+  modal.style.display = "flex";
+  document.body.style.overflow = "hidden";
+}
+
+function hideMainConclusionPopup() {
+  const modal = document.getElementById("mainConclusionModal");
+  if (modal) {
+    modal.style.display = "none";
+  }
+  document.body.style.overflow = "auto";
 }
 
 /* Animación del botón "Ver hallazgos clave": efecto tipo "corte de luz" — los
@@ -2065,6 +2104,39 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("networkViz")?.addEventListener("click", () => { hideEdgeInfo(); hideNodeInfo(); });
   document.getElementById("btnVerHallazgos")?.addEventListener("click", verHallazgosConAnimacion);
   document.getElementById("btnExplorarRelaciones")?.addEventListener("click", explorarRelacionesConAnimacion);
+
+  // Crear y configurar el modal de conclusión principal
+  if (!document.getElementById("mainConclusionModal")) {
+    const mainElement = document.querySelector("main");
+    if (mainElement) {
+      const modalHTML = `
+        <div id="mainConclusionModal" class="main-conclusion-modal" style="display:none;">
+          <div class="main-conclusion-modal-overlay"></div>
+          <div class="main-conclusion-modal-container">
+            <div class="main-conclusion-modal-header">
+              <h2>Cierre de la lectura</h2>
+              <button class="main-conclusion-modal-close" id="mainConclusionCloseBtn" type="button" aria-label="Cerrar">&times;</button>
+            </div>
+            <div class="main-conclusion-modal-body">
+              ${MAIN_CONCLUSION_HTML}
+            </div>
+            <div class="main-conclusion-modal-footer">
+              <button class="main-conclusion-modal-footer-btn" id="mainConclusionFooterBtn" type="button">Cerrar</button>
+            </div>
+          </div>
+        </div>
+      `;
+      mainElement.insertAdjacentHTML("beforeend", modalHTML);
+
+      // Agregar event listeners
+      document.getElementById("topbarConclusionBtn")?.addEventListener("click", showMainConclusionPopup);
+      document.getElementById("mainConclusionCloseBtn")?.addEventListener("click", hideMainConclusionPopup);
+      document.getElementById("mainConclusionFooterBtn")?.addEventListener("click", hideMainConclusionPopup);
+      document.getElementById("mainConclusionModal")?.addEventListener("click", (e) => {
+        if (e.target.id === "mainConclusionModal") hideMainConclusionPopup();
+      });
+    }
+  }
 
   // Mostrar popup inicial después de 500ms (cuando la página esté completamente lista)
   setTimeout(() => {
