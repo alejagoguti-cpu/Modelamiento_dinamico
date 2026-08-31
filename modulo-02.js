@@ -2331,7 +2331,7 @@ const MAIN_CONCLUSION_STEP1 = `
     <svg id="conclusionNetworkViz" viewBox="0 0 2500 1820" preserveAspectRatio="xMidYMid meet"></svg>
   </div>
   <div class="main-conclusion-answer">
-    <p>tiene límites para representar procesos y cambian en el tiempo.</p>
+    <p>Al reconstruir su modelo, encontramos que el POT hace principalmente legibles estructuras, componentes, relaciones funcionales y reglas de intervención. Esto permite construir una representación organizada del territorio tiene límites para representar procesos y cambian en el tiempo.</p>
   </div>
   <button class="main-conclusion-explore-btn" id="mainConclusionNextBtn">DESCUBRIR</button>
 `;
