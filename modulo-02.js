@@ -2318,11 +2318,11 @@ function filterNetwork(mode) {
 
 /* -------- conclusión modal -------- */
 const MAIN_CONCLUSION_FUNCTIONS = [
-  { title: "Clasifica", icon: "fa-list" },
-  { title: "Regula", icon: "fa-gavel" },
-  { title: "Protege", icon: "fa-shield" },
-  { title: "Delimita", icon: "fa-ban" },
-  { title: "Orienta intervenciones", icon: "fa-compass" }
+  { title: "Clasifica", icon: "fa-list", tooltip: "cambian en el tiempo" },
+  { title: "Regula", icon: "fa-gavel", tooltip: "dependen de múltiples actores" },
+  { title: "Protege", icon: "fa-shield", tooltip: "atraviesan diferentes escalas" },
+  { title: "Delimita", icon: "fa-ban", tooltip: "producen efectos no previstos" },
+  { title: "Orienta intervenciones", icon: "fa-compass", tooltip: "sin límites definidos" }
 ];
 
 const MAIN_CONCLUSION_STEP1 = `
@@ -2341,9 +2341,10 @@ const MAIN_CONCLUSION_STEP1 = `
 const MAIN_CONCLUSION_STEP2 = `
   <div class="main-conclusion-functions-grid">
     ${MAIN_CONCLUSION_FUNCTIONS.map((fn, idx) => `
-      <div class="conclusion-function-card" style="--d:${idx * 0.1}s" data-hover-text="pero tiene límites para representar procesos que cambian en el tiempo, dependen de múltiples actores, atraviesan diferentes escalas y producen efectos no previstos a partir de sus componentes individuales.">
+      <div class="conclusion-function-card" style="--d:${idx * 0.1}s" data-tooltip="${fn.tooltip}">
         <i class="fa-solid ${fn.icon}"></i>
         <h3>${fn.title}</h3>
+        <div class="conclusion-card-tooltip" style="display:none;">${fn.tooltip}</div>
       </div>
     `).join('')}
   </div>
@@ -2403,15 +2404,14 @@ function showMainConclusionStep2() {
   document.getElementById("mainConclusionBody").innerHTML = MAIN_CONCLUSION_STEP2;
 
   document.querySelectorAll(".conclusion-function-card").forEach(card => {
-    const originalTitle = card.querySelector("h3").textContent;
-    const hoverText = card.getAttribute("data-hover-text");
+    const tooltip = card.querySelector(".conclusion-card-tooltip");
 
     card.addEventListener("mouseenter", () => {
-      card.querySelector("h3").textContent = hoverText;
+      if (tooltip) tooltip.style.display = "block";
     });
 
     card.addEventListener("mouseleave", () => {
-      card.querySelector("h3").textContent = originalTitle;
+      if (tooltip) tooltip.style.display = "none";
     });
   });
 }
