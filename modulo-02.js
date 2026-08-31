@@ -2031,6 +2031,9 @@ function showInitialPopup() {
     <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 700; margin: 0 0 18px 0 !important; line-height: 1.3; color: #ffffff; letter-spacing: -0.5px;">
       ¿Es suficiente el POT como único modelo de Bogotá?
     </h2>
+    <p style="font-size: 14px; color: #999999; line-height: 1.6; margin: 12px 0 24px 0 !important; font-style: italic;">
+      El POT es suficiente para cumplir su función como instrumento de ordenamiento territorial:
+    </p>
     <p style="font-size: 15px; color: #cccccc; line-height: 1.8; margin: 16px 0 32px 0 !important;">
       Explorar esta pregunta es el propósito de este análisis de ingeniería inversa. Descubre cómo el POT estructura la ciudad y qué le falta para comprenderla completamente.
     </p>
