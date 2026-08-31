@@ -2406,3 +2406,17 @@ footer span { color: var(--teal); }
 }
 
 
+
+
+/* Palabras clave recuperadas dentro de la caja naranja de movilidad. */
+.movilidad-nota-naranja .movilidad-keyword {
+  color: #70e1b2;
+  font-weight: 800;
+  letter-spacing: .01em;
+}
+.movilidad-nota-naranja .movilidad-keyword-line {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(112, 225, 178, .22);
+  color: #d7e9e1;
+}

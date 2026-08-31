@@ -1,0 +1,131 @@
+/* =============================================================================
+   MÓDULO 04 · responsive-fixes.css  (v3)  — Vanilla CSS
+   Cargar SIEMPRE al final del <head> (ya enlazado en modulo-04.html).
+
+   CAMBIO CLAVE v3 (corrige el overlay de la captura):
+   El .sidebar de iconos es un rail FIJO a la izquierda (position:fixed) del
+   tema. En vertical, la versión anterior le quitó a .main su desplazamiento
+   izquierdo → el contenido se metió DEBAJO del rail (texto cortado por la izq).
+
+   SOLUCIÓN = OPCIÓN A: el rail permanece a la izquierda y .main reserva su
+   ANCHO EXACTO como padding-left. El ancho lo mide responsive-fixes.js y lo
+   publica en --sidebar-w (con 72px de reserva por si el JS no corre).
+
+   Responsabilidades:
+   - Aquí (padre): offset del rail, título que no desborda, HUD del juego,
+     ancho fluido del iframe (su ALTURA la gobierna responsive-fixes.js).
+   - El layout INTERNO del iframe (grafo D3, #hud, #conventions) ya está
+     resuelto en el CSS embebido del srcdoc dentro de modulo-04.html.
+   ============================================================================= */
+
+:root {
+  --app-vh: 1vh;        /* fallback de viewport dinámico (navegadores sin dvh) */
+  --sidebar-w: 72px;    /* reserva; el JS lo ajusta al ancho real del rail */
+}
+
+/* Nunca scrollbar horizontal por el título gigante u overflows. */
+html, body { max-width: 100%; overflow-x: hidden; }
+
+/* Antivuelco de flex/grid (que no impongan mínimos que rompan el ancho). */
+.app, .main, .workspace, .workspace > .panel { min-width: 0; }
+
+/* Iframe SIEMPRE fluido en ancho; la ALTURA la fija el JS. */
+.workspace iframe,
+.workspace > .panel > iframe,
+.panel iframe,
+iframe[srcdoc] {
+  display: block;
+  width: 100%;
+  border: 0;
+  background: #000;
+}
+
+/* =============================================================================
+   PORTRAIT y PANTALLAS PEQUEÑAS (incluye laptop rotada a vertical)
+   ============================================================================= */
+@media (orientation: portrait), (max-width: 900px) {
+
+  /* ---- OPCIÓN A · el contenido reserva el ancho del rail fijo ---- */
+  .main {
+    margin-left: 0 !important;                                   /* anula offsets previos del tema */
+    padding-left: calc(var(--sidebar-w) + 6px) !important;       /* deja libre el rail izquierdo */
+    padding-right: 14px !important;
+    padding-top: 12px !important;
+    padding-bottom: 28px !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;                               /* sin scroll lateral */
+  }
+
+  /* Título que ya no se corta por la derecha en vertical. */
+  .welcome h2 {
+    font-size: clamp(1.5rem, 6vw, 2.4rem) !important;
+    line-height: 1.1 !important;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    hyphens: auto;
+  }
+  .welcome p { max-width: 100%; }
+
+  /* Que la tarjeta del iframe pueda crecer con su contenido. */
+  .workspace, .workspace > .panel { height: auto !important; }
+  .workspace > .panel { overflow: hidden; }   /* conserva las esquinas redondeadas */
+
+  /* Otras simulaciones D3 embebidas: área mínima visible garantizada. */
+  .panel iframe, iframe[srcdoc] { min-height: 60vh; }
+
+  /* ---- JUEGO CANVAS · HUD de absoluto → flujo relativo (no tapa la vía) ---- */
+  .drive-layout { display: block !important; }
+  .drive-stage-wrap {
+    position: relative !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    height: auto !important;
+  }
+  .drive-hud.drive-hud-left,
+  .drive-hud.drive-hud-right,
+  .drive-hud.drive-speed {
+    position: static !important;
+    inset: auto !important;
+    top: auto !important; right: auto !important; bottom: auto !important; left: auto !important;
+    transform: none !important;
+    order: -1;
+    flex: 1 1 30%;
+    min-width: 92px;
+    margin: 0 !important;
+    display: flex; flex-direction: column; gap: 2px;
+    padding: 8px 10px;
+    background: rgba(6,12,18,.9);
+    border: 1px solid var(--border, rgba(255,255,255,.12));
+    border-radius: 10px;
+  }
+  #bogotaDriveCanvas {
+    order: 0;
+    flex: 1 1 100%;
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 1200 / 620;
+    display: block;
+    border-radius: 12px;
+  }
+  .drive-toast {
+    position: absolute !important;
+    left: 50% !important; top: 60% !important;
+    transform: translate(-50%, -50%) !important;
+    right: auto !important; bottom: auto !important;
+    max-width: 88%; text-align: center; z-index: 5;
+  }
+  .drive-game-over {
+    position: absolute !important;
+    inset: 0 !important;
+    display: grid; place-items: center; text-align: center;
+    padding: 16px; z-index: 6;
+  }
+  .drive-game-over[hidden] { display: none !important; }
+  .drive-info { display: grid !important; grid-template-columns: 1fr; gap: 12px; }
+}
+
+/* Base del canvas del juego en todas las resoluciones (escritorio intacto). */
+#bogotaDriveCanvas { max-width: 100%; height: auto; aspect-ratio: 1200 / 620; }

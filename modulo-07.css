@@ -5996,3 +5996,66 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
   .simulation-conclusion-section { width: min(100% - 28px, 680px); margin-top: 22px; padding: 24px 18px 28px; }
   .simulation-pillars { grid-template-columns: 1fr; }
 }
+
+
+/* ===== Red "¿Qué queremos hacer visible?": relaciones vivas y legibles ===== */
+.visible-elements-section .bubble-net-wrap {
+  max-width: 700px;
+  aspect-ratio: 560 / 500;
+  margin: 28px auto 34px;
+}
+.visible-elements-section .bubble-net-svg {
+  overflow: visible;
+}
+.visible-elements-section .bubble-edge-visual,
+.visible-elements-section .bubble-edge-tejido,
+.visible-elements-section .bubble-edge-feedback {
+  fill: none;
+  stroke: rgba(245, 250, 248, .82) !important;
+  stroke-width: 1.55px !important;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 4 7;
+  opacity: .76;
+  filter: drop-shadow(0 0 2px rgba(235, 255, 250, .18));
+  transition: opacity .2s ease, stroke-width .2s ease;
+}
+.visible-elements-section .bubble-edge-hit:hover + .bubble-edge-visual,
+.visible-elements-section .bubble-edge-hit.active + .bubble-edge-visual {
+  stroke: #ffffff !important;
+  stroke-width: 2px !important;
+  opacity: 1;
+}
+.visible-elements-section .bubble-edge-hit {
+  stroke: transparent;
+  stroke-width: 16px;
+}
+.visible-elements-section .bubble-flow-dot {
+  fill: #ffffff;
+  opacity: .95;
+  pointer-events: none;
+  filter: drop-shadow(0 0 3px rgba(218, 255, 247, .9));
+}
+.visible-elements-section .bubble-node {
+  transition: opacity .2s ease, transform .2s ease;
+}
+.visible-elements-section .bubble-node-label i,
+.visible-elements-section .bubble-node-label span {
+  text-shadow: 0 1px 5px rgba(0, 0, 0, .92);
+}
+@media (prefers-reduced-motion: reduce) {
+  .visible-elements-section .bubble-flow-dot animateMotion { display: none; }
+}
+
+/* Tres palabras recuperadas en la caja naranja de movilidad. */
+.movilidad-nota-naranja .movilidad-keyword {
+  color: #70e1b2;
+  font-weight: 800;
+  letter-spacing: .01em;
+}
+.movilidad-nota-naranja .movilidad-keyword-line {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(112, 225, 178, .22);
+  color: #d7e9e1;
+}
