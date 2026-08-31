@@ -2318,11 +2318,11 @@ function filterNetwork(mode) {
 
 /* -------- conclusión modal -------- */
 const MAIN_CONCLUSION_FUNCTIONS = [
-  { title: "Clasifica", icon: "fa-list", tooltip: "cambian en el tiempo" },
-  { title: "Regula", icon: "fa-gavel", tooltip: "dependen de múltiples actores" },
-  { title: "Protege", icon: "fa-shield", tooltip: "atraviesan diferentes escalas" },
-  { title: "Delimita", icon: "fa-ban", tooltip: "producen efectos no previstos" },
-  { title: "Orienta intervenciones", icon: "fa-compass", tooltip: "sin límites definidos" }
+  { title: "TIEMPO", icon: "fa-clock", tooltip: "cambian en el tiempo" },
+  { title: "ACTORES", icon: "fa-people-group", tooltip: "dependen de múltiples actores" },
+  { title: "ESCALAS", icon: "fa-arrows-up-down", tooltip: "atraviesan diferentes escalas" },
+  { title: "EFECTOS", icon: "fa-sparkles", tooltip: "producen efectos no previstos" },
+  { title: "Orienta intervenciones", icon: "fa-compass", tooltip: "pero tiene límites para representar procesos" }
 ];
 
 const MAIN_CONCLUSION_STEP1 = `
