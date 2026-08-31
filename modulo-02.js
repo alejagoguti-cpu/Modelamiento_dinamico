@@ -2318,11 +2318,9 @@ function filterNetwork(mode) {
 
 /* -------- conclusión modal -------- */
 const MAIN_CONCLUSION_FUNCTIONS = [
-  { title: "Clasifica", icon: "fa-list" },
-  { title: "Regula", icon: "fa-gavel" },
-  { title: "Protege", icon: "fa-shield" },
-  { title: "Delimita", icon: "fa-ban" },
-  { title: "Orienta intervenciones", icon: "fa-compass" }
+  { title: "1. Dependen de múltiples actores", icon: "fa-users" },
+  { title: "2. Atraviesan diferentes escalas", icon: "fa-expand" },
+  { title: "3. Producen efectos no previstos", icon: "fa-bolt" }
 ];
 
 const MAIN_CONCLUSION_STEP1 = `
@@ -2333,8 +2331,7 @@ const MAIN_CONCLUSION_STEP1 = `
     <svg id="conclusionNetworkViz" viewBox="0 0 2500 1820" preserveAspectRatio="xMidYMid meet"></svg>
   </div>
   <div class="main-conclusion-answer">
-    <p>El POT estructura Bogotá desde cuatro dimensiones (Ecológica, Funcional y del Cuidado, Socioeconómica y Patrimonial) que capturan el funcionamiento de la ciudad desde lo vivo y lo tangible. Pero eso que el POT denomina cada estructura revela relaciones y vacíos que no están explícitos en el texto.</p>
-    <p>La Red Implícita es la trama de conexiones reales sobre la que descansa cada decisión del POT.</p>
+    <p>Al reconstruir su modelo, encontramos que el POT hace principalmente legibles estructuras, componentes, relaciones funcionales y reglas de intervención. Esto permite construir una representación organizada del territorio tiene límites para representar procesos y cambian en el tiempo.</p>
   </div>
   <button class="main-conclusion-explore-btn" id="mainConclusionNextBtn">DESCUBRIR</button>
 `;
@@ -2342,7 +2339,7 @@ const MAIN_CONCLUSION_STEP1 = `
 const MAIN_CONCLUSION_STEP2 = `
   <div class="main-conclusion-functions-grid">
     ${MAIN_CONCLUSION_FUNCTIONS.map((fn, idx) => `
-      <div class="conclusion-function-card" style="--d:${idx * 0.1}s">
+      <div class="conclusion-function-card" style="--d:${idx * 0.1}s" data-card-index="${idx}">
         <i class="fa-solid ${fn.icon}"></i>
         <h3>${fn.title}</h3>
       </div>
@@ -2399,9 +2396,45 @@ function showMainConclusionPopup() {
   document.getElementById("mainConclusionNextBtn")?.addEventListener("click", showMainConclusionStep2);
 }
 
+function showHumedalMap() {
+  const mapHTML = `
+    <div class="conclusion-map-modal">
+      <button class="conclusion-map-close" id="conclusionMapClose">← Volver</button>
+      <h2>Reserva Distrital de Humedal</h2>
+      <div class="conclusion-map-container">
+        <img src="./assets/RESERVA_HUMEDAL.webp" alt="Reserva Distrital de Humedal" class="conclusion-map-image" onerror="console.log('Imagen no cargó')" onload="console.log('Imagen cargada')"
+        <div class="conclusion-nodes-overlay">
+          <div class="conclusion-node" style="top: 12%; left: 18%; --d: 0.1s;" title="Orienta"><span>Orienta</span></div>
+          <div class="conclusion-node" style="top: 12%; left: 24%; --d: 0.2s;" title="Regula"><span>Regula</span></div>
+          <div class="conclusion-node" style="top: 48%; left: 14%; --d: 0.3s;" title="Clasifica"><span>Clasifica</span></div>
+          <div class="conclusion-node" style="top: 23%; right: 12%; --d: 0.4s;" title="Protege"><span>Protege</span></div>
+          <div class="conclusion-node" style="top: 52%; left: 42%; --d: 0.5s;" title="Delimita"><span>Delimita</span></div>
+        </div>
+      </div>
+      <p class="conclusion-map-caption">17 áreas de reserva distrital de humedal en Bogotá — Presiona los nodos para más información</p>
+    </div>
+  `;
+
+  const body = document.getElementById("mainConclusionBody");
+  body.innerHTML = mapHTML;
+
+  document.getElementById("conclusionMapClose")?.addEventListener("click", () => {
+    showMainConclusionStep2();
+  });
+}
+
 function showMainConclusionStep2() {
   mainConclusionStep = 2;
   document.getElementById("mainConclusionBody").innerHTML = MAIN_CONCLUSION_STEP2;
+
+  document.querySelectorAll(".conclusion-function-card").forEach(card => {
+    card.addEventListener("click", (e) => {
+      const cardIndex = card.getAttribute("data-card-index");
+      if (cardIndex === "1") {
+        showHumedalMap();
+      }
+    });
+  });
 }
 
 function hideMainConclusionPopup() {
