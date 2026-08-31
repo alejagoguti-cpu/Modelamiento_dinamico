@@ -1995,56 +1995,30 @@ function filterNetwork(mode) {
 
 // Función para mostrar el popup de pregunta inicial
 function showInitialPopup() {
+  console.log("🚀 Iniciando popup...");
+
   // Crear el overlay/backdrop
   const backdrop = document.createElement("div");
-  backdrop.className = "popup-backdrop";
-  backdrop.style.cssText = `
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(3px);
-    z-index: 9999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    animation: fadeIn 0.3s ease;
-  `;
+  backdrop.id = "popup-backdrop-modal";
+  backdrop.style.cssText = "position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(3px); z-index: 9999; display: flex; align-items: center; justify-content: center;";
 
   // Crear el modal
   const modal = document.createElement("div");
-  modal.className = "popup-modal";
-  modal.style.cssText = `
-    background: linear-gradient(135deg, #0f1522 0%, #121828 100%);
-    border: 1.5px solid rgba(47, 212, 200, 0.4);
-    border-radius: 16px;
-    padding: 40px 36px;
-    width: 90%;
-    max-width: 520px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(47, 212, 200, 0.15);
-    animation: slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    color: #e7eaf2;
-    text-align: center;
-  `;
+  modal.style.cssText = "background: linear-gradient(135deg, #0f1522 0%, #121828 100%); border: 1.5px solid rgba(47, 212, 200, 0.4); border-radius: 16px; padding: 40px 36px; width: 90%; max-width: 520px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(47, 212, 200, 0.15); font-family: 'Inter', sans-serif; color: #e7eaf2; text-align: center; animation: slideUpPopup 0.4s ease-out;";
 
-  // Agregar estilos de animación al head
-  if (!document.getElementById("popup-styles")) {
+  // Agregar estilos de animación
+  if (!document.getElementById("popup-modal-styles")) {
     const style = document.createElement("style");
-    style.id = "popup-styles";
-    style.textContent = `
-      @keyframes fadeIn {
+    style.id = "popup-modal-styles";
+    style.innerHTML = `
+      @keyframes slideUpPopup {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      #popup-backdrop-modal { animation: fadeInPopup 0.3s ease-out; }
+      @keyframes fadeInPopup {
         from { opacity: 0; }
         to { opacity: 1; }
-      }
-      @keyframes slideUp {
-        from {
-          opacity: 0;
-          transform: translateY(30px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
       }
     `;
     document.head.appendChild(style);
@@ -2052,74 +2026,35 @@ function showInitialPopup() {
 
   // Crear contenido del modal
   modal.innerHTML = `
-    <div style="margin-bottom: 20px;">
-      <i class="fa-solid fa-circle-question" style="font-size: 48px; color: #2fd4c8; display: block; margin-bottom: 16px;"></i>
-    </div>
-    <h2 style="
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 28px;
-      font-weight: 700;
-      margin-bottom: 16px;
-      line-height: 1.3;
-      background: linear-gradient(90deg, #e7eaf2 0%, #2fd4c8 60%, #5b8def 100%);
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-    ">
+    <div style="margin-bottom: 20px; font-size: 48px; color: #2fd4c8;">❓</div>
+    <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 26px; font-weight: 700; margin: 0 0 16px 0; line-height: 1.3; color: #e7eaf2;">
       ¿Es suficiente el POT como único modelo de Bogotá?
     </h2>
-    <p style="
-      font-size: 14px;
-      color: #8891a5;
-      line-height: 1.7;
-      margin-bottom: 28px;
-      margin-top: 12px;
-    ">
+    <p style="font-size: 14px; color: #8891a5; line-height: 1.7; margin: 12px 0 28px 0;">
       Explorar esta pregunta es el propósito de este análisis de ingeniería inversa. Descubre cómo el POT estructura la ciudad y qué le falta para comprenderla completamente.
     </p>
-    <button class="popup-close-btn" style="
-      background: linear-gradient(135deg, #1f7a74, #175f5a);
-      color: #eafffb;
-      border: none;
-      padding: 14px 32px;
-      border-radius: 10px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: filter 0.15s, transform 0.15s;
-      width: 100%;
-      max-width: 300px;
-      box-shadow: 0 10px 20px rgba(47, 212, 200, 0.15);
-    ">
+    <button id="popup-btn-cerrar" style="background: linear-gradient(135deg, #1f7a74, #175f5a); color: #eafffb; border: none; padding: 14px 32px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; width: 100%; max-width: 300px; box-shadow: 0 10px 20px rgba(47, 212, 200, 0.15);">
       Comenzar a explorar
     </button>
   `;
 
-  // Agregar evento al botón
-  modal.querySelector(".popup-close-btn").addEventListener("click", () => {
-    backdrop.style.animation = "fadeIn 0.3s ease reverse";
-    modal.style.animation = "slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) reverse";
-    setTimeout(() => {
-      backdrop.remove();
-    }, 300);
-  });
+  // Función para cerrar
+  function closePopup() {
+    backdrop.style.opacity = "0";
+    modal.style.opacity = "0";
+    setTimeout(() => backdrop.remove(), 200);
+  }
 
-  // Cerrar al hacer clic en el backdrop
-  backdrop.addEventListener("click", (e) => {
-    if (e.target === backdrop) {
-      backdrop.style.animation = "fadeIn 0.3s ease reverse";
-      modal.style.animation = "slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) reverse";
-      setTimeout(() => {
-        backdrop.remove();
-      }, 300);
-    }
-  });
+  // Agregar eventos
+  modal.querySelector("#popup-btn-cerrar").addEventListener("click", closePopup);
+  backdrop.addEventListener("click", (e) => { if (e.target === backdrop) closePopup(); });
 
   // Agregar modal al backdrop
   backdrop.appendChild(modal);
 
   // Agregar al documento
   document.body.appendChild(backdrop);
+  console.log("✅ Popup agregado al DOM");
 }
 
 document.addEventListener("DOMContentLoaded", () => {
