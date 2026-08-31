@@ -6059,3 +6059,23 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
   border-top: 1px solid rgba(112, 225, 178, .22);
   color: #d7e9e1;
 }
+
+
+/* ===== Nodos de la red visible: fondo negro y bordes cromáticos ===== */
+.visible-elements-section .bubble-net-nodes .bubble-node {
+  fill: #050708 !important;
+  opacity: 1 !important;
+  mix-blend-mode: normal !important;
+  stroke-width: 2.4px;
+  filter: drop-shadow(0 0 5px rgba(0, 0, 0, .55));
+}
+.visible-elements-section .bubble-net-nodes .bn-agentes { stroke: #f1cf5b; }
+.visible-elements-section .bubble-net-nodes .bn-procesos { stroke: #ee9a4b; }
+.visible-elements-section .bubble-net-nodes .bn-flujos { stroke: #56b8d4; }
+.visible-elements-section .bubble-net-nodes .bn-interacciones { stroke: #b28be8; }
+.visible-elements-section .bubble-net-nodes .bn-sistemas { stroke: #68d391; }
+.visible-elements-section .bubble-net-nodes .bn-emergencia { stroke: #ee9a4b; }
+.visible-elements-section .bubble-net-nodes .bubble-node:hover {
+  stroke-width: 3px;
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, .18));
+}
