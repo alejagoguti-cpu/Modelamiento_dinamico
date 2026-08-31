@@ -2074,32 +2074,32 @@ function showInitialPopup() {
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px;">
         <div class="pot-card" style="background: #1a1a1a; border: 1px solid #333333; border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; animation: slideInCard 0.5s ease-out 0.1s both;">
           <div class="pot-icon" style="width: 50px; height: 50px; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; background: #252525; border-radius: 8px; transition: all 0.3s ease;">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: #ffffff;"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect></svg>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style="color: #ffffff;"><rect x="3" y="3" width="6" height="6" rx="1"/><rect x="11" y="3" width="6" height="6" rx="1"/><rect x="3" y="11" width="6" height="6" rx="1"/><rect x="11" y="11" width="6" height="6" rx="1"/><rect x="19" y="3" width="2" height="2" rx="0.5"/><rect x="19" y="9" width="2" height="2" rx="0.5"/><rect x="19" y="15" width="2" height="2" rx="0.5"/></svg>
           </div>
           <p style="font-size: 14px; font-weight: 600; color: #ffffff; margin: 0;">Clasifica</p>
         </div>
         <div class="pot-card" style="background: #1a1a1a; border: 1px solid #333333; border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; animation: slideInCard 0.5s ease-out 0.2s both;">
           <div class="pot-icon" style="width: 50px; height: 50px; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; background: #252525; border-radius: 8px; transition: all 0.3s ease;">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: #ffffff;"><path d="M3 12h18M3 6h18M3 18h18"></path></svg>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style="color: #ffffff;"><rect x="2" y="5" width="20" height="2" rx="1"/><rect x="2" y="11" width="20" height="2" rx="1"/><rect x="2" y="17" width="20" height="2" rx="1"/></svg>
           </div>
           <p style="font-size: 14px; font-weight: 600; color: #ffffff; margin: 0;">Regula</p>
         </div>
         <div class="pot-card" style="background: #1a1a1a; border: 1px solid #333333; border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; animation: slideInCard 0.5s ease-out 0.3s both;">
           <div class="pot-icon" style="width: 50px; height: 50px; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; background: #252525; border-radius: 8px; transition: all 0.3s ease;">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: #ffffff;"><path d="M12 1l8 4v7c0 7-8 11-8 11s-8-4-8-11V5l8-4z"></path></svg>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style="color: #ffffff;"><path d="M12 2C12 2 5 5 5 11C5 17 12 22 12 22C12 22 19 17 19 11C19 5 12 2 12 2Z"/></svg>
           </div>
           <p style="font-size: 14px; font-weight: 600; color: #ffffff; margin: 0;">Protege</p>
         </div>
         <div class="pot-card" style="background: #1a1a1a; border: 1px solid #333333; border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; animation: slideInCard 0.5s ease-out 0.4s both;">
           <div class="pot-icon" style="width: 50px; height: 50px; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; background: #252525; border-radius: 8px; transition: all 0.3s ease;">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: #ffffff;"><path d="M3 3h18v18H3z"></path><line x1="9" y1="9" x2="15" y2="9"></line><line x1="9" y1="12" x2="15" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style="color: #ffffff;"><path d="M3 3H21V21H3V3M5 5H19V19H5V5M7 9H17V11H7V9M7 13H17V15H7V13Z"/></svg>
           </div>
           <p style="font-size: 14px; font-weight: 600; color: #ffffff; margin: 0;">Delimita</p>
         </div>
         <div style="grid-column: 1 / -1;">
           <div class="pot-card" style="background: #1a1a1a; border: 1px solid #333333; border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; animation: slideInCard 0.5s ease-out 0.5s both;">
             <div class="pot-icon" style="width: 50px; height: 50px; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; background: #252525; border-radius: 8px; transition: all 0.3s ease;">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: #ffffff;"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l4 2"></path></svg>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style="color: #ffffff;"><path d="M12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2M12 4C16.4 4 20 7.6 20 12C20 16.4 16.4 20 12 20C7.6 20 4 16.4 4 12C4 7.6 7.6 4 12 4M12 6C8.7 6 6 8.7 6 12C6 15.3 8.7 18 12 18C15.3 18 18 15.3 18 12C18 8.7 15.3 6 12 6M12 7C14.8 7 17 9.2 17 12C17 14.8 14.8 17 12 17C9.2 17 7 14.8 7 12C7 9.2 9.2 7 12 7Z"/></svg>
             </div>
             <p style="font-size: 14px; font-weight: 600; color: #ffffff; margin: 0;">Orienta intervenciones sobre el territorio</p>
           </div>
