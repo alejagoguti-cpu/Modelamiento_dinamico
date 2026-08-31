@@ -126,12 +126,22 @@
 
             <!-- Ejemplos flotantes conectados con una flechita a su
                  tarjeta (como el referente que mandaste). -->
-            <div class="cycle-callout cycle-callout-1"><i class="fa-solid fa-arrow-down cycle-callout-arrow"></i><i class="fa-solid fa-landmark"></i><span>Una JAC, una alcaldía local, un comerciante</span></div>
-            <div class="cycle-callout cycle-callout-2"><i class="fa-solid fa-arrow-left cycle-callout-arrow"></i><i class="fa-solid fa-road-circle-exclamation"></i><span>Una obra vial en curso, una vivienda en mejoramiento</span></div>
-            <div class="cycle-callout cycle-callout-3"><i class="fa-solid fa-arrow-left cycle-callout-arrow"></i><i class="fa-solid fa-bus"></i><span>Buses llenos en hora pico, agua llegando a un barrio</span></div>
-            <div class="cycle-callout cycle-callout-4"><i class="fa-solid fa-arrow-up cycle-callout-arrow"></i><i class="fa-solid fa-people-robbery"></i><span>Un conflicto por el uso del espacio público</span></div>
-            <div class="cycle-callout cycle-callout-5"><i class="fa-solid fa-arrow-right cycle-callout-arrow"></i><i class="fa-solid fa-layer-group"></i><span>La red hídrica, la red vial, el sistema social</span></div>
-            <div class="cycle-callout cycle-callout-6"><i class="fa-solid fa-arrow-right cycle-callout-arrow"></i><i class="fa-solid fa-triangle-exclamation"></i><span>Congestión recurrente, inundaciones, gentrificación</span></div>
+            <!-- Curvas de colores (una por categoría) conectando el anillo
+                 con su ejemplo — estilo del referente que mandaste. -->
+            <svg class="cycle-callout-svg" viewBox="0 0 400 400" aria-hidden="true">
+              <path d="M 200 0 Q 150 -30 200 -52" class="cycle-callout-curve" stroke="#f1cf5b"/>
+              <path d="M 352 80 Q 410 45 420 60" class="cycle-callout-curve" stroke="#ee9a4b"/>
+              <path d="M 352 272 Q 410 300 420 252" class="cycle-callout-curve" stroke="#56b8d4"/>
+              <path d="M 200 400 Q 150 430 200 452" class="cycle-callout-curve" stroke="#b28be8"/>
+              <path d="M 48 272 Q -10 300 -20 252" class="cycle-callout-curve" stroke="#68d391"/>
+              <path d="M 48 80 Q -10 45 -20 60" class="cycle-callout-curve" stroke="#e58d62"/>
+            </svg>
+            <div class="cycle-callout cycle-callout-1"><i class="fa-solid fa-landmark"></i><span>Una JAC, una alcaldía local, un comerciante</span></div>
+            <div class="cycle-callout cycle-callout-2"><i class="fa-solid fa-road-circle-exclamation"></i><span>Una obra vial en curso, una vivienda en mejoramiento</span></div>
+            <div class="cycle-callout cycle-callout-3"><i class="fa-solid fa-bus"></i><span>Buses llenos en hora pico, agua llegando a un barrio</span></div>
+            <div class="cycle-callout cycle-callout-4"><i class="fa-solid fa-people-robbery"></i><span>Un conflicto por el uso del espacio público</span></div>
+            <div class="cycle-callout cycle-callout-5"><i class="fa-solid fa-layer-group"></i><span>La red hídrica, la red vial, el sistema social</span></div>
+            <div class="cycle-callout cycle-callout-6"><i class="fa-solid fa-chart-line"></i><span>Congestión recurrente, inundaciones, gentrificación</span></div>
           </div>
 
           <!-- Versión compacta: horizontal, con íconos y una animación de
