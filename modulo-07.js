@@ -1788,11 +1788,11 @@
         // Dinámica hídrica: un pequeño sonido de río, nada más — una sola
         // capa de agua corriendo, simple y corta.
         hidrica: (c) => {
-          // Corriente continua + pequeñas variaciones de agua, sin tono sostenido.
-          const dur = 2.8;
-          playFilteredNoise(c, { duration: dur, filterFreq: 820, filterType: "lowpass", q: 0.45, gain: 0.075, fadeIn: 0.35, fadeOut: dur, lfoRate: 0.18, lfoDepth: 0.55 });
-          playFilteredNoise(c, { duration: dur * 0.82, filterFreq: 2100, filterType: "bandpass", q: 0.55, gain: 0.022, fadeIn: 0.5, fadeOut: dur * 0.82, lfoRate: 0.42, lfoDepth: 0.35 });
-          [0.24, 0.86, 1.48, 2.06].forEach((delay, i) => playTone(c, { freq: 980 + (i % 2) * 190, to: 620 + (i % 3) * 110, duration: 0.12, type: "triangle", gain: 0.018, delay, attack: 0.018 }));
+          // Lluvia leve: ruido fino, irregular y corto; no es un río ni una melodía.
+          const dur = 3.1;
+          playFilteredNoise(c, { duration: dur, filterFreq: 4200, filterType: "highpass", q: 0.35, gain: 0.018, fadeIn: 0.55, fadeOut: dur, lfoRate: 0.62, lfoDepth: 0.28 });
+          playFilteredNoise(c, { duration: dur * 0.72, filterFreq: 1700, filterType: "bandpass", q: 0.42, gain: 0.012, fadeIn: 0.7, fadeOut: dur * 0.72, lfoRate: 0.38, lfoDepth: 0.22 });
+          [0.34, 0.92, 1.58, 2.28].forEach((delay, i) => playTone(c, { freq: 1450 + (i % 2) * 260, to: 1050 + (i % 3) * 120, duration: 0.045, type: "sine", gain: 0.008, delay, attack: 0.008 }));
         },
         // Dinámica biótica: dos pajaritos conversando entre la vegetación —
         // trinos con variación natural de tono y ritmo, no siempre iguales
@@ -1819,12 +1819,11 @@
         // Sistema físico-urbano: sonido de ciudad — capas de tráfico
         // lejano y murmullo urbano, con tremolo suave, sin bocinas
         fisico: (c) => {
-          const dur = 3.4;
-          playFilteredNoise(c, { duration: dur, filterFreq: 340, filterType: "lowpass", gain: 0.1, fadeIn: 0.4, fadeOut: dur, lfoRate: 0.22, lfoDepth: 0.3 });
-          playFilteredNoise(c, { duration: dur * 0.85, filterFreq: 950, filterType: "bandpass", q: 0.8, gain: 0.045, fadeIn: 0.6, fadeOut: dur * 0.85, lfoRate: 0.5, lfoDepth: 0.4 });
-          playTone(c, { freq: 90, duration: dur * 0.7, type: "sine", gain: 0.05, attack: 0.5 });
-          // un carro pasando de lejos, muy suave, sin bocina
-          playTone(c, { freq: 65, to: 105, duration: 1.1, type: "triangle", gain: 0.035, delay: 0.7, attack: 0.35 });
+          // Trancón lejano: motor ralentí + pulsos lentos de tráfico, sin bocinas.
+          const dur = 3.2;
+          playFilteredNoise(c, { duration: dur, filterFreq: 250, filterType: "lowpass", gain: 0.055, fadeIn: 0.5, fadeOut: dur, lfoRate: 0.12, lfoDepth: 0.38 });
+          [0.35, 1.15, 2.0].forEach((delay, i) => playTone(c, { freq: 58 + i * 7, to: 72 + i * 8, duration: 0.38, type: "triangle", gain: 0.022, delay, attack: 0.12 }));
+          playFilteredNoise(c, { duration: dur * 0.7, filterFreq: 620, filterType: "bandpass", q: 0.5, gain: 0.012, fadeIn: 0.7, fadeOut: dur * 0.7, lfoRate: 0.2, lfoDepth: 0.25 });
         },
         // Sistema de movilidad: motor de fondo suave, sin bocina
         movilidad: (c) => {
@@ -2496,13 +2495,13 @@
       const submodelIcons = ["fa-water", "fa-feather-pointed", "fa-city", "fa-person-walking", "fa-house-chimney", "fa-people-arrows", "fa-arrows-rotate"];
       const label = (row) => systems ? row.name : row.name.replace(/^Submodelo de /, "");
       const icon = (index) => (systems ? systemIcons : submodelIcons)[index] || "fa-circle-nodes";
-      const dynamicReadings = {
-        hidrica: "El territorio puede leerse como un ciclo de lluvia, infiltración, escorrentía, circulación, acumulación y desborde. La condición del agua cambia según la lluvia, la pendiente, el suelo, los sedimentos, los canales y las obras de drenaje.",
-        biotica: "El territorio cambia como un hábitat vivo: la vegetación ofrece refugio y alimento, las especies llegan, permanecen o se desplazan, y las condiciones de humedad, ruido y cobertura modifican sus posibilidades de reproducción y supervivencia.",
-        fisico: "El borde urbano se transforma cuando se construyen, mantienen o cierran vías, senderos, edificios y redes. Esas decisiones alteran la continuidad del espacio, los accesos, la fragmentación del hábitat y la relación entre ciudad y humedal.",
-        movilidad: "La ciudad se comporta como una red de recorridos: peatones, ciclistas y usuarios del transporte eligen rutas y horarios según accesos, tiempos de viaje, congestión, seguridad y conexiones entre barrios, equipamientos y espacios ambientales.",
-        social: "El territorio se transforma mediante prácticas de visita, cuidado, educación, participación y apropiación. Las relaciones entre habitantes, organizaciones y visitantes producen acuerdos, conflictos y nuevas formas de usar y proteger el espacio.",
-        socioeconomico: "La ocupación urbana cambia cuando las personas, hogares, empresas e instituciones deciden dónde vivir, trabajar, invertir y localizar servicios. Esas decisiones generan presiones sobre el borde, el agua, la movilidad y el hábitat."
+      const dynamicItems = {
+        hidrica: ["Ciclo de lluvia", "Infiltración y escorrentía", "Circulación y acumulación", "Sedimentos y desborde", "Drenaje y conexión hídrica"],
+        biotica: ["Hábitats y refugios", "Alimento y reproducción", "Llegada y desplazamiento de especies", "Humedad y cobertura vegetal", "Presiones sobre la vida del humedal"],
+        fisico: ["Vías y accesos", "Edificaciones y cerramientos", "Senderos y redes", "Fragmentación del borde", "Transformación de la relación ciudad–humedal"],
+        movilidad: ["Recorridos peatonales", "Rutas de bicicleta y transporte", "Tiempos de viaje", "Congestión y accesibilidad", "Conexiones entre barrios y equipamientos"],
+        social: ["Visita y permanencia", "Cuidado y apropiación", "Educación ambiental", "Participación comunitaria", "Acuerdos y conflictos por el espacio"],
+        socioeconomico: ["Vivienda y ocupación", "Actividades económicas", "Servicios y equipamientos", "Decisiones de localización", "Presiones sobre el borde y el hábitat"]
       };
       // Cuando la red está anclada al mapa real (Cartografía interactiva),
       // NINGUNA bolita abstracta de sistema se muestra — solo las bolitas
@@ -2587,7 +2586,7 @@
         const components = document.createElement("div");
         components.className = "subsystem-components active map-components-panel";
         components.style.setProperty("--bubble-color", color);
-        components.innerHTML = `<div class="subsystem-panel-heading"><strong><i class="fa-solid fa-arrows-rotate"></i> DINÁMICA DEL TERRITORIO</strong><button type="button" class="subsystem-panel-close" aria-label="Cerrar panel de dinámica"><i class="fa-solid fa-xmark"></i></button></div><p class="panel-scope-label">CÓMO CAMBIA EN EL TIEMPO</p><p class="panel-specific-reading">${dynamicReadings[row.id] || row.process}</p><p class="panel-specific-reading"><b>SEÑALES OBSERVABLES:</b> ${row.process}</p>`;
+        components.innerHTML = `<div class="subsystem-panel-heading"><strong><i class="fa-solid fa-arrows-rotate"></i> DINÁMICA DEL TERRITORIO</strong><button type="button" class="subsystem-panel-close" aria-label="Cerrar panel de dinámica"><i class="fa-solid fa-xmark"></i></button></div><p class="panel-scope-label">CÓMO CAMBIA EN EL TIEMPO</p><ul class="dynamic-item-list">${(dynamicItems[row.id] || [row.process]).map((item) => `<li><i class="fa-solid fa-circle-dot"></i><span>${item}</span></li>`).join("")}</ul><p class="panel-specific-reading"><b>SEÑALES OBSERVABLES:</b> ${row.process}</p>`;
         const purpose = document.createElement("aside");
         purpose.className = "subsystem-purpose-panel active map-purpose-panel";
         purpose.style.setProperty("--bubble-color", color);

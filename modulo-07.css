@@ -6374,3 +6374,90 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
   #territoryNetworkPlain .map-network-node-icon { font-size: 13px !important; }
   #territoryNetworkPlain .map-network-node strong { font-size: 6.5px !important; }
 }
+
+
+/* MÓDULO 07 · ajustes finales solicitados */
+.visible-elements-section .bubble-net-svg { min-height: 540px; }
+.visible-elements-section .bubble-edge-visual {
+  stroke: rgba(220,231,227,.58) !important;
+  stroke-width: 1.05 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+  opacity: .72 !important;
+}
+.visible-elements-section .bubble-edge-hit { stroke-width: 15 !important; }
+.visible-elements-section .bubble-flow-dot {
+  fill: rgba(184,207,200,.76) !important;
+  opacity: .72 !important;
+  r: 1.65;
+  filter: drop-shadow(0 0 1.5px rgba(184,207,200,.55));
+}
+.visible-elements-section .bubble-node {
+  stroke-width: 1.1 !important;
+  filter: none !important;
+}
+.visible-elements-section .bubble-node-label i {
+  color: rgba(221,231,227,.76) !important;
+  font-size: 18px !important;
+  filter: none !important;
+}
+.visible-elements-section .bubble-node-label span {
+  color: rgba(221,231,227,.82) !important;
+  text-shadow: 0 1px 3px rgba(0,0,0,.72) !important;
+}
+.dynamic-item-list {
+  display: grid;
+  gap: 7px;
+  margin: 10px 0 13px;
+  padding: 0;
+  list-style: none;
+}
+.dynamic-item-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  color: rgba(227,235,231,.82);
+  font-size: 11px;
+  line-height: 1.35;
+}
+.dynamic-item-list li i {
+  flex: 0 0 auto;
+  margin-top: 4px;
+  color: color-mix(in srgb, var(--bubble-color) 70%, #b7c4c0) !important;
+  font-size: 6px;
+}
+.dynamic-item-list li span { display: block; }
+
+
+/* Red superior · acabado ligero y legible */
+.visible-elements-section .bubble-edge-visual {
+  stroke: rgba(191,207,202,.48) !important;
+  stroke-width: .9 !important;
+  opacity: .66 !important;
+}
+.visible-elements-section .bubble-edge-hit:hover + .bubble-edge-visual,
+.visible-elements-section .bubble-edge-hit.active + .bubble-edge-visual {
+  stroke: rgba(222,232,228,.78) !important;
+  stroke-width: 1.35 !important;
+}
+.visible-elements-section .bubble-flow-dot {
+  r: 1.25 !important;
+  fill: rgba(195,212,206,.58) !important;
+  filter: none !important;
+}
+.visible-elements-section .bubble-node {
+  stroke-width: .85 !important;
+  opacity: .54 !important;
+  mix-blend-mode: normal !important;
+}
+.visible-elements-section .bubble-node-label i {
+  color: rgba(211,223,218,.68) !important;
+  font-size: 17px !important;
+  filter: none !important;
+}
+.visible-elements-section .bubble-node-label span {
+  color: rgba(211,223,218,.74) !important;
+  font-size: 10px !important;
+  font-weight: 650 !important;
+  text-shadow: 0 1px 3px rgba(0,0,0,.68) !important;
+}
