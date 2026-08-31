@@ -2042,6 +2042,90 @@ function showInitialPopup() {
     </button>
   `;
 
+  // Función para mostrar las 5 cards
+  function showCards() {
+    modal.innerHTML = `
+      <div style="margin-bottom: 24px; font-size: 32px;">✨</div>
+      <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 24px; font-weight: 700; margin: 0 0 28px 0 !important; color: #ffffff;">
+        Lo que el POT logra hacer:
+      </h2>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 24px;">
+        <div class="pot-card" style="background: #1a1a1a; border: 1px solid #333333; border-radius: 12px; padding: 20px; text-align: center; cursor: default; animation: slideInCard 0.5s ease-out 0.1s both;">
+          <div style="font-size: 32px; margin-bottom: 12px;">📋</div>
+          <p style="font-size: 14px; font-weight: 600; color: #ffffff; margin: 0;">Clasifica</p>
+        </div>
+        <div class="pot-card" style="background: #1a1a1a; border: 1px solid #333333; border-radius: 12px; padding: 20px; text-align: center; cursor: default; animation: slideInCard 0.5s ease-out 0.2s both;">
+          <div style="font-size: 32px; margin-bottom: 12px;">⚖️</div>
+          <p style="font-size: 14px; font-weight: 600; color: #ffffff; margin: 0;">Regula</p>
+        </div>
+        <div class="pot-card" style="background: #1a1a1a; border: 1px solid #333333; border-radius: 12px; padding: 20px; text-align: center; cursor: default; animation: slideInCard 0.5s ease-out 0.3s both;">
+          <div style="font-size: 32px; margin-bottom: 12px;">🛡️</div>
+          <p style="font-size: 14px; font-weight: 600; color: #ffffff; margin: 0;">Protege</p>
+        </div>
+        <div class="pot-card" style="background: #1a1a1a; border: 1px solid #333333; border-radius: 12px; padding: 20px; text-align: center; cursor: default; animation: slideInCard 0.5s ease-out 0.4s both;">
+          <div style="font-size: 32px; margin-bottom: 12px;">📐</div>
+          <p style="font-size: 14px; font-weight: 600; color: #ffffff; margin: 0;">Delimita</p>
+        </div>
+        <div style="grid-column: 1 / -1;">
+          <div class="pot-card" style="background: #1a1a1a; border: 1px solid #333333; border-radius: 12px; padding: 20px; text-align: center; cursor: default; animation: slideInCard 0.5s ease-out 0.5s both;">
+            <div style="font-size: 32px; margin-bottom: 12px;">🎯</div>
+            <p style="font-size: 14px; font-weight: 600; color: #ffffff; margin: 0;">Orienta intervenciones sobre el territorio</p>
+          </div>
+        </div>
+      </div>
+      <button id="popup-btn-close-final" style="background: #222222 !important; color: #ffffff !important; border: 1px solid #444444 !important; padding: 12px 30px !important; border-radius: 8px !important; font-size: 13px !important; font-weight: 600 !important; cursor: pointer !important; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5) !important; transition: all 0.2s !important; animation: slideInCard 0.5s ease-out 0.6s both;">
+        Cerrar
+      </button>
+    `;
+
+    // Agregar estilos de animación si no existen
+    if (!document.getElementById("cards-animation-styles")) {
+      const style = document.createElement("style");
+      style.id = "cards-animation-styles";
+      style.innerHTML = `
+        @keyframes slideInCard {
+          from {
+            opacity: 0;
+            transform: translateY(20px) scale(0.95);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
+        }
+        .pot-card:hover {
+          background: #252525 !important;
+          border-color: #444444 !important;
+          transform: translateY(-4px);
+          transition: all 0.3s ease;
+        }
+      `;
+      document.head.appendChild(style);
+    }
+
+    // Agregar evento al botón de cerrar
+    const closeBtn = modal.querySelector("#popup-btn-close-final");
+    if (closeBtn) {
+      closeBtn.addEventListener("click", () => {
+        backdrop.style.transition = "opacity 0.3s ease";
+        backdrop.style.opacity = "0";
+        modal.style.transition = "opacity 0.3s ease, transform 0.3s ease";
+        modal.style.opacity = "0";
+        modal.style.transform = "scale(0.95)";
+        setTimeout(() => {
+          backdrop.remove();
+          console.log("✅ Popup cerrado");
+        }, 300);
+      });
+      closeBtn.addEventListener("mouseover", function() {
+        this.style.background = "#333333 !important";
+      });
+      closeBtn.addEventListener("mouseout", function() {
+        this.style.background = "#222222 !important";
+      });
+    }
+  }
+
   // Función para cerrar
   function closePopup() {
     backdrop.style.transition = "opacity 0.3s ease";
@@ -2058,7 +2142,7 @@ function showInitialPopup() {
   // Agregar eventos al botón
   const closeBtn = modal.querySelector("#popup-btn-cerrar");
   if (closeBtn) {
-    closeBtn.addEventListener("click", closePopup);
+    closeBtn.addEventListener("click", showCards);
     closeBtn.addEventListener("mouseover", function() {
       this.style.filter = "brightness(1.1)";
     });
