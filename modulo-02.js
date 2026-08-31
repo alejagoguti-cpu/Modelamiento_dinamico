@@ -2341,7 +2341,7 @@ const MAIN_CONCLUSION_STEP1 = `
 const MAIN_CONCLUSION_STEP2 = `
   <div class="main-conclusion-functions-grid">
     ${MAIN_CONCLUSION_FUNCTIONS.map((fn, idx) => `
-      <div class="conclusion-function-card" style="--d:${idx * 0.1}s">
+      <div class="conclusion-function-card" style="--d:${idx * 0.1}s" data-hover-text="pero tiene límites para representar procesos que cambian en el tiempo, dependen de múltiples actores, atraviesan diferentes escalas y producen efectos no previstos a partir de sus componentes individuales.">
         <i class="fa-solid ${fn.icon}"></i>
         <h3>${fn.title}</h3>
       </div>
@@ -2401,6 +2401,19 @@ function showMainConclusionPopup() {
 function showMainConclusionStep2() {
   mainConclusionStep = 2;
   document.getElementById("mainConclusionBody").innerHTML = MAIN_CONCLUSION_STEP2;
+
+  document.querySelectorAll(".conclusion-function-card").forEach(card => {
+    const originalTitle = card.querySelector("h3").textContent;
+    const hoverText = card.getAttribute("data-hover-text");
+
+    card.addEventListener("mouseenter", () => {
+      card.querySelector("h3").textContent = hoverText;
+    });
+
+    card.addEventListener("mouseleave", () => {
+      card.querySelector("h3").textContent = originalTitle;
+    });
+  });
 }
 
 function hideMainConclusionPopup() {
