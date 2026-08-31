@@ -69,61 +69,81 @@
         <section class="visible-elements-section" aria-labelledby="visibleElementsTitle">
           <div class="territory-reading-kicker">EL FENÓMENO CIUDAD</div>
           <h2 id="visibleElementsTitle">¿Qué queremos hacer visible?</h2>
-          <ol class="reveal-steps">
-            <li class="reveal-step rs-agentes">
-              <div class="reveal-step-number">1</div>
-              <div class="reveal-step-body">
-                <strong>Agentes</strong>
-                <p class="reveal-step-question">¿Quién actúa?</p>
-                <p class="reveal-step-items">Personas · instituciones · empresas · organizaciones</p>
-              </div>
-            </li>
-            <li class="reveal-step-arrow" aria-hidden="true"><i class="fa-solid fa-arrow-down"></i></li>
-            <li class="reveal-step rs-procesos">
-              <div class="reveal-step-number">2</div>
-              <div class="reveal-step-body">
-                <strong>Procesos</strong>
-                <p class="reveal-step-question">¿Qué está cambiando?</p>
-                <p class="reveal-step-items">Movilidad · vivienda · economía · cuidado · transformación urbana</p>
-              </div>
-            </li>
-            <li class="reveal-step-arrow" aria-hidden="true"><i class="fa-solid fa-arrow-down"></i></li>
-            <li class="reveal-step rs-flujos">
-              <div class="reveal-step-number">3</div>
-              <div class="reveal-step-body">
-                <strong>Flujos</strong>
-                <p class="reveal-step-question">¿Qué circula?</p>
-                <p class="reveal-step-items">Personas · agua · energía · bienes · información</p>
-              </div>
-            </li>
-            <li class="reveal-step-arrow" aria-hidden="true"><i class="fa-solid fa-arrow-down"></i></li>
-            <li class="reveal-step rs-interacciones">
-              <div class="reveal-step-number">4</div>
-              <div class="reveal-step-body">
-                <strong>Interacciones</strong>
-                <p class="reveal-step-question">¿Cómo se afectan entre sí?</p>
-                <p class="reveal-step-items">Dependencias · conflictos · intercambios · retroalimentaciones</p>
-              </div>
-            </li>
-            <li class="reveal-step-arrow" aria-hidden="true"><i class="fa-solid fa-arrow-down"></i></li>
-            <li class="reveal-step rs-sistemas">
-              <div class="reveal-step-number">5</div>
-              <div class="reveal-step-body">
-                <strong>Sistemas</strong>
-                <p class="reveal-step-question">¿Qué dinámicas están conectadas?</p>
-                <p class="reveal-step-items">Aquí aparecen tus 6 sistemas.</p>
-              </div>
-            </li>
-            <li class="reveal-step-arrow" aria-hidden="true"><i class="fa-solid fa-arrow-down"></i></li>
-            <li class="reveal-step rs-emergencia">
-              <div class="reveal-step-number">6</div>
-              <div class="reveal-step-body">
-                <strong>Emergencia</strong>
-                <p class="reveal-step-question">¿Qué patrones aparecen de sus interacciones?</p>
-                <p class="reveal-step-note">Aquí todavía no tienes que poner la respuesta. Porque justamente eso lo vas a descubrir cuando analices la red.</p>
-              </div>
-            </li>
-          </ol>
+
+          <div class="cycle-ring-wrap">
+            <svg class="cycle-ring-svg" viewBox="0 0 400 400" aria-hidden="true">
+              <circle cx="200" cy="200" r="148" class="cycle-ring-circle"/>
+              <!-- flechitas de dirección repartidas cada 60°, apuntando en sentido horario -->
+              <g class="cycle-ring-arrowheads">
+                <path d="M 200 42 l 10 16 l -20 0 z" transform="rotate(-60 200 200)"/>
+                <path d="M 200 42 l 10 16 l -20 0 z" transform="rotate(0 200 200)"/>
+                <path d="M 200 42 l 10 16 l -20 0 z" transform="rotate(60 200 200)"/>
+                <path d="M 200 42 l 10 16 l -20 0 z" transform="rotate(120 200 200)"/>
+                <path d="M 200 42 l 10 16 l -20 0 z" transform="rotate(180 200 200)"/>
+                <path d="M 200 42 l 10 16 l -20 0 z" transform="rotate(240 200 200)"/>
+              </g>
+            </svg>
+
+            <div class="cycle-center">
+              <i class="fa-solid fa-city"></i>
+              <span>BOGOTÁ</span>
+            </div>
+
+            <article class="cycle-step cycle-pos-1 rs-agentes">
+              <div class="cycle-step-num">1</div>
+              <strong>Agentes</strong>
+              <p class="reveal-step-question">¿Quién actúa?</p>
+              <p class="reveal-step-items">Personas · instituciones · empresas · organizaciones</p>
+            </article>
+            <article class="cycle-step cycle-pos-2 rs-procesos">
+              <div class="cycle-step-num">2</div>
+              <strong>Procesos</strong>
+              <p class="reveal-step-question">¿Qué está cambiando?</p>
+              <p class="reveal-step-items">Movilidad · vivienda · economía · cuidado · transformación urbana</p>
+            </article>
+            <article class="cycle-step cycle-pos-3 rs-flujos">
+              <div class="cycle-step-num">3</div>
+              <strong>Flujos</strong>
+              <p class="reveal-step-question">¿Qué circula?</p>
+              <p class="reveal-step-items">Personas · agua · energía · bienes · información</p>
+            </article>
+            <article class="cycle-step cycle-pos-4 rs-interacciones">
+              <div class="cycle-step-num">4</div>
+              <strong>Interacciones</strong>
+              <p class="reveal-step-question">¿Cómo se afectan entre sí?</p>
+              <p class="reveal-step-items">Dependencias · conflictos · intercambios · retroalimentaciones</p>
+            </article>
+            <article class="cycle-step cycle-pos-5 rs-sistemas">
+              <div class="cycle-step-num">5</div>
+              <strong>Sistemas</strong>
+              <p class="reveal-step-question">¿Qué dinámicas están conectadas?</p>
+              <p class="reveal-step-items">Aquí aparecen tus 6 sistemas.</p>
+            </article>
+            <article class="cycle-step cycle-pos-6 rs-emergencia">
+              <div class="cycle-step-num">6</div>
+              <strong>Emergencia</strong>
+              <p class="reveal-step-question">¿Qué patrones aparecen de sus interacciones?</p>
+              <p class="reveal-step-note">Aquí todavía no tienes que poner la respuesta: eso lo vas a descubrir cuando analices la red.</p>
+            </article>
+          </div>
+
+          <!-- La lógica encadenada: cada frase lleva a la siguiente, no
+               quedan sueltas — con flecha y texto intermedio explicando
+               el paso, como una oración continua. -->
+          <div class="logic-chain">
+            <div class="logic-chain-node">Agentes, procesos y flujos<br /><b>interactúan</b></div>
+            <div class="logic-chain-arrow"><i class="fa-solid fa-arrow-right"></i><span>permiten identificar</span></div>
+            <div class="logic-chain-node">Sistemas</div>
+            <div class="logic-chain-arrow"><i class="fa-solid fa-arrow-right"></i><span>que interactúan entre sí</span></div>
+            <div class="logic-chain-node">Interacción entre sistemas</div>
+            <div class="logic-chain-arrow"><i class="fa-solid fa-arrow-right"></i><span>de donde pueden</span></div>
+            <div class="logic-chain-node logic-chain-final">Emerger patrones</div>
+          </div>
+          <blockquote class="logic-chain-quote">
+            <i class="fa-solid fa-quote-left"></i>
+            <p>A partir de esta lógica construimos seis sistemas que no funcionan de manera independiente, sino que se encuentran conectados mediante flujos, dependencias y retroalimentaciones.</p>
+          </blockquote>
+
           <p class="visible-elements-purpose"><strong>¿Para qué?</strong> Para explicar el funcionamiento cotidiano de la ciudad.</p>
         </section>
 

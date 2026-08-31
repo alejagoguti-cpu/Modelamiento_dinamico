@@ -5801,29 +5801,78 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
   border-radius: 10px; background: linear-gradient(135deg, rgba(7,17,16,.98), rgba(10,13,16,.98));
 }
 .visible-elements-section h2 { margin: 7px 0 16px; color: #fff; font: 700 20px/1.15 "Space Grotesk", Inter, sans-serif; }
-.reveal-steps { list-style: none; margin: 0 0 16px; padding: 0; max-width: 560px; }
-.reveal-step {
-  display: flex; gap: 14px; align-items: flex-start;
-  border: 1px solid rgba(118,255,240,.28); border-radius: 9px; padding: 14px 16px;
-  background: rgba(8,14,14,.96);
+/* ---------- Anillo circular de 6 pasos (estilo del referente) ---------- */
+.cycle-ring-wrap {
+  position: relative; width: 100%; max-width: 620px; aspect-ratio: 1 / 1;
+  margin: 8px auto 28px;
 }
-.reveal-step-number {
-  flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%;
+.cycle-ring-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.cycle-ring-circle { fill: none; stroke: rgba(118,255,240,.22); stroke-width: 26; }
+.cycle-ring-arrowheads path { fill: rgba(118,255,240,.55); }
+.cycle-center {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 34%; height: 34%; border-radius: 50%;
+  background: radial-gradient(circle, rgba(118,255,240,.14), rgba(6,10,10,.9) 70%);
+  border: 1px solid rgba(118,255,240,.35);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+}
+.cycle-center i { font-size: clamp(18px, 3.4vw, 28px); color: #76fff0; }
+.cycle-center span { color: #fff; font: 800 clamp(10px, 1.6vw, 13px) "Space Grotesk", Inter, sans-serif; letter-spacing: .08em; }
+.cycle-step {
+  position: absolute; width: 30%; min-width: 130px; max-width: 190px;
+  background: rgba(8,14,14,.97); border: 1px solid rgba(118,255,240,.28); border-radius: 9px;
+  padding: 10px 12px; text-align: center;
+}
+.cycle-step-num {
+  width: 24px; height: 24px; border-radius: 50%; margin: 0 auto 4px;
   border: 1px solid var(--rs-color, #76fff0); color: var(--rs-color, #76fff0);
   display: flex; align-items: center; justify-content: center;
-  font: 800 13px "Space Grotesk", Inter, sans-serif;
+  font: 800 12px "Space Grotesk", Inter, sans-serif;
 }
-.reveal-step-body strong { color: #fff; font-size: 13px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
-.reveal-step-question { color: var(--rs-color, #76fff0); font-size: 12px; font-weight: 700; font-style: italic; margin: 3px 0 4px; }
-.reveal-step-items { color: rgba(242,236,227,.72); font-size: 11.5px; line-height: 1.45; margin: 0; }
-.reveal-step-note { color: rgba(242,236,227,.55); font-size: 11px; font-style: italic; line-height: 1.5; margin: 0; }
-.reveal-step-arrow { text-align: center; color: rgba(118,255,240,.55); font-size: 13px; padding: 2px 0; }
+.cycle-step strong { display: block; color: #fff; font-size: 12px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
+.cycle-step .reveal-step-question { color: var(--rs-color, #76fff0); font-size: 10.5px; font-weight: 700; font-style: italic; margin: 3px 0; }
+.cycle-step .reveal-step-items, .cycle-step .reveal-step-note { color: rgba(242,236,227,.68); font-size: 9.5px; line-height: 1.4; margin: 0; }
+.cycle-pos-1 { top: 0%; left: 50%; transform: translate(-50%, 0); }
+.cycle-pos-2 { top: 20%; left: 88%; transform: translate(-50%, -50%); }
+.cycle-pos-3 { top: 68%; left: 88%; transform: translate(-50%, -50%); }
+.cycle-pos-4 { top: 100%; left: 50%; transform: translate(-50%, -100%); }
+.cycle-pos-5 { top: 68%; left: 12%; transform: translate(-50%, -50%); }
+.cycle-pos-6 { top: 20%; left: 12%; transform: translate(-50%, -50%); }
 .rs-agentes { --rs-color: #f1cf5b; }
 .rs-procesos { --rs-color: #ee9a4b; }
 .rs-flujos { --rs-color: #56b8d4; }
 .rs-interacciones { --rs-color: #b28be8; }
 .rs-sistemas { --rs-color: #68d391; }
 .rs-emergencia { --rs-color: #e58d62; }
+@media (max-width: 760px) {
+  .cycle-ring-wrap { aspect-ratio: auto; height: auto; display: flex; flex-direction: column; gap: 10px; }
+  .cycle-ring-svg, .cycle-center { display: none; }
+  .cycle-step { position: static; width: 100%; max-width: none; transform: none; text-align: left; }
+}
+
+/* ---------- Cadena lógica: cada frase encadenada a la siguiente ---------- */
+.logic-chain {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
+  margin: 6px 0 14px;
+}
+.logic-chain-node {
+  border: 1px solid rgba(118,255,240,.4); border-radius: 8px; padding: 10px 14px;
+  background: rgba(118,255,240,.08); color: #fff; font-size: 12px; line-height: 1.35; text-align: center;
+}
+.logic-chain-node b { color: #76fff0; }
+.logic-chain-final { border-color: #ee9a4b; background: rgba(238,154,75,.12); color: #ee9a4b; font-weight: 800; }
+.logic-chain-arrow {
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  color: rgba(118,255,240,.85); font-size: 13px; padding: 0 2px;
+}
+.logic-chain-arrow span { color: rgba(242,236,227,.55); font-size: 9px; font-style: italic; white-space: nowrap; }
+.logic-chain-quote {
+  margin: 0 0 18px; padding: 14px 18px; border-left: 3px solid #76fff0;
+  background: rgba(118,255,240,.06); border-radius: 0 8px 8px 0;
+}
+.logic-chain-quote i { color: rgba(118,255,240,.5); font-size: 14px; }
+.logic-chain-quote p { margin: 6px 0 0; color: rgba(242,236,227,.9); font-size: 13px; font-style: italic; line-height: 1.55; }
+
 .visible-elements-purpose {
   border-top: 1px solid rgba(255,255,255,.1); padding-top: 12px; margin: 0;
   color: rgba(242,236,227,.85); font-size: 12px; line-height: 1.5;
