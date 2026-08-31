@@ -2194,7 +2194,7 @@
     // (como el referente que mandaste) con líneas de guía señalando cada
     // ciclo o dinámica que ocurre en general en la red hídrica de Bogotá
     // — no es un mapa de un lugar puntual, es un esquema general.
-    const buildHidricaDiagramHtml = () => {
+    const buildHidricaDiagramHtml = (row) => {
       // Coordenadas en un lienzo de 400x260. "dot" = punto sobre el río,
       // "label" = dónde queda el recuadro de texto (siempre en un borde).
       const callouts = [
@@ -2214,7 +2214,7 @@
         const topPct = (c.label[1] / 260) * 100;
         return `<div class="hidrica-callout-label ${c.side === "left" ? "cal-left" : "cal-right"}" style="left:${leftPct}%;top:${topPct}%"><b><i class="fa-solid ${c.icon}"></i> ${i + 1}. ${c.title}</b><span>${c.text}</span></div>`;
       }).join("");
-      return `<div class="subsystem-panel-heading"><strong><i class="fa-solid fa-water"></i> DINÁMICA HÍDRICA DE BOGOTÁ · CICLOS Y DINÁMICAS</strong><button type="button" class="subsystem-panel-close" aria-label="Cerrar diagrama"><i class="fa-solid fa-xmark"></i></button></div><div class="hidrica-diagram-wrap"><svg viewBox="0 0 400 260" class="hidrica-diagram-svg" preserveAspectRatio="xMidYMid meet"><path d="${riverPath}" class="hidrica-river-path"/>${calloutsSvg}</svg>${labelsHtml}</div>`;
+      return `<div class="subsystem-panel-heading"><strong><i class="fa-solid fa-water"></i> DINÁMICA HÍDRICA DE BOGOTÁ · CICLOS Y DINÁMICAS</strong><button type="button" class="subsystem-panel-close" aria-label="Cerrar diagrama"><i class="fa-solid fa-xmark"></i></button></div><div class="hidrica-diagram-wrap"><svg viewBox="0 0 400 260" class="hidrica-diagram-svg" preserveAspectRatio="xMidYMid meet"><path d="${riverPath}" class="hidrica-river-path"/>${calloutsSvg}</svg>${labelsHtml}</div><p class="hidrica-diagram-summary"><b>¿Qué se analiza?</b> ${row.process}</p>`;
     };
     const renderSubsystemPoints = (item) => {
       const points = getComponentPoints(item);
@@ -2567,7 +2567,11 @@
         purpose.className = "subsystem-purpose-panel active map-purpose-panel";
         purpose.style.setProperty("--bubble-color", color);
         purpose.innerHTML = `<div class="subsystem-panel-heading"><strong>${label(row)}</strong><button type="button" class="subsystem-panel-close" aria-label="Cerrar panel de propósito"><i class="fa-solid fa-xmark"></i></button></div><p class="panel-scope-label">ANÁLISIS GENERAL · TABLA DE PROPÓSITO</p><h4>¿Las partes tienen propósito propio?</h4><p><b>${partsPurpose}</b> · ${partsWhy}</p><h4>¿La totalidad tiene propósito propio?</h4><p><b>${totalPurpose}</b> · ${totalWhy}</p><h4>Por ende, la categoría es:</h4><b class="purpose-category">${row.category}</b><h4>Qué cambia en el tiempo</h4><p>${row.process}</p>`;
-        target.append(components, purpose);
+        // Para "Dinámica hídrica" no se muestra la caja de componentes por
+        // separado — esa info (qué se analiza) ya queda integrada abajo
+        // del diagrama ilustrado, para no repetir contenido.
+        if (row.id !== "hidrica") target.append(components);
+        target.append(purpose);
         // Diagrama ilustrado (como el referente que mandaste): un río/
         // humedal estilizado con líneas de guía hacia cada ciclo o dinámica
         // que ocurre ahí. Por ahora solo existe para "Dinámica hídrica" —
@@ -2576,7 +2580,7 @@
         if (row.id === "hidrica") {
           diagram.className = "subsystem-diagram-panel active";
           diagram.style.setProperty("--bubble-color", color);
-          diagram.innerHTML = buildHidricaDiagramHtml();
+          diagram.innerHTML = buildHidricaDiagramHtml(row);
           target.append(diagram);
           diagram.querySelector(".subsystem-panel-close")?.addEventListener("click", (event) => { event?.stopPropagation(); diagram.remove(); });
         }

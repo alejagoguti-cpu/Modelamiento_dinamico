@@ -5831,7 +5831,7 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
   display: flex; align-items: center; justify-content: center;
   font: 800 12px "Space Grotesk", Inter, sans-serif;
 }
-.cycle-step-icon { display: block; font-size: 15px; color: var(--rs-color, #76fff0); margin-bottom: 4px; }
+.cycle-step-icon { display: block; font-size: 22px; color: var(--rs-color, #76fff0); margin-bottom: 6px; }
 .cycle-step strong { display: block; color: #fff; font-size: 12px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
 .cycle-step .reveal-step-question { color: var(--rs-color, #76fff0); font-size: 10.5px; font-weight: 700; font-style: italic; margin: 3px 0; }
 .cycle-step .reveal-step-items, .cycle-step .reveal-step-note { color: rgba(242,236,227,.68); font-size: 9.5px; line-height: 1.4; margin: 0; }
@@ -5909,3 +5909,9 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
   .hidrica-callout-label { width: 92px; font-size: 7px; }
   .hidrica-callout-label b { font-size: 7.5px; }
 }
+
+.hidrica-diagram-summary {
+  margin: 10px 0 0; padding-top: 10px; border-top: 1px solid rgba(255,255,255,.12);
+  color: rgba(242,236,227,.85); font-size: 11.5px; line-height: 1.5;
+}
+.hidrica-diagram-summary b { color: #56b8d4; }
