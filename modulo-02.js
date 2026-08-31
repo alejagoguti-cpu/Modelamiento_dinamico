@@ -2316,6 +2316,82 @@ function filterNetwork(mode) {
   refreshEdgeVisibility();
 }
 
+/* -------- conclusión modal -------- */
+const MAIN_CONCLUSION_FUNCTIONS = [
+  { title: "Clasifica", icon: "fa-list" },
+  { title: "Regula", icon: "fa-gavel" },
+  { title: "Protege", icon: "fa-shield" },
+  { title: "Limita", icon: "fa-ban" },
+  { title: "Orienta intervenciones", icon: "fa-compass" }
+];
+
+const MAIN_CONCLUSION_STEP1 = `
+  <div class="main-conclusion-question">
+    <p>¿Es suficiente el POT como único modelo de Bogotá?</p>
+  </div>
+  <div class="main-conclusion-answer">
+    <p>El POT estructura Bogotá desde cuatro dimensiones (Ecológica, Funcional y del Cuidado, Socioeconómica y Patrimonial) que capturan el funcionamiento de la ciudad desde lo vivo y lo tangible. Pero eso que el POT denomina cada estructura revela relaciones y vacíos que no están explícitos en el texto.</p>
+    <p>La Red Implícita es la trama de conexiones reales sobre la que descansa cada decisión del POT.</p>
+  </div>
+  <button class="main-conclusion-explore-btn" id="mainConclusionNextBtn">Ver funciones del POT →</button>
+`;
+
+const MAIN_CONCLUSION_STEP2 = `
+  <div class="main-conclusion-functions-grid">
+    ${MAIN_CONCLUSION_FUNCTIONS.map((fn, idx) => `
+      <div class="conclusion-function-card" style="--d:${idx * 0.1}s">
+        <i class="fa-solid ${fn.icon}"></i>
+        <h3>${fn.title}</h3>
+      </div>
+    `).join('')}
+  </div>
+`;
+
+let mainConclusionStep = 1;
+
+function showMainConclusionPopup() {
+  const existingModal = document.querySelector(".main-conclusion-modal");
+  if (existingModal) existingModal.remove();
+
+  const modalHTML = `
+    <div class="main-conclusion-modal">
+      <div class="main-conclusion-overlay"></div>
+      <div class="main-conclusion-container">
+        <div class="main-conclusion-header">
+          <h2>CONCLUSIÓN</h2>
+          <button class="main-conclusion-close" id="mainConclusionCloseBtn" aria-label="Cerrar">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+        <div class="main-conclusion-body" id="mainConclusionBody"></div>
+        <div class="main-conclusion-footer">
+          <button class="main-conclusion-close-footer" id="mainConclusionFooterCloseBtn">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.body.insertAdjacentHTML("beforeend", modalHTML);
+  mainConclusionStep = 1;
+  document.getElementById("mainConclusionBody").innerHTML = MAIN_CONCLUSION_STEP1;
+
+  document.getElementById("mainConclusionCloseBtn")?.addEventListener("click", hideMainConclusionPopup);
+  document.getElementById("mainConclusionFooterCloseBtn")?.addEventListener("click", hideMainConclusionPopup);
+  document.querySelector(".main-conclusion-overlay")?.addEventListener("click", hideMainConclusionPopup);
+  document.getElementById("mainConclusionNextBtn")?.addEventListener("click", showMainConclusionStep2);
+}
+
+function showMainConclusionStep2() {
+  mainConclusionStep = 2;
+  document.getElementById("mainConclusionBody").innerHTML = MAIN_CONCLUSION_STEP2;
+}
+
+function hideMainConclusionPopup() {
+  const modal = document.querySelector(".main-conclusion-modal");
+  if (modal) modal.remove();
+  mainConclusionStep = 1;
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   renderNetwork();
   setupLegendToggle();
@@ -2335,6 +2411,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // Cierre de overlays
   document.getElementById("manzanasOverlayClose")?.addEventListener("click", hideManzanasOverlay);
   document.getElementById("patrimonioOverlayClose")?.addEventListener("click", hidePatrimonioOverlay);
+
+  // Conclusión modal
+  document.getElementById("topbarConclusionBtn")?.addEventListener("click", showMainConclusionPopup);
 });
 
 
