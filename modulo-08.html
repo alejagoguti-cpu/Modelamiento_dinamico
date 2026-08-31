@@ -9,7 +9,6 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="modulo-08.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<link href="https://unpkg.com/maplibre-gl@6.5.0/dist/maplibre-gl.css" rel="stylesheet">
   <link rel="stylesheet" href="site-theme.css?v=20260823">
   <script src="modulo-08-data.js"></script>
   <script src="modulo-08-relations.js"></script>
@@ -206,8 +205,47 @@
         </button>
       </div>
 
-      <!-- Bloque "Módulo Simulador" (hero, tarjetas y comparación) borrado a pedido -->
+      <h2 class="hero-title"><span class="hero-accent">Módulo Simulador</span> — de las reglas escritas a la simulación viva</h2>
+      <p class="hero-sub">Del POT como texto lineal <i class="fa-solid fa-arrow-right-long"></i> a la ciudad como sistema vivo</p>
+      <p class="hero-lead">Si el POT tiene reglas generativas pero no las corre, esta plataforma permite ejecutar la simulación que el Plan escribe pero nunca realiza: agentes que se mueven, viviendas que condicionan la vida cotidiana y ecosistemas que responden en el tiempo.</p>
 
+      <div class="simulator-principles" aria-label="Tres pilares del simulador">
+        <article class="simulator-principle principle-people"><i class="fa-solid fa-people-arrows"></i><div><strong>Personas</strong><span>Agentes de cuidado · 15 minutos caminando · fatiga y tiempo disponible</span></div></article>
+        <article class="simulator-principle principle-housing"><i class="fa-solid fa-house-chimney-user"></i><div><strong>Viviendas</strong><span>Habitabilidad · Art. 384 · 36 m² / 42 m² · mejoramiento progresivo</span></div></article>
+        <article class="simulator-principle principle-ecosystems"><i class="fa-solid fa-water"></i><div><strong>Ecosistemas</strong><span>Matriz ordenadora · escorrentía · riesgo · drenaje sostenible</span></div></article>
+      </div>
+
+      <div class="hero-compare">
+        <div class="compare-card compare-static">
+          <div class="compare-head"><i class="fa-solid fa-circle-dot"></i> Lectura Estática</div>
+          <p class="compare-desc">El POT leído como una suma de objetos, artículos y relaciones fijas.</p>
+          <div class="compare-viz" id="staticViz">
+            <svg viewBox="0 0 260 170"><circle cx="130" cy="85" r="46" class="static-blob"/></svg>
+          </div>
+          <ul class="compare-list">
+            <li><i class="fa-solid fa-circle-dot"></i> Relación aislada</li>
+            <li><i class="fa-solid fa-circle-dot"></i> Sin actores ni mediadores</li>
+            <li><i class="fa-solid fa-circle-dot"></i> Intensidad única y fija</li>
+          </ul>
+        </div>
+
+        <div class="compare-card compare-dynamic">
+          <div class="compare-head"><i class="fa-solid fa-wave-square"></i> Lectura Dinámica</div>
+          <p class="compare-desc">Una simulación donde agentes, vivienda y ecosistemas interactúan y cambian.</p>
+          <div class="compare-viz" id="dynamicViz"></div>
+          <ul class="compare-list">
+            <li><i class="fa-solid fa-check"></i> Incluye actores y mediadores</li>
+            <li><i class="fa-solid fa-check"></i> Cambia según la situación</li>
+            <li><i class="fa-solid fa-check"></i> Intensidad variable</li>
+          </ul>
+        </div>
+      </div>
+
+      <blockquote class="hero-quote">
+        <i class="fa-solid fa-quote-left"></i>
+        <p>Una relación territorial no es un dato fijo: depende de quién la usa, qué la hace posible y en qué momento ocurre.</p>
+        <span>Equipo POT Reverse Engineering</span>
+      </blockquote>
       <section class="reader-pillars" aria-labelledby="reader-pillars-title">
         <div class="reader-pillars-kicker">LA CAPA QUE EL POT NO EJECUTA</div>
         <h3 id="reader-pillars-title">Tres pilares para hacer correr las reglas</h3>
@@ -310,18 +348,10 @@
         <p>Trayectorias vehiculares simuladas sobre la red vial real de Kennedy, exportadas desde SUMO (<code>osm.net.xml</code> + <code>trazado.xml</code>).</p>
       </div>
       <div class="sumo-sim-card">
-        <div class="sumo-main-row">
-          <div class="sumo-canvas-wrap">
-            <div id="sumoMap"></div>
-            <canvas id="sumoVehCanvas"></canvas>
-            <div class="sumo-sim-overlay" id="sumoStatus">Cargando red vial…</div>
-          </div>
-          <div class="sumo-whatif-panel">
-            <h4><i class="fa-solid fa-circle-question"></i> ¿Qué pasaría si...?</h4>
-            <p>¿Qué pasaría si hubiera más o menos vehículos circulando en Kennedy? Mueve la barra para explorar — <b>en 0 se ve la circulación real</b>, tal como está tu simulación, sin ningún cambio.</p>
-            <input type="range" id="sumoDensitySlider" min="-80" max="150" value="0" step="5">
-            <div class="sumo-density-label" id="sumoDensityLabel">0% · circulación actual (sin cambios)</div>
-          </div>
+        <div class="sumo-canvas-wrap">
+          <canvas id="sumoNetCanvas"></canvas>
+          <canvas id="sumoVehCanvas"></canvas>
+          <div class="sumo-sim-overlay" id="sumoStatus">Cargando red vial…</div>
         </div>
         <div class="sumo-sim-controls">
           <button type="button" id="sumoPlayPause" class="sumo-btn" aria-label="Reproducir / pausar"><i class="fa-solid fa-play"></i></button>
@@ -339,7 +369,28 @@
       </div>
     </div>
 
-    <!-- MAPA DE RUIDO Y TRÁFICO (borrada a pedido) -->
+    <!-- MAPA DE RUIDO Y TRÁFICO -->
+    <div class="sumo-sim-section">
+      <div class="sumo-sim-heading">
+        <h3><i class="fa-solid fa-volume-high"></i> Mapa de ruido y tráfico</h3>
+        <p>Índice de ruido relativo por vía, calculado a partir del flujo vehicular y la velocidad promedio de la simulación de tráfico en Kennedy.</p>
+      </div>
+      <div class="sumo-sim-card">
+        <div class="noise-map-wrap">
+          <div id="noiseMap"></div>
+          <div class="noise-map-status" id="noiseMapStatus">Cargando datos de tráfico…</div>
+          <div class="noise-map-legend">
+            <h4>Índice de ruido (relativo)</h4>
+            <div class="noise-legend-row"><span class="noise-legend-swatch" style="background:#2e7d5b"></span> Muy bajo</div>
+            <div class="noise-legend-row"><span class="noise-legend-swatch" style="background:#8bc34a"></span> Bajo</div>
+            <div class="noise-legend-row"><span class="noise-legend-swatch" style="background:#f1c40f"></span> Moderado</div>
+            <div class="noise-legend-row"><span class="noise-legend-swatch" style="background:#e67e22"></span> Alto</div>
+            <div class="noise-legend-row"><span class="noise-legend-swatch" style="background:#e5484d"></span> Muy alto</div>
+          </div>
+        </div>
+        <p class="noise-map-note">No es una medición acústica real en decibeles — es un proxy relativo: a mayor flujo vehicular y mayor velocidad, mayor ruido esperado. Datos: SUMO edgedata (<code>osm.net.xml</code> + <code>datos_vias.xml</code>).</p>
+      </div>
+    </div>
 
     <footer>
       "No se trata de representar la ciudad, sino de comprenderla para transformarla." — <span>Equipo POT Reverse Engineering</span>
@@ -350,11 +401,6 @@
 </div>
 
 <script src="modulo-08.js"></script>
-<script type="module">
-  import * as maplibregl from "https://unpkg.com/maplibre-gl@6.5.0/dist/maplibre-gl.mjs";
-  window.maplibregl = maplibregl;
-  window.dispatchEvent(new Event("maplibre-ready"));
-</script>
 <script src="modulo-08-sumo.js"></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="modulo-08-noise.js"></script>

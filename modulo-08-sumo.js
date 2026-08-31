@@ -1,26 +1,62 @@
 /* ==========================================================================
    SIMULACIÓN DE MOVILIDAD (SUMO) — módulo 8
    ==========================================================================
-   Usa el MISMO mapa base que el módulo 5 (estilo "dark-matter" de CARTO,
-   vía MapLibre GL) — así las calles que se ven son el mapa real, no un
-   dibujo simplificado hecho a mano. Los vehículos se dibujan en un canvas
-   transparente puesto ENCIMA del mapa, y su posición en pantalla se
-   recalcula con map.project() cada vez que el mapa se mueve/hace zoom o
-   cuando avanza la animación — así siempre quedan pegados a la calle real.
+   Renderiza en 2D, sobre <canvas>, la red vial exportada de SUMO
+   (osm.net.xml) y las trayectorias vehiculares de una simulación
+   (trazado.xml), con controles de reproducción/pausa, línea de tiempo y
+   velocidad.
 
-   ARCHIVO QUE ESTE SCRIPT ESPERA ENCONTRAR (ruta relativa a esta página):
+   ARCHIVOS QUE ESTE SCRIPT ESPERA ENCONTRAR (rutas relativas a esta página):
 
-   ./assets/kennedy_vehiculos.json
-      [ [tiempo, [[id, lon, lat], [id, lon, lat], ...]], ... ]
-      Ya en coordenadas geográficas reales (no las locales de SUMO) para
-      que se puedan proyectar directo sobre el mapa real.
+   1) ./assets/kennedy_net.json
+      Ya generado a partir de tu osm.net.xml: es una versión recortada
+      (solo la zona de Kennedy, sin veredas/ciclovías) y convertida a JSON
+      para que cargue rápido en el navegador. Si vuelves a exportar la red
+      desde SUMO y quieres actualizarla, dímelo y la vuelvo a generar.
+
+      Formato:
+      { "offset": [offX, offY], "bbox": [0,0,w,h],
+        "edges": [ ["major"|"mid"|"local", [[x,y], [x,y], ...]], ... ] }
+
+   2) ./assets/kennedy_vehiculos.json  (preferido)
+      Ya generado a partir de tu vehiculos.json: filtrado a la zona de
+      Kennedy y con las mismas coordenadas locales que la red (mismo
+      "offset" ya restado). Formato compacto:
+      [ [tiempo, [[id, x, y], [id, x, y], ...]], ... ]
+      No trae ángulo — se calcula solo, mirando hacia dónde se mueve cada
+      auto entre un instante y el siguiente.
+
+   3) ./assets/trazado.xml  (alternativa, si no existe el JSON de arriba)
+      Tu archivo de trayectorias, tal como lo exporta SUMO en modo
+      "FCD output" (--fcd-output). Súbelo tú mismo a la carpeta /assets
+      de tu repositorio en GitHub (por eso no lo pude cargar yo).
+      Formato esperado (el que genera SUMO por defecto):
+
+        <fcd-export>
+          <timestep time="0.00">
+            <vehicle id="veh0" x="12345.6" y="7890.1" angle="90.0" .../>
+            ...
+          </timestep>
+          ...
+        </fcd-export>
+
+      Los x,y de este archivo deben estar en las MISMAS coordenadas locales
+      que tu osm.net.xml original (las que trae "netconvert" antes de
+      cualquier recorte) — este script les resta automáticamente el mismo
+      "offset" que se usó al recortar la red, para que ambos coincidan.
    ========================================================================== */
 (() => {
   "use strict";
 
-  const VEHICULOS_URL = "./assets/kennedy_vehiculos.json";
-  const KENNEDY_CENTER = [-74.16, 4.635];
-  const MAP_STYLE = "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json";
+  const NET_URL = "./assets/kennedy_net.json";
+  const VEHICULOS_JSON_URL = "./assets/kennedy_vehiculos.json";
+  const TRAZADO_URL = "./assets/trazado.xml";
+
+  const EDGE_STYLE = {
+    major: { color: "rgba(255,255,255,0.55)", width: 2.4 },
+    mid:   { color: "rgba(255,255,255,0.38)", width: 1.6 },
+    local: { color: "rgba(255,255,255,0.22)", width: 1 },
+  };
 
   const start = (fn) =>
     document.readyState === "loading"
@@ -28,163 +64,198 @@
       : fn();
 
   start(() => {
-    const mapContainer = document.getElementById("sumoMap");
+    const netCanvas = document.getElementById("sumoNetCanvas");
     const vehCanvas = document.getElementById("sumoVehCanvas");
     const statusEl = document.getElementById("sumoStatus");
     const playBtn = document.getElementById("sumoPlayPause");
     const slider = document.getElementById("sumoTimeSlider");
     const timeLabel = document.getElementById("sumoTimeLabel");
     const speedSelect = document.getElementById("sumoSpeedSelect");
-    if (!mapContainer || !vehCanvas) return; // esta página no tiene el panel
+    if (!netCanvas || !vehCanvas) return; // esta página no tiene el panel
 
+    const netCtx = netCanvas.getContext("2d");
     const vehCtx = vehCanvas.getContext("2d");
 
-    let map = null;
-    let timesteps = []; // [{ time, vehicles:[{id,lon,lat}] }]
+    let netData = null;      // { offset, bbox, edges }
+    let timesteps = [];      // [{ time, vehicles:[{id,x,y,angle}] }]
+    let view = { scale: 1, offX: 0, offY: 0 }; // mundo -> pantalla
     let playing = false;
     let speedMultiplier = 2;
-    let playhead = 0;
+    let playhead = 0;        // segundos de simulación transcurridos
     let lastFrameTs = 0;
     let rafId = 0;
-    let isScrubbing = false;
 
     function setStatus(text, show = true) {
       if (!statusEl) return;
       statusEl.textContent = text;
       statusEl.classList.toggle("hidden", !show);
     }
+
     function fmtTime(t) {
       const m = Math.floor(t / 60), s = Math.floor(t % 60);
       return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
     }
 
-    function resizeVehCanvas() {
-      const wrap = vehCanvas.parentElement;
+    // ---------- tamaño de los canvas (con devicePixelRatio) ----------
+    function resizeCanvases() {
+      const wrap = netCanvas.parentElement;
       const w = wrap.clientWidth, h = wrap.clientHeight;
       const dpr = window.devicePixelRatio || 1;
-      vehCanvas.width = Math.max(1, Math.round(w * dpr));
-      vehCanvas.height = Math.max(1, Math.round(h * dpr));
+      [netCanvas, vehCanvas].forEach((c) => {
+        c.width = Math.max(1, Math.round(w * dpr));
+        c.height = Math.max(1, Math.round(h * dpr));
+      });
+      netCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
       vehCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    }
-
-    if (window.maplibregl) {
-      initMap();
-    } else {
-      // "maplibregl" se carga como modulo ES (igual que el modulo 5), y los
-      // scripts de modulo se ejecutan DESPUES que los scripts normales —
-      // por eso no se puede asumir que ya existe en este punto, hay que
-      // esperar a que dispare este evento.
-      setStatus("Cargando MapLibre…");
-      window.addEventListener("maplibre-ready", initMap, { once: true });
-    }
-
-    function initMap() {
-      if (!window.maplibregl) {
-        setStatus("MapLibre no pudo cargarse.");
-        return;
+      if (netData) {
+        computeView(w, h);
+        drawNetwork(w, h);
       }
-      map = new maplibregl.Map({
-        container: "sumoMap",
-        style: MAP_STYLE,
-        center: KENNEDY_CENTER,
-        zoom: 14.6,
-        minZoom: 10,
-        maxZoom: 18,
-        attributionControl: true,
-      });
-      map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-left");
-
-      map.on("load", () => {
-        resizeVehCanvas();
-        setStatus("Mapa cargado. Cargando trayectorias de vehículos…");
-        loadVehiculos();
-        restyleWaterAndRoads(map);
-      });
-      map.on("move", () => drawVehiclesAt(playhead));
-      map.on("resize", () => { resizeVehCanvas(); drawVehiclesAt(playhead); });
-      window.addEventListener("resize", () => { resizeVehCanvas(); drawVehiclesAt(playhead); });
     }
 
-    // El mapa base (dark-matter de CARTO) trae los cuerpos de agua y las
-    // vías con su propio color por defecto — esto los repinta: agua en
-    // azul clarito, vías en un gris más agradable.
-    function restyleWaterAndRoads(map) {
-      try {
-        const style = map.getStyle();
-        if (!style || !style.layers) return;
-        style.layers.forEach((layer) => {
-          const id = (layer.id || "").toLowerCase();
-          const sourceLayer = (layer["source-layer"] || "").toLowerCase();
-          const isWater = id.includes("water") || sourceLayer.includes("water");
-          const isRoad = id.includes("road") || id.includes("street") || id.includes("transportation") || id.includes("highway") || sourceLayer.includes("road") || sourceLayer.includes("transportation");
-          if (isWater && layer.type === "fill") {
-            map.setPaintProperty(layer.id, "fill-color", "#bfe3f7");
-            map.setPaintProperty(layer.id, "fill-opacity", 0.55);
-          } else if (isRoad && layer.type === "line") {
-            map.setPaintProperty(layer.id, "line-color", "#7c8792");
+    // Calcula escala/offset para que la red quepa completa en el canvas,
+    // conservando proporción (como "background-size: contain").
+    function computeView(w, h) {
+      const [, , bw, bh] = netData.bbox;
+      const pad = 6;
+      const scale = Math.min((w - pad * 2) / bw, (h - pad * 2) / bh);
+      const offX = (w - bw * scale) / 2;
+      const offY = (h - bh * scale) / 2;
+      view = { scale, offX, offY };
+    }
+
+    // Coordenadas del mundo SUMO (ya con el offset del recorte aplicado)
+    // a coordenadas de pantalla dentro del canvas.
+    function toScreen(x, y) {
+      return [x * view.scale + view.offX, y * view.scale + view.offY];
+    }
+
+    function drawNetwork(w, h) {
+      netCtx.clearRect(0, 0, w, h);
+      netCtx.lineJoin = "round";
+      netCtx.lineCap = "round";
+      // se dibuja primero lo local (más numeroso y fino) y encima lo
+      // principal (más grueso), para que las vías grandes no queden tapadas
+      ["local", "mid", "major"].forEach((cls) => {
+        const style = EDGE_STYLE[cls];
+        netCtx.strokeStyle = style.color;
+        netCtx.lineWidth = style.width;
+        netCtx.beginPath();
+        netData.edges.forEach(([c, pts]) => {
+          if (c !== cls || pts.length < 2) return;
+          const [sx, sy] = toScreen(pts[0][0], pts[0][1]);
+          netCtx.moveTo(sx, sy);
+          for (let i = 1; i < pts.length; i++) {
+            const [px, py] = toScreen(pts[i][0], pts[i][1]);
+            netCtx.lineTo(px, py);
           }
         });
-      } catch (err) {
-        console.warn("No se pudo repintar agua/vías:", err);
-      }
+        netCtx.stroke();
+      });
+      drawWaterMarkers(w, h);
     }
 
-    function loadVehiculos() {
-      fetch(VEHICULOS_URL)
+    // La red de SUMO (osm.net.xml) solo modela vías, no trae geometría de
+    // cuerpos de agua — por eso se marcan aquí los humedales y el río
+    // conocidos, en azul, como referencia (no son el polígono real del
+    // cuerpo de agua, solo su ubicación aproximada).
+    const WATER_POINTS = [
+      { label: "Humedal El Burro", x: 6063.8, y: 2006.4 },
+      { label: "Humedal La Vaca", x: 4932.4, y: 1430.0 },
+      { label: "Humedal Techo", x: 6811.5, y: 2158.0 },
+      { label: "Río Tunjuelo", x: 3934.3, y: 249.7 },
+      { label: "Canal San Francisco", x: 5616.8, y: 1684.1 },
+    ];
+    function drawWaterMarkers(w, h) {
+      netCtx.font = "11px Inter, sans-serif";
+      WATER_POINTS.forEach((p) => {
+        const [sx, sy] = toScreen(p.x, p.y);
+        netCtx.fillStyle = "rgba(90,170,230,0.85)";
+        netCtx.beginPath();
+        netCtx.arc(sx, sy, 7, 0, Math.PI * 2);
+        netCtx.fill();
+        netCtx.strokeStyle = "rgba(200,230,255,0.9)";
+        netCtx.lineWidth = 1.5;
+        netCtx.stroke();
+        netCtx.fillStyle = "#cfe8ff";
+        netCtx.textAlign = "left";
+        netCtx.fillText(p.label, sx + 10, sy + 4);
+      });
+    }
+
+    // ---------- cargar la red (JSON ya recortado) ----------
+    fetch(NET_URL)
+      .then((r) => { if (!r.ok) throw new Error("no se pudo cargar " + NET_URL); return r.json(); })
+      .then((data) => {
+        netData = data;
+        resizeCanvases();
+        setStatus("Red cargada. Cargando trazado.xml…");
+        return loadTrazado();
+      })
+      .catch((err) => {
+        console.error(err);
+        setStatus("No se pudo cargar la red vial (assets/kennedy_net.json). Revisa que el archivo esté subido en tu repositorio.");
+      });
+
+    // ---------- cargar el trazado: primero intenta el JSON compacto, si no
+    // existe cae al FCD-export XML de SUMO ----------
+    function loadTrazado() {
+      return fetch(VEHICULOS_JSON_URL)
         .then((r) => { if (!r.ok) throw new Error("no encontrado"); return r.json(); })
         .then((data) => {
+          // Formato: [ [tiempo, [[id,x,y], ...]], ... ] — ya viene con el
+          // mismo offset restado que la red, y sin ángulo (se calcula solo).
           timesteps = data.map(([time, vehicles]) => ({
             time,
-            vehicles: vehicles.map(([id, lon, lat]) => ({ id, lon, lat })),
+            vehicles: vehicles.map(([id, x, y]) => ({ id, x, y })),
           }));
-          const totalTime = timesteps.length ? timesteps[timesteps.length - 1].time : 0;
-          slider.max = String(Math.round(totalTime));
-          slider.disabled = false;
-          playBtn.disabled = false;
-          setStatus("", false);
-          timeLabel.textContent = `00:00 / ${fmtTime(totalTime)}`;
-          drawVehiclesAt(0);
+          finishLoadingTimesteps();
+        })
+        .catch(() => loadTrazadoXml());
+    }
+    function loadTrazadoXml() {
+      return fetch(TRAZADO_URL)
+        .then((r) => { if (!r.ok) throw new Error("no encontrado"); return r.text(); })
+        .then((xmlText) => {
+          const xml = new DOMParser().parseFromString(xmlText, "application/xml");
+          if (xml.querySelector("parsererror")) throw new Error("trazado.xml no es un XML válido");
+          const stepNodes = xml.getElementsByTagName("timestep");
+          if (!stepNodes.length) throw new Error("trazado.xml no tiene <timestep> (¿es un FCD-export de SUMO?)");
+          const [offX, offY] = netData.offset;
+          timesteps = Array.from(stepNodes).map((step) => {
+            const time = parseFloat(step.getAttribute("time")) || 0;
+            const vehicles = Array.from(step.getElementsByTagName("vehicle")).map((v) => ({
+              id: v.getAttribute("id"),
+              x: parseFloat(v.getAttribute("x")) - offX,
+              y: parseFloat(v.getAttribute("y")) - offY,
+              angle: parseFloat(v.getAttribute("angle")) || 0,
+            }));
+            return { time, vehicles };
+          });
+          finishLoadingTimesteps();
         })
         .catch((err) => {
           console.warn(err);
-          setStatus("El mapa ya está listo. Falta subir assets/kennedy_vehiculos.json para ver los vehículos en movimiento.");
+          setStatus("La red vial ya está lista. Falta subir el archivo de trayectorias (assets/kennedy_vehiculos.json o assets/trazado.xml) para ver los vehículos en movimiento.");
         });
     }
-
-    // "¿Qué pasaría si...?" — un multiplicador que SOLO afecta lo que se
-    // dibuja en pantalla, nunca los datos reales de la simulación. En 0
-    // se ve exactamente la circulación real, sin ningún cambio.
-    let densityPercent = 0;
-    function hashId(str) {
-      let h = 0;
-      for (let i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) % 100;
-      return Math.abs(h);
-    }
-    function applyDensity(vehicles) {
-      if (densityPercent === 0) return vehicles;
-      if (densityPercent < 0) {
-        // Menos carros: se ocultan de forma consistente (mismo auto
-        // siempre oculto, no parpadea entre cuadros).
-        const keepPct = 100 + densityPercent;
-        return vehicles.filter((v) => hashId(v.id) < keepPct);
-      }
-      // Más carros: se "clonan" algunos, cerca de su posición real, solo
-      // para la vista — no se guarda en ningún lado.
-      const extra = [];
-      vehicles.forEach((v) => {
-        if (hashId(v.id + "_x") < densityPercent) {
-          extra.push({ id: v.id + "_clon", lon: v.lon + (Math.random() - 0.5) * 0.0006, lat: v.lat + (Math.random() - 0.5) * 0.0006, angle: v.angle });
-        }
-      });
-      return vehicles.concat(extra);
+    function finishLoadingTimesteps() {
+      const totalTime = timesteps.length ? timesteps[timesteps.length - 1].time : 0;
+      slider.max = String(Math.round(totalTime));
+      slider.disabled = false;
+      playBtn.disabled = false;
+      setStatus("", false);
+      timeLabel.textContent = `00:00 / ${fmtTime(totalTime)}`;
+      drawVehiclesAt(0);
     }
 
     // Busca los dos timesteps que rodean "t" e interpola posiciones entre
-    // ellos, para que el movimiento se vea fluido.
+    // ellos, para que el movimiento se vea fluido aunque el archivo tenga
+    // pocos pasos por segundo.
     function vehiclesAtTime(t) {
       if (!timesteps.length) return [];
-      if (t <= timesteps[0].time) return applyDensity(timesteps[0].vehicles);
-      if (t >= timesteps[timesteps.length - 1].time) return applyDensity(timesteps[timesteps.length - 1].vehicles);
+      if (t <= timesteps[0].time) return timesteps[0].vehicles;
+      if (t >= timesteps[timesteps.length - 1].time) return timesteps[timesteps.length - 1].vehicles;
       let lo = 0, hi = timesteps.length - 1;
       while (hi - lo > 1) {
         const mid = (lo + hi) >> 1;
@@ -194,53 +265,54 @@
       const span = b.time - a.time || 1;
       const frac = (t - a.time) / span;
       const bMap = new Map(b.vehicles.map((v) => [v.id, v]));
-      return applyDensity(a.vehicles.map((va) => {
+      return a.vehicles.map((va) => {
         const vb = bMap.get(va.id);
         if (!vb) return va;
-        const lon = va.lon + (vb.lon - va.lon) * frac;
-        const lat = va.lat + (vb.lat - va.lat) * frac;
-        const angle = (Math.atan2(vb.lon - va.lon, vb.lat - va.lat) * 180) / Math.PI;
-        return { id: va.id, lon, lat, angle };
-      }));
+        const x = va.x + (vb.x - va.x) * frac;
+        const y = va.y + (vb.y - va.y) * frac;
+        // Si el dato trae ángulo (viene del FCD-export de SUMO), se
+        // interpola normal. Si no (viene del JSON de posiciones), se
+        // calcula solo mirando hacia dónde se mueve el auto.
+        const angle = (va.angle != null && vb.angle != null)
+          ? va.angle + (vb.angle - va.angle) * frac
+          : (Math.atan2(vb.x - va.x, -(vb.y - va.y)) * 180) / Math.PI;
+        return { id: va.id, x, y, angle };
+      });
     }
 
     function drawVehiclesAt(t) {
-      if (!map) return;
-      const wrap = vehCanvas.parentElement;
-      const w = wrap.clientWidth, h = wrap.clientHeight;
+      const w = vehCanvas.parentElement.clientWidth, h = vehCanvas.parentElement.clientHeight;
       vehCtx.clearRect(0, 0, w, h);
       const vehicles = vehiclesAtTime(t);
-      // Tamaño real del carro (~4.3m x 1.8m) convertido a píxeles según el
-      // zoom actual del mapa — así el carro siempre se ve a su tamaño de
-      // verdad, ni gigante ni minúsculo, sin importar qué tanto zoom tenga.
-      const metersPerPixel = (156543.03392 * Math.cos((map.getCenter().lat * Math.PI) / 180)) / Math.pow(2, map.getZoom());
-      // A la escala de zoom con la que se suele ver el mapa, 4.3m reales
-      // dan MENOS de 1 píxel (invisibles) — por eso se veían "chiquitos".
-      // Se deja un tamaño mínimo visible, que sigue creciendo si haces
-      // zoom más cerca (ahí sí se acerca a su proporción real).
-      const carLength = Math.max(9, 4.3 / metersPerPixel);
-      const carWidth = Math.max(4, 1.8 / metersPerPixel);
-      const r = carWidth * 0.35;
       vehicles.forEach((v) => {
-        const p = map.project([v.lon, v.lat]);
-        if (p.x < -20 || p.y < -20 || p.x > w + 20 || p.y > h + 20) return; // fuera de pantalla
-        const rad = (((v.angle || 0) - 90) * Math.PI) / 180;
+        const [sx, sy] = toScreen(v.x, v.y);
+        const rad = ((v.angle - 90) * Math.PI) / 180; // SUMO: 0° = norte
         vehCtx.save();
-        vehCtx.translate(p.x, p.y);
+        vehCtx.translate(sx, sy);
         vehCtx.rotate(rad);
+        // Carrito (rectángulo redondeado, como en SUMO), no un triángulo:
+        // el "morro" queda del lado +x, hacia donde apunta el vehículo.
+        const carLength = 6, carWidth = 3, r = 1;
         vehCtx.fillStyle = "#ffb020";
         vehCtx.beginPath();
-        if (vehCtx.roundRect) vehCtx.roundRect(-carLength / 2, -carWidth / 2, carLength, carWidth, r);
-        else vehCtx.rect(-carLength / 2, -carWidth / 2, carLength, carWidth);
+        if (vehCtx.roundRect) {
+          vehCtx.roundRect(-carLength / 2, -carWidth / 2, carLength, carWidth, r);
+        } else {
+          vehCtx.rect(-carLength / 2, -carWidth / 2, carLength, carWidth); // respaldo para navegadores viejos
+        }
         vehCtx.fill();
+        // Parabrisas: un rectángulo más oscuro hacia el frente, para que
+        // se note de un vistazo hacia dónde mira el carro.
         vehCtx.fillStyle = "#7a4a06";
-        vehCtx.fillRect(carLength * 0.05, -carWidth / 2 + carWidth * 0.18, carLength * 0.32, carWidth * 0.64);
+        vehCtx.fillRect(carLength * 0.05, -carWidth / 2 + 0.5, carLength * 0.32, carWidth - 1);
         vehCtx.restore();
       });
       timeLabel.textContent = `${fmtTime(t)} / ${slider.max ? fmtTime(Number(slider.max)) : "00:00"}`;
       if (!isScrubbing) slider.value = String(Math.round(t));
     }
 
+    // ---------- reproducción ----------
+    let isScrubbing = false;
     function step(ts) {
       if (!playing) return;
       if (!lastFrameTs) lastFrameTs = ts;
@@ -268,14 +340,8 @@
     slider?.addEventListener("change", () => { isScrubbing = false; });
     speedSelect?.addEventListener("change", () => { speedMultiplier = Number(speedSelect.value) || 1; });
 
-    // "¿Qué pasaría si...?" — mueve el multiplicador de vehículos.
-    const densitySlider = document.getElementById("sumoDensitySlider");
-    const densityLabel = document.getElementById("sumoDensityLabel");
-    densitySlider?.addEventListener("input", () => {
-      densityPercent = Number(densitySlider.value) || 0;
-      if (densityPercent === 0) densityLabel.textContent = "0% · circulación actual (sin cambios)";
-      else if (densityPercent > 0) densityLabel.textContent = `+${densityPercent}% más vehículos (solo en la vista)`;
-      else densityLabel.textContent = `${densityPercent}% menos vehículos (solo en la vista)`;
+    window.addEventListener("resize", () => {
+      resizeCanvases();
       drawVehiclesAt(playhead);
     });
   });
