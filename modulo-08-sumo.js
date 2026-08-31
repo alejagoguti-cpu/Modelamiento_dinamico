@@ -261,13 +261,21 @@
         vehCtx.save();
         vehCtx.translate(sx, sy);
         vehCtx.rotate(rad);
+        // Carrito (rectángulo redondeado, como en SUMO), no un triángulo:
+        // el "morro" queda del lado +x, hacia donde apunta el vehículo.
+        const carLength = 6, carWidth = 3, r = 1;
         vehCtx.fillStyle = "#ffb020";
         vehCtx.beginPath();
-        vehCtx.moveTo(4.2, 0);
-        vehCtx.lineTo(-3, 2.4);
-        vehCtx.lineTo(-3, -2.4);
-        vehCtx.closePath();
+        if (vehCtx.roundRect) {
+          vehCtx.roundRect(-carLength / 2, -carWidth / 2, carLength, carWidth, r);
+        } else {
+          vehCtx.rect(-carLength / 2, -carWidth / 2, carLength, carWidth); // respaldo para navegadores viejos
+        }
         vehCtx.fill();
+        // Parabrisas: un rectángulo más oscuro hacia el frente, para que
+        // se note de un vistazo hacia dónde mira el carro.
+        vehCtx.fillStyle = "#7a4a06";
+        vehCtx.fillRect(carLength * 0.05, -carWidth / 2 + 0.5, carLength * 0.32, carWidth - 1);
         vehCtx.restore();
       });
       timeLabel.textContent = `${fmtTime(t)} / ${slider.max ? fmtTime(Number(slider.max)) : "00:00"}`;
