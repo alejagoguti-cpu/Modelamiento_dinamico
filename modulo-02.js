@@ -1899,11 +1899,11 @@ function addHumedalNodes() {
 
   // Definir posiciones de nodos (en porcentajes relativos al contenedor)
   const nodes = [
-    { id: "clasifica", title: "Clasifica", icon: "fa-list", x: 18, y: 40, color: "#2fd4c8" },
-    { id: "regula", title: "Regula", icon: "fa-scale-balanced", x: 82, y: 32, color: "#2fd4c8" },
-    { id: "protege", title: "Protege", icon: "fa-shield", x: 70, y: 45, color: "#2fd4c8" },
-    { id: "delimita", title: "Delimita", icon: "fa-borders", x: 50, y: 65, color: "#2fd4c8" },
-    { id: "orienta", title: "Orienta", icon: "fa-compass", x: 30, y: 50, color: "#2fd4c8" },
+    { id: "orienta", title: "Orienta", icon: "fa-compass", x: 15, y: 22, color: "#2fd4c8" },
+    { id: "regula", title: "Regula", icon: "fa-scale-balanced", x: 15, y: 35, color: "#2fd4c8" },
+    { id: "clasifica", title: "Clasifica", icon: "fa-list", x: 15, y: 55, color: "#2fd4c8" },
+    { id: "protege", title: "Protege", icon: "fa-shield", x: 78, y: 65, color: "#2fd4c8" },
+    { id: "delimita", title: "Delimita", icon: "fa-expand", x: 50, y: 75, color: "#2fd4c8" },
   ];
 
   // Crear SVG para líneas de conexión
