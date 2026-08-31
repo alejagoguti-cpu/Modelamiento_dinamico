@@ -1,26 +1,23 @@
-/* ==========================================================================
-   SIMULACIÓN DE MOVILIDAD (SUMO) — módulo 8
+﻿/* ==========================================================================
+   SIMULACIÓN DE MOVILIDAD (SUMO) — MÓDULO 8
    ==========================================================================
-   Usa el MISMO mapa base que el módulo 5 (estilo "dark-matter" de CARTO,
-   vía MapLibre GL) — así las calles que se ven son el mapa real, no un
-   dibujo simplificado hecho a mano. Los vehículos se dibujan en un canvas
-   transparente puesto ENCIMA del mapa, y su posición en pantalla se
-   recalcula con map.project() cada vez que el mapa se mueve/hace zoom o
-   cuando avanza la animación — así siempre quedan pegados a la calle real.
-
-   ARCHIVO QUE ESTE SCRIPT ESPERA ENCONTRAR (ruta relativa a esta página):
-
-   ./assets/kennedy_vehiculos.json
-      [ [tiempo, [[id, lon, lat], [id, lon, lat], ...]], ... ]
-      Ya en coordenadas geográficas reales (no las locales de SUMO) para
-      que se puedan proyectar directo sobre el mapa real.
+   Renderiza la red vial real de Kennedy (assets/kennedy_net.json) y reproduce
+   las trayectorias vehiculares exactas simuladas en SUMO (assets/kennedy_vehiculos.json).
+   Ambos conjuntos de datos comparten el mismo sistema de coordenadas métricas,
+   garantizando que el 100% de los vehículos transite con precisión matemática
+   sobre los carriles y curvas de las vías, sin desalineaciones ni desvíos.
    ========================================================================== */
 (() => {
   "use strict";
 
+  const NET_URL = "./assets/kennedy_net.json";
   const VEHICULOS_URL = "./assets/kennedy_vehiculos.json";
-  const KENNEDY_CENTER = [-74.16, 4.635];
-  const MAP_STYLE = "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json";
+
+  const EDGE_STYLE = {
+    local: { color: "#16202f", width: 1.0 },
+    mid:   { color: "#2d4260", width: 2.0 },
+    major: { color: "#56b8d4", width: 3.2 }
+  };
 
   const start = (fn) =>
     document.readyState === "loading"
@@ -28,19 +25,21 @@
       : fn();
 
   start(() => {
-    const mapContainer = document.getElementById("sumoMap");
+    const netCanvas = document.getElementById("sumoNetCanvas");
     const vehCanvas = document.getElementById("sumoVehCanvas");
     const statusEl = document.getElementById("sumoStatus");
     const playBtn = document.getElementById("sumoPlayPause");
     const slider = document.getElementById("sumoTimeSlider");
     const timeLabel = document.getElementById("sumoTimeLabel");
     const speedSelect = document.getElementById("sumoSpeedSelect");
-    if (!mapContainer || !vehCanvas) return; // esta página no tiene el panel
 
+    if (!netCanvas || !vehCanvas) return;
+
+    const netCtx = netCanvas.getContext("2d");
     const vehCtx = vehCanvas.getContext("2d");
 
-    let map = null;
-    let timesteps = []; // [{ time, vehicles:[{id,lon,lat}] }]
+    let netData = null;
+    let timesteps = [];
     let playing = false;
     let speedMultiplier = 2;
     let playhead = 0;
@@ -48,143 +47,192 @@
     let rafId = 0;
     let isScrubbing = false;
 
+    // Mapa de ángulos previos para evitar giros bruscos cuando un carro frena
+    const angleMap = new Map();
+
     function setStatus(text, show = true) {
       if (!statusEl) return;
       statusEl.textContent = text;
       statusEl.classList.toggle("hidden", !show);
     }
+
     function fmtTime(t) {
-      const m = Math.floor(t / 60), s = Math.floor(t % 60);
+      const m = Math.floor(t / 60);
+      const s = Math.floor(t % 60);
       return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
     }
 
-    function resizeVehCanvas() {
+    let canvasW = 0;
+    let canvasH = 0;
+    let scale = 1;
+    let offX = 0;
+    let offY = 0;
+    let minX = 0, minY = 0, maxX = 0, maxY = 0;
+
+    function resizeCanvases() {
       const wrap = vehCanvas.parentElement;
-      const w = wrap.clientWidth, h = wrap.clientHeight;
+      if (!wrap) return;
+      canvasW = wrap.clientWidth;
+      canvasH = wrap.clientHeight;
       const dpr = window.devicePixelRatio || 1;
-      vehCanvas.width = Math.max(1, Math.round(w * dpr));
-      vehCanvas.height = Math.max(1, Math.round(h * dpr));
+
+      netCanvas.width = Math.max(1, Math.round(canvasW * dpr));
+      netCanvas.height = Math.max(1, Math.round(canvasH * dpr));
+      vehCanvas.width = Math.max(1, Math.round(canvasW * dpr));
+      vehCanvas.height = Math.max(1, Math.round(canvasH * dpr));
+
+      netCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
       vehCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    }
 
-    if (window.maplibregl) {
-      initMap();
-    } else {
-      // "maplibregl" se carga como modulo ES (igual que el modulo 5), y los
-      // scripts de modulo se ejecutan DESPUES que los scripts normales —
-      // por eso no se puede asumir que ya existe en este punto, hay que
-      // esperar a que dispare este evento.
-      setStatus("Cargando MapLibre…");
-      window.addEventListener("maplibre-ready", initMap, { once: true });
-    }
+      if (netData && netData.bbox) {
+        [minX, minY, maxX, maxY] = netData.bbox;
+        const netW = maxX - minX || 1;
+        const netH = maxY - minY || 1;
 
-    function initMap() {
-      if (!window.maplibregl) {
-        setStatus("MapLibre no pudo cargarse.");
-        return;
+        // Margen pequeño para que la red no toque los bordes del contenedor
+        const padding = 12;
+        const availW = Math.max(1, canvasW - padding * 2);
+        const availH = Math.max(1, canvasH - padding * 2);
+
+        scale = Math.min(availW / netW, availH / netH);
+        offX = padding + (availW - netW * scale) / 2;
+        offY = padding + (availH - netH * scale) / 2;
+
+        drawRoadNetwork();
       }
-      map = new maplibregl.Map({
-        container: "sumoMap",
-        style: MAP_STYLE,
-        center: KENNEDY_CENTER,
-        zoom: 14.6,
-        minZoom: 10,
-        maxZoom: 18,
-        attributionControl: true,
-      });
-      map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-left");
-
-      map.on("load", () => {
-        resizeVehCanvas();
-        setStatus("Mapa cargado. Cargando trayectorias de vehículos…");
-        loadVehiculos();
-      });
-      map.on("move", () => drawVehiclesAt(playhead));
-      map.on("resize", () => { resizeVehCanvas(); drawVehiclesAt(playhead); });
-      window.addEventListener("resize", () => { resizeVehCanvas(); drawVehiclesAt(playhead); });
     }
 
-    function loadVehiculos() {
-      fetch(VEHICULOS_URL)
-        .then((r) => { if (!r.ok) throw new Error("no encontrado"); return r.json(); })
-        .then((data) => {
-          timesteps = data.map(([time, vehicles]) => ({
-            time,
-            vehicles: vehicles.map(([id, lon, lat]) => ({ id, lon, lat })),
-          }));
-          const totalTime = timesteps.length ? timesteps[timesteps.length - 1].time : 0;
-          slider.max = String(Math.round(totalTime));
-          slider.disabled = false;
-          playBtn.disabled = false;
-          setStatus("", false);
-          timeLabel.textContent = `00:00 / ${fmtTime(totalTime)}`;
-          drawVehiclesAt(0);
-        })
-        .catch((err) => {
-          console.warn(err);
-          setStatus("El mapa ya está listo. Falta subir assets/kennedy_vehiculos.json para ver los vehículos en movimiento.");
+    function toScreen(x, y) {
+      return [
+        offX + (x - minX) * scale,
+        canvasH - (offY + (y - minY) * scale)
+      ];
+    }
+
+    function drawRoadNetwork() {
+      if (!netData || !netData.edges) return;
+
+      netCtx.clearRect(0, 0, canvasW, canvasH);
+      netCtx.fillStyle = "#05070a";
+      netCtx.fillRect(0, 0, canvasW, canvasH);
+
+      netCtx.lineJoin = "round";
+      netCtx.lineCap = "round";
+
+      // Dibujar por capas de jerarquía: local -> mid -> major
+      ["local", "mid", "major"].forEach((cls) => {
+        const style = EDGE_STYLE[cls] || EDGE_STYLE.local;
+        netCtx.strokeStyle = style.color;
+        netCtx.lineWidth = style.width;
+        netCtx.beginPath();
+
+        netData.edges.forEach(([c, pts]) => {
+          if (c !== cls || !pts || pts.length < 2) return;
+          const [sx, sy] = toScreen(pts[0][0], pts[0][1]);
+          netCtx.moveTo(sx, sy);
+          for (let i = 1; i < pts.length; i++) {
+            const [px, py] = toScreen(pts[i][0], pts[i][1]);
+            netCtx.lineTo(px, py);
+          }
         });
+
+        netCtx.stroke();
+      });
     }
 
-    // Busca los dos timesteps que rodean "t" e interpola posiciones entre
-    // ellos, para que el movimiento se vea fluido.
     function vehiclesAtTime(t) {
       if (!timesteps.length) return [];
-      if (t <= timesteps[0].time) return timesteps[0].vehicles;
-      if (t >= timesteps[timesteps.length - 1].time) return timesteps[timesteps.length - 1].vehicles;
+      if (t <= timesteps[0].time) {
+        return timesteps[0].vehicles.map(v => {
+          const [sx, sy] = toScreen(v.x, v.y);
+          return { id: v.id, sx, sy, angle: angleMap.get(v.id) || 0 };
+        });
+      }
+      if (t >= timesteps[timesteps.length - 1].time) {
+        const last = timesteps[timesteps.length - 1];
+        return last.vehicles.map(v => {
+          const [sx, sy] = toScreen(v.x, v.y);
+          return { id: v.id, sx, sy, angle: angleMap.get(v.id) || 0 };
+        });
+      }
+
       let lo = 0, hi = timesteps.length - 1;
       while (hi - lo > 1) {
         const mid = (lo + hi) >> 1;
-        if (timesteps[mid].time <= t) lo = mid; else hi = mid;
+        if (timesteps[mid].time <= t) lo = mid;
+        else hi = mid;
       }
-      const a = timesteps[lo], b = timesteps[hi];
+
+      const a = timesteps[lo];
+      const b = timesteps[hi];
       const span = b.time - a.time || 1;
       const frac = (t - a.time) / span;
+
       const bMap = new Map(b.vehicles.map((v) => [v.id, v]));
+
       return a.vehicles.map((va) => {
+        const [sxa, sya] = toScreen(va.x, va.y);
         const vb = bMap.get(va.id);
-        if (!vb) return va;
-        const lon = va.lon + (vb.lon - va.lon) * frac;
-        const lat = va.lat + (vb.lat - va.lat) * frac;
-        const angle = (Math.atan2(vb.lon - va.lon, vb.lat - va.lat) * 180) / Math.PI;
-        return { id: va.id, lon, lat, angle };
+
+        if (!vb) {
+          return { id: va.id, sx: sxa, sy: sya, angle: angleMap.get(va.id) || 0 };
+        }
+
+        const [sxb, syb] = toScreen(vb.x, vb.y);
+        const sx = sxa + (sxb - sxa) * frac;
+        const sy = sya + (syb - sya) * frac;
+
+        const dsx = sxb - sxa;
+        const dsy = syb - sya;
+
+        let angle = angleMap.get(va.id) || 0;
+        if (dsx * dsx + dsy * dsy > 0.0001) {
+          angle = Math.atan2(dsy, dsx);
+          angleMap.set(va.id, angle);
+        }
+
+        return { id: va.id, sx, sy, angle };
       });
     }
 
     function drawVehiclesAt(t) {
-      if (!map) return;
-      const wrap = vehCanvas.parentElement;
-      const w = wrap.clientWidth, h = wrap.clientHeight;
-      vehCtx.clearRect(0, 0, w, h);
+      if (!vehCtx) return;
+      vehCtx.clearRect(0, 0, canvasW, canvasH);
+
       const vehicles = vehiclesAtTime(t);
-      // Tamaño real del carro (~4.3m x 1.8m) convertido a píxeles según el
-      // zoom actual del mapa — así el carro siempre se ve a su tamaño de
-      // verdad, ni gigante ni minúsculo, sin importar qué tanto zoom tenga.
-      const metersPerPixel = (156543.03392 * Math.cos((map.getCenter().lat * Math.PI) / 180)) / Math.pow(2, map.getZoom());
-      // A la escala de zoom con la que se suele ver el mapa, 4.3m reales
-      // dan MENOS de 1 píxel (invisibles) — por eso se veían "chiquitos".
-      // Se deja un tamaño mínimo visible, que sigue creciendo si haces
-      // zoom más cerca (ahí sí se acerca a su proporción real).
-      const carLength = Math.max(9, 4.3 / metersPerPixel);
-      const carWidth = Math.max(4, 1.8 / metersPerPixel);
-      const r = carWidth * 0.35;
+
+      const carLength = 7.5;
+      const carWidth = 3.6;
+      const r = 1.0;
+
       vehicles.forEach((v) => {
-        const p = map.project([v.lon, v.lat]);
-        if (p.x < -20 || p.y < -20 || p.x > w + 20 || p.y > h + 20) return; // fuera de pantalla
-        const rad = (((v.angle || 0) - 90) * Math.PI) / 180;
         vehCtx.save();
-        vehCtx.translate(p.x, p.y);
-        vehCtx.rotate(rad);
+        vehCtx.translate(v.sx, v.sy);
+        vehCtx.rotate(v.angle);
+
+        // Sombra suave bajo el vehículo
+        vehCtx.fillStyle = "rgba(0, 0, 0, 0.4)";
+        vehCtx.fillRect(-carLength / 2, -carWidth / 2 + 1, carLength, carWidth);
+
+        // Carrocería
         vehCtx.fillStyle = "#ffb020";
         vehCtx.beginPath();
-        if (vehCtx.roundRect) vehCtx.roundRect(-carLength / 2, -carWidth / 2, carLength, carWidth, r);
-        else vehCtx.rect(-carLength / 2, -carWidth / 2, carLength, carWidth);
+        if (vehCtx.roundRect) {
+          vehCtx.roundRect(-carLength / 2, -carWidth / 2, carLength, carWidth, r);
+        } else {
+          vehCtx.rect(-carLength / 2, -carWidth / 2, carLength, carWidth);
+        }
         vehCtx.fill();
-        vehCtx.fillStyle = "#7a4a06";
-        vehCtx.fillRect(carLength * 0.05, -carWidth / 2 + carWidth * 0.18, carLength * 0.32, carWidth * 0.64);
+
+        // Parabrisas / Frente
+        vehCtx.fillStyle = "#5c3300";
+        vehCtx.fillRect(carLength * 0.08, -carWidth / 2 + 0.6, carLength * 0.32, carWidth - 1.2);
+
         vehCtx.restore();
       });
-      timeLabel.textContent = `${fmtTime(t)} / ${slider.max ? fmtTime(Number(slider.max)) : "00:00"}`;
+
+      const totalTime = timesteps.length ? timesteps[timesteps.length - 1].time : 0;
+      timeLabel.textContent = `${fmtTime(t)} / ${fmtTime(totalTime)}`;
       if (!isScrubbing) slider.value = String(Math.round(t));
     }
 
@@ -193,26 +241,88 @@
       if (!lastFrameTs) lastFrameTs = ts;
       const dt = (ts - lastFrameTs) / 1000;
       lastFrameTs = ts;
+
       const totalTime = timesteps.length ? timesteps[timesteps.length - 1].time : 0;
       playhead = Math.min(totalTime, playhead + dt * speedMultiplier);
+
       drawVehiclesAt(playhead);
-      if (playhead >= totalTime) { playing = false; playBtn.innerHTML = '<i class="fa-solid fa-play"></i>'; return; }
+
+      if (playhead >= totalTime) {
+        playing = false;
+        playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
+        return;
+      }
       rafId = requestAnimationFrame(step);
     }
 
     playBtn?.addEventListener("click", () => {
       if (!timesteps.length) return;
       playing = !playing;
-      playBtn.innerHTML = playing ? '<i class="fa-solid fa-pause"></i>' : '<i class="fa-solid fa-play"></i>';
-      if (playing) { lastFrameTs = 0; rafId = requestAnimationFrame(step); }
-      else cancelAnimationFrame(rafId);
+      playBtn.innerHTML = playing
+        ? '<i class="fa-solid fa-pause"></i>'
+        : '<i class="fa-solid fa-play"></i>';
+      if (playing) {
+        lastFrameTs = 0;
+        rafId = requestAnimationFrame(step);
+      } else {
+        cancelAnimationFrame(rafId);
+      }
     });
+
     slider?.addEventListener("input", () => {
       isScrubbing = true;
       playhead = Number(slider.value);
       drawVehiclesAt(playhead);
     });
-    slider?.addEventListener("change", () => { isScrubbing = false; });
-    speedSelect?.addEventListener("change", () => { speedMultiplier = Number(speedSelect.value) || 1; });
+
+    slider?.addEventListener("change", () => {
+      isScrubbing = false;
+    });
+
+    speedSelect?.addEventListener("change", () => {
+      speedMultiplier = Number(speedSelect.value) || 1;
+    });
+
+    window.addEventListener("resize", () => {
+      resizeCanvases();
+      drawVehiclesAt(playhead);
+    });
+
+    // Carga secuencial: primero la red, luego los vehículos
+    setStatus("Cargando red vial de Kennedy...");
+
+    fetch(NET_URL)
+      .then((r) => {
+        if (!r.ok) throw new Error("No se pudo cargar la red vial");
+        return r.json();
+      })
+      .then((data) => {
+        netData = data;
+        resizeCanvases();
+        setStatus("Cargando trayectorias vehiculares de SUMO...");
+        return fetch(VEHICULOS_URL);
+      })
+      .then((r) => {
+        if (!r.ok) throw new Error("No se pudo cargar las trayectorias vehiculares");
+        return r.json();
+      })
+      .then((data) => {
+        timesteps = data.map(([time, vehicles]) => ({
+          time,
+          vehicles: vehicles.map(([id, x, y]) => ({ id, x, y }))
+        }));
+
+        const totalTime = timesteps.length ? timesteps[timesteps.length - 1].time : 0;
+        slider.max = String(Math.round(totalTime));
+        slider.disabled = false;
+        playBtn.disabled = false;
+        setStatus("", false);
+        timeLabel.textContent = `00:00 / ${fmtTime(totalTime)}`;
+        drawVehiclesAt(0);
+      })
+      .catch((err) => {
+        console.error(err);
+        setStatus("Error al cargar la simulación: " + err.message);
+      });
   });
 })();

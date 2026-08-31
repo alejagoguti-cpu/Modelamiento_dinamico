@@ -639,10 +639,6 @@ function edgePathData(edge, s, t) {
 function drawEdges(svg) {
   const g = document.createElementNS(SVG_NS, "g");
   g.setAttribute("class", "edges-layer");
-  // Las líneas aparecen DESPUÉS de que las bolas ya se están formando (no
-  // de primeras, que se ve raro) — cada una con su propio pequeño retraso.
-  const edgeBaseDelay = ODS_NODES.length * 70 + 200;
-  let edgeOrderIndex = 0;
   RAW_EDGES.forEach((edge, i) => {
     // Las relaciones "vacío" (ausencias documentadas entre estructuras) ya NO
     // se dibujan en la red visual — quedan solo como hallazgo en la tabla y en
@@ -655,15 +651,14 @@ function drawEdges(svg) {
     const d = edgePathData(edge, s, t);
 
     const group = document.createElementNS(SVG_NS, "g");
-    group.setAttribute("class", "edge-group edge-" + edge.tipo + " edge-group-reveal");
+    group.setAttribute("class", "edge-group edge-" + edge.tipo);
     group.setAttribute("data-index", i);
     group.setAttribute("data-type", edge.tipo);
     group.setAttribute("data-cat", edge.cat);
     group.setAttribute("data-source", edge.s);
     group.setAttribute("data-target", edge.t);
     group.style.setProperty("--edge-color", color);
-    group.style.setProperty("--reveal-delay", (edgeBaseDelay + edgeOrderIndex * 12) + "ms");
-    edgeOrderIndex++;
+    group.style.setProperty("--edge-delay", (0.4 + i * 0.03) + "s");
 
     const hit = document.createElementNS(SVG_NS, "path");
     hit.setAttribute("d", d); hit.setAttribute("class", "ods-edge edge-hit");
@@ -698,21 +693,12 @@ function drawEdges(svg) {
 function drawNodes(svg) {
   const g = document.createElementNS(SVG_NS, "g");
   g.setAttribute("class", "nodes-layer");
-  // Orden de aparición aleatorio (distinto cada vez que se carga), para
-  // que la red se sienta viva en vez de aparecer toda de golpe.
-  const revealOrder = ODS_NODES.map((_, i) => i);
-  for (let i = revealOrder.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [revealOrder[i], revealOrder[j]] = [revealOrder[j], revealOrder[i]];
-  }
-  const revealDelay = {};
-  revealOrder.forEach((nodeIndex, order) => { revealDelay[nodeIndex] = order * 70; });
-  ODS_NODES.forEach((node, index) => {
+  ODS_NODES.forEach((node, idx) => {
     const group = document.createElementNS(SVG_NS, "g");
-    group.setAttribute("class", "ods-node ods-node-" + node.cat + (node.isMainHub ? " ods-hub" : " ods-satellite") + " ods-node-reveal");
+    group.setAttribute("class", "ods-node ods-node-" + node.cat + (node.isMainHub ? " ods-hub" : " ods-satellite"));
+    group.style.setProperty("--node-delay", (idx * 0.05) + "s");
     group.setAttribute("data-id", node.id);
     group.setAttribute("data-cat", node.cat);
-    group.style.setProperty("--reveal-delay", revealDelay[index] + "ms");
 
     const circle = document.createElementNS(SVG_NS, "circle");
     circle.setAttribute("class", "node-ring" + (node.isMainHub ? " node-ring-hub" : ""));
@@ -1494,29 +1480,36 @@ const MOVILIDAD_RELACIONES = {
 
 const MOVILIDAD_CONCLUSION = "El POT sí plantea que el Metro debe generar conexiones entre distintos ambitos. Sin embargo, al construir su red, algunos componentes aparecen como hubs centrales y otros quedan periféricos, conectados solo a un proyecto o a una estructura específica. Esta distribución desigual muestra que el POT reconoce relaciones, pero no las articula completamente como una red territorial integrada. Además, sus planos representan principalmente líneas, estaciones y localizaciones, sin mostrar cómo esas conexiones funcionan en el tiempo, quién depende de ellas, qué recorridos se producen ni qué ocurre cuando la red se congestiona o falla.";
 
-const MAIN_CONCLUSION_HTML = `
+const MAIN_CONCLUSION_STEP1 = `
   <div class="main-conclusion-popup-content">
-    <div class="main-conclusion-title">Nuestra conclusión</div>
+    <div class="main-conclusion-question">¿Es suficiente el POT como único modelo de Bogotá?</div>
     <div class="main-conclusion-answer">
-      <strong>No completamente.</strong>
-      <p>El POT es necesario para regular jurídicamente Bogotá, pero no es suficiente para comprender por sí solo todos los procesos que producen y transforman la ciudad.</p>
+      <p>El POT es suficiente para cumplir su función como instrumento de ordenamiento territorial</p>
     </div>
-    <div class="main-conclusion-summary">
-      <div class="conclusion-column">
-        <div class="conclusion-label">1. Lo que sí logra</div>
-        <p>Regula el suelo, delimita áreas, organiza estructuras y orienta proyectos.</p>
-      </div>
-      <div class="conclusion-column">
-        <div class="conclusion-label">2. Lo que deja por fuera</div>
-        <p>No muestra completamente los flujos, los cambios en el tiempo, los actores, los conflictos ni las relaciones entre escalas.</p>
-      </div>
-      <div class="conclusion-column">
-        <div class="conclusion-label">3. La respuesta</div>
-        <p>El POT es necesario, pero no suficiente como único modelo. Debe complementarse con modelos dinámicos, causales, adaptativos y multiescalares.</p>
-      </div>
-    </div>
+    <button class="main-conclusion-explore-btn" id="mainConclusionExploreBtn" type="button">Comenzar a explorar</button>
   </div>
 `;
+
+const MAIN_CONCLUSION_FUNCTIONS = [
+  { title: "Clasifica", icon: "fa-list" },
+  { title: "Regula", icon: "fa-scale-balanced" },
+  { title: "Protege", icon: "fa-shield" },
+  { title: "Limita", icon: "fa-ban" },
+  { title: "Orienta intervenciones", icon: "fa-compass" }
+];
+
+const MAIN_CONCLUSION_STEP2 = `
+  <div class="main-conclusion-functions-grid">
+    ${MAIN_CONCLUSION_FUNCTIONS.map((fn, idx) => `
+      <div class="conclusion-function-card" style="--d:${idx * 0.1}s">
+        <div class="conclusion-function-icon"><i class="fa-solid ${fn.icon}"></i></div>
+        <div class="conclusion-function-title">${fn.title}</div>
+      </div>
+    `).join('')}
+  </div>
+`;
+
+let mainConclusionStep = 1;
 
 let movilidadPopupAnchor = null;
 let movilidadClickOutsideWired = false;
@@ -1798,8 +1791,20 @@ function hideMovilidadPopup() {
 function showMainConclusionPopup() {
   const modal = document.getElementById("mainConclusionModal");
   if (!modal) return;
+  mainConclusionStep = 1;
+  const body = modal.querySelector(".main-conclusion-modal-body");
+  if (body) body.innerHTML = MAIN_CONCLUSION_STEP1;
   modal.style.display = "flex";
   document.body.style.overflow = "hidden";
+  setTimeout(() => {
+    document.getElementById("mainConclusionExploreBtn")?.addEventListener("click", showMainConclusionStep2);
+  }, 0);
+}
+
+function showMainConclusionStep2() {
+  mainConclusionStep = 2;
+  const body = document.querySelector(".main-conclusion-modal-body");
+  if (body) body.innerHTML = MAIN_CONCLUSION_STEP2;
 }
 
 function hideMainConclusionPopup() {
@@ -1808,6 +1813,7 @@ function hideMainConclusionPopup() {
     modal.style.display = "none";
   }
   document.body.style.overflow = "auto";
+  mainConclusionStep = 1;
 }
 
 /* Animación del botón "Ver hallazgos clave": efecto tipo "corte de luz" — los
@@ -2130,11 +2136,11 @@ document.addEventListener("DOMContentLoaded", () => {
           <div class="main-conclusion-modal-overlay"></div>
           <div class="main-conclusion-modal-container">
             <div class="main-conclusion-modal-header">
-              <h2>Cierre de la lectura</h2>
+              <h2>La función del POT</h2>
               <button class="main-conclusion-modal-close" id="mainConclusionCloseBtn" type="button" aria-label="Cerrar">&times;</button>
             </div>
             <div class="main-conclusion-modal-body">
-              ${MAIN_CONCLUSION_HTML}
+              ${MAIN_CONCLUSION_STEP1}
             </div>
             <div class="main-conclusion-modal-footer">
               <button class="main-conclusion-modal-footer-btn" id="mainConclusionFooterBtn" type="button">Cerrar</button>
@@ -2155,9 +2161,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Mostrar popup inicial después de 500ms (cuando la página esté completamente lista)
-  setTimeout(() => {
-    showInitialPopup();
-  }, 500);
+  // setTimeout(() => {
+  //   showInitialPopup();
+  // }, 500);
 });
 
 
