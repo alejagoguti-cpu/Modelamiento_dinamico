@@ -2191,6 +2191,102 @@
     // (como el referente que mandaste) con líneas de guía señalando cada
     // ciclo o dinámica que ocurre en general en la red hídrica de Bogotá
     // — no es un mapa de un lugar puntual, es un esquema general.
+    // Mini-red de un subsistema: cada componente real (row.components) se
+    // dibuja como un nodo alrededor de un centro (el subsistema), conectado
+    // a él — así se ve la composición interna, no solo una lista de texto.
+    function buildMiniNetworkSvg(items, color, systemId) {
+      const cx = 150, cy = 105, R = 78;
+      const n = items.length;
+      const nodes = items.map((label, i) => {
+        const angle = (i / n) * Math.PI * 2 - Math.PI / 2;
+        return { label, x: cx + R * Math.cos(angle), y: cy + R * Math.sin(angle) };
+      });
+      const lines = nodes.map((p) => `<line x1="${cx}" y1="${cy}" x2="${p.x.toFixed(1)}" y2="${p.y.toFixed(1)}" class="mini-net-line"/>`).join("");
+      const nodeCircles = nodes.map((p) => `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="8" class="mini-net-node" style="--node-color:${color}"/>`).join("");
+      const labels = nodes.map((p) => {
+        const anchor = p.x > cx + 4 ? "start" : p.x < cx - 4 ? "end" : "middle";
+        const dx = p.x > cx + 4 ? 11 : p.x < cx - 4 ? -11 : 0;
+        return `<text x="${(p.x + dx).toFixed(1)}" y="${(p.y + 3).toFixed(1)}" class="mini-net-label" text-anchor="${anchor}">${p.label}</text>`;
+      }).join("");
+      return `<svg viewBox="0 0 300 210" class="mini-network-svg" data-system="${systemId}">${lines}<circle cx="${cx}" cy="${cy}" r="15" class="mini-net-hub" style="--node-color:${color}"/>${nodeCircles}${labels}</svg>`;
+    }
+
+    // "Ver toda la red junta": explota los 6 subsistemas con TODOS sus
+    // componentes reales en una sola red grande, conectados entre sí —
+    // los 6 subsistemas siempre conectados entre ellos, y sus componentes
+    // conectados a su propio subsistema, más algunas conexiones cruzadas
+    // por palabras en común (por ejemplo "vías" en físico y "rutas de
+    // transporte" en movilidad).
+    function showCombinedNetworkModal() {
+      const overlay = document.createElement("div");
+      overlay.className = "combined-network-overlay";
+      const W = 900, H = 900, cx = W / 2, cy = H / 2, hubR = 300;
+      const hubs = territorySystems.map((sys, i) => {
+        const angle = (i / territorySystems.length) * Math.PI * 2 - Math.PI / 2;
+        return { ...sys, x: cx + hubR * Math.cos(angle), y: cy + hubR * Math.sin(angle) };
+      });
+      let svgParts = [];
+      let nodeIndex = 0;
+      // líneas entre subsistemas (todos con todos)
+      for (let i = 0; i < hubs.length; i++) {
+        for (let j = i + 1; j < hubs.length; j++) {
+          svgParts.push(`<line x1="${hubs[i].x}" y1="${hubs[i].y}" x2="${hubs[j].x}" y2="${hubs[j].y}" class="combined-hub-line"/>`);
+        }
+      }
+      // componentes de cada subsistema, alrededor de su propio hub
+      const allComponentNodes = [];
+      hubs.forEach((hub) => {
+        const satR = 95;
+        hub.components.forEach((label, i) => {
+          const angle = (i / hub.components.length) * Math.PI * 2 - Math.PI / 2;
+          const x = hub.x + satR * Math.cos(angle), y = hub.y + satR * Math.sin(angle);
+          svgParts.push(`<line x1="${hub.x}" y1="${hub.y}" x2="${x}" y2="${y}" class="combined-sat-line" style="--node-color:${hub.color}"/>`);
+          allComponentNodes.push({ label, x, y, color: hub.color, sysId: hub.id });
+        });
+      });
+      // conexiones cruzadas por palabras en comun entre componentes de
+      // DISTINTOS subsistemas (heuristica simple, no exhaustiva)
+      const KEYWORDS = [
+        ["vías", "rutas de transporte", "accesos", "desplazamientos", "conexiones"],
+        ["agua", "escorrentía", "vertimiento", "sedimentos"],
+        ["vivienda", "viviendas", "ocupación", "usos del suelo", "construcciones"],
+        ["vegetación", "hábitats", "usos del suelo"],
+      ];
+      const crossLines = [];
+      for (let i = 0; i < allComponentNodes.length; i++) {
+        for (let j = i + 1; j < allComponentNodes.length; j++) {
+          const a = allComponentNodes[i], b = allComponentNodes[j];
+          if (a.sysId === b.sysId) continue;
+          const shared = KEYWORDS.some((group) => group.some((k) => a.label.toLowerCase().includes(k)) && group.some((k) => b.label.toLowerCase().includes(k)));
+          if (shared) crossLines.push(`<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" class="combined-cross-line"/>`);
+        }
+      }
+      svgParts.push(...crossLines);
+      const hubCircles = hubs.map((h) => `<g class="combined-node combined-hub-node" style="--node-color:${h.color};--node-i:${nodeIndex++}"><circle cx="${h.x}" cy="${h.y}" r="26"/><text x="${h.x}" y="${h.y + 42}" text-anchor="middle" class="combined-hub-label">${h.name}</text></g>`).join("");
+      const satCircles = allComponentNodes.map((n) => `<g class="combined-node combined-sat-node" style="--node-color:${n.color};--node-i:${nodeIndex++}"><circle cx="${n.x}" cy="${n.y}" r="9"/><text x="${n.x}" y="${n.y + 16}" text-anchor="middle" class="combined-sat-label">${n.label}</text></g>`).join("");
+      overlay.innerHTML = `
+        <div class="combined-network-panel">
+          <div class="combined-network-heading">
+            <strong><i class="fa-solid fa-diagram-project"></i> Red completa: todos los subsistemas y sus componentes</strong>
+            <button type="button" class="subsystem-panel-close" id="closeCombinedNetworkBtn" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+          <div class="combined-network-scroll">
+            <svg viewBox="0 0 ${W} ${H}" class="combined-network-svg">
+              <g class="combined-lines">${svgParts.join("")}</g>
+              <g class="combined-nodes">${hubCircles}${satCircles}</g>
+            </svg>
+          </div>
+        </div>`;
+      document.body.appendChild(overlay);
+      // Explosión: todos los nodos arrancan encogidos en el centro, y en
+      // el siguiente frame "explotan" hacia su posición final, con un
+      // pequeño retraso por nodo para que se vea como una expansión.
+      requestAnimationFrame(() => overlay.classList.add("exploded"));
+      const close = () => overlay.remove();
+      overlay.querySelector("#closeCombinedNetworkBtn")?.addEventListener("click", close);
+      overlay.addEventListener("click", (event) => { if (event.target === overlay) close(); });
+    }
+
     const buildHidricaDiagramHtml = (row) => {
       // Coordenadas en un lienzo de 400x260. "dot" = punto sobre el río,
       // "label" = dónde queda el recuadro de texto (siempre en un borde).
@@ -2587,13 +2683,14 @@
         const components = document.createElement("div");
         components.className = "subsystem-components active map-components-panel";
         components.style.setProperty("--bubble-color", color);
-        components.innerHTML = `<div class="subsystem-panel-heading"><strong><i class="fa-solid fa-arrows-rotate"></i> DINÁMICA DEL TERRITORIO</strong><button type="button" class="subsystem-panel-close" aria-label="Cerrar panel de dinámica"><i class="fa-solid fa-xmark"></i></button></div><p class="panel-scope-label">QUÉ COMPONE ESTE SUBSISTEMA</p><ul class="dynamic-item-list">${(dynamicItems[row.id] || [row.process]).map((item) => `<li><i class="fa-solid fa-circle-dot"></i><span>${item}</span></li>`).join("")}</ul><p class="panel-scope-label">CÓMO CAMBIA EN EL TIEMPO</p><p class="panel-specific-reading">${row.process}</p><p class="panel-specific-reading"><b>SEÑALES OBSERVABLES:</b> ${row.process}</p>`;
+        components.innerHTML = `<div class="subsystem-panel-heading"><strong><i class="fa-solid fa-arrows-rotate"></i> DINÁMICA DEL TERRITORIO</strong><button type="button" class="subsystem-panel-close" aria-label="Cerrar panel de dinámica"><i class="fa-solid fa-xmark"></i></button></div><p class="panel-scope-label">QUÉ COMPONE ESTE SUBSISTEMA</p>${buildMiniNetworkSvg(row.components, color, row.id)}<button type="button" class="see-full-network-btn" id="seeFullNetworkBtn"><i class="fa-solid fa-diagram-project"></i> Ver toda la red junta</button><p class="panel-scope-label">CÓMO CAMBIA EN EL TIEMPO</p><p class="panel-specific-reading">${row.process}</p>`;
         const purpose = document.createElement("aside");
         purpose.className = "subsystem-purpose-panel active map-purpose-panel";
         purpose.style.setProperty("--bubble-color", color);
         purpose.innerHTML = `<div class="subsystem-panel-heading"><strong>${label(row)}</strong><button type="button" class="subsystem-panel-close" aria-label="Cerrar panel de propósito"><i class="fa-solid fa-xmark"></i></button></div><p class="panel-scope-label">ANÁLISIS GENERAL · TABLA DE PROPÓSITO</p><h4>¿Las partes tienen propósito propio?</h4><p><b>${partsPurpose}</b> · ${partsWhy}</p><h4>¿La totalidad tiene propósito propio?</h4><p><b>${totalPurpose}</b> · ${totalWhy}</p><h4>Por ende, la categoría es:</h4><b class="purpose-category">${row.category}</b><h4>Qué cambia en el tiempo</h4><p>${row.process}</p>`;
         target.append(components);
         target.append(purpose);
+        components.querySelector("#seeFullNetworkBtn")?.addEventListener("click", (event) => { event.stopPropagation(); showCombinedNetworkModal(); });
         const closePanels = (event) => { event?.stopPropagation(); components.remove(); purpose.remove(); clearSubsystemPoints(); button.classList.remove("selected"); };
         components.querySelector(".subsystem-panel-close")?.addEventListener("click", closePanels);
         purpose.querySelector(".subsystem-panel-close")?.addEventListener("click", closePanels);
