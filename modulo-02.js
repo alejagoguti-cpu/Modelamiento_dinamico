@@ -1810,7 +1810,36 @@ function showMainConclusionPopup() {
 function showMainConclusionStep2() {
   mainConclusionStep = 2;
   const body = document.querySelector(".main-conclusion-modal-body");
-  if (body) body.innerHTML = MAIN_CONCLUSION_STEP2;
+  if (body) {
+    body.innerHTML = MAIN_CONCLUSION_STEP2;
+
+    // Agregar interactividad a las tarjetas
+    setTimeout(() => {
+      const cards = document.querySelectorAll(".conclusion-function-card");
+      cards.forEach((card, idx) => {
+        card.style.cursor = "pointer";
+        card.addEventListener("click", () => {
+          // Remover selección anterior
+          cards.forEach(c => c.classList.remove("card-selected"));
+          // Agregar selección a la tarjeta actual
+          card.classList.add("card-selected");
+          // Efecto visual
+          card.style.pointerEvents = "none";
+          setTimeout(() => { card.style.pointerEvents = "auto"; }, 300);
+        });
+
+        // Efecto de sonido visual (pulse) en hover
+        card.addEventListener("mouseenter", () => {
+          card.style.animation = "none";
+          setTimeout(() => {
+            if (!card.classList.contains("card-selected")) {
+              card.style.animation = `cardHoverPulse 0.4s ease`;
+            }
+          }, 10);
+        });
+      });
+    }, 50);
+  }
 }
 
 function hideMainConclusionPopup() {
