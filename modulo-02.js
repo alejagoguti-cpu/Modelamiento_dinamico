@@ -2339,7 +2339,7 @@ const MAIN_CONCLUSION_STEP1 = `
 const MAIN_CONCLUSION_STEP2 = `
   <div class="main-conclusion-functions-grid">
     ${MAIN_CONCLUSION_FUNCTIONS.map((fn, idx) => `
-      <div class="conclusion-function-card" style="--d:${idx * 0.1}s">
+      <div class="conclusion-function-card" style="--d:${idx * 0.1}s" data-card-index="${idx}">
         <i class="fa-solid ${fn.icon}"></i>
         <h3>${fn.title}</h3>
       </div>
@@ -2396,9 +2396,45 @@ function showMainConclusionPopup() {
   document.getElementById("mainConclusionNextBtn")?.addEventListener("click", showMainConclusionStep2);
 }
 
+function showHumedalMap() {
+  const mapHTML = `
+    <div class="conclusion-map-modal">
+      <button class="conclusion-map-close" id="conclusionMapClose">← Volver</button>
+      <h2>Reserva Distrital de Humedal</h2>
+      <div class="conclusion-map-container">
+        <img src="./assets/RESERVA_HUMEDAL.webp" alt="Reserva Distrital de Humedal" class="conclusion-map-image" onerror="console.log('Imagen no cargó')" onload="console.log('Imagen cargada')"
+        <div class="conclusion-nodes-overlay">
+          <div class="conclusion-node" style="top: 12%; left: 18%; --d: 0.1s;" title="Orienta"><span>Orienta</span></div>
+          <div class="conclusion-node" style="top: 12%; left: 24%; --d: 0.2s;" title="Regula"><span>Regula</span></div>
+          <div class="conclusion-node" style="top: 48%; left: 14%; --d: 0.3s;" title="Clasifica"><span>Clasifica</span></div>
+          <div class="conclusion-node" style="top: 23%; right: 12%; --d: 0.4s;" title="Protege"><span>Protege</span></div>
+          <div class="conclusion-node" style="top: 52%; left: 42%; --d: 0.5s;" title="Delimita"><span>Delimita</span></div>
+        </div>
+      </div>
+      <p class="conclusion-map-caption">17 áreas de reserva distrital de humedal en Bogotá — Presiona los nodos para más información</p>
+    </div>
+  `;
+
+  const body = document.getElementById("mainConclusionBody");
+  body.innerHTML = mapHTML;
+
+  document.getElementById("conclusionMapClose")?.addEventListener("click", () => {
+    showMainConclusionStep2();
+  });
+}
+
 function showMainConclusionStep2() {
   mainConclusionStep = 2;
   document.getElementById("mainConclusionBody").innerHTML = MAIN_CONCLUSION_STEP2;
+
+  document.querySelectorAll(".conclusion-function-card").forEach(card => {
+    card.addEventListener("click", (e) => {
+      const cardIndex = card.getAttribute("data-card-index");
+      if (cardIndex === "1") {
+        showHumedalMap();
+      }
+    });
+  });
 }
 
 function hideMainConclusionPopup() {

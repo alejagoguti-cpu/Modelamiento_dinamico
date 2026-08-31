@@ -164,6 +164,18 @@ body {
 .conclusion-function-icon { font-size: 24px; color: var(--teal); }
 .conclusion-function-title { font-size: 12px; font-weight: 600; color: var(--text-dim); text-align: center; line-height: 1.3; }
 .conclusion-card-text { font-size: 12px; color: var(--text-dim); text-align: center; line-height: 1.4; margin: 0; }
+.conclusion-map-modal { display: flex; flex-direction: column; gap: 16px; }
+.conclusion-map-close { background: none; border: none; color: var(--text-dim); font-size: 14px; cursor: pointer; padding: 0; text-align: left; transition: color 0.2s ease; }
+.conclusion-map-close:hover { color: var(--text); }
+.conclusion-map-modal h2 { font-size: 18px; font-weight: 600; color: var(--text); margin: 0; }
+.conclusion-map-container { position: relative; width: 100%; max-height: 400px; overflow: hidden; border-radius: 8px; }
+.conclusion-map-image { width: 100%; height: auto; display: block; }
+.conclusion-nodes-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+.conclusion-node { position: absolute; width: 60px; height: 60px; background: #000000; border: 3px solid #5b8def; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; transform: translate(-50%, -50%) scale(0); animation: nodeAppear 0.5s ease var(--d, 0s) forwards; }
+.conclusion-node span { font-size: 11px; font-weight: 600; color: white; text-align: center; line-height: 1.2; }
+.conclusion-node:hover { background: #1a1a1a; border-color: #7fa3f5; transform: translate(-50%, -50%) scale(1.1); }
+@keyframes nodeAppear { from { opacity: 0; transform: translate(-50%, -50%) scale(0); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+.conclusion-map-caption { font-size: 12px; color: var(--text-dim); text-align: center; margin: 0; }
 @media (max-width: 700px) {
   .main-conclusion-functions-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
   .conclusion-function-card { padding: 16px 10px; }
