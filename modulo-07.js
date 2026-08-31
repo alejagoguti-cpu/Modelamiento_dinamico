@@ -2190,19 +2190,20 @@
     };
     const escapePointText = (value) => String(value).replace(/[&<>\"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\\\"": "&quot;" }[char] || char));
     const getComponentPoints = (item) => (componentPointCatalog[item?.mapKey] || []).map((point, index) => ({ ...point, index, color: item.color }));
-    // Diagrama ilustrado de "Dinámica hídrica": un río/humedal estilizado
+    // Diagrama ilustrado de "Dinámica hídrica": un humedal/canal estilizado
     // (como el referente que mandaste) con líneas de guía señalando cada
-    // ciclo o dinámica que ocurre ahí — no es un mapa real, es un esquema.
+    // ciclo o dinámica que ocurre en general en la red hídrica de Bogotá
+    // — no es un mapa de un lugar puntual, es un esquema general.
     const buildHidricaDiagramHtml = () => {
       // Coordenadas en un lienzo de 400x260. "dot" = punto sobre el río,
       // "label" = dónde queda el recuadro de texto (siempre en un borde).
       const callouts = [
-        { dot: [55, 205], label: [60, 240], side: "left", title: "Lluvia y escorrentía", text: "El agua lluvia cae sobre el suelo y las vías, y empieza a moverse ladera abajo." },
-        { dot: [112, 150], label: [40, 105], side: "left", title: "Infiltración en el suelo", text: "Parte del agua se filtra según el tipo de suelo y su capacidad de absorción." },
-        { dot: [175, 100], label: [40, 40], side: "left", title: "Circulación y acumulación", text: "El agua se junta en el canal, sube o baja de nivel según lluvia y pendiente." },
-        { dot: [245, 68], label: [345, 105], side: "right", title: "Sedimentos y arrastre", text: "El flujo arrastra sedimentos que se acumulan o se remueven con el tiempo." },
-        { dot: [310, 40], label: [345, 175], side: "right", title: "Desborde en creciente", text: "En eventos fuertes, el agua sobrepasa el canal y se desborda sobre el borde." },
-        { dot: [365, 22], label: [345, 40], side: "right", title: "Canal Los Ángeles", text: "Punto real de la red hídrica, aguas abajo del sistema del Humedal El Burro." },
+        { dot: [55, 205], label: [60, 240], side: "left", icon: "fa-cloud-showers-heavy", title: "Lluvia y escorrentía", text: "El agua lluvia cae sobre el suelo y las vías, y empieza a moverse ladera abajo." },
+        { dot: [112, 150], label: [40, 105], side: "left", icon: "fa-arrow-down-to-line", title: "Infiltración en el suelo", text: "Parte del agua se filtra según el tipo de suelo y su capacidad de absorción." },
+        { dot: [175, 100], label: [40, 40], side: "left", icon: "fa-water", title: "Circulación y acumulación", text: "El agua se junta en canales y humedales; sube o baja de nivel según lluvia y pendiente." },
+        { dot: [245, 68], label: [345, 105], side: "right", icon: "fa-layer-group", title: "Sedimentos y arrastre", text: "El flujo arrastra sedimentos que se acumulan o se remueven con el tiempo." },
+        { dot: [310, 40], label: [345, 175], side: "right", icon: "fa-triangle-exclamation", title: "Desborde en creciente", text: "En eventos fuertes, el agua sobrepasa el canal y se desborda sobre el borde urbano." },
+        { dot: [365, 22], label: [345, 40], side: "right", icon: "fa-right-left", title: "Descarga al sistema principal", text: "El agua termina conectándose con el río principal, aguas abajo de toda la red hídrica." },
       ];
       const riverPath = "M 15 225 C 70 210, 65 165, 112 150 C 150 138, 150 112, 175 100 C 205 87, 225 80, 245 68 C 270 54, 285 48, 310 40 C 330 33, 345 30, 365 22";
       const calloutsSvg = callouts.map((c) =>
@@ -2211,9 +2212,9 @@
       const labelsHtml = callouts.map((c, i) => {
         const leftPct = (c.label[0] / 400) * 100;
         const topPct = (c.label[1] / 260) * 100;
-        return `<div class="hidrica-callout-label ${c.side === "left" ? "cal-left" : "cal-right"}" style="left:${leftPct}%;top:${topPct}%"><b>${i + 1}. ${c.title}</b><span>${c.text}</span></div>`;
+        return `<div class="hidrica-callout-label ${c.side === "left" ? "cal-left" : "cal-right"}" style="left:${leftPct}%;top:${topPct}%"><b><i class="fa-solid ${c.icon}"></i> ${i + 1}. ${c.title}</b><span>${c.text}</span></div>`;
       }).join("");
-      return `<div class="subsystem-panel-heading"><strong><i class="fa-solid fa-water"></i> DINÁMICA HÍDRICA · CICLOS Y DINÁMICAS</strong><button type="button" class="subsystem-panel-close" aria-label="Cerrar diagrama"><i class="fa-solid fa-xmark"></i></button></div><div class="hidrica-diagram-wrap"><svg viewBox="0 0 400 260" class="hidrica-diagram-svg" preserveAspectRatio="xMidYMid meet"><path d="${riverPath}" class="hidrica-river-path"/>${calloutsSvg}</svg>${labelsHtml}</div>`;
+      return `<div class="subsystem-panel-heading"><strong><i class="fa-solid fa-water"></i> DINÁMICA HÍDRICA DE BOGOTÁ · CICLOS Y DINÁMICAS</strong><button type="button" class="subsystem-panel-close" aria-label="Cerrar diagrama"><i class="fa-solid fa-xmark"></i></button></div><div class="hidrica-diagram-wrap"><svg viewBox="0 0 400 260" class="hidrica-diagram-svg" preserveAspectRatio="xMidYMid meet"><path d="${riverPath}" class="hidrica-river-path"/>${calloutsSvg}</svg>${labelsHtml}</div>`;
     };
     const renderSubsystemPoints = (item) => {
       const points = getComponentPoints(item);
@@ -2557,11 +2558,11 @@
         const partsPurpose = row.partsPurpose || "Sí";
         const totalPurpose = row.totalPurpose || "Sí";
         const partsWhy = row.partsWhy || `Las partes del sistema se analizan en relación con sus funciones y comportamientos dentro del territorio.`;
-        const totalWhy = row.totalWhy || `La totalidad se analiza por las relaciones que produce entre sus partes y sus efectos en el Humedal El Burro.`;
+        const totalWhy = row.totalWhy || `La totalidad se analiza por las relaciones que produce entre sus partes y sus efectos en el territorio de Bogotá.`;
         const components = document.createElement("div");
         components.className = "subsystem-components active map-components-panel";
         components.style.setProperty("--bubble-color", color);
-        components.innerHTML = `<div class="subsystem-panel-heading"><strong><i class="fa-solid fa-sparkles"></i> QUÉ PARTES O COMPONENTES SE ANALIZAN</strong><button type="button" class="subsystem-panel-close" aria-label="Cerrar panel de componentes"><i class="fa-solid fa-xmark"></i></button></div><p class="panel-scope-label">GENERAL · EN EL TERRITORIO</p><div class="component-visual-strip">${(Array.isArray(parts) ? parts : [parts]).map((part, partIndex) => `<span class="component-visual" style="--bubble-color:${color}"><i class="fa-solid ${systems ? ["fa-droplet","fa-feather-pointed","fa-building","fa-route","fa-people-group","fa-house-chimney"][Number(button.dataset.mapNetworkIndex)] : submodelIcons[Number(button.dataset.mapNetworkIndex)]}"></i><em>${part}</em></span>`).join("")}</div><p class="panel-specific-reading"><b>EN EL HUMEDAL EL BURRO:</b> ${systems ? row.process : row.totalWhy}</p>`;
+        components.innerHTML = `<div class="subsystem-panel-heading"><strong><i class="fa-solid fa-sparkles"></i> QUÉ PARTES O COMPONENTES SE ANALIZAN</strong><button type="button" class="subsystem-panel-close" aria-label="Cerrar panel de componentes"><i class="fa-solid fa-xmark"></i></button></div><p class="panel-scope-label">GENERAL · EN EL TERRITORIO</p><div class="component-visual-strip">${(Array.isArray(parts) ? parts : [parts]).map((part, partIndex) => `<span class="component-visual" style="--bubble-color:${color}"><i class="fa-solid ${systems ? ["fa-droplet","fa-feather-pointed","fa-building","fa-route","fa-people-group","fa-house-chimney"][Number(button.dataset.mapNetworkIndex)] : submodelIcons[Number(button.dataset.mapNetworkIndex)]}"></i><em>${part}</em></span>`).join("")}</div><p class="panel-specific-reading"><b>EN BOGOTÁ:</b> ${systems ? row.process : row.totalWhy}</p>`;
         const purpose = document.createElement("aside");
         purpose.className = "subsystem-purpose-panel active map-purpose-panel";
         purpose.style.setProperty("--bubble-color", color);

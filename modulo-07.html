@@ -90,57 +90,67 @@
             </div>
 
             <article class="cycle-step cycle-pos-1 rs-agentes">
-              <div class="cycle-step-num">1</div>
+              <div class="cycle-step-num">1</div><i class="fa-solid fa-people-group cycle-step-icon"></i>
               <strong>Agentes</strong>
               <p class="reveal-step-question">¿Quién actúa?</p>
               <p class="reveal-step-items">Personas · instituciones · empresas · organizaciones</p>
             </article>
             <article class="cycle-step cycle-pos-2 rs-procesos">
-              <div class="cycle-step-num">2</div>
+              <div class="cycle-step-num">2</div><i class="fa-solid fa-gears cycle-step-icon"></i>
               <strong>Procesos</strong>
               <p class="reveal-step-question">¿Qué está cambiando?</p>
               <p class="reveal-step-items">Movilidad · vivienda · economía · cuidado · transformación urbana</p>
             </article>
             <article class="cycle-step cycle-pos-3 rs-flujos">
-              <div class="cycle-step-num">3</div>
+              <div class="cycle-step-num">3</div><i class="fa-solid fa-arrows-turn-to-dots cycle-step-icon"></i>
               <strong>Flujos</strong>
               <p class="reveal-step-question">¿Qué circula?</p>
               <p class="reveal-step-items">Personas · agua · energía · bienes · información</p>
             </article>
             <article class="cycle-step cycle-pos-4 rs-interacciones">
-              <div class="cycle-step-num">4</div>
+              <div class="cycle-step-num">4</div><i class="fa-solid fa-diagram-project cycle-step-icon"></i>
               <strong>Interacciones</strong>
               <p class="reveal-step-question">¿Cómo se afectan entre sí?</p>
               <p class="reveal-step-items">Dependencias · conflictos · intercambios · retroalimentaciones</p>
             </article>
             <article class="cycle-step cycle-pos-5 rs-sistemas">
-              <div class="cycle-step-num">5</div>
+              <div class="cycle-step-num">5</div><i class="fa-solid fa-circle-nodes cycle-step-icon"></i>
               <strong>Sistemas</strong>
               <p class="reveal-step-question">¿Qué dinámicas están conectadas?</p>
               <p class="reveal-step-items">Aquí aparecen tus 6 sistemas.</p>
             </article>
             <article class="cycle-step cycle-pos-6 rs-emergencia">
-              <div class="cycle-step-num">6</div>
+              <div class="cycle-step-num">6</div><i class="fa-solid fa-sparkles cycle-step-icon"></i>
               <strong>Emergencia</strong>
               <p class="reveal-step-question">¿Qué patrones aparecen de sus interacciones?</p>
               <p class="reveal-step-note">Aquí todavía no tienes que poner la respuesta: eso lo vas a descubrir cuando analices la red.</p>
             </article>
           </div>
 
-          <!-- La lógica encadenada: cada frase lleva a la siguiente, no
-               quedan sueltas — con flecha y texto intermedio explicando
-               el paso, como una oración continua. -->
-          <div class="logic-chain">
-            <div class="logic-chain-node">Agentes, procesos y flujos<br /><b>interactúan</b></div>
-            <div class="logic-chain-arrow"><i class="fa-solid fa-arrow-right"></i><span>permiten identificar</span></div>
-            <div class="logic-chain-node">Sistemas</div>
-            <div class="logic-chain-arrow"><i class="fa-solid fa-arrow-right"></i><span>que interactúan entre sí</span></div>
-            <div class="logic-chain-node">Interacción entre sistemas</div>
-            <div class="logic-chain-arrow"><i class="fa-solid fa-arrow-right"></i><span>de donde pueden</span></div>
-            <div class="logic-chain-node logic-chain-final">Emerger patrones</div>
+          <!-- La lógica encadenada, ahora vertical y con íconos, cada
+               paso deja claro qué produce el siguiente. -->
+          <div class="logic-chain-v">
+            <div class="logic-chain-v-step">
+              <i class="fa-solid fa-people-arrows logic-chain-v-icon"></i>
+              <p><b>Agentes, procesos y flujos</b> interactúan entre sí</p>
+            </div>
+            <div class="logic-chain-v-connector"><i class="fa-solid fa-chevron-down"></i><span>eso permite identificar</span></div>
+            <div class="logic-chain-v-step">
+              <i class="fa-solid fa-circle-nodes logic-chain-v-icon"></i>
+              <p><b>Sistemas</b> — conjuntos de dinámicas conectadas</p>
+            </div>
+            <div class="logic-chain-v-connector"><i class="fa-solid fa-chevron-down"></i><span>esos sistemas interactúan entre sí</span></div>
+            <div class="logic-chain-v-step">
+              <i class="fa-solid fa-diagram-project logic-chain-v-icon"></i>
+              <p><b>Interacción entre sistemas</b> — flujos, dependencias y retroalimentaciones</p>
+            </div>
+            <div class="logic-chain-v-connector"><i class="fa-solid fa-chevron-down"></i><span>de donde pueden</span></div>
+            <div class="logic-chain-v-step logic-chain-v-final">
+              <i class="fa-solid fa-sparkles logic-chain-v-icon"></i>
+              <p><b>Emerger patrones</b> — comportamientos que no se explican desde una sola parte</p>
+            </div>
           </div>
           <blockquote class="logic-chain-quote">
-            <i class="fa-solid fa-quote-left"></i>
             <p>A partir de esta lógica construimos seis sistemas que no funcionan de manera independiente, sino que se encuentran conectados mediante flujos, dependencias y retroalimentaciones.</p>
           </blockquote>
 
