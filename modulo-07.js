@@ -2496,13 +2496,13 @@
       const label = (row) => systems ? row.name : row.name.replace(/^Submodelo de /, "");
       const icon = (index) => (systems ? systemIcons : submodelIcons)[index] || "fa-circle-nodes";
       const dynamicItems = {
-        // Componentes concretos y comparables: no son procesos ni conceptos abstractos.
-        hidrica: ["Lluvia", "Cuerpos de agua", "Canales", "Suelo", "Alcantarillas y drenajes"],
-        biotica: ["Aves", "Mamíferos", "Reptiles", "Anfibios", "Insectos"],
-        fisico: ["Calles", "Andenes", "Edificaciones", "Cerramientos", "Redes de servicios"],
-        movilidad: ["Peatones", "Bicicletas", "Buses", "Automóviles", "Motos"],
-        social: ["Habitantes", "Visitantes", "Organizaciones vecinales", "Colegios", "Comerciantes"],
-        socioeconomico: ["Viviendas", "Tiendas", "Bodegas", "Equipamientos", "Parques"]
+        // Dinámicas observables: cada ítem describe un cambio, ciclo, flujo o condición territorial.
+        hidrica: ["Precipitación y duración de las lluvias", "Infiltración, escorrentía y acumulación", "Conexión entre canales, humedales y drenajes", "Calidad del agua y carga de sedimentos", "Desborde y recuperación después de la lluvia"],
+        biotica: ["Reproducción y ciclos de vida", "Alimentación y disponibilidad de refugio", "Migración y desplazamiento de especies", "Cobertura vegetal y humedad", "Calidad del aire y presión urbana"],
+        fisico: ["Construcción y transformación de edificaciones", "Apertura, cierre y mantenimiento de vías", "Continuidad y deterioro de andenes", "Expansión o reducción de cerramientos", "Calidad del aire junto al borde vial"],
+        movilidad: ["Desplazamientos diarios de personas y vehículos", "Cambios de ruta por congestión", "Tiempos de viaje y espera", "Entrada y salida del humedal y los equipamientos", "Conexión o aislamiento entre barrios"],
+        social: ["Visita, permanencia y horarios de uso", "Cuidado y mantenimiento comunitario", "Educación ambiental y transmisión de conocimiento", "Participación y toma de decisiones", "Conflictos, acuerdos y cambios en la apropiación"],
+        socioeconomico: ["Construcción y crecimiento de viviendas", "Apertura y cierre de comercios", "Concentración o desplazamiento de actividades", "Llegada o pérdida de equipamientos", "Cambio de usos del suelo y presión sobre el borde"]
       };
       // Cuando la red está anclada al mapa real (Cartografía interactiva),
       // NINGUNA bolita abstracta de sistema se muestra — solo las bolitas
