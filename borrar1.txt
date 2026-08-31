@@ -1,0 +1,1 @@
+Archivo para la validación de la aplicación de un commit automático como contribuidor de este repo.
