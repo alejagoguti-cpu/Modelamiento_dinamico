@@ -2051,7 +2051,7 @@ function showInitialPopup() {
         Reserva Distrital de Humedal
       </h2>
       <div style="background: #1a1a1a; border: 1px solid #333333; border-radius: 12px; overflow: hidden; margin-bottom: 16px; animation: slideInCard 0.5s ease-out;">
-        <img src="assets/modulo-02/reserva-humedal.png" alt="Cartografía de Humedales" style="width: 100%; height: auto; display: block; border-radius: 12px; background: #0a0a0a;">
+        <img src="https://raw.githubusercontent.com/alejagoguti-cpu/Modelamiento_dinamico/main/assets/modulo-02/reserva-humedal.png" alt="Cartografía de Humedales" style="width: 100%; height: auto; display: block; border-radius: 12px; background: #0a0a0a;">
       </div>
       <p style="font-size: 12px; color: #999999; text-align: center; margin: 0;">
         17 áreas de reserva distrital de humedal en Bogotá
