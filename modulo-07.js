@@ -1684,14 +1684,11 @@
           // derecho de Humedal La Vaca.
           { pos: [-74.16184778855655, 4.62939492240078], icon: "fa-droplet", color: "#56b8d4", label: "Humedal La Vaca",
             route: { bubbleSide: "right", boxSide: "left", offset: -4, type: "hvh", bendNear: "box" } },
-          // Lado derecho de la caja → derecha, baja, derecha otra vez →
-          // lado izquierdo de Corabastos (el ícono ya lo pone la caja
-          // "Modelo Comercial y Logístico", aquí solo sale la línea).
-          // El "offset" se agrandó para que baje más antes de virar a la
-          // derecha, y así no pase cerca del ícono de vía que está entre
-          // los dos puntos.
+          // Lado derecho de la caja → conecta con Corabastos (el ícono ya
+          // lo pone la caja "Modelo Comercial y Logístico", aquí solo
+          // sale la línea).
           { pos: [-74.1589146050763, 4.63015596902525], icon: "fa-cart-shopping", color: "#e58d62", label: "Corabastos", hideIcon: true,
-            route: { bubbleSide: "left", boxSide: "bottom", offset: 10, type: "vhv", bendNear: "box" } },
+            route: { bubbleSide: "left", boxSide: "right", offset: 6, type: "hvh", bendNear: "box" } },
         ],
         sections: [{ system: "Modelo Determinista ⟶ Sistema Ecológico", icon: "fa-gears", submodelos: [
           "Ciclo de compostaje y estabilización de residuos orgánicos.", "Dinámica de reducción de carga contaminante antes del vertimiento.",

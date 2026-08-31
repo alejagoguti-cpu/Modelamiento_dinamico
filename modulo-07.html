@@ -70,78 +70,49 @@
           <div class="territory-reading-kicker">EL FENÓMENO CIUDAD</div>
           <h2 id="visibleElementsTitle">¿Qué queremos hacer visible?</h2>
 
-          <div class="cycle-ring-wrap">
-            <svg class="cycle-ring-svg" viewBox="0 0 400 400" aria-hidden="true">
-              <circle cx="200" cy="200" r="148" class="cycle-ring-circle"/>
-              <!-- flechitas de dirección repartidas cada 30°, apuntando en sentido horario -->
-              <g class="cycle-ring-arrowheads">
-                <path d="M 228 46 L 196 34 L 196 58 Z" transform="rotate(0 200 200)"/>
-                <path d="M 228 46 L 196 34 L 196 58 Z" transform="rotate(60 200 200)"/>
-                <path d="M 228 46 L 196 34 L 196 58 Z" transform="rotate(120 200 200)"/>
-                <path d="M 228 46 L 196 34 L 196 58 Z" transform="rotate(180 200 200)"/>
-                <path d="M 228 46 L 196 34 L 196 58 Z" transform="rotate(240 200 200)"/>
-                <path d="M 228 46 L 196 34 L 196 58 Z" transform="rotate(300 200 200)"/>
-              </g>
-            </svg>
-
-            <div class="cycle-center">
-              <i class="fa-solid fa-city"></i>
-              <span>BOGOTÁ</span>
-            </div>
-
-            <article class="cycle-step cycle-pos-1 rs-agentes">
-              <i class="fa-solid fa-people-group cycle-step-icon"></i>
+          <!-- Simple y limpio: fila de 6 tarjetas con ícono, conectadas por
+               una flecha entre cada una. Sin anillo, sin rotación, sin
+               curvas flotantes — eso se veía mal y no se pudo arreglar. -->
+          <div class="steps-row">
+            <article class="steps-row-card rs-agentes">
+              <i class="fa-solid fa-people-group"></i>
               <strong>Agentes</strong>
               <p class="reveal-step-question">¿Quién actúa?</p>
               <p class="reveal-step-items">Personas · instituciones · empresas · organizaciones</p>
             </article>
-            <article class="cycle-step cycle-pos-2 rs-procesos">
-              <i class="fa-solid fa-gears cycle-step-icon"></i>
+            <i class="fa-solid fa-arrow-right steps-row-arrow"></i>
+            <article class="steps-row-card rs-procesos">
+              <i class="fa-solid fa-gears"></i>
               <strong>Procesos</strong>
               <p class="reveal-step-question">¿Qué está cambiando?</p>
               <p class="reveal-step-items">Desplazamientos diarios, construcción y mejoramiento de vivienda, comercio formal e informal, cuidado de personas dependientes, renovación y densificación urbana.</p>
             </article>
-            <article class="cycle-step cycle-pos-3 rs-flujos">
-              <i class="fa-solid fa-arrows-turn-to-dots cycle-step-icon"></i>
+            <i class="fa-solid fa-arrow-right steps-row-arrow"></i>
+            <article class="steps-row-card rs-flujos">
+              <i class="fa-solid fa-arrows-turn-to-dots"></i>
               <strong>Flujos</strong>
               <p class="reveal-step-question">¿Qué circula?</p>
               <p class="reveal-step-items">Personas · agua · energía · bienes · información</p>
             </article>
-            <article class="cycle-step cycle-pos-4 rs-interacciones">
-              <i class="fa-solid fa-diagram-project cycle-step-icon"></i>
+            <i class="fa-solid fa-arrow-right steps-row-arrow"></i>
+            <article class="steps-row-card rs-interacciones">
+              <i class="fa-solid fa-diagram-project"></i>
               <strong>Interacciones</strong>
               <p class="reveal-step-question">¿Cómo se afectan entre sí?</p>
               <p class="reveal-step-items">Dependencias · conflictos · intercambios · retroalimentaciones</p>
             </article>
-            <article class="cycle-step cycle-pos-5 rs-sistemas">
-              <i class="fa-solid fa-circle-nodes cycle-step-icon"></i>
+            <i class="fa-solid fa-arrow-right steps-row-arrow"></i>
+            <article class="steps-row-card rs-sistemas">
+              <i class="fa-solid fa-circle-nodes"></i>
               <strong>Sistemas</strong>
               <p class="reveal-step-question">¿Qué dinámicas están conectadas?</p>
             </article>
-            <article class="cycle-step cycle-pos-6 rs-emergencia">
-              <i class="fa-solid fa-sparkles cycle-step-icon"></i>
+            <i class="fa-solid fa-arrow-right steps-row-arrow"></i>
+            <article class="steps-row-card rs-emergencia">
+              <i class="fa-solid fa-sparkles"></i>
               <strong>Emergencia</strong>
               <p class="reveal-step-question">¿Qué patrones aparecen de sus interacciones?</p>
             </article>
-
-            <!-- Ejemplos flotantes conectados con una flechita a su
-                 tarjeta (como el referente que mandaste). -->
-            <!-- Curvas de colores (una por categoría) conectando el anillo
-                 con su ejemplo — estilo del referente que mandaste. -->
-            <svg class="cycle-callout-svg" viewBox="0 0 400 400" aria-hidden="true">
-              <path d="M 200 0 Q 150 -30 200 -52" class="cycle-callout-curve" stroke="#f1cf5b"/>
-              <path d="M 352 80 Q 410 45 420 60" class="cycle-callout-curve" stroke="#ee9a4b"/>
-              <path d="M 352 272 Q 410 300 420 252" class="cycle-callout-curve" stroke="#56b8d4"/>
-              <path d="M 200 400 Q 150 430 200 452" class="cycle-callout-curve" stroke="#b28be8"/>
-              <path d="M 48 272 Q -10 300 -20 252" class="cycle-callout-curve" stroke="#68d391"/>
-              <path d="M 48 80 Q -10 45 -20 60" class="cycle-callout-curve" stroke="#e58d62"/>
-            </svg>
-            <div class="cycle-callout cycle-callout-1"><i class="fa-solid fa-landmark"></i><span>Una JAC, una alcaldía local, un comerciante</span></div>
-            <div class="cycle-callout cycle-callout-2"><i class="fa-solid fa-road-circle-exclamation"></i><span>Una obra vial en curso, una vivienda en mejoramiento</span></div>
-            <div class="cycle-callout cycle-callout-3"><i class="fa-solid fa-bus"></i><span>Buses llenos en hora pico, agua llegando a un barrio</span></div>
-            <div class="cycle-callout cycle-callout-4"><i class="fa-solid fa-people-robbery"></i><span>Un conflicto por el uso del espacio público</span></div>
-            <div class="cycle-callout cycle-callout-5"><i class="fa-solid fa-layer-group"></i><span>La red hídrica, la red vial, el sistema social</span></div>
-            <div class="cycle-callout cycle-callout-6"><i class="fa-solid fa-chart-line"></i><span>Congestión recurrente, inundaciones, gentrificación</span></div>
           </div>
 
           <!-- Versión compacta: horizontal, con íconos y una animación de
