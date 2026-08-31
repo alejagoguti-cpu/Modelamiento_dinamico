@@ -2159,6 +2159,213 @@ function abrirMapaPatrimonio() {
   }, 40);
 }
 
+
+const MANZANAS_HOTSPOTS_DATA = [
+  {
+    id: "kennedy",
+    nombre: "Manzana del Cuidado Kennedy - Patio Bonito",
+    x: 28, y: 58,
+    servicios: "Centro de desarrollo comunitario, lavandería comunitaria, jardín infantil, formación técnica para mujeres cuidadoras.",
+    analisis: "El POT asume que un radio de 15 minutos caminando conecta a las personas cuidadoras. En Patio Bonito, la discontinuidad de andenes y la alta congestión fragmentan la accesibilidad real.",
+    cita: "El POT articula las Manzanas del Cuidado con el Sistema de Movilidad para garantizar proximidad a equipamientos sociales."
+  },
+  {
+    id: "bosa",
+    nombre: "Manzana del Cuidado Bosa - Porvenir",
+    x: 22, y: 72,
+    servicios: "Casa de Igualdad de Oportunidades, aulas de respiro, recreación deportiva y atención integral en salud.",
+    analisis: "Bosa presenta uno de los mayores déficits de soporte urbano. La Manzana mitiga la sobrecarga del cuidado pero no resuelve la segregación residencial.",
+    cita: "Las Manzanas del Cuidado en el sur de Bogotá buscan reducir la brecha histórica de equipamientos sociales."
+  },
+  {
+    id: "fontibon",
+    nombre: "Manzana del Cuidado Fontibón",
+    x: 26, y: 44,
+    servicios: "Servicios de respiro, biblioteca comunitaria, talleres de formación e inserción laboral.",
+    analisis: "La proximidad con zonas industriales genera barreras de tráfico pesado y ruido que afectan los recorridos cotidianos de caminata.",
+    cita: "Integración de servicios sociales en centralidades mixtas."
+  },
+  {
+    id: "engativa",
+    nombre: "Manzana del Cuidado Engativá - Tabora",
+    x: 35, y: 36,
+    servicios: "Centro de atención a personas mayores, jardines infantiles y espacios lúdicos.",
+    analisis: "Requiere cruces peatonales seguros sobre avenidas arteriales como la Calle 80 y la Av. Ciudad de Cali.",
+    cita: "Reducción de distancias de desplazamiento para la población dependiente."
+  },
+  {
+    id: "suba",
+    nombre: "Manzana del Cuidado Suba - Rincón",
+    x: 42, y: 22,
+    servicios: "Centro de formación, lavanderías públicas, apoyo psicológico y cuidado infantil.",
+    analisis: "La topografía y la alta densidad habitacional dificultan el acceso universal en los tiempos ideales estipulados por el POT.",
+    cita: "Fortalecimiento de la estructura social en zonas de alta densidad."
+  },
+  {
+    id: "centro",
+    nombre: "Manzana del Cuidado Centro - La Candelaria / Santa Fe",
+    x: 52, y: 56,
+    servicios: "Atención a población migrante, comedores comunitarios, formación y orientación jurídica.",
+    analisis: "La gentrificación y el costo del suelo expulsan a hogares vulnerables, alejándolos de los equipamientos consolidados.",
+    cita: "Garantía de servicios de proximidad en el centro tradicional."
+  },
+  {
+    id: "ciudad_bolivar",
+    nombre: "Manzana del Cuidado Ciudad Bolívar - Lucero",
+    x: 38, y: 82,
+    servicios: "Articulación con TransMiCable, jardines infantiles, aulas digitales y centros de salud.",
+    analisis: "El cable aéreo mejora el tiempo de viaje vertical, pero los recorridos transversales siguen siendo precarios.",
+    cita: "Articulación del Sistema del Cuidado con el transporte por cable."
+  },
+  {
+    id: "san_cristobal",
+    nombre: "Manzana del Cuidado San Cristóbal",
+    x: 58, y: 68,
+    servicios: "Centro comunitario, huertas urbanas, atención psicosocial y formación para el empleo.",
+    analisis: "El borde urbano-rural exige servicios móviles de cuidado que el POT no detalla en su matriz formal.",
+    cita: "Cobertura de servicios sociales en bordes urbanos."
+  }
+];
+
+const PATRIMONIO_HOTSPOTS_DATA = [
+  {
+    id: "centro_historico",
+    nombre: "Centro Histórico y La Candelaria",
+    x: 52, y: 56,
+    categoria: "Patrimonio Material e Inmaterial",
+    descripcion: "Núcleo fundacional de Bogotá con la mayor concentración de Bienes de Interés Cultural (BIC) nacional y distrital.",
+    analisis: "El POT promueve la conservación arquitectónica pero enfrenta tensiones entre la preservación patrimonial y las presiones inmobiliarias de renovación.",
+    cita: "El POT protege los sectores de interés cultural y promueve la permanencia de habitantes tradicionales."
+  },
+  {
+    id: "teusaquillo",
+    nombre: "Barrio Teusaquillo y Sectores de Interés Cultural",
+    x: 46, y: 46,
+    categoria: "Patrimonio Urbano y Arquitectónico",
+    descripcion: "Conjunto representativo de la arquitectura de mitad del siglo XX y expansión urbana moderna.",
+    analisis: "Las normas de densificación amenazan la escala barrial y el tejido residencial histórico.",
+    cita: "Reconocimiento de tipologías residenciales patrimoniales."
+  },
+  {
+    id: "cerros_orientales",
+    nombre: "Cerros Orientales y Senderos Ancestrales",
+    x: 64, y: 40,
+    categoria: "Patrimonio Natural y Cultural",
+    descripcion: "Matriz biofísica fundamental, senderos indígenas y memoria territorial colectiva.",
+    analisis: "La delimitación jurídica no resuelve las tensiones entre preservación ecológica, asentamientos populares y recreación pasiva.",
+    cita: "Integración de la Estructura Ecológica Principal con el patrimonio natural."
+  },
+  {
+    id: "usaquen",
+    nombre: "Núcleo Fundacional de Usaquén",
+    x: 60, y: 20,
+    categoria: "Patrimonio Histórico y Paisajístico",
+    descripcion: "Antiguo municipio anexionado con valor colonial y dinámica cultural contemporánea.",
+    analisis: "La sobreexplotación comercial desplaza usos residenciales y comunitarios tradicionales.",
+    cita: "Protección de núcleos fundacionales periféricos."
+  },
+  {
+    id: "san_francisco",
+    nombre: "Eje Ambiental - Río San Francisco / Vicachá",
+    x: 55, y: 52,
+    categoria: "Patrimonio Hídrico y Paisajístico",
+    descripcion: "Recorrido histórico del agua en la fundación y crecimiento de la ciudad.",
+    analisis: "El POT dibuja el eje pero el río permanece canalizado y subterráneo en la mayor parte de su curso urbano.",
+    cita: "Recuperación de la memoria del agua en el espacio público."
+  }
+];
+
+function renderManzanasHotspots() {
+  const container = document.getElementById("manzanasHotspotsContainer");
+  const popup = document.getElementById("manzanasPopup");
+  if (!container || !popup) return;
+
+  container.innerHTML = MANZANAS_HOTSPOTS_DATA.map(m => `
+    <button type="button" class="manzana-spot" data-id="${m.id}" style="left:${m.x}%; top:${m.y}%;" title="${m.nombre}"></button>
+  `).join("");
+
+  container.querySelectorAll(".manzana-spot").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const id = btn.getAttribute("data-id");
+      const m = MANZANAS_HOTSPOTS_DATA.find(x => x.id === id);
+      if (!m) return;
+
+      container.querySelectorAll(".manzana-spot").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+
+      popup.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px;">
+          <h4 style="font-family:'Space Grotesk',sans-serif; font-size:14px; font-weight:700; color:#f76fb0; margin:0;">${m.nombre}</h4>
+          <button type="button" class="popup-close-mini" style="background:none; border:none; color:#888; font-size:16px; cursor:pointer; padding:0;">&times;</button>
+        </div>
+        <div style="font-size:12px; color:#cbd5e1; line-height:1.5; margin-bottom:8px;"><strong>Servicios:</strong> ${m.servicios}</div>
+        <div style="font-size:11.5px; color:#94a3b8; line-height:1.5; margin-bottom:8px; border-left:2px solid #f76fb0; padding-left:8px;">${m.analisis}</div>
+        <div style="font-size:11px; color:#64748b; font-style:italic;">"${m.cita}"</div>
+      `;
+      popup.style.display = "block";
+
+      popup.querySelector(".popup-close-mini")?.addEventListener("click", () => {
+        popup.style.display = "none";
+        btn.classList.remove("active");
+      });
+    });
+  });
+
+  document.getElementById("manzanasOverlayBody")?.addEventListener("click", (e) => {
+    if (!e.target.closest(".manzanas-popup") && !e.target.closest(".manzana-spot")) {
+      popup.style.display = "none";
+      container.querySelectorAll(".manzana-spot").forEach(b => b.classList.remove("active"));
+    }
+  });
+}
+
+function renderPatrimonioHotspots() {
+  const container = document.getElementById("patrimonioHotspotsContainer");
+  const popup = document.getElementById("patrimonioPopup");
+  if (!container || !popup) return;
+
+  container.innerHTML = PATRIMONIO_HOTSPOTS_DATA.map(p => `
+    <button type="button" class="patrimonio-spot" data-id="${p.id}" style="left:${p.x}%; top:${p.y}%;" title="${p.nombre}"></button>
+  `).join("");
+
+  container.querySelectorAll(".patrimonio-spot").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const id = btn.getAttribute("data-id");
+      const p = PATRIMONIO_HOTSPOTS_DATA.find(x => x.id === id);
+      if (!p) return;
+
+      container.querySelectorAll(".patrimonio-spot").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+
+      popup.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px;">
+          <h4 style="font-family:'Space Grotesk',sans-serif; font-size:14px; font-weight:700; color:#fb8d84; margin:0;">${p.nombre}</h4>
+          <button type="button" class="popup-close-mini" style="background:none; border:none; color:#888; font-size:16px; cursor:pointer; padding:0;">&times;</button>
+        </div>
+        <div style="font-size:12px; color:#cbd5e1; line-height:1.5; margin-bottom:8px;"><strong>Categoría:</strong> ${p.categoria}</div>
+        <div style="font-size:12px; color:#cbd5e1; line-height:1.5; margin-bottom:8px;">${p.descripcion}</div>
+        <div style="font-size:11.5px; color:#94a3b8; line-height:1.5; margin-bottom:8px; border-left:2px solid #fb8d84; padding-left:8px;">${p.analisis}</div>
+        <div style="font-size:11px; color:#64748b; font-style:italic;">"${p.cita}"</div>
+      `;
+      popup.style.display = "block";
+
+      popup.querySelector(".popup-close-mini")?.addEventListener("click", () => {
+        popup.style.display = "none";
+        btn.classList.remove("active");
+      });
+    });
+  });
+
+  document.getElementById("patrimonioOverlayBody")?.addEventListener("click", (e) => {
+    if (!e.target.closest(".patrimonio-popup") && !e.target.closest(".patrimonio-spot")) {
+      popup.style.display = "none";
+      container.querySelectorAll(".patrimonio-spot").forEach(b => b.classList.remove("active"));
+    }
+  });
+}
+
 function showManzanasOverlay(opts) {
   const legendM = document.getElementById("networkLegend");
   if (legendM) legendM.style.display = "none";
@@ -2175,6 +2382,7 @@ function showManzanasOverlay(opts) {
   const overlay = document.getElementById("manzanasOverlay");
   if (overlay) {
     overlay.style.display = "flex";
+    renderManzanasHotspots();
     if (opts?.animateIn) {
       overlay.classList.add("overlay-entering");
       overlay.addEventListener("animationend", () => overlay.classList.remove("overlay-entering"), { once: true });
@@ -2208,6 +2416,7 @@ function showPatrimonioOverlay(opts) {
   const overlay = document.getElementById("patrimonioOverlay");
   if (overlay) {
     overlay.style.display = "flex";
+    renderPatrimonioHotspots();
     if (opts?.animateIn) {
       overlay.classList.add("overlay-entering");
       overlay.addEventListener("animationend", () => overlay.classList.remove("overlay-entering"), { once: true });
@@ -2224,6 +2433,7 @@ function hidePatrimonioOverlay() {
   if (overlay) overlay.style.display = "none";
   document.querySelector(".network-canvas").style.display = "";
 }
+
 
 /* -------- métricas -------- */
 function computeMetrics() {
