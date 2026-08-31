@@ -2000,61 +2000,86 @@ function showInitialPopup() {
   // Crear el overlay/backdrop
   const backdrop = document.createElement("div");
   backdrop.id = "popup-backdrop-modal";
-  backdrop.style.cssText = "position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(3px); z-index: 9999; display: flex; align-items: center; justify-content: center;";
+  backdrop.style.cssText = "position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important; background: rgba(0, 0, 0, 0.8) !important; backdrop-filter: blur(4px) !important; z-index: 99999 !important; display: flex !important; align-items: center !important; justify-content: center !important; margin: 0 !important; padding: 0 !important;";
 
   // Crear el modal
   const modal = document.createElement("div");
-  modal.style.cssText = "background: linear-gradient(135deg, #0f1522 0%, #121828 100%); border: 1.5px solid rgba(47, 212, 200, 0.4); border-radius: 16px; padding: 40px 36px; width: 90%; max-width: 520px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(47, 212, 200, 0.15); font-family: 'Inter', sans-serif; color: #e7eaf2; text-align: center; animation: slideUpPopup 0.4s ease-out;";
+  modal.style.cssText = "background: linear-gradient(135deg, #0f1522 0%, #121828 100%) !important; border: 2px solid #2fd4c8 !important; border-radius: 16px !important; padding: 50px 40px !important; width: 90% !important; max-width: 550px !important; box-shadow: 0 25px 80px rgba(0, 0, 0, 0.9), 0 0 60px rgba(47, 212, 200, 0.25) !important; font-family: 'Inter', sans-serif !important; color: #e7eaf2 !important; text-align: center !important; position: relative !important; z-index: 100000 !important;";
 
-  // Agregar estilos de animación
+  // Agregar estilos de animación globales
   if (!document.getElementById("popup-modal-styles")) {
     const style = document.createElement("style");
     style.id = "popup-modal-styles";
     style.innerHTML = `
       @keyframes slideUpPopup {
-        from { opacity: 0; transform: translateY(30px); }
-        to { opacity: 1; transform: translateY(0); }
+        from { opacity: 0; transform: translateY(40px) scale(0.95); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
       }
-      #popup-backdrop-modal { animation: fadeInPopup 0.3s ease-out; }
+      #popup-backdrop-modal { animation: fadeInPopup 0.4s ease-out !important; }
       @keyframes fadeInPopup {
         from { opacity: 0; }
         to { opacity: 1; }
       }
+      #popup-backdrop-modal > div { animation: slideUpPopup 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) !important; }
     `;
     document.head.appendChild(style);
   }
 
   // Crear contenido del modal
   modal.innerHTML = `
-    <div style="margin-bottom: 20px; font-size: 48px; color: #2fd4c8;">❓</div>
-    <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 26px; font-weight: 700; margin: 0 0 16px 0; line-height: 1.3; color: #e7eaf2;">
+    <div style="margin-bottom: 24px; font-size: 56px; color: #2fd4c8; text-shadow: 0 0 20px rgba(47, 212, 200, 0.5);">❓</div>
+    <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 700; margin: 0 0 18px 0 !important; line-height: 1.3; color: #e7eaf2; letter-spacing: -0.5px;">
       ¿Es suficiente el POT como único modelo de Bogotá?
     </h2>
-    <p style="font-size: 14px; color: #8891a5; line-height: 1.7; margin: 12px 0 28px 0;">
+    <p style="font-size: 15px; color: #a7b5c8; line-height: 1.8; margin: 16px 0 32px 0 !important;">
       Explorar esta pregunta es el propósito de este análisis de ingeniería inversa. Descubre cómo el POT estructura la ciudad y qué le falta para comprenderla completamente.
     </p>
-    <button id="popup-btn-cerrar" style="background: linear-gradient(135deg, #1f7a74, #175f5a); color: #eafffb; border: none; padding: 14px 32px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; width: 100%; max-width: 300px; box-shadow: 0 10px 20px rgba(47, 212, 200, 0.15);">
+    <button id="popup-btn-cerrar" style="background: linear-gradient(135deg, #1f7a74, #175f5a) !important; color: #eafffb !important; border: none !important; padding: 16px 40px !important; border-radius: 10px !important; font-size: 14px !important; font-weight: 600 !important; cursor: pointer !important; width: 100% !important; max-width: 320px !important; box-shadow: 0 12px 30px rgba(47, 212, 200, 0.25) !important; transition: all 0.2s !important;">
       Comenzar a explorar
     </button>
   `;
 
   // Función para cerrar
   function closePopup() {
+    backdrop.style.transition = "opacity 0.3s ease";
     backdrop.style.opacity = "0";
+    modal.style.transition = "opacity 0.3s ease, transform 0.3s ease";
     modal.style.opacity = "0";
-    setTimeout(() => backdrop.remove(), 200);
+    modal.style.transform = "scale(0.95)";
+    setTimeout(() => {
+      backdrop.remove();
+      console.log("✅ Popup cerrado");
+    }, 300);
   }
 
-  // Agregar eventos
-  modal.querySelector("#popup-btn-cerrar").addEventListener("click", closePopup);
-  backdrop.addEventListener("click", (e) => { if (e.target === backdrop) closePopup(); });
+  // Agregar eventos al botón
+  const closeBtn = modal.querySelector("#popup-btn-cerrar");
+  if (closeBtn) {
+    closeBtn.addEventListener("click", closePopup);
+    closeBtn.addEventListener("mouseover", function() {
+      this.style.filter = "brightness(1.1)";
+    });
+    closeBtn.addEventListener("mouseout", function() {
+      this.style.filter = "brightness(1)";
+    });
+  }
+
+  // Cerrar al hacer clic en el backdrop
+  backdrop.addEventListener("click", (e) => {
+    if (e.target === backdrop) closePopup();
+  });
 
   // Agregar modal al backdrop
   backdrop.appendChild(modal);
 
-  // Agregar al documento
-  document.body.appendChild(backdrop);
-  console.log("✅ Popup agregado al DOM");
+  // Agregar al documento (al principio del body para máxima prioridad)
+  if (document.body) {
+    document.body.insertBefore(backdrop, document.body.firstChild);
+  } else {
+    document.documentElement.appendChild(backdrop);
+  }
+
+  console.log("✅ Popup agregado al DOM con z-index: 99999");
 }
 
 document.addEventListener("DOMContentLoaded", () => {
