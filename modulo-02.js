@@ -2004,7 +2004,7 @@ function showInitialPopup() {
 
   // Crear el modal
   const modal = document.createElement("div");
-  modal.style.cssText = "background: #0a0a0a !important; border: 2px solid #333333 !important; border-radius: 16px !important; padding: 50px 40px !important; width: 90% !important; max-width: 550px !important; box-shadow: 0 25px 80px rgba(0, 0, 0, 0.9), 0 0 60px rgba(50, 50, 50, 0.5) !important; font-family: 'Inter', sans-serif !important; color: #ffffff !important; text-align: center !important; position: relative !important; z-index: 100000 !important;";
+  modal.style.cssText = "background: #0a0a0a !important; border: 2px solid #333333 !important; border-radius: 16px !important; padding: 60px 50px !important; width: 90% !important; max-width: 800px !important; max-height: 85vh !important; overflow-y: auto !important; box-shadow: 0 25px 80px rgba(0, 0, 0, 0.9), 0 0 60px rgba(50, 50, 50, 0.5) !important; font-family: 'Inter', sans-serif !important; color: #ffffff !important; text-align: center !important; position: relative !important; z-index: 100000 !important;";
 
   // Agregar estilos de animación globales
   if (!document.getElementById("popup-modal-styles")) {
