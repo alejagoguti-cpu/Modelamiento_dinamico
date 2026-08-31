@@ -2386,11 +2386,11 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("btnVerHallazgos")?.addEventListener("click", verHallazgosConAnimacion);
   document.getElementById("btnExplorarRelaciones")?.addEventListener("click", explorarRelacionesConAnimacion);
 
-  // Mostrar popup inicial después de 500ms SOLO si estamos en modulo-02.html
+  // Mostrar popup inicial después de que terminen las animaciones de la red (3500ms)
   if (window.location.pathname.includes("modulo-02")) {
     setTimeout(() => {
       showInitialPopup();
-    }, 500);
+    }, 3500);
   }
 });
 
