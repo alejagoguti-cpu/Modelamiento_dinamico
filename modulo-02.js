@@ -948,6 +948,7 @@ const HUMEDALES_CASOS = {
 };
 
 function showHumedalesOverlay(opts) {
+  console.log("📍 showHumedalesOverlay() called with opts:", opts);
   const animateIn = !!(opts && opts.animateIn);
   hideNodeInfo();
   hideEdgeInfo();
@@ -1078,9 +1079,16 @@ function showHumedalesOverlay(opts) {
     });
   });
 
+  console.log("Hiding network canvas and showing overlay");
   document.querySelector(".network-canvas").style.display = "none";
   const overlayEl = document.getElementById("humedalesOverlay");
-  overlayEl.style.display = "flex";
+  console.log("Overlay element found:", !!overlayEl);
+  if (overlayEl) {
+    overlayEl.style.display = "flex";
+    console.log("✅ Overlay display set to flex, computed style:", window.getComputedStyle(overlayEl).display);
+  } else {
+    console.error("❌ humedalesOverlay element not found!");
+  }
   if (animateIn) {
     overlayEl.classList.remove("overlay-entering");
     requestAnimationFrame(() => {
@@ -1099,9 +1107,15 @@ function showHumedalesOverlay(opts) {
    dentro del mapa) y, justo cuando el zoom cubre toda la pantalla, entra al
    overlay ampliado de humedales ya existente con un fundido suave. */
 function explorarRelacionesConAnimacion() {
+  console.log("🔍 explorarRelacionesConAnimacion() called");
   const svg = document.getElementById("networkViz");
   const nodeEl = document.querySelector('.ods-node[data-id="humedales"]');
-  if (!svg || !nodeEl) { showHumedalesOverlay(); return; }
+  console.log("SVG found:", !!svg, "Node found:", !!nodeEl);
+  if (!svg || !nodeEl) {
+    console.log("SVG or node missing, calling showHumedalesOverlay directly");
+    showHumedalesOverlay();
+    return;
+  }
 
   const humedal = nodeById("humedales");
   const vb = svg.viewBox.baseVal;
