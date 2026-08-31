@@ -1102,41 +1102,36 @@ function showHumedalesOverlay(opts) {
   }
 }
 
-/* Animación del botón "Explorar relaciones en detalle": acerca la cámara
-   hacia el nodo Humedales en la red principal (como si la vista se metiera
-   dentro del mapa) y, justo cuando el zoom cubre toda la pantalla, entra al
-   overlay ampliado de humedales ya existente con un fundido suave. */
+/* Abre el modal de selección de mapas para explorar relaciones en detalle */
 function explorarRelacionesConAnimacion() {
-  console.log("🔍 explorarRelacionesConAnimacion() called");
-  const svg = document.getElementById("networkViz");
-  const nodeEl = document.querySelector('.ods-node[data-id="humedales"]');
-  console.log("SVG found:", !!svg, "Node found:", !!nodeEl);
-  if (!svg || !nodeEl) {
-    console.log("SVG or node missing, calling showHumedalesOverlay directly");
-    showHumedalesOverlay();
-    return;
-  }
+  abrirModalExplorarRelaciones();
+}
 
-  const humedal = nodeById("humedales");
-  const vb = svg.viewBox.baseVal;
-  // Origen del zoom = posición real del nodo Humedales dentro del viewBox,
-  // convertido a % del propio SVG (para usar como transform-origin en CSS).
-  const originXPct = ((humedal.x - vb.x) / vb.width) * 100;
-  const originYPct = ((humedal.y - vb.y) / vb.height) * 100;
-  svg.style.transformOrigin = `${originXPct}% ${originYPct}%`;
+/* ==========================================================
+   MODAL POPUP: SELECTOR DE MAPAS (EXPLORAR RELACIONES EN DETALLE)
+   ========================================================== */
+function abrirModalExplorarRelaciones() {
+  const modal = document.getElementById("modalExplorarRelaciones");
+  if (!modal) return;
+  modal.style.display = "flex";
+  modal.setAttribute("aria-hidden", "false");
+}
 
-  svg.classList.add("zoom-into-humedales");
-  const onDone = () => {
-    svg.removeEventListener("transitionend", onDone);
-    showHumedalesOverlay({ animateIn: true });
-    // Deja el SVG listo (sin zoom ni clase) para la próxima vez que se muestre
-    // la red principal, ya con la vista reseteada.
-    svg.classList.remove("zoom-into-humedales");
-    svg.style.transformOrigin = "";
-  };
-  svg.addEventListener("transitionend", onDone, { once: true });
-  // Red de seguridad por si transitionend no dispara (pestaña en segundo plano, etc.)
-  setTimeout(() => { if (svg.classList.contains("zoom-into-humedales") && document.getElementById("humedalesOverlay").style.display !== "flex") onDone(); }, 3200);
+function cerrarModalExplorarRelaciones() {
+  const modal = document.getElementById("modalExplorarRelaciones");
+  if (!modal) return;
+  modal.style.display = "none";
+  modal.setAttribute("aria-hidden", "true");
+}
+
+function abrirMapaVias() {
+  cerrarModalExplorarRelaciones();
+  showMovilidadOverlay({ animateIn: true });
+}
+
+function abrirMapaHumedales() {
+  cerrarModalExplorarRelaciones();
+  showHumedalesOverlay({ animateIn: true });
 }
 
 /* Muestra la cita de una LÍNEA de conexión (no de un humedal puntual) en un
@@ -2356,6 +2351,21 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
   }
+
+  // Agregar event listeners para modal de selección de mapas
+  document.getElementById("modalExplorarClose")?.addEventListener("click", cerrarModalExplorarRelaciones);
+  document.getElementById("modalExplorarRelaciones")?.addEventListener("click", (e) => {
+    if (e.target.id === "modalExplorarRelaciones") cerrarModalExplorarRelaciones();
+  });
+  document.getElementById("btnOpcionMapaVias")?.addEventListener("click", abrirMapaVias);
+  document.getElementById("btnOpcionMapaHumedales")?.addEventListener("click", abrirMapaHumedales);
+
+  // Cerrar modal con tecla Escape
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      cerrarModalExplorarRelaciones();
+    }
+  });
 
   // Mostrar popup inicial después de 500ms (cuando la página esté completamente lista)
   // setTimeout(() => {

@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="stylesheet" href="modulo-02.css?v=20260831-debug">
+<link rel="stylesheet" href="modulo-02.css?v=20260831-modal-restored">
   <link rel="stylesheet" href="site-theme.css?v=20260823">
   <link rel="stylesheet" href="navigation-unified.css?v=20260824">
 </head>
@@ -272,6 +272,58 @@
       </div>
     </div>
 
+    <!-- MODAL POPUP: SELECTOR DE MAPAS (EXPLORAR RELACIONES EN DETALLE) -->
+    <div class="modal-backdrop" id="modalExplorarRelaciones" style="display:none;" aria-hidden="true" role="dialog" aria-labelledby="modalExplorarTitle">
+      <div class="modal-dialog">
+        <div class="modal-header">
+          <div>
+            <div class="modal-kicker"><i class="fa-solid fa-network-wired"></i> EXPLORACIÓN A PROFUNDIDAD</div>
+            <h2 class="modal-title" id="modalExplorarTitle">Explorar relaciones en detalle</h2>
+            <p class="modal-subtitle">Selecciona el mapa o dimensión que deseas analizar:</p>
+          </div>
+          <button class="modal-close-btn" id="modalExplorarClose" type="button" aria-label="Cerrar ventana">&times;</button>
+        </div>
+
+        <div class="map-options-grid">
+          <!-- Tarjeta 1: Vías y Movilidad -->
+          <div class="map-option-card card-vias" id="btnOpcionMapaVias" role="button" tabindex="0">
+            <div class="map-option-header">
+              <span class="map-option-badge badge-vias"><i class="fa-solid fa-route"></i> Movilidad</span>
+              <span class="map-option-action-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+            </div>
+            <div class="map-option-icon"><i class="fa-solid fa-road"></i></div>
+            <h3 class="map-option-title">Sistema de Vías y Movilidad</h3>
+            <p class="map-option-desc">Visualiza corredores de transporte masivo (Metro, RegioTram), trazados viales y cómo el POT proyecta la conectividad de la ciudad.</p>
+            <button type="button" class="map-option-btn btn-vias">Explorar Red Vial <i class="fa-solid fa-arrow-right"></i></button>
+          </div>
+
+          <!-- Tarjeta 2: Humedales / Territorios Dinámicos (Mapa 2) -->
+          <div class="map-option-card card-humedales" id="btnOpcionMapaHumedales" role="button" tabindex="0">
+            <div class="map-option-header">
+              <span class="map-option-badge badge-humedales"><i class="fa-solid fa-water"></i> Ecosistemas</span>
+              <span class="map-option-action-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+            </div>
+            <div class="map-option-icon"><i class="fa-solid fa-seedling"></i></div>
+            <h3 class="map-option-title">Humedales y Territorios Dinámicos</h3>
+            <p class="map-option-desc">Analiza los quince humedales reconocidos, presiones ecológicas, conectores ambientales y citas específicas del POT.</p>
+            <button type="button" class="map-option-btn btn-humedales">Explorar Humedales <i class="fa-solid fa-arrow-right"></i></button>
+          </div>
+
+          <!-- Tarjeta 3: Mapa 3 (Personalizado) -->
+          <div class="map-option-card card-mapa3" id="btnOpcionMapa3" role="button" tabindex="0">
+            <div class="map-option-header">
+              <span class="map-option-badge badge-mapa3"><i class="fa-solid fa-layer-group"></i> Nuevo Mapa</span>
+              <span class="map-option-action-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+            </div>
+            <div class="map-option-icon"><i class="fa-solid fa-map-location-dot"></i></div>
+            <h3 class="map-option-title">Mapa 3 (Personalizado)</h3>
+            <p class="map-option-desc">Espacio reservado para integrar tu tercer mapa o capa temática territorial (GeoJSON, ortofoto o análisis propio).</p>
+            <button type="button" class="map-option-btn btn-mapa3">Explorar Mapa 3 <i class="fa-solid fa-arrow-right"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <footer>
       "No se trata de representar la ciudad, sino de comprenderla para transformarla." — <span>Equipo POT Reverse Engineering</span>
     </footer>
@@ -280,7 +332,7 @@
 
 </div>
 
-<script src="modulo-02.js?v=20260831-debug"></script>
+<script src="modulo-02.js?v=20260831-modal-restored"></script>
 
 </body>
 </html>
