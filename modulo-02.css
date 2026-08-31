@@ -539,7 +539,6 @@ body {
 .humedales-overlay-image-frame {
   position: relative;
   transform-origin: 50% 50%;
-  will-change: transform;
   /* Tamaño final calculado por JS (fitImageFrame) para que SIEMPRE respete
      exactamente la proporción 16:9 real de la foto dentro del espacio
      disponible, sin las inconsistencias de aspect-ratio dentro de flexbox.
