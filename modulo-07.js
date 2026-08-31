@@ -1665,10 +1665,12 @@
           // sube, y se pega al lado derecho de esta caja.
           { pos: [-74.14987475206779, 4.64210777486686], icon: "fa-droplet", color: "#56b8d4", label: "Humedal El Burro",
             route: { bubbleSide: "right", boxSide: "right", offset: 4, type: "hvh" } },
-          // Sale del lado izquierdo de esta caja, va a la izquierda, baja,
-          // y se pega al lado izquierdo de la bola de Av. Ciudad de Cali.
+          // Sale del lado izquierdo de esta caja, y baja hasta pegarse al
+          // lado izquierdo de la bola de Av. Ciudad de Cali — el quiebre
+          // ahora ocurre cerca de la bolita (igual que la de El Burro),
+          // para que las dos líneas no se crucen entre sí.
           { pos: [-74.15701979872972, 4.6395972438178115], icon: "fa-road", color: "#b8c0c8", label: "Av. Ciudad de Cali",
-            route: { bubbleSide: "left", boxSide: "left", offset: -4, type: "hvh", bendNear: "box" } },
+            route: { bubbleSide: "left", boxSide: "left", offset: -4, type: "hvh" } },
         ],
         sections: [{ system: "Modelo Determinista ⟶ Sistema Socio-Ecológico", icon: "fa-gears", submodelos: [
           "Desborde y Control de Crecientes.", "Transferencia de Carga y Vibración.",

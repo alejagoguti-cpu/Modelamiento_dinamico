@@ -5723,14 +5723,15 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
   pointer-events: none;
 }
 /* Grupo de 3 íconos de línea delgada al lado derecho de la caja (estilo
-   "regular" de FontAwesome, no relleno), como en tu referente. */
+   "regular" de FontAwesome, no relleno), uno debajo del otro (vertical). */
 .kennedy-info-box .kennedy-model-icons {
-  position: absolute; top: 8px; right: 8px;
-  display: flex; gap: 4px;
+  position: absolute; top: 8px; right: 8px; bottom: 8px;
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 8px;
 }
 .kennedy-model-icons i {
   font-size: 10px; color: var(--node-color, #fff); opacity: .85;
 }
+.kennedy-info-box { padding-right: 26px; }
 .kennedy-info-box::before {
   content: ""; position: absolute; inset: 0; z-index: -1;
   background: linear-gradient(155deg, color-mix(in srgb, var(--node-color) 16%, transparent), transparent 60%);
