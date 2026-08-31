@@ -118,9 +118,14 @@
     function computeView(w, h) {
       const [, , bw, bh] = netData.bbox;
       const pad = 6;
-      const scale = Math.min((w - pad * 2) / bw, (h - pad * 2) / bh);
-      const offX = (w - bw * scale) / 2;
-      const offY = (h - bh * scale) / 2;
+      const fitScale = Math.min((w - pad * 2) / bw, (h - pad * 2) / bh);
+      // Encuadre fijo (no la red completa): acercado sobre la zona de los
+      // humedales, como en el encuadre de referencia — ni más ni menos zoom.
+      const EXTRA_ZOOM = 1.85;
+      const CENTER_X = 6100, CENTER_Y = 2500; // coordenada local a centrar
+      const scale = fitScale * EXTRA_ZOOM;
+      const offX = w / 2 - CENTER_X * scale;
+      const offY = h / 2 - CENTER_Y * scale;
       view = { scale, offX, offY };
     }
 
@@ -152,37 +157,8 @@
         });
         netCtx.stroke();
       });
-      drawWaterMarkers(w, h);
+      // (marcadores de agua quitados a pedido)
     }
-
-    // La red de SUMO (osm.net.xml) solo modela vías, no trae geometría de
-    // cuerpos de agua — por eso se marcan aquí los humedales y el río
-    // conocidos, en azul, como referencia (no son el polígono real del
-    // cuerpo de agua, solo su ubicación aproximada).
-    const WATER_POINTS = [
-      { label: "Humedal El Burro", x: 6063.8, y: 2006.4 },
-      { label: "Humedal La Vaca", x: 4932.4, y: 1430.0 },
-      { label: "Humedal Techo", x: 6811.5, y: 2158.0 },
-      { label: "Río Tunjuelo", x: 3934.3, y: 249.7 },
-      { label: "Canal San Francisco", x: 5616.8, y: 1684.1 },
-    ];
-    function drawWaterMarkers(w, h) {
-      netCtx.font = "11px Inter, sans-serif";
-      WATER_POINTS.forEach((p) => {
-        const [sx, sy] = toScreen(p.x, p.y);
-        netCtx.fillStyle = "rgba(90,170,230,0.85)";
-        netCtx.beginPath();
-        netCtx.arc(sx, sy, 7, 0, Math.PI * 2);
-        netCtx.fill();
-        netCtx.strokeStyle = "rgba(200,230,255,0.9)";
-        netCtx.lineWidth = 1.5;
-        netCtx.stroke();
-        netCtx.fillStyle = "#cfe8ff";
-        netCtx.textAlign = "left";
-        netCtx.fillText(p.label, sx + 10, sy + 4);
-      });
-    }
-
     // ---------- cargar la red (JSON ya recortado) ----------
     fetch(NET_URL)
       .then((r) => { if (!r.ok) throw new Error("no se pudo cargar " + NET_URL); return r.json(); })

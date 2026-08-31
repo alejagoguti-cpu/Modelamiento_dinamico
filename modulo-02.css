@@ -110,11 +110,11 @@ body {
   opacity: 1 !important;
   align-items: center !important;
   gap: 6px !important;
-  background: #ff6b35 !important;
-  border: 2px solid #ff6b35 !important;
+  background: rgba(92, 214, 209, 0.1) !important;
+  border: 1px solid rgba(92, 214, 209, 0.5) !important;
   border-radius: 6px !important;
   padding: 8px 14px !important;
-  color: white !important;
+  color: #5cd6d1 !important;
   font-size: 12px !important;
   font-weight: 600 !important;
   letter-spacing: 0.4px !important;
@@ -131,9 +131,9 @@ body {
   display: inline !important;
 }
 .topbar-conclusion-btn:hover {
-  background: #ff8555 !important;
-  border-color: #ff8555 !important;
-  box-shadow: 0 0 14px rgba(255,107,53,0.5) !important;
+  background: rgba(92, 214, 209, 0.2) !important;
+  border-color: #5cd6d1 !important;
+  box-shadow: 0 0 14px rgba(92, 214, 209, 0.35) !important;
 }
 .topbar-conclusion-btn:active {
   transform: scale(0.97) !important;
@@ -800,6 +800,7 @@ body {
 }
 .quote-card .quote-mark { position: absolute; left: 14px; top: 4px; font-size: 30px; font-family: Georgia, serif; color: #d28b36; opacity: 0.75; line-height: 1; }
 .quote-card p { font-size: 12.5px; color: var(--text-dim); line-height: 1.6; }
+.quote-card .quote-highlight { color: #d28b36; font-weight: 700; }
 .quote-card .quote-attr { font-size: 11.5px; color: #d28b36; font-weight: 600; margin-top: 10px; }
 
 /* La cita entra lentamente desenfocada y se va enfocando, en vez de
