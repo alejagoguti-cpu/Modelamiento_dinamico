@@ -2339,7 +2339,7 @@ const MAIN_CONCLUSION_STEP1 = `
 const MAIN_CONCLUSION_STEP2 = `
   <div class="main-conclusion-functions-grid">
     ${MAIN_CONCLUSION_FUNCTIONS.map((fn, idx) => `
-      <div class="conclusion-function-card" style="--d:${idx * 0.1}s">
+      <div class="conclusion-function-card" style="--d:${idx * 0.1}s" data-card-index="${idx}">
         <i class="fa-solid ${fn.icon}"></i>
         <h3>${fn.title}</h3>
       </div>
@@ -2396,9 +2396,45 @@ function showMainConclusionPopup() {
   document.getElementById("mainConclusionNextBtn")?.addEventListener("click", showMainConclusionStep2);
 }
 
+function showHumedalMap() {
+  const mapHTML = `
+    <div class="conclusion-map-modal">
+      <button class="conclusion-map-close" id="conclusionMapClose">← Volver</button>
+      <h2>Reserva Distrital de Humedal</h2>
+      <div class="conclusion-map-container">
+        <img src="RESERVA_HUMEDAL.webp" alt="Reserva Distrital de Humedal" class="conclusion-map-image">
+        <div class="conclusion-nodes-overlay">
+          <div class="conclusion-node" style="top: 12%; left: 18%;" title="Orienta"><span>Orienta</span></div>
+          <div class="conclusion-node" style="top: 15%; left: 24%;" title="Regula"><span>Regula</span></div>
+          <div class="conclusion-node" style="top: 30%; left: 12%;" title="Clasifica"><span>Clasifica</span></div>
+          <div class="conclusion-node" style="top: 20%; right: 15%;" title="Protege"><span>Protege</span></div>
+          <div class="conclusion-node" style="top: 45%; left: 35%;" title="Delimita"><span>Delimita</span></div>
+        </div>
+      </div>
+      <p class="conclusion-map-caption">17 áreas de reserva distrital de humedal en Bogotá — Presiona los nodos para más información</p>
+    </div>
+  `;
+
+  const body = document.getElementById("mainConclusionBody");
+  body.innerHTML = mapHTML;
+
+  document.getElementById("conclusionMapClose")?.addEventListener("click", () => {
+    showMainConclusionStep2();
+  });
+}
+
 function showMainConclusionStep2() {
   mainConclusionStep = 2;
   document.getElementById("mainConclusionBody").innerHTML = MAIN_CONCLUSION_STEP2;
+
+  document.querySelectorAll(".conclusion-function-card").forEach(card => {
+    card.addEventListener("click", (e) => {
+      const cardIndex = card.getAttribute("data-card-index");
+      if (cardIndex === "1") {
+        showHumedalMap();
+      }
+    });
+  });
 }
 
 function hideMainConclusionPopup() {
