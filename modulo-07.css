@@ -5806,7 +5806,7 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
   position: relative; width: 100%; max-width: 620px; aspect-ratio: 1 / 1;
   margin: 8px auto 28px;
 }
-.cycle-ring-svg { position: absolute; inset: 0; width: 100%; height: 100%; transform-origin: 50% 50%; animation: cycle-ring-spin 26s linear infinite; }
+.cycle-ring-svg { position: absolute; inset: 0; width: 100%; height: 100%; transform-origin: 50% 50%; animation: cycle-ring-spin 55s linear infinite; }
 @keyframes cycle-ring-spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .cycle-ring-svg { animation: none; } }
 .cycle-ring-circle { fill: none; stroke: rgba(118,255,240,.3); stroke-width: 26; }
@@ -5933,3 +5933,20 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
   color: rgba(242,236,227,.55); font-size: 8.5px; font-style: italic; line-height: 1.35;
 }
 .cycle-step-example i { color: #f1cf5b; margin-right: 3px; }
+
+/* ---------- Ejemplos flotantes con flechita (estilo referente) ---------- */
+.cycle-ring-wrap { overflow: visible; }
+.cycle-callout {
+  position: absolute; width: 118px; text-align: center;
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+}
+.cycle-callout-arrow { color: rgba(241,207,91,.8); font-size: 11px; }
+.cycle-callout i:not(.cycle-callout-arrow) { font-size: 15px; color: #f1cf5b; }
+.cycle-callout span { color: rgba(242,236,227,.65); font-size: 8px; line-height: 1.3; font-style: italic; }
+.cycle-callout-1 { top: -13%; left: 50%; transform: translateX(-50%); }
+.cycle-callout-2 { top: 15%; left: 105%; }
+.cycle-callout-3 { top: 63%; left: 105%; }
+.cycle-callout-4 { top: 113%; left: 50%; transform: translateX(-50%); }
+.cycle-callout-5 { top: 63%; right: 105%; left: auto; }
+.cycle-callout-6 { top: 15%; right: 105%; left: auto; }
+@media (max-width: 760px) { .cycle-callout { display: none; } }
