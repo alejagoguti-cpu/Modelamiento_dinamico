@@ -1891,8 +1891,8 @@ function addHumedalNodes() {
   // Definir posiciones de nodos (en porcentajes relativos al contenedor)
   // Basadas en las ubicaciones del mapa de humedales
   const nodes = [
-    { id: "clasifica", title: "Clasifica", icon: "fa-list", x: 15, y: 25, color: "#2fd4c8" },
-    { id: "regula", title: "Regula", icon: "fa-scale-balanced", x: 75, y: 20, color: "#2fd4c8" },
+    { id: "clasifica", title: "Clasifica", icon: "fa-list", x: 18, y: 40, color: "#2fd4c8" },
+    { id: "regula", title: "Regula", icon: "fa-scale-balanced", x: 82, y: 32, color: "#2fd4c8" },
     { id: "protege", title: "Protege", icon: "fa-shield", x: 70, y: 45, color: "#2fd4c8" },
     { id: "delimita", title: "Delimita", icon: "fa-borders", x: 50, y: 65, color: "#2fd4c8" },
     { id: "orienta", title: "Orienta", icon: "fa-compass", x: 30, y: 50, color: "#2fd4c8" },
