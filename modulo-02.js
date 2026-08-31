@@ -2366,7 +2366,7 @@ function showMainConclusionPopup() {
       <div class="main-conclusion-modal-overlay"></div>
       <div class="main-conclusion-modal-container">
         <div class="main-conclusion-modal-header">
-          <h2>CONCLUSIÓN</h2>
+          <h2>CONCLUSIÓN · RESERVA DISTRITAL DE HUMEDAL</h2>
           <button class="main-conclusion-modal-close" id="mainConclusionCloseBtn" aria-label="Cerrar">
             <i class="fa-solid fa-xmark"></i>
           </button>
@@ -2380,20 +2380,11 @@ function showMainConclusionPopup() {
   `;
 
   document.body.insertAdjacentHTML("beforeend", modalHTML);
-  mainConclusionStep = 1;
-  document.getElementById("mainConclusionBody").innerHTML = MAIN_CONCLUSION_STEP1;
-
-  console.log("Modal mostrado, rendering red...");
-  setTimeout(() => {
-    console.log("Renderizando red...");
-    renderConclusionNetwork();
-    console.log("Red renderizada");
-  }, 0);
+  showHumedalMap();
 
   document.getElementById("mainConclusionCloseBtn")?.addEventListener("click", hideMainConclusionPopup);
   document.getElementById("mainConclusionFooterCloseBtn")?.addEventListener("click", hideMainConclusionPopup);
   document.querySelector(".main-conclusion-modal-overlay")?.addEventListener("click", hideMainConclusionPopup);
-  document.getElementById("mainConclusionNextBtn")?.addEventListener("click", showMainConclusionStep2);
 }
 
 function showHumedalMap() {
