@@ -2318,11 +2318,11 @@ function filterNetwork(mode) {
 
 /* -------- conclusión modal -------- */
 const MAIN_CONCLUSION_FUNCTIONS = [
-  { title: "Clasifica", icon: "fa-list" },
-  { title: "Regula", icon: "fa-gavel" },
-  { title: "Protege", icon: "fa-shield" },
-  { title: "Delimita", icon: "fa-ban" },
-  { title: "Orienta intervenciones", icon: "fa-compass" }
+  { title: "Clasifica", icon: "fa-list", tooltip: "cambian en el tiempo" },
+  { title: "Regula", icon: "fa-gavel", tooltip: "dependen de múltiples actores" },
+  { title: "Protege", icon: "fa-shield", tooltip: "atraviesan diferentes escalas" },
+  { title: "Delimita", icon: "fa-ban", tooltip: "producen efectos no previstos" },
+  { title: "Orienta intervenciones", icon: "fa-compass", tooltip: "sin límites definidos" }
 ];
 
 const MAIN_CONCLUSION_STEP1 = `
@@ -2333,8 +2333,7 @@ const MAIN_CONCLUSION_STEP1 = `
     <svg id="conclusionNetworkViz" viewBox="0 0 2500 1820" preserveAspectRatio="xMidYMid meet"></svg>
   </div>
   <div class="main-conclusion-answer">
-    <p>El POT estructura Bogotá desde cuatro dimensiones (Ecológica, Funcional y del Cuidado, Socioeconómica y Patrimonial) que capturan el funcionamiento de la ciudad desde lo vivo y lo tangible. Pero eso que el POT denomina cada estructura revela relaciones y vacíos que no están explícitos en el texto.</p>
-    <p>La Red Implícita es la trama de conexiones reales sobre la que descansa cada decisión del POT.</p>
+    <p>Al reconstruir su modelo, encontramos que el POT hace principalmente legibles estructuras, componentes, relaciones funcionales y reglas de intervención. Esto permite construir una representación organizada del territorio</p>
   </div>
   <button class="main-conclusion-explore-btn" id="mainConclusionNextBtn">DESCUBRIR</button>
 `;
@@ -2342,9 +2341,10 @@ const MAIN_CONCLUSION_STEP1 = `
 const MAIN_CONCLUSION_STEP2 = `
   <div class="main-conclusion-functions-grid">
     ${MAIN_CONCLUSION_FUNCTIONS.map((fn, idx) => `
-      <div class="conclusion-function-card" style="--d:${idx * 0.1}s">
+      <div class="conclusion-function-card" style="--d:${idx * 0.1}s" data-tooltip="${fn.tooltip}">
         <i class="fa-solid ${fn.icon}"></i>
         <h3>${fn.title}</h3>
+        <div class="conclusion-card-tooltip" style="display:none;">${fn.tooltip}</div>
       </div>
     `).join('')}
   </div>
@@ -2402,6 +2402,18 @@ function showMainConclusionPopup() {
 function showMainConclusionStep2() {
   mainConclusionStep = 2;
   document.getElementById("mainConclusionBody").innerHTML = MAIN_CONCLUSION_STEP2;
+
+  document.querySelectorAll(".conclusion-function-card").forEach(card => {
+    const tooltip = card.querySelector(".conclusion-card-tooltip");
+
+    card.addEventListener("mouseenter", () => {
+      if (tooltip) tooltip.style.display = "block";
+    });
+
+    card.addEventListener("mouseleave", () => {
+      if (tooltip) tooltip.style.display = "none";
+    });
+  });
 }
 
 function hideMainConclusionPopup() {
