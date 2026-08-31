@@ -2321,7 +2321,7 @@ const MAIN_CONCLUSION_FUNCTIONS = [
   { title: "Clasifica", icon: "fa-list" },
   { title: "Regula", icon: "fa-gavel" },
   { title: "Protege", icon: "fa-shield" },
-  { title: "Limita", icon: "fa-ban" },
+  { title: "Delimita", icon: "fa-ban" },
   { title: "Orienta intervenciones", icon: "fa-compass" }
 ];
 
@@ -2329,11 +2329,14 @@ const MAIN_CONCLUSION_STEP1 = `
   <div class="main-conclusion-question">
     <p>¿Es suficiente el POT como único modelo de Bogotá?</p>
   </div>
+  <div class="network-canvas" style="height:300px;margin:16px 0;border-radius:8px;overflow:hidden;">
+    <svg id="conclusionNetworkViz" viewBox="0 0 2500 1820" preserveAspectRatio="xMidYMid meet"></svg>
+  </div>
   <div class="main-conclusion-answer">
     <p>El POT estructura Bogotá desde cuatro dimensiones (Ecológica, Funcional y del Cuidado, Socioeconómica y Patrimonial) que capturan el funcionamiento de la ciudad desde lo vivo y lo tangible. Pero eso que el POT denomina cada estructura revela relaciones y vacíos que no están explícitos en el texto.</p>
     <p>La Red Implícita es la trama de conexiones reales sobre la que descansa cada decisión del POT.</p>
   </div>
-  <button class="main-conclusion-explore-btn" id="mainConclusionNextBtn">Ver funciones del POT →</button>
+  <button class="main-conclusion-explore-btn" id="mainConclusionNextBtn">DESCUBRIR</button>
 `;
 
 const MAIN_CONCLUSION_STEP2 = `
@@ -2349,23 +2352,30 @@ const MAIN_CONCLUSION_STEP2 = `
 
 let mainConclusionStep = 1;
 
+function renderConclusionNetwork() {
+  const svg = document.getElementById("conclusionNetworkViz");
+  if (!svg) return;
+  svg.innerHTML = "";
+  buildDefs(svg); buildAmbientMesh(svg); drawEdges(svg); drawNodes(svg);
+}
+
 function showMainConclusionPopup() {
   const existingModal = document.querySelector(".main-conclusion-modal");
   if (existingModal) existingModal.remove();
 
   const modalHTML = `
     <div class="main-conclusion-modal">
-      <div class="main-conclusion-overlay"></div>
-      <div class="main-conclusion-container">
-        <div class="main-conclusion-header">
+      <div class="main-conclusion-modal-overlay"></div>
+      <div class="main-conclusion-modal-container">
+        <div class="main-conclusion-modal-header">
           <h2>CONCLUSIÓN</h2>
-          <button class="main-conclusion-close" id="mainConclusionCloseBtn" aria-label="Cerrar">
+          <button class="main-conclusion-modal-close" id="mainConclusionCloseBtn" aria-label="Cerrar">
             <i class="fa-solid fa-xmark"></i>
           </button>
         </div>
-        <div class="main-conclusion-body" id="mainConclusionBody"></div>
-        <div class="main-conclusion-footer">
-          <button class="main-conclusion-close-footer" id="mainConclusionFooterCloseBtn">Cerrar</button>
+        <div class="main-conclusion-modal-body" id="mainConclusionBody"></div>
+        <div class="main-conclusion-modal-footer">
+          <button class="main-conclusion-modal-footer-btn" id="mainConclusionFooterCloseBtn">Cerrar</button>
         </div>
       </div>
     </div>
@@ -2375,9 +2385,11 @@ function showMainConclusionPopup() {
   mainConclusionStep = 1;
   document.getElementById("mainConclusionBody").innerHTML = MAIN_CONCLUSION_STEP1;
 
+  setTimeout(() => renderConclusionNetwork(), 0);
+
   document.getElementById("mainConclusionCloseBtn")?.addEventListener("click", hideMainConclusionPopup);
   document.getElementById("mainConclusionFooterCloseBtn")?.addEventListener("click", hideMainConclusionPopup);
-  document.querySelector(".main-conclusion-overlay")?.addEventListener("click", hideMainConclusionPopup);
+  document.querySelector(".main-conclusion-modal-overlay")?.addEventListener("click", hideMainConclusionPopup);
   document.getElementById("mainConclusionNextBtn")?.addEventListener("click", showMainConclusionStep2);
 }
 
