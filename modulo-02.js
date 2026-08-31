@@ -1478,29 +1478,36 @@ const MOVILIDAD_RELACIONES = {
 
 const MOVILIDAD_CONCLUSION = "El POT sí plantea que el Metro debe generar conexiones entre distintos ambitos. Sin embargo, al construir su red, algunos componentes aparecen como hubs centrales y otros quedan periféricos, conectados solo a un proyecto o a una estructura específica. Esta distribución desigual muestra que el POT reconoce relaciones, pero no las articula completamente como una red territorial integrada. Además, sus planos representan principalmente líneas, estaciones y localizaciones, sin mostrar cómo esas conexiones funcionan en el tiempo, quién depende de ellas, qué recorridos se producen ni qué ocurre cuando la red se congestiona o falla.";
 
-const MAIN_CONCLUSION_HTML = `
+const MAIN_CONCLUSION_STEP1 = `
   <div class="main-conclusion-popup-content">
-    <div class="main-conclusion-title">Nuestra conclusión</div>
+    <div class="main-conclusion-question">¿Es suficiente el POT como único modelo de Bogotá?</div>
     <div class="main-conclusion-answer">
-      <strong>No completamente.</strong>
-      <p>El POT es necesario para regular jurídicamente Bogotá, pero no es suficiente para comprender por sí solo todos los procesos que producen y transforman la ciudad.</p>
+      <p>El POT es suficiente para cumplir su función como instrumento de ordenamiento territorial</p>
     </div>
-    <div class="main-conclusion-summary">
-      <div class="conclusion-column">
-        <div class="conclusion-label">1. Lo que sí logra</div>
-        <p>Regula el suelo, delimita áreas, organiza estructuras y orienta proyectos.</p>
-      </div>
-      <div class="conclusion-column">
-        <div class="conclusion-label">2. Lo que deja por fuera</div>
-        <p>No muestra completamente los flujos, los cambios en el tiempo, los actores, los conflictos ni las relaciones entre escalas.</p>
-      </div>
-      <div class="conclusion-column">
-        <div class="conclusion-label">3. La respuesta</div>
-        <p>El POT es necesario, pero no suficiente como único modelo. Debe complementarse con modelos dinámicos, causales, adaptativos y multiescalares.</p>
-      </div>
-    </div>
+    <button class="main-conclusion-explore-btn" id="mainConclusionExploreBtn" type="button">Comenzar a explorar</button>
   </div>
 `;
+
+const MAIN_CONCLUSION_FUNCTIONS = [
+  { title: "Clasifica", icon: "fa-list" },
+  { title: "Regula", icon: "fa-scale-balanced" },
+  { title: "Protege", icon: "fa-shield" },
+  { title: "Limita", icon: "fa-ban" },
+  { title: "Orienta intervenciones", icon: "fa-compass" }
+];
+
+const MAIN_CONCLUSION_STEP2 = `
+  <div class="main-conclusion-functions-grid">
+    ${MAIN_CONCLUSION_FUNCTIONS.map((fn, idx) => `
+      <div class="conclusion-function-card" style="--d:${idx * 0.1}s">
+        <div class="conclusion-function-icon"><i class="fa-solid ${fn.icon}"></i></div>
+        <div class="conclusion-function-title">${fn.title}</div>
+      </div>
+    `).join('')}
+  </div>
+`;
+
+let mainConclusionStep = 1;
 
 let movilidadPopupAnchor = null;
 let movilidadClickOutsideWired = false;
@@ -1782,8 +1789,20 @@ function hideMovilidadPopup() {
 function showMainConclusionPopup() {
   const modal = document.getElementById("mainConclusionModal");
   if (!modal) return;
+  mainConclusionStep = 1;
+  const body = modal.querySelector(".main-conclusion-modal-body");
+  if (body) body.innerHTML = MAIN_CONCLUSION_STEP1;
   modal.style.display = "flex";
   document.body.style.overflow = "hidden";
+  setTimeout(() => {
+    document.getElementById("mainConclusionExploreBtn")?.addEventListener("click", showMainConclusionStep2);
+  }, 0);
+}
+
+function showMainConclusionStep2() {
+  mainConclusionStep = 2;
+  const body = document.querySelector(".main-conclusion-modal-body");
+  if (body) body.innerHTML = MAIN_CONCLUSION_STEP2;
 }
 
 function hideMainConclusionPopup() {
@@ -1792,6 +1811,7 @@ function hideMainConclusionPopup() {
     modal.style.display = "none";
   }
   document.body.style.overflow = "auto";
+  mainConclusionStep = 1;
 }
 
 /* Animación del botón "Ver hallazgos clave": efecto tipo "corte de luz" — los
@@ -2114,11 +2134,11 @@ document.addEventListener("DOMContentLoaded", () => {
           <div class="main-conclusion-modal-overlay"></div>
           <div class="main-conclusion-modal-container">
             <div class="main-conclusion-modal-header">
-              <h2>Cierre de la lectura</h2>
+              <h2>La función del POT</h2>
               <button class="main-conclusion-modal-close" id="mainConclusionCloseBtn" type="button" aria-label="Cerrar">&times;</button>
             </div>
             <div class="main-conclusion-modal-body">
-              ${MAIN_CONCLUSION_HTML}
+              ${MAIN_CONCLUSION_STEP1}
             </div>
             <div class="main-conclusion-modal-footer">
               <button class="main-conclusion-modal-footer-btn" id="mainConclusionFooterBtn" type="button">Cerrar</button>
