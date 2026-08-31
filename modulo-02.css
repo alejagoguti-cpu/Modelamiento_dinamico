@@ -290,7 +290,7 @@ body {
   transform-origin: 50% 50%;
   will-change: transform, opacity;
   transform: translateZ(0);
-  transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s ease;
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
 }
 /* Animación "explorar relaciones en detalle": acercamiento suave,
    rápido y fluido hacia el nodo seleccionado antes de pasar al mapa ampliado */
@@ -539,6 +539,7 @@ body {
 .humedales-overlay-image-frame {
   position: relative;
   transform-origin: 50% 50%;
+  will-change: transform;
   /* Tamaño final calculado por JS (fitImageFrame) para que SIEMPRE respete
      exactamente la proporción 16:9 real de la foto dentro del espacio
      disponible, sin las inconsistencias de aspect-ratio dentro de flexbox.
@@ -647,15 +648,7 @@ body {
   display: flex; align-items: center; justify-content: center;
   transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
   z-index: 2;
-  animation: hotspotPulse 2.8s infinite ease-in-out;
 }
-
-@keyframes hotspotPulse {
-  0% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 4px -1px var(--hotspot-color, #2fd4c8), inset 0 0 8px rgba(0,0,0,0.6); }
-  50% { transform: translate(-50%, -50%) scale(1.05); box-shadow: 0 0 18px 2px var(--hotspot-color, #2fd4c8), inset 0 0 10px rgba(0,0,0,0.8), 0 0 8px 1px rgba(92, 214, 209, 0.4); border-color: #5cf2e5; }
-  100% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 4px -1px var(--hotspot-color, #2fd4c8), inset 0 0 8px rgba(0,0,0,0.6); }
-}
-
 .humedal-hotspot-label {
   display: block;
   font-family: 'Inter', sans-serif; font-weight: 700; color: #ffffff;
@@ -665,8 +658,7 @@ body {
 }
 .humedal-hotspot:hover,
 .humedal-hotspot.active {
-  animation: none;
-  transform: translate(-50%, -50%) scale(1.1);
+  transform: translate(-50%, -50%) scale(1.04);
   border-color: #ff8a4c;
   box-shadow: 0 0 0 3px rgba(255, 138, 76, 0.25), 0 0 14px rgba(255, 138, 76, 0.85);
   z-index: 3;
@@ -869,14 +861,14 @@ footer span { color: var(--teal); }
   100% { opacity: 0.1; }
 }
 .ods-node.blackout-flicker, .edge-group.blackout-flicker {
-  animation: blackoutFlicker 1.2s cubic-bezier(0.2, 0.8, 0.4, 1) both;
+  animation: blackoutFlicker 0.48s cubic-bezier(0.2, 0.8, 0.4, 1) both;
 }
 @keyframes blackoutGlow {
   0%   { filter: drop-shadow(0 0 4px currentColor); }
   50%  { filter: drop-shadow(0 0 16px currentColor) drop-shadow(0 0 24px currentColor); }
   100% { filter: drop-shadow(0 0 10px currentColor); }
 }
-.ods-node.blackout-surviving .node-ring { animation: blackoutGlow 1.2s ease both; }
+.ods-node.blackout-surviving .node-ring { animation: blackoutGlow 0.48s ease both; }
 
 /* RESPONSIVE */
 @media (max-width: 1400px) {
@@ -1716,17 +1708,3 @@ footer span { color: var(--teal); }
 }
 
 
-
-
-/* Palabras clave recuperadas dentro de la caja naranja de movilidad. */
-.movilidad-nota-naranja .movilidad-keyword {
-  color: #70e1b2;
-  font-weight: 800;
-  letter-spacing: .01em;
-}
-.movilidad-nota-naranja .movilidad-keyword-line {
-  margin-top: 12px;
-  padding-top: 10px;
-  border-top: 1px solid rgba(112, 225, 178, .22);
-  color: #d7e9e1;
-}

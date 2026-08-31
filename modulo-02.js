@@ -919,19 +919,7 @@ function hideEdgeInfo() {
 
 function showNodeInfo(id) {
   if (id === "humedales") {
-    abrirMapaHumedales();
-    return;
-  }
-  if (id === "manzanas_del_cuidado") {
-    abrirMapaManzanas();
-    return;
-  }
-  if (id === "patrimonio_material") {
-    abrirMapaPatrimonio();
-    return;
-  }
-  if (id === "red_vial") {
-    abrirMapaVias();
+    showHumedalesOverlay();
     return;
   }
   const node = nodeById(id);
@@ -1190,7 +1178,6 @@ const PATRIMONIO_NODOS_SOBREVIVIENTES = [
 
 /* FunciÃ³n maestra para animaciÃ³n de iluminaciÃ³n, desconexiÃ³n y acercamiento fluido */
 function ejecutarTransicionRed(nodosSobrevivientes, hubId, onComplete) {
-  clearSpotlight();
   document.querySelectorAll(".insight-card").forEach(c => c.classList.remove("active"));
 
   const survivors = new Set(nodosSobrevivientes);
@@ -1217,16 +1204,8 @@ function ejecutarTransicionRed(nodosSobrevivientes, hubId, onComplete) {
     const node = nodeById(hubId) || nodeById("red_vial") || nodeById("humedales");
     if (svg && node) {
       const vb = svg.viewBox.baseVal;
-      const rect = svg.getBoundingClientRect();
-      const scale = Math.min(rect.width / vb.width, rect.height / vb.height);
-      const renderedW = vb.width * scale;
-      const renderedH = vb.height * scale;
-      const offsetX = (rect.width - renderedW) / 2;
-      const offsetY = (rect.height - renderedH) / 2;
-      const nodeXScreen = offsetX + ((node.x - vb.x) * scale);
-      const nodeYScreen = offsetY + ((node.y - vb.y) * scale);
-      const originXPct = (nodeXScreen / rect.width) * 100;
-      const originYPct = (nodeYScreen / rect.height) * 100;
+      const originXPct = ((node.x - vb.x) / vb.width) * 100;
+      const originYPct = ((node.y - vb.y) / vb.height) * 100;
       svg.style.transformOrigin = `${originXPct}% ${originYPct}%`;
       svg.classList.add("zoom-into-humedales");
 
@@ -1238,11 +1217,11 @@ function ejecutarTransicionRed(nodosSobrevivientes, hubId, onComplete) {
         svg.classList.remove("zoom-into-humedales");
         svg.style.transformOrigin = "";
       };
-      setTimeout(onDone, 1200);
+      setTimeout(onDone, 440);
     } else {
       onComplete();
     }
-  }, 1200);
+  }, 480);
 }
 
 // Mapa 1: VÃ­as y Movilidad
@@ -2181,94 +2160,24 @@ function abrirMapaPatrimonio() {
 }
 
 function showManzanasOverlay(opts) {
-  const animateIn = !!(opts && opts.animateIn);
+  const legendM = document.getElementById("networkLegend");
+  if (legendM) legendM.style.display = "none";
+  const actsM = document.getElementById("networkSidebarActions");
+  if (actsM) actsM.style.display = "none";
   hideNodeInfo();
   hideEdgeInfo();
-  document.querySelectorAll(".ods-node").forEach(el => el.classList.remove("node-selected"));
-  document.querySelector('.ods-node[data-id="manzanas_del_cuidado"]')?.classList.add("node-selected");
-
-  const legend = document.getElementById("networkLegend");
-  if (legend) legend.style.display = "none";
-  const acts = document.getElementById("networkSidebarActions");
-  if (acts) acts.style.display = "none";
-
-  const body = document.getElementById("manzanasOverlayBody");
-  const hotspotsHTML = Object.entries(MANZANAS_CASOS).map(([key, c]) => \
-    <button type="button" class="humedal-hotspot" data-key="\\"
-      style="left:\\%; top:\\%; width:\\%; height:\\%; --hotspot-color:\\;"
-      title="\\" data-lines="\\">
-      <span class="humedal-hotspot-label" style="font-size: 5px;">\\</span>
-    </button>
-  \).join("");
-
-  body.innerHTML = \
-    <div class="humedales-overlay-image-wrap" id="manzanasImageWrap">
-      <div class="humedales-overlay-image-frame" id="manzanasImageFrame">
-        <img src="assets/mapa-manzanas-cuidado.jpg" alt="Mapa de Manzanas del Cuidado" class="humedales-overlay-image" />
-        \\
-      </div>
-      <div class="humedal-popup" id="manzanasPopup" style="display:none;"></div>
-    </div>
-    <div class="humedales-overlay-sidebar" id="manzanasOverlaySidebar">
-      <div class="humedales-sidebar-intro">
-        <h3 style="color: #f76fb0;">Sistema Distrital del Cuidado</h3>
-        <p>El POT consolida las Manzanas del Cuidado como una apuesta por territorializar la infraestructura social. Aquí se articulan servicios de salud, educación y recreación para relevar las cargas de cuidado no remunerado.</p>
-      </div>
-      <div id="manzanasCasosList"></div>
-    </div>
-  \;
-
+  document.querySelector(".network-canvas").style.display = "none";
+  document.getElementById("humedalesOverlay").style.display = "none";
+  document.getElementById("movilidadOverlay").style.display = "none";
+  const pat = document.getElementById("patrimonioOverlay");
+  if (pat) pat.style.display = "none";
+  
   const overlay = document.getElementById("manzanasOverlay");
   if (overlay) {
     overlay.style.display = "flex";
-    if (animateIn) {
-      overlay.classList.add("fade-in");
-      setTimeout(() => overlay.classList.remove("fade-in"), 600);
-    }
-  }
-
-  requestAnimationFrame(() => {
-    // Reutilizamos fitImageFrame pero ajustado si hace falta
-    const wrap = document.getElementById("manzanasImageWrap");
-    const frame = document.getElementById("manzanasImageFrame");
-    if (wrap && frame) {
-      const wrapW = wrap.clientWidth, wrapH = wrap.clientHeight;
-      if (wrapW && wrapH) {
-        const ratio = 16 / 9;
-        let w = wrapW, h = w / ratio;
-        if (h > wrapH) { h = wrapH; w = h * ratio; }
-        frame.style.width = w + "px";
-        frame.style.height = h + "px";
-      }
-    }
-  });
-
-  // Hotspot interactions
-  body.querySelectorAll(".humedal-hotspot").forEach(btn => {
-    btn.addEventListener("click", () => {
-      body.querySelectorAll(".humedal-hotspot").forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      const k = btn.dataset.key;
-      const data = MANZANAS_CASOS[k];
-      if (data) {
-        const popup = document.getElementById("manzanasPopup");
-        const frame = document.getElementById("manzanasImageFrame");
-        if (popup && frame) {
-          popup.innerHTML = \<h4 style="color:#f76fb0; margin:0 0 5px 0;">\\</h4><p style="margin:0; font-size:12px; color:#ccc;">Punto de articulación de servicios de proximidad para el relevo del cuidado.</p>\;
-          popup.style.display = "block";
-          
-          const wrapRect = document.getElementById("manzanasImageWrap").getBoundingClientRect();
-          const frameRect = frame.getBoundingClientRect();
-          const pX = frameRect.left - wrapRect.left + (frameRect.width * (data.x / 100));
-          const pY = frameRect.top - wrapRect.top + (frameRect.height * (data.y / 100));
-          
-          popup.style.left = (pX + 20) + "px";
-          popup.style.top = (pY + 20) + "px";
-        }
-      }
-    });
-  });
-});
+    if (opts?.animateIn) {
+      overlay.classList.add("overlay-entering");
+      overlay.addEventListener("animationend", () => overlay.classList.remove("overlay-entering"), { once: true });
     }
   }
 }
@@ -2505,39 +2414,3 @@ function wireMovilidadEdicionLineas(body) {
     pintarHandles();
   });
 }
-
-const MANZANAS_CASOS = {
-  m1: { x: 17.14, y: 33.75, diam: 3.5, label: "Manzana 1", nombre: "Manzana del Cuidado 1", color: "#f76fb0" },
-  m2: { x: 18.83, y: 20.35, diam: 3.5, label: "Manzana 2", nombre: "Manzana del Cuidado 2", color: "#f76fb0" },
-  m3: { x: 22.69, y: 45.91, diam: 3.5, label: "Manzana 3", nombre: "Manzana del Cuidado 3", color: "#f76fb0" },
-  m4: { x: 24.41, y: 56.82, diam: 3.5, label: "Manzana 4", nombre: "Manzana del Cuidado 4", color: "#f76fb0" },
-  m5: { x: 25.02, y: 35.98, diam: 3.5, label: "Manzana 5", nombre: "Manzana del Cuidado 5", color: "#f76fb0" },
-  m6: { x: 26.45, y: 26.65, diam: 3.5, label: "Manzana 6", nombre: "Manzana del Cuidado 6", color: "#f76fb0" },
-  m7: { x: 32.18, y: 42.86, diam: 3.5, label: "Manzana 7", nombre: "Manzana del Cuidado 7", color: "#f76fb0" },
-  m8: { x: 35.38, y: 52.46, diam: 3.5, label: "Manzana 8", nombre: "Manzana del Cuidado 8", color: "#f76fb0" },
-  m9: { x: 36.11, y: 21.1, diam: 3.5, label: "Manzana 9", nombre: "Manzana del Cuidado 9", color: "#f76fb0" },
-  m10: { x: 39.67, y: 40.0, diam: 3.5, label: "Manzana 10", nombre: "Manzana del Cuidado 10", color: "#f76fb0" },
-  m11: { x: 39.8, y: 30.72, diam: 3.5, label: "Manzana 11", nombre: "Manzana del Cuidado 11", color: "#f76fb0" },
-  m12: { x: 40.18, y: 56.06, diam: 3.5, label: "Manzana 12", nombre: "Manzana del Cuidado 12", color: "#f76fb0" },
-  m13: { x: 43.43, y: 62.67, diam: 3.5, label: "Manzana 13", nombre: "Manzana del Cuidado 13", color: "#f76fb0" },
-  m14: { x: 47.34, y: 41.71, diam: 3.5, label: "Manzana 14", nombre: "Manzana del Cuidado 14", color: "#f76fb0" },
-  m15: { x: 48.72, y: 72.18, diam: 3.5, label: "Manzana 15", nombre: "Manzana del Cuidado 15", color: "#f76fb0" },
-  m16: { x: 50.17, y: 82.23, diam: 3.5, label: "Manzana 16", nombre: "Manzana del Cuidado 16", color: "#f76fb0" },
-  m17: { x: 52.65, y: 65.1, diam: 3.5, label: "Manzana 17", nombre: "Manzana del Cuidado 17", color: "#f76fb0" },
-  m18: { x: 53.31, y: 34.18, diam: 3.5, label: "Manzana 18", nombre: "Manzana del Cuidado 18", color: "#f76fb0" },
-  m19: { x: 54.77, y: 89.82, diam: 3.5, label: "Manzana 19", nombre: "Manzana del Cuidado 19", color: "#f76fb0" },
-  m20: { x: 54.92, y: 45.74, diam: 3.5, label: "Manzana 20", nombre: "Manzana del Cuidado 20", color: "#f76fb0" },
-  m21: { x: 55.82, y: 63.24, diam: 3.5, label: "Manzana 21", nombre: "Manzana del Cuidado 21", color: "#f76fb0" },
-  m22: { x: 59.36, y: 75.11, diam: 3.5, label: "Manzana 22", nombre: "Manzana del Cuidado 22", color: "#f76fb0" },
-  m23: { x: 59.87, y: 38.36, diam: 3.5, label: "Manzana 23", nombre: "Manzana del Cuidado 23", color: "#f76fb0" },
-  m24: { x: 60.84, y: 53.02, diam: 3.5, label: "Manzana 24", nombre: "Manzana del Cuidado 24", color: "#f76fb0" },
-  m25: { x: 64.94, y: 66.84, diam: 3.5, label: "Manzana 25", nombre: "Manzana del Cuidado 25", color: "#f76fb0" },
-  m26: { x: 65.45, y: 43.92, diam: 3.5, label: "Manzana 26", nombre: "Manzana del Cuidado 26", color: "#f76fb0" },
-  m27: { x: 67.08, y: 82.42, diam: 3.5, label: "Manzana 27", nombre: "Manzana del Cuidado 27", color: "#f76fb0" },
-  m28: { x: 67.36, y: 56.04, diam: 3.5, label: "Manzana 28", nombre: "Manzana del Cuidado 28", color: "#f76fb0" },
-  m29: { x: 73.5, y: 74.0, diam: 3.5, label: "Manzana 29", nombre: "Manzana del Cuidado 29", color: "#f76fb0" },
-  m30: { x: 73.99, y: 63.01, diam: 3.5, label: "Manzana 30", nombre: "Manzana del Cuidado 30", color: "#f76fb0" },
-  m31: { x: 74.21, y: 43.67, diam: 3.5, label: "Manzana 31", nombre: "Manzana del Cuidado 31", color: "#f76fb0" },
-  m32: { x: 84.03, y: 58.52, diam: 3.5, label: "Manzana 32", nombre: "Manzana del Cuidado 32", color: "#f76fb0" }
-};
-
