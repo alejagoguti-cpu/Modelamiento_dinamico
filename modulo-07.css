@@ -5811,21 +5811,47 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 }
 .visible-elements-section h2 { margin: 7px 0 16px; color: #fff; font: 700 20px/1.15 "Space Grotesk", Inter, sans-serif; }
 /* ---------- Fila simple de 6 tarjetas, sin animaciones raras ---------- */
-.steps-row {
-  display: flex; align-items: stretch; flex-wrap: wrap; gap: 10px;
-  margin: 8px 0 20px; justify-content: center;
+/* ---------- Bucle circular: version simple y robusta ----------
+   Un círculo fijo (no rotado) con las 6 tarjetas repartidas alrededor, y
+   un puntito que recorre el borde con "offset-path" — mucho más simple y
+   confiable que armar flechas rotadas a mano (eso fallaba). */
+.loop-ring-wrap {
+  position: relative; width: 100%; max-width: 620px; aspect-ratio: 1 / 1;
+  margin: 20px auto 28px;
 }
-.steps-row-card {
-  border: 1px solid rgba(118,255,240,.3); border-radius: 9px; padding: 14px 12px;
-  background: rgba(118,255,240,.05); width: 150px; text-align: center;
+.loop-ring-circle {
+  position: absolute; inset: 12%; border-radius: 50%;
+  border: 3px dashed rgba(118,255,240,.4);
 }
-.steps-row-card i { display: block; font-size: 22px; color: var(--rs-color, #76fff0); margin-bottom: 8px; }
-.steps-row-card strong { display: block; color: #fff; font-size: 12.5px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; margin-bottom: 4px; }
-.steps-row-card .reveal-step-question { color: var(--rs-color, #76fff0); font-size: 11px; font-weight: 700; font-style: italic; margin: 0 0 6px; }
-.steps-row-card .reveal-step-items { color: rgba(242,236,227,.68); font-size: 10px; line-height: 1.4; margin: 0; }
-.steps-row-arrow { align-self: center; color: rgba(118,255,240,.5); font-size: 16px; flex-shrink: 0; }
-@media (max-width: 900px) {
-  .steps-row { flex-direction: column; align-items: center; }
-  .steps-row-arrow { transform: rotate(90deg); }
-  .steps-row-card { width: 100%; max-width: 320px; }
+.loop-ring-dot {
+  position: absolute; top: 0; left: 0; width: 14px; height: 14px;
+  margin: -7px 0 0 -7px; border-radius: 50%; background: #76fff0;
+  box-shadow: 0 0 10px #76fff0, 0 0 18px #76fff0;
+  offset-path: circle(38% at 50% 50%);
+  offset-rotate: 0deg;
+  animation: loop-ring-travel 12s linear infinite;
+}
+@keyframes loop-ring-travel {
+  0% { offset-distance: 0%; }
+  100% { offset-distance: 100%; }
+}
+.loop-ring-card {
+  position: absolute; width: 30%; min-width: 130px; max-width: 190px;
+  background: rgba(8,14,14,.97); border: 1px solid rgba(118,255,240,.28); border-radius: 9px;
+  padding: 10px 12px; text-align: center;
+}
+.loop-ring-card i { display: block; font-size: 20px; color: var(--rs-color, #76fff0); margin-bottom: 5px; }
+.loop-ring-card strong { display: block; color: #fff; font-size: 12px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
+.loop-ring-card .reveal-step-question { color: var(--rs-color, #76fff0); font-size: 10.5px; font-weight: 700; font-style: italic; margin: 3px 0; }
+.loop-ring-card .reveal-step-items { color: rgba(242,236,227,.68); font-size: 9.5px; line-height: 1.4; margin: 0; }
+.loop-pos-1 { top: 0%; left: 50%; transform: translate(-50%, 0); }
+.loop-pos-2 { top: 20%; left: 88%; transform: translate(-50%, -50%); }
+.loop-pos-3 { top: 68%; left: 88%; transform: translate(-50%, -50%); }
+.loop-pos-4 { top: 100%; left: 50%; transform: translate(-50%, -100%); }
+.loop-pos-5 { top: 68%; left: 12%; transform: translate(-50%, -50%); }
+.loop-pos-6 { top: 20%; left: 12%; transform: translate(-50%, -50%); }
+@media (max-width: 760px) {
+  .loop-ring-wrap { aspect-ratio: auto; height: auto; display: flex; flex-direction: column; gap: 10px; }
+  .loop-ring-circle, .loop-ring-dot { display: none; }
+  .loop-ring-card { position: static; width: 100%; max-width: none; transform: none; text-align: left; }
 }

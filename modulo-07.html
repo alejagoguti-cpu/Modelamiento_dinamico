@@ -70,49 +70,46 @@
           <div class="territory-reading-kicker">EL FENÓMENO CIUDAD</div>
           <h2 id="visibleElementsTitle">¿Qué queremos hacer visible?</h2>
 
-          <!-- Simple y limpio: fila de 6 tarjetas con ícono, conectadas por
-               una flecha entre cada una. Sin anillo, sin rotación, sin
-               curvas flotantes — eso se veía mal y no se pudo arreglar. -->
-          <div class="steps-row">
-            <article class="steps-row-card rs-agentes">
+          <!-- Bucle circular, versión simple y robusta: un círculo fijo
+               (sin flechas rotadas a mano, que fallaban) con un puntito
+               animado que recorre el borde marcando el sentido del ciclo. -->
+          <div class="loop-ring-wrap">
+            <div class="loop-ring-circle"></div>
+            <div class="loop-ring-dot"></div>
+            <div class="loop-ring-card loop-pos-1 rs-agentes">
               <i class="fa-solid fa-people-group"></i>
               <strong>Agentes</strong>
               <p class="reveal-step-question">¿Quién actúa?</p>
               <p class="reveal-step-items">Personas · instituciones · empresas · organizaciones</p>
-            </article>
-            <i class="fa-solid fa-arrow-right steps-row-arrow"></i>
-            <article class="steps-row-card rs-procesos">
+            </div>
+            <div class="loop-ring-card loop-pos-2 rs-procesos">
               <i class="fa-solid fa-gears"></i>
               <strong>Procesos</strong>
               <p class="reveal-step-question">¿Qué está cambiando?</p>
               <p class="reveal-step-items">Desplazamientos diarios, construcción y mejoramiento de vivienda, comercio formal e informal, cuidado de personas dependientes, renovación y densificación urbana.</p>
-            </article>
-            <i class="fa-solid fa-arrow-right steps-row-arrow"></i>
-            <article class="steps-row-card rs-flujos">
+            </div>
+            <div class="loop-ring-card loop-pos-3 rs-flujos">
               <i class="fa-solid fa-arrows-turn-to-dots"></i>
               <strong>Flujos</strong>
               <p class="reveal-step-question">¿Qué circula?</p>
               <p class="reveal-step-items">Personas · agua · energía · bienes · información</p>
-            </article>
-            <i class="fa-solid fa-arrow-right steps-row-arrow"></i>
-            <article class="steps-row-card rs-interacciones">
+            </div>
+            <div class="loop-ring-card loop-pos-4 rs-interacciones">
               <i class="fa-solid fa-diagram-project"></i>
               <strong>Interacciones</strong>
               <p class="reveal-step-question">¿Cómo se afectan entre sí?</p>
               <p class="reveal-step-items">Dependencias · conflictos · intercambios · retroalimentaciones</p>
-            </article>
-            <i class="fa-solid fa-arrow-right steps-row-arrow"></i>
-            <article class="steps-row-card rs-sistemas">
+            </div>
+            <div class="loop-ring-card loop-pos-5 rs-sistemas">
               <i class="fa-solid fa-circle-nodes"></i>
               <strong>Sistemas</strong>
               <p class="reveal-step-question">¿Qué dinámicas están conectadas?</p>
-            </article>
-            <i class="fa-solid fa-arrow-right steps-row-arrow"></i>
-            <article class="steps-row-card rs-emergencia">
+            </div>
+            <div class="loop-ring-card loop-pos-6 rs-emergencia">
               <i class="fa-solid fa-sparkles"></i>
               <strong>Emergencia</strong>
               <p class="reveal-step-question">¿Qué patrones aparecen de sus interacciones?</p>
-            </article>
+            </div>
           </div>
 
           <!-- Versión compacta: horizontal, con íconos y una animación de
