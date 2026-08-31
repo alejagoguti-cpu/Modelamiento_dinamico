@@ -1606,7 +1606,7 @@
     // checkboxes "Subsistema hídrico/biótico/infraestructura").
     const HIDRICA_COMPONENTS = [
       { label: "Humedal El Burro", coords: [-74.14987475206779, 4.64210777486686] },
-      { label: "Humedal La Vaca", coords: [-74.16284778855655, 4.62939492240078] },
+      { label: "Humedal La Vaca", coords: [-74.16184778855655, 4.62939492240078] },
       { label: "Río Bogotá", coords: [-74.16768977818305, 4.656422537771954] },
       { label: "Humedal El Techo", coords: [-74.1413020515684, 4.645452290970931] },
       { label: "Canal Américas", coords: [-74.15762452847382, 4.64242217040295] },
@@ -1628,7 +1628,7 @@
     const FISICO_COMPONENTS = [
       { label: "Estación Banderas", coords: [-74.14541150109216, 4.631221483859855] },
       { label: "Biblioteca Pública El Tintal", coords: [-74.15477971743486, 4.642987513146133] },
-      { label: "Corabastos", coords: [-74.1599146050763, 4.63015596902525] },
+      { label: "Corabastos", coords: [-74.1589146050763, 4.63015596902525] },
       { label: "Av. Ciudad de Cali", coords: [-74.15162630856268, 4.644831758038044] },
     ];
     // Fenómenos de la red hídrica de Kennedy: un solo lugar → una sola
@@ -1682,7 +1682,7 @@
         coords: [
           // Lado izquierdo de la caja → izquierda, baja, derecha → lado
           // derecho de Humedal La Vaca.
-          { pos: [-74.16284778855655, 4.62939492240078], icon: "fa-droplet", color: "#56b8d4", label: "Humedal La Vaca",
+          { pos: [-74.16184778855655, 4.62939492240078], icon: "fa-droplet", color: "#56b8d4", label: "Humedal La Vaca",
             route: { bubbleSide: "right", boxSide: "left", offset: -4, type: "hvh", bendNear: "box" } },
           // Lado derecho de la caja → derecha, baja, derecha otra vez →
           // lado izquierdo de Corabastos (el ícono ya lo pone la caja
@@ -1690,7 +1690,7 @@
           // El "offset" se agrandó para que baje más antes de virar a la
           // derecha, y así no pase cerca del ícono de vía que está entre
           // los dos puntos.
-          { pos: [-74.1599146050763, 4.63015596902525], icon: "fa-cart-shopping", color: "#e58d62", label: "Corabastos", hideIcon: true,
+          { pos: [-74.1589146050763, 4.63015596902525], icon: "fa-cart-shopping", color: "#e58d62", label: "Corabastos", hideIcon: true,
             route: { bubbleSide: "left", boxSide: "bottom", offset: 10, type: "vhv", bendNear: "box" } },
         ],
         sections: [{ system: "Modelo Determinista ⟶ Sistema Ecológico", icon: "fa-gears", submodelos: [
@@ -1703,7 +1703,7 @@
         coords: [
           // Lado izquierdo de la caja → izquierda, sube → se pega por
           // DEBAJO del ícono de Corabastos (no por el lado).
-          { pos: [-74.1599146050763, 4.63015596902525], icon: "fa-cart-shopping", color: "#e58d62", label: "Corabastos",
+          { pos: [-74.1589146050763, 4.63015596902525], icon: "fa-cart-shopping", color: "#e58d62", label: "Corabastos",
             route: { bubbleSide: "bottom", boxSide: "left", offset: -4, type: "hvh", bendNear: "box" } },
         ],
         sections: [{ system: "Modelo Social ⟶ Sistema Social", icon: "fa-people-group", submodelos: [
