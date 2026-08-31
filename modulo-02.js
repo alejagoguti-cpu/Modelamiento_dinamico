@@ -1,4 +1,4 @@
-/* ==========================================================
+ï»¿/* ==========================================================
    RAPOT Ã‚Â· LA RED IMPLÃƒï¿½CITA DEL POT (BogotÃƒÂ¡ Reverdece 2022-2035)
 
    FUENTE DE DATOS: reconstruido directamente desde el archivo del equipo
@@ -2448,7 +2448,100 @@ const MANZANAS_CASOS = {
   m32: { x: 84.03, y: 58.52, diam: 3.5, label: "Manzana 32", nombre: "Manzana del Cuidado 32", color: "#f76fb0" }
 };
 
+let manzanasZoomWired = false;
+const manzanasZoomState = { scale: 1, tx: 0, ty: 0 };
+let manzanasPopupAnchor = null;
 
+function setManzanasZoom(newScale, cx, cy) {
+  const wrap = document.getElementById('manzanasImageWrap');
+  if (!wrap) return;
+  const clamped = Math.max(1, Math.min(6, newScale));
+  const rect = wrap.getBoundingClientRect();
+  const px = (cx !== undefined ? cx : rect.width / 2) - rect.width / 2;
+  const py = (cy !== undefined ? cy : rect.height / 2) - rect.height / 2;
+  const prevScale = manzanasZoomState.scale;
+  const ratio = clamped / prevScale;
+  manzanasZoomState.tx = px - (px - manzanasZoomState.tx) * ratio;
+  manzanasZoomState.ty = py - (py - manzanasZoomState.ty) * ratio;
+  manzanasZoomState.scale = clamped;
+  if (clamped === 1) { manzanasZoomState.tx = 0; manzanasZoomState.ty = 0; }
+  clampManzanasPan();
+  applyManzanasZoom();
+}
+
+function clampManzanasPan() {
+  const frame = document.getElementById('manzanasImageFrame');
+  if (!frame) return;
+  const { scale } = manzanasZoomState;
+  const extraW = (frame.offsetWidth * scale - frame.offsetWidth) / 2;
+  const extraH = (frame.offsetHeight * scale - frame.offsetHeight) / 2;
+  const maxTx = Math.max(0, extraW), maxTy = Math.max(0, extraH);
+  manzanasZoomState.tx = Math.max(-maxTx, Math.min(maxTx, manzanasZoomState.tx));
+  manzanasZoomState.ty = Math.max(-maxTy, Math.min(maxTy, manzanasZoomState.ty));
+}
+
+function applyManzanasZoom() {
+  const frame = document.getElementById('manzanasImageFrame');
+  if (!frame) return;
+  const { scale, tx, ty } = manzanasZoomState;
+  frame.style.transform = 'translate(' + tx + 'px, ' + ty + 'px) scale(' + scale + ')';
+  if (manzanasPopupAnchor && document.getElementById('manzanasPopup')?.style.display === 'block') {
+    const popup = document.getElementById('manzanasPopup');
+    const wrapRect = document.getElementById('manzanasImageWrap').getBoundingClientRect();
+    const frameRect = frame.getBoundingClientRect();
+    const pX = frameRect.left - wrapRect.left + (frameRect.width * (manzanasPopupAnchor.x / 100));
+    const pY = frameRect.top - wrapRect.top + (frameRect.height * (manzanasPopupAnchor.y / 100));
+    popup.style.left = (pX + 20) + 'px';
+    popup.style.top = (pY + 20) + 'px';
+  }
+}
+
+function resetManzanasZoom() {
+  manzanasZoomState.scale = 1; manzanasZoomState.tx = 0; manzanasZoomState.ty = 0;
+  applyManzanasZoom();
+}
+
+function setupManzanasZoom() {
+  resetManzanasZoom();
+  if (manzanasZoomWired) return;
+  manzanasZoomWired = true;
+
+  document.getElementById('manzanasZoomIn')?.addEventListener('click', () => setManzanasZoom(manzanasZoomState.scale * 1.4));
+  document.getElementById('manzanasZoomOut')?.addEventListener('click', () => setManzanasZoom(manzanasZoomState.scale / 1.4));
+  document.getElementById('manzanasZoomReset')?.addEventListener('click', resetManzanasZoom);
+
+  document.getElementById('manzanasOverlayBody')?.addEventListener('wheel', (ev) => {
+    const w = document.getElementById('manzanasImageWrap');
+    if (!w || !w.contains(ev.target)) return;
+    ev.preventDefault();
+    const rect = w.getBoundingClientRect();
+    const cx = ev.clientX - rect.left, cy = ev.clientY - rect.top;
+    const delta = ev.deltaY < 0 ? 1.15 : 1 / 1.15;
+    setManzanasZoom(manzanasZoomState.scale * delta, cx, cy);
+  }, { passive: false });
+
+  let panning = false, startX = 0, startY = 0, startTx = 0, startTy = 0;
+  document.getElementById('manzanasOverlayBody')?.addEventListener('pointerdown', (ev) => {
+    const w = document.getElementById('manzanasImageWrap');
+    if (!w || !w.contains(ev.target)) return;
+    if (manzanasZoomState.scale <= 1) return;
+    panning = true;
+    startX = ev.clientX; startY = ev.clientY;
+    startTx = manzanasZoomState.tx; startTy = manzanasZoomState.ty;
+    w.classList.add('panning');
+    w.setPointerCapture(ev.pointerId);
+  });
+  document.getElementById('manzanasOverlayBody')?.addEventListener('pointermove', (ev) => {
+    if (!panning) return;
+    manzanasZoomState.tx = startTx + (ev.clientX - startX) / manzanasZoomState.scale;
+    manzanasZoomState.ty = startTy + (ev.clientY - startY) / manzanasZoomState.scale;
+    clampManzanasPan(); applyManzanasZoom();
+  });
+  document.getElementById('manzanasOverlayBody')?.addEventListener('pointerup', (ev) => {
+    panning = false;
+    document.getElementById('manzanasImageWrap')?.classList.remove('panning');
+  });
+}
 
 function showManzanasOverlay(opts) {
   const animateIn = !!(opts && opts.animateIn);
@@ -2478,13 +2571,6 @@ function showManzanasOverlay(opts) {
         hotspotsHTML +
       '</div>' +
       '<div class="humedal-popup" id="manzanasPopup" style="display:none;"></div>' +
-    '</div>' +
-    '<div class="humedales-overlay-sidebar" id="manzanasOverlaySidebar">' +
-      '<div class="humedales-sidebar-intro">' +
-        '<h3 style="color: #f76fb0;">Sistema Distrital del Cuidado</h3>' +
-        '<p>El POT consolida las Manzanas del Cuidado como una apuesta por territorializar la infraestructura social. Aquí se articulan servicios de salud, educación y recreación para relevar las cargas de cuidado no remunerado.</p>' +
-      '</div>' +
-      '<div id="manzanasCasosList"></div>' +
     '</div>';
 
   const overlay = document.getElementById('manzanasOverlay');
@@ -2509,6 +2595,7 @@ function showManzanasOverlay(opts) {
         frame.style.height = h + 'px';
       }
     }
+    setupManzanasZoom();
   });
 
   body.querySelectorAll('.humedal-hotspot').forEach(btn => {
@@ -2518,10 +2605,11 @@ function showManzanasOverlay(opts) {
       const k = btn.dataset.key;
       const data = MANZANAS_CASOS[k];
       if (data) {
+        manzanasPopupAnchor = { x: data.x, y: data.y };
         const popup = document.getElementById('manzanasPopup');
         const frame = document.getElementById('manzanasImageFrame');
         if (popup && frame) {
-          popup.innerHTML = '<h4 style="color:#f76fb0; margin:0 0 5px 0;">' + data.nombre + '</h4><p style="margin:0; font-size:12px; color:#ccc;">Punto de articulación de servicios de proximidad para el relevo del cuidado.</p>';
+          popup.innerHTML = '<h4 style="color:#f76fb0; margin:0 0 5px 0;">' + data.nombre + '</h4><p style="margin:0; font-size:12px; color:#ccc;">Punto de articulaciÃ³n de servicios de proximidad para el relevo del cuidado.</p>';
           popup.style.display = 'block';
           const wrapRect = document.getElementById('manzanasImageWrap').getBoundingClientRect();
           const frameRect = frame.getBoundingClientRect();
@@ -2534,4 +2622,3 @@ function showManzanasOverlay(opts) {
     });
   });
 }
-
