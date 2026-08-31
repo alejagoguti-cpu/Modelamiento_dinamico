@@ -2055,42 +2055,37 @@ function showInitialPopup() {
 
         <!-- Nodo: Clasifica (encima de la tabla) -->
         <div class="cartography-node" data-label="Clasifica" style="position: absolute; left: 8%; top: 45%; transform: translate(-50%, -50%); cursor: pointer;">
-          <div style="width: 40px; height: 40px; background: #2fd4c8; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px rgba(47, 212, 200, 0.6), 0 0 40px rgba(47, 212, 200, 0.3); transition: all 0.3s ease; border: 2px solid rgba(255,255,255,0.2);">
-            <span style="font-size: 18px; font-weight: bold; color: #000;">📊</span>
+          <div style="width: 50px; height: 50px; background: #0a0a0a; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid #2fd4c8; transition: all 0.3s ease; box-shadow: 0 0 15px rgba(47, 212, 200, 0.4);">
+            <span style="font-size: 12px; font-weight: 700; color: #2fd4c8; text-align: center; line-height: 1.2;">Clasifica</span>
           </div>
-          <div style="color: #2fd4c8; font-size: 11px; margin-top: 4px; text-align: center; font-weight: 600; white-space: nowrap;">Clasifica</div>
         </div>
 
         <!-- Nodo: Regula (encima de Concertación POT) -->
         <div class="cartography-node" data-label="Regula" style="position: absolute; left: 18%; top: 12%; transform: translate(-50%, -50%); cursor: pointer;">
-          <div style="width: 40px; height: 40px; background: #ff9d2e; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px rgba(255, 157, 46, 0.6), 0 0 40px rgba(255, 157, 46, 0.3); transition: all 0.3s ease; border: 2px solid rgba(255,255,255,0.2);">
-            <span style="font-size: 18px; font-weight: bold; color: #fff;">⚖️</span>
+          <div style="width: 50px; height: 50px; background: #0a0a0a; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid #ff9d2e; transition: all 0.3s ease; box-shadow: 0 0 15px rgba(255, 157, 46, 0.4);">
+            <span style="font-size: 12px; font-weight: 700; color: #ff9d2e; text-align: center; line-height: 1.2;">Regula</span>
           </div>
-          <div style="color: #ff9d2e; font-size: 11px; margin-top: 4px; text-align: center; font-weight: 600; white-space: nowrap;">Regula</div>
         </div>
 
         <!-- Nodo: Protege (encima de Áreas que se conservan) -->
         <div class="cartography-node" data-label="Protege" style="position: absolute; right: 15%; top: 20%; transform: translate(50%, -50%); cursor: pointer;">
-          <div style="width: 40px; height: 40px; background: #5b8def; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px rgba(91, 141, 239, 0.6), 0 0 40px rgba(91, 141, 239, 0.3); transition: all 0.3s ease; border: 2px solid rgba(255,255,255,0.2);">
-            <span style="font-size: 18px; font-weight: bold; color: #fff;">🛡️</span>
+          <div style="width: 50px; height: 50px; background: #0a0a0a; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid #5b8def; transition: all 0.3s ease; box-shadow: 0 0 15px rgba(91, 141, 239, 0.4);">
+            <span style="font-size: 12px; font-weight: 700; color: #5b8def; text-align: center; line-height: 1.2;">Protege</span>
           </div>
-          <div style="color: #5b8def; font-size: 11px; margin-top: 4px; text-align: center; font-weight: 600; white-space: nowrap;">Protege</div>
         </div>
 
         <!-- Nodo: Delimita (encima del plano de humedales) -->
         <div class="cartography-node" data-label="Delimita" style="position: absolute; left: 50%; top: 55%; transform: translate(-50%, -50%); cursor: pointer;">
-          <div style="width: 40px; height: 40px; background: #2fd4c8; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px rgba(47, 212, 200, 0.6), 0 0 40px rgba(47, 212, 200, 0.3); transition: all 0.3s ease; border: 2px solid rgba(255,255,255,0.2);">
-            <span style="font-size: 18px; font-weight: bold; color: #000;">🗺️</span>
+          <div style="width: 50px; height: 50px; background: #0a0a0a; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid #2fd4c8; transition: all 0.3s ease; box-shadow: 0 0 15px rgba(47, 212, 200, 0.4);">
+            <span style="font-size: 12px; font-weight: 700; color: #2fd4c8; text-align: center; line-height: 1.2;">Delimita</span>
           </div>
-          <div style="color: #2fd4c8; font-size: 11px; margin-top: 4px; text-align: center; font-weight: 600; white-space: nowrap;">Delimita</div>
         </div>
 
         <!-- Nodo: Orienta intervenciones (encima del logo POT) -->
         <div class="cartography-node" data-label="Orienta intervenciones" style="position: absolute; left: 12%; top: 8%; transform: translate(-50%, -50%); cursor: pointer;">
-          <div style="width: 40px; height: 40px; background: #ff9d2e; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px rgba(255, 157, 46, 0.6), 0 0 40px rgba(255, 157, 46, 0.3); transition: all 0.3s ease; border: 2px solid rgba(255,255,255,0.2);">
-            <span style="font-size: 18px; font-weight: bold; color: #fff;">🧭</span>
+          <div style="width: 50px; height: 50px; background: #0a0a0a; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid #ff9d2e; transition: all 0.3s ease; box-shadow: 0 0 15px rgba(255, 157, 46, 0.4);">
+            <span style="font-size: 11px; font-weight: 700; color: #ff9d2e; text-align: center; line-height: 1.1; padding: 4px;">Orienta</span>
           </div>
-          <div style="color: #ff9d2e; font-size: 11px; margin-top: 4px; text-align: center; font-weight: 600; white-space: nowrap; max-width: 60px;">Orienta<br>intervenciones</div>
         </div>
       </div>
       <p style="font-size: 12px; color: #999999; text-align: center; margin: 0;">
@@ -2107,12 +2102,16 @@ function showInitialPopup() {
     const nodes = modal.querySelectorAll(".cartography-node");
     nodes.forEach(node => {
       node.addEventListener("mouseover", function() {
-        this.querySelector("div").style.transform = "scale(1.2)";
-        this.querySelector("div").style.boxShadow = "0 0 30px rgba(47, 212, 200, 0.9), 0 0 60px rgba(47, 212, 200, 0.5)";
+        const div = this.querySelector("div");
+        const borderColor = div.style.borderColor;
+        div.style.transform = "scale(1.15)";
+        div.style.boxShadow = `0 0 25px ${borderColor}cc`;
       });
       node.addEventListener("mouseout", function() {
-        this.querySelector("div").style.transform = "scale(1)";
-        this.querySelector("div").style.boxShadow = "0 0 20px rgba(47, 212, 200, 0.6), 0 0 40px rgba(47, 212, 200, 0.3)";
+        const div = this.querySelector("div");
+        div.style.transform = "scale(1)";
+        const borderColor = div.style.borderColor;
+        div.style.boxShadow = `0 0 15px ${borderColor}66`;
       });
       node.addEventListener("click", function() {
         const label = this.getAttribute("data-label");
