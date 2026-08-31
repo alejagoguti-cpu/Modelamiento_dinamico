@@ -5722,11 +5722,14 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
   font-size: 54px; color: var(--node-color, #fff); opacity: .14;
   pointer-events: none;
 }
-/* Ícono de bucle al lado derecho de la caja, marcando que es una dinámica
-   cíclica (no un evento único). */
-.kennedy-info-box .kennedy-loop-icon {
+/* Grupo de 3 íconos de línea delgada al lado derecho de la caja (estilo
+   "regular" de FontAwesome, no relleno), como en tu referente. */
+.kennedy-info-box .kennedy-model-icons {
   position: absolute; top: 8px; right: 8px;
-  font-size: 11px; color: var(--node-color, #fff); opacity: .8;
+  display: flex; gap: 4px;
+}
+.kennedy-model-icons i {
+  font-size: 10px; color: var(--node-color, #fff); opacity: .85;
 }
 .kennedy-info-box::before {
   content: ""; position: absolute; inset: 0; z-index: -1;

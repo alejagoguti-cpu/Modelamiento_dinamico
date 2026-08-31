@@ -2446,7 +2446,8 @@
       // izquierda del nodo si está en la mitad derecha) para que no se
       // recorte contra el borde del contenedor.
       const anchorClass = boxPos[0] > 50 ? "kennedy-anchor-right" : "kennedy-anchor-left";
-      return `<div class="kennedy-info-box ${anchorClass}" id="kennedy-box-${i}" style="left:${boxPos[0]}%;top:${boxPos[1]}%;--node-color:${box.color}"><i class="kennedy-watermark-icon fa-solid ${box.icon}" aria-hidden="true"></i><i class="kennedy-loop-icon fa-solid fa-arrows-rotate" aria-hidden="true" title="Dinámica cíclica"></i><h4 class="kennedy-title-line">${box.title}</h4>${sectionsHtml}</div>${nodesHtml}`;
+      const modelIconsHtml = `<div class="kennedy-model-icons"><i class="fa-regular fa-circle-dot"></i><i class="fa-regular fa-compass"></i><i class="fa-regular fa-hourglass-half"></i></div>`;
+      return `<div class="kennedy-info-box ${anchorClass}" id="kennedy-box-${i}" style="left:${boxPos[0]}%;top:${boxPos[1]}%;--node-color:${box.color}"><i class="kennedy-watermark-icon fa-solid ${box.icon}" aria-hidden="true"></i>${modelIconsHtml}<h4 class="kennedy-title-line">${box.title}</h4>${sectionsHtml}</div>${nodesHtml}`;
     }).join("");
     const updateTextBoxes = () => {
       const stage = subsystemBubbles?.querySelector(".systems-network svg .map-network-flows");
