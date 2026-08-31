@@ -2715,51 +2715,6 @@
       observer?.observe(section);
       window.addEventListener("scroll", maybePlay, { passive: true });
     };
-    // ---------- Red de "¿Qué queremos hacer visible?" ----------
-    // Cada línea es una relación bidireccional real entre dos elementos
-    // (no un paso de una secuencia). Al hacer click en una línea, se
-    // explica esa relación específica. Las líneas de "tejido" (desde
-    // Interacciones) conectan con todos los demás; las de "retroalimentación"
-    // (desde Emergencia) son más suaves porque van en un solo sentido.
-    const VISIBLE_NETWORK_EDGES = {
-      "vn-edge-agentes-procesos": "AGENTES:\nPrimero reconocemos los agentes, es decir, quiénes actúan dentro de la ciudad y toman decisiones.",
-      "vn-edge-agentes-flujos": "AGENTES:\nPrimero reconocemos los agentes, es decir, quiénes actúan dentro de la ciudad y toman decisiones.",
-      "vn-edge-agentes-sistemas": "AGENTES:\nPrimero reconocemos los agentes, es decir, quiénes actúan dentro de la ciudad y toman decisiones.",
-      "vn-edge-procesos-flujos": "PROCESOS:\nEstos agentes participan y generan procesos, que son las transformaciones que están ocurriendo constantemente en el territorio.",
-      "vn-edge-procesos-sistemas": "PROCESOS:\nEstos agentes participan y generan procesos, que son las transformaciones que están ocurriendo constantemente en el territorio.",
-      "vn-edge-flujos-sistemas": "FLUJOS:\nEsos procesos implican también flujos: de personas, agua, energía, bienes e información, que atraviesan y conectan diferentes partes de la ciudad.",
-      "vn-edge-interacciones-agentes": "INTERACCIONES:\nEstos elementos no funcionan de manera independiente. Se afectan entre sí mediante interacciones, que pueden generar dependencias, conflictos, intercambios y retroalimentaciones.",
-      "vn-edge-interacciones-procesos": "INTERACCIONES:\nEstos elementos no funcionan de manera independiente. Se afectan entre sí mediante interacciones, que pueden generar dependencias, conflictos, intercambios y retroalimentaciones.",
-      "vn-edge-interacciones-flujos": "INTERACCIONES:\nEstos elementos no funcionan de manera independiente. Se afectan entre sí mediante interacciones, que pueden generar dependencias, conflictos, intercambios y retroalimentaciones.",
-      "vn-edge-interacciones-sistemas": "INTERACCIONES:\nEstos elementos no funcionan de manera independiente. Se afectan entre sí mediante interacciones, que pueden generar dependencias, conflictos, intercambios y retroalimentaciones.",
-      "vn-edge-interacciones-emergencia": "INTERACCIONES:\nEstos elementos no funcionan de manera independiente. Se afectan entre sí mediante interacciones, que pueden generar dependencias, conflictos, intercambios y retroalimentaciones.",
-      "vn-edge-emergencia-agentes": "EMERGENCIA:\nDe estas múltiples interacciones pueden aparecer patrones emergentes, es decir, comportamientos o fenómenos que no podemos explicar mirando un solo elemento de manera aislada. Aquello que emerge puede modificar nuevamente las condiciones del sistema y generar nuevas respuestas.",
-      "vn-edge-emergencia-procesos": "EMERGENCIA:\nDe estas múltiples interacciones pueden aparecer patrones emergentes, es decir, comportamientos o fenómenos que no podemos explicar mirando un solo elemento de manera aislada. Aquello que emerge puede modificar nuevamente las condiciones del sistema y generar nuevas respuestas.",
-      "vn-edge-emergencia-sistemas": "EMERGENCIA:\nDe estas múltiples interacciones pueden aparecer patrones emergentes, es decir, comportamientos o fenómenos que no podemos explicar mirando un solo elemento de manera aislada. Aquello que emerge puede modificar nuevamente las condiciones del sistema y generar nuevas respuestas.",
-    };
-    (() => {
-      const wrap = document.getElementById("visibleNetworkWrap");
-      const tooltip = document.getElementById("visibleNetworkTooltip");
-      if (!wrap || !tooltip) return;
-      Object.keys(VISIBLE_NETWORK_EDGES).forEach((id) => {
-        const hit = document.getElementById(id);
-        if (!hit) return;
-        hit.style.cursor = "pointer";
-        hit.addEventListener("click", (event) => {
-          event.stopPropagation();
-          wrap.querySelectorAll(".visible-network-edge-hit.active").forEach((el) => el.classList.remove("active"));
-          hit.classList.add("active");
-          tooltip.textContent = VISIBLE_NETWORK_EDGES[id];
-          tooltip.hidden = false;
-          const wrapRect = wrap.getBoundingClientRect();
-          const x = event.clientX - wrapRect.left, y = event.clientY - wrapRect.top;
-          tooltip.style.left = Math.min(Math.max(x, 90), wrapRect.width - 90) + "px";
-          tooltip.style.top = Math.min(Math.max(y - 10, 10), wrapRect.height - 60) + "px";
-        });
-      });
-      document.addEventListener("click", () => { tooltip.hidden = true; });
-    })();
-
     drawSubsystems({ hidden: true });
     initRealCartography();
     // Lo primero que se ve al entrar al módulo son los Subsistemas del
