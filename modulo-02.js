@@ -919,7 +919,19 @@ function hideEdgeInfo() {
 
 function showNodeInfo(id) {
   if (id === "humedales") {
-    showHumedalesOverlay();
+    abrirMapaHumedales();
+    return;
+  }
+  if (id === "manzanas_del_cuidado") {
+    abrirMapaManzanas();
+    return;
+  }
+  if (id === "patrimonio_material") {
+    abrirMapaPatrimonio();
+    return;
+  }
+  if (id === "red_vial") {
+    abrirMapaVias();
     return;
   }
   const node = nodeById(id);
