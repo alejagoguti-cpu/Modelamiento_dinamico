@@ -647,7 +647,15 @@ body {
   display: flex; align-items: center; justify-content: center;
   transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
   z-index: 2;
+  animation: hotspotPulse 2.8s infinite ease-in-out;
 }
+
+@keyframes hotspotPulse {
+  0% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 4px -1px var(--hotspot-color, #2fd4c8), inset 0 0 8px rgba(0,0,0,0.6); }
+  50% { transform: translate(-50%, -50%) scale(1.05); box-shadow: 0 0 18px 2px var(--hotspot-color, #2fd4c8), inset 0 0 10px rgba(0,0,0,0.8), 0 0 8px 1px rgba(92, 214, 209, 0.4); border-color: #5cf2e5; }
+  100% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 4px -1px var(--hotspot-color, #2fd4c8), inset 0 0 8px rgba(0,0,0,0.6); }
+}
+
 .humedal-hotspot-label {
   display: block;
   font-family: 'Inter', sans-serif; font-weight: 700; color: #ffffff;
@@ -657,7 +665,8 @@ body {
 }
 .humedal-hotspot:hover,
 .humedal-hotspot.active {
-  transform: translate(-50%, -50%) scale(1.04);
+  animation: none;
+  transform: translate(-50%, -50%) scale(1.1);
   border-color: #ff8a4c;
   box-shadow: 0 0 0 3px rgba(255, 138, 76, 0.25), 0 0 14px rgba(255, 138, 76, 0.85);
   z-index: 3;
