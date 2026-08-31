@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="stylesheet" href="modulo-02.css?v=20260831_direct_map">
+<link rel="stylesheet" href="modulo-02.css?v=20260831_manzanas_map_ready">
   <link rel="stylesheet" href="site-theme.css?v=20260823">
   <link rel="stylesheet" href="navigation-unified.css?v=20260824">
 </head>
@@ -158,19 +158,23 @@
         <div class="manzanas-overlay" id="manzanasOverlay" style="display:none;">
           <div class="manzanas-overlay-header">
             <div class="manzanas-overlay-title-block">
-              <div class="manzanas-overlay-title" id="manzanasOverlayTitle">Manzanas del Cuidado y Servicios de Proximidad</div>
+              <div class="manzanas-overlay-title" id="manzanasOverlayTitle"><i class="fa-solid fa-house-chimney-medical" style="color:#f76fb0; margin-right:8px;"></i> Manzanas del Cuidado y Servicios de Proximidad</div>
               <div class="manzanas-overlay-subtitle">Estructura Funcional y del Cuidado · Red de equipamientos e inclusión social</div>
             </div>
-            <button class="humedales-overlay-close" id="manzanasOverlayClose" type="button" aria-label="Cerrar">&times;</button>
+            <button class="humedales-overlay-close btn-volver" id="manzanasOverlayClose" type="button"><i class="fa-solid fa-arrow-left"></i> Volver a la red principal</button>
           </div>
           <div class="manzanas-overlay-body" id="manzanasOverlayBody">
-            <div class="map-placeholder-content">
-              <div class="map-placeholder-icon" style="background: rgba(247, 111, 176, 0.12); color: #f76fb0;"><i class="fa-solid fa-building-shield"></i></div>
-              <h3>Mapa: Manzanas del Cuidado</h3>
-              <p>Espacio preparado para integrar la cartografía, datos de equipamientos sociales, tiempos de desplazamiento y servicios de cuidado del POT.</p>
-              <div class="map-placeholder-hint" style="color: #f76fb0; border-color: rgba(247, 111, 176, 0.25); background: rgba(247, 111, 176, 0.08);">
-                <i class="fa-solid fa-code"></i> Puedes personalizar la vista en <code>modulo-02.js</code> &gt; función <code>showManzanasOverlay()</code>.
+            <div class="manzanas-overlay-image-wrap">
+              <div class="manzanas-overlay-image-frame">
+                <img src="assets/mapa-manzanas-cuidado.jpg" alt="Mapa de Manzanas del Cuidado" class="manzanas-overlay-image" />
+                <div class="manzanas-hotspots-container" id="manzanasHotspotsContainer"></div>
               </div>
+              <div class="manzanas-popup" id="manzanasPopup" style="display:none;"></div>
+            </div>
+          </div>
+          <div class="manzanas-overlay-footer">
+            <div class="manzanas-nota-critica">
+              <p><i class="fa-solid fa-triangle-exclamation" style="color:#f76fb0; margin-right:6px;"></i> <strong>Lectura crítica del POT:</strong> El POT formula las Manzanas del Cuidado como nodos de equipamientos para redistribuir el trabajo de cuidado bajo una promesa de proximidad de 15 a 30 minutos. Sin embargo, su representación como círculos homogéneos asume una caminabilidad ideal y no evalúa las barreras peatonales, la saturación de los servicios, los tiempos reales de traslado de las personas cuidadoras ni la articulación con el sistema de transporte.</p>
             </div>
           </div>
         </div>
@@ -179,19 +183,23 @@
         <div class="patrimonio-overlay" id="patrimonioOverlay" style="display:none;">
           <div class="patrimonio-overlay-header">
             <div class="patrimonio-overlay-title-block">
-              <div class="patrimonio-overlay-title" id="patrimonioOverlayTitle">Estructura Integradora de Patrimonios</div>
+              <div class="patrimonio-overlay-title" id="patrimonioOverlayTitle"><i class="fa-solid fa-landmark" style="color:#fb8d84; margin-right:8px;"></i> Estructura Integradora de Patrimonios</div>
               <div class="patrimonio-overlay-subtitle">Patrimonio material, inmaterial, natural y arqueológico articulado con las comunidades</div>
             </div>
-            <button class="humedales-overlay-close" id="patrimonioOverlayClose" type="button" aria-label="Cerrar">&times;</button>
+            <button class="humedales-overlay-close btn-volver" id="patrimonioOverlayClose" type="button"><i class="fa-solid fa-arrow-left"></i> Volver a la red principal</button>
           </div>
           <div class="patrimonio-overlay-body" id="patrimonioOverlayBody">
-            <div class="map-placeholder-content">
-              <div class="map-placeholder-icon" style="background: rgba(251, 141, 132, 0.12); color: #fb8d84;"><i class="fa-solid fa-landmark"></i></div>
-              <h3>Mapa: Estructura de Patrimonios</h3>
-              <p>Espacio preparado para integrar la cartografía de bienes patrimoniales, polígonos de protección, memorias vivas e hitos urbanos.</p>
-              <div class="map-placeholder-hint" style="color: #fb8d84; border-color: rgba(251, 141, 132, 0.25); background: rgba(251, 141, 132, 0.08);">
-                <i class="fa-solid fa-code"></i> Puedes personalizar la vista en <code>modulo-02.js</code> &gt; función <code>showPatrimonioOverlay()</code>.
+            <div class="patrimonio-overlay-image-wrap">
+              <div class="patrimonio-overlay-image-frame">
+                <img src="assets/planosnico.webp" alt="Estructura Integradora de Patrimonios" class="patrimonio-overlay-image" />
+                <div class="patrimonio-hotspots-container" id="patrimonioHotspotsContainer"></div>
               </div>
+              <div class="patrimonio-popup" id="patrimonioPopup" style="display:none;"></div>
+            </div>
+          </div>
+          <div class="patrimonio-overlay-footer">
+            <div class="patrimonio-nota-critica">
+              <p><i class="fa-solid fa-landmark" style="color:#fb8d84; margin-right:6px;"></i> <strong>Lectura crítica del POT:</strong> El POT reconoce bienes de interés cultural y sectores de conservación patrimonial, pero reduce el patrimonio a polígonos normativos e inmuebles aislados. La memoria viva, los usos comunitarios y el arraigo territorial de los barrios tradicionales quedan subordinados a las dinámicas de renovación y densificación inmobiliaria.</p>
             </div>
           </div>
         </div>
@@ -436,10 +444,11 @@
 
 </div>
 
-<script src="modulo-02.js?v=20260831_direct_map"></script>
+<script src="modulo-02.js?v=20260831_manzanas_map_ready"></script>
 
 </body>
 </html>
+
 
 
 
