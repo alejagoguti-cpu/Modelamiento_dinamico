@@ -67,30 +67,42 @@
       vehCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
 
-    if (!window.maplibregl) {
-      setStatus("MapLibre no pudo cargarse.");
-      return;
+    if (window.maplibregl) {
+      initMap();
+    } else {
+      // "maplibregl" se carga como modulo ES (igual que el modulo 5), y los
+      // scripts de modulo se ejecutan DESPUES que los scripts normales —
+      // por eso no se puede asumir que ya existe en este punto, hay que
+      // esperar a que dispare este evento.
+      setStatus("Cargando MapLibre…");
+      window.addEventListener("maplibre-ready", initMap, { once: true });
     }
 
-    map = new maplibregl.Map({
-      container: "sumoMap",
-      style: MAP_STYLE,
-      center: KENNEDY_CENTER,
-      zoom: 12.6,
-      minZoom: 10,
-      maxZoom: 18,
-      attributionControl: true,
-    });
-    map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-left");
+    function initMap() {
+      if (!window.maplibregl) {
+        setStatus("MapLibre no pudo cargarse.");
+        return;
+      }
+      map = new maplibregl.Map({
+        container: "sumoMap",
+        style: MAP_STYLE,
+        center: KENNEDY_CENTER,
+        zoom: 12.6,
+        minZoom: 10,
+        maxZoom: 18,
+        attributionControl: true,
+      });
+      map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-left");
 
-    map.on("load", () => {
-      resizeVehCanvas();
-      setStatus("Mapa cargado. Cargando trayectorias de vehículos…");
-      loadVehiculos();
-    });
-    map.on("move", () => drawVehiclesAt(playhead));
-    map.on("resize", () => { resizeVehCanvas(); drawVehiclesAt(playhead); });
-    window.addEventListener("resize", () => { resizeVehCanvas(); drawVehiclesAt(playhead); });
+      map.on("load", () => {
+        resizeVehCanvas();
+        setStatus("Mapa cargado. Cargando trayectorias de vehículos…");
+        loadVehiculos();
+      });
+      map.on("move", () => drawVehiclesAt(playhead));
+      map.on("resize", () => { resizeVehCanvas(); drawVehiclesAt(playhead); });
+      window.addEventListener("resize", () => { resizeVehCanvas(); drawVehiclesAt(playhead); });
+    }
 
     function loadVehiculos() {
       fetch(VEHICULOS_URL)

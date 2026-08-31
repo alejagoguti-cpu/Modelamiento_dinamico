@@ -402,7 +402,11 @@
 </div>
 
 <script src="modulo-08.js"></script>
-<script src="https://unpkg.com/maplibre-gl@6.5.0/dist/maplibre-gl.js"></script>
+<script type="module">
+  import * as maplibregl from "https://unpkg.com/maplibre-gl@6.5.0/dist/maplibre-gl.mjs";
+  window.maplibregl = maplibregl;
+  window.dispatchEvent(new Event("maplibre-ready"));
+</script>
 <script src="modulo-08-sumo.js"></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="modulo-08-noise.js"></script>
