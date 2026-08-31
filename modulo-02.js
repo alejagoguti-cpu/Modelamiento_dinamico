@@ -658,7 +658,10 @@ function drawEdges(svg) {
     group.setAttribute("data-source", edge.s);
     group.setAttribute("data-target", edge.t);
     group.style.setProperty("--edge-color", color);
-    group.style.setProperty("--edge-delay", (0.4 + i * 0.03) + "s");
+    const edgeDelay = 0.4 + i * 0.03;
+    group.style.setProperty("--edge-delay", edgeDelay + "s");
+    group.style.animation = `edgeEnter 0.8s ease-out forwards`;
+    group.style.animationDelay = edgeDelay + "s";
 
     const hit = document.createElementNS(SVG_NS, "path");
     hit.setAttribute("d", d); hit.setAttribute("class", "ods-edge edge-hit");
@@ -696,7 +699,10 @@ function drawNodes(svg) {
   ODS_NODES.forEach((node, idx) => {
     const group = document.createElementNS(SVG_NS, "g");
     group.setAttribute("class", "ods-node ods-node-" + node.cat + (node.isMainHub ? " ods-hub" : " ods-satellite"));
-    group.style.setProperty("--node-delay", (idx * 0.05) + "s");
+    const delay = idx * 0.05;
+    group.style.setProperty("--node-delay", delay + "s");
+    group.style.animation = `nodeEnter 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both`;
+    group.style.animationDelay = delay + "s";
     group.setAttribute("data-id", node.id);
     group.setAttribute("data-cat", node.cat);
 
@@ -1804,7 +1810,163 @@ function showMainConclusionPopup() {
 function showMainConclusionStep2() {
   mainConclusionStep = 2;
   const body = document.querySelector(".main-conclusion-modal-body");
-  if (body) body.innerHTML = MAIN_CONCLUSION_STEP2;
+  if (body) {
+    body.innerHTML = MAIN_CONCLUSION_STEP2;
+
+    // Agregar interactividad a las tarjetas
+    setTimeout(() => {
+      const cards = document.querySelectorAll(".conclusion-function-card");
+      cards.forEach((card, idx) => {
+        card.style.cursor = "pointer";
+        card.addEventListener("click", () => {
+          // Remover selección anterior
+          cards.forEach(c => c.classList.remove("card-selected"));
+          // Agregar selección a la tarjeta actual
+          card.classList.add("card-selected");
+          // Efecto visual
+          card.style.pointerEvents = "none";
+          setTimeout(() => { card.style.pointerEvents = "auto"; }, 300);
+
+          // Si es "Orienta intervenciones" (última tarjeta), mostrar imagen
+          const titleEl = card.querySelector(".conclusion-function-title");
+          if (titleEl && titleEl.textContent.includes("Orienta")) {
+            setTimeout(() => showHumedalImage(), 300);
+          }
+        });
+
+        // Efecto de sonido visual (pulse) en hover
+        card.addEventListener("mouseenter", () => {
+          card.style.animation = "none";
+          setTimeout(() => {
+            if (!card.classList.contains("card-selected")) {
+              card.style.animation = `cardHoverPulse 0.4s ease`;
+            }
+          }, 10);
+        });
+      });
+    }, 50);
+  }
+}
+
+function showHumedalImage() {
+  const modal = document.getElementById("humedalImageModal");
+  if (!modal) return;
+
+  // Intenta cargar RESERVA_HUMEDAL.webp, si no existe carga gesto-1.png
+  const img = document.getElementById("humedalImage");
+  img.src = "assets/RESERVA_HUMEDAL.webp";
+
+  // Fallback a imagen disponible si no existe
+  img.onerror = () => {
+    img.src = "assets/humedales/gesto-1.png";
+    img.onerror = null;
+  };
+
+  // Agregar nodos encima de la imagen después de que cargue
+  img.onload = () => {
+    addHumedalNodes();
+  };
+
+  // Si ya está cargada, agregar nodos inmediatamente
+  if (img.complete) {
+    addHumedalNodes();
+  }
+
+  modal.classList.add("active");
+  document.body.style.overflow = "hidden";
+}
+
+function addHumedalNodes() {
+  const imgWrapper = document.querySelector(".humedal-image-wrapper");
+  if (!imgWrapper) return;
+
+  // Remover overlay anterior si existe
+  const existingOverlay = imgWrapper.querySelector(".humedal-nodes-overlay");
+  if (existingOverlay) existingOverlay.remove();
+
+  // Crear overlay container
+  const overlay = document.createElement("div");
+  overlay.className = "humedal-nodes-overlay";
+
+  // Definir posiciones de nodos (en porcentajes relativos al contenedor)
+  // Basadas en las ubicaciones del mapa de humedales
+  const nodes = [
+    { id: "clasifica", title: "Clasifica", icon: "fa-list", x: 18, y: 40, color: "#2fd4c8" },
+    { id: "regula", title: "Regula", icon: "fa-scale-balanced", x: 82, y: 32, color: "#2fd4c8" },
+    { id: "protege", title: "Protege", icon: "fa-shield", x: 70, y: 45, color: "#2fd4c8" },
+    { id: "delimita", title: "Delimita", icon: "fa-borders", x: 50, y: 65, color: "#2fd4c8" },
+    { id: "orienta", title: "Orienta", icon: "fa-compass", x: 30, y: 50, color: "#2fd4c8" },
+  ];
+
+  nodes.forEach(node => {
+    const nodeEl = document.createElement("div");
+    nodeEl.className = "humedal-node";
+    nodeEl.style.left = node.x + "%";
+    nodeEl.style.top = node.y + "%";
+    nodeEl.style.transform = "translate(-50%, -50%)";
+
+    const icon = document.createElement("i");
+    icon.className = `fa-solid ${node.icon} humedal-node-icon`;
+    nodeEl.appendChild(icon);
+
+    const label = document.createElement("div");
+    label.className = "humedal-node-label";
+    label.textContent = node.title;
+    nodeEl.appendChild(label);
+
+    nodeEl.addEventListener("click", (e) => {
+      e.stopPropagation();
+      showNodeInfo(node);
+    });
+
+    overlay.appendChild(nodeEl);
+  });
+
+  imgWrapper.appendChild(overlay);
+}
+
+function showNodeInfo(node) {
+  // Remover info anterior si existe
+  const existingInfo = document.querySelector(".humedal-node-info");
+  if (existingInfo) existingInfo.remove();
+
+  // Crear info card
+  const infoCard = document.createElement("div");
+  infoCard.className = "humedal-node-info";
+
+  const infoContent = {
+    clasifica: "Clasifica espacios según el POT en 17 áreas de humedal distribuidas en Bogotá",
+    regula: "Regula el uso y manejo de la Reserva Distrital mediante normativas específicas",
+    protege: "Protege la biodiversidad y resiliencia climática de los ecosistemas acuáticos",
+    delimita: "Delimita zonas que se conservan, disminuyen, adicionan o son nuevas",
+    orienta: "Orienta intervenciones de restauración y gestión ambiental del territorio"
+  };
+
+  infoCard.innerHTML = `
+    <div style="display: flex; align-items: flex-start; gap: 12px;">
+      <i class="fa-solid ${node.icon}" style="color: ${node.color}; margin-top: 2px; flex-shrink: 0;"></i>
+      <div>
+        <div style="font-weight: 600; color: var(--teal); margin-bottom: 4px;">${node.title}</div>
+        <div>${infoContent[node.id]}</div>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(infoCard);
+
+  // Auto-remove después de 8 segundos
+  setTimeout(() => {
+    infoCard.style.animation = "slideInLeft 0.4s ease reverse";
+    setTimeout(() => infoCard.remove(), 400);
+  }, 8000);
+}
+
+function hideHumedalImage() {
+  const modal = document.getElementById("humedalImageModal");
+  if (modal) {
+    modal.classList.remove("active");
+  }
+  document.body.style.overflow = "auto";
 }
 
 function hideMainConclusionPopup() {
@@ -2147,15 +2309,36 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
           </div>
         </div>
+
+        <div id="humedalImageModal" class="humedal-image-modal">
+          <div class="humedal-image-overlay"></div>
+          <div class="humedal-image-container">
+            <div class="humedal-image-header">
+              <h3>Reserva Distrital de Humedal · 17 Áreas</h3>
+              <button class="humedal-image-close" id="humedalImageClose" type="button" aria-label="Cerrar">&times;</button>
+            </div>
+            <div class="humedal-image-body">
+              <div class="humedal-image-wrapper">
+                <img id="humedalImage" src="" alt="Mapa de Reserva de Humedales">
+              </div>
+            </div>
+          </div>
+        </div>
       `;
       mainElement.insertAdjacentHTML("beforeend", modalHTML);
 
-      // Agregar event listeners
+      // Agregar event listeners para modal de conclusión
       document.getElementById("topbarConclusionBtn")?.addEventListener("click", showMainConclusionPopup);
       document.getElementById("mainConclusionCloseBtn")?.addEventListener("click", hideMainConclusionPopup);
       document.getElementById("mainConclusionFooterBtn")?.addEventListener("click", hideMainConclusionPopup);
       document.getElementById("mainConclusionModal")?.addEventListener("click", (e) => {
         if (e.target.id === "mainConclusionModal") hideMainConclusionPopup();
+      });
+
+      // Agregar event listeners para modal de imagen
+      document.getElementById("humedalImageClose")?.addEventListener("click", hideHumedalImage);
+      document.getElementById("humedalImageModal")?.addEventListener("click", (e) => {
+        if (e.target.id === "humedalImageModal") hideHumedalImage();
       });
     }
   }
