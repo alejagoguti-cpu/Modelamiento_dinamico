@@ -765,7 +765,7 @@ footer span { color: var(--teal); }
   padding: 14px; display: flex; flex-direction: column; gap: 12px;
 }
 .sumo-canvas-wrap {
-  position: relative; width: 100%; aspect-ratio: 16 / 10; max-height: 640px;
+  position: relative; width: 100%; aspect-ratio: 10682.66 / 6323.80; max-height: 720px;
   background: #05070a; border-radius: 8px; overflow: hidden;
 }
 .sumo-canvas-wrap canvas { position: absolute; inset: 0; width: 100%; height: 100%; }

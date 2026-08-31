@@ -117,7 +117,7 @@
     // conservando proporción (como "background-size: contain").
     function computeView(w, h) {
       const [, , bw, bh] = netData.bbox;
-      const pad = 24;
+      const pad = 6;
       const scale = Math.min((w - pad * 2) / bw, (h - pad * 2) / bh);
       const offX = (w - bw * scale) / 2;
       const offY = (h - bh * scale) / 2;
