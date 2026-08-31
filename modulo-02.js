@@ -2050,40 +2050,11 @@ function showInitialPopup() {
       <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; margin: 0 0 16px 0 !important; color: #ffffff;">
         Reserva Distrital de Humedal
       </h2>
-      <div style="background: #1a1a1a; border: 1px solid #333333; border-radius: 12px; overflow: hidden; margin-bottom: 16px; animation: slideInCard 0.5s ease-out; padding: 20px;">
-        <svg viewBox="0 0 400 500" style="width: 100%; height: auto; filter: drop-shadow(0 0 20px rgba(255, 157, 46, 0.3));">
-          <!-- Bogotá outline -->
-          <path d="M50 50 L350 50 L350 450 L50 450 Z" fill="none" stroke="#2fd4c8" stroke-width="2" opacity="0.3"/>
-
-          <!-- 17 Wetlands - Reservas Distritales -->
-          <circle cx="80" cy="80" r="8" fill="#2fd4c8" opacity="0.8" class="humedal-point"/>
-          <circle cx="150" cy="100" r="8" fill="#2fd4c8" opacity="0.8" class="humedal-point"/>
-          <circle cx="200" cy="70" r="8" fill="#2fd4c8" opacity="0.8" class="humedal-point"/>
-          <circle cx="280" cy="110" r="8" fill="#2fd4c8" opacity="0.8" class="humedal-point"/>
-          <circle cx="320" cy="85" r="8" fill="#2fd4c8" opacity="0.8" class="humedal-point"/>
-
-          <circle cx="100" cy="200" r="8" fill="#2fd4c8" opacity="0.8" class="humedal-point"/>
-          <circle cx="200" cy="220" r="8" fill="#2fd4c8" opacity="0.8" class="humedal-point"/>
-          <circle cx="300" cy="200" r="8" fill="#2fd4c8" opacity="0.8" class="humedal-point"/>
-          <circle cx="330" cy="240" r="8" fill="#2fd4c8" opacity="0.8" class="humedal-point"/>
-
-          <circle cx="75" cy="330" r="8" fill="#2fd4c8" opacity="0.8" class="humedal-point"/>
-          <circle cx="150" cy="350" r="8" fill="#2fd4c8" opacity="0.8" class="humedal-point"/>
-          <circle cx="210" cy="370" r="8" fill="#2fd4c8" opacity="0.8" class="humedal-point"/>
-          <circle cx="280" cy="340" r="8" fill="#2fd4c8" opacity="0.8" class="humedal-point"/>
-          <circle cx="320" cy="380" r="8" fill="#2fd4c8" opacity="0.8" class="humedal-point"/>
-
-          <circle cx="120" cy="420" r="8" fill="#2fd4c8" opacity="0.8" class="humedal-point"/>
-          <circle cx="200" cy="410" r="8" fill="#2fd4c8" opacity="0.8" class="humedal-point"/>
-          <circle cx="290" cy="430" r="8" fill="#2fd4c8" opacity="0.8" class="humedal-point"/>
-
-          <!-- Labels -->
-          <text x="200" y="30" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="bold" font-family="Space Grotesk, sans-serif">BOGOTÁ D.C.</text>
-          <text x="200" y="480" text-anchor="middle" fill="#999999" font-size="11" font-family="Space Grotesk, sans-serif">17 Áreas de Reserva Distrital</text>
-        </svg>
+      <div style="background: #1a1a1a; border: 1px solid #333333; border-radius: 12px; overflow: hidden; margin-bottom: 16px; animation: slideInCard 0.5s ease-out;">
+        <img src="assets/modulo-02/reserva-humedal.png" alt="Cartografía de Humedales" style="width: 100%; height: auto; display: block; border-radius: 12px; background: #0a0a0a;">
       </div>
       <p style="font-size: 12px; color: #999999; text-align: center; margin: 0;">
-        Los puntos azules representan las 17 áreas de reserva distrital de humedal en Bogotá
+        17 áreas de reserva distrital de humedal en Bogotá
       </p>
     `;
 
@@ -2091,19 +2062,6 @@ function showInitialPopup() {
     if (backBtn) {
       backBtn.addEventListener("click", showCards);
     }
-
-    // Agregar animación a los puntos de humedales
-    const style = document.createElement("style");
-    style.innerHTML = `
-      @keyframes humedalPulse {
-        0%, 100% { r: 8px; opacity: 0.8; }
-        50% { r: 12px; opacity: 0.4; }
-      }
-      .humedal-point {
-        animation: humedalPulse 2s ease-in-out infinite !important;
-      }
-    `;
-    document.head.appendChild(style);
   }
 
   // Función para mostrar las 5 cards
