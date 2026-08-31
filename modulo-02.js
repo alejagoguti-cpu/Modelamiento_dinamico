@@ -93,10 +93,9 @@ const ODS_NODES = [
   /* ---- ESTRUCTURA FUNCIONAL Y DEL CUIDADO ---- */
   { id:"equipamientos", cat:"e2", name:"EQUIPAMIENTOS", icon:"fa-school", fuente:"cita_literal" },
   { id:"servicios_sociales", cat:"e2", name:"SERVICIOS\nSOCIALES", icon:"fa-people-roof", fuente:"cita_literal" },
-  { id:"vivienda", cat:"e2", name:"VIVIENDA", icon:"fa-house", fuente:"cita_literal" },
   { id:"ciclorutas", cat:"e2", name:"CICLORUTAS", icon:"fa-person-biking", fuente:"cita_literal" },
   { id:"transporte_publico", cat:"e2", name:"TRANSPORTE\nPÚBLICO", icon:"fa-bus", fuente:"cita_literal" },
-  { id:"red_vial", cat:"e2", name:"RED\nVIAL", icon:"fa-road", fuente:"cita_literal" },
+  { id:"red_vial", cat:"e2", name:"MALLA\nVIAL", icon:"fa-road", fuente:"cita_literal" },
   { id:"corredores_verdes", cat:"e2", name:"CORREDORES\nVERDES", icon:"fa-seedling", fuente:"cita_literal" },
   { id:"manzanas_del_cuidado", cat:"e2", name:"MANZANAS\nDEL CUIDADO", icon:"fa-building-shield", fuente:"cita_literal" },
   { id:"parques", cat:"e2", name:"PARQUES", icon:"fa-tree", fuente:"inventario_pendiente" },
@@ -157,14 +156,9 @@ const RAW_EDGES = [
     analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: Reserva Forestal Protectora Regional]." },
   { s:"reservas_forestales", t:"humedales", cat:"e1", tipo:"directa", relacion:"Resiliencia", fuente:"inventario_pendiente", articulo:"Art. 42", pagina:"72", cita:null,
     analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: conectividad y complementariedad]." },
-  { s:"equipamientos", t:"vivienda", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:"Una ciudad para el empleo y las oportunidades", pagina:"29",
-    cita:"Que sea en suelo de desarrollo o en suelo de renovación urbana, los constructores y desarrolladores inmobiliarios siempre tengan que garantizar diversos tipos de vivienda de interés social y soportes urbanos y equipamientos sociales de calidad para familias de diferentes tamaños y niveles de ingreso que comparten un mismo trozo de ciudad.",
-    analisis:"El POT vincula la vivienda con soportes urbanos y equipamientos sociales de calidad. (Corrige un hallazgo previo erróneo: sí existe una relación real y textual entre Equipamientos y Vivienda dentro de la EFC.)" },
   { s:"ciclorutas", t:"transporte_publico", cat:"e2", tipo:"indirecta", relacion:"Resiliencia", fuente:"cita_literal", articulo:"Art. 159", pagina:"159",
     cita:"Los proyectos de infraestructura de los corredores verdes de alta capacidad, media capacidad y los corredores de baja capacidad deberán incluir intervenciones que permitan su conexión con la red de ciclo infraestructura de la ciudad.",
     analisis:"El POT establece literalmente que los corredores de transporte deben conectarse con la red de cicloinfraestructura." },
-  { s:"transporte_publico", t:"vivienda", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"Art. 88", pagina:"117", cita:null,
-    analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: accesibilidad y conectividad]." },
   { s:"red_vial", t:"transporte_publico", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:"Art. 158–159", pagina:"158–159",
     cita:"La malla arterial: Son las calles que permiten el desarrollo de viajes de alcance urbano, dan soporte a la operación de todos los modos y es el sustrato para la localización de infraestructuras de la red de transporte público de alta y media capacidad.",
     analisis:"El POT define la red vial como soporte de la infraestructura de transporte público." },
@@ -216,12 +210,6 @@ const RAW_EDGES = [
   { s:"cerros_orientales", t:"rios", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"59",
     cita:"El POT sí identifica el conector “Cerros Orientales-río Bogotá”, pero eso demuestra conectividad, no que exista una relación unidireccional.",
     analisis:"Fuente: Tabla aportada por la usuaria" },
-  { s:"vivienda", t:"servicios_sociales", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"156",
-    cita:"El POT plantea “vivienda con ciudad”, teniendo cerca servicios sociales e infraestructura.",
-    analisis:"Fuente: Tabla aportada por la usuaria" },
-  { s:"red_vial", t:"vivienda", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"110",
-    cita:"El POT incluye la malla vial local e intermedia entre los soportes que acompañan la escala de proximidad y el cuidado.",
-    analisis:"Fuente: Tabla aportada por la usuaria" },
   { s:"distrito_centro_tecnologico_e_innovacion", t:"zonas_industriales", cat:"e3", tipo:"directa", relacion:"Soporte", fuente:"por_verificar", articulo:null, pagina:"158",
     cita:"El corazón del campus comprende un área de 247 hectáreas en el centro de la ciudad articulada con las AE Zibo y Reencuentro.",
     analisis:"Fuente: Fuente indicada: Bogotá.gov.co; comprobar contra PDF" },
@@ -237,15 +225,14 @@ const RAW_EDGES = [
   { s:"humedales", t:"red_vial", cat:"e1-e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"49–50",
     cita:"Con respecto a los humedales de la ciudad, dentro del POT únicamente se identificó un conflicto de malla vial arterial con la Reserva Distrital de Humedal Capellanía, en Fontibón.",
     analisis:"Puente real EEP↔EFC, aportado directamente por la usuaria." },
+  { s:"humedales", t:"parques", cat:"e1-e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Puente EEP↔EFC pendiente de verificar contra el texto del POT: los humedales suelen articularse con parques colindantes (zonas de manejo y preservación ambiental), pero falta localizar la frase exacta." },
   { s:"humedales", t:"patrimonio_natural", cat:"e1-e4", tipo:"directa", relacion:"Resiliencia", fuente:"cita_literal", articulo:null, pagina:null,
     cita:"Los humedales, como parte de la Estructura Ecológica Principal, se integran con el patrimonio natural de la ciudad.",
     analisis:"Puente real EEP↔EIP, aportado directamente por la usuaria." },
   { s:"equipamientos", t:"servicios_empresariales", cat:"e2-e3", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"1150",
     cita:"El POT afirma que la distribución de equipamientos compensa desequilibrios en el acceso a empleos dignos.",
     analisis:"Puente real EFC↔ESECI: 'Empleo' se trata aquí como el mismo concepto que Servicios Empresariales." },
-  { s:"vivienda", t:"zonas_industriales", cat:"e2-e3", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"1229",
-    cita:"El POT explica que los primeros barrios obreros surgieron con la industrialización.",
-    analisis:"Puente real EFC↔ESECI." },
   { s:"transporte_publico", t:"servicios_empresariales", cat:"e2-e3", tipo:"indirecta", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:null,
     cita:"El modelo relaciona el transporte con el acceso a oportunidades de empleo y servicios.",
     analisis:"Puente real EFC↔ESECI: 'Empleo' se trata aquí como el mismo concepto que Servicios Empresariales." },
@@ -280,12 +267,15 @@ const RAW_EDGES = [
    GRADO REAL — de aquí sale cuáles son los hubs, no de una
    categoría administrativa. Los "vacío" NO cuentan como conexión.
    ========================================================== */
-function computeDegrees() {
+function computeDegrees(excluir) {
   const deg = {};
   ODS_NODES.forEach(n => { deg[n.id] = 0; });
   RAW_EDGES.forEach(e => {
     if (e.tipo === "vacio") return;
     if (deg[e.s] === undefined || deg[e.t] === undefined) return;
+    // Si el nodo de origen o destino está "apagado", su arista deja de
+    // contar para el grado (= fuerza nodal) de ambos extremos.
+    if (excluir && (excluir.has(e.s) || excluir.has(e.t))) return;
     deg[e.s]++; deg[e.t]++;
   });
   return deg;
@@ -331,11 +321,10 @@ const NODE_POS = {
   reservas_forestales: { x: 1086, y: 132 },
   equipamientos: { x: 1190, y: 347 },
   servicios_sociales: { x: 1429, y: 104 },
-  vivienda: { x: 1450, y: 783 },
   ciclorutas: { x: 1689, y: 98 },
   transporte_publico: { x: 1686, y: 539 },
   red_vial: { x: 2022, y: 306 },
-  corredores_verdes: { x: 34.7, y: 97.9 },
+  corredores_verdes: { x: 1520, y: 250 }, // junto a ciclorutas (antes quedaba fuera del lienzo: x:34.7,y:97.9)
   manzanas_del_cuidado: { x: 1485, y: 445 },
   parques: { x: 1732, y: 884 },
   distrito_centro_tecnologico_e_innovacion: { x: 1244, y: 1298 },
@@ -355,7 +344,7 @@ const NODE_POS = {
 };
 
 // Los 4 hubs principales (bola grande) por estructura.
-const HUB_IDS = ["humedales", "vivienda", "servicios_empresariales", "patrimonio_material"];
+const HUB_IDS = ["humedales", "servicios_empresariales", "patrimonio_material"];
 
 function layoutNetwork() {
   const deg = computeDegrees();
@@ -365,6 +354,7 @@ function layoutNetwork() {
     const d = deg[n.id] || 0;
     n.r = 32 + Math.pow(d, 1.25) * 7.5; // radio "temático" (sale del grado real) — bolas notablemente más chicas para que la red respire, conservando legibilidad de ícono+nombre
     n._deg = d;
+    n._degBase = d; // fuerza nodal original, sin ningún nodo apagado — sirve para comparar ANTES ↔ DESPUÉS
   });
 
   const nodes = ODS_NODES;
@@ -639,6 +629,10 @@ function edgePathData(edge, s, t) {
 function drawEdges(svg) {
   const g = document.createElementNS(SVG_NS, "g");
   g.setAttribute("class", "edges-layer");
+  // Las líneas aparecen DESPUÉS de que las bolas ya se están formando (no
+  // de primeras, que se ve raro) — cada una con su propio pequeño retraso.
+  const edgeBaseDelay = ODS_NODES.length * 70 + 200;
+  let edgeOrderIndex = 0;
   RAW_EDGES.forEach((edge, i) => {
     // Las relaciones "vacío" (ausencias documentadas entre estructuras) ya NO
     // se dibujan en la red visual — quedan solo como hallazgo en la tabla y en
@@ -651,17 +645,15 @@ function drawEdges(svg) {
     const d = edgePathData(edge, s, t);
 
     const group = document.createElementNS(SVG_NS, "g");
-    group.setAttribute("class", "edge-group edge-" + edge.tipo);
+    group.setAttribute("class", "edge-group edge-" + edge.tipo + " edge-group-reveal");
     group.setAttribute("data-index", i);
     group.setAttribute("data-type", edge.tipo);
     group.setAttribute("data-cat", edge.cat);
     group.setAttribute("data-source", edge.s);
     group.setAttribute("data-target", edge.t);
     group.style.setProperty("--edge-color", color);
-    const edgeDelay = 1.8 + i * 0.015;
-    group.style.setProperty("--edge-delay", edgeDelay + "s");
-    group.style.animation = `edgeEnter 0.8s ease-out forwards`;
-    group.style.animationDelay = edgeDelay + "s";
+    group.style.setProperty("--reveal-delay", (edgeBaseDelay + edgeOrderIndex * 12) + "ms");
+    edgeOrderIndex++;
 
     const hit = document.createElementNS(SVG_NS, "path");
     hit.setAttribute("d", d); hit.setAttribute("class", "ods-edge edge-hit");
@@ -696,24 +688,21 @@ function drawEdges(svg) {
 function drawNodes(svg) {
   const g = document.createElementNS(SVG_NS, "g");
   g.setAttribute("class", "nodes-layer");
-  // Orden de aparición aleatorio (no siempre el mismo), para que la red se
-  // sienta viva desde el primer instante en vez de aparecer en fila.
+  // Orden de aparición aleatorio (no siempre el mismo), para que la red
+  // se sienta viva desde el primer instante en vez de aparecer de golpe.
   const revealOrder = ODS_NODES.map((_, i) => i);
   for (let i = revealOrder.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [revealOrder[i], revealOrder[j]] = [revealOrder[j], revealOrder[i]];
   }
   const revealDelay = {};
-  revealOrder.forEach((nodeIndex, order) => { revealDelay[nodeIndex] = order * 0.05; });
-  ODS_NODES.forEach((node, idx) => {
+  revealOrder.forEach((nodeIndex, order) => { revealDelay[nodeIndex] = order * 70; });
+  ODS_NODES.forEach((node, index) => {
     const group = document.createElementNS(SVG_NS, "g");
-    group.setAttribute("class", "ods-node ods-node-" + node.cat + (node.isMainHub ? " ods-hub" : " ods-satellite"));
-    const delay = revealDelay[idx];
-    group.style.setProperty("--node-delay", delay + "s");
-    group.style.animation = `nodeEnter 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both`;
-    group.style.animationDelay = delay + "s";
+    group.setAttribute("class", "ods-node ods-node-" + node.cat + (node.isMainHub ? " ods-hub" : " ods-satellite") + " ods-node-reveal");
     group.setAttribute("data-id", node.id);
     group.setAttribute("data-cat", node.cat);
+    group.style.setProperty("--reveal-delay", revealDelay[index] + "ms");
 
     const circle = document.createElementNS(SVG_NS, "circle");
     circle.setAttribute("class", "node-ring" + (node.isMainHub ? " node-ring-hub" : ""));
@@ -767,6 +756,60 @@ function updatePositions() {
     const d = edgePathData(edge, s, t);
     edge._el.visual.setAttribute("d", d); edge._el.hit.setAttribute("d", d);
   });
+}
+
+/* ==========================================================
+   FUERZA NODAL — la pregunta del módulo es "¿qué pasaría si se
+   apaga este nodo?". Al apagar un nodo, sus aristas dejan de
+   contar en el grado (computeDegrees) de todos los demás, y cada
+   bola se redimensiona en vivo según su NUEVO grado real: los
+   nodos que dependían del apagado "pierden fuerza" (se encogen),
+   los demás la conservan. El nodo apagado se atenúa (gris) y sus
+   aristas quedan tenues, pero siguen visibles como registro del
+   ANTES.
+   ========================================================== */
+const nodosApagados = new Set();
+
+// Reaplica r/tamaño/posición a un solo nodo ya dibujado en el DOM,
+// sin reconstruir toda la red (usado al recalcular fuerza nodal).
+function resizeNodeVisual(n) {
+  if (!n._el) return;
+  const { circle, fo } = n._el;
+  circle.setAttribute("r", n.r);
+  const size = n.r * 1.8;
+  fo.setAttribute("x", n.x - size / 2); fo.setAttribute("y", n.y - size / 2);
+  fo.setAttribute("width", size); fo.setAttribute("height", size);
+  const iconEl = fo.querySelector("i");
+  if (iconEl) iconEl.style.fontSize = Math.max(n.r * (n.isMainHub ? 0.42 : 0.34), 15) + "px";
+  const nameEl = fo.querySelector("div");
+  if (nameEl) nameEl.style.fontSize = Math.max(n.r * 0.16, 15) + "px";
+}
+
+// Recalcula el grado real (fuerza nodal) de TODA la red teniendo en cuenta
+// los nodos actualmente apagados, y redibuja cada bola con su nuevo tamaño.
+function aplicarFuerzaNodal() {
+  const deg = computeDegrees(nodosApagados);
+  ODS_NODES.forEach(n => {
+    const apagado = nodosApagados.has(n.id);
+    const d = deg[n.id] || 0;
+    n._deg = d;
+    n.r = apagado ? 22 : 32 + Math.pow(d, 1.25) * 7.5;
+    n.collR = n.r;
+    resizeNodeVisual(n);
+    if (n._el) n._el.group.classList.toggle("node-apagado", apagado);
+  });
+  updatePositions();
+  document.querySelectorAll(".edge-group").forEach(el => {
+    const s = el.dataset.source, t = el.dataset.target;
+    el.classList.toggle("edge-apagada", nodosApagados.has(s) || nodosApagados.has(t));
+  });
+}
+
+function toggleNodoApagado(id) {
+  if (nodosApagados.has(id)) nodosApagados.delete(id);
+  else nodosApagados.add(id);
+  aplicarFuerzaNodal();
+  showNodeInfo(id); // refresca la ficha con el grado ANTES → DESPUÉS y el botón actualizado
 }
 
 let physicsRunning = false;
@@ -876,7 +919,19 @@ function hideEdgeInfo() {
 
 function showNodeInfo(id) {
   if (id === "humedales") {
-    showHumedalesOverlay();
+    abrirMapaHumedales();
+    return;
+  }
+  if (id === "manzanas_del_cuidado") {
+    abrirMapaManzanas();
+    return;
+  }
+  if (id === "patrimonio_material") {
+    abrirMapaPatrimonio();
+    return;
+  }
+  if (id === "red_vial") {
+    abrirMapaVias();
     return;
   }
   const node = nodeById(id);
@@ -884,10 +939,25 @@ function showNodeInfo(id) {
   document.querySelectorAll(".ods-node").forEach(el => el.classList.remove("node-selected"));
   document.querySelector(`.ods-node[data-id="${id}"]`)?.classList.add("node-selected");
 
-  const deg = computeDegrees()[id] || 0;
+  const apagado = nodosApagados.has(id);
+  const degActual = computeDegrees(nodosApagados)[id] || 0;
+  const degBase = node._degBase !== undefined ? node._degBase : degActual;
+  let gradoHTML = `fuerza nodal (grado real): <b>${degActual}</b>`;
+  if (!apagado && degActual !== degBase) {
+    gradoHTML = `fuerza nodal (grado real): <b>${degBase} → ${degActual}</b> <span style="opacity:.75;">(recalculada al apagar otro nodo)</span>`;
+  } else if (apagado) {
+    gradoHTML = `fuerza nodal: <b>0</b> — nodo apagado (grado original: ${degBase})`;
+  }
   document.getElementById("nodeInfoTitle").textContent = node.name.replace(/\n/g, " ") + (node.suplementario ? " (suplementario)" : "");
-  document.getElementById("nodeInfoStruct").innerHTML = `<span class="swatch-tag" style="background:${node.color}"></span> ${STRUCT_STYLE[node.cat].label} · grado real: ${deg}`;
+  document.getElementById("nodeInfoStruct").innerHTML = `<span class="swatch-tag" style="background:${node.color}"></span> ${STRUCT_STYLE[node.cat].label} · ${gradoHTML}`;
   document.getElementById("nodeInfoFuente").innerHTML = fuenteBadgeHTML(node.fuente);
+
+  const toggleBtn = document.getElementById("nodeInfoToggleBtn");
+  if (toggleBtn) {
+    toggleBtn.textContent = apagado ? "Encender nodo" : "¿Qué pasaría si se apaga este nodo?";
+    toggleBtn.classList.toggle("is-apagado", apagado);
+    toggleBtn.onclick = () => toggleNodoApagado(id);
+  }
 
   // artículo/página/cita: se toman de la primera arista de este nodo que tenga la mejor evidencia disponible
   const relEdges = RAW_EDGES.filter(e => e.s === id || e.t === id);
@@ -957,7 +1027,6 @@ const HUMEDALES_CASOS = {
 };
 
 function showHumedalesOverlay(opts) {
-  console.log("📍 showHumedalesOverlay() called with opts:", opts);
   const animateIn = !!(opts && opts.animateIn);
   hideNodeInfo();
   hideEdgeInfo();
@@ -1088,16 +1157,9 @@ function showHumedalesOverlay(opts) {
     });
   });
 
-  console.log("Hiding network canvas and showing overlay");
   document.querySelector(".network-canvas").style.display = "none";
   const overlayEl = document.getElementById("humedalesOverlay");
-  console.log("Overlay element found:", !!overlayEl);
-  if (overlayEl) {
-    overlayEl.style.display = "flex";
-    console.log("✅ Overlay display set to flex, computed style:", window.getComputedStyle(overlayEl).display);
-  } else {
-    console.error("❌ humedalesOverlay element not found!");
-  }
+  overlayEl.style.display = "flex";
   if (animateIn) {
     overlayEl.classList.remove("overlay-entering");
     requestAnimationFrame(() => {
@@ -1111,36 +1173,104 @@ function showHumedalesOverlay(opts) {
   }
 }
 
-/* Abre el modal de selección de mapas para explorar relaciones en detalle */
+const HUMEDALES_NODOS_SOBREVIVIENTES = [
+  "humedales", "red_vial", "parques", "patrimonio_natural", 
+  "areas_de_resiliencia_climatica", "areas_protegidas", "reservas_forestales", "rios", "quebradas"
+];
+
+const MANZANAS_NODOS_SOBREVIVIENTES = [
+  "manzanas_del_cuidado", "servicios_sociales", "equipamientos", "parques", 
+  "servicios_empresariales", "transporte_publico", "ciclorutas"
+];
+
+const PATRIMONIO_NODOS_SOBREVIVIENTES = [
+  "patrimonio_material", "patrimonio_inmaterial", "patrimonio_natural", 
+  "patrimonio_arqueologico", "comunidades", "zonas_de_interes_turistico", "plazas_de_mercado", "humedales"
+];
+
+/* Función maestra para animación de iluminación, desconexión y acercamiento fluido */
+function ejecutarTransicionRed(nodosSobrevivientes, hubId, onComplete) {
+  clearSpotlight();
+  document.querySelectorAll(".insight-card").forEach(c => c.classList.remove("active"));
+
+  const survivors = new Set(nodosSobrevivientes);
+  const survivorEdges = new Set();
+  RAW_EDGES.forEach((edge, i) => {
+    if (survivors.has(edge.s) && survivors.has(edge.t)) survivorEdges.add(i);
+  });
+
+  // Ilumina los nodos sobrevivientes y desconecta/apaga los demás
+  document.querySelectorAll(".ods-node").forEach(el => {
+    if (!survivors.has(el.dataset.id)) el.classList.add("blackout-flicker");
+    else el.classList.add("blackout-surviving");
+  });
+  document.querySelectorAll(".edge-group").forEach(el => {
+    if (!survivorEdges.has(Number(el.dataset.index))) el.classList.add("blackout-flicker");
+  });
+
+  setTimeout(() => {
+    setSpotlightNodes(nodosSobrevivientes, false);
+    document.querySelectorAll(".blackout-flicker").forEach(el => el.classList.remove("blackout-flicker"));
+    document.querySelectorAll(".blackout-surviving").forEach(el => el.classList.remove("blackout-surviving"));
+
+    const svg = document.getElementById("networkViz");
+    const node = nodeById(hubId) || nodeById("red_vial") || nodeById("humedales");
+    if (svg && node) {
+      const vb = svg.viewBox.baseVal;
+      const rect = svg.getBoundingClientRect();
+      const scale = Math.min(rect.width / vb.width, rect.height / vb.height);
+      const renderedW = vb.width * scale;
+      const renderedH = vb.height * scale;
+      const offsetX = (rect.width - renderedW) / 2;
+      const offsetY = (rect.height - renderedH) / 2;
+      const nodeXScreen = offsetX + ((node.x - vb.x) * scale);
+      const nodeYScreen = offsetY + ((node.y - vb.y) * scale);
+      const originXPct = (nodeXScreen / rect.width) * 100;
+      const originYPct = (nodeYScreen / rect.height) * 100;
+      svg.style.transformOrigin = `${originXPct}% ${originYPct}%`;
+      svg.classList.add("zoom-into-humedales");
+
+      let done = false;
+      const onDone = () => {
+        if (done) return;
+        done = true;
+        onComplete();
+        svg.classList.remove("zoom-into-humedales");
+        svg.style.transformOrigin = "";
+      };
+      setTimeout(onDone, 1200);
+    } else {
+      onComplete();
+    }
+  }, 1200);
+}
+
+// Mapa 1: Vías y Movilidad
+function zoomIntoMovilidad() {
+  ejecutarTransicionRed(HALLAZGOS_NODOS_SOBREVIVIENTES, "red_vial", () => {
+    showMovilidadOverlay({ animateIn: true });
+  });
+}
+
+// Mapa 2: Humedales y Territorios Dinámicos
 function explorarRelacionesConAnimacion() {
-  abrirModalExplorarRelaciones();
+  ejecutarTransicionRed(HUMEDALES_NODOS_SOBREVIVIENTES, "humedales", () => {
+    showHumedalesOverlay({ animateIn: true });
+  });
 }
 
-/* ==========================================================
-   MODAL POPUP: SELECTOR DE MAPAS (EXPLORAR RELACIONES EN DETALLE)
-   ========================================================== */
-function abrirModalExplorarRelaciones() {
-  const modal = document.getElementById("modalExplorarRelaciones");
-  if (!modal) return;
-  modal.style.display = "flex";
-  modal.setAttribute("aria-hidden", "false");
+// Mapa 3: Manzanas del Cuidado
+function zoomIntoManzanas() {
+  ejecutarTransicionRed(MANZANAS_NODOS_SOBREVIVIENTES, "manzanas_del_cuidado", () => {
+    showManzanasOverlay({ animateIn: true });
+  });
 }
 
-function cerrarModalExplorarRelaciones() {
-  const modal = document.getElementById("modalExplorarRelaciones");
-  if (!modal) return;
-  modal.style.display = "none";
-  modal.setAttribute("aria-hidden", "true");
-}
-
-function abrirMapaVias() {
-  cerrarModalExplorarRelaciones();
-  showMovilidadOverlay({ animateIn: true });
-}
-
-function abrirMapaHumedales() {
-  cerrarModalExplorarRelaciones();
-  showHumedalesOverlay({ animateIn: true });
+// Mapa 4: Patrimonio
+function zoomIntoPatrimonio() {
+  ejecutarTransicionRed(PATRIMONIO_NODOS_SOBREVIVIENTES, "patrimonio_material", () => {
+    showPatrimonioOverlay({ animateIn: true });
+  });
 }
 
 /* Muestra la cita de una LÍNEA de conexión (no de un humedal puntual) en un
@@ -1426,7 +1556,7 @@ function hideNodeInfo() {
 /* Vista de página completa del plano de movilidad: la
    abre la animación de "Ver hallazgos clave", igual que el overlay de
    humedales sustituye la red principal en el mismo espacio. */
-const HALLAZGOS_NODOS_SOBREVIVIENTES = ["transporte_publico", "equipamientos", "vivienda", "servicios_empresariales", "ciclorutas", "red_vial"];
+const HALLAZGOS_NODOS_SOBREVIVIENTES = ["transporte_publico", "equipamientos", "servicios_empresariales", "ciclorutas", "red_vial"];
 
 // Coordenadas medidas directamente sobre la foto HD del plano de movilidad
 // (misma técnica que HUMEDALES_CASOS: % de ancho/alto real de la imagen,
@@ -1503,37 +1633,6 @@ const MOVILIDAD_RELACIONES = {
 };
 
 const MOVILIDAD_CONCLUSION = "El POT sí plantea que el Metro debe generar conexiones entre distintos ambitos. Sin embargo, al construir su red, algunos componentes aparecen como hubs centrales y otros quedan periféricos, conectados solo a un proyecto o a una estructura específica. Esta distribución desigual muestra que el POT reconoce relaciones, pero no las articula completamente como una red territorial integrada. Además, sus planos representan principalmente líneas, estaciones y localizaciones, sin mostrar cómo esas conexiones funcionan en el tiempo, quién depende de ellas, qué recorridos se producen ni qué ocurre cuando la red se congestiona o falla.";
-
-const MAIN_CONCLUSION_STEP1 = `
-  <div class="main-conclusion-popup-content">
-    <div class="main-conclusion-question">¿Es suficiente el POT como único modelo de Bogotá?</div>
-    <div class="main-conclusion-answer">
-      <p>El POT es suficiente para cumplir su función como instrumento de ordenamiento territorial</p>
-    </div>
-    <button class="main-conclusion-explore-btn" id="mainConclusionExploreBtn" type="button">Comenzar a explorar</button>
-  </div>
-`;
-
-const MAIN_CONCLUSION_FUNCTIONS = [
-  { title: "Clasifica", icon: "fa-list" },
-  { title: "Regula", icon: "fa-scale-balanced" },
-  { title: "Protege", icon: "fa-shield" },
-  { title: "Limita", icon: "fa-ban" },
-  { title: "Orienta intervenciones", icon: "fa-compass" }
-];
-
-const MAIN_CONCLUSION_STEP2 = `
-  <div class="main-conclusion-functions-grid">
-    ${MAIN_CONCLUSION_FUNCTIONS.map((fn, idx) => `
-      <div class="conclusion-function-card" style="--d:${idx * 0.1}s">
-        <div class="conclusion-function-icon"><i class="fa-solid ${fn.icon}"></i></div>
-        <div class="conclusion-function-title">${fn.title}</div>
-      </div>
-    `).join('')}
-  </div>
-`;
-
-let mainConclusionStep = 1;
 
 let movilidadPopupAnchor = null;
 let movilidadClickOutsideWired = false;
@@ -1812,274 +1911,6 @@ function hideMovilidadPopup() {
   document.querySelectorAll(".movilidad-hotspot").forEach(b => b.classList.remove("active"));
 }
 
-function showMainConclusionPopup() {
-  const modal = document.getElementById("mainConclusionModal");
-  if (!modal) return;
-  mainConclusionStep = 1;
-  const body = modal.querySelector(".main-conclusion-modal-body");
-  if (body) body.innerHTML = MAIN_CONCLUSION_STEP1;
-  modal.style.display = "flex";
-  document.body.style.overflow = "hidden";
-  setTimeout(() => {
-    document.getElementById("mainConclusionExploreBtn")?.addEventListener("click", showMainConclusionStep2);
-  }, 0);
-}
-
-function showMainConclusionStep2() {
-  mainConclusionStep = 2;
-  const body = document.querySelector(".main-conclusion-modal-body");
-  if (body) {
-    body.innerHTML = MAIN_CONCLUSION_STEP2;
-
-    // Agregar interactividad a las tarjetas
-    setTimeout(() => {
-      const cards = document.querySelectorAll(".conclusion-function-card");
-      cards.forEach((card, idx) => {
-        card.style.cursor = "pointer";
-        card.addEventListener("click", () => {
-          // Remover selección anterior
-          cards.forEach(c => c.classList.remove("card-selected"));
-          // Agregar selección a la tarjeta actual
-          card.classList.add("card-selected");
-          // Efecto visual
-          card.style.pointerEvents = "none";
-          setTimeout(() => { card.style.pointerEvents = "auto"; }, 300);
-
-          // Si es "Orienta intervenciones" (última tarjeta), mostrar imagen
-          const titleEl = card.querySelector(".conclusion-function-title");
-          if (titleEl && titleEl.textContent.includes("Orienta")) {
-            setTimeout(() => showHumedalImage(), 300);
-          }
-        });
-
-        // Efecto de sonido visual (pulse) en hover
-        card.addEventListener("mouseenter", () => {
-          card.style.animation = "none";
-          setTimeout(() => {
-            if (!card.classList.contains("card-selected")) {
-              card.style.animation = `cardHoverPulse 0.4s ease`;
-            }
-          }, 10);
-        });
-      });
-    }, 50);
-  }
-}
-
-function showHumedalImage() {
-  const modal = document.getElementById("humedalImageModal");
-  if (!modal) return;
-
-  // Intenta cargar RESERVA_HUMEDAL.webp, si no existe carga gesto-1.png
-  const img = document.getElementById("humedalImage");
-  img.src = "assets/RESERVA_HUMEDAL.webp";
-
-  // Fallback a imagen disponible si no existe
-  img.onerror = () => {
-    img.src = "assets/humedales/gesto-1.png";
-    img.onerror = null;
-  };
-
-  // Agregar nodos encima de la imagen después de que cargue
-  img.onload = () => {
-    addHumedalNodes();
-  };
-
-  // Si ya está cargada, agregar nodos inmediatamente
-  if (img.complete) {
-    addHumedalNodes();
-  }
-
-  modal.classList.add("active");
-  document.body.style.overflow = "hidden";
-}
-
-function addHumedalNodes() {
-  const imgWrapper = document.querySelector(".humedal-image-wrapper");
-  if (!imgWrapper) return;
-
-  // Remover overlay anterior si existe
-  const existingOverlay = imgWrapper.querySelector(".humedal-nodes-overlay");
-  if (existingOverlay) existingOverlay.remove();
-
-  // Crear overlay container
-  const overlay = document.createElement("div");
-  overlay.className = "humedal-nodes-overlay";
-
-  // Definir posiciones de nodos (en porcentajes relativos al contenedor)
-  const nodes = [
-    { id: "orienta", title: "Orienta", icon: "fa-compass", x: 15, y: 22, color: "#2fd4c8" },
-    { id: "regula", title: "Regula", icon: "fa-scale-balanced", x: 15, y: 35, color: "#2fd4c8" },
-    { id: "clasifica", title: "Clasifica", icon: "fa-list", x: 15, y: 55, color: "#2fd4c8" },
-    { id: "protege", title: "Protege", icon: "fa-shield", x: 78, y: 65, color: "#2fd4c8" },
-    { id: "delimita", title: "Delimita", icon: "fa-expand", x: 50, y: 75, color: "#2fd4c8" },
-  ];
-
-  // Crear SVG para líneas de conexión
-  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-  svg.setAttribute("width", "100%");
-  svg.setAttribute("height", "100%");
-  svg.style.position = "absolute";
-  svg.style.top = "0";
-  svg.style.left = "0";
-  svg.style.pointerEvents = "none";
-
-  // Dibujar líneas conectando todos los nodos en una red
-  for (let i = 0; i < nodes.length; i++) {
-    for (let j = i + 1; j < nodes.length; j++) {
-      const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-      const n1 = nodes[i];
-      const n2 = nodes[j];
-
-      line.setAttribute("x1", n1.x + "%");
-      line.setAttribute("y1", n1.y + "%");
-      line.setAttribute("x2", n2.x + "%");
-      line.setAttribute("y2", n2.y + "%");
-      line.setAttribute("class", "humedal-node-line");
-      line.setAttribute("stroke", "rgba(47,212,200,0.3)");
-      line.setAttribute("stroke-width", "1.5");
-      line.setAttribute("stroke-dasharray", "5,3");
-
-      const delay = (i + j) * 0.08;
-      line.style.opacity = "0";
-      line.style.animation = `fadeIn 0.6s ease-out forwards`;
-      line.style.animationDelay = delay + "s";
-
-      svg.appendChild(line);
-    }
-  }
-
-  overlay.appendChild(svg);
-
-  nodes.forEach((node, idx) => {
-    const nodeEl = document.createElement("div");
-    nodeEl.className = "humedal-node";
-    nodeEl.style.left = node.x + "%";
-    nodeEl.style.top = node.y + "%";
-    nodeEl.style.transform = "translate(-50%, -50%)";
-
-    const icon = document.createElement("i");
-    icon.className = `fa-solid ${node.icon} humedal-node-icon`;
-    nodeEl.appendChild(icon);
-
-    // Agregar texto dentro del nodo
-    const nodeText = document.createElement("div");
-    nodeText.className = "humedal-node-text";
-    nodeText.textContent = node.title;
-    nodeText.style.fontSize = "8px";
-    nodeText.style.marginTop = "2px";
-    nodeEl.appendChild(nodeText);
-
-    const label = document.createElement("div");
-    label.className = "humedal-node-label";
-    label.textContent = node.title;
-    nodeEl.appendChild(label);
-
-    nodeEl.addEventListener("click", (e) => {
-      e.stopPropagation();
-      showNodeInfo(node);
-    });
-
-    overlay.appendChild(nodeEl);
-  });
-
-  imgWrapper.appendChild(overlay);
-  setupHumedalZoom();
-}
-
-function setupHumedalZoom() {
-  const imgBody = document.querySelector(".humedal-image-body");
-  const imgWrapper = document.querySelector(".humedal-image-wrapper");
-  if (!imgBody || !imgWrapper) return;
-
-  let currentZoom = 1;
-  const minZoom = 0.8;
-  const maxZoom = 3;
-  const zoomStep = 0.2;
-
-  // Crear controles de zoom si no existen
-  if (!imgBody.querySelector(".humedal-zoom-controls")) {
-    const controls = document.createElement("div");
-    controls.className = "humedal-zoom-controls";
-    controls.innerHTML = `
-      <button class="humedal-zoom-btn" id="zoomInBtn" type="button" title="Acercar">+</button>
-      <button class="humedal-zoom-btn" id="zoomOutBtn" type="button" title="Alejar">−</button>
-    `;
-    imgBody.appendChild(controls);
-
-    document.getElementById("zoomInBtn").addEventListener("click", () => {
-      currentZoom = Math.min(currentZoom + zoomStep, maxZoom);
-      imgWrapper.style.transform = `scale(${currentZoom})`;
-    });
-
-    document.getElementById("zoomOutBtn").addEventListener("click", () => {
-      currentZoom = Math.max(currentZoom - zoomStep, minZoom);
-      imgWrapper.style.transform = `scale(${currentZoom})`;
-    });
-  }
-
-  // Zoom con scroll de rueda
-  imgBody.addEventListener("wheel", (e) => {
-    e.preventDefault();
-    const delta = e.deltaY > 0 ? -zoomStep : zoomStep;
-    currentZoom = Math.max(minZoom, Math.min(maxZoom, currentZoom + delta));
-    imgWrapper.style.transform = `scale(${currentZoom})`;
-  }, { passive: false });
-}
-
-function showNodeInfo(node) {
-  // Remover info anterior si existe
-  const existingInfo = document.querySelector(".humedal-node-info");
-  if (existingInfo) existingInfo.remove();
-
-  // Crear info card
-  const infoCard = document.createElement("div");
-  infoCard.className = "humedal-node-info";
-
-  const infoContent = {
-    clasifica: "Clasifica espacios según el POT en 17 áreas de humedal distribuidas en Bogotá",
-    regula: "Regula el uso y manejo de la Reserva Distrital mediante normativas específicas",
-    protege: "Protege la biodiversidad y resiliencia climática de los ecosistemas acuáticos",
-    delimita: "Delimita zonas que se conservan, disminuyen, adicionan o son nuevas",
-    orienta: "Orienta intervenciones de restauración y gestión ambiental del territorio"
-  };
-
-  infoCard.innerHTML = `
-    <div style="display: flex; align-items: flex-start; gap: 12px;">
-      <i class="fa-solid ${node.icon}" style="color: ${node.color}; margin-top: 2px; flex-shrink: 0;"></i>
-      <div>
-        <div style="font-weight: 600; color: var(--teal); margin-bottom: 4px;">${node.title}</div>
-        <div>${infoContent[node.id]}</div>
-      </div>
-    </div>
-  `;
-
-  document.body.appendChild(infoCard);
-
-  // Auto-remove después de 8 segundos
-  setTimeout(() => {
-    infoCard.style.animation = "slideInLeft 0.4s ease reverse";
-    setTimeout(() => infoCard.remove(), 400);
-  }, 8000);
-}
-
-function hideHumedalImage() {
-  const modal = document.getElementById("humedalImageModal");
-  if (modal) {
-    modal.classList.remove("active");
-  }
-  document.body.style.overflow = "auto";
-}
-
-function hideMainConclusionPopup() {
-  const modal = document.getElementById("mainConclusionModal");
-  if (modal) {
-    modal.style.display = "none";
-  }
-  document.body.style.overflow = "auto";
-  mainConclusionStep = 1;
-}
-
 /* Animación del botón "Ver hallazgos clave": efecto tipo "corte de luz" — los
    nodos y aristas que NO forman parte de la relación
    Transporte Público / Equipamientos / Vivienda / Servicios Empresariales /
@@ -2200,6 +2031,66 @@ function toggleNodeFlow(id) {
   if (already) clearSpotlight(); else setSpotlightNodes([id], true);
 }
 
+/* ==========================================================
+   HUBS vs PERIFÉRICOS — dos botones en la leyenda que responden
+   a la pregunta del módulo ("¿qué elementos son realmente
+   centrales y cuáles quedan periféricos?"). Reutilizan el mismo
+   spotlight de arriba: iluminan el subconjunto elegido y atenúan
+   el resto de la red, en vivo y sobre el grado real vigente
+   (si hay nodos apagados, la clasificación se recalcula con eso).
+   ========================================================== */
+function clearControlActive() {
+  document.querySelectorAll(".legend-footer-row .control-btn").forEach(b => b.classList.remove("active"));
+}
+function verHubs() {
+  const btn = document.getElementById("btnVerHubs");
+  const yaActivo = btn && btn.classList.contains("active");
+  clearControlActive();
+  if (yaActivo) { clearSpotlight(); return; }
+  setSpotlightNodes(HUB_IDS, true); // true = mostrar también sus vecinos directos
+  btn?.classList.add("active");
+}
+function verPerifericos() {
+  const btn = document.getElementById("btnVerPerifericos");
+  const yaActivo = btn && btn.classList.contains("active");
+  clearControlActive();
+  if (yaActivo) { clearSpotlight(); return; }
+  const deg = computeDegrees(nodosApagados);
+  // Periférico = grado real bajo (≤2 conexiones) sobre la red vigente,
+  // igual que describe el módulo: "pocas conexiones y baja integración".
+  const ids = ODS_NODES.filter(n => (deg[n.id] || 0) <= 2).map(n => n.id);
+  setSpotlightNodes(ids, false);
+  btn?.classList.add("active");
+}
+
+// "Bogotá como sistema complicado" — revela, en un solo panel (texto +
+// mapa de ejemplo juntos, sin un segundo click), la idea de que el POT
+// DESCOMPONE la ciudad en piezas manejables para poder tomar decisiones
+// sobre el territorio, y resalta en la red un ejemplo concreto: "Parques".
+function toggleBogotaComplejo() {
+  const btn = document.getElementById("btnBogotaComplejo");
+  const reveal = document.getElementById("bogotaComplejoReveal");
+  if (!btn || !reveal) return;
+  const yaActivo = btn.classList.contains("active");
+  if (yaActivo) {
+    btn.classList.remove("active");
+    reveal.hidden = true;
+    clearSpotlight();
+    return;
+  }
+  btn.classList.add("active");
+  reveal.hidden = false;
+  clearControlActive();
+  setSpotlightNodes(["parques"], true);
+}
+// Cerrar el panel al hacer click en el fondo oscuro (fuera de la tarjeta)
+document.addEventListener("DOMContentLoaded", () => {
+  const reveal = document.getElementById("bogotaComplejoReveal");
+  if (reveal) reveal.addEventListener("click", (ev) => {
+    if (ev.target === reveal) toggleBogotaComplejo();
+  });
+});
+
 function toggleInsight(key) {
   const card = document.querySelector(`.insight-card[data-insight="${key}"]`);
   if (!card) return;
@@ -2226,6 +2117,203 @@ function setupLegendToggle() {
   document.getElementById("nodeInfoClose")?.addEventListener("click", hideNodeInfo);
   document.getElementById("humedalesOverlayClose")?.addEventListener("click", hideHumedalesOverlay);
   document.getElementById("movilidadOverlayClose")?.addEventListener("click", () => { hideMovilidadOverlay(); clearSpotlight(); });
+  document.getElementById("mapa3OverlayClose")?.addEventListener("click", hideMapa3Overlay);
+  
+  // Selector de mapas (modal de exploración en detalle)
+  document.getElementById("modalExplorarClose")?.addEventListener("click", cerrarModalExplorarRelaciones);
+  document.getElementById("modalExplorarRelaciones")?.addEventListener("click", (e) => {
+    if (e.target.id === "modalExplorarRelaciones") cerrarModalExplorarRelaciones();
+  });
+  document.getElementById("btnOpcionMapaVias")?.addEventListener("click", abrirMapaVias);
+  document.getElementById("btnOpcionMapaHumedales")?.addEventListener("click", abrirMapaHumedales);
+  document.getElementById("btnOpcionMapa3")?.addEventListener("click", abrirMapa3);
+
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      cerrarModalExplorarRelaciones();
+    }
+  });
+}
+
+/* ==========================================================
+   MODAL POPUP: SELECTOR DE MAPAS (EXPLORAR RELACIONES EN DETALLE)
+   ========================================================== */
+function abrirModalExplorarRelaciones() {
+  const modal = document.getElementById("modalExplorarRelaciones");
+  if (!modal) return;
+  modal.style.display = "flex";
+  modal.setAttribute("aria-hidden", "false");
+}
+
+function cerrarModalExplorarRelaciones() {
+  const modal = document.getElementById("modalExplorarRelaciones");
+  if (!modal) return;
+  modal.style.display = "none";
+  modal.setAttribute("aria-hidden", "true");
+}
+
+function abrirMapaVias() {
+  cerrarModalExplorarRelaciones();
+  setTimeout(() => {
+    zoomIntoMovilidad();
+  }, 40);
+}
+
+function abrirMapaHumedales() {
+  cerrarModalExplorarRelaciones();
+  setTimeout(() => {
+    explorarRelacionesConAnimacion();
+  }, 40);
+}
+
+function abrirMapaManzanas() {
+  cerrarModalExplorarRelaciones();
+  setTimeout(() => {
+    zoomIntoManzanas();
+  }, 40);
+}
+
+function abrirMapaPatrimonio() {
+  cerrarModalExplorarRelaciones();
+  setTimeout(() => {
+    zoomIntoPatrimonio();
+  }, 40);
+}
+
+function showManzanasOverlay(opts) {
+  const animateIn = !!(opts && opts.animateIn);
+  hideNodeInfo();
+  hideEdgeInfo();
+  document.querySelectorAll(".ods-node").forEach(el => el.classList.remove("node-selected"));
+  document.querySelector('.ods-node[data-id="manzanas_del_cuidado"]')?.classList.add("node-selected");
+
+  const legend = document.getElementById("networkLegend");
+  if (legend) legend.style.display = "none";
+  const acts = document.getElementById("networkSidebarActions");
+  if (acts) acts.style.display = "none";
+
+  const body = document.getElementById("manzanasOverlayBody");
+  const hotspotsHTML = Object.entries(MANZANAS_CASOS).map(([key, c]) => \
+    <button type="button" class="humedal-hotspot" data-key="\\"
+      style="left:\\%; top:\\%; width:\\%; height:\\%; --hotspot-color:\\;"
+      title="\\" data-lines="\\">
+      <span class="humedal-hotspot-label" style="font-size: 5px;">\\</span>
+    </button>
+  \).join("");
+
+  body.innerHTML = \
+    <div class="humedales-overlay-image-wrap" id="manzanasImageWrap">
+      <div class="humedales-overlay-image-frame" id="manzanasImageFrame">
+        <img src="assets/mapa-manzanas-cuidado.jpg" alt="Mapa de Manzanas del Cuidado" class="humedales-overlay-image" />
+        \\
+      </div>
+      <div class="humedal-popup" id="manzanasPopup" style="display:none;"></div>
+    </div>
+    <div class="humedales-overlay-sidebar" id="manzanasOverlaySidebar">
+      <div class="humedales-sidebar-intro">
+        <h3 style="color: #f76fb0;">Sistema Distrital del Cuidado</h3>
+        <p>El POT consolida las Manzanas del Cuidado como una apuesta por territorializar la infraestructura social. Aqu� se articulan servicios de salud, educaci�n y recreaci�n para relevar las cargas de cuidado no remunerado.</p>
+      </div>
+      <div id="manzanasCasosList"></div>
+    </div>
+  \;
+
+  const overlay = document.getElementById("manzanasOverlay");
+  if (overlay) {
+    overlay.style.display = "flex";
+    if (animateIn) {
+      overlay.classList.add("fade-in");
+      setTimeout(() => overlay.classList.remove("fade-in"), 600);
+    }
+  }
+
+  requestAnimationFrame(() => {
+    // Reutilizamos fitImageFrame pero ajustado si hace falta
+    const wrap = document.getElementById("manzanasImageWrap");
+    const frame = document.getElementById("manzanasImageFrame");
+    if (wrap && frame) {
+      const wrapW = wrap.clientWidth, wrapH = wrap.clientHeight;
+      if (wrapW && wrapH) {
+        const ratio = 16 / 9;
+        let w = wrapW, h = w / ratio;
+        if (h > wrapH) { h = wrapH; w = h * ratio; }
+        frame.style.width = w + "px";
+        frame.style.height = h + "px";
+      }
+    }
+  });
+
+  // Hotspot interactions
+  body.querySelectorAll(".humedal-hotspot").forEach(btn => {
+    btn.addEventListener("click", () => {
+      body.querySelectorAll(".humedal-hotspot").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      const k = btn.dataset.key;
+      const data = MANZANAS_CASOS[k];
+      if (data) {
+        const popup = document.getElementById("manzanasPopup");
+        const frame = document.getElementById("manzanasImageFrame");
+        if (popup && frame) {
+          popup.innerHTML = \<h4 style="color:#f76fb0; margin:0 0 5px 0;">\\</h4><p style="margin:0; font-size:12px; color:#ccc;">Punto de articulaci�n de servicios de proximidad para el relevo del cuidado.</p>\;
+          popup.style.display = "block";
+          
+          const wrapRect = document.getElementById("manzanasImageWrap").getBoundingClientRect();
+          const frameRect = frame.getBoundingClientRect();
+          const pX = frameRect.left - wrapRect.left + (frameRect.width * (data.x / 100));
+          const pY = frameRect.top - wrapRect.top + (frameRect.height * (data.y / 100));
+          
+          popup.style.left = (pX + 20) + "px";
+          popup.style.top = (pY + 20) + "px";
+        }
+      }
+    });
+  });
+});
+    }
+  }
+}
+
+function hideManzanasOverlay() {
+  const legendM = document.getElementById("networkLegend");
+  if (legendM) legendM.style.display = "";
+  const actsM = document.getElementById("networkSidebarActions");
+  if (actsM) actsM.style.display = "";
+  const overlay = document.getElementById("manzanasOverlay");
+  if (overlay) overlay.style.display = "none";
+  document.querySelector(".network-canvas").style.display = "";
+}
+
+function showPatrimonioOverlay(opts) {
+  const legendM = document.getElementById("networkLegend");
+  if (legendM) legendM.style.display = "none";
+  const actsM = document.getElementById("networkSidebarActions");
+  if (actsM) actsM.style.display = "none";
+  hideNodeInfo();
+  hideEdgeInfo();
+  document.querySelector(".network-canvas").style.display = "none";
+  document.getElementById("humedalesOverlay").style.display = "none";
+  document.getElementById("movilidadOverlay").style.display = "none";
+  const man = document.getElementById("manzanasOverlay");
+  if (man) man.style.display = "none";
+  
+  const overlay = document.getElementById("patrimonioOverlay");
+  if (overlay) {
+    overlay.style.display = "flex";
+    if (opts?.animateIn) {
+      overlay.classList.add("overlay-entering");
+      overlay.addEventListener("animationend", () => overlay.classList.remove("overlay-entering"), { once: true });
+    }
+  }
+}
+
+function hidePatrimonioOverlay() {
+  const legendM = document.getElementById("networkLegend");
+  if (legendM) legendM.style.display = "";
+  const actsM = document.getElementById("networkSidebarActions");
+  if (actsM) actsM.style.display = "";
+  const overlay = document.getElementById("patrimonioOverlay");
+  if (overlay) overlay.style.display = "none";
+  document.querySelector(".network-canvas").style.display = "";
 }
 
 /* -------- métricas -------- */
@@ -2291,7 +2379,8 @@ function renderMatrix() {
 }
 
 function filterNetwork(mode) {
-  document.querySelectorAll(".legend-footer-row .control-btn").forEach(btn => btn.classList.remove("active"));
+  clearControlActive();
+  clearSpotlight();
   if (window.event && window.event.currentTarget) window.event.currentTarget.classList.add("active");
   typeOff.clear(); catOff.clear();
   document.querySelectorAll(".legend-item input").forEach(inp => { inp.checked = true; inp.closest(".legend-item").classList.remove("off"); });
@@ -2318,70 +2407,6 @@ function filterNetwork(mode) {
   refreshEdgeVisibility();
 }
 
-// Función para mostrar el popup de pregunta inicial
-function showInitialPopup() {
-  console.log("🚀 Iniciando popup...");
-
-  // Crear el overlay/backdrop
-  const backdrop = document.createElement("div");
-  backdrop.id = "popup-backdrop-modal";
-  backdrop.style.cssText = "position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(3px); z-index: 9999; display: flex; align-items: center; justify-content: center;";
-
-  // Crear el modal
-  const modal = document.createElement("div");
-  modal.style.cssText = "background: linear-gradient(135deg, #0f1522 0%, #121828 100%); border: 1.5px solid rgba(47, 212, 200, 0.4); border-radius: 16px; padding: 40px 36px; width: 90%; max-width: 520px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(47, 212, 200, 0.15); font-family: 'Inter', sans-serif; color: #e7eaf2; text-align: center; animation: slideUpPopup 0.4s ease-out;";
-
-  // Agregar estilos de animación
-  if (!document.getElementById("popup-modal-styles")) {
-    const style = document.createElement("style");
-    style.id = "popup-modal-styles";
-    style.innerHTML = `
-      @keyframes slideUpPopup {
-        from { opacity: 0; transform: translateY(30px); }
-        to { opacity: 1; transform: translateY(0); }
-      }
-      #popup-backdrop-modal { animation: fadeInPopup 0.3s ease-out; }
-      @keyframes fadeInPopup {
-        from { opacity: 0; }
-        to { opacity: 1; }
-      }
-    `;
-    document.head.appendChild(style);
-  }
-
-  // Crear contenido del modal
-  modal.innerHTML = `
-    <div style="margin-bottom: 20px; font-size: 48px; color: #2fd4c8;">❓</div>
-    <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 26px; font-weight: 700; margin: 0 0 16px 0; line-height: 1.3; color: #e7eaf2;">
-      ¿Es suficiente el POT como único modelo de Bogotá?
-    </h2>
-    <p style="font-size: 14px; color: #8891a5; line-height: 1.7; margin: 12px 0 28px 0;">
-      Explorar esta pregunta es el propósito de este análisis de ingeniería inversa. Descubre cómo el POT estructura la ciudad y qué le falta para comprenderla completamente.
-    </p>
-    <button id="popup-btn-cerrar" style="background: linear-gradient(135deg, #1f7a74, #175f5a); color: #eafffb; border: none; padding: 14px 32px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; width: 100%; max-width: 300px; box-shadow: 0 10px 20px rgba(47, 212, 200, 0.15);">
-      Comenzar a explorar
-    </button>
-  `;
-
-  // Función para cerrar
-  function closePopup() {
-    backdrop.style.opacity = "0";
-    modal.style.opacity = "0";
-    setTimeout(() => backdrop.remove(), 200);
-  }
-
-  // Agregar eventos
-  modal.querySelector("#popup-btn-cerrar").addEventListener("click", closePopup);
-  backdrop.addEventListener("click", (e) => { if (e.target === backdrop) closePopup(); });
-
-  // Agregar modal al backdrop
-  backdrop.appendChild(modal);
-
-  // Agregar al documento
-  document.body.appendChild(backdrop);
-  console.log("✅ Popup agregado al DOM");
-}
-
 document.addEventListener("DOMContentLoaded", () => {
   renderNetwork();
   setupLegendToggle();
@@ -2389,81 +2414,18 @@ document.addEventListener("DOMContentLoaded", () => {
   renderMatrix();
   document.getElementById("networkViz")?.addEventListener("click", () => { hideEdgeInfo(); hideNodeInfo(); });
   document.getElementById("btnVerHallazgos")?.addEventListener("click", verHallazgosConAnimacion);
-  document.getElementById("btnExplorarRelaciones")?.addEventListener("click", explorarRelacionesConAnimacion);
+  document.getElementById("btnExplorarRelaciones")?.addEventListener("click", abrirModalExplorarRelaciones);
 
-  // Crear y configurar el modal de conclusión principal
-  if (!document.getElementById("mainConclusionModal")) {
-    const mainElement = document.querySelector("main");
-    if (mainElement) {
-      const modalHTML = `
-        <div id="mainConclusionModal" class="main-conclusion-modal" style="display:none;">
-          <div class="main-conclusion-modal-overlay"></div>
-          <div class="main-conclusion-modal-container">
-            <div class="main-conclusion-modal-header">
-              <h2>La función del POT</h2>
-              <button class="main-conclusion-modal-close" id="mainConclusionCloseBtn" type="button" aria-label="Cerrar">&times;</button>
-            </div>
-            <div class="main-conclusion-modal-body">
-              ${MAIN_CONCLUSION_STEP1}
-            </div>
-            <div class="main-conclusion-modal-footer">
-              <button class="main-conclusion-modal-footer-btn" id="mainConclusionFooterBtn" type="button">Cerrar</button>
-            </div>
-          </div>
-        </div>
-
-        <div id="humedalImageModal" class="humedal-image-modal">
-          <div class="humedal-image-overlay"></div>
-          <div class="humedal-image-container">
-            <div class="humedal-image-header">
-              <h3>Reserva Distrital de Humedal · 17 Áreas</h3>
-              <button class="humedal-image-close" id="humedalImageClose" type="button" aria-label="Cerrar">&times;</button>
-            </div>
-            <div class="humedal-image-body">
-              <div class="humedal-image-wrapper">
-                <img id="humedalImage" src="" alt="Mapa de Reserva de Humedales">
-              </div>
-            </div>
-          </div>
-        </div>
-      `;
-      mainElement.insertAdjacentHTML("beforeend", modalHTML);
-
-      // Agregar event listeners para modal de conclusión
-      document.getElementById("topbarConclusionBtn")?.addEventListener("click", showMainConclusionPopup);
-      document.getElementById("mainConclusionCloseBtn")?.addEventListener("click", hideMainConclusionPopup);
-      document.getElementById("mainConclusionFooterBtn")?.addEventListener("click", hideMainConclusionPopup);
-      document.getElementById("mainConclusionModal")?.addEventListener("click", (e) => {
-        if (e.target.id === "mainConclusionModal") hideMainConclusionPopup();
-      });
-
-      // Agregar event listeners para modal de imagen
-      document.getElementById("humedalImageClose")?.addEventListener("click", hideHumedalImage);
-      document.getElementById("humedalImageModal")?.addEventListener("click", (e) => {
-        if (e.target.id === "humedalImageModal") hideHumedalImage();
-      });
-    }
-  }
-
-  // Agregar event listeners para modal de selección de mapas
-  document.getElementById("modalExplorarClose")?.addEventListener("click", cerrarModalExplorarRelaciones);
-  document.getElementById("modalExplorarRelaciones")?.addEventListener("click", (e) => {
-    if (e.target.id === "modalExplorarRelaciones") cerrarModalExplorarRelaciones();
-  });
+  // Opciones del modal de mapas
   document.getElementById("btnOpcionMapaVias")?.addEventListener("click", abrirMapaVias);
   document.getElementById("btnOpcionMapaHumedales")?.addEventListener("click", abrirMapaHumedales);
+  document.getElementById("btnOpcionMapaManzanas")?.addEventListener("click", abrirMapaManzanas);
+  document.getElementById("btnOpcionMapaPatrimonio")?.addEventListener("click", abrirMapaPatrimonio);
+  document.getElementById("modalExplorarClose")?.addEventListener("click", cerrarModalExplorarRelaciones);
 
-  // Cerrar modal con tecla Escape
-  window.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") {
-      cerrarModalExplorarRelaciones();
-    }
-  });
-
-  // Mostrar popup inicial después de 500ms (cuando la página esté completamente lista)
-  // setTimeout(() => {
-  //   showInitialPopup();
-  // }, 500);
+  // Cierre de overlays
+  document.getElementById("manzanasOverlayClose")?.addEventListener("click", hideManzanasOverlay);
+  document.getElementById("patrimonioOverlayClose")?.addEventListener("click", hidePatrimonioOverlay);
 });
 
 
@@ -2543,3 +2505,39 @@ function wireMovilidadEdicionLineas(body) {
     pintarHandles();
   });
 }
+
+const MANZANAS_CASOS = {
+  m1: { x: 17.14, y: 33.75, diam: 3.5, label: "Manzana 1", nombre: "Manzana del Cuidado 1", color: "#f76fb0" },
+  m2: { x: 18.83, y: 20.35, diam: 3.5, label: "Manzana 2", nombre: "Manzana del Cuidado 2", color: "#f76fb0" },
+  m3: { x: 22.69, y: 45.91, diam: 3.5, label: "Manzana 3", nombre: "Manzana del Cuidado 3", color: "#f76fb0" },
+  m4: { x: 24.41, y: 56.82, diam: 3.5, label: "Manzana 4", nombre: "Manzana del Cuidado 4", color: "#f76fb0" },
+  m5: { x: 25.02, y: 35.98, diam: 3.5, label: "Manzana 5", nombre: "Manzana del Cuidado 5", color: "#f76fb0" },
+  m6: { x: 26.45, y: 26.65, diam: 3.5, label: "Manzana 6", nombre: "Manzana del Cuidado 6", color: "#f76fb0" },
+  m7: { x: 32.18, y: 42.86, diam: 3.5, label: "Manzana 7", nombre: "Manzana del Cuidado 7", color: "#f76fb0" },
+  m8: { x: 35.38, y: 52.46, diam: 3.5, label: "Manzana 8", nombre: "Manzana del Cuidado 8", color: "#f76fb0" },
+  m9: { x: 36.11, y: 21.1, diam: 3.5, label: "Manzana 9", nombre: "Manzana del Cuidado 9", color: "#f76fb0" },
+  m10: { x: 39.67, y: 40.0, diam: 3.5, label: "Manzana 10", nombre: "Manzana del Cuidado 10", color: "#f76fb0" },
+  m11: { x: 39.8, y: 30.72, diam: 3.5, label: "Manzana 11", nombre: "Manzana del Cuidado 11", color: "#f76fb0" },
+  m12: { x: 40.18, y: 56.06, diam: 3.5, label: "Manzana 12", nombre: "Manzana del Cuidado 12", color: "#f76fb0" },
+  m13: { x: 43.43, y: 62.67, diam: 3.5, label: "Manzana 13", nombre: "Manzana del Cuidado 13", color: "#f76fb0" },
+  m14: { x: 47.34, y: 41.71, diam: 3.5, label: "Manzana 14", nombre: "Manzana del Cuidado 14", color: "#f76fb0" },
+  m15: { x: 48.72, y: 72.18, diam: 3.5, label: "Manzana 15", nombre: "Manzana del Cuidado 15", color: "#f76fb0" },
+  m16: { x: 50.17, y: 82.23, diam: 3.5, label: "Manzana 16", nombre: "Manzana del Cuidado 16", color: "#f76fb0" },
+  m17: { x: 52.65, y: 65.1, diam: 3.5, label: "Manzana 17", nombre: "Manzana del Cuidado 17", color: "#f76fb0" },
+  m18: { x: 53.31, y: 34.18, diam: 3.5, label: "Manzana 18", nombre: "Manzana del Cuidado 18", color: "#f76fb0" },
+  m19: { x: 54.77, y: 89.82, diam: 3.5, label: "Manzana 19", nombre: "Manzana del Cuidado 19", color: "#f76fb0" },
+  m20: { x: 54.92, y: 45.74, diam: 3.5, label: "Manzana 20", nombre: "Manzana del Cuidado 20", color: "#f76fb0" },
+  m21: { x: 55.82, y: 63.24, diam: 3.5, label: "Manzana 21", nombre: "Manzana del Cuidado 21", color: "#f76fb0" },
+  m22: { x: 59.36, y: 75.11, diam: 3.5, label: "Manzana 22", nombre: "Manzana del Cuidado 22", color: "#f76fb0" },
+  m23: { x: 59.87, y: 38.36, diam: 3.5, label: "Manzana 23", nombre: "Manzana del Cuidado 23", color: "#f76fb0" },
+  m24: { x: 60.84, y: 53.02, diam: 3.5, label: "Manzana 24", nombre: "Manzana del Cuidado 24", color: "#f76fb0" },
+  m25: { x: 64.94, y: 66.84, diam: 3.5, label: "Manzana 25", nombre: "Manzana del Cuidado 25", color: "#f76fb0" },
+  m26: { x: 65.45, y: 43.92, diam: 3.5, label: "Manzana 26", nombre: "Manzana del Cuidado 26", color: "#f76fb0" },
+  m27: { x: 67.08, y: 82.42, diam: 3.5, label: "Manzana 27", nombre: "Manzana del Cuidado 27", color: "#f76fb0" },
+  m28: { x: 67.36, y: 56.04, diam: 3.5, label: "Manzana 28", nombre: "Manzana del Cuidado 28", color: "#f76fb0" },
+  m29: { x: 73.5, y: 74.0, diam: 3.5, label: "Manzana 29", nombre: "Manzana del Cuidado 29", color: "#f76fb0" },
+  m30: { x: 73.99, y: 63.01, diam: 3.5, label: "Manzana 30", nombre: "Manzana del Cuidado 30", color: "#f76fb0" },
+  m31: { x: 74.21, y: 43.67, diam: 3.5, label: "Manzana 31", nombre: "Manzana del Cuidado 31", color: "#f76fb0" },
+  m32: { x: 84.03, y: 58.52, diam: 3.5, label: "Manzana 32", nombre: "Manzana del Cuidado 32", color: "#f76fb0" }
+};
+
