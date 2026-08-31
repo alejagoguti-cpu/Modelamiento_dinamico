@@ -78,6 +78,7 @@
               <defs>
                 <marker id="vnArrowStart" markerWidth="8" markerHeight="8" refX="1" refY="4" orient="auto-start-reverse"><path d="M8,0 L0,4 L8,8 Z" fill="#76fff0"/></marker>
                 <marker id="vnArrowEnd" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#76fff0"/></marker>
+                <marker id="vnArrowFeedback" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#ee9a4b"/></marker>
               </defs>
               <g class="visible-network-edges">
                 <path id="vn-edge-agentes-procesos" class="visible-network-edge-hit" d="M 200 20 L 340 82"/>
@@ -88,6 +89,28 @@
                 <path class="visible-network-edge-visual" d="M 195 22 L 58 262" marker-start="url(#vnArrowStart)" marker-end="url(#vnArrowEnd)"/>
                 <path id="vn-edge-procesos-flujos" class="visible-network-edge-hit" d="M 352 95 L 352 257"/>
                 <path class="visible-network-edge-visual" d="M 352 95 L 352 257" marker-start="url(#vnArrowStart)" marker-end="url(#vnArrowEnd)"/>
+                <path id="vn-edge-procesos-sistemas" class="visible-network-edge-hit" d="M 340 90 L 60 268"/>
+                <path class="visible-network-edge-visual" d="M 340 90 L 60 268" marker-start="url(#vnArrowStart)" marker-end="url(#vnArrowEnd)"/>
+                <path id="vn-edge-flujos-sistemas" class="visible-network-edge-hit" d="M 340 262 L 62 262"/>
+                <path class="visible-network-edge-visual" d="M 340 262 L 62 262" marker-start="url(#vnArrowStart)" marker-end="url(#vnArrowEnd)"/>
+                <!-- Interacciones conecta con TODOS — el tejido que une los demás -->
+                <path id="vn-edge-interacciones-agentes" class="visible-network-edge-hit" d="M 205 375 L 200 30"/>
+                <path class="visible-network-edge-visual visible-network-edge-tejido" d="M 205 375 L 200 30" marker-start="url(#vnArrowStart)" marker-end="url(#vnArrowEnd)"/>
+                <path id="vn-edge-interacciones-procesos" class="visible-network-edge-hit" d="M 215 372 L 340 90"/>
+                <path class="visible-network-edge-visual visible-network-edge-tejido" d="M 215 372 L 340 90" marker-start="url(#vnArrowStart)" marker-end="url(#vnArrowEnd)"/>
+                <path id="vn-edge-interacciones-flujos" class="visible-network-edge-hit" d="M 225 368 L 345 270"/>
+                <path class="visible-network-edge-visual visible-network-edge-tejido" d="M 225 368 L 345 270" marker-start="url(#vnArrowStart)" marker-end="url(#vnArrowEnd)"/>
+                <path id="vn-edge-interacciones-sistemas" class="visible-network-edge-hit" d="M 178 372 L 60 270"/>
+                <path class="visible-network-edge-visual visible-network-edge-tejido" d="M 178 372 L 60 270" marker-start="url(#vnArrowStart)" marker-end="url(#vnArrowEnd)"/>
+                <path id="vn-edge-interacciones-emergencia" class="visible-network-edge-hit" d="M 190 375 L 58 90"/>
+                <path class="visible-network-edge-visual visible-network-edge-tejido" d="M 190 375 L 58 90" marker-start="url(#vnArrowStart)" marker-end="url(#vnArrowEnd)"/>
+                <!-- Retroalimentación de Emergencia: más suave, un solo sentido -->
+                <path id="vn-edge-emergencia-agentes" class="visible-network-edge-hit" d="M 60 70 L 190 25"/>
+                <path class="visible-network-edge-visual visible-network-edge-feedback" d="M 60 70 L 190 25" marker-end="url(#vnArrowFeedback)"/>
+                <path id="vn-edge-emergencia-procesos" class="visible-network-edge-hit" d="M 65 78 L 335 80"/>
+                <path class="visible-network-edge-visual visible-network-edge-feedback" d="M 65 78 L 335 80" marker-end="url(#vnArrowFeedback)"/>
+                <path id="vn-edge-emergencia-sistemas" class="visible-network-edge-hit" d="M 55 95 L 55 255"/>
+                <path class="visible-network-edge-visual visible-network-edge-feedback" d="M 55 95 L 55 255" marker-end="url(#vnArrowFeedback)"/>
               </g>
             </svg>
             <div class="loop-ring-card loop-pos-1 rs-agentes">

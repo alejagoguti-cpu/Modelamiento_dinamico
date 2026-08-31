@@ -2715,6 +2715,51 @@
       observer?.observe(section);
       window.addEventListener("scroll", maybePlay, { passive: true });
     };
+    // ---------- Red de "¿Qué queremos hacer visible?" ----------
+    // Cada línea es una relación bidireccional real entre dos elementos
+    // (no un paso de una secuencia). Al hacer click en una línea, se
+    // explica esa relación específica. Las líneas de "tejido" (desde
+    // Interacciones) conectan con todos los demás; las de "retroalimentación"
+    // (desde Emergencia) son más suaves porque van en un solo sentido.
+    const VISIBLE_NETWORK_EDGES = {
+      "vn-edge-agentes-procesos": "Los agentes realizan acciones que producen procesos, y los procesos condicionan las decisiones de los agentes.",
+      "vn-edge-agentes-flujos": "Los agentes generan y utilizan flujos.",
+      "vn-edge-agentes-sistemas": "Los agentes participan en distintos sistemas y también los transforman.",
+      "vn-edge-procesos-flujos": "Los procesos modifican qué circula y cómo circula.",
+      "vn-edge-procesos-sistemas": "Un proceso puede afectar simultáneamente varios sistemas.",
+      "vn-edge-flujos-sistemas": "Los flujos son precisamente los que conectan sistemas diferentes.",
+      "vn-edge-interacciones-agentes": "Las interacciones funcionan como el tejido que conecta a todos los elementos entre sí — no son un paso aparte, están presentes en cada relación.",
+      "vn-edge-interacciones-procesos": "Las interacciones funcionan como el tejido que conecta a todos los elementos entre sí — no son un paso aparte, están presentes en cada relación.",
+      "vn-edge-interacciones-flujos": "Las interacciones funcionan como el tejido que conecta a todos los elementos entre sí — no son un paso aparte, están presentes en cada relación.",
+      "vn-edge-interacciones-sistemas": "Las interacciones funcionan como el tejido que conecta a todos los elementos entre sí — no son un paso aparte, están presentes en cada relación.",
+      "vn-edge-interacciones-emergencia": "Los patrones emergentes aparecen a partir de esas interacciones.",
+      "vn-edge-emergencia-agentes": "Lo que emerge vuelve a modificar el comportamiento de los agentes (retroalimentación).",
+      "vn-edge-emergencia-procesos": "Lo que emerge vuelve a modificar cómo ocurren los procesos (retroalimentación).",
+      "vn-edge-emergencia-sistemas": "Lo que emerge vuelve a modificar el comportamiento del sistema (retroalimentación).",
+    };
+    (() => {
+      const wrap = document.getElementById("visibleNetworkWrap");
+      const tooltip = document.getElementById("visibleNetworkTooltip");
+      if (!wrap || !tooltip) return;
+      Object.keys(VISIBLE_NETWORK_EDGES).forEach((id) => {
+        const hit = document.getElementById(id);
+        if (!hit) return;
+        hit.style.cursor = "pointer";
+        hit.addEventListener("click", (event) => {
+          event.stopPropagation();
+          wrap.querySelectorAll(".visible-network-edge-hit.active").forEach((el) => el.classList.remove("active"));
+          hit.classList.add("active");
+          tooltip.textContent = VISIBLE_NETWORK_EDGES[id];
+          tooltip.hidden = false;
+          const wrapRect = wrap.getBoundingClientRect();
+          const x = event.clientX - wrapRect.left, y = event.clientY - wrapRect.top;
+          tooltip.style.left = Math.min(Math.max(x, 90), wrapRect.width - 90) + "px";
+          tooltip.style.top = Math.min(Math.max(y - 10, 10), wrapRect.height - 60) + "px";
+        });
+      });
+      document.addEventListener("click", () => { tooltip.hidden = true; });
+    })();
+
     drawSubsystems({ hidden: true });
     initRealCartography();
     // Lo primero que se ve al entrar al módulo son los Subsistemas del
