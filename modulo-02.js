@@ -2405,8 +2405,8 @@ function showHumedalMap() {
         <img src="RESERVA_HUMEDAL.webp" alt="Reserva Distrital de Humedal" class="conclusion-map-image">
         <div class="conclusion-nodes-overlay">
           <div class="conclusion-node" style="top: 12%; left: 18%;" title="Orienta"><span>Orienta</span></div>
-          <div class="conclusion-node" style="top: 15%; left: 24%;" title="Regula"><span>Regula</span></div>
-          <div class="conclusion-node" style="top: 30%; left: 12%;" title="Clasifica"><span>Clasifica</span></div>
+          <div class="conclusion-node" style="top: 12%; left: 24%;" title="Regula"><span>Regula</span></div>
+          <div class="conclusion-node" style="top: 22%; left: 12%;" title="Clasifica"><span>Clasifica</span></div>
           <div class="conclusion-node" style="top: 20%; right: 15%;" title="Protege"><span>Protege</span></div>
           <div class="conclusion-node" style="top: 45%; left: 35%;" title="Delimita"><span>Delimita</span></div>
         </div>
