@@ -99,11 +99,40 @@ body {
 .icon-btn { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--panel); border: 1px solid var(--border); color: var(--text-dim); font-size: 13px; position: relative; }
 .icon-btn .dot { position: absolute; top: 6px; right: 7px; width: 6px; height: 6px; border-radius: 50%; background: var(--pink); }
 .topbar-chevron { font-size: 11px; color: var(--text-faint); margin-left: 2px; }
-.topbar-conclusion-btn { display: inline-flex !important; align-items: center; gap: 6px; background: linear-gradient(135deg, rgba(47,212,200,0.2), rgba(47,212,200,0.08)); border: 1.5px solid rgba(47,212,200,0.4); border-radius: 6px; padding: 8px 14px; color: var(--teal); font-size: 12px; font-weight: 600; letter-spacing: 0.4px; cursor: pointer; transition: all 0.2s ease; text-decoration: none; white-space: nowrap; }
-.topbar-conclusion-btn i { font-size: 13px; margin-right: 4px; }
-.topbar-conclusion-btn span { display: inline; }
-.topbar-conclusion-btn:hover { background: linear-gradient(135deg, rgba(47,212,200,0.3), rgba(47,212,200,0.15)); border-color: rgba(47,212,200,0.6); box-shadow: 0 0 14px rgba(47,212,200,0.35); }
-.topbar-conclusion-btn:active { transform: scale(0.97); }
+.topbar-conclusion-btn {
+  display: inline-flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  align-items: center !important;
+  gap: 6px !important;
+  background: #ff6b35 !important;
+  border: 2px solid #ff6b35 !important;
+  border-radius: 6px !important;
+  padding: 8px 14px !important;
+  color: white !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.4px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  text-decoration: none !important;
+  white-space: nowrap !important;
+}
+.topbar-conclusion-btn i {
+  font-size: 13px !important;
+  margin-right: 4px !important;
+}
+.topbar-conclusion-btn span {
+  display: inline !important;
+}
+.topbar-conclusion-btn:hover {
+  background: #ff8555 !important;
+  border-color: #ff8555 !important;
+  box-shadow: 0 0 14px rgba(255,107,53,0.5) !important;
+}
+.topbar-conclusion-btn:active {
+  transform: scale(0.97) !important;
+}
 
 /* MODAL DE CONCLUSIÓN PRINCIPAL */
 .main-conclusion-modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: center; z-index: 9999; }
