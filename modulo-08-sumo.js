@@ -161,8 +161,12 @@
       // zoom actual del mapa — así el carro siempre se ve a su tamaño de
       // verdad, ni gigante ni minúsculo, sin importar qué tanto zoom tenga.
       const metersPerPixel = (156543.03392 * Math.cos((map.getCenter().lat * Math.PI) / 180)) / Math.pow(2, map.getZoom());
-      const carLength = Math.max(2, 4.3 / metersPerPixel);
-      const carWidth = Math.max(1, 1.8 / metersPerPixel);
+      // A la escala de zoom con la que se suele ver el mapa, 4.3m reales
+      // dan MENOS de 1 píxel (invisibles) — por eso se veían "chiquitos".
+      // Se deja un tamaño mínimo visible, que sigue creciendo si haces
+      // zoom más cerca (ahí sí se acerca a su proporción real).
+      const carLength = Math.max(9, 4.3 / metersPerPixel);
+      const carWidth = Math.max(4, 1.8 / metersPerPixel);
       const r = carWidth * 0.35;
       vehicles.forEach((v) => {
         const p = map.project([v.lon, v.lat]);
