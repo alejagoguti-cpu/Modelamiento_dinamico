@@ -157,7 +157,7 @@ body {
 .main-conclusion-explore-btn { background: linear-gradient(135deg, rgba(47,212,200,0.2), rgba(47,212,200,0.08)); border: 1.5px solid rgba(47,212,200,0.4); border-radius: 6px; padding: 12px 24px; color: var(--teal); font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; margin-top: 24px; width: 100%; }
 .main-conclusion-explore-btn:hover { background: linear-gradient(135deg, rgba(47,212,200,0.3), rgba(47,212,200,0.15)); border-color: rgba(47,212,200,0.6); }
 
-.main-conclusion-functions-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+.main-conclusion-functions-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
 .conclusion-function-card { background: linear-gradient(135deg, rgba(47,212,200,0.08), rgba(47,212,200,0.02)); border: 1px solid rgba(47,212,200,0.25); border-radius: 8px; padding: 20px 12px; display: flex; flex-direction: column; align-items: center; gap: 12px; animation: fadeIn 0.4s ease var(--d, 0s); cursor: pointer; transition: all 0.2s ease; }
 .conclusion-function-card:hover { background: linear-gradient(135deg, rgba(47,212,200,0.12), rgba(47,212,200,0.05)); border-color: rgba(47,212,200,0.4); }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
