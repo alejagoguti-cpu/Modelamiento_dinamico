@@ -5910,4 +5910,89 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
   margin: 0 0 18px; padding: 14px 18px; border-left: 3px solid #76fff0;
   background: rgba(118,255,240,.06); border-radius: 0 8px 8px 0;
 }
-.logic-chain-quote p { margin: 0; color: rgba(242,236,227,.9); font-size: 13px; font-style: italic; line-height: 1.55; }
+  .logic-chain-quote p { margin: 0; color: rgba(242,236,227,.9); font-size: 13px; font-style: italic; line-height: 1.55; }
+
+/* ================= CIERRE DEL SIMULADOR ================= */
+.simulation-conclusion-section {
+  width: min(1180px, calc(100% - 48px));
+  margin: 32px auto 76px;
+  padding: 30px clamp(22px, 4vw, 54px) 38px;
+  border: 1px solid rgba(91, 190, 181, .22);
+  border-radius: 22px;
+  background: linear-gradient(135deg, rgba(12, 27, 27, .96), rgba(20, 17, 23, .94));
+  box-shadow: 0 22px 60px rgba(0, 0, 0, .22);
+}
+.simulation-conclusion-kicker {
+  color: #65d6ca;
+  font: 700 10px/1.2 'Space Grotesk', sans-serif;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.simulation-conclusion-section h2 {
+  max-width: 880px;
+  margin: 0 0 18px;
+  color: #f1f5f3;
+  font: 700 clamp(23px, 3.2vw, 38px)/1.05 'Space Grotesk', sans-serif;
+  letter-spacing: -.035em;
+}
+.simulation-conclusion-section > p {
+  max-width: 980px;
+  margin: 0 0 16px;
+  color: #b9c8c5;
+  font-size: 14px;
+  line-height: 1.72;
+}
+.simulation-conclusion-section > .simulation-conclusion-lead {
+  color: #e2ece9;
+  font-size: 15px;
+}
+.simulation-pillars {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin: 24px 0 22px;
+}
+.simulation-pillars article {
+  display: flex;
+  gap: 12px;
+  min-width: 0;
+  padding: 16px 14px;
+  border: 1px solid rgba(255, 255, 255, .10);
+  border-radius: 15px;
+  background: rgba(255, 255, 255, .035);
+}
+.simulation-pillar-icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 34px;
+  width: 34px;
+  height: 34px;
+  border-radius: 11px;
+  color: #0b1717;
+  background: #65d6ca;
+}
+.simulation-pillars article:nth-child(2) .simulation-pillar-icon { background: #e8bb71; }
+.simulation-pillars article:nth-child(3) .simulation-pillar-icon { background: #88d39a; }
+.simulation-pillars h3 {
+  margin: 0 0 4px;
+  color: #f2f6f4;
+  font: 700 14px/1.2 'Space Grotesk', sans-serif;
+}
+.simulation-pillars p {
+  margin: 0;
+  color: #aabdb9;
+  font-size: 12px;
+  line-height: 1.45;
+}
+.simulation-conclusion-section > .simulation-conclusion-final {
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(101, 214, 202, .24);
+  color: #d8e6e2;
+}
+.simulation-conclusion-final strong { color: #72e1d5; }
+@media (max-width: 760px) {
+  .simulation-conclusion-section { width: min(100% - 28px, 680px); margin-top: 22px; padding: 24px 18px 28px; }
+  .simulation-pillars { grid-template-columns: 1fr; }
+}
