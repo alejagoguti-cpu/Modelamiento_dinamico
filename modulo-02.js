@@ -2053,38 +2053,38 @@ function showInitialPopup() {
       <div style="background: #1a1a1a; border: 1px solid #333333; border-radius: 12px; overflow: hidden; margin-bottom: 16px; animation: slideInCard 0.5s ease-out; position: relative;">
         <img src="https://raw.githubusercontent.com/alejagoguti-cpu/Modelamiento_dinamico/main/RESERVA_HUMEDAL.webp" alt="Cartografía de Humedales" style="width: 100%; height: auto; display: block; border-radius: 12px; background: #0a0a0a;" id="cartography-img">
 
-        <!-- Nodo: Clasifica (encima de la tabla) -->
-        <div class="cartography-node" data-label="Clasifica" style="position: absolute; left: 8%; top: 45%; transform: translate(-50%, -50%); cursor: pointer;">
+        <!-- Nodo: Clasifica (encima de la tabla de humedales) -->
+        <div class="cartography-node" data-label="Clasifica" style="position: absolute; left: 12%; top: 62%; transform: translate(-50%, -50%); cursor: pointer;">
           <div style="width: 50px; height: 50px; background: #0a0a0a; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid #2fd4c8; transition: all 0.3s ease; box-shadow: 0 0 15px rgba(47, 212, 200, 0.4);">
-            <span style="font-size: 12px; font-weight: 700; color: #2fd4c8; text-align: center; line-height: 1.2;">Clasifica</span>
+            <span style="font-size: 11px; font-weight: 700; color: #2fd4c8; text-align: center; line-height: 1.2; padding: 2px;">Clasifica</span>
           </div>
         </div>
 
         <!-- Nodo: Regula (encima de Concertación POT) -->
-        <div class="cartography-node" data-label="Regula" style="position: absolute; left: 18%; top: 12%; transform: translate(-50%, -50%); cursor: pointer;">
+        <div class="cartography-node" data-label="Regula" style="position: absolute; left: 10%; top: 20%; transform: translate(-50%, -50%); cursor: pointer;">
           <div style="width: 50px; height: 50px; background: #0a0a0a; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid #ff9d2e; transition: all 0.3s ease; box-shadow: 0 0 15px rgba(255, 157, 46, 0.4);">
-            <span style="font-size: 12px; font-weight: 700; color: #ff9d2e; text-align: center; line-height: 1.2;">Regula</span>
+            <span style="font-size: 11px; font-weight: 700; color: #ff9d2e; text-align: center; line-height: 1.2; padding: 2px;">Regula</span>
           </div>
         </div>
 
-        <!-- Nodo: Protege (encima de Áreas que se conservan) -->
-        <div class="cartography-node" data-label="Protege" style="position: absolute; right: 15%; top: 20%; transform: translate(50%, -50%); cursor: pointer;">
+        <!-- Nodo: Protege (encima de Áreas que se conservan en la leyenda) -->
+        <div class="cartography-node" data-label="Protege" style="position: absolute; left: 35%; top: 28%; transform: translate(-50%, -50%); cursor: pointer;">
           <div style="width: 50px; height: 50px; background: #0a0a0a; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid #5b8def; transition: all 0.3s ease; box-shadow: 0 0 15px rgba(91, 141, 239, 0.4);">
-            <span style="font-size: 12px; font-weight: 700; color: #5b8def; text-align: center; line-height: 1.2;">Protege</span>
+            <span style="font-size: 11px; font-weight: 700; color: #5b8def; text-align: center; line-height: 1.2; padding: 2px;">Protege</span>
           </div>
         </div>
 
         <!-- Nodo: Delimita (encima del plano de humedales) -->
-        <div class="cartography-node" data-label="Delimita" style="position: absolute; left: 50%; top: 55%; transform: translate(-50%, -50%); cursor: pointer;">
+        <div class="cartography-node" data-label="Delimita" style="position: absolute; left: 55%; top: 50%; transform: translate(-50%, -50%); cursor: pointer;">
           <div style="width: 50px; height: 50px; background: #0a0a0a; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid #2fd4c8; transition: all 0.3s ease; box-shadow: 0 0 15px rgba(47, 212, 200, 0.4);">
-            <span style="font-size: 12px; font-weight: 700; color: #2fd4c8; text-align: center; line-height: 1.2;">Delimita</span>
+            <span style="font-size: 11px; font-weight: 700; color: #2fd4c8; text-align: center; line-height: 1.2; padding: 2px;">Delimita</span>
           </div>
         </div>
 
         <!-- Nodo: Orienta intervenciones (encima del logo POT) -->
-        <div class="cartography-node" data-label="Orienta intervenciones" style="position: absolute; left: 12%; top: 8%; transform: translate(-50%, -50%); cursor: pointer;">
+        <div class="cartography-node" data-label="Orienta intervenciones" style="position: absolute; left: 7%; top: 12%; transform: translate(-50%, -50%); cursor: pointer;">
           <div style="width: 50px; height: 50px; background: #0a0a0a; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid #ff9d2e; transition: all 0.3s ease; box-shadow: 0 0 15px rgba(255, 157, 46, 0.4);">
-            <span style="font-size: 11px; font-weight: 700; color: #ff9d2e; text-align: center; line-height: 1.1; padding: 4px;">Orienta</span>
+            <span style="font-size: 9px; font-weight: 700; color: #ff9d2e; text-align: center; line-height: 1.1; padding: 2px;">Orienta<br>interv.</span>
           </div>
         </div>
       </div>
