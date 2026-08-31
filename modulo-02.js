@@ -1898,7 +1898,6 @@ function addHumedalNodes() {
   overlay.className = "humedal-nodes-overlay";
 
   // Definir posiciones de nodos (en porcentajes relativos al contenedor)
-  // Basadas en las ubicaciones del mapa de humedales
   const nodes = [
     { id: "clasifica", title: "Clasifica", icon: "fa-list", x: 18, y: 40, color: "#2fd4c8" },
     { id: "regula", title: "Regula", icon: "fa-scale-balanced", x: 82, y: 32, color: "#2fd4c8" },
@@ -1907,7 +1906,43 @@ function addHumedalNodes() {
     { id: "orienta", title: "Orienta", icon: "fa-compass", x: 30, y: 50, color: "#2fd4c8" },
   ];
 
-  nodes.forEach(node => {
+  // Crear SVG para líneas de conexión
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("width", "100%");
+  svg.setAttribute("height", "100%");
+  svg.style.position = "absolute";
+  svg.style.top = "0";
+  svg.style.left = "0";
+  svg.style.pointerEvents = "none";
+
+  // Dibujar líneas conectando todos los nodos en una red
+  for (let i = 0; i < nodes.length; i++) {
+    for (let j = i + 1; j < nodes.length; j++) {
+      const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      const n1 = nodes[i];
+      const n2 = nodes[j];
+
+      line.setAttribute("x1", n1.x + "%");
+      line.setAttribute("y1", n1.y + "%");
+      line.setAttribute("x2", n2.x + "%");
+      line.setAttribute("y2", n2.y + "%");
+      line.setAttribute("class", "humedal-node-line");
+      line.setAttribute("stroke", "rgba(47,212,200,0.3)");
+      line.setAttribute("stroke-width", "1.5");
+      line.setAttribute("stroke-dasharray", "5,3");
+
+      const delay = (i + j) * 0.08;
+      line.style.opacity = "0";
+      line.style.animation = `fadeIn 0.6s ease-out forwards`;
+      line.style.animationDelay = delay + "s";
+
+      svg.appendChild(line);
+    }
+  }
+
+  overlay.appendChild(svg);
+
+  nodes.forEach((node, idx) => {
     const nodeEl = document.createElement("div");
     nodeEl.className = "humedal-node";
     nodeEl.style.left = node.x + "%";
@@ -1917,6 +1952,14 @@ function addHumedalNodes() {
     const icon = document.createElement("i");
     icon.className = `fa-solid ${node.icon} humedal-node-icon`;
     nodeEl.appendChild(icon);
+
+    // Agregar texto dentro del nodo
+    const nodeText = document.createElement("div");
+    nodeText.className = "humedal-node-text";
+    nodeText.textContent = node.title;
+    nodeText.style.fontSize = "8px";
+    nodeText.style.marginTop = "2px";
+    nodeEl.appendChild(nodeText);
 
     const label = document.createElement("div");
     label.className = "humedal-node-label";
@@ -1932,6 +1975,47 @@ function addHumedalNodes() {
   });
 
   imgWrapper.appendChild(overlay);
+  setupHumedalZoom();
+}
+
+function setupHumedalZoom() {
+  const imgBody = document.querySelector(".humedal-image-body");
+  const imgWrapper = document.querySelector(".humedal-image-wrapper");
+  if (!imgBody || !imgWrapper) return;
+
+  let currentZoom = 1;
+  const minZoom = 0.8;
+  const maxZoom = 3;
+  const zoomStep = 0.2;
+
+  // Crear controles de zoom si no existen
+  if (!imgBody.querySelector(".humedal-zoom-controls")) {
+    const controls = document.createElement("div");
+    controls.className = "humedal-zoom-controls";
+    controls.innerHTML = `
+      <button class="humedal-zoom-btn" id="zoomInBtn" type="button" title="Acercar">+</button>
+      <button class="humedal-zoom-btn" id="zoomOutBtn" type="button" title="Alejar">−</button>
+    `;
+    imgBody.appendChild(controls);
+
+    document.getElementById("zoomInBtn").addEventListener("click", () => {
+      currentZoom = Math.min(currentZoom + zoomStep, maxZoom);
+      imgWrapper.style.transform = `scale(${currentZoom})`;
+    });
+
+    document.getElementById("zoomOutBtn").addEventListener("click", () => {
+      currentZoom = Math.max(currentZoom - zoomStep, minZoom);
+      imgWrapper.style.transform = `scale(${currentZoom})`;
+    });
+  }
+
+  // Zoom con scroll de rueda
+  imgBody.addEventListener("wheel", (e) => {
+    e.preventDefault();
+    const delta = e.deltaY > 0 ? -zoomStep : zoomStep;
+    currentZoom = Math.max(minZoom, Math.min(maxZoom, currentZoom + delta));
+    imgWrapper.style.transform = `scale(${currentZoom})`;
+  }, { passive: false });
 }
 
 function showNodeInfo(node) {
