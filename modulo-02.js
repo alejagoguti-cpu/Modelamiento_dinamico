@@ -2235,10 +2235,10 @@ function showInitialPopup() {
       document.head.appendChild(style);
     }
 
-    // Agregar evento al botón de cerrar
-    const closeBtn = modal.querySelector("#popup-btn-close-final");
-    if (closeBtn) {
-      closeBtn.addEventListener("click", () => {
+    // Agregar evento al botón de cerrar (en cards view)
+    const closeBtnCards = modal.querySelector("#popup-btn-close-final");
+    if (closeBtnCards) {
+      closeBtnCards.addEventListener("click", () => {
         backdrop.style.transition = "opacity 0.3s ease";
         backdrop.style.opacity = "0";
         modal.style.transition = "opacity 0.3s ease, transform 0.3s ease";
@@ -2249,14 +2249,13 @@ function showInitialPopup() {
           console.log("✅ Popup cerrado");
         }, 300);
       });
-      closeBtn.addEventListener("mouseover", function() {
+      closeBtnCards.addEventListener("mouseover", function() {
         this.style.background = "#333333 !important";
       });
-      closeBtn.addEventListener("mouseout", function() {
+      closeBtnCards.addEventListener("mouseout", function() {
         this.style.background = "#222222 !important";
       });
     }
-  }
 
   // Función para cerrar
   function closePopup() {
