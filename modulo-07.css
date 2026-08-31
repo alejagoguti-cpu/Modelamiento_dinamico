@@ -6313,3 +6313,64 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
   #territoryNetworkPlain .map-network-node.sound-playing,
   #territoryNetworkPlain .map-network-stage > svg .map-network-bond-flow { animation: none !important; }
 }
+
+
+/* MÓDULO 07 · restauración de la red “Cómo funciona nuestro modelo” */
+#territoryNetworkPlain .map-network-stage > svg .map-network-bond-soft {
+  display: block !important;
+  stroke: none !important;
+  fill: var(--bond-gradient) !important;
+  opacity: .035 !important;
+  filter: blur(.34px) !important;
+}
+#territoryNetworkPlain .map-network-stage > svg .map-network-bond {
+  display: block !important;
+  stroke: none !important;
+  fill: var(--bond-gradient) !important;
+  opacity: .46 !important;
+  filter: none !important;
+}
+#territoryNetworkPlain .map-network-stage > svg .map-network-bond-flow {
+  fill: none !important;
+  stroke: transparent !important;
+  stroke-width: .1 !important;
+  stroke-dasharray: none !important;
+  opacity: 1 !important;
+  animation: none !important;
+}
+#territoryNetworkPlain .map-network-node {
+  width: 94px !important;
+  height: 94px !important;
+  min-height: 94px !important;
+  padding: 10px 8px !important;
+  border: 1px solid color-mix(in srgb, var(--node-color) 80%, white) !important;
+  border-radius: 49% 52% 48% 51% !important;
+  background: radial-gradient(circle at 48% 44%, color-mix(in srgb, var(--node-color) 28%, rgba(8,18,21,.84)), rgba(8,15,18,.92) 74%) !important;
+  box-shadow: 0 0 0 7px color-mix(in srgb, var(--node-color) 9%, transparent), 0 0 18px color-mix(in srgb, var(--node-color) 24%, transparent) !important;
+  animation: module07-node-metaball-float 21s ease-in-out infinite !important;
+}
+#territoryNetworkPlain .map-network-node-icon {
+  color: var(--node-color) !important;
+  opacity: 1 !important;
+  font-size: 17px !important;
+  filter: none !important;
+}
+#territoryNetworkPlain .map-network-node strong {
+  color: #f7fafb !important;
+  font-size: 8px !important;
+  font-weight: 700 !important;
+  line-height: 1.12 !important;
+}
+#territoryNetworkPlain .map-network-node:hover,
+#territoryNetworkPlain .map-network-node.selected {
+  transform: translate(-50%,-50%) scale(1.06) !important;
+  box-shadow: 0 0 0 8px color-mix(in srgb, var(--node-color) 13%, transparent), 0 0 24px color-mix(in srgb, var(--node-color) 40%, transparent) !important;
+}
+#territoryNetworkPlain .map-network-pulse { opacity: .92 !important; }
+#territoryNetworkPlain .map-network-pulse-secondary { opacity: .72 !important; }
+#territoryNetworkPlain .map-network-node.sound-playing { animation: module07-node-metaball-float 21s ease-in-out infinite !important; }
+@media (max-width: 760px) {
+  #territoryNetworkPlain .map-network-node { width: 72px !important; height: 72px !important; min-height: 72px !important; padding: 7px 5px !important; }
+  #territoryNetworkPlain .map-network-node-icon { font-size: 13px !important; }
+  #territoryNetworkPlain .map-network-node strong { font-size: 6.5px !important; }
+}
