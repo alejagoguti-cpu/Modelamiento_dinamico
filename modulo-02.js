@@ -658,7 +658,10 @@ function drawEdges(svg) {
     group.setAttribute("data-source", edge.s);
     group.setAttribute("data-target", edge.t);
     group.style.setProperty("--edge-color", color);
-    group.style.setProperty("--edge-delay", (0.4 + i * 0.03) + "s");
+    const edgeDelay = 0.4 + i * 0.03;
+    group.style.setProperty("--edge-delay", edgeDelay + "s");
+    group.style.animation = `edgeEnter 0.8s ease-out forwards`;
+    group.style.animationDelay = edgeDelay + "s";
 
     const hit = document.createElementNS(SVG_NS, "path");
     hit.setAttribute("d", d); hit.setAttribute("class", "ods-edge edge-hit");
@@ -696,7 +699,10 @@ function drawNodes(svg) {
   ODS_NODES.forEach((node, idx) => {
     const group = document.createElementNS(SVG_NS, "g");
     group.setAttribute("class", "ods-node ods-node-" + node.cat + (node.isMainHub ? " ods-hub" : " ods-satellite"));
-    group.style.setProperty("--node-delay", (idx * 0.05) + "s");
+    const delay = idx * 0.05;
+    group.style.setProperty("--node-delay", delay + "s");
+    group.style.animation = `nodeEnter 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both`;
+    group.style.animationDelay = delay + "s";
     group.setAttribute("data-id", node.id);
     group.setAttribute("data-cat", node.cat);
 
