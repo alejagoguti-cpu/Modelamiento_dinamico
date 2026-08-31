@@ -206,47 +206,8 @@
         </button>
       </div>
 
-      <h2 class="hero-title"><span class="hero-accent">Módulo Simulador</span> — de las reglas escritas a la simulación viva</h2>
-      <p class="hero-sub">Del POT como texto lineal <i class="fa-solid fa-arrow-right-long"></i> a la ciudad como sistema vivo</p>
-      <p class="hero-lead">Si el POT tiene reglas generativas pero no las corre, esta plataforma permite ejecutar la simulación que el Plan escribe pero nunca realiza: agentes que se mueven, viviendas que condicionan la vida cotidiana y ecosistemas que responden en el tiempo.</p>
+      <!-- Bloque "Módulo Simulador" (hero, tarjetas y comparación) borrado a pedido -->
 
-      <div class="simulator-principles" aria-label="Tres pilares del simulador">
-        <article class="simulator-principle principle-people"><i class="fa-solid fa-people-arrows"></i><div><strong>Personas</strong><span>Agentes de cuidado · 15 minutos caminando · fatiga y tiempo disponible</span></div></article>
-        <article class="simulator-principle principle-housing"><i class="fa-solid fa-house-chimney-user"></i><div><strong>Viviendas</strong><span>Habitabilidad · Art. 384 · 36 m² / 42 m² · mejoramiento progresivo</span></div></article>
-        <article class="simulator-principle principle-ecosystems"><i class="fa-solid fa-water"></i><div><strong>Ecosistemas</strong><span>Matriz ordenadora · escorrentía · riesgo · drenaje sostenible</span></div></article>
-      </div>
-
-      <div class="hero-compare">
-        <div class="compare-card compare-static">
-          <div class="compare-head"><i class="fa-solid fa-circle-dot"></i> Lectura Estática</div>
-          <p class="compare-desc">El POT leído como una suma de objetos, artículos y relaciones fijas.</p>
-          <div class="compare-viz" id="staticViz">
-            <svg viewBox="0 0 260 170"><circle cx="130" cy="85" r="46" class="static-blob"/></svg>
-          </div>
-          <ul class="compare-list">
-            <li><i class="fa-solid fa-circle-dot"></i> Relación aislada</li>
-            <li><i class="fa-solid fa-circle-dot"></i> Sin actores ni mediadores</li>
-            <li><i class="fa-solid fa-circle-dot"></i> Intensidad única y fija</li>
-          </ul>
-        </div>
-
-        <div class="compare-card compare-dynamic">
-          <div class="compare-head"><i class="fa-solid fa-wave-square"></i> Lectura Dinámica</div>
-          <p class="compare-desc">Una simulación donde agentes, vivienda y ecosistemas interactúan y cambian.</p>
-          <div class="compare-viz" id="dynamicViz"></div>
-          <ul class="compare-list">
-            <li><i class="fa-solid fa-check"></i> Incluye actores y mediadores</li>
-            <li><i class="fa-solid fa-check"></i> Cambia según la situación</li>
-            <li><i class="fa-solid fa-check"></i> Intensidad variable</li>
-          </ul>
-        </div>
-      </div>
-
-      <blockquote class="hero-quote">
-        <i class="fa-solid fa-quote-left"></i>
-        <p>Una relación territorial no es un dato fijo: depende de quién la usa, qué la hace posible y en qué momento ocurre.</p>
-        <span>Equipo POT Reverse Engineering</span>
-      </blockquote>
       <section class="reader-pillars" aria-labelledby="reader-pillars-title">
         <div class="reader-pillars-kicker">LA CAPA QUE EL POT NO EJECUTA</div>
         <h3 id="reader-pillars-title">Tres pilares para hacer correr las reglas</h3>
@@ -370,28 +331,7 @@
       </div>
     </div>
 
-    <!-- MAPA DE RUIDO Y TRÁFICO -->
-    <div class="sumo-sim-section">
-      <div class="sumo-sim-heading">
-        <h3><i class="fa-solid fa-volume-high"></i> Mapa de ruido y tráfico</h3>
-        <p>Índice de ruido relativo por vía, calculado a partir del flujo vehicular y la velocidad promedio de la simulación de tráfico en Kennedy.</p>
-      </div>
-      <div class="sumo-sim-card">
-        <div class="noise-map-wrap">
-          <div id="noiseMap"></div>
-          <div class="noise-map-status" id="noiseMapStatus">Cargando datos de tráfico…</div>
-          <div class="noise-map-legend">
-            <h4>Índice de ruido (relativo)</h4>
-            <div class="noise-legend-row"><span class="noise-legend-swatch" style="background:#2e7d5b"></span> Muy bajo</div>
-            <div class="noise-legend-row"><span class="noise-legend-swatch" style="background:#8bc34a"></span> Bajo</div>
-            <div class="noise-legend-row"><span class="noise-legend-swatch" style="background:#f1c40f"></span> Moderado</div>
-            <div class="noise-legend-row"><span class="noise-legend-swatch" style="background:#e67e22"></span> Alto</div>
-            <div class="noise-legend-row"><span class="noise-legend-swatch" style="background:#e5484d"></span> Muy alto</div>
-          </div>
-        </div>
-        <p class="noise-map-note">No es una medición acústica real en decibeles — es un proxy relativo: a mayor flujo vehicular y mayor velocidad, mayor ruido esperado. Datos: SUMO edgedata (<code>osm.net.xml</code> + <code>datos_vias.xml</code>).</p>
-      </div>
-    </div>
+    <!-- MAPA DE RUIDO Y TRÁFICO (borrada a pedido) -->
 
     <footer>
       "No se trata de representar la ciudad, sino de comprenderla para transformarla." — <span>Equipo POT Reverse Engineering</span>

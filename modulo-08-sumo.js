@@ -87,7 +87,7 @@
         container: "sumoMap",
         style: MAP_STYLE,
         center: KENNEDY_CENTER,
-        zoom: 12.6,
+        zoom: 14.6,
         minZoom: 10,
         maxZoom: 18,
         attributionControl: true,
@@ -157,6 +157,13 @@
       const w = wrap.clientWidth, h = wrap.clientHeight;
       vehCtx.clearRect(0, 0, w, h);
       const vehicles = vehiclesAtTime(t);
+      // Tamaño real del carro (~4.3m x 1.8m) convertido a píxeles según el
+      // zoom actual del mapa — así el carro siempre se ve a su tamaño de
+      // verdad, ni gigante ni minúsculo, sin importar qué tanto zoom tenga.
+      const metersPerPixel = (156543.03392 * Math.cos((map.getCenter().lat * Math.PI) / 180)) / Math.pow(2, map.getZoom());
+      const carLength = Math.max(2, 4.3 / metersPerPixel);
+      const carWidth = Math.max(1, 1.8 / metersPerPixel);
+      const r = carWidth * 0.35;
       vehicles.forEach((v) => {
         const p = map.project([v.lon, v.lat]);
         if (p.x < -20 || p.y < -20 || p.x > w + 20 || p.y > h + 20) return; // fuera de pantalla
@@ -164,14 +171,13 @@
         vehCtx.save();
         vehCtx.translate(p.x, p.y);
         vehCtx.rotate(rad);
-        const carLength = 7, carWidth = 3.4, r = 1.2;
         vehCtx.fillStyle = "#ffb020";
         vehCtx.beginPath();
         if (vehCtx.roundRect) vehCtx.roundRect(-carLength / 2, -carWidth / 2, carLength, carWidth, r);
         else vehCtx.rect(-carLength / 2, -carWidth / 2, carLength, carWidth);
         vehCtx.fill();
         vehCtx.fillStyle = "#7a4a06";
-        vehCtx.fillRect(carLength * 0.05, -carWidth / 2 + 0.6, carLength * 0.32, carWidth - 1.2);
+        vehCtx.fillRect(carLength * 0.05, -carWidth / 2 + carWidth * 0.18, carLength * 0.32, carWidth * 0.64);
         vehCtx.restore();
       });
       timeLabel.textContent = `${fmtTime(t)} / ${slider.max ? fmtTime(Number(slider.max)) : "00:00"}`;
