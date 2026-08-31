@@ -2109,23 +2109,23 @@ function showInitialPopup() {
         @keyframes pulseGlow {
           0%, 100% {
             background: #252525;
-            box-shadow: 0 0 0px rgba(255, 255, 255, 0), 0 0 0px rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 0px rgba(255, 157, 46, 0), 0 0 0px rgba(255, 157, 46, 0.2);
             transform: scale(1);
           }
           50% {
-            background: #3a3a3a;
-            box-shadow: 0 0 24px rgba(255, 255, 255, 0.6), 0 0 40px rgba(255, 255, 255, 0.3), inset 0 0 12px rgba(255, 255, 255, 0.2);
+            background: #3a2a1a;
+            box-shadow: 0 0 28px rgba(255, 157, 46, 0.8), 0 0 50px rgba(255, 100, 0, 0.5), inset 0 0 12px rgba(255, 157, 46, 0.3);
             transform: scale(1.08);
           }
         }
         @keyframes borderPulse {
           0%, 100% {
             border-color: #333333;
-            box-shadow: 0 0 0px rgba(255, 255, 255, 0);
+            box-shadow: 0 0 0px rgba(255, 157, 46, 0);
           }
           50% {
-            border-color: #555555;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+            border-color: #664422;
+            box-shadow: 0 0 24px rgba(255, 157, 46, 0.4), 0 0 12px rgba(255, 100, 0, 0.2);
           }
         }
         @keyframes iconSpin {
@@ -2150,8 +2150,8 @@ function showInitialPopup() {
           transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
         }
         .pot-card:hover .pot-icon {
-          background: #3a3a3a !important;
-          box-shadow: 0 0 24px rgba(255, 255, 255, 0.6), 0 0 40px rgba(255, 255, 255, 0.3), inset 0 0 12px rgba(255, 255, 255, 0.2) !important;
+          background: #3a2a1a !important;
+          box-shadow: 0 0 28px rgba(255, 157, 46, 0.8), 0 0 50px rgba(255, 100, 0, 0.5), inset 0 0 12px rgba(255, 157, 46, 0.3) !important;
           animation: pulseGlow 1.2s ease-in-out infinite, iconSpin 2s ease-in-out infinite !important;
           transform: scale(1.1) !important;
         }
