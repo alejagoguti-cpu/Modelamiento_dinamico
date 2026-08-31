@@ -310,10 +310,18 @@
         <p>Trayectorias vehiculares simuladas sobre la red vial real de Kennedy, exportadas desde SUMO (<code>osm.net.xml</code> + <code>trazado.xml</code>).</p>
       </div>
       <div class="sumo-sim-card">
-        <div class="sumo-canvas-wrap">
-          <canvas id="sumoNetCanvas"></canvas>
-          <canvas id="sumoVehCanvas"></canvas>
-          <div class="sumo-sim-overlay" id="sumoStatus">Cargando red vial…</div>
+        <div class="sumo-main-row">
+          <div class="sumo-canvas-wrap">
+            <div id="sumoMap"></div>
+            <canvas id="sumoVehCanvas"></canvas>
+            <div class="sumo-sim-overlay" id="sumoStatus">Cargando red vial…</div>
+          </div>
+          <div class="sumo-whatif-panel">
+            <h4><i class="fa-solid fa-circle-question"></i> ¿Qué pasaría si...?</h4>
+            <p>¿Qué pasaría si hubiera más o menos vehículos circulando en Kennedy? Mueve la barra para explorar — <b>en 0 se ve la circulación real</b>, tal como está tu simulación, sin ningún cambio.</p>
+            <input type="range" id="sumoDensitySlider" min="-80" max="150" value="0" step="5">
+            <div class="sumo-density-label" id="sumoDensityLabel">0% · circulación actual (sin cambios)</div>
+          </div>
         </div>
         <div class="sumo-sim-controls">
           <button type="button" id="sumoPlayPause" class="sumo-btn" aria-label="Reproducir / pausar"><i class="fa-solid fa-play"></i></button>
