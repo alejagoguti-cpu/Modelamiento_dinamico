@@ -1590,12 +1590,24 @@
       { name: "Submodelo de gestión y respuesta adaptativa", parts: "Sistema institucional de gestión + sistema hídrico + sistema biótico + sistema físico-urbano + sistema social-comunitario.", partsPurpose: "Sí", partsWhy: "Los sistemas institucional y social-comunitario incluyen actores que observan, deciden, intervienen y evalúan; los demás responden a esas intervenciones.", totalPurpose: "Sí", totalWhy: "Organiza un ciclo de observación, decisión, intervención, monitoreo y ajuste de las acciones territoriales.", category: "Socioecológico dinámico", process: "Cambian las presiones, los diagnósticos, las prioridades, los recursos, las áreas intervenidas, los resultados del monitoreo y las decisiones posteriores." }
     ];
     const territorySystems = [
-      { id: "hidrica", name: "Dinámica hídrica", color: "#56b8d4", components: ["Agua", "lluvia", "suelo", "escorrentía", "sedimentos", "Canal Los Ángeles"], process: "El agua circula, se acumula, disminuye o se desborda según lluvia, pendiente, suelo, sedimentos, obras y drenaje.", category: "Determinista" },
-      { id: "biotica", name: "Dinámica biótica", color: "#68d391", components: ["Aves", "arañas", "insectos", "vegetación", "hábitats"], process: "Cambian la presencia de especies, el alimento, el refugio, la reproducción y la expansión de especies invasoras.", category: "Ecológico" },
-      { id: "fisico", name: "Sistema físico-urbano", color: "#b8c0c8", components: ["Construcciones", "vías", "edificaciones", "redes", "cerramientos", "obras"], process: "Cambian el estado de las obras, accesos, senderos y la fragmentación del borde urbano.", category: "Determinista" },
-      { id: "movilidad", name: "Sistema de movilidad", color: "#f1cf5b", components: ["Desplazamientos", "rutas de transporte", "accesos", "tiempos de viaje", "conexiones"], process: "Cambian los recorridos, usuarios, horarios, tiempos de espera, congestión, ruido y accesibilidad.", category: "Social" },
-      { id: "social", name: "Sistema social-comunitario", color: "#ee9a4b", components: ["Visitantes", "turismo", "grupos sociales", "formas de uso", "apropiación", "participación", "patrimonio ambiental"], process: "Cambian las visitas, formas de apropiación, actividades educativas, participación, acuerdos y conflictos.", category: "Social" },
-      { id: "socioeconomico", name: "Sistema socioeconómico y de ocupación", color: "#e58d62", components: ["Viviendas", "actividades económicas", "servicios", "equipamientos", "usos del suelo", "población", "decisiones de ocupación"], process: "Cambian la población, construcción, demanda de vivienda, servicios, actividades y presiones sobre el borde.", category: "Social" }
+      { id: "hidrica", name: "Dinámica hídrica", color: "#56b8d4", components: ["Agua", "lluvia", "suelo", "escorrentía", "sedimentos", "Canal Los Ángeles"],
+        dynamics: ["Lluvia y escorrentía", "Infiltración en el suelo", "Circulación y acumulación", "Sedimentación", "Desborde en crecientes"],
+        process: "El agua circula, se acumula, disminuye o se desborda según lluvia, pendiente, suelo, sedimentos, obras y drenaje.", category: "Determinista" },
+      { id: "biotica", name: "Dinámica biótica", color: "#68d391", components: ["Aves", "arañas", "insectos", "vegetación", "hábitats"],
+        dynamics: ["Reproducción y anidación", "Búsqueda de alimento", "Migración y desplazamiento", "Colonización de hábitats", "Depredación y competencia"],
+        process: "Cambian la presencia de especies, el alimento, el refugio, la reproducción y la expansión de especies invasoras.", category: "Ecológico" },
+      { id: "fisico", name: "Sistema físico-urbano", color: "#b8c0c8", components: ["Construcciones", "vías", "edificaciones", "redes", "cerramientos", "obras"],
+        dynamics: ["Construcción y mejoramiento", "Deterioro y mantenimiento", "Fragmentación del borde urbano", "Ocupación de predios", "Apertura y cierre de accesos"],
+        process: "Cambian el estado de las obras, accesos, senderos y la fragmentación del borde urbano.", category: "Determinista" },
+      { id: "movilidad", name: "Sistema de movilidad", color: "#f1cf5b", components: ["Desplazamientos", "rutas de transporte", "accesos", "tiempos de viaje", "conexiones"],
+        dynamics: ["Desplazamiento diario", "Congestión en horas pico", "Cambio de rutas", "Espera y transbordo", "Variación de tiempos de viaje"],
+        process: "Cambian los recorridos, usuarios, horarios, tiempos de espera, congestión, ruido y accesibilidad.", category: "Social" },
+      { id: "social", name: "Sistema social-comunitario", color: "#ee9a4b", components: ["Visitantes", "turismo", "grupos sociales", "formas de uso", "apropiación", "participación", "patrimonio ambiental"],
+        dynamics: ["Apropiación del espacio", "Participación comunitaria", "Conflictos por el uso", "Visitas y recorridos", "Transmisión de saberes"],
+        process: "Cambian las visitas, formas de apropiación, actividades educativas, participación, acuerdos y conflictos.", category: "Social" },
+      { id: "socioeconomico", name: "Sistema socioeconómico y de ocupación", color: "#e58d62", components: ["Viviendas", "actividades económicas", "servicios", "equipamientos", "usos del suelo", "población", "decisiones de ocupación"],
+        dynamics: ["Crecimiento poblacional", "Cambio de uso del suelo", "Oferta y demanda de vivienda", "Formalización de actividades", "Presión sobre el borde"],
+        process: "Cambian la población, construcción, demanda de vivienda, servicios, actividades y presiones sobre el borde.", category: "Social" }
     ];
 
     // ---------- Componentes geográficos reales de cada dinámica ----------
@@ -2191,24 +2203,30 @@
     // (como el referente que mandaste) con líneas de guía señalando cada
     // ciclo o dinámica que ocurre en general en la red hídrica de Bogotá
     // — no es un mapa de un lugar puntual, es un esquema general.
-    // Mini-red de un subsistema: cada componente real (row.components) se
-    // dibuja como un nodo alrededor de un centro (el subsistema), conectado
-    // a él — así se ve la composición interna, no solo una lista de texto.
+    // Mini-red de un subsistema: sus DINÁMICAS/CICLOS reales (no sustantivos
+    // fijos como "aves" o "vías") conectadas EN CICLO entre sí, mostrando
+    // cómo una lleva a la siguiente — no hay un centro/hub, son las
+    // dinámicas relacionándose directamente unas con otras.
     function buildMiniNetworkSvg(items, color, systemId) {
-      const cx = 150, cy = 105, R = 78;
+      const cx = 150, cy = 105, R = 82;
       const n = items.length;
       const nodes = items.map((label, i) => {
         const angle = (i / n) * Math.PI * 2 - Math.PI / 2;
         return { label, x: cx + R * Math.cos(angle), y: cy + R * Math.sin(angle) };
       });
-      const lines = nodes.map((p) => `<line x1="${cx}" y1="${cy}" x2="${p.x.toFixed(1)}" y2="${p.y.toFixed(1)}" class="mini-net-line"/>`).join("");
+      // cada dinámica conecta con la siguiente, formando un ciclo cerrado
+      const lines = nodes.map((p, i) => {
+        const next = nodes[(i + 1) % n];
+        return `<line x1="${p.x.toFixed(1)}" y1="${p.y.toFixed(1)}" x2="${next.x.toFixed(1)}" y2="${next.y.toFixed(1)}" class="mini-net-line" marker-end="url(#miniCycleArrow-${systemId})"/>`;
+      }).join("");
       const nodeCircles = nodes.map((p) => `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="8" class="mini-net-node" style="--node-color:${color}"/>`).join("");
       const labels = nodes.map((p) => {
         const anchor = p.x > cx + 4 ? "start" : p.x < cx - 4 ? "end" : "middle";
         const dx = p.x > cx + 4 ? 11 : p.x < cx - 4 ? -11 : 0;
         return `<text x="${(p.x + dx).toFixed(1)}" y="${(p.y + 3).toFixed(1)}" class="mini-net-label" text-anchor="${anchor}">${p.label}</text>`;
       }).join("");
-      return `<svg viewBox="0 0 300 210" class="mini-network-svg" data-system="${systemId}">${lines}<circle cx="${cx}" cy="${cy}" r="15" class="mini-net-hub" style="--node-color:${color}"/>${nodeCircles}${labels}</svg>`;
+      const marker = `<defs><marker id="miniCycleArrow-${systemId}" markerWidth="6" markerHeight="6" refX="12" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="${color}"/></marker></defs>`;
+      return `<svg viewBox="0 0 300 210" class="mini-network-svg" data-system="${systemId}">${marker}${lines}${nodeCircles}${labels}</svg>`;
     }
 
     // "Ver toda la red junta": explota los 6 subsistemas con TODOS sus
@@ -2220,60 +2238,62 @@
     function showCombinedNetworkModal() {
       const overlay = document.createElement("div");
       overlay.className = "combined-network-overlay";
-      const W = 900, H = 900, cx = W / 2, cy = H / 2, hubR = 300;
-      const hubs = territorySystems.map((sys, i) => {
+      const W = 900, H = 900, cx = W / 2, cy = H / 2, clusterR = 300;
+      // Un "centro" invisible por sistema, solo para ubicar su racimo de
+      // dinámicas — no se dibuja ninguna bola ahí (ya sabemos de qué
+      // sistema es cada una por el color y por estar agrupadas).
+      const clusters = territorySystems.map((sys, i) => {
         const angle = (i / territorySystems.length) * Math.PI * 2 - Math.PI / 2;
-        return { ...sys, x: cx + hubR * Math.cos(angle), y: cy + hubR * Math.sin(angle) };
+        return { ...sys, cx: cx + clusterR * Math.cos(angle), cy: cy + clusterR * Math.sin(angle) };
       });
       let svgParts = [];
       let nodeIndex = 0;
-      // líneas entre subsistemas (todos con todos)
-      for (let i = 0; i < hubs.length; i++) {
-        for (let j = i + 1; j < hubs.length; j++) {
-          svgParts.push(`<line x1="${hubs[i].x}" y1="${hubs[i].y}" x2="${hubs[j].x}" y2="${hubs[j].y}" class="combined-hub-line"/>`);
-        }
-      }
-      // componentes de cada subsistema, alrededor de su propio hub
-      const allComponentNodes = [];
-      hubs.forEach((hub) => {
-        const satR = 95;
-        hub.components.forEach((label, i) => {
-          const angle = (i / hub.components.length) * Math.PI * 2 - Math.PI / 2;
-          const x = hub.x + satR * Math.cos(angle), y = hub.y + satR * Math.sin(angle);
-          svgParts.push(`<line x1="${hub.x}" y1="${hub.y}" x2="${x}" y2="${y}" class="combined-sat-line" style="--node-color:${hub.color}"/>`);
-          allComponentNodes.push({ label, x, y, color: hub.color, sysId: hub.id });
+      const allDynamicNodes = [];
+      // las dinámicas de cada sistema, conectadas EN CICLO entre sí
+      // (no a un centro/hub) — se agrupan alrededor de su punto de racimo.
+      clusters.forEach((cl) => {
+        const items = cl.dynamics || cl.components;
+        const satR = 85;
+        const nodesHere = items.map((label, i) => {
+          const angle = (i / items.length) * Math.PI * 2 - Math.PI / 2;
+          return { label, x: cl.cx + satR * Math.cos(angle), y: cl.cy + satR * Math.sin(angle), color: cl.color, sysId: cl.id };
         });
+        nodesHere.forEach((n, i) => {
+          const next = nodesHere[(i + 1) % nodesHere.length];
+          svgParts.push(`<line x1="${n.x}" y1="${n.y}" x2="${next.x}" y2="${next.y}" class="combined-sat-line" style="--node-color:${cl.color}"/>`);
+        });
+        allDynamicNodes.push(...nodesHere);
       });
-      // conexiones cruzadas por palabras en comun entre componentes de
+      // conexiones cruzadas por palabras en comun entre dinámicas de
       // DISTINTOS subsistemas (heuristica simple, no exhaustiva)
       const KEYWORDS = [
-        ["vías", "rutas de transporte", "accesos", "desplazamientos", "conexiones"],
-        ["agua", "escorrentía", "vertimiento", "sedimentos"],
-        ["vivienda", "viviendas", "ocupación", "usos del suelo", "construcciones"],
-        ["vegetación", "hábitats", "usos del suelo"],
+        ["desplazamiento", "accesos", "rutas", "recorridos"],
+        ["escorrentía", "infiltración", "agua", "sedimentación"],
+        ["vivienda", "ocupación", "uso del suelo", "construcción", "predios"],
+        ["hábitats", "colonización", "vegetación"],
+        ["conflictos", "presión", "apropiación"],
       ];
       const crossLines = [];
-      for (let i = 0; i < allComponentNodes.length; i++) {
-        for (let j = i + 1; j < allComponentNodes.length; j++) {
-          const a = allComponentNodes[i], b = allComponentNodes[j];
+      for (let i = 0; i < allDynamicNodes.length; i++) {
+        for (let j = i + 1; j < allDynamicNodes.length; j++) {
+          const a = allDynamicNodes[i], b = allDynamicNodes[j];
           if (a.sysId === b.sysId) continue;
           const shared = KEYWORDS.some((group) => group.some((k) => a.label.toLowerCase().includes(k)) && group.some((k) => b.label.toLowerCase().includes(k)));
           if (shared) crossLines.push(`<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" class="combined-cross-line"/>`);
         }
       }
       svgParts.push(...crossLines);
-      const hubCircles = hubs.map((h) => `<g class="combined-node combined-hub-node" style="--node-color:${h.color};--node-i:${nodeIndex++}"><circle cx="${h.x}" cy="${h.y}" r="26"/><text x="${h.x}" y="${h.y + 42}" text-anchor="middle" class="combined-hub-label">${h.name}</text></g>`).join("");
-      const satCircles = allComponentNodes.map((n) => `<g class="combined-node combined-sat-node" style="--node-color:${n.color};--node-i:${nodeIndex++}"><circle cx="${n.x}" cy="${n.y}" r="9"/><text x="${n.x}" y="${n.y + 16}" text-anchor="middle" class="combined-sat-label">${n.label}</text></g>`).join("");
+      const dynCircles = allDynamicNodes.map((n) => `<g class="combined-node combined-sat-node" style="--node-color:${n.color};--node-i:${nodeIndex++}"><circle cx="${n.x}" cy="${n.y}" r="10"/><text x="${n.x}" y="${n.y + 17}" text-anchor="middle" class="combined-sat-label">${n.label}</text></g>`).join("");
       overlay.innerHTML = `
         <div class="combined-network-panel">
           <div class="combined-network-heading">
-            <strong><i class="fa-solid fa-diagram-project"></i> Red completa: todos los subsistemas y sus componentes</strong>
+            <strong><i class="fa-solid fa-diagram-project"></i> Red completa: ciclos y dinámicas de los 6 subsistemas</strong>
             <button type="button" class="subsystem-panel-close" id="closeCombinedNetworkBtn" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button>
           </div>
           <div class="combined-network-scroll">
             <svg viewBox="0 0 ${W} ${H}" class="combined-network-svg">
               <g class="combined-lines">${svgParts.join("")}</g>
-              <g class="combined-nodes">${hubCircles}${satCircles}</g>
+              <g class="combined-nodes">${dynCircles}</g>
             </svg>
           </div>
         </div>`;
@@ -2683,7 +2703,7 @@
         const components = document.createElement("div");
         components.className = "subsystem-components active map-components-panel";
         components.style.setProperty("--bubble-color", color);
-        components.innerHTML = `<div class="subsystem-panel-heading"><strong><i class="fa-solid fa-arrows-rotate"></i> DINÁMICA DEL TERRITORIO</strong><button type="button" class="subsystem-panel-close" aria-label="Cerrar panel de dinámica"><i class="fa-solid fa-xmark"></i></button></div><p class="panel-scope-label">QUÉ COMPONE ESTE SUBSISTEMA</p>${buildMiniNetworkSvg(row.components, color, row.id)}<button type="button" class="see-full-network-btn" id="seeFullNetworkBtn"><i class="fa-solid fa-diagram-project"></i> Ver toda la red junta</button><p class="panel-scope-label">CÓMO CAMBIA EN EL TIEMPO</p><p class="panel-specific-reading">${row.process}</p>`;
+        components.innerHTML = `<div class="subsystem-panel-heading"><strong><i class="fa-solid fa-arrows-rotate"></i> DINÁMICA DEL TERRITORIO</strong><button type="button" class="subsystem-panel-close" aria-label="Cerrar panel de dinámica"><i class="fa-solid fa-xmark"></i></button></div><p class="panel-scope-label">CICLOS Y DINÁMICAS DE ESTE SUBSISTEMA</p>${buildMiniNetworkSvg(row.dynamics || row.components, color, row.id)}<button type="button" class="see-full-network-btn" id="seeFullNetworkBtn"><i class="fa-solid fa-diagram-project"></i> Ver toda la red junta</button><p class="panel-scope-label">CÓMO CAMBIA EN EL TIEMPO</p><p class="panel-specific-reading">${row.process}</p>`;
         const purpose = document.createElement("aside");
         purpose.className = "subsystem-purpose-panel active map-purpose-panel";
         purpose.style.setProperty("--bubble-color", color);
