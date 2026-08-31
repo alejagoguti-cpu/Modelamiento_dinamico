@@ -2333,8 +2333,7 @@ const MAIN_CONCLUSION_STEP1 = `
     <svg id="conclusionNetworkViz" viewBox="0 0 2500 1820" preserveAspectRatio="xMidYMid meet"></svg>
   </div>
   <div class="main-conclusion-answer">
-    <p>El POT estructura Bogotá desde cuatro dimensiones (Ecológica, Funcional y del Cuidado, Socioeconómica y Patrimonial) que capturan el funcionamiento de la ciudad desde lo vivo y lo tangible. Pero eso que el POT denomina cada estructura revela relaciones y vacíos que no están explícitos en el texto.</p>
-    <p>La Red Implícita es la trama de conexiones reales sobre la que descansa cada decisión del POT.</p>
+    <p>Al reconstruir su modelo, encontramos que el POT hace principalmente legibles estructuras, componentes, relaciones funcionales y reglas de intervención. Esto permite construir una representación organizada del territorio</p>
   </div>
   <button class="main-conclusion-explore-btn" id="mainConclusionNextBtn">DESCUBRIR</button>
 `;
