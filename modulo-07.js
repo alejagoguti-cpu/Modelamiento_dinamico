@@ -1698,9 +1698,10 @@
         color: "#e58d62", icon: "fa-cart-shopping",
         boxCoords: [-74.1385, 4.616655447564548], sound: "socioeconomico",
         coords: [
-          // Lado izquierdo de la caja → izquierda, sube → Corabastos.
+          // Lado izquierdo de la caja → izquierda, sube → se pega por
+          // DEBAJO del ícono de Corabastos (no por el lado).
           { pos: [-74.1599146050763, 4.63015596902525], icon: "fa-cart-shopping", color: "#e58d62", label: "Corabastos",
-            route: { bubbleSide: "left", boxSide: "left", offset: -4, type: "hvh", bendNear: "box" } },
+            route: { bubbleSide: "bottom", boxSide: "left", offset: -4, type: "hvh", bendNear: "box" } },
           // Lado derecho de la caja → derecha, sube, izquierda → lado
           // derecho de Estación Banderas (el ícono lo pone la caja
           // "Modelo de Operación de Estación de Transporte").
@@ -1977,7 +1978,7 @@
     const initPartOneControls = (map, layers) => {
       const controls = document.getElementById("subsystemLayerControls");
       if (controls) {
-        controls.innerHTML = partOneLayerMeta.map((meta) => `<label class="layer-toggle"><input type="checkbox" data-layer-toggle="${meta.id}"${meta.id === "hidrico" ? " checked" : ""}><span class="layer-swatch" style="--layer-color:${meta.color}"></span><span><b>${meta.label}</b><small>${meta.description}</small></span></label>`).join("");
+        controls.innerHTML = partOneLayerMeta.map((meta) => `<label class="layer-toggle"><input type="checkbox" data-layer-toggle="${meta.id}"><span class="layer-swatch" style="--layer-color:${meta.color}"></span><span><b>${meta.label}</b><small>${meta.description}</small></span></label>`).join("");
         controls.querySelectorAll("[data-layer-toggle]").forEach((input) => input.addEventListener("change", () => {
           const meta = partOneLayerMeta.find((item) => item.id === input.dataset.layerToggle);
           const layer = layers.find((item) => item.id === input.dataset.layerToggle);
@@ -2071,9 +2072,6 @@
           if (meta.id === "biotico") map.addLayer({ id: labelId, type: "symbol", source: sourceId, filter: ["==", ["get", "kind"], "bio-point"], layout: { visibility: "none", "text-field": ["get", "label"], "text-size": ["interpolate", ["linear"], ["zoom"], 10, 7, 14, 9], "text-offset": [0, 1.35], "text-anchor": "top", "text-allow-overlap": true }, paint: { "text-color": "#c9f2d6", "text-halo-color": "#061309", "text-halo-width": 1.5 } });
           if (meta.id === "infraestructura") map.addLayer({ id: labelId, type: "symbol", source: sourceId, filter: ["==", ["get", "kind"], "fisico-point"], layout: { visibility: "none", "text-field": ["get", "label"], "text-size": ["interpolate", ["linear"], ["zoom"], 10, 7, 14, 9], "text-offset": [0, 1.35], "text-anchor": "top", "text-allow-overlap": true }, paint: { "text-color": "#dfe3e8", "text-halo-color": "#0a0c0d", "text-halo-width": 1.5 } });
           partOneMapLayers.push({ id: meta.id, fill: fillId, line: lineId, point: pointId, extras: (meta.id === "hidrico" || meta.id === "biotico" || meta.id === "infraestructura") ? [labelId] : [], markers: [] });
-          // El checkbox de "Subsistema hídrico" nace marcado, pero las capas nacen
-          // ocultas: sin esto, nunca se veía nada hasta desmarcar y volver a marcar.
-          if (meta.id === "hidrico") { [pointId, labelId].forEach((id) => map.setLayoutProperty(id, "visibility", "visible")); }
         });
         componentPointMap = map;
         // Avenida Ciudad de Cali (coordenadas reales que diste, de sur a
@@ -2281,15 +2279,34 @@
     // La separación se resuelve moviendo las cajas, no los puntos geográficos.
     let declutteredPositions = {};
     function computeDeclutteredPositions() {
-      const map = {};
+      const items = [];
       KENNEDY_PHENOMENA.forEach((p, i) => {
         const proj = projectToPercent(p.coords);
-        if (proj) map[`phen-${i}`] = { x: proj.x, y: proj.y };
+        if (proj) items.push({ key: `phen-${i}`, x: proj.x, y: proj.y });
       });
       KENNEDY_TEXT_BOXES.forEach((box, i) => box.coords.forEach((c, j) => {
         const proj = projectToPercent(c.pos);
-        if (proj) map[`box-${i}-${j}`] = { x: proj.x, y: proj.y };
+        if (proj) items.push({ key: `box-${i}-${j}`, x: proj.x, y: proj.y });
       }));
+      // Si dos bolitas quedan muy cerca (por estar geográficamente cerca en
+      // la realidad), se empujan un poquito para que no se toquen entre sí.
+      const minDist = 6;
+      for (let iter = 0; iter < 10; iter++) {
+        for (let a = 0; a < items.length; a++) {
+          for (let b = a + 1; b < items.length; b++) {
+            const dx = items[b].x - items[a].x, dy = items[b].y - items[a].y;
+            const dist = Math.hypot(dx, dy) || 0.0001;
+            if (dist < minDist) {
+              const push = (minDist - dist) / 2;
+              const ux = dx / dist, uy = dy / dist;
+              items[a].x -= ux * push; items[a].y -= uy * push;
+              items[b].x += ux * push; items[b].y += uy * push;
+            }
+          }
+        }
+      }
+      const map = {};
+      items.forEach((it) => { map[it.key] = { x: it.x, y: it.y }; });
       return map;
     }
     // Una sola bolita grande (mismo tamaño que las bolas de los sistemas)
@@ -2431,7 +2448,7 @@
       // izquierda del nodo si está en la mitad derecha) para que no se
       // recorte contra el borde del contenedor.
       const anchorClass = boxPos[0] > 50 ? "kennedy-anchor-right" : "kennedy-anchor-left";
-      return `<div class="kennedy-info-box ${anchorClass}" id="kennedy-box-${i}" style="left:${boxPos[0]}%;top:${boxPos[1]}%;--node-color:${box.color}"><i class="kennedy-watermark-icon fa-solid ${box.icon}" aria-hidden="true"></i><h4 class="kennedy-title-line">${box.title}</h4>${sectionsHtml}</div>${nodesHtml}`;
+      return `<div class="kennedy-info-box ${anchorClass}" id="kennedy-box-${i}" style="left:${boxPos[0]}%;top:${boxPos[1]}%;--node-color:${box.color}"><i class="kennedy-watermark-icon fa-solid ${box.icon}" aria-hidden="true"></i><i class="kennedy-loop-icon fa-solid fa-arrows-rotate" aria-hidden="true" title="Dinámica cíclica"></i><h4 class="kennedy-title-line">${box.title}</h4>${sectionsHtml}</div>${nodesHtml}`;
     }).join("");
     const updateTextBoxes = () => {
       const stage = subsystemBubbles?.querySelector(".systems-network svg .map-network-flows");

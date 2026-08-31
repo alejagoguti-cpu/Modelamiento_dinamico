@@ -5722,6 +5722,12 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
   font-size: 54px; color: var(--node-color, #fff); opacity: .14;
   pointer-events: none;
 }
+/* Ícono de bucle al lado derecho de la caja, marcando que es una dinámica
+   cíclica (no un evento único). */
+.kennedy-info-box .kennedy-loop-icon {
+  position: absolute; top: 8px; right: 8px;
+  font-size: 11px; color: var(--node-color, #fff); opacity: .8;
+}
 .kennedy-info-box::before {
   content: ""; position: absolute; inset: 0; z-index: -1;
   background: linear-gradient(155deg, color-mix(in srgb, var(--node-color) 16%, transparent), transparent 60%);
@@ -5758,7 +5764,7 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
    circulitos sueltos) — menos "rara", más clara de seguir. */
 .map-network-stage > svg .kennedy-box-link {
   fill: none; stroke: rgba(244,248,249,0.96); stroke-width: 1.15px;
-  stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: none;
+  stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: .9 .8;
   vector-effect: non-scaling-stroke; opacity: .98;
   filter: drop-shadow(0 0 1px rgba(244,248,249,.32));
 }
