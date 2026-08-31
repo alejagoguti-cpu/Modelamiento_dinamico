@@ -2094,39 +2094,69 @@ function showInitialPopup() {
       style.id = "cards-animation-styles";
       style.innerHTML = `
         @keyframes slideInCard {
-          from {
+          0% {
             opacity: 0;
-            transform: translateY(20px) scale(0.95);
+            transform: translateY(40px) scale(0.8) rotateY(90deg);
           }
-          to {
+          50% {
+            opacity: 0.7;
+          }
+          100% {
             opacity: 1;
-            transform: translateY(0) scale(1);
+            transform: translateY(0) scale(1) rotateY(0deg);
           }
         }
-        @keyframes glowIcon {
-          0% {
+        @keyframes pulseGlow {
+          0%, 100% {
             background: #252525;
+            box-shadow: 0 0 0px rgba(255, 255, 255, 0), 0 0 0px rgba(255, 255, 255, 0.2);
+            transform: scale(1);
+          }
+          50% {
+            background: #3a3a3a;
+            box-shadow: 0 0 24px rgba(255, 255, 255, 0.6), 0 0 40px rgba(255, 255, 255, 0.3), inset 0 0 12px rgba(255, 255, 255, 0.2);
+            transform: scale(1.08);
+          }
+        }
+        @keyframes borderPulse {
+          0%, 100% {
+            border-color: #333333;
             box-shadow: 0 0 0px rgba(255, 255, 255, 0);
           }
           50% {
-            background: #333333;
-            box-shadow: 0 0 12px rgba(255, 255, 255, 0.3);
+            border-color: #555555;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+          }
+        }
+        @keyframes iconSpin {
+          0% {
+            transform: rotateZ(0deg) scale(1);
+          }
+          50% {
+            transform: rotateZ(180deg) scale(1.1);
           }
           100% {
-            background: #252525;
-            box-shadow: 0 0 0px rgba(255, 255, 255, 0);
+            transform: rotateZ(360deg) scale(1);
           }
         }
+        .pot-card {
+          transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+        }
         .pot-card:hover {
-          background: #252525 !important;
-          border-color: #444444 !important;
-          transform: translateY(-4px);
-          transition: all 0.3s ease;
+          background: #1f1f1f !important;
+          border-color: #555555 !important;
+          transform: translateY(-12px) scale(1.05) !important;
+          box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 30px rgba(255, 255, 255, 0.15) !important;
+          transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
         }
         .pot-card:hover .pot-icon {
-          background: #333333 !important;
-          box-shadow: 0 0 16px rgba(255, 255, 255, 0.4) !important;
-          animation: glowIcon 0.6s ease infinite !important;
+          background: #3a3a3a !important;
+          box-shadow: 0 0 24px rgba(255, 255, 255, 0.6), 0 0 40px rgba(255, 255, 255, 0.3), inset 0 0 12px rgba(255, 255, 255, 0.2) !important;
+          animation: pulseGlow 1.2s ease-in-out infinite, iconSpin 2s ease-in-out infinite !important;
+          transform: scale(1.1) !important;
+        }
+        .pot-card:hover {
+          animation: borderPulse 1.5s ease-in-out infinite !important;
         }
       `;
       document.head.appendChild(style);
