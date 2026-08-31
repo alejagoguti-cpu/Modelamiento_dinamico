@@ -5801,14 +5801,24 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
   border-radius: 10px; background: linear-gradient(135deg, rgba(7,17,16,.98), rgba(10,13,16,.98));
 }
 .visible-elements-section h2 { margin: 7px 0 16px; color: #fff; font: 700 20px/1.15 "Space Grotesk", Inter, sans-serif; }
-.visible-elements-grid {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-  gap: 12px; margin-bottom: 16px;
+.visible-elements-loop {
+  position: relative; width: 100%; max-width: 640px; aspect-ratio: 1 / 1; margin: 0 auto 16px;
 }
+.loop-arrows-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.loop-arrow-path {
+  fill: none; stroke: #76fff0; stroke-width: 2; stroke-dasharray: 5 4; opacity: .75;
+  animation: loop-arrow-flow 2.6s linear infinite;
+}
+@keyframes loop-arrow-flow { to { stroke-dashoffset: -18; } }
 .visible-element-card {
   border: 1px solid rgba(118,255,240,.28); border-radius: 9px; padding: 14px;
-  background: rgba(118,255,240,.05); display: flex; flex-direction: column; gap: 6px;
+  background: rgba(8,14,14,.96); display: flex; flex-direction: column; gap: 6px;
+  position: absolute; width: 44%; max-width: 230px;
 }
+.loop-pos-top { top: 0; left: 50%; transform: translate(-50%, 0); }
+.loop-pos-right { top: 50%; right: 0; transform: translate(0, -50%); }
+.loop-pos-bottom { bottom: 0; left: 50%; transform: translate(-50%, 0); }
+.loop-pos-left { top: 50%; left: 0; transform: translate(0, -50%); }
 .visible-element-card i { font-size: 18px; color: var(--ve-color, #76fff0); }
 .visible-element-card strong { color: #fff; font-size: 13px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
 .visible-element-card span { color: rgba(242,236,227,.72); font-size: 11px; line-height: 1.45; }
@@ -5816,6 +5826,11 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 .ve-procesos { --ve-color: #ee9a4b; }
 .ve-flujos { --ve-color: #56b8d4; }
 .ve-interacciones { --ve-color: #b28be8; }
+@media (max-width: 720px) {
+  .visible-elements-loop { max-width: 100%; aspect-ratio: auto; height: auto; }
+  .loop-arrows-svg { display: none; }
+  .visible-element-card { position: static; width: 100%; max-width: none; margin-bottom: 10px; transform: none; }
+}
 .visible-elements-purpose {
   border-top: 1px solid rgba(255,255,255,.1); padding-top: 12px; margin: 0;
   color: rgba(242,236,227,.85); font-size: 12px; line-height: 1.5;
