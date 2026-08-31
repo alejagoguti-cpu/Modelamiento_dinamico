@@ -18,8 +18,16 @@
       { "offset": [offX, offY], "bbox": [0,0,w,h],
         "edges": [ ["major"|"mid"|"local", [[x,y], [x,y], ...]], ... ] }
 
-   2) ./assets/trazado.xml
-      TU archivo de trayectorias, tal como lo exporta SUMO en modo
+   2) ./assets/kennedy_vehiculos.json  (preferido)
+      Ya generado a partir de tu vehiculos.json: filtrado a la zona de
+      Kennedy y con las mismas coordenadas locales que la red (mismo
+      "offset" ya restado). Formato compacto:
+      [ [tiempo, [[id, x, y], [id, x, y], ...]], ... ]
+      No trae ángulo — se calcula solo, mirando hacia dónde se mueve cada
+      auto entre un instante y el siguiente.
+
+   3) ./assets/trazado.xml  (alternativa, si no existe el JSON de arriba)
+      Tu archivo de trayectorias, tal como lo exporta SUMO en modo
       "FCD output" (--fcd-output). Súbelo tú mismo a la carpeta /assets
       de tu repositorio en GitHub (por eso no lo pude cargar yo).
       Formato esperado (el que genera SUMO por defecto):
@@ -36,16 +44,12 @@
       que tu osm.net.xml original (las que trae "netconvert" antes de
       cualquier recorte) — este script les resta automáticamente el mismo
       "offset" que se usó al recortar la red, para que ambos coincidan.
-
-      Si tu archivo NO es un FCD-export (por ejemplo, es un .rou.xml con
-      rutas por aristas en vez de posiciones x,y ya calculadas), avísame:
-      hay que simular el recorrido en vez de solo reproducirlo, y el
-      código de esta parte cambia.
    ========================================================================== */
 (() => {
   "use strict";
 
   const NET_URL = "./assets/kennedy_net.json";
+  const VEHICULOS_JSON_URL = "./assets/kennedy_vehiculos.json";
   const TRAZADO_URL = "./assets/trazado.xml";
 
   const EDGE_STYLE = {
@@ -164,8 +168,23 @@
         setStatus("No se pudo cargar la red vial (assets/kennedy_net.json). Revisa que el archivo esté subido en tu repositorio.");
       });
 
-    // ---------- cargar y parsear el trazado (FCD export de SUMO) ----------
+    // ---------- cargar el trazado: primero intenta el JSON compacto, si no
+    // existe cae al FCD-export XML de SUMO ----------
     function loadTrazado() {
+      return fetch(VEHICULOS_JSON_URL)
+        .then((r) => { if (!r.ok) throw new Error("no encontrado"); return r.json(); })
+        .then((data) => {
+          // Formato: [ [tiempo, [[id,x,y], ...]], ... ] — ya viene con el
+          // mismo offset restado que la red, y sin ángulo (se calcula solo).
+          timesteps = data.map(([time, vehicles]) => ({
+            time,
+            vehicles: vehicles.map(([id, x, y]) => ({ id, x, y })),
+          }));
+          finishLoadingTimesteps();
+        })
+        .catch(() => loadTrazadoXml());
+    }
+    function loadTrazadoXml() {
       return fetch(TRAZADO_URL)
         .then((r) => { if (!r.ok) throw new Error("no encontrado"); return r.text(); })
         .then((xmlText) => {
@@ -184,18 +203,21 @@
             }));
             return { time, vehicles };
           });
-          const totalTime = timesteps.length ? timesteps[timesteps.length - 1].time : 0;
-          slider.max = String(Math.round(totalTime));
-          slider.disabled = false;
-          playBtn.disabled = false;
-          setStatus("", false);
-          timeLabel.textContent = `00:00 / ${fmtTime(totalTime)}`;
-          drawVehiclesAt(0);
+          finishLoadingTimesteps();
         })
         .catch((err) => {
           console.warn(err);
-          setStatus("La red vial ya está lista. Falta subir tu archivo trazado.xml a /assets en tu repositorio de GitHub para ver los vehículos en movimiento.");
+          setStatus("La red vial ya está lista. Falta subir el archivo de trayectorias (assets/kennedy_vehiculos.json o assets/trazado.xml) para ver los vehículos en movimiento.");
         });
+    }
+    function finishLoadingTimesteps() {
+      const totalTime = timesteps.length ? timesteps[timesteps.length - 1].time : 0;
+      slider.max = String(Math.round(totalTime));
+      slider.disabled = false;
+      playBtn.disabled = false;
+      setStatus("", false);
+      timeLabel.textContent = `00:00 / ${fmtTime(totalTime)}`;
+      drawVehiclesAt(0);
     }
 
     // Busca los dos timesteps que rodean "t" e interpola posiciones entre
@@ -217,12 +239,15 @@
       return a.vehicles.map((va) => {
         const vb = bMap.get(va.id);
         if (!vb) return va;
-        return {
-          id: va.id,
-          x: va.x + (vb.x - va.x) * frac,
-          y: va.y + (vb.y - va.y) * frac,
-          angle: va.angle + (vb.angle - va.angle) * frac,
-        };
+        const x = va.x + (vb.x - va.x) * frac;
+        const y = va.y + (vb.y - va.y) * frac;
+        // Si el dato trae ángulo (viene del FCD-export de SUMO), se
+        // interpola normal. Si no (viene del JSON de posiciones), se
+        // calcula solo mirando hacia dónde se mueve el auto.
+        const angle = (va.angle != null && vb.angle != null)
+          ? va.angle + (vb.angle - va.angle) * frac
+          : (Math.atan2(vb.x - va.x, -(vb.y - va.y)) * 180) / Math.PI;
+        return { id: va.id, x, y, angle };
       });
     }
 
