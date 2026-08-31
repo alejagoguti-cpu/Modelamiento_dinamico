@@ -1678,7 +1678,7 @@
       // en las coordenadas exactas que diste.
       { id: "mitigacion_organica", title: "MODELO DE MITIGACIÓN DE CARGA ORGÁNICA Y RESIDUOS",
         color: "#56b8d4", icon: "fa-recycle",
-        boxCoords: [-74.1723091682759, 4.642347361339735], boxPos: [30, 70], screenOffset: [-4.5, 0], sound: "hidrica",
+        boxCoords: [-74.1723091682759, 4.642347361339735], boxPos: [30, 70], screenOffset: [-4.5, 6], sound: "hidrica",
         coords: [
           // Lado izquierdo de la caja → izquierda, baja, derecha → lado
           // derecho de Humedal La Vaca.
@@ -1687,8 +1687,11 @@
           // Lado derecho de la caja → derecha, baja, derecha otra vez →
           // lado izquierdo de Corabastos (el ícono ya lo pone la caja
           // "Modelo Comercial y Logístico", aquí solo sale la línea).
+          // El "offset" se agrandó para que baje más antes de virar a la
+          // derecha, y así no pase cerca del ícono de vía que está entre
+          // los dos puntos.
           { pos: [-74.1599146050763, 4.63015596902525], icon: "fa-cart-shopping", color: "#e58d62", label: "Corabastos", hideIcon: true,
-            route: { bubbleSide: "left", boxSide: "right", offset: 4, type: "hvh", bendNear: "box" } },
+            route: { bubbleSide: "left", boxSide: "bottom", offset: 10, type: "vhv", bendNear: "box" } },
         ],
         sections: [{ system: "Modelo Determinista ⟶ Sistema Ecológico", icon: "fa-gears", submodelos: [
           "Ciclo de compostaje y estabilización de residuos orgánicos.", "Dinámica de reducción de carga contaminante antes del vertimiento.",
@@ -1702,11 +1705,6 @@
           // DEBAJO del ícono de Corabastos (no por el lado).
           { pos: [-74.1599146050763, 4.63015596902525], icon: "fa-cart-shopping", color: "#e58d62", label: "Corabastos",
             route: { bubbleSide: "bottom", boxSide: "left", offset: -4, type: "hvh", bendNear: "box" } },
-          // Lado derecho de la caja → derecha, sube, izquierda → lado
-          // derecho de Estación Banderas (el ícono lo pone la caja
-          // "Modelo de Operación de Estación de Transporte").
-          { pos: [-74.14541150109216, 4.631221483859855], icon: "fa-bus", color: "#f1cf5b", label: "Estación Banderas", hideIcon: true,
-            route: { bubbleSide: "right", boxSide: "right", offset: 4, type: "hvh", bendNear: "box" } },
         ],
         sections: [{ system: "Modelo Social ⟶ Sistema Social", icon: "fa-people-group", submodelos: [
           "Ciclo de generación y descomposición de materia orgánica.", "Dinámica de acumulación y congestión de transporte pesado.",
