@@ -1788,8 +1788,11 @@
         // Dinámica hídrica: un pequeño sonido de río, nada más — una sola
         // capa de agua corriendo, simple y corta.
         hidrica: (c) => {
-          const dur = 2.2;
-          playFilteredNoise(c, { duration: dur, filterFreq: 650, filterType: "lowpass", gain: 0.1, fadeIn: 0.4, fadeOut: dur, lfoRate: 0.35, lfoDepth: 0.4 });
+          // Lluvia leve: ruido fino, irregular y corto; no es un río ni una melodía.
+          const dur = 3.1;
+          playFilteredNoise(c, { duration: dur, filterFreq: 4200, filterType: "highpass", q: 0.35, gain: 0.018, fadeIn: 0.55, fadeOut: dur, lfoRate: 0.62, lfoDepth: 0.28 });
+          playFilteredNoise(c, { duration: dur * 0.72, filterFreq: 1700, filterType: "bandpass", q: 0.42, gain: 0.012, fadeIn: 0.7, fadeOut: dur * 0.72, lfoRate: 0.38, lfoDepth: 0.22 });
+          [0.34, 0.92, 1.58, 2.28].forEach((delay, i) => playTone(c, { freq: 1450 + (i % 2) * 260, to: 1050 + (i % 3) * 120, duration: 0.045, type: "sine", gain: 0.008, delay, attack: 0.008 }));
         },
         // Dinámica biótica: dos pajaritos conversando entre la vegetación —
         // trinos con variación natural de tono y ritmo, no siempre iguales
@@ -1797,30 +1800,30 @@
         // un par de trinos suaves, nada exagerado, más un fondo muy tenue
         // de "ambiente natural" (hoja/viento apenas perceptible).
         biotica: (c) => {
+          // Trinos breves y desiguales, con caída de tono para evitar el efecto de silbido humano.
           const chirp = (delay, baseFreq, calls) => {
             let t = delay;
             for (let i = 0; i < calls; i++) {
-              const f = baseFreq + Math.random() * 300;
-              const dur = 0.07 + Math.random() * 0.05;
-              playTone(c, { freq: f, to: f + 500 + Math.random() * 400, duration: dur, type: "sine", gain: 0.045, delay: t, attack: 0.015 });
-              t += dur + 0.05 + Math.random() * 0.06;
+              const f = baseFreq + Math.random() * 220;
+              const dur = 0.055 + Math.random() * 0.035;
+              playTone(c, { freq: f, to: f * 0.72, duration: dur, type: "triangle", gain: 0.026, delay: t, attack: 0.012 });
+              t += dur + 0.075 + Math.random() * 0.08;
             }
           };
-          chirp(0, 2450, 2);
-          chirp(0.7, 2050, 1 + Math.floor(Math.random() * 2));
-          playFilteredNoise(c, { duration: 1.6, filterFreq: 2600, filterType: "bandpass", q: 0.7, gain: 0.015, fadeIn: 0.3, fadeOut: 1.6 });
+          chirp(0.08, 2850, 3);
+          chirp(0.92, 2200, 2);
+          playFilteredNoise(c, { duration: 1.9, filterFreq: 3600, filterType: "bandpass", q: 0.8, gain: 0.009, fadeIn: 0.4, fadeOut: 1.9 });
         },
         // Sistema físico-urbano: zumbido de ciudad lejana, muy suave y
         // sostenido — sin bocinas ni golpes, solo un fondo urbano tenue
         // Sistema físico-urbano: sonido de ciudad — capas de tráfico
         // lejano y murmullo urbano, con tremolo suave, sin bocinas
         fisico: (c) => {
-          const dur = 3.4;
-          playFilteredNoise(c, { duration: dur, filterFreq: 340, filterType: "lowpass", gain: 0.1, fadeIn: 0.4, fadeOut: dur, lfoRate: 0.22, lfoDepth: 0.3 });
-          playFilteredNoise(c, { duration: dur * 0.85, filterFreq: 950, filterType: "bandpass", q: 0.8, gain: 0.045, fadeIn: 0.6, fadeOut: dur * 0.85, lfoRate: 0.5, lfoDepth: 0.4 });
-          playTone(c, { freq: 90, duration: dur * 0.7, type: "sine", gain: 0.05, attack: 0.5 });
-          // un carro pasando de lejos, muy suave, sin bocina
-          playTone(c, { freq: 65, to: 105, duration: 1.1, type: "triangle", gain: 0.035, delay: 0.7, attack: 0.35 });
+          // Trancón lejano: motor ralentí + pulsos lentos de tráfico, sin bocinas.
+          const dur = 3.2;
+          playFilteredNoise(c, { duration: dur, filterFreq: 250, filterType: "lowpass", gain: 0.055, fadeIn: 0.5, fadeOut: dur, lfoRate: 0.12, lfoDepth: 0.38 });
+          [0.35, 1.15, 2.0].forEach((delay, i) => playTone(c, { freq: 58 + i * 7, to: 72 + i * 8, duration: 0.38, type: "triangle", gain: 0.022, delay, attack: 0.12 }));
+          playFilteredNoise(c, { duration: dur * 0.7, filterFreq: 620, filterType: "bandpass", q: 0.5, gain: 0.012, fadeIn: 0.7, fadeOut: dur * 0.7, lfoRate: 0.2, lfoDepth: 0.25 });
         },
         // Sistema de movilidad: motor de fondo suave, sin bocina
         movilidad: (c) => {
@@ -2492,11 +2495,20 @@
       const submodelIcons = ["fa-water", "fa-feather-pointed", "fa-city", "fa-person-walking", "fa-house-chimney", "fa-people-arrows", "fa-arrows-rotate"];
       const label = (row) => systems ? row.name : row.name.replace(/^Submodelo de /, "");
       const icon = (index) => (systems ? systemIcons : submodelIcons)[index] || "fa-circle-nodes";
+      const dynamicItems = {
+        // Dinámicas observables: cada ítem describe un cambio, ciclo, flujo o condición territorial.
+        hidrica: ["Precipitación y duración de las lluvias", "Infiltración, escorrentía y acumulación", "Conexión entre canales, humedales y drenajes", "Calidad del agua y carga de sedimentos", "Desborde y recuperación después de la lluvia"],
+        biotica: ["Reproducción y ciclos de vida", "Alimentación y disponibilidad de refugio", "Migración y desplazamiento de especies", "Cobertura vegetal y humedad", "Calidad del aire y presión urbana"],
+        fisico: ["Construcción y transformación de edificaciones", "Apertura, cierre y mantenimiento de vías", "Continuidad y deterioro de andenes", "Expansión o reducción de cerramientos", "Calidad del aire junto al borde vial"],
+        movilidad: ["Desplazamientos diarios de personas y vehículos", "Cambios de ruta por congestión", "Tiempos de viaje y espera", "Entrada y salida del humedal y los equipamientos", "Conexión o aislamiento entre barrios"],
+        social: ["Visita, permanencia y horarios de uso", "Cuidado y mantenimiento comunitario", "Educación ambiental y transmisión de conocimiento", "Participación y toma de decisiones", "Conflictos, acuerdos y cambios en la apropiación"],
+        socioeconomico: ["Construcción y crecimiento de viviendas", "Apertura y cierre de comercios", "Concentración o desplazamiento de actividades", "Llegada o pérdida de equipamientos", "Cambio de usos del suelo y presión sobre el borde"]
+      };
       // Cuando la red está anclada al mapa real (Cartografía interactiva),
       // NINGUNA bolita abstracta de sistema se muestra — solo las bolitas
       // de lugar real (Humedal El Burro, Corabastos, etc.).
       const hideAllSystemBubbles = systems && withFlows;
-      const nodes = hideAllSystemBubbles ? "" : rows.map((row, index) => { const [x,y] = positions[index]; return `<button type="button" class="map-network-node ${systems ? "map-system-node" : "map-submodel-node"}" data-map-network-index="${index}" style="--node-x:${x}%;--node-y:${y}%;--node-color:${row.color || colors[index]}"><i class="map-network-node-icon fa-solid ${icon(index)}" aria-hidden="true"></i><strong>${label(row)}</strong></button>`; }).join("");
+      const nodes = hideAllSystemBubbles ? "" : rows.map((row, index) => { const [x,y] = positions[index]; return `<button type="button" class="map-network-node ${systems ? "map-system-node" : "map-submodel-node"}" data-map-network-index="${index}" data-sound-id="${row.id || ""}" aria-label="${label(row)}. Activar sonido del subsistema" style="--node-x:${x}%;--node-y:${y}%;--node-color:${row.color || colors[index]}"><i class="map-network-node-icon fa-solid ${icon(index)}" aria-hidden="true"></i><strong>${label(row)}</strong></button>`; }).join("");
       if (hideAllSystemBubbles) declutteredPositions = computeDeclutteredPositions();
       const kennedyBoxesHtml = hideAllSystemBubbles ? buildPhenomenaHtml() + buildTextBoxesHtml() : "";
       const relationPairs = hideAllSystemBubbles ? [] : (systems
@@ -2564,11 +2576,10 @@
         if (button.classList.contains("map-phenomenon-node")) return; // tiene su propio manejador, más abajo
         const row = rows[Number(button.dataset.mapNetworkIndex)];
         if (!row) return;
-        if (row?.id) DINAMICA_SOUND.play(row.id);
+        DINAMICA_SOUND.play(button.dataset.soundId || row.id); button.classList.remove("sound-playing"); void button.offsetWidth; button.classList.add("sound-playing"); window.setTimeout(() => button.classList.remove("sound-playing"), 900);
         target.querySelectorAll(".map-network-node").forEach((node) => node.classList.toggle("selected", node === button));
         target.querySelectorAll(".subsystem-components, .subsystem-purpose-panel, .subsystem-diagram-panel, .map-network-detail").forEach((node) => node.remove());
         const color = row.color || colors[Number(button.dataset.mapNetworkIndex)];
-        const parts = systems ? row.components : row.parts;
         const partsPurpose = row.partsPurpose || "Sí";
         const totalPurpose = row.totalPurpose || "Sí";
         const partsWhy = row.partsWhy || `Las partes del sistema se analizan en relación con sus funciones y comportamientos dentro del territorio.`;
@@ -2576,29 +2587,14 @@
         const components = document.createElement("div");
         components.className = "subsystem-components active map-components-panel";
         components.style.setProperty("--bubble-color", color);
-        components.innerHTML = `<div class="subsystem-panel-heading"><strong><i class="fa-solid fa-sparkles"></i> QUÉ PARTES O COMPONENTES SE ANALIZAN</strong><button type="button" class="subsystem-panel-close" aria-label="Cerrar panel de componentes"><i class="fa-solid fa-xmark"></i></button></div><p class="panel-scope-label">GENERAL · EN EL TERRITORIO</p><div class="component-visual-strip">${(Array.isArray(parts) ? parts : [parts]).map((part, partIndex) => `<span class="component-visual" style="--bubble-color:${color}"><i class="fa-solid ${systems ? ["fa-droplet","fa-feather-pointed","fa-building","fa-route","fa-people-group","fa-house-chimney"][Number(button.dataset.mapNetworkIndex)] : submodelIcons[Number(button.dataset.mapNetworkIndex)]}"></i><em>${part}</em></span>`).join("")}</div><p class="panel-specific-reading"><b>EN BOGOTÁ:</b> ${systems ? row.process : row.totalWhy}</p>`;
+        components.innerHTML = `<div class="subsystem-panel-heading"><strong><i class="fa-solid fa-arrows-rotate"></i> DINÁMICA DEL TERRITORIO</strong><button type="button" class="subsystem-panel-close" aria-label="Cerrar panel de dinámica"><i class="fa-solid fa-xmark"></i></button></div><p class="panel-scope-label">QUÉ COMPONE ESTE SUBSISTEMA</p><ul class="dynamic-item-list">${(dynamicItems[row.id] || [row.process]).map((item) => `<li><i class="fa-solid fa-circle-dot"></i><span>${item}</span></li>`).join("")}</ul><p class="panel-scope-label">CÓMO CAMBIA EN EL TIEMPO</p><p class="panel-specific-reading">${row.process}</p><p class="panel-specific-reading"><b>SEÑALES OBSERVABLES:</b> ${row.process}</p>`;
         const purpose = document.createElement("aside");
         purpose.className = "subsystem-purpose-panel active map-purpose-panel";
         purpose.style.setProperty("--bubble-color", color);
         purpose.innerHTML = `<div class="subsystem-panel-heading"><strong>${label(row)}</strong><button type="button" class="subsystem-panel-close" aria-label="Cerrar panel de propósito"><i class="fa-solid fa-xmark"></i></button></div><p class="panel-scope-label">ANÁLISIS GENERAL · TABLA DE PROPÓSITO</p><h4>¿Las partes tienen propósito propio?</h4><p><b>${partsPurpose}</b> · ${partsWhy}</p><h4>¿La totalidad tiene propósito propio?</h4><p><b>${totalPurpose}</b> · ${totalWhy}</p><h4>Por ende, la categoría es:</h4><b class="purpose-category">${row.category}</b><h4>Qué cambia en el tiempo</h4><p>${row.process}</p>`;
-        // Para "Dinámica hídrica" no se muestra la caja de componentes por
-        // separado — esa info (qué se analiza) ya queda integrada abajo
-        // del diagrama ilustrado, para no repetir contenido.
-        if (row.id !== "hidrica") target.append(components);
+        target.append(components);
         target.append(purpose);
-        // Diagrama ilustrado (como el referente que mandaste): un río/
-        // humedal estilizado con líneas de guía hacia cada ciclo o dinámica
-        // que ocurre ahí. Por ahora solo existe para "Dinámica hídrica" —
-        // si funciona bien, se hace uno propio para cada uno de los 6.
-        const diagram = document.createElement("aside");
-        if (row.id === "hidrica") {
-          diagram.className = "subsystem-diagram-panel active";
-          diagram.style.setProperty("--bubble-color", color);
-          diagram.innerHTML = buildHidricaDiagramHtml(row);
-          target.append(diagram);
-          diagram.querySelector(".subsystem-panel-close")?.addEventListener("click", (event) => { event?.stopPropagation(); diagram.remove(); });
-        }
-        const closePanels = (event) => { event?.stopPropagation(); components.remove(); purpose.remove(); diagram.remove(); clearSubsystemPoints(); button.classList.remove("selected"); };
+        const closePanels = (event) => { event?.stopPropagation(); components.remove(); purpose.remove(); clearSubsystemPoints(); button.classList.remove("selected"); };
         components.querySelector(".subsystem-panel-close")?.addEventListener("click", closePanels);
         purpose.querySelector(".subsystem-panel-close")?.addEventListener("click", closePanels);
         if (systems && withFlows) renderSubsystemPoints(subsystemData[Number(button.dataset.mapNetworkIndex)]);
@@ -2715,51 +2711,6 @@
       observer?.observe(section);
       window.addEventListener("scroll", maybePlay, { passive: true });
     };
-    // ---------- Red de "¿Qué queremos hacer visible?" ----------
-    // Cada línea es una relación bidireccional real entre dos elementos
-    // (no un paso de una secuencia). Al hacer click en una línea, se
-    // explica esa relación específica. Las líneas de "tejido" (desde
-    // Interacciones) conectan con todos los demás; las de "retroalimentación"
-    // (desde Emergencia) son más suaves porque van en un solo sentido.
-    const VISIBLE_NETWORK_EDGES = {
-      "vn-edge-agentes-procesos": "Los agentes realizan acciones que producen procesos, y los procesos condicionan las decisiones de los agentes.",
-      "vn-edge-agentes-flujos": "Los agentes generan y utilizan flujos.",
-      "vn-edge-agentes-sistemas": "Los agentes participan en distintos sistemas y también los transforman.",
-      "vn-edge-procesos-flujos": "Los procesos modifican qué circula y cómo circula.",
-      "vn-edge-procesos-sistemas": "Un proceso puede afectar simultáneamente varios sistemas.",
-      "vn-edge-flujos-sistemas": "Los flujos son precisamente los que conectan sistemas diferentes.",
-      "vn-edge-interacciones-agentes": "Las interacciones funcionan como el tejido que conecta a todos los elementos entre sí — no son un paso aparte, están presentes en cada relación.",
-      "vn-edge-interacciones-procesos": "Las interacciones funcionan como el tejido que conecta a todos los elementos entre sí — no son un paso aparte, están presentes en cada relación.",
-      "vn-edge-interacciones-flujos": "Las interacciones funcionan como el tejido que conecta a todos los elementos entre sí — no son un paso aparte, están presentes en cada relación.",
-      "vn-edge-interacciones-sistemas": "Las interacciones funcionan como el tejido que conecta a todos los elementos entre sí — no son un paso aparte, están presentes en cada relación.",
-      "vn-edge-interacciones-emergencia": "Los patrones emergentes aparecen a partir de esas interacciones.",
-      "vn-edge-emergencia-agentes": "Lo que emerge vuelve a modificar el comportamiento de los agentes (retroalimentación).",
-      "vn-edge-emergencia-procesos": "Lo que emerge vuelve a modificar cómo ocurren los procesos (retroalimentación).",
-      "vn-edge-emergencia-sistemas": "Lo que emerge vuelve a modificar el comportamiento del sistema (retroalimentación).",
-    };
-    (() => {
-      const wrap = document.getElementById("visibleNetworkWrap");
-      const tooltip = document.getElementById("visibleNetworkTooltip");
-      if (!wrap || !tooltip) return;
-      Object.keys(VISIBLE_NETWORK_EDGES).forEach((id) => {
-        const hit = document.getElementById(id);
-        if (!hit) return;
-        hit.style.cursor = "pointer";
-        hit.addEventListener("click", (event) => {
-          event.stopPropagation();
-          wrap.querySelectorAll(".visible-network-edge-hit.active").forEach((el) => el.classList.remove("active"));
-          hit.classList.add("active");
-          tooltip.textContent = VISIBLE_NETWORK_EDGES[id];
-          tooltip.hidden = false;
-          const wrapRect = wrap.getBoundingClientRect();
-          const x = event.clientX - wrapRect.left, y = event.clientY - wrapRect.top;
-          tooltip.style.left = Math.min(Math.max(x, 90), wrapRect.width - 90) + "px";
-          tooltip.style.top = Math.min(Math.max(y - 10, 10), wrapRect.height - 60) + "px";
-        });
-      });
-      document.addEventListener("click", () => { tooltip.hidden = true; });
-    })();
-
     drawSubsystems({ hidden: true });
     initRealCartography();
     // Lo primero que se ve al entrar al módulo son los Subsistemas del

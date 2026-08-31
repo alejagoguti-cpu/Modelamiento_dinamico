@@ -74,116 +74,88 @@
                referente): cada línea es una relación bidireccional real
                entre dos elementos — hazle click para leer qué significa. -->
           <div class="bubble-net-wrap" id="visibleNetworkWrap">
-            <svg class="bubble-net-svg" viewBox="0 0 500 460">
+            <svg class="bubble-net-svg" viewBox="0 0 560 500" role="img" aria-label="Red de agentes, procesos, flujos, interacciones, sistemas y emergencia">
               <defs>
-                <marker id="vnArrowEnd" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#bcd8d4"/></marker>
-                <marker id="vnArrowFeedback" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#ee9a4b"/></marker>
+                <marker id="vnArrowEnd" markerWidth="4.5" markerHeight="4.5" refX="3.7" refY="2.25" orient="auto"><path d="M0,0 L4.5,2.25 L0,4.5 Z" fill="#f1f7f5"/></marker>
               </defs>
-              <!-- Líneas primero, abajo de los círculos -->
+              <!-- Relaciones suaves: cada trazo mantiene su flecha pequeña y su flujo animado. -->
               <g class="bubble-net-edges">
-                <path id="vn-edge-agentes-procesos" class="bubble-edge-hit" d="M 150 95 L 300 78"/>
-                <path class="bubble-edge-visual" d="M 150 95 L 300 78" marker-end="url(#vnArrowEnd)"/>
-                <path id="vn-edge-agentes-flujos" class="bubble-edge-hit" d="M 145 105 L 100 175"/>
-                <path class="bubble-edge-visual" d="M 145 105 L 100 175" marker-end="url(#vnArrowEnd)"/>
-                <path id="vn-edge-agentes-sistemas" class="bubble-edge-hit" d="M 148 118 L 115 255"/>
-                <path class="bubble-edge-visual" d="M 148 118 L 115 255" marker-end="url(#vnArrowEnd)"/>
-                <path id="vn-edge-procesos-flujos" class="bubble-edge-hit" d="M 290 92 L 108 168"/>
-                <path class="bubble-edge-visual" d="M 290 92 L 108 168" marker-end="url(#vnArrowEnd)"/>
-                <path id="vn-edge-procesos-sistemas" class="bubble-edge-hit" d="M 295 100 L 125 250"/>
-                <path class="bubble-edge-visual" d="M 295 100 L 125 250" marker-end="url(#vnArrowEnd)"/>
-                <path id="vn-edge-flujos-sistemas" class="bubble-edge-hit" d="M 105 190 L 112 245"/>
-                <path class="bubble-edge-visual" d="M 105 190 L 112 245" marker-end="url(#vnArrowEnd)"/>
-                <!-- Interacciones (el círculo grande) conecta con TODOS -->
-                <path id="vn-edge-interacciones-agentes" class="bubble-edge-hit bubble-edge-tejido-hit" d="M 320 195 L 165 90"/>
-                <path class="bubble-edge-visual bubble-edge-tejido" d="M 320 195 L 165 90" marker-end="url(#vnArrowEnd)"/>
-                <path id="vn-edge-interacciones-procesos" class="bubble-edge-hit bubble-edge-tejido-hit" d="M 325 175 L 295 85"/>
-                <path class="bubble-edge-visual bubble-edge-tejido" d="M 325 175 L 295 85" marker-end="url(#vnArrowEnd)"/>
-                <path id="vn-edge-interacciones-flujos" class="bubble-edge-hit bubble-edge-tejido-hit" d="M 285 195 L 120 180"/>
-                <path class="bubble-edge-visual bubble-edge-tejido" d="M 285 195 L 120 180" marker-end="url(#vnArrowEnd)"/>
-                <path id="vn-edge-interacciones-sistemas" class="bubble-edge-hit bubble-edge-tejido-hit" d="M 300 225 L 140 262"/>
-                <path class="bubble-edge-visual bubble-edge-tejido" d="M 300 225 L 140 262" marker-end="url(#vnArrowEnd)"/>
-                <path id="vn-edge-interacciones-emergencia" class="bubble-edge-hit bubble-edge-tejido-hit" d="M 300 235 L 265 300"/>
-                <path class="bubble-edge-visual bubble-edge-tejido" d="M 300 235 L 265 300" marker-end="url(#vnArrowEnd)"/>
-                <!-- Retroalimentación de Emergencia: más suave, un solo sentido -->
-                <path id="vn-edge-emergencia-agentes" class="bubble-edge-hit" d="M 235 285 L 165 105"/>
-                <path class="bubble-edge-visual bubble-edge-feedback" d="M 235 285 L 165 105" marker-end="url(#vnArrowFeedback)"/>
-                <path id="vn-edge-emergencia-procesos" class="bubble-edge-hit" d="M 260 280 L 285 100"/>
-                <path class="bubble-edge-visual bubble-edge-feedback" d="M 260 280 L 285 100" marker-end="url(#vnArrowFeedback)"/>
-                <path id="vn-edge-emergencia-sistemas" class="bubble-edge-hit" d="M 220 300 L 135 270"/>
-                <path class="bubble-edge-visual bubble-edge-feedback" d="M 220 300 L 135 270" marker-end="url(#vnArrowFeedback)"/>
+                <path id="vn-edge-agentes-procesos" class="bubble-edge-hit" d="M314 66 Q378 65 411 124"/><path id="vn-edge-agentes-procesos-visual" class="bubble-edge-visual" d="M314 66 Q378 65 411 124" marker-end="url(#vnArrowEnd)"/><circle class="bubble-flow-dot" r="2.2"><animateMotion dur="5.6s" begin="0s" repeatCount="indefinite"><mpath href="#vn-edge-agentes-procesos-visual"/></animateMotion></circle>
+                <path id="vn-edge-agentes-flujos" class="bubble-edge-hit" d="M314 82 Q400 165 415 290"/><path id="vn-edge-agentes-flujos-visual" class="bubble-edge-visual" d="M314 82 Q400 165 415 290" marker-end="url(#vnArrowEnd)"/><circle class="bubble-flow-dot" r="2.2"><animateMotion dur="6.4s" begin=".4s" repeatCount="indefinite"><mpath href="#vn-edge-agentes-flujos-visual"/></animateMotion></circle>
+                <path id="vn-edge-agentes-interacciones" class="bubble-edge-hit" d="M280 103 Q280 250 280 367"/><path id="vn-edge-agentes-interacciones-visual" class="bubble-edge-visual" d="M280 103 Q280 250 280 367" marker-end="url(#vnArrowEnd)"/><circle class="bubble-flow-dot" r="2.2"><animateMotion dur="7s" begin=".8s" repeatCount="indefinite"><mpath href="#vn-edge-agentes-interacciones-visual"/></animateMotion></circle>
+                <path id="vn-edge-agentes-sistemas" class="bubble-edge-hit" d="M246 82 Q160 165 151 290"/><path id="vn-edge-agentes-sistemas-visual" class="bubble-edge-visual" d="M246 82 Q160 165 151 290" marker-end="url(#vnArrowEnd)"/><circle class="bubble-flow-dot" r="2.2"><animateMotion dur="6.2s" begin="1.2s" repeatCount="indefinite"><mpath href="#vn-edge-agentes-sistemas-visual"/></animateMotion></circle>
+                <path id="vn-edge-agentes-emergencia" class="bubble-edge-hit" d="M246 67 Q170 65 153 125"/><path id="vn-edge-agentes-emergencia-visual" class="bubble-edge-visual" d="M246 67 Q170 65 153 125" marker-end="url(#vnArrowEnd)"/><circle class="bubble-flow-dot" r="2.2"><animateMotion dur="5.2s" begin="1.6s" repeatCount="indefinite"><mpath href="#vn-edge-agentes-emergencia-visual"/></animateMotion></circle>
+                <path id="vn-edge-procesos-flujos" class="bubble-edge-hit" d="M455 194 L455 290"/><path id="vn-edge-procesos-flujos-visual" class="bubble-edge-visual" d="M455 194 L455 290" marker-end="url(#vnArrowEnd)"/><circle class="bubble-flow-dot" r="2.2"><animateMotion dur="4.8s" begin="2s" repeatCount="indefinite"><mpath href="#vn-edge-procesos-flujos-visual"/></animateMotion></circle>
+                <path id="vn-edge-procesos-interacciones" class="bubble-edge-hit" d="M421 177 Q370 300 330 385"/><path id="vn-edge-procesos-interacciones-visual" class="bubble-edge-visual" d="M421 177 Q370 300 330 385" marker-end="url(#vnArrowEnd)"/><circle class="bubble-flow-dot" r="2.2"><animateMotion dur="6.8s" begin="2.4s" repeatCount="indefinite"><mpath href="#vn-edge-procesos-interacciones-visual"/></animateMotion></circle>
+                <path id="vn-edge-procesos-sistemas" class="bubble-edge-hit" d="M415 165 Q275 260 151 320"/><path id="vn-edge-procesos-sistemas-visual" class="bubble-edge-visual" d="M415 165 Q275 260 151 320" marker-end="url(#vnArrowEnd)"/><circle class="bubble-flow-dot" r="2.2"><animateMotion dur="7.2s" begin="2.8s" repeatCount="indefinite"><mpath href="#vn-edge-procesos-sistemas-visual"/></animateMotion></circle>
+                <path id="vn-edge-procesos-emergencia" class="bubble-edge-hit" d="M411 135 Q275 260 153 135"/><path id="vn-edge-procesos-emergencia-visual" class="bubble-edge-visual" d="M411 135 Q275 260 153 135" marker-end="url(#vnArrowEnd)"/><circle class="bubble-flow-dot" r="2.2"><animateMotion dur="7.5s" begin="3.2s" repeatCount="indefinite"><mpath href="#vn-edge-procesos-emergencia-visual"/></animateMotion></circle>
+                <path id="vn-edge-flujos-interacciones" class="bubble-edge-hit" d="M415 330 Q370 390 330 413"/><path id="vn-edge-flujos-interacciones-visual" class="bubble-edge-visual" d="M415 330 Q370 390 330 413" marker-end="url(#vnArrowEnd)"/><circle class="bubble-flow-dot" r="2.2"><animateMotion dur="5.8s" begin="3.6s" repeatCount="indefinite"><mpath href="#vn-edge-flujos-interacciones-visual"/></animateMotion></circle>
+                <path id="vn-edge-flujos-sistemas" class="bubble-edge-hit" d="M415 330 Q275 410 151 330"/><path id="vn-edge-flujos-sistemas-visual" class="bubble-edge-visual" d="M415 330 Q275 410 151 330" marker-end="url(#vnArrowEnd)"/><circle class="bubble-flow-dot" r="2.2"><animateMotion dur="7.2s" begin="4s" repeatCount="indefinite"><mpath href="#vn-edge-flujos-sistemas-visual"/></animateMotion></circle>
+                <path id="vn-edge-flujos-emergencia" class="bubble-edge-hit" d="M420 305 Q300 220 153 160"/><path id="vn-edge-flujos-emergencia-visual" class="bubble-edge-visual" d="M420 305 Q300 220 153 160" marker-end="url(#vnArrowEnd)"/><circle class="bubble-flow-dot" r="2.2"><animateMotion dur="7.5s" begin="4.4s" repeatCount="indefinite"><mpath href="#vn-edge-flujos-emergencia-visual"/></animateMotion></circle>
+                <path id="vn-edge-interacciones-sistemas" class="bubble-edge-hit" d="M222 413 Q165 390 151 345"/><path id="vn-edge-interacciones-sistemas-visual" class="bubble-edge-visual" d="M222 413 Q165 390 151 345" marker-end="url(#vnArrowEnd)"/><circle class="bubble-flow-dot" r="2.2"><animateMotion dur="5.6s" begin="4.8s" repeatCount="indefinite"><mpath href="#vn-edge-interacciones-sistemas-visual"/></animateMotion></circle>
+                <path id="vn-edge-interacciones-emergencia" class="bubble-edge-hit" d="M240 385 Q145 300 153 193"/><path id="vn-edge-interacciones-emergencia-visual" class="bubble-edge-visual" d="M240 385 Q145 300 153 193" marker-end="url(#vnArrowEnd)"/><circle class="bubble-flow-dot" r="2.2"><animateMotion dur="7.2s" begin="5.2s" repeatCount="indefinite"><mpath href="#vn-edge-interacciones-emergencia-visual"/></animateMotion></circle>
+                <path id="vn-edge-sistemas-emergencia" class="bubble-edge-hit" d="M105 284 L105 198"/><path id="vn-edge-sistemas-emergencia-visual" class="bubble-edge-visual" d="M105 284 L105 198" marker-end="url(#vnArrowEnd)"/><circle class="bubble-flow-dot" r="2.2"><animateMotion dur="4.8s" begin="5.6s" repeatCount="indefinite"><mpath href="#vn-edge-sistemas-emergencia-visual"/></animateMotion></circle>
               </g>
-              <!-- Círculos translúcidos encima, con su ícono adentro -->
+              <!-- Nodos separados para que cada relación se lea sin amontonarse. -->
               <g class="bubble-net-nodes">
-                <circle class="bubble-node bn-agentes" cx="150" cy="90" r="52"/>
-                <circle class="bubble-node bn-procesos" cx="295" cy="75" r="45"/>
-                <circle class="bubble-node bn-flujos" cx="95" cy="180" r="40"/>
-                <circle class="bubble-node bn-interacciones" cx="325" cy="205" r="62"/>
-                <circle class="bubble-node bn-sistemas" cx="112" cy="262" r="48"/>
-                <circle class="bubble-node bn-emergencia" cx="245" cy="300" r="52"/>
+                <circle class="bubble-node bn-agentes" cx="280" cy="55" r="46"/>
+                <circle class="bubble-node bn-procesos" cx="455" cy="150" r="42"/>
+                <circle class="bubble-node bn-flujos" cx="455" cy="330" r="38"/>
+                <circle class="bubble-node bn-interacciones" cx="280" cy="430" r="52"/>
+                <circle class="bubble-node bn-sistemas" cx="105" cy="330" r="44"/>
+                <circle class="bubble-node bn-emergencia" cx="105" cy="150" r="46"/>
               </g>
-              <foreignObject x="98" y="38" width="104" height="104"><div xmlns="http://www.w3.org/1999/xhtml" class="bubble-node-label"><i class="fa-solid fa-people-group"></i><span>Agentes</span></div></foreignObject>
-              <foreignObject x="243" y="30" width="104" height="90"><div xmlns="http://www.w3.org/1999/xhtml" class="bubble-node-label"><i class="fa-solid fa-gears"></i><span>Procesos</span></div></foreignObject>
-              <foreignObject x="45" y="140" width="100" height="80"><div xmlns="http://www.w3.org/1999/xhtml" class="bubble-node-label"><i class="fa-solid fa-arrows-turn-to-dots"></i><span>Flujos</span></div></foreignObject>
-              <foreignObject x="263" y="143" width="124" height="124"><div xmlns="http://www.w3.org/1999/xhtml" class="bubble-node-label"><i class="fa-solid fa-diagram-project"></i><span>Interacciones</span></div></foreignObject>
-              <foreignObject x="62" y="214" width="100" height="96"><div xmlns="http://www.w3.org/1999/xhtml" class="bubble-node-label"><i class="fa-solid fa-circle-nodes"></i><span>Sistemas</span></div></foreignObject>
-              <foreignObject x="193" y="248" width="104" height="104"><div xmlns="http://www.w3.org/1999/xhtml" class="bubble-node-label"><i class="fa-solid fa-sparkles"></i><span>Emergencia</span></div></foreignObject>
+              <foreignObject x="234" y="9" width="92" height="92"><div xmlns="http://www.w3.org/1999/xhtml" class="bubble-node-label"><i class="fa-solid fa-people-group"></i><span>Agentes</span></div></foreignObject>
+              <foreignObject x="413" y="108" width="84" height="84"><div xmlns="http://www.w3.org/1999/xhtml" class="bubble-node-label"><i class="fa-solid fa-gears"></i><span>Procesos</span></div></foreignObject>
+              <foreignObject x="417" y="292" width="76" height="76"><div xmlns="http://www.w3.org/1999/xhtml" class="bubble-node-label"><i class="fa-solid fa-arrows-turn-to-dots"></i><span>Flujos</span></div></foreignObject>
+              <foreignObject x="228" y="378" width="104" height="104"><div xmlns="http://www.w3.org/1999/xhtml" class="bubble-node-label"><i class="fa-solid fa-diagram-project"></i><span>Interacciones</span></div></foreignObject>
+              <foreignObject x="61" y="292" width="88" height="88"><div xmlns="http://www.w3.org/1999/xhtml" class="bubble-node-label"><i class="fa-solid fa-circle-nodes"></i><span>Sistemas</span></div></foreignObject>
+              <foreignObject x="59" y="104" width="92" height="92"><div xmlns="http://www.w3.org/1999/xhtml" class="bubble-node-label"><i class="fa-solid fa-triangle-exclamation"></i><span>Emergencia</span></div></foreignObject>
             </svg>
             <div class="visible-network-tooltip" id="visibleNetworkTooltip" hidden></div>
           </div>
 
-          <!-- Versión compacta: horizontal, con íconos y una animación de
-               flujo (puntito viajando) en vez de la vertical larga. -->
-          <div class="micro-flow">
-            <div class="micro-flow-step">
-              <i class="fa-solid fa-people-arrows"></i>
-              <span>Agentes, procesos y flujos interactúan</span>
-            </div>
-            <div class="micro-flow-connector"><i class="fa-solid fa-circle micro-flow-dot"></i></div>
-            <div class="micro-flow-step">
-              <i class="fa-solid fa-circle-nodes"></i>
-              <span>Identifican Sistemas</span>
-            </div>
-            <div class="micro-flow-connector"><i class="fa-solid fa-circle micro-flow-dot"></i></div>
-            <div class="micro-flow-step">
-              <i class="fa-solid fa-diagram-project"></i>
-              <span>Los sistemas interactúan entre sí</span>
-            </div>
-            <div class="micro-flow-connector"><i class="fa-solid fa-circle micro-flow-dot"></i></div>
-            <div class="micro-flow-step micro-flow-final">
-              <i class="fa-solid fa-sparkles"></i>
-              <span>Emergen patrones</span>
+          <div class="model-construction-diagram" aria-label="Proceso de construcción del modelo">
+            <p class="model-construction-lead">Para construir nuestro modelo pasamos de identificar componentes aislados a entender una ciudad compuesta por múltiples relaciones, interacciones y retroalimentaciones, de las cuales emergen determinados patrones.</p>
+            <div class="model-construction-flow">
+              <div class="model-construction-step"><i class="fa-solid fa-list-check"></i><span>Componentes<br><b>aislados</b></span></div>
+              <div class="model-construction-link"><span></span><i class="fa-solid fa-chevron-right"></i></div>
+              <div class="model-construction-step"><i class="fa-solid fa-diagram-project"></i><span>Relaciones,<br><b>interacciones y retroalimentaciones</b></span></div>
+              <div class="model-construction-link"><span></span><i class="fa-solid fa-chevron-right"></i></div>
+              <div class="model-construction-step model-construction-final"><i class="fa-solid fa-sparkles"></i><span>Patrones<br><b>emergentes</b></span></div>
             </div>
           </div>
-          <blockquote class="logic-chain-quote">
-            <p>A partir de esta lógica construimos seis sistemas que no funcionan de manera independiente, sino que se encuentran conectados mediante flujos, dependencias y retroalimentaciones.</p>
-          </blockquote>
 
           <p class="visible-elements-purpose"><strong>¿Para qué?</strong> Para explicar el funcionamiento cotidiano de la ciudad.</p>
         </section>
         <script>
           (() => {
-            const relationships = {
-              "vn-edge-agentes-procesos": "Los agentes realizan acciones que producen procesos, y los procesos condicionan las decisiones de los agentes.",
-              "vn-edge-agentes-flujos": "Los agentes generan y utilizan flujos.",
-              "vn-edge-agentes-sistemas": "Los agentes participan en distintos sistemas y también los transforman.",
-              "vn-edge-procesos-flujos": "Los procesos modifican qué circula y cómo circula.",
+            const readings = {
+              agentes: "AGENTES:\nPrimero reconocemos los agentes, es decir, quiénes actúan dentro de la ciudad y toman decisiones.",
+              procesos: "PROCESOS:\nEstos agentes participan y generan procesos, que son las transformaciones que están ocurriendo constantemente en el territorio.",
+              flujos: "FLUJOS:\nEsos procesos implican también flujos: de personas, agua, energía, bienes e información, que atraviesan y conectan diferentes partes de la ciudad.",
+              interacciones: "INTERACCIONES:\nEstos elementos no funcionan de manera independiente. Se afectan entre sí mediante interacciones, que pueden generar dependencias, conflictos, intercambios y retroalimentaciones.",
+              sistemas: "SISTEMAS:\nEstas relaciones conectan diferentes sistemas que coexisten dentro de la ciudad y que pueden afectarse mutuamente.",
+              emergencia: "EMERGENCIA:\nDe estas múltiples interacciones pueden aparecer patrones emergentes, es decir, comportamientos o fenómenos que no podemos explicar mirando un solo elemento de manera aislada. Aquello que emerge puede modificar nuevamente las condiciones del sistema y generar nuevas respuestas."
             };
             const wrap = document.getElementById("visibleNetworkWrap");
             const tooltip = document.getElementById("visibleNetworkTooltip");
             if (!wrap || !tooltip) return;
-            wrap.querySelectorAll(".visible-network-edge-hit").forEach((hit) => {
+            const keyFor = (id) => {
+              const key = id.replace("vn-edge-", "").split("-")[0];
+              return readings[key] ? key : "interacciones";
+            };
+            wrap.querySelectorAll(".bubble-edge-hit").forEach((hit) => {
               hit.addEventListener("click", (event) => {
                 event.stopPropagation();
-                const text = relationships[hit.id];
-                if (!text) return;
-                wrap.querySelectorAll(".visible-network-edge-hit").forEach((h) => h.classList.toggle("active", h === hit));
-                tooltip.textContent = text;
+                wrap.querySelectorAll(".bubble-edge-hit").forEach((h) => h.classList.toggle("active", h === hit));
+                tooltip.textContent = readings[keyFor(hit.id)];
                 tooltip.hidden = false;
               });
             });
             document.addEventListener("click", () => {
               tooltip.hidden = true;
-              wrap.querySelectorAll(".visible-network-edge-hit").forEach((h) => h.classList.remove("active"));
+              wrap.querySelectorAll(".bubble-edge-hit").forEach((h) => h.classList.remove("active"));
             });
             tooltip.addEventListener("click", (event) => event.stopPropagation());
           })();
@@ -231,6 +203,20 @@
               <span>Dinámica hídrica · dinámica biótica · sistema físico-urbano · movilidad · social-comunitario · socioeconómico y de ocupación</span>
             </div>
           </div>
+        </section>
+
+        <section class="simulation-conclusion-section" aria-labelledby="simulationConclusionTitle">
+          <div class="simulation-conclusion-kicker">CIERRE DEL MODELO</div>
+          <h2 id="simulationConclusionTitle">Conclusión: del POT escrito a la ciudad que se transforma</h2>
+          <p class="simulation-conclusion-lead">El POT es necesario para ordenar jurídicamente Bogotá, establecer normas, delimitar áreas, orientar proyectos y definir condiciones de habitabilidad. Sin embargo, sus reglas no explican por sí solas cómo se comporta la ciudad en el tiempo ni cómo sus decisiones producen efectos concretos sobre las personas, las viviendas y los ecosistemas.</p>
+          <p>El <strong>Módulo Simulador</strong> no pretende reemplazar el POT: permite poner en funcionamiento las reglas que este establece y observar la ciudad como un sistema dinámico de relaciones, decisiones, flujos y transformaciones. De esta manera, pasamos de la norma escrita a la interacción entre procesos que ocurren simultáneamente y se afectan entre sí.</p>
+          <div class="simulation-pillars" aria-label="Tres pilares del simulador">
+            <article><span class="simulation-pillar-icon"><i class="fa-solid fa-person-walking" aria-hidden="true"></i></span><div><h3>Personas</h3><p>Agentes de cuidado con trayectorias, necesidades, tiempo disponible y fatiga.</p></div></article>
+            <article><span class="simulation-pillar-icon"><i class="fa-solid fa-house" aria-hidden="true"></i></span><div><h3>Viviendas</h3><p>Nodos de origen y retorno que afectan la habitabilidad, el estrés y la salud.</p></div></article>
+            <article><span class="simulation-pillar-icon"><i class="fa-solid fa-water" aria-hidden="true"></i></span><div><h3>Ecosistemas</h3><p>Actores físicos que modifican la movilidad, el riesgo, el drenaje y las condiciones urbanas.</p></div></article>
+          </div>
+          <p>Esta estructura permite estudiar situaciones que el POT reconoce, pero no puede desarrollar completamente por su naturaleza normativa: la autoconstrucción en zonas de riesgo, los cambios en las trayectorias de las personas, la interrupción de una ruta por una inundación o un sismo y las respuestas de los actores ante condiciones no previstas.</p>
+          <p class="simulation-conclusion-final"><strong>En conclusión, el POT es suficiente para cumplir una función jurídica y administrativa, pero no para explicar por sí solo cómo funciona la ciudad.</strong> Comprender Bogotá exige complementarlo con modelos capaces de representar el tiempo, la interacción, la adaptación y la respuesta de los actores. El simulador aporta esa dimensión: permite estudiar no solo la ciudad que el POT prescribe, sino también la ciudad que emerge cuando sus reglas interactúan con las decisiones humanas, las viviendas y los ecosistemas.</p>
         </section>
 
       </main>

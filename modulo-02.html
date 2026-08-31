@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="stylesheet" href="modulo-02.css?v=20260831-zoom-network">
+<link rel="stylesheet" href="modulo-02.css?v=20260831_direct_map">
   <link rel="stylesheet" href="site-theme.css?v=20260823">
   <link rel="stylesheet" href="navigation-unified.css?v=20260824">
 </head>
@@ -56,10 +56,55 @@
           <div class="welcome-eyebrow">INGENIERÍA INVERSA</div>
           <h2><span class="h2-plain">Una ciudad que</span> <span class="h2-accent">no cabe en el POT</span></h2>
           <p class="welcome-sub">Ingeniería inversa al Modelo de Ordenamiento Territorial (MOT)</p>
+          <button type="button" class="btn-bogota-complejo" id="btnBogotaComplejo" onclick="toggleBogotaComplejo()">
+            <i class="fa-solid fa-diagram-project"></i> Bogotá como sistema complejo
+          </button>
+          <div class="bogota-complejo-reveal" id="bogotaComplejoReveal" hidden>
+            <div class="bcr-panel">
+              <button type="button" class="bcr-example-close" onclick="toggleBogotaComplejo()" aria-label="Cerrar">✕</button>
+              <div class="bcr-col-text">
+                <p class="bcr-intro">El POT tiene una mirada predominantemente reduccionista en el sentido de que, para poder ordenar Bogotá, descompone la ciudad en partes diferenciables, en lugar de partir de la ciudad como un sistema cuyo comportamiento surge de las interacciones entre todos sus elementos.</p>
+                <div class="bcr-steps">
+                  <div class="bcr-step" style="--d:0s">
+                    <div class="bcr-step-num">1</div>
+                    <div class="bcr-step-body">
+                      <h4>¿Qué elementos existen?</h4>
+                      <p>Comienza por identificar qué elementos existen en el territorio.</p>
+                    </div>
+                  </div>
+                  <div class="bcr-step" style="--d:.18s">
+                    <div class="bcr-step-num">2</div>
+                    <div class="bcr-step-body">
+                      <h4>Clasificación</h4>
+                      <p>Después los clasifica, agrupándolos en categorías y estructuras.</p>
+                    </div>
+                  </div>
+                  <div class="bcr-step" style="--d:.36s">
+                    <div class="bcr-step-num">3</div>
+                    <div class="bcr-step-body">
+                      <h4>¿Qué función cumplen?</h4>
+                      <p>Establece sus características: qué función cumple cada elemento.</p>
+                    </div>
+                  </div>
+                  <div class="bcr-step" style="--d:.54s">
+                    <div class="bcr-step-num">4</div>
+                    <div class="bcr-step-body">
+                      <h4>¿Cómo deben ser regulados?</h4>
+                      <p>Y finalmente determina cómo deben ser regulados.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="bcr-col-map">
+                <img src="./assets/espacio-publico-bogota-recorte.jpg" alt="Mapa oficial del sistema de espacio público de Bogotá (CU-4.1)">
+                <p class="bcr-example-caption">Ejemplo — Mapa CU-4.1 · Sistema de Espacio Público Peatonal y para el Encuentro (Secretaría Distrital de Planeación, mayo 2021).</p>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="quote-card welcome-quote-card">
           <div class="quote-mark">&ldquo;</div>
-          <p>Realizamos una <span class="quote-highlight">ingeniería inversa</span> al Modelo de Ordenamiento Territorial (MOT). Desarmamos el decreto para ver cómo interactúan realmente sus partes en el territorio.</p>
+          <p id="welcomeQuoteText" class="quote-focus-in">El POT construye una Bogotá altamente <span class="pot-keyword">ordenable</span>, <span class="pot-keyword">clasificable</span>, <span class="pot-keyword">zonificable</span> y <span class="pot-keyword">conectable</span> mediante estructuras, redes, soportes y reglas, pero su legibilidad es desigual: representa con mayor precisión los elementos físicos y territoriales y con menor resolución los actores, las interacciones, los flujos y los procesos dinámicos mediante los cuales la ciudad cambia.</p>
         </div>
       </div>
 
@@ -106,6 +151,48 @@
             <button type="button" class="movilidad-conclusion-btn" id="movilidadConclusionBtn">
               <i class="fa-solid fa-circle-info"></i> Ver conclusión de la red de movilidad
             </button>
+          </div>
+        </div>
+
+        <!-- VISTA AMPLIADA 3: Manzanas del Cuidado -->
+        <div class="manzanas-overlay" id="manzanasOverlay" style="display:none;">
+          <div class="manzanas-overlay-header">
+            <div class="manzanas-overlay-title-block">
+              <div class="manzanas-overlay-title" id="manzanasOverlayTitle">Manzanas del Cuidado y Servicios de Proximidad</div>
+              <div class="manzanas-overlay-subtitle">Estructura Funcional y del Cuidado · Red de equipamientos e inclusión social</div>
+            </div>
+            <button class="humedales-overlay-close" id="manzanasOverlayClose" type="button" aria-label="Cerrar">&times;</button>
+          </div>
+          <div class="manzanas-overlay-body" id="manzanasOverlayBody">
+            <div class="map-placeholder-content">
+              <div class="map-placeholder-icon" style="background: rgba(247, 111, 176, 0.12); color: #f76fb0;"><i class="fa-solid fa-building-shield"></i></div>
+              <h3>Mapa: Manzanas del Cuidado</h3>
+              <p>Espacio preparado para integrar la cartografía, datos de equipamientos sociales, tiempos de desplazamiento y servicios de cuidado del POT.</p>
+              <div class="map-placeholder-hint" style="color: #f76fb0; border-color: rgba(247, 111, 176, 0.25); background: rgba(247, 111, 176, 0.08);">
+                <i class="fa-solid fa-code"></i> Puedes personalizar la vista en <code>modulo-02.js</code> &gt; función <code>showManzanasOverlay()</code>.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- VISTA AMPLIADA 4: Patrimonio -->
+        <div class="patrimonio-overlay" id="patrimonioOverlay" style="display:none;">
+          <div class="patrimonio-overlay-header">
+            <div class="patrimonio-overlay-title-block">
+              <div class="patrimonio-overlay-title" id="patrimonioOverlayTitle">Estructura Integradora de Patrimonios</div>
+              <div class="patrimonio-overlay-subtitle">Patrimonio material, inmaterial, natural y arqueológico articulado con las comunidades</div>
+            </div>
+            <button class="humedales-overlay-close" id="patrimonioOverlayClose" type="button" aria-label="Cerrar">&times;</button>
+          </div>
+          <div class="patrimonio-overlay-body" id="patrimonioOverlayBody">
+            <div class="map-placeholder-content">
+              <div class="map-placeholder-icon" style="background: rgba(251, 141, 132, 0.12); color: #fb8d84;"><i class="fa-solid fa-landmark"></i></div>
+              <h3>Mapa: Estructura de Patrimonios</h3>
+              <p>Espacio preparado para integrar la cartografía de bienes patrimoniales, polígonos de protección, memorias vivas e hitos urbanos.</p>
+              <div class="map-placeholder-hint" style="color: #fb8d84; border-color: rgba(251, 141, 132, 0.25); background: rgba(251, 141, 132, 0.08);">
+                <i class="fa-solid fa-code"></i> Puedes personalizar la vista en <code>modulo-02.js</code> &gt; función <code>showPatrimonioOverlay()</code>.
+              </div>
+            </div>
           </div>
         </div>
 
@@ -161,6 +248,10 @@
               <button class="control-btn active" onclick="filterNetwork('all')">Todas</button>
               <button class="control-btn" onclick="filterNetwork('directa')">Directas</button>
               <button class="control-btn" onclick="filterNetwork('indirecta')">Indirectas</button>
+            </div>
+            <div class="legend-footer-row">
+              <button class="control-btn" id="btnVerHubs" onclick="verHubs()"><i class="fa-solid fa-circle-dot"></i> Ver hubs</button>
+              <button class="control-btn" id="btnVerPerifericos" onclick="verPerifericos()"><i class="fa-solid fa-circle-notch"></i> Ver periféricos</button>
             </div>
           </aside>
 
@@ -266,9 +357,74 @@
       <div class="edge-info-page" id="nodeInfoArticulo" style="margin-bottom:8px; color:#fff !important;"></div>
       <div class="edge-info-quote" id="nodeInfoQuote" style="color:#fff !important;"></div>
       <div class="edge-info-analisis" id="nodeInfoNota" style="color:#fff !important;"></div>
+      <button type="button" class="node-toggle-btn" id="nodeInfoToggleBtn">¿Qué pasaría si se apaga este nodo?</button>
       <div class="node-info-schematic-map" id="nodeInfoSchematicMap" style="display:none;"></div>
       <div class="node-info-mapa" id="nodeInfoMapaWrap" style="display:none;">
         <a id="nodeInfoMapa" href="#" target="_blank" rel="noopener"><i class="fa-solid fa-map-location-dot"></i> Ver cartografía / geoportal oficial</a>
+      </div>
+    </div>
+
+    <!-- MODAL POPUP: SELECTOR DE MAPAS (EXPLORAR RELACIONES EN DETALLE) -->
+    <div class="modal-backdrop" id="modalExplorarRelaciones" style="display:none;" aria-hidden="true" role="dialog" aria-labelledby="modalExplorarTitle">
+      <div class="modal-dialog">
+        <div class="modal-header">
+          <div>
+            <div class="modal-kicker"><i class="fa-solid fa-network-wired"></i> EXPLORACIÓN A PROFUNDIDAD</div>
+            <h2 class="modal-title" id="modalExplorarTitle">Explorar relaciones en detalle</h2>
+            <p class="modal-subtitle">Selecciona el mapa o dimensión que deseas analizar:</p>
+          </div>
+          <button class="modal-close-btn" id="modalExplorarClose" type="button" aria-label="Cerrar ventana">&times;</button>
+        </div>
+
+        <div class="map-options-grid">
+          <!-- Tarjeta 1: Vías y Movilidad -->
+          <div class="map-option-card card-vias" id="btnOpcionMapaVias" role="button" tabindex="0">
+            <div class="map-option-header">
+              <span class="map-option-badge badge-vias"><i class="fa-solid fa-route"></i> Movilidad</span>
+              <span class="map-option-action-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+            </div>
+            <div class="map-option-icon"><i class="fa-solid fa-road"></i></div>
+            <h3 class="map-option-title">Sistema de Vías y Movilidad</h3>
+            <p class="map-option-desc">Visualiza corredores de transporte masivo (Metro, RegioTram), trazados viales y cómo el POT proyecta la conectividad de la ciudad.</p>
+            <button type="button" class="map-option-btn btn-vias">Explorar Red Vial <i class="fa-solid fa-arrow-right"></i></button>
+          </div>
+
+          <!-- Tarjeta 2: Humedales / Territorios Dinámicos -->
+          <div class="map-option-card card-humedales" id="btnOpcionMapaHumedales" role="button" tabindex="0">
+            <div class="map-option-header">
+              <span class="map-option-badge badge-humedales"><i class="fa-solid fa-water"></i> Ecosistemas</span>
+              <span class="map-option-action-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+            </div>
+            <div class="map-option-icon"><i class="fa-solid fa-seedling"></i></div>
+            <h3 class="map-option-title">Humedales y Territorios Dinámicos</h3>
+            <p class="map-option-desc">Analiza los quince humedales reconocidos, presiones ecológicas, conectores ambientales y dinámicas del agua en el territorio.</p>
+            <button type="button" class="map-option-btn btn-humedales">Explorar Humedales <i class="fa-solid fa-arrow-right"></i></button>
+          </div>
+
+          <!-- Tarjeta 3: Manzanas del Cuidado -->
+          <div class="map-option-card card-manzanas" id="btnOpcionMapaManzanas" role="button" tabindex="0">
+            <div class="map-option-header">
+              <span class="map-option-badge badge-manzanas"><i class="fa-solid fa-building-shield"></i> Cuidado</span>
+              <span class="map-option-action-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+            </div>
+            <div class="map-option-icon"><i class="fa-solid fa-people-roof"></i></div>
+            <h3 class="map-option-title">Manzanas del Cuidado</h3>
+            <p class="map-option-desc">Explora la red de equipamientos, servicios sociales y de cuidado para reducir brechas de proximidad y tiempo en Bogotá.</p>
+            <button type="button" class="map-option-btn btn-manzanas">Explorar Manzanas <i class="fa-solid fa-arrow-right"></i></button>
+          </div>
+
+          <!-- Tarjeta 4: Patrimonio -->
+          <div class="map-option-card card-patrimonio" id="btnOpcionMapaPatrimonio" role="button" tabindex="0">
+            <div class="map-option-header">
+              <span class="map-option-badge badge-patrimonio"><i class="fa-solid fa-landmark"></i> Patrimonios</span>
+              <span class="map-option-action-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+            </div>
+            <div class="map-option-icon"><i class="fa-solid fa-monument"></i></div>
+            <h3 class="map-option-title">Estructura de Patrimonios</h3>
+            <p class="map-option-desc">Examina la integración entre patrimonio material, inmaterial, natural y arqueológico articulados con las comunidades.</p>
+            <button type="button" class="map-option-btn btn-patrimonio">Explorar Patrimonio <i class="fa-solid fa-arrow-right"></i></button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -280,7 +436,10 @@
 
 </div>
 
-<script src="modulo-02.js?v=20260831-zoom-network"></script>
+<script src="modulo-02.js?v=20260831_direct_map"></script>
 
 </body>
 </html>
+
+
+
