@@ -1826,6 +1826,12 @@ function showMainConclusionStep2() {
           // Efecto visual
           card.style.pointerEvents = "none";
           setTimeout(() => { card.style.pointerEvents = "auto"; }, 300);
+
+          // Si es "Orienta intervenciones" (última tarjeta), mostrar imagen
+          const titleEl = card.querySelector(".conclusion-function-title");
+          if (titleEl && titleEl.textContent.includes("Orienta")) {
+            setTimeout(() => showHumedalImage(), 300);
+          }
         });
 
         // Efecto de sonido visual (pulse) en hover
@@ -1840,6 +1846,32 @@ function showMainConclusionStep2() {
       });
     }, 50);
   }
+}
+
+function showHumedalImage() {
+  const modal = document.getElementById("humedalImageModal");
+  if (!modal) return;
+
+  // Intenta cargar RESERVA_HUMEDAL.webp, si no existe carga gesto-1.png
+  const img = document.getElementById("humedalImage");
+  img.src = "assets/RESERVA_HUMEDAL.webp";
+
+  // Fallback a imagen disponible si no existe
+  img.onerror = () => {
+    img.src = "assets/humedales/gesto-1.png";
+    img.onerror = null;
+  };
+
+  modal.classList.add("active");
+  document.body.style.overflow = "hidden";
+}
+
+function hideHumedalImage() {
+  const modal = document.getElementById("humedalImageModal");
+  if (modal) {
+    modal.classList.remove("active");
+  }
+  document.body.style.overflow = "auto";
 }
 
 function hideMainConclusionPopup() {
@@ -2182,15 +2214,34 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
           </div>
         </div>
+
+        <div id="humedalImageModal" class="humedal-image-modal">
+          <div class="humedal-image-overlay"></div>
+          <div class="humedal-image-container">
+            <div class="humedal-image-header">
+              <h3>Reserva de Humedales · Orientación de Intervenciones</h3>
+              <button class="humedal-image-close" id="humedalImageClose" type="button" aria-label="Cerrar">&times;</button>
+            </div>
+            <div class="humedal-image-body">
+              <img id="humedalImage" src="" alt="Mapa de Reserva de Humedales">
+            </div>
+          </div>
+        </div>
       `;
       mainElement.insertAdjacentHTML("beforeend", modalHTML);
 
-      // Agregar event listeners
+      // Agregar event listeners para modal de conclusión
       document.getElementById("topbarConclusionBtn")?.addEventListener("click", showMainConclusionPopup);
       document.getElementById("mainConclusionCloseBtn")?.addEventListener("click", hideMainConclusionPopup);
       document.getElementById("mainConclusionFooterBtn")?.addEventListener("click", hideMainConclusionPopup);
       document.getElementById("mainConclusionModal")?.addEventListener("click", (e) => {
         if (e.target.id === "mainConclusionModal") hideMainConclusionPopup();
+      });
+
+      // Agregar event listeners para modal de imagen
+      document.getElementById("humedalImageClose")?.addEventListener("click", hideHumedalImage);
+      document.getElementById("humedalImageModal")?.addEventListener("click", (e) => {
+        if (e.target.id === "humedalImageModal") hideHumedalImage();
       });
     }
   }

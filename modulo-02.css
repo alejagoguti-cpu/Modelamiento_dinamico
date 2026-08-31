@@ -542,6 +542,117 @@ body {
   .conclusion-function-card:hover .conclusion-function-icon { font-size: 32px; }
 }
 
+/* MODAL DE IMAGEN HUMEDALES */
+.humedal-image-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  animation: backdropFade 0.4s ease;
+}
+
+.humedal-image-modal.active {
+  display: flex;
+}
+
+.humedal-image-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(8px);
+}
+
+.humedal-image-container {
+  position: relative;
+  background: #0a0a0a;
+  border: 1.5px solid rgba(47,212,200,0.4);
+  border-radius: 14px;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.9), 0 0 40px rgba(47,212,200,0.15);
+  animation: containerSlideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.humedal-image-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid rgba(47,212,200,0.2);
+  background: linear-gradient(135deg, rgba(47,212,200,0.05), rgba(47,212,200,0.02));
+}
+
+.humedal-image-header h3 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--teal);
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+.humedal-image-close {
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-size: 28px;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  border-radius: 6px;
+}
+
+.humedal-image-close:hover {
+  color: var(--text);
+  background: rgba(47,212,200,0.1);
+  transform: rotate(90deg);
+}
+
+.humedal-image-body {
+  flex: 1;
+  overflow: auto;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.humedal-image-body img {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 8px;
+  animation: imageZoomIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 10px 40px rgba(47,212,200,0.1);
+}
+
+@keyframes imageZoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8) rotateY(-15deg);
+    filter: blur(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotateY(0);
+    filter: blur(0);
+  }
+}
+
 .welcome { margin-bottom: 22px; }
 .welcome-with-quote { display: flex; align-items: flex-start; justify-content: space-between; gap: 32px; }
 .welcome-main { flex: 1; min-width: 0; }
