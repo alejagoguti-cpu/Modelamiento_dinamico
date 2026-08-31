@@ -2360,6 +2360,7 @@ function renderConclusionNetwork() {
 }
 
 function showMainConclusionPopup() {
+  console.log("showMainConclusionPopup called");
   const existingModal = document.querySelector(".main-conclusion-modal");
   if (existingModal) existingModal.remove();
 
@@ -2385,7 +2386,12 @@ function showMainConclusionPopup() {
   mainConclusionStep = 1;
   document.getElementById("mainConclusionBody").innerHTML = MAIN_CONCLUSION_STEP1;
 
-  setTimeout(() => renderConclusionNetwork(), 0);
+  console.log("Modal mostrado, rendering red...");
+  setTimeout(() => {
+    console.log("Renderizando red...");
+    renderConclusionNetwork();
+    console.log("Red renderizada");
+  }, 0);
 
   document.getElementById("mainConclusionCloseBtn")?.addEventListener("click", hideMainConclusionPopup);
   document.getElementById("mainConclusionFooterCloseBtn")?.addEventListener("click", hideMainConclusionPopup);
@@ -2425,7 +2431,9 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("patrimonioOverlayClose")?.addEventListener("click", hidePatrimonioOverlay);
 
   // Conclusión modal
-  document.getElementById("topbarConclusionBtn")?.addEventListener("click", showMainConclusionPopup);
+  const conclusionBtn = document.getElementById("topbarConclusionBtn");
+  console.log("topbarConclusionBtn found:", conclusionBtn);
+  conclusionBtn?.addEventListener("click", showMainConclusionPopup);
 });
 
 
