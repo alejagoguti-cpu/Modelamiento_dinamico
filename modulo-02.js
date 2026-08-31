@@ -2404,19 +2404,39 @@ function showHumedalMap() {
       <div class="conclusion-map-container">
         <img src="./assets/RESERVA_HUMEDAL.webp" alt="Reserva Distrital de Humedal" class="conclusion-map-image" onerror="console.log('Imagen no cargó')" onload="console.log('Imagen cargada')">
         <div class="conclusion-nodes-overlay">
-          <div class="conclusion-node" style="top: 15%; left: 12%; --d: 0.1s;" title="Orienta"><span>Orienta</span></div>
-          <div class="conclusion-node" style="top: 48%; left: 15%; --d: 0.2s;" title="Regula"><span>Regula</span></div>
-          <div class="conclusion-node" style="top: 74%; left: 22%; --d: 0.3s;" title="Clasifica"><span>Clasifica</span></div>
-          <div class="conclusion-node" style="top: 46%; left: 42%; --d: 0.4s;" title="Protege"><span>Protege</span></div>
-          <div class="conclusion-node" style="top: 32%; left: 74%; --d: 0.5s;" title="Delimita"><span>Delimita</span></div>
+          <div class="conclusion-node" style="top: 15%; left: 12%; --d: 0.1s;" data-fn="orienta" title="Orienta"><span>Orienta</span></div>
+          <div class="conclusion-node" style="top: 48%; left: 15%; --d: 0.2s;" data-fn="regula" title="Regula"><span>Regula</span></div>
+          <div class="conclusion-node" style="top: 74%; left: 22%; --d: 0.3s;" data-fn="clasifica" title="Clasifica"><span>Clasifica</span></div>
+          <div class="conclusion-node" style="top: 46%; left: 42%; --d: 0.4s;" data-fn="protege" title="Protege"><span>Protege</span></div>
+          <div class="conclusion-node" style="top: 32%; left: 74%; --d: 0.5s;" data-fn="delimita" title="Delimita"><span>Delimita</span></div>
         </div>
       </div>
-      <p class="conclusion-map-caption">17 áreas de reserva distrital de humedal en Bogotá — Presiona los nodos para más información</p>
+      <p class="conclusion-map-caption" id="conclusionMapCaption">17 áreas de reserva distrital de humedal en Bogotá — Presiona los nodos para más información</p>
     </div>
   `;
 
   const body = document.getElementById("mainConclusionBody");
   body.innerHTML = mapHTML;
+
+  const nodeInfo = {
+    clasifica: "<strong>Clasifica:</strong> Organiza y cataloga los 17 humedales en la tabla oficial según sus hectáreas y categorías del POT.",
+    regula: "<strong>Regula:</strong> Aplica el régimen normativo comparativo entre el Decreto 190 de 2004 (727,14 ha) y el POT 555 (901,43 ha).",
+    protege: "<strong>Protege:</strong> Establece convenciones de conservación, adición, sustracción y reconocimiento de nuevos ecosistemas.",
+    delimita: "<strong>Delimita:</strong> Fija los límites cartográficos y polígonos jurídicos de cada reserva sobre el territorio de Bogotá.",
+    orienta: "<strong>Orienta:</strong> Define las directrices de ordenamiento y proyectos estratégicos hacia el modelo territorial 2022-2035."
+  };
+
+  document.querySelectorAll(".conclusion-node").forEach(node => {
+    node.addEventListener("click", () => {
+      const fn = node.getAttribute("data-fn");
+      const caption = document.getElementById("conclusionMapCaption");
+      if (caption && nodeInfo[fn]) {
+        caption.innerHTML = nodeInfo[fn];
+        document.querySelectorAll(".conclusion-node").forEach(n => n.style.borderColor = "#5b8def");
+        node.style.borderColor = "#2fd4c8";
+      }
+    });
+  });
 
   document.getElementById("conclusionMapClose")?.addEventListener("click", () => {
     showMainConclusionStep2();
@@ -2428,11 +2448,8 @@ function showMainConclusionStep2() {
   document.getElementById("mainConclusionBody").innerHTML = MAIN_CONCLUSION_STEP2;
 
   document.querySelectorAll(".conclusion-function-card").forEach(card => {
-    card.addEventListener("click", (e) => {
-      const cardIndex = card.getAttribute("data-card-index");
-      if (cardIndex === "1") {
-        showHumedalMap();
-      }
+    card.addEventListener("click", () => {
+      showHumedalMap();
     });
   });
 }
