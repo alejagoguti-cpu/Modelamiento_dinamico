@@ -1862,8 +1862,103 @@ function showHumedalImage() {
     img.onerror = null;
   };
 
+  // Agregar nodos encima de la imagen después de que cargue
+  img.onload = () => {
+    addHumedalNodes();
+  };
+
+  // Si ya está cargada, agregar nodos inmediatamente
+  if (img.complete) {
+    addHumedalNodes();
+  }
+
   modal.classList.add("active");
   document.body.style.overflow = "hidden";
+}
+
+function addHumedalNodes() {
+  const imgWrapper = document.querySelector(".humedal-image-wrapper");
+  if (!imgWrapper) return;
+
+  // Remover overlay anterior si existe
+  const existingOverlay = imgWrapper.querySelector(".humedal-nodes-overlay");
+  if (existingOverlay) existingOverlay.remove();
+
+  // Crear overlay container
+  const overlay = document.createElement("div");
+  overlay.className = "humedal-nodes-overlay";
+
+  // Definir posiciones de nodos (en porcentajes relativos al contenedor)
+  // Basadas en las ubicaciones del mapa de humedales
+  const nodes = [
+    { id: "clasifica", title: "Clasifica", icon: "fa-list", x: 15, y: 25, color: "#2fd4c8" },
+    { id: "regula", title: "Regula", icon: "fa-scale-balanced", x: 75, y: 20, color: "#2fd4c8" },
+    { id: "protege", title: "Protege", icon: "fa-shield", x: 70, y: 45, color: "#2fd4c8" },
+    { id: "delimita", title: "Delimita", icon: "fa-borders", x: 50, y: 65, color: "#2fd4c8" },
+    { id: "orienta", title: "Orienta", icon: "fa-compass", x: 30, y: 50, color: "#2fd4c8" },
+  ];
+
+  nodes.forEach(node => {
+    const nodeEl = document.createElement("div");
+    nodeEl.className = "humedal-node";
+    nodeEl.style.left = node.x + "%";
+    nodeEl.style.top = node.y + "%";
+    nodeEl.style.transform = "translate(-50%, -50%)";
+
+    const icon = document.createElement("i");
+    icon.className = `fa-solid ${node.icon} humedal-node-icon`;
+    nodeEl.appendChild(icon);
+
+    const label = document.createElement("div");
+    label.className = "humedal-node-label";
+    label.textContent = node.title;
+    nodeEl.appendChild(label);
+
+    nodeEl.addEventListener("click", (e) => {
+      e.stopPropagation();
+      showNodeInfo(node);
+    });
+
+    overlay.appendChild(nodeEl);
+  });
+
+  imgWrapper.appendChild(overlay);
+}
+
+function showNodeInfo(node) {
+  // Remover info anterior si existe
+  const existingInfo = document.querySelector(".humedal-node-info");
+  if (existingInfo) existingInfo.remove();
+
+  // Crear info card
+  const infoCard = document.createElement("div");
+  infoCard.className = "humedal-node-info";
+
+  const infoContent = {
+    clasifica: "Clasifica espacios según el POT en 17 áreas de humedal distribuidas en Bogotá",
+    regula: "Regula el uso y manejo de la Reserva Distrital mediante normativas específicas",
+    protege: "Protege la biodiversidad y resiliencia climática de los ecosistemas acuáticos",
+    delimita: "Delimita zonas que se conservan, disminuyen, adicionan o son nuevas",
+    orienta: "Orienta intervenciones de restauración y gestión ambiental del territorio"
+  };
+
+  infoCard.innerHTML = `
+    <div style="display: flex; align-items: flex-start; gap: 12px;">
+      <i class="fa-solid ${node.icon}" style="color: ${node.color}; margin-top: 2px; flex-shrink: 0;"></i>
+      <div>
+        <div style="font-weight: 600; color: var(--teal); margin-bottom: 4px;">${node.title}</div>
+        <div>${infoContent[node.id]}</div>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(infoCard);
+
+  // Auto-remove después de 8 segundos
+  setTimeout(() => {
+    infoCard.style.animation = "slideInLeft 0.4s ease reverse";
+    setTimeout(() => infoCard.remove(), 400);
+  }, 8000);
 }
 
 function hideHumedalImage() {
@@ -2219,11 +2314,13 @@ document.addEventListener("DOMContentLoaded", () => {
           <div class="humedal-image-overlay"></div>
           <div class="humedal-image-container">
             <div class="humedal-image-header">
-              <h3>Reserva de Humedales · Orientación de Intervenciones</h3>
+              <h3>Reserva Distrital de Humedal · 17 Áreas</h3>
               <button class="humedal-image-close" id="humedalImageClose" type="button" aria-label="Cerrar">&times;</button>
             </div>
             <div class="humedal-image-body">
-              <img id="humedalImage" src="" alt="Mapa de Reserva de Humedales">
+              <div class="humedal-image-wrapper">
+                <img id="humedalImage" src="" alt="Mapa de Reserva de Humedales">
+              </div>
             </div>
           </div>
         </div>
