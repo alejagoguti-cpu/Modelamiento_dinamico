@@ -5828,6 +5828,21 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 .visible-network-edge-hit.active + .visible-network-edge-visual {
   stroke: #76fff0; stroke-width: 2.6; opacity: 1;
 }
+/* Las líneas de Interacciones son el "tejido" que conecta con todos los
+   demás — un poco más finas y translúcidas de base para que no saturen,
+   pero se resaltan igual de fuerte al pasar el mouse o hacer click. */
+.visible-network-edge-tejido { stroke: rgba(178,139,230,.4); stroke-dasharray: 2 3; }
+.visible-network-edge-hit:hover + .visible-network-edge-tejido,
+.visible-network-edge-hit.active + .visible-network-edge-tejido {
+  stroke: #b28be8; stroke-width: 2.6; opacity: 1;
+}
+/* Las líneas de retroalimentación de Emergencia van en un solo sentido y
+   se ven más suaves (color propio, más translúcidas, sin flecha doble). */
+.visible-network-edge-feedback { stroke: rgba(238,154,75,.45); stroke-width: 1.3; stroke-dasharray: 1 4; }
+.visible-network-edge-hit:hover + .visible-network-edge-feedback,
+.visible-network-edge-hit.active + .visible-network-edge-feedback {
+  stroke: #ee9a4b; stroke-width: 2.2; opacity: 1;
+}
 .visible-network-tooltip {
   position: absolute; z-index: 5; left: 50%; bottom: -8px; transform: translate(-50%, 100%);
   width: min(92%, 360px); background: rgba(6,10,10,.98); border: 1px solid #76fff0;

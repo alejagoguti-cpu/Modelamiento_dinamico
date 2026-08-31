@@ -658,7 +658,7 @@ function drawEdges(svg) {
     group.setAttribute("data-source", edge.s);
     group.setAttribute("data-target", edge.t);
     group.style.setProperty("--edge-color", color);
-    const edgeDelay = 0.4 + i * 0.03;
+    const edgeDelay = 1.8 + i * 0.015;
     group.style.setProperty("--edge-delay", edgeDelay + "s");
     group.style.animation = `edgeEnter 0.8s ease-out forwards`;
     group.style.animationDelay = edgeDelay + "s";
@@ -696,10 +696,19 @@ function drawEdges(svg) {
 function drawNodes(svg) {
   const g = document.createElementNS(SVG_NS, "g");
   g.setAttribute("class", "nodes-layer");
+  // Orden de aparición aleatorio (no siempre el mismo), para que la red se
+  // sienta viva desde el primer instante en vez de aparecer en fila.
+  const revealOrder = ODS_NODES.map((_, i) => i);
+  for (let i = revealOrder.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [revealOrder[i], revealOrder[j]] = [revealOrder[j], revealOrder[i]];
+  }
+  const revealDelay = {};
+  revealOrder.forEach((nodeIndex, order) => { revealDelay[nodeIndex] = order * 0.05; });
   ODS_NODES.forEach((node, idx) => {
     const group = document.createElementNS(SVG_NS, "g");
     group.setAttribute("class", "ods-node ods-node-" + node.cat + (node.isMainHub ? " ods-hub" : " ods-satellite"));
-    const delay = idx * 0.05;
+    const delay = revealDelay[idx];
     group.style.setProperty("--node-delay", delay + "s");
     group.style.animation = `nodeEnter 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both`;
     group.style.animationDelay = delay + "s";
