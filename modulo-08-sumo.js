@@ -49,7 +49,13 @@
   "use strict";
 
   const NET_URL = "./assets/kennedy_net.json";
-  const VEHICULOS_JSON_URL = "./assets/kennedy_vehiculos.json";
+  // Encuadre del mapa: acercado sobre la zona de los humedales (no la red
+  // completa), y con una pequeña rotación para enderezar la cuadrícula de
+  // Bogotá, que en las coordenadas locales de SUMO viene inclinada respecto
+  // al norte verdadero (es una característica real de la ciudad, no un error).
+  const EXTRA_ZOOM = 1.95;
+  const CENTER_X = 6100, CENTER_Y = 2500;
+  const ROTATE_DEG = -16;  const VEHICULOS_JSON_URL = "./assets/kennedy_vehiculos.json";
   const TRAZADO_URL = "./assets/trazado.xml";
 
   const EDGE_STYLE = {
@@ -119,10 +125,6 @@
       const [, , bw, bh] = netData.bbox;
       const pad = 6;
       const fitScale = Math.min((w - pad * 2) / bw, (h - pad * 2) / bh);
-      // Encuadre fijo (no la red completa): acercado sobre la zona de los
-      // humedales, como en el encuadre de referencia — ni más ni menos zoom.
-      const EXTRA_ZOOM = 1.85;
-      const CENTER_X = 6100, CENTER_Y = 2500; // coordenada local a centrar
       const scale = fitScale * EXTRA_ZOOM;
       const offX = w / 2 - CENTER_X * scale;
       const offY = h / 2 - CENTER_Y * scale;
@@ -130,9 +132,16 @@
     }
 
     // Coordenadas del mundo SUMO (ya con el offset del recorte aplicado)
-    // a coordenadas de pantalla dentro del canvas.
+    // a coordenadas de pantalla dentro del canvas — primero se rota un
+    // poco alrededor del centro (para enderezar la cuadrícula), y luego
+    // se escala y se desplaza.
+    const ROTATE_RAD = (ROTATE_DEG * Math.PI) / 180;
+    const ROT_COS = Math.cos(ROTATE_RAD), ROT_SIN = Math.sin(ROTATE_RAD);
     function toScreen(x, y) {
-      return [x * view.scale + view.offX, y * view.scale + view.offY];
+      const dx = x - CENTER_X, dy = y - CENTER_Y;
+      const rx = dx * ROT_COS - dy * ROT_SIN + CENTER_X;
+      const ry = dx * ROT_SIN + dy * ROT_COS + CENTER_Y;
+      return [rx * view.scale + view.offX, ry * view.scale + view.offY];
     }
 
     function drawNetwork(w, h) {
@@ -262,7 +271,7 @@
       const vehicles = vehiclesAtTime(t);
       vehicles.forEach((v) => {
         const [sx, sy] = toScreen(v.x, v.y);
-        const rad = ((v.angle - 90) * Math.PI) / 180; // SUMO: 0° = norte
+        const rad = ((v.angle - 90) * Math.PI) / 180 + ROTATE_RAD; // SUMO: 0° = norte, + la rotacion del encuadre
         vehCtx.save();
         vehCtx.translate(sx, sy);
         vehCtx.rotate(rad);
