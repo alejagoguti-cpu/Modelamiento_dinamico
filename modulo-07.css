@@ -6508,16 +6508,18 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
   text-align: center; color: #05070a; font-size: 7.5px; font-weight: 700; line-height: 1.1;
   font-family: Inter, sans-serif; padding: 1px;
 }
-/* Explosión: todo nace encogido en el centro de su propio nodo, y al
-   agregar la clase "exploded" (un frame después) crece a su tamaño real,
-   con un pequeño retraso por nodo según el orden en que se dibujó. */
+/* Explosión real: cada nodo nace ENCOGIDO Y JUNTO en el centro de su propio
+   sistema (usando el desplazamiento --dx/--dy calculado), y al agregar la
+   clase "exploded" (un frame después) sale disparado hacia su posición
+   final mientras crece, como si el racimo se abriera hacia afuera. */
 .combined-node {
   transform-box: fill-box; transform-origin: center;
-  transform: scale(0.05); opacity: 0;
-  transition: transform .55s cubic-bezier(.2,1.4,.4,1), opacity .35s ease;
-  transition-delay: calc(var(--node-i, 0) * 12ms);
+  transform: translate(var(--dx, 0px), var(--dy, 0px)) scale(0.15);
+  opacity: 0;
+  transition: transform .75s cubic-bezier(.16,1,.32,1.15), opacity .35s ease;
+  transition-delay: calc(var(--node-i, 0) * 14ms);
 }
-.combined-network-overlay.exploded .combined-node { transform: scale(1); opacity: 1; }
+.combined-network-overlay.exploded .combined-node { transform: translate(0, 0) scale(1); opacity: 1; }
 .combined-hub-line, .combined-sat-line, .combined-cross-line {
   opacity: 0; transition: opacity .5s ease .5s;
 }

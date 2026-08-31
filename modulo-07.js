@@ -2256,7 +2256,7 @@
         const satR = 92;
         const nodesHere = items.map((label, i) => {
           const angle = (i / items.length) * Math.PI * 2 - Math.PI / 2;
-          return { label, x: cl.cx + satR * Math.cos(angle), y: cl.cy + satR * Math.sin(angle), color: cl.color, sysId: cl.id };
+          return { label, x: cl.cx + satR * Math.cos(angle), y: cl.cy + satR * Math.sin(angle), color: cl.color, sysId: cl.id, originX: cl.cx, originY: cl.cy };
         });
         for (let i = 0; i < nodesHere.length; i++) {
           for (let j = i + 1; j < nodesHere.length; j++) {
@@ -2285,12 +2285,13 @@
       }
       svgParts.push(...crossLines);
       const nodeR2 = 26;
-      const dynCircles = allDynamicNodes.map((n) =>
-        `<g class="combined-node combined-sat-node" style="--node-color:${n.color};--node-i:${nodeIndex++}">` +
-        `<circle cx="${n.x}" cy="${n.y}" r="${nodeR2}"/>` +
-        `<foreignObject x="${n.x - nodeR2 + 3}" y="${n.y - nodeR2 + 3}" width="${(nodeR2 - 3) * 2}" height="${(nodeR2 - 3) * 2}"><div xmlns="http://www.w3.org/1999/xhtml" class="combined-sat-label">${n.label}</div></foreignObject>` +
-        `</g>`
-      ).join("");
+      const dynCircles = allDynamicNodes.map((n) => {
+        const dx = (n.originX - n.x).toFixed(1), dy = (n.originY - n.y).toFixed(1);
+        return `<g class="combined-node combined-sat-node" style="--node-color:${n.color};--node-i:${nodeIndex++};--dx:${dx}px;--dy:${dy}px">` +
+          `<circle cx="${n.x}" cy="${n.y}" r="${nodeR2}"/>` +
+          `<foreignObject x="${n.x - nodeR2 + 3}" y="${n.y - nodeR2 + 3}" width="${(nodeR2 - 3) * 2}" height="${(nodeR2 - 3) * 2}"><div xmlns="http://www.w3.org/1999/xhtml" class="combined-sat-label">${n.label}</div></foreignObject>` +
+          `</g>`;
+      }).join("");
       overlay.innerHTML = `
         <div class="combined-network-panel">
           <div class="combined-network-heading">
