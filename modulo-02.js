@@ -2159,9 +2159,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Mostrar popup inicial después de 500ms (cuando la página esté completamente lista)
-  setTimeout(() => {
-    showInitialPopup();
-  }, 500);
+  // setTimeout(() => {
+  //   showInitialPopup();
+  // }, 500);
 });
 
 
