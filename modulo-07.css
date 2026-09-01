@@ -5060,7 +5060,14 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 @media (max-width: 760px) { .direct-submodel-tabs { align-items: stretch; } .direct-submodel-tabs button { flex: 1 1 100%; } }
 
 /* Red superior de sistemas del territorio */
-.territory-reading-section { margin: 12px 10px 18px; padding: 18px; border: 1px solid rgba(118,255,240,.3); border-radius: 10px; background: linear-gradient(135deg, rgba(7,17,16,.98), rgba(10,13,16,.98)); }
+.territory-reading-section { position: relative; margin: 12px 10px 18px; padding: 18px; border: 1px solid rgba(118,255,240,.3); border-radius: 10px; background: linear-gradient(135deg, rgba(7,17,16,.98), rgba(10,13,16,.98)); }
+.failure-scenarios-btn {
+  position: absolute; top: 16px; right: 16px; display: flex; align-items: center; gap: 7px;
+  padding: 8px 14px; border-radius: 7px; border: 1px solid rgba(255,107,107,.45);
+  background: rgba(255,107,107,.08); color: #ff8f8f; font-size: 11.5px; font-weight: 700;
+  cursor: pointer; transition: background .15s ease; z-index: 2;
+}
+.failure-scenarios-btn:hover { background: rgba(255,107,107,.18); }
 .territory-reading-kicker { color: #76fff0; font-size: 9px; font-weight: 800; letter-spacing: .14em; }
 .territory-reading-section h2 { margin: 7px 0 13px; color: #fff; font: 700 20px/1.15 "Space Grotesk", Inter, sans-serif; }
 .territory-reading-buttons { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
@@ -6503,6 +6510,19 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 .combined-node circle { fill: var(--node-color, #76fff0); stroke: #05070a; }
 .combined-hub-node circle { opacity: .88; }
 .combined-sat-node circle { opacity: .8; }
+
+/* ---------- Escenarios de falla de cada submodelo ---------- */
+.failure-scenarios-panel { width: min(94vw, 760px); height: min(88vh, 820px); }
+.failure-scenarios-scroll { padding: 16px 20px; display: flex; flex-direction: column; gap: 14px; }
+.failure-scenarios-intro { margin: 0 0 4px; color: rgba(242,236,227,.75); font-size: 12.5px; line-height: 1.6; font-style: italic; }
+.failure-scenario-card {
+  padding: 14px 16px; border: 1px solid rgba(255,107,107,.3); border-radius: 9px;
+  background: rgba(255,107,107,.045);
+}
+.failure-scenario-card h4 { margin: 0 0 10px; font-size: 13px; color: #ff9d9d; display: flex; align-items: center; gap: 8px; }
+.failure-scenario-card ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 9px; }
+.failure-scenario-card li { display: flex; align-items: flex-start; gap: 9px; font-size: 12px; color: rgba(242,236,227,.88); line-height: 1.55; }
+.failure-scenario-card li i { color: #ff6b6b; margin-top: 2px; flex-shrink: 0; font-size: 11px; }
 .combined-sat-label {
   width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
   text-align: center; color: #05070a; font-size: 7.5px; font-weight: 700; line-height: 1.1;

@@ -1589,7 +1589,98 @@
       { name: "Submodelo de actores, usos y decisiones", parts: "Sistema social-comunitario + sistema socioeconómico y de ocupación + sistema institucional de gestión.", partsPurpose: "Sí", partsWhy: "Todos los sistemas articulados incluyen actores con intereses, objetivos, responsabilidades y capacidad de decisión.", totalPurpose: "Sí", totalWhy: "Analiza quién usa el territorio, quién decide, qué intereses intervienen y cómo se producen acuerdos, conflictos o cambios de manejo.", category: "Social dinámico", process: "Cambian los usos, las visitas, la participación, las organizaciones activas, las demandas, los conflictos, los acuerdos y las decisiones institucionales." },
       { name: "Submodelo de gestión y respuesta adaptativa", parts: "Sistema institucional de gestión + sistema hídrico + sistema biótico + sistema físico-urbano + sistema social-comunitario.", partsPurpose: "Sí", partsWhy: "Los sistemas institucional y social-comunitario incluyen actores que observan, deciden, intervienen y evalúan; los demás responden a esas intervenciones.", totalPurpose: "Sí", totalWhy: "Organiza un ciclo de observación, decisión, intervención, monitoreo y ajuste de las acciones territoriales.", category: "Socioecológico dinámico", process: "Cambian las presiones, los diagnósticos, las prioridades, los recursos, las áreas intervenidas, los resultados del monitoreo y las decisiones posteriores." }
     ];
+
+    // Escenarios de falla: para cada submodelo, situaciones reales en las
+    // que el submodelo dejaría de representar bien el territorio al
+    // aplicarlo a los subsistemas que articula — no son errores de cálculo,
+    // son casos donde los supuestos del submodelo se rompen.
+    const submodelFailureScenarios = [
+      {
+        name: "Submodelo de flujos de agua y drenaje urbano",
+        scenarios: [
+          "Un evento de lluvia extrema supera la capacidad de diseño del canal: el submodelo asume una respuesta gradual, pero el desborde real es abrupto y no lineal.",
+          "El mantenimiento institucional no se ejecuta como se supone (retrasos, falta de presupuesto): el submodelo pierde validez porque una de sus partes (la gestión) deja de comportarse como se modeló.",
+          "Vertimientos o rellenos ilegales alteran la geometría real del canal de una forma que el submodelo, basado en la geometría de diseño, no contempla.",
+        ],
+      },
+      {
+        name: "Submodelo de hábitat y desplazamiento de especies",
+        scenarios: [
+          "Aparece una especie invasora que cambia las relaciones de competencia y alimento sin estar contemplada en el submodelo.",
+          "El ruido o la luz artificial superan un umbral crítico: las especies abandonan el área de golpe, un comportamiento de umbral que el submodelo (pensado en cambios graduales) no anticipa.",
+          "Se asume un hábitat continuo, pero una obra nueva lo fragmenta de un momento a otro, cambiando por completo las rutas de desplazamiento supuestas.",
+        ],
+      },
+      {
+        name: "Submodelo de transformación del borde urbano",
+        scenarios: [
+          "Ocurre una urbanización informal acelerada que no sigue el patrón gradual que asume el submodelo.",
+          "Un cambio normativo (uso del suelo, licencias) modifica de un día para otro las reglas que el submodelo asumía estables.",
+          "El submodelo asume actores que deciden calculando beneficios, pero la ocupación real responde a una necesidad habitacional urgente, no a ese cálculo.",
+        ],
+      },
+      {
+        name: "Submodelo de recorridos y accesibilidad territorial",
+        scenarios: [
+          "El cierre de una vía crítica (obra, bloqueo) cambia radicalmente los recorridos, invalidando los patrones históricos usados para construir el submodelo.",
+          "Aparece un modo de transporte nuevo (apps, bicicletas eléctricas) que no estaba contemplado y que cambia la demanda de forma súbita.",
+          "El submodelo asume accesibilidad pareja para todos, pero hay barreras físicas o de percepción de seguridad que excluyen a ciertos grupos y el submodelo no las distingue.",
+        ],
+      },
+      {
+        name: "Submodelo de ocupación y presión urbana",
+        scenarios: [
+          "Una crisis económica o una migración acelerada produce una ocupación mucho más rápida que la progresión gradual que asume el submodelo.",
+          "Se subestima la presión de actividades informales o de economía no registrada, que no dejan rastro en los datos con los que se construyó el submodelo.",
+          "Una intervención institucional (reasentamiento, legalización masiva) cambia las reglas del sistema de golpe, rompiendo la continuidad que el submodelo supone.",
+        ],
+      },
+      {
+        name: "Submodelo de actores, usos y decisiones",
+        scenarios: [
+          "Aparecen actores nuevos (organizaciones, intereses externos) que no estaban mapeados cuando se construyó el submodelo.",
+          "Un conflicto latente escala más rápido de lo previsto y rompe los acuerdos institucionales que el submodelo daba por estables.",
+          "El submodelo asume que los actores deciden con información completa, pero en la práctica actúan con información parcial o desinformación.",
+        ],
+      },
+      {
+        name: "Submodelo de gestión y respuesta adaptativa",
+        scenarios: [
+          "El monitoreo no se hace con la frecuencia que el submodelo asume, rompiendo el ciclo de observación-decisión-ajuste del que depende.",
+          "Se recortan los recursos institucionales y el ciclo de intervención se interrumpe a la mitad, dejando acciones a medio implementar.",
+          "La atención institucional se desvía hacia una emergencia distinta, y el sistema modelado deja de recibir el seguimiento que el submodelo supone constante.",
+        ],
+      },
+    ];
+
+    function showFailureScenariosModal() {
+      const overlay = document.createElement("div");
+      overlay.className = "combined-network-overlay";
+      const cards = submodelFailureScenarios.map((sm) => `
+        <div class="failure-scenario-card">
+          <h4><i class="fa-solid fa-diagram-project"></i> ${sm.name}</h4>
+          <ul>${sm.scenarios.map((s) => `<li><i class="fa-solid fa-triangle-exclamation"></i><span>${s}</span></li>`).join("")}</ul>
+        </div>`).join("");
+      overlay.innerHTML = `
+        <div class="combined-network-panel failure-scenarios-panel">
+          <div class="combined-network-heading">
+            <strong><i class="fa-solid fa-triangle-exclamation"></i> Escenarios de falla: cuándo cada submodelo dejaría de representar bien el territorio</strong>
+            <button type="button" class="subsystem-panel-close" id="closeFailureScenariosBtn" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+          <div class="combined-network-scroll failure-scenarios-scroll">
+            <p class="failure-scenarios-intro">No son errores de cálculo: son situaciones reales donde los supuestos de cada submodelo se rompen al aplicarlo a los subsistemas que articula.</p>
+            ${cards}
+          </div>
+        </div>`;
+      document.body.appendChild(overlay);
+      const close = () => overlay.remove();
+      overlay.querySelector("#closeFailureScenariosBtn")?.addEventListener("click", close);
+      overlay.addEventListener("click", (event) => { if (event.target === overlay) close(); });
+    }
+    document.getElementById("failureScenariosBtn")?.addEventListener("click", showFailureScenariosModal);
+
     const territorySystems = [
+
       { id: "hidrica", name: "Dinámica hídrica", color: "#56b8d4", components: ["Agua", "lluvia", "suelo", "escorrentía", "sedimentos", "Canal Los Ángeles"],
         dynamics: ["Lluvia y escorrentía", "Infiltración en el suelo", "Circulación y acumulación", "Sedimentación", "Desborde en crecientes"],
         process: "El agua circula, se acumula, disminuye o se desborda según lluvia, pendiente, suelo, sedimentos, obras y drenaje.", category: "Determinista" },
