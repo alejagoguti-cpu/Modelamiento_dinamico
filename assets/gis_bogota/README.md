@@ -4,7 +4,7 @@ Este directorio contiene los archivos espaciales suministrados para el modelo co
 
 | Archivo | Representación | Estado |
 |---|---|---|
-| `Cober_vege_humedales.shp` | Geometrías poligonales de cobertura vegetal asociada a humedales | Geometría recibida |
+| `Cober_vege_humedales.*` | Geometrías poligonales de cobertura vegetal asociada a humedales | Conjunto completo recibido |
 | `ArboladoUrbano.shp` | Geometrías puntuales de arbolado urbano | Geometría recibida |
 | `pasted_content.txt` | Especificación metodológica del modelo | Recibida |
 
@@ -18,7 +18,7 @@ La transformación usa la calibración geográfica ya existente en `modulo-08-su
 
 El ZIP de arbolado sí contiene `.shp`, `.shx`, `.dbf`, `.prj`, `.cpg`, `.sbn`, `.sbx` y `.shp.xml`. Los componentes pequeños fueron incorporados al repositorio. El `.dbf` pesa aproximadamente 368 MB, supera el límite de un archivo individual de GitHub y por eso no se subió; sus atributos se usaron localmente para validar la capa y el módulo web utiliza el activo optimizado derivado.
 
-La capa de cobertura vegetal todavía requiere sus componentes `.shx`, `.dbf` y `.prj`. El cuadrante de referencia y la capa independiente de humedales también deben incorporarse antes de calcular la matriz de resistencia y las métricas de conectividad.
+La cobertura vegetal ya cuenta con `.shp`, `.shx`, `.dbf`, `.prj`, `.cpg`, `.sbn`, `.sbx` y `.shp.xml`. Su definición recibida corresponde a `GCS_MAGNA` en grados. El cuadrante de referencia y la capa independiente de humedales todavía deben incorporarse antes de calcular la matriz de resistencia y las métricas de conectividad.
 
 ## Criterio metodológico
 
