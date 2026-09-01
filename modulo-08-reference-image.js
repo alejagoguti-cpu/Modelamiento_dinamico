@@ -40,7 +40,7 @@
       naturalHeight: img.naturalHeight || null,
       x: Math.round(state.x * 10) / 10,
       y: Math.round(state.y * 10) / 10,
-      scale: Math.round(state.scale * 1000) / 1000,
+      zoom: Math.round(state.scale * 1000) / 1000,
       opacity: Math.round(state.opacity * 100) / 100,
     }, null, 2);
   }
