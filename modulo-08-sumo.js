@@ -519,9 +519,9 @@
     speedSelect?.addEventListener("change", () => { speedMultiplier = Number(speedSelect.value) || 1; });
 
     // ---------- Ajustar el mapa a mano: arrastrar para mover, rueda del
-    // mouse (o pellizco) para zoom, arrastrar el ícono de girar para rotar.
+    // mouse (o pellizco) para zoom. La rotación ya se dejó fija (0°), no
+    // hace falta poder girar el mapa.
     const calibWrap = document.getElementById("sumoCanvasWrap");
-    const rotateHandle = document.getElementById("sumoRotateHandle");
     const calibOutput = document.getElementById("calibOutput");
     function updateCalibOutput() {
       if (calibOutput) calibOutput.value = `ROTATE_DEG=${ROTATE_DEG.toFixed(1)}  EXTRA_ZOOM=${EXTRA_ZOOM.toFixed(2)}  CENTER_X=${Math.round(CENTER_X)}  CENTER_Y=${Math.round(CENTER_Y)}`;
@@ -537,7 +537,6 @@
     // una imagen en un editor.
     let isPanning = false, panStartX = 0, panStartY = 0, panCenterX0 = 0, panCenterY0 = 0;
     calibWrap?.addEventListener("mousedown", (event) => {
-      if (event.target === rotateHandle || rotateHandle?.contains(event.target)) return;
       isPanning = true; panStartX = event.clientX; panStartY = event.clientY;
       panCenterX0 = CENTER_X; panCenterY0 = CENTER_Y;
       calibWrap.classList.add("panning");
@@ -558,28 +557,6 @@
       EXTRA_ZOOM = Math.min(6, Math.max(0.25, EXTRA_ZOOM * factor));
       redrawCalibration();
     }, { passive: false });
-
-    // Arrastrar el ícono de girar (esquina) para rotar el mapa, como girar
-    // una imagen en un editor: el ángulo sigue a la posición del mouse
-    // respecto al centro del mapa.
-    let isRotating = false, rotateStartAngle = 0, rotateStartDeg = 0;
-    rotateHandle?.addEventListener("mousedown", (event) => {
-      event.stopPropagation();
-      isRotating = true;
-      const rect = calibWrap.getBoundingClientRect();
-      const cx = rect.left + rect.width / 2, cy = rect.top + rect.height / 2;
-      rotateStartAngle = Math.atan2(event.clientY - cy, event.clientX - cx) * (180 / Math.PI);
-      rotateStartDeg = ROTATE_DEG;
-    });
-    window.addEventListener("mousemove", (event) => {
-      if (!isRotating) return;
-      const rect = calibWrap.getBoundingClientRect();
-      const cx = rect.left + rect.width / 2, cy = rect.top + rect.height / 2;
-      const currentAngle = Math.atan2(event.clientY - cy, event.clientX - cx) * (180 / Math.PI);
-      ROTATE_DEG = rotateStartDeg + (currentAngle - rotateStartAngle);
-      redrawCalibration();
-    });
-    window.addEventListener("mouseup", () => { isRotating = false; });
 
     // Mostrar los valores iniciales apenas carga, sin esperar a mover nada.
     updateCalibOutput();
