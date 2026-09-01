@@ -743,8 +743,8 @@
       // Humedales calcados a mano (azul), debajo de las vías para que las
       // calles se sigan viendo con claridad encima. Se suaviza el trazo
       // para que no se vea quebrado/anguloso.
-      netCtx.fillStyle = "rgba(150,200,255,0.62)";
-      netCtx.strokeStyle = "rgba(150,200,255,0.95)";
+      netCtx.fillStyle = "rgba(150,200,255,0.35)";
+      netCtx.strokeStyle = "rgba(150,200,255,0.6)";
       netCtx.lineWidth = 1.6;
       TRACED_WETLANDS.forEach((pts) => {
         if (pts.length < 2) return;
@@ -756,7 +756,7 @@
       });
       // Ríos calcados a mano con la herramienta de línea (mismo azul, un
       // poco más opaco, con el grosor que se eligió al dibujar cada uno).
-      netCtx.strokeStyle = "rgba(150,200,255,0.95)";
+      netCtx.strokeStyle = "rgba(150,200,255,0.6)";
       TRACED_RIVERS.forEach(({ width, points }) => {
         if (points.length < 2) return;
         const screenPts = reduceJitterPoints(points.map(([x, y]) => toScreen(x, y)), 4);
