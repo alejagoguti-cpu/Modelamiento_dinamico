@@ -809,6 +809,10 @@ footer span { color: var(--teal); }
 .sumo-calib-panel label { display: inline-flex; align-items: center; gap: 5px; color: var(--text-dim); font-size: 11px; }
 .sumo-calib-panel input[type="number"] { width: 78px; background: #05070a; color: #76fff0; border: 1px solid var(--border); border-radius: 5px; padding: 5px 6px; font-size: 11px; }
 .sumo-calib-panel .sumo-btn { width: 30px; height: 30px; }
+.sumo-pen-toolbar { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+.sumo-pen-toolbar .noise-formula-note { flex: 1; min-width: 220px; }
+.sumo-pen-toolbar .sumo-btn.active { background: rgba(255,176,32,.28); border-color: #ffb020; color: #ffcf68; }
+#sumoPenOutput { min-height: 84px; }
 
 .noise-scale-legend {
   padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; background: var(--panel-alt);
