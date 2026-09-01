@@ -38,19 +38,19 @@
   function draw() {
     const w = canvas.clientWidth, h = canvas.clientHeight;
     ctx.clearRect(0, 0, w, h);
-    if (!visible || !data) return;
+    if (!visible) return;
     ctx.save();
     ctx.globalAlpha = .58;
     ctx.fillStyle = '#3c9565'; ctx.strokeStyle = 'rgba(138,224,164,.38)'; ctx.lineWidth = .8;
-    for (const feature of data.coverage || []) for (const ring of feature) {
+    for (const feature of data?.coverage || []) for (const ring of feature) {
       if (!ring.length) continue;
       ctx.beginPath(); const first = toScreen(ring[0][0], ring[0][1]); ctx.moveTo(first[0], first[1]);
       for (let i = 1; i < ring.length; i++) { const p = toScreen(ring[i][0], ring[i][1]); ctx.lineTo(p[0], p[1]); }
       ctx.closePath(); ctx.fill(); ctx.stroke();
     }
     ctx.globalAlpha = .72;
-    const max = Math.max(1, ...(data.treeCells || []).map(c => c.count));
-    for (const cell of data.treeCells || []) {
+    const max = Math.max(1, ...(data?.treeCells || []).map(c => c.count));
+    for (const cell of data?.treeCells || []) {
       const p = toScreen(cell.x, cell.y), t = Math.min(1, Math.log1p(cell.count) / Math.log1p(max));
       const r = Math.max(1.1, Math.min(4.2, 1.1 + t * 3.1));
       ctx.fillStyle = `rgba(196,231,93,${.24 + t * .62})`;
