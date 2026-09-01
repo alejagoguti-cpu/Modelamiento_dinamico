@@ -13,6 +13,7 @@
   const ctx = canvas.getContext('2d');
   let data = null, visible = true, view = { scale: 1, offX: 0, offY: 0 };
   const saved = JSON.parse(localStorage.getItem('sumoModule8EcologyCalibration') || 'null') || { dx: 0, dy: 0, scale: 1, rotation: 0 };
+  let dragging = false, lastPointer = null;
 
   function toScreen(x, y) {
     const rad = ((ROTATE_DEG + (saved.rotation || 0)) * Math.PI) / 180, c = Math.cos(rad), s = Math.sin(rad);
@@ -55,6 +56,19 @@
     }
     ctx.restore();
   }
+  function updateReadout() {
+    const readout = document.getElementById('sumoCalibReadout');
+    if (readout) readout.textContent = `Desplazamiento actual: ΔX = ${Number(saved.dx).toFixed(1)} m · ΔY = ${Number(saved.dy).toFixed(1)} m`;
+  }
+  canvas.addEventListener('pointerdown', event => { if (!visible) return; dragging = true; lastPointer = { x: event.clientX, y: event.clientY }; canvas.setPointerCapture(event.pointerId); canvas.style.cursor = 'grabbing'; });
+  canvas.addEventListener('pointermove', event => {
+    if (!dragging || !lastPointer || !view.scale) return;
+    saved.dx += (event.clientX - lastPointer.x) / view.scale;
+    saved.dy -= (event.clientY - lastPointer.y) / view.scale;
+    lastPointer = { x: event.clientX, y: event.clientY }; updateReadout(); draw();
+  });
+  function stopDrag(event) { if (!dragging) return; dragging = false; lastPointer = null; canvas.style.cursor = 'grab'; try { canvas.releasePointerCapture(event.pointerId); } catch (_) {} }
+  canvas.addEventListener('pointerup', stopDrag); canvas.addEventListener('pointercancel', stopDrag); canvas.addEventListener('pointerleave', event => { if (dragging) stopDrag(event); });
   toggle?.addEventListener('change', () => { visible = !!toggle.checked; draw(); });
   const ids = ['sumoCalibDx', 'sumoCalibDy', 'sumoCalibScale', 'sumoCalibRotation'];
   ids.forEach(id => { const el = document.getElementById(id); if (el) el.value = saved[id.replace('sumoCalib', '').toLowerCase()] ?? (id.includes('Scale') ? 1 : 0); });
@@ -63,10 +77,16 @@
     saved.dy = Number(document.getElementById('sumoCalibDy')?.value || 0);
     saved.scale = Math.max(.5, Math.min(1.5, Number(document.getElementById('sumoCalibScale')?.value || 1)));
     saved.rotation = Number(document.getElementById('sumoCalibRotation')?.value || 0);
-    localStorage.setItem('sumoModule8EcologyCalibration', JSON.stringify(saved)); draw();
+    localStorage.setItem('sumoModule8EcologyCalibration', JSON.stringify(saved)); updateReadout(); draw();
     const status = document.getElementById('sumoCalibStatus'); if (status) status.textContent = 'Ajuste guardado en este navegador.';
   });
-  document.getElementById('sumoCalibReset')?.addEventListener('click', () => { Object.assign(saved, { dx: 0, dy: 0, scale: 1, rotation: 0 }); ids.forEach(id => { const el = document.getElementById(id); if (el) el.value = id.includes('Scale') ? 1 : 0; }); localStorage.setItem('sumoModule8EcologyCalibration', JSON.stringify(saved)); draw(); });
+  document.getElementById('sumoCalibReset')?.addEventListener('click', () => { Object.assign(saved, { dx: 0, dy: 0, scale: 1, rotation: 0 }); ids.forEach(id => { const el = document.getElementById(id); if (el) el.value = id.includes('Scale') ? 1 : 0; });     localStorage.setItem('sumoModule8EcologyCalibration', JSON.stringify(saved)); updateReadout(); draw(); });
+  document.getElementById('sumoCalibCopy')?.addEventListener('click', async () => {
+    const text = `ΔX = ${Number(saved.dx).toFixed(1)} m; ΔY = ${Number(saved.dy).toFixed(1)} m; escala = ${Number(saved.scale).toFixed(3)}; rotación = ${Number(saved.rotation).toFixed(1)}°`;
+    try { await navigator.clipboard.writeText(text); } catch (_) {}
+    const status = document.getElementById('sumoCalibStatus'); if (status) status.textContent = `Copiado: ${text}`;
+  });
+  updateReadout();
   window.addEventListener('resize', resize);
   fetch(DATA_URL).then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
     .then(json => { data = json; resize(); const status = document.getElementById('sumoStatus'); if (status) status.textContent = `SUMO + capas ecológicas (${json.treeSourceCount.toLocaleString('es-CO')} árboles agregados)`; })
