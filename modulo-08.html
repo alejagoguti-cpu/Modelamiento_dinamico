@@ -203,17 +203,24 @@
           </div>
           <details class="noise-formula-details">
             <summary>Ver fórmula y reglas de cálculo</summary>
+            <p><strong>Motor acústico real (CNOSSOS-EU)</strong> — implementado, pendiente solo de los coeficientes oficiales:</p>
+            <ol>
+              <li><strong>Velocidad real:</strong> se deriva de la propia posición de cada vehículo en SUMO entre dos instantes consecutivos (no es un dato inventado).</li>
+              <li><strong>Emisión de cada vehículo</strong> (Directiva (UE) 2015/996, Cap. 2.2): ruido de rodadura <code>L_WR = A_R + B_R·log10(v)</code> + ruido de propulsión <code>L_WP = A_P + B_P·(v−70)/70</code>, sumados de forma energética: <code>L_W = 10·log10(10^(L_WR/10) + 10^(L_WP/10))</code>.</li>
+              <li><strong>Propagación:</strong> atenuación por divergencia geométrica de fuente puntual, en metros reales del mapa: <code>A_div = 20·log10(d) + 11</code> (~6 dB menos cada vez que se duplica la distancia).</li>
+              <li><strong>Suma de varios vehículos</strong> en un mismo punto: suma energética, no aritmética: <code>L_total = 10·log10(Σ 10^(Lᵢ/10))</code>.</li>
+              <li>Falta un solo dato para activarlo: la tabla oficial de coeficientes <code>A_R, B_R, A_P, B_P</code> (Categoría 1) de la Directiva — mientras no esté, el mapa usa el método visual de abajo, sin ningún cambio de color ni transparencia.</li>
+            </ol>
+            <p><strong>Método visual actual</strong> (mientras se completa el motor real):</p>
             <ol>
               <li><strong>Mancha por vehículo:</strong> cada vehículo genera un círculo de influencia (degradado radial, blanco en el centro y transparente en el borde) alrededor de su posición actual.</li>
-              <li><strong>Radio según el tipo de vía</strong> (en metros reales, no píxeles): se busca la vía más cercana al vehículo en la red de SUMO y se usa su jerarquía real —
-                <code>local → 25 m</code>, <code>mid (vía secundaria) → 75 m</code>, <code>major (vía principal) → 150 m</code>.
-              </li>
               <li><strong>Acumulación:</strong> donde se superponen las manchas de varios vehículos cercanos, la intensidad se suma (modo "lighter" del canvas) — más vehículos juntos = mayor intensidad acumulada en esa zona.</li>
-              <li><strong>Intensidad → color:</strong> la intensidad acumulada (0 a 1) se eleva a la potencia 2.4 (<code>t = intensidad^2.4</code>) antes de mapearse a color, para que haga falta bastante acumulación de tráfico para llegar al rojo — así se evita que todo se sature a rojo con pocos vehículos.</li>
-              <li><strong>Color:</strong> ese valor <code>t</code> se interpola de forma continua entre 6 colores de referencia (amarillo claro → amarillo → naranja claro → naranja → rojo anaranjado → rojo), equivalentes a los rangos de dB(A) mostrados arriba.</li>
+              <li><strong>Intensidad → color:</strong> la intensidad acumulada (0 a 1) se eleva a la potencia 2.4 (<code>t = intensidad^2.4</code>) antes de mapearse a color, para que haga falta bastante acumulación de tráfico para llegar al rojo.</li>
+              <li><strong>Color:</strong> ese valor <code>t</code> se interpola de forma continua entre 6 colores de referencia (amarillo claro → amarillo → naranja claro → naranja → rojo anaranjado → rojo).</li>
               <li><strong>Transparencia:</strong> siempre la misma (42%) en toda la capa — nunca cambia según el nivel de ruido, solo cambia el color.</li>
-              <li><strong>Suavizado:</strong> el resultado se calcula en una imagen de baja resolución y se dibuja agrandado con desenfoque (blur), para que se vea como una superficie continua y no como puntos o una cuadrícula.</li>
+              <li><strong>Suavizado:</strong> el resultado se calcula en baja resolución y se dibuja agrandado con desenfoque (blur), para que se vea como una superficie continua.</li>
             </ol>
+
             <p class="noise-formula-note">Es un proxy visual de carga de tráfico, no una medición acústica real en decibeles.</p>
           </details>
         </div>
