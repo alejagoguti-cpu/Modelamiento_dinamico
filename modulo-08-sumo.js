@@ -864,7 +864,7 @@
     }
     // ---------- cargar el arbolado de Kennedy (no bloquea la red vial:
     // si tarda o falla, la simulación sigue funcionando igual) ----------
-    fetch("./assets/kennedy_trees.json")
+    fetch("./assets/kennedy_trees.json?v=userclip-v1")
       .then((r) => { if (!r.ok) throw new Error("no se pudo cargar kennedy_trees.json"); return r.json(); })
       .then((data) => { treeData = data; if (netData) drawNetwork(netCanvas.parentElement.clientWidth, netCanvas.parentElement.clientHeight); })
       .catch((err) => console.warn("No se pudo cargar el arbolado de Kennedy:", err));
