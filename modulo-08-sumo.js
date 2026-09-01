@@ -103,6 +103,7 @@
     // =====================================================================
     let demandPercent = 0; // -100 a 100, 0 = modelo base exacto, sin cambios
     let closedEdgeIdx = null; // índice de la vía "cerrada" en netData.edges, o null
+    let detourMap = new Map(); // vehicleId -> {fromTime, toTime, path:[{x,y}], totalDist} — reruteo REAL por Dijkstra
 
     // Vías candidatas a cerrar: las 6 vías "major" con más tránsito real
     // registrado en la simulación base (se contó, fuera de línea, cuántas
@@ -131,11 +132,177 @@
       return { id: `${v.id}_ghost${k}`, x: v.x + jx, y: v.y + jy, angle: v.angle, speedKmh: v.speedKmh, ghost: true };
     }
 
+    // =====================================================================
+    // RERUTEO REAL: cuando se cierra una vía, se construye el grafo real
+    // de calles alrededor (con los mismos segmentos de kennedy_net.json,
+    // sin la vía cerrada) y se calcula, con el algoritmo de Dijkstra, el
+    // camino más corto de verdad por calles existentes para cada vehículo
+    // que iba a pasar cerca — así se ve cómo el tráfico se desvía a las
+    // calles vecinas, no solo un empujón visual hacia el lado.
+    // =====================================================================
+    const DETOUR_THRESHOLD_M = 45; // qué tan cerca de la vía cerrada cuenta como "afectado"
+    const DETOUR_MAX_VEHICLES = 180; // límite para que el cálculo no tarde demasiado
+
+    function buildLocalGraphAround(closedIdx, radiusM) {
+      const closedPts = netData.edges[closedIdx][1];
+      let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+      closedPts.forEach(([x, y]) => { minX = Math.min(minX, x); maxX = Math.max(maxX, x); minY = Math.min(minY, y); maxY = Math.max(maxY, y); });
+      minX -= radiusM; maxX += radiusM; minY -= radiusM; maxY += radiusM;
+      const nodes = new Map(); // key -> {x,y}
+      const adj = new Map(); // key -> [{to,dist}]
+      // Tolerancia de unión de nodos: 22m. Se probó con datos reales que a
+      // menos de esto (0.5m-8m) la red queda fragmentada en cientos de
+      // "islas" desconectadas — no por imprecisión de coordenadas, sino
+      // porque ~10.900 de las 19.037 vías de este mapa fueron reconstruidas
+      // solo a partir de la posición de sus cruces (sin la forma real), y
+      // esas posiciones reconstruidas no coinciden exactamente con las vías
+      // de forma real vecinas. A 22m (bastante menor que una cuadra típica
+      // de ~80-100m, así que no une cruces reales distintos) se conecta el
+      // ~95% de la red local, verificado con vehículos reales de la
+      // simulación.
+      const SNAP_M = 22;
+      const nodeKey = (x, y) => Math.round(x / SNAP_M) + "," + Math.round(y / SNAP_M);
+      const addNode = (x, y) => { const k = nodeKey(x, y); if (!nodes.has(k)) nodes.set(k, { x, y }); return k; };
+      const addEdgeBidir = (k1, k2, dist) => {
+        if (k1 === k2) return; // evitar auto-bucles cuando dos puntos caen en la misma celda
+        if (!adj.has(k1)) adj.set(k1, []);
+        if (!adj.has(k2)) adj.set(k2, []);
+        adj.get(k1).push({ to: k2, dist });
+        adj.get(k2).push({ to: k1, dist });
+      };
+      netData.edges.forEach(([, pts], edgeIdx) => {
+        if (edgeIdx === closedIdx) return; // la vía cerrada NO se incluye: no se puede pasar por ahí
+        for (let i = 0; i < pts.length - 1; i++) {
+          const [ax, ay] = pts[i], [bx, by] = pts[i + 1];
+          const inside = (ax >= minX && ax <= maxX && ay >= minY && ay <= maxY) || (bx >= minX && bx <= maxX && by >= minY && by <= maxY);
+          if (!inside) continue;
+          const dist = Math.hypot(bx - ax, by - ay);
+          if (dist > 0) addEdgeBidir(addNode(ax, ay), addNode(bx, by), dist);
+        }
+      });
+      return { nodes, adj, nodeKey };
+    }
+
+    function findNearestGraphNode(graph, x, y) {
+      let best = null, bestD = Infinity;
+      graph.nodes.forEach((p, key) => {
+        const d = Math.hypot(p.x - x, p.y - y);
+        if (d < bestD) { bestD = d; best = key; }
+      });
+      return best;
+    }
+
+    // Dijkstra con una cola de prioridad (heap binario) sencilla — el
+    // grafo local es chico (solo lo que está cerca de la vía cerrada), así
+    // que esto corre rápido aunque no sea la implementación más optimizada.
+    function dijkstraPath(graph, startKey, endKey) {
+      const dist = new Map([[startKey, 0]]);
+      const prev = new Map();
+      const visited = new Set();
+      const heap = [[0, startKey]];
+      const heapPush = (item) => {
+        heap.push(item);
+        let i = heap.length - 1;
+        while (i > 0) { const p = (i - 1) >> 1; if (heap[p][0] <= heap[i][0]) break; [heap[p], heap[i]] = [heap[i], heap[p]]; i = p; }
+      };
+      const heapPop = () => {
+        const top = heap[0]; const last = heap.pop();
+        if (heap.length) {
+          heap[0] = last; let i = 0;
+          while (true) {
+            let l = 2 * i + 1, r = 2 * i + 2, s = i;
+            if (l < heap.length && heap[l][0] < heap[s][0]) s = l;
+            if (r < heap.length && heap[r][0] < heap[s][0]) s = r;
+            if (s === i) break;
+            [heap[s], heap[i]] = [heap[i], heap[s]]; i = s;
+          }
+        }
+        return top;
+      };
+      while (heap.length) {
+        const [d, u] = heapPop();
+        if (visited.has(u)) continue;
+        visited.add(u);
+        if (u === endKey) break;
+        (graph.adj.get(u) || []).forEach(({ to, dist: w }) => {
+          const nd = d + w;
+          if (nd < (dist.get(to) ?? Infinity)) { dist.set(to, nd); prev.set(to, u); heapPush([nd, to]); }
+        });
+      }
+      if (!dist.has(endKey)) return null;
+      const path = []; let cur = endKey;
+      while (cur !== undefined) { path.push(graph.nodes.get(cur)); if (cur === startKey) break; cur = prev.get(cur); }
+      return path.reverse();
+    }
+
+    // Calcula, para cada vehículo que pasaría cerca de la vía cerrada, un
+    // desvío REAL (por calles existentes) usando Dijkstra, y lo guarda en
+    // detourMap. Se corre UNA vez al activar el cierre, no en cada cuadro.
+    function computeRealDetours(closedIdx) {
+      detourMap = new Map();
+      if (!netData || !timesteps.length) return;
+      const graph = buildLocalGraphAround(closedIdx, 900);
+      const closedPts = netData.edges[closedIdx][1];
+
+      // Encontrar, para cada vehículo, las muestras (tiempo,x,y) donde
+      // pasa cerca de la vía cerrada, a lo largo de TODA la simulación.
+      const near = new Map(); // id -> [{time,x,y}]
+      timesteps.forEach((step) => {
+        step.vehicles.forEach((v) => {
+          let minD = Infinity;
+          for (let i = 0; i < closedPts.length - 1; i++) {
+            const d = distToSegment(v.x, v.y, closedPts[i][0], closedPts[i][1], closedPts[i + 1][0], closedPts[i + 1][1]);
+            if (d < minD) minD = d;
+          }
+          if (minD < DETOUR_THRESHOLD_M) {
+            if (!near.has(v.id)) near.set(v.id, []);
+            near.get(v.id).push({ time: step.time, x: v.x, y: v.y });
+          }
+        });
+      });
+
+      let count = 0;
+      for (const [id, samples] of near) {
+        if (count >= DETOUR_MAX_VEHICLES) break;
+        samples.sort((a, b) => a.time - b.time);
+        const first = samples[0], last = samples[samples.length - 1];
+        const entryStart = findNearestGraphNode(graph, first.x, first.y);
+        const exitEnd = findNearestGraphNode(graph, last.x, last.y);
+        if (!entryStart || !exitEnd || entryStart === exitEnd) continue;
+        const path = dijkstraPath(graph, entryStart, exitEnd);
+        if (!path || path.length < 2) continue; // sin camino alterno encontrado cerca: se deja como iba
+        let totalDist = 0;
+        for (let i = 0; i < path.length - 1; i++) totalDist += Math.hypot(path[i + 1].x - path[i].x, path[i + 1].y - path[i].y);
+        detourMap.set(id, { fromTime: first.time, toTime: last.time, path, totalDist });
+        count++;
+      }
+    }
+
+    // Posición de un vehículo desviado en el instante t, caminando a lo
+    // largo del camino alterno real calculado por Dijkstra.
+    function detourPositionAt(detour, t) {
+      const span = detour.toTime - detour.fromTime || 1;
+      const frac = Math.max(0, Math.min(1, (t - detour.fromTime) / span));
+      const targetDist = frac * detour.totalDist;
+      let acc = 0;
+      for (let i = 0; i < detour.path.length - 1; i++) {
+        const a = detour.path[i], b = detour.path[i + 1];
+        const segLen = Math.hypot(b.x - a.x, b.y - a.y);
+        if (acc + segLen >= targetDist) {
+          const segFrac = segLen > 0 ? (targetDist - acc) / segLen : 0;
+          return { x: a.x + (b.x - a.x) * segFrac, y: a.y + (b.y - a.y) * segFrac };
+        }
+        acc += segLen;
+      }
+      const lastP = detour.path[detour.path.length - 1];
+      return { x: lastP.x, y: lastP.y };
+    }
+
     // Aplica el efecto ilustrativo de demanda (+/-) y de cierre de vía
     // sobre la lista de vehículos base de este instante. Con demanda=0 y
     // sin vía cerrada, devuelve exactamente los vehículos base sin tocar
     // nada (estado inicial = modelo base actual, sin diferencia alguna).
-    function applyDemandAndClosure(baseVehicles) {
+    function applyDemandAndClosure(baseVehicles, t) {
       if (demandPercent === 0 && closedEdgeIdx == null) return baseVehicles;
       let vehicles = baseVehicles;
 
@@ -153,26 +320,16 @@
         vehicles = vehicles.filter((v) => (hashId(v.id) % 1000) / 1000 < keepFrac);
       }
 
-      if (closedEdgeIdx != null && netData) {
-        const closed = netData.edges[closedEdgeIdx];
-        const pts = closed[1];
+      if (closedEdgeIdx != null && detourMap.size) {
+        // Reruteo REAL: los vehículos con un desvío calculado por Dijkstra
+        // caminan por ese camino alterno (calles existentes de verdad)
+        // mientras dure su paso por la zona afectada.
         vehicles = vehicles.map((v) => {
-          let minD = Infinity, nearIdx = -1;
-          for (let i = 0; i < pts.length - 1; i++) {
-            const d = distToSegment(v.x, v.y, pts[i][0], pts[i][1], pts[i + 1][0], pts[i + 1][1]);
-            if (d < minD) { minD = d; nearIdx = i; }
-          }
-          if (minD < 60) {
-            // Empuja al vehículo perpendicularmente lejos de la vía
-            // cerrada, como si hubiera desviado a una calle paralela
-            // cercana — un efecto visual de "esquive", no un recálculo
-            // real de la mejor ruta alterna.
-            const [ax, ay] = pts[nearIdx], [bx, by] = pts[nearIdx + 1];
-            const dx = bx - ax, dy = by - ay, len = Math.hypot(dx, dy) || 1;
-            const nx = -dy / len, ny = dx / len;
-            const side = hashId(v.id) % 2 === 0 ? 1 : -1;
-            const push = (60 - minD) * 1.4 * side;
-            return { ...v, x: v.x + nx * push, y: v.y + ny * push, detoured: true };
+          const baseId = v.id.split("_ghost")[0]; // los "fantasmas" de demanda comparten el desvío de su original
+          const detour = detourMap.get(baseId);
+          if (detour && t >= detour.fromTime && t <= detour.toTime) {
+            const p = detourPositionAt(detour, t);
+            return { ...v, x: p.x, y: p.y, detoured: true };
           }
           return v;
         });
@@ -690,7 +847,7 @@
       const w = vehCanvas.parentElement.clientWidth, h = vehCanvas.parentElement.clientHeight;
       vehCtx.clearRect(0, 0, w, h);
       const baseVehicles = vehiclesAtTime(t);
-      const vehicles = applyDemandAndClosure(baseVehicles);
+      const vehicles = applyDemandAndClosure(baseVehicles, t);
       if (noiseLayerOn) drawNoiseLayer(vehicles, w, h);
       else if (noiseCtx) noiseCtx.clearRect(0, 0, w, h);
       vehicles.forEach((v) => {
@@ -794,7 +951,7 @@
       if (demandPercent !== 0) parts.push(`demanda ${demandPercent > 0 ? "+" : ""}${demandPercent}%`);
       if (closedEdgeIdx != null) {
         const c = CLOSURE_CANDIDATES.find((x) => x.edgeIdx === closedEdgeIdx);
-        parts.push(`${c ? c.label : "vía"} cerrada`);
+        parts.push(`${c ? c.label : "vía"} cerrada — ${detourMap.size} vehículo(s) con desvío real calculado por Dijkstra`);
       }
       if (whatifStatus) whatifStatus.textContent = parts.length ? `Escenario activo: ${parts.join(" · ")} (ilustrativo).` : "Sin cambios — mostrando el modelo base.";
     }
@@ -821,9 +978,23 @@
       closureToggle.innerHTML = isActive
         ? '<i class="fa-solid fa-road-barrier"></i> Reabrir'
         : '<i class="fa-solid fa-road-barrier"></i> Cerrar';
-      updateWhatifStatus();
-      drawNetwork(netCanvas.parentElement.clientWidth, netCanvas.parentElement.clientHeight);
-      drawVehiclesAt(playhead);
+      if (isActive) {
+        if (whatifStatus) whatifStatus.textContent = "Calculando desvíos reales por Dijkstra sobre el grafo de calles…";
+        closureToggle.disabled = true;
+        // pequeño respiro para que el navegador pinte el mensaje antes del cálculo (puede tardar un momento)
+        setTimeout(() => {
+          computeRealDetours(closedEdgeIdx);
+          closureToggle.disabled = false;
+          updateWhatifStatus();
+          drawNetwork(netCanvas.parentElement.clientWidth, netCanvas.parentElement.clientHeight);
+          drawVehiclesAt(playhead);
+        }, 30);
+      } else {
+        detourMap = new Map();
+        updateWhatifStatus();
+        drawNetwork(netCanvas.parentElement.clientWidth, netCanvas.parentElement.clientHeight);
+        drawVehiclesAt(playhead);
+      }
     });
 
     // El mapa queda fijo: sin arrastrar ni hacer zoom, con el encuadre
