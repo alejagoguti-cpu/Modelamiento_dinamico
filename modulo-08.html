@@ -213,20 +213,6 @@
           <p id="sumoWhatifStatus" class="whatif-disclaimer">Sin cambios — mostrando el modelo base.</p>
         </div>
 
-        <!-- Malla de árboles reales de Kennedy: solo mover/agrandar, sin
-             deformarla — la posición base siempre es la real del shapefile. -->
-        <div class="sumo-reference-panel">
-          <strong><i class="fa-solid fa-tree"></i> Árboles de Kennedy — muévelos y agrándalos a tu gusto</strong>
-          <button type="button" class="sumo-btn" id="sumoTreeAdjustMode" title="Mover árboles"><i class="fa-solid fa-arrows-up-down-left-right"></i></button>
-          <button type="button" class="sumo-btn" id="sumoTreeReset" title="Restablecer posición"><i class="fa-solid fa-rotate-left"></i></button>
-          <label>Tamaño <input id="sumoTreeScale" type="range" min="0.5" max="3" step="0.05" value="1"></label>
-          <span id="sumoTreeStatus">Pulsa mover árboles y arrástralos sobre el mapa.</span>
-          <div class="sumo-reference-coords">
-            <button type="button" class="sumo-btn" id="sumoTreeCopy" title="Copiar ajuste de árboles"><i class="fa-solid fa-copy"></i> Copiar coordenadas de los árboles</button>
-            <textarea id="sumoTreeOutput" rows="3" spellcheck="false" placeholder="Aquí aparecerá el desplazamiento y el tamaño de los árboles..."></textarea>
-          </div>
-        </div>
-
         <!-- Leyenda de la capa de ruido: el color cambia con el nivel de
              tráfico/ruido, pero la transparencia es SIEMPRE la misma. -->
         <div class="noise-scale-legend">
