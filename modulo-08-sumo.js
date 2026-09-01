@@ -754,13 +754,14 @@
         if (screenPts.length > 2) { netCtx.closePath(); netCtx.fill(); }
         netCtx.stroke();
       });
-      // Ríos calcados a mano con la herramienta de línea (mismo azul, un
-      // poco más opaco, con el grosor que se eligió al dibujar cada uno).
-      netCtx.strokeStyle = "rgba(150,200,255,0.6)";
+      // Ríos calcados a mano con la herramienta de línea. Color más
+      // saturado y opaco que los humedales (por separado), para que no se
+      // laven visualmente debajo de la capa de ruido que va encima.
+      netCtx.strokeStyle = "rgba(120,190,255,0.95)";
       TRACED_RIVERS.forEach(({ width, points }) => {
         if (points.length < 2) return;
         const screenPts = reduceJitterPoints(points.map(([x, y]) => toScreen(x, y)), 4);
-        netCtx.lineWidth = width;
+        netCtx.lineWidth = Math.max(3, width);
         netCtx.beginPath();
         strokeStraightPath(netCtx, screenPts);
         netCtx.stroke();
