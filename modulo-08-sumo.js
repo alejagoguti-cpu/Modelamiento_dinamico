@@ -90,6 +90,96 @@
     let view = { scale: 1, offX: 0, offY: 0 }; // mundo -> pantalla
     let playing = false;
     let noiseLayerOn = true; // se puede prender/apagar con el interruptor
+
+    // =====================================================================
+    // MODELO ILUSTRATIVO DE DEMANDA Y CIERRE DE VÍA
+    // IMPORTANTE: esto NO es una re-simulación real de SUMO. No hay ningún
+    // servidor ni motor SUMO corriendo detrás de esta página (es un sitio
+    // estático), y no existe el archivo de demanda/rutas original para
+    // regenerar una simulación real. Esto es una manipulación visual y
+    // estadística sobre los MISMOS vehículos ya grabados, para explorar de
+    // forma conceptual "qué pasaría si hubiera más/menos tráfico" o "qué
+    // pasaría si se cerrara esta vía" — no reemplaza un estudio de tránsito.
+    // =====================================================================
+    let demandPercent = 0; // -100 a 100, 0 = modelo base exacto, sin cambios
+    let closedEdgeIdx = null; // índice de la vía "cerrada" en netData.edges, o null
+
+    // Vías candidatas a cerrar: las 6 vías "major" con más tránsito real
+    // registrado en la simulación base (se contó, fuera de línea, cuántas
+    // posiciones de vehículos caen a menos de 40m de cada vía major).
+    const CLOSURE_CANDIDATES = [
+      { edgeIdx: 9847, label: "Vía crítica 1 (mayor tránsito registrado)" },
+      { edgeIdx: 11268, label: "Vía crítica 2" },
+      { edgeIdx: 8260, label: "Vía crítica 3" },
+      { edgeIdx: 9919, label: "Vía crítica 4" },
+      { edgeIdx: 10240, label: "Vía crítica 5" },
+      { edgeIdx: 9449, label: "Vía crítica 6" },
+    ];
+
+    function hashId(str) {
+      let h = 0;
+      for (let i = 0; i < str.length; i++) h = (Math.imul(h, 31) + str.charCodeAt(i)) >>> 0;
+      return h;
+    }
+
+    // Clon "fantasma" de un vehículo real, con un pequeño desplazamiento
+    // fijo (determinista según su id) para representar tráfico adicional
+    // sin inventar una ruta nueva de verdad.
+    function makeGhostVehicle(v, k) {
+      const h = hashId(v.id + "_g" + k);
+      const jx = (h % 21) - 10, jy = ((h >>> 5) % 21) - 10; // -10 a 10 m
+      return { id: `${v.id}_ghost${k}`, x: v.x + jx, y: v.y + jy, angle: v.angle, speedKmh: v.speedKmh, ghost: true };
+    }
+
+    // Aplica el efecto ilustrativo de demanda (+/-) y de cierre de vía
+    // sobre la lista de vehículos base de este instante. Con demanda=0 y
+    // sin vía cerrada, devuelve exactamente los vehículos base sin tocar
+    // nada (estado inicial = modelo base actual, sin diferencia alguna).
+    function applyDemandAndClosure(baseVehicles) {
+      if (demandPercent === 0 && closedEdgeIdx == null) return baseVehicles;
+      let vehicles = baseVehicles;
+
+      if (demandPercent > 0) {
+        const extraWhole = Math.floor(demandPercent / 100);
+        const extraFrac = demandPercent / 100 - extraWhole;
+        const extra = [];
+        baseVehicles.forEach((v) => {
+          for (let k = 0; k < extraWhole; k++) extra.push(makeGhostVehicle(v, k + 1));
+          if ((hashId(v.id + "_f") % 1000) / 1000 < extraFrac) extra.push(makeGhostVehicle(v, extraWhole + 1));
+        });
+        vehicles = vehicles.concat(extra);
+      } else if (demandPercent < 0) {
+        const keepFrac = 1 + demandPercent / 100; // demandPercent es negativo aquí
+        vehicles = vehicles.filter((v) => (hashId(v.id) % 1000) / 1000 < keepFrac);
+      }
+
+      if (closedEdgeIdx != null && netData) {
+        const closed = netData.edges[closedEdgeIdx];
+        const pts = closed[1];
+        vehicles = vehicles.map((v) => {
+          let minD = Infinity, nearIdx = -1;
+          for (let i = 0; i < pts.length - 1; i++) {
+            const d = distToSegment(v.x, v.y, pts[i][0], pts[i][1], pts[i + 1][0], pts[i + 1][1]);
+            if (d < minD) { minD = d; nearIdx = i; }
+          }
+          if (minD < 60) {
+            // Empuja al vehículo perpendicularmente lejos de la vía
+            // cerrada, como si hubiera desviado a una calle paralela
+            // cercana — un efecto visual de "esquive", no un recálculo
+            // real de la mejor ruta alterna.
+            const [ax, ay] = pts[nearIdx], [bx, by] = pts[nearIdx + 1];
+            const dx = bx - ax, dy = by - ay, len = Math.hypot(dx, dy) || 1;
+            const nx = -dy / len, ny = dx / len;
+            const side = hashId(v.id) % 2 === 0 ? 1 : -1;
+            const push = (60 - minD) * 1.4 * side;
+            return { ...v, x: v.x + nx * push, y: v.y + ny * push, detoured: true };
+          }
+          return v;
+        });
+      }
+      return vehicles;
+    }
+
     let speedMultiplier = 2;
     let playhead = 0;        // segundos de simulación transcurridos
     let lastFrameTs = 0;
@@ -463,6 +553,36 @@
         });
         netCtx.stroke();
       });
+      // Vía "cerrada" en el escenario de perturbación: se resalta en rojo
+      // punteado con un ícono de barrera en el medio.
+      if (closedEdgeIdx != null && netData.edges[closedEdgeIdx]) {
+        const pts = netData.edges[closedEdgeIdx][1];
+        netCtx.save();
+        netCtx.strokeStyle = "#ff4d4d";
+        netCtx.lineWidth = 4;
+        netCtx.setLineDash([6, 5]);
+        netCtx.beginPath();
+        const [sx0, sy0] = toScreen(pts[0][0], pts[0][1]);
+        netCtx.moveTo(sx0, sy0);
+        for (let i = 1; i < pts.length; i++) {
+          const [px, py] = toScreen(pts[i][0], pts[i][1]);
+          netCtx.lineTo(px, py);
+        }
+        netCtx.stroke();
+        netCtx.setLineDash([]);
+        const mid = pts[Math.floor(pts.length / 2)];
+        const [mx, my] = toScreen(mid[0], mid[1]);
+        netCtx.fillStyle = "#ff4d4d";
+        netCtx.beginPath();
+        netCtx.arc(mx, my, 9, 0, Math.PI * 2);
+        netCtx.fill();
+        netCtx.fillStyle = "#1a0505";
+        netCtx.font = "bold 11px sans-serif";
+        netCtx.textAlign = "center";
+        netCtx.textBaseline = "middle";
+        netCtx.fillText("✕", mx, my + 1);
+        netCtx.restore();
+      }
     }
     // ---------- cargar la red (JSON ya recortado) ----------
     fetch(NET_URL)
@@ -569,7 +689,8 @@
     function drawVehiclesAt(t) {
       const w = vehCanvas.parentElement.clientWidth, h = vehCanvas.parentElement.clientHeight;
       vehCtx.clearRect(0, 0, w, h);
-      const vehicles = vehiclesAtTime(t);
+      const baseVehicles = vehiclesAtTime(t);
+      const vehicles = applyDemandAndClosure(baseVehicles);
       if (noiseLayerOn) drawNoiseLayer(vehicles, w, h);
       else if (noiseCtx) noiseCtx.clearRect(0, 0, w, h);
       vehicles.forEach((v) => {
@@ -581,7 +702,8 @@
         // Carrito (rectángulo redondeado, como en SUMO), no un triángulo:
         // el "morro" queda del lado +x, hacia donde apunta el vehículo.
         const carLength = 6, carWidth = 3, r = 1;
-        vehCtx.fillStyle = "#ffb020";
+        vehCtx.globalAlpha = v.ghost ? 0.55 : 1; // los "fantasmas" de demanda extra se ven algo más tenues
+        vehCtx.fillStyle = v.detoured ? "#ff6b6b" : "#ffb020";
         vehCtx.beginPath();
         if (vehCtx.roundRect) {
           vehCtx.roundRect(-carLength / 2, -carWidth / 2, carLength, carWidth, r);
@@ -593,6 +715,7 @@
         // se note de un vistazo hacia dónde mira el carro.
         vehCtx.fillStyle = "#7a4a06";
         vehCtx.fillRect(carLength * 0.05, -carWidth / 2 + 0.5, carLength * 0.32, carWidth - 1);
+        vehCtx.globalAlpha = 1;
         vehCtx.restore();
       });
       timeLabel.textContent = `${fmtTime(t)} / ${slider.max ? fmtTime(Number(slider.max)) : "00:00"}`;
@@ -651,6 +774,57 @@
     });
     slider?.addEventListener("change", () => { isScrubbing = false; });
     speedSelect?.addEventListener("change", () => { speedMultiplier = Number(speedSelect.value) || 1; });
+
+    // ---------- Panel "¿qué pasaría si...?" (demanda + cierre de vía) ----------
+    const demandSlider = document.getElementById("sumoDemandSlider");
+    const demandVal = document.getElementById("sumoDemandVal");
+    const closureSelect = document.getElementById("sumoClosureSelect");
+    const closureToggle = document.getElementById("sumoClosureToggle");
+    const whatifStatus = document.getElementById("sumoWhatifStatus");
+
+    CLOSURE_CANDIDATES.forEach((c) => {
+      const opt = document.createElement("option");
+      opt.value = String(c.edgeIdx);
+      opt.textContent = c.label;
+      closureSelect?.appendChild(opt);
+    });
+
+    function updateWhatifStatus() {
+      const parts = [];
+      if (demandPercent !== 0) parts.push(`demanda ${demandPercent > 0 ? "+" : ""}${demandPercent}%`);
+      if (closedEdgeIdx != null) {
+        const c = CLOSURE_CANDIDATES.find((x) => x.edgeIdx === closedEdgeIdx);
+        parts.push(`${c ? c.label : "vía"} cerrada`);
+      }
+      if (whatifStatus) whatifStatus.textContent = parts.length ? `Escenario activo: ${parts.join(" · ")} (ilustrativo).` : "Sin cambios — mostrando el modelo base.";
+    }
+
+    demandSlider?.addEventListener("input", () => {
+      demandPercent = Number(demandSlider.value);
+      if (demandVal) demandVal.textContent = `${demandPercent > 0 ? "+" : ""}${demandPercent}%`;
+      updateWhatifStatus();
+      drawVehiclesAt(playhead);
+    });
+
+    closureSelect?.addEventListener("change", () => {
+      closureToggle.disabled = !closureSelect.value;
+      closureToggle.classList.remove("active");
+      closedEdgeIdx = null;
+      closureToggle.innerHTML = '<i class="fa-solid fa-road-barrier"></i> Cerrar';
+      updateWhatifStatus();
+      drawNetwork(netCanvas.parentElement.clientWidth, netCanvas.parentElement.clientHeight);
+      drawVehiclesAt(playhead);
+    });
+    closureToggle?.addEventListener("click", () => {
+      const isActive = closureToggle.classList.toggle("active");
+      closedEdgeIdx = isActive ? Number(closureSelect.value) : null;
+      closureToggle.innerHTML = isActive
+        ? '<i class="fa-solid fa-road-barrier"></i> Reabrir'
+        : '<i class="fa-solid fa-road-barrier"></i> Cerrar';
+      updateWhatifStatus();
+      drawNetwork(netCanvas.parentElement.clientWidth, netCanvas.parentElement.clientHeight);
+      drawVehiclesAt(playhead);
+    });
 
     // El mapa queda fijo: sin arrastrar ni hacer zoom, con el encuadre
     // definido por EXTRA_ZOOM/CENTER_X/CENTER_Y/ROTATE_DEG de arriba.

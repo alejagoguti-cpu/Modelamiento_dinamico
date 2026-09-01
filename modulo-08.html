@@ -186,6 +186,26 @@
           <audio id="sumoAmbienceAudio" src="./assets/sumo-traffic-ambience.mp3" loop preload="auto"></audio>
         </div>
 
+        <!-- Modelo ilustrativo "¿qué pasaría si...?": NO es una re-simulación
+             real de SUMO (no hay backend). Es una manipulación visual sobre
+             los mismos vehículos ya grabados. -->
+        <div class="sumo-whatif-panel">
+          <p class="whatif-disclaimer"><i class="fa-solid fa-circle-info"></i> Modelo ilustrativo/conceptual — no es una re-simulación real de SUMO (este sitio no tiene un servidor que pueda correr SUMO en vivo). Multiplica visualmente los vehículos ya grabados y desvía a los que pasarían por la vía cerrada.</p>
+          <label class="whatif-slider-label">
+            Demanda vehicular: <span id="sumoDemandVal">0%</span> (0% = modelo base)
+            <input type="range" id="sumoDemandSlider" min="-100" max="100" value="0" step="5">
+          </label>
+          <div class="whatif-closure-row">
+            <label>Cerrar vía crítica:
+              <select id="sumoClosureSelect">
+                <option value="">— Ninguna (modelo base) —</option>
+              </select>
+            </label>
+            <button type="button" class="sumo-btn" id="sumoClosureToggle" disabled><i class="fa-solid fa-road-barrier"></i> Cerrar</button>
+          </div>
+          <p id="sumoWhatifStatus" class="whatif-disclaimer">Sin cambios — mostrando el modelo base.</p>
+        </div>
+
         <!-- Leyenda de la capa de ruido: el color cambia con el nivel de
              tráfico/ruido, pero la transparencia es SIEMPRE la misma. -->
         <div class="noise-scale-legend">
