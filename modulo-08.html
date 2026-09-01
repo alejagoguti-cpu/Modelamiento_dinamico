@@ -169,6 +169,8 @@
           <canvas id="sumoNoiseCanvas"></canvas>
           <canvas id="sumoVehCanvas"></canvas>
           <div id="sumoEcologyDragSurface" aria-label="Arrastrar y dibujar humedales"></div>
+          <img id="sumoReferenceImage" alt="Imagen de referencia para calcar humedales" hidden>
+          <div id="sumoImageDragSurface" hidden aria-label="Mover imagen de referencia"></div>
           <canvas id="sumoFreeDrawCanvas" aria-label="Lienzo libre para dibujar humedales"></canvas>
           <div class="sumo-pen-side-toolbar" aria-label="Herramientas para dibujar humedales">
             <button type="button" class="sumo-btn" id="sumoPenToggle" title="Activar pluma"><i class="fa-solid fa-pen"></i></button>
@@ -178,6 +180,15 @@
             <span>PLUMA<br><small>clics · doble clic para cerrar</small></span>
           </div>
           <div class="sumo-sim-overlay" id="sumoStatus">Cargando red vial…</div>
+        </div>
+        <div class="sumo-reference-panel">
+          <strong><i class="fa-solid fa-image"></i> Imagen para calcar</strong>
+          <label class="sumo-file-label">Cargar imagen <input id="sumoReferenceFile" type="file" accept="image/*"></label>
+          <button type="button" class="sumo-btn" id="sumoImageMode" title="Mover imagen"><i class="fa-solid fa-arrows-up-down-left-right"></i></button>
+          <button type="button" class="sumo-btn" id="sumoReferenceClear" title="Quitar imagen"><i class="fa-solid fa-trash"></i></button>
+          <label>Escala <input id="sumoReferenceScale" type="range" min="0.2" max="3" step="0.01" value="1"></label>
+          <label>Opacidad <input id="sumoReferenceOpacity" type="range" min="0.05" max="1" step="0.01" value="0.55"></label>
+          <span id="sumoImageStatus">Carga una imagen y pulsa mover imagen para acomodarla.</span>
         </div>
         <div class="sumo-sim-controls">
           <button type="button" id="sumoPlayPause" class="sumo-btn" aria-label="Reproducir / pausar"><i class="fa-solid fa-play"></i></button>
@@ -270,5 +281,6 @@
 <script src="modulo-08-sumo.js"></script>
 <script src="modulo-08-ecology.js?v=20260901-pen3"></script>
 <script src="modulo-08-free-draw.js?v=20260901-free1"></script>
+<script src="modulo-08-reference-image.js?v=20260901-image1"></script>
 </body>
 </html>
