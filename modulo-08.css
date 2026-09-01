@@ -798,7 +798,9 @@ footer span { color: var(--teal); }
   padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; background: var(--panel-alt);
   display: flex; flex-direction: column; gap: 8px;
 }
-.noise-scale-legend h4 { margin: 0; font-size: 11.5px; color: var(--text-dim); font-weight: 600; display: flex; align-items: center; gap: 6px; }
+.noise-scale-legend h4 { margin: 0; font-size: 11.5px; color: var(--text-dim); font-weight: 600; display: flex; align-items: center; gap: 6px; justify-content: space-between; }
+.noise-toggle-label { display: flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 500; cursor: pointer; }
+.noise-toggle-label input { accent-color: #ffb020; cursor: pointer; }
 .noise-scale-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 11px; color: var(--text-dim); }
 .noise-scale-swatch { width: 20px; height: 14px; border-radius: 3px; border: 1px solid rgba(255,255,255,.15); background-color: #05070a; }
 .noise-scale-row span { margin-right: 10px; }
