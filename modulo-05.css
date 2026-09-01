@@ -179,7 +179,7 @@ body {
   padding: 20px 18px 40px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
   width: 390px;
   box-sizing: border-box;
 }
@@ -517,66 +517,34 @@ body {
   width: 14px;
 }
 
-/* 4. Diagnóstico y Crítica POT */
-.diagnostic-card {
-  padding: 10px 12px;
+/* Botón disparador para Lectura Sistémica en la barra lateral */
+.btn-trigger-diagnostic {
+  width: 100%;
+  padding: 10px 14px;
   border-radius: 8px;
-  background: #080808;
-  border: 1px solid var(--panel-border);
-  border-left: 3px solid var(--active-scale-color);
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  box-sizing: border-box;
-}
-
-.diagnostic-scale-header {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.scale-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--active-scale-color);
-}
-
-.diagnostic-scale-header h4 {
+  background: #141414;
+  border: 1px solid var(--active-scale-color);
+  color: var(--text-main);
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 12.5px;
+  font-size: 12px;
   font-weight: 700;
-  color: #ffffff;
-}
-
-.diag-reading {
-  font-size: 11px;
-  color: #cccccc;
-  line-height: 1.4;
-}
-
-.diag-critique-box {
-  padding: 8px 10px;
-  border-radius: 6px;
-  background: rgba(255, 75, 75, 0.08);
-  border: 1px solid rgba(255, 75, 75, 0.2);
-}
-
-.critique-label {
-  font-size: 10px;
-  font-weight: 700;
-  color: #ff6b6b;
-  margin-bottom: 2px;
+  cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 4px;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 0 10px var(--active-scale-glow);
+  transition: all 0.2s ease;
 }
 
-.diag-critique-box p {
-  font-size: 10.5px;
-  color: #eeeeee;
-  line-height: 1.35;
+.btn-trigger-diagnostic:hover {
+  background: var(--active-scale-bg);
+  transform: translateY(-1px);
+}
+
+.btn-trigger-diagnostic i {
+  color: var(--active-scale-color);
+  font-size: 14px;
 }
 
 /* Herramientas de Exportación */
@@ -625,7 +593,7 @@ body {
   background: #000000;
 }
 
-/* Map Headline */
+/* Map Headline (Esquina superior izquierda) */
 .map-headline {
   position: absolute;
   top: 18px;
@@ -697,6 +665,144 @@ body {
   background: var(--active-scale-bg);
   border-color: var(--active-scale-color);
   color: #fff;
+}
+
+/* ==========================================================
+   POP-UP FLOTANTE EN LA ESQUINA: LECTURA SISTÉMICA POT
+   ========================================================== */
+.map-corner-diagnostic {
+  position: absolute;
+  bottom: 24px;
+  right: 24px;
+  width: 380px;
+  max-width: calc(100% - 48px);
+  z-index: 30;
+  animation: fadeIn 0.3s ease;
+}
+
+.diagnostic-card {
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: rgba(10, 10, 10, 0.95);
+  border: 1.5px solid var(--active-scale-color);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.9), 0 0 24px var(--active-scale-glow);
+  backdrop-filter: blur(12px);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-sizing: border-box;
+}
+
+.diagnostic-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.diagnostic-scale-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.diagnostic-badge {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: var(--active-scale-color);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.diagnostic-scale-header h4 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.btn-diagnostic-close {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  background: #181818;
+  border: 1px solid var(--panel-border);
+  color: var(--text-muted);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.btn-diagnostic-close:hover {
+  background: #252525;
+  color: #fff;
+}
+
+.diag-reading {
+  font-size: 11.5px;
+  color: #e0e0e0;
+  line-height: 1.45;
+}
+
+.diag-critique-box {
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: rgba(255, 75, 75, 0.08);
+  border: 1px solid rgba(255, 75, 75, 0.25);
+}
+
+.critique-label {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #ff6b6b;
+  margin-bottom: 2px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.diag-critique-box p {
+  font-size: 11px;
+  color: #f0f0f0;
+  line-height: 1.4;
+}
+
+/* Botón flotante cuando el popup de la esquina está minimizado */
+.btn-corner-floating-pill {
+  position: absolute;
+  bottom: 24px;
+  right: 24px;
+  padding: 10px 16px;
+  border-radius: 30px;
+  background: rgba(10, 10, 10, 0.95);
+  border: 1.5px solid var(--active-scale-color);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 20px var(--active-scale-glow);
+  color: #ffffff;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  backdrop-filter: blur(8px);
+  transition: all 0.2s ease;
+}
+
+.btn-corner-floating-pill:hover {
+  transform: translateY(-2px);
+  background: var(--active-scale-bg);
+}
+
+.btn-corner-floating-pill i {
+  color: var(--active-scale-color);
 }
 
 /* Indicador de Zoom UPL */
@@ -774,7 +880,7 @@ body {
 /* Map Toast */
 .map-toast {
   position: absolute;
-  bottom: 24px;
+  top: 18px;
   right: 18px;
   background: rgba(10, 10, 10, 0.95);
   border: 1px solid var(--panel-border);
@@ -1110,7 +1216,7 @@ body {
 
 /* Animaciones */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-4px); }
+  from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
@@ -1131,5 +1237,10 @@ body {
     border-bottom: 1px solid var(--panel-border);
     height: 400px;
     width: 100%;
+  }
+  .map-corner-diagnostic {
+    bottom: 10px;
+    right: 10px;
+    width: calc(100% - 20px);
   }
 }

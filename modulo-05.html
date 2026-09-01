@@ -11,8 +11,8 @@
   <link href="https://unpkg.com/maplibre-gl@6.5.0/dist/maplibre-gl.css" rel="stylesheet">
   <link rel="stylesheet" href="site-theme.css?v=20260823">
   <link rel="stylesheet" href="navigation-unified.css?v=20260824">
-  <link rel="stylesheet" href="modulo-05.css?v=20260901_no_overflow_no_key">
-  <link rel="stylesheet" href="modulo-05-polish.css?v=20260901_black_fix">
+  <link rel="stylesheet" href="modulo-05.css?v=20260901_corner_popup_v2">
+  <link rel="stylesheet" href="modulo-05-polish.css?v=20260901_corner_popup">
 </head>
 <body class="scale-natural-theme">
   <div class="app">
@@ -63,7 +63,7 @@
       <!-- CONTENIDO DEL NAVEGADOR MULTIESCALAR -->
       <div class="workspace">
         
-        <!-- PANEL LATERAL DE CONTROL -->
+        <!-- PANEL LATERAL DE CONTROL COMPACTO -->
         <section class="control-panel" aria-label="Controles del navegador multiescalar">
           <div class="panel-hero">
             <div class="eyebrow"><span class="eyebrow-line"></span> BOGOTÁ VIVA · MÓDULO 05</div>
@@ -158,27 +158,12 @@
             </div>
           </div>
 
-          <!-- 4. DIAGNÓSTICO Y CRÍTICA DEL POT -->
-          <div class="panel-block diagnostic-block">
-            <div class="block-header">
-              <span class="step-badge"><i class="fa-solid fa-brain"></i></span>
-              <span class="block-title">LECTURA SISTÉMICA POT</span>
-            </div>
-            <div class="diagnostic-card" id="scaleDiagnosticCard">
-              <div class="diagnostic-scale-header">
-                <span class="scale-dot"></span>
-                <h4 id="diagScaleTitle">Dimensión Natural</h4>
-              </div>
-              <p class="diag-reading" id="diagScaleReading">
-                La escala natural hace visibles el agua, los humedales y la estructura ecológica como sistemas vivos continuos que trascienden los límites administrativos.
-              </p>
-              <div class="diag-critique-box">
-                <div class="critique-label"><i class="fa-solid fa-triangle-exclamation"></i> Límite del modelo POT:</div>
-                <p id="diagScaleCritique">
-                  El POT fija polígonos estáticos de protección, pero omite los flujos estacionales de cuenca, las presiones de impermeabilización y la fragmentación biótica.
-                </p>
-              </div>
-            </div>
+          <!-- BOTÓN PARA ABRIR / VER POPUP DE LECTURA SISTÉMICA -->
+          <div class="panel-block">
+            <button id="btnToggleDiagnosticPopup" class="btn-trigger-diagnostic" type="button">
+              <i class="fa-solid fa-brain"></i>
+              <span>Ver Lectura Sistémica POT</span>
+            </button>
           </div>
 
           <!-- UTILIDADES DE EXPORTACIÓN Y VISTA -->
@@ -196,7 +181,7 @@
         <section class="map-panel" aria-label="Mapa interactivo de Bogotá">
           <div id="map" class="map-canvas"></div>
 
-          <!-- OVERLAY DE CABECERA DEL MAPA -->
+          <!-- OVERLAY DE CABECERA DEL MAPA (ESQUINA SUPERIOR IZQUIERDA) -->
           <div class="map-headline">
             <div class="headline-info">
               <span class="map-kicker" id="mapScaleKicker"><i class="fa-solid fa-droplet"></i> ESCALA NATURAL</span>
@@ -208,6 +193,35 @@
               <button id="fullscreenBtn" class="map-action-btn" type="button" aria-label="Pantalla completa" title="Pantalla completa"><i class="fa-solid fa-expand"></i></button>
             </div>
           </div>
+
+          <!-- POP-UP EN LA ESQUINA: LECTURA SISTÉMICA POT (ESQUINA INFERIOR DERECHA) -->
+          <div class="map-corner-diagnostic" id="mapCornerDiagnostic">
+            <div class="diagnostic-card" id="scaleDiagnosticCard">
+              <div class="diagnostic-card-top">
+                <div class="diagnostic-scale-header">
+                  <span class="scale-dot"></span>
+                  <span class="diagnostic-badge"><i class="fa-solid fa-brain"></i> LECTURA SISTÉMICA POT</span>
+                  <h4 id="diagScaleTitle">Dimensión Natural</h4>
+                </div>
+                <button id="btnCloseCornerDiagnostic" class="btn-diagnostic-close" type="button" aria-label="Minimizar">&minus;</button>
+              </div>
+              <p class="diag-reading" id="diagScaleReading">
+                La escala natural hace visibles el agua, los humedales y la estructura ecológica como sistemas vivos continuos que trascienden los límites administrativos.
+              </p>
+              <div class="diag-critique-box">
+                <div class="critique-label"><i class="fa-solid fa-triangle-exclamation"></i> Límite del modelo POT:</div>
+                <p id="diagScaleCritique">
+                  El POT fija polígonos estáticos de protección, pero omite los flujos estacionales de cuenca, las presiones de impermeabilización y la fragmentación biótica.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- BOTÓN FLOTANTE EN LA ESQUINA CUANDO ESTÁ MINIMIZADO -->
+          <button id="btnOpenCornerDiagnostic" class="btn-corner-floating-pill" type="button" style="display:none;">
+            <i class="fa-solid fa-brain"></i>
+            <span>Lectura Sistémica POT</span>
+          </button>
 
           <!-- INDICADOR DE ZOOM Y ENFOQUE UPL -->
           <div id="uplZoomIndicator" class="upl-zoom-indicator" role="status" aria-live="polite" hidden>
@@ -318,8 +332,8 @@
     window.maplibregl = maplibregl;
     window.dispatchEvent(new Event("maplibre-ready"));
   </script>
-  <script src="modulo-05.js?v=20260901_no_overflow_no_key"></script>
-  <script src="modulo-05-drive.js?v=20260901_black_fix"></script>
+  <script src="modulo-05.js?v=20260901_corner_popup_v2"></script>
+  <script src="modulo-05-drive.js?v=20260901_corner_popup"></script>
 </body>
 </html>
 

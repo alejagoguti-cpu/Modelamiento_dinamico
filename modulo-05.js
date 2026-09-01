@@ -189,6 +189,7 @@ function setupMapLibreDriveBridge() {
     initLayerToggles();
     initExportButtons();
     initModalEvents();
+    initCornerDiagnosticEvents();
     waitForMapLibreAndBoot();
   });
 
@@ -585,6 +586,29 @@ function setupMapLibreDriveBridge() {
     }
 
     modal.classList.add("active");
+  }
+
+
+  // Manejo de Pop-up en la esquina: Lectura Sistémica POT
+  function initCornerDiagnosticEvents() {
+    const card = document.getElementById("mapCornerDiagnostic");
+    const closeBtn = document.getElementById("btnCloseCornerDiagnostic");
+    const openBtn = document.getElementById("btnOpenCornerDiagnostic");
+    const sidebarToggleBtn = document.getElementById("btnToggleDiagnosticPopup");
+
+    const minimize = () => {
+      if (card) card.style.display = "none";
+      if (openBtn) openBtn.style.display = "flex";
+    };
+
+    const restore = () => {
+      if (card) card.style.display = "block";
+      if (openBtn) openBtn.style.display = "none";
+    };
+
+    closeBtn?.addEventListener("click", minimize);
+    openBtn?.addEventListener("click", restore);
+    sidebarToggleBtn?.addEventListener("click", restore);
   }
 
 })();
