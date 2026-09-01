@@ -718,17 +718,10 @@
       }
       return out;
     }
-    function strokeSmoothPath(ctx, pts) {
+    function strokeStraightPath(ctx, pts) {
       if (pts.length < 2) return;
       ctx.moveTo(pts[0][0], pts[0][1]);
-      if (pts.length === 2) { ctx.lineTo(pts[1][0], pts[1][1]); return; }
-      for (let i = 1; i < pts.length - 1; i++) {
-        const mx = (pts[i][0] + pts[i + 1][0]) / 2;
-        const my = (pts[i][1] + pts[i + 1][1]) / 2;
-        ctx.quadraticCurveTo(pts[i][0], pts[i][1], mx, my);
-      }
-      const last = pts[pts.length - 1];
-      ctx.lineTo(last[0], last[1]);
+      for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
     }
 
     function drawNetwork(w, h) {
@@ -745,7 +738,7 @@
         if (pts.length < 2) return;
         const screenPts = reduceJitterPoints(pts.map(([x, y]) => toScreen(x, y)), 4);
         netCtx.beginPath();
-        strokeSmoothPath(netCtx, screenPts);
+        strokeStraightPath(netCtx, screenPts);
         if (screenPts.length > 2) { netCtx.closePath(); netCtx.fill(); }
         netCtx.stroke();
       });
