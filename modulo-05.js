@@ -239,8 +239,11 @@ function setupMapLibreDriveBridge() {
         style: mapStyle,
         center: [state.selectedUpl.lon, state.selectedUpl.lat],
         zoom: state.selectedUpl.zoom,
-        pitch: 20,
-        bearing: 0
+        pitch: 0,
+        maxPitch: 0,
+        bearing: 0,
+        dragRotate: false,
+        touchPitch: false
       });
 
       state.map.addControl(new window.maplibregl.NavigationControl({ showCompass: true }), "top-right");
@@ -306,6 +309,8 @@ function setupMapLibreDriveBridge() {
       state.map.flyTo({
         center: [upl.lon, upl.lat],
         zoom: upl.zoom || 13.5,
+        pitch: 0,
+        bearing: 0,
         speed: 1.2,
         curve: 1.4,
         essential: true
