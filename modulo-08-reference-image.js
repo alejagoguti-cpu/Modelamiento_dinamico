@@ -14,7 +14,7 @@
   // acomodado con las coordenadas exactas que se dejaron la última vez,
   // para que cargue así desde el inicio en vez de en blanco.
   const DEFAULT_IMAGE_URL = './assets/modulo08-mapa-referencia-kennedy.png';
-  const DEFAULT_STATE = { x: -102.8, y: -81.2, scale: 0.59, opacity: 0.82 };
+  const DEFAULT_STATE = { x: -134.8, y: -106.2, scale: 0.77, opacity: 0.82 };
 
   let state = { ...DEFAULT_STATE };
   let dragging = false, last = null;

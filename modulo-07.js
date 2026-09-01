@@ -1597,6 +1597,7 @@
     const submodelFailureScenarios = [
       {
         name: "Submodelo de flujos de agua y drenaje urbano",
+        shortIcon: "fa-cloud-showers-heavy", shortLabel: "Lluvia extrema desborda el canal de golpe",
         scenarios: [
           "Un evento de lluvia extrema supera la capacidad de diseño del canal: el submodelo asume una respuesta gradual, pero el desborde real es abrupto y no lineal.",
           "El mantenimiento institucional no se ejecuta como se supone (retrasos, falta de presupuesto): el submodelo pierde validez porque una de sus partes (la gestión) deja de comportarse como se modeló.",
@@ -1605,6 +1606,7 @@
       },
       {
         name: "Submodelo de hábitat y desplazamiento de especies",
+        shortIcon: "fa-dove", shortLabel: "Ruido extremo hace huir a las especies",
         scenarios: [
           "Aparece una especie invasora que cambia las relaciones de competencia y alimento sin estar contemplada en el submodelo.",
           "El ruido o la luz artificial superan un umbral crítico: las especies abandonan el área de golpe, un comportamiento de umbral que el submodelo (pensado en cambios graduales) no anticipa.",
@@ -1613,6 +1615,7 @@
       },
       {
         name: "Submodelo de transformación del borde urbano",
+        shortIcon: "fa-house-crack", shortLabel: "Urbanización informal acelerada",
         scenarios: [
           "Ocurre una urbanización informal acelerada que no sigue el patrón gradual que asume el submodelo.",
           "Un cambio normativo (uso del suelo, licencias) modifica de un día para otro las reglas que el submodelo asumía estables.",
@@ -1621,6 +1624,7 @@
       },
       {
         name: "Submodelo de recorridos y accesibilidad territorial",
+        shortIcon: "fa-road-circle-xmark", shortLabel: "Cierre repentino de una vía clave",
         scenarios: [
           "El cierre de una vía crítica (obra, bloqueo) cambia radicalmente los recorridos, invalidando los patrones históricos usados para construir el submodelo.",
           "Aparece un modo de transporte nuevo (apps, bicicletas eléctricas) que no estaba contemplado y que cambia la demanda de forma súbita.",
@@ -1629,6 +1633,7 @@
       },
       {
         name: "Submodelo de ocupación y presión urbana",
+        shortIcon: "fa-arrow-trend-up", shortLabel: "Crisis dispara la ocupación de golpe",
         scenarios: [
           "Una crisis económica o una migración acelerada produce una ocupación mucho más rápida que la progresión gradual que asume el submodelo.",
           "Se subestima la presión de actividades informales o de economía no registrada, que no dejan rastro en los datos con los que se construyó el submodelo.",
@@ -1637,6 +1642,7 @@
       },
       {
         name: "Submodelo de actores, usos y decisiones",
+        shortIcon: "fa-handshake-slash", shortLabel: "Un conflicto rompe los acuerdos",
         scenarios: [
           "Aparecen actores nuevos (organizaciones, intereses externos) que no estaban mapeados cuando se construyó el submodelo.",
           "Un conflicto latente escala más rápido de lo previsto y rompe los acuerdos institucionales que el submodelo daba por estables.",
@@ -1645,6 +1651,7 @@
       },
       {
         name: "Submodelo de gestión y respuesta adaptativa",
+        shortIcon: "fa-clipboard-question", shortLabel: "Se interrumpe el monitoreo institucional",
         scenarios: [
           "El monitoreo no se hace con la frecuencia que el submodelo asume, rompiendo el ciclo de observación-decisión-ajuste del que depende.",
           "Se recortan los recursos institucionales y el ciclo de intervención se interrumpe a la mitad, dejando acciones a medio implementar.",
@@ -2822,13 +2829,12 @@
           // de falla" — aquí solo un ejemplo rápido).
           const scenarioSet = submodelFailureScenarios[Number(button.dataset.mapNetworkIndex)];
           if (scenarioSet) {
-            const example = scenarioSet.scenarios[0];
             failurePopup = document.createElement("div");
             failurePopup.className = "submodel-failure-popup";
             failurePopup.style.setProperty("--bubble-color", color);
-            failurePopup.innerHTML = `<div class="subsystem-panel-heading"><strong><i class="fa-solid fa-triangle-exclamation"></i> Posible escenario de falla</strong><button type="button" class="subsystem-panel-close" aria-label="Cerrar escenario de falla"><i class="fa-solid fa-xmark"></i></button></div><p>${example}</p>`;
+            failurePopup.innerHTML = `<button type="button" class="submodel-failure-close" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button><i class="fa-solid ${scenarioSet.shortIcon} submodel-failure-icon"></i><span>${scenarioSet.shortLabel}</span>`;
             target.append(failurePopup);
-            failurePopup.querySelector(".subsystem-panel-close")?.addEventListener("click", (event) => { event.stopPropagation(); failurePopup.remove(); });
+            failurePopup.querySelector(".submodel-failure-close")?.addEventListener("click", (event) => { event.stopPropagation(); failurePopup.remove(); });
           }
         }
       }));
