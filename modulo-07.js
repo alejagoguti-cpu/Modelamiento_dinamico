@@ -1597,7 +1597,7 @@
     const submodelFailureScenarios = [
       {
         name: "Submodelo de flujos de agua y drenaje urbano",
-        shortIcon: "fa-cloud-showers-heavy", shortLabel: "Lluvia extrema desborda el canal de golpe",
+        shortIcons: ["fa-trash", "fa-water"], shortQuote: "Igual seguimos botando basura al canal, así el modelo diga que no.",
         scenarios: [
           "Un evento de lluvia extrema supera la capacidad de diseño del canal: el submodelo asume una respuesta gradual, pero el desborde real es abrupto y no lineal.",
           "El mantenimiento institucional no se ejecuta como se supone (retrasos, falta de presupuesto): el submodelo pierde validez porque una de sus partes (la gestión) deja de comportarse como se modeló.",
@@ -1606,7 +1606,7 @@
       },
       {
         name: "Submodelo de hábitat y desplazamiento de especies",
-        shortIcon: "fa-dove", shortLabel: "Ruido extremo hace huir a las especies",
+        shortIcons: ["fa-dove", "fa-volume-high"], shortQuote: "Las aves no se van a quedar ahí si el ruido sigue igual de fuerte.",
         scenarios: [
           "Aparece una especie invasora que cambia las relaciones de competencia y alimento sin estar contemplada en el submodelo.",
           "El ruido o la luz artificial superan un umbral crítico: las especies abandonan el área de golpe, un comportamiento de umbral que el submodelo (pensado en cambios graduales) no anticipa.",
@@ -1615,7 +1615,7 @@
       },
       {
         name: "Submodelo de transformación del borde urbano",
-        shortIcon: "fa-house-crack", shortLabel: "Urbanización informal acelerada",
+        shortIcons: ["fa-house-chimney", "fa-file-circle-xmark"], shortQuote: "La gente sigue construyendo donde le sirve, no donde dice la norma.",
         scenarios: [
           "Ocurre una urbanización informal acelerada que no sigue el patrón gradual que asume el submodelo.",
           "Un cambio normativo (uso del suelo, licencias) modifica de un día para otro las reglas que el submodelo asumía estables.",
@@ -1624,7 +1624,7 @@
       },
       {
         name: "Submodelo de recorridos y accesibilidad territorial",
-        shortIcon: "fa-road-circle-xmark", shortLabel: "Cierre repentino de una vía clave",
+        shortIcons: ["fa-person-walking", "fa-map"], shortQuote: "Uno sigue caminando por donde le queda cerca, no por donde dice el plano.",
         scenarios: [
           "El cierre de una vía crítica (obra, bloqueo) cambia radicalmente los recorridos, invalidando los patrones históricos usados para construir el submodelo.",
           "Aparece un modo de transporte nuevo (apps, bicicletas eléctricas) que no estaba contemplado y que cambia la demanda de forma súbita.",
@@ -1633,7 +1633,7 @@
       },
       {
         name: "Submodelo de ocupación y presión urbana",
-        shortIcon: "fa-arrow-trend-up", shortLabel: "Crisis dispara la ocupación de golpe",
+        shortIcons: ["fa-house-chimney-user", "fa-arrow-trend-up"], shortQuote: "La gente sigue llegando a vivir ahí aunque el modelo diga que ya no cabe más.",
         scenarios: [
           "Una crisis económica o una migración acelerada produce una ocupación mucho más rápida que la progresión gradual que asume el submodelo.",
           "Se subestima la presión de actividades informales o de economía no registrada, que no dejan rastro en los datos con los que se construyó el submodelo.",
@@ -1642,7 +1642,7 @@
       },
       {
         name: "Submodelo de actores, usos y decisiones",
-        shortIcon: "fa-handshake-slash", shortLabel: "Un conflicto rompe los acuerdos",
+        shortIcons: ["fa-people-group", "fa-handshake-slash"], shortQuote: "Cada quien sigue decidiendo por su cuenta, no como quedó en el acuerdo.",
         scenarios: [
           "Aparecen actores nuevos (organizaciones, intereses externos) que no estaban mapeados cuando se construyó el submodelo.",
           "Un conflicto latente escala más rápido de lo previsto y rompe los acuerdos institucionales que el submodelo daba por estables.",
@@ -1651,7 +1651,7 @@
       },
       {
         name: "Submodelo de gestión y respuesta adaptativa",
-        shortIcon: "fa-clipboard-question", shortLabel: "Se interrumpe el monitoreo institucional",
+        shortIcons: ["fa-clipboard", "fa-eye-slash"], shortQuote: "Si nadie le sigue haciendo seguimiento, la decisión se queda solo en el papel.",
         scenarios: [
           "El monitoreo no se hace con la frecuencia que el submodelo asume, rompiendo el ciclo de observación-decisión-ajuste del que depende.",
           "Se recortan los recursos institucionales y el ciclo de intervención se interrumpe a la mitad, dejando acciones a medio implementar.",
@@ -2809,7 +2809,11 @@
         const components = document.createElement("div");
         components.className = "subsystem-components active map-components-panel";
         components.style.setProperty("--bubble-color", color);
-        components.innerHTML = `<div class="subsystem-panel-heading"><strong><i class="fa-solid fa-arrows-rotate"></i> DINÁMICA DEL TERRITORIO</strong><button type="button" class="subsystem-panel-close" aria-label="Cerrar panel de dinámica"><i class="fa-solid fa-xmark"></i></button></div><p class="panel-scope-label">CICLOS Y DINÁMICAS DE ESTE SUBSISTEMA</p>${buildMiniNetworkSvg(row.dynamics || row.components, color, row.id)}<button type="button" class="see-full-network-btn" id="seeFullNetworkBtn"><i class="fa-solid fa-diagram-project"></i> Ver toda la red junta</button><p class="panel-scope-label">CÓMO CAMBIA EN EL TIEMPO</p><p class="panel-specific-reading">${row.process}</p>`;
+        const miniNetworkItems = row.dynamics || row.components;
+        const miniNetworkHtml = miniNetworkItems
+          ? `<p class="panel-scope-label">CICLOS Y DINÁMICAS DE ESTE SUBSISTEMA</p>${buildMiniNetworkSvg(miniNetworkItems, color, row.id)}<button type="button" class="see-full-network-btn" id="seeFullNetworkBtn"><i class="fa-solid fa-diagram-project"></i> Ver toda la red junta</button>`
+          : `<p class="panel-scope-label">SISTEMAS QUE ARTICULA</p><p class="panel-specific-reading">${row.parts || ""}</p>`;
+        components.innerHTML = `<div class="subsystem-panel-heading"><strong><i class="fa-solid fa-arrows-rotate"></i> DINÁMICA DEL TERRITORIO</strong><button type="button" class="subsystem-panel-close" aria-label="Cerrar panel de dinámica"><i class="fa-solid fa-xmark"></i></button></div>${miniNetworkHtml}<p class="panel-scope-label">CÓMO CAMBIA EN EL TIEMPO</p><p class="panel-specific-reading">${row.process}</p>`;
         const purpose = document.createElement("aside");
         purpose.className = "subsystem-purpose-panel active map-purpose-panel";
         purpose.style.setProperty("--bubble-color", color);
@@ -2832,7 +2836,8 @@
             failurePopup = document.createElement("div");
             failurePopup.className = "submodel-failure-popup";
             failurePopup.style.setProperty("--bubble-color", color);
-            failurePopup.innerHTML = `<button type="button" class="submodel-failure-close" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button><i class="fa-solid ${scenarioSet.shortIcon} submodel-failure-icon"></i><span>${scenarioSet.shortLabel}</span>`;
+            const iconsHtml = (scenarioSet.shortIcons || []).map((ic) => `<i class="fa-solid ${ic} submodel-failure-icon"></i>`).join("");
+            failurePopup.innerHTML = `<button type="button" class="submodel-failure-close" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button><div class="submodel-failure-icons">${iconsHtml}</div><span>“${scenarioSet.shortQuote}”</span>`;
             target.append(failurePopup);
             failurePopup.querySelector(".submodel-failure-close")?.addEventListener("click", (event) => { event.stopPropagation(); failurePopup.remove(); });
           }
