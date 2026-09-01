@@ -769,6 +769,12 @@ footer span { color: var(--teal); }
   background: #05070a; border-radius: 8px; overflow: hidden;
 }
 .sumo-canvas-wrap.panning { cursor: grabbing; }
+.sumo-tree-info {
+  position: absolute; z-index: 60; max-width: 240px; padding: 7px 10px; border-radius: 7px;
+  border: 1px solid rgba(96,200,110,.6); background: rgba(6,16,8,.96); color: #fff;
+  font-size: 11.5px; line-height: 1.4; pointer-events: none; box-shadow: 0 6px 16px rgba(0,0,0,.5);
+}
+.sumo-tree-info i { color: #6ec86e; }
 .sumo-canvas-wrap canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
 #sumoReferenceImage { position: absolute; left: 30px; top: 30px; z-index: 45; max-width: none; transform-origin: top left; pointer-events: auto; cursor: move; user-select: none; -webkit-user-drag: none; }
 #sumoImageDragSurface { position: absolute; inset: 0; z-index: 35; pointer-events: none; cursor: move; touch-action: none; background: transparent; }

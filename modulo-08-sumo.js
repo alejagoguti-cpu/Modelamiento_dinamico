@@ -86,6 +86,7 @@
     const vehCtx = vehCanvas.getContext("2d");
 
     let netData = null;      // { offset, bbox, edges }
+    let treeData = null;     // { species: [nombre,...], trees: [[x,y,speciesIdx,alturaM],...] } — Arbolado Urbano de Kennedy
     let timesteps = [];      // [{ time, vehicles:[{id,x,y,angle}] }]
     let view = { scale: 1, offX: 0, offY: 0 }; // mundo -> pantalla
     let playing = false;
@@ -782,6 +783,21 @@
         strokeSmoothPath(netCtx, screenPts);
         netCtx.stroke();
       });
+      // Arbolado Urbano real de Kennedy (Alcaldía de Bogotá / IDIGER):
+      // 141.722 árboles, cada uno con su especie guardada en treeData —
+      // se dibuja como un puntito verde; el tamaño varía un poco según la
+      // altura real del árbol para dar sensación de bosque.
+      if (treeData) {
+        netCtx.fillStyle = "rgba(90,190,110,0.55)";
+        treeData.trees.forEach(([tx, ty, , altura]) => {
+          const [sx, sy] = toScreen(tx, ty);
+          if (sx < -10 || sx > w + 10 || sy < -10 || sy > h + 10) return; // no dibujar lo que está fuera de pantalla
+          const r = Math.min(2.6, Math.max(0.8, (altura || 3) * 0.12));
+          netCtx.beginPath();
+          netCtx.arc(sx, sy, r, 0, Math.PI * 2);
+          netCtx.fill();
+        });
+      }
       // se dibuja primero lo local (más numeroso y fino) y encima lo
       // principal (más grueso), para que las vías grandes no queden tapadas
       ["local", "mid", "major"].forEach((cls) => {
@@ -831,6 +847,13 @@
         netCtx.restore();
       }
     }
+    // ---------- cargar el arbolado de Kennedy (no bloquea la red vial:
+    // si tarda o falla, la simulación sigue funcionando igual) ----------
+    fetch("./assets/kennedy_trees.json")
+      .then((r) => { if (!r.ok) throw new Error("no se pudo cargar kennedy_trees.json"); return r.json(); })
+      .then((data) => { treeData = data; if (netData) drawNetwork(netCanvas.parentElement.clientWidth, netCanvas.parentElement.clientHeight); })
+      .catch((err) => console.warn("No se pudo cargar el arbolado de Kennedy:", err));
+
     // ---------- cargar la red (JSON ya recortado) ----------
     fetch(NET_URL)
       .then((r) => { if (!r.ok) throw new Error("no se pudo cargar " + NET_URL); return r.json(); })
@@ -1089,6 +1112,34 @@
 
     // El mapa queda fijo: sin arrastrar ni hacer zoom, con el encuadre
     // definido por EXTRA_ZOOM/CENTER_X/CENTER_Y/ROTATE_DEG de arriba.
+
+    // ---------- Clic sobre un árbol: muestra su especie y altura ----------
+    // (así la información guardada en kennedy_trees.json es consultable,
+    // no solo queda archivada sin usarse).
+    const treeInfoBox = document.createElement("div");
+    treeInfoBox.className = "sumo-tree-info";
+    treeInfoBox.hidden = true;
+    document.getElementById("sumoCanvasWrap")?.appendChild(treeInfoBox);
+    document.getElementById("sumoCanvasWrap")?.addEventListener("click", (event) => {
+      if (!treeData || window.sumoActiveMode === "image") return; // no interferir con el modo mover imagen
+      const wrap = event.currentTarget;
+      const rect = wrap.getBoundingClientRect();
+      const clickX = event.clientX - rect.left, clickY = event.clientY - rect.top;
+      let best = null, bestDist = 12; // hasta 12px de tolerancia
+      treeData.trees.forEach(([tx, ty, spIdx, altura]) => {
+        const [sx, sy] = toScreen(tx, ty);
+        const d = Math.hypot(sx - clickX, sy - clickY);
+        if (d < bestDist) { bestDist = d; best = { species: treeData.species[spIdx], altura }; }
+      });
+      if (best) {
+        treeInfoBox.innerHTML = `<i class="fa-solid fa-tree"></i> <strong>${best.species}</strong> · ${best.altura ? best.altura.toFixed(1) + " m de altura" : "altura no registrada"}`;
+        treeInfoBox.style.left = `${clickX + 10}px`;
+        treeInfoBox.style.top = `${clickY + 10}px`;
+        treeInfoBox.hidden = false;
+      } else {
+        treeInfoBox.hidden = true;
+      }
+    });
 
     window.addEventListener("resize", () => {
       resizeCanvases();
