@@ -168,19 +168,6 @@
           <canvas id="sumoNetCanvas"></canvas>
           <canvas id="sumoNoiseCanvas"></canvas>
           <canvas id="sumoVehCanvas"></canvas>
-          <canvas id="sumoFreeDrawCanvas" aria-label="Lienzo libre para dibujar humedales"></canvas>
-          <div class="sumo-pen-side-toolbar" aria-label="Herramientas para dibujar humedales">
-            <button type="button" class="sumo-btn" id="sumoPenToggle" title="Activar pluma"><i class="fa-solid fa-pen"></i></button>
-            <button type="button" class="sumo-btn" id="sumoPenLineMode" title="Modo línea (para ríos)"><i class="fa-solid fa-wave-square"></i></button>
-            <button type="button" class="sumo-btn" id="sumoPenPointMode" title="Modo árbol (un clic pone un punto)"><i class="fa-solid fa-tree"></i></button>
-            <label class="sumo-pen-width-label" title="Grosor de línea / diámetro de árbol">
-              <input type="range" id="sumoPenLineWidth" min="1" max="30" step="0.5" value="3">
-            </label>
-            <button type="button" class="sumo-btn" id="sumoPenUndo" title="Deshacer punto"><i class="fa-solid fa-rotate-left"></i></button>
-            <button type="button" class="sumo-btn" id="sumoPenClear" title="Borrar dibujos"><i class="fa-solid fa-trash"></i></button>
-            <button type="button" class="sumo-btn" id="sumoPenCopy" title="Copiar geometría"><i class="fa-solid fa-copy"></i></button>
-            <span>PLUMA<br><small>clics · doble clic para cerrar</small></span>
-          </div>
           <div class="sumo-sim-overlay" id="sumoStatus">Cargando red vial…</div>
           <div class="sumo-agents-card">
             <strong><i class="fa-solid fa-users-gear"></i> Agentes</strong>
@@ -226,6 +213,20 @@
           <p id="sumoWhatifStatus" class="whatif-disclaimer">Sin cambios — mostrando el modelo base.</p>
         </div>
 
+        <!-- Malla de árboles reales de Kennedy: solo mover/agrandar, sin
+             deformarla — la posición base siempre es la real del shapefile. -->
+        <div class="sumo-reference-panel">
+          <strong><i class="fa-solid fa-tree"></i> Árboles de Kennedy — muévelos y agrándalos a tu gusto</strong>
+          <button type="button" class="sumo-btn" id="sumoTreeAdjustMode" title="Mover árboles"><i class="fa-solid fa-arrows-up-down-left-right"></i></button>
+          <button type="button" class="sumo-btn" id="sumoTreeReset" title="Restablecer posición"><i class="fa-solid fa-rotate-left"></i></button>
+          <label>Tamaño <input id="sumoTreeScale" type="range" min="0.5" max="3" step="0.05" value="1"></label>
+          <span id="sumoTreeStatus">Pulsa mover árboles y arrástralos sobre el mapa.</span>
+          <div class="sumo-reference-coords">
+            <button type="button" class="sumo-btn" id="sumoTreeCopy" title="Copiar ajuste de árboles"><i class="fa-solid fa-copy"></i> Copiar coordenadas de los árboles</button>
+            <textarea id="sumoTreeOutput" rows="3" spellcheck="false" placeholder="Aquí aparecerá el desplazamiento y el tamaño de los árboles..."></textarea>
+          </div>
+        </div>
+
         <!-- Leyenda de la capa de ruido: el color cambia con el nivel de
              tráfico/ruido, pero la transparencia es SIEMPRE la misma. -->
         <div class="noise-scale-legend">
@@ -264,12 +265,6 @@
             <p class="noise-formula-note">Es un proxy visual de carga de tráfico, no una medición acústica real en decibeles.</p>
           </details>
         </div>
-        <section class="sumo-submit-bar" aria-labelledby="sumo-submit-title">
-          <h4 id="sumo-submit-title"><i class="fa-solid fa-location-dot"></i> Enviar forma del humedal para dejarla fija</h4>
-          <p><strong>Indicaciones:</strong> dibuja el humedal en el plano con la pluma lateral, termina la figura, pulsa <strong>Copiar geometría</strong> y pégame aquí todo el texto de la caja. Yo usaré esa forma y su localización para actualizar el archivo del módulo 8 y dejarla permanente.</p>
-          <textarea id="sumoPenOutput" rows="7" readonly placeholder="Después de dibujar, aquí aparecerán la forma y las coordenadas para copiar..."></textarea>
-          <div class="sumo-submit-actions"><button type="button" class="sumo-btn" id="sumoPenCopy" title="Copiar indicaciones y coordenadas"><i class="fa-solid fa-copy"></i></button><span>Después de copiar, pégalo en el chat. No cierres la página hasta enviarlo.</span></div>
-        </section>
       </div>
     </div>
 
@@ -278,7 +273,6 @@
 </div>
 
 <script src="modulo-08.js"></script>
-<script src="modulo-08-sumo.js?v=trees-raw-v14"></script>
-<script src="modulo-08-free-draw.js?v=trees-v3"></script>
+<script src="modulo-08-sumo.js?v=trees-moveonly-v15"></script>
 </body>
 </html>

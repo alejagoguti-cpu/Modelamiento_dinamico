@@ -86,7 +86,12 @@
     const vehCtx = vehCanvas.getContext("2d");
 
     let netData = null;      // { offset, bbox, edges }
-    let treeData = null;     // { species: [nombre,...], trees: [[x,y,speciesIdx,alturaM],...] } — Arbolado Urbano de Kennedy, tal como viene del shapefile (sin ningún ajuste ni escala manual)
+    let treeData = null;     // { species: [nombre,...], trees: [[x,y,speciesIdx,alturaM],...] } — Arbolado Urbano de Kennedy, posición base SIEMPRE la real del shapefile
+    // Ajuste de mover/agrandar la malla de árboles (sin deformarla — nunca
+    // se toca la posición base real, solo se desplaza/escala en pantalla).
+    const TREE_ADJUST_KEY = "sumoModule8TreeAdjust";
+    let treeAdjust = { dx: 0, dy: 0, scale: 1 };
+    try { treeAdjust = { ...treeAdjust, ...JSON.parse(localStorage.getItem(TREE_ADJUST_KEY) || "{}") }; } catch (_) {}
     let timesteps = [];      // [{ time, vehicles:[{id,x,y,angle}] }]
     let view = { scale: 1, offX: 0, offY: 0 }; // mundo -> pantalla
     let playing = false;
@@ -751,6 +756,16 @@
       ctx.lineTo(last[0], last[1]);
     }
 
+    // Posición en pantalla de un árbol, incluyendo el ajuste de mover/
+    // agrandar — nunca se toca la posición base real, solo se desplaza
+    // en pantalla desde el centro. Se usa tanto para dibujar como clics.
+    function treeToScreen(tx, ty, w, h) {
+      const [sx, sy] = toScreen(tx, ty);
+      const rx = (sx - w / 2) * treeAdjust.scale + w / 2 + treeAdjust.dx;
+      const ry = (sy - h / 2) * treeAdjust.scale + h / 2 + treeAdjust.dy;
+      return [rx, ry];
+    }
+
     function drawNetwork(w, h) {
       netCtx.clearRect(0, 0, w, h);
       netCtx.lineJoin = "round";
@@ -784,16 +799,15 @@
         netCtx.stroke();
       });
       // Arbolado Urbano real de Kennedy (Alcaldía de Bogotá): 141.722
-      // árboles, posición tal como viene del shapefile (lon/lat reales
-      // convertidas al sistema local del mapa), sin ningún ajuste, escala
-      // ni rotación manual — la geografía real no se distorsiona para
-      // tratar de encajar en la red vial.
+      // árboles. La posición BASE es siempre la real del shapefile
+      // (lon/lat convertidas al sistema local); el ajuste de mover/agrandar
+      // se aplica encima, en pantalla, sin deformar esa base real.
       if (treeData) {
         netCtx.fillStyle = "rgba(90,190,110,0.55)";
         treeData.trees.forEach(([tx, ty, , altura]) => {
-          const [sx, sy] = toScreen(tx, ty);
+          const [sx, sy] = treeToScreen(tx, ty, w, h);
           if (sx < -10 || sx > w + 10 || sy < -10 || sy > h + 10) return; // no dibujar lo que está fuera de pantalla
-          const r = Math.min(2.6, Math.max(0.8, (altura || 3) * 0.12));
+          const r = (Math.min(2.6, Math.max(0.8, (altura || 3) * 0.12))) * treeAdjust.scale;
           netCtx.beginPath();
           netCtx.arc(sx, sy, r, 0, Math.PI * 2);
           netCtx.fill();
@@ -1114,6 +1128,59 @@
     // El mapa queda fijo: sin arrastrar ni hacer zoom, con el encuadre
     // definido por EXTRA_ZOOM/CENTER_X/CENTER_Y/ROTATE_DEG de arriba.
 
+    // ---------- Mover/agrandar la malla de árboles (sin deformarla — la
+    // posición base sigue siendo siempre la real del shapefile) ----------
+    const treeAdjustBtn = document.getElementById("sumoTreeAdjustMode");
+    const treeScaleInput = document.getElementById("sumoTreeScale");
+    const treeResetBtn = document.getElementById("sumoTreeReset");
+    const treeCopyBtn = document.getElementById("sumoTreeCopy");
+    const treeOutput = document.getElementById("sumoTreeOutput");
+    const treeStatusEl = document.getElementById("sumoTreeStatus");
+    if (treeScaleInput) treeScaleInput.value = treeAdjust.scale;
+    function saveTreeAdjust() {
+      try { localStorage.setItem(TREE_ADJUST_KEY, JSON.stringify(treeAdjust)); } catch (_) {}
+      if (treeOutput) treeOutput.value = `dx=${treeAdjust.dx.toFixed(1)}  dy=${treeAdjust.dy.toFixed(1)}  scale=${treeAdjust.scale.toFixed(3)}`;
+    }
+    function redrawTrees() {
+      const w = netCanvas.parentElement.clientWidth, h = netCanvas.parentElement.clientHeight;
+      drawNetwork(w, h);
+      saveTreeAdjust();
+    }
+    let treeMoving = false;
+    treeAdjustBtn?.addEventListener("click", () => {
+      const active = treeAdjustBtn.classList.toggle("active");
+      window.sumoActiveMode = active ? "trees" : "draw";
+      if (treeStatusEl) treeStatusEl.textContent = active ? "Modo mover árboles: arrastra sobre el mapa." : "Ajusta cuando quieras — pulsa mover árboles de nuevo.";
+    });
+    document.getElementById("sumoCanvasWrap")?.addEventListener("pointerdown", (event) => {
+      if (window.sumoActiveMode !== "trees") return;
+      treeMoving = true;
+      event.currentTarget.__treeLast = { x: event.clientX, y: event.clientY };
+    });
+    window.addEventListener("pointermove", (event) => {
+      if (!treeMoving) return;
+      const wrap = document.getElementById("sumoCanvasWrap");
+      const last = wrap.__treeLast;
+      if (!last) return;
+      treeAdjust.dx += event.clientX - last.x;
+      treeAdjust.dy += event.clientY - last.y;
+      wrap.__treeLast = { x: event.clientX, y: event.clientY };
+      redrawTrees();
+    });
+    window.addEventListener("pointerup", () => { treeMoving = false; });
+    treeScaleInput?.addEventListener("input", () => { treeAdjust.scale = Number(treeScaleInput.value); redrawTrees(); });
+    treeResetBtn?.addEventListener("click", () => {
+      treeAdjust = { dx: 0, dy: 0, scale: 1 };
+      if (treeScaleInput) treeScaleInput.value = 1;
+      redrawTrees();
+    });
+    treeCopyBtn?.addEventListener("click", async () => {
+      saveTreeAdjust();
+      try { await navigator.clipboard.writeText(treeOutput?.value || ""); } catch (_) {}
+      if (treeStatusEl) treeStatusEl.textContent = "Coordenadas copiadas. Pégamelas en el chat si quieres que las deje fijas así.";
+    });
+    saveTreeAdjust();
+
     // ---------- Clic sobre un árbol: muestra su especie y altura ----------
     // (así la información guardada en kennedy_trees.json es consultable).
     const treeInfoBox = document.createElement("div");
@@ -1121,12 +1188,13 @@
     treeInfoBox.hidden = true;
     document.getElementById("sumoCanvasWrap")?.appendChild(treeInfoBox);
     document.getElementById("sumoCanvasWrap")?.addEventListener("click", (event) => {
-      if (!treeData) return;
+      if (!treeData || window.sumoActiveMode === "trees") return; // no interferir con mover árboles
       const rect = event.currentTarget.getBoundingClientRect();
       const clickX = event.clientX - rect.left, clickY = event.clientY - rect.top;
+      const cw = netCanvas.parentElement.clientWidth, ch = netCanvas.parentElement.clientHeight;
       let best = null, bestDist = 12; // hasta 12px de tolerancia
       treeData.trees.forEach(([tx, ty, spIdx, altura]) => {
-        const [sx, sy] = toScreen(tx, ty);
+        const [sx, sy] = treeToScreen(tx, ty, cw, ch);
         const d = Math.hypot(sx - clickX, sy - clickY);
         if (d < bestDist) { bestDist = d; best = { species: treeData.species[spIdx], altura }; }
       });
