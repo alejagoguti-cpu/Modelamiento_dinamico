@@ -5,12 +5,16 @@
   const output = document.getElementById('sumoPenOutput');
   const status = document.getElementById('sumoPenStatus');
   const lineModeBtn = document.getElementById('sumoPenLineMode');
+  const pointModeBtn = document.getElementById('sumoPenPointMode');
   const lineWidthInput = document.getElementById('sumoPenLineWidth');
   const ctx = canvas.getContext('2d');
   window.sumoActiveMode = window.sumoActiveMode || 'draw';
 
-  // Dos tipos de figura: "polygon" (se cierra y se rellena, para humedales)
-  // y "line" (queda abierta, con el grosor que se elija, para ríos/canales).
+  // Tres tipos de figura:
+  // "polygon" — se cierra y se rellena (humedales, zonas cerradas)
+  // "line"    — queda abierta, con el grosor que se elija (ríos/canales)
+  // "point"   — un solo clic pone un puntito (árbol en planta), con el
+  //             diámetro que se elija con la misma barrita de grosor.
   let shapeMode = 'polygon';
   let currentWidth = Number(lineWidthInput?.value || 3);
   let drawing = false, points = [], allShapes = []; // allShapes: [{type, points, width}]
@@ -29,6 +33,18 @@
   function strokeShape(shape) {
     const pts = shape.points;
     if (!pts.length) return;
+    if (shape.type === 'point') {
+      const [px, py] = pts[0];
+      const r = (shape.width || 6) / 2;
+      ctx.beginPath();
+      ctx.arc(px, py, r, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(96,200,96,.55)';
+      ctx.strokeStyle = 'rgba(96,200,96,.95)';
+      ctx.lineWidth = 1.2;
+      ctx.fill(); ctx.stroke();
+      return;
+    }
+    ctx.strokeStyle = '#ffd166'; ctx.fillStyle = 'rgba(255,209,102,.18)';
     ctx.lineWidth = shape.width || 1.4;
     ctx.beginPath();
     ctx.moveTo(pts[0][0], pts[0][1]);
@@ -38,7 +54,7 @@
   }
   function redraw() {
     const w = canvas.clientWidth, h = canvas.clientHeight; ctx.clearRect(0, 0, w, h);
-    ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.strokeStyle = '#ffd166'; ctx.fillStyle = 'rgba(255,209,102,.18)';
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
     allShapes.forEach(strokeShape);
     if (points.length) strokeShape({ type: shapeMode, points, width: currentWidth });
   }
@@ -80,29 +96,50 @@
     return best;
   }
 
-  canvas.addEventListener('pointerdown', e => { if (window.sumoActiveMode !== 'draw') return; e.preventDefault(); drawing = true; points = [point(e)]; canvas.setPointerCapture(e.pointerId); redraw(); if (status) status.textContent = shapeMode === 'line' ? 'Dibujando línea… suelta el mouse cuando termines.' : 'Dibujando polígono… suelta el mouse cuando termines.'; });
-  canvas.addEventListener('pointermove', e => { if (window.sumoActiveMode !== 'draw' || !drawing) return; e.preventDefault(); const p = point(e), last = points[points.length - 1]; if (!last || Math.hypot(p[0] - last[0], p[1] - last[1]) > 2) { points.push(p); redraw(); } });
+  canvas.addEventListener('pointerdown', e => {
+    if (window.sumoActiveMode !== 'draw') return;
+    e.preventDefault();
+    drawing = true;
+    points = [point(e)];
+    canvas.setPointerCapture(e.pointerId);
+    redraw();
+    if (status) status.textContent = shapeMode === 'line' ? 'Dibujando línea… suelta el mouse cuando termines.' : shapeMode === 'point' ? 'Clic para poner el árbol.' : 'Dibujando polígono… suelta el mouse cuando termines.';
+  });
+  canvas.addEventListener('pointermove', e => {
+    if (window.sumoActiveMode !== 'draw' || !drawing || shapeMode === 'point') return; // el árbol no se "arrastra", es un solo clic
+    e.preventDefault();
+    const p = point(e), last = points[points.length - 1];
+    if (!last || Math.hypot(p[0] - last[0], p[1] - last[1]) > 2) { points.push(p); redraw(); }
+  });
   function end(e) {
     if (!drawing) return;
     drawing = false;
-    const minPts = shapeMode === 'line' ? 2 : 3;
-    if (points.length >= minPts) allShapes.push({ type: shapeMode, points: points.slice(), width: currentWidth });
+    if (shapeMode === 'point') {
+      allShapes.push({ type: 'point', points: [points[0]], width: currentWidth }); // un solo punto = el centro del árbol
+    } else {
+      const minPts = shapeMode === 'line' ? 2 : 3;
+      if (points.length >= minPts) allShapes.push({ type: shapeMode, points: points.slice(), width: currentWidth });
+    }
     points = [];
     exportShapes(); redraw();
-    if (status) status.textContent = 'Figura guardada. Puedes dibujar otra, borrar una con doble clic, o copiarla abajo.';
+    if (status) status.textContent = 'Figura guardada. Puedes seguir dibujando, borrar una con doble clic, o copiarla abajo.';
     try { canvas.releasePointerCapture(e.pointerId); } catch (_) {}
   }
   canvas.addEventListener('pointerup', end); canvas.addEventListener('pointercancel', end);
 
   // Doble clic sobre una figura ya dibujada: borra SOLO esa figura
-  // (polígono: si el punto cae dentro; línea: si el punto queda cerca).
+  // (polígono: si el punto cae dentro; línea: si el punto queda cerca;
+  // árbol: si el clic queda dentro de su círculo).
   canvas.addEventListener('dblclick', e => {
     if (window.sumoActiveMode !== 'draw') return;
     e.preventDefault();
     const [px, py] = point(e);
     for (let i = allShapes.length - 1; i >= 0; i--) {
       const shape = allShapes[i];
-      const hit = shape.type === 'polygon' ? pointInPolygon(px, py, shape.points) : distToPolyline(px, py, shape.points) < Math.max(8, shape.width);
+      let hit;
+      if (shape.type === 'polygon') hit = pointInPolygon(px, py, shape.points);
+      else if (shape.type === 'point') hit = Math.hypot(px - shape.points[0][0], py - shape.points[0][1]) < Math.max(8, (shape.width || 6) / 2);
+      else hit = distToPolyline(px, py, shape.points) < Math.max(8, shape.width);
       if (hit) {
         allShapes.splice(i, 1);
         exportShapes(); redraw();
@@ -112,13 +149,17 @@
     }
   });
 
-  // Modo línea/polígono y grosor.
+  // Modo polígono/línea/árbol y grosor (o diámetro, según el modo).
   function setShapeMode(mode) {
     shapeMode = mode;
     lineModeBtn?.classList.toggle('active', mode === 'line');
-    if (status) status.textContent = mode === 'line' ? 'Modo línea: bueno para ríos y canales. Ajusta el grosor con la barrita.' : 'Modo polígono: bueno para humedales y zonas cerradas.';
+    pointModeBtn?.classList.toggle('active', mode === 'point');
+    if (status) status.textContent = mode === 'line' ? 'Modo línea: bueno para ríos y canales. Ajusta el grosor con la barrita.'
+      : mode === 'point' ? 'Modo árbol: haz clic para poner un punto. Ajusta el diámetro con la barrita.'
+      : 'Modo polígono: bueno para humedales y zonas cerradas.';
   }
   lineModeBtn?.addEventListener('click', () => setShapeMode(shapeMode === 'line' ? 'polygon' : 'line'));
+  pointModeBtn?.addEventListener('click', () => setShapeMode(shapeMode === 'point' ? 'polygon' : 'point'));
   lineWidthInput?.addEventListener('input', () => { currentWidth = Number(lineWidthInput.value); redraw(); });
 
   document.getElementById('sumoPenClear')?.addEventListener('click', () => { allShapes = []; points = []; exportShapes(); redraw(); });

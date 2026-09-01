@@ -735,6 +735,20 @@
       ctx.moveTo(pts[0][0], pts[0][1]);
       for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
     }
+    // Curva suave (técnica de "punto medio") — solo para ríos, para que no
+    // se vean con el trazo tan anguloso de cuando se dibujaron a mano.
+    function strokeSmoothPath(ctx, pts) {
+      if (pts.length < 2) return;
+      ctx.moveTo(pts[0][0], pts[0][1]);
+      if (pts.length === 2) { ctx.lineTo(pts[1][0], pts[1][1]); return; }
+      for (let i = 1; i < pts.length - 1; i++) {
+        const mx = (pts[i][0] + pts[i + 1][0]) / 2;
+        const my = (pts[i][1] + pts[i + 1][1]) / 2;
+        ctx.quadraticCurveTo(pts[i][0], pts[i][1], mx, my);
+      }
+      const last = pts[pts.length - 1];
+      ctx.lineTo(last[0], last[1]);
+    }
 
     function drawNetwork(w, h) {
       netCtx.clearRect(0, 0, w, h);
@@ -756,14 +770,16 @@
       });
       // Ríos calcados a mano con la herramienta de línea. Color más
       // saturado y opaco que los humedales (por separado), para que no se
-      // laven visualmente debajo de la capa de ruido que va encima.
+      // laven visualmente debajo de la capa de ruido que va encima. Se
+      // suaviza el trazo (a diferencia de los humedales) para que no se
+      // vea tan "dibujado a mano".
       netCtx.strokeStyle = "rgba(120,190,255,0.45)";
       TRACED_RIVERS.forEach(({ width, points }) => {
         if (points.length < 2) return;
-        const screenPts = reduceJitterPoints(points.map(([x, y]) => toScreen(x, y)), 4);
+        const screenPts = reduceJitterPoints(points.map(([x, y]) => toScreen(x, y)), 6);
         netCtx.lineWidth = Math.max(3, width);
         netCtx.beginPath();
-        strokeStraightPath(netCtx, screenPts);
+        strokeSmoothPath(netCtx, screenPts);
         netCtx.stroke();
       });
       // se dibuja primero lo local (más numeroso y fino) y encima lo
