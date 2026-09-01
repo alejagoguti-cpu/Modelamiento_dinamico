@@ -8,11 +8,17 @@ Este directorio contiene los archivos espaciales suministrados para el modelo co
 | `ArboladoUrbano.shp` | Geometrías puntuales de arbolado urbano | Geometría recibida |
 | `pasted_content.txt` | Especificación metodológica del modelo | Recibida |
 
-## Componentes pendientes
+## Integración en el módulo 8 de SUMO
 
-Cada shapefile normalmente requiere, como mínimo, los archivos `.shp`, `.shx`, `.dbf` y `.prj` con el mismo nombre base. En esta entrega solo fueron recibidos los archivos `.shp`; por tanto, todavía faltan los índices espaciales `.shx`, las tablas de atributos `.dbf` y la definición del sistema de referencia `.prj` de cada capa.
+El archivo `../kennedy_ecology.json` es un activo derivado para visualización dentro de `modulo-08.html`. La cobertura vegetal se dibuja como polígonos y el arbolado se agrega en celdas de densidad de 60 m, conservando el conteo real de puntos dentro del área calibrada de la red SUMO. El control **Mostrar hábitat y arbolado** permite activar o desactivar la superposición sin ocultar la red vial ni el ruido.
 
-No se reproyectaron ni modificaron las geometrías. La integración espacial, la tabla de atributos, la clasificación de hábitat/corredor/barrera y la matriz de resistencia deben realizarse después de recibir los componentes faltantes y el cuadrante de referencia.
+La transformación usa la calibración geográfica ya existente en `modulo-08-sumo.js`, de modo que no se inventa una nueva ubicación. El activo derivado no representa rutas de aves ni resultados biológicos; únicamente prepara las capas espaciales para la futura matriz de resistencia.
+
+## Componentes de fuente
+
+El ZIP de arbolado sí contiene `.shp`, `.shx`, `.dbf`, `.prj`, `.cpg`, `.sbn`, `.sbx` y `.shp.xml`. Los componentes pequeños fueron incorporados al repositorio. El `.dbf` pesa aproximadamente 368 MB, supera el límite de un archivo individual de GitHub y por eso no se subió; sus atributos se usaron localmente para validar la capa y el módulo web utiliza el activo optimizado derivado.
+
+La capa de cobertura vegetal todavía requiere sus componentes `.shx`, `.dbf` y `.prj`. El cuadrante de referencia y la capa independiente de humedales también deben incorporarse antes de calcular la matriz de resistencia y las métricas de conectividad.
 
 ## Criterio metodológico
 

@@ -166,6 +166,7 @@
       <div class="sumo-sim-card">
         <div class="sumo-canvas-wrap" id="sumoCanvasWrap">
           <canvas id="sumoNetCanvas"></canvas>
+          <canvas id="sumoEcologyCanvas"></canvas>
           <canvas id="sumoNoiseCanvas"></canvas>
           <canvas id="sumoVehCanvas"></canvas>
           <div class="sumo-sim-overlay" id="sumoStatus">Cargando red vial…</div>
@@ -194,6 +195,7 @@
             <label class="noise-toggle-label"><input type="checkbox" id="sumoNoiseToggle" checked> Mostrar capa</label>
           </h4>
           <div class="noise-scale-row">
+            <label class="noise-toggle-label"><input type="checkbox" id="sumoEcologyToggle" checked> Mostrar hábitat y arbolado</label>
             <div class="noise-scale-swatch" style="background:rgba(255,247,179,.42)"></div><span>&lt; 50 dB(A)</span>
             <div class="noise-scale-swatch" style="background:rgba(255,224,76,.42)"></div><span>50–60</span>
             <div class="noise-scale-swatch" style="background:rgba(255,179,77,.42)"></div><span>60–70</span>
@@ -233,6 +235,7 @@
 
 <script src="modulo-08.js"></script>
 <script src="modulo-08-sumo.js"></script>
+<script src="modulo-08-ecology.js"></script>
 
 </body>
 </html>
