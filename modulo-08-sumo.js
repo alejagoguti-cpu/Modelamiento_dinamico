@@ -518,48 +518,8 @@
     slider?.addEventListener("change", () => { isScrubbing = false; });
     speedSelect?.addEventListener("change", () => { speedMultiplier = Number(speedSelect.value) || 1; });
 
-    // ---------- Ajustar el mapa a mano: arrastrar para mover, rueda del
-    // mouse (o pellizco) para zoom. La rotación ya se dejó fija (0°), no
-    // hace falta poder girar el mapa.
-    const calibWrap = document.getElementById("sumoCanvasWrap");
-    const calibOutput = document.getElementById("calibOutput");
-    function updateCalibOutput() {
-      if (calibOutput) calibOutput.value = `ROTATE_DEG=${ROTATE_DEG.toFixed(1)}  EXTRA_ZOOM=${EXTRA_ZOOM.toFixed(2)}  CENTER_X=${Math.round(CENTER_X)}  CENTER_Y=${Math.round(CENTER_Y)}`;
-    }
-    function redrawCalibration() {
-      const wrap = netCanvas.parentElement;
-      const w = wrap.clientWidth, h = wrap.clientHeight;
-      if (netData) { computeView(w, h); drawNetwork(w, h); drawVehiclesAt(playhead); }
-      updateCalibOutput();
-    }
-
-    // Arrastrar el mapa (fondo del canvas) para moverlo — como arrastrar
-    // una imagen en un editor.
-    let isPanning = false, panStartX = 0, panStartY = 0, panCenterX0 = 0, panCenterY0 = 0;
-    calibWrap?.addEventListener("mousedown", (event) => {
-      isPanning = true; panStartX = event.clientX; panStartY = event.clientY;
-      panCenterX0 = CENTER_X; panCenterY0 = CENTER_Y;
-      calibWrap.classList.add("panning");
-    });
-    window.addEventListener("mousemove", (event) => {
-      if (!isPanning || !view.scale) return;
-      const ddx = event.clientX - panStartX, ddy = event.clientY - panStartY;
-      CENTER_X = panCenterX0 - ddx / view.scale;
-      CENTER_Y = panCenterY0 + ddy / view.scale;
-      redrawCalibration();
-    });
-    window.addEventListener("mouseup", () => { isPanning = false; calibWrap?.classList.remove("panning"); });
-
-    // Rueda del mouse (o pellizco en trackpad) para hacer zoom.
-    calibWrap?.addEventListener("wheel", (event) => {
-      event.preventDefault();
-      const factor = event.deltaY < 0 ? 1.08 : 1 / 1.08;
-      EXTRA_ZOOM = Math.min(6, Math.max(0.25, EXTRA_ZOOM * factor));
-      redrawCalibration();
-    }, { passive: false });
-
-    // Mostrar los valores iniciales apenas carga, sin esperar a mover nada.
-    updateCalibOutput();
+    // El mapa queda fijo: sin arrastrar ni hacer zoom, con el encuadre
+    // definido por EXTRA_ZOOM/CENTER_X/CENTER_Y/ROTATE_DEG de arriba.
 
     window.addEventListener("resize", () => {
       resizeCanvases();
