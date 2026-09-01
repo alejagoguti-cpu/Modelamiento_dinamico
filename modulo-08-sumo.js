@@ -74,6 +74,8 @@
     const vehCanvas = document.getElementById("sumoVehCanvas");
     const statusEl = document.getElementById("sumoStatus");
     const playBtn = document.getElementById("sumoPlayPause");
+    const ambienceAudio = document.getElementById("sumoAmbienceAudio");
+    const muteBtn = document.getElementById("sumoMuteToggle");
     const slider = document.getElementById("sumoTimeSlider");
     const timeLabel = document.getElementById("sumoTimeLabel");
     const speedSelect = document.getElementById("sumoSpeedSelect");
@@ -483,7 +485,11 @@
       const totalTime = timesteps.length ? timesteps[timesteps.length - 1].time : 0;
       playhead = Math.min(totalTime, playhead + dt * speedMultiplier);
       drawVehiclesAt(playhead);
-      if (playhead >= totalTime) { playing = false; playBtn.innerHTML = '<i class="fa-solid fa-play"></i>'; return; }
+      if (playhead >= totalTime) {
+        playing = false; playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
+        ambienceAudio?.pause();
+        return;
+      }
       rafId = requestAnimationFrame(step);
     }
 
@@ -491,8 +497,18 @@
       if (!timesteps.length) return;
       playing = !playing;
       playBtn.innerHTML = playing ? '<i class="fa-solid fa-pause"></i>' : '<i class="fa-solid fa-play"></i>';
-      if (playing) { lastFrameTs = 0; rafId = requestAnimationFrame(step); }
-      else cancelAnimationFrame(rafId);
+      if (playing) {
+        lastFrameTs = 0; rafId = requestAnimationFrame(step);
+        ambienceAudio?.play().catch(() => {}); // el navegador puede bloquear autoplay sin gesto; esto ya viene de un clic
+      } else {
+        cancelAnimationFrame(rafId);
+        ambienceAudio?.pause();
+      }
+    });
+    muteBtn?.addEventListener("click", () => {
+      if (!ambienceAudio) return;
+      ambienceAudio.muted = !ambienceAudio.muted;
+      muteBtn.innerHTML = ambienceAudio.muted ? '<i class="fa-solid fa-volume-xmark"></i>' : '<i class="fa-solid fa-volume-high"></i>';
     });
     slider?.addEventListener("input", () => {
       isScrubbing = true;
