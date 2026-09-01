@@ -157,168 +157,6 @@
       </div>
     </div>
 
-    <!-- SITUACIONES: estados que modifican la intensidad de la red -->
-    <div class="situaciones-panel">
-      <div class="situaciones-head">
-        <h3><i class="fa-solid fa-clock-rotate-left"></i> Situaciones — qué momento quieres leer</h3>
-        <p>Cada situación no agrega nodos nuevos: cambia la intensidad, el grosor o la visibilidad de relaciones que ya existen.</p>
-      </div>
-      <div class="situaciones-row" id="situacionesRow"></div>
-      <div class="situacion-desc" id="situacionDesc">Sin situación activa: todas las relaciones se leen en su intensidad documental de base.</div>
-    </div>
-
-    <section class="reader-findings" aria-labelledby="reader-findings-title">
-      <div class="reader-findings-head">
-        <div>
-          <div class="reader-pillars-kicker">HALLAZGOS QUE LA RED HACE VISIBLES</div>
-          <h2 id="reader-findings-title">Lo que aparece cuando el POT se lee como sistema</h2>
-        </div>
-        <p>La tabla ya no queda separada del diagrama: estos cuatro hallazgos se convierten en nodos de interpretación conectados con la lectura dinámica.</p>
-      </div>
-      <div class="reader-findings-grid">
-        <article class="reader-finding finding-pink">
-          <div class="reader-finding-node"><i class="fa-solid fa-diagram-project"></i></div>
-          <div><h3>Red de mundo pequeño, no de sistema dinámico</h3><p>Las 45 relaciones documentadas son internas a EEP, EFC, ESECI o EIP: estructuras densas hacia adentro y prácticamente aisladas entre sí.</p><span>0 puentes reales entre estructuras · 7 vacíos de articulación</span></div>
-        </article>
-        <article class="reader-finding finding-teal">
-          <div class="reader-finding-node"><i class="fa-solid fa-magnifying-glass"></i></div>
-          <div><h3>General vs. particular</h3><p>El POT nombra por su nombre propio a la Reserva Thomas van der Hammen, pero trata “Humedales” como una categoría genérica de 39 conceptos.</p><span>Humedales: hub de mayor grado real · 6 conexiones</span></div>
-        </article>
-        <article class="reader-finding finding-orange">
-          <div class="reader-finding-node"><i class="fa-solid fa-draw-polygon"></i></div>
-          <div><h3>Polígonos fijos, territorios móviles</h3><p>Los realinderamientos y las correcciones oficiales muestran que el límite jurídico-administrativo no coincide de forma estable con el límite ecológico.</p><span>Art. 12, parágrafo 2 · Arts. 573–574 · Resolución 1488/2023</span></div>
-        </article>
-        <article class="reader-finding finding-purple">
-          <div class="reader-finding-node"><i class="fa-solid fa-scale-unbalanced"></i></div>
-          <div><h3>La ESECI no tiene lógica sistémica propia</h3><p>Con solo 2 artículos en el capítulo de Estructuras Territoriales, aporta 9 conceptos y 9 relaciones que permanecen internas a sí misma.</p><span>Su desarrollo aparece disperso en el Libro III como “Áreas de Actividad”.</span></div>
-        </article>
-      </div>
-    </section>
-
-    <!-- HERO: GESTOR DE LECTURA -->
-    <section class="hero-reader">
-      <div class="hero-top">
-        <div class="hero-eyebrow"><span class="eyebrow-line"></span> GESTOR DE LECTURA</div>
-        <button class="agency-toggle" id="agencyToggle" onclick="toggleAgency()">
-          <span class="agency-switch"><span class="agency-knob"></span></span>
-          <span>Activar Dimensión Dinámica</span>
-        </button>
-      </div>
-
-      <h2 class="hero-title"><span class="hero-accent">Módulo Simulador</span> — de las reglas escritas a la simulación viva</h2>
-      <p class="hero-sub">Del POT como texto lineal <i class="fa-solid fa-arrow-right-long"></i> a la ciudad como sistema vivo</p>
-      <p class="hero-lead">Si el POT tiene reglas generativas pero no las corre, esta plataforma permite ejecutar la simulación que el Plan escribe pero nunca realiza: agentes que se mueven, viviendas que condicionan la vida cotidiana y ecosistemas que responden en el tiempo.</p>
-
-      <div class="simulator-principles" aria-label="Tres pilares del simulador">
-        <article class="simulator-principle principle-people"><i class="fa-solid fa-people-arrows"></i><div><strong>Personas</strong><span>Agentes de cuidado · 15 minutos caminando · fatiga y tiempo disponible</span></div></article>
-        <article class="simulator-principle principle-housing"><i class="fa-solid fa-house-chimney-user"></i><div><strong>Viviendas</strong><span>Habitabilidad · Art. 384 · 36 m² / 42 m² · mejoramiento progresivo</span></div></article>
-        <article class="simulator-principle principle-ecosystems"><i class="fa-solid fa-water"></i><div><strong>Ecosistemas</strong><span>Matriz ordenadora · escorrentía · riesgo · drenaje sostenible</span></div></article>
-      </div>
-
-      <div class="hero-compare">
-        <div class="compare-card compare-static">
-          <div class="compare-head"><i class="fa-solid fa-circle-dot"></i> Lectura Estática</div>
-          <p class="compare-desc">El POT leído como una suma de objetos, artículos y relaciones fijas.</p>
-          <div class="compare-viz" id="staticViz">
-            <svg viewBox="0 0 260 170"><circle cx="130" cy="85" r="46" class="static-blob"/></svg>
-          </div>
-          <ul class="compare-list">
-            <li><i class="fa-solid fa-circle-dot"></i> Relación aislada</li>
-            <li><i class="fa-solid fa-circle-dot"></i> Sin actores ni mediadores</li>
-            <li><i class="fa-solid fa-circle-dot"></i> Intensidad única y fija</li>
-          </ul>
-        </div>
-
-        <div class="compare-card compare-dynamic">
-          <div class="compare-head"><i class="fa-solid fa-wave-square"></i> Lectura Dinámica</div>
-          <p class="compare-desc">Una simulación donde agentes, vivienda y ecosistemas interactúan y cambian.</p>
-          <div class="compare-viz" id="dynamicViz"></div>
-          <ul class="compare-list">
-            <li><i class="fa-solid fa-check"></i> Incluye actores y mediadores</li>
-            <li><i class="fa-solid fa-check"></i> Cambia según la situación</li>
-            <li><i class="fa-solid fa-check"></i> Intensidad variable</li>
-          </ul>
-        </div>
-      </div>
-
-      <blockquote class="hero-quote">
-        <i class="fa-solid fa-quote-left"></i>
-        <p>Una relación territorial no es un dato fijo: depende de quién la usa, qué la hace posible y en qué momento ocurre.</p>
-        <span>Equipo POT Reverse Engineering</span>
-      </blockquote>
-      <section class="reader-pillars" aria-labelledby="reader-pillars-title">
-        <div class="reader-pillars-kicker">LA CAPA QUE EL POT NO EJECUTA</div>
-        <h3 id="reader-pillars-title">Tres pilares para hacer correr las reglas</h3>
-        <div class="reader-pillars-grid">
-          <article class="reader-pillar reader-pillar-people">
-            <div class="reader-pillar-icon"><i class="fa-solid fa-people-group"></i></div>
-            <div><h4>Personas</h4><p>Agentes de cuidado con tiempo, fatiga, trayectorias y necesidades reales.</p></div>
-          </article>
-          <article class="reader-pillar reader-pillar-homes">
-            <div class="reader-pillar-icon"><i class="fa-solid fa-house-chimney"></i></div>
-            <div><h4>Viviendas</h4><p>Nodos de origen y retorno que afectan habitabilidad, estrés y salud.</p></div>
-          </article>
-          <article class="reader-pillar reader-pillar-eco">
-            <div class="reader-pillar-icon"><i class="fa-solid fa-leaf"></i></div>
-            <div><h4>Ecosistemas</h4><p>Actores físicos: agua, conectores, riesgo y drenaje que modifican la ciudad.</p></div>
-          </article>
-        </div>
-      </section>
-    </section>
-
-    <!-- STATS -->
-    <div class="reader-stats" id="readerStats">
-      <div class="stat-card" style="--stat-color:#2fd4c8;">
-        <div class="stat-icon"><i class="fa-solid fa-circle-nodes"></i></div>
-        <div class="stat-value" id="statComponentes">—</div>
-        <div class="stat-label">Componentes territoriales</div>
-      </div>
-      <div class="stat-card" style="--stat-color:#f5a623;" id="statActoresCard">
-        <div class="stat-icon"><i class="fa-solid fa-people-group"></i></div>
-        <div class="stat-value" id="statActores">—</div>
-        <div class="stat-label">Actores</div>
-      </div>
-      <div class="stat-card" style="--stat-color:#7d8ea3;" id="statMediadoresCard">
-        <div class="stat-icon"><i class="fa-solid fa-signs-post"></i></div>
-        <div class="stat-value" id="statMediadores">—</div>
-        <div class="stat-label">Mediadores</div>
-      </div>
-      <div class="stat-card" style="--stat-color:#f76fb0;">
-        <div class="stat-icon"><i class="fa-solid fa-link"></i></div>
-        <div class="stat-value" id="statRelaciones">—</div>
-        <div class="stat-label">Relaciones activas</div>
-      </div>
-    </div>
-
-    <!-- LO QUE DEMUESTRA -->
-    <div class="synergies-section">
-      <div class="synergies-grid">
-        <div class="synergy-card success">
-          <div class="synergy-icon"><i class="fa-solid fa-diagram-project"></i></div>
-          <div class="synergy-content">
-            <h4>Lo que ya reconoce el POT</h4>
-            <ul>
-              <li><strong>Componentes documentados:</strong> los nodos coloreados por estructura son los mismos componentes ya identificados en las 4 estructuras del POT (EEP, EFS, ESE, EIP).</li>
-              <li><strong>Relaciones directas:</strong> las líneas continuas citan página y frase exacta del documento.</li>
-              <li><strong>Nada se compone:</strong> ningún nodo contiene a otro — cada uno es independiente, incluso dentro de la misma estructura.</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="synergy-card conflict">
-          <div class="synergy-icon"><i class="fa-solid fa-eye-low-vision"></i></div>
-          <div class="synergy-content">
-            <h4>Lo que esta lectura agrega</h4>
-            <ul>
-              <li><strong>Actores:</strong> quién usa, opera, protege o transforma cada relación — no es lo mismo un estudiante que una persona cuidadora.</li>
-              <li><strong>Mediadores:</strong> qué hace posible la relación en la práctica — estaciones, andenes, senderos, puentes peatonales.</li>
-              <li><strong>Situaciones:</strong> una relación no tiene una intensidad única — cambia en hora pico, en temporada de lluvias, durante una obra.</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- SIMULACIÓN DE MOVILIDAD (SUMO) -->
     <div class="sumo-sim-section">
       <div class="sumo-sim-heading">
@@ -347,29 +185,6 @@
       </div>
     </div>
 
-    <!-- MAPA DE RUIDO Y TRÁFICO -->
-    <div class="sumo-sim-section">
-      <div class="sumo-sim-heading">
-        <h3><i class="fa-solid fa-volume-high"></i> Mapa de ruido y tráfico</h3>
-        <p>Índice de ruido relativo por vía, calculado a partir del flujo vehicular y la velocidad promedio de la simulación de tráfico en Kennedy.</p>
-      </div>
-      <div class="sumo-sim-card">
-        <div class="noise-map-wrap">
-          <div id="noiseMap"></div>
-          <div class="noise-map-status" id="noiseMapStatus">Cargando datos de tráfico…</div>
-          <div class="noise-map-legend">
-            <h4>Índice de ruido (relativo)</h4>
-            <div class="noise-legend-row"><span class="noise-legend-swatch" style="background:#2e7d5b"></span> Muy bajo</div>
-            <div class="noise-legend-row"><span class="noise-legend-swatch" style="background:#8bc34a"></span> Bajo</div>
-            <div class="noise-legend-row"><span class="noise-legend-swatch" style="background:#f1c40f"></span> Moderado</div>
-            <div class="noise-legend-row"><span class="noise-legend-swatch" style="background:#e67e22"></span> Alto</div>
-            <div class="noise-legend-row"><span class="noise-legend-swatch" style="background:#e5484d"></span> Muy alto</div>
-          </div>
-        </div>
-        <p class="noise-map-note">No es una medición acústica real en decibeles — es un proxy relativo: a mayor flujo vehicular y mayor velocidad, mayor ruido esperado. Datos: SUMO edgedata (<code>osm.net.xml</code> + <code>datos_vias.xml</code>).</p>
-      </div>
-    </div>
-
     <footer>
       "No se trata de representar la ciudad, sino de comprenderla para transformarla." — <span>Equipo POT Reverse Engineering</span>
     </footer>
@@ -380,8 +195,6 @@
 
 <script src="modulo-08.js"></script>
 <script src="modulo-08-sumo.js"></script>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="modulo-08-noise.js"></script>
 
 </body>
 </html>

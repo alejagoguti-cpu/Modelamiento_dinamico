@@ -53,9 +53,9 @@
   // completa), y con una pequeña rotación para enderezar la cuadrícula de
   // Bogotá, que en las coordenadas locales de SUMO viene inclinada respecto
   // al norte verdadero (es una característica real de la ciudad, no un error).
-  const EXTRA_ZOOM = 1.95;
+  const EXTRA_ZOOM = 1.5;
   const CENTER_X = 6100, CENTER_Y = 2500;
-  const ROTATE_DEG = -16;  const VEHICULOS_JSON_URL = "./assets/kennedy_vehiculos.json";
+  const ROTATE_DEG = 16;  const VEHICULOS_JSON_URL = "./assets/kennedy_vehiculos.json";
   const TRAZADO_URL = "./assets/trazado.xml";
 
   const EDGE_STYLE = {
