@@ -1065,3 +1065,521 @@ footer span { color: var(--teal); }
 .indicator-change.neutral {
   color: var(--text-faint);
 }
+
+/* ============================================================
+   EXPERIMENTO 2: PERTURBACIÓN DE RED
+   ============================================================ */
+.perturbation-control-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.perturbation-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.perturbation-section h4 {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--text);
+  text-transform: uppercase;
+}
+
+.perturbation-hint {
+  font-size: 11px;
+  color: var(--text-dim);
+  line-height: 1.4;
+}
+
+.edge-selector {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.edge-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.edge-option {
+  background: var(--panel-alt);
+  border: none;
+  border-bottom: 1px solid var(--border-soft);
+  padding: 12px 14px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.edge-option:last-child {
+  border-bottom: none;
+}
+
+.edge-option:hover {
+  background: rgba(255,255,255,0.05);
+}
+
+.edge-option.active {
+  background: rgba(47,212,200,0.15);
+  border-left: 3px solid var(--teal);
+  padding-left: 11px;
+}
+
+.edge-name {
+  font-weight: 600;
+  color: var(--text);
+  font-size: 12px;
+}
+
+.edge-stats {
+  font-size: 10px;
+  color: var(--text-dim);
+}
+
+.perturbation-type-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.perturbation-type-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 6px;
+  transition: background 0.2s ease;
+}
+
+.perturbation-type-option:hover {
+  background: rgba(255,255,255,0.03);
+}
+
+.perturbation-type-option input[type="radio"] {
+  accent-color: var(--teal);
+  margin-top: 2px;
+  cursor: pointer;
+}
+
+.option-label {
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--text);
+}
+
+.option-desc {
+  font-size: 11px;
+  color: var(--text-dim);
+  display: block;
+}
+
+.capacity-slider-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.capacity-slider-container span {
+  font-size: 11px;
+  color: var(--text-dim);
+  min-width: 35px;
+}
+
+.capacity-slider-container input {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: linear-gradient(to right, #e5484d, #f1c40f, #8bc34a);
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+}
+
+.capacity-slider-container input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #ef9552;
+  border: 2px solid var(--panel);
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(239,149,82,0.4);
+}
+
+.capacity-slider-container input::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #ef9552;
+  border: 2px solid var(--panel);
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(239,149,82,0.4);
+}
+
+.capacity-display {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  background: var(--panel-alt);
+  border-radius: 6px;
+  font-size: 12px;
+  margin-top: 8px;
+}
+
+.capacity-display span:last-child {
+  color: var(--orange);
+  font-weight: 600;
+}
+
+.perturbation-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-primary, .btn-secondary {
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.btn-primary {
+  background: var(--pink);
+  color: white;
+  flex: 1;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #f55a9f;
+  box-shadow: 0 0 12px rgba(247,107,176,0.3);
+}
+
+.btn-primary:disabled {
+  background: var(--text-faint);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.btn-secondary {
+  background: var(--panel-alt);
+  color: var(--text);
+  border: 1px solid var(--border);
+  flex: 1;
+}
+
+.btn-secondary:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: var(--border-soft);
+}
+
+.perturbation-results {
+  padding: 16px;
+  background: var(--panel-alt);
+  border-radius: 8px;
+  border: 1px solid var(--border-soft);
+}
+
+.perturbation-results h4 {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 12px;
+}
+
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+.result-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.result-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.result-value {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+/* ============================================================
+   EXPERIMENTO 3: REDISTRIBUCIÓN DE RUTAS
+   ============================================================ */
+.redistribution-control-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.redistribution-strategy-selector h4,
+.redistribution-comparison h4 {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--text);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.strategy-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.strategy-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 6px;
+  transition: background 0.2s ease;
+}
+
+.strategy-option:hover {
+  background: rgba(255,255,255,0.03);
+}
+
+.strategy-option input[type="radio"] {
+  accent-color: var(--teal);
+  margin-top: 2px;
+  cursor: pointer;
+}
+
+.strategy-label {
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--text);
+}
+
+.strategy-desc {
+  font-size: 11px;
+  color: var(--text-dim);
+  display: block;
+}
+
+.comparison-table {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.table-header {
+  display: grid;
+  grid-template-columns: 120px 1fr 1fr 1fr;
+  background: var(--panel-alt);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 12px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  gap: 12px;
+}
+
+.table-row {
+  display: grid;
+  grid-template-columns: 120px 1fr 1fr 1fr;
+  border-bottom: 1px solid var(--border-soft);
+  padding: 12px;
+  font-size: 12px;
+  gap: 12px;
+  align-items: center;
+}
+
+.table-row:last-child {
+  border-bottom: none;
+}
+
+.col-strategy {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.col-metric {
+  color: var(--text-dim);
+  text-align: right;
+}
+
+.redistribution-actions {
+  display: flex;
+  gap: 12px;
+}
+
+/* ============================================================
+   EXPERIMENTO 4: PICO Y RECUPERACIÓN
+   ============================================================ */
+.peak-control-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.peak-profile-section h4,
+.peak-indicators-section h4 {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--text);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.peak-timeline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--panel-alt);
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  padding: 16px;
+  gap: 12px;
+}
+
+.timeline-label {
+  font-size: 11px;
+  color: var(--text-dim);
+  text-align: center;
+  flex: 1;
+  padding: 8px;
+  border-left: 1px solid var(--border-soft);
+}
+
+.timeline-label:first-child {
+  border-left: none;
+}
+
+.event-markers {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.event-marker {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 6px;
+  border-left: 3px solid;
+}
+
+.event-marker.event-start {
+  background: rgba(139,195,74,0.1);
+  border-left-color: #8bc34a;
+}
+
+.event-marker.event-peak {
+  background: rgba(245,169,33,0.1);
+  border-left-color: #f5a921;
+}
+
+.event-marker.event-end {
+  background: rgba(76,175,80,0.1);
+  border-left-color: #4caf50;
+}
+
+.event-marker i {
+  font-size: 14px;
+  color: var(--text);
+  flex-shrink: 0;
+}
+
+.event-marker span:first-of-type {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+  flex: 1;
+}
+
+.event-time {
+  font-size: 11px;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+
+.peak-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.peak-results {
+  padding: 16px;
+  background: var(--panel-alt);
+  border-radius: 8px;
+  border: 1px solid var(--border-soft);
+}
+
+.peak-results h4 {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 12px;
+}
+
+.analysis-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+.analysis-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.analysis-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.analysis-value {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+}

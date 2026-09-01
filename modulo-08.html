@@ -491,6 +491,248 @@
       </div>
     </div>
 
+    <!-- EXPERIMENTO 2: PERTURBACIÓN DE RED -->
+    <div class="sumo-sim-section">
+      <div class="sumo-sim-heading">
+        <h3><i class="fa-solid fa-triangle-exclamation"></i> Experimento 2: Perturbación de Red</h3>
+        <p>Cierra una vía temporalmente o reduce su capacidad, y observa cómo se redistribuye el tráfico y cambian los indicadores del sistema.</p>
+      </div>
+
+      <div class="perturbation-control-card">
+        <div class="perturbation-section">
+          <h4>Selecciona una vía crítica</h4>
+          <p class="perturbation-hint">Las vías listadas son las más importantes según flujo, densidad y tiempo de viaje.</p>
+
+          <div class="edge-selector">
+            <div class="edge-list">
+              <button class="edge-option" data-edge-id="1209495214#3" data-flow="204" data-density="137.0" data-timeloss="60238.0">
+                <span class="edge-name">Vía 1209495214#3</span>
+                <span class="edge-stats">Flow: 204 veh/h · Density: 137.0 veh/km</span>
+              </button>
+              <button class="edge-option" data-edge-id="1184088523#1" data-flow="81" data-density="128.2" data-timeloss="35287.0">
+                <span class="edge-name">Vía 1184088523#1</span>
+                <span class="edge-stats">Flow: 81 veh/h · Density: 128.2 veh/km</span>
+              </button>
+              <button class="edge-option" data-edge-id="1162630088#1" data-flow="113" data-density="105.9" data-timeloss="30828.0">
+                <span class="edge-name">Vía 1162630088#1</span>
+                <span class="edge-stats">Flow: 113 veh/h · Density: 105.9 veh/km</span>
+              </button>
+              <button class="edge-option" data-edge-id="1195023605#3" data-flow="78" data-density="208.2" data-timeloss="28456.0">
+                <span class="edge-name">Vía 1195023605#3</span>
+                <span class="edge-stats">Flow: 78 veh/h · Density: 208.2 veh/km</span>
+              </button>
+              <button class="edge-option" data-edge-id="1078142963#8" data-flow="106" data-density="172.5" data-timeloss="25643.0">
+                <span class="edge-name">Vía 1078142963#8</span>
+                <span class="edge-stats">Flow: 106 veh/h · Density: 172.5 veh/km</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="perturbation-section">
+          <h4>Tipo de Perturbación</h4>
+          <div class="perturbation-type-selector">
+            <label class="perturbation-type-option">
+              <input type="radio" name="perturbationType" value="closure" checked>
+              <span class="option-label">Cierre temporal</span>
+              <span class="option-desc">La vía no está disponible (cierre por obras)</span>
+            </label>
+            <label class="perturbation-type-option">
+              <input type="radio" name="perturbationType" value="capacity">
+              <span class="option-label">Reducción de capacidad</span>
+              <span class="option-desc">Reduce carriles o ancho de vía</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="perturbation-section" id="capacitySection" style="display: none;">
+          <h4>Reducción de Capacidad</h4>
+          <div class="capacity-slider-container">
+            <span>100%</span>
+            <input type="range" id="capacitySlider" min="0" max="100" value="100" step="10">
+            <span>0%</span>
+          </div>
+          <div class="capacity-display">
+            <span>Capacidad disponible:</span>
+            <span id="capacityValue">100%</span>
+          </div>
+        </div>
+
+        <div class="perturbation-actions">
+          <button id="perturbationApplyBtn" class="btn-primary" disabled>Aplicar Perturbación</button>
+          <button id="perturbationResetBtn" class="btn-secondary">Restablecer</button>
+        </div>
+
+        <div class="perturbation-results" id="perturbationResults" style="display: none;">
+          <h4>Impacto de la Perturbación</h4>
+          <div class="results-grid">
+            <div class="result-item">
+              <span class="result-label">Vía afectada</span>
+              <span class="result-value" id="resultEdgeId">—</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">Cambio en tiempo promedio</span>
+              <span class="result-value" id="resultTimeChange">—</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">Ruido sistema</span>
+              <span class="result-value" id="resultNoiseChange">—</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">Vías más afectadas</span>
+              <span class="result-value" id="resultAffectedEdges">—</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EXPERIMENTO 3: REDISTRIBUCIÓN DE RUTAS -->
+    <div class="sumo-sim-section">
+      <div class="sumo-sim-heading">
+        <h3><i class="fa-solid fa-route"></i> Experimento 3: Redistribución de Rutas</h3>
+        <p>Mantén la misma demanda pero cambia cómo se distribuyen los vehículos entre rutas. Observa si hay alternativas más eficientes.</p>
+      </div>
+
+      <div class="redistribution-control-card">
+        <div class="redistribution-strategy-selector">
+          <h4>Estrategia de Distribución</h4>
+          <div class="strategy-options">
+            <label class="strategy-option">
+              <input type="radio" name="routeStrategy" value="current" checked>
+              <span class="strategy-label">Actual</span>
+              <span class="strategy-desc">Distribución actual de SUMO</span>
+            </label>
+            <label class="strategy-option">
+              <input type="radio" name="routeStrategy" value="balanced">
+              <span class="strategy-label">Equilibrada</span>
+              <span class="strategy-desc">Distribuir carga uniforme por vías</span>
+            </label>
+            <label class="strategy-option">
+              <input type="radio" name="routeStrategy" value="shortest">
+              <span class="strategy-label">Ruta Más Corta</span>
+              <span class="strategy-desc">Todos por el camino más corto</span>
+            </label>
+            <label class="strategy-option">
+              <input type="radio" name="routeStrategy" value="fastest">
+              <span class="strategy-label">Ruta Más Rápida</span>
+              <span class="strategy-desc">Evita vías congestionadas (teórico)</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="redistribution-comparison">
+          <h4>Comparación de Estrategias</h4>
+          <div class="comparison-table">
+            <div class="table-header">
+              <span class="col-strategy">Estrategia</span>
+              <span class="col-metric">Tiempo Promedio</span>
+              <span class="col-metric">Flujo Max</span>
+              <span class="col-metric">Ruido Promedio</span>
+            </div>
+            <div class="table-row">
+              <span class="col-strategy">Actual</span>
+              <span class="col-metric" id="comp-current-time">480 s</span>
+              <span class="col-metric" id="comp-current-flow">1015 veh/h</span>
+              <span class="col-metric" id="comp-current-noise">22.4</span>
+            </div>
+            <div class="table-row">
+              <span class="col-strategy">Equilibrada</span>
+              <span class="col-metric" id="comp-balanced-time">— s</span>
+              <span class="col-metric" id="comp-balanced-flow">— veh/h</span>
+              <span class="col-metric" id="comp-balanced-noise">—</span>
+            </div>
+            <div class="table-row">
+              <span class="col-strategy">Más Corta</span>
+              <span class="col-metric" id="comp-shortest-time">— s</span>
+              <span class="col-metric" id="comp-shortest-flow">— veh/h</span>
+              <span class="col-metric" id="comp-shortest-noise">—</span>
+            </div>
+            <div class="table-row">
+              <span class="col-strategy">Más Rápida</span>
+              <span class="col-metric" id="comp-fastest-time">— s</span>
+              <span class="col-metric" id="comp-fastest-flow">— veh/h</span>
+              <span class="col-metric" id="comp-fastest-noise">—</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="redistribution-actions">
+          <button id="redistributionApplyBtn" class="btn-primary">Aplicar Distribución</button>
+          <button id="redistributionResetBtn" class="btn-secondary">Restablecer</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- EXPERIMENTO 4: PICO Y RECUPERACIÓN -->
+    <div class="sumo-sim-section">
+      <div class="sumo-sim-heading">
+        <h3><i class="fa-solid fa-arrow-up-arrow-down"></i> Experimento 4: Pico y Recuperación</h3>
+        <p>Simula un evento temporal (incremento de demanda) y observa cuándo aparece congestión, cuándo se recupera, y cómo cambia el ruido.</p>
+      </div>
+
+      <div class="peak-control-card">
+        <div class="peak-profile-section">
+          <h4>Perfil Temporal</h4>
+          <div class="peak-timeline">
+            <div class="timeline-label">00:00 — Demanda baja</div>
+            <div class="timeline-label">05:00 — Incremento</div>
+            <div class="timeline-label">10:00 — Pico máximo</div>
+            <div class="timeline-label">15:00 — Reducción</div>
+            <div class="timeline-label">20:00 — Recuperación</div>
+          </div>
+        </div>
+
+        <div class="peak-indicators-section">
+          <h4>Eventos Detectados</h4>
+          <div class="event-markers">
+            <div class="event-marker event-start">
+              <i class="fa-solid fa-play"></i>
+              <span>Inicio de congestión</span>
+              <span class="event-time" id="eventCongestionStart">—</span>
+            </div>
+            <div class="event-marker event-peak">
+              <i class="fa-solid fa-mountain"></i>
+              <span>Pico máximo</span>
+              <span class="event-time" id="eventPeakTime">—</span>
+            </div>
+            <div class="event-marker event-end">
+              <i class="fa-solid fa-check"></i>
+              <span>Recuperación completa</span>
+              <span class="event-time" id="eventRecoveryEnd">—</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="peak-actions">
+          <button id="peakSimulateBtn" class="btn-primary">Simular Pico</button>
+          <button id="peakResetBtn" class="btn-secondary">Restablecer</button>
+        </div>
+
+        <div class="peak-results" id="peakResults" style="display: none;">
+          <h4>Análisis del Evento</h4>
+          <div class="analysis-grid">
+            <div class="analysis-item">
+              <span class="analysis-label">Duración total de congestión</span>
+              <span class="analysis-value" id="analysisDuration">—</span>
+            </div>
+            <div class="analysis-item">
+              <span class="analysis-label">Incremento máximo de ruido</span>
+              <span class="analysis-value" id="analysisNoiseIncrease">—</span>
+            </div>
+            <div class="analysis-item">
+              <span class="analysis-label">Vías críticas durante pico</span>
+              <span class="analysis-value" id="analysisCriticalEdges">—</span>
+            </div>
+            <div class="analysis-item">
+              <span class="analysis-label">Tiempo promedio afectado</span>
+              <span class="analysis-value" id="analysisAvgTime">—</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- MAPA DE RUIDO Y TRÁFICO -->
     <div class="sumo-sim-section">
       <div class="sumo-sim-heading">
@@ -525,6 +767,9 @@
 <script src="modulo-08.js"></script>
 <script src="modulo-08-sumo.js"></script>
 <script src="modulo-08-demand.js"></script>
+<script src="modulo-08-perturbation.js"></script>
+<script src="modulo-08-redistribution.js"></script>
+<script src="modulo-08-peak.js"></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="modulo-08-noise.js"></script>
 
