@@ -2793,7 +2793,7 @@
         if (!row) return;
         DINAMICA_SOUND.play(button.dataset.soundId || row.id); button.classList.remove("sound-playing"); void button.offsetWidth; button.classList.add("sound-playing"); window.setTimeout(() => button.classList.remove("sound-playing"), 900);
         target.querySelectorAll(".map-network-node").forEach((node) => node.classList.toggle("selected", node === button));
-        target.querySelectorAll(".subsystem-components, .subsystem-purpose-panel, .subsystem-diagram-panel, .map-network-detail").forEach((node) => node.remove());
+        target.querySelectorAll(".subsystem-components, .subsystem-purpose-panel, .subsystem-diagram-panel, .map-network-detail, .submodel-failure-popup").forEach((node) => node.remove());
         const color = row.color || colors[Number(button.dataset.mapNetworkIndex)];
         const partsPurpose = row.partsPurpose || "Sí";
         const totalPurpose = row.totalPurpose || "Sí";
@@ -2810,10 +2810,27 @@
         target.append(components);
         target.append(purpose);
         components.querySelector("#seeFullNetworkBtn")?.addEventListener("click", (event) => { event.stopPropagation(); showCombinedNetworkModal(); });
-        const closePanels = (event) => { event?.stopPropagation(); components.remove(); purpose.remove(); clearSubsystemPoints(); button.classList.remove("selected"); };
+        let failurePopup = null;
+        const closePanels = (event) => { event?.stopPropagation(); components.remove(); purpose.remove(); failurePopup?.remove(); clearSubsystemPoints(); button.classList.remove("selected"); };
         components.querySelector(".subsystem-panel-close")?.addEventListener("click", closePanels);
         purpose.querySelector(".subsystem-panel-close")?.addEventListener("click", closePanels);
         if (systems && withFlows) renderSubsystemPoints(subsystemData[Number(button.dataset.mapNetworkIndex)]);
+        if (!systems) {
+          // Al hacer clic en un submodelo: un popup aparte con UN ejemplo
+          // concreto de cuándo ese submodelo colapsaría al aplicarlo al
+          // territorio (no la lista completa — esa está en "Ver escenarios
+          // de falla" — aquí solo un ejemplo rápido).
+          const scenarioSet = submodelFailureScenarios[Number(button.dataset.mapNetworkIndex)];
+          if (scenarioSet) {
+            const example = scenarioSet.scenarios[0];
+            failurePopup = document.createElement("div");
+            failurePopup.className = "submodel-failure-popup";
+            failurePopup.style.setProperty("--bubble-color", color);
+            failurePopup.innerHTML = `<div class="subsystem-panel-heading"><strong><i class="fa-solid fa-triangle-exclamation"></i> Posible escenario de falla</strong><button type="button" class="subsystem-panel-close" aria-label="Cerrar escenario de falla"><i class="fa-solid fa-xmark"></i></button></div><p>${example}</p>`;
+            target.append(failurePopup);
+            failurePopup.querySelector(".subsystem-panel-close")?.addEventListener("click", (event) => { event.stopPropagation(); failurePopup.remove(); });
+          }
+        }
       }));
       if (hideAllSystemBubbles) {
         // Los nodos de lugar tienen su propio click porque el listener general
