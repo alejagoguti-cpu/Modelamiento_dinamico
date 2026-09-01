@@ -4,9 +4,16 @@
   if (!canvas) return;
   const output = document.getElementById('sumoPenOutput');
   const status = document.getElementById('sumoPenStatus');
+  const lineModeBtn = document.getElementById('sumoPenLineMode');
+  const lineWidthInput = document.getElementById('sumoPenLineWidth');
   const ctx = canvas.getContext('2d');
   window.sumoActiveMode = window.sumoActiveMode || 'draw';
-  let drawing = false, points = [], allShapes = [];
+
+  // Dos tipos de figura: "polygon" (se cierra y se rellena, para humedales)
+  // y "line" (queda abierta, con el grosor que se elija, para ríos/canales).
+  let shapeMode = 'polygon';
+  let currentWidth = Number(lineWidthInput?.value || 3);
+  let drawing = false, points = [], allShapes = []; // allShapes: [{type, points, width}]
 
   function resize() {
     const box = canvas.parentElement.getBoundingClientRect();
@@ -18,44 +25,101 @@
     redraw();
   }
   function point(e) { const r = canvas.getBoundingClientRect(); return [Number((e.clientX - r.left).toFixed(1)), Number((e.clientY - r.top).toFixed(1))]; }
+
+  function strokeShape(shape) {
+    const pts = shape.points;
+    if (!pts.length) return;
+    ctx.lineWidth = shape.width || 1.4;
+    ctx.beginPath();
+    ctx.moveTo(pts[0][0], pts[0][1]);
+    for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
+    if (shape.type === 'polygon' && pts.length > 2) { ctx.closePath(); ctx.fill(); }
+    ctx.stroke();
+  }
   function redraw() {
     const w = canvas.clientWidth, h = canvas.clientHeight; ctx.clearRect(0, 0, w, h);
-    ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.lineWidth = 1.4; ctx.strokeStyle = '#ffd166'; ctx.fillStyle = 'rgba(255,209,102,.18)';
-    for (const shape of [...allShapes, points]) { if (!shape.length) continue; ctx.beginPath(); ctx.moveTo(shape[0][0], shape[0][1]); for (let i = 1; i < shape.length; i++) ctx.lineTo(shape[i][0], shape[i][1]); if (shape !== points && shape.length > 2) { ctx.closePath(); ctx.fill(); } ctx.stroke(); }
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.strokeStyle = '#ffd166'; ctx.fillStyle = 'rgba(255,209,102,.18)';
+    allShapes.forEach(strokeShape);
+    if (points.length) strokeShape({ type: shapeMode, points, width: currentWidth });
   }
-  function exportShapes() { if (output) output.value = JSON.stringify({ format: 'plano-SUMO', canvas: { width: canvas.clientWidth, height: canvas.clientHeight }, shapes: allShapes.map(shape => shape.map(([x, y]) => ({ x, y }))) }, null, 2); }
+  function exportShapes() {
+    if (!output) return;
+    output.value = JSON.stringify({
+      format: 'plano-SUMO',
+      canvas: { width: canvas.clientWidth, height: canvas.clientHeight },
+      shapes: allShapes.map((shape) => ({
+        type: shape.type,
+        width: shape.width,
+        points: shape.points.map(([x, y]) => ({ x, y })),
+      })),
+    }, null, 2);
+  }
 
-  // ¿el punto (px,py) cae dentro del polígono `shape`? (ray casting, para
-  // saber a cuál figura le hicieron doble clic)
-  function pointInPolygon(px, py, shape) {
+  // ¿el punto (px,py) cae dentro del polígono `pts`? (ray casting, para
+  // saber a cuál figura le hicieron doble clic) — solo aplica a polígonos.
+  function pointInPolygon(px, py, pts) {
     let inside = false;
-    for (let i = 0, j = shape.length - 1; i < shape.length; j = i++) {
-      const [xi, yi] = shape[i], [xj, yj] = shape[j];
+    for (let i = 0, j = pts.length - 1; i < pts.length; j = i++) {
+      const [xi, yi] = pts[i], [xj, yj] = pts[j];
       const intersect = (yi > py) !== (yj > py) && px < ((xj - xi) * (py - yi)) / (yj - yi) + xi;
       if (intersect) inside = !inside;
     }
     return inside;
   }
+  // Distancia de un punto a una línea abierta (para doble clic sobre ríos).
+  function distToPolyline(px, py, pts) {
+    let best = Infinity;
+    for (let i = 0; i < pts.length - 1; i++) {
+      const [ax, ay] = pts[i], [bx, by] = pts[i + 1];
+      const dx = bx - ax, dy = by - ay, lenSq = dx * dx + dy * dy;
+      let t = lenSq > 0 ? ((px - ax) * dx + (py - ay) * dy) / lenSq : 0;
+      t = Math.max(0, Math.min(1, t));
+      const d = Math.hypot(px - (ax + t * dx), py - (ay + t * dy));
+      if (d < best) best = d;
+    }
+    return best;
+  }
 
-  canvas.addEventListener('pointerdown', e => { if (window.sumoActiveMode !== 'draw') return; e.preventDefault(); drawing = true; points = [point(e)]; canvas.setPointerCapture(e.pointerId); redraw(); if (status) status.textContent = 'Dibujando… suelta el mouse cuando termines.'; });
+  canvas.addEventListener('pointerdown', e => { if (window.sumoActiveMode !== 'draw') return; e.preventDefault(); drawing = true; points = [point(e)]; canvas.setPointerCapture(e.pointerId); redraw(); if (status) status.textContent = shapeMode === 'line' ? 'Dibujando línea… suelta el mouse cuando termines.' : 'Dibujando polígono… suelta el mouse cuando termines.'; });
   canvas.addEventListener('pointermove', e => { if (window.sumoActiveMode !== 'draw' || !drawing) return; e.preventDefault(); const p = point(e), last = points[points.length - 1]; if (!last || Math.hypot(p[0] - last[0], p[1] - last[1]) > 2) { points.push(p); redraw(); } });
-  function end(e) { if (!drawing) return; drawing = false; if (points.length > 2) allShapes.push(points.slice()); points = []; exportShapes(); redraw(); if (status) status.textContent = 'Figura guardada. Puedes dibujar otra, borrar una con doble clic, o copiarla abajo.'; try { canvas.releasePointerCapture(e.pointerId); } catch (_) {} }
+  function end(e) {
+    if (!drawing) return;
+    drawing = false;
+    const minPts = shapeMode === 'line' ? 2 : 3;
+    if (points.length >= minPts) allShapes.push({ type: shapeMode, points: points.slice(), width: currentWidth });
+    points = [];
+    exportShapes(); redraw();
+    if (status) status.textContent = 'Figura guardada. Puedes dibujar otra, borrar una con doble clic, o copiarla abajo.';
+    try { canvas.releasePointerCapture(e.pointerId); } catch (_) {}
+  }
   canvas.addEventListener('pointerup', end); canvas.addEventListener('pointercancel', end);
 
-  // Doble clic sobre un polígono ya dibujado: borra SOLO ese polígono.
+  // Doble clic sobre una figura ya dibujada: borra SOLO esa figura
+  // (polígono: si el punto cae dentro; línea: si el punto queda cerca).
   canvas.addEventListener('dblclick', e => {
     if (window.sumoActiveMode !== 'draw') return;
     e.preventDefault();
     const [px, py] = point(e);
-    for (let i = allShapes.length - 1; i >= 0; i--) { // el de encima (más reciente) primero
-      if (pointInPolygon(px, py, allShapes[i])) {
+    for (let i = allShapes.length - 1; i >= 0; i--) {
+      const shape = allShapes[i];
+      const hit = shape.type === 'polygon' ? pointInPolygon(px, py, shape.points) : distToPolyline(px, py, shape.points) < Math.max(8, shape.width);
+      if (hit) {
         allShapes.splice(i, 1);
         exportShapes(); redraw();
-        if (status) status.textContent = 'Se borró ese polígono.';
+        if (status) status.textContent = 'Se borró esa figura.';
         return;
       }
     }
   });
+
+  // Modo línea/polígono y grosor.
+  function setShapeMode(mode) {
+    shapeMode = mode;
+    lineModeBtn?.classList.toggle('active', mode === 'line');
+    if (status) status.textContent = mode === 'line' ? 'Modo línea: bueno para ríos y canales. Ajusta el grosor con la barrita.' : 'Modo polígono: bueno para humedales y zonas cerradas.';
+  }
+  lineModeBtn?.addEventListener('click', () => setShapeMode(shapeMode === 'line' ? 'polygon' : 'line'));
+  lineWidthInput?.addEventListener('input', () => { currentWidth = Number(lineWidthInput.value); redraw(); });
 
   document.getElementById('sumoPenClear')?.addEventListener('click', () => { allShapes = []; points = []; exportShapes(); redraw(); });
   document.getElementById('sumoPenUndo')?.addEventListener('click', () => {

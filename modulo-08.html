@@ -173,6 +173,10 @@
           <canvas id="sumoFreeDrawCanvas" aria-label="Lienzo libre para dibujar humedales"></canvas>
           <div class="sumo-pen-side-toolbar" aria-label="Herramientas para dibujar humedales">
             <button type="button" class="sumo-btn" id="sumoPenToggle" title="Activar pluma"><i class="fa-solid fa-pen"></i></button>
+            <button type="button" class="sumo-btn" id="sumoPenLineMode" title="Modo línea (para ríos)"><i class="fa-solid fa-wave-square"></i></button>
+            <label class="sumo-pen-width-label" title="Grosor de la línea">
+              <input type="range" id="sumoPenLineWidth" min="1" max="14" step="0.5" value="3">
+            </label>
             <button type="button" class="sumo-btn" id="sumoPenUndo" title="Deshacer punto"><i class="fa-solid fa-rotate-left"></i></button>
             <button type="button" class="sumo-btn" id="sumoPenClear" title="Borrar dibujos"><i class="fa-solid fa-trash"></i></button>
             <button type="button" class="sumo-btn" id="sumoPenCopy" title="Copiar geometría"><i class="fa-solid fa-copy"></i></button>
@@ -282,7 +286,7 @@
 
 <script src="modulo-08.js"></script>
 <script src="modulo-08-sumo.js?v=wetlands-smooth-v2"></script>
-<script src="modulo-08-free-draw.js?v=20260901-free1"></script>
+<script src="modulo-08-free-draw.js?v=20260901-lines-v2"></script>
 <script src="modulo-08-reference-image.js?v=20260901-image3-scalefix"></script>
 </body>
 </html>
