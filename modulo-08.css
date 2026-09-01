@@ -770,6 +770,9 @@ footer span { color: var(--teal); }
 }
 .sumo-canvas-wrap.panning { cursor: grabbing; }
 .sumo-canvas-wrap canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+#sumoEcologyCanvas { pointer-events: none; z-index: 2; }
+#sumoEcologyDragSurface { position: absolute; inset: 0; z-index: 20; cursor: grab; touch-action: none; background: transparent; }
+#sumoEcologyDragSurface:active { cursor: grabbing; }
 .sumo-sim-overlay {
   position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
   color: var(--text-dim); font-size: 13px; background: rgba(5,7,10,0.7);
@@ -794,6 +797,11 @@ footer span { color: var(--teal); }
   width: 100%; background: #05070a; border: 1px solid var(--border); border-radius: 6px;
   color: #76fff0; font-family: monospace; font-size: 11px; padding: 8px; resize: vertical;
 }
+.sumo-calib-panel strong { color: #ffcf68; font-size: 12px; }
+.sumo-calib-panel label { display: inline-flex; align-items: center; gap: 5px; color: var(--text-dim); font-size: 11px; }
+.sumo-calib-panel input[type="number"] { width: 78px; background: #05070a; color: #76fff0; border: 1px solid var(--border); border-radius: 5px; padding: 5px 6px; font-size: 11px; }
+.sumo-calib-panel .sumo-btn { width: 30px; height: 30px; }
+
 .noise-scale-legend {
   padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; background: var(--panel-alt);
   display: flex; flex-direction: column; gap: 8px;

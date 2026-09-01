@@ -1,0 +1,246 @@
+Quiero construir una simulación urbana de Bogotá que represente cómo el **ruido urbano puede modificar el desplazamiento y la conectividad funcional de la avifauna**, utilizando como especie de referencia la **mirla patinaranja (*Turdus fuscater*)**.
+
+Voy a proporcionarte varias capas GIS de Bogotá, incluyendo cobertura vegetal/hábitat, humedales, arbolado, espacios verdes y posteriormente una capa de ruido.
+
+NO quiero una animación decorativa de pájaros. Quiero construir un **modelo conceptual de sistema complejo** donde exista una relación entre:
+
+MOVILIDAD / ACTIVIDAD URBANA
+↓
+RUIDO
+↓
+PERTURBACIÓN
+↓
+RESISTENCIA DEL PAISAJE
+↓
+DESPLAZAMIENTO DE LAS AVES
+↓
+CONECTIVIDAD ECOLÓGICA
+
+## OBJETIVO DEL MODELO
+
+El objetivo es simular cómo un cambio en la intensidad del ruido modifica la facilidad de desplazamiento de *Turdus fuscater* entre diferentes parches de hábitat urbano.
+
+La pregunta que debe responder el modelo es:
+
+**¿Cómo cambia la conectividad funcional del paisaje para *Turdus fuscater* cuando aumenta la perturbación acústica?**
+
+No presentes las rutas como trayectorias reales de individuos. Es un **modelo conceptual de desplazamiento potencial** basado en resistencia espacial.
+
+## 1. CONSTRUIR EL HÁBITAT
+
+Utiliza las capas GIS que proporcionaré para identificar:
+
+* parques;
+* arbolado;
+* coberturas vegetales;
+* humedales;
+* cuerpos de agua pertinentes;
+* otras áreas verdes relevantes.
+
+Agrupa estas coberturas para construir una primera capa de **hábitat potencial / parches de conectividad**.
+
+NO inventes geometrías.
+
+NO cambies la ubicación de las capas.
+
+Conserva el sistema de coordenadas y la escala espacial de los datos originales.
+
+## 2. CONSTRUIR LA MATRIZ DE RESISTENCIA
+
+El territorio entre los parches debe representarse como una superficie de resistencia.
+
+Conceptualmente:
+
+* vegetación y zonas arboladas → baja resistencia;
+* parques y corredores verdes → baja resistencia;
+* vegetación dispersa → resistencia intermedia-baja;
+* áreas urbanas residenciales → resistencia intermedia;
+* tejido urbano denso → resistencia alta;
+* grandes vías y superficies muy impermeables → resistencia alta.
+
+Los valores numéricos NO deben inventarse como si fueran mediciones biológicas. Si no existe un valor publicado específico para *Turdus fuscater*, utiliza valores normalizados como parámetros del modelo y deja claramente indicado que son supuestos de simulación.
+
+## 3. INCORPORAR EL RUIDO
+
+Cuando incorpore la capa de ruido, conviértela en un factor que modifique la resistencia.
+
+Usa una relación conceptual:
+
+R_total = R_cobertura × F_ruido
+
+donde:
+
+R_cobertura = resistencia base de la cobertura
+
+F_ruido = factor de perturbación acústica.
+
+El ruido debe aumentar progresivamente la resistencia.
+
+Ruido bajo → poca modificación.
+
+Ruido medio → aumento moderado de resistencia.
+
+Ruido alto → aumento fuerte de resistencia.
+
+Ruido muy alto → comportamiento cercano a una barrera.
+
+NO hagas una relación binaria donde las aves simplemente desaparezcan cuando hay ruido.
+
+## 4. COSTO DE DESPLAZAMIENTO
+
+Para las posibles rutas entre parches utiliza:
+
+C = Σ(R_i × d_i)
+
+donde:
+
+C = costo acumulado de la ruta;
+
+R_i = resistencia de cada celda;
+
+d_i = distancia recorrida.
+
+Las aves deben tender a utilizar rutas de menor costo acumulado.
+
+Sin embargo, NO quiero que todas las aves utilicen exactamente la misma ruta. Deben existir múltiples rutas potenciales y pequeñas variaciones individuales.
+
+## 5. TEORÍA DE CIRCUITOS / MÚLTIPLES RUTAS
+
+Utiliza como referencia conceptual la metodología de teoría de circuitos aplicada a conectividad de aves urbanas.
+
+No quiero representar una única "ruta correcta".
+
+Quiero mostrar una red de rutas potenciales donde algunas zonas funcionan como corredores de mayor importancia.
+
+Visualmente, los corredores con mayor flujo potencial pueden aparecer con mayor intensidad, mientras que las zonas de alta resistencia funcionen como barreras.
+
+## 6. ANIMACIÓN
+
+Una vez construidas las capas y el modelo, genera una animación temporal.
+
+### ESCENARIO 1 — RUIDO BAJO
+
+Las aves se desplazan entre los parches verdes utilizando varias rutas.
+
+Debe existir conectividad relativamente alta.
+
+### ESCENARIO 2 — AUMENTO DEL RUIDO
+
+Incrementa progresivamente el ruido.
+
+Las aves cercanas a las zonas de mayor perturbación deben comenzar a desviarse.
+
+### ESCENARIO 3 — RUIDO ALTO
+
+Las zonas de alta perturbación se convierten en sectores de alta resistencia.
+
+Las aves deben buscar rutas alternativas.
+
+Algunas conexiones deben volverse menos utilizadas.
+
+### ESCENARIO 4 — NUEVO EQUILIBRIO
+
+Las aves se concentran en determinados corredores de menor resistencia.
+
+Quiero que se pueda observar cómo algunos corredores adquieren mayor importancia mientras otros pierden conectividad.
+
+## 7. INDICADORES
+
+El modelo debe calcular y mostrar, antes y después de aumentar el ruido:
+
+1. **Costo medio de desplazamiento**
+2. **Distancia efectiva de desplazamiento**
+3. **Conectividad de la red**
+4. **Número de parches funcionalmente aislados**
+5. **Importancia de los corredores**
+6. Si es técnicamente posible, calcular **Probability of Connectivity (PC)** e **Integral Index of Connectivity (IIC)**.
+
+No inventes valores de indicadores. Calcula los valores a partir de la simulación.
+
+## 8. EXPERIMENTO DE INTERVENCIÓN
+
+Quiero que el modelo permita hacer posteriormente una segunda prueba:
+
+### ESCENARIO A
+
+Condición actual.
+
+### ESCENARIO B
+
+Aumento del ruido.
+
+### ESCENARIO C
+
+Aumento del ruido + eliminación de un corredor verde.
+
+### ESCENARIO D
+
+Aumento del ruido + creación de un nuevo corredor verde.
+
+Esto permitirá observar si una intervención urbana puede recuperar parte de la conectividad perdida.
+
+## 9. RESILIENCIA
+
+Si es posible, agrega un último escenario:
+
+Después de aumentar el ruido, disminuye nuevamente la perturbación.
+
+Observa si las aves:
+
+* regresan a sus rutas iniciales;
+* mantienen las rutas alternativas;
+* o generan una nueva configuración de conectividad.
+
+Esto permitirá representar conceptualmente la **resiliencia del sistema**.
+
+## 10. PRESENTACIÓN VISUAL
+
+Mantén el mapa base limpio y profesional.
+
+Las aves deben ser pequeñas y discretas.
+
+No quiero cientos de pájaros.
+
+Quiero que lo importante sea visualizar:
+
+RUIDO → CAMBIO DE RESISTENCIA → CAMBIO DE RUTAS → CAMBIO DE CONECTIVIDAD.
+
+Las trayectorias no deben llenar todo el mapa.
+
+Utiliza una visualización clara de corredores de mayor y menor conectividad.
+
+## 11. FUNDAMENTO CIENTÍFICO
+
+La metodología debe apoyarse en:
+
+* estudios de conectividad ecológica de aves en Bogotá;
+* matrices de resistencia;
+* costo acumulado;
+* teoría de circuitos;
+* estudios sobre *Turdus fuscater* en Bogotá y su respuesta a perturbaciones.
+
+No afirmes que el modelo reproduce exactamente el comportamiento de una mirla real.
+
+Debe quedar explícito que se trata de:
+
+**“Modelo conceptual de desplazamiento potencial de *Turdus fuscater* en función de la resistencia del paisaje y la perturbación acústica.”**
+
+## 12. ANTES DE PROGRAMAR
+
+Primero analiza todas las capas GIS que te proporcione.
+
+Hazme una tabla indicando:
+
+* nombre de la capa;
+* qué representa;
+* qué atributos contiene;
+* si sirve como hábitat;
+* si sirve como corredor;
+* si sirve como barrera;
+* cómo podría incorporarse a la matriz de resistencia.
+
+Después propón la estructura matemática del modelo.
+
+NO programes la animación hasta haber identificado correctamente las capas y variables.
+
+El objetivo final es producir una simulación que permita demostrar visualmente que una perturbación en un componente del sistema urbano —el ruido— puede generar cambios en el comportamiento de desplazamiento y en la conectividad de otro componente —la avifauna—.
