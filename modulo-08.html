@@ -168,7 +168,6 @@
           <canvas id="sumoNetCanvas"></canvas>
           <canvas id="sumoNoiseCanvas"></canvas>
           <canvas id="sumoVehCanvas"></canvas>
-          <div id="sumoEcologyDragSurface" aria-label="Arrastrar y dibujar humedales"></div>
           <img id="sumoReferenceImage" alt="Imagen de referencia para calcar humedales" hidden>
           <div id="sumoImageDragSurface" hidden aria-label="Mover imagen de referencia"></div>
           <canvas id="sumoFreeDrawCanvas" aria-label="Lienzo libre para dibujar humedales"></canvas>
@@ -189,6 +188,10 @@
           <label>Escala <input id="sumoReferenceScale" type="range" min="0.2" max="3" step="0.01" value="1"></label>
           <label>Opacidad <input id="sumoReferenceOpacity" type="range" min="0.05" max="1" step="0.01" value="0.55"></label>
           <span id="sumoImageStatus">Copia una imagen, pulsa Ctrl + V dentro de la página y luego usa mover imagen.</span>
+          <div class="sumo-reference-coords">
+            <button type="button" class="sumo-btn" id="sumoImageCopy" title="Copiar coordenadas de la imagen"><i class="fa-solid fa-copy"></i> Copiar posición de la imagen</button>
+            <textarea id="sumoImageOutput" rows="4" spellcheck="false" placeholder="Aquí aparecerá la posición, escala y opacidad de la imagen..."></textarea>
+          </div>
         </div>
         <div class="sumo-sim-controls">
           <button type="button" id="sumoPlayPause" class="sumo-btn" aria-label="Reproducir / pausar"><i class="fa-solid fa-play"></i></button>

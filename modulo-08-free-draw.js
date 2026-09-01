@@ -29,6 +29,12 @@
   function end(e) { if (!drawing) return; drawing = false; if (points.length > 2) allShapes.push(points.slice()); points = []; exportShapes(); redraw(); if (status) status.textContent = 'Figura guardada. Puedes dibujar otra o copiarla abajo.'; try { canvas.releasePointerCapture(e.pointerId); } catch (_) {} }
   canvas.addEventListener('pointerup', end); canvas.addEventListener('pointercancel', end);
   document.getElementById('sumoPenClear')?.addEventListener('click', () => { allShapes = []; points = []; exportShapes(); redraw(); });
+  document.getElementById('sumoPenUndo')?.addEventListener('click', () => {
+    if (points.length) points.pop(); // si se está dibujando: quita el último punto puesto
+    else allShapes.pop(); // si no: quita la última figura ya cerrada
+    exportShapes(); redraw();
+    if (status) status.textContent = 'Se deshizo el último punto/figura.';
+  });
   document.getElementById('sumoPenCopy')?.addEventListener('click', async () => { exportShapes(); try { await navigator.clipboard.writeText(output?.value || ''); } catch (_) {} if (status) status.textContent = 'Forma copiada. Pégamela en el chat.'; });
   window.addEventListener('resize', resize); resize();
 })();
