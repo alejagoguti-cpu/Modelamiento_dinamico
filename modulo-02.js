@@ -2162,68 +2162,364 @@ function abrirMapaPatrimonio() {
 
 const MANZANAS_HOTSPOTS_DATA = [
   {
-    id: "kennedy",
-    nombre: "Manzana del Cuidado Kennedy - Patio Bonito",
-    x: 28, y: 58,
-    servicios: "Centro de desarrollo comunitario, lavandería comunitaria, jardín infantil, formación técnica para mujeres cuidadoras.",
-    analisis: "El POT asume que un radio de 15 minutos caminando conecta a las personas cuidadoras. En Patio Bonito, la discontinuidad de andenes y la alta congestión fragmentan la accesibilidad real.",
-    cita: "El POT articula las Manzanas del Cuidado con el Sistema de Movilidad para garantizar proximidad a equipamientos sociales."
+    "id": "m_1",
+    "nombre": "Manzana del Cuidado Suba Tibabuyes",
+    "sector": "Suba - Tibabuyes",
+    "x": 18.84,
+    "y": 20.45,
+    "servicios": "Jardín infantil, centro de respiro, lavandería comunitaria y apoyo psicosocial.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Suba - Tibabuyes. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
   },
   {
-    id: "bosa",
-    nombre: "Manzana del Cuidado Bosa - Porvenir",
-    x: 22, y: 72,
-    servicios: "Casa de Igualdad de Oportunidades, aulas de respiro, recreación deportiva y atención integral en salud.",
-    analisis: "Bosa presenta uno de los mayores déficits de soporte urbano. La Manzana mitiga la sobrecarga del cuidado pero no resuelve la segregación residencial.",
-    cita: "Las Manzanas del Cuidado en el sur de Bogotá buscan reducir la brecha histórica de equipamientos sociales."
+    "id": "m_2",
+    "nombre": "Manzana del Cuidado Usaquén Toberín",
+    "sector": "Usaquén - Toberín",
+    "x": 36.12,
+    "y": 21.12,
+    "servicios": "Capacitación digital, espacios de bienestar, cuidado infantil y atención integral en salud.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Usaquén - Toberín. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
   },
   {
-    id: "fontibon",
-    nombre: "Manzana del Cuidado Fontibón",
-    x: 26, y: 44,
-    servicios: "Servicios de respiro, biblioteca comunitaria, talleres de formación e inserción laboral.",
-    analisis: "La proximidad con zonas industriales genera barreras de tráfico pesado y ruido que afectan los recorridos cotidianos de caminata.",
-    cita: "Integración de servicios sociales en centralidades mixtas."
+    "id": "m_3",
+    "nombre": "Manzana del Cuidado Suba Rincón",
+    "sector": "Suba - Rincón",
+    "x": 26.51,
+    "y": 26.66,
+    "servicios": "Aulas de formación, lavanderías públicas, apoyo a personas mayores y recreación.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Suba - Rincón. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
   },
   {
-    id: "engativa",
-    nombre: "Manzana del Cuidado Engativá - Tabora",
-    x: 35, y: 36,
-    servicios: "Centro de atención a personas mayores, jardines infantiles y espacios lúdicos.",
-    analisis: "Requiere cruces peatonales seguros sobre avenidas arteriales como la Calle 80 y la Av. Ciudad de Cali.",
-    cita: "Reducción de distancias de desplazamiento para la población dependiente."
+    "id": "m_4",
+    "nombre": "Manzana del Cuidado Suba Centro",
+    "sector": "Suba - Centro",
+    "x": 17.1,
+    "y": 33.65,
+    "servicios": "Casa de igualdad de oportunidades, orientación jurídica y cuidado temporal.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Suba - Centro. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
   },
   {
-    id: "suba",
-    nombre: "Manzana del Cuidado Suba - Rincón",
-    x: 42, y: 22,
-    servicios: "Centro de formación, lavanderías públicas, apoyo psicológico y cuidado infantil.",
-    analisis: "La topografía y la alta densidad habitacional dificultan el acceso universal en los tiempos ideales estipulados por el POT.",
-    cita: "Fortalecimiento de la estructura social en zonas de alta densidad."
+    "id": "m_5",
+    "nombre": "Manzana del Cuidado Engativá Cortijo",
+    "sector": "Engativá - Bolivia / Cortijo",
+    "x": 25.07,
+    "y": 36.04,
+    "servicios": "Centro de desarrollo comunitario, cuidado de primera infancia y actividades físicas.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Engativá - Bolivia / Cortijo. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
   },
   {
-    id: "centro",
-    nombre: "Manzana del Cuidado Centro - La Candelaria / Santa Fe",
-    x: 52, y: 56,
-    servicios: "Atención a población migrante, comedores comunitarios, formación y orientación jurídica.",
-    analisis: "La gentrificación y el costo del suelo expulsan a hogares vulnerables, alejándolos de los equipamientos consolidados.",
-    cita: "Garantía de servicios de proximidad en el centro tradicional."
+    "id": "m_6",
+    "nombre": "Manzana del Cuidado Usaquén Oriental",
+    "sector": "Usaquén - Santa Cecilia",
+    "x": 39.82,
+    "y": 30.66,
+    "servicios": "Servicios de salud comunitaria, huertas de cuidado y atención integral a mujeres.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Usaquén - Santa Cecilia. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
   },
   {
-    id: "ciudad_bolivar",
-    nombre: "Manzana del Cuidado Ciudad Bolívar - Lucero",
-    x: 38, y: 82,
-    servicios: "Articulación con TransMiCable, jardines infantiles, aulas digitales y centros de salud.",
-    analisis: "El cable aéreo mejora el tiempo de viaje vertical, pero los recorridos transversales siguen siendo precarios.",
-    cita: "Articulación del Sistema del Cuidado con el transporte por cable."
+    "id": "m_7",
+    "nombre": "Manzana del Cuidado Chapinero",
+    "sector": "Chapinero - Chicó Norte",
+    "x": 53.38,
+    "y": 34.17,
+    "servicios": "Inclusión social, espacios de aprendizaje, biblioteca comunitaria y servicios de respiro.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Chapinero - Chicó Norte. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
   },
   {
-    id: "san_cristobal",
-    nombre: "Manzana del Cuidado San Cristóbal",
-    x: 58, y: 68,
-    servicios: "Centro comunitario, huertas urbanas, atención psicosocial y formación para el empleo.",
-    analisis: "El borde urbano-rural exige servicios móviles de cuidado que el POT no detalla en su matriz formal.",
-    cita: "Cobertura de servicios sociales en bordes urbanos."
+    "id": "m_8",
+    "nombre": "Manzana del Cuidado Chapinero Central",
+    "sector": "Chapinero - Central",
+    "x": 59.9,
+    "y": 38.23,
+    "servicios": "Atención a diversidad, formación en artes, respiro y orientación a cuidadoras.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Chapinero - Central. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_9",
+    "nombre": "Manzana del Cuidado Engativá Tabora",
+    "sector": "Engativá - Tabora",
+    "x": 22.71,
+    "y": 45.88,
+    "servicios": "Centro de atención al adulto mayor, canchas deportivas, formación técnica.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Engativá - Tabora. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_10",
+    "nombre": "Manzana del Cuidado Minuto de Dios",
+    "sector": "Engativá - Minuto de Dios",
+    "x": 30.62,
+    "y": 39.61,
+    "servicios": "Guarderías infantiles, asesoría psicosocial y talleres ocupacionales.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Engativá - Minuto de Dios. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_11",
+    "nombre": "Manzana del Cuidado Barrios Unidos",
+    "sector": "Barrios Unidos - Doce de Octubre",
+    "x": 33.57,
+    "y": 45.66,
+    "servicios": "Espacios de bienestar y actividad física, recreación y cuidado infantil.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Barrios Unidos - Doce de Octubre. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_12",
+    "nombre": "Manzana del Cuidado Fontibón Norte",
+    "sector": "Fontibón - Modelia",
+    "x": 39.72,
+    "y": 39.9,
+    "servicios": "Talleres de formación, apoyo a personas con discapacidad y respiro.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Fontibón - Modelia. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_13",
+    "nombre": "Manzana del Cuidado Teusaquillo",
+    "sector": "Teusaquillo - Centro Cívico",
+    "x": 47.31,
+    "y": 41.64,
+    "servicios": "Espacios culturales, respiro para cuidadoras y formación en derechos.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Teusaquillo - Centro Cívico. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_14",
+    "nombre": "Manzana del Cuidado Fontibón Centro",
+    "sector": "Fontibón - San Pablo / Centro",
+    "x": 54.94,
+    "y": 45.83,
+    "servicios": "Lavandería comunitaria, casa de juventud, formación laboral y respiro.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Fontibón - San Pablo / Centro. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_15",
+    "nombre": "Manzana del Cuidado Santa Fe Oriental",
+    "sector": "Santa Fe - La Macarena",
+    "x": 65.44,
+    "y": 43.9,
+    "servicios": "Centro comunitario, atención a población vulnerable y comedores sociales.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Santa Fe - La Macarena. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_16",
+    "nombre": "Manzana del Cuidado La Candelaria",
+    "sector": "Centro Histórico - La Candelaria",
+    "x": 74.19,
+    "y": 43.69,
+    "servicios": "Atención a cuidadores del centro histórico, patrimonio vivo y orientación legal.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Centro Histórico - La Candelaria. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_17",
+    "nombre": "Manzana del Cuidado Kennedy Tintal",
+    "sector": "Kennedy - Castilla / Tintal",
+    "x": 35.36,
+    "y": 52.45,
+    "servicios": "Biblioteca Tintal, aulas digitales, cuidado infantil y escuela de formación.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Kennedy - Castilla / Tintal. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_18",
+    "nombre": "Manzana del Cuidado Patio Bonito",
+    "sector": "Kennedy - Patio Bonito",
+    "x": 40.24,
+    "y": 56.04,
+    "servicios": "Centro de desarrollo comunitario, lavanderías públicas y atención médica básica.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Kennedy - Patio Bonito. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_19",
+    "nombre": "Manzana del Cuidado Puente Aranda",
+    "sector": "Puente Aranda - Gorgonzola",
+    "x": 60.81,
+    "y": 52.95,
+    "servicios": "Integración con áreas industriales, cuidado infantil y espacios de respiro.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Puente Aranda - Gorgonzola. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_20",
+    "nombre": "Manzana del Cuidado Los Mártires",
+    "sector": "Los Mártires - La Favorita",
+    "x": 67.35,
+    "y": 55.96,
+    "servicios": "Atención integral a mujeres, reducción de daño y comedores comunitarios.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Los Mártires - La Favorita. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_21",
+    "nombre": "Manzana del Cuidado Kennedy Bellavista",
+    "sector": "Kennedy - Bellavista",
+    "x": 24.43,
+    "y": 56.87,
+    "servicios": "Casa de juventud, actividades lúdicas, apoyo psicológico y cuidado infantil.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Kennedy - Bellavista. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_22",
+    "nombre": "Manzana del Cuidado Bosa Porvenir",
+    "sector": "Bosa - El Porvenir",
+    "x": 43.41,
+    "y": 62.6,
+    "servicios": "Centro comunitario El Porvenir, aulas de cuidado y recreación comunitaria.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Bosa - El Porvenir. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_23",
+    "nombre": "Manzana del Cuidado Restrepo",
+    "sector": "Antonio Nariño - Restrepo",
+    "x": 56.99,
+    "y": 61.86,
+    "servicios": "Capacitación en oficios, atención en salud y servicios de proximidad.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Antonio Nariño - Restrepo. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_24",
+    "nombre": "Manzana del Cuidado 20 de Julio",
+    "sector": "San Cristóbal - 20 de Julio",
+    "x": 64.16,
+    "y": 62.83,
+    "servicios": "Atención comunitaria, salas de lactancia y respiro para personas cuidadoras.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en San Cristóbal - 20 de Julio. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_25",
+    "nombre": "Manzana del Cuidado La Victoria",
+    "sector": "San Cristóbal - La Victoria",
+    "x": 72.61,
+    "y": 59.33,
+    "servicios": "Centro de desarrollo social, parque comunitario y formación técnica.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en San Cristóbal - La Victoria. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_26",
+    "nombre": "Manzana del Cuidado Juan Rey (Borde Oriental)",
+    "sector": "San Cristóbal - Juan Rey",
+    "x": 84.08,
+    "y": 58.55,
+    "servicios": "Servicios de borde urbano, huertas comunitarias y atención psicosocial.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en San Cristóbal - Juan Rey. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_27",
+    "nombre": "Manzana del Cuidado Bosa Centro",
+    "sector": "Bosa - Centro / San Pablo",
+    "x": 48.7,
+    "y": 72.13,
+    "servicios": "Casa de igualdad de oportunidades, aulas de respiro y formación.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Bosa - Centro / San Pablo. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_28",
+    "nombre": "Manzana del Cuidado Tunjuelito",
+    "sector": "Tunjuelito - Venecia / El Carmen",
+    "x": 53.18,
+    "y": 65.48,
+    "servicios": "Centro comunitario, atención médica de proximidad y cuidado infantil.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Tunjuelito - Venecia / El Carmen. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_29",
+    "nombre": "Manzana del Cuidado Rafael Uribe Uribe",
+    "sector": "Rafael Uribe - Diana Turbay",
+    "x": 65.67,
+    "y": 70.37,
+    "servicios": "Servicios de cuidado en laderas, atención a familias y lavanderías públicas.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Rafael Uribe - Diana Turbay. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_30",
+    "nombre": "Manzana del Cuidado Molinos",
+    "sector": "Rafael Uribe - Molinos",
+    "x": 75.19,
+    "y": 66.25,
+    "servicios": "Aulas de tecnología, espacios de descanso para cuidadoras y recreación.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Rafael Uribe - Molinos. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_31",
+    "nombre": "Manzana del Cuidado El Ensueño",
+    "sector": "Ciudad Bolívar - El Ensueño",
+    "x": 50.2,
+    "y": 82.23,
+    "servicios": "Teatro El Ensueño, centro comunitario y servicios integrales de cuidado.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Ciudad Bolívar - El Ensueño. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_32",
+    "nombre": "Manzana del Cuidado Sierra Morena",
+    "sector": "Ciudad Bolívar - Sierra Morena",
+    "x": 59.35,
+    "y": 75.06,
+    "servicios": "Casa de la cultura, atención en salud y apoyo a cuidadoras de personas con discapacidad.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Ciudad Bolívar - Sierra Morena. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_33",
+    "nombre": "Manzana del Cuidado Manitas (TransMiCable)",
+    "sector": "Ciudad Bolívar - Lucero / TransMiCable",
+    "x": 73.51,
+    "y": 73.98,
+    "servicios": "Articulación directa con estación de cable aéreo Manitas, jardines infantiles y salud.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Ciudad Bolívar - Lucero / TransMiCable. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_34",
+    "nombre": "Manzana del Cuidado Arborizadora Alta",
+    "sector": "Ciudad Bolívar - Arborizadora Alta",
+    "x": 56.05,
+    "y": 87.15,
+    "servicios": "Servicios en alta montaña urbana, recreación, apoyo psicosocial y formación.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Ciudad Bolívar - Arborizadora Alta. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_35",
+    "nombre": "Manzana del Cuidado Usme Santa Librada",
+    "sector": "Usme - Santa Librada",
+    "x": 67.07,
+    "y": 82.53,
+    "servicios": "Centro de desarrollo comunitario, cuidado de infancia y apoyo a personas mayores.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Usme - Santa Librada. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_36",
+    "nombre": "Manzana del Cuidado Usme Pueblo",
+    "sector": "Usme - Pueblo / Borde Rural",
+    "x": 53.51,
+    "y": 92.62,
+    "servicios": "Articulación rural, servicios móviles de cuidado y preservación campesina.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Usme - Pueblo / Borde Rural. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
   }
 ];
 
