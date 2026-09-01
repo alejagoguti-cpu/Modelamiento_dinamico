@@ -9,7 +9,14 @@
   const freeDraw = document.getElementById('sumoFreeDrawCanvas');
   const output = document.getElementById('sumoImageOutput');
   if (!wrap || !img || !surface || !file) return;
-  let state = { x: 30, y: 30, scale: 1, opacity: .55 };
+
+  // Mapa de referencia de Kennedy (calles, humedales, parques) ya
+  // acomodado con las coordenadas exactas que se dejaron la última vez,
+  // para que cargue así desde el inicio en vez de en blanco.
+  const DEFAULT_IMAGE_URL = './assets/modulo08-mapa-referencia-kennedy.png';
+  const DEFAULT_STATE = { x: -102.8, y: -81.2, scale: 0.59, opacity: 0.82 };
+
+  let state = { ...DEFAULT_STATE };
   let dragging = false, last = null;
 
   function apply() {
@@ -117,6 +124,11 @@
   });
 
   apply();
-  // Empieza en modo dibujo por defecto si todavía no hay imagen cargada.
-  if (img.hidden) setMode('draw');
+  // Cargar automáticamente el mapa de referencia de Kennedy, ya ubicado
+  // con las coordenadas dejadas la última vez, en vez de empezar en blanco.
+  img.src = DEFAULT_IMAGE_URL;
+  img.hidden = false;
+  surface.hidden = false;
+  apply();
+  setMode('draw'); // arranca en modo pluma, listo para calcar sobre el mapa ya puesto
 })();
