@@ -738,8 +738,8 @@
       // Humedales calcados a mano (azul), debajo de las vías para que las
       // calles se sigan viendo con claridad encima. Se suaviza el trazo
       // para que no se vea quebrado/anguloso.
-      netCtx.fillStyle = "rgba(66,133,244,0.55)";
-      netCtx.strokeStyle = "rgba(66,133,244,0.85)";
+      netCtx.fillStyle = "rgba(150,200,255,0.5)";
+      netCtx.strokeStyle = "rgba(150,200,255,0.9)";
       netCtx.lineWidth = 1.6;
       TRACED_WETLANDS.forEach((pts) => {
         if (pts.length < 2) return;
