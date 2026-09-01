@@ -37,7 +37,7 @@ const STRUCT_COLOR = {
 const BASE_NODES = [
   { id: "quebradas", name: "QUEBRADAS", icon: "fa-water", struct: "eco", x: 171, y: 69, r: 24 },
   { id: "complejo_paramos", name: "COMPLEJO DE\nPÁRAMOS", icon: "fa-mountain-sun", struct: "eco", x: 337, y: 71, r: 24 },
-  { id: "reservas_forestales", name: "RESERVAS\nFORESTALES", icon: "fa-tree", struct: "eco", x: 284, y: 131, r: 29 },
+
   { id: "areas_protegidas", name: "ÁREAS\nPROTEGIDAS", icon: "fa-shield", struct: "eco", x: 166, y: 168, r: 27 },
   { id: "areas_resiliencia", name: "ÁREAS DE\nRESILIENCIA", icon: "fa-cloud-sun", struct: "eco", x: 70, y: 201, r: 26 },
   { id: "humedales", name: "HUMEDALES", icon: "fa-droplet", struct: "eco", x: 250, y: 232, r: 54 },
@@ -150,8 +150,6 @@ function findNode(id) {
    relaciones interpretativas sin cita textual). dirigida: si hay flecha. */
 const BASE_EDGES = [
   { s: "quebradas", t: "humedales", tipo: "directa", dirigida: true, evidencia: "El POT reconoce las quebradas como afluentes que alimentan el sistema de humedales urbanos.", page: "p. 196", critica: "La relación es hídrica y unidireccional aguas abajo; no muestra la variación estacional del caudal." },
-  { s: "complejo_paramos", t: "reservas_forestales", tipo: "directa", dirigida: true, evidencia: "Los complejos de páramo sostienen ecológicamente las reservas forestales protegidas.", page: "p. 198", critica: "La relación se documenta a escala regional; no distingue reservas específicas." },
-  { s: "reservas_forestales", t: "humedales", tipo: "indirecta", dirigida: true, evidencia: "Las reservas forestales regulan indirectamente el régimen hídrico de los humedales cercanos.", page: "p. 198", critica: "Es una relación de regulación ambiental, no de conexión física directa." },
   { s: "areas_protegidas", t: "humedales", tipo: "directa", dirigida: true, evidencia: "Las áreas protegidas incluyen la ronda de protección de los humedales.", page: "p. 200", critica: "La protección normativa no garantiza por sí sola el estado ecológico del humedal." },
   { s: "areas_resiliencia", t: "coberturas_vegetales", tipo: "directa", dirigida: true, evidencia: "Las áreas de resiliencia climática dependen de la conservación de coberturas vegetales.", page: "p. 201", critica: "La dependencia es ecológica; no incorpora el efecto de la urbanización sobre esas coberturas." },
   { s: "humedales", t: "rios", tipo: "directa", dirigida: true, evidencia: "Los humedales hacen parte del sistema hídrico junto con los ríos de la ciudad.", page: "p. 196", critica: "La relación no distingue temporada seca de temporada de lluvias, donde la intensidad cambia." },
@@ -352,7 +350,7 @@ const SITUACIONES = [
     id: "intervencion_vial", label: "Intervención vial", icon: "fa-road-barrier",
     desc: "Resalta la relación conflictiva entre una obra cercana y el humedal.",
     boost: ["humedales→servicios_empresariales"],
-    dim: ["reservas_forestales→humedales"],
+    dim: [],
   },
   {
     id: "uso_comunitario", label: "Uso comunitario", icon: "fa-people-group",
