@@ -166,17 +166,8 @@
       <div class="sumo-sim-card">
         <div class="sumo-canvas-wrap" id="sumoCanvasWrap">
           <canvas id="sumoNetCanvas"></canvas>
-          <canvas id="sumoEcologyCanvas"></canvas>
           <canvas id="sumoNoiseCanvas"></canvas>
           <canvas id="sumoVehCanvas"></canvas>
-          <div id="sumoEcologyDragSurface" aria-label="Arrastrar y dibujar humedales"></div>
-          <div class="sumo-pen-side-toolbar" aria-label="Herramientas para dibujar humedales">
-            <button type="button" class="sumo-btn" id="sumoPenToggle" title="Activar pluma"><i class="fa-solid fa-pen"></i></button>
-            <button type="button" class="sumo-btn" id="sumoPenUndo" title="Deshacer punto"><i class="fa-solid fa-rotate-left"></i></button>
-            <button type="button" class="sumo-btn" id="sumoPenClear" title="Borrar dibujos"><i class="fa-solid fa-trash"></i></button>
-            <button type="button" class="sumo-btn" id="sumoPenCopy" title="Copiar geometría"><i class="fa-solid fa-copy"></i></button>
-            <span>PLUMA<br><small>clics · doble clic para cerrar</small></span>
-          </div>
           <div class="sumo-sim-overlay" id="sumoStatus">Cargando red vial…</div>
         </div>
         <div class="sumo-sim-controls">
@@ -230,24 +221,6 @@
             <div class="noise-scale-swatch" style="background:rgba(230,74,25,.42)"></div><span>80–90</span>
             <div class="noise-scale-swatch" style="background:rgba(211,47,47,.42)"></div><span>&gt; 90 dB(A)</span>
           </div>
-          <div class="sumo-calib-panel">
-            <strong><i class="fa-solid fa-crosshairs"></i> Ajustar posición de humedales</strong>
-            <p>Arrastra la capa de humedales directamente sobre el mapa. Debajo verás el desplazamiento en metros; pulsa el botón de copiar para pegármelo. También puedes afinarlo con ΔX, ΔY, escala y rotación.</p>
-            <div class="noise-scale-row">
-              <label>ΔX (m) <input id="sumoCalibDx" type="number" step="1" value="0"></label>
-              <label>ΔY (m) <input id="sumoCalibDy" type="number" step="1" value="0"></label>
-              <label>Escala <input id="sumoCalibScale" type="number" min="0.5" max="1.5" step="0.001" value="1"></label>
-              <label>Rotación (°) <input id="sumoCalibRotation" type="number" step="0.1" value="0"></label>
-              <button type="button" class="sumo-btn" id="sumoCalibApply" title="Guardar ajuste"><i class="fa-solid fa-check"></i></button>
-              <button type="button" class="sumo-btn" id="sumoCalibReset" title="Restablecer"><i class="fa-solid fa-rotate-left"></i></button>
-              <button type="button" class="sumo-btn" id="sumoCalibCopy" title="Copiar coordenadas"><i class="fa-solid fa-copy"></i></button>
-            </div>
-            <span id="sumoCalibReadout" class="noise-formula-note">Desplazamiento actual: ΔX = 0.0 m · ΔY = 0.0 m</span>
-            <span id="sumoCalibStatus" class="noise-formula-note">Ajuste inicial: sin desplazamiento.</span>
-            <span id="sumoPenStatus" class="noise-formula-note">Activa la pluma lateral para dibujar un contorno.</span>
-            <p class="sumo-pen-instructions"><strong>Después de dibujar:</strong> termina con doble clic, revisa la forma y las coordenadas en el cuadro, pulsa <strong>Copiar geometría</strong> y pégame aquí el contenido para dejar el humedal fijo en la página.</p>
-            <textarea id="sumoPenOutput" rows="5" spellcheck="false" placeholder="Aquí aparecerá la forma y su localización en coordenadas SUMO..."></textarea>
-          </div>
           <details class="noise-formula-details">
             <summary>Ver fórmula y reglas de cálculo</summary>
             <p><strong>Motor acústico real (CNOSSOS-EU)</strong> — implementado, pendiente solo de los coeficientes oficiales:</p>
@@ -280,6 +253,5 @@
 
 <script src="modulo-08.js"></script>
 <script src="modulo-08-sumo.js"></script>
-<script src="modulo-08-ecology.js?v=20260901-pen3"></script>
 </body>
 </html>
