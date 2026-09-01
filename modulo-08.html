@@ -170,6 +170,13 @@
           <canvas id="sumoNoiseCanvas"></canvas>
           <canvas id="sumoVehCanvas"></canvas>
           <div id="sumoEcologyDragSurface" aria-label="Arrastrar y dibujar humedales"></div>
+          <div class="sumo-pen-side-toolbar" aria-label="Herramientas para dibujar humedales">
+            <button type="button" class="sumo-btn" id="sumoPenToggle" title="Activar pluma"><i class="fa-solid fa-pen"></i></button>
+            <button type="button" class="sumo-btn" id="sumoPenUndo" title="Deshacer punto"><i class="fa-solid fa-rotate-left"></i></button>
+            <button type="button" class="sumo-btn" id="sumoPenClear" title="Borrar dibujos"><i class="fa-solid fa-trash"></i></button>
+            <button type="button" class="sumo-btn" id="sumoPenCopy" title="Copiar geometría"><i class="fa-solid fa-copy"></i></button>
+            <span>PLUMA<br><small>clics · doble clic para cerrar</small></span>
+          </div>
           <div class="sumo-sim-overlay" id="sumoStatus">Cargando red vial…</div>
         </div>
         <div class="sumo-sim-controls">
@@ -237,13 +244,8 @@
             </div>
             <span id="sumoCalibReadout" class="noise-formula-note">Desplazamiento actual: ΔX = 0.0 m · ΔY = 0.0 m</span>
             <span id="sumoCalibStatus" class="noise-formula-note">Ajuste inicial: sin desplazamiento.</span>
-            <div class="sumo-pen-toolbar">
-              <button type="button" class="sumo-btn" id="sumoPenToggle" title="Activar pluma"><i class="fa-solid fa-pen"></i></button>
-              <button type="button" class="sumo-btn" id="sumoPenUndo" title="Deshacer punto"><i class="fa-solid fa-rotate-left"></i></button>
-              <button type="button" class="sumo-btn" id="sumoPenClear" title="Borrar dibujos"><i class="fa-solid fa-trash"></i></button>
-              <button type="button" class="sumo-btn" id="sumoPenCopy" title="Copiar geometría"><i class="fa-solid fa-copy"></i></button>
-              <span id="sumoPenStatus" class="noise-formula-note">Activa la pluma para dibujar un contorno.</span>
-            </div>
+            <span id="sumoPenStatus" class="noise-formula-note">Activa la pluma lateral para dibujar un contorno.</span>
+            <p class="sumo-pen-instructions"><strong>Después de dibujar:</strong> termina con doble clic, revisa la forma y las coordenadas en el cuadro, pulsa <strong>Copiar geometría</strong> y pégame aquí el contenido para dejar el humedal fijo en la página.</p>
             <textarea id="sumoPenOutput" rows="5" spellcheck="false" placeholder="Aquí aparecerá la forma y su localización en coordenadas SUMO..."></textarea>
           </div>
           <details class="noise-formula-details">
