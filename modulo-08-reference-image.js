@@ -11,13 +11,13 @@
   let state = { x: 30, y: 30, scale: 1, opacity: .55 };
   let dragging = false, last = null;
   function apply() { img.style.left = `${state.x}px`; img.style.top = `${state.y}px`; img.style.transform = `scale(${state.scale})`; img.style.opacity = state.opacity; if (scaleInput) scaleInput.value = state.scale; if (opacityInput) opacityInput.value = state.opacity; }
-  function setMode(mode) { const move = mode === 'image'; surface.style.pointerEvents = move ? 'auto' : 'none'; if (freeDraw) freeDraw.style.pointerEvents = move ? 'none' : 'auto'; document.getElementById('sumoImageMode')?.classList.toggle('active', move); document.getElementById('sumoPenToggle')?.classList.toggle('active', !move); const s = document.getElementById('sumoImageStatus'); if (s) s.textContent = move ? 'Modo imagen: arrástrala sobre el plano.' : 'Modo dibujo: ahora puedes calcar el contorno.'; }
+  function setMode(mode) { const move = mode === 'image'; surface.style.pointerEvents = 'none'; if (freeDraw) freeDraw.style.pointerEvents = 'auto'; document.getElementById('sumoImageMode')?.classList.toggle('active', move); document.getElementById('sumoPenToggle')?.classList.toggle('active', !move); const s = document.getElementById('sumoImageStatus'); if (s) s.textContent = move ? 'Modo imagen: arrástrala sobre el plano.' : 'Modo dibujo: ahora puedes calcar el contorno.'; }
   function loadImage(f) { if (!f || !f.type.startsWith('image/')) return; const reader = new FileReader(); reader.onload = e => { img.src = e.target.result; img.hidden = false; surface.hidden = false; setMode('image'); apply(); const s = document.getElementById('sumoImageStatus'); if (s) s.textContent = 'Imagen pegada/cargada. Pulsa mover imagen y arrástrala.'; }; reader.readAsDataURL(f); }
   file.addEventListener('change', () => loadImage(file.files?.[0]));
   document.addEventListener('paste', event => { const item = [...(event.clipboardData?.items || [])].find(i => i.type.startsWith('image/')); if (!item) return; event.preventDefault(); loadImage(item.getAsFile()); });
-  surface.addEventListener('pointerdown', e => { dragging = true; last = { x: e.clientX, y: e.clientY }; surface.setPointerCapture(e.pointerId); });
-  surface.addEventListener('pointermove', e => { if (!dragging || !last) return; state.x += e.clientX - last.x; state.y += e.clientY - last.y; last = { x: e.clientX, y: e.clientY }; apply(); });
-  surface.addEventListener('pointerup', () => { dragging = false; last = null; }); surface.addEventListener('pointercancel', () => { dragging = false; last = null; });
+  img.addEventListener('pointerdown', e => { e.preventDefault(); dragging = true; last = { x: e.clientX, y: e.clientY }; img.setPointerCapture(e.pointerId); img.style.cursor = 'grabbing'; });
+  img.addEventListener('pointermove', e => { if (!dragging || !last) return; e.preventDefault(); state.x += e.clientX - last.x; state.y += e.clientY - last.y; last = { x: e.clientX, y: e.clientY }; apply(); });
+  img.addEventListener('pointerup', () => { dragging = false; last = null; img.style.cursor = 'move'; }); img.addEventListener('pointercancel', () => { dragging = false; last = null; img.style.cursor = 'move'; });
   scaleInput?.addEventListener('input', () => { state.scale = Number(scaleInput.value); apply(); });
   opacityInput?.addEventListener('input', () => { state.opacity = Number(opacityInput.value); apply(); });
   document.getElementById('sumoImageMode')?.addEventListener('click', () => setMode('image'));
