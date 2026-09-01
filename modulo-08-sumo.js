@@ -91,7 +91,7 @@
     // en el navegador — el usuario la acomoda a ojo, no se recalcula la
     // geografía sola para no "distorsionar" la malla.
     const TREE_ADJUST_KEY = "sumoModule8TreeAdjust";
-    let treeAdjust = { dx: 0, dy: 0, scale: 1 };
+    let treeAdjust = { dx: 0, dy: 0, scale: 1, rotation: 0 };
     try { treeAdjust = { ...treeAdjust, ...JSON.parse(localStorage.getItem(TREE_ADJUST_KEY) || "{}") }; } catch (_) {}
     let timesteps = [];      // [{ time, vehicles:[{id,x,y,angle}] }]
     let view = { scale: 1, offX: 0, offY: 0 }; // mundo -> pantalla
@@ -758,11 +758,20 @@
     }
 
     // Posición en pantalla de un árbol, incluyendo el ajuste manual
-    // (mover/escalar) — se usa tanto para dibujar como para detectar clics.
+    // (mover/escalar/girar) — se usa tanto para dibujar como para
+    // detectar clics. La rotación existe porque la cuadrícula nativa de
+    // SUMO viene inclinada respecto al norte verdadero, y la conversión
+    // lon/lat->local de los árboles no reproduce esa misma inclinación —
+    // por eso, sin esto, los árboles quedaban girados respecto a las vías.
     function treeToScreen(tx, ty, w, h) {
       let [sx, sy] = toScreen(tx, ty);
-      sx = (sx - w / 2) * treeAdjust.scale + w / 2 + treeAdjust.dx;
-      sy = (sy - h / 2) * treeAdjust.scale + h / 2 + treeAdjust.dy;
+      let dx = sx - w / 2, dy = sy - h / 2;
+      const rad = (treeAdjust.rotation * Math.PI) / 180;
+      const cos = Math.cos(rad), sin = Math.sin(rad);
+      const rx = (dx * cos - dy * sin) * treeAdjust.scale;
+      const ry = (dx * sin + dy * cos) * treeAdjust.scale;
+      sx = rx + w / 2 + treeAdjust.dx;
+      sy = ry + h / 2 + treeAdjust.dy;
       return [sx, sy];
     }
 
@@ -1136,14 +1145,16 @@
     // se recalcule sola la geografía y "distorsione" la malla.
     const treeAdjustBtn = document.getElementById("sumoTreeAdjustMode");
     const treeScaleInput = document.getElementById("sumoTreeScale");
+    const treeRotationInput = document.getElementById("sumoTreeRotation");
     const treeResetBtn = document.getElementById("sumoTreeReset");
     const treeCopyBtn = document.getElementById("sumoTreeCopy");
     const treeOutput = document.getElementById("sumoTreeOutput");
     const treeStatusEl = document.getElementById("sumoTreeStatus");
     if (treeScaleInput) treeScaleInput.value = treeAdjust.scale;
+    if (treeRotationInput) treeRotationInput.value = treeAdjust.rotation;
     function saveTreeAdjust() {
       try { localStorage.setItem(TREE_ADJUST_KEY, JSON.stringify(treeAdjust)); } catch (_) {}
-      if (treeOutput) treeOutput.value = `dx=${treeAdjust.dx.toFixed(1)}  dy=${treeAdjust.dy.toFixed(1)}  scale=${treeAdjust.scale.toFixed(3)}`;
+      if (treeOutput) treeOutput.value = `dx=${treeAdjust.dx.toFixed(1)}  dy=${treeAdjust.dy.toFixed(1)}  scale=${treeAdjust.scale.toFixed(3)}  rotation=${treeAdjust.rotation.toFixed(1)}`;
     }
     function redrawTrees() {
       const w = netCanvas.parentElement.clientWidth, h = netCanvas.parentElement.clientHeight;
@@ -1173,9 +1184,11 @@
     });
     window.addEventListener("pointerup", () => { treeMoving = false; });
     treeScaleInput?.addEventListener("input", () => { treeAdjust.scale = Number(treeScaleInput.value); redrawTrees(); });
+    treeRotationInput?.addEventListener("input", () => { treeAdjust.rotation = Number(treeRotationInput.value); redrawTrees(); });
     treeResetBtn?.addEventListener("click", () => {
-      treeAdjust = { dx: 0, dy: 0, scale: 1 };
+      treeAdjust = { dx: 0, dy: 0, scale: 1, rotation: 0 };
       if (treeScaleInput) treeScaleInput.value = 1;
+      if (treeRotationInput) treeRotationInput.value = 0;
       redrawTrees();
     });
     treeCopyBtn?.addEventListener("click", async () => {

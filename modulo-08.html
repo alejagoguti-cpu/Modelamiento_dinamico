@@ -204,6 +204,7 @@
           <button type="button" class="sumo-btn" id="sumoTreeAdjustMode" title="Mover árboles"><i class="fa-solid fa-arrows-up-down-left-right"></i></button>
           <button type="button" class="sumo-btn" id="sumoTreeReset" title="Restablecer posición"><i class="fa-solid fa-rotate-left"></i></button>
           <label>Escala <input id="sumoTreeScale" type="range" min="0.5" max="2" step="0.01" value="1"></label>
+          <label>Rotación <input id="sumoTreeRotation" type="range" min="-45" max="45" step="0.5" value="0"></label>
           <span id="sumoTreeStatus">Pulsa mover árboles y arrástralos sobre el mapa hasta que calcen con las calles.</span>
           <div class="sumo-reference-coords">
             <button type="button" class="sumo-btn" id="sumoTreeCopy" title="Copiar ajuste de árboles"><i class="fa-solid fa-copy"></i> Copiar ajuste de árboles</button>
@@ -298,7 +299,7 @@
 </div>
 
 <script src="modulo-08.js"></script>
-<script src="modulo-08-sumo.js?v=trees-adjustable-v12"></script>
+<script src="modulo-08-sumo.js?v=trees-rotation-v13"></script>
 <script src="modulo-08-free-draw.js?v=trees-v3"></script>
 <script src="modulo-08-reference-image.js?v=20260901-image3-scalefix"></script>
 </body>
