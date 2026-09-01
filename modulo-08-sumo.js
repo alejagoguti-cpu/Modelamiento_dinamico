@@ -203,9 +203,12 @@
           data[i + 3] = 0; // sin tráfico cerca: transparente, se ve el mapa
           continue;
         }
-        // Curva suave para que la zona con un solo vehículo cercano ya
-        // se note (no solo los cruces con muchos autos encimados).
-        const t = Math.min(1, Math.pow(intensity, 0.55));
+        // Antes la curva (exponente 0.55) empujaba los valores hacia arriba
+        // muy rápido, así que con varios vehículos ya todo llegaba a rojo.
+        // Con exponente >1 se estira la escala: hace falta una acumulación
+        // mucho más alta para llegar a rojo, dejando ver amarillos y
+        // naranjas en niveles medios de tráfico.
+        const t = Math.min(1, Math.pow(intensity, 2.4));
         const [r, g, b] = noiseColorAt(t);
         data[i] = r; data[i + 1] = g; data[i + 2] = b;
         data[i + 3] = Math.round(NOISE_ALPHA * 255); // <- SIEMPRE el mismo alpha, nunca varía
