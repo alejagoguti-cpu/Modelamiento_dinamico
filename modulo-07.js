@@ -2798,49 +2798,60 @@
         if (button.classList.contains("map-phenomenon-node")) return; // tiene su propio manejador, más abajo
         const row = rows[Number(button.dataset.mapNetworkIndex)];
         if (!row) return;
-        DINAMICA_SOUND.play(button.dataset.soundId || row.id); button.classList.remove("sound-playing"); void button.offsetWidth; button.classList.add("sound-playing"); window.setTimeout(() => button.classList.remove("sound-playing"), 900);
-        target.querySelectorAll(".map-network-node").forEach((node) => node.classList.toggle("selected", node === button));
         target.querySelectorAll(".subsystem-components, .subsystem-purpose-panel, .subsystem-diagram-panel, .map-network-detail, .submodel-failure-popup").forEach((node) => node.remove());
         const color = row.color || colors[Number(button.dataset.mapNetworkIndex)];
-        const partsPurpose = row.partsPurpose || "Sí";
-        const totalPurpose = row.totalPurpose || "Sí";
-        const partsWhy = row.partsWhy || `Las partes del sistema se analizan en relación con sus funciones y comportamientos dentro del territorio.`;
-        const totalWhy = row.totalWhy || `La totalidad se analiza por las relaciones que produce entre sus partes y sus efectos en el territorio de Bogotá.`;
-        const components = document.createElement("div");
-        components.className = "subsystem-components active map-components-panel";
-        components.style.setProperty("--bubble-color", color);
-        const miniNetworkItems = row.dynamics || row.components;
-        const miniNetworkHtml = miniNetworkItems
-          ? `<p class="panel-scope-label">CICLOS Y DINÁMICAS DE ESTE SUBSISTEMA</p>${buildMiniNetworkSvg(miniNetworkItems, color, row.id)}<button type="button" class="see-full-network-btn" id="seeFullNetworkBtn"><i class="fa-solid fa-diagram-project"></i> Ver toda la red junta</button>`
-          : `<p class="panel-scope-label">SISTEMAS QUE ARTICULA</p><p class="panel-specific-reading">${row.parts || ""}</p>`;
-        components.innerHTML = `<div class="subsystem-panel-heading"><strong><i class="fa-solid fa-arrows-rotate"></i> DINÁMICA DEL TERRITORIO</strong><button type="button" class="subsystem-panel-close" aria-label="Cerrar panel de dinámica"><i class="fa-solid fa-xmark"></i></button></div>${miniNetworkHtml}<p class="panel-scope-label">CÓMO CAMBIA EN EL TIEMPO</p><p class="panel-specific-reading">${row.process}</p>`;
-        const purpose = document.createElement("aside");
-        purpose.className = "subsystem-purpose-panel active map-purpose-panel";
-        purpose.style.setProperty("--bubble-color", color);
-        purpose.innerHTML = `<div class="subsystem-panel-heading"><strong>${label(row)}</strong><button type="button" class="subsystem-panel-close" aria-label="Cerrar panel de propósito"><i class="fa-solid fa-xmark"></i></button></div><p class="panel-scope-label">ANÁLISIS GENERAL · TABLA DE PROPÓSITO</p><h4>¿Las partes tienen propósito propio?</h4><p><b>${partsPurpose}</b> · ${partsWhy}</p><h4>¿La totalidad tiene propósito propio?</h4><p><b>${totalPurpose}</b> · ${totalWhy}</p><h4>Por ende, la categoría es:</h4><b class="purpose-category">${row.category}</b><h4>Qué cambia en el tiempo</h4><p>${row.process}</p>`;
-        target.append(components);
-        target.append(purpose);
-        components.querySelector("#seeFullNetworkBtn")?.addEventListener("click", (event) => { event.stopPropagation(); showCombinedNetworkModal(); });
+
+        // El popup de escenario de falla va PRIMERO y en su propio bloque
+        // protegido: así, sin importar si algo más abajo en este mismo
+        // clic falla, el popup siempre se intenta mostrar.
         let failurePopup = null;
-        const closePanels = (event) => { event?.stopPropagation(); components.remove(); purpose.remove(); failurePopup?.remove(); clearSubsystemPoints(); button.classList.remove("selected"); };
-        components.querySelector(".subsystem-panel-close")?.addEventListener("click", closePanels);
-        purpose.querySelector(".subsystem-panel-close")?.addEventListener("click", closePanels);
-        if (systems && withFlows) renderSubsystemPoints(subsystemData[Number(button.dataset.mapNetworkIndex)]);
         if (!systems) {
-          // Al hacer clic en un submodelo: un popup aparte con UN ejemplo
-          // concreto de cuándo ese submodelo colapsaría al aplicarlo al
-          // territorio (no la lista completa — esa está en "Ver escenarios
-          // de falla" — aquí solo un ejemplo rápido).
-          const scenarioSet = submodelFailureScenarios[Number(button.dataset.mapNetworkIndex)];
-          if (scenarioSet) {
-            failurePopup = document.createElement("div");
-            failurePopup.className = "submodel-failure-popup";
-            failurePopup.style.setProperty("--bubble-color", color);
-            const iconsHtml = (scenarioSet.shortIcons || []).map((ic) => `<i class="fa-solid ${ic} submodel-failure-icon"></i>`).join("");
-            failurePopup.innerHTML = `<button type="button" class="submodel-failure-close" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button><div class="submodel-failure-icons">${iconsHtml}</div><span>“${scenarioSet.shortQuote}”</span>`;
-            target.append(failurePopup);
-            failurePopup.querySelector(".submodel-failure-close")?.addEventListener("click", (event) => { event.stopPropagation(); failurePopup.remove(); });
+          try {
+            const scenarioSet = submodelFailureScenarios[Number(button.dataset.mapNetworkIndex)];
+            if (scenarioSet) {
+              failurePopup = document.createElement("div");
+              failurePopup.className = "submodel-failure-popup";
+              failurePopup.style.setProperty("--bubble-color", color);
+              const iconsHtml = (scenarioSet.shortIcons || []).map((ic) => `<i class="fa-solid ${ic} submodel-failure-icon"></i>`).join("");
+              failurePopup.innerHTML = `<button type="button" class="submodel-failure-close" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button><div class="submodel-failure-icons">${iconsHtml}</div><span>“${scenarioSet.shortQuote}”</span>`;
+              target.append(failurePopup);
+              failurePopup.querySelector(".submodel-failure-close")?.addEventListener("click", (event) => { event.stopPropagation(); failurePopup.remove(); });
+            }
+          } catch (err) {
+            console.error("No se pudo mostrar el popup de escenario de falla:", err);
           }
+        }
+
+        try {
+          DINAMICA_SOUND.play(button.dataset.soundId || row.id); button.classList.remove("sound-playing"); void button.offsetWidth; button.classList.add("sound-playing"); window.setTimeout(() => button.classList.remove("sound-playing"), 900);
+        } catch (err) { console.error("Error de sonido:", err); }
+        target.querySelectorAll(".map-network-node").forEach((node) => node.classList.toggle("selected", node === button));
+        try {
+          const partsPurpose = row.partsPurpose || "Sí";
+          const totalPurpose = row.totalPurpose || "Sí";
+          const partsWhy = row.partsWhy || `Las partes del sistema se analizan en relación con sus funciones y comportamientos dentro del territorio.`;
+          const totalWhy = row.totalWhy || `La totalidad se analiza por las relaciones que produce entre sus partes y sus efectos en el territorio de Bogotá.`;
+          const components = document.createElement("div");
+          components.className = "subsystem-components active map-components-panel";
+          components.style.setProperty("--bubble-color", color);
+          const miniNetworkItems = row.dynamics || row.components;
+          const miniNetworkHtml = miniNetworkItems
+            ? `<p class="panel-scope-label">CICLOS Y DINÁMICAS DE ESTE SUBSISTEMA</p>${buildMiniNetworkSvg(miniNetworkItems, color, row.id)}<button type="button" class="see-full-network-btn" id="seeFullNetworkBtn"><i class="fa-solid fa-diagram-project"></i> Ver toda la red junta</button>`
+            : `<p class="panel-scope-label">SISTEMAS QUE ARTICULA</p><p class="panel-specific-reading">${row.parts || ""}</p>`;
+          components.innerHTML = `<div class="subsystem-panel-heading"><strong><i class="fa-solid fa-arrows-rotate"></i> DINÁMICA DEL TERRITORIO</strong><button type="button" class="subsystem-panel-close" aria-label="Cerrar panel de dinámica"><i class="fa-solid fa-xmark"></i></button></div>${miniNetworkHtml}<p class="panel-scope-label">CÓMO CAMBIA EN EL TIEMPO</p><p class="panel-specific-reading">${row.process}</p>`;
+          const purpose = document.createElement("aside");
+          purpose.className = "subsystem-purpose-panel active map-purpose-panel";
+          purpose.style.setProperty("--bubble-color", color);
+          purpose.innerHTML = `<div class="subsystem-panel-heading"><strong>${label(row)}</strong><button type="button" class="subsystem-panel-close" aria-label="Cerrar panel de propósito"><i class="fa-solid fa-xmark"></i></button></div><p class="panel-scope-label">ANÁLISIS GENERAL · TABLA DE PROPÓSITO</p><h4>¿Las partes tienen propósito propio?</h4><p><b>${partsPurpose}</b> · ${partsWhy}</p><h4>¿La totalidad tiene propósito propio?</h4><p><b>${totalPurpose}</b> · ${totalWhy}</p><h4>Por ende, la categoría es:</h4><b class="purpose-category">${row.category}</b><h4>Qué cambia en el tiempo</h4><p>${row.process}</p>`;
+          target.append(components);
+          target.append(purpose);
+          components.querySelector("#seeFullNetworkBtn")?.addEventListener("click", (event) => { event.stopPropagation(); showCombinedNetworkModal(); });
+          const closePanels = (event) => { event?.stopPropagation(); components.remove(); purpose.remove(); failurePopup?.remove(); clearSubsystemPoints(); button.classList.remove("selected"); };
+          components.querySelector(".subsystem-panel-close")?.addEventListener("click", closePanels);
+          purpose.querySelector(".subsystem-panel-close")?.addEventListener("click", closePanels);
+          if (systems && withFlows) renderSubsystemPoints(subsystemData[Number(button.dataset.mapNetworkIndex)]);
+        } catch (err) {
+          console.error("Error mostrando los paneles de dinámica/propósito:", err);
         }
       }));
       if (hideAllSystemBubbles) {
