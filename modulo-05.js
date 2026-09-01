@@ -211,23 +211,23 @@ function setupMapLibreDriveBridge() {
     if (!container || state.map) return;
 
     try {
-            const mapStyle = {
+                  const mapStyle = {
         version: 8,
         sources: {
-          "esri-dark-base": {
+          "osm-dark-base": {
             type: "raster",
             tiles: [
-              "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}"
+              "https://tile.openstreetmap.org/{z}/{x}/{y}.png"
             ],
             tileSize: 256,
-            attribution: '&copy; Esri, HERE, Garmin, &copy; OpenStreetMap contributors'
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           }
         },
         layers: [
           {
-            id: "esri-dark-layer",
+            id: "osm-dark-layer",
             type: "raster",
-            source: "esri-dark-base",
+            source: "osm-dark-base",
             minzoom: 0,
             maxzoom: 20
           }

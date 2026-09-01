@@ -11,8 +11,8 @@
   <link href="https://unpkg.com/maplibre-gl@6.5.0/dist/maplibre-gl.css" rel="stylesheet">
   <link rel="stylesheet" href="site-theme.css?v=20260823">
   <link rel="stylesheet" href="navigation-unified.css?v=20260824">
-  <link rel="stylesheet" href="modulo-05.css?v=20260901_esri_dark_clean">
-  <link rel="stylesheet" href="modulo-05-polish.css?v=20260901_corner_popup">
+  <link rel="stylesheet" href="modulo-05.css?v=20260901_no_scroll_osm_v1">
+  <link rel="stylesheet" href="modulo-05-polish.css?v=20260901_no_scroll_perfect">
 </head>
 <body class="scale-natural-theme">
   <div class="app">
@@ -54,21 +54,21 @@
           <span class="status-dot"></span>
           <span id="connectionLabel">Cartografía real conectada</span>
           <span class="separator">·</span>
-          <span>MapLibre GL</span>
+          <span>OpenStreetMap Dark</span>
           <span class="separator">·</span>
-          <span class="topbar-help">33 UPLs de Bogotá <i class="fa-solid fa-circle-nodes"></i></span>
+          <span class="topbar-help">33 UPLs <i class="fa-solid fa-circle-nodes"></i></span>
         </div>
       </header>
 
-      <!-- CONTENIDO DEL NAVEGADOR MULTIESCALAR -->
+      <!-- CONTENIDO DEL NAVEGADOR MULTIESCALAR (100% SIN SCROLL) -->
       <div class="workspace">
         
         <!-- PANEL LATERAL DE CONTROL COMPACTO -->
         <section class="control-panel" aria-label="Controles del navegador multiescalar">
           <div class="panel-hero">
             <div class="eyebrow"><span class="eyebrow-line"></span> BOGOTÁ VIVA · MÓDULO 05</div>
-            <h1>Navegador<br><span class="gradient-text">Multiescalar</span></h1>
-            <p class="panel-desc">Exploración territorial del POT en cuatro dimensiones dinámicas de análisis.</p>
+            <h1>Navegador <span class="gradient-text">Multiescalar</span></h1>
+            <p class="panel-desc">Exploración territorial en 4 dimensiones dinámicas.</p>
           </div>
 
           <!-- 1. SELECTOR DE LAS 4 ESCALAS -->
@@ -113,7 +113,7 @@
           <div class="panel-block">
             <div class="block-header">
               <span class="step-badge">2</span>
-              <span class="block-title">UNIDAD DE PLANEAMIENTO LOCAL (UPL)</span>
+              <span class="block-title">UNIDAD DE PLANEAMIENTO (UPL)</span>
             </div>
             <div class="upl-select-wrap">
               <i class="fa-solid fa-location-crosshairs upl-select-icon"></i>
@@ -124,7 +124,7 @@
                 <span class="upl-pill" id="uplPill">UPL 13</span>
                 <span class="upl-localidad" id="uplLocalidad">Kennedy</span>
               </div>
-              <p id="uplTag" class="upl-tag">Alta viabilidad — Línea 1 del Metro, Manzana del Cuidado y parque metropolitano.</p>
+              <p id="uplTag" class="upl-tag">Alta viabilidad — Metro L1, Manzana del Cuidado y parque metropolitano.</p>
             </div>
           </div>
 
@@ -138,40 +138,36 @@
               <label class="layer-toggle-item">
                 <input type="checkbox" id="layerToggleRoads" checked>
                 <span class="toggle-indicator"></span>
-                <span class="layer-name"><i class="fa-solid fa-road"></i> Red vial arterial</span>
+                <span class="layer-name"><i class="fa-solid fa-road"></i> Red vial</span>
               </label>
               <label class="layer-toggle-item">
                 <input type="checkbox" id="layerTogglePlaces" checked>
                 <span class="toggle-indicator"></span>
-                <span class="layer-name" id="layerPlacesLabel"><i class="fa-solid fa-circle-dot"></i> Nodos de escala</span>
+                <span class="layer-name" id="layerPlacesLabel"><i class="fa-solid fa-circle-dot"></i> Nodos escala</span>
               </label>
               <label class="layer-toggle-item">
                 <input type="checkbox" id="layerToggleUplBoundary" checked>
                 <span class="toggle-indicator"></span>
-                <span class="layer-name"><i class="fa-solid fa-draw-polygon"></i> Perímetro UPL</span>
+                <span class="layer-name"><i class="fa-solid fa-draw-polygon"></i> Perímetro</span>
               </label>
               <label class="layer-toggle-item">
                 <input type="checkbox" id="layerToggleTransit" checked>
                 <span class="toggle-indicator"></span>
-                <span class="layer-name"><i class="fa-solid fa-train-subway"></i> Corredores de transporte</span>
+                <span class="layer-name"><i class="fa-solid fa-train-subway"></i> Transporte</span>
               </label>
             </div>
           </div>
 
-          <!-- BOTÓN PARA ABRIR / VER POPUP DE LECTURA SISTÉMICA -->
-          <div class="panel-block">
+          <!-- 4. LECTURA SISTÉMICA Y EXPORTACIÓN -->
+          <div class="panel-block panel-actions-block">
             <button id="btnToggleDiagnosticPopup" class="btn-trigger-diagnostic" type="button">
               <i class="fa-solid fa-brain"></i>
-              <span>Ver Lectura Sistémica POT</span>
+              <span>Lectura Sistémica POT</span>
             </button>
-          </div>
-
-          <!-- UTILIDADES DE EXPORTACIÓN Y VISTA -->
-          <div class="panel-block export-tools-block">
             <div class="export-actions-row">
               <button id="exportVisibleGeojson" class="btn-export" type="button" title="Exportar datos visibles"><i class="fa-solid fa-download"></i> GeoJSON</button>
               <button id="exportVisibleCsv" class="btn-export" type="button" title="Exportar tabla CSV"><i class="fa-solid fa-file-csv"></i> CSV</button>
-              <button id="btnCenterBogota" class="btn-export" type="button" title="Restablecer vista general de Bogotá"><i class="fa-solid fa-crosshairs"></i> Encuadrar</button>
+              <button id="btnCenterBogota" class="btn-export" type="button" title="Restablecer vista general"><i class="fa-solid fa-crosshairs"></i> Encuadrar</button>
             </div>
           </div>
 
@@ -199,7 +195,6 @@
             <div class="diagnostic-card" id="scaleDiagnosticCard">
               <div class="diagnostic-card-top">
                 <div class="diagnostic-scale-header">
-                  <span class="scale-dot"></span>
                   <span class="diagnostic-badge"><i class="fa-solid fa-brain"></i> LECTURA SISTÉMICA POT</span>
                   <h4 id="diagScaleTitle">Dimensión Natural</h4>
                 </div>
@@ -235,7 +230,7 @@
           <!-- LEYENDA DINÁMICA DEL MAPA -->
           <div class="map-legend" id="mapLegend">
             <span class="legend-item"><i class="legend-dot scale-primary-dot"></i> Nodos temáticos</span>
-            <span class="legend-item"><i class="legend-line scale-road-line"></i> Red vial / Conectores</span>
+            <span class="legend-item"><i class="legend-line scale-road-line"></i> Red vial</span>
             <span class="legend-item"><i class="legend-poly scale-upl-poly"></i> Perímetro UPL</span>
             <span id="roadLevel" class="legend-item road-level">Meso · 33 UPLs</span>
           </div>
@@ -282,7 +277,7 @@
 
           <!-- NOTA DE ATRIBUCIÓN -->
           <div class="map-attribution-note">
-            Datos de cartografía: <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap</a> · CARTO Dark Matter · Modelo Multiescalar RAPOT
+            Cartografía: <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap</a> · Modelo Multiescalar RAPOT
           </div>
         </section>
 
@@ -332,9 +327,8 @@
     window.maplibregl = maplibregl;
     window.dispatchEvent(new Event("maplibre-ready"));
   </script>
-  <script src="modulo-05.js?v=20260901_esri_dark_clean"></script>
-  <script src="modulo-05-drive.js?v=20260901_corner_popup"></script>
+  <script src="modulo-05.js?v=20260901_no_scroll_osm_v1"></script>
+  <script src="modulo-05-drive.js?v=20260901_no_scroll_perfect"></script>
 </body>
 </html>
-
 
