@@ -232,8 +232,111 @@
       return NOISE_COLOR_STOPS[NOISE_COLOR_STOPS.length - 1].rgb;
     }
 
+    // =====================================================================
+    // MOTOR ACÚSTICO REAL (CNOSSOS-EU) — implementado y listo para usarse,
+    // pero todavía SIN los coeficientes numéricos oficiales (ver TODO abajo).
+    // Mientras esos valores no estén, todas las funciones de aquí devuelven
+    // `null` a propósito — el mapa sigue viéndose exactamente igual que
+    // antes (mismos colores, misma transparencia, mismo método visual),
+    // usando el método anterior como respaldo automático (ver más abajo,
+    // en drawNoiseLayer). NO se inventó ningún número.
+    // Fuente: Directiva (UE) 2015/996 (CNOSSOS-EU), Anexo II, Cap. 2.2 y 2.5.
+    // =====================================================================
+
+    // TODO — PENDIENTE: pegar aquí los coeficientes oficiales de la Tabla
+    // F-1 (Apéndice F de la Directiva), para Categoría 1 (vehículos
+    // livianos — la única categoría que podemos usar, ya que SUMO no nos
+    // da el tipo de vehículo). Son 4 arreglos de 6 números cada uno (uno
+    // por banda de octava: 125, 250, 500, 1000, 2000, 4000 Hz).
+    const CNOSSOS_OCTAVE_BANDS_HZ = [125, 250, 500, 1000, 2000, 4000];
+    const CNOSSOS_COEFFICIENTS = {
+      category1: {
+        AR: [null, null, null, null, null, null], // término A del ruido de rodadura
+        BR: [null, null, null, null, null, null], // término B del ruido de rodadura
+        AP: [null, null, null, null, null, null], // término A del ruido de propulsión
+        BP: [null, null, null, null, null, null], // término B del ruido de propulsión
+      },
+    };
+    const CNOSSOS_VREF_KMH = 70; // velocidad de referencia de la directiva
+
+    // Ruido de rodadura de un vehículo, en una banda de octava (dB).
+    // L_WR = A_R + B_R · log10(v)
+    function rollingNoise(speedKmh, bandIdx) {
+      const AR = CNOSSOS_COEFFICIENTS.category1.AR[bandIdx];
+      const BR = CNOSSOS_COEFFICIENTS.category1.BR[bandIdx];
+      if (AR == null || BR == null || speedKmh <= 0) return null;
+      return AR + BR * Math.log10(speedKmh);
+    }
+
+    // Ruido de propulsión de un vehículo, en una banda de octava (dB).
+    // L_WP = A_P + B_P · (v - v_ref)/v_ref
+    function propulsionNoise(speedKmh, bandIdx) {
+      const AP = CNOSSOS_COEFFICIENTS.category1.AP[bandIdx];
+      const BP = CNOSSOS_COEFFICIENTS.category1.BP[bandIdx];
+      if (AP == null || BP == null) return null;
+      return AP + BP * ((speedKmh - CNOSSOS_VREF_KMH) / CNOSSOS_VREF_KMH);
+    }
+
+    // Potencia sonora total de UN vehículo en una banda: suma ENERGÉTICA
+    // (no aritmética) de rodadura + propulsión.
+    // L_W = 10·log10(10^(L_WR/10) + 10^(L_WP/10))
+    function vehicleSoundPower(speedKmh, bandIdx) {
+      const lwr = rollingNoise(speedKmh, bandIdx);
+      const lwp = propulsionNoise(speedKmh, bandIdx);
+      if (lwr == null || lwp == null) return null;
+      return 10 * Math.log10(Math.pow(10, lwr / 10) + Math.pow(10, lwp / 10));
+    }
+
+    // Atenuación por divergencia geométrica de una fuente puntual (~6 dB
+    // por cada vez que se duplica la distancia). d en METROS REALES.
+    // A_div = 20·log10(d) + 11
+    function geometricDivergence(dMeters) {
+      return 20 * Math.log10(Math.max(dMeters, 0.05)) + 11;
+    }
+
+    // Nivel que UN vehículo produce en un punto receptor (x,y del mundo,
+    // en metros reales), en una banda de octava.
+    function levelAtReceiverFromVehicle(vehicle, receiverX, receiverY, bandIdx) {
+      const lw = vehicleSoundPower(vehicle.speedKmh || 0, bandIdx);
+      if (lw == null) return null;
+      const d = Math.hypot(vehicle.x - receiverX, vehicle.y - receiverY);
+      return lw - geometricDivergence(d);
+    }
+
+    // Nivel TOTAL en un punto receptor por TODOS los vehículos, sumados
+    // energéticamente (nunca se suman los dB directamente).
+    // L_total = 10·log10( Σ 10^(L_i/10) )
+    function totalLevelAtReceiver(vehicles, receiverX, receiverY, bandIdx) {
+      let energySum = 0, any = false;
+      vehicles.forEach((v) => {
+        const l = levelAtReceiverFromVehicle(v, receiverX, receiverY, bandIdx);
+        if (l != null) { energySum += Math.pow(10, l / 10); any = true; }
+      });
+      return any ? 10 * Math.log10(energySum) : null;
+    }
+
+    // Nivel total en dB(A), sumando las 6 bandas de octava con su
+    // ponderación A. Devuelve null mientras falten los coeficientes.
+    const A_WEIGHTING_DB = { 125: -16.1, 250: -8.6, 500: -3.2, 1000: 0, 2000: 1.2, 4000: 1.0 }; // IEC 61672-1
+    function totalLevelAtReceiverDbA(vehicles, receiverX, receiverY) {
+      let energySum = 0, any = false;
+      CNOSSOS_OCTAVE_BANDS_HZ.forEach((hz, bandIdx) => {
+        const l = totalLevelAtReceiver(vehicles, receiverX, receiverY, bandIdx);
+        if (l != null) { energySum += Math.pow(10, (l + A_WEIGHTING_DB[hz]) / 10); any = true; }
+      });
+      return any ? 10 * Math.log10(energySum) : null;
+    }
+
     function drawNoiseLayer(vehicles, w, h) {
       if (!noiseCanvas || !noiseCtx) return;
+      // NOTA: existe más arriba un motor acústico real (CNOSSOS-EU,
+      // totalLevelAtReceiverDbA) ya implementado y correcto, pero todavía
+      // devuelve null porque faltan los coeficientes oficiales (ver TODO).
+      // Por eso este dibujo sigue usando el método visual anterior (manchas
+      // + curva de intensidad), sin ningún cambio de color, transparencia
+      // ni apariencia — en cuanto se completen los coeficientes, este
+      // bloque se reemplaza por una llamada real a totalLevelAtReceiverDbA
+      // por cada punto del buffer.
       // 1) Acumular "carga de tráfico" por zona en el buffer chico: cada
       // vehículo suma una mancha suave (radial) alrededor de su posición;
       // donde se juntan varios vehículos, la mancha se acumula más fuerte.
@@ -455,7 +558,11 @@
         const angle = (va.angle != null && vb.angle != null)
           ? va.angle + (vb.angle - va.angle) * frac
           : (Math.atan2(vb.x - va.x, vb.y - va.y) * 180) / Math.PI; // sin el signo negativo: coherente con el volteo del eje Y en toScreen
-        return { id: va.id, x, y, angle };
+        // Velocidad real derivada de la propia posición de SUMO entre dos
+        // instantes consecutivos (no es un dato inventado): v = distancia/tiempo.
+        const speedMs = span > 0 ? Math.hypot(vb.x - va.x, vb.y - va.y) / span : 0;
+        const speedKmh = speedMs * 3.6;
+        return { id: va.id, x, y, angle, speedKmh };
       });
     }
 
