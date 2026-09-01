@@ -794,6 +794,11 @@ footer span { color: var(--teal); }
   width: 100%; background: #05070a; border: 1px solid var(--border); border-radius: 6px;
   color: #76fff0; font-family: monospace; font-size: 11px; padding: 8px; resize: vertical;
 }
+.sumo-calib-panel strong { color: #ffcf68; font-size: 12px; }
+.sumo-calib-panel label { display: inline-flex; align-items: center; gap: 5px; color: var(--text-dim); font-size: 11px; }
+.sumo-calib-panel input[type="number"] { width: 78px; background: #05070a; color: #76fff0; border: 1px solid var(--border); border-radius: 5px; padding: 5px 6px; font-size: 11px; }
+.sumo-calib-panel .sumo-btn { width: 30px; height: 30px; }
+
 .noise-scale-legend {
   padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; background: var(--panel-alt);
   display: flex; flex-direction: column; gap: 8px;

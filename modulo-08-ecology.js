@@ -12,9 +12,12 @@
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
   let data = null, visible = true, view = { scale: 1, offX: 0, offY: 0 };
+  const saved = JSON.parse(localStorage.getItem('sumoModule8EcologyCalibration') || 'null') || { dx: 0, dy: 0, scale: 1, rotation: 0 };
 
   function toScreen(x, y) {
-    const rad = ROTATE_DEG * Math.PI / 180, c = Math.cos(rad), s = Math.sin(rad);
+    const rad = ((ROTATE_DEG + (saved.rotation || 0)) * Math.PI) / 180, c = Math.cos(rad), s = Math.sin(rad);
+    x = CENTER_X + (x - CENTER_X) * (saved.scale || 1) + (saved.dx || 0);
+    y = CENTER_Y + (y - CENTER_Y) * (saved.scale || 1) + (saved.dy || 0);
     const dx = x - CENTER_X, dy = y - CENTER_Y;
     const rx = dx * c - dy * s + CENTER_X, ry = dx * s + dy * c + CENTER_Y;
     return [rx * view.scale + view.offX, -ry * view.scale + view.offY];
@@ -53,6 +56,17 @@
     ctx.restore();
   }
   toggle?.addEventListener('change', () => { visible = !!toggle.checked; draw(); });
+  const ids = ['sumoCalibDx', 'sumoCalibDy', 'sumoCalibScale', 'sumoCalibRotation'];
+  ids.forEach(id => { const el = document.getElementById(id); if (el) el.value = saved[id.replace('sumoCalib', '').toLowerCase()] ?? (id.includes('Scale') ? 1 : 0); });
+  document.getElementById('sumoCalibApply')?.addEventListener('click', () => {
+    saved.dx = Number(document.getElementById('sumoCalibDx')?.value || 0);
+    saved.dy = Number(document.getElementById('sumoCalibDy')?.value || 0);
+    saved.scale = Math.max(.5, Math.min(1.5, Number(document.getElementById('sumoCalibScale')?.value || 1)));
+    saved.rotation = Number(document.getElementById('sumoCalibRotation')?.value || 0);
+    localStorage.setItem('sumoModule8EcologyCalibration', JSON.stringify(saved)); draw();
+    const status = document.getElementById('sumoCalibStatus'); if (status) status.textContent = 'Ajuste guardado en este navegador.';
+  });
+  document.getElementById('sumoCalibReset')?.addEventListener('click', () => { Object.assign(saved, { dx: 0, dy: 0, scale: 1, rotation: 0 }); ids.forEach(id => { const el = document.getElementById(id); if (el) el.value = id.includes('Scale') ? 1 : 0; }); localStorage.setItem('sumoModule8EcologyCalibration', JSON.stringify(saved)); draw(); });
   window.addEventListener('resize', resize);
   fetch(DATA_URL).then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
     .then(json => { data = json; resize(); const status = document.getElementById('sumoStatus'); if (status) status.textContent = `SUMO + capas ecológicas (${json.treeSourceCount.toLocaleString('es-CO')} árboles agregados)`; })
