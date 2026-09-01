@@ -121,6 +121,65 @@
       }
     }
 
+    // ---------- Índice espacial de la red vial ----------
+    // Cada vía en kennedy_net.json ya trae su jerarquía como primer valor:
+    // "local" (15.609 segmentos), "mid" (2.778) o "major" (650). Los
+    // vehículos NO saben en qué vía están, así que para cada uno hay que
+    // buscar cuál es el segmento de vía más cercano y leer su tipo ahí.
+    // Se usa una cuadrícula (grid) para no tener que revisar las ~19.000
+    // vías completas en cada cuadro.
+    const ROAD_TYPE_RADIUS_M = { local: 25, mid: 75, major: 150 }; // metros reales, elegido por el usuario
+    const EDGE_GRID_CELL = 150; // metros por celda de búsqueda
+    let edgeGrid = null; // "gx,gy" -> [índice de vía, ...]
+
+    function buildEdgeGrid() {
+      edgeGrid = new Map();
+      netData.edges.forEach(([, pts], idx) => {
+        const cells = new Set();
+        pts.forEach(([px, py]) => {
+          cells.add(Math.floor(px / EDGE_GRID_CELL) + "," + Math.floor(py / EDGE_GRID_CELL));
+        });
+        cells.forEach((key) => {
+          if (!edgeGrid.has(key)) edgeGrid.set(key, []);
+          edgeGrid.get(key).push(idx);
+        });
+      });
+    }
+
+    function distToSegment(px, py, ax, ay, bx, by) {
+      const dx = bx - ax, dy = by - ay;
+      const lenSq = dx * dx + dy * dy;
+      let t = lenSq > 0 ? ((px - ax) * dx + (py - ay) * dy) / lenSq : 0;
+      t = Math.max(0, Math.min(1, t));
+      return Math.hypot(px - (ax + t * dx), py - (ay + t * dy));
+    }
+
+    // Tipo de vía (local/mid/major) más cercano a un punto del mundo (en
+    // metros) — agranda el anillo de búsqueda hasta encontrar algo cerca.
+    function nearestRoadType(x, y) {
+      if (!edgeGrid || !netData) return "local";
+      const gx0 = Math.floor(x / EDGE_GRID_CELL), gy0 = Math.floor(y / EDGE_GRID_CELL);
+      let best = null, bestDist = Infinity;
+      for (let ring = 0; ring <= 3; ring++) {
+        for (let dx = -ring; dx <= ring; dx++) {
+          for (let dy = -ring; dy <= ring; dy++) {
+            if (Math.max(Math.abs(dx), Math.abs(dy)) !== ring) continue; // solo el borde del anillo actual
+            const idxs = edgeGrid.get((gx0 + dx) + "," + (gy0 + dy));
+            if (!idxs) continue;
+            idxs.forEach((idx) => {
+              const [type, pts] = netData.edges[idx];
+              for (let i = 0; i < pts.length - 1; i++) {
+                const d = distToSegment(x, y, pts[i][0], pts[i][1], pts[i + 1][0], pts[i + 1][1]);
+                if (d < bestDist) { bestDist = d; best = type; }
+              }
+            });
+          }
+        }
+        if (best !== null && ring >= 1) break; // ya encontramos algo; un anillo extra por seguridad
+      }
+      return best || "local";
+    }
+
     // ---------- Capa de ruido: superficie continua, alpha SIEMPRE igual,
     // solo cambia el color según qué tan cargada de tráfico está la zona.
     // Se calcula en un buffer de baja resolución (para que el difuminado
@@ -175,13 +234,19 @@
       // 1) Acumular "carga de tráfico" por zona en el buffer chico: cada
       // vehículo suma una mancha suave (radial) alrededor de su posición;
       // donde se juntan varios vehículos, la mancha se acumula más fuerte.
+      // El radio de cada mancha ahora depende del tipo de vía más cercana
+      // al vehículo (local=25m, mid=75m, major=150m — en METROS REALES,
+      // convertidos aquí a píxeles del buffer según el zoom actual).
       noiseBufCtx.clearRect(0, 0, noiseBufW, noiseBufH);
       noiseBufCtx.globalCompositeOperation = "lighter";
       const bufScaleX = noiseBufW / w, bufScaleY = noiseBufH / h;
-      const blobR = Math.max(10, noiseBufW * 0.09);
+      const metersToBufPx = view.scale * bufScaleX; // metros del mundo -> píxeles del buffer
       vehicles.forEach((v) => {
         const [sx, sy] = toScreen(v.x, v.y);
         const bx = sx * bufScaleX, by = sy * bufScaleY;
+        const roadType = nearestRoadType(v.x, v.y);
+        const radiusMeters = ROAD_TYPE_RADIUS_M[roadType] || ROAD_TYPE_RADIUS_M.local;
+        const blobR = Math.max(2, radiusMeters * metersToBufPx);
         const grad = noiseBufCtx.createRadialGradient(bx, by, 0, bx, by, blobR);
         grad.addColorStop(0, "rgba(255,255,255,0.9)");
         grad.addColorStop(1, "rgba(255,255,255,0)");
@@ -283,6 +348,7 @@
       .then((r) => { if (!r.ok) throw new Error("no se pudo cargar " + NET_URL); return r.json(); })
       .then((data) => {
         netData = data;
+        buildEdgeGrid();
         resizeCanvases();
         setStatus("Red cargada. Cargando trazado.xml…");
         return loadTrazado();
