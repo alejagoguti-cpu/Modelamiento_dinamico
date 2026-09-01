@@ -338,34 +338,10 @@
       return [x, y];
     }
 
-    // Zonas verdes, en coordenadas reales (lon/lat), aproximadas a partir
-    // de su ubicación descrita — no son polígonos catastrales exactos.
-    // (Los cuerpos de agua se quitaron a pedido del usuario: quedaban
-    // demasiado grandes en el mapa.)
-    const VEGETATION_FEATURES = [
-      { name: "Zona verde cerca de Corabastos (aprox.)", poly: [[-74.163, 4.628], [-74.157, 4.629], [-74.156, 4.624], [-74.161, 4.622], [-74.165, 4.624], [-74.163, 4.628]] },
-      { name: "Zona verde entre El Burro y Techo (aprox.)", poly: [[-74.155, 4.647], [-74.150, 4.648], [-74.149, 4.644], [-74.153, 4.643], [-74.155, 4.647]] },
-    ];
-
-    function drawGeoPolygon(ctx, lonLatPts, fillStyle) {
-      ctx.beginPath();
-      lonLatPts.forEach(([lon, lat], i) => {
-        const [wx, wy] = lonLatToLocal(lon, lat);
-        const [sx, sy] = toScreen(wx, wy);
-        if (i === 0) ctx.moveTo(sx, sy); else ctx.lineTo(sx, sy);
-      });
-      ctx.closePath();
-      ctx.fillStyle = fillStyle;
-      ctx.fill();
-    }
-
     function drawNetwork(w, h) {
       netCtx.clearRect(0, 0, w, h);
       netCtx.lineJoin = "round";
       netCtx.lineCap = "round";
-      // Vegetación (verde) primero, debajo de las vías, para que las
-      // calles se sigan viendo encima con claridad.
-      VEGETATION_FEATURES.forEach((f) => drawGeoPolygon(netCtx, f.poly, "rgba(96,168,96,0.55)"));
       // se dibuja primero lo local (más numeroso y fino) y encima lo
       // principal (más grueso), para que las vías grandes no queden tapadas
       ["local", "mid", "major"].forEach((cls) => {
