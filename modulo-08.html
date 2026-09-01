@@ -347,6 +347,150 @@
       </div>
     </div>
 
+    <!-- PANEL EXPERIMENTAL: DEMANDA VARIABLE -->
+    <div class="sumo-sim-section">
+      <div class="sumo-sim-heading">
+        <h3><i class="fa-solid fa-flask-vial"></i> Experimento 1: Demanda Variable</h3>
+        <p>Modifica la demanda vehicular y observa cómo responde la red en tiempo real. El 0% representa exactamente el estado actual de la simulación.</p>
+      </div>
+
+      <div class="demand-control-card">
+        <!-- BARRA DE DEMANDA -->
+        <div class="demand-slider-section">
+          <div class="demand-label">
+            <span class="demand-label-text">DEMANDA VEHICULAR</span>
+            <div class="demand-presets">
+              <button class="demand-preset-btn" data-demand="-100" title="Demanda mínima (-100%)">Min</button>
+              <button class="demand-preset-btn" data-demand="-50" title="Demanda baja (-50%)">Baja</button>
+              <button class="demand-preset-btn demand-preset-base" data-demand="0" title="Estado actual (0%)">BASE</button>
+              <button class="demand-preset-btn" data-demand="+25" title="Demanda moderada (+25%)">Mod</button>
+              <button class="demand-preset-btn" data-demand="+50" title="Demanda alta (+50%)">Alta</button>
+              <button class="demand-preset-btn" data-demand="+100" title="Demanda máxima (+100%)">Máx</button>
+            </div>
+          </div>
+
+          <div class="demand-slider-container">
+            <span class="demand-value-min">-100%</span>
+            <input type="range" id="demandSlider" class="demand-slider" min="-100" max="100" value="0" step="5" aria-label="Barra de demanda vehicular">
+            <span class="demand-value-max">+100%</span>
+          </div>
+
+          <div class="demand-value-display">
+            <div class="demand-current">
+              <span>Demanda actual:</span>
+              <span id="demandCurrentValue" class="demand-num">0%</span>
+            </div>
+            <div class="demand-status">
+              <span id="demandStatusText">Estado actual (referencia)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- PANELES DE INDICADORES -->
+        <div class="demand-indicators-section">
+          <div class="indicators-header">
+            <h4>Indicadores de la Red (tiempo real)</h4>
+            <label class="comparison-toggle">
+              <input type="checkbox" id="comparisonToggle" checked>
+              <span>Comparar con base</span>
+            </label>
+          </div>
+
+          <div class="indicators-grid">
+            <!-- Demanda -->
+            <div class="indicator-card">
+              <div class="indicator-icon"><i class="fa-solid fa-car"></i></div>
+              <div class="indicator-data">
+                <div class="indicator-label">Vehículos Activos</div>
+                <div class="indicator-value" id="indVehicles">-</div>
+                <div class="indicator-change" id="indVehiclesChange"></div>
+              </div>
+            </div>
+
+            <!-- Flujo -->
+            <div class="indicator-card">
+              <div class="indicator-icon"><i class="fa-solid fa-wave-square"></i></div>
+              <div class="indicator-data">
+                <div class="indicator-label">Flujo (veh/h)</div>
+                <div class="indicator-value" id="indFlow">-</div>
+                <div class="indicator-change" id="indFlowChange"></div>
+              </div>
+            </div>
+
+            <!-- Velocidad promedio -->
+            <div class="indicator-card">
+              <div class="indicator-icon"><i class="fa-solid fa-gauge"></i></div>
+              <div class="indicator-data">
+                <div class="indicator-label">Velocidad (km/h)</div>
+                <div class="indicator-value" id="indSpeed">-</div>
+                <div class="indicator-change" id="indSpeedChange"></div>
+              </div>
+            </div>
+
+            <!-- Densidad -->
+            <div class="indicator-card">
+              <div class="indicator-icon"><i class="fa-solid fa-compress"></i></div>
+              <div class="indicator-data">
+                <div class="indicator-label">Densidad (veh/km)</div>
+                <div class="indicator-value" id="indDensity">-</div>
+                <div class="indicator-change" id="indDensityChange"></div>
+              </div>
+            </div>
+
+            <!-- Ocupación -->
+            <div class="indicator-card">
+              <div class="indicator-icon"><i class="fa-solid fa-percent"></i></div>
+              <div class="indicator-data">
+                <div class="indicator-label">Ocupación (%)</div>
+                <div class="indicator-value" id="indOccupancy">-</div>
+                <div class="indicator-change" id="indOccupancyChange"></div>
+              </div>
+            </div>
+
+            <!-- Tiempo de viaje -->
+            <div class="indicator-card">
+              <div class="indicator-icon"><i class="fa-solid fa-hourglass-end"></i></div>
+              <div class="indicator-data">
+                <div class="indicator-label">Tiempo de Viaje (s)</div>
+                <div class="indicator-value" id="indTravelTime">-</div>
+                <div class="indicator-change" id="indTravelTimeChange"></div>
+              </div>
+            </div>
+
+            <!-- Tiempo perdido -->
+            <div class="indicator-card">
+              <div class="indicator-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+              <div class="indicator-data">
+                <div class="indicator-label">Tiempo Perdido (s)</div>
+                <div class="indicator-value" id="indTimeLoss">-</div>
+                <div class="indicator-change" id="indTimeLossChange"></div>
+              </div>
+            </div>
+
+            <!-- Ruido promedio -->
+            <div class="indicator-card">
+              <div class="indicator-icon"><i class="fa-solid fa-volume-high"></i></div>
+              <div class="indicator-data">
+                <div class="indicator-label">Ruido (índice)</div>
+                <div class="indicator-value" id="indNoise">-</div>
+                <div class="indicator-change" id="indNoiseChange"></div>
+              </div>
+            </div>
+
+            <!-- Congestión -->
+            <div class="indicator-card">
+              <div class="indicator-icon"><i class="fa-solid fa-traffic-light"></i></div>
+              <div class="indicator-data">
+                <div class="indicator-label">Vías Congestionadas</div>
+                <div class="indicator-value" id="indCongestion">-</div>
+                <div class="indicator-change" id="indCongestionChange"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- MAPA DE RUIDO Y TRÁFICO -->
     <div class="sumo-sim-section">
       <div class="sumo-sim-heading">
@@ -380,6 +524,7 @@
 
 <script src="modulo-08.js"></script>
 <script src="modulo-08-sumo.js"></script>
+<script src="modulo-08-demand.js"></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="modulo-08-noise.js"></script>
 
