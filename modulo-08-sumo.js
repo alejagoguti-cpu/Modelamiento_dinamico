@@ -705,25 +705,49 @@
       [[9193.3,4664.7],[9197.3,4652.7],[9201.3,4640.7],[9201.3,4628.8],[9209.2,4620.8]],
     ];
 
+    // Suaviza un trazo dibujado a mano: quita puntos demasiado cercanos
+    // entre sí (ruido del mouse) y dibuja con curvas suaves entre los
+    // puntos que quedan (técnica de "punto medio"), en vez de líneas
+    // rectas entre cada punto — así se ve una línea limpia, no quebrada.
+    function reduceJitterPoints(pts, minDist) {
+      if (pts.length < 3) return pts;
+      const out = [pts[0]];
+      for (let i = 1; i < pts.length; i++) {
+        const [px, py] = pts[i];
+        const [lx, ly] = out[out.length - 1];
+        if (Math.hypot(px - lx, py - ly) >= minDist) out.push(pts[i]);
+      }
+      return out;
+    }
+    function strokeSmoothPath(ctx, pts) {
+      if (pts.length < 2) return;
+      ctx.moveTo(pts[0][0], pts[0][1]);
+      if (pts.length === 2) { ctx.lineTo(pts[1][0], pts[1][1]); return; }
+      for (let i = 1; i < pts.length - 1; i++) {
+        const mx = (pts[i][0] + pts[i + 1][0]) / 2;
+        const my = (pts[i][1] + pts[i + 1][1]) / 2;
+        ctx.quadraticCurveTo(pts[i][0], pts[i][1], mx, my);
+      }
+      const last = pts[pts.length - 1];
+      ctx.lineTo(last[0], last[1]);
+    }
+
     function drawNetwork(w, h) {
       netCtx.clearRect(0, 0, w, h);
       netCtx.lineJoin = "round";
       netCtx.lineCap = "round";
       // Humedales calcados a mano (azul), debajo de las vías para que las
-      // calles se sigan viendo con claridad encima.
+      // calles se sigan viendo con claridad encima. Se suaviza el trazo
+      // para que no se vea quebrado/anguloso.
       netCtx.fillStyle = "rgba(66,133,244,0.55)";
       netCtx.strokeStyle = "rgba(66,133,244,0.85)";
-      netCtx.lineWidth = 1.2;
+      netCtx.lineWidth = 1.6;
       TRACED_WETLANDS.forEach((pts) => {
         if (pts.length < 2) return;
+        const screenPts = reduceJitterPoints(pts.map(([x, y]) => toScreen(x, y)), 4);
         netCtx.beginPath();
-        const [sx0, sy0] = toScreen(pts[0][0], pts[0][1]);
-        netCtx.moveTo(sx0, sy0);
-        for (let i = 1; i < pts.length; i++) {
-          const [px, py] = toScreen(pts[i][0], pts[i][1]);
-          netCtx.lineTo(px, py);
-        }
-        if (pts.length > 2) { netCtx.closePath(); netCtx.fill(); }
+        strokeSmoothPath(netCtx, screenPts);
+        if (screenPts.length > 2) { netCtx.closePath(); netCtx.fill(); }
         netCtx.stroke();
       });
       // se dibuja primero lo local (más numeroso y fino) y encima lo
