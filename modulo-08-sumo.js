@@ -51,9 +51,9 @@
   const NET_URL = "./assets/kennedy_net.json";
   // Encuadre del mapa: se puede ajustar en vivo con el panel de calibración
   // (ver más abajo) — estos son solo los valores iniciales.
-  let EXTRA_ZOOM = 1.5;
-  let CENTER_X = 6100, CENTER_Y = 2500;
-  let ROTATE_DEG = 0;
+  let EXTRA_ZOOM = 1.62;
+  let CENTER_X = 6730, CENTER_Y = 3350;
+  let ROTATE_DEG = 0.0;
   const VEHICULOS_JSON_URL = "./assets/kennedy_vehiculos.json";
   const TRAZADO_URL = "./assets/trazado.xml";
 
