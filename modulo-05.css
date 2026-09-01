@@ -1,41 +1,44 @@
 ﻿/* ==========================================================================
-   BOGOTÁ VIVA · MÓDULO 05: NAVEGADOR MULTIESCALAR (REDISEÑO TOTAL)
-   Estilos oscuros de alta fidelidad, micro-interacciones y adaptación cromática
+   BOGOTÁ VIVA · MÓDULO 05: NAVEGADOR MULTIESCALAR (TEMA NEGRO PURO)
+   Paleta 100% oscura (#000000 / #080808 / #0c0c0c) sin tonalidades azules
    ========================================================================== */
 
 :root {
-  --bg-main: #06090e;
-  --panel-bg: #090e17;
-  --panel-card: rgba(18, 26, 41, 0.85);
+  --bg-main: #000000;
+  --bg-dark: #050505;
+  --panel-bg: #080808;
+  --panel-card: #0e0e0e;
+  --panel-card-inner: #141414;
   --panel-border: rgba(255, 255, 255, 0.08);
-  --border-glow: rgba(47, 212, 200, 0.25);
-  --text-main: #f2f5f9;
-  --text-muted: #8b9bb4;
-  --text-dim: #5a6b85;
+  --panel-border-subtle: rgba(255, 255, 255, 0.04);
   
-  /* Paleta cromática de las 4 escalas */
+  --text-main: #f5f5f5;
+  --text-muted: #9e9e9e;
+  --text-dim: #616161;
+  
+  /* Acentos de las 4 escalas */
   --scale-natural: #2fd4c8;
-  --scale-natural-glow: rgba(47, 212, 200, 0.4);
-  --scale-natural-bg: rgba(47, 212, 200, 0.08);
+  --scale-natural-glow: rgba(47, 212, 200, 0.35);
+  --scale-natural-bg: rgba(47, 212, 200, 0.1);
   
   --scale-cultural: #fb8d84;
-  --scale-cultural-glow: rgba(251, 141, 132, 0.4);
-  --scale-cultural-bg: rgba(251, 141, 132, 0.08);
+  --scale-cultural-glow: rgba(251, 141, 132, 0.35);
+  --scale-cultural-bg: rgba(251, 141, 132, 0.1);
   
   --scale-tecnologico: #4eb5ed;
-  --scale-tecnologico-glow: rgba(78, 181, 237, 0.4);
-  --scale-tecnologico-bg: rgba(78, 181, 237, 0.08);
+  --scale-tecnologico-glow: rgba(78, 181, 237, 0.35);
+  --scale-tecnologico-bg: rgba(78, 181, 237, 0.1);
   
   --scale-metaverso: #b682ee;
-  --scale-metaverso-glow: rgba(182, 130, 238, 0.4);
-  --scale-metaverso-bg: rgba(182, 130, 238, 0.08);
+  --scale-metaverso-glow: rgba(182, 130, 238, 0.35);
+  --scale-metaverso-bg: rgba(182, 130, 238, 0.1);
   
   --active-scale-color: var(--scale-natural);
   --active-scale-glow: var(--scale-natural-glow);
   --active-scale-bg: var(--scale-natural-bg);
 }
 
-/* Temas dinámicos por escala */
+/* Temas por escala activa */
 body.scale-natural-theme {
   --active-scale-color: var(--scale-natural);
   --active-scale-glow: var(--scale-natural-glow);
@@ -69,29 +72,35 @@ body.scale-metaverso-theme {
 
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  background-color: var(--bg-main);
+  background-color: #000000;
   color: var(--text-main);
   min-height: 100vh;
   overflow-x: hidden;
   line-height: 1.5;
 }
 
-/* App Shell */
-.app-shell {
+.app {
   display: flex;
   min-height: 100vh;
-  background: var(--bg-main);
+  background: #000000;
+  width: 100%;
 }
 
-/* Topbar */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 100vh;
+  background: #000000;
+}
+
+/* TOPBAR */
 .topbar {
-  position: fixed;
+  position: sticky;
   top: 0;
-  left: 60px;
-  right: 0;
   height: 54px;
-  background: rgba(9, 14, 23, 0.85);
-  backdrop-filter: blur(12px);
+  background: #080808;
   border-bottom: 1px solid var(--panel-border);
   display: flex;
   align-items: center;
@@ -106,7 +115,7 @@ body {
   gap: 12px;
   font-family: 'Space Grotesk', sans-serif;
   font-size: 14.5px;
-  color: #fff;
+  color: #ffffff;
 }
 
 .topbar-title i {
@@ -150,27 +159,26 @@ body {
   color: var(--text-dim);
 }
 
-/* Workspace */
+/* WORKSPACE */
 .workspace {
-  margin-top: 54px;
-  margin-left: 60px;
-  width: calc(100vw - 60px);
-  height: calc(100vh - 54px);
+  flex: 1;
   display: grid;
   grid-template-columns: 380px 1fr;
+  height: calc(100vh - 54px);
+  background: #000000;
   overflow: hidden;
 }
 
-/* Panel de Control Lateral */
+/* PANEL LATERAL DE CONTROL */
 .control-panel {
-  background: var(--panel-bg);
+  background: #050505;
   border-right: 1px solid var(--panel-border);
   height: 100%;
   overflow-y: auto;
   padding: 24px 20px 40px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 18px;
 }
 
 .control-panel::-webkit-scrollbar {
@@ -178,13 +186,13 @@ body {
 }
 
 .control-panel::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.15);
   border-radius: 4px;
 }
 
 /* Hero */
 .panel-hero {
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
 .eyebrow {
@@ -229,7 +237,7 @@ body {
 
 /* Bloques del Panel */
 .panel-block {
-  background: var(--panel-card);
+  background: #0c0c0c;
   border: 1px solid var(--panel-border);
   border-radius: 12px;
   padding: 16px;
@@ -268,7 +276,7 @@ body {
   font-size: 11.5px;
   font-weight: 700;
   letter-spacing: 0.8px;
-  color: #e2e8f0;
+  color: #f0f0f0;
 }
 
 /* 1. Grid de las 4 Escalas */
@@ -284,7 +292,7 @@ body {
   gap: 10px;
   padding: 10px 12px;
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.03);
+  background: #121212;
   border: 1px solid var(--panel-border);
   color: var(--text-muted);
   cursor: pointer;
@@ -293,7 +301,7 @@ body {
 }
 
 .scale-card:hover {
-  background: rgba(255, 255, 255, 0.06);
+  background: #1a1a1a;
   border-color: rgba(255, 255, 255, 0.2);
   color: #fff;
   transform: translateY(-1px);
@@ -310,7 +318,8 @@ body {
   width: 32px;
   height: 32px;
   border-radius: 8px;
-  background: rgba(0, 0, 0, 0.3);
+  background: #000000;
+  border: 1px solid rgba(255, 255, 255, 0.08);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -341,7 +350,7 @@ body {
 }
 
 .scale-card.is-active .scale-info span {
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.85);
 }
 
 /* 2. Selector UPL */
@@ -364,9 +373,9 @@ body {
   width: 100%;
   padding: 10px 14px 10px 34px;
   border-radius: 8px;
-  background: #080c14;
+  background: #080808;
   border: 1px solid var(--panel-border);
-  color: #f2f5f9;
+  color: #ffffff;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -383,8 +392,8 @@ body {
 .upl-info-card {
   padding: 10px 12px;
   border-radius: 8px;
-  background: rgba(0, 0, 0, 0.25);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: #080808;
+  border: 1px solid var(--panel-border);
 }
 
 .upl-info-head {
@@ -413,7 +422,7 @@ body {
 
 .upl-tag {
   font-size: 11.5px;
-  color: #a0aec0;
+  color: #a0a0a0;
   line-height: 1.4;
 }
 
@@ -437,7 +446,7 @@ body {
 }
 
 .layer-toggle-item:hover {
-  background: rgba(255, 255, 255, 0.04);
+  background: #141414;
   color: #fff;
 }
 
@@ -446,7 +455,7 @@ body {
   width: 16px;
   height: 16px;
   border-radius: 4px;
-  background: #080c14;
+  background: #000000;
   border: 1px solid var(--panel-border);
   cursor: pointer;
   position: relative;
@@ -465,7 +474,7 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: #06090e;
+  color: #000000;
   font-size: 11px;
   font-weight: 900;
 }
@@ -486,7 +495,8 @@ body {
 .diagnostic-card {
   padding: 12px 14px;
   border-radius: 8px;
-  background: rgba(0, 0, 0, 0.3);
+  background: #080808;
+  border: 1px solid var(--panel-border);
   border-left: 3px solid var(--active-scale-color);
   display: flex;
   flex-direction: column;
@@ -515,21 +525,21 @@ body {
 
 .diag-reading {
   font-size: 11.5px;
-  color: #cbd5e1;
+  color: #cccccc;
   line-height: 1.45;
 }
 
 .diag-critique-box {
   padding: 8px 10px;
   border-radius: 6px;
-  background: rgba(255, 100, 100, 0.08);
-  border: 1px solid rgba(255, 100, 100, 0.2);
+  background: rgba(255, 75, 75, 0.08);
+  border: 1px solid rgba(255, 75, 75, 0.2);
 }
 
 .critique-label {
   font-size: 10.5px;
   font-weight: 700;
-  color: #ff7b72;
+  color: #ff6b6b;
   margin-bottom: 2px;
   display: flex;
   align-items: center;
@@ -538,7 +548,7 @@ body {
 
 .diag-critique-box p {
   font-size: 11px;
-  color: #e2e8f0;
+  color: #eeeeee;
   line-height: 1.4;
 }
 
@@ -552,7 +562,7 @@ body {
 .btn-export {
   padding: 8px 10px;
   border-radius: 6px;
-  background: rgba(255, 255, 255, 0.04);
+  background: #111111;
   border: 1px solid var(--panel-border);
   color: var(--text-muted);
   font-size: 11.5px;
@@ -572,19 +582,20 @@ body {
 }
 
 /* ==========================================================
-   PANEL DEL MAPA (DERECHA)
+   PANEL DEL MAPA (DERECHA) - 100% NEGRO PURO
    ========================================================== */
 .map-panel {
   position: relative;
   width: 100%;
   height: 100%;
-  background: #05070a;
+  background: #000000;
   overflow: hidden;
 }
 
 .map-canvas {
   width: 100%;
   height: 100%;
+  background: #000000;
 }
 
 /* Map Headline */
@@ -592,12 +603,12 @@ body {
   position: absolute;
   top: 18px;
   left: 18px;
-  background: rgba(9, 14, 23, 0.88);
+  background: rgba(10, 10, 10, 0.92);
   border: 1px solid var(--panel-border);
   border-radius: 12px;
   padding: 14px 18px;
   backdrop-filter: blur(10px);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.8);
   z-index: 10;
   display: flex;
   align-items: center;
@@ -644,7 +655,7 @@ body {
   width: 32px;
   height: 32px;
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.05);
+  background: #141414;
   border: 1px solid var(--panel-border);
   color: var(--text-muted);
   cursor: pointer;
@@ -666,7 +677,7 @@ body {
   position: absolute;
   top: 90px;
   left: 18px;
-  background: rgba(9, 14, 23, 0.9);
+  background: rgba(10, 10, 10, 0.95);
   border: 1px solid var(--active-scale-color);
   box-shadow: 0 0 16px var(--active-scale-glow);
   border-radius: 8px;
@@ -691,7 +702,7 @@ body {
   position: absolute;
   bottom: 24px;
   left: 18px;
-  background: rgba(9, 14, 23, 0.9);
+  background: rgba(10, 10, 10, 0.95);
   border: 1px solid var(--panel-border);
   border-radius: 8px;
   padding: 8px 14px;
@@ -738,12 +749,12 @@ body {
   position: absolute;
   bottom: 24px;
   right: 18px;
-  background: rgba(9, 14, 23, 0.92);
+  background: rgba(10, 10, 10, 0.95);
   border: 1px solid var(--panel-border);
   border-radius: 8px;
   padding: 8px 14px;
   font-size: 11.5px;
-  color: #cbd5e1;
+  color: #e0e0e0;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -761,7 +772,7 @@ body {
   bottom: 6px;
   right: 18px;
   font-size: 9.5px;
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.35);
   z-index: 5;
 }
 
@@ -795,7 +806,7 @@ body {
   top: 18px;
   right: 18px;
   width: 320px;
-  background: rgba(14, 9, 26, 0.92);
+  background: rgba(8, 8, 8, 0.95);
   border: 1.5px solid var(--scale-metaverso);
   box-shadow: 0 0 25px rgba(182, 130, 238, 0.35);
   border-radius: 12px;
@@ -815,8 +826,8 @@ body {
 }
 
 .hud-box {
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(182, 130, 238, 0.2);
+  background: #000000;
+  border: 1px solid rgba(182, 130, 238, 0.25);
   border-radius: 6px;
   padding: 6px 8px;
   display: flex;
@@ -828,7 +839,7 @@ body {
   font-size: 9.5px;
   font-weight: 700;
   letter-spacing: 0.8px;
-  color: #a0aec0;
+  color: #a0a0a0;
 }
 
 .hud-value {
@@ -844,7 +855,7 @@ body {
   align-items: center;
   gap: 10px;
   padding: 4px 6px;
-  background: rgba(0, 0, 0, 0.3);
+  background: #000000;
   border-radius: 6px;
 }
 
@@ -881,7 +892,7 @@ body {
 }
 
 .drive-hud-guide strong {
-  color: #cbd5e1;
+  color: #e0e0e0;
 }
 
 .drive-toast {
@@ -889,7 +900,7 @@ body {
   top: 140px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(0, 0, 0, 0.85);
+  background: rgba(0, 0, 0, 0.9);
   border: 1px solid var(--scale-metaverso);
   box-shadow: 0 0 20px var(--scale-metaverso-glow);
   color: #fff;
@@ -911,7 +922,7 @@ body {
 .node-detail-modal {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.85);
   backdrop-filter: blur(8px);
   display: none;
   align-items: center;
@@ -927,9 +938,9 @@ body {
 .node-detail-dialog {
   width: 500px;
   max-width: 95%;
-  background: var(--panel-bg);
+  background: #0a0a0a;
   border: 1.5px solid var(--active-scale-color);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px var(--active-scale-glow);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), 0 0 30px var(--active-scale-glow);
   border-radius: 14px;
   overflow: hidden;
   display: flex;
@@ -941,7 +952,7 @@ body {
   align-items: flex-start;
   justify-content: space-between;
   padding: 16px 20px;
-  background: rgba(255, 255, 255, 0.02);
+  background: #111111;
   border-bottom: 1px solid var(--panel-border);
 }
 
@@ -988,7 +999,7 @@ body {
 
 .node-detail-summary {
   font-size: 13px;
-  color: #cbd5e1;
+  color: #e0e0e0;
   line-height: 1.5;
 }
 
@@ -996,10 +1007,10 @@ body {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 8px;
-  background: rgba(0, 0, 0, 0.3);
+  background: #000000;
   padding: 10px;
   border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--panel-border);
 }
 
 .node-detail-metrics div {
@@ -1044,15 +1055,16 @@ body {
 
 .node-detail-columns li {
   font-size: 11.5px;
-  color: #94a3b8;
+  color: #a0a0a0;
   padding: 4px 8px;
   border-radius: 4px;
-  background: rgba(255, 255, 255, 0.02);
+  background: #000000;
+  border: 1px solid var(--panel-border-subtle);
 }
 
 .node-detail-foot {
   padding: 12px 20px;
-  background: rgba(0, 0, 0, 0.2);
+  background: #050505;
   border-top: 1px solid var(--panel-border);
   display: flex;
   justify-content: flex-end;

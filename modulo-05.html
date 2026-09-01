@@ -11,21 +11,21 @@
   <link href="https://unpkg.com/maplibre-gl@6.5.0/dist/maplibre-gl.css" rel="stylesheet">
   <link rel="stylesheet" href="site-theme.css?v=20260823">
   <link rel="stylesheet" href="navigation-unified.css?v=20260824">
-  <link rel="stylesheet" href="modulo-05.css?v=20260901_redesign">
-  <link rel="stylesheet" href="modulo-05-polish.css?v=20260901_redesign">
+  <link rel="stylesheet" href="modulo-05.css?v=20260901_black_fix">
+  <link rel="stylesheet" href="modulo-05-polish.css?v=20260901_black_fix">
 </head>
 <body class="scale-natural-theme">
-  <div class="app-shell">
+  <div class="app">
     
-    <!-- BARRA LATERAL DE NAVEGACIÓN GLOBAL -->
+    <!-- BARRA LATERAL UNIFICADA -->
     <aside class="sidebar sidebar-icons-only">
       <a class="brand-icon" href="index.html" title="Bogotá Viva · Inicio" aria-label="Inicio"><i class="fa-solid fa-diagram-project"></i></a>
       <nav class="icon-nav" aria-label="Módulos">
         <a href="index.html" class="icon-nav-item" title="Inicio"><i class="fa-solid fa-house"></i></a>
         <a href="modulo-02.html" class="icon-nav-item" title="02 · Medir la red"><i class="fa-solid fa-chart-simple"></i></a>
         <a href="modulo-03.html" class="icon-nav-item" title="03 · Discurso vs realidad"><i class="fa-solid fa-eye"></i></a>
-        <a href="modulo-04.html" class="icon-nav-item active" title="04 · Macromodelos"><i class="fa-solid fa-bullseye"></i></a>
-        <a href="modulo-05.html" class="icon-nav-item" title="05 · Navegador multiescalar"><i class="fa-solid fa-magnifying-glass-location"></i></a>
+        <a href="modulo-04.html" class="icon-nav-item" title="04 · Macromodelos"><i class="fa-solid fa-bullseye"></i></a>
+        <a href="modulo-05.html" class="icon-nav-item active" title="05 · Navegador multiescalar"><i class="fa-solid fa-magnifying-glass-location"></i></a>
         <a href="modulo-06.html" class="icon-nav-item" title="06 · POT ↔ ODS"><i class="fa-solid fa-earth-americas"></i></a>
         <a href="modulo-07.html" class="icon-nav-item" title="07 · Simulador"><i class="fa-solid fa-flask"></i></a>
         <a href="modulo-08.html" class="icon-nav-item" title="08 · Lectura dinámica"><i class="fa-solid fa-wave-square"></i></a>
@@ -38,237 +38,241 @@
       </div>
     </aside>
 
-    <!-- TOPBAR SUPERIOR -->
-    <header class="topbar">
-      <div class="topbar-title">
-        <i class="fa-solid fa-magnifying-glass-location"></i>
-        <strong>Bogotá Viva:</strong> Navegador Multiescalar
-        <span class="scale-badge" id="currentScaleBadge">
-          <i class="fa-solid fa-droplet"></i> Escala Natural
-        </span>
-      </div>
-      <div class="topbar-status">
-        <span class="status-dot"></span>
-        <span id="connectionLabel">Cartografía real conectada</span>
-        <span class="separator">·</span>
-        <span>MapLibre GL</span>
-        <span class="separator">·</span>
-        <span class="topbar-help">33 UPLs de Bogotá <i class="fa-solid fa-circle-nodes"></i></span>
-      </div>
-    </header>
+    <!-- ÁREA PRINCIPAL -->
+    <main class="main">
 
-    <!-- WORKSPACE PRINCIPAL -->
-    <main class="workspace">
-      
-      <!-- PANEL LATERAL DE CONTROL MULTIESCALAR -->
-      <section class="control-panel" aria-label="Controles del navegador multiescalar">
-        <div class="panel-hero">
-          <div class="eyebrow"><span class="eyebrow-line"></span> BOGOTÁ VIVA · MÓDULO 05</div>
-          <h1>Navegador<br><span class="gradient-text">Multiescalar</span></h1>
-          <p class="panel-desc">Exploración territorial del POT en cuatro dimensiones dinámicas de análisis.</p>
+      <!-- TOPBAR SUPERIOR -->
+      <header class="topbar">
+        <div class="topbar-title">
+          <i class="fa-solid fa-magnifying-glass-location"></i>
+          <strong>Bogotá Viva:</strong> Navegador Multiescalar
+          <span class="scale-badge" id="currentScaleBadge">
+            <i class="fa-solid fa-droplet"></i> Escala Natural
+          </span>
         </div>
-
-        <!-- 1. SELECTOR DE LAS 4 ESCALAS -->
-        <div class="panel-block">
-          <div class="block-header">
-            <span class="step-badge">1</span>
-            <span class="block-title">DIMENSIÓN / ESCALA</span>
-          </div>
-          <div class="scale-grid" role="tablist" aria-label="Escalas temáticas">
-            <button class="scale-card is-active" data-scale="natural" role="tab" aria-selected="true">
-              <div class="scale-icon-wrap"><i class="fa-solid fa-droplet"></i></div>
-              <div class="scale-info">
-                <strong>Natural</strong>
-                <span>Agua, humedales y EEP</span>
-              </div>
-            </button>
-            <button class="scale-card" data-scale="cultural" role="tab" aria-selected="false">
-              <div class="scale-icon-wrap"><i class="fa-solid fa-landmark"></i></div>
-              <div class="scale-info">
-                <strong>Cultural</strong>
-                <span>Patrimonio y memoria</span>
-              </div>
-            </button>
-            <button class="scale-card" data-scale="tecnologico" role="tab" aria-selected="false">
-              <div class="scale-icon-wrap"><i class="fa-solid fa-microchip"></i></div>
-              <div class="scale-info">
-                <strong>Tecnológico</strong>
-                <span>Movilidad y redes</span>
-              </div>
-            </button>
-            <button class="scale-card" data-scale="metaverso" role="tab" aria-selected="false">
-              <div class="scale-icon-wrap"><i class="fa-solid fa-cubes"></i></div>
-              <div class="scale-info">
-                <strong>Metaverso</strong>
-                <span>Simulación inmersiva</span>
-              </div>
-            </button>
-          </div>
+        <div class="topbar-status">
+          <span class="status-dot"></span>
+          <span id="connectionLabel">Cartografía real conectada</span>
+          <span class="separator">·</span>
+          <span>MapLibre GL</span>
+          <span class="separator">·</span>
+          <span class="topbar-help">33 UPLs de Bogotá <i class="fa-solid fa-circle-nodes"></i></span>
         </div>
+      </header>
 
-        <!-- 2. ENFOQUE TERRITORIAL POR UPL -->
-        <div class="panel-block">
-          <div class="block-header">
-            <span class="step-badge">2</span>
-            <span class="block-title">UNIDAD DE PLANEAMIENTO LOCAL (UPL)</span>
+      <!-- CONTENIDO DEL NAVEGADOR MULTIESCALAR -->
+      <div class="workspace">
+        
+        <!-- PANEL LATERAL DE CONTROL -->
+        <section class="control-panel" aria-label="Controles del navegador multiescalar">
+          <div class="panel-hero">
+            <div class="eyebrow"><span class="eyebrow-line"></span> BOGOTÁ VIVA · MÓDULO 05</div>
+            <h1>Navegador<br><span class="gradient-text">Multiescalar</span></h1>
+            <p class="panel-desc">Exploración territorial del POT en cuatro dimensiones dinámicas de análisis.</p>
           </div>
-          <div class="upl-select-wrap">
-            <i class="fa-solid fa-location-crosshairs upl-select-icon"></i>
-            <select id="uplSelect" class="upl-select" aria-label="Seleccionar UPL"></select>
-          </div>
-          <div class="upl-info-card" id="uplInfoCard">
-            <div class="upl-info-head">
-              <span class="upl-pill" id="uplPill">UPL 13</span>
-              <span class="upl-localidad" id="uplLocalidad">Kennedy</span>
+
+          <!-- 1. SELECTOR DE LAS 4 ESCALAS -->
+          <div class="panel-block">
+            <div class="block-header">
+              <span class="step-badge">1</span>
+              <span class="block-title">DIMENSIÓN / ESCALA</span>
             </div>
-            <p id="uplTag" class="upl-tag">Alta viabilidad — Línea 1 del Metro, Manzana del Cuidado y parque metropolitano.</p>
-          </div>
-        </div>
-
-        <!-- 3. CAPAS TEMÁTICAS ACTIVAS -->
-        <div class="panel-block">
-          <div class="block-header">
-            <span class="step-badge">3</span>
-            <span class="block-title">CAPAS Y COBERTURAS</span>
-          </div>
-          <div class="layers-toggle-grid" id="layersToggleGrid">
-            <label class="layer-toggle-item">
-              <input type="checkbox" id="layerToggleRoads" checked>
-              <span class="toggle-indicator"></span>
-              <span class="layer-name"><i class="fa-solid fa-road"></i> Red vial arterial</span>
-            </label>
-            <label class="layer-toggle-item">
-              <input type="checkbox" id="layerTogglePlaces" checked>
-              <span class="toggle-indicator"></span>
-              <span class="layer-name" id="layerPlacesLabel"><i class="fa-solid fa-circle-dot"></i> Nodos de escala</span>
-            </label>
-            <label class="layer-toggle-item">
-              <input type="checkbox" id="layerToggleUplBoundary" checked>
-              <span class="toggle-indicator"></span>
-              <span class="layer-name"><i class="fa-solid fa-draw-polygon"></i> Perímetro UPL</span>
-            </label>
-            <label class="layer-toggle-item">
-              <input type="checkbox" id="layerToggleTransit" checked>
-              <span class="toggle-indicator"></span>
-              <span class="layer-name"><i class="fa-solid fa-train-subway"></i> Corredores de transporte</span>
-            </label>
-          </div>
-        </div>
-
-        <!-- 4. DIAGNÓSTICO Y CRÍTICA DEL POT -->
-        <div class="panel-block diagnostic-block">
-          <div class="block-header">
-            <span class="step-badge"><i class="fa-solid fa-brain"></i></span>
-            <span class="block-title">LECTURA SISTÉMICA POT</span>
-          </div>
-          <div class="diagnostic-card" id="scaleDiagnosticCard">
-            <div class="diagnostic-scale-header">
-              <span class="scale-dot"></span>
-              <h4 id="diagScaleTitle">Dimensión Natural</h4>
+            <div class="scale-grid" role="tablist" aria-label="Escalas temáticas">
+              <button class="scale-card is-active" data-scale="natural" role="tab" aria-selected="true">
+                <div class="scale-icon-wrap"><i class="fa-solid fa-droplet"></i></div>
+                <div class="scale-info">
+                  <strong>Natural</strong>
+                  <span>Agua y humedales</span>
+                </div>
+              </button>
+              <button class="scale-card" data-scale="cultural" role="tab" aria-selected="false">
+                <div class="scale-icon-wrap"><i class="fa-solid fa-landmark"></i></div>
+                <div class="scale-info">
+                  <strong>Cultural</strong>
+                  <span>Patrimonio y memoria</span>
+                </div>
+              </button>
+              <button class="scale-card" data-scale="tecnologico" role="tab" aria-selected="false">
+                <div class="scale-icon-wrap"><i class="fa-solid fa-microchip"></i></div>
+                <div class="scale-info">
+                  <strong>Tecnológico</strong>
+                  <span>Movilidad y redes</span>
+                </div>
+              </button>
+              <button class="scale-card" data-scale="metaverso" role="tab" aria-selected="false">
+                <div class="scale-icon-wrap"><i class="fa-solid fa-cubes"></i></div>
+                <div class="scale-info">
+                  <strong>Metaverso</strong>
+                  <span>Simulación inmersiva</span>
+                </div>
+              </button>
             </div>
-            <p class="diag-reading" id="diagScaleReading">
-              La escala natural hace visibles el agua, los humedales y la estructura ecológica como sistemas vivos continuos que trascienden los límites administrativos.
-            </p>
-            <div class="diag-critique-box">
-              <div class="critique-label"><i class="fa-solid fa-triangle-exclamation"></i> Límite del modelo POT:</div>
-              <p id="diagScaleCritique">
-                El POT fija polígonos estáticos de protección, pero omite los flujos estacionales de cuenca, las presiones de impermeabilización y la fragmentación biótica.
+          </div>
+
+          <!-- 2. ENFOQUE TERRITORIAL POR UPL -->
+          <div class="panel-block">
+            <div class="block-header">
+              <span class="step-badge">2</span>
+              <span class="block-title">UNIDAD DE PLANEAMIENTO LOCAL (UPL)</span>
+            </div>
+            <div class="upl-select-wrap">
+              <i class="fa-solid fa-location-crosshairs upl-select-icon"></i>
+              <select id="uplSelect" class="upl-select" aria-label="Seleccionar UPL"></select>
+            </div>
+            <div class="upl-info-card" id="uplInfoCard">
+              <div class="upl-info-head">
+                <span class="upl-pill" id="uplPill">UPL 13</span>
+                <span class="upl-localidad" id="uplLocalidad">Kennedy</span>
+              </div>
+              <p id="uplTag" class="upl-tag">Alta viabilidad — Línea 1 del Metro, Manzana del Cuidado y parque metropolitano.</p>
+            </div>
+          </div>
+
+          <!-- 3. CAPAS TEMÁTICAS ACTIVAS -->
+          <div class="panel-block">
+            <div class="block-header">
+              <span class="step-badge">3</span>
+              <span class="block-title">CAPAS Y COBERTURAS</span>
+            </div>
+            <div class="layers-toggle-grid" id="layersToggleGrid">
+              <label class="layer-toggle-item">
+                <input type="checkbox" id="layerToggleRoads" checked>
+                <span class="toggle-indicator"></span>
+                <span class="layer-name"><i class="fa-solid fa-road"></i> Red vial arterial</span>
+              </label>
+              <label class="layer-toggle-item">
+                <input type="checkbox" id="layerTogglePlaces" checked>
+                <span class="toggle-indicator"></span>
+                <span class="layer-name" id="layerPlacesLabel"><i class="fa-solid fa-circle-dot"></i> Nodos de escala</span>
+              </label>
+              <label class="layer-toggle-item">
+                <input type="checkbox" id="layerToggleUplBoundary" checked>
+                <span class="toggle-indicator"></span>
+                <span class="layer-name"><i class="fa-solid fa-draw-polygon"></i> Perímetro UPL</span>
+              </label>
+              <label class="layer-toggle-item">
+                <input type="checkbox" id="layerToggleTransit" checked>
+                <span class="toggle-indicator"></span>
+                <span class="layer-name"><i class="fa-solid fa-train-subway"></i> Corredores de transporte</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- 4. DIAGNÓSTICO Y CRÍTICA DEL POT -->
+          <div class="panel-block diagnostic-block">
+            <div class="block-header">
+              <span class="step-badge"><i class="fa-solid fa-brain"></i></span>
+              <span class="block-title">LECTURA SISTÉMICA POT</span>
+            </div>
+            <div class="diagnostic-card" id="scaleDiagnosticCard">
+              <div class="diagnostic-scale-header">
+                <span class="scale-dot"></span>
+                <h4 id="diagScaleTitle">Dimensión Natural</h4>
+              </div>
+              <p class="diag-reading" id="diagScaleReading">
+                La escala natural hace visibles el agua, los humedales y la estructura ecológica como sistemas vivos continuos que trascienden los límites administrativos.
               </p>
-            </div>
-          </div>
-        </div>
-
-        <!-- UTILIDADES DE EXPORTACIÓN Y VISTA -->
-        <div class="panel-block export-tools-block">
-          <div class="export-actions-row">
-            <button id="exportVisibleGeojson" class="btn-export" type="button" title="Exportar datos visibles"><i class="fa-solid fa-download"></i> GeoJSON</button>
-            <button id="exportVisibleCsv" class="btn-export" type="button" title="Exportar tabla CSV"><i class="fa-solid fa-file-csv"></i> CSV</button>
-            <button id="btnCenterBogota" class="btn-export" type="button" title="Restablecer vista general de Bogotá"><i class="fa-solid fa-crosshairs"></i> Encuadrar</button>
-          </div>
-        </div>
-
-      </section>
-
-      <!-- VISOR CARTOGRÁFICO INTERACTIVO -->
-      <section class="map-panel" aria-label="Mapa interactivo de Bogotá">
-        <div id="map" class="map-canvas"></div>
-
-        <!-- OVERLAY DE CABECERA DEL MAPA -->
-        <div class="map-headline">
-          <div class="headline-info">
-            <span class="map-kicker" id="mapScaleKicker"><i class="fa-solid fa-droplet"></i> ESCALA NATURAL</span>
-            <h2 id="mapTitle">UPL 13 · Tintal</h2>
-            <p id="mapSubtitle">Kennedy · Estructura Ecológica Principal, rondas y conectores</p>
-          </div>
-          <div class="map-actions">
-            <button id="locateBtn" class="map-action-btn" type="button" aria-label="Centrar UPL" title="Centrar UPL actual"><i class="fa-solid fa-location-arrow"></i></button>
-            <button id="fullscreenBtn" class="map-action-btn" type="button" aria-label="Pantalla completa" title="Pantalla completa"><i class="fa-solid fa-expand"></i></button>
-          </div>
-        </div>
-
-        <!-- INDICADOR DE ZOOM Y ENFOQUE UPL -->
-        <div id="uplZoomIndicator" class="upl-zoom-indicator" role="status" aria-live="polite" hidden>
-          <i class="fa-solid fa-location-crosshairs"></i>
-          <div>
-            <strong id="uplZoomIndicatorLabel">Enfocando UPL…</strong>
-            <small id="uplZoomIndicatorHint">Ajustando vista multiescalar</small>
-          </div>
-        </div>
-
-        <!-- LEYENDA DINÁMICA DEL MAPA -->
-        <div class="map-legend" id="mapLegend">
-          <span class="legend-item"><i class="legend-dot scale-primary-dot"></i> Nodos temáticos</span>
-          <span class="legend-item"><i class="legend-line scale-road-line"></i> Red vial / Conectores</span>
-          <span class="legend-item"><i class="legend-poly scale-upl-poly"></i> Perímetro UPL</span>
-          <span id="roadLevel" class="legend-item road-level">Meso · 33 UPLs</span>
-        </div>
-
-        <!-- TOAST DE ESTADO -->
-        <div class="map-toast" id="mapToast" role="status" aria-live="polite">
-          <i class="fa-solid fa-circle-info"></i>
-          <span id="mapToastText">Cargando cartografía de Bogotá…</span>
-        </div>
-
-        <!-- OVERLAY METAVERSO: BOGOTÁ INFINITE DRIVE -->
-        <div id="driveOverlay" class="drive-overlay" style="display:none;">
-          <canvas id="multiscaleDriveCanvas"></canvas>
-          <div class="drive-hud">
-            <div class="drive-hud-top">
-              <div class="hud-box">
-                <span class="hud-label">SCORE</span>
-                <span class="hud-value" id="multiDriveScore">00000 PTS</span>
-              </div>
-              <div class="hud-box">
-                <span class="hud-label">DISTANCIA</span>
-                <span class="hud-value" id="multiDriveDistance">0.00 km</span>
-              </div>
-              <div class="hud-box">
-                <span class="hud-label">TIEMPO</span>
-                <span class="hud-value" id="multiDriveTimer">00:00.0</span>
-              </div>
-              <div class="hud-audio-controls">
-                <button id="driveMute" class="hud-btn" type="button" aria-label="Silenciar">🔊</button>
-                <input type="range" id="driveVolume" min="0" max="1" step="0.05" value="0.4" aria-label="Volumen">
+              <div class="diag-critique-box">
+                <div class="critique-label"><i class="fa-solid fa-triangle-exclamation"></i> Límite del modelo POT:</div>
+                <p id="diagScaleCritique">
+                  El POT fija polígonos estáticos de protección, pero omite los flujos estacionales de cuenca, las presiones de impermeabilización y la fragmentación biótica.
+                </p>
               </div>
             </div>
-            <div class="drive-hud-status" id="multiDriveStatus">EN MARCHA · CONTROLA CON WASD / FLECHAS</div>
-            <div class="drive-hud-guide">
-              <span><strong>W/↑</strong> Acelerar</span>
-              <span><strong>S/↓</strong> Frenar</span>
-              <span><strong>A-D/←→</strong> Dirección</span>
-              <span><strong>R</strong> Reiniciar</span>
+          </div>
+
+          <!-- UTILIDADES DE EXPORTACIÓN Y VISTA -->
+          <div class="panel-block export-tools-block">
+            <div class="export-actions-row">
+              <button id="exportVisibleGeojson" class="btn-export" type="button" title="Exportar datos visibles"><i class="fa-solid fa-download"></i> GeoJSON</button>
+              <button id="exportVisibleCsv" class="btn-export" type="button" title="Exportar tabla CSV"><i class="fa-solid fa-file-csv"></i> CSV</button>
+              <button id="btnCenterBogota" class="btn-export" type="button" title="Restablecer vista general de Bogotá"><i class="fa-solid fa-crosshairs"></i> Encuadrar</button>
             </div>
           </div>
-          <div id="multiDriveToast" class="drive-toast"></div>
-          <audio id="driveMusic" src="assets/bogota-infinite-drive-background.wav" loop preload="none"></audio>
-        </div>
 
-        <!-- NOTA DE ATRIBUCIÓN -->
-        <div class="map-attribution-note">
-          Datos de cartografía: <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap</a> · CARTO Dark Matter · Modelo Multiescalar RAPOT
-        </div>
-      </section>
+        </section>
 
+        <!-- VISOR CARTOGRÁFICO INTERACTIVO -->
+        <section class="map-panel" aria-label="Mapa interactivo de Bogotá">
+          <div id="map" class="map-canvas"></div>
+
+          <!-- OVERLAY DE CABECERA DEL MAPA -->
+          <div class="map-headline">
+            <div class="headline-info">
+              <span class="map-kicker" id="mapScaleKicker"><i class="fa-solid fa-droplet"></i> ESCALA NATURAL</span>
+              <h2 id="mapTitle">UPL 13 · Tintal</h2>
+              <p id="mapSubtitle">Kennedy · Estructura Ecológica Principal, rondas y conectores</p>
+            </div>
+            <div class="map-actions">
+              <button id="locateBtn" class="map-action-btn" type="button" aria-label="Centrar UPL" title="Centrar UPL actual"><i class="fa-solid fa-location-arrow"></i></button>
+              <button id="fullscreenBtn" class="map-action-btn" type="button" aria-label="Pantalla completa" title="Pantalla completa"><i class="fa-solid fa-expand"></i></button>
+            </div>
+          </div>
+
+          <!-- INDICADOR DE ZOOM Y ENFOQUE UPL -->
+          <div id="uplZoomIndicator" class="upl-zoom-indicator" role="status" aria-live="polite" hidden>
+            <i class="fa-solid fa-location-crosshairs"></i>
+            <div>
+              <strong id="uplZoomIndicatorLabel">Enfocando UPL…</strong>
+              <small id="uplZoomIndicatorHint">Ajustando vista multiescalar</small>
+            </div>
+          </div>
+
+          <!-- LEYENDA DINÁMICA DEL MAPA -->
+          <div class="map-legend" id="mapLegend">
+            <span class="legend-item"><i class="legend-dot scale-primary-dot"></i> Nodos temáticos</span>
+            <span class="legend-item"><i class="legend-line scale-road-line"></i> Red vial / Conectores</span>
+            <span class="legend-item"><i class="legend-poly scale-upl-poly"></i> Perímetro UPL</span>
+            <span id="roadLevel" class="legend-item road-level">Meso · 33 UPLs</span>
+          </div>
+
+          <!-- TOAST DE ESTADO -->
+          <div class="map-toast" id="mapToast" role="status" aria-live="polite">
+            <i class="fa-solid fa-circle-info"></i>
+            <span id="mapToastText">Cargando cartografía de Bogotá…</span>
+          </div>
+
+          <!-- OVERLAY METAVERSO: BOGOTÁ INFINITE DRIVE -->
+          <div id="driveOverlay" class="drive-overlay" style="display:none;">
+            <canvas id="multiscaleDriveCanvas"></canvas>
+            <div class="drive-hud">
+              <div class="drive-hud-top">
+                <div class="hud-box">
+                  <span class="hud-label">SCORE</span>
+                  <span class="hud-value" id="multiDriveScore">00000 PTS</span>
+                </div>
+                <div class="hud-box">
+                  <span class="hud-label">DISTANCIA</span>
+                  <span class="hud-value" id="multiDriveDistance">0.00 km</span>
+                </div>
+                <div class="hud-box">
+                  <span class="hud-label">TIEMPO</span>
+                  <span class="hud-value" id="multiDriveTimer">00:00.0</span>
+                </div>
+                <div class="hud-audio-controls">
+                  <button id="driveMute" class="hud-btn" type="button" aria-label="Silenciar">🔊</button>
+                  <input type="range" id="driveVolume" min="0" max="1" step="0.05" value="0.4" aria-label="Volumen">
+                </div>
+              </div>
+              <div class="drive-hud-status" id="multiDriveStatus">EN MARCHA · CONTROLA CON WASD / FLECHAS</div>
+              <div class="drive-hud-guide">
+                <span><strong>W/↑</strong> Acelerar</span>
+                <span><strong>S/↓</strong> Frenar</span>
+                <span><strong>A-D/←→</strong> Dirección</span>
+                <span><strong>R</strong> Reiniciar</span>
+              </div>
+            </div>
+            <div id="multiDriveToast" class="drive-toast"></div>
+            <audio id="driveMusic" src="assets/bogota-infinite-drive-background.wav" loop preload="none"></audio>
+          </div>
+
+          <!-- NOTA DE ATRIBUCIÓN -->
+          <div class="map-attribution-note">
+            Datos de cartografía: <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap</a> · CARTO Dark Matter · Modelo Multiescalar RAPOT
+          </div>
+        </section>
+
+      </div>
     </main>
   </div>
 
@@ -314,7 +318,7 @@
     window.maplibregl = maplibregl;
     window.dispatchEvent(new Event("maplibre-ready"));
   </script>
-  <script src="modulo-05.js?v=20260901_redesign"></script>
-  <script src="modulo-05-drive.js?v=20260901_redesign"></script>
+  <script src="modulo-05.js?v=20260901_black_fix"></script>
+  <script src="modulo-05-drive.js?v=20260901_black_fix"></script>
 </body>
 </html>
