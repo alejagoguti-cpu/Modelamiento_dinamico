@@ -55,7 +55,7 @@
   // al norte verdadero (es una característica real de la ciudad, no un error).
   const EXTRA_ZOOM = 1.5;
   const CENTER_X = 6100, CENTER_Y = 2500;
-  const ROTATE_DEG = 16;  const VEHICULOS_JSON_URL = "./assets/kennedy_vehiculos.json";
+  const ROTATE_DEG = 0; // el problema real era el volteo del eje Y, no la rotación — se deja en 0 por ahora  const VEHICULOS_JSON_URL = "./assets/kennedy_vehiculos.json";
   const TRAZADO_URL = "./assets/trazado.xml";
 
   const EDGE_STYLE = {
@@ -127,21 +127,25 @@
       const fitScale = Math.min((w - pad * 2) / bw, (h - pad * 2) / bh);
       const scale = fitScale * EXTRA_ZOOM;
       const offX = w / 2 - CENTER_X * scale;
-      const offY = h / 2 - CENTER_Y * scale;
+      // El eje Y de SUMO crece hacia el NORTE (como en UTM real), pero en
+      // pantalla "y" crece hacia ABAJO — sin voltearlo, el norte queda
+      // abajo y todo el mapa se ve "al revés". Por eso el signo cambia
+      // aquí (+ en vez de -) para compensar el volteo que se hace en
+      // toScreen.
+      const offY = h / 2 + CENTER_Y * scale;
       view = { scale, offX, offY };
     }
 
-    // Coordenadas del mundo SUMO (ya con el offset del recorte aplicado)
-    // a coordenadas de pantalla dentro del canvas — primero se rota un
-    // poco alrededor del centro (para enderezar la cuadrícula), y luego
-    // se escala y se desplaza.
+    // Coordenadas del mundo SUMO a coordenadas de pantalla: se rota un
+    // poco alrededor del centro (para enderezar la cuadrícula), y el eje Y
+    // se VOLTEA (el norte de SUMO debe quedar arriba en pantalla, no abajo).
     const ROTATE_RAD = (ROTATE_DEG * Math.PI) / 180;
     const ROT_COS = Math.cos(ROTATE_RAD), ROT_SIN = Math.sin(ROTATE_RAD);
     function toScreen(x, y) {
       const dx = x - CENTER_X, dy = y - CENTER_Y;
       const rx = dx * ROT_COS - dy * ROT_SIN + CENTER_X;
       const ry = dx * ROT_SIN + dy * ROT_COS + CENTER_Y;
-      return [rx * view.scale + view.offX, ry * view.scale + view.offY];
+      return [rx * view.scale + view.offX, -ry * view.scale + view.offY];
     }
 
     function drawNetwork(w, h) {
@@ -260,7 +264,7 @@
         // calcula solo mirando hacia dónde se mueve el auto.
         const angle = (va.angle != null && vb.angle != null)
           ? va.angle + (vb.angle - va.angle) * frac
-          : (Math.atan2(vb.x - va.x, -(vb.y - va.y)) * 180) / Math.PI;
+          : (Math.atan2(vb.x - va.x, vb.y - va.y) * 180) / Math.PI; // sin el signo negativo: coherente con el volteo del eje Y en toScreen
         return { id: va.id, x, y, angle };
       });
     }
