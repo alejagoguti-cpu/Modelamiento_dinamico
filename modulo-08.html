@@ -201,6 +201,21 @@
             <div class="noise-scale-swatch" style="background:rgba(230,74,25,.42)"></div><span>80–90</span>
             <div class="noise-scale-swatch" style="background:rgba(211,47,47,.42)"></div><span>&gt; 90 dB(A)</span>
           </div>
+          <details class="noise-formula-details">
+            <summary>Ver fórmula y reglas de cálculo</summary>
+            <ol>
+              <li><strong>Mancha por vehículo:</strong> cada vehículo genera un círculo de influencia (degradado radial, blanco en el centro y transparente en el borde) alrededor de su posición actual.</li>
+              <li><strong>Radio según el tipo de vía</strong> (en metros reales, no píxeles): se busca la vía más cercana al vehículo en la red de SUMO y se usa su jerarquía real —
+                <code>local → 25 m</code>, <code>mid (vía secundaria) → 75 m</code>, <code>major (vía principal) → 150 m</code>.
+              </li>
+              <li><strong>Acumulación:</strong> donde se superponen las manchas de varios vehículos cercanos, la intensidad se suma (modo "lighter" del canvas) — más vehículos juntos = mayor intensidad acumulada en esa zona.</li>
+              <li><strong>Intensidad → color:</strong> la intensidad acumulada (0 a 1) se eleva a la potencia 2.4 (<code>t = intensidad^2.4</code>) antes de mapearse a color, para que haga falta bastante acumulación de tráfico para llegar al rojo — así se evita que todo se sature a rojo con pocos vehículos.</li>
+              <li><strong>Color:</strong> ese valor <code>t</code> se interpola de forma continua entre 6 colores de referencia (amarillo claro → amarillo → naranja claro → naranja → rojo anaranjado → rojo), equivalentes a los rangos de dB(A) mostrados arriba.</li>
+              <li><strong>Transparencia:</strong> siempre la misma (42%) en toda la capa — nunca cambia según el nivel de ruido, solo cambia el color.</li>
+              <li><strong>Suavizado:</strong> el resultado se calcula en una imagen de baja resolución y se dibuja agrandado con desenfoque (blur), para que se vea como una superficie continua y no como puntos o una cuadrícula.</li>
+            </ol>
+            <p class="noise-formula-note">Es un proxy visual de carga de tráfico, no una medición acústica real en decibeles.</p>
+          </details>
         </div>
       </div>
     </div>

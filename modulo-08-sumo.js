@@ -338,23 +338,10 @@
       return [x, y];
     }
 
-    // Cuerpos de agua y zonas verdes, en coordenadas reales (lon/lat).
-    // El Humedal El Burro viene de un polígono real ya usado en el módulo 7.
-    // Los demás (Techo, La Vaca, canales, zonas verdes) son aproximaciones
-    // dibujadas a partir de su ubicación descrita (colindancias con Av.
-    // Boyacá, Av. Ciudad de Cali, El Burro, Río Fucha) — no son polígonos
-    // catastrales exactos, son ilustrativos pero ubicados correctamente
-    // respecto a las vías reales que sí tenemos con precisión.
-    const WATER_FEATURES = [
-      { name: "Humedal El Burro", poly: [[-74.168, 4.644], [-74.163, 4.646], [-74.1595, 4.644], [-74.159, 4.640], [-74.163, 4.637], [-74.168, 4.639], [-74.168, 4.644]] },
-      { name: "Humedal El Burro (sector oriental)", poly: [[-74.159, 4.644], [-74.153, 4.644], [-74.151, 4.638], [-74.156, 4.633], [-74.160, 4.636], [-74.159, 4.640], [-74.159, 4.644]] },
-      { name: "Humedal La Vaca", poly: [[-74.1638, 4.6314], [-74.1608, 4.6316], [-74.1598, 4.6300], [-74.1608, 4.6278], [-74.1630, 4.6280], [-74.1642, 4.6296], [-74.1638, 4.6314]] },
-      { name: "Humedal de Techo (aprox.)", poly: [[-74.153, 4.641], [-74.140, 4.644], [-74.138, 4.649], [-74.150, 4.651], [-74.156, 4.646], [-74.153, 4.641]] },
-    ];
-    const WATER_LINES = [
-      { name: "Canal Castilla (aprox.)", line: [[-74.168, 4.649], [-74.174, 4.653], [-74.182, 4.658]] },
-      { name: "Canal Alsacia (aprox.)", line: [[-74.160, 4.660], [-74.168, 4.665], [-74.178, 4.670]] },
-    ];
+    // Zonas verdes, en coordenadas reales (lon/lat), aproximadas a partir
+    // de su ubicación descrita — no son polígonos catastrales exactos.
+    // (Los cuerpos de agua se quitaron a pedido del usuario: quedaban
+    // demasiado grandes en el mapa.)
     const VEGETATION_FEATURES = [
       { name: "Zona verde cerca de Corabastos (aprox.)", poly: [[-74.163, 4.628], [-74.157, 4.629], [-74.156, 4.624], [-74.161, 4.622], [-74.165, 4.624], [-74.163, 4.628]] },
       { name: "Zona verde entre El Burro y Techo (aprox.)", poly: [[-74.155, 4.647], [-74.150, 4.648], [-74.149, 4.644], [-74.153, 4.643], [-74.155, 4.647]] },
@@ -371,27 +358,14 @@
       ctx.fillStyle = fillStyle;
       ctx.fill();
     }
-    function drawGeoLine(ctx, lonLatPts, strokeStyle, width) {
-      ctx.beginPath();
-      lonLatPts.forEach(([lon, lat], i) => {
-        const [wx, wy] = lonLatToLocal(lon, lat);
-        const [sx, sy] = toScreen(wx, wy);
-        if (i === 0) ctx.moveTo(sx, sy); else ctx.lineTo(sx, sy);
-      });
-      ctx.strokeStyle = strokeStyle;
-      ctx.lineWidth = width;
-      ctx.stroke();
-    }
 
     function drawNetwork(w, h) {
       netCtx.clearRect(0, 0, w, h);
       netCtx.lineJoin = "round";
       netCtx.lineCap = "round";
-      // Cuerpos de agua (azul) y vegetación (verde) primero, debajo de las
-      // vías, para que las calles se sigan viendo encima con claridad.
+      // Vegetación (verde) primero, debajo de las vías, para que las
+      // calles se sigan viendo encima con claridad.
       VEGETATION_FEATURES.forEach((f) => drawGeoPolygon(netCtx, f.poly, "rgba(96,168,96,0.55)"));
-      WATER_FEATURES.forEach((f) => drawGeoPolygon(netCtx, f.poly, "rgba(66,133,244,0.6)"));
-      WATER_LINES.forEach((f) => drawGeoLine(netCtx, f.line, "rgba(66,133,244,0.75)", Math.max(2, 3 * view.scale * 0.02)));
       // se dibuja primero lo local (más numeroso y fino) y encima lo
       // principal (más grueso), para que las vías grandes no queden tapadas
       ["local", "mid", "major"].forEach((cls) => {

@@ -804,6 +804,11 @@ footer span { color: var(--teal); }
 .noise-scale-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 11px; color: var(--text-dim); }
 .noise-scale-swatch { width: 20px; height: 14px; border-radius: 3px; border: 1px solid rgba(255,255,255,.15); background-color: #05070a; }
 .noise-scale-row span { margin-right: 10px; }
+.noise-formula-details { font-size: 11px; color: var(--text-dim); }
+.noise-formula-details summary { cursor: pointer; color: #ffb020; font-weight: 600; padding: 2px 0; }
+.noise-formula-details ol { margin: 8px 0 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; line-height: 1.5; }
+.noise-formula-details code { background: #05070a; border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; color: #76fff0; font-size: 10.5px; }
+.noise-formula-note { margin: 8px 0 0; font-style: italic; opacity: .8; }
 .sumo-btn {
   width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border);
   background: var(--panel-alt); color: var(--text); cursor: pointer; flex-shrink: 0;
