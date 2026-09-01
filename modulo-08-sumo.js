@@ -49,13 +49,12 @@
   "use strict";
 
   const NET_URL = "./assets/kennedy_net.json";
-  // Encuadre del mapa: acercado sobre la zona de los humedales (no la red
-  // completa), y con una pequeña rotación para enderezar la cuadrícula de
-  // Bogotá, que en las coordenadas locales de SUMO viene inclinada respecto
-  // al norte verdadero (es una característica real de la ciudad, no un error).
-  const EXTRA_ZOOM = 1.5;
-  const CENTER_X = 6100, CENTER_Y = 2500;
-  const ROTATE_DEG = 0; // el problema real era el volteo del eje Y, no la rotación — se deja en 0 por ahora  const VEHICULOS_JSON_URL = "./assets/kennedy_vehiculos.json";
+  // Encuadre del mapa: se puede ajustar en vivo con el panel de calibración
+  // (ver más abajo) — estos son solo los valores iniciales.
+  let EXTRA_ZOOM = 1.5;
+  let CENTER_X = 6100, CENTER_Y = 2500;
+  let ROTATE_DEG = 0;
+  const VEHICULOS_JSON_URL = "./assets/kennedy_vehiculos.json";
   const TRAZADO_URL = "./assets/trazado.xml";
 
   const EDGE_STYLE = {
@@ -139,12 +138,12 @@
     // Coordenadas del mundo SUMO a coordenadas de pantalla: se rota un
     // poco alrededor del centro (para enderezar la cuadrícula), y el eje Y
     // se VOLTEA (el norte de SUMO debe quedar arriba en pantalla, no abajo).
-    const ROTATE_RAD = (ROTATE_DEG * Math.PI) / 180;
-    const ROT_COS = Math.cos(ROTATE_RAD), ROT_SIN = Math.sin(ROTATE_RAD);
     function toScreen(x, y) {
+      const rotateRad = (ROTATE_DEG * Math.PI) / 180;
+      const rotCos = Math.cos(rotateRad), rotSin = Math.sin(rotateRad);
       const dx = x - CENTER_X, dy = y - CENTER_Y;
-      const rx = dx * ROT_COS - dy * ROT_SIN + CENTER_X;
-      const ry = dx * ROT_SIN + dy * ROT_COS + CENTER_Y;
+      const rx = dx * rotCos - dy * rotSin + CENTER_X;
+      const ry = dx * rotSin + dy * rotCos + CENTER_Y;
       return [rx * view.scale + view.offX, -ry * view.scale + view.offY];
     }
 
@@ -275,7 +274,7 @@
       const vehicles = vehiclesAtTime(t);
       vehicles.forEach((v) => {
         const [sx, sy] = toScreen(v.x, v.y);
-        const rad = ((v.angle - 90) * Math.PI) / 180 + ROTATE_RAD; // SUMO: 0° = norte, + la rotacion del encuadre
+        const rad = ((v.angle - 90) * Math.PI) / 180 + (ROTATE_DEG * Math.PI) / 180; // SUMO: 0° = norte, + la rotacion actual del encuadre
         vehCtx.save();
         vehCtx.translate(sx, sy);
         vehCtx.rotate(rad);
@@ -328,6 +327,41 @@
     });
     slider?.addEventListener("change", () => { isScrubbing = false; });
     speedSelect?.addEventListener("change", () => { speedMultiplier = Number(speedSelect.value) || 1; });
+
+    // ---------- Panel de calibración: mover/rotar/hacer zoom a mano ----------
+    const calibRotate = document.getElementById("calibRotate");
+    const calibZoom = document.getElementById("calibZoom");
+    const calibCenterX = document.getElementById("calibCenterX");
+    const calibCenterY = document.getElementById("calibCenterY");
+    const calibOutput = document.getElementById("calibOutput");
+    function redrawCalibration() {
+      const wrap = netCanvas.parentElement;
+      const w = wrap.clientWidth, h = wrap.clientHeight;
+      if (netData) { computeView(w, h); drawNetwork(w, h); drawVehiclesAt(playhead); }
+      if (calibOutput) calibOutput.value = `ROTATE_DEG=${ROTATE_DEG}  EXTRA_ZOOM=${EXTRA_ZOOM.toFixed(2)}  CENTER_X=${CENTER_X}  CENTER_Y=${CENTER_Y}`;
+    }
+    calibRotate?.addEventListener("input", () => {
+      ROTATE_DEG = Number(calibRotate.value);
+      document.getElementById("calibRotateVal").textContent = ROTATE_DEG + "°";
+      redrawCalibration();
+    });
+    calibZoom?.addEventListener("input", () => {
+      EXTRA_ZOOM = Number(calibZoom.value);
+      document.getElementById("calibZoomVal").textContent = EXTRA_ZOOM.toFixed(2);
+      redrawCalibration();
+    });
+    calibCenterX?.addEventListener("input", () => {
+      CENTER_X = Number(calibCenterX.value);
+      document.getElementById("calibCenterXVal").textContent = CENTER_X;
+      redrawCalibration();
+    });
+    calibCenterY?.addEventListener("input", () => {
+      CENTER_Y = Number(calibCenterY.value);
+      document.getElementById("calibCenterYVal").textContent = CENTER_Y;
+      redrawCalibration();
+    });
+    // Mostrar los valores iniciales apenas carga, sin esperar a mover nada.
+    if (calibOutput) calibOutput.value = `ROTATE_DEG=${ROTATE_DEG}  EXTRA_ZOOM=${EXTRA_ZOOM.toFixed(2)}  CENTER_X=${CENTER_X}  CENTER_Y=${CENTER_Y}`;
 
     window.addEventListener("resize", () => {
       resizeCanvases();
