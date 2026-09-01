@@ -769,28 +769,8 @@ footer span { color: var(--teal); }
   background: #05070a; border-radius: 8px; overflow: hidden;
 }
 .sumo-canvas-wrap.panning { cursor: grabbing; }
-.sumo-tree-info {
-  position: absolute; z-index: 60; max-width: 240px; padding: 7px 10px; border-radius: 7px;
-  border: 1px solid rgba(96,200,110,.6); background: rgba(6,16,8,.96); color: #fff;
-  font-size: 11.5px; line-height: 1.4; pointer-events: none; box-shadow: 0 6px 16px rgba(0,0,0,.5);
-}
-.sumo-tree-info i { color: #6ec86e; }
 .sumo-canvas-wrap canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
-#sumoReferenceImage { position: absolute; left: 30px; top: 30px; z-index: 45; max-width: none; transform-origin: top left; pointer-events: auto; cursor: move; user-select: none; -webkit-user-drag: none; }
-#sumoImageDragSurface { position: absolute; inset: 0; z-index: 35; pointer-events: none; cursor: move; touch-action: none; background: transparent; }
 #sumoFreeDrawCanvas { position: absolute; inset: 0; z-index: 40; pointer-events: auto; cursor: crosshair; touch-action: none; background: transparent; }
-.sumo-reference-panel { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 10px 14px; border: 1px solid rgba(118,255,240,.35); border-radius: 8px; background: rgba(118,255,240,.04); color: var(--text-dim); font-size: 11px; }
-.sumo-reference-panel strong { color: #76fff0; font-size: 12px; }
-.sumo-reference-panel label { display: inline-flex; align-items: center; gap: 5px; }
-.sumo-reference-panel input[type="range"] { width: 120px; accent-color: #76fff0; }
-.sumo-file-label input[type="file"] { max-width: 180px; font-size: 10px; }
-.sumo-reference-panel button { flex: 0 0 auto; }
-.sumo-reference-panel span { flex: 1 1 220px; }
-.sumo-reference-coords { display: flex; flex-direction: column; gap: 6px; width: 100%; }
-.sumo-reference-coords textarea {
-  width: 100%; background: #05070a; border: 1px solid var(--border); border-radius: 6px;
-  color: #76fff0; font-family: monospace; font-size: 11px; padding: 8px; resize: vertical;
-}
 
 .sumo-pen-side-toolbar { z-index: 50; }
 .sumo-pen-side-toolbar { position: absolute; top: 12px; right: 12px; z-index: 50; display: flex; flex-direction: column; align-items: center; gap: 7px; padding: 9px 7px; border: 1px solid rgba(255,209,102,.55); border-radius: 9px; background: rgba(7,12,15,.92); color: #ffd166; box-shadow: 0 5px 18px rgba(0,0,0,.35); }

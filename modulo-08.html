@@ -168,8 +168,6 @@
           <canvas id="sumoNetCanvas"></canvas>
           <canvas id="sumoNoiseCanvas"></canvas>
           <canvas id="sumoVehCanvas"></canvas>
-          <img id="sumoReferenceImage" alt="Imagen de referencia para calcar humedales" hidden>
-          <div id="sumoImageDragSurface" hidden aria-label="Mover imagen de referencia"></div>
           <canvas id="sumoFreeDrawCanvas" aria-label="Lienzo libre para dibujar humedales"></canvas>
           <div class="sumo-pen-side-toolbar" aria-label="Herramientas para dibujar humedales">
             <button type="button" class="sumo-btn" id="sumoPenToggle" title="Activar pluma"><i class="fa-solid fa-pen"></i></button>
@@ -184,32 +182,6 @@
             <span>PLUMA<br><small>clics · doble clic para cerrar</small></span>
           </div>
           <div class="sumo-sim-overlay" id="sumoStatus">Cargando red vial…</div>
-        </div>
-        <div class="sumo-reference-panel">
-          <strong><i class="fa-solid fa-image"></i> Imagen para calcar — también puedes usar Ctrl + V</strong>
-          <label class="sumo-file-label">Cargar imagen <input id="sumoReferenceFile" type="file" accept="image/*"></label>
-          <button type="button" class="sumo-btn" id="sumoImageMode" title="Mover imagen"><i class="fa-solid fa-arrows-up-down-left-right"></i></button>
-          <button type="button" class="sumo-btn" id="sumoReferenceClear" title="Quitar imagen"><i class="fa-solid fa-trash"></i></button>
-          <label>Escala <input id="sumoReferenceScale" type="range" min="0.2" max="3" step="0.01" value="1"></label>
-          <label>Opacidad <input id="sumoReferenceOpacity" type="range" min="0.05" max="1" step="0.01" value="0.55"></label>
-          <span id="sumoImageStatus">Copia una imagen, pulsa Ctrl + V dentro de la página y luego usa mover imagen.</span>
-          <div class="sumo-reference-coords">
-            <button type="button" class="sumo-btn" id="sumoImageCopy" title="Copiar coordenadas de la imagen"><i class="fa-solid fa-copy"></i> Copiar posición de la imagen</button>
-            <textarea id="sumoImageOutput" rows="4" spellcheck="false" placeholder="Aquí aparecerá la posición, escala y opacidad de la imagen..."></textarea>
-          </div>
-        </div>
-
-        <div class="sumo-reference-panel">
-          <strong><i class="fa-solid fa-tree"></i> Malla de árboles — muévela y escálala a tu gusto</strong>
-          <button type="button" class="sumo-btn" id="sumoTreeAdjustMode" title="Mover árboles"><i class="fa-solid fa-arrows-up-down-left-right"></i></button>
-          <button type="button" class="sumo-btn" id="sumoTreeReset" title="Restablecer posición"><i class="fa-solid fa-rotate-left"></i></button>
-          <label>Escala <input id="sumoTreeScale" type="range" min="0.5" max="2" step="0.01" value="1"></label>
-          <label>Rotación <input id="sumoTreeRotation" type="range" min="-45" max="45" step="0.5" value="0"></label>
-          <span id="sumoTreeStatus">Pulsa mover árboles y arrástralos sobre el mapa hasta que calcen con las calles.</span>
-          <div class="sumo-reference-coords">
-            <button type="button" class="sumo-btn" id="sumoTreeCopy" title="Copiar ajuste de árboles"><i class="fa-solid fa-copy"></i> Copiar ajuste de árboles</button>
-            <textarea id="sumoTreeOutput" rows="3" spellcheck="false" placeholder="Aquí aparecerá el desplazamiento y la escala de los árboles..."></textarea>
-          </div>
         </div>
         <div class="sumo-sim-controls">
           <button type="button" id="sumoPlayPause" class="sumo-btn" aria-label="Reproducir / pausar"><i class="fa-solid fa-play"></i></button>
@@ -301,6 +273,5 @@
 <script src="modulo-08.js"></script>
 <script src="modulo-08-sumo.js?v=trees-rotation-v13"></script>
 <script src="modulo-08-free-draw.js?v=trees-v3"></script>
-<script src="modulo-08-reference-image.js?v=20260901-image3-scalefix"></script>
 </body>
 </html>
