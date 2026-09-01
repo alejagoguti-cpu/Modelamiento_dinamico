@@ -87,6 +87,12 @@
 
     let netData = null;      // { offset, bbox, edges }
     let treeData = null;     // { species: [nombre,...], trees: [[x,y,speciesIdx,alturaM],...] } — Arbolado Urbano de Kennedy
+    // Ajuste MANUAL de la malla de árboles (arrastrar/escalar), guardado
+    // en el navegador — el usuario la acomoda a ojo, no se recalcula la
+    // geografía sola para no "distorsionar" la malla.
+    const TREE_ADJUST_KEY = "sumoModule8TreeAdjust";
+    let treeAdjust = { dx: 0, dy: 0, scale: 1 };
+    try { treeAdjust = { ...treeAdjust, ...JSON.parse(localStorage.getItem(TREE_ADJUST_KEY) || "{}") }; } catch (_) {}
     let timesteps = [];      // [{ time, vehicles:[{id,x,y,angle}] }]
     let view = { scale: 1, offX: 0, offY: 0 }; // mundo -> pantalla
     let playing = false;
@@ -751,6 +757,15 @@
       ctx.lineTo(last[0], last[1]);
     }
 
+    // Posición en pantalla de un árbol, incluyendo el ajuste manual
+    // (mover/escalar) — se usa tanto para dibujar como para detectar clics.
+    function treeToScreen(tx, ty, w, h) {
+      let [sx, sy] = toScreen(tx, ty);
+      sx = (sx - w / 2) * treeAdjust.scale + w / 2 + treeAdjust.dx;
+      sy = (sy - h / 2) * treeAdjust.scale + h / 2 + treeAdjust.dy;
+      return [sx, sy];
+    }
+
     function drawNetwork(w, h) {
       netCtx.clearRect(0, 0, w, h);
       netCtx.lineJoin = "round";
@@ -790,7 +805,7 @@
       if (treeData) {
         netCtx.fillStyle = "rgba(90,190,110,0.55)";
         treeData.trees.forEach(([tx, ty, , altura]) => {
-          const [sx, sy] = toScreen(tx, ty);
+          const [sx, sy] = treeToScreen(tx, ty, w, h);
           if (sx < -10 || sx > w + 10 || sy < -10 || sy > h + 10) return; // no dibujar lo que está fuera de pantalla
           const r = Math.min(2.6, Math.max(0.8, (altura || 3) * 0.12));
           netCtx.beginPath();
@@ -1116,18 +1131,73 @@
     // ---------- Clic sobre un árbol: muestra su especie y altura ----------
     // (así la información guardada en kennedy_trees.json es consultable,
     // no solo queda archivada sin usarse).
+    // ---------- Mover/escalar la malla de árboles a mano (igual que la
+    // imagen de referencia): el usuario la acomoda por su cuenta, sin que
+    // se recalcule sola la geografía y "distorsione" la malla.
+    const treeAdjustBtn = document.getElementById("sumoTreeAdjustMode");
+    const treeScaleInput = document.getElementById("sumoTreeScale");
+    const treeResetBtn = document.getElementById("sumoTreeReset");
+    const treeCopyBtn = document.getElementById("sumoTreeCopy");
+    const treeOutput = document.getElementById("sumoTreeOutput");
+    const treeStatusEl = document.getElementById("sumoTreeStatus");
+    if (treeScaleInput) treeScaleInput.value = treeAdjust.scale;
+    function saveTreeAdjust() {
+      try { localStorage.setItem(TREE_ADJUST_KEY, JSON.stringify(treeAdjust)); } catch (_) {}
+      if (treeOutput) treeOutput.value = `dx=${treeAdjust.dx.toFixed(1)}  dy=${treeAdjust.dy.toFixed(1)}  scale=${treeAdjust.scale.toFixed(3)}`;
+    }
+    function redrawTrees() {
+      const w = netCanvas.parentElement.clientWidth, h = netCanvas.parentElement.clientHeight;
+      drawNetwork(w, h);
+      saveTreeAdjust();
+    }
+    let treeMoving = false;
+    treeAdjustBtn?.addEventListener("click", () => {
+      const active = treeAdjustBtn.classList.toggle("active");
+      window.sumoActiveMode = active ? "trees" : "draw";
+      if (treeStatusEl) treeStatusEl.textContent = active ? "Modo mover árboles: arrastra sobre el mapa." : "Ajusta cuando quieras — pulsa mover árboles de nuevo.";
+    });
+    document.getElementById("sumoCanvasWrap")?.addEventListener("pointerdown", (event) => {
+      if (window.sumoActiveMode !== "trees") return;
+      treeMoving = true;
+      event.currentTarget.__treeLast = { x: event.clientX, y: event.clientY };
+    });
+    window.addEventListener("pointermove", (event) => {
+      if (!treeMoving) return;
+      const wrap = document.getElementById("sumoCanvasWrap");
+      const last = wrap.__treeLast;
+      if (!last) return;
+      treeAdjust.dx += event.clientX - last.x;
+      treeAdjust.dy += event.clientY - last.y;
+      wrap.__treeLast = { x: event.clientX, y: event.clientY };
+      redrawTrees();
+    });
+    window.addEventListener("pointerup", () => { treeMoving = false; });
+    treeScaleInput?.addEventListener("input", () => { treeAdjust.scale = Number(treeScaleInput.value); redrawTrees(); });
+    treeResetBtn?.addEventListener("click", () => {
+      treeAdjust = { dx: 0, dy: 0, scale: 1 };
+      if (treeScaleInput) treeScaleInput.value = 1;
+      redrawTrees();
+    });
+    treeCopyBtn?.addEventListener("click", async () => {
+      saveTreeAdjust();
+      try { await navigator.clipboard.writeText(treeOutput?.value || ""); } catch (_) {}
+      if (treeStatusEl) treeStatusEl.textContent = "Ajuste copiado. Pégamelo en el chat si quieres que lo deje fijo así.";
+    });
+    saveTreeAdjust();
+
     const treeInfoBox = document.createElement("div");
     treeInfoBox.className = "sumo-tree-info";
     treeInfoBox.hidden = true;
     document.getElementById("sumoCanvasWrap")?.appendChild(treeInfoBox);
     document.getElementById("sumoCanvasWrap")?.addEventListener("click", (event) => {
-      if (!treeData || window.sumoActiveMode === "image") return; // no interferir con el modo mover imagen
+      if (!treeData || window.sumoActiveMode === "image" || window.sumoActiveMode === "trees") return; // no interferir con mover imagen/árboles
       const wrap = event.currentTarget;
       const rect = wrap.getBoundingClientRect();
       const clickX = event.clientX - rect.left, clickY = event.clientY - rect.top;
+      const cw = netCanvas.parentElement.clientWidth, ch = netCanvas.parentElement.clientHeight;
       let best = null, bestDist = 12; // hasta 12px de tolerancia
       treeData.trees.forEach(([tx, ty, spIdx, altura]) => {
-        const [sx, sy] = toScreen(tx, ty);
+        const [sx, sy] = treeToScreen(tx, ty, cw, ch);
         const d = Math.hypot(sx - clickX, sy - clickY);
         if (d < bestDist) { bestDist = d; best = { species: treeData.species[spIdx], altura }; }
       });

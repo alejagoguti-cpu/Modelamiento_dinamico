@@ -198,6 +198,18 @@
             <textarea id="sumoImageOutput" rows="4" spellcheck="false" placeholder="Aquí aparecerá la posición, escala y opacidad de la imagen..."></textarea>
           </div>
         </div>
+
+        <div class="sumo-reference-panel">
+          <strong><i class="fa-solid fa-tree"></i> Malla de árboles — muévela y escálala a tu gusto</strong>
+          <button type="button" class="sumo-btn" id="sumoTreeAdjustMode" title="Mover árboles"><i class="fa-solid fa-arrows-up-down-left-right"></i></button>
+          <button type="button" class="sumo-btn" id="sumoTreeReset" title="Restablecer posición"><i class="fa-solid fa-rotate-left"></i></button>
+          <label>Escala <input id="sumoTreeScale" type="range" min="0.5" max="2" step="0.01" value="1"></label>
+          <span id="sumoTreeStatus">Pulsa mover árboles y arrástralos sobre el mapa hasta que calcen con las calles.</span>
+          <div class="sumo-reference-coords">
+            <button type="button" class="sumo-btn" id="sumoTreeCopy" title="Copiar ajuste de árboles"><i class="fa-solid fa-copy"></i> Copiar ajuste de árboles</button>
+            <textarea id="sumoTreeOutput" rows="3" spellcheck="false" placeholder="Aquí aparecerá el desplazamiento y la escala de los árboles..."></textarea>
+          </div>
+        </div>
         <div class="sumo-sim-controls">
           <button type="button" id="sumoPlayPause" class="sumo-btn" aria-label="Reproducir / pausar"><i class="fa-solid fa-play"></i></button>
           <input type="range" id="sumoTimeSlider" min="0" max="1000" value="0" step="1" disabled>
@@ -286,7 +298,7 @@
 </div>
 
 <script src="modulo-08.js"></script>
-<script src="modulo-08-sumo.js?v=trees-kennedy-v11"></script>
+<script src="modulo-08-sumo.js?v=trees-adjustable-v12"></script>
 <script src="modulo-08-free-draw.js?v=trees-v3"></script>
 <script src="modulo-08-reference-image.js?v=20260901-image3-scalefix"></script>
 </body>
