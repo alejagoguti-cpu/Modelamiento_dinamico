@@ -70,6 +70,7 @@
 
   start(() => {
     const netCanvas = document.getElementById("sumoNetCanvas");
+    const noiseCanvas = document.getElementById("sumoNoiseCanvas");
     const vehCanvas = document.getElementById("sumoVehCanvas");
     const statusEl = document.getElementById("sumoStatus");
     const playBtn = document.getElementById("sumoPlayPause");
@@ -79,6 +80,7 @@
     if (!netCanvas || !vehCanvas) return; // esta página no tiene el panel
 
     const netCtx = netCanvas.getContext("2d");
+    const noiseCtx = noiseCanvas ? noiseCanvas.getContext("2d") : null;
     const vehCtx = vehCanvas.getContext("2d");
 
     let netData = null;      // { offset, bbox, edges }
@@ -112,10 +114,112 @@
       });
       netCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
       vehCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      resizeNoiseCanvas(w, h);
       if (netData) {
         computeView(w, h);
         drawNetwork(w, h);
       }
+    }
+
+    // ---------- Capa de ruido: superficie continua, alpha SIEMPRE igual,
+    // solo cambia el color según qué tan cargada de tráfico está la zona.
+    // Se calcula en un buffer de baja resolución (para que el difuminado
+    // salga suave y sea barato de recalcular en cada cuadro), y se dibuja
+    // agrandado con blur encima del mapa.
+    const NOISE_ALPHA = 0.42; // fijo para TODA la capa, sin importar el nivel
+    const NOISE_BUF_W = 220; // resolución baja a propósito, para que sea una mancha continua, no puntos
+    const noiseBufCanvas = document.createElement("canvas");
+    const noiseBufCtx = noiseBufCanvas.getContext("2d", { willReadFrequently: true });
+    let noiseBufW = NOISE_BUF_W, noiseBufH = 140;
+
+    function resizeNoiseCanvas(w, h) {
+      if (!noiseCanvas) return;
+      const dpr = window.devicePixelRatio || 1;
+      noiseCanvas.width = Math.max(1, Math.round(w * dpr));
+      noiseCanvas.height = Math.max(1, Math.round(h * dpr));
+      noiseCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      noiseBufH = Math.max(1, Math.round((NOISE_BUF_W * h) / Math.max(1, w)));
+      noiseBufCanvas.width = NOISE_BUF_W;
+      noiseBufCanvas.height = noiseBufH;
+    }
+
+    // Escala de color amarillo→rojo (solo el color cambia, nunca el alpha).
+    // Los "stops" son puntos de referencia entre los que se interpola
+    // suavemente, para que la transición sea continua y no por bandas.
+    const NOISE_COLOR_STOPS = [
+      { t: 0.00, rgb: [255, 247, 179] }, // < 50 dB(A): amarillo claro
+      { t: 0.20, rgb: [255, 224, 76] },  // 50–60: amarillo
+      { t: 0.40, rgb: [255, 179, 77] },  // 60–70: naranja claro
+      { t: 0.60, rgb: [245, 124, 0] },   // 70–80: naranja
+      { t: 0.80, rgb: [230, 74, 25] },   // 80–90: rojo anaranjado
+      { t: 1.00, rgb: [211, 47, 47] },   // > 90: rojo
+    ];
+    function noiseColorAt(t) {
+      t = Math.max(0, Math.min(1, t));
+      for (let i = 0; i < NOISE_COLOR_STOPS.length - 1; i++) {
+        const a = NOISE_COLOR_STOPS[i], b = NOISE_COLOR_STOPS[i + 1];
+        if (t >= a.t && t <= b.t) {
+          const f = (t - a.t) / (b.t - a.t || 1);
+          return [
+            Math.round(a.rgb[0] + (b.rgb[0] - a.rgb[0]) * f),
+            Math.round(a.rgb[1] + (b.rgb[1] - a.rgb[1]) * f),
+            Math.round(a.rgb[2] + (b.rgb[2] - a.rgb[2]) * f),
+          ];
+        }
+      }
+      return NOISE_COLOR_STOPS[NOISE_COLOR_STOPS.length - 1].rgb;
+    }
+
+    function drawNoiseLayer(vehicles, w, h) {
+      if (!noiseCanvas || !noiseCtx) return;
+      // 1) Acumular "carga de tráfico" por zona en el buffer chico: cada
+      // vehículo suma una mancha suave (radial) alrededor de su posición;
+      // donde se juntan varios vehículos, la mancha se acumula más fuerte.
+      noiseBufCtx.clearRect(0, 0, noiseBufW, noiseBufH);
+      noiseBufCtx.globalCompositeOperation = "lighter";
+      const bufScaleX = noiseBufW / w, bufScaleY = noiseBufH / h;
+      const blobR = Math.max(10, noiseBufW * 0.09);
+      vehicles.forEach((v) => {
+        const [sx, sy] = toScreen(v.x, v.y);
+        const bx = sx * bufScaleX, by = sy * bufScaleY;
+        const grad = noiseBufCtx.createRadialGradient(bx, by, 0, bx, by, blobR);
+        grad.addColorStop(0, "rgba(255,255,255,0.9)");
+        grad.addColorStop(1, "rgba(255,255,255,0)");
+        noiseBufCtx.fillStyle = grad;
+        noiseBufCtx.beginPath();
+        noiseBufCtx.arc(bx, by, blobR, 0, Math.PI * 2);
+        noiseBufCtx.fill();
+      });
+      noiseBufCtx.globalCompositeOperation = "source-over";
+
+      // 2) Convertir esa acumulación de intensidad en color — el alpha de
+      // salida es SIEMPRE el mismo (NOISE_ALPHA); solo cambia el color
+      // según qué tan alta es la intensidad acumulada en ese punto.
+      const img = noiseBufCtx.getImageData(0, 0, noiseBufW, noiseBufH);
+      const data = img.data;
+      for (let i = 0; i < data.length; i += 4) {
+        const intensity = data[i + 3] / 255; // canal alpha acumulado = "carga de tráfico"
+        if (intensity < 0.02) {
+          data[i + 3] = 0; // sin tráfico cerca: transparente, se ve el mapa
+          continue;
+        }
+        // Curva suave para que la zona con un solo vehículo cercano ya
+        // se note (no solo los cruces con muchos autos encimados).
+        const t = Math.min(1, Math.pow(intensity, 0.55));
+        const [r, g, b] = noiseColorAt(t);
+        data[i] = r; data[i + 1] = g; data[i + 2] = b;
+        data[i + 3] = Math.round(NOISE_ALPHA * 255); // <- SIEMPRE el mismo alpha, nunca varía
+      }
+      noiseBufCtx.putImageData(img, 0, 0);
+
+      // 3) Dibujar el buffer agrandado con blur para que se vea como una
+      // superficie continua, no una cuadrícula de píxeles.
+      noiseCtx.clearRect(0, 0, w, h);
+      noiseCtx.save();
+      noiseCtx.filter = `blur(${Math.max(3, w * 0.012)}px)`;
+      noiseCtx.imageSmoothingEnabled = true;
+      noiseCtx.drawImage(noiseBufCanvas, 0, 0, noiseBufW, noiseBufH, 0, 0, w, h);
+      noiseCtx.restore();
     }
 
     // Calcula escala/offset para que la red quepa completa en el canvas,
@@ -272,6 +376,7 @@
       const w = vehCanvas.parentElement.clientWidth, h = vehCanvas.parentElement.clientHeight;
       vehCtx.clearRect(0, 0, w, h);
       const vehicles = vehiclesAtTime(t);
+      drawNoiseLayer(vehicles, w, h);
       vehicles.forEach((v) => {
         const [sx, sy] = toScreen(v.x, v.y);
         const rad = ((v.angle - 90) * Math.PI) / 180 + (ROTATE_DEG * Math.PI) / 180; // SUMO: 0° = norte, + la rotacion actual del encuadre

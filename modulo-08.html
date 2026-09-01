@@ -166,6 +166,7 @@
       <div class="sumo-sim-card">
         <div class="sumo-canvas-wrap" id="sumoCanvasWrap">
           <canvas id="sumoNetCanvas"></canvas>
+          <canvas id="sumoNoiseCanvas"></canvas>
           <canvas id="sumoVehCanvas"></canvas>
           <div class="sumo-sim-overlay" id="sumoStatus">Cargando red vial…</div>
           <button type="button" class="sumo-rotate-handle" id="sumoRotateHandle" title="Arrastra para girar el mapa"><i class="fa-solid fa-rotate"></i></button>
@@ -189,6 +190,20 @@
         <div class="sumo-calib-panel">
           <p><i class="fa-solid fa-hand"></i> Arrastra el mapa para moverlo · rueda del mouse (o pellizca) para zoom · arrastra el ícono <i class="fa-solid fa-rotate"></i> de la esquina para girarlo. Cuando quede bien, copia este texto y pégamelo:</p>
           <textarea id="calibOutput" readonly rows="2"></textarea>
+        </div>
+
+        <!-- Leyenda de la capa de ruido: el color cambia con el nivel de
+             tráfico/ruido, pero la transparencia es SIEMPRE la misma. -->
+        <div class="noise-scale-legend">
+          <h4><i class="fa-solid fa-volume-high"></i> Ruido estimado por tráfico — misma transparencia siempre, solo cambia el color</h4>
+          <div class="noise-scale-row">
+            <div class="noise-scale-swatch" style="background:rgba(255,247,179,.42)"></div><span>&lt; 50 dB(A)</span>
+            <div class="noise-scale-swatch" style="background:rgba(255,224,76,.42)"></div><span>50–60</span>
+            <div class="noise-scale-swatch" style="background:rgba(255,179,77,.42)"></div><span>60–70</span>
+            <div class="noise-scale-swatch" style="background:rgba(245,124,0,.42)"></div><span>70–80</span>
+            <div class="noise-scale-swatch" style="background:rgba(230,74,25,.42)"></div><span>80–90</span>
+            <div class="noise-scale-swatch" style="background:rgba(211,47,47,.42)"></div><span>&gt; 90 dB(A)</span>
+          </div>
         </div>
       </div>
     </div>

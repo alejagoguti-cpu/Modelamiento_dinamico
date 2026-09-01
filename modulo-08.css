@@ -769,7 +769,7 @@ footer span { color: var(--teal); }
   background: #05070a; border-radius: 8px; overflow: hidden; cursor: grab; touch-action: none;
 }
 .sumo-canvas-wrap.panning { cursor: grabbing; }
-.sumo-canvas-wrap canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.sumo-canvas-wrap canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
 .sumo-sim-overlay {
   position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
   color: var(--text-dim); font-size: 13px; background: rgba(5,7,10,0.7);
@@ -794,6 +794,14 @@ footer span { color: var(--teal); }
   width: 100%; background: #05070a; border: 1px solid var(--border); border-radius: 6px;
   color: #76fff0; font-family: monospace; font-size: 11px; padding: 8px; resize: vertical;
 }
+.noise-scale-legend {
+  padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; background: var(--panel-alt);
+  display: flex; flex-direction: column; gap: 8px;
+}
+.noise-scale-legend h4 { margin: 0; font-size: 11.5px; color: var(--text-dim); font-weight: 600; display: flex; align-items: center; gap: 6px; }
+.noise-scale-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 11px; color: var(--text-dim); }
+.noise-scale-swatch { width: 20px; height: 14px; border-radius: 3px; border: 1px solid rgba(255,255,255,.15); background-color: #05070a; }
+.noise-scale-row span { margin-right: 10px; }
 .sumo-btn {
   width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border);
   background: var(--panel-alt); color: var(--text); cursor: pointer; flex-shrink: 0;
