@@ -8,6 +8,7 @@
   const CENTER_X = 6730, CENTER_Y = 3350, EXTRA_ZOOM = 1.62;
   const ROTATE_DEG = 0;
   const canvas = document.getElementById('sumoEcologyCanvas');
+  const dragSurface = document.getElementById('sumoEcologyDragSurface') || canvas;
   const toggle = document.getElementById('sumoEcologyToggle');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
@@ -60,15 +61,16 @@
     const readout = document.getElementById('sumoCalibReadout');
     if (readout) readout.textContent = `Desplazamiento actual: ΔX = ${Number(saved.dx).toFixed(1)} m · ΔY = ${Number(saved.dy).toFixed(1)} m`;
   }
-  canvas.addEventListener('pointerdown', event => { if (!visible) return; dragging = true; lastPointer = { x: event.clientX, y: event.clientY }; canvas.setPointerCapture(event.pointerId); canvas.style.cursor = 'grabbing'; });
-  canvas.addEventListener('pointermove', event => {
+  dragSurface.addEventListener('pointerdown', event => { if (!visible) return; event.preventDefault(); dragging = true; lastPointer = { x: event.clientX, y: event.clientY }; dragSurface.setPointerCapture(event.pointerId); dragSurface.style.cursor = 'grabbing'; });
+  dragSurface.addEventListener('pointermove', event => {
     if (!dragging || !lastPointer || !view.scale) return;
     saved.dx += (event.clientX - lastPointer.x) / view.scale;
     saved.dy -= (event.clientY - lastPointer.y) / view.scale;
     lastPointer = { x: event.clientX, y: event.clientY }; updateReadout(); draw();
   });
-  function stopDrag(event) { if (!dragging) return; dragging = false; lastPointer = null; canvas.style.cursor = 'grab'; try { canvas.releasePointerCapture(event.pointerId); } catch (_) {} }
-  canvas.addEventListener('pointerup', stopDrag); canvas.addEventListener('pointercancel', stopDrag); canvas.addEventListener('pointerleave', event => { if (dragging) stopDrag(event); });
+  function stopDrag(event) { if (!dragging) return; dragging = false; lastPointer = null; dragSurface.style.cursor = 'grab'; try { dragSurface.releasePointerCapture(event.pointerId); } catch (_) {} }
+  dragSurface.addEventListener('pointerup', stopDrag); dragSurface.addEventListener('pointercancel', stopDrag);
+  window.addEventListener('blur', () => { if (dragging) { dragging = false; lastPointer = null; dragSurface.style.cursor = 'grab'; } });
   toggle?.addEventListener('change', () => { visible = !!toggle.checked; draw(); });
   const ids = ['sumoCalibDx', 'sumoCalibDy', 'sumoCalibScale', 'sumoCalibRotation'];
   ids.forEach(id => { const el = document.getElementById(id); if (el) el.value = saved[id.replace('sumoCalib', '').toLowerCase()] ?? (id.includes('Scale') ? 1 : 0); });
