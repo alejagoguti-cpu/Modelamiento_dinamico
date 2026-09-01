@@ -164,10 +164,11 @@
         <p>Trayectorias vehiculares simuladas sobre la red vial real de Kennedy, exportadas desde SUMO (<code>osm.net.xml</code> + <code>trazado.xml</code>).</p>
       </div>
       <div class="sumo-sim-card">
-        <div class="sumo-canvas-wrap">
+        <div class="sumo-canvas-wrap" id="sumoCanvasWrap">
           <canvas id="sumoNetCanvas"></canvas>
           <canvas id="sumoVehCanvas"></canvas>
           <div class="sumo-sim-overlay" id="sumoStatus">Cargando red vial…</div>
+          <button type="button" class="sumo-rotate-handle" id="sumoRotateHandle" title="Arrastra para girar el mapa"><i class="fa-solid fa-rotate"></i></button>
         </div>
         <div class="sumo-sim-controls">
           <button type="button" id="sumoPlayPause" class="sumo-btn" aria-label="Reproducir / pausar"><i class="fa-solid fa-play"></i></button>
@@ -183,15 +184,10 @@
           </label>
         </div>
 
-        <!-- Panel de calibración: mueve el mapa a mano hasta que quede
-             bien, y copia los valores para pasármelos. -->
+        <!-- Ajustar el mapa directamente, como en Canva: arrastra para
+             mover, rueda del mouse para zoom, ícono de girar para rotar. -->
         <div class="sumo-calib-panel">
-          <h4><i class="fa-solid fa-sliders"></i> Ajustar el mapa a mano</h4>
-          <p>Mueve estas barras hasta que el mapa se vea bien orientado y encuadrado. Copia el texto de abajo y pégamelo — con eso dejo el mapa fijo así siempre.</p>
-          <label>Rotación <input type="range" id="calibRotate" min="-90" max="90" value="0" step="1"><span id="calibRotateVal">0°</span></label>
-          <label>Zoom <input type="range" id="calibZoom" min="0.4" max="4" value="1.5" step="0.05"><span id="calibZoomVal">1.50</span></label>
-          <label>Mover izquierda/derecha <input type="range" id="calibCenterX" min="0" max="10683" value="6100" step="10"><span id="calibCenterXVal">6100</span></label>
-          <label>Mover arriba/abajo <input type="range" id="calibCenterY" min="0" max="6324" value="2500" step="10"><span id="calibCenterYVal">2500</span></label>
+          <p><i class="fa-solid fa-hand"></i> Arrastra el mapa para moverlo · rueda del mouse (o pellizca) para zoom · arrastra el ícono <i class="fa-solid fa-rotate"></i> de la esquina para girarlo. Cuando quede bien, copia este texto y pégamelo:</p>
           <textarea id="calibOutput" readonly rows="2"></textarea>
         </div>
       </div>

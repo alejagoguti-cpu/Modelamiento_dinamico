@@ -328,40 +328,71 @@
     slider?.addEventListener("change", () => { isScrubbing = false; });
     speedSelect?.addEventListener("change", () => { speedMultiplier = Number(speedSelect.value) || 1; });
 
-    // ---------- Panel de calibración: mover/rotar/hacer zoom a mano ----------
-    const calibRotate = document.getElementById("calibRotate");
-    const calibZoom = document.getElementById("calibZoom");
-    const calibCenterX = document.getElementById("calibCenterX");
-    const calibCenterY = document.getElementById("calibCenterY");
+    // ---------- Ajustar el mapa a mano: arrastrar para mover, rueda del
+    // mouse (o pellizco) para zoom, arrastrar el ícono de girar para rotar.
+    const calibWrap = document.getElementById("sumoCanvasWrap");
+    const rotateHandle = document.getElementById("sumoRotateHandle");
     const calibOutput = document.getElementById("calibOutput");
+    function updateCalibOutput() {
+      if (calibOutput) calibOutput.value = `ROTATE_DEG=${ROTATE_DEG.toFixed(1)}  EXTRA_ZOOM=${EXTRA_ZOOM.toFixed(2)}  CENTER_X=${Math.round(CENTER_X)}  CENTER_Y=${Math.round(CENTER_Y)}`;
+    }
     function redrawCalibration() {
       const wrap = netCanvas.parentElement;
       const w = wrap.clientWidth, h = wrap.clientHeight;
       if (netData) { computeView(w, h); drawNetwork(w, h); drawVehiclesAt(playhead); }
-      if (calibOutput) calibOutput.value = `ROTATE_DEG=${ROTATE_DEG}  EXTRA_ZOOM=${EXTRA_ZOOM.toFixed(2)}  CENTER_X=${CENTER_X}  CENTER_Y=${CENTER_Y}`;
+      updateCalibOutput();
     }
-    calibRotate?.addEventListener("input", () => {
-      ROTATE_DEG = Number(calibRotate.value);
-      document.getElementById("calibRotateVal").textContent = ROTATE_DEG + "°";
+
+    // Arrastrar el mapa (fondo del canvas) para moverlo — como arrastrar
+    // una imagen en un editor.
+    let isPanning = false, panStartX = 0, panStartY = 0, panCenterX0 = 0, panCenterY0 = 0;
+    calibWrap?.addEventListener("mousedown", (event) => {
+      if (event.target === rotateHandle || rotateHandle?.contains(event.target)) return;
+      isPanning = true; panStartX = event.clientX; panStartY = event.clientY;
+      panCenterX0 = CENTER_X; panCenterY0 = CENTER_Y;
+      calibWrap.classList.add("panning");
+    });
+    window.addEventListener("mousemove", (event) => {
+      if (!isPanning || !view.scale) return;
+      const ddx = event.clientX - panStartX, ddy = event.clientY - panStartY;
+      CENTER_X = panCenterX0 - ddx / view.scale;
+      CENTER_Y = panCenterY0 + ddy / view.scale;
       redrawCalibration();
     });
-    calibZoom?.addEventListener("input", () => {
-      EXTRA_ZOOM = Number(calibZoom.value);
-      document.getElementById("calibZoomVal").textContent = EXTRA_ZOOM.toFixed(2);
+    window.addEventListener("mouseup", () => { isPanning = false; calibWrap?.classList.remove("panning"); });
+
+    // Rueda del mouse (o pellizco en trackpad) para hacer zoom.
+    calibWrap?.addEventListener("wheel", (event) => {
+      event.preventDefault();
+      const factor = event.deltaY < 0 ? 1.08 : 1 / 1.08;
+      EXTRA_ZOOM = Math.min(6, Math.max(0.25, EXTRA_ZOOM * factor));
+      redrawCalibration();
+    }, { passive: false });
+
+    // Arrastrar el ícono de girar (esquina) para rotar el mapa, como girar
+    // una imagen en un editor: el ángulo sigue a la posición del mouse
+    // respecto al centro del mapa.
+    let isRotating = false, rotateStartAngle = 0, rotateStartDeg = 0;
+    rotateHandle?.addEventListener("mousedown", (event) => {
+      event.stopPropagation();
+      isRotating = true;
+      const rect = calibWrap.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2, cy = rect.top + rect.height / 2;
+      rotateStartAngle = Math.atan2(event.clientY - cy, event.clientX - cx) * (180 / Math.PI);
+      rotateStartDeg = ROTATE_DEG;
+    });
+    window.addEventListener("mousemove", (event) => {
+      if (!isRotating) return;
+      const rect = calibWrap.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2, cy = rect.top + rect.height / 2;
+      const currentAngle = Math.atan2(event.clientY - cy, event.clientX - cx) * (180 / Math.PI);
+      ROTATE_DEG = rotateStartDeg + (currentAngle - rotateStartAngle);
       redrawCalibration();
     });
-    calibCenterX?.addEventListener("input", () => {
-      CENTER_X = Number(calibCenterX.value);
-      document.getElementById("calibCenterXVal").textContent = CENTER_X;
-      redrawCalibration();
-    });
-    calibCenterY?.addEventListener("input", () => {
-      CENTER_Y = Number(calibCenterY.value);
-      document.getElementById("calibCenterYVal").textContent = CENTER_Y;
-      redrawCalibration();
-    });
+    window.addEventListener("mouseup", () => { isRotating = false; });
+
     // Mostrar los valores iniciales apenas carga, sin esperar a mover nada.
-    if (calibOutput) calibOutput.value = `ROTATE_DEG=${ROTATE_DEG}  EXTRA_ZOOM=${EXTRA_ZOOM.toFixed(2)}  CENTER_X=${CENTER_X}  CENTER_Y=${CENTER_Y}`;
+    updateCalibOutput();
 
     window.addEventListener("resize", () => {
       resizeCanvases();
