@@ -6584,3 +6584,38 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 .combined-network-overlay.exploded .combined-cross-line { opacity: 1; }
 .combined-network-overlay.exploded .combined-sat-line { opacity: .35; }
 .combined-network-overlay.exploded .combined-cross-line { opacity: .5; }
+
+/* Módulo 7 · transición de seis sistemas a red completa */
+.territory-network-plain.system-explosion .map-network-node {
+  animation: systemBubbleExplode .82s cubic-bezier(.2,.8,.25,1) forwards;
+  animation-delay: calc(var(--node-index, 0) * 45ms);
+}
+.territory-network-plain.submodels-reveal .map-network-node {
+  opacity: 0;
+  transform: scale(.35) translateY(18px);
+}
+.territory-network-plain.submodels-reveal-active .map-network-node {
+  animation: modelNodeReveal .78s cubic-bezier(.18,.8,.25,1) forwards;
+  animation-delay: calc(var(--node-index, 0) * 95ms);
+}
+.territory-network-plain.system-explosion .map-network-bonds,
+.territory-network-plain.system-explosion .map-network-flows { opacity: 0; transition: opacity .25s ease; }
+.territory-network-plain.submodels-reveal .map-network-bonds,
+.territory-network-plain.submodels-reveal .map-network-flows { opacity: 0; }
+.territory-network-plain.submodels-reveal-active .map-network-bonds,
+.territory-network-plain.submodels-reveal-active .map-network-flows { opacity: 1; transition: opacity .55s ease .45s; }
+.temporal-only-panel { max-width: 420px; }
+@keyframes systemBubbleExplode {
+  0% { opacity: 1; transform: scale(1); filter: brightness(1); }
+  45% { opacity: 1; transform: scale(1.28); filter: brightness(1.8); }
+  100% { opacity: 0; transform: scale(.12) translate(var(--explode-x, 0), var(--explode-y, 0)); filter: brightness(2.2); }
+}
+@keyframes modelNodeReveal {
+  0% { opacity: 0; transform: scale(.3) translateY(24px); }
+  65% { opacity: 1; transform: scale(1.08) translateY(-3px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .territory-network-plain.system-explosion .map-network-node,
+  .territory-network-plain.submodels-reveal-active .map-network-node { animation-duration: .01ms; animation-delay: 0ms; }
+}

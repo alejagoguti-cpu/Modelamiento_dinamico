@@ -1,0 +1,21 @@
+(() => {
+  'use strict';
+  const btn = document.getElementById('modelSystemsAnalysisBtn');
+  const panel = document.getElementById('modelSystemAnalysis');
+  if (!btn || !panel) return;
+  const models = [
+    { id: 'vial', title: 'Modelo de interacción vial', kind: 'Determinista → socio-ecológico', systems: 'Movilidad · físico-urbano · hídrico · biótico', trigger: 'Aumento simultáneo del tráfico, la velocidad y la impermeabilización del borde vial.', failure: 'Falla cuando el flujo vehicular y la escorrentía superan la capacidad de drenaje y amortiguación del humedal.', effect: 'Congestión + ruido + desborde; el modelo deja de representar la retroalimentación entre vía, agua y hábitat.', color: '#f1cf5b' },
+    { id: 'residuos', title: 'Modelo de mitigación de carga orgánica y residuos', kind: 'Determinista → ecológico', systems: 'Hídrico · biótico · socioeconómico', trigger: 'La entrada de residuos orgánicos crece más rápido que la separación, el compostaje y la recolección.', failure: 'Falla cuando la carga contaminante acumulada supera la capacidad de tratamiento antes del vertimiento.', effect: 'Eutrofización, olores y pérdida de calidad del agua; el ciclo de mitigación ya no alcanza a cerrar.', color: '#56b8d4' },
+    { id: 'comercial', title: 'Modelo comercial y logístico', kind: 'Social → social', systems: 'Socioeconómico · movilidad · hídrico · físico-urbano', trigger: 'La demanda de abastecimiento y el tráfico pesado aumentan por encima de la capacidad vial y de carga.', failure: 'Falla cuando la logística prioriza el flujo de mercancías y desplaza los límites ambientales del borde.', effect: 'Congestión persistente, emisiones y presión sobre drenajes y humedales; la actividad económica deja de ser compatible con el sistema.', color: '#e58d62' },
+    { id: 'estacion', title: 'Modelo de operación de estación de transporte', kind: 'Determinista → social', systems: 'Movilidad · social-comunitario · físico-urbano', trigger: 'La afluencia supera la capacidad de andenes, flota, accesos y tiempos de transferencia.', failure: 'Falla cuando la saturación genera colas y desvíos que el modelo no puede absorber.', effect: 'Aumentan espera y aislamiento entre barrios; las personas cambian sus trayectorias y el patrón previsto deja de ser válido.', color: '#f1cf5b' }
+  ];
+  const systems = ['Hídrico', 'Biótico', 'Físico-urbano', 'Movilidad', 'Social-comunitario', 'Socioeconómico y de ocupación'];
+  function render() {
+    panel.innerHTML = `<div class="model-analysis-head"><div><span class="model-analysis-kicker">DIAGRAMA DE EVALUACIÓN</span><h3 id="modelSystemAnalysisTitle">Cuándo fallan los modelos sobre los sistemas</h3><p>El modelo falla cuando el evento de entrada supera su capacidad de representación o rompe las relaciones que intenta explicar.</p></div><button type="button" class="model-analysis-close" aria-label="Cerrar análisis">×</button></div>
+      <div class="model-analysis-legend"><strong>Sistemas analizados:</strong> ${systems.map(s => `<span>${s}</span>`).join('')}</div>
+      <div class="model-analysis-diagram" aria-label="Diagrama de escenarios de falla por modelo"><div class="analysis-origin">Sistemas territoriales<br><small>entradas, flujos y límites</small></div><div class="analysis-branch-line"></div><div class="analysis-models">${models.map((m, i) => `<article class="analysis-model-card" style="--analysis-color:${m.color}"><div class="analysis-card-number">0${i + 1}</div><h4>${m.title}</h4><span class="analysis-kind">${m.kind}</span><div class="analysis-field"><b>Sistemas relacionados</b><span>${m.systems}</span></div><div class="analysis-field"><b>Escenario de falla</b><span>${m.trigger}</span></div><div class="analysis-failure"><b>Cuándo falla</b><span>${m.failure}</span></div><div class="analysis-field"><b>Qué emerge</b><span>${m.effect}</span></div></article>`).join('')}</div></div>`;
+    panel.hidden = false;
+    panel.querySelector('.model-analysis-close')?.addEventListener('click', () => { panel.hidden = true; btn.classList.remove('active'); });
+  }
+  btn.addEventListener('click', () => { const open = !panel.hidden; if (open) { panel.hidden = true; btn.classList.remove('active'); } else { render(); btn.classList.add('active'); panel.scrollIntoView({ behavior: 'smooth', block: 'start' }); } });
+})();
