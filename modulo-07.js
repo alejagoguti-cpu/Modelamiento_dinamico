@@ -2990,7 +2990,8 @@
       // anillo de las 6 bolas, dispara la explosión de las 6 a la vez con
       // todas sus dinámicas y la red completa conectada entre sí.
       const centerHubHtml = (systems && isPlainView && !hideAllSystemBubbles)
-        ? `<button type="button" id="mapNetworkCenterHub" class="map-network-center-hub" aria-label="Explotar los 6 subsistemas y ver la red completa"><i class="fa-solid fa-burst"></i><span>Ver red<br>completa</span></button>`
+        ? `<button type="button" id="mapNetworkCenterHub" class="map-network-center-hub" aria-label="Explotar los 6 subsistemas y ver la red completa"><i class="fa-solid fa-burst"></i><span>Ver red<br>completa</span></button>
+           <button type="button" id="mapNetworkCornerHub" class="map-network-corner-hub" aria-label="Ver la red completa (botón alterno)"><i class="fa-solid fa-diagram-project"></i><span>Ver red completa</span></button>`
         : "";
       if (hideAllSystemBubbles) declutteredPositions = computeDeclutteredPositions();
       const kennedyBoxesHtml = hideAllSystemBubbles ? buildPhenomenaHtml() + buildTextBoxesHtml() : "";
@@ -3055,7 +3056,7 @@
       // Ya existen los rectángulos reales: corrige en el siguiente frame el
       // punto de entrada/salida para que ninguna línea quede suspendida.
       if (hideAllSystemBubbles) requestAnimationFrame(() => updateTextBoxes());
-      target.querySelector("#mapNetworkCenterHub")?.addEventListener("click", (event) => {
+      const openFullNetwork = (event) => {
         event.stopPropagation();
         // Las 6 bolas explotan y desaparecen primero; cuando terminan,
         // aparece la red completa de relaciones con todos los subsistemas.
@@ -3065,7 +3066,9 @@
           showCombinedNetworkModal();
           window.setTimeout(() => stageEl?.classList.remove("center-hub-exploding"), 400);
         }, 560);
-      });
+      };
+      target.querySelector("#mapNetworkCenterHub")?.addEventListener("click", openFullNetwork);
+      target.querySelector("#mapNetworkCornerHub")?.addEventListener("click", openFullNetwork);
       target.querySelectorAll(".map-network-node").forEach((button) => button.addEventListener("click", () => {
         if (button.classList.contains("map-phenomenon-node")) return; // tiene su propio manejador, más abajo
         const row = rows[Number(button.dataset.mapNetworkIndex)];
