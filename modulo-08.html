@@ -192,18 +192,18 @@
           </div>
         </div>
 
-        <!-- Distorsión libre de los árboles (como en Photoshop): mover,
-             escalar y girar a mano, y copiar los valores finales. -->
+        <!-- Distorsión de 4 esquinas de los árboles (como "Distort" de
+             Photoshop): activa el modo, aparecen 4 puntos en las esquinas
+             de la malla, arrastra cada uno por separado; arrastrar fuera
+             de un punto mueve todo junto. -->
         <div class="sumo-reference-panel">
-          <strong><i class="fa-solid fa-tree"></i> Distorsionar árboles a mano</strong>
-          <button type="button" class="sumo-btn" id="sumoTreeMoveMode" title="Mover árboles (arrastrar)"><i class="fa-solid fa-arrows-up-down-left-right"></i></button>
+          <strong><i class="fa-solid fa-tree"></i> Distorsionar árboles (4 esquinas)</strong>
+          <button type="button" class="sumo-btn" id="sumoTreeMoveMode" title="Activar distorsión/mover"><i class="fa-solid fa-arrows-up-down-left-right"></i></button>
           <button type="button" class="sumo-btn" id="sumoTreeDistortReset" title="Restablecer"><i class="fa-solid fa-rotate-left"></i></button>
-          <label>Escala <input id="sumoTreeDistortScale" type="range" min="0.3" max="3" step="0.01" value="1"></label>
-          <label>Rotación <input id="sumoTreeDistortRotation" type="range" min="-90" max="90" step="0.5" value="0"></label>
-          <span id="sumoTreeDistortStatus">Pulsa mover árboles y arrastra sobre el mapa, o usa las barras de escala/rotación.</span>
+          <span id="sumoTreeDistortStatus">Activa el modo: arrastra cualquiera de los 4 puntos naranjas de las esquinas para distorsionar, o arrastra en otra parte del mapa para mover todo junto.</span>
           <div class="sumo-reference-coords">
             <button type="button" class="sumo-btn" id="sumoTreeDistortCopy" title="Copiar coordenadas"><i class="fa-solid fa-copy"></i> Copiar coordenadas de cambio</button>
-            <textarea id="sumoTreeDistortOutput" rows="2" spellcheck="false" placeholder="Aquí aparecerán dx, dy, escala y rotación..."></textarea>
+            <textarea id="sumoTreeDistortOutput" rows="3" spellcheck="false" placeholder="Aquí aparecerán las 4 esquinas..."></textarea>
           </div>
         </div>
         <div class="sumo-sim-controls">

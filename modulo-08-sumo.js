@@ -89,7 +89,13 @@
     let treeData = null;     // { species: [nombre,...], trees: [[x,y,speciesIdx,alturaM],...] } — Arbolado Urbano real de Kennedy
     // Distorsión libre de la malla de árboles (mover/escalar/girar), como
     // en Photoshop — el usuario la acomoda a ojo y copia los valores.
-    let treeDistort = { dx: 0, dy: 0, scale: 1, rotation: 0 };
+    // Distorsión de 4 esquinas de la malla de árboles (como "Distort" de
+    // Photoshop): cada esquina se puede arrastrar por separado, y el resto
+    // de los árboles se acomoda con interpolación entre las 4 esquinas.
+    // Los offsets están en píxeles de pantalla, relativos a la esquina base
+    // (calculada de la caja real que ocupan los árboles).
+    let treeCornerOffsets = { tl: { x: 0, y: 0 }, tr: { x: 0, y: 0 }, bl: { x: 0, y: 0 }, br: { x: 0, y: 0 } };
+    let treeWorldBBox = null; // { minX, minY, maxX, maxY } — se calcula una vez que carga el dato
     let timesteps = [];      // [{ time, vehicles:[{id,x,y,angle}] }]
     let view = { scale: 1, offX: 0, offY: 0 }; // mundo -> pantalla
     let playing = false;
@@ -786,24 +792,55 @@
         strokeSmoothPath(netCtx, screenPts);
         netCtx.stroke();
       });
-      // Arbolado Urbano real de Kennedy: primero pasa por toScreen (igual
-      // que las vías), y encima se le aplica la distorsión libre
-      // (mover/escalar/girar) que el usuario controla a mano.
+      // Arbolado Urbano real de Kennedy: se calcula la posición base de
+      // cada árbol con toScreen (igual que las vías), y luego se distorsiona
+      // con las 4 esquinas arrastrables (interpolación bilineal), como el
+      // "Distort" de Photoshop — la esquina más cercana "jala" más fuerte.
       if (treeData) {
+        if (!treeWorldBBox) {
+          let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+          treeData.trees.forEach(([tx, ty]) => {
+            if (tx < minX) minX = tx; if (tx > maxX) maxX = tx;
+            if (ty < minY) minY = ty; if (ty > maxY) maxY = ty;
+          });
+          treeWorldBBox = { minX, minY, maxX, maxY };
+        }
+        const bb = treeWorldBBox;
+        const [tlx0, tly0] = toScreen(bb.minX, bb.maxY); // esquina superior-izquierda en pantalla
+        const [trx0, try0] = toScreen(bb.maxX, bb.maxY); // superior-derecha
+        const [blx0, bly0] = toScreen(bb.minX, bb.minY); // inferior-izquierda
+        const [brx0, bry0] = toScreen(bb.maxX, bb.minY); // inferior-derecha
+        const TL = { x: tlx0 + treeCornerOffsets.tl.x, y: tly0 + treeCornerOffsets.tl.y };
+        const TR = { x: trx0 + treeCornerOffsets.tr.x, y: try0 + treeCornerOffsets.tr.y };
+        const BL = { x: blx0 + treeCornerOffsets.bl.x, y: bly0 + treeCornerOffsets.bl.y };
+        const BR = { x: brx0 + treeCornerOffsets.br.x, y: bry0 + treeCornerOffsets.br.y };
+        const wSpan = bb.maxX - bb.minX || 1, hSpan = bb.maxY - bb.minY || 1;
         netCtx.fillStyle = "rgba(90,190,110,0.55)";
-        const rad = (treeDistort.rotation * Math.PI) / 180;
-        const cos = Math.cos(rad), sin = Math.sin(rad);
         treeData.trees.forEach(([tx, ty, , altura]) => {
-          const [sx0, sy0] = toScreen(tx, ty);
-          const dx = sx0 - w / 2, dy = sy0 - h / 2;
-          const sx = (dx * cos - dy * sin) * treeDistort.scale + w / 2 + treeDistort.dx;
-          const sy = (dx * sin + dy * cos) * treeDistort.scale + h / 2 + treeDistort.dy;
+          const u = (tx - bb.minX) / wSpan; // 0=izquierda, 1=derecha
+          const v = 1 - (ty - bb.minY) / hSpan; // 0=arriba, 1=abajo (ty mayor = más al norte = más arriba)
+          const top = { x: TL.x + (TR.x - TL.x) * u, y: TL.y + (TR.y - TL.y) * u };
+          const bot = { x: BL.x + (BR.x - BL.x) * u, y: BL.y + (BR.y - BL.y) * u };
+          const sx = top.x + (bot.x - top.x) * v;
+          const sy = top.y + (bot.y - top.y) * v;
           if (sx < -10 || sx > w + 10 || sy < -10 || sy > h + 10) return;
-          const r = Math.min(2.6, Math.max(0.8, (altura || 3) * 0.12)) * treeDistort.scale;
+          const r = Math.min(2.6, Math.max(0.8, (altura || 3) * 0.12));
           netCtx.beginPath();
           netCtx.arc(sx, sy, r, 0, Math.PI * 2);
           netCtx.fill();
         });
+        // Las 4 esquinas arrastrables, solo visibles en modo distorsión.
+        if (window.sumoActiveMode === "trees") {
+          netCtx.fillStyle = "#ffb020";
+          netCtx.strokeStyle = "#1a0505";
+          netCtx.lineWidth = 1.5;
+          [TL, TR, BL, BR].forEach((p) => {
+            netCtx.beginPath();
+            netCtx.arc(p.x, p.y, 8, 0, Math.PI * 2);
+            netCtx.fill();
+            netCtx.stroke();
+          });
+        }
       }
       // se dibuja primero lo local (más numeroso y fino) y encima lo
       // principal (más grueso), para que las vías grandes no queden tapadas
@@ -1146,56 +1183,75 @@
       if (mapRotStatus) mapRotStatus.textContent = "Ángulo copiado. Pégamelo en el chat para dejarlo fijo así.";
     });
 
-    // ---------- Distorsionar árboles a mano (mover/escalar/girar, como
-    // Photoshop) — independiente de la rotación global del mapa. ----------
+    // ---------- Distorsionar árboles con 4 esquinas (como "Distort" de
+    // Photoshop) — arrastrar un punto de esquina distorsiona esa esquina;
+    // arrastrar en otra parte mueve las 4 esquinas juntas (mover todo). ---
     const treeMoveBtn = document.getElementById("sumoTreeMoveMode");
-    const treeDistortScale = document.getElementById("sumoTreeDistortScale");
-    const treeDistortRotation = document.getElementById("sumoTreeDistortRotation");
     const treeDistortReset = document.getElementById("sumoTreeDistortReset");
     const treeDistortCopy = document.getElementById("sumoTreeDistortCopy");
     const treeDistortOutput = document.getElementById("sumoTreeDistortOutput");
     const treeDistortStatus = document.getElementById("sumoTreeDistortStatus");
     function updateTreeDistortOutput() {
-      if (treeDistortOutput) treeDistortOutput.value = `dx=${treeDistort.dx.toFixed(1)}  dy=${treeDistort.dy.toFixed(1)}  scale=${treeDistort.scale.toFixed(3)}  rotation=${treeDistort.rotation.toFixed(1)}`;
+      if (!treeDistortOutput) return;
+      const c = treeCornerOffsets;
+      treeDistortOutput.value = `tl=(${c.tl.x.toFixed(0)},${c.tl.y.toFixed(0)})  tr=(${c.tr.x.toFixed(0)},${c.tr.y.toFixed(0)})  bl=(${c.bl.x.toFixed(0)},${c.bl.y.toFixed(0)})  br=(${c.br.x.toFixed(0)},${c.br.y.toFixed(0)})`;
     }
     function redrawTreeDistort() {
       redrawWholeMap();
       updateTreeDistortOutput();
     }
-    let treeMoving = false;
+    let activeDragCorner = null; // "tl" | "tr" | "bl" | "br" | "all" | null
+    let dragLast = null;
+    const CORNER_GRAB_RADIUS = 16;
     treeMoveBtn?.addEventListener("click", () => {
       const active = treeMoveBtn.classList.toggle("active");
       window.sumoActiveMode = active ? "trees" : "draw";
-      if (treeDistortStatus) treeDistortStatus.textContent = active ? "Modo mover árboles: arrastra sobre el mapa." : "Ajusta cuando quieras — pulsa mover árboles de nuevo.";
+      if (treeDistortStatus) treeDistortStatus.textContent = active
+        ? "Modo activo: arrastra un punto naranja para distorsionar esa esquina, o arrastra en otra parte para mover todo."
+        : "Ajusta cuando quieras — vuelve a activar el modo.";
+      redrawWholeMap();
     });
     document.getElementById("sumoCanvasWrap")?.addEventListener("pointerdown", (event) => {
-      if (window.sumoActiveMode !== "trees") return;
-      treeMoving = true;
-      event.currentTarget.__treeLast = { x: event.clientX, y: event.clientY };
+      if (window.sumoActiveMode !== "trees" || !treeWorldBBox) return;
+      const rect = event.currentTarget.getBoundingClientRect();
+      const px = event.clientX - rect.left, py = event.clientY - rect.top;
+      const w = netCanvas.parentElement.clientWidth, h = netCanvas.parentElement.clientHeight;
+      const bb = treeWorldBBox;
+      const corners = {
+        tl: (() => { const [x, y] = toScreen(bb.minX, bb.maxY); return { x: x + treeCornerOffsets.tl.x, y: y + treeCornerOffsets.tl.y }; })(),
+        tr: (() => { const [x, y] = toScreen(bb.maxX, bb.maxY); return { x: x + treeCornerOffsets.tr.x, y: y + treeCornerOffsets.tr.y }; })(),
+        bl: (() => { const [x, y] = toScreen(bb.minX, bb.minY); return { x: x + treeCornerOffsets.bl.x, y: y + treeCornerOffsets.bl.y }; })(),
+        br: (() => { const [x, y] = toScreen(bb.maxX, bb.minY); return { x: x + treeCornerOffsets.br.x, y: y + treeCornerOffsets.br.y }; })(),
+      };
+      let closest = null, closestDist = CORNER_GRAB_RADIUS;
+      Object.entries(corners).forEach(([key, p]) => {
+        const d = Math.hypot(p.x - px, p.y - py);
+        if (d < closestDist) { closestDist = d; closest = key; }
+      });
+      activeDragCorner = closest || "all"; // si no agarró ninguna esquina, mueve todo junto
+      dragLast = { x: event.clientX, y: event.clientY };
     });
     window.addEventListener("pointermove", (event) => {
-      if (!treeMoving) return;
-      const wrap = document.getElementById("sumoCanvasWrap");
-      const last = wrap.__treeLast;
-      if (!last) return;
-      treeDistort.dx += event.clientX - last.x;
-      treeDistort.dy += event.clientY - last.y;
-      wrap.__treeLast = { x: event.clientX, y: event.clientY };
+      if (!activeDragCorner || !dragLast) return;
+      const ddx = event.clientX - dragLast.x, ddy = event.clientY - dragLast.y;
+      dragLast = { x: event.clientX, y: event.clientY };
+      if (activeDragCorner === "all") {
+        Object.values(treeCornerOffsets).forEach((c) => { c.x += ddx; c.y += ddy; });
+      } else {
+        treeCornerOffsets[activeDragCorner].x += ddx;
+        treeCornerOffsets[activeDragCorner].y += ddy;
+      }
       redrawTreeDistort();
     });
-    window.addEventListener("pointerup", () => { treeMoving = false; });
-    treeDistortScale?.addEventListener("input", () => { treeDistort.scale = Number(treeDistortScale.value); redrawTreeDistort(); });
-    treeDistortRotation?.addEventListener("input", () => { treeDistort.rotation = Number(treeDistortRotation.value); redrawTreeDistort(); });
+    window.addEventListener("pointerup", () => { activeDragCorner = null; dragLast = null; });
     treeDistortReset?.addEventListener("click", () => {
-      treeDistort = { dx: 0, dy: 0, scale: 1, rotation: 0 };
-      if (treeDistortScale) treeDistortScale.value = 1;
-      if (treeDistortRotation) treeDistortRotation.value = 0;
+      treeCornerOffsets = { tl: { x: 0, y: 0 }, tr: { x: 0, y: 0 }, bl: { x: 0, y: 0 }, br: { x: 0, y: 0 } };
       redrawTreeDistort();
     });
     treeDistortCopy?.addEventListener("click", async () => {
       updateTreeDistortOutput();
       try { await navigator.clipboard.writeText(treeDistortOutput?.value || ""); } catch (_) {}
-      if (treeDistortStatus) treeDistortStatus.textContent = "Coordenadas de cambio copiadas. Pégamelas en el chat para dejarlas fijas.";
+      if (treeDistortStatus) treeDistortStatus.textContent = "Coordenadas de las 4 esquinas copiadas. Pégamelas en el chat para dejarlas fijas.";
     });
     updateTreeDistortOutput();
 
