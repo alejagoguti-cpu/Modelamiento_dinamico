@@ -191,6 +191,21 @@
             <textarea id="sumoMapRotationOutput" rows="1" spellcheck="false" placeholder="Aquí aparecerá el ángulo final..."></textarea>
           </div>
         </div>
+
+        <!-- Distorsión libre de los árboles (como en Photoshop): mover,
+             escalar y girar a mano, y copiar los valores finales. -->
+        <div class="sumo-reference-panel">
+          <strong><i class="fa-solid fa-tree"></i> Distorsionar árboles a mano</strong>
+          <button type="button" class="sumo-btn" id="sumoTreeMoveMode" title="Mover árboles (arrastrar)"><i class="fa-solid fa-arrows-up-down-left-right"></i></button>
+          <button type="button" class="sumo-btn" id="sumoTreeDistortReset" title="Restablecer"><i class="fa-solid fa-rotate-left"></i></button>
+          <label>Escala <input id="sumoTreeDistortScale" type="range" min="0.3" max="3" step="0.01" value="1"></label>
+          <label>Rotación <input id="sumoTreeDistortRotation" type="range" min="-90" max="90" step="0.5" value="0"></label>
+          <span id="sumoTreeDistortStatus">Pulsa mover árboles y arrastra sobre el mapa, o usa las barras de escala/rotación.</span>
+          <div class="sumo-reference-coords">
+            <button type="button" class="sumo-btn" id="sumoTreeDistortCopy" title="Copiar coordenadas"><i class="fa-solid fa-copy"></i> Copiar coordenadas de cambio</button>
+            <textarea id="sumoTreeDistortOutput" rows="2" spellcheck="false" placeholder="Aquí aparecerán dx, dy, escala y rotación..."></textarea>
+          </div>
+        </div>
         <div class="sumo-sim-controls">
           <button type="button" id="sumoPlayPause" class="sumo-btn" aria-label="Reproducir / pausar"><i class="fa-solid fa-play"></i></button>
           <input type="range" id="sumoTimeSlider" min="0" max="1000" value="0" step="1" disabled>

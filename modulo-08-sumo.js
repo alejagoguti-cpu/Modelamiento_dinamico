@@ -86,7 +86,10 @@
     const vehCtx = vehCanvas.getContext("2d");
 
     let netData = null;      // { offset, bbox, edges }
-    let treeData = null;     // { species: [nombre,...], trees: [[x,y,speciesIdx,alturaM],...] } — Arbolado Urbano real de Kennedy; usa toScreen igual que las vías, así gira junto con ellas si se ajusta ROTATE_DEG
+    let treeData = null;     // { species: [nombre,...], trees: [[x,y,speciesIdx,alturaM],...] } — Arbolado Urbano real de Kennedy
+    // Distorsión libre de la malla de árboles (mover/escalar/girar), como
+    // en Photoshop — el usuario la acomoda a ojo y copia los valores.
+    let treeDistort = { dx: 0, dy: 0, scale: 1, rotation: 0 };
     let timesteps = [];      // [{ time, vehicles:[{id,x,y,angle}] }]
     let view = { scale: 1, offX: 0, offY: 0 }; // mundo -> pantalla
     let playing = false;
@@ -783,15 +786,20 @@
         strokeSmoothPath(netCtx, screenPts);
         netCtx.stroke();
       });
-      // Arbolado Urbano real de Kennedy: usa toScreen (con ROTATE_DEG)
-      // igual que las vías, así que gira junto con el resto del mapa y no
-      // se desalinea si se corrige la inclinación general.
+      // Arbolado Urbano real de Kennedy: primero pasa por toScreen (igual
+      // que las vías), y encima se le aplica la distorsión libre
+      // (mover/escalar/girar) que el usuario controla a mano.
       if (treeData) {
         netCtx.fillStyle = "rgba(90,190,110,0.55)";
+        const rad = (treeDistort.rotation * Math.PI) / 180;
+        const cos = Math.cos(rad), sin = Math.sin(rad);
         treeData.trees.forEach(([tx, ty, , altura]) => {
-          const [sx, sy] = toScreen(tx, ty);
+          const [sx0, sy0] = toScreen(tx, ty);
+          const dx = sx0 - w / 2, dy = sy0 - h / 2;
+          const sx = (dx * cos - dy * sin) * treeDistort.scale + w / 2 + treeDistort.dx;
+          const sy = (dx * sin + dy * cos) * treeDistort.scale + h / 2 + treeDistort.dy;
           if (sx < -10 || sx > w + 10 || sy < -10 || sy > h + 10) return;
-          const r = Math.min(2.6, Math.max(0.8, (altura || 3) * 0.12));
+          const r = Math.min(2.6, Math.max(0.8, (altura || 3) * 0.12)) * treeDistort.scale;
           netCtx.beginPath();
           netCtx.arc(sx, sy, r, 0, Math.PI * 2);
           netCtx.fill();
@@ -1137,6 +1145,59 @@
       try { await navigator.clipboard.writeText(mapRotOutput?.value || ""); } catch (_) {}
       if (mapRotStatus) mapRotStatus.textContent = "Ángulo copiado. Pégamelo en el chat para dejarlo fijo así.";
     });
+
+    // ---------- Distorsionar árboles a mano (mover/escalar/girar, como
+    // Photoshop) — independiente de la rotación global del mapa. ----------
+    const treeMoveBtn = document.getElementById("sumoTreeMoveMode");
+    const treeDistortScale = document.getElementById("sumoTreeDistortScale");
+    const treeDistortRotation = document.getElementById("sumoTreeDistortRotation");
+    const treeDistortReset = document.getElementById("sumoTreeDistortReset");
+    const treeDistortCopy = document.getElementById("sumoTreeDistortCopy");
+    const treeDistortOutput = document.getElementById("sumoTreeDistortOutput");
+    const treeDistortStatus = document.getElementById("sumoTreeDistortStatus");
+    function updateTreeDistortOutput() {
+      if (treeDistortOutput) treeDistortOutput.value = `dx=${treeDistort.dx.toFixed(1)}  dy=${treeDistort.dy.toFixed(1)}  scale=${treeDistort.scale.toFixed(3)}  rotation=${treeDistort.rotation.toFixed(1)}`;
+    }
+    function redrawTreeDistort() {
+      redrawWholeMap();
+      updateTreeDistortOutput();
+    }
+    let treeMoving = false;
+    treeMoveBtn?.addEventListener("click", () => {
+      const active = treeMoveBtn.classList.toggle("active");
+      window.sumoActiveMode = active ? "trees" : "draw";
+      if (treeDistortStatus) treeDistortStatus.textContent = active ? "Modo mover árboles: arrastra sobre el mapa." : "Ajusta cuando quieras — pulsa mover árboles de nuevo.";
+    });
+    document.getElementById("sumoCanvasWrap")?.addEventListener("pointerdown", (event) => {
+      if (window.sumoActiveMode !== "trees") return;
+      treeMoving = true;
+      event.currentTarget.__treeLast = { x: event.clientX, y: event.clientY };
+    });
+    window.addEventListener("pointermove", (event) => {
+      if (!treeMoving) return;
+      const wrap = document.getElementById("sumoCanvasWrap");
+      const last = wrap.__treeLast;
+      if (!last) return;
+      treeDistort.dx += event.clientX - last.x;
+      treeDistort.dy += event.clientY - last.y;
+      wrap.__treeLast = { x: event.clientX, y: event.clientY };
+      redrawTreeDistort();
+    });
+    window.addEventListener("pointerup", () => { treeMoving = false; });
+    treeDistortScale?.addEventListener("input", () => { treeDistort.scale = Number(treeDistortScale.value); redrawTreeDistort(); });
+    treeDistortRotation?.addEventListener("input", () => { treeDistort.rotation = Number(treeDistortRotation.value); redrawTreeDistort(); });
+    treeDistortReset?.addEventListener("click", () => {
+      treeDistort = { dx: 0, dy: 0, scale: 1, rotation: 0 };
+      if (treeDistortScale) treeDistortScale.value = 1;
+      if (treeDistortRotation) treeDistortRotation.value = 0;
+      redrawTreeDistort();
+    });
+    treeDistortCopy?.addEventListener("click", async () => {
+      updateTreeDistortOutput();
+      try { await navigator.clipboard.writeText(treeDistortOutput?.value || ""); } catch (_) {}
+      if (treeDistortStatus) treeDistortStatus.textContent = "Coordenadas de cambio copiadas. Pégamelas en el chat para dejarlas fijas.";
+    });
+    updateTreeDistortOutput();
 
     window.addEventListener("resize", () => {
       resizeCanvases();
