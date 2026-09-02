@@ -1967,15 +1967,40 @@
       const positions = [[12,18],[50,8],[88,18],[88,78],[50,91],[12,78]];
       const nodes = territorySystems.map((system, index) => { const [x,y] = positions[index]; return `<button type="button" class="territory-network-node" data-system-id="${system.id}" style="--node-x:${x}%;--node-y:${y}%;--node-color:${system.color}"><span class="territory-network-node-dot"></span><strong>${system.name}</strong></button>`; }).join("");
       const edges = territorySystems.map((system, index) => { const [x,y] = positions[index]; return `<line x1="50%" y1="50%" x2="${x}%" y2="${y}%" class="territory-network-edge" style="--edge-color:${system.color}"></line>`; }).join("") + territorySystems.map((system, index) => { const [x,y] = positions[index]; const next = positions[(index + 1) % positions.length]; return `<line x1="${x}%" y1="${y}%" x2="${next[0]}%" y2="${next[1]}%" class="territory-network-edge territory-network-edge-secondary" style="--edge-color:${system.color}"></line>`; }).join("");
-      view.innerHTML = `<div class="territory-network-reading"><strong>¿Cómo creemos que se ordena este territorio?</strong><p>El Humedal El Burro está en el centro. Los seis sistemas se conectan entre sí; al tocar un nodo aparecen sus componentes, su dinámica temporal y su categoría.</p><div class="territory-network-stage"><svg class="territory-network-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${edges}</svg><div class="territory-network-core"><span></span><strong>Humedal<br>El Burro</strong></div>${nodes}</div><div id="territorySystemDetail" class="territory-system-detail" aria-live="polite"><span>Selecciona una burbuja para ver qué contiene cada sistema.</span></div></div>`;
+      view.innerHTML = `<div class="territory-network-reading"><strong>¿Cómo creemos que se ordena este territorio?</strong><p>El Humedal El Burro está en el centro. Los seis sistemas se conectan entre sí; al tocar un nodo aparecen sus componentes, su dinámica temporal y su categoría.</p><div class="territory-network-stage"><svg class="territory-network-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${edges}</svg><div class="territory-network-core"><button type="button" id="territoryNetworkCore" aria-label="Ver red completa"><span></span><strong>Humedal<br>El Burro</strong></button></div>${nodes}</div><div id="territorySystemDetail" class="territory-system-detail" aria-live="polite"><span>Selecciona una burbuja para ver qué contiene cada sistema.</span></div></div>`;
       view.querySelectorAll("[data-system-id]").forEach((button) => button.addEventListener("click", () => {
         const system = territorySystems.find((item) => item.id === button.dataset.systemId);
         if (!system) return;
         DINAMICA_SOUND.play(system.id);
         view.querySelectorAll("[data-system-id]").forEach((item) => item.classList.toggle("selected", item === button));
         const detail = document.getElementById("territorySystemDetail");
-        if (detail) detail.innerHTML = `<div class="territory-detail-heading"><span style="--detail-color:${system.color}"></span><strong>${system.name}</strong><b>${system.category}</b></div><p>${system.process}</p><div class="territory-component-chips">${system.components.map((item) => `<span>${item}</span>`).join("")}</div>`;
+        if (detail) detail.innerHTML = `<div class="territory-detail-heading"><span style="--detail-color:${system.color}"></span><strong>${system.name}</strong></div><p class="territory-detail-time">CÓMO CAMBIA EN EL TIEMPO</p><p>${system.process}</p>`;
       }));
+      view.querySelector("#territoryNetworkCore")?.addEventListener("click", (event) => {
+        event.stopPropagation();
+        const stage = view.querySelector(".territory-network-stage");
+        if (!stage || stage.dataset.opened === "true") return;
+        stage.classList.add("territory-network-exploding");
+        window.setTimeout(() => {
+          const positions = [[18,18],[50,16],[82,18],[82,72],[50,84],[18,72]];
+          const nodesHtml = [], linesHtml = [];
+          territorySystems.forEach((system, si) => {
+            const [cx, cy] = positions[si];
+            const items = system.components || [];
+            items.forEach((label, i) => {
+              const angle = (i / Math.max(1, items.length)) * Math.PI * 2 - Math.PI / 2;
+              const x = cx + Math.cos(angle) * 10, y = cy + Math.sin(angle) * 10;
+              nodesHtml.push(`<span class="territory-component-node" style="left:${x}%;top:${y}%;--node-color:${system.color};--node-index:${nodesHtml.length}">${label}</span>`);
+              if (i > 0) { const previousAngle = ((i - 1) / Math.max(1, items.length)) * Math.PI * 2 - Math.PI / 2; linesHtml.push(`<line x1="${cx + Math.cos(previousAngle) * 10}" y1="${cy + Math.sin(previousAngle) * 10}" x2="${x}" y2="${y}" class="territory-component-link"/>`); }
+            });
+          });
+          for (let i = 0; i < territorySystems.length; i++) { const next = (i + 1) % territorySystems.length; linesHtml.push(`<line x1="${positions[i][0]}" y1="${positions[i][1]}" x2="${positions[next][0]}" y2="${positions[next][1]}" class="territory-system-link"/>`); }
+          stage.innerHTML = `<svg class="territory-network-svg" viewBox="0 0 100 100" preserveAspectRatio="none">${linesHtml.join("")}</svg>${nodesHtml.join("")}`;
+          stage.dataset.opened = "true";
+          stage.classList.remove("territory-network-exploding");
+          stage.classList.add("territory-network-components-visible");
+        }, 850);
+      });
     };
     const renderSubmodelsView = (mode = "subsystems") => {
       const view = document.getElementById("submodelsView");
