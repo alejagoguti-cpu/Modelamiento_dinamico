@@ -95,7 +95,12 @@
     // Los offsets están en píxeles de pantalla, relativos a la esquina base
     // (calculada de la caja real que ocupan los árboles).
     let treeCornerOffsets = { tl: { x: 0, y: 0 }, tr: { x: 0, y: 0 }, bl: { x: 0, y: 0 }, br: { x: 0, y: 0 } };
-    let treeLayerScale = 0.15; // arranca bien chico/muy cerca del centro, para que los 4 puntos de las esquinas queden a la vista y sean fáciles de agarrar desde el principio
+    let treeLayerScale = 1; // escala de la capa de árboles (posiciones reales) — la barra "Escala de la capa" controla esto
+    // Los 4 puntos naranjas de agarre se muestran más cerca del centro que
+    // su posición real, SOLO para que sean fáciles de ver y agarrar — esto
+    // no afecta el tamaño ni la posición real de los árboles, solo dónde
+    // se dibuja el punto con el que se agarra cada esquina.
+    const HANDLE_DISPLAY_SCALE = 0.35;
     let treeWorldBBox = null; // { minX, minY, maxX, maxY } — se calcula una vez que carga el dato
     let timesteps = [];      // [{ time, vehicles:[{id,x,y,angle}] }]
     let view = { scale: 1, offX: 0, offY: 0 }; // mundo -> pantalla
@@ -851,16 +856,17 @@
           netCtx.arc(sx, sy, r, 0, Math.PI * 2);
           netCtx.fill();
         });
-        // Las 4 esquinas arrastrables, escaladas igual que los árboles
-        // (así se quedan cerca de ellos aunque se haga zoom con la barra
-        // de escala). Solo visibles en modo distorsión.
+        // Las 4 esquinas arrastrables: se dibujan más cerca del centro que
+        // su posición real (HANDLE_DISPLAY_SCALE), solo para que sean
+        // fáciles de agarrar — los árboles siguen en su escala normal.
+        // Solo visibles en modo distorsión.
         if (window.sumoActiveMode === "trees") {
           netCtx.fillStyle = "#ffb020";
           netCtx.strokeStyle = "#1a0505";
           netCtx.lineWidth = 1.5;
           [TL, TR, BL, BR].forEach((p) => {
-            const px = (p.x - cx) * treeLayerScale + cx;
-            const py = (p.y - cy) * treeLayerScale + cy;
+            const px = (p.x - cx) * HANDLE_DISPLAY_SCALE + cx;
+            const py = (p.y - cy) * HANDLE_DISPLAY_SCALE + cy;
             netCtx.beginPath();
             netCtx.arc(px, py, 8, 0, Math.PI * 2);
             netCtx.fill();
@@ -1244,13 +1250,13 @@
       const w = netCanvas.parentElement.clientWidth, h = netCanvas.parentElement.clientHeight;
       const { TL, TR, BL, BR } = getTreeCorners(w, h);
       const cx = (TL.x + TR.x + BL.x + BR.x) / 4, cy = (TL.y + TR.y + BL.y + BR.y) / 4;
-      // Los puntos se ven escalados hacia el centro; para agarrarlos bien
-      // hay que comparar contra esa MISMA posición escalada, no la original.
+      // Los puntos de agarre se ven acercados al centro (HANDLE_DISPLAY_SCALE);
+      // para agarrarlos bien hay que comparar contra esa MISMA posición.
       const corners = {
-        tl: { x: (TL.x - cx) * treeLayerScale + cx, y: (TL.y - cy) * treeLayerScale + cy },
-        tr: { x: (TR.x - cx) * treeLayerScale + cx, y: (TR.y - cy) * treeLayerScale + cy },
-        bl: { x: (BL.x - cx) * treeLayerScale + cx, y: (BL.y - cy) * treeLayerScale + cy },
-        br: { x: (BR.x - cx) * treeLayerScale + cx, y: (BR.y - cy) * treeLayerScale + cy },
+        tl: { x: (TL.x - cx) * HANDLE_DISPLAY_SCALE + cx, y: (TL.y - cy) * HANDLE_DISPLAY_SCALE + cy },
+        tr: { x: (TR.x - cx) * HANDLE_DISPLAY_SCALE + cx, y: (TR.y - cy) * HANDLE_DISPLAY_SCALE + cy },
+        bl: { x: (BL.x - cx) * HANDLE_DISPLAY_SCALE + cx, y: (BL.y - cy) * HANDLE_DISPLAY_SCALE + cy },
+        br: { x: (BR.x - cx) * HANDLE_DISPLAY_SCALE + cx, y: (BR.y - cy) * HANDLE_DISPLAY_SCALE + cy },
       };
       let closest = null, closestDist = CORNER_GRAB_RADIUS;
       Object.entries(corners).forEach(([key, p]) => {
@@ -1262,12 +1268,14 @@
     });
     window.addEventListener("pointermove", (event) => {
       if (!activeDragCorner || !dragLast) return;
-      // Como el punto se ve escalado en pantalla, para que el arrastre se
-      // sienta 1:1 con el mouse hay que dividir el movimiento por la
-      // escala actual (si está todo chiquito, un pequeño arrastre real
-      // debe mover mucho el offset "de verdad" para que se vea igual).
-      const ddx = (event.clientX - dragLast.x) / treeLayerScale;
-      const ddy = (event.clientY - dragLast.y) / treeLayerScale;
+      // Si se agarró un punto de esquina, éste se ve más cerca del centro
+      // (HANDLE_DISPLAY_SCALE) que su posición real, así que el arrastre se
+      // divide por esa escala; si se está moviendo todo junto, se usa la
+      // escala real de la capa — en ambos casos, para que el arrastre se
+      // sienta 1:1 con el mouse sin importar qué tan "acercado" se vea.
+      const dragScale = activeDragCorner === "all" ? treeLayerScale : HANDLE_DISPLAY_SCALE;
+      const ddx = (event.clientX - dragLast.x) / dragScale;
+      const ddy = (event.clientY - dragLast.y) / dragScale;
       dragLast = { x: event.clientX, y: event.clientY };
       if (activeDragCorner === "all") {
         Object.values(treeCornerOffsets).forEach((c) => { c.x += ddx; c.y += ddy; });
@@ -1283,8 +1291,8 @@
     treeLayerScaleInput?.addEventListener("input", () => { treeLayerScale = Number(treeLayerScaleInput.value); redrawTreeDistort(); });
     treeDistortReset?.addEventListener("click", () => {
       treeCornerOffsets = { tl: { x: 0, y: 0 }, tr: { x: 0, y: 0 }, bl: { x: 0, y: 0 }, br: { x: 0, y: 0 } };
-      treeLayerScale = 0.15;
-      if (treeLayerScaleInput) treeLayerScaleInput.value = 0.15;
+      treeLayerScale = 1;
+      if (treeLayerScaleInput) treeLayerScaleInput.value = 1;
       redrawTreeDistort();
     });
     treeDistortCopy?.addEventListener("click", async () => {
