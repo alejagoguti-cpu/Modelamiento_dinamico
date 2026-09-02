@@ -2436,7 +2436,6 @@
           partOneMapLayers.push({ id: meta.id, fill: fillId, line: lineId, point: pointId, extras: (meta.id === "hidrico" || meta.id === "biotico" || meta.id === "infraestructura") ? [labelId] : [], markers: [] });
         });
         componentPointMap = map;
-        addEpsteinHotspots(map);
         // Avenida Ciudad de Cali (coordenadas reales que diste, de sur a
         // norte) y Avenida de las Américas, en línea morada delgada.
         map.addSource("avenidas-referencia", { type: "geojson", data: { type: "FeatureCollection", features: [
@@ -3191,6 +3190,12 @@
           DINAMICA_SOUND.play(button.dataset.kennedySound || "fisico");
           target.querySelectorAll(".map-network-node").forEach((node) => node.classList.toggle("selected", node === button));
           target.querySelectorAll(".subsystem-components, .subsystem-purpose-panel, .subsystem-diagram-panel, .map-network-detail").forEach((node) => node.remove());
+          // Si este lugar tiene datos de Epstein (Corabastos, Humedal La
+          // Vaca, Estación Banderas, Humedal El Burro), se muestra ESE
+          // popup de Aumenta/Disminuye en vez del panel genérico.
+          const placeLabel = (place.label || box.title || "").toLowerCase();
+          const epsteinSpot = EPSTEIN_HOTSPOTS.find((s) => placeLabel.includes(s.label.toLowerCase()) || s.label.toLowerCase().includes(placeLabel));
+          if (epsteinSpot) { showEpsteinModal(epsteinSpot); return; }
           const purpose = document.createElement("aside");
           purpose.className = "subsystem-purpose-panel active map-purpose-panel";
           purpose.style.setProperty("--bubble-color", place.color || box.color || "#fff");
