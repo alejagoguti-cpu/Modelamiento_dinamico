@@ -369,6 +369,108 @@ const RAW_EDGES = [
     analisis:"Las Áreas de Resiliencia Climática no tienen ningún puente confirmado hacia las Zonas Industriales u otro componente de la ESECI, pese a que estas últimas son, típicamente, infraestructura de alto impacto ambiental." },
   { s:"distrito_centro_tecnologico_e_innovacion", t:"patrimonio_natural", cat:"e3-e4", tipo:"vacio", relacion:"Soporte", fuente:"inferencia", articulo:null, pagina:null, cita:null,
     analisis:"Ningún puente confirmado entre los componentes económicos de la ESECI y la protección patrimonial de la EIP, pese a que la presión inmobiliaria/comercial sobre zonas patrimoniales es un conflicto documentado (La Candelaria, Chapinero)." },
+
+  /* ---- 100 CONEXIONES NUEVAS: Nodos del inventario POT ↔ Hubs por categoría ---- */
+  { s:"río-bogotá", t:"rios", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"río-tunjuelo", t:"rios", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"río-fucha", t:"rios", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"río-salitre", t:"humedales", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"quebrada-chochal", t:"quebradas", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"quebrada-gallo", t:"quebradas", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"quebrada-los-medios", t:"quebradas", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"quebrada-pilar", t:"quebradas", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"quebrada-pontezuela", t:"quebradas", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"quebrada-san-juan", t:"quebradas", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"quebrada-santa-rosa", t:"quebradas", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"quebrada-teusacá", t:"quebradas", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"quebrada-torca", t:"quebradas", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"córdoba-niza", t:"humedales", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"santa-maría-del-lago", t:"humedales", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"capellaníacofradía", t:"rios", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"jaboque", t:"humedales", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"juan-amarillotibabuyes", t:"humedales", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"la-conejera", t:"humedales", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"la-vaca", t:"humedales", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"techo", t:"humedales", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"tibanica", t:"rios", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"torca-guaymaral", t:"humedales", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"burro", t:"humedales", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"meandro-del-say", t:"humedales", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"hyntiba-el-escritorio", t:"humedales", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"el-tunjo", t:"humedales", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"chiguasuque-la-isla", t:"rios", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"salitre", t:"rios", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"tingua-azul", t:"humedales", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"avenida-boyacá", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"avenida-19", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"avenida-suba", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"carrera-52", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"carrera-68", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"carrera-11", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"avenida-el-polo", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"avenida-villavicencio", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"avenida-esperanza", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"calle-26", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"calle-13", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"calle-80", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"avenida-américas", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"avenida-josé-celestino-mutis", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"avenida-centenario", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"diagonal-50", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"transversal-16", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"carrera-100", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"avenida-fucha", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"calle-87", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"avenida-peatonal-central", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"carrera-7", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"carrera-10", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"carrera-9", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"avenida-colombia", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"avenida-santa-fe", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"carrera-14", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"avenida-jiménez", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"calle-72", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"calle-100", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"avenida-primero-de-mayo", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"transversal-91", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"avenida-congreso", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"calle-146", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"calle-134", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"carrera-4", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"avenida-nqs", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"avenida-circunvalar", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"calle-63", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"avenida-caracas", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"calle-19", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"carrera-32", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"cicloruta-carrera-7", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"cicloruta-carrera-9", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"cicloruta-carrera-11", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"cicloruta-calle-26", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"cicloruta-calle-13", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"cicloruta-calle-80", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"cicloruta-avenida-boyacá", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"cicloruta-avenida-19", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"cicloruta-avenida-suba", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"cicloruta-carrera-52", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"cicloruta-carrera-68", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"cicloruta-carrera-100", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"cicloruta-avenida-el-polo", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"cicloruta-avenida-villavicencio", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"cicloruta-avenida-esperanza", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"cicloruta-calle-87", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"cicloruta-calle-72", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"cicloruta-calle-100", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"cicloruta-avenida-fucha", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"cicloruta-avenida-nqs", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"cicloruta-avenida-circunvalar", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"cicloruta-carrera-14", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"cicloruta-carrera-10", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"cicloruta-carrera-4", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"cicloruta-calle-45", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"cicloruta-calle-63", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"cicloruta-calle-116", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"cicloruta-transversal-16", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
 ];
 
 /* ==========================================================
@@ -449,6 +551,108 @@ const NODE_POS = {
   patrimonio_natural: { x: 1442, y: 1406 },
   patrimonio_material: { x: 1399, y: 1026 },
   comunidades: { x: 1684, y: 1179 },
+
+  /* ---- POSICIONES GENERADAS PARA 100 NODOS NUEVOS (POT Inventory) - Physics-Aware dentro de Canvas ---- */
+  "río-bogotá": { x: 674, y: 824 },
+  "río-tunjuelo": { x: 346, y: 933 },
+  "río-fucha": { x: 478, y: 670 },
+  "río-salitre": { x: 576, y: 969 },
+  "quebrada-chochal": { x: 846, y: 581 },
+  "quebrada-gallo": { x: 514, y: 716 },
+  "quebrada-los-medios": { x: 678, y: 392 },
+  "quebrada-pilar": { x: 783, y: 740 },
+  "quebrada-pontezuela": { x: 493, y: 551 },
+  "quebrada-san-juan": { x: 828, y: 475 },
+  "quebrada-santa-rosa": { x: 612, y: 764 },
+  "quebrada-teusacá": { x: 561, y: 389 },
+  "quebrada-torca": { x: 878, y: 660 },
+  "córdoba-niza": { x: 1266, y: 591 },
+  "santa-maría-del-lago": { x: 866, y: 734 },
+  "capellaníacofradía": { x: 1046, y: 322 },
+  "jaboque": { x: 1146, y: 753 },
+  "juan-amarillotibabuyes": { x: 786, y: 549 },
+  "la-conejera": { x: 1189, y: 485 },
+  "la-vaca": { x: 953, y: 847 },
+  "techo": { x: 918, y: 391 },
+  "tibanica": { x: 1257, y: 677 },
+  "torca-guaymaral": { x: 796, y: 684 },
+  "burro": { x: 1105, y: 414 },
+  "meandro-del-say": { x: 1097, y: 830 },
+  "hyntiba-el-escritorio": { x: 823, y: 476 },
+  "el-tunjo": { x: 1289, y: 532 },
+  "chiguasuque-la-isla": { x: 898, y: 767 },
+  "salitre": { x: 995, y: 384 },
+  "tingua-azul": { x: 1185, y: 729 },
+  "avenida-boyacá": { x: 2266, y: 306 },
+  "avenida-19": { x: 1825, y: 487 },
+  "avenida-suba": { x: 2045, y: 100 },
+  "carrera-52": { x: 2223, y: 568 },
+  "carrera-68": { x: 1712, y: 251 },
+  "carrera-11": { x: 2271, y: 148 },
+  "avenida-el-polo": { x: 1941, y: 608 },
+  "avenida-villavicencio": { x: 1889, y: 100 },
+  "avenida-esperanza": { x: 2296, y: 406 },
+  "calle-26": { x: 1785, y: 404 },
+  "calle-13": { x: 2155, y: 100 },
+  "calle-80": { x: 2121, y: 622 },
+  "avenida-américas": { x: 1752, y: 150 },
+  "avenida-josé-celestino-mutis": { x: 2338, y: 237 },
+  "avenida-centenario": { x: 1855, y: 544 },
+  "diagonal-50": { x: 1988, y: 100 },
+  "transversal-16": { x: 2247, y: 496 },
+  "carrera-100": { x: 1747, y: 317 },
+  "avenida-fucha": { x: 2231, y: 100 },
+  "calle-87": { x: 2010, y: 574 },
+  "avenida-peatonal-central": { x: 1859, y: 111 },
+  "carrera-7": { x: 2323, y: 346 },
+  "carrera-10": { x: 1762, y: 487 },
+  "carrera-9": { x: 2087, y: 100 },
+  "avenida-colombia": { x: 2150, y: 530 },
+  "avenida-santa-fe": { x: 1702, y: 204 },
+  "carrera-14": { x: 2322, y: 168 },
+  "avenida-jiménez": { x: 1906, y: 582 },
+  "calle-72": { x: 1939, y: 100 },
+  "calle-100": { x: 2270, y: 437 },
+  "avenida-primero-de-mayo": { x: 1766, y: 373 },
+  "transversal-91": { x: 2155, y: 100 },
+  "avenida-congreso": { x: 2076, y: 619 },
+  "calle-146": { x: 1765, y: 107 },
+  "calle-134": { x: 2341, y: 280 },
+  "carrera-4": { x: 1819, y: 526 },
+  "avenida-nqs": { x: 2023, y: 100 },
+  "avenida-circunvalar": { x: 2237, y: 544 },
+  "calle-63": { x: 1710, y: 277 },
+  "avenida-caracas": { x: 2216, y: 158 },
+  "calle-19": { x: 1978, y: 547 },
+  "carrera-32": { x: 1887, y: 100 },
+  "cicloruta-carrera-7": { x: 1973, y: 100 },
+  "cicloruta-carrera-9": { x: 1481, y: 288 },
+  "cicloruta-carrera-11": { x: 1710, y: 100 },
+  "cicloruta-calle-26": { x: 1841, y: 296 },
+  "cicloruta-calle-13": { x: 1465, y: 100 },
+  "cicloruta-calle-80": { x: 1912, y: 100 },
+  "cicloruta-avenida-boyacá": { x: 1614, y: 377 },
+  "cicloruta-avenida-19": { x: 1576, y: 100 },
+  "cicloruta-avenida-suba": { x: 1922, y: 183 },
+  "cicloruta-carrera-52": { x: 1477, y: 186 },
+  "cicloruta-carrera-68": { x: 1784, y: 100 },
+  "cicloruta-carrera-100": { x: 1781, y: 392 },
+  "cicloruta-avenida-el-polo": { x: 1487, y: 100 },
+  "cicloruta-avenida-villavicencio": { x: 1980, y: 100 },
+  "cicloruta-avenida-esperanza": { x: 1556, y: 287 },
+  "cicloruta-calle-87": { x: 1657, y: 100 },
+  "cicloruta-calle-72": { x: 1872, y: 252 },
+  "cicloruta-calle-100": { x: 1441, y: 108 },
+  "cicloruta-avenida-fucha": { x: 1877, y: 100 },
+  "cicloruta-avenida-nqs": { x: 1677, y: 352 },
+  "cicloruta-avenida-circunvalar": { x: 1539, y: 100 },
+  "cicloruta-carrera-14": { x: 1930, y: 130 },
+  "cicloruta-carrera-10": { x: 1456, y: 260 },
+  "cicloruta-carrera-4": { x: 1738, y: 100 },
+  "cicloruta-calle-45": { x: 1817, y: 321 },
+  "cicloruta-calle-63": { x: 1427, y: 100 },
+  "cicloruta-calle-116": { x: 1950, y: 100 },
+  "cicloruta-transversal-16": { x: 1595, y: 322 },
 };
 
 // Los 4 hubs principales (bola grande) por estructura.
@@ -2267,6 +2471,509 @@ function abrirMapaPatrimonio() {
   }, 40);
 }
 
+
+const MANZANAS_HOTSPOTS_DATA = [
+  {
+    "id": "m_1",
+    "nombre": "Manzana del Cuidado Suba Tibabuyes",
+    "sector": "Suba - Tibabuyes",
+    "x": 18.84,
+    "y": 20.45,
+    "servicios": "Jardín infantil, centro de respiro, lavandería comunitaria y apoyo psicosocial.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Suba - Tibabuyes. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_2",
+    "nombre": "Manzana del Cuidado Usaquén Toberín",
+    "sector": "Usaquén - Toberín",
+    "x": 36.12,
+    "y": 21.12,
+    "servicios": "Capacitación digital, espacios de bienestar, cuidado infantil y atención integral en salud.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Usaquén - Toberín. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_3",
+    "nombre": "Manzana del Cuidado Suba Rincón",
+    "sector": "Suba - Rincón",
+    "x": 26.51,
+    "y": 26.66,
+    "servicios": "Aulas de formación, lavanderías públicas, apoyo a personas mayores y recreación.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Suba - Rincón. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_4",
+    "nombre": "Manzana del Cuidado Suba Centro",
+    "sector": "Suba - Centro",
+    "x": 17.1,
+    "y": 33.65,
+    "servicios": "Casa de igualdad de oportunidades, orientación jurídica y cuidado temporal.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Suba - Centro. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_5",
+    "nombre": "Manzana del Cuidado Engativá Cortijo",
+    "sector": "Engativá - Bolivia / Cortijo",
+    "x": 25.07,
+    "y": 36.04,
+    "servicios": "Centro de desarrollo comunitario, cuidado de primera infancia y actividades físicas.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Engativá - Bolivia / Cortijo. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_6",
+    "nombre": "Manzana del Cuidado Usaquén Oriental",
+    "sector": "Usaquén - Santa Cecilia",
+    "x": 39.82,
+    "y": 30.66,
+    "servicios": "Servicios de salud comunitaria, huertas de cuidado y atención integral a mujeres.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Usaquén - Santa Cecilia. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_7",
+    "nombre": "Manzana del Cuidado Chapinero",
+    "sector": "Chapinero - Chicó Norte",
+    "x": 53.38,
+    "y": 34.17,
+    "servicios": "Inclusión social, espacios de aprendizaje, biblioteca comunitaria y servicios de respiro.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Chapinero - Chicó Norte. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_8",
+    "nombre": "Manzana del Cuidado Chapinero Central",
+    "sector": "Chapinero - Central",
+    "x": 59.9,
+    "y": 38.23,
+    "servicios": "Atención a diversidad, formación en artes, respiro y orientación a cuidadoras.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Chapinero - Central. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_9",
+    "nombre": "Manzana del Cuidado Engativá Tabora",
+    "sector": "Engativá - Tabora",
+    "x": 22.71,
+    "y": 45.88,
+    "servicios": "Centro de atención al adulto mayor, canchas deportivas, formación técnica.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Engativá - Tabora. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_10",
+    "nombre": "Manzana del Cuidado Minuto de Dios",
+    "sector": "Engativá - Minuto de Dios",
+    "x": 30.62,
+    "y": 39.61,
+    "servicios": "Guarderías infantiles, asesoría psicosocial y talleres ocupacionales.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Engativá - Minuto de Dios. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_11",
+    "nombre": "Manzana del Cuidado Barrios Unidos",
+    "sector": "Barrios Unidos - Doce de Octubre",
+    "x": 33.57,
+    "y": 45.66,
+    "servicios": "Espacios de bienestar y actividad física, recreación y cuidado infantil.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Barrios Unidos - Doce de Octubre. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_12",
+    "nombre": "Manzana del Cuidado Fontibón Norte",
+    "sector": "Fontibón - Modelia",
+    "x": 39.72,
+    "y": 39.9,
+    "servicios": "Talleres de formación, apoyo a personas con discapacidad y respiro.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Fontibón - Modelia. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_13",
+    "nombre": "Manzana del Cuidado Teusaquillo",
+    "sector": "Teusaquillo - Centro Cívico",
+    "x": 47.31,
+    "y": 41.64,
+    "servicios": "Espacios culturales, respiro para cuidadoras y formación en derechos.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Teusaquillo - Centro Cívico. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_14",
+    "nombre": "Manzana del Cuidado Fontibón Centro",
+    "sector": "Fontibón - San Pablo / Centro",
+    "x": 54.94,
+    "y": 45.83,
+    "servicios": "Lavandería comunitaria, casa de juventud, formación laboral y respiro.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Fontibón - San Pablo / Centro. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_15",
+    "nombre": "Manzana del Cuidado Santa Fe Oriental",
+    "sector": "Santa Fe - La Macarena",
+    "x": 65.44,
+    "y": 43.9,
+    "servicios": "Centro comunitario, atención a población vulnerable y comedores sociales.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Santa Fe - La Macarena. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_16",
+    "nombre": "Manzana del Cuidado La Candelaria",
+    "sector": "Centro Histórico - La Candelaria",
+    "x": 74.19,
+    "y": 43.69,
+    "servicios": "Atención a cuidadores del centro histórico, patrimonio vivo y orientación legal.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Centro Histórico - La Candelaria. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_17",
+    "nombre": "Manzana del Cuidado Kennedy Tintal",
+    "sector": "Kennedy - Castilla / Tintal",
+    "x": 35.36,
+    "y": 52.45,
+    "servicios": "Biblioteca Tintal, aulas digitales, cuidado infantil y escuela de formación.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Kennedy - Castilla / Tintal. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_18",
+    "nombre": "Manzana del Cuidado Patio Bonito",
+    "sector": "Kennedy - Patio Bonito",
+    "x": 40.24,
+    "y": 56.04,
+    "servicios": "Centro de desarrollo comunitario, lavanderías públicas y atención médica básica.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Kennedy - Patio Bonito. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_19",
+    "nombre": "Manzana del Cuidado Puente Aranda",
+    "sector": "Puente Aranda - Gorgonzola",
+    "x": 60.81,
+    "y": 52.95,
+    "servicios": "Integración con áreas industriales, cuidado infantil y espacios de respiro.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Puente Aranda - Gorgonzola. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_20",
+    "nombre": "Manzana del Cuidado Los Mártires",
+    "sector": "Los Mártires - La Favorita",
+    "x": 67.35,
+    "y": 55.96,
+    "servicios": "Atención integral a mujeres, reducción de daño y comedores comunitarios.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Los Mártires - La Favorita. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_21",
+    "nombre": "Manzana del Cuidado Kennedy Bellavista",
+    "sector": "Kennedy - Bellavista",
+    "x": 24.43,
+    "y": 56.87,
+    "servicios": "Casa de juventud, actividades lúdicas, apoyo psicológico y cuidado infantil.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Kennedy - Bellavista. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_22",
+    "nombre": "Manzana del Cuidado Bosa Porvenir",
+    "sector": "Bosa - El Porvenir",
+    "x": 43.41,
+    "y": 62.6,
+    "servicios": "Centro comunitario El Porvenir, aulas de cuidado y recreación comunitaria.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Bosa - El Porvenir. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_23",
+    "nombre": "Manzana del Cuidado Restrepo",
+    "sector": "Antonio Nariño - Restrepo",
+    "x": 56.99,
+    "y": 61.86,
+    "servicios": "Capacitación en oficios, atención en salud y servicios de proximidad.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Antonio Nariño - Restrepo. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_24",
+    "nombre": "Manzana del Cuidado 20 de Julio",
+    "sector": "San Cristóbal - 20 de Julio",
+    "x": 64.16,
+    "y": 62.83,
+    "servicios": "Atención comunitaria, salas de lactancia y respiro para personas cuidadoras.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en San Cristóbal - 20 de Julio. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_25",
+    "nombre": "Manzana del Cuidado La Victoria",
+    "sector": "San Cristóbal - La Victoria",
+    "x": 72.61,
+    "y": 59.33,
+    "servicios": "Centro de desarrollo social, parque comunitario y formación técnica.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en San Cristóbal - La Victoria. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_26",
+    "nombre": "Manzana del Cuidado Juan Rey (Borde Oriental)",
+    "sector": "San Cristóbal - Juan Rey",
+    "x": 84.08,
+    "y": 58.55,
+    "servicios": "Servicios de borde urbano, huertas comunitarias y atención psicosocial.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en San Cristóbal - Juan Rey. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_27",
+    "nombre": "Manzana del Cuidado Bosa Centro",
+    "sector": "Bosa - Centro / San Pablo",
+    "x": 48.7,
+    "y": 72.13,
+    "servicios": "Casa de igualdad de oportunidades, aulas de respiro y formación.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Bosa - Centro / San Pablo. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_28",
+    "nombre": "Manzana del Cuidado Tunjuelito",
+    "sector": "Tunjuelito - Venecia / El Carmen",
+    "x": 53.18,
+    "y": 65.48,
+    "servicios": "Centro comunitario, atención médica de proximidad y cuidado infantil.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Tunjuelito - Venecia / El Carmen. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_29",
+    "nombre": "Manzana del Cuidado Rafael Uribe Uribe",
+    "sector": "Rafael Uribe - Diana Turbay",
+    "x": 65.67,
+    "y": 70.37,
+    "servicios": "Servicios de cuidado en laderas, atención a familias y lavanderías públicas.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Rafael Uribe - Diana Turbay. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_30",
+    "nombre": "Manzana del Cuidado Molinos",
+    "sector": "Rafael Uribe - Molinos",
+    "x": 75.19,
+    "y": 66.25,
+    "servicios": "Aulas de tecnología, espacios de descanso para cuidadoras y recreación.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Rafael Uribe - Molinos. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_31",
+    "nombre": "Manzana del Cuidado El Ensueño",
+    "sector": "Ciudad Bolívar - El Ensueño",
+    "x": 50.2,
+    "y": 82.23,
+    "servicios": "Teatro El Ensueño, centro comunitario y servicios integrales de cuidado.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Ciudad Bolívar - El Ensueño. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_32",
+    "nombre": "Manzana del Cuidado Sierra Morena",
+    "sector": "Ciudad Bolívar - Sierra Morena",
+    "x": 59.35,
+    "y": 75.06,
+    "servicios": "Casa de la cultura, atención en salud y apoyo a cuidadoras de personas con discapacidad.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Ciudad Bolívar - Sierra Morena. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_33",
+    "nombre": "Manzana del Cuidado Manitas (TransMiCable)",
+    "sector": "Ciudad Bolívar - Lucero / TransMiCable",
+    "x": 73.51,
+    "y": 73.98,
+    "servicios": "Articulación directa con estación de cable aéreo Manitas, jardines infantiles y salud.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Ciudad Bolívar - Lucero / TransMiCable. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_34",
+    "nombre": "Manzana del Cuidado Arborizadora Alta",
+    "sector": "Ciudad Bolívar - Arborizadora Alta",
+    "x": 56.05,
+    "y": 87.15,
+    "servicios": "Servicios en alta montaña urbana, recreación, apoyo psicosocial y formación.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Ciudad Bolívar - Arborizadora Alta. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_35",
+    "nombre": "Manzana del Cuidado Usme Santa Librada",
+    "sector": "Usme - Santa Librada",
+    "x": 67.07,
+    "y": 82.53,
+    "servicios": "Centro de desarrollo comunitario, cuidado de infancia y apoyo a personas mayores.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Usme - Santa Librada. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  },
+  {
+    "id": "m_36",
+    "nombre": "Manzana del Cuidado Usme Pueblo",
+    "sector": "Usme - Pueblo / Borde Rural",
+    "x": 53.51,
+    "y": 92.62,
+    "servicios": "Articulación rural, servicios móviles de cuidado y preservación campesina.",
+    "analisis": "El POT proyecta esta manzana para atender la demanda de cuidado en Usme - Pueblo / Borde Rural. La realidad territorial exige resolver la falta de cruces seguros, tiempos de traslado y sobrecarga cotidiana.",
+    "cita": "El Sistema Distrital de Cuidado busca reconocer, redistribuir y reducir el trabajo de cuidado no remunerado en Bogotá."
+  }
+];
+
+const PATRIMONIO_HOTSPOTS_DATA = [
+  {
+    id: "centro_historico",
+    nombre: "Centro Histórico y La Candelaria",
+    x: 52, y: 56,
+    categoria: "Patrimonio Material e Inmaterial",
+    descripcion: "Núcleo fundacional de Bogotá con la mayor concentración de Bienes de Interés Cultural (BIC) nacional y distrital.",
+    analisis: "El POT promueve la conservación arquitectónica pero enfrenta tensiones entre la preservación patrimonial y las presiones inmobiliarias de renovación.",
+    cita: "El POT protege los sectores de interés cultural y promueve la permanencia de habitantes tradicionales."
+  },
+  {
+    id: "teusaquillo",
+    nombre: "Barrio Teusaquillo y Sectores de Interés Cultural",
+    x: 46, y: 46,
+    categoria: "Patrimonio Urbano y Arquitectónico",
+    descripcion: "Conjunto representativo de la arquitectura de mitad del siglo XX y expansión urbana moderna.",
+    analisis: "Las normas de densificación amenazan la escala barrial y el tejido residencial histórico.",
+    cita: "Reconocimiento de tipologías residenciales patrimoniales."
+  },
+  {
+    id: "cerros_orientales",
+    nombre: "Cerros Orientales y Senderos Ancestrales",
+    x: 64, y: 40,
+    categoria: "Patrimonio Natural y Cultural",
+    descripcion: "Matriz biofísica fundamental, senderos indígenas y memoria territorial colectiva.",
+    analisis: "La delimitación jurídica no resuelve las tensiones entre preservación ecológica, asentamientos populares y recreación pasiva.",
+    cita: "Integración de la Estructura Ecológica Principal con el patrimonio natural."
+  },
+  {
+    id: "usaquen",
+    nombre: "Núcleo Fundacional de Usaquén",
+    x: 60, y: 20,
+    categoria: "Patrimonio Histórico y Paisajístico",
+    descripcion: "Antiguo municipio anexionado con valor colonial y dinámica cultural contemporánea.",
+    analisis: "La sobreexplotación comercial desplaza usos residenciales y comunitarios tradicionales.",
+    cita: "Protección de núcleos fundacionales periféricos."
+  },
+  {
+    id: "san_francisco",
+    nombre: "Eje Ambiental - Río San Francisco / Vicachá",
+    x: 55, y: 52,
+    categoria: "Patrimonio Hídrico y Paisajístico",
+    descripcion: "Recorrido histórico del agua en la fundación y crecimiento de la ciudad.",
+    analisis: "El POT dibuja el eje pero el río permanece canalizado y subterráneo en la mayor parte de su curso urbano.",
+    cita: "Recuperación de la memoria del agua en el espacio público."
+  }
+];
+
+function renderManzanasHotspots() {
+  const container = document.getElementById("manzanasHotspotsContainer");
+  const popup = document.getElementById("manzanasPopup");
+  if (!container || !popup) return;
+
+  container.innerHTML = MANZANAS_HOTSPOTS_DATA.map(m => `
+    <button type="button" class="manzana-spot" data-id="${m.id}" style="left:${m.x}%; top:${m.y}%;" title="${m.nombre}"></button>
+  `).join("");
+
+  container.querySelectorAll(".manzana-spot").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const id = btn.getAttribute("data-id");
+      const m = MANZANAS_HOTSPOTS_DATA.find(x => x.id === id);
+      if (!m) return;
+
+      container.querySelectorAll(".manzana-spot").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+
+      popup.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px;">
+          <h4 style="font-family:'Space Grotesk',sans-serif; font-size:14px; font-weight:700; color:#f76fb0; margin:0;">${m.nombre}</h4>
+          <button type="button" class="popup-close-mini" style="background:none; border:none; color:#888; font-size:16px; cursor:pointer; padding:0;">&times;</button>
+        </div>
+        <div style="font-size:12px; color:#cbd5e1; line-height:1.5; margin-bottom:8px;"><strong>Servicios:</strong> ${m.servicios}</div>
+        <div style="font-size:11.5px; color:#94a3b8; line-height:1.5; margin-bottom:8px; border-left:2px solid #f76fb0; padding-left:8px;">${m.analisis}</div>
+        <div style="font-size:11px; color:#64748b; font-style:italic;">"${m.cita}"</div>
+      `;
+      popup.style.display = "block";
+
+      popup.querySelector(".popup-close-mini")?.addEventListener("click", () => {
+        popup.style.display = "none";
+        btn.classList.remove("active");
+      });
+    });
+  });
+
+  document.getElementById("manzanasOverlayBody")?.addEventListener("click", (e) => {
+    if (!e.target.closest(".manzanas-popup") && !e.target.closest(".manzana-spot")) {
+      popup.style.display = "none";
+      container.querySelectorAll(".manzana-spot").forEach(b => b.classList.remove("active"));
+    }
+  });
+}
+
+function renderPatrimonioHotspots() {
+  const container = document.getElementById("patrimonioHotspotsContainer");
+  const popup = document.getElementById("patrimonioPopup");
+  if (!container || !popup) return;
+
+  container.innerHTML = PATRIMONIO_HOTSPOTS_DATA.map(p => `
+    <button type="button" class="patrimonio-spot" data-id="${p.id}" style="left:${p.x}%; top:${p.y}%;" title="${p.nombre}"></button>
+  `).join("");
+
+  container.querySelectorAll(".patrimonio-spot").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const id = btn.getAttribute("data-id");
+      const p = PATRIMONIO_HOTSPOTS_DATA.find(x => x.id === id);
+      if (!p) return;
+
+      container.querySelectorAll(".patrimonio-spot").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+
+      popup.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px;">
+          <h4 style="font-family:'Space Grotesk',sans-serif; font-size:14px; font-weight:700; color:#fb8d84; margin:0;">${p.nombre}</h4>
+          <button type="button" class="popup-close-mini" style="background:none; border:none; color:#888; font-size:16px; cursor:pointer; padding:0;">&times;</button>
+        </div>
+        <div style="font-size:12px; color:#cbd5e1; line-height:1.5; margin-bottom:8px;"><strong>Categoría:</strong> ${p.categoria}</div>
+        <div style="font-size:12px; color:#cbd5e1; line-height:1.5; margin-bottom:8px;">${p.descripcion}</div>
+        <div style="font-size:11.5px; color:#94a3b8; line-height:1.5; margin-bottom:8px; border-left:2px solid #fb8d84; padding-left:8px;">${p.analisis}</div>
+        <div style="font-size:11px; color:#64748b; font-style:italic;">"${p.cita}"</div>
+      `;
+      popup.style.display = "block";
+
+      popup.querySelector(".popup-close-mini")?.addEventListener("click", () => {
+        popup.style.display = "none";
+        btn.classList.remove("active");
+      });
+    });
+  });
+
+  document.getElementById("patrimonioOverlayBody")?.addEventListener("click", (e) => {
+    if (!e.target.closest(".patrimonio-popup") && !e.target.closest(".patrimonio-spot")) {
+      popup.style.display = "none";
+      container.querySelectorAll(".patrimonio-spot").forEach(b => b.classList.remove("active"));
+    }
+  });
+}
+
 function showManzanasOverlay(opts) {
   const legendM = document.getElementById("networkLegend");
   if (legendM) legendM.style.display = "none";
@@ -2283,6 +2990,7 @@ function showManzanasOverlay(opts) {
   const overlay = document.getElementById("manzanasOverlay");
   if (overlay) {
     overlay.style.display = "flex";
+    renderManzanasHotspots();
     if (opts?.animateIn) {
       overlay.classList.add("overlay-entering");
       overlay.addEventListener("animationend", () => overlay.classList.remove("overlay-entering"), { once: true });
@@ -2316,6 +3024,7 @@ function showPatrimonioOverlay(opts) {
   const overlay = document.getElementById("patrimonioOverlay");
   if (overlay) {
     overlay.style.display = "flex";
+    renderPatrimonioHotspots();
     if (opts?.animateIn) {
       overlay.classList.add("overlay-entering");
       overlay.addEventListener("animationend", () => overlay.classList.remove("overlay-entering"), { once: true });
@@ -2332,6 +3041,7 @@ function hidePatrimonioOverlay() {
   if (overlay) overlay.style.display = "none";
   document.querySelector(".network-canvas").style.display = "";
 }
+
 
 /* -------- métricas -------- */
 function computeMetrics() {
@@ -2474,7 +3184,7 @@ function showMainConclusionPopup() {
       <div class="main-conclusion-modal-overlay"></div>
       <div class="main-conclusion-modal-container">
         <div class="main-conclusion-modal-header">
-          <h2>CONCLUSIÓN</h2>
+          <h2>CONCLUSIÓN · RESERVA DISTRITAL DE HUMEDAL</h2>
           <button class="main-conclusion-modal-close" id="mainConclusionCloseBtn" aria-label="Cerrar">
             <i class="fa-solid fa-xmark"></i>
           </button>
@@ -2488,20 +3198,11 @@ function showMainConclusionPopup() {
   `;
 
   document.body.insertAdjacentHTML("beforeend", modalHTML);
-  mainConclusionStep = 1;
-  document.getElementById("mainConclusionBody").innerHTML = MAIN_CONCLUSION_STEP1;
-
-  console.log("Modal mostrado, rendering red...");
-  setTimeout(() => {
-    console.log("Renderizando red...");
-    renderConclusionNetwork();
-    console.log("Red renderizada");
-  }, 0);
+  showHumedalMap();
 
   document.getElementById("mainConclusionCloseBtn")?.addEventListener("click", hideMainConclusionPopup);
   document.getElementById("mainConclusionFooterCloseBtn")?.addEventListener("click", hideMainConclusionPopup);
   document.querySelector(".main-conclusion-modal-overlay")?.addEventListener("click", hideMainConclusionPopup);
-  document.getElementById("mainConclusionNextBtn")?.addEventListener("click", showMainConclusionStep2);
 }
 
 function showHumedalMap() {
@@ -2510,21 +3211,41 @@ function showHumedalMap() {
       <button class="conclusion-map-close" id="conclusionMapClose">← Volver</button>
       <h2>Reserva Distrital de Humedal</h2>
       <div class="conclusion-map-container">
-        <img src="./assets/RESERVA_HUMEDAL.webp" alt="Reserva Distrital de Humedal" class="conclusion-map-image" onerror="console.log('Imagen no cargó')" onload="console.log('Imagen cargada')"
+        <img src="./assets/RESERVA_HUMEDAL.webp" alt="Reserva Distrital de Humedal" class="conclusion-map-image" onerror="console.log('Imagen no cargó')" onload="console.log('Imagen cargada')">
         <div class="conclusion-nodes-overlay">
-          <div class="conclusion-node" style="top: 12%; left: 18%; --d: 0.1s;" title="Orienta"><span>Orienta</span></div>
-          <div class="conclusion-node" style="top: 12%; left: 24%; --d: 0.2s;" title="Regula"><span>Regula</span></div>
-          <div class="conclusion-node" style="top: 48%; left: 14%; --d: 0.3s;" title="Clasifica"><span>Clasifica</span></div>
-          <div class="conclusion-node" style="top: 23%; right: 12%; --d: 0.4s;" title="Protege"><span>Protege</span></div>
-          <div class="conclusion-node" style="top: 52%; left: 42%; --d: 0.5s;" title="Delimita"><span>Delimita</span></div>
+          <div class="conclusion-node" style="top: 15%; left: 12%; --d: 0.1s;" data-fn="orienta" title="Orienta"><span>Orienta</span></div>
+          <div class="conclusion-node" style="top: 48%; left: 15%; --d: 0.2s;" data-fn="regula" title="Regula"><span>Regula</span></div>
+          <div class="conclusion-node" style="top: 74%; left: 22%; --d: 0.3s;" data-fn="clasifica" title="Clasifica"><span>Clasifica</span></div>
+          <div class="conclusion-node" style="top: 46%; left: 42%; --d: 0.4s;" data-fn="protege" title="Protege"><span>Protege</span></div>
+          <div class="conclusion-node" style="top: 32%; left: 74%; --d: 0.5s;" data-fn="delimita" title="Delimita"><span>Delimita</span></div>
         </div>
       </div>
-      <p class="conclusion-map-caption">17 áreas de reserva distrital de humedal en Bogotá — Presiona los nodos para más información</p>
+      <p class="conclusion-map-caption" id="conclusionMapCaption">17 áreas de reserva distrital de humedal en Bogotá — Presiona los nodos para más información</p>
     </div>
   `;
 
   const body = document.getElementById("mainConclusionBody");
   body.innerHTML = mapHTML;
+
+  const nodeInfo = {
+    clasifica: "<strong>Clasifica:</strong> Organiza y cataloga los 17 humedales en la tabla oficial según sus hectáreas y categorías del POT.",
+    regula: "<strong>Regula:</strong> Aplica el régimen normativo comparativo entre el Decreto 190 de 2004 (727,14 ha) y el POT 555 (901,43 ha).",
+    protege: "<strong>Protege:</strong> Establece convenciones de conservación, adición, sustracción y reconocimiento de nuevos ecosistemas.",
+    delimita: "<strong>Delimita:</strong> Fija los límites cartográficos y polígonos jurídicos de cada reserva sobre el territorio de Bogotá.",
+    orienta: "<strong>Orienta:</strong> Define las directrices de ordenamiento y proyectos estratégicos hacia el modelo territorial 2022-2035."
+  };
+
+  document.querySelectorAll(".conclusion-node").forEach(node => {
+    node.addEventListener("click", () => {
+      const fn = node.getAttribute("data-fn");
+      const caption = document.getElementById("conclusionMapCaption");
+      if (caption && nodeInfo[fn]) {
+        caption.innerHTML = nodeInfo[fn];
+        document.querySelectorAll(".conclusion-node").forEach(n => n.style.borderColor = "#5b8def");
+        node.style.borderColor = "#2fd4c8";
+      }
+    });
+  });
 
   document.getElementById("conclusionMapClose")?.addEventListener("click", () => {
     showMainConclusionStep2();
@@ -2536,11 +3257,8 @@ function showMainConclusionStep2() {
   document.getElementById("mainConclusionBody").innerHTML = MAIN_CONCLUSION_STEP2;
 
   document.querySelectorAll(".conclusion-function-card").forEach(card => {
-    card.addEventListener("click", (e) => {
-      const cardIndex = card.getAttribute("data-card-index");
-      if (cardIndex === "1") {
-        showHumedalMap();
-      }
+    card.addEventListener("click", () => {
+      showHumedalMap();
     });
   });
 }
