@@ -86,6 +86,7 @@
     const vehCtx = vehCanvas.getContext("2d");
 
     let netData = null;      // { offset, bbox, edges }
+    let treeData = null;     // { species: [nombre,...], trees: [[x,y,speciesIdx,alturaM],...] } — Arbolado Urbano real de Kennedy; usa toScreen igual que las vías, así gira junto con ellas si se ajusta ROTATE_DEG
     let timesteps = [];      // [{ time, vehicles:[{id,x,y,angle}] }]
     let view = { scale: 1, offX: 0, offY: 0 }; // mundo -> pantalla
     let playing = false;
@@ -782,6 +783,20 @@
         strokeSmoothPath(netCtx, screenPts);
         netCtx.stroke();
       });
+      // Arbolado Urbano real de Kennedy: usa toScreen (con ROTATE_DEG)
+      // igual que las vías, así que gira junto con el resto del mapa y no
+      // se desalinea si se corrige la inclinación general.
+      if (treeData) {
+        netCtx.fillStyle = "rgba(90,190,110,0.55)";
+        treeData.trees.forEach(([tx, ty, , altura]) => {
+          const [sx, sy] = toScreen(tx, ty);
+          if (sx < -10 || sx > w + 10 || sy < -10 || sy > h + 10) return;
+          const r = Math.min(2.6, Math.max(0.8, (altura || 3) * 0.12));
+          netCtx.beginPath();
+          netCtx.arc(sx, sy, r, 0, Math.PI * 2);
+          netCtx.fill();
+        });
+      }
       // se dibuja primero lo local (más numeroso y fino) y encima lo
       // principal (más grueso), para que las vías grandes no queden tapadas
       ["local", "mid", "major"].forEach((cls) => {
@@ -831,6 +846,11 @@
         netCtx.restore();
       }
     }
+    fetch("./assets/kennedy_trees.json?v=rotatewhole-v1")
+      .then((r) => { if (!r.ok) throw new Error("no se pudo cargar kennedy_trees.json"); return r.json(); })
+      .then((data) => { treeData = data; if (netData) drawNetwork(netCanvas.parentElement.clientWidth, netCanvas.parentElement.clientHeight); })
+      .catch((err) => console.warn("No se pudo cargar el arbolado de Kennedy:", err));
+
     // ---------- cargar la red (JSON ya recortado) ----------
     fetch(NET_URL)
       .then((r) => { if (!r.ok) throw new Error("no se pudo cargar " + NET_URL); return r.json(); })
@@ -1089,6 +1109,34 @@
 
     // El mapa queda fijo: sin arrastrar ni hacer zoom, con el encuadre
     // definido por EXTRA_ZOOM/CENTER_X/CENTER_Y/ROTATE_DEG de arriba.
+
+    // ---------- Rotación GLOBAL del mapa (calles + árboles + vehículos
+    // juntos, todos usan ROTATE_DEG a través de toScreen) ----------
+    const mapRotInput = document.getElementById("sumoMapRotation");
+    const mapRotReset = document.getElementById("sumoMapRotationReset");
+    const mapRotCopy = document.getElementById("sumoMapRotationCopy");
+    const mapRotOutput = document.getElementById("sumoMapRotationOutput");
+    const mapRotStatus = document.getElementById("sumoMapRotationStatus");
+    function redrawWholeMap() {
+      const w = netCanvas.parentElement.clientWidth, h = netCanvas.parentElement.clientHeight;
+      drawNetwork(w, h);
+      drawVehiclesAt(playhead);
+      if (mapRotOutput) mapRotOutput.value = `ROTATE_DEG=${ROTATE_DEG.toFixed(1)}`;
+    }
+    mapRotInput?.addEventListener("input", () => {
+      ROTATE_DEG = Number(mapRotInput.value);
+      redrawWholeMap();
+    });
+    mapRotReset?.addEventListener("click", () => {
+      ROTATE_DEG = 0;
+      if (mapRotInput) mapRotInput.value = 0;
+      redrawWholeMap();
+    });
+    mapRotCopy?.addEventListener("click", async () => {
+      if (mapRotOutput) mapRotOutput.value = `ROTATE_DEG=${ROTATE_DEG.toFixed(1)}`;
+      try { await navigator.clipboard.writeText(mapRotOutput?.value || ""); } catch (_) {}
+      if (mapRotStatus) mapRotStatus.textContent = "Ángulo copiado. Pégamelo en el chat para dejarlo fijo así.";
+    });
 
     window.addEventListener("resize", () => {
       resizeCanvases();

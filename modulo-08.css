@@ -769,6 +769,17 @@ footer span { color: var(--teal); }
   background: #05070a; border-radius: 8px; overflow: hidden;
 }
 .sumo-canvas-wrap.panning { cursor: grabbing; }
+.sumo-reference-panel { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 10px 14px; border: 1px solid rgba(118,255,240,.35); border-radius: 8px; background: rgba(118,255,240,.04); color: var(--text-dim); font-size: 11px; }
+.sumo-reference-panel strong { color: #76fff0; font-size: 12px; }
+.sumo-reference-panel label { display: inline-flex; align-items: center; gap: 5px; }
+.sumo-reference-panel input[type="range"] { width: 160px; accent-color: #76fff0; }
+.sumo-reference-panel button { flex: 0 0 auto; }
+.sumo-reference-panel span { flex: 1 1 220px; }
+.sumo-reference-coords { display: flex; flex-direction: column; gap: 6px; width: 100%; }
+.sumo-reference-coords textarea {
+  width: 100%; background: #05070a; border: 1px solid var(--border); border-radius: 6px;
+  color: #76fff0; font-family: monospace; font-size: 11px; padding: 8px; resize: vertical;
+}
 .sumo-agents-card {
   position: absolute; top: 12px; right: 12px; z-index: 15; max-width: 260px;
   padding: 10px 12px; border-radius: 8px; border: 1px solid rgba(255,176,32,.45);

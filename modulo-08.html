@@ -177,6 +177,20 @@
             </ul>
           </div>
         </div>
+
+        <!-- Rotación GLOBAL del mapa: gira calles, árboles y vehículos
+             TODOS JUNTOS, para corregir que el mapa se vea acostado/en
+             diagonal. Cuando quede recto, copia el número y pégamelo. -->
+        <div class="sumo-reference-panel">
+          <strong><i class="fa-solid fa-compass"></i> Enderezar el mapa completo</strong>
+          <label>Rotación <input id="sumoMapRotation" type="range" min="-90" max="90" step="0.5" value="0"></label>
+          <button type="button" class="sumo-btn" id="sumoMapRotationReset" title="Restablecer"><i class="fa-solid fa-rotate-left"></i></button>
+          <span id="sumoMapRotationStatus">Mueve la barra hasta que el mapa se vea derecho, no acostado.</span>
+          <div class="sumo-reference-coords">
+            <button type="button" class="sumo-btn" id="sumoMapRotationCopy" title="Copiar ángulo"><i class="fa-solid fa-copy"></i> Copiar ángulo de rotación</button>
+            <textarea id="sumoMapRotationOutput" rows="1" spellcheck="false" placeholder="Aquí aparecerá el ángulo final..."></textarea>
+          </div>
+        </div>
         <div class="sumo-sim-controls">
           <button type="button" id="sumoPlayPause" class="sumo-btn" aria-label="Reproducir / pausar"><i class="fa-solid fa-play"></i></button>
           <input type="range" id="sumoTimeSlider" min="0" max="1000" value="0" step="1" disabled>
