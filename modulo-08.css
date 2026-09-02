@@ -769,6 +769,12 @@ footer span { color: var(--teal); }
   background: #05070a; border-radius: 8px; overflow: hidden;
 }
 .sumo-canvas-wrap.panning { cursor: grabbing; }
+.sumo-tree-info {
+  position: absolute; z-index: 60; max-width: 240px; padding: 7px 10px; border-radius: 7px;
+  border: 1px solid rgba(96,200,110,.6); background: rgba(6,16,8,.96); color: #fff;
+  font-size: 11.5px; line-height: 1.4; pointer-events: none; box-shadow: 0 6px 16px rgba(0,0,0,.5);
+}
+.sumo-tree-info i { color: #6ec86e; }
 .sumo-reference-panel { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 10px 14px; border: 1px solid rgba(118,255,240,.35); border-radius: 8px; background: rgba(118,255,240,.04); color: var(--text-dim); font-size: 11px; }
 .sumo-reference-panel strong { color: #76fff0; font-size: 12px; }
 .sumo-reference-panel label { display: inline-flex; align-items: center; gap: 5px; }

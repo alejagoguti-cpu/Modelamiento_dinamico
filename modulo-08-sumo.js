@@ -760,6 +760,32 @@
       ctx.lineTo(last[0], last[1]);
     }
 
+    // Posiciones actuales de las 4 esquinas de la malla de árboles en
+    // pantalla (base + el desplazamiento que el usuario arrastró).
+    function getTreeCorners(w, h) {
+      const bb = treeWorldBBox;
+      const [tlx0, tly0] = toScreen(bb.minX, bb.maxY);
+      const [trx0, try0] = toScreen(bb.maxX, bb.maxY);
+      const [blx0, bly0] = toScreen(bb.minX, bb.minY);
+      const [brx0, bry0] = toScreen(bb.maxX, bb.minY);
+      return {
+        TL: { x: tlx0 + treeCornerOffsets.tl.x, y: tly0 + treeCornerOffsets.tl.y },
+        TR: { x: trx0 + treeCornerOffsets.tr.x, y: try0 + treeCornerOffsets.tr.y },
+        BL: { x: blx0 + treeCornerOffsets.bl.x, y: bly0 + treeCornerOffsets.bl.y },
+        BR: { x: brx0 + treeCornerOffsets.br.x, y: bry0 + treeCornerOffsets.br.y },
+      };
+    }
+    // Posición final en pantalla de un árbol, con la distorsión de 4
+    // esquinas ya aplicada (interpolación bilineal) — se usa tanto para
+    // dibujar como para detectar clics.
+    function treeDistortedScreen(tx, ty, bb, TL, TR, BL, BR, wSpan, hSpan) {
+      const u = (tx - bb.minX) / wSpan;
+      const v = 1 - (ty - bb.minY) / hSpan;
+      const top = { x: TL.x + (TR.x - TL.x) * u, y: TL.y + (TR.y - TL.y) * u };
+      const bot = { x: BL.x + (BR.x - BL.x) * u, y: BL.y + (BR.y - BL.y) * u };
+      return [top.x + (bot.x - top.x) * v, top.y + (bot.y - top.y) * v];
+    }
+
     function drawNetwork(w, h) {
       netCtx.clearRect(0, 0, w, h);
       netCtx.lineJoin = "round";
@@ -805,24 +831,13 @@
           });
           treeWorldBBox = { minX, minY, maxX, maxY };
         }
+        const corners = getTreeCorners(w, h);
+        const { TL, TR, BL, BR } = corners;
         const bb = treeWorldBBox;
-        const [tlx0, tly0] = toScreen(bb.minX, bb.maxY); // esquina superior-izquierda en pantalla
-        const [trx0, try0] = toScreen(bb.maxX, bb.maxY); // superior-derecha
-        const [blx0, bly0] = toScreen(bb.minX, bb.minY); // inferior-izquierda
-        const [brx0, bry0] = toScreen(bb.maxX, bb.minY); // inferior-derecha
-        const TL = { x: tlx0 + treeCornerOffsets.tl.x, y: tly0 + treeCornerOffsets.tl.y };
-        const TR = { x: trx0 + treeCornerOffsets.tr.x, y: try0 + treeCornerOffsets.tr.y };
-        const BL = { x: blx0 + treeCornerOffsets.bl.x, y: bly0 + treeCornerOffsets.bl.y };
-        const BR = { x: brx0 + treeCornerOffsets.br.x, y: bry0 + treeCornerOffsets.br.y };
         const wSpan = bb.maxX - bb.minX || 1, hSpan = bb.maxY - bb.minY || 1;
         netCtx.fillStyle = "rgba(90,190,110,0.55)";
         treeData.trees.forEach(([tx, ty, , altura]) => {
-          const u = (tx - bb.minX) / wSpan; // 0=izquierda, 1=derecha
-          const v = 1 - (ty - bb.minY) / hSpan; // 0=arriba, 1=abajo (ty mayor = más al norte = más arriba)
-          const top = { x: TL.x + (TR.x - TL.x) * u, y: TL.y + (TR.y - TL.y) * u };
-          const bot = { x: BL.x + (BR.x - BL.x) * u, y: BL.y + (BR.y - BL.y) * u };
-          const sx = top.x + (bot.x - top.x) * v;
-          const sy = top.y + (bot.y - top.y) * v;
+          const [sx, sy] = treeDistortedScreen(tx, ty, bb, TL, TR, BL, BR, wSpan, hSpan);
           if (sx < -10 || sx > w + 10 || sy < -10 || sy > h + 10) return;
           const r = Math.min(2.6, Math.max(0.8, (altura || 3) * 0.12));
           netCtx.beginPath();
@@ -1254,6 +1269,35 @@
       if (treeDistortStatus) treeDistortStatus.textContent = "Coordenadas de las 4 esquinas copiadas. Pégamelas en el chat para dejarlas fijas.";
     });
     updateTreeDistortOutput();
+
+    // ---------- Clic sobre un árbol: muestra su especie y altura ----------
+    const treeInfoBox = document.createElement("div");
+    treeInfoBox.className = "sumo-tree-info";
+    treeInfoBox.hidden = true;
+    document.getElementById("sumoCanvasWrap")?.appendChild(treeInfoBox);
+    document.getElementById("sumoCanvasWrap")?.addEventListener("click", (event) => {
+      if (!treeData || !treeWorldBBox || window.sumoActiveMode === "trees") return; // no interferir con distorsionar/mover
+      const rect = event.currentTarget.getBoundingClientRect();
+      const clickX = event.clientX - rect.left, clickY = event.clientY - rect.top;
+      const w = netCanvas.parentElement.clientWidth, h = netCanvas.parentElement.clientHeight;
+      const { TL, TR, BL, BR } = getTreeCorners(w, h);
+      const bb = treeWorldBBox;
+      const wSpan = bb.maxX - bb.minX || 1, hSpan = bb.maxY - bb.minY || 1;
+      let best = null, bestDist = 12; // hasta 12px de tolerancia
+      treeData.trees.forEach(([tx, ty, spIdx, altura]) => {
+        const [sx, sy] = treeDistortedScreen(tx, ty, bb, TL, TR, BL, BR, wSpan, hSpan);
+        const d = Math.hypot(sx - clickX, sy - clickY);
+        if (d < bestDist) { bestDist = d; best = { species: treeData.species[spIdx], altura }; }
+      });
+      if (best) {
+        treeInfoBox.innerHTML = `<i class="fa-solid fa-tree"></i> <strong>${best.species}</strong> · ${best.altura ? best.altura.toFixed(1) + " m de altura" : "altura no registrada"}`;
+        treeInfoBox.style.left = `${clickX + 10}px`;
+        treeInfoBox.style.top = `${clickY + 10}px`;
+        treeInfoBox.hidden = false;
+      } else {
+        treeInfoBox.hidden = true;
+      }
+    });
 
     window.addEventListener("resize", () => {
       resizeCanvases();
