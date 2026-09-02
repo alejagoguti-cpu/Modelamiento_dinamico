@@ -100,7 +100,7 @@
     // su posición real, SOLO para que sean fáciles de ver y agarrar — esto
     // no afecta el tamaño ni la posición real de los árboles, solo dónde
     // se dibuja el punto con el que se agarra cada esquina.
-    const HANDLE_DISPLAY_SCALE = 0.35;
+    const HANDLE_DISPLAY_SCALE = 0.12;
     let treeWorldBBox = null; // { minX, minY, maxX, maxY } — se calcula una vez que carga el dato
     let timesteps = [];      // [{ time, vehicles:[{id,x,y,angle}] }]
     let view = { scale: 1, offX: 0, offY: 0 }; // mundo -> pantalla
