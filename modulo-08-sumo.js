@@ -86,7 +86,6 @@
     const vehCtx = vehCanvas.getContext("2d");
 
     let netData = null;      // { offset, bbox, edges }
-    let treeData = null;     // { species: [nombre,...], trees: [[x,y,speciesIdx,alturaM],...] } — Arbolado Urbano real de Kennedy, plano, visto desde arriba, sin ningún giro ni ajuste
     let timesteps = [];      // [{ time, vehicles:[{id,x,y,angle}] }]
     let view = { scale: 1, offX: 0, offY: 0 }; // mundo -> pantalla
     let playing = false;
@@ -783,22 +782,6 @@
         strokeSmoothPath(netCtx, screenPts);
         netCtx.stroke();
       });
-      // Arbolado Urbano real de Kennedy (Alcaldía de Bogotá): 141.722
-      // árboles. Plano, visto desde arriba, exactamente como en Google
-      // Maps/el shapefile — círculos simples en 2D puro, sin ningún giro,
-      // inclinación ni ajuste de ningún tipo. Solo su posición real
-      // (lon/lat convertida al sistema local del mapa).
-      if (treeData) {
-        netCtx.fillStyle = "rgba(90,190,110,0.55)";
-        treeData.trees.forEach(([tx, ty, , altura]) => {
-          const [sx, sy] = toScreen(tx, ty);
-          if (sx < -10 || sx > w + 10 || sy < -10 || sy > h + 10) return; // no dibujar lo que está fuera de pantalla
-          const r = Math.min(2.6, Math.max(0.8, (altura || 3) * 0.12));
-          netCtx.beginPath();
-          netCtx.arc(sx, sy, r, 0, Math.PI * 2);
-          netCtx.fill();
-        });
-      }
       // se dibuja primero lo local (más numeroso y fino) y encima lo
       // principal (más grueso), para que las vías grandes no queden tapadas
       ["local", "mid", "major"].forEach((cls) => {
@@ -848,13 +831,6 @@
         netCtx.restore();
       }
     }
-    // ---------- cargar el arbolado de Kennedy (no bloquea la red vial:
-    // si tarda o falla, la simulación sigue funcionando igual) ----------
-    fetch("./assets/kennedy_trees.json?v=flat-final")
-      .then((r) => { if (!r.ok) throw new Error("no se pudo cargar kennedy_trees.json"); return r.json(); })
-      .then((data) => { treeData = data; if (netData) drawNetwork(netCanvas.parentElement.clientWidth, netCanvas.parentElement.clientHeight); })
-      .catch((err) => console.warn("No se pudo cargar el arbolado de Kennedy:", err));
-
     // ---------- cargar la red (JSON ya recortado) ----------
     fetch(NET_URL)
       .then((r) => { if (!r.ok) throw new Error("no se pudo cargar " + NET_URL); return r.json(); })
