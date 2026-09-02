@@ -95,7 +95,7 @@
     // Los offsets están en píxeles de pantalla, relativos a la esquina base
     // (calculada de la caja real que ocupan los árboles).
     let treeCornerOffsets = { tl: { x: 351, y: -257 }, tr: { x: 390, y: -346 }, bl: { x: 384, y: -151 }, br: { x: 384, y: -151 } };
-    let treeSizeScale = 1; // escala del TAMAÑO de cada puntito (no de la posición)
+    let treeLayerScale = 1; // escala de TODA la capa (posiciones), alrededor del centro del mapa — no toca el grosor de cada punto ni la distorsión de esquinas
     let treeWorldBBox = null; // { minX, minY, maxX, maxY } — se calcula una vez que carga el dato
     let timesteps = [];      // [{ time, vehicles:[{id,x,y,angle}] }]
     let view = { scale: 1, offX: 0, offY: 0 }; // mundo -> pantalla
@@ -836,11 +836,17 @@
         const { TL, TR, BL, BR } = corners;
         const bb = treeWorldBBox;
         const wSpan = bb.maxX - bb.minX || 1, hSpan = bb.maxY - bb.minY || 1;
+        // Centro del recuadro de las 4 esquinas — la escala de toda la capa
+        // se aplica alrededor de este punto, para que se sienta como un
+        // zoom de la malla completa, no un tamaño de cada punto.
+        const cx = (TL.x + TR.x + BL.x + BR.x) / 4, cy = (TL.y + TR.y + BL.y + BR.y) / 4;
         netCtx.fillStyle = "rgba(90,190,110,0.55)";
         treeData.trees.forEach(([tx, ty, , altura]) => {
-          const [sx, sy] = treeDistortedScreen(tx, ty, bb, TL, TR, BL, BR, wSpan, hSpan);
+          const [sx0, sy0] = treeDistortedScreen(tx, ty, bb, TL, TR, BL, BR, wSpan, hSpan);
+          const sx = (sx0 - cx) * treeLayerScale + cx;
+          const sy = (sy0 - cy) * treeLayerScale + cy;
           if (sx < -10 || sx > w + 10 || sy < -10 || sy > h + 10) return;
-          const r = Math.min(2.6, Math.max(0.8, (altura || 3) * 0.12)) * treeSizeScale;
+          const r = Math.min(2.6, Math.max(0.8, (altura || 3) * 0.12));
           netCtx.beginPath();
           netCtx.arc(sx, sy, r, 0, Math.PI * 2);
           netCtx.fill();
@@ -1210,7 +1216,7 @@
     function updateTreeDistortOutput() {
       if (!treeDistortOutput) return;
       const c = treeCornerOffsets;
-      treeDistortOutput.value = `tl=(${c.tl.x.toFixed(0)},${c.tl.y.toFixed(0)})  tr=(${c.tr.x.toFixed(0)},${c.tr.y.toFixed(0)})  bl=(${c.bl.x.toFixed(0)},${c.bl.y.toFixed(0)})  br=(${c.br.x.toFixed(0)},${c.br.y.toFixed(0)})  size=${treeSizeScale.toFixed(2)}`;
+      treeDistortOutput.value = `tl=(${c.tl.x.toFixed(0)},${c.tl.y.toFixed(0)})  tr=(${c.tr.x.toFixed(0)},${c.tr.y.toFixed(0)})  bl=(${c.bl.x.toFixed(0)},${c.bl.y.toFixed(0)})  br=(${c.br.x.toFixed(0)},${c.br.y.toFixed(0)})  scale=${treeLayerScale.toFixed(3)}`;
     }
     function redrawTreeDistort() {
       redrawWholeMap();
@@ -1260,13 +1266,13 @@
       redrawTreeDistort();
     });
     window.addEventListener("pointerup", () => { activeDragCorner = null; dragLast = null; });
-    const treeSizeScaleInput = document.getElementById("sumoTreeSizeScale");
-    if (treeSizeScaleInput) treeSizeScaleInput.value = treeSizeScale;
-    treeSizeScaleInput?.addEventListener("input", () => { treeSizeScale = Number(treeSizeScaleInput.value); redrawTreeDistort(); });
+    const treeLayerScaleInput = document.getElementById("sumoTreeSizeScale");
+    if (treeLayerScaleInput) treeLayerScaleInput.value = treeLayerScale;
+    treeLayerScaleInput?.addEventListener("input", () => { treeLayerScale = Number(treeLayerScaleInput.value); redrawTreeDistort(); });
     treeDistortReset?.addEventListener("click", () => {
       treeCornerOffsets = { tl: { x: 0, y: 0 }, tr: { x: 0, y: 0 }, bl: { x: 0, y: 0 }, br: { x: 0, y: 0 } };
-      treeSizeScale = 1;
-      if (treeSizeScaleInput) treeSizeScaleInput.value = 1;
+      treeLayerScale = 1;
+      if (treeLayerScaleInput) treeLayerScaleInput.value = 1;
       redrawTreeDistort();
     });
     treeDistortCopy?.addEventListener("click", async () => {
@@ -1289,9 +1295,12 @@
       const { TL, TR, BL, BR } = getTreeCorners(w, h);
       const bb = treeWorldBBox;
       const wSpan = bb.maxX - bb.minX || 1, hSpan = bb.maxY - bb.minY || 1;
+      const cx = (TL.x + TR.x + BL.x + BR.x) / 4, cy = (TL.y + TR.y + BL.y + BR.y) / 4;
       let best = null, bestDist = 12; // hasta 12px de tolerancia
       treeData.trees.forEach(([tx, ty, spIdx, altura]) => {
-        const [sx, sy] = treeDistortedScreen(tx, ty, bb, TL, TR, BL, BR, wSpan, hSpan);
+        const [sx0, sy0] = treeDistortedScreen(tx, ty, bb, TL, TR, BL, BR, wSpan, hSpan);
+        const sx = (sx0 - cx) * treeLayerScale + cx;
+        const sy = (sy0 - cy) * treeLayerScale + cy;
         const d = Math.hypot(sx - clickX, sy - clickY);
         if (d < bestDist) { bestDist = d; best = { species: treeData.species[spIdx], altura }; }
       });
