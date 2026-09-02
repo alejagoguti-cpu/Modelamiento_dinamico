@@ -94,7 +94,7 @@
     // de los árboles se acomoda con interpolación entre las 4 esquinas.
     // Los offsets están en píxeles de pantalla, relativos a la esquina base
     // (calculada de la caja real que ocupan los árboles).
-    let treeCornerOffsets = { tl: { x: 129, y: -573 }, tr: { x: 448, y: -632 }, bl: { x: 31, y: 288 }, br: { x: 514, y: 321 } };
+    let treeCornerOffsets = { tl: { x: 72, y: -615 }, tr: { x: 477, y: -627 }, bl: { x: 80, y: 306 }, br: { x: 470, y: 326 } };
     let treeLayerScale = 0.95;
     // Los 4 puntos naranjas de agarre se muestran más cerca del centro que
     // su posición real, SOLO para que sean fáciles de ver y agarrar — esto
