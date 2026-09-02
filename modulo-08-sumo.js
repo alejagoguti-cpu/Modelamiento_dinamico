@@ -94,8 +94,8 @@
     // de los árboles se acomoda con interpolación entre las 4 esquinas.
     // Los offsets están en píxeles de pantalla, relativos a la esquina base
     // (calculada de la caja real que ocupan los árboles).
-    let treeCornerOffsets = { tl: { x: 351, y: -257 }, tr: { x: 390, y: -346 }, bl: { x: 384, y: -151 }, br: { x: 384, y: -151 } };
-    let treeLayerScale = 1; // escala de TODA la capa (posiciones), alrededor del centro del mapa — no toca el grosor de cada punto ni la distorsión de esquinas
+    let treeCornerOffsets = { tl: { x: 0, y: 0 }, tr: { x: 0, y: 0 }, bl: { x: 0, y: 0 }, br: { x: 0, y: 0 } };
+    let treeLayerScale = 0.4; // arranca más chico/cerca del centro, para que los 4 puntos se vean y sean fáciles de agarrar desde el principio
     let treeWorldBBox = null; // { minX, minY, maxX, maxY } — se calcula una vez que carga el dato
     let timesteps = [];      // [{ time, vehicles:[{id,x,y,angle}] }]
     let view = { scale: 1, offX: 0, offY: 0 }; // mundo -> pantalla
@@ -1283,8 +1283,8 @@
     treeLayerScaleInput?.addEventListener("input", () => { treeLayerScale = Number(treeLayerScaleInput.value); redrawTreeDistort(); });
     treeDistortReset?.addEventListener("click", () => {
       treeCornerOffsets = { tl: { x: 0, y: 0 }, tr: { x: 0, y: 0 }, bl: { x: 0, y: 0 }, br: { x: 0, y: 0 } };
-      treeLayerScale = 1;
-      if (treeLayerScaleInput) treeLayerScaleInput.value = 1;
+      treeLayerScale = 0.4;
+      if (treeLayerScaleInput) treeLayerScaleInput.value = 0.4;
       redrawTreeDistort();
     });
     treeDistortCopy?.addEventListener("click", async () => {
