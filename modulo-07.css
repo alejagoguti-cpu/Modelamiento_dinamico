@@ -4754,14 +4754,15 @@ body { position:relative !important; }
   display: flex; align-items: center; justify-content: center; color: #05070a; font-size: 10px;
 }
 .epstein-hotspot-pulse {
-  position: absolute; width: 30px; height: 30px; border-radius: 50%; background: var(--hotspot-color);
-  opacity: .5; animation: epstein-pulse 2.2s ease-out infinite;
+  position: absolute; width: 22px; height: 22px; border-radius: 50%; background: transparent;
+  border: 2px solid var(--hotspot-color); opacity: .6; animation: epstein-pulse 2.2s ease-out infinite;
+  pointer-events: none;
 }
 @keyframes epstein-pulse {
-  0% { transform: scale(.4); opacity: .55; }
-  100% { transform: scale(1.9); opacity: 0; }
+  0% { transform: scale(1); opacity: .6; }
+  100% { transform: scale(2.1); opacity: 0; }
 }
-.epstein-modal-panel { width: min(88vw, 380px); height: auto; max-height: 78vh; }
+.combined-network-panel.epstein-modal-panel { width: min(88vw, 380px); height: auto; max-height: 78vh; }
 .epstein-modal-scroll { padding: 13px 16px 16px; color: #f2ece3; }
 .epstein-model-title { font-size: 12.5px; font-weight: 700; margin: 0 0 11px; line-height: 1.35; color: #fff; }
 .epstein-stat-row { display: flex; gap: 9px; padding: 9px 0; border-top: 1px solid rgba(255,255,255,.1); }
