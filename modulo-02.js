@@ -664,7 +664,7 @@ function layoutNetwork() {
     n.color = STRUCT_STYLE[n.cat].color;
     n.vx = 0; n.vy = 0; n.fixed = false; n.isMainHub = false;
     const d = deg[n.id] || 0;
-    n.r = 28; // radio uniforme balanceado — legible sin compresión, todos iguales
+    n.r = 45; // radio grande para accesibilidad visual — texto y nodos legibles para baja visión
     n._deg = d;
     n._degBase = d; // fuerza nodal original, sin ningún nodo apagado — sirve para comparar ANTES ↔ DESPUÉS
   });
@@ -1034,10 +1034,10 @@ function drawNodes(svg) {
 
     const iconEl = document.createElementNS(XHTML_NS, "i");
     iconEl.setAttribute("class", "fa-solid " + node.icon);
-    iconEl.setAttribute("style", `color:${node.color}; font-size:${Math.max(node.r * (node.isMainHub ? 0.42 : 0.34), 15)}px;`);
+    iconEl.setAttribute("style", `color:${node.color}; font-size:${Math.max(node.r * (node.isMainHub ? 0.55 : 0.50), 20)}px;`);
 
     const nameEl = document.createElementNS(XHTML_NS, "div");
-    nameEl.setAttribute("style", `font-size:${Math.max(node.r * 0.16, 15)}px; padding:0 3px; font-weight:700; color:#f2f3f6; line-height:1.15; white-space:pre-line; text-align:center; font-family:'Inter',sans-serif;`);
+    nameEl.setAttribute("style", `font-size:${Math.max(node.r * 0.28, 18)}px; padding:0 3px; font-weight:700; color:#f2f3f6; line-height:1.15; white-space:pre-line; text-align:center; font-family:'Inter',sans-serif;`);
     nameEl.textContent = node.name;
 
     wrapper.appendChild(iconEl); wrapper.appendChild(nameEl);
@@ -1092,9 +1092,9 @@ function resizeNodeVisual(n) {
   fo.setAttribute("x", n.x - size / 2); fo.setAttribute("y", n.y - size / 2);
   fo.setAttribute("width", size); fo.setAttribute("height", size);
   const iconEl = fo.querySelector("i");
-  if (iconEl) iconEl.style.fontSize = Math.max(n.r * (n.isMainHub ? 0.42 : 0.34), 15) + "px";
+  if (iconEl) iconEl.style.fontSize = Math.max(n.r * (n.isMainHub ? 0.55 : 0.50), 20) + "px";
   const nameEl = fo.querySelector("div");
-  if (nameEl) nameEl.style.fontSize = Math.max(n.r * 0.16, 15) + "px";
+  if (nameEl) nameEl.style.fontSize = Math.max(n.r * 0.28, 18) + "px";
 }
 
 // Recalcula el grado real (fuerza nodal) de TODA la red teniendo en cuenta
@@ -1182,11 +1182,76 @@ function attachNodeDragHandler(group, node) {
   group.addEventListener("pointercancel", endDrag);
 }
 
+let zoomLevel = 1;
+let panX = 0, panY = 0;
+
 function renderNetwork() {
   const svg = document.getElementById("networkViz");
   if (!svg) return;
+
   svg.innerHTML = "";
-  buildDefs(svg); buildAmbientMesh(svg); drawEdges(svg); drawNodes(svg);
+
+  // Build defs first at SVG level
+  buildDefs(svg);
+
+  // Create the zoom-pan wrapper group for visual content
+  const zoomPanGroup = document.createElementNS(SVG_NS, "g");
+  zoomPanGroup.setAttribute("id", "zoom-pan-group");
+  zoomPanGroup.setAttribute("transform", `translate(${panX},${panY}) scale(${zoomLevel})`);
+  svg.appendChild(zoomPanGroup);
+
+  // Build visual content into temp group, then move to zoom-pan-group
+  const tempG = document.createElementNS(SVG_NS, "g");
+  buildAmbientMesh(tempG); drawEdges(tempG); drawNodes(tempG);
+
+  // Move all elements from temp to zoom-pan group
+  while (tempG.firstChild) zoomPanGroup.appendChild(tempG.firstChild);
+}
+
+function setupZoomPan() {
+  const svg = document.getElementById("networkViz");
+  if (!svg) return;
+
+  // Zoom with mouse wheel
+  svg.addEventListener("wheel", (ev) => {
+    ev.preventDefault();
+    const zoomSpeed = 0.1;
+    const delta = ev.deltaY > 0 ? -zoomSpeed : zoomSpeed;
+    zoomLevel = Math.max(0.5, Math.min(5, zoomLevel + delta));
+    const group = svg.querySelector("#zoom-pan-group");
+    if (group) group.setAttribute("transform", `translate(${panX},${panY}) scale(${zoomLevel})`);
+  }, { passive: false });
+
+  // Pan with mouse drag (middle mouse button or spacebar + drag)
+  let isPanning = false;
+  let startX = 0, startY = 0;
+  let startPanX = 0, startPanY = 0;
+
+  svg.addEventListener("mousedown", (ev) => {
+    // Only pan with middle mouse button (button 1) or when spacebar is held
+    if (ev.button !== 1 && !ev.getModifierState("Shift")) return;
+    // Don't pan if clicking on a node or edge
+    if (ev.target.closest(".ods-node") || ev.target.closest(".edge-group")) return;
+    isPanning = true;
+    startX = ev.clientX;
+    startY = ev.clientY;
+    startPanX = panX;
+    startPanY = panY;
+  });
+
+  document.addEventListener("mousemove", (ev) => {
+    if (!isPanning) return;
+    const dx = ev.clientX - startX;
+    const dy = ev.clientY - startY;
+    panX = startPanX + dx;
+    panY = startPanY + dy;
+    const group = svg.querySelector("#zoom-pan-group");
+    if (group) group.setAttribute("transform", `translate(${panX},${panY}) scale(${zoomLevel})`);
+  });
+
+  document.addEventListener("mouseup", () => {
+    isPanning = false;
+  });
 }
 
 /* -------- paneles de información -------- */
@@ -3274,6 +3339,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setupLegendToggle();
   renderMetrics();
   renderMatrix();
+  setupZoomPan();
   document.getElementById("networkViz")?.addEventListener("click", () => { hideEdgeInfo(); hideNodeInfo(); });
   document.getElementById("btnVerHallazgos")?.addEventListener("click", verHallazgosConAnimacion);
   document.getElementById("btnExplorarRelaciones")?.addEventListener("click", abrirModalExplorarRelaciones);
