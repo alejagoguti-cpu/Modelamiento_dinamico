@@ -4749,8 +4749,9 @@ body { position:relative !important; }
   display: flex; align-items: center; justify-content: center;
 }
 .epstein-hotspot-dot {
-  width: 15px; height: 15px; border-radius: 50%; background: var(--hotspot-color); border: 2px solid #05070a;
+  width: 22px; height: 22px; border-radius: 50%; background: var(--hotspot-color); border: 2px solid #05070a;
   box-shadow: 0 0 10px var(--hotspot-color); position: relative; z-index: 2;
+  display: flex; align-items: center; justify-content: center; color: #05070a; font-size: 10px;
 }
 .epstein-hotspot-pulse {
   position: absolute; width: 30px; height: 30px; border-radius: 50%; background: var(--hotspot-color);
@@ -4760,21 +4761,21 @@ body { position:relative !important; }
   0% { transform: scale(.4); opacity: .55; }
   100% { transform: scale(1.9); opacity: 0; }
 }
-.epstein-modal-panel { width: min(94vw, 560px); height: auto; max-height: 88vh; }
-.epstein-modal-scroll { padding: 18px 22px 22px; color: #f2ece3; }
-.epstein-model-title { font-size: 15px; font-weight: 700; margin: 0 0 16px; line-height: 1.4; color: #fff; }
-.epstein-stat-row { display: flex; gap: 12px; padding: 12px 0; border-top: 1px solid rgba(255,255,255,.1); }
+.epstein-modal-panel { width: min(88vw, 380px); height: auto; max-height: 78vh; }
+.epstein-modal-scroll { padding: 13px 16px 16px; color: #f2ece3; }
+.epstein-model-title { font-size: 12.5px; font-weight: 700; margin: 0 0 11px; line-height: 1.35; color: #fff; }
+.epstein-stat-row { display: flex; gap: 9px; padding: 9px 0; border-top: 1px solid rgba(255,255,255,.1); }
 .epstein-stat-row:first-of-type { border-top: none; }
-.epstein-stat-icon { flex-shrink: 0; width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; }
+.epstein-stat-icon { flex-shrink: 0; width: 22px; height: 22px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; }
 .epstein-stat-icon.up { background: rgba(61,220,151,.15); color: #3ddc97; }
 .epstein-stat-icon.down { background: rgba(255,138,122,.15); color: #ff8a7a; }
-.epstein-stat-row b { display: block; font-size: 11.5px; color: rgba(242,236,227,.6); font-weight: 600; margin-bottom: 6px; }
-.epstein-list { margin: 0; padding-left: 16px; display: flex; flex-direction: column; gap: 5px; }
-.epstein-list li { font-size: 12.5px; line-height: 1.5; }
-.epstein-objective { margin-top: 14px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,.1); }
-.epstein-objective b { display: block; font-size: 11px; letter-spacing: .01em; color: rgba(242,236,227,.6); font-weight: 600; margin-bottom: 7px; }
-.epstein-objective-title { font-size: 13px; font-weight: 700; color: #ffd166; margin: 0 0 6px; }
-.epstein-objective p:last-child { font-size: 12.5px; line-height: 1.55; margin: 0; color: rgba(242,236,227,.88); }
+.epstein-stat-row b { display: block; font-size: 10px; color: rgba(242,236,227,.6); font-weight: 600; margin-bottom: 4px; }
+.epstein-list { margin: 0; padding-left: 14px; display: flex; flex-direction: column; gap: 4px; }
+.epstein-list li { font-size: 10.5px; line-height: 1.4; }
+.epstein-objective { margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,.1); }
+.epstein-objective b { display: block; font-size: 9px; letter-spacing: .01em; color: rgba(242,236,227,.6); font-weight: 600; margin-bottom: 5px; }
+.epstein-objective-title { font-size: 11px; font-weight: 700; color: #ffd166; margin: 0 0 5px; }
+.epstein-objective p:last-child { font-size: 10.5px; line-height: 1.45; margin: 0; color: rgba(242,236,227,.88); }
 @media (max-width: 720px) { .real-map-shell { min-height: 430px; } .real-cartography-map { min-height: 430px; } .map-source-note { display: none; } .map-live-badge { top: 10px; left: 10px; max-width: calc(100% - 20px); font-size: 9px; } .map-controls { left: 10px; right: 10px; bottom: 10px; max-width: none; padding: 7px; border: 1px solid rgba(70,214,208,.25); border-radius: 10px; background: rgba(7,16,15,.82); backdrop-filter: blur(8px); } .map-controls button { flex: 1 1 30%; min-height: 38px; font-size: 10px; padding: 8px 6px; } }
 
 .procedural-simulation { position: absolute; inset: 0; z-index: 2; pointer-events: none; overflow: hidden; }

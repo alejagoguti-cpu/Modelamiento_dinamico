@@ -2278,6 +2278,7 @@
       {
         coords: [-74.1589146050763, 4.63015596902525],
         label: "Corabastos",
+        icon: "fa-cart-shopping",
         title: "Modelo de Optimización de Abastecimiento y Logística Agroalimentaria",
         color: "#e58d62",
         up: ["Eficiencia en la distribución de la canasta básica alimentaria.", "Tasa de separación en la fuente de residuos y materia orgánica.", "Capacidad logística en horas pico de abastecimiento."],
@@ -2288,6 +2289,7 @@
       {
         coords: [-74.16184778855655, 4.62939492240078],
         label: "Humedal La Vaca",
+        icon: "fa-droplet",
         title: "Modelo de Mitigación de Carga Orgánica y Escorrentía Hídrica",
         color: "#56b8d4",
         up: ["Niveles de oxígeno disuelto en el agua del humedal.", "Capacidad de infiltración natural en la franja calzada-borde.", "Capacidad de amortiguación hidráulica ante lluvias intensas."],
@@ -2298,6 +2300,7 @@
       {
         coords: [-74.14541150109216, 4.631221483859855],
         label: "Estación Banderas",
+        icon: "fa-bus",
         title: "Modelo de Operación e Intermodalidad Peatonal",
         color: "#f1cf5b",
         up: ["Velocidad de transferencia de usuarios en los andenes y accesos.", "Frecuencia de despacho y sincronización de la flota de buses de apoyo.", "Accesibilidad e interconectividad peatonal de la estación."],
@@ -2308,6 +2311,7 @@
       {
         coords: [-74.14987475206779, 4.64210777486686],
         label: "Humedal El Burro / Vías",
+        icon: "fa-dove",
         title: "Modelo de Impacto Acústico y Presión Vial",
         color: "#68d391",
         up: ["Confort y amortiguación acústica en la zona de reserva ecológica.", "Resiliencia del hábitat y zonas seguras para fauna silvestre."],
@@ -2351,7 +2355,7 @@
         el.className = "epstein-hotspot";
         el.style.setProperty("--hotspot-color", spot.color);
         el.setAttribute("aria-label", `${spot.label}: ${spot.title}`);
-        el.innerHTML = `<span class="epstein-hotspot-pulse"></span><span class="epstein-hotspot-dot"></span>`;
+        el.innerHTML = `<span class="epstein-hotspot-pulse"></span><span class="epstein-hotspot-dot"><i class="fa-solid ${spot.icon || "fa-location-dot"}"></i></span>`;
         el.addEventListener("click", (event) => { event.stopPropagation(); showEpsteinModal(spot); });
         new maplibregl.Marker({ element: el, anchor: "center" }).setLngLat(spot.coords).addTo(map);
       });
