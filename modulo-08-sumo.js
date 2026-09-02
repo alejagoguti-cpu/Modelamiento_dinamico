@@ -799,8 +799,8 @@
       // Humedales calcados a mano (azul), debajo de las vías para que las
       // calles se sigan viendo con claridad encima. Se suaviza el trazo
       // para que no se vea quebrado/anguloso.
-      netCtx.fillStyle = "rgba(185,206,225,0.08)";
-      netCtx.strokeStyle = "rgba(151,172,201,0.15)";
+      netCtx.fillStyle = "rgba(185,206,225,0.22)";
+      netCtx.strokeStyle = "rgba(151,172,201,0.4)";
       netCtx.lineWidth = 1.6;
       TRACED_WETLANDS.forEach((pts) => {
         if (pts.length < 2) return;
@@ -815,7 +815,7 @@
       // laven visualmente debajo de la capa de ruido que va encima. Se
       // suaviza el trazo (a diferencia de los humedales) para que no se
       // vea tan "dibujado a mano".
-      netCtx.strokeStyle = "rgba(151,172,201,0.2)";
+      netCtx.strokeStyle = "rgba(151,172,201,0.5)";
       TRACED_RIVERS.forEach(({ width, points }) => {
         if (points.length < 2) return;
         const screenPts = reduceJitterPoints(points.map(([x, y]) => toScreen(x, y)), 6);
@@ -845,7 +845,7 @@
         // se aplica alrededor de este punto, para que se sienta como un
         // zoom de la malla completa, no un tamaño de cada punto.
         const cx = (TL.x + TR.x + BL.x + BR.x) / 4, cy = (TL.y + TR.y + BL.y + BR.y) / 4;
-        netCtx.fillStyle = "rgba(139,168,136,0.7)";
+        netCtx.fillStyle = "rgba(139,168,136,0.25)";
         treeData.trees.forEach(([tx, ty, , altura]) => {
           const [sx0, sy0] = treeDistortedScreen(tx, ty, bb, TL, TR, BL, BR, wSpan, hSpan);
           const sx = (sx0 - cx) * treeLayerScale + cx;
