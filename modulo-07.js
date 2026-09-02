@@ -2801,6 +2801,42 @@
         target.querySelectorAll(".subsystem-components, .subsystem-purpose-panel, .subsystem-diagram-panel, .map-network-detail, .submodel-failure-popup").forEach((node) => node.remove());
         const color = row.color || colors[Number(button.dataset.mapNetworkIndex)];
 
+        // Animación de "explosión": la bolita principal lanza hacia afuera
+        // una bolita chiquita por cada componente/dinámica que la forma,
+        // igual que en "Ver toda la red junta" pero en el lugar donde se
+        // hizo clic, sin abrir ningún modal.
+        target.querySelectorAll(".bubble-explode-satellite").forEach((n) => n.remove());
+        try {
+          const items = row.dynamics || row.components;
+          if (items && items.length) {
+            const stageRect = target.getBoundingClientRect();
+            const btnRect = button.getBoundingClientRect();
+            const originX = btnRect.left + btnRect.width / 2 - stageRect.left;
+            const originY = btnRect.top + btnRect.height / 2 - stageRect.top;
+            const satR = Math.max(70, btnRect.width * 1.3);
+            items.forEach((label, i) => {
+              const angle = (i / items.length) * Math.PI * 2 - Math.PI / 2;
+              const finalX = originX + satR * Math.cos(angle);
+              const finalY = originY + satR * Math.sin(angle);
+              const sat = document.createElement("div");
+              sat.className = "bubble-explode-satellite";
+              sat.style.setProperty("--node-color", color);
+              sat.style.setProperty("--origin-x", `${originX}px`);
+              sat.style.setProperty("--origin-y", `${originY}px`);
+              sat.style.setProperty("--final-x", `${finalX}px`);
+              sat.style.setProperty("--final-y", `${finalY}px`);
+              sat.style.setProperty("--explode-delay", `${i * 55}ms`);
+              sat.textContent = label;
+              target.appendChild(sat);
+            });
+            requestAnimationFrame(() => {
+              target.querySelectorAll(".bubble-explode-satellite").forEach((n) => n.classList.add("exploded"));
+            });
+          }
+        } catch (err) {
+          console.error("No se pudo mostrar la animación de explosión:", err);
+        }
+
         // El popup de escenario de falla va PRIMERO y en su propio bloque
         // protegido: así, sin importar si algo más abajo en este mismo
         // clic falla, el popup siempre se intenta mostrar.
@@ -2846,7 +2882,7 @@
           target.append(components);
           target.append(purpose);
           components.querySelector("#seeFullNetworkBtn")?.addEventListener("click", (event) => { event.stopPropagation(); showCombinedNetworkModal(); });
-          const closePanels = (event) => { event?.stopPropagation(); components.remove(); purpose.remove(); failurePopup?.remove(); clearSubsystemPoints(); button.classList.remove("selected"); };
+          const closePanels = (event) => { event?.stopPropagation(); components.remove(); purpose.remove(); failurePopup?.remove(); target.querySelectorAll(".bubble-explode-satellite").forEach((n) => n.remove()); clearSubsystemPoints(); button.classList.remove("selected"); };
           components.querySelector(".subsystem-panel-close")?.addEventListener("click", closePanels);
           purpose.querySelector(".subsystem-panel-close")?.addEventListener("click", closePanels);
           if (systems && withFlows) renderSubsystemPoints(subsystemData[Number(button.dataset.mapNetworkIndex)]);
