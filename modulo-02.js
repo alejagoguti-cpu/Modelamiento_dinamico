@@ -664,7 +664,7 @@ function layoutNetwork() {
     n.color = STRUCT_STYLE[n.cat].color;
     n.vx = 0; n.vy = 0; n.fixed = false; n.isMainHub = false;
     const d = deg[n.id] || 0;
-    n.r = 20; // radio uniforme para todos los nodos — sin gigantes, red limpia y legible
+    n.r = 28; // radio uniforme balanceado — legible sin compresión, todos iguales
     n._deg = d;
     n._degBase = d; // fuerza nodal original, sin ningún nodo apagado — sirve para comparar ANTES ↔ DESPUÉS
   });
