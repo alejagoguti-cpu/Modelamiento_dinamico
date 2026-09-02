@@ -3086,10 +3086,12 @@
             const originX = btnRect.left + btnRect.width / 2 - stageRect.left;
             const originY = btnRect.top + btnRect.height / 2 - stageRect.top;
             const satR = Math.max(70, btnRect.width * 1.3);
+            const satHalf = 39; // mitad del tamaño de cada bolita (78px), para no dejar que se corte en el borde
+            const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
             items.forEach((label, i) => {
               const angle = (i / items.length) * Math.PI * 2 - Math.PI / 2;
-              const finalX = originX + satR * Math.cos(angle);
-              const finalY = originY + satR * Math.sin(angle);
+              const finalX = clamp(originX + satR * Math.cos(angle), satHalf, stageRect.width - satHalf);
+              const finalY = clamp(originY + satR * Math.sin(angle), satHalf, stageRect.height - satHalf);
               const sat = document.createElement("div");
               sat.className = "bubble-explode-satellite";
               sat.style.setProperty("--node-color", color);
