@@ -4742,6 +4742,39 @@ body { position:relative !important; }
 .map-controls button { padding: 7px 9px; border: 1px solid rgba(201,193,182,.3); border-radius: 5px; background: rgba(8,13,13,.9); color: var(--text); font-size: 9px; transition: .18s ease; }.map-controls button:hover { border-color: var(--teal); color: var(--teal); transform: translateY(-1px); }
 .map-source-note { position: absolute; z-index: 4; right: 10px; bottom: 9px; color: rgba(242,236,227,.62); font-size: 8px; pointer-events: none; }
 .cartography-marker { display: grid; place-items: center; width: 27px; height: 27px; border: 2px solid var(--marker-color); border-radius: 50%; background: #07100f; box-shadow: 0 0 13px var(--marker-color); color: var(--marker-color); font-size: 10px; font-weight: 900; }
+
+/* ---------- Puntos calientes de Epstein (Cartografía interactiva) ---------- */
+.epstein-hotspot {
+  position: relative; width: 30px; height: 30px; border: none; background: none; cursor: pointer; padding: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.epstein-hotspot-dot {
+  width: 15px; height: 15px; border-radius: 50%; background: var(--hotspot-color); border: 2px solid #05070a;
+  box-shadow: 0 0 10px var(--hotspot-color); position: relative; z-index: 2;
+}
+.epstein-hotspot-pulse {
+  position: absolute; width: 30px; height: 30px; border-radius: 50%; background: var(--hotspot-color);
+  opacity: .5; animation: epstein-pulse 2.2s ease-out infinite;
+}
+@keyframes epstein-pulse {
+  0% { transform: scale(.4); opacity: .55; }
+  100% { transform: scale(1.9); opacity: 0; }
+}
+.epstein-modal-panel { width: min(94vw, 560px); height: auto; max-height: 88vh; }
+.epstein-modal-scroll { padding: 18px 22px 22px; color: #f2ece3; }
+.epstein-model-title { font-size: 15px; font-weight: 700; margin: 0 0 16px; line-height: 1.4; color: #fff; }
+.epstein-stat-row { display: flex; gap: 12px; padding: 12px 0; border-top: 1px solid rgba(255,255,255,.1); }
+.epstein-stat-row:first-of-type { border-top: none; }
+.epstein-stat-icon { flex-shrink: 0; width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; }
+.epstein-stat-icon.up { background: rgba(61,220,151,.15); color: #3ddc97; }
+.epstein-stat-icon.down { background: rgba(255,138,122,.15); color: #ff8a7a; }
+.epstein-stat-row b { display: block; font-size: 11.5px; color: rgba(242,236,227,.6); font-weight: 600; margin-bottom: 6px; }
+.epstein-list { margin: 0; padding-left: 16px; display: flex; flex-direction: column; gap: 5px; }
+.epstein-list li { font-size: 12.5px; line-height: 1.5; }
+.epstein-objective { margin-top: 14px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,.1); }
+.epstein-objective b { display: block; font-size: 11px; letter-spacing: .01em; color: rgba(242,236,227,.6); font-weight: 600; margin-bottom: 7px; }
+.epstein-objective-title { font-size: 13px; font-weight: 700; color: #ffd166; margin: 0 0 6px; }
+.epstein-objective p:last-child { font-size: 12.5px; line-height: 1.55; margin: 0; color: rgba(242,236,227,.88); }
 @media (max-width: 720px) { .real-map-shell { min-height: 430px; } .real-cartography-map { min-height: 430px; } .map-source-note { display: none; } .map-live-badge { top: 10px; left: 10px; max-width: calc(100% - 20px); font-size: 9px; } .map-controls { left: 10px; right: 10px; bottom: 10px; max-width: none; padding: 7px; border: 1px solid rgba(70,214,208,.25); border-radius: 10px; background: rgba(7,16,15,.82); backdrop-filter: blur(8px); } .map-controls button { flex: 1 1 30%; min-height: 38px; font-size: 10px; padding: 8px 6px; } }
 
 .procedural-simulation { position: absolute; inset: 0; z-index: 2; pointer-events: none; overflow: hidden; }
@@ -6539,6 +6572,18 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
   border-bottom: 1px solid rgba(255,255,255,.1); color: #fff; font-size: 13px;
 }
 .combined-network-scroll { flex: 1; overflow: auto; }
+.forrester-open-btn {
+  margin-top: 14px; width: 100%; border: none; border-radius: 9px; padding: 11px 14px;
+  background: var(--bubble-color, #76fff0); color: #0b0f17; font-weight: 700; font-size: 12.5px;
+  display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer;
+  transition: filter .15s ease;
+}
+.forrester-open-btn:hover { filter: brightness(1.1); }
+.forrester-modal-panel { width: min(94vw, 700px); height: auto; max-height: 88vh; }
+.forrester-modal-scroll { padding: 18px 20px 20px; }
+.forrester-svg { width: 100%; height: auto; display: block; }
+.forrester-legend { display: flex; flex-wrap: wrap; gap: 14px 18px; margin-top: 14px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,.1); }
+.forrester-legend span { display: flex; align-items: center; gap: 6px; font-size: 11px; color: rgba(242,236,227,.75); }
 .combined-network-svg { width: 100%; height: 100%; display: block; }
 .combined-hub-line { stroke: rgba(255,255,255,.14); stroke-width: 1; }
 .combined-sat-line { stroke: var(--node-color, #76fff0); stroke-width: .7; opacity: .35; }

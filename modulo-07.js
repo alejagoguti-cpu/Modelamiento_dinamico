@@ -1590,7 +1590,119 @@
       { name: "Submodelo de gestión y respuesta adaptativa", parts: "Sistema institucional de gestión + sistema hídrico + sistema biótico + sistema físico-urbano + sistema social-comunitario.", partsPurpose: "Sí", partsWhy: "Los sistemas institucional y social-comunitario incluyen actores que observan, deciden, intervienen y evalúan; los demás responden a esas intervenciones.", totalPurpose: "Sí", totalWhy: "Organiza un ciclo de observación, decisión, intervención, monitoreo y ajuste de las acciones territoriales.", category: "Socioecológico dinámico", process: "Cambian las presiones, los diagnósticos, las prioridades, los recursos, las áreas intervenidas, los resultados del monitoreo y las decisiones posteriores." }
     ];
 
-    // Escenarios de falla: para cada submodelo, situaciones reales en las
+    // Datos para el diagrama de Forrester de cada submodelo (mismo orden
+    // que submodelRows: agua, hábitat, borde, recorridos, ocupación,
+    // actores, gestión), con los colores propios de esta vista.
+    const FORRESTER_DATA = [
+      { color: "#3B82F6", stock: "Agua acumulada en humedal / zonas de inundación",
+        inflows: ["Escorrentía por lluvias", "Desborde de vías pavimentadas"],
+        outflows: ["Capacidad de infiltración natural"],
+        aux: { label: "Área de suelo pavimentado", direction: "toOutflow", sign: "-" } },
+      { color: "#22C55E", stock: "Población de especies amenazadas (aves)",
+        inflows: ["Natalidad y migración positiva de aves"],
+        outflows: ["Desplazamiento o muerte por interferencia"],
+        aux: { label: "Nivel de ruido (decibeles)", direction: "toOutflow", sign: "-" } },
+      { color: "#6B7280", stock: "Suelo natural conservado",
+        inflows: ["Planes de reforestación y protección"],
+        outflows: ["Deforestación / pavimentación por expansión"],
+        aux: { label: "Presión de construcción periférica", direction: "toOutflow", sign: "+" } },
+      { color: "#FBBF24", stock: "Congestión acumulada en vías críticas",
+        inflows: ["Vehículos que ingresan desde rutas origen"],
+        outflows: ["Capacidad de flujo de la vía"],
+        aux: { label: "Tiempos de caminata", direction: "fromStock", sign: "+" } },
+      { color: "#F97316", stock: "Densidad de construcción / ocupación del suelo",
+        inflows: ["Tasa de nuevos desarrollos urbanos"],
+        outflows: ["Renovación urbana / rehabilitación"],
+        aux: { label: "Presión sobre infraestructura", direction: "fromStock", sign: "+" } },
+      { color: "#FDA4AF", stock: "Nivel de eficiencia de logística y abastecimiento",
+        inflows: ["Distribución óptima de productos"],
+        outflows: ["Costos de operación y tiempos de retraso"],
+        aux: { label: "Normativa del POT", direction: "toInflow", sign: "+" } },
+      { color: "#A855F7", stock: "Capacidad de respuesta de emergencia / resiliencia",
+        inflows: ["Presupuesto e infraestructura de mitigación"],
+        outflows: ["Deterioro institucional / inacción"],
+        aux: { label: "Frecuencia de crisis ambientales", direction: "toInflow", sign: "+" } }
+    ];
+
+    function forresterCloud(cx, cy) {
+      return `M${cx-26},${cy+6} c-9,0-15-6-15-13 0-7 6-13 14-13.5 3-5 8-8 14-8 8 0 14 5 16 12 6 1 10 6 10 12 0 7-6 13-14 13z`;
+    }
+    function forresterValve(cx, cy) {
+      return `<path d="M${cx-11},${cy-6} L${cx-1},${cy} L${cx-11},${cy+6} Z M${cx+11},${cy-6} L${cx+1},${cy} L${cx+11},${cy+6} Z" fill="#aab4c2"/>`;
+    }
+    function buildForresterSVG(f) {
+      const color = f.color;
+      const W = 640, H = f.inflows.length > 1 ? 410 : 360;
+      const stockW = 180, stockH = 82;
+      const stockX = (W - stockW) / 2, stockY = H / 2 - stockH / 2 - (f.inflows.length > 1 ? 8 : 0);
+      const stockCX = stockX + stockW / 2, stockCY = stockY + stockH / 2;
+      let svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" class="forrester-svg">`;
+      svg += `<defs><marker id="fArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#aab4c2"/></marker><marker id="fArrowAux" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f2ece3"/></marker></defs>`;
+      const inCloudX = 84;
+      f.inflows.forEach((label, i) => {
+        const targetY = f.inflows.length > 1 ? stockY + (i === 0 ? stockH * 0.28 : stockH * 0.72) : stockCY;
+        const cloudY = f.inflows.length > 1 ? (i === 0 ? stockCY - 68 : stockCY + 68) : stockCY;
+        const midX = (inCloudX + stockX) / 2 + 6;
+        svg += `<path d="${forresterCloud(inCloudX, cloudY)}" fill="rgba(255,255,255,.04)" stroke="#8b96a5" stroke-width="1.2"/>`;
+        svg += `<line x1="${inCloudX+28}" y1="${cloudY}" x2="${stockX-4}" y2="${targetY}" stroke="#aab4c2" stroke-width="1.5" marker-end="url(#fArrow)"/>`;
+        svg += forresterValve(midX, cloudY + (targetY - cloudY) * 0.45);
+        svg += `<text x="${(inCloudX + stockX)/2}" y="${cloudY + (targetY-cloudY)*0.45 - 12}" text-anchor="middle" font-size="9.5" fill="#aab4c2" font-family="Inter,sans-serif">${label.length > 22 ? label.slice(0,20)+"…" : label}</text>`;
+        svg += `<text x="${inCloudX}" y="${cloudY+3}" text-anchor="middle" font-size="9" fill="#6f7a89">+</text>`;
+      });
+      svg += `<rect x="${stockX}" y="${stockY}" width="${stockW}" height="${stockH}" rx="4" fill="rgba(255,255,255,.05)" stroke="${color}" stroke-width="2"/>`;
+      svg += `<foreignObject x="${stockX+6}" y="${stockY+6}" width="${stockW-12}" height="${stockH-12}"><div xmlns="http://www.w3.org/1999/xhtml" style="font-family:Space Grotesk,sans-serif;font-size:11px;font-weight:600;color:#f2ece3;text-align:center;line-height:1.25;display:flex;align-items:center;justify-content:center;height:100%;">${f.stock}</div></foreignObject>`;
+      const outCloudX = W - 84;
+      const outMidX = (stockX + stockW + outCloudX) / 2 - 6;
+      svg += `<path d="${forresterCloud(outCloudX, stockCY)}" fill="rgba(255,255,255,.04)" stroke="#8b96a5" stroke-width="1.2"/>`;
+      svg += `<line x1="${stockX+stockW+4}" y1="${stockCY}" x2="${outCloudX-28}" y2="${stockCY}" stroke="#aab4c2" stroke-width="1.5" marker-end="url(#fArrow)"/>`;
+      svg += forresterValve(outMidX, stockCY);
+      svg += `<text x="${(stockX+stockW+outCloudX)/2}" y="${stockCY-12}" text-anchor="middle" font-size="9.5" fill="#aab4c2" font-family="Inter,sans-serif">${f.outflows[0].length > 22 ? f.outflows[0].slice(0,20)+"…" : f.outflows[0]}</text>`;
+      svg += `<text x="${outCloudX}" y="${stockCY+3}" text-anchor="middle" font-size="9" fill="#6f7a89">−</text>`;
+      const auxCX = stockCX, auxCY = H - 40, auxR = 36;
+      svg += `<circle cx="${auxCX}" cy="${auxCY}" r="${auxR}" fill="rgba(255,255,255,.03)" stroke="#f2ece3" stroke-width="1.2" stroke-dasharray="4 3"/>`;
+      svg += `<foreignObject x="${auxCX-auxR+5}" y="${auxCY-auxR+5}" width="${(auxR-5)*2}" height="${(auxR-5)*2}"><div xmlns="http://www.w3.org/1999/xhtml" style="font-family:Inter,sans-serif;font-size:8.8px;color:#f2ece3;text-align:center;line-height:1.2;display:flex;align-items:center;justify-content:center;height:100%;">${f.aux.label}</div></foreignObject>`;
+      let ax1, ay1, ax2, ay2, sx, sy;
+      if (f.aux.direction === "fromStock") {
+        ax1 = stockCX; ay1 = stockY + stockH; ax2 = auxCX; ay2 = auxCY - auxR; sx = ax2 + 11; sy = (ay1 + ay2) / 2;
+      } else if (f.aux.direction === "toOutflow") {
+        ax1 = auxCX + auxR * 0.7; ay1 = auxCY - auxR * 0.7; ax2 = outMidX; ay2 = stockCY + 12; sx = (ax1 + ax2) / 2 + 9; sy = (ay1 + ay2) / 2;
+      } else {
+        const firstMidX = (inCloudX + stockX) / 2 + 6;
+        const firstMidY = f.inflows.length > 1 ? stockCY - 68 : stockCY;
+        ax1 = auxCX - auxR * 0.7; ay1 = auxCY - auxR * 0.7; ax2 = firstMidX; ay2 = firstMidY + 12; sx = (ax1 + ax2) / 2 - 9; sy = (ay1 + ay2) / 2;
+      }
+      svg += `<line x1="${ax1}" y1="${ay1}" x2="${ax2}" y2="${ay2}" stroke="#f2ece3" stroke-width="1.2" stroke-dasharray="3 4" marker-end="url(#fArrowAux)"/>`;
+      svg += `<circle cx="${sx}" cy="${sy}" r="8.5" fill="#0b0f17" stroke="#f2ece3" stroke-width="1"/>`;
+      svg += `<text x="${sx}" y="${sy+3.5}" text-anchor="middle" font-size="10" font-weight="700" fill="#f2ece3">${f.aux.sign === "+" ? "+" : "−"}</text>`;
+      svg += `</svg>`;
+      return svg;
+    }
+    function showForresterModal(index, name, color) {
+      const f = FORRESTER_DATA[index];
+      if (!f) return;
+      const overlay = document.createElement("div");
+      overlay.className = "combined-network-overlay";
+      overlay.innerHTML = `<div class="combined-network-panel forrester-modal-panel">
+        <div class="combined-network-heading">
+          <strong style="color:${color}"><i class="fa-solid fa-diagram-project"></i> Diagrama de Forrester — ${name}</strong>
+          <button type="button" class="subsystem-panel-close" id="closeForresterBtn" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="combined-network-scroll forrester-modal-scroll">${buildForresterSVG(f)}
+          <div class="forrester-legend">
+            <span><i class="fa-solid fa-square" style="color:${color}"></i> Existencia (stock)</span>
+            <span><i class="fa-solid fa-filter"></i> Válvula de flujo</span>
+            <span><i class="fa-regular fa-cloud"></i> Fuente / sumidero</span>
+            <span><i class="fa-solid fa-circle-dot"></i> Variable auxiliar (+/-)</span>
+          </div>
+        </div>
+      </div>`;
+      document.body.appendChild(overlay);
+      const close = () => overlay.remove();
+      overlay.querySelector("#closeForresterBtn")?.addEventListener("click", close);
+      overlay.addEventListener("click", (e) => { if (e.target === overlay) close(); });
+      requestAnimationFrame(() => overlay.classList.add("exploded"));
+    }
+
     // que el submodelo dejaría de representar bien el territorio al
     // aplicarlo a los subsistemas que articula — no son errores de cálculo,
     // son casos donde los supuestos del submodelo se rompen.
@@ -2133,6 +2245,91 @@
     };
 
     // Cartografía funcional: base procedural + capas públicas opcionales.
+    // ---------- Cartografía interactiva: 4 puntos calientes con el marco
+    // de los 16 objetivos de modelado de Joshua Epstein ----------
+    const EPSTEIN_HOTSPOTS = [
+      {
+        coords: [-74.1589146050763, 4.63015596902525],
+        label: "Corabastos",
+        title: "Modelo de Optimización de Abastecimiento y Logística Agroalimentaria",
+        color: "#e58d62",
+        up: ["Eficiencia en la distribución de la canasta básica alimentaria.", "Tasa de separación en la fuente de residuos y materia orgánica.", "Capacidad logística en horas pico de abastecimiento."],
+        down: ["Pérdida y desperdicio de productos perecederos.", "Tiempos de espera y retrasos de camiones de gran tonelaje.", "Toneladas de residuos orgánicos sin procesar enviadas al relleno sanitario."],
+        epsteinTitle: "Sugerir eficiencias y evaluar escenarios alternativos (Objetivo 10)",
+        epsteinText: "El modelo evalúa cómo la reorganización de horarios de carga y la gestión interna de residuos orgánicos reduce el colapso vial circundante."
+      },
+      {
+        coords: [-74.16184778855655, 4.62939492240078],
+        label: "Humedal La Vaca",
+        title: "Modelo de Mitigación de Carga Orgánica y Escorrentía Hídrica",
+        color: "#56b8d4",
+        up: ["Niveles de oxígeno disuelto en el agua del humedal.", "Capacidad de infiltración natural en la franja calzada-borde.", "Capacidad de amortiguación hidráulica ante lluvias intensas."],
+        down: ["Concentración de lixiviados contaminantes (fósforo, nitrógeno y materia orgánica).", "Escorrentía superficial contaminada sobre el asfalto de las vías.", "Riesgos de inundación en las vías habitadas del sector."],
+        epsteinTitle: "Falsar el conocimiento convencional y contrastar teorías (Objetivo 12)",
+        epsteinText: "Desmitifica el supuesto de que el ecosistema del humedal puede autorregularse solo, demostrando matemáticamente que sin un control estructural de la escorrentía vial, colapsará por sobrecarga biológica."
+      },
+      {
+        coords: [-74.14541150109216, 4.631221483859855],
+        label: "Estación Banderas",
+        title: "Modelo de Operación e Intermodalidad Peatonal",
+        color: "#f1cf5b",
+        up: ["Velocidad de transferencia de usuarios en los andenes y accesos.", "Frecuencia de despacho y sincronización de la flota de buses de apoyo.", "Accesibilidad e interconectividad peatonal de la estación."],
+        down: ["Tiempos muertos de transbordo para los pasajeros.", "Saturación crítica y cuellos de botella en los puntos de control de la estación.", "Demoras totales en los viajes de los ciudadanos que usan el sistema integrado."],
+        epsteinTitle: "Ofrecer opciones de respuesta ante crisis en tiempo real (Objetivo 8)",
+        epsteinText: "Permite simular cambios operativos inmediatos en la asignación de flotas o rutas peatonales internas cuando el sistema experimenta un pico imprevisto de pasajeros."
+      },
+      {
+        coords: [-74.14987475206779, 4.64210777486686],
+        label: "Humedal El Burro / Vías",
+        title: "Modelo de Impacto Acústico y Presión Vial",
+        color: "#68d391",
+        up: ["Confort y amortiguación acústica en la zona de reserva ecológica.", "Resiliencia del hábitat y zonas seguras para fauna silvestre."],
+        down: ["Niveles de ruido (decibelios) generados por la rodadura de vehículos y motores.", "Interferencia acústica que desorienta los campos magnéticos de aves migratorias.", "Fragmentación del corredor ecológico por la barrera del tráfico pesado."],
+        epsteinTitle: "Explicar mecanismos causales complejos (Objetivo 1)",
+        epsteinText: "Demuestra científicamente la relación directa de causa-efecto entre el volumen y tipo de tráfico en las vías y la deserción de especies aviares en el humedal debido al estrés acústico."
+      }
+    ];
+
+    function showEpsteinModal(spot) {
+      const overlay = document.createElement("div");
+      overlay.className = "combined-network-overlay";
+      const listHtml = (items) => `<ul class="epstein-list">${items.map((t) => `<li>${t}</li>`).join("")}</ul>`;
+      overlay.innerHTML = `<div class="combined-network-panel epstein-modal-panel">
+        <div class="combined-network-heading">
+          <strong style="color:${spot.color}"><i class="fa-solid fa-location-dot"></i> ${spot.label}</strong>
+          <button type="button" class="subsystem-panel-close" id="closeEpsteinBtn" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="combined-network-scroll epstein-modal-scroll">
+          <h4 class="epstein-model-title">${spot.title}</h4>
+          <div class="epstein-stat-row"><div class="epstein-stat-icon up">↑</div><div><b>Aumenta / maximiza</b>${listHtml(spot.up)}</div></div>
+          <div class="epstein-stat-row"><div class="epstein-stat-icon down">↓</div><div><b>Disminuye / minimiza</b>${listHtml(spot.down)}</div></div>
+          <div class="epstein-objective">
+            <b>Objetivo de modelado científico · marco de Joshua Epstein</b>
+            <p class="epstein-objective-title">${spot.epsteinTitle}</p>
+            <p>${spot.epsteinText}</p>
+          </div>
+        </div>
+      </div>`;
+      document.body.appendChild(overlay);
+      const close = () => overlay.remove();
+      overlay.querySelector("#closeEpsteinBtn")?.addEventListener("click", close);
+      overlay.addEventListener("click", (e) => { if (e.target === overlay) close(); });
+      requestAnimationFrame(() => overlay.classList.add("exploded"));
+    }
+
+    function addEpsteinHotspots(map) {
+      EPSTEIN_HOTSPOTS.forEach((spot) => {
+        const el = document.createElement("button");
+        el.type = "button";
+        el.className = "epstein-hotspot";
+        el.style.setProperty("--hotspot-color", spot.color);
+        el.setAttribute("aria-label", `${spot.label}: ${spot.title}`);
+        el.innerHTML = `<span class="epstein-hotspot-pulse"></span><span class="epstein-hotspot-dot"></span>`;
+        el.addEventListener("click", (event) => { event.stopPropagation(); showEpsteinModal(spot); });
+        new maplibregl.Marker({ element: el, anchor: "center" }).setLngLat(spot.coords).addTo(map);
+      });
+    }
+
     function initRealCartography() {
       const el = document.getElementById("realCartographyMap");
       if (!el || !window.maplibregl) return;
@@ -2208,6 +2405,7 @@
           partOneMapLayers.push({ id: meta.id, fill: fillId, line: lineId, point: pointId, extras: (meta.id === "hidrico" || meta.id === "biotico" || meta.id === "infraestructura") ? [labelId] : [], markers: [] });
         });
         componentPointMap = map;
+        addEpsteinHotspots(map);
         // Avenida Ciudad de Cali (coordenadas reales que diste, de sur a
         // norte) y Avenida de las Américas, en línea morada delgada.
         map.addSource("avenidas-referencia", { type: "geojson", data: { type: "FeatureCollection", features: [
@@ -2901,8 +3099,10 @@
           const purpose = document.createElement("aside");
           purpose.className = "subsystem-purpose-panel active map-purpose-panel temporal-only-panel";
           purpose.style.setProperty("--bubble-color", color);
-          purpose.innerHTML = `<div class="subsystem-panel-heading"><strong><i class="fa-solid fa-arrows-rotate"></i> ${label(row)}</strong><button type="button" class="subsystem-panel-close" aria-label="Cerrar panel"><i class="fa-solid fa-xmark"></i></button></div><p class="panel-scope-label">CÓMO CAMBIA EN EL TIEMPO</p><p class="panel-specific-reading">${row.process}</p>`;
+          const forresterBtnHtml = !systems ? `<button type="button" class="forrester-open-btn" id="openForresterBtn"><i class="fa-solid fa-diagram-project"></i> Ver diagrama de Forrester</button>` : "";
+          purpose.innerHTML = `<div class="subsystem-panel-heading"><strong><i class="fa-solid fa-arrows-rotate"></i> ${label(row)}</strong><button type="button" class="subsystem-panel-close" aria-label="Cerrar panel"><i class="fa-solid fa-xmark"></i></button></div><p class="panel-scope-label">CÓMO CAMBIA EN EL TIEMPO</p><p class="panel-specific-reading">${row.process}</p>${forresterBtnHtml}`;
           target.append(purpose);
+          purpose.querySelector("#openForresterBtn")?.addEventListener("click", (event) => { event.stopPropagation(); showForresterModal(Number(button.dataset.mapNetworkIndex), label(row), color); });
           const closePanels = (event) => { event?.stopPropagation(); purpose.remove(); failurePopup?.remove(); target.querySelectorAll(".bubble-explode-satellite").forEach((n) => n.remove()); clearSubsystemPoints(); button.classList.remove("selected"); };
           purpose.querySelector(".subsystem-panel-close")?.addEventListener("click", closePanels);
           if (systems && withFlows) renderSubsystemPoints(subsystemData[Number(button.dataset.mapNetworkIndex)]);
