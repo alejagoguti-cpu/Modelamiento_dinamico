@@ -1034,10 +1034,10 @@ function drawNodes(svg) {
 
     const iconEl = document.createElementNS(XHTML_NS, "i");
     iconEl.setAttribute("class", "fa-solid " + node.icon);
-    iconEl.setAttribute("style", `color:${node.color}; font-size:${Math.max(node.r * (node.isMainHub ? 0.80 : 0.75), 42)}px;`);
+    iconEl.setAttribute("style", `color:${node.color}; font-size:${Math.max(node.r * (node.isMainHub ? 0.65 : 0.60), 32)}px;`);
 
     const nameEl = document.createElementNS(XHTML_NS, "div");
-    nameEl.setAttribute("style", `font-size:${Math.max(node.r * 0.55, 32)}px; padding:0 3px; font-weight:700; color:#f2f3f6; line-height:1.2; white-space:pre-line; text-align:center; font-family:'Inter',sans-serif;`);
+    nameEl.setAttribute("style", `font-size:${Math.max(node.r * 0.40, 20)}px; padding:0 3px; font-weight:700; color:#f2f3f6; line-height:1.2; white-space:pre-line; text-align:center; font-family:'Inter',sans-serif;`);
     nameEl.textContent = node.name;
 
     wrapper.appendChild(iconEl); wrapper.appendChild(nameEl);
@@ -1092,9 +1092,9 @@ function resizeNodeVisual(n) {
   fo.setAttribute("x", n.x - size / 2); fo.setAttribute("y", n.y - size / 2);
   fo.setAttribute("width", size); fo.setAttribute("height", size);
   const iconEl = fo.querySelector("i");
-  if (iconEl) iconEl.style.fontSize = Math.max(n.r * (n.isMainHub ? 0.80 : 0.75), 42) + "px";
+  if (iconEl) iconEl.style.fontSize = Math.max(n.r * (n.isMainHub ? 0.65 : 0.60), 32) + "px";
   const nameEl = fo.querySelector("div");
-  if (nameEl) nameEl.style.fontSize = Math.max(n.r * 0.55, 32) + "px";
+  if (nameEl) nameEl.style.fontSize = Math.max(n.r * 0.40, 20) + "px";
 }
 
 // Recalcula el grado real (fuerza nodal) de TODA la red teniendo en cuenta
