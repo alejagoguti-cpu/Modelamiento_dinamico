@@ -1581,13 +1581,13 @@
       { id: "socioeconomico", label: "Sistema socioeconómico y de ocupación", color: "#e58d62", description: "Viviendas, actividades económicas, servicios, equipamientos, usos del suelo y población." }
     ];
     const submodelRows = [
-      { name: "Submodelo de flujos de agua y drenaje urbano", parts: "Sistema hídrico + sistema físico-urbano + sistema institucional de gestión.", partsPurpose: "Sí", partsWhy: "El sistema hídrico y la infraestructura no tienen propósitos propios, pero el sistema institucional sí tiene objetivos y decide sobre mantenimiento, drenaje, residuos y obras.", totalPurpose: "Sí", totalWhy: "Analiza cómo circula el agua y cómo las obras, los residuos y las decisiones de manejo modifican ese flujo.", category: "Socioecológico dinámico", process: "Cambian la lluvia, el nivel del agua, la escorrentía, los sedimentos, la capacidad de almacenamiento, el estado del canal y las acciones de mantenimiento." },
-      { name: "Submodelo de hábitat y desplazamiento de especies", parts: "Sistema biótico + sistema hídrico + sistema físico-urbano.", partsPurpose: "Sí", partsWhy: "El sistema biótico incluye organismos que actúan para alimentarse, refugiarse y reproducirse; los sistemas hídrico y físico-urbano afectan las condiciones en que actúan.", totalPurpose: "Sí", totalWhy: "Analiza cómo el agua, la vegetación, el refugio, el ruido y los edificios influyen en la llegada, permanencia, alimentación y salida de las especies.", category: "Ecológico dinámico", process: "Cambian el nivel del agua, la vegetación, los refugios, la disponibilidad de alimento, la presencia de especies invasoras y el desplazamiento de aves." },
-      { name: "Submodelo de transformación del borde urbano", parts: "Sistema físico-urbano + sistema socioeconómico y de ocupación + sistema hídrico + sistema biótico.", partsPurpose: "Sí", partsWhy: "El sistema físico-urbano no tiene propósito propio, pero el sistema socioeconómico incluye actores que deciden sobre construcción, ocupación y uso del suelo.", totalPurpose: "Sí", totalWhy: "Analiza cómo la urbanización, las vías, los edificios y los cerramientos modifican la relación entre el humedal y la ciudad.", category: "Sociotécnico dinámico", process: "Cambian las edificaciones, los cerramientos, las vías, los usos del suelo, los accesos, el drenaje, el ruido y la fragmentación del hábitat." },
-      { name: "Submodelo de recorridos y accesibilidad territorial", parts: "Sistema de movilidad + sistema físico-urbano + sistema social-comunitario + sistema socioeconómico y de ocupación.", partsPurpose: "Sí", partsWhy: "Los sistemas social, comunitario y de movilidad incluyen personas, usuarios, operadores y entidades que eligen recorridos, horarios y medios; la infraestructura condiciona esas decisiones.", totalPurpose: "Sí", totalWhy: "Analiza cómo las personas se desplazan entre barrios, vías, ciclorrutas, equipamientos y el humedal, y qué barreras encuentran.", category: "Sociotécnico dinámico", process: "Cambian los recorridos, los horarios, la cantidad de usuarios, los tiempos de espera, la congestión, las rutas y la accesibilidad." },
-      { name: "Submodelo de ocupación y presión urbana", parts: "Sistema socioeconómico y de ocupación + sistema físico-urbano + sistema de movilidad + sistema hídrico + sistema biótico.", partsPurpose: "Sí", partsWhy: "El sistema socioeconómico incluye actores que deciden sobre vivienda, actividades, inversión y uso del suelo; los demás sistemas reciben los efectos.", totalPurpose: "Sí", totalWhy: "Analiza cómo las decisiones de ocupación producen transformaciones y presiones sobre el borde, el agua, la movilidad y el hábitat.", category: "Social dinámico", process: "Cambian la población, las viviendas, las actividades, los equipamientos, los usos del suelo, la demanda de movilidad y la presión sobre el humedal." },
-      { name: "Submodelo de actores, usos y decisiones", parts: "Sistema social-comunitario + sistema socioeconómico y de ocupación + sistema institucional de gestión.", partsPurpose: "Sí", partsWhy: "Todos los sistemas articulados incluyen actores con intereses, objetivos, responsabilidades y capacidad de decisión.", totalPurpose: "Sí", totalWhy: "Analiza quién usa el territorio, quién decide, qué intereses intervienen y cómo se producen acuerdos, conflictos o cambios de manejo.", category: "Social dinámico", process: "Cambian los usos, las visitas, la participación, las organizaciones activas, las demandas, los conflictos, los acuerdos y las decisiones institucionales." },
-      { name: "Submodelo de gestión y respuesta adaptativa", parts: "Sistema institucional de gestión + sistema hídrico + sistema biótico + sistema físico-urbano + sistema social-comunitario.", partsPurpose: "Sí", partsWhy: "Los sistemas institucional y social-comunitario incluyen actores que observan, deciden, intervienen y evalúan; los demás responden a esas intervenciones.", totalPurpose: "Sí", totalWhy: "Organiza un ciclo de observación, decisión, intervención, monitoreo y ajuste de las acciones territoriales.", category: "Socioecológico dinámico", process: "Cambian las presiones, los diagnósticos, las prioridades, los recursos, las áreas intervenidas, los resultados del monitoreo y las decisiones posteriores." }
+      { name: "Modelo de Manejo de Agua y Drenaje", parts: "Sistema hídrico + sistema físico-urbano + sistema institucional de gestión.", partsPurpose: "Sí", partsWhy: "El sistema hídrico y la infraestructura no tienen propósitos propios, pero el sistema institucional sí tiene objetivos y decide sobre mantenimiento, drenaje, residuos y obras.", totalPurpose: "Sí", totalWhy: "Analiza cómo circula el agua y cómo las obras, los residuos y las decisiones de manejo modifican ese flujo.", category: "Socioecológico dinámico", process: "Cambian la lluvia, el nivel del agua, la escorrentía, los sedimentos, la capacidad de almacenamiento, el estado del canal y las acciones de mantenimiento." },
+      { name: "Modelo de Conservación de Especies y Hábitats", parts: "Sistema biótico + sistema hídrico + sistema físico-urbano.", partsPurpose: "Sí", partsWhy: "El sistema biótico incluye organismos que actúan para alimentarse, refugiarse y reproducirse; los sistemas hídrico y físico-urbano afectan las condiciones en que actúan.", totalPurpose: "Sí", totalWhy: "Analiza cómo el agua, la vegetación, el refugio, el ruido y los edificios influyen en la llegada, permanencia, alimentación y salida de las especies.", category: "Ecológico dinámico", process: "Cambian el nivel del agua, la vegetación, los refugios, la disponibilidad de alimento, la presencia de especies invasoras y el desplazamiento de aves." },
+      { name: "Modelo de Límites y Borde Urbano", parts: "Sistema físico-urbano + sistema socioeconómico y de ocupación + sistema hídrico + sistema biótico.", partsPurpose: "Sí", partsWhy: "El sistema físico-urbano no tiene propósito propio, pero el sistema socioeconómico incluye actores que deciden sobre construcción, ocupación y uso del suelo.", totalPurpose: "Sí", totalWhy: "Analiza cómo la urbanización, las vías, los edificios y los cerramientos modifican la relación entre el humedal y la ciudad.", category: "Sociotécnico dinámico", process: "Cambian las edificaciones, los cerramientos, las vías, los usos del suelo, los accesos, el drenaje, el ruido y la fragmentación del hábitat." },
+      { name: "Modelo de Conectividad y Redes de Transporte", parts: "Sistema de movilidad + sistema físico-urbano + sistema social-comunitario + sistema socioeconómico y de ocupación.", partsPurpose: "Sí", partsWhy: "Los sistemas social, comunitario y de movilidad incluyen personas, usuarios, operadores y entidades que eligen recorridos, horarios y medios; la infraestructura condiciona esas decisiones.", totalPurpose: "Sí", totalWhy: "Analiza cómo las personas se desplazan entre barrios, vías, ciclorrutas, equipamientos y el humedal, y qué barreras encuentran.", category: "Sociotécnico dinámico", process: "Cambian los recorridos, los horarios, la cantidad de usuarios, los tiempos de espera, la congestión, las rutas y la accesibilidad." },
+      { name: "Modelo de Ocupación y Crecimiento Urbano", parts: "Sistema socioeconómico y de ocupación + sistema físico-urbano + sistema de movilidad + sistema hídrico + sistema biótico.", partsPurpose: "Sí", partsWhy: "El sistema socioeconómico incluye actores que deciden sobre vivienda, actividades, inversión y uso del suelo; los demás sistemas reciben los efectos.", totalPurpose: "Sí", totalWhy: "Analiza cómo las decisiones de ocupación producen transformaciones y presiones sobre el borde, el agua, la movilidad y el hábitat.", category: "Social dinámico", process: "Cambian la población, las viviendas, las actividades, los equipamientos, los usos del suelo, la demanda de movilidad y la presión sobre el humedal." },
+      { name: "Modelo de Abastecimiento y Logística Comercial", parts: "Sistema social-comunitario + sistema socioeconómico y de ocupación + sistema institucional de gestión.", partsPurpose: "Sí", partsWhy: "Todos los sistemas articulados incluyen actores con intereses, objetivos, responsabilidades y capacidad de decisión.", totalPurpose: "Sí", totalWhy: "Analiza quién usa el territorio, quién decide, qué intereses intervienen y cómo se producen acuerdos, conflictos o cambios de manejo.", category: "Social dinámico", process: "Cambian los usos, las visitas, la participación, las organizaciones activas, las demandas, los conflictos, los acuerdos y las decisiones institucionales." },
+      { name: "Modelo de Gestión y Respuesta Territorial", parts: "Sistema institucional de gestión + sistema hídrico + sistema biótico + sistema físico-urbano + sistema social-comunitario.", partsPurpose: "Sí", partsWhy: "Los sistemas institucional y social-comunitario incluyen actores que observan, deciden, intervienen y evalúan; los demás responden a esas intervenciones.", totalPurpose: "Sí", totalWhy: "Organiza un ciclo de observación, decisión, intervención, monitoreo y ajuste de las acciones territoriales.", category: "Socioecológico dinámico", process: "Cambian las presiones, los diagnósticos, las prioridades, los recursos, las áreas intervenidas, los resultados del monitoreo y las decisiones posteriores." }
     ];
 
     // Datos para el diagrama de Forrester de cada submodelo (mismo orden
@@ -1735,7 +1735,7 @@
     // son casos donde los supuestos del submodelo se rompen.
     const submodelFailureScenarios = [
       {
-        name: "Submodelo de flujos de agua y drenaje urbano",
+        name: "Modelo de Manejo de Agua y Drenaje",
         shortIcons: ["fa-trash", "fa-water"], shortQuote: "Igual seguimos botando basura al canal, así el modelo diga que no.",
         scenarios: [
           "Un evento de lluvia extrema supera la capacidad de diseño del canal: el submodelo asume una respuesta gradual, pero el desborde real es abrupto y no lineal.",
@@ -1744,7 +1744,7 @@
         ],
       },
       {
-        name: "Submodelo de hábitat y desplazamiento de especies",
+        name: "Modelo de Conservación de Especies y Hábitats",
         shortIcons: ["fa-dove", "fa-volume-high"], shortQuote: "Las aves no se van a quedar ahí si el ruido sigue igual de fuerte.",
         scenarios: [
           "Aparece una especie invasora que cambia las relaciones de competencia y alimento sin estar contemplada en el submodelo.",
@@ -1753,7 +1753,7 @@
         ],
       },
       {
-        name: "Submodelo de transformación del borde urbano",
+        name: "Modelo de Límites y Borde Urbano",
         shortIcons: ["fa-house-chimney", "fa-file-circle-xmark"], shortQuote: "La gente sigue construyendo donde le sirve, no donde dice la norma.",
         scenarios: [
           "Ocurre una urbanización informal acelerada que no sigue el patrón gradual que asume el submodelo.",
@@ -1762,7 +1762,7 @@
         ],
       },
       {
-        name: "Submodelo de recorridos y accesibilidad territorial",
+        name: "Modelo de Conectividad y Redes de Transporte",
         shortIcons: ["fa-person-walking", "fa-map"], shortQuote: "Uno sigue caminando por donde le queda cerca, no por donde dice el plano.",
         scenarios: [
           "El cierre de una vía crítica (obra, bloqueo) cambia radicalmente los recorridos, invalidando los patrones históricos usados para construir el submodelo.",
@@ -1771,7 +1771,7 @@
         ],
       },
       {
-        name: "Submodelo de ocupación y presión urbana",
+        name: "Modelo de Ocupación y Crecimiento Urbano",
         shortIcons: ["fa-house-chimney-user", "fa-arrow-trend-up"], shortQuote: "La gente sigue llegando a vivir ahí aunque el modelo diga que ya no cabe más.",
         scenarios: [
           "Una crisis económica o una migración acelerada produce una ocupación mucho más rápida que la progresión gradual que asume el submodelo.",
@@ -1780,7 +1780,7 @@
         ],
       },
       {
-        name: "Submodelo de actores, usos y decisiones",
+        name: "Modelo de Abastecimiento y Logística Comercial",
         shortIcons: ["fa-people-group", "fa-handshake-slash"], shortQuote: "Cada quien sigue decidiendo por su cuenta, no como quedó en el acuerdo.",
         scenarios: [
           "Aparecen actores nuevos (organizaciones, intereses externos) que no estaban mapeados cuando se construyó el submodelo.",
@@ -1789,7 +1789,7 @@
         ],
       },
       {
-        name: "Submodelo de gestión y respuesta adaptativa",
+        name: "Modelo de Gestión y Respuesta Territorial",
         shortIcons: ["fa-clipboard", "fa-eye-slash"], shortQuote: "Si nadie le sigue haciendo seguimiento, la decisión se queda solo en el papel.",
         scenarios: [
           "El monitoreo no se hace con la frecuencia que el submodelo asume, rompiendo el ciclo de observación-decisión-ajuste del que depende.",
