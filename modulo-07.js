@@ -2635,7 +2635,12 @@
       const nodeR2 = 26;
       const dynCircles = allDynamicNodes.map((n) => {
         const dx = (n.originX - n.x).toFixed(1), dy = (n.originY - n.y).toFixed(1);
-        return `<g class="combined-node combined-sat-node" style="--node-color:${n.color};--node-i:${nodeIndex++};--dx:${dx}px;--dy:${dy}px">` +
+        // El origen de transformación se fija con las coordenadas EXACTAS
+        // de este nodo (no con "fill-box: center", que no es confiable en
+        // todos los navegadores cuando el <g> contiene un foreignObject —
+        // eso podía hacer que todas las bolitas colapsaran en un mismo
+        // punto y solo se viera una).
+        return `<g class="combined-node combined-sat-node" style="--node-color:${n.color};--node-i:${nodeIndex++};--dx:${dx}px;--dy:${dy}px;transform-origin:${n.x}px ${n.y}px;">` +
           `<circle cx="${n.x}" cy="${n.y}" r="${nodeR2}"/>` +
           `<foreignObject x="${n.x - nodeR2 + 3}" y="${n.y - nodeR2 + 3}" width="${(nodeR2 - 3) * 2}" height="${(nodeR2 - 3) * 2}"><div xmlns="http://www.w3.org/1999/xhtml" class="combined-sat-label">${n.label}</div></foreignObject>` +
           `</g>`;

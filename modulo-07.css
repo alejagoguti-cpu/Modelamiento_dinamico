@@ -6651,7 +6651,6 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
    clase "exploded" (un frame después) sale disparado hacia su posición
    final mientras crece, como si el racimo se abriera hacia afuera. */
 .combined-node {
-  transform-box: fill-box; transform-origin: center;
   transform: translate(var(--dx, 0px), var(--dy, 0px)) scale(0.15);
   opacity: 0;
   transition: transform .75s cubic-bezier(.16,1,.32,1.15), opacity .35s ease;
