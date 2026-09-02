@@ -1189,27 +1189,23 @@ function renderNetwork() {
   const svg = document.getElementById("networkViz");
   if (!svg) return;
 
-  // Remove old zoom-pan group if it exists
-  const oldGroup = svg.querySelector("#zoom-pan-group");
-  if (oldGroup) oldGroup.remove();
-
   svg.innerHTML = "";
 
-  // Create the zoom-pan wrapper group
+  // Build defs first at SVG level
+  buildDefs(svg);
+
+  // Create the zoom-pan wrapper group for visual content
   const zoomPanGroup = document.createElementNS(SVG_NS, "g");
   zoomPanGroup.setAttribute("id", "zoom-pan-group");
+  zoomPanGroup.setAttribute("transform", `translate(${panX},${panY}) scale(${zoomLevel})`);
   svg.appendChild(zoomPanGroup);
 
-  // Build content inside the wrapper, but we need to modify how we do this
-  // Create a temporary SVG to build into, then move elements
-  const tempSvg = document.createElementNS(SVG_NS, "svg");
-  buildDefs(tempSvg); buildAmbientMesh(tempSvg); drawEdges(tempSvg); drawNodes(tempSvg);
+  // Build visual content into temp group, then move to zoom-pan-group
+  const tempG = document.createElementNS(SVG_NS, "g");
+  buildAmbientMesh(tempG); drawEdges(tempG); drawNodes(tempG);
 
   // Move all elements from temp to zoom-pan group
-  while (tempSvg.firstChild) zoomPanGroup.appendChild(tempSvg.firstChild);
-
-  // Apply zoom-pan transform
-  zoomPanGroup.setAttribute("transform", `translate(${panX},${panY}) scale(${zoomLevel})`);
+  while (tempG.firstChild) zoomPanGroup.appendChild(tempG.firstChild);
 }
 
 function setupZoomPan() {
