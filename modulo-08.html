@@ -157,168 +157,6 @@
       </div>
     </div>
 
-    <!-- SITUACIONES: estados que modifican la intensidad de la red -->
-    <div class="situaciones-panel">
-      <div class="situaciones-head">
-        <h3><i class="fa-solid fa-clock-rotate-left"></i> Situaciones — qué momento quieres leer</h3>
-        <p>Cada situación no agrega nodos nuevos: cambia la intensidad, el grosor o la visibilidad de relaciones que ya existen.</p>
-      </div>
-      <div class="situaciones-row" id="situacionesRow"></div>
-      <div class="situacion-desc" id="situacionDesc">Sin situación activa: todas las relaciones se leen en su intensidad documental de base.</div>
-    </div>
-
-    <section class="reader-findings" aria-labelledby="reader-findings-title">
-      <div class="reader-findings-head">
-        <div>
-          <div class="reader-pillars-kicker">HALLAZGOS QUE LA RED HACE VISIBLES</div>
-          <h2 id="reader-findings-title">Lo que aparece cuando el POT se lee como sistema</h2>
-        </div>
-        <p>La tabla ya no queda separada del diagrama: estos cuatro hallazgos se convierten en nodos de interpretación conectados con la lectura dinámica.</p>
-      </div>
-      <div class="reader-findings-grid">
-        <article class="reader-finding finding-pink">
-          <div class="reader-finding-node"><i class="fa-solid fa-diagram-project"></i></div>
-          <div><h3>Red de mundo pequeño, no de sistema dinámico</h3><p>Las 45 relaciones documentadas son internas a EEP, EFC, ESECI o EIP: estructuras densas hacia adentro y prácticamente aisladas entre sí.</p><span>0 puentes reales entre estructuras · 7 vacíos de articulación</span></div>
-        </article>
-        <article class="reader-finding finding-teal">
-          <div class="reader-finding-node"><i class="fa-solid fa-magnifying-glass"></i></div>
-          <div><h3>General vs. particular</h3><p>El POT nombra por su nombre propio a la Reserva Thomas van der Hammen, pero trata “Humedales” como una categoría genérica de 39 conceptos.</p><span>Humedales: hub de mayor grado real · 6 conexiones</span></div>
-        </article>
-        <article class="reader-finding finding-orange">
-          <div class="reader-finding-node"><i class="fa-solid fa-draw-polygon"></i></div>
-          <div><h3>Polígonos fijos, territorios móviles</h3><p>Los realinderamientos y las correcciones oficiales muestran que el límite jurídico-administrativo no coincide de forma estable con el límite ecológico.</p><span>Art. 12, parágrafo 2 · Arts. 573–574 · Resolución 1488/2023</span></div>
-        </article>
-        <article class="reader-finding finding-purple">
-          <div class="reader-finding-node"><i class="fa-solid fa-scale-unbalanced"></i></div>
-          <div><h3>La ESECI no tiene lógica sistémica propia</h3><p>Con solo 2 artículos en el capítulo de Estructuras Territoriales, aporta 9 conceptos y 9 relaciones que permanecen internas a sí misma.</p><span>Su desarrollo aparece disperso en el Libro III como “Áreas de Actividad”.</span></div>
-        </article>
-      </div>
-    </section>
-
-    <!-- HERO: GESTOR DE LECTURA -->
-    <section class="hero-reader">
-      <div class="hero-top">
-        <div class="hero-eyebrow"><span class="eyebrow-line"></span> GESTOR DE LECTURA</div>
-        <button class="agency-toggle" id="agencyToggle" onclick="toggleAgency()">
-          <span class="agency-switch"><span class="agency-knob"></span></span>
-          <span>Activar Dimensión Dinámica</span>
-        </button>
-      </div>
-
-      <h2 class="hero-title"><span class="hero-accent">Módulo Simulador</span> — de las reglas escritas a la simulación viva</h2>
-      <p class="hero-sub">Del POT como texto lineal <i class="fa-solid fa-arrow-right-long"></i> a la ciudad como sistema vivo</p>
-      <p class="hero-lead">Si el POT tiene reglas generativas pero no las corre, esta plataforma permite ejecutar la simulación que el Plan escribe pero nunca realiza: agentes que se mueven, viviendas que condicionan la vida cotidiana y ecosistemas que responden en el tiempo.</p>
-
-      <div class="simulator-principles" aria-label="Tres pilares del simulador">
-        <article class="simulator-principle principle-people"><i class="fa-solid fa-people-arrows"></i><div><strong>Personas</strong><span>Agentes de cuidado · 15 minutos caminando · fatiga y tiempo disponible</span></div></article>
-        <article class="simulator-principle principle-housing"><i class="fa-solid fa-house-chimney-user"></i><div><strong>Viviendas</strong><span>Habitabilidad · Art. 384 · 36 m² / 42 m² · mejoramiento progresivo</span></div></article>
-        <article class="simulator-principle principle-ecosystems"><i class="fa-solid fa-water"></i><div><strong>Ecosistemas</strong><span>Matriz ordenadora · escorrentía · riesgo · drenaje sostenible</span></div></article>
-      </div>
-
-      <div class="hero-compare">
-        <div class="compare-card compare-static">
-          <div class="compare-head"><i class="fa-solid fa-circle-dot"></i> Lectura Estática</div>
-          <p class="compare-desc">El POT leído como una suma de objetos, artículos y relaciones fijas.</p>
-          <div class="compare-viz" id="staticViz">
-            <svg viewBox="0 0 260 170"><circle cx="130" cy="85" r="46" class="static-blob"/></svg>
-          </div>
-          <ul class="compare-list">
-            <li><i class="fa-solid fa-circle-dot"></i> Relación aislada</li>
-            <li><i class="fa-solid fa-circle-dot"></i> Sin actores ni mediadores</li>
-            <li><i class="fa-solid fa-circle-dot"></i> Intensidad única y fija</li>
-          </ul>
-        </div>
-
-        <div class="compare-card compare-dynamic">
-          <div class="compare-head"><i class="fa-solid fa-wave-square"></i> Lectura Dinámica</div>
-          <p class="compare-desc">Una simulación donde agentes, vivienda y ecosistemas interactúan y cambian.</p>
-          <div class="compare-viz" id="dynamicViz"></div>
-          <ul class="compare-list">
-            <li><i class="fa-solid fa-check"></i> Incluye actores y mediadores</li>
-            <li><i class="fa-solid fa-check"></i> Cambia según la situación</li>
-            <li><i class="fa-solid fa-check"></i> Intensidad variable</li>
-          </ul>
-        </div>
-      </div>
-
-      <blockquote class="hero-quote">
-        <i class="fa-solid fa-quote-left"></i>
-        <p>Una relación territorial no es un dato fijo: depende de quién la usa, qué la hace posible y en qué momento ocurre.</p>
-        <span>Equipo POT Reverse Engineering</span>
-      </blockquote>
-      <section class="reader-pillars" aria-labelledby="reader-pillars-title">
-        <div class="reader-pillars-kicker">LA CAPA QUE EL POT NO EJECUTA</div>
-        <h3 id="reader-pillars-title">Tres pilares para hacer correr las reglas</h3>
-        <div class="reader-pillars-grid">
-          <article class="reader-pillar reader-pillar-people">
-            <div class="reader-pillar-icon"><i class="fa-solid fa-people-group"></i></div>
-            <div><h4>Personas</h4><p>Agentes de cuidado con tiempo, fatiga, trayectorias y necesidades reales.</p></div>
-          </article>
-          <article class="reader-pillar reader-pillar-homes">
-            <div class="reader-pillar-icon"><i class="fa-solid fa-house-chimney"></i></div>
-            <div><h4>Viviendas</h4><p>Nodos de origen y retorno que afectan habitabilidad, estrés y salud.</p></div>
-          </article>
-          <article class="reader-pillar reader-pillar-eco">
-            <div class="reader-pillar-icon"><i class="fa-solid fa-leaf"></i></div>
-            <div><h4>Ecosistemas</h4><p>Actores físicos: agua, conectores, riesgo y drenaje que modifican la ciudad.</p></div>
-          </article>
-        </div>
-      </section>
-    </section>
-
-    <!-- STATS -->
-    <div class="reader-stats" id="readerStats">
-      <div class="stat-card" style="--stat-color:#2fd4c8;">
-        <div class="stat-icon"><i class="fa-solid fa-circle-nodes"></i></div>
-        <div class="stat-value" id="statComponentes">—</div>
-        <div class="stat-label">Componentes territoriales</div>
-      </div>
-      <div class="stat-card" style="--stat-color:#f5a623;" id="statActoresCard">
-        <div class="stat-icon"><i class="fa-solid fa-people-group"></i></div>
-        <div class="stat-value" id="statActores">—</div>
-        <div class="stat-label">Actores</div>
-      </div>
-      <div class="stat-card" style="--stat-color:#7d8ea3;" id="statMediadoresCard">
-        <div class="stat-icon"><i class="fa-solid fa-signs-post"></i></div>
-        <div class="stat-value" id="statMediadores">—</div>
-        <div class="stat-label">Mediadores</div>
-      </div>
-      <div class="stat-card" style="--stat-color:#f76fb0;">
-        <div class="stat-icon"><i class="fa-solid fa-link"></i></div>
-        <div class="stat-value" id="statRelaciones">—</div>
-        <div class="stat-label">Relaciones activas</div>
-      </div>
-    </div>
-
-    <!-- LO QUE DEMUESTRA -->
-    <div class="synergies-section">
-      <div class="synergies-grid">
-        <div class="synergy-card success">
-          <div class="synergy-icon"><i class="fa-solid fa-diagram-project"></i></div>
-          <div class="synergy-content">
-            <h4>Lo que ya reconoce el POT</h4>
-            <ul>
-              <li><strong>Componentes documentados:</strong> los nodos coloreados por estructura son los mismos componentes ya identificados en las 4 estructuras del POT (EEP, EFS, ESE, EIP).</li>
-              <li><strong>Relaciones directas:</strong> las líneas continuas citan página y frase exacta del documento.</li>
-              <li><strong>Nada se compone:</strong> ningún nodo contiene a otro — cada uno es independiente, incluso dentro de la misma estructura.</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="synergy-card conflict">
-          <div class="synergy-icon"><i class="fa-solid fa-eye-low-vision"></i></div>
-          <div class="synergy-content">
-            <h4>Lo que esta lectura agrega</h4>
-            <ul>
-              <li><strong>Actores:</strong> quién usa, opera, protege o transforma cada relación — no es lo mismo un estudiante que una persona cuidadora.</li>
-              <li><strong>Mediadores:</strong> qué hace posible la relación en la práctica — estaciones, andenes, senderos, puentes peatonales.</li>
-              <li><strong>Situaciones:</strong> una relación no tiene una intensidad única — cambia en hora pico, en temporada de lluvias, durante una obra.</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- SIMULACIÓN DE MOVILIDAD (SUMO) -->
     <div class="sumo-sim-section">
       <div class="sumo-sim-heading">
@@ -326,10 +164,48 @@
         <p>Trayectorias vehiculares simuladas sobre la red vial real de Kennedy, exportadas desde SUMO (<code>osm.net.xml</code> + <code>trazado.xml</code>).</p>
       </div>
       <div class="sumo-sim-card">
-        <div class="sumo-canvas-wrap">
+        <div class="sumo-canvas-wrap" id="sumoCanvasWrap">
           <canvas id="sumoNetCanvas"></canvas>
+          <canvas id="sumoNoiseCanvas"></canvas>
           <canvas id="sumoVehCanvas"></canvas>
           <div class="sumo-sim-overlay" id="sumoStatus">Cargando red vial…</div>
+          <div class="sumo-agents-card">
+            <strong><i class="fa-solid fa-users-gear"></i> Agentes</strong>
+            <ul>
+              <li><b>Vehículos:</b> Generan flujo de tráfico, congestión y emisión de ruido al desplazarse por la red.</li>
+              <li><b>Mirlas (<i>Turdus fuscater</i>):</b> Generan rutas de desplazamiento y escape, decidiendo por dónde moverse según la resistencia del paisaje y los niveles de ruido.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Rotación GLOBAL del mapa: gira calles, árboles y vehículos
+             TODOS JUNTOS, para corregir que el mapa se vea acostado/en
+             diagonal. Cuando quede recto, copia el número y pégamelo. -->
+        <div class="sumo-reference-panel">
+          <strong><i class="fa-solid fa-compass"></i> Enderezar el mapa completo</strong>
+          <label>Rotación <input id="sumoMapRotation" type="range" min="-90" max="90" step="0.5" value="0"></label>
+          <button type="button" class="sumo-btn" id="sumoMapRotationReset" title="Restablecer"><i class="fa-solid fa-rotate-left"></i></button>
+          <span id="sumoMapRotationStatus">Mueve la barra hasta que el mapa se vea derecho, no acostado.</span>
+          <div class="sumo-reference-coords">
+            <button type="button" class="sumo-btn" id="sumoMapRotationCopy" title="Copiar ángulo"><i class="fa-solid fa-copy"></i> Copiar ángulo de rotación</button>
+            <textarea id="sumoMapRotationOutput" rows="1" spellcheck="false" placeholder="Aquí aparecerá el ángulo final..."></textarea>
+          </div>
+        </div>
+
+        <!-- Distorsión de 4 esquinas de los árboles (como "Distort" de
+             Photoshop): activa el modo, aparecen 4 puntos en las esquinas
+             de la malla, arrastra cada uno por separado; arrastrar fuera
+             de un punto mueve todo junto. -->
+        <div class="sumo-reference-panel">
+          <strong><i class="fa-solid fa-tree"></i> Distorsionar árboles (4 esquinas)</strong>
+          <button type="button" class="sumo-btn" id="sumoTreeMoveMode" title="Activar distorsión/mover"><i class="fa-solid fa-arrows-up-down-left-right"></i></button>
+          <button type="button" class="sumo-btn" id="sumoTreeDistortReset" title="Restablecer"><i class="fa-solid fa-rotate-left"></i></button>
+          <label>Escala de la capa <input id="sumoTreeSizeScale" type="range" min="0.05" max="5" step="0.05" value="0.95"></label>
+          <span id="sumoTreeDistortStatus">Activa el modo: arrastra cualquiera de los 4 puntos naranjas para distorsionar, o arrastra en otra parte para mover todo junto. Las coordenadas de abajo se actualizan solas mientras arrastras.</span>
+          <div class="sumo-reference-coords">
+            <button type="button" class="sumo-btn" id="sumoTreeDistortCopy" title="Copiar coordenadas"><i class="fa-solid fa-copy"></i> Copiar coordenadas de cambio</button>
+            <textarea id="sumoTreeDistortOutput" rows="3" spellcheck="false" placeholder="Aquí aparecerán las 4 esquinas..."></textarea>
+          </div>
         </div>
         <div class="sumo-sim-controls">
           <button type="button" id="sumoPlayPause" class="sumo-btn" aria-label="Reproducir / pausar"><i class="fa-solid fa-play"></i></button>
@@ -343,435 +219,76 @@
               <option value="8">8×</option>
             </select>
           </label>
+          <button type="button" id="sumoMuteToggle" class="sumo-btn" aria-label="Silenciar / activar sonido ambiente" title="Sonido ambiente de tráfico"><i class="fa-solid fa-volume-high"></i></button>
+          <audio id="sumoAmbienceAudio" src="./assets/sumo-traffic-ambience.mp3" loop preload="auto"></audio>
+        </div>
+
+        <!-- Modelo ilustrativo "¿qué pasaría si...?": NO es una re-simulación
+             real de SUMO (no hay backend). Es una manipulación visual sobre
+             los mismos vehículos ya grabados. -->
+        <div class="sumo-whatif-panel">
+          <p class="whatif-disclaimer"><i class="fa-solid fa-circle-info"></i> Modelo ilustrativo/conceptual — no es una re-simulación real de SUMO (este sitio no tiene un servidor que pueda correr SUMO en vivo). Multiplica visualmente los vehículos ya grabados y desvía a los que pasarían por la vía cerrada.</p>
+          <label class="whatif-slider-label">
+            Demanda vehicular: <span id="sumoDemandVal">0%</span> (0% = modelo base)
+            <input type="range" id="sumoDemandSlider" min="-100" max="100" value="0" step="5">
+          </label>
+          <div class="whatif-closure-row">
+            <label>Cerrar vía crítica:
+              <select id="sumoClosureSelect">
+                <option value="">— Ninguna (modelo base) —</option>
+              </select>
+            </label>
+            <button type="button" class="sumo-btn" id="sumoClosureToggle" disabled><i class="fa-solid fa-road-barrier"></i> Cerrar</button>
+          </div>
+          <p id="sumoWhatifStatus" class="whatif-disclaimer">Sin cambios — mostrando el modelo base.</p>
+        </div>
+
+        <!-- Leyenda de la capa de ruido: el color cambia con el nivel de
+             tráfico/ruido, pero la transparencia es SIEMPRE la misma. -->
+        <div class="noise-scale-legend">
+          <h4>
+            <i class="fa-solid fa-volume-high"></i> Ruido estimado por tráfico
+            <label class="noise-toggle-label"><input type="checkbox" id="sumoNoiseToggle" checked> Mostrar capa</label>
+          </h4>
+          <div class="noise-scale-row">
+            <div class="noise-scale-swatch" style="background:rgba(255,247,179,.42)"></div><span>&lt; 50 dB(A)</span>
+            <div class="noise-scale-swatch" style="background:rgba(255,224,76,.42)"></div><span>50–60</span>
+            <div class="noise-scale-swatch" style="background:rgba(255,179,77,.42)"></div><span>60–70</span>
+            <div class="noise-scale-swatch" style="background:rgba(245,124,0,.42)"></div><span>70–80</span>
+            <div class="noise-scale-swatch" style="background:rgba(230,74,25,.42)"></div><span>80–90</span>
+            <div class="noise-scale-swatch" style="background:rgba(211,47,47,.42)"></div><span>&gt; 90 dB(A)</span>
+          </div>
+          <details class="noise-formula-details">
+            <summary>Ver fórmula y reglas de cálculo</summary>
+            <p><strong>Motor acústico real (CNOSSOS-EU)</strong> — implementado, pendiente solo de los coeficientes oficiales:</p>
+            <ol>
+              <li><strong>Velocidad real:</strong> se deriva de la propia posición de cada vehículo en SUMO entre dos instantes consecutivos (no es un dato inventado).</li>
+              <li><strong>Emisión de cada vehículo</strong> (Directiva (UE) 2015/996, Cap. 2.2): ruido de rodadura <code>L_WR = A_R + B_R·log10(v)</code> + ruido de propulsión <code>L_WP = A_P + B_P·(v−70)/70</code>, sumados de forma energética: <code>L_W = 10·log10(10^(L_WR/10) + 10^(L_WP/10))</code>.</li>
+              <li><strong>Propagación:</strong> atenuación por divergencia geométrica de fuente puntual, en metros reales del mapa: <code>A_div = 20·log10(d) + 11</code> (~6 dB menos cada vez que se duplica la distancia).</li>
+              <li><strong>Suma de varios vehículos</strong> en un mismo punto: suma energética, no aritmética: <code>L_total = 10·log10(Σ 10^(Lᵢ/10))</code>.</li>
+              <li>Falta un solo dato para activarlo: la tabla oficial de coeficientes <code>A_R, B_R, A_P, B_P</code> (Categoría 1) de la Directiva — mientras no esté, el mapa usa el método visual de abajo, sin ningún cambio de color ni transparencia.</li>
+            </ol>
+            <p><strong>Método visual actual</strong> (mientras se completa el motor real):</p>
+            <ol>
+              <li><strong>Mancha por vehículo:</strong> cada vehículo genera un círculo de influencia (degradado radial, blanco en el centro y transparente en el borde) alrededor de su posición actual.</li>
+              <li><strong>Acumulación:</strong> donde se superponen las manchas de varios vehículos cercanos, la intensidad se suma (modo "lighter" del canvas) — más vehículos juntos = mayor intensidad acumulada en esa zona.</li>
+              <li><strong>Intensidad → color:</strong> la intensidad acumulada (0 a 1) se eleva a la potencia 2.4 (<code>t = intensidad^2.4</code>) antes de mapearse a color, para que haga falta bastante acumulación de tráfico para llegar al rojo.</li>
+              <li><strong>Color:</strong> ese valor <code>t</code> se interpola de forma continua entre 6 colores de referencia (amarillo claro → amarillo → naranja claro → naranja → rojo anaranjado → rojo).</li>
+              <li><strong>Transparencia:</strong> siempre la misma (42%) en toda la capa — nunca cambia según el nivel de ruido, solo cambia el color.</li>
+              <li><strong>Suavizado:</strong> el resultado se calcula en baja resolución y se dibuja agrandado con desenfoque (blur), para que se vea como una superficie continua.</li>
+            </ol>
+
+            <p class="noise-formula-note">Es un proxy visual de carga de tráfico, no una medición acústica real en decibeles.</p>
+          </details>
         </div>
       </div>
     </div>
-
-    <!-- PANEL EXPERIMENTAL: DEMANDA VARIABLE -->
-    <div class="sumo-sim-section">
-      <div class="sumo-sim-heading">
-        <h3><i class="fa-solid fa-flask-vial"></i> Experimento 1: Demanda Variable</h3>
-        <p>Modifica la demanda vehicular y observa cómo responde la red en tiempo real. El 0% representa exactamente el estado actual de la simulación.</p>
-      </div>
-
-      <div class="demand-control-card">
-        <!-- BARRA DE DEMANDA -->
-        <div class="demand-slider-section">
-          <div class="demand-label">
-            <span class="demand-label-text">DEMANDA VEHICULAR</span>
-            <div class="demand-presets">
-              <button class="demand-preset-btn" data-demand="-100" title="Demanda mínima (-100%)">Min</button>
-              <button class="demand-preset-btn" data-demand="-50" title="Demanda baja (-50%)">Baja</button>
-              <button class="demand-preset-btn demand-preset-base" data-demand="0" title="Estado actual (0%)">BASE</button>
-              <button class="demand-preset-btn" data-demand="+25" title="Demanda moderada (+25%)">Mod</button>
-              <button class="demand-preset-btn" data-demand="+50" title="Demanda alta (+50%)">Alta</button>
-              <button class="demand-preset-btn" data-demand="+100" title="Demanda máxima (+100%)">Máx</button>
-            </div>
-          </div>
-
-          <div class="demand-slider-container">
-            <span class="demand-value-min">-100%</span>
-            <input type="range" id="demandSlider" class="demand-slider" min="-100" max="100" value="0" step="5" aria-label="Barra de demanda vehicular">
-            <span class="demand-value-max">+100%</span>
-          </div>
-
-          <div class="demand-value-display">
-            <div class="demand-current">
-              <span>Demanda actual:</span>
-              <span id="demandCurrentValue" class="demand-num">0%</span>
-            </div>
-            <div class="demand-status">
-              <span id="demandStatusText">Estado actual (referencia)</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- PANELES DE INDICADORES -->
-        <div class="demand-indicators-section">
-          <div class="indicators-header">
-            <h4>Indicadores de la Red (tiempo real)</h4>
-            <label class="comparison-toggle">
-              <input type="checkbox" id="comparisonToggle" checked>
-              <span>Comparar con base</span>
-            </label>
-          </div>
-
-          <div class="indicators-grid">
-            <!-- Demanda -->
-            <div class="indicator-card">
-              <div class="indicator-icon"><i class="fa-solid fa-car"></i></div>
-              <div class="indicator-data">
-                <div class="indicator-label">Vehículos Activos</div>
-                <div class="indicator-value" id="indVehicles">-</div>
-                <div class="indicator-change" id="indVehiclesChange"></div>
-              </div>
-            </div>
-
-            <!-- Flujo -->
-            <div class="indicator-card">
-              <div class="indicator-icon"><i class="fa-solid fa-wave-square"></i></div>
-              <div class="indicator-data">
-                <div class="indicator-label">Flujo (veh/h)</div>
-                <div class="indicator-value" id="indFlow">-</div>
-                <div class="indicator-change" id="indFlowChange"></div>
-              </div>
-            </div>
-
-            <!-- Velocidad promedio -->
-            <div class="indicator-card">
-              <div class="indicator-icon"><i class="fa-solid fa-gauge"></i></div>
-              <div class="indicator-data">
-                <div class="indicator-label">Velocidad (km/h)</div>
-                <div class="indicator-value" id="indSpeed">-</div>
-                <div class="indicator-change" id="indSpeedChange"></div>
-              </div>
-            </div>
-
-            <!-- Densidad -->
-            <div class="indicator-card">
-              <div class="indicator-icon"><i class="fa-solid fa-compress"></i></div>
-              <div class="indicator-data">
-                <div class="indicator-label">Densidad (veh/km)</div>
-                <div class="indicator-value" id="indDensity">-</div>
-                <div class="indicator-change" id="indDensityChange"></div>
-              </div>
-            </div>
-
-            <!-- Ocupación -->
-            <div class="indicator-card">
-              <div class="indicator-icon"><i class="fa-solid fa-percent"></i></div>
-              <div class="indicator-data">
-                <div class="indicator-label">Ocupación (%)</div>
-                <div class="indicator-value" id="indOccupancy">-</div>
-                <div class="indicator-change" id="indOccupancyChange"></div>
-              </div>
-            </div>
-
-            <!-- Tiempo de viaje -->
-            <div class="indicator-card">
-              <div class="indicator-icon"><i class="fa-solid fa-hourglass-end"></i></div>
-              <div class="indicator-data">
-                <div class="indicator-label">Tiempo de Viaje (s)</div>
-                <div class="indicator-value" id="indTravelTime">-</div>
-                <div class="indicator-change" id="indTravelTimeChange"></div>
-              </div>
-            </div>
-
-            <!-- Tiempo perdido -->
-            <div class="indicator-card">
-              <div class="indicator-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
-              <div class="indicator-data">
-                <div class="indicator-label">Tiempo Perdido (s)</div>
-                <div class="indicator-value" id="indTimeLoss">-</div>
-                <div class="indicator-change" id="indTimeLossChange"></div>
-              </div>
-            </div>
-
-            <!-- Ruido promedio -->
-            <div class="indicator-card">
-              <div class="indicator-icon"><i class="fa-solid fa-volume-high"></i></div>
-              <div class="indicator-data">
-                <div class="indicator-label">Ruido (índice)</div>
-                <div class="indicator-value" id="indNoise">-</div>
-                <div class="indicator-change" id="indNoiseChange"></div>
-              </div>
-            </div>
-
-            <!-- Congestión -->
-            <div class="indicator-card">
-              <div class="indicator-icon"><i class="fa-solid fa-traffic-light"></i></div>
-              <div class="indicator-data">
-                <div class="indicator-label">Vías Congestionadas</div>
-                <div class="indicator-value" id="indCongestion">-</div>
-                <div class="indicator-change" id="indCongestionChange"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- EXPERIMENTO 2: PERTURBACIÓN DE RED -->
-    <div class="sumo-sim-section">
-      <div class="sumo-sim-heading">
-        <h3><i class="fa-solid fa-triangle-exclamation"></i> Experimento 2: Perturbación de Red</h3>
-        <p>Cierra una vía temporalmente o reduce su capacidad, y observa cómo se redistribuye el tráfico y cambian los indicadores del sistema.</p>
-      </div>
-
-      <div class="perturbation-control-card">
-        <div class="perturbation-section">
-          <h4>Selecciona una vía crítica</h4>
-          <p class="perturbation-hint">Las vías listadas son las más importantes según flujo, densidad y tiempo de viaje.</p>
-
-          <div class="edge-selector">
-            <div class="edge-list">
-              <button class="edge-option" data-edge-id="1209495214#3" data-flow="204" data-density="137.0" data-timeloss="60238.0">
-                <span class="edge-name">Vía 1209495214#3</span>
-                <span class="edge-stats">Flow: 204 veh/h · Density: 137.0 veh/km</span>
-              </button>
-              <button class="edge-option" data-edge-id="1184088523#1" data-flow="81" data-density="128.2" data-timeloss="35287.0">
-                <span class="edge-name">Vía 1184088523#1</span>
-                <span class="edge-stats">Flow: 81 veh/h · Density: 128.2 veh/km</span>
-              </button>
-              <button class="edge-option" data-edge-id="1162630088#1" data-flow="113" data-density="105.9" data-timeloss="30828.0">
-                <span class="edge-name">Vía 1162630088#1</span>
-                <span class="edge-stats">Flow: 113 veh/h · Density: 105.9 veh/km</span>
-              </button>
-              <button class="edge-option" data-edge-id="1195023605#3" data-flow="78" data-density="208.2" data-timeloss="28456.0">
-                <span class="edge-name">Vía 1195023605#3</span>
-                <span class="edge-stats">Flow: 78 veh/h · Density: 208.2 veh/km</span>
-              </button>
-              <button class="edge-option" data-edge-id="1078142963#8" data-flow="106" data-density="172.5" data-timeloss="25643.0">
-                <span class="edge-name">Vía 1078142963#8</span>
-                <span class="edge-stats">Flow: 106 veh/h · Density: 172.5 veh/km</span>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div class="perturbation-section">
-          <h4>Tipo de Perturbación</h4>
-          <div class="perturbation-type-selector">
-            <label class="perturbation-type-option">
-              <input type="radio" name="perturbationType" value="closure" checked>
-              <span class="option-label">Cierre temporal</span>
-              <span class="option-desc">La vía no está disponible (cierre por obras)</span>
-            </label>
-            <label class="perturbation-type-option">
-              <input type="radio" name="perturbationType" value="capacity">
-              <span class="option-label">Reducción de capacidad</span>
-              <span class="option-desc">Reduce carriles o ancho de vía</span>
-            </label>
-          </div>
-        </div>
-
-        <div class="perturbation-section" id="capacitySection" style="display: none;">
-          <h4>Reducción de Capacidad</h4>
-          <div class="capacity-slider-container">
-            <span>100%</span>
-            <input type="range" id="capacitySlider" min="0" max="100" value="100" step="10">
-            <span>0%</span>
-          </div>
-          <div class="capacity-display">
-            <span>Capacidad disponible:</span>
-            <span id="capacityValue">100%</span>
-          </div>
-        </div>
-
-        <div class="perturbation-actions">
-          <button id="perturbationApplyBtn" class="btn-primary" disabled>Aplicar Perturbación</button>
-          <button id="perturbationResetBtn" class="btn-secondary">Restablecer</button>
-        </div>
-
-        <div class="perturbation-results" id="perturbationResults" style="display: none;">
-          <h4>Impacto de la Perturbación</h4>
-          <div class="results-grid">
-            <div class="result-item">
-              <span class="result-label">Vía afectada</span>
-              <span class="result-value" id="resultEdgeId">—</span>
-            </div>
-            <div class="result-item">
-              <span class="result-label">Cambio en tiempo promedio</span>
-              <span class="result-value" id="resultTimeChange">—</span>
-            </div>
-            <div class="result-item">
-              <span class="result-label">Ruido sistema</span>
-              <span class="result-value" id="resultNoiseChange">—</span>
-            </div>
-            <div class="result-item">
-              <span class="result-label">Vías más afectadas</span>
-              <span class="result-value" id="resultAffectedEdges">—</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- EXPERIMENTO 3: REDISTRIBUCIÓN DE RUTAS -->
-    <div class="sumo-sim-section">
-      <div class="sumo-sim-heading">
-        <h3><i class="fa-solid fa-route"></i> Experimento 3: Redistribución de Rutas</h3>
-        <p>Mantén la misma demanda pero cambia cómo se distribuyen los vehículos entre rutas. Observa si hay alternativas más eficientes.</p>
-      </div>
-
-      <div class="redistribution-control-card">
-        <div class="redistribution-strategy-selector">
-          <h4>Estrategia de Distribución</h4>
-          <div class="strategy-options">
-            <label class="strategy-option">
-              <input type="radio" name="routeStrategy" value="current" checked>
-              <span class="strategy-label">Actual</span>
-              <span class="strategy-desc">Distribución actual de SUMO</span>
-            </label>
-            <label class="strategy-option">
-              <input type="radio" name="routeStrategy" value="balanced">
-              <span class="strategy-label">Equilibrada</span>
-              <span class="strategy-desc">Distribuir carga uniforme por vías</span>
-            </label>
-            <label class="strategy-option">
-              <input type="radio" name="routeStrategy" value="shortest">
-              <span class="strategy-label">Ruta Más Corta</span>
-              <span class="strategy-desc">Todos por el camino más corto</span>
-            </label>
-            <label class="strategy-option">
-              <input type="radio" name="routeStrategy" value="fastest">
-              <span class="strategy-label">Ruta Más Rápida</span>
-              <span class="strategy-desc">Evita vías congestionadas (teórico)</span>
-            </label>
-          </div>
-        </div>
-
-        <div class="redistribution-comparison">
-          <h4>Comparación de Estrategias</h4>
-          <div class="comparison-table">
-            <div class="table-header">
-              <span class="col-strategy">Estrategia</span>
-              <span class="col-metric">Tiempo Promedio</span>
-              <span class="col-metric">Flujo Max</span>
-              <span class="col-metric">Ruido Promedio</span>
-            </div>
-            <div class="table-row">
-              <span class="col-strategy">Actual</span>
-              <span class="col-metric" id="comp-current-time">480 s</span>
-              <span class="col-metric" id="comp-current-flow">1015 veh/h</span>
-              <span class="col-metric" id="comp-current-noise">22.4</span>
-            </div>
-            <div class="table-row">
-              <span class="col-strategy">Equilibrada</span>
-              <span class="col-metric" id="comp-balanced-time">— s</span>
-              <span class="col-metric" id="comp-balanced-flow">— veh/h</span>
-              <span class="col-metric" id="comp-balanced-noise">—</span>
-            </div>
-            <div class="table-row">
-              <span class="col-strategy">Más Corta</span>
-              <span class="col-metric" id="comp-shortest-time">— s</span>
-              <span class="col-metric" id="comp-shortest-flow">— veh/h</span>
-              <span class="col-metric" id="comp-shortest-noise">—</span>
-            </div>
-            <div class="table-row">
-              <span class="col-strategy">Más Rápida</span>
-              <span class="col-metric" id="comp-fastest-time">— s</span>
-              <span class="col-metric" id="comp-fastest-flow">— veh/h</span>
-              <span class="col-metric" id="comp-fastest-noise">—</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="redistribution-actions">
-          <button id="redistributionApplyBtn" class="btn-primary">Aplicar Distribución</button>
-          <button id="redistributionResetBtn" class="btn-secondary">Restablecer</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- EXPERIMENTO 4: PICO Y RECUPERACIÓN -->
-    <div class="sumo-sim-section">
-      <div class="sumo-sim-heading">
-        <h3><i class="fa-solid fa-arrow-up-arrow-down"></i> Experimento 4: Pico y Recuperación</h3>
-        <p>Simula un evento temporal (incremento de demanda) y observa cuándo aparece congestión, cuándo se recupera, y cómo cambia el ruido.</p>
-      </div>
-
-      <div class="peak-control-card">
-        <div class="peak-profile-section">
-          <h4>Perfil Temporal</h4>
-          <div class="peak-timeline">
-            <div class="timeline-label">00:00 — Demanda baja</div>
-            <div class="timeline-label">05:00 — Incremento</div>
-            <div class="timeline-label">10:00 — Pico máximo</div>
-            <div class="timeline-label">15:00 — Reducción</div>
-            <div class="timeline-label">20:00 — Recuperación</div>
-          </div>
-        </div>
-
-        <div class="peak-indicators-section">
-          <h4>Eventos Detectados</h4>
-          <div class="event-markers">
-            <div class="event-marker event-start">
-              <i class="fa-solid fa-play"></i>
-              <span>Inicio de congestión</span>
-              <span class="event-time" id="eventCongestionStart">—</span>
-            </div>
-            <div class="event-marker event-peak">
-              <i class="fa-solid fa-mountain"></i>
-              <span>Pico máximo</span>
-              <span class="event-time" id="eventPeakTime">—</span>
-            </div>
-            <div class="event-marker event-end">
-              <i class="fa-solid fa-check"></i>
-              <span>Recuperación completa</span>
-              <span class="event-time" id="eventRecoveryEnd">—</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="peak-actions">
-          <button id="peakSimulateBtn" class="btn-primary">Simular Pico</button>
-          <button id="peakResetBtn" class="btn-secondary">Restablecer</button>
-        </div>
-
-        <div class="peak-results" id="peakResults" style="display: none;">
-          <h4>Análisis del Evento</h4>
-          <div class="analysis-grid">
-            <div class="analysis-item">
-              <span class="analysis-label">Duración total de congestión</span>
-              <span class="analysis-value" id="analysisDuration">—</span>
-            </div>
-            <div class="analysis-item">
-              <span class="analysis-label">Incremento máximo de ruido</span>
-              <span class="analysis-value" id="analysisNoiseIncrease">—</span>
-            </div>
-            <div class="analysis-item">
-              <span class="analysis-label">Vías críticas durante pico</span>
-              <span class="analysis-value" id="analysisCriticalEdges">—</span>
-            </div>
-            <div class="analysis-item">
-              <span class="analysis-label">Tiempo promedio afectado</span>
-              <span class="analysis-value" id="analysisAvgTime">—</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- MAPA DE RUIDO Y TRÁFICO -->
-    <div class="sumo-sim-section">
-      <div class="sumo-sim-heading">
-        <h3><i class="fa-solid fa-volume-high"></i> Mapa de ruido y tráfico</h3>
-        <p>Índice de ruido relativo por vía, calculado a partir del flujo vehicular y la velocidad promedio de la simulación de tráfico en Kennedy.</p>
-      </div>
-      <div class="sumo-sim-card">
-        <div class="noise-map-wrap">
-          <div id="noiseMap"></div>
-          <div class="noise-map-status" id="noiseMapStatus">Cargando datos de tráfico…</div>
-          <div class="noise-map-legend">
-            <h4>Índice de ruido (relativo)</h4>
-            <div class="noise-legend-row"><span class="noise-legend-swatch" style="background:#2e7d5b"></span> Muy bajo</div>
-            <div class="noise-legend-row"><span class="noise-legend-swatch" style="background:#8bc34a"></span> Bajo</div>
-            <div class="noise-legend-row"><span class="noise-legend-swatch" style="background:#f1c40f"></span> Moderado</div>
-            <div class="noise-legend-row"><span class="noise-legend-swatch" style="background:#e67e22"></span> Alto</div>
-            <div class="noise-legend-row"><span class="noise-legend-swatch" style="background:#e5484d"></span> Muy alto</div>
-          </div>
-        </div>
-        <p class="noise-map-note">No es una medición acústica real en decibeles — es un proxy relativo: a mayor flujo vehicular y mayor velocidad, mayor ruido esperado. Datos: SUMO edgedata (<code>osm.net.xml</code> + <code>datos_vias.xml</code>).</p>
-      </div>
-    </div>
-
-    <footer>
-      "No se trata de representar la ciudad, sino de comprenderla para transformarla." — <span>Equipo POT Reverse Engineering</span>
-    </footer>
 
   </main>
 
 </div>
 
 <script src="modulo-08.js"></script>
-<script src="modulo-08-sumo.js"></script>
-<script src="modulo-08-demand.js"></script>
-<script src="modulo-08-perturbation.js"></script>
-<script src="modulo-08-redistribution.js"></script>
-<script src="modulo-08-peak.js"></script>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="modulo-08-noise.js"></script>
-
+<script src="modulo-08-sumo.js?v=corners-perfect-v32"></script>
 </body>
 </html>

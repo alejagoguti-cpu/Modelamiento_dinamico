@@ -1589,13 +1589,123 @@
       { name: "Submodelo de actores, usos y decisiones", parts: "Sistema social-comunitario + sistema socioeconómico y de ocupación + sistema institucional de gestión.", partsPurpose: "Sí", partsWhy: "Todos los sistemas articulados incluyen actores con intereses, objetivos, responsabilidades y capacidad de decisión.", totalPurpose: "Sí", totalWhy: "Analiza quién usa el territorio, quién decide, qué intereses intervienen y cómo se producen acuerdos, conflictos o cambios de manejo.", category: "Social dinámico", process: "Cambian los usos, las visitas, la participación, las organizaciones activas, las demandas, los conflictos, los acuerdos y las decisiones institucionales." },
       { name: "Submodelo de gestión y respuesta adaptativa", parts: "Sistema institucional de gestión + sistema hídrico + sistema biótico + sistema físico-urbano + sistema social-comunitario.", partsPurpose: "Sí", partsWhy: "Los sistemas institucional y social-comunitario incluyen actores que observan, deciden, intervienen y evalúan; los demás responden a esas intervenciones.", totalPurpose: "Sí", totalWhy: "Organiza un ciclo de observación, decisión, intervención, monitoreo y ajuste de las acciones territoriales.", category: "Socioecológico dinámico", process: "Cambian las presiones, los diagnósticos, las prioridades, los recursos, las áreas intervenidas, los resultados del monitoreo y las decisiones posteriores." }
     ];
+
+    // Escenarios de falla: para cada submodelo, situaciones reales en las
+    // que el submodelo dejaría de representar bien el territorio al
+    // aplicarlo a los subsistemas que articula — no son errores de cálculo,
+    // son casos donde los supuestos del submodelo se rompen.
+    const submodelFailureScenarios = [
+      {
+        name: "Submodelo de flujos de agua y drenaje urbano",
+        shortIcons: ["fa-trash", "fa-water"], shortQuote: "Igual seguimos botando basura al canal, así el modelo diga que no.",
+        scenarios: [
+          "Un evento de lluvia extrema supera la capacidad de diseño del canal: el submodelo asume una respuesta gradual, pero el desborde real es abrupto y no lineal.",
+          "El mantenimiento institucional no se ejecuta como se supone (retrasos, falta de presupuesto): el submodelo pierde validez porque una de sus partes (la gestión) deja de comportarse como se modeló.",
+          "Vertimientos o rellenos ilegales alteran la geometría real del canal de una forma que el submodelo, basado en la geometría de diseño, no contempla.",
+        ],
+      },
+      {
+        name: "Submodelo de hábitat y desplazamiento de especies",
+        shortIcons: ["fa-dove", "fa-volume-high"], shortQuote: "Las aves no se van a quedar ahí si el ruido sigue igual de fuerte.",
+        scenarios: [
+          "Aparece una especie invasora que cambia las relaciones de competencia y alimento sin estar contemplada en el submodelo.",
+          "El ruido o la luz artificial superan un umbral crítico: las especies abandonan el área de golpe, un comportamiento de umbral que el submodelo (pensado en cambios graduales) no anticipa.",
+          "Se asume un hábitat continuo, pero una obra nueva lo fragmenta de un momento a otro, cambiando por completo las rutas de desplazamiento supuestas.",
+        ],
+      },
+      {
+        name: "Submodelo de transformación del borde urbano",
+        shortIcons: ["fa-house-chimney", "fa-file-circle-xmark"], shortQuote: "La gente sigue construyendo donde le sirve, no donde dice la norma.",
+        scenarios: [
+          "Ocurre una urbanización informal acelerada que no sigue el patrón gradual que asume el submodelo.",
+          "Un cambio normativo (uso del suelo, licencias) modifica de un día para otro las reglas que el submodelo asumía estables.",
+          "El submodelo asume actores que deciden calculando beneficios, pero la ocupación real responde a una necesidad habitacional urgente, no a ese cálculo.",
+        ],
+      },
+      {
+        name: "Submodelo de recorridos y accesibilidad territorial",
+        shortIcons: ["fa-person-walking", "fa-map"], shortQuote: "Uno sigue caminando por donde le queda cerca, no por donde dice el plano.",
+        scenarios: [
+          "El cierre de una vía crítica (obra, bloqueo) cambia radicalmente los recorridos, invalidando los patrones históricos usados para construir el submodelo.",
+          "Aparece un modo de transporte nuevo (apps, bicicletas eléctricas) que no estaba contemplado y que cambia la demanda de forma súbita.",
+          "El submodelo asume accesibilidad pareja para todos, pero hay barreras físicas o de percepción de seguridad que excluyen a ciertos grupos y el submodelo no las distingue.",
+        ],
+      },
+      {
+        name: "Submodelo de ocupación y presión urbana",
+        shortIcons: ["fa-house-chimney-user", "fa-arrow-trend-up"], shortQuote: "La gente sigue llegando a vivir ahí aunque el modelo diga que ya no cabe más.",
+        scenarios: [
+          "Una crisis económica o una migración acelerada produce una ocupación mucho más rápida que la progresión gradual que asume el submodelo.",
+          "Se subestima la presión de actividades informales o de economía no registrada, que no dejan rastro en los datos con los que se construyó el submodelo.",
+          "Una intervención institucional (reasentamiento, legalización masiva) cambia las reglas del sistema de golpe, rompiendo la continuidad que el submodelo supone.",
+        ],
+      },
+      {
+        name: "Submodelo de actores, usos y decisiones",
+        shortIcons: ["fa-people-group", "fa-handshake-slash"], shortQuote: "Cada quien sigue decidiendo por su cuenta, no como quedó en el acuerdo.",
+        scenarios: [
+          "Aparecen actores nuevos (organizaciones, intereses externos) que no estaban mapeados cuando se construyó el submodelo.",
+          "Un conflicto latente escala más rápido de lo previsto y rompe los acuerdos institucionales que el submodelo daba por estables.",
+          "El submodelo asume que los actores deciden con información completa, pero en la práctica actúan con información parcial o desinformación.",
+        ],
+      },
+      {
+        name: "Submodelo de gestión y respuesta adaptativa",
+        shortIcons: ["fa-clipboard", "fa-eye-slash"], shortQuote: "Si nadie le sigue haciendo seguimiento, la decisión se queda solo en el papel.",
+        scenarios: [
+          "El monitoreo no se hace con la frecuencia que el submodelo asume, rompiendo el ciclo de observación-decisión-ajuste del que depende.",
+          "Se recortan los recursos institucionales y el ciclo de intervención se interrumpe a la mitad, dejando acciones a medio implementar.",
+          "La atención institucional se desvía hacia una emergencia distinta, y el sistema modelado deja de recibir el seguimiento que el submodelo supone constante.",
+        ],
+      },
+    ];
+
+    function showFailureScenariosModal() {
+      const overlay = document.createElement("div");
+      overlay.className = "combined-network-overlay";
+      const cards = submodelFailureScenarios.map((sm) => `
+        <div class="failure-scenario-card">
+          <h4><i class="fa-solid fa-diagram-project"></i> ${sm.name}</h4>
+          <ul>${sm.scenarios.map((s) => `<li><i class="fa-solid fa-triangle-exclamation"></i><span>${s}</span></li>`).join("")}</ul>
+        </div>`).join("");
+      overlay.innerHTML = `
+        <div class="combined-network-panel failure-scenarios-panel">
+          <div class="combined-network-heading">
+            <strong><i class="fa-solid fa-triangle-exclamation"></i> Escenarios de falla: cuándo cada submodelo dejaría de representar bien el territorio</strong>
+            <button type="button" class="subsystem-panel-close" id="closeFailureScenariosBtn" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+          <div class="combined-network-scroll failure-scenarios-scroll">
+            <p class="failure-scenarios-intro">No son errores de cálculo: son situaciones reales donde los supuestos de cada submodelo se rompen al aplicarlo a los subsistemas que articula.</p>
+            ${cards}
+          </div>
+        </div>`;
+      document.body.appendChild(overlay);
+      const close = () => overlay.remove();
+      overlay.querySelector("#closeFailureScenariosBtn")?.addEventListener("click", close);
+      overlay.addEventListener("click", (event) => { if (event.target === overlay) close(); });
+    }
+    document.getElementById("failureScenariosBtn")?.addEventListener("click", showFailureScenariosModal);
+
     const territorySystems = [
-      { id: "hidrica", name: "Dinámica hídrica", color: "#56b8d4", components: ["Agua", "lluvia", "suelo", "escorrentía", "sedimentos", "Canal Los Ángeles"], process: "El agua circula, se acumula, disminuye o se desborda según lluvia, pendiente, suelo, sedimentos, obras y drenaje.", category: "Determinista" },
-      { id: "biotica", name: "Dinámica biótica", color: "#68d391", components: ["Aves", "arañas", "insectos", "vegetación", "hábitats"], process: "Cambian la presencia de especies, el alimento, el refugio, la reproducción y la expansión de especies invasoras.", category: "Ecológico" },
-      { id: "fisico", name: "Sistema físico-urbano", color: "#b8c0c8", components: ["Construcciones", "vías", "edificaciones", "redes", "cerramientos", "obras"], process: "Cambian el estado de las obras, accesos, senderos y la fragmentación del borde urbano.", category: "Determinista" },
-      { id: "movilidad", name: "Sistema de movilidad", color: "#f1cf5b", components: ["Desplazamientos", "rutas de transporte", "accesos", "tiempos de viaje", "conexiones"], process: "Cambian los recorridos, usuarios, horarios, tiempos de espera, congestión, ruido y accesibilidad.", category: "Social" },
-      { id: "social", name: "Sistema social-comunitario", color: "#ee9a4b", components: ["Visitantes", "turismo", "grupos sociales", "formas de uso", "apropiación", "participación", "patrimonio ambiental"], process: "Cambian las visitas, formas de apropiación, actividades educativas, participación, acuerdos y conflictos.", category: "Social" },
-      { id: "socioeconomico", name: "Sistema socioeconómico y de ocupación", color: "#e58d62", components: ["Viviendas", "actividades económicas", "servicios", "equipamientos", "usos del suelo", "población", "decisiones de ocupación"], process: "Cambian la población, construcción, demanda de vivienda, servicios, actividades y presiones sobre el borde.", category: "Social" }
+
+      { id: "hidrica", name: "Dinámica hídrica", color: "#56b8d4", components: ["Agua", "lluvia", "suelo", "escorrentía", "sedimentos", "Canal Los Ángeles"],
+        dynamics: ["Lluvia y escorrentía", "Infiltración en el suelo", "Circulación y acumulación", "Sedimentación", "Desborde en crecientes"],
+        process: "El agua circula, se acumula, disminuye o se desborda según lluvia, pendiente, suelo, sedimentos, obras y drenaje.", category: "Determinista" },
+      { id: "biotica", name: "Dinámica biótica", color: "#68d391", components: ["Aves", "arañas", "insectos", "vegetación", "hábitats"],
+        dynamics: ["Reproducción y anidación", "Búsqueda de alimento", "Migración y desplazamiento", "Colonización de hábitats", "Depredación y competencia"],
+        process: "Cambian la presencia de especies, el alimento, el refugio, la reproducción y la expansión de especies invasoras.", category: "Ecológico" },
+      { id: "fisico", name: "Sistema físico-urbano", color: "#b8c0c8", components: ["Construcciones", "vías", "edificaciones", "redes", "cerramientos", "obras"],
+        dynamics: ["Construcción y mejoramiento", "Deterioro y mantenimiento", "Fragmentación del borde urbano", "Ocupación de predios", "Apertura y cierre de accesos"],
+        process: "Cambian el estado de las obras, accesos, senderos y la fragmentación del borde urbano.", category: "Determinista" },
+      { id: "movilidad", name: "Sistema de movilidad", color: "#f1cf5b", components: ["Desplazamientos", "rutas de transporte", "accesos", "tiempos de viaje", "conexiones"],
+        dynamics: ["Desplazamiento diario", "Congestión en horas pico", "Cambio de rutas", "Espera y transbordo", "Variación de tiempos de viaje"],
+        process: "Cambian los recorridos, usuarios, horarios, tiempos de espera, congestión, ruido y accesibilidad.", category: "Social" },
+      { id: "social", name: "Sistema social-comunitario", color: "#ee9a4b", components: ["Visitantes", "turismo", "grupos sociales", "formas de uso", "apropiación", "participación", "patrimonio ambiental"],
+        dynamics: ["Apropiación del espacio", "Participación comunitaria", "Conflictos por el uso", "Visitas y recorridos", "Transmisión de saberes"],
+        process: "Cambian las visitas, formas de apropiación, actividades educativas, participación, acuerdos y conflictos.", category: "Social" },
+      { id: "socioeconomico", name: "Sistema socioeconómico y de ocupación", color: "#e58d62", components: ["Viviendas", "actividades económicas", "servicios", "equipamientos", "usos del suelo", "población", "decisiones de ocupación"],
+        dynamics: ["Crecimiento poblacional", "Cambio de uso del suelo", "Oferta y demanda de vivienda", "Formalización de actividades", "Presión sobre el borde"],
+        process: "Cambian la población, construcción, demanda de vivienda, servicios, actividades y presiones sobre el borde.", category: "Social" }
     ];
 
     // ---------- Componentes geográficos reales de cada dinámica ----------
@@ -1788,11 +1898,11 @@
         // Dinámica hídrica: un pequeño sonido de río, nada más — una sola
         // capa de agua corriendo, simple y corta.
         hidrica: (c) => {
-          // Corriente continua + pequeñas variaciones de agua, sin tono sostenido.
-          const dur = 2.8;
-          playFilteredNoise(c, { duration: dur, filterFreq: 820, filterType: "lowpass", q: 0.45, gain: 0.075, fadeIn: 0.35, fadeOut: dur, lfoRate: 0.18, lfoDepth: 0.55 });
-          playFilteredNoise(c, { duration: dur * 0.82, filterFreq: 2100, filterType: "bandpass", q: 0.55, gain: 0.022, fadeIn: 0.5, fadeOut: dur * 0.82, lfoRate: 0.42, lfoDepth: 0.35 });
-          [0.24, 0.86, 1.48, 2.06].forEach((delay, i) => playTone(c, { freq: 980 + (i % 2) * 190, to: 620 + (i % 3) * 110, duration: 0.12, type: "triangle", gain: 0.018, delay, attack: 0.018 }));
+          // Lluvia leve: ruido fino, irregular y corto; no es un río ni una melodía.
+          const dur = 3.1;
+          playFilteredNoise(c, { duration: dur, filterFreq: 4200, filterType: "highpass", q: 0.35, gain: 0.018, fadeIn: 0.55, fadeOut: dur, lfoRate: 0.62, lfoDepth: 0.28 });
+          playFilteredNoise(c, { duration: dur * 0.72, filterFreq: 1700, filterType: "bandpass", q: 0.42, gain: 0.012, fadeIn: 0.7, fadeOut: dur * 0.72, lfoRate: 0.38, lfoDepth: 0.22 });
+          [0.34, 0.92, 1.58, 2.28].forEach((delay, i) => playTone(c, { freq: 1450 + (i % 2) * 260, to: 1050 + (i % 3) * 120, duration: 0.045, type: "sine", gain: 0.008, delay, attack: 0.008 }));
         },
         // Dinámica biótica: dos pajaritos conversando entre la vegetación —
         // trinos con variación natural de tono y ritmo, no siempre iguales
@@ -1819,12 +1929,11 @@
         // Sistema físico-urbano: sonido de ciudad — capas de tráfico
         // lejano y murmullo urbano, con tremolo suave, sin bocinas
         fisico: (c) => {
-          const dur = 3.4;
-          playFilteredNoise(c, { duration: dur, filterFreq: 340, filterType: "lowpass", gain: 0.1, fadeIn: 0.4, fadeOut: dur, lfoRate: 0.22, lfoDepth: 0.3 });
-          playFilteredNoise(c, { duration: dur * 0.85, filterFreq: 950, filterType: "bandpass", q: 0.8, gain: 0.045, fadeIn: 0.6, fadeOut: dur * 0.85, lfoRate: 0.5, lfoDepth: 0.4 });
-          playTone(c, { freq: 90, duration: dur * 0.7, type: "sine", gain: 0.05, attack: 0.5 });
-          // un carro pasando de lejos, muy suave, sin bocina
-          playTone(c, { freq: 65, to: 105, duration: 1.1, type: "triangle", gain: 0.035, delay: 0.7, attack: 0.35 });
+          // Trancón lejano: motor ralentí + pulsos lentos de tráfico, sin bocinas.
+          const dur = 3.2;
+          playFilteredNoise(c, { duration: dur, filterFreq: 250, filterType: "lowpass", gain: 0.055, fadeIn: 0.5, fadeOut: dur, lfoRate: 0.12, lfoDepth: 0.38 });
+          [0.35, 1.15, 2.0].forEach((delay, i) => playTone(c, { freq: 58 + i * 7, to: 72 + i * 8, duration: 0.38, type: "triangle", gain: 0.022, delay, attack: 0.12 }));
+          playFilteredNoise(c, { duration: dur * 0.7, filterFreq: 620, filterType: "bandpass", q: 0.5, gain: 0.012, fadeIn: 0.7, fadeOut: dur * 0.7, lfoRate: 0.2, lfoDepth: 0.25 });
         },
         // Sistema de movilidad: motor de fondo suave, sin bocina
         movilidad: (c) => {
@@ -2192,6 +2301,118 @@
     // (como el referente que mandaste) con líneas de guía señalando cada
     // ciclo o dinámica que ocurre en general en la red hídrica de Bogotá
     // — no es un mapa de un lugar puntual, es un esquema general.
+    // Mini-red de un subsistema: sus DINÁMICAS/CICLOS reales (no sustantivos
+    // fijos como "aves" o "vías"), con el texto DENTRO de cada bola, y TODAS
+    // conectadas con TODAS (no solo con la siguiente) — para mostrar que
+    // cualquier dinámica puede afectar a cualquier otra, no una secuencia.
+    function buildMiniNetworkSvg(items, color, systemId) {
+      const cx = 150, cy = 108, R = 82, nodeR = 34;
+      const n = items.length;
+      const nodes = items.map((label, i) => {
+        const angle = (i / n) * Math.PI * 2 - Math.PI / 2;
+        return { label, x: cx + R * Math.cos(angle), y: cy + R * Math.sin(angle) };
+      });
+      // TODAS las dinámicas conectadas con TODAS (malla completa)
+      let lines = "";
+      for (let i = 0; i < n; i++) {
+        for (let j = i + 1; j < n; j++) {
+          lines += `<line x1="${nodes[i].x.toFixed(1)}" y1="${nodes[i].y.toFixed(1)}" x2="${nodes[j].x.toFixed(1)}" y2="${nodes[j].y.toFixed(1)}" class="mini-net-line"/>`;
+        }
+      }
+      const nodeCircles = nodes.map((p) =>
+        `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${nodeR}" class="mini-net-node" style="--node-color:${color}"/>` +
+        `<foreignObject x="${(p.x - nodeR + 4).toFixed(1)}" y="${(p.y - nodeR + 4).toFixed(1)}" width="${(nodeR - 4) * 2}" height="${(nodeR - 4) * 2}"><div xmlns="http://www.w3.org/1999/xhtml" class="mini-net-node-text">${p.label}</div></foreignObject>`
+      ).join("");
+      return `<svg viewBox="0 0 300 220" class="mini-network-svg" data-system="${systemId}">${lines}${nodeCircles}</svg>`;
+    }
+
+    // "Ver toda la red junta": explota los 6 subsistemas con TODOS sus
+    // componentes reales en una sola red grande, conectados entre sí —
+    // los 6 subsistemas siempre conectados entre ellos, y sus componentes
+    // conectados a su propio subsistema, más algunas conexiones cruzadas
+    // por palabras en común (por ejemplo "vías" en físico y "rutas de
+    // transporte" en movilidad).
+    function showCombinedNetworkModal() {
+      const overlay = document.createElement("div");
+      overlay.className = "combined-network-overlay";
+      const W = 900, H = 900, cx = W / 2, cy = H / 2, clusterR = 300;
+      // Un "centro" invisible por sistema, solo para ubicar su racimo de
+      // dinámicas — no se dibuja ninguna bola ahí (ya sabemos de qué
+      // sistema es cada una por el color y por estar agrupadas).
+      const clusters = territorySystems.map((sys, i) => {
+        const angle = (i / territorySystems.length) * Math.PI * 2 - Math.PI / 2;
+        return { ...sys, cx: cx + clusterR * Math.cos(angle), cy: cy + clusterR * Math.sin(angle) };
+      });
+      let svgParts = [];
+      let nodeIndex = 0;
+      const allDynamicNodes = [];
+      // las dinámicas de cada sistema, TODAS conectadas con TODAS entre sí
+      // (malla completa, igual que en la mini-red) — se agrupan alrededor
+      // de su punto de racimo (invisible, sin bola ahí).
+      clusters.forEach((cl) => {
+        const items = cl.dynamics || cl.components;
+        const satR = 92;
+        const nodesHere = items.map((label, i) => {
+          const angle = (i / items.length) * Math.PI * 2 - Math.PI / 2;
+          return { label, x: cl.cx + satR * Math.cos(angle), y: cl.cy + satR * Math.sin(angle), color: cl.color, sysId: cl.id, originX: cl.cx, originY: cl.cy };
+        });
+        for (let i = 0; i < nodesHere.length; i++) {
+          for (let j = i + 1; j < nodesHere.length; j++) {
+            svgParts.push(`<line x1="${nodesHere[i].x}" y1="${nodesHere[i].y}" x2="${nodesHere[j].x}" y2="${nodesHere[j].y}" class="combined-sat-line" style="--node-color:${cl.color}"/>`);
+          }
+        }
+        allDynamicNodes.push(...nodesHere);
+      });
+      // conexiones cruzadas por palabras en comun entre dinámicas de
+      // DISTINTOS subsistemas (heuristica simple, no exhaustiva)
+      const KEYWORDS = [
+        ["desplazamiento", "accesos", "rutas", "recorridos"],
+        ["escorrentía", "infiltración", "agua", "sedimentación"],
+        ["vivienda", "ocupación", "uso del suelo", "construcción", "predios"],
+        ["hábitats", "colonización", "vegetación"],
+        ["conflictos", "presión", "apropiación"],
+      ];
+      const crossLines = [];
+      for (let i = 0; i < allDynamicNodes.length; i++) {
+        for (let j = i + 1; j < allDynamicNodes.length; j++) {
+          const a = allDynamicNodes[i], b = allDynamicNodes[j];
+          if (a.sysId === b.sysId) continue;
+          const shared = KEYWORDS.some((group) => group.some((k) => a.label.toLowerCase().includes(k)) && group.some((k) => b.label.toLowerCase().includes(k)));
+          if (shared) crossLines.push(`<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" class="combined-cross-line"/>`);
+        }
+      }
+      svgParts.push(...crossLines);
+      const nodeR2 = 26;
+      const dynCircles = allDynamicNodes.map((n) => {
+        const dx = (n.originX - n.x).toFixed(1), dy = (n.originY - n.y).toFixed(1);
+        return `<g class="combined-node combined-sat-node" style="--node-color:${n.color};--node-i:${nodeIndex++};--dx:${dx}px;--dy:${dy}px">` +
+          `<circle cx="${n.x}" cy="${n.y}" r="${nodeR2}"/>` +
+          `<foreignObject x="${n.x - nodeR2 + 3}" y="${n.y - nodeR2 + 3}" width="${(nodeR2 - 3) * 2}" height="${(nodeR2 - 3) * 2}"><div xmlns="http://www.w3.org/1999/xhtml" class="combined-sat-label">${n.label}</div></foreignObject>` +
+          `</g>`;
+      }).join("");
+      overlay.innerHTML = `
+        <div class="combined-network-panel">
+          <div class="combined-network-heading">
+            <strong><i class="fa-solid fa-diagram-project"></i> Red completa: ciclos y dinámicas de los 6 subsistemas</strong>
+            <button type="button" class="subsystem-panel-close" id="closeCombinedNetworkBtn" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+          <div class="combined-network-scroll">
+            <svg viewBox="0 0 ${W} ${H}" class="combined-network-svg">
+              <g class="combined-lines">${svgParts.join("")}</g>
+              <g class="combined-nodes">${dynCircles}</g>
+            </svg>
+          </div>
+        </div>`;
+      document.body.appendChild(overlay);
+      // Explosión: todos los nodos arrancan encogidos en el centro, y en
+      // el siguiente frame "explotan" hacia su posición final, con un
+      // pequeño retraso por nodo para que se vea como una expansión.
+      requestAnimationFrame(() => overlay.classList.add("exploded"));
+      const close = () => overlay.remove();
+      overlay.querySelector("#closeCombinedNetworkBtn")?.addEventListener("click", close);
+      overlay.addEventListener("click", (event) => { if (event.target === overlay) close(); });
+    }
+
     const buildHidricaDiagramHtml = (row) => {
       // Coordenadas en un lienzo de 400x260. "dot" = punto sobre el río,
       // "label" = dónde queda el recuadro de texto (siempre en un borde).
@@ -2496,19 +2717,26 @@
       const submodelIcons = ["fa-water", "fa-feather-pointed", "fa-city", "fa-person-walking", "fa-house-chimney", "fa-people-arrows", "fa-arrows-rotate"];
       const label = (row) => systems ? row.name : row.name.replace(/^Submodelo de /, "");
       const icon = (index) => (systems ? systemIcons : submodelIcons)[index] || "fa-circle-nodes";
-      const dynamicReadings = {
-        hidrica: "El territorio puede leerse como un ciclo de lluvia, infiltración, escorrentía, circulación, acumulación y desborde. La condición del agua cambia según la lluvia, la pendiente, el suelo, los sedimentos, los canales y las obras de drenaje.",
-        biotica: "El territorio cambia como un hábitat vivo: la vegetación ofrece refugio y alimento, las especies llegan, permanecen o se desplazan, y las condiciones de humedad, ruido y cobertura modifican sus posibilidades de reproducción y supervivencia.",
-        fisico: "El borde urbano se transforma cuando se construyen, mantienen o cierran vías, senderos, edificios y redes. Esas decisiones alteran la continuidad del espacio, los accesos, la fragmentación del hábitat y la relación entre ciudad y humedal.",
-        movilidad: "La ciudad se comporta como una red de recorridos: peatones, ciclistas y usuarios del transporte eligen rutas y horarios según accesos, tiempos de viaje, congestión, seguridad y conexiones entre barrios, equipamientos y espacios ambientales.",
-        social: "El territorio se transforma mediante prácticas de visita, cuidado, educación, participación y apropiación. Las relaciones entre habitantes, organizaciones y visitantes producen acuerdos, conflictos y nuevas formas de usar y proteger el espacio.",
-        socioeconomico: "La ocupación urbana cambia cuando las personas, hogares, empresas e instituciones deciden dónde vivir, trabajar, invertir y localizar servicios. Esas decisiones generan presiones sobre el borde, el agua, la movilidad y el hábitat."
+      const dynamicItems = {
+        // Dinámicas observables: cada ítem describe un cambio, ciclo, flujo o condición territorial.
+        hidrica: ["Precipitación y duración de las lluvias", "Infiltración, escorrentía y acumulación", "Conexión entre canales, humedales y drenajes", "Calidad del agua y carga de sedimentos", "Desborde y recuperación después de la lluvia"],
+        biotica: ["Reproducción y ciclos de vida", "Alimentación y disponibilidad de refugio", "Migración y desplazamiento de especies", "Cobertura vegetal y humedad", "Calidad del aire y presión urbana"],
+        fisico: ["Construcción y transformación de edificaciones", "Apertura, cierre y mantenimiento de vías", "Continuidad y deterioro de andenes", "Expansión o reducción de cerramientos", "Calidad del aire junto al borde vial"],
+        movilidad: ["Desplazamientos diarios de personas y vehículos", "Cambios de ruta por congestión", "Tiempos de viaje y espera", "Entrada y salida del humedal y los equipamientos", "Conexión o aislamiento entre barrios"],
+        social: ["Visita, permanencia y horarios de uso", "Cuidado y mantenimiento comunitario", "Educación ambiental y transmisión de conocimiento", "Participación y toma de decisiones", "Conflictos, acuerdos y cambios en la apropiación"],
+        socioeconomico: ["Construcción y crecimiento de viviendas", "Apertura y cierre de comercios", "Concentración o desplazamiento de actividades", "Llegada o pérdida de equipamientos", "Cambio de usos del suelo y presión sobre el borde"]
       };
       // Cuando la red está anclada al mapa real (Cartografía interactiva),
       // NINGUNA bolita abstracta de sistema se muestra — solo las bolitas
       // de lugar real (Humedal El Burro, Corabastos, etc.).
       const hideAllSystemBubbles = systems && withFlows;
       const nodes = hideAllSystemBubbles ? "" : rows.map((row, index) => { const [x,y] = positions[index]; return `<button type="button" class="map-network-node ${systems ? "map-system-node" : "map-submodel-node"}" data-map-network-index="${index}" data-sound-id="${row.id || ""}" aria-label="${label(row)}. Activar sonido del subsistema" style="--node-x:${x}%;--node-y:${y}%;--node-color:${row.color || colors[index]}"><i class="map-network-node-icon fa-solid ${icon(index)}" aria-hidden="true"></i><strong>${label(row)}</strong></button>`; }).join("");
+      // Botón central: en la vista "solo red" de subsistemas, al centro del
+      // anillo de las 6 bolas, dispara la explosión de las 6 a la vez con
+      // todas sus dinámicas y la red completa conectada entre sí.
+      const centerHubHtml = (systems && isPlainView && !hideAllSystemBubbles)
+        ? `<button type="button" id="mapNetworkCenterHub" class="map-network-center-hub" aria-label="Explotar los 6 subsistemas y ver la red completa"><i class="fa-solid fa-burst"></i><span>Ver red<br>completa</span></button>`
+        : "";
       if (hideAllSystemBubbles) declutteredPositions = computeDeclutteredPositions();
       const kennedyBoxesHtml = hideAllSystemBubbles ? buildPhenomenaHtml() + buildTextBoxesHtml() : "";
       const relationPairs = hideAllSystemBubbles ? [] : (systems
@@ -2568,36 +2796,109 @@
       target.classList.add("network-active");
       const flowsSvg = hideAllSystemBubbles ? buildTextBoxesSvg() : "";
       const flowDotsHtml = "";
-      target.innerHTML = `<div class="map-network-stage ${systems ? "systems-network" : "submodels-network"}"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><defs>${gradientDefs.join("")}</defs><g class="map-network-flows">${flowsSvg}</g><g class="map-network-bonds">${showBonds ? bonds : ""}</g></svg>${flowDotsHtml}${nodes}${kennedyBoxesHtml}</div>`;
+      target.innerHTML = `<div class="map-network-stage ${systems ? "systems-network" : "submodels-network"}"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><defs>${gradientDefs.join("")}</defs><g class="map-network-flows">${flowsSvg}</g><g class="map-network-bonds">${showBonds ? bonds : ""}</g></svg>${flowDotsHtml}${nodes}${centerHubHtml}${kennedyBoxesHtml}</div>`;
       // Ya existen los rectángulos reales: corrige en el siguiente frame el
       // punto de entrada/salida para que ninguna línea quede suspendida.
       if (hideAllSystemBubbles) requestAnimationFrame(() => updateTextBoxes());
+      target.querySelector("#mapNetworkCenterHub")?.addEventListener("click", (event) => {
+        event.stopPropagation();
+        showCombinedNetworkModal();
+      });
       target.querySelectorAll(".map-network-node").forEach((button) => button.addEventListener("click", () => {
         if (button.classList.contains("map-phenomenon-node")) return; // tiene su propio manejador, más abajo
         const row = rows[Number(button.dataset.mapNetworkIndex)];
         if (!row) return;
-        DINAMICA_SOUND.play(button.dataset.soundId || row.id); button.classList.remove("sound-playing"); void button.offsetWidth; button.classList.add("sound-playing"); window.setTimeout(() => button.classList.remove("sound-playing"), 900);
-        target.querySelectorAll(".map-network-node").forEach((node) => node.classList.toggle("selected", node === button));
-        target.querySelectorAll(".subsystem-components, .subsystem-purpose-panel, .subsystem-diagram-panel, .map-network-detail").forEach((node) => node.remove());
+        target.querySelectorAll(".subsystem-components, .subsystem-purpose-panel, .subsystem-diagram-panel, .map-network-detail, .submodel-failure-popup").forEach((node) => node.remove());
         const color = row.color || colors[Number(button.dataset.mapNetworkIndex)];
-        const partsPurpose = row.partsPurpose || "Sí";
-        const totalPurpose = row.totalPurpose || "Sí";
-        const partsWhy = row.partsWhy || `Las partes del sistema se analizan en relación con sus funciones y comportamientos dentro del territorio.`;
-        const totalWhy = row.totalWhy || `La totalidad se analiza por las relaciones que produce entre sus partes y sus efectos en el territorio de Bogotá.`;
-        const components = document.createElement("div");
-        components.className = "subsystem-components active map-components-panel";
-        components.style.setProperty("--bubble-color", color);
-        components.innerHTML = `<div class="subsystem-panel-heading"><strong><i class="fa-solid fa-arrows-rotate"></i> DINÁMICA DEL TERRITORIO</strong><button type="button" class="subsystem-panel-close" aria-label="Cerrar panel de dinámica"><i class="fa-solid fa-xmark"></i></button></div><p class="panel-scope-label">CÓMO CAMBIA EN EL TIEMPO</p><p class="panel-specific-reading">${dynamicReadings[row.id] || row.process}</p><p class="panel-specific-reading"><b>SEÑALES OBSERVABLES:</b> ${row.process}</p>`;
-        const purpose = document.createElement("aside");
-        purpose.className = "subsystem-purpose-panel active map-purpose-panel";
-        purpose.style.setProperty("--bubble-color", color);
-        purpose.innerHTML = `<div class="subsystem-panel-heading"><strong>${label(row)}</strong><button type="button" class="subsystem-panel-close" aria-label="Cerrar panel de propósito"><i class="fa-solid fa-xmark"></i></button></div><p class="panel-scope-label">ANÁLISIS GENERAL · TABLA DE PROPÓSITO</p><h4>¿Las partes tienen propósito propio?</h4><p><b>${partsPurpose}</b> · ${partsWhy}</p><h4>¿La totalidad tiene propósito propio?</h4><p><b>${totalPurpose}</b> · ${totalWhy}</p><h4>Por ende, la categoría es:</h4><b class="purpose-category">${row.category}</b><h4>Qué cambia en el tiempo</h4><p>${row.process}</p>`;
-        target.append(components);
-        target.append(purpose);
-        const closePanels = (event) => { event?.stopPropagation(); components.remove(); purpose.remove(); clearSubsystemPoints(); button.classList.remove("selected"); };
-        components.querySelector(".subsystem-panel-close")?.addEventListener("click", closePanels);
-        purpose.querySelector(".subsystem-panel-close")?.addEventListener("click", closePanels);
-        if (systems && withFlows) renderSubsystemPoints(subsystemData[Number(button.dataset.mapNetworkIndex)]);
+
+        // Animación de "explosión": la bolita principal lanza hacia afuera
+        // una bolita chiquita por cada componente/dinámica que la forma,
+        // igual que en "Ver toda la red junta" pero en el lugar donde se
+        // hizo clic, sin abrir ningún modal.
+        target.querySelectorAll(".bubble-explode-satellite").forEach((n) => n.remove());
+        try {
+          const items = row.dynamics || row.components;
+          if (items && items.length) {
+            const stageRect = target.getBoundingClientRect();
+            const btnRect = button.getBoundingClientRect();
+            const originX = btnRect.left + btnRect.width / 2 - stageRect.left;
+            const originY = btnRect.top + btnRect.height / 2 - stageRect.top;
+            const satR = Math.max(70, btnRect.width * 1.3);
+            items.forEach((label, i) => {
+              const angle = (i / items.length) * Math.PI * 2 - Math.PI / 2;
+              const finalX = originX + satR * Math.cos(angle);
+              const finalY = originY + satR * Math.sin(angle);
+              const sat = document.createElement("div");
+              sat.className = "bubble-explode-satellite";
+              sat.style.setProperty("--node-color", color);
+              sat.style.setProperty("--origin-x", `${originX}px`);
+              sat.style.setProperty("--origin-y", `${originY}px`);
+              sat.style.setProperty("--final-x", `${finalX}px`);
+              sat.style.setProperty("--final-y", `${finalY}px`);
+              sat.style.setProperty("--explode-delay", `${i * 55}ms`);
+              sat.textContent = label;
+              target.appendChild(sat);
+            });
+            requestAnimationFrame(() => {
+              target.querySelectorAll(".bubble-explode-satellite").forEach((n) => n.classList.add("exploded"));
+            });
+          }
+        } catch (err) {
+          console.error("No se pudo mostrar la animación de explosión:", err);
+        }
+
+        // El popup de escenario de falla va PRIMERO y en su propio bloque
+        // protegido: así, sin importar si algo más abajo en este mismo
+        // clic falla, el popup siempre se intenta mostrar.
+        let failurePopup = null;
+        if (!systems) {
+          try {
+            const scenarioSet = submodelFailureScenarios[Number(button.dataset.mapNetworkIndex)];
+            if (scenarioSet) {
+              failurePopup = document.createElement("div");
+              failurePopup.className = "submodel-failure-popup";
+              failurePopup.style.setProperty("--bubble-color", color);
+              const iconsHtml = (scenarioSet.shortIcons || []).map((ic) => `<i class="fa-solid ${ic} submodel-failure-icon"></i>`).join("");
+              failurePopup.innerHTML = `<button type="button" class="submodel-failure-close" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button><div class="submodel-failure-icons">${iconsHtml}</div><span>“${scenarioSet.shortQuote}”</span>`;
+              target.append(failurePopup);
+              failurePopup.querySelector(".submodel-failure-close")?.addEventListener("click", (event) => { event.stopPropagation(); failurePopup.remove(); });
+            }
+          } catch (err) {
+            console.error("No se pudo mostrar el popup de escenario de falla:", err);
+          }
+        }
+
+        try {
+          DINAMICA_SOUND.play(button.dataset.soundId || row.id); button.classList.remove("sound-playing"); void button.offsetWidth; button.classList.add("sound-playing"); window.setTimeout(() => button.classList.remove("sound-playing"), 900);
+        } catch (err) { console.error("Error de sonido:", err); }
+        target.querySelectorAll(".map-network-node").forEach((node) => node.classList.toggle("selected", node === button));
+        try {
+          const partsPurpose = row.partsPurpose || "Sí";
+          const totalPurpose = row.totalPurpose || "Sí";
+          const partsWhy = row.partsWhy || `Las partes del sistema se analizan en relación con sus funciones y comportamientos dentro del territorio.`;
+          const totalWhy = row.totalWhy || `La totalidad se analiza por las relaciones que produce entre sus partes y sus efectos en el territorio de Bogotá.`;
+          const components = document.createElement("div");
+          components.className = "subsystem-components active map-components-panel";
+          components.style.setProperty("--bubble-color", color);
+          const miniNetworkItems = row.dynamics || row.components;
+          const miniNetworkHtml = miniNetworkItems
+            ? `<p class="panel-scope-label">CICLOS Y DINÁMICAS DE ESTE SUBSISTEMA</p>${buildMiniNetworkSvg(miniNetworkItems, color, row.id)}<button type="button" class="see-full-network-btn" id="seeFullNetworkBtn"><i class="fa-solid fa-diagram-project"></i> Ver toda la red junta</button>`
+            : `<p class="panel-scope-label">SISTEMAS QUE ARTICULA</p><p class="panel-specific-reading">${row.parts || ""}</p>`;
+          components.innerHTML = `<div class="subsystem-panel-heading"><strong><i class="fa-solid fa-arrows-rotate"></i> DINÁMICA DEL TERRITORIO</strong><button type="button" class="subsystem-panel-close" aria-label="Cerrar panel de dinámica"><i class="fa-solid fa-xmark"></i></button></div>${miniNetworkHtml}<p class="panel-scope-label">CÓMO CAMBIA EN EL TIEMPO</p><p class="panel-specific-reading">${row.process}</p>`;
+          const purpose = document.createElement("aside");
+          purpose.className = "subsystem-purpose-panel active map-purpose-panel";
+          purpose.style.setProperty("--bubble-color", color);
+          purpose.innerHTML = `<div class="subsystem-panel-heading"><strong>${label(row)}</strong><button type="button" class="subsystem-panel-close" aria-label="Cerrar panel de propósito"><i class="fa-solid fa-xmark"></i></button></div><p class="panel-scope-label">ANÁLISIS GENERAL · TABLA DE PROPÓSITO</p><h4>¿Las partes tienen propósito propio?</h4><p><b>${partsPurpose}</b> · ${partsWhy}</p><h4>¿La totalidad tiene propósito propio?</h4><p><b>${totalPurpose}</b> · ${totalWhy}</p><h4>Por ende, la categoría es:</h4><b class="purpose-category">${row.category}</b><h4>Qué cambia en el tiempo</h4><p>${row.process}</p>`;
+          target.append(components);
+          target.append(purpose);
+          components.querySelector("#seeFullNetworkBtn")?.addEventListener("click", (event) => { event.stopPropagation(); showCombinedNetworkModal(); });
+          const closePanels = (event) => { event?.stopPropagation(); components.remove(); purpose.remove(); failurePopup?.remove(); target.querySelectorAll(".bubble-explode-satellite").forEach((n) => n.remove()); clearSubsystemPoints(); button.classList.remove("selected"); };
+          components.querySelector(".subsystem-panel-close")?.addEventListener("click", closePanels);
+          purpose.querySelector(".subsystem-panel-close")?.addEventListener("click", closePanels);
+          if (systems && withFlows) renderSubsystemPoints(subsystemData[Number(button.dataset.mapNetworkIndex)]);
+        } catch (err) {
+          console.error("Error mostrando los paneles de dinámica/propósito:", err);
+        }
       }));
       if (hideAllSystemBubbles) {
         // Los nodos de lugar tienen su propio click porque el listener general

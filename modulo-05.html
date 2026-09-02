@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -6,201 +6,317 @@
   <title>Bogotá Viva · Módulo 05 · Navegador Multiescalar</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
   <link href="https://unpkg.com/maplibre-gl@6.5.0/dist/maplibre-gl.css" rel="stylesheet">
-  <link rel="stylesheet" href="modulo-05.css?v=map-filter-export-v1">
-  <link rel="stylesheet" href="site-theme.css?v=minimal-v4">
-  <link rel="stylesheet" href="modulo-05-popup.css?v=wetland-zoom-v1">
-  <link rel="preload" as="image" href="assets/planosnico-preview.webp" type="image/webp" fetchpriority="high">
+  <link rel="stylesheet" href="site-theme.css?v=20260823">
   <link rel="stylesheet" href="navigation-unified.css?v=20260824">
+  <link rel="stylesheet" href="modulo-05.css?v=20260901_strict_planta_2d">
+  <link rel="stylesheet" href="modulo-05-polish.css?v=20260901_no_scroll_perfect">
 </head>
-<body>
-  <div class="app-shell">
-            <aside class="sidebar sidebar-icons-only">
-    <a class="brand-icon" href="index.html" title="Bogotá Viva · Inicio" aria-label="Inicio"><i class="fa-solid fa-diagram-project"></i></a>
-    <nav class="icon-nav" aria-label="Módulos">
-      <a href="index.html" class="icon-nav-item" title="Inicio"><i class="fa-solid fa-house"></i></a>
-      <a href="modulo-02.html" class="icon-nav-item" title="02 · Medir la red"><i class="fa-solid fa-chart-simple"></i></a>
-      <a href="modulo-03.html" class="icon-nav-item" title="03 · Discurso vs realidad"><i class="fa-solid fa-eye"></i></a>
-      <a href="modulo-04.html" class="icon-nav-item" title="04 · Macromodelos"><i class="fa-solid fa-bullseye"></i></a>
-      <a href="modulo-05.html" class="icon-nav-item active" title="05 · Navegador multiescalar"><i class="fa-solid fa-magnifying-glass-location"></i></a>
-      <a href="modulo-06.html" class="icon-nav-item" title="06 · POT ↔ ODS"><i class="fa-solid fa-earth-americas"></i></a>
-      <a href="modulo-07.html" class="icon-nav-item" title="07 · Simulador"><i class="fa-solid fa-flask"></i></a>
-      <a href="modulo-08.html" class="icon-nav-item" title="08 · Lectura dinámica"><i class="fa-solid fa-wave-square"></i></a>
-      <a href="modulo-09.html" class="icon-nav-item" title="09 · Modelo propio"><i class="fa-solid fa-atom"></i></a>
-    </nav>
+<body class="scale-natural-theme">
+  <div class="app">
+    
+    <!-- BARRA LATERAL UNIFICADA -->
+    <aside class="sidebar sidebar-icons-only">
+      <a class="brand-icon" href="index.html" title="Bogotá Viva · Inicio" aria-label="Inicio"><i class="fa-solid fa-diagram-project"></i></a>
+      <nav class="icon-nav" aria-label="Módulos">
+        <a href="index.html" class="icon-nav-item" title="Inicio"><i class="fa-solid fa-house"></i></a>
+        <a href="modulo-02.html" class="icon-nav-item" title="02 · Medir la red"><i class="fa-solid fa-chart-simple"></i></a>
+        <a href="modulo-03.html" class="icon-nav-item" title="03 · Discurso vs realidad"><i class="fa-solid fa-eye"></i></a>
+        <a href="modulo-04.html" class="icon-nav-item" title="04 · Macromodelos"><i class="fa-solid fa-bullseye"></i></a>
+        <a href="modulo-05.html" class="icon-nav-item active" title="05 · Navegador multiescalar"><i class="fa-solid fa-magnifying-glass-location"></i></a>
+        <a href="modulo-06.html" class="icon-nav-item" title="06 · POT ↔ ODS"><i class="fa-solid fa-earth-americas"></i></a>
+        <a href="modulo-07.html" class="icon-nav-item" title="07 · Simulador"><i class="fa-solid fa-flask"></i></a>
+        <a href="modulo-08.html" class="icon-nav-item" title="08 · Lectura dinámica"><i class="fa-solid fa-wave-square"></i></a>
+        <a href="modulo-09.html" class="icon-nav-item" title="09 · Modelo propio"><i class="fa-solid fa-atom"></i></a>
+      </nav>
 
-    <div class="icon-nav-footer">
-      <a href="configuracion.html" class="icon-nav-item" title="Configuración"><i class="fa-solid fa-gear"></i></a>
-      <a href="demo.html" class="icon-nav-item" title="Salir"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
-    </div>
-  </aside>
+      <div class="icon-nav-footer">
+        <a href="configuracion.html" class="icon-nav-item" title="Configuración"><i class="fa-solid fa-gear"></i></a>
+        <a href="demo.html" class="icon-nav-item" title="Salir"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
+      </div>
+    </aside>
 
-    <header class="topbar">
-      <div class="topbar-title"><i class="fa-solid fa-route"></i><strong>Bogotá Viva:</strong> Simulación Urbana</div>
-      <div class="topbar-status"><span class="status-dot"></span><span id="connectionLabel">Mapa real preparado</span><span class="separator">·</span><span>OSM</span><span class="topbar-help">Centro de ayuda <i class="fa-solid fa-bell"></i></span></div>
-    </header>
+    <!-- ÁREA PRINCIPAL -->
+    <main class="main">
 
-    <main class="workspace">
-      <section class="control-panel" aria-label="Controles del navegador">
-        <div class="eyebrow"><span class="eyebrow-line"></span> BOGOTÁ VIVA · 05B</div>
-        <h1>Navegador<br><span>Multiescalar</span></h1>
-        <div class="panel-block">
-          <div class="block-label"><span class="step-label">1</span> ELIGE UNA ESCALA</div>
-          <div class="scale-grid" role="tablist" aria-label="Escalas temáticas">
-            <button class="scale-btn is-active" data-scale="natural" role="tab" aria-selected="true"><i class="fa-solid fa-droplet"></i><span>Natural</span></button>
-            <button class="scale-btn" data-scale="cultural" role="tab" aria-selected="false"><i class="fa-solid fa-landmark"></i><span>Cultural</span></button>
-            <button class="scale-btn" data-scale="tecnologico" role="tab" aria-selected="false"><i class="fa-solid fa-microchip"></i><span>Tecnológico</span></button>
-            <button class="scale-btn" data-scale="metaverso" role="tab" aria-selected="false"><i class="fa-solid fa-cubes"></i><span>Metaverso</span></button>
+      <!-- TOPBAR SUPERIOR -->
+      <header class="topbar">
+        <div class="topbar-title">
+          <i class="fa-solid fa-magnifying-glass-location"></i>
+          <strong>Bogotá Viva:</strong> Navegador Multiescalar
+          <span class="scale-badge" id="currentScaleBadge">
+            <i class="fa-solid fa-droplet"></i> Escala Natural
+          </span>
+        </div>
+        <div class="topbar-status">
+          <span class="status-dot"></span>
+          <span id="connectionLabel">Cartografía real conectada</span>
+          <span class="separator">·</span>
+          <span>OpenStreetMap Dark</span>
+          <span class="separator">·</span>
+          <span class="topbar-help">33 UPLs <i class="fa-solid fa-circle-nodes"></i></span>
+        </div>
+      </header>
+
+      <!-- CONTENIDO DEL NAVEGADOR MULTIESCALAR (100% SIN SCROLL) -->
+      <div class="workspace">
+        
+        <!-- PANEL LATERAL DE CONTROL COMPACTO -->
+        <section class="control-panel" aria-label="Controles del navegador multiescalar">
+          <div class="panel-hero">
+            <div class="eyebrow"><span class="eyebrow-line"></span> BOGOTÁ VIVA · MÓDULO 05</div>
+            <h1>Navegador <span class="gradient-text">Multiescalar</span></h1>
+            <p class="panel-desc">Exploración territorial en 4 dimensiones dinámicas.</p>
           </div>
-        </div>
 
-        <div class="panel-block">
-          <div class="block-label"><span class="step-label">2</span> ELIGE UNA UPL</div>
-          <label class="sr-only" for="uplSelect">Seleccionar UPL</label>
-          <select id="uplSelect"></select>
-          <p id="uplTag" class="field-note">Selecciona una UPL para enfocar la exploración.</p>
-        </div>
-
-        <div class="panel-block map-data-tools">
-          <div class="block-label"><span class="step-label">3</span> FILTRA Y EXPORTA</div>
-          <div id="mapCategoryFilters" class="map-category-filters" role="group" aria-label="Filtrar puntos por categoría" aria-live="polite"><span class="field-note">Las categorías aparecerán cuando carguen los puntos.</span></div>
-          <div class="map-export-group">
-            <span class="map-export-label">MAPA VISIBLE</span>
-            <div class="map-export-row" role="group" aria-label="Exportar puntos visibles del mapa">
-              <button id="exportVisibleCsv" class="map-export-btn" type="button" disabled>CSV</button>
-              <button id="exportVisibleGeojson" class="map-export-btn" type="button" disabled>GeoJSON</button>
+          <!-- 1. SELECTOR DE LAS 4 ESCALAS -->
+          <div class="panel-block">
+            <div class="block-header">
+              <span class="step-badge">1</span>
+              <span class="block-title">DIMENSIÓN / ESCALA</span>
+            </div>
+            <div class="scale-grid" role="tablist" aria-label="Escalas temáticas">
+              <button class="scale-card is-active" data-scale="natural" role="tab" aria-selected="true">
+                <div class="scale-icon-wrap"><i class="fa-solid fa-droplet"></i></div>
+                <div class="scale-info">
+                  <strong>Natural</strong>
+                  <span>Agua y humedales</span>
+                </div>
+              </button>
+              <button class="scale-card" data-scale="cultural" role="tab" aria-selected="false">
+                <div class="scale-icon-wrap"><i class="fa-solid fa-landmark"></i></div>
+                <div class="scale-info">
+                  <strong>Cultural</strong>
+                  <span>Patrimonio y memoria</span>
+                </div>
+              </button>
+              <button class="scale-card" data-scale="tecnologico" role="tab" aria-selected="false">
+                <div class="scale-icon-wrap"><i class="fa-solid fa-microchip"></i></div>
+                <div class="scale-info">
+                  <strong>Tecnológico</strong>
+                  <span>Movilidad y redes</span>
+                </div>
+              </button>
+              <button class="scale-card" data-scale="metaverso" role="tab" aria-selected="false">
+                <div class="scale-icon-wrap"><i class="fa-solid fa-cubes"></i></div>
+                <div class="scale-info">
+                  <strong>Metaverso</strong>
+                  <span>Simulación inmersiva</span>
+                </div>
+              </button>
             </div>
           </div>
-          <div class="map-export-group map-cluster-export">
-            <span class="map-export-label">ÚLTIMO CLUSTER</span>
-            <div class="map-export-row" role="group" aria-label="Exportar puntos del último cluster">
-              <button id="exportClusterCsv" class="map-export-btn" type="button" disabled>CSV</button>
-              <button id="exportClusterGeojson" class="map-export-btn" type="button" disabled>GeoJSON</button>
+
+          <!-- 2. ENFOQUE TERRITORIAL POR UPL -->
+          <div class="panel-block">
+            <div class="block-header">
+              <span class="step-badge">2</span>
+              <span class="block-title">UNIDAD DE PLANEAMIENTO (UPL)</span>
+            </div>
+            <div class="upl-select-wrap">
+              <i class="fa-solid fa-location-crosshairs upl-select-icon"></i>
+              <select id="uplSelect" class="upl-select" aria-label="Seleccionar UPL"></select>
+            </div>
+            <div class="upl-info-card" id="uplInfoCard">
+              <div class="upl-info-head">
+                <span class="upl-pill" id="uplPill">UPL 13</span>
+                <span class="upl-localidad" id="uplLocalidad">Kennedy</span>
+              </div>
+              <p id="uplTag" class="upl-tag">Alta viabilidad — Metro L1, Manzana del Cuidado y parque metropolitano.</p>
             </div>
           </div>
-          <p id="mapDataSummary" class="field-note">Sin puntos cargados.</p>
-          <p id="mapClusterSummary" class="field-note">Pasa el cursor sobre un cluster para habilitar su exportación.</p>
-        </div>
 
-      </section>
+          <!-- 3. CAPAS TEMÁTICAS ACTIVAS -->
+          <div class="panel-block">
+            <div class="block-header">
+              <span class="step-badge">3</span>
+              <span class="block-title">CAPAS Y COBERTURAS</span>
+            </div>
+            <div class="layers-toggle-grid" id="layersToggleGrid">
+              <label class="layer-toggle-item">
+                <input type="checkbox" id="layerToggleRoads" checked>
+                <span class="toggle-indicator"></span>
+                <span class="layer-name"><i class="fa-solid fa-road"></i> Red vial</span>
+              </label>
+              <label class="layer-toggle-item">
+                <input type="checkbox" id="layerTogglePlaces" checked>
+                <span class="toggle-indicator"></span>
+                <span class="layer-name" id="layerPlacesLabel"><i class="fa-solid fa-circle-dot"></i> Nodos escala</span>
+              </label>
+              <label class="layer-toggle-item">
+                <input type="checkbox" id="layerToggleUplBoundary" checked>
+                <span class="toggle-indicator"></span>
+                <span class="layer-name"><i class="fa-solid fa-draw-polygon"></i> Perímetro</span>
+              </label>
+              <label class="layer-toggle-item">
+                <input type="checkbox" id="layerToggleTransit" checked>
+                <span class="toggle-indicator"></span>
+                <span class="layer-name"><i class="fa-solid fa-train-subway"></i> Transporte</span>
+              </label>
+            </div>
+          </div>
 
-      <section class="map-panel" aria-label="Mapa de Bogotá">
-        <div id="map" class="map-canvas"></div>
-        <div class="map-headline"><div><span class="map-kicker">EXPLORACIÓN EN VIVO</span><h2 id="mapTitle">UPL 13 · Tintal</h2><p id="mapSubtitle">Bogotá · calles, equipamientos y estructura natural</p></div><div class="map-actions"><button id="locateBtn" class="map-action" type="button" aria-label="Restablecer mapa" title="Restablecer mapa"><i class="fa-solid fa-crosshairs" aria-hidden="true"></i></button></div></div>
-        <div id="uplZoomIndicator" class="upl-zoom-indicator" role="status" aria-live="polite" aria-atomic="true" aria-busy="false" hidden><i class="fa-solid fa-location-crosshairs" aria-hidden="true"></i><span><strong id="uplZoomIndicatorLabel">Enfocando UPL…</strong><small id="uplZoomIndicatorHint">Ajustando la vista</small></span><span class="upl-zoom-progress" aria-hidden="true"></span></div>
-        <div class="map-legend"><span><i class="legend-road"></i>Red vial OSM</span><span><i class="legend-place"></i>Pepitas OSM</span><span><i class="legend-upl"></i>UPL seleccionada</span><span id="roadLevel" class="road-level">Nivel meso · 5 jerarquías visibles</span></div>
-        <div class="map-toast" id="mapToast" role="status" aria-live="polite"><i class="fa-solid fa-circle-info"></i><span>Inicializando mapa real…</span></div>
-        <div class="map-attribution-note">Datos de calles y lugares: <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap contributors</a> · Visualización exploratoria RAPOT</div>
-      </section>
+          <!-- 4. LECTURA SISTÉMICA Y EXPORTACIÓN -->
+          <div class="panel-block panel-actions-block">
+            <button id="btnToggleDiagnosticPopup" class="btn-trigger-diagnostic" type="button">
+              <i class="fa-solid fa-brain"></i>
+              <span>Lectura Sistémica POT</span>
+            </button>
+            <div class="export-actions-row">
+              <button id="exportVisibleGeojson" class="btn-export" type="button" title="Exportar datos visibles"><i class="fa-solid fa-download"></i> GeoJSON</button>
+              <button id="exportVisibleCsv" class="btn-export" type="button" title="Exportar tabla CSV"><i class="fa-solid fa-file-csv"></i> CSV</button>
+              <button id="btnCenterBogota" class="btn-export" type="button" title="Restablecer vista general"><i class="fa-solid fa-crosshairs"></i> Encuadrar</button>
+            </div>
+          </div>
 
+        </section>
+
+        <!-- VISOR CARTOGRÁFICO INTERACTIVO -->
+        <section class="map-panel" aria-label="Mapa interactivo de Bogotá">
+          <div id="map" class="map-canvas"></div>
+
+          <!-- OVERLAY DE CABECERA DEL MAPA (ESQUINA SUPERIOR IZQUIERDA) -->
+          <div class="map-headline">
+            <div class="headline-info">
+              <span class="map-kicker" id="mapScaleKicker"><i class="fa-solid fa-droplet"></i> ESCALA NATURAL</span>
+              <h2 id="mapTitle">UPL 13 · Tintal</h2>
+              <p id="mapSubtitle">Kennedy · Estructura Ecológica Principal, rondas y conectores</p>
+            </div>
+            <div class="map-actions">
+              <button id="locateBtn" class="map-action-btn" type="button" aria-label="Centrar UPL" title="Centrar UPL actual"><i class="fa-solid fa-location-arrow"></i></button>
+              <button id="fullscreenBtn" class="map-action-btn" type="button" aria-label="Pantalla completa" title="Pantalla completa"><i class="fa-solid fa-expand"></i></button>
+            </div>
+          </div>
+
+          <!-- POP-UP EN LA ESQUINA: LECTURA SISTÉMICA POT (ESQUINA INFERIOR DERECHA) -->
+          <div class="map-corner-diagnostic" id="mapCornerDiagnostic">
+            <div class="diagnostic-card" id="scaleDiagnosticCard">
+              <div class="diagnostic-card-top">
+                <div class="diagnostic-scale-header">
+                  <span class="diagnostic-badge"><i class="fa-solid fa-brain"></i> LECTURA SISTÉMICA POT</span>
+                  <h4 id="diagScaleTitle">Dimensión Natural</h4>
+                </div>
+                <button id="btnCloseCornerDiagnostic" class="btn-diagnostic-close" type="button" aria-label="Minimizar">&minus;</button>
+              </div>
+              <p class="diag-reading" id="diagScaleReading">
+                La escala natural hace visibles el agua, los humedales y la estructura ecológica como sistemas vivos continuos que trascienden los límites administrativos.
+              </p>
+              <div class="diag-critique-box">
+                <div class="critique-label"><i class="fa-solid fa-triangle-exclamation"></i> Límite del modelo POT:</div>
+                <p id="diagScaleCritique">
+                  El POT fija polígonos estáticos de protección, pero omite los flujos estacionales de cuenca, las presiones de impermeabilización y la fragmentación biótica.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- BOTÓN FLOTANTE EN LA ESQUINA CUANDO ESTÁ MINIMIZADO -->
+          <button id="btnOpenCornerDiagnostic" class="btn-corner-floating-pill" type="button" style="display:none;">
+            <i class="fa-solid fa-brain"></i>
+            <span>Lectura Sistémica POT</span>
+          </button>
+
+          <!-- INDICADOR DE ZOOM Y ENFOQUE UPL -->
+          <div id="uplZoomIndicator" class="upl-zoom-indicator" role="status" aria-live="polite" hidden>
+            <i class="fa-solid fa-location-crosshairs"></i>
+            <div>
+              <strong id="uplZoomIndicatorLabel">Enfocando UPL…</strong>
+              <small id="uplZoomIndicatorHint">Ajustando vista multiescalar</small>
+            </div>
+          </div>
+
+          <!-- LEYENDA DINÁMICA DEL MAPA -->
+          <div class="map-legend" id="mapLegend">
+            <span class="legend-item"><i class="legend-dot scale-primary-dot"></i> Nodos temáticos</span>
+            <span class="legend-item"><i class="legend-line scale-road-line"></i> Red vial</span>
+            <span class="legend-item"><i class="legend-poly scale-upl-poly"></i> Perímetro UPL</span>
+            <span id="roadLevel" class="legend-item road-level">Meso · 33 UPLs</span>
+          </div>
+
+          <!-- TOAST DE ESTADO -->
+          <div class="map-toast" id="mapToast" role="status" aria-live="polite">
+            <i class="fa-solid fa-circle-info"></i>
+            <span id="mapToastText">Cargando cartografía de Bogotá…</span>
+          </div>
+
+          <!-- OVERLAY METAVERSO: BOGOTÁ INFINITE DRIVE -->
+          <div id="driveOverlay" class="drive-overlay" style="display:none;">
+            <canvas id="multiscaleDriveCanvas"></canvas>
+            <div class="drive-hud">
+              <div class="drive-hud-top">
+                <div class="hud-box">
+                  <span class="hud-label">SCORE</span>
+                  <span class="hud-value" id="multiDriveScore">00000 PTS</span>
+                </div>
+                <div class="hud-box">
+                  <span class="hud-label">DISTANCIA</span>
+                  <span class="hud-value" id="multiDriveDistance">0.00 km</span>
+                </div>
+                <div class="hud-box">
+                  <span class="hud-label">TIEMPO</span>
+                  <span class="hud-value" id="multiDriveTimer">00:00.0</span>
+                </div>
+                <div class="hud-audio-controls">
+                  <button id="driveMute" class="hud-btn" type="button" aria-label="Silenciar">🔊</button>
+                  <input type="range" id="driveVolume" min="0" max="1" step="0.05" value="0.4" aria-label="Volumen">
+                </div>
+              </div>
+              <div class="drive-hud-status" id="multiDriveStatus">EN MARCHA · CONTROLA CON WASD / FLECHAS</div>
+              <div class="drive-hud-guide">
+                <span><strong>W/↑</strong> Acelerar</span>
+                <span><strong>S/↓</strong> Frenar</span>
+                <span><strong>A-D/←→</strong> Dirección</span>
+                <span><strong>R</strong> Reiniciar</span>
+              </div>
+            </div>
+            <div id="multiDriveToast" class="drive-toast"></div>
+            <audio id="driveMusic" src="assets/bogota-infinite-drive-background.wav" loop preload="none"></audio>
+          </div>
+
+          <!-- NOTA DE ATRIBUCIÓN -->
+          <div class="map-attribution-note">
+            Cartografía: <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap</a> · Modelo Multiescalar RAPOT
+          </div>
+        </section>
+
+      </div>
     </main>
   </div>
 
-  <div id="scaleNetworkModal" class="scale-network-modal" aria-hidden="true">
-    <div class="scale-network-dialog" role="dialog" aria-modal="true" aria-labelledby="scaleNetworkTitle">
-      <header class="scale-network-dialog-head">
-        <div class="scale-network-heading">
-          <span class="scale-network-kicker">RED MULTIESCALA · BOGOTÁ VIVA</span>
-          <h2 id="scaleNetworkTitle">Red Natural</h2>
-          <p id="scaleNetworkDescription">Sistemas hídricos, estructura ecológica y cobertura vegetal conectados.</p>
-        </div>
-        <div class="scale-network-actions" aria-label="Controles de la red">
-          <button id="scaleNetworkZoomOut" class="scale-network-zoom" type="button" aria-label="Alejar red">−</button>
-          <button id="scaleNetworkZoomReset" class="scale-network-zoom scale-network-zoom-value" type="button" aria-label="Restablecer zoom">100%</button>
-          <button id="scaleNetworkZoomIn" class="scale-network-zoom" type="button" aria-label="Acercar red">+</button>
-          <button id="scaleNetworkClose" class="scale-network-close" type="button" aria-label="Cerrar red">×</button>
-        </div>
-      </header>
-      <div id="scaleNetworkCanvas" class="scale-network-canvas" aria-label="Red de conceptos de la escala seleccionada"></div>
-      <footer class="scale-network-dialog-foot">
-        <section class="scale-network-stats" aria-label="Estadísticas en tiempo real de la red">
-          <div class="scale-network-stat"><strong id="scaleStatsActiveNodes">0</strong><span>Nodos activos</span></div>
-          <div class="scale-network-stat"><strong id="scaleStatsChangedNodes">0</strong><span>Nodos cambiados</span></div>
-          <div class="scale-network-stat"><strong id="scaleStatsActiveHubs">0</strong><span>Hubs activos</span></div>
-          <div class="scale-network-stat"><strong id="scaleStatsActiveEdges">0</strong><span>Conexiones activas</span></div>
-          <div class="scale-network-stat selected"><strong id="scaleStatsSelectedDegree">—</strong><span id="scaleStatsSelectedNode">Grado actual</span></div>
-        </section>
-        <span><i class="scale-legend-line direct"></i> Relación directa</span>
-        <span><i class="scale-legend-line indirect"></i> Relación indirecta</span>
-        <div class="scale-network-flow-controls" role="group" aria-label="Simulación de flujo de agua">
-          <button id="scaleNetworkFlowToggle" class="scale-network-flow-btn" type="button" aria-pressed="true">Pausar flujo</button>
-          <button id="scaleNetworkFlowReset" class="scale-network-flow-btn secondary" type="button">Reiniciar flujo</button>
-          <span id="scaleNetworkFlowStatus" class="scale-network-flow-status" role="status" aria-live="polite">Flujo activo</span>
-        </div>
-        <button id="scaleNetworkWetlandImage" class="scale-network-wetland-btn" type="button" hidden>Abrir imagen de HUMEDALES</button>
-        <span id="scaleNetworkClickStatus" class="scale-network-click-status" role="status" aria-live="polite" hidden></span>
-        <button id="scaleNetworkRestore" class="scale-network-restore" type="button">Reactivar nodos</button>
-        <span class="scale-network-hint">1 clic selecciona · 2 clics abre detalle · 3 clics apaga · tamaño = conexiones activas</span>
-      </footer>
-    </div>
-  </div>
-
-  <div id="wetlandImageModal" class="wetland-image-modal" aria-hidden="true">
-    <div class="wetland-image-dialog" role="dialog" aria-modal="true" aria-labelledby="wetlandImageTitle">
-      <header class="wetland-image-head">
-        <div>
-          <span class="wetland-image-kicker">DETALLE DE RED NATURAL</span>
-          <h2 id="wetlandImageTitle">Humedales</h2>
-          <p id="wetlandImageDescription">Amplía y desplaza el plano para consultar su imagen y su función dentro de la red.</p>
-        </div>
-        <button id="wetlandImageClose" class="wetland-image-close" type="button" aria-label="Cerrar imagen">×</button>
-      </header>
-      <div class="wetland-image-body">
-        <div class="wetland-image-toolbar" role="group" aria-label="Controles de zoom del plano">
-          <span class="wetland-image-toolbar-label">Inspección del plano</span>
-          <button id="wetlandImageZoomOut" class="wetland-image-zoom-btn" type="button" aria-label="Alejar imagen">−</button>
-          <button id="wetlandImageZoomReset" class="wetland-image-zoom-value" type="button" aria-label="Restablecer zoom">100%</button>
-          <button id="wetlandImageZoomIn" class="wetland-image-zoom-btn" type="button" aria-label="Acercar imagen">+</button>
-          <span class="wetland-image-toolbar-help">rueda, arrastra o pellizca</span>
-        </div>
-        <div id="wetlandImageViewport" class="wetland-image-viewport">
-          <div id="wetlandImageEmpty" class="wetland-image-empty">
-            <i class="fa-solid fa-image" aria-hidden="true"></i>
-            <strong>Cargando plano de HUMEDALES</strong>
-            <span>Imagen satelital integrada como evidencia visual de la red natural.</span>
-          </div>
-          <img id="wetlandImage" src="assets/planosnico-preview.webp" data-full-src="assets/planosnico.webp" alt="Plano satelital de Bogotá para el detalle de HUMEDALES" decoding="async" fetchpriority="high">
-        </div>
-        <a id="wetlandImageDirectLink" class="wetland-image-direct-link" href="assets/planosnico.webp" target="_blank" rel="noopener" hidden>Abrir el plano directamente</a>
-      </div>
-      <footer class="wetland-image-foot">HUMEDALES · soporte ecológico, regulación hídrica y resiliencia climática</footer>
-    </div>
-  </div>
-
+  <!-- MODAL DE DETALLE DE NODO / ELEMENTO -->
   <div id="nodeDetailModal" class="node-detail-modal" aria-hidden="true">
     <div class="node-detail-dialog" role="dialog" aria-modal="true" aria-labelledby="nodeDetailTitle">
       <header class="node-detail-head">
         <div>
-          <span id="nodeDetailKicker" class="node-detail-kicker">DETALLE DE NODO</span>
+          <span id="nodeDetailKicker" class="node-detail-kicker">DETALLE TERRITORIAL</span>
           <h2 id="nodeDetailTitle">Concepto</h2>
-          <p id="nodeDetailRole">Componente conectado</p>
+          <p id="nodeDetailRole">Elemento de escala conectado</p>
         </div>
-        <button id="nodeDetailClose" class="node-detail-close" type="button" aria-label="Cerrar detalle">×</button>
+        <button id="nodeDetailClose" class="node-detail-close" type="button" aria-label="Cerrar detalle">&times;</button>
       </header>
       <div class="node-detail-body">
         <p id="nodeDetailSummary" class="node-detail-summary"></p>
-        <div class="node-detail-metrics" aria-label="Métricas del nodo">
-          <div><strong id="nodeDetailDegree">0</strong><span>conexiones activas</span></div>
+        <div class="node-detail-metrics" aria-label="Métricas del elemento">
+          <div><strong id="nodeDetailDegree">0</strong><span>conexiones territoriales</span></div>
           <div><strong id="nodeDetailDirect">0</strong><span>directas</span></div>
           <div><strong id="nodeDetailIndirect">0</strong><span>indirectas</span></div>
-          <div><strong id="nodeDetailHub">—</strong><span>posición estructural</span></div>
+          <div><strong id="nodeDetailHub">—</strong><span>rol sistémico</span></div>
         </div>
         <div class="node-detail-columns">
           <section>
-            <h3>Conexiones de salida</h3>
+            <h3>Relaciones salientes</h3>
             <ul id="nodeDetailOutgoing"></ul>
           </section>
           <section>
-            <h3>Conexiones de entrada</h3>
+            <h3>Relaciones entrantes</h3>
             <ul id="nodeDetailIncoming"></ul>
           </section>
         </div>
       </div>
       <footer class="node-detail-foot">
-        <button id="nodeDetailFocus" class="node-detail-focus" type="button">Resaltar conexiones</button>
-        <span>El triple clic apaga este nodo · el tamaño responde a su grado activo.</span>
+        <button id="nodeDetailCloseBtn" class="btn-modal-close" type="button">Cerrar ficha</button>
       </footer>
     </div>
   </div>
@@ -211,6 +327,9 @@
     window.maplibregl = maplibregl;
     window.dispatchEvent(new Event("maplibre-ready"));
   </script>
-  <script src="modulo-05.js?v=map-filter-export-v1"></script>
+  <script src="modulo-05.js?v=20260901_strict_planta_2d"></script>
+  <script src="modulo-05-drive.js?v=20260901_no_scroll_perfect"></script>
 </body>
 </html>
+
+

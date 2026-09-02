@@ -768,14 +768,89 @@ footer span { color: var(--teal); }
   position: relative; width: 100%; aspect-ratio: 10682.66 / 6323.80; max-height: 1440px;
   background: #05070a; border-radius: 8px; overflow: hidden;
 }
-.sumo-canvas-wrap canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.sumo-canvas-wrap.panning { cursor: grabbing; }
+.sumo-tree-info {
+  position: absolute; z-index: 60; max-width: 240px; padding: 7px 10px; border-radius: 7px;
+  border: 1px solid rgba(96,200,110,.6); background: rgba(6,16,8,.96); color: #fff;
+  font-size: 11.5px; line-height: 1.4; pointer-events: none; box-shadow: 0 6px 16px rgba(0,0,0,.5);
+}
+.sumo-tree-info i { color: #6ec86e; }
+.sumo-reference-panel { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 10px 14px; border: 1px solid rgba(118,255,240,.35); border-radius: 8px; background: rgba(118,255,240,.04); color: var(--text-dim); font-size: 11px; }
+.sumo-reference-panel strong { color: #76fff0; font-size: 12px; }
+.sumo-reference-panel label { display: inline-flex; align-items: center; gap: 5px; }
+.sumo-reference-panel input[type="range"] { width: 160px; accent-color: #76fff0; }
+.sumo-reference-panel button { flex: 0 0 auto; }
+.sumo-reference-panel span { flex: 1 1 220px; }
+.sumo-reference-coords { display: flex; flex-direction: column; gap: 6px; width: 100%; }
+.sumo-reference-coords textarea {
+  width: 100%; background: #05070a; border: 1px solid var(--border); border-radius: 6px;
+  color: #76fff0; font-family: monospace; font-size: 11px; padding: 8px; resize: vertical;
+}
+.sumo-agents-card {
+  position: absolute; top: 12px; right: 12px; z-index: 15; max-width: 260px;
+  padding: 10px 12px; border-radius: 8px; border: 1px solid rgba(255,176,32,.45);
+  background: rgba(8,12,10,.94); color: #f2ece3; box-shadow: 0 6px 16px rgba(0,0,0,.4);
+}
+.sumo-agents-card strong { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #ffb020; margin-bottom: 6px; }
+.sumo-agents-card ul { margin: 0; padding-left: 16px; display: flex; flex-direction: column; gap: 6px; }
+.sumo-agents-card li { font-size: 11px; line-height: 1.5; color: rgba(242,236,227,.9); }
+@media (max-width: 720px) { .sumo-agents-card { max-width: calc(100% - 24px); font-size: 10.5px; } }
+.sumo-canvas-wrap canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
 .sumo-sim-overlay {
   position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
   color: var(--text-dim); font-size: 13px; background: rgba(5,7,10,0.7);
   pointer-events: none; transition: opacity .3s ease;
 }
 .sumo-sim-overlay.hidden { opacity: 0; visibility: hidden; }
+.sumo-rotate-handle {
+  position: absolute; top: 10px; right: 10px; width: 34px; height: 34px; border-radius: 50%;
+  background: rgba(255,176,32,.15); border: 1.5px solid #ffb020; color: #ffb020;
+  display: flex; align-items: center; justify-content: center; font-size: 14px;
+  cursor: grab; z-index: 5; transition: background .15s ease;
+}
+.sumo-rotate-handle:active { cursor: grabbing; background: rgba(255,176,32,.3); }
 .sumo-sim-controls { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.sumo-whatif-panel {
+  margin-top: 4px; padding: 10px 14px; border: 1px dashed rgba(255,107,107,.4);
+  border-radius: 8px; background: rgba(255,107,107,.05);
+  display: flex; flex-direction: column; gap: 10px;
+}
+.whatif-disclaimer { margin: 0; font-size: 10.5px; color: var(--text-dim); font-style: italic; line-height: 1.5; }
+.whatif-slider-label { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--text-dim); }
+.whatif-slider-label input[type="range"] { accent-color: #ff6b6b; }
+.whatif-closure-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 12px; color: var(--text-dim); }
+.whatif-closure-row select { background: #05070a; color: #f2ece3; border: 1px solid var(--border); border-radius: 6px; padding: 4px 8px; }
+#sumoClosureToggle.active { background: #ff4d4d; border-color: #ff4d4d; color: #1a0505; }
+.sumo-calib-panel {
+  margin-top: 4px; padding: 10px 14px; border: 1px dashed rgba(255,176,32,.4);
+  border-radius: 8px; background: rgba(255,176,32,.05);
+  display: flex; flex-direction: column; gap: 8px;
+}
+.sumo-calib-panel > p { margin: 0; font-size: 11.5px; color: var(--text-dim); line-height: 1.6; }
+.sumo-calib-panel textarea {
+  width: 100%; background: #05070a; border: 1px solid var(--border); border-radius: 6px;
+  color: #76fff0; font-family: monospace; font-size: 11px; padding: 8px; resize: vertical;
+}
+.sumo-calib-panel strong { color: #ffcf68; font-size: 12px; }
+.sumo-calib-panel label { display: inline-flex; align-items: center; gap: 5px; color: var(--text-dim); font-size: 11px; }
+.sumo-calib-panel input[type="number"] { width: 78px; background: #05070a; color: #76fff0; border: 1px solid var(--border); border-radius: 5px; padding: 5px 6px; font-size: 11px; }
+.sumo-calib-panel .sumo-btn { width: 30px; height: 30px; }
+
+.noise-scale-legend {
+  padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; background: var(--panel-alt);
+  display: flex; flex-direction: column; gap: 8px;
+}
+.noise-scale-legend h4 { margin: 0; font-size: 11.5px; color: var(--text-dim); font-weight: 600; display: flex; align-items: center; gap: 6px; justify-content: space-between; }
+.noise-toggle-label { display: flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 500; cursor: pointer; }
+.noise-toggle-label input { accent-color: #ffb020; cursor: pointer; }
+.noise-scale-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 11px; color: var(--text-dim); }
+.noise-scale-swatch { width: 20px; height: 14px; border-radius: 3px; border: 1px solid rgba(255,255,255,.15); background-color: #05070a; }
+.noise-scale-row span { margin-right: 10px; }
+.noise-formula-details { font-size: 11px; color: var(--text-dim); }
+.noise-formula-details summary { cursor: pointer; color: #ffb020; font-weight: 600; padding: 2px 0; }
+.noise-formula-details ol { margin: 8px 0 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; line-height: 1.5; }
+.noise-formula-details code { background: #05070a; border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; color: #76fff0; font-size: 10.5px; }
+.noise-formula-note { margin: 8px 0 0; font-style: italic; opacity: .8; }
 .sumo-btn {
   width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border);
   background: var(--panel-alt); color: var(--text); cursor: pointer; flex-shrink: 0;
@@ -783,6 +858,7 @@ footer span { color: var(--teal); }
   transition: background .15s ease, border-color .15s ease;
 }
 .sumo-btn:hover { background: var(--bg); border-color: var(--text-dim); }
+.sumo-btn.active { background: rgba(96,200,110,.3); border-color: #6ec86e; color: #6ec86e; }
 #sumoTimeSlider { flex: 1; min-width: 120px; accent-color: #56b8d4; }
 #sumoTimeLabel { font-size: 12px; color: var(--text-dim); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .sumo-speed-label { font-size: 12px; color: var(--text-dim); display: flex; align-items: center; gap: 6px; }

@@ -1,2904 +1,617 @@
-/*
- * Bogotá Viva · Navegador Multiescalar
- * Mapa base real con OSM/MapLibre + consultas públicas bajo demanda.
- * El modo procedural funciona como respaldo cuando un servicio no responde.
- */
+﻿/* ==========================================================================
+   BOGOTÁ VIVA · MÓDULO 05: NAVEGADOR MULTIESCALAR (JAVASCRIPT)
+   Lógica integral para las 4 Escalas: Natural, Cultural, Tecnológico y Metaverso
+   ========================================================================== */
+
 (() => {
   "use strict";
 
-  const BOGOTA = [-74.10, 4.66];
-  const OVERPASS_ENDPOINTS = [
-    "https://overpass-api.de/api/interpreter",
-    "https://overpass.kumi.systems/api/interpreter",
+  const BOGOTA_CENTER = [-74.10, 4.65];
+  const BOGOTA_DEFAULT_ZOOM = 11.8;
+
+  // Las 33 UPLs oficiales de Bogotá con datos territoriales y coordenadas
+  const UPLS_DATA = [
+    { num: 1, name: "Sumapaz", localidad: "Sumapaz", tag: "Borde rural — Conectividad ecosistémica y cuenca del Río Blanco", lon: -74.32, lat: 4.27, zoom: 10.5 },
+    { num: 2, name: "Cuenca del Tunjuelo", localidad: "Usme – Ciudad Bolívar", tag: "Déficit de soportes — Ámbito integral del cuidado y cuenca media", lon: -74.15, lat: 4.45, zoom: 12.5 },
+    { num: 3, name: "Arborizadora", localidad: "Ciudad Bolívar", tag: "Alta densidad en ladera — Mitigación de riesgos y Manzana del Cuidado", lon: -74.16, lat: 4.53, zoom: 13.5 },
+    { num: 4, name: "Lucero", localidad: "Ciudad Bolívar", tag: "Articulación con TransMiCable y servicios de proximidad barrial", lon: -74.16, lat: 4.56, zoom: 13.5 },
+    { num: 5, name: "Usme – Entrenubes", localidad: "Usme – San Cristóbal", tag: "UPL transfronteriza — Límite de expansión y parque Entrenubes", lon: -74.10, lat: 4.52, zoom: 13 },
+    { num: 6, name: "Cerros Orientales", localidad: "Borde Oriental", tag: "Matriz biofísica fundamental — Conectividad y senderos ancestrales", lon: -74.06, lat: 4.67, zoom: 12 },
+    { num: 7, name: "Torca", localidad: "Suba – Usaquén", tag: "Humedal Torca-Guaymaral — Borde norte y reserva Thomas van der Hammen", lon: -74.03, lat: 4.80, zoom: 12.5 },
+    { num: 8, name: "Britalia", localidad: "Suba", tag: "Proximidad barrial — Red secundaria de equipamientos y ciclorrutas", lon: -74.08, lat: 4.74, zoom: 13.5 },
+    { num: 9, name: "Suba", localidad: "Suba", tag: "Centralidad consolidada — Eje de Corredores Verdes y DOT Metro L2", lon: -74.10, lat: 4.75, zoom: 13 },
+    { num: 10, name: "Tibabuyes", localidad: "Suba", tag: "Humedal Juan Amarillo — Densidad habitacional y demanda de servicios", lon: -74.14, lat: 4.75, zoom: 13.5 },
+    { num: 11, name: "Engativá", localidad: "Engativá", tag: "Mixtura residencial y productiva — Humedal Jaboque y Río Bogotá", lon: -74.13, lat: 4.70, zoom: 13 },
+    { num: 12, name: "Fontibón", localidad: "Fontibón", tag: "Intermodalidad — Regiotram de Occidente, Aeropuerto y zona industrial", lon: -74.15, lat: 4.68, zoom: 13 },
+    { num: 13, name: "Tintal", localidad: "Kennedy", tag: "Alta viabilidad — Línea 1 del Metro, Manzana del Cuidado y Parque Tintal", lon: -74.15, lat: 4.64, zoom: 13.5 },
+    { num: 14, name: "Patio Bonito", localidad: "Kennedy", tag: "Humedal La Vaca — Proximidad peatonal y alta vulnerabilidad", lon: -74.16, lat: 4.62, zoom: 13.5 },
+    { num: 15, name: "Porvenir", localidad: "Bosa – Kennedy", tag: "Déficit de soporte urbano — Manzana del Cuidado El Porvenir", lon: -74.18, lat: 4.61, zoom: 13.5 },
+    { num: 16, name: "Edén", localidad: "Bosa – Kennedy", tag: "Borde sur-occidental — Conectores ecosistémicos del Río Tunjuelo", lon: -74.18, lat: 4.59, zoom: 13.5 },
+    { num: 17, name: "Bosa", localidad: "Bosa", tag: "Centralidad histórica de Bosa — Transformación DOT Línea 1 Metro", lon: -74.19, lat: 4.60, zoom: 13.5 },
+    { num: 18, name: "Kennedy", localidad: "Kennedy – Bosa", tag: "Gran nodo metropolitano — Hospital de Kennedy y comercio mixto", lon: -74.15, lat: 4.63, zoom: 13 },
+    { num: 19, name: "Tunjuelito", localidad: "Tunjuelito", tag: "Área de amortiguación hidráulica — Parque El Tunal y servicios", lon: -74.14, lat: 4.58, zoom: 13.5 },
+    { num: 20, name: "Rafael Uribe", localidad: "Rafael Uribe Uribe", tag: "Tejido de ladera consolidado — Manzana del Cuidado Diana Turbay", lon: -74.12, lat: 4.56, zoom: 13.5 },
+    { num: 21, name: "San Cristóbal", localidad: "San Cristóbal", tag: "Borde ecológico oriental — Cuenca del Río Fucha y cable aéreo", lon: -74.08, lat: 4.56, zoom: 13 },
+    { num: 22, name: "Restrepo", localidad: "Antonio Nariño", tag: "Tradición productiva del calzado — Mixtura de usos y centralidad", lon: -74.10, lat: 4.58, zoom: 14 },
+    { num: 23, name: "Centro Histórico", localidad: "La Candelaria – Santa Fe", tag: "Patrimonio fundacional — Alta densidad institucional y cultural", lon: -74.073, lat: 4.60, zoom: 14 },
+    { num: 24, name: "Chapinero", localidad: "Chapinero", tag: "Diversidad y centralidad ampliada — Corredor Verde Séptima y Metro L1", lon: -74.06, lat: 4.65, zoom: 13.5 },
+    { num: 25, name: "Usaquén", localidad: "Usaquén", tag: "Núcleo patrimonial y financiero — Borde cerros orientales", lon: -74.03, lat: 4.70, zoom: 13.5 },
+    { num: 26, name: "Toberín", localidad: "Usaquén", tag: "Servicios de proximidad norte — Regiotram del Norte y Manzana Cuidado", lon: -74.04, lat: 4.74, zoom: 13.5 },
+    { num: 27, name: "Niza", localidad: "Suba", tag: "Humedal Córdoba — Ecosistemas urbanos y morfología residencial", lon: -74.08, lat: 4.71, zoom: 13.5 },
+    { num: 28, name: "Rincón de Suba", localidad: "Suba", tag: "Alta densidad poblacional — Manzana del Cuidado y cerros de Suba", lon: -74.11, lat: 4.72, zoom: 13.5 },
+    { num: 29, name: "Tabora", localidad: "Engativá", tag: "Red de equipamientos — Humedal Santa María del Lago y Calle 80", lon: -74.11, lat: 4.70, zoom: 13.5 },
+    { num: 30, name: "Salitre", localidad: "Fontibón – Engativá", tag: "Gran centro metropolitano — Parque Simón Bolívar y CAN", lon: -74.11, lat: 4.67, zoom: 13 },
+    { num: 31, name: "Puente Aranda", localidad: "Puente Aranda", tag: "Transformación industrial a mixta — Renovación urbana e infraestructura", lon: -74.11, lat: 4.62, zoom: 13.5 },
+    { num: 32, name: "Teusaquillo", localidad: "Teusaquillo", tag: "Sectores de interés cultural — Campus Universidad Nacional y Parkway", lon: -74.08, lat: 4.64, zoom: 14 },
+    { num: 33, name: "Barrios Unidos", localidad: "Barrios Unidos", tag: "Talleres, comercio activo y proximidad al nodo Calle 72 Metro L1", lon: -74.08, lat: 4.68, zoom: 13.5 }
   ];
-  const NOMINATIM_ENDPOINT = "https://nominatim.openstreetmap.org/search";
-  const OSRM_ENDPOINT = "https://router.project-osrm.org/route/v1/driving";
-  const OSM_ATTRIBUTION = "© OpenStreetMap contributors";
-  const LOCAL_PMTILES_PATH = "./tiles/bogota-roads.pmtiles";
-  const CACHE = new Map();
-  const CACHE_MAX_ENTRIES = 16;
-  const VIEWPORT_DEBOUNCE_MS = 420;
-  const OVERPASS_ENDPOINT_TIMEOUT_MS = 18000;
+
+  // Configuración de las 4 escalas
+  const SCALES_CONFIG = {
+    natural: {
+      id: "natural",
+      name: "Natural",
+      icon: "fa-droplet",
+      color: "#2fd4c8",
+      kicker: "ESCALA NATURAL · AGUA Y ECOSISTEMAS",
+      subtitle: "Estructura Ecológica Principal, humedales, rondas hídricas y cerros",
+      reading: "La escala natural hace visibles el agua, los humedales y la estructura ecológica como sistemas vivos continuos que trascienden las fronteras administrativas.",
+      critique: "El POT fija polígonos estáticos de protección, pero omite los flujos estacionales de cuenca, las presiones de impermeabilización y la fragmentación biótica.",
+      themeClass: "scale-natural-theme",
+      placesLabel: "Humedales y Reservas",
+      hotspots: [
+        { name: "Humedal La Vaca", coords: [-74.158, 4.628], role: "Regulación hídrica local", connections: 12 },
+        { name: "Humedal Tibabuyes (Juan Amarillo)", coords: [-74.125, 4.735], role: "Mayor cuerpo de agua urbano", connections: 24 },
+        { name: "Humedal Córdoba", coords: [-74.075, 4.705], role: "Conector cerros-humedales", connections: 18 },
+        { name: "Humedal Jaboque", coords: [-74.145, 4.715], role: "Amortiguación Río Bogotá", connections: 16 },
+        { name: "Humedal El Burro", coords: [-74.152, 4.642], role: "Fragmentación por Av. Ciudad de Cali", connections: 14 },
+        { name: "Humedal Capellanía", coords: [-74.135, 4.675], role: "Aislamiento por zona franca", connections: 10 },
+        { name: "Cerros Orientales (Guadalupe/Monserrate)", coords: [-74.055, 4.605], role: "Matriz ecosistémica mayor", connections: 32 },
+        { name: "Río Fucha (Eje Ambiental)", coords: [-74.110, 4.580], role: "Corredor hídrico transversal", connections: 20 },
+        { name: "Río Tunjuelo", coords: [-74.140, 4.490], role: "Cuenca sur y riesgo de inundación", connections: 22 }
+      ]
+    },
+    cultural: {
+      id: "cultural",
+      name: "Cultural",
+      icon: "fa-landmark",
+      color: "#fb8d84",
+      kicker: "ESCALA CULTURAL · PATRIMONIO Y MEMORIA",
+      subtitle: "Bienes de interés cultural, núcleos fundacionales y memorias vivas",
+      reading: "La escala cultural superpone patrimonio material, prácticas barriales y lugares de memoria viva sobre la red cotidiana.",
+      critique: "El POT reduce el patrimonio a inmuebles y monumentos aislados, desprotegiendo los modos de vida comunitarios frente a la gentrificación y renovación.",
+      themeClass: "scale-cultural-theme",
+      placesLabel: "Hitos y Centros Históricos",
+      hotspots: [
+        { name: "Centro Histórico La Candelaria", coords: [-74.073, 4.597], role: "Núcleo fundacional y BIC Nacional", connections: 28 },
+        { name: "Barrio Teusaquillo (Parkway)", coords: [-74.078, 4.636], role: "Arquitectura moderna y vida barrial", connections: 19 },
+        { name: "Núcleo Fundacional de Usaquén", coords: [-74.032, 4.696], role: "Patrimonio colonial y centralidad", connections: 15 },
+        { name: "Centro Fundacional de Bosa", coords: [-74.188, 4.608], role: "Memoria muisca y plaza mayor", connections: 17 },
+        { name: "Plaza del 20 de Julio", coords: [-74.088, 4.572], role: "Patrimonio religioso y popular", connections: 21 },
+        { name: "Plaza de Mercado de Paloquemao", coords: [-74.088, 4.618], role: "Patrimonio inmaterial y soberanía", connections: 25 },
+        { name: "Campus Universidad Nacional", coords: [-74.084, 4.638], role: "Hito educativo y arquitectónico", connections: 22 }
+      ]
+    },
+    tecnologico: {
+      id: "tecnologico",
+      name: "Tecnológico",
+      icon: "fa-microchip",
+      color: "#4eb5ed",
+      kicker: "ESCALA TECNOLÓGICA · MOVILIDAD Y REDES",
+      subtitle: "Metro L1/L2, Regiotram, Corredores Verdes y jerarquía vial",
+      reading: "La escala tecnológica lee la ciudad como un sistema integrado de infraestructuras, conectividad multimodal y flujos de transporte masivo.",
+      critique: "El POT formula trazados e infraestructura en planos bidimensionales, pero no modela la congestión en horas pico, la saturación ni los transbordos reales.",
+      themeClass: "scale-tecnologico-theme",
+      placesLabel: "Nodos de Transporte e Intercambio",
+      hotspots: [
+        { name: "Patio Taller Metro L1 (Bosa)", coords: [-74.195, 4.625], role: "Inicio Línea 1 Metro", connections: 30 },
+        { name: "Estación Metro Calle 72", coords: [-74.062, 4.658], role: "Nodo intermodal L1 y Corredor Verde", connections: 34 },
+        { name: "Regiotram de Occidente (Fontibón)", coords: [-74.142, 4.672], role: "Conectividad regional Sabana", connections: 26 },
+        { name: "Portal Américas (TransMilenio)", coords: [-74.168, 4.628], role: "Nodo masivo suroccidente", connections: 28 },
+        { name: "TransMiCable Manitas", coords: [-74.148, 4.542], role: "Transporte vertical en ladera", connections: 18 },
+        { name: "Terminal Salitre", coords: [-74.112, 4.652], role: "Intercambiador nacional y regional", connections: 29 }
+      ]
+    },
+    metaverso: {
+      id: "metaverso",
+      name: "Metaverso",
+      icon: "fa-cubes",
+      color: "#b682ee",
+      kicker: "ESCALA METAVERSO · SIMULACIÓN DINÁMICA",
+      subtitle: "Modelo digital inmersivo, gemelo urbano y Bogotá Infinite Drive",
+      reading: "La escala Metaverso permite interactuar con la ciudad digitalizada en tiempo real, evaluando dinámicas de velocidad, trayectorias y comportamiento urbano.",
+      critique: "A diferencia del POT estático, la simulación virtual revela el impacto de la fricción espacial, colisiones y tiempos de respuesta sobre las vías reales.",
+      themeClass: "scale-metaverso-theme",
+      placesLabel: "Nodos de Simulación",
+      hotspots: [
+        { name: "Simulación Kennedy Central", coords: [-74.150, 4.630], role: "Gemelo digital de tráfico", connections: 35 },
+        { name: "Simulación Corredor Séptima", coords: [-74.060, 4.650], role: "Flujo continuo multimodal", connections: 31 },
+        { name: "Simulación Autopista Sur", coords: [-74.160, 4.590], role: "Eje logístico y congestión", connections: 28 }
+      ]
+    }
+  };
+
+  // Bridge para soportar modulo-05-drive.js con MapLibre GL
+window.L = window.L || {
+  latLng: (lat, lng) => ({ lat, lng })
+};
+
+function setupMapLibreDriveBridge() {
+  window.bogotaLeafletMap = {
+    latLngToContainerPoint(ll) {
+      if (state.map) {
+        const lng = ll.lng !== undefined ? ll.lng : ll[0];
+        const lat = ll.lat !== undefined ? ll.lat : ll[1];
+        const p = state.map.project([lng, lat]);
+        return { x: p.x, y: p.y };
+      }
+      return { x: 0, y: 0 };
+    },
+    setView(coords, zoom, opts) {
+      if (state.map) {
+        const lng = coords.lng !== undefined ? coords.lng : (Array.isArray(coords) ? coords[1] : coords[0]);
+        const lat = coords.lat !== undefined ? coords.lat : (Array.isArray(coords) ? coords[0] : coords[1]);
+        state.map.jumpTo({ center: [lng, lat], zoom: zoom || state.map.getZoom() });
+      }
+    },
+    getZoom() {
+      return state.map ? state.map.getZoom() : 16;
+    },
+    on(event, fn) {
+      if (state.map) {
+        state.map.on("move", fn);
+        state.map.on("zoom", fn);
+        state.map.on("resize", fn);
+      }
+    }
+  };
+}
+
   const state = {
     map: null,
     mapReady: false,
-    mapHoverPopup: null,
-    hoveredMapFeatureKey: "",
-    mapHoverFeatureState: null,
-    mapHoverPulseRaf: null,
-    mapHoverPulseLastAt: -Infinity,
-    selectedUpl: null,
-    selectedScale: "natural",
-    dataMode: "real",
-    streetSource: "local-geojson",
-    localRoadFeatures: [],
-    localRoadCount: 0,
-    placeFeatures: [],
-    placePointRecords: [],
-    categoryVisibility: {},
-    hoveredClusterFeatures: [],
-    hoveredClusterId: null,
-    activeClusterForExport: null,
-    pmtilesArchive: null,
-    pmtilesProtocol: null,
-    currentView: "barrio",
-    placeMarkers: [],
+    activeScale: "natural",
+    selectedUpl: UPLS_DATA.find(u => u.num === 13) || UPLS_DATA[0],
+    markers: [],
     uplMarker: null,
-    uplLabelMarker: null,
-    routeLayerReady: false,
-    routeStart: null,
-    routeEnd: null,
-    queryToken: 0,
-    activeQueryKey: "",
-    overpassController: null,
-    viewportDebounceTimer: null,
-    uplFocusTransitionToken: 0,
-    uplZoomTarget: null,
-    uplFocusLineBaseOpacity: .9,
-    uplFocusLineBaseWidth: 2,
-    uplFocusLineAnimationRaf: null,
-    uplFocusLineLastUpdateAt: -Infinity,
-    uplFocusLineLastPhase: -1,
-    proceduralMarkers: [],
-    favorite: false,
-    apiLayers: {
-      /* Las 28 categorías se cargan automáticamente; cada consulta conserva timeout y fallback. */
-      // Arranque ligero: mantiene las 28 categorías disponibles, pero consulta
-      // primero las capas que dan una lectura útil y rápida. “Activar todo”
-      // conserva el acceso explícito a las 28 categorías.
-      roads: true, walking: false, transport: true, rail: false, aerial: false,
-      natural: true, water: false, green: false,
-      amenities: true, education: false, health: false, care: false, civic: false, services: false,
-      commerce: true, food: false, industrial: false,
-      residential: false, buildings: false, landuse: false,
-      parks: true, sports: false,
-      culture: true, tourism: false, memorial: false,
-      boundaries: false, utilities: false, street: false,
-    },
-    apiLayerStatus: {},
-    apiLayerElements: {},
-  };
-
-  const UPLS = [
-    [1,"Sumapaz","Sumapaz","Borde rural — conectividad ecosistémica, no proximidad de servicios",-74.32,4.27],
-    [2,"Cuenca del Tunjuelo","Usme–Ciudad Bolívar","Déficit de soportes — ámbito integral de cuidado",-74.15,4.45],
-    [3,"Arborizadora","Ciudad Bolívar","Déficit de soportes — ámbito integral de cuidado",-74.16,4.53],
-    [4,"Lucero","Ciudad Bolívar","Déficit de soportes — ámbito integral de cuidado",-74.16,4.56],
-    [5,"Usme–Entrenubes","Usme–San Cristóbal","UPL transfronteriza — la vida cotidiana cruza el límite",-74.10,4.52],
-    [6,"Cerros Orientales","Usme–San Cristóbal–Santa Fé–Chapinero–Usaquén","Conectividad ecosistémica — no aplica lógica de proximidad",-74.06,4.67],
-    [7,"Torca","Suba–Usaquén","Borde rural — conectividad ecosistémica",-74.03,4.80],
-    [8,"Britalia","Suba","Proximidad viable — equipamientos barriales",-74.08,4.74],
-    [9,"Suba","Suba","Eje corredores verdes — DOT alrededor del Metro",-74.10,4.75],
-    [10,"Tibabuyes","Suba","Proximidad viable — equipamientos barriales",-74.14,4.75],
-    [11,"Engativá","Engativá","Proximidad viable — mixtura de usos",-74.13,4.70],
-    [12,"Fontibón","Fontibón","Eje corredores verdes — DOT alrededor del Metro",-74.15,4.68],
-    [13,"Tintal","Kennedy","Alta viabilidad — Línea 1 del Metro, Manzana del Cuidado, velódromo y parque metropolitano",-74.15,4.64],
-    [14,"Patio Bonito","Kennedy","Proximidad viable — equipamientos barriales",-74.16,4.62],
-    [15,"Porvenir","Bosa–Kennedy","Déficit de soportes — ámbito integral de cuidado",-74.18,4.61],
-    [16,"Edén","Bosa–Kennedy","Déficit de soportes — ámbito integral de cuidado",-74.18,4.59],
-    [17,"Bosa","Bosa–Kennedy","Proximidad viable — centralidad existente",-74.19,4.60],
-    [18,"Kennedy","Kennedy–Bosa","Alta viabilidad — Línea 1 del Metro, nueva Manzana del Cuidado",-74.15,4.63],
-    [19,"Tunjuelito","Tunjuelito","Proximidad viable — equipamientos barriales",-74.14,4.58],
-    [20,"Rafael Uribe","Rafael Uribe–Usme","UPL transfronteriza — la vida cotidiana cruza el límite",-74.12,4.56],
-    [21,"San Cristóbal","San Cristóbal","Proximidad viable — equipamientos barriales",-74.08,4.56],
-    [22,"Restrepo","Antonio Nariño–Rafael Uribe","UPL transfronteriza — la vida cotidiana cruza el límite",-74.10,4.58],
-    [23,"Centro Histórico","La Candelaria–Mártires–Santa Fé","Alta viabilidad — densa y mixta, proximidad a escala de caminata",-74.073,4.60],
-    [24,"Chapinero","Chapinero","Alta viabilidad — densa y mixta",-74.06,4.65],
-    [25,"Usaquén","Usaquén","Eje corredores verdes — DOT alrededor del Metro",-74.03,4.70],
-    [26,"Toberín","Usaquén","Proximidad viable — equipamientos barriales",-74.04,4.74],
-    [27,"Niza","Suba","Proximidad viable — equipamientos barriales",-74.08,4.71],
-    [28,"Rincón de Suba","Suba","Proximidad viable — equipamientos barriales",-74.11,4.72],
-    [29,"Tabora","Engativá","Proximidad viable — equipamientos barriales",-74.11,4.70],
-    [30,"Salitre","Fontibón–Engativá","Eje corredores verdes — DOT",-74.11,4.67],
-    [31,"Puente Aranda","Puente Aranda","Proximidad viable — equipamientos barriales",-74.11,4.62],
-    [32,"Teusaquillo","Teusaquillo","Alta viabilidad — densa y mixta",-74.08,4.64],
-    [33,"Barrios Unidos","Barrios Unidos","Alta viabilidad — densa y mixta",-74.08,4.68],
-  ].map(([num,name,localidad,tag,lon,lat]) => ({num,name,localidad,tag,lon,lat}));
-
-  const SCALE_DATA = {
-    natural: {
-      label: "Natural", icon: "fa-droplet", color: "#24d5c6",
-      subtitle: "Agua, humedales y estructura ecológica",
-      reading: "La escala natural hace visibles el agua, los humedales y la estructura ecológica como sistemas vivos que atraviesan el límite administrativo.",
-      overpass: (b) => `\n        (way["waterway"](${b});node["waterway"](${b});way["natural"~"water|wetland|wood|scrub"](${b});node["natural"~"water|wetland|wood|scrub"](${b});way["leisure"="park"](${b}););\n      `,
-      fallback: ["Humedal / área de agua", "Parque ecológico", "Corredor verde", "Cobertura vegetal"],
-    },
-    cultural: {
-      label: "Cultural", icon: "fa-landmark", color: "#e59461",
-      subtitle: "Patrimonio, barrios y memoria urbana",
-      reading: "La escala cultural superpone patrimonio, prácticas barriales y lugares de memoria sobre la red cotidiana: el territorio no es solo soporte físico.",
-      overpass: (b) => `\n        (node["historic"](${b});way["historic"](${b});node["tourism"](${b});node["amenity"="place_of_worship"](${b}););\n      `,
-      fallback: ["Lugar patrimonial", "Plaza de barrio", "Equipamiento cultural", "Sitio de memoria"],
-    },
-    tecnologico: {
-      label: "Tecnológico", icon: "fa-microchip", color: "#4eb5ed",
-      subtitle: "Datos, redes y movilidad inteligente",
-      reading: "La escala tecnológica permite leer las calles como una red de conectividad: movilidad, transporte público, equipamientos y datos se co-producen.",
-      overpass: (b) => `\n        (way["highway"]["name"](${b});node["public_transport"](${b});node["amenity"](${b});node["office"](${b}););\n      `,
-      fallback: ["Parada de transporte", "Equipamiento", "Conector vial", "Nodo de datos"],
-    },
-    metaverso: {
-      label: "Metaverso", icon: "fa-cubes", color: "#b682ee",
-      subtitle: "Modelo digital y escenarios inmersivos",
-      reading: "El metaverso no reemplaza el territorio: añade una capa de escenarios para probar cómo cambiaría la experiencia urbana si se modifican sus relaciones.",
-      overpass: (b) => `\n        (node["amenity"~"school|library|community_centre|social_facility"](${b});node["shop"](${b}););\n      `,
-      fallback: ["Punto de interacción", "Escenario inmersivo", "Nodo comunitario", "Lugar simulado"],
-    },
-  };
-
-  const API_LAYERS = {
-    roads: { label: "Calles", group: "Movilidad", icon: "fa-road", color: "#2baaa0", defaultActive: true, query: (b) => `way["highway"](${b});`, match: (t) => Boolean(t.highway) },
-    walking: { label: "Peatonal y bici", group: "Movilidad", icon: "fa-person-walking", color: "#72d6b5", defaultActive: false, query: (b) => `way["highway"~"^(footway|path|pedestrian|cycleway|steps|bridleway)$"](${b});`, match: (t) => /^(footway|path|pedestrian|cycleway|steps|bridleway)$/.test(t.highway || "") },
-    transport: { label: "Transporte público", group: "Movilidad", icon: "fa-bus", color: "#4eb5ed", defaultActive: true, query: (b) => `nwr["public_transport"](${b});node["highway"="bus_stop"](${b});`, match: (t) => Boolean(t.public_transport || t.highway === "bus_stop") },
-    rail: { label: "Ferrocarril y metro", group: "Movilidad", icon: "fa-train-subway", color: "#7c9cff", defaultActive: false, query: (b) => `nwr["railway"](${b});`, match: (t) => Boolean(t.railway) },
-    aerial: { label: "Cables y aéreo", group: "Movilidad", icon: "fa-cable-car", color: "#9b8cff", defaultActive: false, query: (b) => `nwr["aerialway"](${b});nwr["aeroway"](${b});`, match: (t) => Boolean(t.aerialway || t.aeroway) },
-    natural: { label: "Naturaleza", group: "Ambiente", icon: "fa-leaf", color: "#24d5c6", defaultActive: true, query: (b) => `nwr["natural"](${b});nwr["waterway"](${b});`, match: (t) => Boolean(t.natural || t.waterway) },
-    water: { label: "Agua y humedales", group: "Ambiente", icon: "fa-water", color: "#56b9e9", defaultActive: false, query: (b) => `nwr["waterway"](${b});nwr["natural"~"^(water|wetland|bay|spring|hot_spring)$"](${b});`, match: (t) => Boolean(t.waterway || /^(water|wetland|bay|spring|hot_spring)$/.test(t.natural || "")) },
-    green: { label: "Bosques y cobertura", group: "Ambiente", icon: "fa-tree", color: "#6dd48c", defaultActive: false, query: (b) => `nwr["natural"~"^(tree|wood|scrub|heath|grassland)$"](${b});nwr["landuse"~"^(forest|orchard|vineyard|allotments)$"](${b});`, match: (t) => /^(tree|wood|scrub|heath|grassland)$/.test(t.natural || "") || /^(forest|orchard|vineyard|allotments)$/.test(t.landuse || "") },
-    amenities: { label: "Equipamientos", group: "Servicios", icon: "fa-building-columns", color: "#e59461", defaultActive: true, query: (b) => `nwr["amenity"](${b});`, match: (t) => Boolean(t.amenity) },
-    education: { label: "Educación", group: "Servicios", icon: "fa-graduation-cap", color: "#f0c36e", defaultActive: false, query: (b) => `nwr["amenity"~"^(school|kindergarten|college|university|library|music_school)$"](${b});`, match: (t) => /^(school|kindergarten|college|university|library|music_school)$/.test(t.amenity || "") },
-    health: { label: "Salud", group: "Servicios", icon: "fa-heart-pulse", color: "#f08383", defaultActive: false, query: (b) => `nwr["amenity"~"^(hospital|clinic|doctors|dentist|pharmacy|veterinary)$"](${b});`, match: (t) => /^(hospital|clinic|doctors|dentist|pharmacy|veterinary)$/.test(t.amenity || "") },
-    care: { label: "Cuidado y comunidad", group: "Servicios", icon: "fa-hands-holding-child", color: "#f4a6c2", defaultActive: false, query: (b) => `nwr["amenity"~"^(social_facility|community_centre|childcare|nursing_home|shelter)$"](${b});`, match: (t) => /^(social_facility|community_centre|childcare|nursing_home|shelter)$/.test(t.amenity || "") },
-    civic: { label: "Cívico y público", group: "Servicios", icon: "fa-landmark-dome", color: "#d9b5ff", defaultActive: false, query: (b) => `nwr["amenity"~"^(townhall|public_building|courthouse|post_office|police|fire_station|prison)$"](${b});`, match: (t) => /^(townhall|public_building|courthouse|post_office|police|fire_station|prison)$/.test(t.amenity || "") },
-    services: { label: "Servicios urbanos", group: "Servicios", icon: "fa-droplet", color: "#72b8d8", defaultActive: false, query: (b) => `nwr["amenity"~"^(bank|atm|fuel|parking|toilets|waste_basket|recycling|drinking_water)$"](${b});`, match: (t) => /^(bank|atm|fuel|parking|toilets|waste_basket|recycling|drinking_water)$/.test(t.amenity || "") },
-    commerce: { label: "Comercio y empleo", group: "Economía", icon: "fa-store", color: "#f1bd61", defaultActive: true, query: (b) => `nwr["shop"](${b});nwr["office"](${b});`, match: (t) => Boolean(t.shop || t.office) },
-    food: { label: "Alimentos y mercados", group: "Economía", icon: "fa-utensils", color: "#ff9d62", defaultActive: false, query: (b) => `nwr["amenity"~"^(restaurant|cafe|fast_food|bar|food_court|marketplace)$"](${b});`, match: (t) => /^(restaurant|cafe|fast_food|bar|food_court|marketplace)$/.test(t.amenity || "") },
-    industrial: { label: "Industria y producción", group: "Economía", icon: "fa-industry", color: "#cf9b72", defaultActive: false, query: (b) => `nwr["landuse"~"^(industrial|commercial|retail)$"](${b});nwr["man_made"](${b});`, match: (t) => /^(industrial|commercial|retail)$/.test(t.landuse || "") || Boolean(t.man_made) },
-    residential: { label: "Vivienda", group: "Territorio", icon: "fa-house", color: "#d7a4e8", defaultActive: false, query: (b) => `nwr["landuse"="residential"](${b});nwr["building"~"^(apartments|residential|house|detached|semidetached_house|terrace)$"](${b});`, match: (t) => t.landuse === "residential" || /^(apartments|residential|house|detached|semidetached_house|terrace)$/.test(t.building || "") },
-    buildings: { label: "Edificaciones", group: "Territorio", icon: "fa-building", color: "#c2a7b8", defaultActive: false, query: (b) => `nwr["building"](${b});`, match: (t) => Boolean(t.building) },
-    landuse: { label: "Usos del suelo", group: "Territorio", icon: "fa-layer-group", color: "#b8a477", defaultActive: false, query: (b) => `nwr["landuse"](${b});nwr["landcover"](${b});`, match: (t) => Boolean(t.landuse || t.landcover) },
-    parks: { label: "Parques y recreación", group: "Ambiente", icon: "fa-tree-city", color: "#b682ee", defaultActive: true, query: (b) => `nwr["leisure"](${b});`, match: (t) => Boolean(t.leisure) },
-    sports: { label: "Deporte", group: "Ambiente", icon: "fa-futbol", color: "#a985ec", defaultActive: false, query: (b) => `nwr["leisure"~"^(sports_centre|pitch|stadium|track|swimming_pool|fitness_centre)$"](${b});`, match: (t) => /^(sports_centre|pitch|stadium|track|swimming_pool|fitness_centre)$/.test(t.leisure || "") },
-    culture: { label: "Patrimonio y cultura", group: "Cultura", icon: "fa-landmark", color: "#e59461", defaultActive: true, query: (b) => `nwr["historic"](${b});nwr["amenity"~"^(place_of_worship|arts_centre|theatre|cinema|museum)$"](${b});`, match: (t) => Boolean(t.historic) || /^(place_of_worship|arts_centre|theatre|cinema|museum)$/.test(t.amenity || "") },
-    tourism: { label: "Turismo y atracciones", group: "Cultura", icon: "fa-camera-retro", color: "#ed9ac2", defaultActive: false, query: (b) => `nwr["tourism"](${b});`, match: (t) => Boolean(t.tourism) },
-    memorial: { label: "Memoria y monumentos", group: "Cultura", icon: "fa-monument", color: "#dd8e7f", defaultActive: false, query: (b) => `nwr["historic"~"^(memorial|monument|wayside_shrine|ruins)$"](${b});`, match: (t) => /^(memorial|monument|wayside_shrine|ruins)$/.test(t.historic || "") },
-    boundaries: { label: "Límites y barrios", group: "Territorio", icon: "fa-draw-polygon", color: "#b8c5cc", defaultActive: true, query: (b) => `relation["boundary"](${b});nwr["place"](${b});`, match: (t) => Boolean(t.boundary || t.place) },
-    utilities: { label: "Infraestructura técnica", group: "Infraestructura", icon: "fa-tower-broadcast", color: "#89c8dc", defaultActive: false, query: (b) => `nwr["power"](${b});nwr["man_made"~"^(water_tower|wastewater_plant|communications_tower|silo)$"](${b});`, match: (t) => Boolean(t.power) || /^(water_tower|wastewater_plant|communications_tower|silo)$/.test(t.man_made || "") },
-    street: { label: "Mobiliario vial", group: "Infraestructura", icon: "fa-traffic-light", color: "#d8d08b", defaultActive: false, query: (b) => `nwr["highway"~"^(street_lamp|traffic_signals|crossing|bus_stop)$"](${b});nwr["amenity"~"^(bench|bicycle_parking|shelter)$"](${b});`, match: (t) => /^(street_lamp|traffic_signals|crossing|bus_stop)$/.test(t.highway || "") || /^(bench|bicycle_parking|shelter)$/.test(t.amenity || "") },
-  };
-
-  const $ = (selector) => document.querySelector(selector);
-  const $$ = (selector) => [...document.querySelectorAll(selector)];
-
-  function escapeHtml(value) {
-    return String(value || "").replace(/[&<>'"]/g, (char) => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;","\"":"&quot;"}[char]));
-  }
-
-  function setText(selector, value) {
-    const el = $(selector);
-    if (el) el.textContent = value;
-  }
-
-  function rememberCache(key, value) {
-    if (CACHE.has(key)) CACHE.delete(key);
-    CACHE.set(key, value);
-    while (CACHE.size > CACHE_MAX_ENTRIES) CACHE.delete(CACHE.keys().next().value);
-  }
-
-  function getViewportBBox() {
-    if (!state.map) return null;
-    const bounds = state.map.getBounds();
-    const west = bounds.getWest();
-    const south = bounds.getSouth();
-    const east = bounds.getEast();
-    const north = bounds.getNorth();
-    const lonPad = Math.max((east - west) * 0.08, 0.003);
-    const latPad = Math.max((north - south) * 0.08, 0.003);
-    return {
-      west: Math.max(-74.6, west - lonPad),
-      south: Math.max(3.8, south - latPad),
-      east: Math.min(-73.5, east + lonPad),
-      north: Math.min(5.2, north + latPad),
-    };
-  }
-
-  function bboxString(bbox) {
-    return [bbox.south, bbox.west, bbox.north, bbox.east].map((value) => Number(value).toFixed(5)).join(",");
-  }
-
-  function viewportLevel() {
-    const zoom = state.map?.getZoom?.() ?? 13;
-    if (zoom < 12) return "macro";
-    if (zoom < 14.5) return "meso";
-    return "micro";
-  }
-
-  function roadClassesForLevel(level) {
-    if (level === "macro") return ["motorway", "trunk", "primary", "secondary"];
-    if (level === "meso") return ["motorway", "trunk", "primary", "secondary", "tertiary"];
-    return ["motorway", "trunk", "primary", "secondary", "tertiary", "residential", "living_street", "service", "unclassified"];
-  }
-
-  function roadRegexForLevel(level) {
-    return `^(${roadClassesForLevel(level).join("|")})$`;
-  }
-
-  function applyRoadZoomFilter() {
-    if (!state.map) return;
-    const classes = roadClassesForLevel(viewportLevel());
-    const filter = ["in", ["get", "highway"], ["literal", classes]];
-    ["osm-streets", "osm-streets-casing"].forEach((id) => {
-      if (state.map.getLayer(id)) state.map.setFilter(id, filter);
-    });
-    setText("#roadLevel", `Nivel ${viewportLevel()} · ${classes.length} jerarquías visibles`);
-  }
-
-  function localPmtilesUrl() {
-    return new URL(LOCAL_PMTILES_PATH, window.location.href).href;
-  }
-
-  function updateLocalTilesButton(active, pending = false) {
-    const button = $("#localTilesBtn");
-    if (!button) return;
-    button.classList.toggle("is-active", active);
-    button.disabled = pending;
-    button.innerHTML = pending
-      ? '<i class="fa-solid fa-spinner fa-spin"></i> Cargando PMTiles…'
-      : active
-        ? '<i class="fa-solid fa-hard-drive"></i> PMTiles local activo'
-        : '<i class="fa-solid fa-hard-drive"></i> Usar PMTiles local';
-  }
-
-  function removeLocalRoadLayers() {
-    if (!state.map) return;
-    ["local-roads-casing", "local-roads"].forEach((id) => {
-      if (state.map.getLayer(id)) state.map.removeLayer(id);
-    });
-    if (state.map.getSource("local-roads-source")) state.map.removeSource("local-roads-source");
-    state.pmtilesArchive = null;
-  }
-
-  async function enableLocalPmtiles() {
-    if (!state.mapReady || !window.pmtiles) throw new Error("pmtiles.js no está cargado");
-    updateLocalTilesButton(false, true);
-    const url = localPmtilesUrl();
-    const response = await fetch(url, { method: "HEAD", cache: "no-store" });
-    if (!response.ok) throw new Error("No existe tiles/bogota-roads.pmtiles todavía");
-    if (!state.pmtilesProtocol) {
-      state.pmtilesProtocol = new pmtiles.Protocol();
-      maplibregl.addProtocol("pmtiles", state.pmtilesProtocol.tile);
+    layers: {
+      roads: true,
+      places: true,
+      boundary: true,
+      transit: true
     }
-    const archive = new pmtiles.PMTiles(url);
-    state.pmtilesProtocol.add(archive);
-    state.pmtilesArchive = archive;
-    if (!state.map.getSource("local-roads-source")) {
-      state.map.addSource("local-roads-source", { type: "vector", url: `pmtiles://${url}`, attribution: OSM_ATTRIBUTION });
-      state.map.addLayer({ id: "local-roads-casing", type: "line", source: "local-roads-source", "source-layer": "roads", layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": "#ffffff", "line-width": ["interpolate", ["linear"], ["zoom"], 10, 1.6, 13, 3.2, 16, 6], "line-opacity": .8 } }, "upl-focus-fill");
-      state.map.addLayer({ id: "local-roads", type: "line", source: "local-roads-source", "source-layer": "roads", layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": ["match", ["get", "highway"], "motorway", "#d56c75", "trunk", "#df8e5a", "primary", "#e6a95a", "secondary", "#4cb2a9", "tertiary", "#58a9a4", "residential", "#2d9790", "living_street", "#50aaa2", "service", "#74bab2", "#4a9f99"], "line-width": ["interpolate", ["linear"], ["zoom"], 10, .55, 13, 1.15, 16, 2.5], "line-opacity": .95 } }, "upl-focus-fill");
+  };
+
+  // Inicialización del DOM
+  document.addEventListener("DOMContentLoaded", () => {
+    initUplSelect();
+    initScaleSwitcher();
+    initLayerToggles();
+    initExportButtons();
+    initModalEvents();
+    initCornerDiagnosticEvents();
+    waitForMapLibreAndBoot();
+  });
+
+  // Espera a MapLibre GL
+  function waitForMapLibreAndBoot() {
+    if (window.maplibregl) {
+      bootMap();
+    } else {
+      window.addEventListener("maplibre-ready", () => bootMap(), { once: true });
+      setTimeout(() => {
+        if (!state.mapReady && window.maplibregl) bootMap();
+      }, 500);
     }
-    state.streetSource = "pmtiles";
-    updateLocalTilesButton(true);
-    setText("#modeDetail", "PMTiles local · sin consulta vial externa");
-    setText("#metricRoads", "MVT");
-    setText("#connectionLabel", "Red vial local conectada");
-    showToast("PMTiles local activo: la red vial ya no depende de Overpass.");
-    applyRoadZoomFilter();
   }
 
-  function disableLocalPmtiles() {
-    removeLocalRoadLayers();
-    state.streetSource = state.localRoadFeatures.length ? "local-geojson" : "overpass";
-    if (state.streetSource === "local-geojson") updateStreetLayer(state.localRoadFeatures);
-    updateLocalTilesButton(false);
-    setText("#modeDetail", "OpenStreetMap · consulta bajo demanda");
-    setText("#connectionLabel", "Mapa real conectado");
-    loadScaleData();
-  }
+  // Inicializar mapa MapLibre GL con estilo Dark Matter
+  function bootMap() {
+    const container = document.getElementById("map");
+    if (!container || state.map) return;
 
-  async function toggleLocalPmtiles() {
     try {
-      if (state.streetSource === "pmtiles") disableLocalPmtiles();
-      else await enableLocalPmtiles();
-    } catch (error) {
-      updateLocalTilesButton(false);
-      showToast(`${error.message}. Genera el archivo con tools/build-bogota-roads-pmtiles.sh.`, "error");
-    }
-  }
-
-  function scheduleViewportLoad(immediate = false) {
-    if (!state.mapReady || state.dataMode !== "real") return;
-    window.clearTimeout(state.viewportDebounceTimer);
-    const run = () => loadScaleData({ fromViewport: true });
-    if (immediate) run();
-    else state.viewportDebounceTimer = window.setTimeout(run, VIEWPORT_DEBOUNCE_MS);
-  }
-
-  function showToast(message, kind = "info") {
-    const toast = $("#mapToast");
-    if (!toast) return;
-    toast.classList.toggle("is-error", kind === "error");
-    toast.innerHTML = `<i class="fa-solid ${kind === "error" ? "fa-triangle-exclamation" : "fa-circle-info"}"></i><span>${escapeHtml(message)}</span>`;
-    toast.classList.add("is-visible");
-    window.clearTimeout(showToast.timer);
-    showToast.timer = window.setTimeout(() => toast.classList.remove("is-visible"), 3600);
-  }
-
-  function getDeficit(upl) {
-    if (/Déficit/i.test(upl.tag)) return "46%";
-    if (/Alta viabilidad/i.test(upl.tag)) return "18%";
-    if (/Borde rural|Conectividad/i.test(upl.tag)) return "—";
-    return "32%";
-  }
-
-  function getStrategy(upl) {
-    if (/Déficit/i.test(upl.tag)) return "Priorizar un ámbito integral de cuidado y llevar servicios a la vida cotidiana.";
-    if (/Borde rural|Conectividad/i.test(upl.tag)) return "Proteger la conectividad ecosistémica sin forzar una lógica urbana de proximidad.";
-    if (/Metro|DOT|corredores/i.test(upl.tag)) return "Conectar soporte urbano, cuidado y transporte alrededor de la proximidad.";
-    return "Conectar soporte urbano, cuidado y ecosistemas en la unidad cotidiana.";
-  }
-
-  function makeBounds(upl, view = "barrio") {
-    if (view === "region") return [[-74.38, 4.40], [-73.88, 4.90]];
-    const width = view === "barrio" ? .022 : .035;
-    const height = view === "barrio" ? .018 : .028;
-    return [[upl.lon - width, upl.lat - height], [upl.lon + width, upl.lat + height]];
-  }
-
-  function updateUplPanel(upl) {
-    state.selectedUpl = upl;
-    setText("#selectedUplName", `${upl.num} · ${upl.name.toUpperCase()}`);
-    setText("#selectedUplDescription", `${upl.tag}. Localidades relacionadas: ${upl.localidad}.`);
-    setText("#strategyText", getStrategy(upl));
-    setText("#metricDeficit", getDeficit(upl));
-    setText("#mapTitle", `UPL ${upl.num} · ${upl.name}`);
-    setText("#mapSubtitle", `${upl.localidad} · calles, equipamientos y estructura natural`);
-    setText("#uplTag", `UPL ${upl.num} · ${upl.name}: ${upl.tag}`);
-    const select = $("#uplSelect");
-    if (select) select.value = String(upl.num);
-    state.favorite = localStorage.getItem(`bogota-viva-fav-${upl.num}`) === "1";
-    refreshFavorite();
-  }
-
-  function refreshFavorite() {
-    const button = $("#favoriteBtn");
-    if (!button) return;
-    button.classList.toggle("is-favorite", state.favorite);
-    button.innerHTML = `<i class="fa-${state.favorite ? "solid" : "regular"} fa-star"></i>`;
-    button.setAttribute("aria-label", state.favorite ? "Quitar de favoritas" : "Marcar como favorita");
-  }
-
-  function renderUplSelect() {
-    const select = $("#uplSelect");
-    if (!select) return;
-    select.innerHTML = UPLS.map((upl) => `<option value="${upl.num}">${String(upl.num).padStart(2,"0")} · ${escapeHtml(upl.name)} · ${escapeHtml(upl.localidad)}</option>`).join("");
-  }
-
-  function renderApiLayerToggles() {
-    const wrap = $("#apiLayerToggles");
-    if (!wrap) return;
-    const groups = new Map();
-    Object.entries(API_LAYERS).forEach(([key, layer]) => {
-      if (!groups.has(layer.group)) groups.set(layer.group, []);
-      groups.get(layer.group).push([key, layer]);
-    });
-    wrap.innerHTML = [...groups.entries()].map(([group, entries]) => `<section class="api-layer-group"><div class="api-layer-group-label">${group}</div><div class="api-layer-group-grid">${entries.map(([key, layer]) => `<button type="button" class="api-layer-toggle${state.apiLayers[key] ? " is-active" : ""}" data-api-layer="${key}" aria-pressed="${state.apiLayers[key]}" style="--layer-color:${layer.color}"><i class="fa-solid ${layer.icon}"></i><span>${layer.label}</span></button>`).join("")}</div></section>`).join("");
-    $$(".api-layer-toggle").forEach((button) => button.addEventListener("click", () => {
-      const key = button.dataset.apiLayer;
-      state.apiLayers[key] = !state.apiLayers[key];
-      button.classList.toggle("is-active", state.apiLayers[key]);
-      button.setAttribute("aria-pressed", String(state.apiLayers[key]));
-      state.activeQueryKey = "";
-      if (state.mapReady) loadScaleData();
-    }));
-  }
-
-  function renderApiSummary(elements) {
-    const summary = $("#apiSummary");
-    if (!summary) return;
-    summary.innerHTML = Object.entries(API_LAYERS).filter(([key]) => state.apiLayers[key]).map(([key, layer]) => {
-      const status = state.apiLayerStatus[key] || "idle";
-      const sourceElements = Array.isArray(state.apiLayerElements[key]) ? state.apiLayerElements[key] : [];
-      const uniqueCount = new Set(sourceElements.map((element) => `${element.type}/${element.id}`)).size;
-      const label = status === "loading" || status === "pending" ? "consultando" : status === "ok" && uniqueCount ? "lista" : status === "ok" ? "sin resultados" : status === "error" ? "reintentar" : "apagada";
-      const count = status === "pending" || status === "loading" ? "…" : uniqueCount;
-      return `<span class="api-summary-item is-${status}"><i class="fa-solid ${layer.icon}" style="color:${layer.color}"></i><strong>${layer.label}</strong><b>${count}</b><em>${label}</em></span>`;
-    }).join("") || "<span>Ninguna capa activa.</span>";
-  }
-
-  function renderScaleCards() {
-    const wrap = $("#scaleCards");
-    if (!wrap) return;
-    wrap.innerHTML = Object.entries(SCALE_DATA).map(([key, scale]) => `<button class="scale-card${key === state.selectedScale ? " is-active" : ""}" data-scale="${key}"><span class="card-icon"><i class="fa-solid ${scale.icon}"></i></span><span><strong>${scale.label}</strong><small>${scale.subtitle}</small></span></button>`).join("");
-    $$(".scale-card").forEach((button) => button.addEventListener("click", () => setScale(button.dataset.scale)));
-  }
-
-  function setScale(scaleKey, shouldQuery = true) {
-    if (!SCALE_DATA[scaleKey]) return;
-    state.selectedScale = scaleKey;
-    $$(".scale-btn").forEach((button) => {
-      const active = button.dataset.scale === scaleKey;
-      button.classList.toggle("is-active", active);
-      button.setAttribute("aria-selected", String(active));
-    });
-    renderScaleCards();
-    setText("#scaleReading", SCALE_DATA[scaleKey].reading);
-    if (shouldQuery && state.mapReady) loadScaleData();
-    openScaleNetworkModal(scaleKey);
-  }
-
-  function initializeMap() {
-    if (!window.maplibregl) {
-      useProceduralFallback("MapLibre no pudo cargarse; se activó la lectura procedural.");
-      return;
-    }
-    const style = {
-      version: 8,
-      sources: {
-        "bogota-gray-local": {
-          type: "image",
-          url: "assets/bogota-osm-detail-gray.jpg",
-          coordinates: [[-74.25, 4.82], [-73.95, 4.82], [-73.95, 4.50], [-74.25, 4.50]],
+                  const mapStyle = {
+        version: 8,
+        sources: {
+          "osm-dark-base": {
+            type: "raster",
+            tiles: [
+              "https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+            ],
+            tileSize: 256,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          }
         },
-        "carto-gray-fallback": {
-          type: "raster",
-          tiles: [
-              "https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png",
-            "https://b.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png",
-            "https://c.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png",
-          ],
-          tileSize: 256,
-          attribution: "© OpenStreetMap © CARTO",
-        },
-        "osm-gray-fallback": {
-          type: "raster",
-          tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
-          tileSize: 256,
-          minzoom: 0,
-          maxzoom: 19,
-          attribution: OSM_ATTRIBUTION,
-        },
-      },
-      layers: [
-        { id: "map-background", type: "background", paint: { "background-color": "#05070a" } },
-        { id: "bogota-gray-local-layer", type: "raster", source: "bogota-gray-local", paint: { "raster-saturation": -1, "raster-contrast": 0.34, "raster-brightness-min": 0.00, "raster-brightness-max": 0.22, "raster-opacity": 0.96 } },
-        { id: "carto-gray-fallback-layer", type: "raster", source: "carto-gray-fallback", paint: { "raster-saturation": -1, "raster-contrast": 0.22, "raster-brightness-min": 0.00, "raster-brightness-max": 0.46, "raster-opacity": 0.94 } },
-        { id: "osm-gray-fallback-layer", type: "raster", source: "osm-gray-fallback", paint: { "raster-saturation": -1, "raster-contrast": 0.28, "raster-brightness-min": 0.00, "raster-brightness-max": 0.24, "raster-opacity": 0.58 } },
-      ],
-    };
-    const synthesisStyle = "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json";
-    try {
-      state.map = new maplibregl.Map({ container: "map", style: synthesisStyle, center: BOGOTA, zoom: 11.3, minZoom: 9, maxZoom: 19, attributionControl: true, maxBounds: [[-74.45, 4.35], [-73.75, 4.95]] });
-      state.map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-left");
-      state.map.on("zoom", applyRoadZoomFilter);
-      state.map.on("moveend", () => {
-        applyRoadZoomFilter();
-        scheduleViewportLoad();
-        updateExportButtons();
-        if (!state.map.isMoving?.() && isUplZoomTargetReached()) hideUplZoomIndicator();
+        layers: [
+          {
+            id: "osm-dark-layer",
+            type: "raster",
+            source: "osm-dark-base",
+            minzoom: 0,
+            maxzoom: 20
+          }
+        ]
+      };
+
+      state.map = new window.maplibregl.Map({
+        container: "map",
+        style: mapStyle,
+        center: [state.selectedUpl.lon, state.selectedUpl.lat],
+        zoom: state.selectedUpl.zoom,
+        pitch: 0,
+        maxPitch: 0,
+        bearing: 0,
+        dragRotate: false,
+        touchPitch: false
       });
+
+      state.map.addControl(new window.maplibregl.NavigationControl({ showCompass: true }), "top-right");
+
+      setupMapLibreDriveBridge();
       state.map.on("load", () => {
         state.mapReady = true;
-        addMapLayers();
-        updateUplPanel(state.selectedUpl);
-        focusSelectedUpl(false);
-        setText("#connectionLabel", "Cargando OSM · respaldo visible");
-        renderProceduralMarkers();
-        showToast("Mapa monocromático listo. Se muestran las calles locales mientras llegan los datos OSM.");
-        applyRoadZoomFilter();
-        loadLocalRoadFallback();
-        loadScaleData();
-      });
-      state.map.on("error", (event) => {
-        if (event?.error?.status === 404) showToast("Una tesela no respondió; el mapa continuará con caché del navegador.", "error");
-      });
-    } catch (error) {
-      console.warn("No se pudo inicializar MapLibre", error);
-      useProceduralFallback("No se pudo inicializar el mapa real; se activó el respaldo procedural.");
-    }
-  }
-
-  function clusterTooltipHtml(properties, leaves = null) {
-    const count = Number(properties.point_count) || 0;
-    if (!Array.isArray(leaves) || !leaves.length) {
-      return `<strong>${count.toLocaleString("es-CO")} elementos OSM</strong><span>Resumen OSM · preparando categorías y nombres.</span>`;
-    }
-    const categoryCounts = new Map();
-    const names = [];
-    const isProcedural = leaves.some((leaf) => leaf?.properties?.source === "Simulación procedural");
-    leaves.forEach((leaf) => {
-      const leafProperties = leaf?.properties || {};
-      const category = String(leafProperties.layerLabel || leafProperties.featureType || "Puntos sin categoría");
-      categoryCounts.set(category, (categoryCounts.get(category) || 0) + 1);
-      const name = String(leafProperties.label || "").trim();
-      if (name && name !== "Lugar OSM" && !names.includes(name)) names.push(name);
-    });
-    const categories = [...categoryCounts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 3).map(([category, total]) => `${escapeHtml(category)} (${total})`).join(" · ");
-    const sampleCount = leaves.length < count ? `Muestra ${leaves.length} de ${count}` : `${leaves.length} elementos`;
-    const references = names.slice(0, 3).map((name) => escapeHtml(name)).join(" · ");
-    return `<strong>${count.toLocaleString("es-CO")} ${isProcedural ? "elementos en el mapa" : "elementos OSM"}</strong><span><b>Categorías:</b> ${categories || "Sin clasificar"}<br><b>${sampleCount}:</b> ${references || "sin nombres disponibles"}</span>`;
-  }
-
-  function mapHoverTooltipHtml(feature, layerId, leaves = null) {
-    const properties = feature?.properties || {};
-    const count = Number(properties.point_count);
-    if ((layerId === "osm-place-clusters" || layerId === "osm-place-cluster-count" || Number.isFinite(count)) && count > 0) return clusterTooltipHtml(properties, leaves);
-    const label = properties.label || "Lugar OSM";
-    const type = properties.featureType || "lugar";
-    const category = properties.layerLabel || "Punto OSM";
-    const source = properties.source || "OpenStreetMap";
-    const osmId = properties.osmId ? ` · ID ${escapeHtml(String(properties.osmId))}` : "";
-    return `<strong>${escapeHtml(String(label))}</strong><span>${escapeHtml(String(type))} · ${escapeHtml(String(category))} · ${escapeHtml(String(source))}${osmId}</span>`;
-  }
-
-  function requestClusterLeaves(source, clusterId, limit = 40, offset = 0) {
-    if (!source || typeof source.getClusterLeaves !== "function") return Promise.resolve([]);
-    return new Promise((resolve, reject) => {
-      let settled = false;
-      const finish = (error, leaves) => {
-        if (settled) return;
-        settled = true;
-        if (error) reject(error);
-        else resolve(Array.isArray(leaves) ? leaves : []);
-      };
-      try {
-        const result = source.getClusterLeaves(clusterId, limit, offset, finish);
-        if (result?.then) result.then((leaves) => finish(null, leaves)).catch((error) => finish(error));
-      } catch (error) {
-        finish(error);
-      }
-    });
-  }
-
-  async function enrichClusterTooltip(feature, layerId, featureKey) {
-    const properties = feature?.properties || {};
-    const clusterId = properties.cluster_id ?? feature.id;
-    const count = Number(properties.point_count) || 0;
-    if (clusterId === undefined || clusterId === null || !count || !state.map) return;
-    try {
-      const leaves = await requestClusterLeaves(state.map.getSource("osm-places"), clusterId, Math.min(count, 40), 0);
-      const exportLeaves = count > leaves.length ? await requestClusterLeaves(state.map.getSource("osm-places"), clusterId, count, 0) : leaves;
-      if (state.activeClusterForExport?.featureKey !== featureKey) return;
-      state.hoveredClusterId = clusterId;
-      state.hoveredClusterFeatures = leaves;
-      state.activeClusterForExport = { clusterId, count, featureKey, leaves: exportLeaves, previewLeaves: leaves };
-      if (state.hoveredMapFeatureKey === featureKey && state.mapHoverPopup) state.mapHoverPopup.setHTML(mapHoverTooltipHtml(feature, layerId, leaves)).addTo(state.map);
-      updateExportButtons();
-    } catch (error) {
-      console.debug("No se pudo resumir el cluster OSM", error);
-    }
-  }
-
-  function setMapHoverHaloOpacity(opacity) {
-    if (!state.map) return;
-    const expression = ["case", ["boolean", ["feature-state", "hover"], false], opacity, 0];
-    try {
-      if (state.map.getLayer("osm-places-hover")) state.map.setPaintProperty("osm-places-hover", "circle-opacity", expression);
-      if (state.map.getLayer("osm-place-clusters-hover")) state.map.setPaintProperty("osm-place-clusters-hover", "circle-opacity", expression);
-    } catch (error) {
-      console.debug("No se pudo actualizar el pulso de los puntos OSM", error);
-    }
-  }
-
-  function animateMapHoverPulse(timestamp) {
-    if (!state.map || !state.mapHoverFeatureState) {
-      state.mapHoverPulseRaf = null;
-      return;
-    }
-    if (timestamp - state.mapHoverPulseLastAt >= 70) {
-      const pulse = (Math.sin(timestamp * .006) + 1) / 2;
-      setMapHoverHaloOpacity(.12 + pulse * .22);
-      state.mapHoverPulseLastAt = timestamp;
-    }
-    state.mapHoverPulseRaf = window.requestAnimationFrame(animateMapHoverPulse);
-  }
-
-  function startMapHoverPulse() {
-    if (state.mapHoverPulseRaf !== null || window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches) return;
-    state.mapHoverPulseRaf = window.requestAnimationFrame(animateMapHoverPulse);
-  }
-
-  function stopMapHoverPulse() {
-    if (state.mapHoverPulseRaf !== null) window.cancelAnimationFrame(state.mapHoverPulseRaf);
-    state.mapHoverPulseRaf = null;
-    state.mapHoverPulseLastAt = -Infinity;
-    setMapHoverHaloOpacity(.2);
-  }
-
-  function clearMapHoverFeatureState() {
-    if (!state.map || !state.mapHoverFeatureState || typeof state.map.removeFeatureState !== "function") return;
-    try {
-      state.map.removeFeatureState({ source: "osm-places", id: state.mapHoverFeatureState.id });
-    } catch (error) {
-      console.debug("No se pudo limpiar el brillo del punto OSM", error);
-    }
-    state.mapHoverFeatureState = null;
-  }
-
-  function setMapHoverFeatureState(feature, layerId) {
-    if (!state.map || typeof state.map.setFeatureState !== "function") return;
-    const properties = feature?.properties || {};
-    const id = feature?.id ?? properties.cluster_id ?? properties.osmId;
-    const kind = layerId === "osm-place-clusters" || layerId === "osm-place-cluster-count" ? "cluster" : "point";
-    if (id === undefined || id === null) return;
-    if (state.mapHoverFeatureState?.id === id && state.mapHoverFeatureState?.kind === kind) return;
-    clearMapHoverFeatureState();
-    try {
-      state.map.setFeatureState({ source: "osm-places", id }, { hover: true });
-      state.mapHoverFeatureState = { id, kind };
-      startMapHoverPulse();
-    } catch (error) {
-      console.debug("No se pudo activar el brillo del punto OSM", error);
-    }
-  }
-
-  function setupMapHoverTooltips() {
-    if (!state.map || !window.maplibregl || state.mapHoverPopup) return;
-    state.mapHoverPopup = new maplibregl.Popup({ closeButton: false, closeOnClick: false, closeOnMove: false, offset: 10, className: "map-hover-popup", maxWidth: "260px" });
-    const hide = () => {
-      state.mapHoverPopup?.remove();
-      clearMapHoverFeatureState();
-      stopMapHoverPulse();
-      state.hoveredMapFeatureKey = "";
-      state.hoveredClusterId = null;
-      state.hoveredClusterFeatures = [];
-      if (state.map) state.map.getCanvas().style.cursor = "";
-    };
-    const show = (event, layerId) => {
-      const feature = event?.features?.[0];
-      if (!feature || !state.map) return;
-      const properties = feature.properties || {};
-      const featureId = feature.id ?? properties.cluster_id ?? properties.osmId ?? "point";
-      const featureKey = `osm-places/${featureId}`;
-      const isCluster = layerId === "osm-place-clusters" || layerId === "osm-place-cluster-count";
-      setMapHoverFeatureState(feature, layerId);
-      state.map.getCanvas().style.cursor = "pointer";
-      if (state.hoveredMapFeatureKey !== featureKey) {
-        state.hoveredMapFeatureKey = featureKey;
-        if (isCluster) {
-          const clusterId = properties.cluster_id ?? feature.id;
-          const count = Number(properties.point_count) || 0;
-          state.activeClusterForExport = { clusterId, count, featureKey, leaves: null };
+        const toast = document.getElementById("mapToast");
+        if (toast) {
+          document.getElementById("mapToastText").textContent = "Cartografía en vivo lista";
+          setTimeout(() => { toast.style.opacity = "0"; }, 2000);
         }
-        state.mapHoverPopup.setHTML(mapHoverTooltipHtml(feature, layerId));
-        updateExportButtons();
-        if (isCluster) enrichClusterTooltip(feature, layerId, featureKey);
+        renderScaleHotspots();
+        renderUplMarker();
+      });
+
+    } catch (e) {
+      console.warn("Error al inicializar MapLibre:", e);
+    }
+  }
+
+  // Llenar el selector de 33 UPLs
+  function initUplSelect() {
+    const select = document.getElementById("uplSelect");
+    if (!select) return;
+
+    select.innerHTML = UPLS_DATA.map(u => `
+      <option value="${u.num}" ${u.num === state.selectedUpl.num ? "selected" : ""}>
+        UPL ${u.num < 10 ? '0' + u.num : u.num} · ${u.name} (${u.localidad})
+      </option>
+    `).join("");
+
+    select.addEventListener("change", (e) => {
+      const num = parseInt(e.target.value, 10);
+      const upl = UPLS_DATA.find(u => u.num === num);
+      if (upl) {
+        selectUpl(upl);
       }
-      state.mapHoverPopup.setLngLat(event.lngLat).addTo(state.map);
-    };
-    ["osm-places", "osm-place-clusters", "osm-place-cluster-count"].forEach((layerId) => {
-      state.map.on("mouseenter", layerId, (event) => show(event, layerId));
-      state.map.on("mousemove", layerId, (event) => show(event, layerId));
-      state.map.on("mouseleave", layerId, hide);
     });
+
+    updateUplInfoCard();
   }
 
-  function addMapLayers() {
-    if (!state.map || state.map.getSource("upl-focus")) return;
-    state.map.addSource("osm-streets", { type: "geojson", data: { type: "FeatureCollection", features: [] } });
-    state.map.addLayer({ id: "osm-streets-casing", type: "line", source: "osm-streets", layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": "#ffffff", "line-width": ["interpolate", ["linear"], ["zoom"], 10, 1.6, 13, 3.2, 16, 6], "line-opacity": .78 } });
-    state.map.addLayer({ id: "osm-streets", type: "line", source: "osm-streets", layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": ["match", ["get", "highway"], "motorway", "#d56c75", "trunk", "#df8e5a", "primary", "#e6a95a", "secondary", "#4cb2a9", "tertiary", "#58a9a4", "residential", "#2d9790", "living_street", "#50aaa2", "service", "#74bab2", "#4a9f99"], "line-width": ["interpolate", ["linear"], ["zoom"], 10, .55, 13, 1.15, 16, 2.5], "line-opacity": .93 } });
-    state.map.addSource("osm-places", { type: "geojson", data: { type: "FeatureCollection", features: [] }, cluster: true, clusterMaxZoom: 14, clusterRadius: 34 });
-    state.map.addLayer({ id: "osm-place-clusters", type: "circle", source: "osm-places", filter: ["has", "point_count"], paint: { "circle-radius": ["step", ["get", "point_count"], 9, 20, 12, 100, 16, 500, 21, 2000, 27], "circle-color": ["step", ["get", "point_count"], "#24d5c6", 100, "#e6b85c", 500, "#e8925c", 2000, "#d86b84"], "circle-opacity": .94, "circle-stroke-color": "#0d1718", "circle-stroke-width": 2, "circle-stroke-opacity": .9 } });
-    state.map.addLayer({ id: "osm-place-clusters-hover", type: "circle", source: "osm-places", filter: ["has", "point_count"], paint: { "circle-radius": ["step", ["get", "point_count"], 13, 20, 16, 100, 20, 500, 25, 2000, 31], "circle-color": "#70eee6", "circle-opacity": ["case", ["boolean", ["feature-state", "hover"], false], .2, 0], "circle-stroke-color": "#b7fffa", "circle-stroke-width": ["case", ["boolean", ["feature-state", "hover"], false], 2.5, 0], "circle-stroke-opacity": ["case", ["boolean", ["feature-state", "hover"], false], .9, 0] } });
-    state.map.addLayer({ id: "osm-place-cluster-count", type: "symbol", source: "osm-places", filter: ["has", "point_count"], layout: { "text-field": ["to-string", ["get", "point_count_abbreviated"]], "text-size": 10, "text-font": ["Open Sans Bold", "Arial Unicode MS Bold"] }, paint: { "text-color": "#07100f", "text-halo-color": "#f2eee7", "text-halo-width": 1 } });
-    state.map.addLayer({ id: "osm-places", type: "circle", source: "osm-places", filter: ["!", ["has", "point_count"]], paint: { "circle-radius": ["interpolate", ["linear"], ["zoom"], 9, 3.5, 12, 5.5, 15, 8], "circle-color": ["coalesce", ["get", "color"], "#e8925c"], "circle-opacity": .96, "circle-stroke-color": "#ffffff", "circle-stroke-width": 1.4, "circle-stroke-opacity": .95 } });
-    state.map.addLayer({ id: "osm-places-hover", type: "circle", source: "osm-places", filter: ["!", ["has", "point_count"]], paint: { "circle-radius": ["interpolate", ["linear"], ["zoom"], 9, 7, 12, 9, 15, 12], "circle-color": "#70eee6", "circle-opacity": ["case", ["boolean", ["feature-state", "hover"], false], .24, 0], "circle-stroke-color": "#b7fffa", "circle-stroke-width": ["case", ["boolean", ["feature-state", "hover"], false], 2.5, 0], "circle-stroke-opacity": ["case", ["boolean", ["feature-state", "hover"], false], .95, 0] } });
-    setupMapHoverTooltips();
-    state.map.addSource("upl-focus", { type: "geojson", data: { type: "FeatureCollection", features: [] } });
-    state.map.addLayer({ id: "upl-focus-fill", type: "fill", source: "upl-focus", paint: { "fill-color": "#24d5c6", "fill-opacity": .10 } });
-    state.map.addLayer({ id: "upl-focus-line", type: "line", source: "upl-focus", paint: { "line-color": "#149e96", "line-width": 2, "line-dasharray": [2, 2], "line-opacity": .9 } });
-    startUplFocusLineAnimation();
-    state.map.addSource("route", { type: "geojson", data: { type: "FeatureCollection", features: [] } });
-    state.map.addLayer({ id: "route-casing", type: "line", source: "route", paint: { "line-color": "#ffffff", "line-width": 7, "line-opacity": .75 } });
-    state.map.addLayer({ id: "route-line", type: "line", source: "route", paint: { "line-color": "#24bdb3", "line-width": 4, "line-opacity": .95 } });
+  // Seleccionar UPL con animación flyTo
+  function selectUpl(upl) {
+    state.selectedUpl = upl;
+    updateUplInfoCard();
+
+    // Actualizar encabezados
+    document.getElementById("mapTitle").textContent = `UPL ${upl.num} · ${upl.name}`;
+    document.getElementById("mapSubtitle").textContent = `${upl.localidad} · ${upl.tag}`;
+
+    // Mostrar indicador de zoom
+    const indicator = document.getElementById("uplZoomIndicator");
+    if (indicator) {
+      document.getElementById("uplZoomIndicatorLabel").textContent = `Enfocando UPL ${upl.num} · ${upl.name}`;
+      document.getElementById("uplZoomIndicatorHint").textContent = upl.localidad;
+      indicator.hidden = false;
+      setTimeout(() => { indicator.hidden = true; }, 1800);
+    }
+
+    if (state.map && state.mapReady) {
+      state.map.flyTo({
+        center: [upl.lon, upl.lat],
+        zoom: upl.zoom || 13.5,
+        pitch: 0,
+        bearing: 0,
+        speed: 1.2,
+        curve: 1.4,
+        essential: true
+      });
+      renderUplMarker();
+    }
   }
 
-  let uplFocusTransitionFrame = null;
-  let uplFocusTransitionTimer = null;
-  let uplFocusExitTimer = null;
-  let uplZoomIndicatorHideTimer = null;
-  let uplZoomIndicatorFinishTimer = null;
-  let uplZoomIndicatorToken = 0;
-  let uplFocusExitMarkers = [];
+  // Actualizar tarjeta lateral de UPL
+  function updateUplInfoCard() {
+    const upl = state.selectedUpl;
+    const pill = document.getElementById("uplPill");
+    const loc = document.getElementById("uplLocalidad");
+    const tag = document.getElementById("uplTag");
 
-  function showUplZoomIndicator(upl) {
-    const indicator = $("#uplZoomIndicator");
-    if (!indicator || !upl) return;
-    const label = $("#uplZoomIndicatorLabel");
-    const hint = $("#uplZoomIndicatorHint");
-    if (uplZoomIndicatorHideTimer !== null) {
-      window.clearTimeout(uplZoomIndicatorHideTimer);
-      uplZoomIndicatorHideTimer = null;
-    }
-    if (uplZoomIndicatorFinishTimer !== null) {
-      window.clearTimeout(uplZoomIndicatorFinishTimer);
-      uplZoomIndicatorFinishTimer = null;
-    }
-    const token = ++uplZoomIndicatorToken;
-    if (label) label.textContent = `Enfocando UPL ${upl.num} · ${upl.name}`;
-    if (hint) hint.textContent = state.currentView === "region" ? "Ajustando la vista regional" : "Ajustando la vista de proximidad";
-    indicator.hidden = false;
-    indicator.setAttribute("aria-busy", "true");
-    indicator.classList.remove("is-visible");
-    window.requestAnimationFrame(() => {
-      if (token === uplZoomIndicatorToken) indicator.classList.add("is-visible");
-    });
-    uplZoomIndicatorFinishTimer = window.setTimeout(() => {
-      if (token === uplZoomIndicatorToken) hideUplZoomIndicator();
-    }, 1800);
+    if (pill) pill.textContent = `UPL ${upl.num}`;
+    if (loc) loc.textContent = upl.localidad;
+    if (tag) tag.textContent = upl.tag;
   }
 
-  function hideUplZoomIndicator(immediate = false) {
-    const indicator = $("#uplZoomIndicator");
-    if (!indicator) return;
-    if (uplZoomIndicatorHideTimer !== null) {
-      window.clearTimeout(uplZoomIndicatorHideTimer);
-      uplZoomIndicatorHideTimer = null;
-    }
-    if (uplZoomIndicatorFinishTimer !== null) {
-      window.clearTimeout(uplZoomIndicatorFinishTimer);
-      uplZoomIndicatorFinishTimer = null;
-    }
-    const token = ++uplZoomIndicatorToken;
-    indicator.setAttribute("aria-busy", "false");
-    indicator.classList.remove("is-visible");
-    const hide = () => {
-      if (token !== uplZoomIndicatorToken) return;
-      indicator.hidden = true;
-      uplZoomIndicatorHideTimer = null;
-    };
-    if (immediate) hide();
-    else uplZoomIndicatorHideTimer = window.setTimeout(hide, 220);
-  }
-
-  function isUplZoomTargetReached() {
-    if (!state.map || !state.uplZoomTarget) return true;
-    const center = state.map.getCenter?.();
-    const zoom = state.map.getZoom?.();
-    if (!center || typeof zoom !== "number") return false;
-    const [targetLng, targetLat] = state.uplZoomTarget.center;
-    return Math.abs(center.lng - targetLng) < .001 && Math.abs(center.lat - targetLat) < .001 && Math.abs(zoom - state.uplZoomTarget.zoom) < .15;
-  }
-
-  function animateUplFocusLine(timestamp) {
-    if (!state.map || !state.map.getLayer("upl-focus-line")) {
-      state.uplFocusLineAnimationRaf = null;
-      return;
-    }
-    if (timestamp - state.uplFocusLineLastUpdateAt >= 40) {
-      const elapsed = timestamp % 2400;
-      const pulse = (Math.sin(elapsed * .0031) + 1) / 2;
-      const phase = Math.floor(timestamp / 140) % 2;
-      const opacity = state.uplFocusLineBaseOpacity * (.82 + pulse * .18);
-      const width = state.uplFocusLineBaseWidth * (.88 + pulse * .18);
-      try {
-        state.map.setPaintProperty("upl-focus-line", "line-opacity", opacity);
-        state.map.setPaintProperty("upl-focus-line", "line-width", width);
-        if (phase !== state.uplFocusLineLastPhase) {
-          state.map.setPaintProperty("upl-focus-line", "line-dasharray", phase ? [2.4, 1.8] : [1.8, 2.4]);
-          state.uplFocusLineLastPhase = phase;
+  // Selector de las 4 escalas (Natural, Cultural, Tecnológico, Metaverso)
+  function initScaleSwitcher() {
+    const cards = document.querySelectorAll(".scale-card");
+    cards.forEach(card => {
+      card.addEventListener("click", () => {
+        const scaleKey = card.getAttribute("data-scale");
+        if (scaleKey && SCALES_CONFIG[scaleKey]) {
+          setScale(scaleKey);
         }
-        state.uplFocusLineLastUpdateAt = timestamp;
-      } catch (error) {
-        console.debug("No se pudo animar el borde de la UPL", error);
-      }
-    }
-    state.uplFocusLineAnimationRaf = window.requestAnimationFrame(animateUplFocusLine);
-  }
-
-  function startUplFocusLineAnimation() {
-    if (state.uplFocusLineAnimationRaf !== null || window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches) return;
-    state.uplFocusLineAnimationRaf = window.requestAnimationFrame(animateUplFocusLine);
-  }
-
-  function setUplFocusLayerOpacity(fillOpacity, lineOpacity) {
-    if (!state.map) return;
-    state.uplFocusLineBaseOpacity = lineOpacity;
-    try {
-      if (state.map.getLayer("upl-focus-fill")) state.map.setPaintProperty("upl-focus-fill", "fill-opacity", fillOpacity);
-      if (state.map.getLayer("upl-focus-line")) state.map.setPaintProperty("upl-focus-line", "line-opacity", lineOpacity);
-    } catch (error) {
-      console.debug("No se pudo actualizar la opacidad del foco UPL", error);
-    }
-  }
-
-  function removeUplFocusExitMarkers() {
-    if (uplFocusExitTimer !== null) {
-      window.clearTimeout(uplFocusExitTimer);
-      uplFocusExitTimer = null;
-    }
-    uplFocusExitMarkers.forEach((marker) => marker.remove());
-    uplFocusExitMarkers = [];
-  }
-
-  function cancelUplFocusTransition() {
-    state.uplFocusTransitionToken += 1;
-    if (uplFocusTransitionFrame !== null) {
-      window.cancelAnimationFrame(uplFocusTransitionFrame);
-      uplFocusTransitionFrame = null;
-    }
-    if (uplFocusTransitionTimer !== null) {
-      window.clearTimeout(uplFocusTransitionTimer);
-      uplFocusTransitionTimer = null;
-    }
-    removeUplFocusExitMarkers();
-  }
-
-  function animateUplFocusLayerOpacity(targetFill, targetLine, duration, token) {
-    if (uplFocusTransitionFrame !== null) window.cancelAnimationFrame(uplFocusTransitionFrame);
-    const start = performance.now();
-    const startFill = 0;
-    const startLine = 0;
-    const tick = (now) => {
-      if (token !== state.uplFocusTransitionToken) return;
-      const progress = Math.max(0, Math.min(1, (now - start) / duration));
-      const eased = 1 - Math.pow(1 - progress, 3);
-      setUplFocusLayerOpacity(startFill + (targetFill - startFill) * eased, startLine + (targetLine - startLine) * eased);
-      if (progress < 1) uplFocusTransitionFrame = window.requestAnimationFrame(tick);
-      else uplFocusTransitionFrame = null;
-    };
-    uplFocusTransitionFrame = window.requestAnimationFrame(tick);
-  }
-
-  function fadeOutUplMarkers(duration) {
-    removeUplFocusExitMarkers();
-    const markers = [state.uplMarker, state.uplLabelMarker].filter(Boolean);
-    state.uplMarker = null;
-    state.uplLabelMarker = null;
-    uplFocusExitMarkers = markers;
-    markers.forEach((marker) => marker.getElement?.().classList.add("is-deselecting"));
-    uplFocusExitTimer = window.setTimeout(() => {
-      uplFocusExitMarkers.forEach((marker) => marker.remove());
-      uplFocusExitMarkers = [];
-      uplFocusExitTimer = null;
-    }, duration);
-  }
-
-  function transitionUplFocusVisual(targeted = true) {
-    if (!state.map || !state.selectedUpl) return;
-    showUplZoomIndicator(state.selectedUpl);
-    cancelUplFocusTransition();
-    const token = state.uplFocusTransitionToken;
-    fadeOutUplMarkers(180);
-    setUplFocusLayerOpacity(0, 0);
-    uplFocusTransitionTimer = window.setTimeout(() => {
-      if (token !== state.uplFocusTransitionToken) return;
-      updateFocusLayer();
-      renderUplMarkers(targeted);
-      setUplFocusLayerOpacity(0, 0);
-      animateUplFocusLayerOpacity(.10, .90, 360, token);
-      uplFocusTransitionTimer = null;
-    }, 180);
-  }
-
-  function updateFocusLayer() {
-    if (!state.map || !state.map.getSource("upl-focus") || !state.selectedUpl) return;
-    const [[west, south], [east, north]] = makeBounds(state.selectedUpl, state.currentView);
-    state.map.getSource("upl-focus").setData({ type: "FeatureCollection", features: [{ type: "Feature", properties: { label: "radio exploratorio" }, geometry: { type: "Polygon", coordinates: [[[west,south],[east,south],[east,north],[west,north],[west,south]]] } }] });
-  }
-
-  function clearUplMarkers() {
-    [state.uplMarker, state.uplLabelMarker].forEach((marker) => { if (marker) marker.remove(); });
-    state.uplMarker = null;
-    state.uplLabelMarker = null;
-  }
-
-  function renderUplMarkers(targeted = false) {
-    if (!state.map || !state.selectedUpl || !window.maplibregl) return;
-    clearUplMarkers();
-    const markerEl = document.createElement("div");
-    markerEl.className = `upl-marker${targeted ? " is-targeted" : ""}`;
-    markerEl.title = `UPL ${state.selectedUpl.num} · ${state.selectedUpl.name}`;
-    markerEl.addEventListener("click", () => showToast(`UPL ${state.selectedUpl.num}: el recuadro es un radio exploratorio, no un límite legal.`));
-    state.uplMarker = new maplibregl.Marker({ element: markerEl, anchor: "center" }).setLngLat([state.selectedUpl.lon, state.selectedUpl.lat]).addTo(state.map);
-    const labelEl = document.createElement("div");
-    labelEl.className = "upl-label";
-    labelEl.textContent = `UPL ${state.selectedUpl.num} · ${state.selectedUpl.name}`;
-    state.uplLabelMarker = new maplibregl.Marker({ element: labelEl, anchor: "bottom-left" }).setLngLat([state.selectedUpl.lon + .005, state.selectedUpl.lat + .008]).addTo(state.map);
-  }
-
-  function focusSelectedUpl(animate = true) {
-    if (!state.map || !state.selectedUpl) return;
-    if (animate) transitionUplFocusVisual(true);
-    else {
-      cancelUplFocusTransition();
-      updateFocusLayer();
-      renderUplMarkers(false);
-      setUplFocusLayerOpacity(.10, .90);
-    }
-    const bounds = makeBounds(state.selectedUpl, state.currentView);
-    const maxZoom = state.currentView === "barrio" ? 15.2 : 12.4;
-    const padding = state.currentView === "barrio" ? 44 : 38;
-    if (!animate || typeof state.map.flyTo !== "function") {
-      state.uplZoomTarget = null;
-      hideUplZoomIndicator(true);
-      state.map.fitBounds(bounds, { padding, duration: 0, maxZoom });
-      return;
-    }
-    const camera = typeof state.map.cameraForBounds === "function"
-      ? state.map.cameraForBounds(bounds, { padding })
-      : null;
-    const targetZoom = Math.min(maxZoom, Math.max(10, Number(camera?.zoom) || (state.currentView === "barrio" ? 14.2 : 11.2)));
-    const targetCenter = camera?.center ? [camera.center.lng, camera.center.lat] : [state.selectedUpl.lon, state.selectedUpl.lat];
-    state.uplZoomTarget = { center: targetCenter, zoom: targetZoom };
-    state.map.flyTo({
-      center: targetCenter,
-      zoom: targetZoom,
-      bearing: 0,
-      pitch: 0,
-      duration: 1250,
-      curve: 1.45,
-      speed: 0.72,
-      essential: true,
-      easing: (t) => 1 - Math.pow(1 - t, 3),
+      });
     });
   }
 
-  function switchView(view) {
-    state.currentView = view;
-    $$(".view-card").forEach((button) => button.classList.toggle("is-active", button.dataset.view === view));
-    if (view === "region") {
-      setText("#mapTitle", "Región Metropolitana");
-      setText("#mapSubtitle", "20 municipios conectados · escala macro");
-      transitionUplFocusVisual(false);
-      if (state.map) {
-        const regionBounds = makeBounds(state.selectedUpl, "region");
-        const regionCamera = state.map.cameraForBounds?.(regionBounds, { padding: 38 });
-        state.uplZoomTarget = regionCamera?.center ? { center: [regionCamera.center.lng, regionCamera.center.lat], zoom: Math.min(11.2, regionCamera.zoom) } : null;
-        state.map.fitBounds(regionBounds, { padding: 38, duration: 700, maxZoom: 11.2 });
-      }
-      showToast("Vista macro: el mapa se abre a la región; la UPL permanece como referencia.");
-    } else {
-      updateUplPanel(state.selectedUpl);
-      focusSelectedUpl(true);
-      showToast("Vista barrio vital: lectura de proximidad alrededor de la UPL seleccionada.");
+  // Cambiar escala activa
+  function setScale(scaleKey) {
+    const cfg = SCALES_CONFIG[scaleKey];
+    if (!cfg) return;
+
+    state.activeScale = scaleKey;
+
+    // Actualizar clases activas en botones
+    document.querySelectorAll(".scale-card").forEach(c => {
+      const active = c.getAttribute("data-scale") === scaleKey;
+      c.classList.toggle("is-active", active);
+      c.setAttribute("aria-selected", String(active));
+    });
+
+    // Actualizar tema del body
+    document.body.className = cfg.themeClass;
+
+    // Actualizar Topbar badge
+    const badge = document.getElementById("currentScaleBadge");
+    if (badge) {
+      badge.innerHTML = `<i class="fa-solid ${cfg.icon}"></i> Escala ${cfg.name}`;
     }
+
+    // Actualizar Map Headline Kicker
+    const kicker = document.getElementById("mapScaleKicker");
+    if (kicker) {
+      kicker.innerHTML = `<i class="fa-solid ${cfg.icon}"></i> ${cfg.kicker}`;
+    }
+
+    // Actualizar Diagnóstico y Crítica POT
+    const diagTitle = document.getElementById("diagScaleTitle");
+    const diagReading = document.getElementById("diagScaleReading");
+    const diagCritique = document.getElementById("diagScaleCritique");
+
+    if (diagTitle) diagTitle.textContent = `Dimensión ${cfg.name}`;
+    if (diagReading) diagReading.textContent = cfg.reading;
+    if (diagCritique) diagCritique.textContent = cfg.critique;
+
+    // Actualizar etiqueta de capa de nodos
+    const placesLabel = document.getElementById("layerPlacesLabel");
+    if (placesLabel) {
+      placesLabel.innerHTML = `<i class="fa-solid fa-circle-dot"></i> ${cfg.placesLabel}`;
+    }
+
+    // Manejar Metaverso Drive Overlay
+    const driveOverlay = document.getElementById("driveOverlay");
+    if (driveOverlay) {
+      if (scaleKey === "metaverso") {
+        driveOverlay.style.display = "block";
+        if (window.bogotaDriveFocus) window.bogotaDriveFocus();
+      } else {
+        driveOverlay.style.display = "none";
+      }
+    }
+
+    renderScaleHotspots();
   }
 
-  function clearPlaceMarkers() {
-    state.placeMarkers.forEach((marker) => marker.remove());
-    state.placeMarkers = [];
-    state.proceduralMarkers.forEach((marker) => marker.remove());
-    state.proceduralMarkers = [];
-    state.placeFeatures = [];
-    state.placePointRecords = [];
-    state.hoveredClusterFeatures = [];
-    state.hoveredClusterId = null;
-    state.activeClusterForExport = null;
-    updatePlaceLayer([]);
-    updateMapCategoryFilters();
-    setText("#mapDataSummary", "Sin puntos cargados.");
-    updateExportButtons();
-  }
-
-  function featurePoint(element) {
-    if (element.type === "node" && element.lat != null && element.lon != null) return [Number(element.lon), Number(element.lat)];
-    if (element.center && element.center.lat != null && element.center.lon != null) return [Number(element.center.lon), Number(element.center.lat)];
-    if (Array.isArray(element.geometry) && element.geometry[0]?.lat != null && element.geometry[0]?.lon != null) return [Number(element.geometry[0].lon), Number(element.geometry[0].lat)];
-    return null;
-  }
-
-  function streetFeature(element) {
-    if (element.type !== "way" || !element.tags?.highway || !Array.isArray(element.geometry) || element.geometry.length < 2) return null;
-    const coordinates = element.geometry.map((point) => [Number(point.lon), Number(point.lat)]).filter((point) => Number.isFinite(point[0]) && Number.isFinite(point[1]));
-    if (coordinates.length < 2) return null;
-    return { type: "Feature", properties: { highway: element.tags.highway, name: element.tags.name || "Calle sin nombre", osmId: element.id }, geometry: { type: "LineString", coordinates } };
-  }
-
-  function updateStreetLayer(features) {
-    if (!state.map || !state.map.getSource("osm-streets")) return;
-    state.map.getSource("osm-streets").setData({ type: "FeatureCollection", features });
-  }
-
-  async function loadLocalRoadFallback() {
+  // Renderizar marcadores/hotspots de la escala activa
+  function renderScaleHotspots() {
     if (!state.map || !state.mapReady) return;
-    try {
-      const response = await fetch("./vias.geojson", { cache: "force-cache" });
-      if (!response.ok) throw new Error(`GeoJSON vial HTTP ${response.status}`);
-      const json = await response.json();
-      const features = (json.features || []).filter((feature) => feature.geometry && ["LineString", "MultiLineString"].includes(feature.geometry.type)).map((feature) => ({
-        ...feature,
-        properties: { ...(feature.properties || {}), highway: feature.properties?.highway || feature.properties?.fclass || "residential", source: "GeoJSON local" },
-      }));
-      state.localRoadFeatures = features;
-      state.localRoadCount = features.length;
-      if (state.streetSource !== "pmtiles") {
-        state.streetSource = "local-geojson";
-        updateStreetLayer(features);
-        setText("#metricRoads", features.length.toLocaleString("es-CO"));
-        setText("#modeDetail", "GeoJSON vial local · OSM bajo demanda");
-        setText("#connectionLabel", "Mapa OSM monocromático listo · 16.962 calles locales");
-      }
-    } catch (error) {
-      console.warn("No se pudo cargar el respaldo vial local", error);
-      if (state.streetSource === "local-geojson") state.streetSource = "overpass";
-    }
-  }
 
-  function updatePlaceLayer(features) {
-    if (!state.map || !state.map.getSource("osm-places")) return;
-    state.map.getSource("osm-places").setData({ type: "FeatureCollection", features });
-  }
+    // Limpiar marcadores anteriores
+    state.markers.forEach(m => m.remove());
+    state.markers = [];
 
-  function featureName(element) {
-    const tags = element.tags || {};
-    return tags.name || tags["name:es"] || tags.amenity || tags.shop || tags.office || tags.leisure || tags.natural || tags.waterway || tags.landuse || tags.building || tags.railway || tags.tourism || tags.historic || tags.place || tags.man_made || tags.highway || "Lugar OSM";
-  }
+    const cfg = SCALES_CONFIG[state.activeScale];
+    if (!cfg || !cfg.hotspots || !state.layers.places) return;
 
-  function featureType(element) {
-    const tags = element.tags || {};
-    if (tags.highway) return tags.highway === "bus_stop" ? "parada de transporte" : "calle";
-    return tags.amenity || tags.shop || tags.office || tags.leisure || tags.natural || tags.waterway || tags.landuse || tags.building || tags.railway || tags.tourism || tags.historic || tags.place || tags.man_made || "lugar";
-  }
+    cfg.hotspots.forEach(h => {
+      const el = document.createElement("div");
+      el.className = "map-scale-hotspot";
+      el.style.width = "18px";
+      el.style.height = "18px";
+      el.style.borderRadius = "50%";
+      el.style.background = cfg.color;
+      el.style.border = "2px solid #ffffff";
+      el.style.boxShadow = `0 0 12px ${cfg.color}, 0 0 20px ${cfg.color}`;
+      el.style.cursor = "pointer";
+      el.style.transition = "transform 0.2s ease";
 
-  function featureLayer(element) {
-    const tags = element.tags || {};
-    return Object.entries(API_LAYERS).find(([, layer]) => layer.match?.(tags, element)) || null;
-  }
-
-  function placeCategoryKey(label) {
-    return String(label || "Punto OSM").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "punto-osm";
-  }
-
-  function placeFeatureCategory(feature) {
-    return String(feature?.properties?.layerLabel || feature?.properties?.featureType || "Punto OSM");
-  }
-
-  function placeFeatureCategoryKey(feature) {
-    return String(feature?.properties?.layerKey || placeCategoryKey(placeFeatureCategory(feature)));
-  }
-
-  function updateMapCategoryFilters() {
-    const container = $("#mapCategoryFilters");
-    if (!container) return;
-    const counts = new Map();
-    state.placeFeatures.forEach((feature) => {
-      const label = placeFeatureCategory(feature);
-      const key = placeFeatureCategoryKey(feature);
-      counts.set(key, { key, label, count: (counts.get(key)?.count || 0) + 1 });
-    });
-    if (!counts.size) {
-      container.innerHTML = `<span class="field-note">Las categorías aparecerán cuando carguen los puntos.</span>`;
-      return;
-    }
-    const categories = [...counts.values()].sort((a, b) => b.count - a.count || a.label.localeCompare(b.label, "es"));
-    categories.forEach(({ key }) => {
-      if (state.categoryVisibility[key] === undefined) state.categoryVisibility[key] = true;
-    });
-    Object.keys(state.categoryVisibility).forEach((key) => { if (!counts.has(key)) delete state.categoryVisibility[key]; });
-    container.innerHTML = [`<button class="map-category-filter map-category-all is-active" type="button" data-category="__all" aria-pressed="true">Todas <small>${state.placeFeatures.length}</small></button>`, ...categories.map(({ key, label, count }) => `<button class="map-category-filter${state.categoryVisibility[key] !== false ? " is-active" : ""}" type="button" data-category="${escapeHtml(key)}" aria-pressed="${state.categoryVisibility[key] !== false}" title="Mostrar u ocultar ${escapeHtml(label)}"><span class="map-category-dot"></span>${escapeHtml(label)} <small>${count}</small></button>`)].join("");
-    container.querySelectorAll(".map-category-filter").forEach((button) => button.addEventListener("click", () => {
-      const key = button.dataset.category;
-      if (key === "__all") Object.keys(state.categoryVisibility).forEach((category) => { state.categoryVisibility[category] = true; });
-      else state.categoryVisibility[key] = state.categoryVisibility[key] === false;
-      applyPlaceCategoryFilter();
-    }));
-  }
-
-  function renderHtmlPlaceMarkers(records) {
-    if (!state.map || !window.maplibregl) return;
-    const seen = new Set();
-    records.slice(0, 36).forEach(({ element, point, matchedLayer }) => {
-      if (!point || element.tags?.highway) return;
-      const key = `${point[0].toFixed(5)},${point[1].toFixed(5)}`;
-      if (seen.has(key)) return;
-      seen.add(key);
-      const markerEl = document.createElement("div");
-      markerEl.className = "place-marker";
-      if (matchedLayer) {
-        markerEl.style.background = matchedLayer[1].color;
-        markerEl.title = matchedLayer[1].label;
-      }
-      const marker = new maplibregl.Marker({ element: markerEl, anchor: "center" }).setLngLat(point).setPopup(new maplibregl.Popup({ offset: 9, className: "place-popup" }).setHTML(`<strong>${escapeHtml(featureName(element))}</strong><span>${escapeHtml(featureType(element))} · OpenStreetMap${matchedLayer ? ` · ${escapeHtml(matchedLayer[1].label)}` : ""}</span>`)).addTo(state.map);
-      markerEl.addEventListener("mouseenter", () => marker.togglePopup());
-      markerEl.addEventListener("mouseleave", () => marker.getPopup()?.remove());
-      state.placeMarkers.push(marker);
-    });
-  }
-
-  function applyPlaceCategoryFilter() {
-    if (!state.map) return;
-    clearMapHoverFeatureState();
-    stopMapHoverPulse();
-    state.mapHoverPopup?.remove();
-    state.hoveredMapFeatureKey = "";
-    state.activeClusterForExport = null;
-    state.hoveredClusterFeatures = [];
-    state.hoveredClusterId = null;
-    const visibleFeatures = state.placeFeatures.filter((feature) => state.categoryVisibility[placeFeatureCategoryKey(feature)] !== false);
-    const visibleRecords = state.placePointRecords.filter(({ feature }) => state.categoryVisibility[placeFeatureCategoryKey(feature)] !== false);
-    updatePlaceLayer(visibleFeatures);
-    state.placeMarkers.forEach((marker) => marker.remove());
-    state.placeMarkers = [];
-    renderHtmlPlaceMarkers(visibleRecords);
-    setText("#metricPlaces", String(visibleFeatures.length));
-    updatePlaceDataSummary();
-    const filters = $("#mapCategoryFilters");
-    filters?.querySelectorAll(".map-category-filter").forEach((button) => {
-      const active = button.dataset.category === "__all" ? Object.values(state.categoryVisibility).every(Boolean) : state.categoryVisibility[button.dataset.category] !== false;
-      button.classList.toggle("is-active", active);
-      button.setAttribute("aria-pressed", String(active));
-    });
-    updateExportButtons();
-  }
-
-  function renderPlaces(elements) {
-    clearPlaceMarkers();
-    state.placeFeatures = [];
-    state.placePointRecords = [];
-    if (!state.map || !window.maplibregl) return;
-    const streetFeatures = [];
-    let roadCount = 0;
-    elements.forEach((element) => {
-      const street = streetFeature(element);
-      if (street) {
-        streetFeatures.push(street);
-        roadCount += 1;
-      }
-    });
-    if (state.streetSource === "overpass" && streetFeatures.length) updateStreetLayer(streetFeatures);
-    else if (!streetFeatures.length && state.localRoadFeatures.length) updateStreetLayer(state.localRoadFeatures);
-    elements.forEach((element) => {
-      const point = featurePoint(element);
-      const tags = element.tags || {};
-      if (!point || tags.highway) return;
-      const matchedLayer = featureLayer(element);
-      const feature = { type: "Feature", id: `${element.type}/${element.id}`, properties: { color: matchedLayer?.[1].color || "#e8925c", osmId: element.id, label: featureName(element), featureType: featureType(element), layerKey: matchedLayer?.[0] || "other", layerLabel: matchedLayer?.[1].label || "Punto OSM", source: "OpenStreetMap" }, geometry: { type: "Point", coordinates: point } };
-      state.placeFeatures.push(feature);
-      state.placePointRecords.push({ element, point, matchedLayer, feature });
-    });
-    updateMapCategoryFilters();
-    applyPlaceCategoryFilter();
-    setText("#metricRoads", state.streetSource === "pmtiles" ? "MVT" : (state.streetSource === "local-geojson" && state.localRoadCount ? state.localRoadCount.toLocaleString("es-CO") : (roadCount ? roadCount.toLocaleString("es-CO") : "—")));
-    renderApiSummary(elements);
-  }
-
-  function getFilteredPlaceFeatures() {
-    return state.placeFeatures.filter((feature) => state.categoryVisibility[placeFeatureCategoryKey(feature)] !== false);
-  }
-
-  function getVisiblePlaceFeatures() {
-    const features = getFilteredPlaceFeatures();
-    const bounds = state.map?.getBounds?.();
-    if (!bounds || typeof bounds.contains !== "function") return features;
-    return features.filter((feature) => {
-      const coordinates = feature?.geometry?.coordinates;
-      return Array.isArray(coordinates) && coordinates.length >= 2 && Number.isFinite(Number(coordinates[0])) && Number.isFinite(Number(coordinates[1])) && bounds.contains([Number(coordinates[0]), Number(coordinates[1])]);
-    });
-  }
-
-  function normalizeExportFeature(feature) {
-    const coordinates = feature?.geometry?.coordinates;
-    if (!Array.isArray(coordinates) || coordinates.length < 2) return null;
-    const properties = feature.properties || {};
-    const longitude = Number(coordinates[0]);
-    const latitude = Number(coordinates[1]);
-    if (!Number.isFinite(longitude) || !Number.isFinite(latitude)) return null;
-    return {
-      osm_id: properties.osmId ?? "",
-      nombre: properties.label || "Lugar OSM",
-      tipo: properties.featureType || "lugar",
-      categoria: properties.layerLabel || "Punto OSM",
-      fuente: properties.source || "OpenStreetMap",
-      longitud: longitude,
-      latitud: latitude,
-    };
-  }
-
-  function exportFeatureCollection(features) {
-    return {
-      type: "FeatureCollection",
-      features: features.map((feature) => {
-        const properties = normalizeExportFeature(feature);
-        if (!properties) return null;
-        return { type: "Feature", id: feature.id, properties, geometry: { type: "Point", coordinates: [properties.longitud, properties.latitud] } };
-      }).filter(Boolean),
-    };
-  }
-
-  function csvCell(value) {
-    const text = String(value ?? "");
-    const needsQuotes = text.includes(",") || text.includes(String.fromCharCode(10)) || text.includes(String.fromCharCode(13));
-    return needsQuotes ? `"${text.replace(/"/g, '""')}"` : text;
-  }
-
-  function exportCsv(features) {
-    const columns = ["osm_id", "nombre", "tipo", "categoria", "fuente", "longitud", "latitud"];
-    const rows = features.map(normalizeExportFeature).filter(Boolean).map((row) => columns.map((column) => csvCell(row[column])).join(","));
-    const lineBreak = String.fromCharCode(13, 10);
-    return String.fromCharCode(0xfeff) + columns.join(",") + lineBreak + rows.join(lineBreak) + lineBreak;
-  }
-
-  function downloadText(content, mimeType, filename) {
-    const blob = new Blob([content], { type: mimeType });
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement("a");
-    anchor.href = url;
-    anchor.download = filename;
-    anchor.style.display = "none";
-    document.body.appendChild(anchor);
-    anchor.click();
-    anchor.remove();
-    window.setTimeout(() => URL.revokeObjectURL(url), 1200);
-  }
-
-  function updatePlaceDataSummary() {
-    const visibleCount = getVisiblePlaceFeatures().length;
-    const visibleCategories = new Set(getFilteredPlaceFeatures().map((feature) => placeFeatureCategory(feature))).size;
-    if (state.placeFeatures.length) setText("#mapDataSummary", `${visibleCount.toLocaleString("es-CO")} puntos en la vista · ${visibleCategories} categorías activas`);
-    else setText("#mapDataSummary", "Sin puntos cargados.");
-  }
-
-  function updateExportButtons() {
-    updatePlaceDataSummary();
-    const visibleCount = getVisiblePlaceFeatures().length;
-    const cluster = state.activeClusterForExport;
-    const clusterCount = Array.isArray(cluster?.leaves) ? cluster.leaves.length : 0;
-    ["#exportVisibleCsv", "#exportVisibleGeojson"].forEach((selector) => { const button = $(selector); if (button) button.disabled = visibleCount === 0; });
-    ["#exportClusterCsv", "#exportClusterGeojson"].forEach((selector) => { const button = $(selector); if (button) button.disabled = clusterCount === 0; });
-    if (cluster && cluster.leaves === null) setText("#mapClusterSummary", `Cluster de ${cluster.count.toLocaleString("es-CO")} elementos · preparando datos…`);
-    else if (clusterCount) setText("#mapClusterSummary", `Cluster de ${cluster.count.toLocaleString("es-CO")} elementos · ${clusterCount} listos para exportar.`);
-    else setText("#mapClusterSummary", "Pasa el cursor sobre un cluster para habilitar su exportación.");
-  }
-
-  function exportPlaceData(format, scope) {
-    const sourceFeatures = scope === "cluster" ? (state.activeClusterForExport?.leaves || []) : getVisiblePlaceFeatures();
-    const features = sourceFeatures.map((feature) => ({ ...feature, properties: { ...(feature.properties || {}) } }));
-    const rows = features.map(normalizeExportFeature).filter(Boolean);
-    if (!rows.length) {
-      showToast(scope === "cluster" ? "Todavía no hay un cluster listo para exportar." : "No hay puntos visibles para exportar.", "error");
-      updateExportButtons();
-      return;
-    }
-    const stamp = new Date().toISOString().slice(0, 10);
-    const prefix = scope === "cluster" ? "cluster-osm" : "puntos-osm-visibles";
-    if (format === "geojson") {
-      downloadText(JSON.stringify(exportFeatureCollection(features), null, 2), "application/geo+json;charset=utf-8", `${prefix}-${stamp}.geojson`);
-    } else {
-      downloadText(exportCsv(features), "text/csv;charset=utf-8", `${prefix}-${stamp}.csv`);
-    }
-    showToast(`${rows.length.toLocaleString("es-CO")} ${scope === "cluster" ? "elementos del cluster" : "puntos visibles"} exportados en ${format.toUpperCase()}.`);
-  }
-
-  function buildOverpassQuery(upl, scaleKey, bbox = null, layerKey = null) {
-    const fallback = { west: upl.lon - .03, south: upl.lat - .025, east: upl.lon + .03, north: upl.lat + .025 };
-    const b = bboxString(bbox || fallback);
-    const roadLevel = state.map ? viewportLevel() : "meso";
-    const keys = layerKey ? [layerKey] : Object.keys(API_LAYERS).filter((key) => state.apiLayers[key] && key !== "roads");
-    const clauses = keys.flatMap((key) => {
-      if (!state.apiLayers[key]) return [];
-      if (key === "roads") return [`way["highway"~"${roadRegexForLevel(roadLevel)}"](${b});`];
-      return [API_LAYERS[key].query(b)];
-    });
-    /* La consulta combinada prioriza conteos y puntos; la geometría vial pesada se consulta aparte. */
-    const output = layerKey === "roads" ? "out geom tags;" : "out center tags;";
-    return `[out:json][timeout:18];(${clauses.join("")});${output}`;
-  }
-
-  async function fetchOverpass(upl, scaleKey, bbox, signal, layerKey) {
-    const key = `overpass:${upl.num}:${scaleKey}:${layerKey}:${bboxString(bbox)}`;
-    if (CACHE.has(key)) return CACHE.get(key);
-    const query = buildOverpassQuery(upl, scaleKey, bbox, layerKey);
-    let lastError = null;
-    for (const endpoint of OVERPASS_ENDPOINTS) {
-      const endpointController = new AbortController();
-      const endpointTimer = window.setTimeout(() => endpointController.abort(), OVERPASS_ENDPOINT_TIMEOUT_MS);
-      const requestSignal = AbortSignal.any ? AbortSignal.any([signal, endpointController.signal]) : signal;
-      try {
-        const queryParam = `?data=${encodeURIComponent(query)}`;
-        let response = await fetch(`${endpoint}${queryParam}`, { method: "GET", signal: requestSignal, headers: { Accept: "application/json" } });
-        /* Algunos relays aceptan POST pero no GET; se conserva un segundo intento. */
-        if (!response.ok) {
-          response = await fetch(endpoint, {
-            method: "POST",
-            signal: requestSignal,
-            headers: { Accept: "application/json", "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" },
-            body: `data=${encodeURIComponent(query)}`,
-          });
-        }
-        if (!response.ok) throw new Error(`Overpass HTTP ${response.status}`);
-        const json = await response.json();
-        const elements = Array.isArray(json.elements) ? json.elements : [];
-        rememberCache(key, elements);
-        return elements;
-      } catch (error) {
-        if (signal.aborted) throw error;
-        lastError = error;
-      } finally {
-        window.clearTimeout(endpointTimer);
-      }
-    }
-    throw lastError || new Error("Ningún servidor Overpass respondió");
-  }
-
-  async function fetchVisibleApiLayers(upl, scaleKey, bbox, signal) {
-    const priority = ["natural", "amenities", "transport", "water", "green", "parks", "culture", "commerce", "education", "health", "care", "boundaries", "roads"];
-    const activeKeys = Object.keys(API_LAYERS).filter((key) => state.apiLayers[key]).sort((a, b) => priority.indexOf(a) - priority.indexOf(b));
-    if (!activeKeys.length) return [];
-    activeKeys.forEach((key) => { state.apiLayerStatus[key] = "pending"; state.apiLayerElements[key] = []; });
-    renderApiSummary([]);
-    setText("#connectionLabel", `Consultando OSM · 0/${activeKeys.length} categorías`);
-
-    /* Una sola petición evita que Overpass bloquee el navegador por 28 solicitudes
-       simultáneas. La respuesta se reparte localmente por las etiquetas de cada capa. */
-    const queryKeys = activeKeys.filter((key) => key !== "roads");
-    const combined = await fetchOverpass(upl, scaleKey, bbox, signal, null);
-    const unique = new Map();
-    combined.forEach((element) => unique.set(`${element.type}/${element.id}`, element));
-    const allElements = [...unique.values()];
-    activeKeys.forEach((key) => {
-      if (key === "roads") {
-        state.apiLayerStatus[key] = state.localRoadCount ? "ok" : "pending";
-        state.apiLayerElements[key] = state.localRoadFeatures;
-        return;
-      }
-      const layer = API_LAYERS[key];
-      state.apiLayerElements[key] = allElements.filter((element) => layer.match?.(element.tags || {}, element));
-      state.apiLayerStatus[key] = "ok";
-    });
-    renderPlaces(allElements);
-    renderApiSummary(allElements);
-    setText("#connectionLabel", `Datos OSM listos · ${allElements.length.toLocaleString("es-CO")} elementos · ${queryKeys.length} categorías clasificadas`);
-    return allElements;
-  }
-
-  function renderProceduralMarkers() {
-    if (!state.map || !state.selectedUpl || !window.maplibregl) return;
-    clearPlaceMarkers();
-    updateStreetLayer(state.streetSource === "local-geojson" ? state.localRoadFeatures : []);
-    const scale = SCALE_DATA[state.selectedScale];
-    const offsets = [[-.012,.008],[.010,.010],[-.007,-.009],[.014,-.006],[-.017,-.003],[.002,.017]];
-    state.placeFeatures = offsets.map(([dx, dy], index) => {
-      const coordinates = [state.selectedUpl.lon + dx, state.selectedUpl.lat + dy];
-      const label = scale.fallback[index % scale.fallback.length];
-      return { type: "Feature", id: `procedural/${state.selectedScale}/${index}`, properties: { color: scale.color, osmId: "", label, featureType: "respaldo procedural", layerKey: "procedural", layerLabel: `Respaldo · ${scale.label}`, source: "Simulación procedural" }, geometry: { type: "Point", coordinates } };
-    });
-    state.placePointRecords = [];
-    updateMapCategoryFilters();
-    applyPlaceCategoryFilter();
-    setText("#metricRoads", "6");
-    renderApiSummary([]);
-  }
-
-  async function loadScaleData({ fromViewport = false } = {}) {
-    if (!state.mapReady || !state.selectedUpl) return;
-    const rawBbox = getViewportBBox();
-    if (!rawBbox) return;
-    /* En móvil el viewport puede cubrir demasiada ciudad; acotamos cada consulta para que Overpass responda. */
-    const centerLon = (rawBbox.west + rawBbox.east) / 2;
-    const centerLat = (rawBbox.south + rawBbox.north) / 2;
-    const halfWidth = Math.min((rawBbox.east - rawBbox.west) / 2, 0.035);
-    const halfHeight = Math.min((rawBbox.north - rawBbox.south) / 2, 0.028);
-    const bbox = { west: centerLon - halfWidth, south: centerLat - halfHeight, east: centerLon + halfWidth, north: centerLat + halfHeight };
-    const layerKey = Object.entries(state.apiLayers).filter(([, enabled]) => enabled).map(([key]) => key).join("|");
-    const queryKey = `${state.selectedUpl.num}:${state.selectedScale}:${layerKey}:${bboxString(bbox)}`;
-    if (queryKey === state.activeQueryKey && fromViewport) return;
-    state.activeQueryKey = queryKey;
-    const token = ++state.queryToken;
-    if (state.overpassController) state.overpassController.abort();
-    const controller = new AbortController();
-    state.overpassController = controller;
-    const timeout = window.setTimeout(() => controller.abort(), 90000);
-    const scale = SCALE_DATA[state.selectedScale];
-    if (state.dataMode !== "real") {
-      window.clearTimeout(timeout);
-      renderProceduralMarkers();
-      setText("#connectionLabel", "Modo procedural de respaldo");
-      return;
-    }
-    clearPlaceMarkers();
-    renderProceduralMarkers();
-    setText("#metricPlaces", "6");
-    setText("#metricRoads", "6");
-    Object.keys(API_LAYERS).forEach((key) => { state.apiLayerStatus[key] = state.apiLayers[key] ? "pending" : "idle"; });
-    renderApiSummary([]);
-    setText("#connectionLabel", "Respaldo visible · consultando OSM…");
-    showToast(`Consultando todas las capas API de ${scale.label.toLowerCase()} en el área visible…`);
-    try {
-      const elements = await fetchVisibleApiLayers(state.selectedUpl, state.selectedScale, bbox, controller.signal);
-      if (token !== state.queryToken || controller.signal.aborted) return;
-      renderPlaces(elements);
-      setText("#connectionLabel", "Mapa real conectado");
-      showToast(`${elements.length} elementos OSM recibidos en el área visible.`);
-    } catch (error) {
-      /* Un timeout propio no debe dejar las tarjetas congeladas en “cargando”. */
-      if (token !== state.queryToken) return;
-      console.warn("Overpass no respondió o excedió el tiempo límite", error);
-      useProceduralFallback("Overpass tardó demasiado; se muestran los datos de respaldo y puedes reintentar las capas API.");
-    } finally {
-      window.clearTimeout(timeout);
-      if (state.overpassController === controller) state.overpassController = null;
-    }
-  }
-
-  function useProceduralFallback(message) {
-    state.dataMode = "procedural";
-    Object.keys(API_LAYERS).forEach((key) => { state.apiLayerStatus[key] = state.apiLayers[key] ? "error" : "idle"; });
-    const toggle = $("#modeToggle");
-    if (toggle) { toggle.classList.remove("is-on"); toggle.setAttribute("aria-checked", "false"); }
-    const dot = $("#modeDot");
-    if (dot) dot.style.background = "#f1bd61";
-    setText("#modeTitle", "Simulación procedural");
-    setText("#modeDetail", "respaldo local · sin consultas externas");
-    setText("#connectionLabel", "Modo procedural de respaldo");
-    if (state.mapReady) renderProceduralMarkers();
-    showToast(message, "error");
-  }
-
-  function updateRouteSource(geojson) {
-    if (!state.map || !state.map.getSource("route")) return;
-    state.map.getSource("route").setData(geojson || { type: "FeatureCollection", features: [] });
-  }
-
-  function clearRoute() {
-    state.routeStart = null;
-    state.routeEnd = null;
-    updateRouteSource({ type: "FeatureCollection", features: [] });
-    setText("#metricRoute", "—");
-    setText("#routeStatus", "Nominatim geocodifica y OSRM calcula la ruta. Las consultas se hacen solo al solicitarla.");
-  }
-
-  async function geocode(query) {
-    const clean = `${query}, Bogotá, Colombia`;
-    const url = `${NOMINATIM_ENDPOINT}?format=jsonv2&limit=1&addressdetails=1&accept-language=es&q=${encodeURIComponent(clean)}`;
-    const response = await fetch(url, { headers: { Accept: "application/json" } });
-    if (!response.ok) throw new Error(`Nominatim HTTP ${response.status}`);
-    const results = await response.json();
-    if (!results.length) throw new Error(`No encontré: ${query}`);
-    return { lon: Number(results[0].lon), lat: Number(results[0].lat), label: results[0].display_name };
-  }
-
-  async function calculateRoute() {
-    const startQuery = $("#routeStart")?.value.trim();
-    const endQuery = $("#routeEnd")?.value.trim();
-    if (!startQuery || !endQuery) { setText("#routeStatus", "Escribe un origen y un destino para calcular la ruta."); return; }
-    const button = $("#routeBtn");
-    if (button) { button.disabled = true; button.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Consultando…`; }
-    setText("#routeStatus", "Buscando origen y destino en Nominatim…");
-    try {
-      const [start, end] = await Promise.all([geocode(startQuery), geocode(endQuery)]);
-      setText("#routeStatus", "Calculando recorrido vial real con OSRM…");
-      const routeUrl = `${OSRM_ENDPOINT}/${start.lon},${start.lat};${end.lon},${end.lat}?overview=full&geometries=geojson&steps=false`;
-      const response = await fetch(routeUrl, { headers: { Accept: "application/json" } });
-      if (!response.ok) throw new Error(`OSRM HTTP ${response.status}`);
-      const json = await response.json();
-      if (json.code !== "Ok" || !json.routes?.length) throw new Error("OSRM no encontró una ruta vial.");
-      const route = json.routes[0];
-      state.routeStart = start;
-      state.routeEnd = end;
-      updateRouteSource({ type: "FeatureCollection", features: [{ type: "Feature", properties: { distance: route.distance, duration: route.duration }, geometry: route.geometry }] });
-      setText("#metricRoute", `${(route.distance / 1000).toFixed(1)} km`);
-      setText("#routeStatus", `${start.label.split(",")[0]} → ${end.label.split(",")[0]} · ${(route.duration / 60).toFixed(0)} min estimados sobre la red vial.`);
-      state.map.fitBounds([[start.lon,start.lat],[end.lon,end.lat]], { padding:80, duration:700, maxZoom:15 });
-      showToast("Ruta real calculada sobre la red vial de OSRM.");
-    } catch (error) {
-      console.warn("No se pudo calcular la ruta", error);
-      setText("#routeStatus", `No fue posible calcularla: ${error.message}. Puedes seguir explorando el mapa real o activar el respaldo procedural.`);
-      showToast("La ruta pública no respondió. El mapa real continúa disponible.", "error");
-    } finally {
-      if (button) { button.disabled = false; button.innerHTML = `<i class="fa-solid fa-route"></i> Calcular ruta`; }
-    }
-  }
-
-  function setAllApiLayers(enabled) {
-    Object.keys(API_LAYERS).forEach((key) => { state.apiLayers[key] = enabled; });
-    state.activeQueryKey = "";
-    renderApiLayerToggles();
-    if (state.mapReady) loadScaleData();
-  }
-
-  function bindEvents() {
-    $("#apiSelectAll")?.addEventListener("click", () => setAllApiLayers(true));
-    $("#apiClearAll")?.addEventListener("click", () => setAllApiLayers(false));
-    $("#uplSelect")?.addEventListener("change", (event) => {
-      const upl = UPLS.find((item) => String(item.num) === event.target.value);
-      if (!upl) return;
-      updateUplPanel(upl);
-      state.currentView = "barrio";
-      $$(".view-card").forEach((button) => button.classList.toggle("is-active", button.dataset.view === "barrio"));
-      /* Evita que el select conserve el foco y capture el siguiente gesto de scroll. */
-      event.target.blur();
-      focusSelectedUpl(true);
-      loadScaleData();
-    });
-    $$(".scale-btn").forEach((button) => button.addEventListener("click", () => setScale(button.dataset.scale)));
-    $$(".view-card").forEach((button) => button.addEventListener("click", () => switchView(button.dataset.view)));
-    $("#locateBtn")?.addEventListener("click", () => { state.currentView = "barrio"; updateUplPanel(state.selectedUpl); focusSelectedUpl(true); });
-    $("#exportVisibleCsv")?.addEventListener("click", () => exportPlaceData("csv", "visible"));
-    $("#exportVisibleGeojson")?.addEventListener("click", () => exportPlaceData("geojson", "visible"));
-    $("#exportClusterCsv")?.addEventListener("click", () => exportPlaceData("csv", "cluster"));
-    $("#exportClusterGeojson")?.addEventListener("click", () => exportPlaceData("geojson", "cluster"));
-    $("#fullScreenBtn")?.addEventListener("click", () => { const element = $(".map-panel"); if (!document.fullscreenElement) element?.requestFullscreen?.(); else document.exitFullscreen?.(); });
-    $("#routeBtn")?.addEventListener("click", calculateRoute);
-    $("#clearRouteBtn")?.addEventListener("click", clearRoute);
-    $("#routeStart")?.addEventListener("keydown", (event) => { if (event.key === "Enter") calculateRoute(); });
-    $("#routeEnd")?.addEventListener("keydown", (event) => { if (event.key === "Enter") calculateRoute(); });
-    $("#favoriteBtn")?.addEventListener("click", () => {
-      state.favorite = !state.favorite;
-      localStorage.setItem(`bogota-viva-fav-${state.selectedUpl.num}`, state.favorite ? "1" : "0");
-      refreshFavorite();
-      showToast(state.favorite ? "UPL guardada en favoritas." : "UPL retirada de favoritas.");
-    });
-    $("#localTilesBtn")?.addEventListener("click", toggleLocalPmtiles);
-    $("#modeToggle")?.addEventListener("click", () => {
-      state.dataMode = state.dataMode === "real" ? "procedural" : "real";
-      const real = state.dataMode === "real";
-      const toggle = $("#modeToggle");
-      toggle.classList.toggle("is-on", real);
-      toggle.setAttribute("aria-checked", String(real));
-      const dot = $("#modeDot");
-      if (dot) dot.style.background = real ? "var(--teal)" : "#f1bd61";
-      setText("#modeTitle", real ? "Calles reales" : "Simulación procedural");
-      setText("#modeDetail", real ? "OpenStreetMap · consulta bajo demanda" : "respaldo local · sin consultas externas");
-      loadScaleData();
-    });
-  }
-
-const scaleNetworks = {
-  natural: {
-    title: 'Red Natural',
-    accent: '#46d6d0',
-    nodes: [
-      { id: 'humedales', label: 'HUMEDALES', lat: 4.630, lng: -74.150, hub: true, icon: 'fa-droplet' },
-      { id: 'rios', label: 'RÍOS', lat: 4.665, lng: -74.165, icon: 'fa-water' },
-      { id: 'quebradas', label: 'QUEBRADAS', lat: 4.612, lng: -74.182, icon: 'fa-water' },
-      { id: 'areas_protegidas', label: 'ÁREAS PROTEGIDAS', lat: 4.662, lng: -74.120, icon: 'fa-shield-halved' },
-      { id: 'reservas_forestales', label: 'RESERVAS FORESTALES', lat: 4.690, lng: -74.150, hub: true, icon: 'fa-tree' },
-      { id: 'cobertura_vegetal', label: 'COBERTURA VEGETAL', lat: 4.650, lng: -74.205, icon: 'fa-leaf' },
-      { id: 'parques', label: 'PARQUES', lat: 4.620, lng: -74.105, icon: 'fa-tree' },
-      { id: 'rondas_hidricas', label: 'RONDAS HÍDRICAS', lat: 4.595, lng: -74.195, icon: 'fa-water' },
-      { id: 'bosques_urbanos', label: 'BOSQUES URBANOS', lat: 4.585, lng: -74.115, hub: true, icon: 'fa-tree' },
-      { id: 'paramos', label: 'COMPLEJO DE PÁRAMOS', lat: 4.715, lng: -74.185, icon: 'fa-mountain' },
-      { id: 'cerros_orientales', label: 'CERROS ORIENTALES', lat: 4.735, lng: -74.055, hub: true, icon: 'fa-mountain' },
-      { id: 'paramos_andinos', label: 'PÁRAMOS ANDINOS', lat: 4.710, lng: -74.075, icon: 'fa-mountain' },
-      { id: 'bosques_andinos', label: 'BOSQUES ANDINOS', lat: 4.690, lng: -74.090, icon: 'fa-tree' },
-      { id: 'nacimientos_agua', label: 'NACIMIENTOS DE AGUA', lat: 4.680, lng: -74.120, icon: 'fa-droplet' },
-      { id: 'quebradas_urbanas', label: 'QUEBRADAS URBANAS', lat: 4.610, lng: -74.210, icon: 'fa-water' },
-      { id: 'rios_urbanos', label: 'RÍOS URBANOS', lat: 4.650, lng: -74.080, icon: 'fa-water' },
-      { id: 'humedales_urbanos', label: 'HUMEDALES URBANOS', lat: 4.600, lng: -74.150, icon: 'fa-droplet' },
-      { id: 'rondas_rio', label: 'RONDAS DE RÍO', lat: 4.625, lng: -74.080, icon: 'fa-water' },
-      { id: 'recarga_hidrica', label: 'RECARGA HÍDRICA', lat: 4.670, lng: -74.065, icon: 'fa-droplet' },
-      { id: 'infiltracion_agua', label: 'INFILTRACIÓN DE AGUA', lat: 4.640, lng: -74.090, icon: 'fa-droplet' },
-      { id: 'corredores_ecologicos', label: 'CORREDORES ECOLÓGICOS', lat: 4.630, lng: -74.050, icon: 'fa-leaf' },
-      { id: 'coberturas_vegetales', label: 'COBERTURAS VEGETALES', lat: 4.605, lng: -74.095, icon: 'fa-leaf' },
-      { id: 'jardines_lluvia', label: 'JARDINES DE LLUVIA', lat: 4.585, lng: -74.150, icon: 'fa-leaf' },
-      { id: 'arbolado_urbano', label: 'ARBOLADO URBANO', lat: 4.620, lng: -74.030, icon: 'fa-tree' },
-      { id: 'parques_ecologicos', label: 'PARQUES ECOLÓGICOS', lat: 4.645, lng: -74.045, icon: 'fa-tree' },
-      { id: 'fauna_urbana', label: 'FAUNA URBANA', lat: 4.675, lng: -74.035, icon: 'fa-eye' },
-      { id: 'suelo_permeable', label: 'SUELO PERMEABLE', lat: 4.570, lng: -74.135, icon: 'fa-leaf' },
-      { id: 'restauracion_ecologica', label: 'RESTAURACIÓN ECOLÓGICA', lat: 4.715, lng: -74.040, icon: 'fa-shield-halved' },
-      { id: 'resiliencia_climatica', label: 'RESILIENCIA CLIMÁTICA', lat: 4.575, lng: -74.085, icon: 'fa-temperature-half' },
-      { id: 'areas_conservacion', label: 'ÁREAS DE CONSERVACIÓN', lat: 4.700, lng: -74.030, icon: 'fa-shield-halved' }
-    ],
-    edges: [
-      ['humedales', 'rios', 'directa'],
-      ['humedales', 'areas_protegidas', 'directa'],
-      ['humedales', 'quebradas', 'indirecta'],
-      ['humedales', 'reservas_forestales', 'directa'],
-      ['humedales', 'humedales_urbanos', 'directa'],
-      ['humedales', 'resiliencia_climatica', 'indirecta'],
-      ['rios', 'rondas_hidricas', 'directa'],
-      ['rios', 'rios_urbanos', 'directa'],
-      ['rios', 'nacimientos_agua', 'indirecta'],
-      ['quebradas', 'rondas_hidricas', 'indirecta'],
-      ['quebradas', 'quebradas_urbanas', 'directa'],
-      ['areas_protegidas', 'cobertura_vegetal', 'directa'],
-      ['areas_protegidas', 'cerros_orientales', 'directa'],
-      ['areas_protegidas', 'parques', 'indirecta'],
-      ['reservas_forestales', 'paramos', 'indirecta'],
-      ['reservas_forestales', 'bosques_andinos', 'directa'],
-      ['reservas_forestales', 'areas_conservacion', 'directa'],
-      ['cerros_orientales', 'paramos_andinos', 'directa'],
-      ['cerros_orientales', 'bosques_andinos', 'directa'],
-      ['paramos_andinos', 'nacimientos_agua', 'directa'],
-      ['paramos_andinos', 'recarga_hidrica', 'indirecta'],
-      ['bosques_andinos', 'cobertura_vegetal', 'directa'],
-      ['bosques_andinos', 'fauna_urbana', 'indirecta'],
-      ['cobertura_vegetal', 'bosques_urbanos', 'directa'],
-      ['cobertura_vegetal', 'coberturas_vegetales', 'directa'],
-      ['coberturas_vegetales', 'arbolado_urbano', 'directa'],
-      ['parques', 'parques_ecologicos', 'indirecta'],
-      ['parques', 'jardines_lluvia', 'directa'],
-      ['parques_ecologicos', 'corredores_ecologicos', 'directa'],
-      ['corredores_ecologicos', 'fauna_urbana', 'indirecta'],
-      ['rondas_hidricas', 'suelo_permeable', 'directa'],
-      ['rios_urbanos', 'rondas_rio', 'directa'],
-      ['rondas_rio', 'infiltracion_agua', 'directa'],
-      ['humedales_urbanos', 'jardines_lluvia', 'indirecta'],
-      ['humedales_urbanos', 'fauna_urbana', 'directa'],
-      ['recarga_hidrica', 'infiltracion_agua', 'directa'],
-      ['infiltracion_agua', 'suelo_permeable', 'directa'],
-      ['suelo_permeable', 'resiliencia_climatica', 'directa'],
-      ['resiliencia_climatica', 'restauracion_ecologica', 'directa'],
-      ['restauracion_ecologica', 'areas_conservacion', 'indirecta'],
-      ['arbolado_urbano', 'jardines_lluvia', 'indirecta'],
-      ['areas_conservacion', 'corredores_ecologicos', 'directa']
-    ]
-  },
-  cultural: {
-    title: 'Red Cultural',
-    accent: '#e89a6c',
-    nodes: [
-      { id: 'patrimonio_material', label: 'PATRIMONIO MATERIAL', lat: 4.615, lng: -74.075, hub: true },
-      { id: 'patrimonio_inmaterial', label: 'PATRIMONIO INMATERIAL', lat: 4.635, lng: -74.045, hub: true },
-      { id: 'museos', label: 'MUSEOS', lat: 4.640, lng: -74.085 },
-      { id: 'bibliotecas', label: 'BIBLIOTECAS', lat: 4.595, lng: -74.105 },
-      { id: 'plazas_mercado', label: 'PLAZAS DE MERCADO', lat: 4.605, lng: -74.120 },
-      { id: 'barrios', label: 'BARRIOS', lat: 4.650, lng: -74.115 },
-      { id: 'centros_historicos', label: 'CENTROS HISTÓRICOS', lat: 4.625, lng: -74.100 },
-      { id: 'zonas_turisticas', label: 'ZONAS DE INTERÉS TURÍSTICO', lat: 4.675, lng: -74.070 },
-      { id: 'equipamientos_culturales', label: 'EQUIPAMIENTOS CULTURALES', lat: 4.570, lng: -74.080 },
-      { id: 'artesanias', label: 'PRODUCCIÓN ARTESANAL', lat: 4.585, lng: -74.055 },
-      { id: 'rutas_patrimoniales', label: 'RUTAS PATRIMONIALES', lat: 4.555, lng: -74.105 },
-      { id: 'mercados_barriales', label: 'MERCADOS BARRIALES', lat: 4.565, lng: -74.135 },
-      { id: 'centros_comunitarios', label: 'CENTROS COMUNITARIOS', lat: 4.545, lng: -74.075 },
-      { id: 'escuelas_musica', label: 'ESCUELAS DE MÚSICA', lat: 4.555, lng: -74.045 }
-    ],
-    edges: [
-      ['patrimonio_material', 'museos', 'directa'],
-      ['patrimonio_material', 'centros_historicos', 'directa'],
-      ['patrimonio_material', 'patrimonio_inmaterial', 'indirecta'],
-      ['patrimonio_inmaterial', 'zonas_turisticas', 'directa'],
-      ['patrimonio_inmaterial', 'artesanias', 'directa'],
-      ['museos', 'bibliotecas', 'indirecta'],
-      ['centros_historicos', 'barrios', 'directa'],
-      ['barrios', 'plazas_mercado', 'indirecta'],
-      ['bibliotecas', 'equipamientos_culturales', 'directa'],
-      ['plazas_mercado', 'artesanias', 'indirecta'],
-      ['artesanias', 'rutas_patrimoniales', 'directa'],
-      ['rutas_patrimoniales', 'mercados_barriales', 'indirecta'],
-      ['mercados_barriales', 'centros_comunitarios', 'directa'],
-      ['centros_comunitarios', 'escuelas_musica', 'indirecta'],
-      ['escuelas_musica', 'patrimonio_inmaterial', 'directa']
-    ]
-  },
-  tecnologico: {
-    title: 'Red Tecnológica',
-    accent: '#e89a6c',
-    nodes: [
-      { id: 'red_vial', label: 'RED VIAL', lat: 4.635, lng: -74.100, hub: true },
-      { id: 'transporte_publico', label: 'TRANSPORTE PÚBLICO', lat: 4.605, lng: -74.070, hub: true },
-      { id: 'red_ferrrea', label: 'RED FÉRREA', lat: 4.665, lng: -74.095 },
-      { id: 'ciclorutas', label: 'CICLORRUTAS', lat: 4.655, lng: -74.135 },
-      { id: 'nodos_digitales', label: 'NODOS DIGITALES', lat: 4.680, lng: -74.145 },
-      { id: 'internet_publico', label: 'INTERNET PÚBLICO', lat: 4.585, lng: -74.135 },
-      { id: 'datos_abiertos', label: 'DATOS ABIERTOS', lat: 4.575, lng: -74.080 },
-      { id: 'centro_tecnologico', label: 'CENTRO TECNOLÓGICO', lat: 4.625, lng: -74.045 },
-      { id: 'recarga_electrica', label: 'RECARGA ELÉCTRICA', lat: 4.685, lng: -74.055 },
-      { id: 'semaforizacion', label: 'SEMAFORIZACIÓN', lat: 4.550, lng: -74.105 },
-      { id: 'electrolineras', label: 'ELECTROLINERAS', lat: 4.555, lng: -74.160 },
-      { id: 'fibra_optica', label: 'FIBRA ÓPTICA', lat: 4.565, lng: -74.120 },
-      { id: 'centros_datos', label: 'CENTROS DE DATOS', lat: 4.545, lng: -74.065 },
-      { id: 'subestaciones', label: 'SUBESTACIONES', lat: 4.555, lng: -74.045 }
-    ],
-    edges: [
-      ['red_vial', 'transporte_publico', 'directa'],
-      ['red_vial', 'red_ferrrea', 'directa'],
-      ['red_vial', 'ciclorutas', 'indirecta'],
-      ['transporte_publico', 'nodos_digitales', 'directa'],
-      ['transporte_publico', 'internet_publico', 'indirecta'],
-      ['red_ferrrea', 'recarga_electrica', 'directa'],
-      ['nodos_digitales', 'centro_tecnologico', 'directa'],
-      ['internet_publico', 'datos_abiertos', 'indirecta'],
-      ['datos_abiertos', 'centro_tecnologico', 'directa'],
-      ['ciclorutas', 'semaforizacion', 'indirecta'],
-      ['red_vial', 'semaforizacion', 'directa'],
-      ['semaforizacion', 'electrolineras', 'directa'],
-      ['electrolineras', 'fibra_optica', 'indirecta'],
-      ['fibra_optica', 'centros_datos', 'directa'],
-      ['centros_datos', 'subestaciones', 'indirecta'],
-      ['subestaciones', 'red_vial', 'directa']
-    ]
-  },
-  metaverso: {
-    title: 'Red Metaverso',
-    accent: '#46d6d0',
-    nodes: [
-      { id: 'gemelo_digital', label: 'GEMELO DIGITAL', lat: 4.630, lng: -74.100, hub: true },
-      { id: 'modelos_3d', label: 'MODELOS 3D', lat: 4.665, lng: -74.130, hub: true },
-      { id: 'capas_gis', label: 'CAPAS GIS', lat: 4.680, lng: -74.085 },
-      { id: 'plataformas_bim', label: 'PLATAFORMAS BIM', lat: 4.650, lng: -74.055 },
-      { id: 'nodos_iot', label: 'NODOS IoT', lat: 4.605, lng: -74.045 },
-      { id: 'visualizacion_vr', label: 'VISUALIZACIÓN VR', lat: 4.575, lng: -74.065 },
-      { id: 'laboratorios_urbanos', label: 'LABORATORIOS URBANOS', lat: 4.565, lng: -74.115 },
-      { id: 'datos_territoriales', label: 'DATOS TERRITORIALES', lat: 4.600, lng: -74.150 },
-      { id: 'escenarios_simulados', label: 'ESCENARIOS SIMULADOS', lat: 4.700, lng: -74.115 },
-      { id: 'sensores_urbanos', label: 'SENSORES URBANOS', lat: 4.640, lng: -74.180 },
-      { id: 'escaneo_urbano', label: 'ESCANEO URBANO', lat: 4.555, lng: -74.165 },
-      { id: 'nube_puntos', label: 'NUBE DE PUNTOS', lat: 4.565, lng: -74.120 },
-      { id: 'simulador_movilidad', label: 'SIMULADOR DE MOVILIDAD', lat: 4.545, lng: -74.075 },
-      { id: 'laboratorio_inmersivo', label: 'LABORATORIO INMERSIVO', lat: 4.555, lng: -74.045 }
-    ],
-    edges: [
-      ['gemelo_digital', 'modelos_3d', 'directa'],
-      ['gemelo_digital', 'capas_gis', 'directa'],
-      ['gemelo_digital', 'datos_territoriales', 'directa'],
-      ['modelos_3d', 'plataformas_bim', 'directa'],
-      ['modelos_3d', 'escenarios_simulados', 'indirecta'],
-      ['capas_gis', 'sensores_urbanos', 'indirecta'],
-      ['plataformas_bim', 'nodos_iot', 'directa'],
-      ['nodos_iot', 'sensores_urbanos', 'directa'],
-      ['datos_territoriales', 'laboratorios_urbanos', 'indirecta'],
-      ['laboratorios_urbanos', 'visualizacion_vr', 'directa'],
-      ['escenarios_simulados', 'visualizacion_vr', 'indirecta'],
-      ['visualizacion_vr', 'escaneo_urbano', 'directa'],
-      ['escaneo_urbano', 'nube_puntos', 'indirecta'],
-      ['nube_puntos', 'simulador_movilidad', 'directa'],
-      ['simulador_movilidad', 'laboratorio_inmersivo', 'indirecta'],
-      ['laboratorio_inmersivo', 'gemelo_digital', 'directa']
-    ]
-  }
-};
-/* ========================================================================
-   POP-UP DE RED · la red vive aquí, no sobre el mapa principal
-   ======================================================================== */
-const scaleNetworkDescriptions = {
-  natural: 'Sistemas hídricos, estructura ecológica y cobertura vegetal conectados.',
-  cultural: 'Patrimonio, memoria urbana, barrios y prácticas culturales relacionadas.',
-  tecnologico: 'Movilidad, datos, infraestructura y conectividad territorial.',
-  metaverso: 'Capas digitales, modelos urbanos y escenarios de exploración virtual.'
-};
-
-let scalePopupSelectedNode = null;
-let scalePopupMode = 'natural';
-let nodeDetailState = { mode: 'natural', id: null };
-const scalePopupHiddenNodes = new Set();
-const scaleNetworkViewState = { scale: 1.12, x: 0, y: 0 };
-let scaleNetworkReturnRafId = null;
-const scaleNetworkFlowState = {
-  running: true,
-  rafId: null,
-  ambientRafId: null,
-  lastTime: 0,
-  ambientStartedAt: 0,
-  particles: [],
-};
-const popupNodeRadiusState = new Map();
-
-function cancelScaleNetworkFlowLoop() {
-  if (scaleNetworkFlowState.rafId !== null) {
-    window.cancelAnimationFrame(scaleNetworkFlowState.rafId);
-    scaleNetworkFlowState.rafId = null;
-  }
-  scaleNetworkFlowState.lastTime = 0;
-}
-
-function cancelScaleNetworkAmbientLoop() {
-  if (scaleNetworkFlowState.ambientRafId !== null) {
-    window.cancelAnimationFrame(scaleNetworkFlowState.ambientRafId);
-    scaleNetworkFlowState.ambientRafId = null;
-  }
-  scaleNetworkFlowState.ambientStartedAt = 0;
-  const scene = document.querySelector('#scaleNetworkCanvas .popup-network-scene');
-  scene?.removeAttribute('transform');
-}
-
-function animateScaleNetworkAmbient(timestamp) {
-  const scene = document.querySelector('#scaleNetworkCanvas .popup-network-scene');
-  if (!scene) {
-    scaleNetworkFlowState.ambientRafId = null;
-    return;
-  }
-  if (!scaleNetworkFlowState.ambientStartedAt) scaleNetworkFlowState.ambientStartedAt = timestamp;
-  const elapsed = timestamp - scaleNetworkFlowState.ambientStartedAt;
-  const driftX = Math.sin(elapsed * .00034) * 2.8;
-  const driftY = Math.cos(elapsed * .00027) * 1.8;
-  const breath = 1 + Math.sin(elapsed * .00022) * .0025;
-  scene.setAttribute('transform', `translate(500 272) scale(${breath.toFixed(5)}) translate(${(driftX - 500).toFixed(2)} ${(driftY - 272).toFixed(2)})`);
-  scaleNetworkFlowState.ambientRafId = window.requestAnimationFrame(animateScaleNetworkAmbient);
-}
-
-function startScaleNetworkAmbientLoop() {
-  if (scaleNetworkFlowState.ambientRafId !== null) return;
-  if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
-  scaleNetworkFlowState.ambientRafId = window.requestAnimationFrame(animateScaleNetworkAmbient);
-}
-
-function updateScaleNetworkFlowStatus(edgeCount = document.querySelectorAll('#scaleNetworkCanvas .popup-edge').length) {
-  const toggle = document.getElementById('scaleNetworkFlowToggle');
-  const status = document.getElementById('scaleNetworkFlowStatus');
-  const label = scaleNetworkFlowState.running ? 'Flujo hídrico activo' : 'Flujo hídrico pausado';
-  if (toggle) {
-    toggle.textContent = scaleNetworkFlowState.running ? 'Pausar flujo' : 'Reanudar flujo';
-    toggle.setAttribute('aria-pressed', String(scaleNetworkFlowState.running));
-  }
-  if (status) {
-    status.textContent = `${label} · ${edgeCount} conexiones`;
-    status.classList.toggle('is-paused', !scaleNetworkFlowState.running);
-  }
-}
-
-function animateScaleNetworkFlow(timestamp) {
-  if (!scaleNetworkFlowState.running || !scaleNetworkFlowState.particles.length) {
-    scaleNetworkFlowState.rafId = null;
-    return;
-  }
-  const previous = scaleNetworkFlowState.lastTime || timestamp;
-  const delta = Math.min(64, Math.max(0, timestamp - previous));
-  scaleNetworkFlowState.lastTime = timestamp;
-  scaleNetworkFlowState.particles.forEach(particle => {
-    particle.progress = (particle.progress + delta * particle.speed) % 1;
-    const x = particle.x1 + (particle.x2 - particle.x1) * particle.progress;
-    const y = particle.y1 + (particle.y2 - particle.y1) * particle.progress;
-    particle.element.setAttribute('cx', x.toFixed(2));
-    particle.element.setAttribute('cy', y.toFixed(2));
-  });
-  scaleNetworkFlowState.rafId = window.requestAnimationFrame(animateScaleNetworkFlow);
-}
-
-function setScaleNetworkFlowRunning(running) {
-  scaleNetworkFlowState.running = Boolean(running);
-  cancelScaleNetworkFlowLoop();
-  updateScaleNetworkFlowStatus();
-  if (scaleNetworkFlowState.running && scaleNetworkFlowState.particles.length) {
-    scaleNetworkFlowState.rafId = window.requestAnimationFrame(animateScaleNetworkFlow);
-  }
-}
-
-function popupEdgeEndpoints(edge) {
-  const attributes = ['x1', 'y1', 'x2', 'y2'].map(name => {
-    const value = edge.getAttribute(name);
-    return value === null ? NaN : Number(value);
-  });
-  if (attributes.every(Number.isFinite)) {
-    const [x1, y1, x2, y2] = attributes;
-    return { x1, y1, x2, y2 };
-  }
-  // Las conexiones del grafo orgánico son rutas rectas `M x y L x y`.
-  // El flujo debe leer esa geometría; Number(null) devolvía 0 y ocultaba
-  // todas las partículas en la esquina superior izquierda del SVG.
-  const values = (edge.getAttribute('d') || '').match(/-?\d+(?:\.\d+)?/g)?.map(Number) || [];
-  if (values.length < 4 || !values.slice(0, 4).every(Number.isFinite)) return null;
-  return {
-    x1: values[0],
-    y1: values[1],
-    x2: values[values.length - 2],
-    y2: values[values.length - 1]
-  };
-}
-
-function buildScaleNetworkFlow(resetProgress = false) {
-  cancelScaleNetworkFlowLoop();
-  scaleNetworkFlowState.particles = [];
-  const svg = document.querySelector('#scaleNetworkCanvas .popup-network-svg');
-  const layer = svg?.querySelector('.popup-flow-layer');
-  if (!svg || !layer) {
-    updateScaleNetworkFlowStatus(0);
-    return;
-  }
-  layer.replaceChildren();
-  // La red se mantiene geométricamente estable mientras se arrastra: la escala
-  // se controla solo desde la rueda y los botones explícitos del pop-up.
-  cancelScaleNetworkAmbientLoop();
-  const svgNamespace = 'http://www.w3.org/2000/svg';
-  const edges = [...svg.querySelectorAll('.popup-edge')];
-  edges.forEach((edge, edgeIndex) => {
-    const endpoints = popupEdgeEndpoints(edge);
-    if (!endpoints) return;
-    const { x1, y1, x2, y2 } = endpoints;
-    const isIndirect = edge.classList.contains('indirect');
-    const count = isIndirect ? 1 : 2;
-    for (let index = 0; index < count; index += 1) {
-      const particle = document.createElementNS(svgNamespace, 'circle');
-      particle.setAttribute('class', `water-particle${isIndirect ? ' indirect' : ''}${index === 0 ? ' core' : ''}`);
-      particle.setAttribute('r', index === 0 ? '3.1' : '2.1');
-      particle.setAttribute('aria-hidden', 'true');
-      layer.appendChild(particle);
-      const initialProgress = (index / count + edgeIndex * .037 + (resetProgress ? 0 : .08)) % 1;
-      const initialX = x1 + (x2 - x1) * initialProgress;
-      const initialY = y1 + (y2 - y1) * initialProgress;
-      particle.setAttribute('cx', initialX.toFixed(2));
-      particle.setAttribute('cy', initialY.toFixed(2));
-      scaleNetworkFlowState.particles.push({
-        element: particle,
-        x1,
-        y1,
-        x2,
-        y2,
-        progress: initialProgress,
-        speed: isIndirect ? .00016 : .00023 + (edgeIndex % 4) * .000012
+      el.addEventListener("mouseenter", () => {
+        el.style.transform = "scale(1.4)";
       });
-    }
-  });
-  updateScaleNetworkFlowStatus(edges.length);
-  if (scaleNetworkFlowState.running && scaleNetworkFlowState.particles.length) {
-    scaleNetworkFlowState.rafId = window.requestAnimationFrame(animateScaleNetworkFlow);
-  }
-}
+      el.addEventListener("mouseleave", () => {
+        el.style.transform = "scale(1)";
+      });
+      el.addEventListener("click", () => {
+        openNodeDetailModal(h, cfg);
+      });
 
-function resetScaleNetworkFlow() {
-  buildScaleNetworkFlow(true);
-}
+      const marker = new window.maplibregl.Marker({ element: el })
+        .setLngLat(h.coords)
+        .addTo(state.map);
 
-function updateScaleNetworkViewport() {
-  const viewport = document.getElementById('scaleNetworkViewport');
-  if (!viewport) return;
-  viewport.style.transform = `translate(${scaleNetworkViewState.x}px, ${scaleNetworkViewState.y}px) scale(${scaleNetworkViewState.scale})`;
-  const zoomValue = document.getElementById('scaleNetworkZoomReset');
-  if (zoomValue) zoomValue.textContent = `${Math.round(scaleNetworkViewState.scale * 100)}%`;
-}
-
-function setScaleNetworkZoom(nextScale, resetPosition = false) {
-  scaleNetworkViewState.scale = Math.max(.72, Math.min(2.4, nextScale));
-  if (resetPosition) {
-    scaleNetworkViewState.x = 0;
-    scaleNetworkViewState.y = 0;
-  }
-  updateScaleNetworkViewport();
-}
-
-function resetScaleNetworkView() {
-  cancelScaleNetworkReturnAnimation();
-  scaleNetworkViewState.scale = 1.12;
-  scaleNetworkViewState.x = 0;
-  scaleNetworkViewState.y = 0;
-  updateScaleNetworkViewport();
-}
-
-function cancelScaleNetworkReturnAnimation() {
-  if (scaleNetworkReturnRafId !== null) {
-    window.cancelAnimationFrame(scaleNetworkReturnRafId);
-    scaleNetworkReturnRafId = null;
-  }
-  document.querySelector('#scaleNetworkCanvas .popup-network-viewport')?.classList.remove('is-bouncing');
-}
-
-function animateScaleNetworkReturn(originX, originY, deltaX, deltaY) {
-  const viewport = document.querySelector('#scaleNetworkCanvas .popup-network-viewport');
-  if (!viewport || (Math.abs(deltaX) < 1 && Math.abs(deltaY) < 1)) return;
-  cancelScaleNetworkReturnAnimation();
-  const startedAt = performance.now();
-  const duration = 760;
-  viewport.classList.add('is-bouncing');
-  const frame = timestamp => {
-    const progress = Math.min(1, (timestamp - startedAt) / duration);
-    const spring = Math.pow(1 - progress, 2.1) * Math.cos(progress * Math.PI * 5.2);
-    scaleNetworkViewState.x = originX + deltaX * spring;
-    scaleNetworkViewState.y = originY + deltaY * spring;
-    updateScaleNetworkViewport();
-    if (progress < 1) {
-      scaleNetworkReturnRafId = window.requestAnimationFrame(frame);
-      return;
-    }
-    scaleNetworkViewState.x = originX;
-    scaleNetworkViewState.y = originY;
-    updateScaleNetworkViewport();
-    viewport.classList.remove('is-bouncing');
-    scaleNetworkReturnRafId = null;
-  };
-  scaleNetworkReturnRafId = window.requestAnimationFrame(frame);
-}
-
-function setupScaleNetworkViewport() {
-  const canvas = document.getElementById('scaleNetworkCanvas');
-  const viewport = document.getElementById('scaleNetworkViewport');
-  if (!canvas || !viewport || canvas.dataset.interactive === 'true') return;
-  canvas.dataset.interactive = 'true';
-  let dragging = false;
-  let activePointerId = null;
-  let pointerMoved = false;
-  let startX = 0;
-  let startY = 0;
-  let originX = 0;
-  let originY = 0;
-
-  canvas.addEventListener('wheel', event => {
-    // El gesto de desplazamiento no puede convertirse en zoom; el pinch del
-    // trackpad (ctrl+wheel) tampoco cambia la escala de la red.
-    event.preventDefault();
-    if (dragging || event.ctrlKey) return;
-    cancelScaleNetworkReturnAnimation();
-    setScaleNetworkZoom(scaleNetworkViewState.scale + (event.deltaY < 0 ? .12 : -.12));
-  }, { passive: false });
-
-  canvas.addEventListener('pointerdown', event => {
-    if (!event.isPrimary || (event.pointerType === 'mouse' && event.button !== 0)) return;
-    if (event.target instanceof Element && event.target.closest('.popup-node')) return;
-    event.preventDefault();
-    cancelScaleNetworkReturnAnimation();
-    dragging = true;
-    pointerMoved = false;
-    activePointerId = event.pointerId;
-    startX = event.clientX;
-    startY = event.clientY;
-    originX = scaleNetworkViewState.x;
-    originY = scaleNetworkViewState.y;
-    canvas.classList.add('is-dragging');
-    canvas.setPointerCapture?.(event.pointerId);
-  });
-
-  canvas.addEventListener('pointermove', event => {
-    if (!dragging || event.pointerId !== activePointerId) return;
-    event.preventDefault();
-    if (Math.hypot(event.clientX - startX, event.clientY - startY) > 6) pointerMoved = true;
-    scaleNetworkViewState.x = originX + event.clientX - startX;
-    scaleNetworkViewState.y = originY + event.clientY - startY;
-    updateScaleNetworkViewport();
-  });
-
-  const stopDragging = event => {
-    if (!dragging || (activePointerId !== null && event.pointerId !== activePointerId)) return;
-    dragging = false;
-    if (pointerMoved) canvas.dataset.suppressNodeClick = 'true';
-    canvas.classList.remove('is-dragging');
-    if (canvas.hasPointerCapture?.(event.pointerId)) canvas.releasePointerCapture(event.pointerId);
-    activePointerId = null;
-    const deltaX = scaleNetworkViewState.x - originX;
-    const deltaY = scaleNetworkViewState.y - originY;
-    if (Math.hypot(deltaX, deltaY) > 2) animateScaleNetworkReturn(originX, originY, deltaX, deltaY);
-  };
-  canvas.addEventListener('pointerup', stopDragging);
-  canvas.addEventListener('pointercancel', stopDragging);
-  canvas.addEventListener('lostpointercapture', stopDragging);
-}
-
-function splitPopupLabel(label, radius = 20) {
-  const safeRadius = Math.max(14, Number(radius) || 20);
-  const maxWidth = Math.max(18, safeRadius * 1.55);
-  const fontSize = Number(Math.max(5.4, Math.min(9.2, safeRadius * 0.28)).toFixed(2));
-  const lineHeight = Number(Math.max(6.2, Math.min(9.5, fontSize * 1.08)).toFixed(2));
-  const maxChars = Math.max(6, Math.floor(maxWidth / (fontSize * 0.62)));
-  const words = String(label || '').trim().split(/\s+/).filter(Boolean);
-  const lines = [];
-  let line = '';
-  words.forEach(word => {
-    const next = line ? `${line} ${word}` : word;
-    if (next.length > maxChars && line) {
-      lines.push(line);
-      line = word;
-    } else {
-      line = next;
-    }
-  });
-  if (line) lines.push(line);
-  return {
-    lines: (lines.length ? lines : [String(label || '')]).slice(0, 3),
-    fontSize,
-    lineHeight,
-    maxWidth
-  };
-}
-
-const popupLayoutOverrides = {
-  // Grafo orgánico: hubs separados, satélites alrededor y una continuidad
-  // inferior reconocible. Las coordenadas son deliberadamente irregulares
-  // para evitar tanto la telaraña radial como la lectura de mapa conceptual.
-  natural: {
-    humedales: [160, 235], rios: [300, 105], areas_protegidas: [445, 185], reservas_forestales: [610, 95], cerros_orientales: [790, 145], paramos: [900, 235],
-    quebradas: [95, 335], cobertura_vegetal: [250, 285], parques: [405, 315], paramos_andinos: [610, 255], bosques_andinos: [755, 300], nacimientos_agua: [910, 360],
-    rondas_hidricas: [75, 395], bosques_urbanos: [290, 390], quebradas_urbanas: [390, 430], rios_urbanos: [570, 370], recarga_hidrica: [725, 405], corredores_ecologicos: [830, 420],
-    humedales_urbanos: [150, 430], rondas_rio: [285, 440], infiltracion_agua: [470, 465], coberturas_vegetales: [585, 435], jardines_lluvia: [740, 465], arbolado_urbano: [940, 460],
-    parques_ecologicos: [190, 495], fauna_urbana: [350, 480], suelo_permeable: [530, 505], restauracion_ecologica: [670, 480], resiliencia_climatica: [820, 500], areas_conservacion: [975, 525]
-  },
-  cultural: {
-    patrimonio_material: [260, 150], patrimonio_inmaterial: [720, 120], museos: [90, 270], centros_historicos: [330, 250], zonas_turisticas: [550, 220], artesanias: [840, 260],
-    bibliotecas: [150, 380], barrios: [380, 345], plazas_mercado: [590, 370], equipamientos_culturales: [830, 380], rutas_patrimoniales: [190, 475], mercados_barriales: [390, 445], centros_comunitarios: [620, 485], escuelas_musica: [850, 455]
-  },
-  tecnologico: {
-    red_vial: [300, 150], transporte_publico: [700, 120], red_ferrrea: [100, 270], ciclorutas: [280, 250], nodos_digitales: [480, 220], internet_publico: [690, 260], recarga_electrica: [900, 300],
-    datos_abiertos: [170, 380], centro_tecnologico: [400, 350], semaforizacion: [620, 390], electrolineras: [840, 380], fibra_optica: [250, 475], centros_datos: [520, 450], subestaciones: [800, 485]
-  },
-  metaverso: {
-    gemelo_digital: [300, 130], modelos_3d: [700, 110], capas_gis: [100, 250], plataformas_bim: [290, 230], nodos_iot: [490, 270], sensores_urbanos: [700, 235], escenarios_simulados: [900, 280],
-    datos_territoriales: [170, 380], laboratorios_urbanos: [400, 350], visualizacion_vr: [620, 390], escaneo_urbano: [840, 360], nube_puntos: [260, 475], simulador_movilidad: [520, 450], laboratorio_inmersivo: [800, 485]
-  }
-};
-
-function popupNetworkPositions(definition) {
-  const mode = Object.keys(scaleNetworks).find(key => scaleNetworks[key] === definition);
-  const override = popupLayoutOverrides[mode];
-  if (override) {
-    return Object.fromEntries(definition.nodes.map(node => {
-      const [x, y] = override[node.id] || [500, 270];
-      return [node.id, { ...node, x, y }];
-    }));
-  }
-  const lats = definition.nodes.map(node => node.lat);
-  const lngs = definition.nodes.map(node => node.lng);
-  const minLat = Math.min(...lats);
-  const maxLat = Math.max(...lats);
-  const minLng = Math.min(...lngs);
-  const maxLng = Math.max(...lngs);
-  const latRange = Math.max(maxLat - minLat, 0.001);
-  const lngRange = Math.max(maxLng - minLng, 0.001);
-  return Object.fromEntries(definition.nodes.map(node => [node.id, {
-    ...node,
-    x: 54 + ((node.lng - minLng) / lngRange) * 892,
-    y: 48 + ((maxLat - node.lat) / latRange) * 452
-  }]));
-}
-
-function popupEdgePath(from, to) {
-  // Conexión recta: conserva la lectura de grafo del módulo de referencia
-  // y evita las esquinas repetitivas de una estructura tipo organigrama.
-  return `M ${from.x.toFixed(1)} ${from.y.toFixed(1)} L ${to.x.toFixed(1)} ${to.y.toFixed(1)}`;
-}
-
-const popupNodeContexts = {
-  natural: {
-    humedales: 'Ecosistema de regulación hídrica, hábitat y soporte para la resiliencia climática.',
-    rios: 'Estructura azul que conecta nacimientos, rondas hídricas y cursos urbanos.',
-    quebradas: 'Red de drenaje menor que articula agua, suelo y corredores ecológicos.',
-    areas_protegidas: 'Ámbito de conservación que enlaza cobertura, cerros y parques.',
-    reservas_forestales: 'Reserva de cobertura arbórea que conecta páramos y conservación.',
-    cobertura_vegetal: 'Capa vegetal que articula bosques urbanos, coberturas y biodiversidad.',
-    parques: 'Espacios verdes que conectan parques ecológicos y soluciones de lluvia.',
-    rondas_hidricas: 'Franja de protección que vincula cuerpos de agua y suelo permeable.',
-    bosques_urbanos: 'Infraestructura verde urbana para sombra, hábitat y conectividad.',
-    paramos: 'Complejo altoandino que sostiene regulación hídrica y paisaje ecológico.',
-    cerros_orientales: 'Sistema montañoso de protección, conectividad ecológica y paisaje.',
-    paramos_andinos: 'Ecosistema de alta montaña asociado a nacimientos y recarga hídrica.',
-    bosques_andinos: 'Cobertura de montaña que conecta vegetación y fauna urbana.',
-    nacimientos_agua: 'Origen de flujos hídricos que alimentan la red azul.',
-    quebradas_urbanas: 'Cursos de agua urbanos que traducen la estructura hídrica al territorio.',
-    rios_urbanos: 'Tramos fluviales urbanos que llevan la red natural a la ciudad.',
-    humedales_urbanos: 'Ámbitos urbanos de agua que combinan regulación, biodiversidad y uso público.',
-    rondas_rio: 'Bordes fluviales que conectan agua, infiltración y espacio abierto.',
-    recarga_hidrica: 'Zona de alimentación del sistema hídrico subterráneo y superficial.',
-    infiltracion_agua: 'Proceso que permite que el agua ingrese al suelo y reduzca escorrentías.',
-    corredores_ecologicos: 'Conectores territoriales para el movimiento de especies y flujos ecológicos.',
-    coberturas_vegetales: 'Superficies vegetales que prolongan la conectividad de la estructura verde.',
-    jardines_lluvia: 'Soluciones basadas en naturaleza para retener e infiltrar agua.',
-    arbolado_urbano: 'Red de árboles urbanos que aporta sombra, hábitat y continuidad vegetal.',
-    parques_ecologicos: 'Espacios protegidos de uso ecológico y conexión territorial.',
-    fauna_urbana: 'Especies y comunidades que hacen visible la biodiversidad urbana.',
-    suelo_permeable: 'Superficie que permite infiltración y soporte para la resiliencia climática.',
-    restauracion_ecologica: 'Proceso de recuperación de funciones ecológicas y conectividad.',
-    resiliencia_climatica: 'Capacidad territorial para absorber impactos y sostener funciones ambientales.',
-    areas_conservacion: 'Ámbitos de protección que consolidan corredores y valores naturales.'
-  }
-};
-
-function getPopupNodeContext(mode, node) {
-  return popupNodeContexts[mode]?.[node.id] || `${node.label} participa en la red ${scaleNetworks[mode]?.title || 'territorial'} como componente relacionado con otros conceptos.`;
-}
-
-function setNodeDetailList(selector, edges, nodesById, direction) {
-  const list = document.getElementById(selector);
-  if (!list) return;
-  list.replaceChildren();
-  if (!edges.length) {
-    const empty = document.createElement('li');
-    empty.className = 'node-detail-empty';
-    empty.textContent = direction === 'out' ? 'Sin conexiones de salida activas.' : 'Sin conexiones de entrada activas.';
-    list.appendChild(empty);
-    return;
-  }
-  edges.forEach(([fromId, toId, type]) => {
-    const targetId = direction === 'out' ? toId : fromId;
-    const target = nodesById[targetId];
-    const item = document.createElement('li');
-    item.append(target?.label || targetId);
-    const relation = document.createElement('em');
-    relation.textContent = ` · ${type}`;
-    item.appendChild(relation);
-    list.appendChild(item);
-  });
-}
-
-function getActivePopupTopology(definition) {
-  const activeNodeIds = new Set(definition.nodes.filter(node => !scalePopupHiddenNodes.has(node.id)).map(node => node.id));
-  const activeEdges = definition.edges.filter(([fromId, toId]) => activeNodeIds.has(fromId) && activeNodeIds.has(toId));
-  const activeDegrees = Object.fromEntries(definition.nodes.map(node => [node.id, 0]));
-  activeEdges.forEach(([fromId, toId]) => {
-    activeDegrees[fromId] += 1;
-    activeDegrees[toId] += 1;
-  });
-
-  // La información estadística sí responde a los nodos apagados, pero la
-  // escala visual no se recalcula: quitar un hub no debe encoger ni agrandar
-  // todos los nodos restantes. Esta topología completa fija radios y hubs.
-  const visualDegrees = Object.fromEntries(definition.nodes.map(node => [node.id, 0]));
-  definition.edges.forEach(([fromId, toId]) => {
-    visualDegrees[fromId] += 1;
-    visualDegrees[toId] += 1;
-  });
-  const visualMaxDegree = Math.max(0, ...Object.values(visualDegrees));
-  const visualHubThreshold = visualMaxDegree >= 2 ? Math.max(2, Math.ceil(visualMaxDegree * .72)) : Infinity;
-  const visualHubIds = new Set(definition.nodes.filter(node => visualDegrees[node.id] >= visualHubThreshold).map(node => node.id));
-  const maxDegree = Math.max(0, ...definition.nodes.filter(node => activeNodeIds.has(node.id)).map(node => activeDegrees[node.id]));
-  const hubThreshold = maxDegree >= 2 ? Math.max(2, Math.ceil(maxDegree * .72)) : Infinity;
-  const activeHubIds = new Set(definition.nodes.filter(node => activeNodeIds.has(node.id) && visualHubIds.has(node.id) && activeDegrees[node.id] >= hubThreshold).map(node => node.id));
-  return { activeNodeIds, activeEdges, activeDegrees, activeHubIds, maxDegree, visualDegrees, visualHubIds, visualMaxDegree };
-}
-
-function updateScaleNetworkStats(definition = scaleNetworks[scalePopupMode]) {
-  if (!definition) return;
-  const { activeNodeIds, activeEdges, activeDegrees, activeHubIds } = getActivePopupTopology(definition);
-  const setStat = (id, value) => {
-    const element = document.getElementById(id);
-    if (element) element.textContent = String(value);
-  };
-  setStat('scaleStatsActiveNodes', activeNodeIds.size);
-  setStat('scaleStatsChangedNodes', scalePopupHiddenNodes.size);
-  setStat('scaleStatsActiveHubs', activeHubIds.size);
-  setStat('scaleStatsActiveEdges', activeEdges.length);
-  const selectedId = scalePopupSelectedNode?.id;
-  const selectedNode = definition.nodes.find(node => node.id === selectedId);
-  const selectedDegree = selectedNode ? activeDegrees[selectedNode.id] || 0 : null;
-  const selectedLabel = document.getElementById('scaleStatsSelectedNode');
-  if (selectedLabel) selectedLabel.textContent = selectedNode ? `${selectedNode.label} · grado actual` : 'Selecciona un nodo';
-  setStat('scaleStatsSelectedDegree', selectedDegree === null ? '—' : selectedDegree);
-}
-
-function animatePopupNodeSizes() {
-  const circles = [...document.querySelectorAll('#scaleNetworkCanvas .popup-node circle[data-start-radius]')];
-  const records = circles.map(circle => ({
-    circle,
-    start: Number(circle.dataset.startRadius),
-    target: Number(circle.dataset.targetRadius)
-  })).filter(record => Number.isFinite(record.start) && Number.isFinite(record.target) && record.start !== record.target);
-  if (!records.length) return;
-  const startedAt = performance.now();
-  const duration = 360;
-  const frame = now => {
-    const progress = Math.min(1, (now - startedAt) / duration);
-    const eased = 1 - Math.pow(1 - progress, 3);
-    records.forEach(({ circle, start, target }) => {
-      circle.setAttribute('r', (start + (target - start) * eased).toFixed(2));
+      state.markers.push(marker);
     });
-    if (progress < 1) window.requestAnimationFrame(frame);
-    else records.forEach(({ circle, target }) => circle.setAttribute('r', target.toFixed(2)));
-  };
-  window.requestAnimationFrame(frame);
-}
-
-function openNodeDetailModal(mode, nodeId) {
-  const definition = scaleNetworks[mode];
-  const node = definition?.nodes.find(item => item.id === nodeId);
-  if (!definition || !node || scalePopupHiddenNodes.has(nodeId)) return;
-  const { activeEdges, activeDegrees, activeHubIds } = getActivePopupTopology(definition);
-  const activeDegree = activeDegrees[nodeId] || 0;
-  const isActiveHub = activeHubIds.has(nodeId);
-  const outgoing = activeEdges.filter(([fromId]) => fromId === nodeId);
-  const incoming = activeEdges.filter(([, toId]) => toId === nodeId);
-  const allConnections = [...outgoing, ...incoming];
-  const nodesById = Object.fromEntries(definition.nodes.map(item => [item.id, item]));
-  nodeDetailState = { mode, id: nodeId };
-  document.getElementById('nodeDetailKicker').textContent = `${definition.title} · FICHA INTERACTIVA`;
-  document.getElementById('nodeDetailTitle').textContent = node.label;
-  document.getElementById('nodeDetailRole').textContent = isActiveHub ? `Hub activo · concentra ${activeDegree} conexiones` : activeDegree ? `Nodo activo · ${activeDegree} conexiones` : 'Nodo activo sin conexiones';
-  document.getElementById('nodeDetailSummary').textContent = getPopupNodeContext(mode, node);
-  document.getElementById('nodeDetailDegree').textContent = String(allConnections.length);
-  document.getElementById('nodeDetailDirect').textContent = String(allConnections.filter(([, , type]) => type === 'directa').length);
-  document.getElementById('nodeDetailIndirect').textContent = String(allConnections.filter(([, , type]) => type === 'indirecta').length);
-  document.getElementById('nodeDetailHub').textContent = isActiveHub ? 'Hub activo' : activeDegree ? 'Nodo activo' : 'Aislado';
-  setNodeDetailList('nodeDetailOutgoing', outgoing, nodesById, 'out');
-  setNodeDetailList('nodeDetailIncoming', incoming, nodesById, 'in');
-  const modal = document.getElementById('nodeDetailModal');
-  modal?.classList.add('open');
-  modal?.setAttribute('aria-hidden', 'false');
-  document.body.classList.add('node-detail-open');
-  document.getElementById('nodeDetailClose')?.focus();
-}
-
-function closeNodeDetailModal() {
-  const modal = document.getElementById('nodeDetailModal');
-  if (!modal) return;
-  modal.classList.remove('open');
-  modal.setAttribute('aria-hidden', 'true');
-  document.body.classList.remove('node-detail-open');
-}
-
-function focusNodeConnections() {
-  const { mode, id } = nodeDetailState;
-  closeNodeDetailModal();
-  document.querySelectorAll('#scaleNetworkCanvas .popup-node').forEach(item => item.classList.toggle('selected', item.dataset.nodeId === id));
-  document.querySelectorAll('#scaleNetworkCanvas .popup-edge').forEach(edge => {
-    edge.classList.toggle('emphasis', edge.dataset.from === id || edge.dataset.to === id);
-  });
-  const description = document.getElementById('scaleNetworkDescription');
-  const node = scaleNetworks[mode]?.nodes.find(item => item.id === id);
-  if (description && node) description.textContent = `${node.label} · conexiones resaltadas`;
-}
-
-function clearScaleNetworkClickCue() {
-  const status = document.getElementById('scaleNetworkClickStatus');
-  if (status) {
-    status.hidden = true;
-    status.textContent = '';
-    status.classList.remove('is-pending');
   }
-  document.querySelectorAll('#scaleNetworkCanvas .popup-node.click-pending').forEach(node => node.classList.remove('click-pending'));
-  document.querySelector('#scaleNetworkCanvas .popup-click-cue')?.remove();
-}
 
-function showScaleNetworkClickCue(nodeElement, node) {
-  clearScaleNetworkClickCue();
-  if (!nodeElement || !node) return;
-  const status = document.getElementById('scaleNetworkClickStatus');
-  if (status) {
-    status.hidden = false;
-    status.textContent = `Esperando segundo clic · ${node.label}`;
-    status.classList.add('is-pending');
+  // Marcador de UPL seleccionada
+  function renderUplMarker() {
+    if (!state.map || !state.mapReady) return;
+
+    if (state.uplMarker) {
+      state.uplMarker.remove();
+      state.uplMarker = null;
+    }
+
+    const upl = state.selectedUpl;
+    const el = document.createElement("div");
+    el.className = "map-upl-center-marker";
+    el.innerHTML = `
+      <div style="background:rgba(9,14,23,0.9); border:1.5px solid var(--active-scale-color); color:#fff; font-size:11px; font-weight:700; padding:3px 8px; border-radius:12px; box-shadow:0 0 12px var(--active-scale-glow); white-space:nowrap;">
+        <i class="fa-solid fa-location-dot" style="color:var(--active-scale-color);"></i> UPL ${upl.num} · ${upl.name}
+      </div>
+    `;
+
+    state.uplMarker = new window.maplibregl.Marker({ element: el })
+      .setLngLat([upl.lon, upl.lat])
+      .addTo(state.map);
   }
-  nodeElement.classList.add('click-pending');
-  const svg = document.querySelector('#scaleNetworkCanvas .popup-network-svg');
-  const scene = svg?.querySelector('.popup-network-scene');
-  const circle = nodeElement.querySelector('circle');
-  if (!svg || !scene || !circle) return;
-  const cx = Number(circle.getAttribute('cx')) || 0;
-  const cy = Number(circle.getAttribute('cy')) || 0;
-  const radius = Number(circle.getAttribute('r')) || 20;
-  const width = 148;
-  const height = 19;
-  const x = Math.max(6, Math.min(1000 - width - 6, cx - width / 2));
-  const y = Math.max(6, cy - radius - 30);
-  const ns = 'http://www.w3.org/2000/svg';
-  const cue = document.createElementNS(ns, 'g');
-  cue.setAttribute('class', 'popup-click-cue');
-  cue.setAttribute('aria-hidden', 'true');
-  const background = document.createElementNS(ns, 'rect');
-  background.setAttribute('x', x.toFixed(1));
-  background.setAttribute('y', y.toFixed(1));
-  background.setAttribute('width', String(width));
-  background.setAttribute('height', String(height));
-  background.setAttribute('rx', '5');
-  const dot = document.createElementNS(ns, 'circle');
-  dot.setAttribute('cx', (x + 10).toFixed(1));
-  dot.setAttribute('cy', (y + height / 2).toFixed(1));
-  dot.setAttribute('r', '3');
-  const label = document.createElementNS(ns, 'text');
-  label.setAttribute('x', (x + 18).toFixed(1));
-  label.setAttribute('y', (y + 12.5).toFixed(1));
-  label.textContent = 'ESPERANDO 2.º CLIC';
-  cue.append(background, dot, label);
-  scene.appendChild(cue);
-}
 
-function renderScaleNetworkPopup(mode) {
-  const canvas = document.getElementById('scaleNetworkCanvas');
-  const definition = scaleNetworks[mode];
-  if (!canvas || !definition) return;
-  const nodes = popupNetworkPositions(definition);
-  const wetlandButton = document.getElementById('scaleNetworkWetlandImage');
-  if (wetlandButton) {
-    const available = mode === 'natural' && !scalePopupHiddenNodes.has('humedales');
-    wetlandButton.hidden = !available;
-    wetlandButton.disabled = !available;
-  }
-  const { activeEdges, activeDegrees, visualHubIds, visualDegrees, visualMaxDegree } = getActivePopupTopology(definition);
-  const edgeMarkup = activeEdges.map(([fromId, toId, type]) => {
-    const from = nodes[fromId];
-    const to = nodes[toId];
-    if (!from || !to || scalePopupHiddenNodes.has(fromId) || scalePopupHiddenNodes.has(toId)) return '';
-    const color = type === 'indirecta' ? '#e89a6c' : '#46d6d0';
-    const isBridge = from.y > 285 && to.y > 285;
-    const className = `${type === 'indirecta' ? 'popup-edge indirect' : 'popup-edge direct'}${isBridge ? ' bridge' : ''}`;
-    return `<path class="${className}" data-from="${fromId}" data-to="${toId}" data-bridge="${isBridge}" d="${popupEdgePath(from, to)}" stroke="${color}" marker-end="url(#arrow-${type})" />`;
-  }).join('');
+  // Toggles de Capas
+  function initLayerToggles() {
+    const toggleRoads = document.getElementById("layerToggleRoads");
+    const togglePlaces = document.getElementById("layerTogglePlaces");
+    const toggleBoundary = document.getElementById("layerToggleUplBoundary");
 
-  const popupIconSvg = {
-    'fa-droplet': '<path d="M12 2.5C9 6.2 5.8 9.8 5.8 14.1a6.2 6.2 0 0 0 12.4 0C18.2 9.8 15 6.2 12 2.5Z"/>',
-    'fa-water': '<g class="icon-stroke"><path d="M3 9.5h18M5 14h14M8 18.5h8"/></g>',
-    'fa-shield-halved': '<path d="M12 2.8 19 5.5v5.4c0 4.6-2.7 8.1-7 10.3-4.3-2.2-7-5.7-7-10.3V5.5L12 2.8Z"/><path class="icon-cut" d="M12 3v17.9"/>',
-    'fa-tree': '<path d="m12 2 7 9h-4l3 4h-5v6h-2v-6H6l3-4H5l7-9Z"/><path class="icon-stroke" d="M5 21h14"/>',
-    'fa-leaf': '<path d="M20.5 3.5C11 3.5 4.5 7.8 4.5 13c0 3.8 3.3 6.5 7.2 6.5 4.8 0 8.8-5 8.8-16Z"/><path class="icon-stroke" d="M4.5 20.5c3.1-4.1 6.3-6.5 11.4-9.1"/>',
-    'fa-mountain': '<path d="m3 20 6.1-9 3.2 4.3 2.4-3.3L21 20H3Z"/><path d="m7.3 8.2 2.2-3.2 2.1 3.2Z"/>',
-    'fa-eye': '<g class="icon-stroke"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.7"/></g>',
-    'fa-temperature-half': '<path d="M10 5a2 2 0 0 1 4 0v7.6a5 5 0 1 1-4 0V5Z"/><path class="icon-stroke" d="M12 7v8"/>'
-  };
-  const nodeMarkup = definition.nodes.filter(node => !scalePopupHiddenNodes.has(node.id)).map(node => {
-    const p = nodes[node.id];
-    const activeDegree = activeDegrees[node.id] || 0;
-    const activeHub = visualHubIds.has(node.id);
-    const normalizedDegree = visualMaxDegree ? (visualDegrees[node.id] || 0) / visualMaxDegree : 0;
-    const radius = Number((16 + normalizedDegree * 17 + (activeHub ? 2 : 0)).toFixed(2));
-    const radiusKey = `${mode}:${node.id}`;
-    // El tamaño visual es determinista y estable: apagar un nodo no debe
-    // animar ni recalcular los radios de los nodos restantes.
-    const previousRadius = radius;
-    popupNodeRadiusState.set(radiusKey, radius);
-    const labelLayout = splitPopupLabel(node.label, radius);
-    const lines = labelLayout.lines;
-    const firstY = p.y - ((lines.length - 1) * labelLayout.lineHeight + labelLayout.fontSize) / 2 + labelLayout.fontSize * .82;
-    const iconSvg = popupIconSvg[node.icon] || '';
-    const iconX = p.x - 12;
-    const iconY = p.y - radius * .48 - 12;
-    const iconMarkup = iconSvg ? `<svg class="popup-node-icon" x="${iconX.toFixed(1)}" y="${iconY.toFixed(1)}" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">${iconSvg}</svg>` : '';
-    const labelMarkup = lines.map((line, index) => {
-      const estimatedWidth = line.length * labelLayout.fontSize * .62;
-      const fit = estimatedWidth > labelLayout.maxWidth
-        ? ` textLength="${labelLayout.maxWidth.toFixed(1)}" lengthAdjust="spacingAndGlyphs"`
-        : '';
-      const y = firstY + index * labelLayout.lineHeight;
-      return `<tspan x="${p.x.toFixed(1)}" y="${y.toFixed(1)}"${fit}>${line}</tspan>`;
-    }).join('');
-    return `<g class="popup-node ${activeHub ? 'hub' : ''}" data-node-id="${node.id}" data-active-degree="${activeDegree}" data-active-hub="${activeHub}" tabindex="0" role="button" aria-label="${node.label}: ${activeDegree} conexiones activas">
-      <circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${previousRadius}" data-start-radius="${previousRadius}" data-target-radius="${radius}" />
-      ${iconMarkup}
-      <text x="${p.x.toFixed(1)}" y="${firstY.toFixed(1)}" style="font-size:${labelLayout.fontSize}px;line-height:${labelLayout.lineHeight}px;">${labelMarkup}</text>
-    </g>`;
-  }).join('');
-
-  canvas.innerHTML = `<div id="scaleNetworkViewport" class="popup-network-viewport"><svg class="popup-network-svg" viewBox="0 0 1000 544" role="img" aria-label="${definition.title}">
-    <defs>
-      <filter id="popupGlowTeal" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-      <filter id="popupGlowCopper" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-      <marker id="arrow-direct" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#46d6d0" /></marker>
-      <marker id="arrow-indirecta" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#e89a6c" /></marker>
-    </defs>
-    <g class="popup-network-scene">
-      <g class="popup-edges">${edgeMarkup}</g>
-      <g class="popup-flow-layer" aria-hidden="true"></g>
-      <g class="popup-nodes">${nodeMarkup}</g>
-    </g>
-  </svg></div>`;
-
-  resetScaleNetworkView();
-  setupScaleNetworkViewport();
-  buildScaleNetworkFlow();
-  updateScaleNetworkStats(definition);
-  canvas.querySelectorAll('.popup-node').forEach(nodeElement => {
-    const node = nodes[nodeElement.dataset.nodeId];
-    const selectNode = () => {
-      canvas.querySelectorAll('.popup-node').forEach(item => item.classList.remove('selected'));
-      nodeElement.classList.add('selected');
-      scalePopupSelectedNode = node;
-      updateScaleNetworkStats(definition);
-      const description = document.getElementById('scaleNetworkDescription');
-      if (description && node) description.textContent = `${node.label} · ${definition.title}`;
-    };
-    const openNodeInfo = () => {
-      if (node?.id) {
-        selectNode();
-        openNodeDetailModal(mode, node.id);
-      }
-    };
-    const openNodeDoubleAction = () => {
-      if (!node?.id) return;
-      selectNode();
-      if (mode === 'natural' && node.id === 'humedales') openWetlandImageModal();
-      else openNodeDetailModal(mode, node.id);
-    };
-    const togglePopupNode = () => {
-      if (!node) return;
-      closeNodeDetailModal();
-      closeWetlandImageModal();
-      scalePopupHiddenNodes.add(node.id);
-      scalePopupSelectedNode = null;
-      renderScaleNetworkPopup(mode);
-      const description = document.getElementById('scaleNetworkDescription');
-      if (description) description.textContent = `${node.label} apagado · se retiraron sus relaciones activas`;
-    };
-    const clickSequenceWindow = 900;
-    let clickCount = 0;
-    let clickTimer = null;
-    let lastClickAt = 0;
-    nodeElement.addEventListener('click', event => {
-      event.preventDefault();
-      event.stopPropagation();
-      if (canvas.dataset.suppressNodeClick === 'true') {
-        canvas.dataset.suppressNodeClick = 'false';
-        return;
-      }
-      const now = performance.now();
-      if (now - lastClickAt > clickSequenceWindow) clickCount = 0;
-      lastClickAt = now;
-      clickCount = Math.min(4, clickCount + 1);
-      selectNode();
-      if (clickCount === 1) showScaleNetworkClickCue(nodeElement, node);
-      else clearScaleNetworkClickCue();
-      if (clickTimer) window.clearTimeout(clickTimer);
-      clickTimer = window.setTimeout(() => {
-        const sequence = clickCount;
-        clickCount = 0;
-        clickTimer = null;
-        clearScaleNetworkClickCue();
-        if (sequence >= 3) togglePopupNode();
-        else if (sequence === 2) openNodeDoubleAction();
-        else openNodeInfo();
-      }, clickSequenceWindow);
+    togglePlaces?.addEventListener("change", (e) => {
+      state.layers.places = e.target.checked;
+      renderScaleHotspots();
     });
-    nodeElement.addEventListener('keydown', event => {
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        selectNode();
+
+    toggleBoundary?.addEventListener("change", (e) => {
+      state.layers.boundary = e.target.checked;
+      if (state.uplMarker) {
+        state.uplMarker.getElement().style.display = e.target.checked ? "" : "none";
       }
     });
-  });
-}
-
-let wetlandImagePromise = null;
-const wetlandImageZoomState = {
-  scale: 1,
-  x: 0,
-  y: 0,
-  pointerId: null,
-  dragging: false,
-  startX: 0,
-  startY: 0,
-  originX: 0,
-  originY: 0,
-  pointers: new Map(),
-  pinchDistance: null,
-  pinchStartScale: 1
-};
-
-function getWetlandImageFitScale() {
-  const viewport = document.getElementById('wetlandImageViewport');
-  const image = document.getElementById('wetlandImage');
-  if (!viewport || !image) return 1;
-  const naturalWidth = Number(image.naturalWidth || image.width || image.offsetWidth);
-  const naturalHeight = Number(image.naturalHeight || image.height || image.offsetHeight);
-  if (!naturalWidth || !naturalHeight || !viewport.clientWidth || !viewport.clientHeight) return 1;
-  const horizontalFit = Math.max(0.1, (viewport.clientWidth - 24) / naturalWidth);
-  const verticalFit = Math.max(0.1, (viewport.clientHeight - 24) / naturalHeight);
-  return Math.min(1, horizontalFit, verticalFit);
-}
-
-function getWetlandImageEffectiveScale() {
-  return getWetlandImageFitScale() * wetlandImageZoomState.scale;
-}
-
-function clampWetlandImagePan() {
-  const viewport = document.getElementById('wetlandImageViewport');
-  const image = document.getElementById('wetlandImage');
-  if (!viewport || !image) return;
-  const naturalWidth = Number(image.naturalWidth || image.width || image.offsetWidth);
-  const naturalHeight = Number(image.naturalHeight || image.height || image.offsetHeight);
-  if (!naturalWidth || !naturalHeight) return;
-  const effectiveScale = getWetlandImageEffectiveScale();
-  const scaledWidth = naturalWidth * effectiveScale;
-  const scaledHeight = naturalHeight * effectiveScale;
-  const maxX = Math.max(0, (scaledWidth - viewport.clientWidth) / 2);
-  const maxY = Math.max(0, (scaledHeight - viewport.clientHeight) / 2);
-  wetlandImageZoomState.x = Math.max(-maxX, Math.min(maxX, wetlandImageZoomState.x));
-  wetlandImageZoomState.y = Math.max(-maxY, Math.min(maxY, wetlandImageZoomState.y));
-}
-
-function updateWetlandImageZoomLabel() {
-  const label = document.getElementById('wetlandImageZoomReset');
-  if (label) label.textContent = `${Math.round(wetlandImageZoomState.scale * 100)}%`;
-}
-
-function applyWetlandImageZoom() {
-  const viewport = document.getElementById('wetlandImageViewport');
-  const image = document.getElementById('wetlandImage');
-  if (!viewport || !image) return;
-  const naturalWidth = Number(image.naturalWidth || image.width || image.offsetWidth);
-  const naturalHeight = Number(image.naturalHeight || image.height || image.offsetHeight);
-  if (!naturalWidth || !naturalHeight) {
-    updateWetlandImageZoomLabel();
-    return;
   }
-  image.style.width = `${naturalWidth}px`;
-  image.style.height = `${naturalHeight}px`;
-  viewport.classList.toggle('is-zoomed', wetlandImageZoomState.scale > 1.01);
-  clampWetlandImagePan();
-  const scale = getWetlandImageEffectiveScale();
-  const centeredX = -(naturalWidth * scale) / 2 + wetlandImageZoomState.x;
-  const centeredY = -(naturalHeight * scale) / 2 + wetlandImageZoomState.y;
-  image.style.transform = `translate3d(${centeredX.toFixed(1)}px, ${centeredY.toFixed(1)}px, 0) scale(${scale.toFixed(4)})`;
-  updateWetlandImageZoomLabel();
-}
 
-function setWetlandImageZoom(nextScale) {
-  wetlandImageZoomState.scale = Math.max(.75, Math.min(4, Number(nextScale) || 1));
-  applyWetlandImageZoom();
-}
-
-function resetWetlandImageZoom() {
-  wetlandImageZoomState.scale = 1;
-  wetlandImageZoomState.x = 0;
-  wetlandImageZoomState.y = 0;
-  wetlandImageZoomState.dragging = false;
-  wetlandImageZoomState.pointerId = null;
-  wetlandImageZoomState.pointers.clear();
-  wetlandImageZoomState.pinchDistance = null;
-  wetlandImageZoomState.pinchStartScale = 1;
-  applyWetlandImageZoom();
-}
-
-function setupWetlandImageZoom() {
-  const viewport = document.getElementById('wetlandImageViewport');
-  const zoomIn = document.getElementById('wetlandImageZoomIn');
-  const zoomOut = document.getElementById('wetlandImageZoomOut');
-  const zoomReset = document.getElementById('wetlandImageZoomReset');
-  if (!viewport || viewport.dataset.zoomReady === 'true') return;
-  viewport.dataset.zoomReady = 'true';
-  zoomIn?.addEventListener('click', event => {
-    event.preventDefault();
-    event.stopPropagation();
-    setWetlandImageZoom(wetlandImageZoomState.scale + .25);
-  });
-  zoomOut?.addEventListener('click', event => {
-    event.preventDefault();
-    event.stopPropagation();
-    setWetlandImageZoom(wetlandImageZoomState.scale - .25);
-  });
-  zoomReset?.addEventListener('click', event => {
-    event.preventDefault();
-    event.stopPropagation();
-    resetWetlandImageZoom();
-  });
-  viewport.addEventListener('wheel', event => {
-    event.preventDefault();
-    setWetlandImageZoom(wetlandImageZoomState.scale + (event.deltaY < 0 ? .2 : -.2));
-  }, { passive: false });
-  const capturePointer = pointerId => {
-    try { viewport.setPointerCapture?.(pointerId); } catch { /* El gesto continúa aunque el navegador no capture el puntero. */ }
-  };
-  const releasePointer = pointerId => {
-    try {
-      if (viewport.hasPointerCapture?.(pointerId)) viewport.releasePointerCapture(pointerId);
-    } catch { /* No todos los entornos conservan la captura después de pointerup. */ }
-  };
-  viewport.addEventListener('pointerdown', event => {
-    if (event.pointerType === 'mouse' && event.button !== 0) return;
-    event.preventDefault();
-    wetlandImageZoomState.pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
-    capturePointer(event.pointerId);
-    if (wetlandImageZoomState.pointers.size >= 2) {
-      const [first, second] = [...wetlandImageZoomState.pointers.values()];
-      wetlandImageZoomState.pinchDistance = Math.hypot(second.x - first.x, second.y - first.y);
-      wetlandImageZoomState.pinchStartScale = wetlandImageZoomState.scale;
-      wetlandImageZoomState.dragging = false;
-      wetlandImageZoomState.pointerId = null;
-      viewport.classList.remove('is-dragging');
-      return;
-    }
-    if (wetlandImageZoomState.scale <= 1.01) return;
-    wetlandImageZoomState.dragging = true;
-    wetlandImageZoomState.pointerId = event.pointerId;
-    wetlandImageZoomState.startX = event.clientX;
-    wetlandImageZoomState.startY = event.clientY;
-    wetlandImageZoomState.originX = wetlandImageZoomState.x;
-    wetlandImageZoomState.originY = wetlandImageZoomState.y;
-    viewport.classList.add('is-dragging');
-  });
-  viewport.addEventListener('pointermove', event => {
-    if (!wetlandImageZoomState.pointers.has(event.pointerId)) return;
-    event.preventDefault();
-    wetlandImageZoomState.pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
-    if (wetlandImageZoomState.pointers.size >= 2) {
-      const [first, second] = [...wetlandImageZoomState.pointers.values()];
-      const distance = Math.hypot(second.x - first.x, second.y - first.y);
-      if (wetlandImageZoomState.pinchDistance > 0) {
-        setWetlandImageZoom(wetlandImageZoomState.pinchStartScale * distance / wetlandImageZoomState.pinchDistance);
+  // Botones de exportación y centrado
+  function initExportButtons() {
+    document.getElementById("btnCenterBogota")?.addEventListener("click", () => {
+      if (state.map) {
+        state.map.flyTo({
+          center: BOGOTA_CENTER,
+          zoom: BOGOTA_DEFAULT_ZOOM,
+          speed: 1.2
+        });
       }
-      return;
+    });
+
+    document.getElementById("locateBtn")?.addEventListener("click", () => {
+      selectUpl(state.selectedUpl);
+    });
+
+    document.getElementById("fullscreenBtn")?.addEventListener("click", () => {
+      const elem = document.querySelector(".map-panel");
+      if (!document.fullscreenElement) {
+        elem?.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    });
+
+    document.getElementById("exportVisibleGeojson")?.addEventListener("click", () => {
+      const cfg = SCALES_CONFIG[state.activeScale];
+      const geojson = {
+        type: "FeatureCollection",
+        scale: cfg.name,
+        upl: state.selectedUpl,
+        features: (cfg.hotspots || []).map(h => ({
+          type: "Feature",
+          geometry: { type: "Point", coordinates: h.coords },
+          properties: { name: h.name, role: h.role, connections: h.connections, scale: cfg.name }
+        }))
+      };
+      downloadFile(JSON.stringify(geojson, null, 2), `bogota_multiescalar_${state.activeScale}.geojson`, "application/json");
+    });
+
+    document.getElementById("exportVisibleCsv")?.addEventListener("click", () => {
+      const cfg = SCALES_CONFIG[state.activeScale];
+      let csv = "Nombre,Rol,Conexiones,Longitud,Latitud,Escala\n";
+      (cfg.hotspots || []).forEach(h => {
+        csv += `"${h.name}","${h.role}",${h.connections},${h.coords[0]},${h.coords[1]},"${cfg.name}"\n`;
+      });
+      downloadFile(csv, `bogota_multiescalar_${state.activeScale}.csv`, "text/csv");
+    });
+  }
+
+  function downloadFile(content, fileName, contentType) {
+    const a = document.createElement("a");
+    const file = new Blob([content], { type: contentType });
+    a.href = URL.createObjectURL(file);
+    a.download = fileName;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
+  // Modal de Detalle
+  function initModalEvents() {
+    const modal = document.getElementById("nodeDetailModal");
+    const closeBtn = document.getElementById("nodeDetailClose");
+    const closeBtn2 = document.getElementById("nodeDetailCloseBtn");
+
+    const closeModal = () => modal?.classList.remove("active");
+    closeBtn?.addEventListener("click", closeModal);
+    closeBtn2?.addEventListener("click", closeModal);
+
+    modal?.addEventListener("click", (e) => {
+      if (e.target === modal) closeModal();
+    });
+  }
+
+  function openNodeDetailModal(hotspot, scaleConfig) {
+    const modal = document.getElementById("nodeDetailModal");
+    if (!modal) return;
+
+    document.getElementById("nodeDetailKicker").textContent = `DETALLE · ESCALA ${scaleConfig.name.toUpperCase()}`;
+    document.getElementById("nodeDetailTitle").textContent = hotspot.name;
+    document.getElementById("nodeDetailRole").textContent = hotspot.role;
+    document.getElementById("nodeDetailSummary").textContent = `Elemento territorial clave de la dimensión ${scaleConfig.name}. Articula dinámicas de ${scaleConfig.subtitle.toLowerCase()}.`;
+    document.getElementById("nodeDetailDegree").textContent = hotspot.connections;
+    document.getElementById("nodeDetailDirect").textContent = Math.floor(hotspot.connections * 0.6);
+    document.getElementById("nodeDetailIndirect").textContent = Math.ceil(hotspot.connections * 0.4);
+    document.getElementById("nodeDetailHub").textContent = hotspot.connections > 20 ? "Hub Principal" : "Conector Secundario";
+
+    const outgoing = document.getElementById("nodeDetailOutgoing");
+    const incoming = document.getElementById("nodeDetailIncoming");
+
+    if (outgoing) {
+      outgoing.innerHTML = `
+        <li>Conexión con la red arterial circundante</li>
+        <li>Flujo hacia centralidad de UPL ${state.selectedUpl.name}</li>
+      `;
     }
-    if (!wetlandImageZoomState.dragging || event.pointerId !== wetlandImageZoomState.pointerId) return;
-    wetlandImageZoomState.x = wetlandImageZoomState.originX + event.clientX - wetlandImageZoomState.startX;
-    wetlandImageZoomState.y = wetlandImageZoomState.originY + event.clientY - wetlandImageZoomState.startY;
-    applyWetlandImageZoom();
-  });
-  const stopPan = event => {
-    wetlandImageZoomState.pointers.delete(event.pointerId);
-    if (wetlandImageZoomState.pointers.size < 2) {
-      wetlandImageZoomState.pinchDistance = null;
-      wetlandImageZoomState.pinchStartScale = wetlandImageZoomState.scale;
+    if (incoming) {
+      incoming.innerHTML = `
+        <li>Articulación con sistema regional Sabana</li>
+        <li>Presión de soporte cotidiano barrial</li>
+      `;
     }
-    if (wetlandImageZoomState.pointerId === event.pointerId) {
-      wetlandImageZoomState.dragging = false;
-      wetlandImageZoomState.pointerId = null;
-      viewport.classList.remove('is-dragging');
-    }
-    releasePointer(event.pointerId);
-  };
-  viewport.addEventListener('pointerup', stopPan);
-  viewport.addEventListener('pointercancel', stopPan);
-  viewport.addEventListener('lostpointercapture', stopPan);
-  window.addEventListener('resize', applyWetlandImageZoom);
-  resetWetlandImageZoom();
-}
 
-function getWetlandAssetUrl(source) {
-  if (!source) return '';
-  try {
-    return new URL(source, document.baseURI).href;
-  } catch {
-    return source;
+    modal.classList.add("active");
   }
-}
 
-function preloadWetlandImage() {
-  const image = document.getElementById('wetlandImage');
-  const fullSrc = getWetlandAssetUrl(image?.dataset.fullSrc);
-  if (!fullSrc) return Promise.resolve(null);
-  if (wetlandImagePromise) return wetlandImagePromise;
-  wetlandImagePromise = new Promise(resolve => {
-    const preloader = new Image();
-    preloader.decoding = 'async';
-    preloader.fetchPriority = 'low';
-    preloader.onload = () => resolve(preloader);
-    preloader.onerror = () => resolve(null);
-    preloader.src = fullSrc;
-  });
-  return wetlandImagePromise;
-}
 
-function setWetlandImageState(image, empty, visible) {
-  if (image) {
-    image.hidden = !visible;
-    image.style.display = visible ? 'block' : 'none';
-  }
-  if (empty) {
-    empty.hidden = visible;
-    empty.style.display = visible ? 'none' : 'grid';
-  }
-  const directLink = document.getElementById('wetlandImageDirectLink');
-  if (directLink) {
-    directLink.hidden = visible;
-    directLink.style.display = visible ? 'none' : 'inline-flex';
-  }
-}
+  // Manejo de Pop-up en la esquina: Lectura Sistémica POT
+  function initCornerDiagnosticEvents() {
+    const card = document.getElementById("mapCornerDiagnostic");
+    const closeBtn = document.getElementById("btnCloseCornerDiagnostic");
+    const openBtn = document.getElementById("btnOpenCornerDiagnostic");
+    const sidebarToggleBtn = document.getElementById("btnToggleDiagnosticPopup");
 
-async function openWetlandImageModal() {
-  const modal = document.getElementById('wetlandImageModal');
-  if (!modal) return;
-  const image = document.getElementById('wetlandImage');
-  const empty = document.getElementById('wetlandImageEmpty');
-  const previewSrc = getWetlandAssetUrl(image?.getAttribute('src'));
-  const fullSrc = getWetlandAssetUrl(image?.dataset.fullSrc);
-  resetWetlandImageZoom();
-  if (image && previewSrc) image.src = previewSrc;
-  setWetlandImageState(image, empty, Boolean(previewSrc));
-  if (image) {
-    image.onerror = () => setWetlandImageState(image, empty, false);
-    image.onload = () => {
-      setWetlandImageState(image, empty, true);
-      applyWetlandImageZoom();
+    const minimize = () => {
+      if (card) card.style.display = "none";
+      if (openBtn) openBtn.style.display = "flex";
     };
-  }
-  modal.classList.add('open');
-  modal.setAttribute('aria-hidden', 'false');
-  document.body.classList.add('wetland-modal-open');
-  document.getElementById('wetlandImageClose')?.focus();
-  const fullImage = await preloadWetlandImage();
-  if (fullImage && image && fullSrc) {
-    image.src = fullImage.src || fullSrc;
-    setWetlandImageState(image, empty, true);
-    image.dataset.fullReady = 'true';
-    applyWetlandImageZoom();
-  }
-}
 
-setupWetlandImageZoom();
+    const restore = () => {
+      if (card) card.style.display = "block";
+      if (openBtn) openBtn.style.display = "none";
+    };
 
-function closeWetlandImageModal() {
-  const modal = document.getElementById('wetlandImageModal');
-  if (!modal) return;
-  resetWetlandImageZoom();
-  modal.classList.remove('open');
-  modal.setAttribute('aria-hidden', 'true');
-  document.body.classList.remove('wetland-modal-open');
-}
-
-document.getElementById('wetlandImageClose')?.addEventListener('click', closeWetlandImageModal);
-document.getElementById('wetlandImageModal')?.addEventListener('click', event => {
-  if (event.target.id === 'wetlandImageModal') closeWetlandImageModal();
-});
-document.addEventListener('keydown', event => {
-  if (event.key === 'Escape') closeWetlandImageModal();
-});
-
-document.getElementById('nodeDetailClose')?.addEventListener('click', closeNodeDetailModal);
-document.getElementById('nodeDetailFocus')?.addEventListener('click', focusNodeConnections);
-document.getElementById('nodeDetailModal')?.addEventListener('click', event => {
-  if (event.target.id === 'nodeDetailModal') closeNodeDetailModal();
-});
-document.addEventListener('keydown', event => {
-  if (event.key === 'Escape') closeNodeDetailModal();
-});
-
-function openScaleNetworkModal(mode) {
-  const modal = document.getElementById('scaleNetworkModal');
-  const definition = scaleNetworks[mode];
-  if (!modal || !definition) return;
-  clearScaleNetworkClickCue();
-  scalePopupMode = mode;
-  scaleNetworkFlowState.running = true;
-  scalePopupHiddenNodes.clear();
-  scalePopupSelectedNode = null;
-  document.getElementById('scaleNetworkTitle').textContent = definition.title;
-  document.getElementById('scaleNetworkDescription').textContent = scaleNetworkDescriptions[mode];
-  const wetlandButton = document.getElementById('scaleNetworkWetlandImage');
-  if (wetlandButton) {
-    wetlandButton.hidden = mode !== 'natural';
-    wetlandButton.disabled = mode !== 'natural';
-  }
-  renderScaleNetworkPopup(mode);
-  modal.classList.add('open');
-  modal.setAttribute('aria-hidden', 'false');
-  document.body.classList.add('scale-modal-open');
-  document.getElementById('scaleNetworkClose')?.focus();
-}
-
-function closeScaleNetworkModal() {
-  const modal = document.getElementById('scaleNetworkModal');
-  if (!modal) return;
-  clearScaleNetworkClickCue();
-  cancelScaleNetworkFlowLoop();
-  cancelScaleNetworkAmbientLoop();
-  modal.classList.remove('open');
-  modal.setAttribute('aria-hidden', 'true');
-  document.body.classList.remove('scale-modal-open');
-}
-
-document.getElementById('scaleNetworkWetlandImage')?.addEventListener('click', event => {
-  event.preventDefault();
-  event.stopPropagation();
-  const definition = scaleNetworks.natural;
-  const wetland = definition?.nodes.find(node => node.id === 'humedales');
-  if (!wetland || scalePopupMode !== 'natural' || scalePopupHiddenNodes.has(wetland.id)) return;
-  clearScaleNetworkClickCue();
-  document.querySelectorAll('#scaleNetworkCanvas .popup-node').forEach(item => item.classList.toggle('selected', item.dataset.nodeId === wetland.id));
-  scalePopupSelectedNode = wetland;
-  updateScaleNetworkStats(definition);
-  const description = document.getElementById('scaleNetworkDescription');
-  if (description) description.textContent = `${wetland.label} · ${definition.title}`;
-  openWetlandImageModal();
-});
-
-document.getElementById('scaleNetworkRestore')?.addEventListener('click', () => {
-  clearScaleNetworkClickCue();
-  scalePopupHiddenNodes.clear();
-  scalePopupSelectedNode = null;
-  renderScaleNetworkPopup(scalePopupMode);
-  updateScaleNetworkStats(scaleNetworks[scalePopupMode]);
-  const description = document.getElementById('scaleNetworkDescription');
-  if (description) description.textContent = scaleNetworkDescriptions[scalePopupMode];
-});
-document.getElementById('scaleNetworkFlowToggle')?.addEventListener('click', event => {
-  event.stopPropagation();
-  setScaleNetworkFlowRunning(!scaleNetworkFlowState.running);
-});
-document.getElementById('scaleNetworkFlowReset')?.addEventListener('click', event => {
-  event.stopPropagation();
-  resetScaleNetworkFlow();
-});
-document.getElementById('scaleNetworkClose')?.addEventListener('click', closeScaleNetworkModal);
-document.getElementById('scaleNetworkModal')?.addEventListener('click', event => {
-  if (event.target.id === 'scaleNetworkModal') closeScaleNetworkModal();
-});
-document.addEventListener('keydown', event => {
-  if (event.key === 'Escape') closeScaleNetworkModal();
-});
-
-// Controles de zoom del diagrama, compartidos por las cuatro redes.
-document.getElementById('scaleNetworkZoomIn')?.addEventListener('click', event => {
-  event.stopPropagation();
-  setScaleNetworkZoom(scaleNetworkViewState.scale + .18);
-});
-document.getElementById('scaleNetworkZoomOut')?.addEventListener('click', event => {
-  event.stopPropagation();
-  setScaleNetworkZoom(scaleNetworkViewState.scale - .18);
-});
-document.getElementById('scaleNetworkZoomReset')?.addEventListener('click', event => {
-  event.stopPropagation();
-  resetScaleNetworkView();
-});
-  function boot() {
-    const defaultUpl = UPLS.find((upl) => upl.num === 13) || UPLS[0];
-    state.selectedUpl = defaultUpl;
-    renderUplSelect();
-    renderScaleCards();
-    renderApiLayerToggles();
-    updateUplPanel(defaultUpl);
-    bindEvents();
-    if (window.maplibregl) initializeMap();
-    else {
-      window.addEventListener("maplibre-ready", initializeMap, { once: true });
-      window.setTimeout(() => {
-        if (!state.mapReady && !window.maplibregl) useProceduralFallback("MapLibre no respondió a tiempo; se activó la lectura procedural.");
-      }, 9000);
-    }
-    window.setTimeout(preloadWetlandImage, 650);
-    window.BogotaVivaNavigator = { state, UPLS, SCALE_DATA, setScale, focusSelectedUpl, loadScaleData, calculateRoute, useProceduralFallback, toggleLocalPmtiles, setScaleNetworkFlowRunning, resetScaleNetworkFlow, applyPlaceCategoryFilter, updateMapCategoryFilters, updateExportButtons, getFilteredPlaceFeatures, getVisiblePlaceFeatures, exportPlaceData, exportCsv, exportFeatureCollection, getScaleNetworkFlowState: () => ({ running: scaleNetworkFlowState.running, particles: scaleNetworkFlowState.particles.length, edges: document.querySelectorAll('#scaleNetworkCanvas .popup-edge').length }) };
+    closeBtn?.addEventListener("click", minimize);
+    openBtn?.addEventListener("click", restore);
+    sidebarToggleBtn?.addEventListener("click", restore);
   }
 
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
-  else boot();
 })();

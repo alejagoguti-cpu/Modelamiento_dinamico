@@ -4861,6 +4861,21 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 .subsystem-components div { display: flex; flex-wrap: wrap; gap: 6px; }
 .subsystem-components button { min-height: 28px; padding: 6px 8px; border: 1px solid color-mix(in srgb, var(--bubble-color) 70%, transparent); border-radius: 999px; background: rgba(255,255,255,.04); color: #fff; font-size: 9px; line-height: 1.15; cursor: default; }
 .subsystem-purpose-panel { position: absolute; z-index: 10; top: 84px; right: 12px; width: min(315px, calc(100% - 24px)); max-height: calc(100% - 160px); overflow: auto; padding: 14px 16px; border: 1px solid var(--bubble-color); border-left: 4px solid var(--bubble-color); border-radius: 9px; background: rgba(0,0,0,.96); box-shadow: 0 14px 34px rgba(0,0,0,.7); color: #fff; animation: bubble-in .22s ease-out; }
+.submodel-failure-popup {
+  position: absolute; z-index: 11; left: 12px; bottom: 12px; max-width: min(300px, calc(100% - 24px));
+  display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 14px 30px 12px;
+  border: 1px solid #ff6b6b; border-left: 4px solid #ff6b6b; border-radius: 9px; text-align: center;
+  background: rgba(30,6,6,.96); box-shadow: 0 14px 34px rgba(0,0,0,.7); animation: bubble-in .22s ease-out;
+}
+.submodel-failure-icons { display: flex; align-items: center; gap: 10px; }
+.submodel-failure-icon { color: #ff6b6b; font-size: 22px; flex-shrink: 0; }
+.submodel-failure-popup span { font-size: 12.5px; line-height: 1.45; color: #fff; font-style: italic; font-weight: 500; }
+.submodel-failure-close {
+  position: absolute; top: 6px; right: 6px; width: 20px; height: 20px; border: none; background: transparent;
+  color: rgba(255,255,255,.6); cursor: pointer; font-size: 11px; display: flex; align-items: center; justify-content: center;
+}
+.submodel-failure-close:hover { color: #fff; }
+@media (max-width: 720px) { .submodel-failure-popup { left: 10px; bottom: 10px; max-width: calc(100% - 20px); } }
 .subsystem-purpose-panel strong { display: block; margin-bottom: 10px; color: var(--bubble-color); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
 .subsystem-purpose-panel h4 { margin: 10px 0 4px; color: #76fff0; font-size: 9px; letter-spacing: .05em; text-transform: uppercase; }
 .subsystem-purpose-panel p { margin: 0; color: rgba(242,236,227,.82); font-size: 10px; line-height: 1.42; }
@@ -5025,7 +5040,7 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 .subsystem-panel-close { position: relative; z-index: 30; pointer-events: auto !important; }
 
 /* Los paneles viven dentro de una capa visual sin eventos; sus controles sí deben ser interactivos. */
-.subsystem-components, .subsystem-purpose-panel { pointer-events: auto !important; }
+.subsystem-components, .subsystem-purpose-panel, .submodel-failure-popup { pointer-events: auto !important; }
 
 /* Parte II · Submodelos dinámicos sobre el mismo territorio */
 .submodels-section { margin-top: 16px; padding: 14px; border: 1px solid rgba(118,255,240,.26); border-radius: 10px; background: linear-gradient(135deg, rgba(11,25,23,.96), rgba(8,12,14,.98)); }
@@ -5060,7 +5075,14 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 @media (max-width: 760px) { .direct-submodel-tabs { align-items: stretch; } .direct-submodel-tabs button { flex: 1 1 100%; } }
 
 /* Red superior de sistemas del territorio */
-.territory-reading-section { margin: 12px 10px 18px; padding: 18px; border: 1px solid rgba(118,255,240,.3); border-radius: 10px; background: linear-gradient(135deg, rgba(7,17,16,.98), rgba(10,13,16,.98)); }
+.territory-reading-section { position: relative; margin: 12px 10px 18px; padding: 18px; border: 1px solid rgba(118,255,240,.3); border-radius: 10px; background: linear-gradient(135deg, rgba(7,17,16,.98), rgba(10,13,16,.98)); }
+.failure-scenarios-btn {
+  position: absolute; top: 16px; right: 16px; display: flex; align-items: center; gap: 7px;
+  padding: 8px 14px; border-radius: 7px; border: 1px solid rgba(255,107,107,.45);
+  background: rgba(255,107,107,.08); color: #ff8f8f; font-size: 11.5px; font-weight: 700;
+  cursor: pointer; transition: background .15s ease; z-index: 2;
+}
+.failure-scenarios-btn:hover { background: rgba(255,107,107,.18); }
 .territory-reading-kicker { color: #76fff0; font-size: 9px; font-weight: 800; letter-spacing: .14em; }
 .territory-reading-section h2 { margin: 7px 0 13px; color: #fff; font: 700 20px/1.15 "Space Grotesk", Inter, sans-serif; }
 .territory-reading-buttons { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
@@ -5105,6 +5127,27 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 /* Red relacional integrada en la cartografía principal */
 .subsystem-bubbles.network-active { inset: 0; z-index: 8; pointer-events: auto; }
 .map-network-stage { position: absolute; inset: 0; overflow: hidden; background: radial-gradient(circle at 50% 50%, rgba(118,255,240,.12), transparent 24%), rgba(2,8,10,.18); }
+.bubble-explode-satellite {
+  position: absolute; top: 0; left: 0; z-index: 5; transform: translate(var(--origin-x), var(--origin-y)) translate(-50%, -50%) scale(.15);
+  width: 78px; height: 78px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-align: center;
+  padding: 6px; box-sizing: border-box; font-size: 9.5px; line-height: 1.25; color: #05070a; font-weight: 700;
+  background: var(--node-color, #76fff0); border: 2px solid #05070a; box-shadow: 0 6px 16px rgba(0,0,0,.5);
+  opacity: 0; pointer-events: none; transition: transform .6s cubic-bezier(.2,.9,.3,1.2) var(--explode-delay,0ms), opacity .35s ease var(--explode-delay,0ms);
+}
+.bubble-explode-satellite.exploded { transform: translate(var(--final-x), var(--final-y)) translate(-50%, -50%) scale(1); opacity: .96; }
+.map-network-center-hub {
+  position: absolute; left: 50%; top: 48%; transform: translate(-50%, -50%); z-index: 4;
+  width: 74px; height: 74px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+  border: 2px dashed rgba(255,209,102,.7); background: radial-gradient(circle, rgba(255,209,102,.22), rgba(7,12,15,.9));
+  color: #ffd166; font-size: 9px; font-weight: 700; line-height: 1.2; cursor: pointer;
+  animation: center-hub-pulse 2.4s ease-in-out infinite;
+}
+.map-network-center-hub i { font-size: 16px; margin-bottom: 2px; }
+.map-network-center-hub:hover { background: radial-gradient(circle, rgba(255,209,102,.4), rgba(7,12,15,.95)); animation-play-state: paused; transform: translate(-50%, -50%) scale(1.08); }
+@keyframes center-hub-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255,209,102,.35); }
+  50% { box-shadow: 0 0 0 14px rgba(255,209,102,0); }
+}
 .map-network-stage::after { content: ""; position: absolute; inset: 9%; border: 1px solid rgba(118,255,240,.12); border-radius: 50%; pointer-events: none; }
 .map-network-stage > svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
 .map-network-stage > svg line { stroke: var(--edge-color); stroke-width: .38; stroke-opacity: .8; stroke-dasharray: 2 2.8; animation: map-network-flow 3.4s linear infinite; filter: drop-shadow(0 0 3px var(--edge-color)); vector-effect: non-scaling-stroke; }
@@ -6374,3 +6417,170 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
   #territoryNetworkPlain .map-network-node-icon { font-size: 13px !important; }
   #territoryNetworkPlain .map-network-node strong { font-size: 6.5px !important; }
 }
+
+
+/* MÓDULO 07 · ajustes finales solicitados */
+.visible-elements-section .bubble-net-svg { min-height: 540px; }
+.visible-elements-section .bubble-edge-visual {
+  stroke: rgba(220,231,227,.58) !important;
+  stroke-width: 1.05 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+  opacity: .72 !important;
+}
+.visible-elements-section .bubble-edge-hit { stroke-width: 15 !important; }
+.visible-elements-section .bubble-flow-dot {
+  fill: rgba(184,207,200,.76) !important;
+  opacity: .72 !important;
+  r: 1.65;
+  filter: drop-shadow(0 0 1.5px rgba(184,207,200,.55));
+}
+.visible-elements-section .bubble-node {
+  stroke-width: 1.1 !important;
+  filter: none !important;
+}
+.visible-elements-section .bubble-node-label i {
+  color: rgba(221,231,227,.76) !important;
+  font-size: 18px !important;
+  filter: none !important;
+}
+.visible-elements-section .bubble-node-label span {
+  color: rgba(221,231,227,.82) !important;
+  text-shadow: 0 1px 3px rgba(0,0,0,.72) !important;
+}
+.dynamic-item-list {
+  display: grid;
+  gap: 7px;
+  margin: 10px 0 13px;
+  padding: 0;
+  list-style: none;
+}
+.dynamic-item-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  color: rgba(227,235,231,.82);
+  font-size: 11px;
+  line-height: 1.35;
+}
+.dynamic-item-list li i {
+  flex: 0 0 auto;
+  margin-top: 4px;
+  color: color-mix(in srgb, var(--bubble-color) 70%, #b7c4c0) !important;
+  font-size: 6px;
+}
+.dynamic-item-list li span { display: block; }
+
+
+/* Red superior · acabado ligero y legible */
+.visible-elements-section .bubble-edge-visual {
+  stroke: rgba(191,207,202,.48) !important;
+  stroke-width: .9 !important;
+  opacity: .66 !important;
+}
+.visible-elements-section .bubble-edge-hit:hover + .bubble-edge-visual,
+.visible-elements-section .bubble-edge-hit.active + .bubble-edge-visual {
+  stroke: rgba(222,232,228,.78) !important;
+  stroke-width: 1.35 !important;
+}
+.visible-elements-section .bubble-flow-dot {
+  r: 1.25 !important;
+  fill: rgba(195,212,206,.58) !important;
+  filter: none !important;
+}
+.visible-elements-section .bubble-node {
+  stroke-width: .85 !important;
+  opacity: .54 !important;
+  mix-blend-mode: normal !important;
+}
+.visible-elements-section .bubble-node-label i {
+  color: rgba(211,223,218,.68) !important;
+  font-size: 17px !important;
+  filter: none !important;
+}
+.visible-elements-section .bubble-node-label span {
+  color: rgba(211,223,218,.74) !important;
+  font-size: 10px !important;
+  font-weight: 650 !important;
+  text-shadow: 0 1px 3px rgba(0,0,0,.68) !important;
+}
+
+/* ---------- Mini-red de componentes de un subsistema ---------- */
+.mini-network-svg { width: 100%; height: auto; margin: 6px 0 4px; }
+.mini-net-line { stroke: rgba(255,255,255,.25); stroke-width: 1; }
+.mini-net-node { fill: var(--node-color, #76fff0); stroke: #fff; stroke-width: 1; opacity: .85; }
+.mini-net-node-text {
+  width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
+  text-align: center; color: #05070a; font-size: 8.5px; font-weight: 700; line-height: 1.15;
+  font-family: Inter, sans-serif; padding: 2px;
+}
+.see-full-network-btn {
+  display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%;
+  margin: 4px 0 10px; padding: 8px; border-radius: 7px; border: 1px solid rgba(118,255,240,.4);
+  background: rgba(118,255,240,.08); color: #76fff0; font-size: 11px; font-weight: 700;
+  cursor: pointer; transition: background .15s ease;
+}
+.see-full-network-btn:hover { background: rgba(118,255,240,.18); }
+
+/* ---------- Red combinada de todos los subsistemas, con explosión ---------- */
+.combined-network-overlay {
+  position: fixed; inset: 0; z-index: 500; background: rgba(4,7,7,.92);
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+  animation: combined-fade-in .2s ease-out;
+}
+@keyframes combined-fade-in { from { opacity: 0; } to { opacity: 1; } }
+.combined-network-panel {
+  width: min(94vw, 900px); height: min(90vh, 900px); background: rgba(8,14,14,.98);
+  border: 1px solid rgba(118,255,240,.35); border-radius: 12px; overflow: hidden;
+  display: flex; flex-direction: column;
+}
+.combined-network-heading {
+  display: flex; align-items: center; justify-content: space-between; padding: 14px 18px;
+  border-bottom: 1px solid rgba(255,255,255,.1); color: #fff; font-size: 13px;
+}
+.combined-network-scroll { flex: 1; overflow: auto; }
+.combined-network-svg { width: 100%; height: 100%; display: block; }
+.combined-hub-line { stroke: rgba(255,255,255,.14); stroke-width: 1; }
+.combined-sat-line { stroke: var(--node-color, #76fff0); stroke-width: .7; opacity: .35; }
+.combined-cross-line { stroke: #f1cf5b; stroke-width: 1; stroke-dasharray: 2 3; opacity: .5; }
+.combined-node circle { fill: var(--node-color, #76fff0); stroke: #05070a; }
+.combined-hub-node circle { opacity: .88; }
+.combined-sat-node circle { opacity: .8; }
+
+/* ---------- Escenarios de falla de cada submodelo ---------- */
+.failure-scenarios-panel { width: min(94vw, 760px); height: min(88vh, 820px); }
+.failure-scenarios-scroll { padding: 16px 20px; display: flex; flex-direction: column; gap: 14px; }
+.failure-scenarios-intro { margin: 0 0 4px; color: rgba(242,236,227,.75); font-size: 12.5px; line-height: 1.6; font-style: italic; }
+.failure-scenario-card {
+  padding: 14px 16px; border: 1px solid rgba(255,107,107,.3); border-radius: 9px;
+  background: rgba(255,107,107,.045);
+}
+.failure-scenario-card h4 { margin: 0 0 10px; font-size: 13px; color: #ff9d9d; display: flex; align-items: center; gap: 8px; }
+.failure-scenario-card ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 9px; }
+.failure-scenario-card li { display: flex; align-items: flex-start; gap: 9px; font-size: 12px; color: rgba(242,236,227,.88); line-height: 1.55; }
+.failure-scenario-card li i { color: #ff6b6b; margin-top: 2px; flex-shrink: 0; font-size: 11px; }
+.combined-sat-label {
+  width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
+  text-align: center; color: #05070a; font-size: 7.5px; font-weight: 700; line-height: 1.1;
+  font-family: Inter, sans-serif; padding: 1px;
+}
+/* Explosión real: cada nodo nace ENCOGIDO Y JUNTO en el centro de su propio
+   sistema (usando el desplazamiento --dx/--dy calculado), y al agregar la
+   clase "exploded" (un frame después) sale disparado hacia su posición
+   final mientras crece, como si el racimo se abriera hacia afuera. */
+.combined-node {
+  transform-box: fill-box; transform-origin: center;
+  transform: translate(var(--dx, 0px), var(--dy, 0px)) scale(0.15);
+  opacity: 0;
+  transition: transform .75s cubic-bezier(.16,1,.32,1.15), opacity .35s ease;
+  transition-delay: calc(var(--node-i, 0) * 14ms);
+}
+.combined-network-overlay.exploded .combined-node { transform: translate(0, 0) scale(1); opacity: 1; }
+.combined-hub-line, .combined-sat-line, .combined-cross-line {
+  opacity: 0; transition: opacity .5s ease .5s;
+}
+.combined-network-overlay.exploded .combined-hub-line,
+.combined-network-overlay.exploded .combined-sat-line,
+.combined-network-overlay.exploded .combined-cross-line { opacity: 1; }
+.combined-network-overlay.exploded .combined-sat-line { opacity: .35; }
+.combined-network-overlay.exploded .combined-cross-line { opacity: .5; }
