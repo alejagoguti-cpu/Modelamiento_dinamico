@@ -2802,7 +2802,17 @@
       if (hideAllSystemBubbles) requestAnimationFrame(() => updateTextBoxes());
       target.querySelector("#mapNetworkCenterHub")?.addEventListener("click", (event) => {
         event.stopPropagation();
-        showCombinedNetworkModal();
+        const hub = event.currentTarget;
+        if (hub.dataset.animating === "true") return;
+        hub.dataset.animating = "true";
+        target.classList.remove("network-transition-complete");
+        target.classList.add("network-transition-explode");
+        window.setTimeout(() => {
+          renderMapNetwork("submodels", true, target, false);
+          target.classList.add("network-transition-reveal");
+          requestAnimationFrame(() => target.classList.add("network-transition-reveal-active"));
+          window.setTimeout(() => { target.classList.remove("network-transition-explode", "network-transition-reveal", "network-transition-reveal-active"); target.classList.add("network-transition-complete"); }, 1450);
+        }, 850);
       });
       target.querySelectorAll(".map-network-node").forEach((button) => button.addEventListener("click", () => {
         if (button.classList.contains("map-phenomenon-node")) return; // tiene su propio manejador, más abajo
@@ -2873,27 +2883,12 @@
         } catch (err) { console.error("Error de sonido:", err); }
         target.querySelectorAll(".map-network-node").forEach((node) => node.classList.toggle("selected", node === button));
         try {
-          const partsPurpose = row.partsPurpose || "Sí";
-          const totalPurpose = row.totalPurpose || "Sí";
-          const partsWhy = row.partsWhy || `Las partes del sistema se analizan en relación con sus funciones y comportamientos dentro del territorio.`;
-          const totalWhy = row.totalWhy || `La totalidad se analiza por las relaciones que produce entre sus partes y sus efectos en el territorio de Bogotá.`;
-          const components = document.createElement("div");
-          components.className = "subsystem-components active map-components-panel";
-          components.style.setProperty("--bubble-color", color);
-          const miniNetworkItems = row.dynamics || row.components;
-          const miniNetworkHtml = miniNetworkItems
-            ? `<p class="panel-scope-label">CICLOS Y DINÁMICAS DE ESTE SUBSISTEMA</p>${buildMiniNetworkSvg(miniNetworkItems, color, row.id)}<button type="button" class="see-full-network-btn" id="seeFullNetworkBtn"><i class="fa-solid fa-diagram-project"></i> Ver toda la red junta</button>`
-            : `<p class="panel-scope-label">SISTEMAS QUE ARTICULA</p><p class="panel-specific-reading">${row.parts || ""}</p>`;
-          components.innerHTML = `<div class="subsystem-panel-heading"><strong><i class="fa-solid fa-arrows-rotate"></i> DINÁMICA DEL TERRITORIO</strong><button type="button" class="subsystem-panel-close" aria-label="Cerrar panel de dinámica"><i class="fa-solid fa-xmark"></i></button></div>${miniNetworkHtml}<p class="panel-scope-label">CÓMO CAMBIA EN EL TIEMPO</p><p class="panel-specific-reading">${row.process}</p>`;
           const purpose = document.createElement("aside");
-          purpose.className = "subsystem-purpose-panel active map-purpose-panel";
+          purpose.className = "subsystem-purpose-panel active map-purpose-panel temporal-only-panel";
           purpose.style.setProperty("--bubble-color", color);
-          purpose.innerHTML = `<div class="subsystem-panel-heading"><strong>${label(row)}</strong><button type="button" class="subsystem-panel-close" aria-label="Cerrar panel de propósito"><i class="fa-solid fa-xmark"></i></button></div><p class="panel-scope-label">ANÁLISIS GENERAL · TABLA DE PROPÓSITO</p><h4>¿Las partes tienen propósito propio?</h4><p><b>${partsPurpose}</b> · ${partsWhy}</p><h4>¿La totalidad tiene propósito propio?</h4><p><b>${totalPurpose}</b> · ${totalWhy}</p><h4>Por ende, la categoría es:</h4><b class="purpose-category">${row.category}</b><h4>Qué cambia en el tiempo</h4><p>${row.process}</p>`;
-          target.append(components);
+          purpose.innerHTML = `<div class="subsystem-panel-heading"><strong><i class="fa-solid fa-arrows-rotate"></i> ${label(row)}</strong><button type="button" class="subsystem-panel-close" aria-label="Cerrar panel"><i class="fa-solid fa-xmark"></i></button></div><p class="panel-scope-label">CÓMO CAMBIA EN EL TIEMPO</p><p class="panel-specific-reading">${row.process}</p>`;
           target.append(purpose);
-          components.querySelector("#seeFullNetworkBtn")?.addEventListener("click", (event) => { event.stopPropagation(); showCombinedNetworkModal(); });
-          const closePanels = (event) => { event?.stopPropagation(); components.remove(); purpose.remove(); failurePopup?.remove(); target.querySelectorAll(".bubble-explode-satellite").forEach((n) => n.remove()); clearSubsystemPoints(); button.classList.remove("selected"); };
-          components.querySelector(".subsystem-panel-close")?.addEventListener("click", closePanels);
+          const closePanels = (event) => { event?.stopPropagation(); purpose.remove(); failurePopup?.remove(); target.querySelectorAll(".bubble-explode-satellite").forEach((n) => n.remove()); clearSubsystemPoints(); button.classList.remove("selected"); };
           purpose.querySelector(".subsystem-panel-close")?.addEventListener("click", closePanels);
           if (systems && withFlows) renderSubsystemPoints(subsystemData[Number(button.dataset.mapNetworkIndex)]);
         } catch (err) {
