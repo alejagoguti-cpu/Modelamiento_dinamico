@@ -1053,13 +1053,13 @@ function drawNodes(svg) {
 
 /* -------- física de interacción (arrastre) -------- */
 const PHYSICS = {
-  spring: 0.015,      // spring force between edges (REDUCED 3x to allow more movement)
-  linkDistance: 3,    // TRIPLED: links must be 3x longer to spread network
-  anchor: 0.008,      // attraction to home position (reduced further)
-  damping: 0.75,      // velocity damping (slightly reduced)
-  minVel: 0.010,      // minimum velocity to keep running
-  repulsion: 2.5,     // EXTREME repulsion force (-1000 equivalent in D3)
-  collisionPadding: 1.15 // collision distance = node.r1 + node.r2 + 15px
+  spring: 0.010,      // spring: barely holds edges
+  linkDistance: 3,    // links 3x longer
+  anchor: 0.002,      // anchor: almost zero (repulsion dominates)
+  damping: 0.70,      // damping slightly increased for stability
+  minVel: 0.005,      // minimum velocity
+  repulsion: 10,      // ULTRA EXTREME (800x in inverse square repulsion)
+  collisionPadding: 1.5 // collision radius + 25px mandatory spacing
 };
 
 function updatePositions() {
@@ -1136,14 +1136,14 @@ let physicsRunning = false;
 function physicsStep() {
   let moving = false;
 
-  // 1. GLOBAL REPULSION (all node pairs - extreme force to spread network)
+  // 0. GLOBAL REPULSION (all pairs) - ULTRA EXTREME to push nodes apart
   for (let i = 0; i < ODS_NODES.length; i++) {
     for (let j = i + 1; j < ODS_NODES.length; j++) {
       const a = ODS_NODES[i], b = ODS_NODES[j];
       const dx = b.x - a.x, dy = b.y - a.y;
-      const dist = Math.hypot(dx, dy) || 1;
-      // EXTREME repulsion: -1000 equivalent
-      const repelForce = PHYSICS.repulsion * 400 / (dist + 1);
+      const dist = Math.hypot(dx, dy) || 0.1;
+      // MASSIVE repulsion: inverse square law
+      const repelForce = (PHYSICS.repulsion * 800) / (dist * dist);
       const fx = (dx / dist) * repelForce, fy = (dy / dist) * repelForce;
       if (!a.fixed) { a.vx -= fx; a.vy -= fy; }
       if (!b.fixed) { b.vx += fx; b.vy += fy; }
@@ -1151,55 +1151,77 @@ function physicsStep() {
     }
   }
 
-  // 2. STRICT COLLISION: nodes cannot touch (repel at minDist, not only closer)
-  for (let i = 0; i < ODS_NODES.length; i++) {
-    for (let j = i + 1; j < ODS_NODES.length; j++) {
-      const a = ODS_NODES[i], b = ODS_NODES[j];
-      const dx = b.x - a.x, dy = b.y - a.y;
-      const dist = Math.hypot(dx, dy) || 1;
-      const minDist = a.r + b.r + 15; // 15px padding enforced
-      if (dist < minDist) {
-        // RIGID collision: push apart with extreme force
-        const penetration = minDist - dist;
-        const collisionForce = penetration * 3.0; // 3x multiplier for stiffness
-        const fx = (dx / dist) * collisionForce, fy = (dy / dist) * collisionForce;
-        if (!a.fixed) { a.vx -= fx; a.vy -= fy; }
-        if (!b.fixed) { b.vx += fx; b.vy += fy; }
-        moving = true;
-      }
-    }
-  }
-
-  // 3. SPRING FORCES (edges) - MUCH WEAKER to allow spreading
+  // 1. SPRING FORCES (edges only) - WEAK
   RAW_EDGES.forEach(edge => {
     const s = nodeById(edge.s), t = nodeById(edge.t);
     if (!s || !t) return;
     const dx = t.x - s.x, dy = t.y - s.y;
     const dist = Math.hypot(dx, dy) || 1;
-    const targetDist = edge.restLength * PHYSICS.linkDistance; // 3x target distance
+    const targetDist = edge.restLength * PHYSICS.linkDistance; // 3x
     const diff = (dist - targetDist) * PHYSICS.spring;
     const fx = (dx / dist) * diff, fy = (dy / dist) * diff;
     if (!s.fixed) { s.vx += fx; s.vy += fy; }
     if (!t.fixed) { t.vx -= fx; t.vy -= fy; }
   });
 
-  // 4. ANCHOR FORCES (weak attraction to home - doesn't override collision/repulsion)
+  // 2. WEAK ANCHOR (barely pulls back)
   ODS_NODES.forEach(n => {
     if (n.fixed) { n.vx = 0; n.vy = 0; return; }
     n.vx += (n.homeX - n.x) * PHYSICS.anchor;
     n.vy += (n.homeY - n.y) * PHYSICS.anchor;
-    n.vx *= PHYSICS.damping; n.vy *= PHYSICS.damping;
-    n.x += n.vx; n.y += n.vy;
+  });
 
-    // STRICT BOUNDS: keep nodes inside canvas
-    const margin = n.r + 10;
-    if (n.x < margin) { n.x = margin; n.vx *= -0.5; }
-    if (n.x > CANVAS.w - margin) { n.x = CANVAS.w - margin; n.vx *= -0.5; }
-    if (n.y < margin) { n.y = margin; n.vy *= -0.5; }
-    if (n.y > CANVAS.h - margin) { n.y = CANVAS.h - margin; n.vy *= -0.5; }
-
+  // 3. DAMPING
+  ODS_NODES.forEach(n => {
+    if (n.fixed) return;
+    n.vx *= PHYSICS.damping;
+    n.vy *= PHYSICS.damping;
+    n.x += n.vx;
+    n.y += n.vy;
     if (Math.abs(n.vx) > PHYSICS.minVel || Math.abs(n.vy) > PHYSICS.minVel) moving = true;
   });
+
+  // 4. STRICT BOUNDS
+  ODS_NODES.forEach(n => {
+    const margin = n.r + 5;
+    if (n.x < margin) { n.x = margin; n.vx = Math.abs(n.vx) * 0.5; }
+    if (n.x > CANVAS.w - margin) { n.x = CANVAS.w - margin; n.vx = -Math.abs(n.vx) * 0.5; }
+    if (n.y < margin) { n.y = margin; n.vy = Math.abs(n.vy) * 0.5; }
+    if (n.y > CANVAS.h - margin) { n.y = CANVAS.h - margin; n.vy = -Math.abs(n.vy) * 0.5; }
+  });
+
+  // 5. MANDATORY COLLISION ENFORCEMENT - NO TOUCHING ALLOWED
+  for (let i = 0; i < ODS_NODES.length; i++) {
+    for (let j = i + 1; j < ODS_NODES.length; j++) {
+      const a = ODS_NODES[i], b = ODS_NODES[j];
+      const dx = b.x - a.x, dy = b.y - a.y;
+      const dist = Math.hypot(dx, dy) || 0.1;
+      const minDist = a.r + b.r + 25; // 25px mandatory spacing
+
+      if (dist < minDist) {
+        // FORCED SEPARATION: push apart until minDist is satisfied
+        const overlap = minDist - dist;
+        const pushDist = minDist;
+        const nx = dx / dist, ny = dy / dist;
+
+        if (a.fixed && b.fixed) continue;
+        if (a.fixed) {
+          b.x = a.x + nx * pushDist;
+          b.y = a.y + ny * pushDist;
+        } else if (b.fixed) {
+          a.x = b.x - nx * pushDist;
+          a.y = b.y - ny * pushDist;
+        } else {
+          // Move both apart equally
+          a.x -= nx * (overlap / 2);
+          a.y -= ny * (overlap / 2);
+          b.x += nx * (overlap / 2);
+          b.y += ny * (overlap / 2);
+        }
+        moving = true;
+      }
+    }
+  }
 
   updatePositions();
   if (moving || ODS_NODES.some(n => n.fixed)) requestAnimationFrame(physicsStep);
