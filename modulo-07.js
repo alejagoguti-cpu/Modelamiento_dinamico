@@ -2292,7 +2292,7 @@
         color: "#56b8d4",
         up: ["Niveles de oxígeno disuelto en el agua del humedal.", "Capacidad de infiltración natural en la franja calzada-borde.", "Capacidad de amortiguación hidráulica ante lluvias intensas."],
         down: ["Concentración de lixiviados contaminantes (fósforo, nitrógeno y materia orgánica).", "Escorrentía superficial contaminada sobre el asfalto de las vías.", "Riesgos de inundación en las vías habitadas del sector."],
-        epsteinTitle: "Falsar el conocimiento convencional y contrastar teorías (Objetivo 12)",
+        epsteinTitle: "Promover un pensamiento de sistema",
         epsteinText: "Desmitifica el supuesto de que el ecosistema del humedal puede autorregularse solo, demostrando matemáticamente que sin un control estructural de la escorrentía vial, colapsará por sobrecarga biológica."
       },
       {
