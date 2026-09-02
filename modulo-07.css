@@ -6647,3 +6647,30 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
   .territory-network-plain.network-transition-explode .map-system-node,
   .territory-network-plain.network-transition-reveal-active .map-submodel-node { animation-duration: .01ms; animation-delay: 0ms; }
 }
+
+/* Red completa del módulo 7: explosión de sistemas y despliegue de componentes */
+.territory-network-plain.network-transition-explode .map-system-node { animation: m7SystemExplode .8s cubic-bezier(.2,.8,.2,1) forwards; animation-delay: calc(var(--node-index, 0) * 45ms); }
+.territory-network-plain.network-transition-explode .map-network-center-hub { opacity: 0; transition: opacity .2s ease; }
+.territory-network-plain.network-transition-reveal .map-submodel-node { opacity: 0; transform: scale(.18) translateY(22px); }
+.territory-network-plain.network-transition-reveal-active .map-submodel-node { animation: m7ComponentReveal .75s cubic-bezier(.18,.82,.25,1) forwards; animation-delay: calc(var(--node-index, 0) * 85ms); }
+.territory-network-plain.network-transition-reveal .map-network-bonds { opacity: 0; }
+.territory-network-plain.network-transition-reveal-active .map-network-bonds { opacity: 1; transition: opacity .6s ease .35s; }
+@keyframes m7SystemExplode { 0% { opacity: 1; transform: scale(1); filter: brightness(1); } 48% { opacity: 1; transform: scale(1.28); filter: brightness(1.8); } 100% { opacity: 0; transform: scale(.05); filter: brightness(2.1); } }
+@keyframes m7ComponentReveal { 0% { opacity: 0; transform: scale(.18) translateY(22px); } 65% { opacity: 1; transform: scale(1.08) translateY(-3px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
+@media (prefers-reduced-motion: reduce) { .territory-network-plain.network-transition-explode .map-system-node, .territory-network-plain.network-transition-reveal-active .map-submodel-node { animation-duration: .01ms; animation-delay: 0ms; } }
+
+/* Módulo 7 · red independiente: centro clicable y despliegue de componentes */
+.territory-network-core button { position: relative; z-index: 8; width: 118px; height: 118px; border: 1px solid rgba(118,255,240,.9); border-radius: 50%; background: radial-gradient(circle, rgba(118,255,240,.2), rgba(8,18,19,.94) 68%); color: #dffff9; cursor: pointer; display: grid; place-items: center; align-content: center; gap: 4px; box-shadow: 0 0 24px rgba(118,255,240,.2), inset 0 0 20px rgba(118,255,240,.08); }
+.territory-network-core button:hover { transform: scale(1.06); box-shadow: 0 0 34px rgba(118,255,240,.42), inset 0 0 20px rgba(118,255,240,.15); }
+.territory-network-core button span { position: absolute; width: 58px; height: 58px; border: 1px solid rgba(118,255,240,.7); border-radius: 50%; animation: m7CorePulse 1.8s ease-in-out infinite; }
+.territory-network-core button strong { position: relative; font-size: 11px; line-height: 1.05; text-align: center; }
+.territory-network-stage.territory-network-exploding .territory-network-node { animation: m7TerritoryExplode .8s cubic-bezier(.2,.8,.2,1) forwards; animation-delay: calc(var(--node-index, 0) * 55ms); }
+.territory-network-stage.territory-network-exploding .territory-network-core { opacity: 0; transition: opacity .2s ease; }
+.territory-component-node { position: absolute; transform: translate(-50%,-50%) scale(.2); opacity: 0; width: 112px; min-height: 34px; padding: 7px 8px; border: 1px solid var(--node-color); border-radius: 8px; background: rgba(8,14,16,.94); color: #ecfffb; font-size: 9px; line-height: 1.15; text-align: center; box-shadow: 0 0 10px color-mix(in srgb, var(--node-color) 35%, transparent); animation: m7ComponentIn .7s cubic-bezier(.18,.82,.25,1) forwards; animation-delay: calc(var(--node-index, 0) * 55ms); }
+.territory-component-link, .territory-system-link { stroke: rgba(118,255,240,.55); stroke-width: .35; vector-effect: non-scaling-stroke; opacity: 0; animation: m7LinkIn .8s ease forwards; animation-delay: .45s; }
+.territory-system-link { stroke: rgba(255,209,102,.65); stroke-width: .55; }
+.territory-network-stage.territory-network-components-visible .territory-network-svg { opacity: 1; transition: opacity .5s ease; }
+@keyframes m7TerritoryExplode { 0% { opacity: 1; transform: translate(-50%,-50%) scale(1); } 45% { opacity: 1; transform: translate(-50%,-50%) scale(1.24); } 100% { opacity: 0; transform: translate(-50%,-50%) scale(.08); } }
+@keyframes m7ComponentIn { 0% { opacity: 0; transform: translate(-50%,-50%) scale(.2); } 70% { opacity: 1; transform: translate(-50%,-50%) scale(1.08); } 100% { opacity: 1; transform: translate(-50%,-50%) scale(1); } }
+@keyframes m7LinkIn { to { opacity: 1; } }
+@keyframes m7CorePulse { 50% { transform: scale(1.15); opacity: .55; } }
