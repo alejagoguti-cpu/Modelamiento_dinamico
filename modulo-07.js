@@ -3288,10 +3288,22 @@
       window.addEventListener("scroll", maybePlay, { passive: true });
     };
     drawSubsystems({ hidden: true });
-    initRealCartography();
+    // El mapa real (Cartografía interactiva) va en su propio try/catch: si
+    // MapLibre falla por cualquier motivo (red, CDN, etc.), esto NO debe
+    // impedir que se dibuje la red de Subsistemas del territorio que viene
+    // justo después — son funciones independientes.
+    try {
+      initRealCartography();
+    } catch (err) {
+      console.error("No se pudo iniciar la cartografía real (el resto del módulo sigue funcionando):", err);
+    }
     // Lo primero que se ve al entrar al módulo son los Subsistemas del
     // territorio (solo la red, sin mapa) — Cartografía interactiva solo
     // se abre cuando el usuario le hace click a ese botón.
-    showPlainNetwork("systems", directSubsystemsBtn);
+    try {
+      showPlainNetwork("systems", directSubsystemsBtn);
+    } catch (err) {
+      console.error("Error mostrando la red de subsistemas:", err);
+    }
   });
 })();
