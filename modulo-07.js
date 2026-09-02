@@ -1593,6 +1593,33 @@
     // Datos para el diagrama de Forrester de cada submodelo (mismo orden
     // que submodelRows: agua, hábitat, borde, recorridos, ocupación,
     // actores, gestión), con los colores propios de esta vista.
+    // Maximiza (+) / Minimiza (-) / Qué mide de cada submodelo — mismo
+    // orden que submodelRows (agua, hábitat, borde, recorridos, ocupación,
+    // actores, gestión). Se muestra como popup al tocar cada bola.
+    const MODEL_OBJECTIVES = [
+      { max: "La permeabilidad del suelo y el drenaje hídrico natural del ecosistema.",
+        min: "El riesgo de inundaciones y la contaminación de cuerpos hídricos urbanos.",
+        measures: "La relación crítica de drenaje entre las vías y los humedales colindantes." },
+      { max: "La supervivencia, resiliencia y presencia de las especies de la zona.",
+        min: "La fragmentación del hábitat natural y la contaminación acústica.",
+        measures: "El impacto de los decibeles (ruido del tráfico), que genera interferencia magnética y ahuyenta a las aves migratorias." },
+      { max: "La conservación de las áreas de borde ecológico y los límites sostenibles de la ciudad.",
+        min: "La expansión descontrolada del suelo construido hacia la periferia.",
+        measures: "La presión y el cambio de cobertura natural en los bordes rurales o de reserva." },
+      { max: "La accesibilidad general del territorio y los recorridos eficientes de movilidad.",
+        min: "Los tiempos de caminata, retrasos y congestión en las vías críticas de la ciudad.",
+        measures: "Los flujos y rutas que eligen los vehículos desde su origen." },
+      { max: "La ocupación territorial organizada y eficiente.",
+        min: "La presión desmedida de la urbanización sobre zonas vulnerables.",
+        measures: "El impacto del crecimiento acelerado en la infraestructura existente." },
+      { max: "El cumplimiento de los Planes de Ordenamiento Territorial (POT) y la intermodalidad.",
+        min: "Los conflictos en los usos de suelo y las fallas del modelo histórico de transporte.",
+        measures: "Las decisiones de planeación urbana que dan origen a la estructura de la ciudad (integra el submodelo comercial-logístico, que maximiza el abastecimiento al menor costo posible)." },
+      { max: "La flexibilidad de respuesta de la ciudad ante crisis o colapsos.",
+        min: "La vulnerabilidad del territorio frente a fallos sistémicos de movilidad y medio ambiente.",
+        measures: "Las políticas activas de mitigación urbana." }
+    ];
+
     const FORRESTER_DATA = [
       { color: "#3B82F6", stock: "Agua acumulada en humedal / zonas de inundación",
         inflows: ["Escorrentía por lluvias", "Desborde de vías pavimentadas"],
@@ -3025,13 +3052,20 @@
       if (hideAllSystemBubbles) requestAnimationFrame(() => updateTextBoxes());
       target.querySelector("#mapNetworkCenterHub")?.addEventListener("click", (event) => {
         event.stopPropagation();
-        showCombinedNetworkModal();
+        // Las 6 bolas explotan y desaparecen primero; cuando terminan,
+        // aparece la red completa de relaciones con todos los subsistemas.
+        const stageEl = target.querySelector(".map-network-stage");
+        stageEl?.classList.add("center-hub-exploding");
+        window.setTimeout(() => {
+          showCombinedNetworkModal();
+          window.setTimeout(() => stageEl?.classList.remove("center-hub-exploding"), 400);
+        }, 560);
       });
       target.querySelectorAll(".map-network-node").forEach((button) => button.addEventListener("click", () => {
         if (button.classList.contains("map-phenomenon-node")) return; // tiene su propio manejador, más abajo
         const row = rows[Number(button.dataset.mapNetworkIndex)];
         if (!row) return;
-        target.querySelectorAll(".subsystem-components, .subsystem-purpose-panel, .subsystem-diagram-panel, .map-network-detail, .submodel-failure-popup").forEach((node) => node.remove());
+        target.querySelectorAll(".subsystem-components, .subsystem-purpose-panel, .subsystem-diagram-panel, .map-network-detail, .submodel-failure-popup, .model-objectives-popup").forEach((node) => node.remove());
         const color = row.color || colors[Number(button.dataset.mapNetworkIndex)];
 
         // Animación de "explosión": la bolita principal lanza hacia afuera
@@ -3091,6 +3125,27 @@
           }
         }
 
+        // Popup de Maximiza (+) / Minimiza (-) / Qué mide de este submodelo.
+        let objectivesPopup = null;
+        if (!systems) {
+          try {
+            const obj = MODEL_OBJECTIVES[Number(button.dataset.mapNetworkIndex)];
+            if (obj) {
+              objectivesPopup = document.createElement("div");
+              objectivesPopup.className = "model-objectives-popup";
+              objectivesPopup.style.setProperty("--bubble-color", color);
+              objectivesPopup.innerHTML = `<div class="subsystem-panel-heading"><strong><i class="fa-solid fa-bullseye"></i> Objetivo del modelo</strong><button type="button" class="subsystem-panel-close" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button></div>
+                <div class="model-objective-row"><div class="model-objective-icon up">+</div><div><b>Maximiza</b><p>${obj.max}</p></div></div>
+                <div class="model-objective-row"><div class="model-objective-icon down">−</div><div><b>Minimiza</b><p>${obj.min}</p></div></div>
+                <div class="model-objective-measures"><b>Qué mide</b><p>${obj.measures}</p></div>`;
+              target.append(objectivesPopup);
+              objectivesPopup.querySelector(".subsystem-panel-close")?.addEventListener("click", (event) => { event.stopPropagation(); objectivesPopup.remove(); });
+            }
+          } catch (err) {
+            console.error("No se pudo mostrar el popup de objetivos del modelo:", err);
+          }
+        }
+
         try {
           DINAMICA_SOUND.play(button.dataset.soundId || row.id); button.classList.remove("sound-playing"); void button.offsetWidth; button.classList.add("sound-playing"); window.setTimeout(() => button.classList.remove("sound-playing"), 900);
         } catch (err) { console.error("Error de sonido:", err); }
@@ -3103,7 +3158,7 @@
           purpose.innerHTML = `<div class="subsystem-panel-heading"><strong><i class="fa-solid fa-arrows-rotate"></i> ${label(row)}</strong><button type="button" class="subsystem-panel-close" aria-label="Cerrar panel"><i class="fa-solid fa-xmark"></i></button></div><p class="panel-scope-label">CÓMO CAMBIA EN EL TIEMPO</p><p class="panel-specific-reading">${row.process}</p>${forresterBtnHtml}`;
           target.append(purpose);
           purpose.querySelector("#openForresterBtn")?.addEventListener("click", (event) => { event.stopPropagation(); showForresterModal(Number(button.dataset.mapNetworkIndex), label(row), color); });
-          const closePanels = (event) => { event?.stopPropagation(); purpose.remove(); failurePopup?.remove(); target.querySelectorAll(".bubble-explode-satellite").forEach((n) => n.remove()); clearSubsystemPoints(); button.classList.remove("selected"); };
+          const closePanels = (event) => { event?.stopPropagation(); purpose.remove(); failurePopup?.remove(); objectivesPopup?.remove(); target.querySelectorAll(".bubble-explode-satellite").forEach((n) => n.remove()); clearSubsystemPoints(); button.classList.remove("selected"); };
           purpose.querySelector(".subsystem-panel-close")?.addEventListener("click", closePanels);
           if (systems && withFlows) renderSubsystemPoints(subsystemData[Number(button.dataset.mapNetworkIndex)]);
         } catch (err) {
