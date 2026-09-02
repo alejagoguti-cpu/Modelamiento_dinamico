@@ -664,7 +664,7 @@ function layoutNetwork() {
     n.color = STRUCT_STYLE[n.cat].color;
     n.vx = 0; n.vy = 0; n.fixed = false; n.isMainHub = false;
     const d = deg[n.id] || 0;
-    n.r = 110; // radio grande + espacio — profesor con baja visión, sin solapamiento
+    n.r = 55; // REDUCED 50%: 110 → 55 para que la red respire
     n._deg = d;
     n._degBase = d; // fuerza nodal original, sin ningún nodo apagado — sirve para comparar ANTES ↔ DESPUÉS
   });
@@ -1034,10 +1034,10 @@ function drawNodes(svg) {
 
     const iconEl = document.createElementNS(XHTML_NS, "i");
     iconEl.setAttribute("class", "fa-solid " + node.icon);
-    iconEl.setAttribute("style", `color:${node.color}; font-size:${Math.max(node.r * (node.isMainHub ? 0.65 : 0.60), 32)}px;`);
+    iconEl.setAttribute("style", `color:${node.color}; font-size:${Math.max(node.r * (node.isMainHub ? 0.325 : 0.30), 16)}px;`);
 
     const nameEl = document.createElementNS(XHTML_NS, "div");
-    nameEl.setAttribute("style", `font-size:${Math.max(node.r * 0.40, 20)}px; padding:0 3px; font-weight:700; color:#f2f3f6; line-height:1.2; white-space:pre-line; text-align:center; font-family:'Inter',sans-serif;`);
+    nameEl.setAttribute("style", `font-size:${Math.max(node.r * 0.20, 10)}px; padding:0 3px; font-weight:700; color:#f2f3f6; line-height:1.2; white-space:pre-line; text-align:center; font-family:'Inter',sans-serif;`);
     nameEl.textContent = node.name;
 
     wrapper.appendChild(iconEl); wrapper.appendChild(nameEl);
@@ -1053,12 +1053,13 @@ function drawNodes(svg) {
 
 /* -------- física de interacción (arrastre) -------- */
 const PHYSICS = {
-  spring: 0.045,      // spring force between edges
-  anchor: 0.015,      // attraction to home position (reduced to allow more movement)
-  damping: 0.80,      // velocity damping
-  minVel: 0.015,      // minimum velocity to keep running
-  repulsion: 0.8,     // node-to-node repulsion force (NEW - STRONG)
-  collisionPadding: 1.2 // multiplier for collision distance (NEW)
+  spring: 0.015,      // spring force between edges (REDUCED 3x to allow more movement)
+  linkDistance: 3,    // TRIPLED: links must be 3x longer to spread network
+  anchor: 0.008,      // attraction to home position (reduced further)
+  damping: 0.75,      // velocity damping (slightly reduced)
+  minVel: 0.010,      // minimum velocity to keep running
+  repulsion: 2.5,     // EXTREME repulsion force (-1000 equivalent in D3)
+  collisionPadding: 1.15 // collision distance = node.r1 + node.r2 + 15px
 };
 
 function updatePositions() {
@@ -1099,9 +1100,9 @@ function resizeNodeVisual(n) {
   fo.setAttribute("x", n.x - size / 2); fo.setAttribute("y", n.y - size / 2);
   fo.setAttribute("width", size); fo.setAttribute("height", size);
   const iconEl = fo.querySelector("i");
-  if (iconEl) iconEl.style.fontSize = Math.max(n.r * (n.isMainHub ? 0.65 : 0.60), 32) + "px";
+  if (iconEl) iconEl.style.fontSize = Math.max(n.r * (n.isMainHub ? 0.325 : 0.30), 16) + "px";
   const nameEl = fo.querySelector("div");
-  if (nameEl) nameEl.style.fontSize = Math.max(n.r * 0.40, 20) + "px";
+  if (nameEl) nameEl.style.fontSize = Math.max(n.r * 0.20, 10) + "px";
 }
 
 // Recalcula el grado real (fuerza nodal) de TODA la red teniendo en cuenta
@@ -1135,30 +1136,33 @@ let physicsRunning = false;
 function physicsStep() {
   let moving = false;
 
-  // 1. SPRING FORCES (edges)
-  RAW_EDGES.forEach(edge => {
-    const s = nodeById(edge.s), t = nodeById(edge.t);
-    if (!s || !t) return;
-    const dx = t.x - s.x, dy = t.y - s.y;
-    const dist = Math.hypot(dx, dy) || 1;
-    const diff = (dist - edge.restLength) * PHYSICS.spring;
-    const fx = (dx / dist) * diff, fy = (dy / dist) * diff;
-    if (!s.fixed) { s.vx += fx; s.vy += fy; }
-    if (!t.fixed) { t.vx -= fx; t.vy -= fy; }
-  });
-
-  // 2. COLLISION & REPULSION (all node pairs)
+  // 1. GLOBAL REPULSION (all node pairs - extreme force to spread network)
   for (let i = 0; i < ODS_NODES.length; i++) {
     for (let j = i + 1; j < ODS_NODES.length; j++) {
       const a = ODS_NODES[i], b = ODS_NODES[j];
       const dx = b.x - a.x, dy = b.y - a.y;
       const dist = Math.hypot(dx, dy) || 1;
-      const minDist = (a.r + b.r) * PHYSICS.collisionPadding; // collision distance
+      // EXTREME repulsion: -1000 equivalent
+      const repelForce = PHYSICS.repulsion * 400 / (dist + 1);
+      const fx = (dx / dist) * repelForce, fy = (dy / dist) * repelForce;
+      if (!a.fixed) { a.vx -= fx; a.vy -= fy; }
+      if (!b.fixed) { b.vx += fx; b.vy += fy; }
+      moving = true;
+    }
+  }
 
+  // 2. STRICT COLLISION: nodes cannot touch (repel at minDist, not only closer)
+  for (let i = 0; i < ODS_NODES.length; i++) {
+    for (let j = i + 1; j < ODS_NODES.length; j++) {
+      const a = ODS_NODES[i], b = ODS_NODES[j];
+      const dx = b.x - a.x, dy = b.y - a.y;
+      const dist = Math.hypot(dx, dy) || 1;
+      const minDist = a.r + b.r + 15; // 15px padding enforced
       if (dist < minDist) {
-        // Nodes are too close - REPEL STRONGLY
-        const repelForce = (minDist - dist) * PHYSICS.repulsion;
-        const fx = (dx / dist) * repelForce, fy = (dy / dist) * repelForce;
+        // RIGID collision: push apart with extreme force
+        const penetration = minDist - dist;
+        const collisionForce = penetration * 3.0; // 3x multiplier for stiffness
+        const fx = (dx / dist) * collisionForce, fy = (dy / dist) * collisionForce;
         if (!a.fixed) { a.vx -= fx; a.vy -= fy; }
         if (!b.fixed) { b.vx += fx; b.vy += fy; }
         moving = true;
@@ -1166,13 +1170,34 @@ function physicsStep() {
     }
   }
 
-  // 3. ANCHOR FORCES (attraction to home position)
+  // 3. SPRING FORCES (edges) - MUCH WEAKER to allow spreading
+  RAW_EDGES.forEach(edge => {
+    const s = nodeById(edge.s), t = nodeById(edge.t);
+    if (!s || !t) return;
+    const dx = t.x - s.x, dy = t.y - s.y;
+    const dist = Math.hypot(dx, dy) || 1;
+    const targetDist = edge.restLength * PHYSICS.linkDistance; // 3x target distance
+    const diff = (dist - targetDist) * PHYSICS.spring;
+    const fx = (dx / dist) * diff, fy = (dy / dist) * diff;
+    if (!s.fixed) { s.vx += fx; s.vy += fy; }
+    if (!t.fixed) { t.vx -= fx; t.vy -= fy; }
+  });
+
+  // 4. ANCHOR FORCES (weak attraction to home - doesn't override collision/repulsion)
   ODS_NODES.forEach(n => {
     if (n.fixed) { n.vx = 0; n.vy = 0; return; }
     n.vx += (n.homeX - n.x) * PHYSICS.anchor;
     n.vy += (n.homeY - n.y) * PHYSICS.anchor;
     n.vx *= PHYSICS.damping; n.vy *= PHYSICS.damping;
     n.x += n.vx; n.y += n.vy;
+
+    // STRICT BOUNDS: keep nodes inside canvas
+    const margin = n.r + 10;
+    if (n.x < margin) { n.x = margin; n.vx *= -0.5; }
+    if (n.x > CANVAS.w - margin) { n.x = CANVAS.w - margin; n.vx *= -0.5; }
+    if (n.y < margin) { n.y = margin; n.vy *= -0.5; }
+    if (n.y > CANVAS.h - margin) { n.y = CANVAS.h - margin; n.vy *= -0.5; }
+
     if (Math.abs(n.vx) > PHYSICS.minVel || Math.abs(n.vy) > PHYSICS.minVel) moving = true;
   });
 
