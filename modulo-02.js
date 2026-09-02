@@ -664,7 +664,7 @@ function layoutNetwork() {
     n.color = STRUCT_STYLE[n.cat].color;
     n.vx = 0; n.vy = 0; n.fixed = false; n.isMainHub = false;
     const d = deg[n.id] || 0;
-    n.r = 85; // radio muy grande para accesibilidad visual — profesor con baja visión
+    n.r = 140; // radio ENORME para accesibilidad — profesor con baja visión, texto LEGIBLE
     n._deg = d;
     n._degBase = d; // fuerza nodal original, sin ningún nodo apagado — sirve para comparar ANTES ↔ DESPUÉS
   });
@@ -1034,10 +1034,10 @@ function drawNodes(svg) {
 
     const iconEl = document.createElementNS(XHTML_NS, "i");
     iconEl.setAttribute("class", "fa-solid " + node.icon);
-    iconEl.setAttribute("style", `color:${node.color}; font-size:${Math.max(node.r * (node.isMainHub ? 0.65 : 0.60), 32)}px;`);
+    iconEl.setAttribute("style", `color:${node.color}; font-size:${Math.max(node.r * (node.isMainHub ? 0.75 : 0.70), 48)}px;`);
 
     const nameEl = document.createElementNS(XHTML_NS, "div");
-    nameEl.setAttribute("style", `font-size:${Math.max(node.r * 0.38, 26)}px; padding:0 3px; font-weight:700; color:#f2f3f6; line-height:1.15; white-space:pre-line; text-align:center; font-family:'Inter',sans-serif;`);
+    nameEl.setAttribute("style", `font-size:${Math.max(node.r * 0.50, 36)}px; padding:0 3px; font-weight:700; color:#f2f3f6; line-height:1.2; white-space:pre-line; text-align:center; font-family:'Inter',sans-serif;`);
     nameEl.textContent = node.name;
 
     wrapper.appendChild(iconEl); wrapper.appendChild(nameEl);
@@ -1092,9 +1092,9 @@ function resizeNodeVisual(n) {
   fo.setAttribute("x", n.x - size / 2); fo.setAttribute("y", n.y - size / 2);
   fo.setAttribute("width", size); fo.setAttribute("height", size);
   const iconEl = fo.querySelector("i");
-  if (iconEl) iconEl.style.fontSize = Math.max(n.r * (n.isMainHub ? 0.65 : 0.60), 32) + "px";
+  if (iconEl) iconEl.style.fontSize = Math.max(n.r * (n.isMainHub ? 0.75 : 0.70), 48) + "px";
   const nameEl = fo.querySelector("div");
-  if (nameEl) nameEl.style.fontSize = Math.max(n.r * 0.38, 26) + "px";
+  if (nameEl) nameEl.style.fontSize = Math.max(n.r * 0.50, 36) + "px";
 }
 
 // Recalcula el grado real (fuerza nodal) de TODA la red teniendo en cuenta
