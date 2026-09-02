@@ -2710,7 +2710,7 @@
       // compacto y centrado, pensado para un contenedor alto sin mapa —
       // la vista anclada al mapa usa las posiciones de siempre.
       const positions = systems
-        ? (isPlainView ? [[18,38],[42,14],[66,16],[86,40],[70,78],[28,80]] : [[6,45],[40,6],[72,10],[95,48],[74,90],[14,88]])
+        ? (isPlainView ? [[23,40],[43,16],[67,16],[82,42],[68,76],[30,76]] : [[10,46],[38,10],[70,12],[90,48],[70,86],[18,84]])
         : (isPlainView ? [[16,20],[36,10],[58,10],[86,22],[86,52],[62,80],[26,80]] : [[10,22],[28,7],[58,7],[90,22],[90,58],[68,88],[16,88]]);
       const colors = ["#56b8d4", "#68d391", "#b8c0c8", "#f1cf5b", "#ee9a4b", "#e58d62", "#b28be8"];
       const systemIcons = ["fa-droplet", "fa-feather-pointed", "fa-building", "fa-route", "fa-people-group", "fa-house-chimney"];
@@ -2730,7 +2730,7 @@
       // NINGUNA bolita abstracta de sistema se muestra — solo las bolitas
       // de lugar real (Humedal El Burro, Corabastos, etc.).
       const hideAllSystemBubbles = systems && withFlows;
-      const nodes = hideAllSystemBubbles ? "" : rows.map((row, index) => { const [x,y] = positions[index]; return `<button type="button" class="map-network-node ${systems ? "map-system-node" : "map-submodel-node"}" data-map-network-index="${index}" data-sound-id="${row.id || ""}" aria-label="${label(row)}. Activar sonido del subsistema" style="--node-x:${x}%;--node-y:${y}%;--node-color:${row.color || colors[index]}"><i class="map-network-node-icon fa-solid ${icon(index)}" aria-hidden="true"></i><strong>${label(row)}</strong></button>`; }).join("");
+      const nodes = hideAllSystemBubbles ? "" : rows.map((row, index) => { const [x,y] = positions[index]; return `<button type="button" class="map-network-node ${systems ? "map-system-node" : "map-submodel-node"}" data-map-network-index="${index}" data-sound-id="${row.id || ""}" aria-label="${label(row)}. Activar sonido del subsistema" style="--node-x:${x}%;--node-y:${y}%;--node-color:${row.color || colors[index]};--node-index:${index}"><i class="map-network-node-icon fa-solid ${icon(index)}" aria-hidden="true"></i><strong>${label(row)}</strong></button>`; }).join("");
       // Botón central: en la vista "solo red" de subsistemas, al centro del
       // anillo de las 6 bolas, dispara la explosión de las 6 a la vez con
       // todas sus dinámicas y la red completa conectada entre sí.

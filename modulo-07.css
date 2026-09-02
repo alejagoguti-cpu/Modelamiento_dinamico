@@ -6647,3 +6647,14 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
   .territory-network-plain.network-transition-explode .map-system-node,
   .territory-network-plain.network-transition-reveal-active .map-submodel-node { animation-duration: .01ms; animation-delay: 0ms; }
 }
+
+/* Red completa del módulo 7: explosión de sistemas y despliegue de componentes */
+.territory-network-plain.network-transition-explode .map-system-node { animation: m7SystemExplode .8s cubic-bezier(.2,.8,.2,1) forwards; animation-delay: calc(var(--node-index, 0) * 45ms); }
+.territory-network-plain.network-transition-explode .map-network-center-hub { opacity: 0; transition: opacity .2s ease; }
+.territory-network-plain.network-transition-reveal .map-submodel-node { opacity: 0; transform: scale(.18) translateY(22px); }
+.territory-network-plain.network-transition-reveal-active .map-submodel-node { animation: m7ComponentReveal .75s cubic-bezier(.18,.82,.25,1) forwards; animation-delay: calc(var(--node-index, 0) * 85ms); }
+.territory-network-plain.network-transition-reveal .map-network-bonds { opacity: 0; }
+.territory-network-plain.network-transition-reveal-active .map-network-bonds { opacity: 1; transition: opacity .6s ease .35s; }
+@keyframes m7SystemExplode { 0% { opacity: 1; transform: scale(1); filter: brightness(1); } 48% { opacity: 1; transform: scale(1.28); filter: brightness(1.8); } 100% { opacity: 0; transform: scale(.05); filter: brightness(2.1); } }
+@keyframes m7ComponentReveal { 0% { opacity: 0; transform: scale(.18) translateY(22px); } 65% { opacity: 1; transform: scale(1.08) translateY(-3px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
+@media (prefers-reduced-motion: reduce) { .territory-network-plain.network-transition-explode .map-system-node, .territory-network-plain.network-transition-reveal-active .map-submodel-node { animation-duration: .01ms; animation-delay: 0ms; } }
