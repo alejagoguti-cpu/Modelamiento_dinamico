@@ -94,7 +94,8 @@
     // de los árboles se acomoda con interpolación entre las 4 esquinas.
     // Los offsets están en píxeles de pantalla, relativos a la esquina base
     // (calculada de la caja real que ocupan los árboles).
-    let treeCornerOffsets = { tl: { x: 0, y: 0 }, tr: { x: 0, y: 0 }, bl: { x: 0, y: 0 }, br: { x: 0, y: 0 } };
+    let treeCornerOffsets = { tl: { x: 351, y: -257 }, tr: { x: 390, y: -346 }, bl: { x: 384, y: -151 }, br: { x: 384, y: -151 } };
+    let treeSizeScale = 1; // escala del TAMAÑO de cada puntito (no de la posición)
     let treeWorldBBox = null; // { minX, minY, maxX, maxY } — se calcula una vez que carga el dato
     let timesteps = [];      // [{ time, vehicles:[{id,x,y,angle}] }]
     let view = { scale: 1, offX: 0, offY: 0 }; // mundo -> pantalla
@@ -839,7 +840,7 @@
         treeData.trees.forEach(([tx, ty, , altura]) => {
           const [sx, sy] = treeDistortedScreen(tx, ty, bb, TL, TR, BL, BR, wSpan, hSpan);
           if (sx < -10 || sx > w + 10 || sy < -10 || sy > h + 10) return;
-          const r = Math.min(2.6, Math.max(0.8, (altura || 3) * 0.12));
+          const r = Math.min(2.6, Math.max(0.8, (altura || 3) * 0.12)) * treeSizeScale;
           netCtx.beginPath();
           netCtx.arc(sx, sy, r, 0, Math.PI * 2);
           netCtx.fill();
@@ -1209,7 +1210,7 @@
     function updateTreeDistortOutput() {
       if (!treeDistortOutput) return;
       const c = treeCornerOffsets;
-      treeDistortOutput.value = `tl=(${c.tl.x.toFixed(0)},${c.tl.y.toFixed(0)})  tr=(${c.tr.x.toFixed(0)},${c.tr.y.toFixed(0)})  bl=(${c.bl.x.toFixed(0)},${c.bl.y.toFixed(0)})  br=(${c.br.x.toFixed(0)},${c.br.y.toFixed(0)})`;
+      treeDistortOutput.value = `tl=(${c.tl.x.toFixed(0)},${c.tl.y.toFixed(0)})  tr=(${c.tr.x.toFixed(0)},${c.tr.y.toFixed(0)})  bl=(${c.bl.x.toFixed(0)},${c.bl.y.toFixed(0)})  br=(${c.br.x.toFixed(0)},${c.br.y.toFixed(0)})  size=${treeSizeScale.toFixed(2)}`;
     }
     function redrawTreeDistort() {
       redrawWholeMap();
@@ -1259,8 +1260,13 @@
       redrawTreeDistort();
     });
     window.addEventListener("pointerup", () => { activeDragCorner = null; dragLast = null; });
+    const treeSizeScaleInput = document.getElementById("sumoTreeSizeScale");
+    if (treeSizeScaleInput) treeSizeScaleInput.value = treeSizeScale;
+    treeSizeScaleInput?.addEventListener("input", () => { treeSizeScale = Number(treeSizeScaleInput.value); redrawTreeDistort(); });
     treeDistortReset?.addEventListener("click", () => {
       treeCornerOffsets = { tl: { x: 0, y: 0 }, tr: { x: 0, y: 0 }, bl: { x: 0, y: 0 }, br: { x: 0, y: 0 } };
+      treeSizeScale = 1;
+      if (treeSizeScaleInput) treeSizeScaleInput.value = 1;
       redrawTreeDistort();
     });
     treeDistortCopy?.addEventListener("click", async () => {
