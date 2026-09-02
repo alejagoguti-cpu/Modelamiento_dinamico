@@ -664,7 +664,7 @@ function layoutNetwork() {
     n.color = STRUCT_STYLE[n.cat].color;
     n.vx = 0; n.vy = 0; n.fixed = false; n.isMainHub = false;
     const d = deg[n.id] || 0;
-    n.r = 45; // radio grande para accesibilidad visual — texto y nodos legibles para baja visión
+    n.r = 85; // radio muy grande para accesibilidad visual — profesor con baja visión
     n._deg = d;
     n._degBase = d; // fuerza nodal original, sin ningún nodo apagado — sirve para comparar ANTES ↔ DESPUÉS
   });
@@ -1034,10 +1034,10 @@ function drawNodes(svg) {
 
     const iconEl = document.createElementNS(XHTML_NS, "i");
     iconEl.setAttribute("class", "fa-solid " + node.icon);
-    iconEl.setAttribute("style", `color:${node.color}; font-size:${Math.max(node.r * (node.isMainHub ? 0.55 : 0.50), 20)}px;`);
+    iconEl.setAttribute("style", `color:${node.color}; font-size:${Math.max(node.r * (node.isMainHub ? 0.65 : 0.60), 32)}px;`);
 
     const nameEl = document.createElementNS(XHTML_NS, "div");
-    nameEl.setAttribute("style", `font-size:${Math.max(node.r * 0.28, 18)}px; padding:0 3px; font-weight:700; color:#f2f3f6; line-height:1.15; white-space:pre-line; text-align:center; font-family:'Inter',sans-serif;`);
+    nameEl.setAttribute("style", `font-size:${Math.max(node.r * 0.38, 26)}px; padding:0 3px; font-weight:700; color:#f2f3f6; line-height:1.15; white-space:pre-line; text-align:center; font-family:'Inter',sans-serif;`);
     nameEl.textContent = node.name;
 
     wrapper.appendChild(iconEl); wrapper.appendChild(nameEl);
@@ -1092,9 +1092,9 @@ function resizeNodeVisual(n) {
   fo.setAttribute("x", n.x - size / 2); fo.setAttribute("y", n.y - size / 2);
   fo.setAttribute("width", size); fo.setAttribute("height", size);
   const iconEl = fo.querySelector("i");
-  if (iconEl) iconEl.style.fontSize = Math.max(n.r * (n.isMainHub ? 0.55 : 0.50), 20) + "px";
+  if (iconEl) iconEl.style.fontSize = Math.max(n.r * (n.isMainHub ? 0.65 : 0.60), 32) + "px";
   const nameEl = fo.querySelector("div");
-  if (nameEl) nameEl.style.fontSize = Math.max(n.r * 0.28, 18) + "px";
+  if (nameEl) nameEl.style.fontSize = Math.max(n.r * 0.38, 26) + "px";
 }
 
 // Recalcula el grado real (fuerza nodal) de TODA la red teniendo en cuenta
@@ -1185,6 +1185,11 @@ function attachNodeDragHandler(group, node) {
 let zoomLevel = 1;
 let panX = 0, panY = 0;
 
+function updateZoomDisplay() {
+  const el = document.getElementById("networkZoomLevel");
+  if (el) el.textContent = Math.round(zoomLevel * 100) + "%";
+}
+
 function renderNetwork() {
   const svg = document.getElementById("networkViz");
   if (!svg) return;
@@ -1212,25 +1217,50 @@ function setupZoomPan() {
   const svg = document.getElementById("networkViz");
   if (!svg) return;
 
-  // Zoom with mouse wheel
+  // Zoom con rueda del mouse
   svg.addEventListener("wheel", (ev) => {
     ev.preventDefault();
-    const zoomSpeed = 0.1;
+    const zoomSpeed = 0.15;
     const delta = ev.deltaY > 0 ? -zoomSpeed : zoomSpeed;
-    zoomLevel = Math.max(0.5, Math.min(5, zoomLevel + delta));
+    zoomLevel = Math.max(0.5, Math.min(10, zoomLevel + delta));
     const group = svg.querySelector("#zoom-pan-group");
     if (group) group.setAttribute("transform", `translate(${panX},${panY}) scale(${zoomLevel})`);
+    updateZoomDisplay();
   }, { passive: false });
 
-  // Pan with mouse drag (middle mouse button or spacebar + drag)
+  // Botones de zoom
+  document.getElementById("networkZoomIn")?.addEventListener("click", () => {
+    zoomLevel = Math.min(10, zoomLevel + 0.3);
+    const group = svg.querySelector("#zoom-pan-group");
+    if (group) group.setAttribute("transform", `translate(${panX},${panY}) scale(${zoomLevel})`);
+    updateZoomDisplay();
+  });
+
+  document.getElementById("networkZoomOut")?.addEventListener("click", () => {
+    zoomLevel = Math.max(0.5, zoomLevel - 0.3);
+    const group = svg.querySelector("#zoom-pan-group");
+    if (group) group.setAttribute("transform", `translate(${panX},${panY}) scale(${zoomLevel})`);
+    updateZoomDisplay();
+  });
+
+  document.getElementById("networkZoomReset")?.addEventListener("click", () => {
+    zoomLevel = 1;
+    panX = 0;
+    panY = 0;
+    const group = svg.querySelector("#zoom-pan-group");
+    if (group) group.setAttribute("transform", `translate(${panX},${panY}) scale(${zoomLevel})`);
+    updateZoomDisplay();
+  });
+
+  // Pan con clic del mouse (botón del medio o Shift+arrastre)
   let isPanning = false;
   let startX = 0, startY = 0;
   let startPanX = 0, startPanY = 0;
 
   svg.addEventListener("mousedown", (ev) => {
-    // Only pan with middle mouse button (button 1) or when spacebar is held
+    // Solo pan con botón del medio (button 1) o cuando se sostiene Shift
     if (ev.button !== 1 && !ev.getModifierState("Shift")) return;
-    // Don't pan if clicking on a node or edge
+    // No pan si se hace clic en un nodo o borde
     if (ev.target.closest(".ods-node") || ev.target.closest(".edge-group")) return;
     isPanning = true;
     startX = ev.clientX;
@@ -1252,6 +1282,8 @@ function setupZoomPan() {
   document.addEventListener("mouseup", () => {
     isPanning = false;
   });
+
+  updateZoomDisplay();
 }
 
 /* -------- paneles de información -------- */

@@ -109,6 +109,15 @@
       </div>
 
       <div class="network-body">
+        <div class="network-controls">
+          <div class="network-zoom-info">Zoom para profesor</div>
+          <div class="network-zoom-controls">
+            <button class="network-zoom-btn" id="networkZoomOut" type="button" title="Alejar (Zoom Out)" aria-label="Alejar">&minus;</button>
+            <span class="network-zoom-level" id="networkZoomLevel">100%</span>
+            <button class="network-zoom-btn" id="networkZoomReset" type="button" title="Restablecer zoom a 100%" aria-label="Restablecer zoom">⟲</button>
+            <button class="network-zoom-btn" id="networkZoomIn" type="button" title="Acercar (Zoom In)" aria-label="Acercar">&#43;</button>
+          </div>
+        </div>
         <div class="network-canvas">
           <svg id="networkViz" viewBox="0 0 2500 1820" preserveAspectRatio="xMidYMid meet"></svg>
         </div>
@@ -444,7 +453,7 @@
 
 </div>
 
-<script src="modulo-02.js?v=20260902_zoom_pan_accessibility"></script>
+<script src="modulo-02.js?v=20260902_large_nodes_zoom_panel"></script>
 
 </body>
 </html>
