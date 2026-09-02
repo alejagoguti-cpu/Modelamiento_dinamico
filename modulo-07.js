@@ -2731,6 +2731,12 @@
       // de lugar real (Humedal El Burro, Corabastos, etc.).
       const hideAllSystemBubbles = systems && withFlows;
       const nodes = hideAllSystemBubbles ? "" : rows.map((row, index) => { const [x,y] = positions[index]; return `<button type="button" class="map-network-node ${systems ? "map-system-node" : "map-submodel-node"}" data-map-network-index="${index}" data-sound-id="${row.id || ""}" aria-label="${label(row)}. Activar sonido del subsistema" style="--node-x:${x}%;--node-y:${y}%;--node-color:${row.color || colors[index]}"><i class="map-network-node-icon fa-solid ${icon(index)}" aria-hidden="true"></i><strong>${label(row)}</strong></button>`; }).join("");
+      // Botón central: en la vista "solo red" de subsistemas, al centro del
+      // anillo de las 6 bolas, dispara la explosión de las 6 a la vez con
+      // todas sus dinámicas y la red completa conectada entre sí.
+      const centerHubHtml = (systems && isPlainView && !hideAllSystemBubbles)
+        ? `<button type="button" id="mapNetworkCenterHub" class="map-network-center-hub" aria-label="Explotar los 6 subsistemas y ver la red completa"><i class="fa-solid fa-burst"></i><span>Ver red<br>completa</span></button>`
+        : "";
       if (hideAllSystemBubbles) declutteredPositions = computeDeclutteredPositions();
       const kennedyBoxesHtml = hideAllSystemBubbles ? buildPhenomenaHtml() + buildTextBoxesHtml() : "";
       const relationPairs = hideAllSystemBubbles ? [] : (systems
@@ -2790,10 +2796,14 @@
       target.classList.add("network-active");
       const flowsSvg = hideAllSystemBubbles ? buildTextBoxesSvg() : "";
       const flowDotsHtml = "";
-      target.innerHTML = `<div class="map-network-stage ${systems ? "systems-network" : "submodels-network"}"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><defs>${gradientDefs.join("")}</defs><g class="map-network-flows">${flowsSvg}</g><g class="map-network-bonds">${showBonds ? bonds : ""}</g></svg>${flowDotsHtml}${nodes}${kennedyBoxesHtml}</div>`;
+      target.innerHTML = `<div class="map-network-stage ${systems ? "systems-network" : "submodels-network"}"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><defs>${gradientDefs.join("")}</defs><g class="map-network-flows">${flowsSvg}</g><g class="map-network-bonds">${showBonds ? bonds : ""}</g></svg>${flowDotsHtml}${nodes}${centerHubHtml}${kennedyBoxesHtml}</div>`;
       // Ya existen los rectángulos reales: corrige en el siguiente frame el
       // punto de entrada/salida para que ninguna línea quede suspendida.
       if (hideAllSystemBubbles) requestAnimationFrame(() => updateTextBoxes());
+      target.querySelector("#mapNetworkCenterHub")?.addEventListener("click", (event) => {
+        event.stopPropagation();
+        showCombinedNetworkModal();
+      });
       target.querySelectorAll(".map-network-node").forEach((button) => button.addEventListener("click", () => {
         if (button.classList.contains("map-phenomenon-node")) return; // tiene su propio manejador, más abajo
         const row = rows[Number(button.dataset.mapNetworkIndex)];
