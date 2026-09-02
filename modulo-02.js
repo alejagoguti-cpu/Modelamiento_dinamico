@@ -1052,7 +1052,14 @@ function drawNodes(svg) {
 }
 
 /* -------- física de interacción (arrastre) -------- */
-const PHYSICS = { spring: 0.045, anchor: 0.02, damping: 0.82, minVel: 0.02 };
+const PHYSICS = {
+  spring: 0.045,      // spring force between edges
+  anchor: 0.015,      // attraction to home position (reduced to allow more movement)
+  damping: 0.80,      // velocity damping
+  minVel: 0.015,      // minimum velocity to keep running
+  repulsion: 0.8,     // node-to-node repulsion force (NEW - STRONG)
+  collisionPadding: 1.2 // multiplier for collision distance (NEW)
+};
 
 function updatePositions() {
   ODS_NODES.forEach(n => {
@@ -1127,6 +1134,8 @@ function toggleNodoApagado(id) {
 let physicsRunning = false;
 function physicsStep() {
   let moving = false;
+
+  // 1. SPRING FORCES (edges)
   RAW_EDGES.forEach(edge => {
     const s = nodeById(edge.s), t = nodeById(edge.t);
     if (!s || !t) return;
@@ -1137,6 +1146,27 @@ function physicsStep() {
     if (!s.fixed) { s.vx += fx; s.vy += fy; }
     if (!t.fixed) { t.vx -= fx; t.vy -= fy; }
   });
+
+  // 2. COLLISION & REPULSION (all node pairs)
+  for (let i = 0; i < ODS_NODES.length; i++) {
+    for (let j = i + 1; j < ODS_NODES.length; j++) {
+      const a = ODS_NODES[i], b = ODS_NODES[j];
+      const dx = b.x - a.x, dy = b.y - a.y;
+      const dist = Math.hypot(dx, dy) || 1;
+      const minDist = (a.r + b.r) * PHYSICS.collisionPadding; // collision distance
+
+      if (dist < minDist) {
+        // Nodes are too close - REPEL STRONGLY
+        const repelForce = (minDist - dist) * PHYSICS.repulsion;
+        const fx = (dx / dist) * repelForce, fy = (dy / dist) * repelForce;
+        if (!a.fixed) { a.vx -= fx; a.vy -= fy; }
+        if (!b.fixed) { b.vx += fx; b.vy += fy; }
+        moving = true;
+      }
+    }
+  }
+
+  // 3. ANCHOR FORCES (attraction to home position)
   ODS_NODES.forEach(n => {
     if (n.fixed) { n.vx = 0; n.vy = 0; return; }
     n.vx += (n.homeX - n.x) * PHYSICS.anchor;
@@ -1145,6 +1175,7 @@ function physicsStep() {
     n.x += n.vx; n.y += n.vy;
     if (Math.abs(n.vx) > PHYSICS.minVel || Math.abs(n.vy) > PHYSICS.minVel) moving = true;
   });
+
   updatePositions();
   if (moving || ODS_NODES.some(n => n.fixed)) requestAnimationFrame(physicsStep);
   else physicsRunning = false;
