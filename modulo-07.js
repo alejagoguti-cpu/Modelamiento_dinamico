@@ -2827,17 +2827,7 @@
       if (hideAllSystemBubbles) requestAnimationFrame(() => updateTextBoxes());
       target.querySelector("#mapNetworkCenterHub")?.addEventListener("click", (event) => {
         event.stopPropagation();
-        const hub = event.currentTarget;
-        if (hub.dataset.animating === "true") return;
-        hub.dataset.animating = "true";
-        target.classList.remove("network-transition-complete");
-        target.classList.add("network-transition-explode");
-        window.setTimeout(() => {
-          renderMapNetwork("submodels", true, target, false);
-          target.classList.add("network-transition-reveal");
-          requestAnimationFrame(() => target.classList.add("network-transition-reveal-active"));
-          window.setTimeout(() => { target.classList.remove("network-transition-explode", "network-transition-reveal", "network-transition-reveal-active"); target.classList.add("network-transition-complete"); }, 1450);
-        }, 850);
+        showCombinedNetworkModal();
       });
       target.querySelectorAll(".map-network-node").forEach((button) => button.addEventListener("click", () => {
         if (button.classList.contains("map-phenomenon-node")) return; // tiene su propio manejador, más abajo
