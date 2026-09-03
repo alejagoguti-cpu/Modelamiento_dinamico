@@ -2694,8 +2694,9 @@ const renderTerritoryNetwork = () => {
       const elementPosMap = {};
       UNIFIED_URBAN_ELEMENTS.forEach((el) => { elementPosMap[el.id] = el; });
 
-      // Generar líneas de conexión unificadas y limpias entre nodos
+      // Generar líneas de conexión unificadas, coloridas y brillantes entre los 30 nodos
       let unifiedLinesHtml = "";
+      let defsHtml = "";
       const drawnPairs = new Set();
       let flowCount = 0;
 
@@ -2707,15 +2708,26 @@ const renderTerritoryNetwork = () => {
           if (drawnPairs.has(pairKey)) return;
           drawnPairs.add(pairKey);
 
-          const pathId = `unified-flow-${flowCount++}`;
+          const gradId = `full-link-grad-${flowCount}`;
+          const pathId = `full-link-flow-${flowCount}`;
+          flowCount++;
+
+          const dur = (3.5 + (flowCount % 4) * 0.7).toFixed(2);
           const d = `M ${el.x.toFixed(2)} ${el.y.toFixed(2)} L ${targetEl.x.toFixed(2)} ${targetEl.y.toFixed(2)}`;
-          const dur = (4.5 + (flowCount % 5) * 0.8).toFixed(2);
+
+          defsHtml += `
+            <linearGradient id="${gradId}" x1="${el.x.toFixed(2)}%" y1="${el.y.toFixed(2)}%" x2="${targetEl.x.toFixed(2)}%" y2="${targetEl.y.toFixed(2)}%">
+              <stop offset="0%" stop-color="${el.color}" stop-opacity="0.9"/>
+              <stop offset="50%" stop-color="#ffd166" stop-opacity="0.75"/>
+              <stop offset="100%" stop-color="${targetEl.color}" stop-opacity="0.9"/>
+            </linearGradient>
+          `;
 
           unifiedLinesHtml += `
             <g class="full-unified-group" data-source="${el.id}" data-target="${targetId}">
               <path id="${pathId}" class="full-unified-flow-path" d="${d}"/>
-              <line x1="${el.x.toFixed(2)}" y1="${el.y.toFixed(2)}" x2="${targetEl.x.toFixed(2)}" y2="${targetEl.y.toFixed(2)}" class="full-unified-link"/>
-              <circle class="full-unified-pulse" r="0.45" fill="#ffd166">
+              <line x1="${el.x.toFixed(2)}" y1="${el.y.toFixed(2)}" x2="${targetEl.x.toFixed(2)}" y2="${targetEl.y.toFixed(2)}" class="full-unified-link" style="stroke:url(#${gradId});--source-color:${el.color};--target-color:${targetEl.color};"/>
+              <circle class="full-unified-pulse" r="0.5" fill="#ffd166">
                 <animateMotion dur="${dur}s" repeatCount="indefinite" rotate="auto">
                   <mpath href="#${pathId}"/>
                 </animateMotion>
@@ -2761,7 +2773,7 @@ const renderTerritoryNetwork = () => {
       target.innerHTML = `
         <div class="map-network-stage systems-network is-full-dynamics-active">
           ${headerPillHtml}
-          <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+          <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><defs>${defsHtml}</defs>
             <g class="full-unified-layer">${unifiedLinesHtml}</g>
           </svg>
           ${nodesHtml}
@@ -3266,7 +3278,7 @@ const renderTerritoryNetwork = () => {
       target.classList.add("network-active");
       const flowsSvg = hideAllSystemBubbles ? buildTextBoxesSvg() : "";
       const flowDotsHtml = "";
-      target.innerHTML = `<div class="map-network-stage ${systems ? "systems-network" : "submodels-network"}"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><defs>${gradientDefs.join("")}</defs><g class="map-network-flows">${flowsSvg}</g><g class="map-network-bonds">${showBonds ? bonds : ""}</g></svg>${flowDotsHtml}${nodes}${centerHubHtml}${kennedyBoxesHtml}</div>`;
+      target.innerHTML = `<div class="map-network-stage ${systems ? "systems-network" : "submodels-network"}"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><defs>${defsHtml}</defs><defs>${gradientDefs.join("")}</defs><g class="map-network-flows">${flowsSvg}</g><g class="map-network-bonds">${showBonds ? bonds : ""}</g></svg>${flowDotsHtml}${nodes}${centerHubHtml}${kennedyBoxesHtml}</div>`;
       // Ya existen los rectángulos reales: corrige en el siguiente frame el
       // punto de entrada/salida para que ninguna línea quede suspendida.
       if (hideAllSystemBubbles) requestAnimationFrame(() => updateTextBoxes());
