@@ -21,6 +21,9 @@
 }
 .m2re-zoom-controls { flex-shrink: 0; }
 
+.m2re-highlight-row { justify-content: flex-start; flex-wrap: wrap; }
+.m2re-highlight-info { font-size: 11.5px; color: var(--text-faint); }
+
 /* A pedido: se oculta la red original (la de ODS_NODES/relaciones del POT
    hardcodeadas en modulo-02.js) para que en Módulo 02 solo se vea la red
    nueva alimentada desde Supabase. Se oculta por CSS (no se borra del DOM)
@@ -43,10 +46,17 @@
    se leen como una maraña si se muestran todas a la vez) y se iluminan solo
    al pasar el mouse sobre uno de sus dos extremos. */
 .m2re-edge { stroke: rgba(160,170,190,0.08); stroke-width: 1.2; pointer-events: none; transition: stroke .15s, stroke-width .15s, opacity .15s; }
+.m2re-edge-indirecta { stroke-dasharray: 5 4; }
 .m2re-edge-activa { stroke-width: 2.4 !important; opacity: 1; }
+.m2re-edge[data-filtered-out="1"] { opacity: 0 !important; }
 .m2re-node-group { cursor: pointer; }
-.m2re-node-ring { transition: stroke-width .1s; }
+.m2re-node-ring { transition: stroke-width .1s, filter .15s; }
 .m2re-node-group:hover .m2re-node-ring { stroke-width: 4; }
+.m2re-node-ring.m2re-hl { stroke: #ffffff !important; animation: m2reHlPulse 1.4s ease-in-out infinite; }
+@keyframes m2reHlPulse {
+  0%, 100% { filter: drop-shadow(0 0 2px rgba(255,255,255,0.5)); }
+  50% { filter: drop-shadow(0 0 10px rgba(255,255,255,0.95)); }
+}
 #networkViz.m2re-panning { cursor: grabbing; }
 #networkViz { cursor: grab; }
 
