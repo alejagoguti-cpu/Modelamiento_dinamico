@@ -2870,8 +2870,209 @@
     }
 
     function showCombinedNetworkModal() {
-      // Fallback si alguien llama a la versión modal
-      renderFullSubsystemsNetworkInPlace(document.getElementById("territoryNetworkPlain"));
+      // Remover overlay previo si existe
+      document.querySelectorAll(".combined-network-overlay").forEach((el) => el.remove());
+
+      const overlay = document.createElement("div");
+      overlay.className = "combined-network-overlay";
+      overlay.id = "combinedNetworkOverlay";
+
+      const allElements = [];
+      const elementPosMap = {};
+      const systemsList = Object.values(URBAN_DYNAMICS_DATA);
+
+      systemsList.forEach((sys) => {
+        const cx = sys.cx;
+        const cy = sys.cy;
+        const n = sys.elements.length;
+        const rx = 9.8;
+        const ry = 11.2;
+
+        sys.elements.forEach((el, i) => {
+          const angle = (i / n) * Math.PI * 2 - Math.PI / 2;
+          const x = Math.max(5, Math.min(95, cx + Math.cos(angle) * rx));
+          const y = Math.max(6, Math.min(94, cy + Math.sin(angle) * ry));
+          const nodeData = { ...el, x, y, systemId: sys.id, systemName: sys.name, color: sys.color, parentCx: cx, parentCy: cy };
+          allElements.push(nodeData);
+          elementPosMap[el.id] = nodeData;
+        });
+      });
+
+      // 1. Líneas intra-sistema
+      let intraLinesHtml = "";
+      systemsList.forEach((sys) => {
+        const sysElems = sys.elements.map((e) => elementPosMap[e.id]);
+        for (let i = 0; i < sysElems.length; i++) {
+          for (let j = i + 1; j < sysElems.length; j++) {
+            const a = sysElems[i], b = sysElems[j];
+            intraLinesHtml += `<line x1="${a.x.toFixed(2)}%" y1="${a.y.toFixed(2)}%" x2="${b.x.toFixed(2)}%" y2="${b.y.toFixed(2)}%" class="full-intra-link" data-sys="${sys.id}" style="--node-color:${sys.color}"/>`;
+          }
+        }
+      });
+
+      // 2. Líneas cruzadas inter-sistema con partículas de flujo animadas
+      let crossLinesHtml = "";
+      const drawnPairs = new Set();
+      let flowEdgeCount = 0;
+
+      allElements.forEach((el) => {
+        (el.connects || []).forEach((targetId) => {
+          const targetEl = elementPosMap[targetId];
+          if (!targetEl) return;
+          const pairKey = [el.id, targetId].sort().join("---");
+          if (drawnPairs.has(pairKey)) return;
+          drawnPairs.add(pairKey);
+
+          if (el.systemId !== targetEl.systemId) {
+            const pathId = `modal-flow-cross-${flowEdgeCount++}`;
+            const mx = (el.x + targetEl.x) / 2 + (Math.sin(flowEdgeCount) * 4);
+            const my = (el.y + targetEl.y) / 2 + (Math.cos(flowEdgeCount) * 4);
+            const d = `M ${el.x.toFixed(2)} ${el.y.toFixed(2)} Q ${mx.toFixed(2)} ${my.toFixed(2)} ${targetEl.x.toFixed(2)} ${targetEl.y.toFixed(2)}`;
+            const dur = (5.5 + (flowEdgeCount % 4) * 1.2).toFixed(2);
+
+            crossLinesHtml += `
+              <g class="full-cross-group" data-source="${el.id}" data-target="${targetId}">
+                <path id="${pathId}" class="full-cross-flow-path" d="${d}"/>
+                <path class="full-cross-link" d="${d}"/>
+                <circle class="full-cross-pulse" r="0.5" fill="#ffd166">
+                  <animateMotion dur="${dur}s" repeatCount="indefinite" rotate="auto">
+                    <mpath href="#${pathId}"/>
+                  </animateMotion>
+                </circle>
+              </g>
+            `;
+          }
+        });
+      });
+
+      // 3. Badges de centros de sistema
+      const clusterLabelsHtml = systemsList.map((sys) => {
+        return `
+          <div class="full-cluster-badge" style="left:${sys.cx}%;top:${sys.cy}%;--sys-color:${sys.color};">
+            <i class="fa-solid ${sys.icon}"></i>
+            <span>${sys.name.toUpperCase()}</span>
+          </div>
+        `;
+      }).join("");
+
+      // 4. Render de los 30 nodos dinámicos
+      const nodesHtml = allElements.map((el, index) => {
+        const formattedName = el.name.replace(/\n/g, "<br>");
+        return `
+          <button type="button" class="full-dynamic-node" data-elem-id="${el.id}" data-sys-id="${el.systemId}"
+            style="--node-x:${el.x.toFixed(2)}%;--node-y:${el.y.toFixed(2)}%;--node-color:${el.color};--node-delay:${index * 12}ms;"
+            title="${el.name.replace(/\n/g, ' ')}">
+            <i class="fa-solid ${el.icon} full-node-icon"></i>
+            <span class="full-node-label">${formattedName}</span>
+          </button>
+        `;
+      }).join("");
+
+      overlay.innerHTML = `
+        <div class="combined-network-panel full-dynamics-modal-panel">
+          <div class="combined-network-heading">
+            <div class="full-modal-heading-left">
+              <span class="full-dynamics-dot"></span>
+              <strong><i class="fa-solid fa-circle-nodes"></i> RED COMPLETA DE DINÁMICA URBANA · 6 SUBSISTEMAS Y 30 ELEMENTOS VIVOS</strong>
+            </div>
+            <button type="button" class="subsystem-panel-close" id="closeCombinedNetworkBtn" aria-label="Cerrar modal"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+          <div class="combined-network-scroll full-modal-stage-wrap">
+            <div class="map-network-stage systems-network is-full-dynamics-active modal-inner-stage">
+              <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                <g class="full-intra-layer">${intraLinesHtml}</g>
+                <g class="full-cross-layer">${crossLinesHtml}</g>
+              </svg>
+              ${clusterLabelsHtml}
+              ${nodesHtml}
+              <div id="modalDynamicsDetailCard" class="full-dynamics-detail-card" style="display:none;"></div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      document.body.appendChild(overlay);
+      requestAnimationFrame(() => overlay.classList.add("exploded"));
+
+      const closeModal = () => {
+        overlay.classList.remove("exploded");
+        setTimeout(() => overlay.remove(), 200);
+      };
+
+      overlay.querySelector("#closeCombinedNetworkBtn")?.addEventListener("click", closeModal);
+      overlay.addEventListener("click", (e) => {
+        if (e.target === overlay) closeModal();
+      });
+
+      const handleKeydown = (e) => {
+        if (e.key === "Escape") {
+          closeModal();
+          window.removeEventListener("keydown", handleKeydown);
+        }
+      };
+      window.addEventListener("keydown", handleKeydown);
+
+      overlay.querySelectorAll(".full-dynamic-node").forEach((btn) => {
+        btn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const elemId = btn.dataset.elemId;
+          const nodeData = elementPosMap[elemId];
+          if (!nodeData) return;
+
+          DINAMICA_SOUND.play(nodeData.systemId);
+
+          overlay.querySelectorAll(".full-dynamic-node").forEach((n) => {
+            n.classList.toggle("is-active", n === btn);
+            const isConnected = nodeData.connects?.includes(n.dataset.elemId) || elementPosMap[n.dataset.elemId]?.connects?.includes(elemId);
+            n.classList.toggle("is-connected", isConnected);
+          });
+
+          overlay.querySelectorAll(".full-cross-group").forEach((group) => {
+            const s = group.dataset.source, t = group.dataset.target;
+            const matches = s === elemId || t === elemId;
+            group.classList.toggle("is-highlighted", matches);
+          });
+
+          const card = overlay.querySelector("#modalDynamicsDetailCard");
+          if (card) {
+            const connectsHtml = (nodeData.connects || []).map((cId) => {
+              const cData = elementPosMap[cId];
+              if (!cData) return "";
+              return `<span class="full-detail-tag" data-tag-target="${cId}" style="--tag-color:${cData.color};"><i class="fa-solid ${cData.icon}"></i> ${cData.name.replace(/\n/g, ' ')}</span>`;
+            }).join("");
+
+            card.innerHTML = `
+              <div class="full-detail-head">
+                <div class="full-detail-sys-badge" style="background:${nodeData.color}22;color:${nodeData.color};border:1px solid ${nodeData.color}55;">
+                  <i class="fa-solid ${URBAN_DYNAMICS_DATA[nodeData.systemId]?.icon || 'fa-circle'}"></i> ${nodeData.systemName}
+                </div>
+                <button type="button" class="full-detail-close" aria-label="Cerrar">&times;</button>
+              </div>
+              <h4 class="full-detail-title" style="color:${nodeData.color};"><i class="fa-solid ${nodeData.icon}"></i> ${nodeData.name.replace(/\n/g, ' ')}</h4>
+              <p class="full-detail-desc">${nodeData.desc}</p>
+              <div class="full-detail-connections">
+                <strong><i class="fa-solid fa-arrows-split-up-and-left"></i> Relaciones territoriales directas:</strong>
+                <div class="full-detail-tags-wrap">${connectsHtml}</div>
+              </div>
+            `;
+            card.style.display = "block";
+            card.querySelector(".full-detail-close")?.addEventListener("click", (closeEv) => {
+              closeEv.stopPropagation();
+              card.style.display = "none";
+              overlay.querySelectorAll(".full-dynamic-node").forEach((n) => n.classList.remove("is-active", "is-connected"));
+              overlay.querySelectorAll(".full-cross-group").forEach((g) => g.classList.remove("is-highlighted"));
+            });
+
+            card.querySelectorAll(".full-detail-tag").forEach((tag) => {
+              tag.addEventListener("click", (tagEv) => {
+                tagEv.stopPropagation();
+                const targetBtn = overlay.querySelector(`.full-dynamic-node[data-elem-id="${tag.dataset.tagTarget}"]`);
+                targetBtn?.click();
+              });
+            });
+          }
+        });
+      });
     }
 
     const buildHidricaDiagramHtml = (row) => {
@@ -3281,19 +3482,8 @@
       if (hideAllSystemBubbles) requestAnimationFrame(() => updateTextBoxes());
       const openFullNetwork = (event) => {
         event?.stopPropagation();
-        document.getElementById("showFullSubsystemsNetworkBtn")?.setAttribute("hidden", "");
-        // Secuencia: 1) se esconden las líneas que conectan las 6 bolas,
-        // 2) las 6 bolas explotan, 3) se reemplaza el panel por las 30
-        // dinámicas (que a su vez tienen su propia mini-secuencia interna:
-        // nacen pegadas al punto de su sistema y luego se reacomodan).
-        const stageEl = target.querySelector(".map-network-stage");
-        stageEl?.querySelectorAll(".map-network-flows, .map-network-bonds").forEach((g) => g.classList.add("fading-out"));
-        window.setTimeout(() => {
-          stageEl?.classList.add("center-hub-exploding");
-          window.setTimeout(() => {
-            renderFullSubsystemsNetworkInPlace(target);
-          }, 560);
-        }, 320);
+        try { DINAMICA_SOUND.play("hidrica"); } catch (err) {}
+        showCombinedNetworkModal();
       };
       window.__openFullSubsystemsNetwork = openFullNetwork;
       target.querySelector("#mapNetworkCenterHub")?.addEventListener("click", openFullNetwork);
