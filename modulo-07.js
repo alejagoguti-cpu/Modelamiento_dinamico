@@ -3266,7 +3266,9 @@
           purpose.style.setProperty("--bubble-color", color);
           const forresterBtnHtml = !systems ? `<button type="button" class="forrester-open-btn" id="openForresterBtn"><i class="fa-solid fa-diagram-project"></i> Ver diagrama de Forrester</button>` : "";
           const purposeHtml = row.purpose ? `<p class="panel-scope-label">PROPÓSITO</p><p class="panel-specific-reading">${row.purpose}</p>` : "";
-          const systemTypeHtml = row.category ? `<p class="panel-scope-label">TIPO DE SISTEMA</p><p class="panel-specific-reading"><b>${row.category}</b></p><p class="panel-scope-label">¿LAS PARTES TIENEN PROPÓSITO?</p><p class="panel-specific-reading"><b>${row.partsPurpose}</b></p><p class="panel-scope-label">¿EL TODO TIENE PROPÓSITO?</p><p class="panel-specific-reading"><b>${row.totalPurpose}</b></p>` : "";
+          const partsPurposeHtml = row.partsPurpose ? `<p class="panel-scope-label">¿LAS PARTES TIENEN PROPÓSITO?</p><p class="panel-specific-reading"><b>${row.partsPurpose}</b></p>` : "";
+          const totalPurposeHtml = row.totalPurpose ? `<p class="panel-scope-label">¿EL TODO TIENE PROPÓSITO?</p><p class="panel-specific-reading"><b>${row.totalPurpose}</b></p>` : "";
+          const systemTypeHtml = row.category ? `<p class="panel-scope-label">TIPO DE SISTEMA</p><p class="panel-specific-reading"><b>${row.category}</b></p>${partsPurposeHtml}${totalPurposeHtml}` : "";
           purpose.innerHTML = `<div class="subsystem-panel-heading"><strong><i class="fa-solid fa-arrows-rotate"></i> ${label(row)}</strong><button type="button" class="subsystem-panel-close" aria-label="Cerrar panel"><i class="fa-solid fa-xmark"></i></button></div>${purposeHtml}${systemTypeHtml}${forresterBtnHtml}`;
           target.append(purpose);
           purpose.querySelector("#openForresterBtn")?.addEventListener("click", (event) => { event.stopPropagation(); showForresterModal(Number(button.dataset.mapNetworkIndex), label(row), color); });
