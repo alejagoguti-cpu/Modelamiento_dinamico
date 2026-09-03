@@ -2757,7 +2757,7 @@ const renderTerritoryNetwork = () => {
 
           unifiedLinesHtml += `
             <g class="full-unified-group" data-source="${el.id}" data-target="${targetId}">
-              <line x1="${el.x.toFixed(2)}" y1="${el.y.toFixed(2)}" x2="${targetEl.x.toFixed(2)}" y2="${targetEl.y.toFixed(2)}" class="full-unified-link" stroke="${el.color}"/>
+              <line x1="${el.x.toFixed(2)}" y1="${el.y.toFixed(2)}" x2="${targetEl.x.toFixed(2)}" y2="${targetEl.y.toFixed(2)}" class="full-unified-link" stroke="${el.color}" style="--link-color:${el.color}"/>
             </g>
           `;
         });

@@ -5313,8 +5313,10 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 .map-network-node:hover, .map-network-node.selected { animation-play-state: paused !important; }
 @media (prefers-reduced-motion: reduce) { .map-network-node { animation: none !important; } }
 
-/* Puentes orgánicos tipo burbuja pegada: reemplazan por completo las líneas rectas */
-.map-network-stage > svg line { display: none !important; }
+/* Puentes orgánicos tipo burbuja pegada: reemplazan por completo las líneas rectas.
+   OJO: solo en la red de 6 burbujas. La red integrada de 30 dinámicas SÍ usa
+   líneas rectas, y esta regla se las estaba escondiendo. */
+.map-network-stage:not(.is-full-dynamics-active) > svg line { display: none !important; }
 .map-network-stage > svg .map-network-bonds { pointer-events: none; overflow: visible; }
 .map-network-stage > svg .map-network-bond-group { pointer-events: none; }
 .map-network-stage > svg .map-network-bond-soft,
@@ -8604,4 +8606,28 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 .full-dynamic-node.is-connected {
   border-color: #ffffff !important;
   box-shadow: 0 0 20px var(--node-color, #46d6d0), 0 0 0 2px rgba(255, 255, 255, 0.8) !important;
+}
+
+
+/* ---------- Conexiones de la red integrada de 30 dinámicas ----------
+   Las reglas de la red de 6 burbujas (punteado, animación de flujo, color
+   var(--edge-color) que aquí no existe) también alcanzaban a estas líneas y
+   las dejaban sin trazo. Estas reglas, más específicas, las devuelven. */
+.map-network-stage.is-full-dynamics-active svg line.full-unified-link {
+  display: block !important;
+  stroke: var(--link-color, #8ea3b5) !important;
+  stroke-width: 0.4 !important;
+  stroke-opacity: 0.75 !important;
+  stroke-dasharray: none !important;
+  animation: none !important;
+  filter: drop-shadow(0 0 2px var(--link-color, #8ea3b5)) !important;
+  vector-effect: non-scaling-stroke;
+  transition: stroke-opacity .25s ease, stroke-width .25s ease;
+}
+.map-network-stage.is-full-dynamics-active svg g.full-unified-group:hover line.full-unified-link,
+.map-network-stage.is-full-dynamics-active svg g.full-unified-group.is-highlighted line.full-unified-link {
+  stroke: #ffd166 !important;
+  stroke-width: 0.75 !important;
+  stroke-opacity: 1 !important;
+  filter: drop-shadow(0 0 6px #ffd166) !important;
 }
