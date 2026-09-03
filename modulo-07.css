@@ -4763,6 +4763,13 @@ body { position:relative !important; }
   100% { transform: scale(2.1); opacity: 0; }
 }
 .combined-network-panel.epstein-modal-panel { width: min(88vw, 380px); height: auto; max-height: 78vh; }
+.epstein-side-overlay {
+  background: transparent; justify-content: flex-end; align-items: flex-start;
+  padding: 16px; pointer-events: none;
+}
+.epstein-side-overlay .epstein-modal-panel {
+  pointer-events: auto; margin-top: 70px; box-shadow: 0 20px 50px rgba(0,0,0,.75);
+}
 .epstein-modal-scroll { padding: 13px 16px 16px; color: #f2ece3; }
 .epstein-model-title { font-size: 12.5px; font-weight: 700; margin: 0 0 11px; line-height: 1.35; color: #fff; }
 .epstein-stat-row { display: flex; gap: 9px; padding: 9px 0; border-top: 1px solid rgba(255,255,255,.1); }

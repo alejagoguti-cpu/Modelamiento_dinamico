@@ -2323,7 +2323,7 @@
 
     function showEpsteinModal(spot) {
       const overlay = document.createElement("div");
-      overlay.className = "combined-network-overlay";
+      overlay.className = "combined-network-overlay epstein-side-overlay";
       const listHtml = (items) => `<ul class="epstein-list">${items.map((t) => `<li>${t}</li>`).join("")}</ul>`;
       overlay.innerHTML = `<div class="combined-network-panel epstein-modal-panel">
         <div class="combined-network-heading">
