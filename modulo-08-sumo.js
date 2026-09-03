@@ -957,7 +957,7 @@
     }
     fetch("./assets/kennedy_trees.json?v=rotatewhole-v1")
       .then((r) => { if (!r.ok) throw new Error("no se pudo cargar kennedy_trees.json"); return r.json(); })
-      .then((data) => { treeData = data; buildBirdTrees(); if (netData) drawNetwork(netCanvas.parentElement.clientWidth, netCanvas.parentElement.clientHeight); })
+      .then((data) => { treeData = data; buildBirdTrees(); refrescarCobertura(); if (netData) drawNetwork(netCanvas.parentElement.clientWidth, netCanvas.parentElement.clientHeight); })
       .catch((err) => console.warn("No se pudo cargar el arbolado de Kennedy:", err));
 
     // ---------- cargar la red (JSON ya recortado) ----------
@@ -1091,6 +1091,12 @@
     // que describe la regla.
     const BIRD_NOISE_DB = 60;
     const BIRD_K_REP = 45;
+    // Cobertura vegetal: porcentaje de aumento sobre la muestra base de
+    // árboles atractores. NO se inventa ningún árbol: se activan más de los
+    // que ya trae el Arbolado Urbano real (hay 12.935 de estas 3 especies).
+    const BIRD_TREE_BASE = { sauco: 260, capuli: 200, urapan: 220 };
+    let vegBoost = 0;
+    let refrescarCobertura = () => {};   // lo define la barra, más abajo
     let birdTreesWorld = null;    // muestra de árboles atractores (coordenadas del mapa)
     let birdTreesScreen = [];     // los mismos, ya proyectados a pantalla
     let birds = [];
@@ -1107,7 +1113,10 @@
         const meta = BIRD_TREE_SPECIES[t[2]];
         if (meta) porEspecie[meta.key].push([t[0], t[1], meta]);
       });
-      const TOPE = { sauco: 260, capuli: 200, urapan: 220 };
+      const factor = 1 + vegBoost / 100;
+      const TOPE = { sauco: Math.round(BIRD_TREE_BASE.sauco * factor),
+                     capuli: Math.round(BIRD_TREE_BASE.capuli * factor),
+                     urapan: Math.round(BIRD_TREE_BASE.urapan * factor) };
       birdTreesWorld = [];
       Object.keys(porEspecie).forEach((k) => {
         const lista = porEspecie[k];
@@ -1119,6 +1128,8 @@
     // Misma proyección que usa el dibujo del arbolado (distorsión de las 4
     // esquinas + escala de la capa), para que las mirlas vean los árboles
     // exactamente donde se ven en pantalla.
+    const TREE_CELL = 50;         // lado de la celda de la rejilla, en píxeles
+    let treeGrid = null, treeGridW = 0, treeGridH = 0;
     function updateBirdTreesScreen(w, h) {
       if (!birdTreesWorld || !treeWorldBBox) { birdTreesScreen = []; return; }
       const { TL, TR, BL, BR } = getTreeCorners(w, h);
@@ -1133,6 +1144,42 @@
         if (x < -60 || x > w + 60 || y < -60 || y > h + 60) return;
         birdTreesScreen.push({ x, y, meta: t[2] });
       });
+      // rejilla: cada mirla solo revisa las celdas que toca su campo visual
+      treeGridW = Math.max(1, Math.ceil(w / TREE_CELL) + 3);
+      treeGridH = Math.max(1, Math.ceil(h / TREE_CELL) + 3);
+      treeGrid = new Array(treeGridW * treeGridH);
+      birdTreesScreen.forEach((t) => {
+        const cx = clampNum(Math.floor(t.x / TREE_CELL) + 1, 0, treeGridW - 1);
+        const cy = clampNum(Math.floor(t.y / TREE_CELL) + 1, 0, treeGridH - 1);
+        const i = cy * treeGridW + cx;
+        (treeGrid[i] || (treeGrid[i] = [])).push(t);
+      });
+    }
+    // Mejor árbol dentro del campo visual (más peso ecológico y más cerca)
+    function bestTreeNear(bx, by) {
+      if (!treeGrid) return null;
+      const r = BIRD_VISION;
+      const x0 = clampNum(Math.floor((bx - r) / TREE_CELL) + 1, 0, treeGridW - 1);
+      const x1 = clampNum(Math.floor((bx + r) / TREE_CELL) + 1, 0, treeGridW - 1);
+      const y0 = clampNum(Math.floor((by - r) / TREE_CELL) + 1, 0, treeGridH - 1);
+      const y1 = clampNum(Math.floor((by + r) / TREE_CELL) + 1, 0, treeGridH - 1);
+      let mejor = null, mejorPuntaje = 0, mejorDist = 0;
+      for (let cy = y0; cy <= y1; cy++) {
+        for (let cx = x0; cx <= x1; cx++) {
+          const celda = treeGrid[cy * treeGridW + cx];
+          if (!celda) continue;
+          for (let i = 0; i < celda.length; i++) {
+            const t = celda[i];
+            const dx = t.x - bx, dy = t.y - by;
+            const d2 = dx * dx + dy * dy;
+            if (d2 > r * r) continue;
+            const d = Math.sqrt(d2) || 0.001;
+            const puntaje = t.meta.weight / d;
+            if (puntaje > mejorPuntaje) { mejorPuntaje = puntaje; mejor = t; mejorDist = d; }
+          }
+        }
+      }
+      return mejor ? { arbol: mejor, dist: mejorDist } : null;
     }
 
     const clampNum = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
@@ -1274,17 +1321,9 @@
           b.vx -= BIRD_WIND * dt;
           b.vy += Math.sin(b.phase * 0.28) * 8 * dt;
           // campo visual limitado: se queda con el árbol más atractivo
-          // (más peso ecológico y más cerca)
-          let mejor = null, mejorPuntaje = 0, mejorDist = 0;
-          for (let i = 0; i < birdTreesScreen.length; i++) {
-            const t = birdTreesScreen[i];
-            const dx = t.x - b.x, dy = t.y - b.y;
-            const d2 = dx * dx + dy * dy;
-            if (d2 > BIRD_VISION * BIRD_VISION) continue;
-            const d = Math.sqrt(d2) || 0.001;
-            const puntaje = t.meta.weight / d;
-            if (puntaje > mejorPuntaje) { mejorPuntaje = puntaje; mejor = t; mejorDist = d; }
-          }
+          const hallazgo = bestTreeNear(b.x, b.y);
+          const mejor = hallazgo ? hallazgo.arbol : null;
+          const mejorDist = hallazgo ? hallazgo.dist : 0;
           if (mejor && b.cooldown <= 0) {
             const ux = (mejor.x - b.x) / mejorDist, uy = (mejor.y - b.y) / mejorDist;
             const esSauco = mejor.meta.key === "sauco";
@@ -1518,6 +1557,19 @@
         birds.push(makeBird(w, h, residentes < refugeTarget() ? "refugio" : (birds.length % 2 ? "humedal" : "oriente")));
       }
     }
+    const vegSlider = document.getElementById("sumoVegSlider");
+    const vegVal = document.getElementById("sumoVegVal");
+    const vegCount = document.getElementById("sumoVegCount");
+    refrescarCobertura = () => {
+      if (vegVal) vegVal.textContent = `+${vegBoost}%`;
+      if (vegCount) vegCount.textContent = birdTreesWorld ? birdTreesWorld.length.toLocaleString("es-CO") : "—";
+    };
+    vegSlider?.addEventListener("input", () => {
+      vegBoost = Number(vegSlider.value);
+      buildBirdTrees();
+      refrescarCobertura();
+      drawVehiclesAt(playhead);
+    });
     const birdSlider = document.getElementById("sumoBirdSlider");
     const birdCountVal = document.getElementById("sumoBirdCountVal");
     birdSlider?.addEventListener("input", () => {

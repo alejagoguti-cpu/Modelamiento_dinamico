@@ -1697,3 +1697,6 @@ footer span { color: var(--teal); }
 .birds-noise-note { border-left: 2px solid #ff6b4d; padding-left: 9px; }
 .birds-noise-note code { font-size: 11px; color: #ffb9a6; }
 .birds-noise-note i.fa-volume-high { color: #ff6b4d; }
+
+.birds-slider-label small { display: block; margin-top: 4px; font-size: 10.5px; line-height: 1.45; color: #9aa5b1; }
+.birds-slider-label small span { color: #7ed698; font-weight: 700; }
