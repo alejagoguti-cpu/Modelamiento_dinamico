@@ -3021,23 +3021,28 @@
         const proj = projectToPercent(p.coords);
         if (proj) items.push({ key: `phen-${i}`, x: proj.x, y: proj.y });
       });
+      // Las bolitas de las cajas (Humedal La Vaca, Corabastos, etc.) NO se
+      // empujan entre sí — deben quedar siempre en su coordenada real
+      // exacta, aunque estén geográficamente cerca unas de otras.
       KENNEDY_TEXT_BOXES.forEach((box, i) => box.coords.forEach((c, j) => {
         const proj = projectToPercent(c.pos);
-        if (proj) items.push({ key: `box-${i}-${j}`, x: proj.x, y: proj.y });
+        if (proj) items.push({ key: `box-${i}-${j}`, x: proj.x, y: proj.y, fixed: true });
       }));
       // Si dos bolitas quedan muy cerca (por estar geográficamente cerca en
-      // la realidad), se empujan un poquito para que no se toquen entre sí.
+      // la realidad), se empujan un poquito para que no se toquen entre sí
+      // — pero nunca las de las cajas (fixed:true), esas quedan quietas.
       const minDist = 6;
       for (let iter = 0; iter < 10; iter++) {
         for (let a = 0; a < items.length; a++) {
           for (let b = a + 1; b < items.length; b++) {
+            if (items[a].fixed && items[b].fixed) continue;
             const dx = items[b].x - items[a].x, dy = items[b].y - items[a].y;
             const dist = Math.hypot(dx, dy) || 0.0001;
             if (dist < minDist) {
               const push = (minDist - dist) / 2;
               const ux = dx / dist, uy = dy / dist;
-              items[a].x -= ux * push; items[a].y -= uy * push;
-              items[b].x += ux * push; items[b].y += uy * push;
+              if (!items[a].fixed) { items[a].x -= ux * push; items[a].y -= uy * push; }
+              if (!items[b].fixed) { items[b].x += ux * push; items[b].y += uy * push; }
             }
           }
         }
