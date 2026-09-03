@@ -5196,22 +5196,10 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
   opacity: 0; pointer-events: none; transition: transform .6s cubic-bezier(.2,.9,.3,1.2) var(--explode-delay,0ms), opacity .35s ease var(--explode-delay,0ms);
 }
 .bubble-explode-satellite.exploded { transform: translate(var(--final-x), var(--final-y)) translate(-50%, -50%) scale(1); opacity: .96; }
-.map-network-center-hub {
-  position: absolute; left: 50%; top: 48%; transform: translate(-50%, -50%); z-index: 4;
-  width: 74px; height: 74px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
-  border: 2px dashed rgba(255,209,102,.7); background: radial-gradient(circle, rgba(255,209,102,.22), rgba(7,12,15,.9));
-  color: #ffd166; font-size: 9px; font-weight: 700; line-height: 1.2; cursor: pointer;
-  animation: center-hub-pulse 2.4s ease-in-out infinite;
-}
-.map-network-center-hub i { font-size: 16px; margin-bottom: 2px; }
-.map-network-center-hub:hover { background: radial-gradient(circle, rgba(255,209,102,.4), rgba(7,12,15,.95)); animation-play-state: paused; transform: translate(-50%, -50%) scale(1.08); }
-@keyframes center-hub-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(255,209,102,.35); }
-  50% { box-shadow: 0 0 0 14px rgba(255,209,102,0); }
-}
-/* Al pulsar el botón central: las 6 bolas de subsistemas explotan hacia
-   afuera y se desvanecen, con un pequeño escalonado entre cada una, antes
-   de que aparezca la red completa de relaciones. */
+/* Al pulsar el botón "Ver red completa" (fijo abajo a la izquierda): las 6
+   bolas de subsistemas explotan hacia afuera y se desvanecen, con un
+   pequeño escalonado entre cada una, antes de que aparezca la red completa
+   de relaciones. */
 .map-network-stage.center-hub-exploding .map-system-node {
   transition: transform .5s cubic-bezier(.3,.6,.4,1), opacity .45s ease;
   pointer-events: none;
@@ -5225,20 +5213,6 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 .map-network-stage.center-hub-exploding .map-system-node {
   transform: translate(-50%, -50%) scale(2.4);
   opacity: 0;
-}
-.map-network-stage.center-hub-exploding .map-network-center-hub { opacity: 0; transition: opacity .3s ease; }
-.map-network-corner-hub {
-  position: absolute; right: 14px; bottom: 14px; z-index: 6; display: flex; align-items: center; gap: 8px;
-  padding: 10px 16px; border-radius: 999px; border: 2px solid #ffd166; background: rgba(7,12,15,.95);
-  color: #ffd166; font-family: inherit; font-size: 12px; font-weight: 700; cursor: pointer;
-  box-shadow: 0 6px 20px rgba(0,0,0,.5), 0 0 0 0 rgba(255,209,102,.4);
-  animation: corner-hub-pulse 2.2s ease-in-out infinite;
-}
-.map-network-corner-hub i { font-size: 14px; }
-.map-network-corner-hub:hover { background: rgba(255,209,102,.22); animation-play-state: paused; }
-@keyframes corner-hub-pulse {
-  0%, 100% { box-shadow: 0 6px 20px rgba(0,0,0,.5), 0 0 0 0 rgba(255,209,102,.4); }
-  50% { box-shadow: 0 6px 20px rgba(0,0,0,.5), 0 0 0 10px rgba(255,209,102,0); }
 }
 .map-network-stage::after { content: ""; position: absolute; inset: 9%; border: 1px solid rgba(118,255,240,.12); border-radius: 50%; pointer-events: none; }
 .map-network-stage > svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
@@ -5764,6 +5738,19 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 }
 .territory-network-plain { position: absolute; inset: 0; }
 @media (max-width: 720px) { .territory-network-plain-wrap { min-height: 620px; } }
+.show-full-network-fixed-btn {
+  position: absolute; left: 16px; bottom: 16px; z-index: 20; display: flex; align-items: center; gap: 8px;
+  padding: 11px 18px; border-radius: 999px; border: 2px solid #ffd166; background: rgba(7,12,15,.95);
+  color: #ffd166; font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer;
+  box-shadow: 0 6px 20px rgba(0,0,0,.5), 0 0 0 0 rgba(255,209,102,.4);
+  animation: full-network-btn-pulse 2.2s ease-in-out infinite;
+}
+.show-full-network-fixed-btn i { font-size: 15px; }
+.show-full-network-fixed-btn:hover { background: rgba(255,209,102,.22); animation-play-state: paused; }
+@keyframes full-network-btn-pulse {
+  0%, 100% { box-shadow: 0 6px 20px rgba(0,0,0,.5), 0 0 0 0 rgba(255,209,102,.4); }
+  50% { box-shadow: 0 6px 20px rgba(0,0,0,.5), 0 0 0 10px rgba(255,209,102,0); }
+}
 
 /* Redondez definitiva de TODAS las bolitas, sin excepción — selector con
    id para ganarle a cualquier regla más específica que las deforme. */

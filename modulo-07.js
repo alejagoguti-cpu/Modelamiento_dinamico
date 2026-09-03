@@ -2238,6 +2238,7 @@
       });
     }
     directSubsystemsBtn?.addEventListener("click", () => { openSubmodelsFromDirectButton("subsystems"); showPlainNetwork("systems", directSubsystemsBtn); });
+    document.getElementById("showFullSubsystemsNetworkBtn")?.addEventListener("click", (event) => { window.__openFullSubsystemsNetwork?.(event); });
     directSubmodelsBtn?.addEventListener("click", () => { openSubmodelsFromDirectButton("submodels"); showPlainNetwork("submodels", directSubmodelsBtn); });
     directCartographyBtn?.addEventListener("click", showCartography);
     renderSubmodelsView("subsystems");
@@ -2992,10 +2993,10 @@
       // Botón central: en la vista "solo red" de subsistemas, al centro del
       // anillo de las 6 bolas, dispara la explosión de las 6 a la vez con
       // todas sus dinámicas y la red completa conectada entre sí.
-      const centerHubHtml = (systems && isPlainView && !hideAllSystemBubbles)
-        ? `<button type="button" id="mapNetworkCenterHub" class="map-network-center-hub" aria-label="Explotar los 6 subsistemas y ver la red completa"><i class="fa-solid fa-burst"></i><span>Ver red<br>completa</span></button>
-           <button type="button" id="mapNetworkCornerHub" class="map-network-corner-hub" aria-label="Ver la red completa (botón alterno)"><i class="fa-solid fa-diagram-project"></i><span>Ver red completa</span></button>`
-        : "";
+      // Los botones del centro y de la esquina se quitaron; ahora hay un
+      // único botón fijo abajo a la izquierda (fuera de este HTML, se
+      // agrega directamente al contenedor de la sección) que hace lo mismo.
+      const centerHubHtml = "";
       if (hideAllSystemBubbles) declutteredPositions = computeDeclutteredPositions();
       const kennedyBoxesHtml = hideAllSystemBubbles ? buildPhenomenaHtml() + buildTextBoxesHtml() : "";
       const relationPairs = hideAllSystemBubbles ? [] : (systems
@@ -3060,7 +3061,7 @@
       // punto de entrada/salida para que ninguna línea quede suspendida.
       if (hideAllSystemBubbles) requestAnimationFrame(() => updateTextBoxes());
       const openFullNetwork = (event) => {
-        event.stopPropagation();
+        event?.stopPropagation();
         // Las 6 bolas explotan y desaparecen primero; cuando terminan,
         // aparece la red completa de relaciones con todos los subsistemas.
         const stageEl = target.querySelector(".map-network-stage");
@@ -3070,8 +3071,11 @@
           window.setTimeout(() => stageEl?.classList.remove("center-hub-exploding"), 400);
         }, 560);
       };
-      target.querySelector("#mapNetworkCenterHub")?.addEventListener("click", openFullNetwork);
-      target.querySelector("#mapNetworkCornerHub")?.addEventListener("click", openFullNetwork);
+      window.__openFullSubsystemsNetwork = openFullNetwork; // usado por el botón fijo abajo a la izquierda
+      // El botón fijo "Ver red completa" solo se muestra en la vista de
+      // Subsistemas del territorio (no en Submodelos).
+      const fixedFullNetworkBtn = document.getElementById("showFullSubsystemsNetworkBtn");
+      if (fixedFullNetworkBtn) fixedFullNetworkBtn.hidden = !(systems && isPlainView && !hideAllSystemBubbles);
       target.querySelectorAll(".map-network-node").forEach((button) => button.addEventListener("click", () => {
         if (button.classList.contains("map-phenomenon-node")) return; // tiene su propio manejador, más abajo
         const row = rows[Number(button.dataset.mapNetworkIndex)];
