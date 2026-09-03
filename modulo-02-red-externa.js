@@ -28,19 +28,34 @@
   const NODE_R = 24;
   const MIN_SEP = NODE_R * 2 + 10; // separación mínima garantizada entre centros
 
-  // Ícono flat (Font Awesome 6 Free/Solid, ya cargado en la página) por categoría.
-  const CATEGORY_ICONS = {
-    sistema_hidrico: "fa-water",
-    humedales: "fa-leaf",
-    vias_arteriales: "fa-road",
-    ciclorutas: "fa-bicycle",
-    educacion: "fa-graduation-cap",
-    salud: "fa-hospital",
-    cultura: "fa-masks-theater",
-    deporte: "fa-futbol",
-    comercio: "fa-shop",
-    cuidado: "fa-hand-holding-heart",
-    parques: "fa-tree",
+  // Solo se usan los 4 colores/íconos oficiales de las estructuras del POT
+  // (ver leyenda "Categorías del POT" / STRUCT en modulo-02.js y modulo-02.html),
+  // no un color distinto por cada una de las 11 categorías del Excel.
+  // Clasificación de cada categoría dentro de su estructura, en línea con cómo
+  // ya clasifica el resto de la red (ODS_NODES): ciclorutas/red_vial/parques/
+  // manzanas_del_cuidado → e2; sistema_de_educacion/plazas_de_mercado → e3;
+  // patrimonio_* → e4; ríos/quebradas/humedales → e1. Salud y Deporte no tienen
+  // nodo propio en la red original; se agrupan en e2 (Funcional y del Cuidado)
+  // siguiendo la cita literal del POT sobre Manzanas del Cuidado ("salud,
+  // educación, cultura, cuidado y recreación").
+  const CATEGORIA_A_ESTRUCTURA = {
+    sistema_hidrico: "e1",
+    humedales: "e1",
+    vias_arteriales: "e2",
+    ciclorutas: "e2",
+    parques: "e2",
+    cuidado: "e2",
+    salud: "e2",
+    deporte: "e2",
+    educacion: "e3",
+    comercio: "e3",
+    cultura: "e4",
+  };
+  const ESTRUCTURA_STYLE = {
+    e1: { color: "#5cd6d1", icon: "fa-droplet" },
+    e2: { color: "#ef9f54", icon: "fa-people-roof" },
+    e3: { color: "#fac47b", icon: "fa-building-columns" },
+    e4: { color: "#fb8d84", icon: "fa-landmark" },
   };
 
   const state = {
@@ -218,8 +233,7 @@
     const oldDefs = svg.querySelector("#m2re-defs");
     if (oldDefs) oldDefs.remove();
 
-    const catColor = new Map(state.categorias.map((c) => [c.id, c.color]));
-    buildDefs(svg, [...new Set(state.categorias.map((c) => c.color))]);
+    buildDefs(svg, Object.values(ESTRUCTURA_STYLE).map((s) => s.color));
 
     relaxLayout(state.elementos, state.conexiones);
 
@@ -245,8 +259,10 @@
     layer.appendChild(nodesG);
 
     state.elementos.forEach((e) => {
-      const color = catColor.get(e.categoria_id) || "#8891a5";
-      const icon = CATEGORY_ICONS[e.categoria_id] || "fa-circle";
+      const estructura = CATEGORIA_A_ESTRUCTURA[e.categoria_id] || "e2";
+      const style = ESTRUCTURA_STYLE[estructura];
+      const color = style.color;
+      const icon = style.icon;
 
       const group = document.createElementNS(SVG_NS, "g");
       group.setAttribute("class", "m2re-node-group");
