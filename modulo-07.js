@@ -2647,144 +2647,59 @@ const renderTerritoryNetwork = () => {
     // =========================================================================
     // RED COMPLETA DE DINÁMICA URBANA (30 ELEMENTOS Y FLUJOS VIVOS)
     // =========================================================================
-    const URBAN_DYNAMICS_DATA = {
-      hidrica: {
-        id: "hidrica",
-        name: "Dinámica hídrica",
-        color: "#56b8d4",
-        icon: "fa-droplet",
-        cx: 20, cy: 38,
-        process: "El agua circula, se acumula, disminuye o se desborda según lluvia, pendiente, suelo, sedimentos, obras y drenaje.",
-        elements: [
-          { id: "h_lluvia", name: "Precipitación\ny lluvia", icon: "fa-cloud-showers-heavy", desc: "Aporte pluvial constante y eventos de lluvia extrema que recargan la cuenca.", connects: ["h_infiltra", "h_escorre", "f_impermeable", "m_congestion"] },
-          { id: "h_infiltra", name: "Infiltración\ny suelo húmedo", icon: "fa-water", desc: "Capacidad de absorción natural del suelo y amortiguamiento freático.", connects: ["h_lluvia", "h_humedales", "b_flora"] },
-          { id: "h_escorre", name: "Canales y\ndrenaje pluvial", icon: "fa-arrows-split-up-and-left", desc: "Canal Los Ángeles y colectores que conducen el agua superficial.", connects: ["h_lluvia", "h_humedales", "h_desborde", "f_vias"] },
-          { id: "h_humedales", name: "Humedales y\nlagunas", icon: "fa-droplet", desc: "Espejos de agua de El Burro y La Vaca; retención hidráulica y biodiversidad.", connects: ["h_infiltra", "h_escorre", "b_aves_mig", "b_aves_res", "s_org_amb"] },
-          { id: "h_desborde", name: "Desbordes y\nsedimentos", icon: "fa-triangle-exclamation", desc: "Riesgo de inundación y acumulación de sedimentos en eventos de lluvia.", connects: ["h_escorre", "f_vias", "m_congestion", "se_vivienda"] }
-        ]
-      },
-      biotica: {
-        id: "biotica",
-        name: "Dinámica biótica",
-        color: "#68d391",
-        icon: "fa-feather-pointed",
-        cx: 44, cy: 16,
-        process: "Cambian la presencia de especies, el alimento, el refugio, la reproducción y la expansión de coberturas.",
-        elements: [
-          { id: "b_aves_mig", name: "Aves\nmigratorias", icon: "fa-dove", desc: "Tingua azul, playeritos y especies boreales que usan el humedal como escala.", connects: ["h_humedales", "b_flora", "b_refugio", "f_cerramientos"] },
-          { id: "b_aves_res", name: "Aves residentes\ny fauna", icon: "fa-crow", desc: "Monjitas bogotanas, mirlas y fauna local con ciclos continuos en el ecosistema.", connects: ["h_humedales", "b_insectos", "b_refugio", "f_vias"] },
-          { id: "b_flora", name: "Cobertura vegetal\ny flora", icon: "fa-leaf", desc: "Juncos, eneas, vegetación de ronda y árboles que estabilizan los taludes.", connects: ["h_infiltra", "b_aves_mig", "b_insectos", "b_refugio"] },
-          { id: "b_insectos", name: "Insectos y\npolinizadores", icon: "fa-bug", desc: "Arañas tejedoras, abejas y libélulas que sostienen la cadena trófica.", connects: ["b_aves_res", "b_flora", "b_refugio"] },
-          { id: "b_refugio", name: "Microhábitats\ny refugios", icon: "fa-shield-heart", desc: "Zonas de anidación y amortiguamiento frente a las perturbaciones urbanas.", connects: ["b_aves_mig", "b_aves_res", "b_flora", "f_cerramientos"] }
-        ]
-      },
-      fisico: {
-        id: "fisico",
-        name: "Sistema físico-urbano",
-        color: "#b8c0c8",
-        icon: "fa-building",
-        cx: 72, cy: 16,
-        process: "Cambian el estado de las obras, la ocupación de predios, la continuidad de andenes y la fragmentación del borde.",
-        elements: [
-          { id: "f_edificios", name: "Edificaciones\nresidenciales", icon: "fa-city", desc: "Conjuntos habitacionales y manzanas construidas sobre el borde del humedal.", connects: ["se_vivienda", "f_impermeable", "f_cerramientos", "s_vecinos"] },
-          { id: "f_vias", name: "Malla vial\narterial", icon: "fa-road", desc: "Av. Ciudad de Cali y Av. Américas; soporte de transporte y fuente de vibración.", connects: ["h_escorre", "h_desborde", "m_transporte", "m_congestion", "se_comercio"] },
-          { id: "f_andenes", name: "Andenes y\nespacio público", icon: "fa-person-walking", desc: "Superficies peatonales, plazoletas y senderos perimetrales.", connects: ["m_peatonal", "s_vecinos", "se_equipamientos"] },
-          { id: "f_cerramientos", name: "Cerramientos\ny barreras", icon: "fa-border-all", desc: "Muros y rejas perimetrales que fragmentan el hábitat pero protegen el cuerpo hídrico.", connects: ["f_edificios", "b_refugio", "b_aves_mig", "s_vecinos"] },
-          { id: "f_impermeable", name: "Superficies\nimpermeables", icon: "fa-layer-group", desc: "Asfalto y losas de concreto que impiden la infiltración pluvial.", connects: ["h_lluvia", "h_escorre", "f_edificios", "f_vias"] }
-        ]
-      },
-      movilidad: {
-        id: "movilidad",
-        name: "Sistema de movilidad",
-        color: "#f1cf5b",
-        icon: "fa-route",
-        cx: 86, cy: 44,
-        process: "Cambian los recorridos, usuarios, horarios, tiempos de espera, congestión, ruido y accesibilidad.",
-        elements: [
-          { id: "m_transporte", name: "Transporte masivo\ny buses", icon: "fa-bus", desc: "Flota de TransMilenio y SITP que conecta Kennedy con el resto de Bogotá.", connects: ["f_vias", "m_estaciones", "m_congestion", "se_comercio"] },
-          { id: "m_ciclorrutas", name: "Ciclorrutas y\nbicicletas", icon: "fa-bicycle", desc: "Red de ciclorrutas de El Tintal y Av. Cali para viajes limpios de proximidad.", connects: ["f_vias", "m_peatonal", "se_biblioteca", "s_vecinos"] },
-          { id: "m_peatonal", name: "Flujos y viajes\npeatonales", icon: "fa-person-walking-arrow-right", desc: "Caminatas cotidianas de residentes hacia estaciones, colegios y comercio.", connects: ["f_andenes", "m_ciclorrutas", "m_estaciones", "s_vecinos"] },
-          { id: "m_estaciones", name: "Estaciones y\nportales", icon: "fa-door-open", desc: "Portal Américas y Estación Banderas; puntos neurálgicos de transbordo masivo.", connects: ["m_transporte", "m_peatonal", "se_comercio", "m_congestion"] },
-          { id: "m_congestion", name: "Tiempos de viaje\ny congestión", icon: "fa-clock", desc: "Fricción espacial y demoras que impactan la calidad de vida y el tiempo de cuidado.", connects: ["f_vias", "m_transporte", "h_desborde", "se_vivienda"] }
-        ]
-      },
-      social: {
-        id: "social",
-        name: "Sistema social-comunitario",
-        color: "#ee9a4b",
-        icon: "fa-people-group",
-        cx: 72, cy: 82,
-        process: "Cambian las visitas, formas de apropiación, actividades educativas, participación, acuerdos y conflictos.",
-        elements: [
-          { id: "s_vecinos", name: "Habitantes y\nvecinos", icon: "fa-people-roof", desc: "Comunidades de los barrios circundantes que habitan y recorren el sector.", connects: ["f_edificios", "m_peatonal", "se_vivienda", "s_org_amb", "se_equipamientos"] },
-          { id: "s_org_amb", name: "Organizaciones\nambientales", icon: "fa-hands-holding-circle", desc: "Colectivos ecológicos de base que defienden la conservación de los humedales.", connects: ["h_humedales", "s_vecinos", "s_pedagogia", "s_cuidado"] },
-          { id: "s_pedagogia", name: "Actividades\npedagógicas", icon: "fa-graduation-cap", desc: "Recorridos escolares, avistamiento de aves y talleres de ciencia ciudadana.", connects: ["s_org_amb", "b_aves_res", "se_biblioteca", "s_cuidado"] },
-          { id: "s_cuidado", name: "Cuidado y\nvoluntariado", icon: "fa-hand-holding-heart", desc: "Jornadas de siembra comunitaria, limpieza de canales y monitoreo biológico.", connects: ["s_org_amb", "b_flora", "h_humedales", "s_conflictos"] },
-          { id: "s_conflictos", name: "Conflictos y\nacuerdos", icon: "fa-comments", desc: "Mecanismos de resolución comunitaria frente a presiones de uso y residuos.", connects: ["s_cuidado", "se_comercio", "se_vivienda"] }
-        ]
-      },
-      socioeconomico: {
-        id: "socioeconomico",
-        name: "Sistema socioeconómico y de ocupación",
-        color: "#e58d62",
-        icon: "fa-house-chimney",
-        cx: 28, cy: 82,
-        process: "Cambian la población, construcción, demanda de vivienda, servicios, actividades y presiones sobre el borde.",
-        elements: [
-          { id: "se_vivienda", name: "Vivienda y\nhogares", icon: "fa-house-chimney", desc: "Unidades habitacionales que demandan servicios, movilidad y espacios de cuidado.", connects: ["f_edificios", "s_vecinos", "se_equipamientos", "m_congestion"] },
-          { id: "se_comercio", name: "Comercio y\nabastecimiento", icon: "fa-cart-shopping", desc: "Corabastos y locales de proximidad; nodos de intercambio y abastecimiento.", connects: ["f_vias", "m_transporte", "m_estaciones", "s_conflictos"] },
-          { id: "se_equipamientos", name: "Manzanas del\nCuidado y salud", icon: "fa-building-shield", desc: "Equipamientos sociales que reducen sobrecargas en las personas cuidadoras.", connects: ["s_vecinos", "se_vivienda", "f_andenes"] },
-          { id: "se_biblioteca", name: "Biblioteca Pública\nEl Tintal", icon: "fa-book-open", desc: "Centro cultural y educativo de escala metropolitana contiguo al humedal.", connects: ["m_ciclorrutas", "s_pedagogia", "f_andenes"] },
-          { id: "se_suelo", name: "Presión de uso\ndel suelo", icon: "fa-chart-line", desc: "Valorización del suelo y tensiones entre desarrollo urbano y preservación ecológica.", connects: ["se_vivienda", "f_edificios", "f_cerramientos", "h_humedales"] }
-        ]
-      }
-    };
+    // =========================================================================
+    // RED COMPLETA UNIFICADA DE DINÁMICA URBANA (30 ELEMENTOS VIVOS EN UNA SOLA RED)
+    // =========================================================================
+    const UNIFIED_URBAN_ELEMENTS = [
+      // --- ANILLO EXTERIOR (20 nodos perimetrales) ---
+      { id: "h_lluvia", name: "Precipitación\ny lluvia", icon: "fa-cloud-showers-heavy", systemId: "hidrica", color: "#56b8d4", x: 20, y: 14, desc: "Aporte pluvial constante y eventos de lluvia extrema que recargan la cuenca.", connects: ["h_infiltra", "h_escorre", "h_desborde"] },
+      { id: "h_escorre", name: "Canales y\ndrenaje pluvial", icon: "fa-arrows-split-up-and-left", systemId: "hidrica", color: "#56b8d4", x: 32, y: 10, desc: "Canal Los Ángeles y colectores que conducen el agua superficial.", connects: ["h_lluvia", "h_humedales", "b_aves_mig"] },
+      { id: "b_aves_mig", name: "Aves\nmigratorias", icon: "fa-dove", systemId: "biotica", color: "#68d391", x: 44, y: 8, desc: "Tingua azul, playeritos y especies boreales que usan el humedal como escala.", connects: ["h_escorre", "b_flora", "b_insectos"] },
+      { id: "b_insectos", name: "Insectos y\npolinizadores", icon: "fa-bug", systemId: "biotica", color: "#68d391", x: 56, y: 8, desc: "Arañas tejedoras, abejas y libélulas que sostienen la cadena trófica.", connects: ["b_aves_mig", "b_refugio", "b_aves_res"] },
+      { id: "b_refugio", name: "Microhábitats\ny refugios", icon: "fa-shield-heart", systemId: "biotica", color: "#68d391", x: 68, y: 10, desc: "Zonas de anidación y amortiguamiento frente a las perturbaciones urbanas.", connects: ["b_insectos", "f_cerramientos", "b_aves_res"] },
+      { id: "f_cerramientos", name: "Cerramientos\ny barreras", icon: "fa-border-all", systemId: "fisico", color: "#b8c0c8", x: 80, y: 14, desc: "Muros y rejas perimetrales que fragmentan el hábitat pero protegen el cuerpo hídrico.", connects: ["b_refugio", "f_edificios", "f_impermeable"] },
+      { id: "f_edificios", name: "Edificaciones\nresidenciales", icon: "fa-city", systemId: "fisico", color: "#b8c0c8", x: 90, y: 24, desc: "Conjuntos habitacionales y manzanas construidas sobre el borde del humedal.", connects: ["f_cerramientos", "f_vias", "f_impermeable"] },
+      { id: "f_vias", name: "Malla vial\narterial", icon: "fa-road", systemId: "fisico", color: "#b8c0c8", x: 94, y: 38, desc: "Av. Ciudad de Cali y Av. Américas; soporte de transporte y fuente de vibración.", connects: ["f_edificios", "f_andenes", "m_transporte", "f_impermeable"] },
+      { id: "f_andenes", name: "Andenes y\nespacio público", icon: "fa-person-walking", systemId: "fisico", color: "#b8c0c8", x: 94, y: 54, desc: "Superficies peatonales, plazoletas y senderos perimetrales.", connects: ["f_vias", "m_transporte", "m_peatonal"] },
+      { id: "m_transporte", name: "Transporte masivo\ny buses", icon: "fa-bus", systemId: "movilidad", color: "#f1cf5b", x: 90, y: 68, desc: "Flota de TransMilenio y SITP que conecta Kennedy con el resto de Bogotá.", connects: ["f_andenes", "m_estaciones", "m_peatonal"] },
+      { id: "m_estaciones", name: "Estaciones y\nportales", icon: "fa-door-open", systemId: "movilidad", color: "#f1cf5b", x: 82, y: 80, desc: "Portal Américas y Estación Banderas; puntos neurálgicos de transbordo masivo.", connects: ["m_transporte", "m_congestion", "m_peatonal"] },
+      { id: "m_congestion", name: "Tiempos de viaje\ny congestión", icon: "fa-clock", systemId: "movilidad", color: "#f1cf5b", x: 70, y: 88, desc: "Fricción espacial y demoras que impactan la calidad de vida y el tiempo de cuidado.", connects: ["m_estaciones", "m_ciclorrutas", "s_vecinos"] },
+      { id: "m_ciclorrutas", name: "Ciclorrutas y\nbicicletas", icon: "fa-bicycle", systemId: "movilidad", color: "#f1cf5b", x: 58, y: 91, desc: "Red de ciclorrutas de El Tintal y Av. Cali para viajes limpios de proximidad.", connects: ["m_congestion", "s_conflictos", "m_peatonal", "se_biblioteca"] },
+      { id: "s_conflictos", name: "Conflictos y\nacuerdos", icon: "fa-comments", systemId: "social", color: "#ee9a4b", x: 46, y: 91, desc: "Mecanismos de resolución comunitaria frente a presiones de uso y residuos.", connects: ["m_ciclorrutas", "s_org_amb", "s_cuidado"] },
+      { id: "s_org_amb", name: "Organizaciones\nambientales", icon: "fa-hands-holding-circle", systemId: "social", color: "#ee9a4b", x: 34, y: 88, desc: "Colectivos ecológicos de base que defienden la conservación de los humedales.", connects: ["s_conflictos", "s_pedagogia", "s_cuidado"] },
+      { id: "s_pedagogia", name: "Actividades\npedagógicas", icon: "fa-graduation-cap", systemId: "social", color: "#ee9a4b", x: 22, y: 80, desc: "Recorridos escolares, avistamiento de aves y talleres de ciencia ciudadana.", connects: ["s_org_amb", "se_comercio", "se_biblioteca", "s_cuidado"] },
+      { id: "se_comercio", name: "Comercio y\nabastecimiento", icon: "fa-cart-shopping", systemId: "socioeconomico", color: "#e58d62", x: 12, y: 70, desc: "Corabastos y locales de proximidad; nodos de intercambio y abastecimiento.", connects: ["s_pedagogia", "se_biblioteca", "se_vivienda"] },
+      { id: "se_biblioteca", name: "Biblioteca Pública\nEl Tintal", icon: "fa-book-open", systemId: "socioeconomico", color: "#e58d62", x: 7, y: 56, desc: "Centro cultural y educativo de escala metropolitana contiguo al humedal.", connects: ["se_comercio", "se_suelo", "se_equipamientos", "m_ciclorrutas"] },
+      { id: "se_suelo", name: "Presión de uso\ndel suelo", icon: "fa-chart-line", systemId: "socioeconomico", color: "#e58d62", x: 7, y: 40, desc: "Valorización del suelo y tensiones entre desarrollo urbano y preservación ecológica.", connects: ["se_biblioteca", "h_desborde", "se_equipamientos"] },
+      { id: "h_desborde", name: "Desbordes y\nsedimentos", icon: "fa-triangle-exclamation", systemId: "hidrica", color: "#56b8d4", x: 11, y: 26, desc: "Riesgo de inundación y acumulación de sedimentos en eventos de lluvia.", connects: ["se_suelo", "h_lluvia", "h_infiltra"] },
+
+      // --- ANILLO INTERIOR / CORAZÓN SISTÉMICO (10 nodos conectores centrales) ---
+      { id: "h_humedales", name: "Humedales y\nlagunas", icon: "fa-droplet", systemId: "hidrica", color: "#56b8d4", x: 35, y: 30, desc: "Espejos de agua de El Burro y La Vaca; retención hidráulica y biodiversidad.", connects: ["h_infiltra", "b_flora", "h_escorre", "s_org_amb"] },
+      { id: "b_flora", name: "Cobertura vegetal\ny flora", icon: "fa-leaf", systemId: "biotica", color: "#68d391", x: 50, y: 24, desc: "Juncos, eneas, vegetación de ronda y árboles que estabilizan los taludes.", connects: ["h_humedales", "b_aves_res", "b_aves_mig", "b_insectos"] },
+      { id: "b_aves_res", name: "Aves residentes\ny fauna", icon: "fa-crow", systemId: "biotica", color: "#68d391", x: 65, y: 30, desc: "Monjitas bogotanas, mirlas y fauna local con ciclos continuos en el ecosistema.", connects: ["b_flora", "f_impermeable", "b_refugio", "b_insectos"] },
+      { id: "f_impermeable", name: "Superficies\nimpermeables", icon: "fa-layer-group", systemId: "fisico", color: "#b8c0c8", x: 74, y: 44, desc: "Asfalto y losas de concreto que impiden la infiltración pluvial.", connects: ["b_aves_res", "m_peatonal", "f_vias", "f_edificios", "f_cerramientos"] },
+      { id: "m_peatonal", name: "Flujos y viajes\npeatonales", icon: "fa-person-walking-arrow-right", systemId: "movilidad", color: "#f1cf5b", x: 70, y: 62, desc: "Caminatas cotidianas de residentes hacia estaciones, colegios y comercio.", connects: ["f_impermeable", "s_vecinos", "m_transporte", "m_estaciones", "f_andenes"] },
+      { id: "s_vecinos", name: "Habitantes y\nvecinos", icon: "fa-people-roof", systemId: "social", color: "#ee9a4b", x: 58, y: 71, desc: "Comunidades de los barrios circundantes que habitan y recorren el sector.", connects: ["m_peatonal", "s_cuidado", "se_vivienda", "m_congestion"] },
+      { id: "s_cuidado", name: "Cuidado y\nvoluntariado", icon: "fa-hand-holding-heart", systemId: "social", color: "#ee9a4b", x: 46, y: 72, desc: "Jornadas de siembra comunitaria, limpieza de canales y monitoreo biológico.", connects: ["s_vecinos", "se_vivienda", "s_org_amb", "s_conflictos", "s_pedagogia"] },
+      { id: "se_vivienda", name: "Vivienda y\nhogares", icon: "fa-house-chimney", systemId: "socioeconomico", color: "#e58d62", x: 32, y: 64, desc: "Unidades habitacionales que demandan servicios, movilidad y espacios de cuidado.", connects: ["s_cuidado", "se_equipamientos", "se_comercio", "s_vecinos"] },
+      { id: "se_equipamientos", name: "Manzanas del\nCuidado", icon: "fa-building-shield", systemId: "socioeconomico", color: "#e58d62", x: 26, y: 48, desc: "Equipamientos sociales que reducen sobrecargas en las personas cuidadoras.", connects: ["se_vivienda", "h_infiltra", "se_biblioteca", "se_suelo"] },
+      { id: "h_infiltra", name: "Infiltración\ny suelo húmedo", icon: "fa-water", systemId: "hidrica", color: "#56b8d4", x: 27, y: 36, desc: "Capacidad de absorción natural del suelo y amortiguamiento freático.", connects: ["se_equipamientos", "h_humedales", "h_lluvia", "h_desborde"] }
+    ];
 
     function renderFullSubsystemsNetworkInPlace(target) {
       if (!target) return;
       target.dataset.revealState = "complete";
       target.classList.add("network-active");
 
-      const allElements = [];
       const elementPosMap = {};
-      const systemsList = Object.values(URBAN_DYNAMICS_DATA);
+      UNIFIED_URBAN_ELEMENTS.forEach((el) => { elementPosMap[el.id] = el; });
 
-      // Posiciones de los 6 centros de subsistema y sus 5 elementos
-      systemsList.forEach((sys) => {
-        const cx = sys.cx;
-        const cy = sys.cy;
-        const n = sys.elements.length;
-        const rx = 10.0;
-        const ry = 11.5;
-
-        sys.elements.forEach((el, i) => {
-          const angle = (i / n) * Math.PI * 2 - Math.PI / 2;
-          const x = Math.max(5, Math.min(95, cx + Math.cos(angle) * rx));
-          const y = Math.max(6, Math.min(94, cy + Math.sin(angle) * ry));
-          const nodeData = { ...el, x, y, systemId: sys.id, systemName: sys.name, color: sys.color, parentCx: cx, parentCy: cy };
-          allElements.push(nodeData);
-          elementPosMap[el.id] = nodeData;
-        });
-      });
-
-      // 1. Líneas intra-sistema (malla interna por sistema)
-      let intraLinesHtml = "";
-      systemsList.forEach((sys) => {
-        const sysElems = sys.elements.map((e) => elementPosMap[e.id]);
-        for (let i = 0; i < sysElems.length; i++) {
-          for (let j = i + 1; j < sysElems.length; j++) {
-            const a = sysElems[i], b = sysElems[j];
-            intraLinesHtml += `<line x1="${a.x.toFixed(2)}" y1="${a.y.toFixed(2)}" x2="${b.x.toFixed(2)}" y2="${b.y.toFixed(2)}" class="full-intra-link" data-sys="${sys.id}" style="--node-color:${sys.color}"/>`;
-          }
-        }
-      });
-
-      // 2. Líneas cruzadas inter-sistema con curvas y partículas de flujo animadas
-      let crossLinesHtml = "";
+      // Generar líneas de conexión unificadas y limpias entre nodos
+      let unifiedLinesHtml = "";
       const drawnPairs = new Set();
-      let flowEdgeCount = 0;
+      let flowCount = 0;
 
-      allElements.forEach((el) => {
+      UNIFIED_URBAN_ELEMENTS.forEach((el) => {
         (el.connects || []).forEach((targetId) => {
           const targetEl = elementPosMap[targetId];
           if (!targetEl) return;
@@ -2792,44 +2707,30 @@ const renderTerritoryNetwork = () => {
           if (drawnPairs.has(pairKey)) return;
           drawnPairs.add(pairKey);
 
-          if (el.systemId !== targetEl.systemId) {
-            const pathId = `flow-cross-${flowEdgeCount++}`;
-            const mx = (el.x + targetEl.x) / 2 + (Math.sin(flowEdgeCount) * 4);
-            const my = (el.y + targetEl.y) / 2 + (Math.cos(flowEdgeCount) * 4);
-            const d = `M ${el.x.toFixed(2)} ${el.y.toFixed(2)} Q ${mx.toFixed(2)} ${my.toFixed(2)} ${targetEl.x.toFixed(2)} ${targetEl.y.toFixed(2)}`;
-            const dur = (5.5 + (flowEdgeCount % 4) * 1.2).toFixed(2);
+          const pathId = `unified-flow-${flowCount++}`;
+          const d = `M ${el.x.toFixed(2)} ${el.y.toFixed(2)} L ${targetEl.x.toFixed(2)} ${targetEl.y.toFixed(2)}`;
+          const dur = (4.5 + (flowCount % 5) * 0.8).toFixed(2);
 
-            crossLinesHtml += `
-              <g class="full-cross-group" data-source="${el.id}" data-target="${targetId}">
-                <path id="${pathId}" class="full-cross-flow-path" d="${d}"/>
-                <path class="full-cross-link" d="${d}"/>
-                <circle class="full-cross-pulse" r="0.5" fill="#ffd166">
-                  <animateMotion dur="${dur}s" repeatCount="indefinite" rotate="auto">
-                    <mpath href="#${pathId}"/>
-                  </animateMotion>
-                </circle>
-              </g>
-            `;
-          }
+          unifiedLinesHtml += `
+            <g class="full-unified-group" data-source="${el.id}" data-target="${targetId}">
+              <path id="${pathId}" class="full-unified-flow-path" d="${d}"/>
+              <line x1="${el.x.toFixed(2)}" y1="${el.y.toFixed(2)}" x2="${targetEl.x.toFixed(2)}" y2="${targetEl.y.toFixed(2)}" class="full-unified-link"/>
+              <circle class="full-unified-pulse" r="0.45" fill="#ffd166">
+                <animateMotion dur="${dur}s" repeatCount="indefinite" rotate="auto">
+                  <mpath href="#${pathId}"/>
+                </animateMotion>
+              </circle>
+            </g>
+          `;
         });
       });
 
-      // 3. Badges de centros de sistema
-      const clusterLabelsHtml = systemsList.map((sys) => {
-        return `
-          <div class="full-cluster-badge" style="left:${sys.cx}%;top:${sys.cy}%;--sys-color:${sys.color};">
-            <i class="fa-solid ${sys.icon}"></i>
-            <span>${sys.name.toUpperCase()}</span>
-          </div>
-        `;
-      }).join("");
-
-      // 4. Render de los 30 nodos dinámicos (NEGRO FLAT + CONTORNO NEÓN)
-      const nodesHtml = allElements.map((el, index) => {
+      // Render de los 30 nodos dinámicos unificados
+      const nodesHtml = UNIFIED_URBAN_ELEMENTS.map((el, index) => {
         const formattedName = el.name.replace(/\n/g, "<br>");
         return `
           <button type="button" class="full-dynamic-node" data-elem-id="${el.id}" data-sys-id="${el.systemId}"
-            style="--node-x:${el.x.toFixed(2)}%;--node-y:${el.y.toFixed(2)}%;--node-color:${el.color};--node-delay:${index * 15}ms;"
+            style="--node-x:${el.x.toFixed(2)}%;--node-y:${el.y.toFixed(2)}%;--node-color:${el.color};--node-delay:${index * 18}ms;--node-index:${index};"
             title="${el.name.replace(/\n/g, ' ')}">
             <i class="fa-solid ${el.icon} full-node-icon"></i>
             <span class="full-node-label">${formattedName}</span>
@@ -2837,7 +2738,7 @@ const renderTerritoryNetwork = () => {
         `;
       }).join("");
 
-      // 5. Botón central para regresar a 6 sistemas (ÚNICO BOTÓN)
+      // Botón central para regresar a 6 sistemas (único botón en el centro)
       const centerToggleHtml = `
         <button type="button" id="mapNetworkCenterHub" class="map-network-center-hub is-expanded-mode" aria-label="Volver a los 6 subsistemas">
           <i class="fa-solid fa-arrow-rotate-left"></i>
@@ -2845,12 +2746,12 @@ const renderTerritoryNetwork = () => {
         </button>
       `;
 
-      // 6. Header pill superior
+      // Header pill superior
       const headerPillHtml = `
         <div class="full-dynamics-top-bar">
           <span class="full-dynamics-dot"></span>
           <strong>RED COMPLETA DE DINÁMICA URBANA</strong>
-          <span class="full-dynamics-sub">· 30 elementos vivos y flujos en interacción</span>
+          <span class="full-dynamics-sub">· 30 elementos vivos en interacción</span>
         </div>
       `;
 
@@ -2858,21 +2759,28 @@ const renderTerritoryNetwork = () => {
         <div class="map-network-stage systems-network is-full-dynamics-active">
           ${headerPillHtml}
           <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-            <g class="full-intra-layer">${intraLinesHtml}</g>
-            <g class="full-cross-layer">${crossLinesHtml}</g>
+            <g class="full-unified-layer">${unifiedLinesHtml}</g>
           </svg>
-          ${clusterLabelsHtml}
           ${nodesHtml}
           ${centerToggleHtml}
           <div id="fullDynamicsDetailCard" class="full-dynamics-detail-card" style="display:none;"></div>
         </div>
       `;
 
-      // Listener directo para volver a 6 sistemas
+      const stageEl = target.querySelector(".map-network-stage");
+      requestAnimationFrame(() => {
+        stageEl?.classList.add("is-bloomed");
+      });
+
+      // Listener para volver a 6 sistemas
       const backToOverview = (e) => {
         e.stopPropagation();
         try { DINAMICA_SOUND.play("hidrica"); } catch (err) {}
-        renderMapNetwork("systems", true, target, false);
+        stageEl?.classList.remove("is-bloomed");
+        stageEl?.classList.add("is-stage-imploding");
+        window.setTimeout(() => {
+          renderMapNetwork("systems", true, target, false);
+        }, 320);
       };
       target.querySelector("#mapNetworkCenterHub")?.addEventListener("click", backToOverview);
 
@@ -2892,7 +2800,7 @@ const renderTerritoryNetwork = () => {
             n.classList.toggle("is-connected", isConnected);
           });
 
-          target.querySelectorAll(".full-cross-group").forEach((group) => {
+          target.querySelectorAll(".full-unified-group").forEach((group) => {
             const s = group.dataset.source, t = group.dataset.target;
             const matches = s === elemId || t === elemId;
             group.classList.toggle("is-highlighted", matches);
@@ -2909,7 +2817,7 @@ const renderTerritoryNetwork = () => {
             card.innerHTML = `
               <div class="full-detail-head">
                 <div class="full-detail-sys-badge" style="background:${nodeData.color}22;color:${nodeData.color};border:1px solid ${nodeData.color}55;">
-                  <i class="fa-solid ${URBAN_DYNAMICS_DATA[nodeData.systemId]?.icon || 'fa-circle'}"></i> ${nodeData.systemName}
+                  <i class="fa-solid ${nodeData.icon}"></i> ${nodeData.systemId.toUpperCase()}
                 </div>
                 <button type="button" class="full-detail-close" aria-label="Cerrar">&times;</button>
               </div>
@@ -2925,7 +2833,7 @@ const renderTerritoryNetwork = () => {
               closeEv.stopPropagation();
               card.style.display = "none";
               target.querySelectorAll(".full-dynamic-node").forEach((n) => n.classList.remove("is-active", "is-connected"));
-              target.querySelectorAll(".full-cross-group").forEach((g) => g.classList.remove("is-highlighted"));
+              target.querySelectorAll(".full-unified-group").forEach((g) => g.classList.remove("is-highlighted"));
             });
 
             card.querySelectorAll(".full-detail-tag").forEach((tag) => {
@@ -3360,7 +3268,15 @@ const renderTerritoryNetwork = () => {
       const openFullNetwork = (event) => {
         event?.stopPropagation();
         try { DINAMICA_SOUND.play("expansion"); } catch (err) {}
-        renderFullSubsystemsNetworkInPlace(target);
+        const stage = target.querySelector(".map-network-stage");
+        if (stage) {
+          stage.classList.add("is-stage-exploding");
+          window.setTimeout(() => {
+            renderFullSubsystemsNetworkInPlace(target);
+          }, 320);
+        } else {
+          renderFullSubsystemsNetworkInPlace(target);
+        }
       };
       window.__openFullSubsystemsNetwork = openFullNetwork;
       target.querySelector("#mapNetworkCenterHub")?.addEventListener("click", openFullNetwork);
