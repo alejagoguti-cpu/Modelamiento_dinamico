@@ -1663,3 +1663,30 @@ footer span { color: var(--teal); }
   font-weight: 700;
   color: var(--text);
 }
+
+
+/* ---------- Capa de mirlas sobre la simulación de SUMO ---------- */
+.birds-legend {
+  margin-top: 14px;
+  padding: 12px 14px;
+  border: 1px solid rgba(176,107,255,0.28);
+  border-radius: 10px;
+  background: rgba(12,14,20,0.62);
+}
+.birds-legend h4 {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  margin: 0 0 6px; font-size: 13px; color: #e8edf3;
+}
+.birds-legend h4 i.fa-dove { color: #b06bff; }
+.birds-legend .birds-legend-note {
+  margin: 0 0 8px; font-size: 11.5px; line-height: 1.5; color: #aab4c0;
+}
+.birds-legend-row {
+  display: flex; flex-wrap: wrap; gap: 6px 18px;
+  font-size: 11.5px; color: #cfd6dc;
+}
+.birds-legend-row span { display: inline-flex; align-items: center; gap: 6px; }
+.birds-legend-row b { color: #e8edf3; }
+.birds-dot {
+  width: 9px; height: 9px; border-radius: 50%; display: inline-block; flex-shrink: 0;
+}

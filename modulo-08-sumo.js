@@ -908,7 +908,7 @@
     }
     fetch("./assets/kennedy_trees.json?v=rotatewhole-v1")
       .then((r) => { if (!r.ok) throw new Error("no se pudo cargar kennedy_trees.json"); return r.json(); })
-      .then((data) => { treeData = data; if (netData) drawNetwork(netCanvas.parentElement.clientWidth, netCanvas.parentElement.clientHeight); })
+      .then((data) => { treeData = data; buildBirdTrees(); if (netData) drawNetwork(netCanvas.parentElement.clientWidth, netCanvas.parentElement.clientHeight); })
       .catch((err) => console.warn("No se pudo cargar el arbolado de Kennedy:", err));
 
     // ---------- cargar la red (JSON ya recortado) ----------
@@ -1013,6 +1013,243 @@
       });
     }
 
+
+    // ================= MIRLAS (Turdus fuscater) =================
+    // Desplazamiento local diario desde los Cerros Orientales (oriente)
+    // hacia los humedales (occidente), buscando parches de vegetación para
+    // alimentarse y descansar. Cada mirla es un agente autónomo con
+    // posición (x,y) y velocidad (vx,vy); los árboles del Arbolado Urbano
+    // real de Kennedy son los atractores.
+    const BIRD_TREE_SPECIES = {
+      // índices de especie del propio archivo kennedy_trees.json
+      15: { key: "sauco",  name: "Saúco",  color: "#b06bff", weight: 1.00, food: true },
+      12: { key: "capuli", name: "Capulí", color: "#ff9426", weight: 0.76, food: true },
+      71: { key: "capuli", name: "Capulí", color: "#ff9426", weight: 0.76, food: true },
+      16: { key: "urapan", name: "Urapán", color: "#25d0a0", weight: 0.52, food: false },
+    };
+    const BIRD_VISION = 150;      // px — campo visual limitado
+    const BIRD_ARRIVE = 15;       // px — "muy cerca" del árbol
+    const BIRD_WIND = 30;         // px/s² — impulso global oriente → occidente
+    const BIRD_MAX_SPEED = 82;    // px/s — vuelo de crucero
+    const BIRD_REST_SPEED = 11;   // px/s — revoloteo mientras se alimenta o descansa
+    const BIRD_COUNT = 24;
+    let birdTreesWorld = null;    // muestra de árboles atractores (coordenadas del mapa)
+    let birdTreesScreen = [];     // los mismos, ya proyectados a pantalla
+    let birds = [];
+    let birdsOn = true;
+    let birdLastTs = 0;
+
+    // Se toma una muestra repartida de cada especie: el arbolado real trae
+    // más de 12.000 árboles de estas tres, y buscar en todos cada cuadro
+    // sería innecesariamente caro.
+    function buildBirdTrees() {
+      if (!treeData || !treeData.trees) return;
+      const porEspecie = { sauco: [], capuli: [], urapan: [] };
+      treeData.trees.forEach((t) => {
+        const meta = BIRD_TREE_SPECIES[t[2]];
+        if (meta) porEspecie[meta.key].push([t[0], t[1], meta]);
+      });
+      const TOPE = { sauco: 260, capuli: 200, urapan: 220 };
+      birdTreesWorld = [];
+      Object.keys(porEspecie).forEach((k) => {
+        const lista = porEspecie[k];
+        const paso = Math.max(1, Math.floor(lista.length / TOPE[k]));
+        for (let i = 0; i < lista.length; i += paso) birdTreesWorld.push(lista[i]);
+      });
+    }
+
+    // Misma proyección que usa el dibujo del arbolado (distorsión de las 4
+    // esquinas + escala de la capa), para que las mirlas vean los árboles
+    // exactamente donde se ven en pantalla.
+    function updateBirdTreesScreen(w, h) {
+      if (!birdTreesWorld || !treeWorldBBox) { birdTreesScreen = []; return; }
+      const { TL, TR, BL, BR } = getTreeCorners(w, h);
+      const bb = treeWorldBBox;
+      const wSpan = bb.maxX - bb.minX || 1, hSpan = bb.maxY - bb.minY || 1;
+      const cx = (TL.x + TR.x + BL.x + BR.x) / 4, cy = (TL.y + TR.y + BL.y + BR.y) / 4;
+      birdTreesScreen = [];
+      birdTreesWorld.forEach((t) => {
+        const [sx0, sy0] = treeDistortedScreen(t[0], t[1], bb, TL, TR, BL, BR, wSpan, hSpan);
+        const x = (sx0 - cx) * treeLayerScale + cx;
+        const y = (sy0 - cy) * treeLayerScale + cy;
+        if (x < -60 || x > w + 60 || y < -60 || y > h + 60) return;
+        birdTreesScreen.push({ x, y, meta: t[2] });
+      });
+    }
+
+    const clampNum = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+
+    // Punto al azar sobre uno de los humedales calcados.
+    function wetlandPoint(w, h) {
+      const poly = TRACED_WETLANDS[Math.floor(Math.random() * TRACED_WETLANDS.length)] || [];
+      const p = poly[Math.floor(Math.random() * poly.length)] || [CENTER_X, CENTER_Y];
+      const [sx, sy] = toScreen(p[0], p[1]);
+      return { x: clampNum(sx + (Math.random() - 0.5) * 30, 12, w - 12),
+               y: clampNum(sy + (Math.random() - 0.5) * 30, 12, h - 12) };
+    }
+
+    // origen: "noroeste" = arriba a la izquierda · "humedal" = ya posada en
+    // un humedal · "oriente" = entra por el borde oriental (así el flujo
+    // diario se mantiene cuando una mirla sale por el occidente).
+    function makeBird(w, h, origen) {
+      let x, y;
+      if (origen === "humedal") { const p = wetlandPoint(w, h); x = p.x; y = p.y; }
+      else if (origen === "noroeste") { x = w * (0.03 + Math.random() * 0.14); y = h * (0.03 + Math.random() * 0.20); }
+      else { x = w + 12 + Math.random() * 50; y = h * (0.08 + Math.random() * 0.82); }
+      return { x, y,
+               vx: -(30 + Math.random() * 30), vy: (Math.random() - 0.5) * 14,
+               rest: 0, cooldown: 0, restMeta: null, phase: Math.random() * 6.28, origen };
+    }
+    function initBirds(w, h) {
+      birds = [];
+      // como se pidió: unas salen desde arriba a la izquierda y otras ya
+      // están en los humedales
+      for (let i = 0; i < BIRD_COUNT; i++) birds.push(makeBird(w, h, i % 2 ? "humedal" : "noroeste"));
+    }
+
+    function updateBirds(dtRaw, w, h) {
+      const dt = Math.min(0.05, Math.max(0, dtRaw));
+      if (!dt) return;
+      birds.forEach((b) => {
+        b.phase += dt * 9;
+        if (b.rest > 0) {
+          // Muy cerca de un árbol: desacelera notablemente y revolotea al
+          // azar 2 o 3 segundos (se alimenta o descansa).
+          b.rest -= dt;
+          b.vx += (Math.random() - 0.5) * 150 * dt;
+          b.vy += (Math.random() - 0.5) * 150 * dt;
+          const freno = Math.pow(0.02, dt);
+          b.vx *= freno; b.vy *= freno;
+          const sp = Math.hypot(b.vx, b.vy);
+          if (sp > BIRD_REST_SPEED) { b.vx = (b.vx / sp) * BIRD_REST_SPEED; b.vy = (b.vy / sp) * BIRD_REST_SPEED; }
+        } else {
+          if (b.cooldown > 0) b.cooldown -= dt;
+          // impulso global (viento/flujo) de oriente a occidente
+          b.vx -= BIRD_WIND * dt;
+          b.vy += Math.sin(b.phase * 0.28) * 8 * dt;
+          // campo visual limitado: se queda con el árbol más atractivo
+          // (más peso ecológico y más cerca)
+          let mejor = null, mejorPuntaje = 0, mejorDist = 0;
+          for (let i = 0; i < birdTreesScreen.length; i++) {
+            const t = birdTreesScreen[i];
+            const dx = t.x - b.x, dy = t.y - b.y;
+            const d2 = dx * dx + dy * dy;
+            if (d2 > BIRD_VISION * BIRD_VISION) continue;
+            const d = Math.sqrt(d2) || 0.001;
+            const puntaje = t.meta.weight / d;
+            if (puntaje > mejorPuntaje) { mejorPuntaje = puntaje; mejor = t; mejorDist = d; }
+          }
+          if (mejor && b.cooldown <= 0) {
+            const ux = (mejor.x - b.x) / mejorDist, uy = (mejor.y - b.y) / mejorDist;
+            const esSauco = mejor.meta.key === "sauco";
+            const fuerza = mejor.meta.weight * (esSauco ? 230 : 130);
+            b.vx += ux * fuerza * dt;
+            b.vy += uy * fuerza * dt;
+            if (esSauco) {
+              // su alimento favorito: cambia bruscamente el rumbo
+              const sp = Math.hypot(b.vx, b.vy) || 1;
+              b.vx = b.vx * 0.7 + ux * sp * 0.3;
+              b.vy = b.vy * 0.7 + uy * sp * 0.3;
+            }
+            if (mejorDist < BIRD_ARRIVE) {
+              b.rest = 2 + Math.random();     // 2 a 3 segundos
+              b.restMeta = mejor.meta;
+              b.cooldown = 7;                 // no se vuelve a pegar al mismo árbol enseguida
+            }
+          }
+          const sp = Math.hypot(b.vx, b.vy);
+          if (sp > BIRD_MAX_SPEED) { b.vx = (b.vx / sp) * BIRD_MAX_SPEED; b.vy = (b.vy / sp) * BIRD_MAX_SPEED; }
+        }
+        b.x += b.vx * dt;
+        b.y += b.vy * dt;
+        if (b.y < 8) { b.y = 8; b.vy = Math.abs(b.vy); }
+        if (b.y > h - 8) { b.y = h - 8; b.vy = -Math.abs(b.vy); }
+        if (b.x > w + 70) { b.x = w + 70; b.vx = -Math.abs(b.vx); }
+        // salió por el occidente: vuelve a entrar por el oriente (Cerros)
+        if (b.x < -40) Object.assign(b, makeBird(w, h, "oriente"));
+      });
+    }
+
+    function drawBirds(w, h) {
+      // árboles atractores, con el color de su especie
+      birdTreesScreen.forEach((t) => {
+        vehCtx.beginPath();
+        vehCtx.fillStyle = t.meta.color;
+        vehCtx.globalAlpha = t.meta.key === "urapan" ? 0.45 : 0.78;
+        vehCtx.arc(t.x, t.y, t.meta.key === "sauco" ? 2.6 : 2.1, 0, Math.PI * 2);
+        vehCtx.fill();
+      });
+      vehCtx.globalAlpha = 1;
+      birds.forEach((b) => {
+        const ang = Math.atan2(b.vy, b.vx);
+        vehCtx.save();
+        vehCtx.translate(b.x, b.y);
+        if (b.rest > 0 && b.restMeta) {
+          // halo del color del árbol donde está posada / alimentándose
+          vehCtx.beginPath();
+          vehCtx.strokeStyle = b.restMeta.color;
+          vehCtx.globalAlpha = 0.75;
+          vehCtx.lineWidth = 1.2;
+          vehCtx.arc(0, 0, 7.5, 0, Math.PI * 2);
+          vehCtx.stroke();
+          vehCtx.globalAlpha = 1;
+        }
+        vehCtx.rotate(ang);
+        // La mirla es un ave oscura y el mapa es negro: se le pone un halo
+        // suave y un contorno claro para que se distinga del fondo.
+        const halo = vehCtx.createRadialGradient(0, 0, 0, 0, 0, 9);
+        halo.addColorStop(0, "rgba(226,232,240,0.30)");
+        halo.addColorStop(1, "rgba(226,232,240,0)");
+        vehCtx.fillStyle = halo;
+        vehCtx.beginPath();
+        vehCtx.arc(0, 0, 9, 0, Math.PI * 2);
+        vehCtx.fill();
+        // aleteo: más rápido en vuelo, casi quieto mientras descansa
+        const bat = Math.sin(b.phase) * (b.rest > 0 ? 1.1 : 3.4);
+        vehCtx.strokeStyle = "#eef2f7";
+        vehCtx.lineWidth = 1.7;
+        vehCtx.lineCap = "round";
+        vehCtx.beginPath();
+        vehCtx.moveTo(-4.6, -bat);
+        vehCtx.lineTo(0.4, 0);
+        vehCtx.lineTo(-4.6, bat);
+        vehCtx.stroke();
+        vehCtx.fillStyle = "#20222c";
+        vehCtx.strokeStyle = "rgba(238,242,247,0.9)";
+        vehCtx.lineWidth = 0.9;
+        vehCtx.beginPath();
+        vehCtx.ellipse(0, 0, 3.6, 2, 0, 0, Math.PI * 2);
+        vehCtx.fill();
+        vehCtx.stroke();
+        // pico naranja, como la mirla real
+        vehCtx.fillStyle = "#f2a93b";
+        vehCtx.beginPath();
+        vehCtx.arc(3.7, 0, 1.1, 0, Math.PI * 2);
+        vehCtx.fill();
+        vehCtx.restore();
+      });
+    }
+
+    // Ventana de solo lectura al estado de las mirlas (no cambia nada del
+    // comportamiento): sirve para verificar las reglas desde afuera.
+    window.SUMO_BIRDS_STATE = () => birds.map((b) => ({
+      x: b.x, y: b.y, vx: b.vx, vy: b.vy, rest: b.rest,
+      origen: b.origen, arbol: b.restMeta ? b.restMeta.key : null,
+    }));
+    window.SUMO_BIRDS_TREES = () => ({ total: birdTreesScreen.length,
+      porEspecie: birdTreesScreen.reduce((acc, t) => { acc[t.meta.key] = (acc[t.meta.key] || 0) + 1; return acc; }, {}) });
+
+    function birdsFrame(w, h) {
+      if (!birdsOn) { birdLastTs = 0; return; }
+      const now = (typeof performance !== "undefined" ? performance.now() : Date.now());
+      const dt = birdLastTs ? (now - birdLastTs) / 1000 : 0;
+      birdLastTs = now;
+      updateBirdTreesScreen(w, h);
+      if (!birds.length) initBirds(w, h);
+      if (playing) updateBirds(dt, w, h);
+      drawBirds(w, h);
+    }
+
     function drawVehiclesAt(t) {
       const w = vehCanvas.parentElement.clientWidth, h = vehCanvas.parentElement.clientHeight;
       vehCtx.clearRect(0, 0, w, h);
@@ -1045,6 +1282,7 @@
         vehCtx.globalAlpha = 1;
         vehCtx.restore();
       });
+      birdsFrame(w, h);
       timeLabel.textContent = `${fmtTime(t)} / ${slider.max ? fmtTime(Number(slider.max)) : "00:00"}`;
       if (!isScrubbing) slider.value = String(Math.round(t));
     }
@@ -1083,6 +1321,12 @@
       if (!ambienceAudio) return;
       ambienceAudio.muted = !ambienceAudio.muted;
       muteBtn.innerHTML = ambienceAudio.muted ? '<i class="fa-solid fa-volume-xmark"></i>' : '<i class="fa-solid fa-volume-high"></i>';
+    });
+    const birdToggle = document.getElementById("sumoBirdToggle");
+    birdToggle?.addEventListener("change", () => {
+      birdsOn = birdToggle.checked;
+      birdLastTs = 0;
+      drawVehiclesAt(playhead);
     });
     const noiseToggle = document.getElementById("sumoNoiseToggle");
     noiseToggle?.addEventListener("change", () => {

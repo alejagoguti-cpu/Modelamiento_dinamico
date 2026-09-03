@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="stylesheet" href="modulo-08.css?v=remove-controls-v33">
+<link rel="stylesheet" href="modulo-08.css?v=mirlas-v34">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="site-theme.css?v=20260823">
   <script src="modulo-08-data.js"></script>
@@ -214,6 +214,21 @@
           <p id="sumoWhatifStatus" class="whatif-disclaimer">Sin cambios — mostrando el modelo base.</p>
         </div>
 
+        <!-- Capa de mirlas (Turdus fuscater): agentes que cruzan de oriente
+             a occidente buscando árboles donde alimentarse y descansar. -->
+        <div class="birds-legend">
+          <h4>
+            <i class="fa-solid fa-dove"></i> Mirlas (<i>Turdus fuscater</i>) y árboles atractores
+            <label class="noise-toggle-label"><input type="checkbox" id="sumoBirdToggle" checked> Mostrar capa</label>
+          </h4>
+          <p class="birds-legend-note">Cada mirla es un agente con posición y velocidad. Un impulso global las empuja de oriente a occidente, desde los Cerros hacia los humedales. Ven en un radio de 150&nbsp;px: si detectan un árbol lo buscan, y al llegar a menos de 15&nbsp;px frenan y revolotean 2–3 segundos antes de seguir. Unas entran por arriba a la izquierda y otras arrancan posadas en los humedales.</p>
+          <div class="birds-legend-row">
+            <span><i class="birds-dot" style="background:#b06bff"></i> <b>Saúco</b> · alimento favorito (bayas): cambian bruscamente el rumbo</span>
+            <span><i class="birds-dot" style="background:#ff9426"></i> <b>Capulí</b> · atractor intermedio por frutos andinos</span>
+            <span><i class="birds-dot" style="background:#25d0a0"></i> <b>Urapán</b> · sin frutos comestibles: solo percha para descansar</span>
+          </div>
+        </div>
+
         <!-- Leyenda de la capa de ruido: el color cambia con el nivel de
              tráfico/ruido, pero la transparencia es SIEMPRE la misma. -->
         <div class="noise-scale-legend">
@@ -260,6 +275,6 @@
 </div>
 
 <script src="modulo-08.js"></script>
-<script src="modulo-08-sumo.js?v=remove-controls-v33"></script>
+<script src="modulo-08-sumo.js?v=mirlas-v34"></script>
 </body>
 </html>
