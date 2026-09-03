@@ -2586,6 +2586,72 @@
     // conectados a su propio subsistema, más algunas conexiones cruzadas
     // por palabras en común (por ejemplo "vías" en físico y "rutas de
     // transporte" en movilidad).
+    // Igual que showCombinedNetworkModal, pero en vez de abrir un modal
+    // aparte, reemplaza el contenido DENTRO del mismo panel donde estaban
+    // las 6 bolas — así da la sensación de que las 6 se convierten en 30.
+    function renderFullSubsystemsNetworkInPlace(target) {
+      document.getElementById("showFullSubsystemsNetworkBtn")?.setAttribute("hidden", "");
+      const W = 900, H = 900, cx = W / 2, cy = H / 2, clusterR = 300;
+      const clusters = territorySystems.map((sys, i) => {
+        const angle = (i / territorySystems.length) * Math.PI * 2 - Math.PI / 2;
+        return { ...sys, cx: cx + clusterR * Math.cos(angle), cy: cy + clusterR * Math.sin(angle) };
+      });
+      let svgParts = [];
+      let nodeIndex = 0;
+      const allDynamicNodes = [];
+      clusters.forEach((cl) => {
+        const items = cl.dynamics || cl.components;
+        const satR = 92;
+        const nodesHere = items.map((label, i) => {
+          const angle = (i / items.length) * Math.PI * 2 - Math.PI / 2;
+          return { label, x: cl.cx + satR * Math.cos(angle), y: cl.cy + satR * Math.sin(angle), color: cl.color, sysId: cl.id, originX: cl.cx, originY: cl.cy };
+        });
+        for (let i = 0; i < nodesHere.length; i++) {
+          for (let j = i + 1; j < nodesHere.length; j++) {
+            svgParts.push(`<line x1="${nodesHere[i].x}" y1="${nodesHere[i].y}" x2="${nodesHere[j].x}" y2="${nodesHere[j].y}" class="combined-sat-line" style="--node-color:${cl.color}"/>`);
+          }
+        }
+        allDynamicNodes.push(...nodesHere);
+      });
+      const KEYWORDS = [
+        ["desplazamiento", "accesos", "rutas", "recorridos"],
+        ["escorrentía", "infiltración", "agua", "sedimentación"],
+        ["vivienda", "ocupación", "uso del suelo", "construcción", "predios"],
+        ["hábitats", "colonización", "vegetación"],
+        ["conflictos", "presión", "apropiación"],
+      ];
+      const crossLines = [];
+      for (let i = 0; i < allDynamicNodes.length; i++) {
+        for (let j = i + 1; j < allDynamicNodes.length; j++) {
+          const a = allDynamicNodes[i], b = allDynamicNodes[j];
+          if (a.sysId === b.sysId) continue;
+          const shared = KEYWORDS.some((group) => group.some((k) => a.label.toLowerCase().includes(k)) && group.some((k) => b.label.toLowerCase().includes(k)));
+          if (shared) crossLines.push(`<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" class="combined-cross-line"/>`);
+        }
+      }
+      svgParts.push(...crossLines);
+      const nodeR2 = 26;
+      const dynCircles = allDynamicNodes.map((n) => {
+        const dx = (n.originX - n.x).toFixed(1), dy = (n.originY - n.y).toFixed(1);
+        return `<g class="combined-node combined-sat-node" style="--node-color:${n.color};--node-i:${nodeIndex++};--dx:${dx}px;--dy:${dy}px;transform-origin:${n.x}px ${n.y}px;">` +
+          `<circle cx="${n.x}" cy="${n.y}" r="${nodeR2}"/>` +
+          `<foreignObject x="${n.x - nodeR2 + 3}" y="${n.y - nodeR2 + 3}" width="${(nodeR2 - 3) * 2}" height="${(nodeR2 - 3) * 2}"><div xmlns="http://www.w3.org/1999/xhtml" class="combined-sat-label">${n.label}</div></foreignObject>` +
+          `</g>`;
+      }).join("");
+      target.innerHTML = `<div class="inplace-full-network">
+        <button type="button" id="backToSixSystemsBtn" class="back-to-six-btn"><i class="fa-solid fa-arrow-left"></i> Volver a los 6 subsistemas</button>
+        <svg viewBox="0 0 ${W} ${H}" class="combined-network-svg">
+          <g class="combined-lines">${svgParts.join("")}</g>
+          <g class="combined-nodes">${dynCircles}</g>
+        </svg>
+      </div>`;
+      requestAnimationFrame(() => target.querySelector(".inplace-full-network")?.classList.add("exploded"));
+      target.querySelector("#backToSixSystemsBtn")?.addEventListener("click", (event) => {
+        event.stopPropagation();
+        showPlainNetwork("systems", directSubsystemsBtn);
+      });
+    }
+
     function showCombinedNetworkModal() {
       const overlay = document.createElement("div");
       overlay.className = "combined-network-overlay";
@@ -3062,13 +3128,13 @@
       if (hideAllSystemBubbles) requestAnimationFrame(() => updateTextBoxes());
       const openFullNetwork = (event) => {
         event?.stopPropagation();
-        // Las 6 bolas explotan y desaparecen primero; cuando terminan,
-        // aparece la red completa de relaciones con todos los subsistemas.
+        // Las 6 bolas explotan y desaparecen primero; cuando terminan, se
+        // reemplaza el contenido de este mismo panel por las 30 dinámicas
+        // (ya no se abre un modal aparte).
         const stageEl = target.querySelector(".map-network-stage");
         stageEl?.classList.add("center-hub-exploding");
         window.setTimeout(() => {
-          showCombinedNetworkModal();
-          window.setTimeout(() => stageEl?.classList.remove("center-hub-exploding"), 400);
+          renderFullSubsystemsNetworkInPlace(target);
         }, 560);
       };
       window.__openFullSubsystemsNetwork = openFullNetwork; // usado por el botón fijo abajo a la izquierda
