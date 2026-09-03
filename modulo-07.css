@@ -5882,6 +5882,56 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 .kennedy-anchor-left { transform: translate(0%, -50%); }
 .kennedy-anchor-right { transform: translate(-100%, -50%); }
 @media (max-width: 760px) { .kennedy-info-box { width: 138px; padding: 6px 7px; } }
+
+/* Botón "Propósito" dentro de la caja. La caja tiene pointer-events:none,
+   así que el botón vuelve a activarlos solo para él. */
+.kennedy-info-box .kennedy-purpose-btn {
+  pointer-events: auto; cursor: pointer;
+  margin-top: 6px; display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 7px; border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--node-color, #fff) 70%, transparent);
+  background: color-mix(in srgb, var(--node-color, #fff) 18%, rgba(4,6,8,.9));
+  color: #f2f6f9; font-size: 6.5px; font-weight: 800;
+  text-transform: uppercase; letter-spacing: .3px; line-height: 1;
+}
+.kennedy-info-box .kennedy-purpose-btn:hover {
+  background: color-mix(in srgb, var(--node-color, #fff) 34%, rgba(4,6,8,.9));
+}
+.kennedy-info-box .kennedy-purpose-btn i { font-size: 6.5px; color: var(--node-color, #fff); }
+
+/* Popup del propósito: pequeño y justo al lado de su caja (hermano de la
+   caja, corrido el ancho de la caja hacia el lado en que ella crece). */
+.kennedy-info-box, .kennedy-purpose-pop { --kbox-w: 188px; }
+.kennedy-purpose-pop {
+  position: absolute; z-index: 8; width: 176px;
+  pointer-events: auto;
+  background: rgba(4,6,8,0.96);
+  border: 1px solid color-mix(in srgb, var(--node-color, #fff) 65%, transparent);
+  border-radius: 6px; padding: 8px 9px 9px;
+  box-shadow: 0 6px 18px rgba(0,0,0,.55);
+}
+.kennedy-purpose-pop.kennedy-anchor-left { transform: translate(calc(var(--kbox-w) + 10px), -50%); }
+.kennedy-purpose-pop.kennedy-anchor-right { transform: translate(calc(-100% - var(--kbox-w) - 10px), -50%); }
+.kennedy-purpose-pop .kennedy-purpose-close {
+  position: absolute; top: 4px; right: 4px; cursor: pointer;
+  width: 14px; height: 14px; display: grid; place-items: center;
+  border: 0; border-radius: 4px; background: transparent; color: #9fb0bd; font-size: 8px;
+}
+.kennedy-purpose-pop .kennedy-purpose-close:hover { color: #fff; background: rgba(255,255,255,.12); }
+.kennedy-purpose-pop .kennedy-purpose-label {
+  margin: 0 0 2px; color: var(--node-color, #fff);
+  font-size: 6.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .3px;
+}
+.kennedy-purpose-pop .kennedy-purpose-main {
+  margin: 0 0 6px; color: #f2f6f9; font-size: 8px; font-weight: 700; line-height: 1.25;
+}
+.kennedy-purpose-pop .kennedy-purpose-text {
+  margin: 0; color: #cfd6dc; font-size: 7px; line-height: 1.4;
+}
+@media (max-width: 760px) {
+  .kennedy-info-box, .kennedy-purpose-pop { --kbox-w: 138px; }
+  .kennedy-purpose-pop { width: 146px; }
+}
 .kennedy-info-box .kennedy-title-line {
   color: var(--node-color, #fff); font-size: 8.5px; font-weight: 800; line-height: 1.2;
   margin: 0 0 5px; text-transform: uppercase; letter-spacing: .2px;

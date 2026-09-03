@@ -1903,7 +1903,9 @@
           { pos: [-74.15701979872972, 4.6395972438178115], icon: "fa-road", color: "#b8c0c8", label: "Av. Ciudad de Cali",
             route: { bubbleSide: "top", boxSide: "left", offset: -6, type: "hvh", bendNear: "box" } },
         ],
-        sections: [{ system: "Modelo Determinista ⟶ Sistema Socio-Ecológico", icon: "fa-gears", submodelos: [
+        purpose: { epstein: "Explicar cómo funciona el sistema",
+                   para: "Entender cómo la construcción de calles y el ruido de los carros dañan el agua y asustan a las aves." },
+        sections: [{ icon: "fa-gears", submodelos: [
           "Desborde y Control de Crecientes.", "Transferencia de Carga y Vibración.",
           "Infiltración de Escorrentía Calzada-Borde.", "Propagación de Ruido y Presión Sonora." ] }] },
       // Submodelos redactados por mí (no me diste el texto exacto, solo me
@@ -1923,7 +1925,9 @@
           { pos: [-74.1589146050763, 4.63015596902525], icon: "fa-cart-shopping", color: "#e58d62", label: "Corabastos", hideIcon: true,
             route: { bubbleSide: "left", boxSide: "right", offset: 6, type: "hvh", bendNear: "box" } },
         ],
-        sections: [{ system: "Modelo Determinista ⟶ Sistema Ecológico", icon: "fa-gears", submodelos: [
+        purpose: { epstein: "Probar la resistencia ante emergencias",
+                   para: "Ver si la naturaleza puede autolimpiarse cuando hay picos extremos de contaminación y basura." },
+        sections: [{ icon: "fa-gears", submodelos: [
           "Ciclo de compostaje y estabilización de residuos orgánicos.", "Dinámica de reducción de carga contaminante antes del vertimiento.",
           "Flujo de recolección y separación en la fuente.", "Ciclo de control de vectores y olores." ] }] },
       // Corrida un poco a la izquierda, como pediste.
@@ -1936,7 +1940,9 @@
           { pos: [-74.1589146050763, 4.63015596902525], icon: "fa-cart-shopping", color: "#e58d62", label: "Corabastos",
             route: { bubbleSide: "bottom", boxSide: "left", offset: -4, type: "hvh", bendNear: "box" } },
         ],
-        sections: [{ system: "Modelo Social ⟶ Sistema Social", icon: "fa-people-group", submodelos: [
+        purpose: { epstein: "Ver los límites de tolerancia",
+                   para: "Calcular cuántos camiones de carga pesada pueden entrar a la vez antes de bloquear la movilidad de la zona." },
+        sections: [{ icon: "fa-people-group", submodelos: [
           "Ciclo de generación y descomposición de materia orgánica.", "Dinámica de acumulación y congestión de transporte pesado.",
           "Flujo diario de abastecimiento y distribución.", "Ciclo de producción de carga contaminante hídrica." ] }] },
       // Nueva coordenada. La línea sale de ARRIBA de la caja (no de un
@@ -1948,7 +1954,9 @@
           { pos: [-74.14541150109216, 4.631221483859855], icon: "fa-bus", color: "#f1cf5b", label: "Estación Banderas",
             route: { bubbleSide: "top", boxSide: "top", offset: -4, type: "vhv", bendNear: "box" } },
         ],
-        sections: [{ system: "Modelo Determinista ⟶ Sistema Social", icon: "fa-route", submodelos: [
+        purpose: { epstein: "Sugerir mejoras y eficiencias",
+                   para: "Encontrar la mejor organización de buses y andenes para que los pasajeros no pierdan tiempo en filas." },
+        sections: [{ icon: "fa-route", submodelos: [
           "Afluencia y transferencia de pasajeros.", "Capacidad y saturación de andenes.",
           "Frecuencia y tiempos de la flota." ] }] },
     ];
@@ -3120,7 +3128,7 @@
       }).join("");
       const sectionsHtml = box.sections.map((section) => {
         const items = section.submodelos.map((s) => `<li><i class="fa-solid ${section.icon} kennedy-item-icon" aria-hidden="true"></i>${s}</li>`).join("");
-        return `<div class="kennedy-section"><p class="kennedy-mainline">${section.system} <span class="kennedy-arrow">⟹</span> Sub-modelos:</p><ul>${items}</ul></div>`;
+        return `<div class="kennedy-section"><p class="kennedy-mainline">Sub-modelos:</p><ul>${items}</ul></div>`;
       }).join("");
       // La caja "crece" hacia el lado que sí cabe en la pantalla (a la
       // derecha del nodo si está en la mitad izquierda del mapa, a la
@@ -3128,7 +3136,15 @@
       // recorte contra el borde del contenedor.
       const anchorClass = boxPos[0] > 50 ? "kennedy-anchor-right" : "kennedy-anchor-left";
       const modelIconsHtml = `<div class="kennedy-model-icons"><i class="fa-regular fa-circle-dot"></i><i class="fa-regular fa-compass"></i><i class="fa-regular fa-hourglass-half"></i></div>`;
-      return `<div class="kennedy-info-box ${anchorClass}" id="kennedy-box-${i}" style="left:${boxPos[0]}%;top:${boxPos[1]}%;--node-color:${box.color}"><i class="kennedy-watermark-icon fa-solid ${box.icon}" aria-hidden="true"></i>${modelIconsHtml}<h4 class="kennedy-title-line">${box.title}</h4>${sectionsHtml}</div>${nodesHtml}`;
+      const purposeBtnHtml = box.purpose
+        ? `<button type="button" class="kennedy-purpose-btn" data-purpose-index="${i}"><i class="fa-solid fa-bullseye" aria-hidden="true"></i> Propósito</button>`
+        : "";
+      // El popup NO va dentro de la caja: la caja tiene overflow:hidden y lo
+      // recortaría. Va como hermano, en la misma coordenada, corrido al lado.
+      const purposePopHtml = box.purpose
+        ? `<div class="kennedy-purpose-pop ${anchorClass}" id="kennedy-purpose-${i}" style="left:${boxPos[0]}%;top:${boxPos[1]}%;--node-color:${box.color}" hidden><button type="button" class="kennedy-purpose-close" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button><p class="kennedy-purpose-label">Propósito de Epstein</p><p class="kennedy-purpose-main">${box.purpose.epstein}</p><p class="kennedy-purpose-label">Para qué sirve</p><p class="kennedy-purpose-text">${box.purpose.para}</p></div>`
+        : "";
+      return `<div class="kennedy-info-box ${anchorClass}" id="kennedy-box-${i}" style="left:${boxPos[0]}%;top:${boxPos[1]}%;--node-color:${box.color}"><i class="kennedy-watermark-icon fa-solid ${box.icon}" aria-hidden="true"></i>${modelIconsHtml}<h4 class="kennedy-title-line">${box.title}</h4>${sectionsHtml}${purposeBtnHtml}</div>${purposePopHtml}${nodesHtml}`;
     }).join("");
     const updateTextBoxes = () => {
       const stage = subsystemBubbles?.querySelector(".systems-network svg .map-network-flows");
@@ -3398,6 +3414,21 @@
         }
       }));
       if (hideAllSystemBubbles) {
+        // Botón "Propósito" de cada caja: abre su popup al lado y cierra el
+        // de las demás cajas (solo uno abierto a la vez).
+        const closeAllPurposePops = () => target.querySelectorAll(".kennedy-purpose-pop").forEach((pop) => { pop.hidden = true; });
+        target.querySelectorAll(".kennedy-purpose-btn").forEach((button) => button.addEventListener("click", (event) => {
+          event.stopPropagation();
+          const pop = target.querySelector(`#kennedy-purpose-${button.dataset.purposeIndex}`);
+          if (!pop) return;
+          const wasOpen = !pop.hidden;
+          closeAllPurposePops();
+          pop.hidden = wasOpen;
+        }));
+        target.querySelectorAll(".kennedy-purpose-close").forEach((button) => button.addEventListener("click", (event) => {
+          event.stopPropagation();
+          button.closest(".kennedy-purpose-pop").hidden = true;
+        }));
         // Los nodos de lugar tienen su propio click porque el listener general
         // de la red los deja pasar. El audio vuelve a dispararse aquí, al
         // igual que en las burbujas de subsistemas y submodelos.
