@@ -5,23 +5,43 @@
    red SVG (#networkViz), una capa con TODOS los elementos cargados desde
    la base de datos (m2_elementos) y sus conexiones (m2_conexiones).
 
+   Cada elemento se dibuja con el mismo lenguaje visual de los nodos
+   originales de la red (ver ODS_NODES / drawNodes en modulo-02.js):
+   círculo con anillo de color + glow, ícono flat y el nombre como texto
+   adentro del círculo. Sin toolbar de categorías (se retiró a pedido).
+
    Las conexiones son una INFERENCIA (no un dato oficial del POT): se
    calcularon por cercanía geográfica aproximada (localidad + variación
    determinística dentro de ella), no por coordenadas catastrales reales.
-   El toolbar de categorías permite mostrar/ocultar cada categoría.
    ========================================================== */
 (function () {
   const SUPABASE_URL = "https://mcitahjecaqsshzeamnj.supabase.co";
   const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1jaXRhaGplY2Fxc3NoemVhbW5qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg0NDYwNjQsImV4cCI6MjEwNDAyMjA2NH0.xx63t4EZcdqZqf4onHsU1EcIFdCQS04VigGgyDbLxHQ";
   const SVG_NS = "http://www.w3.org/2000/svg";
+  const XHTML_NS = "http://www.w3.org/1999/xhtml";
   const RECT = { x0: 130, y0: 120, x1: 2370, y1: 1680 };
+  const NODE_R = 17;
+
+  // Ícono flat (Font Awesome, ya cargado en la página) por categoría.
+  const CATEGORY_ICONS = {
+    sistema_hidrico: "fa-water",
+    humedales: "fa-leaf",
+    vias_arteriales: "fa-road",
+    ciclorutas: "fa-bicycle",
+    educacion: "fa-graduation-cap",
+    salud: "fa-hospital",
+    cultura: "fa-masks-theater",
+    deporte: "fa-futbol",
+    comercio: "fa-shop",
+    cuidado: "fa-hand-holding-heart",
+    parques: "fa-tree",
+  };
 
   const state = {
     categorias: [],
     elementos: [],
     conexiones: [],
     byId: new Map(),
-    activeCats: new Set(),
   };
 
   async function fetchTable(name) {
@@ -44,8 +64,24 @@
     return { x: RECT.x0 + tx * (RECT.x1 - RECT.x0), y: RECT.y1 - ty * (RECT.y1 - RECT.y0) };
   }
 
-  function countFor(catId) {
-    return state.elementos.filter((e) => e.categoria_id === catId).length;
+  function buildDefs(svg, colors) {
+    const defs = document.createElementNS(SVG_NS, "defs");
+    defs.setAttribute("id", "m2re-defs");
+    colors.forEach((color) => {
+      const filter = document.createElementNS(SVG_NS, "filter");
+      filter.setAttribute("id", "m2re-glow-" + color.replace("#", ""));
+      filter.setAttribute("x", "-60%"); filter.setAttribute("y", "-60%");
+      filter.setAttribute("width", "220%"); filter.setAttribute("height", "220%");
+      const blur = document.createElementNS(SVG_NS, "feGaussianBlur");
+      blur.setAttribute("stdDeviation", "2"); blur.setAttribute("result", "blur");
+      const merge = document.createElementNS(SVG_NS, "feMerge");
+      ["blur", "SourceGraphic"].forEach((ref) => {
+        const m = document.createElementNS(SVG_NS, "feMergeNode"); m.setAttribute("in", ref); merge.appendChild(m);
+      });
+      filter.appendChild(blur); filter.appendChild(merge);
+      defs.appendChild(filter);
+    });
+    svg.appendChild(defs);
   }
 
   function buildLayer() {
@@ -54,6 +90,11 @@
     const parent = svg.querySelector("#zoom-pan-group") || svg;
     const old = svg.querySelector("#m2-red-externa");
     if (old) old.remove();
+    const oldDefs = svg.querySelector("#m2re-defs");
+    if (oldDefs) oldDefs.remove();
+
+    const catColor = new Map(state.categorias.map((c) => [c.id, c.color]));
+    buildDefs(svg, [...new Set(state.categorias.map((c) => c.color))]);
 
     const layer = document.createElementNS(SVG_NS, "g");
     layer.setAttribute("id", "m2-red-externa");
@@ -74,46 +115,56 @@
       line.setAttribute("x1", a._x); line.setAttribute("y1", a._y);
       line.setAttribute("x2", b._x); line.setAttribute("y2", b._y);
       line.setAttribute("class", "m2re-edge");
-      line.dataset.catA = a.categoria_id; line.dataset.catB = b.categoria_id;
       edgesG.appendChild(line);
     });
 
-    const catColor = new Map(state.categorias.map((c) => [c.id, c.color]));
-    const catLayers = new Map();
-    state.categorias.forEach((cat) => {
-      const g = document.createElementNS(SVG_NS, "g");
-      g.setAttribute("class", "m2re-cat-layer");
-      g.dataset.cat = cat.id;
-      layer.appendChild(g);
-      catLayers.set(cat.id, g);
-    });
+    const nodesG = document.createElementNS(SVG_NS, "g");
+    nodesG.setAttribute("class", "m2re-nodes");
+    layer.appendChild(nodesG);
+
     state.elementos.forEach((e) => {
-      const g = catLayers.get(e.categoria_id);
-      if (!g) return;
+      const color = catColor.get(e.categoria_id) || "#8891a5";
+      const icon = CATEGORY_ICONS[e.categoria_id] || "fa-circle";
+
+      const group = document.createElementNS(SVG_NS, "g");
+      group.setAttribute("class", "m2re-node-group");
+      group.dataset.id = e.id;
+
       const circle = document.createElementNS(SVG_NS, "circle");
-      circle.setAttribute("cx", e._x); circle.setAttribute("cy", e._y);
-      circle.setAttribute("r", 5);
-      circle.setAttribute("class", "m2re-node");
-      circle.setAttribute("fill", catColor.get(e.categoria_id) || "#ccc");
-      circle.dataset.id = e.id;
-      circle.addEventListener("click", (ev) => {
+      circle.setAttribute("class", "m2re-node-ring");
+      circle.setAttribute("cx", e._x); circle.setAttribute("cy", e._y); circle.setAttribute("r", NODE_R);
+      circle.setAttribute("fill", "#0a0a0a");
+      circle.setAttribute("stroke", color);
+      circle.setAttribute("stroke-width", 1.6);
+      circle.setAttribute("filter", "url(#m2re-glow-" + color.replace("#", "") + ")");
+
+      const size = NODE_R * 1.9;
+      const fo = document.createElementNS(SVG_NS, "foreignObject");
+      fo.setAttribute("x", e._x - size / 2); fo.setAttribute("y", e._y - size / 2);
+      fo.setAttribute("width", size); fo.setAttribute("height", size);
+
+      const wrapper = document.createElementNS(XHTML_NS, "div");
+      wrapper.setAttribute("style", "width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;pointer-events:none;padding:1px;overflow:hidden;");
+
+      const iconEl = document.createElementNS(XHTML_NS, "i");
+      iconEl.setAttribute("class", "fa-solid " + icon);
+      iconEl.setAttribute("style", "color:" + color + "; font-size:6px;");
+
+      const nameEl = document.createElementNS(XHTML_NS, "div");
+      nameEl.setAttribute("style", "font-size:3.4px; padding:0 1px; font-weight:700; color:#f2f3f6; line-height:1.05; text-align:center; font-family:'Inter',sans-serif; word-break:break-word;");
+      nameEl.textContent = e.nombre;
+
+      wrapper.appendChild(iconEl); wrapper.appendChild(nameEl);
+      fo.appendChild(wrapper);
+      group.appendChild(circle); group.appendChild(fo);
+
+      group.addEventListener("click", (ev) => {
         ev.stopPropagation();
         showTooltip(ev.clientX, ev.clientY, e);
       });
-      g.appendChild(circle);
+
+      nodesG.appendChild(group);
       e._node = circle;
-    });
-
-    applyVisibility();
-  }
-
-  function applyVisibility() {
-    document.querySelectorAll(".m2re-cat-layer").forEach((g) => {
-      g.style.display = state.activeCats.has(g.dataset.cat) ? "" : "none";
-    });
-    document.querySelectorAll(".m2re-edge").forEach((line) => {
-      const visible = state.activeCats.has(line.dataset.catA) && state.activeCats.has(line.dataset.catB);
-      line.style.display = visible ? "" : "none";
     });
   }
 
@@ -143,84 +194,8 @@
     return String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   }
 
-  function pulseNode(elemento) {
-    if (!elemento || !elemento._node) return;
-    elemento._node.classList.remove("pulse");
-    void elemento._node.getBoundingClientRect();
-    elemento._node.classList.add("pulse");
-  }
-
-  let openDropdown = null;
-  function closeDropdown() {
-    if (openDropdown) { openDropdown.remove(); openDropdown = null; }
-  }
-
-  function toggleDropdown(cat, anchorEl) {
-    if (openDropdown && openDropdown.dataset.cat === cat.id) { closeDropdown(); return; }
-    closeDropdown();
-    const items = state.elementos.filter((e) => e.categoria_id === cat.id)
-      .sort((a, b) => a.nombre.localeCompare(b.nombre, "es"));
-    const dd = document.createElement("div");
-    dd.className = "m2cat-dropdown";
-    dd.dataset.cat = cat.id;
-    items.forEach((e) => {
-      const it = document.createElement("div");
-      it.className = "m2cat-dropdown-item";
-      it.textContent = e.nombre + " — " + e.localidad;
-      it.addEventListener("click", (ev) => {
-        ev.stopPropagation();
-        if (!state.activeCats.has(cat.id)) { state.activeCats.add(cat.id); applyVisibility(); syncButtonState(cat.id); }
-        pulseNode(e);
-        const svgRect = document.getElementById("networkViz")?.getBoundingClientRect();
-        if (svgRect && e._node) showTooltip(svgRect.left + svgRect.width / 2, svgRect.top + 20, e);
-        closeDropdown();
-      });
-      dd.appendChild(it);
-    });
-    document.body.appendChild(dd);
-    const r = anchorEl.getBoundingClientRect();
-    dd.style.position = "fixed";
-    dd.style.left = r.left + "px";
-    dd.style.top = (r.bottom + 6) + "px";
-    openDropdown = dd;
-  }
-
-  function syncButtonState(catId) {
-    const btn = document.querySelector('.m2cat-btn[data-cat="' + catId + '"]');
-    if (btn) btn.classList.toggle("active", state.activeCats.has(catId));
-  }
-
-  function toggleCategory(catId) {
-    if (state.activeCats.has(catId)) state.activeCats.delete(catId); else state.activeCats.add(catId);
-    applyVisibility();
-    syncButtonState(catId);
-  }
-
-  function buildToolbar() {
-    const bar = document.getElementById("m2CategoriasToolbar");
-    if (!bar) return;
-    bar.innerHTML = "";
-    state.categorias.forEach((cat) => {
-      const btn = document.createElement("div");
-      btn.className = "m2cat-btn active";
-      btn.dataset.cat = cat.id;
-      btn.style.setProperty("--cat-color", cat.color);
-      const dot = document.createElement("span"); dot.className = "m2cat-dot";
-      const label = document.createElement("span"); label.className = "m2cat-label"; label.textContent = cat.nombre;
-      const count = document.createElement("span"); count.className = "m2cat-count"; count.textContent = countFor(cat.id);
-      const chevron = document.createElement("span"); chevron.className = "m2cat-chevron"; chevron.textContent = "▾";
-      btn.append(dot, label, count, chevron);
-      chevron.addEventListener("click", (ev) => { ev.stopPropagation(); toggleDropdown(cat, btn); });
-      btn.addEventListener("click", () => toggleCategory(cat.id));
-      bar.appendChild(btn);
-    });
-    document.addEventListener("click", closeDropdown);
-  }
-
   async function init() {
-    const bar = document.getElementById("m2CategoriasToolbar");
     const status = document.getElementById("m2CategoriasStatus");
-    if (!bar) return;
     if (status) status.textContent = "Cargando base de datos…";
     try {
       const [categorias, elementos, conexiones] = await Promise.all([
@@ -230,9 +205,7 @@
       state.elementos = elementos;
       state.conexiones = conexiones;
       state.byId = new Map(elementos.map((e) => [e.id, e]));
-      state.activeCats = new Set(categorias.map((c) => c.id));
       buildLayer();
-      buildToolbar();
       if (status) status.textContent = elementos.length + " elementos · " + conexiones.length + " conexiones (inferidas por cercanía de localidad)";
     } catch (err) {
       if (status) status.textContent = "No se pudo cargar la base de datos.";
