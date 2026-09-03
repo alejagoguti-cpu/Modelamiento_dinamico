@@ -1903,7 +1903,9 @@
           { pos: [-74.15701979872972, 4.6395972438178115], icon: "fa-road", color: "#b8c0c8", label: "Av. Ciudad de Cali",
             route: { bubbleSide: "top", boxSide: "left", offset: -6, type: "hvh", bendNear: "box" } },
         ],
-        sections: [{ system: "Modelo Determinista ⟶ Sistema Socio-Ecológico", icon: "fa-gears", submodelos: [
+        purpose: { epstein: "Explicar cómo funciona el sistema",
+                   para: "Entender cómo la construcción de calles y el ruido de los carros dañan el agua y asustan a las aves." },
+        sections: [{ icon: "fa-gears", submodelos: [
           "Desborde y Control de Crecientes.", "Transferencia de Carga y Vibración.",
           "Infiltración de Escorrentía Calzada-Borde.", "Propagación de Ruido y Presión Sonora." ] }] },
       // Submodelos redactados por mí (no me diste el texto exacto, solo me
@@ -1923,7 +1925,9 @@
           { pos: [-74.1589146050763, 4.63015596902525], icon: "fa-cart-shopping", color: "#e58d62", label: "Corabastos", hideIcon: true,
             route: { bubbleSide: "left", boxSide: "right", offset: 6, type: "hvh", bendNear: "box" } },
         ],
-        sections: [{ system: "Modelo Determinista ⟶ Sistema Ecológico", icon: "fa-gears", submodelos: [
+        purpose: { epstein: "Probar la resistencia ante emergencias",
+                   para: "Ver si la naturaleza puede autolimpiarse cuando hay picos extremos de contaminación y basura." },
+        sections: [{ icon: "fa-gears", submodelos: [
           "Ciclo de compostaje y estabilización de residuos orgánicos.", "Dinámica de reducción de carga contaminante antes del vertimiento.",
           "Flujo de recolección y separación en la fuente.", "Ciclo de control de vectores y olores." ] }] },
       // Corrida un poco a la izquierda, como pediste.
@@ -1936,7 +1940,9 @@
           { pos: [-74.1589146050763, 4.63015596902525], icon: "fa-cart-shopping", color: "#e58d62", label: "Corabastos",
             route: { bubbleSide: "bottom", boxSide: "left", offset: -4, type: "hvh", bendNear: "box" } },
         ],
-        sections: [{ system: "Modelo Social ⟶ Sistema Social", icon: "fa-people-group", submodelos: [
+        purpose: { epstein: "Ver los límites de tolerancia",
+                   para: "Calcular cuántos camiones de carga pesada pueden entrar a la vez antes de bloquear la movilidad de la zona." },
+        sections: [{ icon: "fa-people-group", submodelos: [
           "Ciclo de generación y descomposición de materia orgánica.", "Dinámica de acumulación y congestión de transporte pesado.",
           "Flujo diario de abastecimiento y distribución.", "Ciclo de producción de carga contaminante hídrica." ] }] },
       // Nueva coordenada. La línea sale de ARRIBA de la caja (no de un
@@ -1948,45 +1954,69 @@
           { pos: [-74.14541150109216, 4.631221483859855], icon: "fa-bus", color: "#f1cf5b", label: "Estación Banderas",
             route: { bubbleSide: "top", boxSide: "top", offset: -4, type: "vhv", bendNear: "box" } },
         ],
-        sections: [{ system: "Modelo Determinista ⟶ Sistema Social", icon: "fa-route", submodelos: [
+        purpose: { epstein: "Sugerir mejoras y eficiencias",
+                   para: "Encontrar la mejor organización de buses y andenes para que los pasajeros no pierdan tiempo en filas." },
+        sections: [{ icon: "fa-route", submodelos: [
           "Afluencia y transferencia de pasajeros.", "Capacidad y saturación de andenes.",
           "Frecuencia y tiempos de la flota." ] }] },
     ];
     // ---------- Sonidos ambiente por dinámica (sintetizados, sin archivos
     // externos) — cada burbuja del territorio suena distinto al tocarla:
     // el agua "corre", el pájaro "trina", el tráfico "zumba", etc. ----------
+    // =========================================================================
+    // MOTOR DE SONIDO INMERSIVO DE DINÁMICAS URBANAS (SINTETIZADOR WEBAUDIO)
+    // =========================================================================
     const DINAMICA_SOUND = (() => {
       let ctx = null, masterGain = null;
-      const getCtx = () => {
+
+      const initCtx = () => {
         if (!ctx) {
-          ctx = new (window.AudioContext || window.webkitAudioContext)();
-          // ganancia maestra baja: nada debe sobresaltar, todo suena de fondo
-          masterGain = ctx.createGain();
-          masterGain.gain.value = 0.4;
-          masterGain.connect(ctx.destination);
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          if (AudioContextClass) {
+            ctx = new AudioContextClass();
+            masterGain = ctx.createGain();
+            masterGain.gain.value = 0.75; // Volumen audible, claro y envolvente
+            masterGain.connect(ctx.destination);
+          }
         }
-        if (ctx.state === "suspended") ctx.resume();
+        if (ctx && ctx.state === "suspended") {
+          ctx.resume();
+        }
         return ctx;
       };
-      // ruido filtrado reutilizable (base de agua / ciudad / multitud)
+
+      // Desbloquear audio con el primer toque del usuario
+      if (typeof window !== "undefined") {
+        const unlock = () => {
+          initCtx();
+          window.removeEventListener("click", unlock);
+          window.removeEventListener("touchstart", unlock);
+        };
+        window.addEventListener("click", unlock, { once: true });
+        window.addEventListener("touchstart", unlock, { once: true });
+      }
+
       function noiseBuffer(c, seconds) {
         const buffer = c.createBuffer(1, c.sampleRate * seconds, c.sampleRate);
         const data = buffer.getChannelData(0);
         for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
         return buffer;
       }
-      function playFilteredNoise(c, { duration, filterFreq, filterType = "lowpass", q = 0.7, gain = 0.12, fadeIn = 0.12, fadeOut = duration, lfoRate = 0, lfoDepth = 0 }) {
+
+      function playFilteredNoise(c, { duration, filterFreq, filterType = "lowpass", q = 0.7, gain = 0.15, fadeIn = 0.08, fadeOut = duration, lfoRate = 0, lfoDepth = 0 }) {
         const src = c.createBufferSource();
         src.buffer = noiseBuffer(c, duration);
         const filter = c.createBiquadFilter();
-        filter.type = filterType; filter.frequency.value = filterFreq; filter.Q.value = q;
+        filter.type = filterType;
+        filter.frequency.value = filterFreq;
+        filter.Q.value = q;
         const g = c.createGain();
-        g.gain.setValueAtTime(0, c.currentTime);
+        g.gain.setValueAtTime(0.0001, c.currentTime);
         g.gain.linearRampToValueAtTime(gain, c.currentTime + fadeIn);
-        g.gain.linearRampToValueAtTime(0, c.currentTime + fadeOut);
-        src.connect(filter); filter.connect(g);
-        // Tremolo suave (un LFO real modulando el volumen): así el "ruido"
-        // deja de sonar plano y empieza a sentirse como agua que burbujea.
+        g.gain.linearRampToValueAtTime(0.0001, c.currentTime + fadeOut);
+        src.connect(filter);
+        filter.connect(g);
+
         if (lfoRate > 0 && lfoDepth > 0) {
           const lfo = c.createOscillator();
           lfo.frequency.value = lfoRate;
@@ -1997,88 +2027,108 @@
           lfo.start();
           lfo.stop(c.currentTime + duration + 0.05);
         }
+
         g.connect(masterGain);
-        src.start(); src.stop(c.currentTime + duration + 0.05);
+        src.start();
+        src.stop(c.currentTime + duration + 0.05);
       }
-      function playTone(c, { freq, to, duration, type = "sine", gain = 0.1, delay = 0, attack }) {
+
+      function playTone(c, { freq, to, duration, type = "sine", gain = 0.15, delay = 0, attack = 0.02 }) {
         const osc = c.createOscillator();
-        osc.type = type; osc.frequency.setValueAtTime(freq, c.currentTime + delay);
-        if (to) osc.frequency.exponentialRampToValueAtTime(to, c.currentTime + delay + duration);
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, c.currentTime + delay);
+        if (to) osc.frequency.exponentialRampToValueAtTime(Math.max(20, to), c.currentTime + delay + duration);
         const g = c.createGain();
-        const attackTime = attack ?? Math.min(0.09, duration / 3);
-        g.gain.setValueAtTime(0, c.currentTime + delay);
-        g.gain.linearRampToValueAtTime(gain, c.currentTime + delay + attackTime);
-        g.gain.linearRampToValueAtTime(0, c.currentTime + delay + duration);
-        osc.connect(g); g.connect(masterGain);
-        osc.start(c.currentTime + delay); osc.stop(c.currentTime + delay + duration + 0.05);
+        g.gain.setValueAtTime(0.0001, c.currentTime + delay);
+        g.gain.linearRampToValueAtTime(gain, c.currentTime + delay + attack);
+        g.gain.exponentialRampToValueAtTime(0.0001, c.currentTime + delay + duration);
+        osc.connect(g);
+        g.connect(masterGain);
+        osc.start(c.currentTime + delay);
+        osc.stop(c.currentTime + delay + duration + 0.05);
       }
+
       const players = {
-        // Dinámica hídrica: agua de verdad — varias capas de ruido filtrado
-        // (caudal grave, burbujeo medio, chispeo agudo) con un tremolo
-        // lento en cada una para que se sienta que fluye, más gotitas
-        // sueltas de agua esparcidas; dura varios segundos, sin prisa.
-        // Dinámica hídrica: un pequeño sonido de río, nada más — una sola
-        // capa de agua corriendo, simple y corta.
+        // 1. Dinámica hídrica: flujo de agua y gotas cristalinas de lluvia
         hidrica: (c) => {
-          // Lluvia leve: ruido fino, irregular y corto; no es un río ni una melodía.
-          const dur = 3.1;
-          playFilteredNoise(c, { duration: dur, filterFreq: 4200, filterType: "highpass", q: 0.35, gain: 0.018, fadeIn: 0.55, fadeOut: dur, lfoRate: 0.62, lfoDepth: 0.28 });
-          playFilteredNoise(c, { duration: dur * 0.72, filterFreq: 1700, filterType: "bandpass", q: 0.42, gain: 0.012, fadeIn: 0.7, fadeOut: dur * 0.72, lfoRate: 0.38, lfoDepth: 0.22 });
-          [0.34, 0.92, 1.58, 2.28].forEach((delay, i) => playTone(c, { freq: 1450 + (i % 2) * 260, to: 1050 + (i % 3) * 120, duration: 0.045, type: "sine", gain: 0.008, delay, attack: 0.008 }));
+          const dur = 2.4;
+          playFilteredNoise(c, { duration: dur, filterFreq: 1800, filterType: "bandpass", q: 0.6, gain: 0.14, fadeIn: 0.15, fadeOut: dur, lfoRate: 1.8, lfoDepth: 0.45 });
+          playFilteredNoise(c, { duration: dur * 0.8, filterFreq: 3200, filterType: "highpass", q: 0.35, gain: 0.06, fadeIn: 0.1, fadeOut: dur * 0.8 });
+          [0.05, 0.38, 0.75, 1.22, 1.65].forEach((delay, i) => {
+            playTone(c, { freq: 1200 + (i % 3) * 280, to: 800 + (i % 2) * 150, duration: 0.09, type: "sine", gain: 0.12, delay, attack: 0.008 });
+          });
         },
-        // Dinámica biótica: dos pajaritos conversando entre la vegetación —
-        // trinos con variación natural de tono y ritmo, no siempre iguales
-        // Dinámica biótica: sonido leve de pajaritos y naturaleza — solo
-        // un par de trinos suaves, nada exagerado, más un fondo muy tenue
-        // de "ambiente natural" (hoja/viento apenas perceptible).
+
+        // 2. Dinámica biótica: trinos de aves del humedal y brisa natural
         biotica: (c) => {
-          // Trinos breves y desiguales, con caída de tono para evitar el efecto de silbido humano.
-          const chirp = (delay, baseFreq, calls) => {
+          const chirp = (delay, baseFreq, count) => {
             let t = delay;
-            for (let i = 0; i < calls; i++) {
-              const f = baseFreq + Math.random() * 220;
-              const dur = 0.055 + Math.random() * 0.035;
-              playTone(c, { freq: f, to: f * 0.72, duration: dur, type: "triangle", gain: 0.026, delay: t, attack: 0.012 });
-              t += dur + 0.075 + Math.random() * 0.08;
+            for (let i = 0; i < count; i++) {
+              const f = baseFreq + (i % 2 ? 240 : -120);
+              const dur = 0.075;
+              playTone(c, { freq: f, to: f * 0.85, duration: dur, type: "triangle", gain: 0.16, delay: t, attack: 0.01 });
+              t += dur + 0.05;
             }
           };
-          chirp(0.08, 2850, 3);
-          chirp(0.92, 2200, 2);
-          playFilteredNoise(c, { duration: 1.9, filterFreq: 3600, filterType: "bandpass", q: 0.8, gain: 0.009, fadeIn: 0.4, fadeOut: 1.9 });
+          chirp(0.05, 2600, 3);
+          chirp(0.48, 3100, 2);
+          chirp(0.88, 2400, 4);
+          playFilteredNoise(c, { duration: 1.8, filterFreq: 2400, filterType: "bandpass", q: 0.7, gain: 0.05, fadeIn: 0.2, fadeOut: 1.8 });
         },
-        // Sistema físico-urbano: zumbido de ciudad lejana, muy suave y
-        // sostenido — sin bocinas ni golpes, solo un fondo urbano tenue
-        // Sistema físico-urbano: sonido de ciudad — capas de tráfico
-        // lejano y murmullo urbano, con tremolo suave, sin bocinas
+
+        // 3. Sistema físico-urbano: resonancia arquitectónica y campana urbana
         fisico: (c) => {
-          // Trancón lejano: motor ralentí + pulsos lentos de tráfico, sin bocinas.
-          const dur = 3.2;
-          playFilteredNoise(c, { duration: dur, filterFreq: 250, filterType: "lowpass", gain: 0.055, fadeIn: 0.5, fadeOut: dur, lfoRate: 0.12, lfoDepth: 0.38 });
-          [0.35, 1.15, 2.0].forEach((delay, i) => playTone(c, { freq: 58 + i * 7, to: 72 + i * 8, duration: 0.38, type: "triangle", gain: 0.022, delay, attack: 0.12 }));
-          playFilteredNoise(c, { duration: dur * 0.7, filterFreq: 620, filterType: "bandpass", q: 0.5, gain: 0.012, fadeIn: 0.7, fadeOut: dur * 0.7, lfoRate: 0.2, lfoDepth: 0.25 });
+          playTone(c, { freq: 110, duration: 1.4, type: "sine", gain: 0.18, attack: 0.08 });
+          playTone(c, { freq: 220, duration: 0.9, type: "triangle", gain: 0.12, delay: 0.04, attack: 0.04 });
+          playTone(c, { freq: 554, duration: 0.6, type: "sine", gain: 0.09, delay: 0.08, attack: 0.02 });
+          playFilteredNoise(c, { duration: 1.5, filterFreq: 400, filterType: "lowpass", gain: 0.12, fadeIn: 0.2, fadeOut: 1.5 });
         },
-        // Sistema de movilidad: motor de fondo suave, sin bocina
+
+        // 4. Sistema de movilidad: aceleración y tono armónico de tránsito
         movilidad: (c) => {
-          playTone(c, { freq: 85, duration: 1.1, type: "triangle", gain: 0.06, attack: 0.25 });
-          playFilteredNoise(c, { duration: 1.1, filterFreq: 700, filterType: "lowpass", gain: 0.04, fadeIn: 0.2, fadeOut: 1.1 });
+          playTone(c, { freq: 140, to: 320, duration: 0.85, type: "triangle", gain: 0.16, attack: 0.06 });
+          playTone(c, { freq: 587, duration: 0.45, type: "sine", gain: 0.14, delay: 0.15, attack: 0.02 });
+          playTone(c, { freq: 880, duration: 0.55, type: "sine", gain: 0.12, delay: 0.35, attack: 0.02 });
+          playFilteredNoise(c, { duration: 1.0, filterFreq: 850, filterType: "bandpass", q: 0.6, gain: 0.08, fadeIn: 0.15, fadeOut: 1.0 });
         },
-        // Sistema social-comunitario: murmullo cálido de voces (acorde suave)
+
+        // 5. Sistema social-comunitario: acorde armónico mayor brillante (comunidad)
         social: (c) => {
-          [220, 277, 330].forEach((freq, i) => playTone(c, { freq, duration: 0.8, type: "triangle", gain: 0.04, delay: i * 0.05, attack: 0.15 }));
-          playFilteredNoise(c, { duration: 0.9, filterFreq: 1400, filterType: "bandpass", q: 0.6, gain: 0.03, fadeOut: 0.9 });
+          const notes = [261.6, 329.6, 392.0, 523.2, 659.2]; // Acorde C mayor 9na
+          notes.forEach((freq, i) => {
+            playTone(c, { freq, duration: 1.2, type: "sine", gain: 0.14, delay: i * 0.07, attack: 0.03 });
+          });
         },
-        // Sistema socioeconómico y de ocupación: dos tonos suaves tipo aviso
+
+        // 6. Sistema socioeconómico: campanada marimba de intercambio comercial
         socioeconomico: (c) => {
-          playTone(c, { freq: 660, duration: 0.22, type: "sine", gain: 0.07, attack: 0.06 });
-          playTone(c, { freq: 880, duration: 0.3, type: "sine", gain: 0.07, delay: 0.18, attack: 0.06 });
+          const notes = [440, 554, 659, 880];
+          notes.forEach((freq, i) => {
+            playTone(c, { freq, duration: 0.8, type: "sine", gain: 0.15, delay: i * 0.08, attack: 0.01 });
+          });
         },
+
+        // 7. Expansión completa (cuando se presiona "Ver red completa")
+        expansion: (c) => {
+          const chord = [392, 523, 659, 784, 1046, 1318];
+          chord.forEach((freq, i) => {
+            playTone(c, { freq, duration: 1.6, type: "sine", gain: 0.15, delay: i * 0.05, attack: 0.02 });
+          });
+          playFilteredNoise(c, { duration: 1.8, filterFreq: 3000, filterType: "bandpass", q: 0.8, gain: 0.08, fadeIn: 0.1, fadeOut: 1.8 });
+        }
       };
+
       return {
         play(id) {
           try {
-            const c = getCtx();
-            (players[id] || (() => {}))(c);
-          } catch (err) { /* audio no disponible: seguimos sin sonido */ }
+            const c = initCtx();
+            if (!c) return;
+            const soundKey = (id || "hidrica").toLowerCase();
+            const player = players[soundKey] || players[soundKey.replace(/sistema-|dinámica-/g, "")] || players.hidrica;
+            player(c);
+          } catch (err) {
+            console.warn("Audio play warning:", err);
+          }
         }
       };
     })();
@@ -2702,7 +2752,7 @@
         for (let i = 0; i < sysElems.length; i++) {
           for (let j = i + 1; j < sysElems.length; j++) {
             const a = sysElems[i], b = sysElems[j];
-            intraLinesHtml += `<line x1="${a.x.toFixed(2)}%" y1="${a.y.toFixed(2)}%" x2="${b.x.toFixed(2)}%" y2="${b.y.toFixed(2)}%" class="full-intra-link" data-sys="${sys.id}" style="--node-color:${sys.color}"/>`;
+            intraLinesHtml += `<line x1="${a.x.toFixed(2)}" y1="${a.y.toFixed(2)}" x2="${b.x.toFixed(2)}" y2="${b.y.toFixed(2)}" class="full-intra-link" data-sys="${sys.id}" style="--node-color:${sys.color}"/>`;
           }
         }
       });
@@ -3120,7 +3170,7 @@
       }).join("");
       const sectionsHtml = box.sections.map((section) => {
         const items = section.submodelos.map((s) => `<li><i class="fa-solid ${section.icon} kennedy-item-icon" aria-hidden="true"></i>${s}</li>`).join("");
-        return `<div class="kennedy-section"><p class="kennedy-mainline">${section.system} <span class="kennedy-arrow">⟹</span> Sub-modelos:</p><ul>${items}</ul></div>`;
+        return `<div class="kennedy-section"><p class="kennedy-mainline">Sub-modelos:</p><ul>${items}</ul></div>`;
       }).join("");
       // La caja "crece" hacia el lado que sí cabe en la pantalla (a la
       // derecha del nodo si está en la mitad izquierda del mapa, a la
@@ -3128,7 +3178,15 @@
       // recorte contra el borde del contenedor.
       const anchorClass = boxPos[0] > 50 ? "kennedy-anchor-right" : "kennedy-anchor-left";
       const modelIconsHtml = `<div class="kennedy-model-icons"><i class="fa-regular fa-circle-dot"></i><i class="fa-regular fa-compass"></i><i class="fa-regular fa-hourglass-half"></i></div>`;
-      return `<div class="kennedy-info-box ${anchorClass}" id="kennedy-box-${i}" style="left:${boxPos[0]}%;top:${boxPos[1]}%;--node-color:${box.color}"><i class="kennedy-watermark-icon fa-solid ${box.icon}" aria-hidden="true"></i>${modelIconsHtml}<h4 class="kennedy-title-line">${box.title}</h4>${sectionsHtml}</div>${nodesHtml}`;
+      const purposeBtnHtml = box.purpose
+        ? `<button type="button" class="kennedy-purpose-btn" data-purpose-index="${i}"><i class="fa-solid fa-bullseye" aria-hidden="true"></i> Propósito</button>`
+        : "";
+      // El popup NO va dentro de la caja: la caja tiene overflow:hidden y lo
+      // recortaría. Va como hermano, en la misma coordenada, corrido al lado.
+      const purposePopHtml = box.purpose
+        ? `<div class="kennedy-purpose-pop ${anchorClass}" id="kennedy-purpose-${i}" style="left:${boxPos[0]}%;top:${boxPos[1]}%;--node-color:${box.color}" hidden><button type="button" class="kennedy-purpose-close" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button><p class="kennedy-purpose-label">Propósito de Epstein</p><p class="kennedy-purpose-main">${box.purpose.epstein}</p><p class="kennedy-purpose-label">Para qué sirve</p><p class="kennedy-purpose-text">${box.purpose.para}</p></div>`
+        : "";
+      return `<div class="kennedy-info-box ${anchorClass}" id="kennedy-box-${i}" style="left:${boxPos[0]}%;top:${boxPos[1]}%;--node-color:${box.color}"><i class="kennedy-watermark-icon fa-solid ${box.icon}" aria-hidden="true"></i>${modelIconsHtml}<h4 class="kennedy-title-line">${box.title}</h4>${sectionsHtml}${purposeBtnHtml}</div>${purposePopHtml}${nodesHtml}`;
     }).join("");
     const updateTextBoxes = () => {
       const stage = subsystemBubbles?.querySelector(".systems-network svg .map-network-flows");
@@ -3274,7 +3332,7 @@
       if (hideAllSystemBubbles) requestAnimationFrame(() => updateTextBoxes());
       const openFullNetwork = (event) => {
         event?.stopPropagation();
-        try { DINAMICA_SOUND.play("hidrica"); } catch (err) {}
+        try { DINAMICA_SOUND.play("expansion"); } catch (err) {}
         renderFullSubsystemsNetworkInPlace(target);
       };
       window.__openFullSubsystemsNetwork = openFullNetwork;
@@ -3398,6 +3456,21 @@
         }
       }));
       if (hideAllSystemBubbles) {
+        // Botón "Propósito" de cada caja: abre su popup al lado y cierra el
+        // de las demás cajas (solo uno abierto a la vez).
+        const closeAllPurposePops = () => target.querySelectorAll(".kennedy-purpose-pop").forEach((pop) => { pop.hidden = true; });
+        target.querySelectorAll(".kennedy-purpose-btn").forEach((button) => button.addEventListener("click", (event) => {
+          event.stopPropagation();
+          const pop = target.querySelector(`#kennedy-purpose-${button.dataset.purposeIndex}`);
+          if (!pop) return;
+          const wasOpen = !pop.hidden;
+          closeAllPurposePops();
+          pop.hidden = wasOpen;
+        }));
+        target.querySelectorAll(".kennedy-purpose-close").forEach((button) => button.addEventListener("click", (event) => {
+          event.stopPropagation();
+          button.closest(".kennedy-purpose-pop").hidden = true;
+        }));
         // Los nodos de lugar tienen su propio click porque el listener general
         // de la red los deja pasar. El audio vuelve a dispararse aquí, al
         // igual que en las burbujas de subsistemas y submodelos.
