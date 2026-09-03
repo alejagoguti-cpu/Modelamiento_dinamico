@@ -10,6 +10,7 @@
 <link rel="stylesheet" href="modulo-02.css?v=degree-size-compact-v3">
   <link rel="stylesheet" href="site-theme.css?v=20260823">
   <link rel="stylesheet" href="navigation-unified.css?v=20260824">
+  <link rel="stylesheet" href="modulo-02-red-externa.css?v=1">
 </head>
 <body>
 <div class="app">
@@ -117,8 +118,12 @@
             <button class="network-zoom-btn" id="networkZoomIn" type="button" title="Acercar" aria-label="Acercar">&#43;</button>
           </div>
         </div>
-        <div class="network-canvas">
-          <svg id="networkViz" viewBox="0 0 2500 1820" preserveAspectRatio="xMidYMid meet"></svg>
+        <div class="network-canvas-col">
+          <div class="m2cat-toolbar" id="m2CategoriasToolbar"></div>
+          <div class="m2cat-toolbar-status" id="m2CategoriasStatus">Cargando categorías…</div>
+          <div class="network-canvas">
+            <svg id="networkViz" viewBox="0 0 2500 1820" preserveAspectRatio="xMidYMid meet"></svg>
+          </div>
         </div>
 
         <!-- VISTA AMPLIADA: red de Humedales. Sustituye la red principal en el mismo
@@ -453,6 +458,7 @@
 </div>
 
 <script src="modulo-02.js?v=degree-size-compact-v3"></script>
+<script src="modulo-02-red-externa.js?v=1"></script>
 
 </body>
 </html>
