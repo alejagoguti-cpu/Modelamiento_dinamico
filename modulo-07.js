@@ -2133,7 +2133,29 @@
       };
     })();
 
-    const renderTerritoryNetwork = () => {
+    
+    // Event delegation indestructible para el hub central de la red completa
+    document.addEventListener("click", (e) => {
+      const hubBtn = e.target.closest("#mapNetworkCenterHub, .map-network-center-hub");
+      if (hubBtn) {
+        e.preventDefault();
+        e.stopPropagation();
+        const stageTarget = document.getElementById("territoryNetworkPlain");
+        if (!stageTarget) return;
+
+        if (hubBtn.classList.contains("is-expanded-mode")) {
+          // Volver a los 6 sistemas
+          try { DINAMICA_SOUND.play("hidrica"); } catch (err) {}
+          renderMapNetwork("systems", true, stageTarget, false);
+        } else {
+          // Abrir red completa
+          try { DINAMICA_SOUND.play("expansion"); } catch (err) {}
+          renderFullSubsystemsNetworkInPlace(stageTarget);
+        }
+      }
+    }, true);
+
+const renderTerritoryNetwork = () => {
       const view = document.getElementById("submodelsView");
       if (!view) return;
       const positions = [[12,18],[50,8],[88,18],[88,78],[50,91],[12,78]];
@@ -2815,15 +2837,11 @@
         `;
       }).join("");
 
-      // 5. Botones para regresar a 6 sistemas: uno en el centro y otro
-      // fijo abajo a la izquierda — los dos hacen exactamente lo mismo.
+      // 5. Botón central para regresar a 6 sistemas (ÚNICO BOTÓN)
       const centerToggleHtml = `
         <button type="button" id="mapNetworkCenterHub" class="map-network-center-hub is-expanded-mode" aria-label="Volver a los 6 subsistemas">
           <i class="fa-solid fa-arrow-rotate-left"></i>
           <span>Volver a<br>6 sistemas</span>
-        </button>
-        <button type="button" id="mapNetworkCornerHub" class="show-full-network-fixed-btn is-expanded-mode" aria-label="Volver a los 6 subsistemas">
-          <i class="fa-solid fa-arrow-rotate-left"></i> Volver a 6 sistemas
         </button>
       `;
 
@@ -2850,20 +2868,13 @@
         </div>
       `;
 
-      // Listener para volver a 6 sistemas: primero se anima el cierre
-      // (las 30 se encogen y desvanecen hacia su punto de origen, con un
-      // pequeño escalonado), y solo cuando termina se muestran las 6 bolas.
-      const stageForClose = target.querySelector(".map-network-stage");
+      // Listener directo para volver a 6 sistemas
       const backToOverview = (e) => {
         e.stopPropagation();
         try { DINAMICA_SOUND.play("hidrica"); } catch (err) {}
-        stageForClose?.classList.add("full-dynamics-closing");
-        window.setTimeout(() => {
-          renderMapNetwork("systems", true, target, false);
-        }, 480);
+        renderMapNetwork("systems", true, target, false);
       };
       target.querySelector("#mapNetworkCenterHub")?.addEventListener("click", backToOverview);
-      target.querySelector("#mapNetworkCornerHub")?.addEventListener("click", backToOverview);
 
       // Interactividad de los 30 nodos
       target.querySelectorAll(".full-dynamic-node").forEach((btn) => {
