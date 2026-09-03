@@ -3301,7 +3301,8 @@ const renderTerritoryNetwork = () => {
         // hizo clic, sin abrir ningún modal.
         target.querySelectorAll(".bubble-explode-satellite").forEach((n) => n.remove());
         try {
-          const items = row.dynamics || row.components;
+          const items = row.dynamics || row.components
+            || (row.parts ? row.parts.replace(/\.$/, "").split(" + ").map((s) => s.trim()) : null);
           if (items && items.length) {
             const stageRect = target.getBoundingClientRect();
             const btnRect = button.getBoundingClientRect();
@@ -3311,8 +3312,8 @@ const renderTerritoryNetwork = () => {
             const satHalf = 39; // mitad del tamaño de cada bolita (78px), para no dejar que se corte en el borde
             const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
             const sysKey = ["hidrica", "biotica", "fisico", "movilidad", "social", "socioeconomico"][Number(button.dataset.mapNetworkIndex)];
-            const dynSys = sysKey && URBAN_DYNAMICS_DATA[sysKey];
-            const elemList = dynSys ? dynSys.elements : (items || []).map(text => ({ name: text, icon: "fa-circle-dot", desc: text }));
+            const dynElements = systems && sysKey ? UNIFIED_URBAN_ELEMENTS.filter((el) => el.systemId === sysKey) : null;
+            const elemList = (dynElements && dynElements.length) ? dynElements : (items || []).map((text) => ({ name: text, icon: "fa-circle-dot", desc: text }));
             elemList.forEach((el, i) => {
               const angle = (i / elemList.length) * Math.PI * 2 - Math.PI / 2;
               const finalX = clamp(originX + satR * Math.cos(angle), satHalf, stageRect.width - satHalf);
