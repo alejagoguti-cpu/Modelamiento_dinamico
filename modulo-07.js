@@ -2990,6 +2990,9 @@
         return box.coords.map((c, j) => {
         const proj = declutteredPositions[`box-${i}-${j}`];
         if (!proj) return "";
+        // Nota: los nodos con hideIcon SÍ dibujan su línea, pero en
+        // updateTextBoxes se redirige a la bolita única de ese mismo lugar
+        // (en otra caja), para que no haya dos bolitas del mismo sitio.
         return `<path id="kennedy-textbox-link-${i}-${j}" class="kennedy-box-link" d="${textBoxLinkD(boxPos, proj, c.route, null, null, box)}"/>`;
       }).join("");
     }).join("");
@@ -3026,11 +3029,21 @@
           const proj = declutteredPositions[`box-${i}-${j}`];
           const link = stage?.querySelector(`#kennedy-textbox-link-${i}-${j}`);
           const node = subsystemBubbles?.querySelector(`#kennedy-textbox-node-${i}-${j}`);
+          // Si este lugar no tiene bolita propia (hideIcon), se busca la
+          // bolita ÚNICA de ese mismo lugar en otra caja, para que la
+          // línea llegue ahí en vez de a un punto vacío.
           const nodeButton = node?.querySelector(".map-phenomenon-node") || [...(subsystemBubbles?.querySelectorAll(".kennedy-node-wrap") || [])]
             .find((wrap) => wrap.querySelector(".kennedy-node-label")?.textContent?.trim() === c.label)
             ?.querySelector(".map-phenomenon-node");
           if (!proj) return;
-          if (link) link.setAttribute("d", textBoxLinkD(boxPos, proj, c.route, nodeButton, boxEl, box));
+          // Para un nodo con ícono oculto, la línea se dirige a la posición
+          // real de la bolita única de ese lugar, no a su propia proyección.
+          let targetProj = proj;
+          if (c.hideIcon && nodeButton) {
+            const wrap = nodeButton.closest(".kennedy-node-wrap");
+            if (wrap) targetProj = { x: parseFloat(wrap.style.left), y: parseFloat(wrap.style.top) };
+          }
+          if (link) link.setAttribute("d", textBoxLinkD(boxPos, targetProj, c.route, nodeButton, boxEl, box));
           if (node) { node.style.left = proj.x.toFixed(2) + "%"; node.style.top = proj.y.toFixed(2) + "%"; }
         });
       });
