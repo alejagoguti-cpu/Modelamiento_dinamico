@@ -1094,7 +1094,7 @@
     let birdTreesWorld = null;    // muestra de árboles atractores (coordenadas del mapa)
     let birdTreesScreen = [];     // los mismos, ya proyectados a pantalla
     let birds = [];
-    let birdsOn = true;
+    let birdsOn = false;   // al iniciar solo se ve la simulación de los carros
     let birdLastTs = 0;
 
     // Se toma una muestra repartida de cada especie: el arbolado real trae
