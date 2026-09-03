@@ -25,8 +25,8 @@
   const SVG_NS = "http://www.w3.org/2000/svg";
   const XHTML_NS = "http://www.w3.org/1999/xhtml";
   const RECT = { x0: 90, y0: 90, x1: 2410, y1: 1720 };
-  const NODE_R = 24;
-  const MIN_SEP = NODE_R * 2 + 10; // separación mínima garantizada entre centros
+  const NODE_R = 30;
+  const MIN_SEP = NODE_R * 2 + 12; // separación mínima garantizada entre centros
 
   // Solo se usan los 4 colores/íconos oficiales de las estructuras del POT
   // (ver leyenda "Categorías del POT" / STRUCT en modulo-02.js y modulo-02.html),
@@ -224,10 +224,79 @@
     svg.appendChild(defs);
   }
 
+  /* -------- zoom/pan propio de esta capa (independiente del de la red vieja) -------- */
+  const view = { x: 0, y: 0, scale: 1 };
+  let viewportG = null;
+
+  function applyView() {
+    if (viewportG) viewportG.setAttribute("transform", "translate(" + view.x + "," + view.y + ") scale(" + view.scale + ")");
+    const label = document.getElementById("m2reZoomLevel");
+    if (label) label.textContent = Math.round(view.scale * 100) + "%";
+  }
+
+  function clientToViewboxPoint(svg, clientX, clientY) {
+    const pt = svg.createSVGPoint();
+    pt.x = clientX; pt.y = clientY;
+    const ctm = svg.getScreenCTM();
+    if (!ctm) return { x: 0, y: 0 };
+    return pt.matrixTransform(ctm.inverse());
+  }
+
+  function zoomBy(svg, factor, clientX, clientY) {
+    const p = (clientX != null) ? clientToViewboxPoint(svg, clientX, clientY) : { x: 1250, y: 910 };
+    const newScale = Math.max(0.6, Math.min(8, view.scale * factor));
+    const ratio = newScale / view.scale;
+    view.x = p.x - ratio * (p.x - view.x);
+    view.y = p.y - ratio * (p.y - view.y);
+    view.scale = newScale;
+    applyView();
+  }
+
+  function setupOwnZoomPan(svg) {
+    svg.addEventListener("wheel", (ev) => {
+      if (!viewportG) return;
+      ev.preventDefault();
+      const factor = ev.deltaY > 0 ? 0.88 : 1.14;
+      zoomBy(svg, factor, ev.clientX, ev.clientY);
+    }, { passive: false });
+
+    let dragging = false, startPt = null, start = { x: 0, y: 0 };
+    svg.addEventListener("pointerdown", (ev) => {
+      if (!viewportG) return;
+      if (ev.target.closest && ev.target.closest(".m2re-node-group")) return;
+      dragging = true;
+      startPt = clientToViewboxPoint(svg, ev.clientX, ev.clientY);
+      start.x = view.x; start.y = view.y;
+      svg.setPointerCapture(ev.pointerId);
+      svg.classList.add("m2re-panning");
+    });
+    svg.addEventListener("pointermove", (ev) => {
+      if (!dragging) return;
+      const p = clientToViewboxPoint(svg, ev.clientX, ev.clientY);
+      view.x = start.x + (p.x - startPt.x);
+      view.y = start.y + (p.y - startPt.y);
+      applyView();
+    });
+    const endDrag = (ev) => {
+      if (!dragging) return;
+      dragging = false;
+      svg.classList.remove("m2re-panning");
+      try { svg.releasePointerCapture(ev.pointerId); } catch (err) {}
+    };
+    svg.addEventListener("pointerup", endDrag);
+    svg.addEventListener("pointercancel", endDrag);
+
+    document.getElementById("m2reZoomIn")?.addEventListener("click", () => zoomBy(svg, 1.35));
+    document.getElementById("m2reZoomOut")?.addEventListener("click", () => zoomBy(svg, 1 / 1.35));
+    document.getElementById("m2reZoomReset")?.addEventListener("click", () => {
+      view.x = state._initView.x; view.y = state._initView.y; view.scale = state._initView.scale;
+      applyView();
+    });
+  }
+
   function buildLayer() {
     const svg = document.getElementById("networkViz");
     if (!svg) return;
-    const parent = svg.querySelector("#zoom-pan-group") || svg;
     const old = svg.querySelector("#m2-red-externa");
     if (old) old.remove();
     const oldDefs = svg.querySelector("#m2re-defs");
@@ -237,13 +306,32 @@
 
     relaxLayout(state.elementos, state.conexiones);
 
+    // capa propia, colgada directo del <svg> (NO de #zoom-pan-group): así el
+    // zoom/pan de esta red no depende ni interfiere con el de la red vieja.
     const layer = document.createElementNS(SVG_NS, "g");
     layer.setAttribute("id", "m2-red-externa");
-    parent.appendChild(layer);
+    svg.appendChild(layer);
+    viewportG = document.createElementNS(SVG_NS, "g");
+    viewportG.setAttribute("id", "m2re-viewport");
+    layer.appendChild(viewportG);
+
+    // zoom inicial: centrado en el centroide del layout, ya acercado (los
+    // nodos se ven de entrada a un tamaño legible, sin tener que hacer zoom).
+    let sx = 0, sy = 0;
+    state.elementos.forEach((e) => { sx += e._x; sy += e._y; });
+    const cx = sx / state.elementos.length, cy = sy / state.elementos.length;
+    const initScale = 2.2;
+    view.scale = initScale;
+    view.x = 1250 - cx * initScale;
+    view.y = 910 - cy * initScale;
+    state._initView = { x: view.x, y: view.y, scale: view.scale };
+    applyView();
+    setupOwnZoomPan(svg);
 
     const edgesG = document.createElementNS(SVG_NS, "g");
     edgesG.setAttribute("class", "m2re-edges");
-    layer.appendChild(edgesG);
+    viewportG.appendChild(edgesG);
+    const edgesByNode = new Map();
     state.conexiones.forEach((c) => {
       const a = state.byId.get(c.origen), b = state.byId.get(c.destino);
       if (!a || !b) return;
@@ -252,11 +340,15 @@
       line.setAttribute("x2", b._x); line.setAttribute("y2", b._y);
       line.setAttribute("class", "m2re-edge");
       edgesG.appendChild(line);
+      [a.id, b.id].forEach((id) => {
+        if (!edgesByNode.has(id)) edgesByNode.set(id, []);
+        edgesByNode.get(id).push(line);
+      });
     });
 
     const nodesG = document.createElementNS(SVG_NS, "g");
     nodesG.setAttribute("class", "m2re-nodes");
-    layer.appendChild(nodesG);
+    viewportG.appendChild(nodesG);
 
     state.elementos.forEach((e) => {
       const estructura = CATEGORIA_A_ESTRUCTURA[e.categoria_id] || "e2";
@@ -273,29 +365,36 @@
       circle.setAttribute("cx", e._x); circle.setAttribute("cy", e._y); circle.setAttribute("r", NODE_R);
       circle.setAttribute("fill", "#0a0a0a");
       circle.setAttribute("stroke", color);
-      circle.setAttribute("stroke-width", 2);
+      circle.setAttribute("stroke-width", 2.2);
       circle.setAttribute("filter", "url(#m2re-glow-" + color.replace("#", "") + ")");
 
-      const size = NODE_R * 1.85;
+      const size = NODE_R * 1.9;
       const fo = document.createElementNS(SVG_NS, "foreignObject");
       fo.setAttribute("x", e._x - size / 2); fo.setAttribute("y", e._y - size / 2);
       fo.setAttribute("width", size); fo.setAttribute("height", size);
 
       const wrapper = document.createElementNS(XHTML_NS, "div");
-      wrapper.setAttribute("style", "width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;pointer-events:none;padding:1px;overflow:hidden;box-sizing:border-box;");
+      wrapper.setAttribute("style", "width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;pointer-events:none;padding:2px;overflow:hidden;box-sizing:border-box;");
 
       const iconEl = document.createElementNS(XHTML_NS, "i");
       iconEl.setAttribute("class", "fa-solid " + icon);
-      iconEl.setAttribute("style", "color:" + color + "; font-size:9px; line-height:1;");
+      iconEl.setAttribute("style", "color:" + color + "; font-size:12px; line-height:1;");
 
       const nameEl = document.createElementNS(XHTML_NS, "div");
-      nameEl.setAttribute("style", "font-size:5.2px; padding:0 1px; font-weight:700; color:#f2f3f6; line-height:1.05; text-align:center; font-family:'Inter',sans-serif; word-break:break-word; max-height:22px; overflow:hidden;");
+      nameEl.setAttribute("style", "font-size:6.6px; padding:0 1px; font-weight:700; color:#f2f3f6; line-height:1.08; text-align:center; font-family:'Inter',sans-serif; word-break:break-word; max-height:28px; overflow:hidden;");
       nameEl.textContent = e.nombre;
 
       wrapper.appendChild(iconEl); wrapper.appendChild(nameEl);
       fo.appendChild(wrapper);
       group.appendChild(circle); group.appendChild(fo);
 
+      const misAristas = edgesByNode.get(e.id) || [];
+      group.addEventListener("pointerenter", () => {
+        misAristas.forEach((line) => { line.classList.add("m2re-edge-activa"); line.setAttribute("stroke", color); edgesG.appendChild(line); });
+      });
+      group.addEventListener("pointerleave", () => {
+        misAristas.forEach((line) => line.classList.remove("m2re-edge-activa"));
+      });
       group.addEventListener("click", (ev) => {
         ev.stopPropagation();
         showTooltip(ev.clientX, ev.clientY, e);
@@ -359,7 +458,7 @@
       // deja pintar el mensaje antes de la relajación (puede tardar ~1s)
       await new Promise((r) => setTimeout(r, 30));
       buildLayer();
-      if (status) status.textContent = elementos.length + " elementos · " + conexiones.length + " conexiones (inferidas por cercanía de localidad) — hacé zoom para leer los nombres";
+      if (status) status.textContent = elementos.length + " elementos · " + conexiones.length + " conexiones (inferidas por cercanía de localidad) — arrastrá para mover el mapa, rueda del mouse o los botones +/− para zoom, pasá el mouse sobre un nodo para ver sus conexiones";
     } catch (err) {
       if (status) status.textContent = "No se pudo cargar la base de datos.";
       console.error("[m2-red-externa]", err);
