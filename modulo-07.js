@@ -2702,7 +2702,7 @@
         for (let i = 0; i < sysElems.length; i++) {
           for (let j = i + 1; j < sysElems.length; j++) {
             const a = sysElems[i], b = sysElems[j];
-            intraLinesHtml += `<line x1="${a.x.toFixed(2)}%" y1="${a.y.toFixed(2)}%" x2="${b.x.toFixed(2)}%" y2="${b.y.toFixed(2)}%" class="full-intra-link" data-sys="${sys.id}" style="--node-color:${sys.color}"/>`;
+            intraLinesHtml += `<line x1="${a.x.toFixed(2)}" y1="${a.y.toFixed(2)}" x2="${b.x.toFixed(2)}" y2="${b.y.toFixed(2)}" class="full-intra-link" data-sys="${sys.id}" style="--node-color:${sys.color}"/>`;
           }
         }
       });
