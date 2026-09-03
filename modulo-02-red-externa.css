@@ -12,9 +12,14 @@
   min-width: 0;
 }
 
-.m2cat-toolbar-status {
-  font-size: 11.5px; color: var(--text-faint); padding: 2px 4px 10px; white-space: normal;
+.m2re-toolbar-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  margin-bottom: 6px;
 }
+.m2cat-toolbar-status {
+  font-size: 11.5px; color: var(--text-faint); padding: 2px 4px; white-space: normal; flex: 1;
+}
+.m2re-zoom-controls { flex-shrink: 0; }
 
 /* A pedido: se oculta la red original (la de ODS_NODES/relaciones del POT
    hardcodeadas en modulo-02.js) para que en Módulo 02 solo se vea la red
@@ -26,12 +31,24 @@
 #networkViz .nodes-layer {
   display: none !important;
 }
+/* el control de zoom viejo (networkZoomIn/Out/Reset) controlaba esa red
+   oculta: ya no tiene efecto visible, así que se oculta para no confundir
+   con el control de zoom nuevo (m2reZoomIn/Out/Reset) de arriba. */
+.network-controls {
+  display: none !important;
+}
 
-/* Nodos/aristas dibujados dentro de #networkViz > #zoom-pan-group > #m2-red-externa */
-.m2re-edge { stroke: rgba(160,170,190,0.18); stroke-width: 1; pointer-events: none; }
+/* Nodos/aristas dibujados dentro de #networkViz > #m2-red-externa > #m2re-viewport.
+   Las conexiones quedan casi invisibles por defecto (795 nodos × 2198 líneas
+   se leen como una maraña si se muestran todas a la vez) y se iluminan solo
+   al pasar el mouse sobre uno de sus dos extremos. */
+.m2re-edge { stroke: rgba(160,170,190,0.08); stroke-width: 1.2; pointer-events: none; transition: stroke .15s, stroke-width .15s, opacity .15s; }
+.m2re-edge-activa { stroke-width: 2.4 !important; opacity: 1; }
 .m2re-node-group { cursor: pointer; }
 .m2re-node-ring { transition: stroke-width .1s; }
-.m2re-node-group:hover .m2re-node-ring { stroke-width: 3; }
+.m2re-node-group:hover .m2re-node-ring { stroke-width: 4; }
+#networkViz.m2re-panning { cursor: grabbing; }
+#networkViz { cursor: grab; }
 
 .m2re-tooltip {
   position: absolute; z-index: 50; max-width: 260px;
