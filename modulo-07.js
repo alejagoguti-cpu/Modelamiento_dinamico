@@ -2717,6 +2717,16 @@ const renderTerritoryNetwork = () => {
       { id: "h_infiltra", name: "Infiltración\ny suelo húmedo", icon: "fa-water", systemId: "hidrica", color: "#56b8d4", x: 27, y: 36, desc: "Capacidad de absorción natural del suelo y amortiguamiento freático.", connects: ["se_equipamientos", "h_humedales", "h_lluvia", "h_desborde", "se_suelo"] }
     ];
 
+        // Mapeo por sistema para las explosiones individuales al hacer clic en cada bolita
+    const URBAN_DYNAMICS_DATA = {
+      hidrica: { id: "hidrica", name: "Dinámica hídrica", color: "#56b8d4", icon: "fa-droplet", elements: UNIFIED_URBAN_ELEMENTS.filter(e => e.systemId === "hidrica") },
+      biotica: { id: "biotica", name: "Dinámica biótica", color: "#68d391", icon: "fa-seedling", elements: UNIFIED_URBAN_ELEMENTS.filter(e => e.systemId === "biotica") },
+      fisico: { id: "fisico", name: "Sistema físico-urbano", color: "#b8c0c8", icon: "fa-building", elements: UNIFIED_URBAN_ELEMENTS.filter(e => e.systemId === "fisico") },
+      movilidad: { id: "movilidad", name: "Sistema de movilidad", color: "#f1cf5b", icon: "fa-route", elements: UNIFIED_URBAN_ELEMENTS.filter(e => e.systemId === "movilidad") },
+      social: { id: "social", name: "Sistema social-comunitario", color: "#ee9a4b", icon: "fa-people-group", elements: UNIFIED_URBAN_ELEMENTS.filter(e => e.systemId === "social") },
+      socioeconomico: { id: "socioeconomico", name: "Sistema socioeconómico y de ocupación", color: "#e58d62", icon: "fa-house-chimney", elements: UNIFIED_URBAN_ELEMENTS.filter(e => e.systemId === "socioeconomico") }
+    };
+
     function renderFullSubsystemsNetworkInPlace(target) {
       if (!target) return;
       target.dataset.revealState = "complete";
@@ -3320,7 +3330,7 @@ const renderTerritoryNetwork = () => {
         // hizo clic, sin abrir ningún modal.
         target.querySelectorAll(".bubble-explode-satellite").forEach((n) => n.remove());
         try {
-          const items = row.dynamics || row.components;
+          const items = row.dynamics || row.components || (row.parts ? row.parts.split(/\s*\+\s*|\s*,\s*/) : null);
           if (items && items.length) {
             const stageRect = target.getBoundingClientRect();
             const btnRect = button.getBoundingClientRect();
