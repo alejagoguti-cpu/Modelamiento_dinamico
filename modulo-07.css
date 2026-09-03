@@ -7735,3 +7735,180 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
   opacity: 0 !important;
   pointer-events: none !important;
 }
+
+
+/* =========================================================================
+   RED COMPLETA UNIFICADA DE DINÁMICA URBANA (30 NODOS EN 1 SOLA RED)
+   ========================================================================= */
+
+/* SVG de líneas: SIEMPRE VISIBLE Y DE ALTO CONTRASTE */
+.map-network-stage svg,
+.territory-network-plain svg {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  pointer-events: none !important;
+  z-index: 2 !important;
+  opacity: 1 !important;
+}
+
+.map-network-stage svg *,
+.territory-network-plain svg * {
+  pointer-events: none !important;
+}
+
+.full-unified-link {
+  stroke-width: 0.75 !important;
+  stroke-opacity: 0.9 !important;
+  filter: drop-shadow(0 0 4px rgba(255, 209, 102, 0.6)) !important;
+  transition: stroke 0.3s, stroke-width 0.3s, stroke-opacity 0.3s;
+}
+
+.full-unified-flow-path {
+  fill: none;
+  stroke: none;
+}
+
+.full-unified-pulse {
+  filter: drop-shadow(0 0 8px #ffd166) !important;
+}
+
+.full-unified-group:hover .full-unified-link,
+.full-unified-group.is-highlighted .full-unified-link {
+  stroke: #ffd166 !important;
+  stroke-width: 1.4 !important;
+  stroke-opacity: 1 !important;
+  filter: drop-shadow(0 0 12px #ffd166) !important;
+}
+
+/* Escenario de Red Completa */
+.map-network-stage.is-full-dynamics-active {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 860px !important;
+  background: radial-gradient(circle at 50% 50%, rgba(70,214,208,0.06) 0%, rgba(3,6,8,0.98) 100%), #000000 !important;
+}
+
+/* 30 NODOS DINÁMICOS: FLAT NEGRO + CONTORNO NEÓN CON BLOOM PROGRESSIVO */
+.full-dynamic-node {
+  position: absolute !important;
+  left: var(--node-x) !important;
+  top: var(--node-y) !important;
+  transform: translate(-50%, -50%) !important;
+  opacity: 1 !important;
+  z-index: 100 !important;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+  width: 72px !important;
+  height: 72px !important;
+  border-radius: 50% !important;
+  background: #000000 !important;
+  border: 2px solid var(--node-color, #46d6d0) !important;
+  box-shadow: 0 0 16px var(--node-color, #46d6d0), 0 8px 24px rgba(0, 0, 0, 0.95), inset 0 0 10px rgba(0, 0, 0, 0.9) !important;
+  color: #ffffff !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  padding: 4px !important;
+  animation: node-bloom-in 0.55s cubic-bezier(0.16, 1, 0.3, 1.18) var(--node-delay, 0ms) both !important;
+  transition: transform 0.25s cubic-bezier(0.2, 0.9, 0.3, 1.2), box-shadow 0.25s, border-color 0.25s !important;
+}
+
+@keyframes node-bloom-in {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.1);
+  }
+  60% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.15);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.full-dynamic-node:hover {
+  transform: translate(-50%, -50%) scale(1.18) !important;
+  z-index: 150 !important;
+  border-color: #ffffff !important;
+  box-shadow: 0 0 28px var(--node-color, #46d6d0), 0 0 45px var(--node-color, #46d6d0), 0 12px 30px rgba(0,0,0,1) !important;
+}
+
+.full-dynamic-node.is-active {
+  transform: translate(-50%, -50%) scale(1.22) !important;
+  z-index: 200 !important;
+  border-color: #ffd166 !important;
+  box-shadow: 0 0 0 3px rgba(255, 209, 102, 0.5), 0 0 32px #ffd166, 0 12px 30px rgba(0,0,0,1) !important;
+}
+
+.full-dynamic-node.is-connected {
+  border-color: #ffffff !important;
+  box-shadow: 0 0 20px var(--node-color, #46d6d0), 0 0 0 2px rgba(255, 255, 255, 0.7) !important;
+}
+
+/* ANIMACIÓN DE EXPLOSIÓN DE LOS 7 NODOS INICIALES */
+.map-network-stage.is-stage-exploding .map-network-node {
+  transform: scale(2.2) translate(calc(var(--node-x, 0) * 0.4), calc(var(--node-y, 0) * 0.4)) !important;
+  opacity: 0 !important;
+  filter: blur(14px) brightness(2.8) !important;
+  transition: transform 0.38s cubic-bezier(0.1, 0.8, 0.2, 1), opacity 0.35s ease, filter 0.35s ease !important;
+}
+
+.map-network-stage.is-stage-exploding .map-network-center-hub {
+  transform: translate(-50%, -50%) scale(1.8) !important;
+  opacity: 0 !important;
+  filter: blur(10px) brightness(2.8) !important;
+  transition: transform 0.38s cubic-bezier(0.1, 0.8, 0.2, 1), opacity 0.35s ease, filter 0.35s ease !important;
+}
+
+.map-network-stage.is-stage-exploding .map-network-bonds,
+.map-network-stage.is-stage-exploding .map-network-flows {
+  opacity: 0 !important;
+  transition: opacity 0.25s ease !important;
+}
+
+/* BOTÓN CENTRAL */
+.map-network-center-hub {
+  position: absolute !important;
+  left: 50% !important;
+  top: 48% !important;
+  transform: translate(-50%, -50%) !important;
+  z-index: 999 !important;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+  width: 94px !important;
+  height: 94px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4px !important;
+  border: 2.5px solid #ffd166 !important;
+  background: #000000 !important;
+  box-shadow: 0 0 26px rgba(255, 209, 102, 0.7), 0 8px 32px rgba(0, 0, 0, 0.95), inset 0 0 16px rgba(0, 0, 0, 0.9) !important;
+  color: #ffd166 !important;
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  line-height: 1.15 !important;
+  text-align: center !important;
+  letter-spacing: 0.02em !important;
+  transition: transform 0.25s cubic-bezier(0.2, 0.9, 0.3, 1.2), box-shadow 0.25s, border-color 0.25s !important;
+  animation: center-hub-neon-pulse 2.2s ease-in-out infinite !important;
+  user-select: none !important;
+}
+
+.map-network-center-hub.is-expanded-mode {
+  border-color: #46d6d0 !important;
+  color: #46d6d0 !important;
+  background: #000000 !important;
+  box-shadow: 0 0 26px rgba(70, 214, 208, 0.7), 0 8px 32px rgba(0, 0, 0, 0.95), inset 0 0 16px rgba(0, 0, 0, 0.9) !important;
+  animation: center-hub-cyan-pulse 2.2s ease-in-out infinite !important;
+}
