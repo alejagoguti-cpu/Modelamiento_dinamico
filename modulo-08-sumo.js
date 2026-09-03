@@ -1142,7 +1142,9 @@
     // que pasa por ahí: se pinta de verde translúcido SIN cruzar el río
     // (el polígono usa el trazado real del río como borde) y aloja un grupo
     // de mirlas residentes.
-    const REFUGE_RIVER_IDX = [0, 2]; // los dos trazados del río en esa esquina
+    // Un SOLO trazado: el que bordea la esquina. Mezclando los dos, donde
+    // termina uno el borde saltaba al otro y aparecía un corte recto.
+    const REFUGE_RIVER_IDX = [0];
     let refugePoly = null, refugeKey = "";
     // El borde del refugio es la ORILLA SUPERIOR del río: para cada franja
     // vertical se toma el punto más alto del trazado. Seguir el polilínea
