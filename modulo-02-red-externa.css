@@ -16,6 +16,17 @@
   font-size: 11.5px; color: var(--text-faint); padding: 2px 4px 10px; white-space: normal;
 }
 
+/* A pedido: se oculta la red original (la de ODS_NODES/relaciones del POT
+   hardcodeadas en modulo-02.js) para que en Módulo 02 solo se vea la red
+   nueva alimentada desde Supabase. Se oculta por CSS (no se borra del DOM)
+   para no romper el resto de la lógica de modulo-02.js que sigue leyendo/
+   escribiendo sobre esos nodos (métricas, matriz, leyenda, etc.). */
+#networkViz .ambient-mesh-layer,
+#networkViz .edges-layer,
+#networkViz .nodes-layer {
+  display: none !important;
+}
+
 /* Nodos/aristas dibujados dentro de #networkViz > #zoom-pan-group > #m2-red-externa */
 .m2re-edge { stroke: rgba(160,170,190,0.18); stroke-width: 1; pointer-events: none; }
 .m2re-node-group { cursor: pointer; }
