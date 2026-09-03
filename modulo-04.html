@@ -478,7 +478,7 @@ if (typeof module !== &quot;undefined&quot;) { module.exports = { NODES, LINKS }
   // ajusta es la letra, que se achica lo justo para que la etiqueta quepa
   // COMPLETA adentro de esa burbuja, sin cortarse.
   function targetRadius(n){
-    const porConexiones = n.active ? Math.max(26, Math.min(44, 26 + (n._adeg||0)*1.4)) : 22;
+    const porConexiones = n.active ? Math.max(24, Math.min(58, 24 + (n._adeg||0)*3.4)) : 21;
     // nunca por debajo de lo que necesita su etiqueta con la letra mas
     // pequena legible: asi ningun texto queda cortado
     return Math.max(porConexiones, minRadius(n));
@@ -616,11 +616,18 @@ if (typeof module !== &quot;undefined&quot;) { module.exports = { NODES, LINKS }
   NODES.forEach(layoutLabel);
   textSel.each(function(d){ renderLabel(d3.select(this), d); });
 
+  // disco opaco: tapa las lineas que pasan por detras de la bola
   nodeSel.insert(&quot;circle&quot;,&quot;text&quot;)
+    .attr(&quot;class&quot;,&quot;node-base&quot;)
+    .attr(&quot;fill&quot;,&quot;#06080a&quot;)
+    .attr(&quot;stroke&quot;,&quot;none&quot;)
+    .attr(&quot;r&quot;,nodeRadius);
+  nodeSel.insert(&quot;circle&quot;,&quot;text&quot;)
+    .attr(&quot;class&quot;,&quot;node-fill&quot;)
     .attr(&quot;fill&quot;,nodeColor)
     .attr(&quot;r&quot;,nodeRadius)
     .attr(&quot;stroke&quot;,nodeColor)
-    .attr(&quot;stroke-width&quot;,d=> d.rol===&quot;dominante&quot;?2.6:2)
+    .attr(&quot;stroke-width&quot;,d=> d.rol===&quot;dominante&quot;?2.8:2.1)
     .attr(&quot;fill-opacity&quot;,fillOpacity)
     .attr(&quot;stroke-dasharray&quot;,d=> d.rol===&quot;transversal&quot;?&quot;4 3&quot;:null);
 
@@ -649,9 +656,9 @@ if (typeof module !== &quot;undefined&quot;) { module.exports = { NODES, LINKS }
     });
 
   const linkForce=d3.forceLink(LINKS).id(d=>d.id)
-    .distance(l=>{ const pad=nodeRadius(l.source)+nodeRadius(l.target)+26;
-                   if(l.tipo===&quot;fundamenta&quot;)return 34+pad; if(l.tipo===&quot;concreta&quot;)return 14+pad;
-                   if(l.tipo===&quot;subordina&quot;)return 24+pad; return 30+pad; })
+    .distance(l=>{ const pad=nodeRadius(l.source)+nodeRadius(l.target)+34;
+                   if(l.tipo===&quot;fundamenta&quot;)return 16+pad; if(l.tipo===&quot;concreta&quot;)return 2+pad;
+                   if(l.tipo===&quot;subordina&quot;)return 8+pad; return 12+pad; })
     .strength(l=> !linkActive(l) ? 0
                  : l.tipo===&quot;concreta&quot;?0.7 : l.tipo===&quot;fundamenta&quot;?0.25 : 0.5);
 
@@ -660,12 +667,12 @@ if (typeof module !== &quot;undefined&quot;) { module.exports = { NODES, LINKS }
     // la separacion minima la garantiza la colision; la repulsion se deja
     // suave para que la red no se estire mas de lo necesario y no haya que
     // alejar la vista (que es lo que achicaba el texto)
-    .force(&quot;charge&quot;,d3.forceManyBody().strength(d=> !d.active?-40 : isMacro(d)?-150 : d.tipo===&quot;modelo&quot;?-130 : -90))
+    .force(&quot;charge&quot;,d3.forceManyBody().strength(d=> !d.active?-25 : isMacro(d)?-70 : d.tipo===&quot;modelo&quot;?-60 : -40))
     .force(&quot;center&quot;,d3.forceCenter(W/2,H/2))
-    .force(&quot;collide&quot;,d3.forceCollide().radius(d=>nodeRadius(d)+28).strength(1))
+    .force(&quot;collide&quot;,d3.forceCollide().radius(d=>nodeRadius(d)+34).strength(1))
     .force(&quot;y&quot;,d3.forceY(d=> d.eje===&quot;pot&quot;?H*0.72:H*0.4).strength(0.06))
     .on(&quot;tick&quot;,ticked)
-    .on(&quot;end&quot;,fitToView);
+    .on(&quot;end&quot;,()=>{ fitToView(); if(!introDone){ introDone = true; playIntro(); } });
 
   // Centra y ajusta la red en el espacio libre del lienzo (sin quedar debajo
   // del HUD, la barra de botones, las convenciones ni el pie de pagina).
@@ -697,6 +704,43 @@ if (typeof module !== &quot;undefined&quot;) { module.exports = { NODES, LINKS }
       d3.zoomIdentity.translate(padL+availW/2-k*cx, padT+availH/2-k*cy).scale(k));
   }
 
+  // ---- Animacion de entrada: se arma la red a la vista ----
+  let introRunning = false, introDone = false, introTimer = null;
+  function playIntro(){
+    if (introRunning) return;
+    introRunning = true;
+    window.clearTimeout(introTimer);
+    const orden = NODES.map((n,i)=>i).sort((x,y)=> (NODES[y]._adeg||0) - (NODES[x]._adeg||0));
+    const retardo = new Map();
+    orden.forEach((idx,k)=> retardo.set(NODES[idx].id, 60 + k*85));
+    const dNodo = (d)=> retardo.get(d.id) || 0;
+    nodeSel.interrupt(); nodeSel.selectAll(&quot;*&quot;).interrupt(); linkSel.interrupt();
+    nodeSel.style(&quot;opacity&quot;,0);
+    nodeSel.selectAll(&quot;circle&quot;).attr(&quot;r&quot;,0);
+    nodeSel.select(&quot;text&quot;).style(&quot;opacity&quot;,0);
+    linkSel.style(&quot;opacity&quot;,0);
+    nodeSel.transition().delay(dNodo).duration(360).style(&quot;opacity&quot;,1);
+    nodeSel.selectAll(&quot;circle&quot;).transition()
+      .delay(function(){ return dNodo(this.parentNode.__data__); })
+      .duration(520).ease(d3.easeBackOut.overshoot(1.5))
+      .attr(&quot;r&quot;, function(){ return nodeRadius(this.parentNode.__data__); });
+    nodeSel.select(&quot;text&quot;).transition().delay(d=>dNodo(d)+200).duration(340).style(&quot;opacity&quot;,1);
+    linkSel.transition()
+      .delay(l=> Math.max(dNodo(l.source), dNodo(l.target)) + 240)
+      .duration(420)
+      .style(&quot;opacity&quot;,1)
+      .on(&quot;end&quot;, function(){ d3.select(this).style(&quot;opacity&quot;,null); });
+    const total = 60 + NODES.length*85 + 1200;
+    introTimer = window.setTimeout(()=>{
+      introRunning = false;
+      nodeSel.style(&quot;opacity&quot;,null);
+      nodeSel.select(&quot;text&quot;).style(&quot;opacity&quot;,null);
+      linkSel.style(&quot;opacity&quot;,null);
+    }, total);
+  }
+  // la pagina que contiene el iframe la dispara al entrar a la seccion
+  window.__playIntro = playIntro;
+
   function ticked(){
     linkSel.attr(&quot;x1&quot;,d=>d.source.x).attr(&quot;y1&quot;,d=>d.source.y)
            .attr(&quot;x2&quot;,d=>d.target.x).attr(&quot;y2&quot;,d=>d.target.y);
@@ -713,7 +757,10 @@ if (typeof module !== &quot;undefined&quot;) { module.exports = { NODES, LINKS }
            .classed(&quot;aislado&quot;, d=> d.active &amp;&amp; d._adeg===0)
            .classed(&quot;colgando&quot;, d=> d.active &amp;&amp; d._adeg===1);
 
-    nodeSel.select(&quot;circle&quot;)
+    nodeSel.select(&quot;circle.node-base&quot;)
+      .transition().duration(420)
+      .attr(&quot;r&quot;,nodeRadius);
+    nodeSel.select(&quot;circle.node-fill&quot;)
       .transition().duration(420)
       .attr(&quot;fill&quot;,nodeColor)
       .attr(&quot;r&quot;,nodeRadius)
@@ -731,7 +778,7 @@ if (typeof module !== &quot;undefined&quot;) { module.exports = { NODES, LINKS }
     if(reorganize){
       linkForce.strength(l=> !linkActive(l) ? 0
                  : l.tipo===&quot;concreta&quot;?0.7 : l.tipo===&quot;fundamenta&quot;?0.25 : 0.5);
-      sim.force(&quot;collide&quot;).radius(d=>nodeRadius(d)+28);
+      sim.force(&quot;collide&quot;).radius(d=>nodeRadius(d)+34);
       sim.alpha(0.75).restart();
     }
     updateHUD();
@@ -964,6 +1011,28 @@ if (typeof module !== &quot;undefined&quot;) { module.exports = { NODES, LINKS }
   </div>
 
   <script src="modulo-04-drive.js?v=module04-infinite-drive-1"></script>
+  <script>
+    // Al entrar a la sección de la red de macromodelos, se vuelve a armar la
+    // red a la vista (las bolas aparecen y luego se tejen las líneas). El
+    // iframe es srcdoc, así que comparte origen y se le puede pedir directo.
+    (function () {
+      const frame = document.querySelector("iframe.m04-sim-frame");
+      if (!frame || !("IntersectionObserver" in window)) return;
+      let fuera = true, ultima = 0;
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) { fuera = true; return; }
+          if (!fuera) return;
+          fuera = false;
+          const ahora = Date.now();
+          if (ahora - ultima < 3000) return;   // no se repite si apenas ocurrió
+          ultima = ahora;
+          try { frame.contentWindow?.__playIntro?.(); } catch (err) { /* aún no cargó */ }
+        });
+      }, { threshold: 0.35 });
+      observer.observe(frame);
+    })();
+  </script>
 </body>
 
 </html>
