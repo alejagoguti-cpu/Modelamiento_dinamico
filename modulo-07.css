@@ -7178,3 +7178,147 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
   height: 100% !important;
   background: radial-gradient(circle at 50% 50%, rgba(70, 214, 208, 0.06) 0%, rgba(4, 8, 10, 0.98) 100%) !important;
 }
+
+
+/* =========================================================================
+   DISEÑO NEÓN + FONDO NEGRO FLAT: NODOS DINÁMICOS DEL TERRITORIO
+   ========================================================================= */
+
+/* Nodos dinámicos individuales (30 elementos) */
+.full-dynamic-node {
+  position: absolute;
+  left: var(--node-x);
+  top: var(--node-y);
+  transform: translate(-50%, -50%) scale(0.2);
+  opacity: 0;
+  z-index: 6;
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: #000000 !important;
+  border: 2px solid var(--node-color, #46d6d0) !important;
+  box-shadow: 0 0 16px var(--node-color, #46d6d0), 0 8px 24px rgba(0, 0, 0, 0.95), inset 0 0 10px rgba(0, 0, 0, 0.9) !important;
+  color: #ffffff !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 4px;
+  cursor: pointer;
+  transition: transform 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.2), box-shadow 0.25s, border-color 0.25s, opacity 0.35s;
+  animation: node-burst-in 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.2) forwards var(--node-delay, 0ms);
+}
+
+.full-node-icon {
+  font-size: 15px !important;
+  color: var(--node-color, #46d6d0) !important;
+  margin-bottom: 2px;
+  line-height: 1;
+  filter: drop-shadow(0 0 6px var(--node-color, #46d6d0));
+  transition: transform 0.25s;
+}
+
+.full-node-label {
+  font-size: 8px !important;
+  font-weight: 700 !important;
+  line-height: 1.1 !important;
+  color: #ffffff !important;
+  text-shadow: 0 1px 4px #000000, 0 0 2px #000000 !important;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  pointer-events: none;
+}
+
+.full-dynamic-node:hover {
+  transform: translate(-50%, -50%) scale(1.18);
+  z-index: 14;
+  background: #000000 !important;
+  border-color: #ffffff !important;
+  box-shadow: 0 0 26px var(--node-color, #46d6d0), 0 0 40px var(--node-color, #46d6d0), 0 12px 30px rgba(0,0,0,1) !important;
+}
+
+.full-dynamic-node:hover .full-node-icon {
+  transform: scale(1.15);
+  filter: drop-shadow(0 0 10px #ffffff);
+}
+
+.full-dynamic-node.is-active {
+  transform: translate(-50%, -50%) scale(1.22);
+  z-index: 18;
+  background: #000000 !important;
+  border-color: #ffd166 !important;
+  box-shadow: 0 0 0 3px rgba(255, 209, 102, 0.4), 0 0 30px #ffd166, 0 12px 30px rgba(0,0,0,1) !important;
+}
+
+.full-dynamic-node.is-connected {
+  border-color: #ffffff !important;
+  box-shadow: 0 0 18px var(--node-color, #46d6d0), 0 0 0 2px rgba(255, 255, 255, 0.6) !important;
+  animation: connected-glow 1.4s infinite alternate;
+}
+
+/* Satélites de explosión individual (al hacer clic en una sola bola) */
+.bubble-explode-satellite {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: #000000 !important;
+  border: 2px solid var(--node-color, #46d6d0) !important;
+  box-shadow: 0 0 16px var(--node-color, #46d6d0), 0 8px 20px rgba(0,0,0,0.9) !important;
+  color: #ffffff !important;
+  font-size: 8.5px;
+  font-weight: 700;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 4px;
+  line-height: 1.15;
+  text-shadow: 0 1px 4px #000000;
+  cursor: pointer;
+  z-index: 12;
+  transform: translate(var(--origin-x), var(--origin-y)) translate(-50%, -50%) scale(0.1);
+  opacity: 0;
+  transition: transform 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.2), opacity 0.35s ease;
+  transition-delay: var(--explode-delay, 0ms);
+  pointer-events: auto !important;
+}
+
+.bubble-explode-satellite i {
+  font-size: 15px;
+  color: var(--node-color, #46d6d0);
+  margin-bottom: 2px;
+  filter: drop-shadow(0 0 6px var(--node-color, #46d6d0));
+}
+
+.bubble-explode-satellite span {
+  color: #ffffff;
+  font-size: 8px;
+}
+
+.bubble-explode-satellite.exploded {
+  transform: translate(var(--final-x), var(--final-y)) translate(-50%, -50%) scale(1);
+  opacity: 1;
+}
+
+.bubble-explode-satellite:hover {
+  transform: translate(var(--final-x), var(--final-y)) translate(-50%, -50%) scale(1.15) !important;
+  box-shadow: 0 0 28px var(--node-color, #46d6d0), 0 12px 28px rgba(0,0,0,1) !important;
+}
+
+/* Nodos SVG en caso de fallback */
+.combined-node circle {
+  fill: #000000 !important;
+  stroke: var(--node-color, #46d6d0) !important;
+  stroke-width: 2 !important;
+  filter: drop-shadow(0 0 8px var(--node-color, #46d6d0)) !important;
+}
+
+.combined-sat-label {
+  color: #ffffff !important;
+  text-shadow: 0 1px 4px #000000 !important;
+  font-weight: 700 !important;
+}
