@@ -137,13 +137,15 @@ svg:active{cursor:grabbing;}
 .link.dim{stroke-opacity:.05!important;}
 .link.hot{stroke-opacity:.98!important;}
 
-.node circle{stroke:#000;stroke-width:1.5px;cursor:pointer;transition:opacity .2s;}
+.node circle{stroke-width:2px;cursor:pointer;transition:opacity .2s;}
 .node.dim{opacity:.1;}
 .node.macro.rol-dominante circle{filter:drop-shadow(0 0 7px rgba(255,255,255,.18));}
-.node text{fill:var(--txt);pointer-events:none;paint-order:stroke;stroke:#000;stroke-width:3px;stroke-linejoin:round;}
+.node text{fill:#eef3f8;pointer-events:none;text-anchor:middle;paint-order:stroke;
+  stroke:rgba(0,0,0,.72);stroke-width:2.2px;stroke-linejoin:round;letter-spacing:.015em;}
 .node text.dim{opacity:.1;}
-.node .lbl-macro{font-size:11px;font-weight:600;}
-.node .lbl-pot{font-size:9.5px;fill:var(--txt-dim);}
+.node .lbl-macro{font-size:10px;font-weight:700;}
+.node .lbl-pot{font-size:9px;font-weight:600;fill:#cfd9e4;}
+.node text.txt-off{fill:#8b95a3;}
 .node.hot text{fill:#fff;}
 
 .toolbar{position:absolute;top:14px;right:14px;display:flex;gap:8px;z-index:5;}
@@ -345,7 +347,7 @@ const NODES = [
     base:&quot;Criterio: derecho a la ciudad para las mujeres.&quot;,
     art:&quot;Art. 4 (6, 15)&quot;,
     desc:&quot;«Enfoque de género en el ordenamiento territorial» y «derecho a la ciudad para las mujeres», mediante un «urbanismo con perspectiva de género» (Art. 4, num. 6 y 15).&quot; },
-  { id:&quot;patrimonial&quot;, label:&quot;Patrimonial-identitario&quot;, tipo:&quot;macromodelo&quot;, eje:&quot;sociocultural&quot;, rol:&quot;transversal&quot;,
+  { id:&quot;patrimonial&quot;, label:&quot;Patrimonial&quot;, tipo:&quot;macromodelo&quot;, eje:&quot;sociocultural&quot;, rol:&quot;transversal&quot;,
     base:&quot;Centro: la memoria y la identidad.&quot;,
     art:&quot;Art. 80&quot;,
     desc:&quot;Ordena desde «la memoria y testimonio de la ciudad históricamente construida» y «la diversidad de las identidades de sus habitantes» (Art. 80). Fundamenta la EIP.&quot; },
@@ -471,9 +473,43 @@ if (typeof module !== &quot;undefined&quot;) { module.exports = { NODES, LINKS }
   function baseColor(n){ return EJE_COLOR[n.eje]||&quot;#888&quot;; }
   function nodeColor(n){ return n.active ? baseColor(n) : OFF_COLOR; }
 
+  // El texto va DENTRO de la burbuja: el radio parte de lo que mide la
+  // etiqueta ya repartida en renglones y crece con las conexiones activas
+  // (misma lectura de siempre: grande = mas conexiones).
+  function labelFont(n){ return isMacro(n) ? 10 : 9; }
+  function labelLines(n){
+    if(n._lines) return n._lines;
+    const max = isMacro(n) ? 15 : 14;
+    const lines = []; let cur = &quot;&quot;;
+    // un separador suelto (&quot;/&quot;, &quot;-&quot;) no puede quedar solo en su renglon
+    const words = [];
+    String(n.label).split(/\s+/).forEach(w=>{
+      if(/^[\/·\-]$/.test(w) &amp;&amp; words.length) words[words.length-1] += &quot; &quot; + w;
+      else words.push(w);
+    });
+    words.forEach(w=>{
+      if(!cur){ cur = w; }
+      else if((cur+&quot; &quot;+w).length <= max){ cur += &quot; &quot; + w; }
+      else { lines.push(cur); cur = w; }
+    });
+    if(cur) lines.push(cur);
+    n._lines = lines;
+    return lines;
+  }
+  function textRadius(n){
+    const lines = labelLines(n), fs = labelFont(n);
+    const w = n._tw || Math.max.apply(null, lines.map(l=>l.length)) * fs * 0.62;
+    const h = n._th || lines.length * fs * 1.22;
+    return Math.sqrt(w*w + h*h)/2 + 8;
+  }
   function nodeRadius(n){
-    if(!n.active) return 8;
-    return Math.max(9, Math.min(40, 9 + n._adeg*2.4));
+    const base = textRadius(n);
+    if(!n.active) return base*0.86;
+    return base * (1 + Math.min(0.5, (n._adeg||0)*0.05));
+  }
+  function fillOpacity(n){
+    if(!n.active) return 0.14;
+    return n.rol===&quot;subordinado&quot; ? 0.16 : (isMacro(n) ? 0.26 : 0.20);
   }
 
   const wrap=document.getElementById(&quot;canvas-wrap&quot;);
@@ -496,17 +532,41 @@ if (typeof module !== &quot;undefined&quot;) { module.exports = { NODES, LINKS }
     .call(d3.drag().on(&quot;start&quot;,dragStart).on(&quot;drag&quot;,dragged).on(&quot;end&quot;,dragEnd));
 
   NODES.forEach(n=> n._adeg = activeDeg(n));
-  nodeSel.append(&quot;circle&quot;)
+  const textSel = nodeSel.append(&quot;text&quot;)
+    .attr(&quot;class&quot;,d=> isMacro(d)?&quot;lbl-macro&quot;:&quot;lbl-pot&quot;)
+    .each(function(d){ renderLabel(d3.select(this), d); });
+
+  measureLabels();
+
+  nodeSel.insert(&quot;circle&quot;,&quot;text&quot;)
     .attr(&quot;fill&quot;,nodeColor)
     .attr(&quot;r&quot;,nodeRadius)
-    .attr(&quot;fill-opacity&quot;,d=> d.rol===&quot;subordinado&quot;?0.7:(isMacro(d)?1:0.85))
-    .attr(&quot;stroke-dasharray&quot;,d=> d.rol===&quot;transversal&quot;?&quot;3 3&quot;:null);
-  nodeSel.append(&quot;text&quot;)
-    .attr(&quot;x&quot;,d=>nodeRadius(d)+5)
-    .attr(&quot;y&quot;,4)
-    .text(d=> isMacro(d)?d.label:shorten(d.label))
-    .attr(&quot;class&quot;,d=> isMacro(d)?&quot;lbl-macro&quot;:&quot;lbl-pot&quot;);
-  function shorten(s){ return s.length>30?s.slice(0,28)+&quot;…&quot;:s; }
+    .attr(&quot;stroke&quot;,nodeColor)
+    .attr(&quot;stroke-width&quot;,d=> d.rol===&quot;dominante&quot;?2.6:2)
+    .attr(&quot;fill-opacity&quot;,fillOpacity)
+    .attr(&quot;stroke-dasharray&quot;,d=> d.rol===&quot;transversal&quot;?&quot;4 3&quot;:null);
+
+  function measureLabels(){
+    textSel.each(function(d){
+      let w=0;
+      d3.select(this).selectAll(&quot;tspan&quot;).each(function(){
+        const t=this.getComputedTextLength ? this.getComputedTextLength() : 0;
+        if(t>w) w=t;
+      });
+      if(w>0){ d._tw=w; d._th=labelLines(d).length*labelFont(d)*1.22; }
+    });
+  }
+
+  function renderLabel(sel, n){
+    const lines = labelLines(n), fs = labelFont(n), lineH = fs*1.22;
+    sel.selectAll(&quot;tspan&quot;).remove();
+    lines.forEach((line,i)=>{
+      sel.append(&quot;tspan&quot;)
+        .attr(&quot;x&quot;,0)
+        .attr(&quot;y&quot;,(i-(lines.length-1)/2)*lineH + fs*0.34)
+        .text(line);
+    });
+  }
 
   let clickTimer=null;
   nodeSel
@@ -520,8 +580,9 @@ if (typeof module !== &quot;undefined&quot;) { module.exports = { NODES, LINKS }
     });
 
   const linkForce=d3.forceLink(LINKS).id(d=>d.id)
-    .distance(l=>{ if(l.tipo===&quot;fundamenta&quot;)return 120; if(l.tipo===&quot;concreta&quot;)return 70;
-                   if(l.tipo===&quot;subordina&quot;)return 95; return 110; })
+    .distance(l=>{ const pad=nodeRadius(l.source)+nodeRadius(l.target);
+                   if(l.tipo===&quot;fundamenta&quot;)return 60+pad; if(l.tipo===&quot;concreta&quot;)return 30+pad;
+                   if(l.tipo===&quot;subordina&quot;)return 46+pad; return 55+pad; })
     .strength(l=> !linkActive(l) ? 0
                  : l.tipo===&quot;concreta&quot;?0.7 : l.tipo===&quot;fundamenta&quot;?0.25 : 0.5);
 
@@ -529,9 +590,38 @@ if (typeof module !== &quot;undefined&quot;) { module.exports = { NODES, LINKS }
     .force(&quot;link&quot;,linkForce)
     .force(&quot;charge&quot;,d3.forceManyBody().strength(d=> !d.active?-60 : isMacro(d)?-560 : d.tipo===&quot;modelo&quot;?-500 : -260))
     .force(&quot;center&quot;,d3.forceCenter(W/2,H/2))
-    .force(&quot;collide&quot;,d3.forceCollide().radius(d=>nodeRadius(d)+10))
+    .force(&quot;collide&quot;,d3.forceCollide().radius(d=>nodeRadius(d)+12).strength(0.95))
     .force(&quot;y&quot;,d3.forceY(d=> d.eje===&quot;pot&quot;?H*0.72:H*0.4).strength(0.06))
-    .on(&quot;tick&quot;,ticked);
+    .on(&quot;tick&quot;,ticked)
+    .on(&quot;end&quot;,fitToView);
+
+  // Centra y ajusta la red en el espacio libre del lienzo (sin quedar debajo
+  // del HUD, la barra de botones, las convenciones ni el pie de pagina).
+  function fitToView(){
+    const box=(el)=>{ if(!el||el.offsetParent===null) return null;
+                      const r=el.getBoundingClientRect(); return r.width?r:null; };
+    const conv=box(document.getElementById(&quot;conventions&quot;));
+    const hud=box(document.getElementById(&quot;hud&quot;));
+    const tool=box(document.querySelector(&quot;.toolbar&quot;));
+    const cap=box(document.querySelector(&quot;.caption&quot;));
+    // en pantallas angostas los paneles taparian casi todo: se limita cuanto
+    // margen pueden reclamar para que la red no quede diminuta en una esquina
+    const padL=18;
+    const padR=Math.min(18+(conv?conv.width+12:0), W*0.34);
+    const padT=Math.min(16+Math.max(hud?hud.height:0, tool?tool.height:0), H*0.3);
+    const padB=Math.min(16+(cap?cap.height:0), H*0.3);
+    const availW=Math.max(140,W-padL-padR), availH=Math.max(140,H-padT-padB);
+    let x0=Infinity,y0=Infinity,x1=-Infinity,y1=-Infinity;
+    NODES.forEach(n=>{ if(!isFinite(n.x)||!isFinite(n.y)) return;
+      const r=nodeRadius(n)+2;
+      x0=Math.min(x0,n.x-r); x1=Math.max(x1,n.x+r);
+      y0=Math.min(y0,n.y-r); y1=Math.max(y1,n.y+r); });
+    if(!isFinite(x0)) return;
+    const k=Math.min(1.05, availW/Math.max(1,x1-x0), availH/Math.max(1,y1-y0));
+    const cx=(x0+x1)/2, cy=(y0+y1)/2;
+    svg.transition().duration(520).call(zoom.transform,
+      d3.zoomIdentity.translate(padL+availW/2-k*cx, padT+availH/2-k*cy).scale(k));
+  }
 
   function ticked(){
     linkSel.attr(&quot;x1&quot;,d=>d.source.x).attr(&quot;y1&quot;,d=>d.source.y)
@@ -553,11 +643,11 @@ if (typeof module !== &quot;undefined&quot;) { module.exports = { NODES, LINKS }
       .transition().duration(420)
       .attr(&quot;fill&quot;,nodeColor)
       .attr(&quot;r&quot;,nodeRadius)
-      .attr(&quot;fill-opacity&quot;,d=> !d.active?0.5 : d.rol===&quot;subordinado&quot;?0.7 : (isMacro(d)?1:0.85))
-      .attr(&quot;stroke-dasharray&quot;,d=> !d.active?&quot;2 2&quot; : d.rol===&quot;transversal&quot;?&quot;3 3&quot;:null);
+      .attr(&quot;stroke&quot;,nodeColor)
+      .attr(&quot;fill-opacity&quot;,fillOpacity)
+      .attr(&quot;stroke-dasharray&quot;,d=> !d.active?&quot;2 3&quot; : d.rol===&quot;transversal&quot;?&quot;4 3&quot;:null);
 
     nodeSel.select(&quot;text&quot;)
-      .attr(&quot;x&quot;,d=>nodeRadius(d)+5)
       .classed(&quot;txt-off&quot;,d=>!d.active);
 
     linkSel.classed(&quot;inactive&quot;, d=>!linkActive(d));
@@ -565,7 +655,7 @@ if (typeof module !== &quot;undefined&quot;) { module.exports = { NODES, LINKS }
     if(reorganize){
       linkForce.strength(l=> !linkActive(l) ? 0
                  : l.tipo===&quot;concreta&quot;?0.7 : l.tipo===&quot;fundamenta&quot;?0.25 : 0.5);
-      sim.force(&quot;collide&quot;).radius(d=>nodeRadius(d)+10);
+      sim.force(&quot;collide&quot;).radius(d=>nodeRadius(d)+12);
       sim.alpha(0.75).restart();
     }
     updateHUD();
@@ -656,8 +746,7 @@ if (typeof module !== &quot;undefined&quot;) { module.exports = { NODES, LINKS }
 
   document.getElementById(&quot;btn-reset&quot;).onclick=()=>{
     NODES.forEach(n=>n.active=true);
-    recompute(true); clearFocus();
-    svg.transition().duration(500).call(zoom.transform,d3.zoomIdentity);
+    recompute(true); clearFocus(); fitToView();
   };
 
   (function(){
@@ -679,7 +768,7 @@ if (typeof module !== &quot;undefined&quot;) { module.exports = { NODES, LINKS }
   window.addEventListener(&quot;resize&quot;,()=>{
     const m=measure();W=m.w;H=m.h;
     svg.attr(&quot;viewBox&quot;,[0,0,W,H]);
-    sim.force(&quot;center&quot;,d3.forceCenter(W/2,H/2)); sim.alpha(0.3).restart();
+    sim.force(&quot;center&quot;,d3.forceCenter(W/2,H/2)); sim.alpha(0.3).restart(); fitToView();
   });
 
   recompute(false);
