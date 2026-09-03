@@ -5346,6 +5346,7 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 @media (prefers-reduced-motion: reduce) { .map-network-stage > svg .map-network-bond, .map-network-stage > svg .map-network-bond-soft { animation: none; } }
 
 .map-network-stage > svg .map-network-flows { pointer-events: none; overflow: visible; }
+.map-network-flows.fading-out, .map-network-bonds.fading-out { opacity: 0; transition: opacity .3s ease; }
 
 /* Bolita de fenómeno: mismo tamaño y estilo que las bolas de los sistemas,
    pero solo con el ícono (sin nombre), puesta encima del lugar real.

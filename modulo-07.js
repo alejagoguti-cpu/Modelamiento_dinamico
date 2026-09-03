@@ -2591,7 +2591,13 @@
     // las 6 bolas — así da la sensación de que las 6 se convierten en 30.
     function renderFullSubsystemsNetworkInPlace(target) {
       document.getElementById("showFullSubsystemsNetworkBtn")?.setAttribute("hidden", "");
-      const W = 900, H = 900, cx = W / 2, cy = H / 2, clusterR = 300;
+      const W = 900, H = 900, cx = W / 2, cy = H / 2;
+      // Los 6 "orígenes" (donde estaba cada bola de sistema) quedan más
+      // cerca entre sí que antes, y cada racimo se esparce con más radio y
+      // un poco de variación aleatoria en ángulo/distancia — así no se ve
+      // como 6 flores rígidas y separadas, sino como una red más orgánica
+      // donde los bordes entre sistemas se mezclan un poco.
+      const clusterR = 210;
       const clusters = territorySystems.map((sys, i) => {
         const angle = (i / territorySystems.length) * Math.PI * 2 - Math.PI / 2;
         return { ...sys, cx: cx + clusterR * Math.cos(angle), cy: cy + clusterR * Math.sin(angle) };
@@ -2599,19 +2605,47 @@
       let svgParts = [];
       let nodeIndex = 0;
       const allDynamicNodes = [];
+      let seed = 7; // aleatoriedad reproducible (misma forma cada vez que se abre)
+      const rand = () => { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; };
       clusters.forEach((cl) => {
         const items = cl.dynamics || cl.components;
-        const satR = 92;
+        const baseR = 128;
         const nodesHere = items.map((label, i) => {
-          const angle = (i / items.length) * Math.PI * 2 - Math.PI / 2;
-          return { label, x: cl.cx + satR * Math.cos(angle), y: cl.cy + satR * Math.sin(angle), color: cl.color, sysId: cl.id, originX: cl.cx, originY: cl.cy };
+          const evenAngle = (i / items.length) * Math.PI * 2 - Math.PI / 2;
+          const angle = evenAngle + (rand() - 0.5) * 0.55; // variación orgánica del ángulo
+          const r = baseR + (rand() - 0.5) * 56; // variación orgánica del radio
+          return { label, x: cl.cx + r * Math.cos(angle), y: cl.cy + r * Math.sin(angle), color: cl.color, sysId: cl.id, originX: cl.cx, originY: cl.cy };
         });
+        allDynamicNodes.push(...nodesHere);
+      });
+      // Relajación suave entre TODAS las bolitas (no solo dentro de su
+      // propio racimo) para que nadie quede encimada ni pegada — y de paso
+      // esto ayuda a que los bordes entre sistemas se entremezclen un poco.
+      const nodeR2 = 26, GAP = 6;
+      for (let pass = 0; pass < 120; pass++) {
+        for (let i = 0; i < allDynamicNodes.length; i++) {
+          for (let j = i + 1; j < allDynamicNodes.length; j++) {
+            const a = allDynamicNodes[i], b = allDynamicNodes[j];
+            const dx = b.x - a.x, dy = b.y - a.y;
+            const dist = Math.hypot(dx, dy) || 0.01;
+            const minDist = nodeR2 * 2 + GAP;
+            if (dist < minDist) {
+              const push = (minDist - dist) / 2;
+              const ux = dx / dist, uy = dy / dist;
+              a.x -= ux * push; a.y -= uy * push;
+              b.x += ux * push; b.y += uy * push;
+            }
+          }
+        }
+      }
+      clusters.forEach((cl) => {
+        const items = cl.dynamics || cl.components;
+        const nodesHere = allDynamicNodes.filter((n) => n.sysId === cl.id);
         for (let i = 0; i < nodesHere.length; i++) {
           for (let j = i + 1; j < nodesHere.length; j++) {
             svgParts.push(`<line x1="${nodesHere[i].x}" y1="${nodesHere[i].y}" x2="${nodesHere[j].x}" y2="${nodesHere[j].y}" class="combined-sat-line" style="--node-color:${cl.color}"/>`);
           }
         }
-        allDynamicNodes.push(...nodesHere);
       });
       const KEYWORDS = [
         ["desplazamiento", "accesos", "rutas", "recorridos"],
@@ -2630,7 +2664,6 @@
         }
       }
       svgParts.push(...crossLines);
-      const nodeR2 = 26;
       const dynCircles = allDynamicNodes.map((n) => {
         const dx = (n.originX - n.x).toFixed(1), dy = (n.originY - n.y).toFixed(1);
         return `<g class="combined-node combined-sat-node" style="--node-color:${n.color};--node-i:${nodeIndex++};--dx:${dx}px;--dy:${dy}px;transform-origin:${n.x}px ${n.y}px;">` +
@@ -3128,14 +3161,18 @@
       if (hideAllSystemBubbles) requestAnimationFrame(() => updateTextBoxes());
       const openFullNetwork = (event) => {
         event?.stopPropagation();
-        // Las 6 bolas explotan y desaparecen primero; cuando terminan, se
-        // reemplaza el contenido de este mismo panel por las 30 dinámicas
-        // (ya no se abre un modal aparte).
+        // Secuencia: 1) se esconden las líneas que conectan las 6 bolas,
+        // 2) las 6 bolas explotan, 3) se reemplaza el panel por las 30
+        // dinámicas (que a su vez tienen su propia mini-secuencia interna:
+        // nacen pegadas al punto de su sistema y luego se reacomodan).
         const stageEl = target.querySelector(".map-network-stage");
-        stageEl?.classList.add("center-hub-exploding");
+        stageEl?.querySelectorAll(".map-network-flows, .map-network-bonds").forEach((g) => g.classList.add("fading-out"));
         window.setTimeout(() => {
-          renderFullSubsystemsNetworkInPlace(target);
-        }, 560);
+          stageEl?.classList.add("center-hub-exploding");
+          window.setTimeout(() => {
+            renderFullSubsystemsNetworkInPlace(target);
+          }, 560);
+        }, 320);
       };
       window.__openFullSubsystemsNetwork = openFullNetwork; // usado por el botón fijo abajo a la izquierda
       // El botón fijo "Ver red completa" solo se muestra en la vista de
