@@ -856,6 +856,23 @@
         strokeSmoothPath(netCtx, screenPts);
         netCtx.stroke();
       });
+      // Refugio verde del rincón superior izquierdo: la tierra que queda
+      // entre la esquina del mapa y el río, pintada con el trazado real del
+      // río como borde para que el verde no se meta al agua.
+      const refugio = refugePolygon(w, h);
+      if (refugio && refugio.length > 3) {
+        netCtx.save();
+        netCtx.beginPath();
+        netCtx.moveTo(refugio[0][0], refugio[0][1]);
+        for (let i = 1; i < refugio.length; i++) netCtx.lineTo(refugio[i][0], refugio[i][1]);
+        netCtx.closePath();
+        netCtx.fillStyle = "rgba(94,186,124,0.26)";
+        netCtx.fill();
+        netCtx.strokeStyle = "rgba(126,214,152,0.42)";
+        netCtx.lineWidth = 1.2;
+        netCtx.stroke();
+        netCtx.restore();
+      }
       // Arbolado Urbano real de Kennedy: se calcula la posición base de
       // cada árbol con toScreen (igual que las vías), y luego se distorsiona
       // con las 4 esquinas arrastrables (interpolación bilineal), como el
@@ -1055,8 +1072,8 @@
     const BIRD_TREE_SPECIES = {
       // índices de especie del propio archivo kennedy_trees.json
       15: { key: "sauco",  name: "Saúco",  color: "#b06bff", weight: 1.00, food: true },
-      12: { key: "capuli", name: "Capulí", color: "#ff9426", weight: 0.76, food: true },
-      71: { key: "capuli", name: "Capulí", color: "#ff9426", weight: 0.76, food: true },
+      12: { key: "capuli", name: "Capulí", color: "#ff5fa8", weight: 0.76, food: true },
+      71: { key: "capuli", name: "Capulí", color: "#ff5fa8", weight: 0.76, food: true },
       16: { key: "urapan", name: "Urapán", color: "#25d0a0", weight: 0.52, food: false },
     };
     const BIRD_VISION = 150;      // px — campo visual limitado
@@ -1120,6 +1137,69 @@
 
     const clampNum = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 
+    // ---- Refugio verde del rincón superior izquierdo ----
+    // Es la franja de tierra que queda entre la esquina del mapa y el río
+    // que pasa por ahí: se pinta de verde translúcido SIN cruzar el río
+    // (el polígono usa el trazado real del río como borde) y aloja un grupo
+    // de mirlas residentes.
+    const REFUGE_RIVER_IDX = [0, 2]; // los dos trazados del río en esa esquina
+    let refugePoly = null, refugeKey = "";
+    // El borde del refugio es la ORILLA SUPERIOR del río: para cada franja
+    // vertical se toma el punto más alto del trazado. Seguir el polilínea
+    // completa no sirve: en los meandros se dobla sobre sí misma y el
+    // relleno terminaba metiéndose al agua.
+    function refugePolygon(w, h) {
+      const clave = `${Math.round(w)}x${Math.round(h)}|${view.scale.toFixed(4)}|${view.offX.toFixed(1)}|${view.offY.toFixed(1)}|${ROTATE_DEG}`;
+      if (refugePoly && refugeKey === clave) return refugePoly;
+      const PASO = 8;
+      const orilla = new Map();
+      REFUGE_RIVER_IDX.forEach((idx) => {
+        const rio = TRACED_RIVERS[idx];
+        if (!rio) return;
+        rio.points.forEach(([wx, wy]) => {
+          const [x, y] = toScreen(wx, wy);
+          if (x < -80 || x > w + 80) return;
+          const celda = Math.round(x / PASO);
+          const previo = orilla.get(celda);
+          if (previo == null || y < previo) orilla.set(celda, y);
+        });
+      });
+      if (orilla.size < 3) return null;
+      const borde = [...orilla.entries()].sort((a, b) => a[0] - b[0]).map(([c, y]) => [c * PASO, y]);
+      const primero = borde[0], ultimo = borde[borde.length - 1];
+      refugePoly = [[primero[0], -60]].concat(borde, [[ultimo[0], -60]]);
+      refugeKey = clave;
+      return refugePoly;
+    }
+    function pointInPoly(x, y, poly) {
+      let dentro = false;
+      for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+        const xi = poly[i][0], yi = poly[i][1], xj = poly[j][0], yj = poly[j][1];
+        if ((yi > y) !== (yj > y) && x < ((xj - xi) * (y - yi)) / (yj - yi + 1e-9) + xi) dentro = !dentro;
+      }
+      return dentro;
+    }
+    let refugeAnchorCache = null, refugeAnchorKey = "";
+    function refugeAnchor(w, h) {
+      const clave = `${Math.round(w)}x${Math.round(h)}|${view.scale.toFixed(4)}`;
+      if (refugeAnchorCache && refugeAnchorKey === clave) return refugeAnchorCache;
+      const poly = refugePolygon(w, h);
+      let sx = 0, sy = 0, n = 0;
+      (poly || []).forEach(([x, y]) => { if (x > 0 && y > 0 && x < w && y < h) { sx += x; sy += y; n++; } });
+      refugeAnchorCache = n ? { x: sx / n, y: Math.max(12, sy / n - 30) } : { x: w * 0.1, y: h * 0.1 };
+      refugeAnchorKey = clave;
+      return refugeAnchorCache;
+    }
+    function refugePointInside(w, h) {
+      const poly = refugePolygon(w, h);
+      if (!poly) return { x: w * 0.08, y: h * 0.08 };
+      for (let i = 0; i < 60; i++) {
+        const x = Math.random() * w * 0.45, y = Math.random() * h * 0.4;
+        if (x > 6 && y > 6 && pointInPoly(x, y, poly)) return { x, y };
+      }
+      return { x: w * 0.06, y: h * 0.06 };
+    }
+
     // Punto al azar sobre uno de los humedales calcados.
     function wetlandPoint(w, h) {
       const poly = TRACED_WETLANDS[Math.floor(Math.random() * TRACED_WETLANDS.length)] || [];
@@ -1134,18 +1214,24 @@
     // diario se mantiene cuando una mirla sale por el occidente).
     function makeBird(w, h, origen) {
       let x, y;
-      if (origen === "humedal") { const p = wetlandPoint(w, h); x = p.x; y = p.y; }
+      if (origen === "refugio") { const p = refugePointInside(w, h); x = p.x; y = p.y; }
+      else if (origen === "humedal") { const p = wetlandPoint(w, h); x = p.x; y = p.y; }
       else if (origen === "noroeste") { x = w * (0.03 + Math.random() * 0.14); y = h * (0.03 + Math.random() * 0.20); }
       else { x = w + 12 + Math.random() * 50; y = h * (0.08 + Math.random() * 0.82); }
+      const residente = origen === "refugio";
       return { x, y,
-               vx: -(30 + Math.random() * 30), vy: (Math.random() - 0.5) * 14,
-               rest: 0, cooldown: 0, restMeta: null, phase: Math.random() * 6.28, origen };
+               vx: residente ? (Math.random() - 0.5) * 26 : -(30 + Math.random() * 30),
+               vy: (Math.random() - 0.5) * (residente ? 26 : 14),
+               rest: 0, cooldown: 0, restMeta: null, phase: Math.random() * 6.28, origen, residente };
     }
+    const refugeTarget = () => Math.max(6, Math.round(BIRD_COUNT * 0.15));
     function initBirds(w, h) {
       birds = [];
+      const enRefugio = refugeTarget();
+      for (let i = 0; i < enRefugio; i++) birds.push(makeBird(w, h, "refugio"));
       // como se pidió: unas salen desde arriba a la izquierda y otras ya
       // están en los humedales
-      for (let i = 0; i < BIRD_COUNT; i++) birds.push(makeBird(w, h, i % 2 ? "humedal" : "noroeste"));
+      for (let i = enRefugio; i < BIRD_COUNT; i++) birds.push(makeBird(w, h, i % 2 ? "humedal" : "noroeste"));
     }
 
     function updateBirds(dtRaw, w, h) {
@@ -1163,6 +1249,23 @@
           b.vx *= freno; b.vy *= freno;
           const sp = Math.hypot(b.vx, b.vy);
           if (sp > BIRD_REST_SPEED) { b.vx = (b.vx / sp) * BIRD_REST_SPEED; b.vy = (b.vy / sp) * BIRD_REST_SPEED; }
+        } else if (b.residente) {
+          // Residentes del refugio: no las arrastra el flujo hacia el
+          // occidente; revolotean dentro de la mancha verde y, si se salen,
+          // vuelven a entrar.
+          if (b.cooldown > 0) b.cooldown -= dt;
+          b.vx += (Math.random() - 0.5) * 90 * dt;
+          b.vy += (Math.random() - 0.5) * 90 * dt;
+          const poly = refugePolygon(w, h);
+          if (poly && !pointInPoly(b.x, b.y, poly)) {
+            const destino = refugeAnchor(w, h);
+            const dx = destino.x - b.x, dy = destino.y - b.y;
+            const d = Math.hypot(dx, dy) || 1;
+            b.vx += (dx / d) * 130 * dt;
+            b.vy += (dy / d) * 130 * dt;
+          }
+          const spR = Math.hypot(b.vx, b.vy);
+          if (spR > 46) { b.vx = (b.vx / spR) * 46; b.vy = (b.vy / spR) * 46; }
         } else {
           if (b.cooldown > 0) b.cooldown -= dt;
           // impulso global (viento/flujo) de oriente a occidente
@@ -1234,8 +1337,9 @@
         if (b.y < 8) { b.y = 8; b.vy = Math.abs(b.vy); }
         if (b.y > h - 8) { b.y = h - 8; b.vy = -Math.abs(b.vy); }
         if (b.x > w + 70) { b.x = w + 70; b.vx = -Math.abs(b.vx); }
-        // salió por el occidente: vuelve a entrar por el oriente (Cerros)
-        if (b.x < -40) Object.assign(b, makeBird(w, h, "oriente"));
+        // salió por el occidente: vuelve a entrar por el oriente (Cerros).
+        // Las residentes del refugio no se van: se las devuelve al refugio.
+        if (b.x < -40) Object.assign(b, makeBird(w, h, b.residente ? "refugio" : "oriente"));
       });
     }
 
@@ -1259,7 +1363,7 @@
           vehCtx.strokeStyle = "#ff6b4d";
           vehCtx.globalAlpha = 0.85;
           vehCtx.lineWidth = 1.3;
-          vehCtx.arc(0, 0, 8.5, 0, Math.PI * 2);
+          vehCtx.arc(0, 0, 5.8, 0, Math.PI * 2);
           vehCtx.stroke();
           vehCtx.globalAlpha = 1;
         }
@@ -1269,41 +1373,41 @@
           vehCtx.strokeStyle = b.restMeta.color;
           vehCtx.globalAlpha = 0.75;
           vehCtx.lineWidth = 1.2;
-          vehCtx.arc(0, 0, 7.5, 0, Math.PI * 2);
+          vehCtx.arc(0, 0, 5.2, 0, Math.PI * 2);
           vehCtx.stroke();
           vehCtx.globalAlpha = 1;
         }
         vehCtx.rotate(ang);
         // La mirla es un ave oscura y el mapa es negro: se le pone un halo
         // suave y un contorno claro para que se distinga del fondo.
-        const halo = vehCtx.createRadialGradient(0, 0, 0, 0, 0, 9);
+        const halo = vehCtx.createRadialGradient(0, 0, 0, 0, 0, 6);
         halo.addColorStop(0, "rgba(226,232,240,0.30)");
         halo.addColorStop(1, "rgba(226,232,240,0)");
         vehCtx.fillStyle = halo;
         vehCtx.beginPath();
-        vehCtx.arc(0, 0, 9, 0, Math.PI * 2);
+        vehCtx.arc(0, 0, 6, 0, Math.PI * 2);
         vehCtx.fill();
         // aleteo: más rápido en vuelo, casi quieto mientras descansa
-        const bat = Math.sin(b.phase) * (b.rest > 0 ? 1.1 : 3.4);
+        const bat = Math.sin(b.phase) * (b.rest > 0 ? 0.7 : 2.2);
         vehCtx.strokeStyle = "#eef2f7";
-        vehCtx.lineWidth = 1.7;
+        vehCtx.lineWidth = 1.15;
         vehCtx.lineCap = "round";
         vehCtx.beginPath();
-        vehCtx.moveTo(-4.6, -bat);
-        vehCtx.lineTo(0.4, 0);
-        vehCtx.lineTo(-4.6, bat);
+        vehCtx.moveTo(-3, -bat);
+        vehCtx.lineTo(0.3, 0);
+        vehCtx.lineTo(-3, bat);
         vehCtx.stroke();
         vehCtx.fillStyle = "#20222c";
         vehCtx.strokeStyle = "rgba(238,242,247,0.9)";
-        vehCtx.lineWidth = 0.9;
+        vehCtx.lineWidth = 0.7;
         vehCtx.beginPath();
-        vehCtx.ellipse(0, 0, 3.6, 2, 0, 0, Math.PI * 2);
+        vehCtx.ellipse(0, 0, 2.3, 1.3, 0, 0, Math.PI * 2);
         vehCtx.fill();
         vehCtx.stroke();
         // pico naranja, como la mirla real
         vehCtx.fillStyle = "#f2a93b";
         vehCtx.beginPath();
-        vehCtx.arc(3.7, 0, 1.1, 0, Math.PI * 2);
+        vehCtx.arc(2.4, 0, 0.7, 0, Math.PI * 2);
         vehCtx.fill();
         vehCtx.restore();
       });
@@ -1407,7 +1511,10 @@
       BIRD_COUNT = Math.max(1, Math.round(n));
       if (!birds.length) return;
       while (birds.length > BIRD_COUNT) birds.pop();
-      while (birds.length < BIRD_COUNT) birds.push(makeBird(w, h, birds.length % 2 ? "humedal" : "oriente"));
+      while (birds.length < BIRD_COUNT) {
+        const residentes = birds.filter((x) => x.residente).length;
+        birds.push(makeBird(w, h, residentes < refugeTarget() ? "refugio" : (birds.length % 2 ? "humedal" : "oriente")));
+      }
     }
     const birdSlider = document.getElementById("sumoBirdSlider");
     const birdCountVal = document.getElementById("sumoBirdCountVal");
