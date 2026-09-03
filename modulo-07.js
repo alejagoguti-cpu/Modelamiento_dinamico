@@ -2669,6 +2669,18 @@ const renderTerritoryNetwork = () => {
     // =========================================================================
     // RED COMPLETA UNIFICADA DE DINÁMICA URBANA (30 ELEMENTOS TOTALMENTE INTERCONECTADOS)
     // =========================================================================
+    // =========================================================================
+    // RED COMPLETA UNIFICADA DE DINÁMICA URBANA (30 ELEMENTOS VIVOS TOTALMENTE CONECTADOS)
+    // =========================================================================
+    const PARENT_SYSTEM_CENTERS = {
+      hidrica: { x: 32, y: 28 },
+      biotica: { x: 68, y: 28 },
+      fisico: { x: 82, y: 54 },
+      movilidad: { x: 68, y: 80 },
+      social: { x: 32, y: 80 },
+      socioeconomico: { x: 18, y: 54 }
+    };
+
     const UNIFIED_URBAN_ELEMENTS = [
       // --- ANILLO EXTERIOR (20 nodos perimetrales) ---
       { id: "h_lluvia", name: "Precipitación\ny lluvia", icon: "fa-cloud-showers-heavy", systemId: "hidrica", color: "#56b8d4", x: 20, y: 14, desc: "Aporte pluvial constante y eventos de lluvia extrema que recargan la cuenca.", connects: ["h_escorre", "h_desborde", "h_infiltra", "h_humedales"] },
@@ -2713,9 +2725,8 @@ const renderTerritoryNetwork = () => {
       const elementPosMap = {};
       UNIFIED_URBAN_ELEMENTS.forEach((el) => { elementPosMap[el.id] = el; });
 
-      // Generar líneas de conexión limpias, coloridas y brillantes entre los 30 nodos
+      // Generar líneas de conexión visibles, sólidas y de alto contraste
       let unifiedLinesHtml = "";
-      let defsHtml = "";
       const drawnPairs = new Set();
       let flowCount = 0;
 
@@ -2727,26 +2738,16 @@ const renderTerritoryNetwork = () => {
           if (drawnPairs.has(pairKey)) return;
           drawnPairs.add(pairKey);
 
-          const gradId = `full-link-grad-${flowCount}`;
-          const pathId = `full-link-flow-${flowCount}`;
-          flowCount++;
-
-          const dur = (3.5 + (flowCount % 4) * 0.7).toFixed(2);
+          const pathId = `full-link-flow-${flowCount++}`;
+          const dur = (3.5 + (flowCount % 4) * 0.8).toFixed(2);
           const d = `M ${el.x.toFixed(2)} ${el.y.toFixed(2)} L ${targetEl.x.toFixed(2)} ${targetEl.y.toFixed(2)}`;
 
-          defsHtml += `
-            <linearGradient id="${gradId}" x1="${el.x.toFixed(2)}%" y1="${el.y.toFixed(2)}%" x2="${targetEl.x.toFixed(2)}%" y2="${targetEl.y.toFixed(2)}%">
-              <stop offset="0%" stop-color="${el.color}" stop-opacity="0.9"/>
-              <stop offset="50%" stop-color="#ffd166" stop-opacity="0.75"/>
-              <stop offset="100%" stop-color="${targetEl.color}" stop-opacity="0.9"/>
-            </linearGradient>
-          `;
-
+          // Línea sólida visible y brillante
           unifiedLinesHtml += `
             <g class="full-unified-group" data-source="${el.id}" data-target="${targetId}">
               <path id="${pathId}" class="full-unified-flow-path" d="${d}"/>
-              <line x1="${el.x.toFixed(2)}" y1="${el.y.toFixed(2)}" x2="${targetEl.x.toFixed(2)}" y2="${targetEl.y.toFixed(2)}" class="full-unified-link" style="stroke:url(#${gradId});--source-color:${el.color};--target-color:${targetEl.color};"/>
-              <circle class="full-unified-pulse" r="0.5" fill="#ffd166">
+              <line x1="${el.x.toFixed(2)}" y1="${el.y.toFixed(2)}" x2="${targetEl.x.toFixed(2)}" y2="${targetEl.y.toFixed(2)}" class="full-unified-link" stroke="${el.color}"/>
+              <circle class="full-unified-pulse" r="0.6" fill="#ffd166">
                 <animateMotion dur="${dur}s" repeatCount="indefinite" rotate="auto">
                   <mpath href="#${pathId}"/>
                 </animateMotion>
@@ -2756,12 +2757,13 @@ const renderTerritoryNetwork = () => {
         });
       });
 
-      // Render de los 30 nodos dinámicos unificados
+      // Render de los 30 nodos dinámicos con origen espacial para la explosión
       const nodesHtml = UNIFIED_URBAN_ELEMENTS.map((el, index) => {
         const formattedName = el.name.replace(/\n/g, "<br>");
+        const parentCenter = PARENT_SYSTEM_CENTERS[el.systemId] || { x: 50, y: 48 };
         return `
           <button type="button" class="full-dynamic-node" data-elem-id="${el.id}" data-sys-id="${el.systemId}"
-            style="--node-x:${el.x.toFixed(2)}%;--node-y:${el.y.toFixed(2)}%;--node-color:${el.color};--node-delay:${index * 18}ms;--node-index:${index};"
+            style="--node-x:${el.x.toFixed(2)}%;--node-y:${el.y.toFixed(2)}%;--origin-x:${parentCenter.x}%;--origin-y:${parentCenter.y}%;--node-color:${el.color};--node-delay:${index * 16}ms;"
             title="${el.name.replace(/\n/g, ' ')}">
             <i class="fa-solid ${el.icon} full-node-icon"></i>
             <span class="full-node-label">${formattedName}</span>
@@ -2790,7 +2792,6 @@ const renderTerritoryNetwork = () => {
         <div class="map-network-stage systems-network is-full-dynamics-active">
           ${headerPillHtml}
           <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-            <defs>${defsHtml}</defs>
             <g class="full-unified-layer">${unifiedLinesHtml}</g>
           </svg>
           ${nodesHtml}
