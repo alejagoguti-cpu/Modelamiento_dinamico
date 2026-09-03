@@ -660,11 +660,21 @@ const HUB_IDS = ["humedales", "servicios_empresariales", "patrimonio_material"];
 
 function layoutNetwork() {
   const deg = computeDegrees();
+  const allDegs = Object.values(deg);
+  const minDeg = Math.min(...allDegs, 1);
+  const maxDeg = Math.max(...allDegs, 1);
+  // Tamaño de cada bola según cuántas conexiones tiene: las que casi no se
+  // conectan quedan chiquitas (pero visibles), las más conectadas ("hubs")
+  // se ven claramente más grandes. Escala raíz cuadrada (no lineal) para
+  // que la diferencia se note también entre los nodos con pocas conexiones,
+  // no solo contra los 2-3 hubs enormes.
+  const R_MIN = 34, R_MAX = 82;
   ODS_NODES.forEach(n => {
     n.color = STRUCT_STYLE[n.cat].color;
     n.vx = 0; n.vy = 0; n.fixed = false; n.isMainHub = false;
     const d = deg[n.id] || 0;
-    n.r = 55; // REDUCED 50%: 110 → 55 para que la red respire
+    const t = maxDeg > minDeg ? Math.sqrt((d - minDeg) / (maxDeg - minDeg)) : 0;
+    n.r = R_MIN + (R_MAX - R_MIN) * t;
     n._deg = d;
     n._degBase = d; // fuerza nodal original, sin ningún nodo apagado — sirve para comparar ANTES ↔ DESPUÉS
   });
@@ -674,11 +684,18 @@ function layoutNetwork() {
   // ---- 1. Posiciones fijas definidas por el equipo (lienzo 2500 x 1820) ----
   // Sustituyen al layout radial automático: cada bola queda exactamente donde
   // se colocó en el wireframe. Para mover una, cambia su par x/y en NODE_POS.
+  // Se compacta un poco hacia el centro (COMPACT_FACTOR) para que toda la
+  // red se vea menos grande/dispersa y quede más ordenada.
+  const COMPACT_FACTOR = 0.82;
+  const cx0 = CANVAS.w / 2, cy0 = CANVAS.h / 2;
   nodes.forEach(n => {
     n.collR = n.r;
     const p = NODE_POS[n.id];
-    if (p) { n.x = p.x; n.y = p.y; }
-    else { n.x = CANVAS.w / 2; n.y = CANVAS.h / 2; }
+    if (p) {
+      n.x = cx0 + (p.x - cx0) * COMPACT_FACTOR;
+      n.y = cy0 + (p.y - cy0) * COMPACT_FACTOR;
+    }
+    else { n.x = cx0; n.y = cy0; }
     n.isMainHub = (HUB_IDS.indexOf(n.id) !== -1);
     if (n.isMainHub) n._outwardAngle = Math.atan2(n.y - CANVAS.h / 2, n.x - CANVAS.w / 2) || 0;
   });
