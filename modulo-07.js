@@ -2738,11 +2738,14 @@ const renderTerritoryNetwork = () => {
         `;
       }).join("");
 
-      // Botón central para regresar a 6 sistemas (único botón en el centro)
+      // Botones para regresar a 6 sistemas: centro y abajo a la izquierda.
       const centerToggleHtml = `
         <button type="button" id="mapNetworkCenterHub" class="map-network-center-hub is-expanded-mode" aria-label="Volver a los 6 subsistemas">
           <i class="fa-solid fa-arrow-rotate-left"></i>
           <span>Volver a<br>6 sistemas</span>
+        </button>
+        <button type="button" id="mapNetworkCornerHub" class="show-full-network-fixed-btn is-expanded-mode" aria-label="Volver a los 6 subsistemas">
+          <i class="fa-solid fa-arrow-rotate-left"></i> Volver a 6 sistemas
         </button>
       `;
 
@@ -2783,6 +2786,7 @@ const renderTerritoryNetwork = () => {
         }, 320);
       };
       target.querySelector("#mapNetworkCenterHub")?.addEventListener("click", backToOverview);
+      target.querySelector("#mapNetworkCornerHub")?.addEventListener("click", backToOverview);
 
       // Interactividad de los 30 nodos
       target.querySelectorAll(".full-dynamic-node").forEach((btn) => {
@@ -3201,7 +3205,8 @@ const renderTerritoryNetwork = () => {
       // El botón fijo abajo a la izquierda hace lo mismo que el del centro
       // (queda como una segunda forma de activarlo); solo se muestra junto
       // con las 6 bolas de sistemas, no mientras están las 30 dinámicas.
-      
+      const fixedFullNetworkBtn = document.getElementById("showFullSubsystemsNetworkBtn");
+      if (fixedFullNetworkBtn) fixedFullNetworkBtn.hidden = !(systems && isPlainView && !hideAllSystemBubbles);
       if (hideAllSystemBubbles) declutteredPositions = computeDeclutteredPositions();
       const kennedyBoxesHtml = hideAllSystemBubbles ? buildPhenomenaHtml() + buildTextBoxesHtml() : "";
       const relationPairs = hideAllSystemBubbles ? [] : (systems
@@ -3267,16 +3272,19 @@ const renderTerritoryNetwork = () => {
       if (hideAllSystemBubbles) requestAnimationFrame(() => updateTextBoxes());
       const openFullNetwork = (event) => {
         event?.stopPropagation();
+        document.getElementById("showFullSubsystemsNetworkBtn")?.setAttribute("hidden", "");
         try { DINAMICA_SOUND.play("expansion"); } catch (err) {}
         const stage = target.querySelector(".map-network-stage");
-        if (stage) {
-          stage.classList.add("is-stage-exploding");
+        // Secuencia: 1) se esconden las líneas que conectan las 6 bolas,
+        // 2) las 6 bolas explotan, 3) se reemplaza el panel por las 30
+        // dinámicas conectadas entre sí.
+        stage?.querySelectorAll(".map-network-flows, .map-network-bonds").forEach((g) => g.classList.add("fading-out"));
+        window.setTimeout(() => {
+          stage?.classList.add("center-hub-exploding");
           window.setTimeout(() => {
             renderFullSubsystemsNetworkInPlace(target);
-          }, 320);
-        } else {
-          renderFullSubsystemsNetworkInPlace(target);
-        }
+          }, 560);
+        }, 320);
       };
       window.__openFullSubsystemsNetwork = openFullNetwork;
       target.querySelector("#mapNetworkCenterHub")?.addEventListener("click", openFullNetwork);
