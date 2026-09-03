@@ -856,23 +856,6 @@
           netCtx.arc(sx, sy, r, 0, Math.PI * 2);
           netCtx.fill();
         });
-        // Las 4 esquinas arrastrables: se dibujan más cerca del centro que
-        // su posición real (HANDLE_DISPLAY_SCALE), solo para que sean
-        // fáciles de agarrar — los árboles siguen en su escala normal.
-        // Solo visibles en modo distorsión.
-        if (window.sumoActiveMode === "trees") {
-          netCtx.fillStyle = "#ffb020";
-          netCtx.strokeStyle = "#1a0505";
-          netCtx.lineWidth = 1.5;
-          [TL, TR, BL, BR].forEach((p) => {
-            const px = (p.x - cx) * HANDLE_DISPLAY_SCALE + cx;
-            const py = (p.y - cy) * HANDLE_DISPLAY_SCALE + cy;
-            netCtx.beginPath();
-            netCtx.arc(px, py, 8, 0, Math.PI * 2);
-            netCtx.fill();
-            netCtx.stroke();
-          });
-        }
       }
       // se dibuja primero lo local (más numeroso y fino) y encima lo
       // principal (más grueso), para que las vías grandes no queden tapadas
@@ -1185,122 +1168,8 @@
     });
 
     // El mapa queda fijo: sin arrastrar ni hacer zoom, con el encuadre
-    // definido por EXTRA_ZOOM/CENTER_X/CENTER_Y/ROTATE_DEG de arriba.
-
-    // ---------- Rotación GLOBAL del mapa (calles + árboles + vehículos
-    // juntos, todos usan ROTATE_DEG a través de toScreen) ----------
-    const mapRotInput = document.getElementById("sumoMapRotation");
-    const mapRotReset = document.getElementById("sumoMapRotationReset");
-    const mapRotCopy = document.getElementById("sumoMapRotationCopy");
-    const mapRotOutput = document.getElementById("sumoMapRotationOutput");
-    const mapRotStatus = document.getElementById("sumoMapRotationStatus");
-    function redrawWholeMap() {
-      const w = netCanvas.parentElement.clientWidth, h = netCanvas.parentElement.clientHeight;
-      drawNetwork(w, h);
-      drawVehiclesAt(playhead);
-      if (mapRotOutput) mapRotOutput.value = `ROTATE_DEG=${ROTATE_DEG.toFixed(1)}`;
-    }
-    mapRotInput?.addEventListener("input", () => {
-      ROTATE_DEG = Number(mapRotInput.value);
-      redrawWholeMap();
-    });
-    mapRotReset?.addEventListener("click", () => {
-      ROTATE_DEG = 0;
-      if (mapRotInput) mapRotInput.value = 0;
-      redrawWholeMap();
-    });
-    mapRotCopy?.addEventListener("click", async () => {
-      if (mapRotOutput) mapRotOutput.value = `ROTATE_DEG=${ROTATE_DEG.toFixed(1)}`;
-      try { await navigator.clipboard.writeText(mapRotOutput?.value || ""); } catch (_) {}
-      if (mapRotStatus) mapRotStatus.textContent = "Ángulo copiado. Pégamelo en el chat para dejarlo fijo así.";
-    });
-
-    // ---------- Distorsionar árboles con 4 esquinas (como "Distort" de
-    // Photoshop) — arrastrar un punto de esquina distorsiona esa esquina;
-    // arrastrar en otra parte mueve las 4 esquinas juntas (mover todo). ---
-    const treeMoveBtn = document.getElementById("sumoTreeMoveMode");
-    const treeDistortReset = document.getElementById("sumoTreeDistortReset");
-    const treeDistortCopy = document.getElementById("sumoTreeDistortCopy");
-    const treeDistortOutput = document.getElementById("sumoTreeDistortOutput");
-    const treeDistortStatus = document.getElementById("sumoTreeDistortStatus");
-    function updateTreeDistortOutput() {
-      if (!treeDistortOutput) return;
-      const c = treeCornerOffsets;
-      treeDistortOutput.value = `tl=(${c.tl.x.toFixed(0)},${c.tl.y.toFixed(0)})  tr=(${c.tr.x.toFixed(0)},${c.tr.y.toFixed(0)})  bl=(${c.bl.x.toFixed(0)},${c.bl.y.toFixed(0)})  br=(${c.br.x.toFixed(0)},${c.br.y.toFixed(0)})  scale=${treeLayerScale.toFixed(3)}`;
-    }
-    function redrawTreeDistort() {
-      redrawWholeMap();
-      updateTreeDistortOutput();
-    }
-    let activeDragCorner = null; // "tl" | "tr" | "bl" | "br" | "all" | null
-    let dragLast = null;
-    const CORNER_GRAB_RADIUS = 16;
-    treeMoveBtn?.addEventListener("click", () => {
-      const active = treeMoveBtn.classList.toggle("active");
-      window.sumoActiveMode = active ? "trees" : "draw";
-      if (treeDistortStatus) treeDistortStatus.textContent = active
-        ? "Modo activo: arrastra un punto naranja para distorsionar esa esquina, o arrastra en otra parte para mover todo."
-        : "Ajusta cuando quieras — vuelve a activar el modo.";
-      redrawWholeMap();
-    });
-    document.getElementById("sumoCanvasWrap")?.addEventListener("pointerdown", (event) => {
-      if (window.sumoActiveMode !== "trees" || !treeWorldBBox) return;
-      const rect = event.currentTarget.getBoundingClientRect();
-      const px = event.clientX - rect.left, py = event.clientY - rect.top;
-      const w = netCanvas.parentElement.clientWidth, h = netCanvas.parentElement.clientHeight;
-      const { TL, TR, BL, BR } = getTreeCorners(w, h);
-      const cx = (TL.x + TR.x + BL.x + BR.x) / 4, cy = (TL.y + TR.y + BL.y + BR.y) / 4;
-      // Los puntos de agarre se ven acercados al centro (HANDLE_DISPLAY_SCALE);
-      // para agarrarlos bien hay que comparar contra esa MISMA posición.
-      const corners = {
-        tl: { x: (TL.x - cx) * HANDLE_DISPLAY_SCALE + cx, y: (TL.y - cy) * HANDLE_DISPLAY_SCALE + cy },
-        tr: { x: (TR.x - cx) * HANDLE_DISPLAY_SCALE + cx, y: (TR.y - cy) * HANDLE_DISPLAY_SCALE + cy },
-        bl: { x: (BL.x - cx) * HANDLE_DISPLAY_SCALE + cx, y: (BL.y - cy) * HANDLE_DISPLAY_SCALE + cy },
-        br: { x: (BR.x - cx) * HANDLE_DISPLAY_SCALE + cx, y: (BR.y - cy) * HANDLE_DISPLAY_SCALE + cy },
-      };
-      let closest = null, closestDist = CORNER_GRAB_RADIUS;
-      Object.entries(corners).forEach(([key, p]) => {
-        const d = Math.hypot(p.x - px, p.y - py);
-        if (d < closestDist) { closestDist = d; closest = key; }
-      });
-      activeDragCorner = closest || "all"; // si no agarró ninguna esquina, mueve todo junto
-      dragLast = { x: event.clientX, y: event.clientY };
-    });
-    window.addEventListener("pointermove", (event) => {
-      if (!activeDragCorner || !dragLast) return;
-      // Si se agarró un punto de esquina, éste se ve más cerca del centro
-      // (HANDLE_DISPLAY_SCALE) que su posición real, así que el arrastre se
-      // divide por esa escala; si se está moviendo todo junto, se usa la
-      // escala real de la capa — en ambos casos, para que el arrastre se
-      // sienta 1:1 con el mouse sin importar qué tan "acercado" se vea.
-      const dragScale = activeDragCorner === "all" ? treeLayerScale : HANDLE_DISPLAY_SCALE;
-      const ddx = (event.clientX - dragLast.x) / dragScale;
-      const ddy = (event.clientY - dragLast.y) / dragScale;
-      dragLast = { x: event.clientX, y: event.clientY };
-      if (activeDragCorner === "all") {
-        Object.values(treeCornerOffsets).forEach((c) => { c.x += ddx; c.y += ddy; });
-      } else {
-        treeCornerOffsets[activeDragCorner].x += ddx;
-        treeCornerOffsets[activeDragCorner].y += ddy;
-      }
-      redrawTreeDistort();
-    });
-    window.addEventListener("pointerup", () => { activeDragCorner = null; dragLast = null; });
-    const treeLayerScaleInput = document.getElementById("sumoTreeSizeScale");
-    if (treeLayerScaleInput) treeLayerScaleInput.value = treeLayerScale;
-    treeLayerScaleInput?.addEventListener("input", () => { treeLayerScale = Number(treeLayerScaleInput.value); redrawTreeDistort(); });
-    treeDistortReset?.addEventListener("click", () => {
-      treeCornerOffsets = { tl: { x: 0, y: 0 }, tr: { x: 0, y: 0 }, bl: { x: 0, y: 0 }, br: { x: 0, y: 0 } };
-      treeLayerScale = 1;
-      if (treeLayerScaleInput) treeLayerScaleInput.value = 1;
-      redrawTreeDistort();
-    });
-    treeDistortCopy?.addEventListener("click", async () => {
-      updateTreeDistortOutput();
-      try { await navigator.clipboard.writeText(treeDistortOutput?.value || ""); } catch (_) {}
-      if (treeDistortStatus) treeDistortStatus.textContent = "Coordenadas de las 4 esquinas copiadas. Pégamelas en el chat para dejarlas fijas.";
-    });
-    updateTreeDistortOutput();
+    // definido por EXTRA_ZOOM/CENTER_X/CENTER_Y/ROTATE_DEG de arriba (fijo,
+    // ya no editable desde un panel).
 
     // ---------- Clic sobre un árbol: muestra su especie y altura ----------
     const treeInfoBox = document.createElement("div");
@@ -1308,7 +1177,7 @@
     treeInfoBox.hidden = true;
     document.getElementById("sumoCanvasWrap")?.appendChild(treeInfoBox);
     document.getElementById("sumoCanvasWrap")?.addEventListener("click", (event) => {
-      if (!treeData || !treeWorldBBox || window.sumoActiveMode === "trees") return; // no interferir con distorsionar/mover
+      if (!treeData || !treeWorldBBox) return;
       const rect = event.currentTarget.getBoundingClientRect();
       const clickX = event.clientX - rect.left, clickY = event.clientY - rect.top;
       const w = netCanvas.parentElement.clientWidth, h = netCanvas.parentElement.clientHeight;

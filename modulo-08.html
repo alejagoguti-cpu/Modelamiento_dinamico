@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="stylesheet" href="modulo-08.css">
+<link rel="stylesheet" href="modulo-08.css?v=remove-controls-v33">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="site-theme.css?v=20260823">
   <script src="modulo-08-data.js"></script>
@@ -178,35 +178,6 @@
           </div>
         </div>
 
-        <!-- Rotación GLOBAL del mapa: gira calles, árboles y vehículos
-             TODOS JUNTOS, para corregir que el mapa se vea acostado/en
-             diagonal. Cuando quede recto, copia el número y pégamelo. -->
-        <div class="sumo-reference-panel">
-          <strong><i class="fa-solid fa-compass"></i> Enderezar el mapa completo</strong>
-          <label>Rotación <input id="sumoMapRotation" type="range" min="-90" max="90" step="0.5" value="0"></label>
-          <button type="button" class="sumo-btn" id="sumoMapRotationReset" title="Restablecer"><i class="fa-solid fa-rotate-left"></i></button>
-          <span id="sumoMapRotationStatus">Mueve la barra hasta que el mapa se vea derecho, no acostado.</span>
-          <div class="sumo-reference-coords">
-            <button type="button" class="sumo-btn" id="sumoMapRotationCopy" title="Copiar ángulo"><i class="fa-solid fa-copy"></i> Copiar ángulo de rotación</button>
-            <textarea id="sumoMapRotationOutput" rows="1" spellcheck="false" placeholder="Aquí aparecerá el ángulo final..."></textarea>
-          </div>
-        </div>
-
-        <!-- Distorsión de 4 esquinas de los árboles (como "Distort" de
-             Photoshop): activa el modo, aparecen 4 puntos en las esquinas
-             de la malla, arrastra cada uno por separado; arrastrar fuera
-             de un punto mueve todo junto. -->
-        <div class="sumo-reference-panel">
-          <strong><i class="fa-solid fa-tree"></i> Distorsionar árboles (4 esquinas)</strong>
-          <button type="button" class="sumo-btn" id="sumoTreeMoveMode" title="Activar distorsión/mover"><i class="fa-solid fa-arrows-up-down-left-right"></i></button>
-          <button type="button" class="sumo-btn" id="sumoTreeDistortReset" title="Restablecer"><i class="fa-solid fa-rotate-left"></i></button>
-          <label>Escala de la capa <input id="sumoTreeSizeScale" type="range" min="0.05" max="5" step="0.05" value="0.95"></label>
-          <span id="sumoTreeDistortStatus">Activa el modo: arrastra cualquiera de los 4 puntos naranjas para distorsionar, o arrastra en otra parte para mover todo junto. Las coordenadas de abajo se actualizan solas mientras arrastras.</span>
-          <div class="sumo-reference-coords">
-            <button type="button" class="sumo-btn" id="sumoTreeDistortCopy" title="Copiar coordenadas"><i class="fa-solid fa-copy"></i> Copiar coordenadas de cambio</button>
-            <textarea id="sumoTreeDistortOutput" rows="3" spellcheck="false" placeholder="Aquí aparecerán las 4 esquinas..."></textarea>
-          </div>
-        </div>
         <div class="sumo-sim-controls">
           <button type="button" id="sumoPlayPause" class="sumo-btn" aria-label="Reproducir / pausar"><i class="fa-solid fa-play"></i></button>
           <input type="range" id="sumoTimeSlider" min="0" max="1000" value="0" step="1" disabled>
@@ -289,6 +260,6 @@
 </div>
 
 <script src="modulo-08.js"></script>
-<script src="modulo-08-sumo.js?v=corners-perfect-v32"></script>
+<script src="modulo-08-sumo.js?v=remove-controls-v33"></script>
 </body>
 </html>
