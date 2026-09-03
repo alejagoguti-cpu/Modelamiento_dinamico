@@ -2221,6 +2221,7 @@
       });
     }
     directSubsystemsBtn?.addEventListener("click", () => { openSubmodelsFromDirectButton("subsystems"); showPlainNetwork("systems", directSubsystemsBtn); });
+    document.getElementById("showFullSubsystemsNetworkBtn")?.addEventListener("click", (event) => { window.__openFullSubsystemsNetwork?.(event); });
     directSubmodelsBtn?.addEventListener("click", () => { openSubmodelsFromDirectButton("submodels"); showPlainNetwork("submodels", directSubmodelsBtn); });
     directCartographyBtn?.addEventListener("click", showCartography);
     renderSubmodelsView("subsystems");
@@ -2676,6 +2677,7 @@
       const elementPosMap = {};
       const systemsList = Object.values(URBAN_DYNAMICS_DATA);
 
+      // Posiciones de los 6 centros de subsistema y sus 5 elementos
       systemsList.forEach((sys) => {
         const cx = sys.cx;
         const cy = sys.cy;
@@ -2696,7 +2698,7 @@
       // 1. Líneas intra-sistema (malla interna por sistema)
       let intraLinesHtml = "";
       systemsList.forEach((sys) => {
-        const sysElems = sys.elements.map(e => elementPosMap[e.id]);
+        const sysElems = sys.elements.map((e) => elementPosMap[e.id]);
         for (let i = 0; i < sysElems.length; i++) {
           for (let j = i + 1; j < sysElems.length; j++) {
             const a = sysElems[i], b = sysElems[j];
@@ -2750,12 +2752,12 @@
         `;
       }).join("");
 
-      // 4. Render de los 30 nodos dinámicos
+      // 4. Render de los 30 nodos dinámicos (NEGRO FLAT + CONTORNO NEÓN)
       const nodesHtml = allElements.map((el, index) => {
         const formattedName = el.name.replace(/\n/g, "<br>");
         return `
           <button type="button" class="full-dynamic-node" data-elem-id="${el.id}" data-sys-id="${el.systemId}"
-            style="--node-x:${el.x.toFixed(2)}%;--node-y:${el.y.toFixed(2)}%;--node-color:${el.color};--node-delay:${index * 20}ms;"
+            style="--node-x:${el.x.toFixed(2)}%;--node-y:${el.y.toFixed(2)}%;--node-color:${el.color};--node-delay:${index * 15}ms;"
             title="${el.name.replace(/\n/g, ' ')}">
             <i class="fa-solid ${el.icon} full-node-icon"></i>
             <span class="full-node-label">${formattedName}</span>
@@ -2763,19 +2765,15 @@
         `;
       }).join("");
 
-      // 5. Botón central para regresar
+      // 5. Botón central para regresar a 6 sistemas (único botón en el centro)
       const centerToggleHtml = `
-        <button type="button" id="mapNetworkCenterHub" class="map-network-center-hub is-expanded-mode" aria-label="Volver a la vista de 6 subsistemas">
+        <button type="button" id="mapNetworkCenterHub" class="map-network-center-hub is-expanded-mode" aria-label="Volver a los 6 subsistemas">
           <i class="fa-solid fa-arrow-rotate-left"></i>
           <span>Volver a<br>6 sistemas</span>
         </button>
-        <button type="button" id="mapNetworkCornerHub" class="map-network-corner-hub is-expanded-mode" aria-label="Volver a 6 subsistemas">
-          <i class="fa-solid fa-arrow-rotate-left"></i>
-          <span>Volver a 6 sistemas</span>
-        </button>
       `;
 
-      // 6. Header pill flotante
+      // 6. Header pill superior
       const headerPillHtml = `
         <div class="full-dynamics-top-bar">
           <span class="full-dynamics-dot"></span>
@@ -2798,13 +2796,15 @@
         </div>
       `;
 
+      // Listener para volver a 6 sistemas
       const backToOverview = (e) => {
         e.stopPropagation();
+        try { DINAMICA_SOUND.play("hidrica"); } catch (err) {}
         renderMapNetwork("systems", true, target, false);
       };
       target.querySelector("#mapNetworkCenterHub")?.addEventListener("click", backToOverview);
-      target.querySelector("#mapNetworkCornerHub")?.addEventListener("click", backToOverview);
 
+      // Interactividad de los 30 nodos
       target.querySelectorAll(".full-dynamic-node").forEach((btn) => {
         btn.addEventListener("click", (e) => {
           e.stopPropagation();
@@ -2812,7 +2812,7 @@
           const nodeData = elementPosMap[elemId];
           if (!nodeData) return;
 
-          DINAMICA_SOUND.play(nodeData.systemId);
+          try { DINAMICA_SOUND.play(nodeData.systemId); } catch (err) {}
 
           target.querySelectorAll(".full-dynamic-node").forEach((n) => {
             n.classList.toggle("is-active", n === btn);
@@ -2866,11 +2866,6 @@
           }
         });
       });
-    }
-
-    function showCombinedNetworkModal() {
-      // Fallback si alguien llama a la versión modal
-      renderFullSubsystemsNetworkInPlace(document.getElementById("territoryNetworkPlain"));
     }
 
     const buildHidricaDiagramHtml = (row) => {
@@ -3210,6 +3205,10 @@
       const centerHubHtml = (systems && isPlainView && !hideAllSystemBubbles)
         ? `<button type="button" id="mapNetworkCenterHub" class="map-network-center-hub" aria-label="Explotar los 6 subsistemas y ver la red completa"><i class="fa-solid fa-burst"></i><span>Ver red<br>completa</span></button>`
         : "";
+      // El botón fijo abajo a la izquierda hace lo mismo que el del centro
+      // (queda como una segunda forma de activarlo); solo se muestra junto
+      // con las 6 bolas de sistemas, no mientras están las 30 dinámicas.
+      
       if (hideAllSystemBubbles) declutteredPositions = computeDeclutteredPositions();
       const kennedyBoxesHtml = hideAllSystemBubbles ? buildPhenomenaHtml() + buildTextBoxesHtml() : "";
       const relationPairs = hideAllSystemBubbles ? [] : (systems
@@ -3275,18 +3274,8 @@
       if (hideAllSystemBubbles) requestAnimationFrame(() => updateTextBoxes());
       const openFullNetwork = (event) => {
         event?.stopPropagation();
-        // Secuencia: 1) se esconden las líneas que conectan las 6 bolas,
-        // 2) las 6 bolas explotan, 3) se reemplaza el panel por las 30
-        // dinámicas (que a su vez tienen su propia mini-secuencia interna:
-        // nacen pegadas al punto de su sistema y luego se reacomodan).
-        const stageEl = target.querySelector(".map-network-stage");
-        stageEl?.querySelectorAll(".map-network-flows, .map-network-bonds").forEach((g) => g.classList.add("fading-out"));
-        window.setTimeout(() => {
-          stageEl?.classList.add("center-hub-exploding");
-          window.setTimeout(() => {
-            renderFullSubsystemsNetworkInPlace(target);
-          }, 560);
-        }, 320);
+        try { DINAMICA_SOUND.play("hidrica"); } catch (err) {}
+        renderFullSubsystemsNetworkInPlace(target);
       };
       window.__openFullSubsystemsNetwork = openFullNetwork;
       target.querySelector("#mapNetworkCenterHub")?.addEventListener("click", openFullNetwork);
