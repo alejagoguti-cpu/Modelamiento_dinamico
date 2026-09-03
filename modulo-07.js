@@ -2221,6 +2221,7 @@
       });
     }
     directSubsystemsBtn?.addEventListener("click", () => { openSubmodelsFromDirectButton("subsystems"); showPlainNetwork("systems", directSubsystemsBtn); });
+    document.getElementById("showFullSubsystemsNetworkBtn")?.addEventListener("click", (event) => { window.__openFullSubsystemsNetwork?.(event); });
     directSubmodelsBtn?.addEventListener("click", () => { openSubmodelsFromDirectButton("submodels"); showPlainNetwork("submodels", directSubmodelsBtn); });
     directCartographyBtn?.addEventListener("click", showCartography);
     renderSubmodelsView("subsystems");
@@ -3210,6 +3211,11 @@
       const centerHubHtml = (systems && isPlainView && !hideAllSystemBubbles)
         ? `<button type="button" id="mapNetworkCenterHub" class="map-network-center-hub" aria-label="Explotar los 6 subsistemas y ver la red completa"><i class="fa-solid fa-burst"></i><span>Ver red<br>completa</span></button>`
         : "";
+      // El botón fijo abajo a la izquierda hace lo mismo que el del centro
+      // (queda como una segunda forma de activarlo); solo se muestra junto
+      // con las 6 bolas de sistemas, no mientras están las 30 dinámicas.
+      const fixedFullNetworkBtn = document.getElementById("showFullSubsystemsNetworkBtn");
+      if (fixedFullNetworkBtn) fixedFullNetworkBtn.hidden = !(systems && isPlainView && !hideAllSystemBubbles);
       if (hideAllSystemBubbles) declutteredPositions = computeDeclutteredPositions();
       const kennedyBoxesHtml = hideAllSystemBubbles ? buildPhenomenaHtml() + buildTextBoxesHtml() : "";
       const relationPairs = hideAllSystemBubbles ? [] : (systems
@@ -3275,6 +3281,7 @@
       if (hideAllSystemBubbles) requestAnimationFrame(() => updateTextBoxes());
       const openFullNetwork = (event) => {
         event?.stopPropagation();
+        document.getElementById("showFullSubsystemsNetworkBtn")?.setAttribute("hidden", "");
         // Secuencia: 1) se esconden las líneas que conectan las 6 bolas,
         // 2) las 6 bolas explotan, 3) se reemplaza el panel por las 30
         // dinámicas (que a su vez tienen su propia mini-secuencia interna:
