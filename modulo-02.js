@@ -683,12 +683,41 @@ function layoutNetwork() {
     if (n.isMainHub) n._outwardAngle = Math.atan2(n.y - CANVAS.h / 2, n.x - CANVAS.w / 2) || 0;
   });
 
-  // ---- 2. Solo se recorta al lienzo; NO hay resolucion de colisiones,
-  //         para que ninguna bola se desplace de su sitio. ----
+  // ---- 2. Recorte al lienzo, y luego resolución de colisiones REAL:
+  //         ninguna bola puede quedar tocando a otra. Se empujan poco a
+  //         poco (muchas pasadas pequeñas) desde su posición original del
+  //         wireframe, así el orden/organización se mantiene pero nunca
+  //         se tocan entre sí — como una red de "big data" bien separada.
   nodes.forEach(n => {
     n.x = Math.max(n.collR + 20, Math.min(CANVAS.w - n.collR - 20, n.x));
     n.y = Math.max(n.collR + 20, Math.min(CANVAS.h - n.collR - 20, n.y));
   });
+  const MIN_GAP = 16; // espacio mínimo obligatorio entre bordes de dos bolas, nunca 0
+  for (let pass = 0; pass < 400; pass++) {
+    let anyOverlap = false;
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const a = nodes[i], b = nodes[j];
+        let dx = b.x - a.x, dy = b.y - a.y;
+        let dist = Math.hypot(dx, dy);
+        const minDist = a.collR + b.collR + MIN_GAP;
+        if (dist < minDist) {
+          anyOverlap = true;
+          if (dist < 0.001) { dx = (Math.random() - 0.5) * 2; dy = (Math.random() - 0.5) * 2; dist = Math.hypot(dx, dy); }
+          const overlap = (minDist - dist) / 2;
+          const ux = dx / dist, uy = dy / dist;
+          a.x -= ux * overlap; a.y -= uy * overlap;
+          b.x += ux * overlap; b.y += uy * overlap;
+        }
+      }
+    }
+    // se mantiene todo dentro del lienzo en cada pasada
+    nodes.forEach(n => {
+      n.x = Math.max(n.collR + 20, Math.min(CANVAS.w - n.collR - 20, n.x));
+      n.y = Math.max(n.collR + 20, Math.min(CANVAS.h - n.collR - 20, n.y));
+    });
+    if (!anyOverlap) break;
+  }
 
   nodes.forEach(n => { n.homeX = n.x; n.homeY = n.y; });
 }
