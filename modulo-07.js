@@ -2694,8 +2694,9 @@ const renderTerritoryNetwork = () => {
       const elementPosMap = {};
       UNIFIED_URBAN_ELEMENTS.forEach((el) => { elementPosMap[el.id] = el; });
 
-      // Generar líneas de conexión unificadas y limpias entre nodos
+      // Generar líneas de conexión unificadas, coloridas y brillantes entre los 30 nodos
       let unifiedLinesHtml = "";
+      let defsHtml = "";
       const drawnPairs = new Set();
       let flowCount = 0;
 
@@ -2707,15 +2708,26 @@ const renderTerritoryNetwork = () => {
           if (drawnPairs.has(pairKey)) return;
           drawnPairs.add(pairKey);
 
-          const pathId = `unified-flow-${flowCount++}`;
+          const gradId = `full-link-grad-${flowCount}`;
+          const pathId = `full-link-flow-${flowCount}`;
+          flowCount++;
+
+          const dur = (3.5 + (flowCount % 4) * 0.7).toFixed(2);
           const d = `M ${el.x.toFixed(2)} ${el.y.toFixed(2)} L ${targetEl.x.toFixed(2)} ${targetEl.y.toFixed(2)}`;
-          const dur = (4.5 + (flowCount % 5) * 0.8).toFixed(2);
+
+          defsHtml += `
+            <linearGradient id="${gradId}" x1="${el.x.toFixed(2)}%" y1="${el.y.toFixed(2)}%" x2="${targetEl.x.toFixed(2)}%" y2="${targetEl.y.toFixed(2)}%">
+              <stop offset="0%" stop-color="${el.color}" stop-opacity="0.9"/>
+              <stop offset="50%" stop-color="#ffd166" stop-opacity="0.75"/>
+              <stop offset="100%" stop-color="${targetEl.color}" stop-opacity="0.9"/>
+            </linearGradient>
+          `;
 
           unifiedLinesHtml += `
             <g class="full-unified-group" data-source="${el.id}" data-target="${targetId}">
               <path id="${pathId}" class="full-unified-flow-path" d="${d}"/>
-              <line x1="${el.x.toFixed(2)}" y1="${el.y.toFixed(2)}" x2="${targetEl.x.toFixed(2)}" y2="${targetEl.y.toFixed(2)}" class="full-unified-link"/>
-              <circle class="full-unified-pulse" r="0.45" fill="#ffd166">
+              <line x1="${el.x.toFixed(2)}" y1="${el.y.toFixed(2)}" x2="${targetEl.x.toFixed(2)}" y2="${targetEl.y.toFixed(2)}" class="full-unified-link" style="stroke:url(#${gradId});--source-color:${el.color};--target-color:${targetEl.color};"/>
+              <circle class="full-unified-pulse" r="0.5" fill="#ffd166">
                 <animateMotion dur="${dur}s" repeatCount="indefinite" rotate="auto">
                   <mpath href="#${pathId}"/>
                 </animateMotion>
@@ -2738,11 +2750,14 @@ const renderTerritoryNetwork = () => {
         `;
       }).join("");
 
-      // Botón central para regresar a 6 sistemas (único botón en el centro)
+      // Botones para regresar a 6 sistemas: centro y abajo a la izquierda.
       const centerToggleHtml = `
         <button type="button" id="mapNetworkCenterHub" class="map-network-center-hub is-expanded-mode" aria-label="Volver a los 6 subsistemas">
           <i class="fa-solid fa-arrow-rotate-left"></i>
           <span>Volver a<br>6 sistemas</span>
+        </button>
+        <button type="button" id="mapNetworkCornerHub" class="show-full-network-fixed-btn is-expanded-mode" aria-label="Volver a los 6 subsistemas">
+          <i class="fa-solid fa-arrow-rotate-left"></i> Volver a 6 sistemas
         </button>
       `;
 
@@ -2758,7 +2773,7 @@ const renderTerritoryNetwork = () => {
       target.innerHTML = `
         <div class="map-network-stage systems-network is-full-dynamics-active">
           ${headerPillHtml}
-          <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+          <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><defs>${defsHtml}</defs>
             <g class="full-unified-layer">${unifiedLinesHtml}</g>
           </svg>
           ${nodesHtml}
@@ -2783,6 +2798,7 @@ const renderTerritoryNetwork = () => {
         }, 320);
       };
       target.querySelector("#mapNetworkCenterHub")?.addEventListener("click", backToOverview);
+      target.querySelector("#mapNetworkCornerHub")?.addEventListener("click", backToOverview);
 
       // Interactividad de los 30 nodos
       target.querySelectorAll(".full-dynamic-node").forEach((btn) => {
@@ -3201,7 +3217,8 @@ const renderTerritoryNetwork = () => {
       // El botón fijo abajo a la izquierda hace lo mismo que el del centro
       // (queda como una segunda forma de activarlo); solo se muestra junto
       // con las 6 bolas de sistemas, no mientras están las 30 dinámicas.
-      
+      const fixedFullNetworkBtn = document.getElementById("showFullSubsystemsNetworkBtn");
+      if (fixedFullNetworkBtn) fixedFullNetworkBtn.hidden = !(systems && isPlainView && !hideAllSystemBubbles);
       if (hideAllSystemBubbles) declutteredPositions = computeDeclutteredPositions();
       const kennedyBoxesHtml = hideAllSystemBubbles ? buildPhenomenaHtml() + buildTextBoxesHtml() : "";
       const relationPairs = hideAllSystemBubbles ? [] : (systems
@@ -3261,22 +3278,25 @@ const renderTerritoryNetwork = () => {
       target.classList.add("network-active");
       const flowsSvg = hideAllSystemBubbles ? buildTextBoxesSvg() : "";
       const flowDotsHtml = "";
-      target.innerHTML = `<div class="map-network-stage ${systems ? "systems-network" : "submodels-network"}"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><defs>${gradientDefs.join("")}</defs><g class="map-network-flows">${flowsSvg}</g><g class="map-network-bonds">${showBonds ? bonds : ""}</g></svg>${flowDotsHtml}${nodes}${centerHubHtml}${kennedyBoxesHtml}</div>`;
+      target.innerHTML = `<div class="map-network-stage ${systems ? "systems-network" : "submodels-network"}"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><defs>${defsHtml}</defs><defs>${gradientDefs.join("")}</defs><g class="map-network-flows">${flowsSvg}</g><g class="map-network-bonds">${showBonds ? bonds : ""}</g></svg>${flowDotsHtml}${nodes}${centerHubHtml}${kennedyBoxesHtml}</div>`;
       // Ya existen los rectángulos reales: corrige en el siguiente frame el
       // punto de entrada/salida para que ninguna línea quede suspendida.
       if (hideAllSystemBubbles) requestAnimationFrame(() => updateTextBoxes());
       const openFullNetwork = (event) => {
         event?.stopPropagation();
+        document.getElementById("showFullSubsystemsNetworkBtn")?.setAttribute("hidden", "");
         try { DINAMICA_SOUND.play("expansion"); } catch (err) {}
         const stage = target.querySelector(".map-network-stage");
-        if (stage) {
-          stage.classList.add("is-stage-exploding");
+        // Secuencia: 1) se esconden las líneas que conectan las 6 bolas,
+        // 2) las 6 bolas explotan, 3) se reemplaza el panel por las 30
+        // dinámicas conectadas entre sí.
+        stage?.querySelectorAll(".map-network-flows, .map-network-bonds").forEach((g) => g.classList.add("fading-out"));
+        window.setTimeout(() => {
+          stage?.classList.add("center-hub-exploding");
           window.setTimeout(() => {
             renderFullSubsystemsNetworkInPlace(target);
-          }, 320);
-        } else {
-          renderFullSubsystemsNetworkInPlace(target);
-        }
+          }, 560);
+        }, 320);
       };
       window.__openFullSubsystemsNetwork = openFullNetwork;
       target.querySelector("#mapNetworkCenterHub")?.addEventListener("click", openFullNetwork);
@@ -3293,7 +3313,8 @@ const renderTerritoryNetwork = () => {
         // hizo clic, sin abrir ningún modal.
         target.querySelectorAll(".bubble-explode-satellite").forEach((n) => n.remove());
         try {
-          const items = row.dynamics || row.components;
+          const items = row.dynamics || row.components
+            || (row.parts ? row.parts.replace(/\.$/, "").split(" + ").map((s) => s.trim()) : null);
           if (items && items.length) {
             const stageRect = target.getBoundingClientRect();
             const btnRect = button.getBoundingClientRect();
@@ -3303,8 +3324,8 @@ const renderTerritoryNetwork = () => {
             const satHalf = 39; // mitad del tamaño de cada bolita (78px), para no dejar que se corte en el borde
             const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
             const sysKey = ["hidrica", "biotica", "fisico", "movilidad", "social", "socioeconomico"][Number(button.dataset.mapNetworkIndex)];
-            const dynSys = sysKey && URBAN_DYNAMICS_DATA[sysKey];
-            const elemList = dynSys ? dynSys.elements : (items || []).map(text => ({ name: text, icon: "fa-circle-dot", desc: text }));
+            const dynElements = systems && sysKey ? UNIFIED_URBAN_ELEMENTS.filter((el) => el.systemId === sysKey) : null;
+            const elemList = (dynElements && dynElements.length) ? dynElements : (items || []).map((text) => ({ name: text, icon: "fa-circle-dot", desc: text }));
             elemList.forEach((el, i) => {
               const angle = (i / elemList.length) * Math.PI * 2 - Math.PI / 2;
               const finalX = clamp(originX + satR * Math.cos(angle), satHalf, stageRect.width - satHalf);
