@@ -473,45 +473,122 @@ if (typeof module !== &quot;undefined&quot;) { module.exports = { NODES, LINKS }
   function baseColor(n){ return EJE_COLOR[n.eje]||&quot;#888&quot;; }
   function nodeColor(n){ return n.active ? baseColor(n) : OFF_COLOR; }
 
-  // El texto va DENTRO de la burbuja: el radio parte de lo que mide la
-  // etiqueta ya repartida en renglones y crece con las conexiones activas
-  // (misma lectura de siempre: grande = mas conexiones).
-  function labelFont(n){ return isMacro(n) ? 10 : 9; }
-  function labelLines(n){
-    if(n._lines) return n._lines;
-    const max = isMacro(n) ? 15 : 14;
-    const lines = []; let cur = &quot;&quot;;
-    // un separador suelto (&quot;/&quot;, &quot;-&quot;) no puede quedar solo en su renglon
-    const words = [];
-    String(n.label).split(/\s+/).forEach(w=>{
-      if(/^[\/·\-]$/.test(w) &amp;&amp; words.length) words[words.length-1] += &quot; &quot; + w;
-      else words.push(w);
-    });
-    words.forEach(w=>{
-      if(!cur){ cur = w; }
-      else if((cur+&quot; &quot;+w).length <= max){ cur += &quot; &quot; + w; }
-      else { lines.push(cur); cur = w; }
-    });
-    if(cur) lines.push(cur);
-    n._lines = lines;
-    return lines;
+  // El tamano de la burbuja NO lo manda el texto: vuelve a depender solo de
+  // las conexiones activas (grande = mas conexiones), como antes. Lo que se
+  // ajusta es la letra, que se achica lo justo para que la etiqueta quepa
+  // COMPLETA adentro de esa burbuja, sin cortarse.
+  function targetRadius(n){
+    const porConexiones = n.active ? Math.max(26, Math.min(44, 26 + (n._adeg||0)*1.4)) : 22;
+    // nunca por debajo de lo que necesita su etiqueta con la letra mas
+    // pequena legible: asi ningun texto queda cortado
+    return Math.max(porConexiones, minRadius(n));
   }
-  function textRadius(n){
-    const lines = labelLines(n), fs = labelFont(n);
-    const w = n._tw || Math.max.apply(null, lines.map(l=>l.length)) * fs * 0.62;
-    const h = n._th || lines.length * fs * 1.22;
-    return Math.sqrt(w*w + h*h)/2 + 8;
-  }
-  function nodeRadius(n){
-    const base = textRadius(n);
-    if(!n.active) return base*0.86;
-    return base * (1 + Math.min(0.5, (n._adeg||0)*0.05));
-  }
+  function nodeRadius(n){ return targetRadius(n); }
   function fillOpacity(n){
     if(!n.active) return 0.14;
     return n.rol===&quot;subordinado&quot; ? 0.16 : (isMacro(n) ? 0.26 : 0.20);
   }
 
+  // Medidor oculto: da el ancho REAL de un renglon a 10px, para no depender
+  // de estimaciones por numero de caracteres.
+  // se crea cuando ya existe el <svg> (este bloque se define antes que el)
+  let measurer = null;
+  function getMeasurer(){
+    // va dentro de un <g class=&quot;node&quot;> para heredar exactamente los mismos
+    // estilos (negrita incluida) que las etiquetas de verdad: si no, mide
+    // de menos y el texto termina saliendose del circulo
+    if(!measurer) measurer = d3.select(&quot;#svg&quot;).append(&quot;g&quot;).attr(&quot;class&quot;,&quot;node node-measure&quot;)
+      .style(&quot;visibility&quot;,&quot;hidden&quot;)
+      .append(&quot;text&quot;).attr(&quot;x&quot;,-9999).attr(&quot;y&quot;,-9999).style(&quot;font-size&quot;,&quot;10px&quot;);
+    return measurer;
+  }
+  const widthCache = new Map();
+  function width10(str, cls){
+    const key = cls + &quot;|&quot; + str;
+    if(widthCache.has(key)) return widthCache.get(key);
+    const m = getMeasurer().attr(&quot;class&quot;,cls).text(str).node();
+    const w = m.getComputedTextLength ? m.getComputedTextLength() : str.length*5.5;
+    widthCache.set(key,w);
+    return w;
+  }
+
+  // Palabras: un separador suelto (&quot;/&quot;, &quot;-&quot;) no queda solo en su renglon, y
+  // una palabra larga con guion (Economico-productivo) se puede partir en el
+  // guion para que el bloque de texto quede mas cuadrado.
+  function tokenize(label){
+    const out = [];
+    String(label).split(/\s+/).forEach(w=>{
+      if(/^[\/·\-]$/.test(w) &amp;&amp; out.length){ out[out.length-1] += &quot; &quot; + w; return; }
+      let rest = w;
+      if(w.length > 11){
+        let idx;
+        while((idx = rest.indexOf(&quot;-&quot;)) > 0 &amp;&amp; idx < rest.length-1){
+          out.push(rest.slice(0, idx+1)); rest = rest.slice(idx+1);
+        }
+      }
+      out.push(rest);
+    });
+    return out;
+  }
+  function wrapTokens(tokens, max){
+    const lines = []; let cur = &quot;&quot;;
+    tokens.forEach(t=>{
+      if(!cur){ cur = t; return; }
+      const glue = /-$/.test(cur) ? &quot;&quot; : &quot; &quot;;
+      if((cur+glue+t).length <= max) cur += glue + t;
+      else { lines.push(cur); cur = t; }
+    });
+    if(cur) lines.push(cur);
+    return lines;
+  }
+  // Busca la letra mas grande (y el reparto en renglones con menos cortes)
+  // que cabe entera dentro del circulo de ese nodo.
+  const FONTS = [10,9.5,9,8.5,8,7.5,7,6.5];
+  const MIN_FS = FONTS[FONTS.length-1];
+  const WRAPS = [18,15,13,11,9];
+  function wrapOptions(n){
+    if(n._opts) return n._opts;
+    const tokens = tokenize(n.label);
+    const seen = new Set(), opts = [];
+    WRAPS.forEach(mx=>{ const lines = wrapTokens(tokens, mx); const key = lines.join(&quot;|&quot;);
+                        if(!seen.has(key)){ seen.add(key); opts.push(lines); } });
+    n._opts = opts;
+    return opts;
+  }
+  function radiusFor(lines, fs, cls){
+    const w = Math.max.apply(null, lines.map(l=>width10(l,cls))) * fs/10;
+    const h = lines.length * fs * 1.2;
+    return Math.sqrt(w*w + h*h)/2 + 4;
+  }
+  // radio mas chico en el que la etiqueta todavia cabe entera
+  function minRadius(n){
+    if(n._minR) return n._minR;
+    const cls = isMacro(n) ? &quot;lbl-macro&quot; : &quot;lbl-pot&quot;;
+    n._minR = Math.min.apply(null, wrapOptions(n).map(lines=>radiusFor(lines, MIN_FS, cls)));
+    return n._minR;
+  }
+  function layoutLabel(n){
+    const cls = isMacro(n) ? &quot;lbl-macro&quot; : &quot;lbl-pot&quot;;
+    const R = targetRadius(n);
+    const options = wrapOptions(n);
+    let best = null;
+    for(const fs of FONTS){
+      for(const lines of options){
+        if(radiusFor(lines, fs, cls) <= R){ best = {fs, lines}; break; }
+      }
+      if(best) break;
+    }
+    if(!best){
+      // no deberia pasar (R nunca baja de minRadius), pero si pasa se elige
+      // el reparto que menos se sale, con la letra mas pequena
+      let mejor = options[0], mejorR = Infinity;
+      options.forEach(lines=>{ const rr = radiusFor(lines, MIN_FS, cls); if(rr < mejorR){ mejorR = rr; mejor = lines; } });
+      best = {fs: MIN_FS, lines: mejor};
+    }
+    n._fs = best.fs; n._lines = best.lines;
+  }
+  function labelLines(n){ if(!n._lines) layoutLabel(n); return n._lines; }
+  function labelFont(n){ if(!n._fs) layoutLabel(n); return n._fs; }
   const wrap=document.getElementById(&quot;canvas-wrap&quot;);
   const svg=d3.select(&quot;#svg&quot;);
   const measure=()=>{const r=svg.node().getBoundingClientRect();return{w:Math.round(r.width)||wrap.clientWidth,h:Math.round(r.height)||wrap.clientHeight};};let W=measure().w,H=measure().h;
@@ -536,7 +613,8 @@ if (typeof module !== &quot;undefined&quot;) { module.exports = { NODES, LINKS }
     .attr(&quot;class&quot;,d=> isMacro(d)?&quot;lbl-macro&quot;:&quot;lbl-pot&quot;)
     .each(function(d){ renderLabel(d3.select(this), d); });
 
-  measureLabels();
+  NODES.forEach(layoutLabel);
+  textSel.each(function(d){ renderLabel(d3.select(this), d); });
 
   nodeSel.insert(&quot;circle&quot;,&quot;text&quot;)
     .attr(&quot;fill&quot;,nodeColor)
@@ -546,19 +624,10 @@ if (typeof module !== &quot;undefined&quot;) { module.exports = { NODES, LINKS }
     .attr(&quot;fill-opacity&quot;,fillOpacity)
     .attr(&quot;stroke-dasharray&quot;,d=> d.rol===&quot;transversal&quot;?&quot;4 3&quot;:null);
 
-  function measureLabels(){
-    textSel.each(function(d){
-      let w=0;
-      d3.select(this).selectAll(&quot;tspan&quot;).each(function(){
-        const t=this.getComputedTextLength ? this.getComputedTextLength() : 0;
-        if(t>w) w=t;
-      });
-      if(w>0){ d._tw=w; d._th=labelLines(d).length*labelFont(d)*1.22; }
-    });
-  }
 
   function renderLabel(sel, n){
-    const lines = labelLines(n), fs = labelFont(n), lineH = fs*1.22;
+    const lines = labelLines(n), fs = labelFont(n), lineH = fs*1.2;
+    sel.style(&quot;font-size&quot;, fs+&quot;px&quot;);
     sel.selectAll(&quot;tspan&quot;).remove();
     lines.forEach((line,i)=>{
       sel.append(&quot;tspan&quot;)
@@ -580,17 +649,17 @@ if (typeof module !== &quot;undefined&quot;) { module.exports = { NODES, LINKS }
     });
 
   const linkForce=d3.forceLink(LINKS).id(d=>d.id)
-    .distance(l=>{ const pad=nodeRadius(l.source)+nodeRadius(l.target);
-                   if(l.tipo===&quot;fundamenta&quot;)return 60+pad; if(l.tipo===&quot;concreta&quot;)return 30+pad;
-                   if(l.tipo===&quot;subordina&quot;)return 46+pad; return 55+pad; })
+    .distance(l=>{ const pad=nodeRadius(l.source)+nodeRadius(l.target)+14;
+                   if(l.tipo===&quot;fundamenta&quot;)return 34+pad; if(l.tipo===&quot;concreta&quot;)return 14+pad;
+                   if(l.tipo===&quot;subordina&quot;)return 24+pad; return 30+pad; })
     .strength(l=> !linkActive(l) ? 0
                  : l.tipo===&quot;concreta&quot;?0.7 : l.tipo===&quot;fundamenta&quot;?0.25 : 0.5);
 
   const sim=d3.forceSimulation(NODES)
     .force(&quot;link&quot;,linkForce)
-    .force(&quot;charge&quot;,d3.forceManyBody().strength(d=> !d.active?-60 : isMacro(d)?-560 : d.tipo===&quot;modelo&quot;?-500 : -260))
+    .force(&quot;charge&quot;,d3.forceManyBody().strength(d=> !d.active?-50 : isMacro(d)?-330 : d.tipo===&quot;modelo&quot;?-300 : -170))
     .force(&quot;center&quot;,d3.forceCenter(W/2,H/2))
-    .force(&quot;collide&quot;,d3.forceCollide().radius(d=>nodeRadius(d)+12).strength(0.95))
+    .force(&quot;collide&quot;,d3.forceCollide().radius(d=>nodeRadius(d)+17).strength(1))
     .force(&quot;y&quot;,d3.forceY(d=> d.eje===&quot;pot&quot;?H*0.72:H*0.4).strength(0.06))
     .on(&quot;tick&quot;,ticked)
     .on(&quot;end&quot;,fitToView);
@@ -617,7 +686,9 @@ if (typeof module !== &quot;undefined&quot;) { module.exports = { NODES, LINKS }
       x0=Math.min(x0,n.x-r); x1=Math.max(x1,n.x+r);
       y0=Math.min(y0,n.y-r); y1=Math.max(y1,n.y+r); });
     if(!isFinite(x0)) return;
-    const k=Math.min(1.05, availW/Math.max(1,x1-x0), availH/Math.max(1,y1-y0));
+    // si sobra espacio, la red se agranda un poco para que el texto de las
+    // burbujas se lea mejor (sin agrandar las burbujas entre si)
+    const k=Math.min(1.25, availW/Math.max(1,x1-x0), availH/Math.max(1,y1-y0));
     const cx=(x0+x1)/2, cy=(y0+y1)/2;
     svg.transition().duration(520).call(zoom.transform,
       d3.zoomIdentity.translate(padL+availW/2-k*cx, padT+availH/2-k*cy).scale(k));
@@ -647,15 +718,17 @@ if (typeof module !== &quot;undefined&quot;) { module.exports = { NODES, LINKS }
       .attr(&quot;fill-opacity&quot;,fillOpacity)
       .attr(&quot;stroke-dasharray&quot;,d=> !d.active?&quot;2 3&quot; : d.rol===&quot;transversal&quot;?&quot;4 3&quot;:null);
 
+    NODES.forEach(layoutLabel);
     nodeSel.select(&quot;text&quot;)
-      .classed(&quot;txt-off&quot;,d=>!d.active);
+      .classed(&quot;txt-off&quot;,d=>!d.active)
+      .each(function(d){ renderLabel(d3.select(this), d); });
 
     linkSel.classed(&quot;inactive&quot;, d=>!linkActive(d));
 
     if(reorganize){
       linkForce.strength(l=> !linkActive(l) ? 0
                  : l.tipo===&quot;concreta&quot;?0.7 : l.tipo===&quot;fundamenta&quot;?0.25 : 0.5);
-      sim.force(&quot;collide&quot;).radius(d=>nodeRadius(d)+12);
+      sim.force(&quot;collide&quot;).radius(d=>nodeRadius(d)+17);
       sim.alpha(0.75).restart();
     }
     updateHUD();

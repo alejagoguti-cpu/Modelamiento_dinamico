@@ -2815,11 +2815,15 @@
         `;
       }).join("");
 
-      // 5. Botón central para regresar a 6 sistemas (único botón en el centro)
+      // 5. Botones para regresar a 6 sistemas: uno en el centro y otro
+      // fijo abajo a la izquierda — los dos hacen exactamente lo mismo.
       const centerToggleHtml = `
         <button type="button" id="mapNetworkCenterHub" class="map-network-center-hub is-expanded-mode" aria-label="Volver a los 6 subsistemas">
           <i class="fa-solid fa-arrow-rotate-left"></i>
           <span>Volver a<br>6 sistemas</span>
+        </button>
+        <button type="button" id="mapNetworkCornerHub" class="show-full-network-fixed-btn is-expanded-mode" aria-label="Volver a los 6 subsistemas">
+          <i class="fa-solid fa-arrow-rotate-left"></i> Volver a 6 sistemas
         </button>
       `;
 
@@ -2846,13 +2850,20 @@
         </div>
       `;
 
-      // Listener para volver a 6 sistemas
+      // Listener para volver a 6 sistemas: primero se anima el cierre
+      // (las 30 se encogen y desvanecen hacia su punto de origen, con un
+      // pequeño escalonado), y solo cuando termina se muestran las 6 bolas.
+      const stageForClose = target.querySelector(".map-network-stage");
       const backToOverview = (e) => {
         e.stopPropagation();
         try { DINAMICA_SOUND.play("hidrica"); } catch (err) {}
-        renderMapNetwork("systems", true, target, false);
+        stageForClose?.classList.add("full-dynamics-closing");
+        window.setTimeout(() => {
+          renderMapNetwork("systems", true, target, false);
+        }, 480);
       };
       target.querySelector("#mapNetworkCenterHub")?.addEventListener("click", backToOverview);
+      target.querySelector("#mapNetworkCornerHub")?.addEventListener("click", backToOverview);
 
       // Interactividad de los 30 nodos
       target.querySelectorAll(".full-dynamic-node").forEach((btn) => {

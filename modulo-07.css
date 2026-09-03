@@ -7712,3 +7712,26 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
   transform: translate(var(--final-x), var(--final-y)) translate(-50%, -50%) scale(1.15) !important;
   box-shadow: 0 0 28px var(--node-color, #46d6d0), 0 12px 28px rgba(0,0,0,1) !important;
 }
+
+/* ---------- Animación de CIERRE de la red completa: las 30 dinámicas se
+   encogen y desvanecen hacia su punto de origen (con escalonado), antes
+   de que se vuelva a mostrar la vista de 6 subsistemas. ---------- */
+.full-dynamics-closing .full-dynamic-node {
+  transition: transform .42s cubic-bezier(.4,0,.6,1) var(--node-delay, 0ms), opacity .32s ease var(--node-delay, 0ms) !important;
+  transform: translate(-50%, -50%) scale(.1) !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+.full-dynamics-closing .full-cluster-badge,
+.full-dynamics-closing .full-dynamics-top-bar,
+.full-dynamics-closing .full-intra-layer,
+.full-dynamics-closing .full-cross-layer {
+  transition: opacity .3s ease !important;
+  opacity: 0 !important;
+}
+.full-dynamics-closing .map-network-center-hub,
+.full-dynamics-closing .show-full-network-fixed-btn.is-expanded-mode {
+  transition: opacity .2s ease !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
