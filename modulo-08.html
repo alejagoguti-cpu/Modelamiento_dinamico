@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="stylesheet" href="modulo-08.css?v=mirlas-v34">
+<link rel="stylesheet" href="modulo-08.css?v=mirlas-ruido-v35">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="site-theme.css?v=20260823">
   <script src="modulo-08-data.js"></script>
@@ -222,6 +222,11 @@
             <label class="noise-toggle-label"><input type="checkbox" id="sumoBirdToggle" checked> Mostrar capa</label>
           </h4>
           <p class="birds-legend-note">Cada mirla es un agente con posición y velocidad. Un impulso global las empuja de oriente a occidente, desde los Cerros hacia los humedales. Ven en un radio de 150&nbsp;px: si detectan un árbol lo buscan, y al llegar a menos de 15&nbsp;px frenan y revolotean 2–3 segundos antes de seguir. Unas entran por arriba a la izquierda y otras arrancan posadas en los humedales.</p>
+          <label class="whatif-slider-label birds-slider-label">
+            Número de mirlas: <span id="sumoBirdCountVal">60</span>
+            <input type="range" id="sumoBirdSlider" min="10" max="200" value="60" step="5">
+          </label>
+          <p class="birds-legend-note birds-noise-note"><i class="fa-solid fa-volume-high"></i> <b>Umbral crítico de 60&nbsp;dB(A)</b> (Caltrans): por encima de ese nivel el ruido del tráfico enmascara por completo sus señales de comunicación. Cuando el nivel en su posición pasa de 60&nbsp;dB(A), una fuerza <code>F = −K·max(0, Lp−60)·û</code> las empuja lejos de la calle ruidosa —&nbsp;más fuerte cuanto más ruido&nbsp;— y sueltan el árbol donde estuvieran comiendo. Se marcan con un anillo naranja mientras están sobre el umbral.</p>
           <div class="birds-legend-row">
             <span><i class="birds-dot" style="background:#b06bff"></i> <b>Saúco</b> · alimento favorito (bayas): cambian bruscamente el rumbo</span>
             <span><i class="birds-dot" style="background:#ff9426"></i> <b>Capulí</b> · atractor intermedio por frutos andinos</span>
@@ -275,6 +280,6 @@
 </div>
 
 <script src="modulo-08.js"></script>
-<script src="modulo-08-sumo.js?v=mirlas-v34"></script>
+<script src="modulo-08-sumo.js?v=mirlas-ruido-v35"></script>
 </body>
 </html>

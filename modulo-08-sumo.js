@@ -590,26 +590,18 @@
       return any ? 10 * Math.log10(energySum) : null;
     }
 
-    function drawNoiseLayer(vehicles, w, h) {
-      if (!noiseCanvas || !noiseCtx) return;
-      // NOTA: existe más arriba un motor acústico real (CNOSSOS-EU,
-      // totalLevelAtReceiverDbA) ya implementado y correcto, pero todavía
-      // devuelve null porque faltan los coeficientes oficiales (ver TODO).
-      // Por eso este dibujo sigue usando el método visual anterior (manchas
-      // + curva de intensidad), sin ningún cambio de color, transparencia
-      // ni apariencia — en cuanto se completen los coeficientes, este
-      // bloque se reemplaza por una llamada real a totalLevelAtReceiverDbA
-      // por cada punto del buffer.
-      // 1) Acumular "carga de tráfico" por zona en el buffer chico: cada
-      // vehículo suma una mancha suave (radial) alrededor de su posición;
-      // donde se juntan varios vehículos, la mancha se acumula más fuerte.
-      // El radio de cada mancha ahora depende del tipo de vía más cercana
-      // al vehículo (local=25m, mid=75m, major=150m — en METROS REALES,
-      // convertidos aquí a píxeles del buffer según el zoom actual).
+    // Campo de "carga de tráfico" del buffer chico (0..1 por celda). Es el
+    // MISMO que pinta la capa de ruido; se guarda aparte para poder leer el
+    // nivel en un punto (lo necesitan las mirlas) aunque la capa esté
+    // apagada.
+    let noiseField = null, noiseFieldW = 0, noiseFieldH = 0, noiseFieldImg = null;
+
+    function computeNoiseField(vehicles, w, h) {
+      if (!noiseBufCtx) return;
       noiseBufCtx.clearRect(0, 0, noiseBufW, noiseBufH);
       noiseBufCtx.globalCompositeOperation = "lighter";
       const bufScaleX = noiseBufW / w, bufScaleY = noiseBufH / h;
-      const metersToBufPx = view.scale * bufScaleX; // metros del mundo -> píxeles del buffer
+      const metersToBufPx = view.scale * bufScaleX;
       vehicles.forEach((v) => {
         const [sx, sy] = toScreen(v.x, v.y);
         const bx = sx * bufScaleX, by = sy * bufScaleY;
@@ -625,11 +617,51 @@
         noiseBufCtx.fill();
       });
       noiseBufCtx.globalCompositeOperation = "source-over";
-
-      // 2) Convertir esa acumulación de intensidad en color — el alpha de
-      // salida es SIEMPRE el mismo (NOISE_ALPHA); solo cambia el color
-      // según qué tan alta es la intensidad acumulada en ese punto.
       const img = noiseBufCtx.getImageData(0, 0, noiseBufW, noiseBufH);
+      const celdas = noiseBufW * noiseBufH;
+      if (!noiseField || noiseField.length !== celdas) noiseField = new Float32Array(celdas);
+      for (let i = 0, j = 0; j < celdas; i += 4, j++) noiseField[j] = img.data[i + 3] / 255;
+      noiseFieldW = noiseBufW; noiseFieldH = noiseBufH; noiseFieldImg = img;
+    }
+
+    // Nivel en dB(A) en un punto de la pantalla, leído del mismo campo y con
+    // la MISMA escala que su leyenda: t=0.2 → 60 dB, 0.4 → 70, 0.6 → 80…
+    const NOISE_DB_BASE = 50, NOISE_DB_SPAN = 50;
+    function noiseDbAtScreen(x, y, w, h) {
+      if (!noiseField || !noiseFieldW) return NOISE_DB_BASE;
+      const bx = Math.floor((x / w) * noiseFieldW), by = Math.floor((y / h) * noiseFieldH);
+      if (bx < 0 || by < 0 || bx >= noiseFieldW || by >= noiseFieldH) return NOISE_DB_BASE;
+      const t = Math.min(1, Math.pow(noiseField[by * noiseFieldW + bx], 2.4));
+      return NOISE_DB_BASE + NOISE_DB_SPAN * t;
+    }
+    // û del enunciado: unitario que apunta desde la avenida (más ruido)
+    // hacia el ave (menos ruido). Se obtiene del gradiente del propio campo,
+    // así funciona con cualquier trazado de vía, no solo con una avenida.
+    function noiseEscapeDir(x, y, w, h) {
+      const paso = Math.max(4, w / Math.max(1, noiseFieldW));
+      const gx = noiseDbAtScreen(x + paso, y, w, h) - noiseDbAtScreen(x - paso, y, w, h);
+      const gy = noiseDbAtScreen(x, y + paso, w, h) - noiseDbAtScreen(x, y - paso, w, h);
+      const m = Math.hypot(gx, gy);
+      if (m < 1e-4) return null;
+      return [-gx / m, -gy / m];
+    }
+
+    function drawNoiseLayer(vehicles, w, h) {
+      if (!noiseCanvas || !noiseCtx) return;
+      // NOTA: existe más arriba un motor acústico real (CNOSSOS-EU,
+      // totalLevelAtReceiverDbA) ya implementado y correcto, pero todavía
+      // devuelve null porque faltan los coeficientes oficiales (ver TODO).
+      // Por eso este dibujo sigue usando el método visual anterior (manchas
+      // + curva de intensidad), sin ningún cambio de color, transparencia
+      // ni apariencia — en cuanto se completen los coeficientes, este
+      // bloque se reemplaza por una llamada real a totalLevelAtReceiverDbA
+      // por cada punto del buffer.
+      // 2) Convertir la acumulación de intensidad (ya calculada en
+      // computeNoiseField) en color — el alpha de salida es SIEMPRE el
+      // mismo (NOISE_ALPHA); solo cambia el color según qué tan alta es la
+      // intensidad acumulada en ese punto.
+      const img = noiseFieldImg;
+      if (!img) return;
       const data = img.data;
       for (let i = 0; i < data.length; i += 4) {
         const intensity = data[i + 3] / 255; // canal alpha acumulado = "carga de tráfico"
@@ -1032,7 +1064,16 @@
     const BIRD_WIND = 30;         // px/s² — impulso global oriente → occidente
     const BIRD_MAX_SPEED = 82;    // px/s — vuelo de crucero
     const BIRD_REST_SPEED = 11;   // px/s — revoloteo mientras se alimenta o descansa
-    const BIRD_COUNT = 24;
+    let BIRD_COUNT = 60;
+    // Umbral crítico de 60 dB(A) (Caltrans): por encima de ese nivel el
+    // ruido de tráfico enmascara por completo las señales de comunicación
+    // de las aves y su comportamiento cambia. Fuerza de repulsión:
+    //   F_ruido = -K_rep · max(0, Lp(R) - 60) · û
+    // con û el unitario que apunta desde la avenida hacia el ave; aquí se
+    // aplica en el sentido que aleja al ave de la calle ruidosa, que es lo
+    // que describe la regla.
+    const BIRD_NOISE_DB = 60;
+    const BIRD_K_REP = 45;
     let birdTreesWorld = null;    // muestra de árboles atractores (coordenadas del mapa)
     let birdTreesScreen = [];     // los mismos, ya proyectados a pantalla
     let birds = [];
@@ -1160,6 +1201,34 @@
           const sp = Math.hypot(b.vx, b.vy);
           if (sp > BIRD_MAX_SPEED) { b.vx = (b.vx / sp) * BIRD_MAX_SPEED; b.vy = (b.vy / sp) * BIRD_MAX_SPEED; }
         }
+        // ---- Umbral crítico de 60 dB(A) ----
+        const db = noiseDbAtScreen(b.x, b.y, w, h);
+        b.db = db;
+        // La regla se evalúa donde está el ave Y un poco por delante de su
+        // rumbo: el sonido viaja, así que la mirla oye la avenida antes de
+        // llegar y la esquiva, en vez de reaccionar cuando ya está encima
+        // (con la fuerza solo en su posición apenas alcanza a desviarse).
+        let exceso = Math.max(0, db - BIRD_NOISE_DB);     // max(0, Lp(R) - 60)
+        let rx = b.x, ry = b.y;
+        const rapidez = Math.hypot(b.vx, b.vy) || 1;
+        for (let k = 1; k <= 3; k++) {
+          const ax = b.x + (b.vx / rapidez) * k * 30, ay = b.y + (b.vy / rapidez) * k * 30;
+          const e = Math.max(0, noiseDbAtScreen(ax, ay, w, h) - BIRD_NOISE_DB) * (1 - k * 0.15);
+          if (e > exceso) { exceso = e; rx = ax; ry = ay; }
+        }
+        b.estresada = exceso > 0;
+        if (exceso > 0) {
+          const u = noiseEscapeDir(rx, ry, w, h);
+          if (u) {
+            b.vx += BIRD_K_REP * exceso * u[0] * dt;
+            b.vy += BIRD_K_REP * exceso * u[1] * dt;
+          }
+          // por encima del umbral el comportamiento cambia: si estaba
+          // comiendo o descansando, deja el árbol y sale de la zona
+          if (b.rest > 0) { b.rest = 0; b.cooldown = Math.max(b.cooldown, 3); }
+          const sp = Math.hypot(b.vx, b.vy);
+          if (sp > BIRD_MAX_SPEED * 1.35) { b.vx = (b.vx / sp) * BIRD_MAX_SPEED * 1.35; b.vy = (b.vy / sp) * BIRD_MAX_SPEED * 1.35; }
+        }
         b.x += b.vx * dt;
         b.y += b.vy * dt;
         if (b.y < 8) { b.y = 8; b.vy = Math.abs(b.vy); }
@@ -1184,6 +1253,16 @@
         const ang = Math.atan2(b.vy, b.vx);
         vehCtx.save();
         vehCtx.translate(b.x, b.y);
+        if (b.estresada) {
+          // por encima de 60 dB(A): anillo de alerta, huyendo del ruido
+          vehCtx.beginPath();
+          vehCtx.strokeStyle = "#ff6b4d";
+          vehCtx.globalAlpha = 0.85;
+          vehCtx.lineWidth = 1.3;
+          vehCtx.arc(0, 0, 8.5, 0, Math.PI * 2);
+          vehCtx.stroke();
+          vehCtx.globalAlpha = 1;
+        }
         if (b.rest > 0 && b.restMeta) {
           // halo del color del árbol donde está posada / alimentándose
           vehCtx.beginPath();
@@ -1235,6 +1314,7 @@
     window.SUMO_BIRDS_STATE = () => birds.map((b) => ({
       x: b.x, y: b.y, vx: b.vx, vy: b.vy, rest: b.rest,
       origen: b.origen, arbol: b.restMeta ? b.restMeta.key : null,
+      db: b.db || null, estresada: !!b.estresada,
     }));
     window.SUMO_BIRDS_TREES = () => ({ total: birdTreesScreen.length,
       porEspecie: birdTreesScreen.reduce((acc, t) => { acc[t.meta.key] = (acc[t.meta.key] || 0) + 1; return acc; }, {}) });
@@ -1255,6 +1335,7 @@
       vehCtx.clearRect(0, 0, w, h);
       const baseVehicles = vehiclesAtTime(t);
       const vehicles = applyDemandAndClosure(baseVehicles, t);
+      if (noiseLayerOn || birdsOn) computeNoiseField(vehicles, w, h);
       if (noiseLayerOn) drawNoiseLayer(vehicles, w, h);
       else if (noiseCtx) noiseCtx.clearRect(0, 0, w, h);
       vehicles.forEach((v) => {
@@ -1321,6 +1402,21 @@
       if (!ambienceAudio) return;
       ambienceAudio.muted = !ambienceAudio.muted;
       muteBtn.innerHTML = ambienceAudio.muted ? '<i class="fa-solid fa-volume-xmark"></i>' : '<i class="fa-solid fa-volume-high"></i>';
+    });
+    function setBirdCount(n, w, h) {
+      BIRD_COUNT = Math.max(1, Math.round(n));
+      if (!birds.length) return;
+      while (birds.length > BIRD_COUNT) birds.pop();
+      while (birds.length < BIRD_COUNT) birds.push(makeBird(w, h, birds.length % 2 ? "humedal" : "oriente"));
+    }
+    const birdSlider = document.getElementById("sumoBirdSlider");
+    const birdCountVal = document.getElementById("sumoBirdCountVal");
+    birdSlider?.addEventListener("input", () => {
+      const n = Number(birdSlider.value);
+      if (birdCountVal) birdCountVal.textContent = String(n);
+      const w = vehCanvas.parentElement.clientWidth, h = vehCanvas.parentElement.clientHeight;
+      setBirdCount(n, w, h);
+      drawVehiclesAt(playhead);
     });
     const birdToggle = document.getElementById("sumoBirdToggle");
     birdToggle?.addEventListener("change", () => {

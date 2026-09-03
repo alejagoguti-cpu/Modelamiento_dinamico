@@ -1690,3 +1690,10 @@ footer span { color: var(--teal); }
 .birds-dot {
   width: 9px; height: 9px; border-radius: 50%; display: inline-block; flex-shrink: 0;
 }
+
+.birds-slider-label { display: block; margin: 4px 0 10px; font-size: 11.5px; color: #cfd6dc; }
+.birds-slider-label input[type="range"] { display: block; width: 100%; max-width: 420px; margin-top: 5px; }
+.birds-slider-label span { color: #b06bff; font-weight: 700; }
+.birds-noise-note { border-left: 2px solid #ff6b4d; padding-left: 9px; }
+.birds-noise-note code { font-size: 11px; color: #ffb9a6; }
+.birds-noise-note i.fa-volume-high { color: #ff6b4d; }
