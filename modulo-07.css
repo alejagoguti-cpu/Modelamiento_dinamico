@@ -8272,3 +8272,159 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
   opacity: 0 !important;
   transition: opacity 0.25s ease !important;
 }
+
+
+/* =========================================================================
+   ANIMACIÓN SUAVE, NATURAL Y RED COMPLETA EQUILIBRADA (SIN EFECTOS BRUSCOS)
+   ========================================================================= */
+
+/* SVG de líneas: SIEMPRE VISIBLE, NÍTIDO Y DE ALTO CONTRASTE */
+.map-network-stage svg,
+.territory-network-plain svg {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  pointer-events: none !important;
+  z-index: 2 !important;
+  opacity: 1 !important;
+}
+
+.map-network-stage svg *,
+.territory-network-plain svg * {
+  pointer-events: none !important;
+}
+
+.full-unified-link {
+  stroke-width: 0.8 !important;
+  stroke-linecap: round !important;
+  opacity: 0.82 !important;
+  filter: drop-shadow(0 0 3px currentColor) !important;
+  transition: stroke 0.25s ease, stroke-width 0.25s ease, opacity 0.25s ease;
+}
+
+.full-unified-flow-path {
+  fill: none;
+  stroke: none;
+}
+
+.full-unified-pulse {
+  filter: drop-shadow(0 0 6px #ffd166) !important;
+}
+
+.full-unified-group:hover .full-unified-link,
+.full-unified-group.is-highlighted .full-unified-link {
+  stroke: #ffd166 !important;
+  stroke-width: 1.5 !important;
+  opacity: 1 !important;
+  filter: drop-shadow(0 0 10px #ffd166) !important;
+}
+
+/* Escenario de Red Completa */
+.map-network-stage.is-full-dynamics-active {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 860px !important;
+  background: radial-gradient(circle at 50% 50%, rgba(70,214,208,0.06) 0%, rgba(3,6,8,0.98) 100%), #000000 !important;
+}
+
+/* 1. ANIMACIÓN SUAVE DE SALIDA DE LOS 7 NODOS INICIALES (FADE OUT ELEGANTE) */
+.map-network-stage.is-stage-fading-out .map-network-node {
+  transform: scale(1.28) translate(calc(var(--node-x, 0) * 0.15), calc(var(--node-y, 0) * 0.15)) !important;
+  opacity: 0 !important;
+  filter: blur(8px) !important;
+  transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s ease, filter 0.3s ease !important;
+}
+
+.map-network-stage.is-stage-fading-out .map-network-center-hub {
+  transform: translate(-50%, -50%) scale(1.25) !important;
+  opacity: 0 !important;
+  filter: blur(6px) !important;
+  transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s ease, filter 0.3s ease !important;
+}
+
+.map-network-stage.is-stage-fading-out .map-network-bonds,
+.map-network-stage.is-stage-fading-out .map-network-flows {
+  opacity: 0 !important;
+  transition: opacity 0.25s ease !important;
+}
+
+/* 2. ANIMACIÓN DE CIERRE / RETORNO SUAVE A LOS 6 SISTEMAS */
+.map-network-stage.is-stage-imploding .full-dynamic-node {
+  left: var(--origin-x, 50%) !important;
+  top: var(--origin-y, 48%) !important;
+  transform: translate(-50%, -50%) scale(0.2) !important;
+  opacity: 0 !important;
+  transition: left 0.32s cubic-bezier(0.7, 0, 0.3, 1), top 0.32s cubic-bezier(0.7, 0, 0.3, 1), transform 0.32s cubic-bezier(0.7, 0, 0.3, 1), opacity 0.28s ease !important;
+}
+
+.map-network-stage.is-stage-imploding svg {
+  opacity: 0 !important;
+  transition: opacity 0.25s ease !important;
+}
+
+/* 3. 30 NODOS DINÁMICOS: DESEMPAQUE ESPACIAL SUAVE Y NATURAL */
+.full-dynamic-node {
+  position: absolute !important;
+  left: var(--node-x) !important;
+  top: var(--node-y) !important;
+  transform: translate(-50%, -50%) !important;
+  opacity: 1 !important;
+  z-index: 100 !important;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+  width: 72px !important;
+  height: 72px !important;
+  border-radius: 50% !important;
+  background: #000000 !important;
+  border: 2px solid var(--node-color, #46d6d0) !important;
+  box-shadow: 0 0 16px var(--node-color, #46d6d0), 0 8px 24px rgba(0, 0, 0, 0.95), inset 0 0 10px rgba(0, 0, 0, 0.9) !important;
+  color: #ffffff !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  padding: 4px !important;
+  animation: smooth-subsystem-unpack 0.68s cubic-bezier(0.22, 1, 0.36, 1) var(--node-delay, 0ms) both !important;
+  transition: transform 0.25s cubic-bezier(0.2, 0.9, 0.3, 1.2), box-shadow 0.25s, border-color 0.25s !important;
+}
+
+@keyframes smooth-subsystem-unpack {
+  0% {
+    left: var(--origin-x, 50%) !important;
+    top: var(--origin-y, 48%) !important;
+    transform: translate(-50%, -50%) scale(0.25);
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
+  }
+  100% {
+    left: var(--node-x) !important;
+    top: var(--node-y) !important;
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+}
+
+.full-dynamic-node:hover {
+  transform: translate(-50%, -50%) scale(1.18) !important;
+  z-index: 150 !important;
+  border-color: #ffffff !important;
+  box-shadow: 0 0 28px var(--node-color, #46d6d0), 0 0 45px var(--node-color, #46d6d0), 0 12px 30px rgba(0,0,0,1) !important;
+}
+
+.full-dynamic-node.is-active {
+  transform: translate(-50%, -50%) scale(1.22) !important;
+  z-index: 200 !important;
+  border-color: #ffd166 !important;
+  box-shadow: 0 0 0 3.5px rgba(255, 209, 102, 0.6), 0 0 36px #ffd166, 0 12px 30px rgba(0,0,0,1) !important;
+}
+
+.full-dynamic-node.is-connected {
+  border-color: #ffffff !important;
+  box-shadow: 0 0 20px var(--node-color, #46d6d0), 0 0 0 2px rgba(255, 255, 255, 0.8) !important;
+}
