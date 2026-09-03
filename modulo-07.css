@@ -7735,3 +7735,118 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
   opacity: 0 !important;
   pointer-events: none !important;
 }
+
+
+/* =========================================================================
+   GARANTÍA TOTAL DE INTERACTIVIDAD Y ESTILO NEÓN FLAT
+   ========================================================================= */
+
+.map-network-stage svg,
+.map-network-stage svg *,
+.territory-network-plain svg,
+.territory-network-plain svg * {
+  pointer-events: none !important;
+}
+
+.map-network-center-hub {
+  position: absolute !important;
+  left: 50% !important;
+  top: 48% !important;
+  transform: translate(-50%, -50%) !important;
+  z-index: 999 !important;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+  width: 94px !important;
+  height: 94px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4px !important;
+  border: 2.5px solid #ffd166 !important;
+  background: #000000 !important;
+  box-shadow: 0 0 26px rgba(255, 209, 102, 0.7), 0 8px 32px rgba(0, 0, 0, 0.95), inset 0 0 16px rgba(0, 0, 0, 0.9) !important;
+  color: #ffd166 !important;
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  line-height: 1.15 !important;
+  text-align: center !important;
+  letter-spacing: 0.02em !important;
+  transition: transform 0.25s cubic-bezier(0.2, 0.9, 0.3, 1.2), box-shadow 0.25s, border-color 0.25s !important;
+  animation: center-hub-neon-pulse 2.2s ease-in-out infinite !important;
+  user-select: none !important;
+}
+
+.map-network-center-hub i {
+  font-size: 20px !important;
+  margin-bottom: 2px !important;
+  color: #ffd166 !important;
+  filter: drop-shadow(0 0 8px #ffd166) !important;
+  pointer-events: none !important;
+}
+
+.map-network-center-hub span {
+  pointer-events: none !important;
+  color: #ffffff !important;
+  text-shadow: 0 1px 4px #000000 !important;
+}
+
+.map-network-center-hub:hover {
+  transform: translate(-50%, -50%) scale(1.14) !important;
+  background: #050a0a !important;
+  border-color: #ffffff !important;
+  box-shadow: 0 0 38px #ffd166, 0 0 55px rgba(255, 209, 102, 0.5), 0 12px 35px rgba(0, 0, 0, 1) !important;
+}
+
+.map-network-center-hub.is-expanded-mode {
+  border-color: #46d6d0 !important;
+  color: #46d6d0 !important;
+  background: #000000 !important;
+  box-shadow: 0 0 26px rgba(70, 214, 208, 0.7), 0 8px 32px rgba(0, 0, 0, 0.95), inset 0 0 16px rgba(0, 0, 0, 0.9) !important;
+  animation: center-hub-cyan-pulse 2.2s ease-in-out infinite !important;
+}
+
+.map-network-center-hub.is-expanded-mode i {
+  color: #46d6d0 !important;
+  filter: drop-shadow(0 0 8px #46d6d0) !important;
+}
+
+.map-network-center-hub.is-expanded-mode:hover {
+  transform: translate(-50%, -50%) scale(1.14) !important;
+  border-color: #ffffff !important;
+  box-shadow: 0 0 38px #46d6d0, 0 0 55px rgba(70, 214, 208, 0.5), 0 12px 35px rgba(0, 0, 0, 1) !important;
+}
+
+/* 30 NODOS DINÁMICOS */
+.full-dynamic-node {
+  position: absolute !important;
+  left: var(--node-x) !important;
+  top: var(--node-y) !important;
+  transform: translate(-50%, -50%) !important;
+  opacity: 1 !important;
+  z-index: 100 !important;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+  width: 72px !important;
+  height: 72px !important;
+  border-radius: 50% !important;
+  background: #000000 !important;
+  border: 2px solid var(--node-color, #46d6d0) !important;
+  box-shadow: 0 0 16px var(--node-color, #46d6d0), 0 8px 24px rgba(0, 0, 0, 0.95), inset 0 0 10px rgba(0, 0, 0, 0.9) !important;
+  color: #ffffff !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  padding: 4px !important;
+  transition: transform 0.25s cubic-bezier(0.2, 0.9, 0.3, 1.2), box-shadow 0.25s, border-color 0.25s !important;
+}
+
+.full-dynamic-node:hover {
+  transform: translate(-50%, -50%) scale(1.18) !important;
+  z-index: 150 !important;
+  border-color: #ffffff !important;
+  box-shadow: 0 0 28px var(--node-color, #46d6d0), 0 0 45px var(--node-color, #46d6d0), 0 12px 30px rgba(0,0,0,1) !important;
+}
