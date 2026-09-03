@@ -86,7 +86,7 @@
 html,body{margin:0;height:100%;background:var(--bg);color:var(--txt);
   font-family:-apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Inter,Roboto,Helvetica,Arial,sans-serif;
   -webkit-font-smoothing:antialiased;overflow:hidden;}
-#app{display:grid;grid-template-columns:340px 1fr;height:100vh;width:100vw;}
+#app{display:grid;grid-template-columns:300px 1fr;height:100vh;width:100vw;}
 
 #sidebar{background:var(--panel);border-right:1px solid var(--line);display:flex;flex-direction:column;min-height:0;}
 .side-head{padding:20px 20px 16px;border-bottom:1px solid var(--line);}
@@ -186,7 +186,7 @@ svg:active{cursor:grabbing;}
 #info .afx{font-size:11px;color:#f5a623;margin-top:9px;line-height:1.45;}
 #info .afx b{color:var(--txt);}
 
-#conventions{position:absolute;top:58px;right:14px;z-index:6;width:246px;
+#conventions{position:absolute;top:58px;right:14px;z-index:6;width:212px;
   background:rgba(11,13,16,.92);border:1px solid var(--line);border-radius:10px;
   backdrop-filter:blur(8px);max-height:calc(100vh - 150px);display:flex;flex-direction:column;overflow:hidden;}
 #conventions .conv-head{display:flex;align-items:center;justify-content:space-between;
@@ -649,7 +649,7 @@ if (typeof module !== &quot;undefined&quot;) { module.exports = { NODES, LINKS }
     });
 
   const linkForce=d3.forceLink(LINKS).id(d=>d.id)
-    .distance(l=>{ const pad=nodeRadius(l.source)+nodeRadius(l.target)+14;
+    .distance(l=>{ const pad=nodeRadius(l.source)+nodeRadius(l.target)+26;
                    if(l.tipo===&quot;fundamenta&quot;)return 34+pad; if(l.tipo===&quot;concreta&quot;)return 14+pad;
                    if(l.tipo===&quot;subordina&quot;)return 24+pad; return 30+pad; })
     .strength(l=> !linkActive(l) ? 0
@@ -657,9 +657,12 @@ if (typeof module !== &quot;undefined&quot;) { module.exports = { NODES, LINKS }
 
   const sim=d3.forceSimulation(NODES)
     .force(&quot;link&quot;,linkForce)
-    .force(&quot;charge&quot;,d3.forceManyBody().strength(d=> !d.active?-50 : isMacro(d)?-330 : d.tipo===&quot;modelo&quot;?-300 : -170))
+    // la separacion minima la garantiza la colision; la repulsion se deja
+    // suave para que la red no se estire mas de lo necesario y no haya que
+    // alejar la vista (que es lo que achicaba el texto)
+    .force(&quot;charge&quot;,d3.forceManyBody().strength(d=> !d.active?-40 : isMacro(d)?-150 : d.tipo===&quot;modelo&quot;?-130 : -90))
     .force(&quot;center&quot;,d3.forceCenter(W/2,H/2))
-    .force(&quot;collide&quot;,d3.forceCollide().radius(d=>nodeRadius(d)+17).strength(1))
+    .force(&quot;collide&quot;,d3.forceCollide().radius(d=>nodeRadius(d)+28).strength(1))
     .force(&quot;y&quot;,d3.forceY(d=> d.eje===&quot;pot&quot;?H*0.72:H*0.4).strength(0.06))
     .on(&quot;tick&quot;,ticked)
     .on(&quot;end&quot;,fitToView);
@@ -728,7 +731,7 @@ if (typeof module !== &quot;undefined&quot;) { module.exports = { NODES, LINKS }
     if(reorganize){
       linkForce.strength(l=> !linkActive(l) ? 0
                  : l.tipo===&quot;concreta&quot;?0.7 : l.tipo===&quot;fundamenta&quot;?0.25 : 0.5);
-      sim.force(&quot;collide&quot;).radius(d=>nodeRadius(d)+17);
+      sim.force(&quot;collide&quot;).radius(d=>nodeRadius(d)+28);
       sim.alpha(0.75).restart();
     }
     updateHUD();
