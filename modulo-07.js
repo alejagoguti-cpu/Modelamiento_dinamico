@@ -2571,185 +2571,306 @@
     // Igual que showCombinedNetworkModal, pero en vez de abrir un modal
     // aparte, reemplaza el contenido DENTRO del mismo panel donde estaban
     // las 6 bolas — así da la sensación de que las 6 se convierten en 30.
+    // =========================================================================
+    // RED COMPLETA DE DINÁMICA URBANA (30 ELEMENTOS Y FLUJOS VIVOS)
+    // =========================================================================
+    const URBAN_DYNAMICS_DATA = {
+      hidrica: {
+        id: "hidrica",
+        name: "Dinámica hídrica",
+        color: "#56b8d4",
+        icon: "fa-droplet",
+        cx: 20, cy: 38,
+        process: "El agua circula, se acumula, disminuye o se desborda según lluvia, pendiente, suelo, sedimentos, obras y drenaje.",
+        elements: [
+          { id: "h_lluvia", name: "Precipitación\ny lluvia", icon: "fa-cloud-showers-heavy", desc: "Aporte pluvial constante y eventos de lluvia extrema que recargan la cuenca.", connects: ["h_infiltra", "h_escorre", "f_impermeable", "m_congestion"] },
+          { id: "h_infiltra", name: "Infiltración\ny suelo húmedo", icon: "fa-water", desc: "Capacidad de absorción natural del suelo y amortiguamiento freático.", connects: ["h_lluvia", "h_humedales", "b_flora"] },
+          { id: "h_escorre", name: "Canales y\ndrenaje pluvial", icon: "fa-arrows-split-up-and-left", desc: "Canal Los Ángeles y colectores que conducen el agua superficial.", connects: ["h_lluvia", "h_humedales", "h_desborde", "f_vias"] },
+          { id: "h_humedales", name: "Humedales y\nlagunas", icon: "fa-droplet", desc: "Espejos de agua de El Burro y La Vaca; retención hidráulica y biodiversidad.", connects: ["h_infiltra", "h_escorre", "b_aves_mig", "b_aves_res", "s_org_amb"] },
+          { id: "h_desborde", name: "Desbordes y\nsedimentos", icon: "fa-triangle-exclamation", desc: "Riesgo de inundación y acumulación de sedimentos en eventos de lluvia.", connects: ["h_escorre", "f_vias", "m_congestion", "se_vivienda"] }
+        ]
+      },
+      biotica: {
+        id: "biotica",
+        name: "Dinámica biótica",
+        color: "#68d391",
+        icon: "fa-feather-pointed",
+        cx: 44, cy: 16,
+        process: "Cambian la presencia de especies, el alimento, el refugio, la reproducción y la expansión de coberturas.",
+        elements: [
+          { id: "b_aves_mig", name: "Aves\nmigratorias", icon: "fa-dove", desc: "Tingua azul, playeritos y especies boreales que usan el humedal como escala.", connects: ["h_humedales", "b_flora", "b_refugio", "f_cerramientos"] },
+          { id: "b_aves_res", name: "Aves residentes\ny fauna", icon: "fa-crow", desc: "Monjitas bogotanas, mirlas y fauna local con ciclos continuos en el ecosistema.", connects: ["h_humedales", "b_insectos", "b_refugio", "f_vias"] },
+          { id: "b_flora", name: "Cobertura vegetal\ny flora", icon: "fa-leaf", desc: "Juncos, eneas, vegetación de ronda y árboles que estabilizan los taludes.", connects: ["h_infiltra", "b_aves_mig", "b_insectos", "b_refugio"] },
+          { id: "b_insectos", name: "Insectos y\npolinizadores", icon: "fa-bug", desc: "Arañas tejedoras, abejas y libélulas que sostienen la cadena trófica.", connects: ["b_aves_res", "b_flora", "b_refugio"] },
+          { id: "b_refugio", name: "Microhábitats\ny refugios", icon: "fa-shield-heart", desc: "Zonas de anidación y amortiguamiento frente a las perturbaciones urbanas.", connects: ["b_aves_mig", "b_aves_res", "b_flora", "f_cerramientos"] }
+        ]
+      },
+      fisico: {
+        id: "fisico",
+        name: "Sistema físico-urbano",
+        color: "#b8c0c8",
+        icon: "fa-building",
+        cx: 72, cy: 16,
+        process: "Cambian el estado de las obras, la ocupación de predios, la continuidad de andenes y la fragmentación del borde.",
+        elements: [
+          { id: "f_edificios", name: "Edificaciones\nresidenciales", icon: "fa-city", desc: "Conjuntos habitacionales y manzanas construidas sobre el borde del humedal.", connects: ["se_vivienda", "f_impermeable", "f_cerramientos", "s_vecinos"] },
+          { id: "f_vias", name: "Malla vial\narterial", icon: "fa-road", desc: "Av. Ciudad de Cali y Av. Américas; soporte de transporte y fuente de vibración.", connects: ["h_escorre", "h_desborde", "m_transporte", "m_congestion", "se_comercio"] },
+          { id: "f_andenes", name: "Andenes y\nespacio público", icon: "fa-person-walking", desc: "Superficies peatonales, plazoletas y senderos perimetrales.", connects: ["m_peatonal", "s_vecinos", "se_equipamientos"] },
+          { id: "f_cerramientos", name: "Cerramientos\ny barreras", icon: "fa-border-all", desc: "Muros y rejas perimetrales que fragmentan el hábitat pero protegen el cuerpo hídrico.", connects: ["f_edificios", "b_refugio", "b_aves_mig", "s_vecinos"] },
+          { id: "f_impermeable", name: "Superficies\nimpermeables", icon: "fa-layer-group", desc: "Asfalto y losas de concreto que impiden la infiltración pluvial.", connects: ["h_lluvia", "h_escorre", "f_edificios", "f_vias"] }
+        ]
+      },
+      movilidad: {
+        id: "movilidad",
+        name: "Sistema de movilidad",
+        color: "#f1cf5b",
+        icon: "fa-route",
+        cx: 86, cy: 44,
+        process: "Cambian los recorridos, usuarios, horarios, tiempos de espera, congestión, ruido y accesibilidad.",
+        elements: [
+          { id: "m_transporte", name: "Transporte masivo\ny buses", icon: "fa-bus", desc: "Flota de TransMilenio y SITP que conecta Kennedy con el resto de Bogotá.", connects: ["f_vias", "m_estaciones", "m_congestion", "se_comercio"] },
+          { id: "m_ciclorrutas", name: "Ciclorrutas y\nbicicletas", icon: "fa-bicycle", desc: "Red de ciclorrutas de El Tintal y Av. Cali para viajes limpios de proximidad.", connects: ["f_vias", "m_peatonal", "se_biblioteca", "s_vecinos"] },
+          { id: "m_peatonal", name: "Flujos y viajes\npeatonales", icon: "fa-person-walking-arrow-right", desc: "Caminatas cotidianas de residentes hacia estaciones, colegios y comercio.", connects: ["f_andenes", "m_ciclorrutas", "m_estaciones", "s_vecinos"] },
+          { id: "m_estaciones", name: "Estaciones y\nportales", icon: "fa-door-open", desc: "Portal Américas y Estación Banderas; puntos neurálgicos de transbordo masivo.", connects: ["m_transporte", "m_peatonal", "se_comercio", "m_congestion"] },
+          { id: "m_congestion", name: "Tiempos de viaje\ny congestión", icon: "fa-clock", desc: "Fricción espacial y demoras que impactan la calidad de vida y el tiempo de cuidado.", connects: ["f_vias", "m_transporte", "h_desborde", "se_vivienda"] }
+        ]
+      },
+      social: {
+        id: "social",
+        name: "Sistema social-comunitario",
+        color: "#ee9a4b",
+        icon: "fa-people-group",
+        cx: 72, cy: 82,
+        process: "Cambian las visitas, formas de apropiación, actividades educativas, participación, acuerdos y conflictos.",
+        elements: [
+          { id: "s_vecinos", name: "Habitantes y\nvecinos", icon: "fa-people-roof", desc: "Comunidades de los barrios circundantes que habitan y recorren el sector.", connects: ["f_edificios", "m_peatonal", "se_vivienda", "s_org_amb", "se_equipamientos"] },
+          { id: "s_org_amb", name: "Organizaciones\nambientales", icon: "fa-hands-holding-circle", desc: "Colectivos ecológicos de base que defienden la conservación de los humedales.", connects: ["h_humedales", "s_vecinos", "s_pedagogia", "s_cuidado"] },
+          { id: "s_pedagogia", name: "Actividades\npedagógicas", icon: "fa-graduation-cap", desc: "Recorridos escolares, avistamiento de aves y talleres de ciencia ciudadana.", connects: ["s_org_amb", "b_aves_res", "se_biblioteca", "s_cuidado"] },
+          { id: "s_cuidado", name: "Cuidado y\nvoluntariado", icon: "fa-hand-holding-heart", desc: "Jornadas de siembra comunitaria, limpieza de canales y monitoreo biológico.", connects: ["s_org_amb", "b_flora", "h_humedales", "s_conflictos"] },
+          { id: "s_conflictos", name: "Conflictos y\nacuerdos", icon: "fa-comments", desc: "Mecanismos de resolución comunitaria frente a presiones de uso y residuos.", connects: ["s_cuidado", "se_comercio", "se_vivienda"] }
+        ]
+      },
+      socioeconomico: {
+        id: "socioeconomico",
+        name: "Sistema socioeconómico y de ocupación",
+        color: "#e58d62",
+        icon: "fa-house-chimney",
+        cx: 28, cy: 82,
+        process: "Cambian la población, construcción, demanda de vivienda, servicios, actividades y presiones sobre el borde.",
+        elements: [
+          { id: "se_vivienda", name: "Vivienda y\nhogares", icon: "fa-house-chimney", desc: "Unidades habitacionales que demandan servicios, movilidad y espacios de cuidado.", connects: ["f_edificios", "s_vecinos", "se_equipamientos", "m_congestion"] },
+          { id: "se_comercio", name: "Comercio y\nabastecimiento", icon: "fa-cart-shopping", desc: "Corabastos y locales de proximidad; nodos de intercambio y abastecimiento.", connects: ["f_vias", "m_transporte", "m_estaciones", "s_conflictos"] },
+          { id: "se_equipamientos", name: "Manzanas del\nCuidado y salud", icon: "fa-building-shield", desc: "Equipamientos sociales que reducen sobrecargas en las personas cuidadoras.", connects: ["s_vecinos", "se_vivienda", "f_andenes"] },
+          { id: "se_biblioteca", name: "Biblioteca Pública\nEl Tintal", icon: "fa-book-open", desc: "Centro cultural y educativo de escala metropolitana contiguo al humedal.", connects: ["m_ciclorrutas", "s_pedagogia", "f_andenes"] },
+          { id: "se_suelo", name: "Presión de uso\ndel suelo", icon: "fa-chart-line", desc: "Valorización del suelo y tensiones entre desarrollo urbano y preservación ecológica.", connects: ["se_vivienda", "f_edificios", "f_cerramientos", "h_humedales"] }
+        ]
+      }
+    };
+
     function renderFullSubsystemsNetworkInPlace(target) {
-      const W = 900, H = 900, cx = W / 2, cy = H / 2;
-      // Los 6 "orígenes" (donde estaba cada bola de sistema) quedan más
-      // cerca entre sí que antes, y cada racimo se esparce con más radio y
-      // un poco de variación aleatoria en ángulo/distancia — así no se ve
-      // como 6 flores rígidas y separadas, sino como una red más orgánica
-      // donde los bordes entre sistemas se mezclan un poco.
-      const clusterR = 210;
-      const clusters = territorySystems.map((sys, i) => {
-        const angle = (i / territorySystems.length) * Math.PI * 2 - Math.PI / 2;
-        return { ...sys, cx: cx + clusterR * Math.cos(angle), cy: cy + clusterR * Math.sin(angle) };
-      });
-      let svgParts = [];
-      let nodeIndex = 0;
-      const allDynamicNodes = [];
-      let seed = 7; // aleatoriedad reproducible (misma forma cada vez que se abre)
-      const rand = () => { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; };
-      clusters.forEach((cl) => {
-        const items = cl.dynamics || cl.components;
-        const baseR = 128;
-        const nodesHere = items.map((label, i) => {
-          const evenAngle = (i / items.length) * Math.PI * 2 - Math.PI / 2;
-          const angle = evenAngle + (rand() - 0.5) * 0.55; // variación orgánica del ángulo
-          const r = baseR + (rand() - 0.5) * 56; // variación orgánica del radio
-          return { label, x: cl.cx + r * Math.cos(angle), y: cl.cy + r * Math.sin(angle), color: cl.color, sysId: cl.id, originX: cl.cx, originY: cl.cy };
+      if (!target) return;
+      target.dataset.revealState = "complete";
+      target.classList.add("network-active");
+
+      const allElements = [];
+      const elementPosMap = {};
+      const systemsList = Object.values(URBAN_DYNAMICS_DATA);
+
+      systemsList.forEach((sys) => {
+        const cx = sys.cx;
+        const cy = sys.cy;
+        const n = sys.elements.length;
+        const rx = 10.0;
+        const ry = 11.5;
+
+        sys.elements.forEach((el, i) => {
+          const angle = (i / n) * Math.PI * 2 - Math.PI / 2;
+          const x = Math.max(5, Math.min(95, cx + Math.cos(angle) * rx));
+          const y = Math.max(6, Math.min(94, cy + Math.sin(angle) * ry));
+          const nodeData = { ...el, x, y, systemId: sys.id, systemName: sys.name, color: sys.color, parentCx: cx, parentCy: cy };
+          allElements.push(nodeData);
+          elementPosMap[el.id] = nodeData;
         });
-        allDynamicNodes.push(...nodesHere);
       });
-      // Relajación suave entre TODAS las bolitas (no solo dentro de su
-      // propio racimo) para que nadie quede encimada ni pegada — y de paso
-      // esto ayuda a que los bordes entre sistemas se entremezclen un poco.
-      const nodeR2 = 26, GAP = 6;
-      for (let pass = 0; pass < 120; pass++) {
-        for (let i = 0; i < allDynamicNodes.length; i++) {
-          for (let j = i + 1; j < allDynamicNodes.length; j++) {
-            const a = allDynamicNodes[i], b = allDynamicNodes[j];
-            const dx = b.x - a.x, dy = b.y - a.y;
-            const dist = Math.hypot(dx, dy) || 0.01;
-            const minDist = nodeR2 * 2 + GAP;
-            if (dist < minDist) {
-              const push = (minDist - dist) / 2;
-              const ux = dx / dist, uy = dy / dist;
-              a.x -= ux * push; a.y -= uy * push;
-              b.x += ux * push; b.y += uy * push;
-            }
-          }
-        }
-      }
-      clusters.forEach((cl) => {
-        const items = cl.dynamics || cl.components;
-        const nodesHere = allDynamicNodes.filter((n) => n.sysId === cl.id);
-        for (let i = 0; i < nodesHere.length; i++) {
-          for (let j = i + 1; j < nodesHere.length; j++) {
-            svgParts.push(`<line x1="${nodesHere[i].x}" y1="${nodesHere[i].y}" x2="${nodesHere[j].x}" y2="${nodesHere[j].y}" class="combined-sat-line" style="--node-color:${cl.color}"/>`);
+
+      // 1. Líneas intra-sistema (malla interna por sistema)
+      let intraLinesHtml = "";
+      systemsList.forEach((sys) => {
+        const sysElems = sys.elements.map(e => elementPosMap[e.id]);
+        for (let i = 0; i < sysElems.length; i++) {
+          for (let j = i + 1; j < sysElems.length; j++) {
+            const a = sysElems[i], b = sysElems[j];
+            intraLinesHtml += `<line x1="${a.x.toFixed(2)}%" y1="${a.y.toFixed(2)}%" x2="${b.x.toFixed(2)}%" y2="${b.y.toFixed(2)}%" class="full-intra-link" data-sys="${sys.id}" style="--node-color:${sys.color}"/>`;
           }
         }
       });
-      const KEYWORDS = [
-        ["desplazamiento", "accesos", "rutas", "recorridos"],
-        ["escorrentía", "infiltración", "agua", "sedimentación"],
-        ["vivienda", "ocupación", "uso del suelo", "construcción", "predios"],
-        ["hábitats", "colonización", "vegetación"],
-        ["conflictos", "presión", "apropiación"],
-      ];
-      const crossLines = [];
-      for (let i = 0; i < allDynamicNodes.length; i++) {
-        for (let j = i + 1; j < allDynamicNodes.length; j++) {
-          const a = allDynamicNodes[i], b = allDynamicNodes[j];
-          if (a.sysId === b.sysId) continue;
-          const shared = KEYWORDS.some((group) => group.some((k) => a.label.toLowerCase().includes(k)) && group.some((k) => b.label.toLowerCase().includes(k)));
-          if (shared) crossLines.push(`<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" class="combined-cross-line"/>`);
-        }
-      }
-      svgParts.push(...crossLines);
-      const dynCircles = allDynamicNodes.map((n) => {
-        const dx = (n.originX - n.x).toFixed(1), dy = (n.originY - n.y).toFixed(1);
-        return `<g class="combined-node combined-sat-node" style="--node-color:${n.color};--node-i:${nodeIndex++};--dx:${dx}px;--dy:${dy}px;transform-origin:${n.x}px ${n.y}px;">` +
-          `<circle cx="${n.x}" cy="${n.y}" r="${nodeR2}"/>` +
-          `<foreignObject x="${n.x - nodeR2 + 3}" y="${n.y - nodeR2 + 3}" width="${(nodeR2 - 3) * 2}" height="${(nodeR2 - 3) * 2}"><div xmlns="http://www.w3.org/1999/xhtml" class="combined-sat-label">${n.label}</div></foreignObject>` +
-          `</g>`;
+
+      // 2. Líneas cruzadas inter-sistema con curvas y partículas de flujo animadas
+      let crossLinesHtml = "";
+      const drawnPairs = new Set();
+      let flowEdgeCount = 0;
+
+      allElements.forEach((el) => {
+        (el.connects || []).forEach((targetId) => {
+          const targetEl = elementPosMap[targetId];
+          if (!targetEl) return;
+          const pairKey = [el.id, targetId].sort().join("---");
+          if (drawnPairs.has(pairKey)) return;
+          drawnPairs.add(pairKey);
+
+          if (el.systemId !== targetEl.systemId) {
+            const pathId = `flow-cross-${flowEdgeCount++}`;
+            const mx = (el.x + targetEl.x) / 2 + (Math.sin(flowEdgeCount) * 4);
+            const my = (el.y + targetEl.y) / 2 + (Math.cos(flowEdgeCount) * 4);
+            const d = `M ${el.x.toFixed(2)} ${el.y.toFixed(2)} Q ${mx.toFixed(2)} ${my.toFixed(2)} ${targetEl.x.toFixed(2)} ${targetEl.y.toFixed(2)}`;
+            const dur = (5.5 + (flowEdgeCount % 4) * 1.2).toFixed(2);
+
+            crossLinesHtml += `
+              <g class="full-cross-group" data-source="${el.id}" data-target="${targetId}">
+                <path id="${pathId}" class="full-cross-flow-path" d="${d}"/>
+                <path class="full-cross-link" d="${d}"/>
+                <circle class="full-cross-pulse" r="0.5" fill="#ffd166">
+                  <animateMotion dur="${dur}s" repeatCount="indefinite" rotate="auto">
+                    <mpath href="#${pathId}"/>
+                  </animateMotion>
+                </circle>
+              </g>
+            `;
+          }
+        });
+      });
+
+      // 3. Badges de centros de sistema
+      const clusterLabelsHtml = systemsList.map((sys) => {
+        return `
+          <div class="full-cluster-badge" style="left:${sys.cx}%;top:${sys.cy}%;--sys-color:${sys.color};">
+            <i class="fa-solid ${sys.icon}"></i>
+            <span>${sys.name.toUpperCase()}</span>
+          </div>
+        `;
       }).join("");
-      target.innerHTML = `<div class="inplace-full-network">
-        <button type="button" id="backToSixSystemsBtn" class="back-to-six-btn"><i class="fa-solid fa-arrow-left"></i> Volver a los 6 subsistemas</button>
-        <svg viewBox="0 0 ${W} ${H}" class="combined-network-svg">
-          <g class="combined-lines">${svgParts.join("")}</g>
-          <g class="combined-nodes">${dynCircles}</g>
-        </svg>
-      </div>`;
-      requestAnimationFrame(() => target.querySelector(".inplace-full-network")?.classList.add("exploded"));
-      target.querySelector("#backToSixSystemsBtn")?.addEventListener("click", (event) => {
-        event.stopPropagation();
-        showPlainNetwork("systems", directSubsystemsBtn);
+
+      // 4. Render de los 30 nodos dinámicos
+      const nodesHtml = allElements.map((el, index) => {
+        const formattedName = el.name.replace(/\n/g, "<br>");
+        return `
+          <button type="button" class="full-dynamic-node" data-elem-id="${el.id}" data-sys-id="${el.systemId}"
+            style="--node-x:${el.x.toFixed(2)}%;--node-y:${el.y.toFixed(2)}%;--node-color:${el.color};--node-delay:${index * 20}ms;"
+            title="${el.name.replace(/\n/g, ' ')}">
+            <i class="fa-solid ${el.icon} full-node-icon"></i>
+            <span class="full-node-label">${formattedName}</span>
+          </button>
+        `;
+      }).join("");
+
+      // 5. Botón central para regresar
+      const centerToggleHtml = `
+        <button type="button" id="mapNetworkCenterHub" class="map-network-center-hub is-expanded-mode" aria-label="Volver a la vista de 6 subsistemas">
+          <i class="fa-solid fa-arrow-rotate-left"></i>
+          <span>Volver a<br>6 sistemas</span>
+        </button>
+        <button type="button" id="mapNetworkCornerHub" class="map-network-corner-hub is-expanded-mode" aria-label="Volver a 6 subsistemas">
+          <i class="fa-solid fa-arrow-rotate-left"></i>
+          <span>Volver a 6 sistemas</span>
+        </button>
+      `;
+
+      // 6. Header pill flotante
+      const headerPillHtml = `
+        <div class="full-dynamics-top-bar">
+          <span class="full-dynamics-dot"></span>
+          <strong>RED COMPLETA DE DINÁMICA URBANA</strong>
+          <span class="full-dynamics-sub">· 30 elementos vivos y flujos en interacción</span>
+        </div>
+      `;
+
+      target.innerHTML = `
+        <div class="map-network-stage systems-network is-full-dynamics-active">
+          ${headerPillHtml}
+          <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+            <g class="full-intra-layer">${intraLinesHtml}</g>
+            <g class="full-cross-layer">${crossLinesHtml}</g>
+          </svg>
+          ${clusterLabelsHtml}
+          ${nodesHtml}
+          ${centerToggleHtml}
+          <div id="fullDynamicsDetailCard" class="full-dynamics-detail-card" style="display:none;"></div>
+        </div>
+      `;
+
+      const backToOverview = (e) => {
+        e.stopPropagation();
+        renderMapNetwork("systems", true, target, false);
+      };
+      target.querySelector("#mapNetworkCenterHub")?.addEventListener("click", backToOverview);
+      target.querySelector("#mapNetworkCornerHub")?.addEventListener("click", backToOverview);
+
+      target.querySelectorAll(".full-dynamic-node").forEach((btn) => {
+        btn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const elemId = btn.dataset.elemId;
+          const nodeData = elementPosMap[elemId];
+          if (!nodeData) return;
+
+          DINAMICA_SOUND.play(nodeData.systemId);
+
+          target.querySelectorAll(".full-dynamic-node").forEach((n) => {
+            n.classList.toggle("is-active", n === btn);
+            const isConnected = nodeData.connects?.includes(n.dataset.elemId) || elementPosMap[n.dataset.elemId]?.connects?.includes(elemId);
+            n.classList.toggle("is-connected", isConnected);
+          });
+
+          target.querySelectorAll(".full-cross-group").forEach((group) => {
+            const s = group.dataset.source, t = group.dataset.target;
+            const matches = s === elemId || t === elemId;
+            group.classList.toggle("is-highlighted", matches);
+          });
+
+          const card = target.querySelector("#fullDynamicsDetailCard");
+          if (card) {
+            const connectsHtml = (nodeData.connects || []).map((cId) => {
+              const cData = elementPosMap[cId];
+              if (!cData) return "";
+              return `<span class="full-detail-tag" data-tag-target="${cId}" style="--tag-color:${cData.color};"><i class="fa-solid ${cData.icon}"></i> ${cData.name.replace(/\n/g, ' ')}</span>`;
+            }).join("");
+
+            card.innerHTML = `
+              <div class="full-detail-head">
+                <div class="full-detail-sys-badge" style="background:${nodeData.color}22;color:${nodeData.color};border:1px solid ${nodeData.color}55;">
+                  <i class="fa-solid ${URBAN_DYNAMICS_DATA[nodeData.systemId]?.icon || 'fa-circle'}"></i> ${nodeData.systemName}
+                </div>
+                <button type="button" class="full-detail-close" aria-label="Cerrar">&times;</button>
+              </div>
+              <h4 class="full-detail-title" style="color:${nodeData.color};"><i class="fa-solid ${nodeData.icon}"></i> ${nodeData.name.replace(/\n/g, ' ')}</h4>
+              <p class="full-detail-desc">${nodeData.desc}</p>
+              <div class="full-detail-connections">
+                <strong><i class="fa-solid fa-arrows-split-up-and-left"></i> Relaciones territoriales directas:</strong>
+                <div class="full-detail-tags-wrap">${connectsHtml}</div>
+              </div>
+            `;
+            card.style.display = "block";
+            card.querySelector(".full-detail-close")?.addEventListener("click", (closeEv) => {
+              closeEv.stopPropagation();
+              card.style.display = "none";
+              target.querySelectorAll(".full-dynamic-node").forEach((n) => n.classList.remove("is-active", "is-connected"));
+              target.querySelectorAll(".full-cross-group").forEach((g) => g.classList.remove("is-highlighted"));
+            });
+
+            card.querySelectorAll(".full-detail-tag").forEach((tag) => {
+              tag.addEventListener("click", (tagEv) => {
+                tagEv.stopPropagation();
+                const targetBtn = target.querySelector(`.full-dynamic-node[data-elem-id="${tag.dataset.tagTarget}"]`);
+                targetBtn?.click();
+              });
+            });
+          }
+        });
       });
     }
 
     function showCombinedNetworkModal() {
-      const overlay = document.createElement("div");
-      overlay.className = "combined-network-overlay";
-      const W = 900, H = 900, cx = W / 2, cy = H / 2, clusterR = 300;
-      // Un "centro" invisible por sistema, solo para ubicar su racimo de
-      // dinámicas — no se dibuja ninguna bola ahí (ya sabemos de qué
-      // sistema es cada una por el color y por estar agrupadas).
-      const clusters = territorySystems.map((sys, i) => {
-        const angle = (i / territorySystems.length) * Math.PI * 2 - Math.PI / 2;
-        return { ...sys, cx: cx + clusterR * Math.cos(angle), cy: cy + clusterR * Math.sin(angle) };
-      });
-      let svgParts = [];
-      let nodeIndex = 0;
-      const allDynamicNodes = [];
-      // las dinámicas de cada sistema, TODAS conectadas con TODAS entre sí
-      // (malla completa, igual que en la mini-red) — se agrupan alrededor
-      // de su punto de racimo (invisible, sin bola ahí).
-      clusters.forEach((cl) => {
-        const items = cl.dynamics || cl.components;
-        const satR = 92;
-        const nodesHere = items.map((label, i) => {
-          const angle = (i / items.length) * Math.PI * 2 - Math.PI / 2;
-          return { label, x: cl.cx + satR * Math.cos(angle), y: cl.cy + satR * Math.sin(angle), color: cl.color, sysId: cl.id, originX: cl.cx, originY: cl.cy };
-        });
-        for (let i = 0; i < nodesHere.length; i++) {
-          for (let j = i + 1; j < nodesHere.length; j++) {
-            svgParts.push(`<line x1="${nodesHere[i].x}" y1="${nodesHere[i].y}" x2="${nodesHere[j].x}" y2="${nodesHere[j].y}" class="combined-sat-line" style="--node-color:${cl.color}"/>`);
-          }
-        }
-        allDynamicNodes.push(...nodesHere);
-      });
-      // conexiones cruzadas por palabras en comun entre dinámicas de
-      // DISTINTOS subsistemas (heuristica simple, no exhaustiva)
-      const KEYWORDS = [
-        ["desplazamiento", "accesos", "rutas", "recorridos"],
-        ["escorrentía", "infiltración", "agua", "sedimentación"],
-        ["vivienda", "ocupación", "uso del suelo", "construcción", "predios"],
-        ["hábitats", "colonización", "vegetación"],
-        ["conflictos", "presión", "apropiación"],
-      ];
-      const crossLines = [];
-      for (let i = 0; i < allDynamicNodes.length; i++) {
-        for (let j = i + 1; j < allDynamicNodes.length; j++) {
-          const a = allDynamicNodes[i], b = allDynamicNodes[j];
-          if (a.sysId === b.sysId) continue;
-          const shared = KEYWORDS.some((group) => group.some((k) => a.label.toLowerCase().includes(k)) && group.some((k) => b.label.toLowerCase().includes(k)));
-          if (shared) crossLines.push(`<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" class="combined-cross-line"/>`);
-        }
-      }
-      svgParts.push(...crossLines);
-      const nodeR2 = 26;
-      const dynCircles = allDynamicNodes.map((n) => {
-        const dx = (n.originX - n.x).toFixed(1), dy = (n.originY - n.y).toFixed(1);
-        // El origen de transformación se fija con las coordenadas EXACTAS
-        // de este nodo (no con "fill-box: center", que no es confiable en
-        // todos los navegadores cuando el <g> contiene un foreignObject —
-        // eso podía hacer que todas las bolitas colapsaran en un mismo
-        // punto y solo se viera una).
-        return `<g class="combined-node combined-sat-node" style="--node-color:${n.color};--node-i:${nodeIndex++};--dx:${dx}px;--dy:${dy}px;transform-origin:${n.x}px ${n.y}px;">` +
-          `<circle cx="${n.x}" cy="${n.y}" r="${nodeR2}"/>` +
-          `<foreignObject x="${n.x - nodeR2 + 3}" y="${n.y - nodeR2 + 3}" width="${(nodeR2 - 3) * 2}" height="${(nodeR2 - 3) * 2}"><div xmlns="http://www.w3.org/1999/xhtml" class="combined-sat-label">${n.label}</div></foreignObject>` +
-          `</g>`;
-      }).join("");
-      overlay.innerHTML = `
-        <div class="combined-network-panel">
-          <div class="combined-network-heading">
-            <strong><i class="fa-solid fa-diagram-project"></i> Red completa: ciclos y dinámicas de los 6 subsistemas</strong>
-            <button type="button" class="subsystem-panel-close" id="closeCombinedNetworkBtn" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button>
-          </div>
-          <div class="combined-network-scroll">
-            <svg viewBox="0 0 ${W} ${H}" class="combined-network-svg">
-              <g class="combined-lines">${svgParts.join("")}</g>
-              <g class="combined-nodes">${dynCircles}</g>
-            </svg>
-          </div>
-        </div>`;
-      document.body.appendChild(overlay);
-      // Explosión: todos los nodos arrancan encogidos en el centro, y en
-      // el siguiente frame "explotan" hacia su posición final, con un
-      // pequeño retraso por nodo para que se vea como una expansión.
-      requestAnimationFrame(() => overlay.classList.add("exploded"));
-      const close = () => overlay.remove();
-      overlay.querySelector("#closeCombinedNetworkBtn")?.addEventListener("click", close);
-      overlay.addEventListener("click", (event) => { if (event.target === overlay) close(); });
+      // Fallback si alguien llama a la versión modal
+      renderFullSubsystemsNetworkInPlace(document.getElementById("territoryNetworkPlain"));
     }
 
     const buildHidricaDiagramHtml = (row) => {
@@ -3191,8 +3312,11 @@
             const satR = Math.max(70, btnRect.width * 1.3);
             const satHalf = 39; // mitad del tamaño de cada bolita (78px), para no dejar que se corte en el borde
             const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
-            items.forEach((label, i) => {
-              const angle = (i / items.length) * Math.PI * 2 - Math.PI / 2;
+            const sysKey = ["hidrica", "biotica", "fisico", "movilidad", "social", "socioeconomico"][Number(button.dataset.mapNetworkIndex)];
+            const dynSys = sysKey && URBAN_DYNAMICS_DATA[sysKey];
+            const elemList = dynSys ? dynSys.elements : (items || []).map(text => ({ name: text, icon: "fa-circle-dot", desc: text }));
+            elemList.forEach((el, i) => {
+              const angle = (i / elemList.length) * Math.PI * 2 - Math.PI / 2;
               const finalX = clamp(originX + satR * Math.cos(angle), satHalf, stageRect.width - satHalf);
               const finalY = clamp(originY + satR * Math.sin(angle), satHalf, stageRect.height - satHalf);
               const sat = document.createElement("div");
@@ -3203,7 +3327,12 @@
               sat.style.setProperty("--final-x", `${finalX}px`);
               sat.style.setProperty("--final-y", `${finalY}px`);
               sat.style.setProperty("--explode-delay", `${i * 55}ms`);
-              sat.textContent = label;
+              sat.innerHTML = `<i class="fa-solid ${el.icon || 'fa-circle-dot'}"></i><span>${(el.name || el).replace(/\n/g, ' ')}</span>`;
+              sat.title = el.desc || (el.name || el);
+              sat.addEventListener("click", (satEv) => {
+                satEv.stopPropagation();
+                DINAMICA_SOUND.play(sysKey || "hidrica");
+              });
               target.appendChild(sat);
             });
             requestAnimationFrame(() => {

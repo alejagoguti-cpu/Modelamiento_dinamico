@@ -1159,7 +1159,7 @@ function aplicarFuerzaNodal() {
     const apagado = nodosApagados.has(n.id);
     const d = deg[n.id] || 0;
     n._deg = d;
-    n.r = apagado ? 22 : 32 + Math.pow(d, 1.25) * 7.5;
+    n.r = apagado ? 34 : Math.max(56, 50 + Math.pow(d, 1.2) * 11);
     n.collR = n.r;
     resizeNodeVisual(n);
     if (n._el) n._el.group.classList.toggle("node-apagado", apagado);
@@ -1292,7 +1292,7 @@ function attachNodeDragHandler(group, node) {
     if (!dragging) return;
     if (Math.hypot(e.clientX - startClientX, e.clientY - startClientY) > 4) moved = true;
     const p = toSvgPoint(e.clientX, e.clientY);
-    node.x = p.x; node.y = p.y; node.vx = 0; node.vy = 0;
+    node.x = p.x; node.y = p.y; node.homeX = p.x; node.homeY = p.y; node.vx = 0; node.vy = 0;
     updatePositions(); wakePhysics();
   });
   function endDrag(e) {

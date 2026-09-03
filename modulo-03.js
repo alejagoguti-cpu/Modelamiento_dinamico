@@ -949,7 +949,7 @@ function recomputeActiveGraph() {
     // El radio nunca usa el grado histórico: solo cuenta relaciones activas
     // después de aplicar estado de estructuras, filtros y nodos apagados.
     c.activeDeg = c.rels.filter(relActive).length;
-    nodeR[c.id] = c.activeDeg > 0 ? Math.max(36, 30 + c.activeDeg * 11) : 30;
+    nodeR[c.id] = c.activeDeg > 0 ? Math.max(58, 50 + c.activeDeg * 13) : 44;
   });
 }
 
@@ -1013,8 +1013,8 @@ function updateGraphGeometry() {
     }
     const icon = g.querySelector('.node-icon');
     const name = g.querySelector('.node-name');
-    if (icon) icon.style.fontSize = `${Math.max(15, radius * 0.34)}px`;
-    if (name) name.style.fontSize = `${Math.max(9, Math.min(18, radius * 0.16))}px`;
+    if (icon) icon.style.fontSize = `${Math.max(24, radius * 0.38)}px`;
+    if (name) name.style.fontSize = `${Math.max(15, Math.min(26, radius * 0.20))}px`;
   });
   document.querySelectorAll('#gRels path[data-rel]').forEach(path => {
     const r = model.relations.find(x => String(x.id) === path.getAttribute('data-rel'));
@@ -1026,17 +1026,9 @@ function updateGraphGeometry() {
 function paintDraggedGraph() {
   const d = nodeDrag.delta;
   const activeId = nodeDrag.active;
-  Object.values(model.concepts).forEach(c => {
-    const base = nodeDrag.base[c.id];
-    if (!base) return;
-    if (c.id === activeId) {
-      drawPos[c.id] = { x: base.x + d.x, y: base.y + d.y };
-      return;
-    }
-    const distance = Math.hypot(base.x - nodeDrag.base[activeId].x, base.y - nodeDrag.base[activeId].y);
-    const follow = Math.max(0.14, Math.min(0.62, 0.62 - distance / 5200));
-    drawPos[c.id] = { x: base.x + d.x * follow, y: base.y + d.y * follow };
-  });
+  if (!activeId || !nodeDrag.base || !nodeDrag.base[activeId]) return;
+  drawPos[activeId] = { x: nodeDrag.base[activeId].x + d.x, y: nodeDrag.base[activeId].y + d.y };
+  layout[activeId] = { ...drawPos[activeId] };
   updateGraphGeometry();
 }
 function releaseDraggedGraph() {
