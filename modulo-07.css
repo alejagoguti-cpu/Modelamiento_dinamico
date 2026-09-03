@@ -5739,19 +5739,20 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 }
 .territory-network-plain { position: absolute; inset: 0; }
 @media (max-width: 720px) { .territory-network-plain-wrap { min-height: 620px; } }
-.show-full-network-fixed-btn {
-  position: absolute; left: 16px; bottom: 16px; z-index: 20; display: flex; align-items: center; gap: 8px;
-  padding: 11px 18px; border-radius: 999px; border: 2px solid #ffd166; background: rgba(7,12,15,.95);
-  color: #ffd166; font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer;
-  box-shadow: 0 6px 20px rgba(0,0,0,.5), 0 0 0 0 rgba(255,209,102,.4);
-  animation: full-network-btn-pulse 2.2s ease-in-out infinite;
+.map-network-center-hub {
+  position: absolute; left: 50%; top: 48%; transform: translate(-50%, -50%); z-index: 4;
+  width: 74px; height: 74px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+  border: 2px dashed rgba(255,209,102,.7); background: radial-gradient(circle, rgba(255,209,102,.22), rgba(7,12,15,.9));
+  color: #ffd166; font-size: 9px; font-weight: 700; line-height: 1.2; cursor: pointer;
+  animation: full-network-btn-pulse 2.4s ease-in-out infinite;
 }
-.show-full-network-fixed-btn i { font-size: 15px; }
-.show-full-network-fixed-btn:hover { background: rgba(255,209,102,.22); animation-play-state: paused; }
+.map-network-center-hub i { font-size: 16px; margin-bottom: 2px; }
+.map-network-center-hub:hover { background: radial-gradient(circle, rgba(255,209,102,.4), rgba(7,12,15,.95)); animation-play-state: paused; transform: translate(-50%, -50%) scale(1.08); }
 @keyframes full-network-btn-pulse {
-  0%, 100% { box-shadow: 0 6px 20px rgba(0,0,0,.5), 0 0 0 0 rgba(255,209,102,.4); }
-  50% { box-shadow: 0 6px 20px rgba(0,0,0,.5), 0 0 0 10px rgba(255,209,102,0); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255,209,102,.35); }
+  50% { box-shadow: 0 0 0 14px rgba(255,209,102,0); }
 }
+.map-network-stage.center-hub-exploding .map-network-center-hub { opacity: 0; transition: opacity .3s ease; }
 
 /* Redondez definitiva de TODAS las bolitas, sin excepción — selector con
    id para ganarle a cualquier regla más específica que las deforme. */

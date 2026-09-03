@@ -2221,7 +2221,6 @@
       });
     }
     directSubsystemsBtn?.addEventListener("click", () => { openSubmodelsFromDirectButton("subsystems"); showPlainNetwork("systems", directSubsystemsBtn); });
-    document.getElementById("showFullSubsystemsNetworkBtn")?.addEventListener("click", (event) => { window.__openFullSubsystemsNetwork?.(event); });
     directSubmodelsBtn?.addEventListener("click", () => { openSubmodelsFromDirectButton("submodels"); showPlainNetwork("submodels", directSubmodelsBtn); });
     directCartographyBtn?.addEventListener("click", showCartography);
     renderSubmodelsView("subsystems");
@@ -2573,7 +2572,6 @@
     // aparte, reemplaza el contenido DENTRO del mismo panel donde estaban
     // las 6 bolas — así da la sensación de que las 6 se convierten en 30.
     function renderFullSubsystemsNetworkInPlace(target) {
-      document.getElementById("showFullSubsystemsNetworkBtn")?.setAttribute("hidden", "");
       const W = 900, H = 900, cx = W / 2, cy = H / 2;
       // Los 6 "orígenes" (donde estaba cada bola de sistema) quedan más
       // cerca entre sí que antes, y cada racimo se esparce con más radio y
@@ -3088,10 +3086,9 @@
       // Botón central: en la vista "solo red" de subsistemas, al centro del
       // anillo de las 6 bolas, dispara la explosión de las 6 a la vez con
       // todas sus dinámicas y la red completa conectada entre sí.
-      // Los botones del centro y de la esquina se quitaron; ahora hay un
-      // único botón fijo abajo a la izquierda (fuera de este HTML, se
-      // agrega directamente al contenedor de la sección) que hace lo mismo.
-      const centerHubHtml = "";
+      const centerHubHtml = (systems && isPlainView && !hideAllSystemBubbles)
+        ? `<button type="button" id="mapNetworkCenterHub" class="map-network-center-hub" aria-label="Explotar los 6 subsistemas y ver la red completa"><i class="fa-solid fa-burst"></i><span>Ver red<br>completa</span></button>`
+        : "";
       if (hideAllSystemBubbles) declutteredPositions = computeDeclutteredPositions();
       const kennedyBoxesHtml = hideAllSystemBubbles ? buildPhenomenaHtml() + buildTextBoxesHtml() : "";
       const relationPairs = hideAllSystemBubbles ? [] : (systems
@@ -3170,11 +3167,8 @@
           }, 560);
         }, 320);
       };
-      window.__openFullSubsystemsNetwork = openFullNetwork; // usado por el botón fijo abajo a la izquierda
-      // El botón fijo "Ver red completa" solo se muestra en la vista de
-      // Subsistemas del territorio (no en Submodelos).
-      const fixedFullNetworkBtn = document.getElementById("showFullSubsystemsNetworkBtn");
-      if (fixedFullNetworkBtn) fixedFullNetworkBtn.hidden = !(systems && isPlainView && !hideAllSystemBubbles);
+      window.__openFullSubsystemsNetwork = openFullNetwork;
+      target.querySelector("#mapNetworkCenterHub")?.addEventListener("click", openFullNetwork);
       target.querySelectorAll(".map-network-node").forEach((button) => button.addEventListener("click", () => {
         if (button.classList.contains("map-phenomenon-node")) return; // tiene su propio manejador, más abajo
         const row = rows[Number(button.dataset.mapNetworkIndex)];
@@ -3272,7 +3266,7 @@
           purpose.style.setProperty("--bubble-color", color);
           const forresterBtnHtml = !systems ? `<button type="button" class="forrester-open-btn" id="openForresterBtn"><i class="fa-solid fa-diagram-project"></i> Ver diagrama de Forrester</button>` : "";
           const purposeHtml = row.purpose ? `<p class="panel-scope-label">PROPÓSITO</p><p class="panel-specific-reading">${row.purpose}</p>` : "";
-          const systemTypeHtml = row.category ? `<p class="panel-scope-label">TIPO DE SISTEMA</p><p class="panel-specific-reading"><b>${row.category}</b></p><p class="panel-scope-label">PARTES: ¿TIENEN PROPÓSITO?</p><p class="panel-specific-reading">${row.partsPurpose === "Sí" ? "Sí. " : "No. "}${row.partsWhy || ""}</p><p class="panel-scope-label">TOTALIDAD: ¿TIENE PROPÓSITO?</p><p class="panel-specific-reading">${row.totalPurpose === "Sí" ? "Sí. " : "No. "}${row.totalWhy || ""}</p>` : "";
+          const systemTypeHtml = row.category ? `<p class="panel-scope-label">TIPO DE SISTEMA</p><p class="panel-specific-reading"><b>${row.category}</b></p><p class="panel-scope-label">¿LAS PARTES TIENEN PROPÓSITO?</p><p class="panel-specific-reading"><b>${row.partsPurpose}</b></p><p class="panel-scope-label">¿EL TODO TIENE PROPÓSITO?</p><p class="panel-specific-reading"><b>${row.totalPurpose}</b></p>` : "";
           purpose.innerHTML = `<div class="subsystem-panel-heading"><strong><i class="fa-solid fa-arrows-rotate"></i> ${label(row)}</strong><button type="button" class="subsystem-panel-close" aria-label="Cerrar panel"><i class="fa-solid fa-xmark"></i></button></div>${purposeHtml}<p class="panel-scope-label">CÓMO CAMBIA EN EL TIEMPO</p><p class="panel-specific-reading">${row.process}</p>${systemTypeHtml}${forresterBtnHtml}`;
           target.append(purpose);
           purpose.querySelector("#openForresterBtn")?.addEventListener("click", (event) => { event.stopPropagation(); showForresterModal(Number(button.dataset.mapNetworkIndex), label(row), color); });
