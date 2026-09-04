@@ -219,7 +219,7 @@ function nodeById(id) { return ODS_NODES.find(n => n.id === id); }
    ========================================================== */
 const TYPE_STYLE = {
   directa:   { color: "#2fd4c8", label: "Directa (respaldo explícito del POT)" },
-  indirecta: { color: "#8b93a8", label: "Indirecta (relación funcional intermedia)" },
+  indirecta: { color: "#8b93a8", label: "Indirecta (por cruce o intersección espacial)" },
   vacio:     { color: "#ef4444", label: "Vacío de articulación (hallazgo)" },
 };
 // Color de trazo por "Tipo de relación" (dimensión independiente del estilo de línea)
@@ -3297,7 +3297,7 @@ const MAIN_CONCLUSION_STEP1 = `
     <svg id="conclusionNetworkViz" viewBox="0 0 2500 1820" preserveAspectRatio="xMidYMid meet"></svg>
   </div>
   <div class="main-conclusion-answer">
-    <p>Al reconstruir su modelo, encontramos que el POT hace principalmente legibles estructuras, componentes, relaciones funcionales y reglas de intervención. Esto permite construir una representación organizada del territorio tiene límites para representar procesos y cambian en el tiempo.</p>
+    <p>Al mirar la red del POT, la gran concentración de conexiones ocurre únicamente entre las normas escritas y las obras físicas, mientras que los elementos humanos y ambientales quedan casi sueltos en los bordes. Esta desconexión visual demuestra que el modelo estructura un territorio rígido de leyes y concreto que mantiene la vida real de la gente aislada de su diseño principal.</p>
   </div>
   <button class="main-conclusion-explore-btn" id="mainConclusionNextBtn">DESCUBRIR</button>
 `;
