@@ -535,6 +535,42 @@
       while (nodesTopG.firstChild) nodesG.appendChild(nodesTopG.firstChild);
     }
 
+    // Foco: enciende las conexiones de un nodo y apaga el resto de la red.
+    // Con el cursor es momentáneo; con doble clic queda FIJO hasta que se
+    // vuelve a hacer doble clic o se toca el fondo.
+    let focoFijo = null;
+    function aplicarFoco(e) {
+      const vecinos = (vecinosPorNodo.get(e.id) || []).map((v) => state.byId.get(v)?._group).filter(Boolean);
+      (e._aristas || []).forEach((line) => {
+        if (line.dataset.filteredOut) return;
+        line.classList.add("m2re-edge-activa");
+        line.setAttribute("stroke", e._colorBase);
+        line.style.strokeWidth = "2.2";
+      });
+      enfocar(e._aristas || [], [e._group].concat(vecinos));
+    }
+    function limpiarFoco(e) {
+      (e._aristas || []).forEach((line) => {
+        line.classList.remove("m2re-edge-activa");
+        line.style.strokeWidth = "";
+        line.removeAttribute("stroke");
+      });
+      desenfocar();
+    }
+    function alternarFocoFijo(e) {
+      if (focoFijo === e.id) { limpiarFoco(e); focoFijo = null; return; }
+      if (focoFijo != null) { const previo = state.byId.get(focoFijo); if (previo) limpiarFoco(previo); }
+      focoFijo = e.id;
+      aplicarFoco(e);
+    }
+    function soltarFocoFijo() {
+      if (focoFijo == null) return;
+      const previo = state.byId.get(focoFijo);
+      if (previo) limpiarFoco(previo);
+      focoFijo = null;
+    }
+    layer._soltarFoco = soltarFocoFijo;
+
     // dibuja primero los de menor grado y al final los hubs, para que los
     // más grandes/importantes queden siempre por encima visualmente.
     const ordenDibujo = [...state.elementos].sort((a, b) => (state.grado.get(a.id) || 0) - (state.grado.get(b.id) || 0));
@@ -579,26 +615,11 @@
       group.appendChild(circle); group.appendChild(fo);
 
       const misAristas = edgesByNode.get(e.id) || [];
-      group.addEventListener("pointerenter", () => {
-        // se encienden SUS conexiones y se apaga el resto de la red: con
-        // 2.198 líneas, resaltar sin apagar lo demás no se distingue
-        const vecinos = (vecinosPorNodo.get(e.id) || []).map((vid) => state.byId.get(vid)?._group).filter(Boolean);
-        misAristas.forEach((line) => {
-          if (line.dataset.filteredOut) return;
-          line.classList.add("m2re-edge-activa");
-          line.setAttribute("stroke", color);
-          line.style.strokeWidth = "2.2";
-        });
-        enfocar(misAristas, [group].concat(vecinos));
-      });
-      group.addEventListener("pointerleave", () => {
-        misAristas.forEach((line) => {
-          line.classList.remove("m2re-edge-activa");
-          line.style.strokeWidth = "";
-          line.removeAttribute("stroke");
-        });
-        desenfocar();
-      });
+      e._aristas = misAristas;
+      e._colorBase = color;
+      // con el cursor: foco momentáneo (si no hay uno fijado con doble clic)
+      group.addEventListener("pointerenter", () => { if (focoFijo == null) aplicarFoco(e); });
+      group.addEventListener("pointerleave", () => { if (focoFijo == null) limpiarFoco(e); });
       group.addEventListener("click", (ev) => {
         ev.stopPropagation();
         abrirFicha(e);
@@ -656,6 +677,7 @@
     }
 
     recalcularRed = function () {
+      soltarFocoFijo();
       // grado y puentes SOLO con lo que sigue encendido
       const vivos = state.elementos.filter((e) => estaActivo(e.id));
       const vivas = state.conexiones.filter(conexionActiva);
@@ -671,11 +693,12 @@
         vivas.length + " conexiones activas · " + puentes.size + " nodos puente · " + aislados + " aislados";
     };
 
-    // doble clic sobre un nodo = encender / apagar
+    // doble clic sobre un nodo = dejar iluminadas SUS conexiones
     state.elementos.forEach((e) => {
       e._group?.addEventListener("dblclick", (ev) => {
         ev.stopPropagation(); ev.preventDefault();
-        alternarNodo(e.id);
+        alternarFocoFijo(e);
+        abrirFicha(e);
       });
     });
     document.getElementById("m2reBtnApagarTodos")?.addEventListener("click", () => {
@@ -843,6 +866,9 @@
 
   document.addEventListener("DOMContentLoaded", () => {
     init();
-    document.getElementById("networkViz")?.addEventListener("click", () => { hideTooltip(); cerrarFicha(); });
+    document.getElementById("networkViz")?.addEventListener("click", () => {
+      hideTooltip(); cerrarFicha();
+      document.getElementById("m2-red-externa")?._soltarFoco?.();
+    });
   });
 })();
