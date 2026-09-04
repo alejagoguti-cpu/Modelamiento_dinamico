@@ -897,7 +897,10 @@ footer span { color: var(--teal); }
 }
 .noise-formula-modal-close:hover { color: #ffb020; background: rgba(255,255,255,.15); }
 .noise-formula-modal-body ol { margin: 8px 0 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; line-height: 1.5; }
-.noise-formula-modal-body code { background: #05070a; border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; color: #76fff0; font-size: 10.5px; }
+.noise-formula-modal-body code {
+  background: #05070a; border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; color: #76fff0; font-size: 10.5px;
+  white-space: nowrap; display: inline-block; max-width: 100%; overflow-x: auto; vertical-align: bottom;
+}
 .noise-formula-note { margin: 8px 0 0; font-style: italic; opacity: .8; }
 
 /* Pop-up de fórmula de agente: compacto (no debe tapar todo el plano) y
