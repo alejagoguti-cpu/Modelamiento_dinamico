@@ -1350,6 +1350,15 @@ RAW_EDGES.forEach(edge => {
   edge.restLength = Math.hypot(t.x - s.x, t.y - s.y);
 });
 
+// Vecinos directos de cada nodo (solo por relaciones que sí se dibujan):
+// al arrastrar una bola, las que están conectadas a ella se dejan llevar.
+const VECINOS_DIRECTOS = new Map(DISPLAY_NODES.map((n) => [n.id, []]));
+RAW_EDGES.forEach((e) => {
+  if (e.tipo === "vacio" || !relacionVisible(e)) return;
+  VECINOS_DIRECTOS.get(e.s)?.push(e.t);
+  VECINOS_DIRECTOS.get(e.t)?.push(e.s);
+});
+
 /* No puede haber una línea recta encima de otra: con el reparto final ya
    fijo, cualquier relación cuyo trazo recto pase muy cerca de una tercera
    bola (por ejemplo, dos vecinos casi en línea con ella) queda marcada
@@ -2157,6 +2166,7 @@ function acomodarTrasArrastre(nodoMovido) {
 function attachNodeDragHandler(group, node) {
   const svg = document.getElementById("networkViz");
   let dragging = false, moved = false, startClientX = 0, startClientY = 0;
+  let startX = 0, startY = 0, vecinosInicio = [];
   function toSvgPoint(clientX, clientY) {
     const pt = svg.createSVGPoint(); pt.x = clientX; pt.y = clientY;
     const m = svg.getScreenCTM().inverse();
@@ -2165,6 +2175,14 @@ function attachNodeDragHandler(group, node) {
   group.addEventListener("pointerdown", (e) => {
     e.stopPropagation();
     dragging = true; moved = false; startClientX = e.clientX; startClientY = e.clientY;
+    startX = node.x; startY = node.y;
+    // Los vecinos conectados a este nodo se dejan llevar con él: se guarda
+    // su posición de arranque para calcular cuánto los arrastra el tirón.
+    const idsVecinos = VECINOS_DIRECTOS.get(node.id) || [];
+    vecinosInicio = idsVecinos
+      .map((id) => nodeById(id))
+      .filter((n) => n && !nodosApagados.has(n.id))
+      .map((n) => ({ n, x0: n.x, y0: n.y }));
     // El motor de fuerzas se despierta solo si de verdad se arrastra: con un
     // clic simple la red se quedaba temblando y reacomodándose sola.
     node.fixed = true; group.classList.add("dragging"); group.setPointerCapture(e.pointerId);
@@ -2174,6 +2192,14 @@ function attachNodeDragHandler(group, node) {
     if (Math.hypot(e.clientX - startClientX, e.clientY - startClientY) > 4) moved = true;
     const p = toSvgPoint(e.clientX, e.clientY);
     node.x = p.x; node.y = p.y; node.homeX = p.x; node.homeY = p.y; node.vx = 0; node.vy = 0;
+    // Tirón parcial hacia sus vecinos directos: se mueven una fracción de lo
+    // mismo que el nodo arrastrado, para que se sienta la conexión sin que
+    // toda la red se mueva en bloque.
+    const dx = node.x - startX, dy = node.y - startY;
+    const TIRON = 0.35;
+    vecinosInicio.forEach(({ n, x0, y0 }) => {
+      n.x = x0 + dx * TIRON; n.y = y0 + dy * TIRON; n.homeX = n.x; n.homeY = n.y; n.vx = 0; n.vy = 0;
+    });
     updatePositions();
   });
   function endDrag(e) {
@@ -2182,6 +2208,7 @@ function attachNodeDragHandler(group, node) {
     try { group.releasePointerCapture(e.pointerId); } catch (err) {}
     if (moved) acomodarTrasArrastre(node);
     if (moved) { group.dataset.suppressClick = "1"; setTimeout(() => { delete group.dataset.suppressClick; }, 0); }
+    vecinosInicio = [];
   }
   group.addEventListener("pointerup", endDrag);
   group.addEventListener("pointercancel", endDrag);
