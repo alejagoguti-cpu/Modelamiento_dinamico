@@ -566,7 +566,7 @@ function layoutNetwork() {
   // se ven claramente más grandes. Escala raíz cuadrada (no lineal) para
   // que la diferencia se note también entre los nodos con pocas conexiones,
   // no solo contra los 2-3 hubs enormes.
-  const R_MIN = 34, R_MAX = 82;
+  const R_MIN = 24, R_MAX = 58;
   ODS_NODES.forEach(n => {
     n.color = STRUCT_STYLE[n.cat].color;
     n.vx = 0; n.vy = 0; n.fixed = false; n.isMainHub = false;
@@ -606,9 +606,39 @@ function layoutNetwork() {
   nodes.forEach(n => {
     n.x = Math.max(n.collR + 20, Math.min(CANVAS.w - n.collR - 20, n.x));
     n.y = Math.max(n.collR + 20, Math.min(CANVAS.h - n.collR - 20, n.y));
+    n._origX = n.x; n._origY = n.y; // posición original del wireframe, para no alejarse demasiado de ella
   });
-  const MIN_GAP = 16; // espacio mínimo obligatorio entre bordes de dos bolas, nunca 0
-  for (let pass = 0; pass < 400; pass++) {
+  const MIN_GAP = 8; // espacio mínimo obligatorio entre bordes de dos bolas, nunca 0
+  const SPRING = 0.06; // qué tan fuerte "jala" cada bola de vuelta a su lugar original en cada pasada
+  // Fase 1: separar Y jalar de vuelta al origen a la vez, para terminar lo
+  // más cerca posible del wireframe original sin alejarse de más.
+  for (let pass = 0; pass < 350; pass++) {
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const a = nodes[i], b = nodes[j];
+        let dx = b.x - a.x, dy = b.y - a.y;
+        let dist = Math.hypot(dx, dy);
+        const minDist = a.collR + b.collR + MIN_GAP;
+        if (dist < minDist) {
+          if (dist < 0.001) { dx = (Math.random() - 0.5) * 2; dy = (Math.random() - 0.5) * 2; dist = Math.hypot(dx, dy); }
+          const overlap = (minDist - dist) / 2;
+          const ux = dx / dist, uy = dy / dist;
+          a.x -= ux * overlap; a.y -= uy * overlap;
+          b.x += ux * overlap; b.y += uy * overlap;
+        }
+      }
+    }
+    nodes.forEach(n => {
+      n.x += (n._origX - n.x) * SPRING;
+      n.y += (n._origY - n.y) * SPRING;
+      n.x = Math.max(n.collR + 20, Math.min(CANVAS.w - n.collR - 20, n.x));
+      n.y = Math.max(n.collR + 20, Math.min(CANVAS.h - n.collR - 20, n.y));
+    });
+  }
+  // Fase 2: SOLO separación, sin resorte — garantiza que al final ninguna
+  // bola quede tocando a otra, sin importar qué tan apretado haya quedado
+  // el wireframe original en esa zona.
+  for (let pass = 0; pass < 200; pass++) {
     let anyOverlap = false;
     for (let i = 0; i < nodes.length; i++) {
       for (let j = i + 1; j < nodes.length; j++) {
@@ -626,7 +656,6 @@ function layoutNetwork() {
         }
       }
     }
-    // se mantiene todo dentro del lienzo en cada pasada
     nodes.forEach(n => {
       n.x = Math.max(n.collR + 20, Math.min(CANVAS.w - n.collR - 20, n.x));
       n.y = Math.max(n.collR + 20, Math.min(CANVAS.h - n.collR - 20, n.y));
