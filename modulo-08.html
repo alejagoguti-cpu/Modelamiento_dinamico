@@ -70,12 +70,12 @@
           <div class="sumo-agents-card">
             <strong><i class="fa-solid fa-users-gear"></i> Agentes</strong>
             <div class="sumo-agents-grid">
-              <div class="sumo-agent-col">
-                <div class="sumo-agent-col-title"><i class="fa-solid fa-car"></i> Vehículos</div>
+              <div class="sumo-agent-col" data-agent="vehiculos" role="button" tabindex="0" aria-haspopup="dialog" aria-controls="agentFormulaModal">
+                <div class="sumo-agent-col-title"><i class="fa-solid fa-car"></i> Vehículos <i class="fa-solid fa-square-root-variable sumo-agent-formula-icon"></i></div>
                 <p>Generan flujo de tráfico, congestión y emisión de ruido al desplazarse por la red.</p>
               </div>
-              <div class="sumo-agent-col">
-                <div class="sumo-agent-col-title"><i class="fa-solid fa-dove"></i> Mirlas <em>(Turdus fuscater)</em></div>
+              <div class="sumo-agent-col" data-agent="mirlas" role="button" tabindex="0" aria-haspopup="dialog" aria-controls="agentFormulaModal">
+                <div class="sumo-agent-col-title"><i class="fa-solid fa-dove"></i> Mirlas <em>(Turdus fuscater)</em> <i class="fa-solid fa-square-root-variable sumo-agent-formula-icon"></i></div>
                 <p>Generan rutas de desplazamiento y escape, decidiendo por dónde moverse según la resistencia del paisaje y los niveles de ruido.</p>
               </div>
             </div>
@@ -200,6 +200,19 @@
           </ol>
           <p class="noise-formula-note">Es un proxy visual de carga de tráfico, no una medición acústica real en decibeles.</p>
         </div>
+      </div>
+    </div>
+
+    <!-- Pop-up con la fórmula del agente (Vehículos o Mirlas) que se haya
+         clicado en la tarjeta "Agentes" -->
+    <div class="noise-formula-modal" id="agentFormulaModal" hidden>
+      <div class="noise-formula-modal-backdrop" id="agentFormulaModalBackdrop"></div>
+      <div class="noise-formula-modal-box" role="dialog" aria-modal="true" aria-labelledby="agentFormulaModalTitle">
+        <div class="noise-formula-modal-head">
+          <h4 id="agentFormulaModalTitle"><i class="fa-solid fa-square-root-variable"></i> Fórmula del agente</h4>
+          <button type="button" class="noise-formula-modal-close" id="agentFormulaModalClose" aria-label="Cerrar">&times;</button>
+        </div>
+        <div class="noise-formula-modal-body" id="agentFormulaModalBody"></div>
       </div>
     </div>
 

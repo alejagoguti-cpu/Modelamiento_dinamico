@@ -1268,8 +1268,61 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("noiseFormulaToggle")?.addEventListener("click", abrirFormulaModal);
   document.getElementById("noiseFormulaModalClose")?.addEventListener("click", cerrarFormulaModal);
   document.getElementById("noiseFormulaModalBackdrop")?.addEventListener("click", cerrarFormulaModal);
+
+  // Fórmula propia de cada agente, al hacer clic en su tarjeta dentro de
+  // "Agentes" — la misma matemática que ya usa la simulación, no una
+  // aparte inventada solo para mostrar.
+  const AGENT_FORMULAS = {
+    vehiculos: {
+      title: '<i class="fa-solid fa-car"></i> Fórmula del agente: Vehículos',
+      body: `
+        <p><strong>Emisión de ruido por vehículo</strong> (Directiva (UE) 2015/996, Cap. 2.2):</p>
+        <ol>
+          <li><strong>Ruido de rodadura:</strong> <code>L_WR = A_R + B_R·log10(v)</code></li>
+          <li><strong>Ruido de propulsión:</strong> <code>L_WP = A_P + B_P·(v−70)/70</code></li>
+          <li><strong>Emisión total del vehículo</strong> (suma energética): <code>L_W = 10·log10(10^(L_WR/10) + 10^(L_WP/10))</code></li>
+          <li><strong>Propagación</strong> hasta un punto a distancia <code>d</code>: <code>A_div = 20·log10(d) + 11</code></li>
+          <li><strong>Varios vehículos</strong> en el mismo punto (suma energética, no aritmética): <code>L_total = 10·log10(Σ 10^(Lᵢ/10))</code></li>
+        </ol>
+        <p class="noise-formula-note"><code>v</code> es la velocidad real de cada vehículo, tomada de su propia posición en SUMO entre dos instantes consecutivos.</p>
+      `,
+    },
+    mirlas: {
+      title: '<i class="fa-solid fa-dove"></i> Fórmula del agente: Mirlas',
+      body: `
+        <p><strong>Fuerza de escape por ruido</strong> (umbral crítico de 60&nbsp;dB(A), Caltrans):</p>
+        <ol>
+          <li><strong>Fuerza sobre la mirla:</strong> <code>F = −K·max(0, Lp−60)·û</code></li>
+          <li><code>Lp</code> es el nivel de ruido (dB(A)) en la posición actual de la mirla.</li>
+          <li><code>max(0, Lp−60)</code>: por debajo de 60&nbsp;dB(A) la fuerza es cero — el tráfico no las afecta.</li>
+          <li><code>û</code> es el vector unitario que apunta lejos de la calle ruidosa; <code>K</code> escala qué tan fuerte reaccionan.</li>
+          <li>Por encima del umbral, el ruido enmascara sus señales de comunicación: sueltan el árbol donde estuvieran comiendo y se alejan más fuerte cuanto más ruido reciben (anillo naranja mientras están sobre el umbral).</li>
+        </ol>
+      `,
+    },
+  };
+  const agentFormulaModal = document.getElementById("agentFormulaModal");
+  const abrirAgentFormula = (agente) => {
+    const datos = AGENT_FORMULAS[agente];
+    if (!datos || !agentFormulaModal) return;
+    document.getElementById("agentFormulaModalTitle").innerHTML = datos.title;
+    document.getElementById("agentFormulaModalBody").innerHTML = datos.body;
+    agentFormulaModal.hidden = false;
+  };
+  const cerrarAgentFormula = () => { if (agentFormulaModal) agentFormulaModal.hidden = true; };
+  document.querySelectorAll(".sumo-agent-col[data-agent]").forEach((col) => {
+    col.addEventListener("click", () => abrirAgentFormula(col.dataset.agent));
+    col.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); abrirAgentFormula(col.dataset.agent); }
+    });
+  });
+  document.getElementById("agentFormulaModalClose")?.addEventListener("click", cerrarAgentFormula);
+  document.getElementById("agentFormulaModalBackdrop")?.addEventListener("click", cerrarAgentFormula);
+
   window.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && noiseFormulaModal && !noiseFormulaModal.hidden) cerrarFormulaModal();
+    if (e.key !== "Escape") return;
+    if (noiseFormulaModal && !noiseFormulaModal.hidden) cerrarFormulaModal();
+    if (agentFormulaModal && !agentFormulaModal.hidden) cerrarAgentFormula();
   });
   window.addEventListener("resize", () => {
     const svg = document.getElementById("readerViz");

@@ -803,6 +803,13 @@ footer span { color: var(--teal); }
 .sumo-agent-col-title { display: flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 700; color: #ffcf7a; margin-bottom: 4px; }
 .sumo-agent-col-title em { font-weight: 500; font-style: italic; opacity: .85; font-size: 10.5px; }
 .sumo-agent-col p { margin: 0; font-size: 11px; line-height: 1.5; color: rgba(242,236,227,.9); }
+.sumo-agent-col[data-agent] {
+  cursor: pointer; border-radius: 6px; transition: background .15s ease;
+}
+.sumo-agent-col[data-agent]:hover, .sumo-agent-col[data-agent]:focus-visible {
+  background: rgba(255,176,32,.10); outline: none;
+}
+.sumo-agent-formula-icon { margin-left: auto; font-size: 9.5px; opacity: .65; }
 @media (max-width: 720px) {
   .sumo-agents-card { max-width: calc(100% - 24px); font-size: 10.5px; }
   .sumo-agents-grid { grid-template-columns: 1fr; gap: 10px; }
