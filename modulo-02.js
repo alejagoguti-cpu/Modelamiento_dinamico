@@ -142,14 +142,10 @@ const ODS_NODES = [
   { id:"chiguasuque-la-isla", cat:"e1", name:"CHIGUASUQUE", icon:"fa-droplet", fuente:"inventario_pendiente" },
   { id:"salitre", cat:"e1", name:"HUMEDAL SALITRE", icon:"fa-droplet", fuente:"inventario_pendiente" },
   { id:"tingua-azul", cat:"e1", name:"TINGUA AZUL", icon:"fa-droplet", fuente:"inventario_pendiente" },
-<<<<<<< HEAD
 
   /* ---- VÍAS ARTERIALES (42 items) ---- */
   { id:"avenida-boyacá", cat:"e2", name:"AVENIDA BOYACÁ", icon:"fa-road", fuente:"cita_literal" },
   { id:"avenida-ciudad-de-cali", cat:"e2", name:"AVENIDA CIUDAD DE CALI", icon:"fa-road", fuente:"cita_literal" },
-=======
-  { id:"avenida-boyacá", cat:"e2", name:"AVENIDA BOYACÁ", icon:"fa-road", fuente:"inventario_pendiente" },
->>>>>>> 4749a0c57cd45f0f345e6903a8239ea8188dfaf0
   { id:"avenida-19", cat:"e2", name:"AVENIDA 19", icon:"fa-road", fuente:"inventario_pendiente" },
   { id:"avenida-suba", cat:"e2", name:"AVENIDA SUBA", icon:"fa-road", fuente:"inventario_pendiente" },
   { id:"carrera-52", cat:"e2", name:"CARRERA 52", icon:"fa-road", fuente:"inventario_pendiente" },
@@ -402,7 +398,6 @@ const RAW_EDGES = [
     analisis:"Las Áreas de Resiliencia Climática no tienen ningún puente confirmado hacia las Zonas Industriales u otro componente de la ESECI, pese a que estas últimas son, típicamente, infraestructura de alto impacto ambiental." },
   { s:"distrito_centro_tecnologico_e_innovacion", t:"patrimonio_natural", cat:"e3-e4", tipo:"vacio", relacion:"Soporte", fuente:"inferencia", articulo:null, pagina:null, cita:null,
     analisis:"Ningún puente confirmado entre los componentes económicos de la ESECI y la protección patrimonial de la EIP, pese a que la presión inmobiliaria/comercial sobre zonas patrimoniales es un conflicto documentado (La Candelaria, Chapinero)." },
-<<<<<<< HEAD
 
   /* ---- 100 CONEXIONES NUEVAS: Nodos del inventario POT ↔ Hubs por categoría ---- */
   { s:"río-bogotá", t:"rios", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
@@ -438,9 +433,6 @@ const RAW_EDGES = [
   { s:"avenida-boyacá", t:"red_vial", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:"Art. 158–159", pagina:"158", cita:"La Avenida Boyacá articula la conectividad longitudinal como eje estructurante de la malla vial arterial.", analisis:"Malla arterial de integración metropolitana." },
   { s:"avenida-ciudad-de-cali", t:"red_vial", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:"Art. 158–159", pagina:"158", cita:"La Avenida Ciudad de Cali constituye el soporte de transporte multimodal y borde de integración del suroccidente.", analisis:"Eje arterial y conector de transporte masivo." },
   { s:"avenida-ciudad-de-cali", t:"humedales", cat:"e1-e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:"Art. 42 / 158", pagina:"49–50", cita:"Intersección de la Avenida Ciudad de Cali con las Reservas Distritales de Humedal El Burro y La Vaca.", analisis:"Corredor vial en interacción directa con la Estructura Ecológica Principal." },
-=======
-  { s:"avenida-boyacá", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
->>>>>>> 4749a0c57cd45f0f345e6903a8239ea8188dfaf0
   { s:"avenida-19", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
   { s:"avenida-suba", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
   { s:"carrera-52", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
@@ -1229,7 +1221,6 @@ function radioPorGrado(d, apagado) {
   return apagado ? 30 : 30 + d * 5.8;   // la fuerza nodal se ve: cada relación suma tamaño
 }
 
-<<<<<<< HEAD
   // ---- 1. Posiciones fijas definidas por el equipo (lienzo 2500 x 1820) ----
   // Sustituyen al layout radial automático: cada bola queda exactamente donde
   // se colocó en el wireframe. Para mover una, cambia su par x/y en NODE_POS.
@@ -1248,16 +1239,6 @@ function radioPorGrado(d, apagado) {
     n.isMainHub = (HUB_IDS.indexOf(n.id) !== -1);
     if (n.isMainHub) n._outwardAngle = Math.atan2(n.y - CANVAS.h / 2, n.x - CANVAS.w / 2) || 0;
   });
-=======
-/* Radio mínimo para que el nombre no tenga que partirse a la mitad: los
-   nombres largos (SERVICIOS EMPRESARIALES, CENTROS DE ABASTECIMIENTO)
-   necesitan una bola algo más ancha. Con tope, para no borrar la
-   diferencia de tamaño entre un hub y un elemento periférico. */
-function radioParaNombre(nombre) {
-  const larga = String(nombre || "").split(/[\s\n]+/).reduce((a, p) => Math.max(a, p.length), 1);
-  return Math.min(52, larga * 4.4);   // lo justo para que el nombre no se parta, sin borrar la diferencia de tamaño
-}
->>>>>>> 4749a0c57cd45f0f345e6903a8239ea8188dfaf0
 
 /* Separación entre bolas: ninguna puede tocar a otra. Con resorte, cada
    una tira de vuelta a su sitio del wireframe; sin resorte, solo se
@@ -2251,185 +2232,13 @@ function renderNetwork() {
   while (tempG.firstChild) zoomPanGroup.appendChild(tempG.firstChild);
 }
 
-<<<<<<< HEAD
 let isDetailZoomEnabled = false;
-=======
-/* ==========================================================
-   ZOOM A UN GRUPO DE ELEMENTOS — "Explorar relaciones a detalle"
-   Acerca la red sobre los humedales de Kennedy (El Burro, La Vaca y
-   Techo), los ríos Fucha y Tunjuelo a los que drenan, y los dos
-   corredores que los cruzan (Avenida Boyacá y Avenida Ciudad de Cali).
-   No cambia la red: solo la encuadra y apaga el resto.
-   ========================================================== */
-const ZOOM_KENNEDY_IDS = [
-  "burro", "la-vaca", "techo", "río-fucha", "río-tunjuelo",
-  "avenida-boyacá", "avenida-ciudad-de-cali",
-];
-let zoomDetalleActivo = false;
-
-/* ==========================================================
-   ENCUADRE DEL LIENZO — el viewBox fijo de 2500x1820 hacía que en
-   pantallas angostas (un teléfono, o la columna de la red junto a la
-   leyenda) la red se dibujara en un rectángulo diminuto en el centro de
-   un recuadro negro: se veía vacío. Ahora el encuadre se ajusta a lo que
-   la red ocupa de verdad y a la forma del contenedor, así que la red
-   siempre llena su espacio.
-   ========================================================== */
-let VISTA = { x: 0, y: 0, w: CANVAS.w, h: CANVAS.h };
-
-function ajustarEncuadreRed() {
-  const svg = document.getElementById("networkViz");
-  const capa = svg?.querySelector(".nodes-layer");
-  if (!svg || !capa) return;
-  let caja;
-  try { caja = capa.getBBox(); } catch (e) { return; }
-  if (!caja || !caja.width || !caja.height) return;
-  const MARGEN = 60;
-  let w = caja.width + MARGEN * 2, h = caja.height + MARGEN * 2;
-  // El alto del lienzo sigue la forma real de la red (con topes), así la red
-  // llena el recuadro en vez de quedar como una franja en medio del negro.
-  const ancho = svg.clientWidth;
-  if (ancho) {
-    const altoIdeal = Math.round(Math.max(300, Math.min(820, ancho * h / w)));
-    svg.style.height = altoIdeal + "px";
-  }
-  const cara = svg.clientWidth && svg.clientHeight ? svg.clientWidth / svg.clientHeight : w / h;
-  if (w / h > cara) h = w / cara; else w = h * cara;
-  VISTA = {
-    x: caja.x + caja.width / 2 - w / 2,
-    y: caja.y + caja.height / 2 - h / 2,
-    w, h,
-  };
-  svg.setAttribute("viewBox", `${VISTA.x.toFixed(1)} ${VISTA.y.toFixed(1)} ${w.toFixed(1)} ${h.toFixed(1)}`);
-
-  // Si al encuadrar toda la red las bolas quedan diminutas (un teléfono, una
-  // ventana angosta), se arranca acercado a un tamaño legible y se recorre
-  // arrastrando; el botón de alejar devuelve la vista completa.
-  if (!ajustarEncuadreRed._zoomInicialHecho && svg.clientWidth && svg.clientWidth < 760) {
-    ajustarEncuadreRed._zoomInicialHecho = true;
-    const escala = svg.clientWidth / w;
-    const rMin = Math.min(...DISPLAY_NODES.map((n) => n.r || 0).filter((r) => r > 0));
-    const diametro = 2 * rMin * escala;
-    if (diametro > 0 && diametro < 46) {
-      zoomLevel = Math.max(1, Math.min(3.6, 46 / diametro));
-      const g = svg.querySelector("#zoom-pan-group");
-      if (g) g.setAttribute("transform", `translate(${panX},${panY}) scale(${zoomLevel})`);
-      updateZoomDisplay();
-    }
-  }
-}
-
-function irAZoomDe(ids, ms) {
-  const svg = document.getElementById("networkViz");
-  const group = svg?.querySelector("#zoom-pan-group");
-  if (!svg || !group) return;
-  const nodos = ids.map(nodeById).filter(n => n && n._el);
-  if (!nodos.length) return;
-  const x0 = Math.min(...nodos.map(n => n.x - n.r)), x1 = Math.max(...nodos.map(n => n.x + n.r));
-  const y0 = Math.min(...nodos.map(n => n.y - n.r)), y1 = Math.max(...nodos.map(n => n.y + n.r));
-  const margen = 70;   // el encuadre se ceñía demasiado poco al grupo
-  const escala = Math.max(0.5, Math.min(6,
-    Math.min(VISTA.w / (x1 - x0 + margen * 2), VISTA.h / (y1 - y0 + margen * 2))));
-  const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
-  const destino = {
-    z: escala,
-    x: VISTA.x + VISTA.w / 2 - cx * escala,
-    y: VISTA.y + VISTA.h / 2 - cy * escala,
-  };
-  const desde = { z: zoomLevel, x: panX, y: panY };
-  const t0 = performance.now(), DUR = ms || 900;
-  const suave = (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-  function paso(ahora) {
-    const k = suave(Math.min(1, (ahora - t0) / DUR));
-    zoomLevel = desde.z + (destino.z - desde.z) * k;
-    panX = desde.x + (destino.x - desde.x) * k;
-    panY = desde.y + (destino.y - desde.y) * k;
-    group.setAttribute("transform", `translate(${panX},${panY}) scale(${zoomLevel})`);
-    updateZoomDisplay();
-    if (k < 1) requestAnimationFrame(paso);
-  }
-  requestAnimationFrame(paso);
-}
-
-function explorarRelacionesDetalle() {
-  const btn = document.getElementById("btnExplorarRelaciones");
-  if (zoomDetalleActivo) {   // segundo clic: se vuelve a ver toda la red
-    zoomDetalleActivo = false;
-    clearSpotlight();
-    btn?.classList.remove("active");
-    const svg = document.getElementById("networkViz");
-    const group = svg?.querySelector("#zoom-pan-group");
-    const desde = { z: zoomLevel, x: panX, y: panY };
-    const t0 = performance.now();
-    const paso = (ahora) => {
-      const k = Math.min(1, (ahora - t0) / 700);
-      zoomLevel = desde.z + (1 - desde.z) * k;
-      panX = desde.x * (1 - k); panY = desde.y * (1 - k);
-      group?.setAttribute("transform", `translate(${panX},${panY}) scale(${zoomLevel})`);
-      updateZoomDisplay();
-      if (k < 1) requestAnimationFrame(paso);
-    };
-    requestAnimationFrame(paso);
-    return;
-  }
-  zoomDetalleActivo = true;
-  btn?.classList.add("active");
-  // ilumina los elementos del acercamiento (y sus relaciones entre sí)
-  setSpotlightNodes(ZOOM_KENNEDY_IDS, false);
-  irAZoomDe(ZOOM_KENNEDY_IDS);
-}
->>>>>>> 4749a0c57cd45f0f345e6903a8239ea8188dfaf0
 
 function setupZoomPan() {
   const svg = document.getElementById("networkViz");
   if (!svg) return;
 
-<<<<<<< HEAD
   // Zoom con rueda del mouse (solo activo en modo detalle)
-=======
-  /* Arrastre del lienzo: sin esto, al acercar la red no había forma de
-     moverse por ella (y en un teléfono era la única manera de recorrerla).
-     Solo actúa cuando el gesto empieza en el fondo, no sobre un nodo. */
-  let arrastrando = false, x0 = 0, y0 = 0, pan0x = 0, pan0y = 0;
-  const aplicar = () => {
-    const g = svg.querySelector("#zoom-pan-group");
-    if (g) g.setAttribute("transform", `translate(${panX},${panY}) scale(${zoomLevel})`);
-  };
-  let capturado = false;
-  svg.addEventListener("pointerdown", (ev) => {
-    if (ev.target.closest(".ods-node")) return;   // los nodos tienen su propio arrastre
-    arrastrando = true; capturado = false;
-    x0 = ev.clientX; y0 = ev.clientY; pan0x = panX; pan0y = panY;
-  });
-  svg.addEventListener("pointermove", (ev) => {
-    if (!arrastrando) return;
-    // El lienzo solo empieza a moverse cuando de verdad se arrastra: si se
-    // capturara el puntero desde el primer toque, el clic nunca llegaría a la
-    // línea de una relación y no se podría abrir su ficha.
-    if (!capturado) {
-      if (Math.hypot(ev.clientX - x0, ev.clientY - y0) < 4) return;
-      capturado = true;
-      svg.classList.add("m2-arrastrando");
-      try { svg.setPointerCapture(ev.pointerId); } catch (e) {}
-    }
-    const caja = svg.getBoundingClientRect();
-    const escala = caja.width ? VISTA.w / caja.width : 1;   // pantalla -> lienzo
-    panX = pan0x + (ev.clientX - x0) * escala;
-    panY = pan0y + (ev.clientY - y0) * escala;
-    aplicar();
-  });
-  const fin = (ev) => {
-    if (!arrastrando) return;
-    arrastrando = false; svg.classList.remove("m2-arrastrando");
-    if (capturado) { try { svg.releasePointerCapture(ev.pointerId); } catch (e) {} }
-    capturado = false;
-  };
-  svg.addEventListener("pointerup", fin);
-  svg.addEventListener("pointercancel", fin);
-  svg.addEventListener("pointerleave", fin);
-
-  // Zoom con rueda del mouse
->>>>>>> 4749a0c57cd45f0f345e6903a8239ea8188dfaf0
   svg.addEventListener("wheel", (ev) => {
     if (!isDetailZoomEnabled) return; // Bloqueado en vista general para no interferir con scroll
     ev.preventDefault();
@@ -4702,7 +4511,6 @@ document.addEventListener("DOMContentLoaded", () => {
   renderMatrix();
   setupZoomPan();
   document.getElementById("networkViz")?.addEventListener("click", () => { hideEdgeInfo(); hideNodeInfo(); });
-<<<<<<< HEAD
   document.getElementById("btnVerHallazgos")?.addEventListener("click", verHallazgosConAnimacion);
   document.getElementById("btnExplorarRelaciones")?.addEventListener("click", () => {
     isDetailZoomEnabled = !isDetailZoomEnabled;
@@ -4723,13 +4531,6 @@ document.addEventListener("DOMContentLoaded", () => {
       updateZoomDisplay();
     }
   });
-=======
-  // "Ver hallazgos clave" abre el explorador de mapas (lo que antes estaba en
-  // "Explorar relaciones a detalle"); "Explorar relaciones a detalle" ahora
-  // acerca la red sobre los humedales de Kennedy y los ejes que los cruzan.
-  document.getElementById("btnVerHallazgos")?.addEventListener("click", abrirModalExplorarRelaciones);
-  document.getElementById("btnExplorarRelaciones")?.addEventListener("click", explorarRelacionesDetalle);
->>>>>>> 4749a0c57cd45f0f345e6903a8239ea8188dfaf0
 
   // Opciones del modal de mapas
   document.getElementById("btnOpcionMapaVias")?.addEventListener("click", abrirMapaVias);
