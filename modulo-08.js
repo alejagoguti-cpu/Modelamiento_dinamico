@@ -1262,6 +1262,14 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("edgeInfoClose")?.addEventListener("click", hideEdgeInfo);
   document.getElementById("findingsToggle")?.addEventListener("click", () => toggleFindingsPanel());
   document.getElementById("findingsClose")?.addEventListener("click", () => toggleFindingsPanel(false));
+  document.getElementById("noiseFormulaToggle")?.addEventListener("click", (e) => {
+    const btn = e.currentTarget;
+    const body = document.getElementById("noiseFormulaBody");
+    if (!body) return;
+    const abierta = body.hidden;   // va a quedar así después del clic
+    body.hidden = !abierta;
+    btn.setAttribute("aria-expanded", String(abierta));
+  });
   window.addEventListener("resize", () => {
     const svg = document.getElementById("readerViz");
     if (svg) { svg.setAttribute("width", svg.clientWidth); svg.setAttribute("height", svg.clientHeight); }
