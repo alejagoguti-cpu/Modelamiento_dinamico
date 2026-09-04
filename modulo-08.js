@@ -1262,13 +1262,14 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("edgeInfoClose")?.addEventListener("click", hideEdgeInfo);
   document.getElementById("findingsToggle")?.addEventListener("click", () => toggleFindingsPanel());
   document.getElementById("findingsClose")?.addEventListener("click", () => toggleFindingsPanel(false));
-  document.getElementById("noiseFormulaToggle")?.addEventListener("click", (e) => {
-    const btn = e.currentTarget;
-    const body = document.getElementById("noiseFormulaBody");
-    if (!body) return;
-    const abierta = body.hidden;   // va a quedar así después del clic
-    body.hidden = !abierta;
-    btn.setAttribute("aria-expanded", String(abierta));
+  const noiseFormulaModal = document.getElementById("noiseFormulaModal");
+  const abrirFormulaModal = () => { if (noiseFormulaModal) noiseFormulaModal.hidden = false; };
+  const cerrarFormulaModal = () => { if (noiseFormulaModal) noiseFormulaModal.hidden = true; };
+  document.getElementById("noiseFormulaToggle")?.addEventListener("click", abrirFormulaModal);
+  document.getElementById("noiseFormulaModalClose")?.addEventListener("click", cerrarFormulaModal);
+  document.getElementById("noiseFormulaModalBackdrop")?.addEventListener("click", cerrarFormulaModal);
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && noiseFormulaModal && !noiseFormulaModal.hidden) cerrarFormulaModal();
   });
   window.addEventListener("resize", () => {
     const svg = document.getElementById("readerViz");
