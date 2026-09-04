@@ -748,7 +748,7 @@ if (typeof module !== &quot;undefined&quot;) { module.exports = { NODES, LINKS }
     .force(&quot;charge&quot;,d3.forceManyBody().strength(d=&gt; !d.active?-25 : isMacro(d)?-70 : d.tipo===&quot;modelo&quot;?-60 : -40))
     .force(&quot;center&quot;,d3.forceCenter(W/2,H/2))
     .force(&quot;collide&quot;,d3.forceCollide().radius(d=&gt;nodeRadius(d)+34).strength(1))
-    .force(&quot;y&quot;,d3.forceY(d=&gt; d.eje===&quot;pot&quot;?H*0.72:H*0.4).strength(0.06))
+    .force(&quot;y&quot;,d3.forceY(d=&gt; d.eje===&quot;pot&quot;?H*0.62:H*0.42).strength(0.045))
     .on(&quot;tick&quot;,ticked)
     .on(&quot;end&quot;,fitToView);
   sim.stop();   // no se deja correr sola: el acomodo inicial se hace de una
@@ -767,7 +767,7 @@ if (typeof module !== &quot;undefined&quot;) { module.exports = { NODES, LINKS }
     const padL=18;
     const padR=Math.min(18+(conv?conv.width+12:0), W*0.34);
     const padT=Math.min(16+Math.max(hud?hud.height:0, tool?tool.height:0), H*0.3);
-    const padB=Math.min(16+(cap?cap.height:0), H*0.3);
+    const padB=Math.min(28+(cap?cap.height:0), H*0.34);
     const availW=Math.max(140,W-padL-padR), availH=Math.max(140,H-padT-padB);
     let x0=Infinity,y0=Infinity,x1=-Infinity,y1=-Infinity;
     NODES.forEach(n=&gt;{ if(!isFinite(n.x)||!isFinite(n.y)) return;
