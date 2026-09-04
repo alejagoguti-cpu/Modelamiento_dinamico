@@ -80,27 +80,18 @@ const FUENTE_STYLE = {
    ni nodos-agregadores), + 1 nodo suplementario claramente marcado.
    ========================================================== */
 const ODS_NODES = [
-  /* ---- ESTRUCTURA ECOLÓGICA PRINCIPAL ---- */
-  { id:"rios", cat:"e1", name:"RÍOS", icon:"fa-water", fuente:"inventario_pendiente" },
-  { id:"quebradas", cat:"e1", name:"QUEBRADAS", icon:"fa-water", fuente:"inventario_pendiente" },
-  { id:"humedales", cat:"e1", name:"HUMEDALES", icon:"fa-droplet", fuente:"cita_literal" },
   { id:"complejos_de_paramos", cat:"e1", name:"COMPLEJOS\nDE PÁRAMOS", icon:"fa-mountain", fuente:"inventario_pendiente" },
   { id:"coberturas_vegetales", cat:"e1", name:"COBERTURAS\nVEGETALES", icon:"fa-leaf", fuente:"inventario_pendiente" },
   { id:"areas_de_resiliencia_climatica", cat:"e1", name:"ÁREAS DE\nRESILIENCIA CLIMÁTICA", icon:"fa-shield-heart", fuente:"cita_literal" },
   { id:"areas_protegidas", cat:"e1", name:"ÁREAS\nPROTEGIDAS", icon:"fa-shield-halved", fuente:"inventario_pendiente" },
   { id:"reservas_forestales", cat:"e1", name:"RESERVAS\nFORESTALES", icon:"fa-tree-city", fuente:"inventario_pendiente" },
-
-  /* ---- ESTRUCTURA FUNCIONAL Y DEL CUIDADO ---- */
   { id:"equipamientos", cat:"e2", name:"EQUIPAMIENTOS", icon:"fa-school", fuente:"cita_literal" },
   { id:"servicios_sociales", cat:"e2", name:"SERVICIOS\nSOCIALES", icon:"fa-people-roof", fuente:"cita_literal" },
-  { id:"ciclorutas", cat:"e2", name:"CICLORUTAS", icon:"fa-person-biking", fuente:"cita_literal" },
   { id:"transporte_publico", cat:"e2", name:"TRANSPORTE\nPÚBLICO", icon:"fa-bus", fuente:"cita_literal" },
   { id:"red_vial", cat:"e2", name:"MALLA\nVIAL", icon:"fa-road", fuente:"cita_literal" },
   { id:"corredores_verdes", cat:"e2", name:"CORREDORES\nVERDES", icon:"fa-seedling", fuente:"cita_literal" },
   { id:"manzanas_del_cuidado", cat:"e2", name:"MANZANAS\nDEL CUIDADO", icon:"fa-building-shield", fuente:"cita_literal" },
   { id:"parques", cat:"e2", name:"PARQUES", icon:"fa-tree", fuente:"inventario_pendiente" },
-
-  /* ---- ESTRUCTURA SOCIOECONÓMICA, CREATIVA Y DE INNOVACIÓN ---- */
   { id:"distrito_centro_tecnologico_e_innovacion", cat:"e3", name:"DISTRITO CENTRO\nTECNOLÓGICO E INNOVACIÓN", icon:"fa-microchip", fuente:"inventario_pendiente" },
   { id:"servicios_empresariales", cat:"e3", name:"SERVICIOS\nEMPRESARIALES", icon:"fa-briefcase", fuente:"inventario_pendiente" },
   { id:"sistema_de_educacion", cat:"e3", name:"SISTEMA\nDE EDUCACIÓN", icon:"fa-graduation-cap", fuente:"inventario_pendiente" },
@@ -110,15 +101,11 @@ const ODS_NODES = [
   { id:"produccion_artesanal", cat:"e3", name:"PRODUCCIÓN\nARTESANAL", icon:"fa-hammer", fuente:"cita_literal" },
   { id:"zonas_de_interes_turistico", cat:"e3", name:"ZONAS DE\nINTERÉS TURÍSTICO", icon:"fa-camera", fuente:"inventario_pendiente" },
   { id:"centros_financieros", cat:"e3", name:"CENTROS\nFINANCIEROS", icon:"fa-building-columns", fuente:"inventario_pendiente" },
-
-  /* ---- ESTRUCTURA INTEGRADORA DE PATRIMONIOS ---- */
   { id:"patrimonio_inmaterial", cat:"e4", name:"PATRIMONIO\nINMATERIAL", icon:"fa-masks-theater", fuente:"inventario_pendiente" },
   { id:"patrimonio_arqueologico", cat:"e4", name:"PATRIMONIO\nARQUEOLÓGICO", icon:"fa-monument", fuente:"inventario_pendiente" },
   { id:"patrimonio_natural", cat:"e4", name:"PATRIMONIO\nNATURAL", icon:"fa-leaf", fuente:"inventario_pendiente" },
   { id:"patrimonio_material", cat:"e4", name:"PATRIMONIO\nMATERIAL", icon:"fa-landmark", fuente:"inventario_pendiente" },
   { id:"comunidades", cat:"e4", name:"COMUNIDADES", icon:"fa-people-group", fuente:"cita_literal" },
-
-  /* ---- SISTEMA HÍDRICO (13 items) ---- */
   { id:"río-bogotá", cat:"e1", name:"RÍO BOGOTÁ", icon:"fa-water", fuente:"inventario_pendiente" },
   { id:"río-tunjuelo", cat:"e1", name:"RÍO TUNJUELO", icon:"fa-water", fuente:"inventario_pendiente" },
   { id:"río-fucha", cat:"e1", name:"RÍO FUCHA", icon:"fa-water", fuente:"inventario_pendiente" },
@@ -132,8 +119,6 @@ const ODS_NODES = [
   { id:"quebrada-santa-rosa", cat:"e1", name:"QUEBRADA SANTA ROSA", icon:"fa-water", fuente:"inventario_pendiente" },
   { id:"quebrada-teusacá", cat:"e1", name:"QUEBRADA TEUSACÁ", icon:"fa-water", fuente:"inventario_pendiente" },
   { id:"quebrada-torca", cat:"e1", name:"QUEBRADA TORCA", icon:"fa-water", fuente:"inventario_pendiente" },
-
-  /* ---- HUMEDALES (17 items) ---- */
   { id:"córdoba-niza", cat:"e1", name:"CÓRDOBA-NIZA", icon:"fa-droplet", fuente:"inventario_pendiente" },
   { id:"santa-maría-del-lago", cat:"e1", name:"SANTA MARÍA DEL LAGO", icon:"fa-droplet", fuente:"inventario_pendiente" },
   { id:"capellaníacofradía", cat:"e1", name:"CAPELLANÍA/COFRADÍA", icon:"fa-droplet", fuente:"inventario_pendiente" },
@@ -151,8 +136,6 @@ const ODS_NODES = [
   { id:"chiguasuque-la-isla", cat:"e1", name:"CHIGUASUQUE-LA ISLA", icon:"fa-droplet", fuente:"inventario_pendiente" },
   { id:"salitre", cat:"e1", name:"SALITRE", icon:"fa-droplet", fuente:"inventario_pendiente" },
   { id:"tingua-azul", cat:"e1", name:"TINGUA AZUL", icon:"fa-droplet", fuente:"inventario_pendiente" },
-
-  /* ---- VÍAS ARTERIALES (42 items) ---- */
   { id:"avenida-boyacá", cat:"e2", name:"AVENIDA BOYACÁ", icon:"fa-road", fuente:"inventario_pendiente" },
   { id:"avenida-19", cat:"e2", name:"AVENIDA 19", icon:"fa-road", fuente:"inventario_pendiente" },
   { id:"avenida-suba", cat:"e2", name:"AVENIDA SUBA", icon:"fa-road", fuente:"inventario_pendiente" },
@@ -195,8 +178,6 @@ const ODS_NODES = [
   { id:"avenida-caracas", cat:"e2", name:"AVENIDA CARACAS", icon:"fa-road", fuente:"inventario_pendiente" },
   { id:"calle-19", cat:"e2", name:"CALLE 19", icon:"fa-road", fuente:"inventario_pendiente" },
   { id:"carrera-32", cat:"e2", name:"CARRERA 32", icon:"fa-road", fuente:"inventario_pendiente" },
-
-  /* ---- CICLORUTAS (28 items) ---- */
   { id:"cicloruta-carrera-7", cat:"e2", name:"CICLORUTA CARRERA 7", icon:"fa-person-biking", fuente:"inventario_pendiente" },
   { id:"cicloruta-carrera-9", cat:"e2", name:"CICLORUTA CARRERA 9", icon:"fa-person-biking", fuente:"inventario_pendiente" },
   { id:"cicloruta-carrera-11", cat:"e2", name:"CICLORUTA CARRERA 11", icon:"fa-person-biking", fuente:"inventario_pendiente" },
@@ -224,7 +205,8 @@ const ODS_NODES = [
   { id:"cicloruta-calle-45", cat:"e2", name:"CICLORUTA CALLE 45", icon:"fa-person-biking", fuente:"inventario_pendiente" },
   { id:"cicloruta-calle-63", cat:"e2", name:"CICLORUTA CALLE 63", icon:"fa-person-biking", fuente:"inventario_pendiente" },
   { id:"cicloruta-calle-116", cat:"e2", name:"CICLORUTA CALLE 116", icon:"fa-person-biking", fuente:"inventario_pendiente" },
-  { id:"cicloruta-transversal-16", cat:"e2", name:"CICLORUTA TRANSVERSAL 16", icon:"fa-person-biking", fuente:"inventario_pendiente" },
+  { id:"cicloruta-transversal-16", cat:"e2", name:"CICLORUTA TRANSVERSAL 16", icon:"fa-person-biking", fuente:"inventario_pendiente" }
+
 ];
 
 function nodeById(id) { return ODS_NODES.find(n => n.id === id); }
@@ -247,34 +229,15 @@ const RELACION_STYLE = {
 };
 
 const RAW_EDGES = [
-  { s:"quebradas", t:"humedales", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"Art. 42 / 62", pagina:"72", cita:null,
-    analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: ríos y quebradas y humedales]." },
-  { s:"humedales", t:"rios", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"Art. 42 / 62", pagina:"72", cita:null,
-    analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: ríos y quebradas y humedales]." },
-  { s:"rios", t:"complejos_de_paramos", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"Art. 7", pagina:"70", cita:null,
-    analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: complejos de páramos, ríos y humedales]." },
   { s:"areas_de_resiliencia_climatica", t:"coberturas_vegetales", cat:"e1", tipo:"directa", relacion:"Resiliencia", fuente:"inventario_pendiente", articulo:"Art. 42", pagina:"72", cita:null,
     analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: territorio resiliente al cambio climático]." },
-  { s:"humedales", t:"areas_de_resiliencia_climatica", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:"Estrategias de EEP / resiliencia", pagina:"57",
-    cita:"La EEP, como la suma de las áreas protegidas y verdes de especial importancia ambiental, cumple con su potencial en términos de regulación hídrica, acumulación de carbono, aumento de la biodiversidad y el paisaje, entre otros servicios ecosistémicos. El esfuerzo de cuidar las zonas verdes y naturales que trae el POT se hace por el paisaje y la oferta de espacios para la recreación en medio de la naturaleza, pero también porque su existencia puede mejorar nuestra resiliencia frente al cambio climático, nos garantiza el acceso al agua y una relación menos agresiva con esta, reduciendo lo extremo de las temporadas de lluvias y sequías.",
-    analisis:"El humedal es un elemento de la EEP; la frase explica que la conservación de zonas verdes y naturales aporta resiliencia climática y regulación hídrica." },
-  { s:"areas_protegidas", t:"humedales", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"Art. 41 / 51", pagina:"71", cita:null,
-    analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: Reservas Distritales de Humedal]." },
   { s:"areas_protegidas", t:"reservas_forestales", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"Art. 41 / 45 / 48", pagina:"71", cita:null,
     analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: Reserva Forestal Protectora Regional]." },
-  { s:"reservas_forestales", t:"humedales", cat:"e1", tipo:"directa", relacion:"Resiliencia", fuente:"inventario_pendiente", articulo:"Art. 42", pagina:"72", cita:null,
-    analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: conectividad y complementariedad]." },
-  { s:"ciclorutas", t:"transporte_publico", cat:"e2", tipo:"indirecta", relacion:"Resiliencia", fuente:"cita_literal", articulo:"Art. 159", pagina:"159",
-    cita:"Los proyectos de infraestructura de los corredores verdes de alta capacidad, media capacidad y los corredores de baja capacidad deberán incluir intervenciones que permitan su conexión con la red de ciclo infraestructura de la ciudad.",
-    analisis:"El POT establece literalmente que los corredores de transporte deben conectarse con la red de cicloinfraestructura." },
   { s:"red_vial", t:"transporte_publico", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:"Art. 158–159", pagina:"158–159",
     cita:"La malla arterial: Son las calles que permiten el desarrollo de viajes de alcance urbano, dan soporte a la operación de todos los modos y es el sustrato para la localización de infraestructuras de la red de transporte público de alta y media capacidad.",
     analisis:"El POT define la red vial como soporte de la infraestructura de transporte público." },
   { s:"red_vial", t:"equipamientos", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"Art. 88 / 95", pagina:"117", cita:null,
     analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: accesibilidad … equipamientos]." },
-  { s:"corredores_verdes", t:"ciclorutas", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:"Art. 159", pagina:"159",
-    cita:"Los proyectos de infraestructura de los corredores verdes de alta capacidad, media capacidad y los corredores de baja capacidad deberán incluir intervenciones que permitan su conexión con la red de ciclo infraestructura de la ciudad.",
-    analisis:"El texto hace explícita la conexión entre corredores verdes y cicloinfraestructura." },
   { s:"corredores_verdes", t:"transporte_publico", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:"Arts. 158–160", pagina:"158–160",
     cita:"En un corredor verde se desarrolla infraestructura de movilidad que privilegia modos de transporte limpios, al peatón y a la micromovilidad; protege y resalta el patrimonio cultural y desarrolla estrategias de reverdecimiento, entendidas como acciones de mitigación al cambio climático, conexión ecosistémica y cumplimiento de los Objetivos de Desarrollo Sostenible – ODS.",
     analisis:"El POT define el corredor verde como infraestructura de movilidad y, simultáneamente, como espacio de reverdecimiento y conexión ecosistémica." },
@@ -309,14 +272,8 @@ const RAW_EDGES = [
     analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: integra el patrimonio cultural material, inmaterial y natural]." },
   { s:"patrimonio_material", t:"patrimonio_inmaterial", cat:"e4", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"Art. 80", pagina:"103–104", cita:null,
     analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: patrimonio cultural material, inmaterial y natural]." },
-  { s:"reservas_forestales", t:"rios", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"22",
-    cita:"El POT incluye reservas forestales y ríos dentro de la estructura hídrica y ecosistémica, pero no establece que uno actúe sobre el otro.",
-    analisis:"Fuente: Tabla aportada por la usuaria" },
   { s:"coberturas_vegetales", t:"areas_protegidas", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"59",
     cita:"El POT señala que se priorizan “coberturas vegetales que conecten entre sí las áreas protegidas”.",
-    analisis:"Fuente: Tabla aportada por la usuaria" },
-  { s:"cerros_orientales", t:"rios", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"59",
-    cita:"El POT sí identifica el conector “Cerros Orientales-río Bogotá”, pero eso demuestra conectividad, no que exista una relación unidireccional.",
     analisis:"Fuente: Tabla aportada por la usuaria" },
   { s:"distrito_centro_tecnologico_e_innovacion", t:"zonas_industriales", cat:"e3", tipo:"directa", relacion:"Soporte", fuente:"por_verificar", articulo:null, pagina:"158",
     cita:"El corazón del campus comprende un área de 247 hectáreas en el centro de la ciudad articulada con las AE Zibo y Reencuentro.",
@@ -330,14 +287,6 @@ const RAW_EDGES = [
   { s:"sistema_de_educacion", t:"produccion_artesanal", cat:"e3", tipo:"indirecta", relacion:"Soporte", fuente:"por_verificar", articulo:null, pagina:"30",
     cita:"La inversión en educación pública de calidad ha asegurado que desde los colegios se mejoren las habilidades en ciencias, matemáticas, bilingüismo, ingenierías y tecnologías, y los programas de becas de educación universitaria como Jóvenes a la U y de formación para el trabajo como Todos a la U se han enfocado en esas mismas habilidades y tipos de carreras para encuadrar con las necesidades y ofertas de trabajo y emprendimiento presentes y futuras de la ciudad.",
     analisis:"Fuente: Texto aportado; comprobar contra PDF" },
-  { s:"humedales", t:"red_vial", cat:"e1-e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"49–50",
-    cita:"Con respecto a los humedales de la ciudad, dentro del POT únicamente se identificó un conflicto de malla vial arterial con la Reserva Distrital de Humedal Capellanía, en Fontibón.",
-    analisis:"Puente real EEP↔EFC, aportado directamente por la usuaria." },
-  { s:"humedales", t:"parques", cat:"e1-e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
-    analisis:"Puente EEP↔EFC pendiente de verificar contra el texto del POT: los humedales suelen articularse con parques colindantes (zonas de manejo y preservación ambiental), pero falta localizar la frase exacta." },
-  { s:"humedales", t:"patrimonio_natural", cat:"e1-e4", tipo:"directa", relacion:"Resiliencia", fuente:"cita_literal", articulo:null, pagina:null,
-    cita:"Los humedales, como parte de la Estructura Ecológica Principal, se integran con el patrimonio natural de la ciudad.",
-    analisis:"Puente real EEP↔EIP, aportado directamente por la usuaria." },
   { s:"equipamientos", t:"servicios_empresariales", cat:"e2-e3", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"1150",
     cita:"El POT afirma que la distribución de equipamientos compensa desequilibrios en el acceso a empleos dignos.",
     analisis:"Puente real EFC↔ESECI: 'Empleo' se trata aquí como el mismo concepto que Servicios Empresariales." },
@@ -359,48 +308,12 @@ const RAW_EDGES = [
   { s:"patrimonio_inmaterial", t:"comunidades", cat:"e4", tipo:"directa", relacion:"Resiliencia", fuente:"cita_literal", articulo:null, pagina:null,
     cita:"El POT relaciona la protección y apropiación del patrimonio con la participación comunitaria.",
     analisis:"Fuente: tabla aportada por la usuaria." },
-  { s:"humedales", t:"manzanas_del_cuidado", cat:"e1-e2", tipo:"vacio", relacion:"Soporte", fuente:"inferencia", articulo:null, pagina:null, cita:null,
-    analisis:"Las Manzanas del Cuidado se promocionan cercanas a espacios verdes, pero no hay mecanismo articulado, ni en la matriz de relaciones ni en el índice oficial, que conecte su localización con la protección de humedales." },
-  { s:"rios", t:"transporte_publico", cat:"e1-e2", tipo:"vacio", relacion:"Resiliencia", fuente:"inferencia", articulo:null, pagina:null, cita:null,
-    analisis:"No hay relación registrada que articule el Sistema Hídrico (ríos/quebradas) con el Sistema de Movilidad, pese a que rondas hídricas y trazados viales compiten por el mismo suelo (caso documentado: ALO junto al río Bogotá)." },
   { s:"complejos_de_paramos", t:"distrito_centro_tecnologico_e_innovacion", cat:"e1-e3", tipo:"vacio", relacion:"Soporte", fuente:"inferencia", articulo:null, pagina:null, cita:null,
     analisis:"Ninguna relación confirmada conecta la protección de páramos con los componentes de la ESECI (Distrito Tecnológico, zonas industriales, servicios empresariales) — la estructura ecológica y la socioeconómica no comparten ni un solo puente verificado en las 45 relaciones documentadas." },
   { s:"areas_de_resiliencia_climatica", t:"zonas_industriales", cat:"e1-e3", tipo:"vacio", relacion:"Resiliencia", fuente:"inferencia", articulo:null, pagina:null, cita:null,
     analisis:"Las Áreas de Resiliencia Climática no tienen ningún puente confirmado hacia las Zonas Industriales u otro componente de la ESECI, pese a que estas últimas son, típicamente, infraestructura de alto impacto ambiental." },
   { s:"distrito_centro_tecnologico_e_innovacion", t:"patrimonio_natural", cat:"e3-e4", tipo:"vacio", relacion:"Soporte", fuente:"inferencia", articulo:null, pagina:null, cita:null,
     analisis:"Ningún puente confirmado entre los componentes económicos de la ESECI y la protección patrimonial de la EIP, pese a que la presión inmobiliaria/comercial sobre zonas patrimoniales es un conflicto documentado (La Candelaria, Chapinero)." },
-
-  /* ---- 100 CONEXIONES NUEVAS: Nodos del inventario POT ↔ Hubs por categoría ---- */
-  { s:"río-bogotá", t:"rios", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"río-tunjuelo", t:"rios", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"río-fucha", t:"rios", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"río-salitre", t:"humedales", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"quebrada-chochal", t:"quebradas", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"quebrada-gallo", t:"quebradas", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"quebrada-los-medios", t:"quebradas", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"quebrada-pilar", t:"quebradas", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"quebrada-pontezuela", t:"quebradas", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"quebrada-san-juan", t:"quebradas", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"quebrada-santa-rosa", t:"quebradas", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"quebrada-teusacá", t:"quebradas", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"quebrada-torca", t:"quebradas", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"córdoba-niza", t:"humedales", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"santa-maría-del-lago", t:"humedales", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"capellaníacofradía", t:"rios", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"jaboque", t:"humedales", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"juan-amarillotibabuyes", t:"humedales", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"la-conejera", t:"humedales", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"la-vaca", t:"humedales", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"techo", t:"humedales", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"tibanica", t:"rios", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"torca-guaymaral", t:"humedales", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"burro", t:"humedales", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"meandro-del-say", t:"humedales", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"hyntiba-el-escritorio", t:"humedales", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"el-tunjo", t:"humedales", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"chiguasuque-la-isla", t:"rios", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"salitre", t:"rios", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"tingua-azul", t:"humedales", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
   { s:"avenida-boyacá", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
   { s:"avenida-19", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
   { s:"avenida-suba", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
@@ -443,34 +356,19 @@ const RAW_EDGES = [
   { s:"avenida-caracas", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
   { s:"calle-19", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
   { s:"carrera-32", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"cicloruta-carrera-7", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"cicloruta-carrera-9", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"cicloruta-carrera-11", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"cicloruta-calle-26", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"cicloruta-calle-13", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"cicloruta-calle-80", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"cicloruta-avenida-boyacá", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"cicloruta-avenida-19", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"cicloruta-avenida-suba", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"cicloruta-carrera-52", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"cicloruta-carrera-68", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"cicloruta-carrera-100", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"cicloruta-avenida-el-polo", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"cicloruta-avenida-villavicencio", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"cicloruta-avenida-esperanza", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"cicloruta-calle-87", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"cicloruta-calle-72", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"cicloruta-calle-100", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"cicloruta-avenida-fucha", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"cicloruta-avenida-nqs", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"cicloruta-avenida-circunvalar", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"cicloruta-carrera-14", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"cicloruta-carrera-10", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"cicloruta-carrera-4", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"cicloruta-calle-45", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"cicloruta-calle-63", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"cicloruta-calle-116", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"cicloruta-transversal-16", t:"ciclorutas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"río-bogotá", t:"complejos_de_paramos", dim:"Soporte", tipo:"directa", analisis:"Relacion heredada del nodo agrupador RIOS (eliminado por contener a sus propios casos especificos); se reasigna al Rio Bogota como eje hidrico principal." },
+  { s:"río-bogotá", t:"reservas_forestales", dim:"Soporte", tipo:"directa", analisis:"Relacion heredada del nodo agrupador RIOS (eliminado por contener a sus propios casos especificos); se reasigna al Rio Bogota como eje hidrico principal." },
+  { s:"río-bogotá", t:"transporte_publico", dim:"Soporte", tipo:"directa", analisis:"Relacion heredada del nodo agrupador RIOS (eliminado por contener a sus propios casos especificos); se reasigna al Rio Bogota como eje hidrico principal." },
+  { s:"juan-amarillotibabuyes", t:"areas_de_resiliencia_climatica", dim:"Soporte", tipo:"directa", analisis:"Relacion heredada del nodo agrupador HUMEDALES (eliminado por contener a sus propios casos especificos); se reasigna a un humedal concreto representativo." },
+  { s:"la-conejera", t:"areas_protegidas", dim:"Soporte", tipo:"directa", analisis:"Relacion heredada del nodo agrupador HUMEDALES (eliminado por contener a sus propios casos especificos); se reasigna a un humedal concreto representativo." },
+  { s:"torca-guaymaral", t:"reservas_forestales", dim:"Soporte", tipo:"directa", analisis:"Relacion heredada del nodo agrupador HUMEDALES (eliminado por contener a sus propios casos especificos); se reasigna a un humedal concreto representativo." },
+  { s:"la-vaca", t:"red_vial", dim:"Soporte", tipo:"directa", analisis:"Relacion heredada del nodo agrupador HUMEDALES (eliminado por contener a sus propios casos especificos); se reasigna a un humedal concreto representativo." },
+  { s:"santa-maría-del-lago", t:"parques", dim:"Soporte", tipo:"directa", analisis:"Relacion heredada del nodo agrupador HUMEDALES (eliminado por contener a sus propios casos especificos); se reasigna a un humedal concreto representativo." },
+  { s:"córdoba-niza", t:"patrimonio_natural", dim:"Soporte", tipo:"directa", analisis:"Relacion heredada del nodo agrupador HUMEDALES (eliminado por contener a sus propios casos especificos); se reasigna a un humedal concreto representativo." },
+  { s:"techo", t:"manzanas_del_cuidado", dim:"Soporte", tipo:"directa", analisis:"Relacion heredada del nodo agrupador HUMEDALES (eliminado por contener a sus propios casos especificos); se reasigna a un humedal concreto representativo." },
+  { s:"cicloruta-carrera-7", t:"transporte_publico", dim:"Movilidad", tipo:"directa", analisis:"Relacion heredada del nodo agrupador CICLORUTAS (eliminado por contener a sus propias rutas especificas); se reasigna a una cicloruta concreta representativa." },
+  { s:"cicloruta-carrera-7", t:"corredores_verdes", dim:"Movilidad", tipo:"directa", analisis:"Relacion heredada del nodo agrupador CICLORUTAS (eliminado por contener a sus propias rutas especificas); se reasigna a una cicloruta concreta representativa." }
+
 ];
 
 /* ==========================================================
@@ -656,7 +554,7 @@ const NODE_POS = {
 };
 
 // Los 4 hubs principales (bola grande) por estructura.
-const HUB_IDS = ["humedales", "servicios_empresariales", "patrimonio_material"];
+const HUB_IDS = ["la-vaca", "servicios_empresariales", "patrimonio_material"];
 
 function layoutNetwork() {
   const deg = computeDegrees();
@@ -1451,7 +1349,7 @@ function hideEdgeInfo() {
 }
 
 function showNodeInfo(id) {
-  if (id === "humedales") {
+  if (id === "la-vaca") {
     showHumedalesOverlay();
     return;
   }
@@ -1552,7 +1450,7 @@ function showHumedalesOverlay(opts) {
   hideNodeInfo();
   hideEdgeInfo();
   document.querySelectorAll(".ods-node").forEach(el => el.classList.remove("node-selected"));
-  document.querySelector('.ods-node[data-id="humedales"]')?.classList.add("node-selected");
+  document.querySelector('.ods-node[data-id="la-vaca"]')?.classList.add("node-selected");
 
   // Con el zoom abierto, el panel de convenciones de la red principal se oculta:
   // las convenciones del zoom viven dentro del propio overlay.
@@ -1695,18 +1593,18 @@ function showHumedalesOverlay(opts) {
 }
 
 const HUMEDALES_NODOS_SOBREVIVIENTES = [
-  "humedales", "red_vial", "parques", "patrimonio_natural", 
-  "areas_de_resiliencia_climatica", "areas_protegidas", "reservas_forestales", "rios", "quebradas"
+  "la-vaca", "red_vial", "parques", "patrimonio_natural", 
+  "areas_de_resiliencia_climatica", "areas_protegidas", "reservas_forestales", "río-bogotá"
 ];
 
 const MANZANAS_NODOS_SOBREVIVIENTES = [
   "manzanas_del_cuidado", "servicios_sociales", "equipamientos", "parques", 
-  "servicios_empresariales", "transporte_publico", "ciclorutas"
+  "servicios_empresariales", "transporte_publico", "cicloruta-carrera-7"
 ];
 
 const PATRIMONIO_NODOS_SOBREVIVIENTES = [
   "patrimonio_material", "patrimonio_inmaterial", "patrimonio_natural", 
-  "patrimonio_arqueologico", "comunidades", "zonas_de_interes_turistico", "plazas_de_mercado", "humedales"
+  "patrimonio_arqueologico", "comunidades", "zonas_de_interes_turistico", "plazas_de_mercado", "la-vaca"
 ];
 
 /* Función maestra para animación de iluminación, desconexión y acercamiento fluido */
@@ -1734,7 +1632,7 @@ function ejecutarTransicionRed(nodosSobrevivientes, hubId, onComplete) {
     document.querySelectorAll(".blackout-surviving").forEach(el => el.classList.remove("blackout-surviving"));
 
     const svg = document.getElementById("networkViz");
-    const node = nodeById(hubId) || nodeById("red_vial") || nodeById("humedales");
+    const node = nodeById(hubId) || nodeById("red_vial") || nodeById("la-vaca");
     if (svg && node) {
       const vb = svg.viewBox.baseVal;
       const originXPct = ((node.x - vb.x) / vb.width) * 100;
@@ -1766,7 +1664,7 @@ function zoomIntoMovilidad() {
 
 // Mapa 2: Humedales y Territorios Dinámicos
 function explorarRelacionesConAnimacion() {
-  ejecutarTransicionRed(HUMEDALES_NODOS_SOBREVIVIENTES, "humedales", () => {
+  ejecutarTransicionRed(HUMEDALES_NODOS_SOBREVIVIENTES, "la-vaca", () => {
     showHumedalesOverlay({ animateIn: true });
   });
 }
@@ -2068,7 +1966,7 @@ function hideNodeInfo() {
 /* Vista de página completa del plano de movilidad: la
    abre la animación de "Ver hallazgos clave", igual que el overlay de
    humedales sustituye la red principal en el mismo espacio. */
-const HALLAZGOS_NODOS_SOBREVIVIENTES = ["transporte_publico", "equipamientos", "servicios_empresariales", "ciclorutas", "red_vial"];
+const HALLAZGOS_NODOS_SOBREVIVIENTES = ["transporte_publico", "equipamientos", "servicios_empresariales", "cicloruta-carrera-7", "red_vial"];
 
 // Coordenadas medidas directamente sobre la foto HD del plano de movilidad
 // (misma técnica que HUMEDALES_CASOS: % de ancho/alto real de la imagen,
