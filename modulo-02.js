@@ -80,6 +80,12 @@ const FUENTE_STYLE = {
    ni nodos-agregadores), + 1 nodo suplementario claramente marcado.
    ========================================================== */
 const ODS_NODES = [
+  /* Nodos agregadores de la red original del módulo: vuelven a estar
+     porque la vista principal es otra vez esa red de 30 conceptos. */
+  { id:"rios", cat:"e1", name:"RÍOS", icon:"fa-water", fuente:"inventario_pendiente" },
+  { id:"quebradas", cat:"e1", name:"QUEBRADAS", icon:"fa-water", fuente:"inventario_pendiente" },
+  { id:"humedales", cat:"e1", name:"HUMEDALES", icon:"fa-droplet", fuente:"cita_literal" },
+  { id:"ciclorutas", cat:"e2", name:"CICLORUTAS", icon:"fa-person-biking", fuente:"cita_literal" },
   { id:"complejos_de_paramos", cat:"e1", name:"COMPLEJOS\nDE PÁRAMOS", icon:"fa-mountain", fuente:"inventario_pendiente" },
   { id:"coberturas_vegetales", cat:"e1", name:"COBERTURAS\nVEGETALES", icon:"fa-leaf", fuente:"inventario_pendiente" },
   { id:"areas_de_resiliencia_climatica", cat:"e1", name:"ÁREAS DE\nRESILIENCIA CLIMÁTICA", icon:"fa-shield-heart", fuente:"cita_literal" },
@@ -213,16 +219,21 @@ const ODS_NODES = [
   { id:"bibliotecas", cat:"e2", name:"BIBLIOTECAS", icon:"fa-book-open", fuente:"por_verificar" }
 ];
 function nodeById(id) { return ODS_NODES.find(n => n.id === id); }
-// Vista principal acotada: se conservan los elementos específicos prioritarios
-// y se completa hasta 55 nodos, evitando los agregadores genéricos HUMEDALES y CICLORUTAS.
-const PRIORITY_NODE_IDS = [
-  "río-tunjuelo", "río-fucha", "río-bogotá", "burro", "la-vaca", "salitre", "juan-amarillotibabuyes", "jaboque", "capellaníacofradía", "córdoba-niza", "santa-maría-del-lago", "la-conejera", "techo", "tibanica", "torca-guaymaral",
-  "avenida-boyacá", "avenida-ciudad-de-cali", "avenida-fucha", "avenida-nqs", "avenida-villavicencio", "avenida-centenario", "calle-26", "calle-13", "calle-80", "carrera-68", "avenida-primero-de-mayo", "primera-linea-metro", "segunda-linea-metro",
-  "corredores_verdes", "cicloruta-avenida-fucha", "cicloruta-avenida-boyacá", "cicloruta-carrera-7", "cicloruta-calle-26", "manzanas_del_cuidado", "colegios", "bibliotecas", "equipamientos", "sistema_de_educacion", "servicios_sociales", "parques", "plazas_de_mercado", "centros_de_abastecimiento", "comunidades", "coberturas_vegetales", "areas_protegidas", "areas_de_resiliencia_climatica", "reservas_forestales", "zonas_industriales", "patrimonio_natural", "patrimonio_material", "patrimonio_inmaterial", "servicios_empresariales", "transporte_publico", "red_vial", "produccion_artesanal"
+/* Vista principal: la red original del módulo — los 30 conceptos del POT
+   (agregadores incluidos). El inventario de 100+ elementos específicos
+   (ríos, humedales, avenidas y ciclorrutas uno por uno) sigue cargado en
+   ODS_NODES para las demás vistas, pero no se dibuja en esta red. */
+const RED_ORIGINAL_IDS = [
+  "rios",   "quebradas",   "humedales",   "complejos_de_paramos",
+  "coberturas_vegetales",   "areas_de_resiliencia_climatica",   "areas_protegidas",   "reservas_forestales",
+  "equipamientos",   "servicios_sociales",   "ciclorutas",   "transporte_publico",
+  "red_vial",   "corredores_verdes",   "manzanas_del_cuidado",   "parques",
+  "distrito_centro_tecnologico_e_innovacion",   "servicios_empresariales",   "sistema_de_educacion",   "centros_de_abastecimiento",
+  "plazas_de_mercado",   "zonas_industriales",   "produccion_artesanal",   "zonas_de_interes_turistico",
+  "centros_financieros",   "patrimonio_inmaterial",   "patrimonio_arqueologico",   "patrimonio_natural",
+  "patrimonio_material",   "comunidades",
 ];
-const DISPLAY_NODES = [...new Set([...PRIORITY_NODE_IDS, ...ODS_NODES.map(n => n.id)])]
-  .filter(id => !["humedales", "ciclorutas", "rios", "quebradas"].includes(id))
-  .map(nodeById).filter(Boolean).slice(0, 55);
+const DISPLAY_NODES = RED_ORIGINAL_IDS.map(nodeById).filter(Boolean);
 const DISPLAY_NODE_IDS = new Set(DISPLAY_NODES.map(n => n.id));
 
 /* ==========================================================
@@ -382,7 +393,46 @@ const RAW_EDGES = [
   { s:"techo", t:"manzanas_del_cuidado", dim:"Soporte", tipo:"directa", analisis:"Relacion heredada del nodo agrupador HUMEDALES (eliminado por contener a sus propios casos especificos); se reasigna a un humedal concreto representativo." },
   { s:"cicloruta-carrera-7", t:"transporte_publico", dim:"Movilidad", tipo:"directa", analisis:"Relacion heredada del nodo agrupador CICLORUTAS (eliminado por contener a sus propias rutas especificas); se reasigna a una cicloruta concreta representativa." },
   { s:"cicloruta-carrera-7", t:"corredores_verdes", dim:"Movilidad", tipo:"directa", analisis:"Relacion heredada del nodo agrupador CICLORUTAS (eliminado por contener a sus propias rutas especificas); se reasigna a una cicloruta concreta representativa." }
+,
 
+  /* Relaciones de los 4 nodos agregadores, tal como estaban en la red original */
+  { s:"quebradas", t:"humedales", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"Art. 42 / 62", pagina:"72", cita:null,
+    analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: ríos y quebradas y humedales]." },
+  { s:"humedales", t:"rios", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"Art. 42 / 62", pagina:"72", cita:null,
+    analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: ríos y quebradas y humedales]." },
+  { s:"rios", t:"complejos_de_paramos", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"Art. 7", pagina:"70", cita:null,
+    analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: complejos de páramos, ríos y humedales]." },
+  { s:"humedales", t:"areas_de_resiliencia_climatica", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:"Estrategias de EEP / resiliencia", pagina:"57",
+    cita:"La EEP, como la suma de las áreas protegidas y verdes de especial importancia ambiental, cumple con su potencial en términos de regulación hídrica, acumulación de carbono, aumento de la biodiversidad y el paisaje, entre otros servicios ecosistémicos. El esfuerzo de cuidar las zonas verdes y naturales que trae el POT se hace por el paisaje y la oferta de espacios para la recreación en medio de la naturaleza, pero también porque su existencia puede mejorar nuestra resiliencia frente al cambio climático, nos garantiza el acceso al agua y una relación menos agresiva con esta, reduciendo lo extremo de las temporadas de lluvias y sequías.",
+    analisis:"El humedal es un elemento de la EEP; la frase explica que la conservación de zonas verdes y naturales aporta resiliencia climática y regulación hídrica." },
+  { s:"areas_protegidas", t:"humedales", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"Art. 41 / 51", pagina:"71", cita:null,
+    analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: Reservas Distritales de Humedal]." },
+  { s:"reservas_forestales", t:"humedales", cat:"e1", tipo:"directa", relacion:"Resiliencia", fuente:"inventario_pendiente", articulo:"Art. 42", pagina:"72", cita:null,
+    analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: conectividad y complementariedad]." },
+  { s:"ciclorutas", t:"transporte_publico", cat:"e2", tipo:"indirecta", relacion:"Resiliencia", fuente:"cita_literal", articulo:"Art. 159", pagina:"159",
+    cita:"Los proyectos de infraestructura de los corredores verdes de alta capacidad, media capacidad y los corredores de baja capacidad deberán incluir intervenciones que permitan su conexión con la red de ciclo infraestructura de la ciudad.",
+    analisis:"El POT establece literalmente que los corredores de transporte deben conectarse con la red de cicloinfraestructura." },
+  { s:"corredores_verdes", t:"ciclorutas", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:"Art. 159", pagina:"159",
+    cita:"Los proyectos de infraestructura de los corredores verdes de alta capacidad, media capacidad y los corredores de baja capacidad deberán incluir intervenciones que permitan su conexión con la red de ciclo infraestructura de la ciudad.",
+    analisis:"El texto hace explícita la conexión entre corredores verdes y cicloinfraestructura." },
+  { s:"reservas_forestales", t:"rios", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"22",
+    cita:"El POT incluye reservas forestales y ríos dentro de la estructura hídrica y ecosistémica, pero no establece que uno actúe sobre el otro.",
+    analisis:"Fuente: Tabla aportada por la usuaria" },
+  { s:"cerros_orientales", t:"rios", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"59",
+    cita:"El POT sí identifica el conector “Cerros Orientales-río Bogotá”, pero eso demuestra conectividad, no que exista una relación unidireccional.",
+    analisis:"Fuente: Tabla aportada por la usuaria" },
+  { s:"humedales", t:"red_vial", cat:"e1-e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"49–50",
+    cita:"Con respecto a los humedales de la ciudad, dentro del POT únicamente se identificó un conflicto de malla vial arterial con la Reserva Distrital de Humedal Capellanía, en Fontibón.",
+    analisis:"Puente real EEP↔EFC, aportado directamente por la usuaria." },
+  { s:"humedales", t:"parques", cat:"e1-e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Puente EEP↔EFC pendiente de verificar contra el texto del POT: los humedales suelen articularse con parques colindantes (zonas de manejo y preservación ambiental), pero falta localizar la frase exacta." },
+  { s:"humedales", t:"patrimonio_natural", cat:"e1-e4", tipo:"directa", relacion:"Resiliencia", fuente:"cita_literal", articulo:null, pagina:null,
+    cita:"Los humedales, como parte de la Estructura Ecológica Principal, se integran con el patrimonio natural de la ciudad.",
+    analisis:"Puente real EEP↔EIP, aportado directamente por la usuaria." },
+  { s:"humedales", t:"manzanas_del_cuidado", cat:"e1-e2", tipo:"vacio", relacion:"Soporte", fuente:"inferencia", articulo:null, pagina:null, cita:null,
+    analisis:"Las Manzanas del Cuidado se promocionan cercanas a espacios verdes, pero no hay mecanismo articulado, ni en la matriz de relaciones ni en el índice oficial, que conecte su localización con la protección de humedales." },
+  { s:"rios", t:"transporte_publico", cat:"e1-e2", tipo:"vacio", relacion:"Resiliencia", fuente:"inferencia", articulo:null, pagina:null, cita:null,
+    analisis:"No hay relación registrada que articule el Sistema Hídrico (ríos/quebradas) con el Sistema de Movilidad, pese a que rondas hídricas y trazados viales compiten por el mismo suelo (caso documentado: ALO junto al río Bogotá)." }
 ];
 RAW_EDGES.push(
   { s:"avenida-boyacá", t:"avenida-ciudad-de-cali", tipo:"directa", relacion:"Soporte", cat:"e2", fuente:"por_verificar", analisis:"Conexión prioritaria solicitada para lectura de la malla vial principal." },
@@ -409,6 +459,10 @@ function computeDegrees(excluir) {
   RAW_EDGES.forEach(e => {
     if (e.tipo === "vacio") return;
     if (deg[e.s] === undefined || deg[e.t] === undefined) return;
+    // Solo cuentan las relaciones de la red que se dibuja: las del inventario
+    // de elementos específicos (que no se muestra) inflaban el grado —y con él
+    // el tamaño— de nodos como MALLA VIAL o HUMEDALES.
+    if (!DISPLAY_NODE_IDS.has(e.s) || !DISPLAY_NODE_IDS.has(e.t)) return;
     // Si el nodo de origen o destino está "apagado", su arista deja de
     // contar para el grado (= fuerza nodal) de ambos extremos.
     if (excluir && (excluir.has(e.s) || excluir.has(e.t))) return;
@@ -587,7 +641,7 @@ const NODE_POS = {
 };
 
 // Los 4 hubs principales (bola grande) por estructura.
-const HUB_IDS = ["la-vaca", "servicios_empresariales", "patrimonio_material", "avenida-boyacá", "avenida-ciudad-de-cali"];
+const HUB_IDS = ["humedales", "servicios_empresariales", "patrimonio_material"];
 
 function layoutNetwork() {
   const deg = computeDegrees();
@@ -599,26 +653,27 @@ function layoutNetwork() {
   // se ven claramente más grandes. Escala raíz cuadrada (no lineal) para
   // que la diferencia se note también entre los nodos con pocas conexiones,
   // no solo contra los 2-3 hubs enormes.
-  const R_MIN = 24, R_MAX = 58;
+  // Radio "temático" de la red original: sale del grado real de cada nodo
+  // (32 px de base y crecimiento algo más que lineal), que es como se veían
+  // los hubs —HUMEDALES, SERVICIOS EMPRESARIALES, PATRIMONIO MATERIAL—
+  // claramente más grandes que el resto.
   ODS_NODES.forEach(n => {
     n.color = STRUCT_STYLE[n.cat].color;
     n.vx = 0; n.vy = 0; n.fixed = false; n.isMainHub = false;
     const d = deg[n.id] || 0;
-    const t = maxDeg > minDeg ? Math.sqrt((d - minDeg) / (maxDeg - minDeg)) : 0;
-    n.r = R_MIN + (R_MAX - R_MIN) * t;
-    if (["avenida-boyacá", "avenida-ciudad-de-cali"].includes(n.id)) n.r = Math.max(n.r, 68);
+    n.r = 32 + Math.pow(d, 1.25) * 7.5;
     n._deg = d;
     n._degBase = d; // fuerza nodal original, sin ningún nodo apagado — sirve para comparar ANTES ↔ DESPUÉS
   });
 
-  const nodes = ODS_NODES;
+  const nodes = DISPLAY_NODES;   // solo la red que se dibuja
 
   // ---- 1. Posiciones fijas definidas por el equipo (lienzo 2500 x 1820) ----
   // Sustituyen al layout radial automático: cada bola queda exactamente donde
   // se colocó en el wireframe. Para mover una, cambia su par x/y en NODE_POS.
   // Se compacta un poco hacia el centro (COMPACT_FACTOR) para que toda la
   // red se vea menos grande/dispersa y quede más ordenada.
-  const COMPACT_FACTOR = 0.82;
+  const COMPACT_FACTOR = 1;   // la red de 30 conceptos usa el wireframe tal cual
   const cx0 = CANVAS.w / 2, cy0 = CANVAS.h / 2;
   nodes.forEach(n => {
     n.collR = n.r;
@@ -1451,7 +1506,7 @@ function hideEdgeInfo() {
 }
 
 function showNodeInfo(id) {
-  if (id === "la-vaca") {
+  if (id === "humedales") {
     showHumedalesOverlay();
     return;
   }
@@ -1552,7 +1607,7 @@ function showHumedalesOverlay(opts) {
   hideNodeInfo();
   hideEdgeInfo();
   document.querySelectorAll(".ods-node").forEach(el => el.classList.remove("node-selected"));
-  document.querySelector('.ods-node[data-id="la-vaca"]')?.classList.add("node-selected");
+  document.querySelector('.ods-node[data-id="humedales"]')?.classList.add("node-selected");
 
   // Con el zoom abierto, el panel de convenciones de la red principal se oculta:
   // las convenciones del zoom viven dentro del propio overlay.
@@ -1695,18 +1750,18 @@ function showHumedalesOverlay(opts) {
 }
 
 const HUMEDALES_NODOS_SOBREVIVIENTES = [
-  "la-vaca", "red_vial", "parques", "patrimonio_natural", 
-  "areas_de_resiliencia_climatica", "areas_protegidas", "reservas_forestales", "río-bogotá"
+  "humedales", "red_vial", "parques", "patrimonio_natural", 
+  "areas_de_resiliencia_climatica", "areas_protegidas", "reservas_forestales", "rios", "quebradas"
 ];
 
 const MANZANAS_NODOS_SOBREVIVIENTES = [
   "manzanas_del_cuidado", "servicios_sociales", "equipamientos", "parques", 
-  "servicios_empresariales", "transporte_publico", "cicloruta-carrera-7"
+  "servicios_empresariales", "transporte_publico", "ciclorutas"
 ];
 
 const PATRIMONIO_NODOS_SOBREVIVIENTES = [
   "patrimonio_material", "patrimonio_inmaterial", "patrimonio_natural", 
-  "patrimonio_arqueologico", "comunidades", "zonas_de_interes_turistico", "plazas_de_mercado", "la-vaca"
+  "patrimonio_arqueologico", "comunidades", "zonas_de_interes_turistico", "plazas_de_mercado", "humedales"
 ];
 
 /* Función maestra para animación de iluminación, desconexión y acercamiento fluido */
@@ -1766,7 +1821,7 @@ function zoomIntoMovilidad() {
 
 // Mapa 2: Humedales y Territorios Dinámicos
 function explorarRelacionesConAnimacion() {
-  ejecutarTransicionRed(HUMEDALES_NODOS_SOBREVIVIENTES, "la-vaca", () => {
+  ejecutarTransicionRed(HUMEDALES_NODOS_SOBREVIVIENTES, "humedales", () => {
     showHumedalesOverlay({ animateIn: true });
   });
 }
@@ -2068,7 +2123,7 @@ function hideNodeInfo() {
 /* Vista de página completa del plano de movilidad: la
    abre la animación de "Ver hallazgos clave", igual que el overlay de
    humedales sustituye la red principal en el mismo espacio. */
-const HALLAZGOS_NODOS_SOBREVIVIENTES = ["transporte_publico", "equipamientos", "servicios_empresariales", "cicloruta-carrera-7", "red_vial"];
+const HALLAZGOS_NODOS_SOBREVIVIENTES = ["transporte_publico", "equipamientos", "servicios_empresariales", "ciclorutas", "red_vial"];
 
 // Coordenadas medidas directamente sobre la foto HD del plano de movilidad
 // (misma técnica que HUMEDALES_CASOS: % de ancho/alto real de la imagen,
@@ -3267,15 +3322,20 @@ function hidePatrimonioOverlay() {
 /* -------- métricas -------- */
 function computeMetrics() {
   const deg = computeDegrees();
-  const nodeCount = ODS_NODES.length;
-  const edgeCount = RAW_EDGES.length;
-  const vacios = RAW_EDGES.filter(e => e.tipo === "vacio").length;
-  const directas = RAW_EDGES.filter(e => e.tipo === "directa").length;
-  const indirectas = RAW_EDGES.filter(e => e.tipo === "indirecta").length;
+  // Las cifras describen la red que se dibuja (los 30 conceptos), no el
+  // inventario completo cargado en ODS_NODES: si contaran todo, la leyenda
+  // diría 39 elementos ecológicos donde en pantalla se ven 8.
+  const NODOS = DISPLAY_NODES;
+  const ARISTAS = RAW_EDGES.filter(e => DISPLAY_NODE_IDS.has(e.s) && DISPLAY_NODE_IDS.has(e.t));
+  const nodeCount = NODOS.length;
+  const edgeCount = ARISTAS.length;
+  const vacios = ARISTAS.filter(e => e.tipo === "vacio").length;
+  const directas = ARISTAS.filter(e => e.tipo === "directa").length;
+  const indirectas = ARISTAS.filter(e => e.tipo === "indirecta").length;
   const porFuente = { cita_literal:0, indice_oficial:0, fuente_secundaria:0, inferencia:0, inventario_pendiente:0 };
-  [...ODS_NODES, ...RAW_EDGES].forEach(x => { if (x.fuente) porFuente[x.fuente] = (porFuente[x.fuente]||0)+1; });
+  [...NODOS, ...ARISTAS].forEach(x => { if (x.fuente) porFuente[x.fuente] = (porFuente[x.fuente]||0)+1; });
   let maxId = null, maxDeg = -1;
-  ODS_NODES.forEach(n => { if ((deg[n.id]||0) > maxDeg) { maxDeg = deg[n.id]||0; maxId = n.id; } });
+  NODOS.forEach(n => { if ((deg[n.id]||0) > maxDeg) { maxDeg = deg[n.id]||0; maxId = n.id; } });
   return { nodeCount, edgeCount, vacios, directas, indirectas, porFuente, deg, maxId, maxDeg };
 }
 
@@ -3294,7 +3354,7 @@ function renderMetrics() {
 
   Object.keys(STRUCT_STYLE).forEach(cat => {
     const el = document.getElementById("struct-" + cat);
-    const nCount = ODS_NODES.filter(n => n.cat === cat).length;
+    const nCount = DISPLAY_NODES.filter(n => n.cat === cat).length;
     if (el) {
       el.textContent = String(nCount);
       const row = el.closest(".cat-item");

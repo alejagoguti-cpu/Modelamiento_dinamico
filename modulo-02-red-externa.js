@@ -18,6 +18,13 @@
        clásico de Tarjan, y se pueden resaltar con un botón dedicado.
    ========================================================== */
 (function () {
+  /* ¿Se dibuja esta red (la de Supabase) o la original de modulo-02.js?
+     A pedido de la usuaria, Módulo 02 vuelve a mostrar la red de siempre:
+     con la constante en false esta capa no se construye, no se consulta la
+     base de datos y su barra de herramientas queda oculta. Poner true
+     devuelve la red externa tal como estaba, sin tocar nada más. */
+  const RED_EXTERNA_ACTIVA = false;
+
   const SUPABASE_URL = "https://mcitahjecaqsshzeamnj.supabase.co";
   const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1jaXRhaGplY2Fxc3NoemVhbW5qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg0NDYwNjQsImV4cCI6MjEwNDAyMjA2NH0.xx63t4EZcdqZqf4onHsU1EcIFdCQS04VigGgyDbLxHQ";
   const SVG_NS = "http://www.w3.org/2000/svg";
@@ -1231,6 +1238,8 @@
   }
 
   document.addEventListener("DOMContentLoaded", () => {
+    if (!RED_EXTERNA_ACTIVA) return;   // se queda la red original de modulo-02.js
+    document.body.classList.add("m2re-activa");
     init();
     document.getElementById("m2reBtnSoloPot")?.addEventListener("click", () => {
       soloPot = !soloPot;

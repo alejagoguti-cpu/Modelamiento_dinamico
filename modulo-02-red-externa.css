@@ -24,20 +24,32 @@
 .m2re-highlight-row { justify-content: flex-start; flex-wrap: wrap; }
 .m2re-highlight-info { font-size: 11.5px; color: var(--text-faint); }
 
-/* A pedido: se oculta la red original (la de ODS_NODES/relaciones del POT
-   hardcodeadas en modulo-02.js) para que en Módulo 02 solo se vea la red
-   nueva alimentada desde Supabase. Se oculta por CSS (no se borra del DOM)
-   para no romper el resto de la lógica de modulo-02.js que sigue leyendo/
-   escribiendo sobre esos nodos (métricas, matriz, leyenda, etc.). */
-#networkViz .ambient-mesh-layer,
-#networkViz .edges-layer,
-#networkViz .nodes-layer {
+/* Cuál de las dos redes se ve en Módulo 02 lo decide la constante
+   RED_EXTERNA_ACTIVA de modulo-02-red-externa.js, que pone (o no) la clase
+   .m2re-activa en el <body>:
+
+   - SIN la clase (estado actual, a pedido): se ve la red original de
+     modulo-02.js (ODS_NODES y las relaciones del POT escritas a mano), con
+     su propio control de zoom, y se esconde toda la interfaz de la red
+     externa (barra de estado, botones de resalte y de simulación).
+   - CON la clase: se ve la red alimentada desde Supabase y se esconde la
+     original — que se oculta por CSS, no se borra del DOM, para no romper
+     la lógica de modulo-02.js que sigue leyendo esos nodos (métricas,
+     matriz, leyenda, etc.). */
+body.m2re-activa #networkViz .ambient-mesh-layer,
+body.m2re-activa #networkViz .edges-layer,
+body.m2re-activa #networkViz .nodes-layer {
   display: none !important;
 }
-/* el control de zoom viejo (networkZoomIn/Out/Reset) controlaba esa red
-   oculta: ya no tiene efecto visible, así que se oculta para no confundir
-   con el control de zoom nuevo (m2reZoomIn/Out/Reset) de arriba. */
-.network-controls {
+/* el control de zoom viejo (networkZoomIn/Out/Reset) controla la red
+   original: solo se esconde cuando esa red no está a la vista. */
+body.m2re-activa .network-controls {
+  display: none !important;
+}
+/* y al revés: sin red externa, su barra de herramientas no tiene qué controlar */
+body:not(.m2re-activa) .m2re-toolbar-row,
+body:not(.m2re-activa) .m2re-ficha,
+body:not(.m2re-activa) .m2re-conclusiones {
   display: none !important;
 }
 
