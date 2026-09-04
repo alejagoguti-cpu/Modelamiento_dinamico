@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="stylesheet" href="modulo-02.css?v=degree-size-compact-v3">
+<link rel="stylesheet" href="modulo-02.css?v=simulacion-conclusiones">
   <link rel="stylesheet" href="site-theme.css?v=20260823">
   <link rel="stylesheet" href="navigation-unified.css?v=20260824">
   <link rel="stylesheet" href="modulo-02-red-externa.css?v=7-red-original">
@@ -143,8 +143,18 @@
             <button class="control-btn" id="m2reBtnApagarHubs" type="button">Desactivar hubs</button>
             <span class="m2re-highlight-info" id="m2reSimInfo">Un clic abre su ficha · doble clic deja iluminadas sus conexiones · para activar o desactivar, el botón de la ficha o los de aquí arriba.</span>
           </div>
+          <!-- Barra de la red original: simulación de apagado + conclusiones -->
+          <div class="m2-red-toolbar">
+            <span class="m2-red-toolbar-label"><i class="fa-solid fa-power-off"></i> Simulación:</span>
+            <button class="control-btn" id="btnApagarTodos" type="button">Desactivar todos</button>
+            <button class="control-btn" id="btnEncenderTodos" type="button">Activar todos</button>
+            <button class="control-btn" id="btnApagarHubs" type="button">Desactivar hubs</button>
+            <button class="control-btn m2-btn-conclusiones" id="btnConclusionesRed" type="button"><i class="fa-solid fa-lightbulb"></i> Conclusiones de la red</button>
+            <span class="m2-red-toolbar-info" id="m2SimInfo"></span>
+          </div>
           <div class="network-canvas">
             <svg id="networkViz" viewBox="0 0 2500 1820" preserveAspectRatio="xMidYMid meet"></svg>
+            <aside class="m2-conclusiones" id="m2Conclusiones" hidden></aside>
             <aside class="m2re-ficha" id="m2reFicha" hidden></aside>
             <aside class="m2re-conclusiones" id="m2reConclusiones" hidden></aside>
           </div>
@@ -481,7 +491,7 @@
 
 </div>
 
-<script src="modulo-02.js?v=red-original-30"></script>
+<script src="modulo-02.js?v=red-original-simulacion"></script>
 <script src="modulo-02-red-externa.js?v=12-red-original"></script>
 
 </body>

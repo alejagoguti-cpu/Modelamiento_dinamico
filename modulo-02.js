@@ -643,6 +643,55 @@ const NODE_POS = {
 // Los 4 hubs principales (bola grande) por estructura.
 const HUB_IDS = ["humedales", "servicios_empresariales", "patrimonio_material"];
 
+/* Nodos apagados por la simulación ("¿qué pasaría si se apaga este nodo?").
+   Se declara aquí, antes del layout, porque el acomodo de la red ya
+   consulta qué está apagado. */
+const nodosApagados = new Set();
+
+/* Radio de cada bola: sale del grado real (cuántas relaciones vigentes
+   tiene). Un nodo apagado se encoge a un tamaño fijo. Es la MISMA fórmula
+   que usa la simulación de apagado, para que al encender y apagar los
+   tamaños vuelvan exactamente a donde estaban. */
+function radioPorGrado(d, apagado) {
+  return apagado ? 34 : 32 + Math.pow(d, 1.25) * 7.5;
+}
+
+/* Separación entre bolas: ninguna puede tocar a otra. Con resorte, cada
+   una tira de vuelta a su sitio del wireframe; sin resorte, solo se
+   garantiza que no se toquen. Se usa al construir la red y cada vez que
+   la simulación cambia los tamaños. */
+function separarNodos(nodes, conResorte, pasadas) {
+  const MIN_GAP = 8, SPRING = 0.06;
+  for (let pass = 0; pass < pasadas; pass++) {
+    let anyOverlap = false;
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const a = nodes[i], b = nodes[j];
+        let dx = b.x - a.x, dy = b.y - a.y;
+        let dist = Math.hypot(dx, dy);
+        const minDist = a.collR + b.collR + MIN_GAP;
+        if (dist < minDist) {
+          anyOverlap = true;
+          if (dist < 0.001) { dx = (Math.random() - 0.5) * 2; dy = (Math.random() - 0.5) * 2; dist = Math.hypot(dx, dy); }
+          const overlap = (minDist - dist) / 2;
+          const ux = dx / dist, uy = dy / dist;
+          a.x -= ux * overlap; a.y -= uy * overlap;
+          b.x += ux * overlap; b.y += uy * overlap;
+        }
+      }
+    }
+    nodes.forEach(n => {
+      if (conResorte) {
+        n.x += (n._origX - n.x) * SPRING;
+        n.y += (n._origY - n.y) * SPRING;
+      }
+      n.x = Math.max(n.collR + 20, Math.min(CANVAS.w - n.collR - 20, n.x));
+      n.y = Math.max(n.collR + 20, Math.min(CANVAS.h - n.collR - 20, n.y));
+    });
+    if (!conResorte && !anyOverlap) break;
+  }
+}
+
 function layoutNetwork() {
   const deg = computeDegrees();
   const allDegs = Object.values(deg);
@@ -661,7 +710,7 @@ function layoutNetwork() {
     n.color = STRUCT_STYLE[n.cat].color;
     n.vx = 0; n.vy = 0; n.fixed = false; n.isMainHub = false;
     const d = deg[n.id] || 0;
-    n.r = 32 + Math.pow(d, 1.25) * 7.5;
+    n.r = radioPorGrado(d, false);
     n._deg = d;
     n._degBase = d; // fuerza nodal original, sin ningún nodo apagado — sirve para comparar ANTES ↔ DESPUÉS
   });
@@ -697,60 +746,10 @@ function layoutNetwork() {
     n.y = Math.max(n.collR + 20, Math.min(CANVAS.h - n.collR - 20, n.y));
     n._origX = n.x; n._origY = n.y; // posición original del wireframe, para no alejarse demasiado de ella
   });
-  const MIN_GAP = 8; // espacio mínimo obligatorio entre bordes de dos bolas, nunca 0
-  const SPRING = 0.06; // qué tan fuerte "jala" cada bola de vuelta a su lugar original en cada pasada
-  // Fase 1: separar Y jalar de vuelta al origen a la vez, para terminar lo
-  // más cerca posible del wireframe original sin alejarse de más.
-  for (let pass = 0; pass < 350; pass++) {
-    for (let i = 0; i < nodes.length; i++) {
-      for (let j = i + 1; j < nodes.length; j++) {
-        const a = nodes[i], b = nodes[j];
-        let dx = b.x - a.x, dy = b.y - a.y;
-        let dist = Math.hypot(dx, dy);
-        const minDist = a.collR + b.collR + MIN_GAP;
-        if (dist < minDist) {
-          if (dist < 0.001) { dx = (Math.random() - 0.5) * 2; dy = (Math.random() - 0.5) * 2; dist = Math.hypot(dx, dy); }
-          const overlap = (minDist - dist) / 2;
-          const ux = dx / dist, uy = dy / dist;
-          a.x -= ux * overlap; a.y -= uy * overlap;
-          b.x += ux * overlap; b.y += uy * overlap;
-        }
-      }
-    }
-    nodes.forEach(n => {
-      n.x += (n._origX - n.x) * SPRING;
-      n.y += (n._origY - n.y) * SPRING;
-      n.x = Math.max(n.collR + 20, Math.min(CANVAS.w - n.collR - 20, n.x));
-      n.y = Math.max(n.collR + 20, Math.min(CANVAS.h - n.collR - 20, n.y));
-    });
-  }
-  // Fase 2: SOLO separación, sin resorte — garantiza que al final ninguna
-  // bola quede tocando a otra, sin importar qué tan apretado haya quedado
-  // el wireframe original en esa zona.
-  for (let pass = 0; pass < 200; pass++) {
-    let anyOverlap = false;
-    for (let i = 0; i < nodes.length; i++) {
-      for (let j = i + 1; j < nodes.length; j++) {
-        const a = nodes[i], b = nodes[j];
-        let dx = b.x - a.x, dy = b.y - a.y;
-        let dist = Math.hypot(dx, dy);
-        const minDist = a.collR + b.collR + MIN_GAP;
-        if (dist < minDist) {
-          anyOverlap = true;
-          if (dist < 0.001) { dx = (Math.random() - 0.5) * 2; dy = (Math.random() - 0.5) * 2; dist = Math.hypot(dx, dy); }
-          const overlap = (minDist - dist) / 2;
-          const ux = dx / dist, uy = dy / dist;
-          a.x -= ux * overlap; a.y -= uy * overlap;
-          b.x += ux * overlap; b.y += uy * overlap;
-        }
-      }
-    }
-    nodes.forEach(n => {
-      n.x = Math.max(n.collR + 20, Math.min(CANVAS.w - n.collR - 20, n.x));
-      n.y = Math.max(n.collR + 20, Math.min(CANVAS.h - n.collR - 20, n.y));
-    });
-    if (!anyOverlap) break;
-  }
+  // Fase 1: separar Y jalar de vuelta al wireframe a la vez. Fase 2: solo
+  // separación, para garantizar que ninguna bola quede tocando a otra.
+  separarNodos(nodes, true, 350);
+  separarNodos(nodes, false, 200);
 
   nodes.forEach(n => { n.homeX = n.x; n.homeY = n.y; });
 }
@@ -1151,13 +1150,13 @@ function updatePositions() {
    aristas quedan tenues, pero siguen visibles como registro del
    ANTES.
    ========================================================== */
-const nodosApagados = new Set();
 
 // Reaplica r/tamaño/posición a un solo nodo ya dibujado en el DOM,
 // sin reconstruir toda la red (usado al recalcular fuerza nodal).
 function resizeNodeVisual(n) {
   if (!n._el) return;
   const { circle, fo } = n._el;
+  const apagado = nodosApagados.has(n.id);
   circle.setAttribute("r", n.r);
   const size = n.r * 1.8;
   fo.setAttribute("x", n.x - size / 2); fo.setAttribute("y", n.y - size / 2);
@@ -1165,44 +1164,171 @@ function resizeNodeVisual(n) {
   const iconEl = fo.querySelector("i");
   if (iconEl) iconEl.style.fontSize = Math.max(n.r * (n.isMainHub ? 0.325 : 0.30), 16) + "px";
   const nameEl = fo.querySelector("div");
-  if (nameEl) nameEl.style.fontSize = Math.max(n.r * 0.20, 10) + "px";
+  if (nameEl) {
+    // En un nodo apagado la bola es demasiado chica para su nombre: se deja
+    // solo el ícono, y el nombre vuelve al encenderlo.
+    nameEl.style.display = apagado ? "none" : "";
+    nameEl.style.fontSize = Math.max(n.r * 0.20, 10) + "px";
+  }
 }
 
 // Recalcula el grado real (fuerza nodal) de TODA la red teniendo en cuenta
 // los nodos actualmente apagados, y redibuja cada bola con su nuevo tamaño.
-function aplicarFuerzaNodal() {
+function aplicarFuerzaNodal(reacomodar) {
   const deg = computeDegrees(nodosApagados);
-  ODS_NODES.forEach(n => {
+  DISPLAY_NODES.forEach(n => {
     const apagado = nodosApagados.has(n.id);
     const d = deg[n.id] || 0;
     n._deg = d;
-    n.r = apagado ? 34 : Math.max(56, 50 + Math.pow(d, 1.2) * 11);
+    n.r = radioPorGrado(d, apagado);
     n.collR = n.r;
-    resizeNodeVisual(n);
     if (n._el) n._el.group.classList.toggle("node-apagado", apagado);
   });
-  updatePositions();
   document.querySelectorAll(".edge-group").forEach(el => {
     const s = el.dataset.source, t = el.dataset.target;
     el.classList.toggle("edge-apagada", nodosApagados.has(s) || nodosApagados.has(t));
   });
+  if (reacomodar === false) {
+    DISPLAY_NODES.forEach(resizeNodeVisual);
+    updatePositions();
+  } else {
+    reacomodarRed();
+  }
+  actualizarInfoSimulacion();
+  if (!document.getElementById("m2Conclusiones")?.hidden) abrirConclusionesRed();
+}
+
+/* La red se reacomoda de verdad: con los nuevos tamaños se vuelven a
+   separar las bolas (partiendo del wireframe, para que la organización
+   general no se pierda) y se anima cada nodo y cada arista hasta su nueva
+   posición, en vez de saltar. */
+/* Reorganización por hubs. La red de arranque es el wireframe del equipo y
+   se queda tal cual mientras nada esté apagado: la fuerza de abajo vale
+   cero si ningún nodo perdió relaciones. Al apagar un nodo, los que
+   dependían de él —y solo ellos— se sueltan de su sitio y se agrupan
+   alrededor de las relaciones que les quedan, en proporción a lo que
+   perdieron: un elemento que perdía su única relación se mueve mucho; uno
+   que perdía una de seis, casi nada. */
+function relajarRed(nodes) {
+  const deg = computeDegrees(nodosApagados);
+  const activo = (id) => !nodosApagados.has(id);
+  const vecinos = new Map(nodes.map(n => [n.id, []]));
+  RAW_EDGES.forEach(e => {
+    if (e.tipo === "vacio") return;
+    if (!DISPLAY_NODE_IDS.has(e.s) || !DISPLAY_NODE_IDS.has(e.t)) return;
+    if (!activo(e.s) || !activo(e.t)) return;
+    vecinos.get(e.s).push(e.t); vecinos.get(e.t).push(e.s);
+  });
+  // cuánto perdió cada nodo respecto de su grado original (0 = nada)
+  const perdida = new Map();
+  nodes.forEach(n => {
+    const base = n._degBase || 0, ahora = deg[n.id] || 0;
+    perdida.set(n.id, base > 0 && activo(n.id) ? Math.max(0, (base - ahora) / base) : 0);
+  });
+  if (![...perdida.values()].some(v => v > 0)) { separarNodos(nodes, true, 60); return; }
+
+  const K_VECINOS = 0.09, K_CASA = 0.05;
+  for (let pass = 0; pass < 260; pass++) {
+    nodes.forEach(n => {
+      const p = perdida.get(n.id);
+      if (!p) return;
+      const vs = vecinos.get(n.id);
+      if (!vs.length) return;                 // se quedó sin relaciones: se queda en su sitio
+      let cx = 0, cy = 0;
+      vs.forEach(id => { const v = nodeById(id); cx += v.x; cy += v.y; });
+      cx /= vs.length; cy /= vs.length;
+      n.x += (cx - n.x) * K_VECINOS * p;
+      n.y += (cy - n.y) * K_VECINOS * p;
+    });
+    nodes.forEach(n => {
+      n.x += (n._origX - n.x) * K_CASA;
+      n.y += (n._origY - n.y) * K_CASA;
+    });
+    separarNodos(nodes, false, 1);
+  }
+}
+
+let animacionRed = null;
+function reacomodarRed() {
+  const nodes = DISPLAY_NODES;
+  const desde = nodes.map(n => ({ x: n.x, y: n.y, r: parseFloat(n._el?.circle.getAttribute("r")) || n.r }));
+  nodes.forEach(n => { n.x = n._origX; n.y = n._origY; });
+  relajarRed(nodes);
+  separarNodos(nodes, false, 150);
+  const hasta = nodes.map(n => ({ x: n.x, y: n.y, r: n.r }));
+
+  if (animacionRed) cancelAnimationFrame(animacionRed);
+  const t0 = performance.now(), DUR = 620;
+  const suave = (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;   // easeInOutCubic
+  function paso(ahora) {
+    const k = suave(Math.min(1, (ahora - t0) / DUR));
+    nodes.forEach((n, i) => {
+      n.x = desde[i].x + (hasta[i].x - desde[i].x) * k;
+      n.y = desde[i].y + (hasta[i].y - desde[i].y) * k;
+      n.r = desde[i].r + (hasta[i].r - desde[i].r) * k;
+      resizeNodeVisual(n);
+    });
+    updatePositions();
+    if (k < 1) animacionRed = requestAnimationFrame(paso);
+    else {
+      animacionRed = null;
+      nodes.forEach((n, i) => { n.x = hasta[i].x; n.y = hasta[i].y; n.r = hasta[i].r; n.collR = n.r; n.homeX = n.x; n.homeY = n.y; resizeNodeVisual(n); });
+      updatePositions();
+    }
+  }
+  animacionRed = requestAnimationFrame(paso);
 }
 
 function toggleNodoApagado(id) {
   if (nodosApagados.has(id)) nodosApagados.delete(id);
   else nodosApagados.add(id);
   aplicarFuerzaNodal();
-  showNodeInfo(id); // refresca la ficha con el grado ANTES → DESPUÉS y el botón actualizado
+  // refresca la ficha con el grado ANTES → DESPUÉS y el botón actualizado.
+  // HUMEDALES no: su ficha abre la vista ampliada de humedales y taparía la
+  // red justo cuando se quiere ver cómo se reacomoda.
+  if (id !== "humedales") showNodeInfo(id);
 }
 
+/* Botones de la barra: apagar/encender toda la red o solo sus hubs. */
+function apagarTodosLosNodos() {
+  DISPLAY_NODES.forEach(n => nodosApagados.add(n.id));
+  aplicarFuerzaNodal();
+}
+function encenderTodosLosNodos() {
+  nodosApagados.clear();
+  aplicarFuerzaNodal();
+}
+function apagarHubs() {
+  HUB_IDS.forEach(id => { if (DISPLAY_NODE_IDS.has(id)) nodosApagados.add(id); });
+  aplicarFuerzaNodal();
+}
+function actualizarInfoSimulacion() {
+  const el = document.getElementById("m2SimInfo");
+  if (!el) return;
+  const d = computeDegrees(nodosApagados);
+  const encendidos = DISPLAY_NODES.filter(n => !nodosApagados.has(n.id));
+  const aristas = RAW_EDGES.filter(e => e.tipo !== "vacio" && DISPLAY_NODE_IDS.has(e.s) && DISPLAY_NODE_IDS.has(e.t) &&
+    !nodosApagados.has(e.s) && !nodosApagados.has(e.t)).length;
+  const sueltos = encendidos.filter(n => (d[n.id] || 0) === 0).length;
+  el.textContent = nodosApagados.size === 0
+    ? "Un clic abre la ficha · dos clics iluminan sus conexiones · tres clics apagan el nodo y la red se reacomoda."
+    : encendidos.length === 0
+      ? "La red completa apagada: 0 de " + DISPLAY_NODES.length + " nodos activos y ninguna relación en pie."
+      : encendidos.length + " de " + DISPLAY_NODES.length + " nodos activos · " + aristas + " relaciones vigentes · " +
+        sueltos + " elemento" + (sueltos === 1 ? "" : "s") + " sin ninguna relación";
+}
+
+/* El motor de arrastre trabaja SOLO sobre la red dibujada: los elementos
+   del inventario que no se muestran no tienen posición, y mezclarlos aquí
+   metía NaN en las fuerzas y descolocaba la red al arrastrar. */
 let physicsRunning = false;
 function physicsStep() {
   let moving = false;
 
   // 0. GLOBAL REPULSION (all pairs) - ULTRA EXTREME to push nodes apart
-  for (let i = 0; i < ODS_NODES.length; i++) {
-    for (let j = i + 1; j < ODS_NODES.length; j++) {
-      const a = ODS_NODES[i], b = ODS_NODES[j];
+  for (let i = 0; i < DISPLAY_NODES.length; i++) {
+    for (let j = i + 1; j < DISPLAY_NODES.length; j++) {
+      const a = DISPLAY_NODES[i], b = DISPLAY_NODES[j];
       const dx = b.x - a.x, dy = b.y - a.y;
       const dist = Math.hypot(dx, dy) || 0.1;
       // MASSIVE repulsion: inverse square law
@@ -1216,6 +1342,9 @@ function physicsStep() {
 
   // 1. SPRING FORCES (edges only) - WEAK
   RAW_EDGES.forEach(edge => {
+    // solo las relaciones de la red dibujada: los elementos del inventario
+    // que no se muestran no tienen posición y contaminarían las fuerzas
+    if (!DISPLAY_NODE_IDS.has(edge.s) || !DISPLAY_NODE_IDS.has(edge.t)) return;
     const s = nodeById(edge.s), t = nodeById(edge.t);
     if (!s || !t) return;
     const dx = t.x - s.x, dy = t.y - s.y;
@@ -1228,14 +1357,14 @@ function physicsStep() {
   });
 
   // 2. WEAK ANCHOR (barely pulls back)
-  ODS_NODES.forEach(n => {
+  DISPLAY_NODES.forEach(n => {
     if (n.fixed) { n.vx = 0; n.vy = 0; return; }
     n.vx += (n.homeX - n.x) * PHYSICS.anchor;
     n.vy += (n.homeY - n.y) * PHYSICS.anchor;
   });
 
   // 3. DAMPING
-  ODS_NODES.forEach(n => {
+  DISPLAY_NODES.forEach(n => {
     if (n.fixed) return;
     n.vx *= PHYSICS.damping;
     n.vy *= PHYSICS.damping;
@@ -1245,7 +1374,7 @@ function physicsStep() {
   });
 
   // 4. STRICT BOUNDS
-  ODS_NODES.forEach(n => {
+  DISPLAY_NODES.forEach(n => {
     const margin = n.r + 5;
     if (n.x < margin) { n.x = margin; n.vx = Math.abs(n.vx) * 0.5; }
     if (n.x > CANVAS.w - margin) { n.x = CANVAS.w - margin; n.vx = -Math.abs(n.vx) * 0.5; }
@@ -1254,9 +1383,9 @@ function physicsStep() {
   });
 
   // 5. MANDATORY COLLISION ENFORCEMENT - NO TOUCHING ALLOWED
-  for (let i = 0; i < ODS_NODES.length; i++) {
-    for (let j = i + 1; j < ODS_NODES.length; j++) {
-      const a = ODS_NODES[i], b = ODS_NODES[j];
+  for (let i = 0; i < DISPLAY_NODES.length; i++) {
+    for (let j = i + 1; j < DISPLAY_NODES.length; j++) {
+      const a = DISPLAY_NODES[i], b = DISPLAY_NODES[j];
       const dx = b.x - a.x, dy = b.y - a.y;
       const dist = Math.hypot(dx, dy) || 0.1;
       const minDist = a.r + b.r + 25; // 25px mandatory spacing
@@ -1287,7 +1416,7 @@ function physicsStep() {
   }
 
   updatePositions();
-  if (moving || ODS_NODES.some(n => n.fixed)) requestAnimationFrame(physicsStep);
+  if (moving || DISPLAY_NODES.some(n => n.fixed)) requestAnimationFrame(physicsStep);
   else physicsRunning = false;
 }
 function wakePhysics() { if (!physicsRunning) { physicsRunning = true; requestAnimationFrame(physicsStep); } }
@@ -1303,7 +1432,9 @@ function attachNodeDragHandler(group, node) {
   group.addEventListener("pointerdown", (e) => {
     e.stopPropagation();
     dragging = true; moved = false; startClientX = e.clientX; startClientY = e.clientY;
-    node.fixed = true; group.classList.add("dragging"); group.setPointerCapture(e.pointerId); wakePhysics();
+    // El motor de fuerzas se despierta solo si de verdad se arrastra: con un
+    // clic simple la red se quedaba temblando y reacomodándose sola.
+    node.fixed = true; group.classList.add("dragging"); group.setPointerCapture(e.pointerId);
   });
   group.addEventListener("pointermove", (e) => {
     if (!dragging) return;
@@ -1316,7 +1447,7 @@ function attachNodeDragHandler(group, node) {
     if (!dragging) return;
     dragging = false; node.fixed = false; group.classList.remove("dragging");
     try { group.releasePointerCapture(e.pointerId); } catch (err) {}
-    wakePhysics();
+    if (moved) wakePhysics();
     if (moved) { group.dataset.suppressClick = "1"; setTimeout(() => { delete group.dataset.suppressClick; }, 0); }
   }
   group.addEventListener("pointerup", endDrag);
@@ -2560,9 +2691,11 @@ function attachNodeClickHandler(group, id) {
     count++;
     if (timer) clearTimeout(timer);
     timer = setTimeout(() => {
+      // 1 clic: ficha del nodo · 2 clics: deja iluminadas sus conexiones ·
+      // 3 clics: lo apaga (o lo enciende) y la red se reacomoda.
       if (count === 1) showNodeInfo(id);
-      else if (count === 2) toggleNode(id);
-      else if (count >= 3) toggleNodeFlow(id);
+      else if (count === 2) toggleNodeFlow(id);
+      else if (count >= 3) toggleNodoApagado(id);
       count = 0;
     }, 300);
   });
@@ -3573,10 +3706,183 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Conclusión modal
   const conclusionBtn = document.getElementById("topbarConclusionBtn");
-  console.log("topbarConclusionBtn found:", conclusionBtn);
   conclusionBtn?.addEventListener("click", showMainConclusionPopup);
+
+  // Barra de la red: simulación de apagado y conclusiones medidas
+  document.getElementById("btnApagarTodos")?.addEventListener("click", apagarTodosLosNodos);
+  document.getElementById("btnEncenderTodos")?.addEventListener("click", encenderTodosLosNodos);
+  document.getElementById("btnApagarHubs")?.addEventListener("click", apagarHubs);
+  document.getElementById("btnConclusionesRed")?.addEventListener("click", () => {
+    if (document.getElementById("m2Conclusiones")?.hidden) abrirConclusionesRed();
+    else cerrarConclusionesRed();
+  });
+  actualizarInfoSimulacion();
 });
 
+
+/* ==========================================================
+   CONCLUSIONES DE LA RED — panel lateral con lo que la red deja
+   ver. Ninguna cifra está escrita a mano: todas se miden sobre
+   la red que está en pantalla (con los nodos que estén apagados
+   en ese momento), así que si se apaga un nodo, cambian.
+   ========================================================== */
+const ESTRUCTURA_NOMBRE_CORTO = {
+  e1: "Ecológica Principal", e2: "Funcional y del Cuidado",
+  e3: "Socioeconómica y Creativa", e4: "Integradora de Patrimonios",
+};
+const pctRed = (parte, total) => (total > 0 ? Math.round((parte / total) * 100) : 0);
+const pluralRed = (n, sing, plu) => n + " " + (n === 1 ? sing : plu);
+
+// tamaños de las componentes conexas de un subconjunto de la red
+function componentesRed(ids, aristas) {
+  const ady = new Map(ids.map(id => [id, []]));
+  aristas.forEach(e => {
+    if (!ady.has(e.s) || !ady.has(e.t)) return;
+    ady.get(e.s).push(e.t); ady.get(e.t).push(e.s);
+  });
+  const visto = new Set(), tam = [];
+  ady.forEach((_, ini) => {
+    if (visto.has(ini)) return;
+    let n = 0; const pila = [ini]; visto.add(ini);
+    while (pila.length) {
+      const cur = pila.pop(); n++;
+      (ady.get(cur) || []).forEach(v => { if (!visto.has(v)) { visto.add(v); pila.push(v); } });
+    }
+    tam.push(n);
+  });
+  return tam.sort((a, b) => b - a);
+}
+
+function medirRed() {
+  const activos = DISPLAY_NODES.filter(n => !nodosApagados.has(n.id));
+  const idsActivos = new Set(activos.map(n => n.id));
+  const dentro = (e) => DISPLAY_NODE_IDS.has(e.s) && DISPLAY_NODE_IDS.has(e.t);
+  const vigente = (e) => dentro(e) && idsActivos.has(e.s) && idsActivos.has(e.t);
+  const relaciones = RAW_EDGES.filter(e => e.tipo !== "vacio" && vigente(e));
+  const vacios = RAW_EDGES.filter(e => e.tipo === "vacio" && vigente(e));
+  const deg = computeDegrees(nodosApagados);
+
+  // respaldo documental: qué relaciones tienen una frase del POT detrás
+  const conCita = relaciones.filter(e => e.cita).length;
+  const conArticulo = relaciones.filter(e => e.articulo).length;
+  const pendientes = relaciones.filter(e => e.fuente === "inventario_pendiente").length;
+
+  // cruces entre estructuras (la categoría de la arista trae "e1-e2" cuando cruza)
+  const cruzadas = relaciones.filter(e => String(e.cat).includes("-"));
+  const paresCruce = {};
+  cruzadas.forEach(e => { paresCruce[e.cat] = (paresCruce[e.cat] || 0) + 1; });
+
+  // concentración en los nodos más conectados
+  const orden = [...activos].sort((a, b) => (deg[b.id] || 0) - (deg[a.id] || 0));
+  const cuantosHubs = Math.max(1, Math.round(activos.length * 0.1));
+  const hubs = orden.slice(0, cuantosHubs);
+  const idsHub = new Set(hubs.map(n => n.id));
+  const tocanHub = relaciones.filter(e => idsHub.has(e.s) || idsHub.has(e.t)).length;
+
+  // qué queda si se apagan esos hubs
+  const restoIds = activos.filter(n => !idsHub.has(n.id)).map(n => n.id);
+  const setResto = new Set(restoIds);
+  const comps = componentesRed(restoIds, relaciones.filter(e => setResto.has(e.s) && setResto.has(e.t)));
+
+  const sueltos = activos.filter(n => (deg[n.id] || 0) === 0).length;
+  const porEstructura = {};
+  Object.keys(ESTRUCTURA_NOMBRE_CORTO).forEach(k => { porEstructura[k] = 0; });
+  activos.forEach(n => { porEstructura[n.cat]++; });
+
+  return {
+    nodos: activos.length, total: DISPLAY_NODES.length, apagados: nodosApagados.size,
+    relaciones: relaciones.length, vacios: vacios.length,
+    conCita, conArticulo, pendientes,
+    cruzadas: cruzadas.length, paresCruce,
+    hubs, cuantosHubs, tocanHub,
+    compsSinHub: comps.length, mayorSinHub: comps[0] || 0, sueltosSinHub: comps.filter(t => t === 1).length,
+    sueltos, porEstructura, deg,
+  };
+}
+
+function htmlConclusionesRed() {
+  const d = medirRed();
+  const nombreHub = (n) => n.name.replace(/\n/g, " ");
+  const gradoMedio = d.nodos ? (d.relaciones * 2 / d.nodos).toFixed(1) : "0";
+  const dato = (v, t) => `<div class="m2-concl-dato"><b>${v}</b><span>${t}</span></div>`;
+
+  const barras = Object.keys(ESTRUCTURA_NOMBRE_CORTO).map(k => `
+    <div class="m2-concl-barra">
+      <span class="m2-concl-punto" style="background:${STRUCT_STYLE[k].color}"></span>
+      <span class="m2-concl-barra-nom">${ESTRUCTURA_NOMBRE_CORTO[k]}</span>
+      <span class="m2-concl-barra-track"><span class="m2-concl-barra-fill" style="width:${pctRed(d.porEstructura[k], d.nodos)}%;background:${STRUCT_STYLE[k].color}"></span></span>
+      <span class="m2-concl-barra-val">${d.porEstructura[k]}</span>
+    </div>`).join("");
+
+  const concentra = pctRed(d.tocanHub, d.relaciones);
+  const fragmento = d.compsSinHub > 1
+    ? `Si se apagan, la red se parte en <b>${pluralRed(d.compsSinHub, "pedazo", "pedazos")}</b> —el mayor conserva ${d.mayorSinHub} nodos— y <b>${pluralRed(d.sueltosSinHub, "elemento queda suelto", "elementos quedan sueltos")}</b>.`
+    : `Si se apagan, lo que queda sigue en una sola pieza, pero pierde <b>${d.tocanHub}</b> de las ${d.relaciones} relaciones.`;
+
+  const sinRespaldo = d.relaciones - d.conCita;
+  const pctSinRespaldo = pctRed(sinRespaldo, d.relaciones);
+  // El título sigue a la cifra: no se afirma "la mayoría" si no lo es.
+  const tituloRespaldo = pctSinRespaldo >= 50
+    ? "1. La mayoría de las relaciones no están escritas en el POT"
+    : pctSinRespaldo >= 30
+      ? "1. Casi la mitad de las relaciones no están escritas en el POT"
+      : "1. Una parte de las relaciones no están escritas en el POT";
+  const pctCruce = pctRed(d.cruzadas, d.relaciones);
+  const tituloCruce = pctCruce < 25
+    ? "3. Las cuatro estructuras casi no se cruzan"
+    : "3. Las cuatro estructuras se cruzan, pero pesan muy distinto";
+  const cruceTop = Object.entries(d.paresCruce).sort((a, b) => b[1] - a[1])[0];
+
+  return `
+    <button class="m2-concl-cerrar" type="button" aria-label="Cerrar">&times;</button>
+    <div class="m2-concl-kicker">Conclusiones de la red</div>
+    <h3>Lo que el POT alcanza a modelar de la ciudad</h3>
+    <p class="m2-concl-nota">Todo lo que dice este panel se mide sobre la red que está viendo ahora mismo${d.apagados ? `, con ${pluralRed(d.apagados, "nodo apagado", "nodos apagados")}` : ""}. Apague un nodo (tres clics) y las cifras se recalculan.</p>
+
+    <div class="m2-concl-datos">
+      ${dato(d.nodos, "elementos")}${dato(d.relaciones, "relaciones")}
+      ${dato(gradoMedio, "relaciones por elemento")}${dato(d.vacios, "vacíos de articulación")}
+    </div>
+
+    <div class="m2-concl-bloque">
+      <h4>${tituloRespaldo}</h4>
+      <p>De las <b>${d.relaciones}</b> relaciones dibujadas, <b>${d.conCita}</b> (${pctRed(d.conCita, d.relaciones)}%) están respaldadas por una cita textual del plan y <b>${d.conArticulo}</b> remiten a un artículo concreto. Las otras <b>${sinRespaldo}</b> (${pctSinRespaldo}%) vienen del inventario del equipo o de una inferencia: se ven en el territorio, pero el documento no las enuncia.</p>
+    </div>
+
+    <div class="m2-concl-bloque">
+      <h4>2. La red se sostiene sobre muy pocos elementos</h4>
+      <p>Los <b>${d.cuantosHubs}</b> elementos más conectados (${d.hubs.slice(0, 3).map(nombreHub).join(", ")}) tocan <b>${concentra}%</b> de las relaciones. ${fragmento} Pruébelo: tres clics sobre uno de ellos, o el botón <em>Desactivar hubs</em>.</p>
+    </div>
+
+    <div class="m2-concl-bloque">
+      <h4>${tituloCruce}</h4>
+      <p>Solo <b>${d.cruzadas}</b> de las ${d.relaciones} relaciones (${pctCruce}%) unen elementos de estructuras distintas${cruceTop ? `; la más frecuente es ${cruceTop[0].split("-").map(k => ESTRUCTURA_NOMBRE_CORTO[k]).join(" ↔ ")}` : ""}. El POT reconoce cuatro sistemas, pero los ordena casi por separado.</p>
+      <div class="m2-concl-barras">${barras}</div>
+    </div>
+
+    <div class="m2-concl-bloque">
+      <h4>4. Los vacíos de articulación también son un hallazgo</h4>
+      <p>La red marca <b>${pluralRed(d.vacios, "relación que el plan debería tener y no tiene", "relaciones que el plan debería tener y no tiene")}</b>: cruces donde dos sistemas se tocan en el territorio pero ningún artículo los articula. No son un error del dibujo, son lo que falta en el documento.</p>
+    </div>
+
+    <div class="m2-concl-final">
+      <b>En síntesis:</b> el POT funciona como un inventario de elementos localizados, no como un modelo de relaciones. Nombra lugares y les fija reglas, pero lo que sostiene la ciudad —quién depende de quién y qué se cae si se cae un nodo— solo se ve al reconstruirlo como red. Y reconstruido se ve frágil: ${concentra}% de las relaciones pasa por ${d.cuantosHubs} de ${d.nodos} elementos, y ${pctSinRespaldo}% de esas relaciones no está escrita en ninguna parte del plan.
+    </div>`;
+}
+
+function abrirConclusionesRed() {
+  const cap = document.getElementById("m2Conclusiones");
+  if (!cap) return;
+  cap.innerHTML = htmlConclusionesRed();
+  cap.hidden = false;
+  cap.querySelector(".m2-concl-cerrar")?.addEventListener("click", cerrarConclusionesRed);
+  document.getElementById("btnConclusionesRed")?.classList.add("active");
+}
+function cerrarConclusionesRed() {
+  const cap = document.getElementById("m2Conclusiones");
+  if (cap) { cap.hidden = true; cap.innerHTML = ""; }
+  document.getElementById("btnConclusionesRed")?.classList.remove("active");
+}
 
 // Modo edición de trazos: se activa con la tecla L sobre el zoom de movilidad.
 function wireMovilidadEdicionLineas(body) {
