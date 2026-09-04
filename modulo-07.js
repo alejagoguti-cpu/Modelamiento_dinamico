@@ -1812,22 +1812,22 @@
 
       { id: "hidrica", name: "Dinámica hídrica", color: "#56b8d4", components: ["Agua", "lluvia", "suelo", "escorrentía", "sedimentos", "Canal Los Ángeles"],
         dynamics: ["Lluvia y escorrentía", "Infiltración en el suelo", "Circulación y acumulación", "Sedimentación", "Desborde en crecientes"],
-        process: "El agua circula, se acumula, disminuye o se desborda según lluvia, pendiente, suelo, sedimentos, obras y drenaje.", category: "Determinista" },
+        process: "El agua circula, se acumula, disminuye o se desborda según lluvia, pendiente, suelo, sedimentos, obras y drenaje.", category: "Determinista", partsPurpose: "No. El agua, la lluvia, el suelo, la escorrentía y los sedimentos no eligen entre alternativas ni persiguen objetivos propios.", totalPurpose: "No. El conjunto tampoco decide acumular, circular o desbordarse: eso resulta de condiciones físicas y de drenaje." },
       { id: "biotica", name: "Dinámica biótica", color: "#68d391", components: ["Aves", "arañas", "insectos", "vegetación", "hábitats"],
         dynamics: ["Reproducción y anidación", "Búsqueda de alimento", "Migración y desplazamiento", "Colonización de hábitats", "Depredación y competencia"],
-        process: "Cambian la presencia de especies, el alimento, el refugio, la reproducción y la expansión de especies invasoras.", category: "Ecológico" },
+        process: "Cambian la presencia de especies, el alimento, el refugio, la reproducción y la expansión de especies invasoras.", category: "Determinista", partsPurpose: "No. Las poblaciones responden a las condiciones del hábitat —agua, alimento, refugio— y no formulan propósitos.", totalPurpose: "No. El conjunto de organismos, vegetación y hábitats no formula una decisión colectiva." },
       { id: "fisico", name: "Sistema físico-urbano", color: "#b8c0c8", components: ["Construcciones", "vías", "edificaciones", "redes", "cerramientos", "obras"],
         dynamics: ["Construcción y mejoramiento", "Deterioro y mantenimiento", "Fragmentación del borde urbano", "Ocupación de predios", "Apertura y cierre de accesos"],
-        process: "Cambian el estado de las obras, accesos, senderos y la fragmentación del borde urbano.", category: "Determinista" },
+        process: "Cambian el estado de las obras, accesos, senderos y la fragmentación del borde urbano.", category: "Determinista", partsPurpose: "No. Las estructuras físicas funcionan según su diseño, localización, uso y mantenimiento.", totalPurpose: "No. La infraestructura no decide cómo transformarse; esas decisiones son de personas e instituciones." },
       { id: "movilidad", name: "Sistema de movilidad", color: "#f1cf5b", components: ["Desplazamientos", "rutas de transporte", "accesos", "tiempos de viaje", "conexiones"],
         dynamics: ["Desplazamiento diario", "Congestión en horas pico", "Cambio de rutas", "Espera y transbordo", "Variación de tiempos de viaje"],
-        process: "Cambian los recorridos, usuarios, horarios, tiempos de espera, congestión, ruido y accesibilidad.", category: "Social" },
+        process: "Cambian los recorridos, usuarios, horarios, tiempos de espera, congestión, ruido y accesibilidad.", category: "Determinista", partsPurpose: "No. Las rutas, los accesos y los tiempos de viaje resultan de la infraestructura y de la demanda, no de un objetivo propio.", totalPurpose: "No. El conjunto de la red no formula un propósito: opera según su trazado, su capacidad y su carga." },
       { id: "social", name: "Sistema social-comunitario", color: "#ee9a4b", components: ["Visitantes", "turismo", "grupos sociales", "formas de uso", "apropiación", "participación", "patrimonio ambiental"],
         dynamics: ["Apropiación del espacio", "Participación comunitaria", "Conflictos por el uso", "Visitas y recorridos", "Transmisión de saberes"],
-        process: "Cambian las visitas, formas de apropiación, actividades educativas, participación, acuerdos y conflictos.", category: "Social" },
+        process: "Cambian las visitas, formas de apropiación, actividades educativas, participación, acuerdos y conflictos.", category: "Social", partsPurpose: "Sí. Las personas y organizaciones deciden visitar, aprender, proteger, reclamar, participar o usar el espacio.", totalPurpose: "Sí. La comunidad se organiza alrededor de propósitos colectivos de protección, educación y exigencia institucional." },
       { id: "socioeconomico", name: "Sistema socioeconómico y de ocupación", color: "#e58d62", components: ["Viviendas", "actividades económicas", "servicios", "equipamientos", "usos del suelo", "población", "decisiones de ocupación"],
         dynamics: ["Crecimiento poblacional", "Cambio de uso del suelo", "Oferta y demanda de vivienda", "Formalización de actividades", "Presión sobre el borde"],
-        process: "Cambian la población, construcción, demanda de vivienda, servicios, actividades y presiones sobre el borde.", category: "Social" }
+        process: "Cambian la población, construcción, demanda de vivienda, servicios, actividades y presiones sobre el borde.", category: "Social", partsPurpose: "Sí. Habitantes, propietarios, empresas e instituciones deciden sobre vivienda, inversión, servicios y uso del suelo.", totalPurpose: "Sí. La totalidad se organiza para habitar, trabajar, producir, intercambiar y acceder a servicios." }
     ];
 
     // ---------- Componentes geográficos reales de cada dinámica ----------
