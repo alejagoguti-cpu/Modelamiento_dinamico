@@ -281,29 +281,7 @@ function nodeById(id) { return ODS_NODES.find(n => n.id === id); }
 /* Vista principal: 80 elementos con nombre propio del POT. Ni una palabra
    de categoría ni de programa (HUMEDALES, PARQUES, EQUIPAMIENTOS, MANZANAS
    DEL CUIDADO, CENTROS FELICIDAD...): esas no son un lugar del territorio. */
-const RED_POT_IDS = [
-  "burro",   "la-vaca",   "techo",   "tibanica",
-  "el-tunjo",   "tingua-azul",   "chiguasuque-la-isla",   "capellaníacofradía",
-  "hyntiba-el-escritorio",   "jaboque",   "meandro-del-say",   "córdoba-niza",
-  "juan-amarillotibabuyes",   "santa-maría-del-lago",   "salitre",   "la-conejera",
-  "torca-guaymaral",   "río-bogotá",   "río-fucha",   "río-tunjuelo",
-  "río-salitre",   "canal-arzobispo",   "canal-el-virrey",   "canal-independencia",
-  "quebrada-torca",   "quebrada-teusacá",   "cerros-orientales",   "reserva-van-der-hammen",
-  "cerro-seco",   "paramo-sumapaz",   "paramo-chingaza",   "paramo-guerrero",
-  "parque-entrenubes",   "parque-soratama",   "mirador-nevados",   "parque-nacional",
-  "parque-simon-bolivar",   "primera-linea-metro",   "segunda-linea-metro",   "regiotram-occidente",
-  "cable-san-cristobal",   "cable-potosi",   "corredor-verde-septima",   "alo-sur",
-  "avenida-boyacá",   "avenida-ciudad-de-cali",   "avenida-nqs",   "avenida-caracas",
-  "avenida-circunvalar",   "avenida-suba",   "avenida-américas",   "avenida-villavicencio",
-  "avenida-primero-de-mayo",   "avenida-centenario",   "calle-13",   "calle-26",
-  "calle-63",   "calle-72",   "calle-80",   "carrera-7",
-  "carrera-10",   "hospital-kennedy",   "hospital-meissen",   "hospital-bosa",
-  "hospital-tintal",   "hospital-simon-bolivar",   "hospital-tunal",   "hospital-usme",
-  "hospital-engativa",   "distrito_centro_tecnologico_e_innovacion",   "zona-restrepo",   "zona-12-de-octubre",
-  "corabastos",   "centro-historico",   "cabildo-muisca-suba",   "carrera-68",
-  "autopista-norte",   "portal-20-de-julio",   "portal-del-sur",   "biblioteca-de-suba",
-];
-const DISPLAY_NODES = RED_POT_IDS.map(nodeById).filter(Boolean);
+const DISPLAY_NODES = ODS_NODES;
 const DISPLAY_NODE_IDS = new Set(DISPLAY_NODES.map(n => n.id));
 
 /* ==========================================================
@@ -2207,6 +2185,10 @@ let panX = 0, panY = 0;
 function updateZoomDisplay() {
   const el = document.getElementById("networkZoomLevel");
   if (el) el.textContent = Math.round(zoomLevel * 100) + "%";
+}
+
+function ajustarEncuadreRed() {
+  // Ajuste de encuadre automático opcional
 }
 
 function renderNetwork() {
