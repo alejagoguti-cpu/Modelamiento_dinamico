@@ -560,8 +560,6 @@ const RAW_EDGES = [
     analisis:"La segunda línea se proyecta sobre el corredor de la calle 80." },
   { s:"segunda-linea-metro", t:"avenida-ciudad-de-cali", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"El trazado cruza este eje arterial." },
-  { s:"burro", t:"la-vaca", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
-    analisis:"Dos Reservas Distritales de Humedal de la misma cuenca urbana, separadas por unas pocas manzanas: comparten drenaje, fauna y presiones." },
   { s:"burro", t:"techo", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"Humedales vecinos de la misma localidad y la misma cuenca." },
   { s:"la-vaca", t:"techo", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
@@ -604,8 +602,6 @@ const RAW_EDGES = [
     analisis:"El Salitre es afluente del río Bogotá." },
   { s:"avenida-nqs", t:"transporte_publico", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"Corredor troncal del sistema de transporte." },
-  { s:"avenida-nqs", t:"río-fucha", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
-    analisis:"Cruce espacial: el corredor vial atraviesa este cuerpo de agua. El POT localiza ambos elementos, pero no describe qué le pasa a uno cuando el otro se interviene." },
   { s:"avenida-caracas", t:"transporte_publico", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"Corredor troncal del sistema de transporte." },
   { s:"avenida-circunvalar", t:"areas_protegidas", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
@@ -626,22 +622,12 @@ const RAW_EDGES = [
     analisis:"El corredor pasa por el eje de equipamientos y bienes patrimoniales del centro." },
   { s:"calle-13", t:"zonas_industriales", cat:"e2-e3", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"Corredor industrial y logístico del occidente." },
-  { s:"calle-13", t:"río-fucha", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
-    analisis:"Cruce espacial: el corredor vial atraviesa este cuerpo de agua. El POT localiza ambos elementos, pero no describe qué le pasa a uno cuando el otro se interviene." },
   { s:"calle-80", t:"transporte_publico", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"Corredor troncal del noroccidente." },
   { s:"calle-72", t:"transporte_publico", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"Corredor de transporte público." },
-  { s:"carrera-68", t:"río-salitre", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
-    analisis:"Cruce espacial: el corredor vial atraviesa este cuerpo de agua. El POT localiza ambos elementos, pero no describe qué le pasa a uno cuando el otro se interviene." },
-  { s:"avenida-suba", t:"juan-amarillotibabuyes", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
-    analisis:"Cruce espacial: el corredor vial atraviesa este cuerpo de agua. El POT localiza ambos elementos, pero no describe qué le pasa a uno cuando el otro se interviene." },
   { s:"avenida-américas", t:"zonas_industriales", cat:"e2-e3", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"Corredor de acceso al suelo industrial." },
-  { s:"avenida-centenario", t:"meandro-del-say", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
-    analisis:"Cruce espacial: el corredor vial atraviesa este cuerpo de agua. El POT localiza ambos elementos, pero no describe qué le pasa a uno cuando el otro se interviene." },
-  { s:"avenida-villavicencio", t:"tibanica", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
-    analisis:"Cruce espacial: el corredor vial atraviesa este cuerpo de agua. El POT localiza ambos elementos, pero no describe qué le pasa a uno cuando el otro se interviene." },
   { s:"avenida-primero-de-mayo", t:"transporte_publico", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"Corredor de transporte público del sur." },
   { s:"cicloruta-calle-26", t:"calle-26", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
@@ -913,7 +899,6 @@ const RAW_EDGES = [
 RAW_EDGES.push(
   { s:"avenida-boyacá", t:"avenida-ciudad-de-cali", tipo:"directa", relacion:"Soporte", cat:"e2", fuente:"por_verificar", analisis:"Conexión prioritaria solicitada para lectura de la malla vial principal." },
   { s:"avenida-ciudad-de-cali", t:"red_vial", tipo:"directa", relacion:"Soporte", cat:"e2", fuente:"por_verificar" },
-  { s:"primera-linea-metro", t:"segunda-linea-metro", tipo:"directa", relacion:"Soporte", cat:"e2", fuente:"por_verificar", analisis:"Conexión entre las dos líneas del Metro para lectura de la red de movilidad." },
   { s:"primera-linea-metro", t:"transporte_publico", tipo:"directa", relacion:"Soporte", cat:"e2", fuente:"por_verificar" },
   { s:"segunda-linea-metro", t:"transporte_publico", tipo:"directa", relacion:"Soporte", cat:"e2", fuente:"por_verificar" },
   { s:"colegios", t:"bibliotecas", tipo:"indirecta", relacion:"Soporte", cat:"e2", fuente:"por_verificar" },
@@ -921,7 +906,6 @@ RAW_EDGES.push(
   { s:"bibliotecas", t:"manzanas_del_cuidado", tipo:"directa", relacion:"Soporte", cat:"e2", fuente:"por_verificar" },
   { s:"río-tunjuelo", t:"río-fucha", tipo:"indirecta", relacion:"Resiliencia", cat:"e1", fuente:"por_verificar" },
   { s:"río-fucha", t:"burro", tipo:"indirecta", relacion:"Resiliencia", cat:"e1", fuente:"por_verificar" },
-  { s:"burro", t:"la-vaca", tipo:"indirecta", relacion:"Resiliencia", cat:"e1", fuente:"por_verificar" },
   { s:"avenida-ciudad-de-cali", t:"corabastos", tipo:"directa", relacion:"Soporte", cat:"e2-e3", fuente:"por_verificar", analisis:"La Av. Ciudad de Cali es el eje de acceso y abastecimiento de Corabastos, la central mayorista más grande de la ciudad." }
 );
 
@@ -1662,7 +1646,7 @@ function drawEdges(svg) {
     visual.setAttribute("d", d);
     visual.setAttribute("class", "ods-edge edge-visual");
     visual.setAttribute("stroke", color);
-    visual.setAttribute("stroke-width", edge.tipo === "vacio" ? 2.6 : tocaVia ? 0.85 : edge.tipo === "directa" ? 1.7 : 1.0);
+    visual.setAttribute("stroke-width", edge.tipo === "vacio" ? 2.6 : tocaVia ? 0.6 : edge.tipo === "directa" ? 1.2 : 0.7);
     if (edge.tipo !== "directa" || tocaVia) visual.setAttribute("stroke-dasharray", edge.tipo === "vacio" ? "2,7" : "5,4");
     const markerId = arrowMarkerId(edge);
     if (markerId) visual.setAttribute("marker-end", `url(#${markerId})`);
