@@ -422,11 +422,12 @@
 
     // zoom inicial: encuadra TODA la red (con margen), para dar una vista de
     // conjunto legible de entrada; desde ahí se puede acercar a cada zona.
-    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
-    state.elementos.forEach((e) => {
-      minX = Math.min(minX, e._x - e._r); maxX = Math.max(maxX, e._x + e._r);
-      minY = Math.min(minY, e._y - e._r); maxY = Math.max(maxY, e._y + e._r);
-    });
+    const xs = state.elementos.map((e) => e._x).sort((a, b) => a - b);
+    const ys = state.elementos.map((e) => e._y).sort((a, b) => a - b);
+    const pct = (arr, q) => arr[Math.min(arr.length - 1, Math.max(0, Math.round((arr.length - 1) * q)))] || 0;
+    const margen = R_MAX * 2;
+    let minX = pct(xs, 0.02) - margen, maxX = pct(xs, 0.98) + margen;
+    let minY = pct(ys, 0.02) - margen, maxY = pct(ys, 0.98) + margen;
     const w = maxX - minX, h = maxY - minY;
     const fitScale = Math.max(0.15, Math.min(2500 / w, 1820 / h) * 0.94);
     view.scale = fitScale;
@@ -441,6 +442,7 @@
     edgesG.setAttribute("class", "m2re-edges");
     viewportG.appendChild(edgesG);
     const edgesByNode = new Map();
+    const vecinosPorNodo = new Map();
     state.conexiones.forEach((c) => {
       const a = state.byId.get(c.origen), b = state.byId.get(c.destino);
       if (!a || !b) return;
@@ -453,11 +455,35 @@
         if (!edgesByNode.has(id)) edgesByNode.set(id, []);
         edgesByNode.get(id).push(line);
       });
+      if (!vecinosPorNodo.has(a.id)) vecinosPorNodo.set(a.id, []);
+      if (!vecinosPorNodo.has(b.id)) vecinosPorNodo.set(b.id, []);
+      vecinosPorNodo.get(a.id).push(b.id);
+      vecinosPorNodo.get(b.id).push(a.id);
     });
 
     const nodesG = document.createElementNS(SVG_NS, "g");
     nodesG.setAttribute("class", "m2re-nodes");
     viewportG.appendChild(nodesG);
+
+    const edgesTopG = document.createElementNS(SVG_NS, "g");
+    edgesTopG.setAttribute("class", "m2re-edges-top");
+    viewportG.appendChild(edgesTopG);
+    const nodesTopG = document.createElementNS(SVG_NS, "g");
+    nodesTopG.setAttribute("class", "m2re-nodes-top");
+    viewportG.appendChild(nodesTopG);
+
+    function enfocar(encendidas, gruposArriba) {
+      edgesG.style.opacity = "0.09";
+      nodesG.style.opacity = "0.22";
+      encendidas.forEach((line) => { if (!line.dataset.filteredOut) edgesTopG.appendChild(line); });
+      gruposArriba.forEach((g) => { if (g) nodesTopG.appendChild(g); });
+    }
+    function desenfocar() {
+      edgesG.style.opacity = "";
+      nodesG.style.opacity = "";
+      while (edgesTopG.firstChild) edgesG.appendChild(edgesTopG.firstChild);
+      while (nodesTopG.firstChild) nodesG.appendChild(nodesTopG.firstChild);
+    }
 
     // dibuja primero los de menor grado y al final los hubs, para que los
     // más grandes/importantes queden siempre por encima visualmente.
@@ -504,13 +530,24 @@
 
       const misAristas = edgesByNode.get(e.id) || [];
       group.addEventListener("pointerenter", () => {
+        // se encienden SUS conexiones y se apaga el resto de la red: con
+        // 2.198 líneas, resaltar sin apagar lo demás no se distingue
+        const vecinos = (vecinosPorNodo.get(e.id) || []).map((vid) => state.byId.get(vid)?._group).filter(Boolean);
         misAristas.forEach((line) => {
           if (line.dataset.filteredOut) return;
-          line.classList.add("m2re-edge-activa"); line.setAttribute("stroke", color); edgesG.appendChild(line);
+          line.classList.add("m2re-edge-activa");
+          line.setAttribute("stroke", color);
+          line.style.strokeWidth = "2.2";
         });
+        enfocar(misAristas, [group].concat(vecinos));
       });
       group.addEventListener("pointerleave", () => {
-        misAristas.forEach((line) => line.classList.remove("m2re-edge-activa"));
+        misAristas.forEach((line) => {
+          line.classList.remove("m2re-edge-activa");
+          line.style.strokeWidth = "";
+          line.removeAttribute("stroke");
+        });
+        desenfocar();
       });
       group.addEventListener("click", (ev) => {
         ev.stopPropagation();
@@ -520,6 +557,7 @@
       nodesG.appendChild(group);
       e._node = circle;
       e._fo = fo;
+      e._group = group;
     });
   }
 

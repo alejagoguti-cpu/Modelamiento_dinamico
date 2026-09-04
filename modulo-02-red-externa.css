@@ -45,9 +45,14 @@
    Las conexiones quedan casi invisibles por defecto (795 nodos × 2198 líneas
    se leen como una maraña si se muestran todas a la vez) y se iluminan solo
    al pasar el mouse sobre uno de sus dos extremos. */
-.m2re-edge { stroke: rgba(160,170,190,0.08); stroke-width: 1.2; pointer-events: none; transition: stroke .15s, stroke-width .15s, opacity .15s; }
-.m2re-edge-indirecta { stroke-dasharray: 5 4; }
-.m2re-edge-activa { stroke-width: 2.4 !important; opacity: 1; }
+/* Las conexiones SÍ se ven: finas y tenues, se leen como una malla. Antes
+   estaban al 8% y con 1.2px, así que la red parecía una nube de burbujas
+   sin una sola línea. Al señalar un nodo se encienden las suyas y el resto
+   de la red se apaga (con 2.198 líneas, resaltar sin apagar no se nota). */
+.m2re-edge { stroke: rgba(158,175,200,0.34); stroke-width: 0.75; pointer-events: none; transition: stroke .18s, stroke-width .18s, opacity .18s; }
+.m2re-edge-indirecta { stroke: rgba(158,175,200,0.2); stroke-dasharray: 4 4; }
+.m2re-edge-activa { stroke-width: 2.2 !important; opacity: 1 !important; }
+.m2re-nodes, .m2re-edges { transition: opacity .18s ease; }
 .m2re-edge[data-filtered-out="1"] { opacity: 0 !important; }
 .m2re-node-group { cursor: pointer; }
 .m2re-node-ring { transition: stroke-width .1s, filter .15s; }
