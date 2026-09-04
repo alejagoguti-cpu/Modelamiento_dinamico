@@ -98,7 +98,7 @@ const ODS_NODES = [
   { id:"corredores_verdes", cat:"e2", name:"CORREDORES\nVERDES", icon:"fa-seedling", fuente:"cita_literal" },
   { id:"manzanas_del_cuidado", cat:"e2", name:"MANZANAS\nDEL CUIDADO", icon:"fa-building-shield", fuente:"cita_literal" },
   { id:"parques", cat:"e2", name:"PARQUES", icon:"fa-tree", fuente:"inventario_pendiente" },
-  { id:"distrito_centro_tecnologico_e_innovacion", cat:"e3", name:"DISTRITO CENTRO\nTECNOLÓGICO E INNOVACIÓN", icon:"fa-microchip", fuente:"inventario_pendiente" },
+  { id:"distrito_centro_tecnologico_e_innovacion", cat:"e3", name:"DISTRITO\nTECNOLÓGICO", icon:"fa-microchip", fuente:"inventario_pendiente" },
   { id:"servicios_empresariales", cat:"e3", name:"SERVICIOS\nEMPRESARIALES", icon:"fa-briefcase", fuente:"inventario_pendiente" },
   { id:"sistema_de_educacion", cat:"e3", name:"SISTEMA\nDE EDUCACIÓN", icon:"fa-graduation-cap", fuente:"inventario_pendiente" },
   { id:"centros_de_abastecimiento", cat:"e3", name:"CENTROS\nDE ABASTECIMIENTO", icon:"fa-warehouse", fuente:"inventario_pendiente" },
@@ -126,20 +126,20 @@ const ODS_NODES = [
   { id:"quebrada-teusacá", cat:"e1", name:"QUEBRADA TEUSACÁ", icon:"fa-water", fuente:"inventario_pendiente" },
   { id:"quebrada-torca", cat:"e1", name:"QUEBRADA TORCA", icon:"fa-water", fuente:"inventario_pendiente" },
   { id:"córdoba-niza", cat:"e1", name:"CÓRDOBA-NIZA", icon:"fa-droplet", fuente:"inventario_pendiente" },
-  { id:"santa-maría-del-lago", cat:"e1", name:"SANTA MARÍA DEL LAGO", icon:"fa-droplet", fuente:"inventario_pendiente" },
-  { id:"capellaníacofradía", cat:"e1", name:"CAPELLANÍA/COFRADÍA", icon:"fa-droplet", fuente:"inventario_pendiente" },
+  { id:"santa-maría-del-lago", cat:"e1", name:"SANTA MARÍA\nDEL LAGO", icon:"fa-droplet", fuente:"inventario_pendiente" },
+  { id:"capellaníacofradía", cat:"e1", name:"CAPELLANÍA", icon:"fa-droplet", fuente:"inventario_pendiente" },
   { id:"jaboque", cat:"e1", name:"JABOQUE", icon:"fa-droplet", fuente:"inventario_pendiente" },
-  { id:"juan-amarillotibabuyes", cat:"e1", name:"JUAN AMARILLO/TIBABUYES", icon:"fa-droplet", fuente:"inventario_pendiente" },
+  { id:"juan-amarillotibabuyes", cat:"e1", name:"JUAN\nAMARILLO", icon:"fa-droplet", fuente:"inventario_pendiente" },
   { id:"la-conejera", cat:"e1", name:"LA CONEJERA", icon:"fa-droplet", fuente:"inventario_pendiente" },
   { id:"la-vaca", cat:"e1", name:"HUMEDAL LA VACA", icon:"fa-droplet", fuente:"inventario_pendiente" },
   { id:"techo", cat:"e1", name:"TECHO", icon:"fa-droplet", fuente:"inventario_pendiente" },
   { id:"tibanica", cat:"e1", name:"TIBANICA", icon:"fa-droplet", fuente:"inventario_pendiente" },
-  { id:"torca-guaymaral", cat:"e1", name:"TORCA-GUAYMARAL", icon:"fa-droplet", fuente:"inventario_pendiente" },
+  { id:"torca-guaymaral", cat:"e1", name:"TORCA", icon:"fa-droplet", fuente:"inventario_pendiente" },
   { id:"burro", cat:"e1", name:"HUMEDAL EL BURRO", icon:"fa-droplet", fuente:"inventario_pendiente" },
-  { id:"meandro-del-say", cat:"e1", name:"MEANDRO DEL SAY", icon:"fa-droplet", fuente:"inventario_pendiente" },
-  { id:"hyntiba-el-escritorio", cat:"e1", name:"HYNTIBA-EL ESCRITORIO", icon:"fa-droplet", fuente:"inventario_pendiente" },
+  { id:"meandro-del-say", cat:"e1", name:"MEANDRO\nDEL SAY", icon:"fa-droplet", fuente:"inventario_pendiente" },
+  { id:"hyntiba-el-escritorio", cat:"e1", name:"HYNTIBA", icon:"fa-droplet", fuente:"inventario_pendiente" },
   { id:"el-tunjo", cat:"e1", name:"EL TUNJO", icon:"fa-droplet", fuente:"inventario_pendiente" },
-  { id:"chiguasuque-la-isla", cat:"e1", name:"CHIGUASUQUE-LA ISLA", icon:"fa-droplet", fuente:"inventario_pendiente" },
+  { id:"chiguasuque-la-isla", cat:"e1", name:"CHIGUASUQUE", icon:"fa-droplet", fuente:"inventario_pendiente" },
   { id:"salitre", cat:"e1", name:"HUMEDAL SALITRE", icon:"fa-droplet", fuente:"inventario_pendiente" },
   { id:"tingua-azul", cat:"e1", name:"TINGUA AZUL", icon:"fa-droplet", fuente:"inventario_pendiente" },
   { id:"avenida-boyacá", cat:"e2", name:"AVENIDA BOYACÁ", icon:"fa-road", fuente:"inventario_pendiente" },
@@ -149,14 +149,14 @@ const ODS_NODES = [
   { id:"carrera-68", cat:"e2", name:"CARRERA 68", icon:"fa-road", fuente:"inventario_pendiente" },
   { id:"carrera-11", cat:"e2", name:"CARRERA 11", icon:"fa-road", fuente:"inventario_pendiente" },
   { id:"avenida-el-polo", cat:"e2", name:"AVENIDA EL POLO", icon:"fa-road", fuente:"inventario_pendiente" },
-  { id:"avenida-villavicencio", cat:"e2", name:"AVENIDA VILLAVICENCIO", icon:"fa-road", fuente:"inventario_pendiente" },
+  { id:"avenida-villavicencio", cat:"e2", name:"AV.\nVILLAVICENCIO", icon:"fa-road", fuente:"inventario_pendiente" },
   { id:"avenida-esperanza", cat:"e2", name:"AVENIDA ESPERANZA", icon:"fa-road", fuente:"inventario_pendiente" },
   { id:"calle-26", cat:"e2", name:"CALLE 26", icon:"fa-road", fuente:"inventario_pendiente" },
   { id:"calle-13", cat:"e2", name:"CALLE 13", icon:"fa-road", fuente:"inventario_pendiente" },
   { id:"calle-80", cat:"e2", name:"CALLE 80", icon:"fa-road", fuente:"inventario_pendiente" },
-  { id:"avenida-américas", cat:"e2", name:"AVENIDA AMÉRICAS", icon:"fa-road", fuente:"inventario_pendiente" },
+  { id:"avenida-américas", cat:"e2", name:"AV.\nAMÉRICAS", icon:"fa-road", fuente:"inventario_pendiente" },
   { id:"avenida-josé-celestino-mutis", cat:"e2", name:"AVENIDA JOSÉ CELESTINO MUTIS", icon:"fa-road", fuente:"inventario_pendiente" },
-  { id:"avenida-centenario", cat:"e2", name:"AVENIDA CENTENARIO", icon:"fa-road", fuente:"inventario_pendiente" },
+  { id:"avenida-centenario", cat:"e2", name:"AV.\nCENTENARIO", icon:"fa-road", fuente:"inventario_pendiente" },
   { id:"diagonal-50", cat:"e2", name:"DIAGONAL 50", icon:"fa-road", fuente:"inventario_pendiente" },
   { id:"transversal-16", cat:"e2", name:"TRANSVERSAL 16", icon:"fa-road", fuente:"inventario_pendiente" },
   { id:"carrera-100", cat:"e2", name:"CARRERA 100", icon:"fa-road", fuente:"inventario_pendiente" },
@@ -172,14 +172,14 @@ const ODS_NODES = [
   { id:"avenida-jiménez", cat:"e2", name:"AVENIDA JIMÉNEZ", icon:"fa-road", fuente:"inventario_pendiente" },
   { id:"calle-72", cat:"e2", name:"CALLE 72", icon:"fa-road", fuente:"inventario_pendiente" },
   { id:"calle-100", cat:"e2", name:"CALLE 100", icon:"fa-road", fuente:"inventario_pendiente" },
-  { id:"avenida-primero-de-mayo", cat:"e2", name:"AVENIDA PRIMERO DE MAYO", icon:"fa-road", fuente:"inventario_pendiente" },
+  { id:"avenida-primero-de-mayo", cat:"e2", name:"AV. PRIMERO\nDE MAYO", icon:"fa-road", fuente:"inventario_pendiente" },
   { id:"transversal-91", cat:"e2", name:"TRANSVERSAL 91", icon:"fa-road", fuente:"inventario_pendiente" },
   { id:"avenida-congreso", cat:"e2", name:"AVENIDA CONGRESO", icon:"fa-road", fuente:"inventario_pendiente" },
   { id:"calle-146", cat:"e2", name:"CALLE 146", icon:"fa-road", fuente:"inventario_pendiente" },
   { id:"calle-134", cat:"e2", name:"CALLE 134", icon:"fa-road", fuente:"inventario_pendiente" },
   { id:"carrera-4", cat:"e2", name:"CARRERA 4", icon:"fa-road", fuente:"inventario_pendiente" },
   { id:"avenida-nqs", cat:"e2", name:"AVENIDA NQS", icon:"fa-road", fuente:"inventario_pendiente" },
-  { id:"avenida-circunvalar", cat:"e2", name:"AVENIDA CIRCUNVALAR", icon:"fa-road", fuente:"inventario_pendiente" },
+  { id:"avenida-circunvalar", cat:"e2", name:"AV.\nCIRCUNVALAR", icon:"fa-road", fuente:"inventario_pendiente" },
   { id:"calle-63", cat:"e2", name:"CALLE 63", icon:"fa-road", fuente:"inventario_pendiente" },
   { id:"avenida-caracas", cat:"e2", name:"AVENIDA CARACAS", icon:"fa-road", fuente:"inventario_pendiente" },
   { id:"calle-19", cat:"e2", name:"CALLE 19", icon:"fa-road", fuente:"inventario_pendiente" },
@@ -221,20 +221,20 @@ const ODS_NODES = [
   { id:"canal-el-virrey", cat:"e1", name:"CANAL\nEL VIRREY", icon:"fa-water", fuente:"cita_literal" },
   { id:"canal-independencia", cat:"e1", name:"CANAL\nINDEPENDENCIA", icon:"fa-water", fuente:"cita_literal" },
   { id:"cerros-orientales", cat:"e1", name:"CERROS\nORIENTALES", icon:"fa-mountain", fuente:"cita_literal" },
-  { id:"reserva-van-der-hammen", cat:"e1", name:"RESERVA THOMAS\nVAN DER HAMMEN", icon:"fa-tree-city", fuente:"cita_literal" },
-  { id:"cerro-seco", cat:"e1", name:"PARQUE ECOLÓGICO\nCERRO SECO", icon:"fa-mountain-sun", fuente:"cita_literal" },
+  { id:"reserva-van-der-hammen", cat:"e1", name:"VAN DER\nHAMMEN", icon:"fa-tree-city", fuente:"cita_literal" },
+  { id:"cerro-seco", cat:"e1", name:"CERRO\nSECO", icon:"fa-mountain-sun", fuente:"cita_literal" },
   { id:"paramo-sumapaz", cat:"e1", name:"PÁRAMO DE\nSUMAPAZ", icon:"fa-mountain", fuente:"cita_literal" },
   { id:"paramo-chingaza", cat:"e1", name:"PÁRAMO DE\nCHINGAZA", icon:"fa-mountain", fuente:"cita_literal" },
   { id:"paramo-guerrero", cat:"e1", name:"PÁRAMO DE\nGUERRERO", icon:"fa-mountain", fuente:"cita_literal" },
   { id:"parque-entrenubes", cat:"e1", name:"PARQUE\nENTRENUBES", icon:"fa-tree", fuente:"cita_literal" },
   { id:"parque-soratama", cat:"e1", name:"PARQUE\nSORATAMA", icon:"fa-tree", fuente:"cita_literal" },
-  { id:"mirador-nevados", cat:"e1", name:"MIRADOR DE\nLOS NEVADOS", icon:"fa-binoculars", fuente:"cita_literal" },
+  { id:"mirador-nevados", cat:"e1", name:"MIRADOR\nNEVADOS", icon:"fa-binoculars", fuente:"cita_literal" },
   { id:"parque-nacional", cat:"e1", name:"PARQUE\nNACIONAL", icon:"fa-tree", fuente:"cita_literal" },
   { id:"parque-simon-bolivar", cat:"e1", name:"PARQUE SIMÓN\nBOLÍVAR", icon:"fa-tree", fuente:"cita_literal" },
-  { id:"regiotram-occidente", cat:"e2", name:"REGIOTRAM DE\nOCCIDENTE", icon:"fa-train", fuente:"cita_literal" },
-  { id:"cable-san-cristobal", cat:"e2", name:"CABLE SAN\nCRISTÓBAL SUR", icon:"fa-cable-car", fuente:"cita_literal" },
+  { id:"regiotram-occidente", cat:"e2", name:"REGIOTRAM", icon:"fa-train", fuente:"cita_literal" },
+  { id:"cable-san-cristobal", cat:"e2", name:"CABLE SAN\nCRISTÓBAL", icon:"fa-cable-car", fuente:"cita_literal" },
   { id:"cable-potosi", cat:"e2", name:"CABLE DE\nPOTOSÍ", icon:"fa-cable-car", fuente:"cita_literal" },
-  { id:"corredor-verde-septima", cat:"e2", name:"CORREDOR VERDE\nDE LA SÉPTIMA", icon:"fa-seedling", fuente:"cita_literal" },
+  { id:"corredor-verde-septima", cat:"e2", name:"CORREDOR\nVERDE 7ª", icon:"fa-seedling", fuente:"cita_literal" },
   { id:"alo-sur", cat:"e2", name:"ALO SUR", icon:"fa-road", fuente:"cita_literal" },
   { id:"hospital-kennedy", cat:"e2", name:"HOSPITAL DE\nKENNEDY", icon:"fa-hospital", fuente:"cita_literal" },
   { id:"hospital-meissen", cat:"e2", name:"HOSPITAL DE\nMEISSEN", icon:"fa-hospital", fuente:"cita_literal" },
@@ -245,12 +245,16 @@ const ODS_NODES = [
   { id:"hospital-usme", cat:"e2", name:"HOSPITAL DE\nUSME", icon:"fa-hospital", fuente:"cita_literal" },
   { id:"hospital-engativa", cat:"e2", name:"HOSPITAL DE\nENGATIVÁ", icon:"fa-hospital", fuente:"cita_literal" },
   { id:"biblioteca-el-tintal", cat:"e2", name:"BIBLIOTECA\nEL TINTAL", icon:"fa-book-open", fuente:"cita_literal" },
-  { id:"universidad-suba", cat:"e2", name:"UNIVERSIDAD\nPÚBLICA DE SUBA", icon:"fa-graduation-cap", fuente:"cita_literal" },
-  { id:"zona-restrepo", cat:"e3", name:"ZONA PRODUCTIVA\nDEL RESTREPO", icon:"fa-industry", fuente:"cita_literal" },
-  { id:"zona-12-de-octubre", cat:"e3", name:"ZONA PRODUCTIVA\n12 DE OCTUBRE", icon:"fa-industry", fuente:"cita_literal" },
+  { id:"universidad-suba", cat:"e2", name:"UNIVERSIDAD\nDE SUBA", icon:"fa-graduation-cap", fuente:"cita_literal" },
+  { id:"zona-restrepo", cat:"e3", name:"EL\nRESTREPO", icon:"fa-industry", fuente:"cita_literal" },
+  { id:"zona-12-de-octubre", cat:"e3", name:"12 DE\nOCTUBRE", icon:"fa-industry", fuente:"cita_literal" },
   { id:"corabastos", cat:"e3", name:"CORABASTOS", icon:"fa-truck-ramp-box", fuente:"cita_literal" },
   { id:"centro-historico", cat:"e4", name:"CENTRO\nHISTÓRICO", icon:"fa-landmark", fuente:"cita_literal" },
-  { id:"cabildo-muisca-suba", cat:"e4", name:"CABILDO\nMUISCA DE SUBA", icon:"fa-people-group", fuente:"cita_literal" },
+  { id:"cabildo-muisca-suba", cat:"e4", name:"CABILDO\nMUISCA", icon:"fa-people-group", fuente:"cita_literal" },
+  { id:"autopista-norte", cat:"e2", name:"AUTOPISTA\nNORTE", icon:"fa-road", fuente:"cita_literal" },
+  { id:"portal-20-de-julio", cat:"e2", name:"PORTAL\n20 DE JULIO", icon:"fa-door-open", fuente:"cita_literal" },
+  { id:"portal-del-sur", cat:"e2", name:"PORTAL\nDEL SUR", icon:"fa-door-open", fuente:"cita_literal" },
+  { id:"biblioteca-de-suba", cat:"e2", name:"BIBLIOTECA\nSUBA", icon:"fa-book-open", fuente:"cita_literal" },
   { id:"jardines-infantiles", cat:"e2", name:"JARDINES\nINFANTILES", icon:"fa-baby-carriage", fuente:"cita_literal" },
   { id:"centros-de-salud", cat:"e2", name:"CENTROS\nDE SALUD", icon:"fa-stethoscope", fuente:"cita_literal" },
   { id:"hospitales", cat:"e2", name:"HOSPITALES", icon:"fa-hospital", fuente:"cita_literal" },
@@ -271,6 +275,9 @@ function nodeById(id) { return ODS_NODES.find(n => n.id === id); }
    que deja entregados, las zonas productivas que protege— sin una sola
    categoría abstracta: las palabras genéricas (HUMEDALES, PARQUES,
    EQUIPAMIENTOS, MALLA VIAL...) no dicen qué elemento del territorio es. */
+/* Vista principal: 80 elementos con nombre propio del POT. Ni una palabra
+   de categoría ni de programa (HUMEDALES, PARQUES, EQUIPAMIENTOS, MANZANAS
+   DEL CUIDADO, CENTROS FELICIDAD...): esas no son un lugar del territorio. */
 const RED_POT_IDS = [
   "burro",   "la-vaca",   "techo",   "tibanica",
   "el-tunjo",   "tingua-azul",   "chiguasuque-la-isla",   "capellaníacofradía",
@@ -287,12 +294,11 @@ const RED_POT_IDS = [
   "avenida-circunvalar",   "avenida-suba",   "avenida-américas",   "avenida-villavicencio",
   "avenida-primero-de-mayo",   "avenida-centenario",   "calle-13",   "calle-26",
   "calle-63",   "calle-72",   "calle-80",   "carrera-7",
-  "carrera-10",   "manzanas_del_cuidado",   "centros-felicidad",   "casas-igualdad",
-  "hospital-kennedy",   "hospital-meissen",   "hospital-bosa",   "hospital-tintal",
-  "hospital-simon-bolivar",   "hospital-tunal",   "hospital-usme",   "hospital-engativa",
-  "biblioteca-el-tintal",   "distrito_centro_tecnologico_e_innovacion",   "zona-restrepo",   "zona-12-de-octubre",
-  "corabastos",   "centro-historico",   "cabildo-muisca-suba",
-  "carrera-68",
+  "carrera-10",   "hospital-kennedy",   "hospital-meissen",   "hospital-bosa",
+  "hospital-tintal",   "hospital-simon-bolivar",   "hospital-tunal",   "hospital-usme",
+  "hospital-engativa",   "distrito_centro_tecnologico_e_innovacion",   "zona-restrepo",   "zona-12-de-octubre",
+  "corabastos",   "centro-historico",   "cabildo-muisca-suba",   "carrera-68",
+  "autopista-norte",   "portal-20-de-julio",   "portal-del-sur",   "biblioteca-de-suba",
 ];
 const DISPLAY_NODES = RED_POT_IDS.map(nodeById).filter(Boolean);
 const DISPLAY_NODE_IDS = new Set(DISPLAY_NODES.map(n => n.id));
@@ -327,14 +333,6 @@ const RAW_EDGES = [
   { s:"corredores_verdes", t:"transporte_publico", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:"Arts. 158–160", pagina:"158–160",
     cita:"En un corredor verde se desarrolla infraestructura de movilidad que privilegia modos de transporte limpios, al peatón y a la micromovilidad; protege y resalta el patrimonio cultural y desarrolla estrategias de reverdecimiento, entendidas como acciones de mitigación al cambio climático, conexión ecosistémica y cumplimiento de los Objetivos de Desarrollo Sostenible – ODS.",
     analisis:"El POT define el corredor verde como infraestructura de movilidad y, simultáneamente, como espacio de reverdecimiento y conexión ecosistémica." },
-  { s:"manzanas_del_cuidado", t:"servicios_sociales", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:"Sistema Distrital de Manzanas del Cuidado", pagina:"128",
-    cita:"El tejido que se forma entre las Manzanas del Cuidado y la infraestructura nueva y existente de salud, educación, cultura, cuidado y recreación convierte cada una de las UPL —que son las nuevas localidades en las que el POT proyecta la ciudad— en una Red del Cuidado.",
-    analisis:"La Red del Cuidado se construye articulando las Manzanas con infraestructura de servicios." },
-  { s:"manzanas_del_cuidado", t:"equipamientos", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:"Sistema Distrital de Manzanas del Cuidado", pagina:"128",
-    cita:"El tejido que se forma entre las Manzanas del Cuidado y la infraestructura nueva y existente de salud, educación, cultura, cuidado y recreación convierte cada una de las UPL —que son las nuevas localidades en las que el POT proyecta la ciudad— en una Red del Cuidado.",
-    analisis:"Las Manzanas del Cuidado se articulan explícitamente con la infraestructura social existente y nueva." },
-  { s:"manzanas_del_cuidado", t:"parques", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"Art. 94", pagina:"117", cita:null,
-    analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: jardines infantiles, colegios, parques]." },
   { s:"distrito_centro_tecnologico_e_innovacion", t:"servicios_empresariales", cat:"e3", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"Art. 101", pagina:"122", cita:null,
     analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: Eje de Servicios Empresariales Avenida El Dorado]." },
   { s:"distrito_centro_tecnologico_e_innovacion", t:"sistema_de_educacion", cat:"e3", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"Art. 100–101", pagina:"122", cita:null,
@@ -378,9 +376,6 @@ const RAW_EDGES = [
     analisis:"Puente real EFC↔ESECI: 'Empleo' se trata aquí como el mismo concepto que Servicios Empresariales." },
   { s:"transporte_publico", t:"servicios_empresariales", cat:"e2-e3", tipo:"indirecta", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:null,
     cita:"El modelo relaciona el transporte con el acceso a oportunidades de empleo y servicios.",
-    analisis:"Puente real EFC↔ESECI: 'Empleo' se trata aquí como el mismo concepto que Servicios Empresariales." },
-  { s:"manzanas_del_cuidado", t:"servicios_empresariales", cat:"e2-e3", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"32",
-    cita:"El POT dice que las Manzanas ofrecen oportunidades para emprender y conseguir trabajo.",
     analisis:"Puente real EFC↔ESECI: 'Empleo' se trata aquí como el mismo concepto que Servicios Empresariales." },
   { s:"patrimonio_material", t:"zonas_de_interes_turistico", cat:"e3-e4", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"92",
     cita:"La EIP aparece articulada con los clústeres hoteleros, zonas de interés turístico y corredores inteligentes de turismo.",
@@ -451,7 +446,6 @@ const RAW_EDGES = [
   { s:"la-vaca", t:"red_vial", dim:"Soporte", tipo:"directa", analisis:"Relación del sistema de humedales, leída sobre uno de los humedales que el POT nombra." },
   { s:"santa-maría-del-lago", t:"parques", dim:"Soporte", tipo:"directa", analisis:"Relación del sistema de humedales, leída sobre uno de los humedales que el POT nombra." },
   { s:"córdoba-niza", t:"patrimonio_natural", dim:"Soporte", tipo:"directa", analisis:"Relación del sistema de humedales, leída sobre uno de los humedales que el POT nombra." },
-  { s:"techo", t:"manzanas_del_cuidado", dim:"Soporte", tipo:"directa", analisis:"Relación del sistema de humedales, leída sobre uno de los humedales que el POT nombra." },
   { s:"cicloruta-carrera-7", t:"transporte_publico", dim:"Movilidad", tipo:"directa", analisis:"Relación de la red de cicloinfraestructura, leída sobre uno de sus corredores." },
   { s:"cicloruta-carrera-7", t:"corredores_verdes", dim:"Movilidad", tipo:"directa", analisis:"Relación de la red de cicloinfraestructura, leída sobre uno de sus corredores." }
 ,
@@ -490,8 +484,6 @@ const RAW_EDGES = [
   { s:"humedales", t:"patrimonio_natural", cat:"e1-e4", tipo:"directa", relacion:"Resiliencia", fuente:"cita_literal", articulo:null, pagina:null,
     cita:"Los humedales, como parte de la Estructura Ecológica Principal, se integran con el patrimonio natural de la ciudad.",
     analisis:"Puente real EEP↔EIP, aportado directamente por la usuaria." },
-  { s:"humedales", t:"manzanas_del_cuidado", cat:"e1-e2", tipo:"vacio", relacion:"Soporte", fuente:"inferencia", articulo:null, pagina:null, cita:null,
-    analisis:"Las Manzanas del Cuidado se promocionan cercanas a espacios verdes, pero no hay mecanismo articulado, ni en la matriz de relaciones ni en el índice oficial, que conecte su localización con la protección de humedales." },
   { s:"rios", t:"transporte_publico", cat:"e1-e2", tipo:"vacio", relacion:"Resiliencia", fuente:"inferencia", articulo:null, pagina:null, cita:null,
     analisis:"No hay relación registrada que articule el Sistema Hídrico (ríos/quebradas) con el Sistema de Movilidad, pese a que rondas hídricas y trazados viales compiten por el mismo suelo (caso documentado: ALO junto al río Bogotá)." },
 
@@ -552,16 +544,12 @@ const RAW_EDGES = [
     analisis:"El POT liga los corredores de transporte de alta capacidad con la localización de equipamientos sobre su trazado; falta fijar el artículo exacto." },
   { s:"primera-linea-metro", t:"corredores_verdes", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:"Art. 159", pagina:"159", cita:"Los proyectos de infraestructura de los corredores verdes de alta capacidad, media capacidad y los corredores de baja capacidad deberán incluir intervenciones que permitan su conexión con la red de ciclo infraestructura de la ciudad.",
     analisis:"El texto obliga a conectar los corredores de alta capacidad con la red de cicloinfraestructura." },
-  { s:"primera-linea-metro", t:"manzanas_del_cuidado", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
-    analisis:"Las Manzanas del Cuidado se localizan buscando acceso al transporte de alta capacidad." },
   { s:"segunda-linea-metro", t:"transporte_publico", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"La línea es parte del sistema de transporte público que estructura el POT." },
   { s:"segunda-linea-metro", t:"equipamientos", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"El POT liga los corredores de transporte de alta capacidad con la localización de equipamientos sobre su trazado; falta fijar el artículo exacto." },
   { s:"segunda-linea-metro", t:"corredores_verdes", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:"Art. 159", pagina:"159", cita:"Los proyectos de infraestructura de los corredores verdes de alta capacidad, media capacidad y los corredores de baja capacidad deberán incluir intervenciones que permitan su conexión con la red de ciclo infraestructura de la ciudad.",
     analisis:"El texto obliga a conectar los corredores de alta capacidad con la red de cicloinfraestructura." },
-  { s:"segunda-linea-metro", t:"manzanas_del_cuidado", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
-    analisis:"Las Manzanas del Cuidado se localizan buscando acceso al transporte de alta capacidad." },
   { s:"primera-linea-metro", t:"avenida-caracas", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"El trazado de la primera línea usa el corredor de la Caracas en su tramo norte." },
   { s:"primera-linea-metro", t:"avenida-primero-de-mayo", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
@@ -686,8 +674,6 @@ const RAW_EDGES = [
     analisis:"Los colegios son la infraestructura del sistema de educación." },
   { s:"colegios", t:"equipamientos", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"Los colegios son equipamientos del sistema del cuidado." },
-  { s:"colegios", t:"manzanas_del_cuidado", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
-    analisis:"Las Manzanas del Cuidado se apoyan en los colegios existentes." },
   { s:"bibliotecas", t:"equipamientos", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"Las bibliotecas son equipamientos culturales del sistema." },
   { s:"bibliotecas", t:"servicios_sociales", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
@@ -715,28 +701,6 @@ const RAW_EDGES = [
      El nodo genérico EQUIPAMIENTOS no decía nada: el documento sí lista
      cuáles son las piezas con las que se montan las Manzanas del Cuidado,
      y esa frase va como cita literal en cada relación. */
-  { s:"jardines-infantiles", t:"manzanas_del_cuidado", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:"Sistema Distrital de Manzanas del Cuidado", pagina:"31", cita:"Son jardines infantiles, colegios, parques, bibliotecas, centros de desarrollo comunitario, centros de salud, hospitales, casas de igualdad de oportunidades, centros de atención a personas mayores y con discapacidad, Centros Felicidad y unidades móviles existentes.",
-    analisis:"El POT nombra este equipamiento como una de las piezas con las que se montan las Manzanas del Cuidado." },
-  { s:"colegios", t:"manzanas_del_cuidado", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:"Sistema Distrital de Manzanas del Cuidado", pagina:"31", cita:"Son jardines infantiles, colegios, parques, bibliotecas, centros de desarrollo comunitario, centros de salud, hospitales, casas de igualdad de oportunidades, centros de atención a personas mayores y con discapacidad, Centros Felicidad y unidades móviles existentes.",
-    analisis:"El POT nombra este equipamiento como una de las piezas con las que se montan las Manzanas del Cuidado." },
-  { s:"parques", t:"manzanas_del_cuidado", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:"Sistema Distrital de Manzanas del Cuidado", pagina:"31", cita:"Son jardines infantiles, colegios, parques, bibliotecas, centros de desarrollo comunitario, centros de salud, hospitales, casas de igualdad de oportunidades, centros de atención a personas mayores y con discapacidad, Centros Felicidad y unidades móviles existentes.",
-    analisis:"El POT nombra este equipamiento como una de las piezas con las que se montan las Manzanas del Cuidado." },
-  { s:"bibliotecas", t:"manzanas_del_cuidado", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:"Sistema Distrital de Manzanas del Cuidado", pagina:"31", cita:"Son jardines infantiles, colegios, parques, bibliotecas, centros de desarrollo comunitario, centros de salud, hospitales, casas de igualdad de oportunidades, centros de atención a personas mayores y con discapacidad, Centros Felicidad y unidades móviles existentes.",
-    analisis:"El POT nombra este equipamiento como una de las piezas con las que se montan las Manzanas del Cuidado." },
-  { s:"centros-desarrollo-comunitario", t:"manzanas_del_cuidado", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:"Sistema Distrital de Manzanas del Cuidado", pagina:"31", cita:"Son jardines infantiles, colegios, parques, bibliotecas, centros de desarrollo comunitario, centros de salud, hospitales, casas de igualdad de oportunidades, centros de atención a personas mayores y con discapacidad, Centros Felicidad y unidades móviles existentes.",
-    analisis:"El POT nombra este equipamiento como una de las piezas con las que se montan las Manzanas del Cuidado." },
-  { s:"centros-de-salud", t:"manzanas_del_cuidado", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:"Sistema Distrital de Manzanas del Cuidado", pagina:"31", cita:"Son jardines infantiles, colegios, parques, bibliotecas, centros de desarrollo comunitario, centros de salud, hospitales, casas de igualdad de oportunidades, centros de atención a personas mayores y con discapacidad, Centros Felicidad y unidades móviles existentes.",
-    analisis:"El POT nombra este equipamiento como una de las piezas con las que se montan las Manzanas del Cuidado." },
-  { s:"hospitales", t:"manzanas_del_cuidado", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:"Sistema Distrital de Manzanas del Cuidado", pagina:"31", cita:"Son jardines infantiles, colegios, parques, bibliotecas, centros de desarrollo comunitario, centros de salud, hospitales, casas de igualdad de oportunidades, centros de atención a personas mayores y con discapacidad, Centros Felicidad y unidades móviles existentes.",
-    analisis:"El POT nombra este equipamiento como una de las piezas con las que se montan las Manzanas del Cuidado." },
-  { s:"casas-igualdad", t:"manzanas_del_cuidado", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:"Sistema Distrital de Manzanas del Cuidado", pagina:"31", cita:"Son jardines infantiles, colegios, parques, bibliotecas, centros de desarrollo comunitario, centros de salud, hospitales, casas de igualdad de oportunidades, centros de atención a personas mayores y con discapacidad, Centros Felicidad y unidades móviles existentes.",
-    analisis:"El POT nombra este equipamiento como una de las piezas con las que se montan las Manzanas del Cuidado." },
-  { s:"centros-personas-mayores", t:"manzanas_del_cuidado", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:"Sistema Distrital de Manzanas del Cuidado", pagina:"31", cita:"Son jardines infantiles, colegios, parques, bibliotecas, centros de desarrollo comunitario, centros de salud, hospitales, casas de igualdad de oportunidades, centros de atención a personas mayores y con discapacidad, Centros Felicidad y unidades móviles existentes.",
-    analisis:"El POT nombra este equipamiento como una de las piezas con las que se montan las Manzanas del Cuidado." },
-  { s:"centros-felicidad", t:"manzanas_del_cuidado", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:"Sistema Distrital de Manzanas del Cuidado", pagina:"31", cita:"Son jardines infantiles, colegios, parques, bibliotecas, centros de desarrollo comunitario, centros de salud, hospitales, casas de igualdad de oportunidades, centros de atención a personas mayores y con discapacidad, Centros Felicidad y unidades móviles existentes.",
-    analisis:"El POT nombra este equipamiento como una de las piezas con las que se montan las Manzanas del Cuidado." },
-  { s:"unidades-moviles", t:"manzanas_del_cuidado", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:"Sistema Distrital de Manzanas del Cuidado", pagina:"31", cita:"Son jardines infantiles, colegios, parques, bibliotecas, centros de desarrollo comunitario, centros de salud, hospitales, casas de igualdad de oportunidades, centros de atención a personas mayores y con discapacidad, Centros Felicidad y unidades móviles existentes.",
-    analisis:"El POT nombra este equipamiento como una de las piezas con las que se montan las Manzanas del Cuidado." },
   { s:"jardines-infantiles", t:"sistema_de_educacion", cat:"e2-e3", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"La primera infancia es el primer tramo del sistema de educación de la ciudad." },
   { s:"jardines-infantiles", t:"colegios", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
@@ -751,10 +715,6 @@ const RAW_EDGES = [
     analisis:"Los equipos de salud al barrio y la vereda llegan donde no llega el sistema fijo." },
   { s:"unidades-moviles", t:"transporte_publico", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"La unidad móvil depende de la malla vial y del transporte para desplazarse." },
-  { s:"casas-igualdad", t:"comunidades", cat:"e2-e4", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
-    analisis:"Las casas de igualdad trabajan con las organizaciones de mujeres del barrio." },
-  { s:"casas-igualdad", t:"servicios_sociales", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
-    analisis:"Hacen parte de la oferta de servicios sociales del Distrito." },
   { s:"centros-personas-mayores", t:"servicios_sociales", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"Atienden a la población que más depende del trabajo de cuidado." },
   { s:"centros-personas-mayores", t:"comunidades", cat:"e2-e4", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
@@ -763,12 +723,6 @@ const RAW_EDGES = [
     analisis:"Son la infraestructura donde se reúnen las organizaciones de barrio." },
   { s:"centros-desarrollo-comunitario", t:"bibliotecas", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"Comparten programación cultural y educativa de proximidad." },
-  { s:"centros-felicidad", t:"parques", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
-    analisis:"Los Centros Felicidad son la pieza deportiva y recreativa dentro del sistema de parques." },
-  { s:"centros-felicidad", t:"comunidades", cat:"e2-e4", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
-    analisis:"Concentran el uso deportivo y recreativo de los barrios cercanos." },
-  { s:"primera-linea-metro", t:"centros-felicidad", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"39", cita:"A Kennedy, por ejemplo, con la Primera Línea llega una nueva Manzana del Cuidado, un nuevo centro deportivo de alto rendimiento, un velódromo para los jóvenes y deportistas, también un nuevo parque metropolitano.",
-    analisis:"El POT liga la llegada de la primera línea con nuevo equipamiento deportivo y recreativo en Kennedy." },
   { s:"primera-linea-metro", t:"parques", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"39", cita:"también un nuevo parque metropolitano",
     analisis:"Con la primera línea el POT anuncia también un nuevo parque metropolitano." },
   { s:"segunda-linea-metro", t:"colegios", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"39", cita:"A Suba le llegan nuevos colegios y una universidad pública, un logro que lideraron los mismos jóvenes.",
@@ -856,30 +810,10 @@ const RAW_EDGES = [
     analisis:"El cable de San Cristóbal Sur sube hacia el borde de montaña donde está Entrenubes." },
   { s:"cable-potosi", t:"cerro-seco", cat:"e1-e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"38", cita:"También dejamos contratado y en obra la ampliación de la Autopista Norte, la carrera Séptima, la calle 80, la calle 63, la calle 13 y la nueva alo Sur, quedan 231 km adicionales de ciclorrutas, el Corredor Verde de la Séptima, dos cables aéreos: el de San Cristóbal Sur que ya empezó obra para llevar a la gente desde el Portal del 20 de Julio hasta el barrio Altamira, y el cable de Potosí, para ir desde el Portal del Sur, hasta el barrio Potosí.",
     analisis:"El cable de Potosí llega al borde de Ciudad Bolívar, donde está el Parque Ecológico Cerro Seco." },
-  { s:"hospital-kennedy", t:"manzanas_del_cuidado", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"31", cita:"Son jardines infantiles, colegios, parques, bibliotecas, centros de desarrollo comunitario, centros de salud, hospitales, casas de igualdad de oportunidades, centros de atención a personas mayores y con discapacidad, Centros Felicidad y unidades móviles existentes.",
-    analisis:"El POT cuenta los hospitales entre las piezas con las que se montan las Manzanas del Cuidado." },
-  { s:"hospital-bosa", t:"manzanas_del_cuidado", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"31", cita:"Son jardines infantiles, colegios, parques, bibliotecas, centros de desarrollo comunitario, centros de salud, hospitales, casas de igualdad de oportunidades, centros de atención a personas mayores y con discapacidad, Centros Felicidad y unidades móviles existentes.",
-    analisis:"El POT cuenta los hospitales entre las piezas con las que se montan las Manzanas del Cuidado." },
-  { s:"hospital-tintal", t:"manzanas_del_cuidado", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"31", cita:"Son jardines infantiles, colegios, parques, bibliotecas, centros de desarrollo comunitario, centros de salud, hospitales, casas de igualdad de oportunidades, centros de atención a personas mayores y con discapacidad, Centros Felicidad y unidades móviles existentes.",
-    analisis:"El POT cuenta los hospitales entre las piezas con las que se montan las Manzanas del Cuidado." },
-  { s:"hospital-tunal", t:"manzanas_del_cuidado", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"31", cita:"Son jardines infantiles, colegios, parques, bibliotecas, centros de desarrollo comunitario, centros de salud, hospitales, casas de igualdad de oportunidades, centros de atención a personas mayores y con discapacidad, Centros Felicidad y unidades móviles existentes.",
-    analisis:"El POT cuenta los hospitales entre las piezas con las que se montan las Manzanas del Cuidado." },
-  { s:"hospital-usme", t:"manzanas_del_cuidado", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"31", cita:"Son jardines infantiles, colegios, parques, bibliotecas, centros de desarrollo comunitario, centros de salud, hospitales, casas de igualdad de oportunidades, centros de atención a personas mayores y con discapacidad, Centros Felicidad y unidades móviles existentes.",
-    analisis:"El POT cuenta los hospitales entre las piezas con las que se montan las Manzanas del Cuidado." },
-  { s:"hospital-engativa", t:"manzanas_del_cuidado", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"31", cita:"Son jardines infantiles, colegios, parques, bibliotecas, centros de desarrollo comunitario, centros de salud, hospitales, casas de igualdad de oportunidades, centros de atención a personas mayores y con discapacidad, Centros Felicidad y unidades móviles existentes.",
-    analisis:"El POT cuenta los hospitales entre las piezas con las que se montan las Manzanas del Cuidado." },
-  { s:"hospital-meissen", t:"manzanas_del_cuidado", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"31", cita:"Son jardines infantiles, colegios, parques, bibliotecas, centros de desarrollo comunitario, centros de salud, hospitales, casas de igualdad de oportunidades, centros de atención a personas mayores y con discapacidad, Centros Felicidad y unidades móviles existentes.",
-    analisis:"El POT cuenta los hospitales entre las piezas con las que se montan las Manzanas del Cuidado." },
-  { s:"hospital-simon-bolivar", t:"manzanas_del_cuidado", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"31", cita:"Son jardines infantiles, colegios, parques, bibliotecas, centros de desarrollo comunitario, centros de salud, hospitales, casas de igualdad de oportunidades, centros de atención a personas mayores y con discapacidad, Centros Felicidad y unidades móviles existentes.",
-    analisis:"El POT cuenta los hospitales entre las piezas con las que se montan las Manzanas del Cuidado." },
   { s:"hospital-kennedy", t:"hospital-tintal", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"25", cita:"Dejamos 5 nuevos hospitales entregados: Kennedy, Meissen, Bosa, Tintal y Unidad de Cirugía del Simón Bolívar, 3 en obra: Tunal, Usme y Engativá.",
     analisis:"El POT los nombra como parte de la misma tanda de hospitales nuevos." },
   { s:"hospital-tunal", t:"avenida-boyacá", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"El hospital queda sobre el corredor de la Avenida Boyacá." },
-  { s:"biblioteca-el-tintal", t:"manzanas_del_cuidado", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"31", cita:"Son jardines infantiles, colegios, parques, bibliotecas, centros de desarrollo comunitario, centros de salud, hospitales, casas de igualdad de oportunidades, centros de atención a personas mayores y con discapacidad, Centros Felicidad y unidades móviles existentes.",
-    analisis:"El POT cuenta las bibliotecas entre las piezas de las Manzanas del Cuidado." },
-  { s:"biblioteca-el-tintal", t:"techo", cat:"e1-e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
-    analisis:"La biblioteca está en el borde del sistema de humedales de Kennedy." },
   { s:"universidad-suba", t:"segunda-linea-metro", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"39", cita:"A Suba le llegan nuevos colegios y una universidad pública, un logro que lideraron los mismos jóvenes. Además, una biblioteca, un centro cultural por el que ha luchado el Cabildo Muisca.",
     analisis:"El POT liga la llegada del metro a Suba con una universidad pública nueva." },
   { s:"universidad-suba", t:"cabildo-muisca-suba", cat:"e2-e4", tipo:"indirecta", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"39", cita:"A Suba le llegan nuevos colegios y una universidad pública, un logro que lideraron los mismos jóvenes. Además, una biblioteca, un centro cultural por el que ha luchado el Cabildo Muisca.",
@@ -888,8 +822,6 @@ const RAW_EDGES = [
     analisis:"El territorio muisca de Suba incluye el humedal La Conejera." },
   { s:"cabildo-muisca-suba", t:"juan-amarillotibabuyes", cat:"e1-e4", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"Tibabuyes es topónimo muisca y territorio del cabildo." },
-  { s:"centros-felicidad", t:"primera-linea-metro", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"39", cita:"A Kennedy, por ejemplo, con la Primera Línea llega una nueva Manzana del Cuidado, un nuevo centro deportivo de alto rendimiento, un velódromo para los jóvenes y deportistas, también un nuevo parque metropolitano.",
-    analisis:"Con la primera línea del metro el POT anuncia equipamiento deportivo nuevo en Kennedy." },
   { s:"zona-restrepo", t:"avenida-primero-de-mayo", cat:"e2-e3", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"La zona productiva del Restrepo está sobre este corredor." },
   { s:"zona-restrepo", t:"distrito_centro_tecnologico_e_innovacion", cat:"e3", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"—", cita:"El pot protege a las zonas productivas históricas de la expulsión, como al Restrepo o el 12 de Octubre y potencia la oferta de suelo para la localización de nuevas empresas.",
@@ -923,7 +855,60 @@ const RAW_EDGES = [
     analisis:"Cruce físico: el corredor de la calle 63 atraviesa el cauce del río Salitre." },
   { s:"calle-63", t:"carrera-7", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"38",
     cita:"También dejamos contratado y en obra la ampliación de la Autopista Norte, la carrera Séptima, la calle 80, la calle 63, la calle 13 y la nueva alo Sur.",
-    analisis:"El POT deja contratada la ampliación de los dos corredores en la misma obra de la malla arterial." }
+    analisis:"El POT deja contratada la ampliación de los dos corredores en la misma obra de la malla arterial." },
+
+  /* ---- Obras, portales, hospitales y equipamientos de Suba, tal como los
+     enumera el POT: cada relación sale de una frase del documento. */
+  { s:"autopista-norte", t:"carrera-7", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"38", cita:"También dejamos contratado y en obra la ampliación de la Autopista Norte, la carrera Séptima, la calle 80, la calle 63, la calle 13 y la nueva alo Sur, quedan 231 km adicionales de ciclorrutas, el Corredor Verde de la Séptima, dos cables aéreos: el de San Cristóbal Sur que ya empezó obra para llevar a la gente desde el Portal del 20 de Julio hasta el barrio Altamira, y el cable de Potosí, para ir desde el Portal del Sur, hasta el barrio Potosí.",
+    analisis:"El POT deja contratada la ampliación de estos corredores en la misma obra de la malla arterial." },
+  { s:"carrera-7", t:"calle-80", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"38", cita:"También dejamos contratado y en obra la ampliación de la Autopista Norte, la carrera Séptima, la calle 80, la calle 63, la calle 13 y la nueva alo Sur, quedan 231 km adicionales de ciclorrutas, el Corredor Verde de la Séptima, dos cables aéreos: el de San Cristóbal Sur que ya empezó obra para llevar a la gente desde el Portal del 20 de Julio hasta el barrio Altamira, y el cable de Potosí, para ir desde el Portal del Sur, hasta el barrio Potosí.",
+    analisis:"El POT deja contratada la ampliación de estos corredores en la misma obra de la malla arterial." },
+  { s:"calle-80", t:"calle-63", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"38", cita:"También dejamos contratado y en obra la ampliación de la Autopista Norte, la carrera Séptima, la calle 80, la calle 63, la calle 13 y la nueva alo Sur, quedan 231 km adicionales de ciclorrutas, el Corredor Verde de la Séptima, dos cables aéreos: el de San Cristóbal Sur que ya empezó obra para llevar a la gente desde el Portal del 20 de Julio hasta el barrio Altamira, y el cable de Potosí, para ir desde el Portal del Sur, hasta el barrio Potosí.",
+    analisis:"El POT deja contratada la ampliación de estos corredores en la misma obra de la malla arterial." },
+  { s:"calle-63", t:"calle-13", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"38", cita:"También dejamos contratado y en obra la ampliación de la Autopista Norte, la carrera Séptima, la calle 80, la calle 63, la calle 13 y la nueva alo Sur, quedan 231 km adicionales de ciclorrutas, el Corredor Verde de la Séptima, dos cables aéreos: el de San Cristóbal Sur que ya empezó obra para llevar a la gente desde el Portal del 20 de Julio hasta el barrio Altamira, y el cable de Potosí, para ir desde el Portal del Sur, hasta el barrio Potosí.",
+    analisis:"El POT deja contratada la ampliación de estos corredores en la misma obra de la malla arterial." },
+  { s:"calle-13", t:"alo-sur", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"38", cita:"También dejamos contratado y en obra la ampliación de la Autopista Norte, la carrera Séptima, la calle 80, la calle 63, la calle 13 y la nueva alo Sur, quedan 231 km adicionales de ciclorrutas, el Corredor Verde de la Séptima, dos cables aéreos: el de San Cristóbal Sur que ya empezó obra para llevar a la gente desde el Portal del 20 de Julio hasta el barrio Altamira, y el cable de Potosí, para ir desde el Portal del Sur, hasta el barrio Potosí.",
+    analisis:"El POT deja contratada la ampliación de estos corredores en la misma obra de la malla arterial." },
+  { s:"autopista-norte", t:"torca-guaymaral", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Cruce físico: la Autopista Norte atraviesa el humedal de Torca-Guaymaral." },
+  { s:"autopista-norte", t:"reserva-van-der-hammen", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Cruce físico: el corredor atraviesa la franja de la Reserva Thomas van der Hammen." },
+  { s:"cable-san-cristobal", t:"portal-20-de-julio", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"38", cita:"También dejamos contratado y en obra la ampliación de la Autopista Norte, la carrera Séptima, la calle 80, la calle 63, la calle 13 y la nueva alo Sur, quedan 231 km adicionales de ciclorrutas, el Corredor Verde de la Séptima, dos cables aéreos: el de San Cristóbal Sur que ya empezó obra para llevar a la gente desde el Portal del 20 de Julio hasta el barrio Altamira, y el cable de Potosí, para ir desde el Portal del Sur, hasta el barrio Potosí.",
+    analisis:"El cable de San Cristóbal Sur arranca en el Portal del 20 de Julio." },
+  { s:"cable-potosi", t:"portal-del-sur", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"38", cita:"También dejamos contratado y en obra la ampliación de la Autopista Norte, la carrera Séptima, la calle 80, la calle 63, la calle 13 y la nueva alo Sur, quedan 231 km adicionales de ciclorrutas, el Corredor Verde de la Séptima, dos cables aéreos: el de San Cristóbal Sur que ya empezó obra para llevar a la gente desde el Portal del 20 de Julio hasta el barrio Altamira, y el cable de Potosí, para ir desde el Portal del Sur, hasta el barrio Potosí.",
+    analisis:"El cable de Potosí arranca en el Portal del Sur." },
+  { s:"portal-20-de-julio", t:"avenida-caracas", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"El portal es la cabecera sur del corredor troncal de la Caracas." },
+  { s:"portal-del-sur", t:"avenida-villavicencio", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"El Portal del Sur es la cabecera del corredor de la Avenida Villavicencio." },
+  { s:"hospital-kennedy", t:"hospital-meissen", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"25", cita:"Dejamos 5 nuevos hospitales entregados: Kennedy, Meissen, Bosa, Tintal y Unidad de Cirugía del Simón Bolívar, 3 en obra: Tunal, Usme y Engativá.",
+    analisis:"El POT los deja entregados en la misma tanda de hospitales nuevos." },
+  { s:"hospital-meissen", t:"hospital-bosa", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"25", cita:"Dejamos 5 nuevos hospitales entregados: Kennedy, Meissen, Bosa, Tintal y Unidad de Cirugía del Simón Bolívar, 3 en obra: Tunal, Usme y Engativá.",
+    analisis:"El POT los deja entregados en la misma tanda de hospitales nuevos." },
+  { s:"hospital-bosa", t:"hospital-tintal", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"25", cita:"Dejamos 5 nuevos hospitales entregados: Kennedy, Meissen, Bosa, Tintal y Unidad de Cirugía del Simón Bolívar, 3 en obra: Tunal, Usme y Engativá.",
+    analisis:"El POT los deja entregados en la misma tanda de hospitales nuevos." },
+  { s:"hospital-tintal", t:"hospital-simon-bolivar", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"25", cita:"Dejamos 5 nuevos hospitales entregados: Kennedy, Meissen, Bosa, Tintal y Unidad de Cirugía del Simón Bolívar, 3 en obra: Tunal, Usme y Engativá.",
+    analisis:"El POT los deja entregados en la misma tanda de hospitales nuevos." },
+  { s:"hospital-tunal", t:"hospital-usme", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"25", cita:"Dejamos 5 nuevos hospitales entregados: Kennedy, Meissen, Bosa, Tintal y Unidad de Cirugía del Simón Bolívar, 3 en obra: Tunal, Usme y Engativá.",
+    analisis:"El POT los deja en obra en la misma tanda de hospitales nuevos." },
+  { s:"hospital-usme", t:"hospital-engativa", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"25", cita:"Dejamos 5 nuevos hospitales entregados: Kennedy, Meissen, Bosa, Tintal y Unidad de Cirugía del Simón Bolívar, 3 en obra: Tunal, Usme y Engativá.",
+    analisis:"El POT los deja en obra en la misma tanda de hospitales nuevos." },
+  { s:"hospital-simon-bolivar", t:"hospital-tunal", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"25", cita:"Dejamos 5 nuevos hospitales entregados: Kennedy, Meissen, Bosa, Tintal y Unidad de Cirugía del Simón Bolívar, 3 en obra: Tunal, Usme y Engativá.",
+    analisis:"La misma frase separa los cinco hospitales entregados de los tres que quedan en obra." },
+  { s:"hospital-kennedy", t:"avenida-primero-de-mayo", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"El hospital de Kennedy está sobre el corredor de la Avenida Primero de Mayo." },
+  { s:"hospital-tunal", t:"avenida-boyacá", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"El hospital del Tunal está sobre el corredor de la Avenida Boyacá." },
+  { s:"hospital-engativa", t:"calle-80", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"El hospital de Engativá está sobre el corredor de la calle 80." },
+  { s:"hospital-meissen", t:"cable-potosi", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"El cable de Potosí sube por la ladera donde está el hospital de Meissen." },
+  { s:"biblioteca-de-suba", t:"universidad-suba", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"39", cita:"A Suba le llegan nuevos colegios y una universidad pública, un logro que lideraron los mismos jóvenes. Además, una biblioteca, un centro cultural por el que ha luchado el Cabildo Muisca.",
+    analisis:"El POT anuncia los tres con la llegada del metro a Suba, en la misma frase." },
+  { s:"biblioteca-de-suba", t:"cabildo-muisca-suba", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"39", cita:"A Suba le llegan nuevos colegios y una universidad pública, un logro que lideraron los mismos jóvenes. Además, una biblioteca, un centro cultural por el que ha luchado el Cabildo Muisca.",
+    analisis:"El POT anuncia los tres con la llegada del metro a Suba, en la misma frase." },
+  { s:"biblioteca-de-suba", t:"segunda-linea-metro", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"39", cita:"A Suba le llegan nuevos colegios y una universidad pública, un logro que lideraron los mismos jóvenes. Además, una biblioteca, un centro cultural por el que ha luchado el Cabildo Muisca.",
+    analisis:"El POT anuncia los tres con la llegada del metro a Suba, en la misma frase." }
 ];
 RAW_EDGES.push(
   { s:"avenida-boyacá", t:"avenida-ciudad-de-cali", tipo:"directa", relacion:"Soporte", cat:"e2", fuente:"por_verificar", analisis:"Conexión prioritaria solicitada para lectura de la malla vial principal." },
@@ -1162,7 +1147,7 @@ const nodosApagados = new Set();
    que usa la simulación de apagado, para que al encender y apagar los
    tamaños vuelvan exactamente a donde estaban. */
 function radioPorGrado(d, apagado) {
-  return apagado ? 48 : 46 + Math.sqrt(d) * 20;
+  return apagado ? 40 : 40 + d * 8.5;   // la fuerza nodal se ve: cada relación suma tamaño
 }
 
 /* Radio mínimo para que el nombre no tenga que partirse a la mitad: los
@@ -1171,7 +1156,7 @@ function radioPorGrado(d, apagado) {
    diferencia de tamaño entre un hub y un elemento periférico. */
 function radioParaNombre(nombre) {
   const larga = String(nombre || "").split(/[\s\n]+/).reduce((a, p) => Math.max(a, p.length), 1);
-  return Math.min(70, larga * 5.4);
+  return Math.min(66, larga * 5.6);   // lo justo para que el nombre no se parta, sin borrar la diferencia de tamaño
 }
 
 /* Separación entre bolas: ninguna puede tocar a otra. Con resorte, cada
@@ -1226,74 +1211,109 @@ function layoutNetwork() {
 
   const nodes = DISPLAY_NODES;   // solo la red que se dibuja
 
-  /* ---- Reparto parejo por todo el lienzo ----
-     Ni rueda ni racimos: los 80 elementos se reparten por todo el lienzo
-     —arrancando de una retícula en espiral que ya queda separada— y luego
-     cada uno se acerca a los elementos con los que se relaciona, sin que
-     dos bolas puedan tocarse nunca. El tamaño lo sigue marcando el número
-     de relaciones de cada uno. */
+  /* ---- Reparto parejo, y de varios intentos se queda el más limpio ----
+     El trazado no se deja al azar ni a un parámetro elegido a ojo: se prueban
+     varias semillas de reparto, y de cada una se cuentan los CRUCES DE LÍNEA
+     y las líneas que pasan por encima de un nodo ajeno. Se dibuja la que
+     menos deja. Dentro de cada intento, los elementos que se relacionan se
+     atraen entre sí (por eso terminan cerca los que están conectados) y
+     ninguna bola puede tocar a otra. */
   const cx0 = CANVAS.w / 2, cy0 = CANVAS.h / 2;
   const gradoDe = (n) => deg[n.id] || 0;
-
-  // 1) semilla: espiral de Fermat sobre todo el lienzo, los más conectados
-  //    hacia el centro (así sus muchas líneas quedan cortas)
-  const ordenados = [...nodes].sort((a, b) => gradoDe(b) - gradoDe(a));
-  const rMax = Math.min(CANVAS.w, CANVAS.h) / 2 - 130;
-  ordenados.forEach((n, i) => {
-    const t = (i + 0.5) / ordenados.length;
-    const rad = rMax * Math.sqrt(t);
-    const ang = i * 2.399963;
-    n.collR = n.r;
-    n.x = cx0 + Math.cos(ang) * rad * (CANVAS.w / CANVAS.h);
-    n.y = cy0 + Math.sin(ang) * rad;
-    n.isMainHub = (HUB_IDS.indexOf(n.id) !== -1);
-    if (n.isMainHub) n._outwardAngle = ang;
-  });
-  nodes.forEach((n) => {
-    n.x = Math.max(n.collR + 40, Math.min(CANVAS.w - n.collR - 40, n.x));
-    n.y = Math.max(n.collR + 40, Math.min(CANVAS.h - n.collR - 40, n.y));
-  });
-  separarNodos(nodes, false, 240);
-
-  // 2) coherencia: cada nodo se acerca a los elementos con los que se
-  //    relaciona (fuerza suave) y a la vez nadie puede quedar encima de otro
   const vecinosDe = new Map(nodes.map((n) => [n.id, []]));
   RAW_EDGES.forEach((e) => {
     if (e.tipo === "vacio" || !relacionVisible(e)) return;
     vecinosDe.get(e.s)?.push(e.t);
     vecinosDe.get(e.t)?.push(e.s);
   });
-  // 0.13 no es un número al azar: con la red ya podada se probaron varias
-  // fuerzas midiendo los cruces de líneas, y esta es la que menos deja
-  // (528 cruces con la fuerza anterior, 160 con esta).
-  const K_VECINO = 0.13;
-  for (let pass = 0; pass < 300; pass++) {
-    nodes.forEach((n) => {
-      const vs = vecinosDe.get(n.id) || [];
-      if (!vs.length) return;
-      let vx = 0, vy = 0, cuenta = 0;
-      vs.forEach((id) => { const v = nodeById(id); if (v && DISPLAY_NODE_IDS.has(id)) { vx += v.x; vy += v.y; cuenta++; } });
-      if (!cuenta) return;
-      n.x += (vx / cuenta - n.x) * K_VECINO;
-      n.y += (vy / cuenta - n.y) * K_VECINO;
-    });
-    // un empujón hacia afuera desde el centro evita que todo se apiñe
-    nodes.forEach((n) => {
-      const dx = n.x - cx0, dy = n.y - cy0;
-      const d = Math.hypot(dx, dy) || 1;
-      const objetivo = rMax * 0.72;
-      if (d < objetivo) {
-        const f = (objetivo - d) * 0.004;
-        n.x += (dx / d) * f; n.y += (dy / d) * f;
+  const parejas = RAW_EDGES.filter((e) => e.tipo !== "vacio" && relacionVisible(e))
+    .map((e) => [nodeById(e.s), nodeById(e.t)]).filter(([a, b]) => a && b);
+
+  function costeTrazado() {
+    const seCruzan = (a, b, c, d) => {
+      const f = (p1, p2, p3) => (p3.y - p1.y) * (p2.x - p1.x) - (p2.y - p1.y) * (p3.x - p1.x);
+      const d1 = f(c, d, a), d2 = f(c, d, b), e1 = f(a, b, c), e2 = f(a, b, d);
+      return ((d1 > 0 && d2 < 0) || (d1 < 0 && d2 > 0)) && ((e1 > 0 && e2 < 0) || (e1 < 0 && e2 > 0));
+    };
+    let cruces = 0;
+    for (let i = 0; i < parejas.length; i++) {
+      for (let j = i + 1; j < parejas.length; j++) {
+        const [a, b] = parejas[i], [c, d] = parejas[j];
+        if (a === c || a === d || b === c || b === d) continue;
+        if (seCruzan(a, b, c, d)) cruces++;
       }
+    }
+    let sobreNodos = 0;
+    parejas.forEach(([a, b]) => {
+      const dx = b.x - a.x, dy = b.y - a.y, L2 = dx * dx + dy * dy;
+      if (!L2) return;
+      nodes.forEach((n) => {
+        if (n === a || n === b) return;
+        let t = ((n.x - a.x) * dx + (n.y - a.y) * dy) / L2;
+        t = Math.max(0, Math.min(1, t));
+        if (Math.hypot(a.x + t * dx - n.x, a.y + t * dy - n.y) < n.r * 0.8) sobreNodos++;
+      });
+    });
+    return cruces + sobreNodos * 2;
+  }
+
+  function unIntento(giro, fuerza) {
+    const ordenados = [...nodes].sort((a, b) => gradoDe(b) - gradoDe(a));
+    const rMax = Math.min(CANVAS.w, CANVAS.h) / 2 - 130;
+    ordenados.forEach((n, i) => {
+      const t = (i + 0.5) / ordenados.length;
+      const rad = rMax * Math.sqrt(t);
+      const ang = giro + i * 2.399963;
+      n.collR = n.r;
+      n.x = cx0 + Math.cos(ang) * rad * (CANVAS.w / CANVAS.h);
+      n.y = cy0 + Math.sin(ang) * rad;
+    });
+    const dentro = () => nodes.forEach((n) => {
       n.x = Math.max(n.collR + 40, Math.min(CANVAS.w - n.collR - 40, n.x));
       n.y = Math.max(n.collR + 40, Math.min(CANVAS.h - n.collR - 40, n.y));
     });
-    separarNodos(nodes, false, 1);
+    dentro();
+    separarNodos(nodes, false, 200);
+    for (let pass = 0; pass < 190; pass++) {
+      nodes.forEach((n) => {
+        const vs = vecinosDe.get(n.id) || [];
+        if (!vs.length) return;
+        let vx = 0, vy = 0, cuenta = 0;
+        vs.forEach((id) => { const v = nodeById(id); if (v && DISPLAY_NODE_IDS.has(id)) { vx += v.x; vy += v.y; cuenta++; } });
+        if (!cuenta) return;
+        n.x += (vx / cuenta - n.x) * fuerza;
+        n.y += (vy / cuenta - n.y) * fuerza;
+      });
+      nodes.forEach((n) => {
+        const dx = n.x - cx0, dy = n.y - cy0;
+        const d = Math.hypot(dx, dy) || 1;
+        const objetivo = rMax * 0.72;
+        if (d < objetivo) { const f = (objetivo - d) * 0.004; n.x += (dx / d) * f; n.y += (dy / d) * f; }
+      });
+      dentro();
+      separarNodos(nodes, false, 1);
+    }
+    separarNodos(nodes, false, 300);
+    return costeTrazado();
   }
 
-  nodes.forEach(n => { n._origX = n.x; n._origY = n.y; });
-  separarNodos(nodes, false, 400);
+  let mejor = null;
+  const GIROS = [0, 0.5, 1.0, 1.6, 2.2, 2.8, 3.4, 4.0];
+  const FUERZAS = [0.13, 0.17, 0.21];
+  GIROS.forEach((giro) => FUERZAS.forEach((fuerza) => {
+    const coste = unIntento(giro, fuerza);
+    if (!mejor || coste < mejor.coste) {
+      mejor = { coste, pos: nodes.map((n) => ({ x: n.x, y: n.y })) };
+    }
+  }));
+  nodes.forEach((n, i) => { n.x = mejor.pos[i].x; n.y = mejor.pos[i].y; });
+  separarNodos(nodes, false, 200);
+  // el "sitio de casa" es la posición final del arranque: así, al volver a
+  // encender un nodo, la red regresa exactamente al dibujo inicial
+  nodes.forEach(n => {
+    n.isMainHub = (HUB_IDS.indexOf(n.id) !== -1);
+    n._origX = n.x; n._origY = n.y;
+  });
 
   nodes.forEach(n => { n.homeX = n.x; n.homeY = n.y; });
 }
@@ -1706,7 +1726,7 @@ function fuenteQueCabe(node) {
   const base = Math.max(node.r * 0.235, 20);
   const ancho = node.r * 1.8 * 0.86;            // ancho útil dentro del círculo
   const cabe = ancho / (9 * 0.66);              // ~9 letras por renglón, 0.66 em cada una
-  return Math.max(17, Math.min(base, cabe));
+  return Math.max(15, Math.min(base, cabe));
 }
 
 function resizeNodeVisual(n) {
@@ -1738,11 +1758,17 @@ function aplicarFuerzaNodal(reacomodar) {
     n._deg = d;
     n.r = apagado ? radioPorGrado(d, true) : Math.max(radioPorGrado(d, false), radioParaNombre(n.name));
     n.collR = n.r;
-    if (n._el) n._el.group.classList.toggle("node-apagado", apagado);
+    if (n._el) {
+      n._el.group.classList.toggle("node-apagado", apagado);
+      // desaparece del dibujo: no queda ni el fantasma
+      n._el.group.style.display = apagado ? "none" : "";
+    }
   });
   document.querySelectorAll(".edge-group").forEach(el => {
     const s = el.dataset.source, t = el.dataset.target;
-    el.classList.toggle("edge-apagada", nodosApagados.has(s) || nodosApagados.has(t));
+    const muerta = nodosApagados.has(s) || nodosApagados.has(t);
+    el.classList.toggle("edge-apagada", muerta);
+    el.style.display = muerta ? "none" : "";
   });
   if (reacomodar === false) {
     DISPLAY_NODES.forEach(resizeNodeVisual);
@@ -1781,7 +1807,9 @@ function relajarRed(nodes) {
     const base = n._degBase || 0, ahora = deg[n.id] || 0;
     perdida.set(n.id, base > 0 && activo(n.id) ? Math.max(0, (base - ahora) / base) : 0);
   });
-  if (![...perdida.values()].some(v => v > 0)) { separarNodos(nodes, true, 60); return; }
+  // Sin nada apagado, cada bola vuelve exactamente a su sitio de arranque
+  // (con 60 pasadas se quedaba a medio camino).
+  if (![...perdida.values()].some(v => v > 0)) { separarNodos(nodes, true, 240); return; }
 
   const K_VECINOS = 0.09, K_CASA = 0.05;
   for (let pass = 0; pass < 260; pass++) {
