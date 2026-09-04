@@ -7956,14 +7956,14 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 }
 
 .map-network-stage.is-full-dynamics-active .full-dynamic-node:hover {
-  transform: translate(-50%, -50%) scale(1.18) !important;
+  transform: translate(-50%, -50%) scale(calc(var(--node-scale, 1) * 1.18)) !important;
   z-index: 150 !important;
   border-color: #ffffff !important;
   box-shadow: 0 0 28px var(--node-color, #46d6d0), 0 0 45px var(--node-color, #46d6d0), 0 12px 30px rgba(0,0,0,1) !important;
 }
 
 .map-network-stage.is-full-dynamics-active .full-dynamic-node.is-active {
-  transform: translate(-50%, -50%) scale(1.22) !important;
+  transform: translate(-50%, -50%) scale(calc(var(--node-scale, 1) * 1.22)) !important;
   z-index: 200 !important;
   border-color: #ffd166 !important;
   box-shadow: 0 0 0 3px rgba(255, 209, 102, 0.5), 0 0 32px #ffd166, 0 12px 30px rgba(0,0,0,1) !important;
@@ -8093,21 +8093,21 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 
 /* Estado Expandido / Acomodado */
 .map-network-stage.is-full-dynamics-active.is-bloomed .full-dynamic-node {
-  left: var(--node-final-x) !important;
-  top: var(--node-final-y) !important;
-  transform: translate(-50%, -50%) scale(1) !important;
+  left: var(--node-x) !important;
+  top: var(--node-y) !important;
+  transform: translate(-50%, -50%) scale(var(--node-scale, 1)) !important;
   opacity: 1 !important;
 }
 
 .map-network-stage.is-full-dynamics-active .full-dynamic-node:hover {
-  transform: translate(-50%, -50%) scale(1.18) !important;
+  transform: translate(-50%, -50%) scale(calc(var(--node-scale, 1) * 1.18)) !important;
   z-index: 150 !important;
   border-color: #ffffff !important;
   box-shadow: 0 0 28px var(--node-color, #46d6d0), 0 0 45px var(--node-color, #46d6d0), 0 12px 30px rgba(0,0,0,1) !important;
 }
 
 .map-network-stage.is-full-dynamics-active .full-dynamic-node.is-active {
-  transform: translate(-50%, -50%) scale(1.22) !important;
+  transform: translate(-50%, -50%) scale(calc(var(--node-scale, 1) * 1.22)) !important;
   z-index: 200 !important;
   border-color: #ffd166 !important;
   box-shadow: 0 0 0 3px rgba(255, 209, 102, 0.5), 0 0 32px #ffd166, 0 12px 30px rgba(0,0,0,1) !important;

@@ -2049,31 +2049,29 @@
       }
 
       const players = {
-        // 1. Dinámica hídrica: flujo de agua y gotas cristalinas de lluvia
+        // 1. Dinámica hídrica: agua de río fluyendo, muy calmada y continua
         hidrica: (c) => {
-          const dur = 2.4;
-          playFilteredNoise(c, { duration: dur, filterFreq: 1800, filterType: "bandpass", q: 0.6, gain: 0.14, fadeIn: 0.15, fadeOut: dur, lfoRate: 1.8, lfoDepth: 0.45 });
-          playFilteredNoise(c, { duration: dur * 0.8, filterFreq: 3200, filterType: "highpass", q: 0.35, gain: 0.06, fadeIn: 0.1, fadeOut: dur * 0.8 });
-          [0.05, 0.38, 0.75, 1.22, 1.65].forEach((delay, i) => {
-            playTone(c, { freq: 1200 + (i % 3) * 280, to: 800 + (i % 2) * 150, duration: 0.09, type: "sine", gain: 0.12, delay, attack: 0.008 });
-          });
+          const dur = 3.2;
+          playFilteredNoise(c, { duration: dur, filterFreq: 620, filterType: "lowpass", q: 0.5, gain: 0.13, fadeIn: 0.6, fadeOut: dur * 0.9, lfoRate: 0.35, lfoDepth: 0.3 });
+          playFilteredNoise(c, { duration: dur, filterFreq: 950, filterType: "bandpass", q: 0.5, gain: 0.07, fadeIn: 0.8, fadeOut: dur * 0.85, lfoRate: 0.22, lfoDepth: 0.35 });
+          playFilteredNoise(c, { duration: dur * 0.9, filterFreq: 2600, filterType: "highpass", q: 0.3, gain: 0.02, fadeIn: 0.5, fadeOut: dur * 0.8 });
         },
 
-        // 2. Dinámica biótica: trinos de aves del humedal y brisa natural
+        // 2. Dinámica biótica: pajaritos calmados del humedal, trinos suaves y espaciados
         biotica: (c) => {
           const chirp = (delay, baseFreq, count) => {
             let t = delay;
             for (let i = 0; i < count; i++) {
-              const f = baseFreq + (i % 2 ? 240 : -120);
-              const dur = 0.075;
-              playTone(c, { freq: f, to: f * 0.85, duration: dur, type: "triangle", gain: 0.16, delay: t, attack: 0.01 });
-              t += dur + 0.05;
+              const f = baseFreq + (i % 2 ? 60 : -40);
+              const dur = 0.16;
+              playTone(c, { freq: f, to: f * 0.94, duration: dur, type: "sine", gain: 0.09, delay: t, attack: 0.035 });
+              t += dur + 0.22;
             }
           };
-          chirp(0.05, 2600, 3);
-          chirp(0.48, 3100, 2);
-          chirp(0.88, 2400, 4);
-          playFilteredNoise(c, { duration: 1.8, filterFreq: 2400, filterType: "bandpass", q: 0.7, gain: 0.05, fadeIn: 0.2, fadeOut: 1.8 });
+          chirp(0.1, 1900, 2);
+          chirp(0.95, 2150, 2);
+          chirp(1.85, 1750, 2);
+          playFilteredNoise(c, { duration: 2.6, filterFreq: 900, filterType: "lowpass", q: 0.4, gain: 0.035, fadeIn: 0.4, fadeOut: 2.4 });
         },
 
         // 3. Sistema físico-urbano: resonancia arquitectónica y campana urbana
@@ -2084,12 +2082,12 @@
           playFilteredNoise(c, { duration: 1.5, filterFreq: 400, filterType: "lowpass", gain: 0.12, fadeIn: 0.2, fadeOut: 1.5 });
         },
 
-        // 4. Sistema de movilidad: aceleración y tono armónico de tránsito
+        // 4. Sistema de movilidad: motor de vehículo pasando, aceleración y rodadura sobre asfalto
         movilidad: (c) => {
-          playTone(c, { freq: 140, to: 320, duration: 0.85, type: "triangle", gain: 0.16, attack: 0.06 });
-          playTone(c, { freq: 587, duration: 0.45, type: "sine", gain: 0.14, delay: 0.15, attack: 0.02 });
-          playTone(c, { freq: 880, duration: 0.55, type: "sine", gain: 0.12, delay: 0.35, attack: 0.02 });
-          playFilteredNoise(c, { duration: 1.0, filterFreq: 850, filterType: "bandpass", q: 0.6, gain: 0.08, fadeIn: 0.15, fadeOut: 1.0 });
+          playTone(c, { freq: 85, to: 150, duration: 0.9, type: "sawtooth", gain: 0.1, attack: 0.08 });
+          playTone(c, { freq: 60, to: 95, duration: 1.1, type: "triangle", gain: 0.09, delay: 0.05, attack: 0.1 });
+          playFilteredNoise(c, { duration: 1.3, filterFreq: 420, filterType: "lowpass", q: 0.5, gain: 0.12, fadeIn: 0.2, fadeOut: 1.1, lfoRate: 5, lfoDepth: 0.15 });
+          playFilteredNoise(c, { duration: 0.9, filterFreq: 1400, filterType: "bandpass", q: 0.5, gain: 0.04, fadeIn: 0.15, fadeOut: 0.85 });
         },
 
         // 5. Sistema social-comunitario: acorde armónico mayor brillante (comunidad)
@@ -2683,7 +2681,24 @@ const renderTerritoryNetwork = () => {
       { id: "s_cuidado", name: "Cuidado y\nvoluntariado", icon: "fa-hand-holding-heart", systemId: "social", color: "#ee9a4b", x: 46, y: 72, desc: "Jornadas de siembra comunitaria, limpieza de canales y monitoreo biológico.", connects: ["s_vecinos", "se_vivienda", "s_org_amb", "s_conflictos", "s_pedagogia"] },
       { id: "se_vivienda", name: "Vivienda y\nhogares", icon: "fa-house-chimney", systemId: "socioeconomico", color: "#e58d62", x: 32, y: 64, desc: "Unidades habitacionales que demandan servicios, movilidad y espacios de cuidado.", connects: ["s_cuidado", "se_equipamientos", "se_comercio", "s_vecinos"] },
       { id: "se_equipamientos", name: "Manzanas del\nCuidado", icon: "fa-building-shield", systemId: "socioeconomico", color: "#e58d62", x: 26, y: 48, desc: "Equipamientos sociales que reducen sobrecargas en las personas cuidadoras.", connects: ["se_vivienda", "h_infiltra", "se_biblioteca", "se_suelo"] },
-      { id: "h_infiltra", name: "Infiltración\ny suelo húmedo", icon: "fa-water", systemId: "hidrica", color: "#56b8d4", x: 27, y: 36, desc: "Capacidad de absorción natural del suelo y amortiguamiento freático.", connects: ["se_equipamientos", "h_humedales", "h_lluvia", "h_desborde"] }
+      { id: "h_infiltra", name: "Infiltración\ny suelo húmedo", icon: "fa-water", systemId: "hidrica", color: "#56b8d4", x: 27, y: 36, desc: "Capacidad de absorción natural del suelo y amortiguamiento freático.", connects: ["se_equipamientos", "h_humedales", "h_lluvia", "h_desborde"] },
+
+      // --- 3 SUBSISTEMAS NUEVOS (9 nodos), integrados sin tocar las
+      // conexiones de los 30 nodos originales — solo se agregan nodos y
+      // sus propias conexiones hacia el resto de la red. Colores iguales
+      // a los del Módulo 08 para que el mismo subsistema se lea igual en
+      // toda la app. ---
+      { id: "c_jardines", name: "Jardines\ninfantiles", icon: "fa-child-reaching", systemId: "cuidado", color: "#c6a0e9", x: 6, y: 62, desc: "Primera infancia y cuidado diario en los barrios del entorno del humedal.", connects: ["s_cuidado", "se_vivienda", "c_salud_barrial"] },
+      { id: "c_salud_barrial", name: "Puestos de salud\nbarrial", icon: "fa-house-medical", systemId: "cuidado", color: "#c6a0e9", x: 4, y: 48, desc: "Atención primaria de proximidad para las comunidades vecinas.", connects: ["s_vecinos", "se_equipamientos", "c_jardines", "c_espacio_publico"] },
+      { id: "c_espacio_publico", name: "Espacio público\ny plazoletas", icon: "fa-tree-city", systemId: "cuidado", color: "#c6a0e9", x: 14, y: 92, desc: "Andenes, plazoletas y zonas de encuentro que sostienen la vida cotidiana.", connects: ["m_peatonal", "f_andenes", "c_salud_barrial"] },
+
+      { id: "p_memoria_local", name: "Memoria\ndel barrio", icon: "fa-clock-rotate-left", systemId: "patrimonio", color: "#f07bb1", x: 4, y: 10, desc: "Relatos y archivos comunitarios sobre la transformación del territorio.", connects: ["s_org_amb", "s_pedagogia", "p_tradiciones"] },
+      { id: "p_patrimonio_construido", name: "Patrimonio\nconstruido", icon: "fa-landmark", systemId: "patrimonio", color: "#f07bb1", x: 96, y: 10, desc: "Edificaciones y trazados con valor histórico o simbólico para la comunidad.", connects: ["f_edificios", "f_cerramientos", "p_memoria_local"] },
+      { id: "p_tradiciones", name: "Tradiciones y\nsaberes locales", icon: "fa-masks-theater", systemId: "patrimonio", color: "#f07bb1", x: 50, y: 98, desc: "Prácticas culturales y saberes ambientales transmitidos entre generaciones.", connects: ["s_pedagogia", "b_flora", "p_patrimonio_construido"] },
+
+      { id: "i_alcaldia_local", name: "Alcaldía\nlocal", icon: "fa-building-columns", systemId: "institucional", color: "#9d8be8", x: 96, y: 62, desc: "Gestión administrativa y presupuestal del territorio a escala local.", connects: ["s_conflictos", "se_suelo", "i_curaduria"] },
+      { id: "i_curaduria", name: "Curaduría y\nnormativa", icon: "fa-stamp", systemId: "institucional", color: "#9d8be8", x: 98, y: 48, desc: "Licencias y normas urbanísticas que regulan lo que se construye.", connects: ["f_edificios", "se_suelo", "i_alcaldia_local", "i_control_ambiental"] },
+      { id: "i_control_ambiental", name: "Control y vigilancia\nambiental", icon: "fa-clipboard-check", systemId: "institucional", color: "#9d8be8", x: 88, y: 92, desc: "Inspección y seguimiento del cumplimiento de las normas ambientales.", connects: ["h_desborde", "b_refugio", "i_curaduria"] }
     ];
 
     function renderFullSubsystemsNetworkInPlace(target) {
@@ -2693,6 +2708,19 @@ const renderTerritoryNetwork = () => {
 
       const elementPosMap = {};
       UNIFIED_URBAN_ELEMENTS.forEach((el) => { elementPosMap[el.id] = el; });
+
+      // Grado de cada nodo (cuántas conexiones tiene, contando también las
+      // que apuntan hacia él desde otros) — sirve para que los nodos con
+      // más conexiones se vean más grandes que los periféricos.
+      const degreeMap = {};
+      UNIFIED_URBAN_ELEMENTS.forEach((el) => { degreeMap[el.id] = 0; });
+      UNIFIED_URBAN_ELEMENTS.forEach((el) => {
+        (el.connects || []).forEach((targetId) => {
+          if (!elementPosMap[targetId]) return;
+          degreeMap[el.id] = (degreeMap[el.id] || 0) + 1;
+          degreeMap[targetId] = (degreeMap[targetId] || 0) + 1;
+        });
+      });
 
       // Generar líneas de conexión unificadas, coloridas y brillantes entre los 30 nodos
       let unifiedLinesHtml = "";
@@ -2737,12 +2765,16 @@ const renderTerritoryNetwork = () => {
         });
       });
 
-      // Render de los 30 nodos dinámicos unificados
+      // Render de los nodos dinámicos unificados — el tamaño de cada uno
+      // (--node-scale) crece con su grado, para que los más conectados se
+      // vean más grandes que los periféricos.
       const nodesHtml = UNIFIED_URBAN_ELEMENTS.map((el, index) => {
         const formattedName = el.name.replace(/\n/g, "<br>");
+        const degree = degreeMap[el.id] || 0;
+        const nodeScale = Math.max(0.72, Math.min(1.55, 0.72 + Math.sqrt(degree) * 0.24));
         return `
           <button type="button" class="full-dynamic-node" data-elem-id="${el.id}" data-sys-id="${el.systemId}"
-            style="--node-x:${el.x.toFixed(2)}%;--node-y:${el.y.toFixed(2)}%;--node-color:${el.color};--node-delay:${index * 18}ms;--node-index:${index};"
+            style="--node-x:${el.x.toFixed(2)}%;--node-y:${el.y.toFixed(2)}%;--node-color:${el.color};--node-delay:${index * 18}ms;--node-index:${index};--node-scale:${nodeScale.toFixed(3)};"
             title="${el.name.replace(/\n/g, ' ')}">
             <i class="fa-solid ${el.icon} full-node-icon"></i>
             <span class="full-node-label">${formattedName}</span>
@@ -2761,18 +2793,8 @@ const renderTerritoryNetwork = () => {
         </button>
       `;
 
-      // Header pill superior
-      const headerPillHtml = `
-        <div class="full-dynamics-top-bar">
-          <span class="full-dynamics-dot"></span>
-          <strong>RED COMPLETA DE DINÁMICA URBANA</strong>
-          <span class="full-dynamics-sub">· 30 elementos vivos en interacción</span>
-        </div>
-      `;
-
       target.innerHTML = `
         <div class="map-network-stage systems-network is-full-dynamics-active">
-          ${headerPillHtml}
           <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><defs>${defsHtml}</defs>
             <g class="full-unified-layer">${unifiedLinesHtml}</g>
           </svg>
@@ -3278,7 +3300,7 @@ const renderTerritoryNetwork = () => {
       target.classList.add("network-active");
       const flowsSvg = hideAllSystemBubbles ? buildTextBoxesSvg() : "";
       const flowDotsHtml = "";
-      target.innerHTML = `<div class="map-network-stage ${systems ? "systems-network" : "submodels-network"}"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><defs>${defsHtml}</defs><defs>${gradientDefs.join("")}</defs><g class="map-network-flows">${flowsSvg}</g><g class="map-network-bonds">${showBonds ? bonds : ""}</g></svg>${flowDotsHtml}${nodes}${centerHubHtml}${kennedyBoxesHtml}</div>`;
+      target.innerHTML = `<div class="map-network-stage ${systems ? "systems-network" : "submodels-network"}"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><defs>${gradientDefs.join("")}</defs><g class="map-network-flows">${flowsSvg}</g><g class="map-network-bonds">${showBonds ? bonds : ""}</g></svg>${flowDotsHtml}${nodes}${centerHubHtml}${kennedyBoxesHtml}</div>`;
       // Ya existen los rectángulos reales: corrige en el siguiente frame el
       // punto de entrada/salida para que ninguna línea quede suspendida.
       if (hideAllSystemBubbles) requestAnimationFrame(() => updateTextBoxes());
