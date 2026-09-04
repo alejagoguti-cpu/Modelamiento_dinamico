@@ -1568,7 +1568,16 @@ function drawEdges(svg) {
   g.setAttribute("class", "edges-layer");
   // Las líneas aparecen DESPUÉS de que las bolas ya se están formando (no
   // de primeras, que se ve raro) — cada una con su propio pequeño retraso.
-  const edgeBaseDelay = DISPLAY_NODES.length * 70 + 200;
+  const edgeBaseDelay = DISPLAY_NODES.length * 38 + 300;   // las líneas arrancan cuando ya están todas las bolas
+  // Las líneas también aparecen en el orden en que se armó la red: primero
+  // las del elemento más conectado, después las de sus vecinos.
+  const ordenNodo = new Map();
+  ordenDeAparicion().forEach((idx, orden) => { ordenNodo.set(DISPLAY_NODES[idx]?.id, orden); });
+  const prioridad = (e) => Math.max(ordenNodo.get(e.s) ?? 999, ordenNodo.get(e.t) ?? 999);
+  const ordenAristas = new Map();
+  RAW_EDGES.map((e, i) => [i, e]).filter(([, e]) => relacionVisible(e))
+    .sort((a, b) => prioridad(a[1]) - prioridad(b[1]))
+    .forEach(([i], orden) => ordenAristas.set(i, orden));
   let edgeOrderIndex = 0;
   RAW_EDGES.forEach((edge, i) => {
     if (!relacionVisible(edge)) return;
@@ -1590,7 +1599,7 @@ function drawEdges(svg) {
     group.setAttribute("data-source", edge.s);
     group.setAttribute("data-target", edge.t);
     group.style.setProperty("--edge-color", color);
-    group.style.setProperty("--reveal-delay", (edgeBaseDelay + edgeOrderIndex * 12) + "ms");
+    group.style.setProperty("--reveal-delay", (edgeBaseDelay + (ordenAristas.get(i) ?? edgeOrderIndex) * 18) + "ms");
     edgeOrderIndex++;
 
     const hit = document.createElementNS(SVG_NS, "path");
@@ -1624,18 +1633,49 @@ function drawEdges(svg) {
 // dentro — el tamaño (radio, ícono, texto) escala con el grado real, así que
 // los hubs se leen mucho más grandes que la periferia sin dejar de mostrar
 // la etiqueta de cada componente.
+/* Orden en que se arma la red: se arranca del elemento más conectado y se
+   avanza a sus vecinos, y de ahí a los vecinos de esos (recorrido por
+   anchura). Así cada bola que aparece se engancha con algo que ya está en
+   pantalla, y la red se ve armarse en vez de salir a pedazos sueltos. */
+function ordenDeAparicion() {
+  const grado = computeDegrees();
+  const vecinos = new Map(DISPLAY_NODES.map((n) => [n.id, []]));
+  RAW_EDGES.forEach((e) => {
+    if (e.tipo === "vacio" || !relacionVisible(e)) return;
+    vecinos.get(e.s)?.push(e.t);
+    vecinos.get(e.t)?.push(e.s);
+  });
+  const g = (id) => grado[id] || 0;
+  const porGrado = [...DISPLAY_NODES].sort((a, b) => g(b.id) - g(a.id));
+  const indice = new Map(DISPLAY_NODES.map((n, i) => [n.id, i]));
+  const visto = new Set(), orden = [];
+  porGrado.forEach((raiz) => {
+    if (visto.has(raiz.id)) return;
+    const cola = [raiz.id]; visto.add(raiz.id);
+    while (cola.length) {
+      const id = cola.shift();
+      orden.push(indice.get(id));
+      (vecinos.get(id) || [])
+        .sort((x, y) => g(y) - g(x))
+        .forEach((v) => { if (!visto.has(v) && indice.has(v)) { visto.add(v); cola.push(v); } });
+    }
+  });
+  DISPLAY_NODES.forEach((n, i) => { if (!orden.includes(i)) orden.push(i); });
+  return orden;
+}
+
 function drawNodes(svg) {
   const g = document.createElementNS(SVG_NS, "g");
   g.setAttribute("class", "nodes-layer");
   // Orden de aparición aleatorio (no siempre el mismo), para que la red
   // se sienta viva desde el primer instante en vez de aparecer de golpe.
-  const revealOrder = DISPLAY_NODES.map((_, i) => i);
-  for (let i = revealOrder.length - 1; i > 0; i--) {
+  const revealOrder = ordenDeAparicion();
+  for (let i = -1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [revealOrder[i], revealOrder[j]] = [revealOrder[j], revealOrder[i]];
   }
   const revealDelay = {};
-  revealOrder.forEach((nodeIndex, order) => { revealDelay[nodeIndex] = order * 70; });
+  revealOrder.forEach((nodeIndex, order) => { revealDelay[nodeIndex] = order * 38; });
   DISPLAY_NODES.forEach((node, index) => {
     const group = document.createElementNS(SVG_NS, "g");
     group.setAttribute("class", "ods-node ods-node-" + node.cat + (node.isMainHub ? " ods-hub" : " ods-satellite") + " ods-node-reveal");
@@ -2003,7 +2043,37 @@ function physicsStep() {
   if (moving || DISPLAY_NODES.some(n => n.fixed)) requestAnimationFrame(physicsStep);
   else physicsRunning = false;
 }
-function wakePhysics() { if (!physicsRunning) { physicsRunning = true; requestAnimationFrame(physicsStep); } }
+/* El motor de fuerzas viejo (repulsión "extrema") lanzaba el nodo a otro
+   punto del lienzo al soltarlo: se movía, sí, pero terminaba donde nadie lo
+   había puesto. Se deja de usar. Al soltar un nodo, la red hace lo que se
+   espera: el nodo SE QUEDA donde lo pusieron —ese pasa a ser su sitio— y las
+   demás bolas se corren lo justo para que ninguna quede encima de otra. */
+function wakePhysics() { /* sin motor de fuerzas: ver acomodarTrasArrastre */ }
+
+function acomodarTrasArrastre(nodoMovido) {
+  const nodes = DISPLAY_NODES.filter((n) => !nodosApagados.has(n.id));
+  if (!nodes.length) return;
+  nodoMovido._origX = nodoMovido.x; nodoMovido._origY = nodoMovido.y;
+  nodoMovido.homeX = nodoMovido.x; nodoMovido.homeY = nodoMovido.y;
+  const desde = nodes.map((n) => ({ n, x: n.x, y: n.y }));
+  separarNodos(nodes, false, 260);
+  const hasta = nodes.map((n) => ({ x: n.x, y: n.y }));
+  if (animacionRed) cancelAnimationFrame(animacionRed);
+  const t0 = performance.now(), DUR = 420;
+  const suave = (t) => 1 - Math.pow(1 - t, 3);
+  const paso = (ahora) => {
+    const k = suave(Math.min(1, (ahora - t0) / DUR));
+    nodes.forEach((o, i) => { o.x = desde[i].x + (hasta[i].x - desde[i].x) * k; o.y = desde[i].y + (hasta[i].y - desde[i].y) * k; });
+    updatePositions();
+    if (k < 1) animacionRed = requestAnimationFrame(paso);
+    else {
+      animacionRed = null;
+      nodes.forEach((o, i) => { o.x = hasta[i].x; o.y = hasta[i].y; o._origX = o.x; o._origY = o.y; o.homeX = o.x; o.homeY = o.y; });
+      updatePositions();
+    }
+  };
+  animacionRed = requestAnimationFrame(paso);
+}
 
 function attachNodeDragHandler(group, node) {
   const svg = document.getElementById("networkViz");
@@ -2025,13 +2095,13 @@ function attachNodeDragHandler(group, node) {
     if (Math.hypot(e.clientX - startClientX, e.clientY - startClientY) > 4) moved = true;
     const p = toSvgPoint(e.clientX, e.clientY);
     node.x = p.x; node.y = p.y; node.homeX = p.x; node.homeY = p.y; node.vx = 0; node.vy = 0;
-    updatePositions(); wakePhysics();
+    updatePositions();
   });
   function endDrag(e) {
     if (!dragging) return;
     dragging = false; node.fixed = false; group.classList.remove("dragging");
     try { group.releasePointerCapture(e.pointerId); } catch (err) {}
-    if (moved) wakePhysics();
+    if (moved) acomodarTrasArrastre(node);
     if (moved) { group.dataset.suppressClick = "1"; setTimeout(() => { delete group.dataset.suppressClick; }, 0); }
   }
   group.addEventListener("pointerup", endDrag);
@@ -2120,7 +2190,7 @@ function ajustarEncuadreRed() {
   // Si al encuadrar toda la red las bolas quedan diminutas (un teléfono, una
   // ventana angosta), se arranca acercado a un tamaño legible y se recorre
   // arrastrando; el botón de alejar devuelve la vista completa.
-  if (!ajustarEncuadreRed._zoomInicialHecho && svg.clientWidth) {
+  if (!ajustarEncuadreRed._zoomInicialHecho && svg.clientWidth && svg.clientWidth < 760) {
     ajustarEncuadreRed._zoomInicialHecho = true;
     const escala = svg.clientWidth / w;
     const rMin = Math.min(...DISPLAY_NODES.map((n) => n.r || 0).filter((r) => r > 0));
@@ -4459,6 +4529,19 @@ function hideMainConclusionPopup() {
 document.addEventListener("DOMContentLoaded", () => {
   renderNetwork();
   ajustarEncuadreRed();
+  // La red se arma cuando entra en pantalla, no al cargar la página: si no,
+  // la animación pasa mientras el usuario está leyendo arriba.
+  const lienzo = document.querySelector(".network-canvas");
+  if (lienzo) {
+    if ("IntersectionObserver" in window) {
+      const obs = new IntersectionObserver((entradas) => {
+        entradas.forEach((e) => {
+          if (e.isIntersecting) { lienzo.classList.add("red-armada"); obs.disconnect(); }
+        });
+      }, { threshold: 0.25 });
+      obs.observe(lienzo);
+    } else lienzo.classList.add("red-armada");
+  }
   window.addEventListener("resize", ajustarEncuadreRed);
   setupLegendToggle();
   renderMetrics();

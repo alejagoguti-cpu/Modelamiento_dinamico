@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="stylesheet" href="modulo-02.css?v=aristas-y-foco">
+<link rel="stylesheet" href="modulo-02.css?v=tablero-y-animacion">
   <link rel="stylesheet" href="site-theme.css?v=20260823">
   <link rel="stylesheet" href="navigation-unified.css?v=20260824">
   <link rel="stylesheet" href="modulo-02-red-externa.css?v=7-red-original">
@@ -110,14 +110,6 @@
       </div>
 
       <div class="network-body">
-        <div class="network-controls">
-          <div class="network-zoom-controls">
-            <button class="network-zoom-btn" id="networkZoomOut" type="button" title="Alejar" aria-label="Alejar">&minus;</button>
-            <span class="network-zoom-level" id="networkZoomLevel">100%</span>
-            <button class="network-zoom-btn" id="networkZoomReset" type="button" title="Restablecer" aria-label="Restablecer zoom">⟲</button>
-            <button class="network-zoom-btn" id="networkZoomIn" type="button" title="Acercar" aria-label="Acercar">&#43;</button>
-          </div>
-        </div>
         <div class="network-canvas-col">
           <div class="m2re-toolbar-row">
             <div class="m2cat-toolbar-status" id="m2CategoriasStatus">Cargando base de datos…</div>
@@ -154,6 +146,15 @@
           </div>
           <div class="network-canvas">
             <svg id="networkViz" viewBox="0 0 2500 1820" preserveAspectRatio="xMidYMid meet"></svg>
+            <!-- El zoom vive DENTRO del tablero, en su esquina, no flotando arriba -->
+            <div class="network-controls">
+              <div class="network-zoom-controls">
+                <button class="network-zoom-btn" id="networkZoomOut" type="button" title="Alejar" aria-label="Alejar">&minus;</button>
+                <span class="network-zoom-level" id="networkZoomLevel">100%</span>
+                <button class="network-zoom-btn" id="networkZoomReset" type="button" title="Restablecer" aria-label="Restablecer zoom">⟲</button>
+                <button class="network-zoom-btn" id="networkZoomIn" type="button" title="Acercar" aria-label="Acercar">&#43;</button>
+              </div>
+            </div>
             <aside class="m2-conclusiones" id="m2Conclusiones" hidden></aside>
             <aside class="m2re-ficha" id="m2reFicha" hidden></aside>
             <aside class="m2re-conclusiones" id="m2reConclusiones" hidden></aside>
@@ -491,7 +492,7 @@
 
 </div>
 
-<script src="modulo-02.js?v=trazado-medido"></script>
+<script src="modulo-02.js?v=tablero-y-animacion"></script>
 <script src="modulo-02-red-externa.js?v=12-red-original"></script>
 
 </body>

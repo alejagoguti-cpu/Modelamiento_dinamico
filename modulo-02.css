@@ -2171,3 +2171,34 @@ footer span { color: var(--teal); }
 }
 .ods-node.node-focus-on { opacity: 1; }
 .edge-group, .ods-node { transition: opacity .2s ease; }
+
+/* ==========================================================
+   El zoom, dentro del tablero de la red
+   ========================================================== */
+.network-canvas > .network-controls {
+  position: absolute; top: 12px; right: 12px; z-index: 22;
+  display: flex; margin: 0;
+}
+.network-canvas > .network-controls .network-zoom-controls {
+  display: flex; align-items: center; gap: 4px;
+  background: rgba(6,9,13,.88); border: 1px solid var(--border);
+  border-radius: 10px; padding: 5px 7px;
+  box-shadow: 0 6px 18px rgba(0,0,0,.5);
+  backdrop-filter: blur(3px);
+}
+.network-canvas > .network-controls .network-zoom-btn {
+  width: 28px; height: 28px; border-radius: 7px; cursor: pointer;
+  background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.14);
+  color: #dbe3ea; font-size: 14px; line-height: 1;
+}
+.network-canvas > .network-controls .network-zoom-btn:hover { background: rgba(255,255,255,.16); color: #fff; }
+.network-canvas > .network-controls .network-zoom-level {
+  min-width: 44px; text-align: center; font-size: 11.5px; color: #9fb0bd; font-variant-numeric: tabular-nums;
+}
+
+/* La red se queda "cerrada" hasta que entra en pantalla: ahí arrancan las
+   animaciones de aparición (bola por bola y después línea por línea). */
+.network-canvas:not(.red-armada) .ods-node-reveal,
+.network-canvas:not(.red-armada) .edge-group-reveal {
+  animation-play-state: paused;
+}
