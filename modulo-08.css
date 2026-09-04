@@ -907,16 +907,19 @@ footer span { color: var(--teal); }
    con la fórmula sola, como una lámina invertida — fondo negro, letra
    blanca — sin ningún texto explicativo alrededor. */
 #agentFormulaModal .noise-formula-modal-box {
-  width: min(420px, 90%); max-height: none; padding: 14px 18px 22px;
+  width: min(460px, 92vw); max-height: none; padding: 14px 18px 22px;
   background: #000; border-color: rgba(255,255,255,.18);
 }
+#agentFormulaModal .formula-display { font-size: 21px; }
 #agentFormulaModal .noise-formula-modal-head h4 { color: rgba(255,255,255,.75); font-size: 12px; }
 .formula-display {
-  display: flex; align-items: center; justify-content: center; flex-wrap: wrap;
+  display: flex; align-items: center; justify-content: center; flex-wrap: nowrap;
   gap: 6px; padding: 22px 6px 10px; color: #fff;
   font-family: 'Cambria Math', 'STIX Two Math', Georgia, 'Times New Roman', serif;
   font-style: italic; font-size: 24px; letter-spacing: .01em;
+  overflow-x: auto; max-width: 100%;
 }
+.formula-display > * { flex-shrink: 0; }
 .formula-display sub { font-size: .62em; }
 .formula-paren { font-size: 1.5em; font-style: normal; line-height: 1; }
 .formula-frac { display: inline-flex; flex-direction: column; align-items: center; margin: 0 2px; line-height: 1.15; }
