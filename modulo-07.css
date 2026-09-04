@@ -6728,6 +6728,7 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 .forrester-svg { width: 100%; height: auto; display: block; }
 .forrester-legend { display: flex; flex-wrap: wrap; gap: 14px 18px; margin-top: 14px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,.1); }
 .forrester-legend span { display: flex; align-items: center; gap: 6px; font-size: 11px; color: rgba(242,236,227,.75); }
+.causal-loop-intro { font-size: 12.5px; line-height: 1.6; color: rgba(242,236,227,.85); margin: 0 0 16px; }
 .combined-network-svg { width: 100%; height: 100%; display: block; }
 .combined-hub-line { stroke: rgba(255,255,255,.14); stroke-width: 1; }
 .combined-sat-line { stroke: var(--node-color, #76fff0); stroke-width: .7; opacity: .35; }

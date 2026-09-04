@@ -1581,12 +1581,12 @@
       { id: "socioeconomico", label: "Sistema socioeconómico y de ocupación", color: "#e58d62", description: "Viviendas, actividades económicas, servicios, equipamientos, usos del suelo y población." }
     ];
     const submodelRows = [
-      { id: "hidrica", name: "Modelo de Manejo de Agua y Drenaje", purpose: "Comprender las dinámicas de permeabilidad de los suelos y el funcionamiento del drenaje hídrico natural frente a los flujos de escorrentía en el territorio urbano de Bogotá.", parts: "Sistema hídrico + sistema físico-urbano + sistema institucional de gestión.", partsPurpose: "Sí", partsWhy: "El sistema hídrico y la infraestructura no tienen propósitos propios, pero el sistema institucional sí tiene objetivos y decide sobre mantenimiento, drenaje, residuos y obras.", totalPurpose: "Sí", totalWhy: "Analiza cómo circula el agua y cómo las obras, los residuos y las decisiones de manejo modifican ese flujo.", category: "Socioecológico dinámico", process: "Cambian la lluvia, el nivel del agua, la escorrentía, los sedimentos, la capacidad de almacenamiento, el estado del canal y las acciones de mantenimiento." },
-      { id: "biotica", name: "Modelo de Conservación de Especies y Hábitats", purpose: "Analizar la estructura de los ecosistemas urbanos (cerros, ríos y humedales) y las condiciones físicas reales que posibilitan la migración, reproducción y supervivencia de las especies nativas de la ciudad.", parts: "Sistema biótico + sistema hídrico + sistema físico-urbano.", partsPurpose: "Sí", partsWhy: "El sistema biótico incluye organismos que actúan para alimentarse, refugiarse y reproducirse; los sistemas hídrico y físico-urbano afectan las condiciones en que actúan.", totalPurpose: "Sí", totalWhy: "Analiza cómo el agua, la vegetación, el refugio, el ruido y los edificios influyen en la llegada, permanencia, alimentación y salida de las especies.", category: "Ecológico dinámico", process: "Cambian el nivel del agua, la vegetación, los refugios, la disponibilidad de alimento, la presencia de especies invasoras y el desplazamiento de aves." },
-      { id: "fisico", name: "Modelo de Límites y Borde Urbano", purpose: "Caracterizar las tensiones y dinámicas de ocupación informal en las periferias de Bogotá, confrontando la frontera física real de la ciudad con los límites normativos planteados por la planeación distrital.", parts: "Sistema físico-urbano + sistema socioeconómico y de ocupación + sistema hídrico + sistema biótico.", partsPurpose: "Sí", partsWhy: "El sistema físico-urbano no tiene propósito propio, pero el sistema socioeconómico incluye actores que deciden sobre construcción, ocupación y uso del suelo.", totalPurpose: "Sí", totalWhy: "Analiza cómo la urbanización, las vías, los edificios y los cerramientos modifican la relación entre el humedal y la ciudad.", category: "Sociotécnico dinámico", process: "Cambian las edificaciones, los cerramientos, las vías, los usos del suelo, los accesos, el drenaje, el ruido y la fragmentación del hábitat." },
-      { id: "movilidad", name: "Modelo de Conectividad y Redes de Transporte", purpose: "Mapear la conectividad de la malla vial general y el funcionamiento actual de los sistemas de transporte masivo que articulan los flujos de movilidad de toda la capital.", parts: "Sistema de movilidad + sistema físico-urbano + sistema social-comunitario + sistema socioeconómico y de ocupación.", partsPurpose: "Sí", partsWhy: "Los sistemas social, comunitario y de movilidad incluyen personas, usuarios, operadores y entidades que eligen recorridos, horarios y medios; la infraestructura condiciona esas decisiones.", totalPurpose: "Sí", totalWhy: "Analiza cómo las personas se desplazan entre barrios, vías, ciclorrutas, equipamientos y el humedal, y qué barreras encuentran.", category: "Sociotécnico dinámico", process: "Cambian los recorridos, los horarios, la cantidad de usuarios, los tiempos de espera, la congestión, las rutas y la accesibilidad." },
-      { id: "social", name: "Modelo de Ocupación y Crecimiento Urbano", purpose: "Analizar la correspondencia real entre la densidad de población y de edificación de las manzanas de la ciudad frente a la capacidad de soporte de su infraestructura de servicios y vías.", parts: "Sistema socioeconómico y de ocupación + sistema físico-urbano + sistema de movilidad + sistema hídrico + sistema biótico.", partsPurpose: "Sí", partsWhy: "El sistema socioeconómico incluye actores que deciden sobre vivienda, actividades, inversión y uso del suelo; los demás sistemas reciben los efectos.", totalPurpose: "Sí", totalWhy: "Analiza cómo las decisiones de ocupación producen transformaciones y presiones sobre el borde, el agua, la movilidad y el hábitat.", category: "Social dinámico", process: "Cambian la población, las viviendas, las actividades, los equipamientos, los usos del suelo, la demanda de movilidad y la presión sobre el humedal." },
-      { id: "socioeconomico", name: "Modelo de Abastecimiento y Logística Comercial", purpose: "Comprender la estructura de las redes de distribución, los flujos de mercancías y la logística comercial que sostienen el abastecimiento alimentario diario de toda la población bogotana.", parts: "Sistema social-comunitario + sistema socioeconómico y de ocupación + sistema institucional de gestión.", partsPurpose: "Sí", partsWhy: "Todos los sistemas articulados incluyen actores con intereses, objetivos, responsabilidades y capacidad de decisión.", totalPurpose: "Sí", totalWhy: "Analiza quién usa el territorio, quién decide, qué intereses intervienen y cómo se producen acuerdos, conflictos o cambios de manejo.", category: "Social dinámico", process: "Cambian los usos, las visitas, la participación, las organizaciones activas, las demandas, los conflictos, los acuerdos y las decisiones institucionales." }
+      { id: "hidrica", name: "Modelo de Manejo de Agua y Drenaje", purpose: "Comprender las dinámicas de permeabilidad de los suelos y el funcionamiento del drenaje hídrico natural frente a los flujos de escorrentía en el territorio urbano de Bogotá.", parts: "Sistema hídrico + sistema físico-urbano + sistema institucional de gestión.", partsPurpose: "No", partsWhy: "Ninguna de las partes persigue un objetivo propio: el agua, el suelo y la infraestructura responden a leyes físicas de escorrentía, infiltración y capacidad hidráulica, no a decisiones.", totalPurpose: "No", totalWhy: "El comportamiento del conjunto queda determinado por las mismas leyes físicas que rigen a sus partes: dada la lluvia y el estado del suelo, el resultado es calculable, no elegido.", category: "Determinista", process: "Cambian la lluvia, el nivel del agua, la escorrentía, los sedimentos, la capacidad de almacenamiento, el estado del canal y las acciones de mantenimiento." },
+      { id: "biotica", name: "Modelo de Conservación de Especies y Hábitats", purpose: "Analizar la estructura de los ecosistemas urbanos (cerros, ríos y humedales) y las condiciones físicas reales que posibilitan la migración, reproducción y supervivencia de las especies nativas de la ciudad.", parts: "Sistema biótico + sistema hídrico + sistema físico-urbano.", partsPurpose: "No", partsWhy: "Las especies responden por instinto y condicionamiento físico a la disponibilidad de agua, vegetación, refugio y ruido, no persiguen un propósito propio dentro del modelo.", totalPurpose: "No", totalWhy: "La migración, permanencia o salida de las especies queda determinada por las condiciones físicas del ecosistema (agua, vegetación, ruido), sin que el sistema decida ni tenga fines propios.", category: "Determinista", process: "Cambian el nivel del agua, la vegetación, los refugios, la disponibilidad de alimento, la presencia de especies invasoras y el desplazamiento de aves." },
+      { id: "fisico", name: "Modelo de Límites y Borde Urbano", purpose: "Caracterizar las tensiones y dinámicas de ocupación informal en las periferias de Bogotá, confrontando la frontera física real de la ciudad con los límites normativos planteados por la planeación distrital.", parts: "Sistema físico-urbano + sistema socioeconómico y de ocupación + sistema hídrico + sistema biótico.", partsPurpose: "No", partsWhy: "Ni la infraestructura física ni el patrón de ocupación tienen un propósito propio dentro del modelo: son el resultado acumulado de condiciones físicas y normativas, no de una intención unificada.", totalPurpose: "No", totalWhy: "El avance de la ocupación sobre el borde queda determinado por la disponibilidad de suelo, las vías y las normas vigentes; el modelo describe un resultado, no una decisión del sistema.", category: "Determinista", process: "Cambian las edificaciones, los cerramientos, las vías, los usos del suelo, los accesos, el drenaje, el ruido y la fragmentación del hábitat." },
+      { id: "movilidad", name: "Modelo de Conectividad y Redes de Transporte", purpose: "Mapear la conectividad de la malla vial general y el funcionamiento actual de los sistemas de transporte masivo que articulan los flujos de movilidad de toda la capital.", parts: "Sistema de movilidad + sistema físico-urbano + sistema social-comunitario + sistema socioeconómico y de ocupación.", partsPurpose: "No", partsWhy: "Dentro de este modelo las vías, los vehículos y los flujos se tratan como variables físicas de capacidad y demanda, no como partes con un propósito propio que el modelo represente.", totalPurpose: "No", totalWhy: "La congestión y los tiempos de viaje resultan de la capacidad de la malla vial frente a la demanda registrada: un resultado calculable a partir de esas variables, no un fin que persiga el sistema.", category: "Determinista", process: "Cambian los recorridos, los horarios, la cantidad de usuarios, los tiempos de espera, la congestión, las rutas y la accesibilidad." },
+      { id: "social", name: "Modelo de Ocupación y Crecimiento Urbano", purpose: "Analizar la correspondencia real entre la densidad de población y de edificación de las manzanas de la ciudad frente a la capacidad de soporte de su infraestructura de servicios y vías.", parts: "Sistema socioeconómico y de ocupación + sistema físico-urbano + sistema de movilidad + sistema hídrico + sistema biótico.", partsPurpose: "No", partsWhy: "El modelo trata la densidad de población y de edificación como variables que se acumulan según la capacidad disponible, no como partes que persiguen un objetivo propio.", totalPurpose: "No", totalWhy: "La presión sobre la infraestructura resulta directamente de la relación entre densidad y capacidad instalada: un cálculo, no un propósito que el sistema en conjunto persiga.", category: "Determinista", process: "Cambian la población, las viviendas, las actividades, los equipamientos, los usos del suelo, la demanda de movilidad y la presión sobre el humedal." },
+      { id: "socioeconomico", name: "Modelo de Abastecimiento y Logística Comercial", purpose: "Comprender la estructura de las redes de distribución, los flujos de mercancías y la logística comercial que sostienen el abastecimiento alimentario diario de toda la población bogotana.", parts: "Sistema social-comunitario + sistema socioeconómico y de ocupación + sistema institucional de gestión.", partsPurpose: "No", partsWhy: "El modelo describe los flujos de mercancías y la capacidad logística como variables físicas de oferta y demanda, sin representar intenciones propias de cada parte.", totalPurpose: "No", totalWhy: "El nivel de abastecimiento resulta de la relación entre la capacidad logística instalada y la demanda diaria: un resultado determinado por esas variables, no un fin que el sistema busque.", category: "Determinista", process: "Cambian los usos, las visitas, la participación, las organizaciones activas, las demandas, los conflictos, los acuerdos y las decisiones institucionales." }
     ];
 
     // Datos para el diagrama de Forrester de cada submodelo (mismo orden
@@ -1696,23 +1696,101 @@
       svg += `</svg>`;
       return svg;
     }
+
+    /* Diagrama CAUSAL (no de existencias y flujos) del Modelo de Conservación
+       de Especies y Hábitats: un bucle de retroalimentación positiva (R) —
+       a más tráfico, más ruido, más disrupción del hábitat, más pérdida de
+       aves y biodiversidad, lo que reduce la dispersión de semillas y
+       degrada la cobertura vegetal, haciendo al ecosistema más vulnerable y
+       amplificando el deterioro, que vuelve a presionar el ciclo. */
+    const CAUSAL_LOOP_INTRO = "Para visualizar cómo interactúan estas variables en el tiempo, utilizamos un diagrama causal, tomando como ejemplo el Modelo de Conservación de Especies y Hábitats. En este diagrama explicamos un bucle de retroalimentación positiva: a mayor tráfico vehicular en las avenidas, mayor es la emisión de decibeles y ruido urbano; este incremento de contaminación acústica genera una mayor interferencia magnética y disrupción en los hábitats, lo que provoca la expulsión masiva de aves migratorias y la pérdida de biodiversidad. Al reducirse la fauna, disminuye la dispersión natural de semillas, degradando aún más la cobertura vegetal y haciendo al ecosistema más vulnerable, lo que amplifica exponencialmente el deterioro ambiental en un ciclo continuo.";
+    const CAUSAL_LOOP_NODES = [
+      "Tráfico vehicular\nen las avenidas",
+      "Emisión de decibeles\ny ruido urbano",
+      "Interferencia y\ndisrupción de hábitats",
+      "Expulsión de aves\ny pérdida de biodiversidad",
+      "Menor dispersión\nnatural de semillas",
+      "Degradación de la\ncobertura vegetal",
+      "Mayor vulnerabilidad\ndel ecosistema",
+    ];
+    const CAUSAL_LOOP_SIGNS = ["+", "+", "+", "-", "-", "+", "+"];   // entre nodo i e i+1 (el último cierra el ciclo)
+    function buildCausalLoopSVG() {
+      const W = 640, H = 620;
+      const cx = W / 2, cy = 300, R = 225;
+      const n = CAUSAL_LOOP_NODES.length;
+      const pts = CAUSAL_LOOP_NODES.map((label, i) => {
+        const ang = -Math.PI / 2 + (i * 2 * Math.PI) / n;
+        return { x: cx + Math.cos(ang) * R, y: cy + Math.sin(ang) * R, ang, label };
+      });
+      let svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" class="forrester-svg causal-loop-svg">`;
+      svg += `<defs><marker id="causalArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7.5" markerHeight="7.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e8b94b"/></marker></defs>`;
+      // Anillo guía apenas visible, para que se lea como un ciclo.
+      svg += `<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="rgba(232,185,75,.12)" stroke-width="1"/>`;
+      // Flechas curvas entre cada nodo y el siguiente, siguiendo el anillo.
+      for (let i = 0; i < n; i++) {
+        const a = pts[i], b = pts[(i + 1) % n];
+        // Los extremos se acortan un poco para no meterse debajo de las cajas.
+        const shrink = 0.19;
+        const ax = a.x + (b.x - a.x) * shrink * 0.5, ay = a.y + (b.y - a.y) * shrink * 0.5;
+        const bx = b.x - (b.x - a.x) * shrink * 0.5, by = b.y - (b.y - a.y) * shrink * 0.5;
+        // Punto de control empujado hacia afuera del círculo para que la
+        // línea "bordee" el anillo en vez de cortar por el centro.
+        // Como los puntos están a un mismo paso angular (2π/n) uno del otro,
+        // el punto medio entre el nodo i y el i+1 es siempre a.ang + π/n —
+        // esto funciona igual para el tramo que cierra el ciclo (del último
+        // nodo de vuelta al primero), sin tratarlo como caso especial.
+        const midAng = a.ang + Math.PI / n;
+        const ctrlR = R * 1.16;
+        const ctrlX = cx + Math.cos(midAng) * ctrlR, ctrlY = cy + Math.sin(midAng) * ctrlR;
+        svg += `<path d="M${ax.toFixed(1)},${ay.toFixed(1)} Q${ctrlX.toFixed(1)},${ctrlY.toFixed(1)} ${bx.toFixed(1)},${by.toFixed(1)}" fill="none" stroke="#e8b94b" stroke-width="1.8" marker-end="url(#causalArrow)"/>`;
+        const signX = cx + Math.cos(midAng) * (R * 1.28), signY = cy + Math.sin(midAng) * (R * 1.28);
+        const sign = CAUSAL_LOOP_SIGNS[i];
+        svg += `<circle cx="${signX.toFixed(1)}" cy="${signY.toFixed(1)}" r="11" fill="#151a12" stroke="#e8b94b" stroke-width="1.2"/>`;
+        svg += `<text x="${signX.toFixed(1)}" y="${(signY + 4).toFixed(1)}" text-anchor="middle" font-size="13" font-weight="700" fill="${sign === "+" ? "#8ee68a" : "#ff9d9d"}">${sign}</text>`;
+      }
+      // Centro: indicador de bucle de refuerzo (R).
+      svg += `<circle cx="${cx}" cy="${cy}" r="46" fill="rgba(232,185,75,.07)" stroke="#e8b94b" stroke-width="1.4" stroke-dasharray="3 4"/>`;
+      svg += `<text x="${cx}" y="${cy - 4}" text-anchor="middle" font-size="26" font-weight="800" fill="#e8b94b" font-family="Space Grotesk,sans-serif">R</text>`;
+      svg += `<text x="${cx}" y="${cy + 16}" text-anchor="middle" font-size="9.5" fill="rgba(242,236,227,.8)" font-family="Inter,sans-serif">refuerzo</text>`;
+      // Nodos (cajas con el nombre de la variable).
+      const boxW = 128, boxH = 52;
+      pts.forEach((p) => {
+        svg += `<rect x="${(p.x - boxW / 2).toFixed(1)}" y="${(p.y - boxH / 2).toFixed(1)}" width="${boxW}" height="${boxH}" rx="8" fill="rgba(255,255,255,.05)" stroke="#e8b94b" stroke-width="1.6"/>`;
+        svg += `<foreignObject x="${(p.x - boxW / 2 + 4).toFixed(1)}" y="${(p.y - boxH / 2 + 4).toFixed(1)}" width="${boxW - 8}" height="${boxH - 8}"><div xmlns="http://www.w3.org/1999/xhtml" style="font-family:Inter,sans-serif;font-size:10px;font-weight:600;color:#f2ece3;text-align:center;line-height:1.22;display:flex;align-items:center;justify-content:center;height:100%;white-space:pre-line;">${p.label}</div></foreignObject>`;
+      });
+      svg += `</svg>`;
+      return svg;
+    }
+
     function showForresterModal(index, name, color) {
-      const f = FORRESTER_DATA[index];
-      if (!f) return;
+      // El Modelo de Conservación de Especies y Hábitats (índice 1) se
+      // explica con un diagrama CAUSAL (bucle de retroalimentación) en vez
+      // del diagrama de existencias y flujos que usan los demás submodelos.
+      const esCausal = index === 1;
+      if (!esCausal && !FORRESTER_DATA[index]) return;
       const overlay = document.createElement("div");
       overlay.className = "combined-network-overlay";
-      overlay.innerHTML = `<div class="combined-network-panel forrester-modal-panel">
-        <div class="combined-network-heading">
-          <strong style="color:${color}"><i class="fa-solid fa-diagram-project"></i> Diagrama de Forrester — ${name}</strong>
-          <button type="button" class="subsystem-panel-close" id="closeForresterBtn" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-        <div class="combined-network-scroll forrester-modal-scroll">${buildForresterSVG(f)}
+      const cuerpoHtml = esCausal
+        ? `<p class="causal-loop-intro">${CAUSAL_LOOP_INTRO}</p>${buildCausalLoopSVG()}
+          <div class="forrester-legend">
+            <span><i class="fa-solid fa-arrow-right" style="color:#e8b94b"></i> Relación causal</span>
+            <span style="color:#8ee68a">+ Mismo sentido (sube con sube, baja con baja)</span>
+            <span style="color:#ff9d9d">− Sentido contrario (sube cuando la otra baja)</span>
+            <span><i class="fa-solid fa-rotate" style="color:#e8b94b"></i> R = bucle de refuerzo</span>
+          </div>`
+        : `${buildForresterSVG(FORRESTER_DATA[index])}
           <div class="forrester-legend">
             <span><i class="fa-solid fa-square" style="color:${color}"></i> Existencia (stock)</span>
             <span><i class="fa-solid fa-filter"></i> Válvula de flujo</span>
             <span><i class="fa-regular fa-cloud"></i> Fuente / sumidero</span>
             <span><i class="fa-solid fa-circle-dot"></i> Variable auxiliar (+/-)</span>
-          </div>
+          </div>`;
+      overlay.innerHTML = `<div class="combined-network-panel forrester-modal-panel">
+        <div class="combined-network-heading">
+          <strong style="color:${color}"><i class="fa-solid fa-diagram-project"></i> ${esCausal ? "Diagrama causal" : "Diagrama de Forrester"} — ${name}</strong>
+          <button type="button" class="subsystem-panel-close" id="closeForresterBtn" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="combined-network-scroll forrester-modal-scroll">${cuerpoHtml}
         </div>
       </div>`;
       document.body.appendChild(overlay);
