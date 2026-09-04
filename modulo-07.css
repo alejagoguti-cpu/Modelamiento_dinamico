@@ -6053,11 +6053,30 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
   color: #fff; font-size: 11px; font-weight: 800; letter-spacing: .03em; text-transform: uppercase;
   text-shadow: 0 1px 4px rgba(0,0,0,.8);
 }
+/* El texto de cada relación va AL LADO del diagrama, nunca encima: antes
+   se posaba sobre las bolas de abajo y las tapaba. */
+.bubble-net-wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 22px;
+  align-items: center;
+  max-width: 980px;
+  aspect-ratio: auto;
+}
+.bubble-net-svg {
+  position: relative; inset: auto; width: 100%; height: auto;
+  aspect-ratio: 560 / 512;
+}
 .visible-network-tooltip {
-  position: absolute; z-index: 5; left: 50%; bottom: 8px; transform: translateX(-50%);
-  width: min(92%, 360px); background: rgba(6,10,10,.98); border: 1px solid #76fff0;
-  border-radius: 8px; padding: 10px 14px; color: #fff; font-size: 12px; line-height: 1.5;
+  position: relative; z-index: 5; left: auto; bottom: auto; transform: none;
+  width: 100%; background: rgba(6,10,10,.98); border: 1px solid #76fff0;
+  border-radius: 8px; padding: 12px 15px; color: #fff; font-size: 12px; line-height: 1.55;
+  white-space: pre-line;
   box-shadow: 0 10px 24px rgba(0,0,0,.6);
+}
+.visible-network-tooltip[hidden] { display: none; }
+@media (max-width: 860px) {
+  .bubble-net-wrap { grid-template-columns: 1fr; }
 }
 @media (max-width: 620px) {
   .bubble-node-label i { font-size: 15px; }
@@ -6189,8 +6208,8 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 
 /* ===== Red "¿Qué queremos hacer visible?": relaciones vivas y legibles ===== */
 .visible-elements-section .bubble-net-wrap {
-  max-width: 700px;
-  aspect-ratio: 560 / 500;
+  max-width: 1000px;
+  aspect-ratio: auto;   /* el diagrama va a la izquierda y el texto al lado */
   margin: 28px auto 34px;
 }
 .visible-elements-section .bubble-net-svg {
@@ -8628,6 +8647,12 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 }
 /* relación entre sistemas distintos: gris neutro y más tenue, para que los
    racimos de cada sistema se distingan del tejido que los cruza */
+.map-network-stage.is-full-dynamics-active svg line.full-unified-link {
+  stroke-dasharray: var(--link-len, 400) !important;
+  stroke-dashoffset: var(--link-len, 400);
+  animation: full-link-draw .8s ease forwards var(--link-delay, 0ms) !important;
+}
+
 .map-network-stage.is-full-dynamics-active svg line.full-unified-link.is-cross {
   stroke: #8896a6 !important;
   stroke-opacity: 0.34 !important;
@@ -8664,3 +8689,46 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 }
 .map-network-stage.is-dragging-node svg line.full-unified-link { transition: none !important; }
 .map-network-stage.is-dragging-node .full-dynamic-node { transition: opacity .22s ease !important; }
+
+/* ==========================================================
+   Red completa: tamaño por número de relaciones
+   Cada dinámica lleva --node-scale (0.82 a 1.37) según cuántas
+   relaciones vigentes tiene, así se ve cuáles sostienen la red.
+   ========================================================== */
+.full-dynamic-node {
+  animation-name: node-burst-in-escala !important;
+}
+@keyframes node-burst-in-escala {
+  from { transform: translate(-50%, -50%) scale(0.1); opacity: 0; }
+  to   { transform: translate(-50%, -50%) scale(var(--node-scale, 1)); opacity: 1; }
+}
+.full-dynamic-node:hover {
+  transform: translate(-50%, -50%) scale(calc(var(--node-scale, 1) * 1.18)) !important;
+}
+.full-dynamic-node.is-active {
+  transform: translate(-50%, -50%) scale(calc(var(--node-scale, 1) * 1.22)) !important;
+}
+.full-dynamic-node .full-node-label { font-size: calc(8.4px * var(--node-scale, 1)); }
+
+/* ==========================================================
+   Módulo 07 · Ajustes de la vista de subsistemas
+   ========================================================== */
+/* La bolita del centro ("Ver red completa") queda menos brillante que los
+   seis subsistemas: es un acceso, no un subsistema más. */
+.map-network-center-hub {
+  opacity: .55;
+  transition: opacity .25s ease, transform .25s ease, background .25s ease;
+}
+.map-network-center-hub:hover,
+.map-network-center-hub:focus-visible { opacity: 1; }
+
+/* Entrada de la red completa: primero aparecen las dinámicas, una tras
+   otra, y solo después se van dibujando las relaciones. */
+@keyframes full-link-draw {
+  to { stroke-dashoffset: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .map-network-stage.is-full-dynamics-active .full-unified-link {
+    animation: none; stroke-dashoffset: 0;
+  }
+}
