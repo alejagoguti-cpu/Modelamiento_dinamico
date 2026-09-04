@@ -823,7 +823,7 @@ if (typeof module !== &quot;undefined&quot;) { module.exports = { NODES, LINKS }
 
   function ticked(){
     // Sin esto, la fuerza del enjambre puede empujar nodos fuera del
-    // recuadro visible (sobre todo hacia abajo): se ven "caer" fuera de la
+    // recuadro visible (sobre todo hacia abajo): se ven caer fuera de la
     // red. Se mantienen dentro del viewBox dejando un margen de su radio.
     NODES.forEach(n=&gt;{
       const r=nodeRadius(n)+6;
