@@ -285,7 +285,7 @@ const RED_POT_IDS = [
   "juan-amarillotibabuyes",   "santa-maría-del-lago",   "salitre",   "la-conejera",
   "torca-guaymaral",   "río-bogotá",   "río-fucha",   "río-tunjuelo",
   "río-salitre",   "canal-arzobispo",   "canal-el-virrey",   "canal-independencia",
-  "quebrada-torca",   "quebrada-teusacá",   "cerros-orientales",   "reserva-van-der-hammen",
+  "quebrada-torca",   "quebrada-teusacá",   "cerros-orientales",
   "cerro-seco",   "paramo-sumapaz",   "paramo-chingaza",   "paramo-guerrero",
   "parque-entrenubes",   "parque-soratama",   "mirador-nevados",   "parque-nacional",
   "parque-simon-bolivar",   "primera-linea-metro",   "segunda-linea-metro",   "regiotram-occidente",
@@ -2214,7 +2214,10 @@ function ajustarEncuadreRed() {
   // llena el recuadro en vez de quedar como una franja en medio del negro.
   const ancho = svg.clientWidth;
   if (ancho) {
-    const altoIdeal = Math.round(Math.max(300, Math.min(820, ancho * h / w)));
+    // En un teléfono el tablero era un cuadrado de ~300 px y la red no cabía:
+    // se le da la mayor parte de la altura de la pantalla.
+    const altoMin = ancho < 560 ? Math.min(560, Math.round((window.innerHeight || 700) * 0.62)) : 300;
+    const altoIdeal = Math.round(Math.max(altoMin, Math.min(820, ancho * h / w)));
     svg.style.height = altoIdeal + "px";
   }
   const cara = svg.clientWidth && svg.clientHeight ? svg.clientWidth / svg.clientHeight : w / h;
@@ -2234,8 +2237,15 @@ function ajustarEncuadreRed() {
     const escala = svg.clientWidth / w;
     const rMin = Math.min(...DISPLAY_NODES.map((n) => n.r || 0).filter((r) => r > 0));
     const diametro = 2 * rMin * escala;
-    if (diametro > 0 && diametro < 46) {
-      zoomLevel = Math.max(1, Math.min(3.6, 46 / diametro));
+    // se acerca lo justo para que la bola más pequeña se lea, sin perder de
+    // vista el resto de la red (con 360% solo se veían dos bolas)
+    if (diametro > 0 && diametro < 30) {
+      zoomLevel = Math.max(1, Math.min(2.1, 30 / diametro));
+      // el acercamiento se hace SOBRE EL CENTRO de la red: si no, el zoom
+      // empuja el dibujo fuera de cuadro y el teléfono abre en un vacío
+      const cx = caja.x + caja.width / 2, cy = caja.y + caja.height / 2;
+      panX = (VISTA.x + VISTA.w / 2) - zoomLevel * cx;
+      panY = (VISTA.y + VISTA.h / 2) - zoomLevel * cy;
       const g = svg.querySelector("#zoom-pan-group");
       if (g) g.setAttribute("transform", `translate(${panX},${panY}) scale(${zoomLevel})`);
       updateZoomDisplay();

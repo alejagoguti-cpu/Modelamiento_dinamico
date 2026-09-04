@@ -8708,8 +8708,8 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
    relaciones vigentes tiene, así se ve cuáles sostienen la red.
    ========================================================== */
 .full-dynamic-node {
-  width: calc(56px * var(--node-scale, 1)) !important;
-  height: calc(56px * var(--node-scale, 1)) !important;
+  width: calc(60px * var(--node-scale, 1)) !important;
+  height: calc(60px * var(--node-scale, 1)) !important;
   padding: 3px !important;
   animation-name: node-burst-in-escala !important;
 }
@@ -8726,7 +8726,15 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 .full-dynamic-node .full-node-label {
   font-size: max(6.6px, calc(8.2px * var(--node-scale, 1))) !important;
   line-height: 1.06 !important;
+  /* el nombre se queda dentro de la bola: parte la palabra si le hace falta
+     y nunca sobresale del círculo */
+  overflow-wrap: break-word !important;
+  word-break: break-word !important;
+  hyphens: auto !important;
+  max-width: 100% !important;
+  display: block !important;
 }
+.full-dynamic-node { overflow: hidden !important; }
 .full-dynamic-node .full-node-icon {
   font-size: max(10px, calc(15px * var(--node-scale, 1))) !important;
   margin-bottom: 1px !important;
