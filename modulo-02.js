@@ -1738,7 +1738,7 @@ function drawNodes(svg) {
     circle.setAttribute("cx", node.x); circle.setAttribute("cy", node.y); circle.setAttribute("r", node.r);
     circle.setAttribute("fill", "#0a0a0a");
     circle.setAttribute("stroke", node.color);
-    circle.setAttribute("stroke-width", node.isMainHub ? 2.5 : 1.6);
+    circle.setAttribute("stroke-width", node.isMainHub ? 1.4 : 0.9);
     circle.setAttribute("filter", "url(#glow-" + node.color.replace("#", "") + ")");
 
     const fo = document.createElementNS(SVG_NS, "foreignObject");
