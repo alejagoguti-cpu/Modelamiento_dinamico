@@ -80,6 +80,39 @@
     { nombre: "Avenida Longitudinal de Occidente (ALO)", re: /\balo\b|longitudinal\s*de\s*occidente/i },
   ];
   const ES_VIA = (e) => e.categoria_id === "vias_arteriales";
+
+  /* -------- Lo que el POT nombra --------
+     Términos tomados del documento del POT "Bogotá Reverdece". Se separan
+     los LUGARES que nombra uno por uno de los SISTEMAS/PROGRAMAS que nombra
+     como tales (y que por tanto cobijan a todos sus elementos). */
+  const POT_LUGARES = [
+    /humedal(es)?\s+(de\s+)?(capellan[ií]a|c[óo]rdoba|el\s+burro|techo|torca|tibanica|juan\s+amarillo|jaboque|santa\s+mar[ií]a\s+del\s+lago|la\s+conejera|meandro)/i,
+    /\b(capellan[ií]a|conejera|entrenubes|neuque|media\s+luna\s+del\s+sur)\b/i,
+    /r[ií]o\s+(bogot[áa]|fucha|tunjuelo|tunjuelito|salitre|vicach[áa]|guayuriba|forero)/i,
+    /canal\s+(arzobispo|boyac[áa]|el\s+virrey|independencia|brazo\s+salitre|cortijo)/i,
+    /parque\s+(nacional|sim[óo]n\s+bol[ií]var|entrenubes|cerro\s+seco|la\s+requilina|los\s+soches|quiba|cometas)/i,
+    /reserva\s+.*(thomas|van\s+der\s+hammen|forestal\s+protectora|regional\s+productora)/i,
+    /cerros?\s+orientales|bosque\s+oriental/i,
+    /portal\s+(del\s+sur|20\s+de\s+julio)/i,
+  ];
+  const POT_SISTEMAS = [
+    { nombre: "Manzanas del Cuidado",  re: /manzana\s*s?\s*del\s*cuidado/i },
+    { nombre: "Corredores verdes",     re: /corredor(es)?\s+verde/i },
+    { nombre: "Ciclorrutas y cicloalamedas", re: /ciclorr?uta|cicloalameda/i },
+    { nombre: "Red Metro",             re: /\bmetro\b|primera\s+l[ií]nea|segunda\s+l[ií]nea|tercera\s+l[ií]nea/i },
+    { nombre: "RegioTram",             re: /regiotram/i },
+    { nombre: "Cables aéreos",         re: /\bcable\b/i },
+    { nombre: "Bosques urbanos",       re: /bosque\s+urbano/i },
+  ];
+  function razonPot(e) {
+    const n = String(e.nombre || "");
+    if (ES_VIA(e)) { const v = viaDelPot(n); return v ? "Corredor vial que el POT nombra: " + v : null; }
+    if (POT_LUGARES.some((re) => re.test(n))) return "Lugar nombrado en el POT (Bogotá Reverdece)";
+    const sis = POT_SISTEMAS.find((x) => x.re.test(n));
+    if (sis) return "Parte de un sistema que el POT nombra: " + sis.nombre;
+    return null;
+  }
+  let soloPot = true;   // se puede alternar con el botón de la barra
   function viaDelPot(nombre) {
     const v = VIAS_POT.find((x) => x.re.test(String(nombre || "")));
     return v ? v.nombre : null;
@@ -831,6 +864,61 @@
     return String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   }
 
+  // Deja en la red solo lo que el POT nombra (o toda la base, si se apaga
+  // el filtro con el botón de la barra).
+  function aplicarFiltroPot() {
+    const todos = state.todosElementos || [];
+    state.elementos = soloPot ? todos.filter((e) => e._razonPot) : todos.slice();
+    state.byId = new Map(state.elementos.map((e) => [e.id, e]));
+    const todasCon = state.todasConexiones || [];
+    state.conexiones = todasCon.filter((c) => state.byId.has(c.origen) && state.byId.has(c.destino));
+    if (soloPot) {
+      // Al quedarse solo con lo que el POT nombra, la mayoría de vecinos
+      // directos desaparece y los supervivientes quedan sueltos. Se
+      // reconstruye el vínculo con las relaciones de la PROPIA base: si dos
+      // elementos del POT estaban unidos por un camino que solo pasa por
+      // elementos retirados, se dibuja esa relación indirecta.
+      const ady = new Map();
+      todasCon.forEach((c) => {
+        if (!ady.has(c.origen)) ady.set(c.origen, []);
+        if (!ady.has(c.destino)) ady.set(c.destino, []);
+        ady.get(c.origen).push(c.destino);
+        ady.get(c.destino).push(c.origen);
+      });
+      const yaHay = new Set(state.conexiones.map((c) => [c.origen, c.destino].sort().join("|")));
+      const MAX_SALTOS = 3;
+      state.elementos.forEach((origen) => {
+        const visto = new Map([[origen.id, 0]]);
+        const cola = [origen.id];
+        while (cola.length) {
+          const actual = cola.shift();
+          const saltos = visto.get(actual);
+          if (saltos >= MAX_SALTOS) continue;
+          (ady.get(actual) || []).forEach((vec) => {
+            if (visto.has(vec)) return;
+            visto.set(vec, saltos + 1);
+            if (state.byId.has(vec)) {
+              if (vec === origen.id) return;
+              const clave = [origen.id, vec].sort().join("|");
+              if (yaHay.has(clave)) return;
+              yaHay.add(clave);
+              state.conexiones.push({
+                origen: origen.id, destino: vec, tipo: "indirecta",
+                motivo: "Relación a través de " + saltos + " elemento" + (saltos === 1 ? "" : "s") +
+                        " que el POT no nombra (según las conexiones de la base de datos).",
+                _derivada: true,
+              });
+            } else {
+              cola.push(vec);   // solo se atraviesan elementos retirados
+            }
+          });
+        }
+      });
+    }
+    state.apagados = new Set();
+    state.filtroInfo = { total: todos.length, conservados: state.elementos.length };
+  }
+
   async function init() {
     const status = document.getElementById("m2CategoriasStatus");
     if (status) status.textContent = "Cargando base de datos…";
@@ -839,33 +927,45 @@
         fetchTable("m2_categorias"), fetchTable("m2_elementos"), fetchTable("m2_conexiones"),
       ]);
       state.categorias = categorias;
-      // de la malla vial solo se conservan los corredores que el POT nombra
-      const viasTotales = elementos.filter(ES_VIA).length;
-      state.elementos = elementos.filter((e) => {
-        if (!ES_VIA(e)) return true;
-        const v = viaDelPot(e.nombre);
-        if (v) { e._viaPot = v; return true; }
-        return false;
-      });
-      state.viasFiltradas = { total: viasTotales, conservadas: state.elementos.filter(ES_VIA).length };
-      state.byId = new Map(state.elementos.map((e) => [e.id, e]));
-      // las conexiones de las vías retiradas se van con ellas
-      state.conexiones = conexiones.filter((c) => state.byId.has(c.origen) && state.byId.has(c.destino));
+      state.todosElementos = elementos;
+      state.todasConexiones = conexiones;
+      elementos.forEach((e) => { e._razonPot = razonPot(e); if (ES_VIA(e) && e._razonPot) e._viaPot = viaDelPot(e.nombre); });
+      aplicarFiltroPot();
       if (status) status.textContent = "Calculando red (grados, puentes, disposición sin superposiciones)…";
       // deja pintar el mensaje antes del cálculo (puede tardar ~1s)
       await new Promise((r) => setTimeout(r, 30));
       buildLayer();
-      if (status) status.textContent = state.elementos.length + " nodos · " + state.conexiones.length +
-        " conexiones · " + state.puentes.size + " nodos puente · vías: solo las " + state.viasFiltradas.conservadas +
-        " que el POT nombra (de " + state.viasFiltradas.total + ") — arrastrá para mover, rueda/botones para zoom, mouse sobre un nodo para ver sus conexiones";
+      pintarEstadoFiltro(status);
     } catch (err) {
       if (status) status.textContent = "No se pudo cargar la base de datos.";
       console.error("[m2-red-externa]", err);
     }
   }
 
+  function pintarEstadoFiltro(status) {
+    const st = status || document.getElementById("m2CategoriasStatus");
+    if (!st) return;
+    st.textContent = state.elementos.length + " nodos · " + state.conexiones.length + " conexiones · " +
+      state.puentes.size + " nodos puente · " +
+      (soloPot ? "solo los " + state.filtroInfo.conservados + " elementos que el POT nombra (de " + state.filtroInfo.total + ")"
+               : "toda la base de datos (" + state.filtroInfo.total + " elementos)");
+    const btn = document.getElementById("m2reBtnSoloPot");
+    if (btn) {
+      btn.classList.toggle("active", soloPot);
+      btn.innerHTML = soloPot ? '<i class="fa-solid fa-filter"></i> Solo lo que el POT nombra'
+                              : '<i class="fa-solid fa-filter-circle-xmark"></i> Viendo toda la base';
+    }
+  }
+
   document.addEventListener("DOMContentLoaded", () => {
     init();
+    document.getElementById("m2reBtnSoloPot")?.addEventListener("click", () => {
+      soloPot = !soloPot;
+      aplicarFiltroPot();
+      buildLayer();
+      pintarEstadoFiltro();
+      cerrarFicha();
+    });
     document.getElementById("networkViz")?.addEventListener("click", () => {
       hideTooltip(); cerrarFicha();
       document.getElementById("m2-red-externa")?._soltarFoco?.();
