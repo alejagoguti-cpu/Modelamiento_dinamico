@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="modulo-02.css?v=degree-size-compact-v3">
   <link rel="stylesheet" href="site-theme.css?v=20260823">
   <link rel="stylesheet" href="navigation-unified.css?v=20260824">
-  <link rel="stylesheet" href="modulo-02-red-externa.css?v=4-vias-pot">
+  <link rel="stylesheet" href="modulo-02-red-externa.css?v=5-ficha-simulacion">
 </head>
 <body>
 <div class="app">
@@ -134,8 +134,16 @@
             <button class="control-btn" id="m2reBtnPuentes" type="button"><i class="fa-solid fa-link"></i> Ver nodos puente</button>
             <span class="m2re-highlight-info" id="m2reHighlightInfo"></span>
           </div>
+          <div class="m2re-toolbar-row m2re-sim-row">
+            <span class="m2re-sim-label"><i class="fa-solid fa-power-off"></i> Simulación:</span>
+            <button class="control-btn" id="m2reBtnApagarTodos" type="button">Desactivar todos</button>
+            <button class="control-btn" id="m2reBtnEncenderTodos" type="button">Activar todos</button>
+            <button class="control-btn" id="m2reBtnApagarHubs" type="button">Desactivar hubs</button>
+            <span class="m2re-highlight-info" id="m2reSimInfo">Doble clic en un nodo para activarlo o desactivarlo; la red se recalcula y se reacomoda.</span>
+          </div>
           <div class="network-canvas">
             <svg id="networkViz" viewBox="0 0 2500 1820" preserveAspectRatio="xMidYMid meet"></svg>
+            <aside class="m2re-ficha" id="m2reFicha" hidden></aside>
           </div>
         </div>
 
@@ -471,7 +479,7 @@
 </div>
 
 <script src="modulo-02.js?v=gentler-layout-v5"></script>
-<script src="modulo-02-red-externa.js?v=4-vias-pot"></script>
+<script src="modulo-02-red-externa.js?v=5-ficha-simulacion"></script>
 
 </body>
 </html>
