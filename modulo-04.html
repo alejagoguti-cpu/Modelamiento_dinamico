@@ -264,7 +264,7 @@ svg:active{cursor:default;}
           &lt;span class=&quot;chip&quot; data-eje=&quot;ambientaltec&quot;&gt;Ambiental-técnico&lt;/span&gt;
           &lt;span class=&quot;chip&quot; data-eje=&quot;pot&quot;&gt;Contexto POT&lt;/span&gt;
         &lt;/div&gt;
-        &lt;div class=&quot;hint&quot;&gt;Sin filtro se ve la red completa. Arrastra nodos; zoom con la rueda.&lt;/div&gt;
+        &lt;div class=&quot;hint&quot;&gt;Sin filtro se ve la red completa. Arrastra nodos; usa los botones +/− para acercar o alejar.&lt;/div&gt;
       &lt;/div&gt;
     &lt;/div&gt;
 
@@ -276,6 +276,8 @@ svg:active{cursor:default;}
     &lt;div class=&quot;toolbar&quot;&gt;
       &lt;button class=&quot;tbtn&quot; id=&quot;btn-context&quot; data-hidden=&quot;0&quot;&gt;Ocultar estructuras POT&lt;/button&gt;
       &lt;button class=&quot;tbtn&quot; id=&quot;btn-reset&quot;&gt;Reiniciar red&lt;/button&gt;
+      &lt;button class=&quot;tbtn&quot; id=&quot;btn-zoom-out&quot; aria-label=&quot;Alejar&quot; title=&quot;Alejar&quot;&gt;−&lt;/button&gt;
+      &lt;button class=&quot;tbtn&quot; id=&quot;btn-zoom-in&quot; aria-label=&quot;Acercar&quot; title=&quot;Acercar&quot;&gt;+&lt;/button&gt;
     &lt;/div&gt;
     &lt;aside id=&quot;conventions&quot; class=&quot;open&quot;&gt;
       &lt;div class=&quot;conv-head&quot;&gt;
@@ -663,9 +665,17 @@ if (typeof module !== &quot;undefined&quot;) { module.exports = { NODES, LINKS }
   svg.attr(&quot;viewBox&quot;,[0,0,W,H]);
   const root=svg.append(&quot;g&quot;);
   const zoom=d3.zoom().scaleExtent([0.35,3.5]).on(&quot;zoom&quot;,e=&gt;root.attr(&quot;transform&quot;,e.transform));
-  // Vista fija: no se permite zoom ni paneo con rueda o doble clic.
+  // Vista fija: no se permite zoom ni paneo con rueda o doble clic — solo
+  // con los botones +/−, y siempre con una transicion suave y animada
+  // (nunca un salto brusco de escala).
   svg.on(&quot;wheel.zoom&quot;, null);
   svg.on(&quot;dblclick.zoom&quot;, null);
+  document.getElementById(&quot;btn-zoom-in&quot;)?.addEventListener(&quot;click&quot;, ()=&gt;{
+    svg.transition().duration(320).ease(d3.easeCubicOut).call(zoom.scaleBy, 1.35);
+  });
+  document.getElementById(&quot;btn-zoom-out&quot;)?.addEventListener(&quot;click&quot;, ()=&gt;{
+    svg.transition().duration(320).ease(d3.easeCubicOut).call(zoom.scaleBy, 1/1.35);
+  });
 
   const linkSel=root.append(&quot;g&quot;).selectAll(&quot;line&quot;)
     .data(LINKS).join(&quot;line&quot;)
