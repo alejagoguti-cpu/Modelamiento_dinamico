@@ -493,8 +493,8 @@ body {
 .ods-node.node-off .node-ring, .ods-node.node-off .node-dot, .ods-node.node-off .node-dot-ring { opacity: 0.15 !important; }
 .ods-node.node-off .node-inner { opacity: 0.28; }
 .ods-node { transition: opacity .2s; }
-.ods-node.node-focus-dim { opacity: 0.12; }
-.ods-node.node-apagado { opacity: 0.32; filter: grayscale(1); transition: opacity .35s ease, filter .35s ease; }
+.ods-node.node-focus-dim { opacity: 0.12 !important; }   /* !important: los nodos traen una animación de entrada que fija opacity:1 y sin esto el apagado no se veía */
+.ods-node.node-apagado { opacity: 0.15 !important; filter: grayscale(1); transition: opacity .35s ease, filter .35s ease; }
 .ods-node.node-apagado .node-ring { stroke-dasharray: 5 4; }
 .ods-node.node-focus-active .node-ring, .ods-node.node-selected .node-ring { filter: drop-shadow(0 0 8px #fff); }
 .ods-node.node-focus-active .node-dot, .ods-node.node-selected .node-dot { filter: drop-shadow(0 0 6px #fff); }
@@ -503,8 +503,8 @@ body {
 .edge-group { cursor: pointer; }
 .edge-group.hidden-edge { visibility: hidden; }
 .edge-group { transition: opacity .2s; }
-.edge-group.edge-focus-dim { opacity: 0.05; }
-.edge-group.edge-apagada { opacity: 0.08; transition: opacity .35s ease; }
+.edge-group.edge-focus-dim { opacity: 0.05 !important; }
+.edge-group.edge-apagada { opacity: 0.03 !important; transition: opacity .35s ease; }
 .ods-edge.edge-visual { fill: none; pointer-events: none; transition: opacity .15s, filter .15s; }
 .ods-edge.edge-hit { fill: none; stroke: transparent; stroke-width: 12; pointer-events: stroke; }
 .edge-group:hover .edge-visual { opacity: 1 !important; filter: drop-shadow(0 0 4px var(--edge-color)); }
@@ -2154,3 +2154,20 @@ footer span { color: var(--teal); }
 /* Arrastre del lienzo de la red */
 #networkViz { cursor: grab; touch-action: none; }
 #networkViz.m2-arrastrando { cursor: grabbing; }
+
+/* ==========================================================
+   Resalte de las conexiones directas (doble clic en un nodo, o clic en
+   una línea): lo que entra en el foco se enciende, no solo se apaga el
+   resto.
+   ========================================================== */
+.edge-group.edge-focus-on .edge-visual {
+  opacity: 1 !important;
+  stroke-width: 4.2 !important;
+  filter: drop-shadow(0 0 7px var(--edge-color, #2fd4c8));
+}
+.ods-node.node-focus-on .node-ring {
+  stroke-width: 5;
+  filter: drop-shadow(0 0 10px currentColor);
+}
+.ods-node.node-focus-on { opacity: 1; }
+.edge-group, .ods-node { transition: opacity .2s ease; }

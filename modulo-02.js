@@ -442,18 +442,18 @@ const RAW_EDGES = [
   { s:"avenida-caracas", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
   { s:"calle-19", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
   { s:"carrera-32", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"río-bogotá", t:"complejos_de_paramos", dim:"Soporte", tipo:"directa", analisis:"Relacion heredada del nodo agrupador RIOS (eliminado por contener a sus propios casos especificos); se reasigna al Rio Bogota como eje hidrico principal." },
-  { s:"río-bogotá", t:"reservas_forestales", dim:"Soporte", tipo:"directa", analisis:"Relacion heredada del nodo agrupador RIOS (eliminado por contener a sus propios casos especificos); se reasigna al Rio Bogota como eje hidrico principal." },
-  { s:"río-bogotá", t:"transporte_publico", dim:"Soporte", tipo:"directa", analisis:"Relacion heredada del nodo agrupador RIOS (eliminado por contener a sus propios casos especificos); se reasigna al Rio Bogota como eje hidrico principal." },
-  { s:"juan-amarillotibabuyes", t:"areas_de_resiliencia_climatica", dim:"Soporte", tipo:"directa", analisis:"Relacion heredada del nodo agrupador HUMEDALES (eliminado por contener a sus propios casos especificos); se reasigna a un humedal concreto representativo." },
-  { s:"la-conejera", t:"areas_protegidas", dim:"Soporte", tipo:"directa", analisis:"Relacion heredada del nodo agrupador HUMEDALES (eliminado por contener a sus propios casos especificos); se reasigna a un humedal concreto representativo." },
-  { s:"torca-guaymaral", t:"reservas_forestales", dim:"Soporte", tipo:"directa", analisis:"Relacion heredada del nodo agrupador HUMEDALES (eliminado por contener a sus propios casos especificos); se reasigna a un humedal concreto representativo." },
-  { s:"la-vaca", t:"red_vial", dim:"Soporte", tipo:"directa", analisis:"Relacion heredada del nodo agrupador HUMEDALES (eliminado por contener a sus propios casos especificos); se reasigna a un humedal concreto representativo." },
-  { s:"santa-maría-del-lago", t:"parques", dim:"Soporte", tipo:"directa", analisis:"Relacion heredada del nodo agrupador HUMEDALES (eliminado por contener a sus propios casos especificos); se reasigna a un humedal concreto representativo." },
-  { s:"córdoba-niza", t:"patrimonio_natural", dim:"Soporte", tipo:"directa", analisis:"Relacion heredada del nodo agrupador HUMEDALES (eliminado por contener a sus propios casos especificos); se reasigna a un humedal concreto representativo." },
-  { s:"techo", t:"manzanas_del_cuidado", dim:"Soporte", tipo:"directa", analisis:"Relacion heredada del nodo agrupador HUMEDALES (eliminado por contener a sus propios casos especificos); se reasigna a un humedal concreto representativo." },
-  { s:"cicloruta-carrera-7", t:"transporte_publico", dim:"Movilidad", tipo:"directa", analisis:"Relacion heredada del nodo agrupador CICLORUTAS (eliminado por contener a sus propias rutas especificas); se reasigna a una cicloruta concreta representativa." },
-  { s:"cicloruta-carrera-7", t:"corredores_verdes", dim:"Movilidad", tipo:"directa", analisis:"Relacion heredada del nodo agrupador CICLORUTAS (eliminado por contener a sus propias rutas especificas); se reasigna a una cicloruta concreta representativa." }
+  { s:"río-bogotá", t:"complejos_de_paramos", dim:"Soporte", tipo:"directa", analisis:"Relación del sistema hídrico: el río Bogotá es el eje al que drena toda la red de ríos y canales de la ciudad." },
+  { s:"río-bogotá", t:"reservas_forestales", dim:"Soporte", tipo:"directa", analisis:"Relación del sistema hídrico: el río Bogotá es el eje al que drena toda la red de ríos y canales de la ciudad." },
+  { s:"río-bogotá", t:"transporte_publico", dim:"Soporte", tipo:"directa", analisis:"Relación del sistema hídrico: el río Bogotá es el eje al que drena toda la red de ríos y canales de la ciudad." },
+  { s:"juan-amarillotibabuyes", t:"areas_de_resiliencia_climatica", dim:"Soporte", tipo:"directa", analisis:"Relación del sistema de humedales, leída sobre uno de los humedales que el POT nombra." },
+  { s:"la-conejera", t:"areas_protegidas", dim:"Soporte", tipo:"directa", analisis:"Relación del sistema de humedales, leída sobre uno de los humedales que el POT nombra." },
+  { s:"torca-guaymaral", t:"reservas_forestales", dim:"Soporte", tipo:"directa", analisis:"Relación del sistema de humedales, leída sobre uno de los humedales que el POT nombra." },
+  { s:"la-vaca", t:"red_vial", dim:"Soporte", tipo:"directa", analisis:"Relación del sistema de humedales, leída sobre uno de los humedales que el POT nombra." },
+  { s:"santa-maría-del-lago", t:"parques", dim:"Soporte", tipo:"directa", analisis:"Relación del sistema de humedales, leída sobre uno de los humedales que el POT nombra." },
+  { s:"córdoba-niza", t:"patrimonio_natural", dim:"Soporte", tipo:"directa", analisis:"Relación del sistema de humedales, leída sobre uno de los humedales que el POT nombra." },
+  { s:"techo", t:"manzanas_del_cuidado", dim:"Soporte", tipo:"directa", analisis:"Relación del sistema de humedales, leída sobre uno de los humedales que el POT nombra." },
+  { s:"cicloruta-carrera-7", t:"transporte_publico", dim:"Movilidad", tipo:"directa", analisis:"Relación de la red de cicloinfraestructura, leída sobre uno de sus corredores." },
+  { s:"cicloruta-carrera-7", t:"corredores_verdes", dim:"Movilidad", tipo:"directa", analisis:"Relación de la red de cicloinfraestructura, leída sobre uno de sus corredores." }
 ,
 
   /* Relaciones de los 4 nodos agregadores, tal como estaban en la red original */
@@ -1639,6 +1639,7 @@ function drawEdges(svg) {
 
     const hit = document.createElementNS(SVG_NS, "path");
     hit.setAttribute("d", d); hit.setAttribute("class", "ods-edge edge-hit");
+    hit.setAttribute("stroke-width", "30");   // zona de clic ancha: la línea se agarra fácil, también con el dedo
 
     const visual = document.createElementNS(SVG_NS, "path");
     visual.setAttribute("d", d);
@@ -2241,14 +2242,23 @@ function setupZoomPan() {
     const g = svg.querySelector("#zoom-pan-group");
     if (g) g.setAttribute("transform", `translate(${panX},${panY}) scale(${zoomLevel})`);
   };
+  let capturado = false;
   svg.addEventListener("pointerdown", (ev) => {
     if (ev.target.closest(".ods-node")) return;   // los nodos tienen su propio arrastre
-    arrastrando = true; x0 = ev.clientX; y0 = ev.clientY; pan0x = panX; pan0y = panY;
-    svg.classList.add("m2-arrastrando");
-    try { svg.setPointerCapture(ev.pointerId); } catch (e) {}
+    arrastrando = true; capturado = false;
+    x0 = ev.clientX; y0 = ev.clientY; pan0x = panX; pan0y = panY;
   });
   svg.addEventListener("pointermove", (ev) => {
     if (!arrastrando) return;
+    // El lienzo solo empieza a moverse cuando de verdad se arrastra: si se
+    // capturara el puntero desde el primer toque, el clic nunca llegaría a la
+    // línea de una relación y no se podría abrir su ficha.
+    if (!capturado) {
+      if (Math.hypot(ev.clientX - x0, ev.clientY - y0) < 4) return;
+      capturado = true;
+      svg.classList.add("m2-arrastrando");
+      try { svg.setPointerCapture(ev.pointerId); } catch (e) {}
+    }
     const caja = svg.getBoundingClientRect();
     const escala = caja.width ? VISTA.w / caja.width : 1;   // pantalla -> lienzo
     panX = pan0x + (ev.clientX - x0) * escala;
@@ -2258,7 +2268,8 @@ function setupZoomPan() {
   const fin = (ev) => {
     if (!arrastrando) return;
     arrastrando = false; svg.classList.remove("m2-arrastrando");
-    try { svg.releasePointerCapture(ev.pointerId); } catch (e) {}
+    if (capturado) { try { svg.releasePointerCapture(ev.pointerId); } catch (e) {} }
+    capturado = false;
   };
   svg.addEventListener("pointerup", fin);
   svg.addEventListener("pointercancel", fin);
@@ -2399,11 +2410,23 @@ function showEdgeInfo(index) {
   document.getElementById("edgeInfoFuente").innerHTML = fuenteBadgeHTML(edge.fuente) + " " + relacionBadgeHTML(edge.relacion);
   document.getElementById("edgeInfoQuote").textContent = edge.cita ? edge.cita : "(No hay cita literal disponible para esta relación — ver análisis abajo.)";
   document.getElementById("edgeInfoAnalisis").textContent = edge.analisis || "";
-  document.getElementById("edgeInfoPage").textContent = (edge.articulo ? edge.articulo : "Sin artículo específico") + (edge.pagina ? ` · p. ${edge.pagina}` : "");
+  // De dónde sale la relación: artículo y página cuando el POT la enuncia; y
+  // si no, se dice con esas palabras en vez de dejar un "sin artículo" seco.
+  const donde = [];
+  if (edge.articulo) donde.push(edge.articulo);
+  if (edge.pagina && edge.pagina !== "—") donde.push("p. " + edge.pagina);
+  document.getElementById("edgeInfoPage").textContent = donde.length
+    ? "Dónde aparece en el POT: " + donde.join(" · ")
+    : (edge.fuente === "inventario_pendiente"
+        ? "El POT no enuncia esta relación: está en el inventario del equipo, pendiente de localizar la frase."
+        : "Sin artículo ni página localizados todavía.");
   document.getElementById("edgeInfoPanel").classList.add("visible");
   document.getElementById("nodeInfoPanel")?.classList.remove("visible");
 
   document.querySelectorAll(".matrix-row[data-edge]").forEach(row => row.classList.toggle("row-highlight", Number(row.dataset.edge) === index));
+
+  // se iluminan los dos elementos que la relación une, y se apaga el resto
+  setSpotlightNodes([edge.s, edge.t], false);
 }
 function hideEdgeInfo() {
   document.getElementById("edgeInfoPanel").classList.remove("visible");
@@ -3498,8 +3521,19 @@ function applySpotlightState() {
     visibleNodes = new Set(); visibleEdges = new Set();
     RAW_EDGES.forEach((edge, i) => { if (spotlight.cats.some(c => edge.cat.split("-").includes(c))) { visibleEdges.add(i); visibleNodes.add(edge.s); visibleNodes.add(edge.t); } });
   }
-  document.querySelectorAll(".ods-node").forEach(el => el.classList.toggle("node-focus-dim", visibleNodes ? !visibleNodes.has(el.dataset.id) : false));
-  document.querySelectorAll(".edge-group").forEach(el => el.classList.toggle("edge-focus-dim", visibleEdges ? !visibleEdges.has(Number(el.dataset.index)) : false));
+  // Lo que queda fuera se apaga y lo que queda dentro se ENCIENDE: así el
+  // doble clic sobre un nodo se lee como "estas son sus conexiones directas",
+  // no solo como "el resto se ve más oscuro".
+  document.querySelectorAll(".ods-node").forEach(el => {
+    const dentro = visibleNodes ? visibleNodes.has(el.dataset.id) : null;
+    el.classList.toggle("node-focus-dim", dentro === false);
+    el.classList.toggle("node-focus-on", dentro === true);
+  });
+  document.querySelectorAll(".edge-group").forEach(el => {
+    const dentro = visibleEdges ? visibleEdges.has(Number(el.dataset.index)) : null;
+    el.classList.toggle("edge-focus-dim", dentro === false);
+    el.classList.toggle("edge-focus-on", dentro === true);
+  });
 }
 function toggleNodeFlow(id) {
   const already = spotlight && spotlight.mode === "nodes" && spotlight.expand && spotlight.nodes.size === 1 && spotlight.nodes.has(id);
