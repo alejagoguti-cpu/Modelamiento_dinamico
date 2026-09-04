@@ -18,6 +18,13 @@
        clásico de Tarjan, y se pueden resaltar con un botón dedicado.
    ========================================================== */
 (function () {
+  /* ¿Se dibuja esta red (la de Supabase) o la original de modulo-02.js?
+     A pedido de la usuaria, Módulo 02 vuelve a mostrar la red de siempre:
+     con la constante en false esta capa no se construye, no se consulta la
+     base de datos y su barra de herramientas queda oculta. Poner true
+     devuelve la red externa tal como estaba, sin tocar nada más. */
+  const RED_EXTERNA_ACTIVA = false;
+
   const SUPABASE_URL = "https://mcitahjecaqsshzeamnj.supabase.co";
   const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1jaXRhaGplY2Fxc3NoemVhbW5qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg0NDYwNjQsImV4cCI6MjEwNDAyMjA2NH0.xx63t4EZcdqZqf4onHsU1EcIFdCQS04VigGgyDbLxHQ";
   const SVG_NS = "http://www.w3.org/2000/svg";
@@ -31,8 +38,17 @@
   const R_MIN = 15, R_MAX = 62;
   const GAP = 26; // "aire" mínimo entre el borde de dos nodos cualesquiera
 
+  // Con pocos nodos en pantalla (por ejemplo al dejar solo lo que el POT
+  // nombra) las bolas se veían diminutas sobre el mismo lienzo enorme. El
+  // tamaño se escala según cuántos nodos hay: menos nodos, bolas más
+  // grandes, para que siga leyéndose como una red y no como puntos.
+  let escalaNodo = 1;
+  function ajustarEscalaNodo(n) {
+    escalaNodo = Math.max(1, Math.min(2.6, Math.sqrt(760 / Math.max(30, n || 760))));
+  }
   function radiusForDegree(d) {
-    return Math.max(R_MIN, Math.min(R_MAX, R_MIN + Math.sqrt(d) * 8.2));
+    const r = Math.max(R_MIN, Math.min(R_MAX, R_MIN + Math.sqrt(d) * 8.2));
+    return r * escalaNodo;
   }
 
   // Solo se usan los 4 colores/íconos oficiales de las estructuras del POT
@@ -256,9 +272,9 @@
       e._ax = p.x; e._ay = p.y;
     });
 
-    const cellSize = R_MAX * 2 + GAP + 5; // mayor que cualquier separación mínima posible
+    const cellSize = R_MAX * escalaNodo * 2 + GAP + 5; // mayor que cualquier separación mínima posible
     const gridKey = (cx, cy) => (cx + 16384) * 65536 + (cy + 16384);
-    const EDGE_LEN = R_MAX * 1.8;
+    const EDGE_LEN = R_MAX * escalaNodo * 1.8;
     const ITER = 110;
 
     function buildGrid() {
@@ -527,7 +543,7 @@
     const xs = state.elementos.map((e) => e._x).sort((a, b) => a - b);
     const ys = state.elementos.map((e) => e._y).sort((a, b) => a - b);
     const pct = (arr, q) => arr[Math.min(arr.length - 1, Math.max(0, Math.round((arr.length - 1) * q)))] || 0;
-    const margen = R_MAX * 2;
+    const margen = R_MAX * escalaNodo * 2;
     let minX = pct(xs, 0.02) - margen, maxX = pct(xs, 0.98) + margen;
     let minY = pct(ys, 0.02) - margen, maxY = pct(ys, 0.98) + margen;
     const w = maxX - minX, h = maxY - minY;
@@ -745,6 +761,7 @@
       const info = document.getElementById("m2reSimInfo");
       if (info) info.textContent = vivos.length + " de " + state.elementos.length + " nodos activos · " +
         vivas.length + " conexiones activas · " + puentes.size + " nodos puente · " + aislados + " aislados";
+      if (!document.getElementById("m2reConclusiones")?.hidden) abrirConclusiones();
     };
 
     // doble clic sobre un nodo = dejar iluminadas SUS conexiones
@@ -895,10 +912,16 @@
     state.conexiones = todasCon.filter((c) => state.byId.has(c.origen) && state.byId.has(c.destino));
     if (soloPot) {
       // Al quedarse solo con lo que el POT nombra, la mayoría de vecinos
-      // directos desaparece y los supervivientes quedan sueltos. Se
-      // reconstruye el vínculo con las relaciones de la PROPIA base: si dos
-      // elementos del POT estaban unidos por un camino que solo pasa por
-      // elementos retirados, se dibuja esa relación indirecta.
+      // directos desaparece. Se reconstruye el vínculo con las relaciones de
+      // la PROPIA base: si dos elementos del POT estaban unidos por un
+      // camino que solo atraviesa elementos retirados, esa relación se
+      // conserva como indirecta.
+      // OJO: hay que limitarlas. Sin límite cada superviviente heredaba las
+      // conexiones de todos sus vecinos retirados y la red terminaba con 12
+      // conexiones por nodo — una maraña. Cada nodo conserva solo sus
+      // MAX_DERIVADAS relaciones más cercanas.
+      const MAX_SALTOS = 2;        // solo a través de UN elemento retirado
+      const MAX_DERIVADAS = 3;     // por nodo
       const ady = new Map();
       todasCon.forEach((c) => {
         if (!ady.has(c.origen)) ady.set(c.origen, []);
@@ -906,8 +929,9 @@
         ady.get(c.origen).push(c.destino);
         ady.get(c.destino).push(c.origen);
       });
+      const dist = (a, b) => Math.hypot((a.lon_jitter || 0) - (b.lon_jitter || 0), (a.lat_jitter || 0) - (b.lat_jitter || 0));
+      const candidatas = [];
       const yaHay = new Set(state.conexiones.map((c) => [c.origen, c.destino].sort().join("|")));
-      const MAX_SALTOS = 2;   // solo a través de UN elemento retirado
       state.elementos.forEach((origen) => {
         const visto = new Map([[origen.id, 0]]);
         const cola = [origen.id];
@@ -922,22 +946,45 @@
               if (vec === origen.id) return;
               const clave = [origen.id, vec].sort().join("|");
               if (yaHay.has(clave)) return;
-              yaHay.add(clave);
-              state.conexiones.push({
-                origen: origen.id, destino: vec, tipo: "indirecta",
-                motivo: "Relación a través de " + saltos + " elemento" + (saltos === 1 ? "" : "s") +
-                        " que el POT no nombra (según las conexiones de la base de datos).",
-                _derivada: true,
-              });
+              candidatas.push({ a: origen.id, b: vec, clave, saltos, d: dist(origen, state.byId.get(vec)) });
             } else {
               cola.push(vec);   // solo se atraviesan elementos retirados
             }
           });
         }
       });
+      // Además se descartan las relaciones derivadas que cruzarían media
+      // ciudad: son ruido visual. El tope se saca de los propios datos (el
+      // doble de la distancia mediana de las conexiones directas que
+      // quedaron), no de un número inventado.
+      const porTodos = new Map(todos.map((e) => [e.id, e]));
+      const largos = todasCon
+        .map((c) => { const a = porTodos.get(c.origen), b = porTodos.get(c.destino); return a && b ? dist(a, b) : null; })
+        .filter((x) => x != null).sort((x, y) => x - y);
+      const mediana = largos.length ? largos[Math.floor(largos.length / 2)] : 0;
+      const TOPE_DIST = mediana > 0 ? mediana * 4 : Infinity;
+      // las más cercanas primero, y con tope por nodo
+      candidatas.sort((x, y) => (x.saltos - y.saltos) || (x.d - y.d));
+      const cuenta = new Map();
+      const usadas = new Set();
+      candidatas.forEach((k) => {
+        if (usadas.has(k.clave)) return;
+        if (k.d > TOPE_DIST) return;
+        const ca = cuenta.get(k.a) || 0, cb = cuenta.get(k.b) || 0;
+        if (ca >= MAX_DERIVADAS || cb >= MAX_DERIVADAS) return;
+        usadas.add(k.clave);
+        cuenta.set(k.a, ca + 1); cuenta.set(k.b, cb + 1);
+        state.conexiones.push({
+          origen: k.a, destino: k.b, tipo: "indirecta",
+          motivo: "Relación a través de " + k.saltos + " elemento" + (k.saltos === 1 ? "" : "s") +
+                  " que el POT no nombra (según las conexiones de la base de datos).",
+          _derivada: true,
+        });
+      });
     }
     state.apagados = new Set();
     state.filtroInfo = { total: todos.length, conservados: state.elementos.length };
+    ajustarEscalaNodo(state.elementos.length);
   }
 
   async function init() {
@@ -978,7 +1025,221 @@
     }
   }
 
+  /* ---------- Conclusiones de la red ----------
+     Todo lo que afirma el panel se mide sobre la red que está en pantalla
+     en ese momento (nodos y conexiones activas). Ningún número va escrito
+     a mano: si se apagan nodos o se quita el filtro del POT, las
+     conclusiones se recalculan. */
+  const ESTRUCTURA_NOMBRE = {
+    e1: "Estructura Ecológica Principal",
+    e2: "Estructura Funcional y del Cuidado",
+    e3: "Estructura Socioeconómica, Creativa y de Innovación",
+    e4: "Estructura Integradora de Patrimonios",
+  };
+  const estructuraDe = (e) => CATEGORIA_A_ESTRUCTURA[e.categoria_id] || "e2";
+  const pct = (parte, total) => (total > 0 ? Math.round((parte / total) * 100) : 0);
+
+  // tamaños de las componentes conexas, de mayor a menor
+  function componentesDe(ids, conexiones) {
+    const ady = new Map(ids.map((id) => [id, []]));
+    conexiones.forEach((c) => {
+      if (!ady.has(c.origen) || !ady.has(c.destino)) return;
+      ady.get(c.origen).push(c.destino);
+      ady.get(c.destino).push(c.origen);
+    });
+    const visto = new Set(), tamanos = [];
+    ady.forEach((_, start) => {
+      if (visto.has(start)) return;
+      let n = 0; const pila = [start]; visto.add(start);
+      while (pila.length) {
+        const cur = pila.pop(); n++;
+        (ady.get(cur) || []).forEach((v) => { if (!visto.has(v)) { visto.add(v); pila.push(v); } });
+      }
+      tamanos.push(n);
+    });
+    return tamanos.sort((a, b) => b - a);
+  }
+
+  function calcularConclusiones() {
+    const vivos = state.elementos.filter((e) => estaActivo(e.id));
+    const vivas = state.conexiones.filter(conexionActiva);
+    const grado = state.grado;
+
+    // reparto por estructura del POT
+    const porEstructura = {};
+    Object.keys(ESTRUCTURA_NOMBRE).forEach((k) => { porEstructura[k] = { nodos: 0, extremos: 0 }; });
+    vivos.forEach((e) => { porEstructura[estructuraDe(e)].nodos++; });
+    let cruzadas = 0;
+    vivas.forEach((c) => {
+      const a = state.byId.get(c.origen), b = state.byId.get(c.destino);
+      if (!a || !b) return;
+      const ea = estructuraDe(a), eb = estructuraDe(b);
+      porEstructura[ea].extremos++; porEstructura[eb].extremos++;
+      if (ea !== eb) cruzadas++;
+    });
+
+    // concentración: el 5% de nodos con más conexiones
+    const ordenados = [...vivos].sort((a, b) => (grado.get(b.id) || 0) - (grado.get(a.id) || 0));
+    const cuantosHubs = Math.max(1, Math.round(vivos.length * 0.05));
+    const hubs = ordenados.slice(0, cuantosHubs);
+    const idsHub = new Set(hubs.map((e) => e.id));
+    const conHub = vivas.filter((c) => idsHub.has(c.origen) || idsHub.has(c.destino)).length;
+
+    // qué queda si esos hubs se apagan
+    const idsSinHub = vivos.filter((e) => !idsHub.has(e.id)).map((e) => e.id);
+    const setSinHub = new Set(idsSinHub);
+    const vivasSinHub = vivas.filter((c) => setSinHub.has(c.origen) && setSinHub.has(c.destino));
+    const comps = componentesDe(idsSinHub, vivasSinHub);
+    const sueltosSinHub = comps.filter((t) => t === 1).length;
+
+    const conexionesSinHub = vivasSinHub.length;
+    const conservadosPot = (state.todosElementos || []).filter((e) => e._razonPot).length;
+
+    const aislados = vivos.filter((e) => (grado.get(e.id) || 0) === 0).length;
+    const derivadas = vivas.filter((c) => c._derivada).length;
+    const indirectas = vivas.filter((c) => c.tipo === "indirecta").length;
+
+    return {
+      nodos: vivos.length,
+      conexiones: vivas.length,
+      totalBase: (state.filtroInfo && state.filtroInfo.total) || vivos.length,
+      soloPot,
+      porEstructura,
+      cruzadas,
+      hubs, cuantosHubs, conHub,
+      compsSinHub: comps.length,
+      mayorSinHub: comps[0] || 0,
+      sueltosSinHub, conexionesSinHub, conservadosPot,
+      aislados,
+      puentes: state.puentes.size,
+      derivadas, indirectas,
+      apagados: state.apagados.size,
+    };
+  }
+
+  function htmlConclusiones() {
+    const d = calcularConclusiones();
+    const gradoMedio = d.nodos ? (d.conexiones * 2 / d.nodos).toFixed(1) : "0";
+    const filaEstructura = Object.keys(ESTRUCTURA_NOMBRE).map((k) => {
+      const s = ESTRUCTURA_STYLE[k], p = d.porEstructura[k];
+      return '<div class="m2re-concl-barra">' +
+        '<span class="m2re-concl-punto" style="background:' + s.color + '"></span>' +
+        '<span class="m2re-concl-barra-nom">' + ESTRUCTURA_NOMBRE[k] + '</span>' +
+        '<span class="m2re-concl-barra-track"><span class="m2re-concl-barra-fill" style="width:' +
+          pct(p.nodos, d.nodos) + '%;background:' + s.color + '"></span></span>' +
+        '<span class="m2re-concl-barra-val">' + p.nodos + ' · ' + pct(p.nodos, d.nodos) + '%</span>' +
+        '</div>';
+    }).join("");
+
+    const dato = (v, t) => '<div class="m2re-concl-dato"><b>' + v + '</b><span>' + t + '</span></div>';
+    const plural = (n, sing, plu) => n + " " + (n === 1 ? sing : plu);
+
+    // La redacción sigue a los números medidos: si la red no se parte, no se
+    // dice que se parte; si no hay nodos puente, se dice que no los hay.
+    const concentra = pct(d.conHub, d.conexiones);
+    const tituloHubs = concentra >= 30
+      ? "2. La red se sostiene sobre muy pocos nodos"
+      : "2. El peso de la red está repartido de forma desigual";
+    const fragmento = d.compsSinHub > 1
+      ? 'Si se apagan solo esos, la red se parte en <b>' + plural(d.compsSinHub, "pedazo", "pedazos") +
+        '</b> —el mayor conserva ' + d.mayorSinHub + ' nodos— y <b>' + plural(d.sueltosSinHub, "elemento queda suelto", "elementos quedan sueltos") + '</b>.'
+      : 'Si se apagan solo esos, la red sigue en una sola pieza, pero pierde <b>' +
+        (d.conexiones - d.conexionesSinHub) + '</b> conexiones (' + pct(d.conexiones - d.conexionesSinHub, d.conexiones) + '%).';
+    const puentesTxt = d.puentes > 0
+      ? 'Además hay <b>' + plural(d.puentes, "nodo puente", "nodos puente") + '</b>: basta con quitar uno para que una parte del territorio se desconecte del resto.'
+      : 'No hay ningún nodo puente: ningún elemento sostiene por sí solo la unión entre dos partes de la red.';
+
+    const cruce = pct(d.cruzadas, d.conexiones);
+    const orden = Object.keys(ESTRUCTURA_NOMBRE).sort((a, b) => d.porEstructura[b].nodos - d.porEstructura[a].nodos);
+    const dominante = orden[0], ultima = orden[orden.length - 1];
+    const tituloEstr = cruce < 25
+      ? "3. Las cuatro estructuras del POT casi no se hablan entre sí"
+      : "3. Las cuatro estructuras se cruzan, pero pesan muy distinto";
+    const textoEstr = cruce < 25
+      ? 'Solo <b>' + cruce + '%</b> de las conexiones (' + d.cruzadas + ' de ' + d.conexiones + ') une elementos de ' +
+        'estructuras distintas: lo ecológico con lo funcional, lo funcional con lo patrimonial. El resto ocurre dentro ' +
+        'de la misma estructura. El plan reconoce cuatro sistemas, pero los modela casi por separado.'
+      : '<b>' + cruce + '%</b> de las conexiones (' + d.cruzadas + ' de ' + d.conexiones + ') une elementos de estructuras ' +
+        'distintas, así que los cuatro sistemas sí se tocan. Lo que no está repartido es el peso: la <b>' +
+        ESTRUCTURA_NOMBRE[dominante] + '</b> aporta ' + pct(d.porEstructura[dominante].nodos, d.nodos) + '% de los nodos, ' +
+        'mientras la <b>' + ESTRUCTURA_NOMBRE[ultima] + '</b> aporta ' + pct(d.porEstructura[ultima].nodos, d.nodos) + '%. ' +
+        'La red se lee como un sistema con un centro y tres bordes.';
+
+    const cierrePuentes = d.puentes > 0
+      ? 'con ' + plural(d.puentes, "punto de quiebre", "puntos de quiebre") + ' '
+      : 'sin ningún punto de quiebre único ';
+
+    return '' +
+      '<button class="m2re-concl-cerrar" type="button" aria-label="Cerrar">&times;</button>' +
+      '<div class="m2re-concl-kicker">Conclusiones de la red</div>' +
+      '<h3>Lo que el POT alcanza a modelar de la ciudad</h3>' +
+      '<p class="m2re-concl-nota">Todas las cifras se calculan sobre la red que está viendo ahora mismo' +
+        (d.soloPot ? ' (filtro <em>solo lo que el POT nombra</em> activo' : ' (viendo toda la base de datos') +
+        (d.apagados ? ', ' + plural(d.apagados, "nodo desactivado", "nodos desactivados") : '') +
+        '). Si cambia el filtro o apaga nodos, cambian.</p>' +
+
+      '<div class="m2re-concl-datos">' +
+        dato(d.nodos, 'nodos') + dato(d.conexiones, 'conexiones') +
+        dato(gradoMedio, 'conexiones por nodo') + dato(d.puentes, 'nodos puente') +
+      '</div>' +
+
+      '<div class="m2re-concl-bloque">' +
+        '<h4>1. El POT nombra una parte pequeña del territorio que regula</h4>' +
+        '<p>De los <b>' + d.totalBase + '</b> elementos cargados en la base, el documento del POT nombra de forma ' +
+        'explícita <b>' + d.conservadosPot + '</b> (' + pct(d.conservadosPot, d.totalBase) + '%): humedales, ríos y ' +
+        'canales con nombre propio, unos pocos corredores viales y sistemas completos (Manzanas del Cuidado, ' +
+        'corredores verdes, red de metro y cables). El resto existe en la ciudad, pero no aparece en el texto que ' +
+        'la ordena.' + (d.soloPot ? '' : ' Ahora mismo está viendo la base completa: el botón <em>Solo lo que el POT nombra</em> deja únicamente esos ' + d.conservadosPot + '.') + '</p>' +
+      '</div>' +
+
+      '<div class="m2re-concl-bloque">' +
+        '<h4>' + tituloHubs + '</h4>' +
+        '<p>El <b>5%</b> de los nodos con más conexiones (' + d.cuantosHubs + ' de ' + d.nodos + ') concentra ' +
+        '<b>' + concentra + '%</b> de todas las conexiones. ' + fragmento + ' ' + puentesTxt +
+        ' Puede comprobarlo con el botón <em>Desactivar hubs</em> de la barra.</p>' +
+      '</div>' +
+
+      '<div class="m2re-concl-bloque">' +
+        '<h4>' + tituloEstr + '</h4>' +
+        '<p>' + textoEstr + '</p>' +
+        '<div class="m2re-concl-barras">' + filaEstructura + '</div>' +
+      '</div>' +
+
+      '<div class="m2re-concl-bloque">' +
+        '<h4>4. Las relaciones no están escritas: hay que deducirlas</h4>' +
+        '<p>Ninguna de estas <b>' + d.conexiones + '</b> conexiones está enunciada como tal en el POT. Se construyen ' +
+        'desde la base a partir de la cercanía entre elementos, y <b>' + d.indirectas + '</b> son indirectas' +
+        (d.derivadas ? ' — <b>' + d.derivadas + '</b> de ellas pasan por elementos que el POT no nombra' : '') +
+        '. El plan localiza objetos (polígonos, trazados, equipamientos) y les asigna normas, pero no describe ' +
+        'qué depende de qué, ni qué pasa cuando una de esas piezas falla.</p>' +
+      '</div>' +
+
+      '<div class="m2re-concl-final">' +
+        '<b>En síntesis:</b> el POT se comporta como un inventario localizado, no como un modelo de relaciones. ' +
+        'Nombra lugares y les fija reglas, pero la estructura que sostiene la ciudad —quién depende de quién, ' +
+        'qué se cae si se cae un nodo— solo aparece cuando se la reconstruye como red. Y reconstruida se ve ' +
+        'desbalanceada: ' + concentra + '% de las conexiones pasa por el 5% de los nodos, ' + cierrePuentes +
+        'y con las cuatro estructuras pesando de forma muy distinta.' +
+      '</div>';
+  }
+
+  function abrirConclusiones() {
+    const cap = document.getElementById("m2reConclusiones");
+    if (!cap) return;
+    cap.innerHTML = htmlConclusiones();
+    cap.hidden = false;
+    cap.querySelector(".m2re-concl-cerrar")?.addEventListener("click", cerrarConclusiones);
+    document.getElementById("m2reBtnConclusiones")?.classList.add("active");
+  }
+  function cerrarConclusiones() {
+    const cap = document.getElementById("m2reConclusiones");
+    if (cap) { cap.hidden = true; cap.innerHTML = ""; }
+    document.getElementById("m2reBtnConclusiones")?.classList.remove("active");
+  }
+
   document.addEventListener("DOMContentLoaded", () => {
+    if (!RED_EXTERNA_ACTIVA) return;   // se queda la red original de modulo-02.js
+    document.body.classList.add("m2re-activa");
     init();
     document.getElementById("m2reBtnSoloPot")?.addEventListener("click", () => {
       soloPot = !soloPot;
@@ -986,6 +1247,12 @@
       buildLayer();
       pintarEstadoFiltro();
       cerrarFicha();
+      // el panel de conclusiones mide la red en pantalla: si cambia, se rehace
+      if (!document.getElementById("m2reConclusiones")?.hidden) abrirConclusiones();
+    });
+    document.getElementById("m2reBtnConclusiones")?.addEventListener("click", () => {
+      if (document.getElementById("m2reConclusiones")?.hidden) abrirConclusiones();
+      else cerrarConclusiones();
     });
     document.getElementById("networkViz")?.addEventListener("click", () => {
       hideTooltip(); cerrarFicha();

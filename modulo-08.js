@@ -1199,6 +1199,7 @@ function isComponenteConectadoADinamico(id) {
 /* -------- situaciones -------- */
 function renderSituacionesRow() {
   const row = document.getElementById("situacionesRow");
+  if (!row) return;   // el módulo puede cargarse sin la sección de la red
   row.innerHTML = SITUACIONES.map(s => `
     <button class="situacion-btn" data-sit="${s.id}" onclick="setSituacion('${s.id}')">
       <i class="fa-solid ${s.icon}"></i> ${s.label}
@@ -1224,10 +1225,12 @@ function setSituacion(id) {
 
 /* -------- stats -------- */
 function updateStats() {
-  document.getElementById("statComponentes").textContent = BASE_NODES.length;
-  document.getElementById("statActores").textContent = agencyOn ? ACTOR_NODES.length : "—";
-  document.getElementById("statMediadores").textContent = agencyOn ? MEDIADOR_NODES.length : "—";
-  document.getElementById("statRelaciones").textContent = allActiveEdges().length;
+  // El módulo puede cargarse sin la sección de la red (y sin sus contadores).
+  const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+  set("statComponentes", BASE_NODES.length);
+  set("statActores", agencyOn ? ACTOR_NODES.length : "—");
+  set("statMediadores", agencyOn ? MEDIADOR_NODES.length : "—");
+  set("statRelaciones", allActiveEdges().length);
 }
 
 /* -------- mini-viz "Lectura Dinámica" del hero (decorativo) -------- */

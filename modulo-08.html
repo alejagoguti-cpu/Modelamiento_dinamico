@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="stylesheet" href="modulo-08.css?v=cobertura-vegetal-v39">
+<link rel="stylesheet" href="modulo-08.css?v=solo-simulacion-v40">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="site-theme.css?v=20260823">
   <script src="modulo-08-data.js"></script>
@@ -55,108 +55,6 @@
       <p>Del POT como texto lineal <i class="fa-solid fa-arrow-right-long"></i> a la ciudad como sistema vivo</p>
     </section>
 
-    <!-- RED -->
-    <div class="network-section">
-      <div class="network-header">
-        <div class="network-heading-copy"><h3><i class="fa-solid fa-share-nodes"></i> Red de datos relacionales de la ciudad</h3><p>La ciudad aparece como un campo de datos vivos: <span class="simulator-agent-key">150 nodos generales y dinámicos</span> conectan ecosistemas, infraestructura, cuidado, movilidad, patrimonio, agentes e instituciones.</p></div>
-        <div class="network-controls">
-          <button class="control-btn active" data-view="todas" onclick="filterView('todas')">Todos los nodos</button>
-          <button class="control-btn" data-view="componentes" onclick="filterView('componentes')">Componentes</button>
-          <button class="control-btn" data-view="actores" onclick="filterView('actores')">Agentes y actores</button>
-        </div>
-        <label class="city-data-filter-label" for="cityDataFilter">Datos de la tabla
-          <select id="cityDataFilter" class="city-data-filter" onchange="setCityDataFilter(this.value)">
-            <option value="all" selected>Red completa · 150 nodos</option>
-            <option value="initial">Vista reducida</option>
-            <option value="Sistema hídrico">Sistema hídrico · 19 nodos</option>
-            <option value="Sistema biótico">Sistema biótico · 14 nodos</option>
-            <option value="Sistema físico-urbano">Sistema físico-urbano · 26 nodos</option>
-            <option value="Sistema de movilidad">Sistema de movilidad · 11 nodos</option>
-            <option value="Sistema de cuidado, servicios y espacio público">Sistema de cuidado, servicios y espacio público · 10 nodos</option>
-            <option value="Sistema socioeconómico y de ocupación">Sistema socioeconómico y de ocupación · 22 nodos</option>
-            <option value="Sistema social-comunitario">Sistema social-comunitario · 14 nodos</option>
-            <option value="Sistema patrimonial y de memoria">Sistema patrimonial y de memoria · 10 nodos</option>
-            <option value="Sistema institucional de gestión">Sistema institucional de gestión · 24 nodos</option>
-          </select>
-        </label>
-      </div>
-
-      <div class="network-viz-wrap">
-        <svg id="readerViz" viewBox="0 0 1060 800" preserveAspectRatio="xMidYMid meet"></svg>
-
-        <div class="network-sidebar">
-          <button class="findings-toggle" id="findingsToggle" type="button"><i class="fa-solid fa-lightbulb"></i> Hallazgo y conclusión</button>
-          <div class="findings-side-panel" id="findingsSidePanel" aria-hidden="true">
-            <div class="findings-side-header"><span>Hallazgo y conclusión</span><button class="edge-info-close" id="findingsClose" type="button" aria-label="Cerrar">&times;</button></div>
-            <div class="finding-side-kicker">LO QUE LA RED HACE VISIBLE</div>
-            <h4>El POT no opera como una cadena lineal</h4>
-            <p>La red muestra que una regla territorial solo se vuelve real cuando atraviesa agentes, instituciones, mercados, infraestructuras, mediadores y ecosistemas. Una modificación en vivienda, movilidad o agua redistribuye tiempos, riesgos y posibilidades de acceso.</p>
-            <div class="finding-side-kicker">HALLAZGO</div>
-            <p><strong>La ciudad funciona como un sistema de dependencias cruzadas:</strong> los agentes no recorren objetos aislados, sino cadenas de cuidado, vivienda, transporte, empleo, abastecimiento, salud y evacuación.</p>
-            <div class="finding-side-kicker">CONCLUSIÓN</div>
-            <p>El POT es indispensable como instrumento jurídico, pero insuficiente como modelo explicativo único. La simulación agrega la capa que permite observar la ciudad mientras cambia: quién queda conectado, quién acumula fatiga, qué infraestructura se rompe y cómo responden las comunidades y los ecosistemas.</p>
-            <div class="finding-side-speech"><strong>Qué decir en vivo:</strong><br>“La conclusión de esta red es que la ciudad no se comporta como el texto que la regula. El POT fija reglas y localizaciones; la simulación muestra las relaciones, los efectos acumulados y las decisiones que aparecen cuando esas reglas se encuentran con la vida cotidiana.”</div>
-          </div>
-
-          <aside class="network-legend">
-            <div class="legend-title">Convenciones de la tabla</div>
-            <div class="legend-item legend-static"><span class="legend-dot" style="background:#ffffff;"></span> Bolita = nodo de la tabla</div>
-            <div class="legend-item legend-static"><span class="legend-ic"><i class="fa-solid fa-circle-nodes"></i></span> Ícono = tipo de nodo</div>
-            <div class="legend-item legend-static"><span class="legend-line-sample"></span> Línea continua = relación directa</div>
-            <div class="legend-item legend-static"><span class="legend-line-sample dashed"></span> Línea punteada = relación indirecta</div>
-            <div class="legend-item legend-static"><span class="legend-flow-sample"></span> Puntos móviles = intercambio</div>
-
-            <div class="legend-title">Color = subsistema</div>
-            <div class="legend-item legend-static"><span class="legend-dot" style="background:#43c7d7;"></span> Sistema hídrico</div>
-            <div class="legend-item legend-static"><span class="legend-dot" style="background:#6bcf8f;"></span> Sistema biótico</div>
-            <div class="legend-item legend-static"><span class="legend-dot" style="background:#b7c0cb;"></span> Sistema físico-urbano</div>
-            <div class="legend-item legend-static"><span class="legend-dot" style="background:#f1cf5b;"></span> Sistema de movilidad</div>
-            <div class="legend-item legend-static"><span class="legend-dot" style="background:#c6a0e9;"></span> Sistema de cuidado, servicios y espacio público</div>
-            <div class="legend-item legend-static"><span class="legend-dot" style="background:#e98b67;"></span> Sistema socioeconómico y de ocupación</div>
-            <div class="legend-item legend-static"><span class="legend-dot" style="background:#ef9a4b;"></span> Sistema social-comunitario</div>
-            <div class="legend-item legend-static"><span class="legend-dot" style="background:#f07bb1;"></span> Sistema patrimonial y de memoria</div>
-            <div class="legend-item legend-static"><span class="legend-dot" style="background:#9d8be8;"></span> Sistema institucional de gestión</div>
-
-            <div class="legend-divider"></div>
-            <div class="legend-hint">Los 150 nodos están visibles desde el inicio y ocupan todo el cuadrado. La red incorpora 165 relaciones de la tabla entre 127 nodos conectados. Toca una bolita o una conexión para ver su registro. Al elegir una situación, la red cambia su intensidad y muestra qué procesos se activan.</div>
-          </aside>
-
-
-          <div class="edge-info-panel" id="edgeInfoPanel">
-            <div class="edge-info-header">
-              <span id="edgeInfoTitle">Relación</span>
-              <button class="edge-info-close" id="edgeInfoClose" type="button" aria-label="Cerrar">&times;</button>
-            </div>
-
-            <div class="edge-info-row">
-              <div class="edge-info-label">Nombre</div>
-              <div class="edge-info-value" id="edgeInfoConvencion">—</div>
-            </div>
-            <div class="edge-info-row">
-              <div class="edge-info-label">Subsistema</div>
-              <div class="edge-info-quote" id="edgeInfoEvidencia">—</div>
-              <div class="edge-info-page" id="edgeInfoPage"></div>
-            </div>
-            <div class="edge-info-row">
-              <div class="edge-info-label">Type</div>
-              <div class="edge-info-value" id="edgeInfoActores">—</div>
-            </div>
-            <div class="edge-info-row">
-              <div class="edge-info-label">Registro</div>
-              <div class="edge-info-value" id="edgeInfoSituacion">—</div>
-            </div>
-            <div class="edge-info-row">
-              <div class="edge-info-label">Lectura</div>
-              <div class="edge-info-quote" id="edgeInfoCritica">—</div>
-            </div>
-            <div class="edge-info-live" id="edgeInfoLiveScript">
-              Haz clic en un agente, una conexión o una situación para ver qué decir en vivo.
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- SIMULACIÓN DE MOVILIDAD (SUMO) -->
     <div class="sumo-sim-section">
       <div class="sumo-sim-heading">
@@ -203,7 +101,11 @@
         <!-- Modelo ilustrativo "¿qué pasaría si...?": NO es una re-simulación
              real de SUMO (no hay backend). Es una manipulación visual sobre
              los mismos vehículos ya grabados. -->
-        <div class="sumo-whatif-panel">
+        <!-- Editar el escenario: mitad izquierda los vehículos, mitad derecha
+             las mirlas; debajo, a lo ancho, las convenciones de ruido. -->
+        <div class="sumo-escenario-row">
+        <div class="sumo-whatif-panel sumo-escenario-col">
+          <h4><i class="fa-solid fa-car-side"></i> Vehículos</h4>
           <p class="whatif-disclaimer"><i class="fa-solid fa-circle-info"></i> Modelo ilustrativo/conceptual — no es una re-simulación real de SUMO (este sitio no tiene un servidor que pueda correr SUMO en vivo). Multiplica visualmente los vehículos ya grabados y desvía a los que pasarían por la vía cerrada.</p>
           <label class="whatif-slider-label">
             Demanda vehicular: <span id="sumoDemandVal">0%</span> (0% = modelo base)
@@ -222,7 +124,7 @@
 
         <!-- Capa de mirlas (Turdus fuscater): agentes que cruzan de oriente
              a occidente buscando árboles donde alimentarse y descansar. -->
-        <div class="birds-legend">
+        <div class="birds-legend sumo-escenario-col">
           <h4>
             <i class="fa-solid fa-dove"></i> Mirlas (<i>Turdus fuscater</i>) y árboles atractores
             <label class="noise-toggle-label"><input type="checkbox" id="sumoBirdToggle"> Mostrar capa</label>
@@ -243,6 +145,8 @@
             <span><i class="birds-dot" style="background:#25d0a0"></i> <b>Urapán</b> · sin frutos comestibles: solo percha para descansar</span>
           </div>
         </div>
+
+        </div><!-- /sumo-escenario-row -->
 
         <!-- Leyenda de la capa de ruido: el color cambia con el nivel de
              tráfico/ruido, pero la transparencia es SIEMPRE la misma. -->

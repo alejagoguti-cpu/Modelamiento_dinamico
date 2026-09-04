@@ -1711,3 +1711,19 @@ footer span { color: var(--teal); }
 
 .birds-slider-label small { display: block; margin-top: 4px; font-size: 10.5px; line-height: 1.45; color: #9aa5b1; }
 .birds-slider-label small span { color: #7ed698; font-weight: 700; }
+
+/* ==========================================================
+   Editar el escenario en dos mitades: vehículos | mirlas
+   ========================================================== */
+.sumo-escenario-row {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: stretch;
+  margin-bottom: 14px;
+}
+.sumo-escenario-row > .sumo-escenario-col { margin: 0; height: 100%; }
+.sumo-whatif-panel.sumo-escenario-col > h4,
+.birds-legend.sumo-escenario-col > h4 {
+  margin: 0 0 8px; font-size: 13px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+@media (max-width: 900px) {
+  .sumo-escenario-row { grid-template-columns: 1fr; }
+}

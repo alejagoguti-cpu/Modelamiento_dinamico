@@ -6053,11 +6053,42 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
   color: #fff; font-size: 11px; font-weight: 800; letter-spacing: .03em; text-transform: uppercase;
   text-shadow: 0 1px 4px rgba(0,0,0,.8);
 }
+/* El texto de cada relación va AL LADO del diagrama, nunca encima: antes
+   se posaba sobre las bolas de abajo y las tapaba. */
+/* El hexágono va CENTRADO en la sección: la columna del texto tiene a su
+   izquierda un hueco del mismo ancho, así el diagrama queda en el eje de la
+   página y el texto de cada relación aparece al lado sin desplazarlo. */
+.bubble-net-wrap {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 620px) 300px;
+  grid-template-areas: "hueco diagrama texto";
+  justify-content: center;
+  gap: 22px;
+  align-items: center;
+  max-width: 1300px;
+  aspect-ratio: auto;
+}
+.bubble-net-wrap > .bubble-net-svg { grid-area: diagrama; }
+.bubble-net-wrap > .visible-network-tooltip { grid-area: texto; }
+.bubble-net-svg {
+  position: relative; inset: auto; width: 100%; height: auto;
+  aspect-ratio: 560 / 512;
+}
 .visible-network-tooltip {
-  position: absolute; z-index: 5; left: 50%; bottom: 8px; transform: translateX(-50%);
-  width: min(92%, 360px); background: rgba(6,10,10,.98); border: 1px solid #76fff0;
-  border-radius: 8px; padding: 10px 14px; color: #fff; font-size: 12px; line-height: 1.5;
+  position: relative; z-index: 5; left: auto; bottom: auto; transform: none;
+  width: 100%; background: rgba(6,10,10,.98); border: 1px solid #76fff0;
+  border-radius: 8px; padding: 12px 15px; color: #fff; font-size: 12px; line-height: 1.55;
+  white-space: pre-line;
   box-shadow: 0 10px 24px rgba(0,0,0,.6);
+}
+.visible-network-tooltip[hidden] { display: none; }
+@media (max-width: 1180px) {
+  /* sin espacio para las tres columnas, el texto pasa debajo del diagrama */
+  .bubble-net-wrap {
+    grid-template-columns: minmax(0, 620px);
+    grid-template-areas: "diagrama" "texto";
+    justify-content: center;
+  }
 }
 @media (max-width: 620px) {
   .bubble-node-label i { font-size: 15px; }
@@ -6189,8 +6220,8 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 
 /* ===== Red "¿Qué queremos hacer visible?": relaciones vivas y legibles ===== */
 .visible-elements-section .bubble-net-wrap {
-  max-width: 700px;
-  aspect-ratio: 560 / 500;
+  max-width: 1300px;
+  aspect-ratio: auto;   /* el diagrama va a la izquierda y el texto al lado */
   margin: 28px auto 34px;
 }
 .visible-elements-section .bubble-net-svg {
@@ -7461,7 +7492,7 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
   left: var(--node-x);
   top: var(--node-y);
   transform: translate(-50%, -50%);
-  opacity: 1 !important;
+  opacity: 1;
   z-index: 6;
   width: 72px;
   height: 72px;
@@ -7799,8 +7830,8 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
   position: absolute !important;
   left: var(--node-x) !important;
   top: var(--node-y) !important;
-  transform: translate(-50%, -50%) !important;
-  opacity: 1 !important;
+  transform: translate(-50%, -50%);
+  opacity: 1;
   z-index: 100 !important;
   pointer-events: auto !important;
   cursor: pointer !important;
@@ -8054,8 +8085,8 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
   position: absolute !important;
   left: var(--node-x) !important;
   top: var(--node-y) !important;
-  transform: translate(-50%, -50%) !important;
-  opacity: 1 !important;
+  transform: translate(-50%, -50%);
+  opacity: 1;
   z-index: 100 !important;
   pointer-events: auto !important;
   cursor: pointer !important;
@@ -8141,7 +8172,7 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 .full-unified-link {
   stroke-width: 0.8 !important;
   stroke-linecap: round !important;
-  opacity: 0.85 !important;
+  opacity: 0.85;
   filter: drop-shadow(0 0 3px currentColor) !important;
   transition: stroke 0.3s, stroke-width 0.3s, opacity 0.3s;
 }
@@ -8178,8 +8209,8 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
   position: absolute !important;
   left: var(--node-x) !important;
   top: var(--node-y) !important;
-  transform: translate(-50%, -50%) !important;
-  opacity: 1 !important;
+  transform: translate(-50%, -50%);
+  opacity: 1;
   z-index: 100 !important;
   pointer-events: auto !important;
   cursor: pointer !important;
@@ -8300,7 +8331,7 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 .full-unified-link {
   stroke-width: 0.8 !important;
   stroke-linecap: round !important;
-  opacity: 0.82 !important;
+  opacity: 0.82;
   filter: drop-shadow(0 0 3px currentColor) !important;
   transition: stroke 0.25s ease, stroke-width 0.25s ease, opacity 0.25s ease;
 }
@@ -8372,8 +8403,8 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
   position: absolute !important;
   left: var(--node-x) !important;
   top: var(--node-y) !important;
-  transform: translate(-50%, -50%) !important;
-  opacity: 1 !important;
+  transform: translate(-50%, -50%);
+  opacity: 1;
   z-index: 100 !important;
   pointer-events: auto !important;
   cursor: pointer !important;
@@ -8456,7 +8487,7 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 .full-unified-link {
   stroke-width: 0.85 !important;
   stroke-linecap: round !important;
-  opacity: 0.85 !important;
+  opacity: 0.85;
   filter: drop-shadow(0 0 3px currentColor) !important;
   transition: stroke 0.25s ease, stroke-width 0.25s ease, opacity 0.25s ease;
 }
@@ -8549,8 +8580,8 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
   position: absolute !important;
   left: var(--node-x) !important;
   top: var(--node-y) !important;
-  transform: translate(-50%, -50%) !important;
-  opacity: 1 !important;
+  transform: translate(-50%, -50%);
+  opacity: 1;
   z-index: 100 !important;
   pointer-events: auto !important;
   cursor: pointer !important;
@@ -8567,7 +8598,7 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
   justify-content: center !important;
   text-align: center !important;
   padding: 4px !important;
-  animation: smooth-subsystem-unpack 0.68s cubic-bezier(0.22, 1, 0.36, 1) var(--node-delay, 0ms) both !important;
+  animation: smooth-subsystem-unpack 0.82s cubic-bezier(0.22, 1, 0.36, 1) var(--node-delay, 0ms) both !important;
   transition: transform 0.25s cubic-bezier(0.2, 0.9, 0.3, 1.2), box-shadow 0.25s, border-color 0.25s !important;
 }
 
@@ -8626,8 +8657,14 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
   vector-effect: non-scaling-stroke;
   transition: stroke-opacity .22s ease, stroke-width .22s ease, stroke .22s ease;
 }
-/* relación entre sistemas distintos: gris neutro y más tenue, para que los
-   racimos de cada sistema se distingan del tejido que los cruza */
+/* Cada relación aparece en su turno, ya completa: línea continua que se
+   enciende (el trazo progresivo con stroke-dasharray se veía punteado en
+   pantalla, porque el trazo no escala con el lienzo). */
+.map-network-stage.is-full-dynamics-active svg line.full-unified-link {
+  stroke-dasharray: none !important;
+  animation: full-link-fade .5s ease var(--link-delay, 0ms) both !important;
+}
+
 .map-network-stage.is-full-dynamics-active svg line.full-unified-link.is-cross {
   stroke: #8896a6 !important;
   stroke-opacity: 0.34 !important;
@@ -8664,3 +8701,86 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 }
 .map-network-stage.is-dragging-node svg line.full-unified-link { transition: none !important; }
 .map-network-stage.is-dragging-node .full-dynamic-node { transition: opacity .22s ease !important; }
+
+/* ==========================================================
+   Red completa: tamaño por número de relaciones
+   Cada dinámica lleva --node-scale (0.70 a 1.42) según cuántas
+   relaciones vigentes tiene, así se ve cuáles sostienen la red.
+   ========================================================== */
+.full-dynamic-node {
+  width: calc(56px * var(--node-scale, 1)) !important;
+  height: calc(56px * var(--node-scale, 1)) !important;
+  padding: 3px !important;
+  animation-name: node-burst-in-escala !important;
+}
+@keyframes node-burst-in-escala {
+  from { transform: translate(-50%, -50%) scale(0.12); opacity: 0; }
+  to   { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+.full-dynamic-node:hover {
+  transform: translate(-50%, -50%) scale(1.16) !important;
+}
+.full-dynamic-node.is-active {
+  transform: translate(-50%, -50%) scale(1.2) !important;
+}
+.full-dynamic-node .full-node-label {
+  font-size: max(6.6px, calc(8.2px * var(--node-scale, 1))) !important;
+  line-height: 1.06 !important;
+}
+.full-dynamic-node .full-node-icon {
+  font-size: max(10px, calc(15px * var(--node-scale, 1))) !important;
+  margin-bottom: 1px !important;
+}
+
+/* En pantalla de teléfono el tablero es angosto: las mismas bolitas, más
+   pequeñas, para que no se monten unas sobre otras. */
+@media (max-width: 780px) {
+  .full-dynamic-node {
+    width: calc(28px * var(--node-scale, 1)) !important;
+    height: calc(28px * var(--node-scale, 1)) !important;
+    padding: 0 !important;
+    border-width: 1.4px !important;
+  }
+  /* a este tamaño el rótulo no se puede leer: queda el icono, y el nombre
+     aparece al tocar la bolita */
+  .full-dynamic-node .full-node-label { display: none !important; }
+  .full-dynamic-node .full-node-icon {
+    font-size: max(8px, calc(11px * var(--node-scale, 1))) !important;
+    margin-bottom: 0 !important;
+  }
+  /* el rótulo del tablero y el botón de volver no caben en la misma línea:
+     el botón arriba y el rótulo debajo */
+  .map-network-stage.is-full-dynamics-active .map-network-back-pill {
+    top: 8px !important;
+    right: 8px !important;
+    padding: 5px 10px !important;
+    font-size: 9.5px !important;
+  }
+  /* en el teléfono el rótulo tapaba las bolitas: el botón de volver ya
+     dice en qué vista estamos */
+  .full-dynamics-top-bar { display: none; }
+}
+
+/* ==========================================================
+   Módulo 07 · Ajustes de la vista de subsistemas
+   ========================================================== */
+/* La bolita del centro ("Ver red completa") queda menos brillante que los
+   seis subsistemas: es un acceso, no un subsistema más. */
+.map-network-center-hub {
+  opacity: .55;
+  transition: opacity .25s ease, transform .25s ease, background .25s ease;
+}
+.map-network-center-hub:hover,
+.map-network-center-hub:focus-visible { opacity: 1; }
+
+/* Entrada de la red completa: primero aparecen las dinámicas, una tras
+   otra, y solo después se van dibujando las relaciones. */
+@keyframes full-link-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .map-network-stage.is-full-dynamics-active .full-unified-link {
+    animation: none !important;
+  }
+}
