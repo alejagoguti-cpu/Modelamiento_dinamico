@@ -1274,30 +1274,23 @@ document.addEventListener("DOMContentLoaded", () => {
   // aparte inventada solo para mostrar.
   const AGENT_FORMULAS = {
     vehiculos: {
-      title: '<i class="fa-solid fa-car"></i> Fórmula del agente: Vehículos',
+      title: '<i class="fa-solid fa-car"></i> Vehículos — acústica',
       body: `
-        <p><strong>Emisión de ruido por vehículo</strong> (Directiva (UE) 2015/996, Cap. 2.2):</p>
-        <ol>
-          <li><strong>Ruido de rodadura:</strong> <code>L_WR = A_R + B_R·log10(v)</code></li>
-          <li><strong>Ruido de propulsión:</strong> <code>L_WP = A_P + B_P·(v−70)/70</code></li>
-          <li><strong>Emisión total del vehículo</strong> (suma energética): <code>L_W = 10·log10(10^(L_WR/10) + 10^(L_WP/10))</code></li>
-          <li><strong>Propagación</strong> hasta un punto a distancia <code>d</code>: <code>A_div = 20·log10(d) + 11</code></li>
-          <li><strong>Varios vehículos</strong> en el mismo punto (suma energética, no aritmética): <code>L_total = 10·log10(Σ 10^(Lᵢ/10))</code></li>
-        </ol>
-        <p class="noise-formula-note"><code>v</code> es la velocidad real de cada vehículo, tomada de su propia posición en SUMO entre dos instantes consecutivos.</p>
+        <div class="formula-display">
+          <span>L = A + B·log<sub>10</sub></span>
+          <span class="formula-paren">(</span>
+          <span class="formula-frac"><span class="formula-frac-num">v</span><span class="formula-frac-den">v<sub>ref</sub></span></span>
+          <span class="formula-paren">)</span>
+          <span>+ ΔL</span>
+        </div>
       `,
     },
     mirlas: {
-      title: '<i class="fa-solid fa-dove"></i> Fórmula del agente: Mirlas',
+      title: '<i class="fa-solid fa-dove"></i> Mirlas — fuerza de escape',
       body: `
-        <p><strong>Fuerza de escape por ruido</strong> (umbral crítico de 60&nbsp;dB(A), Caltrans):</p>
-        <ol>
-          <li><strong>Fuerza sobre la mirla:</strong> <code>F = −K·max(0, Lp−60)·û</code></li>
-          <li><code>Lp</code> es el nivel de ruido (dB(A)) en la posición actual de la mirla.</li>
-          <li><code>max(0, Lp−60)</code>: por debajo de 60&nbsp;dB(A) la fuerza es cero — el tráfico no las afecta.</li>
-          <li><code>û</code> es el vector unitario que apunta lejos de la calle ruidosa; <code>K</code> escala qué tan fuerte reaccionan.</li>
-          <li>Por encima del umbral, el ruido enmascara sus señales de comunicación: sueltan el árbol donde estuvieran comiendo y se alejan más fuerte cuanto más ruido reciben (anillo naranja mientras están sobre el umbral).</li>
-        </ol>
+        <div class="formula-display">
+          <span>F<sub>rep</sub> = −K·(L<sub>ruido</sub> − 60)</span>
+        </div>
       `,
     },
   };
