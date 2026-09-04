@@ -2176,7 +2176,7 @@
 
         if (hubBtn.classList.contains("is-expanded-mode")) {
           // Volver a los 6 sistemas
-          try { DINAMICA_SOUND.play("hidrica"); } catch (err) {}
+          try { DINAMICA_SOUND.play("expansion"); } catch (err) {}
           const stage = stageTarget.querySelector(".map-network-stage");
           if (stage) {
             stage.classList.add("is-stage-imploding");
@@ -2188,7 +2188,7 @@
           }
         } else {
           // Abrir red completa con transición suave
-          try { DINAMICA_SOUND.play("hidrica"); } catch (err) {}
+          try { DINAMICA_SOUND.play("expansion"); } catch (err) {}
           const stage = stageTarget.querySelector(".map-network-stage");
           if (stage) {
             stage.classList.add("is-stage-fading-out");
@@ -2967,7 +2967,7 @@ const renderTerritoryNetwork = () => {
       // Listener para volver a 6 sistemas con transición suave
       const backToOverview = (e) => {
         e.stopPropagation();
-        try { DINAMICA_SOUND.play("hidrica"); } catch (err) {}
+        try { DINAMICA_SOUND.play("expansion"); } catch (err) {}
         const stageEl = target.querySelector(".map-network-stage");
         if (stageEl) {
           stageEl.classList.add("is-stage-imploding");
@@ -3588,7 +3588,7 @@ const renderTerritoryNetwork = () => {
       if (hideAllSystemBubbles) requestAnimationFrame(() => updateTextBoxes());
       const openFullNetwork = (event) => {
         event?.stopPropagation();
-        try { DINAMICA_SOUND.play("hidrica"); } catch (err) {}
+        try { DINAMICA_SOUND.play("expansion"); } catch (err) {}
         const stage = target.querySelector(".map-network-stage");
         if (stage) {
           stage.classList.add("is-stage-fading-out");
