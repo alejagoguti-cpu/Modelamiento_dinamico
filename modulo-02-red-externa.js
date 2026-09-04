@@ -58,6 +58,33 @@
     e4: { color: "#fb8d84", icon: "fa-landmark" },
   };
 
+  /* -------- Vías: solo las que el POT nombra --------
+     La malla vial completa ahogaba la lectura de la red. Se dejan
+     únicamente los corredores que el POT (documento "Bogotá Reverdece")
+     nombra de forma explícita, sea como obra estructurante del plan, como
+     corredor del sistema de transporte o como vía de la malla arterial en
+     conflicto con la Estructura Ecológica Principal. */
+  const VIAS_POT = [
+    { nombre: "Autopista Norte",            re: /autopista\s*norte/i },
+    { nombre: "Carrera Séptima",            re: /(carrera|cra\.?|kr\.?)\s*7\b|s[ée]ptima/i },
+    { nombre: "Carrera 10",                 re: /(carrera|cra\.?|kr\.?)\s*10\b|d[ée]cima/i },
+    { nombre: "Carrera 80",                 re: /(carrera|cra\.?|kr\.?)\s*80\b/i },
+    { nombre: "Calle 13",                   re: /calle\s*13\b/i },
+    { nombre: "Calle 63",                   re: /calle\s*63\b/i },
+    { nombre: "Calle 80",                   re: /calle\s*80\b/i },
+    { nombre: "Calle 43 Sur",               re: /calle\s*43\s*sur/i },
+    { nombre: "Avenida Boyacá",             re: /boyac[áa]/i },
+    { nombre: "Avenida Ciudad de Cali",     re: /ciudad\s*de\s*cali/i },
+    { nombre: "Avenida Caracas",            re: /caracas/i },
+    { nombre: "Avenida Suba–Cota",          re: /suba\s*[-–]\s*cota|suba\s*cota/i },
+    { nombre: "Avenida Longitudinal de Occidente (ALO)", re: /\balo\b|longitudinal\s*de\s*occidente/i },
+  ];
+  const ES_VIA = (e) => e.categoria_id === "vias_arteriales";
+  function viaDelPot(nombre) {
+    const v = VIAS_POT.find((x) => x.re.test(String(nombre || "")));
+    return v ? v.nombre : null;
+  }
+
   const state = {
     categorias: [],
     elementos: [],
@@ -608,14 +635,25 @@
         fetchTable("m2_categorias"), fetchTable("m2_elementos"), fetchTable("m2_conexiones"),
       ]);
       state.categorias = categorias;
-      state.elementos = elementos;
-      state.conexiones = conexiones;
-      state.byId = new Map(elementos.map((e) => [e.id, e]));
+      // de la malla vial solo se conservan los corredores que el POT nombra
+      const viasTotales = elementos.filter(ES_VIA).length;
+      state.elementos = elementos.filter((e) => {
+        if (!ES_VIA(e)) return true;
+        const v = viaDelPot(e.nombre);
+        if (v) { e._viaPot = v; return true; }
+        return false;
+      });
+      state.viasFiltradas = { total: viasTotales, conservadas: state.elementos.filter(ES_VIA).length };
+      state.byId = new Map(state.elementos.map((e) => [e.id, e]));
+      // las conexiones de las vías retiradas se van con ellas
+      state.conexiones = conexiones.filter((c) => state.byId.has(c.origen) && state.byId.has(c.destino));
       if (status) status.textContent = "Calculando red (grados, puentes, disposición sin superposiciones)…";
       // deja pintar el mensaje antes del cálculo (puede tardar ~1s)
       await new Promise((r) => setTimeout(r, 30));
       buildLayer();
-      if (status) status.textContent = elementos.length + " nodos · " + conexiones.length + " conexiones · " + state.puentes.size + " nodos puente — arrastrá para mover, rueda/botones para zoom, mouse sobre un nodo para ver sus conexiones";
+      if (status) status.textContent = state.elementos.length + " nodos · " + state.conexiones.length +
+        " conexiones · " + state.puentes.size + " nodos puente · vías: solo las " + state.viasFiltradas.conservadas +
+        " que el POT nombra (de " + state.viasFiltradas.total + ") — arrastrá para mover, rueda/botones para zoom, mouse sobre un nodo para ver sus conexiones";
     } catch (err) {
       if (status) status.textContent = "No se pudo cargar la base de datos.";
       console.error("[m2-red-externa]", err);
