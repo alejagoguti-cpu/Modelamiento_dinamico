@@ -494,19 +494,19 @@ const RAW_EDGES = [
      como inventario_pendiente y así lo dice la ficha. */
   { s:"avenida-boyacá", t:"juan-amarillotibabuyes", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"Cruce espacial: el corredor vial atraviesa este cuerpo de agua. El POT localiza ambos elementos, pero no describe qué le pasa a uno cuando el otro se interviene." },
-  { s:"avenida-boyacá", t:"córdoba-niza", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+  { s:"avenida-boyacá", t:"córdoba-niza", cat:"e1-e2", tipo:"directa", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"Cruce espacial: el corredor vial atraviesa este cuerpo de agua. El POT localiza ambos elementos, pero no describe qué le pasa a uno cuando el otro se interviene." },
   { s:"avenida-boyacá", t:"capellaníacofradía", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"Cruce espacial: el corredor vial atraviesa este cuerpo de agua. El POT localiza ambos elementos, pero no describe qué le pasa a uno cuando el otro se interviene." },
   { s:"avenida-boyacá", t:"burro", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"Cruce espacial: el corredor vial atraviesa este cuerpo de agua. El POT localiza ambos elementos, pero no describe qué le pasa a uno cuando el otro se interviene." },
-  { s:"avenida-boyacá", t:"techo", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+  { s:"avenida-boyacá", t:"techo", cat:"e1-e2", tipo:"directa", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"Cruce espacial: el corredor vial atraviesa este cuerpo de agua. El POT localiza ambos elementos, pero no describe qué le pasa a uno cuando el otro se interviene." },
   { s:"avenida-boyacá", t:"la-vaca", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"Cruce espacial: el corredor vial atraviesa este cuerpo de agua. El POT localiza ambos elementos, pero no describe qué le pasa a uno cuando el otro se interviene." },
-  { s:"avenida-boyacá", t:"río-salitre", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+  { s:"avenida-boyacá", t:"río-salitre", cat:"e1-e2", tipo:"directa", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"Cruce espacial: el corredor vial atraviesa este cuerpo de agua. El POT localiza ambos elementos, pero no describe qué le pasa a uno cuando el otro se interviene." },
-  { s:"avenida-boyacá", t:"río-fucha", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+  { s:"avenida-boyacá", t:"río-fucha", cat:"e1-e2", tipo:"directa", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"Cruce espacial: el corredor vial atraviesa este cuerpo de agua. El POT localiza ambos elementos, pero no describe qué le pasa a uno cuando el otro se interviene." },
   { s:"avenida-boyacá", t:"río-tunjuelo", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"Cruce espacial: el corredor vial atraviesa este cuerpo de agua. El POT localiza ambos elementos, pero no describe qué le pasa a uno cuando el otro se interviene." },
@@ -518,7 +518,7 @@ const RAW_EDGES = [
     analisis:"La ciclorruta va sobre el mismo corredor." },
   { s:"avenida-ciudad-de-cali", t:"juan-amarillotibabuyes", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"Cruce espacial: el corredor vial atraviesa este cuerpo de agua. El POT localiza ambos elementos, pero no describe qué le pasa a uno cuando el otro se interviene." },
-  { s:"avenida-ciudad-de-cali", t:"jaboque", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+  { s:"avenida-ciudad-de-cali", t:"jaboque", cat:"e1-e2", tipo:"directa", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"Cruce espacial: el corredor vial atraviesa este cuerpo de agua. El POT localiza ambos elementos, pero no describe qué le pasa a uno cuando el otro se interviene." },
   { s:"avenida-ciudad-de-cali", t:"capellaníacofradía", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"Cruce espacial: el corredor vial atraviesa este cuerpo de agua. El POT localiza ambos elementos, pero no describe qué le pasa a uno cuando el otro se interviene." },
@@ -528,9 +528,9 @@ const RAW_EDGES = [
     analisis:"Cruce espacial: el corredor vial atraviesa este cuerpo de agua. El POT localiza ambos elementos, pero no describe qué le pasa a uno cuando el otro se interviene." },
   { s:"avenida-ciudad-de-cali", t:"la-vaca", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"Cruce espacial: el corredor vial atraviesa este cuerpo de agua. El POT localiza ambos elementos, pero no describe qué le pasa a uno cuando el otro se interviene." },
-  { s:"avenida-ciudad-de-cali", t:"tibanica", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+  { s:"avenida-ciudad-de-cali", t:"tibanica", cat:"e1-e2", tipo:"directa", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"Cruce espacial: el corredor vial atraviesa este cuerpo de agua. El POT localiza ambos elementos, pero no describe qué le pasa a uno cuando el otro se interviene." },
-  { s:"avenida-ciudad-de-cali", t:"río-fucha", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+  { s:"avenida-ciudad-de-cali", t:"río-fucha", cat:"e1-e2", tipo:"directa", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"Cruce espacial: el corredor vial atraviesa este cuerpo de agua. El POT localiza ambos elementos, pero no describe qué le pasa a uno cuando el otro se interviene." },
   { s:"avenida-ciudad-de-cali", t:"río-tunjuelo", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"Cruce espacial: el corredor vial atraviesa este cuerpo de agua. El POT localiza ambos elementos, pero no describe qué le pasa a uno cuando el otro se interviene." },
@@ -558,7 +558,7 @@ const RAW_EDGES = [
     analisis:"El trazado de la primera línea arranca en el sur sobre este corredor." },
   { s:"segunda-linea-metro", t:"calle-80", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"La segunda línea se proyecta sobre el corredor de la calle 80." },
-  { s:"segunda-linea-metro", t:"avenida-ciudad-de-cali", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+  { s:"segunda-linea-metro", t:"avenida-ciudad-de-cali", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"El trazado cruza este eje arterial." },
   { s:"burro", t:"la-vaca", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"Dos Reservas Distritales de Humedal de la misma cuenca urbana, separadas por unas pocas manzanas: comparten drenaje, fauna y presiones." },
@@ -578,15 +578,15 @@ const RAW_EDGES = [
     analisis:"El humedal Juan Amarillo es el tramo bajo del río Salitre antes de su entrega al río Bogotá." },
   { s:"córdoba-niza", t:"juan-amarillotibabuyes", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"Córdoba drena hacia Juan Amarillo por el canal Molinos–Córdoba." },
-  { s:"jaboque", t:"río-bogotá", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+  { s:"jaboque", t:"río-bogotá", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"El humedal entrega sus aguas directamente al río Bogotá." },
-  { s:"la-conejera", t:"río-bogotá", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+  { s:"la-conejera", t:"río-bogotá", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"El humedal entrega sus aguas al río Bogotá." },
-  { s:"meandro-del-say", t:"río-bogotá", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+  { s:"meandro-del-say", t:"río-bogotá", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"El Meandro del Say es un brazo antiguo del propio río Bogotá." },
-  { s:"tibanica", t:"río-tunjuelo", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+  { s:"tibanica", t:"río-tunjuelo", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"El humedal hace parte de la cuenca baja del Tunjuelo." },
-  { s:"el-tunjo", t:"río-tunjuelo", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+  { s:"el-tunjo", t:"río-tunjuelo", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"El parque-humedal está sobre la ronda del Tunjuelo." },
   { s:"chiguasuque-la-isla", t:"río-bogotá", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"Humedal de Bosa en la confluencia Tunjuelo–Bogotá." },
@@ -686,7 +686,7 @@ const RAW_EDGES = [
     analisis:"Dos Reservas Distritales de Humedal de la misma localidad, unidas por el mismo sistema de canales." },
   { s:"hyntiba-el-escritorio", t:"avenida-ciudad-de-cali", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"Cruce espacial: el corredor vial atraviesa este cuerpo de agua. El POT localiza ambos elementos, pero no describe qué le pasa a uno cuando el otro se interviene." },
-  { s:"tingua-azul", t:"río-tunjuelo", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+  { s:"tingua-azul", t:"río-tunjuelo", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"El humedal de Bosa drena hacia el río Tunjuelo." },
   { s:"tingua-azul", t:"chiguasuque-la-isla", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"Humedales vecinos de Bosa, en la misma llanura de inundación." },
@@ -921,7 +921,8 @@ RAW_EDGES.push(
   { s:"bibliotecas", t:"manzanas_del_cuidado", tipo:"directa", relacion:"Soporte", cat:"e2", fuente:"por_verificar" },
   { s:"río-tunjuelo", t:"río-fucha", tipo:"indirecta", relacion:"Resiliencia", cat:"e1", fuente:"por_verificar" },
   { s:"río-fucha", t:"burro", tipo:"indirecta", relacion:"Resiliencia", cat:"e1", fuente:"por_verificar" },
-  { s:"burro", t:"la-vaca", tipo:"indirecta", relacion:"Resiliencia", cat:"e1", fuente:"por_verificar" }
+  { s:"burro", t:"la-vaca", tipo:"indirecta", relacion:"Resiliencia", cat:"e1", fuente:"por_verificar" },
+  { s:"avenida-ciudad-de-cali", t:"corabastos", tipo:"directa", relacion:"Soporte", cat:"e2-e3", fuente:"por_verificar", analisis:"La Av. Ciudad de Cali es el eje de acceso y abastecimiento de Corabastos, la central mayorista más grande de la ciudad." }
 );
 
 
@@ -1661,7 +1662,7 @@ function drawEdges(svg) {
     visual.setAttribute("d", d);
     visual.setAttribute("class", "ods-edge edge-visual");
     visual.setAttribute("stroke", color);
-    visual.setAttribute("stroke-width", edge.tipo === "vacio" ? 2.6 : tocaVia ? 1.1 : edge.tipo === "directa" ? 2.2 : 1.4);
+    visual.setAttribute("stroke-width", edge.tipo === "vacio" ? 2.6 : tocaVia ? 0.85 : edge.tipo === "directa" ? 1.7 : 1.0);
     if (edge.tipo !== "directa" || tocaVia) visual.setAttribute("stroke-dasharray", edge.tipo === "vacio" ? "2,7" : "5,4");
     const markerId = arrowMarkerId(edge);
     if (markerId) visual.setAttribute("marker-end", `url(#${markerId})`);
