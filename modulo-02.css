@@ -358,11 +358,29 @@ body {
 .swatch-e1 { background: #5cd6d1; } .swatch-e2 { background: #ef9f54; } .swatch-e3 { background: #fac47b; } .swatch-e4 { background: #fb8d84; }
 
 /* NETWORK CANVAS + ZOOM */
-/* La red va sola, a todo el ancho, y la leyenda debajo: con 80 elementos
-   necesita todo el espacio para que las bolas se lean sin quedar del
-   tamaño de una hormiga. */
-.network-body { display: flex; flex-direction: column; gap: 16px; align-items: stretch; }
-.network-body > .network-sidebar { width: 100%; max-width: none; }
+.network-body {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: 20px !important;
+  width: 100% !important;
+}
+.network-canvas-col {
+  flex: 1 1 0% !important;
+  min-width: 0 !important;
+}
+.network-sidebar {
+  width: 320px !important;
+  min-width: 290px !important;
+  max-width: 340px !important;
+  flex-shrink: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 14px !important;
+  position: sticky !important;
+  top: 20px !important;
+}
 .network-sidebar > .network-legend.compact { max-width: none; }
 .network-canvas { position: relative; width: 100%; min-width: 0; border-radius: 12px; overflow: hidden; }
 #networkViz {
@@ -397,12 +415,16 @@ body {
 .map-scale i { font-size: 13px; color: var(--text-dim); transform: rotate(-45deg); }
 .map-scale-bar { display: flex; gap: 14px; font-size: 9.5px; font-weight: 600; letter-spacing: 0.3px; border-top: 1.5px solid var(--text-faint); padding-top: 3px; }
 
-.network-sidebar { width: 100%; display: flex; flex-direction: column; gap: 14px; }
-
 .network-legend {
-  width: 100%; background: #111111; border: 1px solid var(--border-soft); border-radius: 10px;
-  padding: 14px 16px; display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px 22px;
-  align-items: start;
+  width: 100% !important;
+  background: #111111;
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  padding: 14px 16px;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  align-items: stretch !important;
 }
 .legend-section-box {
   border: 1px solid rgba(92, 214, 209, 0.35); border-radius: 10px;
@@ -961,18 +983,10 @@ footer span { color: var(--teal); }
 @media (max-width: 1200px) {
   .synergies-grid { grid-template-columns: 1fr; }
 }
-/* La red necesita ancho para leerse: en cuanto la pantalla no da para
-   ponerla al lado de la leyenda, la leyenda pasa debajo y el lienzo se
-   queda con todo el ancho. */
-@media (max-width: 1150px) {
-  .network-body { flex-direction: column; }
-  .network-sidebar { width: 100%; max-width: none; }
-  .network-canvas-col { width: 100%; }
-  #networkViz { height: min(72vh, 620px); }
-}
-@media (max-width: 900px) {
-  .network-body { flex-direction: column; }
-  .network-sidebar { width: 100%; }
+@media (max-width: 800px) {
+  .network-body { flex-direction: column !important; }
+  .network-sidebar { width: 100% !important; max-width: none !important; }
+  .network-canvas-col { width: 100% !important; }
   #networkViz { height: min(70vh, 560px); }
   .ods-insight-stats { grid-template-columns: repeat(2, 1fr); }
   .metrics-row { grid-template-columns: repeat(2, 1fr); }
