@@ -6055,14 +6055,21 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 }
 /* El texto de cada relación va AL LADO del diagrama, nunca encima: antes
    se posaba sobre las bolas de abajo y las tapaba. */
+/* El hexágono va CENTRADO en la sección: la columna del texto tiene a su
+   izquierda un hueco del mismo ancho, así el diagrama queda en el eje de la
+   página y el texto de cada relación aparece al lado sin desplazarlo. */
 .bubble-net-wrap {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 300px;
+  grid-template-columns: 300px minmax(0, 620px) 300px;
+  grid-template-areas: "hueco diagrama texto";
+  justify-content: center;
   gap: 22px;
   align-items: center;
-  max-width: 980px;
+  max-width: 1300px;
   aspect-ratio: auto;
 }
+.bubble-net-wrap > .bubble-net-svg { grid-area: diagrama; }
+.bubble-net-wrap > .visible-network-tooltip { grid-area: texto; }
 .bubble-net-svg {
   position: relative; inset: auto; width: 100%; height: auto;
   aspect-ratio: 560 / 512;
@@ -6075,8 +6082,13 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
   box-shadow: 0 10px 24px rgba(0,0,0,.6);
 }
 .visible-network-tooltip[hidden] { display: none; }
-@media (max-width: 860px) {
-  .bubble-net-wrap { grid-template-columns: 1fr; }
+@media (max-width: 1180px) {
+  /* sin espacio para las tres columnas, el texto pasa debajo del diagrama */
+  .bubble-net-wrap {
+    grid-template-columns: minmax(0, 620px);
+    grid-template-areas: "diagrama" "texto";
+    justify-content: center;
+  }
 }
 @media (max-width: 620px) {
   .bubble-node-label i { font-size: 15px; }
@@ -6208,7 +6220,7 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 
 /* ===== Red "¿Qué queremos hacer visible?": relaciones vivas y legibles ===== */
 .visible-elements-section .bubble-net-wrap {
-  max-width: 1000px;
+  max-width: 1300px;
   aspect-ratio: auto;   /* el diagrama va a la izquierda y el texto al lado */
   margin: 28px auto 34px;
 }
