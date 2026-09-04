@@ -2755,9 +2755,10 @@ const renderTerritoryNetwork = () => {
           if (drawnPairs.has(pairKey)) return;
           drawnPairs.add(pairKey);
 
+          const cruzada = el.systemId !== targetEl.systemId;
           unifiedLinesHtml += `
             <g class="full-unified-group" data-source="${el.id}" data-target="${targetId}">
-              <line x1="${el.x.toFixed(2)}" y1="${el.y.toFixed(2)}" x2="${targetEl.x.toFixed(2)}" y2="${targetEl.y.toFixed(2)}" class="full-unified-link" stroke="${el.color}" style="--link-color:${el.color}"/>
+              <line x1="${el.x.toFixed(2)}" y1="${el.y.toFixed(2)}" x2="${targetEl.x.toFixed(2)}" y2="${targetEl.y.toFixed(2)}" class="full-unified-link${cruzada ? " is-cross" : ""}" style="--link-color:${el.color}"/>
             </g>
           `;
         });
@@ -2823,9 +2824,137 @@ const renderTerritoryNetwork = () => {
       target.querySelector("#mapNetworkCenterHub")?.addEventListener("click", backToOverview);
 
       // Interactividad de los 30 nodos
+      // ---------- Física ligera: arrastrar un nodo mueve a sus conectados ----------
+      // Muelles a lo largo de cada conexión (con la distancia inicial como
+      // reposo) + un muelle suave a la posición original, para que la red se
+      // deforme al tirar de un nodo y luego se reacomode sola.
+      (function iniciarFisica() {
+        const escenario = target.querySelector(".map-network-stage");
+        if (!escenario) return;
+        const nodos = UNIFIED_URBAN_ELEMENTS.map((el) => ({
+          id: el.id, x: el.x, y: el.y, hx: el.x, hy: el.y, vx: 0, vy: 0,
+          dom: target.querySelector(`.full-dynamic-node[data-elem-id="${el.id}"]`)
+        }));
+        const porId = {}; nodos.forEach((n) => { porId[n.id] = n; });
+        const enlaces = [];
+        target.querySelectorAll(".full-unified-group").forEach((g) => {
+          const a = porId[g.dataset.source], b = porId[g.dataset.target];
+          const linea = g.querySelector("line");
+          if (!a || !b || !linea) return;
+          enlaces.push({ a, b, linea });
+        });
+        let arrastrado = null, raf = 0, corriendo = false;
+        // el lienzo no es cuadrado: se corrige la proporción para que los
+        // muelles no se vean estirados en un eje
+        const proporcion = () => { const r = escenario.getBoundingClientRect(); return (r.width / Math.max(1, r.height)) || 1; };
+
+        function pintar() {
+          nodos.forEach((n) => {
+            if (!n.dom) return;
+            n.dom.style.setProperty("--node-x", n.x.toFixed(2) + "%");
+            n.dom.style.setProperty("--node-y", n.y.toFixed(2) + "%");
+          });
+          enlaces.forEach((e) => {
+            e.linea.setAttribute("x1", e.a.x.toFixed(2));
+            e.linea.setAttribute("y1", e.a.y.toFixed(2));
+            e.linea.setAttribute("x2", e.b.x.toFixed(2));
+            e.linea.setAttribute("y2", e.b.y.toFixed(2));
+          });
+        }
+        function paso() {
+          const ar = proporcion();
+          const K_ENLACE = 0.055, K_CASA = 0.012, AMORT = 0.9;
+          enlaces.forEach((e) => {
+            const dx = (e.b.x - e.a.x) * ar, dy = e.b.y - e.a.y;
+            const d = Math.hypot(dx, dy) || 0.001;
+            // reposo = la distancia que tenían en el reparto original, medida
+            // en las mismas unidades corregidas por la proporción del lienzo
+            const reposo = Math.hypot((e.b.hx - e.a.hx) * ar, e.b.hy - e.a.hy) || 0.001;
+            const f = K_ENLACE * (d - reposo);
+            const ux = dx / d, uy = dy / d;
+            if (e.a !== arrastrado) { e.a.vx += (ux * f) / ar; e.a.vy += uy * f; }
+            if (e.b !== arrastrado) { e.b.vx -= (ux * f) / ar; e.b.vy -= uy * f; }
+          });
+          let movimiento = 0;
+          nodos.forEach((n) => {
+            if (n === arrastrado) { n.vx = 0; n.vy = 0; return; }
+            n.vx += (n.hx - n.x) * K_CASA;
+            n.vy += (n.hy - n.y) * K_CASA;
+            n.vx *= AMORT; n.vy *= AMORT;
+            n.x = Math.max(3, Math.min(97, n.x + n.vx));
+            n.y = Math.max(4, Math.min(96, n.y + n.vy));
+            movimiento += Math.abs(n.vx) + Math.abs(n.vy);
+          });
+          pintar();
+          if (arrastrado || movimiento > 0.02) { raf = requestAnimationFrame(paso); }
+          else { corriendo = false; }
+        }
+        function arrancar() { if (!corriendo) { corriendo = true; raf = requestAnimationFrame(paso); } }
+
+        nodos.forEach((n) => {
+          if (!n.dom) return;
+          n.dom.addEventListener("pointerdown", (ev) => {
+            ev.preventDefault();
+            arrastrado = n;
+            n.dom.setPointerCapture?.(ev.pointerId);
+            n.dom.classList.add("is-dragging");
+            escenario.classList.add("is-dragging-node");
+            n.movido = 0;
+            arrancar();
+          });
+          n.dom.addEventListener("pointermove", (ev) => {
+            if (arrastrado !== n) return;
+            const r = escenario.getBoundingClientRect();
+            const nx = ((ev.clientX - r.left) / r.width) * 100;
+            const ny = ((ev.clientY - r.top) / r.height) * 100;
+            n.movido = (n.movido || 0) + Math.abs(nx - n.x) + Math.abs(ny - n.y);
+            n.x = Math.max(3, Math.min(97, nx));
+            n.y = Math.max(4, Math.min(96, ny));
+            arrancar();
+          });
+          const soltar = (ev) => {
+            if (arrastrado !== n) return;
+            arrastrado = null;
+            n.dom.releasePointerCapture?.(ev.pointerId);
+            n.dom.classList.remove("is-dragging");
+            escenario.classList.remove("is-dragging-node");
+            // si de verdad se arrastró, se evita que cuente como clic
+            if ((n.movido || 0) > 1.2) { n.dom.dataset.suppressClick = "1"; window.setTimeout(() => { delete n.dom.dataset.suppressClick; }, 60); }
+            arrancar();
+          };
+          n.dom.addEventListener("pointerup", soltar);
+          n.dom.addEventListener("pointercancel", soltar);
+        });
+      })();
+
+      // Pasar el cursor por un nodo enciende solo sus conexiones (sin abrir
+      // la ficha): es la forma de leer la red sin tener que hacer clic.
+      const stageEl = () => target.querySelector(".map-network-stage");
       target.querySelectorAll(".full-dynamic-node").forEach((btn) => {
+        btn.addEventListener("mouseenter", () => {
+          const stage = stageEl();
+          if (!stage || stage.classList.contains("has-selection")) return;
+          const elemId = btn.dataset.elemId;
+          stage.classList.add("has-hover");
+          target.querySelectorAll(".full-unified-group").forEach((g) => {
+            g.classList.toggle("is-hovered", g.dataset.source === elemId || g.dataset.target === elemId);
+          });
+          const dato = elementPosMap[elemId];
+          target.querySelectorAll(".full-dynamic-node").forEach((n) => {
+            const vecino = dato?.connects?.includes(n.dataset.elemId) || elementPosMap[n.dataset.elemId]?.connects?.includes(elemId);
+            n.classList.toggle("is-near", n === btn || !!vecino);
+          });
+        });
+        btn.addEventListener("mouseleave", () => {
+          const stage = stageEl();
+          if (!stage) return;
+          stage.classList.remove("has-hover");
+          target.querySelectorAll(".full-unified-group").forEach((g) => g.classList.remove("is-hovered"));
+          target.querySelectorAll(".full-dynamic-node").forEach((n) => n.classList.remove("is-near"));
+        });
         btn.addEventListener("click", (e) => {
           e.stopPropagation();
+          if (btn.dataset.suppressClick) return;   // venía de arrastrar el nodo
           const elemId = btn.dataset.elemId;
           const nodeData = elementPosMap[elemId];
           if (!nodeData) return;
@@ -2843,6 +2972,7 @@ const renderTerritoryNetwork = () => {
             const matches = s === elemId || t === elemId;
             group.classList.toggle("is-highlighted", matches);
           });
+          target.querySelector(".map-network-stage")?.classList.add("has-selection");
 
           const card = target.querySelector("#fullDynamicsDetailCard");
           if (card) {
@@ -2872,6 +3002,7 @@ const renderTerritoryNetwork = () => {
               card.style.display = "none";
               target.querySelectorAll(".full-dynamic-node").forEach((n) => n.classList.remove("is-active", "is-connected"));
               target.querySelectorAll(".full-unified-group").forEach((g) => g.classList.remove("is-highlighted"));
+              target.querySelector(".map-network-stage")?.classList.remove("has-selection");
             });
 
             card.querySelectorAll(".full-detail-tag").forEach((tag) => {

@@ -8610,24 +8610,57 @@ body.module02-reference-page::before { content: ""; position: fixed; inset: -18%
 
 
 /* ---------- Conexiones de la red integrada de 30 dinámicas ----------
-   Las reglas de la red de 6 burbujas (punteado, animación de flujo, color
-   var(--edge-color) que aquí no existe) también alcanzaban a estas líneas y
-   las dejaban sin trazo. Estas reglas, más específicas, las devuelven. */
+   Líneas rectas, pero legibles: finas y apagadas de base (antes eran
+   gruesas y con brillo, y la red se veía como un panal), y la lectura se
+   hace con el cursor: al señalar un nodo se encienden SOLO sus conexiones
+   y el resto de la red se apaga. */
 .map-network-stage.is-full-dynamics-active svg line.full-unified-link {
   display: block !important;
   stroke: var(--link-color, #8ea3b5) !important;
-  stroke-width: 0.4 !important;
-  stroke-opacity: 0.75 !important;
+  stroke-width: 0.34 !important;
+  stroke-opacity: 0.55 !important;
+  stroke-linecap: round !important;
   stroke-dasharray: none !important;
   animation: none !important;
-  filter: drop-shadow(0 0 2px var(--link-color, #8ea3b5)) !important;
+  filter: none !important;
   vector-effect: non-scaling-stroke;
-  transition: stroke-opacity .25s ease, stroke-width .25s ease;
+  transition: stroke-opacity .22s ease, stroke-width .22s ease, stroke .22s ease;
 }
-.map-network-stage.is-full-dynamics-active svg g.full-unified-group:hover line.full-unified-link,
-.map-network-stage.is-full-dynamics-active svg g.full-unified-group.is-highlighted line.full-unified-link {
+/* relación entre sistemas distintos: gris neutro y más tenue, para que los
+   racimos de cada sistema se distingan del tejido que los cruza */
+.map-network-stage.is-full-dynamics-active svg line.full-unified-link.is-cross {
+  stroke: #8896a6 !important;
+  stroke-opacity: 0.34 !important;
+}
+/* con un nodo señalado o activo, el resto de la red se apaga */
+.map-network-stage.is-full-dynamics-active.has-selection svg line.full-unified-link,
+.map-network-stage.is-full-dynamics-active.has-hover svg line.full-unified-link {
+  stroke-opacity: 0.05 !important;
+}
+.map-network-stage.is-full-dynamics-active.has-selection svg g.full-unified-group.is-highlighted line.full-unified-link,
+.map-network-stage.is-full-dynamics-active.has-hover svg g.full-unified-group.is-hovered line.full-unified-link {
   stroke: #ffd166 !important;
-  stroke-width: 0.75 !important;
+  stroke-width: 0.6 !important;
   stroke-opacity: 1 !important;
-  filter: drop-shadow(0 0 6px #ffd166) !important;
+  filter: drop-shadow(0 0 4px rgba(255, 209, 102, .55)) !important;
 }
+/* los nodos que no participan se atenúan (con !important: las reglas de
+   arriba fijan opacity:1 !important y si no, la atenuación no ocurría) */
+.map-network-stage.is-full-dynamics-active.has-selection .full-dynamic-node:not(.is-active):not(.is-connected),
+.map-network-stage.is-full-dynamics-active.has-hover .full-dynamic-node:not(.is-near) {
+  opacity: 0.22 !important;
+  filter: saturate(.5);
+}
+.map-network-stage.is-full-dynamics-active .full-dynamic-node {
+  transition: opacity .22s ease, filter .22s ease, transform .18s cubic-bezier(.34,1.4,.5,1),
+              box-shadow .22s ease, border-color .22s ease;
+}
+/* mientras se arrastra un nodo: el cursor cambia y no hay transición de
+   posición que retrase el movimiento */
+.map-network-stage.is-full-dynamics-active .full-dynamic-node.is-dragging {
+  cursor: grabbing !important;
+  z-index: 220 !important;
+  transform: translate(-50%, -50%) scale(1.14) !important;
+}
+.map-network-stage.is-dragging-node svg line.full-unified-link { transition: none !important; }
+.map-network-stage.is-dragging-node .full-dynamic-node { transition: opacity .22s ease !important; }
