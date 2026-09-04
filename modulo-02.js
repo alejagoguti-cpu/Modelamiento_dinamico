@@ -1174,7 +1174,7 @@ const nodosApagados = new Set();
    que usa la simulación de apagado, para que al encender y apagar los
    tamaños vuelvan exactamente a donde estaban. */
 function radioPorGrado(d, apagado) {
-  return apagado ? 40 : 40 + d * 8.5;   // la fuerza nodal se ve: cada relación suma tamaño
+  return apagado ? 30 : 30 + d * 5.8;   // la fuerza nodal se ve: cada relación suma tamaño
 }
 
 /* Radio mínimo para que el nombre no tenga que partirse a la mitad: los
@@ -1183,7 +1183,7 @@ function radioPorGrado(d, apagado) {
    diferencia de tamaño entre un hub y un elemento periférico. */
 function radioParaNombre(nombre) {
   const larga = String(nombre || "").split(/[\s\n]+/).reduce((a, p) => Math.max(a, p.length), 1);
-  return Math.min(66, larga * 5.6);   // lo justo para que el nombre no se parta, sin borrar la diferencia de tamaño
+  return Math.min(52, larga * 4.4);   // lo justo para que el nombre no se parta, sin borrar la diferencia de tamaño
 }
 
 /* Separación entre bolas: ninguna puede tocar a otra. Con resorte, cada
@@ -1191,7 +1191,7 @@ function radioParaNombre(nombre) {
    garantiza que no se toquen. Se usa al construir la red y cada vez que
    la simulación cambia los tamaños. */
 function separarNodos(nodes, conResorte, pasadas) {
-  const MIN_GAP = 34, SPRING = 0.05;   // aire mínimo entre dos bolas, siempre
+  const MIN_GAP = 66, SPRING = 0.05;   // aire mínimo entre dos bolas, siempre
   for (let pass = 0; pass < pasadas; pass++) {
     let anyOverlap = false;
     for (let i = 0; i < nodes.length; i++) {
@@ -1719,19 +1719,21 @@ function drawNodes(svg) {
     circle.setAttribute("filter", "url(#glow-" + node.color.replace("#", "") + ")");
 
     const fo = document.createElementNS(SVG_NS, "foreignObject");
-    const size = node.r * 1.8;
-    fo.setAttribute("x", node.x - size / 2); fo.setAttribute("y", node.y - size / 2);
-    fo.setAttribute("width", size); fo.setAttribute("height", size);
+    const ancho = anchoRotulo(node), alto = node.r * 2.3;
+    fo.setAttribute("x", node.x - ancho / 2); fo.setAttribute("y", node.y - alto / 2);
+    fo.setAttribute("width", ancho); fo.setAttribute("height", alto);
+    // el rótulo no recibe clics: los recibe la bola que está debajo
+    fo.setAttribute("pointer-events", "none");
 
     const wrapper = document.createElementNS(XHTML_NS, "div");
     wrapper.setAttribute("style", "width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;pointer-events:none;padding:2px;");
 
     const iconEl = document.createElementNS(XHTML_NS, "i");
     iconEl.setAttribute("class", "fa-solid " + node.icon);
-    iconEl.setAttribute("style", `color:${node.color}; font-size:${Math.max(node.r * 0.26, 20)}px;`);
+    iconEl.setAttribute("style", `color:${node.color}; font-size:${Math.max(node.r * 0.26, 15)}px;`);
 
     const nameEl = document.createElementNS(XHTML_NS, "div");
-    nameEl.setAttribute("style", `font-size:${fuenteQueCabe(node)}px; padding:0 3px; font-weight:700; color:#f2f3f6; line-height:1.2; white-space:pre-line; overflow-wrap:anywhere; hyphens:auto; text-align:center; font-family:'Inter',sans-serif;`);
+    nameEl.setAttribute("style", `font-size:${fuenteQueCabe(node)}px; padding:0 1px; font-weight:700; color:#f2f3f6; line-height:1.15; white-space:pre-line; overflow-wrap:normal; text-align:center; font-family:'Inter',sans-serif;`);
     nameEl.textContent = node.name;
 
     wrapper.appendChild(iconEl); wrapper.appendChild(nameEl);
@@ -1760,8 +1762,8 @@ function updatePositions() {
   ODS_NODES.forEach(n => {
     if (!n._el) return;
     n._el.circle.setAttribute("cx", n.x); n._el.circle.setAttribute("cy", n.y);
-    const size = n.r * 1.8;
-    n._el.fo.setAttribute("x", n.x - size / 2); n._el.fo.setAttribute("y", n.y - size / 2);
+    const ancho = anchoRotulo(n), alto = n.r * 2.3;
+    n._el.fo.setAttribute("x", n.x - ancho / 2); n._el.fo.setAttribute("y", n.y - alto / 2);
   });
   RAW_EDGES.forEach(edge => {
     if (!edge._el) return;
@@ -1789,11 +1791,21 @@ function updatePositions() {
    del nombre y se baja la letra hasta que quepa en el ancho útil del círculo.
    Antes los nombres largos (CENTROS DE ABASTECIMIENTO, SERVICIOS
    EMPRESARIALES) se salían por los lados. */
+function palabraMasLarga(nombre) {
+  return String(nombre || "").split(/[\s\n]+/).reduce((a, w) => Math.max(a, w.length), 1);
+}
+
 function fuenteQueCabe(node) {
-  const base = Math.max(node.r * 0.235, 20);
-  const ancho = node.r * 1.8 * 0.86;            // ancho útil dentro del círculo
-  const cabe = ancho / (9 * 0.66);              // ~9 letras por renglón, 0.66 em cada una
-  return Math.max(15, Math.min(base, cabe));
+  return Math.max(15, Math.min(node.r * 0.30, 26));
+}
+
+/* Ancho del rótulo. Cuando el nombre es una palabra larga (CHIGUASUQUE,
+   CAPELLANÍA, CIRCUNVALAR) no se parte a la mitad: el rótulo se ensancha un
+   poco más que la bola y el texto sale entero sobre el fondo. El tope evita
+   que dos rótulos vecinos se toquen. */
+function anchoRotulo(node) {
+  const necesario = palabraMasLarga(node.name) * fuenteQueCabe(node) * 0.70 + 10;
+  return Math.max(node.r * 1.8, Math.min(necesario, node.r * 3.1));
 }
 
 function resizeNodeVisual(n) {
@@ -1801,11 +1813,11 @@ function resizeNodeVisual(n) {
   const { circle, fo } = n._el;
   const apagado = nodosApagados.has(n.id);
   circle.setAttribute("r", n.r);
-  const size = n.r * 1.8;
-  fo.setAttribute("x", n.x - size / 2); fo.setAttribute("y", n.y - size / 2);
-  fo.setAttribute("width", size); fo.setAttribute("height", size);
+  const ancho = anchoRotulo(n), alto = n.r * 2.3;
+  fo.setAttribute("x", n.x - ancho / 2); fo.setAttribute("y", n.y - alto / 2);
+  fo.setAttribute("width", ancho); fo.setAttribute("height", alto);
   const iconEl = fo.querySelector("i");
-  if (iconEl) iconEl.style.fontSize = Math.max(n.r * 0.26, 20) + "px";
+  if (iconEl) iconEl.style.fontSize = Math.max(n.r * 0.26, 15) + "px";
   const nameEl = fo.querySelector("div");
   if (nameEl) {
     // En un nodo apagado la bola es demasiado chica para su nombre: se deja
@@ -2223,7 +2235,7 @@ function ajustarEncuadreRed() {
     const rMin = Math.min(...DISPLAY_NODES.map((n) => n.r || 0).filter((r) => r > 0));
     const diametro = 2 * rMin * escala;
     if (diametro > 0 && diametro < 46) {
-      zoomLevel = Math.max(1, Math.min(3, 46 / diametro));
+      zoomLevel = Math.max(1, Math.min(3.6, 46 / diametro));
       const g = svg.querySelector("#zoom-pan-group");
       if (g) g.setAttribute("transform", `translate(${panX},${panY}) scale(${zoomLevel})`);
       updateZoomDisplay();
