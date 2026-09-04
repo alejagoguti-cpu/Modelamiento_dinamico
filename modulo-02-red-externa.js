@@ -31,8 +31,17 @@
   const R_MIN = 15, R_MAX = 62;
   const GAP = 26; // "aire" mínimo entre el borde de dos nodos cualesquiera
 
+  // Con pocos nodos en pantalla (por ejemplo al dejar solo lo que el POT
+  // nombra) las bolas se veían diminutas sobre el mismo lienzo enorme. El
+  // tamaño se escala según cuántos nodos hay: menos nodos, bolas más
+  // grandes, para que siga leyéndose como una red y no como puntos.
+  let escalaNodo = 1;
+  function ajustarEscalaNodo(n) {
+    escalaNodo = Math.max(1, Math.min(2.6, Math.sqrt(760 / Math.max(30, n || 760))));
+  }
   function radiusForDegree(d) {
-    return Math.max(R_MIN, Math.min(R_MAX, R_MIN + Math.sqrt(d) * 8.2));
+    const r = Math.max(R_MIN, Math.min(R_MAX, R_MIN + Math.sqrt(d) * 8.2));
+    return r * escalaNodo;
   }
 
   // Solo se usan los 4 colores/íconos oficiales de las estructuras del POT
@@ -256,9 +265,9 @@
       e._ax = p.x; e._ay = p.y;
     });
 
-    const cellSize = R_MAX * 2 + GAP + 5; // mayor que cualquier separación mínima posible
+    const cellSize = R_MAX * escalaNodo * 2 + GAP + 5; // mayor que cualquier separación mínima posible
     const gridKey = (cx, cy) => (cx + 16384) * 65536 + (cy + 16384);
-    const EDGE_LEN = R_MAX * 1.8;
+    const EDGE_LEN = R_MAX * escalaNodo * 1.8;
     const ITER = 110;
 
     function buildGrid() {
@@ -527,7 +536,7 @@
     const xs = state.elementos.map((e) => e._x).sort((a, b) => a - b);
     const ys = state.elementos.map((e) => e._y).sort((a, b) => a - b);
     const pct = (arr, q) => arr[Math.min(arr.length - 1, Math.max(0, Math.round((arr.length - 1) * q)))] || 0;
-    const margen = R_MAX * 2;
+    const margen = R_MAX * escalaNodo * 2;
     let minX = pct(xs, 0.02) - margen, maxX = pct(xs, 0.98) + margen;
     let minY = pct(ys, 0.02) - margen, maxY = pct(ys, 0.98) + margen;
     const w = maxX - minX, h = maxY - minY;
@@ -895,10 +904,16 @@
     state.conexiones = todasCon.filter((c) => state.byId.has(c.origen) && state.byId.has(c.destino));
     if (soloPot) {
       // Al quedarse solo con lo que el POT nombra, la mayoría de vecinos
-      // directos desaparece y los supervivientes quedan sueltos. Se
-      // reconstruye el vínculo con las relaciones de la PROPIA base: si dos
-      // elementos del POT estaban unidos por un camino que solo pasa por
-      // elementos retirados, se dibuja esa relación indirecta.
+      // directos desaparece. Se reconstruye el vínculo con las relaciones de
+      // la PROPIA base: si dos elementos del POT estaban unidos por un
+      // camino que solo atraviesa elementos retirados, esa relación se
+      // conserva como indirecta.
+      // OJO: hay que limitarlas. Sin límite cada superviviente heredaba las
+      // conexiones de todos sus vecinos retirados y la red terminaba con 12
+      // conexiones por nodo — una maraña. Cada nodo conserva solo sus
+      // MAX_DERIVADAS relaciones más cercanas.
+      const MAX_SALTOS = 2;        // solo a través de UN elemento retirado
+      const MAX_DERIVADAS = 3;     // por nodo
       const ady = new Map();
       todasCon.forEach((c) => {
         if (!ady.has(c.origen)) ady.set(c.origen, []);
@@ -906,8 +921,9 @@
         ady.get(c.origen).push(c.destino);
         ady.get(c.destino).push(c.origen);
       });
+      const dist = (a, b) => Math.hypot((a.lon_jitter || 0) - (b.lon_jitter || 0), (a.lat_jitter || 0) - (b.lat_jitter || 0));
+      const candidatas = [];
       const yaHay = new Set(state.conexiones.map((c) => [c.origen, c.destino].sort().join("|")));
-      const MAX_SALTOS = 2;   // solo a través de UN elemento retirado
       state.elementos.forEach((origen) => {
         const visto = new Map([[origen.id, 0]]);
         const cola = [origen.id];
@@ -922,22 +938,45 @@
               if (vec === origen.id) return;
               const clave = [origen.id, vec].sort().join("|");
               if (yaHay.has(clave)) return;
-              yaHay.add(clave);
-              state.conexiones.push({
-                origen: origen.id, destino: vec, tipo: "indirecta",
-                motivo: "Relación a través de " + saltos + " elemento" + (saltos === 1 ? "" : "s") +
-                        " que el POT no nombra (según las conexiones de la base de datos).",
-                _derivada: true,
-              });
+              candidatas.push({ a: origen.id, b: vec, clave, saltos, d: dist(origen, state.byId.get(vec)) });
             } else {
               cola.push(vec);   // solo se atraviesan elementos retirados
             }
           });
         }
       });
+      // Además se descartan las relaciones derivadas que cruzarían media
+      // ciudad: son ruido visual. El tope se saca de los propios datos (el
+      // doble de la distancia mediana de las conexiones directas que
+      // quedaron), no de un número inventado.
+      const porTodos = new Map(todos.map((e) => [e.id, e]));
+      const largos = todasCon
+        .map((c) => { const a = porTodos.get(c.origen), b = porTodos.get(c.destino); return a && b ? dist(a, b) : null; })
+        .filter((x) => x != null).sort((x, y) => x - y);
+      const mediana = largos.length ? largos[Math.floor(largos.length / 2)] : 0;
+      const TOPE_DIST = mediana > 0 ? mediana * 4 : Infinity;
+      // las más cercanas primero, y con tope por nodo
+      candidatas.sort((x, y) => (x.saltos - y.saltos) || (x.d - y.d));
+      const cuenta = new Map();
+      const usadas = new Set();
+      candidatas.forEach((k) => {
+        if (usadas.has(k.clave)) return;
+        if (k.d > TOPE_DIST) return;
+        const ca = cuenta.get(k.a) || 0, cb = cuenta.get(k.b) || 0;
+        if (ca >= MAX_DERIVADAS || cb >= MAX_DERIVADAS) return;
+        usadas.add(k.clave);
+        cuenta.set(k.a, ca + 1); cuenta.set(k.b, cb + 1);
+        state.conexiones.push({
+          origen: k.a, destino: k.b, tipo: "indirecta",
+          motivo: "Relación a través de " + k.saltos + " elemento" + (k.saltos === 1 ? "" : "s") +
+                  " que el POT no nombra (según las conexiones de la base de datos).",
+          _derivada: true,
+        });
+      });
     }
     state.apagados = new Set();
     state.filtroInfo = { total: todos.length, conservados: state.elementos.length };
+    ajustarEscalaNodo(state.elementos.length);
   }
 
   async function init() {
