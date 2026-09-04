@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="modulo-02.css?v=degree-size-compact-v3">
   <link rel="stylesheet" href="site-theme.css?v=20260823">
   <link rel="stylesheet" href="navigation-unified.css?v=20260824">
-  <link rel="stylesheet" href="modulo-02-red-externa.css?v=2">
+  <link rel="stylesheet" href="modulo-02-red-externa.css?v=5-ficha-simulacion">
 </head>
 <body>
 <div class="app">
@@ -105,7 +105,7 @@
         </div>
         <div class="quote-card welcome-quote-card">
           <div class="quote-mark">&ldquo;</div>
-          <p id="welcomeQuoteText" class="quote-focus-in">El POT construye una Bogotá altamente <span class="pot-keyword">ordenable</span>, <span class="pot-keyword">clasificable</span>, <span class="pot-keyword">zonificable</span> y <span class="pot-keyword">conectable</span> mediante estructuras, redes, soportes y reglas, pero su legibilidad es desigual: representa con mayor precisión los elementos físicos y territoriales y con menor resolución los actores, las interacciones, los flujos y los procesos dinámicos mediante los cuales la ciudad cambia.</p>
+          <p id="welcomeQuoteText" class="quote-focus-in">Al mirar la red del POT, la gran concentración de conexiones ocurre únicamente entre las normas escritas y las obras físicas, mientras que los elementos humanos y ambientales quedan casi sueltos en los bordes. Esta desconexión visual demuestra que el modelo estructura un territorio rígido de leyes y concreto que mantiene la vida real de la gente aislada de su diseño principal.</p>
         </div>
       </div>
 
@@ -132,10 +132,19 @@
             <button class="control-btn" id="m2reBtnHubs" type="button"><i class="fa-solid fa-circle-dot"></i> Ver hubs</button>
             <button class="control-btn" id="m2reBtnPerifericos" type="button"><i class="fa-solid fa-circle-notch"></i> Ver periféricos</button>
             <button class="control-btn" id="m2reBtnPuentes" type="button"><i class="fa-solid fa-link"></i> Ver nodos puente</button>
+            <button class="control-btn active" id="m2reBtnSoloPot" type="button"><i class="fa-solid fa-filter"></i> Solo lo que el POT nombra</button>
             <span class="m2re-highlight-info" id="m2reHighlightInfo"></span>
+          </div>
+          <div class="m2re-toolbar-row m2re-sim-row">
+            <span class="m2re-sim-label"><i class="fa-solid fa-power-off"></i> Simulación:</span>
+            <button class="control-btn" id="m2reBtnApagarTodos" type="button">Desactivar todos</button>
+            <button class="control-btn" id="m2reBtnEncenderTodos" type="button">Activar todos</button>
+            <button class="control-btn" id="m2reBtnApagarHubs" type="button">Desactivar hubs</button>
+            <span class="m2re-highlight-info" id="m2reSimInfo">Un clic abre su ficha · doble clic deja iluminadas sus conexiones · para activar o desactivar, el botón de la ficha o los de aquí arriba.</span>
           </div>
           <div class="network-canvas">
             <svg id="networkViz" viewBox="0 0 2500 1820" preserveAspectRatio="xMidYMid meet"></svg>
+            <aside class="m2re-ficha" id="m2reFicha" hidden></aside>
           </div>
         </div>
 
@@ -240,7 +249,7 @@
               </label>
               <label class="legend-item" data-mode="type" data-type="indirecta">
                 <input type="checkbox" checked><span class="legend-swatch swatch-indirecta-neutral"></span>
-                <span class="legend-text"><strong>Indirecta</strong><small>Relación funcional intermedia</small></span>
+                <span class="legend-text"><strong>Indirecta</strong><small>Por cruce o intersección espacial</small></span>
               </label>
             </div>
 
@@ -470,8 +479,8 @@
 
 </div>
 
-<script src="modulo-02.js?v=20260903_nodes_v3"></script>
-<script src="modulo-02-red-externa.js?v=2"></script>
+<script src="modulo-02.js?v=gentler-layout-v5"></script>
+<script src="modulo-02-red-externa.js?v=9-pot-verificado"></script>
 
 </body>
 </html>

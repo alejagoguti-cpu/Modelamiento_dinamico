@@ -2144,11 +2144,27 @@
         if (hubBtn.classList.contains("is-expanded-mode")) {
           // Volver a los 6 sistemas
           try { DINAMICA_SOUND.play("hidrica"); } catch (err) {}
-          renderMapNetwork("systems", true, stageTarget, false);
+          const stage = stageTarget.querySelector(".map-network-stage");
+          if (stage) {
+            stage.classList.add("is-stage-imploding");
+            window.setTimeout(() => {
+              renderMapNetwork("systems", true, stageTarget, false);
+            }, 320);
+          } else {
+            renderMapNetwork("systems", true, stageTarget, false);
+          }
         } else {
-          // Abrir red completa
-          try { DINAMICA_SOUND.play("expansion"); } catch (err) {}
-          renderFullSubsystemsNetworkInPlace(stageTarget);
+          // Abrir red completa con transición suave
+          try { DINAMICA_SOUND.play("hidrica"); } catch (err) {}
+          const stage = stageTarget.querySelector(".map-network-stage");
+          if (stage) {
+            stage.classList.add("is-stage-fading-out");
+            window.setTimeout(() => {
+              renderFullSubsystemsNetworkInPlace(stageTarget);
+            }, 320);
+          } else {
+            renderFullSubsystemsNetworkInPlace(stageTarget);
+          }
         }
       }
     }, true);
@@ -2646,42 +2662,65 @@ const renderTerritoryNetwork = () => {
     // RED COMPLETA DE DINÁMICA URBANA (30 ELEMENTOS Y FLUJOS VIVOS)
     // =========================================================================
     // =========================================================================
-    // RED COMPLETA UNIFICADA DE DINÁMICA URBANA (30 ELEMENTOS VIVOS EN UNA SOLA RED)
+    // RED COMPLETA UNIFICADA DE DINÁMICA URBANA (30 ELEMENTOS VIVOS EN 1 SOLA RED)
     // =========================================================================
-    const UNIFIED_URBAN_ELEMENTS = [
-      // --- ANILLO EXTERIOR (20 nodos perimetrales) ---
-      { id: "h_lluvia", name: "Precipitación\ny lluvia", icon: "fa-cloud-showers-heavy", systemId: "hidrica", color: "#56b8d4", x: 20, y: 14, desc: "Aporte pluvial constante y eventos de lluvia extrema que recargan la cuenca.", connects: ["h_infiltra", "h_escorre", "h_desborde"] },
-      { id: "h_escorre", name: "Canales y\ndrenaje pluvial", icon: "fa-arrows-split-up-and-left", systemId: "hidrica", color: "#56b8d4", x: 32, y: 10, desc: "Canal Los Ángeles y colectores que conducen el agua superficial.", connects: ["h_lluvia", "h_humedales", "b_aves_mig"] },
-      { id: "b_aves_mig", name: "Aves\nmigratorias", icon: "fa-dove", systemId: "biotica", color: "#68d391", x: 44, y: 8, desc: "Tingua azul, playeritos y especies boreales que usan el humedal como escala.", connects: ["h_escorre", "b_flora", "b_insectos"] },
-      { id: "b_insectos", name: "Insectos y\npolinizadores", icon: "fa-bug", systemId: "biotica", color: "#68d391", x: 56, y: 8, desc: "Arañas tejedoras, abejas y libélulas que sostienen la cadena trófica.", connects: ["b_aves_mig", "b_refugio", "b_aves_res"] },
-      { id: "b_refugio", name: "Microhábitats\ny refugios", icon: "fa-shield-heart", systemId: "biotica", color: "#68d391", x: 68, y: 10, desc: "Zonas de anidación y amortiguamiento frente a las perturbaciones urbanas.", connects: ["b_insectos", "f_cerramientos", "b_aves_res"] },
-      { id: "f_cerramientos", name: "Cerramientos\ny barreras", icon: "fa-border-all", systemId: "fisico", color: "#b8c0c8", x: 80, y: 14, desc: "Muros y rejas perimetrales que fragmentan el hábitat pero protegen el cuerpo hídrico.", connects: ["b_refugio", "f_edificios", "f_impermeable"] },
-      { id: "f_edificios", name: "Edificaciones\nresidenciales", icon: "fa-city", systemId: "fisico", color: "#b8c0c8", x: 90, y: 24, desc: "Conjuntos habitacionales y manzanas construidas sobre el borde del humedal.", connects: ["f_cerramientos", "f_vias", "f_impermeable"] },
-      { id: "f_vias", name: "Malla vial\narterial", icon: "fa-road", systemId: "fisico", color: "#b8c0c8", x: 94, y: 38, desc: "Av. Ciudad de Cali y Av. Américas; soporte de transporte y fuente de vibración.", connects: ["f_edificios", "f_andenes", "m_transporte", "f_impermeable"] },
-      { id: "f_andenes", name: "Andenes y\nespacio público", icon: "fa-person-walking", systemId: "fisico", color: "#b8c0c8", x: 94, y: 54, desc: "Superficies peatonales, plazoletas y senderos perimetrales.", connects: ["f_vias", "m_transporte", "m_peatonal"] },
-      { id: "m_transporte", name: "Transporte masivo\ny buses", icon: "fa-bus", systemId: "movilidad", color: "#f1cf5b", x: 90, y: 68, desc: "Flota de TransMilenio y SITP que conecta Kennedy con el resto de Bogotá.", connects: ["f_andenes", "m_estaciones", "m_peatonal"] },
-      { id: "m_estaciones", name: "Estaciones y\nportales", icon: "fa-door-open", systemId: "movilidad", color: "#f1cf5b", x: 82, y: 80, desc: "Portal Américas y Estación Banderas; puntos neurálgicos de transbordo masivo.", connects: ["m_transporte", "m_congestion", "m_peatonal"] },
-      { id: "m_congestion", name: "Tiempos de viaje\ny congestión", icon: "fa-clock", systemId: "movilidad", color: "#f1cf5b", x: 70, y: 88, desc: "Fricción espacial y demoras que impactan la calidad de vida y el tiempo de cuidado.", connects: ["m_estaciones", "m_ciclorrutas", "s_vecinos"] },
-      { id: "m_ciclorrutas", name: "Ciclorrutas y\nbicicletas", icon: "fa-bicycle", systemId: "movilidad", color: "#f1cf5b", x: 58, y: 91, desc: "Red de ciclorrutas de El Tintal y Av. Cali para viajes limpios de proximidad.", connects: ["m_congestion", "s_conflictos", "m_peatonal", "se_biblioteca"] },
-      { id: "s_conflictos", name: "Conflictos y\nacuerdos", icon: "fa-comments", systemId: "social", color: "#ee9a4b", x: 46, y: 91, desc: "Mecanismos de resolución comunitaria frente a presiones de uso y residuos.", connects: ["m_ciclorrutas", "s_org_amb", "s_cuidado"] },
-      { id: "s_org_amb", name: "Organizaciones\nambientales", icon: "fa-hands-holding-circle", systemId: "social", color: "#ee9a4b", x: 34, y: 88, desc: "Colectivos ecológicos de base que defienden la conservación de los humedales.", connects: ["s_conflictos", "s_pedagogia", "s_cuidado"] },
-      { id: "s_pedagogia", name: "Actividades\npedagógicas", icon: "fa-graduation-cap", systemId: "social", color: "#ee9a4b", x: 22, y: 80, desc: "Recorridos escolares, avistamiento de aves y talleres de ciencia ciudadana.", connects: ["s_org_amb", "se_comercio", "se_biblioteca", "s_cuidado"] },
-      { id: "se_comercio", name: "Comercio y\nabastecimiento", icon: "fa-cart-shopping", systemId: "socioeconomico", color: "#e58d62", x: 12, y: 70, desc: "Corabastos y locales de proximidad; nodos de intercambio y abastecimiento.", connects: ["s_pedagogia", "se_biblioteca", "se_vivienda"] },
-      { id: "se_biblioteca", name: "Biblioteca Pública\nEl Tintal", icon: "fa-book-open", systemId: "socioeconomico", color: "#e58d62", x: 7, y: 56, desc: "Centro cultural y educativo de escala metropolitana contiguo al humedal.", connects: ["se_comercio", "se_suelo", "se_equipamientos", "m_ciclorrutas"] },
-      { id: "se_suelo", name: "Presión de uso\ndel suelo", icon: "fa-chart-line", systemId: "socioeconomico", color: "#e58d62", x: 7, y: 40, desc: "Valorización del suelo y tensiones entre desarrollo urbano y preservación ecológica.", connects: ["se_biblioteca", "h_desborde", "se_equipamientos"] },
-      { id: "h_desborde", name: "Desbordes y\nsedimentos", icon: "fa-triangle-exclamation", systemId: "hidrica", color: "#56b8d4", x: 11, y: 26, desc: "Riesgo de inundación y acumulación de sedimentos en eventos de lluvia.", connects: ["se_suelo", "h_lluvia", "h_infiltra"] },
+    // =========================================================================
+    // RED COMPLETA UNIFICADA DE DINÁMICA URBANA (30 ELEMENTOS TOTALMENTE INTERCONECTADOS)
+    // =========================================================================
+    // =========================================================================
+    // RED COMPLETA UNIFICADA DE DINÁMICA URBANA (30 ELEMENTOS VIVOS TOTALMENTE CONECTADOS)
+    // =========================================================================
+    // =========================================================================
+    // RED COMPLETA UNIFICADA DE DINÁMICA URBANA (30 ELEMENTOS VIVOS EN 6 SECTORES)
+    // =========================================================================
+    // =========================================================================
+    // RED COMPLETA INTEGRADA DE DINÁMICA URBANA (30 NODOS INTEGRADOS SIN HUECO CENTRAL)
+    // =========================================================================
+    const PARENT_SYSTEM_CENTERS = {
+      hidrica: { x: 23, y: 40 },
+      biotica: { x: 43, y: 16 },
+      fisico: { x: 67, y: 16 },
+      movilidad: { x: 82, y: 42 },
+      social: { x: 68, y: 76 },
+      socioeconomico: { x: 30, y: 76 }
+    };
 
-      // --- ANILLO INTERIOR / CORAZÓN SISTÉMICO (10 nodos conectores centrales) ---
-      { id: "h_humedales", name: "Humedales y\nlagunas", icon: "fa-droplet", systemId: "hidrica", color: "#56b8d4", x: 35, y: 30, desc: "Espejos de agua de El Burro y La Vaca; retención hidráulica y biodiversidad.", connects: ["h_infiltra", "b_flora", "h_escorre", "s_org_amb"] },
-      { id: "b_flora", name: "Cobertura vegetal\ny flora", icon: "fa-leaf", systemId: "biotica", color: "#68d391", x: 50, y: 24, desc: "Juncos, eneas, vegetación de ronda y árboles que estabilizan los taludes.", connects: ["h_humedales", "b_aves_res", "b_aves_mig", "b_insectos"] },
-      { id: "b_aves_res", name: "Aves residentes\ny fauna", icon: "fa-crow", systemId: "biotica", color: "#68d391", x: 65, y: 30, desc: "Monjitas bogotanas, mirlas y fauna local con ciclos continuos en el ecosistema.", connects: ["b_flora", "f_impermeable", "b_refugio", "b_insectos"] },
-      { id: "f_impermeable", name: "Superficies\nimpermeables", icon: "fa-layer-group", systemId: "fisico", color: "#b8c0c8", x: 74, y: 44, desc: "Asfalto y losas de concreto que impiden la infiltración pluvial.", connects: ["b_aves_res", "m_peatonal", "f_vias", "f_edificios", "f_cerramientos"] },
-      { id: "m_peatonal", name: "Flujos y viajes\npeatonales", icon: "fa-person-walking-arrow-right", systemId: "movilidad", color: "#f1cf5b", x: 70, y: 62, desc: "Caminatas cotidianas de residentes hacia estaciones, colegios y comercio.", connects: ["f_impermeable", "s_vecinos", "m_transporte", "m_estaciones", "f_andenes"] },
-      { id: "s_vecinos", name: "Habitantes y\nvecinos", icon: "fa-people-roof", systemId: "social", color: "#ee9a4b", x: 58, y: 71, desc: "Comunidades de los barrios circundantes que habitan y recorren el sector.", connects: ["m_peatonal", "s_cuidado", "se_vivienda", "m_congestion"] },
-      { id: "s_cuidado", name: "Cuidado y\nvoluntariado", icon: "fa-hand-holding-heart", systemId: "social", color: "#ee9a4b", x: 46, y: 72, desc: "Jornadas de siembra comunitaria, limpieza de canales y monitoreo biológico.", connects: ["s_vecinos", "se_vivienda", "s_org_amb", "s_conflictos", "s_pedagogia"] },
-      { id: "se_vivienda", name: "Vivienda y\nhogares", icon: "fa-house-chimney", systemId: "socioeconomico", color: "#e58d62", x: 32, y: 64, desc: "Unidades habitacionales que demandan servicios, movilidad y espacios de cuidado.", connects: ["s_cuidado", "se_equipamientos", "se_comercio", "s_vecinos"] },
-      { id: "se_equipamientos", name: "Manzanas del\nCuidado", icon: "fa-building-shield", systemId: "socioeconomico", color: "#e58d62", x: 26, y: 48, desc: "Equipamientos sociales que reducen sobrecargas en las personas cuidadoras.", connects: ["se_vivienda", "h_infiltra", "se_biblioteca", "se_suelo"] },
-      { id: "h_infiltra", name: "Infiltración\ny suelo húmedo", icon: "fa-water", systemId: "hidrica", color: "#56b8d4", x: 27, y: 36, desc: "Capacidad de absorción natural del suelo y amortiguamiento freático.", connects: ["se_equipamientos", "h_humedales", "h_lluvia", "h_desborde"] },
+    const UNIFIED_URBAN_ELEMENTS = [
+      // --- NÚCLEO CENTRAL INTEGRADO (6 hubs conectores en el corazón del mapa) ---
+      { id: "h_humedales", name: "Ciclos de agua en\nhumedales y lagunas", icon: "fa-droplet", systemId: "hidrica", color: "#56b8d4", x: 42, y: 42, desc: "Ciclos hídricos, retención y amortiguamiento en los espejos de agua de El Burro y La Vaca.", connects: ["h_infiltra", "h_escorre", "b_flora", "se_vivienda", "s_cuidado", "h_desborde", "b_aves_res"] },
+      { id: "b_flora", name: "Cobertura vegetal\ny flora", icon: "fa-leaf", systemId: "biotica", color: "#68d391", x: 58, y: 38, desc: "Juncos, eneas, vegetación de ronda y árboles que estabilizan los taludes.", connects: ["h_humedales", "b_aves_res", "b_insectos", "f_impermeable", "b_aves_mig", "h_escorre"] },
+      { id: "f_impermeable", name: "Superficies\nimpermeables", icon: "fa-layer-group", systemId: "fisico", color: "#b8c0c8", x: 62, y: 50, desc: "Asfalto y losas de concreto que impiden la infiltración pluvial.", connects: ["b_flora", "m_peatonal", "f_edificios", "f_andenes", "se_vivienda", "f_vias"] },
+      { id: "m_peatonal", name: "Flujos y viajes\npeatonales", icon: "fa-person-walking-arrow-right", systemId: "movilidad", color: "#f1cf5b", x: 56, y: 62, desc: "Caminatas cotidianas de residentes hacia estaciones, colegios y comercio.", connects: ["f_impermeable", "s_cuidado", "s_vecinos", "m_transporte", "m_ciclorrutas", "f_andenes"] },
+      { id: "s_cuidado", name: "Cuidado y\nvoluntariado", icon: "fa-hand-holding-heart", systemId: "social", color: "#ee9a4b", x: 42, y: 62, desc: "Jornadas de siembra comunitaria, limpieza de canales y monitoreo biológico.", connects: ["m_peatonal", "se_vivienda", "s_vecinos", "s_conflictos", "h_humedales", "s_org_amb"] },
+      { id: "se_vivienda", name: "Vivienda y\nhogares", icon: "fa-house-chimney", systemId: "socioeconomico", color: "#e58d62", x: 36, y: 50, desc: "Unidades habitacionales que demandan servicios, movilidad y espacios de cuidado.", connects: ["s_cuidado", "h_humedales", "f_impermeable", "se_equipamientos", "se_comercio", "h_infiltra"] },
+
+      // --- ZONA INTERMEDIA (12 nodos de transición) ---
+      { id: "h_infiltra", name: "Infiltración\ny suelo húmedo", icon: "fa-water", systemId: "hidrica", color: "#56b8d4", x: 28, y: 32, desc: "Capacidad de absorción natural del suelo y amortiguamiento freático.", connects: ["h_humedales", "h_lluvia", "h_escorre", "se_comercio", "h_desborde", "se_vivienda"] },
+      { id: "h_escorre", name: "Canales y\ndrenajes", icon: "fa-arrows-split-up-and-left", systemId: "hidrica", color: "#56b8d4", x: 38, y: 22, desc: "Canal Los Ángeles y colectores que conducen el agua superficial.", connects: ["h_infiltra", "h_humedales", "h_lluvia", "b_insectos", "b_flora", "b_aves_mig"] },
+      { id: "b_insectos", name: "Insectos y\npolinizadores", icon: "fa-bug", systemId: "biotica", color: "#68d391", x: 54, y: 20, desc: "Arañas tejedoras, abejas y libélulas que sostienen la cadena trófica.", connects: ["h_escorre", "b_flora", "b_aves_mig", "b_aves_res", "b_refugio"] },
+      { id: "b_aves_res", name: "Aves residentes\ny fauna", icon: "fa-crow", systemId: "biotica", color: "#68d391", x: 70, y: 34, desc: "Monjitas bogotanas, mirlas y fauna local con ciclos continuos en el ecosistema.", connects: ["b_flora", "b_insectos", "b_refugio", "f_cerramientos", "f_impermeable", "h_humedales"] },
+      { id: "f_edificios", name: "Edificaciones\nresidenciales", icon: "fa-city", systemId: "fisico", color: "#b8c0c8", x: 76, y: 44, desc: "Conjuntos habitacionales y manzanas construidas sobre el borde del humedal.", connects: ["f_impermeable", "f_cerramientos", "f_vias", "se_vivienda", "f_andenes"] },
+      { id: "f_andenes", name: "Andenes y\nespacio público", icon: "fa-person-walking", systemId: "fisico", color: "#b8c0c8", x: 72, y: 58, desc: "Superficies peatonales, plazoletas y senderos perimetrales.", connects: ["f_impermeable", "f_vias", "m_peatonal", "m_transporte", "f_edificios"] },
+      { id: "m_transporte", name: "Transporte masivo\ny buses", icon: "fa-bus", systemId: "movilidad", color: "#f1cf5b", x: 70, y: 70, desc: "Flota de TransMilenio y SITP que conecta Kennedy con el resto de Bogotá.", connects: ["f_andenes", "m_peatonal", "m_estaciones", "m_congestion", "m_ciclorrutas"] },
+      { id: "m_ciclorrutas", name: "Ciclorrutas y\nbicicletas", icon: "fa-bicycle", systemId: "movilidad", color: "#f1cf5b", x: 54, y: 76, desc: "Red de ciclorrutas de El Tintal y Av. Cali para viajes limpios de proximidad.", connects: ["m_peatonal", "m_congestion", "s_vecinos", "s_conflictos", "m_transporte"] },
+      { id: "s_vecinos", name: "Habitantes y\nvecinos", icon: "fa-people-roof", systemId: "social", color: "#ee9a4b", x: 46, y: 72, desc: "Comunidades de los barrios circundantes que habitan y recorren el sector.", connects: ["m_peatonal", "s_cuidado", "m_ciclorrutas", "s_conflictos", "se_vivienda", "s_org_amb"] },
+      { id: "s_conflictos", name: "Conflictos y\nacuerdos", icon: "fa-comments", systemId: "social", color: "#ee9a4b", x: 36, y: 74, desc: "Mecanismos de resolución comunitaria frente a presiones de uso y residuos.", connects: ["s_cuidado", "s_vecinos", "m_ciclorrutas", "s_org_amb", "se_equipamientos", "se_vivienda"] },
+      { id: "se_equipamientos", name: "Manzanas del\nCuidado", icon: "fa-building-shield", systemId: "socioeconomico", color: "#e58d62", x: 26, y: 60, desc: "Equipamientos sociales que reducen sobrecargas en las personas cuidadoras.", connects: ["se_vivienda", "s_cuidado", "s_conflictos", "se_biblioteca", "se_suelo", "se_comercio"] },
+      { id: "se_comercio", name: "Comercio y\nabastecimiento", icon: "fa-cart-shopping", systemId: "socioeconomico", color: "#e58d62", x: 24, y: 46, desc: "Corabastos y locales de proximidad; nodos de intercambio y abastecimiento.", connects: ["se_vivienda", "h_infiltra", "se_suelo", "f_edificios", "se_equipamientos"] },
+
+      // --- PERÍMETRO EXTERIOR (12 dinámicas de borde) ---
+      { id: "h_lluvia", name: "Precipitación\ny lluvia", icon: "fa-cloud-showers-heavy", systemId: "hidrica", color: "#56b8d4", x: 16, y: 18, desc: "Aporte pluvial constante y eventos de lluvia extrema que recargan la cuenca.", connects: ["h_infiltra", "h_escorre", "h_desborde"] },
+      { id: "h_desborde", name: "Desbordes y\nsedimentos", icon: "fa-triangle-exclamation", systemId: "hidrica", color: "#56b8d4", x: 12, y: 34, desc: "Riesgo de inundación y acumulación de sedimentos en eventos de lluvia.", connects: ["h_lluvia", "h_infiltra", "h_humedales", "se_suelo"] },
+      { id: "b_aves_mig", name: "Aves\nmigratorias", icon: "fa-dove", systemId: "biotica", color: "#68d391", x: 68, y: 14, desc: "Tingua azul, playeritos y especies boreales que usan el humedal como escala.", connects: ["b_insectos", "b_flora", "b_refugio", "h_escorre"] },
+      { id: "b_refugio", name: "Microhábitats\ny refugios", icon: "fa-shield-heart", systemId: "biotica", color: "#68d391", x: 82, y: 18, desc: "Zonas de anidación y amortiguamiento frente a las perturbaciones urbanas.", connects: ["b_aves_mig", "b_aves_res", "f_cerramientos"] },
+      { id: "f_cerramientos", name: "Cerramientos\ny barreras", icon: "fa-border-all", systemId: "fisico", color: "#b8c0c8", x: 90, y: 28, desc: "Muros y rejas perimetrales que fragmentan el hábitat pero protegen el cuerpo hídrico.", connects: ["b_refugio", "b_aves_res", "f_edificios"] },
+      { id: "f_vias", name: "Malla vial\narterial", icon: "fa-road", systemId: "fisico", color: "#b8c0c8", x: 92, y: 50, desc: "Av. Ciudad de Cali y Av. Américas; soporte de transporte y fuente de vibración.", connects: ["f_edificios", "f_andenes", "m_transporte", "f_impermeable"] },
+      { id: "m_estaciones", name: "Estaciones y\nportales", icon: "fa-door-open", systemId: "movilidad", color: "#f1cf5b", x: 88, y: 76, desc: "Portal Américas y Estación Banderas; puntos neurálgicos de transbordo masivo.", connects: ["m_transporte", "m_congestion", "m_peatonal"] },
+      { id: "m_congestion", name: "Tiempos de viaje\ny congestión", icon: "fa-clock", systemId: "movilidad", color: "#f1cf5b", x: 76, y: 88, desc: "Fricción espacial y demoras que impactan la calidad de vida y el tiempo de cuidado.", connects: ["m_transporte", "m_estaciones", "m_ciclorrutas"] },
+      { id: "s_org_amb", name: "Organizaciones\nambientales", icon: "fa-hands-holding-circle", systemId: "social", color: "#ee9a4b", x: 32, y: 88, desc: "Colectivos ecológicos de base que defienden la conservación de los humedales.", connects: ["s_conflictos", "s_pedagogia", "s_cuidado", "s_vecinos"] },
+      { id: "s_pedagogia", name: "Actividades\npedagógicas", icon: "fa-graduation-cap", systemId: "social", color: "#ee9a4b", x: 18, y: 86, desc: "Recorridos escolares, avistamiento de aves y talleres de ciencia ciudadana.", connects: ["s_org_amb", "se_biblioteca", "s_conflictos"] },
+      { id: "se_biblioteca", name: "Biblioteca Pública\nEl Tintal", icon: "fa-book-open", systemId: "socioeconomico", color: "#e58d62", x: 10, y: 72, desc: "Centro cultural y educativo de escala metropolitana contiguo al humedal.", connects: ["se_equipamientos", "s_pedagogia", "se_suelo"] },
+      { id: "se_suelo", name: "Presión de uso\ndel suelo", icon: "fa-chart-line", systemId: "socioeconomico", color: "#e58d62", x: 8, y: 52, desc: "Valorización del suelo y tensiones entre desarrollo urbano y preservación ecológica.", connects: ["se_equipamientos", "se_comercio", "se_biblioteca", "h_desborde"] },
 
       // --- 3 SUBSISTEMAS NUEVOS (9 nodos), integrados sin tocar las
       // conexiones de los 30 nodos originales — solo se agregan nodos y
@@ -2700,6 +2739,16 @@ const renderTerritoryNetwork = () => {
       { id: "i_curaduria", name: "Curaduría y\nnormativa", icon: "fa-stamp", systemId: "institucional", color: "#9d8be8", x: 98, y: 48, desc: "Licencias y normas urbanísticas que regulan lo que se construye.", connects: ["f_edificios", "se_suelo", "i_alcaldia_local", "i_control_ambiental"] },
       { id: "i_control_ambiental", name: "Control y vigilancia\nambiental", icon: "fa-clipboard-check", systemId: "institucional", color: "#9d8be8", x: 88, y: 92, desc: "Inspección y seguimiento del cumplimiento de las normas ambientales.", connects: ["h_desborde", "b_refugio", "i_curaduria"] }
     ];
+
+        // Mapeo por sistema para las explosiones individuales al hacer clic en cada bolita
+    const URBAN_DYNAMICS_DATA = {
+      hidrica: { id: "hidrica", name: "Dinámica hídrica", color: "#56b8d4", icon: "fa-droplet", elements: UNIFIED_URBAN_ELEMENTS.filter(e => e.systemId === "hidrica") },
+      biotica: { id: "biotica", name: "Dinámica biótica", color: "#68d391", icon: "fa-seedling", elements: UNIFIED_URBAN_ELEMENTS.filter(e => e.systemId === "biotica") },
+      fisico: { id: "fisico", name: "Sistema físico-urbano", color: "#b8c0c8", icon: "fa-building", elements: UNIFIED_URBAN_ELEMENTS.filter(e => e.systemId === "fisico") },
+      movilidad: { id: "movilidad", name: "Sistema de movilidad", color: "#f1cf5b", icon: "fa-route", elements: UNIFIED_URBAN_ELEMENTS.filter(e => e.systemId === "movilidad") },
+      social: { id: "social", name: "Sistema social-comunitario", color: "#ee9a4b", icon: "fa-people-group", elements: UNIFIED_URBAN_ELEMENTS.filter(e => e.systemId === "social") },
+      socioeconomico: { id: "socioeconomico", name: "Sistema socioeconómico y de ocupación", color: "#e58d62", icon: "fa-house-chimney", elements: UNIFIED_URBAN_ELEMENTS.filter(e => e.systemId === "socioeconomico") }
+    };
 
     function renderFullSubsystemsNetworkInPlace(target) {
       if (!target) return;
@@ -2722,11 +2771,9 @@ const renderTerritoryNetwork = () => {
         });
       });
 
-      // Generar líneas de conexión unificadas, coloridas y brillantes entre los 30 nodos
+      // Generar líneas de conexión nítidas, limpias y visibles (SIN PUNTOS EN MOVIMIENTO)
       let unifiedLinesHtml = "";
-      let defsHtml = "";
       const drawnPairs = new Set();
-      let flowCount = 0;
 
       UNIFIED_URBAN_ELEMENTS.forEach((el) => {
         (el.connects || []).forEach((targetId) => {
@@ -2736,30 +2783,10 @@ const renderTerritoryNetwork = () => {
           if (drawnPairs.has(pairKey)) return;
           drawnPairs.add(pairKey);
 
-          const gradId = `full-link-grad-${flowCount}`;
-          const pathId = `full-link-flow-${flowCount}`;
-          flowCount++;
-
-          const dur = (3.5 + (flowCount % 4) * 0.7).toFixed(2);
-          const d = `M ${el.x.toFixed(2)} ${el.y.toFixed(2)} L ${targetEl.x.toFixed(2)} ${targetEl.y.toFixed(2)}`;
-
-          defsHtml += `
-            <linearGradient id="${gradId}" x1="${el.x.toFixed(2)}%" y1="${el.y.toFixed(2)}%" x2="${targetEl.x.toFixed(2)}%" y2="${targetEl.y.toFixed(2)}%">
-              <stop offset="0%" stop-color="${el.color}" stop-opacity="0.9"/>
-              <stop offset="50%" stop-color="#ffd166" stop-opacity="0.75"/>
-              <stop offset="100%" stop-color="${targetEl.color}" stop-opacity="0.9"/>
-            </linearGradient>
-          `;
-
+          const cruzada = el.systemId !== targetEl.systemId;
           unifiedLinesHtml += `
             <g class="full-unified-group" data-source="${el.id}" data-target="${targetId}">
-              <path id="${pathId}" class="full-unified-flow-path" d="${d}"/>
-              <line x1="${el.x.toFixed(2)}" y1="${el.y.toFixed(2)}" x2="${targetEl.x.toFixed(2)}" y2="${targetEl.y.toFixed(2)}" class="full-unified-link" style="stroke:url(#${gradId});--source-color:${el.color};--target-color:${targetEl.color};"/>
-              <circle class="full-unified-pulse" r="0.5" fill="#ffd166">
-                <animateMotion dur="${dur}s" repeatCount="indefinite" rotate="auto">
-                  <mpath href="#${pathId}"/>
-                </animateMotion>
-              </circle>
+              <line x1="${el.x.toFixed(2)}" y1="${el.y.toFixed(2)}" x2="${targetEl.x.toFixed(2)}" y2="${targetEl.y.toFixed(2)}" class="full-unified-link${cruzada ? " is-cross" : ""}" style="--link-color:${el.color}"/>
             </g>
           `;
         });
@@ -2770,11 +2797,12 @@ const renderTerritoryNetwork = () => {
       // vean más grandes que los periféricos.
       const nodesHtml = UNIFIED_URBAN_ELEMENTS.map((el, index) => {
         const formattedName = el.name.replace(/\n/g, "<br>");
+        const parentCenter = PARENT_SYSTEM_CENTERS[el.systemId] || { x: 50, y: 48 };
         const degree = degreeMap[el.id] || 0;
         const nodeScale = Math.max(0.72, Math.min(1.55, 0.72 + Math.sqrt(degree) * 0.24));
         return `
           <button type="button" class="full-dynamic-node" data-elem-id="${el.id}" data-sys-id="${el.systemId}"
-            style="--node-x:${el.x.toFixed(2)}%;--node-y:${el.y.toFixed(2)}%;--node-color:${el.color};--node-delay:${index * 18}ms;--node-index:${index};--node-scale:${nodeScale.toFixed(3)};"
+            style="--node-x:${el.x.toFixed(2)}%;--node-y:${el.y.toFixed(2)}%;--origin-x:${parentCenter.x}%;--origin-y:${parentCenter.y}%;--node-color:${el.color};--node-delay:${index * 12}ms;--node-scale:${nodeScale.toFixed(3)};"
             title="${el.name.replace(/\n/g, ' ')}">
             <i class="fa-solid ${el.icon} full-node-icon"></i>
             <span class="full-node-label">${formattedName}</span>
@@ -2782,50 +2810,173 @@ const renderTerritoryNetwork = () => {
         `;
       }).join("");
 
-      // Botones para regresar a 6 sistemas: centro y abajo a la izquierda.
+      // Botón flotante para regresar a 6 sistemas (elegante en la esquina superior)
       const centerToggleHtml = `
-        <button type="button" id="mapNetworkCenterHub" class="map-network-center-hub is-expanded-mode" aria-label="Volver a los 6 subsistemas">
+        <button type="button" id="mapNetworkCenterHub" class="map-network-back-pill is-expanded-mode" aria-label="Volver a los 6 subsistemas">
           <i class="fa-solid fa-arrow-rotate-left"></i>
-          <span>Volver a<br>6 sistemas</span>
-        </button>
-        <button type="button" id="mapNetworkCornerHub" class="show-full-network-fixed-btn is-expanded-mode" aria-label="Volver a los 6 subsistemas">
-          <i class="fa-solid fa-arrow-rotate-left"></i> Volver a 6 sistemas
+          <span>Volver a 6 subsistemas</span>
         </button>
       `;
 
       target.innerHTML = `
         <div class="map-network-stage systems-network is-full-dynamics-active">
-          <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><defs>${defsHtml}</defs>
+          ${centerToggleHtml}
+          <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
             <g class="full-unified-layer">${unifiedLinesHtml}</g>
           </svg>
           ${nodesHtml}
-          ${centerToggleHtml}
           <div id="fullDynamicsDetailCard" class="full-dynamics-detail-card" style="display:none;"></div>
         </div>
       `;
 
-      const stageEl = target.querySelector(".map-network-stage");
-      requestAnimationFrame(() => {
-        stageEl?.classList.add("is-bloomed");
-      });
-
-      // Listener para volver a 6 sistemas
+      // Listener para volver a 6 sistemas con transición suave
       const backToOverview = (e) => {
         e.stopPropagation();
         try { DINAMICA_SOUND.play("hidrica"); } catch (err) {}
-        stageEl?.classList.remove("is-bloomed");
-        stageEl?.classList.add("is-stage-imploding");
-        window.setTimeout(() => {
+        const stageEl = target.querySelector(".map-network-stage");
+        if (stageEl) {
+          stageEl.classList.add("is-stage-imploding");
+          window.setTimeout(() => {
+            renderMapNetwork("systems", true, target, false);
+          }, 320);
+        } else {
           renderMapNetwork("systems", true, target, false);
-        }, 320);
+        }
       };
       target.querySelector("#mapNetworkCenterHub")?.addEventListener("click", backToOverview);
-      target.querySelector("#mapNetworkCornerHub")?.addEventListener("click", backToOverview);
 
       // Interactividad de los 30 nodos
+      // ---------- Física ligera: arrastrar un nodo mueve a sus conectados ----------
+      // Muelles a lo largo de cada conexión (con la distancia inicial como
+      // reposo) + un muelle suave a la posición original, para que la red se
+      // deforme al tirar de un nodo y luego se reacomode sola.
+      (function iniciarFisica() {
+        const escenario = target.querySelector(".map-network-stage");
+        if (!escenario) return;
+        const nodos = UNIFIED_URBAN_ELEMENTS.map((el) => ({
+          id: el.id, x: el.x, y: el.y, hx: el.x, hy: el.y, vx: 0, vy: 0,
+          dom: target.querySelector(`.full-dynamic-node[data-elem-id="${el.id}"]`)
+        }));
+        const porId = {}; nodos.forEach((n) => { porId[n.id] = n; });
+        const enlaces = [];
+        target.querySelectorAll(".full-unified-group").forEach((g) => {
+          const a = porId[g.dataset.source], b = porId[g.dataset.target];
+          const linea = g.querySelector("line");
+          if (!a || !b || !linea) return;
+          enlaces.push({ a, b, linea });
+        });
+        let arrastrado = null, raf = 0, corriendo = false;
+        // el lienzo no es cuadrado: se corrige la proporción para que los
+        // muelles no se vean estirados en un eje
+        const proporcion = () => { const r = escenario.getBoundingClientRect(); return (r.width / Math.max(1, r.height)) || 1; };
+
+        function pintar() {
+          nodos.forEach((n) => {
+            if (!n.dom) return;
+            n.dom.style.setProperty("--node-x", n.x.toFixed(2) + "%");
+            n.dom.style.setProperty("--node-y", n.y.toFixed(2) + "%");
+          });
+          enlaces.forEach((e) => {
+            e.linea.setAttribute("x1", e.a.x.toFixed(2));
+            e.linea.setAttribute("y1", e.a.y.toFixed(2));
+            e.linea.setAttribute("x2", e.b.x.toFixed(2));
+            e.linea.setAttribute("y2", e.b.y.toFixed(2));
+          });
+        }
+        function paso() {
+          const ar = proporcion();
+          const K_ENLACE = 0.055, K_CASA = 0.012, AMORT = 0.9;
+          enlaces.forEach((e) => {
+            const dx = (e.b.x - e.a.x) * ar, dy = e.b.y - e.a.y;
+            const d = Math.hypot(dx, dy) || 0.001;
+            // reposo = la distancia que tenían en el reparto original, medida
+            // en las mismas unidades corregidas por la proporción del lienzo
+            const reposo = Math.hypot((e.b.hx - e.a.hx) * ar, e.b.hy - e.a.hy) || 0.001;
+            const f = K_ENLACE * (d - reposo);
+            const ux = dx / d, uy = dy / d;
+            if (e.a !== arrastrado) { e.a.vx += (ux * f) / ar; e.a.vy += uy * f; }
+            if (e.b !== arrastrado) { e.b.vx -= (ux * f) / ar; e.b.vy -= uy * f; }
+          });
+          let movimiento = 0;
+          nodos.forEach((n) => {
+            if (n === arrastrado) { n.vx = 0; n.vy = 0; return; }
+            n.vx += (n.hx - n.x) * K_CASA;
+            n.vy += (n.hy - n.y) * K_CASA;
+            n.vx *= AMORT; n.vy *= AMORT;
+            n.x = Math.max(3, Math.min(97, n.x + n.vx));
+            n.y = Math.max(4, Math.min(96, n.y + n.vy));
+            movimiento += Math.abs(n.vx) + Math.abs(n.vy);
+          });
+          pintar();
+          if (arrastrado || movimiento > 0.02) { raf = requestAnimationFrame(paso); }
+          else { corriendo = false; }
+        }
+        function arrancar() { if (!corriendo) { corriendo = true; raf = requestAnimationFrame(paso); } }
+
+        nodos.forEach((n) => {
+          if (!n.dom) return;
+          n.dom.addEventListener("pointerdown", (ev) => {
+            ev.preventDefault();
+            arrastrado = n;
+            n.dom.setPointerCapture?.(ev.pointerId);
+            n.dom.classList.add("is-dragging");
+            escenario.classList.add("is-dragging-node");
+            n.movido = 0;
+            arrancar();
+          });
+          n.dom.addEventListener("pointermove", (ev) => {
+            if (arrastrado !== n) return;
+            const r = escenario.getBoundingClientRect();
+            const nx = ((ev.clientX - r.left) / r.width) * 100;
+            const ny = ((ev.clientY - r.top) / r.height) * 100;
+            n.movido = (n.movido || 0) + Math.abs(nx - n.x) + Math.abs(ny - n.y);
+            n.x = Math.max(3, Math.min(97, nx));
+            n.y = Math.max(4, Math.min(96, ny));
+            arrancar();
+          });
+          const soltar = (ev) => {
+            if (arrastrado !== n) return;
+            arrastrado = null;
+            n.dom.releasePointerCapture?.(ev.pointerId);
+            n.dom.classList.remove("is-dragging");
+            escenario.classList.remove("is-dragging-node");
+            // si de verdad se arrastró, se evita que cuente como clic
+            if ((n.movido || 0) > 1.2) { n.dom.dataset.suppressClick = "1"; window.setTimeout(() => { delete n.dom.dataset.suppressClick; }, 60); }
+            arrancar();
+          };
+          n.dom.addEventListener("pointerup", soltar);
+          n.dom.addEventListener("pointercancel", soltar);
+        });
+      })();
+
+      // Pasar el cursor por un nodo enciende solo sus conexiones (sin abrir
+      // la ficha): es la forma de leer la red sin tener que hacer clic.
+      const stageEl = () => target.querySelector(".map-network-stage");
       target.querySelectorAll(".full-dynamic-node").forEach((btn) => {
+        btn.addEventListener("mouseenter", () => {
+          const stage = stageEl();
+          if (!stage || stage.classList.contains("has-selection")) return;
+          const elemId = btn.dataset.elemId;
+          stage.classList.add("has-hover");
+          target.querySelectorAll(".full-unified-group").forEach((g) => {
+            g.classList.toggle("is-hovered", g.dataset.source === elemId || g.dataset.target === elemId);
+          });
+          const dato = elementPosMap[elemId];
+          target.querySelectorAll(".full-dynamic-node").forEach((n) => {
+            const vecino = dato?.connects?.includes(n.dataset.elemId) || elementPosMap[n.dataset.elemId]?.connects?.includes(elemId);
+            n.classList.toggle("is-near", n === btn || !!vecino);
+          });
+        });
+        btn.addEventListener("mouseleave", () => {
+          const stage = stageEl();
+          if (!stage) return;
+          stage.classList.remove("has-hover");
+          target.querySelectorAll(".full-unified-group").forEach((g) => g.classList.remove("is-hovered"));
+          target.querySelectorAll(".full-dynamic-node").forEach((n) => n.classList.remove("is-near"));
+        });
         btn.addEventListener("click", (e) => {
           e.stopPropagation();
+          if (btn.dataset.suppressClick) return;   // venía de arrastrar el nodo
           const elemId = btn.dataset.elemId;
           const nodeData = elementPosMap[elemId];
           if (!nodeData) return;
@@ -2843,6 +2994,7 @@ const renderTerritoryNetwork = () => {
             const matches = s === elemId || t === elemId;
             group.classList.toggle("is-highlighted", matches);
           });
+          target.querySelector(".map-network-stage")?.classList.add("has-selection");
 
           const card = target.querySelector("#fullDynamicsDetailCard");
           if (card) {
@@ -2872,6 +3024,7 @@ const renderTerritoryNetwork = () => {
               card.style.display = "none";
               target.querySelectorAll(".full-dynamic-node").forEach((n) => n.classList.remove("is-active", "is-connected"));
               target.querySelectorAll(".full-unified-group").forEach((g) => g.classList.remove("is-highlighted"));
+              target.querySelector(".map-network-stage")?.classList.remove("has-selection");
             });
 
             card.querySelectorAll(".full-detail-tag").forEach((tag) => {
@@ -2978,28 +3131,23 @@ const renderTerritoryNetwork = () => {
         const proj = projectToPercent(p.coords);
         if (proj) items.push({ key: `phen-${i}`, x: proj.x, y: proj.y });
       });
-      // Las bolitas de las cajas (Humedal La Vaca, Corabastos, etc.) NO se
-      // empujan entre sí — deben quedar siempre en su coordenada real
-      // exacta, aunque estén geográficamente cerca unas de otras.
       KENNEDY_TEXT_BOXES.forEach((box, i) => box.coords.forEach((c, j) => {
         const proj = projectToPercent(c.pos);
-        if (proj) items.push({ key: `box-${i}-${j}`, x: proj.x, y: proj.y, fixed: true });
+        if (proj) items.push({ key: `box-${i}-${j}`, x: proj.x, y: proj.y });
       }));
       // Si dos bolitas quedan muy cerca (por estar geográficamente cerca en
-      // la realidad), se empujan un poquito para que no se toquen entre sí
-      // — pero nunca las de las cajas (fixed:true), esas quedan quietas.
+      // la realidad), se empujan un poquito para que no se toquen entre sí.
       const minDist = 6;
       for (let iter = 0; iter < 10; iter++) {
         for (let a = 0; a < items.length; a++) {
           for (let b = a + 1; b < items.length; b++) {
-            if (items[a].fixed && items[b].fixed) continue;
             const dx = items[b].x - items[a].x, dy = items[b].y - items[a].y;
             const dist = Math.hypot(dx, dy) || 0.0001;
             if (dist < minDist) {
               const push = (minDist - dist) / 2;
               const ux = dx / dist, uy = dy / dist;
-              if (!items[a].fixed) { items[a].x -= ux * push; items[a].y -= uy * push; }
-              if (!items[b].fixed) { items[b].x += ux * push; items[b].y += uy * push; }
+              items[a].x -= ux * push; items[a].y -= uy * push;
+              items[b].x += ux * push; items[b].y += uy * push;
             }
           }
         }
@@ -3239,8 +3387,7 @@ const renderTerritoryNetwork = () => {
       // El botón fijo abajo a la izquierda hace lo mismo que el del centro
       // (queda como una segunda forma de activarlo); solo se muestra junto
       // con las 6 bolas de sistemas, no mientras están las 30 dinámicas.
-      const fixedFullNetworkBtn = document.getElementById("showFullSubsystemsNetworkBtn");
-      if (fixedFullNetworkBtn) fixedFullNetworkBtn.hidden = !(systems && isPlainView && !hideAllSystemBubbles);
+      
       if (hideAllSystemBubbles) declutteredPositions = computeDeclutteredPositions();
       const kennedyBoxesHtml = hideAllSystemBubbles ? buildPhenomenaHtml() + buildTextBoxesHtml() : "";
       const relationPairs = hideAllSystemBubbles ? [] : (systems
@@ -3306,19 +3453,16 @@ const renderTerritoryNetwork = () => {
       if (hideAllSystemBubbles) requestAnimationFrame(() => updateTextBoxes());
       const openFullNetwork = (event) => {
         event?.stopPropagation();
-        document.getElementById("showFullSubsystemsNetworkBtn")?.setAttribute("hidden", "");
-        try { DINAMICA_SOUND.play("expansion"); } catch (err) {}
+        try { DINAMICA_SOUND.play("hidrica"); } catch (err) {}
         const stage = target.querySelector(".map-network-stage");
-        // Secuencia: 1) se esconden las líneas que conectan las 6 bolas,
-        // 2) las 6 bolas explotan, 3) se reemplaza el panel por las 30
-        // dinámicas conectadas entre sí.
-        stage?.querySelectorAll(".map-network-flows, .map-network-bonds").forEach((g) => g.classList.add("fading-out"));
-        window.setTimeout(() => {
-          stage?.classList.add("center-hub-exploding");
+        if (stage) {
+          stage.classList.add("is-stage-fading-out");
           window.setTimeout(() => {
             renderFullSubsystemsNetworkInPlace(target);
-          }, 560);
-        }, 320);
+          }, 320);
+        } else {
+          renderFullSubsystemsNetworkInPlace(target);
+        }
       };
       window.__openFullSubsystemsNetwork = openFullNetwork;
       target.querySelector("#mapNetworkCenterHub")?.addEventListener("click", openFullNetwork);
@@ -3335,8 +3479,7 @@ const renderTerritoryNetwork = () => {
         // hizo clic, sin abrir ningún modal.
         target.querySelectorAll(".bubble-explode-satellite").forEach((n) => n.remove());
         try {
-          const items = row.dynamics || row.components
-            || (row.parts ? row.parts.replace(/\.$/, "").split(" + ").map((s) => s.trim()) : null);
+          const items = row.dynamics || row.components || (row.parts ? row.parts.split(/\s*\+\s*|\s*,\s*/) : null);
           if (items && items.length) {
             const stageRect = target.getBoundingClientRect();
             const btnRect = button.getBoundingClientRect();
@@ -3346,8 +3489,8 @@ const renderTerritoryNetwork = () => {
             const satHalf = 39; // mitad del tamaño de cada bolita (78px), para no dejar que se corte en el borde
             const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
             const sysKey = ["hidrica", "biotica", "fisico", "movilidad", "social", "socioeconomico"][Number(button.dataset.mapNetworkIndex)];
-            const dynElements = systems && sysKey ? UNIFIED_URBAN_ELEMENTS.filter((el) => el.systemId === sysKey) : null;
-            const elemList = (dynElements && dynElements.length) ? dynElements : (items || []).map((text) => ({ name: text, icon: "fa-circle-dot", desc: text }));
+            const dynSys = sysKey && URBAN_DYNAMICS_DATA[sysKey];
+            const elemList = dynSys ? dynSys.elements : (items || []).map(text => ({ name: text, icon: "fa-circle-dot", desc: text }));
             elemList.forEach((el, i) => {
               const angle = (i / elemList.length) * Math.PI * 2 - Math.PI / 2;
               const finalX = clamp(originX + satR * Math.cos(angle), satHalf, stageRect.width - satHalf);

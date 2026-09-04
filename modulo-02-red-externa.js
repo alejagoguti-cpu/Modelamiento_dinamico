@@ -58,6 +58,87 @@
     e4: { color: "#fb8d84", icon: "fa-landmark" },
   };
 
+  /* -------- Vías: solo las que el POT nombra --------
+     La malla vial completa ahogaba la lectura de la red. Se dejan
+     únicamente los corredores que el POT (documento "Bogotá Reverdece")
+     nombra de forma explícita, sea como obra estructurante del plan, como
+     corredor del sistema de transporte o como vía de la malla arterial en
+     conflicto con la Estructura Ecológica Principal. */
+  const VIAS_POT = [
+    { nombre: "Autopista Norte",            re: /autopista\s*norte/i },
+    { nombre: "Carrera Séptima",            re: /(carrera|cra\.?|kr\.?)\s*7\b|s[ée]ptima/i },
+    { nombre: "Carrera 10",                 re: /(carrera|cra\.?|kr\.?)\s*10\b|d[ée]cima/i },
+    { nombre: "Carrera 80",                 re: /(carrera|cra\.?|kr\.?)\s*80\b/i },
+    { nombre: "Calle 13",                   re: /calle\s*13\b/i },
+    { nombre: "Calle 26",                   re: /calle\s*26\b/i },
+    { nombre: "Calle 63",                   re: /calle\s*63\b/i },
+    { nombre: "Calle 72",                   re: /calle\s*72\b/i },
+    { nombre: "Calle 80",                   re: /calle\s*80\b/i },
+    { nombre: "Calle 43 Sur",               re: /calle\s*43\s*sur/i },
+    { nombre: "Avenida Boyacá",             re: /boyac[áa]/i },
+    { nombre: "Avenida Ciudad de Cali",     re: /ciudad\s*de\s*cali/i },
+    { nombre: "Avenida Caracas",            re: /caracas/i },
+    { nombre: "Avenida Suba–Cota",          re: /suba\s*[-–]\s*cota|suba\s*cota/i },
+    { nombre: "Avenida Longitudinal de Occidente (ALO)", re: /\balo\b|longitudinal\s*de\s*occidente/i },
+  ];
+  const ES_VIA = (e) => e.categoria_id === "vias_arteriales";
+
+  /* -------- Lo que el POT nombra --------
+     Términos tomados del documento del POT "Bogotá Reverdece". Se separan
+     los LUGARES que nombra uno por uno de los SISTEMAS/PROGRAMAS que nombra
+     como tales (y que por tanto cobijan a todos sus elementos). */
+  const POT_LUGARES = [
+    // humedales y cuerpos de agua que el documento nombra (en la base están
+    // escritos sin la palabra "humedal": TECHO, LA CONEJERA, CÓRDOBA-NIZA…)
+    { q: "Humedal Capellanía",            re: /capellan[íi]a/i },
+    { q: "Humedal Córdoba",               re: /c[óo]rdoba/i },
+    { q: "Humedal El Burro",              re: /\bel\s+burro\b/i },
+    { q: "Humedal Techo",                 re: /\btecho\b/i },
+    { q: "Humedal Torca",                 re: /\btorca\b/i },
+    { q: "Humedal La Conejera",           re: /conejera/i },
+    { q: "Río Bogotá",                    re: /r[íi]o\s+bogot[áa]/i },
+    { q: "Río Fucha",                     re: /\bfucha\b/i },
+    { q: "Río Tunjuelo",                  re: /tunjuel/i },
+    { q: "Río y canal Salitre",           re: /salitre/i },
+    { q: "Canal Arzobispo",               re: /arzobispo/i },
+    { q: "Canal El Virrey",               re: /virrey/i },
+    { q: "Canal Independencia",           re: /independencia/i },
+    { q: "Cerros Orientales",             re: /cerros?\s+orientales/i },
+    { q: "Reserva Thomas van der Hammen", re: /thomas|van\s+der\s+hammen/i },
+    { q: "Parque Entrenubes",             re: /entrenubes/i },
+    { q: "Parque Nacional",               re: /parque\s+nacional/i },
+    { q: "Parque Simón Bolívar",          re: /sim[óo]n\s+bol[íi]var/i },
+    { q: "Parque Ecológico Cerro Seco",   re: /cerro\s+seco/i },
+    { q: "Parques rurales (La Requilina, Los Soches, Quiba)", re: /requilina|soches|quiba/i },
+    { q: "Áreas protegidas y reservas forestales", re: /[áa]reas?\s+protegidas?|reservas?\s+forestal/i },
+    { q: "Complejos de páramos",          re: /p[áa]ramo/i },
+  ];
+  const POT_SISTEMAS = [
+    { q: "Reservas Distritales de Humedal", re: /humedal/i, categoria: "humedales" },
+    { q: "Manzanas del Cuidado",          re: /manzana\s*s?\s*del\s*cuidado/i },
+    { q: "Corredores verdes",             re: /corredor(es)?\s+verde/i },
+    { q: "Ciclorrutas y cicloalamedas",   re: /ciclorr?uta|cicloalameda/i },
+    { q: "Red Metro",                     re: /\bmetro\b|primera\s+l[íi]nea|segunda\s+l[íi]nea|tercera\s+l[íi]nea/i },
+    { q: "RegioTram",                     re: /regiotram/i },
+    { q: "Cables aéreos",                 re: /\bcable/i },
+    { q: "Bosques urbanos",               re: /bosque\s+urbano/i },
+    { q: "Coberturas vegetales",          re: /cobertura[s]?\s+vegetal/i },
+  ];
+  function razonPot(e) {
+    const n = String(e.nombre || "");
+    if (ES_VIA(e)) { const v = viaDelPot(n); return v ? "Corredor vial que el POT nombra: " + v : null; }
+    const lugar = POT_LUGARES.find((x) => x.re.test(n));
+    if (lugar) return "Lugar que el POT nombra: " + lugar.q;
+    const sis = POT_SISTEMAS.find((x) => (x.categoria ? e.categoria_id === x.categoria : x.re.test(n)));
+    if (sis) return "Parte de un sistema que el POT nombra: " + sis.q;
+    return null;
+  }
+  let soloPot = true;   // se puede alternar con el botón de la barra
+  function viaDelPot(nombre) {
+    const v = VIAS_POT.find((x) => x.re.test(String(nombre || "")));
+    return v ? v.nombre : null;
+  }
+
   const state = {
     categorias: [],
     elementos: [],
@@ -67,7 +148,24 @@
     puentes: new Set(),
     edgeTypeOn: { directa: true, indirecta: true },
     highlight: null, // null | 'hubs' | 'perifericos' | 'puentes'
+    apagados: new Set(),   // nodos desactivados en la simulación
   };
+  const estaActivo = (id) => !state.apagados.has(id);
+  const conexionActiva = (c) => estaActivo(c.origen) && estaActivo(c.destino);
+
+  /* -------- Campos de la base que puede o no traer cada fila --------
+     No se inventa nada: si el campo no está en la base, la ficha lo dice. */
+  const CAMPOS_DESC = ["descripcion", "descripción", "detalle", "resumen", "definicion", "definición", "que_es", "observaciones"];
+  const CAMPOS_ART = ["articulo", "artículo", "articulos", "artículos", "articulo_pot", "art_pot", "norma", "referencia_pot", "art"];
+  const CAMPOS_MOTIVO = ["motivo", "razon", "razón", "descripcion", "descripción", "justificacion", "justificación", "por_que", "porque", "detalle", "evidencia"];
+  function primerCampo(obj, claves) {
+    if (!obj) return null;
+    for (const k of claves) {
+      const v = obj[k];
+      if (v != null && String(v).trim() !== "") return String(v).trim();
+    }
+    return null;
+  }
 
   async function fetchTable(name) {
     const res = await fetch(SUPABASE_URL + "/rest/v1/" + name + "?select=*", {
@@ -395,6 +493,10 @@
     });
   }
 
+  // Vuelve a calcular grado/puentes con los nodos encendidos, reacomoda la
+  // red y repinta. Es lo que hace que al apagar un hub la red se reestructure.
+  let recalcularRed = () => {};
+
   function buildLayer() {
     const svg = document.getElementById("networkViz");
     if (!svg) return;
@@ -422,11 +524,12 @@
 
     // zoom inicial: encuadra TODA la red (con margen), para dar una vista de
     // conjunto legible de entrada; desde ahí se puede acercar a cada zona.
-    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
-    state.elementos.forEach((e) => {
-      minX = Math.min(minX, e._x - e._r); maxX = Math.max(maxX, e._x + e._r);
-      minY = Math.min(minY, e._y - e._r); maxY = Math.max(maxY, e._y + e._r);
-    });
+    const xs = state.elementos.map((e) => e._x).sort((a, b) => a - b);
+    const ys = state.elementos.map((e) => e._y).sort((a, b) => a - b);
+    const pct = (arr, q) => arr[Math.min(arr.length - 1, Math.max(0, Math.round((arr.length - 1) * q)))] || 0;
+    const margen = R_MAX * 2;
+    let minX = pct(xs, 0.02) - margen, maxX = pct(xs, 0.98) + margen;
+    let minY = pct(ys, 0.02) - margen, maxY = pct(ys, 0.98) + margen;
     const w = maxX - minX, h = maxY - minY;
     const fitScale = Math.max(0.15, Math.min(2500 / w, 1820 / h) * 0.94);
     view.scale = fitScale;
@@ -441,6 +544,7 @@
     edgesG.setAttribute("class", "m2re-edges");
     viewportG.appendChild(edgesG);
     const edgesByNode = new Map();
+    const vecinosPorNodo = new Map();
     state.conexiones.forEach((c) => {
       const a = state.byId.get(c.origen), b = state.byId.get(c.destino);
       if (!a || !b) return;
@@ -448,16 +552,78 @@
       line.setAttribute("x1", a._x); line.setAttribute("y1", a._y);
       line.setAttribute("x2", b._x); line.setAttribute("y2", b._y);
       line.setAttribute("class", "m2re-edge " + (c.tipo === "directa" ? "m2re-edge-directa" : "m2re-edge-indirecta"));
+      line.dataset.origen = c.origen; line.dataset.destino = c.destino;
+      line._conexion = c;
       edgesG.appendChild(line);
       [a.id, b.id].forEach((id) => {
         if (!edgesByNode.has(id)) edgesByNode.set(id, []);
         edgesByNode.get(id).push(line);
       });
+      if (!vecinosPorNodo.has(a.id)) vecinosPorNodo.set(a.id, []);
+      if (!vecinosPorNodo.has(b.id)) vecinosPorNodo.set(b.id, []);
+      vecinosPorNodo.get(a.id).push(b.id);
+      vecinosPorNodo.get(b.id).push(a.id);
     });
 
     const nodesG = document.createElementNS(SVG_NS, "g");
     nodesG.setAttribute("class", "m2re-nodes");
     viewportG.appendChild(nodesG);
+
+    const edgesTopG = document.createElementNS(SVG_NS, "g");
+    edgesTopG.setAttribute("class", "m2re-edges-top");
+    viewportG.appendChild(edgesTopG);
+    const nodesTopG = document.createElementNS(SVG_NS, "g");
+    nodesTopG.setAttribute("class", "m2re-nodes-top");
+    viewportG.appendChild(nodesTopG);
+
+    function enfocar(encendidas, gruposArriba) {
+      edgesG.style.opacity = "0.09";
+      nodesG.style.opacity = "0.22";
+      encendidas.forEach((line) => { if (!line.dataset.filteredOut) edgesTopG.appendChild(line); });
+      gruposArriba.forEach((g) => { if (g) nodesTopG.appendChild(g); });
+    }
+    function desenfocar() {
+      edgesG.style.opacity = "";
+      nodesG.style.opacity = "";
+      while (edgesTopG.firstChild) edgesG.appendChild(edgesTopG.firstChild);
+      while (nodesTopG.firstChild) nodesG.appendChild(nodesTopG.firstChild);
+    }
+
+    // Foco: enciende las conexiones de un nodo y apaga el resto de la red.
+    // Con el cursor es momentáneo; con doble clic queda FIJO hasta que se
+    // vuelve a hacer doble clic o se toca el fondo.
+    let focoFijo = null;
+    function aplicarFoco(e) {
+      const vecinos = (vecinosPorNodo.get(e.id) || []).map((v) => state.byId.get(v)?._group).filter(Boolean);
+      (e._aristas || []).forEach((line) => {
+        if (line.dataset.filteredOut) return;
+        line.classList.add("m2re-edge-activa");
+        line.setAttribute("stroke", e._colorBase);
+        line.style.strokeWidth = "2.2";
+      });
+      enfocar(e._aristas || [], [e._group].concat(vecinos));
+    }
+    function limpiarFoco(e) {
+      (e._aristas || []).forEach((line) => {
+        line.classList.remove("m2re-edge-activa");
+        line.style.strokeWidth = "";
+        line.removeAttribute("stroke");
+      });
+      desenfocar();
+    }
+    function alternarFocoFijo(e) {
+      if (focoFijo === e.id) { limpiarFoco(e); focoFijo = null; return; }
+      if (focoFijo != null) { const previo = state.byId.get(focoFijo); if (previo) limpiarFoco(previo); }
+      focoFijo = e.id;
+      aplicarFoco(e);
+    }
+    function soltarFocoFijo() {
+      if (focoFijo == null) return;
+      const previo = state.byId.get(focoFijo);
+      if (previo) limpiarFoco(previo);
+      focoFijo = null;
+    }
+    layer._soltarFoco = soltarFocoFijo;
 
     // dibuja primero los de menor grado y al final los hubs, para que los
     // más grandes/importantes queden siempre por encima visualmente.
@@ -503,23 +669,180 @@
       group.appendChild(circle); group.appendChild(fo);
 
       const misAristas = edgesByNode.get(e.id) || [];
-      group.addEventListener("pointerenter", () => {
-        misAristas.forEach((line) => {
-          if (line.dataset.filteredOut) return;
-          line.classList.add("m2re-edge-activa"); line.setAttribute("stroke", color); edgesG.appendChild(line);
-        });
-      });
-      group.addEventListener("pointerleave", () => {
-        misAristas.forEach((line) => line.classList.remove("m2re-edge-activa"));
-      });
+      e._aristas = misAristas;
+      e._colorBase = color;
+      // con el cursor: foco momentáneo (si no hay uno fijado con doble clic)
+      group.addEventListener("pointerenter", () => { if (focoFijo == null) aplicarFoco(e); });
+      group.addEventListener("pointerleave", () => { if (focoFijo == null) limpiarFoco(e); });
       group.addEventListener("click", (ev) => {
         ev.stopPropagation();
-        showTooltip(ev.clientX, ev.clientY, e);
+        abrirFicha(e);
       });
 
       nodesG.appendChild(group);
       e._node = circle;
       e._fo = fo;
+      e._group = group;
+      e._colorBase = color;
+    });
+
+    // ---------- simulación: encender / apagar nodos ----------
+    const lineaPorPar = new Map();
+    state.conexiones.forEach((c, i) => lineaPorPar.set(c.origen + "|" + c.destino, edgesG.children[i]));
+
+    function pintarEstado() {
+      state.elementos.forEach((e) => {
+        const activo = estaActivo(e.id);
+        if (!e._group) return;
+        e._group.style.opacity = activo ? "" : "0.16";
+        e._node.setAttribute("stroke", activo ? e._colorBase : "#5a6470");
+        e._node.setAttribute("stroke-dasharray", activo ? "" : "3 3");
+      });
+      [...edgesG.children, ...edgesTopG.children].forEach((line) => {
+        const a = line.dataset.origen, b = line.dataset.destino;
+        const viva = estaActivo(Number(a)) && estaActivo(Number(b));
+        line.style.opacity = viva ? "" : "0.04";
+      });
+    }
+
+    function moverNodos() {
+      state.elementos.forEach((e) => {
+        if (!e._group) return;
+        // posición Y TAMAÑO: el radio depende del grado, que cambia cuando
+        // se apagan nodos, así que hay que volver a escribirlo (antes solo
+        // se movían y el tamaño se quedaba con el valor viejo)
+        e._node.setAttribute("cx", e._x); e._node.setAttribute("cy", e._y);
+        e._node.setAttribute("r", e._r);
+        e._node.setAttribute("stroke-width", Math.max(1.6, Math.min(3.2, 1.4 + e._r / 30)));
+        const size = e._r * 1.8;
+        e._fo.setAttribute("x", e._x - size / 2); e._fo.setAttribute("y", e._y - size / 2);
+        e._fo.setAttribute("width", size); e._fo.setAttribute("height", size);
+        const icono = e._fo.querySelector("i");
+        const texto = e._fo.querySelector("div > div");
+        if (icono) icono.style.fontSize = Math.max(9, e._r * 0.34) + "px";
+        if (texto) { texto.style.fontSize = Math.max(5.5, e._r * 0.19) + "px"; texto.style.maxHeight = (e._r * 1.1) + "px"; }
+      });
+      [...edgesG.children, ...edgesTopG.children].forEach((line) => {
+        const a = state.byId.get(Number(line.dataset.origen)), b = state.byId.get(Number(line.dataset.destino));
+        if (!a || !b) return;
+        line.setAttribute("x1", a._x); line.setAttribute("y1", a._y);
+        line.setAttribute("x2", b._x); line.setAttribute("y2", b._y);
+      });
+    }
+
+    recalcularRed = function () {
+      soltarFocoFijo();
+      // grado y puentes SOLO con lo que sigue encendido
+      const vivos = state.elementos.filter((e) => estaActivo(e.id));
+      const vivas = state.conexiones.filter(conexionActiva);
+      const { grado, puentes } = computeGradoYPuentes(vivos, vivas);
+      state.grado = grado; state.puentes = puentes;
+      state.elementos.forEach((e) => { e._r = radiusForDegree(grado.get(e.id) || 0); });
+      relaxLayout(state.elementos, vivas);
+      moverNodos();
+      pintarEstado();
+      const aislados = vivos.filter((e) => (grado.get(e.id) || 0) === 0).length;
+      const info = document.getElementById("m2reSimInfo");
+      if (info) info.textContent = vivos.length + " de " + state.elementos.length + " nodos activos · " +
+        vivas.length + " conexiones activas · " + puentes.size + " nodos puente · " + aislados + " aislados";
+    };
+
+    // doble clic sobre un nodo = dejar iluminadas SUS conexiones
+    state.elementos.forEach((e) => {
+      e._group?.addEventListener("dblclick", (ev) => {
+        ev.stopPropagation(); ev.preventDefault();
+        alternarFocoFijo(e);
+        abrirFicha(e);
+      });
+    });
+    document.getElementById("m2reBtnApagarTodos")?.addEventListener("click", () => {
+      state.elementos.forEach((e) => state.apagados.add(e.id));
+      recalcularRed(); cerrarFicha();
+    });
+    document.getElementById("m2reBtnEncenderTodos")?.addEventListener("click", () => {
+      state.apagados.clear(); recalcularRed(); cerrarFicha();
+    });
+    document.getElementById("m2reBtnApagarHubs")?.addEventListener("click", () => {
+      const ordenados = [...state.elementos].sort((a, b) => (state.grado.get(b.id) || 0) - (state.grado.get(a.id) || 0));
+      const cuantos = Math.max(1, Math.round(ordenados.length * 0.05));
+      ordenados.slice(0, cuantos).forEach((e) => state.apagados.add(e.id));
+      recalcularRed(); cerrarFicha();
+    });
+    pintarEstado();
+  }
+
+  function alternarNodo(id) {
+    if (state.apagados.has(id)) state.apagados.delete(id); else state.apagados.add(id);
+    recalcularRed();
+    const e = state.byId.get(id);
+    if (e) abrirFicha(e);
+  }
+
+  /* ---------- Ficha del nodo: qué es, artículos del POT y por qué se
+     conecta con cada vecino. Lo que la base no traiga se dice, no se
+     inventa. ---------- */
+  function cerrarFicha() {
+    const f = document.getElementById("m2reFicha");
+    if (f) { f.hidden = true; f.innerHTML = ""; }
+  }
+  function abrirFicha(e) {
+    const f = document.getElementById("m2reFicha");
+    if (!f) return;
+    const estructura = CATEGORIA_A_ESTRUCTURA[e.categoria_id] || "e2";
+    const style = ESTRUCTURA_STYLE[estructura];
+    const grado = state.grado.get(e.id) || 0;
+    const apagado = !estaActivo(e.id);
+    const desc = primerCampo(e, CAMPOS_DESC);
+    const art = primerCampo(e, CAMPOS_ART) || (e._viaPot ? "Corredor nombrado por el POT (Bogotá Reverdece): " + e._viaPot : null);
+
+    const vecinos = state.conexiones
+      .filter((c) => c.origen === e.id || c.destino === e.id)
+      .map((c) => {
+        const otro = state.byId.get(c.origen === e.id ? c.destino : c.origen);
+        return otro ? { otro, c } : null;
+      })
+      .filter(Boolean);
+
+    const vecinosHtml = vecinos.length
+      ? vecinos.map(({ otro, c }) => {
+          const motivo = primerCampo(c, CAMPOS_MOTIVO);
+          const tipo = c.tipo === "directa" ? "Relación directa" : "Relación indirecta";
+          const razon = motivo
+            ? escapeHtml(motivo)
+            : tipo + " — el motivo no está registrado en la base de datos" +
+              (estaActivo(otro.id) ? "" : " · nodo desactivado");
+          return '<button type="button" class="m2re-vecino-btn" data-ir="' + otro.id + '">' +
+                 escapeHtml(otro.nombre) + '<small>' + razon + '</small></button>';
+        }).join("")
+      : '<p class="m2re-ficha-vacio">Sin conexiones registradas.</p>';
+
+    f.innerHTML =
+      '<button type="button" class="m2re-ficha-cerrar" aria-label="Cerrar">&times;</button>' +
+      '<span class="m2re-ficha-cat" style="background:' + style.color + '22;color:' + style.color + ';border:1px solid ' + style.color + '55;">' +
+        '<i class="fa-solid ' + style.icon + '"></i>' + escapeHtml(style.label || e.categoria_id) + '</span>' +
+      '<h4>' + escapeHtml(e.nombre) + '</h4>' +
+      '<div class="m2re-ficha-datos">' +
+        '<span class="m2re-chip">' + escapeHtml(e.localidad || "Sin localidad") + '</span>' +
+        '<span class="m2re-chip">' + grado + ' conexiones</span>' +
+        (state.puentes.has(e.id) ? '<span class="m2re-chip">nodo puente</span>' : '') +
+        (apagado ? '<span class="m2re-chip">desactivado</span>' : '') +
+      '</div>' +
+      '<p class="m2re-ficha-etiqueta">Qué es</p>' +
+      (desc ? '<p>' + escapeHtml(desc) + '</p>' : '<p class="m2re-ficha-vacio">La base de datos no trae una descripción para este elemento.</p>') +
+      '<p class="m2re-ficha-etiqueta">Artículo del POT</p>' +
+      (art ? '<p>' + escapeHtml(art) + '</p>' : '<p class="m2re-ficha-vacio">No hay artículo del POT registrado para este elemento en la base de datos.</p>') +
+      '<p class="m2re-ficha-etiqueta">Por qué se conecta</p>' + vecinosHtml +
+      '<button type="button" class="m2re-ficha-toggle' + (apagado ? ' apagado' : '') + '">' +
+        (apagado ? 'Activar este nodo' : 'Desactivar este nodo') + '</button>';
+
+    f.hidden = false;
+    f.querySelector(".m2re-ficha-cerrar")?.addEventListener("click", cerrarFicha);
+    f.querySelector(".m2re-ficha-toggle")?.addEventListener("click", () => alternarNodo(e.id));
+    f.querySelectorAll(".m2re-vecino-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const otro = state.byId.get(Number(btn.dataset.ir));
+        if (otro) abrirFicha(otro);
+      });
     });
   }
 
@@ -562,6 +885,61 @@
     return String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   }
 
+  // Deja en la red solo lo que el POT nombra (o toda la base, si se apaga
+  // el filtro con el botón de la barra).
+  function aplicarFiltroPot() {
+    const todos = state.todosElementos || [];
+    state.elementos = soloPot ? todos.filter((e) => e._razonPot) : todos.slice();
+    state.byId = new Map(state.elementos.map((e) => [e.id, e]));
+    const todasCon = state.todasConexiones || [];
+    state.conexiones = todasCon.filter((c) => state.byId.has(c.origen) && state.byId.has(c.destino));
+    if (soloPot) {
+      // Al quedarse solo con lo que el POT nombra, la mayoría de vecinos
+      // directos desaparece y los supervivientes quedan sueltos. Se
+      // reconstruye el vínculo con las relaciones de la PROPIA base: si dos
+      // elementos del POT estaban unidos por un camino que solo pasa por
+      // elementos retirados, se dibuja esa relación indirecta.
+      const ady = new Map();
+      todasCon.forEach((c) => {
+        if (!ady.has(c.origen)) ady.set(c.origen, []);
+        if (!ady.has(c.destino)) ady.set(c.destino, []);
+        ady.get(c.origen).push(c.destino);
+        ady.get(c.destino).push(c.origen);
+      });
+      const yaHay = new Set(state.conexiones.map((c) => [c.origen, c.destino].sort().join("|")));
+      const MAX_SALTOS = 2;   // solo a través de UN elemento retirado
+      state.elementos.forEach((origen) => {
+        const visto = new Map([[origen.id, 0]]);
+        const cola = [origen.id];
+        while (cola.length) {
+          const actual = cola.shift();
+          const saltos = visto.get(actual);
+          if (saltos >= MAX_SALTOS) continue;
+          (ady.get(actual) || []).forEach((vec) => {
+            if (visto.has(vec)) return;
+            visto.set(vec, saltos + 1);
+            if (state.byId.has(vec)) {
+              if (vec === origen.id) return;
+              const clave = [origen.id, vec].sort().join("|");
+              if (yaHay.has(clave)) return;
+              yaHay.add(clave);
+              state.conexiones.push({
+                origen: origen.id, destino: vec, tipo: "indirecta",
+                motivo: "Relación a través de " + saltos + " elemento" + (saltos === 1 ? "" : "s") +
+                        " que el POT no nombra (según las conexiones de la base de datos).",
+                _derivada: true,
+              });
+            } else {
+              cola.push(vec);   // solo se atraviesan elementos retirados
+            }
+          });
+        }
+      });
+    }
+    state.apagados = new Set();
+    state.filtroInfo = { total: todos.length, conservados: state.elementos.length };
+  }
+
   async function init() {
     const status = document.getElementById("m2CategoriasStatus");
     if (status) status.textContent = "Cargando base de datos…";
@@ -570,22 +948,48 @@
         fetchTable("m2_categorias"), fetchTable("m2_elementos"), fetchTable("m2_conexiones"),
       ]);
       state.categorias = categorias;
-      state.elementos = elementos;
-      state.conexiones = conexiones;
-      state.byId = new Map(elementos.map((e) => [e.id, e]));
+      state.todosElementos = elementos;
+      state.todasConexiones = conexiones;
+      elementos.forEach((e) => { e._razonPot = razonPot(e); if (ES_VIA(e) && e._razonPot) e._viaPot = viaDelPot(e.nombre); });
+      aplicarFiltroPot();
       if (status) status.textContent = "Calculando red (grados, puentes, disposición sin superposiciones)…";
       // deja pintar el mensaje antes del cálculo (puede tardar ~1s)
       await new Promise((r) => setTimeout(r, 30));
       buildLayer();
-      if (status) status.textContent = elementos.length + " nodos · " + conexiones.length + " conexiones · " + state.puentes.size + " nodos puente — arrastrá para mover, rueda/botones para zoom, mouse sobre un nodo para ver sus conexiones";
+      pintarEstadoFiltro(status);
     } catch (err) {
       if (status) status.textContent = "No se pudo cargar la base de datos.";
       console.error("[m2-red-externa]", err);
     }
   }
 
+  function pintarEstadoFiltro(status) {
+    const st = status || document.getElementById("m2CategoriasStatus");
+    if (!st) return;
+    st.textContent = state.elementos.length + " nodos · " + state.conexiones.length + " conexiones · " +
+      state.puentes.size + " nodos puente · " +
+      (soloPot ? "solo los " + state.filtroInfo.conservados + " elementos que el POT nombra (de " + state.filtroInfo.total + ")"
+               : "toda la base de datos (" + state.filtroInfo.total + " elementos)");
+    const btn = document.getElementById("m2reBtnSoloPot");
+    if (btn) {
+      btn.classList.toggle("active", soloPot);
+      btn.innerHTML = soloPot ? '<i class="fa-solid fa-filter"></i> Solo lo que el POT nombra'
+                              : '<i class="fa-solid fa-filter-circle-xmark"></i> Viendo toda la base';
+    }
+  }
+
   document.addEventListener("DOMContentLoaded", () => {
     init();
-    document.getElementById("networkViz")?.addEventListener("click", hideTooltip);
+    document.getElementById("m2reBtnSoloPot")?.addEventListener("click", () => {
+      soloPot = !soloPot;
+      aplicarFiltroPot();
+      buildLayer();
+      pintarEstadoFiltro();
+      cerrarFicha();
+    });
+    document.getElementById("networkViz")?.addEventListener("click", () => {
+      hideTooltip(); cerrarFicha();
+      document.getElementById("m2-red-externa")?._soltarFoco?.();
+    });
   });
 })();

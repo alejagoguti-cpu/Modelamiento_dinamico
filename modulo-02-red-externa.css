@@ -45,9 +45,14 @@
    Las conexiones quedan casi invisibles por defecto (795 nodos × 2198 líneas
    se leen como una maraña si se muestran todas a la vez) y se iluminan solo
    al pasar el mouse sobre uno de sus dos extremos. */
-.m2re-edge { stroke: rgba(160,170,190,0.08); stroke-width: 1.2; pointer-events: none; transition: stroke .15s, stroke-width .15s, opacity .15s; }
-.m2re-edge-indirecta { stroke-dasharray: 5 4; }
-.m2re-edge-activa { stroke-width: 2.4 !important; opacity: 1; }
+/* Las conexiones SÍ se ven: finas y tenues, se leen como una malla. Antes
+   estaban al 8% y con 1.2px, así que la red parecía una nube de burbujas
+   sin una sola línea. Al señalar un nodo se encienden las suyas y el resto
+   de la red se apaga (con 2.198 líneas, resaltar sin apagar no se nota). */
+.m2re-edge { stroke: rgba(158,175,200,0.34); stroke-width: 0.75; pointer-events: none; transition: stroke .18s, stroke-width .18s, opacity .18s; }
+.m2re-edge-indirecta { stroke: rgba(158,175,200,0.2); stroke-dasharray: 4 4; }
+.m2re-edge-activa { stroke-width: 2.2 !important; opacity: 1 !important; }
+.m2re-nodes, .m2re-edges { transition: opacity .18s ease; }
 .m2re-edge[data-filtered-out="1"] { opacity: 0 !important; }
 .m2re-node-group { cursor: pointer; }
 .m2re-node-ring { transition: stroke-width .1s, filter .15s; }
@@ -68,3 +73,54 @@
 }
 .m2re-tooltip strong { color: var(--text); display: block; margin-bottom: 3px; font-size: 12.5px; }
 .m2re-tooltip small { color: var(--text-faint); display: block; margin-top: 4px; }
+
+
+/* ---------- Ficha del nodo (panel lateral) y simulación de apagado ---------- */
+.network-canvas { position: relative; }
+.m2re-ficha {
+  position: absolute; top: 12px; right: 12px; z-index: 20;
+  width: 290px; max-height: calc(100% - 24px); overflow-y: auto;
+  padding: 12px 14px 14px; border-radius: 12px;
+  background: rgba(9,11,15,0.96); border: 1px solid rgba(255,255,255,0.14);
+  box-shadow: 0 14px 40px rgba(0,0,0,.6);
+  font-family: 'Inter', sans-serif; color: #cfd6dc;
+}
+.m2re-ficha[hidden] { display: none; }
+.m2re-ficha .m2re-ficha-cerrar {
+  position: absolute; top: 8px; right: 8px; width: 20px; height: 20px;
+  border: 0; border-radius: 5px; background: transparent; color: #9fb0bd; cursor: pointer; font-size: 14px;
+}
+.m2re-ficha .m2re-ficha-cerrar:hover { background: rgba(255,255,255,.12); color: #fff; }
+.m2re-ficha h4 { margin: 2px 26px 4px 0; font-size: 14px; color: #f2f5f7; line-height: 1.25; }
+.m2re-ficha .m2re-ficha-cat {
+  display: inline-flex; align-items: center; gap: 6px; margin-bottom: 8px;
+  padding: 2px 8px; border-radius: 999px; font-size: 10.5px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .3px;
+}
+.m2re-ficha .m2re-ficha-etiqueta {
+  margin: 10px 0 3px; font-size: 10px; font-weight: 800; letter-spacing: .4px;
+  text-transform: uppercase; color: #8fa0b0;
+}
+.m2re-ficha p { margin: 0; font-size: 11.5px; line-height: 1.5; }
+.m2re-ficha .m2re-ficha-vacio { color: #7d8794; font-style: italic; }
+.m2re-ficha .m2re-ficha-datos { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px; }
+.m2re-ficha .m2re-chip {
+  padding: 2px 7px; border-radius: 6px; font-size: 10.5px;
+  background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.12); color: #dbe3ea;
+}
+.m2re-ficha .m2re-vecino-btn {
+  display: block; width: 100%; text-align: left; margin-top: 4px; cursor: pointer;
+  padding: 5px 7px; border-radius: 7px; font-size: 11px; line-height: 1.35;
+  background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); color: #dbe3ea;
+  font-family: inherit;
+}
+.m2re-ficha .m2re-vecino-btn:hover { background: rgba(255,255,255,.12); border-color: rgba(255,255,255,.25); }
+.m2re-ficha .m2re-vecino-btn small { display: block; margin-top: 2px; color: #93a1ae; font-size: 10px; }
+.m2re-ficha .m2re-ficha-toggle {
+  width: 100%; margin-top: 12px; padding: 7px; cursor: pointer;
+  border-radius: 8px; font-size: 11.5px; font-weight: 700; font-family: inherit;
+  border: 1px solid rgba(255,209,102,.5); background: rgba(255,209,102,.14); color: #ffd166;
+}
+.m2re-ficha .m2re-ficha-toggle:hover { background: rgba(255,209,102,.24); }
+.m2re-ficha .m2re-ficha-toggle.apagado { border-color: rgba(120,220,160,.5); background: rgba(120,220,160,.14); color: #7fdca4; }
+.m2re-sim-row .m2re-sim-label { font-size: 11px; font-weight: 700; color: #9fb0bd; text-transform: uppercase; letter-spacing: .3px; }

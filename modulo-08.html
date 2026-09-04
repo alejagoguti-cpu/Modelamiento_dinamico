@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="stylesheet" href="modulo-08.css?v=remove-controls-v33">
+<link rel="stylesheet" href="modulo-08.css?v=cobertura-vegetal-v39">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="site-theme.css?v=20260823">
   <script src="modulo-08-data.js"></script>
@@ -220,6 +220,30 @@
           <p id="sumoWhatifStatus" class="whatif-disclaimer">Sin cambios — mostrando el modelo base.</p>
         </div>
 
+        <!-- Capa de mirlas (Turdus fuscater): agentes que cruzan de oriente
+             a occidente buscando árboles donde alimentarse y descansar. -->
+        <div class="birds-legend">
+          <h4>
+            <i class="fa-solid fa-dove"></i> Mirlas (<i>Turdus fuscater</i>) y árboles atractores
+            <label class="noise-toggle-label"><input type="checkbox" id="sumoBirdToggle"> Mostrar capa</label>
+          </h4>
+          <label class="whatif-slider-label birds-slider-label">
+            Número de mirlas: <span id="sumoBirdCountVal">60</span>
+            <input type="range" id="sumoBirdSlider" min="10" max="200" value="60" step="5">
+          </label>
+          <label class="whatif-slider-label birds-slider-label">
+            Aumentar cobertura vegetal: <span id="sumoVegVal">+0%</span>
+            <input type="range" id="sumoVegSlider" min="0" max="500" value="0" step="25">
+            <small>Árboles atractores activos: <span id="sumoVegCount">—</span> — todos reales del Arbolado Urbano de Kennedy (hay 12.935 de estas tres especies; el modelo trabaja con una muestra repartida y esta barra la amplía).</small>
+          </label>
+          <p class="birds-legend-note birds-noise-note"><i class="fa-solid fa-volume-high"></i> <b>Umbral crítico de 60&nbsp;dB(A)</b> (Caltrans): por encima de ese nivel el ruido del tráfico enmascara por completo sus señales de comunicación. Cuando el nivel en su posición pasa de 60&nbsp;dB(A), una fuerza <code>F = −K·max(0, Lp−60)·û</code> las empuja lejos de la calle ruidosa —&nbsp;más fuerte cuanto más ruido&nbsp;— y sueltan el árbol donde estuvieran comiendo. Se marcan con un anillo naranja mientras están sobre el umbral.</p>
+          <div class="birds-legend-row">
+            <span><i class="birds-dot" style="background:#b06bff"></i> <b>Saúco</b> · alimento favorito (bayas): cambian bruscamente el rumbo</span>
+            <span><i class="birds-dot" style="background:#ff5fa8"></i> <b>Capulí</b> · atractor intermedio por frutos andinos</span>
+            <span><i class="birds-dot" style="background:#25d0a0"></i> <b>Urapán</b> · sin frutos comestibles: solo percha para descansar</span>
+          </div>
+        </div>
+
         <!-- Leyenda de la capa de ruido: el color cambia con el nivel de
              tráfico/ruido, pero la transparencia es SIEMPRE la misma. -->
         <div class="noise-scale-legend">
@@ -266,6 +290,6 @@
 </div>
 
 <script src="modulo-08.js"></script>
-<script src="modulo-08-sumo.js?v=remove-controls-v33"></script>
+<script src="modulo-08-sumo.js?v=cobertura-vegetal-v39"></script>
 </body>
 </html>
