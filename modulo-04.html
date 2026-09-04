@@ -779,9 +779,15 @@ if (typeof module !== &quot;undefined&quot;) { module.exports = { NODES, LINKS }
     // burbujas se lea mejor (sin agrandar las burbujas entre si)
     const k=Math.min(1.25, availW/Math.max(1,x1-x0), availH/Math.max(1,y1-y0));
     const cx=(x0+x1)/2, cy=(y0+y1)/2;
+    // El margen (padL/padR/padT/padB) solo decide qué tan grande puede verse
+    // la red sin que las convenciones tapen ninguna bola (la escala k) — no
+    // debe correr el centro. Si el centro se calculara sobre el rectángulo
+    // disponible (asimétrico: las convenciones solo reservan espacio a la
+    // derecha), la red quedaba corrida hacia la izquierda del cuadro en vez
+    // de centrada en él. El centro real del recuadro es W/2, H/2.
     // sin transicion: el encuadre se aplica de una, sin zoom animado
     svg.call(zoom.transform,
-      d3.zoomIdentity.translate(padL+availW/2-k*cx, padT+availH/2-k*cy).scale(k));
+      d3.zoomIdentity.translate(W/2-k*cx, H/2-k*cy).scale(k));
   }
 
   // ---- Animacion de entrada: se arma la red a la vista ----
@@ -822,6 +828,14 @@ if (typeof module !== &quot;undefined&quot;) { module.exports = { NODES, LINKS }
   window.__playIntro = playIntro;
 
   function ticked(){
+    // Sin esto, la fuerza del enjambre puede empujar nodos fuera del
+    // recuadro visible (sobre todo hacia abajo): se ven caer fuera de la
+    // red. Se mantienen dentro del viewBox dejando un margen de su radio.
+    NODES.forEach(n=&gt;{
+      const r=nodeRadius(n)+6;
+      n.x=Math.max(r,Math.min(W-r,n.x));
+      n.y=Math.max(r,Math.min(H-r,n.y));
+    });
     linkSel.attr(&quot;x1&quot;,d=&gt;d.source.x).attr(&quot;y1&quot;,d=&gt;d.source.y)
            .attr(&quot;x2&quot;,d=&gt;d.target.x).attr(&quot;y2&quot;,d=&gt;d.target.y);
     nodeSel.attr(&quot;transform&quot;,d=&gt;`translate(${d.x},${d.y})`);
