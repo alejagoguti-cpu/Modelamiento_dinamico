@@ -875,16 +875,18 @@ footer span { color: var(--teal); }
   display: flex; align-items: center; gap: 6px;
 }
 
-/* Pop-up de la fórmula: fijo sobre toda la pantalla (incluida la de la
-   simulación), con la fórmula sola y nada más alrededor. */
-.noise-formula-modal { position: fixed; inset: 0; z-index: 500; display: flex; align-items: center; justify-content: center; padding: 24px; }
+/* Pop-up de la fórmula: a un lado, sobre el borde izquierdo de la
+   pantalla, sin oscurecer ni tapar el resto (la simulación queda visible
+   y usable detrás). Sin telón de fondo: se cierra con la X o Escape. */
+.noise-formula-modal { position: fixed; top: 0; left: 0; height: 100%; z-index: 500; display: flex; align-items: center; justify-content: flex-start; padding: 20px; pointer-events: none; }
 .noise-formula-modal[hidden] { display: none; }
-.noise-formula-modal-backdrop { position: absolute; inset: 0; background: rgba(4,6,8,.72); backdrop-filter: blur(2px); }
+.noise-formula-modal-backdrop { display: none; }
 .noise-formula-modal-box {
-  position: relative; z-index: 1; width: min(640px, 100%); max-height: min(80vh, 720px); overflow-y: auto;
+  position: relative; z-index: 1; width: min(480px, 92vw); max-height: min(80vh, 720px); overflow-y: auto;
   background: var(--panel-alt); border: 1px solid #ffb020; border-radius: 12px;
   padding: 18px 20px; box-shadow: 0 20px 60px rgba(0,0,0,.55), 0 0 24px rgba(255,176,32,.12);
   font-size: 11px; color: var(--text-dim);
+  pointer-events: auto;
 }
 .noise-formula-modal-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
 .noise-formula-modal-head h4 { margin: 0; font-size: 14px; color: #ffb020; display: flex; align-items: center; gap: 8px; }
