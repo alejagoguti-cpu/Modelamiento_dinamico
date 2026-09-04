@@ -633,10 +633,19 @@
     function moverNodos() {
       state.elementos.forEach((e) => {
         if (!e._group) return;
+        // posición Y TAMAÑO: el radio depende del grado, que cambia cuando
+        // se apagan nodos, así que hay que volver a escribirlo (antes solo
+        // se movían y el tamaño se quedaba con el valor viejo)
         e._node.setAttribute("cx", e._x); e._node.setAttribute("cy", e._y);
+        e._node.setAttribute("r", e._r);
+        e._node.setAttribute("stroke-width", Math.max(1.6, Math.min(3.2, 1.4 + e._r / 30)));
         const size = e._r * 1.8;
         e._fo.setAttribute("x", e._x - size / 2); e._fo.setAttribute("y", e._y - size / 2);
         e._fo.setAttribute("width", size); e._fo.setAttribute("height", size);
+        const icono = e._fo.querySelector("i");
+        const texto = e._fo.querySelector("div > div");
+        if (icono) icono.style.fontSize = Math.max(9, e._r * 0.34) + "px";
+        if (texto) { texto.style.fontSize = Math.max(5.5, e._r * 0.19) + "px"; texto.style.maxHeight = (e._r * 1.1) + "px"; }
       });
       [...edgesG.children, ...edgesTopG.children].forEach((line) => {
         const a = state.byId.get(Number(line.dataset.origen)), b = state.byId.get(Number(line.dataset.destino));
