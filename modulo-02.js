@@ -219,21 +219,34 @@ const ODS_NODES = [
   { id:"bibliotecas", cat:"e2", name:"BIBLIOTECAS", icon:"fa-book-open", fuente:"por_verificar" }
 ];
 function nodeById(id) { return ODS_NODES.find(n => n.id === id); }
-/* Vista principal: la red original del módulo — los 30 conceptos del POT
-   (agregadores incluidos). El inventario de 100+ elementos específicos
-   (ríos, humedales, avenidas y ciclorrutas uno por uno) sigue cargado en
-   ODS_NODES para las demás vistas, pero no se dibuja en esta red. */
-const RED_ORIGINAL_IDS = [
+/* Vista principal: los 80 elementos más importantes para la pregunta del
+   módulo — los 30 conceptos del POT más los cuerpos de agua, corredores
+   viales, líneas del metro, ciclorrutas y equipamientos que el plan nombra
+   uno por uno. El resto del inventario sigue cargado en ODS_NODES para las
+   demás vistas, pero no se dibuja en esta red. */
+const RED_POT_IDS = [
   "rios",   "quebradas",   "humedales",   "complejos_de_paramos",
   "coberturas_vegetales",   "areas_de_resiliencia_climatica",   "areas_protegidas",   "reservas_forestales",
-  "equipamientos",   "servicios_sociales",   "ciclorutas",   "transporte_publico",
-  "red_vial",   "corredores_verdes",   "manzanas_del_cuidado",   "parques",
-  "distrito_centro_tecnologico_e_innovacion",   "servicios_empresariales",   "sistema_de_educacion",   "centros_de_abastecimiento",
-  "plazas_de_mercado",   "zonas_industriales",   "produccion_artesanal",   "zonas_de_interes_turistico",
-  "centros_financieros",   "patrimonio_inmaterial",   "patrimonio_arqueologico",   "patrimonio_natural",
-  "patrimonio_material",   "comunidades",
+  "río-bogotá",   "río-tunjuelo",   "río-fucha",   "río-salitre",
+  "burro",   "la-vaca",   "techo",   "capellaníacofradía",
+  "córdoba-niza",   "juan-amarillotibabuyes",   "jaboque",   "santa-maría-del-lago",
+  "la-conejera",   "tibanica",   "torca-guaymaral",   "salitre",
+  "meandro-del-say",   "el-tunjo",   "chiguasuque-la-isla",   "quebrada-torca",
+  "quebrada-teusacá",   "equipamientos",   "servicios_sociales",   "ciclorutas",
+  "transporte_publico",   "red_vial",   "corredores_verdes",   "manzanas_del_cuidado",
+  "parques",   "colegios",   "bibliotecas",   "primera-linea-metro",
+  "segunda-linea-metro",   "avenida-boyacá",   "avenida-ciudad-de-cali",   "avenida-nqs",
+  "avenida-caracas",   "avenida-circunvalar",   "avenida-suba",   "avenida-américas",
+  "avenida-villavicencio",   "avenida-primero-de-mayo",   "avenida-centenario",   "calle-13",
+  "calle-26",   "calle-63",   "calle-72",   "calle-80",
+  "carrera-7",   "carrera-10",   "carrera-68",   "cicloruta-avenida-boyacá",
+  "cicloruta-calle-26",   "cicloruta-carrera-7",   "cicloruta-avenida-nqs",   "cicloruta-calle-13",
+  "cicloruta-calle-80",   "cicloruta-avenida-villavicencio",   "distrito_centro_tecnologico_e_innovacion",   "servicios_empresariales",
+  "sistema_de_educacion",   "centros_de_abastecimiento",   "plazas_de_mercado",   "zonas_industriales",
+  "produccion_artesanal",   "zonas_de_interes_turistico",   "centros_financieros",   "patrimonio_inmaterial",
+  "patrimonio_arqueologico",   "patrimonio_natural",   "patrimonio_material",   "comunidades",
 ];
-const DISPLAY_NODES = RED_ORIGINAL_IDS.map(nodeById).filter(Boolean);
+const DISPLAY_NODES = RED_POT_IDS.map(nodeById).filter(Boolean);
 const DISPLAY_NODE_IDS = new Set(DISPLAY_NODES.map(n => n.id));
 
 /* ==========================================================
@@ -432,7 +445,229 @@ const RAW_EDGES = [
   { s:"humedales", t:"manzanas_del_cuidado", cat:"e1-e2", tipo:"vacio", relacion:"Soporte", fuente:"inferencia", articulo:null, pagina:null, cita:null,
     analisis:"Las Manzanas del Cuidado se promocionan cercanas a espacios verdes, pero no hay mecanismo articulado, ni en la matriz de relaciones ni en el índice oficial, que conecte su localización con la protección de humedales." },
   { s:"rios", t:"transporte_publico", cat:"e1-e2", tipo:"vacio", relacion:"Resiliencia", fuente:"inferencia", articulo:null, pagina:null, cita:null,
-    analisis:"No hay relación registrada que articule el Sistema Hídrico (ríos/quebradas) con el Sistema de Movilidad, pese a que rondas hídricas y trazados viales compiten por el mismo suelo (caso documentado: ALO junto al río Bogotá)." }
+    analisis:"No hay relación registrada que articule el Sistema Hídrico (ríos/quebradas) con el Sistema de Movilidad, pese a que rondas hídricas y trazados viales compiten por el mismo suelo (caso documentado: ALO junto al río Bogotá)." },
+
+  /* ---- Relaciones territoriales entre los elementos que el POT nombra ----
+     Cruces de la malla arterial con el sistema hídrico, cuencas de los
+     humedales, trazado de las líneas del metro y red de ciclorrutas. Lo
+     que tiene frase del POT va como cita_literal; el resto queda marcado
+     como inventario_pendiente y así lo dice la ficha. */
+  { s:"avenida-boyacá", t:"juan-amarillotibabuyes", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Cruce espacial: el corredor vial atraviesa este cuerpo de agua. El POT localiza ambos elementos, pero no describe qué le pasa a uno cuando el otro se interviene." },
+  { s:"avenida-boyacá", t:"córdoba-niza", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Cruce espacial: el corredor vial atraviesa este cuerpo de agua. El POT localiza ambos elementos, pero no describe qué le pasa a uno cuando el otro se interviene." },
+  { s:"avenida-boyacá", t:"capellaníacofradía", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Cruce espacial: el corredor vial atraviesa este cuerpo de agua. El POT localiza ambos elementos, pero no describe qué le pasa a uno cuando el otro se interviene." },
+  { s:"avenida-boyacá", t:"burro", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Cruce espacial: el corredor vial atraviesa este cuerpo de agua. El POT localiza ambos elementos, pero no describe qué le pasa a uno cuando el otro se interviene." },
+  { s:"avenida-boyacá", t:"techo", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Cruce espacial: el corredor vial atraviesa este cuerpo de agua. El POT localiza ambos elementos, pero no describe qué le pasa a uno cuando el otro se interviene." },
+  { s:"avenida-boyacá", t:"la-vaca", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Cruce espacial: el corredor vial atraviesa este cuerpo de agua. El POT localiza ambos elementos, pero no describe qué le pasa a uno cuando el otro se interviene." },
+  { s:"avenida-boyacá", t:"río-salitre", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Cruce espacial: el corredor vial atraviesa este cuerpo de agua. El POT localiza ambos elementos, pero no describe qué le pasa a uno cuando el otro se interviene." },
+  { s:"avenida-boyacá", t:"río-fucha", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Cruce espacial: el corredor vial atraviesa este cuerpo de agua. El POT localiza ambos elementos, pero no describe qué le pasa a uno cuando el otro se interviene." },
+  { s:"avenida-boyacá", t:"río-tunjuelo", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Cruce espacial: el corredor vial atraviesa este cuerpo de agua. El POT localiza ambos elementos, pero no describe qué le pasa a uno cuando el otro se interviene." },
+  { s:"avenida-boyacá", t:"transporte_publico", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Corredor de la malla arterial sobre el que opera transporte público de la ciudad." },
+  { s:"avenida-boyacá", t:"corredores_verdes", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"El POT propone corredores verdes sobre los grandes ejes arteriales; falta verificar la frase exacta para este eje." },
+  { s:"avenida-boyacá", t:"cicloruta-avenida-boyacá", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"La ciclorruta va sobre el mismo corredor." },
+  { s:"avenida-boyacá", t:"zonas_industriales", cat:"e2-e3", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"El corredor sirve a las zonas industriales del occidente." },
+  { s:"avenida-boyacá", t:"parques", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"El eje bordea parques metropolitanos; relación de colindancia, no de norma." },
+  { s:"avenida-ciudad-de-cali", t:"juan-amarillotibabuyes", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Cruce espacial: el corredor vial atraviesa este cuerpo de agua. El POT localiza ambos elementos, pero no describe qué le pasa a uno cuando el otro se interviene." },
+  { s:"avenida-ciudad-de-cali", t:"jaboque", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Cruce espacial: el corredor vial atraviesa este cuerpo de agua. El POT localiza ambos elementos, pero no describe qué le pasa a uno cuando el otro se interviene." },
+  { s:"avenida-ciudad-de-cali", t:"capellaníacofradía", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Cruce espacial: el corredor vial atraviesa este cuerpo de agua. El POT localiza ambos elementos, pero no describe qué le pasa a uno cuando el otro se interviene." },
+  { s:"avenida-ciudad-de-cali", t:"burro", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Cruce espacial: el corredor vial atraviesa este cuerpo de agua. El POT localiza ambos elementos, pero no describe qué le pasa a uno cuando el otro se interviene." },
+  { s:"avenida-ciudad-de-cali", t:"techo", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Cruce espacial: el corredor vial atraviesa este cuerpo de agua. El POT localiza ambos elementos, pero no describe qué le pasa a uno cuando el otro se interviene." },
+  { s:"avenida-ciudad-de-cali", t:"la-vaca", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Cruce espacial: el corredor vial atraviesa este cuerpo de agua. El POT localiza ambos elementos, pero no describe qué le pasa a uno cuando el otro se interviene." },
+  { s:"avenida-ciudad-de-cali", t:"tibanica", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Cruce espacial: el corredor vial atraviesa este cuerpo de agua. El POT localiza ambos elementos, pero no describe qué le pasa a uno cuando el otro se interviene." },
+  { s:"avenida-ciudad-de-cali", t:"río-fucha", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Cruce espacial: el corredor vial atraviesa este cuerpo de agua. El POT localiza ambos elementos, pero no describe qué le pasa a uno cuando el otro se interviene." },
+  { s:"avenida-ciudad-de-cali", t:"río-tunjuelo", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Cruce espacial: el corredor vial atraviesa este cuerpo de agua. El POT localiza ambos elementos, pero no describe qué le pasa a uno cuando el otro se interviene." },
+  { s:"avenida-ciudad-de-cali", t:"transporte_publico", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Corredor de la malla arterial con transporte público en operación." },
+  { s:"avenida-ciudad-de-cali", t:"corredores_verdes", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Eje candidato a corredor verde en el modelo de ocupación del POT; falta la frase exacta." },
+  { s:"avenida-ciudad-de-cali", t:"equipamientos", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"El corredor articula equipamientos del occidente de la ciudad." },
+  { s:"avenida-ciudad-de-cali", t:"zonas_industriales", cat:"e2-e3", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Sirve al suelo industrial y logístico del occidente." },
+  { s:"primera-linea-metro", t:"transporte_publico", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"La línea es parte del sistema de transporte público que estructura el POT." },
+  { s:"primera-linea-metro", t:"equipamientos", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"El POT liga los corredores de transporte de alta capacidad con la localización de equipamientos sobre su trazado; falta fijar el artículo exacto." },
+  { s:"primera-linea-metro", t:"corredores_verdes", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:"Art. 159", pagina:"159", cita:"Los proyectos de infraestructura de los corredores verdes de alta capacidad, media capacidad y los corredores de baja capacidad deberán incluir intervenciones que permitan su conexión con la red de ciclo infraestructura de la ciudad.",
+    analisis:"El texto obliga a conectar los corredores de alta capacidad con la red de cicloinfraestructura." },
+  { s:"primera-linea-metro", t:"manzanas_del_cuidado", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Las Manzanas del Cuidado se localizan buscando acceso al transporte de alta capacidad." },
+  { s:"segunda-linea-metro", t:"transporte_publico", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"La línea es parte del sistema de transporte público que estructura el POT." },
+  { s:"segunda-linea-metro", t:"equipamientos", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"El POT liga los corredores de transporte de alta capacidad con la localización de equipamientos sobre su trazado; falta fijar el artículo exacto." },
+  { s:"segunda-linea-metro", t:"corredores_verdes", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:"Art. 159", pagina:"159", cita:"Los proyectos de infraestructura de los corredores verdes de alta capacidad, media capacidad y los corredores de baja capacidad deberán incluir intervenciones que permitan su conexión con la red de ciclo infraestructura de la ciudad.",
+    analisis:"El texto obliga a conectar los corredores de alta capacidad con la red de cicloinfraestructura." },
+  { s:"segunda-linea-metro", t:"manzanas_del_cuidado", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Las Manzanas del Cuidado se localizan buscando acceso al transporte de alta capacidad." },
+  { s:"primera-linea-metro", t:"avenida-caracas", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"El trazado de la primera línea usa el corredor de la Caracas en su tramo norte." },
+  { s:"primera-linea-metro", t:"avenida-primero-de-mayo", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"El trazado de la primera línea recorre este corredor." },
+  { s:"primera-linea-metro", t:"avenida-villavicencio", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"El trazado de la primera línea arranca en el sur sobre este corredor." },
+  { s:"segunda-linea-metro", t:"calle-80", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"La segunda línea se proyecta sobre el corredor de la calle 80." },
+  { s:"segunda-linea-metro", t:"avenida-ciudad-de-cali", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"El trazado cruza este eje arterial." },
+  { s:"burro", t:"la-vaca", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Dos Reservas Distritales de Humedal de la misma cuenca urbana, separadas por unas pocas manzanas: comparten drenaje, fauna y presiones." },
+  { s:"burro", t:"techo", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Humedales vecinos de la misma localidad y la misma cuenca." },
+  { s:"la-vaca", t:"techo", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Humedales vecinos de la misma localidad y la misma cuenca." },
+  { s:"burro", t:"río-tunjuelo", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"El humedal drena hacia el río Tunjuelo: lo que pase en el río llega al humedal y al revés." },
+  { s:"burro", t:"río-fucha", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Ambos pertenecen al sistema hídrico del occidente; el Fucha recibe y aporta caudal a la misma red de canales." },
+  { s:"la-vaca", t:"río-tunjuelo", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"El humedal drena hacia el río Tunjuelo: lo que pase en el río llega al humedal y al revés." },
+  { s:"la-vaca", t:"río-fucha", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Ambos pertenecen al sistema hídrico del occidente; el Fucha recibe y aporta caudal a la misma red de canales." },
+  { s:"techo", t:"río-tunjuelo", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"El humedal drena hacia el río Tunjuelo: lo que pase en el río llega al humedal y al revés." },
+  { s:"techo", t:"río-fucha", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Ambos pertenecen al sistema hídrico del occidente; el Fucha recibe y aporta caudal a la misma red de canales." },
+  { s:"capellaníacofradía", t:"río-fucha", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"El humedal hace parte de la cuenca del río Fucha." },
+  { s:"juan-amarillotibabuyes", t:"río-salitre", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"El humedal Juan Amarillo es el tramo bajo del río Salitre antes de su entrega al río Bogotá." },
+  { s:"córdoba-niza", t:"juan-amarillotibabuyes", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Córdoba drena hacia Juan Amarillo por el canal Molinos–Córdoba." },
+  { s:"jaboque", t:"río-bogotá", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"El humedal entrega sus aguas directamente al río Bogotá." },
+  { s:"la-conejera", t:"río-bogotá", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"El humedal entrega sus aguas al río Bogotá." },
+  { s:"meandro-del-say", t:"río-bogotá", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"El Meandro del Say es un brazo antiguo del propio río Bogotá." },
+  { s:"tibanica", t:"río-tunjuelo", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"El humedal hace parte de la cuenca baja del Tunjuelo." },
+  { s:"el-tunjo", t:"río-tunjuelo", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"El parque-humedal está sobre la ronda del Tunjuelo." },
+  { s:"chiguasuque-la-isla", t:"río-bogotá", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Humedal de Bosa en la confluencia Tunjuelo–Bogotá." },
+  { s:"salitre", t:"río-salitre", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"El humedal y el río comparten nombre y cuenca." },
+  { s:"torca-guaymaral", t:"quebrada-torca", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"La quebrada Torca alimenta el humedal." },
+  { s:"quebrada-teusacá", t:"areas_protegidas", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"La quebrada nace en el área protegida de los Cerros Orientales." },
+  { s:"río-fucha", t:"río-bogotá", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"El Fucha es afluente del río Bogotá." },
+  { s:"río-tunjuelo", t:"río-bogotá", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"El Tunjuelo es afluente del río Bogotá." },
+  { s:"río-salitre", t:"río-bogotá", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"El Salitre es afluente del río Bogotá." },
+  { s:"avenida-nqs", t:"transporte_publico", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Corredor troncal del sistema de transporte." },
+  { s:"avenida-nqs", t:"río-fucha", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Cruce espacial: el corredor vial atraviesa este cuerpo de agua. El POT localiza ambos elementos, pero no describe qué le pasa a uno cuando el otro se interviene." },
+  { s:"avenida-caracas", t:"transporte_publico", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Corredor troncal del sistema de transporte." },
+  { s:"avenida-circunvalar", t:"areas_protegidas", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"La vía corre por el borde de los Cerros Orientales, área protegida." },
+  { s:"avenida-circunvalar", t:"reservas_forestales", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"El corredor limita con la reserva forestal de los Cerros." },
+  { s:"carrera-7", t:"patrimonio_material", cat:"e2-e4", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"El eje histórico de la ciudad concentra bienes de interés cultural." },
+  { s:"carrera-7", t:"transporte_publico", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Corredor de transporte público del centro." },
+  { s:"carrera-10", t:"patrimonio_material", cat:"e2-e4", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Corredor del centro histórico." },
+  { s:"carrera-10", t:"transporte_publico", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Corredor troncal del centro." },
+  { s:"calle-26", t:"transporte_publico", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Corredor troncal aeropuerto–centro." },
+  { s:"calle-26", t:"patrimonio_material", cat:"e2-e4", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"El corredor pasa por el eje de equipamientos y bienes patrimoniales del centro." },
+  { s:"calle-13", t:"zonas_industriales", cat:"e2-e3", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Corredor industrial y logístico del occidente." },
+  { s:"calle-13", t:"río-fucha", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Cruce espacial: el corredor vial atraviesa este cuerpo de agua. El POT localiza ambos elementos, pero no describe qué le pasa a uno cuando el otro se interviene." },
+  { s:"calle-80", t:"transporte_publico", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Corredor troncal del noroccidente." },
+  { s:"calle-63", t:"parques", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"El corredor bordea el parque metropolitano Simón Bolívar." },
+  { s:"calle-72", t:"transporte_publico", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Corredor de transporte público." },
+  { s:"carrera-68", t:"río-salitre", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Cruce espacial: el corredor vial atraviesa este cuerpo de agua. El POT localiza ambos elementos, pero no describe qué le pasa a uno cuando el otro se interviene." },
+  { s:"avenida-suba", t:"juan-amarillotibabuyes", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Cruce espacial: el corredor vial atraviesa este cuerpo de agua. El POT localiza ambos elementos, pero no describe qué le pasa a uno cuando el otro se interviene." },
+  { s:"avenida-suba", t:"la-conejera", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"El corredor de Suba pasa cerca del humedal La Conejera." },
+  { s:"avenida-américas", t:"zonas_industriales", cat:"e2-e3", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Corredor de acceso al suelo industrial." },
+  { s:"avenida-centenario", t:"meandro-del-say", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Cruce espacial: el corredor vial atraviesa este cuerpo de agua. El POT localiza ambos elementos, pero no describe qué le pasa a uno cuando el otro se interviene." },
+  { s:"avenida-villavicencio", t:"tibanica", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Cruce espacial: el corredor vial atraviesa este cuerpo de agua. El POT localiza ambos elementos, pero no describe qué le pasa a uno cuando el otro se interviene." },
+  { s:"avenida-primero-de-mayo", t:"transporte_publico", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Corredor de transporte público del sur." },
+  { s:"cicloruta-calle-26", t:"calle-26", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"La ciclorruta va sobre el mismo corredor vial." },
+  { s:"cicloruta-calle-26", t:"ciclorutas", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Tramo de la red de cicloinfraestructura de la ciudad." },
+  { s:"cicloruta-carrera-7", t:"carrera-7", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"La ciclorruta va sobre el mismo corredor vial." },
+  { s:"cicloruta-carrera-7", t:"ciclorutas", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Tramo de la red de cicloinfraestructura de la ciudad." },
+  { s:"cicloruta-avenida-nqs", t:"avenida-nqs", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"La ciclorruta va sobre el mismo corredor vial." },
+  { s:"cicloruta-avenida-nqs", t:"ciclorutas", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Tramo de la red de cicloinfraestructura de la ciudad." },
+  { s:"cicloruta-calle-13", t:"calle-13", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"La ciclorruta va sobre el mismo corredor vial." },
+  { s:"cicloruta-calle-13", t:"ciclorutas", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Tramo de la red de cicloinfraestructura de la ciudad." },
+  { s:"cicloruta-calle-80", t:"calle-80", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"La ciclorruta va sobre el mismo corredor vial." },
+  { s:"cicloruta-calle-80", t:"ciclorutas", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Tramo de la red de cicloinfraestructura de la ciudad." },
+  { s:"cicloruta-avenida-villavicencio", t:"avenida-villavicencio", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"La ciclorruta va sobre el mismo corredor vial." },
+  { s:"cicloruta-avenida-villavicencio", t:"ciclorutas", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Tramo de la red de cicloinfraestructura de la ciudad." },
+  { s:"cicloruta-avenida-boyacá", t:"ciclorutas", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Tramo de la red de cicloinfraestructura de la ciudad." },
+  { s:"colegios", t:"sistema_de_educacion", cat:"e2-e3", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Los colegios son la infraestructura del sistema de educación." },
+  { s:"colegios", t:"equipamientos", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Los colegios son equipamientos del sistema del cuidado." },
+  { s:"colegios", t:"manzanas_del_cuidado", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Las Manzanas del Cuidado se apoyan en los colegios existentes." },
+  { s:"bibliotecas", t:"equipamientos", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Las bibliotecas son equipamientos culturales del sistema." },
+  { s:"bibliotecas", t:"servicios_sociales", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Hacen parte de la oferta de servicios sociales de proximidad." },
+  { s:"bibliotecas", t:"patrimonio_inmaterial", cat:"e2-e4", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Sostienen prácticas culturales de barrio." },
+  { s:"calle-72", t:"centros_financieros", cat:"e2-e3", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"El corredor de la calle 72 concentra el eje financiero y empresarial del nororiente." },
+  { s:"calle-72", t:"servicios_empresariales", cat:"e2-e3", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
+    analisis:"Corredor de acceso a la mayor concentración de oficinas y servicios empresariales de la ciudad." }
 ];
 RAW_EDGES.push(
   { s:"avenida-boyacá", t:"avenida-ciudad-de-cali", tipo:"directa", relacion:"Soporte", cat:"e2", fuente:"por_verificar", analisis:"Conexión prioritaria solicitada para lectura de la malla vial principal." },
@@ -453,16 +688,34 @@ RAW_EDGES.push(
    GRADO REAL — de aquí sale cuáles son los hubs, no de una
    categoría administrativa. Los "vacío" NO cuentan como conexión.
    ========================================================== */
+/* Un agregador y uno de sus propios elementos son la misma cosa a dos
+   escalas (AVENIDA BOYACÁ "es parte de" MALLA VIAL, CICLORUTA CALLE 26 "es
+   parte de" CICLORUTAS). Esa línea no dice de qué depende quién, y convertía
+   a los agregadores en hubs falsos: MALLA VIAL salía como el elemento más
+   conectado de la red solo por contener a las avenidas. Se dejan fuera del
+   dibujo y del cálculo de tamaños; la pertenencia se sigue leyendo en el
+   color y el ícono de cada nodo. */
+const CONTENCION = {
+  red_vial: /^(avenida|calle|carrera|diagonal|transversal)-|-metro$/,
+  transporte_publico: /^(avenida|calle|carrera)-|-metro$/,
+  ciclorutas: /^cicloruta-/,
+};
+function esContencion(e) {
+  const re1 = CONTENCION[e.s], re2 = CONTENCION[e.t];
+  return !!((re1 && re1.test(e.t)) || (re2 && re2.test(e.s)));
+}
+function relacionVisible(e) {
+  return DISPLAY_NODE_IDS.has(e.s) && DISPLAY_NODE_IDS.has(e.t) && !esContencion(e);
+}
+
 function computeDegrees(excluir) {
   const deg = {};
   ODS_NODES.forEach(n => { deg[n.id] = 0; });
   RAW_EDGES.forEach(e => {
     if (e.tipo === "vacio") return;
     if (deg[e.s] === undefined || deg[e.t] === undefined) return;
-    // Solo cuentan las relaciones de la red que se dibuja: las del inventario
-    // de elementos específicos (que no se muestra) inflaban el grado —y con él
-    // el tamaño— de nodos como MALLA VIAL o HUMEDALES.
-    if (!DISPLAY_NODE_IDS.has(e.s) || !DISPLAY_NODE_IDS.has(e.t)) return;
+    // Solo cuentan las relaciones que se dibujan.
+    if (!relacionVisible(e)) return;
     // Si el nodo de origen o destino está "apagado", su arista deja de
     // contar para el grado (= fuerza nodal) de ambos extremos.
     if (excluir && (excluir.has(e.s) || excluir.has(e.t))) return;
@@ -641,7 +894,7 @@ const NODE_POS = {
 };
 
 // Los 4 hubs principales (bola grande) por estructura.
-const HUB_IDS = ["humedales", "servicios_empresariales", "patrimonio_material"];
+const HUB_IDS = ["avenida-boyacá", "avenida-ciudad-de-cali", "humedales", "servicios_empresariales", "patrimonio_material"];
 
 /* Nodos apagados por la simulación ("¿qué pasaría si se apaga este nodo?").
    Se declara aquí, antes del layout, porque el acomodo de la red ya
@@ -653,7 +906,7 @@ const nodosApagados = new Set();
    que usa la simulación de apagado, para que al encender y apagar los
    tamaños vuelvan exactamente a donde estaban. */
 function radioPorGrado(d, apagado) {
-  return apagado ? 34 : 32 + Math.pow(d, 1.25) * 7.5;
+  return apagado ? 24 : 19 + Math.sqrt(d) * 13;
 }
 
 /* Separación entre bolas: ninguna puede tocar a otra. Con resorte, cada
@@ -694,18 +947,9 @@ function separarNodos(nodes, conResorte, pasadas) {
 
 function layoutNetwork() {
   const deg = computeDegrees();
-  const allDegs = Object.values(deg);
-  const minDeg = Math.min(...allDegs, 1);
-  const maxDeg = Math.max(...allDegs, 1);
-  // Tamaño de cada bola según cuántas conexiones tiene: las que casi no se
-  // conectan quedan chiquitas (pero visibles), las más conectadas ("hubs")
-  // se ven claramente más grandes. Escala raíz cuadrada (no lineal) para
-  // que la diferencia se note también entre los nodos con pocas conexiones,
-  // no solo contra los 2-3 hubs enormes.
-  // Radio "temático" de la red original: sale del grado real de cada nodo
-  // (32 px de base y crecimiento algo más que lineal), que es como se veían
-  // los hubs —HUMEDALES, SERVICIOS EMPRESARIALES, PATRIMONIO MATERIAL—
-  // claramente más grandes que el resto.
+  // Cada bola crece con su grado real: los corredores que cruzan media ciudad
+  // (AVENIDA BOYACÁ, AVENIDA CIUDAD DE CALI) quedan como los elementos más
+  // conectados de la red, y los que casi no se relacionan, pequeños.
   ODS_NODES.forEach(n => {
     n.color = STRUCT_STYLE[n.cat].color;
     n.vx = 0; n.vy = 0; n.fixed = false; n.isMainHub = false;
@@ -717,38 +961,49 @@ function layoutNetwork() {
 
   const nodes = DISPLAY_NODES;   // solo la red que se dibuja
 
-  // ---- 1. Posiciones fijas definidas por el equipo (lienzo 2500 x 1820) ----
-  // Sustituyen al layout radial automático: cada bola queda exactamente donde
-  // se colocó en el wireframe. Para mover una, cambia su par x/y en NODE_POS.
-  // Se compacta un poco hacia el centro (COMPACT_FACTOR) para que toda la
-  // red se vea menos grande/dispersa y quede más ordenada.
-  const COMPACT_FACTOR = 1;   // la red de 30 conceptos usa el wireframe tal cual
+  // ---- Trazado redondo por estructura ----
+  // La red se lee mejor como un anillo: cada una de las 4 estructuras del POT
+  // ocupa un sector angular proporcional a cuántos elementos tiene, y dentro
+  // del sector la distancia al centro la marca el grado — los elementos más
+  // conectados quedan adentro y los que casi no se relacionan, en el borde.
   const cx0 = CANVAS.w / 2, cy0 = CANVAS.h / 2;
-  nodes.forEach(n => {
-    n.collR = n.r;
-    const p = NODE_POS[n.id];
-    if (p) {
-      n.x = cx0 + (p.x - cx0) * COMPACT_FACTOR;
-      n.y = cy0 + (p.y - cy0) * COMPACT_FACTOR;
-    }
-    else { n.x = cx0; n.y = cy0; }
-    n.isMainHub = (HUB_IDS.indexOf(n.id) !== -1);
-    if (n.isMainHub) n._outwardAngle = Math.atan2(n.y - CANVAS.h / 2, n.x - CANVAS.w / 2) || 0;
+  const RX_INT = 300, RX_EXT = 1150, RY_INT = 215, RY_EXT = 830;
+  const ORDEN_ESTRUCTURA = ["e1", "e2", "e3", "e4"];
+  const porEstructura = {};
+  ORDEN_ESTRUCTURA.forEach(k => { porEstructura[k] = nodes.filter(n => n.cat === k); });
+  const gradoDe = (n) => deg[n.id] || 0;
+  const gMax = Math.max(1, ...nodes.map(gradoDe));
+
+  let anguloAcum = -Math.PI / 2;   // arranca arriba y gira en sentido horario
+  ORDEN_ESTRUCTURA.forEach(k => {
+    const grupo = porEstructura[k];
+    if (!grupo.length) return;
+    const ancho = (grupo.length / nodes.length) * Math.PI * 2;
+    // dentro del sector se alternan grandes y pequeños para que los hubs no
+    // queden todos pegados en el mismo radio
+    const ordenado = [...grupo].sort((a, b) => gradoDe(b) - gradoDe(a));
+    const intercalado = [];
+    ordenado.forEach((n, i) => { if (i % 2 === 0) intercalado.push(n); else intercalado.unshift(n); });
+    intercalado.forEach((n, i) => {
+      const a = anguloAcum + ancho * ((i + 0.5) / grupo.length);
+      const t = Math.sqrt(gradoDe(n) / gMax);            // 1 = el más conectado
+      const rx = RX_EXT - (RX_EXT - RX_INT) * t;
+      const ry = RY_EXT - (RY_EXT - RY_INT) * t;
+      n.collR = n.r;
+      n.x = cx0 + Math.cos(a) * rx;
+      n.y = cy0 + Math.sin(a) * ry;
+      n.isMainHub = (HUB_IDS.indexOf(n.id) !== -1);
+      if (n.isMainHub) n._outwardAngle = a;
+    });
+    anguloAcum += ancho;
   });
 
-  // ---- 2. Recorte al lienzo, y luego resolución de colisiones REAL:
-  //         ninguna bola puede quedar tocando a otra. Se empujan poco a
-  //         poco (muchas pasadas pequeñas) desde su posición original del
-  //         wireframe, así el orden/organización se mantiene pero nunca
-  //         se tocan entre sí — como una red de "big data" bien separada.
   nodes.forEach(n => {
     n.x = Math.max(n.collR + 20, Math.min(CANVAS.w - n.collR - 20, n.x));
     n.y = Math.max(n.collR + 20, Math.min(CANVAS.h - n.collR - 20, n.y));
-    n._origX = n.x; n._origY = n.y; // posición original del wireframe, para no alejarse demasiado de ella
+    n._origX = n.x; n._origY = n.y;   // sitio "de casa" al que vuelve cada bola
   });
-  // Fase 1: separar Y jalar de vuelta al wireframe a la vez. Fase 2: solo
-  // separación, para garantizar que ninguna bola quede tocando a otra.
-  separarNodos(nodes, true, 350);
+  separarNodos(nodes, true, 320);
   separarNodos(nodes, false, 200);
 
   nodes.forEach(n => { n.homeX = n.x; n.homeY = n.y; });
@@ -1007,7 +1262,7 @@ function drawEdges(svg) {
   const edgeBaseDelay = DISPLAY_NODES.length * 70 + 200;
   let edgeOrderIndex = 0;
   RAW_EDGES.forEach((edge, i) => {
-    if (!DISPLAY_NODE_IDS.has(edge.s) || !DISPLAY_NODE_IDS.has(edge.t)) return;
+    if (!relacionVisible(edge)) return;
     // Las relaciones "vacío" (ausencias documentadas entre estructuras) ya NO
     // se dibujan en la red visual — quedan solo como hallazgo en la tabla y en
     // las tarjetas de "hallazgos clave", para que la red se lea limpia con
@@ -1215,7 +1470,7 @@ function relajarRed(nodes) {
   const vecinos = new Map(nodes.map(n => [n.id, []]));
   RAW_EDGES.forEach(e => {
     if (e.tipo === "vacio") return;
-    if (!DISPLAY_NODE_IDS.has(e.s) || !DISPLAY_NODE_IDS.has(e.t)) return;
+    if (!relacionVisible(e)) return;
     if (!activo(e.s) || !activo(e.t)) return;
     vecinos.get(e.s).push(e.t); vecinos.get(e.t).push(e.s);
   });
@@ -1307,7 +1562,7 @@ function actualizarInfoSimulacion() {
   if (!el) return;
   const d = computeDegrees(nodosApagados);
   const encendidos = DISPLAY_NODES.filter(n => !nodosApagados.has(n.id));
-  const aristas = RAW_EDGES.filter(e => e.tipo !== "vacio" && DISPLAY_NODE_IDS.has(e.s) && DISPLAY_NODE_IDS.has(e.t) &&
+  const aristas = RAW_EDGES.filter(e => e.tipo !== "vacio" && relacionVisible(e) &&
     !nodosApagados.has(e.s) && !nodosApagados.has(e.t)).length;
   const sueltos = encendidos.filter(n => (d[n.id] || 0) === 0).length;
   el.textContent = nodosApagados.size === 0
@@ -1344,7 +1599,7 @@ function physicsStep() {
   RAW_EDGES.forEach(edge => {
     // solo las relaciones de la red dibujada: los elementos del inventario
     // que no se muestran no tienen posición y contaminarían las fuerzas
-    if (!DISPLAY_NODE_IDS.has(edge.s) || !DISPLAY_NODE_IDS.has(edge.t)) return;
+    if (!relacionVisible(edge)) return;
     const s = nodeById(edge.s), t = nodeById(edge.t);
     if (!s || !t) return;
     const dx = t.x - s.x, dy = t.y - s.y;
@@ -1483,6 +1738,75 @@ function renderNetwork() {
 
   // Move all elements from temp to zoom-pan group
   while (tempG.firstChild) zoomPanGroup.appendChild(tempG.firstChild);
+}
+
+/* ==========================================================
+   ZOOM A UN GRUPO DE ELEMENTOS — "Explorar relaciones a detalle"
+   Acerca la red sobre los humedales de Kennedy (El Burro, La Vaca y
+   Techo), los ríos Fucha y Tunjuelo a los que drenan, y los dos
+   corredores que los cruzan (Avenida Boyacá y Avenida Ciudad de Cali).
+   No cambia la red: solo la encuadra y apaga el resto.
+   ========================================================== */
+const ZOOM_KENNEDY_IDS = [
+  "burro", "la-vaca", "techo", "río-fucha", "río-tunjuelo",
+  "avenida-boyacá", "avenida-ciudad-de-cali",
+];
+let zoomDetalleActivo = false;
+
+function irAZoomDe(ids, ms) {
+  const svg = document.getElementById("networkViz");
+  const group = svg?.querySelector("#zoom-pan-group");
+  if (!svg || !group) return;
+  const nodos = ids.map(nodeById).filter(n => n && n._el);
+  if (!nodos.length) return;
+  const x0 = Math.min(...nodos.map(n => n.x - n.r)), x1 = Math.max(...nodos.map(n => n.x + n.r));
+  const y0 = Math.min(...nodos.map(n => n.y - n.r)), y1 = Math.max(...nodos.map(n => n.y + n.r));
+  const margen = 140;
+  const escala = Math.max(0.5, Math.min(6,
+    Math.min(CANVAS.w / (x1 - x0 + margen * 2), CANVAS.h / (y1 - y0 + margen * 2))));
+  const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
+  const destino = { z: escala, x: CANVAS.w / 2 - cx * escala, y: CANVAS.h / 2 - cy * escala };
+  const desde = { z: zoomLevel, x: panX, y: panY };
+  const t0 = performance.now(), DUR = ms || 900;
+  const suave = (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  function paso(ahora) {
+    const k = suave(Math.min(1, (ahora - t0) / DUR));
+    zoomLevel = desde.z + (destino.z - desde.z) * k;
+    panX = desde.x + (destino.x - desde.x) * k;
+    panY = desde.y + (destino.y - desde.y) * k;
+    group.setAttribute("transform", `translate(${panX},${panY}) scale(${zoomLevel})`);
+    updateZoomDisplay();
+    if (k < 1) requestAnimationFrame(paso);
+  }
+  requestAnimationFrame(paso);
+}
+
+function explorarRelacionesDetalle() {
+  const btn = document.getElementById("btnExplorarRelaciones");
+  if (zoomDetalleActivo) {   // segundo clic: se vuelve a ver toda la red
+    zoomDetalleActivo = false;
+    clearSpotlight();
+    btn?.classList.remove("active");
+    const svg = document.getElementById("networkViz");
+    const group = svg?.querySelector("#zoom-pan-group");
+    const desde = { z: zoomLevel, x: panX, y: panY };
+    const t0 = performance.now();
+    const paso = (ahora) => {
+      const k = Math.min(1, (ahora - t0) / 700);
+      zoomLevel = desde.z + (1 - desde.z) * k;
+      panX = desde.x * (1 - k); panY = desde.y * (1 - k);
+      group?.setAttribute("transform", `translate(${panX},${panY}) scale(${zoomLevel})`);
+      updateZoomDisplay();
+      if (k < 1) requestAnimationFrame(paso);
+    };
+    requestAnimationFrame(paso);
+    return;
+  }
+  zoomDetalleActivo = true;
+  btn?.classList.add("active");
+  // ilumina los elementos del acercamiento (y sus relaciones entre sí)
+  setSpotlightNodes(ZOOM_KENNEDY_IDS, false);
+  irAZoomDe(ZOOM_KENNEDY_IDS);
 }
 
 function setupZoomPan() {
@@ -3459,7 +3783,7 @@ function computeMetrics() {
   // inventario completo cargado en ODS_NODES: si contaran todo, la leyenda
   // diría 39 elementos ecológicos donde en pantalla se ven 8.
   const NODOS = DISPLAY_NODES;
-  const ARISTAS = RAW_EDGES.filter(e => DISPLAY_NODE_IDS.has(e.s) && DISPLAY_NODE_IDS.has(e.t));
+  const ARISTAS = RAW_EDGES.filter(relacionVisible);
   const nodeCount = NODOS.length;
   const edgeCount = ARISTAS.length;
   const vacios = ARISTAS.filter(e => e.tipo === "vacio").length;
@@ -3690,8 +4014,11 @@ document.addEventListener("DOMContentLoaded", () => {
   renderMatrix();
   setupZoomPan();
   document.getElementById("networkViz")?.addEventListener("click", () => { hideEdgeInfo(); hideNodeInfo(); });
-  document.getElementById("btnVerHallazgos")?.addEventListener("click", verHallazgosConAnimacion);
-  document.getElementById("btnExplorarRelaciones")?.addEventListener("click", abrirModalExplorarRelaciones);
+  // "Ver hallazgos clave" abre el explorador de mapas (lo que antes estaba en
+  // "Explorar relaciones a detalle"); "Explorar relaciones a detalle" ahora
+  // acerca la red sobre los humedales de Kennedy y los ejes que los cruzan.
+  document.getElementById("btnVerHallazgos")?.addEventListener("click", abrirModalExplorarRelaciones);
+  document.getElementById("btnExplorarRelaciones")?.addEventListener("click", explorarRelacionesDetalle);
 
   // Opciones del modal de mapas
   document.getElementById("btnOpcionMapaVias")?.addEventListener("click", abrirMapaVias);
@@ -3756,7 +4083,7 @@ function componentesRed(ids, aristas) {
 function medirRed() {
   const activos = DISPLAY_NODES.filter(n => !nodosApagados.has(n.id));
   const idsActivos = new Set(activos.map(n => n.id));
-  const dentro = (e) => DISPLAY_NODE_IDS.has(e.s) && DISPLAY_NODE_IDS.has(e.t);
+  const dentro = relacionVisible;
   const vigente = (e) => dentro(e) && idsActivos.has(e.s) && idsActivos.has(e.t);
   const relaciones = RAW_EDGES.filter(e => e.tipo !== "vacio" && vigente(e));
   const vacios = RAW_EDGES.filter(e => e.tipo === "vacio" && vigente(e));
@@ -3856,7 +4183,7 @@ function htmlConclusionesRed() {
 
     <div class="m2-concl-bloque">
       <h4>${tituloCruce}</h4>
-      <p>Solo <b>${d.cruzadas}</b> de las ${d.relaciones} relaciones (${pctCruce}%) unen elementos de estructuras distintas${cruceTop ? `; la más frecuente es ${cruceTop[0].split("-").map(k => ESTRUCTURA_NOMBRE_CORTO[k]).join(" ↔ ")}` : ""}. El POT reconoce cuatro sistemas, pero los ordena casi por separado.</p>
+      <p>${pctCruce < 25 ? "Solo" : ""} <b>${d.cruzadas}</b> de las ${d.relaciones} relaciones (${pctCruce}%) unen elementos de estructuras distintas${cruceTop ? `; la más frecuente es ${cruceTop[0].split("-").map(k => ESTRUCTURA_NOMBRE_CORTO[k]).join(" ↔ ")}` : ""}. El POT reconoce cuatro sistemas, pero los ordena casi por separado.</p>
       <div class="m2-concl-barras">${barras}</div>
     </div>
 
