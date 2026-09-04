@@ -1753,6 +1753,42 @@ const ZOOM_KENNEDY_IDS = [
 ];
 let zoomDetalleActivo = false;
 
+/* ==========================================================
+   ENCUADRE DEL LIENZO — el viewBox fijo de 2500x1820 hacía que en
+   pantallas angostas (un teléfono, o la columna de la red junto a la
+   leyenda) la red se dibujara en un rectángulo diminuto en el centro de
+   un recuadro negro: se veía vacío. Ahora el encuadre se ajusta a lo que
+   la red ocupa de verdad y a la forma del contenedor, así que la red
+   siempre llena su espacio.
+   ========================================================== */
+let VISTA = { x: 0, y: 0, w: CANVAS.w, h: CANVAS.h };
+
+function ajustarEncuadreRed() {
+  const svg = document.getElementById("networkViz");
+  const capa = svg?.querySelector(".nodes-layer");
+  if (!svg || !capa) return;
+  let caja;
+  try { caja = capa.getBBox(); } catch (e) { return; }
+  if (!caja || !caja.width || !caja.height) return;
+  const MARGEN = 60;
+  let w = caja.width + MARGEN * 2, h = caja.height + MARGEN * 2;
+  // El alto del lienzo sigue la forma real de la red (con topes), así la red
+  // llena el recuadro en vez de quedar como una franja en medio del negro.
+  const ancho = svg.clientWidth;
+  if (ancho) {
+    const altoIdeal = Math.round(Math.max(300, Math.min(820, ancho * h / w)));
+    svg.style.height = altoIdeal + "px";
+  }
+  const cara = svg.clientWidth && svg.clientHeight ? svg.clientWidth / svg.clientHeight : w / h;
+  if (w / h > cara) h = w / cara; else w = h * cara;
+  VISTA = {
+    x: caja.x + caja.width / 2 - w / 2,
+    y: caja.y + caja.height / 2 - h / 2,
+    w, h,
+  };
+  svg.setAttribute("viewBox", `${VISTA.x.toFixed(1)} ${VISTA.y.toFixed(1)} ${w.toFixed(1)} ${h.toFixed(1)}`);
+}
+
 function irAZoomDe(ids, ms) {
   const svg = document.getElementById("networkViz");
   const group = svg?.querySelector("#zoom-pan-group");
@@ -1763,9 +1799,13 @@ function irAZoomDe(ids, ms) {
   const y0 = Math.min(...nodos.map(n => n.y - n.r)), y1 = Math.max(...nodos.map(n => n.y + n.r));
   const margen = 140;
   const escala = Math.max(0.5, Math.min(6,
-    Math.min(CANVAS.w / (x1 - x0 + margen * 2), CANVAS.h / (y1 - y0 + margen * 2))));
+    Math.min(VISTA.w / (x1 - x0 + margen * 2), VISTA.h / (y1 - y0 + margen * 2))));
   const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
-  const destino = { z: escala, x: CANVAS.w / 2 - cx * escala, y: CANVAS.h / 2 - cy * escala };
+  const destino = {
+    z: escala,
+    x: VISTA.x + VISTA.w / 2 - cx * escala,
+    y: VISTA.y + VISTA.h / 2 - cy * escala,
+  };
   const desde = { z: zoomLevel, x: panX, y: panY };
   const t0 = performance.now(), DUR = ms || 900;
   const suave = (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
@@ -4009,6 +4049,8 @@ function hideMainConclusionPopup() {
 
 document.addEventListener("DOMContentLoaded", () => {
   renderNetwork();
+  ajustarEncuadreRed();
+  window.addEventListener("resize", ajustarEncuadreRed);
   setupLegendToggle();
   renderMetrics();
   renderMatrix();

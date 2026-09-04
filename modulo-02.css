@@ -955,17 +955,32 @@ footer span { color: var(--teal); }
 @media (max-width: 1200px) {
   .synergies-grid { grid-template-columns: 1fr; }
 }
+/* La red necesita ancho para leerse: en cuanto la pantalla no da para
+   ponerla al lado de la leyenda, la leyenda pasa debajo y el lienzo se
+   queda con todo el ancho. */
+@media (max-width: 1150px) {
+  .network-body { flex-direction: column; }
+  .network-sidebar { width: 100%; max-width: none; }
+  .network-canvas-col { width: 100%; }
+  #networkViz { height: min(72vh, 620px); }
+}
 @media (max-width: 900px) {
   .network-body { flex-direction: column; }
   .network-sidebar { width: 100%; }
-  #networkViz { height: 460px; }
+  #networkViz { height: min(70vh, 560px); }
   .ods-insight-stats { grid-template-columns: repeat(2, 1fr); }
   .metrics-row { grid-template-columns: repeat(2, 1fr); }
   .network-footer-actions { flex-direction: column; }
 }
-@media (max-width: 768px) {
+@media (max-width: 1000px) {
+  /* En pantallas angostas la barra de iconos y el relleno se comen el ancho
+     que necesita la red: se esconde la barra y se reduce el relleno. */
   .sidebar { display: none; }
-  .main { padding: 16px 20px 40px; }
+  .main { padding: 14px 10px 40px; }
+  .network-canvas { border-radius: 8px; }
+  /* el relleno de la tarjeta de la red se comía 60 px de ancho */
+  .network-section { padding: 16px 10px; }
+  .network-body { gap: 12px; }
 }
 
 /* Trazo rosa calcado sobre la línea de la foto del plano de movilidad. */
