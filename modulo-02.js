@@ -80,12 +80,6 @@ const FUENTE_STYLE = {
    ni nodos-agregadores), + 1 nodo suplementario claramente marcado.
    ========================================================== */
 const ODS_NODES = [
-  /* Nodos agregadores de la red original del módulo: vuelven a estar
-     porque la vista principal es otra vez esa red de 30 conceptos. */
-  { id:"rios", cat:"e1", name:"RÍOS", icon:"fa-water", fuente:"inventario_pendiente" },
-  { id:"quebradas", cat:"e1", name:"QUEBRADAS", icon:"fa-water", fuente:"inventario_pendiente" },
-  { id:"humedales", cat:"e1", name:"HUMEDALES", icon:"fa-droplet", fuente:"cita_literal" },
-  { id:"ciclorutas", cat:"e2", name:"CICLORUTAS", icon:"fa-person-biking", fuente:"cita_literal" },
   { id:"complejos_de_paramos", cat:"e1", name:"COMPLEJOS\nDE PÁRAMOS", icon:"fa-mountain", fuente:"inventario_pendiente" },
   { id:"coberturas_vegetales", cat:"e1", name:"COBERTURAS\nVEGETALES", icon:"fa-leaf", fuente:"inventario_pendiente" },
   { id:"areas_de_resiliencia_climatica", cat:"e1", name:"ÁREAS DE\nRESILIENCIA CLIMÁTICA", icon:"fa-shield-heart", fuente:"cita_literal" },
@@ -211,7 +205,7 @@ const ODS_NODES = [
   { id:"cicloruta-calle-45", cat:"e2", name:"CICLORUTA CALLE 45", icon:"fa-person-biking", fuente:"inventario_pendiente" },
   { id:"cicloruta-calle-63", cat:"e2", name:"CICLORUTA CALLE 63", icon:"fa-person-biking", fuente:"inventario_pendiente" },
   { id:"cicloruta-calle-116", cat:"e2", name:"CICLORUTA CALLE 116", icon:"fa-person-biking", fuente:"inventario_pendiente" },
-    { id:"cicloruta-transversal-16", cat:"e2", name:"CICLORUTA TRANSVERSAL 16", icon:"fa-person-biking", fuente:"inventario_pendiente" },
+  { id:"cicloruta-transversal-16", cat:"e2", name:"CICLORUTA TRANSVERSAL 16", icon:"fa-person-biking", fuente:"inventario_pendiente" },
   { id:"avenida-ciudad-de-cali", cat:"e2", name:"AVENIDA CIUDAD DE CALI", icon:"fa-road", fuente:"por_verificar" },
   { id:"primera-linea-metro", cat:"e2", name:"PRIMERA LÍNEA DEL METRO", icon:"fa-train-subway", fuente:"por_verificar" },
   { id:"segunda-linea-metro", cat:"e2", name:"SEGUNDA LÍNEA DEL METRO", icon:"fa-train-subway", fuente:"por_verificar" },
@@ -263,6 +257,7 @@ const ODS_NODES = [
   { id:"centros-personas-mayores", cat:"e2", name:"PERSONAS MAYORES\nY DISCAPACIDAD", icon:"fa-wheelchair", fuente:"cita_literal" },
   { id:"centros-felicidad", cat:"e2", name:"CENTROS\nFELICIDAD", icon:"fa-futbol", fuente:"cita_literal" },
   { id:"unidades-moviles", cat:"e2", name:"UNIDADES\nMÓVILES", icon:"fa-truck-medical", fuente:"cita_literal" }
+
 ];
 function nodeById(id) { return ODS_NODES.find(n => n.id === id); }
 /* Vista principal: los 80 elementos más importantes para la pregunta del
@@ -447,51 +442,10 @@ const RAW_EDGES = [
   { s:"santa-maría-del-lago", t:"parques", dim:"Soporte", tipo:"directa", analisis:"Relación del sistema de humedales, leída sobre uno de los humedales que el POT nombra." },
   { s:"córdoba-niza", t:"patrimonio_natural", dim:"Soporte", tipo:"directa", analisis:"Relación del sistema de humedales, leída sobre uno de los humedales que el POT nombra." },
   { s:"cicloruta-carrera-7", t:"transporte_publico", dim:"Movilidad", tipo:"directa", analisis:"Relación de la red de cicloinfraestructura, leída sobre uno de sus corredores." },
-  { s:"cicloruta-carrera-7", t:"corredores_verdes", dim:"Movilidad", tipo:"directa", analisis:"Relación de la red de cicloinfraestructura, leída sobre uno de sus corredores." }
-,
-
-  /* Relaciones de los 4 nodos agregadores, tal como estaban en la red original */
-  { s:"quebradas", t:"humedales", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"Art. 42 / 62", pagina:"72", cita:null,
-    analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: ríos y quebradas y humedales]." },
-  { s:"humedales", t:"rios", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"Art. 42 / 62", pagina:"72", cita:null,
-    analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: ríos y quebradas y humedales]." },
-  { s:"rios", t:"complejos_de_paramos", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"Art. 7", pagina:"70", cita:null,
-    analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: complejos de páramos, ríos y humedales]." },
-  { s:"humedales", t:"areas_de_resiliencia_climatica", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:"Estrategias de EEP / resiliencia", pagina:"57",
-    cita:"La EEP, como la suma de las áreas protegidas y verdes de especial importancia ambiental, cumple con su potencial en términos de regulación hídrica, acumulación de carbono, aumento de la biodiversidad y el paisaje, entre otros servicios ecosistémicos. El esfuerzo de cuidar las zonas verdes y naturales que trae el POT se hace por el paisaje y la oferta de espacios para la recreación en medio de la naturaleza, pero también porque su existencia puede mejorar nuestra resiliencia frente al cambio climático, nos garantiza el acceso al agua y una relación menos agresiva con esta, reduciendo lo extremo de las temporadas de lluvias y sequías.",
-    analisis:"El humedal es un elemento de la EEP; la frase explica que la conservación de zonas verdes y naturales aporta resiliencia climática y regulación hídrica." },
-  { s:"areas_protegidas", t:"humedales", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"Art. 41 / 51", pagina:"71", cita:null,
-    analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: Reservas Distritales de Humedal]." },
-  { s:"reservas_forestales", t:"humedales", cat:"e1", tipo:"directa", relacion:"Resiliencia", fuente:"inventario_pendiente", articulo:"Art. 42", pagina:"72", cita:null,
-    analisis:"La relación estaba en el inventario previo del equipo; no se incorpora como evidencia textual definitiva sin verificar la frase completa. Pista sin validar: [Fragmento previo: conectividad y complementariedad]." },
-  { s:"ciclorutas", t:"transporte_publico", cat:"e2", tipo:"indirecta", relacion:"Resiliencia", fuente:"cita_literal", articulo:"Art. 159", pagina:"159",
-    cita:"Los proyectos de infraestructura de los corredores verdes de alta capacidad, media capacidad y los corredores de baja capacidad deberán incluir intervenciones que permitan su conexión con la red de ciclo infraestructura de la ciudad.",
-    analisis:"El POT establece literalmente que los corredores de transporte deben conectarse con la red de cicloinfraestructura." },
-  { s:"corredores_verdes", t:"ciclorutas", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:"Art. 159", pagina:"159",
-    cita:"Los proyectos de infraestructura de los corredores verdes de alta capacidad, media capacidad y los corredores de baja capacidad deberán incluir intervenciones que permitan su conexión con la red de ciclo infraestructura de la ciudad.",
-    analisis:"El texto hace explícita la conexión entre corredores verdes y cicloinfraestructura." },
-  { s:"reservas_forestales", t:"rios", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"22",
-    cita:"El POT incluye reservas forestales y ríos dentro de la estructura hídrica y ecosistémica, pero no establece que uno actúe sobre el otro.",
-    analisis:"Fuente: Tabla aportada por la usuaria" },
-  { s:"cerros_orientales", t:"rios", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"59",
+  { s:"cicloruta-carrera-7", t:"corredores_verdes", dim:"Movilidad", tipo:"directa", analisis:"Relación de la red de cicloinfraestructura, leída sobre uno de sus corredores." },
+  { s:"reservas_forestales", t:"río-bogotá", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"59",
     cita:"El POT sí identifica el conector “Cerros Orientales-río Bogotá”, pero eso demuestra conectividad, no que exista una relación unidireccional.",
-    analisis:"Fuente: Tabla aportada por la usuaria" },
-  { s:"humedales", t:"red_vial", cat:"e1-e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"49–50",
-    cita:"Con respecto a los humedales de la ciudad, dentro del POT únicamente se identificó un conflicto de malla vial arterial con la Reserva Distrital de Humedal Capellanía, en Fontibón.",
-    analisis:"Puente real EEP↔EFC, aportado directamente por la usuaria." },
-  { s:"humedales", t:"parques", cat:"e1-e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
-    analisis:"Puente EEP↔EFC pendiente de verificar contra el texto del POT: los humedales suelen articularse con parques colindantes (zonas de manejo y preservación ambiental), pero falta localizar la frase exacta." },
-  { s:"humedales", t:"patrimonio_natural", cat:"e1-e4", tipo:"directa", relacion:"Resiliencia", fuente:"cita_literal", articulo:null, pagina:null,
-    cita:"Los humedales, como parte de la Estructura Ecológica Principal, se integran con el patrimonio natural de la ciudad.",
-    analisis:"Puente real EEP↔EIP, aportado directamente por la usuaria." },
-  { s:"rios", t:"transporte_publico", cat:"e1-e2", tipo:"vacio", relacion:"Resiliencia", fuente:"inferencia", articulo:null, pagina:null, cita:null,
-    analisis:"No hay relación registrada que articule el Sistema Hídrico (ríos/quebradas) con el Sistema de Movilidad, pese a que rondas hídricas y trazados viales compiten por el mismo suelo (caso documentado: ALO junto al río Bogotá)." },
-
-  /* ---- Relaciones territoriales entre los elementos que el POT nombra ----
-     Cruces de la malla arterial con el sistema hídrico, cuencas de los
-     humedales, trazado de las líneas del metro y red de ciclorrutas. Lo
-     que tiene frase del POT va como cita_literal; el resto queda marcado
-     como inventario_pendiente y así lo dice la ficha. */
+    analisis:"Fuente: Tabla aportada por la usuaria. Cerros Orientales se representa aquí con reservas_forestales (categoría a la que pertenece); el genérico RIOS ya no existe como nodo, se usa río-bogotá como representante." },
   { s:"avenida-boyacá", t:"juan-amarillotibabuyes", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"Cruce espacial: el corredor vial atraviesa este cuerpo de agua. El POT localiza ambos elementos, pero no describe qué le pasa a uno cuando el otro se interviene." },
   { s:"avenida-boyacá", t:"córdoba-niza", cat:"e1-e2", tipo:"directa", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
@@ -628,30 +582,16 @@ const RAW_EDGES = [
     analisis:"Corredor de transporte público del sur." },
   { s:"cicloruta-calle-26", t:"calle-26", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"La ciclorruta va sobre el mismo corredor vial." },
-  { s:"cicloruta-calle-26", t:"ciclorutas", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
-    analisis:"Tramo de la red de cicloinfraestructura de la ciudad." },
   { s:"cicloruta-carrera-7", t:"carrera-7", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"La ciclorruta va sobre el mismo corredor vial." },
-  { s:"cicloruta-carrera-7", t:"ciclorutas", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
-    analisis:"Tramo de la red de cicloinfraestructura de la ciudad." },
   { s:"cicloruta-avenida-nqs", t:"avenida-nqs", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"La ciclorruta va sobre el mismo corredor vial." },
-  { s:"cicloruta-avenida-nqs", t:"ciclorutas", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
-    analisis:"Tramo de la red de cicloinfraestructura de la ciudad." },
   { s:"cicloruta-calle-13", t:"calle-13", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"La ciclorruta va sobre el mismo corredor vial." },
-  { s:"cicloruta-calle-13", t:"ciclorutas", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
-    analisis:"Tramo de la red de cicloinfraestructura de la ciudad." },
   { s:"cicloruta-calle-80", t:"calle-80", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"La ciclorruta va sobre el mismo corredor vial." },
-  { s:"cicloruta-calle-80", t:"ciclorutas", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
-    analisis:"Tramo de la red de cicloinfraestructura de la ciudad." },
   { s:"cicloruta-avenida-villavicencio", t:"avenida-villavicencio", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"La ciclorruta va sobre el mismo corredor vial." },
-  { s:"cicloruta-avenida-villavicencio", t:"ciclorutas", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
-    analisis:"Tramo de la red de cicloinfraestructura de la ciudad." },
-  { s:"cicloruta-avenida-boyacá", t:"ciclorutas", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
-    analisis:"Tramo de la red de cicloinfraestructura de la ciudad." },
   { s:"colegios", t:"sistema_de_educacion", cat:"e2-e3", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"Los colegios son la infraestructura del sistema de educación." },
   { s:"colegios", t:"equipamientos", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
@@ -678,11 +618,6 @@ const RAW_EDGES = [
     analisis:"El corredor de la calle 72 concentra el eje financiero y empresarial del nororiente." },
   { s:"calle-72", t:"servicios_empresariales", cat:"e2-e3", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"Corredor de acceso a la mayor concentración de oficinas y servicios empresariales de la ciudad." },
-
-  /* ---- Los equipamientos que el POT nombra uno por uno ----
-     El nodo genérico EQUIPAMIENTOS no decía nada: el documento sí lista
-     cuáles son las piezas con las que se montan las Manzanas del Cuidado,
-     y esa frase va como cita literal en cada relación. */
   { s:"jardines-infantiles", t:"sistema_de_educacion", cat:"e2-e3", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"La primera infancia es el primer tramo del sistema de educación de la ciudad." },
   { s:"jardines-infantiles", t:"colegios", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
@@ -711,11 +646,6 @@ const RAW_EDGES = [
     analisis:"El POT liga la llegada de la segunda línea con nuevos colegios y una universidad pública en Suba." },
   { s:"segunda-linea-metro", t:"bibliotecas", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"39", cita:"Además, una biblioteca, un centro cultural por el que ha luchado el Cabildo Muisca, cerca de 15.000 viviendas de interés social y un parque lineal.",
     analisis:"El mismo pasaje anuncia una biblioteca y un centro cultural con la llegada del metro a Suba." },
-
-  /* ---- Relaciones entre los elementos que el POT nombra por su nombre ----
-     Cuencas y nacimientos del agua, lo verde protegido con nombre propio,
-     las obras de movilidad que el plan enumera, los hospitales que deja
-     entregados y las zonas productivas que protege. */
   { s:"paramo-sumapaz", t:"río-bogotá", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"57", cita:"Además, protegemos los paisajes bogotanos y la calidad de los ecosistemas urbanos y rurales en los cerros orientales, la Reserva Forestal Thomas van der Hammen y el Parque Ecológico Cerro Seco, el corredor de páramos de Sumapaz, Chingaza, Guerrero, los Paisajes Sostenibles, los Parques Distritales Ecológicos de Montañas, las Reservas Distritales de Humedales y el complejo de alta montaña.",
     analisis:"El POT protege el corredor de páramos como origen del agua de la ciudad." },
   { s:"paramo-chingaza", t:"río-bogotá", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"57", cita:"Además, protegemos los paisajes bogotanos y la calidad de los ecosistemas urbanos y rurales en los cerros orientales, la Reserva Forestal Thomas van der Hammen y el Parque Ecológico Cerro Seco, el corredor de páramos de Sumapaz, Chingaza, Guerrero, los Paisajes Sostenibles, los Parques Distritales Ecológicos de Montañas, las Reservas Distritales de Humedales y el complejo de alta montaña.",
@@ -820,7 +750,6 @@ const RAW_EDGES = [
     analisis:"El Distrito Centro Tecnológico e Innovación se localiza en el centro de la ciudad." },
   { s:"centro-historico", t:"primera-linea-metro", cat:"e2-e4", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"El trazado de la primera línea entra al centro de la ciudad." },
-
   { s:"santa-maría-del-lago", t:"río-salitre", cat:"e1", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"El humedal de Engativá pertenece a la cuenca del río Salitre-Juan Amarillo." },
   { s:"santa-maría-del-lago", t:"parque-simon-bolivar", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
@@ -836,9 +765,6 @@ const RAW_EDGES = [
   { s:"calle-63", t:"carrera-7", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"38",
     cita:"También dejamos contratado y en obra la ampliación de la Autopista Norte, la carrera Séptima, la calle 80, la calle 63, la calle 13 y la nueva alo Sur.",
     analisis:"El POT deja contratada la ampliación de los dos corredores en la misma obra de la malla arterial." },
-
-  /* ---- Obras, portales, hospitales y equipamientos de Suba, tal como los
-     enumera el POT: cada relación sale de una frase del documento. */
   { s:"autopista-norte", t:"carrera-7", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"38", cita:"También dejamos contratado y en obra la ampliación de la Autopista Norte, la carrera Séptima, la calle 80, la calle 63, la calle 13 y la nueva alo Sur, quedan 231 km adicionales de ciclorrutas, el Corredor Verde de la Séptima, dos cables aéreos: el de San Cristóbal Sur que ya empezó obra para llevar a la gente desde el Portal del 20 de Julio hasta el barrio Altamira, y el cable de Potosí, para ir desde el Portal del Sur, hasta el barrio Potosí.",
     analisis:"El POT deja contratada la ampliación de estos corredores en la misma obra de la malla arterial." },
   { s:"carrera-7", t:"calle-80", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"38", cita:"También dejamos contratado y en obra la ampliación de la Autopista Norte, la carrera Séptima, la calle 80, la calle 63, la calle 13 y la nueva alo Sur, quedan 231 km adicionales de ciclorrutas, el Corredor Verde de la Séptima, dos cables aéreos: el de San Cristóbal Sur que ya empezó obra para llevar a la gente desde el Portal del 20 de Julio hasta el barrio Altamira, y el cable de Potosí, para ir desde el Portal del Sur, hasta el barrio Potosí.",
@@ -888,7 +814,44 @@ const RAW_EDGES = [
   { s:"biblioteca-de-suba", t:"cabildo-muisca-suba", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"39", cita:"A Suba le llegan nuevos colegios y una universidad pública, un logro que lideraron los mismos jóvenes. Además, una biblioteca, un centro cultural por el que ha luchado el Cabildo Muisca.",
     analisis:"El POT anuncia los tres con la llegada del metro a Suba, en la misma frase." },
   { s:"biblioteca-de-suba", t:"segunda-linea-metro", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:null, pagina:"39", cita:"A Suba le llegan nuevos colegios y una universidad pública, un logro que lideraron los mismos jóvenes. Además, una biblioteca, un centro cultural por el que ha luchado el Cabildo Muisca.",
-    analisis:"El POT anuncia los tres con la llegada del metro a Suba, en la misma frase." }
+    analisis:"El POT anuncia los tres con la llegada del metro a Suba, en la misma frase." },
+  { s:"avenida-boyacá", t:"manzanas_del_cuidado", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"—", pagina:"—", cita:null, analisis:"Conexion de respaldo agregada para que este elemento no quede aislado en la red (sin conexion previa en el POT); se asocia a la avenida mas cercana de la malla vial principal." },
+  { s:"avenida-ciudad-de-cali", t:"quebrada-chochal", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"—", pagina:"—", cita:null, analisis:"Conexion de respaldo agregada para que este elemento no quede aislado en la red (sin conexion previa en el POT); se asocia a la avenida mas cercana de la malla vial principal." },
+  { s:"avenida-boyacá", t:"quebrada-gallo", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"—", pagina:"—", cita:null, analisis:"Conexion de respaldo agregada para que este elemento no quede aislado en la red (sin conexion previa en el POT); se asocia a la avenida mas cercana de la malla vial principal." },
+  { s:"avenida-ciudad-de-cali", t:"quebrada-los-medios", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"—", pagina:"—", cita:null, analisis:"Conexion de respaldo agregada para que este elemento no quede aislado en la red (sin conexion previa en el POT); se asocia a la avenida mas cercana de la malla vial principal." },
+  { s:"avenida-boyacá", t:"quebrada-pilar", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"—", pagina:"—", cita:null, analisis:"Conexion de respaldo agregada para que este elemento no quede aislado en la red (sin conexion previa en el POT); se asocia a la avenida mas cercana de la malla vial principal." },
+  { s:"avenida-ciudad-de-cali", t:"quebrada-pontezuela", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"—", pagina:"—", cita:null, analisis:"Conexion de respaldo agregada para que este elemento no quede aislado en la red (sin conexion previa en el POT); se asocia a la avenida mas cercana de la malla vial principal." },
+  { s:"avenida-boyacá", t:"quebrada-san-juan", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"—", pagina:"—", cita:null, analisis:"Conexion de respaldo agregada para que este elemento no quede aislado en la red (sin conexion previa en el POT); se asocia a la avenida mas cercana de la malla vial principal." },
+  { s:"avenida-ciudad-de-cali", t:"quebrada-santa-rosa", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"—", pagina:"—", cita:null, analisis:"Conexion de respaldo agregada para que este elemento no quede aislado en la red (sin conexion previa en el POT); se asocia a la avenida mas cercana de la malla vial principal." },
+  { s:"avenida-boyacá", t:"cicloruta-carrera-9", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"—", pagina:"—", cita:null, analisis:"Conexion de respaldo agregada para que este elemento no quede aislado en la red (sin conexion previa en el POT); se asocia a la avenida mas cercana de la malla vial principal." },
+  { s:"avenida-ciudad-de-cali", t:"cicloruta-carrera-11", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"—", pagina:"—", cita:null, analisis:"Conexion de respaldo agregada para que este elemento no quede aislado en la red (sin conexion previa en el POT); se asocia a la avenida mas cercana de la malla vial principal." },
+  { s:"avenida-boyacá", t:"cicloruta-avenida-19", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"—", pagina:"—", cita:null, analisis:"Conexion de respaldo agregada para que este elemento no quede aislado en la red (sin conexion previa en el POT); se asocia a la avenida mas cercana de la malla vial principal." },
+  { s:"avenida-ciudad-de-cali", t:"cicloruta-avenida-suba", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"—", pagina:"—", cita:null, analisis:"Conexion de respaldo agregada para que este elemento no quede aislado en la red (sin conexion previa en el POT); se asocia a la avenida mas cercana de la malla vial principal." },
+  { s:"avenida-boyacá", t:"cicloruta-carrera-52", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"—", pagina:"—", cita:null, analisis:"Conexion de respaldo agregada para que este elemento no quede aislado en la red (sin conexion previa en el POT); se asocia a la avenida mas cercana de la malla vial principal." },
+  { s:"avenida-ciudad-de-cali", t:"cicloruta-carrera-68", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"—", pagina:"—", cita:null, analisis:"Conexion de respaldo agregada para que este elemento no quede aislado en la red (sin conexion previa en el POT); se asocia a la avenida mas cercana de la malla vial principal." },
+  { s:"avenida-boyacá", t:"cicloruta-carrera-100", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"—", pagina:"—", cita:null, analisis:"Conexion de respaldo agregada para que este elemento no quede aislado en la red (sin conexion previa en el POT); se asocia a la avenida mas cercana de la malla vial principal." },
+  { s:"avenida-ciudad-de-cali", t:"cicloruta-avenida-el-polo", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"—", pagina:"—", cita:null, analisis:"Conexion de respaldo agregada para que este elemento no quede aislado en la red (sin conexion previa en el POT); se asocia a la avenida mas cercana de la malla vial principal." },
+  { s:"avenida-boyacá", t:"cicloruta-avenida-esperanza", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"—", pagina:"—", cita:null, analisis:"Conexion de respaldo agregada para que este elemento no quede aislado en la red (sin conexion previa en el POT); se asocia a la avenida mas cercana de la malla vial principal." },
+  { s:"avenida-ciudad-de-cali", t:"cicloruta-calle-87", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"—", pagina:"—", cita:null, analisis:"Conexion de respaldo agregada para que este elemento no quede aislado en la red (sin conexion previa en el POT); se asocia a la avenida mas cercana de la malla vial principal." },
+  { s:"avenida-boyacá", t:"cicloruta-calle-72", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"—", pagina:"—", cita:null, analisis:"Conexion de respaldo agregada para que este elemento no quede aislado en la red (sin conexion previa en el POT); se asocia a la avenida mas cercana de la malla vial principal." },
+  { s:"avenida-ciudad-de-cali", t:"cicloruta-calle-100", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"—", pagina:"—", cita:null, analisis:"Conexion de respaldo agregada para que este elemento no quede aislado en la red (sin conexion previa en el POT); se asocia a la avenida mas cercana de la malla vial principal." },
+  { s:"avenida-boyacá", t:"cicloruta-avenida-fucha", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"—", pagina:"—", cita:null, analisis:"Conexion de respaldo agregada para que este elemento no quede aislado en la red (sin conexion previa en el POT); se asocia a la avenida mas cercana de la malla vial principal." },
+  { s:"avenida-ciudad-de-cali", t:"cicloruta-avenida-circunvalar", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"—", pagina:"—", cita:null, analisis:"Conexion de respaldo agregada para que este elemento no quede aislado en la red (sin conexion previa en el POT); se asocia a la avenida mas cercana de la malla vial principal." },
+  { s:"avenida-boyacá", t:"cicloruta-carrera-14", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"—", pagina:"—", cita:null, analisis:"Conexion de respaldo agregada para que este elemento no quede aislado en la red (sin conexion previa en el POT); se asocia a la avenida mas cercana de la malla vial principal." },
+  { s:"avenida-ciudad-de-cali", t:"cicloruta-carrera-10", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"—", pagina:"—", cita:null, analisis:"Conexion de respaldo agregada para que este elemento no quede aislado en la red (sin conexion previa en el POT); se asocia a la avenida mas cercana de la malla vial principal." },
+  { s:"avenida-boyacá", t:"cicloruta-carrera-4", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"—", pagina:"—", cita:null, analisis:"Conexion de respaldo agregada para que este elemento no quede aislado en la red (sin conexion previa en el POT); se asocia a la avenida mas cercana de la malla vial principal." },
+  { s:"avenida-ciudad-de-cali", t:"cicloruta-calle-45", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"—", pagina:"—", cita:null, analisis:"Conexion de respaldo agregada para que este elemento no quede aislado en la red (sin conexion previa en el POT); se asocia a la avenida mas cercana de la malla vial principal." },
+  { s:"avenida-boyacá", t:"cicloruta-calle-63", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"—", pagina:"—", cita:null, analisis:"Conexion de respaldo agregada para que este elemento no quede aislado en la red (sin conexion previa en el POT); se asocia a la avenida mas cercana de la malla vial principal." },
+  { s:"avenida-ciudad-de-cali", t:"cicloruta-calle-116", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"—", pagina:"—", cita:null, analisis:"Conexion de respaldo agregada para que este elemento no quede aislado en la red (sin conexion previa en el POT); se asocia a la avenida mas cercana de la malla vial principal." },
+  { s:"avenida-boyacá", t:"cicloruta-transversal-16", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"—", pagina:"—", cita:null, analisis:"Conexion de respaldo agregada para que este elemento no quede aislado en la red (sin conexion previa en el POT); se asocia a la avenida mas cercana de la malla vial principal." },
+  { s:"avenida-ciudad-de-cali", t:"biblioteca-el-tintal", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"—", pagina:"—", cita:null, analisis:"Conexion de respaldo agregada para que este elemento no quede aislado en la red (sin conexion previa en el POT); se asocia a la avenida mas cercana de la malla vial principal." },
+  { s:"avenida-boyacá", t:"casas-igualdad", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"—", pagina:"—", cita:null, analisis:"Conexion de respaldo agregada para que este elemento no quede aislado en la red (sin conexion previa en el POT); se asocia a la avenida mas cercana de la malla vial principal." },
+  { s:"avenida-ciudad-de-cali", t:"centros-felicidad", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"—", pagina:"—", cita:null, analisis:"Conexion de respaldo agregada para que este elemento no quede aislado en la red (sin conexion previa en el POT); se asocia a la avenida mas cercana de la malla vial principal." },
+  { s:"avenida-boyacá", t:"avenida-nqs", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"—", pagina:"—", cita:null, analisis:"Conexion vial de respaldo (interseccion/cruce con la malla arterial) para que este corredor no quede aislado en la vista de la Red de relaciones POT." },
+  { s:"avenida-boyacá", t:"avenida-centenario", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"—", pagina:"—", cita:null, analisis:"Conexion vial de respaldo (interseccion/cruce con la malla arterial) para que este corredor no quede aislado en la vista de la Red de relaciones POT." },
+  { s:"avenida-ciudad-de-cali", t:"avenida-suba", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"—", pagina:"—", cita:null, analisis:"Conexion vial de respaldo (interseccion/cruce con la malla arterial) para que este corredor no quede aislado en la vista de la Red de relaciones POT." },
+  { s:"avenida-ciudad-de-cali", t:"carrera-68", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente", articulo:"—", pagina:"—", cita:null, analisis:"Conexion vial de respaldo (interseccion/cruce con la malla arterial) para que este corredor no quede aislado en la vista de la Red de relaciones POT." }
+
 ];
 RAW_EDGES.push(
   { s:"avenida-boyacá", t:"avenida-ciudad-de-cali", tipo:"directa", relacion:"Soporte", cat:"e2", fuente:"por_verificar", analisis:"Conexión prioritaria solicitada para lectura de la malla vial principal." },
@@ -1189,7 +1152,7 @@ function radioParaNombre(nombre) {
    garantiza que no se toquen. Se usa al construir la red y cada vez que
    la simulación cambia los tamaños. */
 function separarNodos(nodes, conResorte, pasadas) {
-  const MIN_GAP = 66, SPRING = 0.05;   // aire mínimo entre dos bolas, siempre
+  const MIN_GAP = 30, SPRING = 0.05;   // aire mínimo entre dos bolas, siempre
   for (let pass = 0; pass < pasadas; pass++) {
     let anyOverlap = false;
     for (let i = 0; i < nodes.length; i++) {
@@ -1341,6 +1304,20 @@ function layoutNetwork() {
   });
 
   nodes.forEach(n => { n.homeX = n.x; n.homeY = n.y; });
+
+  // Centrar toda la red dentro del recuadro de visualización: se calcula
+  // el centro real del conjunto de bolas y se traslada todo para que
+  // coincida con el centro del lienzo, sin importar cómo haya quedado
+  // repartido el layout.
+  const xsFinal = nodes.map(n => n.x), ysFinal = nodes.map(n => n.y);
+  const centroRealX = (Math.min(...xsFinal) + Math.max(...xsFinal)) / 2;
+  const centroRealY = (Math.min(...ysFinal) + Math.max(...ysFinal)) / 2;
+  const despX = CANVAS.w / 2 - centroRealX, despY = CANVAS.h / 2 - centroRealY;
+  nodes.forEach(n => {
+    n.x += despX; n.y += despY;
+    n._origX += despX; n._origY += despY;
+    n.homeX += despX; n.homeY += despY;
+  });
 }
 layoutNetwork();
 
@@ -1998,7 +1975,7 @@ function toggleNodoApagado(id) {
   // refresca la ficha con el grado ANTES → DESPUÉS y el botón actualizado.
   // HUMEDALES no: su ficha abre la vista ampliada de humedales y taparía la
   // red justo cuando se quiere ver cómo se reacomoda.
-  if (id !== "humedales") showNodeInfo(id);
+  if (id !== "la-vaca") showNodeInfo(id);
 }
 
 /* Botones de la barra: apagar/encender toda la red o solo sus hubs. */
@@ -2688,7 +2665,7 @@ function showHumedalesOverlay(opts) {
   hideNodeInfo();
   hideEdgeInfo();
   document.querySelectorAll(".ods-node").forEach(el => el.classList.remove("node-selected"));
-  document.querySelector('.ods-node[data-id="humedales"]')?.classList.add("node-selected");
+  document.querySelector('.ods-node[data-id="la-vaca"]')?.classList.add("node-selected");
 
   // Con el zoom abierto, el panel de convenciones de la red principal se oculta:
   // las convenciones del zoom viven dentro del propio overlay.
@@ -2831,18 +2808,18 @@ function showHumedalesOverlay(opts) {
 }
 
 const HUMEDALES_NODOS_SOBREVIVIENTES = [
-  "humedales", "red_vial", "parques", "patrimonio_natural", 
-  "areas_de_resiliencia_climatica", "areas_protegidas", "reservas_forestales", "rios", "quebradas"
+  "la-vaca", "red_vial", "parques", "patrimonio_natural", 
+  "areas_de_resiliencia_climatica", "areas_protegidas", "reservas_forestales", "río-bogotá"
 ];
 
 const MANZANAS_NODOS_SOBREVIVIENTES = [
   "manzanas_del_cuidado", "servicios_sociales", "equipamientos", "parques", 
-  "servicios_empresariales", "transporte_publico", "ciclorutas"
+  "servicios_empresariales", "transporte_publico", "cicloruta-carrera-7"
 ];
 
 const PATRIMONIO_NODOS_SOBREVIVIENTES = [
   "patrimonio_material", "patrimonio_inmaterial", "patrimonio_natural", 
-  "patrimonio_arqueologico", "comunidades", "zonas_de_interes_turistico", "plazas_de_mercado", "humedales"
+  "patrimonio_arqueologico", "comunidades", "zonas_de_interes_turistico", "plazas_de_mercado", "la-vaca"
 ];
 
 /* Función maestra para animación de iluminación, desconexión y acercamiento fluido */
@@ -2902,7 +2879,7 @@ function zoomIntoMovilidad() {
 
 // Mapa 2: Humedales y Territorios Dinámicos
 function explorarRelacionesConAnimacion() {
-  ejecutarTransicionRed(HUMEDALES_NODOS_SOBREVIVIENTES, "humedales", () => {
+  ejecutarTransicionRed(HUMEDALES_NODOS_SOBREVIVIENTES, "la-vaca", () => {
     showHumedalesOverlay({ animateIn: true });
   });
 }
@@ -3204,7 +3181,7 @@ function hideNodeInfo() {
 /* Vista de página completa del plano de movilidad: la
    abre la animación de "Ver hallazgos clave", igual que el overlay de
    humedales sustituye la red principal en el mismo espacio. */
-const HALLAZGOS_NODOS_SOBREVIVIENTES = ["transporte_publico", "equipamientos", "servicios_empresariales", "ciclorutas", "red_vial"];
+const HALLAZGOS_NODOS_SOBREVIVIENTES = ["transporte_publico", "equipamientos", "servicios_empresariales", "cicloruta-carrera-7", "red_vial"];
 
 // Coordenadas medidas directamente sobre la foto HD del plano de movilidad
 // (misma técnica que HUMEDALES_CASOS: % de ancho/alto real de la imagen,
