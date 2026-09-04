@@ -984,6 +984,15 @@ function computeDegrees(excluir) {
     if (deg[e.s] === undefined || deg[e.t] === undefined) return;
     // Solo cuentan las relaciones que se dibujan.
     if (!relacionVisible(e)) return;
+    // Una relación apagada desde la leyenda (tipo o categoría) tampoco debe
+    // contar para el tamaño de la bola — si no, una bola grande podía no
+    // tener ninguna línea visible (todas sus conexiones eran "indirecta",
+    // apagada por defecto) y el tamaño no coincidía con lo que se ve.
+    if (typeOff.has(e.tipo)) return;
+    if (catOff.size) {
+      const catBits = String(e.cat || "").split("-");
+      if (catBits.some((c) => catOff.has(c))) return;
+    }
     // Si el nodo de origen o destino está "apagado", su arista deja de
     // contar para el grado (= fuerza nodal) de ambos extremos.
     if (excluir && (excluir.has(e.s) || excluir.has(e.t))) return;
@@ -1168,6 +1177,18 @@ const HUB_IDS = ["avenida-boyacá", "avenida-ciudad-de-cali", "río-bogotá", "c
    Se declara aquí, antes del layout, porque el acomodo de la red ya
    consulta qué está apagado. */
 const nodosApagados = new Set();
+
+/* Tipo/categoría apagados desde la leyenda. Igual que nodosApagados, se
+   declaran antes del layout: computeDegrees() ya los consulta desde el
+   primer cálculo de grados (layoutNetwork() más abajo), y si se declararan
+   más adelante en el archivo, esa primera llamada fallaría por acceder a
+   la variable antes de su inicialización.
+   Las relaciones "indirecta" (por cruce o intersección espacial, la
+   evidencia más débil) arrancan apagadas: con las 132 relaciones visibles
+   encendidas de una vez la red se veía como una maraña de líneas. Así entra
+   solo con las 83 "directa" (respaldo explícito del POT) y el botón de la
+   leyenda sigue encendiéndolas si se quieren ver. */
+const typeOff = new Set(["indirecta"]), nodeOff = new Set(), catOff = new Set();
 
 /* Radio de cada bola: sale del grado real (cuántas relaciones vigentes
    tiene). Un nodo apagado se encoge a un tamaño fijo. Es la MISMA fórmula
@@ -2358,40 +2379,10 @@ function setupZoomPan() {
   svg.addEventListener("pointercancel", fin);
   svg.addEventListener("pointerleave", fin);
 
-  // Zoom con rueda del mouse
-  svg.addEventListener("wheel", (ev) => {
-    ev.preventDefault();
-    const zoomSpeed = 0.15;
-    const delta = ev.deltaY > 0 ? -zoomSpeed : zoomSpeed;
-    zoomLevel = Math.max(0.5, Math.min(10, zoomLevel + delta));
-    const group = svg.querySelector("#zoom-pan-group");
-    if (group) group.setAttribute("transform", `translate(${panX},${panY}) scale(${zoomLevel})`);
-    updateZoomDisplay();
-  }, { passive: false });
-
-  // Botones de zoom
-  document.getElementById("networkZoomIn")?.addEventListener("click", () => {
-    zoomLevel = Math.min(10, zoomLevel + 0.3);
-    const group = svg.querySelector("#zoom-pan-group");
-    if (group) group.setAttribute("transform", `translate(${panX},${panY}) scale(${zoomLevel})`);
-    updateZoomDisplay();
-  });
-
-  document.getElementById("networkZoomOut")?.addEventListener("click", () => {
-    zoomLevel = Math.max(0.5, zoomLevel - 0.3);
-    const group = svg.querySelector("#zoom-pan-group");
-    if (group) group.setAttribute("transform", `translate(${panX},${panY}) scale(${zoomLevel})`);
-    updateZoomDisplay();
-  });
-
-  document.getElementById("networkZoomReset")?.addEventListener("click", () => {
-    zoomLevel = 1;
-    panX = 0;
-    panY = 0;
-    const group = svg.querySelector("#zoom-pan-group");
-    if (group) group.setAttribute("transform", `translate(${panX},${panY}) scale(${zoomLevel})`);
-    updateZoomDisplay();
-  });
+  // La red queda estática: sin zoom manual (ni con la rueda del mouse ni
+  // con los botones +/−, que por eso se ocultan en el CSS). El único cambio
+  // de escala que queda es el "enfoque" guiado al hacer clic/doble clic en
+  // el fondo (una función curada, no un control libre de zoom).
 
   let backgroundFocusState = 0;
   let backgroundClickTimer = null;
@@ -3574,13 +3565,7 @@ function verHallazgosConAnimacion() {
   }, 950);
 }
 
-/* -------- visibilidad / leyenda --------
-   Las relaciones "indirecta" (por cruce o intersección espacial, la
-   evidencia más débil) arrancan apagadas: con las 132 relaciones visibles
-   encendidas de una vez la red se veía como una maraña de líneas. Así entra
-   solo con las 83 "directa" (respaldo explícito del POT) y el botón de la
-   leyenda sigue encendiéndolas si se quieren ver. */
-const typeOff = new Set(["indirecta"]), nodeOff = new Set(), catOff = new Set();
+/* -------- visibilidad / leyenda -------- */
 function refreshEdgeVisibility() {
   document.querySelectorAll(".edge-group").forEach(group => {
     const type = group.dataset.type, cat = group.dataset.cat, s = group.dataset.source, t = group.dataset.target;
@@ -3592,6 +3577,9 @@ function refreshEdgeVisibility() {
     const cat = node.dataset.cat;
     node.classList.toggle("hidden-node", nodeOff.has(node.dataset.id) || catOff.has(cat));
   });
+  // El tamaño de cada bola depende de cuántas líneas tiene EN PANTALLA:
+  // al apagar o encender un tipo/categoría desde la leyenda, se recalcula.
+  aplicarFuerzaNodal(false);
 }
 function toggleNode(id) {
   const group = document.querySelector(`.ods-node[data-id="${id}"]`);

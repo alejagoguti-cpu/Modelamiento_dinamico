@@ -2190,11 +2190,9 @@ footer span { color: var(--teal); }
    El zoom, dentro del tablero de la red
    ========================================================== */
 .network-canvas > .network-controls {
-  position: absolute; top: 12px; right: 12px; z-index: 22;
-  display: flex; margin: 0;
-  /* el contenedor no intercepta el ratón: solo la pastilla. Si no, tapaba
-     los nodos que quedaran debajo de su área vacía */
-  pointer-events: none;
+  /* La red quedó estática (sin zoom manual): los botones +/− ya no hacen
+     nada, así que se ocultan en vez de dejarlos ahí sin función. */
+  display: none;
 }
 .network-canvas > .network-controls .network-zoom-controls { pointer-events: auto; }
 @media (max-width: 760px) {
