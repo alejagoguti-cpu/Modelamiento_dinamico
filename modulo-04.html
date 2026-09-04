@@ -125,8 +125,8 @@ html,body{margin:0;height:100%;background:var(--bg);color:var(--txt);
 #info .rel{font-size:11px;color:var(--txt-faint);margin-top:10px;padding-top:10px;border-top:1px solid var(--line);}
 
 #canvas-wrap{position:relative;min-width:0;background:radial-gradient(1200px 800px at 55% 38%, #0a0c0f 0%, #000 72%);}
-svg{width:100%;height:100%;display:block;cursor:grab;}
-svg:active{cursor:grabbing;}
+svg{width:100%;height:100%;display:block;cursor:default;touch-action:none;}
+svg:active{cursor:default;}
 
 .link{stroke-opacity:.55;transition:stroke-opacity .2s;}
 .link.refuerza{stroke:#6f7b8a;stroke-width:1.4;}
@@ -663,8 +663,9 @@ if (typeof module !== &quot;undefined&quot;) { module.exports = { NODES, LINKS }
   svg.attr(&quot;viewBox&quot;,[0,0,W,H]);
   const root=svg.append(&quot;g&quot;);
   const zoom=d3.zoom().scaleExtent([0.35,3.5]).on(&quot;zoom&quot;,e=&gt;root.attr(&quot;transform&quot;,e.transform));
-  svg.call(zoom);
-  svg.on(&quot;dblclick.zoom&quot;,null);
+  // Vista fija: no se permite zoom ni paneo con rueda o doble clic.
+  svg.on(&quot;wheel.zoom&quot;, null);
+  svg.on(&quot;dblclick.zoom&quot;, null);
 
   const linkSel=root.append(&quot;g&quot;).selectAll(&quot;line&quot;)
     .data(LINKS).join(&quot;line&quot;)
@@ -673,8 +674,7 @@ if (typeof module !== &quot;undefined&quot;) { module.exports = { NODES, LINKS }
 
   const nodeSel=root.append(&quot;g&quot;).selectAll(&quot;g&quot;)
     .data(NODES).join(&quot;g&quot;)
-    .attr(&quot;class&quot;,d=&gt;&quot;node &quot;+(isMacro(d)?&quot;macro rol-&quot;+d.rol:d.tipo))
-    .call(d3.drag().on(&quot;start&quot;,dragStart).on(&quot;drag&quot;,dragged).on(&quot;end&quot;,dragEnd));
+    .attr(&quot;class&quot;,d=&gt;&quot;node &quot;+(isMacro(d)?&quot;macro rol-&quot;+d.rol:d.tipo));
 
   NODES.forEach(n=&gt; n._adeg = activeDeg(n));
   DEG_MIN = Math.min.apply(null, NODES.map(n=&gt;n._adeg||0));
@@ -748,7 +748,7 @@ if (typeof module !== &quot;undefined&quot;) { module.exports = { NODES, LINKS }
     .force(&quot;charge&quot;,d3.forceManyBody().strength(d=&gt; !d.active?-25 : isMacro(d)?-70 : d.tipo===&quot;modelo&quot;?-60 : -40))
     .force(&quot;center&quot;,d3.forceCenter(W/2,H/2))
     .force(&quot;collide&quot;,d3.forceCollide().radius(d=&gt;nodeRadius(d)+34).strength(1))
-    .force(&quot;y&quot;,d3.forceY(d=&gt; d.eje===&quot;pot&quot;?H*0.72:H*0.4).strength(0.06))
+    .force(&quot;y&quot;,d3.forceY(d=&gt; d.eje===&quot;pot&quot;?H*0.62:H*0.42).strength(0.045))
     .on(&quot;tick&quot;,ticked)
     .on(&quot;end&quot;,fitToView);
   sim.stop();   // no se deja correr sola: el acomodo inicial se hace de una
@@ -767,7 +767,7 @@ if (typeof module !== &quot;undefined&quot;) { module.exports = { NODES, LINKS }
     const padL=18;
     const padR=Math.min(18+(conv?conv.width+12:0), W*0.34);
     const padT=Math.min(16+Math.max(hud?hud.height:0, tool?tool.height:0), H*0.3);
-    const padB=Math.min(16+(cap?cap.height:0), H*0.3);
+    const padB=Math.min(28+(cap?cap.height:0), H*0.34);
     const availW=Math.max(140,W-padL-padR), availH=Math.max(140,H-padT-padB);
     let x0=Infinity,y0=Infinity,x1=-Infinity,y1=-Infinity;
     NODES.forEach(n=&gt;{ if(!isFinite(n.x)||!isFinite(n.y)) return;
@@ -871,7 +871,7 @@ if (typeof module !== &quot;undefined&quot;) { module.exports = { NODES, LINKS }
   function toggleNode(d){
     d.active=!d.active;
 
-    recompute(true);
+    recompute(false);
     focusNode(d,true);
   }
 

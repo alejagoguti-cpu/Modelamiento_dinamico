@@ -125,16 +125,16 @@ const ODS_NODES = [
   { id:"jaboque", cat:"e1", name:"JABOQUE", icon:"fa-droplet", fuente:"inventario_pendiente" },
   { id:"juan-amarillotibabuyes", cat:"e1", name:"JUAN AMARILLO/TIBABUYES", icon:"fa-droplet", fuente:"inventario_pendiente" },
   { id:"la-conejera", cat:"e1", name:"LA CONEJERA", icon:"fa-droplet", fuente:"inventario_pendiente" },
-  { id:"la-vaca", cat:"e1", name:"LA VACA", icon:"fa-droplet", fuente:"inventario_pendiente" },
+  { id:"la-vaca", cat:"e1", name:"HUMEDAL LA VACA", icon:"fa-droplet", fuente:"inventario_pendiente" },
   { id:"techo", cat:"e1", name:"TECHO", icon:"fa-droplet", fuente:"inventario_pendiente" },
   { id:"tibanica", cat:"e1", name:"TIBANICA", icon:"fa-droplet", fuente:"inventario_pendiente" },
   { id:"torca-guaymaral", cat:"e1", name:"TORCA-GUAYMARAL", icon:"fa-droplet", fuente:"inventario_pendiente" },
-  { id:"burro", cat:"e1", name:"BURRO", icon:"fa-droplet", fuente:"inventario_pendiente" },
+  { id:"burro", cat:"e1", name:"HUMEDAL EL BURRO", icon:"fa-droplet", fuente:"inventario_pendiente" },
   { id:"meandro-del-say", cat:"e1", name:"MEANDRO DEL SAY", icon:"fa-droplet", fuente:"inventario_pendiente" },
   { id:"hyntiba-el-escritorio", cat:"e1", name:"HYNTIBA-EL ESCRITORIO", icon:"fa-droplet", fuente:"inventario_pendiente" },
   { id:"el-tunjo", cat:"e1", name:"EL TUNJO", icon:"fa-droplet", fuente:"inventario_pendiente" },
   { id:"chiguasuque-la-isla", cat:"e1", name:"CHIGUASUQUE-LA ISLA", icon:"fa-droplet", fuente:"inventario_pendiente" },
-  { id:"salitre", cat:"e1", name:"SALITRE", icon:"fa-droplet", fuente:"inventario_pendiente" },
+  { id:"salitre", cat:"e1", name:"HUMEDAL SALITRE", icon:"fa-droplet", fuente:"inventario_pendiente" },
   { id:"tingua-azul", cat:"e1", name:"TINGUA AZUL", icon:"fa-droplet", fuente:"inventario_pendiente" },
   { id:"avenida-boyacá", cat:"e2", name:"AVENIDA BOYACÁ", icon:"fa-road", fuente:"inventario_pendiente" },
   { id:"avenida-19", cat:"e2", name:"AVENIDA 19", icon:"fa-road", fuente:"inventario_pendiente" },
@@ -205,11 +205,25 @@ const ODS_NODES = [
   { id:"cicloruta-calle-45", cat:"e2", name:"CICLORUTA CALLE 45", icon:"fa-person-biking", fuente:"inventario_pendiente" },
   { id:"cicloruta-calle-63", cat:"e2", name:"CICLORUTA CALLE 63", icon:"fa-person-biking", fuente:"inventario_pendiente" },
   { id:"cicloruta-calle-116", cat:"e2", name:"CICLORUTA CALLE 116", icon:"fa-person-biking", fuente:"inventario_pendiente" },
-  { id:"cicloruta-transversal-16", cat:"e2", name:"CICLORUTA TRANSVERSAL 16", icon:"fa-person-biking", fuente:"inventario_pendiente" }
-
+    { id:"cicloruta-transversal-16", cat:"e2", name:"CICLORUTA TRANSVERSAL 16", icon:"fa-person-biking", fuente:"inventario_pendiente" },
+  { id:"avenida-ciudad-de-cali", cat:"e2", name:"AVENIDA CIUDAD DE CALI", icon:"fa-road", fuente:"por_verificar" },
+  { id:"primera-linea-metro", cat:"e2", name:"PRIMERA LÍNEA DEL METRO", icon:"fa-train-subway", fuente:"por_verificar" },
+  { id:"segunda-linea-metro", cat:"e2", name:"SEGUNDA LÍNEA DEL METRO", icon:"fa-train-subway", fuente:"por_verificar" },
+  { id:"colegios", cat:"e2", name:"COLEGIOS", icon:"fa-school", fuente:"por_verificar" },
+  { id:"bibliotecas", cat:"e2", name:"BIBLIOTECAS", icon:"fa-book-open", fuente:"por_verificar" }
 ];
-
 function nodeById(id) { return ODS_NODES.find(n => n.id === id); }
+// Vista principal acotada: se conservan los elementos específicos prioritarios
+// y se completa hasta 55 nodos, evitando los agregadores genéricos HUMEDALES y CICLORUTAS.
+const PRIORITY_NODE_IDS = [
+  "río-tunjuelo", "río-fucha", "río-bogotá", "burro", "la-vaca", "salitre", "juan-amarillotibabuyes", "jaboque", "capellaníacofradía", "córdoba-niza", "santa-maría-del-lago", "la-conejera", "techo", "tibanica", "torca-guaymaral",
+  "avenida-boyacá", "avenida-ciudad-de-cali", "avenida-fucha", "avenida-nqs", "avenida-villavicencio", "avenida-centenario", "calle-26", "calle-13", "calle-80", "carrera-68", "avenida-primero-de-mayo", "primera-linea-metro", "segunda-linea-metro",
+  "corredores_verdes", "cicloruta-avenida-fucha", "cicloruta-avenida-boyacá", "cicloruta-carrera-7", "cicloruta-calle-26", "manzanas_del_cuidado", "colegios", "bibliotecas", "equipamientos", "sistema_de_educacion", "servicios_sociales", "parques", "plazas_de_mercado", "centros_de_abastecimiento", "comunidades", "coberturas_vegetales", "areas_protegidas", "areas_de_resiliencia_climatica", "reservas_forestales", "zonas_industriales", "patrimonio_natural", "patrimonio_material", "patrimonio_inmaterial", "servicios_empresariales", "transporte_publico", "red_vial", "produccion_artesanal"
+];
+const DISPLAY_NODES = [...new Set([...PRIORITY_NODE_IDS, ...ODS_NODES.map(n => n.id)])]
+  .filter(id => !["humedales", "ciclorutas", "rios", "quebradas"].includes(id))
+  .map(nodeById).filter(Boolean).slice(0, 55);
+const DISPLAY_NODE_IDS = new Set(DISPLAY_NODES.map(n => n.id));
 
 /* ==========================================================
    ARISTAS — 45 relaciones intra-estructura de la Matriz completa,
@@ -219,7 +233,7 @@ function nodeById(id) { return ODS_NODES.find(n => n.id === id); }
    ========================================================== */
 const TYPE_STYLE = {
   directa:   { color: "#2fd4c8", label: "Directa (respaldo explícito del POT)" },
-  indirecta: { color: "#8b93a8", label: "Indirecta (relación funcional intermedia)" },
+  indirecta: { color: "#8b93a8", label: "Indirecta (por cruce o intersección espacial)" },
   vacio:     { color: "#ef4444", label: "Vacío de articulación (hallazgo)" },
 };
 // Color de trazo por "Tipo de relación" (dimensión independiente del estilo de línea)
@@ -370,6 +384,20 @@ const RAW_EDGES = [
   { s:"cicloruta-carrera-7", t:"corredores_verdes", dim:"Movilidad", tipo:"directa", analisis:"Relacion heredada del nodo agrupador CICLORUTAS (eliminado por contener a sus propias rutas especificas); se reasigna a una cicloruta concreta representativa." }
 
 ];
+RAW_EDGES.push(
+  { s:"avenida-boyacá", t:"avenida-ciudad-de-cali", tipo:"directa", relacion:"Soporte", cat:"e2", fuente:"por_verificar", analisis:"Conexión prioritaria solicitada para lectura de la malla vial principal." },
+  { s:"avenida-ciudad-de-cali", t:"red_vial", tipo:"directa", relacion:"Soporte", cat:"e2", fuente:"por_verificar" },
+  { s:"primera-linea-metro", t:"segunda-linea-metro", tipo:"directa", relacion:"Soporte", cat:"e2", fuente:"por_verificar", analisis:"Conexión entre las dos líneas del Metro para lectura de la red de movilidad." },
+  { s:"primera-linea-metro", t:"transporte_publico", tipo:"directa", relacion:"Soporte", cat:"e2", fuente:"por_verificar" },
+  { s:"segunda-linea-metro", t:"transporte_publico", tipo:"directa", relacion:"Soporte", cat:"e2", fuente:"por_verificar" },
+  { s:"colegios", t:"bibliotecas", tipo:"indirecta", relacion:"Soporte", cat:"e2", fuente:"por_verificar" },
+  { s:"colegios", t:"manzanas_del_cuidado", tipo:"directa", relacion:"Soporte", cat:"e2", fuente:"por_verificar" },
+  { s:"bibliotecas", t:"manzanas_del_cuidado", tipo:"directa", relacion:"Soporte", cat:"e2", fuente:"por_verificar" },
+  { s:"río-tunjuelo", t:"río-fucha", tipo:"indirecta", relacion:"Resiliencia", cat:"e1", fuente:"por_verificar" },
+  { s:"río-fucha", t:"burro", tipo:"indirecta", relacion:"Resiliencia", cat:"e1", fuente:"por_verificar" },
+  { s:"burro", t:"la-vaca", tipo:"indirecta", relacion:"Resiliencia", cat:"e1", fuente:"por_verificar" }
+);
+
 
 /* ==========================================================
    GRADO REAL — de aquí sale cuáles son los hubs, no de una
@@ -551,10 +579,15 @@ const NODE_POS = {
   "cicloruta-calle-63": { x: 2116, y: 240 },
   "cicloruta-calle-116": { x: 2061, y: 351 },
   "cicloruta-transversal-16": { x: 1948, y: 466 },
+  "avenida-ciudad-de-cali": { x: 1835, y: 480 },
+  "primera-linea-metro": { x: 1280, y: 740 },
+  "segunda-linea-metro": { x: 1435, y: 820 },
+  "colegios": { x: 1210, y: 1040 },
+  "bibliotecas": { x: 1370, y: 1120 },
 };
 
 // Los 4 hubs principales (bola grande) por estructura.
-const HUB_IDS = ["la-vaca", "servicios_empresariales", "patrimonio_material"];
+const HUB_IDS = ["la-vaca", "servicios_empresariales", "patrimonio_material", "avenida-boyacá", "avenida-ciudad-de-cali"];
 
 function layoutNetwork() {
   const deg = computeDegrees();
@@ -573,6 +606,7 @@ function layoutNetwork() {
     const d = deg[n.id] || 0;
     const t = maxDeg > minDeg ? Math.sqrt((d - minDeg) / (maxDeg - minDeg)) : 0;
     n.r = R_MIN + (R_MAX - R_MIN) * t;
+    if (["avenida-boyacá", "avenida-ciudad-de-cali"].includes(n.id)) n.r = Math.max(n.r, 68);
     n._deg = d;
     n._degBase = d; // fuerza nodal original, sin ningún nodo apagado — sirve para comparar ANTES ↔ DESPUÉS
   });
@@ -916,9 +950,10 @@ function drawEdges(svg) {
   g.setAttribute("class", "edges-layer");
   // Las líneas aparecen DESPUÉS de que las bolas ya se están formando (no
   // de primeras, que se ve raro) — cada una con su propio pequeño retraso.
-  const edgeBaseDelay = ODS_NODES.length * 70 + 200;
+  const edgeBaseDelay = DISPLAY_NODES.length * 70 + 200;
   let edgeOrderIndex = 0;
   RAW_EDGES.forEach((edge, i) => {
+    if (!DISPLAY_NODE_IDS.has(edge.s) || !DISPLAY_NODE_IDS.has(edge.t)) return;
     // Las relaciones "vacío" (ausencias documentadas entre estructuras) ya NO
     // se dibujan en la red visual — quedan solo como hallazgo en la tabla y en
     // las tarjetas de "hallazgos clave", para que la red se lea limpia con
@@ -975,14 +1010,14 @@ function drawNodes(svg) {
   g.setAttribute("class", "nodes-layer");
   // Orden de aparición aleatorio (no siempre el mismo), para que la red
   // se sienta viva desde el primer instante en vez de aparecer de golpe.
-  const revealOrder = ODS_NODES.map((_, i) => i);
+  const revealOrder = DISPLAY_NODES.map((_, i) => i);
   for (let i = revealOrder.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [revealOrder[i], revealOrder[j]] = [revealOrder[j], revealOrder[i]];
   }
   const revealDelay = {};
   revealOrder.forEach((nodeIndex, order) => { revealDelay[nodeIndex] = order * 70; });
-  ODS_NODES.forEach((node, index) => {
+  DISPLAY_NODES.forEach((node, index) => {
     const group = document.createElementNS(SVG_NS, "g");
     group.setAttribute("class", "ods-node ods-node-" + node.cat + (node.isMainHub ? " ods-hub" : " ods-satellite") + " ods-node-reveal");
     group.setAttribute("data-id", node.id);
@@ -1301,6 +1336,44 @@ function setupZoomPan() {
     const group = svg.querySelector("#zoom-pan-group");
     if (group) group.setAttribute("transform", `translate(${panX},${panY}) scale(${zoomLevel})`);
     updateZoomDisplay();
+  });
+
+  let backgroundFocusState = 0;
+  let backgroundClickTimer = null;
+  const focusIds = (ids, level, text) => {
+    const points = ids.map(id => NODE_POS[id]).filter(Boolean);
+    if (!points.length) return;
+    const center = points.reduce((acc, p) => [acc[0] + p.x / points.length, acc[1] + p.y / points.length], [0, 0]);
+    zoomLevel = level;
+    panX = CANVAS.w / 2 - center[0] * zoomLevel;
+    panY = CANVAS.h / 2 - center[1] * zoomLevel;
+    const group = svg.querySelector("#zoom-pan-group");
+    if (group) group.setAttribute("transform", `translate(${panX},${panY}) scale(${zoomLevel})`);
+    updateZoomDisplay();
+    svg.setAttribute("aria-label", text);
+  };
+  const resetNetworkView = () => {
+    zoomLevel = 1; panX = 0; panY = 0; backgroundFocusState = 0;
+    const group = svg.querySelector("#zoom-pan-group");
+    if (group) group.setAttribute("transform", `translate(${panX},${panY}) scale(${zoomLevel})`);
+    updateZoomDisplay();
+    svg.setAttribute("aria-label", "Red completa del POT");
+  };
+  svg.addEventListener("click", (ev) => {
+    if (ev.target.closest?.(".ods-node, .edge-group")) return;
+    window.clearTimeout(backgroundClickTimer);
+    backgroundClickTimer = window.setTimeout(() => {
+      if (backgroundFocusState === 0) {
+        focusIds(["río-tunjuelo", "río-fucha", "burro", "la-vaca"], 2.15, "Enfoque hídrico: río Tunjuelo, río Fucha, humedal El Burro y humedal La Vaca");
+        backgroundFocusState = 1;
+      } else resetNetworkView();
+    }, 230);
+  });
+  svg.addEventListener("dblclick", (ev) => {
+    if (ev.target.closest?.(".ods-node, .edge-group")) return;
+    window.clearTimeout(backgroundClickTimer);
+    focusIds(["primera-linea-metro", "segunda-linea-metro", "avenida-boyacá", "avenida-ciudad-de-cali"], 2.05, "Enfoque del Metro: primera y segunda línea");
+    backgroundFocusState = 2;
   });
 
   // Pan con clic del mouse (botón del medio o Shift+arrastre)
@@ -3297,7 +3370,7 @@ const MAIN_CONCLUSION_STEP1 = `
     <svg id="conclusionNetworkViz" viewBox="0 0 2500 1820" preserveAspectRatio="xMidYMid meet"></svg>
   </div>
   <div class="main-conclusion-answer">
-    <p>Al reconstruir su modelo, encontramos que el POT hace principalmente legibles estructuras, componentes, relaciones funcionales y reglas de intervención. Esto permite construir una representación organizada del territorio tiene límites para representar procesos y cambian en el tiempo.</p>
+    <p>Al mirar la red del POT, la gran concentración de conexiones ocurre únicamente entre las normas escritas y las obras físicas, mientras que los elementos humanos y ambientales quedan casi sueltos en los bordes. Esta desconexión visual demuestra que el modelo estructura un territorio rígido de leyes y concreto que mantiene la vida real de la gente aislada de su diseño principal.</p>
   </div>
   <button class="main-conclusion-explore-btn" id="mainConclusionNextBtn">DESCUBRIR</button>
 `;
