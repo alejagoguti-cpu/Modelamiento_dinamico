@@ -1654,12 +1654,17 @@ function drawEdges(svg) {
     hit.setAttribute("d", d); hit.setAttribute("class", "ods-edge edge-hit");
     hit.setAttribute("stroke-width", "30");   // zona de clic ancha: la línea se agarra fácil, también con el dedo
 
+    // Las relaciones que tocan una vía (Avenida Boyacá, Av. Ciudad de Cali,
+    // cualquier avenida/calle/carrera) se dibujan más delgadas y punteadas
+    // que el resto: una vía cruza media ciudad y concentra tantas relaciones
+    // que sus líneas gruesas y sólidas ahogaban el resto de la red.
+    const tocaVia = CONTENCION.red_vial.test(edge.s) || CONTENCION.red_vial.test(edge.t);
     const visual = document.createElementNS(SVG_NS, "path");
     visual.setAttribute("d", d);
     visual.setAttribute("class", "ods-edge edge-visual");
     visual.setAttribute("stroke", color);
-    visual.setAttribute("stroke-width", edge.tipo === "vacio" ? 2.6 : edge.tipo === "directa" ? 2.2 : 1.4);
-    if (edge.tipo !== "directa") visual.setAttribute("stroke-dasharray", edge.tipo === "vacio" ? "2,7" : "5,4");
+    visual.setAttribute("stroke-width", edge.tipo === "vacio" ? 2.6 : tocaVia ? 1.1 : edge.tipo === "directa" ? 2.2 : 1.4);
+    if (edge.tipo !== "directa" || tocaVia) visual.setAttribute("stroke-dasharray", edge.tipo === "vacio" ? "2,7" : "5,4");
     const markerId = arrowMarkerId(edge);
     if (markerId) visual.setAttribute("marker-end", `url(#${markerId})`);
     visual.setAttribute("opacity", edge.tipo === "indirecta" ? "0.55" : edge.tipo === "vacio" ? "0.8" : "0.95");
@@ -1740,18 +1745,18 @@ function drawNodes(svg) {
     circle.setAttribute("filter", "url(#glow-" + node.color.replace("#", "") + ")");
 
     const fo = document.createElementNS(SVG_NS, "foreignObject");
-    const ancho = anchoRotulo(node), alto = node.r * 2.3;
+    const ancho = anchoRotulo(node), alto = node.r * 2.0;
     fo.setAttribute("x", node.x - ancho / 2); fo.setAttribute("y", node.y - alto / 2);
     fo.setAttribute("width", ancho); fo.setAttribute("height", alto);
     // el rótulo no recibe clics: los recibe la bola que está debajo
     fo.setAttribute("pointer-events", "none");
 
     const wrapper = document.createElementNS(XHTML_NS, "div");
-    wrapper.setAttribute("style", "width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;pointer-events:none;padding:2px;");
+    wrapper.setAttribute("style", "width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;pointer-events:none;padding:2px;overflow:hidden;");
 
     const iconEl = document.createElementNS(XHTML_NS, "i");
     iconEl.setAttribute("class", "fa-solid " + node.icon);
-    iconEl.setAttribute("style", `color:${node.color}; font-size:${Math.max(node.r * 0.26, 15)}px;`);
+    iconEl.setAttribute("style", `color:${node.color}; font-size:${Math.max(node.r * 0.20, 10)}px;`);
 
     const nameEl = document.createElementNS(XHTML_NS, "div");
     nameEl.setAttribute("style", `font-size:${fuenteQueCabe(node)}px; padding:0 1px; font-weight:700; color:#f2f3f6; line-height:1.15; white-space:pre-line; overflow-wrap:normal; text-align:center; font-family:'Inter',sans-serif;`);
@@ -1783,7 +1788,7 @@ function updatePositions() {
   ODS_NODES.forEach(n => {
     if (!n._el) return;
     n._el.circle.setAttribute("cx", n.x); n._el.circle.setAttribute("cy", n.y);
-    const ancho = anchoRotulo(n), alto = n.r * 2.3;
+    const ancho = anchoRotulo(n), alto = n.r * 2.0;
     n._el.fo.setAttribute("x", n.x - ancho / 2); n._el.fo.setAttribute("y", n.y - alto / 2);
   });
   RAW_EDGES.forEach(edge => {
@@ -1817,7 +1822,10 @@ function palabraMasLarga(nombre) {
 }
 
 function fuenteQueCabe(node) {
-  return Math.max(15, Math.min(node.r * 0.30, 26));
+  // Un poco más chica que antes: en las bolas pequeñas (la mayoría, ahora
+  // que el tamaño solo cuenta las líneas visibles) la letra + el ícono ya
+  // no se salían del anillo.
+  return Math.max(10, Math.min(node.r * 0.24, 22));
 }
 
 /* Ancho del rótulo. Cuando el nombre es una palabra larga (CHIGUASUQUE,
@@ -1834,11 +1842,11 @@ function resizeNodeVisual(n) {
   const { circle, fo } = n._el;
   const apagado = nodosApagados.has(n.id);
   circle.setAttribute("r", n.r);
-  const ancho = anchoRotulo(n), alto = n.r * 2.3;
+  const ancho = anchoRotulo(n), alto = n.r * 2.0;
   fo.setAttribute("x", n.x - ancho / 2); fo.setAttribute("y", n.y - alto / 2);
   fo.setAttribute("width", ancho); fo.setAttribute("height", alto);
   const iconEl = fo.querySelector("i");
-  if (iconEl) iconEl.style.fontSize = Math.max(n.r * 0.26, 15) + "px";
+  if (iconEl) iconEl.style.fontSize = Math.max(n.r * 0.20, 10) + "px";
   const nameEl = fo.querySelector("div");
   if (nameEl) {
     // En un nodo apagado la bola es demasiado chica para su nombre: se deja
