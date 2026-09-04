@@ -59,9 +59,9 @@ const STRUCT_STYLE = {
     articulos: "Art. 41–79 (39 artículos)", paginas: "pp. 70–101" },
   e2: { color: "#ef9f54", label: "2. Estructura Funcional y del Cuidado", short: "EFC",
     articulos: "Art. 88–99 (12 artículos)", paginas: "pp. 109–120" },
-  e3: { color: "#f1cf5b", label: "3. Estructura Socioeconómica, Creativa y de Innovación", short: "ESECI",
+  e3: { color: "#fac47b", label: "3. Estructura Socioeconómica, Creativa y de Innovación", short: "ESECI",
     articulos: "Art. 100–101 (2 artículos, + Art.240/243/327 en Libro III)", paginas: "pp. 120–122 / 223–279" },
-  e4: { color: "#f76fb0", label: "4. Estructura Integradora de Patrimonios", short: "EIP",
+  e4: { color: "#fb8d84", label: "4. Estructura Integradora de Patrimonios", short: "EIP",
     articulos: "Art. 80–87 (8 artículos)", paginas: "pp. 101–109" },
 };
 
@@ -142,10 +142,7 @@ const ODS_NODES = [
   { id:"chiguasuque-la-isla", cat:"e1", name:"CHIGUASUQUE", icon:"fa-droplet", fuente:"inventario_pendiente" },
   { id:"salitre", cat:"e1", name:"HUMEDAL SALITRE", icon:"fa-droplet", fuente:"inventario_pendiente" },
   { id:"tingua-azul", cat:"e1", name:"TINGUA AZUL", icon:"fa-droplet", fuente:"inventario_pendiente" },
-
-  /* ---- VÍAS ARTERIALES (42 items) ---- */
-  { id:"avenida-boyacá", cat:"e2", name:"AVENIDA BOYACÁ", icon:"fa-road", fuente:"cita_literal" },
-  { id:"avenida-ciudad-de-cali", cat:"e2", name:"AVENIDA CIUDAD DE CALI", icon:"fa-road", fuente:"cita_literal" },
+  { id:"avenida-boyacá", cat:"e2", name:"AVENIDA BOYACÁ", icon:"fa-road", fuente:"inventario_pendiente" },
   { id:"avenida-19", cat:"e2", name:"AVENIDA 19", icon:"fa-road", fuente:"inventario_pendiente" },
   { id:"avenida-suba", cat:"e2", name:"AVENIDA SUBA", icon:"fa-road", fuente:"inventario_pendiente" },
   { id:"carrera-52", cat:"e2", name:"CARRERA 52", icon:"fa-road", fuente:"inventario_pendiente" },
@@ -281,7 +278,29 @@ function nodeById(id) { return ODS_NODES.find(n => n.id === id); }
 /* Vista principal: 80 elementos con nombre propio del POT. Ni una palabra
    de categoría ni de programa (HUMEDALES, PARQUES, EQUIPAMIENTOS, MANZANAS
    DEL CUIDADO, CENTROS FELICIDAD...): esas no son un lugar del territorio. */
-const DISPLAY_NODES = ODS_NODES;
+const RED_POT_IDS = [
+  "burro",   "la-vaca",   "techo",   "tibanica",
+  "el-tunjo",   "tingua-azul",   "chiguasuque-la-isla",   "capellaníacofradía",
+  "hyntiba-el-escritorio",   "jaboque",   "meandro-del-say",   "córdoba-niza",
+  "juan-amarillotibabuyes",   "santa-maría-del-lago",   "salitre",   "la-conejera",
+  "torca-guaymaral",   "río-bogotá",   "río-fucha",   "río-tunjuelo",
+  "río-salitre",   "canal-arzobispo",   "canal-el-virrey",   "canal-independencia",
+  "quebrada-torca",   "quebrada-teusacá",   "cerros-orientales",   "reserva-van-der-hammen",
+  "cerro-seco",   "paramo-sumapaz",   "paramo-chingaza",   "paramo-guerrero",
+  "parque-entrenubes",   "parque-soratama",   "mirador-nevados",   "parque-nacional",
+  "parque-simon-bolivar",   "primera-linea-metro",   "segunda-linea-metro",   "regiotram-occidente",
+  "cable-san-cristobal",   "cable-potosi",   "corredor-verde-septima",   "alo-sur",
+  "avenida-boyacá",   "avenida-ciudad-de-cali",   "avenida-nqs",   "avenida-caracas",
+  "avenida-circunvalar",   "avenida-suba",   "avenida-américas",   "avenida-villavicencio",
+  "avenida-primero-de-mayo",   "avenida-centenario",   "calle-13",   "calle-26",
+  "calle-63",   "calle-72",   "calle-80",   "carrera-7",
+  "carrera-10",   "hospital-kennedy",   "hospital-meissen",   "hospital-bosa",
+  "hospital-tintal",   "hospital-simon-bolivar",   "hospital-tunal",   "hospital-usme",
+  "hospital-engativa",   "distrito_centro_tecnologico_e_innovacion",   "zona-restrepo",   "zona-12-de-octubre",
+  "corabastos",   "centro-historico",   "cabildo-muisca-suba",   "carrera-68",
+  "autopista-norte",   "portal-20-de-julio",   "portal-del-sur",   "biblioteca-de-suba",
+];
+const DISPLAY_NODES = RED_POT_IDS.map(nodeById).filter(Boolean);
 const DISPLAY_NODE_IDS = new Set(DISPLAY_NODES.map(n => n.id));
 
 /* ==========================================================
@@ -376,41 +395,7 @@ const RAW_EDGES = [
     analisis:"Las Áreas de Resiliencia Climática no tienen ningún puente confirmado hacia las Zonas Industriales u otro componente de la ESECI, pese a que estas últimas son, típicamente, infraestructura de alto impacto ambiental." },
   { s:"distrito_centro_tecnologico_e_innovacion", t:"patrimonio_natural", cat:"e3-e4", tipo:"vacio", relacion:"Soporte", fuente:"inferencia", articulo:null, pagina:null, cita:null,
     analisis:"Ningún puente confirmado entre los componentes económicos de la ESECI y la protección patrimonial de la EIP, pese a que la presión inmobiliaria/comercial sobre zonas patrimoniales es un conflicto documentado (La Candelaria, Chapinero)." },
-
-  /* ---- 100 CONEXIONES NUEVAS: Nodos del inventario POT ↔ Hubs por categoría ---- */
-  { s:"río-bogotá", t:"rios", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"río-tunjuelo", t:"rios", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"río-fucha", t:"rios", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"río-salitre", t:"humedales", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"quebrada-chochal", t:"quebradas", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"quebrada-gallo", t:"quebradas", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"quebrada-los-medios", t:"quebradas", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"quebrada-pilar", t:"quebradas", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"quebrada-pontezuela", t:"quebradas", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"quebrada-san-juan", t:"quebradas", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"quebrada-santa-rosa", t:"quebradas", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"quebrada-teusacá", t:"quebradas", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"quebrada-torca", t:"quebradas", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"córdoba-niza", t:"humedales", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"santa-maría-del-lago", t:"humedales", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"capellaníacofradía", t:"rios", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"jaboque", t:"humedales", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"juan-amarillotibabuyes", t:"humedales", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"la-conejera", t:"humedales", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"la-vaca", t:"humedales", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"techo", t:"humedales", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"tibanica", t:"rios", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"torca-guaymaral", t:"humedales", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"burro", t:"humedales", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"meandro-del-say", t:"humedales", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"hyntiba-el-escritorio", t:"humedales", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"el-tunjo", t:"humedales", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"chiguasuque-la-isla", t:"rios", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"salitre", t:"rios", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"tingua-azul", t:"humedales", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"avenida-boyacá", t:"red_vial", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:"Art. 158–159", pagina:"158", cita:"La Avenida Boyacá articula la conectividad longitudinal como eje estructurante de la malla vial arterial.", analisis:"Malla arterial de integración metropolitana." },
-  { s:"avenida-ciudad-de-cali", t:"red_vial", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:"Art. 158–159", pagina:"158", cita:"La Avenida Ciudad de Cali constituye el soporte de transporte multimodal y borde de integración del suroccidente.", analisis:"Eje arterial y conector de transporte masivo." },
-  { s:"avenida-ciudad-de-cali", t:"humedales", cat:"e1-e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:"Art. 42 / 158", pagina:"49–50", cita:"Intersección de la Avenida Ciudad de Cali con las Reservas Distritales de Humedal El Burro y La Vaca.", analisis:"Corredor vial en interacción directa con la Estructura Ecológica Principal." },
+  { s:"avenida-boyacá", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
   { s:"avenida-19", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
   { s:"avenida-suba", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
   { s:"carrera-52", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
@@ -1037,45 +1022,38 @@ const HUB_CENTERS = {
    cualquier bola; el layout automático ya no las recalcula.
    ========================================================== */
 const NODE_POS = {
-  // E1: Ecológica Principal (Izquierda: X 240 a 880, Y 180 a 780)
-  "humedales": { x: 640, y: 560 },
-  "rios": { x: 380, y: 780 },
-  "quebradas": { x: 420, y: 440 },
-  "complejos_de_paramos": { x: 240, y: 320 },
-  "coberturas_vegetales": { x: 460, y: 200 },
-  "areas_de_resiliencia_climatica": { x: 680, y: 180 },
-  "areas_protegidas": { x: 760, y: 380 },
-  "reservas_forestales": { x: 880, y: 200 },
+  rios: { x: 465, y: 824 },
+  quebradas: { x: 661, y: 581 },
+  humedales: { x: 1022, y: 591 },
+  complejos_de_paramos: { x: 352, y: 449 },
+  coberturas_vegetales: { x: 509, y: 297 },
+  areas_de_resiliencia_climatica: { x: 639, y: 112 },
+  areas_protegidas: { x: 771, y: 421 },
+  reservas_forestales: { x: 1086, y: 132 },
+  equipamientos: { x: 1190, y: 347 },
+  servicios_sociales: { x: 1429, y: 104 },
+  ciclorutas: { x: 1689, y: 98 },
+  transporte_publico: { x: 1686, y: 539 },
+  red_vial: { x: 2022, y: 306 },
+  corredores_verdes: { x: 1520, y: 250 }, // junto a ciclorutas (antes quedaba fuera del lienzo: x:34.7,y:97.9)
+  manzanas_del_cuidado: { x: 1485, y: 445 },
+  parques: { x: 1732, y: 884 },
+  distrito_centro_tecnologico_e_innovacion: { x: 1244, y: 1298 },
+  servicios_empresariales: { x: 1055, y: 918 },
+  sistema_de_educacion: { x: 992, y: 1253 },
+  centros_de_abastecimiento: { x: 921, y: 1601 },
+  plazas_de_mercado: { x: 758, y: 1173 },
+  zonas_industriales: { x: 679, y: 1576 },
+  produccion_artesanal: { x: 486, y: 1312 },
+  zonas_de_interes_turistico: { x: 498, y: 1054 },
+  centros_financieros: { x: 727, y: 873 },
+  patrimonio_inmaterial: { x: 2017, y: 991 },
+  patrimonio_arqueologico: { x: 1862, y: 1430 },
+  patrimonio_natural: { x: 1442, y: 1406 },
+  patrimonio_material: { x: 1399, y: 1026 },
+  comunidades: { x: 1684, y: 1179 },
 
-  // E2: Funcional y del Cuidado (Centro con Av. Boyacá y Av. Cali en el centro: X 1060 a 1620)
-  "avenida-ciudad-de-cali": { x: 1140, y: 620 },
-  "avenida-boyacá": { x: 1360, y: 620 },
-  "red_vial": { x: 1250, y: 440 },
-  "transporte_publico": { x: 1460, y: 440 },
-  "manzanas_del_cuidado": { x: 1250, y: 800 },
-  "equipamientos": { x: 1060, y: 300 },
-  "servicios_sociales": { x: 1260, y: 180 },
-  "ciclorutas": { x: 1460, y: 200 },
-  "corredores_verdes": { x: 1620, y: 340 },
-  "parques": { x: 1560, y: 800 },
-
-  // E3: Socioeconómica, Creativa y de Innovación (Centro-Abajo y Centro-Derecha: X 780 a 1580, Y 1000 a 1580)
-  "servicios_empresariales": { x: 1150, y: 1140 },
-  "distrito_centro_tecnologico_e_innovacion": { x: 1380, y: 1160 },
-  "sistema_de_educacion": { x: 960, y: 1280 },
-  "plazas_de_mercado": { x: 780, y: 1340 },
-  "centros_de_abastecimiento": { x: 860, y: 1580 },
-  "zonas_industriales": { x: 1140, y: 1560 },
-  "produccion_artesanal": { x: 1380, y: 1540 },
-  "zonas_de_interes_turistico": { x: 1580, y: 1380 },
-  "centros_financieros": { x: 980, y: 1000 },
-
-  // E4: Integradora de Patrimonios (Derecha y Abajo-Derecha: X 1820 a 2260, Y 700 a 1340)
-  "patrimonio_material": { x: 1960, y: 880 },
-  "patrimonio_inmaterial": { x: 2200, y: 700 },
-  "patrimonio_natural": { x: 1820, y: 1200 },
-  "patrimonio_arqueologico": { x: 2120, y: 1340 },
-  "comunidades": { x: 2260, y: 1040 },
+  /* ---- POSICIONES GENERADAS PARA 100 NODOS NUEVOS (POT Inventory) - Sector-aware distribution ---- */
   "río-bogotá": { x: 655, y: 871 },
   "río-tunjuelo": { x: 308, y: 952 },
   "río-fucha": { x: 491, y: 623 },
@@ -1195,16 +1173,23 @@ const nodosApagados = new Set();
    tiene). Un nodo apagado se encoge a un tamaño fijo. Es la MISMA fórmula
    que usa la simulación de apagado, para que al encender y apagar los
    tamaños vuelvan exactamente a donde estaban. */
-function radioParaNombre(name) {
-  if (!name) return 32;
-  const longest = name.split('\n').reduce((max, w) => Math.max(max, w.length), 0);
-  return Math.max(34, Math.min(75, 26 + longest * 2.8));
-}
-
 function radioPorGrado(d, apagado) {
   return apagado ? 30 : 30 + d * 5.8;   // la fuerza nodal se ve: cada relación suma tamaño
 }
 
+/* Radio mínimo para que el nombre no tenga que partirse a la mitad: los
+   nombres largos (SERVICIOS EMPRESARIALES, CENTROS DE ABASTECIMIENTO)
+   necesitan una bola algo más ancha. Con tope, para no borrar la
+   diferencia de tamaño entre un hub y un elemento periférico. */
+function radioParaNombre(nombre) {
+  const larga = String(nombre || "").split(/[\s\n]+/).reduce((a, p) => Math.max(a, p.length), 1);
+  return Math.min(52, larga * 4.4);   // lo justo para que el nombre no se parta, sin borrar la diferencia de tamaño
+}
+
+/* Separación entre bolas: ninguna puede tocar a otra. Con resorte, cada
+   una tira de vuelta a su sitio del wireframe; sin resorte, solo se
+   garantiza que no se toquen. Se usa al construir la red y cada vez que
+   la simulación cambia los tamaños. */
 function separarNodos(nodes, conResorte, pasadas) {
   const MIN_GAP = 66, SPRING = 0.05;   // aire mínimo entre dos bolas, siempre
   for (let pass = 0; pass < pasadas; pass++) {
@@ -1239,37 +1224,125 @@ function separarNodos(nodes, conResorte, pasadas) {
 
 function layoutNetwork() {
   const deg = computeDegrees();
-  const allDegs = Object.values(deg);
-  const minDeg = Math.min(...allDegs, 1);
-  const maxDeg = Math.max(...allDegs, 1);
-
+  // Cada bola crece con su grado real: los corredores que cruzan media ciudad
+  // (AVENIDA BOYACÁ, AVENIDA CIUDAD DE CALI) quedan como los elementos más
+  // conectados de la red, y los que casi no se relacionan, pequeños.
   ODS_NODES.forEach(n => {
     n.color = STRUCT_STYLE[n.cat].color;
-    n.vx = 0; n.vy = 0; n.fixed = false;
+    n.vx = 0; n.vy = 0; n.fixed = false; n.isMainHub = false;
     const d = deg[n.id] || 0;
     n.r = Math.max(radioPorGrado(d, false), radioParaNombre(n.name));
     n._deg = d;
-    n._degBase = d;
-    n.collR = n.r;
-    const p = NODE_POS[n.id];
-    if (p) {
-      n.x = p.x;
-      n.y = p.y;
-    } else {
-      n.x = 1250;
-      n.y = 910;
-    }
-    n.isMainHub = (HUB_IDS.indexOf(n.id) !== -1);
-    if (n.isMainHub) n._outwardAngle = Math.atan2(n.y - CANVAS.h / 2, n.x - CANVAS.w / 2) || 0;
-    n.homeX = n.x;
-    n.homeY = n.y;
-    n._origX = n.x;
-    n._origY = n.y;
+    n._degBase = d; // fuerza nodal original, sin ningún nodo apagado — sirve para comparar ANTES ↔ DESPUÉS
   });
 
-  // Separación suave sin solapamientos
-  separarNodos(ODS_NODES, false, 200);
-  ODS_NODES.forEach(n => { n.homeX = n.x; n.homeY = n.y; n._origX = n.x; n._origY = n.y; });
+  const nodes = DISPLAY_NODES;   // solo la red que se dibuja
+
+  /* ---- Reparto parejo, y de varios intentos se queda el más limpio ----
+     El trazado no se deja al azar ni a un parámetro elegido a ojo: se prueban
+     varias semillas de reparto, y de cada una se cuentan los CRUCES DE LÍNEA
+     y las líneas que pasan por encima de un nodo ajeno. Se dibuja la que
+     menos deja. Dentro de cada intento, los elementos que se relacionan se
+     atraen entre sí (por eso terminan cerca los que están conectados) y
+     ninguna bola puede tocar a otra. */
+  const cx0 = CANVAS.w / 2, cy0 = CANVAS.h / 2;
+  const gradoDe = (n) => deg[n.id] || 0;
+  const vecinosDe = new Map(nodes.map((n) => [n.id, []]));
+  RAW_EDGES.forEach((e) => {
+    if (e.tipo === "vacio" || !relacionVisible(e)) return;
+    vecinosDe.get(e.s)?.push(e.t);
+    vecinosDe.get(e.t)?.push(e.s);
+  });
+  const parejas = RAW_EDGES.filter((e) => e.tipo !== "vacio" && relacionVisible(e))
+    .map((e) => [nodeById(e.s), nodeById(e.t)]).filter(([a, b]) => a && b);
+
+  function costeTrazado() {
+    const seCruzan = (a, b, c, d) => {
+      const f = (p1, p2, p3) => (p3.y - p1.y) * (p2.x - p1.x) - (p2.y - p1.y) * (p3.x - p1.x);
+      const d1 = f(c, d, a), d2 = f(c, d, b), e1 = f(a, b, c), e2 = f(a, b, d);
+      return ((d1 > 0 && d2 < 0) || (d1 < 0 && d2 > 0)) && ((e1 > 0 && e2 < 0) || (e1 < 0 && e2 > 0));
+    };
+    let cruces = 0;
+    for (let i = 0; i < parejas.length; i++) {
+      for (let j = i + 1; j < parejas.length; j++) {
+        const [a, b] = parejas[i], [c, d] = parejas[j];
+        if (a === c || a === d || b === c || b === d) continue;
+        if (seCruzan(a, b, c, d)) cruces++;
+      }
+    }
+    let sobreNodos = 0;
+    parejas.forEach(([a, b]) => {
+      const dx = b.x - a.x, dy = b.y - a.y, L2 = dx * dx + dy * dy;
+      if (!L2) return;
+      nodes.forEach((n) => {
+        if (n === a || n === b) return;
+        let t = ((n.x - a.x) * dx + (n.y - a.y) * dy) / L2;
+        t = Math.max(0, Math.min(1, t));
+        if (Math.hypot(a.x + t * dx - n.x, a.y + t * dy - n.y) < n.r * 0.8) sobreNodos++;
+      });
+    });
+    return cruces + sobreNodos * 2;
+  }
+
+  function unIntento(giro, fuerza) {
+    const ordenados = [...nodes].sort((a, b) => gradoDe(b) - gradoDe(a));
+    const rMax = Math.min(CANVAS.w, CANVAS.h) / 2 - 130;
+    ordenados.forEach((n, i) => {
+      const t = (i + 0.5) / ordenados.length;
+      const rad = rMax * Math.sqrt(t);
+      const ang = giro + i * 2.399963;
+      n.collR = n.r;
+      n.x = cx0 + Math.cos(ang) * rad * (CANVAS.w / CANVAS.h);
+      n.y = cy0 + Math.sin(ang) * rad;
+    });
+    const dentro = () => nodes.forEach((n) => {
+      n.x = Math.max(n.collR + 40, Math.min(CANVAS.w - n.collR - 40, n.x));
+      n.y = Math.max(n.collR + 40, Math.min(CANVAS.h - n.collR - 40, n.y));
+    });
+    dentro();
+    separarNodos(nodes, false, 200);
+    for (let pass = 0; pass < 190; pass++) {
+      nodes.forEach((n) => {
+        const vs = vecinosDe.get(n.id) || [];
+        if (!vs.length) return;
+        let vx = 0, vy = 0, cuenta = 0;
+        vs.forEach((id) => { const v = nodeById(id); if (v && DISPLAY_NODE_IDS.has(id)) { vx += v.x; vy += v.y; cuenta++; } });
+        if (!cuenta) return;
+        n.x += (vx / cuenta - n.x) * fuerza;
+        n.y += (vy / cuenta - n.y) * fuerza;
+      });
+      nodes.forEach((n) => {
+        const dx = n.x - cx0, dy = n.y - cy0;
+        const d = Math.hypot(dx, dy) || 1;
+        const objetivo = rMax * 0.72;
+        if (d < objetivo) { const f = (objetivo - d) * 0.004; n.x += (dx / d) * f; n.y += (dy / d) * f; }
+      });
+      dentro();
+      separarNodos(nodes, false, 1);
+    }
+    separarNodos(nodes, false, 300);
+    return costeTrazado();
+  }
+
+  let mejor = null;
+  const GIROS = [0, 0.5, 1.0, 1.6, 2.2, 2.8, 3.4, 4.0];
+  const FUERZAS = [0.13, 0.17, 0.21];
+  GIROS.forEach((giro) => FUERZAS.forEach((fuerza) => {
+    const coste = unIntento(giro, fuerza);
+    if (!mejor || coste < mejor.coste) {
+      mejor = { coste, pos: nodes.map((n) => ({ x: n.x, y: n.y })) };
+    }
+  }));
+  nodes.forEach((n, i) => { n.x = mejor.pos[i].x; n.y = mejor.pos[i].y; });
+  separarNodos(nodes, false, 200);
+  // el "sitio de casa" es la posición final del arranque: así, al volver a
+  // encender un nodo, la red regresa exactamente al dibujo inicial
+  nodes.forEach(n => {
+    n.isMainHub = (HUB_IDS.indexOf(n.id) !== -1);
+    n._origX = n.x; n._origY = n.y;
+  });
+
+  nodes.forEach(n => { n.homeX = n.x; n.homeY = n.y; });
 }
 layoutNetwork();
 
@@ -1465,7 +1538,7 @@ function buildAmbientMesh(svg) {
   }
   // colores ambientales: ciclan entre los 4 colores de estructura para dar
   // la sensación de "mesh multicolor" de la referencia
-  const palette = ["#5cd6d1", "#ef9f54", "#f1cf5b", "#f76fb0"];
+  const palette = ["#5cd6d1", "#ef9f54", "#fac47b", "#fb8d84"];
 
   // líneas finas entre puntos cercanos (umbral de distancia)
   const THRESH = 230;
@@ -2082,10 +2155,6 @@ function updateZoomDisplay() {
   if (el) el.textContent = Math.round(zoomLevel * 100) + "%";
 }
 
-function ajustarEncuadreRed() {
-  // Ajuste de encuadre automático opcional
-}
-
 function renderNetwork() {
   const svg = document.getElementById("networkViz");
   if (!svg) return;
@@ -2109,15 +2178,178 @@ function renderNetwork() {
   while (tempG.firstChild) zoomPanGroup.appendChild(tempG.firstChild);
 }
 
-let isDetailZoomEnabled = false;
+/* ==========================================================
+   ZOOM A UN GRUPO DE ELEMENTOS — "Explorar relaciones a detalle"
+   Acerca la red sobre los humedales de Kennedy (El Burro, La Vaca y
+   Techo), los ríos Fucha y Tunjuelo a los que drenan, y los dos
+   corredores que los cruzan (Avenida Boyacá y Avenida Ciudad de Cali).
+   No cambia la red: solo la encuadra y apaga el resto.
+   ========================================================== */
+const ZOOM_KENNEDY_IDS = [
+  "burro", "la-vaca", "techo", "río-fucha", "río-tunjuelo",
+  "avenida-boyacá", "avenida-ciudad-de-cali",
+];
+let zoomDetalleActivo = false;
+
+/* ==========================================================
+   ENCUADRE DEL LIENZO — el viewBox fijo de 2500x1820 hacía que en
+   pantallas angostas (un teléfono, o la columna de la red junto a la
+   leyenda) la red se dibujara en un rectángulo diminuto en el centro de
+   un recuadro negro: se veía vacío. Ahora el encuadre se ajusta a lo que
+   la red ocupa de verdad y a la forma del contenedor, así que la red
+   siempre llena su espacio.
+   ========================================================== */
+let VISTA = { x: 0, y: 0, w: CANVAS.w, h: CANVAS.h };
+
+function ajustarEncuadreRed() {
+  const svg = document.getElementById("networkViz");
+  const capa = svg?.querySelector(".nodes-layer");
+  if (!svg || !capa) return;
+  let caja;
+  try { caja = capa.getBBox(); } catch (e) { return; }
+  if (!caja || !caja.width || !caja.height) return;
+  const MARGEN = 60;
+  let w = caja.width + MARGEN * 2, h = caja.height + MARGEN * 2;
+  // El alto del lienzo sigue la forma real de la red (con topes), así la red
+  // llena el recuadro en vez de quedar como una franja en medio del negro.
+  const ancho = svg.clientWidth;
+  if (ancho) {
+    const altoIdeal = Math.round(Math.max(300, Math.min(820, ancho * h / w)));
+    svg.style.height = altoIdeal + "px";
+  }
+  const cara = svg.clientWidth && svg.clientHeight ? svg.clientWidth / svg.clientHeight : w / h;
+  if (w / h > cara) h = w / cara; else w = h * cara;
+  VISTA = {
+    x: caja.x + caja.width / 2 - w / 2,
+    y: caja.y + caja.height / 2 - h / 2,
+    w, h,
+  };
+  svg.setAttribute("viewBox", `${VISTA.x.toFixed(1)} ${VISTA.y.toFixed(1)} ${w.toFixed(1)} ${h.toFixed(1)}`);
+
+  // Si al encuadrar toda la red las bolas quedan diminutas (un teléfono, una
+  // ventana angosta), se arranca acercado a un tamaño legible y se recorre
+  // arrastrando; el botón de alejar devuelve la vista completa.
+  if (!ajustarEncuadreRed._zoomInicialHecho && svg.clientWidth && svg.clientWidth < 760) {
+    ajustarEncuadreRed._zoomInicialHecho = true;
+    const escala = svg.clientWidth / w;
+    const rMin = Math.min(...DISPLAY_NODES.map((n) => n.r || 0).filter((r) => r > 0));
+    const diametro = 2 * rMin * escala;
+    if (diametro > 0 && diametro < 46) {
+      zoomLevel = Math.max(1, Math.min(3.6, 46 / diametro));
+      const g = svg.querySelector("#zoom-pan-group");
+      if (g) g.setAttribute("transform", `translate(${panX},${panY}) scale(${zoomLevel})`);
+      updateZoomDisplay();
+    }
+  }
+}
+
+function irAZoomDe(ids, ms) {
+  const svg = document.getElementById("networkViz");
+  const group = svg?.querySelector("#zoom-pan-group");
+  if (!svg || !group) return;
+  const nodos = ids.map(nodeById).filter(n => n && n._el);
+  if (!nodos.length) return;
+  const x0 = Math.min(...nodos.map(n => n.x - n.r)), x1 = Math.max(...nodos.map(n => n.x + n.r));
+  const y0 = Math.min(...nodos.map(n => n.y - n.r)), y1 = Math.max(...nodos.map(n => n.y + n.r));
+  const margen = 70;   // el encuadre se ceñía demasiado poco al grupo
+  const escala = Math.max(0.5, Math.min(6,
+    Math.min(VISTA.w / (x1 - x0 + margen * 2), VISTA.h / (y1 - y0 + margen * 2))));
+  const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
+  const destino = {
+    z: escala,
+    x: VISTA.x + VISTA.w / 2 - cx * escala,
+    y: VISTA.y + VISTA.h / 2 - cy * escala,
+  };
+  const desde = { z: zoomLevel, x: panX, y: panY };
+  const t0 = performance.now(), DUR = ms || 900;
+  const suave = (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  function paso(ahora) {
+    const k = suave(Math.min(1, (ahora - t0) / DUR));
+    zoomLevel = desde.z + (destino.z - desde.z) * k;
+    panX = desde.x + (destino.x - desde.x) * k;
+    panY = desde.y + (destino.y - desde.y) * k;
+    group.setAttribute("transform", `translate(${panX},${panY}) scale(${zoomLevel})`);
+    updateZoomDisplay();
+    if (k < 1) requestAnimationFrame(paso);
+  }
+  requestAnimationFrame(paso);
+}
+
+function explorarRelacionesDetalle() {
+  const btn = document.getElementById("btnExplorarRelaciones");
+  if (zoomDetalleActivo) {   // segundo clic: se vuelve a ver toda la red
+    zoomDetalleActivo = false;
+    clearSpotlight();
+    btn?.classList.remove("active");
+    const svg = document.getElementById("networkViz");
+    const group = svg?.querySelector("#zoom-pan-group");
+    const desde = { z: zoomLevel, x: panX, y: panY };
+    const t0 = performance.now();
+    const paso = (ahora) => {
+      const k = Math.min(1, (ahora - t0) / 700);
+      zoomLevel = desde.z + (1 - desde.z) * k;
+      panX = desde.x * (1 - k); panY = desde.y * (1 - k);
+      group?.setAttribute("transform", `translate(${panX},${panY}) scale(${zoomLevel})`);
+      updateZoomDisplay();
+      if (k < 1) requestAnimationFrame(paso);
+    };
+    requestAnimationFrame(paso);
+    return;
+  }
+  zoomDetalleActivo = true;
+  btn?.classList.add("active");
+  // ilumina los elementos del acercamiento (y sus relaciones entre sí)
+  setSpotlightNodes(ZOOM_KENNEDY_IDS, false);
+  irAZoomDe(ZOOM_KENNEDY_IDS);
+}
 
 function setupZoomPan() {
   const svg = document.getElementById("networkViz");
   if (!svg) return;
 
-  // Zoom con rueda del mouse (solo activo en modo detalle)
+  /* Arrastre del lienzo: sin esto, al acercar la red no había forma de
+     moverse por ella (y en un teléfono era la única manera de recorrerla).
+     Solo actúa cuando el gesto empieza en el fondo, no sobre un nodo. */
+  let arrastrando = false, x0 = 0, y0 = 0, pan0x = 0, pan0y = 0;
+  const aplicar = () => {
+    const g = svg.querySelector("#zoom-pan-group");
+    if (g) g.setAttribute("transform", `translate(${panX},${panY}) scale(${zoomLevel})`);
+  };
+  let capturado = false;
+  svg.addEventListener("pointerdown", (ev) => {
+    if (ev.target.closest(".ods-node")) return;   // los nodos tienen su propio arrastre
+    arrastrando = true; capturado = false;
+    x0 = ev.clientX; y0 = ev.clientY; pan0x = panX; pan0y = panY;
+  });
+  svg.addEventListener("pointermove", (ev) => {
+    if (!arrastrando) return;
+    // El lienzo solo empieza a moverse cuando de verdad se arrastra: si se
+    // capturara el puntero desde el primer toque, el clic nunca llegaría a la
+    // línea de una relación y no se podría abrir su ficha.
+    if (!capturado) {
+      if (Math.hypot(ev.clientX - x0, ev.clientY - y0) < 4) return;
+      capturado = true;
+      svg.classList.add("m2-arrastrando");
+      try { svg.setPointerCapture(ev.pointerId); } catch (e) {}
+    }
+    const caja = svg.getBoundingClientRect();
+    const escala = caja.width ? VISTA.w / caja.width : 1;   // pantalla -> lienzo
+    panX = pan0x + (ev.clientX - x0) * escala;
+    panY = pan0y + (ev.clientY - y0) * escala;
+    aplicar();
+  });
+  const fin = (ev) => {
+    if (!arrastrando) return;
+    arrastrando = false; svg.classList.remove("m2-arrastrando");
+    if (capturado) { try { svg.releasePointerCapture(ev.pointerId); } catch (e) {} }
+    capturado = false;
+  };
+  svg.addEventListener("pointerup", fin);
+  svg.addEventListener("pointercancel", fin);
+  svg.addEventListener("pointerleave", fin);
+
+  // Zoom con rueda del mouse
   svg.addEventListener("wheel", (ev) => {
-    if (!isDetailZoomEnabled) return; // Bloqueado en vista general para no interferir con scroll
     ev.preventDefault();
     const zoomSpeed = 0.15;
     const delta = ev.deltaY > 0 ? -zoomSpeed : zoomSpeed;
@@ -2195,7 +2427,6 @@ function setupZoomPan() {
   let startPanX = 0, startPanY = 0;
 
   svg.addEventListener("mousedown", (ev) => {
-    if (!isDetailZoomEnabled) return;
     // Solo pan con botón del medio (button 1) o cuando se sostiene Shift
     if (ev.button !== 1 && !ev.getModifierState("Shift")) return;
     // No pan si se hace clic en un nodo o borde
@@ -3496,22 +3727,20 @@ function setupLegendToggle() {
       refreshEdgeVisibility();
     });
   });
-    document.getElementById("edgeInfoClose")?.addEventListener("click", () => hideEdgeInfo());
-  document.getElementById("nodeInfoClose")?.addEventListener("click", () => hideNodeInfo());
-  document.getElementById("humedalesOverlayClose")?.addEventListener("click", () => hideHumedalesOverlay());
+  document.getElementById("edgeInfoClose")?.addEventListener("click", hideEdgeInfo);
+  document.getElementById("nodeInfoClose")?.addEventListener("click", hideNodeInfo);
+  document.getElementById("humedalesOverlayClose")?.addEventListener("click", hideHumedalesOverlay);
   document.getElementById("movilidadOverlayClose")?.addEventListener("click", () => { hideMovilidadOverlay(); clearSpotlight(); });
-  document.getElementById("manzanasOverlayClose")?.addEventListener("click", () => hideManzanasOverlay());
-  document.getElementById("patrimonioOverlayClose")?.addEventListener("click", () => hidePatrimonioOverlay());
+  document.getElementById("mapa3OverlayClose")?.addEventListener("click", hideMapa3Overlay);
   
   // Selector de mapas (modal de exploración en detalle)
-  document.getElementById("modalExplorarClose")?.addEventListener("click", () => cerrarModalExplorarRelaciones());
+  document.getElementById("modalExplorarClose")?.addEventListener("click", cerrarModalExplorarRelaciones);
   document.getElementById("modalExplorarRelaciones")?.addEventListener("click", (e) => {
     if (e.target.id === "modalExplorarRelaciones") cerrarModalExplorarRelaciones();
   });
-  document.getElementById("btnOpcionMapaVias")?.addEventListener("click", () => abrirMapaVias());
-  document.getElementById("btnOpcionMapaHumedales")?.addEventListener("click", () => abrirMapaHumedales());
-  document.getElementById("btnOpcionMapaManzanas")?.addEventListener("click", () => abrirMapaManzanas());
-  document.getElementById("btnOpcionMapaPatrimonio")?.addEventListener("click", () => abrirMapaPatrimonio());
+  document.getElementById("btnOpcionMapaVias")?.addEventListener("click", abrirMapaVias);
+  document.getElementById("btnOpcionMapaHumedales")?.addEventListener("click", abrirMapaHumedales);
+  document.getElementById("btnOpcionMapa3")?.addEventListener("click", abrirMapa3);
 
   window.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
@@ -4192,7 +4421,7 @@ function renderMatrix() {
     row.className = "matrix-row"; row.dataset.edge = i;
     const color = edgeColor(edge);
     row.innerHTML = `
-      <div class="matrix-cell"><span class="swatch-tag" style="background:${s.color}"></span> ${(edge.cat || s.cat || "").toUpperCase()}</div>
+      <div class="matrix-cell"><span class="swatch-tag" style="background:${s.color}"></span> ${edge.cat.toUpperCase()}</div>
       <div class="matrix-cell">${s.name.replace(/\n/g," ")} → ${t.name.replace(/\n/g," ")}</div>
       <div class="matrix-cell"><span class="alignment-tag" style="background:${color}26;color:${color}">${TYPE_STYLE[edge.tipo].label}</span></div>
       <div class="matrix-cell">${fuenteBadgeHTML(edge.fuente)}</div>
@@ -4390,26 +4619,11 @@ document.addEventListener("DOMContentLoaded", () => {
   renderMatrix();
   setupZoomPan();
   document.getElementById("networkViz")?.addEventListener("click", () => { hideEdgeInfo(); hideNodeInfo(); });
-  document.getElementById("btnVerHallazgos")?.addEventListener("click", verHallazgosConAnimacion);
-  document.getElementById("btnExplorarRelaciones")?.addEventListener("click", () => {
-    isDetailZoomEnabled = !isDetailZoomEnabled;
-    const btn = document.getElementById("btnExplorarRelaciones");
-    const svg = document.getElementById("networkViz");
-    if (isDetailZoomEnabled) {
-      btn?.classList.add("zoom-active");
-      if (btn) btn.innerHTML = `<i class="fa-solid fa-magnifying-glass-plus"></i> Modo exploración activo (Zoom activado)`;
-      svg?.classList.add("zoom-unlocked");
-      abrirModalExplorarRelaciones();
-    } else {
-      btn?.classList.remove("zoom-active");
-      if (btn) btn.innerHTML = `Explorar relaciones en detalle <i class="fa-solid fa-arrow-right"></i>`;
-      svg?.classList.remove("zoom-unlocked");
-      zoomLevel = 1; panX = 0; panY = 0;
-      const group = svg?.querySelector("#zoom-pan-group");
-      if (group) group.setAttribute("transform", `translate(${panX},${panY}) scale(${zoomLevel})`);
-      updateZoomDisplay();
-    }
-  });
+  // "Ver hallazgos clave" abre el explorador de mapas (lo que antes estaba en
+  // "Explorar relaciones a detalle"); "Explorar relaciones a detalle" ahora
+  // acerca la red sobre los humedales de Kennedy y los ejes que los cruzan.
+  document.getElementById("btnVerHallazgos")?.addEventListener("click", abrirModalExplorarRelaciones);
+  document.getElementById("btnExplorarRelaciones")?.addEventListener("click", explorarRelacionesDetalle);
 
   // Opciones del modal de mapas
   document.getElementById("btnOpcionMapaVias")?.addEventListener("click", abrirMapaVias);
