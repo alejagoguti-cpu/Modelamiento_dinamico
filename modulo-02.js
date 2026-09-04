@@ -926,6 +926,29 @@ RAW_EDGES.push(
 
 
 /* ==========================================================
+   LIMPIEZA DE LAS RELACIONES
+   La lista viene de varias tandas de datos y traía pares repetidos —dos
+   líneas dibujadas una encima de la otra, y la ficha del nodo mostrando el
+   mismo vecino dos veces, una sin explicación—. Se conserva UNA sola
+   relación por par: la que traiga mejor respaldo (frase del POT > motivo
+   escrito > artículo o página). Los "vacío" (ausencias documentadas) se
+   cuentan aparte para que una relación real no los tape.
+   ========================================================== */
+(function limpiarRelacionesRepetidas() {
+  const puntaje = (e) => (e.fuente === "cita_literal" && e.cita ? 4 : 0) + (e.analisis ? 2 : 0) + (e.articulo || e.pagina ? 1 : 0);
+  const mejor = new Map();
+  RAW_EDGES.forEach((e) => {
+    const clave = [e.s, e.t].sort().join("|") + "|" + (e.tipo === "vacio" ? "vacio" : "real");
+    const previo = mejor.get(clave);
+    if (!previo || puntaje(e) > puntaje(previo)) mejor.set(clave, e);
+  });
+  const conservar = new Set(mejor.values());
+  for (let i = RAW_EDGES.length - 1; i >= 0; i--) {
+    if (!conservar.has(RAW_EDGES[i])) RAW_EDGES.splice(i, 1);
+  }
+})();
+
+/* ==========================================================
    GRADO REAL — de aquí sale cuáles son los hubs, no de una
    categoría administrativa. Los "vacío" NO cuentan como conexión.
    ========================================================== */
@@ -946,7 +969,11 @@ function esContencion(e) {
   return !!((re1 && re1.test(e.t)) || (re2 && re2.test(e.s)));
 }
 function relacionVisible(e) {
-  return DISPLAY_NODE_IDS.has(e.s) && DISPLAY_NODE_IDS.has(e.t) && !esContencion(e);
+  // Sin motivo escrito no se dibuja: una línea que no se puede explicar es
+  // "conectar por conectar". Quedaban entradas viejas sin explicación (por
+  // ejemplo el Fucha con el humedal El Burro, que además no comparten cuenca).
+  const explicada = !!(e.analisis && String(e.analisis).trim()) || !!(e.cita && String(e.cita).trim());
+  return DISPLAY_NODE_IDS.has(e.s) && DISPLAY_NODE_IDS.has(e.t) && !esContencion(e) && explicada;
 }
 
 function computeDegrees(excluir) {
@@ -2212,7 +2239,7 @@ function irAZoomDe(ids, ms) {
   if (!nodos.length) return;
   const x0 = Math.min(...nodos.map(n => n.x - n.r)), x1 = Math.max(...nodos.map(n => n.x + n.r));
   const y0 = Math.min(...nodos.map(n => n.y - n.r)), y1 = Math.max(...nodos.map(n => n.y + n.r));
-  const margen = 140;
+  const margen = 70;   // el encuadre se ceñía demasiado poco al grupo
   const escala = Math.max(0.5, Math.min(6,
     Math.min(VISTA.w / (x1 - x0 + margen * 2), VISTA.h / (y1 - y0 + margen * 2))));
   const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
@@ -2468,11 +2495,11 @@ function hideEdgeInfo() {
   document.querySelectorAll(".matrix-row[data-edge]").forEach(row => row.classList.remove("row-highlight"));
 }
 
+function escapeTexto(t) {
+  return String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
 function showNodeInfo(id) {
-  if (id === "humedales") {
-    showHumedalesOverlay();
-    return;
-  }
   const node = nodeById(id);
   if (!node) return;
   document.querySelectorAll(".ods-node").forEach(el => el.classList.remove("node-selected"));
@@ -2498,14 +2525,46 @@ function showNodeInfo(id) {
     toggleBtn.onclick = () => toggleNodoApagado(id);
   }
 
-  // artículo/página/cita: se toman de la primera arista de este nodo que tenga la mejor evidencia disponible
-  const relEdges = RAW_EDGES.filter(e => e.s === id || e.t === id);
-  const bestEdge = relEdges.find(e => e.fuente === "cita_literal") || relEdges[0];
-  document.getElementById("nodeInfoArticulo").textContent = bestEdge ? (bestEdge.articulo || "—") + (bestEdge.pagina ? ` · p. ${bestEdge.pagina}` : "") : "—";
-  document.getElementById("nodeInfoQuote").textContent = bestEdge && bestEdge.cita ? bestEdge.cita : "(Sin cita literal verificada para este componente — ver relaciones asociadas en la tabla.)";
+  /* Relaciones del elemento. Antes la ficha tomaba UNA arista cualquiera y
+     mostraba su cita, su artículo y su análisis como si fueran del nodo: para
+     el HUMEDAL EL BURRO decía "cruce espacial: el corredor vial atraviesa
+     este cuerpo de agua", que es el motivo de una de sus relaciones, no lo que
+     el POT dice del humedal. Ahora la cita solo se muestra si el POT habla del
+     elemento en sí, y cada relación se lista aparte con su propio motivo. */
+  const relEdges = RAW_EDGES.filter(e => (e.s === id || e.t === id) && relacionVisible(e));
+  const citaPropia = relEdges.find(e => e.fuente === "cita_literal" && e.cita &&
+    (String(e.cita).toLowerCase().includes(String(node.name).split("\n")[0].toLowerCase().slice(0, 9))));
+  document.getElementById("nodeInfoArticulo").textContent = citaPropia
+    ? (citaPropia.articulo || "Documento del POT") + (citaPropia.pagina ? ` · p. ${citaPropia.pagina}` : "")
+    : "El POT lo nombra, pero sin un artículo localizado para el elemento en sí.";
+  document.getElementById("nodeInfoQuote").textContent = citaPropia ? citaPropia.cita
+    : "El respaldo documental de este elemento está en cada una de sus relaciones, abajo.";
   document.getElementById("nodeInfoNota").textContent = node.suplementario
-    ? "Nodo suplementario: no forma parte de la Matriz completa (Excel) del equipo, pero se incluye por su valor narrativo para el hallazgo 'general vs. particular'."
-    : (bestEdge ? bestEdge.analisis || "" : "");
+    ? "Nodo suplementario: no forma parte de la Matriz completa (Excel) del equipo, pero se incluye por su valor narrativo."
+    : "";
+
+  const cont = document.getElementById("nodeInfoRelaciones");
+  if (cont) {
+    const vivas = relEdges.filter(e => e.tipo !== "vacio" && !nodosApagados.has(e.s) && !nodosApagados.has(e.t));
+    const fila = (e) => {
+      const otroId = e.s === id ? e.t : e.s;
+      const otro = nodeById(otroId);
+      if (!otro) return "";
+      const donde = e.articulo || (e.pagina && e.pagina !== "—" ? "p. " + e.pagina : null);
+      const i = RAW_EDGES.indexOf(e);
+      return `<button type="button" class="node-rel-fila" data-arista="${i}">
+        <span class="node-rel-nombre"><i class="node-rel-punto" style="background:${otro.color}"></i>${otro.name.replace(/\n/g, " ")}</span>
+        <span class="node-rel-motivo">${escapeTexto(e.analisis || "")}</span>
+        <span class="node-rel-donde">${e.fuente === "cita_literal" ? "Frase del POT" : "Sin frase del POT"}${donde ? " · " + donde : ""}</span>
+      </button>`;
+    };
+    cont.innerHTML = vivas.length
+      ? `<p class="node-rel-titulo">Por qué se conecta (${vivas.length} ${vivas.length === 1 ? "relación" : "relaciones"})</p>` + vivas.map(fila).join("")
+      : `<p class="node-rel-titulo">Sin relaciones vigentes en este momento.</p>`;
+    cont.querySelectorAll(".node-rel-fila").forEach((btn) => {
+      btn.addEventListener("click", (ev) => { ev.stopPropagation(); showEdgeInfo(Number(btn.dataset.arista)); });
+    });
+  }
 
   document.getElementById("nodeInfoMapaWrap").style.display = "none";
 
