@@ -3574,8 +3574,13 @@ function verHallazgosConAnimacion() {
   }, 950);
 }
 
-/* -------- visibilidad / leyenda -------- */
-const typeOff = new Set(), nodeOff = new Set(), catOff = new Set();
+/* -------- visibilidad / leyenda --------
+   Las relaciones "indirecta" (por cruce o intersección espacial, la
+   evidencia más débil) arrancan apagadas: con las 132 relaciones visibles
+   encendidas de una vez la red se veía como una maraña de líneas. Así entra
+   solo con las 83 "directa" (respaldo explícito del POT) y el botón de la
+   leyenda sigue encendiéndolas si se quieren ver. */
+const typeOff = new Set(["indirecta"]), nodeOff = new Set(), catOff = new Set();
 function refreshEdgeVisibility() {
   document.querySelectorAll(".edge-group").forEach(group => {
     const type = group.dataset.type, cat = group.dataset.cat, s = group.dataset.source, t = group.dataset.target;
@@ -4625,6 +4630,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   window.addEventListener("resize", ajustarEncuadreRed);
   setupLegendToggle();
+  refreshEdgeVisibility();   // aplica el typeOff inicial (indirecta apagada) a las líneas recién dibujadas
   renderMetrics();
   renderMatrix();
   setupZoomPan();
