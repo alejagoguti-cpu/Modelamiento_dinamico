@@ -2049,63 +2049,71 @@
       }
 
       const players = {
-        // 1. Dinámica hídrica: flujo de agua y gotas cristalinas de lluvia
+        // 1. Dinámica hídrica: flujo de agua y gotas suaves y naturales
         hidrica: (c) => {
           const dur = 2.4;
           playFilteredNoise(c, { duration: dur, filterFreq: 1800, filterType: "bandpass", q: 0.6, gain: 0.14, fadeIn: 0.15, fadeOut: dur, lfoRate: 1.8, lfoDepth: 0.45 });
           playFilteredNoise(c, { duration: dur * 0.8, filterFreq: 3200, filterType: "highpass", q: 0.35, gain: 0.06, fadeIn: 0.1, fadeOut: dur * 0.8 });
-          [0.05, 0.38, 0.75, 1.22, 1.65].forEach((delay, i) => {
-            playTone(c, { freq: 1200 + (i % 3) * 280, to: 800 + (i % 2) * 150, duration: 0.09, type: "sine", gain: 0.12, delay, attack: 0.008 });
+          // Gotas: ráfagas cortas de ruido filtrado (no tonos puros/"beeps"),
+          // suenan como una gota real, no como una nota musical.
+          [0.05, 0.38, 0.75, 1.22, 1.65].forEach((delay) => {
+            const src = c.createBufferSource();
+            src.buffer = noiseBuffer(c, 0.09);
+            const filt = c.createBiquadFilter();
+            filt.type = "bandpass"; filt.frequency.value = 1500 + Math.random() * 900; filt.Q.value = 4;
+            const g = c.createGain();
+            g.gain.setValueAtTime(0.0001, c.currentTime + delay);
+            g.gain.linearRampToValueAtTime(0.11, c.currentTime + delay + 0.006);
+            g.gain.exponentialRampToValueAtTime(0.0001, c.currentTime + delay + 0.09);
+            src.connect(filt); filt.connect(g); g.connect(masterGain);
+            src.start(c.currentTime + delay); src.stop(c.currentTime + delay + 0.1);
           });
         },
 
-        // 2. Dinámica biótica: trinos de aves del humedal y brisa natural
+        // 2. Dinámica biótica: trinos de un pajarito, suaves y naturales
         biotica: (c) => {
           const chirp = (delay, baseFreq, count) => {
             let t = delay;
             for (let i = 0; i < count; i++) {
               const f = baseFreq + (i % 2 ? 240 : -120);
               const dur = 0.075;
-              playTone(c, { freq: f, to: f * 0.85, duration: dur, type: "triangle", gain: 0.16, delay: t, attack: 0.01 });
+              playTone(c, { freq: f, to: f * 0.85, duration: dur, type: "triangle", gain: 0.1, delay: t, attack: 0.012 });
               t += dur + 0.05;
             }
           };
           chirp(0.05, 2600, 3);
           chirp(0.48, 3100, 2);
           chirp(0.88, 2400, 4);
-          playFilteredNoise(c, { duration: 1.8, filterFreq: 2400, filterType: "bandpass", q: 0.7, gain: 0.05, fadeIn: 0.2, fadeOut: 1.8 });
+          playFilteredNoise(c, { duration: 1.8, filterFreq: 2400, filterType: "bandpass", q: 0.7, gain: 0.035, fadeIn: 0.2, fadeOut: 1.8 });
         },
 
-        // 3. Sistema físico-urbano: resonancia arquitectónica y campana urbana
+        // 3. Sistema físico-urbano: ambiente urbano suave (zumbido lejano de
+        // ciudad, no campanas ni tonos musicales) — como estar cerca de
+        // edificios y vías, sin que canse el oído.
         fisico: (c) => {
-          playTone(c, { freq: 110, duration: 1.4, type: "sine", gain: 0.18, attack: 0.08 });
-          playTone(c, { freq: 220, duration: 0.9, type: "triangle", gain: 0.12, delay: 0.04, attack: 0.04 });
-          playTone(c, { freq: 554, duration: 0.6, type: "sine", gain: 0.09, delay: 0.08, attack: 0.02 });
-          playFilteredNoise(c, { duration: 1.5, filterFreq: 400, filterType: "lowpass", gain: 0.12, fadeIn: 0.2, fadeOut: 1.5 });
+          playFilteredNoise(c, { duration: 1.8, filterFreq: 320, filterType: "lowpass", q: 0.5, gain: 0.09, fadeIn: 0.3, fadeOut: 1.8 });
+          playFilteredNoise(c, { duration: 1.4, filterFreq: 900, filterType: "bandpass", q: 0.4, gain: 0.035, fadeIn: 0.25, fadeOut: 1.4, lfoRate: 0.6, lfoDepth: 0.3 });
         },
 
-        // 4. Sistema de movilidad: aceleración y tono armónico de tránsito
+        // 4. Sistema de movilidad: tránsito suave pasando (ruido de calle,
+        // no un tono armónico) — un carro/bus pasando de lejos.
         movilidad: (c) => {
-          playTone(c, { freq: 140, to: 320, duration: 0.85, type: "triangle", gain: 0.16, attack: 0.06 });
-          playTone(c, { freq: 587, duration: 0.45, type: "sine", gain: 0.14, delay: 0.15, attack: 0.02 });
-          playTone(c, { freq: 880, duration: 0.55, type: "sine", gain: 0.12, delay: 0.35, attack: 0.02 });
-          playFilteredNoise(c, { duration: 1.0, filterFreq: 850, filterType: "bandpass", q: 0.6, gain: 0.08, fadeIn: 0.15, fadeOut: 1.0 });
+          playFilteredNoise(c, { duration: 1.3, filterFreq: 500, filterType: "bandpass", q: 0.5, gain: 0.11, fadeIn: 0.35, fadeOut: 0.9, lfoRate: 0.3, lfoDepth: 0.2 });
+          playFilteredNoise(c, { duration: 1.0, filterFreq: 1400, filterType: "highpass", q: 0.3, gain: 0.03, fadeIn: 0.3, fadeOut: 0.7 });
         },
 
-        // 5. Sistema social-comunitario: acorde armónico mayor brillante (comunidad)
+        // 5. Sistema social-comunitario: murmullo suave de gente/actividad
+        // (textura, no acorde musical).
         social: (c) => {
-          const notes = [261.6, 329.6, 392.0, 523.2, 659.2]; // Acorde C mayor 9na
-          notes.forEach((freq, i) => {
-            playTone(c, { freq, duration: 1.2, type: "sine", gain: 0.14, delay: i * 0.07, attack: 0.03 });
-          });
+          playFilteredNoise(c, { duration: 1.9, filterFreq: 750, filterType: "bandpass", q: 0.45, gain: 0.06, fadeIn: 0.3, fadeOut: 1.9, lfoRate: 2.6, lfoDepth: 0.5 });
+          playFilteredNoise(c, { duration: 1.5, filterFreq: 1800, filterType: "bandpass", q: 0.4, gain: 0.025, fadeIn: 0.25, fadeOut: 1.5, lfoRate: 3.4, lfoDepth: 0.4 });
         },
 
-        // 6. Sistema socioeconómico: campanada marimba de intercambio comercial
+        // 6. Sistema socioeconómico: ambiente suave de actividad comercial
+        // (textura de calle/mercado, no campanadas de marimba).
         socioeconomico: (c) => {
-          const notes = [440, 554, 659, 880];
-          notes.forEach((freq, i) => {
-            playTone(c, { freq, duration: 0.8, type: "sine", gain: 0.15, delay: i * 0.08, attack: 0.01 });
-          });
+          playFilteredNoise(c, { duration: 1.6, filterFreq: 650, filterType: "bandpass", q: 0.5, gain: 0.07, fadeIn: 0.3, fadeOut: 1.6, lfoRate: 1.4, lfoDepth: 0.35 });
+          playFilteredNoise(c, { duration: 1.2, filterFreq: 2200, filterType: "highpass", q: 0.3, gain: 0.02, fadeIn: 0.25, fadeOut: 1.2 });
         },
 
         // 7. Expansión completa (cuando se presiona "Ver red completa")
