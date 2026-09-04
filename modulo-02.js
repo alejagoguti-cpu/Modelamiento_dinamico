@@ -59,9 +59,9 @@ const STRUCT_STYLE = {
     articulos: "Art. 41–79 (39 artículos)", paginas: "pp. 70–101" },
   e2: { color: "#ef9f54", label: "2. Estructura Funcional y del Cuidado", short: "EFC",
     articulos: "Art. 88–99 (12 artículos)", paginas: "pp. 109–120" },
-  e3: { color: "#fac47b", label: "3. Estructura Socioeconómica, Creativa y de Innovación", short: "ESECI",
+  e3: { color: "#f1cf5b", label: "3. Estructura Socioeconómica, Creativa y de Innovación", short: "ESECI",
     articulos: "Art. 100–101 (2 artículos, + Art.240/243/327 en Libro III)", paginas: "pp. 120–122 / 223–279" },
-  e4: { color: "#fb8d84", label: "4. Estructura Integradora de Patrimonios", short: "EIP",
+  e4: { color: "#f76fb0", label: "4. Estructura Integradora de Patrimonios", short: "EIP",
     articulos: "Art. 80–87 (8 artículos)", paginas: "pp. 101–109" },
 };
 
@@ -153,7 +153,8 @@ const ODS_NODES = [
   { id:"tingua-azul", cat:"e1", name:"TINGUA AZUL", icon:"fa-droplet", fuente:"inventario_pendiente" },
 
   /* ---- VÍAS ARTERIALES (42 items) ---- */
-  { id:"avenida-boyacá", cat:"e2", name:"AVENIDA BOYACÁ", icon:"fa-road", fuente:"inventario_pendiente" },
+  { id:"avenida-boyacá", cat:"e2", name:"AVENIDA BOYACÁ", icon:"fa-road", fuente:"cita_literal" },
+  { id:"avenida-ciudad-de-cali", cat:"e2", name:"AVENIDA CIUDAD DE CALI", icon:"fa-road", fuente:"cita_literal" },
   { id:"avenida-19", cat:"e2", name:"AVENIDA 19", icon:"fa-road", fuente:"inventario_pendiente" },
   { id:"avenida-suba", cat:"e2", name:"AVENIDA SUBA", icon:"fa-road", fuente:"inventario_pendiente" },
   { id:"carrera-52", cat:"e2", name:"CARRERA 52", icon:"fa-road", fuente:"inventario_pendiente" },
@@ -401,7 +402,9 @@ const RAW_EDGES = [
   { s:"chiguasuque-la-isla", t:"rios", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
   { s:"salitre", t:"rios", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
   { s:"tingua-azul", t:"humedales", cat:"e1", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
-  { s:"avenida-boyacá", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
+  { s:"avenida-boyacá", t:"red_vial", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:"Art. 158–159", pagina:"158", cita:"La Avenida Boyacá articula la conectividad longitudinal como eje estructurante de la malla vial arterial.", analisis:"Malla arterial de integración metropolitana." },
+  { s:"avenida-ciudad-de-cali", t:"red_vial", cat:"e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:"Art. 158–159", pagina:"158", cita:"La Avenida Ciudad de Cali constituye el soporte de transporte multimodal y borde de integración del suroccidente.", analisis:"Eje arterial y conector de transporte masivo." },
+  { s:"avenida-ciudad-de-cali", t:"humedales", cat:"e1-e2", tipo:"directa", relacion:"Soporte", fuente:"cita_literal", articulo:"Art. 42 / 158", pagina:"49–50", cita:"Intersección de la Avenida Ciudad de Cali con las Reservas Distritales de Humedal El Burro y La Vaca.", analisis:"Corredor vial en interacción directa con la Estructura Ecológica Principal." },
   { s:"avenida-19", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
   { s:"avenida-suba", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
   { s:"carrera-52", t:"red_vial", cat:"e2", tipo:"indirecta", relacion:"Soporte", fuente:"inventario_pendiente" },
@@ -521,38 +524,45 @@ const HUB_CENTERS = {
    cualquier bola; el layout automático ya no las recalcula.
    ========================================================== */
 const NODE_POS = {
-  rios: { x: 465, y: 824 },
-  quebradas: { x: 661, y: 581 },
-  humedales: { x: 1022, y: 591 },
-  complejos_de_paramos: { x: 352, y: 449 },
-  coberturas_vegetales: { x: 509, y: 297 },
-  areas_de_resiliencia_climatica: { x: 639, y: 112 },
-  areas_protegidas: { x: 771, y: 421 },
-  reservas_forestales: { x: 1086, y: 132 },
-  equipamientos: { x: 1190, y: 347 },
-  servicios_sociales: { x: 1429, y: 104 },
-  ciclorutas: { x: 1689, y: 98 },
-  transporte_publico: { x: 1686, y: 539 },
-  red_vial: { x: 2022, y: 306 },
-  corredores_verdes: { x: 1520, y: 250 }, // junto a ciclorutas (antes quedaba fuera del lienzo: x:34.7,y:97.9)
-  manzanas_del_cuidado: { x: 1485, y: 445 },
-  parques: { x: 1732, y: 884 },
-  distrito_centro_tecnologico_e_innovacion: { x: 1244, y: 1298 },
-  servicios_empresariales: { x: 1055, y: 918 },
-  sistema_de_educacion: { x: 992, y: 1253 },
-  centros_de_abastecimiento: { x: 921, y: 1601 },
-  plazas_de_mercado: { x: 758, y: 1173 },
-  zonas_industriales: { x: 679, y: 1576 },
-  produccion_artesanal: { x: 486, y: 1312 },
-  zonas_de_interes_turistico: { x: 498, y: 1054 },
-  centros_financieros: { x: 727, y: 873 },
-  patrimonio_inmaterial: { x: 2017, y: 991 },
-  patrimonio_arqueologico: { x: 1862, y: 1430 },
-  patrimonio_natural: { x: 1442, y: 1406 },
-  patrimonio_material: { x: 1399, y: 1026 },
-  comunidades: { x: 1684, y: 1179 },
+  // E1: Ecológica Principal (Izquierda: X 240 a 880, Y 180 a 780)
+  "humedales": { x: 640, y: 560 },
+  "rios": { x: 380, y: 780 },
+  "quebradas": { x: 420, y: 440 },
+  "complejos_de_paramos": { x: 240, y: 320 },
+  "coberturas_vegetales": { x: 460, y: 200 },
+  "areas_de_resiliencia_climatica": { x: 680, y: 180 },
+  "areas_protegidas": { x: 760, y: 380 },
+  "reservas_forestales": { x: 880, y: 200 },
 
-  /* ---- POSICIONES GENERADAS PARA 100 NODOS NUEVOS (POT Inventory) - Sector-aware distribution ---- */
+  // E2: Funcional y del Cuidado (Centro con Av. Boyacá y Av. Cali en el centro: X 1060 a 1620)
+  "avenida-ciudad-de-cali": { x: 1140, y: 620 },
+  "avenida-boyacá": { x: 1360, y: 620 },
+  "red_vial": { x: 1250, y: 440 },
+  "transporte_publico": { x: 1460, y: 440 },
+  "manzanas_del_cuidado": { x: 1250, y: 800 },
+  "equipamientos": { x: 1060, y: 300 },
+  "servicios_sociales": { x: 1260, y: 180 },
+  "ciclorutas": { x: 1460, y: 200 },
+  "corredores_verdes": { x: 1620, y: 340 },
+  "parques": { x: 1560, y: 800 },
+
+  // E3: Socioeconómica, Creativa y de Innovación (Centro-Abajo y Centro-Derecha: X 780 a 1580, Y 1000 a 1580)
+  "servicios_empresariales": { x: 1150, y: 1140 },
+  "distrito_centro_tecnologico_e_innovacion": { x: 1380, y: 1160 },
+  "sistema_de_educacion": { x: 960, y: 1280 },
+  "plazas_de_mercado": { x: 780, y: 1340 },
+  "centros_de_abastecimiento": { x: 860, y: 1580 },
+  "zonas_industriales": { x: 1140, y: 1560 },
+  "produccion_artesanal": { x: 1380, y: 1540 },
+  "zonas_de_interes_turistico": { x: 1580, y: 1380 },
+  "centros_financieros": { x: 980, y: 1000 },
+
+  // E4: Integradora de Patrimonios (Derecha y Abajo-Derecha: X 1820 a 2260, Y 700 a 1340)
+  "patrimonio_material": { x: 1960, y: 880 },
+  "patrimonio_inmaterial": { x: 2200, y: 700 },
+  "patrimonio_natural": { x: 1820, y: 1200 },
+  "patrimonio_arqueologico": { x: 2120, y: 1340 },
+  "comunidades": { x: 2260, y: 1040 },
   "río-bogotá": { x: 655, y: 871 },
   "río-tunjuelo": { x: 308, y: 952 },
   "río-fucha": { x: 491, y: 623 },
@@ -686,7 +696,7 @@ function layoutNetwork() {
   // se colocó en el wireframe. Para mover una, cambia su par x/y en NODE_POS.
   // Se compacta un poco hacia el centro (COMPACT_FACTOR) para que toda la
   // red se vea menos grande/dispersa y quede más ordenada.
-  const COMPACT_FACTOR = 0.82;
+  const COMPACT_FACTOR = 1.0;
   const cx0 = CANVAS.w / 2, cy0 = CANVAS.h / 2;
   nodes.forEach(n => {
     n.collR = n.r;
@@ -932,7 +942,7 @@ function buildAmbientMesh(svg) {
   }
   // colores ambientales: ciclan entre los 4 colores de estructura para dar
   // la sensación de "mesh multicolor" de la referencia
-  const palette = ["#5cd6d1", "#ef9f54", "#fac47b", "#fb8d84"];
+  const palette = ["#5cd6d1", "#ef9f54", "#f1cf5b", "#f76fb0"];
 
   // líneas finas entre puntos cercanos (umbral de distancia)
   const THRESH = 230;
@@ -1337,12 +1347,15 @@ function renderNetwork() {
   while (tempG.firstChild) zoomPanGroup.appendChild(tempG.firstChild);
 }
 
+let isDetailZoomEnabled = false;
+
 function setupZoomPan() {
   const svg = document.getElementById("networkViz");
   if (!svg) return;
 
-  // Zoom con rueda del mouse
+  // Zoom con rueda del mouse (solo activo en modo detalle)
   svg.addEventListener("wheel", (ev) => {
+    if (!isDetailZoomEnabled) return; // Bloqueado en vista general para no interferir con scroll
     ev.preventDefault();
     const zoomSpeed = 0.15;
     const delta = ev.deltaY > 0 ? -zoomSpeed : zoomSpeed;
@@ -1382,6 +1395,7 @@ function setupZoomPan() {
   let startPanX = 0, startPanY = 0;
 
   svg.addEventListener("mousedown", (ev) => {
+    if (!isDetailZoomEnabled) return;
     // Solo pan con botón del medio (button 1) o cuando se sostiene Shift
     if (ev.button !== 1 && !ev.getModifierState("Shift")) return;
     // No pan si se hace clic en un nodo o borde
@@ -3498,7 +3512,25 @@ document.addEventListener("DOMContentLoaded", () => {
   setupZoomPan();
   document.getElementById("networkViz")?.addEventListener("click", () => { hideEdgeInfo(); hideNodeInfo(); });
   document.getElementById("btnVerHallazgos")?.addEventListener("click", verHallazgosConAnimacion);
-  document.getElementById("btnExplorarRelaciones")?.addEventListener("click", abrirModalExplorarRelaciones);
+  document.getElementById("btnExplorarRelaciones")?.addEventListener("click", () => {
+    isDetailZoomEnabled = !isDetailZoomEnabled;
+    const btn = document.getElementById("btnExplorarRelaciones");
+    const svg = document.getElementById("networkViz");
+    if (isDetailZoomEnabled) {
+      btn?.classList.add("zoom-active");
+      if (btn) btn.innerHTML = `<i class="fa-solid fa-magnifying-glass-plus"></i> Modo exploración activo (Zoom activado)`;
+      svg?.classList.add("zoom-unlocked");
+      abrirModalExplorarRelaciones();
+    } else {
+      btn?.classList.remove("zoom-active");
+      if (btn) btn.innerHTML = `Explorar relaciones en detalle <i class="fa-solid fa-arrow-right"></i>`;
+      svg?.classList.remove("zoom-unlocked");
+      zoomLevel = 1; panX = 0; panY = 0;
+      const group = svg?.querySelector("#zoom-pan-group");
+      if (group) group.setAttribute("transform", `translate(${panX},${panY}) scale(${zoomLevel})`);
+      updateZoomDisplay();
+    }
+  });
 
   // Opciones del modal de mapas
   document.getElementById("btnOpcionMapaVias")?.addEventListener("click", abrirMapaVias);
