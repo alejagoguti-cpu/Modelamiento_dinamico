@@ -25,7 +25,7 @@ body::-webkit-scrollbar-thumb:hover { background: #46d6d0; }
 
 .app { height: auto; min-height: 100vh; overflow: visible; }
 .app > .main { height: auto; min-height: 100vh; overflow: visible; }
-.app > .main > .welcome { border-top: 0; }
+.app > .main > .welcome { border-top: 0; margin-bottom: 14px; }
 .app > .main > .welcome h2 { max-width: 920px; margin-bottom: 10px; }
 
 /* ---------- Bloques del módulo ---------- */
@@ -41,17 +41,17 @@ body::-webkit-scrollbar-thumb:hover { background: #46d6d0; }
 }
 
 /* ---------- Simulador embebido (red de macromodelos) ---------- */
-.m04-sim { padding: 0; overflow: hidden; }
+.m04-sim { padding: 0; overflow: hidden; margin-top: -6px; }
 .m04-sim-frame {
   display: block;
   width: 100%;
-  height: 94vh;
-  min-height: 860px;
+  height: 76vh;
+  min-height: 660px;
   border: 0;
   background: #07090a;
 }
 @media (max-width: 900px) {
-  .m04-sim-frame { height: auto; min-height: 900px; }
+  .m04-sim-frame { height: auto; min-height: 780px; }
 }
 
 /* ---------- Capa complementaria de lectura ---------- */

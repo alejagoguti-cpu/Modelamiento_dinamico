@@ -822,6 +822,14 @@ if (typeof module !== &quot;undefined&quot;) { module.exports = { NODES, LINKS }
   window.__playIntro = playIntro;
 
   function ticked(){
+    // Sin esto, la fuerza del enjambre puede empujar nodos fuera del
+    // recuadro visible (sobre todo hacia abajo): se ven "caer" fuera de la
+    // red. Se mantienen dentro del viewBox dejando un margen de su radio.
+    NODES.forEach(n=&gt;{
+      const r=nodeRadius(n)+6;
+      n.x=Math.max(r,Math.min(W-r,n.x));
+      n.y=Math.max(r,Math.min(H-r,n.y));
+    });
     linkSel.attr(&quot;x1&quot;,d=&gt;d.source.x).attr(&quot;y1&quot;,d=&gt;d.source.y)
            .attr(&quot;x2&quot;,d=&gt;d.target.x).attr(&quot;y2&quot;,d=&gt;d.target.y);
     nodeSel.attr(&quot;transform&quot;,d=&gt;`translate(${d.x},${d.y})`);
