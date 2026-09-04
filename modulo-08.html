@@ -58,7 +58,8 @@
     <!-- SIMULACIÓN DE MOVILIDAD (SUMO) -->
     <div class="sumo-sim-section">
       <div class="sumo-sim-heading">
-        <h3><i class="fa-solid fa-volume-high"></i> Simulación de contaminación auditiva y su efecto en el desplazamiento de las mirlas</h3>
+        <h3><i class="fa-solid fa-car-side"></i> Simulación de movilidad (SUMO)</h3>
+        <p>Simulación de contaminación auditiva y su efecto en el desplazamiento de la fauna</p>
       </div>
       <div class="sumo-sim-card">
         <div class="sumo-canvas-wrap" id="sumoCanvasWrap">
@@ -68,10 +69,16 @@
           <div class="sumo-sim-overlay" id="sumoStatus">Cargando red vial…</div>
           <div class="sumo-agents-card">
             <strong><i class="fa-solid fa-users-gear"></i> Agentes</strong>
-            <ul>
-              <li><b>Vehículos:</b> Generan flujo de tráfico, congestión y emisión de ruido al desplazarse por la red.</li>
-              <li><b>Mirlas (<i>Turdus fuscater</i>):</b> Generan rutas de desplazamiento y escape, decidiendo por dónde moverse según la resistencia del paisaje y los niveles de ruido.</li>
-            </ul>
+            <div class="sumo-agents-grid">
+              <div class="sumo-agent-col">
+                <div class="sumo-agent-col-title"><i class="fa-solid fa-car"></i> Vehículos</div>
+                <p>Generan flujo de tráfico, congestión y emisión de ruido al desplazarse por la red.</p>
+              </div>
+              <div class="sumo-agent-col">
+                <div class="sumo-agent-col-title"><i class="fa-solid fa-dove"></i> Mirlas <em>(Turdus fuscater)</em></div>
+                <p>Generan rutas de desplazamiento y escape, decidiendo por dónde moverse según la resistencia del paisaje y los niveles de ruido.</p>
+              </div>
+            </div>
           </div>
         </div>
 

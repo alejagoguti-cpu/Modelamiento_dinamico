@@ -2767,7 +2767,23 @@ const renderTerritoryNetwork = () => {
       { id: "s_memoria", corto: "Memoria\ndel lugar", name: "Memoria y relato\ndel humedal", icon: "fa-book-journal-whills", systemId: "social", color: "#ee9a4b", x: 88, y: 88, soloRedCompleta: true, desc: "Lo que los vecinos recuerdan y cuentan del humedal sostiene su defensa.", connects: ["s_org_amb", "s_pedagogia", "se_biblioteca", "s_vecinos"] },
       { id: "s_seguridad", corto: "Sentirse\nseguro", name: "Percepción de\nseguridad", icon: "fa-shield-halved", systemId: "social", color: "#ee9a4b", x: 56, y: 88, soloRedCompleta: true, desc: "Sentirse o no seguro decide quién usa el borde del humedal y a qué horas.", connects: ["s_vecinos", "f_andenes", "m_peatonal", "s_conflictos"] },
       { id: "se_informal", corto: "Economía\npopular", name: "Economía popular\ny rebusque", icon: "fa-store", systemId: "socioeconomico", color: "#e58d62", x: 6, y: 83, soloRedCompleta: true, desc: "Ventas ambulantes y oficios de calle que dependen del flujo de gente, no de un local.", connects: ["se_comercio", "s_vecinos", "m_informal", "se_equipamientos"] },
-      { id: "se_alquiler", corto: "Arriendo\ny salida", name: "Arriendo y\ndesplazamiento", icon: "fa-file-signature", systemId: "socioeconomico", color: "#e58d62", x: 24, y: 75, soloRedCompleta: true, desc: "La subida del arriendo empuja a los hogares a irse del sector.", connects: ["se_vivienda", "se_suelo", "s_conflictos", "se_informal"] }
+      { id: "se_alquiler", corto: "Arriendo\ny salida", name: "Arriendo y\ndesplazamiento", icon: "fa-file-signature", systemId: "socioeconomico", color: "#e58d62", x: 24, y: 75, soloRedCompleta: true, desc: "La subida del arriendo empuja a los hogares a irse del sector.", connects: ["se_vivienda", "se_suelo", "s_conflictos", "se_informal"] },
+
+      /* --- 3 subsistemas nuevos (9 dinámicas), solo en la red completa —
+         se agregan nodos y sus propias conexiones hacia el resto de la red
+         sin tocar ninguna conexión existente. Colores iguales a los del
+         Módulo 08 para que el mismo subsistema se lea igual en toda la app. --- */
+      { id: "c_jardines", corto: "Jardines\ninfantiles", name: "Jardines\ninfantiles", icon: "fa-child-reaching", systemId: "cuidado", color: "#c6a0e9", x: 6.0, y: 62.0, soloRedCompleta: true, desc: "Primera infancia y cuidado diario en los barrios del entorno del humedal.", connects: ["s_cuidado", "se_vivienda", "c_salud_barrial"] },
+      { id: "c_salud_barrial", corto: "Salud\nbarrial", name: "Puestos de salud\nbarrial", icon: "fa-house-medical", systemId: "cuidado", color: "#c6a0e9", x: 4.0, y: 41.0, soloRedCompleta: true, desc: "Atención primaria de proximidad para las comunidades vecinas.", connects: ["s_vecinos", "se_equipamientos", "c_jardines", "c_espacio_publico"] },
+      { id: "c_espacio_publico", corto: "Plazas\ny andenes", name: "Espacio público\ny plazoletas", icon: "fa-tree-city", systemId: "cuidado", color: "#c6a0e9", x: 13.7, y: 92.5, soloRedCompleta: true, desc: "Andenes, plazoletas y zonas de encuentro que sostienen la vida cotidiana.", connects: ["m_peatonal", "f_andenes", "c_salud_barrial"] },
+
+      { id: "p_memoria_local", corto: "Memoria\ndel barrio", name: "Memoria\ndel barrio", icon: "fa-clock-rotate-left", systemId: "patrimonio", color: "#f07bb1", x: 4.0, y: 10.0, soloRedCompleta: true, desc: "Relatos y archivos comunitarios sobre la transformación del territorio.", connects: ["s_org_amb", "s_pedagogia", "p_tradiciones"] },
+      { id: "p_patrimonio_construido", corto: "Patrimonio\nconstruido", name: "Patrimonio\nconstruido", icon: "fa-landmark", systemId: "patrimonio", color: "#f07bb1", x: 96.0, y: 10.0, soloRedCompleta: true, desc: "Edificaciones y trazados con valor histórico o simbólico para la comunidad.", connects: ["f_edificios", "f_cerramientos", "p_memoria_local"] },
+      { id: "p_tradiciones", corto: "Saberes\nlocales", name: "Tradiciones y\nsaberes locales", icon: "fa-masks-theater", systemId: "patrimonio", color: "#f07bb1", x: 50.0, y: 98.0, soloRedCompleta: true, desc: "Prácticas culturales y saberes ambientales transmitidos entre generaciones.", connects: ["s_pedagogia", "b_flora", "p_patrimonio_construido"] },
+
+      { id: "i_alcaldia_local", corto: "Alcaldía\nlocal", name: "Alcaldía\nlocal", icon: "fa-building-columns", systemId: "institucional", color: "#9d8be8", x: 96.0, y: 62.0, soloRedCompleta: true, desc: "Gestión administrativa y presupuestal del territorio a escala local.", connects: ["s_conflictos", "se_suelo", "i_curaduria"] },
+      { id: "i_curaduria", corto: "Curaduría\ny norma", name: "Curaduría y\nnormativa", icon: "fa-stamp", systemId: "institucional", color: "#9d8be8", x: 98.0, y: 48.0, soloRedCompleta: true, desc: "Licencias y normas urbanísticas que regulan lo que se construye.", connects: ["f_edificios", "se_suelo", "i_alcaldia_local", "i_control_ambiental"] },
+      { id: "i_control_ambiental", corto: "Control\nambiental", name: "Control y vigilancia\nambiental", icon: "fa-clipboard-check", systemId: "institucional", color: "#9d8be8", x: 88.0, y: 97.0, soloRedCompleta: true, desc: "Inspección y seguimiento del cumplimiento de las normas ambientales.", connects: ["h_desborde", "b_refugio", "i_curaduria"] }
     ];
 
         // Mapeo por sistema para las explosiones individuales al hacer clic en cada bolita
@@ -2888,17 +2904,8 @@ const renderTerritoryNetwork = () => {
         </button>
       `;
 
-      // Header pill superior
-      const headerPillHtml = `
-        <div class="full-dynamics-top-bar">
-          <span class="full-dynamics-dot"></span>
-          <strong>RED INTEGRADA DE DINÁMICA URBANA</strong>
-        </div>
-      `;
-
       target.innerHTML = `
         <div class="map-network-stage systems-network is-full-dynamics-active">
-          ${headerPillHtml}
           ${centerToggleHtml}
           <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
             <g class="full-unified-layer">${unifiedLinesHtml}</g>

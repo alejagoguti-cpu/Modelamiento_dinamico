@@ -791,14 +791,24 @@ footer span { color: var(--teal); }
   color: #76fff0; font-family: monospace; font-size: 11px; padding: 8px; resize: vertical;
 }
 .sumo-agents-card {
-  position: absolute; top: 12px; right: 12px; z-index: 15; max-width: 260px;
+  position: absolute; top: 12px; right: 12px; z-index: 15; max-width: 420px;
   padding: 10px 12px; border-radius: 8px; border: 1px solid rgba(255,176,32,.45);
   background: rgba(8,12,10,.94); color: #f2ece3; box-shadow: 0 6px 16px rgba(0,0,0,.4);
 }
 .sumo-agents-card strong { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #ffb020; margin-bottom: 6px; }
-.sumo-agents-card ul { margin: 0; padding-left: 16px; display: flex; flex-direction: column; gap: 6px; }
-.sumo-agents-card li { font-size: 11px; line-height: 1.5; color: rgba(242,236,227,.9); }
-@media (max-width: 720px) { .sumo-agents-card { max-width: calc(100% - 24px); font-size: 10.5px; } }
+.sumo-agents-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+.sumo-agent-col { padding: 0 10px; }
+.sumo-agent-col:first-child { padding-left: 0; border-right: 1px solid rgba(255,176,32,.25); }
+.sumo-agent-col:last-child { padding-right: 0; }
+.sumo-agent-col-title { display: flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 700; color: #ffcf7a; margin-bottom: 4px; }
+.sumo-agent-col-title em { font-weight: 500; font-style: italic; opacity: .85; font-size: 10.5px; }
+.sumo-agent-col p { margin: 0; font-size: 11px; line-height: 1.5; color: rgba(242,236,227,.9); }
+@media (max-width: 720px) {
+  .sumo-agents-card { max-width: calc(100% - 24px); font-size: 10.5px; }
+  .sumo-agents-grid { grid-template-columns: 1fr; gap: 10px; }
+  .sumo-agent-col:first-child { border-right: none; border-bottom: 1px solid rgba(255,176,32,.25); padding-bottom: 8px; }
+  .sumo-agent-col { padding: 0; }
+}
 .sumo-canvas-wrap canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
 .sumo-sim-overlay {
   position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
@@ -843,6 +853,7 @@ footer span { color: var(--teal); }
 .noise-scale-legend {
   padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; background: var(--panel-alt);
   display: flex; flex-direction: column; gap: 8px;
+  margin-top: -8px;
 }
 .noise-scale-legend h4 { margin: 0; font-size: 11.5px; color: var(--text-dim); font-weight: 600; display: flex; align-items: center; gap: 6px; justify-content: space-between; }
 .noise-toggle-label { display: flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 500; cursor: pointer; }
