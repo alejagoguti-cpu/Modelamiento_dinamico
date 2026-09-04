@@ -2788,9 +2788,34 @@ const renderTerritoryNetwork = () => {
       const elementPosMap = {};
       UNIFIED_URBAN_ELEMENTS.forEach((el) => { elementPosMap[el.id] = el; });
 
+      // La red completa se dibuja más abierta que la vista de subsistemas:
+      // son las mismas posiciones, estiradas hasta los bordes del tablero,
+      // para que las bolitas queden separadas y no se vean espichadas.
+      const POS = (function repartoAbierto() {
+        const xs = UNIFIED_URBAN_ELEMENTS.map((e) => e.x);
+        const ys = UNIFIED_URBAN_ELEMENTS.map((e) => e.y);
+        const remapear = (v, min, max, destMin, destMax) =>
+          max - min < 0.001 ? (destMin + destMax) / 2 : destMin + ((v - min) / (max - min)) * (destMax - destMin);
+        const minX = Math.min(...xs), maxX = Math.max(...xs);
+        const minY = Math.min(...ys), maxY = Math.max(...ys);
+        const mapa = {};
+        UNIFIED_URBAN_ELEMENTS.forEach((el) => {
+          mapa[el.id] = {
+            x: remapear(el.x, minX, maxX, 5, 95),
+            y: remapear(el.y, minY, maxY, 5, 95)
+          };
+        });
+        return mapa;
+      })();
+      const posDe = (el) => POS[el.id] || { x: el.x, y: el.y };
+
       // Generar líneas de conexión nítidas, limpias y visibles (SIN PUNTOS EN MOVIMIENTO)
       let unifiedLinesHtml = "";
       const drawnPairs = new Set();
+      // Ritmo de entrada: las bolitas salen de a una (PASO_NODOS) y solo
+      // cuando terminan empiezan a aparecer las relaciones (TURNO_ENLACES).
+      const PASO_NODOS = 42;
+      const TURNO_ENLACES = UNIFIED_URBAN_ELEMENTS.length * PASO_NODOS + 620;
 
       UNIFIED_URBAN_ELEMENTS.forEach((el) => {
         (el.connects || []).forEach((targetId) => {
@@ -2801,14 +2826,15 @@ const renderTerritoryNetwork = () => {
           drawnPairs.add(pairKey);
 
           const cruzada = el.systemId !== targetEl.systemId;
-          // Cada relación se dibuja sola, de a poco, después de que hayan
-          // salido las bolitas: --link-len es su largo (para el trazo
-          // progresivo) y --link-delay su turno.
-          const largo = Math.hypot(targetEl.x - el.x, targetEl.y - el.y);
-          const turno = 900 + drawnPairs.size * 26;
+          // Cada relación aparece sola, una tras otra, después de que hayan
+          // salido todas las bolitas: --link-delay es su turno. La línea es
+          // continua (antes se dibujaba con un trazo progresivo que en
+          // pantalla se veía punteado).
+          const pa = posDe(el), pb = posDe(targetEl);
+          const turno = TURNO_ENLACES + drawnPairs.size * 24;
           unifiedLinesHtml += `
             <g class="full-unified-group" data-source="${el.id}" data-target="${targetId}">
-              <line x1="${el.x.toFixed(2)}" y1="${el.y.toFixed(2)}" x2="${targetEl.x.toFixed(2)}" y2="${targetEl.y.toFixed(2)}" class="full-unified-link${cruzada ? " is-cross" : ""}" style="--link-color:${el.color};--link-len:${largo.toFixed(1)};--link-delay:${turno}ms"/>
+              <line x1="${pa.x.toFixed(2)}" y1="${pa.y.toFixed(2)}" x2="${pb.x.toFixed(2)}" y2="${pb.y.toFixed(2)}" class="full-unified-link${cruzada ? " is-cross" : ""}" style="--link-color:${el.color};--link-delay:${turno}ms"/>
             </g>
           `;
         });
@@ -2826,15 +2852,25 @@ const renderTerritoryNetwork = () => {
       const gradoMax = Math.max(1, ...Object.values(gradoElemento));
       const gradoMin = Math.min(...Object.values(gradoElemento));
 
+      // La red se arma desde sus nodos más fuertes: primero las dinámicas con
+      // más relaciones y después las de los bordes.
+      const ordenAparicion = {};
+      UNIFIED_URBAN_ELEMENTS.slice()
+        .sort((a, b) => (gradoElemento[b.id] - gradoElemento[a.id]) || a.id.localeCompare(b.id))
+        .forEach((el, i) => { ordenAparicion[el.id] = i; });
+
       // Render de las dinámicas de la red completa
-      const nodesHtml = UNIFIED_URBAN_ELEMENTS.map((el, index) => {
+      const nodesHtml = UNIFIED_URBAN_ELEMENTS.map((el) => {
         const formattedName = el.name.replace(/\n/g, "<br>");
         const parentCenter = PARENT_SYSTEM_CENTERS[el.systemId] || { x: 50, y: 48 };
+        const pos = posDe(el);
+        // El tamaño va por número de relaciones, con diferencia visible: la
+        // más suelta queda en 0.80 y la que sostiene la red en 1.32.
         const t = gradoMax > gradoMin ? (gradoElemento[el.id] - gradoMin) / (gradoMax - gradoMin) : 0;
-        const escala = (0.82 + Math.sqrt(t) * 0.55).toFixed(3);
+        const escala = (0.80 + t * 0.52).toFixed(3);
         return `
           <button type="button" class="full-dynamic-node" data-elem-id="${el.id}" data-sys-id="${el.systemId}"
-            style="--node-x:${el.x.toFixed(2)}%;--node-y:${el.y.toFixed(2)}%;--origin-x:${parentCenter.x}%;--origin-y:${parentCenter.y}%;--node-color:${el.color};--node-delay:${index * 12}ms;--node-scale:${escala};"
+            style="--node-x:${pos.x.toFixed(2)}%;--node-y:${pos.y.toFixed(2)}%;--origin-x:${parentCenter.x}%;--origin-y:${parentCenter.y}%;--node-color:${el.color};--node-delay:${ordenAparicion[el.id] * PASO_NODOS}ms;--node-scale:${escala};"
             title="${el.name.replace(/\n/g, ' ')} · ${gradoElemento[el.id]} relaciones">
             <i class="fa-solid ${el.icon} full-node-icon"></i>
             <span class="full-node-label">${formattedName}</span>
@@ -2895,7 +2931,7 @@ const renderTerritoryNetwork = () => {
         const escenario = target.querySelector(".map-network-stage");
         if (!escenario) return;
         const nodos = UNIFIED_URBAN_ELEMENTS.map((el) => ({
-          id: el.id, x: el.x, y: el.y, hx: el.x, hy: el.y, vx: 0, vy: 0,
+          id: el.id, x: posDe(el).x, y: posDe(el).y, hx: posDe(el).x, hy: posDe(el).y, vx: 0, vy: 0,
           dom: target.querySelector(`.full-dynamic-node[data-elem-id="${el.id}"]`)
         }));
         const porId = {}; nodos.forEach((n) => { porId[n.id] = n; });
