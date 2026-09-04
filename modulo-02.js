@@ -520,10 +520,6 @@ const RAW_EDGES = [
     analisis:"Cruce espacial: el corredor vial atraviesa este cuerpo de agua. El POT localiza ambos elementos, pero no describe qué le pasa a uno cuando el otro se interviene." },
   { s:"avenida-ciudad-de-cali", t:"jaboque", cat:"e1-e2", tipo:"directa", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"Cruce espacial: el corredor vial atraviesa este cuerpo de agua. El POT localiza ambos elementos, pero no describe qué le pasa a uno cuando el otro se interviene." },
-  { s:"avenida-ciudad-de-cali", t:"capellaníacofradía", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
-    analisis:"Cruce espacial: el corredor vial atraviesa este cuerpo de agua. El POT localiza ambos elementos, pero no describe qué le pasa a uno cuando el otro se interviene." },
-  { s:"avenida-ciudad-de-cali", t:"burro", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
-    analisis:"Cruce espacial: el corredor vial atraviesa este cuerpo de agua. El POT localiza ambos elementos, pero no describe qué le pasa a uno cuando el otro se interviene." },
   { s:"avenida-ciudad-de-cali", t:"techo", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"Cruce espacial: el corredor vial atraviesa este cuerpo de agua. El POT localiza ambos elementos, pero no describe qué le pasa a uno cuando el otro se interviene." },
   { s:"avenida-ciudad-de-cali", t:"la-vaca", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
@@ -780,8 +776,6 @@ const RAW_EDGES = [
     analisis:"El corredor entra al centro histórico por la carrera Séptima." },
   { s:"corredor-verde-septima", t:"parque-nacional", cat:"e1-e2", tipo:"directa", relacion:"Soporte", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
     analisis:"El trazado pasa junto al Parque Nacional." },
-  { s:"alo-sur", t:"río-tunjuelo", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
-    analisis:"La ALO Sur cruza la cuenca baja del Tunjuelo." },
   { s:"alo-sur", t:"río-bogotá", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"cita_literal", articulo:null, pagina:"38", cita:"También dejamos contratado y en obra la ampliación de la Autopista Norte, la carrera Séptima, la calle 80, la calle 63, la calle 13 y la nueva alo Sur, quedan 231 km adicionales de ciclorrutas, el Corredor Verde de la Séptima, dos cables aéreos: el de San Cristóbal Sur que ya empezó obra para llevar a la gente desde el Portal del 20 de Julio hasta el barrio Altamira, y el cable de Potosí, para ir desde el Portal del Sur, hasta el barrio Potosí.",
     analisis:"La nueva ALO Sur es una de las obras que el POT deja contratadas sobre el borde occidental del río Bogotá." },
   { s:"alo-sur", t:"chiguasuque-la-isla", cat:"e1-e2", tipo:"indirecta", relacion:"Presión", fuente:"inventario_pendiente", articulo:null, pagina:null, cita:null,
@@ -1356,6 +1350,30 @@ RAW_EDGES.forEach(edge => {
   edge.restLength = Math.hypot(t.x - s.x, t.y - s.y);
 });
 
+/* No puede haber una línea recta encima de otra: con el reparto final ya
+   fijo, cualquier relación cuyo trazo recto pase muy cerca de una tercera
+   bola (por ejemplo, dos vecinos casi en línea con ella) queda marcada
+   para dibujarse con una leve curva — así nunca se confunde con las
+   líneas de esa tercera bola, sin tener que tocar los datos cada vez que
+   el reparto cambia. */
+(function marcarLineasQueDebenCurvarse() {
+  const visibles = RAW_EDGES.filter(e => e.tipo !== "vacio" && relacionVisible(e));
+  visibles.forEach(edge => {
+    const a = nodeById(edge.s), c = nodeById(edge.t);
+    if (!a || !c) return;
+    const dx = c.x - a.x, dy = c.y - a.y, L2 = dx * dx + dy * dy;
+    if (!L2) return;
+    const pasaCerca = DISPLAY_NODES.some((b) => {
+      if (b.id === a.id || b.id === c.id) return false;
+      let t = ((b.x - a.x) * dx + (b.y - a.y) * dy) / L2;
+      if (t < 0.12 || t > 0.88) return false;   // solo cuenta si b queda BIEN adentro del tramo, no cerca de una punta
+      const projX = a.x + t * dx, projY = a.y + t * dy;
+      return Math.hypot(projX - b.x, projY - b.y) < b.r * 0.9;
+    });
+    if (pasaCerca) edge._curvar = true;
+  });
+})();
+
 /* ==========================================================
    La red es ESTÁTICA: sin zoom ni pan. El lienzo SVG se ajusta
    siempre por completo al contenedor mediante el viewBox fijo.
@@ -1591,7 +1609,17 @@ function edgePathData(edge, s, t) {
   const startPad = (s.collR || s.r) + 2, endPad = (t.collR || t.r) + 6;
   const x1 = s.x + ux * startPad, y1 = s.y + uy * startPad;
   const x2 = t.x - ux * endPad, y2 = t.y - uy * endPad;
-  return `M${x1},${y1} L${x2},${y2}`;
+  if (!edge._curvar) return `M${x1},${y1} L${x2},${y2}`;
+  // Se separa con una curva suave (no una línea recta) para que nunca se
+  // confunda con las líneas de la bola que queda de paso. El lado hacia el
+  // que se dobla es siempre el mismo para este par (no cambia si se
+  // reconstruye la red), para que la curva no "salte" de un lado a otro.
+  const midX = (x1 + x2) / 2, midY = (y1 + y2) / 2;
+  const nx = -uy, ny = ux;   // perpendicular a la línea
+  const lado = edge.s < edge.t ? 1 : -1;
+  const arco = Math.min(46, Math.max(16, dist * 0.14)) * lado;
+  const ctrlX = midX + nx * arco, ctrlY = midY + ny * arco;
+  return `M${x1},${y1} Q${ctrlX},${ctrlY} ${x2},${y2}`;
 }
 
 function drawEdges(svg) {
