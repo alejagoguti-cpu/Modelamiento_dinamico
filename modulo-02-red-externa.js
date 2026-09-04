@@ -70,7 +70,9 @@
     { nombre: "Carrera 10",                 re: /(carrera|cra\.?|kr\.?)\s*10\b|d[ée]cima/i },
     { nombre: "Carrera 80",                 re: /(carrera|cra\.?|kr\.?)\s*80\b/i },
     { nombre: "Calle 13",                   re: /calle\s*13\b/i },
+    { nombre: "Calle 26",                   re: /calle\s*26\b/i },
     { nombre: "Calle 63",                   re: /calle\s*63\b/i },
+    { nombre: "Calle 72",                   re: /calle\s*72\b/i },
     { nombre: "Calle 80",                   re: /calle\s*80\b/i },
     { nombre: "Calle 43 Sur",               re: /calle\s*43\s*sur/i },
     { nombre: "Avenida Boyacá",             re: /boyac[áa]/i },
@@ -86,30 +88,49 @@
      los LUGARES que nombra uno por uno de los SISTEMAS/PROGRAMAS que nombra
      como tales (y que por tanto cobijan a todos sus elementos). */
   const POT_LUGARES = [
-    /humedal(es)?\s+(de\s+)?(capellan[ií]a|c[óo]rdoba|el\s+burro|techo|torca|tibanica|juan\s+amarillo|jaboque|santa\s+mar[ií]a\s+del\s+lago|la\s+conejera|meandro)/i,
-    /\b(capellan[ií]a|conejera|entrenubes|neuque|media\s+luna\s+del\s+sur)\b/i,
-    /r[ií]o\s+(bogot[áa]|fucha|tunjuelo|tunjuelito|salitre|vicach[áa]|guayuriba|forero)/i,
-    /canal\s+(arzobispo|boyac[áa]|el\s+virrey|independencia|brazo\s+salitre|cortijo)/i,
-    /parque\s+(nacional|sim[óo]n\s+bol[ií]var|entrenubes|cerro\s+seco|la\s+requilina|los\s+soches|quiba|cometas)/i,
-    /reserva\s+.*(thomas|van\s+der\s+hammen|forestal\s+protectora|regional\s+productora)/i,
-    /cerros?\s+orientales|bosque\s+oriental/i,
-    /portal\s+(del\s+sur|20\s+de\s+julio)/i,
+    // humedales y cuerpos de agua que el documento nombra (en la base están
+    // escritos sin la palabra "humedal": TECHO, LA CONEJERA, CÓRDOBA-NIZA…)
+    { q: "Humedal Capellanía",            re: /capellan[íi]a/i },
+    { q: "Humedal Córdoba",               re: /c[óo]rdoba/i },
+    { q: "Humedal El Burro",              re: /\bel\s+burro\b/i },
+    { q: "Humedal Techo",                 re: /\btecho\b/i },
+    { q: "Humedal Torca",                 re: /\btorca\b/i },
+    { q: "Humedal La Conejera",           re: /conejera/i },
+    { q: "Río Bogotá",                    re: /r[íi]o\s+bogot[áa]/i },
+    { q: "Río Fucha",                     re: /\bfucha\b/i },
+    { q: "Río Tunjuelo",                  re: /tunjuel/i },
+    { q: "Río y canal Salitre",           re: /salitre/i },
+    { q: "Canal Arzobispo",               re: /arzobispo/i },
+    { q: "Canal El Virrey",               re: /virrey/i },
+    { q: "Canal Independencia",           re: /independencia/i },
+    { q: "Cerros Orientales",             re: /cerros?\s+orientales/i },
+    { q: "Reserva Thomas van der Hammen", re: /thomas|van\s+der\s+hammen/i },
+    { q: "Parque Entrenubes",             re: /entrenubes/i },
+    { q: "Parque Nacional",               re: /parque\s+nacional/i },
+    { q: "Parque Simón Bolívar",          re: /sim[óo]n\s+bol[íi]var/i },
+    { q: "Parque Ecológico Cerro Seco",   re: /cerro\s+seco/i },
+    { q: "Parques rurales (La Requilina, Los Soches, Quiba)", re: /requilina|soches|quiba/i },
+    { q: "Áreas protegidas y reservas forestales", re: /[áa]reas?\s+protegidas?|reservas?\s+forestal/i },
+    { q: "Complejos de páramos",          re: /p[áa]ramo/i },
   ];
   const POT_SISTEMAS = [
-    { nombre: "Manzanas del Cuidado",  re: /manzana\s*s?\s*del\s*cuidado/i },
-    { nombre: "Corredores verdes",     re: /corredor(es)?\s+verde/i },
-    { nombre: "Ciclorrutas y cicloalamedas", re: /ciclorr?uta|cicloalameda/i },
-    { nombre: "Red Metro",             re: /\bmetro\b|primera\s+l[ií]nea|segunda\s+l[ií]nea|tercera\s+l[ií]nea/i },
-    { nombre: "RegioTram",             re: /regiotram/i },
-    { nombre: "Cables aéreos",         re: /\bcable\b/i },
-    { nombre: "Bosques urbanos",       re: /bosque\s+urbano/i },
+    { q: "Reservas Distritales de Humedal", re: /humedal/i, categoria: "humedales" },
+    { q: "Manzanas del Cuidado",          re: /manzana\s*s?\s*del\s*cuidado/i },
+    { q: "Corredores verdes",             re: /corredor(es)?\s+verde/i },
+    { q: "Ciclorrutas y cicloalamedas",   re: /ciclorr?uta|cicloalameda/i },
+    { q: "Red Metro",                     re: /\bmetro\b|primera\s+l[íi]nea|segunda\s+l[íi]nea|tercera\s+l[íi]nea/i },
+    { q: "RegioTram",                     re: /regiotram/i },
+    { q: "Cables aéreos",                 re: /\bcable/i },
+    { q: "Bosques urbanos",               re: /bosque\s+urbano/i },
+    { q: "Coberturas vegetales",          re: /cobertura[s]?\s+vegetal/i },
   ];
   function razonPot(e) {
     const n = String(e.nombre || "");
     if (ES_VIA(e)) { const v = viaDelPot(n); return v ? "Corredor vial que el POT nombra: " + v : null; }
-    if (POT_LUGARES.some((re) => re.test(n))) return "Lugar nombrado en el POT (Bogotá Reverdece)";
-    const sis = POT_SISTEMAS.find((x) => x.re.test(n));
-    if (sis) return "Parte de un sistema que el POT nombra: " + sis.nombre;
+    const lugar = POT_LUGARES.find((x) => x.re.test(n));
+    if (lugar) return "Lugar que el POT nombra: " + lugar.q;
+    const sis = POT_SISTEMAS.find((x) => (x.categoria ? e.categoria_id === x.categoria : x.re.test(n)));
+    if (sis) return "Parte de un sistema que el POT nombra: " + sis.q;
     return null;
   }
   let soloPot = true;   // se puede alternar con el botón de la barra
@@ -886,7 +907,7 @@
         ady.get(c.destino).push(c.origen);
       });
       const yaHay = new Set(state.conexiones.map((c) => [c.origen, c.destino].sort().join("|")));
-      const MAX_SALTOS = 3;
+      const MAX_SALTOS = 2;   // solo a través de UN elemento retirado
       state.elementos.forEach((origen) => {
         const visto = new Map([[origen.id, 0]]);
         const cola = [origen.id];
