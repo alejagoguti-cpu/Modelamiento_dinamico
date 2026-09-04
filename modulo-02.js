@@ -1195,33 +1195,16 @@ const nodosApagados = new Set();
    tiene). Un nodo apagado se encoge a un tamaño fijo. Es la MISMA fórmula
    que usa la simulación de apagado, para que al encender y apagar los
    tamaños vuelvan exactamente a donde estaban. */
+function radioParaNombre(name) {
+  if (!name) return 32;
+  const longest = name.split('\n').reduce((max, w) => Math.max(max, w.length), 0);
+  return Math.max(34, Math.min(75, 26 + longest * 2.8));
+}
+
 function radioPorGrado(d, apagado) {
   return apagado ? 30 : 30 + d * 5.8;   // la fuerza nodal se ve: cada relación suma tamaño
 }
 
-  // ---- 1. Posiciones fijas definidas por el equipo (lienzo 2500 x 1820) ----
-  // Sustituyen al layout radial automático: cada bola queda exactamente donde
-  // se colocó en el wireframe. Para mover una, cambia su par x/y en NODE_POS.
-  // Se compacta un poco hacia el centro (COMPACT_FACTOR) para que toda la
-  // red se vea menos grande/dispersa y quede más ordenada.
-  const COMPACT_FACTOR = 1.0;
-  const cx0 = CANVAS.w / 2, cy0 = CANVAS.h / 2;
-  nodes.forEach(n => {
-    n.collR = n.r;
-    const p = NODE_POS[n.id];
-    if (p) {
-      n.x = cx0 + (p.x - cx0) * COMPACT_FACTOR;
-      n.y = cy0 + (p.y - cy0) * COMPACT_FACTOR;
-    }
-    else { n.x = cx0; n.y = cy0; }
-    n.isMainHub = (HUB_IDS.indexOf(n.id) !== -1);
-    if (n.isMainHub) n._outwardAngle = Math.atan2(n.y - CANVAS.h / 2, n.x - CANVAS.w / 2) || 0;
-  });
-
-/* Separación entre bolas: ninguna puede tocar a otra. Con resorte, cada
-   una tira de vuelta a su sitio del wireframe; sin resorte, solo se
-   garantiza que no se toquen. Se usa al construir la red y cada vez que
-   la simulación cambia los tamaños. */
 function separarNodos(nodes, conResorte, pasadas) {
   const MIN_GAP = 66, SPRING = 0.05;   // aire mínimo entre dos bolas, siempre
   for (let pass = 0; pass < pasadas; pass++) {
@@ -1256,125 +1239,37 @@ function separarNodos(nodes, conResorte, pasadas) {
 
 function layoutNetwork() {
   const deg = computeDegrees();
-  // Cada bola crece con su grado real: los corredores que cruzan media ciudad
-  // (AVENIDA BOYACÁ, AVENIDA CIUDAD DE CALI) quedan como los elementos más
-  // conectados de la red, y los que casi no se relacionan, pequeños.
+  const allDegs = Object.values(deg);
+  const minDeg = Math.min(...allDegs, 1);
+  const maxDeg = Math.max(...allDegs, 1);
+
   ODS_NODES.forEach(n => {
     n.color = STRUCT_STYLE[n.cat].color;
-    n.vx = 0; n.vy = 0; n.fixed = false; n.isMainHub = false;
+    n.vx = 0; n.vy = 0; n.fixed = false;
     const d = deg[n.id] || 0;
     n.r = Math.max(radioPorGrado(d, false), radioParaNombre(n.name));
     n._deg = d;
-    n._degBase = d; // fuerza nodal original, sin ningún nodo apagado — sirve para comparar ANTES ↔ DESPUÉS
-  });
-
-  const nodes = DISPLAY_NODES;   // solo la red que se dibuja
-
-  /* ---- Reparto parejo, y de varios intentos se queda el más limpio ----
-     El trazado no se deja al azar ni a un parámetro elegido a ojo: se prueban
-     varias semillas de reparto, y de cada una se cuentan los CRUCES DE LÍNEA
-     y las líneas que pasan por encima de un nodo ajeno. Se dibuja la que
-     menos deja. Dentro de cada intento, los elementos que se relacionan se
-     atraen entre sí (por eso terminan cerca los que están conectados) y
-     ninguna bola puede tocar a otra. */
-  const cx0 = CANVAS.w / 2, cy0 = CANVAS.h / 2;
-  const gradoDe = (n) => deg[n.id] || 0;
-  const vecinosDe = new Map(nodes.map((n) => [n.id, []]));
-  RAW_EDGES.forEach((e) => {
-    if (e.tipo === "vacio" || !relacionVisible(e)) return;
-    vecinosDe.get(e.s)?.push(e.t);
-    vecinosDe.get(e.t)?.push(e.s);
-  });
-  const parejas = RAW_EDGES.filter((e) => e.tipo !== "vacio" && relacionVisible(e))
-    .map((e) => [nodeById(e.s), nodeById(e.t)]).filter(([a, b]) => a && b);
-
-  function costeTrazado() {
-    const seCruzan = (a, b, c, d) => {
-      const f = (p1, p2, p3) => (p3.y - p1.y) * (p2.x - p1.x) - (p2.y - p1.y) * (p3.x - p1.x);
-      const d1 = f(c, d, a), d2 = f(c, d, b), e1 = f(a, b, c), e2 = f(a, b, d);
-      return ((d1 > 0 && d2 < 0) || (d1 < 0 && d2 > 0)) && ((e1 > 0 && e2 < 0) || (e1 < 0 && e2 > 0));
-    };
-    let cruces = 0;
-    for (let i = 0; i < parejas.length; i++) {
-      for (let j = i + 1; j < parejas.length; j++) {
-        const [a, b] = parejas[i], [c, d] = parejas[j];
-        if (a === c || a === d || b === c || b === d) continue;
-        if (seCruzan(a, b, c, d)) cruces++;
-      }
+    n._degBase = d;
+    n.collR = n.r;
+    const p = NODE_POS[n.id];
+    if (p) {
+      n.x = p.x;
+      n.y = p.y;
+    } else {
+      n.x = 1250;
+      n.y = 910;
     }
-    let sobreNodos = 0;
-    parejas.forEach(([a, b]) => {
-      const dx = b.x - a.x, dy = b.y - a.y, L2 = dx * dx + dy * dy;
-      if (!L2) return;
-      nodes.forEach((n) => {
-        if (n === a || n === b) return;
-        let t = ((n.x - a.x) * dx + (n.y - a.y) * dy) / L2;
-        t = Math.max(0, Math.min(1, t));
-        if (Math.hypot(a.x + t * dx - n.x, a.y + t * dy - n.y) < n.r * 0.8) sobreNodos++;
-      });
-    });
-    return cruces + sobreNodos * 2;
-  }
-
-  function unIntento(giro, fuerza) {
-    const ordenados = [...nodes].sort((a, b) => gradoDe(b) - gradoDe(a));
-    const rMax = Math.min(CANVAS.w, CANVAS.h) / 2 - 130;
-    ordenados.forEach((n, i) => {
-      const t = (i + 0.5) / ordenados.length;
-      const rad = rMax * Math.sqrt(t);
-      const ang = giro + i * 2.399963;
-      n.collR = n.r;
-      n.x = cx0 + Math.cos(ang) * rad * (CANVAS.w / CANVAS.h);
-      n.y = cy0 + Math.sin(ang) * rad;
-    });
-    const dentro = () => nodes.forEach((n) => {
-      n.x = Math.max(n.collR + 40, Math.min(CANVAS.w - n.collR - 40, n.x));
-      n.y = Math.max(n.collR + 40, Math.min(CANVAS.h - n.collR - 40, n.y));
-    });
-    dentro();
-    separarNodos(nodes, false, 200);
-    for (let pass = 0; pass < 190; pass++) {
-      nodes.forEach((n) => {
-        const vs = vecinosDe.get(n.id) || [];
-        if (!vs.length) return;
-        let vx = 0, vy = 0, cuenta = 0;
-        vs.forEach((id) => { const v = nodeById(id); if (v && DISPLAY_NODE_IDS.has(id)) { vx += v.x; vy += v.y; cuenta++; } });
-        if (!cuenta) return;
-        n.x += (vx / cuenta - n.x) * fuerza;
-        n.y += (vy / cuenta - n.y) * fuerza;
-      });
-      nodes.forEach((n) => {
-        const dx = n.x - cx0, dy = n.y - cy0;
-        const d = Math.hypot(dx, dy) || 1;
-        const objetivo = rMax * 0.72;
-        if (d < objetivo) { const f = (objetivo - d) * 0.004; n.x += (dx / d) * f; n.y += (dy / d) * f; }
-      });
-      dentro();
-      separarNodos(nodes, false, 1);
-    }
-    separarNodos(nodes, false, 300);
-    return costeTrazado();
-  }
-
-  let mejor = null;
-  const GIROS = [0, 0.5, 1.0, 1.6, 2.2, 2.8, 3.4, 4.0];
-  const FUERZAS = [0.13, 0.17, 0.21];
-  GIROS.forEach((giro) => FUERZAS.forEach((fuerza) => {
-    const coste = unIntento(giro, fuerza);
-    if (!mejor || coste < mejor.coste) {
-      mejor = { coste, pos: nodes.map((n) => ({ x: n.x, y: n.y })) };
-    }
-  }));
-  nodes.forEach((n, i) => { n.x = mejor.pos[i].x; n.y = mejor.pos[i].y; });
-  separarNodos(nodes, false, 200);
-  // el "sitio de casa" es la posición final del arranque: así, al volver a
-  // encender un nodo, la red regresa exactamente al dibujo inicial
-  nodes.forEach(n => {
     n.isMainHub = (HUB_IDS.indexOf(n.id) !== -1);
-    n._origX = n.x; n._origY = n.y;
+    if (n.isMainHub) n._outwardAngle = Math.atan2(n.y - CANVAS.h / 2, n.x - CANVAS.w / 2) || 0;
+    n.homeX = n.x;
+    n.homeY = n.y;
+    n._origX = n.x;
+    n._origY = n.y;
   });
 
-  nodes.forEach(n => { n.homeX = n.x; n.homeY = n.y; });
+  // Separación suave sin solapamientos
+  separarNodos(ODS_NODES, false, 200);
+  ODS_NODES.forEach(n => { n.homeX = n.x; n.homeY = n.y; n._origX = n.x; n._origY = n.y; });
 }
 layoutNetwork();
 
@@ -3601,20 +3496,22 @@ function setupLegendToggle() {
       refreshEdgeVisibility();
     });
   });
-  document.getElementById("edgeInfoClose")?.addEventListener("click", hideEdgeInfo);
-  document.getElementById("nodeInfoClose")?.addEventListener("click", hideNodeInfo);
-  document.getElementById("humedalesOverlayClose")?.addEventListener("click", hideHumedalesOverlay);
+    document.getElementById("edgeInfoClose")?.addEventListener("click", () => hideEdgeInfo());
+  document.getElementById("nodeInfoClose")?.addEventListener("click", () => hideNodeInfo());
+  document.getElementById("humedalesOverlayClose")?.addEventListener("click", () => hideHumedalesOverlay());
   document.getElementById("movilidadOverlayClose")?.addEventListener("click", () => { hideMovilidadOverlay(); clearSpotlight(); });
-  document.getElementById("mapa3OverlayClose")?.addEventListener("click", hideMapa3Overlay);
+  document.getElementById("manzanasOverlayClose")?.addEventListener("click", () => hideManzanasOverlay());
+  document.getElementById("patrimonioOverlayClose")?.addEventListener("click", () => hidePatrimonioOverlay());
   
   // Selector de mapas (modal de exploración en detalle)
-  document.getElementById("modalExplorarClose")?.addEventListener("click", cerrarModalExplorarRelaciones);
+  document.getElementById("modalExplorarClose")?.addEventListener("click", () => cerrarModalExplorarRelaciones());
   document.getElementById("modalExplorarRelaciones")?.addEventListener("click", (e) => {
     if (e.target.id === "modalExplorarRelaciones") cerrarModalExplorarRelaciones();
   });
-  document.getElementById("btnOpcionMapaVias")?.addEventListener("click", abrirMapaVias);
-  document.getElementById("btnOpcionMapaHumedales")?.addEventListener("click", abrirMapaHumedales);
-  document.getElementById("btnOpcionMapa3")?.addEventListener("click", abrirMapa3);
+  document.getElementById("btnOpcionMapaVias")?.addEventListener("click", () => abrirMapaVias());
+  document.getElementById("btnOpcionMapaHumedales")?.addEventListener("click", () => abrirMapaHumedales());
+  document.getElementById("btnOpcionMapaManzanas")?.addEventListener("click", () => abrirMapaManzanas());
+  document.getElementById("btnOpcionMapaPatrimonio")?.addEventListener("click", () => abrirMapaPatrimonio());
 
   window.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
@@ -4295,7 +4192,7 @@ function renderMatrix() {
     row.className = "matrix-row"; row.dataset.edge = i;
     const color = edgeColor(edge);
     row.innerHTML = `
-      <div class="matrix-cell"><span class="swatch-tag" style="background:${s.color}"></span> ${edge.cat.toUpperCase()}</div>
+      <div class="matrix-cell"><span class="swatch-tag" style="background:${s.color}"></span> ${(edge.cat || s.cat || "").toUpperCase()}</div>
       <div class="matrix-cell">${s.name.replace(/\n/g," ")} → ${t.name.replace(/\n/g," ")}</div>
       <div class="matrix-cell"><span class="alignment-tag" style="background:${color}26;color:${color}">${TYPE_STYLE[edge.tipo].label}</span></div>
       <div class="matrix-cell">${fuenteBadgeHTML(edge.fuente)}</div>
