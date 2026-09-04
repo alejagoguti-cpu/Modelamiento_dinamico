@@ -358,10 +358,15 @@ body {
 .swatch-e1 { background: #5cd6d1; } .swatch-e2 { background: #ef9f54; } .swatch-e3 { background: #fac47b; } .swatch-e4 { background: #fb8d84; }
 
 /* NETWORK CANVAS + ZOOM */
-.network-body { display: flex; gap: 20px; align-items: stretch; }
-.network-canvas { position: relative; flex: 1; min-width: 0; align-self: flex-start; border-radius: 12px; overflow: hidden; }
+/* La red va sola, a todo el ancho, y la leyenda debajo: con 80 elementos
+   necesita todo el espacio para que las bolas se lean sin quedar del
+   tamaño de una hormiga. */
+.network-body { display: flex; flex-direction: column; gap: 16px; align-items: stretch; }
+.network-body > .network-sidebar { width: 100%; max-width: none; }
+.network-sidebar > .network-legend.compact { max-width: none; }
+.network-canvas { position: relative; width: 100%; min-width: 0; border-radius: 12px; overflow: hidden; }
 #networkViz {
-  width: 100%; height: 780px; background: #05070a;
+  width: 100%; height: 860px; background: #05070a;
   border: 1px solid var(--border);
   display: block;
   transform-origin: 50% 50%;
@@ -392,11 +397,12 @@ body {
 .map-scale i { font-size: 13px; color: var(--text-dim); transform: rotate(-45deg); }
 .map-scale-bar { display: flex; gap: 14px; font-size: 9.5px; font-weight: 600; letter-spacing: 0.3px; border-top: 1.5px solid var(--text-faint); padding-top: 3px; }
 
-.network-sidebar { width: 260px; flex-shrink: 0; display: flex; flex-direction: column; gap: 14px; }
+.network-sidebar { width: 100%; display: flex; flex-direction: column; gap: 14px; }
 
 .network-legend {
   width: 100%; background: #111111; border: 1px solid var(--border-soft); border-radius: 10px;
-  padding: 16px 16px 14px; display: flex; flex-direction: column; gap: 14px; align-self: flex-start;
+  padding: 14px 16px; display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px 22px;
+  align-items: start;
 }
 .legend-section-box {
   border: 1px solid rgba(92, 214, 209, 0.35); border-radius: 10px;
@@ -2144,3 +2150,7 @@ footer span { color: var(--teal); }
   font-size: 11.5px; line-height: 1.55; color: #e6dcc4;
 }
 .m2-concl-final b { color: #ffd166; }
+
+/* Arrastre del lienzo de la red */
+#networkViz { cursor: grab; touch-action: none; }
+#networkViz.m2-arrastrando { cursor: grabbing; }
