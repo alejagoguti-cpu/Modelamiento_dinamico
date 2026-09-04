@@ -984,15 +984,13 @@ function computeDegrees(excluir) {
     if (deg[e.s] === undefined || deg[e.t] === undefined) return;
     // Solo cuentan las relaciones que se dibujan.
     if (!relacionVisible(e)) return;
-    // Una relación apagada desde la leyenda (tipo o categoría) tampoco debe
-    // contar para el tamaño de la bola — si no, una bola grande podía no
-    // tener ninguna línea visible (todas sus conexiones eran "indirecta",
-    // apagada por defecto) y el tamaño no coincidía con lo que se ve.
-    if (typeOff.has(e.tipo)) return;
-    if (catOff.size) {
-      const catBits = String(e.cat || "").split("-");
-      if (catBits.some((c) => catOff.has(c))) return;
-    }
+    // El tamaño refleja la fuerza nodal REAL (todas sus relaciones vigentes,
+    // "directa" e "indirecta"), no solo lo que esté encendido en la leyenda
+    // en un momento dado — así una vía arterial como Avenida Boyacá o Av.
+    // Ciudad de Cali, que cruza media ciudad y toca decenas de otros
+    // elementos casi siempre por intersección espacial ("indirecta"), se ve
+    // como el hub que realmente es aunque esas líneas estén apagadas por
+    // defecto para que la red no se vea como una maraña.
     // Si el nodo de origen o destino está "apagado", su arista deja de
     // contar para el grado (= fuerza nodal) de ambos extremos.
     if (excluir && (excluir.has(e.s) || excluir.has(e.t))) return;
@@ -3585,9 +3583,6 @@ function refreshEdgeVisibility() {
     const cat = node.dataset.cat;
     node.classList.toggle("hidden-node", nodeOff.has(node.dataset.id) || catOff.has(cat));
   });
-  // El tamaño de cada bola depende de cuántas líneas tiene EN PANTALLA:
-  // al apagar o encender un tipo/categoría desde la leyenda, se recalcula.
-  aplicarFuerzaNodal(false);
 }
 function toggleNode(id) {
   const group = document.querySelector(`.ods-node[data-id="${id}"]`);
