@@ -143,7 +143,7 @@
 
   const actorNames = [...new Set(PROBLEMS.flatMap(p => p.actors))];
   const actorNodes = actorNames.map(name => ({ id:"actor:"+name, kind:"actor", name }));
-  const problemNodes = PROBLEMS.map(p => ({ id:"prob:"+p.id, kind:"problem", ...p, color: INDICATORS[p.indicadores[0]] }));
+  const problemNodes = PROBLEMS.map(p => ({ ...p, id:"prob:"+p.id, kind:"problem", color: INDICATORS[p.indicadores[0]] }));
   const nodes = [...actorNodes, ...problemNodes];
 
   const links = [];
