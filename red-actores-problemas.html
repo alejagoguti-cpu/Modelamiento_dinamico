@@ -105,6 +105,7 @@
 
 <script>
 (() => {
+  const ROLE_COLOR = { actor: "#5ec8e0", problema: "#ef4444", causa: "#eab308", efecto: "#22c55e" };
   const INDICATORS = {
     "Rojo":    "#ef4444", "Naranja": "#f97316", "Marrón": "#92400e", "Azul": "#3b82f6",
     "Verde":   "#22c55e", "Amarillo":"#eab308", "Gris":   "#9ca3af"
@@ -113,56 +114,70 @@
   const PROBLEMS = [
     { id:"p1", name:"Congestión y Colapso Logístico Vial", actors:["Corabastos","Transportadores de Carga Pesada"],
       causa:"Ingreso masivo y simultáneo de tractocamiones, sumado a la falta de patios de parqueo oficiales y operación sin gestión interna.",
-      indicadores:["Rojo"],
-      sintomas:"Filas kilométricas y parálisis total del tráfico en las avenidas Ciudad de Cali y Boyacá; bloqueo absoluto de intersecciones en horas pico." },
+      efectos:[{ind:"Rojo", texto:"Filas kilométricas y parálisis total del tráfico en las avenidas Ciudad de Cali y Boyacá; bloqueo absoluto de intersecciones en horas pico."}] },
     { id:"p2", name:"Deterioro y Fractura de la Malla Vial", actors:["Transportadores de Carga Pesada","Propietarios de Bodegas"],
       causa:"Estacionamiento prolongado de vehículos pesados en vías secundarias y tránsito constante de camiones con sobrepeso.",
-      indicadores:["Naranja"],
-      sintomas:"Hundimiento severo del asfalto, fractura de pavimentos y andenes destruidos por invasión de vehículos." },
+      efectos:[{ind:"Naranja", texto:"Hundimiento severo del asfalto, fractura de pavimentos y andenes destruidos por invasión de vehículos."}] },
     { id:"p3", name:"Saturación de Residuos Orgánicos y Lixiviados", actors:["Corabastos","Comercio Informal / Ventas Ambulantes"],
       causa:"Operación comercial masiva sin centros logísticos de subproductos y desecho directo de empaques o restos al espacio público.",
-      indicadores:["Marrón"],
-      sintomas:"Toneladas de residuos orgánicos podridos en las esquinas, acumulación de lixiviados tóxicos corriendo hacia los sumideros y puntos críticos de basura." },
+      efectos:[{ind:"Marrón", texto:"Toneladas de residuos orgánicos podridos en las esquinas, acumulación de lixiviados tóxicos corriendo hacia los sumideros y puntos críticos de basura."}] },
     { id:"p4", name:"Fragmentación Ecológica e Impermeabilización del Suelo", actors:["Propietarios de Bodegas","Operadores Logísticos Locales"],
       causa:"Rellenos de escombros, pavimentación masiva de lotes baldíos y expansión desordenada sobre las franjas de ronda de los cuerpos de agua.",
-      indicadores:["Azul","Verde"],
-      sintomas:"Suelos completamente impermeabilizados e inundaciones severas por escorrentía; aislamiento absoluto de la fauna nativa, ruptura de corredores ecológicos y eutrofización acelerada en los humedales." },
+      efectos:[
+        {ind:"Azul", texto:"Suelos completamente impermeabilizados e inundaciones severas por escorrentía."},
+        {ind:"Verde", texto:"Aislamiento absoluto de la fauna nativa, ruptura de corredores ecológicos y eutrofización acelerada en los humedales."}
+      ] },
     { id:"p5", name:"Privatización y Bloqueo del Espacio Público Peatonal", actors:["Comercio Informal / Ventas Ambulantes","Propietarios de Bodegas"],
       causa:"Ocupación permanente de la sección transversal del andén para exhibir mercancía o maniobrar carga pesada con montacargas.",
-      indicadores:["Amarillo"],
-      sintomas:"Desaparición total del corredor peatonal, bajísima caminabilidad y peatones obligados a arriesgar su vida caminando por la calzada vehicular." },
+      efectos:[{ind:"Amarillo", texto:"Desaparición total del corredor peatonal, bajísima caminabilidad y peatones obligados a arriesgar su vida caminando por la calzada vehicular."}] },
     { id:"p6", name:"Contaminación Visual, Eólica y Particulada", actors:["Recicladores Informales de Oficio","Transportadores de Carga Pesada"],
       causa:"Manipulación y clasificación de materiales reciclables directamente sobre el espacio público, combinada con la alta concentración de motores diésel encendidos.",
-      indicadores:["Gris"],
-      sintomas:"Regueros de plásticos ligeros volando hacia calles y canales por el viento, material particulado denso y contaminación visual severa en separadores viales." },
+      efectos:[{ind:"Gris", texto:"Regueros de plásticos ligeros volando hacia calles y canales por el viento, material particulado denso y contaminación visual severa en separadores viales."}] },
     { id:"p7", name:"Déficit, Abandono y Degradación de Equipamientos", actors:["Comunidad Local / Redes Vecinales","Instituciones Distritales"],
       causa:"Falta histórica de inversión estatal, abandono institucional crónico y ausencia de mantenimiento en centros zonales.",
-      indicadores:["Rojo","Verde"],
-      sintomas:"Parques y centros comunales oscuros, vandalizados y apropiados por dinámicas delictivas; respuesta comunitaria mediante la creación de huertas urbanas, redes de cuidado y limpieza autogestionada de bordes ecológicos." },
+      efectos:[
+        {ind:"Rojo", texto:"Parques y centros comunales oscuros, vandalizados y apropiados por dinámicas delictivas."},
+        {ind:"Verde", texto:"Respuesta comunitaria mediante la creación de huertas urbanas, redes de cuidado y limpieza autogestionada de bordes ecológicos."}
+      ] },
   ];
 
   const actorNames = [...new Set(PROBLEMS.flatMap(p => p.actors))];
   const actorNodes = actorNames.map(name => ({ id:"actor:"+name, kind:"actor", name }));
-  const problemNodes = PROBLEMS.map(p => ({ ...p, id:"prob:"+p.id, kind:"problem", color: INDICATORS[p.indicadores[0]] }));
-  const nodes = [...actorNodes, ...problemNodes];
+  const problemNodes = PROBLEMS.map(p => ({ actors:p.actors, id:"prob:"+p.id, kind:"problema", name:p.name, pid:p.id }));
+  const causaNodes = PROBLEMS.map(p => ({ id:"causa:"+p.id, kind:"causa", name:p.causa.length>60 ? p.causa.slice(0,58)+"…" : p.causa, full:p.causa, pid:p.id }));
+  const efectoNodes = [];
+  PROBLEMS.forEach(p => p.efectos.forEach((e,i) => efectoNodes.push({ id:`efecto:${p.id}:${i}`, kind:"efecto", name:e.texto.length>55 ? e.texto.slice(0,53)+"…" : e.texto, full:e.texto, ind:e.ind, pid:p.id })));
+  const nodes = [...actorNodes, ...problemNodes, ...causaNodes, ...efectoNodes];
 
+  // Todo queda conectado: actor<->problema, problema<->causa, problema<->efecto.
+  // Nada flota suelto: cada causa y cada efecto pertenece a exactamente un
+  // problema, y cada problema tiene siempre al menos 2 actores + 1 causa +
+  // 1 o 2 efectos.
   const links = [];
-  PROBLEMS.forEach(p => p.actors.forEach(a => links.push({ source:"actor:"+a, target:"prob:"+p.id })));
+  PROBLEMS.forEach(p => {
+    p.actors.forEach(a => links.push({ source:"actor:"+a, target:"prob:"+p.id, kind:"actor-prob" }));
+    links.push({ source:"prob:"+p.id, target:"causa:"+p.id, kind:"prob-causa" });
+    p.efectos.forEach((e,i) => links.push({ source:"prob:"+p.id, target:`efecto:${p.id}:${i}`, kind:"prob-efecto" }));
+  });
 
   const deg = {};
   links.forEach(l => { deg[l.source]=(deg[l.source]||0)+1; deg[l.target]=(deg[l.target]||0)+1; });
-  nodes.forEach(n => { n.deg = deg[n.id]||0; n.r = n.kind==="actor" ? Math.max(30, Math.min(58, 26+n.deg*7)) : Math.max(34, Math.min(52, 30+n.deg*5)); });
+  nodes.forEach(n => {
+    n.deg = deg[n.id]||0;
+    n.color = ROLE_COLOR[n.kind];
+    n.r = n.kind==="actor" ? Math.max(30, Math.min(58, 26+n.deg*7)) : n.kind==="problema" ? Math.max(40, Math.min(58, 34+n.deg*4)) : 26;
+  });
 
   const svg = d3.select("#stage");
   const W = window.innerWidth, H = window.innerHeight;
   const root = svg.append("g");
-  svg.call(d3.zoom().scaleExtent([0.4,2.5]).on("zoom", e => root.attr("transform", e.transform)));
+  svg.call(d3.zoom().scaleExtent([0.35,2.5]).on("zoom", e => root.attr("transform", e.transform)));
 
   const sim = d3.forceSimulation(nodes)
-    .force("link", d3.forceLink(links).id(d=>d.id).distance(150).strength(0.5))
-    .force("charge", d3.forceManyBody().strength(d => d.kind==="actor" ? -900 : -650))
+    .force("link", d3.forceLink(links).id(d=>d.id).distance(d => d.kind==="actor-prob" ? 160 : 95).strength(0.6))
+    .force("charge", d3.forceManyBody().strength(d => d.kind==="actor" ? -900 : d.kind==="problema" ? -700 : -220))
     .force("center", d3.forceCenter(W/2, H/2))
-    .force("collide", d3.forceCollide().radius(d => d.r + 34).strength(1));
+    .force("collide", d3.forceCollide().radius(d => d.r + 26).strength(1));
 
   const linkSel = root.append("g").selectAll("line").data(links).join("line").attr("class","link");
   const nodeSel = root.append("g").selectAll("g").data(nodes).join("g")
@@ -174,16 +189,18 @@
 
   nodeSel.append("circle").attr("class","ring")
     .attr("r", d => d.r)
-    .attr("stroke", d => d.kind==="actor" ? "#5ec8e0" : d.color);
+    .attr("stroke", d => d.color);
   nodeSel.append("text").attr("dy","-0.15em")
     .each(function(d){
+      const maxChars = d.kind==="actor" || d.kind==="problema" ? 14 : 11;
       const words = d.name.split(" ");
       const lines = [""];
-      words.forEach(w => { const i=lines.length-1; if ((lines[i]+" "+w).trim().length<=14 || !lines[i]) lines[i]=(lines[i]+" "+w).trim(); else lines.push(w); });
+      words.forEach(w => { const i=lines.length-1; if ((lines[i]+" "+w).trim().length<=maxChars || !lines[i]) lines[i]=(lines[i]+" "+w).trim(); else lines.push(w); });
       const t = d3.select(this);
-      lines.slice(0,3).forEach((line,i) => t.append("tspan").attr("x",0).attr("dy", i===0? -((lines.length-1)*5.5)+"px" : "11px").text(line));
+      const maxLines = d.kind==="actor"||d.kind==="problema" ? 3 : 4;
+      lines.slice(0,maxLines).forEach((line,i) => t.append("tspan").attr("x",0).attr("dy", i===0? -((Math.min(lines.length,maxLines)-1)*5.2)+"px" : "10.4px").text(line));
     });
-  nodeSel.filter(d=>d.kind==="problem").append("text").attr("class","sub").attr("dy", d => d.r + 14).text(d => d.indicadores.join(" · "));
+  nodeSel.filter(d=>d.kind==="efecto").append("text").attr("class","sub").attr("dy", d => d.r + 13).text(d => d.ind);
 
   nodeSel.on("click", (event, d) => { event.stopPropagation(); openPanel(d); highlight(d); });
   svg.on("click", () => { closePanel(); highlight(null); });
@@ -197,27 +214,47 @@
   }
 
   function nodeById(id){ return nodes.find(n=>n.id===id); }
+  function problemaDe(pid){ return nodeById("prob:"+pid); }
+
+  const KIND_LABEL = { actor:"Actor", problema:"Problema", causa:"Causa", efecto:"Efecto / síntoma" };
 
   function openPanel(d){
     const panel = document.getElementById("panel"), body = document.getElementById("panelBody");
-    if (d.kind === "problem") {
+    const p = PROBLEMS.find(x => x.id === d.pid);
+    if (d.kind === "problema") {
+      const causaN = nodeById("causa:"+d.pid);
+      const efectoNs = nodes.filter(n => n.kind==="efecto" && n.pid===d.pid);
       body.innerHTML = `
-        <p class="panel-kind">Problema</p>
+        <p class="panel-kind" style="color:${ROLE_COLOR.problema}">Problema</p>
         <h2>${d.name}</h2>
-        <div class="badge-row">${d.indicadores.map(i => `<span class="badge" style="border-color:${INDICATORS[i]};color:${INDICATORS[i]}">${i}</span>`).join("")}</div>
-        <div class="block"><b>Causa</b><p>${d.causa}</p></div>
-        <div class="block"><b>Síntomas / indicadores</b><p>${d.sintomas}</p></div>
+        <div class="block"><b>Causa</b><div class="problem-chip" style="border-color:${ROLE_COLOR.causa};color:${ROLE_COLOR.causa}" data-goto="${causaN.id}">${causaN.full}</div></div>
+        <div class="block"><b>Efectos / síntomas</b><div class="actor-list">
+          ${efectoNs.map(e => `<div class="problem-chip" style="border-color:${ROLE_COLOR.efecto};color:${ROLE_COLOR.efecto}" data-goto="${e.id}"><span class="badge" style="border-color:${INDICATORS[e.ind]};color:${INDICATORS[e.ind]};margin-right:6px">${e.ind}</span>${e.full}</div>`).join("")}
+        </div></div>
         <div class="block"><b>Actores involucrados</b><div class="actor-list">
-          ${d.actors.map(a => `<div class="actor-chip" data-goto="actor:${a}"><i class="fa-solid fa-user-group"></i> ${a}</div>`).join("")}
+          ${p.actors.map(a => `<div class="actor-chip" data-goto="actor:${a}"><i class="fa-solid fa-user-group"></i> ${a}</div>`).join("")}
         </div></div>`;
-    } else {
-      const related = PROBLEMS.filter(p => p.actors.includes(d.name));
+    } else if (d.kind === "actor") {
+      const related = PROBLEMS.filter(pp => pp.actors.includes(d.name));
       body.innerHTML = `
-        <p class="panel-kind">Actor</p>
+        <p class="panel-kind" style="color:${ROLE_COLOR.actor}">Actor</p>
         <h2>${d.name}</h2>
         <div class="block"><b>Problemas en los que interviene (${related.length})</b><div class="problem-list">
-          ${related.map(p => `<div class="problem-chip" style="border-color:${INDICATORS[p.indicadores[0]]};color:${INDICATORS[p.indicadores[0]]}" data-goto="prob:${p.id}">${p.name}</div>`).join("")}
+          ${related.map(pp => `<div class="problem-chip" style="border-color:${ROLE_COLOR.problema};color:${ROLE_COLOR.problema}" data-goto="prob:${pp.id}">${pp.name}</div>`).join("")}
         </div></div>`;
+    } else if (d.kind === "causa") {
+      const prob = problemaDe(d.pid);
+      body.innerHTML = `
+        <p class="panel-kind" style="color:${ROLE_COLOR.causa}">Causa</p>
+        <h2>${d.full}</h2>
+        <div class="block"><b>Del problema</b><div class="problem-chip" style="border-color:${ROLE_COLOR.problema};color:${ROLE_COLOR.problema}" data-goto="${prob.id}">${prob.name}</div></div>`;
+    } else { // efecto
+      const prob = problemaDe(d.pid);
+      body.innerHTML = `
+        <p class="panel-kind" style="color:${ROLE_COLOR.efecto}">Efecto / síntoma</p>
+        <div class="badge-row"><span class="badge" style="border-color:${INDICATORS[d.ind]};color:${INDICATORS[d.ind]}">${d.ind}</span></div>
+        <h2>${d.full}</h2>
+        <div class="block"><b>Del problema</b><div class="problem-chip" style="border-color:${ROLE_COLOR.problema};color:${ROLE_COLOR.problema}" data-goto="${prob.id}">${prob.name}</div></div>`;
     }
     body.querySelectorAll("[data-goto]").forEach(el => el.addEventListener("click", (e) => {
       e.stopPropagation();
@@ -229,8 +266,20 @@
   function closePanel(){ document.getElementById("panel").classList.remove("open"); }
   document.getElementById("panelClose").addEventListener("click", (e)=>{ e.stopPropagation(); closePanel(); highlight(null); });
 
-  // Leyenda de colores
+  // Leyenda: primero los 4 roles (el color principal de cada bola), luego
+  // los colores de indicador (solo aparecen como etiqueta chiquita en los
+  // efectos, para no perder esa informacion).
   const legend = document.getElementById("legend");
+  legend.innerHTML = "<b>Tipo de nodo</b>";
+  Object.entries(ROLE_COLOR).forEach(([name,color]) => {
+    const span = document.createElement("span");
+    span.innerHTML = `<i style="background:${color}"></i>${name.charAt(0).toUpperCase()+name.slice(1)}`;
+    legend.appendChild(span);
+  });
+  const legend2 = document.createElement("b");
+  legend2.textContent = "Indicador del efecto";
+  legend2.style.marginTop = "6px";
+  legend.appendChild(legend2);
   Object.entries(INDICATORS).forEach(([name,color]) => {
     const span = document.createElement("span");
     span.innerHTML = `<i style="background:${color}"></i>${name}`;
