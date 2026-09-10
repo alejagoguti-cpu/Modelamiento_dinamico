@@ -8,7 +8,7 @@
 <style>
   :root{
     --bg:#f4f6f8;
-    --node:#3a5a94;
+    --node:#2454c9;
     --ink-on-node:#ffffff;
     --panel:rgba(0,0,0,.04); --panel-border:rgba(0,0,0,.1);
     --ink-dark:#1c2430; --ink-dim:#5b6675;
@@ -23,18 +23,8 @@
   .intro h1{ font-family:'Space Grotesk',sans-serif; font-size:16px; font-weight:600; margin:0 0 4px; }
   .intro p{ margin:0; font-size:12px; color:var(--ink-dim); }
 
-  .stage{ position:relative; width:100vw; height:100vh; perspective:750px; cursor:grab; }
-  .stage.dragging{ cursor:grabbing; }
-  /* La rotacion 3D se aplica DIRECTAMENTE a la capa que tiene el filtro
-     (goo-layer) y a la de las etiquetas, cada una por su cuenta — poner el
-     filtro adentro de un contenedor preserve-3d hace que el navegador
-     "aplane" esa capa y el giro se vea plano, sin perspectiva real. */
-  .goo-layer{
-    position:absolute; inset:0; filter:url(#goo);
-    transition: transform .5s cubic-bezier(.22,1,.36,1);
-  }
-  .label-layer{ transition: transform .5s cubic-bezier(.22,1,.36,1); }
-  .stage.dragging .goo-layer, .stage.dragging .label-layer{ transition:none; }
+  .stage{ position:relative; width:100vw; height:100vh; }
+  .goo-layer{ position:absolute; inset:0; filter:url(#goo); }
   .blob{
     position:absolute; border-radius:50%; top:0; left:0; transform:translate(-50%,-50%); background:var(--node);
     transition: left 1s cubic-bezier(.22,1,.36,1), top 1s cubic-bezier(.22,1,.36,1),
@@ -91,8 +81,8 @@
   <svg width="0" height="0" style="position:absolute">
     <defs>
       <filter id="goo">
-        <feGaussianBlur in="SourceGraphic" stdDeviation="7" result="blur" />
-        <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 17 -8" result="goo" />
+        <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+        <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 24 -12" result="goo" />
         <feComposite in="SourceGraphic" in2="goo" operator="atop" />
       </filter>
     </defs>
@@ -100,7 +90,6 @@
   <div class="goo-layer" id="gooLayer"></div>
   <div class="label-layer" id="labelLayer"></div>
 </div>
-<div class="hint3d" id="hint3d">🖱️ Arrastra para inclinar la red</div>
 
 <button class="back-btn" id="backBtn">← Volver a la burbuja inicial</button>
 
@@ -166,6 +155,7 @@
     l.textContent = c.corto;
     labelLayer.appendChild(l); nodeLabels[c.id] = l;
     const h = el("hit"); labelLayer.appendChild(h); nodeHits[c.id] = h;
+    h.addEventListener("click", (e) => { e.stopPropagation(); openPanel(c.id); });
   });
 
   const bridgesByRel = REL.map(() => {
@@ -205,7 +195,7 @@
       const b = revealed ? nodePos[r.to] : { x: cx, y: cy };
       bridgesByRel[idx].forEach((bridge, j) => {
         const t = (j + 1) / (BRIDGES + 1);
-        const rr = revealed ? (NODE_R * (1 - t * 0.8)) * 0.22 : 1;
+        const rr = revealed ? (NODE_R * (1 - t * 0.7)) * 0.3 : 1;
         size(bridge, rr);
         place(bridge, a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t);
         bridge.style.opacity = revealed ? "1" : "0";
@@ -216,50 +206,8 @@
   function reveal() { revealed = true; render(); }
   function collapse() { revealed = false; render(); document.getElementById("panel").classList.remove("open"); }
 
+  hitCenter.addEventListener("click", reveal);
   backBtn.addEventListener("click", collapse);
-
-  // ---- Un solo manejador de gesto para TODA la pantalla: si el
-  // movimiento es chico, es un "toque" (revela la red / abre el panel de
-  // la causa que estaba debajo del dedo/cursor); si es grande, es un
-  // arrastre para inclinar la tarjeta. Así el arrastre funciona sin
-  // importar si empieza sobre una bolita o en el fondo.
-  const hint3d = document.getElementById("hint3d");
-  const stage = document.getElementById("stage");
-  let rotX = 0, rotY = 0, dragStart = null, dragStartRot = null, downTarget = null;
-
-  function applyRotation() {
-    const t = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
-    gooLayer.style.transform = t;
-    labelLayer.style.transform = t;
-  }
-
-  stage.addEventListener("pointerdown", (e) => {
-    dragStart = { x: e.clientX, y: e.clientY };
-    dragStartRot = { x: rotX, y: rotY };
-    downTarget = e.target;
-    stage.classList.add("dragging");
-  });
-  window.addEventListener("pointermove", (e) => {
-    if (!dragStart) return;
-    const dx = e.clientX - dragStart.x, dy = e.clientY - dragStart.y;
-    rotY = dragStartRot.y + dx * 0.25;
-    rotX = Math.max(-55, Math.min(55, dragStartRot.x - dy * 0.25));
-    applyRotation();
-    if (hint3d) hint3d.style.opacity = "0";
-  });
-  window.addEventListener("pointerup", (e) => {
-    if (!dragStart) return;
-    const moved = Math.hypot(e.clientX - dragStart.x, e.clientY - dragStart.y);
-    dragStart = null;
-    stage.classList.remove("dragging");
-    if (moved < 8 && downTarget) {
-      if (downTarget === hitCenter) reveal();
-      else {
-        const causaId = Object.keys(nodeHits).find(id => nodeHits[id] === downTarget);
-        if (causaId) openPanel(Number(causaId));
-      }
-    }
-  });
 
   function openPanel(id) {
     const c = byId[id];
