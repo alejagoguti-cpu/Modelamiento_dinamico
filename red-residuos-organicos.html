@@ -23,13 +23,18 @@
   .intro h1{ font-family:'Space Grotesk',sans-serif; font-size:16px; font-weight:600; margin:0 0 4px; }
   .intro p{ margin:0; font-size:12px; color:var(--ink-dim); }
 
-  .stage{ position:relative; width:100vw; height:100vh; perspective:1400px; }
-  .rotator{
-    position:absolute; inset:0; transform-style:preserve-3d; cursor:grab;
+  .stage{ position:relative; width:100vw; height:100vh; perspective:1400px; cursor:grab; }
+  .stage.dragging{ cursor:grabbing; }
+  /* La rotacion 3D se aplica DIRECTAMENTE a la capa que tiene el filtro
+     (goo-layer) y a la de las etiquetas, cada una por su cuenta — poner el
+     filtro adentro de un contenedor preserve-3d hace que el navegador
+     "aplane" esa capa y el giro se vea plano, sin perspectiva real. */
+  .goo-layer{
+    position:absolute; inset:0; filter:url(#goo);
     transition: transform .5s cubic-bezier(.22,1,.36,1);
   }
-  .rotator.dragging{ cursor:grabbing; transition:none; }
-  .goo-layer{ position:absolute; inset:0; filter:url(#goo); }
+  .label-layer{ transition: transform .5s cubic-bezier(.22,1,.36,1); }
+  .stage.dragging .goo-layer, .stage.dragging .label-layer{ transition:none; }
   .blob{
     position:absolute; border-radius:50%; top:0; left:0; transform:translate(-50%,-50%); background:var(--node);
     transition: left 1s cubic-bezier(.22,1,.36,1), top 1s cubic-bezier(.22,1,.36,1),
@@ -92,10 +97,8 @@
       </filter>
     </defs>
   </svg>
-  <div class="rotator" id="rotator">
-    <div class="goo-layer" id="gooLayer"></div>
-    <div class="label-layer" id="labelLayer"></div>
-  </div>
+  <div class="goo-layer" id="gooLayer"></div>
+  <div class="label-layer" id="labelLayer"></div>
 </div>
 <div class="hint3d" id="hint3d">🖱️ Arrastra para inclinar la red</div>
 
@@ -220,18 +223,21 @@
   // la causa que estaba debajo del dedo/cursor); si es grande, es un
   // arrastre para inclinar la tarjeta. Así el arrastre funciona sin
   // importar si empieza sobre una bolita o en el fondo.
-  const rotator = document.getElementById("rotator");
   const hint3d = document.getElementById("hint3d");
   const stage = document.getElementById("stage");
   let rotX = 0, rotY = 0, dragStart = null, dragStartRot = null, downTarget = null;
 
-  function applyRotation() { rotator.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`; }
+  function applyRotation() {
+    const t = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+    gooLayer.style.transform = t;
+    labelLayer.style.transform = t;
+  }
 
   stage.addEventListener("pointerdown", (e) => {
     dragStart = { x: e.clientX, y: e.clientY };
     dragStartRot = { x: rotX, y: rotY };
     downTarget = e.target;
-    rotator.classList.add("dragging");
+    stage.classList.add("dragging");
   });
   window.addEventListener("pointermove", (e) => {
     if (!dragStart) return;
@@ -245,7 +251,7 @@
     if (!dragStart) return;
     const moved = Math.hypot(e.clientX - dragStart.x, e.clientY - dragStart.y);
     dragStart = null;
-    rotator.classList.remove("dragging");
+    stage.classList.remove("dragging");
     if (moved < 8 && downTarget) {
       if (downTarget === hitCenter) reveal();
       else {
