@@ -163,7 +163,6 @@
     l.textContent = c.corto;
     labelLayer.appendChild(l); nodeLabels[c.id] = l;
     const h = el("hit"); labelLayer.appendChild(h); nodeHits[c.id] = h;
-    addTapListener(h, () => openPanel(c.id));
   });
 
   const bridgesByRel = REL.map(() => {
@@ -216,32 +215,22 @@
 
   backBtn.addEventListener("click", collapse);
 
-  // ---- Distinguir "clic" (poco movimiento) de "arrastre para inclinar"
-  // (mucho movimiento), para que ambas cosas convivan en la misma zona.
-  function addTapListener(elm, handler) {
-    let down = null;
-    elm.addEventListener("pointerdown", (e) => { down = { x: e.clientX, y: e.clientY }; e.stopPropagation(); });
-    elm.addEventListener("pointerup", (e) => {
-      if (!down) return;
-      const moved = Math.hypot(e.clientX - down.x, e.clientY - down.y);
-      down = null;
-      if (moved < 8) handler();
-    });
-  }
-  addTapListener(hitCenter, reveal);
-
-  // ---- Inclinar la red en 3D arrastrando (toda la imagen plana se
-  // "agarra" y gira como una tarjeta en el espacio, sin perder su
-  // apariencia orgánica 2D). ----
+  // ---- Un solo manejador de gesto para TODA la pantalla: si el
+  // movimiento es chico, es un "toque" (revela la red / abre el panel de
+  // la causa que estaba debajo del dedo/cursor); si es grande, es un
+  // arrastre para inclinar la tarjeta. Así el arrastre funciona sin
+  // importar si empieza sobre una bolita o en el fondo.
   const rotator = document.getElementById("rotator");
   const hint3d = document.getElementById("hint3d");
-  let rotX = 0, rotY = 0, dragStart = null, dragStartRot = null;
-  function applyRotation() {
-    rotator.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
-  }
-  document.getElementById("stage").addEventListener("pointerdown", (e) => {
+  const stage = document.getElementById("stage");
+  let rotX = 0, rotY = 0, dragStart = null, dragStartRot = null, downTarget = null;
+
+  function applyRotation() { rotator.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`; }
+
+  stage.addEventListener("pointerdown", (e) => {
     dragStart = { x: e.clientX, y: e.clientY };
     dragStartRot = { x: rotX, y: rotY };
+    downTarget = e.target;
     rotator.classList.add("dragging");
   });
   window.addEventListener("pointermove", (e) => {
@@ -252,7 +241,19 @@
     applyRotation();
     if (hint3d) hint3d.style.opacity = "0";
   });
-  window.addEventListener("pointerup", () => { dragStart = null; rotator.classList.remove("dragging"); });
+  window.addEventListener("pointerup", (e) => {
+    if (!dragStart) return;
+    const moved = Math.hypot(e.clientX - dragStart.x, e.clientY - dragStart.y);
+    dragStart = null;
+    rotator.classList.remove("dragging");
+    if (moved < 8 && downTarget) {
+      if (downTarget === hitCenter) reveal();
+      else {
+        const causaId = Object.keys(nodeHits).find(id => nodeHits[id] === downTarget);
+        if (causaId) openPanel(Number(causaId));
+      }
+    }
+  });
 
   function openPanel(id) {
     const c = byId[id];
