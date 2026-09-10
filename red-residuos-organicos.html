@@ -3,13 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ausencia de gestión de residuos orgánicos — Corabastos</title>
+<title>Ausencia de gestión de residuos orgánicos — Corabastos (3D)</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#f4f6f8;
-    --node:#2454c9;
-    --ink-on-node:#ffffff;
+    --bg:#f4f6f8; --node:#2454c9; --node-light:#5c85e6;
     --panel:rgba(0,0,0,.04); --panel-border:rgba(0,0,0,.1);
     --ink-dark:#1c2430; --ink-dim:#5b6675;
   }
@@ -23,23 +21,17 @@
   .intro h1{ font-family:'Space Grotesk',sans-serif; font-size:16px; font-weight:600; margin:0 0 4px; }
   .intro p{ margin:0; font-size:12px; color:var(--ink-dim); }
 
-  .stage{ position:relative; width:100vw; height:100vh; }
-  .goo-layer{ position:absolute; inset:0; filter:url(#goo); }
-  .blob{
-    position:absolute; border-radius:50%; top:0; left:0; transform:translate(-50%,-50%); background:var(--node);
-    transition: left 1s cubic-bezier(.22,1,.36,1), top 1s cubic-bezier(.22,1,.36,1),
-                width .85s cubic-bezier(.22,1,.36,1), height .85s cubic-bezier(.22,1,.36,1), opacity .45s ease;
-  }
+  #stage{ position:fixed; inset:0; cursor:grab; }
+  #stage:active{ cursor:grabbing; }
 
-  .label-layer{ position:absolute; inset:0; pointer-events:none; }
-  .label{
+  .label-layer{ position:fixed; inset:0; pointer-events:none; z-index:3; }
+  .label3d{
     position:absolute; top:0; left:0; transform:translate(-50%,-50%);
-    transition: left 1s cubic-bezier(.22,1,.36,1), top 1s cubic-bezier(.22,1,.36,1), opacity .4s ease;
-    text-align:center; font-weight:600; line-height:1.28; color:var(--ink-on-node); padding:0 10px; pointer-events:none;
+    text-align:center; font-weight:600; line-height:1.25; color:#fff;
+    padding:0 8px; pointer-events:none; text-shadow:0 1px 3px rgba(0,0,0,.35);
   }
-  .label.center-label{ font-family:'Space Grotesk',sans-serif; font-size:16px; }
-  .label.child-label{ font-size:12px; }
-  .hit{ position:absolute; top:0; left:0; transform:translate(-50%,-50%); border-radius:50%; cursor:pointer; z-index:5; pointer-events:auto; }
+  .label3d.center-label{ font-family:'Space Grotesk',sans-serif; font-size:15px; }
+  .label3d.child-label{ font-size:11.5px; }
 
   .panel{
     position:fixed; top:0; right:0; bottom:0; z-index:10; width:min(360px,92vw);
@@ -66,168 +58,274 @@
     opacity:0; pointer-events:none; transition:opacity .3s ease;
   }
   .back-btn.show{ opacity:1; pointer-events:auto; }
-
-  @media (prefers-reduced-motion: reduce){ .blob, .label, .panel, .back-btn{ transition:none !important; } }
+  .hint3d{
+    position:fixed; bottom:22px; right:22px; z-index:6; font-size:11px; color:var(--ink-dim);
+    background:#fff; border:1px solid var(--panel-border); border-radius:999px; padding:8px 14px;
+  }
 </style>
 </head>
 <body>
 
 <div class="intro" id="intro">
   <h1>Ausencia de un modelo de gestión y tratamiento de residuos orgánicos</h1>
-  <p>Toca la burbuja para revelar la red de causas que la explican</p>
+  <p>Toca la esfera para revelar la red de causas — arrastra para rotar en 3D</p>
 </div>
 
-<div class="stage" id="stage">
-  <svg width="0" height="0" style="position:absolute">
-    <defs>
-      <filter id="goo">
-        <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
-        <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 24 -12" result="goo" />
-        <feComposite in="SourceGraphic" in2="goo" operator="atop" />
-      </filter>
-    </defs>
-  </svg>
-  <div class="goo-layer" id="gooLayer"></div>
-  <div class="label-layer" id="labelLayer"></div>
-</div>
-
-<button class="back-btn" id="backBtn">← Volver a la burbuja inicial</button>
+<div id="stage"></div>
+<div class="label-layer" id="labelLayer"></div>
+<div class="hint3d">🖱️ Arrastra para rotar · rueda para acercar</div>
+<button class="back-btn" id="backBtn">← Volver a la esfera inicial</button>
 
 <aside class="panel" id="panel">
   <button class="panel-close" id="panelClose">✕</button>
   <div id="panelBody"></div>
 </aside>
 
-<script>
-(() => {
-  const CAUSAS = [
-    { id:1, corto:"Sin infraestructura distrital", full:"Insuficiencia de redes de servicios públicos e infraestructura distrital especializada en la recolección diferenciada de residuos húmedos a gran escala." },
-    { id:2, corto:"Sin acopio interno", full:"Inexistencia de áreas logísticas internas de acopio y separación temporal de biomasa dentro de los predios comerciales mayoristas." },
-    { id:3, corto:"Comercio sobre saneamiento", full:"Supeditación absoluta de la morfología arquitectónica privada al rendimiento comercial bruto, suprimiendo los espacios dedicados al saneamiento y mantenimiento de cargas." },
-    { id:4, corto:"Vacío normativo urbano", full:"Carencia de lineamientos de control normativo y exigencias urbanísticas locales para el tratamiento interno de subproductos en el suelo comercial." },
-    { id:5, corto:"Desarticulación institucional", full:"Desarticulación entre las políticas de distribución alimentaria regional y la capacidad de soporte de los servicios de aseo urbano en el borde de la localidad." },
-  ];
-  // Qué causa qué: red real, no una fila — el nodo 5 alimenta a dos causas
-  // distintas, y esas dos convergen finalmente en el nodo 2.
-  const REL = [
-    { from:5, to:1 }, { from:5, to:4 }, { from:4, to:3 }, { from:3, to:2 }, { from:1, to:2 },
-  ];
-  const byId = {}; CAUSAS.forEach(c => byId[c.id] = c);
+<script type="importmap">
+{ "imports": {
+  "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+} }
+</script>
+<script type="module">
+import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
-  const gooLayer = document.getElementById("gooLayer");
-  const labelLayer = document.getElementById("labelLayer");
-  const intro = document.getElementById("intro");
-  const backBtn = document.getElementById("backBtn");
+const CAUSAS = [
+  { id:1, corto:"Sin infraestructura distrital", full:"Insuficiencia de redes de servicios públicos e infraestructura distrital especializada en la recolección diferenciada de residuos húmedos a gran escala." },
+  { id:2, corto:"Sin acopio interno", full:"Inexistencia de áreas logísticas internas de acopio y separación temporal de biomasa dentro de los predios comerciales mayoristas." },
+  { id:3, corto:"Comercio sobre saneamiento", full:"Supeditación absoluta de la morfología arquitectónica privada al rendimiento comercial bruto, suprimiendo los espacios dedicados al saneamiento y mantenimiento de cargas." },
+  { id:4, corto:"Vacío normativo urbano", full:"Carencia de lineamientos de control normativo y exigencias urbanísticas locales para el tratamiento interno de subproductos en el suelo comercial." },
+  { id:5, corto:"Desarticulación institucional", full:"Desarticulación entre las políticas de distribución alimentaria regional y la capacidad de soporte de los servicios de aseo urbano en el borde de la localidad." },
+];
+const REL = [ {from:5,to:1}, {from:5,to:4}, {from:4,to:3}, {from:3,to:2}, {from:1,to:2} ];
+const byId = {}; CAUSAS.forEach(c => byId[c.id] = c);
 
-  const CENTER_R = 118;
-  const NODE_R = 68;
-  const BRIDGES = 12;
+const stageEl = document.getElementById("stage");
+const labelLayer = document.getElementById("labelLayer");
+const intro = document.getElementById("intro");
+const backBtn = document.getElementById("backBtn");
 
-  let cx, cy, radius;
-  const nodePos = {};
-  function computeGeometry() {
-    cx = window.innerWidth / 2;
-    cy = window.innerHeight / 2 + 10;
-    radius = Math.min(window.innerWidth, window.innerHeight) * 0.30;
-    CAUSAS.forEach((c, i) => {
-      const angle = (-90 + i * (360 / CAUSAS.length)) * Math.PI / 180;
-      nodePos[c.id] = { x: cx + radius * Math.cos(angle), y: cy + radius * Math.sin(angle) };
-    });
+// ---------- Escena 3D ----------
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xf4f6f8);
+
+const camera = new THREE.PerspectiveCamera(50, window.innerWidth/window.innerHeight, 0.1, 100);
+camera.position.set(0, 0, 13);
+
+const renderer = new THREE.WebGLRenderer({ antialias:true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+stageEl.appendChild(renderer.domElement);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.08;
+controls.minDistance = 5; controls.maxDistance = 24;
+
+scene.add(new THREE.AmbientLight(0xffffff, 0.65));
+const key = new THREE.DirectionalLight(0xffffff, 0.9); key.position.set(5,8,6); scene.add(key);
+const rim = new THREE.DirectionalLight(0x88aaff, 0.35); rim.position.set(-6,-4,-5); scene.add(rim);
+
+const NODE_COLOR = 0x2454c9;
+const NODE_COLOR_LIGHT = 0x5c85e6;
+
+function makeSphere(radius, color) {
+  const geo = new THREE.SphereGeometry(radius, 48, 32);
+  const mat = new THREE.MeshStandardMaterial({ color, roughness:0.35, metalness:0.08 });
+  return new THREE.Mesh(geo, mat);
+}
+
+// Esfera inicial
+const CENTER_R = 2.4;
+const centerMesh = makeSphere(CENTER_R, NODE_COLOR);
+scene.add(centerMesh);
+
+// 5 esferas de causas, distribuidas en el espacio 3D (no en un plano
+// plano: alternan un poco en Z para que la rotación se sienta real).
+const NODE_R = 1.15;
+const nodePos3D = {};
+CAUSAS.forEach((c, i) => {
+  const angle = (i / CAUSAS.length) * Math.PI * 2;
+  const R = 4.6;
+  nodePos3D[c.id] = new THREE.Vector3(
+    Math.cos(angle) * R,
+    Math.sin(angle) * R * 0.72,
+    (i % 2 === 0 ? 1 : -1) * 1.5
+  );
+});
+const nodeMeshes = {};
+CAUSAS.forEach(c => {
+  const m = makeSphere(NODE_R, NODE_COLOR_LIGHT);
+  m.position.set(0,0,0); // nacen en el centro, luego viajan
+  m.scale.setScalar(0.001);
+  m.visible = false;
+  m.userData.causaId = c.id;
+  scene.add(m);
+  nodeMeshes[c.id] = m;
+});
+
+// Conexiones: un cono truncado (cilindro con radios distintos) entre cada
+// par de causas segun REL, ancho junto al origen y afinado al destino.
+const linkMeshes = [];
+REL.forEach(r => {
+  const geo = new THREE.CylinderGeometry(0.16, 0.42, 1, 20, 1, true);
+  const mat = new THREE.MeshStandardMaterial({ color: NODE_COLOR, roughness:0.4, transparent:true, opacity:0 });
+  const mesh = new THREE.Mesh(geo, mat);
+  mesh.visible = false;
+  scene.add(mesh);
+  linkMeshes.push({ mesh, rel:r });
+});
+
+function orientLink(mesh, a, b) {
+  const dir = new THREE.Vector3().subVectors(b, a);
+  const len = dir.length();
+  const mid = new THREE.Vector3().addVectors(a, b).multiplyScalar(0.5);
+  mesh.position.copy(mid);
+  mesh.scale.set(1, len, 1);
+  const up = new THREE.Vector3(0,1,0);
+  const quat = new THREE.Quaternion().setFromUnitVectors(up, dir.clone().normalize());
+  mesh.quaternion.copy(quat);
+}
+
+// ---------- Etiquetas HTML proyectadas sobre cada esfera ----------
+const centerLabel = document.createElement("div");
+centerLabel.className = "label3d center-label";
+centerLabel.style.width = "220px";
+centerLabel.textContent = "Ausencia de gestión de residuos orgánicos";
+labelLayer.appendChild(centerLabel);
+
+const nodeLabels = {};
+CAUSAS.forEach(c => {
+  const l = document.createElement("div");
+  l.className = "label3d child-label";
+  l.style.width = "140px";
+  l.textContent = c.corto;
+  l.style.opacity = "0";
+  labelLayer.appendChild(l);
+  nodeLabels[c.id] = l;
+});
+
+function project(vec3) {
+  const p = vec3.clone().project(camera);
+  return { x: (p.x*0.5+0.5)*window.innerWidth, y: (-p.y*0.5+0.5)*window.innerHeight, behind: p.z > 1 };
+}
+
+// ---------- Interacción: clic para revelar / clic en causa para panel ----------
+let revealed = false;
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+let downPos = null;
+
+renderer.domElement.addEventListener("pointerdown", (e) => { downPos = { x:e.clientX, y:e.clientY }; });
+renderer.domElement.addEventListener("pointerup", (e) => {
+  if (!downPos) return;
+  const moved = Math.hypot(e.clientX-downPos.x, e.clientY-downPos.y);
+  downPos = null;
+  if (moved > 6) return; // fue un arrastre de rotacion, no un clic
+  mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+  raycaster.setFromCamera(mouse, camera);
+  if (!revealed) {
+    const hit = raycaster.intersectObject(centerMesh)[0];
+    if (hit) reveal();
+    return;
   }
-  computeGeometry();
+  const hits = raycaster.intersectObjects(Object.values(nodeMeshes));
+  if (hits[0]) openPanel(hits[0].object.userData.causaId);
+});
 
-  function el(cls) { const d = document.createElement("div"); d.className = cls; return d; }
-  function size(elm, r) { elm.style.width = elm.style.height = r * 2 + "px"; }
-  function place(elm, x, y) { elm.style.left = x + "px"; elm.style.top = y + "px"; }
+function reveal() {
+  revealed = true;
+  intro.style.opacity = "0";
+  backBtn.classList.add("show");
+  animateTo(1, 1200);
+}
+function collapse() {
+  revealed = false;
+  intro.style.opacity = "1";
+  backBtn.classList.remove("show");
+  document.getElementById("panel").classList.remove("open");
+  animateTo(0, 1000);
+}
+backBtn.addEventListener("click", collapse);
 
-  const centerBlob = el("blob"); gooLayer.appendChild(centerBlob);
-  const centerLabel = el("label center-label");
-  centerLabel.style.width = (CENTER_R * 1.55) + "px";
-  centerLabel.textContent = "Ausencia de gestión de residuos orgánicos";
-  labelLayer.appendChild(centerLabel);
-  const hitCenter = el("hit"); labelLayer.appendChild(hitCenter);
+// t=0 estado colapsado (solo esfera central), t=1 estado revelado (red)
+let animT = 0, animFrom = 0, animTo = 0, animStart = 0, animDur = 1000;
+function animateTo(target, dur) {
+  animFrom = animT; animTo = target; animStart = performance.now(); animDur = dur;
+}
+function easeOutCubic(x){ return 1 - Math.pow(1-x, 3); }
 
-  const nodeBlobs = {}, nodeLabels = {}, nodeHits = {};
+function applyState() {
+  const t = animT;
+  centerMesh.scale.setScalar(THREE.MathUtils.lerp(1, 0.001, t));
+  centerMesh.material.opacity = 1; centerMesh.material.transparent = t > 0;
+  centerMesh.visible = t < 0.999;
+
   CAUSAS.forEach(c => {
-    const b = el("blob"); gooLayer.appendChild(b); nodeBlobs[c.id] = b;
-    const l = el("label child-label");
-    l.style.width = (NODE_R * 1.8) + "px";
-    l.textContent = c.corto;
-    labelLayer.appendChild(l); nodeLabels[c.id] = l;
-    const h = el("hit"); labelLayer.appendChild(h); nodeHits[c.id] = h;
-    h.addEventListener("click", (e) => { e.stopPropagation(); openPanel(c.id); });
+    const m = nodeMeshes[c.id];
+    m.visible = t > 0.001;
+    m.scale.setScalar(THREE.MathUtils.lerp(0.001, 1, t));
+    m.position.lerpVectors(new THREE.Vector3(0,0,0), nodePos3D[c.id], t);
   });
 
-  const bridgesByRel = REL.map(() => {
-    const arr = [];
-    for (let i = 0; i < BRIDGES; i++) { const b = el("blob"); gooLayer.appendChild(b); arr.push(b); }
-    return arr;
+  linkMeshes.forEach(({mesh, rel}) => {
+    const a = new THREE.Vector3().lerpVectors(new THREE.Vector3(0,0,0), nodePos3D[rel.from], t);
+    const b = new THREE.Vector3().lerpVectors(new THREE.Vector3(0,0,0), nodePos3D[rel.to], t);
+    orientLink(mesh, a, b);
+    mesh.visible = t > 0.001;
+    mesh.material.opacity = t;
   });
+}
 
-  let revealed = false;
+function openPanel(id) {
+  const c = byId[id];
+  const panel = document.getElementById("panel"), body = document.getElementById("panelBody");
+  const causaDe = REL.filter(r => r.to === id).map(r => byId[r.from]);
+  const provoca = REL.filter(r => r.from === id).map(r => byId[r.to]);
+  body.innerHTML = `
+    <p class="panel-kind">Causa</p>
+    <h2>${c.full}</h2>
+    ${causaDe.length ? `<div class="block"><b>Viene de</b>${causaDe.map(x => `<div class="rel-chip" data-goto="${x.id}">${x.corto}</div>`).join("")}</div>` : ""}
+    ${provoca.length ? `<div class="block"><b>Alimenta a</b>${provoca.map(x => `<div class="rel-chip" data-goto="${x.id}">${x.corto}</div>`).join("")}</div>` : ""}
+  `;
+  body.querySelectorAll("[data-goto]").forEach(elm => elm.addEventListener("click", (e) => { e.stopPropagation(); openPanel(Number(elm.dataset.goto)); }));
+  panel.classList.add("open");
+}
+document.getElementById("panelClose").addEventListener("click", () => document.getElementById("panel").classList.remove("open"));
 
-  function render() {
-    size(centerBlob, revealed ? 1 : CENTER_R);
-    place(centerBlob, cx, cy);
-    centerBlob.style.opacity = revealed ? "0" : "1";
-    place(centerLabel, cx, cy);
-    centerLabel.style.opacity = revealed ? "0" : "1";
-    size(hitCenter, CENTER_R); place(hitCenter, cx, cy);
-    hitCenter.style.pointerEvents = revealed ? "none" : "auto";
-    intro.style.opacity = revealed ? "0" : "1";
-    backBtn.classList.toggle("show", revealed);
+window.addEventListener("resize", () => {
+  camera.aspect = window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
 
-    CAUSAS.forEach(c => {
-      const target = revealed ? nodePos[c.id] : { x: cx, y: cy };
-      place(nodeBlobs[c.id], target.x, target.y);
-      size(nodeBlobs[c.id], revealed ? NODE_R : NODE_R * 0.08);
-      nodeBlobs[c.id].style.opacity = revealed ? "1" : "0";
-
-      place(nodeLabels[c.id], target.x, target.y);
-      nodeLabels[c.id].style.opacity = revealed ? "1" : "0";
-
-      size(nodeHits[c.id], NODE_R); place(nodeHits[c.id], target.x, target.y);
-      nodeHits[c.id].style.pointerEvents = revealed ? "auto" : "none";
-    });
-
-    REL.forEach((r, idx) => {
-      const a = revealed ? nodePos[r.from] : { x: cx, y: cy };
-      const b = revealed ? nodePos[r.to] : { x: cx, y: cy };
-      bridgesByRel[idx].forEach((bridge, j) => {
-        const t = (j + 1) / (BRIDGES + 1);
-        const rr = revealed ? (NODE_R * (1 - t * 0.7)) * 0.3 : 1;
-        size(bridge, rr);
-        place(bridge, a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t);
-        bridge.style.opacity = revealed ? "1" : "0";
-      });
-    });
+function tick(now) {
+  requestAnimationFrame(tick);
+  if (animT !== animTo) {
+    const p = Math.min(1, (now - animStart) / animDur);
+    animT = animFrom + (animTo - animFrom) * easeOutCubic(p);
+    applyState();
   }
+  controls.update();
+  renderer.render(scene, camera);
 
-  function reveal() { revealed = true; render(); }
-  function collapse() { revealed = false; render(); document.getElementById("panel").classList.remove("open"); }
+  // Proyectar etiquetas
+  const cp = project(centerMesh.position);
+  centerLabel.style.left = cp.x + "px"; centerLabel.style.top = cp.y + "px";
+  centerLabel.style.opacity = (centerMesh.visible && !cp.behind) ? String(1 - animT) : "0";
 
-  hitCenter.addEventListener("click", reveal);
-  backBtn.addEventListener("click", collapse);
-
-  function openPanel(id) {
-    const c = byId[id];
-    const panel = document.getElementById("panel"), body = document.getElementById("panelBody");
-    const causaDe = REL.filter(r => r.to === id).map(r => byId[r.from]);
-    const provoca = REL.filter(r => r.from === id).map(r => byId[r.to]);
-    body.innerHTML = `
-      <p class="panel-kind">Causa</p>
-      <h2>${c.full}</h2>
-      ${causaDe.length ? `<div class="block"><b>Viene de</b>${causaDe.map(x => `<div class="rel-chip" data-goto="${x.id}">${x.corto}</div>`).join("")}</div>` : ""}
-      ${provoca.length ? `<div class="block"><b>Alimenta a</b>${provoca.map(x => `<div class="rel-chip" data-goto="${x.id}">${x.corto}</div>`).join("")}</div>` : ""}
-    `;
-    body.querySelectorAll("[data-goto]").forEach(elm => elm.addEventListener("click", (e) => { e.stopPropagation(); openPanel(Number(elm.dataset.goto)); }));
-    panel.classList.add("open");
-  }
-  document.getElementById("panelClose").addEventListener("click", () => document.getElementById("panel").classList.remove("open"));
-
-  window.addEventListener("resize", () => { computeGeometry(); render(); });
-  render();
-})();
+  CAUSAS.forEach(c => {
+    const m = nodeMeshes[c.id];
+    const p = project(m.position);
+    const el = nodeLabels[c.id];
+    el.style.left = p.x + "px"; el.style.top = p.y + "px";
+    el.style.opacity = (m.visible && !p.behind) ? String(animT) : "0";
+  });
+}
+applyState();
+requestAnimationFrame(tick);
 </script>
 </body>
 </html>
