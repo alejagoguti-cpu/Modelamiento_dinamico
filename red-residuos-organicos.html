@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ausencia de gestión de residuos orgánicos — Corabastos</title>
+<title>Saturación de residuos por centralización operativa — Corabastos</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg:#f4f6f8;
-    --node:#2454c9;
+    --node:#3a5a94;
     --ink-on-node:#ffffff;
     --panel:rgba(0,0,0,.04); --panel-border:rgba(0,0,0,.1);
     --ink-dark:#1c2430; --ink-dim:#5b6675;
@@ -17,11 +17,17 @@
   html,body{height:100%;margin:0;}
   body{ background:var(--bg); color:var(--ink-dark); font-family:'Inter',sans-serif; overflow:hidden; }
   .intro{
-    position:fixed; top:24px; left:50%; transform:translateX(-50%); z-index:6; text-align:center;
-    pointer-events:none; max-width:560px; transition:opacity .4s ease;
+    position:fixed; top:20px; left:50%; transform:translateX(-50%); z-index:6; text-align:center;
+    pointer-events:none; max-width:640px; transition:opacity .4s ease;
   }
-  .intro h1{ font-family:'Space Grotesk',sans-serif; font-size:16px; font-weight:600; margin:0 0 4px; }
-  .intro p{ margin:0; font-size:12px; color:var(--ink-dim); }
+  .intro h1{ font-family:'Space Grotesk',sans-serif; font-size:15px; font-weight:600; margin:0 0 4px; line-height:1.35; }
+  .intro p{ margin:0; font-size:11.5px; color:var(--ink-dim); }
+
+  .tier-caption{
+    position:fixed; top:96px; z-index:2; font-size:11px; text-transform:uppercase; letter-spacing:.05em;
+    color:var(--ink-dim); font-weight:600; text-align:center; width:29vw; opacity:0; transition:opacity .5s ease;
+  }
+  .tier-caption.show{ opacity:1; }
 
   .stage{ position:relative; width:100vw; height:100vh; }
   .goo-layer{ position:absolute; inset:0; filter:url(#goo); }
@@ -35,14 +41,14 @@
   .label{
     position:absolute; top:0; left:0; transform:translate(-50%,-50%);
     transition: left 1s cubic-bezier(.22,1,.36,1), top 1s cubic-bezier(.22,1,.36,1), opacity .4s ease;
-    text-align:center; font-weight:600; line-height:1.28; color:var(--ink-on-node); padding:0 10px; pointer-events:none;
+    text-align:center; font-weight:600; line-height:1.22; color:var(--ink-on-node); padding:0 8px; pointer-events:none;
   }
-  .label.center-label{ font-family:'Space Grotesk',sans-serif; font-size:16px; }
-  .label.child-label{ font-size:12px; }
+  .label.center-label{ font-family:'Space Grotesk',sans-serif; font-size:14.5px; }
+  .label.child-label{ font-size:10.5px; }
   .hit{ position:absolute; top:0; left:0; transform:translate(-50%,-50%); border-radius:50%; cursor:pointer; z-index:5; pointer-events:auto; }
 
   .panel{
-    position:fixed; top:0; right:0; bottom:0; z-index:10; width:min(360px,92vw);
+    position:fixed; top:0; right:0; bottom:0; z-index:10; width:min(380px,92vw);
     background:#fff; border-left:1px solid var(--panel-border); box-shadow:-14px 0 40px rgba(0,0,0,.08);
     padding:26px 24px; overflow-y:auto; transform:translateX(100%); transition:transform .32s cubic-bezier(.2,.8,.2,1);
   }
@@ -53,36 +59,44 @@
   }
   .panel-close:hover{ background:rgba(0,0,0,.08); }
   .panel-kind{ font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-dim); margin:0 0 8px; }
-  .panel h2{ font-family:'Space Grotesk',sans-serif; font-size:16.5px; font-weight:600; margin:0 30px 4px 0; line-height:1.4; }
+  .panel h2{ font-family:'Space Grotesk',sans-serif; font-size:16px; font-weight:600; margin:0 30px 4px 0; line-height:1.4; }
   .panel .block{ margin-top:16px; padding-top:16px; border-top:1px solid var(--panel-border); }
   .panel .block b{ display:block; font-size:11px; color:var(--ink-dim); font-weight:600; margin-bottom:7px; text-transform:uppercase; letter-spacing:.04em; }
-  .panel .rel-chip{ display:block; padding:9px 12px; margin-bottom:7px; border-radius:9px; background:rgba(36,84,201,.08); border:1px solid rgba(36,84,201,.3); font-size:12.5px; cursor:pointer; color:var(--ink-dark); }
-  .panel .rel-chip:hover{ background:rgba(36,84,201,.15); }
+  .panel .rel-chip{ display:block; padding:9px 12px; margin-bottom:7px; border-radius:9px; background:rgba(58,90,148,.08); border:1px solid rgba(58,90,148,.3); font-size:12px; cursor:pointer; color:var(--ink-dark); }
+  .panel .rel-chip .rel-verbo{ display:block; font-size:10px; color:var(--ink-dim); font-style:italic; margin-top:2px; }
+  .panel .rel-chip:hover{ background:rgba(58,90,148,.15); }
+  .panel .cat-tag{ display:inline-block; font-size:10.5px; font-weight:600; padding:3px 9px; border-radius:999px; background:rgba(58,90,148,.12); color:var(--node); margin-bottom:10px; }
 
-  .back-btn{
-    position:fixed; bottom:22px; left:50%; transform:translateX(-50%); z-index:6;
+  .back-btn, .analysis-btn{
+    position:fixed; bottom:22px; z-index:6;
     padding:10px 18px; border-radius:999px; border:1px solid var(--panel-border); background:#fff;
-    font-size:12.5px; font-weight:600; color:var(--ink-dark); cursor:pointer; box-shadow:0 6px 16px rgba(0,0,0,.08);
+    font-size:12px; font-weight:600; color:var(--ink-dark); cursor:pointer; box-shadow:0 6px 16px rgba(0,0,0,.08);
     opacity:0; pointer-events:none; transition:opacity .3s ease;
   }
-  .back-btn.show{ opacity:1; pointer-events:auto; }
+  .back-btn{ left:50%; transform:translateX(-50%); }
+  .analysis-btn{ right:22px; }
+  .back-btn.show, .analysis-btn.show{ opacity:1; pointer-events:auto; }
 
-  @media (prefers-reduced-motion: reduce){ .blob, .label, .panel, .back-btn{ transition:none !important; } }
+  @media (prefers-reduced-motion: reduce){ .blob, .label, .panel{ transition:none !important; } }
 </style>
 </head>
 <body>
 
 <div class="intro" id="intro">
-  <h1>Ausencia de un modelo de gestión y tratamiento de residuos orgánicos</h1>
-  <p>Toca la burbuja para revelar la red de causas que la explican</p>
+  <h1>Saturación de residuos por centralización operativa en Corabastos y fricción espacial de acopio</h1>
+  <p>Toca la burbuja para revelar la red de causas, actores, lugares y síntomas</p>
 </div>
+
+<div class="tier-caption" id="capT1" style="left:2vw;">Causas de fondo</div>
+<div class="tier-caption" id="capT2" style="left:35.5vw;">Actores y espacio</div>
+<div class="tier-caption" id="capT3" style="right:2vw;">Síntomas visibles</div>
 
 <div class="stage" id="stage">
   <svg width="0" height="0" style="position:absolute">
     <defs>
       <filter id="goo">
-        <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
-        <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 24 -12" result="goo" />
+        <feGaussianBlur in="SourceGraphic" stdDeviation="7" result="blur" />
+        <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 17 -8" result="goo" />
         <feComposite in="SourceGraphic" in2="goo" operator="atop" />
       </filter>
     </defs>
@@ -92,6 +106,7 @@
 </div>
 
 <button class="back-btn" id="backBtn">← Volver a la burbuja inicial</button>
+<button class="analysis-btn" id="analysisBtn">📄 Análisis de la red</button>
 
 <aside class="panel" id="panel">
   <button class="panel-close" id="panelClose">✕</button>
@@ -100,38 +115,67 @@
 
 <script>
 (() => {
-  const CAUSAS = [
-    { id:1, corto:"Sin infraestructura distrital", full:"Insuficiencia de redes de servicios públicos e infraestructura distrital especializada en la recolección diferenciada de residuos húmedos a gran escala." },
-    { id:2, corto:"Sin acopio interno", full:"Inexistencia de áreas logísticas internas de acopio y separación temporal de biomasa dentro de los predios comerciales mayoristas." },
-    { id:3, corto:"Comercio sobre saneamiento", full:"Supeditación absoluta de la morfología arquitectónica privada al rendimiento comercial bruto, suprimiendo los espacios dedicados al saneamiento y mantenimiento de cargas." },
-    { id:4, corto:"Vacío normativo urbano", full:"Carencia de lineamientos de control normativo y exigencias urbanísticas locales para el tratamiento interno de subproductos en el suelo comercial." },
-    { id:5, corto:"Desarticulación institucional", full:"Desarticulación entre las políticas de distribución alimentaria regional y la capacidad de soporte de los servicios de aseo urbano en el borde de la localidad." },
+  const NODOS = [
+    { id:"ingreso", tier:1, cat:"Causa de fondo", corto:"Ingreso masivo de biomasa", full:"Ingreso masivo diario de biomasa de alimentos." },
+    { id:"distancia", tier:1, cat:"Causa de fondo", corto:"Distancia a centros formales", full:"Distancia física excesiva a centros de tratamiento formales." },
+    { id:"saturacion", tier:1, cat:"Síntoma / mecanismo", corto:"Saturación operativa interna", full:"Saturación de la capacidad operativa interna." },
+
+    { id:"plataformas", tier:2, cat:"Espacio físico", corto:"Plataformas de carga", full:"Plataformas internas de carga y descarga de Corabastos." },
+    { id:"comerciantes", tier:2, cat:"Actor", corto:"Comerciantes y coteros", full:"Comerciantes y coteros de Corabastos." },
+    { id:"recicladores", tier:2, cat:"Actor", corto:"Recicladores informales", full:"Recicladores informales y recuperadores de oficio." },
+    { id:"uaesp", tier:2, cat:"Actor", corto:"UAESP y aseo formal", full:"UAESP y operadores formales de aseo." },
+    { id:"bodegas", tier:2, cat:"Espacio físico", corto:"Bodegas informales de acopio", full:"Bodegas e instalaciones informales de acopio en vía pública." },
+
+    { id:"acopio", tier:3, cat:"Síntoma visible", corto:"Invasión de residuos en vía pública", full:"Acopio e invasión de residuos orgánicos en vía pública." },
+    { id:"bordes", tier:3, cat:"Espacio físico", corto:"Bordes del humedal", full:"Bordes del Humedal El Tintal y Chucua La Vaca." },
+    { id:"degradacion", tier:3, cat:"Síntoma visible", corto:"Degradación del ecosistema", full:"Degradación del ecosistema hídrico." },
+    { id:"vectores", tier:3, cat:"Síntoma visible", corto:"Vectores y contaminación", full:"Proliferación de vectores y contaminación ambiental." },
   ];
-  // Qué causa qué: red real, no una fila — el nodo 5 alimenta a dos causas
-  // distintas, y esas dos convergen finalmente en el nodo 2.
+  const byId = {}; NODOS.forEach(n => byId[n.id] = n);
+
   const REL = [
-    { from:5, to:1 }, { from:5, to:4 }, { from:4, to:3 }, { from:3, to:2 }, { from:1, to:2 },
+    { from:"ingreso", to:"plataformas", verbo:"satura las" },
+    { from:"plataformas", to:"saturacion", verbo:"provoca la" },
+    { from:"saturacion", to:"comerciantes", verbo:"condiciona la decisión de los" },
+    { from:"distancia", to:"comerciantes", verbo:"condiciona la decisión de los" },
+    { from:"comerciantes", to:"recicladores", verbo:"transfieren el residuo sin clasificar a" },
+    { from:"recicladores", to:"bodegas", verbo:"consolidan y operan en" },
+    { from:"bodegas", to:"acopio", verbo:"producen el" },
+    { from:"acopio", to:"bordes", verbo:"se desborda hacia los" },
+    { from:"bordes", to:"degradacion", verbo:"causan la" },
+    { from:"bordes", to:"vectores", verbo:"causan la" },
+    { from:"bodegas", to:"uaesp", verbo:"obstruyen la gestión de la" },
+    { from:"uaesp", to:"saturacion", verbo:"incrementa la (bucle de retroalimentación)" },
   ];
-  const byId = {}; CAUSAS.forEach(c => byId[c.id] = c);
+
+  const ANALISIS = "La red evidencia que la acumulación de basura en el espacio público no se explica por «falta de cultura» o «conducta individual», sino por un conflicto de escala y distancia física. Revela a Corabastos como un hub emisor centralizado y a las bodegas informales como nodos puente que trasladan el colapso operativo privado de la central hacia la degradación del espacio público y la Estructura Ecológica Principal (Humedales).";
 
   const gooLayer = document.getElementById("gooLayer");
   const labelLayer = document.getElementById("labelLayer");
   const intro = document.getElementById("intro");
   const backBtn = document.getElementById("backBtn");
+  const analysisBtn = document.getElementById("analysisBtn");
+  const tierCaptions = [document.getElementById("capT1"), document.getElementById("capT2"), document.getElementById("capT3")];
 
-  const CENTER_R = 118;
-  const NODE_R = 68;
-  const BRIDGES = 12;
+  const CENTER_R = 108;
+  const NODE_R = 56;
+  const BRIDGES = 10;
 
-  let cx, cy, radius;
+  let cx, cy, colX;
   const nodePos = {};
   function computeGeometry() {
     cx = window.innerWidth / 2;
     cy = window.innerHeight / 2 + 10;
-    radius = Math.min(window.innerWidth, window.innerHeight) * 0.30;
-    CAUSAS.forEach((c, i) => {
-      const angle = (-90 + i * (360 / CAUSAS.length)) * Math.PI / 180;
-      nodePos[c.id] = { x: cx + radius * Math.cos(angle), y: cy + radius * Math.sin(angle) };
+    colX = [window.innerWidth * 0.16, window.innerWidth * 0.5, window.innerWidth * 0.84];
+    const byTier = { 1: [], 2: [], 3: [] };
+    NODOS.forEach(n => byTier[n.tier].push(n));
+    Object.entries(byTier).forEach(([tier, list]) => {
+      const gap = Math.min(190, (window.innerHeight - 200) / Math.max(1, list.length - 1 || 1));
+      const totalH = gap * (list.length - 1);
+      const startY = cy - totalH / 2;
+      list.forEach((n, i) => {
+        nodePos[n.id] = { x: colX[Number(tier) - 1], y: list.length === 1 ? cy : startY + i * gap };
+      });
     });
   }
   computeGeometry();
@@ -142,20 +186,19 @@
 
   const centerBlob = el("blob"); gooLayer.appendChild(centerBlob);
   const centerLabel = el("label center-label");
-  centerLabel.style.width = (CENTER_R * 1.55) + "px";
-  centerLabel.textContent = "Ausencia de gestión de residuos orgánicos";
+  centerLabel.style.width = (CENTER_R * 1.65) + "px";
+  centerLabel.textContent = "Saturación de residuos por centralización operativa";
   labelLayer.appendChild(centerLabel);
   const hitCenter = el("hit"); labelLayer.appendChild(hitCenter);
 
   const nodeBlobs = {}, nodeLabels = {}, nodeHits = {};
-  CAUSAS.forEach(c => {
-    const b = el("blob"); gooLayer.appendChild(b); nodeBlobs[c.id] = b;
+  NODOS.forEach(n => {
+    const b = el("blob"); gooLayer.appendChild(b); nodeBlobs[n.id] = b;
     const l = el("label child-label");
-    l.style.width = (NODE_R * 1.8) + "px";
-    l.textContent = c.corto;
-    labelLayer.appendChild(l); nodeLabels[c.id] = l;
-    const h = el("hit"); labelLayer.appendChild(h); nodeHits[c.id] = h;
-    h.addEventListener("click", (e) => { e.stopPropagation(); openPanel(c.id); });
+    l.style.width = (NODE_R * 1.9) + "px";
+    l.textContent = n.corto;
+    labelLayer.appendChild(l); nodeLabels[n.id] = l;
+    const h = el("hit"); labelLayer.appendChild(h); nodeHits[n.id] = h;
   });
 
   const bridgesByRel = REL.map(() => {
@@ -176,18 +219,20 @@
     hitCenter.style.pointerEvents = revealed ? "none" : "auto";
     intro.style.opacity = revealed ? "0" : "1";
     backBtn.classList.toggle("show", revealed);
+    analysisBtn.classList.toggle("show", revealed);
+    tierCaptions.forEach(c => c.classList.toggle("show", revealed));
 
-    CAUSAS.forEach(c => {
-      const target = revealed ? nodePos[c.id] : { x: cx, y: cy };
-      place(nodeBlobs[c.id], target.x, target.y);
-      size(nodeBlobs[c.id], revealed ? NODE_R : NODE_R * 0.08);
-      nodeBlobs[c.id].style.opacity = revealed ? "1" : "0";
+    NODOS.forEach(n => {
+      const target = revealed ? nodePos[n.id] : { x: cx, y: cy };
+      place(nodeBlobs[n.id], target.x, target.y);
+      size(nodeBlobs[n.id], revealed ? NODE_R : NODE_R * 0.08);
+      nodeBlobs[n.id].style.opacity = revealed ? "1" : "0";
 
-      place(nodeLabels[c.id], target.x, target.y);
-      nodeLabels[c.id].style.opacity = revealed ? "1" : "0";
+      place(nodeLabels[n.id], target.x, target.y);
+      nodeLabels[n.id].style.opacity = revealed ? "1" : "0";
 
-      size(nodeHits[c.id], NODE_R); place(nodeHits[c.id], target.x, target.y);
-      nodeHits[c.id].style.pointerEvents = revealed ? "auto" : "none";
+      size(nodeHits[n.id], NODE_R); place(nodeHits[n.id], target.x, target.y);
+      nodeHits[n.id].style.pointerEvents = revealed ? "auto" : "none";
     });
 
     REL.forEach((r, idx) => {
@@ -195,7 +240,7 @@
       const b = revealed ? nodePos[r.to] : { x: cx, y: cy };
       bridgesByRel[idx].forEach((bridge, j) => {
         const t = (j + 1) / (BRIDGES + 1);
-        const rr = revealed ? (NODE_R * (1 - t * 0.7)) * 0.3 : 1;
+        const rr = revealed ? (NODE_R * (1 - t * 0.8)) * 0.22 : 1;
         size(bridge, rr);
         place(bridge, a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t);
         bridge.style.opacity = revealed ? "1" : "0";
@@ -205,22 +250,41 @@
 
   function reveal() { revealed = true; render(); }
   function collapse() { revealed = false; render(); document.getElementById("panel").classList.remove("open"); }
-
-  hitCenter.addEventListener("click", reveal);
   backBtn.addEventListener("click", collapse);
+  analysisBtn.addEventListener("click", openAnalysis);
+
+  const stage = document.getElementById("stage");
+  let downStart = null, downTarget = null;
+  stage.addEventListener("pointerdown", (e) => { downStart = { x: e.clientX, y: e.clientY }; downTarget = e.target; });
+  window.addEventListener("pointerup", (e) => {
+    if (!downStart) return;
+    const moved = Math.hypot(e.clientX - downStart.x, e.clientY - downStart.y);
+    downStart = null;
+    if (moved >= 8) return;
+    if (downTarget === hitCenter) { reveal(); return; }
+    const nid = Object.keys(nodeHits).find(id => nodeHits[id] === downTarget);
+    if (nid) openPanel(nid);
+  });
 
   function openPanel(id) {
-    const c = byId[id];
+    const n = byId[id];
     const panel = document.getElementById("panel"), body = document.getElementById("panelBody");
-    const causaDe = REL.filter(r => r.to === id).map(r => byId[r.from]);
-    const provoca = REL.filter(r => r.from === id).map(r => byId[r.to]);
+    const vieneDe = REL.filter(r => r.to === id).map(r => ({ n: byId[r.from], verbo: r.verbo }));
+    const alimentaA = REL.filter(r => r.from === id).map(r => ({ n: byId[r.to], verbo: r.verbo }));
     body.innerHTML = `
-      <p class="panel-kind">Causa</p>
-      <h2>${c.full}</h2>
-      ${causaDe.length ? `<div class="block"><b>Viene de</b>${causaDe.map(x => `<div class="rel-chip" data-goto="${x.id}">${x.corto}</div>`).join("")}</div>` : ""}
-      ${provoca.length ? `<div class="block"><b>Alimenta a</b>${provoca.map(x => `<div class="rel-chip" data-goto="${x.id}">${x.corto}</div>`).join("")}</div>` : ""}
+      <span class="cat-tag">${n.cat}</span>
+      <p class="panel-kind">Nodo</p>
+      <h2>${n.full}</h2>
+      ${vieneDe.length ? `<div class="block"><b>Viene de</b>${vieneDe.map(x => `<div class="rel-chip" data-goto="${x.n.id}">${x.n.corto}<span class="rel-verbo">${x.verbo}</span></div>`).join("")}</div>` : ""}
+      ${alimentaA.length ? `<div class="block"><b>Alimenta a</b>${alimentaA.map(x => `<div class="rel-chip" data-goto="${x.n.id}">${x.n.corto}<span class="rel-verbo">${x.verbo}</span></div>`).join("")}</div>` : ""}
     `;
-    body.querySelectorAll("[data-goto]").forEach(elm => elm.addEventListener("click", (e) => { e.stopPropagation(); openPanel(Number(elm.dataset.goto)); }));
+    body.querySelectorAll("[data-goto]").forEach(elm => elm.addEventListener("click", (e) => { e.stopPropagation(); openPanel(elm.dataset.goto); }));
+    panel.classList.add("open");
+  }
+
+  function openAnalysis() {
+    const panel = document.getElementById("panel"), body = document.getElementById("panelBody");
+    body.innerHTML = `<p class="panel-kind">Análisis de la arquitectura de la red</p><h2>¿Qué revela esta red sobre Kennedy?</h2><div class="block"><p style="font-size:13.5px;line-height:1.6;color:var(--ink-dark);margin:0;">${ANALISIS}</p></div>`;
     panel.classList.add("open");
   }
   document.getElementById("panelClose").addEventListener("click", () => document.getElementById("panel").classList.remove("open"));
