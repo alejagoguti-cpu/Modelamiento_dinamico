@@ -8,7 +8,7 @@
 <style>
   :root{
     --bg:#f4f6f8;
-    --node:#2454c9;
+    --node:#3a5a94;
     --ink-on-node:#ffffff;
     --panel:rgba(0,0,0,.04); --panel-border:rgba(0,0,0,.1);
     --ink-dark:#1c2430; --ink-dim:#5b6675;
@@ -86,8 +86,8 @@
   <svg width="0" height="0" style="position:absolute">
     <defs>
       <filter id="goo">
-        <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
-        <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 24 -12" result="goo" />
+        <feGaussianBlur in="SourceGraphic" stdDeviation="7" result="blur" />
+        <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 17 -8" result="goo" />
         <feComposite in="SourceGraphic" in2="goo" operator="atop" />
       </filter>
     </defs>
@@ -203,7 +203,7 @@
       const b = revealed ? nodePos[r.to] : { x: cx, y: cy };
       bridgesByRel[idx].forEach((bridge, j) => {
         const t = (j + 1) / (BRIDGES + 1);
-        const rr = revealed ? (NODE_R * (1 - t * 0.7)) * 0.3 : 1;
+        const rr = revealed ? (NODE_R * (1 - t * 0.8)) * 0.22 : 1;
         size(bridge, rr);
         place(bridge, a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t);
         bridge.style.opacity = revealed ? "1" : "0";
