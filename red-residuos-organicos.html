@@ -18,7 +18,7 @@
   body{ background:var(--bg); color:var(--ink-dark); font-family:'Inter',sans-serif; overflow:hidden; }
   .intro{
     position:fixed; top:24px; left:50%; transform:translateX(-50%); z-index:6; text-align:center;
-    pointer-events:none; max-width:560px;
+    pointer-events:none; max-width:560px; transition:opacity .4s ease;
   }
   .intro h1{ font-family:'Space Grotesk',sans-serif; font-size:16px; font-weight:600; margin:0 0 4px; }
   .intro p{ margin:0; font-size:12px; color:var(--ink-dim); }
@@ -27,18 +27,18 @@
   .goo-layer{ position:absolute; inset:0; filter:url(#goo); }
   .blob{
     position:absolute; border-radius:50%; top:0; left:0; transform:translate(-50%,-50%); background:var(--node);
-    transition: left .95s cubic-bezier(.22,1,.36,1), top .95s cubic-bezier(.22,1,.36,1),
-                width .8s cubic-bezier(.22,1,.36,1), height .8s cubic-bezier(.22,1,.36,1), opacity .4s ease;
+    transition: left 1s cubic-bezier(.22,1,.36,1), top 1s cubic-bezier(.22,1,.36,1),
+                width .85s cubic-bezier(.22,1,.36,1), height .85s cubic-bezier(.22,1,.36,1), opacity .45s ease;
   }
 
   .label-layer{ position:absolute; inset:0; pointer-events:none; }
   .label{
     position:absolute; top:0; left:0; transform:translate(-50%,-50%);
-    transition: left .95s cubic-bezier(.22,1,.36,1), top .95s cubic-bezier(.22,1,.36,1), opacity .4s ease;
+    transition: left 1s cubic-bezier(.22,1,.36,1), top 1s cubic-bezier(.22,1,.36,1), opacity .4s ease;
     text-align:center; font-weight:600; line-height:1.28; color:var(--ink-on-node); padding:0 10px; pointer-events:none;
   }
   .label.center-label{ font-family:'Space Grotesk',sans-serif; font-size:16px; }
-  .label.child-label{ font-size:12.5px; }
+  .label.child-label{ font-size:12px; }
   .hit{ position:absolute; top:0; left:0; transform:translate(-50%,-50%); border-radius:50%; cursor:pointer; z-index:5; pointer-events:auto; }
 
   .panel{
@@ -54,22 +54,34 @@
   .panel-close:hover{ background:rgba(0,0,0,.08); }
   .panel-kind{ font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-dim); margin:0 0 8px; }
   .panel h2{ font-family:'Space Grotesk',sans-serif; font-size:16.5px; font-weight:600; margin:0 30px 4px 0; line-height:1.4; }
+  .panel .block{ margin-top:16px; padding-top:16px; border-top:1px solid var(--panel-border); }
+  .panel .block b{ display:block; font-size:11px; color:var(--ink-dim); font-weight:600; margin-bottom:7px; text-transform:uppercase; letter-spacing:.04em; }
+  .panel .rel-chip{ display:block; padding:9px 12px; margin-bottom:7px; border-radius:9px; background:rgba(36,84,201,.08); border:1px solid rgba(36,84,201,.3); font-size:12.5px; cursor:pointer; color:var(--ink-dark); }
+  .panel .rel-chip:hover{ background:rgba(36,84,201,.15); }
 
-  @media (prefers-reduced-motion: reduce){ .blob, .label, .panel{ transition:none !important; } }
+  .back-btn{
+    position:fixed; bottom:22px; left:50%; transform:translateX(-50%); z-index:6;
+    padding:10px 18px; border-radius:999px; border:1px solid var(--panel-border); background:#fff;
+    font-size:12.5px; font-weight:600; color:var(--ink-dark); cursor:pointer; box-shadow:0 6px 16px rgba(0,0,0,.08);
+    opacity:0; pointer-events:none; transition:opacity .3s ease;
+  }
+  .back-btn.show{ opacity:1; pointer-events:auto; }
+
+  @media (prefers-reduced-motion: reduce){ .blob, .label, .panel, .back-btn{ transition:none !important; } }
 </style>
 </head>
 <body>
 
-<div class="intro">
+<div class="intro" id="intro">
   <h1>Ausencia de un modelo de gestión y tratamiento de residuos orgánicos</h1>
-  <p>Toca la burbuja para desplegar las causas que la componen</p>
+  <p>Toca la burbuja para revelar la red de causas que la explican</p>
 </div>
 
 <div class="stage" id="stage">
   <svg width="0" height="0" style="position:absolute">
     <defs>
       <filter id="goo">
-        <feGaussianBlur in="SourceGraphic" stdDeviation="11" result="blur" />
+        <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
         <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 24 -12" result="goo" />
         <feComposite in="SourceGraphic" in2="goo" operator="atop" />
       </filter>
@@ -79,6 +91,8 @@
   <div class="label-layer" id="labelLayer"></div>
 </div>
 
+<button class="back-btn" id="backBtn">← Volver a la burbuja inicial</button>
+
 <aside class="panel" id="panel">
   <button class="panel-close" id="panelClose">✕</button>
   <div id="panelBody"></div>
@@ -87,33 +101,37 @@
 <script>
 (() => {
   const CAUSAS = [
-    { corto:"Sin infraestructura distrital", full:"Insuficiencia de redes de servicios públicos e infraestructura distrital especializada en la recolección diferenciada de residuos húmedos a gran escala." },
-    { corto:"Sin acopio interno", full:"Inexistencia de áreas logísticas internas de acopio y separación temporal de biomasa dentro de los predios comerciales mayoristas." },
-    { corto:"Comercio sobre saneamiento", full:"Supeditación absoluta de la morfología arquitectónica privada al rendimiento comercial bruto, suprimiendo los espacios dedicados al saneamiento y mantenimiento de cargas." },
-    { corto:"Vacío normativo urbano", full:"Carencia de lineamientos de control normativo y exigencias urbanísticas locales para el tratamiento interno de subproductos en el suelo comercial." },
-    { corto:"Desarticulación institucional", full:"Desarticulación entre las políticas de distribución alimentaria regional y la capacidad de soporte de los servicios de aseo urbano en el borde de la localidad." },
+    { id:1, corto:"Sin infraestructura distrital", full:"Insuficiencia de redes de servicios públicos e infraestructura distrital especializada en la recolección diferenciada de residuos húmedos a gran escala." },
+    { id:2, corto:"Sin acopio interno", full:"Inexistencia de áreas logísticas internas de acopio y separación temporal de biomasa dentro de los predios comerciales mayoristas." },
+    { id:3, corto:"Comercio sobre saneamiento", full:"Supeditación absoluta de la morfología arquitectónica privada al rendimiento comercial bruto, suprimiendo los espacios dedicados al saneamiento y mantenimiento de cargas." },
+    { id:4, corto:"Vacío normativo urbano", full:"Carencia de lineamientos de control normativo y exigencias urbanísticas locales para el tratamiento interno de subproductos en el suelo comercial." },
+    { id:5, corto:"Desarticulación institucional", full:"Desarticulación entre las políticas de distribución alimentaria regional y la capacidad de soporte de los servicios de aseo urbano en el borde de la localidad." },
   ];
+  // Qué causa qué: red real, no una fila — el nodo 5 alimenta a dos causas
+  // distintas, y esas dos convergen finalmente en el nodo 2.
+  const REL = [
+    { from:5, to:1 }, { from:5, to:4 }, { from:4, to:3 }, { from:3, to:2 }, { from:1, to:2 },
+  ];
+  const byId = {}; CAUSAS.forEach(c => byId[c.id] = c);
 
   const gooLayer = document.getElementById("gooLayer");
   const labelLayer = document.getElementById("labelLayer");
+  const intro = document.getElementById("intro");
+  const backBtn = document.getElementById("backBtn");
 
   const CENTER_R = 118;
-  const CHILD_R = 66;
-  const BRIDGES = 14;
+  const NODE_R = 68;
+  const BRIDGES = 12;
 
   let cx, cy, radius;
-  const childTargets = CAUSAS.map(() => ({ x: 0, y: 0 }));
-
+  const nodePos = {};
   function computeGeometry() {
     cx = window.innerWidth / 2;
     cy = window.innerHeight / 2 + 10;
-    radius = Math.min(window.innerWidth, window.innerHeight) * 0.33;
-    const angleStart = -150, angleEnd = 130;
-    CAUSAS.forEach((_, i) => {
-      const t = i / (CAUSAS.length - 1);
-      const angle = (angleStart + t * (angleEnd - angleStart)) * Math.PI / 180;
-      childTargets[i].x = cx + radius * Math.cos(angle);
-      childTargets[i].y = cy + radius * Math.sin(angle);
+    radius = Math.min(window.innerWidth, window.innerHeight) * 0.30;
+    CAUSAS.forEach((c, i) => {
+      const angle = (-90 + i * (360 / CAUSAS.length)) * Math.PI / 180;
+      nodePos[c.id] = { x: cx + radius * Math.cos(angle), y: cy + radius * Math.sin(angle) };
     });
   }
   computeGeometry();
@@ -123,75 +141,86 @@
   function place(elm, x, y) { elm.style.left = x + "px"; elm.style.top = y + "px"; }
 
   const centerBlob = el("blob"); gooLayer.appendChild(centerBlob);
-  const childBlobs = CAUSAS.map(() => { const b = el("blob"); gooLayer.appendChild(b); return b; });
-  const bridgesPerChild = CAUSAS.map(() => {
+  const centerLabel = el("label center-label");
+  centerLabel.style.width = (CENTER_R * 1.55) + "px";
+  centerLabel.textContent = "Ausencia de gestión de residuos orgánicos";
+  labelLayer.appendChild(centerLabel);
+  const hitCenter = el("hit"); labelLayer.appendChild(hitCenter);
+
+  const nodeBlobs = {}, nodeLabels = {}, nodeHits = {};
+  CAUSAS.forEach(c => {
+    const b = el("blob"); gooLayer.appendChild(b); nodeBlobs[c.id] = b;
+    const l = el("label child-label");
+    l.style.width = (NODE_R * 1.8) + "px";
+    l.textContent = c.corto;
+    labelLayer.appendChild(l); nodeLabels[c.id] = l;
+    const h = el("hit"); labelLayer.appendChild(h); nodeHits[c.id] = h;
+    h.addEventListener("click", (e) => { e.stopPropagation(); openPanel(c.id); });
+  });
+
+  const bridgesByRel = REL.map(() => {
     const arr = [];
     for (let i = 0; i < BRIDGES; i++) { const b = el("blob"); gooLayer.appendChild(b); arr.push(b); }
     return arr;
   });
 
-  const centerLabel = el("label center-label");
-  centerLabel.style.width = (CENTER_R * 1.55) + "px";
-  centerLabel.textContent = "Ausencia de gestión de residuos orgánicos";
-  labelLayer.appendChild(centerLabel);
-
-  const childLabelDivs = CAUSAS.map((c) => {
-    const l = el("label child-label");
-    l.style.width = (CHILD_R * 1.75) + "px";
-    l.textContent = c.corto;
-    labelLayer.appendChild(l);
-    return l;
-  });
-
-  const hitCenter = el("hit"); labelLayer.appendChild(hitCenter);
-  const hitChildren = CAUSAS.map(() => { const h = el("hit"); labelLayer.appendChild(h); return h; });
-
-  let expanded = false;
+  let revealed = false;
 
   function render() {
-    size(centerBlob, CENTER_R); place(centerBlob, cx, cy);
+    size(centerBlob, revealed ? 1 : CENTER_R);
+    place(centerBlob, cx, cy);
+    centerBlob.style.opacity = revealed ? "0" : "1";
     place(centerLabel, cx, cy);
+    centerLabel.style.opacity = revealed ? "0" : "1";
     size(hitCenter, CENTER_R); place(hitCenter, cx, cy);
+    hitCenter.style.pointerEvents = revealed ? "none" : "auto";
+    intro.style.opacity = revealed ? "0" : "1";
+    backBtn.classList.toggle("show", revealed);
 
-    childBlobs.forEach((blob, i) => {
-      const target = expanded ? childTargets[i] : { x: cx, y: cy };
-      place(blob, target.x, target.y);
-      size(blob, expanded ? CHILD_R : CHILD_R * 0.1);
-      blob.style.opacity = expanded ? "1" : "0";
+    CAUSAS.forEach(c => {
+      const target = revealed ? nodePos[c.id] : { x: cx, y: cy };
+      place(nodeBlobs[c.id], target.x, target.y);
+      size(nodeBlobs[c.id], revealed ? NODE_R : NODE_R * 0.08);
+      nodeBlobs[c.id].style.opacity = revealed ? "1" : "0";
 
-      place(childLabelDivs[i], target.x, target.y);
-      childLabelDivs[i].style.opacity = expanded ? "1" : "0";
+      place(nodeLabels[c.id], target.x, target.y);
+      nodeLabels[c.id].style.opacity = revealed ? "1" : "0";
 
-      size(hitChildren[i], CHILD_R);
-      place(hitChildren[i], target.x, target.y);
-      hitChildren[i].style.pointerEvents = expanded ? "auto" : "none";
+      size(nodeHits[c.id], NODE_R); place(nodeHits[c.id], target.x, target.y);
+      nodeHits[c.id].style.pointerEvents = revealed ? "auto" : "none";
+    });
 
-      bridgesPerChild[i].forEach((bridge, j) => {
+    REL.forEach((r, idx) => {
+      const a = revealed ? nodePos[r.from] : { x: cx, y: cy };
+      const b = revealed ? nodePos[r.to] : { x: cx, y: cy };
+      bridgesByRel[idx].forEach((bridge, j) => {
         const t = (j + 1) / (BRIDGES + 1);
-        // Radio que va del tamaño del centro al de la hija, para que la
-        // rama nazca ancha junto al centro y se afine hacia la hija —
-        // así el "goo" las funde en una sola conexión gruesa y continua.
-        const r = expanded ? (CENTER_R * (1 - t) + CHILD_R * t * 0.85) * 0.62 : 1;
-        size(bridge, r);
-        const bx = expanded ? cx + (target.x - cx) * t : cx;
-        const by = expanded ? cy + (target.y - cy) * t : cy;
-        place(bridge, bx, by);
-        bridge.style.opacity = expanded ? "1" : "0";
+        const rr = revealed ? (NODE_R * (1 - t * 0.55)) * 0.6 : 1;
+        size(bridge, rr);
+        place(bridge, a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t);
+        bridge.style.opacity = revealed ? "1" : "0";
       });
     });
   }
 
-  function toggle() { expanded = !expanded; render(); }
-  hitCenter.addEventListener("click", toggle);
+  function reveal() { revealed = true; render(); }
+  function collapse() { revealed = false; render(); document.getElementById("panel").classList.remove("open"); }
 
-  hitChildren.forEach((hit, i) => {
-    hit.addEventListener("click", (e) => { e.stopPropagation(); openPanel(i); });
-  });
+  hitCenter.addEventListener("click", reveal);
+  backBtn.addEventListener("click", collapse);
 
-  function openPanel(i) {
-    const c = CAUSAS[i];
+  function openPanel(id) {
+    const c = byId[id];
     const panel = document.getElementById("panel"), body = document.getElementById("panelBody");
-    body.innerHTML = `<p class="panel-kind">Causa</p><h2>${c.full}</h2>`;
+    const causaDe = REL.filter(r => r.to === id).map(r => byId[r.from]);
+    const provoca = REL.filter(r => r.from === id).map(r => byId[r.to]);
+    body.innerHTML = `
+      <p class="panel-kind">Causa</p>
+      <h2>${c.full}</h2>
+      ${causaDe.length ? `<div class="block"><b>Viene de</b>${causaDe.map(x => `<div class="rel-chip" data-goto="${x.id}">${x.corto}</div>`).join("")}</div>` : ""}
+      ${provoca.length ? `<div class="block"><b>Alimenta a</b>${provoca.map(x => `<div class="rel-chip" data-goto="${x.id}">${x.corto}</div>`).join("")}</div>` : ""}
+    `;
+    body.querySelectorAll("[data-goto]").forEach(elm => elm.addEventListener("click", (e) => { e.stopPropagation(); openPanel(Number(elm.dataset.goto)); }));
     panel.classList.add("open");
   }
   document.getElementById("panelClose").addEventListener("click", () => document.getElementById("panel").classList.remove("open"));
