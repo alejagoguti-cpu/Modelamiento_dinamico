@@ -195,7 +195,7 @@
       const b = revealed ? nodePos[r.to] : { x: cx, y: cy };
       bridgesByRel[idx].forEach((bridge, j) => {
         const t = (j + 1) / (BRIDGES + 1);
-        const rr = revealed ? (NODE_R * (1 - t * 0.55)) * 0.6 : 1;
+        const rr = revealed ? (NODE_R * (1 - t * 0.7)) * 0.3 : 1;
         size(bridge, rr);
         place(bridge, a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t);
         bridge.style.opacity = revealed ? "1" : "0";
