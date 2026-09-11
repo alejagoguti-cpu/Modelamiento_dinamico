@@ -23,15 +23,8 @@
   .intro h1{ font-family:'Space Grotesk',sans-serif; font-size:15px; font-weight:600; margin:0 0 4px; line-height:1.35; }
   .intro p{ margin:0; font-size:11.5px; color:var(--ink-dim); }
 
-  .tier-caption{
-    position:fixed; top:96px; z-index:2; font-size:11px; text-transform:uppercase; letter-spacing:.05em;
-    color:var(--ink-dim); font-weight:600; text-align:center; width:29vw; opacity:0; transition:opacity .5s ease;
-  }
-  .tier-caption.show{ opacity:1; }
-
   .stage{ position:relative; width:100vw; height:100vh; }
-  .goo-layer{ position:absolute; inset:0; filter:url(#goo); transition:opacity .5s ease; }
-  .label-layer{ position:absolute; inset:0; pointer-events:none; transition:opacity .5s ease; }
+  .goo-layer{ position:absolute; inset:0; filter:url(#goo); }
   .blob{
     position:absolute; border-radius:50%; top:0; left:0; transform:translate(-50%,-50%); background:var(--node);
     transition: left 1s cubic-bezier(.22,1,.36,1), top 1s cubic-bezier(.22,1,.36,1),
@@ -42,10 +35,10 @@
   .label{
     position:absolute; top:0; left:0; transform:translate(-50%,-50%);
     transition: left 1s cubic-bezier(.22,1,.36,1), top 1s cubic-bezier(.22,1,.36,1), opacity .4s ease;
-    text-align:center; font-weight:600; line-height:1.22; color:var(--ink-on-node); padding:0 8px; pointer-events:none;
+    text-align:center; font-weight:600; line-height:1.24; color:var(--ink-on-node); padding:0 8px; pointer-events:none;
   }
   .label.center-label{ font-family:'Space Grotesk',sans-serif; font-size:14.5px; }
-  .label.child-label{ font-size:10.5px; }
+  .label.child-label{ font-size:11.5px; }
   .hit{ position:absolute; top:0; left:0; transform:translate(-50%,-50%); border-radius:50%; cursor:pointer; z-index:5; pointer-events:auto; }
 
   .panel{
@@ -64,19 +57,15 @@
   .panel .block{ margin-top:16px; padding-top:16px; border-top:1px solid var(--panel-border); }
   .panel .block b{ display:block; font-size:11px; color:var(--ink-dim); font-weight:600; margin-bottom:7px; text-transform:uppercase; letter-spacing:.04em; }
   .panel .rel-chip{ display:block; padding:9px 12px; margin-bottom:7px; border-radius:9px; background:rgba(58,90,148,.08); border:1px solid rgba(58,90,148,.3); font-size:12px; cursor:pointer; color:var(--ink-dark); }
-  .panel .rel-chip .rel-verbo{ display:block; font-size:10px; color:var(--ink-dim); font-style:italic; margin-top:2px; }
   .panel .rel-chip:hover{ background:rgba(58,90,148,.15); }
-  .panel .cat-tag{ display:inline-block; font-size:10.5px; font-weight:600; padding:3px 9px; border-radius:999px; background:rgba(58,90,148,.12); color:var(--node); margin-bottom:10px; }
 
-  .back-btn, .analysis-btn{
-    position:fixed; bottom:22px; z-index:6;
+  .back-btn{
+    position:fixed; bottom:22px; left:50%; transform:translateX(-50%); z-index:6;
     padding:10px 18px; border-radius:999px; border:1px solid var(--panel-border); background:#fff;
     font-size:12px; font-weight:600; color:var(--ink-dark); cursor:pointer; box-shadow:0 6px 16px rgba(0,0,0,.08);
     opacity:0; pointer-events:none; transition:opacity .3s ease;
   }
-  .back-btn{ left:50%; transform:translateX(-50%); }
-  .analysis-btn{ right:22px; }
-  .back-btn.show, .analysis-btn.show{ opacity:1; pointer-events:auto; }
+  .back-btn.show{ opacity:1; pointer-events:auto; }
 
   @media (prefers-reduced-motion: reduce){ .blob, .label, .panel{ transition:none !important; } }
 </style>
@@ -84,10 +73,9 @@
 <body>
 
 <div class="intro" id="intro">
-  <h1>Saturación de residuos por centralización operativa en Corabastos y fricción espacial de acopio</h1>
-  <p>Toca la burbuja para revelar la red de causas, actores, lugares y síntomas</p>
+  <h1>Saturación de residuos por centralización operativa en Corabastos</h1>
+  <p>Toca la burbuja para revelar la red completa de causas</p>
 </div>
-
 
 <div class="stage" id="stage">
   <svg width="0" height="0" style="position:absolute">
@@ -101,13 +89,9 @@
   </svg>
   <div class="goo-layer" id="gooLayer"></div>
   <div class="label-layer" id="labelLayer"></div>
-  <div class="goo-layer" id="subGooLayer" style="opacity:0; pointer-events:none;"></div>
-  <div class="label-layer" id="subLabelLayer" style="opacity:0;"></div>
 </div>
 
 <button class="back-btn" id="backBtn">← Volver a la burbuja inicial</button>
-<button class="back-btn" id="subBackBtn" style="display:none;">← Volver a la red principal</button>
-<button class="analysis-btn" id="analysisBtn">📄 Análisis de la red</button>
 
 <aside class="panel" id="panel">
   <button class="panel-close" id="panelClose">✕</button>
@@ -117,58 +101,65 @@
 <script>
 (() => {
   const NODOS = [
-    { id:"ingreso", tier:1, cat:"Causa de fondo", corto:"Ingreso masivo de biomasa", full:"Ingreso masivo diario de biomasa de alimentos." },
-    { id:"distancia", tier:1, cat:"Causa de fondo", corto:"Distancia a centros formales", full:"Distancia física excesiva a centros de tratamiento formales." },
-    { id:"saturacion", tier:1, cat:"Síntoma / mecanismo", corto:"Saturación operativa interna", full:"Saturación de la capacidad operativa interna." },
-
-    { id:"plataformas", tier:2, cat:"Espacio físico", corto:"Plataformas de carga", full:"Plataformas internas de carga y descarga de Corabastos." },
-    { id:"comerciantes", tier:2, cat:"Actor", corto:"Comerciantes y coteros", full:"Comerciantes y coteros de Corabastos." },
-    { id:"recicladores", tier:2, cat:"Actor", corto:"Recicladores informales", full:"Recicladores informales y recuperadores de oficio." },
-    { id:"uaesp", tier:2, cat:"Actor", corto:"UAESP y aseo formal", full:"UAESP y operadores formales de aseo." },
-    { id:"bodegas", tier:2, cat:"Espacio físico", corto:"Bodegas informales de acopio", full:"Bodegas e instalaciones informales de acopio en vía pública." },
-
-    { id:"acopio", tier:3, cat:"Síntoma visible", corto:"Invasión de residuos en vía pública", full:"Acopio e invasión de residuos orgánicos en vía pública." },
-    { id:"bordes", tier:3, cat:"Espacio físico", corto:"Bordes del humedal", full:"Bordes del Humedal El Tintal y Chucua La Vaca." },
-    { id:"degradacion", tier:3, cat:"Síntoma visible", corto:"Degradación del ecosistema", full:"Degradación del ecosistema hídrico." },
-    { id:"vectores", tier:3, cat:"Síntoma visible", corto:"Vectores y contaminación", full:"Proliferación de vectores y contaminación ambiental." },
+    { id:"n1",  corto:"Concentración masiva diaria de alimentos en Corabastos" },
+    { id:"n2",  corto:"Llegada de carga continua sin clasificación previa por comerciantes" },
+    { id:"n3",  corto:"Capacidad limitada en plataformas internas de carga de la central" },
+    { id:"n4",  corto:"Ausencia de áreas de compostaje o transformación interna en Corabastos" },
+    { id:"n5",  corto:"Distancia física a plantas formales de tratamiento regional" },
+    { id:"n6",  corto:"Inexistencia de puntos limpios de acopio gestionados por el Distrito en barrios vecinos" },
+    { id:"n7",  corto:"Desarticulación entre horarios de comerciantes y rutas de recolección de la UAESP" },
+    { id:"n8",  corto:"Desajuste entre regulación de la Administración de Corabastos y normativa ambiental del Distrito" },
+    { id:"n9",  corto:"Informalidad laboral de recicladores e intermediarios en la cadena" },
+    { id:"n10", corto:"Desplazamiento de la clasificación por cargadores y recuperadores hacia calles y andenes" },
+    { id:"n11", corto:"Saturación de bodegas informales operadas por acopiadores del barrio" },
+    { id:"n12", corto:"Límite de alcance por transporte manual de carga realizado por recuperadores de oficio y cargadores del sector" },
+    { id:"n13", corto:"Congestión de camiones de carga pesada en vías de acceso perimetrales" },
   ];
   const byId = {}; NODOS.forEach(n => byId[n.id] = n);
 
   const REL = [
-    { from:"ingreso", to:"plataformas", verbo:"satura las" },
-    { from:"plataformas", to:"saturacion", verbo:"provoca la" },
-    { from:"saturacion", to:"comerciantes", verbo:"condiciona la decisión de los" },
-    { from:"distancia", to:"comerciantes", verbo:"condiciona la decisión de los" },
-    { from:"comerciantes", to:"recicladores", verbo:"transfieren el residuo sin clasificar a" },
-    { from:"recicladores", to:"bodegas", verbo:"consolidan y operan en" },
-    { from:"bodegas", to:"acopio", verbo:"producen el" },
-    { from:"acopio", to:"bordes", verbo:"se desborda hacia los" },
-    { from:"bordes", to:"degradacion", verbo:"causan la" },
-    { from:"bordes", to:"vectores", verbo:"causan la" },
-    { from:"bodegas", to:"uaesp", verbo:"obstruyen la gestión de la" },
-    { from:"uaesp", to:"saturacion", verbo:"incrementa la (bucle de retroalimentación)" },
+    { from:"n1",  to:"n3" },
+    { from:"n2",  to:"n3" },
+    { from:"n3",  to:"n10" },
+    { from:"n4",  to:"n10" },
+    { from:"n8",  to:"n7" },
+    { from:"n7",  to:"n10" },
+    { from:"n5",  to:"n10" },
+    { from:"n6",  to:"n10" },
+    { from:"n12", to:"n10" },
+    { from:"n9",  to:"n11" },
+    { from:"n10", to:"n11" },
+    { from:"n11", to:"n13" },
+    { from:"n13", to:"n3" },
+    { from:"n13", to:"n7" },
   ];
-
-  const ANALISIS = "La red evidencia que la acumulación de basura en el espacio público no se explica por «falta de cultura» o «conducta individual», sino por un conflicto de escala y distancia física. Revela a Corabastos como un hub emisor centralizado y a las bodegas informales como nodos puente que trasladan el colapso operativo privado de la central hacia la degradación del espacio público y la Estructura Ecológica Principal (Humedales).";
 
   const gooLayer = document.getElementById("gooLayer");
   const labelLayer = document.getElementById("labelLayer");
   const intro = document.getElementById("intro");
   const backBtn = document.getElementById("backBtn");
-  const analysisBtn = document.getElementById("analysisBtn");
 
-  const CENTER_R = 108;
-  const NODE_R = 56;
-  const BRIDGES = 25;
+  const CENTER_R = 112;
+  let NODE_R = 92;
+  const BRIDGES = 45;
 
-  // ---- Layout tipo "red sin orden": fuerzas simples de repulsion entre
-  // todos los nodos + atraccion por cada conexion, en vez de columnas
-  // rigidas — se ve como una red organica dispersa, no una jerarquia. ----
-  function forceLayout(nodeList, edgeList, centerX, centerY, spread, nodeRadius, minDistMult = 2.5, iterations = 300) {
+  function forceLayout(nodeList, edgeList, centerX, centerY, spread, nodeRadius, minDistMult = 3.6, margin = 230, iterations = 320) {
     const pos = {};
+    // Sembrado inicial en CUADRICULA (no aleatorio) dentro del area
+    // disponible: garantiza que arranquen ya separadas, evitando que la
+    // fisica de repulsion quede atascada en un minimo local sin salida
+    // cuando hay muchas bolas en poco espacio.
+    const margin0 = margin;
+    const areaW = window.innerWidth - margin0 * 2, areaH = window.innerHeight - margin0 * 2;
+    const cols = Math.ceil(Math.sqrt(nodeList.length * areaW / areaH));
+    const rows = Math.ceil(nodeList.length / cols);
     nodeList.forEach((n, i) => {
-      const a = (i / nodeList.length) * Math.PI * 2 + Math.random() * 0.6;
-      pos[n.id] = { x: centerX + Math.cos(a) * spread * (0.5 + Math.random() * 0.5), y: centerY + Math.sin(a) * spread * (0.5 + Math.random() * 0.5) };
+      const col = i % cols, row = Math.floor(i / cols);
+      const jitter = () => (Math.random() - 0.5) * 0.3;
+      pos[n.id] = {
+        x: margin0 + (areaW * (col + 0.5 + jitter())) / cols,
+        y: margin0 + (areaH * (row + 0.5 + jitter())) / rows,
+      };
     });
     const ids = nodeList.map(n => n.id);
     const minDist = nodeRadius * minDistMult;
@@ -180,9 +171,11 @@
           let dx = a.x - b.x, dy = a.y - b.y;
           let dist = Math.hypot(dx, dy) || 0.001;
           if (dist < minDist) {
-            const push = (minDist - dist) / dist * 0.5;
-            force[ids[i]].x += dx * push; force[ids[i]].y += dy * push;
-            force[ids[j]].x -= dx * push; force[ids[j]].y -= dy * push;
+            if (dist < 0.01) { dx = (Math.random() - 0.5) * 2; dy = (Math.random() - 0.5) * 2; dist = Math.hypot(dx, dy); }
+            const overlap = (minDist - dist) / 2;
+            const ux = dx / dist, uy = dy / dist;
+            force[ids[i]].x += ux * overlap; force[ids[i]].y += uy * overlap;
+            force[ids[j]].x -= ux * overlap; force[ids[j]].y -= uy * overlap;
           }
         }
       }
@@ -191,22 +184,47 @@
         const dx = b.x - a.x, dy = b.y - a.y;
         const dist = Math.hypot(dx, dy) || 0.001;
         const target = minDist * 1.7;
-        const pull = (dist - target) * 0.02;
+        const pull = (dist - target) * 0.008;
         force[e.from].x += dx / dist * pull; force[e.from].y += dy / dist * pull;
         force[e.to].x -= dx / dist * pull; force[e.to].y -= dy / dist * pull;
       });
       ids.forEach(id => {
         pos[id].x += force[id].x; pos[id].y += force[id].y;
-        pos[id].x += (centerX - pos[id].x) * 0.008;
-        pos[id].y += (centerY - pos[id].y) * 0.008;
-        // Nunca dejar que una bolita quede tan cerca del borde de la
-        // pantalla que su etiqueta (que puede ser varias lineas de texto
-        // largo) se corte contra el borde.
-        const margin = Math.max(220, nodeRadius * 2.6);
-        pos[id].x = Math.max(margin, Math.min(window.innerWidth - margin, pos[id].x));
-        pos[id].y = Math.max(margin, Math.min(window.innerHeight - margin, pos[id].y));
+        pos[id].x += (centerX - pos[id].x) * 0.0008;
+        pos[id].y += (centerY - pos[id].y) * 0.0008;
+        // Fuerza SUAVE de borde (no un tope duro) — así varias bolas nunca
+        // quedan apiladas exactamente en el mismo punto de la orilla.
+        if (pos[id].x < margin) pos[id].x += (margin - pos[id].x) * 0.45;
+        if (pos[id].x > window.innerWidth - margin) pos[id].x -= (pos[id].x - (window.innerWidth - margin)) * 0.45;
+        if (pos[id].y < margin) pos[id].y += (margin - pos[id].y) * 0.45;
+        if (pos[id].y > window.innerHeight - margin) pos[id].y -= (pos[id].y - (window.innerHeight - margin)) * 0.45;
       });
     }
+    // Fase final: solo separacion pura (sin atraccion de conexiones ni
+    // centro), para GARANTIZAR que ninguna bolita quede tocando a otra sin
+    // importar la semilla aleatoria del sembrado inicial.
+    for (let pass = 0; pass < 320; pass++) {
+      for (let i = 0; i < ids.length; i++) {
+        for (let j = i + 1; j < ids.length; j++) {
+          const a = pos[ids[i]], b = pos[ids[j]];
+          let dx = a.x - b.x, dy = a.y - b.y;
+          let dist = Math.hypot(dx, dy) || 0.001;
+          if (dist < minDist) {
+            if (dist < 0.01) { dx = (Math.random() - 0.5) * 2; dy = (Math.random() - 0.5) * 2; dist = Math.hypot(dx, dy); }
+            const overlap = (minDist - dist) / 2;
+            const ux = dx / dist, uy = dy / dist;
+            a.x += ux * overlap; a.y += uy * overlap;
+            b.x -= ux * overlap; b.y -= uy * overlap;
+          }
+        }
+      }
+    }
+    // Al final (una sola vez, no en cada pasada) se acomoda todo dentro del
+    // margen de seguridad de la pantalla.
+    ids.forEach(id => {
+      pos[id].x = Math.max(margin, Math.min(window.innerWidth - margin, pos[id].x));
+      pos[id].y = Math.max(margin, Math.min(window.innerHeight - margin, pos[id].y));
+    });
     return pos;
   }
 
@@ -215,8 +233,25 @@
   function computeGeometry() {
     cx = window.innerWidth / 2;
     cy = window.innerHeight / 2 + 10;
-    const spread = Math.min(window.innerWidth, window.innerHeight) * 0.56;
-    nodePos = forceLayout(NODOS, REL, cx, cy, spread, NODE_R, 3.6);
+    // El radio de cada bolita tambien se adapta: en pantallas angostas
+    // (celular) las 13 bolitas de este tamaño fijo no caben de ninguna
+    // manera, asi que se encogen un poco para que siempre quepan bien.
+    NODE_R = Math.max(34, Math.min(92, window.innerWidth * 0.135));
+    // El margen de seguridad se reduce solo si la pantalla es chica, para
+    // no comerse todo el espacio disponible.
+    const margin = Math.max(70, Math.min(230, window.innerWidth * 0.12));
+    const effW = Math.max(220, window.innerWidth - margin * 2);
+    const effH = Math.max(220, window.innerHeight - margin * 2);
+    // La separacion minima entre bolas se calcula segun el espacio REAL
+    // disponible (empaquetado tipo panal), para que las 13 bolas SIEMPRE
+    // quepan sin tocarse sin importar el tamano de la pantalla — en vez de
+    // pedir siempre la misma separacion grande y que a veces no quepa.
+    const n = NODOS.length;
+    const area = effW * effH;
+    const maxFeasibleMinDist = 2 * Math.sqrt((area * 0.68) / (n * Math.PI));
+    const minDist = Math.min(NODE_R * 3.4, Math.max(NODE_R * 2.05, maxFeasibleMinDist));
+    const spread = Math.min(effW, effH) * 0.6;
+    nodePos = forceLayout(NODOS, REL, cx, cy, spread, NODE_R, minDist / NODE_R, margin);
   }
   computeGeometry();
 
@@ -235,7 +270,7 @@
   NODOS.forEach(n => {
     const b = el("blob"); gooLayer.appendChild(b); nodeBlobs[n.id] = b;
     const l = el("label child-label");
-    l.style.width = (NODE_R * 1.9) + "px";
+    l.style.width = (NODE_R * 2.5) + "px";
     l.textContent = n.corto;
     labelLayer.appendChild(l); nodeLabels[n.id] = l;
     const h = el("hit"); labelLayer.appendChild(h); nodeHits[n.id] = h;
@@ -259,7 +294,6 @@
     hitCenter.style.pointerEvents = revealed ? "none" : "auto";
     intro.style.opacity = revealed ? "0" : "1";
     backBtn.classList.toggle("show", revealed);
-    analysisBtn.classList.toggle("show", revealed);
 
     NODOS.forEach(n => {
       const target = revealed ? nodePos[n.id] : { x: cx, y: cy };
@@ -279,7 +313,7 @@
       const b = revealed ? nodePos[r.to] : { x: cx, y: cy };
       bridgesByRel[idx].forEach((bridge, j) => {
         const t = (j + 1) / (BRIDGES + 1);
-        const rr = revealed ? (NODE_R * (1 - t * 0.35)) * 0.19 : 1;
+        const rr = revealed ? (NODE_R * (1 - t * 0.35)) * 0.17 : 1;
         size(bridge, rr);
         place(bridge, a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t);
         bridge.style.opacity = revealed ? "1" : "0";
@@ -290,7 +324,6 @@
   function reveal() { revealed = true; render(); }
   function collapse() { revealed = false; render(); document.getElementById("panel").classList.remove("open"); }
   backBtn.addEventListener("click", collapse);
-  analysisBtn.addEventListener("click", openAnalysis);
 
   const stage = document.getElementById("stage");
   let downStart = null, downTarget = null;
@@ -302,160 +335,27 @@
     if (moved >= 8) return;
     if (downTarget === hitCenter) { reveal(); return; }
     const nid = Object.keys(nodeHits).find(id => nodeHits[id] === downTarget);
-    if (nid === "saturacion") { drillIntoSaturacion(); return; }
     if (nid) openPanel(nid);
   });
 
   function openPanel(id) {
     const n = byId[id];
     const panel = document.getElementById("panel"), body = document.getElementById("panelBody");
-    const vieneDe = REL.filter(r => r.to === id).map(r => ({ n: byId[r.from], verbo: r.verbo }));
-    const alimentaA = REL.filter(r => r.from === id).map(r => ({ n: byId[r.to], verbo: r.verbo }));
+    const vieneDe = REL.filter(r => r.to === id).map(r => byId[r.from]);
+    const alimentaA = REL.filter(r => r.from === id).map(r => byId[r.to]);
     body.innerHTML = `
-      <span class="cat-tag">${n.cat}</span>
-      <p class="panel-kind">Nodo</p>
-      <h2>${n.full}</h2>
-      ${vieneDe.length ? `<div class="block"><b>Viene de</b>${vieneDe.map(x => `<div class="rel-chip" data-goto="${x.n.id}">${x.n.corto}<span class="rel-verbo">${x.verbo}</span></div>`).join("")}</div>` : ""}
-      ${alimentaA.length ? `<div class="block"><b>Alimenta a</b>${alimentaA.map(x => `<div class="rel-chip" data-goto="${x.n.id}">${x.n.corto}<span class="rel-verbo">${x.verbo}</span></div>`).join("")}</div>` : ""}
+      <p class="panel-kind">Causa</p>
+      <h2>${n.corto}</h2>
+      ${vieneDe.length ? `<div class="block"><b>Viene de</b>${vieneDe.map(x => `<div class="rel-chip" data-goto="${x.id}">${x.corto}</div>`).join("")}</div>` : ""}
+      ${alimentaA.length ? `<div class="block"><b>Alimenta a</b>${alimentaA.map(x => `<div class="rel-chip" data-goto="${x.id}">${x.corto}</div>`).join("")}</div>` : ""}
     `;
     body.querySelectorAll("[data-goto]").forEach(elm => elm.addEventListener("click", (e) => { e.stopPropagation(); openPanel(elm.dataset.goto); }));
     panel.classList.add("open");
   }
-
-  function openAnalysis() {
-    const panel = document.getElementById("panel"), body = document.getElementById("panelBody");
-    body.innerHTML = `<p class="panel-kind">Análisis de la arquitectura de la red</p><h2>¿Qué revela esta red sobre Kennedy?</h2><div class="block"><p style="font-size:13.5px;line-height:1.6;color:var(--ink-dark);margin:0;">${ANALISIS}</p></div>`;
-    panel.classList.add("open");
-  }
   document.getElementById("panelClose").addEventListener("click", () => document.getElementById("panel").classList.remove("open"));
 
-  window.addEventListener("resize", () => { computeGeometry(); render(); if (subRevealed) { computeSubGeometry(); renderSub(); } });
+  window.addEventListener("resize", () => { computeGeometry(); render(); });
   render();
-
-  // ==========================================================================
-  // SUB-RED dentro de "Saturación operativa interna": al tocar esa bolita,
-  // en vez del panel normal se revela esta red mas detallada de 13 causas.
-  // ==========================================================================
-  const SUBNODOS = [
-    { id:"s0",  tier:1, corto:"Concentración masiva diaria de alimentos en Corabastos", full:"Concentración masiva diaria de alimentos en Corabastos." },
-    { id:"s1",  tier:1, corto:"Llegada de carga continua sin clasificación previa por comerciantes", full:"Llegada de carga continua sin clasificación previa por comerciantes." },
-    { id:"s7",  tier:1, corto:"Desajuste entre regulación de la Administración de Corabastos y normativa ambiental del Distrito", full:"Desajuste entre regulación de la Administración de Corabastos y normativa ambiental del Distrito." },
-    { id:"s3",  tier:1, corto:"Ausencia de áreas de compostaje o transformación interna en Corabastos", full:"Ausencia de áreas de compostaje o transformación interna en Corabastos." },
-    { id:"s4",  tier:1, corto:"Distancia física a plantas formales de tratamiento regional", full:"Distancia física a plantas formales de tratamiento regional." },
-    { id:"s5",  tier:1, corto:"Inexistencia de puntos limpios de acopio gestionados por el Distrito en barrios vecinos", full:"Inexistencia de puntos limpios de acopio gestionados por el Distrito en barrios vecinos." },
-    { id:"s8",  tier:1, corto:"Informalidad laboral de recicladores e intermediarios en la cadena", full:"Informalidad laboral de recicladores e intermediarios en la cadena." },
-    { id:"s11", tier:1, corto:"Límite de alcance por transporte manual de carga realizado por recuperadores de oficio y cargadores del sector", full:"Límite de alcance por transporte manual de carga realizado por recuperadores de oficio y cargadores del sector." },
-    { id:"s2",  tier:2, corto:"Capacidad limitada en plataformas internas de carga de la central", full:"Capacidad limitada en plataformas internas de carga de la central." },
-    { id:"s6",  tier:2, corto:"Desarticulación entre horarios de comerciantes y rutas de recolección de la UAESP", full:"Desarticulación entre horarios de comerciantes y rutas de recolección de la UAESP." },
-    { id:"s9",  tier:3, corto:"Desplazamiento de la clasificación por cargadores y recuperadores hacia calles y andenes", full:"Desplazamiento de la clasificación por cargadores y recuperadores hacia calles y andenes." },
-    { id:"s10", tier:4, corto:"Saturación de bodegas informales operadas por acopiadores del barrio", full:"Saturación de bodegas informales operadas por acopiadores del barrio." },
-    { id:"s12", tier:5, corto:"Congestión de camiones de carga pesada en vías de acceso perimetrales", full:"Congestión de camiones de carga pesada en vías de acceso perimetrales." },
-  ];
-  const subById = {}; SUBNODOS.forEach(n => subById[n.id] = n);
-  const SUBREL = [
-    { from:"s0", to:"s2" }, { from:"s1", to:"s2" },
-    { from:"s2", to:"s9" }, { from:"s3", to:"s9" }, { from:"s4", to:"s9" }, { from:"s5", to:"s9" }, { from:"s6", to:"s9" }, { from:"s11", to:"s9" },
-    { from:"s7", to:"s6" },
-    { from:"s8", to:"s10" }, { from:"s9", to:"s10" },
-    { from:"s10", to:"s12" },
-    { from:"s12", to:"s2" }, { from:"s12", to:"s6" }, // bucle de retroalimentación
-  ];
-
-  const subGooLayer = document.getElementById("subGooLayer");
-  const subLabelLayer = document.getElementById("subLabelLayer");
-  const subBackBtn = document.getElementById("subBackBtn");
-
-  const SUB_NODE_R = 88;
-  const SUB_BRIDGES = 75;
-  let subCx, subCy;
-  let subNodePos = {};
-  function computeSubGeometry() {
-    subCx = window.innerWidth / 2;
-    subCy = window.innerHeight / 2 + 10;
-    const spread = Math.min(window.innerWidth, window.innerHeight) * 0.62;
-    subNodePos = forceLayout(SUBNODOS, SUBREL, subCx, subCy, spread, SUB_NODE_R, 3.4);
-  }
-  computeSubGeometry();
-
-  const subNodeBlobs = {}, subNodeLabels = {}, subNodeHits = {};
-  SUBNODOS.forEach(n => {
-    const b = el("blob"); subGooLayer.appendChild(b); subNodeBlobs[n.id] = b;
-    const l = el("label child-label");
-    l.style.width = (SUB_NODE_R * 2.6) + "px";
-    l.style.fontSize = "11.5px";
-    l.textContent = n.corto;
-    subLabelLayer.appendChild(l); subNodeLabels[n.id] = l;
-    const h = el("hit"); subLabelLayer.appendChild(h); subNodeHits[n.id] = h;
-    size(h, SUB_NODE_R);
-  });
-  const subBridgesByRel = SUBREL.map(() => {
-    const arr = [];
-    for (let i = 0; i < SUB_BRIDGES; i++) { const b = el("blob"); subGooLayer.appendChild(b); arr.push(b); }
-    return arr;
-  });
-
-  function renderSub() {
-    SUBNODOS.forEach(n => {
-      const p = subNodePos[n.id];
-      place(subNodeBlobs[n.id], p.x, p.y); size(subNodeBlobs[n.id], SUB_NODE_R);
-      place(subNodeLabels[n.id], p.x, p.y);
-      place(subNodeHits[n.id], p.x, p.y);
-    });
-    SUBREL.forEach((r, idx) => {
-      const a = subNodePos[r.from], b = subNodePos[r.to];
-      subBridgesByRel[idx].forEach((bridge, j) => {
-        const t = (j + 1) / (SUB_BRIDGES + 1);
-        const rr = (SUB_NODE_R * (1 - t * 0.35)) * 0.27;
-        size(bridge, rr);
-        place(bridge, a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t);
-      });
-    });
-  }
-  renderSub();
-
-  let subRevealed = false;
-  function drillIntoSaturacion() {
-    subRevealed = true;
-    gooLayer.style.opacity = "0"; gooLayer.style.pointerEvents = "none";
-    labelLayer.style.opacity = "0"; labelLayer.style.pointerEvents = "none";
-    subGooLayer.style.opacity = "1";
-    subLabelLayer.style.opacity = "1"; subLabelLayer.style.pointerEvents = "auto";
-    backBtn.style.display = "none";
-    subBackBtn.style.display = "inline-block";
-  }
-  function backToMainNetwork() {
-    subRevealed = false;
-    subGooLayer.style.opacity = "0"; subGooLayer.style.pointerEvents = "none";
-    subLabelLayer.style.opacity = "0"; subLabelLayer.style.pointerEvents = "none";
-    gooLayer.style.opacity = "1"; gooLayer.style.pointerEvents = "auto";
-    labelLayer.style.opacity = "1"; labelLayer.style.pointerEvents = "auto";
-    backBtn.style.display = "inline-block";
-    subBackBtn.style.display = "none";
-    document.getElementById("panel").classList.remove("open");
-  }
-  subBackBtn.addEventListener("click", backToMainNetwork);
-
-  // Toques dentro de la sub-red: abren el panel de detalle de esa causa.
-  window.addEventListener("pointerup", (e) => {
-    if (!subRevealed) return;
-    const nid = Object.keys(subNodeHits).find(id => subNodeHits[id] === e.target);
-    if (nid) openSubPanel(nid);
-  });
-
-  function openSubPanel(id) {
-    const n = subById[id];
-    const panel = document.getElementById("panel"), body = document.getElementById("panelBody");
-    const vieneDe = SUBREL.filter(r => r.to === id).map(r => subById[r.from]);
-    const alimentaA = SUBREL.filter(r => r.from === id).map(r => subById[r.to]);
-    body.innerHTML = `
-      <p class="panel-kind">Causa (detalle de saturación)</p>
-      <h2>${n.full}</h2>
-      ${vieneDe.length ? `<div class="block"><b>Viene de</b>${vieneDe.map(x => `<div class="rel-chip" data-subgoto="${x.id}">${x.corto}</div>`).join("")}</div>` : ""}
-      ${alimentaA.length ? `<div class="block"><b>Alimenta a</b>${alimentaA.map(x => `<div class="rel-chip" data-subgoto="${x.id}">${x.corto}</div>`).join("")}</div>` : ""}
-    `;
-    body.querySelectorAll("[data-subgoto]").forEach(elm => elm.addEventListener("click", (e) => { e.stopPropagation(); openSubPanel(elm.dataset.subgoto); }));
-    panel.classList.add("open");
-  }
 })();
 </script>
 </body>
