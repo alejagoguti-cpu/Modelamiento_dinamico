@@ -254,12 +254,22 @@
     return pos;
   }
 
+  // ---- Posiciones acomodadas a mano por el usuario, guardadas como
+  // referencia sobre un lienzo de 1470x660 (segun donde quedaron al
+  // acomodarlas) — se escalan proporcionalmente si la pantalla es de otro
+  // tamaño, para mantener el mismo acomodo relativo. ----
+  const FIXED_POS = {
+    n1:  { x: 362,  y: 126 }, n2:  { x: 422,  y: 304 }, n3:  { x: 617,  y: 128 },
+    n4:  { x: 877,  y: 128 }, n5:  { x: 1219, y: 81  }, n6:  { x: 1184, y: 296 },
+    n7:  { x: 299,  y: 444 }, n8:  { x: 209,  y: 170 }, n9:  { x: 740,  y: 447 },
+    n10: { x: 915,  y: 316 }, n11: { x: 976,  y: 580 }, n12: { x: 1260, y: 490 },
+    n13: { x: 573,  y: 555 },
+  };
+  const REF_W = 1470, REF_H = 660, REF_MARGIN = 90;
+
   let cx, cy;
   let nodePos = {};
   let nodeRadiusMap = {};
-  // Grado de conexion de cada nodo (cuantas veces aparece en REL, como
-  // origen o destino) — se usa para que las bolas mas conectadas salgan
-  // mas grandes y las menos conectadas mas chiquitas.
   const degree = {};
   NODOS.forEach(n => degree[n.id] = 0);
   REL.forEach(r => { degree[r.from]++; degree[r.to]++; });
@@ -269,68 +279,25 @@
   function computeGeometry() {
     cx = window.innerWidth / 2;
     cy = window.innerHeight / 2 + 10;
-    // El radio BASE tambien se adapta: en pantallas angostas (celular) las
-    // 13 bolitas de este tamaño fijo no caben de ninguna manera, asi que
-    // se encogen un poco para que siempre quepan bien.
     NODE_R = Math.max(32, Math.min(72, window.innerWidth * 0.095));
-    // Cada nodo obtiene su PROPIO radio segun su grado de conexion: los
-    // mas conectados salen mas grandes, los menos conectados mas chicos
-    // (escala raiz cuadrada, para que el AREA sea proporcional al grado,
-    // no el radio directamente — se ve mas natural).
     const R_MIN = NODE_R * 0.9, R_MAX = NODE_R * 1.55;
     NODOS.forEach(n => {
       const t = degMax === degMin ? 0.5 : (degree[n.id] - degMin) / (degMax - degMin);
       nodeRadiusMap[n.id] = R_MIN + (R_MAX - R_MIN) * Math.sqrt(t);
     });
-    function radiusOf(id) { return nodeRadiusMap[id] || NODE_R; }
 
-    // El margen de seguridad se reduce solo si la pantalla es chica, para
-    // no comerse todo el espacio disponible.
-    const margin = Math.max(50, Math.min(160, window.innerWidth * 0.07));
-    const effW = Math.max(220, window.innerWidth - margin * 2);
-    const effH = Math.max(220, window.innerHeight - margin * 2);
-    // La separacion minima entre bolas se calcula segun el espacio REAL
-    // disponible (empaquetado tipo panal, usando el radio PROMEDIO), para
-    // que las 13 bolas SIEMPRE quepan sin tocarse sin importar el tamano
-    // de la pantalla — en vez de pedir siempre la misma separacion grande
-    // y que a veces no quepa.
-    const n = NODOS.length;
-    const area = effW * effH;
-    const avgR = degValues.reduce((s, d) => s + (R_MIN + (R_MAX - R_MIN) * Math.sqrt(degMax === degMin ? 0.5 : (d - degMin) / (degMax - degMin))), 0) / n;
-    const maxFeasibleMinDist = 2 * Math.sqrt((area * 0.68) / (n * Math.PI));
-    const gapMult = Math.min(1.8, Math.max(1.35, maxFeasibleMinDist / (avgR * 2)));
-    const spread = Math.min(effW, effH) * 0.6;
-    // Probar varios acomodos al azar y quedarse con el que tenga MENOS
-    // cruces entre lineas de conexion, para que se vea claro que conecta
-    // con que (sin lineas de distintas conexiones superpuestas).
-    function segmentsIntersect(p1, p2, p3, p4) {
-      const d1x = p2.x - p1.x, d1y = p2.y - p1.y;
-      const d2x = p4.x - p3.x, d2y = p4.y - p3.y;
-      const denom = d1x * d2y - d1y * d2x;
-      if (Math.abs(denom) < 1e-9) return false;
-      const t = ((p3.x - p1.x) * d2y - (p3.y - p1.y) * d2x) / denom;
-      const u = ((p3.x - p1.x) * d1y - (p3.y - p1.y) * d1x) / denom;
-      return t > 0.05 && t < 0.95 && u > 0.05 && u < 0.95;
-    }
-    function countCrossings(pos) {
-      let count = 0;
-      for (let i = 0; i < REL.length; i++) {
-        for (let j = i + 1; j < REL.length; j++) {
-          const a = REL[i], b = REL[j];
-          if (a.from === b.from || a.from === b.to || a.to === b.from || a.to === b.to) continue;
-          if (segmentsIntersect(pos[a.from], pos[a.to], pos[b.from], pos[b.to])) count++;
-        }
-      }
-      return count;
-    }
-    let best = null, bestCrossings = Infinity;
-    for (let attempt = 0; attempt < 45; attempt++) {
-      const candidate = forceLayout(NODOS, REL, cx, cy, spread, radiusOf, gapMult, margin);
-      const crossings = countCrossings(candidate);
-      if (crossings < bestCrossings) { bestCrossings = crossings; best = candidate; }
-      if (bestCrossings === 0) break;
-    }
-    nodePos = best;
+    // Escalar el acomodo de referencia al tamaño real de pantalla,
+    // manteniendo la proporcion y centrado.
+    const availW = Math.max(300, window.innerWidth - REF_MARGIN * 2);
+    const availH = Math.max(300, window.innerHeight - REF_MARGIN * 2);
+    const scale = Math.min(availW / REF_W, availH / REF_H);
+    const offX = (window.innerWidth - REF_W * scale) / 2;
+    const offY = (window.innerHeight - REF_H * scale) / 2;
+    nodePos = {};
+    NODOS.forEach(n => {
+      const f = FIXED_POS[n.id];
+      nodePos[n.id] = { x: offX + f.x * scale, y: offY + f.y * scale };
+    });
   }
   computeGeometry();
 
