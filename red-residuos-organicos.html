@@ -301,6 +301,58 @@
   }
   computeGeometry();
 
+  // ---- Simulacion de fuerzas EN VIVO: arranca desde el acomodo pegado y
+  // se sigue moviendo solo — atraccion entre nodos conectados, repulsion
+  // entre todos para que no se amontonen. Se puede seguir arrastrando
+  // cualquier bolita, que "ancla" esa bolita mientras se mueve el mouse. ----
+  const velocity = {};
+  NODOS.forEach(n => velocity[n.id] = { x: 0, y: 0 });
+  let simRunning = false;
+  function simTick() {
+    if (!simRunning) return;
+    requestAnimationFrame(simTick);
+    if (!revealed) return;
+    const ids = NODOS.map(n => n.id);
+    const force = {}; ids.forEach(id => force[id] = { x: 0, y: 0 });
+    // Repulsion entre todas las bolas, segun la suma de sus radios reales.
+    for (let i = 0; i < ids.length; i++) {
+      for (let j = i + 1; j < ids.length; j++) {
+        const a = nodePos[ids[i]], b = nodePos[ids[j]];
+        const minDist = (nodeRadiusMap[ids[i]] + nodeRadiusMap[ids[j]]) * 1.5;
+        let dx = a.x - b.x, dy = a.y - b.y;
+        let dist = Math.hypot(dx, dy) || 0.001;
+        if (dist < minDist) {
+          const push = (minDist - dist) / dist * 0.06;
+          force[ids[i]].x += dx * push; force[ids[i]].y += dy * push;
+          force[ids[j]].x -= dx * push; force[ids[j]].y -= dy * push;
+        }
+      }
+    }
+    // Atraccion: cada nodo conectado jala levemente al otro hacia si.
+    REL.forEach(r => {
+      const a = nodePos[r.from], b = nodePos[r.to];
+      const dx = b.x - a.x, dy = b.y - a.y;
+      const dist = Math.hypot(dx, dy) || 0.001;
+      const target = (nodeRadiusMap[r.from] + nodeRadiusMap[r.to]) * 2.1;
+      const pull = (dist - target) * 0.012;
+      force[r.from].x += dx / dist * pull; force[r.from].y += dy / dist * pull;
+      force[r.to].x -= dx / dist * pull; force[r.to].y -= dy / dist * pull;
+    });
+    ids.forEach(id => {
+      if (id === draggingNodeId) { velocity[id].x = 0; velocity[id].y = 0; return; } // se mueve por el arrastre, no por la fisica
+      velocity[id].x = (velocity[id].x + force[id].x) * 0.82;
+      velocity[id].y = (velocity[id].y + force[id].y) * 0.82;
+      nodePos[id].x += velocity[id].x;
+      nodePos[id].y += velocity[id].y;
+      // no dejar que se salga de la pantalla
+      const r = nodeRadiusMap[id];
+      nodePos[id].x = Math.max(r, Math.min(window.innerWidth - r, nodePos[id].x));
+      nodePos[id].y = Math.max(r + 60, Math.min(window.innerHeight - r - 90, nodePos[id].y));
+    });
+    render();
+  }
+  function startSim() { if (!simRunning) { simRunning = true; requestAnimationFrame(simTick); } }
+
   function el(cls) { const d = document.createElement("div"); d.className = cls; return d; }
   function size(elm, r) { elm.style.width = elm.style.height = r * 2 + "px"; }
   function place(elm, x, y) { elm.style.left = x + "px"; elm.style.top = y + "px"; }
@@ -408,7 +460,7 @@
     });
   }
 
-  function reveal() { revealed = true; render(); updateCoordsOutput(); }
+  function reveal() { revealed = true; render(); updateCoordsOutput(); startSim(); }
   function collapse() { revealed = false; render(); document.getElementById("panel").classList.remove("open"); }
   backBtn.addEventListener("click", collapse);
 
