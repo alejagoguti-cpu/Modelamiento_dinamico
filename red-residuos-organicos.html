@@ -331,19 +331,19 @@
   // en vez del panel normal se revela esta red mas detallada de 13 causas.
   // ==========================================================================
   const SUBNODOS = [
-    { id:"s0",  tier:1, corto:"Concentración masiva de alimentos", full:"Concentración masiva diaria de alimentos en Corabastos." },
-    { id:"s1",  tier:1, corto:"Carga continua sin clasificar", full:"Llegada de carga continua sin clasificación previa." },
-    { id:"s7",  tier:1, corto:"Desajuste normativo", full:"Desajuste entre normas internas de la central y la ciudad." },
-    { id:"s3",  tier:1, corto:"Sin áreas de compostaje", full:"Ausencia de áreas de compostaje o transformación interna." },
-    { id:"s4",  tier:1, corto:"Distancia a plantas formales", full:"Distancia física a plantas formales de tratamiento." },
-    { id:"s5",  tier:1, corto:"Sin puntos limpios vecinos", full:"Inexistencia de puntos limpios de acopio en barrios vecinos." },
-    { id:"s8",  tier:1, corto:"Informalidad laboral", full:"Informalidad laboral en la cadena de recolección." },
-    { id:"s11", tier:1, corto:"Esfuerzo físico en transporte", full:"Esfuerzo físico en el transporte manual de carga pesada." },
-    { id:"s2",  tier:2, corto:"Plataformas con capacidad limitada", full:"Capacidad limitada en plataformas internas de carga." },
-    { id:"s6",  tier:2, corto:"Desarticulación de horarios", full:"Desarticulación de horarios entre el mercado y las rutas de aseo." },
-    { id:"s9",  tier:3, corto:"Clasificación en calles y andenes", full:"Desplazamiento de la clasificación hacia calles y andenes." },
-    { id:"s10", tier:4, corto:"Bodegas informales saturadas", full:"Saturación de bodegas informales de acopio en el barrio." },
-    { id:"s12", tier:5, corto:"Congestión de vehículos de carga", full:"Congestión de vehículos de carga en las vías de acceso." },
+    { id:"s0",  tier:1, corto:"Concentración masiva diaria de alimentos en Corabastos", full:"Concentración masiva diaria de alimentos en Corabastos." },
+    { id:"s1",  tier:1, corto:"Llegada de carga continua sin clasificación previa por comerciantes", full:"Llegada de carga continua sin clasificación previa por comerciantes." },
+    { id:"s7",  tier:1, corto:"Desajuste entre regulación de la Administración de Corabastos y normativa ambiental del Distrito", full:"Desajuste entre regulación de la Administración de Corabastos y normativa ambiental del Distrito." },
+    { id:"s3",  tier:1, corto:"Ausencia de áreas de compostaje o transformación interna en Corabastos", full:"Ausencia de áreas de compostaje o transformación interna en Corabastos." },
+    { id:"s4",  tier:1, corto:"Distancia física a plantas formales de tratamiento regional", full:"Distancia física a plantas formales de tratamiento regional." },
+    { id:"s5",  tier:1, corto:"Inexistencia de puntos limpios de acopio gestionados por el Distrito en barrios vecinos", full:"Inexistencia de puntos limpios de acopio gestionados por el Distrito en barrios vecinos." },
+    { id:"s8",  tier:1, corto:"Informalidad laboral de recicladores e intermediarios en la cadena", full:"Informalidad laboral de recicladores e intermediarios en la cadena." },
+    { id:"s11", tier:1, corto:"Límite de alcance por transporte manual de carga realizado por recuperadores de oficio y cargadores del sector", full:"Límite de alcance por transporte manual de carga realizado por recuperadores de oficio y cargadores del sector." },
+    { id:"s2",  tier:2, corto:"Capacidad limitada en plataformas internas de carga de la central", full:"Capacidad limitada en plataformas internas de carga de la central." },
+    { id:"s6",  tier:2, corto:"Desarticulación entre horarios de comerciantes y rutas de recolección de la UAESP", full:"Desarticulación entre horarios de comerciantes y rutas de recolección de la UAESP." },
+    { id:"s9",  tier:3, corto:"Desplazamiento de la clasificación por cargadores y recuperadores hacia calles y andenes", full:"Desplazamiento de la clasificación por cargadores y recuperadores hacia calles y andenes." },
+    { id:"s10", tier:4, corto:"Saturación de bodegas informales operadas por acopiadores del barrio", full:"Saturación de bodegas informales operadas por acopiadores del barrio." },
+    { id:"s12", tier:5, corto:"Congestión de camiones de carga pesada en vías de acceso perimetrales", full:"Congestión de camiones de carga pesada en vías de acceso perimetrales." },
   ];
   const subById = {}; SUBNODOS.forEach(n => subById[n.id] = n);
   const SUBREL = [
@@ -359,14 +359,14 @@
   const subLabelLayer = document.getElementById("subLabelLayer");
   const subBackBtn = document.getElementById("subBackBtn");
 
-  const SUB_NODE_R = 46;
-  const SUB_BRIDGES = 34;
+  const SUB_NODE_R = 88;
+  const SUB_BRIDGES = 55;
   let subCx, subCy;
   let subNodePos = {};
   function computeSubGeometry() {
     subCx = window.innerWidth / 2;
     subCy = window.innerHeight / 2 + 10;
-    const spread = Math.min(window.innerWidth, window.innerHeight) * 0.32;
+    const spread = Math.min(window.innerWidth, window.innerHeight) * 0.46;
     subNodePos = forceLayout(SUBNODOS, SUBREL, subCx, subCy, spread, SUB_NODE_R);
   }
   computeSubGeometry();
@@ -375,8 +375,8 @@
   SUBNODOS.forEach(n => {
     const b = el("blob"); subGooLayer.appendChild(b); subNodeBlobs[n.id] = b;
     const l = el("label child-label");
-    l.style.width = (SUB_NODE_R * 2.1) + "px";
-    l.style.fontSize = "9.5px";
+    l.style.width = (SUB_NODE_R * 1.7) + "px";
+    l.style.fontSize = "10.5px";
     l.textContent = n.corto;
     subLabelLayer.appendChild(l); subNodeLabels[n.id] = l;
     const h = el("hit"); subLabelLayer.appendChild(h); subNodeHits[n.id] = h;
