@@ -253,7 +253,7 @@
     // mas conectados salen mas grandes, los menos conectados mas chicos
     // (escala raiz cuadrada, para que el AREA sea proporcional al grado,
     // no el radio directamente — se ve mas natural).
-    const R_MIN = NODE_R * 0.62, R_MAX = NODE_R * 1.55;
+    const R_MIN = NODE_R * 0.9, R_MAX = NODE_R * 1.55;
     NODOS.forEach(n => {
       const t = degMax === degMin ? 0.5 : (degree[n.id] - degMin) / (degMax - degMin);
       nodeRadiusMap[n.id] = R_MIN + (R_MAX - R_MIN) * Math.sqrt(t);
