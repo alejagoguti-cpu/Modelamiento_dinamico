@@ -37,6 +37,8 @@
 
   .stage{ position:absolute; inset:0; width:100%; height:100%; }
   .goo-layer{ position:absolute; inset:0; filter:url(#goo); }
+  .arrows-svg{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; overflow:visible; }
+  .arrow-line{ fill:none; stroke-linecap:round; }
   .blob{
     position:absolute; border-radius:50%; top:0; left:0; transform:translate(-50%,-50%); background:var(--node);
     transition: left .8s cubic-bezier(.22,1,.36,1), top .8s cubic-bezier(.22,1,.36,1),
@@ -128,6 +130,7 @@
     </defs>
   </svg>
   <div class="goo-layer" id="gooLayer"></div>
+  <svg class="arrows-svg" id="arrowsSvg"><defs></defs></svg>
   <div class="label-layer" id="labelLayer"></div>
 </div>
 
@@ -406,14 +409,37 @@
   let currentDetailId = null;
   let nodeBlobs = {}, nodeLabels = {}, nodeHits = {}, nodeRadiusMap = {};
   let bridgeEls = [];
+  let arrowEls = [];
   let activeNodes = [], activeRel = [], nodePos = {};
+  const SVGNS = "http://www.w3.org/2000/svg";
+  const arrowsSvg = document.getElementById("arrowsSvg");
+  const arrowDefs = arrowsSvg.querySelector("defs");
+  const arrowMarkerCache = {};
+  function ensureArrowMarker(color) {
+    const key = color.replace(/[^a-zA-Z0-9]/g, "");
+    if (arrowMarkerCache[key]) return key;
+    const marker = document.createElementNS(SVGNS, "marker");
+    marker.setAttribute("id", "arrow-" + key);
+    marker.setAttribute("viewBox", "0 0 10 10");
+    marker.setAttribute("refX", "8"); marker.setAttribute("refY", "5");
+    marker.setAttribute("markerWidth", "7"); marker.setAttribute("markerHeight", "7");
+    marker.setAttribute("orient", "auto-start-reverse");
+    const path = document.createElementNS(SVGNS, "path");
+    path.setAttribute("d", "M 0 0 L 10 5 L 0 10 z");
+    path.setAttribute("fill", color);
+    marker.appendChild(path);
+    arrowDefs.appendChild(marker);
+    arrowMarkerCache[key] = true;
+    return key;
+  }
 
   function clearNetwork() {
     Object.values(nodeBlobs).forEach(b => b.remove());
     Object.values(nodeLabels).forEach(l => l.remove());
     Object.values(nodeHits).forEach(h => h.remove());
     bridgeEls.forEach(b => b.remove());
-    nodeBlobs = {}; nodeLabels = {}; nodeHits = {}; bridgeEls = []; nodeRadiusMap = {};
+    arrowEls.forEach(a => a.remove());
+    nodeBlobs = {}; nodeLabels = {}; nodeHits = {}; bridgeEls = []; arrowEls = []; nodeRadiusMap = {};
   }
 
   function hexToRgb(hex) {
@@ -513,6 +539,25 @@
         if (colorFrom.startsWith("#") && colorTo.startsWith("#")) bridge.style.background = lerpColor(colorFrom, colorTo, t);
         size(bridge, rr); place(bridge, a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t);
       }
+      // Flecha nítida encima de la conexion organica, para que se entienda
+      // la DIRECCION causa -> efecto (diagrama causal, no solo una mancha
+      // sin sentido de flujo).
+      const dx = b.x - a.x, dy = b.y - a.y;
+      const dist = Math.hypot(dx, dy) || 1;
+      const ux = dx / dist, uy = dy / dist;
+      const startX = a.x + ux * (rFrom + 4), startY = a.y + uy * (rFrom + 4);
+      const endX = b.x - ux * (rTo + 4), endY = b.y - uy * (rTo + 4);
+      const arrowColorRaw = colorTo.startsWith("#") ? colorTo : getComputedStyle(document.documentElement).getPropertyValue("--node").trim();
+      const markerKey = ensureArrowMarker(arrowColorRaw);
+      const line = document.createElementNS(SVGNS, "line");
+      line.setAttribute("class", "arrow-line");
+      line.setAttribute("x1", startX); line.setAttribute("y1", startY);
+      line.setAttribute("x2", endX); line.setAttribute("y2", endY);
+      line.setAttribute("stroke", arrowColorRaw);
+      line.setAttribute("stroke-width", "2.4");
+      line.setAttribute("stroke-opacity", "0.85");
+      line.setAttribute("marker-end", `url(#arrow-${markerKey})`);
+      arrowsSvg.appendChild(line); arrowEls.push(line);
     });
   }
 
