@@ -251,7 +251,37 @@
     const maxFeasibleMinDist = 2 * Math.sqrt((area * 0.68) / (n * Math.PI));
     const minDist = Math.min(NODE_R * 3.4, Math.max(NODE_R * 2.7, maxFeasibleMinDist));
     const spread = Math.min(effW, effH) * 0.6;
-    nodePos = forceLayout(NODOS, REL, cx, cy, spread, NODE_R, minDist / NODE_R, margin);
+    // Probar varios acomodos al azar y quedarse con el que tenga MENOS
+    // cruces entre lineas de conexion, para que se vea claro que conecta
+    // con que (sin lineas de distintas conexiones superpuestas).
+    function segmentsIntersect(p1, p2, p3, p4) {
+      const d1x = p2.x - p1.x, d1y = p2.y - p1.y;
+      const d2x = p4.x - p3.x, d2y = p4.y - p3.y;
+      const denom = d1x * d2y - d1y * d2x;
+      if (Math.abs(denom) < 1e-9) return false;
+      const t = ((p3.x - p1.x) * d2y - (p3.y - p1.y) * d2x) / denom;
+      const u = ((p3.x - p1.x) * d1y - (p3.y - p1.y) * d1x) / denom;
+      return t > 0.05 && t < 0.95 && u > 0.05 && u < 0.95;
+    }
+    function countCrossings(pos) {
+      let count = 0;
+      for (let i = 0; i < REL.length; i++) {
+        for (let j = i + 1; j < REL.length; j++) {
+          const a = REL[i], b = REL[j];
+          if (a.from === b.from || a.from === b.to || a.to === b.from || a.to === b.to) continue;
+          if (segmentsIntersect(pos[a.from], pos[a.to], pos[b.from], pos[b.to])) count++;
+        }
+      }
+      return count;
+    }
+    let best = null, bestCrossings = Infinity;
+    for (let attempt = 0; attempt < 45; attempt++) {
+      const candidate = forceLayout(NODOS, REL, cx, cy, spread, NODE_R, minDist / NODE_R, margin);
+      const crossings = countCrossings(candidate);
+      if (crossings < bestCrossings) { bestCrossings = crossings; best = candidate; }
+      if (bestCrossings === 0) break;
+    }
+    nodePos = best;
   }
   computeGeometry();
 
