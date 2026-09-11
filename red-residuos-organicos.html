@@ -259,11 +259,11 @@
   // acomodarlas) — se escalan proporcionalmente si la pantalla es de otro
   // tamaño, para mantener el mismo acomodo relativo. ----
   const FIXED_POS = {
-    n1:  { x: 362,  y: 126 }, n2:  { x: 422,  y: 304 }, n3:  { x: 617,  y: 128 },
-    n4:  { x: 877,  y: 128 }, n5:  { x: 1219, y: 81  }, n6:  { x: 1184, y: 296 },
-    n7:  { x: 299,  y: 444 }, n8:  { x: 209,  y: 170 }, n9:  { x: 740,  y: 447 },
-    n10: { x: 915,  y: 316 }, n11: { x: 976,  y: 580 }, n12: { x: 1260, y: 490 },
-    n13: { x: 573,  y: 555 },
+    n1:  { x: 357,  y: 168 }, n2:  { x: 448,  y: 315 }, n3:  { x: 672,  y: 105 },
+    n4:  { x: 964,  y: 71  }, n5:  { x: 1162, y: 186 }, n6:  { x: 1344, y: 293 },
+    n7:  { x: 245,  y: 489 }, n8:  { x: 222,  y: 286 }, n9:  { x: 763,  y: 499 },
+    n10: { x: 980,  y: 341 }, n11: { x: 1038, y: 603 }, n12: { x: 1342, y: 527 },
+    n13: { x: 562,  y: 580 },
   };
   const REF_W = 1470, REF_H = 660, REF_MARGIN = 90;
 
@@ -301,57 +301,17 @@
   }
   computeGeometry();
 
-  // ---- Simulacion de fuerzas EN VIVO: arranca desde el acomodo pegado y
-  // se sigue moviendo solo — atraccion entre nodos conectados, repulsion
-  // entre todos para que no se amontonen. Se puede seguir arrastrando
-  // cualquier bolita, que "ancla" esa bolita mientras se mueve el mouse. ----
-  const velocity = {};
-  NODOS.forEach(n => velocity[n.id] = { x: 0, y: 0 });
-  let simRunning = false;
-  function simTick() {
-    if (!simRunning) return;
-    requestAnimationFrame(simTick);
-    if (!revealed) return;
-    const ids = NODOS.map(n => n.id);
-    const force = {}; ids.forEach(id => force[id] = { x: 0, y: 0 });
-    // Repulsion entre todas las bolas, segun la suma de sus radios reales.
-    for (let i = 0; i < ids.length; i++) {
-      for (let j = i + 1; j < ids.length; j++) {
-        const a = nodePos[ids[i]], b = nodePos[ids[j]];
-        const minDist = (nodeRadiusMap[ids[i]] + nodeRadiusMap[ids[j]]) * 1.5;
-        let dx = a.x - b.x, dy = a.y - b.y;
-        let dist = Math.hypot(dx, dy) || 0.001;
-        if (dist < minDist) {
-          const push = (minDist - dist) / dist * 0.06;
-          force[ids[i]].x += dx * push; force[ids[i]].y += dy * push;
-          force[ids[j]].x -= dx * push; force[ids[j]].y -= dy * push;
-        }
-      }
-    }
-    // Atraccion: cada nodo conectado jala levemente al otro hacia si.
-    REL.forEach(r => {
-      const a = nodePos[r.from], b = nodePos[r.to];
-      const dx = b.x - a.x, dy = b.y - a.y;
-      const dist = Math.hypot(dx, dy) || 0.001;
-      const target = (nodeRadiusMap[r.from] + nodeRadiusMap[r.to]) * 2.1;
-      const pull = (dist - target) * 0.012;
-      force[r.from].x += dx / dist * pull; force[r.from].y += dy / dist * pull;
-      force[r.to].x -= dx / dist * pull; force[r.to].y -= dy / dist * pull;
-    });
-    ids.forEach(id => {
-      if (id === draggingNodeId) { velocity[id].x = 0; velocity[id].y = 0; return; } // se mueve por el arrastre, no por la fisica
-      velocity[id].x = (velocity[id].x + force[id].x) * 0.82;
-      velocity[id].y = (velocity[id].y + force[id].y) * 0.82;
-      nodePos[id].x += velocity[id].x;
-      nodePos[id].y += velocity[id].y;
-      // no dejar que se salga de la pantalla
-      const r = nodeRadiusMap[id];
-      nodePos[id].x = Math.max(r, Math.min(window.innerWidth - r, nodePos[id].x));
-      nodePos[id].y = Math.max(r + 60, Math.min(window.innerHeight - r - 90, nodePos[id].y));
-    });
-    render();
+  // Devuelve la posicion FIJA (escalada a la pantalla actual) de un nodo,
+  // para poder regresarlo ahi cuando se suelta tras arrastrarlo.
+  function homePositionOf(id) {
+    const availW = Math.max(300, window.innerWidth - REF_MARGIN * 2);
+    const availH = Math.max(300, window.innerHeight - REF_MARGIN * 2);
+    const scale = Math.min(availW / REF_W, availH / REF_H);
+    const offX = (window.innerWidth - REF_W * scale) / 2;
+    const offY = (window.innerHeight - REF_H * scale) / 2;
+    const f = FIXED_POS[id];
+    return { x: offX + f.x * scale, y: offY + f.y * scale };
   }
-  function startSim() { if (!simRunning) { simRunning = true; requestAnimationFrame(simTick); } }
 
   function el(cls) { const d = document.createElement("div"); d.className = cls; return d; }
   function size(elm, r) { elm.style.width = elm.style.height = r * 2 + "px"; }
@@ -460,7 +420,7 @@
     });
   }
 
-  function reveal() { revealed = true; render(); updateCoordsOutput(); startSim(); }
+  function reveal() { revealed = true; render(); updateCoordsOutput(); }
   function collapse() { revealed = false; render(); document.getElementById("panel").classList.remove("open"); }
   backBtn.addEventListener("click", collapse);
 
@@ -495,7 +455,16 @@
     updateCoordsOutput();
   });
   window.addEventListener("pointerup", (e) => {
-    if (draggingNodeId) { draggingNodeId = null; downStart = null; return; }
+    if (draggingNodeId) {
+      // Al soltar, la bolita regresa sola a su lugar fijo (como un
+      // resorte) — no se queda donde se solto.
+      const home = homePositionOf(draggingNodeId);
+      nodePos[draggingNodeId].x = home.x;
+      nodePos[draggingNodeId].y = home.y;
+      render();
+      updateCoordsOutput();
+      draggingNodeId = null; downStart = null; return;
+    }
     if (!downStart) return;
     const moved = Math.hypot(e.clientX - downStart.x, e.clientY - downStart.y);
     downStart = null;
