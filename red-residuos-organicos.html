@@ -183,8 +183,8 @@
         const a = pos[e.from], b = pos[e.to];
         const dx = b.x - a.x, dy = b.y - a.y;
         const dist = Math.hypot(dx, dy) || 0.001;
-        const target = minDistFor(e.from, e.to) * 1.7;
-        const pull = (dist - target) * 0.008;
+        const target = minDistFor(e.from, e.to) * 1.25;
+        const pull = (dist - target) * 0.014;
         force[e.from].x += dx / dist * pull; force[e.from].y += dy / dist * pull;
         force[e.to].x -= dx / dist * pull; force[e.to].y -= dy / dist * pull;
       });
@@ -324,8 +324,10 @@
   // Reparte un texto largo en lineas anchas y balanceadas (por palabras
   // completas, nunca corta una palabra) calculando cuantas palabras caben
   // realmente en el ancho disponible, para que el bloque de texto quede
-  // SIEMPRE dentro del circulo de la bolita, nunca sobresaliendo.
-  function wrapToFit(text, maxCharsPerLine) {
+  // SIEMPRE dentro del circulo de la bolita, nunca sobresaliendo. Si la
+  // bolita es muy chiquita y no alcanza para todo el texto, se corta con
+  // "…" al final — el texto completo siempre esta disponible al tocarla.
+  function wrapToFit(text, maxCharsPerLine, maxLines) {
     const words = text.split(" ");
     const lines = [];
     let current = "";
@@ -335,6 +337,13 @@
       else current = candidate;
     });
     if (current) lines.push(current);
+    if (lines.length > maxLines) {
+      const shown = lines.slice(0, maxLines);
+      let last = shown[maxLines - 1];
+      while (last.length > 3 && (last + "…").length > maxCharsPerLine) last = last.slice(0, -1).trim();
+      shown[maxLines - 1] = last.replace(/[.,;:]+$/, "") + "…";
+      return shown.join("<br>");
+    }
     return lines.join("<br>");
   }
 
@@ -350,7 +359,10 @@
     l.style.width = labelWidthPx + "px";
     const fontPx = 11.5;
     const maxCharsPerLine = Math.max(6, Math.floor(labelWidthPx / (fontPx * 0.52)));
-    l.innerHTML = wrapToFit(n.corto, maxCharsPerLine);
+    // Cuantas lineas caben verticalmente en ESTA bolita, con margen de
+    // seguridad (85% del diametro) para que nunca se salga del circulo.
+    const maxLines = Math.max(2, Math.floor((ownR * 2 * 0.85) / (fontPx * 1.24)));
+    l.innerHTML = wrapToFit(n.corto, maxCharsPerLine, maxLines);
     labelLayer.appendChild(l); nodeLabels[n.id] = l;
     const h = el("hit"); labelLayer.appendChild(h); nodeHits[n.id] = h;
   });
