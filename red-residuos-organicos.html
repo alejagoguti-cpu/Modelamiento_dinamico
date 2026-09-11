@@ -236,10 +236,10 @@
     // El radio de cada bolita tambien se adapta: en pantallas angostas
     // (celular) las 13 bolitas de este tamaño fijo no caben de ninguna
     // manera, asi que se encogen un poco para que siempre quepan bien.
-    NODE_R = Math.max(30, Math.min(80, window.innerWidth * 0.115));
+    NODE_R = Math.max(28, Math.min(70, window.innerWidth * 0.095));
     // El margen de seguridad se reduce solo si la pantalla es chica, para
     // no comerse todo el espacio disponible.
-    const margin = Math.max(60, Math.min(190, window.innerWidth * 0.09));
+    const margin = Math.max(50, Math.min(160, window.innerWidth * 0.07));
     const effW = Math.max(220, window.innerWidth - margin * 2);
     const effH = Math.max(220, window.innerHeight - margin * 2);
     // La separacion minima entre bolas se calcula segun el espacio REAL
@@ -249,7 +249,7 @@
     const n = NODOS.length;
     const area = effW * effH;
     const maxFeasibleMinDist = 2 * Math.sqrt((area * 0.68) / (n * Math.PI));
-    const minDist = Math.min(NODE_R * 3.4, Math.max(NODE_R * 2.35, maxFeasibleMinDist));
+    const minDist = Math.min(NODE_R * 3.4, Math.max(NODE_R * 2.7, maxFeasibleMinDist));
     const spread = Math.min(effW, effH) * 0.6;
     nodePos = forceLayout(NODOS, REL, cx, cy, spread, NODE_R, minDist / NODE_R, margin);
   }
@@ -283,7 +283,7 @@
     const l = el("label child-label");
     l.style.width = (NODE_R * 3.3) + "px";
     const wordCount = n.corto.split(" ").length;
-    const targetLines = wordCount > 12 ? 4 : wordCount > 8 ? 3 : 2;
+    const targetLines = wordCount > 12 ? 5 : wordCount > 8 ? 4 : 3;
     l.innerHTML = wrapBalanced(n.corto, targetLines);
     labelLayer.appendChild(l); nodeLabels[n.id] = l;
     const h = el("hit"); labelLayer.appendChild(h); nodeHits[n.id] = h;
