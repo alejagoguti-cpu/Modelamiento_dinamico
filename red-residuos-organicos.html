@@ -143,12 +143,8 @@
   let NODE_R = 92;
   const BRIDGES = 45;
 
-  function forceLayout(nodeList, edgeList, centerX, centerY, spread, nodeRadius, minDistMult = 3.6, margin = 230, iterations = 320) {
+  function forceLayout(nodeList, edgeList, centerX, centerY, spread, radiusOf, gapMult = 1.8, margin = 230, iterations = 320) {
     const pos = {};
-    // Sembrado inicial en CUADRICULA (no aleatorio) dentro del area
-    // disponible: garantiza que arranquen ya separadas, evitando que la
-    // fisica de repulsion quede atascada en un minimo local sin salida
-    // cuando hay muchas bolas en poco espacio.
     const margin0 = margin;
     const areaW = window.innerWidth - margin0 * 2, areaH = window.innerHeight - margin0 * 2;
     const cols = Math.ceil(Math.sqrt(nodeList.length * areaW / areaH));
@@ -162,12 +158,16 @@
       };
     });
     const ids = nodeList.map(n => n.id);
-    const minDist = nodeRadius * minDistMult;
+    // La separacion minima entre CADA PAR ahora depende de la suma de sus
+    // propios radios (bolas mas grandes por mas conexiones necesitan mas
+    // espacio a su alrededor que las chiquitas).
+    function minDistFor(idA, idB) { return (radiusOf(idA) + radiusOf(idB)) * gapMult; }
     for (let iter = 0; iter < iterations; iter++) {
       const force = {}; ids.forEach(id => force[id] = { x: 0, y: 0 });
       for (let i = 0; i < ids.length; i++) {
         for (let j = i + 1; j < ids.length; j++) {
           const a = pos[ids[i]], b = pos[ids[j]];
+          const minDist = minDistFor(ids[i], ids[j]);
           let dx = a.x - b.x, dy = a.y - b.y;
           let dist = Math.hypot(dx, dy) || 0.001;
           if (dist < minDist) {
@@ -183,7 +183,7 @@
         const a = pos[e.from], b = pos[e.to];
         const dx = b.x - a.x, dy = b.y - a.y;
         const dist = Math.hypot(dx, dy) || 0.001;
-        const target = minDist * 1.7;
+        const target = minDistFor(e.from, e.to) * 1.7;
         const pull = (dist - target) * 0.008;
         force[e.from].x += dx / dist * pull; force[e.from].y += dy / dist * pull;
         force[e.to].x -= dx / dist * pull; force[e.to].y -= dy / dist * pull;
@@ -207,6 +207,7 @@
       for (let i = 0; i < ids.length; i++) {
         for (let j = i + 1; j < ids.length; j++) {
           const a = pos[ids[i]], b = pos[ids[j]];
+          const minDist = minDistFor(ids[i], ids[j]);
           let dx = a.x - b.x, dy = a.y - b.y;
           let dist = Math.hypot(dx, dy) || 0.001;
           if (dist < minDist) {
@@ -222,34 +223,58 @@
     // Al final (una sola vez, no en cada pasada) se acomoda todo dentro del
     // margen de seguridad de la pantalla.
     ids.forEach(id => {
-      pos[id].x = Math.max(margin, Math.min(window.innerWidth - margin, pos[id].x));
-      pos[id].y = Math.max(margin, Math.min(window.innerHeight - margin, pos[id].y));
+      const r = radiusOf(id);
+      pos[id].x = Math.max(margin + r * 0.3, Math.min(window.innerWidth - margin - r * 0.3, pos[id].x));
+      pos[id].y = Math.max(margin + r * 0.3, Math.min(window.innerHeight - margin - r * 0.3, pos[id].y));
     });
     return pos;
   }
 
   let cx, cy;
   let nodePos = {};
+  let nodeRadiusMap = {};
+  // Grado de conexion de cada nodo (cuantas veces aparece en REL, como
+  // origen o destino) — se usa para que las bolas mas conectadas salgan
+  // mas grandes y las menos conectadas mas chiquitas.
+  const degree = {};
+  NODOS.forEach(n => degree[n.id] = 0);
+  REL.forEach(r => { degree[r.from]++; degree[r.to]++; });
+  const degValues = Object.values(degree);
+  const degMin = Math.min(...degValues), degMax = Math.max(...degValues);
+
   function computeGeometry() {
     cx = window.innerWidth / 2;
     cy = window.innerHeight / 2 + 10;
-    // El radio de cada bolita tambien se adapta: en pantallas angostas
-    // (celular) las 13 bolitas de este tamaño fijo no caben de ninguna
-    // manera, asi que se encogen un poco para que siempre quepan bien.
+    // El radio BASE tambien se adapta: en pantallas angostas (celular) las
+    // 13 bolitas de este tamaño fijo no caben de ninguna manera, asi que
+    // se encogen un poco para que siempre quepan bien.
     NODE_R = Math.max(32, Math.min(72, window.innerWidth * 0.095));
+    // Cada nodo obtiene su PROPIO radio segun su grado de conexion: los
+    // mas conectados salen mas grandes, los menos conectados mas chicos
+    // (escala raiz cuadrada, para que el AREA sea proporcional al grado,
+    // no el radio directamente — se ve mas natural).
+    const R_MIN = NODE_R * 0.62, R_MAX = NODE_R * 1.55;
+    NODOS.forEach(n => {
+      const t = degMax === degMin ? 0.5 : (degree[n.id] - degMin) / (degMax - degMin);
+      nodeRadiusMap[n.id] = R_MIN + (R_MAX - R_MIN) * Math.sqrt(t);
+    });
+    function radiusOf(id) { return nodeRadiusMap[id] || NODE_R; }
+
     // El margen de seguridad se reduce solo si la pantalla es chica, para
     // no comerse todo el espacio disponible.
     const margin = Math.max(50, Math.min(160, window.innerWidth * 0.07));
     const effW = Math.max(220, window.innerWidth - margin * 2);
     const effH = Math.max(220, window.innerHeight - margin * 2);
     // La separacion minima entre bolas se calcula segun el espacio REAL
-    // disponible (empaquetado tipo panal), para que las 13 bolas SIEMPRE
-    // quepan sin tocarse sin importar el tamano de la pantalla — en vez de
-    // pedir siempre la misma separacion grande y que a veces no quepa.
+    // disponible (empaquetado tipo panal, usando el radio PROMEDIO), para
+    // que las 13 bolas SIEMPRE quepan sin tocarse sin importar el tamano
+    // de la pantalla — en vez de pedir siempre la misma separacion grande
+    // y que a veces no quepa.
     const n = NODOS.length;
     const area = effW * effH;
+    const avgR = degValues.reduce((s, d) => s + (R_MIN + (R_MAX - R_MIN) * Math.sqrt(degMax === degMin ? 0.5 : (d - degMin) / (degMax - degMin))), 0) / n;
     const maxFeasibleMinDist = 2 * Math.sqrt((area * 0.68) / (n * Math.PI));
-    const minDist = Math.min(NODE_R * 3.4, Math.max(NODE_R * 2.7, maxFeasibleMinDist));
+    const gapMult = Math.min(1.8, Math.max(1.35, maxFeasibleMinDist / (avgR * 2)));
     const spread = Math.min(effW, effH) * 0.6;
     // Probar varios acomodos al azar y quedarse con el que tenga MENOS
     // cruces entre lineas de conexion, para que se vea claro que conecta
@@ -276,7 +301,7 @@
     }
     let best = null, bestCrossings = Infinity;
     for (let attempt = 0; attempt < 45; attempt++) {
-      const candidate = forceLayout(NODOS, REL, cx, cy, spread, NODE_R, minDist / NODE_R, margin);
+      const candidate = forceLayout(NODOS, REL, cx, cy, spread, radiusOf, gapMult, margin);
       const crossings = countCrossings(candidate);
       if (crossings < bestCrossings) { bestCrossings = crossings; best = candidate; }
       if (bestCrossings === 0) break;
@@ -317,10 +342,11 @@
   NODOS.forEach(n => {
     const b = el("blob"); gooLayer.appendChild(b); nodeBlobs[n.id] = b;
     const l = el("label child-label");
-    // Ancho de texto deliberadamente MENOR al diametro de la bolita (no
-    // 2*NODE_R, sino ~1.3x el radio), para que incluso las lineas mas
-    // alejadas del centro queden dentro del circulo, no solo las del medio.
-    const labelWidthPx = NODE_R * 1.55;
+    // Ancho de texto deliberadamente MENOR al diametro de la bolita de
+    // ESTE nodo especifico (cada uno tiene su propio radio segun cuantas
+    // conexiones tiene), para que quede dentro del circulo.
+    const ownR = nodeRadiusMap[n.id];
+    const labelWidthPx = ownR * 1.55;
     l.style.width = labelWidthPx + "px";
     const fontPx = 11.5;
     const maxCharsPerLine = Math.max(6, Math.floor(labelWidthPx / (fontPx * 0.52)));
@@ -350,23 +376,27 @@
 
     NODOS.forEach(n => {
       const target = revealed ? nodePos[n.id] : { x: cx, y: cy };
+      const ownR = nodeRadiusMap[n.id];
       place(nodeBlobs[n.id], target.x, target.y);
-      size(nodeBlobs[n.id], revealed ? NODE_R : NODE_R * 0.08);
+      size(nodeBlobs[n.id], revealed ? ownR : ownR * 0.08);
       nodeBlobs[n.id].style.opacity = revealed ? "1" : "0";
 
       place(nodeLabels[n.id], target.x, target.y);
       nodeLabels[n.id].style.opacity = revealed ? "1" : "0";
 
-      size(nodeHits[n.id], NODE_R); place(nodeHits[n.id], target.x, target.y);
+      size(nodeHits[n.id], ownR); place(nodeHits[n.id], target.x, target.y);
       nodeHits[n.id].style.pointerEvents = revealed ? "auto" : "none";
     });
 
     REL.forEach((r, idx) => {
       const a = revealed ? nodePos[r.from] : { x: cx, y: cy };
       const b = revealed ? nodePos[r.to] : { x: cx, y: cy };
+      const rFrom = nodeRadiusMap[r.from], rTo = nodeRadiusMap[r.to];
       bridgesByRel[idx].forEach((bridge, j) => {
         const t = (j + 1) / (BRIDGES + 1);
-        const rr = revealed ? (NODE_R * (1 - t * 0.35)) * 0.17 : 1;
+        // El puente nace ancho junto al origen y se afina hacia el
+        // destino, cada uno segun el radio real de SU bolita.
+        const rr = revealed ? ((rFrom * (1 - t) + rTo * t) * (1 - t * 0.35)) * 0.17 : 1;
         size(bridge, rr);
         place(bridge, a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t);
         bridge.style.opacity = revealed ? "1" : "0";
