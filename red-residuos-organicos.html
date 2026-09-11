@@ -436,16 +436,39 @@
     downStart = { x: e.clientX, y: e.clientY };
     nodePos[draggingNodeId].x += dx;
     nodePos[draggingNodeId].y += dy;
+    // "Fuerza de atraccion": las bolitas conectadas DIRECTAMENTE con la
+    // que se arrastra tambien se mueven un poco, jaladas con mas o menos
+    // fuerza segun que tan grande es la bolita que se esta arrastrando
+    // (una bolita grande, con muchas conexiones, arrastra mas cosas
+    // consigo que una chiquita).
+    const dragR = nodeRadiusMap[draggingNodeId];
+    const pullFactor = Math.max(0.12, Math.min(0.62, dragR / (NODE_R * 1.55)));
+    REL.forEach(r => {
+      let neighborId = null;
+      if (r.from === draggingNodeId) neighborId = r.to;
+      else if (r.to === draggingNodeId) neighborId = r.from;
+      if (neighborId && neighborId !== draggingNodeId) {
+        nodePos[neighborId].x += dx * pullFactor;
+        nodePos[neighborId].y += dy * pullFactor;
+      }
+    });
     render();
     updateCoordsOutput();
   });
   window.addEventListener("pointerup", (e) => {
     if (draggingNodeId) {
-      // Al soltar, la bolita regresa sola a su lugar fijo (como un
-      // resorte) — no se queda donde se solto.
-      const home = homePositionOf(draggingNodeId);
-      nodePos[draggingNodeId].x = home.x;
-      nodePos[draggingNodeId].y = home.y;
+      // Al soltar, la bolita y todas las vecinas que arrastro consigo
+      // regresan solas a su lugar fijo (como un resorte).
+      const affected = new Set([draggingNodeId]);
+      REL.forEach(r => {
+        if (r.from === draggingNodeId) affected.add(r.to);
+        if (r.to === draggingNodeId) affected.add(r.from);
+      });
+      affected.forEach(id => {
+        const home = homePositionOf(id);
+        nodePos[id].x = home.x;
+        nodePos[id].y = home.y;
+      });
       render();
       updateCoordsOutput();
       draggingNodeId = null; downStart = null; return;
