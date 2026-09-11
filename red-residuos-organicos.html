@@ -30,7 +30,8 @@
   .tier-caption.show{ opacity:1; }
 
   .stage{ position:relative; width:100vw; height:100vh; }
-  .goo-layer{ position:absolute; inset:0; filter:url(#goo); }
+  .goo-layer{ position:absolute; inset:0; filter:url(#goo); transition:opacity .5s ease; }
+  .label-layer{ position:absolute; inset:0; pointer-events:none; transition:opacity .5s ease; }
   .blob{
     position:absolute; border-radius:50%; top:0; left:0; transform:translate(-50%,-50%); background:var(--node);
     transition: left 1s cubic-bezier(.22,1,.36,1), top 1s cubic-bezier(.22,1,.36,1),
@@ -103,9 +104,12 @@
   </svg>
   <div class="goo-layer" id="gooLayer"></div>
   <div class="label-layer" id="labelLayer"></div>
+  <div class="goo-layer" id="subGooLayer" style="opacity:0; pointer-events:none;"></div>
+  <div class="label-layer" id="subLabelLayer" style="opacity:0;"></div>
 </div>
 
 <button class="back-btn" id="backBtn">← Volver a la burbuja inicial</button>
+<button class="back-btn" id="subBackBtn" style="display:none;">← Volver a la red principal</button>
 <button class="analysis-btn" id="analysisBtn">📄 Análisis de la red</button>
 
 <aside class="panel" id="panel">
@@ -263,6 +267,7 @@
     if (moved >= 8) return;
     if (downTarget === hitCenter) { reveal(); return; }
     const nid = Object.keys(nodeHits).find(id => nodeHits[id] === downTarget);
+    if (nid === "saturacion") { drillIntoSaturacion(); return; }
     if (nid) openPanel(nid);
   });
 
@@ -289,8 +294,144 @@
   }
   document.getElementById("panelClose").addEventListener("click", () => document.getElementById("panel").classList.remove("open"));
 
-  window.addEventListener("resize", () => { computeGeometry(); render(); });
+  window.addEventListener("resize", () => { computeGeometry(); render(); if (subRevealed) { computeSubGeometry(); renderSub(); } });
   render();
+
+  // ==========================================================================
+  // SUB-RED dentro de "Saturación operativa interna": al tocar esa bolita,
+  // en vez del panel normal se revela esta red mas detallada de 13 causas.
+  // ==========================================================================
+  const SUBNODOS = [
+    { id:"s0",  tier:1, corto:"Concentración masiva de alimentos", full:"Concentración masiva diaria de alimentos en Corabastos." },
+    { id:"s1",  tier:1, corto:"Carga continua sin clasificar", full:"Llegada de carga continua sin clasificación previa." },
+    { id:"s7",  tier:1, corto:"Desajuste normativo", full:"Desajuste entre normas internas de la central y la ciudad." },
+    { id:"s3",  tier:1, corto:"Sin áreas de compostaje", full:"Ausencia de áreas de compostaje o transformación interna." },
+    { id:"s4",  tier:1, corto:"Distancia a plantas formales", full:"Distancia física a plantas formales de tratamiento." },
+    { id:"s5",  tier:1, corto:"Sin puntos limpios vecinos", full:"Inexistencia de puntos limpios de acopio en barrios vecinos." },
+    { id:"s8",  tier:1, corto:"Informalidad laboral", full:"Informalidad laboral en la cadena de recolección." },
+    { id:"s11", tier:1, corto:"Esfuerzo físico en transporte", full:"Esfuerzo físico en el transporte manual de carga pesada." },
+    { id:"s2",  tier:2, corto:"Plataformas con capacidad limitada", full:"Capacidad limitada en plataformas internas de carga." },
+    { id:"s6",  tier:2, corto:"Desarticulación de horarios", full:"Desarticulación de horarios entre el mercado y las rutas de aseo." },
+    { id:"s9",  tier:3, corto:"Clasificación en calles y andenes", full:"Desplazamiento de la clasificación hacia calles y andenes." },
+    { id:"s10", tier:4, corto:"Bodegas informales saturadas", full:"Saturación de bodegas informales de acopio en el barrio." },
+    { id:"s12", tier:5, corto:"Congestión de vehículos de carga", full:"Congestión de vehículos de carga en las vías de acceso." },
+  ];
+  const subById = {}; SUBNODOS.forEach(n => subById[n.id] = n);
+  const SUBREL = [
+    { from:"s0", to:"s2" }, { from:"s1", to:"s2" },
+    { from:"s2", to:"s9" }, { from:"s3", to:"s9" }, { from:"s4", to:"s9" }, { from:"s5", to:"s9" }, { from:"s6", to:"s9" }, { from:"s11", to:"s9" },
+    { from:"s7", to:"s6" },
+    { from:"s8", to:"s10" }, { from:"s9", to:"s10" },
+    { from:"s10", to:"s12" },
+    { from:"s12", to:"s2" }, { from:"s12", to:"s6" }, // bucle de retroalimentación
+  ];
+
+  const subGooLayer = document.getElementById("subGooLayer");
+  const subLabelLayer = document.getElementById("subLabelLayer");
+  const subBackBtn = document.getElementById("subBackBtn");
+
+  const SUB_NODE_R = 46;
+  const SUB_BRIDGES = 34;
+  let subCx, subCy, subColX;
+  const subNodePos = {};
+  function computeSubGeometry() {
+    subCx = window.innerWidth / 2;
+    subCy = window.innerHeight / 2 + 10;
+    const nTiers = 5;
+    subColX = [];
+    for (let i = 0; i < nTiers; i++) subColX.push(window.innerWidth * (0.09 + i * (0.82 / (nTiers - 1))));
+    const byTier = {};
+    SUBNODOS.forEach(n => { (byTier[n.tier] = byTier[n.tier] || []).push(n); });
+    Object.entries(byTier).forEach(([tier, list]) => {
+      const gap = Math.min(105, (window.innerHeight - 160) / Math.max(1, list.length - 1 || 1));
+      const totalH = gap * (list.length - 1);
+      const startY = subCy - totalH / 2;
+      list.forEach((n, i) => { subNodePos[n.id] = { x: subColX[Number(tier) - 1], y: list.length === 1 ? subCy : startY + i * gap }; });
+    });
+  }
+  computeSubGeometry();
+
+  const subNodeBlobs = {}, subNodeLabels = {}, subNodeHits = {};
+  SUBNODOS.forEach(n => {
+    const b = el("blob"); subGooLayer.appendChild(b); subNodeBlobs[n.id] = b;
+    const l = el("label child-label");
+    l.style.width = (SUB_NODE_R * 2.1) + "px";
+    l.style.fontSize = "9.5px";
+    l.textContent = n.corto;
+    subLabelLayer.appendChild(l); subNodeLabels[n.id] = l;
+    const h = el("hit"); subLabelLayer.appendChild(h); subNodeHits[n.id] = h;
+    size(h, SUB_NODE_R);
+  });
+  const subBridgesByRel = SUBREL.map(() => {
+    const arr = [];
+    for (let i = 0; i < SUB_BRIDGES; i++) { const b = el("blob"); subGooLayer.appendChild(b); arr.push(b); }
+    return arr;
+  });
+
+  function renderSub() {
+    SUBNODOS.forEach(n => {
+      const p = subNodePos[n.id];
+      place(subNodeBlobs[n.id], p.x, p.y); size(subNodeBlobs[n.id], SUB_NODE_R);
+      place(subNodeLabels[n.id], p.x, p.y);
+      place(subNodeHits[n.id], p.x, p.y);
+    });
+    SUBREL.forEach((r, idx) => {
+      const a = subNodePos[r.from], b = subNodePos[r.to];
+      subBridgesByRel[idx].forEach((bridge, j) => {
+        const t = (j + 1) / (SUB_BRIDGES + 1);
+        const rr = (SUB_NODE_R * (1 - t * 0.35)) * 0.27;
+        size(bridge, rr);
+        place(bridge, a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t);
+      });
+    });
+  }
+  renderSub();
+
+  let subRevealed = false;
+  function drillIntoSaturacion() {
+    subRevealed = true;
+    gooLayer.style.opacity = "0"; gooLayer.style.pointerEvents = "none";
+    labelLayer.style.opacity = "0"; labelLayer.style.pointerEvents = "none";
+    subGooLayer.style.opacity = "1";
+    subLabelLayer.style.opacity = "1"; subLabelLayer.style.pointerEvents = "auto";
+    backBtn.style.display = "none";
+    subBackBtn.style.display = "inline-block";
+    tierCaptions.forEach(c => c.classList.remove("show"));
+  }
+  function backToMainNetwork() {
+    subRevealed = false;
+    subGooLayer.style.opacity = "0"; subGooLayer.style.pointerEvents = "none";
+    subLabelLayer.style.opacity = "0"; subLabelLayer.style.pointerEvents = "none";
+    gooLayer.style.opacity = "1"; gooLayer.style.pointerEvents = "auto";
+    labelLayer.style.opacity = "1"; labelLayer.style.pointerEvents = "auto";
+    backBtn.style.display = "inline-block";
+    subBackBtn.style.display = "none";
+    tierCaptions.forEach(c => c.classList.add("show"));
+    document.getElementById("panel").classList.remove("open");
+  }
+  subBackBtn.addEventListener("click", backToMainNetwork);
+
+  // Toques dentro de la sub-red: abren el panel de detalle de esa causa.
+  window.addEventListener("pointerup", (e) => {
+    if (!subRevealed) return;
+    const nid = Object.keys(subNodeHits).find(id => subNodeHits[id] === e.target);
+    if (nid) openSubPanel(nid);
+  });
+
+  function openSubPanel(id) {
+    const n = subById[id];
+    const panel = document.getElementById("panel"), body = document.getElementById("panelBody");
+    const vieneDe = SUBREL.filter(r => r.to === id).map(r => subById[r.from]);
+    const alimentaA = SUBREL.filter(r => r.from === id).map(r => subById[r.to]);
+    body.innerHTML = `
+      <p class="panel-kind">Causa (detalle de saturación)</p>
+      <h2>${n.full}</h2>
+      ${vieneDe.length ? `<div class="block"><b>Viene de</b>${vieneDe.map(x => `<div class="rel-chip" data-subgoto="${x.id}">${x.corto}</div>`).join("")}</div>` : ""}
+      ${alimentaA.length ? `<div class="block"><b>Alimenta a</b>${alimentaA.map(x => `<div class="rel-chip" data-subgoto="${x.id}">${x.corto}</div>`).join("")}</div>` : ""}
+    `;
+    body.querySelectorAll("[data-subgoto]").forEach(elm => elm.addEventListener("click", (e) => { e.stopPropagation(); openSubPanel(elm.dataset.subgoto); }));
+    panel.classList.add("open");
+  }
 })();
 </script>
 </body>
