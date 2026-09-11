@@ -88,9 +88,6 @@
   <p>Toca la burbuja para revelar la red de causas, actores, lugares y síntomas</p>
 </div>
 
-<div class="tier-caption" id="capT1" style="left:2vw;">Causas de fondo</div>
-<div class="tier-caption" id="capT2" style="left:35.5vw;">Actores y espacio</div>
-<div class="tier-caption" id="capT3" style="right:2vw;">Síntomas visibles</div>
 
 <div class="stage" id="stage">
   <svg width="0" height="0" style="position:absolute">
@@ -159,28 +156,61 @@
   const intro = document.getElementById("intro");
   const backBtn = document.getElementById("backBtn");
   const analysisBtn = document.getElementById("analysisBtn");
-  const tierCaptions = [document.getElementById("capT1"), document.getElementById("capT2"), document.getElementById("capT3")];
 
   const CENTER_R = 108;
   const NODE_R = 56;
   const BRIDGES = 40;
 
-  let cx, cy, colX;
-  const nodePos = {};
+  // ---- Layout tipo "red sin orden": fuerzas simples de repulsion entre
+  // todos los nodos + atraccion por cada conexion, en vez de columnas
+  // rigidas — se ve como una red organica dispersa, no una jerarquia. ----
+  function forceLayout(nodeList, edgeList, centerX, centerY, spread, nodeRadius, iterations = 300) {
+    const pos = {};
+    nodeList.forEach((n, i) => {
+      const a = (i / nodeList.length) * Math.PI * 2 + Math.random() * 0.6;
+      pos[n.id] = { x: centerX + Math.cos(a) * spread * (0.5 + Math.random() * 0.5), y: centerY + Math.sin(a) * spread * (0.5 + Math.random() * 0.5) };
+    });
+    const ids = nodeList.map(n => n.id);
+    const minDist = nodeRadius * 2.5;
+    for (let iter = 0; iter < iterations; iter++) {
+      const force = {}; ids.forEach(id => force[id] = { x: 0, y: 0 });
+      for (let i = 0; i < ids.length; i++) {
+        for (let j = i + 1; j < ids.length; j++) {
+          const a = pos[ids[i]], b = pos[ids[j]];
+          let dx = a.x - b.x, dy = a.y - b.y;
+          let dist = Math.hypot(dx, dy) || 0.001;
+          if (dist < minDist) {
+            const push = (minDist - dist) / dist * 0.5;
+            force[ids[i]].x += dx * push; force[ids[i]].y += dy * push;
+            force[ids[j]].x -= dx * push; force[ids[j]].y -= dy * push;
+          }
+        }
+      }
+      edgeList.forEach(e => {
+        const a = pos[e.from], b = pos[e.to];
+        const dx = b.x - a.x, dy = b.y - a.y;
+        const dist = Math.hypot(dx, dy) || 0.001;
+        const target = minDist * 1.7;
+        const pull = (dist - target) * 0.02;
+        force[e.from].x += dx / dist * pull; force[e.from].y += dy / dist * pull;
+        force[e.to].x -= dx / dist * pull; force[e.to].y -= dy / dist * pull;
+      });
+      ids.forEach(id => {
+        pos[id].x += force[id].x; pos[id].y += force[id].y;
+        pos[id].x += (centerX - pos[id].x) * 0.008;
+        pos[id].y += (centerY - pos[id].y) * 0.008;
+      });
+    }
+    return pos;
+  }
+
+  let cx, cy;
+  let nodePos = {};
   function computeGeometry() {
     cx = window.innerWidth / 2;
     cy = window.innerHeight / 2 + 10;
-    colX = [window.innerWidth * 0.16, window.innerWidth * 0.5, window.innerWidth * 0.84];
-    const byTier = { 1: [], 2: [], 3: [] };
-    NODOS.forEach(n => byTier[n.tier].push(n));
-    Object.entries(byTier).forEach(([tier, list]) => {
-      const gap = Math.min(190, (window.innerHeight - 200) / Math.max(1, list.length - 1 || 1));
-      const totalH = gap * (list.length - 1);
-      const startY = cy - totalH / 2;
-      list.forEach((n, i) => {
-        nodePos[n.id] = { x: colX[Number(tier) - 1], y: list.length === 1 ? cy : startY + i * gap };
-      });
-    });
+    const spread = Math.min(window.innerWidth, window.innerHeight) * 0.36;
+    nodePos = forceLayout(NODOS, REL, cx, cy, spread, NODE_R);
   }
   computeGeometry();
 
@@ -224,7 +254,6 @@
     intro.style.opacity = revealed ? "0" : "1";
     backBtn.classList.toggle("show", revealed);
     analysisBtn.classList.toggle("show", revealed);
-    tierCaptions.forEach(c => c.classList.toggle("show", revealed));
 
     NODOS.forEach(n => {
       const target = revealed ? nodePos[n.id] : { x: cx, y: cy };
@@ -332,22 +361,13 @@
 
   const SUB_NODE_R = 46;
   const SUB_BRIDGES = 34;
-  let subCx, subCy, subColX;
-  const subNodePos = {};
+  let subCx, subCy;
+  let subNodePos = {};
   function computeSubGeometry() {
     subCx = window.innerWidth / 2;
     subCy = window.innerHeight / 2 + 10;
-    const nTiers = 5;
-    subColX = [];
-    for (let i = 0; i < nTiers; i++) subColX.push(window.innerWidth * (0.09 + i * (0.82 / (nTiers - 1))));
-    const byTier = {};
-    SUBNODOS.forEach(n => { (byTier[n.tier] = byTier[n.tier] || []).push(n); });
-    Object.entries(byTier).forEach(([tier, list]) => {
-      const gap = Math.min(105, (window.innerHeight - 160) / Math.max(1, list.length - 1 || 1));
-      const totalH = gap * (list.length - 1);
-      const startY = subCy - totalH / 2;
-      list.forEach((n, i) => { subNodePos[n.id] = { x: subColX[Number(tier) - 1], y: list.length === 1 ? subCy : startY + i * gap }; });
-    });
+    const spread = Math.min(window.innerWidth, window.innerHeight) * 0.32;
+    subNodePos = forceLayout(SUBNODOS, SUBREL, subCx, subCy, spread, SUB_NODE_R);
   }
   computeSubGeometry();
 
@@ -396,7 +416,6 @@
     subLabelLayer.style.opacity = "1"; subLabelLayer.style.pointerEvents = "auto";
     backBtn.style.display = "none";
     subBackBtn.style.display = "inline-block";
-    tierCaptions.forEach(c => c.classList.remove("show"));
   }
   function backToMainNetwork() {
     subRevealed = false;
@@ -406,7 +425,6 @@
     labelLayer.style.opacity = "1"; labelLayer.style.pointerEvents = "auto";
     backBtn.style.display = "inline-block";
     subBackBtn.style.display = "none";
-    tierCaptions.forEach(c => c.classList.add("show"));
     document.getElementById("panel").classList.remove("open");
   }
   subBackBtn.addEventListener("click", backToMainNetwork);
