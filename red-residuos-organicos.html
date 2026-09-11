@@ -199,6 +199,12 @@
         pos[id].x += force[id].x; pos[id].y += force[id].y;
         pos[id].x += (centerX - pos[id].x) * 0.008;
         pos[id].y += (centerY - pos[id].y) * 0.008;
+        // Nunca dejar que una bolita quede tan cerca del borde de la
+        // pantalla que su etiqueta (que puede ser varias lineas de texto
+        // largo) se corte contra el borde.
+        const margin = Math.max(220, nodeRadius * 2.6);
+        pos[id].x = Math.max(margin, Math.min(window.innerWidth - margin, pos[id].x));
+        pos[id].y = Math.max(margin, Math.min(window.innerHeight - margin, pos[id].y));
       });
     }
     return pos;
@@ -375,8 +381,8 @@
   SUBNODOS.forEach(n => {
     const b = el("blob"); subGooLayer.appendChild(b); subNodeBlobs[n.id] = b;
     const l = el("label child-label");
-    l.style.width = (SUB_NODE_R * 1.7) + "px";
-    l.style.fontSize = "10.5px";
+    l.style.width = (SUB_NODE_R * 2.6) + "px";
+    l.style.fontSize = "11.5px";
     l.textContent = n.corto;
     subLabelLayer.appendChild(l); subNodeLabels[n.id] = l;
     const h = el("hit"); subLabelLayer.appendChild(h); subNodeHits[n.id] = h;
