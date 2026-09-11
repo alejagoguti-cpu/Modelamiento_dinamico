@@ -286,31 +286,17 @@
       nodeRadiusMap[n.id] = R_MIN + (R_MAX - R_MIN) * Math.sqrt(t);
     });
 
-    // Escalar el acomodo de referencia al tamaño real de pantalla,
-    // manteniendo la proporcion y centrado.
-    const availW = Math.max(300, window.innerWidth - REF_MARGIN * 2);
-    const availH = Math.max(300, window.innerHeight - REF_MARGIN * 2);
-    const scale = Math.min(availW / REF_W, availH / REF_H);
-    const offX = (window.innerWidth - REF_W * scale) / 2;
-    const offY = (window.innerHeight - REF_H * scale) / 2;
+    // Las coordenadas se usan TAL CUAL, en pixeles exactos, sin ningun
+    // reescalado — donde el usuario las puso es donde quedan.
     nodePos = {};
-    NODOS.forEach(n => {
-      const f = FIXED_POS[n.id];
-      nodePos[n.id] = { x: offX + f.x * scale, y: offY + f.y * scale };
-    });
+    NODOS.forEach(n => { nodePos[n.id] = { x: FIXED_POS[n.id].x, y: FIXED_POS[n.id].y }; });
   }
   computeGeometry();
 
-  // Devuelve la posicion FIJA (escalada a la pantalla actual) de un nodo,
+  // Devuelve la posicion FIJA exacta de un nodo (sin ningun reescalado),
   // para poder regresarlo ahi cuando se suelta tras arrastrarlo.
   function homePositionOf(id) {
-    const availW = Math.max(300, window.innerWidth - REF_MARGIN * 2);
-    const availH = Math.max(300, window.innerHeight - REF_MARGIN * 2);
-    const scale = Math.min(availW / REF_W, availH / REF_H);
-    const offX = (window.innerWidth - REF_W * scale) / 2;
-    const offY = (window.innerHeight - REF_H * scale) / 2;
-    const f = FIXED_POS[id];
-    return { x: offX + f.x * scale, y: offY + f.y * scale };
+    return { x: FIXED_POS[id].x, y: FIXED_POS[id].y };
   }
 
   function el(cls) { const d = document.createElement("div"); d.className = cls; return d; }
