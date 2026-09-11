@@ -474,8 +474,7 @@
     levelTitle.classList.add("show");
     levelTitleText.textContent = "8 problemáticas de Corabastos y su entorno";
     levelSubText.textContent = "Toca cualquier problema para ver sus causas internas";
-    backBtn.textContent = "← Volver a la burbuja inicial";
-    backBtn.classList.add("show");
+    backBtn.classList.remove("show");
     centerBlob.style.opacity = "0"; centerLabel.style.opacity = "0"; hitCenter.style.pointerEvents = "none";
   }
 
@@ -517,8 +516,18 @@
     if (moved >= 8) return;
     if (downTarget === hitCenter) { showMacro(); return; }
     const nid = Object.keys(nodeHits).find(id => nodeHits[id] === downTarget);
-    if (nid) openPanel(nid);
+    if (!nid) return;
+    // Clic directo en un nodo: si estamos en la red macro, entra directo a
+    // la red de sub-problematicas de esa problemática (sin pasar por el
+    // panel); si ya estamos en un detalle, el clic abre el panel normal
+    // con la informacion de esa causa.
+    if (level === "macro") showDetail(nid);
+    else openPanel(nid);
   });
+
+  // Mostrar la red de las 8 problematicas directamente al abrir la pagina,
+  // sin necesidad de tocar primero la burbuja inicial.
+  showMacro();
 
   function openPanel(id) {
     const panel = document.getElementById("panel"), body = document.getElementById("panelBody");
