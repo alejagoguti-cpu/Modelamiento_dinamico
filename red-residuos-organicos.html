@@ -469,11 +469,18 @@
       const b = el("blob"); gooLayer.appendChild(b); nodeBlobs[n.id] = b;
       const l = el("label child-label");
       const ownR = nodeRadiusMap[n.id];
-      const labelWidthPx = ownR * 1.55;
-      l.style.width = labelWidthPx + "px";
-      const fontPx = 11.5;
-      const maxCharsPerLine = Math.max(6, Math.floor(labelWidthPx / (fontPx * 0.52)));
-      const maxLines = Math.max(2, Math.floor((ownR * 2 * 0.85) / (fontPx * 1.24)));
+      const fontPx = 11.5, lineH = fontPx * 1.24;
+      // Calculo consciente de la curva del circulo: la linea mas alejada
+      // del centro (arriba/abajo del bloque de texto) tiene MENOS ancho
+      // disponible que una linea justo en el medio — se usa el ancho
+      // seguro en el punto mas angosto que realmente vaya a ocupar el
+      // texto, no un ancho fijo que ignore la curva.
+      let maxLines = Math.max(2, Math.floor((ownR * 2 * 0.8) / lineH));
+      let halfH = (maxLines * lineH) / 2;
+      while (halfH >= ownR * 0.85 && maxLines > 1) { maxLines--; halfH = (maxLines * lineH) / 2; }
+      const safeWidth = 2 * Math.sqrt(Math.max(0, ownR * ownR - halfH * halfH)) * 0.86;
+      l.style.width = safeWidth + "px";
+      const maxCharsPerLine = Math.max(5, Math.floor(safeWidth / (fontPx * 0.58)));
       const text = byIdMap[n.id].corto || byIdMap[n.id].t;
       l.innerHTML = wrapToFit(text, maxCharsPerLine, maxLines);
       labelLayer.appendChild(l); nodeLabels[n.id] = l;
