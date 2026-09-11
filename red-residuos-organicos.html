@@ -60,12 +60,28 @@
   .panel .rel-chip:hover{ background:rgba(58,90,148,.15); }
 
   .back-btn{
-    position:fixed; bottom:22px; left:50%; transform:translateX(-50%); z-index:6;
+    position:fixed; bottom:100px; left:50%; transform:translateX(-50%); z-index:6;
     padding:10px 18px; border-radius:999px; border:1px solid var(--panel-border); background:#fff;
     font-size:12px; font-weight:600; color:var(--ink-dark); cursor:pointer; box-shadow:0 6px 16px rgba(0,0,0,.08);
     opacity:0; pointer-events:none; transition:opacity .3s ease;
   }
   .back-btn.show{ opacity:1; pointer-events:auto; }
+
+  .coords-panel{
+    position:fixed; bottom:0; left:0; right:0; z-index:7; background:#fff; border-top:1px solid var(--panel-border);
+    padding:10px 16px; opacity:0; pointer-events:none; transition:opacity .3s ease; box-shadow:0 -6px 16px rgba(0,0,0,.06);
+  }
+  .coords-panel.show{ opacity:1; pointer-events:auto; }
+  .coords-row{ display:flex; align-items:center; gap:10px; margin-bottom:6px; font-size:11.5px; color:var(--ink-dim); flex-wrap:wrap; }
+  .coords-row button{
+    padding:6px 12px; border-radius:999px; border:1px solid var(--panel-border); background:var(--panel);
+    font-size:11.5px; font-weight:600; color:var(--ink-dark); cursor:pointer;
+  }
+  .coords-row button:hover{ background:rgba(0,0,0,.08); }
+  #coordsOutput{
+    width:100%; resize:vertical; font-family:monospace; font-size:11px; padding:8px; border-radius:8px;
+    border:1px solid var(--panel-border); background:#f7f8f9; color:var(--ink-dark);
+  }
 
   @media (prefers-reduced-motion: reduce){ .blob, .label, .panel{ transition:none !important; } }
 </style>
@@ -92,6 +108,14 @@
 </div>
 
 <button class="back-btn" id="backBtn">← Volver a la burbuja inicial</button>
+<div class="coords-panel" id="coordsPanel">
+  <div class="coords-row">
+    <span>Arrastra las bolitas a donde quieras — las coordenadas se actualizan solas</span>
+    <button type="button" id="coordsCopyBtn">📋 Copiar coordenadas</button>
+    <button type="button" id="coordsResetBtn">↺ Restablecer</button>
+  </div>
+  <textarea id="coordsOutput" rows="3" spellcheck="false" readonly></textarea>
+</div>
 
 <aside class="panel" id="panel">
   <button class="panel-close" id="panelClose">✕</button>
@@ -385,6 +409,7 @@
     hitCenter.style.pointerEvents = revealed ? "none" : "auto";
     intro.style.opacity = revealed ? "0" : "1";
     backBtn.classList.toggle("show", revealed);
+    document.getElementById("coordsPanel")?.classList.toggle("show", revealed);
 
     NODOS.forEach(n => {
       const target = revealed ? nodePos[n.id] : { x: cx, y: cy };
@@ -416,14 +441,42 @@
     });
   }
 
-  function reveal() { revealed = true; render(); }
+  function reveal() { revealed = true; render(); updateCoordsOutput(); }
   function collapse() { revealed = false; render(); document.getElementById("panel").classList.remove("open"); }
   backBtn.addEventListener("click", collapse);
 
+  // ---- Guardar las posiciones "de fabrica" para poder Restablecer ----
+  let factoryPos = null;
+
+  // ---- Arrastrar cada bolita a mano: si el arrastre EMPIEZA sobre una
+  // bolita ya revelada, se mueve ESA bolita (y sus conexiones la siguen);
+  // si empieza en el fondo o sobre la bolita inicial, funciona como antes
+  // (toque = revelar / abrir panel). ----
   const stage = document.getElementById("stage");
-  let downStart = null, downTarget = null;
-  stage.addEventListener("pointerdown", (e) => { downStart = { x: e.clientX, y: e.clientY }; downTarget = e.target; });
+  let downStart = null, downTarget = null, draggingNodeId = null;
+
+  stage.addEventListener("pointerdown", (e) => {
+    downStart = { x: e.clientX, y: e.clientY };
+    downTarget = e.target;
+    if (revealed) {
+      const nid = Object.keys(nodeHits).find(id => nodeHits[id] === e.target);
+      if (nid) {
+        draggingNodeId = nid;
+        if (!factoryPos) factoryPos = JSON.parse(JSON.stringify(nodePos));
+      }
+    }
+  });
+  window.addEventListener("pointermove", (e) => {
+    if (!draggingNodeId || !downStart) return;
+    const dx = e.clientX - downStart.x, dy = e.clientY - downStart.y;
+    downStart = { x: e.clientX, y: e.clientY };
+    nodePos[draggingNodeId].x += dx;
+    nodePos[draggingNodeId].y += dy;
+    render();
+    updateCoordsOutput();
+  });
   window.addEventListener("pointerup", (e) => {
+    if (draggingNodeId) { draggingNodeId = null; downStart = null; return; }
     if (!downStart) return;
     const moved = Math.hypot(e.clientX - downStart.x, e.clientY - downStart.y);
     downStart = null;
@@ -431,6 +484,26 @@
     if (downTarget === hitCenter) { reveal(); return; }
     const nid = Object.keys(nodeHits).find(id => nodeHits[id] === downTarget);
     if (nid) openPanel(nid);
+  });
+
+  // ---- Panel de coordenadas: se muestra junto con la red revelada,
+  // permite copiar la posicion actual de cada bolita y restablecer. ----
+  const coordsPanel = document.getElementById("coordsPanel");
+  const coordsOutput = document.getElementById("coordsOutput");
+  function updateCoordsOutput() {
+    const lines = NODOS.map(n => {
+      const p = nodePos[n.id];
+      return `  { id:"${n.id}", x:${Math.round(p.x)}, y:${Math.round(p.y)} }, // ${n.corto.slice(0, 40)}`;
+    });
+    coordsOutput.value = "[\n" + lines.join("\n") + "\n]";
+  }
+  document.getElementById("coordsCopyBtn").addEventListener("click", async () => {
+    updateCoordsOutput();
+    try { await navigator.clipboard.writeText(coordsOutput.value); } catch (err) {}
+    coordsOutput.select();
+  });
+  document.getElementById("coordsResetBtn").addEventListener("click", () => {
+    if (factoryPos) { nodePos = JSON.parse(JSON.stringify(factoryPos)); render(); updateCoordsOutput(); }
   });
 
   function openPanel(id) {
