@@ -159,7 +159,7 @@
 
   const CENTER_R = 108;
   const NODE_R = 56;
-  const BRIDGES = 40;
+  const BRIDGES = 25;
 
   // ---- Layout tipo "red sin orden": fuerzas simples de repulsion entre
   // todos los nodos + atraccion por cada conexion, en vez de columnas
@@ -215,8 +215,8 @@
   function computeGeometry() {
     cx = window.innerWidth / 2;
     cy = window.innerHeight / 2 + 10;
-    const spread = Math.min(window.innerWidth, window.innerHeight) * 0.36;
-    nodePos = forceLayout(NODOS, REL, cx, cy, spread, NODE_R);
+    const spread = Math.min(window.innerWidth, window.innerHeight) * 0.56;
+    nodePos = forceLayout(NODOS, REL, cx, cy, spread, NODE_R, 3.6);
   }
   computeGeometry();
 
@@ -279,7 +279,7 @@
       const b = revealed ? nodePos[r.to] : { x: cx, y: cy };
       bridgesByRel[idx].forEach((bridge, j) => {
         const t = (j + 1) / (BRIDGES + 1);
-        const rr = revealed ? (NODE_R * (1 - t * 0.35)) * 0.27 : 1;
+        const rr = revealed ? (NODE_R * (1 - t * 0.35)) * 0.19 : 1;
         size(bridge, rr);
         place(bridge, a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t);
         bridge.style.opacity = revealed ? "1" : "0";
