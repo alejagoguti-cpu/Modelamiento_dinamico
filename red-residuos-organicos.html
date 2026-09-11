@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Saturación de residuos por centralización operativa — Corabastos</title>
+<title>Corabastos y su entorno — Red macro de problemáticas</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
@@ -23,18 +23,25 @@
   .intro h1{ font-family:'Space Grotesk',sans-serif; font-size:15px; font-weight:600; margin:0 0 4px; line-height:1.35; }
   .intro p{ margin:0; font-size:11.5px; color:var(--ink-dim); }
 
+  .level-title{
+    position:fixed; top:20px; left:50%; transform:translateX(-50%); z-index:6; text-align:center;
+    max-width:640px; opacity:0; pointer-events:none; transition:opacity .4s ease;
+  }
+  .level-title.show{ opacity:1; }
+  .level-title h2{ font-family:'Space Grotesk',sans-serif; font-size:14px; font-weight:600; margin:0; color:var(--ink-dark); }
+  .level-title p{ margin:2px 0 0; font-size:11px; color:var(--ink-dim); }
+
   .stage{ position:relative; width:100vw; height:100vh; }
   .goo-layer{ position:absolute; inset:0; filter:url(#goo); }
   .blob{
     position:absolute; border-radius:50%; top:0; left:0; transform:translate(-50%,-50%); background:var(--node);
-    transition: left 1s cubic-bezier(.22,1,.36,1), top 1s cubic-bezier(.22,1,.36,1),
-                width .85s cubic-bezier(.22,1,.36,1), height .85s cubic-bezier(.22,1,.36,1), opacity .45s ease;
+    transition: left .8s cubic-bezier(.22,1,.36,1), top .8s cubic-bezier(.22,1,.36,1),
+                width .7s cubic-bezier(.22,1,.36,1), height .7s cubic-bezier(.22,1,.36,1), opacity .4s ease;
   }
-
   .label-layer{ position:absolute; inset:0; pointer-events:none; }
   .label{
     position:absolute; top:0; left:0; transform:translate(-50%,-50%);
-    transition: left 1s cubic-bezier(.22,1,.36,1), top 1s cubic-bezier(.22,1,.36,1), opacity .4s ease;
+    transition: left .8s cubic-bezier(.22,1,.36,1), top .8s cubic-bezier(.22,1,.36,1), opacity .4s ease;
     text-align:center; font-weight:600; line-height:1.24; color:var(--ink-on-node); padding:0 8px; pointer-events:none;
   }
   .label.center-label{ font-family:'Space Grotesk',sans-serif; font-size:14.5px; }
@@ -57,31 +64,21 @@
   .panel .block{ margin-top:16px; padding-top:16px; border-top:1px solid var(--panel-border); }
   .panel .block b{ display:block; font-size:11px; color:var(--ink-dim); font-weight:600; margin-bottom:7px; text-transform:uppercase; letter-spacing:.04em; }
   .panel .rel-chip{ display:block; padding:9px 12px; margin-bottom:7px; border-radius:9px; background:rgba(58,90,148,.08); border:1px solid rgba(58,90,148,.3); font-size:12px; cursor:pointer; color:var(--ink-dark); }
+  .panel .rel-chip .rel-verbo{ display:block; font-size:10px; color:var(--ink-dim); font-style:italic; margin-top:2px; }
   .panel .rel-chip:hover{ background:rgba(58,90,148,.15); }
+  .panel .drill-btn{
+    display:block; width:100%; margin-top:16px; padding:11px 14px; border-radius:10px; border:none;
+    background:var(--node); color:#fff; font-weight:600; font-size:13px; cursor:pointer;
+  }
+  .panel .drill-btn:hover{ opacity:.9; }
 
   .back-btn{
-    position:fixed; bottom:100px; left:50%; transform:translateX(-50%); z-index:6;
+    position:fixed; bottom:22px; left:50%; transform:translateX(-50%); z-index:6;
     padding:10px 18px; border-radius:999px; border:1px solid var(--panel-border); background:#fff;
     font-size:12px; font-weight:600; color:var(--ink-dark); cursor:pointer; box-shadow:0 6px 16px rgba(0,0,0,.08);
     opacity:0; pointer-events:none; transition:opacity .3s ease;
   }
   .back-btn.show{ opacity:1; pointer-events:auto; }
-
-  .coords-panel{
-    position:fixed; bottom:0; left:0; right:0; z-index:7; background:#fff; border-top:1px solid var(--panel-border);
-    padding:10px 16px; opacity:0; pointer-events:none; transition:opacity .3s ease; box-shadow:0 -6px 16px rgba(0,0,0,.06);
-  }
-  .coords-panel.show{ opacity:1; pointer-events:auto; }
-  .coords-row{ display:flex; align-items:center; gap:10px; margin-bottom:6px; font-size:11.5px; color:var(--ink-dim); flex-wrap:wrap; }
-  .coords-row button{
-    padding:6px 12px; border-radius:999px; border:1px solid var(--panel-border); background:var(--panel);
-    font-size:11.5px; font-weight:600; color:var(--ink-dark); cursor:pointer;
-  }
-  .coords-row button:hover{ background:rgba(0,0,0,.08); }
-  #coordsOutput{
-    width:100%; resize:vertical; font-family:monospace; font-size:11px; padding:8px; border-radius:8px;
-    border:1px solid var(--panel-border); background:#f7f8f9; color:var(--ink-dark);
-  }
 
   @media (prefers-reduced-motion: reduce){ .blob, .label, .panel{ transition:none !important; } }
 </style>
@@ -89,8 +86,12 @@
 <body>
 
 <div class="intro" id="intro">
-  <h1>Saturación de residuos por centralización operativa en Corabastos</h1>
-  <p>Toca la burbuja para revelar la red completa de causas</p>
+  <h1>Corabastos y su entorno: 8 problemáticas interconectadas</h1>
+  <p>Toca la burbuja para revelar la red — luego toca cualquier problema para ver sus causas internas</p>
+</div>
+<div class="level-title" id="levelTitle">
+  <h2 id="levelTitleText"></h2>
+  <p id="levelSubText"></p>
 </div>
 
 <div class="stage" id="stage">
@@ -107,14 +108,7 @@
   <div class="label-layer" id="labelLayer"></div>
 </div>
 
-<button class="back-btn" id="backBtn">← Volver a la burbuja inicial</button>
-<div class="coords-panel" id="coordsPanel">
-  <div class="coords-row">
-    <button type="button" id="coordsCopyBtn">📋 Copiar coordenadas</button>
-    <button type="button" id="coordsResetBtn">↺ Restablecer</button>
-  </div>
-  <textarea id="coordsOutput" rows="3" spellcheck="false" readonly></textarea>
-</div>
+<button class="back-btn" id="backBtn">← Volver</button>
 
 <aside class="panel" id="panel">
   <button class="panel-close" id="panelClose">✕</button>
@@ -123,90 +117,199 @@
 
 <script>
 (() => {
-  const NODOS = [
-    { id:"n1",  corto:"Concentración masiva diaria de alimentos en Corabastos" },
-    { id:"n2",  corto:"Llegada de carga continua sin clasificación previa por comerciantes" },
-    { id:"n3",  corto:"Capacidad limitada en plataformas internas de carga de la central" },
-    { id:"n4",  corto:"Ausencia de áreas de compostaje o transformación interna en Corabastos" },
-    { id:"n5",  corto:"Distancia física a plantas formales de tratamiento regional" },
-    { id:"n6",  corto:"Inexistencia de puntos limpios de acopio gestionados por el Distrito en barrios vecinos" },
-    { id:"n7",  corto:"Desarticulación entre horarios de comerciantes y rutas de recolección de la UAESP" },
-    { id:"n8",  corto:"Desajuste entre regulación de la Administración de Corabastos y normativa ambiental del Distrito" },
-    { id:"n9",  corto:"Informalidad laboral de recicladores e intermediarios en la cadena" },
-    { id:"n10", corto:"Desplazamiento de la clasificación por cargadores y recuperadores hacia calles y andenes" },
-    { id:"n11", corto:"Saturación de bodegas informales operadas por acopiadores del barrio" },
-    { id:"n12", corto:"Límite de alcance por transporte manual de carga realizado por recuperadores de oficio y cargadores del sector" },
-    { id:"n13", corto:"Congestión de camiones de carga pesada en vías de acceso perimetrales" },
+  const MACRO = [
+    { id:"m1", corto:"Desarticulación de gobernanza y regulación temporal", full:"Desarticulación de gobernanza y regulación temporal entre el Distrito y la administración de Corabastos" },
+    { id:"m2", corto:"Saturación de residuos", full:"Saturación de la infraestructura física interna y plataformas de descarga de Corabastos" },
+    { id:"m3", corto:"Colapso de la red vial local en Kennedy", full:"Colapso de la red vial local en Kennedy" },
+    { id:"m4", corto:"Acumulación y desborde de residuos orgánicos", full:"Acumulación y desborde de residuos orgánicos en el espacio público perimetral" },
+    { id:"m5", corto:"Incompatibilidad de usos del suelo", full:"Incompatibilidad de usos del suelo y proliferación no regulada de bodegas informales en barrios vecinos" },
+    { id:"m6", corto:"Informalidad laboral y segregación socio-espacial", full:"Informalidad laboral y segregación socio-espacial de recuperadores de oficio y coteros" },
+    { id:"m7", corto:"Eutrofización y contaminación de fuentes hídricas", full:"Eutrofización y contaminación de fuentes hídricas por vertimiento no tratado de lixiviados y aguas servidas" },
+    { id:"m8", corto:"Deterioro de la Estructura Ecológica Principal", full:"Deterioro y fragmentación de la Estructura Ecológica Principal en el Humedal La Vaca" },
   ];
-  const byId = {}; NODOS.forEach(n => byId[n.id] = n);
+  const MACRO_REL = [
+    { from:"m1", to:"m2", verbo:"causa la" },
+    { from:"m2", to:"m3", verbo:"desplaza la flota pesada al exterior y genera el" },
+    { from:"m3", to:"m4", verbo:"obstruye los camiones de aseo e intensifica la" },
+    { from:"m4", to:"m5", verbo:"fuerza la selección en vía e incentiva la" },
+    { from:"m5", to:"m6", verbo:"precariza el entorno y acentúa la" },
+    { from:"m4", to:"m7", verbo:"genera escorrentía ácida hacia la red pluvial, provocando la" },
+    { from:"m7", to:"m8", verbo:"degrada el cuerpo de agua y desencadena el" },
+    { from:"m3", to:"m8", verbo:"presiona el parqueo sobre áreas de protección ambiental, acelerando el" },
+  ];
 
-  const REL = [
-    { from:"n1",  to:"n3" },
-    { from:"n2",  to:"n3" },
-    { from:"n3",  to:"n10" },
-    { from:"n4",  to:"n10" },
-    { from:"n8",  to:"n7" },
-    { from:"n7",  to:"n10" },
-    { from:"n5",  to:"n10" },
-    { from:"n6",  to:"n10" },
-    { from:"n12", to:"n10" },
-    { from:"n9",  to:"n11" },
-    { from:"n10", to:"n11" },
-    { from:"n11", to:"n13" },
-    { from:"n13", to:"n3" },
-    { from:"n13", to:"n7" },
-  ];
+  const SUBNETS = {
+    m1: {
+      nodes: [
+        { id:"s1_1", t:"Estructura accionaria mixta de Corabastos dividida entre sector público y comerciantes privados" },
+        { id:"s1_2", t:"Inexistencia de concertación horaria entre Secretaría de Movilidad y administración de la central" },
+        { id:"s1_3", t:"Incompatibilidad entre sanciones de espacio público del Distrito y reglamento interno de la central" },
+        { id:"s1_4", t:"Descalce entre las ventanas de comercialización de bodegas y los itinerarios nocturnos del transporte regional" },
+        { id:"s1_5", t:"Ausencia de control de flujo en los portones perimetrales de acceso" },
+        { id:"s1_6", t:"Desincronización de planes operativos entre la UAESP, operadores de aseo y Corabastos" },
+      ],
+      rel: [
+        { from:"s1_1", to:"s1_2" }, { from:"s1_2", to:"s1_4" }, { from:"s1_1", to:"s1_3" },
+        { from:"s1_3", to:"s1_5" }, { from:"s1_2", to:"s1_6" }, { from:"s1_6", to:"s1_2", loop:true },
+      ],
+      loopNote: "La descoordinación en calle refuerza la falta de acuerdos formales",
+    },
+    m2: {
+      nodes: [
+        { id:"s2_1", t:"Recepción diaria concentrada de 11.500 toneladas de alimentos en 1.500 camiones pesados" },
+        { id:"s2_2", t:"Diseño geométrico de portones de acceso a 90 grados sin carriles de desaceleración" },
+        { id:"s2_3", t:"Capacidad limitada de estacionamiento en el sector El Martillo y bodegas internas" },
+        { id:"s2_4", t:"Invasión y bloqueo de las áreas de acopio interno por parqueo vehicular no regulado" },
+        { id:"s2_5", t:"Mezcla no zonificada de cargue y descargue en los mismos callejones de circulación interna" },
+        { id:"s2_6", t:"Inmovilización vehicular en las vías internas de la central" },
+      ],
+      rel: [
+        { from:"s2_1", to:"s2_3" }, { from:"s2_2", to:"s2_6" }, { from:"s2_5", to:"s2_4" },
+        { from:"s2_4", to:"s2_3" }, { from:"s2_3", to:"s2_6" }, { from:"s2_6", to:"s2_4", loop:true },
+      ],
+      loopNote: "El trancón interno atrapa camiones sobre las áreas de parqueo y acopio, anulando el espacio disponible",
+    },
+    m3: {
+      nodes: [
+        { id:"s3_1", t:"Convergencia obligada de flujos intermunicipales de carga por Calle 13, Autopista Sur y Vía al Llano" },
+        { id:"s3_2", t:"Ausencia de plataformas logísticas de filtrado y puertos secos en los bordes de Bogotá" },
+        { id:"s3_3", t:"Atracción de camiones de carga pesada sobre los portones de la Cervecería Bavaria (Av. Boyacá / Av. Américas)" },
+        { id:"s3_4", t:"Predominio de vías perimetrales de una sola calzada en los barrios María Paz y Patio Bonito" },
+        { id:"s3_5", t:"Estacionamiento de camiones pesados sobre calzadas y andenes en espera de turno" },
+        { id:"s3_6", t:"Operaciones informales de cargue y descargue en vía pública" },
+        { id:"s3_7", t:"Invasión de calzadas por vehículos de tracción humana (VTH) y cargadores de oficio" },
+        { id:"s3_8", t:"Bloqueo físico de la circulación en la Av. Ciudad de Cali, Av. de las Américas y Av. Agoberto Mejía" },
+      ],
+      rel: [
+        { from:"s3_2", to:"s3_1" }, { from:"s3_1", to:"s3_5" }, { from:"s3_3", to:"s3_8" },
+        { from:"s3_4", to:"s3_8" }, { from:"s3_5", to:"s3_6" }, { from:"s3_6", to:"s3_7" },
+        { from:"s3_7", to:"s3_8" }, { from:"s3_8", to:"s3_5", loop:true },
+      ],
+      loopNote: "El colapso de las avenidas principales impide el paso hacia los portones, represando más camiones en las calles residenciales",
+    },
+    m4: {
+      nodes: [
+        { id:"s4_1", t:"Concentración y descarte masivo de biomasa vegetal sin clasificación en origen" },
+        { id:"s4_2", t:"Saturación de la capacidad de contención en contenedores internos de Corabastos" },
+        { id:"s4_3", t:"Descarte masivo de chatarra, estibas y residuos de la industria metalmecánica y cervecera" },
+        { id:"s4_4", t:"Ausencia de plantas de compostaje o transformación de biomasa dentro del predio" },
+        { id:"s4_5", t:"Desborde y traslado de residuos orgánicos e inerte hacia los portones P7, P8 y P9" },
+        { id:"s4_6", t:"Desplazamiento de la selección manual («puchero») y descarte a la calzada vehicular de la Diagonal 38 Sur" },
+        { id:"s4_7", t:"Descalce entre los horarios de venta comercial y la frecuencia de recolección de la UAESP" },
+        { id:"s4_8", t:"Acumulación de residuos sólidos y biomasa en descomposición sobre la vía pública" },
+      ],
+      rel: [
+        { from:"s4_1", to:"s4_2" }, { from:"s4_2", to:"s4_5" }, { from:"s4_3", to:"s4_8" },
+        { from:"s4_4", to:"s4_6" }, { from:"s4_5", to:"s4_6" }, { from:"s4_7", to:"s4_8" },
+        { from:"s4_6", to:"s4_8" }, { from:"s4_8", to:"s4_2", loop:true },
+      ],
+      loopNote: "La basura acumulada en las aceras desborda los contenedores de los bordes, colapsando el sistema de retiro interno",
+    },
+    m5: {
+      nodes: [
+        { id:"s5_1", t:"Presión comercial e industrial de Corabastos, Cervecería Bavaria y talleres sobre el entorno urbano" },
+        { id:"s5_2", t:"Inexistencia de franjas urbanas de amortiguación o mitigación de impactos entre la central y el barrio" },
+        { id:"s5_3", t:"Transformación de viviendas residenciales en bodegas informales de recolección, alimentos y chatarra" },
+        { id:"s5_4", t:"Proliferación de pequeños talleres metalmecánicos y de soldadura no regulados" },
+        { id:"s5_5", t:"Ocupación indebida de andenes por exhibición de mercancía, guacales y carretas" },
+        { id:"s5_6", t:"Deterioro del pavimento y sobrecarga de la infraestructura de servicios en María Paz" },
+      ],
+      rel: [
+        { from:"s5_2", to:"s5_1" }, { from:"s5_1", to:"s5_3" }, { from:"s5_1", to:"s5_4" },
+        { from:"s5_3", to:"s5_5" }, { from:"s5_5", to:"s5_6" }, { from:"s5_6", to:"s5_3", loop:true },
+      ],
+      loopNote: "El deterioro físico del barrio expulsa el uso residencial y abarata el suelo para el alquiler de más bodegas informales",
+    },
+    m6: {
+      nodes: [
+        { id:"s6_1", t:"Contratación informal y trabajo a destajo operado por intermediarios" },
+        { id:"s6_2", t:"Ausencia de Estaciones de Clasificación y Aprovechamiento (ECA) e infraestructura pública limpia" },
+        { id:"s6_3", t:"Acarreo informal de reciclaje y carga en vehículos de tracción humana (VTH / carretas de madera)" },
+        { id:"s6_4", t:"Exposición a vectores y riesgos biológicos por manipulación no protegida de biomasa podrida" },
+        { id:"s6_5", t:"Estigmatización social y persecución administrativa a trabajadores informales" },
+      ],
+      rel: [
+        { from:"s6_1", to:"s6_3" }, { from:"s6_2", to:"s6_3" }, { from:"s6_3", to:"s6_4" },
+        { from:"s6_3", to:"s6_5" }, { from:"s6_5", to:"s6_1", loop:true },
+      ],
+      loopNote: "La marginalización bloquea el acceso a esquemas de empleo formal, reduciendo las alternativas al pago por bulto a destajo",
+    },
+    m7: {
+      nodes: [
+        { id:"s7_1", t:"Generación masiva de lixiviados ácidos por descomposición de biomasa vegetal acumulada" },
+        { id:"s7_2", t:"Vertimiento de aguas de lavado de bodegas, carnes y verduras con alta carga orgánica y grasa" },
+        { id:"s7_3", t:"Vertimiento de aceites de corte, refrigerantes y químicos de la industria metalmecánica y cervecera" },
+        { id:"s7_4", t:"Inexistencia de plantas de tratamiento de agua residual (PTAR) o trampas de grasa en Corabastos e industrias" },
+        { id:"s7_5", t:"Conexión errada de tuberías servidas al alcantarillado pluvial urbano" },
+        { id:"s7_6", t:"Escorrentía de lixiviados desde las calzadas de la Diagonal 38 Sur hacia los colectores del humedal" },
+        { id:"s7_7", t:"Anoxia, eutrofización y carga bacteriana en los canales y vaso de agua" },
+      ],
+      rel: [
+        { from:"s7_1", to:"s7_6" }, { from:"s7_2", to:"s7_5" }, { from:"s7_3", to:"s7_5" },
+        { from:"s7_4", to:"s7_5" }, { from:"s7_5", to:"s7_7" }, { from:"s7_6", to:"s7_7" },
+        { from:"s7_7", to:"s7_6", loop:true },
+      ],
+      loopNote: "El colapso biológico del agua anula la capacidad natural de autodepuración del canal, estancando los nuevos lixiviados en los bordes superficiales",
+    },
+    m8: {
+      nodes: [
+        { id:"s8_1", t:"Relleno e invasión histórica de la ronda hidráulica por desarrollo urbano informal" },
+        { id:"s8_2", t:"Cerramiento perimetral rígido de Corabastos funcionando como barrera biofísica" },
+        { id:"s8_3", t:"Disposición no controlada de escombros, llantas y residuos sólidos en la franja ambiental" },
+        { id:"s8_4", t:"Reducción del espejo de agua y pérdida de capacidad de amortiguación de inundaciones" },
+        { id:"s8_5", t:"Interrupción de la conectividad biológica entre el Humedal La Vaca y el Parque Cayetano Cañizares" },
+      ],
+      rel: [
+        { from:"s8_1", to:"s8_4" }, { from:"s8_2", to:"s8_5" }, { from:"s8_3", to:"s8_4" },
+        { from:"s8_4", to:"s8_5" }, { from:"s8_5", to:"s8_3", loop:true },
+      ],
+      loopNote: "La desconexión ecosistémica desvaloriza la percepción social del humedal, convirtiendo sus bordes en puntos clandestinos de arrojo de escombros",
+    },
+  };
+  const macroById = {}; MACRO.forEach(m => macroById[m.id] = m);
 
   const gooLayer = document.getElementById("gooLayer");
   const labelLayer = document.getElementById("labelLayer");
   const intro = document.getElementById("intro");
   const backBtn = document.getElementById("backBtn");
+  const levelTitle = document.getElementById("levelTitle");
+  const levelTitleText = document.getElementById("levelTitleText");
+  const levelSubText = document.getElementById("levelSubText");
 
-  const CENTER_R = 112;
-  let NODE_R = 92;
-  const BRIDGES = 45;
+  const CENTER_R = 108;
+  let NODE_R = 62;
 
-  function forceLayout(nodeList, edgeList, centerX, centerY, spread, radiusOf, gapMult = 1.8, margin = 230, iterations = 320) {
+  function forceLayout(nodeList, edgeList, centerX, centerY, spread, radiusOf, gapMult, margin, iterations = 300) {
     const pos = {};
-    const margin0 = margin;
-    const areaW = window.innerWidth - margin0 * 2, areaH = window.innerHeight - margin0 * 2;
+    const areaW = window.innerWidth - margin * 2, areaH = window.innerHeight - margin * 2;
     const cols = Math.ceil(Math.sqrt(nodeList.length * areaW / areaH));
     const rows = Math.ceil(nodeList.length / cols);
     nodeList.forEach((n, i) => {
       const col = i % cols, row = Math.floor(i / cols);
       const jitter = () => (Math.random() - 0.5) * 0.3;
-      pos[n.id] = {
-        x: margin0 + (areaW * (col + 0.5 + jitter())) / cols,
-        y: margin0 + (areaH * (row + 0.5 + jitter())) / rows,
-      };
+      pos[n.id] = { x: margin + (areaW * (col + 0.5 + jitter())) / cols, y: margin + (areaH * (row + 0.5 + jitter())) / rows };
     });
     const ids = nodeList.map(n => n.id);
-    // La separacion minima entre CADA PAR ahora depende de la suma de sus
-    // propios radios (bolas mas grandes por mas conexiones necesitan mas
-    // espacio a su alrededor que las chiquitas).
-    function minDistFor(idA, idB) { return (radiusOf(idA) + radiusOf(idB)) * gapMult; }
+    function minDistFor(a, b) { return (radiusOf(a) + radiusOf(b)) * gapMult; }
     for (let iter = 0; iter < iterations; iter++) {
       const force = {}; ids.forEach(id => force[id] = { x: 0, y: 0 });
-      for (let i = 0; i < ids.length; i++) {
-        for (let j = i + 1; j < ids.length; j++) {
-          const a = pos[ids[i]], b = pos[ids[j]];
-          const minDist = minDistFor(ids[i], ids[j]);
-          let dx = a.x - b.x, dy = a.y - b.y;
-          let dist = Math.hypot(dx, dy) || 0.001;
-          if (dist < minDist) {
-            if (dist < 0.01) { dx = (Math.random() - 0.5) * 2; dy = (Math.random() - 0.5) * 2; dist = Math.hypot(dx, dy); }
-            const overlap = (minDist - dist) / 2;
-            const ux = dx / dist, uy = dy / dist;
-            force[ids[i]].x += ux * overlap; force[ids[i]].y += uy * overlap;
-            force[ids[j]].x -= ux * overlap; force[ids[j]].y -= uy * overlap;
-          }
+      for (let i = 0; i < ids.length; i++) for (let j = i + 1; j < ids.length; j++) {
+        const a = pos[ids[i]], b = pos[ids[j]];
+        const minDist = minDistFor(ids[i], ids[j]);
+        let dx = a.x - b.x, dy = a.y - b.y;
+        let dist = Math.hypot(dx, dy) || 0.001;
+        if (dist < minDist) {
+          if (dist < 0.01) { dx = (Math.random() - 0.5) * 2; dy = (Math.random() - 0.5) * 2; dist = Math.hypot(dx, dy); }
+          const overlap = (minDist - dist) / 2, ux = dx / dist, uy = dy / dist;
+          force[ids[i]].x += ux * overlap; force[ids[i]].y += uy * overlap;
+          force[ids[j]].x -= ux * overlap; force[ids[j]].y -= uy * overlap;
         }
       }
       edgeList.forEach(e => {
         const a = pos[e.from], b = pos[e.to];
         const dx = b.x - a.x, dy = b.y - a.y;
         const dist = Math.hypot(dx, dy) || 0.001;
-        const target = minDistFor(e.from, e.to) * 1.25;
+        const target = minDistFor(e.from, e.to) * 1.3;
         const pull = (dist - target) * 0.014;
         force[e.from].x += dx / dist * pull; force[e.from].y += dy / dist * pull;
         force[e.to].x -= dx / dist * pull; force[e.to].y -= dy / dist * pull;
@@ -215,110 +318,39 @@
         pos[id].x += force[id].x; pos[id].y += force[id].y;
         pos[id].x += (centerX - pos[id].x) * 0.0008;
         pos[id].y += (centerY - pos[id].y) * 0.0008;
-        // Fuerza SUAVE de borde (no un tope duro) — así varias bolas nunca
-        // quedan apiladas exactamente en el mismo punto de la orilla.
         if (pos[id].x < margin) pos[id].x += (margin - pos[id].x) * 0.45;
         if (pos[id].x > window.innerWidth - margin) pos[id].x -= (pos[id].x - (window.innerWidth - margin)) * 0.45;
         if (pos[id].y < margin) pos[id].y += (margin - pos[id].y) * 0.45;
         if (pos[id].y > window.innerHeight - margin) pos[id].y -= (pos[id].y - (window.innerHeight - margin)) * 0.45;
       });
     }
-    // Fase final: solo separacion pura (sin atraccion de conexiones ni
-    // centro), para GARANTIZAR que ninguna bolita quede tocando a otra sin
-    // importar la semilla aleatoria del sembrado inicial.
     for (let pass = 0; pass < 320; pass++) {
-      for (let i = 0; i < ids.length; i++) {
-        for (let j = i + 1; j < ids.length; j++) {
-          const a = pos[ids[i]], b = pos[ids[j]];
-          const minDist = minDistFor(ids[i], ids[j]);
-          let dx = a.x - b.x, dy = a.y - b.y;
-          let dist = Math.hypot(dx, dy) || 0.001;
-          if (dist < minDist) {
-            if (dist < 0.01) { dx = (Math.random() - 0.5) * 2; dy = (Math.random() - 0.5) * 2; dist = Math.hypot(dx, dy); }
-            const overlap = (minDist - dist) / 2;
-            const ux = dx / dist, uy = dy / dist;
-            a.x += ux * overlap; a.y += uy * overlap;
-            b.x -= ux * overlap; b.y -= uy * overlap;
-          }
+      for (let i = 0; i < ids.length; i++) for (let j = i + 1; j < ids.length; j++) {
+        const a = pos[ids[i]], b = pos[ids[j]];
+        const minDist = minDistFor(ids[i], ids[j]);
+        let dx = a.x - b.x, dy = a.y - b.y;
+        let dist = Math.hypot(dx, dy) || 0.001;
+        if (dist < minDist) {
+          if (dist < 0.01) { dx = (Math.random() - 0.5) * 2; dy = (Math.random() - 0.5) * 2; dist = Math.hypot(dx, dy); }
+          const overlap = (minDist - dist) / 2, ux = dx / dist, uy = dy / dist;
+          a.x += ux * overlap; a.y += uy * overlap; b.x -= ux * overlap; b.y -= uy * overlap;
         }
       }
     }
-    // Al final (una sola vez, no en cada pasada) se acomoda todo dentro del
-    // margen de seguridad de la pantalla.
     ids.forEach(id => {
       const r = radiusOf(id);
-      pos[id].x = Math.max(margin + r * 0.3, Math.min(window.innerWidth - margin - r * 0.3, pos[id].x));
-      pos[id].y = Math.max(margin + r * 0.3, Math.min(window.innerHeight - margin - r * 0.3, pos[id].y));
+      pos[id].x = Math.max(margin + r * 0.2, Math.min(window.innerWidth - margin - r * 0.2, pos[id].x));
+      pos[id].y = Math.max(margin + r * 0.2, Math.min(window.innerHeight - margin - r * 0.2, pos[id].y));
     });
     return pos;
-  }
-
-  // ---- Posiciones acomodadas a mano por el usuario, guardadas como
-  // referencia sobre un lienzo de 1470x660 (segun donde quedaron al
-  // acomodarlas) — se escalan proporcionalmente si la pantalla es de otro
-  // tamaño, para mantener el mismo acomodo relativo. ----
-  const FIXED_POS = {
-    n1:  { x: 357,  y: 168 }, n2:  { x: 448,  y: 315 }, n3:  { x: 672,  y: 105 },
-    n4:  { x: 964,  y: 71  }, n5:  { x: 1162, y: 186 }, n6:  { x: 1344, y: 293 },
-    n7:  { x: 245,  y: 489 }, n8:  { x: 222,  y: 286 }, n9:  { x: 763,  y: 499 },
-    n10: { x: 980,  y: 341 }, n11: { x: 1038, y: 603 }, n12: { x: 1342, y: 527 },
-    n13: { x: 562,  y: 580 },
-  };
-  const REF_W = 1470, REF_H = 660, REF_MARGIN = 90;
-
-  let cx, cy;
-  let nodePos = {};
-  let nodeRadiusMap = {};
-  const degree = {};
-  NODOS.forEach(n => degree[n.id] = 0);
-  REL.forEach(r => { degree[r.from]++; degree[r.to]++; });
-  const degValues = Object.values(degree);
-  const degMin = Math.min(...degValues), degMax = Math.max(...degValues);
-
-  function computeGeometry() {
-    cx = window.innerWidth / 2;
-    cy = window.innerHeight / 2 + 10;
-    NODE_R = Math.max(32, Math.min(72, window.innerWidth * 0.095));
-    const R_MIN = NODE_R * 0.9, R_MAX = NODE_R * 1.55;
-    NODOS.forEach(n => {
-      const t = degMax === degMin ? 0.5 : (degree[n.id] - degMin) / (degMax - degMin);
-      nodeRadiusMap[n.id] = R_MIN + (R_MAX - R_MIN) * Math.sqrt(t);
-    });
-
-    // Las coordenadas se usan TAL CUAL, en pixeles exactos, sin ningun
-    // reescalado — donde el usuario las puso es donde quedan.
-    nodePos = {};
-    NODOS.forEach(n => { nodePos[n.id] = { x: FIXED_POS[n.id].x, y: FIXED_POS[n.id].y }; });
-  }
-  computeGeometry();
-
-  // Devuelve la posicion FIJA exacta de un nodo (sin ningun reescalado),
-  // para poder regresarlo ahi cuando se suelta tras arrastrarlo.
-  function homePositionOf(id) {
-    return { x: FIXED_POS[id].x, y: FIXED_POS[id].y };
   }
 
   function el(cls) { const d = document.createElement("div"); d.className = cls; return d; }
   function size(elm, r) { elm.style.width = elm.style.height = r * 2 + "px"; }
   function place(elm, x, y) { elm.style.left = x + "px"; elm.style.top = y + "px"; }
-
-  const centerBlob = el("blob"); gooLayer.appendChild(centerBlob);
-  const centerLabel = el("label center-label");
-  centerLabel.style.width = (CENTER_R * 1.65) + "px";
-  centerLabel.textContent = "Saturación de residuos por centralización operativa";
-  labelLayer.appendChild(centerLabel);
-  const hitCenter = el("hit"); labelLayer.appendChild(hitCenter);
-
-  // Reparte un texto largo en lineas anchas y balanceadas (por palabras
-  // completas, nunca corta una palabra) calculando cuantas palabras caben
-  // realmente en el ancho disponible, para que el bloque de texto quede
-  // SIEMPRE dentro del circulo de la bolita, nunca sobresaliendo. Si la
-  // bolita es muy chiquita y no alcanza para todo el texto, se corta con
-  // "…" al final — el texto completo siempre esta disponible al tocarla.
   function wrapToFit(text, maxCharsPerLine, maxLines) {
     const words = text.split(" ");
-    const lines = [];
-    let current = "";
+    const lines = []; let current = "";
     words.forEach(w => {
       const candidate = current ? current + " " + w : w;
       if (candidate.length > maxCharsPerLine && current) { lines.push(current); current = w; }
@@ -335,191 +367,201 @@
     return lines.join("<br>");
   }
 
-  const nodeBlobs = {}, nodeLabels = {}, nodeHits = {};
-  NODOS.forEach(n => {
-    const b = el("blob"); gooLayer.appendChild(b); nodeBlobs[n.id] = b;
-    const l = el("label child-label");
-    // Ancho de texto deliberadamente MENOR al diametro de la bolita de
-    // ESTE nodo especifico (cada uno tiene su propio radio segun cuantas
-    // conexiones tiene), para que quede dentro del circulo.
-    const ownR = nodeRadiusMap[n.id];
-    const labelWidthPx = ownR * 1.55;
-    l.style.width = labelWidthPx + "px";
-    const fontPx = 11.5;
-    const maxCharsPerLine = Math.max(6, Math.floor(labelWidthPx / (fontPx * 0.52)));
-    // Cuantas lineas caben verticalmente en ESTA bolita, con margen de
-    // seguridad (85% del diametro) para que nunca se salga del circulo.
-    const maxLines = Math.max(2, Math.floor((ownR * 2 * 0.85) / (fontPx * 1.24)));
-    l.innerHTML = wrapToFit(n.corto, maxCharsPerLine, maxLines);
-    labelLayer.appendChild(l); nodeLabels[n.id] = l;
-    const h = el("hit"); labelLayer.appendChild(h); nodeHits[n.id] = h;
-  });
+  const centerBlob = el("blob"); gooLayer.appendChild(centerBlob);
+  const centerLabel = el("label center-label");
+  centerLabel.style.width = (CENTER_R * 1.65) + "px";
+  centerLabel.textContent = "Corabastos y su entorno";
+  labelLayer.appendChild(centerLabel);
+  const hitCenter = el("hit"); labelLayer.appendChild(hitCenter);
 
-  const bridgesByRel = REL.map(() => {
-    const arr = [];
-    for (let i = 0; i < BRIDGES; i++) { const b = el("blob"); gooLayer.appendChild(b); arr.push(b); }
-    return arr;
-  });
+  let level = "none";
+  let currentDetailId = null;
+  let nodeBlobs = {}, nodeLabels = {}, nodeHits = {}, nodeRadiusMap = {};
+  let bridgeEls = [];
+  let activeNodes = [], activeRel = [], nodePos = {};
 
-  let revealed = false;
+  function clearNetwork() {
+    Object.values(nodeBlobs).forEach(b => b.remove());
+    Object.values(nodeLabels).forEach(l => l.remove());
+    Object.values(nodeHits).forEach(h => h.remove());
+    bridgeEls.forEach(b => b.remove());
+    nodeBlobs = {}; nodeLabels = {}; nodeHits = {}; bridgeEls = []; nodeRadiusMap = {};
+  }
 
-  function render() {
-    size(centerBlob, revealed ? 1 : CENTER_R);
-    place(centerBlob, cx, cy);
-    centerBlob.style.opacity = revealed ? "0" : "1";
-    place(centerLabel, cx, cy);
-    centerLabel.style.opacity = revealed ? "0" : "1";
-    size(hitCenter, CENTER_R); place(hitCenter, cx, cy);
-    hitCenter.style.pointerEvents = revealed ? "none" : "auto";
-    intro.style.opacity = revealed ? "0" : "1";
-    backBtn.classList.toggle("show", revealed);
-    document.getElementById("coordsPanel")?.classList.toggle("show", revealed);
-
-    NODOS.forEach(n => {
-      const target = revealed ? nodePos[n.id] : { x: cx, y: cy };
-      const ownR = nodeRadiusMap[n.id];
-      place(nodeBlobs[n.id], target.x, target.y);
-      size(nodeBlobs[n.id], revealed ? ownR : ownR * 0.08);
-      nodeBlobs[n.id].style.opacity = revealed ? "1" : "0";
-
-      place(nodeLabels[n.id], target.x, target.y);
-      nodeLabels[n.id].style.opacity = revealed ? "1" : "0";
-
-      size(nodeHits[n.id], ownR); place(nodeHits[n.id], target.x, target.y);
-      nodeHits[n.id].style.pointerEvents = revealed ? "auto" : "none";
+  function buildNetwork(nodes, rel, byIdMap, opts) {
+    clearNetwork();
+    activeNodes = nodes; activeRel = rel;
+    const degree = {};
+    nodes.forEach(n => degree[n.id] = 0);
+    rel.forEach(r => { degree[r.from]++; degree[r.to]++; });
+    const degValues = Object.values(degree);
+    const degMin = Math.min(...degValues), degMax = Math.max(...degValues);
+    NODE_R = Math.max(30, Math.min(opts.maxR, window.innerWidth * opts.wFrac));
+    const R_MIN = NODE_R * 0.85, R_MAX = NODE_R * 1.5;
+    nodes.forEach(n => {
+      const t = degMax === degMin ? 0.5 : (degree[n.id] - degMin) / (degMax - degMin);
+      nodeRadiusMap[n.id] = R_MIN + (R_MAX - R_MIN) * Math.sqrt(t);
     });
+    function radiusOf(id) { return nodeRadiusMap[id]; }
+    const margin = Math.max(50, Math.min(150, window.innerWidth * 0.07));
+    const cx = window.innerWidth / 2, cy = window.innerHeight / 2 + 10;
+    const spread = Math.min(window.innerWidth - margin * 2, window.innerHeight - margin * 2) * 0.55;
+    const avgR = degValues.reduce((s, d) => s + (R_MIN + (R_MAX - R_MIN) * Math.sqrt(degMax === degMin ? 0.5 : (d - degMin) / (degMax - degMin))), 0) / nodes.length;
+    const area = (window.innerWidth - margin * 2) * (window.innerHeight - margin * 2);
+    const maxFeasible = 2 * Math.sqrt((area * 0.68) / (nodes.length * Math.PI));
+    const gapMult = Math.min(1.8, Math.max(1.3, maxFeasible / (avgR * 2)));
 
-    REL.forEach((r, idx) => {
-      const a = revealed ? nodePos[r.from] : { x: cx, y: cy };
-      const b = revealed ? nodePos[r.to] : { x: cx, y: cy };
+    function segInt(p1, p2, p3, p4) {
+      const d1x = p2.x - p1.x, d1y = p2.y - p1.y, d2x = p4.x - p3.x, d2y = p4.y - p3.y;
+      const denom = d1x * d2y - d1y * d2x;
+      if (Math.abs(denom) < 1e-9) return false;
+      const t = ((p3.x - p1.x) * d2y - (p3.y - p1.y) * d2x) / denom;
+      const u = ((p3.x - p1.x) * d1y - (p3.y - p1.y) * d1x) / denom;
+      return t > 0.05 && t < 0.95 && u > 0.05 && u < 0.95;
+    }
+    function countCrossings(pos) {
+      let c = 0;
+      for (let i = 0; i < rel.length; i++) for (let j = i + 1; j < rel.length; j++) {
+        const a = rel[i], b = rel[j];
+        if (a.from === b.from || a.from === b.to || a.to === b.from || a.to === b.to) continue;
+        if (segInt(pos[a.from], pos[a.to], pos[b.from], pos[b.to])) c++;
+      }
+      return c;
+    }
+    let best = null, bestC = Infinity;
+    for (let attempt = 0; attempt < 25; attempt++) {
+      const cand = forceLayout(nodes, rel, cx, cy, spread, radiusOf, gapMult, margin);
+      const c = countCrossings(cand);
+      if (c < bestC) { bestC = c; best = cand; }
+      if (bestC === 0) break;
+    }
+    nodePos = best;
+
+    nodes.forEach(n => {
+      const b = el("blob"); gooLayer.appendChild(b); nodeBlobs[n.id] = b;
+      const l = el("label child-label");
+      const ownR = nodeRadiusMap[n.id];
+      const labelWidthPx = ownR * 1.55;
+      l.style.width = labelWidthPx + "px";
+      const fontPx = 11.5;
+      const maxCharsPerLine = Math.max(6, Math.floor(labelWidthPx / (fontPx * 0.52)));
+      const maxLines = Math.max(2, Math.floor((ownR * 2 * 0.85) / (fontPx * 1.24)));
+      const text = byIdMap[n.id].corto || byIdMap[n.id].t;
+      l.innerHTML = wrapToFit(text, maxCharsPerLine, maxLines);
+      labelLayer.appendChild(l); nodeLabels[n.id] = l;
+      const h = el("hit"); labelLayer.appendChild(h); nodeHits[n.id] = h;
+      place(nodeBlobs[n.id], nodePos[n.id].x, nodePos[n.id].y); size(nodeBlobs[n.id], ownR);
+      place(l, nodePos[n.id].x, nodePos[n.id].y);
+      size(h, ownR); place(h, nodePos[n.id].x, nodePos[n.id].y);
+    });
+    const BRIDGES = 45;
+    rel.forEach(r => {
+      const a = nodePos[r.from], b = nodePos[r.to];
       const rFrom = nodeRadiusMap[r.from], rTo = nodeRadiusMap[r.to];
-      bridgesByRel[idx].forEach((bridge, j) => {
+      for (let j = 0; j < BRIDGES; j++) {
         const t = (j + 1) / (BRIDGES + 1);
-        // El puente nace ancho junto al origen y se afina hacia el
-        // destino, cada uno segun el radio real de SU bolita.
-        const rr = revealed ? ((rFrom * (1 - t) + rTo * t) * (1 - t * 0.35)) * 0.17 : 1;
-        size(bridge, rr);
-        place(bridge, a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t);
-        bridge.style.opacity = revealed ? "1" : "0";
-      });
+        const rr = ((rFrom * (1 - t) + rTo * t) * (1 - t * 0.35)) * 0.17;
+        const bridge = el("blob"); gooLayer.appendChild(bridge); bridgeEls.push(bridge);
+        size(bridge, rr); place(bridge, a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t);
+      }
     });
   }
 
-  function reveal() { revealed = true; render(); updateCoordsOutput(); }
-  function collapse() { revealed = false; render(); document.getElementById("panel").classList.remove("open"); }
-  backBtn.addEventListener("click", collapse);
+  function showMacro() {
+    level = "macro"; currentDetailId = null;
+    buildNetwork(MACRO, MACRO_REL, macroById, { maxR: 78, wFrac: 0.1 });
+    intro.style.opacity = "0";
+    levelTitle.classList.add("show");
+    levelTitleText.textContent = "8 problemáticas de Corabastos y su entorno";
+    levelSubText.textContent = "Toca cualquier problema para ver sus causas internas";
+    backBtn.textContent = "← Volver a la burbuja inicial";
+    backBtn.classList.add("show");
+    centerBlob.style.opacity = "0"; centerLabel.style.opacity = "0"; hitCenter.style.pointerEvents = "none";
+  }
 
-  // ---- Guardar las posiciones "de fabrica" para poder Restablecer ----
-  let factoryPos = null;
+  function showDetail(macroId) {
+    level = "detail"; currentDetailId = macroId;
+    const sub = SUBNETS[macroId];
+    const byId = {}; sub.nodes.forEach(n => byId[n.id] = n);
+    buildNetwork(sub.nodes, sub.rel, byId, { maxR: 66, wFrac: 0.09 });
+    levelTitleText.textContent = macroById[macroId].full;
+    levelSubText.textContent = "Causas internas de esta problemática — toca una causa para ver más";
+    backBtn.textContent = "← Volver a las 8 problemáticas";
+    backBtn.classList.add("show");
+    document.getElementById("panel").classList.remove("open");
+  }
 
-  // ---- Arrastrar cada bolita a mano: si el arrastre EMPIEZA sobre una
-  // bolita ya revelada, se mueve ESA bolita (y sus conexiones la siguen);
-  // si empieza en el fondo o sobre la bolita inicial, funciona como antes
-  // (toque = revelar / abrir panel). ----
+  function backAction() {
+    if (level === "detail") { showMacro(); return; }
+    level = "none"; currentDetailId = null;
+    clearNetwork();
+    intro.style.opacity = "1";
+    levelTitle.classList.remove("show");
+    backBtn.classList.remove("show");
+    centerBlob.style.opacity = "1"; centerLabel.style.opacity = "1"; hitCenter.style.pointerEvents = "auto";
+    document.getElementById("panel").classList.remove("open");
+  }
+  backBtn.addEventListener("click", backAction);
+
+  place(centerBlob, window.innerWidth / 2, window.innerHeight / 2 + 10); size(centerBlob, CENTER_R);
+  place(centerLabel, window.innerWidth / 2, window.innerHeight / 2 + 10);
+  place(hitCenter, window.innerWidth / 2, window.innerHeight / 2 + 10); size(hitCenter, CENTER_R);
+
   const stage = document.getElementById("stage");
-  let downStart = null, downTarget = null, draggingNodeId = null;
-
-  stage.addEventListener("pointerdown", (e) => {
-    downStart = { x: e.clientX, y: e.clientY };
-    downTarget = e.target;
-    if (revealed) {
-      const nid = Object.keys(nodeHits).find(id => nodeHits[id] === e.target);
-      if (nid) {
-        draggingNodeId = nid;
-        if (!factoryPos) factoryPos = JSON.parse(JSON.stringify(nodePos));
-      }
-    }
-  });
-  window.addEventListener("pointermove", (e) => {
-    if (!draggingNodeId || !downStart) return;
-    const dx = e.clientX - downStart.x, dy = e.clientY - downStart.y;
-    downStart = { x: e.clientX, y: e.clientY };
-    nodePos[draggingNodeId].x += dx;
-    nodePos[draggingNodeId].y += dy;
-    // "Fuerza de atraccion": las bolitas conectadas DIRECTAMENTE con la
-    // que se arrastra tambien se mueven un poco, jaladas con mas o menos
-    // fuerza segun que tan grande es la bolita que se esta arrastrando
-    // (una bolita grande, con muchas conexiones, arrastra mas cosas
-    // consigo que una chiquita).
-    const dragR = nodeRadiusMap[draggingNodeId];
-    const pullFactor = Math.max(0.12, Math.min(0.62, dragR / (NODE_R * 1.55)));
-    REL.forEach(r => {
-      let neighborId = null;
-      if (r.from === draggingNodeId) neighborId = r.to;
-      else if (r.to === draggingNodeId) neighborId = r.from;
-      if (neighborId && neighborId !== draggingNodeId) {
-        nodePos[neighborId].x += dx * pullFactor;
-        nodePos[neighborId].y += dy * pullFactor;
-      }
-    });
-    render();
-    updateCoordsOutput();
-  });
+  let downStart = null, downTarget = null;
+  stage.addEventListener("pointerdown", (e) => { downStart = { x: e.clientX, y: e.clientY }; downTarget = e.target; });
   window.addEventListener("pointerup", (e) => {
-    if (draggingNodeId) {
-      // Al soltar, la bolita y todas las vecinas que arrastro consigo
-      // regresan solas a su lugar fijo (como un resorte).
-      const affected = new Set([draggingNodeId]);
-      REL.forEach(r => {
-        if (r.from === draggingNodeId) affected.add(r.to);
-        if (r.to === draggingNodeId) affected.add(r.from);
-      });
-      affected.forEach(id => {
-        const home = homePositionOf(id);
-        nodePos[id].x = home.x;
-        nodePos[id].y = home.y;
-      });
-      render();
-      updateCoordsOutput();
-      draggingNodeId = null; downStart = null; return;
-    }
     if (!downStart) return;
     const moved = Math.hypot(e.clientX - downStart.x, e.clientY - downStart.y);
     downStart = null;
     if (moved >= 8) return;
-    if (downTarget === hitCenter) { reveal(); return; }
+    if (downTarget === hitCenter) { showMacro(); return; }
     const nid = Object.keys(nodeHits).find(id => nodeHits[id] === downTarget);
     if (nid) openPanel(nid);
   });
 
-  // ---- Panel de coordenadas: se muestra junto con la red revelada,
-  // permite copiar la posicion actual de cada bolita y restablecer. ----
-  const coordsPanel = document.getElementById("coordsPanel");
-  const coordsOutput = document.getElementById("coordsOutput");
-  function updateCoordsOutput() {
-    const lines = NODOS.map(n => {
-      const p = nodePos[n.id];
-      return `  { id:"${n.id}", x:${Math.round(p.x)}, y:${Math.round(p.y)} }, // ${n.corto.slice(0, 40)}`;
-    });
-    coordsOutput.value = "[\n" + lines.join("\n") + "\n]";
-  }
-  document.getElementById("coordsCopyBtn").addEventListener("click", async () => {
-    updateCoordsOutput();
-    try { await navigator.clipboard.writeText(coordsOutput.value); } catch (err) {}
-    coordsOutput.select();
-  });
-  document.getElementById("coordsResetBtn").addEventListener("click", () => {
-    if (factoryPos) { nodePos = JSON.parse(JSON.stringify(factoryPos)); render(); updateCoordsOutput(); }
-  });
-
   function openPanel(id) {
-    const n = byId[id];
     const panel = document.getElementById("panel"), body = document.getElementById("panelBody");
-    const vieneDe = REL.filter(r => r.to === id).map(r => byId[r.from]);
-    const alimentaA = REL.filter(r => r.from === id).map(r => byId[r.to]);
-    body.innerHTML = `
-      <p class="panel-kind">Causa</p>
-      <h2>${n.corto}</h2>
-      ${vieneDe.length ? `<div class="block"><b>Viene de</b>${vieneDe.map(x => `<div class="rel-chip" data-goto="${x.id}">${x.corto}</div>`).join("")}</div>` : ""}
-      ${alimentaA.length ? `<div class="block"><b>Alimenta a</b>${alimentaA.map(x => `<div class="rel-chip" data-goto="${x.id}">${x.corto}</div>`).join("")}</div>` : ""}
-    `;
-    body.querySelectorAll("[data-goto]").forEach(elm => elm.addEventListener("click", (e) => { e.stopPropagation(); openPanel(elm.dataset.goto); }));
+    if (level === "macro") {
+      const n = macroById[id];
+      const vieneDe = MACRO_REL.filter(r => r.to === id).map(r => ({ n: macroById[r.from], verbo: r.verbo }));
+      const alimentaA = MACRO_REL.filter(r => r.from === id).map(r => ({ n: macroById[r.to], verbo: r.verbo }));
+      body.innerHTML = `
+        <p class="panel-kind">Problemática</p>
+        <h2>${n.full}</h2>
+        ${vieneDe.length ? `<div class="block"><b>Viene de</b>${vieneDe.map(x => `<div class="rel-chip" data-goto="${x.n.id}">${x.n.corto}<span class="rel-verbo">${x.verbo}</span></div>`).join("")}</div>` : ""}
+        ${alimentaA.length ? `<div class="block"><b>Alimenta a</b>${alimentaA.map(x => `<div class="rel-chip" data-goto="${x.n.id}">${x.n.corto}<span class="rel-verbo">${x.verbo}</span></div>`).join("")}</div>` : ""}
+        <button class="drill-btn" id="drillBtn">Ver causas internas de esta problemática →</button>
+      `;
+      body.querySelectorAll("[data-goto]").forEach(elm => elm.addEventListener("click", (e) => { e.stopPropagation(); openPanel(elm.dataset.goto); }));
+      document.getElementById("drillBtn").addEventListener("click", (e) => { e.stopPropagation(); showDetail(id); });
+    } else if (level === "detail") {
+      const sub = SUBNETS[currentDetailId];
+      const byId = {}; sub.nodes.forEach(n => byId[n.id] = n);
+      const n = byId[id];
+      const vieneDe = sub.rel.filter(r => r.to === id).map(r => byId[r.from]);
+      const alimentaA = sub.rel.filter(r => r.from === id).map(r => byId[r.to]);
+      const esLoop = sub.rel.some(r => r.loop && (r.from === id || r.to === id));
+      body.innerHTML = `
+        <p class="panel-kind">Causa (${macroById[currentDetailId].corto})</p>
+        <h2>${n.t}</h2>
+        ${vieneDe.length ? `<div class="block"><b>Viene de</b>${vieneDe.map(x => `<div class="rel-chip" data-goto="${x.id}">${x.t}</div>`).join("")}</div>` : ""}
+        ${alimentaA.length ? `<div class="block"><b>Alimenta a</b>${alimentaA.map(x => `<div class="rel-chip" data-goto="${x.id}">${x.t}</div>`).join("")}</div>` : ""}
+        ${esLoop ? `<div class="block"><b>Bucle de retroalimentación</b><p style="font-size:12.5px;color:var(--ink-dark);margin:0;font-style:italic;">${sub.loopNote}</p></div>` : ""}
+      `;
+      body.querySelectorAll("[data-goto]").forEach(elm => elm.addEventListener("click", (e) => { e.stopPropagation(); openPanel(elm.dataset.goto); }));
+    }
     panel.classList.add("open");
   }
   document.getElementById("panelClose").addEventListener("click", () => document.getElementById("panel").classList.remove("open"));
 
-  window.addEventListener("resize", () => { computeGeometry(); render(); });
-  render();
+  window.addEventListener("resize", () => {
+    place(centerBlob, window.innerWidth / 2, window.innerHeight / 2 + 10);
+    place(centerLabel, window.innerWidth / 2, window.innerHeight / 2 + 10);
+    place(hitCenter, window.innerWidth / 2, window.innerHeight / 2 + 10);
+    if (level === "macro") buildNetwork(MACRO, MACRO_REL, macroById, { maxR: 78, wFrac: 0.1 });
+    else if (level === "detail") { const sub = SUBNETS[currentDetailId]; const byId = {}; sub.nodes.forEach(n => byId[n.id] = n); buildNetwork(sub.nodes, sub.rel, byId, { maxR: 66, wFrac: 0.09 }); }
+  });
 })();
 </script>
 </body>
