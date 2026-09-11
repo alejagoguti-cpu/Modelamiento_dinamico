@@ -5,33 +5,37 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Corabastos y su entorno — Red macro de problemáticas</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="navigation-unified.css?v=20260824">
 <style>
   :root{
     --bg:#f4f6f8;
-    --node:#5b8ad6;
+    --node:#d2691e;
     --ink-on-node:#ffffff;
     --panel:rgba(0,0,0,.04); --panel-border:rgba(0,0,0,.1);
     --ink-dark:#1c2430; --ink-dim:#5b6675;
   }
   *{box-sizing:border-box;}
   html,body{height:100%;margin:0;}
+  .app{ display:flex; min-height:100vh; }
+  .main{ flex:1; position:relative; min-width:0; }
   body{ background:var(--bg); color:var(--ink-dark); font-family:'Inter',sans-serif; overflow:hidden; }
   .intro{
-    position:fixed; top:20px; left:50%; transform:translateX(-50%); z-index:6; text-align:center;
+    position:absolute; top:20px; left:50%; transform:translateX(-50%); z-index:6; text-align:center;
     pointer-events:none; max-width:640px; transition:opacity .4s ease;
   }
   .intro h1{ font-family:'Space Grotesk',sans-serif; font-size:15px; font-weight:600; margin:0 0 4px; line-height:1.35; }
   .intro p{ margin:0; font-size:11.5px; color:var(--ink-dim); }
 
   .level-title{
-    position:fixed; top:20px; left:50%; transform:translateX(-50%); z-index:6; text-align:center;
+    position:absolute; top:20px; left:50%; transform:translateX(-50%); z-index:6; text-align:center;
     max-width:640px; opacity:0; pointer-events:none; transition:opacity .4s ease;
   }
   .level-title.show{ opacity:1; }
   .level-title h2{ font-family:'Space Grotesk',sans-serif; font-size:14px; font-weight:600; margin:0; color:var(--ink-dark); }
   .level-title p{ margin:2px 0 0; font-size:11px; color:var(--ink-dim); }
 
-  .stage{ position:relative; width:100vw; height:100vh; }
+  .stage{ position:absolute; inset:0; width:100%; height:100%; }
   .goo-layer{ position:absolute; inset:0; filter:url(#goo); }
   .blob{
     position:absolute; border-radius:50%; top:0; left:0; transform:translate(-50%,-50%); background:var(--node);
@@ -49,7 +53,7 @@
   .hit{ position:absolute; top:0; left:0; transform:translate(-50%,-50%); border-radius:50%; cursor:pointer; z-index:5; pointer-events:auto; }
 
   .panel{
-    position:fixed; top:0; right:0; bottom:0; z-index:10; width:min(380px,92vw);
+    position:absolute; top:0; right:0; bottom:0; z-index:10; width:min(380px,92vw);
     background:#fff; border-left:1px solid var(--panel-border); box-shadow:-14px 0 40px rgba(0,0,0,.08);
     padding:26px 24px; overflow-y:auto; transform:translateX(100%); transition:transform .32s cubic-bezier(.2,.8,.2,1);
   }
@@ -73,7 +77,7 @@
   .panel .drill-btn:hover{ opacity:.9; }
 
   .back-btn{
-    position:fixed; bottom:22px; left:50%; transform:translateX(-50%); z-index:6;
+    position:absolute; bottom:22px; left:50%; transform:translateX(-50%); z-index:6;
     padding:10px 18px; border-radius:999px; border:1px solid var(--panel-border); background:#fff;
     font-size:12px; font-weight:600; color:var(--ink-dark); cursor:pointer; box-shadow:0 6px 16px rgba(0,0,0,.08);
     opacity:0; pointer-events:none; transition:opacity .3s ease;
@@ -84,6 +88,25 @@
 </style>
 </head>
 <body>
+<div class="app">
+  <aside class="sidebar sidebar-icons-only">
+    <div class="brand-icon"><i class="fa-solid fa-diagram-project"></i></div>
+    <nav class="icon-nav">
+      <a href="modulo-02.html" class="icon-nav-item" title="Medir la Red"><i class="fa-solid fa-chart-simple"></i></a>
+      <a href="modulo-03.html" class="icon-nav-item" title="Discurso vs Realidad"><i class="fa-solid fa-eye"></i></a>
+      <a href="modulo-04.html" class="icon-nav-item" title="Macromodelos"><i class="fa-solid fa-bullseye"></i></a>
+      <a href="modulo-05.html" class="icon-nav-item" title="Lo que no está"><i class="fa-solid fa-magnifying-glass"></i></a>
+      <a href="modulo-06.html" class="icon-nav-item" title="POT ↔ ODS"><i class="fa-solid fa-earth-americas"></i></a>
+      <a href="modulo-07.html" class="icon-nav-item" title="Simulador"><i class="fa-solid fa-flask"></i></a>
+      <a href="modulo-08.html" class="icon-nav-item" title="Modelo Propio"><i class="fa-solid fa-city"></i></a>
+      <a href="red-residuos-organicos.html" class="icon-nav-item active" title="Problemas de Kennedy"><i class="fa-solid fa-triangle-exclamation"></i></a>
+    </nav>
+    <div class="icon-nav-footer">
+      <a href="configuracion.html" class="icon-nav-item" title="Configuración"><i class="fa-solid fa-gear"></i></a>
+      <a href="demo.html" class="icon-nav-item" title="Salir"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
+    </div>
+  </aside>
+  <main class="main">
 
 <div class="intro" id="intro">
   <h1>Corabastos y su entorno: 8 problemáticas interconectadas</h1>
@@ -117,6 +140,11 @@
 
 <script>
 (() => {
+  // Medimos el area de CONTENIDO (junto a la barra lateral), no toda la
+  // ventana, para que la red no quede tapada ni descuadrada por el menu.
+  const mainEl = document.querySelector(".main");
+  function mainW() { return mainEl.clientWidth; }
+  function mainH() { return mainEl.clientHeight; }
   const MACRO = [
     { id:"m1", corto:"Desarticulación de gobernanza y regulación temporal", full:"Desarticulación de gobernanza y regulación temporal entre el Distrito y la administración de Corabastos" },
     { id:"m2", corto:"Saturación de residuos", full:"Saturación de la infraestructura física interna y plataformas de descarga de Corabastos" },
@@ -281,7 +309,7 @@
 
   function forceLayout(nodeList, edgeList, centerX, centerY, spread, radiusOf, gapMult, margin, iterations = 300) {
     const pos = {};
-    const areaW = window.innerWidth - margin * 2, areaH = window.innerHeight - margin * 2;
+    const areaW = mainW() - margin * 2, areaH = mainH() - margin * 2;
     const cols = Math.ceil(Math.sqrt(nodeList.length * areaW / areaH));
     const rows = Math.ceil(nodeList.length / cols);
     nodeList.forEach((n, i) => {
@@ -319,9 +347,9 @@
         pos[id].x += (centerX - pos[id].x) * 0.0008;
         pos[id].y += (centerY - pos[id].y) * 0.0008;
         if (pos[id].x < margin) pos[id].x += (margin - pos[id].x) * 0.45;
-        if (pos[id].x > window.innerWidth - margin) pos[id].x -= (pos[id].x - (window.innerWidth - margin)) * 0.45;
+        if (pos[id].x > mainW() - margin) pos[id].x -= (pos[id].x - (mainW() - margin)) * 0.45;
         if (pos[id].y < margin) pos[id].y += (margin - pos[id].y) * 0.45;
-        if (pos[id].y > window.innerHeight - margin) pos[id].y -= (pos[id].y - (window.innerHeight - margin)) * 0.45;
+        if (pos[id].y > mainH() - margin) pos[id].y -= (pos[id].y - (mainH() - margin)) * 0.45;
       });
     }
     for (let pass = 0; pass < 320; pass++) {
@@ -339,8 +367,8 @@
     }
     ids.forEach(id => {
       const r = radiusOf(id);
-      pos[id].x = Math.max(margin + r * 0.2, Math.min(window.innerWidth - margin - r * 0.2, pos[id].x));
-      pos[id].y = Math.max(margin + r * 0.2, Math.min(window.innerHeight - margin - r * 0.2, pos[id].y));
+      pos[id].x = Math.max(margin + r * 0.2, Math.min(mainW() - margin - r * 0.2, pos[id].x));
+      pos[id].y = Math.max(margin + r * 0.2, Math.min(mainH() - margin - r * 0.2, pos[id].y));
     });
     return pos;
   }
@@ -396,18 +424,18 @@
     rel.forEach(r => { degree[r.from]++; degree[r.to]++; });
     const degValues = Object.values(degree);
     const degMin = Math.min(...degValues), degMax = Math.max(...degValues);
-    NODE_R = Math.max(30, Math.min(opts.maxR, window.innerWidth * opts.wFrac));
+    NODE_R = Math.max(30, Math.min(opts.maxR, mainW() * opts.wFrac));
     const R_MIN = NODE_R * 0.85, R_MAX = NODE_R * 1.5;
     nodes.forEach(n => {
       const t = degMax === degMin ? 0.5 : (degree[n.id] - degMin) / (degMax - degMin);
       nodeRadiusMap[n.id] = R_MIN + (R_MAX - R_MIN) * Math.sqrt(t);
     });
     function radiusOf(id) { return nodeRadiusMap[id]; }
-    const margin = Math.max(50, Math.min(150, window.innerWidth * 0.07));
-    const cx = window.innerWidth / 2, cy = window.innerHeight / 2 + 10;
-    const spread = Math.min(window.innerWidth - margin * 2, window.innerHeight - margin * 2) * 0.55;
+    const margin = Math.max(50, Math.min(150, mainW() * 0.07));
+    const cx = mainW() / 2, cy = mainH() / 2 + 10;
+    const spread = Math.min(mainW() - margin * 2, mainH() - margin * 2) * 0.55;
     const avgR = degValues.reduce((s, d) => s + (R_MIN + (R_MAX - R_MIN) * Math.sqrt(degMax === degMin ? 0.5 : (d - degMin) / (degMax - degMin))), 0) / nodes.length;
-    const area = (window.innerWidth - margin * 2) * (window.innerHeight - margin * 2);
+    const area = (mainW() - margin * 2) * (mainH() - margin * 2);
     const maxFeasible = 2 * Math.sqrt((area * 0.68) / (nodes.length * Math.PI));
     const gapMult = Math.min(1.8, Math.max(1.3, maxFeasible / (avgR * 2)));
 
@@ -502,9 +530,9 @@
   }
   backBtn.addEventListener("click", backAction);
 
-  place(centerBlob, window.innerWidth / 2, window.innerHeight / 2 + 10); size(centerBlob, CENTER_R);
-  place(centerLabel, window.innerWidth / 2, window.innerHeight / 2 + 10);
-  place(hitCenter, window.innerWidth / 2, window.innerHeight / 2 + 10); size(hitCenter, CENTER_R);
+  place(centerBlob, mainW() / 2, mainH() / 2 + 10); size(centerBlob, CENTER_R);
+  place(centerLabel, mainW() / 2, mainH() / 2 + 10);
+  place(hitCenter, mainW() / 2, mainH() / 2 + 10); size(hitCenter, CENTER_R);
 
   const stage = document.getElementById("stage");
   let downStart = null, downTarget = null;
@@ -565,13 +593,16 @@
   document.getElementById("panelClose").addEventListener("click", () => document.getElementById("panel").classList.remove("open"));
 
   window.addEventListener("resize", () => {
-    place(centerBlob, window.innerWidth / 2, window.innerHeight / 2 + 10);
-    place(centerLabel, window.innerWidth / 2, window.innerHeight / 2 + 10);
-    place(hitCenter, window.innerWidth / 2, window.innerHeight / 2 + 10);
+    place(centerBlob, mainW() / 2, mainH() / 2 + 10);
+    place(centerLabel, mainW() / 2, mainH() / 2 + 10);
+    place(hitCenter, mainW() / 2, mainH() / 2 + 10);
     if (level === "macro") buildNetwork(MACRO, MACRO_REL, macroById, { maxR: 78, wFrac: 0.1 });
     else if (level === "detail") { const sub = SUBNETS[currentDetailId]; const byId = {}; sub.nodes.forEach(n => byId[n.id] = n); buildNetwork(sub.nodes, sub.rel, byId, { maxR: 66, wFrac: 0.09 }); }
   });
 })();
 </script>
+
+  </main>
+</div>
 </body>
 </html>
